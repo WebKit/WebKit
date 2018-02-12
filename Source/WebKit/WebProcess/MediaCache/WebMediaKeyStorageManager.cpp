@@ -32,9 +32,8 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/URL.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebMediaKeyStorageManager::initialize(const WebProcessCreationParameters &parameters)
 {

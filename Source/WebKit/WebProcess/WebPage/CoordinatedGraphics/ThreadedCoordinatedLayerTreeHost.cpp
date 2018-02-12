@@ -36,9 +36,8 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/MainFrame.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<ThreadedCoordinatedLayerTreeHost> ThreadedCoordinatedLayerTreeHost::create(WebPage& webPage)
 {

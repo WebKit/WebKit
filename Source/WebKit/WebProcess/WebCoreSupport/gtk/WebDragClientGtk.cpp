@@ -41,9 +41,8 @@
 #include <WebCore/PlatformContextCairo.h>
 #include <cairo.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surface_t* surface)
 {

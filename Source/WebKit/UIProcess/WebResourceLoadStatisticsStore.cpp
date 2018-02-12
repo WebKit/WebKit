@@ -42,9 +42,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 constexpr unsigned operatingDatesWindow { 30 };
 constexpr unsigned statisticsModelVersion { 10 };

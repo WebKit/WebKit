@@ -9,8 +9,8 @@
 #include "WebKitDOMObject.h"
 
 enum {
-    PROP_0,
-    PROP_CORE_OBJECT
+    DOM_OBJECT_PROP_0,
+    DOM_OBJECT_PROP_CORE_OBJECT
 };
 
 G_DEFINE_TYPE(WebKitDOMObject, webkit_dom_object, G_TYPE_OBJECT)
@@ -22,7 +22,7 @@ static void webkit_dom_object_init(WebKitDOMObject*)
 static void webkitDOMObjectSetProperty(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     switch (propertyId) {
-    case PROP_CORE_OBJECT:
+    case DOM_OBJECT_PROP_CORE_OBJECT:
         WEBKIT_DOM_OBJECT(object)->coreObject = g_value_get_pointer(value);
         break;
     default:
@@ -38,7 +38,7 @@ static void webkit_dom_object_class_init(WebKitDOMObjectClass* klass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CORE_OBJECT,
+        DOM_OBJECT_PROP_CORE_OBJECT,
         g_param_spec_pointer(
             "core-object",
             "Core Object",

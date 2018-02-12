@@ -30,9 +30,8 @@
 #include "WebPageProxy.h"
 #include <gtk/gtk.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static unsigned modifiersToEventState(WebEvent::Modifiers modifiers)
 {

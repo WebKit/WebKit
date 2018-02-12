@@ -33,9 +33,8 @@
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/NetworkStorageSession.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {

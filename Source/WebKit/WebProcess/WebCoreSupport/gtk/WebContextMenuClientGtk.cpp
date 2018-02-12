@@ -31,9 +31,8 @@
 
 #include <WebCore/NotImplemented.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebContextMenuClient::lookUpInDictionary(Frame*)
 {

@@ -44,9 +44,8 @@ static const char* gContextMenuActionId = "webkit-context-menu-action";
 static const char* gContextMenuTitle = "webkit-context-menu-title";
 static const char* gContextMenuItemGroup = "webkitContextMenu";
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static void contextMenuItemActivatedCallback(GAction* action, GVariant*, WebPageProxy* page)
 {

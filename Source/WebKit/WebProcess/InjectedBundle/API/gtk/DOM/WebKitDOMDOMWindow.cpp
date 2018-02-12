@@ -102,45 +102,45 @@ static gboolean webkit_dom_dom_window_remove_event_listener(WebKitDOMEventTarget
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_dom_window_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_dom_window_dispatch_event;
     iface->add_event_listener = webkit_dom_dom_window_add_event_listener;
     iface->remove_event_listener = webkit_dom_dom_window_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMDOMWindow, webkit_dom_dom_window, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMDOMWindow, webkit_dom_dom_window, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_dom_window_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_FRAME_ELEMENT,
-    PROP_OFFSCREEN_BUFFERING,
-    PROP_OUTER_HEIGHT,
-    PROP_OUTER_WIDTH,
-    PROP_INNER_HEIGHT,
-    PROP_INNER_WIDTH,
-    PROP_SCREEN_X,
-    PROP_SCREEN_Y,
-    PROP_SCREEN_LEFT,
-    PROP_SCREEN_TOP,
-    PROP_SCROLL_X,
-    PROP_SCROLL_Y,
-    PROP_PAGE_X_OFFSET,
-    PROP_PAGE_Y_OFFSET,
-    PROP_CLOSED,
-    PROP_LENGTH,
-    PROP_NAME,
-    PROP_STATUS,
-    PROP_DEFAULT_STATUS,
-    PROP_SELF,
-    PROP_WINDOW,
-    PROP_FRAMES,
-    PROP_OPENER,
-    PROP_PARENT,
-    PROP_TOP,
-    PROP_DOCUMENT,
-    PROP_DEVICE_PIXEL_RATIO,
-    PROP_ORIENTATION,
+    DOM_WINDOW_PROP_0,
+    DOM_WINDOW_PROP_FRAME_ELEMENT,
+    DOM_WINDOW_PROP_OFFSCREEN_BUFFERING,
+    DOM_WINDOW_PROP_OUTER_HEIGHT,
+    DOM_WINDOW_PROP_OUTER_WIDTH,
+    DOM_WINDOW_PROP_INNER_HEIGHT,
+    DOM_WINDOW_PROP_INNER_WIDTH,
+    DOM_WINDOW_PROP_SCREEN_X,
+    DOM_WINDOW_PROP_SCREEN_Y,
+    DOM_WINDOW_PROP_SCREEN_LEFT,
+    DOM_WINDOW_PROP_SCREEN_TOP,
+    DOM_WINDOW_PROP_SCROLL_X,
+    DOM_WINDOW_PROP_SCROLL_Y,
+    DOM_WINDOW_PROP_PAGE_X_OFFSET,
+    DOM_WINDOW_PROP_PAGE_Y_OFFSET,
+    DOM_WINDOW_PROP_CLOSED,
+    DOM_WINDOW_PROP_LENGTH,
+    DOM_WINDOW_PROP_NAME,
+    DOM_WINDOW_PROP_STATUS,
+    DOM_WINDOW_PROP_DEFAULT_STATUS,
+    DOM_WINDOW_PROP_SELF,
+    DOM_WINDOW_PROP_WINDOW,
+    DOM_WINDOW_PROP_FRAMES,
+    DOM_WINDOW_PROP_OPENER,
+    DOM_WINDOW_PROP_PARENT,
+    DOM_WINDOW_PROP_TOP,
+    DOM_WINDOW_PROP_DOCUMENT,
+    DOM_WINDOW_PROP_DEVICE_PIXEL_RATIO,
+    DOM_WINDOW_PROP_ORIENTATION,
 };
 
 static void webkit_dom_dom_window_finalize(GObject* object)
@@ -158,13 +158,13 @@ static void webkit_dom_dom_window_set_property(GObject* object, guint propertyId
     WebKitDOMDOMWindow* self = WEBKIT_DOM_DOM_WINDOW(object);
 
     switch (propertyId) {
-    case PROP_NAME:
+    case DOM_WINDOW_PROP_NAME:
         webkit_dom_dom_window_set_name(self, g_value_get_string(value));
         break;
-    case PROP_STATUS:
+    case DOM_WINDOW_PROP_STATUS:
         webkit_dom_dom_window_set_status(self, g_value_get_string(value));
         break;
-    case PROP_DEFAULT_STATUS:
+    case DOM_WINDOW_PROP_DEFAULT_STATUS:
         webkit_dom_dom_window_set_default_status(self, g_value_get_string(value));
         break;
     default:
@@ -178,88 +178,88 @@ static void webkit_dom_dom_window_get_property(GObject* object, guint propertyId
     WebKitDOMDOMWindow* self = WEBKIT_DOM_DOM_WINDOW(object);
 
     switch (propertyId) {
-    case PROP_FRAME_ELEMENT:
+    case DOM_WINDOW_PROP_FRAME_ELEMENT:
         g_value_set_object(value, webkit_dom_dom_window_get_frame_element(self));
         break;
-    case PROP_OFFSCREEN_BUFFERING:
+    case DOM_WINDOW_PROP_OFFSCREEN_BUFFERING:
         g_value_set_boolean(value, webkit_dom_dom_window_get_offscreen_buffering(self));
         break;
-    case PROP_OUTER_HEIGHT:
+    case DOM_WINDOW_PROP_OUTER_HEIGHT:
         g_value_set_long(value, webkit_dom_dom_window_get_outer_height(self));
         break;
-    case PROP_OUTER_WIDTH:
+    case DOM_WINDOW_PROP_OUTER_WIDTH:
         g_value_set_long(value, webkit_dom_dom_window_get_outer_width(self));
         break;
-    case PROP_INNER_HEIGHT:
+    case DOM_WINDOW_PROP_INNER_HEIGHT:
         g_value_set_long(value, webkit_dom_dom_window_get_inner_height(self));
         break;
-    case PROP_INNER_WIDTH:
+    case DOM_WINDOW_PROP_INNER_WIDTH:
         g_value_set_long(value, webkit_dom_dom_window_get_inner_width(self));
         break;
-    case PROP_SCREEN_X:
+    case DOM_WINDOW_PROP_SCREEN_X:
         g_value_set_long(value, webkit_dom_dom_window_get_screen_x(self));
         break;
-    case PROP_SCREEN_Y:
+    case DOM_WINDOW_PROP_SCREEN_Y:
         g_value_set_long(value, webkit_dom_dom_window_get_screen_y(self));
         break;
-    case PROP_SCREEN_LEFT:
+    case DOM_WINDOW_PROP_SCREEN_LEFT:
         g_value_set_long(value, webkit_dom_dom_window_get_screen_left(self));
         break;
-    case PROP_SCREEN_TOP:
+    case DOM_WINDOW_PROP_SCREEN_TOP:
         g_value_set_long(value, webkit_dom_dom_window_get_screen_top(self));
         break;
-    case PROP_SCROLL_X:
+    case DOM_WINDOW_PROP_SCROLL_X:
         g_value_set_long(value, webkit_dom_dom_window_get_scroll_x(self));
         break;
-    case PROP_SCROLL_Y:
+    case DOM_WINDOW_PROP_SCROLL_Y:
         g_value_set_long(value, webkit_dom_dom_window_get_scroll_y(self));
         break;
-    case PROP_PAGE_X_OFFSET:
+    case DOM_WINDOW_PROP_PAGE_X_OFFSET:
         g_value_set_long(value, webkit_dom_dom_window_get_page_x_offset(self));
         break;
-    case PROP_PAGE_Y_OFFSET:
+    case DOM_WINDOW_PROP_PAGE_Y_OFFSET:
         g_value_set_long(value, webkit_dom_dom_window_get_page_y_offset(self));
         break;
-    case PROP_CLOSED:
+    case DOM_WINDOW_PROP_CLOSED:
         g_value_set_boolean(value, webkit_dom_dom_window_get_closed(self));
         break;
-    case PROP_LENGTH:
+    case DOM_WINDOW_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_dom_window_get_length(self));
         break;
-    case PROP_NAME:
+    case DOM_WINDOW_PROP_NAME:
         g_value_take_string(value, webkit_dom_dom_window_get_name(self));
         break;
-    case PROP_STATUS:
+    case DOM_WINDOW_PROP_STATUS:
         g_value_take_string(value, webkit_dom_dom_window_get_status(self));
         break;
-    case PROP_DEFAULT_STATUS:
+    case DOM_WINDOW_PROP_DEFAULT_STATUS:
         g_value_take_string(value, webkit_dom_dom_window_get_default_status(self));
         break;
-    case PROP_SELF:
+    case DOM_WINDOW_PROP_SELF:
         g_value_set_object(value, webkit_dom_dom_window_get_self(self));
         break;
-    case PROP_WINDOW:
+    case DOM_WINDOW_PROP_WINDOW:
         g_value_set_object(value, webkit_dom_dom_window_get_window(self));
         break;
-    case PROP_FRAMES:
+    case DOM_WINDOW_PROP_FRAMES:
         g_value_set_object(value, webkit_dom_dom_window_get_frames(self));
         break;
-    case PROP_OPENER:
+    case DOM_WINDOW_PROP_OPENER:
         g_value_set_object(value, webkit_dom_dom_window_get_opener(self));
         break;
-    case PROP_PARENT:
+    case DOM_WINDOW_PROP_PARENT:
         g_value_set_object(value, webkit_dom_dom_window_get_parent(self));
         break;
-    case PROP_TOP:
+    case DOM_WINDOW_PROP_TOP:
         g_value_set_object(value, webkit_dom_dom_window_get_top(self));
         break;
-    case PROP_DOCUMENT:
+    case DOM_WINDOW_PROP_DOCUMENT:
         g_value_set_object(value, webkit_dom_dom_window_get_document(self));
         break;
-    case PROP_DEVICE_PIXEL_RATIO:
+    case DOM_WINDOW_PROP_DEVICE_PIXEL_RATIO:
         g_value_set_double(value, webkit_dom_dom_window_get_device_pixel_ratio(self));
         break;
-    case PROP_ORIENTATION:
+    case DOM_WINDOW_PROP_ORIENTATION:
         g_value_set_long(value, webkit_dom_dom_window_get_orientation(self));
         break;
     default:
@@ -290,7 +290,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FRAME_ELEMENT,
+        DOM_WINDOW_PROP_FRAME_ELEMENT,
         g_param_spec_object(
             "frame-element",
             "DOMWindow:frame-element",
@@ -300,7 +300,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OFFSCREEN_BUFFERING,
+        DOM_WINDOW_PROP_OFFSCREEN_BUFFERING,
         g_param_spec_boolean(
             "offscreen-buffering",
             "DOMWindow:offscreen-buffering",
@@ -310,7 +310,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OUTER_HEIGHT,
+        DOM_WINDOW_PROP_OUTER_HEIGHT,
         g_param_spec_long(
             "outer-height",
             "DOMWindow:outer-height",
@@ -320,7 +320,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OUTER_WIDTH,
+        DOM_WINDOW_PROP_OUTER_WIDTH,
         g_param_spec_long(
             "outer-width",
             "DOMWindow:outer-width",
@@ -330,7 +330,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_INNER_HEIGHT,
+        DOM_WINDOW_PROP_INNER_HEIGHT,
         g_param_spec_long(
             "inner-height",
             "DOMWindow:inner-height",
@@ -340,7 +340,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_INNER_WIDTH,
+        DOM_WINDOW_PROP_INNER_WIDTH,
         g_param_spec_long(
             "inner-width",
             "DOMWindow:inner-width",
@@ -350,7 +350,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCREEN_X,
+        DOM_WINDOW_PROP_SCREEN_X,
         g_param_spec_long(
             "screen-x",
             "DOMWindow:screen-x",
@@ -360,7 +360,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCREEN_Y,
+        DOM_WINDOW_PROP_SCREEN_Y,
         g_param_spec_long(
             "screen-y",
             "DOMWindow:screen-y",
@@ -370,7 +370,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCREEN_LEFT,
+        DOM_WINDOW_PROP_SCREEN_LEFT,
         g_param_spec_long(
             "screen-left",
             "DOMWindow:screen-left",
@@ -380,7 +380,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCREEN_TOP,
+        DOM_WINDOW_PROP_SCREEN_TOP,
         g_param_spec_long(
             "screen-top",
             "DOMWindow:screen-top",
@@ -390,7 +390,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCROLL_X,
+        DOM_WINDOW_PROP_SCROLL_X,
         g_param_spec_long(
             "scroll-x",
             "DOMWindow:scroll-x",
@@ -400,7 +400,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCROLL_Y,
+        DOM_WINDOW_PROP_SCROLL_Y,
         g_param_spec_long(
             "scroll-y",
             "DOMWindow:scroll-y",
@@ -410,7 +410,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PAGE_X_OFFSET,
+        DOM_WINDOW_PROP_PAGE_X_OFFSET,
         g_param_spec_long(
             "page-x-offset",
             "DOMWindow:page-x-offset",
@@ -420,7 +420,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PAGE_Y_OFFSET,
+        DOM_WINDOW_PROP_PAGE_Y_OFFSET,
         g_param_spec_long(
             "page-y-offset",
             "DOMWindow:page-y-offset",
@@ -430,7 +430,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CLOSED,
+        DOM_WINDOW_PROP_CLOSED,
         g_param_spec_boolean(
             "closed",
             "DOMWindow:closed",
@@ -440,7 +440,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_WINDOW_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "DOMWindow:length",
@@ -450,7 +450,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_WINDOW_PROP_NAME,
         g_param_spec_string(
             "name",
             "DOMWindow:name",
@@ -460,7 +460,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_STATUS,
+        DOM_WINDOW_PROP_STATUS,
         g_param_spec_string(
             "status",
             "DOMWindow:status",
@@ -470,7 +470,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DEFAULT_STATUS,
+        DOM_WINDOW_PROP_DEFAULT_STATUS,
         g_param_spec_string(
             "default-status",
             "DOMWindow:default-status",
@@ -480,7 +480,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SELF,
+        DOM_WINDOW_PROP_SELF,
         g_param_spec_object(
             "self",
             "DOMWindow:self",
@@ -490,7 +490,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WINDOW,
+        DOM_WINDOW_PROP_WINDOW,
         g_param_spec_object(
             "window",
             "DOMWindow:window",
@@ -500,7 +500,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FRAMES,
+        DOM_WINDOW_PROP_FRAMES,
         g_param_spec_object(
             "frames",
             "DOMWindow:frames",
@@ -510,7 +510,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OPENER,
+        DOM_WINDOW_PROP_OPENER,
         g_param_spec_object(
             "opener",
             "DOMWindow:opener",
@@ -520,7 +520,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT,
+        DOM_WINDOW_PROP_PARENT,
         g_param_spec_object(
             "parent",
             "DOMWindow:parent",
@@ -530,7 +530,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TOP,
+        DOM_WINDOW_PROP_TOP,
         g_param_spec_object(
             "top",
             "DOMWindow:top",
@@ -540,7 +540,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DOCUMENT,
+        DOM_WINDOW_PROP_DOCUMENT,
         g_param_spec_object(
             "document",
             "DOMWindow:document",
@@ -550,7 +550,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DEVICE_PIXEL_RATIO,
+        DOM_WINDOW_PROP_DEVICE_PIXEL_RATIO,
         g_param_spec_double(
             "device-pixel-ratio",
             "DOMWindow:device-pixel-ratio",
@@ -560,7 +560,7 @@ static void webkit_dom_dom_window_class_init(WebKitDOMDOMWindowClass* requestCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ORIENTATION,
+        DOM_WINDOW_PROP_ORIENTATION,
         g_param_spec_long(
             "orientation",
             "DOMWindow:orientation",

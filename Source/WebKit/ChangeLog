@@ -1,3 +1,567 @@
+2018-02-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unify builds for platform-specific files in WebKit layer
+        https://bugs.webkit.org/show_bug.cgi?id=182450
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add most GTK-specific sources to unified build. API files are exempted, except for the DOM
+        API. Files shared with PluginProcessGTK2 are also exempted. Finally, files with name
+        conflicts in headers, which appears difficult to fix, are also exempted.
+
+        * CMakeLists.txt:
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp:
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        * Platform/classifier/ResourceLoadStatisticsClassifier.cpp:
+        * PlatformGTK.cmake:
+        * PluginProcess/unix/PluginControllerProxyUnix.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        * Shared/CoordinatedGraphics/SimpleViewportController.cpp:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp:
+        * Shared/Plugins/unix/PluginSearchPath.cpp:
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        * Shared/glib/WebContextMenuItemGlib.cpp:
+        * Shared/glib/WebErrorsGlib.cpp:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        * Shared/gtk/WebErrorsGtk.cpp:
+        * Shared/gtk/WebEventFactory.cpp:
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        * Shared/soup/WebErrorsSoup.cpp:
+        * SourcesGTK.txt: Added.
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        * UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        * UIProcess/BackingStore.cpp:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        * UIProcess/WebStorage/StorageManager.cpp:
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        * UIProcess/gtk/AcceleratedBackingStore.cpp:
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        * UIProcess/gtk/GestureController.cpp:
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        * UIProcess/gtk/WebColorPickerGtk.cpp:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.cpp:
+        (webkit_dom_attr_dom_event_target_init):
+        (webkit_dom_attr_set_property):
+        (webkit_dom_attr_get_property):
+        (webkit_dom_attr_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.cpp:
+        (webkit_dom_cdata_section_dom_event_target_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.cpp:
+        (webkit_dom_css_rule_set_property):
+        (webkit_dom_css_rule_get_property):
+        (webkit_dom_css_rule_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleList.cpp:
+        (webkit_dom_css_rule_list_get_property):
+        (webkit_dom_css_rule_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleDeclaration.cpp:
+        (webkit_dom_css_style_declaration_set_property):
+        (webkit_dom_css_style_declaration_get_property):
+        (webkit_dom_css_style_declaration_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.cpp:
+        (webkit_dom_css_style_sheet_get_property):
+        (webkit_dom_css_style_sheet_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp:
+        (webkit_dom_css_value_set_property):
+        (webkit_dom_css_value_get_property):
+        (webkit_dom_css_value_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp:
+        (webkit_dom_character_data_dom_event_target_init):
+        (webkit_dom_character_data_set_property):
+        (webkit_dom_character_data_get_property):
+        (webkit_dom_character_data_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRect.cpp:
+        (webkit_dom_client_rect_get_property):
+        (webkit_dom_client_rect_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:
+        (webkit_dom_client_rect_list_get_property):
+        (webkit_dom_client_rect_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.cpp:
+        (webkit_dom_comment_dom_event_target_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.cpp:
+        (webkit_dom_dom_selection_get_property):
+        (webkit_dom_dom_selection_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.cpp:
+        (webkit_dom_dom_token_list_set_property):
+        (webkit_dom_dom_token_list_get_property):
+        (webkit_dom_dom_token_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_dom_event_target_init):
+        (webkit_dom_dom_window_set_property):
+        (webkit_dom_dom_window_get_property):
+        (webkit_dom_dom_window_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_dom_event_target_init):
+        (webkit_dom_document_set_property):
+        (webkit_dom_document_get_property):
+        (webkit_dom_document_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.cpp:
+        (webkit_dom_document_fragment_dom_event_target_init):
+        (webkit_dom_document_fragment_get_property):
+        (webkit_dom_document_fragment_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp:
+        (webkit_dom_document_type_dom_event_target_init):
+        (webkit_dom_document_type_get_property):
+        (webkit_dom_document_type_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_dom_event_target_init):
+        (webkit_dom_element_set_property):
+        (webkit_dom_element_get_property):
+        (webkit_dom_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.cpp:
+        (webkit_dom_event_set_property):
+        (webkit_dom_event_get_property):
+        (webkit_dom_event_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.cpp:
+        (webkit_dom_file_get_property):
+        (webkit_dom_file_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.cpp:
+        (webkit_dom_file_list_get_property):
+        (webkit_dom_file_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.cpp:
+        (webkit_dom_html_anchor_element_dom_event_target_init):
+        (webkit_dom_html_anchor_element_set_property):
+        (webkit_dom_html_anchor_element_get_property):
+        (webkit_dom_html_anchor_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.cpp:
+        (webkit_dom_html_applet_element_dom_event_target_init):
+        (webkit_dom_html_applet_element_set_property):
+        (webkit_dom_html_applet_element_get_property):
+        (webkit_dom_html_applet_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.cpp:
+        (webkit_dom_html_area_element_dom_event_target_init):
+        (webkit_dom_html_area_element_set_property):
+        (webkit_dom_html_area_element_get_property):
+        (webkit_dom_html_area_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBRElement.cpp:
+        (webkit_dom_html_br_element_dom_event_target_init):
+        (webkit_dom_html_br_element_set_property):
+        (webkit_dom_html_br_element_get_property):
+        (webkit_dom_html_br_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBaseElement.cpp:
+        (webkit_dom_html_base_element_dom_event_target_init):
+        (webkit_dom_html_base_element_set_property):
+        (webkit_dom_html_base_element_get_property):
+        (webkit_dom_html_base_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBodyElement.cpp:
+        (webkit_dom_html_body_element_dom_event_target_init):
+        (webkit_dom_html_body_element_set_property):
+        (webkit_dom_html_body_element_get_property):
+        (webkit_dom_html_body_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElement.cpp:
+        (webkit_dom_html_button_element_dom_event_target_init):
+        (webkit_dom_html_button_element_set_property):
+        (webkit_dom_html_button_element_get_property):
+        (webkit_dom_html_button_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCanvasElement.cpp:
+        (webkit_dom_html_canvas_element_dom_event_target_init):
+        (webkit_dom_html_canvas_element_set_property):
+        (webkit_dom_html_canvas_element_get_property):
+        (webkit_dom_html_canvas_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCollection.cpp:
+        (webkit_dom_html_collection_get_property):
+        (webkit_dom_html_collection_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.cpp:
+        (webkit_dom_html_d_list_element_dom_event_target_init):
+        (webkit_dom_html_d_list_element_set_property):
+        (webkit_dom_html_d_list_element_get_property):
+        (webkit_dom_html_d_list_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.cpp:
+        (webkit_dom_html_directory_element_dom_event_target_init):
+        (webkit_dom_html_directory_element_set_property):
+        (webkit_dom_html_directory_element_get_property):
+        (webkit_dom_html_directory_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDivElement.cpp:
+        (webkit_dom_html_div_element_dom_event_target_init):
+        (webkit_dom_html_div_element_set_property):
+        (webkit_dom_html_div_element_get_property):
+        (webkit_dom_html_div_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDocument.cpp:
+        (webkit_dom_html_document_dom_event_target_init):
+        (webkit_dom_html_document_set_property):
+        (webkit_dom_html_document_get_property):
+        (webkit_dom_html_document_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.cpp:
+        (webkit_dom_html_element_dom_event_target_init):
+        (webkit_dom_html_element_set_property):
+        (webkit_dom_html_element_get_property):
+        (webkit_dom_html_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLEmbedElement.cpp:
+        (webkit_dom_html_embed_element_dom_event_target_init):
+        (webkit_dom_html_embed_element_set_property):
+        (webkit_dom_html_embed_element_get_property):
+        (webkit_dom_html_embed_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElement.cpp:
+        (webkit_dom_html_field_set_element_dom_event_target_init):
+        (webkit_dom_html_field_set_element_get_property):
+        (webkit_dom_html_field_set_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFontElement.cpp:
+        (webkit_dom_html_font_element_dom_event_target_init):
+        (webkit_dom_html_font_element_set_property):
+        (webkit_dom_html_font_element_get_property):
+        (webkit_dom_html_font_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElement.cpp:
+        (webkit_dom_html_form_element_dom_event_target_init):
+        (webkit_dom_html_form_element_set_property):
+        (webkit_dom_html_form_element_get_property):
+        (webkit_dom_html_form_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameElement.cpp:
+        (webkit_dom_html_frame_element_dom_event_target_init):
+        (webkit_dom_html_frame_element_set_property):
+        (webkit_dom_html_frame_element_get_property):
+        (webkit_dom_html_frame_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameSetElement.cpp:
+        (webkit_dom_html_frame_set_element_dom_event_target_init):
+        (webkit_dom_html_frame_set_element_set_property):
+        (webkit_dom_html_frame_set_element_get_property):
+        (webkit_dom_html_frame_set_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHRElement.cpp:
+        (webkit_dom_html_hr_element_dom_event_target_init):
+        (webkit_dom_html_hr_element_set_property):
+        (webkit_dom_html_hr_element_get_property):
+        (webkit_dom_html_hr_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadElement.cpp:
+        (webkit_dom_html_head_element_dom_event_target_init):
+        (webkit_dom_html_head_element_set_property):
+        (webkit_dom_html_head_element_get_property):
+        (webkit_dom_html_head_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadingElement.cpp:
+        (webkit_dom_html_heading_element_dom_event_target_init):
+        (webkit_dom_html_heading_element_set_property):
+        (webkit_dom_html_heading_element_get_property):
+        (webkit_dom_html_heading_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElement.cpp:
+        (webkit_dom_html_html_element_dom_event_target_init):
+        (webkit_dom_html_html_element_set_property):
+        (webkit_dom_html_html_element_get_property):
+        (webkit_dom_html_html_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.cpp:
+        (webkit_dom_html_iframe_element_dom_event_target_init):
+        (webkit_dom_html_iframe_element_set_property):
+        (webkit_dom_html_iframe_element_get_property):
+        (webkit_dom_html_iframe_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.cpp:
+        (webkit_dom_html_image_element_dom_event_target_init):
+        (webkit_dom_html_image_element_set_property):
+        (webkit_dom_html_image_element_get_property):
+        (webkit_dom_html_image_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_dom_event_target_init):
+        (webkit_dom_html_input_element_set_property):
+        (webkit_dom_html_input_element_get_property):
+        (webkit_dom_html_input_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLIElement.cpp:
+        (webkit_dom_html_li_element_dom_event_target_init):
+        (webkit_dom_html_li_element_set_property):
+        (webkit_dom_html_li_element_get_property):
+        (webkit_dom_html_li_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.cpp:
+        (webkit_dom_html_label_element_dom_event_target_init):
+        (webkit_dom_html_label_element_set_property):
+        (webkit_dom_html_label_element_get_property):
+        (webkit_dom_html_label_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLegendElement.cpp:
+        (webkit_dom_html_legend_element_dom_event_target_init):
+        (webkit_dom_html_legend_element_set_property):
+        (webkit_dom_html_legend_element_get_property):
+        (webkit_dom_html_legend_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.cpp:
+        (webkit_dom_html_link_element_dom_event_target_init):
+        (webkit_dom_html_link_element_set_property):
+        (webkit_dom_html_link_element_get_property):
+        (webkit_dom_html_link_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMapElement.cpp:
+        (webkit_dom_html_map_element_dom_event_target_init):
+        (webkit_dom_html_map_element_set_property):
+        (webkit_dom_html_map_element_get_property):
+        (webkit_dom_html_map_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.cpp:
+        (webkit_dom_html_marquee_element_dom_event_target_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.cpp:
+        (webkit_dom_html_menu_element_dom_event_target_init):
+        (webkit_dom_html_menu_element_set_property):
+        (webkit_dom_html_menu_element_get_property):
+        (webkit_dom_html_menu_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMetaElement.cpp:
+        (webkit_dom_html_meta_element_dom_event_target_init):
+        (webkit_dom_html_meta_element_set_property):
+        (webkit_dom_html_meta_element_get_property):
+        (webkit_dom_html_meta_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLModElement.cpp:
+        (webkit_dom_html_mod_element_dom_event_target_init):
+        (webkit_dom_html_mod_element_set_property):
+        (webkit_dom_html_mod_element_get_property):
+        (webkit_dom_html_mod_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.cpp:
+        (webkit_dom_html_o_list_element_dom_event_target_init):
+        (webkit_dom_html_o_list_element_set_property):
+        (webkit_dom_html_o_list_element_get_property):
+        (webkit_dom_html_o_list_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.cpp:
+        (webkit_dom_html_object_element_dom_event_target_init):
+        (webkit_dom_html_object_element_set_property):
+        (webkit_dom_html_object_element_get_property):
+        (webkit_dom_html_object_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptGroupElement.cpp:
+        (webkit_dom_html_opt_group_element_dom_event_target_init):
+        (webkit_dom_html_opt_group_element_set_property):
+        (webkit_dom_html_opt_group_element_get_property):
+        (webkit_dom_html_opt_group_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionElement.cpp:
+        (webkit_dom_html_option_element_dom_event_target_init):
+        (webkit_dom_html_option_element_set_property):
+        (webkit_dom_html_option_element_get_property):
+        (webkit_dom_html_option_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollection.cpp:
+        (webkit_dom_html_options_collection_set_property):
+        (webkit_dom_html_options_collection_get_property):
+        (webkit_dom_html_options_collection_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParagraphElement.cpp:
+        (webkit_dom_html_paragraph_element_dom_event_target_init):
+        (webkit_dom_html_paragraph_element_set_property):
+        (webkit_dom_html_paragraph_element_get_property):
+        (webkit_dom_html_paragraph_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParamElement.cpp:
+        (webkit_dom_html_param_element_dom_event_target_init):
+        (webkit_dom_html_param_element_set_property):
+        (webkit_dom_html_param_element_get_property):
+        (webkit_dom_html_param_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPreElement.cpp:
+        (webkit_dom_html_pre_element_dom_event_target_init):
+        (webkit_dom_html_pre_element_set_property):
+        (webkit_dom_html_pre_element_get_property):
+        (webkit_dom_html_pre_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLQuoteElement.cpp:
+        (webkit_dom_html_quote_element_dom_event_target_init):
+        (webkit_dom_html_quote_element_set_property):
+        (webkit_dom_html_quote_element_get_property):
+        (webkit_dom_html_quote_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.cpp:
+        (webkit_dom_html_script_element_dom_event_target_init):
+        (webkit_dom_html_script_element_set_property):
+        (webkit_dom_html_script_element_get_property):
+        (webkit_dom_html_script_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_dom_event_target_init):
+        (webkit_dom_html_select_element_set_property):
+        (webkit_dom_html_select_element_get_property):
+        (webkit_dom_html_select_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElement.cpp:
+        (webkit_dom_html_style_element_dom_event_target_init):
+        (webkit_dom_html_style_element_set_property):
+        (webkit_dom_html_style_element_get_property):
+        (webkit_dom_html_style_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCaptionElement.cpp:
+        (webkit_dom_html_table_caption_element_dom_event_target_init):
+        (webkit_dom_html_table_caption_element_set_property):
+        (webkit_dom_html_table_caption_element_get_property):
+        (webkit_dom_html_table_caption_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCellElement.cpp:
+        (webkit_dom_html_table_cell_element_dom_event_target_init):
+        (webkit_dom_html_table_cell_element_set_property):
+        (webkit_dom_html_table_cell_element_get_property):
+        (webkit_dom_html_table_cell_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableColElement.cpp:
+        (webkit_dom_html_table_col_element_dom_event_target_init):
+        (webkit_dom_html_table_col_element_set_property):
+        (webkit_dom_html_table_col_element_get_property):
+        (webkit_dom_html_table_col_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.cpp:
+        (webkit_dom_html_table_element_dom_event_target_init):
+        (webkit_dom_html_table_element_set_property):
+        (webkit_dom_html_table_element_get_property):
+        (webkit_dom_html_table_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableRowElement.cpp:
+        (webkit_dom_html_table_row_element_dom_event_target_init):
+        (webkit_dom_html_table_row_element_set_property):
+        (webkit_dom_html_table_row_element_get_property):
+        (webkit_dom_html_table_row_element_class_init):
+        (webkit_dom_html_table_row_element_insert_cell):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableSectionElement.cpp:
+        (webkit_dom_html_table_section_element_dom_event_target_init):
+        (webkit_dom_html_table_section_element_set_property):
+        (webkit_dom_html_table_section_element_get_property):
+        (webkit_dom_html_table_section_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+        (webkit_dom_html_text_area_element_dom_event_target_init):
+        (webkit_dom_html_text_area_element_set_property):
+        (webkit_dom_html_text_area_element_get_property):
+        (webkit_dom_html_text_area_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTitleElement.cpp:
+        (webkit_dom_html_title_element_dom_event_target_init):
+        (webkit_dom_html_title_element_set_property):
+        (webkit_dom_html_title_element_get_property):
+        (webkit_dom_html_title_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLUListElement.cpp:
+        (webkit_dom_html_u_list_element_dom_event_target_init):
+        (webkit_dom_html_u_list_element_set_property):
+        (webkit_dom_html_u_list_element_get_property):
+        (webkit_dom_html_u_list_element_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.cpp:
+        (webkit_dom_keyboard_event_get_property):
+        (webkit_dom_keyboard_event_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp:
+        (webkit_dom_media_list_set_property):
+        (webkit_dom_media_list_get_property):
+        (webkit_dom_media_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.cpp:
+        (webkit_dom_mouse_event_get_property):
+        (webkit_dom_mouse_event_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.cpp:
+        (webkit_dom_named_node_map_get_property):
+        (webkit_dom_named_node_map_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp:
+        (webkit_dom_node_dom_event_target_init):
+        (webkit_dom_node_set_property):
+        (webkit_dom_node_get_property):
+        (webkit_dom_node_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.cpp:
+        (webkit_dom_node_iterator_get_property):
+        (webkit_dom_node_iterator_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.cpp:
+        (webkit_dom_node_list_get_property):
+        (webkit_dom_node_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.cpp:
+        (webkitDOMObjectSetProperty):
+        (webkit_dom_object_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.cpp:
+        (webkit_dom_processing_instruction_dom_event_target_init):
+        (webkit_dom_processing_instruction_get_property):
+        (webkit_dom_processing_instruction_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp:
+        (webkit_dom_range_get_property):
+        (webkit_dom_range_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.cpp:
+        (webkit_dom_style_sheet_set_property):
+        (webkit_dom_style_sheet_get_property):
+        (webkit_dom_style_sheet_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.cpp:
+        (webkit_dom_style_sheet_list_get_property):
+        (webkit_dom_style_sheet_list_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.cpp:
+        (webkit_dom_text_dom_event_target_init):
+        (webkit_dom_text_get_property):
+        (webkit_dom_text_class_init):
+        (webkit_dom_event_target_init): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.cpp:
+        (webkit_dom_tree_walker_get_property):
+        (webkit_dom_tree_walker_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.cpp:
+        (webkit_dom_ui_event_get_property):
+        (webkit_dom_ui_event_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp:
+        (webkit_dom_wheel_event_get_property):
+        (webkit_dom_wheel_event_class_init):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.cpp:
+        (webkit_dom_xpath_result_get_property):
+        (webkit_dom_xpath_result_class_init):
+        * WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        * WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        * WebProcess/WebPage/AcceleratedSurface.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        * WebProcess/gtk/WaylandCompositorDisplay.cpp:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: addCookie command should prepend a dot to domain if missing

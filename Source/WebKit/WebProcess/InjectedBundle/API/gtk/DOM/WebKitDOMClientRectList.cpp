@@ -66,8 +66,8 @@ WebKitDOMClientRectList* wrapDOMRectList(WebCore::DOMRectList* coreObject)
 G_DEFINE_TYPE(WebKitDOMClientRectList, webkit_dom_client_rect_list, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_LENGTH,
+    DOM_CLIENT_RECT_LIST_PROP_0,
+    DOM_CLIENT_RECT_LIST_PROP_LENGTH,
 };
 
 static void webkit_dom_client_rect_list_finalize(GObject* object)
@@ -85,7 +85,7 @@ static void webkit_dom_client_rect_list_get_property(GObject* object, guint prop
     WebKitDOMClientRectList* self = WEBKIT_DOM_CLIENT_RECT_LIST(object);
 
     switch (propertyId) {
-    case PROP_LENGTH:
+    case DOM_CLIENT_RECT_LIST_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_client_rect_list_get_length(self));
         break;
     default:
@@ -113,7 +113,7 @@ static void webkit_dom_client_rect_list_class_init(WebKitDOMClientRectListClass*
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_CLIENT_RECT_LIST_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "ClientRectList:length",

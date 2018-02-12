@@ -69,14 +69,14 @@ WebKitDOMRange* wrapRange(WebCore::Range* coreObject)
 G_DEFINE_TYPE(WebKitDOMRange, webkit_dom_range, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_START_CONTAINER,
-    PROP_START_OFFSET,
-    PROP_END_CONTAINER,
-    PROP_END_OFFSET,
-    PROP_COLLAPSED,
-    PROP_COMMON_ANCESTOR_CONTAINER,
-    PROP_TEXT,
+    DOM_RANGE_PROP_0,
+    DOM_RANGE_PROP_START_CONTAINER,
+    DOM_RANGE_PROP_START_OFFSET,
+    DOM_RANGE_PROP_END_CONTAINER,
+    DOM_RANGE_PROP_END_OFFSET,
+    DOM_RANGE_PROP_COLLAPSED,
+    DOM_RANGE_PROP_COMMON_ANCESTOR_CONTAINER,
+    DOM_RANGE_PROP_TEXT,
 };
 
 static void webkit_dom_range_finalize(GObject* object)
@@ -94,25 +94,25 @@ static void webkit_dom_range_get_property(GObject* object, guint propertyId, GVa
     WebKitDOMRange* self = WEBKIT_DOM_RANGE(object);
 
     switch (propertyId) {
-    case PROP_START_CONTAINER:
+    case DOM_RANGE_PROP_START_CONTAINER:
         g_value_set_object(value, webkit_dom_range_get_start_container(self, nullptr));
         break;
-    case PROP_START_OFFSET:
+    case DOM_RANGE_PROP_START_OFFSET:
         g_value_set_long(value, webkit_dom_range_get_start_offset(self, nullptr));
         break;
-    case PROP_END_CONTAINER:
+    case DOM_RANGE_PROP_END_CONTAINER:
         g_value_set_object(value, webkit_dom_range_get_end_container(self, nullptr));
         break;
-    case PROP_END_OFFSET:
+    case DOM_RANGE_PROP_END_OFFSET:
         g_value_set_long(value, webkit_dom_range_get_end_offset(self, nullptr));
         break;
-    case PROP_COLLAPSED:
+    case DOM_RANGE_PROP_COLLAPSED:
         g_value_set_boolean(value, webkit_dom_range_get_collapsed(self, nullptr));
         break;
-    case PROP_COMMON_ANCESTOR_CONTAINER:
+    case DOM_RANGE_PROP_COMMON_ANCESTOR_CONTAINER:
         g_value_set_object(value, webkit_dom_range_get_common_ancestor_container(self, nullptr));
         break;
-    case PROP_TEXT:
+    case DOM_RANGE_PROP_TEXT:
         g_value_take_string(value, webkit_dom_range_get_text(self));
         break;
     default:
@@ -142,7 +142,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_START_CONTAINER,
+        DOM_RANGE_PROP_START_CONTAINER,
         g_param_spec_object(
             "start-container",
             "Range:start-container",
@@ -152,7 +152,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_START_OFFSET,
+        DOM_RANGE_PROP_START_OFFSET,
         g_param_spec_long(
             "start-offset",
             "Range:start-offset",
@@ -162,7 +162,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_END_CONTAINER,
+        DOM_RANGE_PROP_END_CONTAINER,
         g_param_spec_object(
             "end-container",
             "Range:end-container",
@@ -172,7 +172,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_END_OFFSET,
+        DOM_RANGE_PROP_END_OFFSET,
         g_param_spec_long(
             "end-offset",
             "Range:end-offset",
@@ -182,7 +182,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COLLAPSED,
+        DOM_RANGE_PROP_COLLAPSED,
         g_param_spec_boolean(
             "collapsed",
             "Range:collapsed",
@@ -192,7 +192,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COMMON_ANCESTOR_CONTAINER,
+        DOM_RANGE_PROP_COMMON_ANCESTOR_CONTAINER,
         g_param_spec_object(
             "common-ancestor-container",
             "Range:common-ancestor-container",
@@ -202,7 +202,7 @@ static void webkit_dom_range_class_init(WebKitDOMRangeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TEXT,
+        DOM_RANGE_PROP_TEXT,
         g_param_spec_string(
             "text",
             "Range:text",

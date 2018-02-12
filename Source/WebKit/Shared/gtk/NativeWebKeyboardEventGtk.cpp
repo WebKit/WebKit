@@ -31,9 +31,8 @@
 #include "WebEventFactory.h"
 #include <gdk/gdk.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked, Vector<String>&& commands)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, compositionResults, WTFMove(commands)))

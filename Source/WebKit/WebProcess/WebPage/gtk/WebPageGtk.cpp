@@ -51,9 +51,8 @@
 #include <WebCore/UserAgent.h>
 #include <wtf/glib/GUniquePtr.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPage::platformInitialize()
 {

@@ -84,23 +84,23 @@ static gboolean webkit_dom_html_table_col_element_remove_event_listener(WebKitDO
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_table_col_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_table_col_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_table_col_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_table_col_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLTableColElement, webkit_dom_html_table_col_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLTableColElement, webkit_dom_html_table_col_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_table_col_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_ALIGN,
-    PROP_CH,
-    PROP_CH_OFF,
-    PROP_SPAN,
-    PROP_V_ALIGN,
-    PROP_WIDTH,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_0,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_ALIGN,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_CH,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_CH_OFF,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_SPAN,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_V_ALIGN,
+    DOM_HTML_TABLE_COL_ELEMENT_PROP_WIDTH,
 };
 
 static void webkit_dom_html_table_col_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -108,22 +108,22 @@ static void webkit_dom_html_table_col_element_set_property(GObject* object, guin
     WebKitDOMHTMLTableColElement* self = WEBKIT_DOM_HTML_TABLE_COL_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALIGN:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_ALIGN:
         webkit_dom_html_table_col_element_set_align(self, g_value_get_string(value));
         break;
-    case PROP_CH:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_CH:
         webkit_dom_html_table_col_element_set_ch(self, g_value_get_string(value));
         break;
-    case PROP_CH_OFF:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_CH_OFF:
         webkit_dom_html_table_col_element_set_ch_off(self, g_value_get_string(value));
         break;
-    case PROP_SPAN:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_SPAN:
         webkit_dom_html_table_col_element_set_span(self, g_value_get_long(value));
         break;
-    case PROP_V_ALIGN:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_V_ALIGN:
         webkit_dom_html_table_col_element_set_v_align(self, g_value_get_string(value));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_WIDTH:
         webkit_dom_html_table_col_element_set_width(self, g_value_get_string(value));
         break;
     default:
@@ -137,22 +137,22 @@ static void webkit_dom_html_table_col_element_get_property(GObject* object, guin
     WebKitDOMHTMLTableColElement* self = WEBKIT_DOM_HTML_TABLE_COL_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALIGN:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_ALIGN:
         g_value_take_string(value, webkit_dom_html_table_col_element_get_align(self));
         break;
-    case PROP_CH:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_CH:
         g_value_take_string(value, webkit_dom_html_table_col_element_get_ch(self));
         break;
-    case PROP_CH_OFF:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_CH_OFF:
         g_value_take_string(value, webkit_dom_html_table_col_element_get_ch_off(self));
         break;
-    case PROP_SPAN:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_SPAN:
         g_value_set_long(value, webkit_dom_html_table_col_element_get_span(self));
         break;
-    case PROP_V_ALIGN:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_V_ALIGN:
         g_value_take_string(value, webkit_dom_html_table_col_element_get_v_align(self));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_TABLE_COL_ELEMENT_PROP_WIDTH:
         g_value_take_string(value, webkit_dom_html_table_col_element_get_width(self));
         break;
     default:
@@ -169,7 +169,7 @@ static void webkit_dom_html_table_col_element_class_init(WebKitDOMHTMLTableColEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALIGN,
+        DOM_HTML_TABLE_COL_ELEMENT_PROP_ALIGN,
         g_param_spec_string(
             "align",
             "HTMLTableColElement:align",
@@ -179,7 +179,7 @@ static void webkit_dom_html_table_col_element_class_init(WebKitDOMHTMLTableColEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CH,
+        DOM_HTML_TABLE_COL_ELEMENT_PROP_CH,
         g_param_spec_string(
             "ch",
             "HTMLTableColElement:ch",
@@ -189,7 +189,7 @@ static void webkit_dom_html_table_col_element_class_init(WebKitDOMHTMLTableColEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CH_OFF,
+        DOM_HTML_TABLE_COL_ELEMENT_PROP_CH_OFF,
         g_param_spec_string(
             "ch-off",
             "HTMLTableColElement:ch-off",
@@ -199,7 +199,7 @@ static void webkit_dom_html_table_col_element_class_init(WebKitDOMHTMLTableColEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SPAN,
+        DOM_HTML_TABLE_COL_ELEMENT_PROP_SPAN,
         g_param_spec_long(
             "span",
             "HTMLTableColElement:span",
@@ -209,7 +209,7 @@ static void webkit_dom_html_table_col_element_class_init(WebKitDOMHTMLTableColEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_V_ALIGN,
+        DOM_HTML_TABLE_COL_ELEMENT_PROP_V_ALIGN,
         g_param_spec_string(
             "v-align",
             "HTMLTableColElement:v-align",
@@ -219,7 +219,7 @@ static void webkit_dom_html_table_col_element_class_init(WebKitDOMHTMLTableColEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WIDTH,
+        DOM_HTML_TABLE_COL_ELEMENT_PROP_WIDTH,
         g_param_spec_string(
             "width",
             "HTMLTableColElement:width",

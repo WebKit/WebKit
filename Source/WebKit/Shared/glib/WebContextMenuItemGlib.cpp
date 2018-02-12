@@ -33,9 +33,8 @@
 #include <gtk/gtk.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if PLATFORM(GTK)
 static const char* gtkStockIDFromContextMenuAction(ContextMenuAction action)

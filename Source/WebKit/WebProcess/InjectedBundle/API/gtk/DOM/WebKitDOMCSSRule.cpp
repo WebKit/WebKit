@@ -67,11 +67,11 @@ WebKitDOMCSSRule* wrapCSSRule(WebCore::CSSRule* coreObject)
 G_DEFINE_TYPE(WebKitDOMCSSRule, webkit_dom_css_rule, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_TYPE,
-    PROP_CSS_TEXT,
-    PROP_PARENT_STYLE_SHEET,
-    PROP_PARENT_RULE,
+    DOM_CSS_RULE_PROP_0,
+    DOM_CSS_RULE_PROP_TYPE,
+    DOM_CSS_RULE_PROP_CSS_TEXT,
+    DOM_CSS_RULE_PROP_PARENT_STYLE_SHEET,
+    DOM_CSS_RULE_PROP_PARENT_RULE,
 };
 
 static void webkit_dom_css_rule_finalize(GObject* object)
@@ -89,7 +89,7 @@ static void webkit_dom_css_rule_set_property(GObject* object, guint propertyId, 
     WebKitDOMCSSRule* self = WEBKIT_DOM_CSS_RULE(object);
 
     switch (propertyId) {
-    case PROP_CSS_TEXT:
+    case DOM_CSS_RULE_PROP_CSS_TEXT:
         webkit_dom_css_rule_set_css_text(self, g_value_get_string(value), nullptr);
         break;
     default:
@@ -103,16 +103,16 @@ static void webkit_dom_css_rule_get_property(GObject* object, guint propertyId, 
     WebKitDOMCSSRule* self = WEBKIT_DOM_CSS_RULE(object);
 
     switch (propertyId) {
-    case PROP_TYPE:
+    case DOM_CSS_RULE_PROP_TYPE:
         g_value_set_uint(value, webkit_dom_css_rule_get_rule_type(self));
         break;
-    case PROP_CSS_TEXT:
+    case DOM_CSS_RULE_PROP_CSS_TEXT:
         g_value_take_string(value, webkit_dom_css_rule_get_css_text(self));
         break;
-    case PROP_PARENT_STYLE_SHEET:
+    case DOM_CSS_RULE_PROP_PARENT_STYLE_SHEET:
         g_value_set_object(value, webkit_dom_css_rule_get_parent_style_sheet(self));
         break;
-    case PROP_PARENT_RULE:
+    case DOM_CSS_RULE_PROP_PARENT_RULE:
         g_value_set_object(value, webkit_dom_css_rule_get_parent_rule(self));
         break;
     default:
@@ -143,7 +143,7 @@ static void webkit_dom_css_rule_class_init(WebKitDOMCSSRuleClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TYPE,
+        DOM_CSS_RULE_PROP_TYPE,
         g_param_spec_uint(
             "type",
             "CSSRule:type",
@@ -153,7 +153,7 @@ static void webkit_dom_css_rule_class_init(WebKitDOMCSSRuleClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CSS_TEXT,
+        DOM_CSS_RULE_PROP_CSS_TEXT,
         g_param_spec_string(
             "css-text",
             "CSSRule:css-text",
@@ -163,7 +163,7 @@ static void webkit_dom_css_rule_class_init(WebKitDOMCSSRuleClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT_STYLE_SHEET,
+        DOM_CSS_RULE_PROP_PARENT_STYLE_SHEET,
         g_param_spec_object(
             "parent-style-sheet",
             "CSSRule:parent-style-sheet",
@@ -173,7 +173,7 @@ static void webkit_dom_css_rule_class_init(WebKitDOMCSSRuleClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT_RULE,
+        DOM_CSS_RULE_PROP_PARENT_RULE,
         g_param_spec_object(
             "parent-rule",
             "CSSRule:parent-rule",

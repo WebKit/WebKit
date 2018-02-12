@@ -40,11 +40,10 @@
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
 using namespace WebCore;
 using namespace JSC;
 using namespace WTF;
-
-namespace WebKit {
 
 static const unsigned int maxBuffer = 128;
 static const unsigned int maxProcessPath = 35;

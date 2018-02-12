@@ -84,21 +84,21 @@ static gboolean webkit_dom_html_meta_element_remove_event_listener(WebKitDOMEven
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_meta_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_meta_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_meta_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_meta_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLMetaElement, webkit_dom_html_meta_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLMetaElement, webkit_dom_html_meta_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_meta_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_CONTENT,
-    PROP_HTTP_EQUIV,
-    PROP_NAME,
-    PROP_SCHEME,
+    DOM_HTML_META_ELEMENT_PROP_0,
+    DOM_HTML_META_ELEMENT_PROP_CONTENT,
+    DOM_HTML_META_ELEMENT_PROP_HTTP_EQUIV,
+    DOM_HTML_META_ELEMENT_PROP_NAME,
+    DOM_HTML_META_ELEMENT_PROP_SCHEME,
 };
 
 static void webkit_dom_html_meta_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -106,16 +106,16 @@ static void webkit_dom_html_meta_element_set_property(GObject* object, guint pro
     WebKitDOMHTMLMetaElement* self = WEBKIT_DOM_HTML_META_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CONTENT:
+    case DOM_HTML_META_ELEMENT_PROP_CONTENT:
         webkit_dom_html_meta_element_set_content(self, g_value_get_string(value));
         break;
-    case PROP_HTTP_EQUIV:
+    case DOM_HTML_META_ELEMENT_PROP_HTTP_EQUIV:
         webkit_dom_html_meta_element_set_http_equiv(self, g_value_get_string(value));
         break;
-    case PROP_NAME:
+    case DOM_HTML_META_ELEMENT_PROP_NAME:
         webkit_dom_html_meta_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_SCHEME:
+    case DOM_HTML_META_ELEMENT_PROP_SCHEME:
         webkit_dom_html_meta_element_set_scheme(self, g_value_get_string(value));
         break;
     default:
@@ -129,16 +129,16 @@ static void webkit_dom_html_meta_element_get_property(GObject* object, guint pro
     WebKitDOMHTMLMetaElement* self = WEBKIT_DOM_HTML_META_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CONTENT:
+    case DOM_HTML_META_ELEMENT_PROP_CONTENT:
         g_value_take_string(value, webkit_dom_html_meta_element_get_content(self));
         break;
-    case PROP_HTTP_EQUIV:
+    case DOM_HTML_META_ELEMENT_PROP_HTTP_EQUIV:
         g_value_take_string(value, webkit_dom_html_meta_element_get_http_equiv(self));
         break;
-    case PROP_NAME:
+    case DOM_HTML_META_ELEMENT_PROP_NAME:
         g_value_take_string(value, webkit_dom_html_meta_element_get_name(self));
         break;
-    case PROP_SCHEME:
+    case DOM_HTML_META_ELEMENT_PROP_SCHEME:
         g_value_take_string(value, webkit_dom_html_meta_element_get_scheme(self));
         break;
     default:
@@ -155,7 +155,7 @@ static void webkit_dom_html_meta_element_class_init(WebKitDOMHTMLMetaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CONTENT,
+        DOM_HTML_META_ELEMENT_PROP_CONTENT,
         g_param_spec_string(
             "content",
             "HTMLMetaElement:content",
@@ -165,7 +165,7 @@ static void webkit_dom_html_meta_element_class_init(WebKitDOMHTMLMetaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HTTP_EQUIV,
+        DOM_HTML_META_ELEMENT_PROP_HTTP_EQUIV,
         g_param_spec_string(
             "http-equiv",
             "HTMLMetaElement:http-equiv",
@@ -175,7 +175,7 @@ static void webkit_dom_html_meta_element_class_init(WebKitDOMHTMLMetaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_HTML_META_ELEMENT_PROP_NAME,
         g_param_spec_string(
             "name",
             "HTMLMetaElement:name",
@@ -185,7 +185,7 @@ static void webkit_dom_html_meta_element_class_init(WebKitDOMHTMLMetaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCHEME,
+        DOM_HTML_META_ELEMENT_PROP_SCHEME,
         g_param_spec_string(
             "scheme",
             "HTMLMetaElement:scheme",

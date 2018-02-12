@@ -86,19 +86,19 @@ static gboolean webkit_dom_html_label_element_remove_event_listener(WebKitDOMEve
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_label_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_label_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_label_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_label_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLLabelElement, webkit_dom_html_label_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLLabelElement, webkit_dom_html_label_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_label_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_FORM,
-    PROP_HTML_FOR,
+    DOM_HTML_LABEL_ELEMENT_PROP_0,
+    DOM_HTML_LABEL_ELEMENT_PROP_FORM,
+    DOM_HTML_LABEL_ELEMENT_PROP_HTML_FOR,
 };
 
 static void webkit_dom_html_label_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -106,7 +106,7 @@ static void webkit_dom_html_label_element_set_property(GObject* object, guint pr
     WebKitDOMHTMLLabelElement* self = WEBKIT_DOM_HTML_LABEL_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_HTML_FOR:
+    case DOM_HTML_LABEL_ELEMENT_PROP_HTML_FOR:
         webkit_dom_html_label_element_set_html_for(self, g_value_get_string(value));
         break;
     default:
@@ -120,10 +120,10 @@ static void webkit_dom_html_label_element_get_property(GObject* object, guint pr
     WebKitDOMHTMLLabelElement* self = WEBKIT_DOM_HTML_LABEL_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_FORM:
+    case DOM_HTML_LABEL_ELEMENT_PROP_FORM:
         g_value_set_object(value, webkit_dom_html_label_element_get_form(self));
         break;
-    case PROP_HTML_FOR:
+    case DOM_HTML_LABEL_ELEMENT_PROP_HTML_FOR:
         g_value_take_string(value, webkit_dom_html_label_element_get_html_for(self));
         break;
     default:
@@ -140,7 +140,7 @@ static void webkit_dom_html_label_element_class_init(WebKitDOMHTMLLabelElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FORM,
+        DOM_HTML_LABEL_ELEMENT_PROP_FORM,
         g_param_spec_object(
             "form",
             "HTMLLabelElement:form",
@@ -150,7 +150,7 @@ static void webkit_dom_html_label_element_class_init(WebKitDOMHTMLLabelElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HTML_FOR,
+        DOM_HTML_LABEL_ELEMENT_PROP_HTML_FOR,
         g_param_spec_string(
             "html-for",
             "HTMLLabelElement:html-for",

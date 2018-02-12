@@ -84,19 +84,19 @@ static gboolean webkit_dom_html_opt_group_element_remove_event_listener(WebKitDO
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_opt_group_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_opt_group_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_opt_group_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_opt_group_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLOptGroupElement, webkit_dom_html_opt_group_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLOptGroupElement, webkit_dom_html_opt_group_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_opt_group_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_DISABLED,
-    PROP_LABEL,
+    DOM_HTML_OPT_GROUP_ELEMENT_PROP_0,
+    DOM_HTML_OPT_GROUP_ELEMENT_PROP_DISABLED,
+    DOM_HTML_OPT_GROUP_ELEMENT_PROP_LABEL,
 };
 
 static void webkit_dom_html_opt_group_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -104,10 +104,10 @@ static void webkit_dom_html_opt_group_element_set_property(GObject* object, guin
     WebKitDOMHTMLOptGroupElement* self = WEBKIT_DOM_HTML_OPT_GROUP_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_DISABLED:
+    case DOM_HTML_OPT_GROUP_ELEMENT_PROP_DISABLED:
         webkit_dom_html_opt_group_element_set_disabled(self, g_value_get_boolean(value));
         break;
-    case PROP_LABEL:
+    case DOM_HTML_OPT_GROUP_ELEMENT_PROP_LABEL:
         webkit_dom_html_opt_group_element_set_label(self, g_value_get_string(value));
         break;
     default:
@@ -121,10 +121,10 @@ static void webkit_dom_html_opt_group_element_get_property(GObject* object, guin
     WebKitDOMHTMLOptGroupElement* self = WEBKIT_DOM_HTML_OPT_GROUP_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_DISABLED:
+    case DOM_HTML_OPT_GROUP_ELEMENT_PROP_DISABLED:
         g_value_set_boolean(value, webkit_dom_html_opt_group_element_get_disabled(self));
         break;
-    case PROP_LABEL:
+    case DOM_HTML_OPT_GROUP_ELEMENT_PROP_LABEL:
         g_value_take_string(value, webkit_dom_html_opt_group_element_get_label(self));
         break;
     default:
@@ -141,7 +141,7 @@ static void webkit_dom_html_opt_group_element_class_init(WebKitDOMHTMLOptGroupEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DISABLED,
+        DOM_HTML_OPT_GROUP_ELEMENT_PROP_DISABLED,
         g_param_spec_boolean(
             "disabled",
             "HTMLOptGroupElement:disabled",
@@ -151,7 +151,7 @@ static void webkit_dom_html_opt_group_element_class_init(WebKitDOMHTMLOptGroupEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LABEL,
+        DOM_HTML_OPT_GROUP_ELEMENT_PROP_LABEL,
         g_param_spec_string(
             "label",
             "HTMLOptGroupElement:label",

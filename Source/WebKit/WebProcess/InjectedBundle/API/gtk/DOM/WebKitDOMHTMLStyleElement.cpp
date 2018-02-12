@@ -85,21 +85,21 @@ static gboolean webkit_dom_html_style_element_remove_event_listener(WebKitDOMEve
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_style_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_style_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_style_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_style_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLStyleElement, webkit_dom_html_style_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLStyleElement, webkit_dom_html_style_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_style_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_DISABLED,
-    PROP_MEDIA,
-    PROP_TYPE,
-    PROP_SHEET,
+    DOM_HTML_STYLE_ELEMENT_PROP_0,
+    DOM_HTML_STYLE_ELEMENT_PROP_DISABLED,
+    DOM_HTML_STYLE_ELEMENT_PROP_MEDIA,
+    DOM_HTML_STYLE_ELEMENT_PROP_TYPE,
+    DOM_HTML_STYLE_ELEMENT_PROP_SHEET,
 };
 
 static void webkit_dom_html_style_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -107,13 +107,13 @@ static void webkit_dom_html_style_element_set_property(GObject* object, guint pr
     WebKitDOMHTMLStyleElement* self = WEBKIT_DOM_HTML_STYLE_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_DISABLED:
+    case DOM_HTML_STYLE_ELEMENT_PROP_DISABLED:
         webkit_dom_html_style_element_set_disabled(self, g_value_get_boolean(value));
         break;
-    case PROP_MEDIA:
+    case DOM_HTML_STYLE_ELEMENT_PROP_MEDIA:
         webkit_dom_html_style_element_set_media(self, g_value_get_string(value));
         break;
-    case PROP_TYPE:
+    case DOM_HTML_STYLE_ELEMENT_PROP_TYPE:
         webkit_dom_html_style_element_set_type_attr(self, g_value_get_string(value));
         break;
     default:
@@ -127,16 +127,16 @@ static void webkit_dom_html_style_element_get_property(GObject* object, guint pr
     WebKitDOMHTMLStyleElement* self = WEBKIT_DOM_HTML_STYLE_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_DISABLED:
+    case DOM_HTML_STYLE_ELEMENT_PROP_DISABLED:
         g_value_set_boolean(value, webkit_dom_html_style_element_get_disabled(self));
         break;
-    case PROP_MEDIA:
+    case DOM_HTML_STYLE_ELEMENT_PROP_MEDIA:
         g_value_take_string(value, webkit_dom_html_style_element_get_media(self));
         break;
-    case PROP_TYPE:
+    case DOM_HTML_STYLE_ELEMENT_PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_style_element_get_type_attr(self));
         break;
-    case PROP_SHEET:
+    case DOM_HTML_STYLE_ELEMENT_PROP_SHEET:
         g_value_set_object(value, webkit_dom_html_style_element_get_sheet(self));
         break;
     default:
@@ -153,7 +153,7 @@ static void webkit_dom_html_style_element_class_init(WebKitDOMHTMLStyleElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DISABLED,
+        DOM_HTML_STYLE_ELEMENT_PROP_DISABLED,
         g_param_spec_boolean(
             "disabled",
             "HTMLStyleElement:disabled",
@@ -163,7 +163,7 @@ static void webkit_dom_html_style_element_class_init(WebKitDOMHTMLStyleElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_MEDIA,
+        DOM_HTML_STYLE_ELEMENT_PROP_MEDIA,
         g_param_spec_string(
             "media",
             "HTMLStyleElement:media",
@@ -173,7 +173,7 @@ static void webkit_dom_html_style_element_class_init(WebKitDOMHTMLStyleElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TYPE,
+        DOM_HTML_STYLE_ELEMENT_PROP_TYPE,
         g_param_spec_string(
             "type",
             "HTMLStyleElement:type",
@@ -183,7 +183,7 @@ static void webkit_dom_html_style_element_class_init(WebKitDOMHTMLStyleElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SHEET,
+        DOM_HTML_STYLE_ELEMENT_PROP_SHEET,
         g_param_spec_object(
             "sheet",
             "HTMLStyleElement:sheet",

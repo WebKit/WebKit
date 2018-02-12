@@ -32,9 +32,8 @@
 #include "WebProcess.h"
 #include <wayland-egl.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<AcceleratedSurfaceWayland> AcceleratedSurfaceWayland::create(WebPage& webPage, Client& client)
 {

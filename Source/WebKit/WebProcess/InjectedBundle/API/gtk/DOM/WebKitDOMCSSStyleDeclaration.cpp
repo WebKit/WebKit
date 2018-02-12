@@ -67,10 +67,10 @@ WebKitDOMCSSStyleDeclaration* wrapCSSStyleDeclaration(WebCore::CSSStyleDeclarati
 G_DEFINE_TYPE(WebKitDOMCSSStyleDeclaration, webkit_dom_css_style_declaration, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_CSS_TEXT,
-    PROP_LENGTH,
-    PROP_PARENT_RULE,
+    DOM_CSS_STYLE_DECLARATION_PROP_0,
+    DOM_CSS_STYLE_DECLARATION_PROP_CSS_TEXT,
+    DOM_CSS_STYLE_DECLARATION_PROP_LENGTH,
+    DOM_CSS_STYLE_DECLARATION_PROP_PARENT_RULE,
 };
 
 static void webkit_dom_css_style_declaration_finalize(GObject* object)
@@ -88,7 +88,7 @@ static void webkit_dom_css_style_declaration_set_property(GObject* object, guint
     WebKitDOMCSSStyleDeclaration* self = WEBKIT_DOM_CSS_STYLE_DECLARATION(object);
 
     switch (propertyId) {
-    case PROP_CSS_TEXT:
+    case DOM_CSS_STYLE_DECLARATION_PROP_CSS_TEXT:
         webkit_dom_css_style_declaration_set_css_text(self, g_value_get_string(value), nullptr);
         break;
     default:
@@ -102,13 +102,13 @@ static void webkit_dom_css_style_declaration_get_property(GObject* object, guint
     WebKitDOMCSSStyleDeclaration* self = WEBKIT_DOM_CSS_STYLE_DECLARATION(object);
 
     switch (propertyId) {
-    case PROP_CSS_TEXT:
+    case DOM_CSS_STYLE_DECLARATION_PROP_CSS_TEXT:
         g_value_take_string(value, webkit_dom_css_style_declaration_get_css_text(self));
         break;
-    case PROP_LENGTH:
+    case DOM_CSS_STYLE_DECLARATION_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_css_style_declaration_get_length(self));
         break;
-    case PROP_PARENT_RULE:
+    case DOM_CSS_STYLE_DECLARATION_PROP_PARENT_RULE:
         g_value_set_object(value, webkit_dom_css_style_declaration_get_parent_rule(self));
         break;
     default:
@@ -139,7 +139,7 @@ static void webkit_dom_css_style_declaration_class_init(WebKitDOMCSSStyleDeclara
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CSS_TEXT,
+        DOM_CSS_STYLE_DECLARATION_PROP_CSS_TEXT,
         g_param_spec_string(
             "css-text",
             "CSSStyleDeclaration:css-text",
@@ -149,7 +149,7 @@ static void webkit_dom_css_style_declaration_class_init(WebKitDOMCSSStyleDeclara
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_CSS_STYLE_DECLARATION_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "CSSStyleDeclaration:length",
@@ -159,7 +159,7 @@ static void webkit_dom_css_style_declaration_class_init(WebKitDOMCSSStyleDeclara
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT_RULE,
+        DOM_CSS_STYLE_DECLARATION_PROP_PARENT_RULE,
         g_param_spec_object(
             "parent-rule",
             "CSSStyleDeclaration:parent-rule",

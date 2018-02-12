@@ -85,35 +85,35 @@ static gboolean webkit_dom_html_anchor_element_remove_event_listener(WebKitDOMEv
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_anchor_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_anchor_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_anchor_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_anchor_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLAnchorElement, webkit_dom_html_anchor_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLAnchorElement, webkit_dom_html_anchor_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_anchor_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_CHARSET,
-    PROP_COORDS,
-    PROP_HREFLANG,
-    PROP_NAME,
-    PROP_REL,
-    PROP_REV,
-    PROP_SHAPE,
-    PROP_TARGET,
-    PROP_TYPE,
-    PROP_TEXT,
-    PROP_HREF,
-    PROP_PROTOCOL,
-    PROP_HOST,
-    PROP_HOSTNAME,
-    PROP_PORT,
-    PROP_PATHNAME,
-    PROP_SEARCH,
-    PROP_HASH,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_0,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_CHARSET,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_COORDS,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_HREFLANG,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_NAME,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_REL,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_REV,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_SHAPE,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_TARGET,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_TYPE,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_TEXT,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_HREF,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_PROTOCOL,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_HOST,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_HOSTNAME,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_PORT,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_PATHNAME,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_SEARCH,
+    DOM_HTML_ANCHOR_ELEMENT_PROP_HASH,
 };
 
 static void webkit_dom_html_anchor_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -121,58 +121,58 @@ static void webkit_dom_html_anchor_element_set_property(GObject* object, guint p
     WebKitDOMHTMLAnchorElement* self = WEBKIT_DOM_HTML_ANCHOR_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CHARSET:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_CHARSET:
         webkit_dom_html_anchor_element_set_charset(self, g_value_get_string(value));
         break;
-    case PROP_COORDS:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_COORDS:
         webkit_dom_html_anchor_element_set_coords(self, g_value_get_string(value));
         break;
-    case PROP_HREFLANG:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HREFLANG:
         webkit_dom_html_anchor_element_set_hreflang(self, g_value_get_string(value));
         break;
-    case PROP_NAME:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_NAME:
         webkit_dom_html_anchor_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_REL:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_REL:
         webkit_dom_html_anchor_element_set_rel(self, g_value_get_string(value));
         break;
-    case PROP_REV:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_REV:
         webkit_dom_html_anchor_element_set_rev(self, g_value_get_string(value));
         break;
-    case PROP_SHAPE:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_SHAPE:
         webkit_dom_html_anchor_element_set_shape(self, g_value_get_string(value));
         break;
-    case PROP_TARGET:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_TARGET:
         webkit_dom_html_anchor_element_set_target(self, g_value_get_string(value));
         break;
-    case PROP_TYPE:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_TYPE:
         webkit_dom_html_anchor_element_set_type_attr(self, g_value_get_string(value));
         break;
-    case PROP_TEXT:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_TEXT:
         webkit_dom_html_anchor_element_set_text(self, g_value_get_string(value));
         break;
-    case PROP_HREF:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HREF:
         webkit_dom_html_anchor_element_set_href(self, g_value_get_string(value));
         break;
-    case PROP_PROTOCOL:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_PROTOCOL:
         webkit_dom_html_anchor_element_set_protocol(self, g_value_get_string(value));
         break;
-    case PROP_HOST:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HOST:
         webkit_dom_html_anchor_element_set_host(self, g_value_get_string(value));
         break;
-    case PROP_HOSTNAME:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HOSTNAME:
         webkit_dom_html_anchor_element_set_hostname(self, g_value_get_string(value));
         break;
-    case PROP_PORT:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_PORT:
         webkit_dom_html_anchor_element_set_port(self, g_value_get_string(value));
         break;
-    case PROP_PATHNAME:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_PATHNAME:
         webkit_dom_html_anchor_element_set_pathname(self, g_value_get_string(value));
         break;
-    case PROP_SEARCH:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_SEARCH:
         webkit_dom_html_anchor_element_set_search(self, g_value_get_string(value));
         break;
-    case PROP_HASH:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HASH:
         webkit_dom_html_anchor_element_set_hash(self, g_value_get_string(value));
         break;
     default:
@@ -186,58 +186,58 @@ static void webkit_dom_html_anchor_element_get_property(GObject* object, guint p
     WebKitDOMHTMLAnchorElement* self = WEBKIT_DOM_HTML_ANCHOR_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CHARSET:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_CHARSET:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_charset(self));
         break;
-    case PROP_COORDS:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_COORDS:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_coords(self));
         break;
-    case PROP_HREFLANG:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HREFLANG:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_hreflang(self));
         break;
-    case PROP_NAME:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_NAME:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_name(self));
         break;
-    case PROP_REL:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_REL:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_rel(self));
         break;
-    case PROP_REV:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_REV:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_rev(self));
         break;
-    case PROP_SHAPE:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_SHAPE:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_shape(self));
         break;
-    case PROP_TARGET:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_TARGET:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_target(self));
         break;
-    case PROP_TYPE:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_type_attr(self));
         break;
-    case PROP_TEXT:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_TEXT:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_text(self));
         break;
-    case PROP_HREF:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HREF:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_href(self));
         break;
-    case PROP_PROTOCOL:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_PROTOCOL:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_protocol(self));
         break;
-    case PROP_HOST:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HOST:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_host(self));
         break;
-    case PROP_HOSTNAME:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HOSTNAME:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_hostname(self));
         break;
-    case PROP_PORT:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_PORT:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_port(self));
         break;
-    case PROP_PATHNAME:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_PATHNAME:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_pathname(self));
         break;
-    case PROP_SEARCH:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_SEARCH:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_search(self));
         break;
-    case PROP_HASH:
+    case DOM_HTML_ANCHOR_ELEMENT_PROP_HASH:
         g_value_take_string(value, webkit_dom_html_anchor_element_get_hash(self));
         break;
     default:
@@ -254,7 +254,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHARSET,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_CHARSET,
         g_param_spec_string(
             "charset",
             "HTMLAnchorElement:charset",
@@ -264,7 +264,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COORDS,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_COORDS,
         g_param_spec_string(
             "coords",
             "HTMLAnchorElement:coords",
@@ -274,7 +274,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HREFLANG,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_HREFLANG,
         g_param_spec_string(
             "hreflang",
             "HTMLAnchorElement:hreflang",
@@ -284,7 +284,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_NAME,
         g_param_spec_string(
             "name",
             "HTMLAnchorElement:name",
@@ -294,7 +294,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_REL,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_REL,
         g_param_spec_string(
             "rel",
             "HTMLAnchorElement:rel",
@@ -304,7 +304,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_REV,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_REV,
         g_param_spec_string(
             "rev",
             "HTMLAnchorElement:rev",
@@ -314,7 +314,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SHAPE,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_SHAPE,
         g_param_spec_string(
             "shape",
             "HTMLAnchorElement:shape",
@@ -324,7 +324,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TARGET,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_TARGET,
         g_param_spec_string(
             "target",
             "HTMLAnchorElement:target",
@@ -334,7 +334,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TYPE,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_TYPE,
         g_param_spec_string(
             "type",
             "HTMLAnchorElement:type",
@@ -344,7 +344,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TEXT,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_TEXT,
         g_param_spec_string(
             "text",
             "HTMLAnchorElement:text",
@@ -354,7 +354,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HREF,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_HREF,
         g_param_spec_string(
             "href",
             "HTMLAnchorElement:href",
@@ -364,7 +364,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PROTOCOL,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_PROTOCOL,
         g_param_spec_string(
             "protocol",
             "HTMLAnchorElement:protocol",
@@ -374,7 +374,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HOST,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_HOST,
         g_param_spec_string(
             "host",
             "HTMLAnchorElement:host",
@@ -384,7 +384,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HOSTNAME,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_HOSTNAME,
         g_param_spec_string(
             "hostname",
             "HTMLAnchorElement:hostname",
@@ -394,7 +394,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PORT,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_PORT,
         g_param_spec_string(
             "port",
             "HTMLAnchorElement:port",
@@ -404,7 +404,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PATHNAME,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_PATHNAME,
         g_param_spec_string(
             "pathname",
             "HTMLAnchorElement:pathname",
@@ -414,7 +414,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SEARCH,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_SEARCH,
         g_param_spec_string(
             "search",
             "HTMLAnchorElement:search",
@@ -424,7 +424,7 @@ static void webkit_dom_html_anchor_element_class_init(WebKitDOMHTMLAnchorElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HASH,
+        DOM_HTML_ANCHOR_ELEMENT_PROP_HASH,
         g_param_spec_string(
             "hash",
             "HTMLAnchorElement:hash",

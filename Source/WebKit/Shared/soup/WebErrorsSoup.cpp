@@ -31,9 +31,8 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 ResourceError downloadNetworkError(const URL& failingURL, const String& localizedDescription)
 {

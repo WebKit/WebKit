@@ -66,9 +66,9 @@ WebKitDOMDOMTokenList* wrapDOMTokenList(WebCore::DOMTokenList* coreObject)
 G_DEFINE_TYPE(WebKitDOMDOMTokenList, webkit_dom_dom_token_list, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_LENGTH,
-    PROP_VALUE,
+    DOM_DOM_TOKEN_LIST_PROP_0,
+    DOM_DOM_TOKEN_LIST_PROP_LENGTH,
+    DOM_DOM_TOKEN_LIST_PROP_VALUE,
 };
 
 static void webkit_dom_dom_token_list_finalize(GObject* object)
@@ -86,7 +86,7 @@ static void webkit_dom_dom_token_list_set_property(GObject* object, guint proper
     WebKitDOMDOMTokenList* self = WEBKIT_DOM_DOM_TOKEN_LIST(object);
 
     switch (propertyId) {
-    case PROP_VALUE:
+    case DOM_DOM_TOKEN_LIST_PROP_VALUE:
         webkit_dom_dom_token_list_set_value(self, g_value_get_string(value));
         break;
     default:
@@ -100,10 +100,10 @@ static void webkit_dom_dom_token_list_get_property(GObject* object, guint proper
     WebKitDOMDOMTokenList* self = WEBKIT_DOM_DOM_TOKEN_LIST(object);
 
     switch (propertyId) {
-    case PROP_LENGTH:
+    case DOM_DOM_TOKEN_LIST_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_dom_token_list_get_length(self));
         break;
-    case PROP_VALUE:
+    case DOM_DOM_TOKEN_LIST_PROP_VALUE:
         g_value_take_string(value, webkit_dom_dom_token_list_get_value(self));
         break;
     default:
@@ -134,7 +134,7 @@ static void webkit_dom_dom_token_list_class_init(WebKitDOMDOMTokenListClass* req
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_DOM_TOKEN_LIST_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "DOMTokenList:length",
@@ -144,7 +144,7 @@ static void webkit_dom_dom_token_list_class_init(WebKitDOMDOMTokenListClass* req
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VALUE,
+        DOM_DOM_TOKEN_LIST_PROP_VALUE,
         g_param_spec_string(
             "value",
             "DOMTokenList:value",

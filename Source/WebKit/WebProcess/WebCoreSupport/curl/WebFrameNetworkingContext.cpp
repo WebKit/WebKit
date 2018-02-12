@@ -36,9 +36,8 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {

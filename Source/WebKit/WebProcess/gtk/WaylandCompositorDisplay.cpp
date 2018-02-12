@@ -31,9 +31,8 @@
 #include "WebKitWaylandClientProtocol.h"
 #include "WebPage.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<WaylandCompositorDisplay> WaylandCompositorDisplay::create(const String& displayName)
 {

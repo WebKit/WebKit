@@ -108,68 +108,68 @@ static gboolean webkit_dom_document_remove_event_listener(WebKitDOMEventTarget* 
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_document_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_document_dispatch_event;
     iface->add_event_listener = webkit_dom_document_add_event_listener;
     iface->remove_event_listener = webkit_dom_document_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_document_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_DOCTYPE,
-    PROP_IMPLEMENTATION,
-    PROP_DOCUMENT_ELEMENT,
-    PROP_INPUT_ENCODING,
-    PROP_XML_ENCODING,
-    PROP_XML_VERSION,
-    PROP_XML_STANDALONE,
-    PROP_DOCUMENT_URI,
-    PROP_DEFAULT_VIEW,
-    PROP_STYLE_SHEETS,
-    PROP_CONTENT_TYPE,
-    PROP_TITLE,
-    PROP_DIR,
-    PROP_DESIGN_MODE,
-    PROP_REFERRER,
-    PROP_DOMAIN,
-    PROP_URL,
-    PROP_COOKIE,
-    PROP_BODY,
-    PROP_HEAD,
-    PROP_IMAGES,
-    PROP_APPLETS,
-    PROP_LINKS,
-    PROP_FORMS,
-    PROP_ANCHORS,
-    PROP_EMBEDS,
-    PROP_PLUGINS,
-    PROP_SCRIPTS,
-    PROP_LAST_MODIFIED,
-    PROP_CHARSET,
-    PROP_READY_STATE,
-    PROP_CHARACTER_SET,
-    PROP_PREFERRED_STYLESHEET_SET,
-    PROP_SELECTED_STYLESHEET_SET,
-    PROP_ACTIVE_ELEMENT,
-    PROP_COMPAT_MODE,
-    PROP_WEBKIT_IS_FULL_SCREEN,
-    PROP_WEBKIT_FULL_SCREEN_KEYBOARD_INPUT_ALLOWED,
-    PROP_WEBKIT_CURRENT_FULL_SCREEN_ELEMENT,
-    PROP_WEBKIT_FULLSCREEN_ENABLED,
-    PROP_WEBKIT_FULLSCREEN_ELEMENT,
-    PROP_POINTER_LOCK_ELEMENT,
-    PROP_VISIBILITY_STATE,
-    PROP_HIDDEN,
-    PROP_CURRENT_SCRIPT,
-    PROP_ORIGIN,
-    PROP_SCROLLING_ELEMENT,
-    PROP_CHILDREN,
-    PROP_FIRST_ELEMENT_CHILD,
-    PROP_LAST_ELEMENT_CHILD,
-    PROP_CHILD_ELEMENT_COUNT,
+    DOM_DOCUMENT_PROP_0,
+    DOM_DOCUMENT_PROP_DOCTYPE,
+    DOM_DOCUMENT_PROP_IMPLEMENTATION,
+    DOM_DOCUMENT_PROP_DOCUMENT_ELEMENT,
+    DOM_DOCUMENT_PROP_INPUT_ENCODING,
+    DOM_DOCUMENT_PROP_XML_ENCODING,
+    DOM_DOCUMENT_PROP_XML_VERSION,
+    DOM_DOCUMENT_PROP_XML_STANDALONE,
+    DOM_DOCUMENT_PROP_DOCUMENT_URI,
+    DOM_DOCUMENT_PROP_DEFAULT_VIEW,
+    DOM_DOCUMENT_PROP_STYLE_SHEETS,
+    DOM_DOCUMENT_PROP_CONTENT_TYPE,
+    DOM_DOCUMENT_PROP_TITLE,
+    DOM_DOCUMENT_PROP_DIR,
+    DOM_DOCUMENT_PROP_DESIGN_MODE,
+    DOM_DOCUMENT_PROP_REFERRER,
+    DOM_DOCUMENT_PROP_DOMAIN,
+    DOM_DOCUMENT_PROP_URL,
+    DOM_DOCUMENT_PROP_COOKIE,
+    DOM_DOCUMENT_PROP_BODY,
+    DOM_DOCUMENT_PROP_HEAD,
+    DOM_DOCUMENT_PROP_IMAGES,
+    DOM_DOCUMENT_PROP_APPLETS,
+    DOM_DOCUMENT_PROP_LINKS,
+    DOM_DOCUMENT_PROP_FORMS,
+    DOM_DOCUMENT_PROP_ANCHORS,
+    DOM_DOCUMENT_PROP_EMBEDS,
+    DOM_DOCUMENT_PROP_PLUGINS,
+    DOM_DOCUMENT_PROP_SCRIPTS,
+    DOM_DOCUMENT_PROP_LAST_MODIFIED,
+    DOM_DOCUMENT_PROP_CHARSET,
+    DOM_DOCUMENT_PROP_READY_STATE,
+    DOM_DOCUMENT_PROP_CHARACTER_SET,
+    DOM_DOCUMENT_PROP_PREFERRED_STYLESHEET_SET,
+    DOM_DOCUMENT_PROP_SELECTED_STYLESHEET_SET,
+    DOM_DOCUMENT_PROP_ACTIVE_ELEMENT,
+    DOM_DOCUMENT_PROP_COMPAT_MODE,
+    DOM_DOCUMENT_PROP_WEBKIT_IS_FULL_SCREEN,
+    DOM_DOCUMENT_PROP_WEBKIT_FULL_SCREEN_KEYBOARD_INPUT_ALLOWED,
+    DOM_DOCUMENT_PROP_WEBKIT_CURRENT_FULL_SCREEN_ELEMENT,
+    DOM_DOCUMENT_PROP_WEBKIT_FULLSCREEN_ENABLED,
+    DOM_DOCUMENT_PROP_WEBKIT_FULLSCREEN_ELEMENT,
+    DOM_DOCUMENT_PROP_POINTER_LOCK_ELEMENT,
+    DOM_DOCUMENT_PROP_VISIBILITY_STATE,
+    DOM_DOCUMENT_PROP_HIDDEN,
+    DOM_DOCUMENT_PROP_CURRENT_SCRIPT,
+    DOM_DOCUMENT_PROP_ORIGIN,
+    DOM_DOCUMENT_PROP_SCROLLING_ELEMENT,
+    DOM_DOCUMENT_PROP_CHILDREN,
+    DOM_DOCUMENT_PROP_FIRST_ELEMENT_CHILD,
+    DOM_DOCUMENT_PROP_LAST_ELEMENT_CHILD,
+    DOM_DOCUMENT_PROP_CHILD_ELEMENT_COUNT,
 };
 
 static void webkit_dom_document_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -177,31 +177,31 @@ static void webkit_dom_document_set_property(GObject* object, guint propertyId, 
     WebKitDOMDocument* self = WEBKIT_DOM_DOCUMENT(object);
 
     switch (propertyId) {
-    case PROP_XML_VERSION:
+    case DOM_DOCUMENT_PROP_XML_VERSION:
         webkit_dom_document_set_xml_version(self, g_value_get_string(value), nullptr);
         break;
-    case PROP_XML_STANDALONE:
+    case DOM_DOCUMENT_PROP_XML_STANDALONE:
         webkit_dom_document_set_xml_standalone(self, g_value_get_boolean(value), nullptr);
         break;
-    case PROP_DOCUMENT_URI:
+    case DOM_DOCUMENT_PROP_DOCUMENT_URI:
         webkit_dom_document_set_document_uri(self, g_value_get_string(value));
         break;
-    case PROP_TITLE:
+    case DOM_DOCUMENT_PROP_TITLE:
         webkit_dom_document_set_title(self, g_value_get_string(value));
         break;
-    case PROP_DIR:
+    case DOM_DOCUMENT_PROP_DIR:
         webkit_dom_document_set_dir(self, g_value_get_string(value));
         break;
-    case PROP_DESIGN_MODE:
+    case DOM_DOCUMENT_PROP_DESIGN_MODE:
         webkit_dom_document_set_design_mode(self, g_value_get_string(value));
         break;
-    case PROP_COOKIE:
+    case DOM_DOCUMENT_PROP_COOKIE:
         webkit_dom_document_set_cookie(self, g_value_get_string(value), nullptr);
         break;
-    case PROP_CHARSET:
+    case DOM_DOCUMENT_PROP_CHARSET:
         webkit_dom_document_set_charset(self, g_value_get_string(value));
         break;
-    case PROP_SELECTED_STYLESHEET_SET:
+    case DOM_DOCUMENT_PROP_SELECTED_STYLESHEET_SET:
         webkit_dom_document_set_selected_stylesheet_set(self, g_value_get_string(value));
         break;
     default:
@@ -215,157 +215,157 @@ static void webkit_dom_document_get_property(GObject* object, guint propertyId, 
     WebKitDOMDocument* self = WEBKIT_DOM_DOCUMENT(object);
 
     switch (propertyId) {
-    case PROP_DOCTYPE:
+    case DOM_DOCUMENT_PROP_DOCTYPE:
         g_value_set_object(value, webkit_dom_document_get_doctype(self));
         break;
-    case PROP_IMPLEMENTATION:
+    case DOM_DOCUMENT_PROP_IMPLEMENTATION:
         g_value_set_object(value, webkit_dom_document_get_implementation(self));
         break;
-    case PROP_DOCUMENT_ELEMENT:
+    case DOM_DOCUMENT_PROP_DOCUMENT_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_document_element(self));
         break;
-    case PROP_INPUT_ENCODING:
+    case DOM_DOCUMENT_PROP_INPUT_ENCODING:
         g_value_take_string(value, webkit_dom_document_get_input_encoding(self));
         break;
-    case PROP_XML_ENCODING:
+    case DOM_DOCUMENT_PROP_XML_ENCODING:
         g_value_take_string(value, webkit_dom_document_get_xml_encoding(self));
         break;
-    case PROP_XML_VERSION:
+    case DOM_DOCUMENT_PROP_XML_VERSION:
         g_value_take_string(value, webkit_dom_document_get_xml_version(self));
         break;
-    case PROP_XML_STANDALONE:
+    case DOM_DOCUMENT_PROP_XML_STANDALONE:
         g_value_set_boolean(value, webkit_dom_document_get_xml_standalone(self));
         break;
-    case PROP_DOCUMENT_URI:
+    case DOM_DOCUMENT_PROP_DOCUMENT_URI:
         g_value_take_string(value, webkit_dom_document_get_document_uri(self));
         break;
-    case PROP_DEFAULT_VIEW:
+    case DOM_DOCUMENT_PROP_DEFAULT_VIEW:
         g_value_set_object(value, webkit_dom_document_get_default_view(self));
         break;
-    case PROP_STYLE_SHEETS:
+    case DOM_DOCUMENT_PROP_STYLE_SHEETS:
         g_value_set_object(value, webkit_dom_document_get_style_sheets(self));
         break;
-    case PROP_CONTENT_TYPE:
+    case DOM_DOCUMENT_PROP_CONTENT_TYPE:
         g_value_take_string(value, webkit_dom_document_get_content_type(self));
         break;
-    case PROP_TITLE:
+    case DOM_DOCUMENT_PROP_TITLE:
         g_value_take_string(value, webkit_dom_document_get_title(self));
         break;
-    case PROP_DIR:
+    case DOM_DOCUMENT_PROP_DIR:
         g_value_take_string(value, webkit_dom_document_get_dir(self));
         break;
-    case PROP_DESIGN_MODE:
+    case DOM_DOCUMENT_PROP_DESIGN_MODE:
         g_value_take_string(value, webkit_dom_document_get_design_mode(self));
         break;
-    case PROP_REFERRER:
+    case DOM_DOCUMENT_PROP_REFERRER:
         g_value_take_string(value, webkit_dom_document_get_referrer(self));
         break;
-    case PROP_DOMAIN:
+    case DOM_DOCUMENT_PROP_DOMAIN:
         g_value_take_string(value, webkit_dom_document_get_domain(self));
         break;
-    case PROP_URL:
+    case DOM_DOCUMENT_PROP_URL:
         g_value_take_string(value, webkit_dom_document_get_url(self));
         break;
-    case PROP_COOKIE:
+    case DOM_DOCUMENT_PROP_COOKIE:
         g_value_take_string(value, webkit_dom_document_get_cookie(self, nullptr));
         break;
-    case PROP_BODY:
+    case DOM_DOCUMENT_PROP_BODY:
         g_value_set_object(value, webkit_dom_document_get_body(self));
         break;
-    case PROP_HEAD:
+    case DOM_DOCUMENT_PROP_HEAD:
         g_value_set_object(value, webkit_dom_document_get_head(self));
         break;
-    case PROP_IMAGES:
+    case DOM_DOCUMENT_PROP_IMAGES:
         g_value_set_object(value, webkit_dom_document_get_images(self));
         break;
-    case PROP_APPLETS:
+    case DOM_DOCUMENT_PROP_APPLETS:
         g_value_set_object(value, webkit_dom_document_get_applets(self));
         break;
-    case PROP_LINKS:
+    case DOM_DOCUMENT_PROP_LINKS:
         g_value_set_object(value, webkit_dom_document_get_links(self));
         break;
-    case PROP_FORMS:
+    case DOM_DOCUMENT_PROP_FORMS:
         g_value_set_object(value, webkit_dom_document_get_forms(self));
         break;
-    case PROP_ANCHORS:
+    case DOM_DOCUMENT_PROP_ANCHORS:
         g_value_set_object(value, webkit_dom_document_get_anchors(self));
         break;
-    case PROP_EMBEDS:
+    case DOM_DOCUMENT_PROP_EMBEDS:
         g_value_set_object(value, webkit_dom_document_get_embeds(self));
         break;
-    case PROP_PLUGINS:
+    case DOM_DOCUMENT_PROP_PLUGINS:
         g_value_set_object(value, webkit_dom_document_get_plugins(self));
         break;
-    case PROP_SCRIPTS:
+    case DOM_DOCUMENT_PROP_SCRIPTS:
         g_value_set_object(value, webkit_dom_document_get_scripts(self));
         break;
-    case PROP_LAST_MODIFIED:
+    case DOM_DOCUMENT_PROP_LAST_MODIFIED:
         g_value_take_string(value, webkit_dom_document_get_last_modified(self));
         break;
-    case PROP_CHARSET:
+    case DOM_DOCUMENT_PROP_CHARSET:
         g_value_take_string(value, webkit_dom_document_get_charset(self));
         break;
-    case PROP_READY_STATE:
+    case DOM_DOCUMENT_PROP_READY_STATE:
         g_value_take_string(value, webkit_dom_document_get_ready_state(self));
         break;
-    case PROP_CHARACTER_SET:
+    case DOM_DOCUMENT_PROP_CHARACTER_SET:
         g_value_take_string(value, webkit_dom_document_get_character_set(self));
         break;
-    case PROP_PREFERRED_STYLESHEET_SET:
+    case DOM_DOCUMENT_PROP_PREFERRED_STYLESHEET_SET:
         g_value_take_string(value, webkit_dom_document_get_preferred_stylesheet_set(self));
         break;
-    case PROP_SELECTED_STYLESHEET_SET:
+    case DOM_DOCUMENT_PROP_SELECTED_STYLESHEET_SET:
         g_value_take_string(value, webkit_dom_document_get_selected_stylesheet_set(self));
         break;
-    case PROP_ACTIVE_ELEMENT:
+    case DOM_DOCUMENT_PROP_ACTIVE_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_active_element(self));
         break;
-    case PROP_COMPAT_MODE:
+    case DOM_DOCUMENT_PROP_COMPAT_MODE:
         g_value_take_string(value, webkit_dom_document_get_compat_mode(self));
         break;
-    case PROP_WEBKIT_IS_FULL_SCREEN:
+    case DOM_DOCUMENT_PROP_WEBKIT_IS_FULL_SCREEN:
         g_value_set_boolean(value, webkit_dom_document_get_webkit_is_fullscreen(self));
         break;
-    case PROP_WEBKIT_FULL_SCREEN_KEYBOARD_INPUT_ALLOWED:
+    case DOM_DOCUMENT_PROP_WEBKIT_FULL_SCREEN_KEYBOARD_INPUT_ALLOWED:
         g_value_set_boolean(value, webkit_dom_document_get_webkit_fullscreen_keyboard_input_allowed(self));
         break;
-    case PROP_WEBKIT_CURRENT_FULL_SCREEN_ELEMENT:
+    case DOM_DOCUMENT_PROP_WEBKIT_CURRENT_FULL_SCREEN_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_webkit_current_fullscreen_element(self));
         break;
-    case PROP_WEBKIT_FULLSCREEN_ENABLED:
+    case DOM_DOCUMENT_PROP_WEBKIT_FULLSCREEN_ENABLED:
         g_value_set_boolean(value, webkit_dom_document_get_webkit_fullscreen_enabled(self));
         break;
-    case PROP_WEBKIT_FULLSCREEN_ELEMENT:
+    case DOM_DOCUMENT_PROP_WEBKIT_FULLSCREEN_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_webkit_fullscreen_element(self));
         break;
-    case PROP_POINTER_LOCK_ELEMENT:
+    case DOM_DOCUMENT_PROP_POINTER_LOCK_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_pointer_lock_element(self));
         break;
-    case PROP_VISIBILITY_STATE:
+    case DOM_DOCUMENT_PROP_VISIBILITY_STATE:
         g_value_take_string(value, webkit_dom_document_get_visibility_state(self));
         break;
-    case PROP_HIDDEN:
+    case DOM_DOCUMENT_PROP_HIDDEN:
         g_value_set_boolean(value, webkit_dom_document_get_hidden(self));
         break;
-    case PROP_CURRENT_SCRIPT:
+    case DOM_DOCUMENT_PROP_CURRENT_SCRIPT:
         g_value_set_object(value, webkit_dom_document_get_current_script(self));
         break;
-    case PROP_ORIGIN:
+    case DOM_DOCUMENT_PROP_ORIGIN:
         g_value_take_string(value, webkit_dom_document_get_origin(self));
         break;
-    case PROP_SCROLLING_ELEMENT:
+    case DOM_DOCUMENT_PROP_SCROLLING_ELEMENT:
         g_value_set_object(value, webkit_dom_document_get_scrolling_element(self));
         break;
-    case PROP_CHILDREN:
+    case DOM_DOCUMENT_PROP_CHILDREN:
         g_value_set_object(value, webkit_dom_document_get_children(self));
         break;
-    case PROP_FIRST_ELEMENT_CHILD:
+    case DOM_DOCUMENT_PROP_FIRST_ELEMENT_CHILD:
         g_value_set_object(value, webkit_dom_document_get_first_element_child(self));
         break;
-    case PROP_LAST_ELEMENT_CHILD:
+    case DOM_DOCUMENT_PROP_LAST_ELEMENT_CHILD:
         g_value_set_object(value, webkit_dom_document_get_last_element_child(self));
         break;
-    case PROP_CHILD_ELEMENT_COUNT:
+    case DOM_DOCUMENT_PROP_CHILD_ELEMENT_COUNT:
         g_value_set_ulong(value, webkit_dom_document_get_child_element_count(self));
         break;
     default:
@@ -382,7 +382,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DOCTYPE,
+        DOM_DOCUMENT_PROP_DOCTYPE,
         g_param_spec_object(
             "doctype",
             "Document:doctype",
@@ -392,7 +392,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_IMPLEMENTATION,
+        DOM_DOCUMENT_PROP_IMPLEMENTATION,
         g_param_spec_object(
             "implementation",
             "Document:implementation",
@@ -402,7 +402,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DOCUMENT_ELEMENT,
+        DOM_DOCUMENT_PROP_DOCUMENT_ELEMENT,
         g_param_spec_object(
             "document-element",
             "Document:document-element",
@@ -412,7 +412,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_INPUT_ENCODING,
+        DOM_DOCUMENT_PROP_INPUT_ENCODING,
         g_param_spec_string(
             "input-encoding",
             "Document:input-encoding",
@@ -422,7 +422,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_XML_ENCODING,
+        DOM_DOCUMENT_PROP_XML_ENCODING,
         g_param_spec_string(
             "xml-encoding",
             "Document:xml-encoding",
@@ -432,7 +432,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_XML_VERSION,
+        DOM_DOCUMENT_PROP_XML_VERSION,
         g_param_spec_string(
             "xml-version",
             "Document:xml-version",
@@ -442,7 +442,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_XML_STANDALONE,
+        DOM_DOCUMENT_PROP_XML_STANDALONE,
         g_param_spec_boolean(
             "xml-standalone",
             "Document:xml-standalone",
@@ -452,7 +452,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DOCUMENT_URI,
+        DOM_DOCUMENT_PROP_DOCUMENT_URI,
         g_param_spec_string(
             "document-uri",
             "Document:document-uri",
@@ -462,7 +462,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DEFAULT_VIEW,
+        DOM_DOCUMENT_PROP_DEFAULT_VIEW,
         g_param_spec_object(
             "default-view",
             "Document:default-view",
@@ -472,7 +472,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_STYLE_SHEETS,
+        DOM_DOCUMENT_PROP_STYLE_SHEETS,
         g_param_spec_object(
             "style-sheets",
             "Document:style-sheets",
@@ -482,7 +482,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CONTENT_TYPE,
+        DOM_DOCUMENT_PROP_CONTENT_TYPE,
         g_param_spec_string(
             "content-type",
             "Document:content-type",
@@ -492,7 +492,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TITLE,
+        DOM_DOCUMENT_PROP_TITLE,
         g_param_spec_string(
             "title",
             "Document:title",
@@ -502,7 +502,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DIR,
+        DOM_DOCUMENT_PROP_DIR,
         g_param_spec_string(
             "dir",
             "Document:dir",
@@ -512,7 +512,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DESIGN_MODE,
+        DOM_DOCUMENT_PROP_DESIGN_MODE,
         g_param_spec_string(
             "design-mode",
             "Document:design-mode",
@@ -522,7 +522,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_REFERRER,
+        DOM_DOCUMENT_PROP_REFERRER,
         g_param_spec_string(
             "referrer",
             "Document:referrer",
@@ -532,7 +532,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DOMAIN,
+        DOM_DOCUMENT_PROP_DOMAIN,
         g_param_spec_string(
             "domain",
             "Document:domain",
@@ -542,7 +542,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_URL,
+        DOM_DOCUMENT_PROP_URL,
         g_param_spec_string(
             "url",
             "Document:url",
@@ -552,7 +552,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COOKIE,
+        DOM_DOCUMENT_PROP_COOKIE,
         g_param_spec_string(
             "cookie",
             "Document:cookie",
@@ -562,7 +562,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BODY,
+        DOM_DOCUMENT_PROP_BODY,
         g_param_spec_object(
             "body",
             "Document:body",
@@ -572,7 +572,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HEAD,
+        DOM_DOCUMENT_PROP_HEAD,
         g_param_spec_object(
             "head",
             "Document:head",
@@ -582,7 +582,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_IMAGES,
+        DOM_DOCUMENT_PROP_IMAGES,
         g_param_spec_object(
             "images",
             "Document:images",
@@ -592,7 +592,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_APPLETS,
+        DOM_DOCUMENT_PROP_APPLETS,
         g_param_spec_object(
             "applets",
             "Document:applets",
@@ -602,7 +602,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LINKS,
+        DOM_DOCUMENT_PROP_LINKS,
         g_param_spec_object(
             "links",
             "Document:links",
@@ -612,7 +612,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FORMS,
+        DOM_DOCUMENT_PROP_FORMS,
         g_param_spec_object(
             "forms",
             "Document:forms",
@@ -622,7 +622,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ANCHORS,
+        DOM_DOCUMENT_PROP_ANCHORS,
         g_param_spec_object(
             "anchors",
             "Document:anchors",
@@ -632,7 +632,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_EMBEDS,
+        DOM_DOCUMENT_PROP_EMBEDS,
         g_param_spec_object(
             "embeds",
             "Document:embeds",
@@ -642,7 +642,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PLUGINS,
+        DOM_DOCUMENT_PROP_PLUGINS,
         g_param_spec_object(
             "plugins",
             "Document:plugins",
@@ -652,7 +652,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCRIPTS,
+        DOM_DOCUMENT_PROP_SCRIPTS,
         g_param_spec_object(
             "scripts",
             "Document:scripts",
@@ -662,7 +662,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LAST_MODIFIED,
+        DOM_DOCUMENT_PROP_LAST_MODIFIED,
         g_param_spec_string(
             "last-modified",
             "Document:last-modified",
@@ -672,7 +672,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHARSET,
+        DOM_DOCUMENT_PROP_CHARSET,
         g_param_spec_string(
             "charset",
             "Document:charset",
@@ -682,7 +682,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_READY_STATE,
+        DOM_DOCUMENT_PROP_READY_STATE,
         g_param_spec_string(
             "ready-state",
             "Document:ready-state",
@@ -692,7 +692,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHARACTER_SET,
+        DOM_DOCUMENT_PROP_CHARACTER_SET,
         g_param_spec_string(
             "character-set",
             "Document:character-set",
@@ -702,7 +702,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PREFERRED_STYLESHEET_SET,
+        DOM_DOCUMENT_PROP_PREFERRED_STYLESHEET_SET,
         g_param_spec_string(
             "preferred-stylesheet-set",
             "Document:preferred-stylesheet-set",
@@ -712,7 +712,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SELECTED_STYLESHEET_SET,
+        DOM_DOCUMENT_PROP_SELECTED_STYLESHEET_SET,
         g_param_spec_string(
             "selected-stylesheet-set",
             "Document:selected-stylesheet-set",
@@ -722,7 +722,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ACTIVE_ELEMENT,
+        DOM_DOCUMENT_PROP_ACTIVE_ELEMENT,
         g_param_spec_object(
             "active-element",
             "Document:active-element",
@@ -732,7 +732,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COMPAT_MODE,
+        DOM_DOCUMENT_PROP_COMPAT_MODE,
         g_param_spec_string(
             "compat-mode",
             "Document:compat-mode",
@@ -742,7 +742,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WEBKIT_IS_FULL_SCREEN,
+        DOM_DOCUMENT_PROP_WEBKIT_IS_FULL_SCREEN,
         g_param_spec_boolean(
             "webkit-is-full-screen",
             "Document:webkit-is-full-screen",
@@ -752,7 +752,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WEBKIT_FULL_SCREEN_KEYBOARD_INPUT_ALLOWED,
+        DOM_DOCUMENT_PROP_WEBKIT_FULL_SCREEN_KEYBOARD_INPUT_ALLOWED,
         g_param_spec_boolean(
             "webkit-full-screen-keyboard-input-allowed",
             "Document:webkit-full-screen-keyboard-input-allowed",
@@ -762,7 +762,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WEBKIT_CURRENT_FULL_SCREEN_ELEMENT,
+        DOM_DOCUMENT_PROP_WEBKIT_CURRENT_FULL_SCREEN_ELEMENT,
         g_param_spec_object(
             "webkit-current-full-screen-element",
             "Document:webkit-current-full-screen-element",
@@ -772,7 +772,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WEBKIT_FULLSCREEN_ENABLED,
+        DOM_DOCUMENT_PROP_WEBKIT_FULLSCREEN_ENABLED,
         g_param_spec_boolean(
             "webkit-fullscreen-enabled",
             "Document:webkit-fullscreen-enabled",
@@ -782,7 +782,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WEBKIT_FULLSCREEN_ELEMENT,
+        DOM_DOCUMENT_PROP_WEBKIT_FULLSCREEN_ELEMENT,
         g_param_spec_object(
             "webkit-fullscreen-element",
             "Document:webkit-fullscreen-element",
@@ -792,7 +792,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_POINTER_LOCK_ELEMENT,
+        DOM_DOCUMENT_PROP_POINTER_LOCK_ELEMENT,
         g_param_spec_object(
             "pointer-lock-element",
             "Document:pointer-lock-element",
@@ -802,7 +802,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VISIBILITY_STATE,
+        DOM_DOCUMENT_PROP_VISIBILITY_STATE,
         g_param_spec_string(
             "visibility-state",
             "Document:visibility-state",
@@ -812,7 +812,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HIDDEN,
+        DOM_DOCUMENT_PROP_HIDDEN,
         g_param_spec_boolean(
             "hidden",
             "Document:hidden",
@@ -822,7 +822,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CURRENT_SCRIPT,
+        DOM_DOCUMENT_PROP_CURRENT_SCRIPT,
         g_param_spec_object(
             "current-script",
             "Document:current-script",
@@ -832,7 +832,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ORIGIN,
+        DOM_DOCUMENT_PROP_ORIGIN,
         g_param_spec_string(
             "origin",
             "Document:origin",
@@ -842,7 +842,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCROLLING_ELEMENT,
+        DOM_DOCUMENT_PROP_SCROLLING_ELEMENT,
         g_param_spec_object(
             "scrolling-element",
             "Document:scrolling-element",
@@ -852,7 +852,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHILDREN,
+        DOM_DOCUMENT_PROP_CHILDREN,
         g_param_spec_object(
             "children",
             "Document:children",
@@ -862,7 +862,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FIRST_ELEMENT_CHILD,
+        DOM_DOCUMENT_PROP_FIRST_ELEMENT_CHILD,
         g_param_spec_object(
             "first-element-child",
             "Document:first-element-child",
@@ -872,7 +872,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LAST_ELEMENT_CHILD,
+        DOM_DOCUMENT_PROP_LAST_ELEMENT_CHILD,
         g_param_spec_object(
             "last-element-child",
             "Document:last-element-child",
@@ -882,7 +882,7 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHILD_ELEMENT_COUNT,
+        DOM_DOCUMENT_PROP_CHILD_ELEMENT_COUNT,
         g_param_spec_ulong(
             "child-element-count",
             "Document:child-element-count",

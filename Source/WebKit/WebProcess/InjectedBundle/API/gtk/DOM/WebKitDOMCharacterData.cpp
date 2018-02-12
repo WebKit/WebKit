@@ -84,19 +84,19 @@ static gboolean webkit_dom_character_data_remove_event_listener(WebKitDOMEventTa
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_character_data_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_character_data_dispatch_event;
     iface->add_event_listener = webkit_dom_character_data_add_event_listener;
     iface->remove_event_listener = webkit_dom_character_data_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMCharacterData, webkit_dom_character_data, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMCharacterData, webkit_dom_character_data, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_character_data_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_DATA,
-    PROP_LENGTH,
+    DOM_CHARACTER_DATA_PROP_0,
+    DOM_CHARACTER_DATA_PROP_DATA,
+    DOM_CHARACTER_DATA_PROP_LENGTH,
 };
 
 static void webkit_dom_character_data_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -104,7 +104,7 @@ static void webkit_dom_character_data_set_property(GObject* object, guint proper
     WebKitDOMCharacterData* self = WEBKIT_DOM_CHARACTER_DATA(object);
 
     switch (propertyId) {
-    case PROP_DATA:
+    case DOM_CHARACTER_DATA_PROP_DATA:
         webkit_dom_character_data_set_data(self, g_value_get_string(value), nullptr);
         break;
     default:
@@ -118,10 +118,10 @@ static void webkit_dom_character_data_get_property(GObject* object, guint proper
     WebKitDOMCharacterData* self = WEBKIT_DOM_CHARACTER_DATA(object);
 
     switch (propertyId) {
-    case PROP_DATA:
+    case DOM_CHARACTER_DATA_PROP_DATA:
         g_value_take_string(value, webkit_dom_character_data_get_data(self));
         break;
-    case PROP_LENGTH:
+    case DOM_CHARACTER_DATA_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_character_data_get_length(self));
         break;
     default:
@@ -138,7 +138,7 @@ static void webkit_dom_character_data_class_init(WebKitDOMCharacterDataClass* re
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DATA,
+        DOM_CHARACTER_DATA_PROP_DATA,
         g_param_spec_string(
             "data",
             "CharacterData:data",
@@ -148,7 +148,7 @@ static void webkit_dom_character_data_class_init(WebKitDOMCharacterDataClass* re
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_CHARACTER_DATA_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "CharacterData:length",

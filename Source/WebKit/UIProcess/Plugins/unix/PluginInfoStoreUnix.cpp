@@ -43,9 +43,8 @@
 #include "PluginInfoCache.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Vector<String> PluginInfoStore::pluginsDirectories()
 {

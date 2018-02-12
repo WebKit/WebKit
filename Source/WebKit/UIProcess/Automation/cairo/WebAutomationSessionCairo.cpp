@@ -30,9 +30,8 @@
 #include <cairo/cairo.h>
 #include <wtf/text/Base64.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)
 {

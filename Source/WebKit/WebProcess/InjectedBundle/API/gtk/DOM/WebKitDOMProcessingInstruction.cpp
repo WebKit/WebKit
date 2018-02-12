@@ -84,19 +84,19 @@ static gboolean webkit_dom_processing_instruction_remove_event_listener(WebKitDO
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_processing_instruction_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_processing_instruction_dispatch_event;
     iface->add_event_listener = webkit_dom_processing_instruction_add_event_listener;
     iface->remove_event_listener = webkit_dom_processing_instruction_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMProcessingInstruction, webkit_dom_processing_instruction, WEBKIT_DOM_TYPE_CHARACTER_DATA, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMProcessingInstruction, webkit_dom_processing_instruction, WEBKIT_DOM_TYPE_CHARACTER_DATA, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_processing_instruction_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_TARGET,
-    PROP_SHEET,
+    DOM_PROCESSING_INSTRUCTION_PROP_0,
+    DOM_PROCESSING_INSTRUCTION_PROP_TARGET,
+    DOM_PROCESSING_INSTRUCTION_PROP_SHEET,
 };
 
 static void webkit_dom_processing_instruction_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -104,10 +104,10 @@ static void webkit_dom_processing_instruction_get_property(GObject* object, guin
     WebKitDOMProcessingInstruction* self = WEBKIT_DOM_PROCESSING_INSTRUCTION(object);
 
     switch (propertyId) {
-    case PROP_TARGET:
+    case DOM_PROCESSING_INSTRUCTION_PROP_TARGET:
         g_value_take_string(value, webkit_dom_processing_instruction_get_target(self));
         break;
-    case PROP_SHEET:
+    case DOM_PROCESSING_INSTRUCTION_PROP_SHEET:
         g_value_set_object(value, webkit_dom_processing_instruction_get_sheet(self));
         break;
     default:
@@ -123,7 +123,7 @@ static void webkit_dom_processing_instruction_class_init(WebKitDOMProcessingInst
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TARGET,
+        DOM_PROCESSING_INSTRUCTION_PROP_TARGET,
         g_param_spec_string(
             "target",
             "ProcessingInstruction:target",
@@ -133,7 +133,7 @@ static void webkit_dom_processing_instruction_class_init(WebKitDOMProcessingInst
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SHEET,
+        DOM_PROCESSING_INSTRUCTION_PROP_SHEET,
         g_param_spec_object(
             "sheet",
             "ProcessingInstruction:sheet",

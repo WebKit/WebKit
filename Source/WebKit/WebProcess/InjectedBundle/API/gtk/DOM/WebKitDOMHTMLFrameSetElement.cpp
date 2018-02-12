@@ -84,19 +84,19 @@ static gboolean webkit_dom_html_frame_set_element_remove_event_listener(WebKitDO
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_frame_set_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_frame_set_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_frame_set_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_frame_set_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLFrameSetElement, webkit_dom_html_frame_set_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLFrameSetElement, webkit_dom_html_frame_set_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_frame_set_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_COLS,
-    PROP_ROWS,
+    DOM_HTML_FRAME_SET_ELEMENT_PROP_0,
+    DOM_HTML_FRAME_SET_ELEMENT_PROP_COLS,
+    DOM_HTML_FRAME_SET_ELEMENT_PROP_ROWS,
 };
 
 static void webkit_dom_html_frame_set_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -104,10 +104,10 @@ static void webkit_dom_html_frame_set_element_set_property(GObject* object, guin
     WebKitDOMHTMLFrameSetElement* self = WEBKIT_DOM_HTML_FRAME_SET_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_COLS:
+    case DOM_HTML_FRAME_SET_ELEMENT_PROP_COLS:
         webkit_dom_html_frame_set_element_set_cols(self, g_value_get_string(value));
         break;
-    case PROP_ROWS:
+    case DOM_HTML_FRAME_SET_ELEMENT_PROP_ROWS:
         webkit_dom_html_frame_set_element_set_rows(self, g_value_get_string(value));
         break;
     default:
@@ -121,10 +121,10 @@ static void webkit_dom_html_frame_set_element_get_property(GObject* object, guin
     WebKitDOMHTMLFrameSetElement* self = WEBKIT_DOM_HTML_FRAME_SET_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_COLS:
+    case DOM_HTML_FRAME_SET_ELEMENT_PROP_COLS:
         g_value_take_string(value, webkit_dom_html_frame_set_element_get_cols(self));
         break;
-    case PROP_ROWS:
+    case DOM_HTML_FRAME_SET_ELEMENT_PROP_ROWS:
         g_value_take_string(value, webkit_dom_html_frame_set_element_get_rows(self));
         break;
     default:
@@ -141,7 +141,7 @@ static void webkit_dom_html_frame_set_element_class_init(WebKitDOMHTMLFrameSetEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COLS,
+        DOM_HTML_FRAME_SET_ELEMENT_PROP_COLS,
         g_param_spec_string(
             "cols",
             "HTMLFrameSetElement:cols",
@@ -151,7 +151,7 @@ static void webkit_dom_html_frame_set_element_class_init(WebKitDOMHTMLFrameSetEl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ROWS,
+        DOM_HTML_FRAME_SET_ELEMENT_PROP_ROWS,
         g_param_spec_string(
             "rows",
             "HTMLFrameSetElement:rows",

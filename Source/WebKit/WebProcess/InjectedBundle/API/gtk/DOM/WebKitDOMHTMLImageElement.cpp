@@ -84,35 +84,35 @@ static gboolean webkit_dom_html_image_element_remove_event_listener(WebKitDOMEve
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_image_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_image_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_image_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_image_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLImageElement, webkit_dom_html_image_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLImageElement, webkit_dom_html_image_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_image_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_NAME,
-    PROP_ALIGN,
-    PROP_ALT,
-    PROP_BORDER,
-    PROP_HEIGHT,
-    PROP_HSPACE,
-    PROP_IS_MAP,
-    PROP_LONG_DESC,
-    PROP_SRC,
-    PROP_USE_MAP,
-    PROP_VSPACE,
-    PROP_WIDTH,
-    PROP_COMPLETE,
-    PROP_LOWSRC,
-    PROP_NATURAL_HEIGHT,
-    PROP_NATURAL_WIDTH,
-    PROP_X,
-    PROP_Y,
+    DOM_HTML_IMAGE_ELEMENT_PROP_0,
+    DOM_HTML_IMAGE_ELEMENT_PROP_NAME,
+    DOM_HTML_IMAGE_ELEMENT_PROP_ALIGN,
+    DOM_HTML_IMAGE_ELEMENT_PROP_ALT,
+    DOM_HTML_IMAGE_ELEMENT_PROP_BORDER,
+    DOM_HTML_IMAGE_ELEMENT_PROP_HEIGHT,
+    DOM_HTML_IMAGE_ELEMENT_PROP_HSPACE,
+    DOM_HTML_IMAGE_ELEMENT_PROP_IS_MAP,
+    DOM_HTML_IMAGE_ELEMENT_PROP_LONG_DESC,
+    DOM_HTML_IMAGE_ELEMENT_PROP_SRC,
+    DOM_HTML_IMAGE_ELEMENT_PROP_USE_MAP,
+    DOM_HTML_IMAGE_ELEMENT_PROP_VSPACE,
+    DOM_HTML_IMAGE_ELEMENT_PROP_WIDTH,
+    DOM_HTML_IMAGE_ELEMENT_PROP_COMPLETE,
+    DOM_HTML_IMAGE_ELEMENT_PROP_LOWSRC,
+    DOM_HTML_IMAGE_ELEMENT_PROP_NATURAL_HEIGHT,
+    DOM_HTML_IMAGE_ELEMENT_PROP_NATURAL_WIDTH,
+    DOM_HTML_IMAGE_ELEMENT_PROP_X,
+    DOM_HTML_IMAGE_ELEMENT_PROP_Y,
 };
 
 static void webkit_dom_html_image_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -120,43 +120,43 @@ static void webkit_dom_html_image_element_set_property(GObject* object, guint pr
     WebKitDOMHTMLImageElement* self = WEBKIT_DOM_HTML_IMAGE_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_NAME:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_NAME:
         webkit_dom_html_image_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_ALIGN:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_ALIGN:
         webkit_dom_html_image_element_set_align(self, g_value_get_string(value));
         break;
-    case PROP_ALT:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_ALT:
         webkit_dom_html_image_element_set_alt(self, g_value_get_string(value));
         break;
-    case PROP_BORDER:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_BORDER:
         webkit_dom_html_image_element_set_border(self, g_value_get_string(value));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_HEIGHT:
         webkit_dom_html_image_element_set_height(self, g_value_get_long(value));
         break;
-    case PROP_HSPACE:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_HSPACE:
         webkit_dom_html_image_element_set_hspace(self, g_value_get_long(value));
         break;
-    case PROP_IS_MAP:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_IS_MAP:
         webkit_dom_html_image_element_set_is_map(self, g_value_get_boolean(value));
         break;
-    case PROP_LONG_DESC:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_LONG_DESC:
         webkit_dom_html_image_element_set_long_desc(self, g_value_get_string(value));
         break;
-    case PROP_SRC:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_SRC:
         webkit_dom_html_image_element_set_src(self, g_value_get_string(value));
         break;
-    case PROP_USE_MAP:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_USE_MAP:
         webkit_dom_html_image_element_set_use_map(self, g_value_get_string(value));
         break;
-    case PROP_VSPACE:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_VSPACE:
         webkit_dom_html_image_element_set_vspace(self, g_value_get_long(value));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_WIDTH:
         webkit_dom_html_image_element_set_width(self, g_value_get_long(value));
         break;
-    case PROP_LOWSRC:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_LOWSRC:
         webkit_dom_html_image_element_set_lowsrc(self, g_value_get_string(value));
         break;
     default:
@@ -170,58 +170,58 @@ static void webkit_dom_html_image_element_get_property(GObject* object, guint pr
     WebKitDOMHTMLImageElement* self = WEBKIT_DOM_HTML_IMAGE_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_NAME:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_NAME:
         g_value_take_string(value, webkit_dom_html_image_element_get_name(self));
         break;
-    case PROP_ALIGN:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_ALIGN:
         g_value_take_string(value, webkit_dom_html_image_element_get_align(self));
         break;
-    case PROP_ALT:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_ALT:
         g_value_take_string(value, webkit_dom_html_image_element_get_alt(self));
         break;
-    case PROP_BORDER:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_BORDER:
         g_value_take_string(value, webkit_dom_html_image_element_get_border(self));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_HEIGHT:
         g_value_set_long(value, webkit_dom_html_image_element_get_height(self));
         break;
-    case PROP_HSPACE:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_HSPACE:
         g_value_set_long(value, webkit_dom_html_image_element_get_hspace(self));
         break;
-    case PROP_IS_MAP:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_IS_MAP:
         g_value_set_boolean(value, webkit_dom_html_image_element_get_is_map(self));
         break;
-    case PROP_LONG_DESC:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_LONG_DESC:
         g_value_take_string(value, webkit_dom_html_image_element_get_long_desc(self));
         break;
-    case PROP_SRC:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_SRC:
         g_value_take_string(value, webkit_dom_html_image_element_get_src(self));
         break;
-    case PROP_USE_MAP:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_USE_MAP:
         g_value_take_string(value, webkit_dom_html_image_element_get_use_map(self));
         break;
-    case PROP_VSPACE:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_VSPACE:
         g_value_set_long(value, webkit_dom_html_image_element_get_vspace(self));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_WIDTH:
         g_value_set_long(value, webkit_dom_html_image_element_get_width(self));
         break;
-    case PROP_COMPLETE:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_COMPLETE:
         g_value_set_boolean(value, webkit_dom_html_image_element_get_complete(self));
         break;
-    case PROP_LOWSRC:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_LOWSRC:
         g_value_take_string(value, webkit_dom_html_image_element_get_lowsrc(self));
         break;
-    case PROP_NATURAL_HEIGHT:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_NATURAL_HEIGHT:
         g_value_set_long(value, webkit_dom_html_image_element_get_natural_height(self));
         break;
-    case PROP_NATURAL_WIDTH:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_NATURAL_WIDTH:
         g_value_set_long(value, webkit_dom_html_image_element_get_natural_width(self));
         break;
-    case PROP_X:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_X:
         g_value_set_long(value, webkit_dom_html_image_element_get_x(self));
         break;
-    case PROP_Y:
+    case DOM_HTML_IMAGE_ELEMENT_PROP_Y:
         g_value_set_long(value, webkit_dom_html_image_element_get_y(self));
         break;
     default:
@@ -238,7 +238,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_HTML_IMAGE_ELEMENT_PROP_NAME,
         g_param_spec_string(
             "name",
             "HTMLImageElement:name",
@@ -248,7 +248,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALIGN,
+        DOM_HTML_IMAGE_ELEMENT_PROP_ALIGN,
         g_param_spec_string(
             "align",
             "HTMLImageElement:align",
@@ -258,7 +258,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALT,
+        DOM_HTML_IMAGE_ELEMENT_PROP_ALT,
         g_param_spec_string(
             "alt",
             "HTMLImageElement:alt",
@@ -268,7 +268,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BORDER,
+        DOM_HTML_IMAGE_ELEMENT_PROP_BORDER,
         g_param_spec_string(
             "border",
             "HTMLImageElement:border",
@@ -278,7 +278,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HEIGHT,
+        DOM_HTML_IMAGE_ELEMENT_PROP_HEIGHT,
         g_param_spec_long(
             "height",
             "HTMLImageElement:height",
@@ -288,7 +288,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HSPACE,
+        DOM_HTML_IMAGE_ELEMENT_PROP_HSPACE,
         g_param_spec_long(
             "hspace",
             "HTMLImageElement:hspace",
@@ -298,7 +298,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_IS_MAP,
+        DOM_HTML_IMAGE_ELEMENT_PROP_IS_MAP,
         g_param_spec_boolean(
             "is-map",
             "HTMLImageElement:is-map",
@@ -308,7 +308,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LONG_DESC,
+        DOM_HTML_IMAGE_ELEMENT_PROP_LONG_DESC,
         g_param_spec_string(
             "long-desc",
             "HTMLImageElement:long-desc",
@@ -318,7 +318,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SRC,
+        DOM_HTML_IMAGE_ELEMENT_PROP_SRC,
         g_param_spec_string(
             "src",
             "HTMLImageElement:src",
@@ -328,7 +328,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_USE_MAP,
+        DOM_HTML_IMAGE_ELEMENT_PROP_USE_MAP,
         g_param_spec_string(
             "use-map",
             "HTMLImageElement:use-map",
@@ -338,7 +338,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VSPACE,
+        DOM_HTML_IMAGE_ELEMENT_PROP_VSPACE,
         g_param_spec_long(
             "vspace",
             "HTMLImageElement:vspace",
@@ -348,7 +348,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WIDTH,
+        DOM_HTML_IMAGE_ELEMENT_PROP_WIDTH,
         g_param_spec_long(
             "width",
             "HTMLImageElement:width",
@@ -358,7 +358,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COMPLETE,
+        DOM_HTML_IMAGE_ELEMENT_PROP_COMPLETE,
         g_param_spec_boolean(
             "complete",
             "HTMLImageElement:complete",
@@ -368,7 +368,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LOWSRC,
+        DOM_HTML_IMAGE_ELEMENT_PROP_LOWSRC,
         g_param_spec_string(
             "lowsrc",
             "HTMLImageElement:lowsrc",
@@ -378,7 +378,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NATURAL_HEIGHT,
+        DOM_HTML_IMAGE_ELEMENT_PROP_NATURAL_HEIGHT,
         g_param_spec_long(
             "natural-height",
             "HTMLImageElement:natural-height",
@@ -388,7 +388,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NATURAL_WIDTH,
+        DOM_HTML_IMAGE_ELEMENT_PROP_NATURAL_WIDTH,
         g_param_spec_long(
             "natural-width",
             "HTMLImageElement:natural-width",
@@ -398,7 +398,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_X,
+        DOM_HTML_IMAGE_ELEMENT_PROP_X,
         g_param_spec_long(
             "x",
             "HTMLImageElement:x",
@@ -408,7 +408,7 @@ static void webkit_dom_html_image_element_class_init(WebKitDOMHTMLImageElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_Y,
+        DOM_HTML_IMAGE_ELEMENT_PROP_Y,
         g_param_spec_long(
             "y",
             "HTMLImageElement:y",

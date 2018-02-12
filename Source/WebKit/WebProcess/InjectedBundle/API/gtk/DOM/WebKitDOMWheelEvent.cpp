@@ -56,10 +56,10 @@ WebKitDOMWheelEvent* wrapWheelEvent(WebCore::WheelEvent* coreObject)
 G_DEFINE_TYPE(WebKitDOMWheelEvent, webkit_dom_wheel_event, WEBKIT_DOM_TYPE_MOUSE_EVENT)
 
 enum {
-    PROP_0,
-    PROP_WHEEL_DELTA_X,
-    PROP_WHEEL_DELTA_Y,
-    PROP_WHEEL_DELTA,
+    DOM_WHEEL_EVENT_PROP_0,
+    DOM_WHEEL_EVENT_PROP_WHEEL_DELTA_X,
+    DOM_WHEEL_EVENT_PROP_WHEEL_DELTA_Y,
+    DOM_WHEEL_EVENT_PROP_WHEEL_DELTA,
 };
 
 static void webkit_dom_wheel_event_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -67,13 +67,13 @@ static void webkit_dom_wheel_event_get_property(GObject* object, guint propertyI
     WebKitDOMWheelEvent* self = WEBKIT_DOM_WHEEL_EVENT(object);
 
     switch (propertyId) {
-    case PROP_WHEEL_DELTA_X:
+    case DOM_WHEEL_EVENT_PROP_WHEEL_DELTA_X:
         g_value_set_long(value, webkit_dom_wheel_event_get_wheel_delta_x(self));
         break;
-    case PROP_WHEEL_DELTA_Y:
+    case DOM_WHEEL_EVENT_PROP_WHEEL_DELTA_Y:
         g_value_set_long(value, webkit_dom_wheel_event_get_wheel_delta_y(self));
         break;
-    case PROP_WHEEL_DELTA:
+    case DOM_WHEEL_EVENT_PROP_WHEEL_DELTA:
         g_value_set_long(value, webkit_dom_wheel_event_get_wheel_delta(self));
         break;
     default:
@@ -89,7 +89,7 @@ static void webkit_dom_wheel_event_class_init(WebKitDOMWheelEventClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WHEEL_DELTA_X,
+        DOM_WHEEL_EVENT_PROP_WHEEL_DELTA_X,
         g_param_spec_long(
             "wheel-delta-x",
             "WheelEvent:wheel-delta-x",
@@ -99,7 +99,7 @@ static void webkit_dom_wheel_event_class_init(WebKitDOMWheelEventClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WHEEL_DELTA_Y,
+        DOM_WHEEL_EVENT_PROP_WHEEL_DELTA_Y,
         g_param_spec_long(
             "wheel-delta-y",
             "WheelEvent:wheel-delta-y",
@@ -109,7 +109,7 @@ static void webkit_dom_wheel_event_class_init(WebKitDOMWheelEventClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WHEEL_DELTA,
+        DOM_WHEEL_EVENT_PROP_WHEEL_DELTA,
         g_param_spec_long(
             "wheel-delta",
             "WheelEvent:wheel-delta",

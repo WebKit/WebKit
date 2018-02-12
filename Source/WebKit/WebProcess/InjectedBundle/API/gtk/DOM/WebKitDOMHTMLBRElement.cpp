@@ -84,18 +84,17 @@ static gboolean webkit_dom_html_br_element_remove_event_listener(WebKitDOMEventT
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_br_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_br_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_br_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_br_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLBRElement, webkit_dom_html_br_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
-
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLBRElement, webkit_dom_html_br_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_br_element_dom_event_target_init))
 enum {
-    PROP_0,
-    PROP_CLEAR,
+    DOM_HTML_BR_ELEMENT_PROP_0,
+    DOM_HTML_BR_ELEMENT_PROP_CLEAR,
 };
 
 static void webkit_dom_html_br_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -103,7 +102,7 @@ static void webkit_dom_html_br_element_set_property(GObject* object, guint prope
     WebKitDOMHTMLBRElement* self = WEBKIT_DOM_HTML_BR_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CLEAR:
+    case DOM_HTML_BR_ELEMENT_PROP_CLEAR:
         webkit_dom_html_br_element_set_clear(self, g_value_get_string(value));
         break;
     default:
@@ -117,7 +116,7 @@ static void webkit_dom_html_br_element_get_property(GObject* object, guint prope
     WebKitDOMHTMLBRElement* self = WEBKIT_DOM_HTML_BR_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CLEAR:
+    case DOM_HTML_BR_ELEMENT_PROP_CLEAR:
         g_value_take_string(value, webkit_dom_html_br_element_get_clear(self));
         break;
     default:
@@ -134,7 +133,7 @@ static void webkit_dom_html_br_element_class_init(WebKitDOMHTMLBRElementClass* r
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CLEAR,
+        DOM_HTML_BR_ELEMENT_PROP_CLEAR,
         g_param_spec_string(
             "clear",
             "HTMLBRElement:clear",

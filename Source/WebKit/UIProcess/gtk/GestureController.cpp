@@ -31,9 +31,8 @@
 #include <WebCore/Scrollbar.h>
 #include <gtk/gtk.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 GestureController::GestureController(GtkWidget* widget, std::unique_ptr<GestureControllerClient>&& client)
     : m_client(WTFMove(client))

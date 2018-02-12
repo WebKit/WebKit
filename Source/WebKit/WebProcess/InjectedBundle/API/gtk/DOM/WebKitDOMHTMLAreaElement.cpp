@@ -85,30 +85,30 @@ static gboolean webkit_dom_html_area_element_remove_event_listener(WebKitDOMEven
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_area_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_area_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_area_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_area_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLAreaElement, webkit_dom_html_area_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLAreaElement, webkit_dom_html_area_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_area_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_ALT,
-    PROP_COORDS,
-    PROP_NO_HREF,
-    PROP_SHAPE,
-    PROP_TARGET,
-    PROP_HREF,
-    PROP_PROTOCOL,
-    PROP_HOST,
-    PROP_HOSTNAME,
-    PROP_PORT,
-    PROP_PATHNAME,
-    PROP_SEARCH,
-    PROP_HASH,
+    DOM_HTML_AREA_ELEMENT_PROP_0,
+    DOM_HTML_AREA_ELEMENT_PROP_ALT,
+    DOM_HTML_AREA_ELEMENT_PROP_COORDS,
+    DOM_HTML_AREA_ELEMENT_PROP_NO_HREF,
+    DOM_HTML_AREA_ELEMENT_PROP_SHAPE,
+    DOM_HTML_AREA_ELEMENT_PROP_TARGET,
+    DOM_HTML_AREA_ELEMENT_PROP_HREF,
+    DOM_HTML_AREA_ELEMENT_PROP_PROTOCOL,
+    DOM_HTML_AREA_ELEMENT_PROP_HOST,
+    DOM_HTML_AREA_ELEMENT_PROP_HOSTNAME,
+    DOM_HTML_AREA_ELEMENT_PROP_PORT,
+    DOM_HTML_AREA_ELEMENT_PROP_PATHNAME,
+    DOM_HTML_AREA_ELEMENT_PROP_SEARCH,
+    DOM_HTML_AREA_ELEMENT_PROP_HASH,
 };
 
 static void webkit_dom_html_area_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -116,43 +116,43 @@ static void webkit_dom_html_area_element_set_property(GObject* object, guint pro
     WebKitDOMHTMLAreaElement* self = WEBKIT_DOM_HTML_AREA_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALT:
+    case DOM_HTML_AREA_ELEMENT_PROP_ALT:
         webkit_dom_html_area_element_set_alt(self, g_value_get_string(value));
         break;
-    case PROP_COORDS:
+    case DOM_HTML_AREA_ELEMENT_PROP_COORDS:
         webkit_dom_html_area_element_set_coords(self, g_value_get_string(value));
         break;
-    case PROP_NO_HREF:
+    case DOM_HTML_AREA_ELEMENT_PROP_NO_HREF:
         webkit_dom_html_area_element_set_no_href(self, g_value_get_boolean(value));
         break;
-    case PROP_SHAPE:
+    case DOM_HTML_AREA_ELEMENT_PROP_SHAPE:
         webkit_dom_html_area_element_set_shape(self, g_value_get_string(value));
         break;
-    case PROP_TARGET:
+    case DOM_HTML_AREA_ELEMENT_PROP_TARGET:
         webkit_dom_html_area_element_set_target(self, g_value_get_string(value));
         break;
-    case PROP_HREF:
+    case DOM_HTML_AREA_ELEMENT_PROP_HREF:
         webkit_dom_html_area_element_set_href(self, g_value_get_string(value));
         break;
-    case PROP_PROTOCOL:
+    case DOM_HTML_AREA_ELEMENT_PROP_PROTOCOL:
         webkit_dom_html_area_element_set_protocol(self, g_value_get_string(value));
         break;
-    case PROP_HOST:
+    case DOM_HTML_AREA_ELEMENT_PROP_HOST:
         webkit_dom_html_area_element_set_host(self, g_value_get_string(value));
         break;
-    case PROP_HOSTNAME:
+    case DOM_HTML_AREA_ELEMENT_PROP_HOSTNAME:
         webkit_dom_html_area_element_set_hostname(self, g_value_get_string(value));
         break;
-    case PROP_PORT:
+    case DOM_HTML_AREA_ELEMENT_PROP_PORT:
         webkit_dom_html_area_element_set_port(self, g_value_get_string(value));
         break;
-    case PROP_PATHNAME:
+    case DOM_HTML_AREA_ELEMENT_PROP_PATHNAME:
         webkit_dom_html_area_element_set_pathname(self, g_value_get_string(value));
         break;
-    case PROP_SEARCH:
+    case DOM_HTML_AREA_ELEMENT_PROP_SEARCH:
         webkit_dom_html_area_element_set_search(self, g_value_get_string(value));
         break;
-    case PROP_HASH:
+    case DOM_HTML_AREA_ELEMENT_PROP_HASH:
         webkit_dom_html_area_element_set_hash(self, g_value_get_string(value));
         break;
     default:
@@ -166,43 +166,43 @@ static void webkit_dom_html_area_element_get_property(GObject* object, guint pro
     WebKitDOMHTMLAreaElement* self = WEBKIT_DOM_HTML_AREA_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALT:
+    case DOM_HTML_AREA_ELEMENT_PROP_ALT:
         g_value_take_string(value, webkit_dom_html_area_element_get_alt(self));
         break;
-    case PROP_COORDS:
+    case DOM_HTML_AREA_ELEMENT_PROP_COORDS:
         g_value_take_string(value, webkit_dom_html_area_element_get_coords(self));
         break;
-    case PROP_NO_HREF:
+    case DOM_HTML_AREA_ELEMENT_PROP_NO_HREF:
         g_value_set_boolean(value, webkit_dom_html_area_element_get_no_href(self));
         break;
-    case PROP_SHAPE:
+    case DOM_HTML_AREA_ELEMENT_PROP_SHAPE:
         g_value_take_string(value, webkit_dom_html_area_element_get_shape(self));
         break;
-    case PROP_TARGET:
+    case DOM_HTML_AREA_ELEMENT_PROP_TARGET:
         g_value_take_string(value, webkit_dom_html_area_element_get_target(self));
         break;
-    case PROP_HREF:
+    case DOM_HTML_AREA_ELEMENT_PROP_HREF:
         g_value_take_string(value, webkit_dom_html_area_element_get_href(self));
         break;
-    case PROP_PROTOCOL:
+    case DOM_HTML_AREA_ELEMENT_PROP_PROTOCOL:
         g_value_take_string(value, webkit_dom_html_area_element_get_protocol(self));
         break;
-    case PROP_HOST:
+    case DOM_HTML_AREA_ELEMENT_PROP_HOST:
         g_value_take_string(value, webkit_dom_html_area_element_get_host(self));
         break;
-    case PROP_HOSTNAME:
+    case DOM_HTML_AREA_ELEMENT_PROP_HOSTNAME:
         g_value_take_string(value, webkit_dom_html_area_element_get_hostname(self));
         break;
-    case PROP_PORT:
+    case DOM_HTML_AREA_ELEMENT_PROP_PORT:
         g_value_take_string(value, webkit_dom_html_area_element_get_port(self));
         break;
-    case PROP_PATHNAME:
+    case DOM_HTML_AREA_ELEMENT_PROP_PATHNAME:
         g_value_take_string(value, webkit_dom_html_area_element_get_pathname(self));
         break;
-    case PROP_SEARCH:
+    case DOM_HTML_AREA_ELEMENT_PROP_SEARCH:
         g_value_take_string(value, webkit_dom_html_area_element_get_search(self));
         break;
-    case PROP_HASH:
+    case DOM_HTML_AREA_ELEMENT_PROP_HASH:
         g_value_take_string(value, webkit_dom_html_area_element_get_hash(self));
         break;
     default:
@@ -219,7 +219,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALT,
+        DOM_HTML_AREA_ELEMENT_PROP_ALT,
         g_param_spec_string(
             "alt",
             "HTMLAreaElement:alt",
@@ -229,7 +229,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COORDS,
+        DOM_HTML_AREA_ELEMENT_PROP_COORDS,
         g_param_spec_string(
             "coords",
             "HTMLAreaElement:coords",
@@ -239,7 +239,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NO_HREF,
+        DOM_HTML_AREA_ELEMENT_PROP_NO_HREF,
         g_param_spec_boolean(
             "no-href",
             "HTMLAreaElement:no-href",
@@ -249,7 +249,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SHAPE,
+        DOM_HTML_AREA_ELEMENT_PROP_SHAPE,
         g_param_spec_string(
             "shape",
             "HTMLAreaElement:shape",
@@ -259,7 +259,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TARGET,
+        DOM_HTML_AREA_ELEMENT_PROP_TARGET,
         g_param_spec_string(
             "target",
             "HTMLAreaElement:target",
@@ -269,7 +269,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HREF,
+        DOM_HTML_AREA_ELEMENT_PROP_HREF,
         g_param_spec_string(
             "href",
             "HTMLAreaElement:href",
@@ -279,7 +279,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PROTOCOL,
+        DOM_HTML_AREA_ELEMENT_PROP_PROTOCOL,
         g_param_spec_string(
             "protocol",
             "HTMLAreaElement:protocol",
@@ -289,7 +289,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HOST,
+        DOM_HTML_AREA_ELEMENT_PROP_HOST,
         g_param_spec_string(
             "host",
             "HTMLAreaElement:host",
@@ -299,7 +299,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HOSTNAME,
+        DOM_HTML_AREA_ELEMENT_PROP_HOSTNAME,
         g_param_spec_string(
             "hostname",
             "HTMLAreaElement:hostname",
@@ -309,7 +309,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PORT,
+        DOM_HTML_AREA_ELEMENT_PROP_PORT,
         g_param_spec_string(
             "port",
             "HTMLAreaElement:port",
@@ -319,7 +319,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PATHNAME,
+        DOM_HTML_AREA_ELEMENT_PROP_PATHNAME,
         g_param_spec_string(
             "pathname",
             "HTMLAreaElement:pathname",
@@ -329,7 +329,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SEARCH,
+        DOM_HTML_AREA_ELEMENT_PROP_SEARCH,
         g_param_spec_string(
             "search",
             "HTMLAreaElement:search",
@@ -339,7 +339,7 @@ static void webkit_dom_html_area_element_class_init(WebKitDOMHTMLAreaElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HASH,
+        DOM_HTML_AREA_ELEMENT_PROP_HASH,
         g_param_spec_string(
             "hash",
             "HTMLAreaElement:hash",

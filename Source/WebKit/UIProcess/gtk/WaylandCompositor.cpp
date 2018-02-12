@@ -46,9 +46,8 @@
 #include <WebCore/OpenGLShims.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if !defined(PFNEGLBINDWAYLANDDISPLAYWL)
 typedef EGLBoolean (*PFNEGLBINDWAYLANDDISPLAYWL) (EGLDisplay, struct wl_display*);

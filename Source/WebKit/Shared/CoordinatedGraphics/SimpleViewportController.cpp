@@ -24,9 +24,8 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 SimpleViewportController::SimpleViewportController(const IntSize& size)
     : m_viewportSize(size)

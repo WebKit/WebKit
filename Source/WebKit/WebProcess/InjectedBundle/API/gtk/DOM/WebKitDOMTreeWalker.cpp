@@ -68,11 +68,11 @@ WebKitDOMTreeWalker* wrapTreeWalker(WebCore::TreeWalker* coreObject)
 G_DEFINE_TYPE(WebKitDOMTreeWalker, webkit_dom_tree_walker, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_ROOT,
-    PROP_WHAT_TO_SHOW,
-    PROP_FILTER,
-    PROP_CURRENT_NODE,
+    DOM_TREE_WALKER_PROP_0,
+    DOM_TREE_WALKER_PROP_ROOT,
+    DOM_TREE_WALKER_PROP_WHAT_TO_SHOW,
+    DOM_TREE_WALKER_PROP_FILTER,
+    DOM_TREE_WALKER_PROP_CURRENT_NODE,
 };
 
 static void webkit_dom_tree_walker_finalize(GObject* object)
@@ -90,16 +90,16 @@ static void webkit_dom_tree_walker_get_property(GObject* object, guint propertyI
     WebKitDOMTreeWalker* self = WEBKIT_DOM_TREE_WALKER(object);
 
     switch (propertyId) {
-    case PROP_ROOT:
+    case DOM_TREE_WALKER_PROP_ROOT:
         g_value_set_object(value, webkit_dom_tree_walker_get_root(self));
         break;
-    case PROP_WHAT_TO_SHOW:
+    case DOM_TREE_WALKER_PROP_WHAT_TO_SHOW:
         g_value_set_ulong(value, webkit_dom_tree_walker_get_what_to_show(self));
         break;
-    case PROP_FILTER:
+    case DOM_TREE_WALKER_PROP_FILTER:
         g_value_set_object(value, webkit_dom_tree_walker_get_filter(self));
         break;
-    case PROP_CURRENT_NODE:
+    case DOM_TREE_WALKER_PROP_CURRENT_NODE:
         g_value_set_object(value, webkit_dom_tree_walker_get_current_node(self));
         break;
     default:
@@ -129,7 +129,7 @@ static void webkit_dom_tree_walker_class_init(WebKitDOMTreeWalkerClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ROOT,
+        DOM_TREE_WALKER_PROP_ROOT,
         g_param_spec_object(
             "root",
             "TreeWalker:root",
@@ -139,7 +139,7 @@ static void webkit_dom_tree_walker_class_init(WebKitDOMTreeWalkerClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WHAT_TO_SHOW,
+        DOM_TREE_WALKER_PROP_WHAT_TO_SHOW,
         g_param_spec_ulong(
             "what-to-show",
             "TreeWalker:what-to-show",
@@ -149,7 +149,7 @@ static void webkit_dom_tree_walker_class_init(WebKitDOMTreeWalkerClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FILTER,
+        DOM_TREE_WALKER_PROP_FILTER,
         g_param_spec_object(
             "filter",
             "TreeWalker:filter",
@@ -159,7 +159,7 @@ static void webkit_dom_tree_walker_class_init(WebKitDOMTreeWalkerClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CURRENT_NODE,
+        DOM_TREE_WALKER_PROP_CURRENT_NODE,
         g_param_spec_object(
             "current-node",
             "TreeWalker:current-node",

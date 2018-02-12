@@ -36,9 +36,8 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 const unsigned minimumPrevalentResourcesForTelemetry = 3;
 const unsigned significantFiguresForLoggedValues = 3;

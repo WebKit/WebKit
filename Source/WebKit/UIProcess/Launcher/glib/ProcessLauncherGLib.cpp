@@ -44,9 +44,8 @@
 #include <wpe/renderer-host.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static void childSetupFunction(gpointer userData)
 {

@@ -84,24 +84,24 @@ static gboolean webkit_dom_attr_remove_event_listener(WebKitDOMEventTarget* targ
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_attr_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_attr_dispatch_event;
     iface->add_event_listener = webkit_dom_attr_add_event_listener;
     iface->remove_event_listener = webkit_dom_attr_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMAttr, webkit_dom_attr, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMAttr, webkit_dom_attr, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_attr_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_NAME,
-    PROP_SPECIFIED,
-    PROP_VALUE,
-    PROP_OWNER_ELEMENT,
-    PROP_NAMESPACE_URI,
-    PROP_PREFIX,
-    PROP_LOCAL_NAME,
+    DOM_ATTR_PROP_0,
+    DOM_ATTR_PROP_NAME,
+    DOM_ATTR_PROP_SPECIFIED,
+    DOM_ATTR_PROP_VALUE,
+    DOM_ATTR_PROP_OWNER_ELEMENT,
+    DOM_ATTR_PROP_NAMESPACE_URI,
+    DOM_ATTR_PROP_PREFIX,
+    DOM_ATTR_PROP_LOCAL_NAME,
 };
 
 static void webkit_dom_attr_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -109,7 +109,7 @@ static void webkit_dom_attr_set_property(GObject* object, guint propertyId, cons
     WebKitDOMAttr* self = WEBKIT_DOM_ATTR(object);
 
     switch (propertyId) {
-    case PROP_VALUE:
+    case DOM_ATTR_PROP_VALUE:
         webkit_dom_attr_set_value(self, g_value_get_string(value), nullptr);
         break;
     default:
@@ -123,25 +123,25 @@ static void webkit_dom_attr_get_property(GObject* object, guint propertyId, GVal
     WebKitDOMAttr* self = WEBKIT_DOM_ATTR(object);
 
     switch (propertyId) {
-    case PROP_NAME:
+    case DOM_ATTR_PROP_NAME:
         g_value_take_string(value, webkit_dom_attr_get_name(self));
         break;
-    case PROP_SPECIFIED:
+    case DOM_ATTR_PROP_SPECIFIED:
         g_value_set_boolean(value, webkit_dom_attr_get_specified(self));
         break;
-    case PROP_VALUE:
+    case DOM_ATTR_PROP_VALUE:
         g_value_take_string(value, webkit_dom_attr_get_value(self));
         break;
-    case PROP_OWNER_ELEMENT:
+    case DOM_ATTR_PROP_OWNER_ELEMENT:
         g_value_set_object(value, webkit_dom_attr_get_owner_element(self));
         break;
-    case PROP_NAMESPACE_URI:
+    case DOM_ATTR_PROP_NAMESPACE_URI:
         g_value_take_string(value, webkit_dom_attr_get_namespace_uri(self));
         break;
-    case PROP_PREFIX:
+    case DOM_ATTR_PROP_PREFIX:
         g_value_take_string(value, webkit_dom_attr_get_prefix(self));
         break;
-    case PROP_LOCAL_NAME:
+    case DOM_ATTR_PROP_LOCAL_NAME:
         g_value_take_string(value, webkit_dom_attr_get_local_name(self));
         break;
     default:
@@ -158,7 +158,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_ATTR_PROP_NAME,
         g_param_spec_string(
             "name",
             "Attr:name",
@@ -168,7 +168,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SPECIFIED,
+        DOM_ATTR_PROP_SPECIFIED,
         g_param_spec_boolean(
             "specified",
             "Attr:specified",
@@ -178,7 +178,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VALUE,
+        DOM_ATTR_PROP_VALUE,
         g_param_spec_string(
             "value",
             "Attr:value",
@@ -188,7 +188,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OWNER_ELEMENT,
+        DOM_ATTR_PROP_OWNER_ELEMENT,
         g_param_spec_object(
             "owner-element",
             "Attr:owner-element",
@@ -198,7 +198,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAMESPACE_URI,
+        DOM_ATTR_PROP_NAMESPACE_URI,
         g_param_spec_string(
             "namespace-uri",
             "Attr:namespace-uri",
@@ -208,7 +208,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PREFIX,
+        DOM_ATTR_PROP_PREFIX,
         g_param_spec_string(
             "prefix",
             "Attr:prefix",
@@ -218,7 +218,7 @@ static void webkit_dom_attr_class_init(WebKitDOMAttrClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LOCAL_NAME,
+        DOM_ATTR_PROP_LOCAL_NAME,
         g_param_spec_string(
             "local-name",
             "Attr:local-name",

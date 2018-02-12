@@ -30,9 +30,8 @@
 #include <WebCore/markup.h>
 #include <wtf/glib/GRefPtr.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
 {
