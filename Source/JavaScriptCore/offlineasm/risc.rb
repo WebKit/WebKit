@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -575,7 +575,7 @@ def riscLowerNot(list)
         if node.is_a? Instruction
             case node.opcode
             when "noti", "notp"
-                raise "Wrong nubmer of operands at #{node.codeOriginString}" unless node.operands.size == 1
+                raise "Wrong number of operands at #{node.codeOriginString}" unless node.operands.size == 1
                 suffix = node.opcode[-1..-1]
                 newList << Instruction.new(node.codeOrigin, "xor" + suffix,
                                            [Immediate.new(node.codeOrigin, -1), node.operands[0]])
