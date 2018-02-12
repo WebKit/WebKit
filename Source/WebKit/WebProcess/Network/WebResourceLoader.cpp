@@ -160,6 +160,14 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
     m_coreLoader->didFail(error);
 }
 
+void WebResourceLoader::didBlockAuthenticationChallenge()
+{
+    LOG(Network, "(WebProcess) WebResourceLoader::didBlockAuthenticationChallenge for '%s'", m_coreLoader->url().string().latin1().data());
+    RELEASE_LOG_IF_ALLOWED("didBlockAuthenticationChallenge: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
+
+    m_coreLoader->didBlockAuthenticationChallenge();
+}
+
 #if ENABLE(SHAREABLE_RESOURCE)
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle)
 {

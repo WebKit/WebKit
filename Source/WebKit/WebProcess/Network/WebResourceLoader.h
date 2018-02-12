@@ -81,6 +81,7 @@ private:
     void didRetrieveDerivedData(const String& type, const IPC::DataReference&);
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
+    void didBlockAuthenticationChallenge();
 #if ENABLE(SHAREABLE_RESOURCE)
     void didReceiveResource(const ShareableResource::Handle&);
 #endif

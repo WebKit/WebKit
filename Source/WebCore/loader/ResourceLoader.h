@@ -89,6 +89,9 @@ public:
 
     unsigned long identifier() const { return m_identifier; }
 
+    bool wasAuthenticationChallengeBlocked() const { return m_wasAuthenticationChallengeBlocked; }
+    bool wasInsecureRequestSeen() const { return m_wasInsecureRequestSeen; }
+
     virtual void releaseResources();
     const ResourceResponse& response() const { return m_response; }
 
@@ -105,6 +108,8 @@ public:
     virtual void didFinishLoading(const NetworkLoadMetrics&);
     virtual void didFail(const ResourceError&);
     virtual void didRetrieveDerivedDataFromCache(const String& type, SharedBuffer&);
+
+    WEBCORE_EXPORT void didBlockAuthenticationChallenge();
 
     virtual bool shouldUseCredentialStorage();
     virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
@@ -149,6 +154,8 @@ public:
 
 protected:
     ResourceLoader(Frame&, ResourceLoaderOptions);
+
+    bool isMixedContent(const URL&) const;
 
     void didFinishLoadingOnePart(const NetworkLoadMetrics&);
     void cleanupForError(const ResourceError&);
@@ -204,8 +211,6 @@ private:
     bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
-    bool isMixedContent(const URL&) const;
-
     ResourceRequest m_request;
     ResourceRequest m_originalRequest; // Before redirects.
     RefPtr<SharedBuffer> m_resourceData;
@@ -225,6 +230,8 @@ private:
 
     bool m_defersLoading;
     bool m_canAskClientForCredentials;
+    bool m_wasInsecureRequestSeen { false };
+    bool m_wasAuthenticationChallengeBlocked { false };
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
 
