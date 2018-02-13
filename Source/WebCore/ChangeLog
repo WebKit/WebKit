@@ -1,5 +1,20 @@
 2018-02-12  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228229. rdar://problem/37475107
+
+    2018-02-06  Matt Lewis  <jlewis3@apple.com>
+
+            Removed the assertions from VideoFullscreenInterfaceAVKit.mm temporarily to stop the resulting crashes during debugging.
+            https://bugs.webkit.org/show_bug.cgi?id=182527
+
+            Unreviewed build fix.
+
+            * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+            (VideoFullscreenInterfaceAVKit::exitFullscreen):
+            (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+
+2018-02-12  Jason Marcell  <jmarcell@apple.com>
+
         Apply patch. rdar://problem/37470882
 
     CoreAudioCaptureSourceIOSListener should be a WebProcess singleton
