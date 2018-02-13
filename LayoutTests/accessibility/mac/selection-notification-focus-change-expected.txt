@@ -16,9 +16,9 @@ accessibilityController.accessibleElementById("1").takeFocus()
 Received AXFocusChanged
 
 eventSender.keyDown(tabCharacter)
-Received AXFocusChanged
 Received AXSelectedTextChanged
 PASS userInfo["AXTextSelectionChangedFocus"] is true
+Received AXFocusChanged
 Received AXSelectedTextChanged
 PASS userInfo["AXTextSelectionChangedFocus"] is true
 PASS successfullyParsed is true
