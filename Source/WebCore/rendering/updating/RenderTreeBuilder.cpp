@@ -224,6 +224,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
     if (is<RenderSVGRoot>(parent))
         return svgBuilder().takeChild(downcast<RenderSVGRoot>(parent), child);
 
+    if (is<RenderBlockFlow>(parent))
+        return blockBuilder().takeChild(downcast<RenderBlockFlow>(parent), child);
+
     return parent.takeChild(*this, child);
 }
 
@@ -449,11 +452,6 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
 void RenderTreeBuilder::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
 {
     blockBuilder().dropAnonymousBoxChild(parent, child);
-}
-
-void RenderTreeBuilder::multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow& flow, RenderObject& relative)
-{
-    multiColumnBuilder().multiColumnRelativeWillBeRemoved(flow, relative);
 }
 
 void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)

@@ -29,6 +29,7 @@
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderFullScreen.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderRubyRun.h"
 #include "RenderTextControl.h"
@@ -363,6 +364,16 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     child.moveAllChildrenTo(m_builder, &parent, nextSibling, RenderBoxModelObject::NormalizeAfterInsertion::No);
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
+}
+
+RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlockFlow& parent, RenderObject& child)
+{
+    if (!parent.renderTreeBeingDestroyed()) {
+        auto* fragmentedFlow = parent.multiColumnFlow();
+        if (fragmentedFlow && fragmentedFlow != &child)
+            m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child);
+    }
+    return parent.RenderBlock::takeChild(m_builder, child);
 }
 
 }
