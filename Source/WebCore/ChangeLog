@@ -1,3 +1,87 @@
+2018-02-13  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make KeyframeEffect target nullable and read-write
+        https://bugs.webkit.org/show_bug.cgi?id=182741
+
+        Reviewed by Dean Jackson.
+
+        We used to completely disregard null targets, for instance not parsing keyframes, but targets
+        can be null and are also supposed to be read-write for KeyframeEffect. We now update the IDL
+        for KeyframeEffect to mark the target property as read-write and update the implementation
+        to correctly handle null targets by creating a StyleResolver based on the ScriptExecutionContext's
+        document's document element (the <html> element in practice) and not the target itself, since it
+        can be null.
+
+        This revealed a few issues in our implementation by allowing more WPT tests to run. So we also
+        ensure that:
+        
+        - we don't crash when parsing font-related properties by calling update() on the generated
+        RenderStyle's FontCascade when parsing keyframes.
+
+        - CSS properties are provided as camel-case and not as hyphenated form
+
+        - values provided in keyframes dictionaries are only read for valid properties
+
+        - styles for effect targets are invalidated as soon as the timing model for that animation
+        is changed
+
+        We also rename AnimationTimeline::animationTimingModelDidChange() to AnimationTimeline::timingModelDidChange()
+        since the previous name didn't add useful information and we're adding a new WebAnimation::timingModelDidChange()
+        method, so having the two methods have a similar name made more sense.
+
+        * animation/Animatable.idl: Call animate() with a ScriptExecutionContext rather than a ScriptState
+        so that the ScriptExecutionContext can be passed to the KeyframeEffectReadOnly constructor.
+        * animation/AnimationEffectReadOnly.h: Add a new invalidate() method, designed to be subclassed, that
+        is called when the timing model for this effect or owning animation has changed.
+        * animation/AnimationTimeline.cpp: Rename animationTimingModelDidChange() to timingModelDidChange().
+        (WebCore::AnimationTimeline::addAnimation):
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::setCurrentTime):
+        * animation/AnimationTimeline.h: Rename animationTimingModelDidChange() to timingModelDidChange().
+        (WebCore::AnimationTimeline::timingModelDidChange):
+        (WebCore::AnimationTimeline::animationTimingModelDidChange): Deleted.
+        * animation/DocumentTimeline.cpp: Rename animationTimingModelDidChange() to timingModelDidChange().
+        (WebCore::DocumentTimeline::timingModelDidChange):
+        (WebCore::DocumentTimeline::updateAnimations):
+        (WebCore::DocumentTimeline::animationTimingModelDidChange): Deleted.
+        * animation/DocumentTimeline.h: Rename animationTimingModelDidChange() to timingModelDidChange().
+        * animation/KeyframeEffect.cpp: Expect a ScriptExecutionContext rather than a ScriptState.
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::setKeyframes):
+        * animation/KeyframeEffect.h: Expect a ScriptExecutionContext rather than a ScriptState.
+        * animation/KeyframeEffect.idl: Expect a ScriptExecutionContext rather than a ScriptState and make the
+        target property read-write.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::IDLAttributeNameToAnimationPropertyName): Move this function below CSSPropertyIDToIDLAttributeName
+        so that it can call that function. We also check that we reject CSS properties that are not provided in
+        camel-case form (eg. "font-size" vs. "fontSize").
+        (WebCore::processIterableKeyframes): Only read the JS values if we know that the provided JS property name
+        maps to a valid CSS property.
+        (WebCore::KeyframeEffectReadOnly::create): Expect a ScriptExecutionContext rather than a ScriptState.
+        (WebCore::KeyframeEffectReadOnly::processKeyframes): Expect a ScriptExecutionContext rather than a ScriptState
+        and use the context's document to get an HTML element to create a StyleResolver. We also call update() on the
+        generated RenderStyle's FontCascade since otherwise we would hit an ASSERT in FontCascade when parsing font-related
+        CSS properties.
+        (WebCore::KeyframeEffectReadOnly::setTarget): Notify the animation that the effect target has changed and invalidate
+        the style of the new target and the old targets, if any.
+        (WebCore::KeyframeEffectReadOnly::invalidate): Invalidate the target's style. This method is called by setTarget()
+        and WebAnimation::timingModelDidChange().
+        * animation/KeyframeEffectReadOnly.h: Expect a ScriptExecutionContext rather than a ScriptState.
+        * animation/KeyframeEffectReadOnly.idl: Expect a ScriptExecutionContext rather than a ScriptState.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timingModelDidChange): We add this new method such that any place in WebAnimation where we
+        know the animation's timing model has changed we can invalidate the associated effect, if any, as well as notify
+        the timeline, if any. We used to only notify the timeline and, as a result, only invalidate the associated effect
+        in the next display monitor refresh. 
+        (WebCore::WebAnimation::effectTargetDidChange): This method is called in KeyframeEffectReadOnly::setTarget() to inform
+        the animation of the previous effect target and the new one upon a target change. This allows us to forward this information
+        onto the timeline so that we correctly add or remove the targets from the list of animated elements.
+        (WebCore::WebAnimation::setStartTime):
+        * animation/WebAnimation.h: Expose the new effectTargetDidChange() and timingModelDidChange() methods.
+        * dom/Element.cpp: Expect a ScriptExecutionContext rather than a ScriptState.
+        (WebCore::Element::animate):
+        * dom/Element.h: Expect a ScriptExecutionContext rather than a ScriptState.
+
 2018-02-13  Antti Koivisto  <antti@apple.com>
 
         Crash when breakpoint hit in unload handler

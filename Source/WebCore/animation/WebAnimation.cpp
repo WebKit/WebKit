@@ -71,6 +71,14 @@ WebAnimation::~WebAnimation()
         m_timeline->removeAnimation(*this);
 }
 
+void WebAnimation::timingModelDidChange()
+{
+    if (m_effect)
+        m_effect->invalidate();
+    if (m_timeline)
+        m_timeline->timingModelDidChange();
+}
+
 void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& effect)
 {
     // 3.4.3. Setting the target effect of an animation
@@ -152,7 +160,19 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     // and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 }
-    
+
+void WebAnimation::effectTargetDidChange(RefPtr<Element> previousTarget, RefPtr<Element> newTarget)
+{
+    if (!m_timeline)
+        return;
+
+    if (previousTarget)
+        m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
+
+    if (newTarget)
+        m_timeline->animationWasAddedToElement(*this, *newTarget);
+}
+
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)
@@ -180,8 +200,7 @@ void WebAnimation::setStartTime(std::optional<Seconds> startTime)
 
     m_startTime = startTime;
     
-    if (m_timeline)
-        m_timeline->animationTimingModelDidChange();
+    timingModelDidChange();
 }
 
 std::optional<double> WebAnimation::bindingsCurrentTime() const

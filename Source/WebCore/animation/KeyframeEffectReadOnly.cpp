@@ -45,19 +45,6 @@
 namespace WebCore {
 using namespace JSC;
 
-static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(String idlAttributeName)
-{
-    // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
-    // 1. If attribute conforms to the <custom-property-name> production, return attribute.
-    // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
-    if (idlAttributeName == "cssFloat")
-        return CSSPropertyFloat;
-    // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
-    // FIXME: we don't support the CSS "offset" property
-    // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
-    return CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
-}
-
 static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
 {
     // https://drafts.csswg.org/web-animations-1/#animation-property-name-to-idl-attribute-name
@@ -69,6 +56,27 @@ static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId
     // FIXME: we don't support the CSS "offset" property
     // 4. Otherwise, return the result of applying the CSS property to IDL attribute algorithm [CSSOM] to property.
     return getJSPropertyName(cssPropertyId);
+}
+
+static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(String idlAttributeName)
+{
+    // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
+    // 1. If attribute conforms to the <custom-property-name> production, return attribute.
+    // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
+    if (idlAttributeName == "cssFloat")
+        return CSSPropertyFloat;
+    // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
+    // FIXME: we don't support the CSS "offset" property
+    // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
+
+    auto cssPropertyId = CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
+
+    // We need to check that converting the property back to IDL form yields the same result such that a property passed
+    // in non-IDL form is rejected, for instance "font-size".
+    if (idlAttributeName != CSSPropertyIDToIDLAttributeName(cssPropertyId))
+        return CSSPropertyInvalid;
+
+    return cssPropertyId;
 }
 
 static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffectReadOnly::ProcessedKeyframe>& keyframes)
@@ -144,17 +152,16 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
 
         for (size_t j = 0; j < numberOfProperties; ++j) {
             auto ownPropertyName = ownPropertyNames[j];
-            auto ownPropertyRawValue = keyframe->get(&state, ownPropertyName);
             if (ownPropertyName == "easing")
-                easing = convert<IDLDOMString>(state, ownPropertyRawValue);
+                easing = convert<IDLDOMString>(state, keyframe->get(&state, ownPropertyName));
             else if (ownPropertyName == "offset")
-                offset = convert<IDLNullable<IDLDouble>>(state, ownPropertyRawValue);
+                offset = convert<IDLNullable<IDLDouble>>(state, keyframe->get(&state, ownPropertyName));
             else if (ownPropertyName == "composite")
-                composite = convert<IDLEnumeration<CompositeOperation>>(state, ownPropertyRawValue);
+                composite = convert<IDLEnumeration<CompositeOperation>>(state, keyframe->get(&state, ownPropertyName));
             else {
                 auto cssPropertyId = IDLAttributeNameToAnimationPropertyName(ownPropertyName.string());
                 if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId))
-                    keyframeOutput.cssPropertiesAndValues.set(cssPropertyId, convert<IDLDOMString>(state, ownPropertyRawValue));
+                    keyframeOutput.cssPropertiesAndValues.set(cssPropertyId, convert<IDLDOMString>(state, keyframe->get(&state, ownPropertyName)));
             }
             RETURN_IF_EXCEPTION(scope, Exception { TypeError });
         }
@@ -384,7 +391,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(ScriptExecutionContext& scriptExecutionContext, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffectReadOnly(KeyframeEffectReadOnlyClass, AnimationEffectTimingReadOnly::create(), target));
 
@@ -392,14 +399,14 @@ ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(ExecStat
     if (setPropertiesResult.hasException())
         return setPropertiesResult.releaseException();
 
-    auto processKeyframesResult = keyframeEffect->processKeyframes(state, WTFMove(keyframes));
+    auto processKeyframesResult = keyframeEffect->processKeyframes(scriptExecutionContext, WTFMove(keyframes));
     if (processKeyframesResult.hasException())
         return processKeyframesResult.releaseException();
 
     return WTFMove(keyframeEffect);
 }
 
-ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&& source)
+ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(ScriptExecutionContext&, Ref<KeyframeEffectReadOnly>&& source)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffectReadOnly(KeyframeEffectReadOnlyClass, AnimationEffectTimingReadOnly::create(), nullptr));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
@@ -495,11 +502,13 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
     return result;
 }
 
-ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ScriptExecutionContext& scriptExecutionContext, Strong<JSObject>&& keyframesInput)
 {
     // 1. If object is null, return an empty sequence of keyframes.
-    if (!m_target || !keyframesInput.get())
+    if (!keyframesInput.get())
         return { };
+
+    auto& state = *scriptExecutionContext.execState();
 
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -542,7 +551,15 @@ ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Str
     Vector<RefPtr<TimingFunction>> timingFunctions;
     Vector<std::optional<CompositeOperation>> compositeOperations;
 
-    StyleResolver& styleResolver = m_target->styleResolver();
+    if (!scriptExecutionContext.isDocument())
+        return Exception { TypeError };
+
+    auto documentElement = downcast<Document>(scriptExecutionContext).documentElement();
+
+    if (!documentElement)
+        return Exception { TypeError };
+
+    StyleResolver& styleResolver = documentElement->styleResolver();
     auto parserContext = CSSParserContext(HTMLStandardMode);
 
     // 8. For each frame in processed keyframes, perform the following steps:
@@ -565,6 +582,8 @@ ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Str
 
         KeyframeValue keyframeValue(keyframe.computedOffset.value(), nullptr);
         auto renderStyle = RenderStyle::createPtr();
+        // We need to call update() on the FontCascade or we'll hit an ASSERT when parsing font-related properties.
+        renderStyle->fontCascade().update(nullptr);
         auto styleProperties = MutableStyleProperties::create();
         styleProperties->parseDeclaration(cssText.toString(), parserContext);
         unsigned numberOfCSSProperties = styleProperties->propertyCount();
@@ -619,6 +638,29 @@ void KeyframeEffectReadOnly::computeStackingContextImpact()
     }
 }
 
+void KeyframeEffectReadOnly::setTarget(RefPtr<Element> newTarget)
+{
+    auto previousTarget = m_target;
+    if (previousTarget == newTarget)
+        return;
+
+    m_target = newTarget;
+
+    if (auto effectAnimation = animation())
+        effectAnimation->effectTargetDidChange(previousTarget, newTarget);
+
+    // We need to invalidate the effect now that the target has changed
+    // to ensure the effect's styles are applied to the new target right away.
+    invalidate();
+
+    // Likewise, we need to invalidate styles on the previous target so that
+    // any animated styles are removed immediately.
+    if (previousTarget) {
+        previousTarget->invalidateStyleAndLayerComposition();
+        previousTarget->document().updateStyleIfNeeded();
+    }
+}
+
 void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
 {
     if (!m_target)
@@ -651,6 +693,15 @@ void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
     // must act as if the will-change property ([css-will-change-1]) on the target element includes the property.
     if (m_triggersStackingContext && targetStyle.hasAutoZIndex())
         targetStyle.setZIndex(0);
+}
+
+void KeyframeEffectReadOnly::invalidate()
+{
+    if (!m_target)
+        return;
+
+    m_target->invalidateStyleAndLayerComposition();
+    m_target->document().updateStyleIfNeeded();
 }
 
 bool KeyframeEffectReadOnly::shouldRunAccelerated()

@@ -37,13 +37,13 @@ class Element;
 
 class KeyframeEffect final : public KeyframeEffectReadOnly {
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(ScriptExecutionContext&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(ScriptExecutionContext&, Ref<KeyframeEffectReadOnly>&&);
     ~KeyframeEffect() { }
 
     void setIterationComposite(IterationCompositeOperation iterationCompositeOperation) { m_iterationCompositeOperation = iterationCompositeOperation; }
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
-    ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+    ExceptionOr<void> setKeyframes(ScriptExecutionContext&, JSC::Strong<JSC::JSObject>&&);
 
 private:
     KeyframeEffect(Ref<AnimationEffectTimingReadOnly>&&, Element*);
