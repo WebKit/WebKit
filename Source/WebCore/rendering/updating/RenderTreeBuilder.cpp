@@ -28,6 +28,7 @@
 
 #include "RenderButton.h"
 #include "RenderElement.h"
+#include "RenderMenuList.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
@@ -197,6 +198,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
 
     if (is<RenderRubyRun>(parent))
         return rubyBuilder().takeChild(downcast<RenderRubyRun>(parent), child);
+
+    if (is<RenderMenuList>(parent))
+        return takeChildFromRenderMenuList(downcast<RenderMenuList>(parent), child);
 
     return parent.takeChild(*this, child);
 }
@@ -508,6 +512,14 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 RenderObject* RenderTreeBuilder::resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild)
 {
     return multiColumnBuilder().resolveMovedChild(enclosingFragmentedFlow, beforeChild);
+}
+
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child)
+{
+    auto* innerRenderer = parent.innerRenderer();
+    if (!innerRenderer || &child == innerRenderer)
+        return parent.RenderBlock::takeChild(*this, child);
+    return takeChild(*innerRenderer, child);
 }
 
 }

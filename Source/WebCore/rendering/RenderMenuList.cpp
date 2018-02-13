@@ -172,13 +172,6 @@ void RenderMenuList::addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child,
         cache->childrenChanged(this, child.get());
 }
 
-RenderPtr<RenderObject> RenderMenuList::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
-{
-    if (!m_innerBlock || &oldChild == m_innerBlock)
-        return RenderFlexibleBox::takeChild(builder, oldChild);
-    return builder.takeChild(*m_innerBlock, oldChild);
-}
-
 void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
