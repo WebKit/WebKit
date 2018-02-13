@@ -123,6 +123,30 @@ Ref<MediaSample> MediaSampleGStreamer::createNonDisplayingCopy() const
     return adoptRef(*new MediaSampleGStreamer(sample.get(), m_presentationSize, m_trackId));
 }
 
+void MediaSampleGStreamer::dump(PrintStream& out) const
+{
+    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(");
+
+    bool anyFlags = false;
+    auto appendFlag = [&out, &anyFlags](const char* flagName) {
+        if (anyFlags)
+            out.print(",");
+        out.print(flagName);
+        anyFlags = true;
+    };
+
+    if (flags() & MediaSample::IsSync)
+        appendFlag("sync");
+    if (flags() & MediaSample::IsNonDisplaying)
+        appendFlag("non-displaying");
+    if (flags() & MediaSample::HasAlpha)
+        appendFlag("has-alpha");
+    if (flags() & ~(MediaSample::IsSync | MediaSample::IsNonDisplaying | MediaSample::HasAlpha))
+        appendFlag("unknown-flag");
+
+    out.print("), trackId(", trackID().string(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
+}
+
 } // namespace WebCore.
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)
