@@ -1,5 +1,33 @@
 2018-02-13  Zalan Bujtas  <zalan@apple.com>
 
+        [RenderTreeBuilder] Move RenderSVG*::takeChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182736
+        <rdar://problem/37503107>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::takeChild): Deleted.
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::takeChild): Deleted.
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::takeChild): Deleted.
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::takeChild): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChild):
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::takeChild):
+        * rendering/updating/RenderTreeBuilderSVG.h:
+
+2018-02-13  Zalan Bujtas  <zalan@apple.com>
+
         [RenderTreeBuilder] Move RenderGrid::takeChild() to RenderTreeBuilder
         https://bugs.webkit.org/show_bug.cgi?id=182734
         <rdar://problem/37500876>

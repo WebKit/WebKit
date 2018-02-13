@@ -33,6 +33,9 @@
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
+#include "RenderSVGContainer.h"
+#include "RenderSVGInline.h"
+#include "RenderSVGRoot.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"
@@ -208,6 +211,18 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
 
     if (is<RenderGrid>(parent))
         return takeChildFromRenderGrid(downcast<RenderGrid>(parent), child);
+
+    if (is<RenderSVGText>(parent))
+        return svgBuilder().takeChild(downcast<RenderSVGText>(parent), child);
+
+    if (is<RenderSVGInline>(parent))
+        return svgBuilder().takeChild(downcast<RenderSVGInline>(parent), child);
+
+    if (is<RenderSVGContainer>(parent))
+        return svgBuilder().takeChild(downcast<RenderSVGContainer>(parent), child);
+
+    if (is<RenderSVGRoot>(parent))
+        return svgBuilder().takeChild(downcast<RenderSVGRoot>(parent), child);
 
     return parent.takeChild(*this, child);
 }

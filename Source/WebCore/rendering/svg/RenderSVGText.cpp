@@ -525,17 +525,6 @@ void RenderSVGText::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject>
     builder.insertChildToSVGText(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderSVGText::takeChild(RenderTreeBuilder& builder, RenderObject& child)
-{
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
-
-    Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
-    subtreeChildWillBeRemoved(&child, affectedAttributes);
-    auto takenChild = RenderSVGBlock::takeChild(builder, child);
-    subtreeChildWasRemoved(affectedAttributes);
-    return takenChild;
-}
-
 // Fix for <rdar://problem/8048875>. We should not render :first-line CSS Style
 // in a SVG text element context.
 RenderBlock* RenderSVGText::firstLineBlock() const
