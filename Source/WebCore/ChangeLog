@@ -1,3 +1,26 @@
+2018-02-13  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlock::takeChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182746
+        <rdar://problem/37512871>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::takeChild): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChild):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderMenuList):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderButton):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderGrid):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderBlock): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::takeChild):
+
 2018-02-13  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make KeyframeEffect target nullable and read-write
