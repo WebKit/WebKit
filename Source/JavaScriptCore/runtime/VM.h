@@ -338,22 +338,33 @@ public:
     CompleteSubspace webAssemblyCodeBlockSpace;
 #endif
     
+    IsoSubspace asyncFunctionSpace;
+    IsoSubspace asyncGeneratorFunctionSpace;
+    IsoSubspace boundFunctionSpace;
+    IsoSubspace customGetterSetterFunctionSpace;
     IsoSubspace directEvalExecutableSpace;
     IsoSubspace errorInstanceSpace;
     IsoSubspace exceptionSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionExecutableSpace;
+    IsoSubspace functionSpace;
+    IsoSubspace generatorFunctionSpace;
     IsoSubspace indirectEvalExecutableSpace;
     IsoSubspace inferredTypeSpace;
     IsoSubspace inferredValueSpace;
     IsoSubspace moduleProgramExecutableSpace;
     IsoSubspace nativeExecutableSpace;
+    IsoSubspace nativeStdFunctionSpace;
     IsoSubspace programExecutableSpace;
     IsoSubspace propertyTableSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
     IsoSubspace weakSetSpace;
     IsoSubspace weakMapSpace;
+#if ENABLE(WEBASSEMBLY)
+    IsoSubspace webAssemblyFunctionSpace;
+    IsoSubspace webAssemblyWrapperFunctionSpace;
+#endif
     
     IsoCellSet errorInstancesWithFinalizers;
     IsoCellSet exceptionsWithFinalizers;

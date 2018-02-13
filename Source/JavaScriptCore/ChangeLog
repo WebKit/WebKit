@@ -1,3 +1,63 @@
+2018-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Lock down JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=182652
+
+        Reviewed by Saam Barati.
+        
+        This poisons pointers in JSFunction and puts all of the types in the JSFunction hierarchy in
+        isospaces.
+        
+        This is so neutral on JetStream: 0.01% slower with p = 0.969211.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::TrustedImmPtr):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPointer):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPoisonedPointer):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetExecutable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::weakPointer):
+        (JSC::FTL::DFG::LowerDFGToB3::weakPoisonedPointer):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::weakPointer):
+        (JSC::FTL::Output::weakPoisonedPointer):
+        * heap/MarkedSpace.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSAsyncFunction.h:
+        (JSC::JSAsyncFunction::subspaceFor):
+        * runtime/JSAsyncGeneratorFunction.h:
+        (JSC::JSAsyncGeneratorFunction::subspaceFor):
+        * runtime/JSBoundFunction.h:
+        (JSC::JSBoundFunction::subspaceFor):
+        * runtime/JSCPoison.h:
+        * runtime/JSCustomGetterSetterFunction.h:
+        (JSC::JSCustomGetterSetterFunction::subspaceFor):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::subspaceFor):
+        * runtime/JSGeneratorFunction.h:
+        (JSC::JSGeneratorFunction::subspaceFor):
+        * runtime/JSNativeStdFunction.h:
+        (JSC::JSNativeStdFunction::subspaceFor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2018-02-12  Saam Barati  <sbarati@apple.com>
 
         Add a GetIndexMask node and make it an input to GetByVal for array and typed array accesses in DFG SSA
