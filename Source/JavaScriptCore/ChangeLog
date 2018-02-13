@@ -1,3 +1,10 @@
+2018-02-13  Saam Barati  <sbarati@apple.com>
+
+        Follup fix to r228411 for 32-bit builds. I missed a place where we used non vararg getter for child2().
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2018-02-13  Guillaume Emont  <guijemont@igalia.com>
 
         [YarrJIT][ARM] We need to save r8 as it is the initial start register
