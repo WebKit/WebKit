@@ -1,3 +1,17 @@
+2018-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] whitelist iokit-get-properties
+        https://bugs.webkit.org/show_bug.cgi?id=182722
+        <rdar://problem/30929165>
+
+        Reviewed by Eric Carlson.
+
+        Update the iOS sandbox to block access to IOKit properties that are not needed for
+        legitimate WebContent process use. This brings the iOS sandbox in line with the
+        work done under macOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2018-02-12  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources
