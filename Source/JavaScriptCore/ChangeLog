@@ -1,3 +1,22 @@
+2018-02-13  Guillaume Emont  <guijemont@igalia.com>
+
+        [YarrJIT][ARM] We need to save r8 as it is the initial start register
+        https://bugs.webkit.org/show_bug.cgi?id=182157
+
+        Reviewed by Saam Barati.
+
+        Register r8 is the initial start register since r224172, so we need to
+        save it. We still need to save r6 as well even though it is not the
+        initial start register any more, since it is used by the
+        MacroAssembler which we use (we get crashes in some situations if we
+        don't save r6). This issue was discovered because
+        stress/regress-174044.js crashes on a raspberry pi 2 when compiled in
+        -O2.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+
 2018-02-13  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] cache TaggedTemplate arrays by callsite rather than by contents

@@ -3334,6 +3334,7 @@ class YarrGenerator : private MacroAssembler {
         push(ARMRegisters::r4);
         push(ARMRegisters::r5);
         push(ARMRegisters::r6);
+        push(ARMRegisters::r8);
 #elif CPU(MIPS)
         // Do nothing.
 #endif
@@ -3381,6 +3382,7 @@ class YarrGenerator : private MacroAssembler {
         if (m_decodeSurrogatePairs)
             popPair(framePointerRegister, linkRegister);
 #elif CPU(ARM)
+        pop(ARMRegisters::r8);
         pop(ARMRegisters::r6);
         pop(ARMRegisters::r5);
         pop(ARMRegisters::r4);
