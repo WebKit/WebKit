@@ -44,6 +44,7 @@ class KeyframeEffectReadOnly : public AnimationEffectReadOnly
     , public CSSPropertyBlendingClient {
 public:
     static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&&);
     ~KeyframeEffectReadOnly() { }
 
     struct BasePropertyIndexedKeyframe {
@@ -98,7 +99,9 @@ public:
 #endif
 
 protected:
+    void copyPropertiesFromSource(Ref<KeyframeEffectReadOnly>&&);
     ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+
     IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
 

@@ -80,6 +80,18 @@ ExceptionOr<void> AnimationEffectTimingReadOnly::setProperties(std::optional<Var
     return { };
 }
 
+void AnimationEffectTimingReadOnly::copyPropertiesFromSource(AnimationEffectTimingReadOnly* source)
+{
+    m_fill = source->m_fill;
+    m_delay = source->m_delay;
+    m_endDelay = source->m_endDelay;
+    m_direction = source->m_direction;
+    m_iterations = source->m_iterations;
+    m_timingFunction = source->m_timingFunction;
+    m_iterationStart = source->m_iterationStart;
+    m_iterationDuration = source->m_iterationDuration;
+}
+
 ExceptionOr<void> AnimationEffectTimingReadOnly::setIterationStart(double iterationStart)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-animationeffecttiming-iterationstart

@@ -44,6 +44,13 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Elemen
     return WTFMove(keyframeEffect);
 }
 
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&& source)
+{
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(AnimationEffectTiming::create(), nullptr));
+    keyframeEffect->copyPropertiesFromSource(WTFMove(source));
+    return WTFMove(keyframeEffect);
+}
+
 KeyframeEffect::KeyframeEffect(Ref<AnimationEffectTimingReadOnly>&& timing, Element* target)
     : KeyframeEffectReadOnly(KeyframeEffectClass, WTFMove(timing), target)
 {

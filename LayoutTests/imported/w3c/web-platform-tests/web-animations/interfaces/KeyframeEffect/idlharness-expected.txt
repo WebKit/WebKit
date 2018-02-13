@@ -7,7 +7,7 @@ PASS AnimationEffectReadOnly interface: existence and properties of interface pr
 PASS AnimationEffectReadOnly interface: attribute timing 
 PASS AnimationEffectReadOnly interface: operation getComputedTiming() 
 PASS KeyframeEffectReadOnly interface: existence and properties of interface object 
-FAIL KeyframeEffectReadOnly interface object length assert_equals: wrong value for KeyframeEffectReadOnly.length expected 1 but got 2
+PASS KeyframeEffectReadOnly interface object length 
 PASS KeyframeEffectReadOnly interface object name 
 PASS KeyframeEffectReadOnly interface: existence and properties of interface prototype object 
 PASS KeyframeEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
@@ -24,7 +24,7 @@ PASS KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) mu
 PASS AnimationEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "timing" with the proper type 
 PASS AnimationEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "getComputedTiming()" with the proper type 
 PASS KeyframeEffect interface: existence and properties of interface object 
-FAIL KeyframeEffect interface object length assert_equals: wrong value for KeyframeEffect.length expected 1 but got 2
+PASS KeyframeEffect interface object length 
 PASS KeyframeEffect interface object name 
 PASS KeyframeEffect interface: existence and properties of interface prototype object 
 PASS KeyframeEffect interface: existence and properties of interface prototype object's "constructor" property 

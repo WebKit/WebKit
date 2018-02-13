@@ -1,3 +1,34 @@
+2018-02-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support the copy constructors for KeyframeEffectReadOnly and KeyframeEffect
+        https://bugs.webkit.org/show_bug.cgi?id=182712
+
+        Reviewed by Dean Jackson.
+
+        We now support the variants for the KeyframeEffectReadOnly and KeyframeEffect constructors where
+        another KeyframeEffectReadOnly is provided as a source. All timing, keyframe and target properties
+        of that source are copied on the newly-constructed KeyframeEffect.
+
+        To support copying properties, we add new copyPropertiesFromSource() methods to
+        AnimationEffectTimingReadOnly and KeyframeEffectReadOnly to encapsulate copying various
+        member variables in the relevant classes. Copying properties of the backing KeyframeList
+        is performed in KeyframeEffectReadOnly::copyPropertiesFromSource() via public KeyframeList
+        methods.
+
+        * animation/AnimationEffectTimingReadOnly.cpp:
+        (WebCore::AnimationEffectTimingReadOnly::copyPropertiesFromSource):
+        * animation/AnimationEffectTimingReadOnly.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::create):
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffect.idl:
+        * animation/KeyframeEffectOptions.idl:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::create):
+        (WebCore::KeyframeEffectReadOnly::copyPropertiesFromSource):
+        * animation/KeyframeEffectReadOnly.h:
+        * animation/KeyframeEffectReadOnly.idl:
+
 2018-02-12  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Introduce RenderTreebuilder::takeChild

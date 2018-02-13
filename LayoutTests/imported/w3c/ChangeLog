@@ -1,3 +1,15 @@
+2018-02-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support the copy constructors for KeyframeEffectReadOnly and KeyframeEffect
+        https://bugs.webkit.org/show_bug.cgi?id=182712
+
+        Reviewed by Dean Jackson.
+
+        Update test expectations for tests relevant to the copy constructors.
+
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness-expected.txt:
+
 2018-02-08  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Refactor AnimationEffect and KeyframeEffect into AnimationEffectReadOnly, KeyframeEffectReadOnly and KeyframeEffect

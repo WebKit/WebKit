@@ -399,11 +399,39 @@ ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(ExecStat
     return WTFMove(keyframeEffect);
 }
 
+ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&& source)
+{
+    auto keyframeEffect = adoptRef(*new KeyframeEffectReadOnly(KeyframeEffectReadOnlyClass, AnimationEffectTimingReadOnly::create(), nullptr));
+    keyframeEffect->copyPropertiesFromSource(WTFMove(source));
+    return WTFMove(keyframeEffect);
+}
+
 KeyframeEffectReadOnly::KeyframeEffectReadOnly(ClassType classType, Ref<AnimationEffectTimingReadOnly>&& timing, Element* target)
     : AnimationEffectReadOnly(classType, WTFMove(timing))
     , m_target(target)
     , m_keyframes(emptyString())
 {
+}
+
+void KeyframeEffectReadOnly::copyPropertiesFromSource(Ref<KeyframeEffectReadOnly>&& source)
+{
+    m_target = source->m_target;
+    m_offsets = source->m_offsets;
+    m_timingFunctions = source->m_timingFunctions;
+    m_compositeOperation = source->m_compositeOperation;
+    m_compositeOperations = source->m_compositeOperations;
+    m_iterationCompositeOperation = source->m_iterationCompositeOperation;
+
+    timing()->copyPropertiesFromSource(source->timing());
+
+    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
+    for (auto& keyframe : source->m_keyframes.keyframes()) {
+        KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
+        for (auto propertyId : keyframe.properties())
+            keyframeValue.addProperty(propertyId);
+        keyframeList.insert(WTFMove(keyframeValue));
+    }
+    m_keyframes = WTFMove(keyframeList);
 }
 
 Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)

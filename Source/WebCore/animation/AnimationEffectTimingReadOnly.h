@@ -48,6 +48,7 @@ public:
     bool isAnimationEffectTiming() const { return m_classType == AnimationEffectTimingClass; }
 
     ExceptionOr<void> setProperties(std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    void copyPropertiesFromSource(AnimationEffectTimingReadOnly*);
 
     double bindingsDelay() const { return secondsToWebAnimationsAPITime(m_delay); }
     void setBindingsDelay(double delay) { m_delay = Seconds::fromMilliseconds(delay); }

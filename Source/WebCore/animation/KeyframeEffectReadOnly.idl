@@ -26,9 +26,11 @@
 [
     EnabledAtRuntime=WebAnimations,
     Exposed=Window,
+    JSGenerateToNativeObject,
     ConstructorMayThrowException,
     ConstructorCallWith=ScriptState,
-    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options)
+    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options),
+    Constructor(KeyframeEffectReadOnly source)
 ] interface KeyframeEffectReadOnly : AnimationEffectReadOnly {
     readonly attribute Element? target;
     readonly attribute IterationCompositeOperation iterationComposite;

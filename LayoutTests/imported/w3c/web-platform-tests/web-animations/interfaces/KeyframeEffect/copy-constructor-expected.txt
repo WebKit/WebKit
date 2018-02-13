@@ -1,7 +1,7 @@
 
-FAIL Copied KeyframeEffectReadOnly has the same target Not enough arguments
-FAIL Copied KeyframeEffectReadOnly has the same keyframes Not enough arguments
-FAIL Copied KeyframeEffectReadOnly has the same KeyframeEffectOptions Not enough arguments
-FAIL Copied KeyframeEffectReadOnly has the same timing content Not enough arguments
-FAIL KeyframeEffect constructed from a KeyframeEffectReadOnly is mutable Not enough arguments
+PASS Copied KeyframeEffectReadOnly has the same target 
+PASS Copied KeyframeEffectReadOnly has the same keyframes 
+PASS Copied KeyframeEffectReadOnly has the same KeyframeEffectOptions 
+PASS Copied KeyframeEffectReadOnly has the same timing content 
+PASS KeyframeEffect constructed from a KeyframeEffectReadOnly is mutable 
 
