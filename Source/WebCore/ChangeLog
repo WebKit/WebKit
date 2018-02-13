@@ -1,3 +1,21 @@
+2018-02-13  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderButton::takeChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182732
+        <rdar://problem/37500564>
+
+        Reviewed by Antti Koivisto.
+
+        No change of functionality.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setInnerRenderer):
+        (WebCore::RenderButton::takeChild): Deleted.
+        * rendering/RenderButton.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChildFromRenderButton):
+        * rendering/updating/RenderTreeBuilder.h:
+
 2018-02-13  Alicia Boya García  <aboya@igalia.com>
 
         [Gstreamer][MSE] Add string representation for GStreamerMediaSample

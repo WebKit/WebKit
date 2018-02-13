@@ -522,4 +522,14 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderMenuList(RenderMen
     return takeChild(*innerRenderer, child);
 }
 
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderButton(RenderButton& parent, RenderObject& child)
+{
+    auto* innerRenderer = parent.innerRenderer();
+    if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
+        ASSERT(&child == innerRenderer || !innerRenderer);
+        return parent.RenderBlock::takeChild(*this, child);
+    }
+    return takeChild(*innerRenderer, child);
+}
+
 }

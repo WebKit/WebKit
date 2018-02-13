@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class RenderButton;
 class RenderMathMLFenced;
 class RenderMenuList;
 class RenderRubyAsBlock;
@@ -105,6 +106,7 @@ private:
 
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
     RenderPtr<RenderObject> takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChildFromRenderButton(RenderButton& parent, RenderObject& child);
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
