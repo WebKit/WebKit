@@ -554,6 +554,7 @@ public:
     Element* findAnchorElementForLink(String& outAnchorName);
 
     ExceptionOr<Ref<WebAnimation>> animate(ScriptExecutionContext&, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeAnimationOptions>>&&);
+    Vector<RefPtr<WebAnimation>> getAnimations();
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
