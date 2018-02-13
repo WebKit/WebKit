@@ -1556,7 +1556,6 @@ void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError*
 {
     if (!success) {
         WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
-        ASSERT_NOT_REACHED();
     }
 
     UNUSED_PARAM(success);
