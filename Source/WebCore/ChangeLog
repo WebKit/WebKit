@@ -1,5 +1,26 @@
 2018-02-12  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/37470882
+
+    CoreAudioCaptureSourceIOSListener should be a WebProcess singleton
+
+    2018-02-12  Youenn Fablet  <youenn@apple.com>
+
+            CoreAudioCaptureSourceIOSListener should be a WebProcess singleton
+            https://bugs.webkit.org/show_bug.cgi?id=182606
+            <rdar://problem/37470882>
+
+            Reviewed by Eric Carlson.
+
+            Covered by manual testing.
+            In case shared unit is suspended, unsuspend it when creating a new audio source.
+            This creation should only happen when WebKit iOS is foregrounded.
+
+            * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+            (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+
+2018-02-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228231. rdar://problem/37408885
 
     2018-02-07  Daniel Bates  <dabates@apple.com>

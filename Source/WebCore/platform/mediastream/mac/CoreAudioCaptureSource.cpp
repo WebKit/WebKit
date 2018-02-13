@@ -724,6 +724,13 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const Str
     initializeVolume(unit.volume());
 
     unit.addClient(*this);
+
+#if PLATFORM(IOS)
+    // We ensure that we unsuspend ourselves on the constructor as a capture source
+    // is created when getUserMedia grants access which only happens when the process is foregrounded.
+    if (unit.isSuspended())
+        unit.reconfigureAudioUnit();
+#endif
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
