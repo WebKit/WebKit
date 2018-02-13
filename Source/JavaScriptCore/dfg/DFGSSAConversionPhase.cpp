@@ -349,7 +349,7 @@ public:
                             m_graph.m_stackAccessData.add(
                                 variable->local(), variable->flushFormat()));
                     } else
-                        node->remove();
+                        node->remove(m_graph);
                     
                     if (verbose)
                         dataLog("Mapping: ", variable->local(), " -> ", child, "\n");
@@ -367,7 +367,7 @@ public:
                     VariableAccessData* variable = node->variableAccessData();
                     node->children.reset();
                     
-                    node->remove();
+                    node->remove(m_graph);
                     if (verbose)
                         dataLog("Replacing node ", node, " with ", valueForOperand.operand(variable->local()), "\n");
                     node->setReplacement(valueForOperand.operand(variable->local()));
@@ -376,7 +376,7 @@ public:
                     
                 case Flush: {
                     node->children.reset();
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                 }
                     
@@ -384,12 +384,12 @@ public:
                     ASSERT(node->child1().useKind() == UntypedUse);
                     VariableAccessData* variable = node->variableAccessData();
                     node->child1() = valueForOperand.operand(variable->local())->defaultEdge();
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                 }
                     
                 case SetArgument: {
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                 }
                     

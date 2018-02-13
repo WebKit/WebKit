@@ -572,7 +572,7 @@ public:
                 if (!putStacksToSink.contains(node))
                     continue;
                 
-                node->remove();
+                node->remove(m_graph);
             }
         }
         

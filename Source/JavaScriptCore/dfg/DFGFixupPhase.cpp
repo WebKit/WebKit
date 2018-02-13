@@ -710,11 +710,11 @@ private:
             node->setArrayMode(
                 node->arrayMode().refine(
                     m_graph, node,
-                    node->child1()->prediction(),
-                    node->child2()->prediction(),
+                    m_graph.varArgChild(node, 0)->prediction(),
+                    m_graph.varArgChild(node, 1)->prediction(),
                     SpecNone));
             
-            blessArrayOperation(node->child1(), node->child2(), node->child3());
+            blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
             
             ArrayMode arrayMode = node->arrayMode();
             switch (arrayMode.type()) {
@@ -793,28 +793,28 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Array::Generic:
-                if (node->child1()->shouldSpeculateObject()) {
-                    if (node->child2()->shouldSpeculateString()) {
-                        fixEdge<ObjectUse>(node->child1());
-                        fixEdge<StringUse>(node->child2());
+                if (m_graph.varArgChild(node, 0)->shouldSpeculateObject()) {
+                    if (m_graph.varArgChild(node, 1)->shouldSpeculateString()) {
+                        fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
+                        fixEdge<StringUse>(m_graph.varArgChild(node, 1));
                         break;
                     }
 
-                    if (node->child2()->shouldSpeculateSymbol()) {
-                        fixEdge<ObjectUse>(node->child1());
-                        fixEdge<SymbolUse>(node->child2());
+                    if (m_graph.varArgChild(node, 1)->shouldSpeculateSymbol()) {
+                        fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
+                        fixEdge<SymbolUse>(m_graph.varArgChild(node, 1));
                         break;
                     }
                 }
 #if USE(JSVALUE32_64)
-                fixEdge<CellUse>(node->child1()); // Speculating cell due to register pressure on 32-bit.
+                fixEdge<CellUse>(m_graph.varArgChild(node, 0)); // Speculating cell due to register pressure on 32-bit.
 #endif
                 break;
             case Array::ForceExit:
                 break;
             default:
-                fixEdge<KnownCellUse>(node->child1());
-                fixEdge<Int32Use>(node->child2());
+                fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
+                fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
                 break;
             }
             
@@ -1567,6 +1567,7 @@ private:
             break;
         }
 
+        case CheckVarargs:
         case Check: {
             m_graph.doToChildren(
                 node,
@@ -1586,7 +1587,7 @@ private:
 
         case Phantom:
             // Phantoms are meaningless past Fixup. We recreate them on-demand in the backend.
-            node->remove();
+            node->remove(m_graph);
             break;
 
         case FiatInt52: {
@@ -1765,13 +1766,13 @@ private:
             if (typeSet->doesTypeConformTo(TypeAnyInt)) {
                 if (node->child1()->shouldSpeculateInt32()) {
                     fixEdge<Int32Use>(node->child1());
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                 }
 
                 if (enableInt52()) {
                     fixEdge<AnyIntUse>(node->child1());
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                 }
 
@@ -1780,16 +1781,16 @@ private:
 
             if (typeSet->doesTypeConformTo(TypeNumber | TypeAnyInt)) {
                 fixEdge<NumberUse>(node->child1());
-                node->remove();
+                node->remove(m_graph);
             } else if (typeSet->doesTypeConformTo(TypeString)) {
                 fixEdge<StringUse>(node->child1());
-                node->remove();
+                node->remove(m_graph);
             } else if (typeSet->doesTypeConformTo(TypeBoolean)) {
                 fixEdge<BooleanUse>(node->child1());
-                node->remove();
+                node->remove(m_graph);
             } else if (typeSet->doesTypeConformTo(TypeUndefined | TypeNull) && (seenTypes & TypeUndefined) && (seenTypes & TypeNull)) {
                 fixEdge<OtherUse>(node->child1());
-                node->remove();
+                node->remove(m_graph);
             } else if (typeSet->doesTypeConformTo(TypeObject)) {
                 StructureSet set;
                 {
@@ -2182,6 +2183,7 @@ private:
         case GetGlobalThis:
         case ExtractValueFromWeakMapGet:
         case CPUIntrinsic:
+        case GetArrayMask:
             break;
 #else
         default:
@@ -3463,6 +3465,7 @@ private:
             switch (node->op()) {
             case MovHint:
             case Check:
+            case CheckVarargs:
                 m_graph.doToChildren(
                     node,
                     [&] (Edge& edge) {

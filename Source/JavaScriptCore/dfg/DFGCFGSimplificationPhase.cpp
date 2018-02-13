@@ -339,7 +339,7 @@ private:
         Node* terminal = firstBlock->terminal();
         ASSERT(terminal->isTerminal());
         NodeOrigin boundaryNodeOrigin = terminal->origin;
-        terminal->remove();
+        terminal->remove(m_graph);
         ASSERT(terminal->refCount() == 1);
         
         for (unsigned i = jettisonedBlocks.size(); i--;) {

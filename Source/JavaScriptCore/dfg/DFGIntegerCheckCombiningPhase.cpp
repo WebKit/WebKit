@@ -284,7 +284,7 @@ private:
                 break;
                 
             case ArrayBounds:
-                node->remove();
+                node->remove(m_graph);
                 m_changed = true;
                 break;
                 

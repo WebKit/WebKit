@@ -372,6 +372,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:
+    case CheckVarargs:
     case MultiPutByOffset:
     case ValueRep:
     case DoubleRep:
@@ -476,7 +477,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ArrayPop:
     case StringCharAt:
     case StringCharCodeAt:
-        return node->arrayMode().alreadyChecked(graph, node, state.forNode(node->child1()));
+        return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.child(node, 0)));
+
+    case GetArrayMask:
+        return state.forNode(node->child1()).isType(SpecObject);
 
     case ArrayPush:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.varArgChild(node, 1)));

@@ -1,3 +1,120 @@
+2018-02-12  Saam Barati  <sbarati@apple.com>
+
+        Add a GetIndexMask node and make it an input to GetByVal for array and typed array accesses in DFG SSA
+        https://bugs.webkit.org/show_bug.cgi?id=182633
+        <rdar://problem/37441037>
+
+        Reviewed by Keith Miller.
+
+        This patch introduces a GetIndexMask node to DFG SSA. This is an input to
+        GetByVal for the GetByVal variants that do conservative index masking.
+        The reason I'm adding this node is I realized there were loads of
+        the butterfly index mask inside loops that B3 couldn't reason about
+        because B3 can't arbitrarily hoist loads out of loops if those loops
+        have side exits (because the side exit might be protecting the safety of the
+        load). However, for these loops I analyzed, the DFG would be able to hoist
+        these loads out of loops because it knows about JS semantics to correctly
+        reason about the safety of hoisting the load.
+        
+        This is a 1% speedup on JetStream on Mac and iOS in my testing.
+        
+        This patch also adds some infrastructure for eliminating and doing CSE on
+        varargs nodes. Because this patch makes GetByVal a varargs node, I ran into
+        issues we never had before. We never had a varargs node that could be CSEd or be
+        hoisted out of a loop until I made GetByVal varargs. To make it all work,
+        I added a CheckVarargs node. This is just like Check, but it's varargs.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::AdjacencyList):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::replaceTerminal):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::findTerminal const):
+        * dfg/DFGBasicBlockInlines.h:
+        (JSC::DFG::BasicBlock::replaceTerminal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCleanUpPhase.cpp:
+        (JSC::DFG::CleanUpPhase::run):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::fixUpsilons):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::fixupBlock):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::remove):
+        (JSC::DFG::Node::convertToIdentityOn):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::replaceWith):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPureValue.cpp:
+        (JSC::DFG::PureValue::dump const):
+        * dfg/DFGPureValue.h:
+        (JSC::DFG::PureValue::PureValue):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithSymbol):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierClusteringPhase.cpp:
+        * dfg/DFGValidate.cpp:
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayMask):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::maskedIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::pointerIntoTypedArray):
+
 2018-02-12  Mark Lam  <mark.lam@apple.com>
 
         Miscellaneous refactoring of offlineasm.

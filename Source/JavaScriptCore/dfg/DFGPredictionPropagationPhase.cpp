@@ -1065,6 +1065,7 @@ private:
             break;
         }
 
+        case GetArrayMask:
         case PutByValAlias:
         case DoubleAsInt32:
         case CheckArray:
@@ -1174,6 +1175,7 @@ private:
         case PutStructure:
         case Phantom:
         case Check:
+        case CheckVarargs:
         case PutGlobalVariable:
         case CheckTraps:
         case LogShadowChickenPrologue:

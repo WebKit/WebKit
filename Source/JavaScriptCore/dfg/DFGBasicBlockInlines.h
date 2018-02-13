@@ -52,7 +52,7 @@ template<typename... Params>
 Node* BasicBlock::replaceTerminal(Graph& graph, SpeculatedType type, Params... params)
 {
     Node* result = graph.addNode(type, params...);
-    replaceTerminal(result);
+    replaceTerminal(graph, result);
     return result;
 }
 

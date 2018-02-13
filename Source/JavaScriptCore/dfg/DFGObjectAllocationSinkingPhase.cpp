@@ -961,7 +961,7 @@ private:
                 PromotedHeapLocation location(NamedPropertyPLoc, allocation->identifier(), identifierNumber);
                 if (Node* value = heapResolve(location)) {
                     if (allocation->structures().isSubsetOf(validStructures))
-                        node->replaceWith(value);
+                        node->replaceWith(m_graph, value);
                     else {
                         Node* structure = heapResolve(PromotedHeapLocation(allocation->identifier(), StructurePLoc));
                         ASSERT(structure);
@@ -1071,6 +1071,7 @@ private:
             break;
 
         case Check:
+        case CheckVarargs:
             m_graph.doToChildren(
                 node,
                 [&] (Edge edge) {
@@ -1103,7 +1104,7 @@ private:
             ASSERT(writes.isEmpty());
             if (Node* value = heapResolve(PromotedHeapLocation(target->identifier(), exactRead))) {
                 ASSERT(!value->replacement());
-                node->replaceWith(value);
+                node->replaceWith(m_graph, value);
             }
             Node* identifier = target->get(exactRead);
             if (identifier)
@@ -1928,7 +1929,7 @@ private:
                         break;
 
                     default:
-                        node->remove();
+                        node->remove(m_graph);
                         break;
                     }
                 }

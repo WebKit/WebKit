@@ -71,6 +71,7 @@ namespace JSC { namespace DFG {
 SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : m_compileOkay(true)
     , m_jit(jit)
+    , m_graph(m_jit.graph())
     , m_currentNode(0)
     , m_lastGeneratedNode(LastNodeType)
     , m_indexInBlock(0)
@@ -2144,9 +2145,9 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
 
 void SpeculativeJIT::compileGetByValOnString(Node* node)
 {
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand property(this, node->child2());
-    StorageOperand storage(this, node->child3());
+    SpeculateCellOperand base(this, m_graph.child(node, 0));
+    SpeculateStrictInt32Operand property(this, m_graph.child(node, 1));
+    StorageOperand storage(this, m_graph.child(node, 2));
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
@@ -2163,7 +2164,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     }
 #endif
 
-    ASSERT(ArrayMode(Array::String).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
+    ASSERT(ArrayMode(Array::String).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.child(node, 0))));
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
     JITCompiler::Jump outOfBounds = m_jit.branch32(
@@ -2912,9 +2913,9 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
 {
     ASSERT(isInt(type));
     
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand property(this, node->child2());
-    StorageOperand storage(this, node->child3());
+    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+    StorageOperand storage(this, m_graph.varArgChild(node, 2));
 
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
@@ -2923,7 +2924,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     GPRTemporary result(this);
     GPRReg resultReg = result.gpr();
 
-    ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
+    ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
 
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     loadFromIntTypedArray(baseReg, storageReg, propertyReg, resultReg, type);
@@ -3145,15 +3146,15 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
 {
     ASSERT(isFloat(type));
     
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand property(this, node->child2());
-    StorageOperand storage(this, node->child3());
+    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+    StorageOperand storage(this, m_graph.varArgChild(node, 2));
 
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
 
-    ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
+    ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
 
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
@@ -3217,14 +3218,14 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
 
 void SpeculativeJIT::compileGetByValForObjectWithString(Node* node)
 {
-    SpeculateCellOperand arg1(this, node->child1());
-    SpeculateCellOperand arg2(this, node->child2());
+    SpeculateCellOperand arg1(this, m_graph.varArgChild(node, 0));
+    SpeculateCellOperand arg2(this, m_graph.varArgChild(node, 1));
 
     GPRReg arg1GPR = arg1.gpr();
     GPRReg arg2GPR = arg2.gpr();
 
-    speculateObject(node->child1(), arg1GPR);
-    speculateString(node->child2(), arg2GPR);
+    speculateObject(m_graph.varArgChild(node, 0), arg1GPR);
+    speculateString(m_graph.varArgChild(node, 1), arg2GPR);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
@@ -3237,14 +3238,14 @@ void SpeculativeJIT::compileGetByValForObjectWithString(Node* node)
 
 void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node)
 {
-    SpeculateCellOperand arg1(this, node->child1());
-    SpeculateCellOperand arg2(this, node->child2());
+    SpeculateCellOperand arg1(this, m_graph.varArgChild(node, 0));
+    SpeculateCellOperand arg2(this, m_graph.varArgChild(node, 1));
 
     GPRReg arg1GPR = arg1.gpr();
     GPRReg arg2GPR = arg2.gpr();
 
-    speculateObject(node->child1(), arg1GPR);
-    speculateSymbol(node->child2(), arg2GPR);
+    speculateObject(m_graph.varArgChild(node, 0), arg1GPR);
+    speculateSymbol(m_graph.varArgChild(node, 1), arg2GPR);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
@@ -6431,8 +6432,8 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 
 void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
 {
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand property(this, node->child2());
+    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
     GPRTemporary result(this);
 #if USE(JSVALUE32_64)
     GPRTemporary resultTag(this);
@@ -6453,7 +6454,7 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
     if (!m_compileOkay)
         return;
     
-    ASSERT(ArrayMode(Array::DirectArguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
+    ASSERT(ArrayMode(Array::DirectArguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
     
     speculationCheck(
         ExoticObjectMode, JSValueSource(), 0,
@@ -6488,8 +6489,8 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
 
 void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
 {
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand property(this, node->child2());
+    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
     GPRTemporary result(this);
 #if USE(JSVALUE32_64)
     GPRTemporary resultTag(this);
@@ -6512,7 +6513,7 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     if (!m_compileOkay)
         return;
     
-    ASSERT(ArrayMode(Array::ScopedArguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
+    ASSERT(ArrayMode(Array::ScopedArguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
     
     speculationCheck(
         ExoticObjectMode, JSValueSource(), nullptr,

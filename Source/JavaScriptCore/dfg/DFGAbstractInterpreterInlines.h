@@ -1731,7 +1731,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setIsValid(false);
             break;
         case Array::Undecided: {
-            JSValue index = forNode(node->child2()).value();
+            JSValue index = forNode(m_graph.child(node, 1)).value();
             if (index && index.isInt32() && index.asInt32() >= 0) {
                 setConstant(node, jsUndefined());
                 break;
@@ -2525,6 +2525,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecInt32Only);
         break;
     }
+
+    case GetArrayMask:
+        forNode(node).setType(SpecInt32Only);
+        break;
 
     case GetVectorLength: {
         forNode(node).setType(SpecInt32Only);
@@ -3344,17 +3348,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph.globalObjectFor(node->origin.semantic)->restParameterStructure());
         break;
             
+    case CheckVarargs:
     case Check: {
         // Simplify out checks that don't actually do checking.
-        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
-            Edge edge = node->children.child(i);
+        m_graph.doToChildren(node, [&] (Edge edge) {
             if (!edge)
-                break;
-            if (edge.isProved() || edge.willNotHaveCheck()) {
+                return;
+            if (edge.isProved() || edge.willNotHaveCheck())
                 m_state.setFoundConstants(true);
-                break;
-            }
-        }
+        });
         break;
     }
 

@@ -88,6 +88,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("ArrayLengthLoc");
         return;
 
+    case ArrayMaskLoc:
+        out.print("ArrayMaskLoc");
+        return;
+
     case VectorLengthLoc:
         out.print("VectorLengthLoc");
         return;

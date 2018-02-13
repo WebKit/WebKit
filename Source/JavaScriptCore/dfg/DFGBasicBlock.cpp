@@ -72,14 +72,14 @@ void BasicBlock::ensureLocals(unsigned newNumLocals)
     intersectionOfPastValuesAtHead.ensureLocals(newNumLocals, AbstractValue::fullTop());
 }
 
-void BasicBlock::replaceTerminal(Node* node)
+void BasicBlock::replaceTerminal(Graph& graph, Node* node)
 {
     NodeAndIndex result = findTerminal();
     if (!result)
         append(node);
     else {
         m_nodes.insert(result.index + 1, node);
-        result.node->remove();
+        result.node->remove(graph);
     }
     
     ASSERT(terminal());
