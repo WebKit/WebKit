@@ -1,3 +1,16 @@
+2018-02-13  Brian Burg  <bburg@apple.com>
+
+        Web Automation: don't return an error if resizing/moving a window has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=182742
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext):
+        Unify the behavior for all ports. Don't raise an error if the command was
+        idempotent (by mistake or not). It should not be an error to re-maximize a window.
+
 2018-02-13  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make WebCore headers copies

@@ -344,19 +344,7 @@ void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString&
             return callback->sendSuccess();
 
         page->setWindowFrame(newFrame);
-
-#if PLATFORM(GTK)
         callback->sendSuccess();
-#else
-        // If nothing changed at all, it's probably fair to report that something went wrong.
-        // (We can't assume that the requested frame size will be honored exactly, however.)
-        page->getWindowFrameWithCallback([callback = WTFMove(callback), originalFrame](WebCore::FloatRect updatedFrame) {
-            if (originalFrame == updatedFrame)
-                callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "The window size was expected to have changed, but did not."));
-            else
-                callback->sendSuccess();
-        });
-#endif
     });
 #endif
 }
@@ -392,19 +380,7 @@ void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& e
             return callback->sendSuccess();
 
         page->setWindowFrame(newFrame);
-
-#if PLATFORM(GTK)
         callback->sendSuccess();
-#else
-        // If nothing changed at all, it's probably fair to report that something went wrong.
-        // (We can't assume that the requested frame size will be honored exactly, however.)
-        page->getWindowFrameWithCallback([callback = WTFMove(callback), originalFrame](WebCore::FloatRect updatedFrame) {
-            if (originalFrame == updatedFrame)
-                callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "The window position was expected to have changed, but did not."));
-            else
-                callback->sendSuccess();
-        });
-#endif
     });
 #endif
 }
