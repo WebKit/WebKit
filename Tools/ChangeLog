@@ -1,3 +1,25 @@
+2018-02-12  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources
+        https://bugs.webkit.org/show_bug.cgi?id=182664
+        <rdar://problem/37372572>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsSubresourceUniqueRedirectFrom):
+        (WTR::TestRunner::setStatisticsTopFrameUniqueRedirectTo):
+        (WTR::TestRunner::setStatisticsTopFrameUniqueRedirectFrom):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsSubresourceUniqueRedirectFrom):
+        (WTR::TestController::setStatisticsTopFrameUniqueRedirectTo):
+        (WTR::TestController::setStatisticsTopFrameUniqueRedirectFrom):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2018-02-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         download-latest-github-release .py should not use "browser download URL".

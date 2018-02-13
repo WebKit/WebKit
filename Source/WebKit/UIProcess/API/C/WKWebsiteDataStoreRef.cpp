@@ -211,6 +211,33 @@ void WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo(WKWebsiteDataSto
     store->setSubresourceUniqueRedirectTo(WebCore::URL(WebCore::URL(), WebKit::toImpl(host)->string()), WebCore::URL(WebCore::URL(), WebKit::toImpl(hostRedirectedTo)->string()));
 }
 
+void WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef hostRedirectedFrom)
+{
+    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+    
+    store->setSubresourceUniqueRedirectFrom(WebCore::URL(WebCore::URL(), WebKit::toImpl(host)->string()), WebCore::URL(WebCore::URL(), WebKit::toImpl(hostRedirectedFrom)->string()));
+}
+
+void WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef hostRedirectedTo)
+{
+    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+    
+    store->setTopFrameUniqueRedirectTo(WebCore::URL(WebCore::URL(), WebKit::toImpl(host)->string()), WebCore::URL(WebCore::URL(), WebKit::toImpl(hostRedirectedTo)->string()));
+}
+
+void WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef hostRedirectedFrom)
+{
+    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+    
+    store->setTopFrameUniqueRedirectFrom(WebCore::URL(WebCore::URL(), WebKit::toImpl(host)->string()), WebCore::URL(WebCore::URL(), WebKit::toImpl(hostRedirectedFrom)->string()));
+}
+
 void WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(WKWebsiteDataStoreRef dataStoreRef, double seconds)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();

@@ -1,3 +1,20 @@
+2018-02-12  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources
+        https://bugs.webkit.org/show_bug.cgi?id=182664
+        <rdar://problem/37372572>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html: Added.
+        * platform/wk2/TestExpectations:
+            New tests added as [ Pass ].
+
 2018-02-12  Matt Lewis  <jlewis3@apple.com>
 
         Marked multiple http/tests/resourceLoadStatistics tests as flaky and skip.

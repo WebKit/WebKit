@@ -1,3 +1,43 @@
+2018-02-12  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources
+        https://bugs.webkit.org/show_bug.cgi?id=182664
+        <rdar://problem/37372572>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/classifier/ResourceLoadStatisticsClassifier.cpp:
+        (WebKit::ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics):
+            Unique top frame redirects now counts toward classification as prevalent.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom):
+            Test infrastructure.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+            Bumped the statistics model to 11 because of the added fields.
+        (WebKit::WebResourceLoadStatisticsStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain):
+            This function back traces redirect chains to classify domains
+            that have redirected to a newly classified prevalent resource.
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+            Now uses the new convenience function WebResourceLoadStatisticsStore::setPrevalentResource().
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+            New convenience function to make sure we always call
+            WebResourceLoadStatisticsStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain()
+            and capture redirect chains backward.
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom):
+            Test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-02-12  Antti Koivisto  <antti@apple.com>
 
         Update NetworkCache::Storage::lastStableVersion after r226349

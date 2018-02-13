@@ -38,15 +38,18 @@ bool ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics(const
     auto subresourceUnderTopFrameOriginsCount = resourceStatistic.subresourceUnderTopFrameOrigins.size();
     auto subresourceUniqueRedirectsToCount = resourceStatistic.subresourceUniqueRedirectsTo.size();
     auto subframeUnderTopFrameOriginsCount = resourceStatistic.subframeUnderTopFrameOrigins.size();
+    auto topFrameUniqueRedirectsToCount = resourceStatistic.topFrameUniqueRedirectsTo.size();
     
     if (!subresourceUnderTopFrameOriginsCount
         && !subresourceUniqueRedirectsToCount
-        && !subframeUnderTopFrameOriginsCount)
+        && !subframeUnderTopFrameOriginsCount
+        && !topFrameUniqueRedirectsToCount)
         return false;
     
     if (subresourceUnderTopFrameOriginsCount > featureVectorLengthThreshold
         || subresourceUniqueRedirectsToCount > featureVectorLengthThreshold
-        || subframeUnderTopFrameOriginsCount > featureVectorLengthThreshold)
+        || subframeUnderTopFrameOriginsCount > featureVectorLengthThreshold
+        || topFrameUniqueRedirectsToCount > featureVectorLengthThreshold)
         return true;
 
     return classify(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount);

@@ -1107,6 +1107,48 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsSubresourceUniqueRedirectFrom")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey(AdoptWK, WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> hostNameRedirectedFromKey(AdoptWK, WKStringCreateWithUTF8CString("HostNameRedirectedFrom"));
+        
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKStringRef hostNameRedirectedFrom = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameRedirectedFromKey.get()));
+        
+        TestController::singleton().setStatisticsSubresourceUniqueRedirectFrom(hostName, hostNameRedirectedFrom);
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTopFrameUniqueRedirectTo")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey(AdoptWK, WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> hostNameRedirectedToKey(AdoptWK, WKStringCreateWithUTF8CString("HostNameRedirectedTo"));
+        
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKStringRef hostNameRedirectedTo = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameRedirectedToKey.get()));
+        
+        TestController::singleton().setStatisticsTopFrameUniqueRedirectTo(hostName, hostNameRedirectedTo);
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTopFrameUniqueRedirectFrom")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey(AdoptWK, WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> hostNameRedirectedFromKey(AdoptWK, WKStringCreateWithUTF8CString("HostNameRedirectedFrom"));
+        
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKStringRef hostNameRedirectedFrom = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameRedirectedFromKey.get()));
+        
+        TestController::singleton().setStatisticsTopFrameUniqueRedirectFrom(hostName, hostNameRedirectedFrom);
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTimeToLiveUserInteraction")) {
         ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
         WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);

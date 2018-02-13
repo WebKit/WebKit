@@ -1477,6 +1477,80 @@ void TestRunner::setStatisticsSubresourceUniqueRedirectTo(JSStringRef hostName, 
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+
+void TestRunner::setStatisticsSubresourceUniqueRedirectFrom(JSStringRef hostName, JSStringRef hostNameRedirectedFrom)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostName") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostName) });
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostNameRedirectedFrom") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostNameRedirectedFrom) });
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsSubresourceUniqueRedirectFrom"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setStatisticsTopFrameUniqueRedirectTo(JSStringRef hostName, JSStringRef hostNameRedirectedTo)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostName") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostName) });
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostNameRedirectedTo") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostNameRedirectedTo) });
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsTopFrameUniqueRedirectTo"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setStatisticsTopFrameUniqueRedirectFrom(JSStringRef hostName, JSStringRef hostNameRedirectedFrom)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostName") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostName) });
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostNameRedirectedFrom") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostNameRedirectedFrom) });
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsTopFrameUniqueRedirectFrom"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+
 void TestRunner::setStatisticsTimeToLiveUserInteraction(double seconds)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsTimeToLiveUserInteraction"));
