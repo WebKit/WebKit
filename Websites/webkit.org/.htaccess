@@ -67,6 +67,7 @@ Redirect 301 /security/ /security-policy/
 Redirect 301 /security /security-policy/
 Redirect 301 /status.html /status/
 Redirect 301 /team.html /team/
+Redirect 301 /nightly /downloads/
 
 # Old B3 Documentation
 Redirect 301 /documentation/b3/air/ /docs/b3/assembly-intermediate-representation.html
