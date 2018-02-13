@@ -33,6 +33,7 @@
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -55,22 +56,32 @@ std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataC
 
 void CachedRawResource::updateBuffer(SharedBuffer& data)
 {
+    // Skip any updateBuffers triggered from nested runloops. We'll have the complete buffer in finishLoading.
+    if (m_inIncrementalDataNotify)
+        return;
+
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     ASSERT(dataBufferingPolicy() == BufferData);
     m_data = &data;
 
     auto incrementalData = calculateIncrementalDataChunk(&data);
     setEncodedSize(data.size());
-    if (incrementalData)
+    if (incrementalData) {
+        SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
         notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
+    }
+
     if (dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
-        return;
-    }
+    } else
+        CachedResource::updateBuffer(data);
 
-    CachedResource::updateBuffer(data);
+    if (m_delayedFinishLoading) {
+        auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, std::nullopt);
+        finishLoading(delayedFinishLoading->buffer.get());
+    }
 }
 
 void CachedRawResource::updateData(const char* data, unsigned length)
@@ -82,6 +93,12 @@ void CachedRawResource::updateData(const char* data, unsigned length)
 
 void CachedRawResource::finishLoading(SharedBuffer* data)
 {
+    if (m_inIncrementalDataNotify) {
+        // We may get here synchronously from updateBuffer() if the callback there ends up spinning a runloop.
+        // In that case delay the call.
+        m_delayedFinishLoading = std::make_optional(DelayedFinishLoading { data });
+        return;
+    };
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     DataBufferingPolicy dataBufferingPolicy = this->dataBufferingPolicy();
     if (dataBufferingPolicy == BufferData) {

@@ -1,3 +1,30 @@
+2018-02-13  Antti Koivisto  <antti@apple.com>
+
+        Crash when breakpoint hit in unload handler
+        https://bugs.webkit.org/show_bug.cgi?id=169855
+        <rdar://problem/28683567>
+
+        Reviewed by Daniel Bates.
+
+        Test: inspector/debugger/reload-paused.html
+
+        CachedRawResource::updateBuffer may generate unload event in client notify callback. If Inspector was
+        paused, this even would spawn a nested runloop. CachedRawResource::finishLoading would get called in
+        the nested loop, confusing the DocumentLoader state machine and resulting in crashes later.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+
+        - Set a bit when entering the client callback.
+        - Ensure we don't re-enter updateBuffer.
+        - If finishLoading got delayed during client callback, do it at the end.
+
+        (WebCore::CachedRawResource::finishLoading):
+
+        If we are in updateBuffer client callback, save the buffer and bail out.
+
+        * loader/cache/CachedRawResource.h:
+
 2018-02-13  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBlockFlow::takeChild() to RenderTreeBuilder
