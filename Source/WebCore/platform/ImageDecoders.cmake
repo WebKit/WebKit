@@ -1,4 +1,4 @@
-list(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/image-decoders"
     "${WEBCORE_DIR}/platform/image-decoders/bmp"
     "${WEBCORE_DIR}/platform/image-decoders/gif"

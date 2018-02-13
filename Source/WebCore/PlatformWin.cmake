@@ -1,6 +1,6 @@
 add_definitions(/bigobj -D__STDC_CONSTANT_MACROS)
 
-list(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/../include/private"
     "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${WEBCORE_DIR}/accessibility/win"
@@ -113,127 +113,44 @@ list(APPEND WebCore_SOURCES
     rendering/RenderThemeWin.cpp
 )
 
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    accessibility/win/AccessibilityObjectWrapperWin.h
+
+    page/win/FrameWin.h
+
+    platform/graphics/win/DIBPixelData.h
+    platform/graphics/win/FullScreenController.h
+    platform/graphics/win/FullScreenControllerClient.h
+    platform/graphics/win/LocalWindowsContext.h
+    platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h
+    platform/graphics/win/SharedGDIObject.h
+
+    platform/win/BString.h
+    platform/win/BitmapInfo.h
+    platform/win/COMPtr.h
+    platform/win/DefWndProcWindowClass.h
+    platform/win/GDIObjectCounter.h
+    platform/win/GDIUtilities.h
+    platform/win/HWndDC.h
+    platform/win/PopupMenuWin.h
+    platform/win/SearchPopupMenuWin.h
+    platform/win/SystemInfo.h
+    platform/win/WCDataObject.h
+    platform/win/WebCoreBundleWin.h
+    platform/win/WebCoreInstanceHandle.h
+    platform/win/WebCoreTextRenderer.h
+    platform/win/WindowMessageBroadcaster.h
+    platform/win/WindowMessageListener.h
+    platform/win/WindowsTouch.h
+)
+
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/themeWin.css
     ${WEBCORE_DIR}/css/themeWinQuirks.css
 )
 
-set(WebCore_FORWARDING_HEADERS_DIRECTORIES
-    .
-    accessibility
-    animation
-    bindings
-    bridge
-    contentextensions
-    css
-    dom
-    editing
-    fileapi
-    history
-    html
-    inspector
-    loader
-    page
-    platform
-    plugins
-    rendering
-    storage
-    style
-    svg
-    websockets
-    workers
-    xml
-
-    Modules/cache
-    Modules/fetch
-    Modules/geolocation
-    Modules/indexeddb
-    Modules/mediastream
-    Modules/websockets
-
-    Modules/indexeddb/client
-    Modules/indexeddb/legacy
-    Modules/indexeddb/server
-    Modules/indexeddb/shared
-    Modules/notifications
-    Modules/webdatabase
-
-    accessibility/win
-
-    bindings/js
-
-    bridge/c
-    bridge/jsc
-
-    css/parser
-
-    html/forms
-    html/parser
-    html/shadow
-    html/track
-
-    loader/appcache
-    loader/archive
-    loader/cache
-    loader/icon
-
-
-    page/animation
-    page/csp
-    page/scrolling
-    page/win
-
-    platform/animation
-    platform/audio
-    platform/graphics
-    platform/mock
-    platform/network
-    platform/sql
-    platform/text
-    platform/win
-
-    platform/graphics/filters
-    platform/graphics/opengl
-    platform/graphics/opentype
-    platform/graphics/texmap
-    platform/graphics/transforms
-    platform/graphics/win
-
-    platform/mediastream/libwebrtc
-
-    platform/text/transcoder
-
-    rendering/line
-    rendering/shapes
-    rendering/style
-    rendering/svg
-
-    svg/animation
-    svg/graphics
-    svg/properties
-
-    svg/graphics/filters
-
-    workers/service
-)
-
-if (ENABLE_WEBKIT)
-    list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
-        Modules/applicationmanifest
-
-        dom/messageports
-
-        inspector/agents
-
-        platform/mediastream
-
-        workers/service/context
-        workers/service/server
-    )
-endif ()
-
 if (USE_CF)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/cf"
         "${WEBCORE_DIR}/platform/cf/win"
     )
@@ -253,14 +170,12 @@ if (USE_CF)
         platform/text/cf/HyphenationCF.cpp
     )
 
-    list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
-        history/cf
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        loader/archive/cf/LegacyWebArchive.h
 
-        loader/archive/cf
+        platform/cf/CFURLExtras.h
 
-        platform/cf
-
-        platform/cf/win
+        platform/cf/win/CertificateCFWin.h
     )
 endif ()
 
@@ -304,12 +219,6 @@ if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem)
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates/cacert.pem
     )
 endif ()
-
-WEBKIT_MAKE_FORWARDING_HEADERS(WebCore
-    DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES}
-    DERIVED_SOURCE_DIRECTORIES ${DERIVED_SOURCES_WEBCORE_DIR} ${DERIVED_SOURCES_PAL_DIR}
-    FLATTENED
-)
 
 set(WebCore_OUTPUT_NAME
     WebCore${DEBUG_SUFFIX}

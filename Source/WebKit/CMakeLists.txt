@@ -934,7 +934,7 @@ if ("${PORT}" STREQUAL "GTK")
 endif ()
 
 WEBKIT_FRAMEWORK(WebKit)
-add_dependencies(WebKit WebCore ${WEBKIT_EXTRA_DEPENDENCIES})
+add_dependencies(WebKit WebCore WebCoreForwardingHeaders ${WEBKIT_EXTRA_DEPENDENCIES})
 ADD_WEBKIT_PREFIX_HEADER(WebKit)
 
 add_executable(WebProcess ${WebProcess_SOURCES})

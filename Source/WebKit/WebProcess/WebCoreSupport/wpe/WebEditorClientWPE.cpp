@@ -26,13 +26,13 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
-#include "PlatformKeyboardEvent.h"
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Node.h>
+#include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <wtf/NeverDestroyed.h>
 

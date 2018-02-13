@@ -66,7 +66,7 @@ if (NOT LOOKUP_FRAMEWORK-NOTFOUND)
     list(APPEND WebCore_LIBRARIES ${LOOKUP_FRAMEWORK})
 endif ()
 
-list(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/accessibility/mac"
@@ -460,183 +460,123 @@ list(APPEND WebCore_SOURCES
     xml/SoftLinkLibxslt.cpp
 )
 
-# FIXME: We do not need everything from all of these directories.
-# Move some to WebCore_FORWARDING_HEADERS_FILES once people start actually maintaining this.
-set(WebCore_FORWARDING_HEADERS_DIRECTORIES
-    accessibility
-    bridge
-    contentextensions
-    crypto
-    css
-    dom
-    editing
-    fileapi
-    history
-    html
-    inspector
-    loader
-    page
-    platform
-    plugins
-    rendering
-    replay
-    storage
-    style
-    svg
-    workers
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    editing/cocoa/DataDetection.h
+    editing/cocoa/HTMLConverter.h
 
-    workers/service/context
-
-    Modules/applepay
-    Modules/applicationmanifest
-    Modules/cache
-    Modules/geolocation
-    Modules/indexeddb
-    Modules/mediastream
-    Modules/notifications
-    Modules/webdatabase
-    Modules/websockets
-
-    Modules/indexeddb/client
-    Modules/indexeddb/shared
-    Modules/indexeddb/server
-
-    bindings/js
-
-    bridge/objc
-    bridge/jsc
-
-    css/parser
-
-    editing/cocoa
-    editing/mac
-    editing/ios
-
-    html/canvas
-    html/forms
-    html/parser
-    html/shadow
-
-    inspector/agents
-
-    loader/appcache
-    loader/archive
-    loader/cache
-    loader/cocoa
-
-    loader/archive/cf
-
-    page/animation
-    page/cocoa
-    page/csp
-    page/mac
-    page/scrolling
-
-    page/scrolling/mac
-
-    platform/animation
-    platform/audio
-    platform/cf
-    platform/cocoa
-    platform/graphics
-    platform/mac
-    platform/mediastream
-    platform/mock
-    platform/network
-    platform/sql
-    platform/text
-
-    platform/audio/cocoa
-
-    platform/gamepad/cocoa
-    platform/gamepad/mac
-
-    platform/graphics/ca
-    platform/graphics/cocoa
-    platform/graphics/cg
-    platform/graphics/filters
-    platform/graphics/opentype
-    platform/graphics/mac
-    platform/graphics/transforms
-
-    platform/graphics/ca/cocoa
-
-    platform/mediastream/libwebrtc
-
-    platform/network/cf
-    platform/network/cocoa
-    platform/network/mac
-
-    platform/spi/cf
-    platform/spi/cg
-    platform/spi/cocoa
-    platform/spi/mac
-
-    rendering/line
-    rendering/style
-
-    svg/graphics
-    svg/properties
-
-    workers/service
-
-    workers/service/server
-
-    xml
-)
-
-set(WebCore_FORWARDING_HEADERS_FILES
-    Modules/webdatabase/DatabaseDetails.h
-
-    bridge/IdentifierRep.h
-    bridge/npruntime_impl.h
-    bridge/npruntime_internal.h
-
-    contentextensions/CompiledContentExtension.h
-
-    editing/EditAction.h
-    editing/EditingBehaviorTypes.h
-    editing/EditingBoundary.h
-    editing/FindOptions.h
-    editing/FrameSelection.h
-    editing/TextAffinity.h
-
+    editing/mac/AlternativeTextUIController.h
+    editing/mac/DictionaryLookup.h
     editing/mac/TextAlternativeWithRange.h
+    editing/mac/TextUndoInsertionMarkupMac.h
 
-    history/HistoryItem.h
-    history/PageCache.h
-
-    html/HTMLMediaElement.h
-
-    loader/appcache/ApplicationCacheStorage.h
-
-    loader/icon/IconDatabase.h
-    loader/icon/IconDatabaseBase.h
-    loader/icon/IconDatabaseClient.h
+    loader/archive/cf/LegacyWebArchive.h
 
     loader/mac/LoaderNSURLExtras.h
 
-    platform/PlatformExportMacros.h
+    page/mac/TextIndicatorWindow.h
+    page/mac/WebCoreFrameView.h
 
-    platform/audio/AudioHardwareListener.h
+    page/scrolling/mac/ScrollingTreeFixedNode.h
+    page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h
+    page/scrolling/mac/ScrollingTreeStickyNode.h
 
+    platform/audio/mac/CAAudioStreamDescription.h
+    platform/audio/mac/CARingBuffer.h
+
+    platform/cf/CFURLExtras.h
     platform/cf/RunLoopObserver.h
 
     platform/cocoa/MachSendRight.h
-    platform/cocoa/SoftLinking.h
+    platform/cocoa/PlatformView.h
+    platform/cocoa/PlaybackSessionInterface.h
+    platform/cocoa/PlaybackSessionModel.h
+    platform/cocoa/PlaybackSessionModelMediaElement.h
+    platform/cocoa/ScrollController.h
+    platform/cocoa/ScrollSnapAnimatorState.h
+    platform/cocoa/SearchPopupMenuCocoa.h
+    platform/cocoa/SystemVersion.h
+    platform/cocoa/VideoFullscreenChangeObserver.h
+    platform/cocoa/VideoFullscreenModel.h
+    platform/cocoa/VideoFullscreenModelVideoElement.h
+    platform/cocoa/WebKitAvailability.h
 
+    platform/gamepad/cocoa/GameControllerGamepadProvider.h
+
+    platform/gamepad/mac/HIDGamepad.h
+    platform/gamepad/mac/HIDGamepadProvider.h
+
+    platform/graphics/avfoundation/MediaPlaybackTargetMac.h
+    platform/graphics/avfoundation/WebMediaSessionManagerMac.h
+
+    platform/graphics/ca/GraphicsLayerCA.h
+    platform/graphics/ca/LayerFlushScheduler.h
+    platform/graphics/ca/LayerFlushSchedulerClient.h
+    platform/graphics/ca/LayerPool.h
+    platform/graphics/ca/PlatformCAAnimation.h
+    platform/graphics/ca/PlatformCAFilters.h
+    platform/graphics/ca/PlatformCALayer.h
+    platform/graphics/ca/PlatformCALayerClient.h
+    platform/graphics/ca/TileController.h
+
+    platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.h
+    platform/graphics/ca/cocoa/PlatformCALayerCocoa.h
+
+    platform/graphics/cg/GraphicsContextCG.h
+    platform/graphics/cg/IOSurfacePool.h
+    platform/graphics/cg/ImageBufferDataCG.h
+    platform/graphics/cg/PDFDocumentImage.h
+
+    platform/graphics/cocoa/FontCacheCoreText.h
+    platform/graphics/cocoa/FontFamilySpecificationCoreText.h
     platform/graphics/cocoa/IOSurface.h
+    platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h
+    platform/graphics/cocoa/WebCoreCALayerExtras.h
 
-    platform/graphics/transforms/AffineTransform.h
+    platform/graphics/mac/ColorMac.h
+    platform/graphics/mac/WebLayer.h
 
+    platform/mac/DynamicLinkerInterposing.h
+    platform/mac/LegacyNSPasteboardTypes.h
+    platform/mac/PasteboardWriter.h
+    platform/mac/PlatformEventFactoryMac.h
+    platform/mac/PlaybackSessionInterfaceMac.h
+    platform/mac/PluginBlacklist.h
+    platform/mac/ScrollbarThemeMac.h
+    platform/mac/StringUtilities.h
+    platform/mac/VideoFullscreenInterfaceMac.h
+    platform/mac/WebCoreFullScreenPlaceholderView.h
+    platform/mac/WebCoreFullScreenWindow.h
+    platform/mac/WebCoreNSURLExtras.h
+    platform/mac/WebCoreObjCExtras.h
+    platform/mac/WebCoreView.h
+    platform/mac/WebGLBlacklist.h
+    platform/mac/WebNSAttributedStringExtras.h
+    platform/mac/WebPlaybackControlsManager.h
+
+    platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h
+
+    platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h
+
+    platform/network/cf/AuthenticationCF.h
+    platform/network/cf/AuthenticationChallenge.h
     platform/network/cf/CertificateInfo.h
+    platform/network/cf/DownloadBundle.h
+    platform/network/cf/LoaderRunLoopCF.h
+    platform/network/cf/ProtectionSpaceCFNet.h
+    platform/network/cf/ResourceError.h
+    platform/network/cf/ResourceRequest.h
+    platform/network/cf/ResourceRequestCFNet.h
     platform/network/cf/ResourceResponse.h
+    platform/network/cf/SocketStreamHandleImpl.h
+
+    platform/network/cocoa/CookieStorageObserver.h
+    platform/network/cocoa/CredentialCocoa.h
+    platform/network/cocoa/ProtectionSpaceCocoa.h
+    platform/network/cocoa/WebCoreNSURLSession.h
 
     platform/network/mac/AuthenticationMac.h
-
-    platform/sql/SQLiteDatabase.h
-
-    rendering/style/RenderStyleConstants.h
+    platform/network/mac/FormDataStreamMac.h
+    platform/network/mac/WebCoreURLResponse.h
 )
 
 list(APPEND WebCore_IDL_FILES

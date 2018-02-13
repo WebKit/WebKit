@@ -1,3 +1,26 @@
+2018-02-13  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+
+        Reviewed by Keith Miller.
+
+        * FullscreenVideoController.h:
+        * Plugins/PluginDatabase.cpp:
+        * Plugins/PluginDatabaseWin.cpp:
+        * Plugins/PluginDebug.cpp:
+        * Plugins/PluginMainThreadScheduler.cpp:
+        * Plugins/PluginMessageThrottlerWin.cpp:
+        * Plugins/PluginPackage.cpp:
+        * Plugins/PluginPackageWin.cpp:
+        * Plugins/PluginStream.cpp:
+        * Plugins/PluginView.cpp:
+        * Plugins/PluginViewWin.cpp:
+        * Plugins/npapi.cpp:
+        * WebKitMessageLoop.cpp:
+        * WebKitPrefix.h:
+        * storage/WebDatabaseProvider.cpp:
+
 2018-01-13  Darin Adler  <darin@apple.com>
 
         Event improvements

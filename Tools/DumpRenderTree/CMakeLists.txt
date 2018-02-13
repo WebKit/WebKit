@@ -92,6 +92,7 @@ add_dependencies(DumpRenderTree DumpRenderTreeBindings)
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     add_library(TestNetscapePlugIn SHARED ${TestNetscapePlugIn_SOURCES})
+    add_dependencies(TestNetscapePlugIn WebCoreForwardingHeaders)
     target_link_libraries(TestNetscapePlugIn ${TestNetscapePlugIn_LIBRARIES})
 endif ()
 

@@ -41,7 +41,31 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKit.h>
-#include "config.h"
+
+#include <WebCore/PlatformExportMacros.h>
+#include <JavaScriptCore/JSExportMacros.h>
+#include <pal/ExportMacros.h>
+
+#ifdef __cplusplus
+
+// These undefs match up with defines in WebCorePrefix.h for Mac OS X.
+// Helps us catch if anyone uses new or delete by accident in code and doesn't include "config.h".
+#undef new
+#undef delete
+#include <wtf/FastMalloc.h>
+
+#endif
+
+#if USE(CG)
+#ifndef CGFLOAT_DEFINED
+#if (defined(__LP64__) && __LP64__) || (defined(__x86_64__) && __x86_64__) || defined(_M_X64) || defined(__amd64__)
+typedef double CGFloat;
+#else
+typedef float CGFloat;
+#endif
+#define CGFLOAT_DEFINED 1
+#endif
+#endif /* USE(CG) */
 
 // WebKit.dll is expected to export the symbols in WebCore that have been marked
 // as WEBCORE_EXPORT

@@ -1,3 +1,27 @@
+2018-02-13  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+
+        Reviewed by Keith Miller.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * PlatformAppleWin.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * PlatformWinCairo.cmake:
+        * platform/Cairo.cmake:
+        * platform/Curl.cmake:
+        * platform/FreeType.cmake:
+        * platform/GStreamer.cmake:
+        * platform/ImageDecoders.cmake:
+        * platform/TextureMapper.cmake:
+        * platform/graphics/win/LocalWindowsContext.h:
+
 2018-02-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r228299): Broke reader mode in Safari

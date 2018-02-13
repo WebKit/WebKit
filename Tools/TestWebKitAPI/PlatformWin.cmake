@@ -166,4 +166,5 @@ set(test_main_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
 
+add_dependencies(TestWebCoreLib WebCoreForwardingHeaders)
 add_dependencies(TestWebCore TestWebCoreLib)

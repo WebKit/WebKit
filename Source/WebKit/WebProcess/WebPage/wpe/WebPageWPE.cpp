@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "NotImplemented.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 

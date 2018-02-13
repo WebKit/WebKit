@@ -21,7 +21,7 @@
 
 #if HAVE(ACCESSIBILITY)
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 namespace WTR {
 

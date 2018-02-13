@@ -1,3 +1,26 @@
+2018-02-13  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+
+        Reviewed by Keith Miller.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npapi.h:
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npfunctions.h:
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npruntime.h:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/win/TestWebCoreStubs.cpp:
+        (loadResourceIntoBuffer):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityControllerWPE.cpp:
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityUIElementWPE.cpp:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+
 2018-02-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r228299): Broke reader mode in Safari

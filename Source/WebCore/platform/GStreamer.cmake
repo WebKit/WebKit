@@ -1,5 +1,11 @@
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/gstreamer/GUniquePtrGStreamer.h
+    platform/graphics/gstreamer/MediaPlayerRequestInstallMissingPluginsCallback.h
+)
+
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gstreamer"
         "${WEBCORE_DIR}/platform/graphics/gstreamer/mse"
         "${WEBCORE_DIR}/platform/graphics/gstreamer/eme"
@@ -88,7 +94,7 @@ if (ENABLE_VIDEO)
 endif ()
 
 if (ENABLE_WEB_AUDIO)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/audio/gstreamer"
     )
 
@@ -111,7 +117,7 @@ if (ENABLE_WEB_AUDIO)
 endif ()
 
 if (ENABLE_ENCRYPTED_MEDIA)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
         ${LIBGCRYPT_INCLUDE_DIRS}
     )
