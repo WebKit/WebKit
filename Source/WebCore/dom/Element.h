@@ -553,9 +553,6 @@ public:
 
     Element* findAnchorElementForLink(String& outAnchorName);
 
-    AccessibleNode* existingAccessibleNode() const;
-    AccessibleNode* accessibleNode();
-
     ExceptionOr<Ref<WebAnimation>> animate(ScriptExecutionContext&, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeAnimationOptions>>&&);
 
 protected:
