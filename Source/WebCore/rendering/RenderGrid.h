@@ -80,7 +80,6 @@ private:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
     void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild) final;
-    RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) final;
 
     StyleSelfAlignmentData selfAlignmentForChild(GridAxis, const RenderBox&, const RenderStyle* = nullptr) const;
     bool selfAlignmentChangedToStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;

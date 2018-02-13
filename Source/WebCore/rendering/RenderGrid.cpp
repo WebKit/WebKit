@@ -85,21 +85,6 @@ void RenderGrid::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> ne
     dirtyGrid();
 }
 
-RenderPtr<RenderObject> RenderGrid::takeChild(RenderTreeBuilder& builder, RenderObject& child)
-{
-    auto takenChild = RenderBlock::takeChild(builder, child);
-
-    // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
-    // for that reason we don't need to mark the grid as dirty when they are removed.
-    if (child.isOutOfFlowPositioned())
-        return takenChild;
-
-    // The grid needs to be recomputed as it might contain auto-placed items that
-    // will change their position.
-    dirtyGrid();
-    return takenChild;
-}
-
 StyleSelfAlignmentData RenderGrid::selfAlignmentForChild(GridAxis axis, const RenderBox& child, const RenderStyle* gridStyle) const
 {
     return axis == GridRowAxis ? justifySelfForChild(child, gridStyle) : alignSelfForChild(child, gridStyle);

@@ -28,6 +28,7 @@
 
 #include "RenderButton.h"
 #include "RenderElement.h"
+#include "RenderGrid.h"
 #include "RenderMenuList.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
@@ -201,6 +202,12 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
 
     if (is<RenderMenuList>(parent))
         return takeChildFromRenderMenuList(downcast<RenderMenuList>(parent), child);
+
+    if (is<RenderButton>(parent))
+        return takeChildFromRenderButton(downcast<RenderButton>(parent), child);
+
+    if (is<RenderGrid>(parent))
+        return takeChildFromRenderGrid(downcast<RenderGrid>(parent), child);
 
     return parent.takeChild(*this, child);
 }
@@ -530,6 +537,19 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderButton(RenderButto
         return parent.RenderBlock::takeChild(*this, child);
     }
     return takeChild(*innerRenderer, child);
+}
+
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child)
+{
+    auto takenChild = parent.RenderBlock::takeChild(*this, child);
+    // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
+    // for that reason we don't need to mark the grid as dirty when they are removed.
+    if (child.isOutOfFlowPositioned())
+        return takenChild;
+
+    // The grid needs to be recomputed as it might contain auto-placed items that will change their position.
+    parent.dirtyGrid();
+    return takenChild;
 }
 
 }
