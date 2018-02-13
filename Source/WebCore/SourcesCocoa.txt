@@ -98,7 +98,6 @@ page/cocoa/PerformanceLoggingCocoa.mm
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/SettingsBaseCocoa.mm
-page/cocoa/UserAgent.mm
 
 page/mac/ChromeMac.mm
 page/mac/DragControllerMac.mm
@@ -158,6 +157,7 @@ platform/cocoa/SharedBufferCocoa.mm
 platform/cocoa/SystemVersion.mm
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/cocoa/ThemeCocoa.mm
+platform/cocoa/UserAgentCocoa.mm
 platform/cocoa/VideoFullscreenModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreNSErrorExtras.mm

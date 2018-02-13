@@ -644,7 +644,6 @@
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		262391361A648CEE007251A3 /* ContentExtensionsDebugging.h in Headers */ = {isa = PBXBuildFile; fileRef = 262391351A648CEE007251A3 /* ContentExtensionsDebugging.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		26255F0318878E110006E1FD /* UserAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 26255F0118878E110006E1FD /* UserAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		262EC41A1D078FB900BA78FC /* EventTrackingRegions.h in Headers */ = {isa = PBXBuildFile; fileRef = 262EC4191D078F3D00BA78FC /* EventTrackingRegions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2873,6 +2872,7 @@
 		A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */; };
 		A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */; };
 		A31C4E5416E02B40002F7957 /* JSOESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */; };
+		A3AF9D8620326861006CAD06 /* UserAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AF9D8220325324006CAD06 /* UserAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3BB59F41457A40D00AC56FE /* DocumentEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A3E2642F14748991005A8588 /* WorkerEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = A409C983116D0DDD007197BD /* AccessibilityProgressIndicator.h */; };
@@ -6181,9 +6181,6 @@
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
 		262391351A648CEE007251A3 /* ContentExtensionsDebugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionsDebugging.h; sourceTree = "<group>"; };
-		26255EFF18878DFF0006E1FD /* UserAgentIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentIOS.mm; sourceTree = "<group>"; };
-		26255F0118878E110006E1FD /* UserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgent.h; sourceTree = "<group>"; };
-		26255F0218878E110006E1FD /* UserAgentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentMac.mm; sourceTree = "<group>"; };
 		262EC4191D078F3D00BA78FC /* EventTrackingRegions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTrackingRegions.h; sourceTree = "<group>"; };
 		262EC41C1D110B1F00BA78FC /* EventTrackingRegions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTrackingRegions.cpp; sourceTree = "<group>"; };
 		265541371489811C000DFC5D /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyEventCodesIOS.h; sourceTree = "<group>"; };
@@ -8472,7 +8469,6 @@
 		5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTParser.h; sourceTree = "<group>"; };
 		5D5975B119635F1100D00878 /* SystemVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemVersion.h; sourceTree = "<group>"; };
 		5D5975B219635F1100D00878 /* SystemVersion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemVersion.mm; sourceTree = "<group>"; };
-		5D5975B61963637B00D00878 /* UserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgent.mm; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollAlignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAlignment.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollAlignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAlignment.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
@@ -10877,6 +10873,10 @@
 		A31C4E5016E02AC5002F7957 /* OESTextureHalfFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OESTextureHalfFloat.idl; sourceTree = "<group>"; };
 		A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureHalfFloat.cpp; sourceTree = "<group>"; };
 		A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloat.h; sourceTree = "<group>"; };
+		A3AF9D81203252EE006CAD06 /* UserAgentCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentCocoa.mm; sourceTree = "<group>"; };
+		A3AF9D8220325324006CAD06 /* UserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgent.h; sourceTree = "<group>"; };
+		A3AF9D8320325691006CAD06 /* UserAgentIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentIOS.mm; sourceTree = "<group>"; };
+		A3AF9D84203256A3006CAD06 /* UserAgentMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgentMac.mm; sourceTree = "<group>"; };
 		A3BB59F11457A40D00AC56FE /* DocumentEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentEventQueue.cpp; sourceTree = "<group>"; };
 		A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentEventQueue.h; sourceTree = "<group>"; };
 		A3D42A841F33BA3600A64B62 /* LayoutUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnit.cpp; sourceTree = "<group>"; };
@@ -15478,7 +15478,6 @@
 			children = (
 				FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */,
 				FED13D3B0CEA936A00D89466 /* FrameIOS.mm */,
-				26255EFF18878DFF0006E1FD /* UserAgentIOS.mm */,
 				225A16B30D5C11E900090295 /* WebEventRegion.h */,
 				225A16B40D5C11E900090295 /* WebEventRegion.mm */,
 			);
@@ -18341,8 +18340,6 @@
 				ADFE2B541BD5F41200DAB457 /* ResourceUsageOverlayCocoa.mm */,
 				A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */,
 				A182D5B61BE722620087A7CC /* SettingsBaseCocoa.mm */,
-				26255F0118878E110006E1FD /* UserAgent.h */,
-				5D5975B61963637B00D00878 /* UserAgent.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -18670,6 +18667,7 @@
 				51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */,
 				6593923909AE435C002C531F /* URLMac.mm */,
 				868160D3187669E70021E79D /* UserActivityMac.mm */,
+				A3AF9D84203256A3006CAD06 /* UserAgentMac.mm */,
 				83C45B8B1DC2B663008871BA /* ValidationBubbleMac.mm */,
 				52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */,
 				52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */,
@@ -19811,7 +19809,6 @@
 				2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */,
 				2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */,
 				2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */,
-				26255F0218878E110006E1FD /* UserAgentMac.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 				2E9B5D8E1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h */,
 				2EEEE55B1B66A047008E2CBC /* WheelEventDeltaFilterMac.mm */,
@@ -20917,6 +20914,7 @@
 				44C9919E0F3D210E00586670 /* ThemeIOS.mm */,
 				1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */,
 				1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */,
+				A3AF9D8320325691006CAD06 /* UserAgentIOS.mm */,
 				837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */,
 				3FBC4AF2189881560046EE38 /* VideoFullscreenInterfaceAVKit.h */,
 				3FBC4AF1189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm */,
@@ -21055,6 +21053,7 @@
 				7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */,
 				310D71941B335C9D009C7B73 /* ThemeCocoa.h */,
 				310D71931B335C9D009C7B73 /* ThemeCocoa.mm */,
+				A3AF9D81203252EE006CAD06 /* UserAgentCocoa.mm */,
 				52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */,
 				52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */,
 				52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */,
@@ -23988,6 +23987,7 @@
 				5C6E65401D5CEDC900F7862E /* URLParser.h */,
 				868160D1187669C40021E79D /* UserActivity.cpp */,
 				868160D2187669C40021E79D /* UserActivity.h */,
+				A3AF9D8220325324006CAD06 /* UserAgent.h */,
 				71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */,
 				83C45B8D1DC2B67C008871BA /* ValidationBubble.h */,
 				515F79511CFCA3C700CCED93 /* WebCoreCrossThreadCopier.cpp */,
@@ -30072,7 +30072,7 @@
 				93D437A21D57B3FE00AB85EA /* URLUtils.h in Headers */,
 				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
 				868160D618766A130021E79D /* UserActivity.h in Headers */,
-				26255F0318878E110006E1FD /* UserAgent.h in Headers */,
+				A3AF9D8620326861006CAD06 /* UserAgent.h in Headers */,
 				CDAB6D3117C9259500C60B34 /* UserAgentScripts.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				1AE79D43188DB61F002239C2 /* UserContentController.h in Headers */,

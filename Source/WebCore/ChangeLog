@@ -1,3 +1,22 @@
+2018-02-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unify UserAgent into WebCore/platform.
+        https://bugs.webkit.org/show_bug.cgi?id=182716
+
+        Reviewed by Michael Catanzaro.
+
+        No change in functionality.
+
+        * SourcesCocoa.txt:
+        * SourcesIOS.txt:
+        * SourcesMac.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/cocoa/UserAgent.h: Removed.
+        * platform/UserAgent.h:
+        * platform/cocoa/UserAgentCocoa.mm: Renamed from Source/WebCore/page/cocoa/UserAgent.mm.
+        * platform/ios/UserAgentIOS.mm: Renamed from Source/WebCore/page/ios/UserAgentIOS.mm.
+        * platform/mac/UserAgentMac.mm: Renamed from Source/WebCore/page/mac/UserAgentMac.mm.
+
 2018-02-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Support the copy constructors for KeyframeEffectReadOnly and KeyframeEffect

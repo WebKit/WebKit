@@ -42,7 +42,6 @@ html/shadow/mac/ImageControlsRootElementMac.cpp
 page/mac/EventHandlerMac.mm
 page/mac/ServicesOverlayController.mm
 page/mac/TextIndicatorWindow.mm
-page/mac/UserAgentMac.mm
 page/mac/WheelEventDeltaFilterMac.mm
 
 page/scrolling/mac/ScrollingCoordinatorMac.mm
@@ -97,6 +96,7 @@ platform/mac/SuddenTermination.mm
 platform/mac/ThemeMac.mm
 platform/mac/ThreadCheck.mm @no-unify
 platform/mac/UserActivityMac.mm
+platform/mac/UserAgentMac.mm
 platform/mac/ValidationBubbleMac.mm
 platform/mac/WebCoreFullScreenPlaceholderView.mm
 platform/mac/WebCoreFullScreenWarningView.mm
