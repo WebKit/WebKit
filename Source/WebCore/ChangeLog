@@ -1,3 +1,37 @@
+2018-02-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r228299): Broke reader mode in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=182697
+        <rdar://problem/37399012>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rework the fix for r228299 to be more targeted. I moved the policy check
+        cencelation from FrameLoader::stopLoading() to NavigationScheduler::schedule()
+        when a pending load is cancelled by another load. I have verified that the
+        sites fixed by r228299 still work with this more limited change. However,
+        reader mode is now working again.
+
+        The issue seems to be that we tell CFNetwork to continue with the load after
+        receiving the response, even if the client has not responded to the
+        decidePolicyForNavigationResponse delegate yet. As a result, CFNetwork sends
+        us the resource data and we may commit the provisional load before receiving
+        the policy response from the client. When the provisional load is committed,
+        we call FrameLoader::stopLoading() which after r228299 cancelled pending
+        policy checks. Because we did not wait for the policy check response to
+        commit the load, we would cancel it which would make the load fail.
+
+        The real fix here would be to make not tell CFNetwork to continue until after
+        we've received the policy delegate response. However, this is a larger and
+        riskier change at this point. I will follow-up on this issue.
+
+        Covered by new API test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::schedule):
+
 2018-02-13  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderSVG*::takeChild() to RenderTreeBuilder

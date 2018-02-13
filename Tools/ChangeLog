@@ -1,3 +1,23 @@
+2018-02-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r228299): Broke reader mode in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=182697
+        <rdar://problem/37399012>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add API test coverage for responding asynchronously to the decidePolicyForNavigationResponse
+        delegate.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm: Added.
+        (-[TestAsyncNavigationDelegate webView:didFinishNavigation:]):
+        (-[TestAsyncNavigationDelegate webView:didFailNavigation:withError:]):
+        (-[TestAsyncNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[TestAsyncNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[TestAsyncNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+
 2018-02-12  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources
