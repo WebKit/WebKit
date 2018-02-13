@@ -13,5 +13,5 @@ var site1 = eval("0, tag`Cocoa`");
 var site2 = eval("1, tag`Cappuccino`");
 var site3 = eval("2, tag`Cocoa`");
 
-shouldBe(site1 === site3, true);
+shouldBe(site1 !== site3, true);
 shouldBe(site1 !== site2, true);

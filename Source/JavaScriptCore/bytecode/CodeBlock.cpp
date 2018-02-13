@@ -62,7 +62,7 @@
 #include "JSModuleEnvironment.h"
 #include "JSSet.h"
 #include "JSString.h"
-#include "JSTemplateRegistryKey.h"
+#include "JSTemplateObjectDescriptor.h"
 #include "LLIntData.h"
 #include "LLIntEntrypoint.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
@@ -942,8 +942,9 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
                     clone->setRareDataCodeBlock(this);
 
                 constant = clone;
-            } else if (isTemplateRegistryKey(vm, constant)) {
-                auto* templateObject = globalObject->templateRegistry().getTemplateObject(exec, jsCast<JSTemplateRegistryKey*>(constant));
+            } else if (isTemplateObjectDescriptor(vm, constant)) {
+                auto descriptor = jsCast<JSTemplateObjectDescriptor*>(constant);
+                auto* templateObject = descriptor->createTemplateObject(exec);
                 RETURN_IF_EXCEPTION(scope, void());
                 constant = templateObject;
             }

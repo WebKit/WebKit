@@ -1,3 +1,176 @@
+2018-02-13  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] cache TaggedTemplate arrays by callsite rather than by contents
+        https://bugs.webkit.org/show_bug.cgi?id=182717
+
+        Reviewed by Yusuke Suzuki.
+
+        https://github.com/tc39/ecma262/pull/890 imposes a change to template
+        literals, to allow template callsite arrays to be collected when the
+        code containing the tagged template call is collected. This spec change
+        has received concensus and been ratified.
+
+        This change eliminates the eternal map associating template contents
+        with arrays.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::setSlow):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::allowDirectEvalCache const):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateObjectConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        (JSC::BytecodeGenerator::addTemplateRegistryKeyConstant): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/ParserModes.h:
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::allowDirectEvalCache const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::templateRegistry): Deleted.
+        * runtime/JSTemplateObjectDescriptor.cpp: Renamed from Source/JavaScriptCore/runtime/TemplateRegistry.cpp.
+        (JSC::JSTemplateObjectDescriptor::JSTemplateObjectDescriptor):
+        (JSC::JSTemplateObjectDescriptor::create):
+        (JSC::JSTemplateObjectDescriptor::destroy):
+        (JSC::JSTemplateObjectDescriptor::createTemplateObject):
+        * runtime/JSTemplateObjectDescriptor.h: Renamed from Source/JavaScriptCore/runtime/JSTemplateRegistryKey.h.
+        (JSC::isTemplateObjectDescriptor):
+        * runtime/JSTemplateRegistryKey.cpp: Removed.
+        * runtime/TemplateObjectDescriptor.cpp: Renamed from Source/JavaScriptCore/runtime/TemplateRegistryKey.cpp.
+        (JSC::TemplateObjectDescriptor::~TemplateObjectDescriptor):
+        * runtime/TemplateObjectDescriptor.h: Renamed from Source/JavaScriptCore/runtime/TemplateRegistryKey.h.
+        (JSC::TemplateObjectDescriptor::operator== const):
+        (JSC::TemplateObjectDescriptor::operator!= const):
+        (JSC::TemplateObjectDescriptor::Hasher::hash):
+        (JSC::TemplateObjectDescriptor::Hasher::equal):
+        (JSC::TemplateObjectDescriptor::create):
+        (JSC::TemplateObjectDescriptor::TemplateObjectDescriptor):
+        (JSC::TemplateObjectDescriptor::calculateHash):
+        * runtime/TemplateRegistry.h: Removed.
+        * runtime/TemplateRegistryKeyTable.cpp: Removed.
+        * runtime/TemplateRegistryKeyTable.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::templateRegistryKeyTable): Deleted.
+        * runtime/VMEntryScope.cpp:
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::setSlow):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::allowDirectEvalCache const):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateObjectConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        (JSC::BytecodeGenerator::addTemplateRegistryKeyConstant): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/ParserModes.h:
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::allowDirectEvalCache const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::templateRegistry): Deleted.
+        * runtime/JSTemplateObjectDescriptor.cpp: Renamed from Source/JavaScriptCore/runtime/TemplateRegistry.cpp.
+        (JSC::JSTemplateObjectDescriptor::JSTemplateObjectDescriptor):
+        (JSC::JSTemplateObjectDescriptor::create):
+        (JSC::JSTemplateObjectDescriptor::destroy):
+        (JSC::JSTemplateObjectDescriptor::createTemplateObject):
+        * runtime/JSTemplateObjectDescriptor.h: Renamed from Source/JavaScriptCore/runtime/JSTemplateRegistryKey.h.
+        (JSC::isTemplateObjectDescriptor):
+        * runtime/JSTemplateRegistryKey.cpp: Removed.
+        * runtime/TemplateObjectDescriptor.cpp: Renamed from Source/JavaScriptCore/runtime/TemplateRegistryKey.cpp.
+        (JSC::TemplateObjectDescriptor::~TemplateObjectDescriptor):
+        * runtime/TemplateObjectDescriptor.h: Renamed from Source/JavaScriptCore/runtime/TemplateRegistryKey.h.
+        (JSC::TemplateObjectDescriptor::operator== const):
+        (JSC::TemplateObjectDescriptor::operator!= const):
+        (JSC::TemplateObjectDescriptor::Hasher::hash):
+        (JSC::TemplateObjectDescriptor::Hasher::equal):
+        (JSC::TemplateObjectDescriptor::create):
+        (JSC::TemplateObjectDescriptor::TemplateObjectDescriptor):
+        (JSC::TemplateObjectDescriptor::calculateHash):
+        * runtime/TemplateRegistry.h: Removed.
+        * runtime/TemplateRegistryKeyTable.cpp: Removed.
+        * runtime/TemplateRegistryKeyTable.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::templateRegistryKeyTable): Deleted.
+        * runtime/VMEntryScope.cpp:
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::setSlow):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::allowDirectEvalCache const):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateObjectConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        (JSC::BytecodeGenerator::addTemplateRegistryKeyConstant): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/ParserModes.h:
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::allowDirectEvalCache const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::templateRegistry): Deleted.
+        * runtime/JSTemplateObjectDescriptor.cpp: Renamed from Source/JavaScriptCore/runtime/TemplateRegistry.cpp.
+        (JSC::JSTemplateObjectDescriptor::JSTemplateObjectDescriptor):
+        (JSC::JSTemplateObjectDescriptor::create):
+        (JSC::JSTemplateObjectDescriptor::destroy):
+        (JSC::JSTemplateObjectDescriptor::createTemplateObject):
+        * runtime/JSTemplateObjectDescriptor.h: Renamed from Source/JavaScriptCore/runtime/JSTemplateRegistryKey.h.
+        (JSC::isTemplateObjectDescriptor):
+        * runtime/JSTemplateRegistryKey.cpp: Removed.
+        * runtime/TemplateObjectDescriptor.cpp: Renamed from Source/JavaScriptCore/runtime/TemplateRegistryKey.cpp.
+        (JSC::TemplateObjectDescriptor::~TemplateObjectDescriptor):
+        * runtime/TemplateObjectDescriptor.h: Renamed from Source/JavaScriptCore/runtime/TemplateRegistryKey.h.
+        (JSC::TemplateObjectDescriptor::operator== const):
+        (JSC::TemplateObjectDescriptor::operator!= const):
+        (JSC::TemplateObjectDescriptor::Hasher::hash):
+        (JSC::TemplateObjectDescriptor::Hasher::equal):
+        (JSC::TemplateObjectDescriptor::create):
+        (JSC::TemplateObjectDescriptor::TemplateObjectDescriptor):
+        (JSC::TemplateObjectDescriptor::calculateHash):
+        * runtime/TemplateRegistry.h: Removed.
+        * runtime/TemplateRegistryKeyTable.cpp: Removed.
+        * runtime/TemplateRegistryKeyTable.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::templateRegistryKeyTable): Deleted.
+        * runtime/VMEntryScope.cpp:
+
 2018-02-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Support GetArrayLength on ArrayStorage in the FTL

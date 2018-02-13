@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,54 @@
  */
 
 #include "config.h"
-#include "TemplateRegistry.h"
+#include "JSTemplateObjectDescriptor.h"
 
-#include "BuiltinNames.h"
 #include "JSCInlines.h"
-#include "JSGlobalObject.h"
-#include "JSTemplateRegistryKey.h"
 #include "ObjectConstructor.h"
-#include "TemplateRegistryKey.h"
-#include "WeakGCMapInlines.h"
+#include "VM.h"
 
 namespace JSC {
 
-TemplateRegistry::TemplateRegistry(VM& vm)
-    : m_templateMap(vm)
+const ClassInfo JSTemplateObjectDescriptor::s_info = { "TemplateObjectDescriptor", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSTemplateObjectDescriptor) };
+
+
+JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor)
+    : Base(vm, vm.templateObjectDescriptorStructure.get())
+    , m_descriptor(WTFMove(descriptor))
 {
 }
 
-JSArray* TemplateRegistry::getTemplateObject(ExecState* exec, JSTemplateRegistryKey* templateKeyObject)
+JSTemplateObjectDescriptor* JSTemplateObjectDescriptor::create(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor)
 {
-    auto& templateKey = templateKeyObject->templateRegistryKey();
-    JSArray* cached = m_templateMap.get(&templateKey);
-    if (cached)
-        return cached;
+    JSTemplateObjectDescriptor* result = new (NotNull, allocateCell<JSTemplateObjectDescriptor>(vm.heap)) JSTemplateObjectDescriptor(vm, WTFMove(descriptor));
+    result->finishCreation(vm);
+    return result;
+}
 
+void JSTemplateObjectDescriptor::destroy(JSCell* cell)
+{
+    static_cast<JSTemplateObjectDescriptor*>(cell)->JSTemplateObjectDescriptor::~JSTemplateObjectDescriptor();
+}
+
+JSArray* JSTemplateObjectDescriptor::createTemplateObject(ExecState* exec)
+{
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    unsigned count = templateKey.cookedStrings().size();
+    unsigned count = descriptor().cookedStrings().size();
     JSArray* templateObject = constructEmptyArray(exec, nullptr, count);
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSArray* rawObject = constructEmptyArray(exec, nullptr, count);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     for (unsigned index = 0; index < count; ++index) {
-        auto cooked = templateKey.cookedStrings()[index];
+        auto cooked = descriptor().cookedStrings()[index];
         if (cooked)
             templateObject->putDirectIndex(exec, index, jsString(exec, cooked.value()), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
         else
             templateObject->putDirectIndex(exec, index, jsUndefined(), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        rawObject->putDirectIndex(exec, index, jsString(exec, templateKey.rawStrings()[index]), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
+        rawObject->putDirectIndex(exec, index, jsString(exec, descriptor().rawStrings()[index]), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
@@ -74,17 +81,10 @@ JSArray* TemplateRegistry::getTemplateObject(ExecState* exec, JSTemplateRegistry
 
     templateObject->putDirect(vm, vm.propertyNames->raw, rawObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 
-    // Template JSArray hold the reference to JSTemplateRegistryKey to make TemplateRegistryKey pointer live until this JSArray is collected.
-    // TemplateRegistryKey pointer is used for TemplateRegistry's key.
-    templateObject->putDirect(vm, vm.propertyNames->builtinNames().templateRegistryKeyPrivateName(), templateKeyObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
-
     objectConstructorFreeze(exec, templateObject);
     scope.assertNoException();
 
-    m_templateMap.set(&templateKey, templateObject);
-
     return templateObject;
 }
-
 
 } // namespace JSC

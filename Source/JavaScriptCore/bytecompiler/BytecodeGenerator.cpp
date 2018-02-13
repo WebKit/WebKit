@@ -46,7 +46,7 @@
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSLexicalEnvironment.h"
-#include "JSTemplateRegistryKey.h"
+#include "JSTemplateObjectDescriptor.h"
 #include "LowLevelInterpreter.h"
 #include "Options.h"
 #include "StackAlignment.h"
@@ -3135,14 +3135,15 @@ JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
     return stringInMap;
 }
 
-RegisterID* BytecodeGenerator::addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&& templateRegistryKey)
+RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&& descriptor)
 {
-    return m_templateRegistryKeyMap.ensure(templateRegistryKey.copyRef(), [&] {
-        auto* result = JSTemplateRegistryKey::create(*vm(), WTFMove(templateRegistryKey));
-        unsigned index = addConstantIndex();
-        m_codeBlock->addConstant(result);
-        return &m_constantPoolRegisters[index];
+    JSTemplateObjectDescriptor* descriptorValue = m_templateObjectDescriptorMap.ensure(descriptor.copyRef(), [&] {
+        return JSTemplateObjectDescriptor::create(*vm(), WTFMove(descriptor));
     }).iterator->value;
+
+    int index = addConstantIndex();
+    m_codeBlock->addConstant(descriptorValue);
+    return &m_constantPoolRegisters[index];
 }
 
 RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements, unsigned length)
@@ -4401,8 +4402,8 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
 
 RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode* taggedTemplate)
 {
-    TemplateRegistryKey::StringVector rawStrings;
-    TemplateRegistryKey::OptionalStringVector cookedStrings;
+    TemplateObjectDescriptor::StringVector rawStrings;
+    TemplateObjectDescriptor::OptionalStringVector cookedStrings;
 
     TemplateStringListNode* templateString = taggedTemplate->templateLiteral()->templateStrings();
     for (; templateString; templateString = templateString->next()) {
@@ -4414,7 +4415,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         else
             cookedStrings.append(string->cooked()->impl());
     }
-    RefPtr<RegisterID> constant = addTemplateRegistryKeyConstant(m_vm->templateRegistryKeyTable().createKey(WTFMove(rawStrings), WTFMove(cookedStrings)));
+    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTFMove(rawStrings), WTFMove(cookedStrings)));
     if (!dst)
         return constant.get();
     return emitMove(dst, constant.get());

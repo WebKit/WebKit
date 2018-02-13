@@ -858,9 +858,7 @@ set(JavaScriptCore_FORWARDING_HEADERS
     runtime/Symbol.h
     runtime/SymbolPrototype.h
     runtime/SymbolTable.h
-    runtime/TemplateRegistry.h
-    runtime/TemplateRegistryKey.h
-    runtime/TemplateRegistryKeyTable.h
+    runtime/TemplateObjectDescriptor.h
     runtime/TestRunnerUtils.h
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h

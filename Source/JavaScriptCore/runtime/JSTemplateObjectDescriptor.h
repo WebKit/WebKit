@@ -26,11 +26,11 @@
 #pragma once
 
 #include "Structure.h"
-#include "TemplateRegistryKey.h"
+#include "TemplateObjectDescriptor.h"
 
 namespace JSC {
 
-class JSTemplateRegistryKey final : public JSCell {
+class JSTemplateObjectDescriptor final : public JSCell {
 public:
     using Base = JSCell;
 
@@ -38,32 +38,34 @@ public:
     static const bool needsDestruction = true;
     DECLARE_INFO;
 
-    static JSTemplateRegistryKey* create(VM&, Ref<TemplateRegistryKey>&&);
+    static JSTemplateObjectDescriptor* create(VM&, Ref<TemplateObjectDescriptor>&&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
-    const TemplateRegistryKey& templateRegistryKey() const { return m_templateRegistryKey.get(); }
+    const TemplateObjectDescriptor& descriptor() const { return m_descriptor.get(); }
+
+    JSArray* createTemplateObject(ExecState*);
 
 protected:
     static void destroy(JSCell*);
 
 private:
-    JSTemplateRegistryKey(VM&, Ref<TemplateRegistryKey>&&);
+    JSTemplateObjectDescriptor(VM&, Ref<TemplateObjectDescriptor>&&);
 
-    Ref<TemplateRegistryKey> m_templateRegistryKey;
+    Ref<TemplateObjectDescriptor> m_descriptor;
 };
 
-inline bool isTemplateRegistryKey(VM& vm, JSCell* cell)
+inline bool isTemplateObjectDescriptor(VM& vm, JSCell* cell)
 {
-    return cell->classInfo(vm) == JSTemplateRegistryKey::info();
+    return cell->classInfo(vm) == JSTemplateObjectDescriptor::info();
 }
 
-inline bool isTemplateRegistryKey(VM& vm, JSValue v)
+inline bool isTemplateObjectDescriptor(VM& vm, JSValue v)
 {
-    return v.isCell() && isTemplateRegistryKey(vm, v.asCell());
+    return v.isCell() && isTemplateObjectDescriptor(vm, v.asCell());
 }
 
 } // namespace JSC

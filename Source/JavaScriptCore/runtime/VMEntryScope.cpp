@@ -27,6 +27,7 @@
 #include "VMEntryScope.h"
 
 #include "DisallowVMReentry.h"
+#include "JSGlobalObject.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "ThreadLocalCacheInlines.h"
