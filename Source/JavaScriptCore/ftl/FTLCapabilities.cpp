@@ -355,6 +355,9 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::Undecided:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
         case Array::DirectArguments:
         case Array::ScopedArguments:
             break;
@@ -370,6 +373,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
         case Array::String:
         case Array::DirectArguments:
         case Array::ScopedArguments:

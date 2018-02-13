@@ -3644,6 +3644,14 @@ private:
             setInt32(m_out.load32NonNegative(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength));
             return;
         }
+
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage: {
+            LValue length = m_out.load32(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength);
+            speculate(Uncountable, noValue(), nullptr, m_out.lessThan(length, m_out.int32Zero));
+            setInt32(length);
+            return;
+        }
             
         case Array::String: {
             LValue string = lowCell(m_node->child1());
@@ -14540,7 +14548,10 @@ private:
         switch (arrayMode.type()) {
         case Array::Int32:
         case Array::Double:
-        case Array::Contiguous: {
+        case Array::Contiguous:
+        case Array::Undecided:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage: {
             IndexingType shape = arrayMode.shapeMask();
             LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc);
 
@@ -14580,6 +14591,9 @@ private:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::Undecided:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
             return isArrayTypeForArrayify(cell, arrayMode);
             
         case Array::DirectArguments:
