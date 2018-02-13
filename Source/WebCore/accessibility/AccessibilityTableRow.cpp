@@ -32,7 +32,6 @@
 #include "AXObjectCache.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
-#include "AccessibleNode.h"
 #include "HTMLNames.h"
 #include "HTMLTableRowElement.h"
 #include "RenderObject.h"
@@ -170,18 +169,18 @@ void AccessibilityTableRow::addChildren()
 
 int AccessibilityTableRow::axColumnIndex() const
 {
-    unsigned colIndexValue = unsignedValueForProperty(AXPropertyName::ColIndex);
-    if (colIndexValue >= 1)
-        return colIndexValue;
+    const AtomicString& colIndexValue = getAttribute(aria_colindexAttr);
+    if (colIndexValue.toInt() >= 1)
+        return colIndexValue.toInt();
     
     return -1;
 }
 
 int AccessibilityTableRow::axRowIndex() const
 {
-    unsigned rowIndexValue = unsignedValueForProperty(AXPropertyName::RowIndex);
-    if (rowIndexValue >= 1)
-        return rowIndexValue;
+    const AtomicString& rowIndexValue = getAttribute(aria_rowindexAttr);
+    if (rowIndexValue.toInt() >= 1)
+        return rowIndexValue.toInt();
     
     return -1;
 }

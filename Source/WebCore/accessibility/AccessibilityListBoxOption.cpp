@@ -31,7 +31,6 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
-#include "AccessibleNode.h"
 #include "Element.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -63,7 +62,7 @@ bool AccessibilityListBoxOption::isEnabled() const
     if (is<HTMLOptGroupElement>(m_optionElement))
         return false;
 
-    if (boolValueForProperty(AXPropertyName::Disabled).value())
+    if (equalLettersIgnoringASCIICase(getAttribute(aria_disabledAttr), "true"))
         return false;
 
     if (m_optionElement->hasAttributeWithoutSynchronization(disabledAttr))
@@ -142,7 +141,7 @@ String AccessibilityListBoxOption::stringValue() const
     if (!m_optionElement)
         return String();
     
-    const AtomicString& ariaLabel = stringValueForProperty(AXPropertyName::Label);
+    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isNull())
         return ariaLabel;
     

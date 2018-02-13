@@ -31,7 +31,6 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityRenderObject.h"
-#include "AccessibleNode.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "RenderBoxModelObject.h"
@@ -69,7 +68,7 @@ AccessibilityRole AccessibilityImageMapLink::roleValue() const
     if (!m_areaElement)
         return AccessibilityRole::WebCoreLink;
     
-    const AtomicString& ariaRole = stringValueForProperty(AXPropertyName::Role);
+    const AtomicString& ariaRole = getAttribute(roleAttr);
     if (!ariaRole.isEmpty())
         return AccessibilityObject::ariaRoleToWebCoreRole(ariaRole);
 
@@ -111,7 +110,7 @@ void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& tex
     
 String AccessibilityImageMapLink::accessibilityDescription() const
 {
-    const AtomicString& ariaLabel = stringValueForProperty(AXPropertyName::Label);
+    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     const AtomicString& alt = getAttribute(altAttr);

@@ -749,7 +749,7 @@ String AccessibilityRenderObject::stringValue() const
         int selectedIndex = selectElement.selectedIndex();
         const Vector<HTMLElement*>& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
-            const AtomicString& overriddenDescription = AccessibleNode::effectiveStringValueForElement(*listItems[selectedIndex], AXPropertyName::Label);
+            const AtomicString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
@@ -1059,7 +1059,7 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     // titleUIElement, otherwise its inner text will be announced by a screenreader.
     if (isLabelable()) {
         if (HTMLLabelElement* label = labelForElement(downcast<Element>(node()))) {
-            if (!AccessibleNode::effectiveStringValueForElement(*label, AXPropertyName::Label).isEmpty())
+            if (!label->attributeWithoutSynchronization(aria_labelAttr).isEmpty())
                 return false;
             if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label)) {
                 if (!labelObject->ariaLabeledByAttribute().isEmpty())
@@ -1140,10 +1140,8 @@ AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion()
 
     if (m_renderer->style().visibility() != VISIBLE) {
         // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
-        if (auto hidden = boolValueForProperty(AXPropertyName::Hidden)) {
-            if (!hidden.value())
-                return AccessibilityObjectInclusion::DefaultBehavior;
-        }
+        if (equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "false"))
+            return AccessibilityObjectInclusion::DefaultBehavior;
 
         return AccessibilityObjectInclusion::IgnoreObject;
     }
@@ -1632,7 +1630,7 @@ bool AccessibilityRenderObject::isSelected() const
     if (!m_renderer->node())
         return false;
     
-    if (boolValueForProperty(AXPropertyName::Selected).value())
+    if (equalLettersIgnoringASCIICase(getAttribute(aria_selectedAttr), "true"))
         return true;    
     
     if (isTabItem() && isTabItemSelected())
@@ -2438,8 +2436,14 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     if (!m_renderer)
         return nullptr;
     
+    const AtomicString& activeDescendantAttrStr = getAttribute(aria_activedescendantAttr);
+    if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
+        return nullptr;
+    Element* element = this->element();
+    if (!element)
+        return nullptr;
     
-    Element* target = elementValueForProperty(AXPropertyName::ActiveDescendant);
+    Element* target = element->treeScope().getElementById(activeDescendantAttrStr);
     if (!target)
         return nullptr;
     
@@ -2789,7 +2793,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
     // for section elements which have names.
     if (node && node->hasTagName(sectionTag))
-        return hasProperty(AXPropertyName::Label) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
+        return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
 
     if (node && node->hasTagName(addressTag))
         return AccessibilityRole::LandmarkContentInfo;
@@ -2862,7 +2866,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
 AccessibilityOrientation AccessibilityRenderObject::orientation() const
 {
-    const AtomicString& ariaOrientation = stringValueForProperty(AXPropertyName::Orientation);
+    const AtomicString& ariaOrientation = getAttribute(aria_orientationAttr);
     if (equalLettersIgnoringASCIICase(ariaOrientation, "horizontal"))
         return AccessibilityOrientation::Horizontal;
     if (equalLettersIgnoringASCIICase(ariaOrientation, "vertical"))
@@ -2963,7 +2967,8 @@ bool AccessibilityRenderObject::canSetExpandedAttribute() const
         return true;
     
     // An object can be expanded if it aria-expanded is true or false.
-    if (boolValueForProperty(AXPropertyName::Expanded))
+    const AtomicString& expanded = getAttribute(aria_expandedAttr);
+    if (equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false"))
         return true;
     return false;
 }
@@ -3277,7 +3282,7 @@ bool AccessibilityRenderObject::canHaveChildren() const
 
 const String AccessibilityRenderObject::liveRegionStatus() const
 {
-    const AtomicString& liveRegionStatus = stringValueForProperty(AXPropertyName::Live);
+    const AtomicString& liveRegionStatus = getAttribute(aria_liveAttr);
     // These roles have implicit live region status.
     if (liveRegionStatus.isEmpty())
         return defaultLiveRegionStatusForRole(roleValue());
@@ -3287,7 +3292,8 @@ const String AccessibilityRenderObject::liveRegionStatus() const
 
 const String AccessibilityRenderObject::liveRegionRelevant() const
 {
-    const AtomicString& relevant = stringValueForProperty(AXPropertyName::Relevant);
+    static NeverDestroyed<const AtomicString> defaultLiveRegionRelevant("additions text", AtomicString::ConstructFromLiteral);
+    const AtomicString& relevant = getAttribute(aria_relevantAttr);
 
     // Default aria-relevant = "additions text".
     if (relevant.isEmpty())
@@ -3298,8 +3304,11 @@ const String AccessibilityRenderObject::liveRegionRelevant() const
 
 bool AccessibilityRenderObject::liveRegionAtomic() const
 {
-    if (auto atomic = boolValueForProperty(AXPropertyName::Atomic))
-        return atomic.value();
+    const AtomicString& atomic = getAttribute(aria_atomicAttr);
+    if (equalLettersIgnoringASCIICase(atomic, "true"))
+        return true;
+    if (equalLettersIgnoringASCIICase(atomic, "false"))
+        return false;
 
     // WAI-ARIA "alert" and "status" roles have an implicit aria-atomic value of true.
     switch (roleValue()) {
@@ -3313,7 +3322,7 @@ bool AccessibilityRenderObject::liveRegionAtomic() const
 
 bool AccessibilityRenderObject::isBusy() const
 {
-    return boolValueForProperty(AXPropertyName::Busy).value();
+    return elementAttributeValue(aria_busyAttr);
 }
 
 bool AccessibilityRenderObject::canHaveSelectedChildren() const

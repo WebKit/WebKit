@@ -34,7 +34,6 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
-#include "AccessibleNode.h"
 #include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "HTMLTableCaptionElement.h"
@@ -154,11 +153,11 @@ bool AccessibilityTable::isDataTable() const
     
     // If the author has used ARIA to specify a valid column or row count, assume they
     // want us to treat the table as a data table.
-    int axColumnCount = intValueForProperty(AXPropertyName::ColCount);
+    int axColumnCount = getAttribute(aria_colcountAttr).toInt();
     if (axColumnCount == -1 || axColumnCount > 0)
         return true;
 
-    int axRowCount = intValueForProperty(AXPropertyName::RowCount);
+    int axRowCount = getAttribute(aria_rowcountAttr).toInt();
     if (axRowCount == -1 || axRowCount > 0)
         return true;
 
@@ -235,16 +234,16 @@ bool AccessibilityTable::isDataTable() const
 
             // If the author has used ARIA to specify a valid column or row index, assume they want us
             // to treat the table as a data table.
-            int axColumnIndex = AccessibleNode::effectiveUnsignedValueForElement(*cellElement, AXPropertyName::ColIndex);
+            int axColumnIndex =  cellElement->attributeWithoutSynchronization(aria_colindexAttr).toInt();
             if (axColumnIndex >= 1)
                 return true;
 
-            int axRowIndex = AccessibleNode::effectiveUnsignedValueForElement(*cellElement, AXPropertyName::RowIndex);
+            int axRowIndex = cellElement->attributeWithoutSynchronization(aria_rowindexAttr).toInt();
             if (axRowIndex >= 1)
                 return true;
 
             if (auto cellParentElement = cellElement->parentElement()) {
-                axRowIndex = AccessibleNode::effectiveUnsignedValueForElement(*cellParentElement, AXPropertyName::RowIndex);
+                axRowIndex = cellParentElement->attributeWithoutSynchronization(aria_rowindexAttr).toInt();
                 if (axRowIndex >= 1)
                     return true;
             }
@@ -252,11 +251,11 @@ bool AccessibilityTable::isDataTable() const
             // If the author has used ARIA to specify a column or row span, we're supposed to ignore
             // the value for the purposes of exposing the span. But assume they want us to treat the
             // table as a data table.
-            int axColumnSpan = AccessibleNode::effectiveUnsignedValueForElement(*cellElement, AXPropertyName::ColSpan);
+            int axColumnSpan = cellElement->attributeWithoutSynchronization(aria_colspanAttr).toInt();
             if (axColumnSpan >= 1)
                 return true;
 
-            int axRowSpan = AccessibleNode::effectiveUnsignedValueForElement(*cellElement, AXPropertyName::RowSpan);
+            int axRowSpan = cellElement->attributeWithoutSynchronization(aria_rowspanAttr).toInt();
             if (axRowSpan >= 1)
                 return true;
 
@@ -701,7 +700,8 @@ String AccessibilityTable::title() const
 
 int AccessibilityTable::axColumnCount() const
 {
-    int colCountInt = intValueForProperty(AXPropertyName::ColCount);
+    const AtomicString& colCountValue = getAttribute(aria_colcountAttr);
+    int colCountInt = colCountValue.toInt();
     // The ARIA spec states, "Authors must set the value of aria-colcount to an integer equal to the
     // number of columns in the full table. If the total number of columns is unknown, authors must
     // set the value of aria-colcount to -1 to indicate that the value should not be calculated by
@@ -714,7 +714,8 @@ int AccessibilityTable::axColumnCount() const
 
 int AccessibilityTable::axRowCount() const
 {
-    int rowCountInt = intValueForProperty(AXPropertyName::RowCount);
+    const AtomicString& rowCountValue = getAttribute(aria_rowcountAttr);
+    int rowCountInt = rowCountValue.toInt();
     // The ARIA spec states, "Authors must set the value of aria-rowcount to an integer equal to the
     // number of rows in the full table. If the total number of rows is unknown, authors must set
     // the value of aria-rowcount to -1 to indicate that the value should not be calculated by the
