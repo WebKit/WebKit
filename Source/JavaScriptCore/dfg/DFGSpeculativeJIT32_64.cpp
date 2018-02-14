@@ -2576,7 +2576,7 @@ void SpeculativeJIT::compile(Node* node)
                     break;
                 }
 
-                if (node->child2().useKind() == SymbolUse) {
+                if (m_graph.varArgChild(node, 1).useKind() == SymbolUse) {
                     compileGetByValForObjectWithSymbol(node);
                     break;
                 }
