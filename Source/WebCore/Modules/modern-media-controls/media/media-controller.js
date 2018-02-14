@@ -56,9 +56,12 @@ class MediaController
         media.videoTracks.addEventListener("addtrack", this);
         media.videoTracks.addEventListener("removetrack", this);
 
+        media.addEventListener("play", this);
         media.addEventListener(this.fullscreenChangeEventType, this);
 
         window.addEventListener("keydown", this);
+
+        new MutationObserver(this._updateControlsAvailability.bind(this)).observe(this.media, { attributes: true, attributeFilter: ["controls"] });
     }
 
     // Public
@@ -164,7 +167,7 @@ class MediaController
             scheduler.flushScheduledLayoutCallbacks();
         } else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();
-            this._updateiOSFullscreenProperties();
+            this._updateControlsAvailability();
             if (event.type === "webkitpresentationmodechanged")
                 this._returnMediaLayerToInlineIfNeeded();
         } else if (event.type === "keydown" && this.isFullscreen && event.key === " ") {
@@ -214,6 +217,8 @@ class MediaController
         }, this);
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
+
+        this._updateControlsAvailability();
     }
 
     _updateControlsSize()
@@ -300,20 +305,16 @@ class MediaController
         this._supportingObjects.forEach(supportingObject => supportingObject.controlsUserVisibilityDidChange());
     }
 
-    _updateiOSFullscreenProperties()
+    _updateControlsAvailability()
     {
-        // On iOS, we want to make sure not to update controls when we're in fullscreen since the UI
-        // will be completely invisible.
-        if (!(this.layoutTraits & LayoutTraits.iOS))
-            return;
+        const shouldControlsBeAvailable = !!(this.media.controls || (this.host && this.host.shouldForceControlsDisplay) || ((this.layoutTraits & LayoutTraits.macOS) && this.isFullscreen));
 
-        const isFullscreen = this.isFullscreen;
-        if (isFullscreen)
+        if (!shouldControlsBeAvailable)
             this._supportingObjects.forEach(supportingObject => supportingObject.disable());
         else
             this._supportingObjects.forEach(supportingObject => supportingObject.enable());
 
-        this.controls.visible = !isFullscreen;
+        this.controls.visible = shouldControlsBeAvailable;
     }
 
 }

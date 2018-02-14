@@ -1,3 +1,38 @@
+2018-02-13  Antoine Quint  <graouts@apple.com>
+
+        Removing the controls attribute from a <video> element does not tear down the controls shadow DOM nor cancel event listeners.
+        https://bugs.webkit.org/show_bug.cgi?id=182668
+        <rdar://problem/33793004>
+
+        Reviewed by Jer Noble.
+
+        When controls were turned off for inline media players, we would remove all media controls elements from the shadow root,
+        but we would nevertheless continue to listen to media events and, as a result, update properties of the media controls
+        which would lead to requestAnimationFrame() calls that would update the detached DOM nodes.
+
+        We now only listent to media events if controls are turned on.
+
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype.enable): Remove the mutation observer from ControlsVisibilitySupport since observing
+        changes to the controls attribute is now performed directly in MediaController. We need to make sure that we update the
+        controls however since fadesWhileIdle is turned off in the disable() call to ensure that the auto-hide behavior is disabled
+        as well.
+        (ControlsVisibilitySupport.prototype.disable): Disable the auto-hide controller as well.
+        (ControlsVisibilitySupport.prototype._updateControls): Remove code that has now been moved into MediaController._updateControlsAvailability().
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController): Listen to the "play" event on the media so that we call _updateControlsAvailability() in this situation to account for
+        shouldForceControlsDisplay on MediaControlsHost. We also register for a mutation observer to track when the controls attribute availability
+        changes in which case we want to call _updateControlsAvailability() as well.
+        (MediaController.prototype.handleEvent): Call _updateControlsAvailability() instead of _updateiOSFullscreenProperties() which has been renamed
+        and expanded.
+        (MediaController.prototype._updateControlsIfNeeded): Call _updateControlsAvailability() after controls have been updated.
+        (MediaController.prototype._updateControlsAvailability): We now disable supporting media controller objects when we know that controls should
+        be hidden in all cases except when in fullscreen on macOS.
+        (MediaController.prototype._updateiOSFullscreenProperties): Deleted.
+        * Modules/modern-media-controls/media/placard-support.js:
+        (PlacardSupport.prototype.disable): Only allow the media events required to track when to show placards when in fullscreen since inline media
+        players need to show the AirPlay and picture-in-picture placards even when controls are disabled.
+
 2018-02-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Revisit the whole async model of task dispatching, timeout and aborting

@@ -1,3 +1,34 @@
+2018-02-13  Antoine Quint  <graouts@apple.com>
+
+        Removing the controls attribute from a <video> element does not tear down the controls shadow DOM nor cancel event listeners.
+        https://bugs.webkit.org/show_bug.cgi?id=182668
+
+        Reviewed by Jer Noble.
+
+        Ensure controls are turned on for a number of tests that would fail otherwise since media events would not be handled by media
+        controls without it.
+
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html:
+        * http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html:
+        * http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html:
+        * http/tests/media/modern-media-controls/status-support/status-support-loading.html:
+        * media/modern-media-controls/airplay-support/airplay-support.html:
+        * media/modern-media-controls/mute-support/mute-support-media-api.html:
+        * media/modern-media-controls/playback-support/playback-support-autoplay.html:
+        * media/modern-media-controls/playback-support/playback-support-media-api.html:
+        * media/modern-media-controls/start-support/start-support-error.html:
+        * media/modern-media-controls/start-support/start-support-lowPowerMode.html:
+        * media/modern-media-controls/start-support/start-support-manual-play.html:
+        * media/modern-media-controls/status-support/status-support-error.html:
+        * media/modern-media-controls/time-labels-support/elapsed-time.html:
+        * media/modern-media-controls/time-labels-support/remaining-time.html:
+        * media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html:
+        * media/modern-media-controls/tracks-support/tracks-support-text-tracks.html:
+        * media/modern-media-controls/volume-support/volume-support-media-api-mute.html:
+        * media/modern-media-controls/volume-support/volume-support-media-api.html:
+
 2018-02-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Revisit the whole async model of task dispatching, timeout and aborting

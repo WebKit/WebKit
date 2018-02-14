@@ -38,23 +38,13 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     enable()
     {
         super.enable();
-
-        if (this._controlsAttributeObserver)
-            return;
-
-        this._controlsAttributeObserver = new MutationObserver(this._updateControls.bind(this));
-        this._controlsAttributeObserver.observe(this.mediaController.media, { attributes: true, attributeFilter: ["controls"] });
+        this._updateControls();
     }
 
     disable()
     {
         super.disable();
-
-        if (!this._controlsAttributeObserver)
-            return;
-
-        this._controlsAttributeObserver.disconnect();
-        delete this._controlsAttributeObserver;
+        this.mediaController.controls.autoHideController.fadesWhileIdle = false;
     }
 
     get mediaEvents()
@@ -77,13 +67,8 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     _updateControls()
     {
         const media = this.mediaController.media;
-        const host = this.mediaController.host;
-        const shouldShowControls = !!(media.controls || (host && host.shouldForceControlsDisplay) || this.mediaController.isFullscreen);
         const isVideo = media instanceof HTMLVideoElement && media.videoTracks.length > 0;
-
-        const controls = this.mediaController.controls;
-        controls.visible = shouldShowControls;
-        controls.autoHideController.fadesWhileIdle = isVideo ? !media.paused && !media.webkitCurrentPlaybackTargetIsWireless : false;
+        this.mediaController.controls.autoHideController.fadesWhileIdle = isVideo ? !media.paused && !media.webkitCurrentPlaybackTargetIsWireless : false;
     }
 
 }
