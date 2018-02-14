@@ -101,6 +101,8 @@ allowFileAccessFromFileURLs:
   initial: true
 allowSettingAnyXHRHeaderFromFileURLs:
   initial: false
+allowCrossOriginSubresourcesToAskForCredentials:
+  initial: false
 needsStorageAccessFromFileURLsQuirk:
   initial: true
 javaScriptCanOpenWindowsAutomatically:

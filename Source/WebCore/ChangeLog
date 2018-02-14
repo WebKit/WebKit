@@ -1,3 +1,47 @@
+2018-02-14  Daniel Bates  <dabates@apple.com>
+
+        Disallow cross-origin subresources from asking for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=182579
+        <rdar://problem/36162271>
+
+        Reviewed by Andy Estes.
+
+        Prompts for credentials to load cross-origin subresources are typically seen as unexpected
+        by a person that navigates to- or interacts with- a web page. The cross-origin and implicit
+        loading nature of these subresources makes asking for credentials questionable because they
+        are not being served by the same origin of the page a person explicitly loaded and are not
+        guaranteed to correspond to an explicit user interaction other than the initial load of the
+        page. We know that subresources that ask for credentials can be abused as part of a phishing
+        attack. It seems reasonable to disallow cross-origin subresources from asking for credentials
+        due to their questionable nature and the risk for abuse. This will also make the behavior
+        of WebKit match the behavior of Chrome.
+
+        Tests: http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html
+               http/tests/security/basic-auth-subresource.html
+               http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https.html
+               http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.html
+               http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html
+               http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html
+               http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::isSubresourceLoader const): Formerly non-const.
+        (WebCore::ResourceLoader::shouldAllowResourceToAskForCredentials const): Added.
+        (WebCore::ResourceLoader::didBlockAuthenticationChallenge): Emit Web Inspector console message if
+        the authentication challenge was blocked because the request is cross origin.
+        (WebCore::ResourceLoader::isAllowedToAskUserForCredentials const): Disallow a cross-origin
+        request from prompting for credentials.
+        (WebCore::ResourceLoader::isSubresourceLoader): Deleted; made const.
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader): Update ResourceLoader state so that block cross-origin
+        subresources from prompting for credentials, if applicable.
+        (WebCore::SubresourceLoader::isSubresourceLoader const): Formerly non-const.
+        (WebCore::SubresourceLoader::isSubresourceLoader): Deleted; made const.
+        * loader/SubresourceLoader.h:
+        * page/Settings.yaml: Add setting allowCrossOriginSubresourcesToAskForCredentials (defaults: false -
+        do not allow cross origin subresources to ask for credentials).
+
 2018-02-14  Don Olmstead  <don.olmstead@sony.com>
 
         WebCore headers should not include config.h or PlatformExportMacros.h

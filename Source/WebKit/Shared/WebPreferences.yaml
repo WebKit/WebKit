@@ -183,6 +183,10 @@ AllowSettingAnyXHRHeaderFromFileURLs:
   type: bool
   defaultValue: false
 
+AllowCrossOriginSubresourcesToAskForCredentials:
+  type: bool
+  defaultValue: false
+
 AVFoundationEnabled:
   type: bool
   defaultValue: true

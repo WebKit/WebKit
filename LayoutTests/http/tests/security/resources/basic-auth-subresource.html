@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function pass(image, messagePrefix)
+{
+    window.top.postMessage(`PASS:${messagePrefix} with origin ${(new URL(image.src)).origin}.`, "*");
+    runNextImageTest();
+}
+
+function fail(image, messagePrefix)
+{
+    window.top.postMessage(`FAIL:${messagePrefix} with origin ${(new URL(image.src)).origin}.`, "*");
+    runNextImageTest();
+}
+
+function finishJSTest()
+{
+    window.top.postMessage("DONE:", "*");
+}
+
+function runNextImageTest()
+{
+    var test = imageTests.shift();
+    if (!test) {
+        finishJSTest();
+        return;
+    }
+    var image = new Image;
+    image.onload = () => test.onload(image);
+    image.onerror = () => test.onerror(image);
+    image.src = test.src;
+    document.getElementById("test-container").appendChild(image);
+}
+
+window.onload = runNextImageTest;
+
+// Tests
+
+const DidLoadImage = "did load image";
+const DidNotLoadImage = "did not load image";
+
+var searchParams = new URLSearchParams(document.location.search);
+
+var imageTests = [
+{
+    src: "subresource2/protected-image.php",
+    onload: (image) => {
+        if (document.location.origin === searchParams.get("top-origin"))
+            pass(image, DidLoadImage);
+        else
+            fail(image, DidLoadImage);
+    },
+    onerror: (image) => {
+        if (document.location.origin === searchParams.get("top-origin"))
+            fail(image, DidNotLoadImage);
+        else
+            pass(image, DidNotLoadImage);
+    },
+},
+{
+    src: "http://127.0.0.1:8000/security/resources/subresource2/protected-image.php",
+    onload: (image) => pass(image, DidLoadImage),
+    onerror: (image) => fail(image, DidNotLoadImage),
+},
+{
+    src: "https://127.0.0.1:8443/security/resources/subresource2/protected-image.php",
+    onload: (image) => fail(image, DidLoadImage),
+    onerror: (image) => pass(image, DidNotLoadImage),
+},
+{
+    src: "https://localhost:8443/security/resources/subresource2/protected-image.php",
+    onload: (image) => fail(image, DidLoadImage),
+    onerror: (image) => pass(image, DidNotLoadImage),
+},
+];
+</script>
+</head>
+<body>
+<div id="test-container"></div>
+</body>
+</html>

@@ -1,3 +1,20 @@
+2018-02-14  Daniel Bates  <dabates@apple.com>
+
+        Disallow cross-origin subresources from asking for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=182579
+        <rdar://problem/36162271>
+
+        Reviewed by Andy Estes.
+
+        Add a private preference to toggle allowing non-mixed content cross-origin subresources to load.
+        WebKitTestRunner toggles this preference when it sees the test option allowCrossOriginSubresourcesToAskForCredential.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials):
+        (WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2018-02-14  John Wilander  <wilander@apple.com>
 
         Make maximumParallelReadCount static to fix lambda capture error in WebKit::NetworkCache::Storage::traverse()

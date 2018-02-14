@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: line 33: The page at https://127.0.0.1:8443/security/mixedContent/insecure-basic-auth-image.https.html was allowed to display insecure content from http://localhost:8000/security/mixedContent/resources/subresource2/protected-image.php.
 
-CONSOLE MESSAGE: Blocked http://localhost:8000/security/mixedContent/resources/subresource2/protected-image.php from asking for credentials because it is insecure content.
+CONSOLE MESSAGE: Blocked http://localhost:8000/security/mixedContent/resources/subresource2/protected-image.php from asking for credentials because it is a cross-origin request.
 Tests that we do not ask for credentials when loading an insecure image that requires basic authentication.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

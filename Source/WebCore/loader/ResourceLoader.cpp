@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007, 2010-2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -326,7 +326,7 @@ void ResourceLoader::clearResourceData()
         m_resourceData->clear();
 }
 
-bool ResourceLoader::isSubresourceLoader()
+bool ResourceLoader::isSubresourceLoader() const
 {
     return false;
 }
@@ -463,12 +463,22 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
     frame->page()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceResponseSourceKey(), sourceKey, ShouldSample::Yes);
 }
 
+bool ResourceLoader::shouldAllowResourceToAskForCredentials() const
+{
+    return m_canCrossOriginRequestsAskUserForCredentials || m_frame->tree().top().document()->securityOrigin().canRequest(m_request.url());
+}
+
 void ResourceLoader::didBlockAuthenticationChallenge()
 {
     m_wasAuthenticationChallengeBlocked = true;
 
     if (!m_canAskClientForCredentials)
         return;
+
+    if (!shouldAllowResourceToAskForCredentials()) {
+        FrameLoader::reportAuthenticationChallengeBlocked(m_frame.get(), m_request.url(), ASCIILiteral("it is a cross-origin request"));
+        return;
+    }
 
     if (!m_wasInsecureRequestSeen)
         return;
@@ -738,6 +748,8 @@ bool ResourceLoader::shouldUseCredentialStorage()
 bool ResourceLoader::isAllowedToAskUserForCredentials() const
 {
     if (!m_canAskClientForCredentials)
+        return false;
+    if (!shouldAllowResourceToAskForCredentials())
         return false;
     if (m_wasInsecureRequestSeen)
         return false;

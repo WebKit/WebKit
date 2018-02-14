@@ -144,6 +144,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)allowFileAccessFromFileURLs;
 - (void)setAllowFileAccessFromFileURLs:(BOOL)flag;
 
+- (BOOL)allowCrossOriginSubresourcesToAskForCredentials;
+- (void)setAllowCrossOriginSubresourcesToAskForCredentials:(BOOL)flag;
+
 - (BOOL)needsStorageAccessFromFileURLsQuirk;
 - (void)setNeedsStorageAccessFromFileURLsQuirk:(BOOL)flag;
 
@@ -598,6 +601,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL allowMediaContentTypesRequiringHardwareSupportAsFallback;
 @property (nonatomic) BOOL accessibilityObjectModelEnabled;
 @property (nonatomic) BOOL mediaCapabilitiesEnabled;
+@property (nonatomic) BOOL allowCrossOriginSubresourcesToAskForCredentials;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL quickLookDocumentSavingEnabled;

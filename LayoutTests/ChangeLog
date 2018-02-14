@@ -1,3 +1,55 @@
+2018-02-14  Daniel Bates  <dabates@apple.com>
+
+        Disallow cross-origin subresources from asking for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=182579
+        <rdar://problem/36162271>
+
+        Reviewed by Andy Estes.
+
+        Copied existing tests that depended on cross-origin subresources being able prompt for credentials
+        to files with suffix allowCrossOriginSubresourcesToAskForCredentials. These copies were modified
+        to set allowCrossOriginSubresourcesToAskForCredentials to false so as to opt-into the behavior
+        before this change. Updated existing tests to reflect the new behavior and added new tests to
+        ensure that we do not regress the new behavior.
+
+        * http/tests/media/video-auth-expected.txt:
+        * http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials-expected.txt: Copied from LayoutTests/http/tests/media/video-auth-expected.txt.
+        * http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html: Copied from LayoutTests/http/tests/media/video-auth.html.
+        * http/tests/media/video-auth.html:
+        * http/tests/security/basic-auth-subresource-expected.txt: Added.
+        * http/tests/security/basic-auth-subresource.html: Added.
+        * http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials-expected.txt: Renamed from LayoutTests/platform/mac-wk1/http/tests/security/credentials-iframes-expected.txt.
+        * http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html: Added.
+        * http/tests/security/credentials-iframes-expected.txt:
+        * http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/insecure-basic-auth-image.https-expected.txt.
+        * http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https.html: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html.
+        * http/tests/security/mixedContent/insecure-basic-auth-image.https-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-expected.txt.
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.html: Added.
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https-expected.txt.
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html.
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https-expected.txt.
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html.
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Renamed from LayoutTests/platform/mac-wk1/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https-expected.txt.
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html.
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html:
+        * http/tests/security/resources/basic-auth-subresource.html: Added.
+        * http/tests/security/resources/subresource1/protected-image.php: Added.
+        * http/tests/security/resources/subresource2/protected-image.php: Added.
+        * platform/win/TestExpectations: Skip allowCrossOriginSubresourcesToAskForCredentials-suffixed tests as
+        DumpRenderTree on Windows does not support parsing test options. See <https://bugs.webkit.org/show_bug.cgi?id=173281>.
+        * platform/win/http/tests/security/basic-auth-subresource-expected.txt: Added Windows-specific result. For some reason
+        connections to localhost:8443 are not allowed. See <https://bugs.webkit.org/show_bug.cgi?id=182609> for more details.
+        * platform/wk2/http/tests/media/video-auth-expected.txt:
+        * platform/wk2/http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials-expected.txt: Copied from LayoutTests/platform/wk2/http/tests/media/video-auth-expected.txt.
+        * platform/wk2/http/tests/security/basic-auth-subresource-expected.txt: Added.
+        * platform/wk2/http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials-expected.txt: Copied from LayoutTests/http/tests/security/credentials-iframes-expected.txt.
+        * platform/wk2/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https-expected.txt.
+
 2018-02-14  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html as flaky on macOS WK2.

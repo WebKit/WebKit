@@ -102,6 +102,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->enableInspectorAdditions = parseBooleanTestHeaderValue(value);
         else if (key == "dumpJSConsoleLogInStdErr")
             this->dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
+        else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
+            this->allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

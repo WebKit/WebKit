@@ -45,6 +45,7 @@
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -92,6 +93,7 @@ SubresourceLoader::SubresourceLoader(Frame& frame, CachedResource& resource, con
 #if ENABLE(CONTENT_EXTENSIONS)
     m_resourceType = toResourceType(resource.type());
 #endif
+    m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::MainResource || frame.settings().allowCrossOriginSubresourcesToAskForCredentials();
 }
 
 SubresourceLoader::~SubresourceLoader()
@@ -162,7 +164,7 @@ void SubresourceLoader::init(ResourceRequest&& request, CompletionHandler<void(b
     });
 }
 
-bool SubresourceLoader::isSubresourceLoader()
+bool SubresourceLoader::isSubresourceLoader() const
 {
     return true;
 }

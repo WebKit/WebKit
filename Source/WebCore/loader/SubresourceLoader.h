@@ -47,7 +47,7 @@ public:
     virtual ~SubresourceLoader();
 
     void cancelIfNotFinishing();
-    bool isSubresourceLoader() override;
+    bool isSubresourceLoader() const override;
     CachedResource* cachedResource();
 
     SecurityOrigin* origin() { return m_origin.get(); }

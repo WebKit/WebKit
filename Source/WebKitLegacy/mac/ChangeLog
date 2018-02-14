@@ -1,3 +1,23 @@
+2018-02-14  Daniel Bates  <dabates@apple.com>
+
+        Disallow cross-origin subresources from asking for credentials
+        https://bugs.webkit.org/show_bug.cgi?id=182579
+        <rdar://problem/36162271>
+
+        Reviewed by Andy Estes.
+
+        Add a private preference to toggle allowing non-mixed content cross-origin subresources to load.
+        DumpRenderTree toggles this preference when it sees the test option allowCrossOriginSubresourcesToAskForCredential.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences allowCrossOriginSubresourcesToAskForCredentials]):
+        (-[WebPreferences setAllowCrossOriginSubresourcesToAskForCredentials:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         Remove ForwardingHeaders directory from WebKitLegacy/mac.

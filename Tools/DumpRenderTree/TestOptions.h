@@ -41,6 +41,7 @@ struct TestOptions {
     bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
     bool dumpJSConsoleLogInStdErr { false };
+    bool allowCrossOriginSubresourcesToAskForCredentials { false };
 
     TestOptions(NSURL*, const TestCommand&);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;
