@@ -44,6 +44,14 @@ class PlacardSupport extends MediaControllerSupport
         this._updatePlacard();
     }
 
+    disable()
+    {
+        // We should not allow disabling Placard support when playing inline as it would prevent the
+        // PiP placard from being shown if the controls are disabled.
+        if (this.mediaController.isFullscreen)
+            super.disable();
+    }
+
     // Private
 
     _updatePlacard()
