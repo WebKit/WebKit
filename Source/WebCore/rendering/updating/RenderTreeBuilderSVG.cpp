@@ -78,7 +78,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGText& parent,
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     parent.subtreeChildWillBeRemoved(&child, affectedAttributes);
-    auto takenChild = parent.RenderBlockFlow::takeChild(m_builder, child);
+    auto takenChild = m_builder.blockBuilder().takeChild(parent, child);
     parent.subtreeChildWasRemoved(affectedAttributes);
     return takenChild;
 }
@@ -89,11 +89,11 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGInline& paren
 
     auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(parent);
     if (!textAncestor)
-        return parent.RenderElement::takeChild(m_builder, child);
+        return m_builder.takeChildFromRenderElement(parent, child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     textAncestor->subtreeChildWillBeRemoved(&child, affectedAttributes);
-    auto takenChild = parent.RenderElement::takeChild(m_builder, child);
+    auto takenChild = m_builder.takeChildFromRenderElement(parent, child);
     textAncestor->subtreeChildWasRemoved(affectedAttributes);
     return takenChild;
 }
@@ -101,13 +101,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGInline& paren
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGContainer& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return parent.RenderElement::takeChild(m_builder, child);
+    return m_builder.takeChildFromRenderElement(parent, child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGRoot& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return parent.RenderElement::takeChild(m_builder, child);
+    return m_builder.takeChildFromRenderElement(parent, child);
 }
 
 }

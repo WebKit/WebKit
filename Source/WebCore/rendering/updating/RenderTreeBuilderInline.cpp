@@ -235,7 +235,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            auto childToMove = block->takeChildInternal(*no);
+            auto childToMove = m_builder.takeChildFromRenderElement(*block, *no);
             pre->insertChildInternal(WTFMove(childToMove), nullptr);
             no->setNeedsLayoutAndPrefWidthsRecalc();
         }
@@ -305,7 +305,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             // FIXME: When the anonymous wrapper has multiple children, we end up traversing up to the topmost wrapper
             // every time, which is a bit wasteful.
         }
-        auto childToMove = rendererToMove->parent()->takeChildInternal(*rendererToMove);
+        auto childToMove = m_builder.takeChildFromRenderElement(*rendererToMove->parent(), *rendererToMove);
         cloneInline->addChildIgnoringContinuation(m_builder, WTFMove(childToMove));
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
@@ -343,7 +343,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             // *after* currentChild and append them all to the clone.
             for (auto* sibling = currentChild->nextSibling(); sibling;) {
                 auto* next = sibling->nextSibling();
-                auto childToMove = current->takeChildInternal(*sibling);
+                auto childToMove = m_builder.takeChildFromRenderElement(*current, *sibling);
                 cloneInline->addChildIgnoringContinuation(m_builder, WTFMove(childToMove));
                 sibling->setNeedsLayoutAndPrefWidthsRecalc();
                 sibling = next;
@@ -367,7 +367,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
     // and put them in the toBlock.
     for (auto* current = currentChild->nextSibling(); current;) {
         auto* next = current->nextSibling();
-        auto childToMove = fromBlock->takeChildInternal(*current);
+        auto childToMove = m_builder.takeChildFromRenderElement(*fromBlock, *current);
         toBlock->insertChildInternal(WTFMove(childToMove), nullptr);
         current = next;
     }
@@ -389,7 +389,7 @@ void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, Rende
         oldContinuation->removeFromContinuationChain();
     newBox->insertIntoContinuationChainAfter(parent);
     auto* beforeChild = child.nextSibling();
-    auto removedChild = parent.takeChildInternal(child);
+    auto removedChild = m_builder.takeChildFromRenderElement(parent, child);
     splitFlow(parent, beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);
 }
 

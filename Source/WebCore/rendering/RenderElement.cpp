@@ -481,11 +481,6 @@ void RenderElement::addChildIgnoringContinuation(RenderTreeBuilder& builder, Ren
     builder.insertChild(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderElement::takeChild(RenderTreeBuilder&, RenderObject& oldChild)
-{
-    return takeChildInternal(oldChild);
-}
-
 void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     if (is<RenderElement>(oldChild)) {
@@ -580,65 +575,6 @@ void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, Ren
         downcast<RenderBlockFlow>(*this).invalidateLineLayoutPath();
     if (hasOutlineAutoAncestor() || outlineStyleForRepaint().outlineStyleIsAuto())
         newChild->setHasOutlineAutoAncestor();
-}
-
-RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild)
-{
-    RELEASE_ASSERT_WITH_MESSAGE(!view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
-
-    ASSERT(canHaveChildren() || canHaveGeneratedChildren());
-    ASSERT(oldChild.parent() == this);
-
-    if (oldChild.isFloatingOrOutOfFlowPositioned())
-        downcast<RenderBox>(oldChild).removeFloatingOrPositionedChildFromBlockLists();
-
-    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
-    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
-    // disappears gets repainted properly.
-    if (!renderTreeBeingDestroyed() && oldChild.everHadLayout()) {
-        oldChild.setNeedsLayoutAndPrefWidthsRecalc();
-        // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
-        if (oldChild.isBody())
-            view().repaintRootContents();
-        else
-            oldChild.repaint();
-    }
-
-    // If we have a line box wrapper, delete it.
-    if (is<RenderBox>(oldChild))
-        downcast<RenderBox>(oldChild).deleteLineBoxWrapper();
-    else if (is<RenderLineBreak>(oldChild))
-        downcast<RenderLineBreak>(oldChild).deleteInlineBoxWrapper();
-    
-    if (!renderTreeBeingDestroyed() && is<RenderFlexibleBox>(this) && !oldChild.isFloatingOrOutOfFlowPositioned() && oldChild.isBox())
-        downcast<RenderFlexibleBox>(this)->clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(oldChild));
-
-    // If oldChild is the start or end of the selection, then clear the selection to
-    // avoid problems of invalid pointers.
-    if (!renderTreeBeingDestroyed() && oldChild.isSelectionBorder())
-        frame().selection().setNeedsSelectionUpdate();
-
-    if (!renderTreeBeingDestroyed())
-        oldChild.willBeRemovedFromTree();
-
-    oldChild.resetFragmentedFlowStateOnRemoval();
-
-    // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
-    // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
-    // and the code running here would force an untimely rebuilding, leaving |oldChild| dangling.
-    auto childToTake = detachRendererInternal(oldChild);
-
-    // rendererRemovedFromTree walks the whole subtree. We can improve performance
-    // by skipping this step when destroying the entire tree.
-    if (!renderTreeBeingDestroyed() && is<RenderElement>(*childToTake))
-        RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(*childToTake));
-
-    if (!renderTreeBeingDestroyed()) {
-        if (AXObjectCache* cache = document().existingAXObjectCache())
-            cache->childrenChanged(this);
-    }
-
-    return childToTake;
 }
 
 RenderBlock* RenderElement::containingBlockForFixedPosition() const

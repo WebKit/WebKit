@@ -1,3 +1,40 @@
+2018-02-14  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderElement::takeChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182762
+        <rdar://problem/37523756>
+
+        Reviewed by Daniel Bates.
+
+        This patch removes the remaining takeChild() related mutation logic from the renderers.
+
+        No change in functionality.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::takeChild): Deleted.
+        (WebCore::RenderElement::takeChildInternal): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChild):
+        (WebCore::RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderElement):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::removeLeftoverAnonymousBlock):
+        (WebCore::RenderTreeBuilder::Block::takeChild):
+        (WebCore::RenderTreeBuilder::Block::dropAnonymousBoxChild):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::splitFlow):
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+        (WebCore::RenderTreeBuilder::Inline::childBecameNonInline):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::takeChild):
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::takeChild): Leftover from the previous patch.
+
 2018-02-13  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r228313): Membuster | macOS | All Devices | 1.5 MB

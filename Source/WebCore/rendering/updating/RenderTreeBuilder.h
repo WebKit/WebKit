@@ -78,6 +78,8 @@ public:
     void insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
+    RenderPtr<RenderObject> takeChildFromRenderElement(RenderElement& parent, RenderObject& child) WARN_UNUSED_RETURN;
+
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);

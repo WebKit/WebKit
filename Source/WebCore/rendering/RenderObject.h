@@ -776,6 +776,9 @@ public:
         return outlineBoundsForRepaint(nullptr);
     }
 
+    virtual void willBeRemovedFromTree();
+    void resetFragmentedFlowStateOnRemoval();
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -791,7 +794,6 @@ protected:
     virtual void willBeDestroyed(RenderTreeBuilder&);
 
     virtual void insertedIntoTree();
-    virtual void willBeRemovedFromTree();
 
     void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
     void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }
@@ -802,7 +804,6 @@ protected:
     static void calculateBorderStyleColor(const EBorderStyle&, const BoxSide&, Color&);
 
     void initializeFragmentedFlowStateOnInsertion();
-    void resetFragmentedFlowStateOnRemoval();
     static FragmentedFlowState computedFragmentedFlowState(const RenderObject&);
 
 private:
