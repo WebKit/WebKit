@@ -1,3 +1,26 @@
+2018-02-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: completion popover doesn't hide when switching panels
+        https://bugs.webkit.org/show_bug.cgi?id=182464
+        <rdar://problem/37202763>
+
+        Reviewed by Timothy Hatcher.
+
+        Save the position of the anchor, an element the popover is shown for, and hide the completion popover
+        when the position changes.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView.prototype.showUntilAnchorMoves):
+        When the popover is visible, check every 200ms if the anchor moved.
+
+        (WI.CompletionSuggestionsView.prototype.hide):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._getCaretRect):
+        getBoundingClientRect returns {x: 0, y: 0} when it can't determine node's position.
+        This happens when a node isn't attached to DOM, attached to DOM but not visible, and
+        a number of odd cases.
+
 2018-02-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TabBar redesign: only show allowed tabs in the available tabs context menu

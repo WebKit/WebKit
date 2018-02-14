@@ -33,6 +33,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._preventBlur = preventBlur || false;
 
         this._selectedIndex = NaN;
+        this._anchorBounds = null;
 
         this._element = document.createElement("div");
         this._element.classList.add("completion-suggestions", WI.Popover.IgnoreAutoDismissClassName);
@@ -157,9 +158,36 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         document.body.appendChild(this._element);
     }
 
+    showUntilAnchorMoves(getAnchorBounds)
+    {
+        this._anchorBounds = getAnchorBounds();
+        if (!this._anchorBounds) {
+            this.hide();
+            return;
+        }
+
+        this.show(this._anchorBounds);
+
+        let hideWhenMoved = () => {
+            let anchorBounds = getAnchorBounds();
+            if (!anchorBounds || !anchorBounds.equals(this._anchorBounds))
+                this.hide();
+        };
+
+        if (this._hideWhenMovedIdentifier)
+            clearInterval(this._hideWhenMovedIdentifier);
+
+        this._hideWhenMovedIdentifier = setInterval(hideWhenMoved, 200);
+    }
+
     hide()
     {
         this._element.remove();
+        this._anchorBounds = null;
+        if (this._hideWhenMovedIdentifier) {
+            clearInterval(this._hideWhenMovedIdentifier);
+            this._hideWhenMovedIdentifier = 0;
+        }
     }
 
     update(completions, selectedIndex)

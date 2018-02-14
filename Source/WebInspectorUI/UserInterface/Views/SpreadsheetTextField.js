@@ -377,8 +377,10 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             // No need to show the completion popover that matches the suggestion hint.
             this._suggestionsView.hide();
         } else {
-            let caretRect = this._getCaretRect(prefix, completionPrefix);
-            this._suggestionsView.show(caretRect);
+            let startOffset = prefix.length - completionPrefix.length;
+            this._suggestionsView.showUntilAnchorMoves(() => {
+                return this._getCaretRect(startOffset);
+            });
         }
 
         this._suggestionsView.selectedIndex = NaN;
@@ -389,19 +391,30 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             this.suggestionHint = "";
     }
 
-    _getCaretRect(prefix, completionPrefix)
+    _getCaretRect(startOffset)
     {
-        let startOffset = prefix.length - completionPrefix.length;
         let selection = window.getSelection();
 
-        if (startOffset > 0 && selection.rangeCount) {
+        let isHidden = (clientRect) => {
+            return clientRect.x === 0 && clientRect.y === 0
+        };
+
+        if (selection.rangeCount) {
             let range = selection.getRangeAt(0).cloneRange();
             range.setStart(range.startContainer, startOffset);
             let clientRect = range.getBoundingClientRect();
-            return WI.Rect.rectFromClientRect(clientRect);
+
+            if (!isHidden(clientRect)) {
+                // This happens after deleting value. However, when focusing
+                // on an empty value clientRect is visible.
+                return WI.Rect.rectFromClientRect(clientRect);
+            }
         }
 
         let clientRect = this._element.getBoundingClientRect();
+        if (isHidden(clientRect))
+            return null;
+
         const leftPadding = parseInt(getComputedStyle(this._element).paddingLeft) || 0;
         return new WI.Rect(clientRect.left + leftPadding, clientRect.top, clientRect.width, clientRect.height);
     }
