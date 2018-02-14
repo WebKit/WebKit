@@ -1,3 +1,10 @@
+2018-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2018-02-13  Antoine Quint  <graouts@apple.com>
 
         Removing the controls attribute from a <video> element does not tear down the controls shadow DOM nor cancel event listeners.

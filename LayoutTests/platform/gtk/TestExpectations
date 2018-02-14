@@ -1182,11 +1182,27 @@ webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
 webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
 
 # GTK ought to support the new modern pasteboard API
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/copy-without-selection.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/copying-html-strips-javascript-url-and-event-handler.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-copying-pasting-malformed-url-in-same-document.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-items-add-custom-data.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-ignore-copied-malformed-url-in-null-origin.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/datatransfer-items-paste-plaintext.html [ Skip ]
+webkit.org/b/177633 editing/pasteboard/dataTransfer-types-pasting-plaintext.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/onpaste-text-html-types.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
+webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
+webkit.org/b/177633 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
+webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
 
 # We should consider enabling ENABLE_LINK_PREFETCH and ENABLE_CSS3_TEXT
 webkit.org/b/179989 http/tests/misc/prefetch-purpose.html [ Skip ]
@@ -1920,7 +1936,15 @@ webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 webkit.org/b/179947 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdi-element/bdi-auto-dir-default.html [ Pass Timeout ]
 webkit.org/b/182364 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Timeout Crash ]
 
-webkit.org/b/182604 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Pass Crash ]
+webkit.org/b/182604 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Pass Failure Slow Crash ]
+
+webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
+webkit.org/b/182761 accessibility/gtk/aria-current-changed-notification.html [ Pass Failure ]
+webkit.org/b/182761 accessibility/gtk/aria-disabled-changed-notification.html [ Pass Failure ]
+webkit.org/b/182761 accessibility/gtk/aria-expanded-changed-notification.html [ Pass Failure ]
+webkit.org/b/182761 accessibility/gtk/aria-pressed-changed-notification.html [ Pass Failure ]
+webkit.org/b/182761 accessibility/gtk/aria-readonly-changed-notification.html [ Pass Failure ]
+webkit.org/b/182761 accessibility/gtk/aria-required-changed-notification.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2229,8 +2253,6 @@ webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeo
 
 webkit.org/b/177941 http/tests/inspector/network/ping-type.html [ Timeout ]
 
-webkit.org/b/178454 editing/pasteboard/datatransfer-items-paste-plaintext.html [ Timeout ]
-
 webkit.org/b/178792 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 
 webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
@@ -2248,7 +2270,7 @@ webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 
 webkit.org/b/182109 media/video-fullscreen-reload-crash.html [ Timeout ]
 
-webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
+webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3259,21 +3281,6 @@ webkit.org/b/178441 editing/deleting/delete-ligature-001.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-002.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-003.html [ Failure ]
 
-webkit.org/b/178454 editing/pasteboard/copy-without-selection.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/copying-html-strips-javascript-url-and-event-handler.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-get-data-on-copying-pasting-malformed-url-in-same-document.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-items-add-custom-data.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-set-data-ignore-copied-malformed-url-in-null-origin.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/dataTransfer-types-pasting-plaintext.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/onpaste-text-html-types.html [ Failure ]
-webkit.org/b/178454 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
-webkit.org/b/178454 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
-webkit.org/b/178454 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
-
 webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
@@ -3329,6 +3336,14 @@ webkit.org/b/182223 fast/forms/listbox-selection.html [ Failure ]
 
 webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]
 webkit.org/b/182502 media/modern-media-controls [ Skip ]
+
+webkit.org/b/182763 accessibility/gtk/aria-activedescendant-changed-notification.html [ Failure ]
+webkit.org/b/182763 accessibility/gtk/text-in-span-block-in-a-block.html [ Failure ]
+webkit.org/b/182763 accessibility/notification-listeners.html [ Failure ]
+webkit.org/b/182763 accessibility/gtk/caret-offsets.html [ Timeout ]
+
+webkit.org/b/182765 fast/backgrounds/background-leakage-transforms.html [ Failure ImageOnlyFailure ]
+webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
