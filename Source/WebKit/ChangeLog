@@ -1,3 +1,42 @@
+2018-02-14  Maureen Daum  <mdaum@apple.com>
+
+        Add C SPI for support of Website Data Store in Website Policies
+        https://bugs.webkit.org/show_bug.cgi?id=182698
+        <rdar://problem/37412008>
+
+        Reviewed by Andy Estes.
+
+        Expand the API added for _WKWebsitePolicies.websiteDataStore in r225989 and r226325
+        to be available in the C API. In the ObjC API, we handle setting the website data
+        store in NavigationState::NavigationClient::decidePolicyForNavigationAction. There
+        we throw an exception if setting the website data store isn't supported, and then
+        change the website data store. The equivalent place to do this work in the C API is
+        in WKFramePolicyListenerUseWithPolicies. However, instead of throwing exceptions,
+        release asserts are used.
+
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUseWithPolicies):
+        If the website policies data contains a website data store, do the same checks that
+        are done in NavigationState::NavigationClient::decidePolicyForNavigationAction. Namely,
+        that it is a valid website data store and it is a policy decision for a main frame navigation.
+        If these checks are met, change the website data store.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageUpdateWebsitePolicies):
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetDataStore):
+        (WKWebsitePoliciesSetDataStore):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/WebFrameListenerProxy.cpp:
+        (WebKit::WebFrameListenerProxy::changeWebsiteDataStore):
+        (WebKit::WebFrameListenerProxy::isMainFrame):
+        Expose whether the frame proxy is for a main frame, which is required to verify that
+        website policies only specify a website data store for main frame policy decisions.
+        * UIProcess/WebFrameListenerProxy.h:
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::changeWebsiteDataStore):
+        * UIProcess/WebFrameProxy.h:
+
 2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228444.

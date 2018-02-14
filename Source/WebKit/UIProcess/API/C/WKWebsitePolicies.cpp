@@ -27,6 +27,7 @@
 #include "WKWebsitePolicies.h"
 
 #include "APIDictionary.h"
+#include "APIWebsiteDataStore.h"
 #include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
@@ -174,3 +175,14 @@ void WKWebsitePoliciesSetPopUpPolicy(WKWebsitePoliciesRef websitePolicies, WKWeb
     }
     ASSERT_NOT_REACHED();
 }
+
+WKWebsiteDataStoreRef WKWebsitePoliciesGetDataStore(WKWebsitePoliciesRef websitePolicies)
+{
+    return toAPI(toImpl(websitePolicies)->websiteDataStore());
+}
+
+void WKWebsitePoliciesSetDataStore(WKWebsitePoliciesRef websitePolicies, WKWebsiteDataStoreRef websiteDataStore)
+{
+    toImpl(websitePolicies)->setWebsiteDataStore(toImpl(websiteDataStore));
+}
+

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKFramePolicyListener.h"
 
+#include "APIWebsiteDataStore.h"
 #include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -47,7 +48,15 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
     auto data = toImpl(websitePolicies)->data();
-    RELEASE_ASSERT_WITH_MESSAGE(!data.websiteDataStoreParameters, "Setting WebsitePolicies.WebsiteDataStore is not supported in the C API.");
+
+    if (data.websiteDataStoreParameters) {
+        auto& sessionID = data.websiteDataStoreParameters->networkSessionParameters.sessionID;
+        RELEASE_ASSERT_WITH_MESSAGE(sessionID.isEphemeral() || sessionID == PAL::SessionID::defaultSessionID(), "If WebsitePolicies specifies a WebsiteDataStore, the data store's session must be default or non-persistent.");
+        RELEASE_ASSERT_WITH_MESSAGE(toImpl(policyListenerRef)->isMainFrame(), "WebsitePolicies cannot specify a WebsiteDataStore for subframe navigations.");
+
+        toImpl(policyListenerRef)->changeWebsiteDataStore(toImpl(websitePolicies)->websiteDataStore()->websiteDataStore());
+    }
+
     toImpl(policyListenerRef)->use(WTFMove(data));
 }
 

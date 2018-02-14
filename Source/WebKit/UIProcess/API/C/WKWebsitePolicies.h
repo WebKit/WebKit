@@ -70,6 +70,9 @@ WK_EXPORT void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef, WKWebsit
 WK_EXPORT WKWebsitePopUpPolicy WKWebsitePoliciesGetPopUpPolicy(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetPopUpPolicy(WKWebsitePoliciesRef, WKWebsitePopUpPolicy);
 
+WK_EXPORT WKWebsiteDataStoreRef WKWebsitePoliciesGetDataStore(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetDataStore(WKWebsitePoliciesRef, WKWebsiteDataStoreRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -34,6 +34,7 @@
 namespace WebKit {
 
 class WebFrameProxy;
+class WebsiteDataStore;
 struct WebsitePoliciesData;
 
 class WebFrameListenerProxy : public API::Object {
@@ -44,6 +45,9 @@ public:
     uint64_t listenerID() const { return m_listenerID; }
 
     void setNavigation(Ref<API::Navigation>&& navigation) { m_navigation = WTFMove(navigation); }
+
+    void changeWebsiteDataStore(WebsiteDataStore&);
+    bool isMainFrame() const;
 
 protected:
     WebFrameListenerProxy(WebFrameProxy*, uint64_t listenerID);
