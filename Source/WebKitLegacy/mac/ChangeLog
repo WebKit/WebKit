@@ -1,3 +1,22 @@
+2018-02-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove ForwardingHeaders directory from WebKitLegacy/mac.
+        https://bugs.webkit.org/show_bug.cgi?id=182738
+
+        Reviewed by Darin Adler.
+
+        * ForwardingHeaders/collector/handles/Global.h: Removed.
+        * ForwardingHeaders/debugger/DebuggerCallFrame.h: Removed.
+        * ForwardingHeaders/runtime/Completion.h: Removed.
+        * ForwardingHeaders/runtime/Error.h: Removed.
+        * ForwardingHeaders/runtime/JSCJSValue.h: Removed.
+        * ForwardingHeaders/runtime/JSFunction.h: Removed.
+        * ForwardingHeaders/runtime/JSLock.h: Removed.
+        * ForwardingHeaders/runtime/JSObject.h: Removed.
+        * ForwardingHeaders/runtime/JSString.h: Removed.
+        * ForwardingHeaders/runtime/Protect.h: Removed.
+        * ForwardingHeaders/runtime/SymbolTable.h: Removed.
+
 2018-02-09  Per Arne Vollan  <pvollan@apple.com>
 
         Follow-up fixes after moving WebVideoFullscreenController from WebCore to WebKitLegacy.
