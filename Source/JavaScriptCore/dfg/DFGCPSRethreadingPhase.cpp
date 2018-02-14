@@ -187,12 +187,12 @@ private:
             
             if (otherNode->op() == GetLocal) {
                 // Replace all references to this GetLocal with otherNode.
-                node->replaceWith(otherNode);
+                node->replaceWith(m_graph, otherNode);
                 return;
             }
             
             ASSERT(otherNode->op() == SetLocal);
-            node->replaceWith(otherNode->child1().node());
+            node->replaceWith(m_graph, otherNode->child1().node());
             return;
         }
         
@@ -240,7 +240,7 @@ private:
                 // redundant and inefficient, since really it just means that we want to
                 // keep the last MovHinted value of that local alive.
                 
-                node->remove();
+                node->remove(m_graph);
                 return;
             }
             

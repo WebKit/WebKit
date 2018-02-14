@@ -3312,6 +3312,7 @@ public:
 
     // The JIT, while also provides MacroAssembler functionality.
     JITCompiler& m_jit;
+    Graph& m_graph;
 
     // The current node being generated.
     BasicBlock* m_block;

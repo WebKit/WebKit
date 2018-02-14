@@ -71,6 +71,15 @@ public:
                     if (node->children.isEmpty())
                         continue;
                     break;
+                case CheckVarargs: {
+                    bool isEmpty = true;
+                    m_graph.doToChildren(node, [&] (Edge edge) {
+                        isEmpty &= !edge;
+                    });
+                    if (isEmpty)
+                        continue;
+                    break;
+                }
                 default:
                     break;
                 }
@@ -126,7 +135,7 @@ private:
                 continue;
             }
             
-            node->remove();
+            node->remove(m_graph);
             node->setRefCount(1);
         }
 

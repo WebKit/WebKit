@@ -1330,7 +1330,7 @@ public:
                     
                     if (nonNegative && lessThanLength) {
                         executeNode(block->at(nodeIndex));
-                        node->remove();
+                        node->remove(m_graph);
                         changed = true;
                     }
                     break;
@@ -1340,7 +1340,7 @@ public:
                     if (node->arrayMode().type() != Array::Undecided)
                         break;
 
-                    auto iter = m_relationships.find(node->child2().node());
+                    auto iter = m_relationships.find(m_graph.varArgChild(node, 1).node());
                     if (iter == m_relationships.end())
                         break;
 

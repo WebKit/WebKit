@@ -81,13 +81,27 @@ bool Node::hasVariableAccessData(Graph& graph)
     }
 }
 
-void Node::remove()
+void Node::remove(Graph& graph)
 {
-    ASSERT(!(flags() & NodeHasVarArgs));
-    
-    children = children.justChecks();
-    
-    setOpAndDefaultFlags(Check);
+    if (flags() & NodeHasVarArgs) {
+        unsigned targetIndex = 0;
+        for (unsigned i = 0; i < numChildren(); ++i) {
+            Edge& edge = graph.varArgChild(this, i);
+            if (!edge)
+                continue;
+            if (edge.willHaveCheck()) {
+                Edge& dst = graph.varArgChild(this, targetIndex++);
+                std::swap(dst, edge);
+                continue;
+            }
+            edge = Edge();
+        }
+        setOpAndDefaultFlags(CheckVarargs);
+        children.setNumChildren(targetIndex);
+    } else {
+        children = children.justChecks();
+        setOpAndDefaultFlags(Check);
+    }
 }
 
 void Node::convertToIdentity()
@@ -102,6 +116,7 @@ void Node::convertToIdentity()
 void Node::convertToIdentityOn(Node* child)
 {
     children.reset();
+    clearFlags(NodeHasVarArgs);
     child1() = child->defaultEdge();
     NodeFlags output = canonicalResultRepresentation(this->result());
     NodeFlags input = canonicalResultRepresentation(child->result());

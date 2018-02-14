@@ -120,7 +120,7 @@ private:
             
             NodeOrigin origin = node->origin;
             m_neededBarriers.append(ChildAndOrigin(node->child1().node(), origin.semantic));
-            node->remove();
+            node->remove(m_graph);
             
             if (!m_barrierPoints[nodeIndex])
                 continue;
