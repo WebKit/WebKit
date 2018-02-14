@@ -336,6 +336,11 @@ WI.TabBar = class TabBar extends WI.View
     set selectedTabBarItem(tabBarItemOrIndex)
     {
         let tabBarItem = this._findTabBarItem(tabBarItemOrIndex);
+        if (tabBarItem === this._tabPickerTabBarItem) {
+            // Get the last normal tab item if the item is not selectable.
+            tabBarItem = this._tabBarItems[this.normalTabCount - 1];
+        }
+
         if (this._selectedTabBarItem === tabBarItem)
             return;
 
@@ -767,7 +772,7 @@ WI.TabBar = class TabBar extends WI.View
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         for (let tabClass of WI.knownTabClasses()) {
-            if (tabClass.tabInfo().isEphemeral)
+            if (!tabClass.isTabAllowed() || tabClass.tabInfo().isEphemeral)
                 continue;
 
             let openTabBarItem = null;
