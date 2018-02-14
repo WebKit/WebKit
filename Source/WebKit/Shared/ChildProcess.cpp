@@ -30,7 +30,10 @@
 #include "SandboxInitializationParameters.h"
 #include <WebCore/SchemeRegistry.h>
 #include <pal/SessionID.h>
+
+#if !OS(WINDOWS)
 #include <unistd.h>
+#endif
 
 using namespace WebCore;
 

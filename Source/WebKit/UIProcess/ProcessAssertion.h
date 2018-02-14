@@ -26,9 +26,12 @@
 #ifndef ProcessAssertion_h
 #define ProcessAssertion_h
 
-#include <unistd.h>
 #include <wtf/Function.h>
 #include <wtf/ProcessID.h>
+
+#if !OS(WINDOWS)
+#include <unistd.h>
+#endif
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 #include <wtf/RetainPtr.h>

@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#include <windows.h>
+
 class WindowsSystemProxy {
     static const int ProxyServerNameLength = 512;
 public:

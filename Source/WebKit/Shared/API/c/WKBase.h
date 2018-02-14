@@ -32,14 +32,12 @@
 
 #if defined(BUILDING_GTK__)
 #include <WebKit/WKBaseGtk.h>
-#endif
-
-#if defined(__APPLE__) && !defined(BUILDING_GTK__)
-#include <WebKit/WKBaseMac.h>
-#endif
-
-#if defined(BUILDING_WPE__)
+#elif defined(BUILDING_WPE__)
 #include <WebKit/WKBaseWPE.h>
+#elif defined(__APPLE__)
+#include <WebKit/WKBaseMac.h>
+#elif defined(_WIN32)
+#include <WebKit/WKBaseWin.h>
 #endif
 
 /* WebKit2 shared types */

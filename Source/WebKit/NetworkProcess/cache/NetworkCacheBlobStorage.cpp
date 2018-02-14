@@ -30,11 +30,14 @@
 #include "NetworkCacheFileSystem.h"
 #include <WebCore/FileSystem.h>
 #include <fcntl.h>
+#include <wtf/RunLoop.h>
+#include <wtf/SHA1.h>
+
+#if !OS(WINDOWS)
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <wtf/RunLoop.h>
-#include <wtf/SHA1.h>
+#endif
 
 namespace WebKit {
 namespace NetworkCache {
@@ -83,6 +86,7 @@ String BlobStorage::blobPathForHash(const SHA1::Digest& hash) const
 
 BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
 {
+#if !OS(WINDOWS)
     ASSERT(!RunLoop::isMain());
 
     auto hash = computeSHA1(data, m_salt);
@@ -114,6 +118,9 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
     m_approximateSize += mappedData.size();
 
     return { mappedData, hash };
+#else
+    return { Data(), computeSHA1(data, m_salt) };
+#endif
 }
 
 BlobStorage::Blob BlobStorage::get(const String& path)

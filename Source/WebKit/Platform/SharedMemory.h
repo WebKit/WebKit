@@ -35,6 +35,10 @@
 #include <wtf/Optional.h>
 #endif
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;

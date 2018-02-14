@@ -31,6 +31,10 @@
 #include <mach/mach_traps.h>
 #endif
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 namespace IPC {
 
 class Decoder;

@@ -38,8 +38,11 @@
 #include "PluginProcessConnectionMessages.h"
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
-#include <unistd.h>
 #include <wtf/SetForScope.h>
+
+#if !OS(WINDOWS)
+#include <unistd.h>
+#endif
 
 using namespace WebCore;
 
