@@ -1,3 +1,22 @@
+2018-02-13  Youenn Fablet  <youenn@apple.com>
+
+        Add support for configuring WebsiteDatastore service worker and cache storage path
+        https://bugs.webkit.org/show_bug.cgi?id=182674
+
+        Reviewed by Chris Dumez.
+
+        Beef up WKWebsiteDataStoreConfiguration to easily set the WebsiteDataStore
+        service worker registration and cache storage directory path.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration _cacheStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setCacheStorageDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _serviceWorkerRegistrationDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setServiceWorkerRegistrationDirectory:]):
+
 2018-02-13  Brian Burg  <bburg@apple.com>
 
         Web Automation: don't return an error if resizing/moving a window has no effect

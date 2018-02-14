@@ -200,6 +200,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         config.cookieStorageFile = configuration._cookieStorageFile.path;
     if (configuration._resourceLoadStatisticsDirectory)
         config.resourceLoadStatisticsDirectory = configuration._resourceLoadStatisticsDirectory.path;
+    if (configuration._cacheStorageDirectory)
+        config.cacheStorageDirectory = configuration._cacheStorageDirectory.path;
+    if (configuration._serviceWorkerRegistrationDirectory)
+        config.serviceWorkerRegistrationDirectory = configuration._serviceWorkerRegistrationDirectory.path;
 
     API::Object::constructInWrapper<API::WebsiteDataStore>(self, config, PAL::SessionID::generatePersistentSessionID());
 
