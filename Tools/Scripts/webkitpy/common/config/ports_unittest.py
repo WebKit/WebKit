@@ -59,5 +59,5 @@ class DeprecatedPortTest(unittest.TestCase):
     def test_wincairo_port(self):
         self.assertEqual(WinCairoPort().flag(), "--port=wincairo")
         self.assertEqual(WinCairoPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests") + ["--wincairo"])
-        self.assertEqual(WinCairoPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--wincairo", "--64-bit"])
-        self.assertEqual(WinCairoPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--wincairo", "--64-bit"])
+        self.assertEqual(WinCairoPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--wincairo"])
+        self.assertEqual(WinCairoPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--wincairo"])

@@ -449,6 +449,8 @@ class WinPort(ApplePort):
 class WinCairoPort(WinPort):
     port_name = "wincairo"
 
+    DEFAULT_ARCHITECTURE = 'x86_64'
+
     TEST_PATH_SEPARATOR = os.sep
 
     def default_baseline_search_path(self):

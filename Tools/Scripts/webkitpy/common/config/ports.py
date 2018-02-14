@@ -192,7 +192,6 @@ class WinCairoPort(DeprecatedPort):
     def build_webkit_command(self, build_style=None):
         command = super(WinCairoPort, self).build_webkit_command(build_style=build_style)
         command.append('--wincairo')
-        command.append('--64-bit')
         return command
 
     def run_webkit_tests_command(self, build_style=None):
