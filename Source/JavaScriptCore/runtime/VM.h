@@ -684,6 +684,15 @@ public:
     BumpPointerAllocator m_regExpAllocator;
     ConcurrentJSLock m_regExpAllocatorLock;
 
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+    static constexpr size_t patternContextBufferSize = 8192; // Space allocated to save nested parenthesis context
+    char* m_regExpPatternContexBuffer { nullptr };
+    Lock m_regExpPatternContextLock;
+    char* acquireRegExpPatternContexBuffer();
+    void releaseRegExpPatternContexBuffer();
+#endif
+
+
     std::unique_ptr<HasOwnPropertyCache> m_hasOwnPropertyCache;
     ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.get(); }
     HasOwnPropertyCache* ensureHasOwnPropertyCache();

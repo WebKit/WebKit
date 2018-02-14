@@ -38,8 +38,7 @@
 #define YARR_CALL
 #endif
 
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
-#define JIT_ALL_PARENS_EXPRESSIONS
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
 constexpr size_t patternContextBufferSize = 8192; // Space caller allocates to save nested parenthesis context
 #endif
 
@@ -61,7 +60,7 @@ enum class JITFailureReason : uint8_t {
 
 class YarrCodeBlock {
 #if CPU(X86_64) || CPU(ARM64)
-#ifdef JIT_ALL_PARENS_EXPRESSIONS
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     typedef MatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
     typedef MatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
     typedef MatchResult (*YarrJITCodeMatchOnly8)(const LChar* input, unsigned start, unsigned length, void*, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
@@ -95,7 +94,10 @@ public:
     void set8BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly8 = matchOnly; }
     void set16BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly16 = matchOnly; }
 
-#ifdef JIT_ALL_PARENS_EXPRESSIONS
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+    bool usesPatternContextBuffer() { return m_usesPatternContextBuffer; }
+    void setUsesPaternContextBuffer() { m_usesPatternContextBuffer = true; }
+
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has8BitCode());
@@ -198,6 +200,9 @@ private:
     MacroAssemblerCodeRef m_ref16;
     MacroAssemblerCodeRef m_matchOnly8;
     MacroAssemblerCodeRef m_matchOnly16;
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+    bool m_usesPatternContextBuffer;
+#endif
     std::optional<JITFailureReason> m_failureReason;
 };
 

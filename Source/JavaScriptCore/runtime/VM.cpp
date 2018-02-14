@@ -536,6 +536,12 @@ VM::~VM()
 
     delete clientData;
     delete m_regExpCache;
+
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+    if (m_regExpPatternContexBuffer)
+        delete[] m_regExpPatternContexBuffer;
+#endif
+
 #if ENABLE(REGEXP_TRACING)
     delete m_rtTraceList;
 #endif
@@ -894,6 +900,25 @@ void logSanitizeStack(VM* vm)
             vm->topCallFrame->codeOrigin(), ", last stack top = ", RawPointer(vm->lastStackTop()), ", in stack range [", RawPointer(stackBounds.origin()), ", ", RawPointer(stackBounds.end()), "]\n");
     }
 }
+
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+char* VM::acquireRegExpPatternContexBuffer()
+{
+    ASSERT(!m_regExpPatternContextLock.isLocked());
+
+    m_regExpPatternContextLock.lock();
+    if (!m_regExpPatternContexBuffer)
+        m_regExpPatternContexBuffer = new char[VM::patternContextBufferSize];
+    return m_regExpPatternContexBuffer;
+}
+
+void VM::releaseRegExpPatternContexBuffer()
+{
+    ASSERT(m_regExpPatternContextLock.isLocked());
+
+    m_regExpPatternContextLock.unlock();
+}
+#endif
 
 #if ENABLE(REGEXP_TRACING)
 void VM::addRegExpToTrace(RegExp* regExp)
