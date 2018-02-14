@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "PlatformExportMacros.h"
-
 namespace WebCore {
 
 class Frame;

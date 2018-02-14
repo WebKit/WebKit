@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "PlatformExportMacros.h"
-
 OBJC_CLASS NSAttributedString;
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #ifndef CredentialBase_h
 #define CredentialBase_h
 
-#include "PlatformExportMacros.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

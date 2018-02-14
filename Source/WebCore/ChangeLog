@@ -1,3 +1,36 @@
+2018-02-14  Don Olmstead  <don.olmstead@sony.com>
+
+        WebCore headers should not include config.h or PlatformExportMacros.h
+        https://bugs.webkit.org/show_bug.cgi?id=182799
+
+        Reviewed by Darin Adler.
+
+        No new tests. No change in behavior.
+
+        * Modules/speech/SpeechSynthesis.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * contentextensions/ContentExtensionError.h:
+        * contentextensions/DFA.h:
+        * dom/ContextDestructionObserver.h:
+        * dom/DeviceOrientationClient.h:
+        * dom/DeviceOrientationData.h:
+        * editing/cocoa/HTMLConverter.h:
+        * loader/FrameLoaderStateMachine.h:
+        * loader/cache/CachedResourceHandle.h:
+        * page/FrameDestructionObserver.h:
+        * page/RuntimeEnabledFeatures.h:
+        * platform/URL.h:
+        * platform/audio/AudioHardwareListener.h:
+        * platform/audio/AudioSession.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/win/LocalWindowsContext.h:
+        * platform/network/CacheValidation.h:
+        * platform/network/CredentialBase.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/cf/CertificateInfo.h:
+
 2018-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r223440): Copying & pasting a list from Microsoft Word to TinyMCE fails

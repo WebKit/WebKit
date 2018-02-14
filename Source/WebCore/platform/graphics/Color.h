@@ -27,7 +27,6 @@
 
 #include "ColorSpace.h"
 #include "ExtendedColor.h"
-#include "PlatformExportMacros.h"
 #include <algorithm>
 #include <cmath>
 #include <unicode/uchar.h>

@@ -26,7 +26,6 @@
 #ifndef LocalWindowsContext_h
 #define LocalWindowsContext_h
 
-#include "config.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
