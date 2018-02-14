@@ -1,3 +1,55 @@
+2018-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r223440): Copying & pasting a list from Microsoft Word to TinyMCE fails
+        https://bugs.webkit.org/show_bug.cgi?id=182564
+
+        Reviewed by Wenson Hsieh.
+
+        Unfortunately, r228352 was inadaquate to fix copying & pasting of a list item from Microsoft Word into TinyMCE
+        in older verions of TinyMCE. This patch amends the approach taken by r228352 to make it work across the board
+        as well as unbreak GMail.
+
+        Turns out older versions of TinyMCE can't handle list items when computed styles are added as inline style
+        declarations by WebKit. To make this work, avoid adding any computed styles as inline styles within mso-list
+        conditionals as well as any p elements whose style attribute contains "mso-list" property. We would instead
+        preserve these styles by keeping Microsoft Word's CSS style rules in addition to special @list rules.
+
+        In addition, not keeping the style element of Microsoft Word in a head element as done in r228352 causes some
+        versions of TinyMCE to treat it as regular text, and inserting a bunch of @list rules as user visible text.
+        To work around this problem, we serialize the style rules as a comment (<!-- ~ -->) within a head element.
+
+        Furthermore, when Microsoft Word is in the compatibility mode, it does not generate xmlns:o as the first xmlns
+        declaration. Generalized the code to detect Microsoft Word's HTML declaration by looking for xmlns:o and xmlns:w
+        xmls declarations. 
+
+        Finally, it turns out that Gmail has its own handling of list items copy & pasted from Microsoft Word, and also
+        needs this quirks but in the pasted HTML, not the one exposed in getData. As such, this patch also enables the
+        MSO list quirks in the pasted content as well as the one exposed in getData.
+
+        Tests: PasteHTML.PreservesMSOList
+               PasteHTML.PreservesMSOListInCompatibilityMode
+               PasteHTML.StripsMSOListWhenMissingMSOHTMLElement
+               PasteWebArchive.PreservesMSOList
+               PasteWebArchive.PreservesMSOListInCompatibilityMode
+               PasteWebArchive.StripsMSOListWhenMissingMSOHTMLElement
+
+        * editing/HTMLInterchange.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::removeHeadContents): Don't remove the special style element needed for the MSO list quirks since we
+        don't keep the computed style as inline styles in this case.
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readWebArchive): Enable the quirks in the pasted content as well as opposed to
+        just in DataTransfer API exposed to the JavaScript.
+        (WebCore::WebContentReader::readHTML): Ditto.
+        * editing/markup.cpp:
+        (WebCore::shouldPreserveMSOLists): Added. Generalized the logic to detect a Microsoft Word document.
+        more xmlns declarations.
+        (WebCore::StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement): Added.
+        (WebCore::StyledMarkupAccumulator::appendElement): Don't generate the second style element here for elements
+        with most-list properties. Instead, avoid overriding inline styles with computed styles altogether.
+        (WebCore::StyledMarkupAccumulator::appendNodeToPreserveMSOList): Include the style rules as well as list rules
+        and wrap the "style" element in a "head" element to make it compatible with older versions of TinyMCE.
+
 2018-02-14  Dean Jackson  <dino@apple.com>
 
         CrashTracer: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot + 618

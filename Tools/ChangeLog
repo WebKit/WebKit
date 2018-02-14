@@ -1,3 +1,24 @@
+2018-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r223440): Copying & pasting a list from Microsoft Word to TinyMCE fails
+        https://bugs.webkit.org/show_bug.cgi?id=182564
+
+        Reviewed by Wenson Hsieh.
+
+        Updated assertions to make sure the trailing "}" of @list rules is includd in the style, the "style" element
+        is wrapped by "head" element (not present in the pasted markup since the fragment parsing algorithm strips away),
+        and the style content is enclosed in "<!--" and "-->".
+
+        Also use execCommand('insertHTML', ~) to insert the HTML obtained via dataTransfer.getData instead of innerHTML
+        to make sure our pasting code preserves the special style element for MSO list quirks.
+
+        Finally, added two more test cases for pasting content from Microsoft Word's compatibility mode.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+        (TEST):
+
 2018-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Tools] --wincairo should imply --64-bit by default.

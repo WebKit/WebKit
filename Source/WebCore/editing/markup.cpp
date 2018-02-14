@@ -236,6 +236,8 @@ private:
     String renderedText(const Node&, const Range*);
     String stringValueForRange(const Node&, const Range*);
 
+    bool shouldPreserveMSOListStyleForElement(const Element&);
+
     void appendElement(StringBuilder& out, const Element&, bool addDisplayInline, RangeFullySelectsNode);
     void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
 
@@ -421,6 +423,11 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
 #endif
 }
 
+bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element& element)
+{
+    return m_inMSOList || (m_shouldPreserveMSOList && element.hasTagName(pTag) && element.getAttribute(styleAttr).contains(";mso-list:"));
+}
+
 void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
     const bool documentIsHTML = element.document().isHTMLDocument();
@@ -429,16 +436,12 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
     appendCustomAttributes(out, element, nullptr);
 
     const bool shouldAnnotateOrForceInline = element.isHTMLElement() && (shouldAnnotate() || addDisplayInline);
-    const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
-    bool containsMSOList = false;
+    bool shouldOverrideStyleAttr = (shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element)) && !shouldPreserveMSOListStyleForElement(element);
     if (element.hasAttributes()) {
         for (const Attribute& attribute : element.attributesIterator()) {
             // We'll handle the style attribute separately, below.
-            if (attribute.name() == styleAttr && shouldOverrideStyleAttr) {
-                if (m_shouldPreserveMSOList && attribute.value().contains(";mso-list:"))
-                    containsMSOList = true;
+            if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
                 continue;
-            }
             if (element.isEventHandlerAttribute(attribute) || element.isJavaScriptURLAttribute(attribute))
                 continue;
             appendAttribute(out, element, attribute, 0);
@@ -479,16 +482,6 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
         if (!newInlineStyle->isEmpty()) {
             out.appendLiteral(" style=\"");
             appendAttributeValue(out, newInlineStyle->style()->asText(), documentIsHTML);
-            out.append('\"');
-        }
-
-        if (containsMSOList) {
-            ASSERT(m_shouldPreserveMSOList);
-            // Unfortunately, TinyMCE doesn't recognize mso-list inline style if the style attribute contains properties.
-            // Generate a separate, second style attribute if newInlineStyle is not empty above.
-            // The inline style is preserved because the first attribute always wins but TinyMCE can still recognize the list.
-            out.appendLiteral(" style=\"");
-            appendAttributeValue(out, element.getAttribute(styleAttr), documentIsHTML);
             out.append('\"');
         }
     }
@@ -615,18 +608,21 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
         auto& textChild = downcast<Text>(*firstChild);
         auto& styleContent = textChild.data();
 
+        const auto msoStyleDefinitionsStart = styleContent.find("/* Style Definitions */");
         const auto msoListDefinitionsStart = styleContent.find("/* List Definitions */");
         const auto lastListItem = styleContent.reverseFind("\n@list");
         if (msoListDefinitionsStart == notFound || lastListItem == notFound)
             return false;
+        const auto start = msoStyleDefinitionsStart != notFound && msoStyleDefinitionsStart < msoListDefinitionsStart ? msoStyleDefinitionsStart : msoListDefinitionsStart;
 
         const auto msoListDefinitionsEnd = styleContent.find(";}\n", lastListItem);
-        if (msoListDefinitionsEnd == notFound || msoListDefinitionsStart >= msoListDefinitionsEnd)
+        if (msoListDefinitionsEnd == notFound || start >= msoListDefinitionsEnd)
             return false;
 
-        appendStartTag(node);
-        appendTextSubstring(textChild, msoListDefinitionsStart, msoListDefinitionsEnd - msoListDefinitionsStart + 1);
-        appendEndTag(node);
+        appendString("<head><style class=\"" WebKitMSOListQuirksStyle "\">\n<!--\n");
+        appendTextSubstring(textChild, start, msoListDefinitionsEnd - start + 3);
+        appendString("\n-->\n</style></head>");
+
         return true;
     }
     return false;
@@ -839,11 +835,22 @@ String createMarkup(const Range& range, Vector<Node*>* nodes, EAnnotateForInterc
     return createMarkupInternal(range.ownerDocument(), range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs, MSOListMode::DoNotPreserve);
 }
 
+static bool shouldPreserveMSOLists(const String& markup)
+{
+    if (!markup.startsWith("<html xmlns:"))
+        return false;
+    auto tagClose = markup.find('>');
+    if (tagClose == notFound)
+        return false;
+    auto htmlTag = markup.substring(0, tagClose);
+    return htmlTag.contains("xmlns:o=\"urn:schemas-microsoft-com:office:office\"")
+        && htmlTag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\"");
+}
+
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document, MSOListQuirks msoListQuirks, const String& originalMarkup)
 {
-    MSOListMode msoListMode = MSOListMode::DoNotPreserve;
-    if (msoListQuirks == MSOListQuirks::CheckIfNeeded && originalMarkup.startsWith("<html xmlns:o=\"urn:schemas-microsoft-com:office:office\""))
-        msoListMode = MSOListMode::Preserve;
+    MSOListMode msoListMode = msoListQuirks == MSOListQuirks::CheckIfNeeded && shouldPreserveMSOLists(originalMarkup)
+        ? MSOListMode::Preserve : MSOListMode::DoNotPreserve;
 
     auto bodyElement = makeRefPtr(document.body());
     ASSERT(bodyElement);
