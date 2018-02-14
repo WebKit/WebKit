@@ -38,6 +38,12 @@ public:
 
     const static unsigned StructureFlags = Base::StructureFlags;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.webAssemblyWrapperFunctionSpace;
+    }
+
     DECLARE_INFO;
 
     static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::SignatureIndex);

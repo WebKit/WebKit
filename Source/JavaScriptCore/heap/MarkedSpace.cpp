@@ -141,7 +141,6 @@ const Vector<size_t>& sizeClasses()
             // https://bugs.webkit.org/show_bug.cgi?id=179876
             add(sizeof(UnlinkedFunctionCodeBlock));
             add(sizeof(JSString));
-            add(sizeof(JSFunction));
 
             {
                 // Sort and deduplicate.

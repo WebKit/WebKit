@@ -936,6 +936,7 @@ void linkPolymorphicCall(
         stubJit.loadPtr(
             CCallHelpers::Address(calleeGPR, JSFunction::offsetOfExecutable()),
             scratchGPR);
+        stubJit.xorPtr(CCallHelpers::TrustedImmPtr(JSFunctionPoison::key()), scratchGPR);
         
         comparisonValueGPR = scratchGPR;
     } else

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Oleksandr Skachkov <gskachkov@gmail.com>.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,12 @@ public:
     using Base = JSFunction;
 
     const static unsigned StructureFlags = Base::StructureFlags;
+
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.asyncGeneratorFunctionSpace;
+    }
 
     DECLARE_EXPORT_INFO;
 

@@ -2102,6 +2102,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     move cfr, a0
     loadp Callee[cfr], t1
     loadp JSFunction::m_executable[t1], t1
+    unpoison(_g_JSFunctionPoison, t1, t2)
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
         loadp _g_NativeCodePoison, t2

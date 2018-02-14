@@ -940,29 +940,31 @@ macro assertNotConstant(index)
     assert(macro (ok) bilt index, FirstConstantRegisterIndex, ok end)
 end
 
-macro functionForCallCodeBlockGetter(targetRegister)
+macro functionForCallCodeBlockGetter(targetRegister, scratch)
     if JSVALUE64
         loadp Callee[cfr], targetRegister
     else
         loadp Callee + PayloadOffset[cfr], targetRegister
     end
     loadp JSFunction::m_executable[targetRegister], targetRegister
+    unpoison(_g_JSFunctionPoison, targetRegister, scratch)
     loadp FunctionExecutable::m_codeBlockForCall[targetRegister], targetRegister
     loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
 
-macro functionForConstructCodeBlockGetter(targetRegister)
+macro functionForConstructCodeBlockGetter(targetRegister, scratch)
     if JSVALUE64
         loadp Callee[cfr], targetRegister
     else
         loadp Callee + PayloadOffset[cfr], targetRegister
     end
     loadp JSFunction::m_executable[targetRegister], targetRegister
+    unpoison(_g_JSFunctionPoison, targetRegister, scratch)
     loadp FunctionExecutable::m_codeBlockForConstruct[targetRegister], targetRegister
     loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
 
-macro notFunctionCodeBlockGetter(targetRegister)
+macro notFunctionCodeBlockGetter(targetRegister, ignored)
     loadp CodeBlock[cfr], targetRegister
 end
 
@@ -985,7 +987,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         callSlowPath(traceSlowPath)
         addp maxFrameExtentForSlowPathCall, sp
     end
-    codeBlockGetter(t1)
+    codeBlockGetter(t1, t2)
     if not C_LOOP
         baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
         if JSVALUE64
@@ -1014,7 +1016,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         end
         jmp r0
     .recover:
-        codeBlockGetter(t1)
+        codeBlockGetter(t1, t2)
     .continue:
     end
 
@@ -1055,7 +1057,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 .stackHeightOKGetCodeBlock:
     # Stack check slow path returned that the stack was ok.
     # Since they were clobbered, need to get CodeBlock and new sp
-    codeBlockGetter(t1)
+    codeBlockGetter(t1, t2)
     getFrameRegisterSizeForCodeBlock(t1, t0)
     subp cfr, t0, t0
 
