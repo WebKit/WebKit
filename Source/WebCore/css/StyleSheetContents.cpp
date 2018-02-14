@@ -430,31 +430,23 @@ URL StyleSheetContents::completeURL(const String& url) const
     return m_parserContext.completeURL(url);
 }
 
-static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rules, const WTF::Function<bool (const CachedResource&)>& handler)
+static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, const WTF::Function<bool (const StyleRuleBase&)>& handler)
 {
     for (auto& rule : rules) {
+        if (handler(*rule))
+            return true;
         switch (rule->type()) {
-        case StyleRuleBase::Style: {
-            auto* properties = downcast<StyleRule>(*rule).propertiesWithoutDeferredParsing();
-            if (properties && properties->traverseSubresources(handler))
-                return true;
-            break;
-        }
-        case StyleRuleBase::FontFace:
-            if (downcast<StyleRuleFontFace>(*rule).properties().traverseSubresources(handler))
-                return true;
-            break;
         case StyleRuleBase::Media: {
             auto* childRules = downcast<StyleRuleMedia>(*rule).childRulesWithoutDeferredParsing();
-            if (childRules && traverseSubresourcesInRules(*childRules, handler))
+            if (childRules && traverseRulesInVector(*childRules, handler))
                 return true;
             break;
         }
         case StyleRuleBase::Import:
             ASSERT_NOT_REACHED();
-#if ASSERT_DISABLED
-            FALLTHROUGH;
-#endif
+            break;
+        case StyleRuleBase::Style:
+        case StyleRuleBase::FontFace:
         case StyleRuleBase::Page:
         case StyleRuleBase::Keyframes:
         case StyleRuleBase::Namespace:
@@ -471,18 +463,48 @@ static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rul
     return false;
 }
 
-bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
+bool StyleSheetContents::traverseRules(const WTF::Function<bool (const StyleRuleBase&)>& handler) const
 {
     for (auto& importRule : m_importRules) {
-        if (auto* cachedResource = importRule->cachedCSSStyleSheet()) {
-            if (handler(*cachedResource))
-                return true;
-        }
+        if (handler(*importRule))
+            return true;
         auto* importedStyleSheet = importRule->styleSheet();
-        if (importedStyleSheet && importedStyleSheet->traverseSubresources(handler))
+        if (importedStyleSheet && importedStyleSheet->traverseRules(handler))
             return true;
     }
-    return traverseSubresourcesInRules(m_childRules, handler);
+    return traverseRulesInVector(m_childRules, handler);
+}
+
+bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
+{
+    return traverseRules([&] (const StyleRuleBase& rule) {
+        switch (rule.type()) {
+        case StyleRuleBase::Style: {
+            auto* properties = downcast<StyleRule>(rule).propertiesWithoutDeferredParsing();
+            return properties && properties->traverseSubresources(handler);
+        }
+        case StyleRuleBase::FontFace:
+            return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
+        case StyleRuleBase::Import:
+            if (auto* cachedResource = downcast<StyleRuleImport>(rule).cachedCSSStyleSheet())
+                return handler(*cachedResource);
+            return false;
+        case StyleRuleBase::Media:
+        case StyleRuleBase::Page:
+        case StyleRuleBase::Keyframes:
+        case StyleRuleBase::Namespace:
+        case StyleRuleBase::Unknown:
+        case StyleRuleBase::Charset:
+        case StyleRuleBase::Keyframe:
+        case StyleRuleBase::Supports:
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+        case StyleRuleBase::Viewport:
+#endif
+            return false;
+        };
+        ASSERT_NOT_REACHED();
+        return false;
+    });
 }
 
 bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLoader& loader) const

@@ -118,6 +118,7 @@ public:
     StyleResolver& resolver();
     StyleResolver* resolverIfExists();
     void clearResolver();
+    void releaseMemory();
 
     const Document& document() const { return m_document; }
 

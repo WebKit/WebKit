@@ -132,8 +132,13 @@ public:
 
     using StyleRuleBase::hasDocumentSecurityOrigin;
 
-    void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = WTFMove(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList& selectors)
+    {
+        m_selectorList = WTFMove(selectors);
+#if ENABLE(CSS_SELECTOR_JIT)
+        m_compiledSelectors = nullptr;
+#endif
+    }
     void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
     Ref<StyleRule> copy() const { return adoptRef(*new StyleRule(*this)); }
@@ -143,9 +148,13 @@ public:
 #if ENABLE(CSS_SELECTOR_JIT)
     CompiledSelector& compiledSelectorForListIndex(unsigned index)
     {
-        if (m_compiledSelectors.isEmpty())
-            m_compiledSelectors.grow(m_selectorList.listSize());
+        if (!m_compiledSelectors)
+            m_compiledSelectors = std::make_unique<CompiledSelector[]>(m_selectorList.listSize());
         return m_compiledSelectors[index];
+    }
+    void releaseCompiledSelectors() const
+    {
+        m_compiledSelectors = nullptr;
     }
 #endif
 
@@ -161,7 +170,7 @@ private:
     CSSSelectorList m_selectorList;
 
 #if ENABLE(CSS_SELECTOR_JIT)
-    Vector<CompiledSelector> m_compiledSelectors;
+    mutable std::unique_ptr<CompiledSelector[]> m_compiledSelectors;
 #endif
 };
 

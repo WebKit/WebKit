@@ -191,9 +191,6 @@ StyleRule::StyleRule(const StyleRule& o)
     : StyleRuleBase(o)
     , m_properties(o.properties().mutableCopy())
     , m_selectorList(o.m_selectorList)
-#if ENABLE(CSS_SELECTOR_JIT)
-    , m_compiledSelectors(o.m_compiledSelectors)
-#endif
 {
 }
 
