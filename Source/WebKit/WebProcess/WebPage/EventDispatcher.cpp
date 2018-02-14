@@ -96,10 +96,10 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 
 #if PLATFORM(COCOA)
     switch (wheelEvent.phase()) {
-    case PlatformWheelEventPhaseBegan:
+    case WebWheelEvent::PhaseBegan:
         m_recentWheelEventDeltaFilter->beginFilteringDeltas();
         break;
-    case PlatformWheelEventPhaseEnded:
+    case WebWheelEvent::PhaseEnded:
         m_recentWheelEventDeltaFilter->endFilteringDeltas();
         break;
     default:

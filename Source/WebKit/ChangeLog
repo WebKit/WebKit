@@ -1,3 +1,18 @@
+2018-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EventDispatcher::wheelEvent uses a wrong enum values in switch
+        https://bugs.webkit.org/show_bug.cgi?id=182796
+
+        Reviewed by Chris Dumez.
+
+        EventDispatcher::wheelEvent is using PlatformWheelEventPhaseBegan and PlatformWheelEventPhaseEnded
+        but the enum type of wheelEvent.phase() is WebWheelEvent::Phase.
+
+        The enum values are indentical for both so there is no behavioral change.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2018-02-14  Maureen Daum  <mdaum@apple.com>
 
         Add C SPI for support of Website Data Store in Website Policies
