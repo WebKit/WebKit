@@ -51,7 +51,7 @@ public:
     WEBCORE_EXPORT String description();
     WEBCORE_EXPORT virtual void pause() { };
 
-    virtual void timingModelDidChange() { };
+    virtual void animationTimingModelDidChange() { };
 
     const HashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&);

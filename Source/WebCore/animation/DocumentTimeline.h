@@ -52,7 +52,7 @@ public:
     std::optional<Seconds> currentTime() override;
     void pause() override;
 
-    void timingModelDidChange() override;
+    void animationTimingModelDidChange() override;
     void windowScreenDidChange(PlatformDisplayID);
 
     std::unique_ptr<RenderStyle> animatedStyleForRenderer(RenderElement& renderer);

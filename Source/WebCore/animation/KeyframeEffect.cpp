@@ -29,7 +29,7 @@
 namespace WebCore {
 using namespace JSC;
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ScriptExecutionContext& scriptExecutionContext, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(AnimationEffectTiming::create(), target));
 
@@ -37,14 +37,14 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ScriptExecutionContext& 
     if (setPropertiesResult.hasException())
         return setPropertiesResult.releaseException();
 
-    auto setKeyframesResult = keyframeEffect->setKeyframes(scriptExecutionContext, WTFMove(keyframes));
+    auto setKeyframesResult = keyframeEffect->setKeyframes(state, WTFMove(keyframes));
     if (setKeyframesResult.hasException())
         return setKeyframesResult.releaseException();
 
     return WTFMove(keyframeEffect);
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ScriptExecutionContext&, Ref<KeyframeEffectReadOnly>&& source)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&& source)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(AnimationEffectTiming::create(), nullptr));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
@@ -56,9 +56,9 @@ KeyframeEffect::KeyframeEffect(Ref<AnimationEffectTimingReadOnly>&& timing, Elem
 {
 }
 
-ExceptionOr<void> KeyframeEffect::setKeyframes(ScriptExecutionContext& scriptExecutionContext, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffect::setKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput)
 {
-    return processKeyframes(scriptExecutionContext, WTFMove(keyframesInput));
+    return processKeyframes(state, WTFMove(keyframesInput));
 }
 
 } // namespace WebCore

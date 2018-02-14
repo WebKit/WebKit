@@ -44,7 +44,6 @@ public:
     AnimationEffectTimingReadOnly* timing() const { return m_timing.get(); }
     ComputedTimingProperties getComputedTiming();
     virtual void apply(RenderStyle&) = 0;
-    virtual void invalidate() = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
     void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }

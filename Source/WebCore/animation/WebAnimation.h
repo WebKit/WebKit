@@ -42,7 +42,6 @@ class AnimationEffectReadOnly;
 class AnimationPlaybackEvent;
 class AnimationTimeline;
 class Document;
-class Element;
 class RenderStyle;
 
 class WebAnimation final : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
@@ -92,7 +91,6 @@ public:
 
     Seconds timeToNextRequiredTick(Seconds) const;
     void resolve(RenderStyle&);
-    void effectTargetDidChange(RefPtr<Element> previousTarget, RefPtr<Element> newTarget);
     void acceleratedRunningStateDidChange();
     void startOrStopAccelerated();
 
@@ -130,7 +128,6 @@ private:
     void runPendingPauseTask();
     void runPendingPlayTask();
     void resetPendingTasks();
-    void timingModelDidChange();
     
     String m_id;
     RefPtr<AnimationEffectReadOnly> m_effect;

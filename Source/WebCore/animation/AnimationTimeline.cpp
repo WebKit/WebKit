@@ -46,13 +46,13 @@ AnimationTimeline::~AnimationTimeline()
 void AnimationTimeline::addAnimation(Ref<WebAnimation>&& animation)
 {
     m_animations.add(WTFMove(animation));
-    timingModelDidChange();
+    animationTimingModelDidChange();
 }
 
 void AnimationTimeline::removeAnimation(Ref<WebAnimation>&& animation)
 {
     m_animations.remove(WTFMove(animation));
-    timingModelDidChange();
+    animationTimingModelDidChange();
 }
 
 std::optional<double> AnimationTimeline::bindingsCurrentTime()
@@ -66,7 +66,7 @@ std::optional<double> AnimationTimeline::bindingsCurrentTime()
 void AnimationTimeline::setCurrentTime(Seconds currentTime)
 {
     m_currentTime = currentTime;
-    timingModelDidChange();
+    animationTimingModelDidChange();
 }
 
 void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)

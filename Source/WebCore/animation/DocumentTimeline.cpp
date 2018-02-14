@@ -84,7 +84,7 @@ void DocumentTimeline::pause()
     m_paused = true;
 }
 
-void DocumentTimeline::timingModelDidChange()
+void DocumentTimeline::animationTimingModelDidChange()
 {
     if (m_needsUpdateAnimationSchedule)
         return;
@@ -176,7 +176,7 @@ void DocumentTimeline::updateAnimations()
         animation->updateFinishedState(WebAnimation::DidSeek::No, WebAnimation::SynchronouslyNotify::No);
 
     // Time has advanced, the timing model requires invalidation now.
-    timingModelDidChange();
+    animationTimingModelDidChange();
 }
 
 std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderElement& renderer)

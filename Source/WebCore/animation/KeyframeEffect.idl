@@ -27,12 +27,11 @@
     EnabledAtRuntime=WebAnimations,
     Exposed=Window,
     ConstructorMayThrowException,
-    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptState,
     Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options),
     Constructor(KeyframeEffectReadOnly source)
 ] interface KeyframeEffect : KeyframeEffectReadOnly {
-    inherit attribute Element? target;
     inherit attribute IterationCompositeOperation iterationComposite;
     inherit attribute CompositeOperation composite;
-    [MayThrowException, CallWith=ScriptExecutionContext] void setKeyframes(object? keyframes);
+    [MayThrowException, CallWith=ScriptState] void setKeyframes(object? keyframes);
 };

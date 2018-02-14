@@ -43,8 +43,8 @@ class Element;
 class KeyframeEffectReadOnly : public AnimationEffectReadOnly
     , public CSSPropertyBlendingClient {
 public:
-    static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(ScriptExecutionContext&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
-    static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(ScriptExecutionContext&, Ref<KeyframeEffectReadOnly>&&);
+    static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&&);
     ~KeyframeEffectReadOnly() { }
 
     struct BasePropertyIndexedKeyframe {
@@ -79,8 +79,6 @@ public:
     };
 
     Element* target() const { return m_target.get(); }
-    void setTarget(RefPtr<Element>);
-
     Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::ExecState&);
 
     IterationCompositeOperation iterationComposite() const { return m_iterationCompositeOperation; }
@@ -88,7 +86,6 @@ public:
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle&) override;
-    void invalidate() override;
     void startOrStopAccelerated();
     bool isRunningAccelerated() const { return m_startedAccelerated; }
 
@@ -103,7 +100,7 @@ public:
 
 protected:
     void copyPropertiesFromSource(Ref<KeyframeEffectReadOnly>&&);
-    ExceptionOr<void> processKeyframes(ScriptExecutionContext&, JSC::Strong<JSC::JSObject>&&);
+    ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
 
     IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
