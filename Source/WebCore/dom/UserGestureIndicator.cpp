@@ -47,13 +47,9 @@ UserGestureToken::~UserGestureToken()
 }
 
 UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle)
+    : m_previousToken { currentToken() }
 {
-    // Silently ignore UserGestureIndicators on non main threads.
-    if (!isMainThread())
-        return;
-
-    // It is only safe to use currentToken() on the main thread.
-    m_previousToken = currentToken();
+    ASSERT(isMainThread());
 
     if (state)
         currentToken() = UserGestureToken::create(state.value(), gestureType);
@@ -68,6 +64,7 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
 
 UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token)
 {
+    // Silently ignore UserGestureIndicators on non main threads.
     if (!isMainThread())
         return;
 
