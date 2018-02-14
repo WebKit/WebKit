@@ -568,6 +568,7 @@ void NetworkLoad::didReceiveAuthenticationChallenge(ResourceHandle* handle, cons
     ASSERT_UNUSED(handle, handle == m_handle);
 
     if (!isAllowedToAskUserForCredentials()) {
+        m_client.get().didBlockAuthenticationChallenge();
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
         return;
     }

@@ -1,3 +1,14 @@
+2018-02-13  Daniel Bates  <dabates@apple.com>
+
+        [safari-605-branch] Fix OS X El Capitan layout test failures following r228386
+        (https://bugs.webkit.org/show_bug.cgi?id=182358)
+
+        Patch the safari-605 branch-specific NetworkLoad::didReceiveAuthenticationChallenge
+        function to notify the Web Process when the authentication challenge is blocked.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveAuthenticationChallenge):
+
 2018-02-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228231. rdar://problem/37408885
