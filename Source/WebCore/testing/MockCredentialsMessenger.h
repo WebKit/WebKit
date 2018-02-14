@@ -27,35 +27,43 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TypeCasts.h>
+#include "BufferSource.h"
+#include "CredentialsMessenger.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AuthenticatorResponse : public RefCounted<AuthenticatorResponse> {
+class Internals;
+
+class MockCredentialsMessenger final : public CredentialsMessenger {
 public:
-    enum class Type {
-        Assertion,
-        Attestation
-    };
+    MockCredentialsMessenger(Internals&);
 
-    explicit AuthenticatorResponse(RefPtr<ArrayBuffer>&&);
-    virtual ~AuthenticatorResponse() = default;
+    void setDidTimeOut() { m_didTimeOut = true; }
+    void setDidUserCancel() { m_didUserCancel = true; }
+    void setAttestationObject(const BufferSource&);
+    void setAssertionReturnBundle(const BufferSource& credentialId, const BufferSource& authenticatorData, const BufferSource& signature, const BufferSource& userHandle);
 
-    virtual Type type() const = 0;
-
-    ArrayBuffer* clientDataJSON() const;
+    void ref();
+    void deref();
 
 private:
-    RefPtr<ArrayBuffer> m_clientDataJSON;
+    void makeCredential(const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, CreationCompletionHandler&&) final;
+    void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) final;
+    void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&) final;
+    void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) final;
+
+    Internals& m_internals;
+    // All following fields are disposable.
+    bool m_didTimeOut { false };
+    bool m_didUserCancel { false };
+    Vector<uint8_t> m_attestationObject;
+    Vector<uint8_t> m_credentialId;
+    Vector<uint8_t> m_authenticatorData;
+    Vector<uint8_t> m_signature;
+    Vector<uint8_t> m_userHandle;
 };
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_AUTHENTICATOR_RESPONSE(ToClassName, Type) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
-    static bool isType(const WebCore::AuthenticatorResponse& response) { return response.type() == WebCore::Type; } \
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_AUTHN)

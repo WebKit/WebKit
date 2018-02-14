@@ -1,3 +1,93 @@
+2018-02-13  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Revisit the whole async model of task dispatching, timeout and aborting
+        https://bugs.webkit.org/show_bug.cgi?id=181946
+        <rdar://problem/37258262>
+
+        Reviewed by Chris Dumez.
+
+        This patch changes the original async model from a work queue to IPC between WebProcess
+        and UIProcess. Since all authenticator operations must be handled in the UIProcess due
+        to sandboxing, this message passing IPC async model then surpasses the original multi
+        threading model. To cooperate that, a CredentialsMessenger class is then created and
+        all task dispatching code is moved thre.
+
+        As an improvement over existing code, static functions from PublicKeyCredential are
+        moved to AuthenticatorManager. AuthenticatorManager is made as a singleton such that
+        when static functions are called, they could reach the CredentialsMessenger to interact
+        with UIProccess. CredentialsMessenger and AuthenticatorManager are separated so later
+        on when other Credential types are created, they can reuse the same IPC messenger.
+
+        What's more, a mock CredentialsMessenger is then created to mock behaviors of UIProcess
+        for testing purpose.
+
+        Covered by existing tests.
+
+        * DerivedSources.make:
+        * Modules/credentialmanagement/BasicCredential.h:
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::CredentialsContainer):
+        (WebCore::CredentialsContainer::doesHaveSameOriginAsItsAncestors):
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::isCreate):
+        (WebCore::CredentialsContainer::PendingPromise::PendingPromise): Deleted.
+        (WebCore::CredentialsContainer::dispatchTask): Deleted.
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        (WebCore::CredentialsContainer::PendingPromise::create): Deleted.
+        * Modules/credentialmanagement/CredentialsMessenger.cpp: Added.
+        (WebCore::CredentialsMessenger::exceptionReply):
+        (WebCore::CredentialsMessenger::addCreationCompletionHandler):
+        (WebCore::CredentialsMessenger::takeCreationCompletionHandler):
+        (WebCore::CredentialsMessenger::addRequestCompletionHandler):
+        (WebCore::CredentialsMessenger::takeRequestCompletionHandler):
+        (WebCore::CredentialsMessenger::addQueryCompletionHandler):
+        (WebCore::CredentialsMessenger::takeQueryCompletionHandler):
+        (WebCore::getIdFromAttestationObject):
+        * Modules/credentialmanagement/CredentialsMessenger.h: Added.
+        (WebCore::CreationReturnBundle::CreationReturnBundle):
+        (WebCore::AssertionReturnBundle::AssertionReturnBundle):
+        (WebCore::CredentialsMessenger::weakPtrFactory const):
+        * Modules/webauthn/Authenticator.cpp: Removed.
+        * Modules/webauthn/Authenticator.h: Removed.
+        * Modules/webauthn/AuthenticatorManager.cpp: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.cpp.
+        (WebCore::AuthenticatorManagerInternal::produceClientDataJson):
+        (WebCore::AuthenticatorManagerInternal::produceClientDataJsonHash):
+        (WebCore::AuthenticatorManagerInternal::initTimer):
+        (WebCore::AuthenticatorManagerInternal::didTimerFire):
+        (WebCore::AuthenticatorManager::singleton):
+        (WebCore::AuthenticatorManager::setMessenger):
+        (WebCore::AuthenticatorManager::create const):
+        (WebCore::AuthenticatorManager::discoverFromExternalSource const):
+        * Modules/webauthn/AuthenticatorManager.h: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+        * Modules/webauthn/AuthenticatorResponse.h:
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredentialInternal::produceClientDataJson): Deleted.
+        (WebCore::PublicKeyCredentialInternal::produceClientDataJsonHash): Deleted.
+        (WebCore::PublicKeyCredentialInternal::getIdFromAttestationObject): Deleted.
+        (WebCore::PublicKeyCredential::collectFromCredentialStore): Deleted.
+        (WebCore::PublicKeyCredential::discoverFromExternalSource): Deleted.
+        (WebCore::PublicKeyCredential::store): Deleted.
+        (WebCore::PublicKeyCredential::create): Deleted.
+        (WebCore::PublicKeyCredential::rawId const): Deleted.
+        (WebCore::PublicKeyCredential::response const): Deleted.
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::mockCredentialsMessenger const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockCredentialsMessenger.cpp: Added.
+        (WebCore::MockCredentialsMessenger::setAttestationObject):
+        (WebCore::MockCredentialsMessenger::setAssertionReturnBundle):
+        (WebCore::MockCredentialsMessenger::makeCredential):
+        (WebCore::MockCredentialsMessenger::getAssertion):
+        (WebCore::MockCredentialsMessenger::makeCredentialReply):
+        (WebCore::MockCredentialsMessenger::getAssertionReply):
+        * testing/MockCredentialsMessenger.h: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+        * testing/MockCredentialsMessenger.idl: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+
 2018-02-13  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBlock::takeChild() to RenderTreeBuilder

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,41 +27,37 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "BasicCredential.h"
-#include "ExceptionOr.h"
-#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class AuthenticatorResponse;
+class AbortSignal;
+class CredentialsMessenger;
 class DeferredPromise;
+class SecurityOrigin;
 
-class PublicKeyCredential final : public BasicCredential {
+struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialRequestOptions;
+
+class AuthenticatorManager {
+    WTF_MAKE_NONCOPYABLE(AuthenticatorManager);
+    friend class NeverDestroyed<AuthenticatorManager>;
 public:
-    static Ref<PublicKeyCredential> create(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&& response)
-    {
-        return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
-    }
+    WEBCORE_EXPORT static AuthenticatorManager& singleton();
+    WEBCORE_EXPORT void setMessenger(CredentialsMessenger&);
 
-    ArrayBuffer* rawId() const { return m_rawId.get(); }
-    AuthenticatorResponse* response() const { return m_response.get(); }
-    // Not support yet. Always throws.
-    ExceptionOr<bool> getClientExtensionResults() const;
-
-    static void isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&&);
+    // The following methods implement static methods of PublicKeyCredential.
+    void create(const SecurityOrigin&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, Ref<DeferredPromise>&&) const;
+    void discoverFromExternalSource(const SecurityOrigin&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, Ref<DeferredPromise>&&) const;
 
 private:
-    PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&&);
+    AuthenticatorManager() = default;
 
-    Type credentialType() const final { return Type::PublicKey; }
-
-    RefPtr<ArrayBuffer> m_rawId;
-    RefPtr<AuthenticatorResponse> m_response;
+    WeakPtr<CredentialsMessenger> m_messenger;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(PublicKeyCredential, BasicCredential::Type::PublicKey)
 
 #endif // ENABLE(WEB_AUTHN)
