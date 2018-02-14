@@ -72,23 +72,6 @@ inline static bool vmIsInactive(VM& vm)
     return !vm.entryScope && !vm.ownerThread();
 }
 
-inline CallFrame* sanitizedTopCallFrame(CallFrame* topCallFrame)
-{
-#if !defined(NDEBUG) && !CPU(ARM) && !CPU(MIPS)
-    // prepareForExternalCall() in DFGSpeculativeJIT.h may set topCallFrame to a bad word
-    // before calling native functions, but tryInstallTrapBreakpoints() below expects
-    // topCallFrame to be null if not set.
-#if USE(JSVALUE64)
-    const uintptr_t badBeefWord = 0xbadbeef0badbeef;
-#else
-    const uintptr_t badBeefWord = 0xbadbeef;
-#endif
-    if (topCallFrame == reinterpret_cast<CallFrame*>(badBeefWord))
-        topCallFrame = nullptr;
-#endif
-    return topCallFrame;
-}
-
 static bool isSaneFrame(CallFrame* frame, CallFrame* calleeFrame, EntryFrame* entryFrame, StackBounds stackBounds)
 {
     if (reinterpret_cast<void*>(frame) >= reinterpret_cast<void*>(entryFrame))
@@ -104,21 +87,18 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
     // Let's get the thread to break at invalidation points if needed.
     VM& vm = this->vm();
     void* trapPC = context.trapPC;
+    // We must ensure we're in JIT/LLint code. If we are, we know a few things:
+    // - The JS thread isn't holding the malloc lock. Therefore, it's safe to malloc below.
+    // - The JS thread isn't holding the CodeBlockSet lock.
+    // If we're not in JIT/LLInt code, we can't run the C++ code below because it
+    // mallocs, and we must prove the JS thread isn't holding the malloc lock
+    // to be able to do that without risking a deadlock.
+    if (!isJITPC(trapPC) && !LLInt::isLLIntPC(trapPC))
+        return;
 
     CallFrame* callFrame = reinterpret_cast<CallFrame*>(context.framePointer);
 
-    auto& lock = vm.heap.codeBlockSet().getLock();
-    // If the target thread is in C++ code it might be holding the codeBlockSet lock.
-    // if it's in JIT code then it cannot be holding that lock but the GC might be.
-    auto codeBlockSetLocker = isJITPC(trapPC) ? holdLock(lock) : tryHoldLock(lock);
-    if (!codeBlockSetLocker)
-        return; // Let the SignalSender try again later.
-
-    if (!isJITPC(trapPC) && !LLInt::isLLIntPC(trapPC)) {
-        // We resort to topCallFrame to see if we can get anything
-        // useful. We usually get here when we're executing C code.
-        callFrame = sanitizedTopCallFrame(vm.topCallFrame);
-    }
+    auto codeBlockSetLocker = holdLock(vm.heap.codeBlockSet().getLock());
 
     CodeBlock* foundCodeBlock = nullptr;
     EntryFrame* entryFrame = vm.topEntryFrame;

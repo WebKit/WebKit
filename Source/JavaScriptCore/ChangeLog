@@ -1,3 +1,25 @@
+2018-02-14  Saam Barati  <sbarati@apple.com>
+
+        Setting a VMTrap shouldn't look at topCallFrame since that may imply we're in C code and holding the malloc lock
+        https://bugs.webkit.org/show_bug.cgi?id=182801
+
+        Reviewed by Keith Miller.
+
+        VMTraps would sometimes install traps when it paused the JS thread when it
+        was in C code. This is wrong, as installing traps mallocs, and the JS thread
+        may have been holding the malloc lock while in C code. This could lead to a
+        deadlock when C code was holding the malloc lock.
+        
+        This patch makes it so that we only install traps when we've proven the PC
+        is in JIT or LLInt code. If we're in JIT/LLInt code, we are guaranteed that
+        we're not holding the malloc lock.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionMallocInALoop):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+
 2018-02-14  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(225695) : com.apple.WebKit.WebContent at com.apple.JavaScriptCore: JSC::RegExp::match + 630 :: stack overflow
