@@ -1,3 +1,16 @@
+2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Work towards rdar://problem/36837397.
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra-wk1/fast/canvas/webgpu/webgpu-dispatch-expected.txt: Removed.
+        * platform/mac-highsierra-wk1/fast/canvas/webgpu/webgpu-runtime-flag-expected.txt: Removed.
+        * platform/mac-highsierra-wk1/inspector/canvas/resolveCanvasContext-webgpu-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/workers/interfaces.worker-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt: Added.
+        * platform/mac-wk1/inspector/canvas/recording-2d-expected.txt: Added.
+
 2018-02-13  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228445. rdar://problem/37523940
