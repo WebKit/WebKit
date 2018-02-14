@@ -1,3 +1,16 @@
+2018-02-14  Michael Saboff  <msaboff@apple.com>
+
+        Crash: triggerOMGTierUpThunkGenerator() doesn't align the stack pointer before calling C++ code
+        https://bugs.webkit.org/show_bug.cgi?id=182808
+
+        Reviewed by Keith Miller.
+
+        Set up a proper frame with a prologue and epilogue to align the stack pointer for the rest of the
+        thunk.
+
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+
 2018-02-14  Saam Barati  <sbarati@apple.com>
 
         Setting a VMTrap shouldn't look at topCallFrame since that may imply we're in C code and holding the malloc lock
