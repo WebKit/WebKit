@@ -286,9 +286,13 @@ void HTMLPlugInElement::swapRendererTimerFired()
 
 void HTMLPlugInElement::setDisplayState(DisplayState state)
 {
+    if (state == m_displayState)
+        return;
+
     m_displayState = state;
     
-    if ((state == DisplayingSnapshot || displayState() == PreparingPluginReplacement) && !m_swapRendererTimer.isActive())
+    m_swapRendererTimer.stop();
+    if (state == DisplayingSnapshot || displayState() == PreparingPluginReplacement)
         m_swapRendererTimer.startOneShot(0_s);
 }
 

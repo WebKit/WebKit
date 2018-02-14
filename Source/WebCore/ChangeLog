@@ -1,3 +1,20 @@
+2018-02-14  Dean Jackson  <dino@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot + 618
+        https://bugs.webkit.org/show_bug.cgi?id=182798
+        <rdar://problem/23337253>
+
+        Reviewed by Eric Carlson.
+
+        Speculative fix for a crash in HTMLPlugInImageElement::didAddUserAgentShadowRoot.
+        The guess is that the m_swapRendererTimer is set, and the display state changes to
+        something that does not require a shadow root, but before the timer fires.
+        Fix this by ensuring that the timer is reset on every display state change.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::setDisplayState): Guard for sets that wouldn't
+        actually change value, and make sure we always reset the timer.
+
 2018-02-14  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Don't use arrays as values for localisable strings
