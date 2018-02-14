@@ -1,9 +1,9 @@
-Testing that we can load a replaced string using UIString.
+Testing that we can replace strings using UIString.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS UIString('Test replaced string') is "Value 15 should be printed here"
+PASS UIString('Test replaced string', 15) is "Value 15 should be printed here"
 PASS successfullyParsed is true
 
 TEST COMPLETE

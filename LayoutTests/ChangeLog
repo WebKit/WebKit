@@ -1,3 +1,14 @@
+2018-02-14  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Don't use arrays as values for localisable strings
+        https://bugs.webkit.org/show_bug.cgi?id=182791
+        <rdar://problem/36007262>
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/localized-strings/replaced-string-expected.txt:
+        * media/modern-media-controls/localized-strings/replaced-string.html:
+
 2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228444.

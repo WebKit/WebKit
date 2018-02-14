@@ -1,3 +1,24 @@
+2018-02-14  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Don't use arrays as values for localisable strings
+        https://bugs.webkit.org/show_bug.cgi?id=182791
+        <rdar://problem/36007262>
+
+        Reviewed by Dean Jackson.
+
+        Localization tools expect localizable strings to be specified as key-value pairs where both the key and the pair
+        are plain strings. For the skip buttons, we used an array value to specify a replacement string. We now perform
+        this task in code with a centralized SkipSeconds constant defining the skip amount.
+
+        * English.lproj/modern-media-controls-localized-strings.js:
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/main.js:
+        (UIString):
+        * Modules/modern-media-controls/media/skip-back-support.js:
+        (SkipBackSupport.prototype.buttonWasPressed):
+        * Modules/modern-media-controls/media/skip-forward-support.js:
+        (SkipForwardSupport.prototype.buttonWasPressed):
+
 2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228444.
