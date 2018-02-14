@@ -31,6 +31,7 @@
 
 #include "APIPageConfiguration.h"
 #include "AcceleratedBackingStore.h"
+#include "ActivityState.h"
 #include "DrawingAreaProxyImpl.h"
 #include "InputMethodFilter.h"
 #include "KeyBindingTranslator.h"
@@ -49,7 +50,6 @@
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
-#include <WebCore/ActivityState.h>
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>

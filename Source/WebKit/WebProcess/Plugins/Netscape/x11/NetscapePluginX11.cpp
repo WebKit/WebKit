@@ -47,8 +47,8 @@
 #endif
 
 #if USE(CAIRO)
-#include <WebCore/PlatformContextCairo.h>
-#include <WebCore/RefPtrCairo.h>
+#include "PlatformContextCairo.h"
+#include "RefPtrCairo.h"
 #include <cairo/cairo-xlib.h>
 #endif
 

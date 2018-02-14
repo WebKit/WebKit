@@ -32,6 +32,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "NotImplemented.h"
 #include "WebColorPickerGtk.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
@@ -45,7 +46,6 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/RefPtrCairo.h>
 #include <wtf/Compiler.h>
 #include <wtf/text/CString.h>

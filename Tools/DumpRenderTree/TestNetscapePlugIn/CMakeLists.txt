@@ -30,9 +30,10 @@ set(WebKitTestNetscapePlugIn_SOURCES
 )
 
 set(WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES
-    ${FORWARDING_HEADERS_DIR}
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/ForwardingHeaders
+    ${WEBCORE_DIR}
+    ${WTF_DIR}
 )
 
 if (MOZ_X11)

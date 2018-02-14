@@ -29,11 +29,13 @@
 #include "WebPage.h"
 
 #include "EditorState.h"
+#include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WebFrame.h"
 #include "WebPageAccessibilityObject.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WindowsKeyboardCodes.h"
 #include <WebCore/BackForwardController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventHandler.h>
@@ -41,14 +43,12 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserAgent.h>
-#include <WebCore/WindowsKeyboardCodes.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {

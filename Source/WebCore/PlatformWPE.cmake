@@ -12,35 +12,16 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "platform/SourcesSoup.txt"
 )
 
-list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    platform/graphics/wayland/PlatformDisplayWayland.h
-    platform/graphics/wayland/WlUniquePtr.h
-
-    platform/graphics/wpe/PlatformDisplayWPE.h
-
-    platform/network/soup/AuthenticationChallenge.h
-    platform/network/soup/CertificateInfo.h
-    platform/network/soup/GRefPtrSoup.h
-    platform/network/soup/GUniquePtrSoup.h
-    platform/network/soup/ResourceError.h
-    platform/network/soup/ResourceRequest.h
-    platform/network/soup/ResourceResponse.h
-    platform/network/soup/SocketStreamHandleImpl.h
-    platform/network/soup/SoupNetworkProxySettings.h
-    platform/network/soup/SoupNetworkSession.h
-    platform/network/soup/WebKitSoupRequestGeneric.h
-    platform/network/soup/WebKitSoupRequestGenericClient.h
-)
-
 # Allow building ANGLE on platforms that don't provide X11 headers.
 list(APPEND ANGLE_PLATFORM_DEFINITIONS "USE_WPE")
 
-list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/epoxy"
     "${WEBCORE_DIR}/platform/graphics/glx"
+    "${WEBCORE_DIR}/platform/graphics/gstreamer"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wpe"

@@ -1,1 +1,1 @@
-#include <WebCore/npruntime.h>
+#include <plugins/npruntime.h>

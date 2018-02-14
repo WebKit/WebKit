@@ -14,7 +14,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "platform/SourcesSoup.txt"
 )
 
-list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/accessibility/atk"
@@ -68,39 +68,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/WidgetGtk.cpp
 
     rendering/RenderThemeGtk.cpp
-)
-
-list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    platform/graphics/wayland/PlatformDisplayWayland.h
-    platform/graphics/wayland/WlUniquePtr.h
-
-    platform/graphics/x11/PlatformDisplayX11.h
-    platform/graphics/x11/XErrorTrapper.h
-    platform/graphics/x11/XUniquePtr.h
-    platform/graphics/x11/XUniqueResource.h
-
-    platform/gtk/CompositionResults.h
-    platform/gtk/GRefPtrGtk.h
-    platform/gtk/GUniquePtrGtk.h
-    platform/gtk/GtkUtilities.h
-    platform/gtk/GtkVersioning.h
-    platform/gtk/PasteboardHelper.h
-    platform/gtk/SelectionData.h
-
-    platform/network/soup/AuthenticationChallenge.h
-    platform/network/soup/CertificateInfo.h
-    platform/network/soup/GRefPtrSoup.h
-    platform/network/soup/GUniquePtrSoup.h
-    platform/network/soup/ResourceError.h
-    platform/network/soup/ResourceRequest.h
-    platform/network/soup/ResourceResponse.h
-    platform/network/soup/SocketStreamHandleImpl.h
-    platform/network/soup/SoupNetworkProxySettings.h
-    platform/network/soup/SoupNetworkSession.h
-    platform/network/soup/WebKitSoupRequestGeneric.h
-    platform/network/soup/WebKitSoupRequestGenericClient.h
-
-    platform/text/enchant/TextCheckerEnchant.h
 )
 
 if (ENABLE_GEOLOCATION)
@@ -188,7 +155,7 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
     )
     target_include_directories(WebCorePlatformGTK2 PRIVATE
-        ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
+        ${WebCore_INCLUDE_DIRECTORIES}
         ${GTK2_INCLUDE_DIRS}
         ${GDK2_INCLUDE_DIRS}
     )
@@ -214,7 +181,7 @@ endif ()
 add_library(WebCorePlatformGTK ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
 add_dependencies(WebCorePlatformGTK WebCore)
 target_include_directories(WebCorePlatformGTK PRIVATE
-    ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
+    ${WebCore_INCLUDE_DIRECTORIES}
 )
 target_include_directories(WebCorePlatformGTK SYSTEM PRIVATE
     ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}
@@ -228,7 +195,7 @@ target_link_libraries(WebCorePlatformGTK
 )
 
 include_directories(
-    ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
+    ${WebCore_INCLUDE_DIRECTORIES}
     "${WEBCORE_DIR}/bindings/gobject/"
 )
 

@@ -1,1 +1,1 @@
-#include <WebCore/npfunctions.h>
+#include <plugins/npfunctions.h>

@@ -33,9 +33,9 @@
 #include "config.h"
 #include "EventSenderProxy.h"
 
+#include "NotImplemented.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <WebCore/NotImplemented.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/StdLibExtras.h>
