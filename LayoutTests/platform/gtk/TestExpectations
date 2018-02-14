@@ -1946,6 +1946,9 @@ webkit.org/b/182761 accessibility/gtk/aria-pressed-changed-notification.html [ P
 webkit.org/b/182761 accessibility/gtk/aria-readonly-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-required-changed-notification.html [ Pass Failure ]
 
+webkit.org/b/182789 fast/events/touch/touch-scaled-scrolled.html [ Pass Failure ]
+webkit.org/b/182790 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3056,7 +3059,7 @@ webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 
 webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
 webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
-webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
+webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Timeout ]
 webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
 webkit.org/b/163525 media/video-background-tab-playback.html [ Failure Pass Crash Timeout ]
 webkit.org/b/163526 media/video-controls-drop-and-restore-timeline.html [ Failure ]
@@ -3326,7 +3329,7 @@ webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.ht
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]
 
-webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Failure ]
+webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Failure Crash ]
 
 webkit.org/b/182103 fast/forms/textarea-scrolled-type.html [ Failure ]
 webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
