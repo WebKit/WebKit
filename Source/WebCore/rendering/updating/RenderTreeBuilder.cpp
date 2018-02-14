@@ -457,11 +457,6 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
     // WARNING: child is deleted here.
 }
 
-void RenderTreeBuilder::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
-{
-    blockBuilder().dropAnonymousBoxChild(parent, child);
-}
-
 void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChild(parent, WTFMove(child), beforeChild);
@@ -507,11 +502,6 @@ void RenderTreeBuilder::insertChildToRenderTableRow(RenderTableRow& parent, Rend
     tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
-void RenderTreeBuilder::moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to)
-{
-    rubyBuilder().moveChildren(from, to);
-}
-
 void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
@@ -530,11 +520,6 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         listBuilder().updateItemMarker(downcast<RenderListItem>(renderer));
     if (is<RenderBlockFlow>(renderer))
         multiColumnBuilder().updateAfterDescendants(downcast<RenderBlockFlow>(renderer));
-}
-
-RenderObject* RenderTreeBuilder::resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild)
-{
-    return multiColumnBuilder().resolveMovedChild(enclosingFragmentedFlow, beforeChild);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child)
