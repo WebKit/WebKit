@@ -1,3 +1,4 @@
+//@ skip if $buildType == "debug"
 "use strict";
 
 var n = 10000000;
