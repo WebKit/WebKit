@@ -260,11 +260,6 @@
 #include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
 #endif
 
-#if ENABLE(WEB_AUTHN)
-#include "WebCredentialsMessenger.h"
-#include <WebCore/AuthenticatorManager.h>
-#endif
-
 using namespace JSC;
 using namespace WebCore;
 
@@ -375,9 +370,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
-#if ENABLE(WEB_AUTHN)
-    , m_credentialsMessenger(std::make_unique<WebCredentialsMessenger>(*this))
-#endif
 {
     ASSERT(m_pageID);
 
@@ -586,10 +578,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     if (parameters.enumeratingAllNetworkInterfacesEnabled)
         enableEnumeratingAllNetworkInterfaces();
 #endif
-#endif
-
-#if ENABLE(WEB_AUTHN)
-    WebCore::AuthenticatorManager::singleton().setMessenger(*m_credentialsMessenger);
 #endif
 
     for (auto iterator : parameters.urlSchemeHandlers)

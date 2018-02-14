@@ -49,8 +49,6 @@ promise_test(async () => {
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         }
     };
-    // A mock attestation object
-    internals.mockCredentialsMessenger.setAttestationObject(hexStringToUint8Array('000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001ff'));
     createdCredential = await navigator.credentials.create(creationOptions);
 
 
@@ -59,8 +57,6 @@ promise_test(async () => {
             challenge: Base64URL.parse("MTIzNDU2"),
         }
     };
-    // A mock assertion return bundle.
-    internals.mockCredentialsMessenger.setAssertionReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'), hexStringToUint8Array('02'), hexStringToUint8Array('03'));
     requestedCredential = await navigator.credentials.get(requestOptions);
 
     idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});

@@ -947,7 +947,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/testing/MemoryInfo.idl \
     $(WebCore)/testing/MockCDMFactory.idl \
     $(WebCore)/testing/MockContentFilterSettings.idl \
-    $(WebCore)/testing/MockCredentialsMessenger.idl \
     $(WebCore)/testing/MockPageOverlay.idl \
     $(WebCore)/testing/MockPaymentAddress.idl \
     $(WebCore)/testing/MockPaymentCoordinator.idl \

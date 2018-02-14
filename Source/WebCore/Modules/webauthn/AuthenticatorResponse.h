@@ -28,12 +28,12 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-class AuthenticatorResponse : public RefCounted<AuthenticatorResponse> {
+class AuthenticatorResponse : public ThreadSafeRefCounted<AuthenticatorResponse> {
 public:
     enum class Type {
         Assertion,

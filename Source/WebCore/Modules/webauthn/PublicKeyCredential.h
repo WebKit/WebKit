@@ -36,6 +36,10 @@ namespace WebCore {
 
 class AuthenticatorResponse;
 class DeferredPromise;
+class SecurityOrigin;
+
+struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialRequestOptions;
 
 class PublicKeyCredential final : public BasicCredential {
 public:
@@ -44,8 +48,13 @@ public:
         return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
     }
 
-    ArrayBuffer* rawId() const { return m_rawId.get(); }
-    AuthenticatorResponse* response() const { return m_response.get(); }
+    static Vector<Ref<BasicCredential>> collectFromCredentialStore(PublicKeyCredentialRequestOptions&&, bool);
+    static ExceptionOr<RefPtr<BasicCredential>> discoverFromExternalSource(const SecurityOrigin&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors);
+    static RefPtr<BasicCredential> store(RefPtr<BasicCredential>&&, bool);
+    static ExceptionOr<RefPtr<BasicCredential>> create(const SecurityOrigin&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors);
+
+    ArrayBuffer* rawId() const;
+    AuthenticatorResponse* response() const;
     // Not support yet. Always throws.
     ExceptionOr<bool> getClientExtensionResults() const;
 

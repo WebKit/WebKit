@@ -28,13 +28,16 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "JSDOMPromiseDeferred.h"
+#include "Timer.h"
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
 class BasicCredential;
-class DeferredPromise;
 class Document;
 
 struct CredentialCreationOptions;
@@ -56,8 +59,34 @@ private:
     CredentialsContainer(WeakPtr<Document>&&);
 
     bool doesHaveSameOriginAsItsAncestors();
+    template<typename OperationType>
+    void dispatchTask(OperationType&&, Ref<DeferredPromise>&&, std::optional<unsigned long> timeOutInMs = std::nullopt);
 
     WeakPtr<Document> m_document;
+    Ref<WorkQueue> m_workQueue;
+    WeakPtrFactory<CredentialsContainer> m_weakPtrFactory;
+
+    // Bundle promise and timer, such that the timer can
+    // times out the corresponding promsie.
+    struct PendingPromise : public RefCounted<PendingPromise> {
+        static Ref<PendingPromise> create(Ref<DeferredPromise>&& promise, std::unique_ptr<Timer>&& timer)
+        {
+            return adoptRef(*new PendingPromise(WTFMove(promise), WTFMove(timer)));
+        }
+        static Ref<PendingPromise> create(Ref<DeferredPromise>&& promise)
+        {
+            return adoptRef(*new PendingPromise(WTFMove(promise)));
+        }
+
+    private:
+        PendingPromise(Ref<DeferredPromise>&&, std::unique_ptr<Timer>&&);
+        PendingPromise(Ref<DeferredPromise>&&);
+
+    public:
+        Ref<DeferredPromise> promise;
+        std::unique_ptr<Timer> timer;
+    };
+    HashMap<DeferredPromise*, Ref<PendingPromise>> m_pendingPromises;
 };
 
 } // namespace WebCore

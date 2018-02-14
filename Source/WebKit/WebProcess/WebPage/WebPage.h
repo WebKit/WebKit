@@ -211,7 +211,6 @@ class WebUserContentController;
 class VideoFullscreenManager;
 class WebWheelEvent;
 class WebTouchEvent;
-class WebCredentialsMessenger;
 class RemoteLayerTreeTransaction;
 
 struct AssistedNodeInformation;
@@ -1687,11 +1686,6 @@ private:
 #if ENABLE(APPLICATION_MANIFEST)
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
 #endif
-
-#if ENABLE(WEB_AUTHN)
-    std::unique_ptr<WebCredentialsMessenger> m_credentialsMessenger;
-#endif
-
 };
 
 } // namespace WebKit

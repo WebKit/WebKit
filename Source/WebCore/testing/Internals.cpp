@@ -259,11 +259,6 @@
 #include "PaymentCoordinator.h"
 #endif
 
-#if ENABLE(WEB_AUTHN)
-#include "AuthenticatorManager.h"
-#include "MockCredentialsMessenger.h"
-#endif
-
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -530,11 +525,6 @@ Internals::Internals(Document& document)
         m_mockPaymentCoordinator = new MockPaymentCoordinator(frame->mainFrame());
         frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
     }
-#endif
-
-#if ENABLE(WEB_AUTHN)
-    m_mockCredentialsMessenger = std::make_unique<MockCredentialsMessenger>(*this);
-    AuthenticatorManager::singleton().setMessenger(*m_mockCredentialsMessenger);
 #endif
 }
 
@@ -4382,13 +4372,6 @@ void Internals::testIncomingSyncIPCMessageWhileWaitingForSyncReply()
 MockPaymentCoordinator& Internals::mockPaymentCoordinator() const
 {
     return *m_mockPaymentCoordinator;
-}
-#endif
-
-#if ENABLE(WEB_AUTHN)
-MockCredentialsMessenger& Internals::mockCredentialsMessenger() const
-{
-    return *m_mockCredentialsMessenger;
 }
 #endif
 

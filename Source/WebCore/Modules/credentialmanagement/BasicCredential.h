@@ -27,13 +27,13 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class BasicCredential : public RefCounted<BasicCredential> {
+class BasicCredential : public ThreadSafeRefCounted<BasicCredential> {
 public:
     enum class Type {
         PublicKey,
