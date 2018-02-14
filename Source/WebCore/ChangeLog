@@ -1,3 +1,33 @@
+2018-02-14  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderSVG*::addChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182811
+        <rdar://problem/37549714>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addChild): Deleted.
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::addChild): Deleted.
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::addChild): Deleted.
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::addChild): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChild):
+        (WebCore::RenderTreeBuilder::insertChildToSVGContainer): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToSVGInline): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToSVGRoot): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToSVGText): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+
 2018-02-14  Daniel Bates  <dabates@apple.com>
 
         Disallow cross-origin subresources from asking for credentials

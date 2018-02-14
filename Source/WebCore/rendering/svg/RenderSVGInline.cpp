@@ -123,9 +123,4 @@ void RenderSVGInline::updateFromStyle()
     setInline(true);
 }
 
-void RenderSVGInline::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    builder.insertChildToSVGInline(*this, WTFMove(newChild), beforeChild);
-}
-
 }
