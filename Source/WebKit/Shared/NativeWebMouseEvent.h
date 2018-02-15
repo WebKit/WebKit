@@ -59,9 +59,7 @@ public:
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(IOS)
-    const void* nativeEvent() const { return 0; }
-#elif PLATFORM(WPE)
+#else
     const void* nativeEvent() const { return nullptr; }
 #endif
 

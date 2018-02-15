@@ -1,3 +1,14 @@
+2018-02-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Default implementations of nativeEvent() should be platform-agnostic.
+        https://bugs.webkit.org/show_bug.cgi?id=182806
+
+        Reviewed by Darin Adler.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+
 2018-02-14  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make sure WebResourceLoadStatisticsStore::mergeWithDataFromDecoder() can ingest older plist versions and not reset the database

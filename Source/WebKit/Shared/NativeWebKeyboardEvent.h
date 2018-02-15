@@ -78,7 +78,7 @@ public:
     bool isFakeEventForComposition() const { return m_fakeEventForComposition; }
 #elif PLATFORM(IOS)
     ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WPE)
+#else
     const void* nativeEvent() const { return nullptr; }
 #endif
 
