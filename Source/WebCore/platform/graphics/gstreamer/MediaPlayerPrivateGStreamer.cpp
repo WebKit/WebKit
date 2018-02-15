@@ -2166,7 +2166,11 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
     ASSERT(m_textAppSinkPad);
 
-    GRefPtr<GstCaps> textCaps = adoptGRef(gst_caps_new_empty_simple("text/vtt"));
+    GRefPtr<GstCaps> textCaps;
+    if (webkitGstCheckVersion(1, 13, 0))
+        textCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
+    else
+        textCaps = adoptGRef(gst_caps_new_empty_simple("text/vtt"));
     g_object_set(m_textAppSink.get(), "emit-signals", TRUE, "enable-last-sample", FALSE, "caps", textCaps.get(), nullptr);
     g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
 
