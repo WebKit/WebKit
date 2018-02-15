@@ -1,3 +1,11 @@
+2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip stress/new-largeish-contiguous-array-with-size.js on arm.
+
+        Unreviewed test gardening.
+
+        * stress/new-largeish-contiguous-array-with-size.js:
+
 2018-02-14  Saam Barati  <sbarati@apple.com>
 
         Setting a VMTrap shouldn't look at topCallFrame since that may imply we're in C code and holding the malloc lock
