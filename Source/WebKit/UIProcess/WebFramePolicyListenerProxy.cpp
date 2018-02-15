@@ -27,6 +27,7 @@
 #include "WebFramePolicyListenerProxy.h"
 
 #include "WebFrameProxy.h"
+#include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
 namespace WebKit {

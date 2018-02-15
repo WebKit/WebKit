@@ -32,6 +32,7 @@
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/Image.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -192,6 +193,14 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t li
         m_activeListener->invalidate();
     m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID);
     return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
+}
+
+void WebFrameProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)
+{
+    if (!m_page)
+        return;
+
+    m_page->changeWebsiteDataStore(websiteDataStore);
 }
 
 void WebFrameProxy::getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)

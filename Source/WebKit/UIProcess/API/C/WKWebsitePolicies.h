@@ -61,6 +61,9 @@ WK_EXPORT void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef, W
 WK_EXPORT WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef, WKWebsiteAutoplayPolicy);
 
+WK_EXPORT WKWebsiteDataStoreRef WKWebsitePoliciesGetDataStore(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetDataStore(WKWebsitePoliciesRef, WKWebsiteDataStoreRef);
+
 #ifdef __cplusplus
 }
 #endif
