@@ -276,7 +276,6 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
         return false;
 
     WallTime fileTime;
-    time_t fileModificationDate;
 
     if (auto fileTimeFromFile = FileSystem::getFileModificationTime(m_headerFilename))
         fileTime = fileTimeFromFile.value();

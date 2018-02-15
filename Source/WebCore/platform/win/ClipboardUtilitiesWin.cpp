@@ -163,10 +163,15 @@ static String extractURL(const String &inURL, String* title)
     return url;
 }
 
+static CLIPFORMAT registerClipboardFormat(LPCWSTR format)
+{
+    return static_cast<CLIPFORMAT>(RegisterClipboardFormat(format));
+}
+
 // Firefox text/html
 static FORMATETC* texthtmlFormat() 
 {
-    static UINT cf = RegisterClipboardFormat(L"text/html");
+    static CLIPFORMAT cf = registerClipboardFormat(L"text/html");
     static FORMATETC texthtmlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &texthtmlFormat;
 }
@@ -321,14 +326,14 @@ void replaceNBSPWithSpace(String& str)
 
 FORMATETC* urlWFormat()
 {
-    static UINT cf = RegisterClipboardFormat(L"UniformResourceLocatorW");
+    static CLIPFORMAT cf = registerClipboardFormat(L"UniformResourceLocatorW");
     static FORMATETC urlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
 
 FORMATETC* urlFormat()
 {
-    static UINT cf = RegisterClipboardFormat(L"UniformResourceLocator");
+    static CLIPFORMAT cf = registerClipboardFormat(L"UniformResourceLocator");
     static FORMATETC urlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
@@ -347,14 +352,14 @@ FORMATETC* plainTextWFormat()
 
 FORMATETC* filenameWFormat()
 {
-    static UINT cf = RegisterClipboardFormat(L"FileNameW");
+    static CLIPFORMAT cf = registerClipboardFormat(L"FileNameW");
     static FORMATETC urlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
 
 FORMATETC* filenameFormat()
 {
-    static UINT cf = RegisterClipboardFormat(L"FileName");
+    static CLIPFORMAT cf = registerClipboardFormat(L"FileName");
     static FORMATETC urlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &urlFormat;
 }
@@ -362,28 +367,28 @@ FORMATETC* filenameFormat()
 // MSIE HTML Format
 FORMATETC* htmlFormat() 
 {
-    static UINT cf = RegisterClipboardFormat(L"HTML Format");
+    static CLIPFORMAT cf = registerClipboardFormat(L"HTML Format");
     static FORMATETC htmlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &htmlFormat;
 }
 
 FORMATETC* smartPasteFormat()
 {
-    static UINT cf = RegisterClipboardFormat(L"WebKit Smart Paste Format");
+    static CLIPFORMAT cf = registerClipboardFormat(L"WebKit Smart Paste Format");
     static FORMATETC htmlFormat = {cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL};
     return &htmlFormat;
 }
 
 FORMATETC* fileDescriptorFormat()
 {
-    static UINT cf = RegisterClipboardFormat(CFSTR_FILEDESCRIPTOR);
+    static CLIPFORMAT cf = registerClipboardFormat(CFSTR_FILEDESCRIPTOR);
     static FORMATETC fileDescriptorFormat = { cf, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
     return &fileDescriptorFormat;
 }
 
 FORMATETC* fileContentFormatZero()
 {
-    static UINT cf = RegisterClipboardFormat(CFSTR_FILECONTENTS);
+    static CLIPFORMAT cf = registerClipboardFormat(CFSTR_FILECONTENTS);
     static FORMATETC fileContentFormat = { cf, 0, DVASPECT_CONTENT, 0, TYMED_HGLOBAL };
     return &fileContentFormat;
 }

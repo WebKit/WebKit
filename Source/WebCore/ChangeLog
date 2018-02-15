@@ -1,3 +1,45 @@
+2018-02-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Fix several build warnings under WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=182802
+
+        Reviewed by Konstantin Tokarev.
+
+        Warning C4101 'fileModificationDate': unreferenced local variable
+                Source\WebCore\platform\network\curl\CurlCacheEntry.cpp:279
+
+        Warning C4239 nonstandard extension used: 'argument': conversion from 'WTF::String'
+        to 'WTF::String &'
+                Source\WebCore\platform\text\win\LocaleWin.cpp:75
+                Source\WebCore\platform\text\win\LocaleWin.cpp:77
+
+        Warning C4838 conversion from 'UINT' to 'CLIPFORMAT' requires a narrowing conversion
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:170
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:325
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:332
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:351
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:358
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:366
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:373
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:380
+                Source\WebCore\platform\win\ClipboardUtilitiesWin.cpp:387
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::parseResponseHeaders):
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LCIDFromLocaleInternal):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::registerClipboardFormat):
+        (WebCore::texthtmlFormat):
+        (WebCore::urlWFormat):
+        (WebCore::urlFormat):
+        (WebCore::filenameWFormat):
+        (WebCore::filenameFormat):
+        (WebCore::htmlFormat):
+        (WebCore::smartPasteFormat):
+        (WebCore::fileDescriptorFormat):
+        (WebCore::fileContentFormatZero):
+
 2018-02-14  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderSVG*::addChild() to RenderTreeBuilder
