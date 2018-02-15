@@ -1,19 +1,19 @@
 
-FAIL A step-start function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A steps(1, start) function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A steps(2, start) function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A step-end function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A steps(1) function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A steps(1, end) function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A steps(2, end) function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A frames function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A linear function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A ease function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A ease-in function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A ease-in-out function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A ease-out function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A easing function which produces values greater than 1 on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
-FAIL A easing function which produces values less than 1 on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 99.9 at 999ms expected 99.9 +/- 0.01 but got 0
+PASS A step-start function on a keyframe affects the resulting style 
+PASS A steps(1, start) function on a keyframe affects the resulting style 
+PASS A steps(2, start) function on a keyframe affects the resulting style 
+PASS A step-end function on a keyframe affects the resulting style 
+PASS A steps(1) function on a keyframe affects the resulting style 
+PASS A steps(1, end) function on a keyframe affects the resulting style 
+PASS A steps(2, end) function on a keyframe affects the resulting style 
+PASS A frames function on a keyframe affects the resulting style 
+PASS A linear function on a keyframe affects the resulting style 
+FAIL A ease function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 109.47963055884654 at 1100ms expected 109.47963055884654 +/- 0.01 but got 109.46875
+PASS A ease-in function on a keyframe affects the resulting style 
+FAIL A ease-in-out function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 101.97224534417684 at 1100ms expected 101.97224534417684 +/- 0.01 but got 101.953125
+FAIL A ease-out function on a keyframe affects the resulting style assert_approx_equals: The width should be approximately 116.05721544376388 at 1100ms expected 116.05721544376388 +/- 0.01 but got 116.078125
+PASS A easing function which produces values greater than 1 on a keyframe affects the resulting style 
+PASS A easing function which produces values less than 1 on a keyframe affects the resulting style 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a step-start function does not alter the result 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a steps(1, start) function does not alter the result 
 PASS Linear-equivalent cubic-bezier keyframe easing applied to an effect with a steps(2, start) function does not alter the result 

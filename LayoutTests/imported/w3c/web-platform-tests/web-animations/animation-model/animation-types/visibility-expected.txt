@@ -1,4 +1,4 @@
 
-FAIL Visibility clamping behavior assert_equals: Visibility when progress > 0 due to linear easing expected "visible" but got "hidden"
-FAIL Visibility clamping behavior with an easing that has a negative component assert_equals: Visibility when progress > 0 due to cubic-bezier easing expected "visible" but got "hidden"
+PASS Visibility clamping behavior 
+PASS Visibility clamping behavior with an easing that has a negative component 
 

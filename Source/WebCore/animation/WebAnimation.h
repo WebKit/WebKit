@@ -98,6 +98,8 @@ public:
     enum class SynchronouslyNotify { Yes, No };
     void updateFinishedState(DidSeek, SynchronouslyNotify);
 
+    void timingModelDidChange();
+
     String description();
 
     using RefCounted::ref;

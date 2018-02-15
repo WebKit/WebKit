@@ -1,7 +1,7 @@
 
-FAIL Test animating discrete values assert_equals: Animation produces 'to' value at exact middle of the interval expected "italic" but got "normal"
-FAIL Test discrete animation is used when interpolation fails assert_equals: Animation produces 'to' value at exact middle of the interval expected "200px" but got "0px"
-FAIL Test discrete animation is used only for pairs of values that cannot be interpolated assert_equals: First non-interpolable pair uses discrete interpolation expected "200px" but got "0px"
-FAIL Test the 50% switch point for discrete animation is based on the effect easing assert_equals: Animation produces 'to' value at 96% of the iteration time expected "italic" but got "normal"
-FAIL Test the 50% switch point for discrete animation is based on the keyframe easing assert_equals: Animation produces 'to' value at 96% of the iteration time expected "italic" but got "normal"
+FAIL Test animating discrete values assert_equals: Animation produces 'from' value just before the middle of the interval expected "normal" but got "oblique 9.75deg"
+FAIL Test discrete animation is used when interpolation fails assert_equals: Animation produces 'from' value at start of interval expected "0px" but got "200px"
+FAIL Test discrete animation is used only for pairs of values that cannot be interpolated assert_equals: Animation produces 'from' value at start of interval expected "0px" but got "200px"
+FAIL Test the 50% switch point for discrete animation is based on the effect easing assert_equals: Animation produces 'from' value at 94% of the iteration time expected "normal" but got "oblique 8.5deg"
+FAIL Test the 50% switch point for discrete animation is based on the keyframe easing assert_equals: Animation produces 'from' value at 94% of the iteration time expected "normal" but got "oblique 8.5deg"
 

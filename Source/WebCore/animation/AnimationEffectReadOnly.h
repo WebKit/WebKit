@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "AnimationEffectTiming.h"
 #include "ComputedTimingProperties.h"
 #include "WebAnimation.h"
 #include <wtf/Forward.h>
@@ -35,15 +34,18 @@
 
 namespace WebCore {
 
+class AnimationEffectTimingReadOnly;
+
 class AnimationEffectReadOnly : public RefCounted<AnimationEffectReadOnly> {
 public:
-    virtual ~AnimationEffectReadOnly() = default;
+    virtual ~AnimationEffectReadOnly();
 
     bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
     bool isKeyframeEffectReadOnly() const { return m_classType == KeyframeEffectReadOnlyClass; }
     AnimationEffectTimingReadOnly* timing() const { return m_timing.get(); }
     ComputedTimingProperties getComputedTiming();
     virtual void apply(RenderStyle&) = 0;
+    virtual void invalidate() = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
     void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }
@@ -54,6 +56,8 @@ public:
 
     enum class Phase { Before, Active, After, Idle };
     Phase phase() const;
+
+    void timingDidChange();
 
 protected:
     enum ClassType {

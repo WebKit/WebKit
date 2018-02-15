@@ -1,3 +1,76 @@
+2018-02-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure that changing the timing model updates styles synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=182836
+
+        Reviewed by Dean Jackson.
+
+        We did not invalidate the timing model when properties of an effect's timing object changed
+        and even when we did invalidate the timing model, we did not update styles on effect targets
+        synchronously, only scheduling such updates for the next animation frame.
+
+        In this patch we expose the effect on the timing object such that changing timing properties
+        can notify the effect of a change in the timing model, which can then be forwarded to the
+        animation (which already informs its timeline, if any).
+
+        Additionally, when an animation's timing model has changed, we now invalidate the effect, which
+        will update styles synchronously.
+
+        This produces a number of progressions in WPT tests.
+
+        * animation/AnimationEffectReadOnly.cpp:
+        (WebCore::AnimationEffectReadOnly::AnimationEffectReadOnly): Set the timing object's effect upon
+        effect construction.
+        (WebCore::AnimationEffectReadOnly::~AnimationEffectReadOnly): Set the timing object's effect to
+        null upon effect destruction.
+        (WebCore::AnimationEffectReadOnly::timingDidChange): Notify the animation (if any) that its timing
+        model changed following a change in the timing properties.
+        * animation/AnimationEffectReadOnly.h: Add a new virtual invalidate() method that subclasses can
+        override to implement invalidation behavior when the animation finds out its timing model changed.
+        * animation/AnimationEffectTimingReadOnly.cpp: Notify the effect when a property changes such
+        that it may notify its animation of a timing model change.
+        (WebCore::AnimationEffectTimingReadOnly::propertyDidChange):
+        (WebCore::AnimationEffectTimingReadOnly::setIterationStart):
+        (WebCore::AnimationEffectTimingReadOnly::setIterations):
+        (WebCore::AnimationEffectTimingReadOnly::setBindingsDuration):
+        (WebCore::AnimationEffectTimingReadOnly::setEasing):
+        (WebCore::AnimationEffectTimingReadOnly::setDelay):
+        (WebCore::AnimationEffectTimingReadOnly::setEndDelay):
+        (WebCore::AnimationEffectTimingReadOnly::setFill):
+        (WebCore::AnimationEffectTimingReadOnly::setIterationDuration):
+        (WebCore::AnimationEffectTimingReadOnly::setDirection):
+        * animation/AnimationEffectTimingReadOnly.h:
+        (WebCore::AnimationEffectTimingReadOnly::setEffect):
+        (WebCore::AnimationEffectTimingReadOnly::setBindingsDelay):
+        (WebCore::AnimationEffectTimingReadOnly::setBindingsEndDelay):
+        (WebCore::AnimationEffectTimingReadOnly::setDelay): Deleted.
+        (WebCore::AnimationEffectTimingReadOnly::setEndDelay): Deleted.
+        (WebCore::AnimationEffectTimingReadOnly::setFill): Deleted.
+        (WebCore::AnimationEffectTimingReadOnly::setIterationDuration): Deleted.
+        (WebCore::AnimationEffectTimingReadOnly::setDirection): Deleted.
+        * animation/AnimationTimeline.cpp: Rename animationTimingModelDidChange() to timingModelDidChange()
+        to align it with the new WebAnimation::timingModelDidChange() method.
+        (WebCore::AnimationTimeline::addAnimation):
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::setCurrentTime):
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::timingModelDidChange):
+        (WebCore::AnimationTimeline::animationTimingModelDidChange): Deleted.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::timingModelDidChange):
+        (WebCore::DocumentTimeline::updateAnimations):
+        (WebCore::DocumentTimeline::animationTimingModelDidChange): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::invalidate): Override the invalidate() method to perform a synchronous
+        style update in order to ensure that timing properties are accounted for right as they change.
+        * animation/KeyframeEffectReadOnly.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timingModelDidChange): Invalidate the effect and notify the timeline of a timing
+        model change when an animation is notified that its timing model has changed.
+        (WebCore::WebAnimation::setStartTime):
+        * animation/WebAnimation.h:
+
 2018-02-15  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

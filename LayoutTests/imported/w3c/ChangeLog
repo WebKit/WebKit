@@ -1,3 +1,23 @@
+2018-02-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure that changing the timing model updates styles synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=182836
+
+        Reviewed by Dean Jackson.
+
+        Update test expectations for progressions.
+
+        * web-platform-tests/css-timing-1/cubic-bezier-timing-functions-output-expected.txt:
+        * web-platform-tests/css-timing-1/frames-timing-functions-output-expected.txt:
+        * web-platform-tests/css-timing-1/step-timing-functions-output-expected.txt:
+        * web-platform-tests/css/css-multicol/multicol-gap-animation-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/discrete-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/visibility-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/cancel-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/iterationComposite-expected.txt:
+
 2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228444.

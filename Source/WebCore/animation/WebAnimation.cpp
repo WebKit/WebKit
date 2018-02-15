@@ -27,6 +27,7 @@
 #include "WebAnimation.h"
 
 #include "AnimationEffectReadOnly.h"
+#include "AnimationEffectTimingReadOnly.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "Document.h"
@@ -69,6 +70,14 @@ WebAnimation::~WebAnimation()
 {
     if (m_timeline)
         m_timeline->removeAnimation(*this);
+}
+
+void WebAnimation::timingModelDidChange()
+{
+    if (m_effect)
+        m_effect->invalidate();
+    if (m_timeline)
+        m_timeline->timingModelDidChange();
 }
 
 void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& effect)
@@ -179,9 +188,7 @@ void WebAnimation::setStartTime(std::optional<Seconds> startTime)
         return;
 
     m_startTime = startTime;
-    
-    if (m_timeline)
-        m_timeline->animationTimingModelDidChange();
+    timingModelDidChange();
 }
 
 std::optional<double> WebAnimation::bindingsCurrentTime() const

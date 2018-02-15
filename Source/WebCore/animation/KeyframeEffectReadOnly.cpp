@@ -653,6 +653,15 @@ void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
         targetStyle.setZIndex(0);
 }
 
+void KeyframeEffectReadOnly::invalidate()
+{
+    if (!m_target)
+        return;
+
+    m_target->invalidateStyleAndLayerComposition();
+    m_target->document().updateStyleIfNeeded();
+}
+
 bool KeyframeEffectReadOnly::shouldRunAccelerated()
 {
     for (auto cssPropertyId : m_keyframes.properties()) {

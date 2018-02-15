@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnimationEffectReadOnly.h"
 #include "ExceptionOr.h"
 #include "FillMode.h"
 #include "KeyframeEffectOptions.h"
@@ -47,26 +48,28 @@ public:
 
     bool isAnimationEffectTiming() const { return m_classType == AnimationEffectTimingClass; }
 
+    void setEffect(AnimationEffectReadOnly* effect) { m_effect = effect; }
+
     ExceptionOr<void> setProperties(std::optional<Variant<double, KeyframeEffectOptions>>&&);
     void copyPropertiesFromSource(AnimationEffectTimingReadOnly*);
 
     double bindingsDelay() const { return secondsToWebAnimationsAPITime(m_delay); }
-    void setBindingsDelay(double delay) { m_delay = Seconds::fromMilliseconds(delay); }
+    void setBindingsDelay(double delay) { setDelay(Seconds::fromMilliseconds(delay)); }
 
     double bindingsEndDelay() const { return secondsToWebAnimationsAPITime(m_endDelay); }
-    void setBindingsEndDelay(double endDelay) { m_endDelay = Seconds::fromMilliseconds(endDelay); }
+    void setBindingsEndDelay(double endDelay) { setEndDelay(Seconds::fromMilliseconds(endDelay)); }
 
     Variant<double, String> bindingsDuration() const;
     ExceptionOr<void> setBindingsDuration(Variant<double, String>&&);
 
     Seconds delay() const { return m_delay; }
-    void setDelay(Seconds& delay) { m_delay = delay; }
+    void setDelay(const Seconds&);
 
     Seconds endDelay() const { return m_endDelay; }
-    void setEndDelay(Seconds& endDelay) { m_endDelay = endDelay; }
+    void setEndDelay(const Seconds&);
 
     FillMode fill() const { return m_fill; }
-    void setFill(FillMode fill) { m_fill = fill; }
+    void setFill(FillMode);
 
     double iterationStart() const { return m_iterationStart; }
     ExceptionOr<void> setIterationStart(double);
@@ -75,10 +78,10 @@ public:
     ExceptionOr<void> setIterations(double);
 
     Seconds iterationDuration() const { return m_iterationDuration; }
-    void setIterationDuration(Seconds& duration) { m_iterationDuration = duration; }
+    void setIterationDuration(const Seconds&);
 
     PlaybackDirection direction() const { return m_direction; }
-    void setDirection(PlaybackDirection direction) { m_direction = direction; }
+    void setDirection(PlaybackDirection);
 
     String easing() const { return m_timingFunction->cssText(); }
     ExceptionOr<void> setEasing(const String&);
@@ -97,9 +100,11 @@ protected:
 
     explicit AnimationEffectTimingReadOnly(ClassType);
 
-
 private:
+    void propertyDidChange();
+
     ClassType m_classType;
+    AnimationEffectReadOnly* m_effect;
     Seconds m_delay { 0_s };
     Seconds m_endDelay { 0_s };
     FillMode m_fill { FillMode::Auto };

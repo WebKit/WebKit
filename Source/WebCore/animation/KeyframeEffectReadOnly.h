@@ -86,6 +86,7 @@ public:
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle&) override;
+    void invalidate() override;
     void startOrStopAccelerated();
     bool isRunningAccelerated() const { return m_startedAccelerated; }
 
