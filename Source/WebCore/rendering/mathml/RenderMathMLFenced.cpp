@@ -85,14 +85,6 @@ void RenderMathMLFenced::updateFromElement()
     }
 }
 
-void RenderMathMLFenced::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    // make the fences if the render object is empty
-    if (!firstChild())
-        updateFromElement();
-    builder.insertChildToRenderMathMLFenced(*this, WTFMove(child), beforeChild);
-}
-
 }
 
 #endif
