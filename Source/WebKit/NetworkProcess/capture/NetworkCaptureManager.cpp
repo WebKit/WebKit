@@ -30,8 +30,8 @@
 
 #include "NetworkCaptureLogging.h"
 #include "NetworkCaptureResource.h"
-#include "WebCore/ResourceRequest.h"
-#include "WebCore/URL.h"
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/URL.h>
 #include <algorithm>
 #include <iterator>
 #include <limits>

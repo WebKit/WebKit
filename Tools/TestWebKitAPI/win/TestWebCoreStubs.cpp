@@ -23,7 +23,7 @@
  */
 #include "config.h"
 
-#include "SharedBuffer.h"
+#include <WebCore/SharedBuffer.h>
 
 RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char*)
 {

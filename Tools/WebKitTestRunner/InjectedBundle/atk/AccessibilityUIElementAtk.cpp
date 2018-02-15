@@ -32,9 +32,9 @@
 
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
-#include "NotImplemented.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
+#include <WebCore/NotImplemented.h>
 #if ATK_CHECK_VERSION(2,11,90)
 #include <WebKit/WKBundleFrame.h>
 #endif

@@ -1,3 +1,22 @@
+2018-02-15  Don Olmstead  <don.olmstead@sony.com>
+
+        WebCore headers should not be included relatively within dependent projects
+        https://bugs.webkit.org/show_bug.cgi?id=182805
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h:
+        * Shared/gtk/WebEventFactory.cpp:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+
 2018-02-15  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228495.
