@@ -59,11 +59,6 @@
 
 namespace WebCore {
 
-std::unique_ptr<VideoFullscreenLayerManager> VideoFullscreenLayerManager::create()
-{
-    return std::unique_ptr<VideoFullscreenLayerManager>(new VideoFullscreenLayerManager());
-}
-
 VideoFullscreenLayerManager::VideoFullscreenLayerManager()
 {
 }

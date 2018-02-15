@@ -139,22 +139,22 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
 {
     switch (resource.type()) {
     case CachedResource::ImageResource:
-        return LinkPreloadImageResourceClient::create(loader, downcast<CachedImage>(resource));
+        return std::make_unique<LinkPreloadImageResourceClient>(loader, downcast<CachedImage>(resource));
     case CachedResource::Script:
-        return LinkPreloadDefaultResourceClient::create(loader, downcast<CachedScript>(resource));
+        return std::make_unique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedScript>(resource));
     case CachedResource::CSSStyleSheet:
-        return LinkPreloadStyleResourceClient::create(loader, downcast<CachedCSSStyleSheet>(resource));
+        return std::make_unique<LinkPreloadStyleResourceClient>(loader, downcast<CachedCSSStyleSheet>(resource));
     case CachedResource::FontResource:
-        return LinkPreloadFontResourceClient::create(loader, downcast<CachedFont>(resource));
+        return std::make_unique<LinkPreloadFontResourceClient>(loader, downcast<CachedFont>(resource));
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
-        return LinkPreloadDefaultResourceClient::create(loader, downcast<CachedTextTrack>(resource));
+        return std::make_unique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedTextTrack>(resource));
 #endif
     case CachedResource::MediaResource:
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled());
         FALLTHROUGH;
     case CachedResource::RawResource:
-        return LinkPreloadRawResourceClient::create(loader, downcast<CachedRawResource>(resource));
+        return std::make_unique<LinkPreloadRawResourceClient>(loader, downcast<CachedRawResource>(resource));
     case CachedResource::MainResource:
     case CachedResource::Icon:
 #if ENABLE(SVG_FONTS)

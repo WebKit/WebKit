@@ -279,7 +279,7 @@ std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(const String& keySyste
 #else
     ASSERT(supportsKeySystem(keySystem));
 #endif
-    return std::unique_ptr<CDMPrivate>(new CDMPrivateClearKey);
+    return std::make_unique<CDMPrivateClearKey>();
 }
 
 bool CDMFactoryClearKey::supportsKeySystem(const String& keySystem)

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoFullscreenLayerManager_h
-#define VideoFullscreenLayerManager_h
+#pragma once
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -40,7 +39,7 @@ namespace WebCore {
 class VideoFullscreenLayerManager {
     WTF_MAKE_NONCOPYABLE(VideoFullscreenLayerManager);
 public:
-    static std::unique_ptr<VideoFullscreenLayerManager> create();
+    VideoFullscreenLayerManager();
 
     PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
     PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
@@ -51,8 +50,6 @@ public:
     void didDestroyVideoLayer();
 
 private:
-    VideoFullscreenLayerManager();
-
     RetainPtr<PlatformLayer> m_videoInlineLayer;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     RetainPtr<PlatformLayer> m_videoLayer;
@@ -62,5 +59,3 @@ private:
 }
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-
-#endif /* VideoFullscreenLayerManager_h */

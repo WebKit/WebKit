@@ -639,7 +639,7 @@ double GridTrackSizingAlgorithm::computeFlexFactorUnitSize(const Vector<GridTrac
             leftOverSpace -= baseSize;
             flexFactorSum -= flexFactor;
             if (!tracksToTreatAsInflexible)
-                tracksToTreatAsInflexible = std::unique_ptr<TrackIndexSet>(new TrackIndexSet());
+                tracksToTreatAsInflexible = std::make_unique<TrackIndexSet>();
             tracksToTreatAsInflexible->add(index);
             validFlexFactorUnit = false;
         }

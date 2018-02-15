@@ -1,3 +1,37 @@
+2018-02-14  Darin Adler  <darin@apple.com>
+
+        Use std::make_unique instead of explicit calls to new and instead of writing create functions
+        https://bugs.webkit.org/show_bug.cgi?id=182821
+
+        Reviewed by Anders Carlsson.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient): Use std::make_unique insteadof create functions.
+
+        * loader/LinkPreloadResourceClients.h: Make constructors public, get rid of create functions,
+        make overrides be private and final, get rid of unnecessary public default virtual destructors
+        that the compiler will generate correctly without anything explicit.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMFactoryClearKey::createCDM): Use std::make_unique instead of std::unique_ptr/new.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Use
+        std::make_unique instead of calling a create function.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC): Ditto.
+
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.h: Made the constructor
+        public and got rid of the create function.
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm:
+        (WebCore::VideoFullscreenLayerManager::create): Deleted.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::computeFlexFactorUnitSize const):
+        Use std::make_unique instead of std::unique_ptr/new.
+
 2018-02-15  Andy Estes  <aestes@apple.com>
 
         Finish unifying Apple Pay and Payment Request sources

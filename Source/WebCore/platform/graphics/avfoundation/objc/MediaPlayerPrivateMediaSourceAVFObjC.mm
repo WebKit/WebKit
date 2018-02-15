@@ -135,7 +135,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_seeking(false)
     , m_loadingProgressed(false)
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
+    , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManager>())
 #endif
 {
     CMTimebaseRef timebase = [m_synchronizer timebase];
