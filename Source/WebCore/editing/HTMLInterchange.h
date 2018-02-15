@@ -36,6 +36,7 @@ class Text;
 #define ApplePasteAsQuotation     "Apple-paste-as-quotation"
 #define AppleStyleSpanClass       "Apple-style-span"
 #define AppleTabSpanClass         "Apple-tab-span"
+#define WebKitMSOListQuirksStyle  "WebKit-mso-list-quirks-style"
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };
 
