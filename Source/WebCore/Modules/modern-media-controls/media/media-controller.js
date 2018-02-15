@@ -305,10 +305,20 @@ class MediaController
         this._supportingObjects.forEach(supportingObject => supportingObject.controlsUserVisibilityDidChange());
     }
 
+    _shouldControlsBeAvailable()
+    {
+        // Controls are always available while in fullscreen on macOS, and they are never available when in fullscreen on iOS.
+        if (this.isFullscreen)
+            return !!(this.layoutTraits & LayoutTraits.macOS);
+
+        // Otherwise, for controls to be available, the controls attribute must be present on the media element
+        // or the MediaControlsHost must indicate that controls are forced.
+        return this.media.controls || !!(this.host && this.host.shouldForceControlsDisplay);
+    }
+
     _updateControlsAvailability()
     {
-        const shouldControlsBeAvailable = !!(this.media.controls || (this.host && this.host.shouldForceControlsDisplay) || ((this.layoutTraits & LayoutTraits.macOS) && this.isFullscreen));
-
+        const shouldControlsBeAvailable = this._shouldControlsBeAvailable();
         if (!shouldControlsBeAvailable)
             this._supportingObjects.forEach(supportingObject => supportingObject.disable());
         else

@@ -1,3 +1,23 @@
+2018-02-15  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] REGRESSION: Inline media controls are not disabled while in fullscreen on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=182830
+        <rdar://problem/37537909>
+
+        Reviewed by Eric Carlson.
+
+        The test media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html
+        regressed when fixing webkit.org/b/182668 since we now started only caring about the presence of the "controls"
+        attribute to identify that WebKit media controls should be available.
+
+        We now have a dedicated _shouldControlsBeAvailable() method which more clearly establishes the conditions under
+        which controls should be available and correctly disables them while in fullscreen on iOS, regardless of the
+        "controls" attribute value.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._shouldControlsBeAvailable):
+        (MediaController.prototype._updateControlsAvailability):
+
 2018-02-15  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228495.
