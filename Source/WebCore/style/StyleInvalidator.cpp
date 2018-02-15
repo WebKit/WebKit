@@ -103,7 +103,7 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
     if (m_hasShadowPseudoElementRulesInAuthorSheet) {
         // FIXME: This could do actual rule matching too.
         if (element.shadowRoot())
-            element.invalidateStyleForSubtree();
+            element.invalidateStyleForSubtreeInternal();
     }
 
     bool shouldCheckForSlots = !m_ruleSet.slottedPseudoElementRules().isEmpty() && !m_didInvalidateHostChildren;
@@ -111,7 +111,7 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
         auto* containingShadowRoot = element.containingShadowRoot();
         if (containingShadowRoot && containingShadowRoot->host()) {
             for (auto& possiblySlotted : childrenOfType<Element>(*containingShadowRoot->host()))
-                possiblySlotted.invalidateStyle();
+                possiblySlotted.invalidateStyleInternal();
         }
         // No need to do this again.
         m_didInvalidateHostChildren = true;
@@ -124,7 +124,7 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
         ruleCollector.matchAuthorRules(false);
 
         if (ruleCollector.hasMatchedRules())
-            element.invalidateStyle();
+            element.invalidateStyleInternal();
         return CheckDescendants::Yes;
     }
     case Style::Validity::ElementInvalid:
@@ -193,7 +193,7 @@ void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
     ASSERT(!m_dirtiesAllStyle);
 
     if (!m_ruleSet.hostPseudoClassRules().isEmpty() && shadowRoot.host())
-        shadowRoot.host()->invalidateStyle();
+        shadowRoot.host()->invalidateStyleInternal();
 
     for (auto& child : childrenOfType<Element>(shadowRoot)) {
         SelectorFilter filter;

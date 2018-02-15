@@ -1,3 +1,48 @@
+2018-02-14  Antti Koivisto  <antti@apple.com>
+
+        Do sibling invalidation on mutation
+        https://bugs.webkit.org/show_bug.cgi?id=182809
+
+        Reviewed by Zalan Bujtas.
+
+        We used to invalidate siblings for sibling combinators and nth-pseudo classes during style resolution tree walk.
+        This would consider any element with invalid style a reason to invalidate siblings too. However we now do
+        accurate invalidation on class and attribute changes and this approach ends up invalidating too much.
+
+        This patch sibling style invalidation to mutation time and removes invalidation code from style resolution tree walk.
+
+        * dom/Element.cpp:
+        (WebCore::invalidateSiblingsIfNeeded):
+
+            Helper to invalidate siblings.
+
+        (WebCore::Element::invalidateStyle):
+        (WebCore::Element::invalidateStyleAndLayerComposition):
+        (WebCore::Element::invalidateStyleForSubtree):
+        (WebCore::Element::invalidateStyleAndRenderersForSubtree):
+
+            Invalidate siblings if needed based on affectsNextSibling/affectedByPreviousSibling bits.
+
+        (WebCore::Element::invalidateStyleInternal):
+        (WebCore::Element::invalidateStyleForSubtreeInternal):
+
+            Add "internal" versions that don't invalidate siblings. These are used by StyleInvalidator for accurate invalidation.
+
+        * dom/Element.h:
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+        (WebCore::Style::Invalidator::invalidateStyle):
+
+            Use internal invalidation functions.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
+            Remove sibling invalidation.
+
+        * style/StyleTreeResolver.h:
+
 2018-02-14  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make sure WebResourceLoadStatisticsStore::mergeWithDataFromDecoder() can ingest older plist versions and not reset the database

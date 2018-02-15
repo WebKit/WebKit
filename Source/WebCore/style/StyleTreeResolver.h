@@ -79,7 +79,6 @@ private:
         Change change { NoChange };
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
         bool didPushScope { false };
-        bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle { false };
 
         Parent(Document&);
         Parent(Element&, const RenderStyle&, Change, DescendantsToResolve);

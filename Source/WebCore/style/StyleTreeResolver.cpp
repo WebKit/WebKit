@@ -137,14 +137,8 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, con
 
 static void resetStyleForNonRenderedDescendants(Element& current)
 {
-    // FIXME: This is not correct with shadow trees. This should be done with ComposedTreeIterator.
-    bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
     for (auto& child : childrenOfType<Element>(current)) {
-        bool affectedByPreviousSibling = child.styleIsAffectedByPreviousSibling() && elementNeedingStyleRecalcAffectsNextSiblingElementStyle;
-        if (child.needsStyleRecalc() || elementNeedingStyleRecalcAffectsNextSiblingElementStyle)
-            elementNeedingStyleRecalcAffectsNextSiblingElementStyle = child.affectsNextSiblingElementStyle();
-
-        if (child.needsStyleRecalc() || affectedByPreviousSibling) {
+        if (child.needsStyleRecalc()) {
             child.resetComputedStyle();
             child.resetStyleRelations();
             child.setHasValidStyle();
@@ -471,16 +465,11 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        // FIXME: We should deal with this during style invalidation.
-        bool affectedByPreviousSibling = element.styleIsAffectedByPreviousSibling() && parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle;
-        if (element.needsStyleRecalc() || parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle)
-            parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle = element.affectsNextSiblingElementStyle();
-
         auto* style = renderOrDisplayContentsStyle(element);
         auto change = NoChange;
         auto descendantsToResolve = DescendantsToResolve::None;
 
-        bool shouldResolve = shouldResolveElement(element, parent.descendantsToResolve) || affectedByPreviousSibling;
+        bool shouldResolve = shouldResolveElement(element, parent.descendantsToResolve);
         if (shouldResolve) {
             if (!element.hasDisplayContents())
                 element.resetComputedStyle();
@@ -497,9 +486,6 @@ void TreeResolver::resolveComposedTree()
             style = elementUpdates.update.style.get();
             change = elementUpdates.update.change;
             descendantsToResolve = elementUpdates.descendantsToResolve;
-
-            if (affectedByPreviousSibling)
-                descendantsToResolve = DescendantsToResolve::All;
 
             if (elementUpdates.update.style)
                 m_update->addElement(element, parent.element, WTFMove(elementUpdates));
