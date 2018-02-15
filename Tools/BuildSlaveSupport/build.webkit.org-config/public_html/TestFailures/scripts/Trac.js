@@ -90,7 +90,8 @@ function parseCommitData(responseXML)
 {
     var commits = Array.prototype.map.call(responseXML.getElementsByTagName('item'), function(item) {
         var title = item.getElementsByTagName('title')[0].textContent;
-        var author = item.getElementsByTagName('author')[0].textContent;
+        var author = item.getElementsByTagName('author')[0] || item.getElementsByTagName('dc:creator')[0];
+        author = author.textContent;
         var time = item.getElementsByTagName('pubDate')[0].textContent;
 
         // FIXME: This isn't a very high-fidelity reproduction of the commit message,

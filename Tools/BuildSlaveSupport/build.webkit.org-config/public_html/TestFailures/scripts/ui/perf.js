@@ -52,7 +52,7 @@ ui.perf.View = base.extends('div', {
         builders.perfBuilders(this.loadGraphs.bind(this));
 
         var stream = new ui.notifications.Stream();
-        var notifications = document.createElement()
+        var notifications = document.createElement('div');
         this._notification = ui.notifications.Info("Loading list of perf dashboards...");
         stream.appendChild(this._notification);
         this.appendChild(stream);

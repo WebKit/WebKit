@@ -66,7 +66,6 @@ config.kPlatforms = {
         layoutTestResultsURL: 'https://build.webkit.org/results',
         waterfallURL: 'https://build.webkit.org/waterfall',
         builders: {
-            'GTK Linux 32-bit Release' : {version: '32-bit release'},
             'GTK Linux 64-bit Release (Tests)' : {version: '64-bit release'},
             'GTK Linux 64-bit Debug (Tests)' : {version: '64-bit debug', debug: true},
         },

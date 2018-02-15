@@ -1,3 +1,19 @@
+2018-02-14  Charlie Turner  <cturner@igalia.com>
+
+        Get Garden-O-Matic running again.
+        https://bugs.webkit.org/show_bug.cgi?id=179089
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Trac.js:
+        (parseCommitData): Author field is not always spelled 'author' these days.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        No longer have a 32-bit builder.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/perf.js:
+        (ui.perf.View.base.init): createElement has a required parameter these days.
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        (GardenOMatic): Override use_globs so that platform lookup in config.js works.
+
 2018-02-14  Don Olmstead  <don.olmstead@sony.com>
 
         Remove unused ForwardingHeaders directories from Tools
