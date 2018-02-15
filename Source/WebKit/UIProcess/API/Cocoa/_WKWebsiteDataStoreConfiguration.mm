@@ -42,6 +42,8 @@ static void checkURLArgument(NSURL *url)
     RetainPtr<NSURL> _webSQLDatabaseDirectoryURL;
     RetainPtr<NSURL> _cookieStorageFileURL;
     RetainPtr<NSURL> _resourceLoadStatisticsDirectoryURL;
+    RetainPtr<NSURL> _cacheStorageDirectoryURL;
+    RetainPtr<NSURL> _serviceWorkerRegistrationDirectoryURL;
 }
 
 - (NSURL *)_webStorageDirectory
@@ -100,6 +102,28 @@ static void checkURLArgument(NSURL *url)
 {
     checkURLArgument(url);
     _resourceLoadStatisticsDirectoryURL = adoptNS([url copy]);
+}
+
+- (NSURL *)_cacheStorageDirectory
+{
+    return _cacheStorageDirectoryURL.get();
+}
+
+- (void)_setCacheStorageDirectory:(NSURL *)url
+{
+    checkURLArgument(url);
+    _cacheStorageDirectoryURL = adoptNS([url copy]);
+}
+
+- (NSURL *)_serviceWorkerRegistrationDirectory
+{
+    return _serviceWorkerRegistrationDirectoryURL.get();
+}
+
+- (void)_setServiceWorkerRegistrationDirectory:(NSURL *)url
+{
+    checkURLArgument(url);
+    _serviceWorkerRegistrationDirectoryURL = adoptNS([url copy]);
 }
 
 @end
