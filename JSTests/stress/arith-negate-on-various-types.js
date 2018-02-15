@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ defaultNoEagerRun
 "use strict";
 

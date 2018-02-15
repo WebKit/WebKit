@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runNoCJITValidatePhases
 //@ runFTLNoCJITValidate
 "use strict";

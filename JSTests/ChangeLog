@@ -1,3 +1,43 @@
+2018-02-15  Tomas Popela  <tpopela@redhat.com>
+
+        Many stress tests fail with JIT disabled
+        https://bugs.webkit.org/show_bug.cgi?id=182730
+
+        Reviewed by Saam Barati.
+
+        These tests are broken by design if the JIT is disabled - they test
+        the return value of numberOfDFGCompiles(), which is always set to
+        1000000.0 in TestRunnerUtils.cpp and makes the tests to fail.
+
+        * stress/arith-abs-on-various-types.js:
+        * stress/arith-abs-to-arith-negate-range-optimizaton.js:
+        * stress/arith-acos-on-various-types.js:
+        * stress/arith-acosh-on-various-types.js:
+        * stress/arith-asin-on-various-types.js:
+        * stress/arith-asinh-on-various-types.js:
+        * stress/arith-atan-on-various-types.js:
+        * stress/arith-atanh-on-various-types.js:
+        * stress/arith-cbrt-on-various-types.js:
+        * stress/arith-ceil-on-various-types.js:
+        * stress/arith-clz32-on-various-types.js:
+        * stress/arith-cos-on-various-types.js:
+        * stress/arith-cosh-on-various-types.js:
+        * stress/arith-expm1-on-various-types.js:
+        * stress/arith-floor-on-various-types.js:
+        * stress/arith-fround-on-various-types.js:
+        * stress/arith-log-on-various-types.js:
+        * stress/arith-log10-on-various-types.js:
+        * stress/arith-log2-on-various-types.js:
+        * stress/arith-negate-on-various-types.js:
+        * stress/arith-round-on-various-types.js:
+        * stress/arith-sin-on-various-types.js:
+        * stress/arith-sinh-on-various-types.js:
+        * stress/arith-sqrt-on-various-types.js:
+        * stress/arith-tan-on-various-types.js:
+        * stress/arith-tanh-on-various-types.js:
+        * stress/arith-trunc-on-various-types.js:
+        * stress/compare-strict-eq-on-various-types.js:
+
 2018-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip stress/new-largeish-contiguous-array-with-size.js on arm.
