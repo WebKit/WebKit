@@ -31,7 +31,7 @@
 #include "HeapProfiler.h"
 #include "HeapSnapshot.h"
 #include "JSCInlines.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "PreventCollectionScope.h"
 #include "VM.h"
 #include <wtf/text/StringBuilder.h>

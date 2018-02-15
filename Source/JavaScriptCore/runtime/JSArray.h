@@ -173,6 +173,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
+        ASSERT(jsDynamicCast<JSArray*>(vm, this));
         ASSERT_WITH_MESSAGE(type() == ArrayType || type() == DerivedArrayType, "Instance inheriting JSArray should have either ArrayType or DerivedArrayType");
     }
 

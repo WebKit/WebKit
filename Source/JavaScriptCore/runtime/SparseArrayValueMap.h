@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSTypeInfo.h"
 #include "PropertyDescriptor.h"
 #include "PutDirectIndexMode.h"

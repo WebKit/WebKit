@@ -48,7 +48,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
 void InternalFunction::finishCreation(VM& vm, const String& name, NameVisibility nameVisibility)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(jsDynamicCast<InternalFunction*>(vm, this));
     ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
     ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
     ASSERT(type() == InternalFunctionType);

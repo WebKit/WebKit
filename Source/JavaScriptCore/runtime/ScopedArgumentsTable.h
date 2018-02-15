@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSCast.h"
 #include "ScopeOffset.h"
 #include <wtf/Assertions.h>
 #include <wtf/CagedUniquePtr.h>

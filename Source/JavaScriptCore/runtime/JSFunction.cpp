@@ -106,7 +106,7 @@ JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structur
 void JSFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(jsDynamicCast<JSFunction*>(vm, this));
     if (isBuiltinFunction() && jsExecutable()->name().isPrivateName()) {
         // This is anonymous builtin function.
         rareData(vm)->setHasReifiedName();

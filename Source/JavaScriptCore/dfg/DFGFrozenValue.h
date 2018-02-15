@@ -28,8 +28,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGValueStrength.h"
-#include "JSCell.h"
 #include "JSCJSValue.h"
+#include "JSCast.h"
 #include "Structure.h"
 
 namespace JSC { namespace DFG {

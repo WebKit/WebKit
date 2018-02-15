@@ -31,7 +31,7 @@
 #include "HeapInlines.h"
 #include "HeapUtil.h"
 #include "JITStubRoutineSet.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"

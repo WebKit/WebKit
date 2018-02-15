@@ -33,7 +33,7 @@
 #include "DOMAttributeGetterSetter.h"
 #include "Heap.h"
 #include "IndexingHeaderInlines.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "ObjectInitializationScope.h"
 #include "PropertySlot.h"
 #include "PropertyStorage.h"
@@ -877,7 +877,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(inherits(vm, info()));
+        ASSERT(jsDynamicCast<JSObject*>(vm, this));
         ASSERT(structure()->hasPolyProto() || getPrototypeDirect(vm).isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect(vm)));
         ASSERT(structure()->isObject());
         ASSERT(classInfo(vm));

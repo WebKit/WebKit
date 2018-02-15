@@ -30,7 +30,7 @@
 #include "HeapCellInlines.h"
 #include "IndexingHeader.h"
 #include "JSCallee.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "Structure.h"
 #include <type_traits>
 #include <wtf/Assertions.h>

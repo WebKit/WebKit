@@ -24,7 +24,7 @@
 
 #include "CallFrame.h"
 #include "ConstructData.h"
-#include "JSCell.h"
+#include "JSCast.h"
 
 namespace WTF {
 class PrintStream;

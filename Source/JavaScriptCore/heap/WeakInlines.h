@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSCast.h"
 #include "WeakSetInlines.h"
 #include <wtf/Assertions.h>
 

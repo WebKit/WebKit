@@ -33,7 +33,7 @@
 #include "DFGJumpReplacement.h"
 #include "DFGOSREntry.h"
 #include "InlineCallFrameSet.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "ProfilerCompilation.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>

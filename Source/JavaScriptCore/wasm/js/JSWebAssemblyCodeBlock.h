@@ -29,7 +29,7 @@
 
 #include "CallLinkInfo.h"
 #include "JSCPoison.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "PromiseDeferredTimer.h"
 #include "Structure.h"
 #include "UnconditionalFinalizer.h"

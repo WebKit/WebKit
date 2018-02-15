@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CellContainer.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "LargeAllocation.h"
 #include "MarkedBlock.h"
 #include "VM.h"

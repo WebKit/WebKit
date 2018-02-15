@@ -27,7 +27,7 @@
 
 #include "Identifier.h"
 #include "InferredType.h"
-#include "JSCell.h"
+#include "JSCast.h"
 
 namespace JSC {
 

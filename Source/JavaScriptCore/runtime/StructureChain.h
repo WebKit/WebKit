@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSObject.h"
 #include "Structure.h"
 #include <wtf/StdLibExtras.h>

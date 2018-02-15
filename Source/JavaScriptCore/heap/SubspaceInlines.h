@@ -26,7 +26,7 @@
 #pragma once
 
 #include "BlockDirectoryInlines.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
 #include "Subspace.h"
