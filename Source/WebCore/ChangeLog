@@ -1,3 +1,28 @@
+2018-02-15  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderInline/RenderGrid::addChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182819
+        <rdar://problem/37558187>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::addChild): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChild): Deleted.
+        * rendering/RenderInline.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChild):
+        (WebCore::RenderTreeBuilder::takeChild): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::findOrCreateParentForChild):
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::insertChild):
+
 2018-02-15  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] REGRESSION: Inline media controls are not disabled while in fullscreen on iOS

@@ -30,6 +30,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderTreeBuilderInline.h"
 #include "SVGResourcesCache.h"
 
 namespace WebCore {
@@ -49,7 +50,7 @@ void RenderTreeBuilder::SVG::insertChild(RenderSVGContainer& parent, RenderPtr<R
 void RenderTreeBuilder::SVG::insertChild(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.insertChildToRenderInline(parent, WTFMove(child), beforeChild);
+    m_builder.inlineBuilder().insertChild(parent, WTFMove(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(parent))

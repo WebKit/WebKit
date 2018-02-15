@@ -31,6 +31,7 @@
 #include "RenderRubyRun.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
+#include "RenderTreeBuilderInline.h"
 
 namespace WebCore {
 
@@ -313,7 +314,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
         if (!beforeBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             beforeBlock = newBlock.get();
-            m_builder.insertChildToRenderInline(parent, WTFMove(newBlock), parent.firstChild());
+            m_builder.inlineBuilder().insertChild(parent, WTFMove(newBlock), parent.firstChild());
         }
         beforeChild = nullptr;
         return *beforeBlock;
@@ -328,7 +329,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
         if (!afterBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             afterBlock = newBlock.get();
-            m_builder.insertChildToRenderInline(parent, WTFMove(newBlock));
+            m_builder.inlineBuilder().insertChild(parent, WTFMove(newBlock), nullptr);
         }
         beforeChild = nullptr;
         return *afterBlock;
@@ -357,7 +358,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
     if (!lastRun || lastRun->hasRubyText()) {
         auto newRun = RenderRubyRun::staticCreateRubyRun(&parent);
         lastRun = newRun.get();
-        m_builder.insertChildToRenderInline(parent, WTFMove(newRun), beforeChild);
+        m_builder.inlineBuilder().insertChild(parent, WTFMove(newRun), beforeChild);
     }
     beforeChild = nullptr;
     return *lastRun;

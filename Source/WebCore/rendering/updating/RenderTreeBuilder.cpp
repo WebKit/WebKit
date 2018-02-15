@@ -220,6 +220,16 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
+    if (is<RenderGrid>(parent)) {
+        insertChildToRenderGrid(downcast<RenderGrid>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderInline>(parent)) {
+        inlineBuilder().insertChild(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
     parent.addChild(*this, WTFMove(child), beforeChild);
 }
 
@@ -483,11 +493,6 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
     // WARNING: child is deleted here.
 }
 
-void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    inlineBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
 void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
@@ -613,5 +618,19 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderElement(RenderElem
     return childToTake;
 }
 
+void RenderTreeBuilder::insertChildToRenderGrid(RenderGrid& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    auto& newChild = *child;
+    blockBuilder().insertChild(parent, WTFMove(child), beforeChild);
+
+    // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
+    // for that reason we don't need to mark the grid as dirty when they are added.
+    if (newChild.isOutOfFlowPositioned())
+        return;
+
+    // The grid needs to be recomputed as it might contain auto-placed items that
+    // will change their position.
+    parent.dirtyGrid();
+}
 
 }

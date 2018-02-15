@@ -67,7 +67,6 @@ public:
     void insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
-    void insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderTable(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderTableSection(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
@@ -99,6 +98,8 @@ private:
     RenderPtr<RenderObject> takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderButton(RenderButton& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child);
+
+    void insertChildToRenderGrid(RenderGrid& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
