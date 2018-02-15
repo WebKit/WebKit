@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+const SkipSeconds = 15;
+
 let mediaControlsHost;
 
 // This is called from HTMLMediaElement::ensureMediaControlsInjectedScript().
@@ -37,7 +39,7 @@ function createControls(shadowRoot, media, host)
     return new MediaController(shadowRoot, media, host);
 }
 
-function UIString(stringToLocalize)
+function UIString(stringToLocalize, replacementString)
 {
     let allLocalizedStrings = {};
     try {
@@ -48,9 +50,8 @@ function UIString(stringToLocalize)
     if (!localizedString)
         return stringToLocalize;
 
-    // We allow an array of a string and a replacement.
-    if (Array.isArray(localizedString) && localizedString.length == 2)
-        return localizedString[0].replace("%s", UIString(localizedString[1]));
+    if (replacementString)
+        return localizedString.replace("%s", replacementString);
 
     return localizedString;
 }

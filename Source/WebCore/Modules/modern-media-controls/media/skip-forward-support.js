@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const SkipForwardSeconds = 15;
-
 class SkipForwardSupport extends MediaControllerSupport
 {
 
@@ -43,7 +41,7 @@ class SkipForwardSupport extends MediaControllerSupport
     buttonWasPressed(control)
     {
         const media = this.mediaController.media;
-        media.currentTime = Math.min(media.currentTime + SkipForwardSeconds, media.seekable.end(0));
+        media.currentTime = Math.min(media.currentTime + SkipSeconds, media.seekable.end(0));
     }
 
     syncControl()
