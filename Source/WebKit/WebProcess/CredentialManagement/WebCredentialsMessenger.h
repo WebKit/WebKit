@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,41 +27,34 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "BasicCredential.h"
-#include "ExceptionOr.h"
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/Forward.h>
+#include "MessageReceiver.h"
+#include <WebCore/CredentialsMessenger.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class AuthenticatorResponse;
-class DeferredPromise;
+class WebPage;
 
-class PublicKeyCredential final : public BasicCredential {
+class WebCredentialsMessenger final : public WebCore::CredentialsMessenger, private IPC::MessageReceiver {
 public:
-    static Ref<PublicKeyCredential> create(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&& response)
-    {
-        return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
-    }
-
-    ArrayBuffer* rawId() const { return m_rawId.get(); }
-    AuthenticatorResponse* response() const { return m_response.get(); }
-    // Not support yet. Always throws.
-    ExceptionOr<bool> getClientExtensionResults() const;
-
-    static void isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&&);
+    explicit WebCredentialsMessenger(WebPage&);
+    ~WebCredentialsMessenger();
 
 private:
-    PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&&);
+    // WebCore::CredentialsMessenger
+    // sender
+    void makeCredential(const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::CreationCompletionHandler&&) final;
+    void getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&) final;
 
-    Type credentialType() const final { return Type::PublicKey; }
+    // receiver
+    void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&) final;
+    void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) final;
 
-    RefPtr<ArrayBuffer> m_rawId;
-    RefPtr<AuthenticatorResponse> m_response;
+    // IPC::MessageReceiver.
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    WebPage& m_webPage;
 };
 
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(PublicKeyCredential, BasicCredential::Type::PublicKey)
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

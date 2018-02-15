@@ -195,6 +195,10 @@
 #include "PlaybackSessionManagerProxy.h"
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include "WebCredentialsMessengerProxy.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -406,6 +410,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
 #if ENABLE(APPLE_PAY)
     m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
@@ -659,6 +667,10 @@ void WebPageProxy::reattachToWebProcess()
 
 #if ENABLE(APPLE_PAY)
     m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
 #endif
 
     initializeWebPage();
@@ -5681,6 +5693,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(APPLE_PAY)
     m_paymentCoordinator = nullptr;
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    m_credentialsMessenger = nullptr;
 #endif
 
     CallbackBase::Error error;

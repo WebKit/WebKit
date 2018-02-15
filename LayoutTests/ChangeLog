@@ -1,3 +1,19 @@
+2018-02-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Revisit the whole async model of task dispatching, timeout and aborting
+        https://bugs.webkit.org/show_bug.cgi?id=181946
+        <rdar://problem/37258262>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/credential-management/credentialscontainer-store-basics.https.html:
+        * http/wpt/webauthn/idl.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success.https.html:
+        * http/wpt/webauthn/resources/util.js:
+
 2018-02-14  Antti Koivisto  <antti@apple.com>
 
         Do sibling invalidation on mutation

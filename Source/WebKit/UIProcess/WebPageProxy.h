@@ -217,6 +217,7 @@ class WebFullScreenManagerProxy;
 class PlaybackSessionManagerProxy;
 class WebNavigationState;
 class VideoFullscreenManagerProxy;
+class WebCredentialsMessengerProxy;
 class WebKeyboardEvent;
 class WebURLSchemeHandler;
 class WebMouseEvent;
@@ -1784,6 +1785,10 @@ private:
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    std::unique_ptr<WebCredentialsMessengerProxy> m_credentialsMessenger;
 #endif
 
     CallbackMap m_callbacks;

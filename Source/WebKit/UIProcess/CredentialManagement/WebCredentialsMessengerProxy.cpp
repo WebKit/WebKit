@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebCredentialsMessengerProxy.h"
 
 #if ENABLE(WEB_AUTHN)
 
-#include "BasicCredential.h"
-#include "ExceptionOr.h"
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/Forward.h>
+#include "WebCredentialsMessengerMessages.h"
+#include "WebCredentialsMessengerProxyMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class AuthenticatorResponse;
-class DeferredPromise;
+WebCredentialsMessengerProxy::WebCredentialsMessengerProxy(WebPageProxy& webPageProxy)
+    : m_webPageProxy(webPageProxy)
+{
+    m_webPageProxy.process().addMessageReceiver(Messages::WebCredentialsMessengerProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
+}
 
-class PublicKeyCredential final : public BasicCredential {
-public:
-    static Ref<PublicKeyCredential> create(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&& response)
-    {
-        return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
-    }
+WebCredentialsMessengerProxy::~WebCredentialsMessengerProxy()
+{
+    m_webPageProxy.process().removeMessageReceiver(Messages::WebCredentialsMessengerProxy::messageReceiverName(), m_webPageProxy.pageID());
+}
 
-    ArrayBuffer* rawId() const { return m_rawId.get(); }
-    AuthenticatorResponse* response() const { return m_response.get(); }
-    // Not support yet. Always throws.
-    ExceptionOr<bool> getClientExtensionResults() const;
+void WebCredentialsMessengerProxy::makeCredential(uint64_t)
+{
+}
 
-    static void isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&&);
+void WebCredentialsMessengerProxy::getAssertion(uint64_t)
+{
+}
 
-private:
-    PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&&);
-
-    Type credentialType() const final { return Type::PublicKey; }
-
-    RefPtr<ArrayBuffer> m_rawId;
-    RefPtr<AuthenticatorResponse> m_response;
-};
-
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(PublicKeyCredential, BasicCredential::Type::PublicKey)
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

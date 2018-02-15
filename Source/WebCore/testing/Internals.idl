@@ -580,4 +580,5 @@ enum EventThrottlingBehavior {
     [EnabledAtRuntime=WebAnimations] void pauseTimeline(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void setTimelineCurrentTime(AnimationTimeline timeline, double currentTime);
     [Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
+    [Conditional=WEB_AUTHN] readonly attribute MockCredentialsMessenger mockCredentialsMessenger;
 };

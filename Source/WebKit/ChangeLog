@@ -1,3 +1,42 @@
+2018-02-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Revisit the whole async model of task dispatching, timeout and aborting
+        https://bugs.webkit.org/show_bug.cgi?id=181946
+        <rdar://problem/37258262>
+
+        Reviewed by Chris Dumez.
+
+        Dummy WebCredentialsMessenger and WebCredentialsMessengerProxy are crafted to establish
+        a message exchange channel between UIProcess and WebProcess.
+
+        * DerivedSources.make:
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+        (WebKit::WebCredentialsMessengerProxy::WebCredentialsMessengerProxy):
+        (WebKit::WebCredentialsMessengerProxy::~WebCredentialsMessengerProxy):
+        (WebKit::WebCredentialsMessengerProxy::makeCredential):
+        (WebKit::WebCredentialsMessengerProxy::getAssertion):
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.messages.in: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.cpp: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+        (WebKit::WebCredentialsMessenger::WebCredentialsMessenger):
+        (WebKit::WebCredentialsMessenger::~WebCredentialsMessenger):
+        (WebKit::WebCredentialsMessenger::makeCredential):
+        (WebKit::WebCredentialsMessenger::getAssertion):
+        (WebKit::WebCredentialsMessenger::makeCredentialReply):
+        (WebKit::WebCredentialsMessenger::getAssertionReply):
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.h: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.h.
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.messages.in: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        (WebKit::m_cpuLimit): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2018-02-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Unify build of platform-specific files in WebKit layer
