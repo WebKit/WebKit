@@ -121,7 +121,7 @@ void RenderTableSection::willBeRemovedFromTree()
     setNeedsCellRecalc();
 }
 
-void RenderTableSection::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTableSection::willInsertTableRow(RenderTableRow& child, RenderObject* beforeChild)
 {
     if (beforeChild)
         setNeedsCellRecalc();
@@ -132,13 +132,11 @@ void RenderTableSection::addChild(RenderTreeBuilder& builder, RenderPtr<RenderOb
 
     ensureRows(m_cRow);
 
-    RenderTableRow& row = downcast<RenderTableRow>(*child);
-    m_grid[insertionRow].rowRenderer = &row;
-    row.setRowIndex(insertionRow);
+    m_grid[insertionRow].rowRenderer = &child;
+    child.setRowIndex(insertionRow);
 
     if (!beforeChild)
         setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
-    builder.insertChildToRenderTableSection(*this, WTFMove(child), beforeChild);
 }
 
 void RenderTableSection::ensureRows(unsigned numRows)
