@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IPHONE
 
 // Unicodes we reserve for function keys on the keyboard,
 // OpenStep reserves the range 0xF700-0xF8FF for this purpose.
@@ -119,4 +119,4 @@ enum {
     NSDeleteCharacter = 0x007f
 };
 
-#endif // TARGET_OS_IOS
+#endif // TARGET_OS_IPHONE
