@@ -1,3 +1,40 @@
+2018-02-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up HarfBuzzFaceCairo
+        https://bugs.webkit.org/show_bug.cgi?id=182824
+
+        Reviewed by Carlos Garcia Campos.
+
+        Clean up Cairo-specific bits of HarfBuzzFace implementation.
+
+        HarfBuzzFontData is simplified, removing the constructor and turning the
+        cairo_scaled_font_t member into a RefPtr<>, tying the Cairo object's
+        lifetime to the lifetime of the HarfBuzzFontData instance.
+
+        HarfBuzz font callbacks have the HarfBuzzFontData casting cleaned up,
+        casting the user data pointer straight into a HarfBuzzFontData reference
+        that's then used in the functions. HarfBuzzFontData member access is
+        also adjusted.
+
+        HarfBuzzFace::createFace() now references the cairo_scaled_font_t object
+        that is then set as the user data pointer, with the destroy callback
+        that dereferences that object also specified. With hb_face_t being a
+        reference-counted object itself, this ensures the cairo_scaled_font_t
+        object doesn't get destroyed while hb_face_t is still alive.
+
+        In HarfBuzzFace::createFont(), the hb_font_t creation is cleaned up,
+        with a C++ lambda used as the destroy callback.
+
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzGetGlyph):
+        (WebCore::harfBuzzGetGlyphHorizontalAdvance):
+        (WebCore::harfBuzzGetGlyphExtents):
+        (WebCore::harfBuzzCairoGetTable):
+        (WebCore::HarfBuzzFace::createFace):
+        (WebCore::HarfBuzzFace::createFont):
+        (WebCore::HarfBuzzFontData::HarfBuzzFontData): Deleted.
+        (WebCore::destroyHarfBuzzFontData): Deleted.
+
 2018-02-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] WebVTT caps changed in GStreamer 1.14
