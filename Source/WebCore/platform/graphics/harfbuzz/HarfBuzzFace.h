@@ -33,24 +33,22 @@
 
 #include <hb.h>
 
+#include <memory>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class FontPlatformData;
 
-class HarfBuzzFace : public RefCounted<HarfBuzzFace> {
+class HarfBuzzFace {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static const hb_tag_t vertTag;
     static const hb_tag_t vrt2Tag;
     static const hb_tag_t kernTag;
 
-    static Ref<HarfBuzzFace> create(FontPlatformData* platformData, uint64_t uniqueID)
-    {
-        return adoptRef(*new HarfBuzzFace(platformData, uniqueID));
-    }
+    HarfBuzzFace(FontPlatformData*, uint64_t);
     ~HarfBuzzFace();
 
     hb_font_t* createFont();
@@ -58,8 +56,6 @@ public:
     void setScriptForVerticalGlyphSubstitution(hb_buffer_t*);
 
 private:
-    HarfBuzzFace(FontPlatformData*, uint64_t);
-
     hb_face_t* createFace();
 
     FontPlatformData* m_platformData;

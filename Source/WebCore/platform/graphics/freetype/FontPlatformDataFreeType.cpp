@@ -195,11 +195,11 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     m_fixedWidth = other.m_fixedWidth;
     m_pattern = other.m_pattern;
 
+    m_scaledFont = other.m_scaledFont;
+
     // This will be re-created on demand.
     m_fallbacks = nullptr;
-
-    m_scaledFont = other.m_scaledFont;
-    m_harfBuzzFace = other.m_harfBuzzFace;
+    m_harfBuzzFace = nullptr;
 
     return *this;
 }
@@ -241,8 +241,7 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
 HarfBuzzFace* FontPlatformData::harfBuzzFace() const
 {
     if (!m_harfBuzzFace)
-        m_harfBuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), hash());
-
+        m_harfBuzzFace = std::make_unique<HarfBuzzFace>(const_cast<FontPlatformData*>(this), hash());
     return m_harfBuzzFace.get();
 }
 
