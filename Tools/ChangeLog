@@ -1,3 +1,16 @@
+2018-02-14  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove unused ForwardingHeaders directories from Tools
+        https://bugs.webkit.org/show_bug.cgi?id=182813
+
+        Reviewed by Konstantin Tokarev.
+
+        * DumpRenderTree/ForwardingHeaders/runtime/ArrayBufferView.h: Removed.
+        * DumpRenderTree/ForwardingHeaders/runtime/JSArrayBufferView.h: Removed.
+        * DumpRenderTree/ForwardingHeaders/runtime/JSExportMacros.h: Removed.
+        * DumpRenderTree/ForwardingHeaders/runtime/TypedArrayInlines.h: Removed.
+        * TestWebKitAPI/ForwardingHeaders/WebCore/LayoutUnit.h: Removed.
+
 2018-02-14  Daniel Bates  <dabates@apple.com>
 
         Disallow cross-origin subresources from asking for credentials
