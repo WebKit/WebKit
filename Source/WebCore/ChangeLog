@@ -1,3 +1,25 @@
+2018-02-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        FontPlatformData::harfBuzzFace() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=182825
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have FontPlatformData::harfBuzzFace() return a reference instead of a
+        pointer, given that the returned HarfBuzzFace object cannot be null.
+
+        Call-sites of FontPlatformData::harfBuzzFace() are adjusted.
+        OpenTypeMathData constructors are also changed to not rely on
+        preprocessor to correctly position the closing brace.
+
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::harfBuzzFace const):
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+        (WebCore::OpenTypeMathData::OpenTypeMathData):
+
 2018-02-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Revisit the whole async model of task dispatching, timeout and aborting

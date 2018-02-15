@@ -254,20 +254,17 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
     const OpenType::MathVariants* mathVariants = math->mathVariants(*m_mathBuffer);
     if (!mathVariants)
         m_mathBuffer = nullptr;
+}
 #elif USE(HARFBUZZ)
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
+    : m_mathFont(font.harfBuzzFace().createFont())
 {
-    HarfBuzzFace* face = font.harfBuzzFace();
-    if (face) {
-        m_mathFont.reset(face->createFont());
-        if (!hb_ot_math_has_data(hb_font_get_face(m_mathFont.get())))
-            m_mathFont.release();
-    }
-#else
-OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
-{
-#endif
+    if (!hb_ot_math_has_data(hb_font_get_face(m_mathFont.get())))
+        m_mathFont = nullptr;
 }
+#else
+OpenTypeMathData::OpenTypeMathData(const FontPlatformData&) = default;
+#endif
 
 OpenTypeMathData::~OpenTypeMathData() = default;
 
