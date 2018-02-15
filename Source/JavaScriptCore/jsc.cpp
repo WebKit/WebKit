@@ -80,10 +80,10 @@
 #include <thread>
 #include <type_traits>
 #include <wtf/CommaPrinter.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
 
 #if OS(WINDOWS)
@@ -409,23 +409,23 @@ public:
     long getElapsedMS(); // call stop() first
 
 private:
-    double m_startTime;
-    double m_stopTime;
+    MonotonicTime m_startTime;
+    MonotonicTime m_stopTime;
 };
 
 void StopWatch::start()
 {
-    m_startTime = monotonicallyIncreasingTime();
+    m_startTime = MonotonicTime::now();
 }
 
 void StopWatch::stop()
 {
-    m_stopTime = monotonicallyIncreasingTime();
+    m_stopTime = MonotonicTime::now();
 }
 
 long StopWatch::getElapsedMS()
 {
-    return static_cast<long>((m_stopTime - m_startTime) * 1000);
+    return (m_stopTime - m_startTime).millisecondsAs<long>();
 }
 
 template<typename Vector>
@@ -1377,7 +1377,7 @@ EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*)
 {
-    return JSValue::encode(jsNumber(currentTime()));
+    return JSValue::encode(jsNumber(WallTime::now().secondsSinceEpoch().value()));
 }
 
 EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState* exec)
@@ -2649,7 +2649,7 @@ int runJSC(CommandLine options, bool isWorker, const Func& func)
             compileTimeKeys.append(entry.key);
         std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
         for (CString key : compileTimeKeys)
-            printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key));
+            printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
     }
 #endif
 

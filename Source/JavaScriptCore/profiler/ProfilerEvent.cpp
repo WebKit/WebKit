@@ -49,7 +49,7 @@ JSValue Event::toJS(ExecState* exec) const
     VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
     
-    result->putDirect(vm, vm.propertyNames->time, jsNumber(m_time));
+    result->putDirect(vm, vm.propertyNames->time, jsNumber(m_time.secondsSinceEpoch().value()));
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
     if (m_compilation)
         result->putDirect(vm, vm.propertyNames->compilationUID, m_compilation->uid().toJS(exec));

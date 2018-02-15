@@ -347,7 +347,7 @@ void MarkedSpace::resumeAllocating()
     // Nothing to do for LargeAllocations.
 }
 
-bool MarkedSpace::isPagedOut(double deadline)
+bool MarkedSpace::isPagedOut(MonotonicTime deadline)
 {
     bool result = false;
     forEachDirectory(

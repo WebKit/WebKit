@@ -30,6 +30,7 @@
 #include "InspectorFrontendDispatchers.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -86,7 +87,7 @@ protected:
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount { 0 };
     HashMap<String, unsigned> m_counts;
-    HashMap<String, double> m_times;
+    HashMap<String, MonotonicTime> m_times;
     bool m_enabled { false };
 };
 

@@ -31,7 +31,7 @@
 namespace JSC {
 
 #if !PLATFORM(IOS)
-const double pagingTimeOut = 0.1; // Time in seconds to allow opportunistic timer to iterate over all blocks to see if the Heap is paged out.
+const constexpr Seconds pagingTimeOut { 100_ms }; // Time in seconds to allow opportunistic timer to iterate over all blocks to see if the Heap is paged out.
 #endif
 
 FullGCActivityCallback::FullGCActivityCallback(Heap* heap)
@@ -45,10 +45,10 @@ void FullGCActivityCallback::doCollection()
     m_didGCRecently = false;
 
 #if !PLATFORM(IOS)
-    double startTime = WTF::monotonicallyIncreasingTime();
+    MonotonicTime startTime = MonotonicTime::now();
     if (heap.isPagedOut(startTime + pagingTimeOut)) {
         cancel();
-        heap.increaseLastFullGCLength(Seconds(pagingTimeOut));
+        heap.increaseLastFullGCLength(pagingTimeOut);
         return;
     }
 #endif

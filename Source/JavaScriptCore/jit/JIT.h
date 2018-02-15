@@ -249,7 +249,7 @@ namespace JSC {
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
-        JS_EXPORT_PRIVATE static HashMap<CString, double> compileTimeStats();
+        JS_EXPORT_PRIVATE static HashMap<CString, Seconds> compileTimeStats();
 
     private:
         void privateCompileMainPass();

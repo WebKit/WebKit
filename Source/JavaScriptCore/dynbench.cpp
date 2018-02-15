@@ -60,10 +60,10 @@ NEVER_INLINE void benchmarkImpl(const char* name, unsigned iterationCount, const
     if (requestedIterationCount)
         iterationCount = requestedIterationCount;
     
-    double before = monotonicallyIncreasingTimeMS();
+    MonotonicTime before = MonotonicTime::now();
     callback(iterationCount);
-    double after = monotonicallyIncreasingTimeMS();
-    dataLog(name, ": ", after - before, " ms.\n");
+    MonotonicTime after = MonotonicTime::now();
+    dataLog(name, ": ", (after - before).milliseconds(), " ms.\n");
 }
 
 } // anonymous namespace
