@@ -1,3 +1,19 @@
+2018-02-15  Tomas Popela  <tpopela@redhat.com>
+
+        run-jsc-stress-tests - skip a test if any of the run commands evals to skip
+        https://bugs.webkit.org/show_bug.cgi?id=182729
+
+        If multiple run commands are specified and one of them evals to skip,
+        then the test is not skipped, because the run is scheduled while
+        evaluating other commands.
+
+        Remember if the test is going to be skipped - if yes, just stop
+        evaluating the other run commands.
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+
 2018-02-14  Charlie Turner  <cturner@igalia.com>
 
         Get Garden-O-Matic running again.

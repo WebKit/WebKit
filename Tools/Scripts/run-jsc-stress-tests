@@ -536,6 +536,7 @@ end
 def parseRunCommands
     oldDidAddRunCommand = $didAddRunCommand
     $didAddRunCommand = false
+    $skipped = false
 
     Dir.chdir($outputDir) {
         File.open($benchmarkDirectory + $benchmark) {
@@ -551,6 +552,9 @@ def parseRunCommands
                 end
                 next unless doesMatch
                 eval $~.post_match
+                if $skipped
+                    break
+                end
             }
         }
     }
@@ -1356,6 +1360,7 @@ end
 
 def skip
     $didAddRunCommand = true
+    $skipped = true
     puts "Skipping #{$collectionName}/#{$benchmark}"
 end
 
