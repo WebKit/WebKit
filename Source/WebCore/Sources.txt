@@ -187,6 +187,8 @@ Modules/navigatorcontentutils/NavigatorContentUtils.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 
+Modules/paymentrequest/MerchantValidationEvent.cpp
+Modules/paymentrequest/PaymentAddress.cpp
 Modules/paymentrequest/PaymentHandler.cpp
 Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
@@ -2684,6 +2686,7 @@ JSMediaStreamTrack.cpp
 JSMediaStreamTrackEvent.cpp
 JSMediaTrackConstraints.cpp
 JSMediaTrackSupportedConstraints.cpp
+JSMerchantValidationEvent.cpp
 JSMessageChannel.cpp
 JSMessageEvent.cpp
 JSMessagePort.cpp

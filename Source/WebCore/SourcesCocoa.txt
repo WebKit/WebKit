@@ -384,29 +384,33 @@ platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
     Modules/applepay/ApplePayShippingMethodSelectedEvent.cpp
     Modules/applepay/ApplePayValidateMerchantEvent.cpp
     Modules/applepay/PaymentCoordinator.cpp
-    Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
     Modules/applepay/PaymentRequestValidator.mm
+    Modules/applepay/PaymentSession.cpp
 
+    Modules/applepay/cocoa/PaymentCocoa.mm
     Modules/applepay/cocoa/PaymentContactCocoa.mm
     Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm @no-unify
     Modules/applepay/cocoa/PaymentMethodCocoa.mm
-    Modules/applepay/cocoa/PaymentCocoa.mm
+
+    Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 
     JSApplePayContactField.cpp
-    JSApplePayMerchantCapability.cpp
-    JSApplePayRequest.cpp
-    JSApplePayRequestBase.cpp
     JSApplePayError.cpp
     JSApplePayLineItem.cpp
+    JSApplePayMerchantCapability.cpp
+    JSApplePayModifier.cpp
     JSApplePayPayment.cpp
     JSApplePayPaymentAuthorizationResult.cpp
     JSApplePayPaymentAuthorizedEvent.cpp
     JSApplePayPaymentContact.cpp
     JSApplePayPaymentMethod.cpp
     JSApplePayPaymentMethodSelectedEvent.cpp
+    JSApplePayPaymentMethodType.cpp
     JSApplePayPaymentMethodUpdate.cpp
     JSApplePayPaymentPass.cpp
     JSApplePayPaymentRequest.cpp
+    JSApplePayRequest.cpp
+    JSApplePayRequestBase.cpp
     JSApplePaySession.cpp
     JSApplePayShippingContactSelectedEvent.cpp
     JSApplePayShippingContactUpdate.cpp
@@ -416,4 +420,3 @@ platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
     JSApplePayValidateMerchantEvent.cpp
 
 #endif
-
