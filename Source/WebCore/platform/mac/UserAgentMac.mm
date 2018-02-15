@@ -26,6 +26,8 @@
 #import "config.h"
 #import "UserAgent.h"
 
+#if PLATFORM(MAC)
+
 #import "SystemVersion.h"
 
 namespace WebCore {
@@ -49,3 +51,5 @@ String standardUserAgentWithApplicationName(const String& applicationName)
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

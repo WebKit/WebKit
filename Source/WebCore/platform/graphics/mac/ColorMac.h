@@ -26,29 +26,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ColorMac_h
-#define ColorMac_h
+#pragma once
 
 #include "Color.h"
 
 #if USE(APPKIT)
+
 OBJC_CLASS NSColor;
-#endif
 
 namespace WebCore {
-    
-#if USE(APPKIT)
-    // These functions assume NSColors are in DeviceRGB colorspace
-    WEBCORE_EXPORT Color colorFromNSColor(NSColor *);
-    WEBCORE_EXPORT NSColor *nsColor(const Color&);
-#endif
 
-    WEBCORE_EXPORT bool usesTestModeFocusRingColor();
-    WEBCORE_EXPORT void setUsesTestModeFocusRingColor(bool);
-    
-    // Focus ring color used for testing purposes.
-    Color oldAquaFocusRingColor();
+// These functions assume NSColors are in DeviceRGB colorspace
+WEBCORE_EXPORT Color colorFromNSColor(NSColor *);
+WEBCORE_EXPORT NSColor *nsColor(const Color&);
+
+WEBCORE_EXPORT bool usesTestModeFocusRingColor();
+WEBCORE_EXPORT void setUsesTestModeFocusRingColor(bool);
+
+// Focus ring color used for testing purposes.
+Color oldAquaFocusRingColor();
 
 }
 
-#endif
+#endif // USE(APPKIT)

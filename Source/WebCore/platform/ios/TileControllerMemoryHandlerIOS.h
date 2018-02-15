@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileControllerMemoryHandlerIOS_h
-#define TileControllerMemoryHandlerIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -53,4 +54,4 @@ private:
 WEBCORE_EXPORT TileControllerMemoryHandler& tileControllerMemoryHandler();
 }
 
-#endif // TileControllerMemoryHandlerIOS_h
+#endif // PLATFORM(IOS)

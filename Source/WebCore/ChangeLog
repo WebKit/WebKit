@@ -1,3 +1,106 @@
+2018-02-15  Tim Horton  <timothy_horton@apple.com>
+
+        Stop using EXCLUDED_SOURCE_FILE_NAMES for actual source files in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=182822
+
+        Reviewed by Dan Bernstein.
+
+        It's much easier to reason about things if xcconfigs don't apply extra
+        constraints to which source files actually build on a per-platform basis.
+        We should use #ifs instead like we usually do.
+
+        * Configurations/WebCore.xcconfig:
+        * Modules/geolocation/ios/GeolocationPositionIOS.mm:
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * dom/DataTransferMac.mm:
+        * editing/ios/DictationCommandIOS.cpp:
+        * editing/ios/DictationCommandIOS.h:
+        * editing/ios/EditorIOS.mm:
+        * editing/ios/WebContentReaderIOS.mm:
+        * editing/mac/EditorMac.mm:
+        * editing/mac/WebContentReaderMac.mm:
+        * page/ios/EventHandlerIOS.mm:
+        * page/ios/FrameIOS.mm:
+        * page/mac/EventHandlerMac.mm:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        * platform/ThreadCheck.h:
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/ios/AudioFileReaderIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        * platform/graphics/ios/FontCacheIOS.mm:
+        * platform/graphics/ios/GraphicsContext3DIOS.h:
+        * platform/graphics/ios/IconIOS.mm:
+        * platform/graphics/mac/ColorMac.h:
+        * platform/graphics/mac/ColorMac.mm:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.h:
+        * platform/graphics/mac/IconMac.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        * platform/ios/CursorIOS.cpp:
+        * platform/ios/DeviceMotionClientIOS.h:
+        * platform/ios/DeviceOrientationClientIOS.h:
+        * platform/ios/EventLoopIOS.mm:
+        * platform/ios/KeyEventCodesIOS.h:
+        * platform/ios/LowPowerModeNotifierIOS.mm:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        * platform/ios/RemoteCommandListenerIOS.h:
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        * platform/ios/SSLKeyGeneratorIOS.cpp:
+        * platform/ios/ScrollAnimatorIOS.h:
+        * platform/ios/ScrollAnimatorIOS.mm:
+        * platform/ios/ScrollViewIOS.mm:
+        * platform/ios/ScrollbarThemeIOS.h:
+        * platform/ios/ScrollbarThemeIOS.mm:
+        * platform/ios/SystemMemoryIOS.cpp:
+        * platform/ios/ThemeIOS.h:
+        * platform/ios/ThemeIOS.mm:
+        * platform/ios/TileControllerMemoryHandlerIOS.cpp:
+        * platform/ios/TileControllerMemoryHandlerIOS.h:
+        * platform/ios/UserAgentIOS.mm:
+        * platform/ios/ValidationBubbleIOS.mm:
+        * platform/ios/WidgetIOS.mm:
+        * platform/mac/CursorMac.mm:
+        * platform/mac/EventLoopMac.mm:
+        * platform/mac/LocalCurrentGraphicsContext.h:
+        * platform/mac/LocalCurrentGraphicsContext.mm:
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/NSScrollerImpDetails.mm:
+        * platform/mac/PasteboardMac.mm:
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        * platform/mac/PlatformPasteboardMac.mm:
+        * platform/mac/PlatformScreenMac.mm:
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        * platform/mac/ThreadCheck.mm:
+        * platform/mac/UserAgentMac.mm:
+        * platform/mac/WebCoreView.h:
+        * platform/mac/WebCoreView.m:
+        * platform/mac/WidgetMac.mm:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.h:
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        * platform/network/ios/WebCoreURLResponseIOS.h:
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+
 2018-02-15  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderTableSection::addChild() to RenderTreeBuilder

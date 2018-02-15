@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimatorIOS_h
-#define ScrollAnimatorIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include "ScrollAnimator.h"
 
@@ -69,4 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ScrollAnimatorIOS_h
+#endif // PLATFORM(IOS)

@@ -26,8 +26,12 @@
 #include "config.h"
 #include "Sound.h"
 
+#if !PLATFORM(MAC)
+
 namespace PAL {
 
 void systemBeep() { }
 
 } // namespace PAL
+
+#endif // !PLATFORM(MAC)

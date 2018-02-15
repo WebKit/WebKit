@@ -26,6 +26,8 @@
 #include "config.h"
 #include "KillRing.h"
 
+#if !PLATFORM(MAC)
+
 namespace PAL {
 
 void KillRing::append(const String&)
@@ -50,3 +52,5 @@ void KillRing::setToYankedState()
 }
 
 } // namespace PAL
+
+#endif // !PLATFORM(MAC)

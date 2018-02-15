@@ -751,4 +751,5 @@ void Frame::resetAllGeolocationPermission()
 }
 
 } // namespace WebCore
+
 #endif // PLATFORM(IOS)

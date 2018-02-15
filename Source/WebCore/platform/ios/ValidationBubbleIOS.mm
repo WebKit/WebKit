@@ -26,6 +26,7 @@
 #import "config.h"
 
 #if PLATFORM(IOS)
+
 #import "ValidationBubble.h"
 
 #import <pal/spi/ios/UIKitSPI.h>

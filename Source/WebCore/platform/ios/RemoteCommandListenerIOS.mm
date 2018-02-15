@@ -148,4 +148,4 @@ void RemoteCommandListenerIOS::updateSupportedCommands()
 
 }
 
-#endif
+#endif // PLATFORM(IOS)

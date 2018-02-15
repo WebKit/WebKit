@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformSpeechSynthesizer.h"
+#import "config.h"
+#import "PlatformSpeechSynthesizer.h"
 
-#include "PlatformSpeechSynthesisUtterance.h"
-#include "PlatformSpeechSynthesisVoice.h"
-#include <AppKit/NSSpeechSynthesizer.h>
-#include <pal/spi/mac/SpeechSynthesisSPI.h>
-#include <wtf/RetainPtr.h>
+#if ENABLE(SPEECH_SYNTHESIS) && PLATFORM(MAC)
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#import "PlatformSpeechSynthesisUtterance.h"
+#import "PlatformSpeechSynthesisVoice.h"
+#import <AppKit/NSSpeechSynthesizer.h>
+#import <pal/spi/mac/SpeechSynthesisSPI.h>
+#import <wtf/RetainPtr.h>
 
 @interface WebSpeechSynthesisWrapper : NSObject<NSSpeechSynthesizerDelegate>
 {
@@ -279,4 +279,4 @@ void PlatformSpeechSynthesizer::cancel()
 
 } // namespace WebCore
 
-#endif // ENABLE(SPEECH_SYNTHESIS)
+#endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(MAC)

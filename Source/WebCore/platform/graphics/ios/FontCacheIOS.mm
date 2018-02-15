@@ -29,6 +29,8 @@
 #import "config.h"
 #import "FontCache.h"
 
+#if PLATFORM(IOS)
+
 #import "FontCascade.h"
 #import "RenderThemeIOS.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -168,3 +170,5 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

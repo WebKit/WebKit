@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeIOS_h
-#define ScrollbarThemeIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include "ScrollbarThemeComposite.h"
 
@@ -65,4 +66,4 @@ public:
 
 }
 
-#endif // ScrollbarThemeIOS_h
+#endif // PLATFORM(IOS)

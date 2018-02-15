@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if PLATFORM(IOS)
+
 #include "ThemeCocoa.h"
 
 namespace WebCore {
@@ -35,3 +37,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

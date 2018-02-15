@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Widget.h"
 
+#if PLATFORM(MAC)
+
 #import "Chrome.h"
 #import "Cursor.h"
 #import "Document.h"
@@ -348,3 +350,5 @@ void Widget::setPlatformWidget(NSView *widget)
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

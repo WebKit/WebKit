@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if USE(APPKIT)
+
 #import "WebCoreView.h"
 
 @interface NSClipView (WebCoreView)
@@ -63,3 +66,4 @@
 
 @end
 
+#endif // USE(APPKIT)

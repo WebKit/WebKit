@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollbarThemeIOS.h"
 
+#if PLATFORM(IOS)
+
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PlatformMouseEvent.h"
@@ -117,3 +119,5 @@ bool ScrollbarThemeIOS::paint(Scrollbar&, GraphicsContext&, const IntRect& /*dam
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

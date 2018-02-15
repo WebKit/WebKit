@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsContext3DIOS_h
-#define GraphicsContext3DIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #define glBindFramebufferEXT glBindFramebuffer
 #define glBindRenderbufferEXT glBindRenderbuffer
@@ -70,4 +71,4 @@
 #define GL_STENCIL_ATTACHMENT_EXT GL_STENCIL_ATTACHMENT
 #define GL_UNSIGNED_INT_8_8_8_8_REV GL_UNSIGNED_BYTE
 
-#endif // GraphicsContext3DIOS_h
+#endif // PLATFORM(IOS)

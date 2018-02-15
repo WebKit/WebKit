@@ -29,6 +29,8 @@
 #import "config.h"
 #import "WebCoreURLResponseIOS.h"
 
+#if PLATFORM(IOS)
+
 #import "QuickLook.h"
 #import "UTIUtilities.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -74,3 +76,5 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

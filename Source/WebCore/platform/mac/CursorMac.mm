@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Cursor.h"
 
+#if PLATFORM(MAC)
+
 #import <objc/runtime.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -382,3 +384,5 @@ NSCursor *Cursor::platformCursor() const
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

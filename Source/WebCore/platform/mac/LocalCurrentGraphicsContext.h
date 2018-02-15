@@ -17,8 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#pragma once
+
 #include "GraphicsContext.h"
 #include <wtf/Noncopyable.h>
+
+#if USE(APPKIT)
 
 OBJC_CLASS NSGraphicsContext;
 
@@ -52,3 +56,5 @@ private:
 };
 
 }
+
+#endif // USE(APPKIT)

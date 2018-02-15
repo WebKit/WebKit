@@ -25,6 +25,8 @@
 #import "config.h"
 #import "Pasteboard.h"
 
+#if PLATFORM(IOS)
+
 #import "DragData.h"
 #import "Image.h"
 #import "NotImplemented.h"
@@ -450,3 +452,5 @@ Vector<String> Pasteboard::readFilePaths()
 }
 
 }
+
+#endif // PLATFORM(IOS)

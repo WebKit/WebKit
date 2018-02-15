@@ -22,19 +22,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformSpeechSynthesizer.h"
+#import "config.h"
+#import "PlatformSpeechSynthesizer.h"
 
-#if PLATFORM(IOS)
+#if ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS)
 
-#if ENABLE(SPEECH_SYNTHESIS)
-
-#include "PlatformSpeechSynthesisUtterance.h"
-#include "PlatformSpeechSynthesisVoice.h"
-#include <AVFoundation/AVSpeechSynthesis.h>
-#include <wtf/BlockObjCExceptions.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/SoftLinking.h>
+#import "PlatformSpeechSynthesisUtterance.h"
+#import "PlatformSpeechSynthesisVoice.h"
+#import <AVFoundation/AVSpeechSynthesis.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVSpeechSynthesizer)
@@ -281,6 +279,4 @@ void PlatformSpeechSynthesizer::cancel()
 
 } // namespace WebCore
 
-#endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif // PLATFORM(IOS)
+#endif // ENABLE(SPEECH_SYNTHESIS) && PLATFORM(IOS)

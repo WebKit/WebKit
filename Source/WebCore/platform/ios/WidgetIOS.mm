@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Widget.h"
 
+#if PLATFORM(IOS)
+
 #import "Cursor.h"
 #import "Document.h"
 #import "FontCascade.h"
@@ -273,3 +275,5 @@ void Widget::setPlatformWidget(NSView *widget)
 }
 
 }
+
+#endif // PLATFORM(IOS)

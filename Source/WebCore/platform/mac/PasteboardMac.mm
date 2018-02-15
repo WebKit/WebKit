@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Pasteboard.h"
 
+#if PLATFORM(MAC)
+
 #import "DragData.h"
 #import "Image.h"
 #import "LegacyNSPasteboardTypes.h"
@@ -673,3 +675,5 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
 #endif
 
 }
+
+#endif // PLATFORM(MAC)

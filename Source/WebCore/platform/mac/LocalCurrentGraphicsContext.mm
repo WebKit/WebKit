@@ -20,6 +20,8 @@
 #include "config.h"
 #include "LocalCurrentGraphicsContext.h"
 
+#if USE(APPKIT)
+
 #include <AppKit/NSGraphicsContext.h>
 
 namespace WebCore {
@@ -62,3 +64,5 @@ CGContextRef LocalCurrentGraphicsContext::cgContext()
 }
 
 }
+
+#endif // USE(APPKIT)

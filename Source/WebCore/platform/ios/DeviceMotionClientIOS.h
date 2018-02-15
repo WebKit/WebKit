@@ -23,19 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceMotionClientIOS_h
-#define DeviceMotionClientIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include "DeviceMotionClient.h"
 #include "DeviceMotionController.h"
 #include "DeviceMotionData.h"
 #include <wtf/RefPtr.h>
 
-#ifdef __OBJC__
-@class WebCoreMotionManager;
-#else
-class WebCoreMotionManager;
-#endif
+OBJC_CLASS WebCoreMotionManager;
 
 namespace WebCore {
 
@@ -60,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-#endif // DeviceMotionClientIOS_h
+#endif // PLATFORM(IOS)

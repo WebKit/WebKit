@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebContentReader.h"
 
+#if PLATFORM(MAC)
+
 #import "ArchiveResource.h"
 #import "Document.h"
 #import "DocumentFragment.h"
@@ -62,3 +64,5 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 }
 
 }
+
+#endif // PLATFORM(MAC)

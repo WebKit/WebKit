@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebCore_NSScrollerImpDetails_h
-#define WebCore_NSScrollerImpDetails_h
+#pragma once
+
+#if USE(APPKIT)
 
 namespace WebCore {
 
@@ -32,4 +33,4 @@ NSScrollerStyle recommendedScrollerStyle();
 
 }
 
-#endif
+#endif // USE(APPKIT)

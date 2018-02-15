@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ColorMac.h"
 
+#if USE(APPKIT)
+
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -113,3 +115,5 @@ NSColor *nsColor(const Color& color)
 
 
 } // namespace WebCore
+
+#endif // USE(APPKIT)

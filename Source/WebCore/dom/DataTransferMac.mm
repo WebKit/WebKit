@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DataTransfer.h"
 
+#if PLATFORM(MAC)
+
 #import "CachedImage.h"
 #import "Element.h"
 #import "DragImage.h"
@@ -58,3 +60,5 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
 }
 
 }
+
+#endif // PLATFORM(MAC)

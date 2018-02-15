@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformScreen.h"
 
+#if PLATFORM(IOS)
+
 #import "Device.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
@@ -153,3 +155,5 @@ float screenScaleFactor(UIScreen *screen)
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

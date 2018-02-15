@@ -26,6 +26,8 @@
 #import "config.h"
 #import "EventHandler.h"
 
+#if PLATFORM(IOS)
+
 #import "AXObjectCache.h"
 #import "AutoscrollController.h"
 #import "Chrome.h"
@@ -632,3 +634,5 @@ bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPositi
 #endif
 
 }
+
+#endif // PLATFORM(IOS)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EventLoop.h"
 
+#if PLATFORM(IOS)
+
 #include <CoreFoundation/CFRunLoop.h>
 
 namespace WebCore {
@@ -37,3 +39,5 @@ void EventLoop::cycle()
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

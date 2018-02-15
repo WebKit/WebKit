@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeMac_h
-#define ScrollbarThemeMac_h
+#pragma once
 
 #include "ScrollbarThemeComposite.h"
+
+#if PLATFORM(MAC)
 
 namespace WebCore {
 
@@ -99,4 +100,4 @@ protected:
 
 }
 
-#endif
+#endif // PLATFORM(MAC)

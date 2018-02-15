@@ -23,25 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ScrollbarThemeMac.h"
+#import "config.h"
+#import "ScrollbarThemeMac.h"
 
-#include "ColorMac.h"
-#include "GraphicsLayer.h"
-#include "ImageBuffer.h"
-#include "LocalCurrentGraphicsContext.h"
-#include "NSScrollerImpDetails.h"
-#include "PlatformMouseEvent.h"
-#include "ScrollAnimatorMac.h"
-#include "ScrollView.h"
-#include <Carbon/Carbon.h>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <pal/spi/mac/NSScrollerImpSPI.h>
-#include <wtf/BlockObjCExceptions.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/SetForScope.h>
-#include <wtf/StdLibExtras.h>
+#if PLATFORM(MAC)
+
+#import "ColorMac.h"
+#import "GraphicsLayer.h"
+#import "ImageBuffer.h"
+#import "LocalCurrentGraphicsContext.h"
+#import "NSScrollerImpDetails.h"
+#import "PlatformMouseEvent.h"
+#import "ScrollAnimatorMac.h"
+#import "ScrollView.h"
+#import <Carbon/Carbon.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/SetForScope.h>
+#import <wtf/StdLibExtras.h>
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
@@ -632,3 +634,5 @@ void ScrollbarThemeMac::setUpContentShadowLayer(GraphicsLayer* graphicsLayer)
 #endif
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "KillRing.h"
 
+#if PLATFORM(MAC)
+
 namespace PAL {
 
 extern "C" {
@@ -87,3 +89,4 @@ void KillRing::setToYankedState()
 
 } // namespace PAL
 
+#endif // PLATFORM(MAC)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EventLoop.h"
 
+#if PLATFORM(MAC)
+
 namespace WebCore {
 
 void EventLoop::cycle()
@@ -42,3 +44,5 @@ void EventLoop::cycle()
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

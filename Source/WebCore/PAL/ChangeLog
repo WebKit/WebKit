@@ -1,3 +1,16 @@
+2018-02-15  Tim Horton  <timothy_horton@apple.com>
+
+        Stop using EXCLUDED_SOURCE_FILE_NAMES for actual source files in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=182822
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/PAL.xcconfig:
+        * pal/system/Sound.cpp:
+        * pal/system/mac/SoundMac.mm:
+        * pal/text/KillRing.cpp:
+        * pal/text/mac/KillRingMac.mm:
+
 2018-02-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make PAL headers copies

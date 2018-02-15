@@ -21,7 +21,7 @@
 #import "config.h"
 #import "Icon.h"
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #import "GraphicsContext.h"
 #import "IntRect.h"
@@ -103,4 +103,4 @@ void Icon::paint(GraphicsContext& context, const FloatRect& rect)
 
 }
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

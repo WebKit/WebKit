@@ -26,6 +26,8 @@
 #import "config.h"
 #import "UserAgent.h"
 
+#if PLATFORM(IOS)
+
 #import "Device.h"
 #import "SystemVersion.h"
 #import <pal/spi/ios/MobileGestaltSPI.h>
@@ -96,3 +98,5 @@ String standardUserAgentWithApplicationName(const String& applicationName)
 }
 
 } // namespace WebCore.
+
+#endif // PLATFORM(IOS)

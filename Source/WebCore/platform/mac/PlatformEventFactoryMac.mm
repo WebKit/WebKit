@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformEventFactoryMac.h"
 
+#if PLATFORM(MAC)
+
 #import "KeyEventCocoa.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
@@ -859,3 +861,5 @@ PlatformKeyboardEvent PlatformEventFactory::createPlatformKeyboardEvent(NSEvent 
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

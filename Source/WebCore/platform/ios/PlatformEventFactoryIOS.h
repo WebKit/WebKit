@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformEventFactoryIOS_h
-#define PlatformEventFactoryIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -34,7 +35,7 @@
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
 #endif
 
-@class WebEvent;
+OBJC_CLASS WebEvent;
 
 namespace WebCore {
 
@@ -55,4 +56,4 @@ WEBCORE_EXPORT String keyIdentifierForKeyEvent(WebEvent *);
 
 } // namespace WebCore
 
-#endif // PlatformEventFactoryIOS_h
+#endif // PLATFORM(IOS)

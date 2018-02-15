@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Editor.h"
 
+#if PLATFORM(IOS)
+
 #import "CSSComputedStyleDeclaration.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CachedImage.h"
@@ -394,3 +396,5 @@ void Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping()
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

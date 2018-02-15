@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TileControllerMemoryHandlerIOS.h"
 
+#if PLATFORM(IOS)
+
 #include "TileController.h"
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -85,3 +87,5 @@ TileControllerMemoryHandler& tileControllerMemoryHandler()
 }
 
 }
+
+#endif // PLATFORM(IOS)

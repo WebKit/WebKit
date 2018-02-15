@@ -25,10 +25,12 @@
  */
 
 
-#include "config.h"
-#include "NSScrollerImpDetails.h"
+#import "config.h"
+#import "NSScrollerImpDetails.h"
 
-#include "DeprecatedGlobalSettings.h"
+#if USE(APPKIT)
+
+#import "DeprecatedGlobalSettings.h"
 
 namespace WebCore {
 
@@ -40,3 +42,5 @@ NSScrollerStyle recommendedScrollerStyle()
 }
 
 }
+
+#endif // USE(APPKIT)

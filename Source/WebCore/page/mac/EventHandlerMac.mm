@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EventHandler.h"
 
+#if PLATFORM(MAC)
+
 #include "AXObjectCache.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -1155,3 +1157,5 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 }
 
 }
+
+#endif // PLATFORM(MAC)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DisplayRefreshMonitorIOS.h"
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(IOS)
 
 #import "WebCoreThread.h"
 #import <QuartzCore/QuartzCore.h>
@@ -118,4 +118,4 @@ void DisplayRefreshMonitorIOS::displayLinkFired()
 
 }
 
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(IOS)

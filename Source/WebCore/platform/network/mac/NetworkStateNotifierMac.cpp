@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
+#if PLATFORM(MAC)
+
 #include <SystemConfiguration/SystemConfiguration.h>
 
 namespace WebCore {
@@ -96,3 +98,5 @@ void NetworkStateNotifier::startObserving()
 }
     
 }
+
+#endif // PLATFORM(MAC)

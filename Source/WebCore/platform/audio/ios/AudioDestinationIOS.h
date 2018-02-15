@@ -27,8 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationIOS_h
-#define AudioDestinationIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
@@ -75,5 +76,4 @@ private:
 
 } // namespace WebCore
 
-#endif // AudioDestinationIOS_h
-
+#endif // PLATFORM(IOS)

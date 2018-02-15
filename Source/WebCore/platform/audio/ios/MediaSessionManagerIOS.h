@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManageriOS_h
-#define MediaSessionManageriOS_h
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -87,7 +86,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // MediaSessionManageriOS_h
 
 #endif // PLATFORM(IOS)

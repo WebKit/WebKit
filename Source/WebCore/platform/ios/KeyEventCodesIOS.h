@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyEventCodesIOS_h
-#define KeyEventCodesIOS_h
+#pragma once
+
+#if TARGET_OS_IOS
 
 // Unicodes we reserve for function keys on the keyboard,
 // OpenStep reserves the range 0xF700-0xF8FF for this purpose.
@@ -118,4 +119,4 @@ enum {
     NSDeleteCharacter = 0x007f
 };
 
-#endif // KeyEventCodesIOS_h
+#endif // TARGET_OS_IOS

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GeolocationPosition.h"
+#import "config.h"
+#import "GeolocationPosition.h"
 
 #if PLATFORM(IOS)
 
@@ -52,4 +52,4 @@ GeolocationPosition::GeolocationPosition(CLLocation* location)
 
 }
 
-#endif
+#endif // PLATFORM(IOS)

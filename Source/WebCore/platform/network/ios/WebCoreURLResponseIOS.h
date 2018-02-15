@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreURLResponseIOS_h
-#define WebCoreURLResponseIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #ifdef __OBJC__
 #include "WebCoreURLResponse.h"
@@ -60,4 +61,4 @@ inline bool shouldUseQuickLookForMIMEType(const WTF::String& mimeType)
 
 } // namespace WebCore
 
-#endif // WebCoreURLResponseIOS_h
+#endif // PLATFORM(IOS)

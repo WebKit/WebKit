@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformEventFactoryIOS.h"
 
+#if PLATFORM(IOS)
+
 #import "IntPoint.h"
 #import "KeyEventCocoa.h"
 #import "Logging.h"
@@ -525,3 +527,5 @@ PlatformTouchEvent PlatformEventFactory::createPlatformSimulatedTouchEvent(Platf
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

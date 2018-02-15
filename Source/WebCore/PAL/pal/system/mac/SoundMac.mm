@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Sound.h"
 
+#if PLATFORM(MAC)
+
 #import <AppKit/AppKit.h>
 
 namespace PAL {
@@ -33,3 +35,5 @@ namespace PAL {
 void systemBeep() { NSBeep(); }
 
 } // namespace PAL
+
+#endif // PLATFORM(MAC)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformPasteboard.h"
 
+#if PLATFORM(MAC)
+
 #import "Color.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "Pasteboard.h"
@@ -310,3 +312,5 @@ long PlatformPasteboard::setStringForType(const String& string, const String& pa
 }
 
 }
+
+#endif // PLATFORM(MAC)

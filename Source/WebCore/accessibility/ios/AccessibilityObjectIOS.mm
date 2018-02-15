@@ -25,14 +25,14 @@
 
 #import "config.h"
 #import "AccessibilityObject.h"
+
+#if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
+
 #import "AccessibilityRenderObject.h"
 #import "EventNames.h"
 #import "HTMLInputElement.h"
 #import "RenderObject.h"
 #import "WAKView.h"
-
-#if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
-
 #import "WebAccessibilityObjectWrapperIOS.h"
 
 namespace WebCore {

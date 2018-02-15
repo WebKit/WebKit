@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ThemeIOS.h"
 
+#if PLATFORM(IOS)
+
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
@@ -48,3 +50,5 @@ bool ThemeIOS::userPrefersReducedMotion() const
 }
 
 }
+
+#endif // PLATFORM(IOS)

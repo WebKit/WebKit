@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
-
 #import "config.h"
 #import "Icon.h"
+
+#if PLATFORM(IOS)
 
 #import "BitmapImage.h"
 #import "GraphicsContext.h"

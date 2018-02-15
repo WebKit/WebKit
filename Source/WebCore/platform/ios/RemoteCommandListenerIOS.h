@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RemoteCommandListenerIOS_h
-#define RemoteCommandListenerIOS_h
+#pragma once
 
 #include "RemoteCommandListener.h"
 
@@ -59,6 +58,4 @@ protected:
 
 }
 
-#endif
-
-#endif
+#endif // PLATFORM(IOS)

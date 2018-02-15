@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ScrollView.h"
 
+#if PLATFORM(MAC)
+
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import "IntRect.h"
@@ -282,3 +284,5 @@ void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePosi
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

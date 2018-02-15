@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformScreen.h"
 
+#if PLATFORM(MAC)
+
 #import "FloatRect.h"
 #import "FrameView.h"
 #import "HostWindow.h"
@@ -169,3 +171,5 @@ NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

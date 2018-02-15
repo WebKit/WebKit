@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ThemeMac.h"
 
+#if PLATFORM(MAC)
+
 #import "AXObjectCache.h"
 #import "ControlStates.h"
 #import "GraphicsContext.h"
@@ -871,3 +873,5 @@ bool ThemeMac::userPrefersReducedMotion() const
 }
 
 }
+
+#endif // PLATFORM(MAC)

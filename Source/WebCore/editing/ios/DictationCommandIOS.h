@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DictationCommandIOS_h
-#define DictationCommandIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #import "CompositeEditCommand.h"
 #import <wtf/RetainPtr.h>
@@ -51,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-#endif
+#endif // PLATFORM(IOS)

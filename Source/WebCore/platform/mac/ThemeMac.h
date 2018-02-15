@@ -27,6 +27,8 @@
 
 #include "ThemeCocoa.h"
 
+#if PLATFORM(MAC)
+
 namespace WebCore {
 
 class ThemeMac final : public ThemeCocoa {
@@ -58,3 +60,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

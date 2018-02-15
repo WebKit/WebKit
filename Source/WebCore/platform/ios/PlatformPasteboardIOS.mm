@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformPasteboard.h"
 
+#if PLATFORM(IOS)
+
 #import "Color.h"
 #import "Image.h"
 #import "Pasteboard.h"
@@ -642,3 +644,5 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
 }
 
 }
+
+#endif // PLATFORM(IOS)

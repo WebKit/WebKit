@@ -26,10 +26,12 @@
 #import "config.h"
 #import "ThreadCheck.h"
 
+#if PLATFORM(MAC)
+
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
-#include <wtf/text/StringHash.h>
+#import <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -117,3 +119,5 @@ void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolation
             break;
     }
 }
+
+#endif // PLATFORM(MAC)

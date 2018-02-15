@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Cursor.h"
 
+#if PLATFORM(IOS)
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -257,3 +259,5 @@ IntPoint determineHotSpot(Image*, const IntPoint&)
 }
 
 }
+
+#endif // PLATFORM(IOS)

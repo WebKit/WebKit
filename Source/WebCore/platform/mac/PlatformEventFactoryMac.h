@@ -29,6 +29,8 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 
+#if PLATFORM(MAC)
+
 namespace WebCore {
 
 class PlatformEventFactory {
@@ -56,3 +58,5 @@ WEBCORE_EXPORT UInt8 keyCharForEvent(NSEvent *);
 #endif
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

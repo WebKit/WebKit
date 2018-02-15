@@ -27,8 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioFileReaderIOS_h
-#define AudioFileReaderIOS_h
+#pragma once
+
+#if PLATFORM(IOS)
 
 #include <AudioToolbox/AudioFile.h>
 #include <AudioToolbox/ExtendedAudioFile.h>
@@ -67,4 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // AudioFileReaderIOS_h
+#endif // PLATFORM(IOS)

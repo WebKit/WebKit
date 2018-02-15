@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ScrollView.h"
 
+#if PLATFORM(IOS)
+
 #import "FloatRect.h"
 #import "IntRect.h"
 #import "Logging.h"
@@ -316,3 +318,5 @@ void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePosi
 }
 
 }
+
+#endif // PLATFORM(IOS)

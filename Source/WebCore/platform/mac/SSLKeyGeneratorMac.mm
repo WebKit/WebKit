@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SSLKeyGenerator.h"
 
+#if PLATFORM(MAC)
+
 #import "LocalizedStrings.h"
 #import "URL.h"
 #import <Security/SecAsn1Coder.h>
@@ -247,3 +249,5 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& ch
 }
 
 }
+
+#endif // PLATFORM(MAC)

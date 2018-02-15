@@ -26,6 +26,8 @@
 #import "config.h"
 #import "Editor.h"
 
+#if PLATFORM(MAC)
+
 #import "Blob.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CSSValuePool.h"
@@ -299,3 +301,5 @@ void Editor::applyFontStyles(const String& fontFamily, double fontSize, unsigned
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

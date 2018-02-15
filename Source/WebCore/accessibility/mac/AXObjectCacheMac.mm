@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AXObjectCache.h"
 
-#if HAVE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY) && PLATFORM(MAC)
 
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
@@ -521,4 +521,4 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
 
 }
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(MAC)

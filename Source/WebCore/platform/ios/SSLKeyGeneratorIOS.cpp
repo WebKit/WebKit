@@ -25,6 +25,8 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
+#if PLATFORM(IOS)
+
 namespace WebCore {
 
 void getSupportedKeySizes(Vector<String>&)
@@ -39,3 +41,5 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& ch
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)

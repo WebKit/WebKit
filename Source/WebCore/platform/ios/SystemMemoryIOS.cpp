@@ -29,6 +29,8 @@
 #include "config.h"
 #include "SystemMemory.h"
 
+#if PLATFORM(IOS)
+
 #include <sys/sysctl.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
@@ -53,3 +55,5 @@ int systemMemoryLevel()
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(IOS)
