@@ -47,36 +47,21 @@ const hb_tag_t HarfBuzzFace::kernTag = HB_TAG('k', 'e', 'r', 'n');
 // to reduce the memory consumption because hb_face_t should be associated with
 // underling font data (e.g. CTFontRef, FTFace).
 
-class FaceCacheEntry : public RefCounted<FaceCacheEntry> {
-public:
-    static Ref<FaceCacheEntry> create(hb_face_t* face)
-    {
-        ASSERT(face);
-        return adoptRef(*new FaceCacheEntry(face));
-    }
-    ~FaceCacheEntry()
-    {
-        hb_face_destroy(m_face);
-    }
-
-    hb_face_t* face() { return m_face; }
-    HashMap<uint32_t, uint16_t>* glyphCache() { return &m_glyphCache; }
-
-private:
-    explicit FaceCacheEntry(hb_face_t* face)
-        : m_face(face)
-    { }
-
-    hb_face_t* m_face;
-    HashMap<uint32_t, uint16_t> m_glyphCache;
-};
-
-typedef HashMap<uint64_t, RefPtr<FaceCacheEntry>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > HarfBuzzFaceCache;
-
-static HarfBuzzFaceCache* harfBuzzFaceCache()
+HarfBuzzFace::CacheEntry::CacheEntry(hb_face_t* face)
+    : m_face(face)
 {
-    static NeverDestroyed<HarfBuzzFaceCache> s_harfBuzzFaceCache;
-    return &s_harfBuzzFaceCache.get();
+    ASSERT(m_face);
+}
+
+HarfBuzzFace::CacheEntry::~CacheEntry()
+{
+    hb_face_destroy(m_face);
+}
+
+HarfBuzzFace::Cache& HarfBuzzFace::cache()
+{
+    static NeverDestroyed<Cache> s_cache;
+    return s_cache;
 }
 
 HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
@@ -84,22 +69,22 @@ HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
     , m_uniqueID(uniqueID)
     , m_scriptForVerticalText(HB_SCRIPT_INVALID)
 {
-    HarfBuzzFaceCache::AddResult result = harfBuzzFaceCache()->add(m_uniqueID, nullptr);
+    auto result = cache().add(m_uniqueID, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = FaceCacheEntry::create(createFace());
-    result.iterator->value->ref();
-    m_face = result.iterator->value->face();
-    m_glyphCacheForFaceCacheEntry = result.iterator->value->glyphCache();
+        result.iterator->value = CacheEntry::create(createFace());
+    m_cacheEntry = result.iterator->value;
 }
 
 HarfBuzzFace::~HarfBuzzFace()
 {
-    HarfBuzzFaceCache::iterator result = harfBuzzFaceCache()->find(m_uniqueID);
-    ASSERT(result != harfBuzzFaceCache()->end());
-    ASSERT(result.get()->value->refCount() > 1);
-    result.get()->value->deref();
-    if (result.get()->value->refCount() == 1)
-        harfBuzzFaceCache()->remove(m_uniqueID);
+    auto it = cache().find(m_uniqueID);
+    ASSERT(it != cache().end());
+    ASSERT(it->value == m_cacheEntry);
+    ASSERT(it->value->refCount() > 1);
+
+    m_cacheEntry = nullptr;
+    if (it->value->refCount() == 1)
+        cache().remove(it);
 }
 
 static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
@@ -126,7 +111,7 @@ static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
 void HarfBuzzFace::setScriptForVerticalGlyphSubstitution(hb_buffer_t* buffer)
 {
     if (m_scriptForVerticalText == HB_SCRIPT_INVALID)
-        m_scriptForVerticalText = findScriptForVerticalGlyphSubstitution(m_face);
+        m_scriptForVerticalText = findScriptForVerticalGlyphSubstitution(m_cacheEntry->face());
     hb_buffer_set_script(buffer, m_scriptForVerticalText);
 }
 
