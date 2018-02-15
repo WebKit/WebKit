@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,17 +26,8 @@
 
 namespace JSC {
 
-// FIXME: This should be final, but isn't because of bizarre (and mostly wrong) things done in
-// WebAssembly.
-// https://bugs.webkit.org/show_bug.cgi?id=182649
 class ErrorInstance : public JSDestructibleObject {
 public:
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.errorInstanceSpace;
-    }
-
     typedef JSDestructibleObject Base;
     const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
@@ -77,8 +68,6 @@ public:
     JS_EXPORT_PRIVATE String sanitizedToString(ExecState*);
     
     Vector<StackFrame>* stackTrace() { return m_stackTrace.get(); }
-    
-    void finalizeUnconditionally(VM&);
 
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);

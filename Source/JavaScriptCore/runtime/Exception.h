@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,8 @@
 
 namespace JSC {
     
-class Exception final : public JSDestructibleObject {
+class Exception : public JSDestructibleObject {
 public:
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.exceptionSpace;
-    }
-
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
 
@@ -66,8 +60,6 @@ public:
     void setDidNotifyInspectorOfThrow() { m_didNotifyInspectorOfThrow = true; }
 
     ~Exception();
-    
-    void finalizeUnconditionally(VM&);
 
 private:
     Exception(VM&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,8 +56,7 @@ public:
         return m_bytecodeOffset;
     }
     
-    bool isFinalizationCandidate();
-    void finalizeUnconditionally(VM&);
+    void visitChildren(SlotVisitor&);
 
 private:
     WriteBarrier<JSCell> m_callee { };

@@ -579,8 +579,6 @@ void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
 
 void Heap::finalizeUnconditionalFinalizers()
 {
-    finalizeMarkedUnconditionalFinalizers<ErrorInstance>(vm()->errorInstancesWithFinalizers);
-    finalizeMarkedUnconditionalFinalizers<Exception>(vm()->exceptionsWithFinalizers);
     finalizeMarkedUnconditionalFinalizers<InferredType>(vm()->inferredTypesWithFinalizers);
     finalizeMarkedUnconditionalFinalizers<InferredValue>(vm()->inferredValuesWithFinalizers);
     vm()->forEachCodeBlockSpace(

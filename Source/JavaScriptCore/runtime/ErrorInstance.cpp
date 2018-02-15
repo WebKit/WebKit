@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@
 
 #include "CodeBlock.h"
 #include "InlineCallFrame.h"
-#include "IsoCellSetInlines.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
 #include "ParseInt.h"
@@ -234,33 +233,13 @@ void ErrorInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    bool isFinalizationCandidate = false;
     {
         auto locker = holdLock(thisObject->cellLock());
         if (thisObject->m_stackTrace) {
-            for (StackFrame& frame : *thisObject->m_stackTrace) {
-                if (frame.isFinalizationCandidate()) {
-                    isFinalizationCandidate = true;
-                    break;
-                }
-            }
+            for (StackFrame& frame : *thisObject->m_stackTrace)
+                frame.visitChildren(visitor);
         }
     }
-    if (isFinalizationCandidate)
-        visitor.vm().errorInstancesWithFinalizers.add(thisObject);
-}
-
-void ErrorInstance::finalizeUnconditionally(VM& vm)
-{
-    {
-        auto locker = holdLock(cellLock());
-        if (m_stackTrace) {
-            for (StackFrame& frame : *m_stackTrace)
-                frame.finalizeUnconditionally(vm);
-        }
-    }
-    
-    vm.errorInstancesWithFinalizers.remove(this);
 }
 
 bool ErrorInstance::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #include "Exception.h"
 
 #include "Interpreter.h"
-#include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -58,24 +57,9 @@ void Exception::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    bool isFinalizationCandidate = false;
     visitor.append(thisObject->m_value);
-    for (StackFrame& frame : thisObject->m_stack) {
-        if (frame.isFinalizationCandidate()) {
-            isFinalizationCandidate = true;
-            break;
-        }
-    }
-    if (isFinalizationCandidate)
-        visitor.vm().exceptionsWithFinalizers.add(thisObject);
-}
-
-void Exception::finalizeUnconditionally(VM& vm)
-{
-    for (StackFrame& frame : m_stack)
-        frame.finalizeUnconditionally(vm);
-    
-    vm.exceptionsWithFinalizers.remove(this);
+    for (StackFrame& frame : thisObject->m_stack)
+        frame.visitChildren(visitor);
 }
 
 Exception::Exception(VM& vm)

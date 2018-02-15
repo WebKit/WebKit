@@ -1,3 +1,10 @@
+2018-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r228366 since it did not progress anything.
+
+        * stress/gc-error-stack.js: Removed.
+        * stress/no-gc-error-stack.js: Removed.
+
 2018-02-15  Tomas Popela  <tpopela@redhat.com>
 
         Many stress tests fail with JIT disabled

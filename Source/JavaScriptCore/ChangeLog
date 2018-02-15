@@ -1,3 +1,28 @@
+2018-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r228366 since it did not progress anything.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::visitChildren):
+        (JSC::ErrorInstance::finalizeUnconditionally): Deleted.
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::stackTrace):
+        (JSC::ErrorInstance::subspaceFor): Deleted.
+        * runtime/Exception.cpp:
+        (JSC::Exception::visitChildren):
+        (JSC::Exception::finalizeUnconditionally): Deleted.
+        * runtime/Exception.h:
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::visitChildren):
+        (JSC::StackFrame::isFinalizationCandidate): Deleted.
+        (JSC::StackFrame::finalizeUnconditionally): Deleted.
+        * runtime/StackFrame.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-02-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove monotonicallyIncreasingTime and currentTime

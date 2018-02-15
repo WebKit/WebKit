@@ -342,8 +342,6 @@ public:
     IsoSubspace boundFunctionSpace;
     IsoSubspace customGetterSetterFunctionSpace;
     IsoSubspace directEvalExecutableSpace;
-    IsoSubspace errorInstanceSpace;
-    IsoSubspace exceptionSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionExecutableSpace;
     IsoSubspace functionSpace;
@@ -365,8 +363,6 @@ public:
     IsoSubspace webAssemblyWrapperFunctionSpace;
 #endif
     
-    IsoCellSet errorInstancesWithFinalizers;
-    IsoCellSet exceptionsWithFinalizers;
     IsoCellSet executableToCodeBlockEdgesWithConstraints;
     IsoCellSet executableToCodeBlockEdgesWithFinalizers;
     IsoCellSet inferredTypesWithFinalizers;
