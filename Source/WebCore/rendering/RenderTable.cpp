@@ -133,43 +133,41 @@ static inline void resetSectionPointerIfNotBefore(WeakPtr<RenderTableSection>& s
         section.clear();
 }
 
-void RenderTable::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTable::willInsertTableColumn(RenderTableCol&, RenderObject*)
 {
-    if (is<RenderTableCol>(*child)) {
-        m_hasColElements = true;
-    } else if (is<RenderTableSection>(*child)) {
-        switch (child->style().display()) {
-            case TABLE_HEADER_GROUP:
-                resetSectionPointerIfNotBefore(m_head, beforeChild);
-                if (!m_head) {
-                    m_head = makeWeakPtr(downcast<RenderTableSection>(child.get()));
-                } else {
-                    resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
-                    if (!m_firstBody) 
-                        m_firstBody = makeWeakPtr(downcast<RenderTableSection>(child.get()));
-                }
-                break;
-            case TABLE_FOOTER_GROUP:
-                resetSectionPointerIfNotBefore(m_foot, beforeChild);
-                if (!m_foot) {
-                    m_foot = makeWeakPtr(downcast<RenderTableSection>(child.get()));
-                    break;
-                }
-                FALLTHROUGH;
-            case TABLE_ROW_GROUP:
-                resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
-                if (!m_firstBody)
-                    m_firstBody = makeWeakPtr(downcast<RenderTableSection>(child.get()));
-                break;
-            default:
-                ASSERT_NOT_REACHED();
+    m_hasColElements = true;
+}
+
+void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild)
+{
+    switch (child.style().display()) {
+    case TABLE_HEADER_GROUP:
+        resetSectionPointerIfNotBefore(m_head, beforeChild);
+        if (!m_head)
+            m_head = makeWeakPtr(child);
+        else {
+            resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+            if (!m_firstBody)
+                m_firstBody = makeWeakPtr(child);
         }
+        break;
+    case TABLE_FOOTER_GROUP:
+        resetSectionPointerIfNotBefore(m_foot, beforeChild);
+        if (!m_foot) {
+            m_foot = makeWeakPtr(child);
+            break;
+        }
+        FALLTHROUGH;
+    case TABLE_ROW_GROUP:
+        resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+        if (!m_firstBody)
+            m_firstBody = makeWeakPtr(child);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
-    if (is<RenderTableSection>(*child))
-        setNeedsSectionRecalc();
-
-    builder.insertChildToRenderTable(*this, WTFMove(child), beforeChild);
+    setNeedsSectionRecalc();
 }
 
 void RenderTable::addCaption(RenderTableCaption& caption)
