@@ -118,7 +118,7 @@ static void decodeHashSet(KeyedDecoder& decoder, const String& label, HashSet<St
     });
 }
 
-bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
+bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion)
 {
     if (!decoder.decodeString("PrevalentResourceOrigin", highLevelDomain))
         return false;
@@ -131,8 +131,10 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
     decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
 
     // Top frame stats
-    decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
-    decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+    if (modelVersion >= 11) {
+        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
+        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+    }
 
     // Subframe stats
     decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
@@ -140,7 +142,8 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
     // Subresource stats
     decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins);
     decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
-    decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
+    if (modelVersion >= 11)
+        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
 
     // Prevalent Resource
     if (!decoder.decodeBool("isPrevalentResource", isPrevalentResource))
@@ -162,11 +165,12 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
         return false;
     lastSeen = WallTime::fromRawSeconds(lastSeenTimeAsDouble);
 
-    if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction))
-        timesAccessedAsFirstPartyDueToUserInteraction = 0;
-    if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI))
-        timesAccessedAsFirstPartyDueToStorageAccessAPI = 0;
-
+    if (modelVersion >= 11) {
+        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction))
+            timesAccessedAsFirstPartyDueToUserInteraction = 0;
+        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI))
+            timesAccessedAsFirstPartyDueToStorageAccessAPI = 0;
+    }
     return true;
 }
 

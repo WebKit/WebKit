@@ -1,3 +1,19 @@
+2018-02-14  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make sure WebResourceLoadStatisticsStore::mergeWithDataFromDecoder() can ingest older plist versions and not reset the database
+        https://bugs.webkit.org/show_bug.cgi?id=182812
+        <rdar://problem/37511406>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::mergeWithDataFromDecoder):
+            Now does the following:
+            - Logs when there is a model version mismatch.
+            - Does not ingest statistics if the version on disk is newer than the supported one.
+            - Does ingest statistics if the version on disk is older than the supported one.
+            - Passes on the version found on disk to WebCore::ResourceLoadStatistics::decode().
+
 2018-02-14  Daniel Bates  <dabates@apple.com>
 
         Disallow cross-origin subresources from asking for credentials
