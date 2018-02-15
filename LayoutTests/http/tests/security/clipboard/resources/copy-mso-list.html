@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<body>
+<button onclick="runTest()">1. Copy</button>
+<div><br></div>
+<div id="source" oncopy="copy(event)" contenteditable>dummy content</div>
+<div id="destination" onpaste="paste(event)" contenteditable>2. Paste here</div>
+<script>
+
+const originalHTML = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<style>
+<!--
+ /* Font Definitions */
+
+ /* List Definitions */
+@list l0
+    {mso-list-id:1325861647;
+    mso-list-type:hybrid;
+    mso-list-template-ids:-1195895068 67698689 -655347914 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+
+ol
+    {margin-bottom:0in;}
+ul
+    {margin-bottom:0in;}
+-->
+</style>
+</head>
+
+<p class=MsoListParagraphCxSpFirst style='text-indent:-.25in;mso-list:l0 level1 lfo1'><span
+style='mso-bookmark:OLE_LINK1'><span style='mso-bookmark:OLE_LINK2'><![if !supportLists]><span
+style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
+Symbol'><span style='mso-list:Ignore'>Â·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>world<o:p></o:p></span></span></p>
+`;
+function copy(event) {
+    event.clipboardData.setData('text/html', originalHTML);
+    event.preventDefault();
+}
+
+function paste(event) {
+    parent.postMessage({
+        originalHTML,
+        html: event.clipboardData.getData('text/html'),
+        types: event.clipboardData.types,
+        items: Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})),
+    }, '*');
+}
+
+function runTest() {
+    document.getElementById('source').focus();
+    document.execCommand('selectAll');
+    document.execCommand('copy');
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+if (window.testRunner)
+    runTest();
+
+</script>
+</body>
+</html>

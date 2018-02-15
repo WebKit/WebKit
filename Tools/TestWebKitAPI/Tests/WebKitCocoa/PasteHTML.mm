@@ -156,4 +156,85 @@ TEST(PasteHTML, KeepsHTTPURLs)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('abe.png')"].boolValue);
 }
 
+TEST(PasteHTML, PreservesMSOList)
+{
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]
+        encoding:NSUTF8StringEncoding error:NULL]);
+
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
+
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/* List Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('@list l0:level1')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('[if !supportLists]')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('[endif]')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes(' style=\"text-indent:-.25in;mso-list:l0 level1 lfo1\">')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/* Style Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/Users/webkitten/Library/')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('.MsoListParagraphCxSpLast'));"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary');"];
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/* List Definitions */')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('@list l0:level1')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('[if !supportLists]')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('[endif]')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes(' style=\"text-indent:-.25in;mso-list:l0 level1 lfo1\">')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/* Style Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/Users/webkitten/Library/')"].boolValue);
+
+    [webView stringByEvaluatingJavaScript:@"editor.innerHTML = htmlInDataTransfer"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('.MsoListParagraphCxSpLast'));"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary');"];
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
+}
+
+TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
+{
+    auto *markup = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL];
+
+    writeHTMLToPasteboard([markup substringFromIndex:[markup rangeOfString:@">"].location + 1]);
+
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    [webView stringByEvaluatingJavaScript:@"window.htmlInDataTransfer = clipboardData.values[0]"];
+    [webView stringByEvaluatingJavaScript:@"window.pastedHTML = editor.innerHTML"];
+
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.startsWith('<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/* List Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('@list l0:level1')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('[if !supportLists]')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('[endif]')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes(' style=\"text-indent:-.25in;mso-list:l0 level1 lfo1\">')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/* Style Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/Users/webkitten/Library/')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('.MsoListParagraphCxSpLast'));"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary');"];
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
+
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/* List Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('@list l0:level1')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('[if !supportLists]')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('[endif]')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes(' style=\"text-indent:-.25in;mso-list:l0 level1 lfo1\">')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/* Style Definitions */')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/Users/webkitten/Library/')"].boolValue);
+
+    [webView stringByEvaluatingJavaScript:@"editor.innerHTML = htmlInDataTransfer"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('.MsoListParagraphCxSpLast'));"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary');"];
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
+}
+
+
 #endif // WK_API_ENABLED && PLATFORM(COCOA)

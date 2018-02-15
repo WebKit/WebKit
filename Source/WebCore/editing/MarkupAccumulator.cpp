@@ -199,6 +199,12 @@ void MarkupAccumulator::appendEndTag(const Element& element)
     appendEndMarkup(m_markup, element);
 }
 
+void MarkupAccumulator::appendTextSubstring(const Text& text, unsigned start, unsigned length)
+{
+    ASSERT(start + length <= text.data().length());
+    appendCharactersReplacingEntities(m_markup, text.data(), start, length, entityMaskForText(text));
+}
+
 size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
 {
     size_t length = 0;
