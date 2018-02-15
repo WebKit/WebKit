@@ -1,3 +1,23 @@
+2018-02-15  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make sure WebResourceLoadStatisticsStore::mergeWithDataFromDecoder() can ingest older plist versions and not reset the database
+        https://bugs.webkit.org/show_bug.cgi?id=182812
+        <rdar://problem/37511406>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Tested manually between versions of Safari.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::decode):
+            Now only expects these fields for model version 11 or higher:
+            - topFrameUniqueRedirectsTo
+            - topFrameUniqueRedirectsFrom
+            - subresourceUniqueRedirectsFrom
+            - timesAccessedAsFirstPartyDueToUserInteraction
+            - timesAccessedAsFirstPartyDueToStorageAccessAPI
+        * loader/ResourceLoadStatistics.h:
+
 2018-02-15  Tim Horton  <timothy_horton@apple.com>
 
         Stop using EXCLUDED_SOURCE_FILE_NAMES for actual source files in WebCore

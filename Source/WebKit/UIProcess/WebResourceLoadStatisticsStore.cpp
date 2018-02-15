@@ -803,8 +803,10 @@ void WebResourceLoadStatisticsStore::mergeWithDataFromDecoder(KeyedDecoder& deco
     if (!decoder.decodeUInt32("version", versionOnDisk))
         return;
 
-    if (versionOnDisk != statisticsModelVersion)
+    if (versionOnDisk > statisticsModelVersion) {
+        WTFLogAlways("Found resource load statistics on disk with model version %u whereas the highest supported version is %u. Resetting.", versionOnDisk, statisticsModelVersion);
         return;
+    }
 
     double endOfGrandfatheringTimestamp;
     if (decoder.decodeDouble("endOfGrandfatheringTimestamp", endOfGrandfatheringTimestamp))
@@ -813,8 +815,8 @@ void WebResourceLoadStatisticsStore::mergeWithDataFromDecoder(KeyedDecoder& deco
         m_endOfGrandfatheringTimestamp = { };
 
     Vector<ResourceLoadStatistics> loadedStatistics;
-    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
-        return statistics.decode(decoderInner);
+    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [versionOnDisk](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
+        return statistics.decode(decoderInner, versionOnDisk);
     });
 
     if (!succeeded)
