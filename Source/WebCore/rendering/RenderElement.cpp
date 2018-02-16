@@ -456,11 +456,8 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     }
 }
 
-void RenderElement::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderElement::didInsertChild(RenderObject& child, RenderObject*)
 {
-    auto& child = *newChild;
-    builder.insertChildToRenderElement(*this, WTFMove(newChild), beforeChild);
-
     if (is<RenderText>(child))
         downcast<RenderText>(child).styleDidChange(StyleDifferenceEqual, nullptr);
     // SVG creates renderers for <g display="none">, as SVG requires children of hidden

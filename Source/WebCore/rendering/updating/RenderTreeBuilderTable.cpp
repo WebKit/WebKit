@@ -168,7 +168,7 @@ void RenderTreeBuilder::Table::insertChild(RenderTableRow& parent, RenderPtr<Ren
 
     auto& newChild = *child.get();
     ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
-    parent.RenderElement::addChild(m_builder, WTFMove(child), beforeChild);
+    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
     // FIXME: child should always be a RenderTableCell at this point.
     if (is<RenderTableCell>(newChild))
         parent.didInsertTableCell(downcast<RenderTableCell>(newChild), beforeChild);
@@ -183,7 +183,7 @@ void RenderTreeBuilder::Table::insertChild(RenderTableSection& parent, RenderPtr
     if (is<RenderTableRow>(*child.get()))
         parent.willInsertTableRow(downcast<RenderTableRow>(*child.get()), beforeChild);
     ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
-    parent.RenderElement::addChild(m_builder, WTFMove(child), beforeChild);
+    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -197,7 +197,7 @@ void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<Render
     else if (is<RenderTableCol>(newChild))
         parent.willInsertTableColumn(downcast<RenderTableCol>(newChild), beforeChild);
 
-    parent.RenderElement::addChild(m_builder, WTFMove(child), beforeChild);
+    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
 bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, const RenderObject& child)

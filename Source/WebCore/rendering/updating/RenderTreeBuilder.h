@@ -63,7 +63,6 @@ public:
     static RenderTreeBuilder* current() { return s_current; }
 
     // These functions are temporary until after all block/inline/continuation code is moved over.
-    void insertChildToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
@@ -95,6 +94,7 @@ private:
     RenderPtr<RenderObject> takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child);
 
     void insertChildToRenderGrid(RenderGrid& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
+    void insertChildToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }

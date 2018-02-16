@@ -1,3 +1,33 @@
+2018-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderElement::addChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182878
+        <rdar://problem/37608349>
+
+        Reviewed by Antti Koivisto.
+
+        This patch removes the last addChild() related mutation logic from the renderers.
+
+        No change in functionality.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::didInsertChild):
+        (WebCore::RenderElement::addChild): Deleted.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::isChildAllowed const):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChild):
+        (WebCore::RenderTreeBuilder::insertChildToRenderElement):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::insertChildIgnoringContinuation):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::insertChildIgnoringContinuation):
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::insertChild):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::insertChild):
+
 2018-02-16  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228546.
