@@ -27,7 +27,6 @@
 #include "AsyncStackTrace.h"
 
 #include "ScriptCallStack.h"
-#include <wtf/Ref.h>
 
 namespace Inspector {
 
@@ -97,17 +96,17 @@ void AsyncStackTrace::didCancelAsyncCall()
     m_state = State::Canceled;
 }
 
-RefPtr<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
+RefPtr<Inspector::Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() const
 {
-    RefPtr<Protocol::Console::StackTrace> topStackTrace;
-    RefPtr<Protocol::Console::StackTrace> previousStackTrace;
+    RefPtr<Inspector::Protocol::Console::StackTrace> topStackTrace;
+    RefPtr<Inspector::Protocol::Console::StackTrace> previousStackTrace;
 
     auto* stackTrace = this;
     while (stackTrace) {
         auto& callStack = stackTrace->m_callStack;
         ASSERT(callStack->size());
 
-        auto protocolObject = Protocol::Console::StackTrace::create()
+        RefPtr<Inspector::Protocol::Console::StackTrace> protocolObject = Inspector::Protocol::Console::StackTrace::create()
             .setCallFrames(callStack->buildInspectorArray())
             .release();
 
@@ -117,12 +116,12 @@ RefPtr<Protocol::Console::StackTrace> AsyncStackTrace::buildInspectorObject() co
             protocolObject->setTopCallFrameIsBoundary(true);
 
         if (!topStackTrace)
-            topStackTrace = protocolObject.ptr();
+            topStackTrace = protocolObject;
 
         if (previousStackTrace)
-            previousStackTrace->setParentStackTrace(protocolObject.ptr());
+            previousStackTrace->setParentStackTrace(protocolObject);
 
-        previousStackTrace = WTFMove(protocolObject);
+        previousStackTrace = protocolObject;
         stackTrace = stackTrace->m_parent.get();
     }
 

@@ -836,7 +836,7 @@ static JSC::JSValue webSocketAsScriptValue(JSC::ExecState& state, WebSocket* web
     return toJS(&state, deprecatedGlobalObjectForPrototype(&state), webSocket);
 }
 
-void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
+void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const String& requestId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
 {
     WebSocket* webSocket = webSocketForRequestId(requestId);
     if (!webSocket) {

@@ -43,14 +43,14 @@
 namespace {
 
 enum DOMBreakpointType {
-    SubtreeModified,
+    SubtreeModified = 0,
     AttributeModified,
     NodeRemoved,
     DOMBreakpointTypesCount
 };
 
-static const char listenerEventCategoryType[] = "listener:";
-static const char instrumentationEventCategoryType[] = "instrumentation:";
+static const char* const listenerEventCategoryType = "listener:";
+static const char* const instrumentationEventCategoryType = "instrumentation:";
 
 const uint32_t inheritableDOMBreakpointTypesMask = (1 << SubtreeModified);
 const int domBreakpointDerivedTypeShift = 16;
@@ -122,12 +122,12 @@ void InspectorDOMDebuggerAgent::discardBindings()
 
 void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString& error, const String& eventName)
 {
-    setBreakpoint(error, listenerEventCategoryType + eventName);
+    setBreakpoint(error, String(listenerEventCategoryType) + eventName);
 }
 
 void InspectorDOMDebuggerAgent::setInstrumentationBreakpoint(ErrorString& error, const String& eventName)
 {
-    setBreakpoint(error, instrumentationEventCategoryType + eventName);
+    setBreakpoint(error, String(instrumentationEventCategoryType) + eventName);
 }
 
 void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString& error, const String& eventName)
@@ -142,12 +142,12 @@ void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString& error, const String& 
 
 void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString& error, const String& eventName)
 {
-    removeBreakpoint(error, listenerEventCategoryType + eventName);
+    removeBreakpoint(error, String(listenerEventCategoryType) + eventName);
 }
 
 void InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint(ErrorString& error, const String& eventName)
 {
-    removeBreakpoint(error, instrumentationEventCategoryType + eventName);
+    removeBreakpoint(error, String(instrumentationEventCategoryType) + eventName);
 }
 
 void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString& error, const String& eventName)
@@ -375,7 +375,7 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
         m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
 }
 
-void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex)
+void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url, const bool* const optionalIsRegex)
 {
     if (url.isEmpty()) {
         m_pauseOnAllXHRsEnabled = true;

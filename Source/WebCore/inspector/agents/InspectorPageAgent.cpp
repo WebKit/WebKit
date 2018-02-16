@@ -315,7 +315,7 @@ void InspectorPageAgent::disable(ErrorString&)
     setEmulatedMedia(unused, emptyString());
 }
 
-void InspectorPageAgent::reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources)
+void InspectorPageAgent::reload(ErrorString&, const bool* const optionalReloadFromOrigin, const bool* const optionalRevalidateAllResources)
 {
     bool reloadFromOrigin = optionalReloadFromOrigin && *optionalReloadFromOrigin;
     bool revalidateAllResources = optionalRevalidateAllResources && *optionalRevalidateAllResources;
@@ -471,7 +471,7 @@ void InspectorPageAgent::getResourceContent(ErrorString& errorString, const Stri
     resourceContent(errorString, frame, URL(ParsedURLString, url), content, base64Encoded);
 }
 
-void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
+void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
     results = JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
@@ -524,7 +524,7 @@ static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(c
         .release();
 }
 
-void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
+void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
 {
     result = JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>::create();
 
