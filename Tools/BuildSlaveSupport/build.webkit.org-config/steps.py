@@ -206,10 +206,12 @@ class CompileWebKit(shell.Compile):
             self.setCommand(self.command + ['ARCHS=' + architecture])
             if platform == 'ios':
                 self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
-        # Generating dSYM files is slow, but these are needed to have line numbers in crash reports on testers.
-        # Debug builds on Yosemite can't use dSYMs, because crash logs end up unsymbolicated.
-        if platform in ('mac', 'ios') and buildOnly and (self.getProperty('fullPlatform') != "mac-yosemite" or self.getProperty('configuration') != "debug"):
+        if platform in ('mac', 'ios') and buildOnly:
+            # For build-only bots, the expectation is that tests will be run on separate machines,
+            # so we need to package debug info as dSYMs. Only generating line tables makes
+            # this much faster than full debug info, and crash logs still have line numbers.
             self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
+            self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=line-tables-only'])
 
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
