@@ -1,3 +1,33 @@
+2018-02-16  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: !m_processes[i] || *m_processes[i] == process in MessagePortChannel::entanglePortWithProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=182054
+        <rdar://problem/36871207>
+
+        Reviewed by Brady Eidson.
+
+        Pipe postMessage messages to and from service workers via the UIProcess instead of going
+        directly to the StorageProcess. This is temporarily needed to avoid races due to the
+        MessagePort registry currently living in the UIProcess and postMessage messages potentially
+        sending MessagePort objects.
+
+        This change is covered by tests on the bots that currently flakily crash in debug.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::postMessageToServiceWorker):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::postMessageToServiceWorkerClient):
+        (WebKit::WebProcessPool::postMessageToServiceWorker):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::postMessageToServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::postMessageToServiceWorkerClient):
+
 2018-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add basic support for <input type='date'> using date picker UI
