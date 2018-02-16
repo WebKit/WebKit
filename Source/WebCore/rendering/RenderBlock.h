@@ -391,7 +391,6 @@ public:
     
     void adjustBorderBoxRectForPainting(LayoutRect&) override;
     LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) override;
-    void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild) override;
     bool isInlineBlockOrInlineTable() const final { return isInline() && isReplaced(); }
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder& builder, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion normalizeAfterInsertion) { moveAllChildrenTo(builder, &toBlock, normalizeAfterInsertion); }

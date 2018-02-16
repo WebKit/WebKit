@@ -255,11 +255,6 @@ LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, unsigned, LayoutUn
     return caretRect;
 }
 
-void RenderInline::addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    builder.insertChildToRenderInlineIgnoringContinuation(*this, WTFMove(newChild), beforeChild);
-}
-
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     m_lineBoxes.paint(this, paintInfo, paintOffset);

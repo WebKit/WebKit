@@ -139,20 +139,20 @@ void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, 
         ASSERT_NOT_REACHED();
 
     if (child->isFloatingOrOutOfFlowPositioned())
-        return beforeChildAncestor->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        return m_builder.insertChildIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
 
     if (flow == beforeChildAncestor)
-        return flow->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        return m_builder.insertChildIgnoringContinuation(*flow, WTFMove(child), beforeChild);
     // A continuation always consists of two potential candidates: an inline or an anonymous
     // block box holding block children.
     bool childInline = newChildIsInline(parent, *child);
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
     if (childInline == beforeChildAncestor->isInline())
-        return beforeChildAncestor->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        return m_builder.insertChildIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
     if (flow->isInline() == childInline)
-        return flow->addChildIgnoringContinuation(m_builder, WTFMove(child)); // Just treat like an append.
-    return beforeChildAncestor->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        return m_builder.insertChildIgnoringContinuation(*flow, WTFMove(child)); // Just treat like an append.
+    return m_builder.insertChildIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::Inline::insertChildIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -306,7 +306,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             // every time, which is a bit wasteful.
         }
         auto childToMove = m_builder.takeChildFromRenderElement(*rendererToMove->parent(), *rendererToMove);
-        cloneInline->addChildIgnoringContinuation(m_builder, WTFMove(childToMove));
+        m_builder.insertChildIgnoringContinuation(*cloneInline, WTFMove(childToMove));
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
     }
@@ -334,7 +334,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             cloneInline = cloneAsContinuation(downcast<RenderInline>(*current));
 
             // Insert our child clone as the first child.
-            cloneInline->addChildIgnoringContinuation(m_builder, WTFMove(cloneChild));
+            m_builder.insertChildIgnoringContinuation(*cloneInline, WTFMove(cloneChild));
 
             // Hook the clone up as a continuation of |curr|.
             cloneInline->insertIntoContinuationChainAfter(*current);
@@ -344,7 +344,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             for (auto* sibling = currentChild->nextSibling(); sibling;) {
                 auto* next = sibling->nextSibling();
                 auto childToMove = m_builder.takeChildFromRenderElement(*current, *sibling);
-                cloneInline->addChildIgnoringContinuation(m_builder, WTFMove(childToMove));
+                m_builder.insertChildIgnoringContinuation(*cloneInline, WTFMove(childToMove));
                 sibling->setNeedsLayoutAndPrefWidthsRecalc();
                 sibling = next;
             }

@@ -1,3 +1,33 @@
+2018-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlock/RenderInline::addChildIgnoringContinuation() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182876
+        <rdar://problem/37607604>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringContinuation): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::addChildIgnoringContinuation): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation): Deleted.
+        * rendering/RenderInline.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChildIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::insertChildToRenderBlockIgnoringContinuation): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::insertChildToContinuation):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::insertChildToContinuation):
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+
 2018-02-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Unify logic of ResourceHandleCurlDelegate into ResourceHandle
