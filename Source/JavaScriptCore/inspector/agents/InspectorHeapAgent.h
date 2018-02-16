@@ -58,8 +58,8 @@ public:
     void snapshot(ErrorString&, double* timestamp, String* snapshotData) final;
     void startTracking(ErrorString&) final;
     void stopTracking(ErrorString&) final;
-    void getPreview(ErrorString&, int heapObjectId, Inspector::Protocol::OptOutput<String>* resultString, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& functionDetails, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>& objectPreview) final;
-    void getRemoteObject(ErrorString&, int heapObjectId, const String* const optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) final;
+    void getPreview(ErrorString&, int heapObjectId, std::optional<String>& resultString, RefPtr<Protocol::Debugger::FunctionDetails>&, RefPtr<Protocol::Runtime::ObjectPreview>&) final;
+    void getRemoteObject(ErrorString&, int heapObjectId, const String* optionalObjectGroup, RefPtr<Protocol::Runtime::RemoteObject>& result) final;
 
     // HeapObserver
     void willGarbageCollect() override;
@@ -68,7 +68,7 @@ public:
 protected:
     void clearHeapSnapshots();
 
-    virtual void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, double startTime, double endTime);
+    virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, double startTime, double endTime);
 
 private:
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(ErrorString&, unsigned heapObjectIdentifier);

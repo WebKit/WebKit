@@ -1,3 +1,102 @@
+2018-02-15  Darin Adler  <darin@apple.com>
+
+        Web Inspector: get rid of remaining uses of OptOutput<T>
+        https://bugs.webkit.org/show_bug.cgi?id=180607
+
+        Reviewed by Brian Burg.
+
+        * inspector/AsyncStackTrace.cpp: Removed explicit Inspector prefix from code that
+        is inside the Inspector namespace already. Also use auto a bit.
+        * inspector/AsyncStackTrace.h: Ditto.
+        * inspector/ConsoleMessage.cpp: Ditto.
+
+        * inspector/ContentSearchUtilities.cpp: More Inspector namespace removal and ...
+        (Inspector::ContentSearchUtilities::getRegularExpressionMatchesByLines): Use a
+        Vector instead of a unique_ptr<Vector>.
+        (Inspector::ContentSearchUtilities::lineEndings): Ditto.
+        (Inspector::ContentSearchUtilities::stylesheetCommentPattern): Deleted.
+        (Inspector::ContentSearchUtilities::findMagicComment): Use std::array instead of
+        a Vector for a fixed size array; also got rid of reinterpret_cast.
+        (Inspector::ContentSearchUtilities::findStylesheetSourceMapURL): Moved the regular
+        expression here since it's the only place it was used.
+
+        * inspector/ContentSearchUtilities.h: Cut down on unneeded includes.
+
+        * inspector/InjectedScript.cpp: Removed explicit Inspector prefix from code that
+        is inside the Inspector namespace already. Also use auto a bit.
+
+        * inspector/InspectorProtocolTypes.h: Removed OptOutput. Simplified assertions.
+        Removed base template for BindingTraits; we only need the specializations.
+
+        * inspector/ScriptCallFrame.cpp: Removed explicit Inspector prefix from code that
+        is inside the Inspector namespace already. Also use auto a bit.
+        * inspector/ScriptCallFrame.h: Ditto.
+        * inspector/ScriptCallStack.cpp: Ditto.
+        * inspector/ScriptCallStack.h: Ditto.
+        * inspector/agents/InspectorConsoleAgent.cpp: Ditto.
+        * inspector/agents/InspectorConsoleAgent.h: Ditto.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp: More Inspector namespace removal and ...
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame): Use std::optional& intead of
+        OptOutput* for out arguments.
+        * inspector/agents/InspectorDebuggerAgent.h: Ditto.
+
+        * inspector/agents/InspectorHeapAgent.cpp: More Inspector namespace removal and ...
+        (Inspector::InspectorHeapAgent::getPreview): Use std::optional& intead of OptOutput*
+        for out arguments.
+        * inspector/agents/InspectorHeapAgent.h: Ditto.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp: More Inspector namespace removal and ...
+        (Inspector::InspectorRuntimeAgent::parse): Use std::optional& intead of OptOutput*
+        for out arguments.
+        (Inspector::InspectorRuntimeAgent::evaluate): Ditto.
+        (Inspector::InspectorRuntimeAgent::callFunctionOn): Ditto.
+        (Inspector::InspectorRuntimeAgent::saveResult): Ditto.
+        * inspector/agents/InspectorRuntimeAgent.h: Ditto.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp: More Inspector namespace removal
+        and removed some bogus const.
+        * inspector/agents/InspectorScriptProfilerAgent.h: Ditto.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_type_for_unchecked_formal_in_parameter): Removed some bogus const.
+        (CppGenerator.cpp_type_for_type_with_name): Ditto.
+        (CppGenerator.cpp_type_for_formal_out_parameter): Use std::optional& instead of
+        Inspector::Protocol::OptOutput*.
+        (CppGenerator.cpp_type_for_formal_async_parameter): Ditto.
+        (CppGenerator.cpp_type_for_stack_in_parameter): Ditto.
+        (CppGenerator.cpp_type_for_stack_out_parameter): Ditto.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py: Removed ASSERT_DISABLED
+        conditional around assertion code which will now compile to nothing if ASSERT is disabled.
+        Build strings more simply in a few cases.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain):
+        Use has_value instead of isAssigned and * operator instead of getValue() since std::optional
+        replace OptOutput here.
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        Pass by reference instead of pointer now.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        Removed ASSERT_DISABLED conditional around assertion code which will now compile to nothing
+        if ASSERT is disabled.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_object_declaration): Generate
+        the assertion function unconditionally, but leave out the assertions if ASSERT_DISABLED is true.
+        (CppProtocolTypesImplementationGenerator): Use auto instead of writing out JSON::Object::iterator.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator._generate_conversions_for_command): Build strings
+        more simply.
+
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        Rebaselined.
+
 2018-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r228366 since it did not progress anything.

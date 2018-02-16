@@ -98,7 +98,7 @@ public:
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
-    void start(ErrorString&, const int* const maxCallStackDepth = nullptr) final;
+    void start(ErrorString&, const int* maxCallStackDepth = nullptr) final;
     void stop(ErrorString&) final;
     void setAutoCaptureEnabled(ErrorString&, bool) final;
     void setInstruments(ErrorString&, const JSON::Array&) final;

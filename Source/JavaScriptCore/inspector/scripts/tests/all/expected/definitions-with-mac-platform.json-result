@@ -238,7 +238,7 @@ void NetworkBackendDispatcher::dispatch(long requestId, const String& method, Re
     if (method == "loadResource")
         loadResource(requestId, WTFMove(parameters));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network." + method + "' was not found");
 }
 
 void NetworkBackendDispatcher::loadResource(long requestId, RefPtr<JSON::Object>&&)

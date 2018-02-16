@@ -29,9 +29,7 @@
 #pragma once
 
 #include "InspectorProtocolObjects.h"
-#include <wtf/Vector.h>
-#include <wtf/text/TextPosition.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace JSC { namespace Yarr {
 class RegularExpression;
@@ -43,9 +41,9 @@ namespace ContentSearchUtilities {
 
 JS_EXPORT_PRIVATE JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
 JS_EXPORT_PRIVATE int countRegularExpressionMatches(const JSC::Yarr::RegularExpression&, const String&);
-JS_EXPORT_PRIVATE Ref<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
+JS_EXPORT_PRIVATE Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 JS_EXPORT_PRIVATE TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
-JS_EXPORT_PRIVATE std::unique_ptr<Vector<size_t>> lineEndings(const String&);
+JS_EXPORT_PRIVATE Vector<size_t> lineEndings(const String&);
 
 JS_EXPORT_PRIVATE String findStylesheetSourceMapURL(const String& content);
 

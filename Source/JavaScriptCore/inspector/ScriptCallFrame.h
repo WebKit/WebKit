@@ -54,7 +54,7 @@ public:
 
     bool operator==(const ScriptCallFrame& other) const { return isEqual(other); }
 
-    Ref<Inspector::Protocol::Console::CallFrame> buildInspectorObject() const;
+    Ref<Protocol::Console::CallFrame> buildInspectorObject() const;
 
 private:
     String m_functionName;

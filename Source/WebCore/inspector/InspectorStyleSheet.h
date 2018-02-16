@@ -198,7 +198,7 @@ protected:
 
     // Also accessed by friend class InspectorStyle.
     virtual ExceptionOr<void> setStyleText(CSSStyleDeclaration*, const String&);
-    virtual std::unique_ptr<Vector<size_t>> lineEndings() const;
+    virtual Vector<size_t> lineEndings() const;
 
 private:
     typedef Vector<RefPtr<CSSStyleRule>> CSSStyleRuleVector;
@@ -246,7 +246,7 @@ protected:
 
     // Also accessed by friend class InspectorStyle.
     ExceptionOr<void> setStyleText(CSSStyleDeclaration*, const String&) final;
-    std::unique_ptr<Vector<size_t>> lineEndings() const final;
+    Vector<size_t> lineEndings() const final;
 
 private:
     CSSStyleDeclaration& inlineStyle() const;

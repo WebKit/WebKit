@@ -234,7 +234,7 @@ class FrontendRouter;
 class DatabaseFrontendDispatcher {
 public:
     DatabaseFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
-    void didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor);
+    void didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* notes, const double* timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* printColor);
     void didExecuteNoOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String& notes, double timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor);
 private:
     FrontendRouter& m_frontendRouter;
@@ -282,7 +282,7 @@ private:
 
 namespace Inspector {
 
-void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
+void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* notes, const double* timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* printColor)
 {
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));

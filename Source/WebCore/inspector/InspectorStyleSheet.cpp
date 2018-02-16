@@ -385,12 +385,13 @@ enum MediaListSource {
     MediaListSourceImportRule
 };
 
-static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, Vector<size_t>* lineEndings, int* endingLine = nullptr)
+static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, const Vector<size_t>& lineEndings, int* endingLine = nullptr)
 {
-    if (!lineEndings)
+    if (lineEndings.isEmpty())
         return nullptr;
-    TextPosition start = ContentSearchUtilities::textPositionFromOffset(range.start, *lineEndings);
-    TextPosition end = ContentSearchUtilities::textPositionFromOffset(range.end, *lineEndings);
+
+    TextPosition start = ContentSearchUtilities::textPositionFromOffset(range.start, lineEndings);
+    TextPosition end = ContentSearchUtilities::textPositionFromOffset(range.end, lineEndings);
 
     if (endingLine)
         *endingLine = end.m_line.zeroBasedInt();
@@ -543,7 +544,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle()
 
     RefPtr<CSSRuleSourceData> sourceData = extractSourceData();
     if (sourceData)
-        result->setRange(buildSourceRangeObject(sourceData->ruleBodyRange, m_parentStyleSheet->lineEndings().get()));
+        result->setRange(buildSourceRangeObject(sourceData->ruleBodyRange, m_parentStyleSheet->lineEndings()));
 
     return WTFMove(result);
 }
@@ -625,7 +626,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
     HashSet<String> foundShorthands;
     String previousPriority;
     String previousStatus;
-    std::unique_ptr<Vector<size_t>> lineEndings(m_parentStyleSheet ? m_parentStyleSheet->lineEndings() : nullptr);
+    Vector<size_t> lineEndings = m_parentStyleSheet ? m_parentStyleSheet->lineEndings() : Vector<size_t> { };
     auto sourceData = extractSourceData();
     unsigned ruleBodyRangeStart = sourceData ? sourceData->ruleBodyRange.start : 0;
 
@@ -667,7 +668,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
             SourceRange absolutePropertyRange = propertyEntry.range;
             absolutePropertyRange.start += ruleBodyRangeStart;
             absolutePropertyRange.end += ruleBodyRangeStart;
-            property->setRange(buildSourceRangeObject(absolutePropertyRange, lineEndings.get()));
+            property->setRange(buildSourceRangeObject(absolutePropertyRange, lineEndings));
         }
 
         if (!it->disabled) {
@@ -1149,7 +1150,7 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
         .setText(selectorText)
         .release();
     if (sourceData)
-        result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings().get(), &endingLine));
+        result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings(), &endingLine));
     return result;
 }
 
@@ -1282,10 +1283,10 @@ RefPtr<CSSRuleSourceData> InspectorStyleSheet::ruleSourceDataFor(CSSStyleDeclara
     return m_parsedStyleSheet->ruleSourceDataAt(ruleIndexByStyle(style));
 }
 
-std::unique_ptr<Vector<size_t>> InspectorStyleSheet::lineEndings() const
+Vector<size_t> InspectorStyleSheet::lineEndings() const
 {
     if (!m_parsedStyleSheet->hasText())
-        return nullptr;
+        return { };
     return ContentSearchUtilities::lineEndings(m_parsedStyleSheet->text());
 }
 
@@ -1524,7 +1525,7 @@ ExceptionOr<void> InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclar
     return { };
 }
 
-std::unique_ptr<Vector<size_t>> InspectorStyleSheetForInlineStyle::lineEndings() const
+Vector<size_t> InspectorStyleSheetForInlineStyle::lineEndings() const
 {
     return ContentSearchUtilities::lineEndings(elementStyleText());
 }
