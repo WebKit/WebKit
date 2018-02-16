@@ -56,7 +56,7 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderB
 
     auto wrapper = parent.createAnonymousBlock(parent.style().display());
     innerRenderer = wrapper.get();
-    parent.RenderFlexibleBox::addChild(m_builder, WTFMove(wrapper));
+    parent.RenderBlock::addChild(m_builder, WTFMove(wrapper));
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
@@ -69,7 +69,7 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderM
 
     auto wrapper = parent.createAnonymousBlock();
     innerRenderer = wrapper.get();
-    parent.RenderFlexibleBox::addChild(m_builder, WTFMove(wrapper));
+    parent.RenderBlock::addChild(m_builder, WTFMove(wrapper));
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }

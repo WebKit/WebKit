@@ -223,7 +223,7 @@ void RenderTreeBuilder::Block::insertChildIgnoringContinuation(RenderBlock& pare
             // No suitable existing anonymous box - create a new one.
             auto newBox = parent.createAnonymousBlock();
             auto& box = *newBox;
-            parent.RenderBox::addChild(m_builder, WTFMove(newBox), beforeChild);
+            parent.RenderElement::addChild(m_builder, WTFMove(newBox), beforeChild);
             m_builder.insertChild(box, WTFMove(child));
             return;
         }
@@ -231,7 +231,7 @@ void RenderTreeBuilder::Block::insertChildIgnoringContinuation(RenderBlock& pare
 
     parent.invalidateLineLayoutPath();
 
-    parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
+    parent.RenderElement::addChild(m_builder, WTFMove(child), beforeChild);
 
     if (madeBoxesNonInline && is<RenderBlock>(parent.parent()) && parent.isAnonymousBlock())
         removeLeftoverAnonymousBlock(parent);

@@ -1,3 +1,27 @@
+2018-02-15  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] parent.Render*::addChild() cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=182842
+        <rdar://problem/37585524>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::insertChildIgnoringContinuation):
+        * rendering/updating/RenderTreeBuilderFormControls.cpp:
+        (WebCore::RenderTreeBuilder::FormControls::createInnerRendererIfNeeded):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::insertChildIgnoringContinuation):
+        * rendering/updating/RenderTreeBuilderMathML.cpp:
+        (WebCore::RenderTreeBuilder::MathML::makeFences):
+        (WebCore::RenderTreeBuilder::MathML::insertChild):
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::insertChild):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::insertChild):
+
 2018-02-15  Megan Gardner  <megan_gardner@apple.com>
 
         Support scrolling for non-editable web-selection and start autoscroll when near screen edges
