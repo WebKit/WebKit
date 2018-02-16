@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1427,7 +1427,8 @@ static NSControlStateValue kit(TriState state)
 {
     // Copy subviews because [self subviews] returns the view's mutable internal array,
     // and we must avoid mutating the array while enumerating it.
-    for (NSView *view in adoptNS([[self subviews] copy]).get()) {
+    auto subviewsCopy = adoptNS([self.subviews copy]);
+    for (NSView *view in subviewsCopy.get()) {
         if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
             [view performSelector:selector withObject:object];
     }
