@@ -33,6 +33,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ScriptController.h"
+#include "ScriptExecutionContext.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -166,11 +167,20 @@ void AudioScheduledSourceNode::finish()
         context().decrementActiveSourceCount();
     }
 
-    if (m_hasEndedListener) {
-        callOnMainThread([protectedThis = makeRef(*this)] () mutable {
-            protectedThis->dispatchEvent(Event::create(eventNames().endedEvent, false, false));
-        });
-    }
+    if (!m_hasEndedListener)
+        return;
+
+    auto* scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return;
+
+    scriptExecutionContext->postTask([this, protectedThis = makeRef(*this)] (auto&) {
+        // Make sure ActiveDOMObjects have not been stopped after scheduling this task.
+        if (!this->scriptExecutionContext())
+            return;
+
+        this->dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+    });
 }
 
 bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)

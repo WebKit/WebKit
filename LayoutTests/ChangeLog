@@ -1,3 +1,17 @@
+2018-02-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::EventTarget::fireEventListeners
+        https://bugs.webkit.org/show_bug.cgi?id=182880
+        <rdar://problem/20788804>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * webaudio/audiobuffersource-ended-detached-frame-expected.txt: Added.
+        * webaudio/audiobuffersource-ended-detached-frame.html: Added.
+        * webaudio/resources/audiobuffersource-ended-detached-frame-iframe.html: Added.
+
 2018-02-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
