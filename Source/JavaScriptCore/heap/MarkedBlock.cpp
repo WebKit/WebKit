@@ -334,7 +334,7 @@ void MarkedBlock::Handle::removeFromDirectory()
     m_directory->removeBlock(this);
 }
 
-void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t index)
+void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t index, SecurityOriginToken securityOriginToken)
 {
     ASSERT(m_index == std::numeric_limits<size_t>::max());
     ASSERT(!m_directory);
@@ -349,7 +349,20 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t in
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
     m_endAtom = endAtom - m_atomsPerCell + 1;
     
+    if (directory->attributes().securityKind == SecurityKind::JSValueOOB) {
+        // If we are going to be used for JSValueOOB allocations, then we may need to zero the block.
+        // We don't have to zero it if it was already used for JSValues in the same security origin.
+        // It's tempting to say that this means that we don't have to zero it if it's coming from
+        // JSValueStrict, but since JSValueStrict doesn't zero when converting from DangerousBits, that
+        // would not be sound.
+        
+        if (m_attributes.securityKind != SecurityKind::JSValueOOB
+            || m_securityOriginToken != securityOriginToken)
+            fastZeroFillBytes(&block(), m_endAtom * atomSize);
+    }
+    
     m_attributes = directory->attributes();
+    m_securityOriginToken = securityOriginToken;
 
     if (m_attributes.cellKind != HeapCell::JSCell)
         RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
@@ -486,15 +499,6 @@ bool MarkedBlock::Handle::isFreeListedCell(const void* target) const
 {
     ASSERT(isFreeListed());
     return m_directory->isFreeListedCell(target);
-}
-
-void MarkedBlock::Handle::associateWithOrigin(SecurityOriginToken securityOriginToken)
-{
-    if (m_securityOriginToken == securityOriginToken)
-        return;
-    
-    fastZeroFillBytes(&block(), endAtom * atomSize);
-    m_securityOriginToken = securityOriginToken;
 }
 
 } // namespace JSC

@@ -190,12 +190,11 @@ public:
         
         void removeFromDirectory();
         
-        void didAddToDirectory(BlockDirectory*, size_t index);
+        void didAddToDirectory(BlockDirectory*, size_t index, SecurityOriginToken);
         void didRemoveFromDirectory();
         
         void dumpState(PrintStream&);
         
-        void associateWithOrigin(SecurityOriginToken);
         SecurityOriginToken securityOriginToken() const { return m_securityOriginToken; }
         
     private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,43 +24,28 @@
  */
 
 #include "config.h"
-#include "JSWebAssemblyCodeBlockHeapCellType.h"
+#include "SecurityKind.h"
 
-#if ENABLE(WEBASSEMBLY)
+#include <wtf/Assertions.h>
+#include <wtf/PrintStream.h>
 
-#include "JSCInlines.h"
-#include "JSWebAssemblyCodeBlock.h"
-#include "MarkedBlockInlines.h"
+namespace WTF {
 
-namespace JSC {
-
-struct JSWebAssemblyCodeBlockDestroyFunc {
-    ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
-    {
-        static_assert(std::is_final<JSWebAssemblyCodeBlock>::value, "Otherwise, this code would not be correct.");
-        JSWebAssemblyCodeBlock::info()->methodTable.destroy(cell);
+void printInternal(PrintStream& out, JSC::SecurityKind securityKind)
+{
+    switch (securityKind) {
+    case JSC::SecurityKind::JSValueOOB:
+        out.print("JSValueOOB");
+        return;
+    case JSC::SecurityKind::JSValueStrict:
+        out.print("JSValueStrict");
+        return;
+    case JSC::SecurityKind::DangerousBits:
+        out.print("DangerousBits");
+        return;
     }
-};
-
-JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType()
-    : HeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell, SecurityKind::DangerousBits))
-{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-JSWebAssemblyCodeBlockHeapCellType::~JSWebAssemblyCodeBlockHeapCellType()
-{
-}
+} // namespace WTF
 
-void JSWebAssemblyCodeBlockHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
-{
-    handle.finishSweepKnowingHeapCellType(freeList, JSWebAssemblyCodeBlockDestroyFunc());
-}
-
-void JSWebAssemblyCodeBlockHeapCellType::destroy(VM& vm, JSCell* cell)
-{
-    JSWebAssemblyCodeBlockDestroyFunc()(vm, cell);
-}
-
-} // namespace JSC
-
-#endif // ENABLE(WEBASSEMBLY)

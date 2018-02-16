@@ -110,7 +110,7 @@ MarkedBlock::Handle* BlockDirectory::tryAllocateBlock()
     return handle;
 }
 
-void BlockDirectory::addBlock(MarkedBlock::Handle* block)
+void BlockDirectory::addBlock(MarkedBlock::Handle* block, SecurityOriginToken securityOriginToken)
 {
     size_t index;
     if (m_freeBlockIndices.isEmpty()) {
@@ -148,7 +148,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
         });
 
     // This is the point at which the block learns of its cellSize() and attributes().
-    block->didAddToDirectory(this, index);
+    block->didAddToDirectory(this, index, securityOriginToken);
     
     setIsLive(NoLockingNecessary, index, true);
     setIsEmpty(NoLockingNecessary, index, true);

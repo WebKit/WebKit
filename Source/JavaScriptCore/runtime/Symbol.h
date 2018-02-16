@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +35,12 @@ class Symbol final : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
+
+    template<typename>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellJSValueOOBSpace;
+    }
 
     DECLARE_EXPORT_INFO;
 

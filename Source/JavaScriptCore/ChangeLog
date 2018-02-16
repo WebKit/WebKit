@@ -1,3 +1,60 @@
+2018-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Objects that contain dangerous things should be allocated far away from objects that can do OOB
+        https://bugs.webkit.org/show_bug.cgi?id=182843
+
+        Reviewed by Saam Barati.
+        
+        To complete our object distancing plan, we need to put objects that can contain unpoisoned data
+        far away from objects that cannot. Objects referenceable from JSValues cannot contain
+        unpoisoned data, but auxiliary data can. This further divides auxiliary data that is meant for
+        storing mostly JSValues from data that is meant for storing anything.
+        
+        This is achieved by having three SecurityKinds that are used for MarkedBlock selection and
+        zeroing sort of the same way SecurityOriginToken already was.
+        
+        This change shouldn't make anything slower. If anything, it will be a small speed-up because it
+        removes some cases of MarkedBlock zeroing since we don't need to zero blocks used for two of
+        the SecurityKinds.
+
+        * Sources.txt:
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::addBlock):
+        * heap/BlockDirectory.h:
+        * heap/CellAttributes.cpp:
+        (JSC::CellAttributes::dump const):
+        * heap/CellAttributes.h:
+        (JSC::CellAttributes::CellAttributes):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::allocateSlowCase):
+        (JSC::LocalAllocator::tryAllocateWithoutCollecting):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        (JSC::MarkedBlock::Handle::associateWithOrigin): Deleted.
+        * heap/MarkedBlock.h:
+        * heap/SecurityKind.cpp: Added.
+        (WTF::printInternal):
+        * heap/SecurityKind.h: Added.
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::subspaceFor):
+        * runtime/JSDestructibleObjectHeapCellType.cpp:
+        (JSC::JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType):
+        * runtime/JSObject.h:
+        (JSC::JSObject::subspaceFor):
+        * runtime/JSSegmentedVariableObjectHeapCellType.cpp:
+        (JSC::JSSegmentedVariableObjectHeapCellType::JSSegmentedVariableObjectHeapCellType):
+        * runtime/JSStringHeapCellType.cpp:
+        (JSC::JSStringHeapCellType::JSStringHeapCellType):
+        * runtime/Symbol.h:
+        (JSC::Symbol::subspaceFor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp:
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType):
+
 2018-02-15  Darin Adler  <darin@apple.com>
 
         Web Inspector: get rid of remaining uses of OptOutput<T>
