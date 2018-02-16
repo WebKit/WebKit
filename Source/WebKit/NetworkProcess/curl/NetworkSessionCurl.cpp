@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,70 +24,23 @@
  */
 
 #include "config.h"
-#include "NetworkSession.h"
-
-#include "NetworkDataTask.h"
-#include <WebCore/NetworkStorageSession.h>
-#include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
-
-#if PLATFORM(COCOA)
-#include "NetworkSessionCocoa.h"
-#endif
-#if USE(SOUP)
-#include "NetworkSessionSoup.h"
-#endif
-#if USE(CURL)
 #include "NetworkSessionCurl.h"
-#endif
 
+#include "NetworkSessionCreationParameters.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkSession> NetworkSession::create(NetworkSessionCreationParameters&& parameters)
+NetworkSessionCurl::NetworkSessionCurl(NetworkSessionCreationParameters&& parameters)
+    : NetworkSession(parameters.sessionID)
 {
-#if PLATFORM(COCOA)
-    return NetworkSessionCocoa::create(WTFMove(parameters));
-#endif
-#if USE(SOUP)
-    return NetworkSessionSoup::create(WTFMove(parameters));
-#endif
-#if USE(CURL)
-    return NetworkSessionCurl::create(WTFMove(parameters));
-#endif
+
 }
 
-NetworkStorageSession& NetworkSession::networkStorageSession() const
+NetworkSessionCurl::~NetworkSessionCurl()
 {
-    auto* storageSession = NetworkStorageSession::storageSession(m_sessionID);
-    RELEASE_ASSERT(storageSession);
-    return *storageSession;
-}
 
-NetworkSession::NetworkSession(PAL::SessionID sessionID)
-    : m_sessionID(sessionID)
-{
-}
-
-NetworkSession::~NetworkSession()
-{
-}
-
-void NetworkSession::invalidateAndCancel()
-{
-    for (auto* task : m_dataTaskSet)
-        task->invalidateAndCancel();
-}
-
-bool NetworkSession::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
-{
-#if PLATFORM(COCOA)
-    return NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge);
-#else
-    return false;
-#endif
 }
 
 } // namespace WebKit

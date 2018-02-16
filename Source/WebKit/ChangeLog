@@ -1,3 +1,14 @@
+2018-02-16  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCario] Add NetworkSessionCurl
+        https://bugs.webkit.org/show_bug.cgi?id=182680
+
+        Reviewed by Konstantin Tokarev.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::create):
+        * PlatformWin.cmake:
+
 2018-02-16  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: !m_processes[i] || *m_processes[i] == process in MessagePortChannel::entanglePortWithProcess()

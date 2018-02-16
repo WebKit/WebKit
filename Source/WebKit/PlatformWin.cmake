@@ -124,7 +124,8 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 
     list(APPEND WebKit_INCLUDE_DIRECTORIES
-        "${WEBKIT_DIR}/UIProcess/WebCoreSupport/curl"
+        "${WEBKIT_DIR}/NetworkProcess/curl"
+        "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     )
 
     list(APPEND WebKit_LIBRARIES
