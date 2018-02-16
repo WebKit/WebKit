@@ -1123,7 +1123,7 @@ Bug(WPE) svg/text/select-text-svgfont.html [ Failure ]
 Bug(WPE) svg/text/offset-square-svg-font.html [ ImageOnlyFailure ]
 webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
-webkit.org/b/178704 svg/as-image/svg-as-image-canvas.html [ Crash ]
+webkit.org/b/178704 svg/as-image/svg-as-image-canvas.html [ Crash Pass ImageOnlyFailure ]
 webkit.org/b/178704 svg/css/svg-resource-fragment-identifier-img-src.html [ Crash Pass ImageOnlyFailure ]
 
 webkit.org/b/178703 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.html [ Crash ]
@@ -1163,5 +1163,6 @@ webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Fail
 webkit.org/b/182240 svg/animations/svgenum-animation-7.html [ Pass Crash ]
 
 webkit.org/b/182244 http/tests/appcache/fail-on-update-2.html [ Failure ]
+webkit.org/b/182244 http/tests/appcache/fail-on-update.html [ Pass Failure ]
 
 webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Pass Failure ]

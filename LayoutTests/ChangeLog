@@ -1,5 +1,15 @@
 2018-02-16  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Update expectations for a couple of flaky tests
+
+        Unreviewed gardening.
+
+        http/tests/appcache/fail-on-update.html and
+        svg/as-image/svg-as-image-canvas.html are flaky.
+        * platform/wpe/TestExpectations:
+
+2018-02-16  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] New rebaseline after r228427
 
         Unreviewed gardening
