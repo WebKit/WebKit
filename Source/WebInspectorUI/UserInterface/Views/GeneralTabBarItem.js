@@ -69,7 +69,7 @@ WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
             titleContentElement.textContent = title;
             this._titleElement.appendChild(titleContentElement);
 
-            this.element.appendChild(this._titleElement);
+            this.element.insertBefore(this._titleElement, this.element.lastChild);
         } else {
             if (this._titleElement)
                 this._titleElement.remove();

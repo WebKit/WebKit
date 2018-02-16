@@ -1,3 +1,32 @@
+2018-02-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TabBar redesign: TabBarItem close button is incorrectly positioned
+        https://bugs.webkit.org/show_bug.cgi?id=182844
+        <rdar://problem/37586749>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WI.GeneralTabBarItem.prototype.set title):
+        Insert the title before the last flexible space item.
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .item):
+        (.tab-bar > .item > .close):
+        (.tab-bar > .item > .flex-space):
+        (.tab-bar > .item.ephemeral > .flex-space:last-child):
+        (.tab-bar.collapsed > .item):
+        (.tab-bar.collapsed > .item > .flex-space):
+        (.tab-bar.collapsed > .item > .close):
+        (.tab-bar.collapsed > .item:hover > .close):
+        (.tab-bar.collapsed > .item.ephemeral:hover > .icon):
+        (.tab-bar > .item:hover > .close): Deleted.
+        (.tab-bar:not(.collapsed) > .item.ephemeral:hover > .icon): Deleted.
+
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem):
+        Restore flexible space items before and after the icon.
+
 2018-02-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: completion popover doesn't hide when switching panels
