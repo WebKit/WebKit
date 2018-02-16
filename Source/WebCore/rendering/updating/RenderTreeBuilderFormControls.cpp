@@ -36,29 +36,41 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 {
 }
 
-RenderBlock& RenderTreeBuilder::FormControls::createInnerRendererIfNeeded(RenderButton& button)
+void RenderTreeBuilder::FormControls::insertChild(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto* innerRenderer = button.innerRenderer();
+    m_builder.blockBuilder().insertChild(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::FormControls::insertChild(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    auto& newChild = *child.get();
+    m_builder.blockBuilder().insertChild(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+    parent.didInsertChild(newChild, beforeChild);
+}
+
+RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderButton& parent)
+{
+    auto* innerRenderer = parent.innerRenderer();
     if (innerRenderer)
         return *innerRenderer;
 
-    auto wrapper = button.createAnonymousBlock(button.style().display());
+    auto wrapper = parent.createAnonymousBlock(parent.style().display());
     innerRenderer = wrapper.get();
-    button.RenderFlexibleBox::addChild(m_builder, WTFMove(wrapper));
-    button.setInnerRenderer(*innerRenderer);
+    parent.RenderFlexibleBox::addChild(m_builder, WTFMove(wrapper));
+    parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
 
-RenderBlock& RenderTreeBuilder::FormControls::createInnerRendererIfNeeded(RenderMenuList& menuList)
+RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderMenuList& parent)
 {
-    auto* innerRenderer = menuList.innerRenderer();
+    auto* innerRenderer = parent.innerRenderer();
     if (innerRenderer)
         return *innerRenderer;
 
-    auto wrapper = menuList.createAnonymousBlock();
+    auto wrapper = parent.createAnonymousBlock();
     innerRenderer = wrapper.get();
-    menuList.RenderFlexibleBox::addChild(m_builder, WTFMove(wrapper));
-    menuList.setInnerRenderer(*innerRenderer);
+    parent.RenderFlexibleBox::addChild(m_builder, WTFMove(wrapper));
+    parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
 
