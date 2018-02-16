@@ -1,3 +1,54 @@
+2018-02-16  Saam Barati  <sbarati@apple.com>
+
+        Fix bugs from r228411
+        https://bugs.webkit.org/show_bug.cgi?id=182851
+        <rdar://problem/37577732>
+
+        Reviewed by JF Bastien.
+
+        There was a bug from r228411 where inside the constant folding phase,
+        we used an insertCheck method that didn't handle varargs. This would
+        lead to a crash. When thinking about the fix for that function, I realized
+        a made a couple of mistakes in r228411. One is probably a security bug, and
+        the other is a performance bug because it'll prevent CSE for certain flavors
+        of GetByVal nodes. Both blunders are similar in nature.
+        
+        In r228411, I added code in LICM that inserted a CheckVarargs node with children
+        of another varargs node. However, to construct this new node's children,
+        I just copied the AdjacencyList. This does a shallow copy. What we needed
+        was a deep copy. We needed to create a new vararg AdjacencyList that points
+        to edges that are deep copies of the original varargs children. This patch
+        fixes this goof in LICM.
+        
+        r228411 made it so that PureValue over a varargs node would just compare actual
+        AdjacencyLists structs. So, if you had two GetByVals that had equal santized
+        children, their actual AdjacencyList structs are *not* bitwise equal, since they'll
+        have different firstChild values. Instead, we need to do a deep compare of their
+        adjacency lists. This patch teaches PureValue how to do that.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::copyVarargChildren):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertCheck):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGPureValue.cpp:
+        (JSC::DFG::PureValue::dump const):
+        * dfg/DFGPureValue.h:
+        (JSC::DFG::PureValue::PureValue):
+        (JSC::DFG::PureValue::op const):
+        (JSC::DFG::PureValue::hash const):
+        (JSC::DFG::PureValue::operator== const):
+        (JSC::DFG::PureValue::isVarargs const):
+        (JSC::DFG::PureValue::children const): Deleted.
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::convertToIdentityOverChild):
+
 2018-02-16  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228546.

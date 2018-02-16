@@ -788,7 +788,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 return;
             }
             // This appears to read nothing because it's only reading immutable data.
-            def(PureValue(node, mode.asWord()));
+            def(PureValue(graph, node, mode.asWord()));
             return;
             
         case Array::DirectArguments:
@@ -840,7 +840,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
 
         case Array::Undecided:
-            def(PureValue(node));
+            def(PureValue(graph, node));
             return;
             
         case Array::ArrayStorage:

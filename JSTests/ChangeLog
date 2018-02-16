@@ -1,3 +1,13 @@
+2018-02-16  Saam Barati  <sbarati@apple.com>
+
+        Fix bugs from r228411
+        https://bugs.webkit.org/show_bug.cgi?id=182851
+        <rdar://problem/37577732>
+
+        Reviewed by JF Bastien.
+
+        * stress/constant-folding-phase-insert-check-handle-varargs.js: Added.
+
 2018-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r228366 since it did not progress anything.

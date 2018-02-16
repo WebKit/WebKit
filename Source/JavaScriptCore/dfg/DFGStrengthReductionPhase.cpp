@@ -231,7 +231,7 @@ private:
             for (Node* node = m_node->child1().node(); ; node = node->child1().node()) {
                 if (canonicalResultRepresentation(node->result()) ==
                     canonicalResultRepresentation(m_node->result())) {
-                    m_insertionSet.insertCheck(m_nodeIndex, m_node);
+                    m_insertionSet.insertCheck(m_graph, m_nodeIndex, m_node);
                     if (hadInt32Check) {
                         // FIXME: Consider adding Int52RepInt32Use or even DoubleRepInt32Use,
                         // which would be super weird. The latter would only arise in some
@@ -912,7 +912,8 @@ private:
             
     void convertToIdentityOverChild(unsigned childIndex)
     {
-        m_insertionSet.insertCheck(m_nodeIndex, m_node);
+        ASSERT(!(m_node->flags() & NodeHasVarArgs));
+        m_insertionSet.insertCheck(m_graph, m_nodeIndex, m_node);
         m_node->children.removeEdge(childIndex ^ 1);
         m_node->convertToIdentity();
         m_changed = true;
