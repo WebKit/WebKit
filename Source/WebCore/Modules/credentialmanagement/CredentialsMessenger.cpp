@@ -68,7 +68,6 @@ uint64_t CredentialsMessenger::addCreationCompletionHandler(CreationCompletionHa
     messageId = messageId | CallBackClassifier::Creation << callBackClassifierOffset;
     auto addResult = m_pendingCreationCompletionHandlers.add(messageId, WTFMove(handler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    ASSERT(addResult);
     return messageId;
 }
 
@@ -86,13 +85,29 @@ uint64_t CredentialsMessenger::addRequestCompletionHandler(RequestCompletionHand
     messageId = messageId | CallBackClassifier::Request << callBackClassifierOffset;
     auto addResult = m_pendingRequestCompletionHandlers.add(messageId, WTFMove(handler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    ASSERT(addResult);
     return messageId;
 }
 
 RequestCompletionHandler CredentialsMessenger::takeRequestCompletionHandler(uint64_t messageId)
 {
     return m_pendingRequestCompletionHandlers.take(messageId);
+}
+
+uint64_t CredentialsMessenger::addQueryCompletionHandler(QueryCompletionHandler&& handler)
+{
+    using namespace CredentialsMessengerInternal;
+
+    uint64_t messageId = m_accumulatedMessageId++;
+    ASSERT(messageId < maxMessageId);
+    messageId = messageId | CallBackClassifier::Query << callBackClassifierOffset;
+    auto addResult = m_pendingQueryCompletionHandlers.add(messageId, WTFMove(handler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    return messageId;
+}
+
+QueryCompletionHandler CredentialsMessenger::takeQueryCompletionHandler(uint64_t messageId)
+{
+    return m_pendingQueryCompletionHandlers.take(messageId);
 }
 
 RefPtr<ArrayBuffer> getIdFromAttestationObject(const Vector<uint8_t>& attestationObject)

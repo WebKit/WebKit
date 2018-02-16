@@ -1,3 +1,29 @@
+2018-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=182771
+        <rdar://problem/36459988>
+
+        Reviewed by Brent Fulgham.
+
+        This patch utilizes LocalAuthentication Framework to determine if biometrics
+        are enrolled on a device, which is the user verifying platform authenticator.
+        To do so, it links the framework to WebKit.
+
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp:
+        (WebKit::WebCredentialsMessengerProxy::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebCredentialsMessengerProxy::isUserVerifyingPlatformAuthenticatorAvailableReply):
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h:
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.messages.in:
+        * UIProcess/CredentialManagement/cocoa/WebCredentialsMessengerProxyCocoa.mm:
+        (WebKit::WebCredentialsMessengerProxy::platformIsUserVerifyingPlatformAuthenticatorAvailable):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.cpp:
+        (WebKit::WebCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailableReply):
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.h:
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.messages.in:
+
 2018-02-16  Per Arne Vollan  <pvollan@apple.com>
 
         Implement stopping of run loop in the WebContent process when using NSRunLoop.

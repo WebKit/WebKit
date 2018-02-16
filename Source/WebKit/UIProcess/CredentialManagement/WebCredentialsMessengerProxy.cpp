@@ -50,8 +50,18 @@ void WebCredentialsMessengerProxy::makeCredential(uint64_t)
 {
 }
 
+void WebCredentialsMessengerProxy::isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)
+{
+    platformIsUserVerifyingPlatformAuthenticatorAvailable(messageId);
+}
+
 void WebCredentialsMessengerProxy::getAssertion(uint64_t)
 {
+}
+
+void WebCredentialsMessengerProxy::isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result)
+{
+    m_webPageProxy.send(Messages::WebCredentialsMessenger::IsUserVerifyingPlatformAuthenticatorAvailableReply(messageId, result));
 }
 
 } // namespace WebKit

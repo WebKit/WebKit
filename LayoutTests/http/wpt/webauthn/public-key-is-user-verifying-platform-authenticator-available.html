@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<title>Web Authentication API: PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    promise_test(function(t) {
+        internals.mockCredentialsMessenger;
+
+        return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function(result) {
+            assert_equals(result, false);
+        });
+    }, "PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() without any available authenticators.");
+
+    promise_test(function(t) {
+        internals.mockCredentialsMessenger.setDidUserVerifyingPlatformAuthenticatorPresent();
+
+        return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function(result) {
+            assert_equals(result, true);
+        });
+    }, "PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() with available authenticators.");
+</script>

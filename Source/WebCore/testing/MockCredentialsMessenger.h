@@ -42,6 +42,7 @@ public:
 
     void setDidTimeOut() { m_didTimeOut = true; }
     void setDidUserCancel() { m_didUserCancel = true; }
+    void setDidUserVerifyingPlatformAuthenticatorPresent() { m_didUserVerifyingPlatformAuthenticatorPresent = true; }
     void setAttestationObject(const BufferSource&);
     void setAssertionReturnBundle(const BufferSource& credentialId, const BufferSource& authenticatorData, const BufferSource& signature, const BufferSource& userHandle);
 
@@ -51,13 +52,16 @@ public:
 private:
     void makeCredential(const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, CreationCompletionHandler&&) final;
     void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) final;
+    void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) final;
     void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&) final;
     void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) final;
+    void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool) final;
 
     Internals& m_internals;
     // All following fields are disposable.
     bool m_didTimeOut { false };
     bool m_didUserCancel { false };
+    bool m_didUserVerifyingPlatformAuthenticatorPresent { false };
     Vector<uint8_t> m_attestationObject;
     Vector<uint8_t> m_credentialId;
     Vector<uint8_t> m_authenticatorData;

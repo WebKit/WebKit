@@ -23,13 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    NoInterfaceObject,
-] interface MockCredentialsMessenger {
-    void setDidTimeOut();
-    void setDidUserCancel();
-    void setDidUserVerifyingPlatformAuthenticatorPresent();
-    void setAttestationObject(BufferSource attestationObject);
-    void setAssertionReturnBundle(BufferSource credentialId, BufferSource authenticatorData, BufferSource signature, BufferSource userHandle);
-};
+#import "config.h"
+#import "WebCredentialsMessengerProxy.h"
+
+#if ENABLE(WEB_AUTHN)
+
+#import <LocalAuthentication/LocalAuthentication.h>
+#import <WebCore/NotImplemented.h>
+#import <wtf/RetainPtr.h>
+
+namespace WebKit {
+
+void WebCredentialsMessengerProxy::platformIsUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)
+{
+#if defined(__i386__)
+    ASSERT_UNUSED(messageId, messageId);
+    notImplemented();
+#else
+    auto context = adoptNS([[LAContext alloc] init]);
+    NSError *error = nil;
+
+    if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error])
+        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, true);
+    else {
+        LOG_ERROR("Couldn't evaluate authentication with biometrics policy: %@", error);
+        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, false);
+    }
+#endif // defined(__i386__)
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WEB_AUTHN)

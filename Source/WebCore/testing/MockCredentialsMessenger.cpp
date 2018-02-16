@@ -117,6 +117,16 @@ void MockCredentialsMessenger::getAssertion(const Vector<uint8_t>&, const Public
     ASSERT_NOT_REACHED();
 }
 
+void MockCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
+{
+    auto messageId = addQueryCompletionHandler(WTFMove(handler));
+    if (m_didUserVerifyingPlatformAuthenticatorPresent) {
+        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, true);
+        m_didUserVerifyingPlatformAuthenticatorPresent = false;
+    } else
+        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, false);
+}
+
 void MockCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& attestationObject)
 {
     auto handler = takeCreationCompletionHandler(messageId);
@@ -127,6 +137,12 @@ void MockCredentialsMessenger::getAssertionReply(uint64_t messageId, const Vecto
 {
     auto handler = takeRequestCompletionHandler(messageId);
     handler(AssertionReturnBundle(ArrayBuffer::create(credentialId.data(), credentialId.size()), ArrayBuffer::create(authenticatorData.data(), authenticatorData.size()), ArrayBuffer::create(signature.data(), signature.size()), ArrayBuffer::create(userHandle.data(), userHandle.size())));
+}
+
+void MockCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result)
+{
+    auto handler = takeQueryCompletionHandler(messageId);
+    handler(result);
 }
 
 } // namespace WebCore

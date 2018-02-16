@@ -30,7 +30,6 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AbortSignal.h"
-#include "AuthenticatorManager.h"
 #include "CredentialCreationOptions.h"
 #include "CredentialRequestOptions.h"
 #include "Document.h"
@@ -60,16 +59,16 @@ bool CredentialsContainer::doesHaveSameOriginAsItsAncestors()
     return true;
 }
 
-void CredentialsContainer::get(CredentialRequestOptions&& options, Ref<DeferredPromise>&& promise)
+void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPromise&& promise)
 {
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-request as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
     if (!m_document) {
-        promise->reject(Exception { NotSupportedError });
+        promise.reject(Exception { NotSupportedError });
         return;
     }
     if (options.signal && options.signal->aborted()) {
-        promise->reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+        promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
         return;
     }
     // Step 1-2.
@@ -79,7 +78,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, Ref<DeferredP
     // Step 4-6. Shortcut as we only support PublicKeyCredential which can only
     // be requested from [[discoverFromExternalSource]].
     if (!options.publicKey) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("Only PublicKeyCredential is supported.") });
+        promise.reject(Exception { NotSupportedError, ASCIILiteral("Only PublicKeyCredential is supported.") });
         return;
     }
 
@@ -87,21 +86,21 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, Ref<DeferredP
     AuthenticatorManager::singleton().discoverFromExternalSource(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
-void CredentialsContainer::store(const BasicCredential&, Ref<DeferredPromise>&& promise)
+void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
 {
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("Not implemented.") });
+    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented.") });
 }
 
-void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Ref<DeferredPromise>&& promise)
+void CredentialsContainer::isCreate(CredentialCreationOptions&& options, CredentialPromise&& promise)
 {
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-create as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
     if (!m_document) {
-        promise->reject(Exception { NotSupportedError });
+        promise.reject(Exception { NotSupportedError });
         return;
     }
     if (options.signal && options.signal->aborted()) {
-        promise->reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+        promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
         return;
     }
     // Step 1-2.
@@ -109,7 +108,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Ref<Def
 
     // Step 3-7. Shortcut as we only support one kind of credentials.
     if (!options.publicKey) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("Only PublicKeyCredential is supported.") });
+        promise.reject(Exception { NotSupportedError, ASCIILiteral("Only PublicKeyCredential is supported.") });
         return;
     }
 
@@ -117,9 +116,9 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Ref<Def
     AuthenticatorManager::singleton().create(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
-void CredentialsContainer::preventSilentAccess(Ref<DeferredPromise>&& promise) const
+void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("Not implemented.") });
+    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented.") });
 }
 
 } // namespace WebCore

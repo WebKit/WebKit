@@ -68,6 +68,7 @@ struct AssertionReturnBundle {
 
 using CreationCompletionHandler = CompletionHandler<void(ExceptionOr<CreationReturnBundle>&&)>;
 using RequestCompletionHandler = CompletionHandler<void(ExceptionOr<AssertionReturnBundle>&&)>;
+using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
 class CredentialsMessenger {
     WTF_MAKE_FAST_ALLOCATED;
@@ -75,11 +76,13 @@ public:
     // sender
     virtual void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, CreationCompletionHandler&&) = 0;
     virtual void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) = 0;
+    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
 
     // receiver
     WEBCORE_EXPORT void exceptionReply(uint64_t messageId, const ExceptionData&);
     virtual void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&) = 0;
     virtual void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) = 0;
+    virtual void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool) = 0;
 
     auto& weakPtrFactory() const { return m_weakFactory; }
 
@@ -90,6 +93,8 @@ protected:
     WEBCORE_EXPORT CreationCompletionHandler takeCreationCompletionHandler(uint64_t);
     WEBCORE_EXPORT uint64_t addRequestCompletionHandler(RequestCompletionHandler&&);
     WEBCORE_EXPORT RequestCompletionHandler takeRequestCompletionHandler(uint64_t);
+    WEBCORE_EXPORT uint64_t addQueryCompletionHandler(QueryCompletionHandler&&);
+    WEBCORE_EXPORT QueryCompletionHandler takeQueryCompletionHandler(uint64_t);
 
 private:
     WeakPtrFactory<CredentialsMessenger> m_weakFactory;
@@ -103,6 +108,7 @@ private:
     uint64_t m_accumulatedMessageId { 1 };
     HashMap<uint64_t, CreationCompletionHandler> m_pendingCreationCompletionHandlers;
     HashMap<uint64_t, RequestCompletionHandler> m_pendingRequestCompletionHandlers;
+    HashMap<uint64_t, QueryCompletionHandler> m_pendingQueryCompletionHandlers;
 };
 
 // FIXME: We shouldn't expose this into the messenger. Since the receivers can only be passed with const references, we couldn't

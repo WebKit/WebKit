@@ -33,7 +33,6 @@
 #include "AuthenticatorAttestationResponse.h"
 #include "CredentialsMessenger.h"
 #include "JSBasicCredential.h"
-#include "JSDOMPromiseDeferred.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
@@ -83,13 +82,13 @@ static Vector<uint8_t> produceClientDataJsonHash(const ArrayBuffer& clientDataJs
 }
 
 // FIXME(181947): We should probably trim timeOutInMs to some max allowable number.
-static std::unique_ptr<Timer> initTimeoutTimer(std::optional<unsigned long> timeOutInMs, const Ref<DeferredPromise>& promise)
+static std::unique_ptr<Timer> initTimeoutTimer(std::optional<unsigned long> timeOutInMs, const CredentialPromise& promise)
 {
     if (!timeOutInMs)
         return nullptr;
 
-    auto timer = std::make_unique<Timer>([promise = promise.copyRef()] () {
-        promise->reject(Exception { NotAllowedError, ASCIILiteral("Operation timed out.") });
+    auto timer = std::make_unique<Timer>([promise = promise] () mutable {
+        promise.reject(Exception { NotAllowedError, ASCIILiteral("Operation timed out.") });
     });
     timer->startOneShot(Seconds::fromMilliseconds(*timeOutInMs));
     return timer;
@@ -119,7 +118,7 @@ void AuthenticatorManager::setMessenger(CredentialsMessenger& messenger)
     m_messenger = makeWeakPtr(messenger);
 }
 
-void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const PublicKeyCredentialCreationOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, Ref<DeferredPromise>&& promise) const
+void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const PublicKeyCredentialCreationOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
 {
     using namespace AuthenticatorManagerInternal;
 
@@ -128,7 +127,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Step 1, 3, 16 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
-        promise->reject(Exception { NotAllowedError, ASCIILiteral("The origin of the document is not the same as its ancestors.") });
+        promise.reject(Exception { NotAllowedError, ASCIILiteral("The origin of the document is not the same as its ancestors.") });
         return;
     }
 
@@ -140,7 +139,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
     // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
     if (!options.rp.id.isEmpty() && callerOrigin.host() != options.rp.id) {
-        promise->reject(Exception { SecurityError, ASCIILiteral("The origin of the document is not a registrable domain suffix of the provided RP ID.") });
+        promise.reject(Exception { SecurityError, ASCIILiteral("The origin of the document is not a registrable domain suffix of the provided RP ID.") });
         return;
     }
     if (options.rp.id.isEmpty())
@@ -150,7 +149,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Most of the jobs are done by bindings. However, we can't know if the JSValue of options.pubKeyCredParams
     // is empty or not. Return NotSupportedError as long as it is empty.
     if (options.pubKeyCredParams.isEmpty()) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("No desired properties of the to be created credential are provided.") });
+        promise.reject(Exception { NotSupportedError, ASCIILiteral("No desired properties of the to be created credential are provided.") });
         return;
     }
 
@@ -163,7 +162,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, no filtering is done here regarding to options.excludeCredentials.
     if (!m_messenger)  {
-        promise->reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
+        promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
         return;
     }
 
@@ -171,22 +170,22 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
         if (didTimeoutTimerFire(timeoutTimer.get()))
             return;
         if (abortSignal && abortSignal->aborted()) {
-            promise->reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+            promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
             return;
         }
         if (result.hasException()) {
-            promise->reject(result.exception());
+            promise.reject(result.exception());
             return;
         }
 
         auto bundle = result.releaseReturnValue();
-        promise->resolve<IDLNullable<IDLInterface<BasicCredential>>>(PublicKeyCredential::create(WTFMove(bundle.credentialId), AuthenticatorAttestationResponse::create(WTFMove(clientDataJson), ArrayBuffer::create(WTFMove(bundle.attestationObject)))).ptr());
+        promise.resolve(PublicKeyCredential::create(WTFMove(bundle.credentialId), AuthenticatorAttestationResponse::create(WTFMove(clientDataJson), ArrayBuffer::create(WTFMove(bundle.attestationObject)))).ptr());
     };
     // Async operations are dispatched and handled in the messenger.
     m_messenger->makeCredential(clientDataJsonHash, options, WTFMove(completionHandler));
 }
 
-void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& callerOrigin, const PublicKeyCredentialRequestOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, Ref<DeferredPromise>&& promise) const
+void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& callerOrigin, const PublicKeyCredentialRequestOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
 {
     using namespace AuthenticatorManagerInternal;
 
@@ -195,7 +194,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
-        promise->reject(Exception { NotAllowedError, ASCIILiteral("The origin of the document is not the same as its ancestors.") });
+        promise.reject(Exception { NotAllowedError, ASCIILiteral("The origin of the document is not the same as its ancestors.") });
         return;
     }
 
@@ -207,7 +206,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
     // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
     if (!options.rpId.isEmpty() && callerOrigin.host() != options.rpId) {
-        promise->reject(Exception { SecurityError, ASCIILiteral("The origin of the document is not a registrable domain suffix of the provided RP ID.") });
+        promise.reject(Exception { SecurityError, ASCIILiteral("The origin of the document is not a registrable domain suffix of the provided RP ID.") });
         return;
     }
     if (options.rpId.isEmpty())
@@ -222,7 +221,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, no filtering is done here regarding to options.allowCredentials.
     if (!m_messenger)  {
-        promise->reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
+        promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
         return;
     }
 
@@ -230,19 +229,37 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
         if (didTimeoutTimerFire(timeoutTimer.get()))
             return;
         if (abortSignal && abortSignal->aborted()) {
-            promise->reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+            promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
             return;
         }
         if (result.hasException()) {
-            promise->reject(result.exception());
+            promise.reject(result.exception());
             return;
         }
 
         auto bundle = result.releaseReturnValue();
-        promise->resolve<IDLNullable<IDLInterface<BasicCredential>>>(PublicKeyCredential::create(WTFMove(bundle.credentialId), AuthenticatorAssertionResponse::create(WTFMove(clientDataJson), WTFMove(bundle.authenticatorData), WTFMove(bundle.signature), WTFMove(bundle.userHandle))).ptr());
+        promise.resolve(PublicKeyCredential::create(WTFMove(bundle.credentialId), AuthenticatorAssertionResponse::create(WTFMove(clientDataJson), WTFMove(bundle.authenticatorData), WTFMove(bundle.signature), WTFMove(bundle.userHandle))).ptr());
     };
     // Async operations are dispatched and handled in the messenger.
     m_messenger->getAssertion(clientDataJsonHash, options, WTFMove(completionHandler));
+}
+
+void AuthenticatorManager::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
+{
+    // The following implements https://www.w3.org/TR/webauthn/#isUserVerifyingPlatformAuthenticatorAvailable
+    // as of 5 December 2017.
+    if (!m_messenger)  {
+        promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
+        return;
+    }
+
+    // FIXME(182767): We should consider more on the assessment of the return value. Right now, we return true/false
+    // immediately according to platform specific procedures.
+    auto completionHandler = [promise = WTFMove(promise)] (bool result) mutable {
+        promise.resolve(result);
+    };
+    // Async operation are dispatched and handled in the messenger.
+    m_messenger->isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(completionHandler));
 }
 
 } // namespace WebCore

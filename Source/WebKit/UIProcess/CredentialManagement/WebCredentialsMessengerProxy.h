@@ -45,6 +45,15 @@ private:
     // Receivers.
     void makeCredential(uint64_t messageId);
     void getAssertion(uint64_t messageId);
+    void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
+
+    // Senders.
+    void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
+
+    // Platform specific procedures.
+    // FIXME(182768): Might change to some forms of delegates later on.
+    // FIXME(182769): Figure out a way to auto-test the followings.
+    void platformIsUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
 
     WebPageProxy& m_webPageProxy;
 };

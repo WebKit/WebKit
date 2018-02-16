@@ -54,6 +54,12 @@ void WebCredentialsMessenger::getAssertion(const Vector<uint8_t>&, const WebCore
 {
 }
 
+void WebCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&& handler)
+{
+    auto messageId = addQueryCompletionHandler(WTFMove(handler));
+    m_webPage.send(Messages::WebCredentialsMessengerProxy::IsUserVerifyingPlatformAuthenticatorAvailable(messageId));
+}
+
 void WebCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&)
 {
 }
@@ -61,6 +67,13 @@ void WebCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vect
 void WebCredentialsMessenger::getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle)
 {
 }
+
+void WebCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result)
+{
+    auto handler = takeQueryCompletionHandler(messageId);
+    handler(result);
+}
+
 
 } // namespace WebKit
 

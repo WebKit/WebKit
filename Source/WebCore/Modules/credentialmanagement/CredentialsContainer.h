@@ -28,13 +28,12 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorManager.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class BasicCredential;
-class DeferredPromise;
 class Document;
 
 struct CredentialCreationOptions;
@@ -44,13 +43,13 @@ class CredentialsContainer : public RefCounted<CredentialsContainer> {
 public:
     static Ref<CredentialsContainer> create(WeakPtr<Document>&& document) { return adoptRef(*new CredentialsContainer(WTFMove(document))); }
 
-    void get(CredentialRequestOptions&&, Ref<DeferredPromise>&&);
+    void get(CredentialRequestOptions&&, CredentialPromise&&);
 
-    void store(const BasicCredential&, Ref<DeferredPromise>&&);
+    void store(const BasicCredential&, CredentialPromise&&);
 
-    void isCreate(CredentialCreationOptions&&, Ref<DeferredPromise>&&);
+    void isCreate(CredentialCreationOptions&&, CredentialPromise&&);
 
-    void preventSilentAccess(Ref<DeferredPromise>&&) const;
+    void preventSilentAccess(DOMPromiseDeferred<void>&&) const;
 
 private:
     CredentialsContainer(WeakPtr<Document>&&);

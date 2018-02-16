@@ -1,3 +1,49 @@
+2018-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=182771
+        <rdar://problem/36459988>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        per https://www.w3.org/TR/webauthn/#isUserVerifyingPlatformAuthenticatorAvailable with some
+        limitations.
+
+        In addition, it changes DeferredPromise to DOMPromiseDeferred<> for all CredentialsManagement
+        and WebAuthN API.
+
+        Test: http/wpt/webauthn/public-key-is-user-verifying-platform-authenticator-available.html
+
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::store):
+        (WebCore::CredentialsContainer::isCreate):
+        (WebCore::CredentialsContainer::preventSilentAccess const):
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        * Modules/credentialmanagement/CredentialsMessenger.cpp:
+        (WebCore::CredentialsMessenger::addCreationCompletionHandler):
+        Remove a redundant assertion.
+        (WebCore::CredentialsMessenger::addRequestCompletionHandler):
+        Remove a redundant assertion.
+        (WebCore::CredentialsMessenger::addQueryCompletionHandler):
+        (WebCore::CredentialsMessenger::takeQueryCompletionHandler):
+        * Modules/credentialmanagement/CredentialsMessenger.h:
+        * Modules/webauthn/AuthenticatorManager.cpp:
+        (WebCore::AuthenticatorManagerInternal::initTimeoutTimer):
+        (WebCore::AuthenticatorManager::create const):
+        (WebCore::AuthenticatorManager::discoverFromExternalSource const):
+        (WebCore::AuthenticatorManager::isUserVerifyingPlatformAuthenticatorAvailable const):
+        * Modules/webauthn/AuthenticatorManager.h:
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable):
+        * Modules/webauthn/PublicKeyCredential.h:
+        * testing/MockCredentialsMessenger.cpp:
+        (WebCore::MockCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebCore::MockCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailableReply):
+        * testing/MockCredentialsMessenger.h:
+        * testing/MockCredentialsMessenger.idl:
+
 2018-02-16  Tim Horton  <timothy_horton@apple.com>
 
         Stop using EXCLUDED_SOURCE_FILE_NAMES for touch and gesture files in WebCore

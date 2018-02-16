@@ -29,13 +29,13 @@
 
 #include "BasicCredential.h"
 #include "ExceptionOr.h"
+#include "JSDOMPromiseDeferred.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class AuthenticatorResponse;
-class DeferredPromise;
 
 class PublicKeyCredential final : public BasicCredential {
 public:
@@ -49,7 +49,7 @@ public:
     // Not support yet. Always throws.
     ExceptionOr<bool> getClientExtensionResults() const;
 
-    static void isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&&);
+    static void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
 private:
     PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&&);

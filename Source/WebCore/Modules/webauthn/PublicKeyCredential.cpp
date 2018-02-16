@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorManager.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/text/Base64.h>
 
@@ -45,9 +46,9 @@ ExceptionOr<bool> PublicKeyCredential::getClientExtensionResults() const
     return Exception { NotSupportedError };
 }
 
-void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&& promise)
+void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    promise->reject(Exception { NotSupportedError });
+    AuthenticatorManager::singleton().isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(promise));
 }
 
 } // namespace WebCore
