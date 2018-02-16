@@ -1082,6 +1082,7 @@ webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure 
 
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
+webkit.org/b/168366 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html
 
 # DASHBOARD_SUPPORT is mac only
 http/tests/xmlhttprequest/default-content-type-dashboard.html [ Skip ]
@@ -1887,7 +1888,7 @@ webkit.org/b/176110 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt
 
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 
-webkit.org/b/176756 inspector/heap/getPreview.html [ Timeout Pass ]
+webkit.org/b/180607 inspector/heap/getPreview.html [ Failure ]
 
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
