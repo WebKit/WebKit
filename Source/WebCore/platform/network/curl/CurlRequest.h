@@ -56,14 +56,14 @@ public:
         Yes = true
     };
 
-    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient* client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No)
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No)
     {
-        return adoptRef(*new CurlRequest(request, client, shouldSuspend == ShouldSuspend::Yes, enableMultipart == EnableMultipart::Yes));
+        return adoptRef(*new CurlRequest(request, &client, shouldSuspend == ShouldSuspend::Yes, enableMultipart == EnableMultipart::Yes));
     }
 
     virtual ~CurlRequest() = default;
 
-    void setClient(CurlRequestClient* client) { m_client = client;  }
+    void invalidateClient() { m_client = nullptr;  }
     void setUserPass(const String&, const String&);
 
     void start(bool isSyncRequest = false);
@@ -102,7 +102,7 @@ private:
 
     void startWithJobManager();
 
-    void callClient(WTF::Function<void(CurlRequestClient&)>);
+    void callClient(WTF::Function<void(CurlRequest&, CurlRequestClient&)>);
 
     // Transfer processing of Request body, Response header/body
     // Called by worker thread in case of async, main thread in case of sync.

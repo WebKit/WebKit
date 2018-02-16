@@ -70,11 +70,11 @@ public:
 
 private:
     Ref<CurlRequest> createCurlRequest(ResourceRequest&);
-    void curlDidSendData(unsigned long long, unsigned long long) override { }
-    void curlDidReceiveResponse(const CurlResponse&) override;
-    void curlDidReceiveBuffer(Ref<SharedBuffer>&&) override;
-    void curlDidComplete() override;
-    void curlDidFailWithError(const ResourceError&) override;
+    void curlDidSendData(CurlRequest&, unsigned long long, unsigned long long) override { }
+    void curlDidReceiveResponse(CurlRequest&, const CurlResponse&) override;
+    void curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&) override;
+    void curlDidComplete(CurlRequest&) override;
+    void curlDidFailWithError(CurlRequest&, const ResourceError&) override;
 
     bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
     void willSendRequest();

@@ -199,10 +199,6 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
     if (m_disabled)
         return;
 
-    ResourceHandleInternal* d = job.getInternal();
-    if (!d->m_delegate->hasHandle())
-        return;
-
     const String& url = job.firstRequest().url().string();
 
     removeCacheEntryClient(url, &job);

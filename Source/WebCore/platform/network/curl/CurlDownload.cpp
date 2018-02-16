@@ -40,7 +40,7 @@ namespace WebCore {
 CurlDownload::~CurlDownload()
 {
     if (m_curlRequest)
-        m_curlRequest->setClient(nullptr);
+        m_curlRequest->invalidateClient();
 }
 
 void CurlDownload::init(CurlDownloadListener& listener, const URL& url)
@@ -76,10 +76,11 @@ bool CurlDownload::cancel()
 
 Ref<CurlRequest> CurlDownload::createCurlRequest(ResourceRequest& request)
 {
-    return CurlRequest::create(request, this);
+    auto curlRequest = CurlRequest::create(request, *this);
+    return curlRequest;
 }
 
-void CurlDownload::curlDidReceiveResponse(const CurlResponse& response)
+void CurlDownload::curlDidReceiveResponse(CurlRequest& request, const CurlResponse& response)
 {
     ASSERT(isMainThread());
 
@@ -96,11 +97,11 @@ void CurlDownload::curlDidReceiveResponse(const CurlResponse& response)
     if (m_listener)
         m_listener->didReceiveResponse(m_response);
 
-    m_curlRequest->completeDidReceiveResponse();
+    request.completeDidReceiveResponse();
 }
 
 
-void CurlDownload::curlDidReceiveBuffer(Ref<SharedBuffer>&& buffer)
+void CurlDownload::curlDidReceiveBuffer(CurlRequest& request, Ref<SharedBuffer>&& buffer)
 {
     ASSERT(isMainThread());
 
@@ -111,7 +112,7 @@ void CurlDownload::curlDidReceiveBuffer(Ref<SharedBuffer>&& buffer)
         m_listener->didReceiveDataOfLength(buffer->size());
 }
 
-void CurlDownload::curlDidComplete()
+void CurlDownload::curlDidComplete(CurlRequest& request)
 {
     ASSERT(isMainThread());
 
@@ -119,23 +120,23 @@ void CurlDownload::curlDidComplete()
         return;
 
     if (!m_destination.isEmpty()) {
-        if (m_curlRequest && !m_curlRequest->getDownloadedFilePath().isEmpty())
-            FileSystem::moveFile(m_curlRequest->getDownloadedFilePath(), m_destination);
+        if (!request.getDownloadedFilePath().isEmpty())
+            FileSystem::moveFile(request.getDownloadedFilePath(), m_destination);
     }
 
     if (m_listener)
         m_listener->didFinish();
 }
 
-void CurlDownload::curlDidFailWithError(const ResourceError& resourceError)
+void CurlDownload::curlDidFailWithError(CurlRequest& request, const ResourceError& resourceError)
 {
     ASSERT(isMainThread());
 
     if (m_isCancelled)
         return;
 
-    if (m_deletesFileUponFailure && m_curlRequest && !m_curlRequest->getDownloadedFilePath().isEmpty())
-        FileSystem::deleteFile(m_curlRequest->getDownloadedFilePath());
+    if (m_deletesFileUponFailure && !request.getDownloadedFilePath().isEmpty())
+        FileSystem::deleteFile(request.getDownloadedFilePath());
 
     if (m_listener)
         m_listener->didFail();
@@ -194,7 +195,6 @@ void CurlDownload::willSendRequest()
     }
 
     m_curlRequest->cancel();
-    m_curlRequest->setClient(nullptr);
 
     m_curlRequest = createCurlRequest(newRequest);
     m_curlRequest->start();
