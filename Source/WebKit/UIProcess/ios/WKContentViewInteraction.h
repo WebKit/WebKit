@@ -84,6 +84,7 @@ class WebPageProxy;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
 #if ENABLE(EXTRA_ZOOM_MODE)
+@class WKDatePickerViewController;
 @class WKFocusedFormControlViewController;
 @class WKNumberPadViewController;
 @class WKSelectMenuViewController;
@@ -246,6 +247,7 @@ struct WKAutoCorrectionData {
 #endif
 
 #if ENABLE(EXTRA_ZOOM_MODE)
+    RetainPtr<WKDatePickerViewController> _datePickerViewController;
     RetainPtr<WKTextInputViewController> _textInputViewController;
     RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
     RetainPtr<WKNumberPadViewController> _numberPadViewController;

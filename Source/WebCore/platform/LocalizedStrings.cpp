@@ -1056,14 +1056,29 @@ String formControlSearchButtonTitle()
     return WEB_UI_STRING("Search", "Title of the Search button for zoomed form controls.");
 }
 
-String textInputModeWriteButton()
+String textInputModeWriteButtonTitle()
 {
     return WEB_UI_STRING("Write", "Title of the writing button for zoomed form controls.");
 }
 
-String textInputModeSpeechButton()
+String textInputModeSpeechButtonTitle()
 {
     return WEB_UI_STRING("Speak", "Title of the dictation button for zoomed form controls.");
+}
+
+String datePickerDayLabelTitle()
+{
+    return WEB_UI_STRING("Day label in date picker", "Day label in date picker");
+}
+
+String datePickerMonthLabelTitle()
+{
+    return WEB_UI_STRING("Month label in date picker", "Month label in date picker");
+}
+
+String datePickerYearLabelTitle()
+{
+    return WEB_UI_STRING("Year label in date picker", "Year label in date picker");
 }
 
 #endif

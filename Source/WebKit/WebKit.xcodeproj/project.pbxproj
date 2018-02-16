@@ -736,6 +736,8 @@
 		2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E5C770C1FA7D429005932C3 /* APIAttachment.h */; };
 		2E5C770F1FA7D429005932C3 /* APIAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */; };
 		2E7A944A1BBD97C300945547 /* _WKFocusedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2E94FC1620351A6D00974BA0 /* WKDatePickerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94FC1420351A6D00974BA0 /* WKDatePickerViewController.h */; };
+		2E94FC1720351A6D00974BA0 /* WKDatePickerViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E94FC1520351A6D00974BA0 /* WKDatePickerViewController.mm */; };
 		2EA7B3D12026CEF8009CE5AC /* WKNumberPadViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3CF2026CEF8009CE5AC /* WKNumberPadViewController.h */; };
 		2EA7B3D22026CEF8009CE5AC /* WKNumberPadViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */; };
 		2EA7B3D52026CF23009CE5AC /* WKNumberPadView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */; };
@@ -3104,6 +3106,8 @@
 		2E5C770C1FA7D429005932C3 /* APIAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIAttachment.h; sourceTree = "<group>"; };
 		2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIAttachment.cpp; sourceTree = "<group>"; };
 		2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKFocusedElementInfo.h; sourceTree = "<group>"; };
+		2E94FC1420351A6D00974BA0 /* WKDatePickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKDatePickerViewController.h; path = ios/forms/WKDatePickerViewController.h; sourceTree = "<group>"; };
+		2E94FC1520351A6D00974BA0 /* WKDatePickerViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKDatePickerViewController.mm; path = ios/forms/WKDatePickerViewController.mm; sourceTree = "<group>"; };
 		2EA7B3CF2026CEF8009CE5AC /* WKNumberPadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNumberPadViewController.h; path = ios/forms/WKNumberPadViewController.h; sourceTree = "<group>"; };
 		2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNumberPadViewController.mm; path = ios/forms/WKNumberPadViewController.mm; sourceTree = "<group>"; };
 		2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNumberPadView.h; path = ios/forms/WKNumberPadView.h; sourceTree = "<group>"; };
@@ -8383,6 +8387,8 @@
 			children = (
 				C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */,
 				C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */,
+				2E94FC1420351A6D00974BA0 /* WKDatePickerViewController.h */,
+				2E94FC1520351A6D00974BA0 /* WKDatePickerViewController.mm */,
 				A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */,
 				A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */,
 				2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */,
@@ -9410,6 +9416,7 @@
 				BC4075F8124FF0270068F20A /* WKData.h in Headers */,
 				37A709A71E3EA0FD00CA5969 /* WKDataDetectorTypes.h in Headers */,
 				37A709A91E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h in Headers */,
+				2E94FC1620351A6D00974BA0 /* WKDatePickerViewController.h in Headers */,
 				377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */,
 				8372DB2F1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h in Headers */,
 				BC4075FA124FF0270068F20A /* WKDictionary.h in Headers */,
@@ -11107,6 +11114,7 @@
 				A1FB68251F6E518200C43F9F /* WKCrashReporter.mm in Sources */,
 				512F58F912A88A5400629530 /* WKCredential.cpp in Sources */,
 				BC4075F7124FF0270068F20A /* WKData.cpp in Sources */,
+				2E94FC1720351A6D00974BA0 /* WKDatePickerViewController.mm in Sources */,
 				1AFF49001833DE78009AB15A /* WKDeprecatedFunctions.cpp in Sources */,
 				BC4075F9124FF0270068F20A /* WKDictionary.cpp in Sources */,
 				BC017D0816260FF4007054F5 /* WKDOMDocument.mm in Sources */,

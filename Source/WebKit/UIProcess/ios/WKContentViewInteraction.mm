@@ -40,6 +40,7 @@
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
+#import "WKDatePickerViewController.h"
 #import "WKError.h"
 #import "WKFocusedFormControlViewController.h"
 #import "WKFormInputControl.h"
@@ -4088,10 +4089,7 @@ static bool isAssistableInputType(InputType type)
     [_webSelectionAssistant resignedFirstResponder];
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    [self dismissTextInputViewController:YES];
-    [self dismissNumberPadViewController:YES];
-    [self dismissSelectMenuViewController:YES];
-    [self dismissTimePickerViewController:YES];
+    [self dismissAllInputViewControllers];
     if (!_isChangingFocus)
         [self dismissFocusedFormControlViewController:[_focusedFormControlViewController isVisible]];
 #endif
@@ -4104,6 +4102,34 @@ static bool isAssistableInputType(InputType type)
 }
 
 #if ENABLE(EXTRA_ZOOM_MODE)
+
+- (void)dismissAllInputViewControllers
+{
+    [self dismissTextInputViewController:YES];
+    [self dismissNumberPadViewController:YES];
+    [self dismissSelectMenuViewController:YES];
+    [self dismissTimePickerViewController:YES];
+    [self dismissDatePickerViewController:YES];
+}
+
+- (void)presentDatePickerViewController:(BOOL)animated
+{
+    if (_datePickerViewController)
+        return;
+
+    _datePickerViewController = adoptNS([[WKDatePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
+    [_datePickerViewController setDelegate:self];
+    [_focusedFormControlViewController presentViewController:_datePickerViewController.get() animated:animated completion:nil];
+}
+
+- (void)dismissDatePickerViewController:(BOOL)animated
+{
+    if (!_datePickerViewController)
+        return;
+
+    auto datePickerViewController = WTFMove(_datePickerViewController);
+    [datePickerViewController dismissViewControllerAnimated:animated completion:nil];
+}
 
 - (void)presentTimePickerViewController:(BOOL)animated
 {
@@ -4195,6 +4221,9 @@ static bool isAssistableInputType(InputType type)
     case InputType::Time:
         [self presentTimePickerViewController:YES];
         break;
+    case InputType::Date:
+        [self presentDatePickerViewController:YES];
+        break;
     case InputType::None:
         break;
     default:
@@ -4235,9 +4264,7 @@ static bool isAssistableInputType(InputType type)
     }
 
     [_focusedFormControlViewController show:NO];
-    [self dismissTextInputViewController:YES];
-    [self dismissNumberPadViewController:YES];
-    [self dismissTimePickerViewController:YES];
+    [self dismissAllInputViewControllers];
 }
 
 - (void)textInputControllerDidRequestDismissal:(WKTextFormControlViewController *)controller
@@ -4396,6 +4423,9 @@ static bool isAssistableInputType(InputType type)
         return;
 
     if ([_timePickerViewController handleWheelEvent:event])
+        return;
+
+    if ([_datePickerViewController handleWheelEvent:event])
         return;
 
     if ([_focusedFormControlViewController handleWheelEvent:event])

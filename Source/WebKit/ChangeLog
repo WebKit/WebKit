@@ -1,3 +1,35 @@
+2018-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add basic support for <input type='date'> using date picker UI
+        https://bugs.webkit.org/show_bug.cgi?id=182847
+        <rdar://problem/35143111>
+
+        Reviewed by Tim Horton.
+
+        Add support for presenting date pickers when focusing a date input.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView dismissAllInputViewControllers]):
+
+        Pull logic to dismiss input view controllers into a single helper.
+
+        (-[WKContentView presentDatePickerViewController:]):
+        (-[WKContentView dismissDatePickerViewController:]):
+        (-[WKContentView presentViewControllerForAssistedNode:]):
+        (-[WKContentView textInputController:didCommitText:]):
+        (-[WKContentView _wheelChangedWithEvent:]):
+
+        Delegate wheel events to the date picker.
+
+        * UIProcess/ios/forms/WKDatePickerViewController.h: Added.
+        * UIProcess/ios/forms/WKDatePickerViewController.mm: Added.
+
+        Add harness files for the WKDatePickerViewController implementation in WebKitAdditions.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-02-15  Youenn Fablet  <youenn@apple.com>
 
         Resources loaded from service workers are not downloadable
