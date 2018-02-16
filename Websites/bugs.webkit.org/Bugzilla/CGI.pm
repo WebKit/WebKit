@@ -288,6 +288,69 @@ sub close_standby_message {
     }
 }
 
+our $ALLOW_UNSAFE_RESPONSE = 0;
+# responding to text/plain or text/html is safe
+# responding to any request with a referer header is safe
+# some things need to have unsafe responses (attachment.cgi)
+# everything else should get a 403.
+sub _prevent_unsafe_response {
+    my ($self, $headers) = @_;
+    my $safe_content_type_re = qr{
+        ^ (*COMMIT) # COMMIT makes the regex faster
+                    # by preventing back-tracking. see also perldoc pelre.
+        # application/x-javascript, xml, atom+xml, rdf+xml, xml-dtd, and json
+        (?: application/ (?: x(?: -javascript | ml (?: -dtd )? )
+                           | (?: atom | rdf) \+ xml
+                           | json )
+        # text/csv, text/calendar, text/plain, and text/html
+          | text/ (?: c (?: alendar | sv )
+                    | plain
+                    | html )
+        # used for HTTP push responses
+          | multipart/x-mixed-replace)
+    }sx;
+    my $safe_referer_re = do {
+        # Note that urlbase must end with a /.
+        # It almost certainly does, but let's be extra careful.
+        my $urlbase = correct_urlbase();
+        $urlbase =~ s{/$}{};
+        qr{
+            # Begins with literal urlbase
+            ^ (*COMMIT)
+            \Q$urlbase\E
+            # followed by a slash or end of string
+            (?: /
+              | $ )
+        }sx
+    };
+
+    return if $ALLOW_UNSAFE_RESPONSE;
+
+    if (Bugzilla->usage_mode == USAGE_MODE_BROWSER) {
+        # Safe content types are ones that arn't images.
+        # For now let's assume plain text and html are not valid images.
+        my $content_type         = $headers->{'-type'} // $headers->{'-content_type'} // 'text/html';
+        my $is_safe_content_type = $content_type =~ $safe_content_type_re;
+
+        # Safe referers are ones that begin with the urlbase.
+        my $referer         = $self->referer;
+        my $is_safe_referer = $referer && $referer =~ $safe_referer_re;
+
+        if (!$is_safe_referer && !$is_safe_content_type) {
+            print $self->SUPER::header(-type => 'text/html',  -status => '403 Forbidden');
+            if ($content_type ne 'text/html') {
+                print "Untrusted Referer Header\n";
+                if ($ENV{MOD_PERL}) {
+                    my $r = $self->r;
+                    $r->rflush;
+                    $r->status(200);
+                }
+            }
+            exit;
+        }
+    }
+}
+
 # Override header so we can add the cookies in
 sub header {
     my $self = shift;
@@ -302,6 +365,7 @@ sub header {
     else {
         %headers = @_;
     }
+    $self->_prevent_unsafe_response(\%headers);
 
     if ($self->{'_content_disp'}) {
         $headers{'-content_disposition'} = $self->{'_content_disp'};

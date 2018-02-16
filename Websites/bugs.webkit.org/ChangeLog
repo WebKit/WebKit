@@ -1,3 +1,15 @@
+2018-02-16  Ling Ho  <lingho@apple.com>
+
+        Apply Bugzilla patches for CVE-2018-5123
+        https://bugs.webkit.org/show_bug.cgi?id=182884
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Bugzilla/CGI.pm:
+        (_prevent_unsafe_response):
+        (header):
+        * attachment.cgi:
+
 2017-06-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         pretty patch doesn't show image diffs with newer versions of git
