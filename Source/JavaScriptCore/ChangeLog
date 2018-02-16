@@ -1,3 +1,15 @@
+2018-02-16  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r228318.
+
+        The patch that this attempted to fix was rolled out already.
+
+        Reverted changeset:
+
+        "Fix build on ARMv7 traditional JSCOnly bot after r228306"
+        https://bugs.webkit.org/show_bug.cgi?id=182563
+        https://trac.webkit.org/changeset/228318
+
 2018-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r228306 (custom memcpy/memset) because the bots say that it was not a
