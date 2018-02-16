@@ -1,3 +1,21 @@
+2018-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        IndexedDB: Several test crash in when destroying a IDBKeyData
+        https://bugs.webkit.org/show_bug.cgi?id=167576
+
+        Reviewed by Michael Catanzaro.
+
+        IDBKeyDataHashTraits::constructDeletedValue is using operator= to
+        assign deletedValue. But, the value is destructed just before
+        calling constructDeletedValue. You can't use operator= for a
+        destructed value.
+
+        No new tests (Covered by existing tests).
+
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyDataHashTraits::constructDeletedValue):
+        Construct null value before assigning deletedValue.
+
 2018-02-16  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBlock/RenderBlockFlow::addChild() to RenderTreeBuilder

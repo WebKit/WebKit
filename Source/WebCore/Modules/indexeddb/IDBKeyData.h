@@ -208,6 +208,7 @@ struct IDBKeyDataHashTraits : public WTF::CustomHashTraits<IDBKeyData> {
 
     static void constructDeletedValue(IDBKeyData& key)
     {
+        new (&key) IDBKeyData;
         key = IDBKeyData::deletedValue();
     }
 

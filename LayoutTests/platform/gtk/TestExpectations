@@ -1295,10 +1295,6 @@ webkit.org/b/131546 media/track/track-in-band.html [ Crash Timeout Failure ]
 
 webkit.org/b/163782 media/video-played-ranges-1.html [ Crash Pass ]
 
-webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash Timeout ]
-webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash Timeout ]
-webkit.org/b/167576 storage/indexeddb/modern/index-3-private.html [ Crash ]
-
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash Timeout ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
 
