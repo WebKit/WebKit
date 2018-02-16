@@ -27,8 +27,10 @@
 
 #include <dispatch/dispatch.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SchedulePair.h>
 
 namespace WebCore {
 class ResourceHandle;
@@ -41,7 +43,9 @@ class ResourceHandle;
     dispatch_semaphore_t m_semaphore;
     MessageQueue<Function<void()>>* m_messageQueue;
     RetainPtr<NSURLRequest> m_requestResult;
+    Lock m_mutex;
     RetainPtr<NSCachedURLResponse> m_cachedResponseResult;
+    std::optional<SchedulePairHashSet> m_scheduledPairs;
     BOOL m_boolResult;
 }
 

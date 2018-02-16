@@ -42,7 +42,7 @@
 
 using namespace WebCore;
 
-static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
+static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashSet>& pairs)
 {
     if (!pairs)
         return false;
@@ -63,8 +63,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
         return m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(function)));
 
     // This is the common case.
-    SchedulePairHashSet* pairs = m_handle && m_handle->context() ? m_handle->context()->scheduledRunLoopPairs() : nullptr;
-    if (!scheduledWithCustomRunLoopMode(pairs))
+    if (!scheduledWithCustomRunLoopMode(m_scheduledPairs))
         return callOnMainThread(WTFMove(function));
 
     // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
@@ -75,7 +74,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
         function();
         function = nullptr;
     });
-    for (auto& pair : *pairs)
+    for (auto& pair : *m_scheduledPairs)
         CFRunLoopPerformBlock(pair->runLoop(), pair->mode(), block.get());
 }
 
@@ -86,6 +85,10 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
         return nil;
 
     m_handle = handle;
+    if (m_handle && m_handle->context()) {
+        if (auto* pairs = m_handle->context()->scheduledRunLoopPairs())
+            m_scheduledPairs = *pairs;
+    }
     m_semaphore = dispatch_semaphore_create(0);
     m_messageQueue = messageQueue;
 
@@ -94,6 +97,8 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
 - (void)detachHandle
 {
+    LockHolder lock(m_mutex);
+
     m_handle = nullptr;
 
     m_requestResult = nullptr;
@@ -139,7 +144,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 #endif
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self = self, protectedSelf = retainPtr(self), newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] () mutable {
+    auto work = [self, protectedSelf, newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] () mutable {
         if (!m_handle) {
             m_requestResult = nullptr;
             dispatch_semaphore_signal(m_semaphore);
@@ -154,7 +159,18 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return m_requestResult.get();
+
+    LockHolder lock(m_mutex);
+    if (!m_handle)
+        return nil;
+
+    RetainPtr<NSURLRequest> requestResult = m_requestResult;
+
+    // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
+    // as we do not want to get destroyed on a non-main thread.
+    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+
+    return requestResult.autorelease();
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -183,7 +199,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
     LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%u realm:%@ method:%@ %@%@", m_handle, connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self = self, protectedSelf = retainPtr(self), protectionSpace = retainPtr(protectionSpace)] () mutable {
+    auto work = [self, protectedSelf, protectionSpace = retainPtr(protectionSpace)] () mutable {
         if (!m_handle) {
             m_boolResult = NO;
             dispatch_semaphore_signal(m_semaphore);
@@ -194,7 +210,18 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return m_boolResult;
+
+    LockHolder lock(m_mutex);
+    if (!m_handle)
+        return NO;
+
+    auto boolResult = m_boolResult;
+
+    // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
+    // as we do not want to get destroyed on a non-main thread.
+    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+
+    return boolResult;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
@@ -204,7 +231,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self = self, protectedSelf = retainPtr(self), r = retainPtr(r), connection = retainPtr(connection)] () mutable {
+    auto work = [self, protectedSelf, r = retainPtr(r), connection = retainPtr(connection)] () mutable {
         RefPtr<ResourceHandle> protectedHandle(m_handle);
         if (!m_handle || !m_handle->client()) {
             dispatch_semaphore_signal(m_semaphore);
@@ -232,6 +259,9 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
+
+    // Make sure we get destroyed on the main thread.
+    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
@@ -326,7 +356,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
     LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
 
     auto protectedSelf = retainPtr(self);
-    auto work = [self = self, protectedSelf = retainPtr(self), cachedResponse = retainPtr(cachedResponse)] () mutable {
+    auto work = [self, protectedSelf, cachedResponse = retainPtr(cachedResponse)] () mutable {
         if (!m_handle || !m_handle->client()) {
             m_cachedResponseResult = nullptr;
             dispatch_semaphore_signal(m_semaphore);
@@ -338,7 +368,18 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return m_cachedResponseResult.get();
+
+    LockHolder lock(m_mutex);
+    if (!m_handle)
+        return nil;
+
+    RetainPtr<NSCachedURLResponse> cachedResponseResult = m_cachedResponseResult;
+
+    // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
+    // as we do not want to get destroyed on a non-main thread.
+    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+
+    return cachedResponseResult.autorelease();
 }
 
 @end

@@ -1,3 +1,40 @@
+2018-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Flaky Test: imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl-worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=182270
+        <rdar://problem/36904314>
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, already covered by existing tests that crash flakily on the bots.
+
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper):
+        isolate copy the initiator string as this object can be destroyed on a different thread. This was
+        causing the test to flakily crash as well when destroying ThreadLocalData.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (scheduledWithCustomRunLoopMode):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate callFunctionOnMainThread:]):
+        Fix thread safety issue in callFunctionOnMainThread. This function is called from a background thread
+        to get to the main thread. However, it relied on m_handle which would get nullified on the main thread
+        by detachHandle when the ResourceHandle is destroyed. Fix the issue by not relying on m_handle anymore.
+
+        (-[WebCoreResourceHandleAsOperationQueueDelegate initWithHandle:messageQueue:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willCacheResponse:]):
+        - Go back to using autorelease() instead of get() for the returned objects to match the code pre-r224522.
+        - Dispatch the protectedSelf variables that were added in r227073 to the main thread to make sure we do
+          not get destroyed on the background thread when protectedSelf is the last strong reference to self.
+          Destroying the WebCoreResourceHandleAsOperationQueueDelegate on the background safe is unsafe due to
+          its m_messageQueue data member which contains lambdas that may capture anything.
+        - Add a Lock to protect against detachHandle getting called on the main thread and nulling out
+          m_handle / m_requestResult / m_cachedResponseResult while the background thread may be accessing
+          them.
+
 2018-02-15  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderTableRow::addChild() to RenderTreeBuilder
