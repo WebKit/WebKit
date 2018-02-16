@@ -743,8 +743,7 @@
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || (CPU(ARM64) && !defined(__ILP32__)) || CPU(MIPS)) \
-    && !CPU(APPLE_ARMV7K) \
-    && !CPU(ARM64E)
+    && !CPU(APPLE_ARMV7K)
 #define ENABLE_JIT 1
 #endif
 
