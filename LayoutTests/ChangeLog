@@ -1,5 +1,14 @@
 2018-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        fast/frames/sandboxed-iframe-navigation-top-denied.html is crashing in Inspector::createScriptCallStackForConsole::Exec for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=172952
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations: Unmarked fast/frames/sandboxed-iframe-navigation-top-denied.html.
+
+2018-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         IndexedDB: Several test crash in when destroying a IDBKeyData
         https://bugs.webkit.org/show_bug.cgi?id=167576
 
