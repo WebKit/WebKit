@@ -108,7 +108,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     String errorMessage;
     auto scopeExit = makeScopeExit([&, errorMessage = &errorMessage] {
         ASSERT_UNUSED(errorMessage, !errorMessage->isNull());
-        RELEASE_LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database: %s", errorMessage->utf8().data());
+        RELEASE_LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database: %{public}s", errorMessage->utf8().data());
         m_database = nullptr;
         postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::databaseFailedToOpen));
     });
