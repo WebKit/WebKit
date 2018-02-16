@@ -3278,6 +3278,18 @@ ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& el
     return downcast<HTMLPlugInElement>(element).isReplacementObscured();
 }
 
+ExceptionOr<String> Internals::unavailablePluginReplacementText(Element& element)
+{
+    if (!is<HTMLPlugInElement>(element))
+        return Exception { InvalidAccessError };
+
+    auto* renderer = element.renderer();
+    if (!is<RenderEmbeddedObject>(renderer))
+        return String { };
+
+    return String { downcast<RenderEmbeddedObject>(*renderer).pluginReplacementTextIfUnavailable() };
+}
+
 bool Internals::isPluginSnapshotted(Element& element)
 {
     return is<HTMLPlugInElement>(element) && downcast<HTMLPlugInElement>(element).displayState() <= HTMLPlugInElement::DisplayingSnapshot;

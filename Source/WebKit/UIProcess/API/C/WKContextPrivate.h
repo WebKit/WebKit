@@ -112,6 +112,9 @@ WK_EXPORT void WKContextPreconnectToServer(WKContextRef context, WKURLRef server
 WK_EXPORT WKProcessID WKContextGetNetworkProcessIdentifier(WKContextRef context);
 WK_EXPORT WKProcessID WKContextGetDatabaseProcessIdentifier(WKContextRef context);
 
+WK_EXPORT void WKContextAddSupportedPlugin(WKContextRef context, WKStringRef origin, WKStringRef name, WKArrayRef mimeTypes, WKArrayRef extensions);
+WK_EXPORT void WKContextClearSupportedPlugins(WKContextRef context);
+
 #ifdef __cplusplus
 }
 #endif

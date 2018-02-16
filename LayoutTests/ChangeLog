@@ -1,3 +1,25 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Allow specifying which plug-ins are supported
+        https://bugs.webkit.org/show_bug.cgi?id=182748
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/plugins/nounsupported-plugin-expected.txt: Added.
+        * http/tests/plugins/nounsupported-plugin.html: Added.
+        * http/tests/plugins/supported-plugin-all-origin-visibility-expected.txt: Added.
+        * http/tests/plugins/supported-plugin-all-origin-visibility.html: Added.
+        * http/tests/plugins/supported-plugin-on-specific-origin-expected.txt: Added.
+        * http/tests/plugins/supported-plugin-on-specific-origin.html: Added.
+        * http/tests/plugins/supported-plugin-origin-specific-visibility-expected.txt: Added.
+        * http/tests/plugins/supported-plugin-origin-specific-visibility.html: Added.
+        * http/tests/plugins/unsupported-plugin-on-specific-origin-expected.txt: Added.
+        * http/tests/plugins/unsupported-plugin-on-specific-origin.html: Added.
+        * plugins/unsupported-plugin-expected.txt: Added.
+        * plugins/unsupported-plugin.html: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/block/positioning/fixed-container-with-relative-parent.html as flaky.

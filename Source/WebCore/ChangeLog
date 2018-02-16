@@ -1,3 +1,49 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Allow specifying which plug-ins are supported
+        https://bugs.webkit.org/show_bug.cgi?id=182748
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/plugins/nounsupported-plugin.html
+               http/tests/plugins/supported-plugin-all-origin-visibility.html
+               http/tests/plugins/supported-plugin-on-specific-origin.html
+               http/tests/plugins/supported-plugin-origin-specific-visibility.html
+               http/tests/plugins/unsupported-plugin-on-specific-origin.html
+               plugins/unsupported-plugin.html
+
+        Added support for computing plugin web visibility with the added knowledge of supported plugins.
+        In case of a plugin failing to be created due to being unsupported, update the UI
+        to use mark the plugin as "Unexpected plug in".
+
+        Added internal API to retrieve the plug-in error description message.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::setReplacement):
+        * html/HTMLPlugInElement.h:
+        * loader/EmptyClients.cpp:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::unsupportedPluginText):
+        * platform/LocalizedStrings.h:
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/PluginData.h:
+        (WebCore::decodePluginNames):
+        (WebCore::encodePluginNames):
+        (WebCore::SupportedPluginNames::decode):
+        (WebCore::SupportedPluginNames::encode const):
+        * plugins/PluginInfoProvider.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::unavailablePluginReplacementText):
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::pluginReplacementTextIfUnavailable const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::unavailablePluginReplacementText):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-02-16  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/http-0.9/xhr-blocked.html is flaky

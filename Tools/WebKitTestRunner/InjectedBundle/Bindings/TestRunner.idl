@@ -233,7 +233,8 @@ interface TestRunner {
     
     // Override plugin load policy.
     void setBlockAllPlugins(boolean shouldBlock);
-    
+    void setPluginSupportedMode(DOMString mode);
+
     // Hooks to the JSC compiler.
     object failNextNewCodeBlock();
     object numberOfDFGCompiles(object function);

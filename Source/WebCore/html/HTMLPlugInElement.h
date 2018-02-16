@@ -24,6 +24,7 @@
 
 #include "HTMLFrameOwnerElement.h"
 #include "Image.h"
+#include "RenderEmbeddedObject.h"
 
 namespace JSC {
 namespace Bindings {
@@ -34,7 +35,6 @@ class Instance;
 namespace WebCore {
 
 class PluginReplacement;
-class RenderEmbeddedObject;
 class RenderWidget;
 class Widget;
 
@@ -82,7 +82,9 @@ public:
 
     bool isUserObservable() const;
 
-    WEBCORE_EXPORT bool isReplacementObscured(const String& unavailabilityDescription);
+    // Return whether or not the replacement content for blocked plugins is accessible to the user.
+    WEBCORE_EXPORT bool setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason, const String& unavailabilityDescription);
+
     WEBCORE_EXPORT bool isReplacementObscured();
 
 protected:

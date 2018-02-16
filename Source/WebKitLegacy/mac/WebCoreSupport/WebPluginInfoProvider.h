@@ -34,8 +34,8 @@ public:
 
 private:
     void refreshPlugins() override;
-    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
-    void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
+    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&, std::optional<WebCore::SupportedPluginNames>&) final;
+    void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) final;
 
     WebPluginInfoProvider();
 };

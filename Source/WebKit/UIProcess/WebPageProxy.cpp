@@ -2055,17 +2055,27 @@ WebPreferencesStore WebPageProxy::preferencesStore() const
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMimeType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription)
+void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMimeType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription, bool& isUnsupported)
 {
     PageClientProtector protector(m_pageClient);
 
     MESSAGE_CHECK_URL(urlString);
 
+    URL pluginURL = URL { URL(), urlString };
     newMimeType = mimeType.convertToASCIILowercase();
-    pluginLoadPolicy = PluginModuleLoadNormally;
 
     PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;
-    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), urlString), allowedPluginTypes);
+
+    URL pageURL = URL { URL(), pageURLString };
+    if (!m_process->processPool().pluginInfoStore().isSupportedPlugin(mimeType, pluginURL, frameURLString, pageURL)) {
+        isUnsupported = true;
+        pluginProcessToken = 0;
+        return;
+    }
+
+    isUnsupported = false;
+    pluginLoadPolicy = PluginModuleLoadNormally;
+    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, pluginURL, allowedPluginTypes);
     if (!plugin.path) {
         pluginProcessToken = 0;
         return;
@@ -4143,6 +4153,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
         pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginCrashed;
         break;
     case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
+    case RenderEmbeddedObject::UnsupportedPlugin:
         ASSERT_NOT_REACHED();
     }
 

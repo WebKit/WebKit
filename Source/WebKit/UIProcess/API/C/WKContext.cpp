@@ -36,8 +36,10 @@
 #include "AuthenticationChallengeProxy.h"
 #include "DownloadProxy.h"
 #include "WKAPICast.h"
+#include "WKArray.h"
 #include "WKContextConfigurationRef.h"
 #include "WKRetainPtr.h"
+#include "WKString.h"
 #include "WebCertificateInfo.h"
 #include "WebContextInjectedBundleClient.h"
 #include "WebProcessPool.h"
@@ -617,4 +619,31 @@ ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
 ProcessID WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
 {
     return toImpl(contextRef)->storageProcessIdentifier();
+}
+
+void WKContextAddSupportedPlugin(WKContextRef contextRef, WKStringRef originRef, WKStringRef nameRef, WKArrayRef mimeTypesRef, WKArrayRef extensionsRef)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    HashSet<String> mimeTypes;
+    HashSet<String> extensions;
+
+    size_t count = WKArrayGetSize(mimeTypesRef);
+    for (size_t i = 0; i < count; ++i)
+        mimeTypes.add(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(mimeTypesRef, i))));
+    count = WKArrayGetSize(extensionsRef);
+    for (size_t i = 0; i < count; ++i)
+        extensions.add(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(extensionsRef, i))));
+
+    RefPtr<SecurityOrigin> origin;
+    if (!WKStringIsEmpty(originRef))
+        origin = SecurityOrigin::createFromString(toWTFString(originRef));
+    toImpl(contextRef)->addSupportedPlugin(origin.get(), toWTFString(nameRef), WTFMove(mimeTypes), WTFMove(extensions));
+#endif
+}
+
+void WKContextClearSupportedPlugins(WKContextRef contextRef)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    toImpl(contextRef)->clearSupportedPlugins();
+#endif
 }

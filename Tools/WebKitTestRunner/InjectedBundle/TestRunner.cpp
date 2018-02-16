@@ -1075,6 +1075,13 @@ void TestRunner::setBlockAllPlugins(bool shouldBlock)
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
 }
 
+void TestRunner::setPluginSupportedMode(JSStringRef mode)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetPluginSupportedMode"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(mode));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
 JSValueRef TestRunner::failNextNewCodeBlock()
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());

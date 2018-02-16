@@ -1,3 +1,15 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Allow specifying which plug-ins are supported
+        https://bugs.webkit.org/show_bug.cgi?id=182748
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPluginInfoProvider.h:
+        * WebCoreSupport/WebPluginInfoProvider.mm:
+        (WebPluginInfoProvider::getPluginInfo):
+        (WebPluginInfoProvider::getWebVisiblePluginInfo):
+
 2018-02-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa][WebKitLegacy] REGRESSION(r221559): Coda 2 crashes when switching views

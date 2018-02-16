@@ -1,3 +1,23 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Allow specifying which plug-ins are supported
+        https://bugs.webkit.org/show_bug.cgi?id=182748
+
+        Reviewed by Chris Dumez.
+
+        Add support for a test runner API to specificy supported plug-ins.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPluginsAsUnsupported):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::setPluginsAsUnsupported):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2018-02-16  Per Arne Vollan  <pvollan@apple.com>
 
         Implement stopping of run loop in the WebContent process when using NSRunLoop.

@@ -1094,6 +1094,13 @@ http/tests/security/video-cross-origin-accessfailure.html [ Failure ]
 http/tests/security/video-cross-origin-readback.html [ Failure ]
 http/tests/security/xssAuditor/link-opens-new-window.html [ Failure ]
 
+http/tests/plugins/nounsupported-plugin.html [ Skip ]
+http/tests/plugins/supported-plugin-all-origin-visibility.html [ Skip ]
+http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Skip ]
+http/tests/plugins/supported-plugin-on-specific-origin.html [ Skip ]
+http/tests/plugins/unsupported-plugin-on-specific-origin.html [ Skip ]
+plugins/unsupported-plugin.html [ Skip ]
+
 # HTTP tests that assert:
 http/tests/navigation/metaredirect-basic.html
 http/tests/navigation/metaredirect-goback.html

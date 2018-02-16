@@ -156,6 +156,8 @@ static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnava
         return blockedPluginByContentSecurityPolicyText();
     case RenderEmbeddedObject::InsecurePluginVersion:
         return insecurePluginVersionText();
+    case RenderEmbeddedObject::UnsupportedPlugin:
+        return unsupportedPluginText();
     }
 
     ASSERT_NOT_REACHED();

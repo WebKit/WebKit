@@ -480,6 +480,7 @@ public:
     ExceptionOr<Ref<DOMRect>> selectionBounds();
 
     ExceptionOr<bool> isPluginUnavailabilityIndicatorObscured(Element&);
+    ExceptionOr<String> unavailablePluginReplacementText(Element&);
     bool isPluginSnapshotted(Element&);
 
 #if ENABLE(MEDIA_SOURCE)

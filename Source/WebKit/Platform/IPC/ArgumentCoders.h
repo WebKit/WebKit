@@ -368,23 +368,26 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
         uint64_t hashMapSize;
         if (!decoder.decode(hashMapSize))
             return std::nullopt;
-        
+
         HashMapType hashMap;
         for (uint64_t i = 0; i < hashMapSize; ++i) {
-            KeyArg key;
-            MappedArg value;
-            if (!decoder.decode(key))
+            std::optional<KeyArg> key;
+            decoder >> key;
+            if (!key)
                 return std::nullopt;
-            if (!decoder.decode(value))
+
+            std::optional<MappedArg> value;
+            decoder >> value;
+            if (!value)
                 return std::nullopt;
-            
-            if (!hashMap.add(key, value).isNewEntry) {
+
+            if (!hashMap.add(WTFMove(key.value()), WTFMove(value.value())).isNewEntry) {
                 // The hash map already has the specified key, bail.
                 decoder.markInvalid();
                 return std::nullopt;
             }
         }
-        
+
         return WTFMove(hashMap);
     }
 };
@@ -401,26 +404,36 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 
     static bool decode(Decoder& decoder, HashSetType& hashSet)
     {
-        uint64_t hashSetSize;
-        if (!decoder.decode(hashSetSize))
+        std::optional<HashSetType> tempHashSet;
+        decoder >> tempHashSet;
+        if (!tempHashSet)
             return false;
 
-        HashSetType tempHashSet;
+        hashSet.swap(tempHashSet.value());
+        return true;
+    }
+
+    static std::optional<HashSetType> decode(Decoder& decoder)
+    {
+        uint64_t hashSetSize;
+        if (!decoder.decode(hashSetSize))
+            return std::nullopt;
+
+        HashSetType hashSet;
         for (uint64_t i = 0; i < hashSetSize; ++i) {
             std::optional<KeyArg> key;
             decoder >> key;
             if (!key)
-                return false;
+                return std::nullopt;
 
-            if (!tempHashSet.add(*key).isNewEntry) {
-                // The hash map already has the specified key, bail.
+            if (!hashSet.add(WTFMove(key.value())).isNewEntry) {
+                // The hash set already has the specified key, bail.
                 decoder.markInvalid();
-                return false;
+                return std::nullopt;
             }
         }
 
-        hashSet.swap(tempHashSet);
-        return true;
+        return WTFMove(hashSet);
     }
 };
 

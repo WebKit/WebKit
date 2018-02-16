@@ -202,6 +202,9 @@ public:
     const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& pluginLoadClientPolicies() const { return m_pluginLoadClientPolicies; }
 #endif
 
+    void addSupportedPlugin(WebCore::SecurityOrigin*, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    void clearSupportedPlugins();
+
     ProcessID networkProcessIdentifier();
     ProcessID storageProcessIdentifier();
 

@@ -139,6 +139,7 @@ public:
     void setAllowsAnySSLCertificate(bool);
 
     void setBlockAllPlugins(bool shouldBlock) { m_shouldBlockAllPlugins = shouldBlock; }
+    void setPluginSupportedMode(const String&);
 
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
     void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
@@ -398,6 +399,7 @@ private:
     String m_authenticationPassword;
 
     bool m_shouldBlockAllPlugins { false };
+    String m_unsupportedPluginMode;
 
     bool m_forceComplexText { false };
     bool m_shouldUseAcceleratedDrawing { false };

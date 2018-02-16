@@ -1760,6 +1760,25 @@ void WebProcessPool::clearPluginClientPolicies()
 }
 #endif
 
+void WebProcessPool::addSupportedPlugin(SecurityOrigin* origin, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    m_pluginInfoStore.addSupportedPlugin(origin, WTFMove(name), WTFMove(mimeTypes), WTFMove(extensions));
+#else
+    UNUSED_PARAM(origin);
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(mimeTypes);
+    UNUSED_PARAM(extensions);
+#endif
+}
+
+void WebProcessPool::clearSupportedPlugins()
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    m_pluginInfoStore.clearSupportedPlugins();
+#endif
+}
+
 void WebProcessPool::setMemoryCacheDisabled(bool disabled)
 {
     m_memoryCacheDisabled = disabled;

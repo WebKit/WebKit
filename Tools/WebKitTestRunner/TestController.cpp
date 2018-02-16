@@ -843,6 +843,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     m_authenticationPassword = String();
 
     m_shouldBlockAllPlugins = false;
+    setPluginSupportedMode({ });
 
     m_shouldLogDownloadCallbacks = false;
     m_shouldLogHistoryClientCallbacks = false;
@@ -1667,6 +1668,44 @@ WKPluginLoadPolicy TestController::decidePolicyForPluginLoad(WKPageRef, WKPlugin
 #else
     return currentPluginLoadPolicy;
 #endif
+}
+
+void TestController::setPluginSupportedMode(const String& mode)
+{
+    if (m_unsupportedPluginMode == mode)
+        return;
+
+    m_unsupportedPluginMode = mode;
+    if (m_unsupportedPluginMode.isEmpty()) {
+        WKContextClearSupportedPlugins(m_context.get());
+        return;
+    }
+
+    WKRetainPtr<WKMutableArrayRef> emptyArray = adoptWK(WKMutableArrayCreate());
+    WKRetainPtr<WKStringRef> allOrigins = adoptWK(WKStringCreateWithUTF8CString(""));
+    WKRetainPtr<WKStringRef> specificOrigin = adoptWK(WKStringCreateWithUTF8CString("http://localhost:8080"));
+
+    WKRetainPtr<WKStringRef> pdfName = adoptWK(WKStringCreateWithUTF8CString("My personal PDF"));
+    WKContextAddSupportedPlugin(m_context.get(), allOrigins.get(), pdfName.get(), emptyArray.get(), emptyArray.get());
+
+    WKRetainPtr<WKStringRef> nameNetscape = adoptWK(WKStringCreateWithUTF8CString("com.apple.testnetscapeplugin"));
+    WKRetainPtr<WKStringRef> mimeTypeNetscape = adoptWK(WKStringCreateWithUTF8CString("application/x-webkit-test-netscape"));
+    WKRetainPtr<WKMutableArrayRef> mimeTypesNetscape = adoptWK(WKMutableArrayCreate());
+    WKArrayAppendItem(mimeTypesNetscape.get(), mimeTypeNetscape.get());
+
+    WKRetainPtr<WKStringRef> namePdf = adoptWK(WKStringCreateWithUTF8CString("WebKit built-in PDF"));
+
+    if (m_unsupportedPluginMode == "allOrigins") {
+        WKContextAddSupportedPlugin(m_context.get(), allOrigins.get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
+        WKContextAddSupportedPlugin(m_context.get(), allOrigins.get(), namePdf.get(), emptyArray.get(), emptyArray.get());
+        return;
+    }
+
+    if (m_unsupportedPluginMode == "specificOrigin") {
+        WKContextAddSupportedPlugin(m_context.get(), specificOrigin.get(), nameNetscape.get(), mimeTypesNetscape.get(), emptyArray.get());
+        WKContextAddSupportedPlugin(m_context.get(), specificOrigin.get(), namePdf.get(), emptyArray.get(), emptyArray.get());
+        return;
+    }
 }
 
 void TestController::didCommitNavigation(WKPageRef page, WKNavigationRef navigation)

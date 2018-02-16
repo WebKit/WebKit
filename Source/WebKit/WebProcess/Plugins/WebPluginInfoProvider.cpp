@@ -35,15 +35,15 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
-#include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(MAC)
 #include <WebCore/StringUtilities.h>
+#endif
 
 using namespace WebCore;
-#endif
 
 namespace WebKit {
 
@@ -97,10 +97,13 @@ void WebPluginInfoProvider::refreshPlugins()
 #endif
 }
 
-void WebPluginInfoProvider::getPluginInfo(WebCore::Page& page, Vector<WebCore::PluginInfo>& plugins)
+void WebPluginInfoProvider::getPluginInfo(Page& page, Vector<PluginInfo>& plugins, std::optional<SupportedPluginNames>& supportedPluginNames)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache(page);
+
+    if (m_cachedSupportedPluginNames)
+        supportedPluginNames = *m_cachedSupportedPluginNames;
 
     if (page.mainFrame().loader().subframeLoader().allowPlugins()) {
         plugins = m_cachedPlugins;
@@ -118,13 +121,22 @@ void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<
 {
     ASSERT_ARG(plugins, plugins.isEmpty());
 
-    getPluginInfo(page, plugins);
+    std::optional<WebCore::SupportedPluginNames> supportedPluginNames;
+    getPluginInfo(page, plugins, supportedPluginNames);
+
+    auto* document = page.mainFrame().document();
+    auto* origin = document ? &document->securityOrigin(): nullptr;
+
+    if (origin && supportedPluginNames) {
+        auto originData = SecurityOriginData::fromSecurityOrigin(*origin);
+        plugins.removeAllMatching([&] (auto& plugin) {
+            return !isSupportedPlugin(*supportedPluginNames, originData, plugin.name);
+        });
+    }
 
 #if PLATFORM(MAC)
-    if (auto* document = page.mainFrame().document()) {
-        if (document->securityOrigin().isLocal())
-            return;
-    }
+    if (origin && origin->isLocal())
+        return;
 
     for (int32_t i = plugins.size() - 1; i >= 0; --i) {
         auto& info = plugins.at(i);
@@ -146,7 +158,7 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
         HangDetectionDisabler hangDetectionDisabler;
 
         if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
-            Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0,
+            Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins, m_cachedSupportedPluginNames), 0,
             Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
             return;
 

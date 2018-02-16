@@ -397,6 +397,23 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setAutomationSession(automationSession ? automationSession->_session.get() : nullptr);
 }
 
+- (void)_addSupportedPlugin:(NSString *) origin named:(NSString *) name withMimeTypes: (NSSet<NSString *> *) nsMimeTypes withExtensions: (NSSet<NSString *> *) nsExtensions
+{
+    HashSet<String> mimeTypes;
+    for (NSString *mimeType in nsMimeTypes)
+        mimeTypes.add(mimeType);
+    HashSet<String> extensions;
+    for (NSString *extension in nsExtensions)
+        extensions.add(extension);
+
+    _processPool->addSupportedPlugin([origin length] ? WebCore::SecurityOrigin::createFromString(origin).ptr() : nullptr, name, WTFMove(mimeTypes), WTFMove(extensions));
+}
+
+- (void)_clearSupportedPlugins
+{
+    _processPool->clearSupportedPlugins();
+}
+
 - (void)_terminateStorageProcess
 {
     _processPool->terminateStorageProcess();

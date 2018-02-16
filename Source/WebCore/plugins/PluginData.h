@@ -20,8 +20,12 @@
 
 #pragma once
 
+#include "SecurityOriginData.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -84,6 +88,14 @@ inline bool operator==(PluginInfo& a, PluginInfo& b)
     return result;
 }
 
+struct SupportedPluginNames {
+    HashSet<String> allOriginPlugins;
+    HashMap<SecurityOriginData, HashSet<String>> originSpecificPlugins;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<SupportedPluginNames> decode(Decoder&);
+};
+
 // FIXME: merge with PluginDatabase in the future
 class PluginData : public RefCounted<PluginData> {
 public:
@@ -114,6 +126,39 @@ private:
 protected:
     Page& m_page;
     Vector<PluginInfo> m_plugins;
+    std::optional<SupportedPluginNames> m_supportedPluginNames;
 };
+
+inline bool isSupportedPlugin(SupportedPluginNames& pluginNames, SecurityOriginData& origin, const String& pluginName)
+{
+    auto iterator = pluginNames.originSpecificPlugins.find(origin);
+    if (iterator != pluginNames.originSpecificPlugins.end()) {
+        if (iterator->value.contains(pluginName))
+            return true;
+    }
+
+    return pluginNames.allOriginPlugins.contains(pluginName);
+}
+
+template<class Decoder> inline std::optional<SupportedPluginNames> SupportedPluginNames::decode(Decoder& decoder)
+{
+    std::optional<HashSet<String>> allOriginPlugins;
+    decoder >> allOriginPlugins;
+    if (!allOriginPlugins)
+        return std::nullopt;
+
+    std::optional<HashMap<SecurityOriginData, HashSet<String>>> originSpecificPlugins;
+    decoder >> originSpecificPlugins;
+    if (!originSpecificPlugins)
+        return std::nullopt;
+
+    return SupportedPluginNames { WTFMove(allOriginPlugins.value()), WTFMove(originSpecificPlugins.value()) };
+}
+
+template<class Encoder> inline void SupportedPluginNames::encode(Encoder& encoder) const
+{
+    encoder << allOriginPlugins;
+    encoder << originSpecificPlugins;
+}
 
 } // namespace WebCore

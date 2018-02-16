@@ -174,7 +174,7 @@ void PluginData::initPlugins()
 {
     ASSERT(m_plugins.isEmpty());
 
-    m_page.pluginInfoProvider().getPluginInfo(m_page, m_plugins);
+    m_page.pluginInfoProvider().getPluginInfo(m_page, m_plugins, m_supportedPluginNames);
 }
 
 } // namespace WebCore

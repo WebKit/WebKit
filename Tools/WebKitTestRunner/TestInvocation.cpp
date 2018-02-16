@@ -710,6 +710,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPluginSupportedMode")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef mode = static_cast<WKStringRef>(messageBody);
+        TestController::singleton().setPluginSupportedMode(toWTFString(mode));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetShouldDecideNavigationPolicyAfterDelay")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);

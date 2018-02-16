@@ -64,6 +64,7 @@ public:
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SessionID&);
+    template<class Decoder> static std::optional<SessionID> decode(Decoder&);
 
     SessionID isolatedCopy() const;
 
@@ -86,11 +87,25 @@ void SessionID::encode(Encoder& encoder) const
 template<class Decoder>
 bool SessionID::decode(Decoder& decoder, SessionID& sessionID)
 {
-    if (!decoder.decode(sessionID.m_sessionID))
+    std::optional<SessionID> decodedSessionID;
+    decoder >> decodedSessionID;
+    if (!decodedSessionID)
         return false;
 
-    // FIXME: Eliminate places that encode invalid SessionIDs, then fail to decode an invalid sessionID.
+    sessionID = decodedSessionID.value();
     return true;
+}
+
+template<class Decoder>
+std::optional<SessionID> SessionID::decode(Decoder& decoder)
+{
+    std::optional<uint64_t> sessionID;
+    decoder >> sessionID;
+    if (!sessionID)
+        return std::nullopt;
+
+    // FIXME: Eliminate places that encode invalid SessionIDs, then fail to decode an invalid sessionID.
+    return SessionID { *sessionID };
 }
 
 } // namespace PAL

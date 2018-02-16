@@ -45,8 +45,8 @@ public:
 private:
     WebPluginInfoProvider();
 
-    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
-    void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
+    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&, std::optional<WebCore::SupportedPluginNames>&) final;
+    void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) final;
     void refreshPlugins() override;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -68,6 +68,7 @@ private:
     bool m_shouldRefreshPlugins { false };
     Vector<WebCore::PluginInfo> m_cachedPlugins;
     Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
+    std::optional<WebCore::SupportedPluginNames> m_cachedSupportedPluginNames;
 #endif
 };
 

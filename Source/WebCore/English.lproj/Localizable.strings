@@ -115,6 +115,9 @@
 /* Label text to be used when an insecure plug-in version was blocked from loading */
 "Blocked Plug-In (Insecure plug-in)" = "Blocked Plug-in";
 
+/* Label text to be used when an insecure plug-in version was blocked from loading */
+"Unsupported Plug-In" = "Unsupported Plug-in";
+
 /* Bold context menu item */
 "Bold" = "Bold";
 

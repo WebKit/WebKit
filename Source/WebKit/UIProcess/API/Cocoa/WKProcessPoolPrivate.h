@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WKProcessPool.h>
+#import <WebKit/WKSecurityOrigin.h>
 
 #if WK_API_ENABLED
 
@@ -70,6 +71,9 @@
 - (void)_warmInitialProcess WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (void)_automationCapabilitiesDidChange WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (void)_setAutomationSession:(_WKAutomationSession *)automationSession WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+
+- (void)_addSupportedPlugin:(NSString *) origin named:(NSString *) name withMimeTypes: (NSSet<NSString *> *) mimeTypes withExtensions: (NSSet<NSString *> *) extensions WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_clearSupportedPlugins WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateStorageProcess;

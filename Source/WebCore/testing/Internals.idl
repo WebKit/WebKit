@@ -440,6 +440,7 @@ enum EventThrottlingBehavior {
     boolean isSelectPopupVisible(HTMLSelectElement element);
 
     [MayThrowException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
+    [MayThrowException] DOMString unavailablePluginReplacementText(Element element);
     boolean isPluginSnapshotted(Element element);
 
     [MayThrowException] DOMRect selectionBounds();

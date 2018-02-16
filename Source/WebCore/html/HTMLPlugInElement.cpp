@@ -403,13 +403,16 @@ JSC::JSObject* HTMLPlugInElement::scriptObjectForPluginReplacement()
     return nullptr;
 }
 
-// Return whether or not the replacement content for blocked plugins is accessible to the user.
-bool HTMLPlugInElement::isReplacementObscured(const String& unavailabilityDescription)
+bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)
 {
     if (!is<RenderEmbeddedObject>(renderer()))
         return false;
+
+    if (reason == RenderEmbeddedObject::UnsupportedPlugin)
+        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Tried to use an unsupported plug-in."));
+
     Ref<HTMLPlugInElement> protectedThis(*this);
-    downcast<RenderEmbeddedObject>(*renderer()).setPluginUnavailabilityReasonWithDescription(RenderEmbeddedObject::InsecurePluginVersion, unavailabilityDescription);
+    downcast<RenderEmbeddedObject>(*renderer()).setPluginUnavailabilityReasonWithDescription(reason, unavailabilityDescription);
     bool replacementIsObscured = isReplacementObscured();
     // hittest in isReplacementObscured() method could destroy the renderer. Let's refetch it.
     if (is<RenderEmbeddedObject>(renderer()))

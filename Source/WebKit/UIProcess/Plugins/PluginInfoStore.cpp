@@ -204,6 +204,65 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, P
     return PluginModuleInfo();
 }
 
+bool PluginInfoStore::isSupportedPlugin(const PluginInfoStore::SupportedPlugin& plugin, const String& mimeType, const URL& pluginURL)
+{
+    if (plugin.mimeTypes.contains(mimeType))
+        return true;
+    auto extension = pathExtension(pluginURL);
+    return extension.isEmpty() ? false : plugin.extensions.contains(extension);
+}
+
+bool PluginInfoStore::isSupportedPlugin(const String& mimeType, const URL& pluginURL, const String&, const URL& pageURL)
+{
+    // We check only pageURLString for consistency with WebProcess visible plugins.
+    if (!m_supportedPlugins)
+        return true;
+
+    for (auto& plugin : m_supportedPlugins->originSpecificPlugins.get(SecurityOriginData { pageURL.protocol().toString(), pageURL.host(), pageURL.port() })) {
+        if (isSupportedPlugin(plugin, mimeType, pluginURL))
+            return true;
+    }
+    for (auto& plugin : m_supportedPlugins->allOriginPlugins) {
+        if (isSupportedPlugin(plugin, mimeType, pluginURL))
+            return true;
+    }
+    return false;
+}
+
+std::optional<SupportedPluginNames> PluginInfoStore::supportedPluginNames()
+{
+    if (!m_supportedPlugins)
+        return std::nullopt;
+
+    HashSet<String> allOriginPlugins;
+    for (auto& plugin : m_supportedPlugins->allOriginPlugins)
+        allOriginPlugins.add(plugin.name);
+
+    HashMap<SecurityOriginData, HashSet<String>> originSpecificPlugins;
+    for (auto& keyValue : m_supportedPlugins->originSpecificPlugins) {
+        HashSet<String> names;
+        for (auto& plugin : keyValue.value)
+            names.add(plugin.name);
+        originSpecificPlugins.add(keyValue.key, WTFMove(names));
+    }
+    return SupportedPluginNames { WTFMove(allOriginPlugins), WTFMove(originSpecificPlugins) };
+}
+
+void PluginInfoStore::addSupportedPlugin(const SecurityOrigin* origin, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
+{
+    if (!m_supportedPlugins)
+        m_supportedPlugins = SupportedPlugins { };
+
+    SupportedPlugin plugin { WTFMove(name), WTFMove(mimeTypes), WTFMove(extensions) };
+    if (!origin) {
+        m_supportedPlugins->allOriginPlugins.append(WTFMove(plugin));
+        return;
+    }
+    m_supportedPlugins->originSpecificPlugins.ensure(SecurityOriginData::fromSecurityOrigin(*origin), [] {
+        return Vector<SupportedPlugin> { };
+    }).iterator->value.append(WTFMove(plugin));
+}
+
 PluginModuleInfo PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const
 {
     for (const auto& plugin : m_plugins) {

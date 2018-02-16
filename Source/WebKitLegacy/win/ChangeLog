@@ -1,3 +1,14 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Allow specifying which plug-ins are supported
+        https://bugs.webkit.org/show_bug.cgi?id=182748
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPluginInfoProvider.cpp:
+        (WebPluginInfoProvider::getPluginInfo):
+        * WebCoreSupport/WebPluginInfoProvider.h:
+
 2018-02-15  Don Olmstead  <don.olmstead@sony.com>
 
         WebCore headers should not be included relatively within dependent projects
