@@ -321,7 +321,8 @@ void NetworkConnectionToWebProcess::startDownload(PAL::SessionID sessionID, Down
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
     auto& networkProcess = NetworkProcess::singleton();
-    if (!mainResourceLoadIdentifier) {
+    // In case a response is served from service worker, we do not have yet the ability to convert the load.
+    if (!mainResourceLoadIdentifier || response.source() == ResourceResponse::Source::ServiceWorker) {
         networkProcess.downloadManager().startDownload(this, sessionID, downloadID, request);
         return;
     }
