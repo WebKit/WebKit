@@ -113,7 +113,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
     }
     
     if (policy == ZeroInitialize)
-        fastZeroFillBytes(m_data.get(), size);
+        memset(m_data.get(), 0, size);
 
     m_sizeInBytes = numElements * elementByteSize;
     m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
@@ -141,7 +141,7 @@ void ArrayBufferContents::copyTo(ArrayBufferContents& other)
     other.tryAllocate(m_sizeInBytes, sizeof(char), ArrayBufferContents::DontInitialize);
     if (!other.m_data)
         return;
-    fastCopyBytes(other.m_data.get(), m_data.get(), m_sizeInBytes);
+    memcpy(other.m_data.get(), m_data.get(), m_sizeInBytes);
     other.m_sizeInBytes = m_sizeInBytes;
 }
 
@@ -246,7 +246,7 @@ Ref<ArrayBuffer> ArrayBuffer::createInternal(ArrayBufferContents&& contents, con
 {
     ASSERT(!byteLength || source);
     auto buffer = adoptRef(*new ArrayBuffer(WTFMove(contents)));
-    fastCopyBytes(buffer->data(), source, byteLength);
+    memcpy(buffer->data(), source, byteLength);
     return buffer;
 }
 

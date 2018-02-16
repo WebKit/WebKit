@@ -99,7 +99,7 @@ void StringBuilder::allocateBuffer(const LChar* currentCharacters, unsigned requ
     ASSERT(m_is8Bit);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
     auto buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters8);
-    fastCopy(m_bufferCharacters8, currentCharacters, m_length);
+    memcpy(m_bufferCharacters8, currentCharacters, static_cast<size_t>(m_length) * sizeof(LChar)); // This can't overflow.
     
     // Update the builder state.
     m_buffer = WTFMove(buffer);
@@ -114,7 +114,7 @@ void StringBuilder::allocateBuffer(const UChar* currentCharacters, unsigned requ
     ASSERT(!m_is8Bit);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
     auto buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
-    fastCopy(m_bufferCharacters16, currentCharacters, m_length);
+    memcpy(m_bufferCharacters16, currentCharacters, static_cast<size_t>(m_length) * sizeof(UChar)); // This can't overflow.
     
     // Update the builder state.
     m_buffer = WTFMove(buffer);
@@ -276,10 +276,10 @@ void StringBuilder::append(const UChar* characters, unsigned length)
             allocateBufferUpConvert(m_string.isNull() ? 0 : m_string.characters8(), expandedCapacity(capacity(), requiredLength));
         }
 
-        fastCopy(m_bufferCharacters16 + m_length, characters, length);
+        memcpy(m_bufferCharacters16 + m_length, characters, static_cast<size_t>(length) * sizeof(UChar));
         m_length = requiredLength;
     } else
-        fastCopy(appendUninitialized<UChar>(length), characters, length);
+        memcpy(appendUninitialized<UChar>(length), characters, static_cast<size_t>(length) * sizeof(UChar));
     ASSERT(m_buffer->length() >= m_length);
 }
 
@@ -291,7 +291,13 @@ void StringBuilder::append(const LChar* characters, unsigned length)
 
     if (m_is8Bit) {
         LChar* dest = appendUninitialized<LChar>(length);
-        fastCopy(dest, characters, length);
+        if (length > 8)
+            memcpy(dest, characters, static_cast<size_t>(length) * sizeof(LChar));
+        else {
+            const LChar* end = characters + length;
+            while (characters < end)
+                *(dest++) = *(characters++);
+        }
     } else {
         UChar* dest = appendUninitialized<UChar>(length);
         const LChar* end = characters + length;

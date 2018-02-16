@@ -94,7 +94,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     if (!m_vector)
         return;
     if (mode == ZeroFill)
-        fastZeroFillBytes(m_vector.get(), size);
+        memset(m_vector.get(), 0, size);
     
     vm.heap.reportExtraMemoryAllocated(static_cast<size_t>(length) * elementSize);
     

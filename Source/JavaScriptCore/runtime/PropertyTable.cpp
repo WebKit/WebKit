@@ -74,7 +74,7 @@ PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
 {
     ASSERT(isPowerOf2(m_indexSize));
 
-    fastCopyBytes(m_index, other.m_index, dataSize());
+    memcpy(m_index, other.m_index, dataSize());
 
     iterator end = this->end();
     for (iterator iter = begin(); iter != end; ++iter)

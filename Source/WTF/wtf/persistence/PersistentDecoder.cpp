@@ -52,7 +52,7 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
     if (!bufferIsLargeEnoughToContain(size))
         return false;
 
-    fastCopy(data, m_bufferPosition, size);
+    memcpy(data, m_bufferPosition, size);
     m_bufferPosition += size;
 
     Encoder::updateChecksumForData(m_sha1, data, size);

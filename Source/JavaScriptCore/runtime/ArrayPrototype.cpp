@@ -1341,18 +1341,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
     
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
-        fastCopy(buffer, firstButterfly->contiguousDouble().data(), firstArraySize);
-        fastCopy(buffer + firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize);
+        memcpy(buffer, firstButterfly->contiguousDouble().data(), sizeof(JSValue) * firstArraySize);
+        memcpy(buffer + firstArraySize, secondButterfly->contiguousDouble().data(), sizeof(JSValue) * secondArraySize);
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
         
         auto copy = [&] (unsigned offset, void* source, unsigned size, IndexingType type) {
             if (type != ArrayWithUndecided) {
-                fastCopy(buffer + offset, static_cast<WriteBarrier<Unknown>*>(source), size);
+                memcpy(buffer + offset, source, sizeof(JSValue) * size);
                 return;
             }
             
-            clearArray(buffer + offset, size);
+            for (unsigned i = size; i--;)
+                buffer[i + offset].clear();
         };
         
         copy(0, firstButterfly->contiguous().data(), firstArraySize, firstType);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,7 @@
 #include <algorithm>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/FastCopy.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/FastZeroFill.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -43,7 +41,7 @@ void BitVector::setSlow(const BitVector& other)
         newBitsOrPointer = other.m_bitsOrPointer;
     else {
         OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(other.size());
-        fastCopy(newOutOfLineBits->bits(), other.bits(), wordCount(other.size()));
+        memcpy(newOutOfLineBits->bits(), other.bits(), byteCount(other.size()));
         newBitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
     }
     if (!isInline() && !isEmptyOrDeletedValue())
@@ -71,7 +69,7 @@ void BitVector::clearAll()
     if (isInline())
         m_bitsOrPointer = makeInlineBits(0);
     else
-        fastZeroFill(outOfLineBits()->bits(), wordCount(size()));
+        memset(outOfLineBits()->bits(), 0, byteCount(size()));
 }
 
 BitVector::OutOfLineBits* BitVector::OutOfLineBits::create(size_t numBits)
@@ -95,14 +93,14 @@ void BitVector::resizeOutOfLine(size_t numBits)
     if (isInline()) {
         // Make sure that all of the bits are zero in case we do a no-op resize.
         *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
-        fastZeroFill(newOutOfLineBits->bits() + 1, newNumWords - 1);
+        memset(newOutOfLineBits->bits() + 1, 0, (newNumWords - 1) * sizeof(void*));
     } else {
         if (numBits > size()) {
             size_t oldNumWords = outOfLineBits()->numWords();
-            fastCopy(newOutOfLineBits->bits(), outOfLineBits()->bits(), oldNumWords);
-            fastZeroFill(newOutOfLineBits->bits() + oldNumWords, newNumWords - oldNumWords);
+            memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), oldNumWords * sizeof(void*));
+            memset(newOutOfLineBits->bits() + oldNumWords, 0, (newNumWords - oldNumWords) * sizeof(void*));
         } else
-            fastCopy(newOutOfLineBits->bits(), outOfLineBits()->bits(), newOutOfLineBits->numWords());
+            memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), newOutOfLineBits->numWords() * sizeof(void*));
         OutOfLineBits::destroy(outOfLineBits());
     }
     m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;

@@ -1,3 +1,22 @@
+2018-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r228306 (custom memcpy/memset) because the bots say that it was not a
+        progression.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::fastCopy): Deleted.
+        (bmalloc::fastZeroFill): Deleted.
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate):
+        * bmalloc/Bits.h:
+        (bmalloc::BitsWordOwner::operator=):
+        (bmalloc::BitsWordOwner::clearAll):
+        (bmalloc::BitsWordOwner::set):
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::IsoPage):
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::reallocateBuffer):
+
 2018-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Improve of string.h include after r228317.

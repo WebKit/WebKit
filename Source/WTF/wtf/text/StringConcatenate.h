@@ -27,7 +27,6 @@
 #define StringConcatenate_h
 
 #include <string.h>
-#include <wtf/FastCopy.h>
 
 #ifndef AtomicString_h
 #include <wtf/text/AtomicString.h>
@@ -158,7 +157,7 @@ public:
 
     void writeTo(UChar* destination) const
     {
-        fastCopy(destination, m_characters, m_length);
+        memcpy(destination, m_characters, m_length * sizeof(UChar));
     }
 
     String toString() const { return String(m_characters, m_length); }

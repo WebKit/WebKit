@@ -1066,7 +1066,7 @@ template<typename CharacterType> inline void StringImpl::copyCharacters(Characte
         *destination = *source;
         return;
     }
-    fastCopy(destination, source, numCharacters);
+    memcpy(destination, source, numCharacters * sizeof(CharacterType));
 }
 
 ALWAYS_INLINE void StringImpl::copyCharacters(UChar* destination, const LChar* source, unsigned numCharacters)

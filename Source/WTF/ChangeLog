@@ -1,3 +1,56 @@
+2018-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r228306 (custom memcpy/memset) because the bots say that it was not a
+        progression.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::setSlow):
+        (WTF::BitVector::clearAll):
+        (WTF::BitVector::resizeOutOfLine):
+        * wtf/BitVector.h:
+        (WTF::BitVector::OutOfLineBits::numWords const):
+        (WTF::BitVector::wordCount): Deleted.
+        * wtf/CMakeLists.txt:
+        * wtf/ConcurrentBuffer.h:
+        (WTF::ConcurrentBuffer::growExact):
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVectorWordOwner::operator=):
+        (WTF::FastBitVectorWordOwner::clearAll):
+        (WTF::FastBitVectorWordOwner::set):
+        * wtf/FastCopy.h: Removed.
+        * wtf/FastMalloc.cpp:
+        (WTF::fastZeroedMalloc):
+        (WTF::fastStrDup):
+        (WTF::tryFastZeroedMalloc):
+        * wtf/FastZeroFill.h: Removed.
+        * wtf/OSAllocator.h:
+        (WTF::OSAllocator::reallocateCommitted):
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::increaseSize):
+        * wtf/Vector.h:
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::decodeFixedLengthData):
+        * wtf/persistence/PersistentEncoder.cpp:
+        (WTF::Persistence::Encoder::encodeFixedLengthData):
+        * wtf/text/CString.cpp:
+        (WTF::CString::init):
+        (WTF::CString::copyBufferIfNeeded):
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        (WTF::LineBreakIteratorPool::makeLocaleWithBreakKeyword):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::append):
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::copyCharacters):
+        * wtf/text/icu/UTextProvider.cpp:
+        (WTF::uTextCloneImpl):
+        * wtf/text/icu/UTextProviderLatin1.cpp:
+        (WTF::uTextLatin1Clone):
+        (WTF::openLatin1UTextProvider):
+        * wtf/threads/Signals.cpp:
+
 2018-02-16  Keith Miller  <keith_miller@apple.com>
 
         Remove unused line from Platform.h

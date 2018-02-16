@@ -59,10 +59,8 @@ set(WTF_HEADERS
     Expected.h
     ExportMacros.h
     FastBitVector.h
-    FastCopy.h
     FastMalloc.h
     FastTLS.h
-    FastZeroFill.h
     FeatureDefines.h
     FilePrintStream.h
     FlipBytes.h

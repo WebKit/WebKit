@@ -125,7 +125,7 @@ void* Allocator::reallocate(void* object, size_t newSize)
 
     void* result = allocate(newSize);
     size_t copySize = std::min(oldSize, newSize);
-    fastCopy(static_cast<char*>(result), static_cast<char*>(object), copySize);
+    memcpy(result, object, copySize);
     m_deallocator.deallocate(object);
     return result;
 }

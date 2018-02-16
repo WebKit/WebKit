@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 #pragma once
 
 #include <unicode/uloc.h>
-#include <wtf/FastCopy.h>
-#include <wtf/FastZeroFill.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
@@ -53,7 +51,7 @@ public:
         if (!utf8Locale.length())
             return locale;
         Vector<char> scratchBuffer(utf8Locale.length() + 11, 0);
-        fastCopy(scratchBuffer.data(), utf8Locale.data(), utf8Locale.length());
+        memcpy(scratchBuffer.data(), utf8Locale.data(), utf8Locale.length());
 
         const char* keywordValue = nullptr;
         switch (mode) {
@@ -77,7 +75,7 @@ public:
             return AtomicString::fromUTF8(scratchBuffer.data(), lengthNeeded);
         if (status == U_BUFFER_OVERFLOW_ERROR) {
             scratchBuffer.grow(lengthNeeded + 1);
-            fastZeroFill(scratchBuffer.data() + utf8Locale.length(), scratchBuffer.size() - utf8Locale.length());
+            memset(scratchBuffer.data() + utf8Locale.length(), 0, scratchBuffer.size() - utf8Locale.length());
             status = U_ZERO_ERROR;
             int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
             if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)

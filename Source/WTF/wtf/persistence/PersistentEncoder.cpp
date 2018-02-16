@@ -58,7 +58,7 @@ void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size)
     updateChecksumForData(m_sha1, data, size);
 
     uint8_t* buffer = grow(size);
-    fastCopy(buffer, data, size);
+    memcpy(buffer, data, size);
 }
 
 template<typename Type>

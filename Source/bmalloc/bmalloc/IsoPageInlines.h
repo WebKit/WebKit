@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ IsoPage<Config>::IsoPage(IsoDirectoryBase<Config>& directory, unsigned index)
     : m_directory(directory)
     , m_index(index)
 {
-    fastZeroFill(m_allocBits, bitsArrayLength(numObjects));
+    memset(m_allocBits, 0, sizeof(m_allocBits));
 }
 
 template<typename Config>

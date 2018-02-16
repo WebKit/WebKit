@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/Atomics.h>
-#include <wtf/FastCopy.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
@@ -66,7 +65,7 @@ public:
         Array* newArray = createArray(newSize);
         // This allows us to do ConcurrentBuffer<std::unique_ptr<>>.
         if (array)
-            fastCopy(newArray->data, array->data, array->size);
+            memcpy(newArray->data, array->data, sizeof(T) * array->size);
         for (size_t i = array ? array->size : 0; i < newSize; ++i)
             new (newArray->data + i) T();
         WTF::storeStoreFence();

@@ -1,3 +1,46 @@
+2018-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r228306 (custom memcpy/memset) because the bots say that it was not a
+        progression.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::append):
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::tryCreate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::copyTo):
+        (JSC::ArrayBuffer::createInternal):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::zeroRangeImpl):
+        * runtime/ArrayConventions.cpp:
+        (JSC::clearArrayMemset):
+        * runtime/ArrayConventions.h:
+        (JSC::clearArray):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::fastSlice):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+
 2018-02-16  Saam Barati  <sbarati@apple.com>
 
         Fix bugs from r228411

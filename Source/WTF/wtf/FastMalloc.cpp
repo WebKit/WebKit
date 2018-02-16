@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005, 2007, Google Inc. All rights reserved.
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -31,8 +31,6 @@
 #include <limits>
 #include <string.h>
 #include <wtf/DataLog.h>
-#include <wtf/FastCopy.h>
-#include <wtf/FastZeroFill.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -80,7 +78,7 @@ void fastSetMaxSingleAllocationSize(size_t size)
 void* fastZeroedMalloc(size_t n) 
 {
     void* result = fastMalloc(n);
-    fastZeroFillBytes(result, n);
+    memset(result, 0, n);
     return result;
 }
 
@@ -88,7 +86,7 @@ char* fastStrDup(const char* src)
 {
     size_t len = strlen(src) + 1;
     char* dup = static_cast<char*>(fastMalloc(len));
-    fastCopy(dup, src, len);
+    memcpy(dup, src, len);
     return dup;
 }
 
@@ -97,7 +95,7 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
     void* result;
     if (!tryFastMalloc(n).getValue(result))
         return 0;
-    fastZeroFillBytes(result, n);
+    memset(result, 0, n);
     return result;
 }
 

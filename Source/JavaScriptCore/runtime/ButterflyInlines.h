@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ inline Butterfly* Butterfly::tryCreate(VM& vm, JSCell*, size_t preCapacity, size
     Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
     if (hasIndexingHeader)
         *result->indexingHeader() = indexingHeader;
-    fastZeroFill(result->propertyStorage() - propertyCapacity, propertyCapacity);
+    memset(result->propertyStorage() - propertyCapacity, 0, propertyCapacity * sizeof(EncodedJSValue));
     return result;
 }
 
@@ -129,13 +129,14 @@ inline Butterfly* Butterfly::createOrGrowPropertyStorage(
     bool hasIndexingHeader = structure->hasIndexingHeader(intendedOwner);
     Butterfly* result = createUninitialized(
         vm, intendedOwner, preCapacity, newPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    fastCopyBytes(
+    memcpy(
         result->propertyStorage() - oldPropertyCapacity,
         oldButterfly->propertyStorage() - oldPropertyCapacity,
         totalSize(0, oldPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes));
-    fastZeroFill(
+    memset(
         result->propertyStorage() - newPropertyCapacity,
-        newPropertyCapacity - oldPropertyCapacity);
+        0,
+        (newPropertyCapacity - oldPropertyCapacity) * sizeof(EncodedJSValue));
     return result;
 }
 
@@ -167,7 +168,8 @@ inline Butterfly* Butterfly::growArrayRight(
     void* newBase = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, newSize, nullptr, AllocationFailureMode::ReturnNull);
     if (!newBase)
         return nullptr;
-    fastCopyBytes(newBase, theBase, oldSize);
+    // FIXME: This probably shouldn't be a memcpy.
+    memcpy(newBase, theBase, oldSize);
     return fromBase(newBase, 0, propertyCapacity);
 }
 
@@ -197,7 +199,7 @@ inline Butterfly* Butterfly::resizeArray(
     size_t size = std::min(
         totalSize(0, propertyCapacity, oldHasIndexingHeader, oldIndexingPayloadSizeInBytes),
         totalSize(0, propertyCapacity, newHasIndexingHeader, newIndexingPayloadSizeInBytes));
-    fastCopyBytes(to, from, size);
+    memcpy(to, from, size);
     return result;
 }
 

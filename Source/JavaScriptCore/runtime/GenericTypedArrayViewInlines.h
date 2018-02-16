@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(
     const typename Adaptor::Type* array, unsigned length)
 {
     RefPtr<GenericTypedArrayView> result = create(length);
-    fastCopy(result->data(), array, length);
+    memcpy(result->data(), array, length * sizeof(typename Adaptor::Type));
     return result;
 }
 

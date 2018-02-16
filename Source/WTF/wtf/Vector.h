@@ -27,9 +27,7 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/FastCopy.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/FastZeroFill.h>
 #include <wtf/Forward.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/MathExtras.h>
@@ -88,7 +86,7 @@ struct VectorInitializer<true, true, T>
 {
     static void initialize(T* begin, T* end) 
     {
-        fastZeroFill(begin, end - begin);
+        memset(begin, 0, reinterpret_cast<char*>(end) - reinterpret_cast<char*>(begin));
     }
 };
 
@@ -128,7 +126,7 @@ struct VectorMover<true, T>
 {
     static void move(const T* src, const T* srcEnd, T* dst) 
     {
-        fastCopy(dst, src, srcEnd - src);
+        memcpy(dst, src, reinterpret_cast<const char*>(srcEnd) - reinterpret_cast<const char*>(src));
     }
     static void moveOverlapping(const T* src, const T* srcEnd, T* dst) 
     {

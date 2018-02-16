@@ -45,7 +45,7 @@ LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* s
         return nullptr;
     
     // Make sure that the padding does not contain useful things.
-    fastZeroFillBytes(static_cast<char*>(space) + sizeBeforeDistancing, distancing);
+    memset(static_cast<char*>(space) + sizeBeforeDistancing, 0, distancing);
     
     if (scribbleFreeCells())
         scribble(space, size);

@@ -358,7 +358,7 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t in
         
         if (m_attributes.securityKind != SecurityKind::JSValueOOB
             || m_securityOriginToken != securityOriginToken)
-            fastZeroFillBytes(&block(), m_endAtom * atomSize);
+            memset(&block(), 0, m_endAtom * atomSize);
     }
     
     m_attributes = directory->attributes();
