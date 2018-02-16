@@ -240,6 +240,16 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
+    if (is<RenderBlockFlow>(parent)) {
+        blockFlowBuilder().insertChild(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderBlock>(parent)) {
+        blockBuilder().insertChild(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
     if (is<RenderInline>(parent)) {
         inlineBuilder().insertChild(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
         return;
@@ -311,11 +321,6 @@ void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, Render
         return;
     }
     parent.RenderElement::insertChildInternal(WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    blockBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -511,11 +516,6 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
 void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)

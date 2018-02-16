@@ -67,7 +67,7 @@ void RenderTreeBuilder::SVG::insertChild(RenderSVGRoot& parent, RenderPtr<Render
 void RenderTreeBuilder::SVG::insertChild(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.insertChildToRenderBlockFlow(parent, WTFMove(child), beforeChild);
+    m_builder.blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
 
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
     parent.subtreeChildWasAdded(&childToAdd);

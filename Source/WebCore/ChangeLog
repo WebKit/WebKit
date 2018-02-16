@@ -1,3 +1,41 @@
+2018-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlock/RenderBlockFlow::addChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182862
+        <rdar://problem/37595464>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChild): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addChild): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChild):
+        (WebCore::RenderTreeBuilder::insertChildToRenderBlock): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToRenderBlockFlow): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlockFlow.cpp:
+        (WebCore::RenderTreeBuilder::BlockFlow::insertChild):
+        * rendering/updating/RenderTreeBuilderFormControls.cpp:
+        (WebCore::RenderTreeBuilder::FormControls::findOrCreateParentForChild):
+        * rendering/updating/RenderTreeBuilderMathML.cpp:
+        (WebCore::RenderTreeBuilder::MathML::makeFences):
+        (WebCore::RenderTreeBuilder::MathML::insertChild):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::insertChild):
+        (WebCore::RenderTreeBuilder::Ruby::findOrCreateParentForChild):
+        (WebCore::RenderTreeBuilder::Ruby::rubyBaseSafe):
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::insertChild):
+
 2018-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add basic support for <input type='date'> using date picker UI
