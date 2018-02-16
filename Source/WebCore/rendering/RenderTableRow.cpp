@@ -111,14 +111,11 @@ const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell&
     return style().borderEnd();
 }
 
-void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTableRow::didInsertTableCell(RenderTableCell& child, RenderObject* beforeChild)
 {
-    auto& childToAdd = *child;
-    builder.insertChildToRenderTableRow(*this, WTFMove(child), beforeChild);
-
     // Generated content can result in us having a null section so make sure to null check our parent.
     if (auto* section = this->section()) {
-        section->addCell(&downcast<RenderTableCell>(childToAdd), this);
+        section->addCell(&child, this);
         if (beforeChild || nextRow())
             section->setNeedsCellRecalc();
     }
