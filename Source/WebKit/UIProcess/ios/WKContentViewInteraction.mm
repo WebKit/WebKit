@@ -762,9 +762,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 
 #pragma mark - UITextAutoscrolling
-- (void)startAutoscroll:(CGPoint)point
+- (void)startAutoscroll:(CGPoint)pointInDocument
 {
-    _page->startAutoscrollAtPosition(point);
+    _page->startAutoscrollAtPosition(pointInDocument);
 }
 
 - (void)cancelAutoscroll
@@ -917,7 +917,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     // and do nothing if the return value is NO.
 
     _resigningFirstResponder = YES;
-
     if (!_webView->_activeFocusedStateRetainCount) {
         // We need to complete the editing operation before we blur the element.
         [_inputPeripheral endEditing];
@@ -3133,7 +3132,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UITextRange *)selectedTextRange
 {
-    if (_page->editorState().selectionIsNone)
+    if (_page->editorState().selectionIsNone || _page->editorState().isMissingPostLayoutData)
         return nil;
     auto& postLayoutEditorStateData = _page->editorState().postLayoutData();
     FloatRect startRect = postLayoutEditorStateData.caretRectAtStart;

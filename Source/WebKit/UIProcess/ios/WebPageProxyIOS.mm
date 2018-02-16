@@ -734,9 +734,9 @@ void WebPageProxy::storeSelectionForAccessibility(bool shouldStore)
     m_process->send(Messages::WebPage::StoreSelectionForAccessibility(shouldStore), m_pageID);
 }
 
-void WebPageProxy::startAutoscrollAtPosition(const WebCore::FloatPoint& position)
+void WebPageProxy::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
 {
-    m_process->send(Messages::WebPage::StartAutoscrollAtPosition(position), m_pageID);
+    m_process->send(Messages::WebPage::StartAutoscrollAtPosition(positionInWindow), m_pageID);
 }
     
 void WebPageProxy::cancelAutoscroll()

@@ -1,3 +1,25 @@
+2018-02-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Support scrolling for non-editable web-selection and start autoscroll when near screen edges
+        https://bugs.webkit.org/show_bug.cgi?id=182815
+
+        Add support for autoscrolling during a selection. This also takes into account the edges of the screen
+        and starts autoscrolling when you get close, while still allowing autoscrolling when you are past the bounds
+        of the WebView.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView startAutoscroll:]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView useSelectionAssistantWithGranularity:]):
+        (-[WKContentView selectedTextRange]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAutoscrollAtPosition):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::startAutoscrollAtPosition):
+        (WebKit::WebPage::cancelAutoscroll):
+
 2018-02-15  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make sure WebResourceLoadStatisticsStore::mergeWithDataFromDecoder() can ingest older plist versions and not reset the database
