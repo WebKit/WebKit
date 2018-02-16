@@ -50,7 +50,7 @@ public:
     static const hb_tag_t vrt2Tag;
     static const hb_tag_t kernTag;
 
-    HarfBuzzFace(FontPlatformData*, uint64_t);
+    HarfBuzzFace(FontPlatformData&, uint64_t);
     ~HarfBuzzFace();
 
     hb_font_t* createFont();
@@ -83,7 +83,7 @@ private:
 
     hb_face_t* createFace();
 
-    FontPlatformData* m_platformData;
+    FontPlatformData& m_platformData;
     uint64_t m_uniqueID;
     RefPtr<CacheEntry> m_cacheEntry;
 

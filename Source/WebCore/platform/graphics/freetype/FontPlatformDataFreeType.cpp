@@ -241,7 +241,7 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
 HarfBuzzFace& FontPlatformData::harfBuzzFace() const
 {
     if (!m_harfBuzzFace)
-        m_harfBuzzFace = std::make_unique<HarfBuzzFace>(const_cast<FontPlatformData*>(this), hash());
+        m_harfBuzzFace = std::make_unique<HarfBuzzFace>(const_cast<FontPlatformData&>(*this), hash());
     return *m_harfBuzzFace;
 }
 

@@ -64,7 +64,7 @@ HarfBuzzFace::Cache& HarfBuzzFace::cache()
     return s_cache;
 }
 
-HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
+HarfBuzzFace::HarfBuzzFace(FontPlatformData& platformData, uint64_t uniqueID)
     : m_platformData(platformData)
     , m_uniqueID(uniqueID)
     , m_scriptForVerticalText(HB_SCRIPT_INVALID)
