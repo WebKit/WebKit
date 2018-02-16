@@ -488,3 +488,5 @@ webkit.org/b/181008 http/tests/images/image-supports-video.html [ Pass Failure ]
 webkit.org/b/180997 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
 
 webkit.org/b/179853 [ Debug ] imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
+
+webkit.org/b/181834 [ Debug ] fast/block/positioning/fixed-container-with-relative-parent.html [ Pass ImageOnlyFailure ]
