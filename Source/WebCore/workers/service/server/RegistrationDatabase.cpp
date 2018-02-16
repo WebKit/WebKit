@@ -110,7 +110,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
         ASSERT_UNUSED(errorMessage, !errorMessage->isNull());
 
 #if RELEASE_LOG_DISABLED
-        LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database: %s", errorMessage->utf8().data());
+        LOG_ERROR("Failed to open Service Worker registration database: %s", errorMessage->utf8().data());
 #else
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database: %{public}s", errorMessage->utf8().data());
 #endif
