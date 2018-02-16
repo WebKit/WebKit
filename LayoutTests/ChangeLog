@@ -1,3 +1,9 @@
+2018-02-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, land TestExpectations for rdar://problem/37587737.
+
+        * platform/mac-elcapitan/TestExpectations:
+
 2018-02-15  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228352. rdar://problem/37559826

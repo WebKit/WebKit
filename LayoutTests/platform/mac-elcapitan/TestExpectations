@@ -14,3 +14,5 @@ webkit.org/b/178526 webarchive/adopt-attribute-styled-node-webarchive.html [ Cra
 
 webkit.org/b/155132 http/tests/security/mixedContent/insecure-download-redirects-to-basic-auth-secure-download.https.html [ Skip ]
 
+# <rdar://problem/37587737>
+http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https.html [ Pass Failure ]
