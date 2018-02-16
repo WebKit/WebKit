@@ -498,3 +498,4 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/181834 [ Debug ] fast/block/positioning/fixed-container-with-relative-parent.html [ Pass ImageOnlyFailure ]
