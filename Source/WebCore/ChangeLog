@@ -1,3 +1,15 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Log the error message when failing to open the database
+        https://bugs.webkit.org/show_bug.cgi?id=182795
+        <rdar://problem/37592399>
+
+        Unreviewed.
+        Fixing iOS simulator debug build.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+
 2018-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         IndexedDB: Several test crash in when destroying a IDBKeyData
