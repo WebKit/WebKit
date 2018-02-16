@@ -1,5 +1,13 @@
 2018-02-16  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] New rebaseline after r228427
+
+        Unreviewed gardening
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt: Remove
+        gone AccessibleNode class.
+
+2018-02-16  Claudio Saavedra  <csaavedra@igalia.com>
+
         Update expectations for a couple of failing tests.
 
         Unreviewed gardening.
