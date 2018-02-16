@@ -27,7 +27,12 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
 {
     constructor(identifier)
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.SearchTabContentView.tabInfo());
+        let tabBarItem;
+        if (WI.settings.experimentalEnableNewTabBar.value)
+            tabBarItem = WI.PinnedTabBarItem.fromTabInfo(WI.SearchTabContentView.tabInfo());
+        else
+            tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.SearchTabContentView.tabInfo());
+
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel,
             WI.DOMNodeDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.RulesStyleDetailsSidebarPanel];
 
@@ -36,13 +41,17 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
 
         super(identifier || "search", "search", tabBarItem, WI.SearchSidebarPanel, detailsSidebarPanelConstructors);
 
+        // Ensures that the Search tab is displayable from a pinned tab bar item.
+        tabBarItem.representedObject = this;
+
         this._forcePerformSearch = false;
     }
 
     static tabInfo()
     {
+        let image = WI.settings.experimentalEnableNewTabBar.value ? "Images/Search.svg" : "Images/SearchResults.svg";
         return {
-            image: "Images/SearchResults.svg",
+            image,
             title: WI.UIString("Search"),
             isEphemeral: true,
         };

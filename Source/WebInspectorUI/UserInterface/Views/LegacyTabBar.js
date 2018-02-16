@@ -396,6 +396,11 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
         return this._tabBarItems.filter((item) => !(item instanceof WI.PinnedTabBarItem)).length;
     }
 
+    get saveableTabCount()
+    {
+        return this._tabBarItems.filter((item) => item.representedObject && item.representedObject.constructor.shouldSaveTab()).length;
+    }
+
     // Protected
 
     layout()

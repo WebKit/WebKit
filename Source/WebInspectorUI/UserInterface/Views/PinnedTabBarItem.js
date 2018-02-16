@@ -34,6 +34,11 @@ WI.PinnedTabBarItem = class PinnedTabBarItem extends WI.TabBarItem
         this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
     }
 
+    static fromTabInfo({image, title})
+    {
+        return new WI.PinnedTabBarItem(image, title);
+    }
+
     // Private
 
     _handleContextMenuEvent(event)

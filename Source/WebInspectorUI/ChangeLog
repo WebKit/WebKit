@@ -1,5 +1,73 @@
 2018-02-16  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: TabBar redesign: remove top-level search field and pin the Search tab
+        https://bugs.webkit.org/show_bug.cgi?id=182353
+        <rdar://problem/37088644>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Create Search UI based on experimental setting. When the new TabBar is
+        enabled, the Search tab is a pinned tab. Since it is also saveable, it
+        needs to be added to the TabBrowser (the browser adds the item to the bar).
+
+        When restoring saved tabs, make an additional check to prevent a tab
+        from being added twice. This can occur now that the Search tab is pinned.
+
+        * UserInterface/Images/Search.svg:
+        Update art to better match Safari/macOS. Slightly increase the radius of
+        the lens, and shorten the length of the handle.
+
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog > div::before):
+        Update styles for new Search icon.
+
+        * UserInterface/Views/LegacyTabBar.js:
+        (WI.LegacyTabBar.prototype.get saveableTabCount):
+        Backported new TabBar method which is called by TabBrowser.
+
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .field::before):
+        Update styles for new Search icon.
+
+        * UserInterface/Views/PinnedTabBarItem.js:
+        (WI.PinnedTabBarItem.prototype.fromTabInfo):
+        Match GeneralTabBarItem.fromTabInfo.
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView):
+        (WI.SearchTabContentView.tabInfo):
+        New image (magnifying glass without border) when new TabBar is enabled.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView):
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        Move creation of the Settings item out of TabBar. The TabBar should
+        only be concerned with managing tabs.
+
+        (WI.TabBar.prototype.get saveableTabCount):
+        (WI.TabBar.prototype._handleContextMenu):
+        (WI.TabBar.prototype.get normalNonEphemeralTabCount): Deleted.
+        Now that the Search tab is pinned, there aren't any normal tabs that
+        are also ephemeral. For the LegacyTabBar, both the Search and New Tab
+        tabs are still in this category.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.addTabForContentView):
+        (WI.TabBrowser.prototype.closeTabForContentView):
+        (WI.TabBrowser.prototype._tabBarItemSelected):
+        (WI.TabBrowser._tabBarItemRemoved):
+        Recent tab list should be validated against the list of saveable tabs,
+        since the Search tab is no longer a normal tab (a GeneralTabBarItem),
+        but is still persisted across Inspector sessions.
+
+2018-02-16  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: TabBar redesign: TabBarItem close button is incorrectly positioned
         https://bugs.webkit.org/show_bug.cgi?id=182844
         <rdar://problem/37586749>

@@ -399,10 +399,6 @@ WI.contentLoaded = function()
     this._dashboardContainer = new WI.DashboardContainerView;
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
 
-    const incremental = false;
-    this._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), incremental);
-    this._searchToolbarItem.addEventListener(WI.SearchBar.Event.TextChanged, this._searchTextDidChange, this);
-
     this.toolbar.addToolbarItem(this._closeToolbarButton, WI.Toolbar.Section.Control);
 
     this.toolbar.addToolbarItem(this._undockToolbarButton, WI.Toolbar.Section.Left);
@@ -416,7 +412,17 @@ WI.contentLoaded = function()
 
     this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WI.Toolbar.Section.CenterRight);
 
-    this.toolbar.addToolbarItem(this._searchToolbarItem, WI.Toolbar.Section.Right);
+    this._searchTabContentView = new WI.SearchTabContentView;
+
+    if (WI.settings.experimentalEnableNewTabBar.value) {
+        this.tabBrowser.addTabForContentView(this._searchTabContentView, {suppressAnimations: true});
+        this.tabBar.addTabBarItem(this.settingsTabContentView.tabBarItem, {suppressAnimations: true});
+    } else {
+        const incremental = false;
+        this._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), incremental);
+        this._searchToolbarItem.addEventListener(WI.SearchBar.Event.TextChanged, this._searchTextDidChange, this);
+        this.toolbar.addToolbarItem(this._searchToolbarItem, WI.Toolbar.Section.Right);
+    }
 
     this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
 
@@ -469,6 +475,9 @@ WI.contentLoaded = function()
             this._pendingOpenTabs.push({tabType, index: i});
             continue;
         }
+
+        if (!this.isNewTabWithTypeAllowed(tabType))
+            continue;
 
         let tabContentView = this._createTabContentViewForType(tabType);
         if (!tabContentView)
@@ -1263,12 +1272,16 @@ WI._searchTextDidChange = function(event)
 
 WI._focusSearchField = function(event)
 {
+    if (WI.settings.experimentalEnableNewTabBar.value)
+        this.tabBrowser.showTabForContentView(this._searchTabContentView);
+
     if (this.tabBrowser.selectedTabContentView instanceof WI.SearchTabContentView) {
         this.tabBrowser.selectedTabContentView.focusSearchField();
         return;
     }
 
-    this._searchToolbarItem.focus();
+    if (this._searchToolbarItem)
+        this._searchToolbarItem.focus();
 };
 
 WI._focusChanged = function(event)

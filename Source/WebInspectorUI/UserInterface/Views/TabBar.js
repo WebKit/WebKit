@@ -46,8 +46,6 @@ WI.TabBar = class TabBar extends WI.View
                 this.addTabBarItem(tabBarItem);
         }
 
-        this.addTabBarItem(WI.settingsTabContentView.tabBarItem, {suppressAnimations: true});
-
         this._tabPickerTabBarItem = new WI.PinnedTabBarItem("Images/TabPicker.svg", WI.UIString("Show hidden tabs"));
         this._tabPickerTabBarItem.element.classList.add("tab-picker");
         this._tabPickerTabBarItem.element.addEventListener("contextmenu", this._handleTabPickerTabContextMenu.bind(this));
@@ -83,7 +81,10 @@ WI.TabBar = class TabBar extends WI.View
 
         tabBarItem.parentTabBar = this;
 
-        index = Number.constrain(index, 0, this.normalTabCount);
+        if (tabBarItem instanceof WI.GeneralTabBarItem)
+            index = Number.constrain(index, 0, this.normalTabCount);
+        else
+            index = Number.constrain(index, this.normalTabCount, this._tabBarItems.length);
 
         if (this.element.classList.contains("animating")) {
             requestAnimationFrame(removeStyles.bind(this));
@@ -168,7 +169,7 @@ WI.TabBar = class TabBar extends WI.View
         if (!tabBarItem || tabBarItem instanceof WI.PinnedTabBarItem)
             return null;
 
-        if (!tabBarItem.isEphemeral && this.normalNonEphemeralTabCount === 1)
+        if (!tabBarItem.isEphemeral && this.normalTabCount === 1)
             return null;
 
         tabBarItem.parentTabBar = null;
@@ -368,9 +369,9 @@ WI.TabBar = class TabBar extends WI.View
         return this._tabBarItems.filter((item) => !(item instanceof WI.PinnedTabBarItem)).length;
     }
 
-    get normalNonEphemeralTabCount()
+    get saveableTabCount()
     {
-        return this._tabBarItems.filter((item) => !item.isEphemeral && !(item instanceof WI.PinnedTabBarItem)).length;
+        return this._tabBarItems.filter((item) => item.representedObject && item.representedObject.constructor.shouldSaveTab()).length;
     }
 
     // Protected
@@ -788,7 +789,7 @@ WI.TabBar = class TabBar extends WI.View
             }
 
             let checked = !!openTabBarItem;
-            let disabled = checked && this.normalNonEphemeralTabCount === 1;
+            let disabled = checked && this.normalTabCount === 1;
             contextMenu.appendCheckboxItem(tabClass.tabInfo().title, () => {
                 if (openTabBarItem)
                     this.removeTabBarItem(openTabBarItem);

@@ -659,7 +659,6 @@ localizedStrings["Only show resources with issues"] = "Only show resources with 
 localizedStrings["Only show visual actions"] = "Only show visual actions";
 localizedStrings["Opacity"] = "Opacity";
 localizedStrings["Open"] = "Open";
-localizedStrings["Open Settings"] = "Open Settings";
 localizedStrings["Open in New Tab"] = "Open in New Tab";
 localizedStrings["Option-click to show all units"] = "Option-click to show all units";
 localizedStrings["Option-click to show all values"] = "Option-click to show all values";

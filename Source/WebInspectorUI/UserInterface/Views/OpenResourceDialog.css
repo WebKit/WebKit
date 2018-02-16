@@ -67,12 +67,12 @@ body[dir=rtl] .open-resource-dialog > .field {
 
 .open-resource-dialog > .field::before {
     position: absolute;
-    top: 6px;
-    width: 30px;
+    top: 10px;
+    width: 24px;
     opacity: 0.5;
     content: url(../Images/Search.svg);
 
-    --open-resource-dialog-search-icon-offset-start: 6px;
+    --open-resource-dialog-search-icon-offset-start: 10px;
 }
 
 body[dir=ltr] .open-resource-dialog > .field::before {

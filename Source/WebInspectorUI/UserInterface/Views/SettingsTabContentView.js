@@ -28,7 +28,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 {
     constructor(identifier)
     {
-        let tabBarItem = new WI.PinnedTabBarItem("Images/Gear.svg", WI.UIString("Open Settings"));
+        let tabBarItem = WI.PinnedTabBarItem.fromTabInfo(WI.SettingsTabContentView.tabInfo());
 
         super(identifier || "settings", "settings", tabBarItem);
 
