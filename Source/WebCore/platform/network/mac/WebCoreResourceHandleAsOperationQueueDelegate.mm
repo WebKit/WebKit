@@ -101,6 +101,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 
     m_handle = nullptr;
 
+    m_messageQueue = nullptr;
     m_requestResult = nullptr;
     m_cachedResponseResult = nullptr;
     m_boolResult = NO;
