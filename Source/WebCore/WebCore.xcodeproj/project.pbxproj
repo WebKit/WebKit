@@ -7103,6 +7103,8 @@
 		418C395F1C8F0AAB0051C8A3 /* ReadableStreamDefaultController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStreamDefaultController.h; sourceTree = "<group>"; };
 		418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorker.cpp; sourceTree = "<group>"; };
 		418F88030FF957AE0080F045 /* JSAbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractWorker.h; sourceTree = "<group>"; };
+		41945694203502A5004BA277 /* ApplicationCacheResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheResourceLoader.cpp; sourceTree = "<group>"; };
+		41945696203502A6004BA277 /* ApplicationCacheResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheResourceLoader.h; sourceTree = "<group>"; };
 		419ACF8E1F97E7D5009F1A83 /* ServiceWorkerFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerFetch.h; sourceTree = "<group>"; };
 		419ACF901F97E7D6009F1A83 /* ServiceWorkerFetch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerFetch.cpp; sourceTree = "<group>"; };
 		419BC2DC1685329900D64D6D /* VisitedLinkState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkState.cpp; sourceTree = "<group>"; };
@@ -15692,6 +15694,8 @@
 				24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */,
 				1A8F6BB50DB55CDC001DB794 /* ApplicationCacheResource.cpp */,
 				1A8F6BB60DB55CDC001DB794 /* ApplicationCacheResource.h */,
+				41945694203502A5004BA277 /* ApplicationCacheResourceLoader.cpp */,
+				41945696203502A6004BA277 /* ApplicationCacheResourceLoader.h */,
 				1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */,
 				1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */,
 				1A8F6BB70DB55CDC001DB794 /* DOMApplicationCache.cpp */,

@@ -1253,6 +1253,7 @@ loader/appcache/ApplicationCache.cpp
 loader/appcache/ApplicationCacheGroup.cpp
 loader/appcache/ApplicationCacheHost.cpp
 loader/appcache/ApplicationCacheResource.cpp
+loader/appcache/ApplicationCacheResourceLoader.cpp
 loader/appcache/ApplicationCacheStorage.cpp
 loader/appcache/DOMApplicationCache.cpp
 loader/appcache/ManifestParser.cpp

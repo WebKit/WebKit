@@ -1,3 +1,47 @@
+2018-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Use ResourceLoader to load appcache manifest
+        https://bugs.webkit.org/show_bug.cgi?id=182861
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated tests.
+
+        Add ApplicationCacheResourceLoader to load an ApplicationCacheResource from a ResourceLoader.
+        Make use of it to load the app cache manifest.
+        Future work should load entries using the same loader.
+
+        Remove manifest handle.
+        Ensure that DocumentLoader does not register the manifest resource loader as its lifetime
+        is handled by its ApplicationCacheGroup.
+
+        Add a ResourceLoader option to bypass the application cache.
+        Use it for manifest loading.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::addSubresourceLoader):
+        * loader/ResourceLoaderOptions.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::stopLoading):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::createRequest):
+        (WebCore::ApplicationCacheGroup::didReceiveResponseAsync):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForRedirect):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForResponse):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForError):
+        * loader/appcache/ApplicationCacheResourceLoader.cpp: Added.
+        * loader/appcache/ApplicationCacheResourceLoader.h: Added.
+
 2018-02-16  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::EventTarget::fireEventListeners

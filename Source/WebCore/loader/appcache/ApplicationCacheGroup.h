@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ApplicationCacheResourceLoader.h"
 #include "DOMApplicationCache.h"
 #include "URL.h"
 #include "ResourceHandleClient.h"
@@ -118,9 +119,9 @@ private:
     void didFinishLoading(ResourceHandle*) final;
     void didFail(ResourceHandle*, const ResourceError&) final;
 
-    void didReceiveManifestResponse(const ResourceResponse&);
-    void didReceiveManifestData(const char*, int);
     void didFinishLoadingManifest();
+    void didFailLoadingManifest(ApplicationCacheResourceLoader::Error);
+
     void didReachMaxAppCacheSize();
     void didReachOriginQuota(int64_t totalSpaceNeeded);
     
@@ -136,6 +137,8 @@ private:
     void associateDocumentLoaderWithCache(DocumentLoader*, ApplicationCache*);
     
     void stopLoading();
+
+    ResourceRequest createRequest(URL&&, ApplicationCacheResource*);
 
     Ref<ApplicationCacheStorage> m_storage;
 
@@ -195,7 +198,8 @@ private:
     unsigned long m_currentResourceIdentifier;
 
     RefPtr<ApplicationCacheResource> m_manifestResource;
-    RefPtr<ResourceHandle> m_manifestHandle;
+
+    RefPtr<ApplicationCacheResourceLoader> m_loader;
 
     int64_t m_availableSpaceInQuota;
     bool m_originQuotaExceededPreviously { false };

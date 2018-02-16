@@ -1538,6 +1538,10 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
     ASSERT(!m_subresourceLoaders.contains(loader->identifier()));
     ASSERT(!mainResourceLoader() || mainResourceLoader() != loader);
 
+    // Application Cache loaders are handled by their ApplicationCacheGroup directly.
+    if (loader->options().applicationCacheMode == ApplicationCacheMode::Bypass)
+        return;
+
     // A page in the PageCache or about to enter PageCache should not be able to start loads.
     ASSERT_WITH_SECURITY_IMPLICATION(!document() || document()->pageCacheState() == Document::NotInPageCache);
 

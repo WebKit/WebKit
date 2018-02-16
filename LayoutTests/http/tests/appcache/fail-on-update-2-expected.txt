@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 SUCCESS: No crash.
