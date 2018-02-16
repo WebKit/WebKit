@@ -1753,6 +1753,7 @@
 		C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly_Bundle.cpp; sourceTree = "<group>"; };
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
+		C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessTerminate.mm; sourceTree = "<group>"; };
 		C25CCA051E51380B0026CB8A /* LineBreaking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LineBreaking.mm; path = ../WebCore/LineBreaking.mm; sourceTree = "<group>"; };
 		C25CCA0A1E513F490026CB8A /* LineBreaking.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LineBreaking.html; sourceTree = "<group>"; };
 		C25CCA0C1E5140E50026CB8A /* AllAhem.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllAhem.svg; sourceTree = "<group>"; };
@@ -2179,6 +2180,7 @@
 				83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */,
 				5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */,
 				51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */,
+				C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */,
 				5120C83C1E6750790025B250 /* WebsiteDataStoreCustomPaths.mm */,
 				5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */,
 				2E5C77061FA70136005932C3 /* WKAttachmentTests.mm */,

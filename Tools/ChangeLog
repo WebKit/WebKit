@@ -1,3 +1,15 @@
+2018-02-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Implement stopping of run loop in the WebContent process when using NSRunLoop.
+        https://bugs.webkit.org/show_bug.cgi?id=182499
+        <rdar://problem/37247424>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessTerminate.mm: Added.
+        (TEST):
+
 2018-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         Speed up dSYM generation on build.webkit.org with -gline-tables-only

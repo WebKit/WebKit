@@ -103,6 +103,10 @@ protected:
 #if USE(APPKIT)
     static void stopNSAppRunLoop();
 #endif
+    
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    static void stopNSRunLoop();
+#endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

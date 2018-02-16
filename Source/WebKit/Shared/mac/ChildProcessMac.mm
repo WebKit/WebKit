@@ -219,6 +219,16 @@ void ChildProcess::stopNSAppRunLoop()
 }
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+void ChildProcess::stopNSRunLoop()
+{
+    ASSERT([NSRunLoop mainRunLoop]);
+    [[NSRunLoop mainRunLoop] performBlock:^{
+        exit(0);
+    }];
+}
+#endif
+
 void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
 {
     if (!latencyQOS && !throughputQOS)

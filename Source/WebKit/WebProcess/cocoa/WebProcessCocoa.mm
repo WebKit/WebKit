@@ -177,7 +177,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     [NSApplication sharedApplication];
     [NSApplication _accessibilityInitialize];
 #endif
-    
+
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
 #if TARGET_OS_IPHONE
@@ -315,7 +315,11 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 #if USE(APPKIT)
 void WebProcess::stopRunLoop()
 {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    ChildProcess::stopNSRunLoop();
+#else
     ChildProcess::stopNSAppRunLoop();
+#endif
 }
 #endif
 
