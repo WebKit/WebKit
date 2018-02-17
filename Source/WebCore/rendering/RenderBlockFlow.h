@@ -461,7 +461,7 @@ protected:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
     void layoutExcludedChildren(bool relayoutChildren) override;
-    void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder&, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion) override;
+    void addOverflowFromFloats();
 
 private:
     bool recomputeLogicalWidthAndColumnWidth();
@@ -508,7 +508,6 @@ private:
     bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) override;
     bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    void addOverflowFromFloats();
     void addOverflowFromInlineChildren() override;
     
     void fitBorderToLinesIfNeeded(); // Shrink the box in which the border paints if border-fit is set.

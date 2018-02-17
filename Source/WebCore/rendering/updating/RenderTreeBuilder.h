@@ -72,6 +72,17 @@ public:
     void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
 
+    // NormalizeAfterInsertion::Yes ensures that the destination subtree is consistent after the insertion (anonymous wrappers etc).
+    enum class NormalizeAfterInsertion { No, Yes };
+    void moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* child, RenderObject* beforeChild, NormalizeAfterInsertion);
+    void moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* child, NormalizeAfterInsertion);
+    void moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, NormalizeAfterInsertion);
+    void moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* beforeChild, NormalizeAfterInsertion);
+    // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote
+    // that all the kids from |startChild| onwards should be moved.
+    void moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion);
+    void moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion);
+
 private:
     class FirstLetter;
     class List;
@@ -91,6 +102,8 @@ private:
     RenderPtr<RenderObject> takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderButton(RenderButton& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child);
+
+    void moveAllChildrenIncludingFloatsTo(RenderBlock& from, RenderBlock& toBlock, RenderTreeBuilder::NormalizeAfterInsertion);
 
     void insertChildToRenderGrid(RenderGrid& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);

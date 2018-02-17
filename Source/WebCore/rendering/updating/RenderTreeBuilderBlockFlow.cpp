@@ -45,6 +45,10 @@ void RenderTreeBuilder::BlockFlow::insertChild(RenderBlockFlow& parent, RenderPt
     m_builder.blockBuilder().insertChild(parent, WTFMove(child), beforeChildOrPlaceholder);
 }
 
+void RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    m_builder.moveAllChildrenTo(from, &to, normalizeAfterInsertion);
+    from.addFloatsToNewParent(downcast<RenderBlockFlow>(to));
 }
 
-
+}

@@ -2023,7 +2023,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
     // It copies the logic of RenderBlock::addChildIgnoringContinuation
     if (noLongerAffectsParentBlock() && style().isFloating() && previousSibling() && previousSibling()->isAnonymousBlock())
-        downcast<RenderBoxModelObject>(*parent()).moveChildTo(*RenderTreeBuilder::current(), &downcast<RenderBoxModelObject>(*previousSibling()), this, RenderBoxModelObject::NormalizeAfterInsertion::No);
+        RenderTreeBuilder::current()->moveChildTo(downcast<RenderBoxModelObject>(*parent()), &downcast<RenderBoxModelObject>(*previousSibling()), this, RenderTreeBuilder::NormalizeAfterInsertion::No);
 
     if (diff >= StyleDifferenceRepaint) {
         // FIXME: This could use a cheaper style-only test instead of SimpleLineLayout::canUseFor.
@@ -2103,13 +2103,6 @@ void RenderBlockFlow::addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const
             continue;
         toBlockFlow.m_floatingObjects->add(floatingObject->cloneForNewParent());
     }
-}
-
-void RenderBlockFlow::moveAllChildrenIncludingFloatsTo(RenderTreeBuilder& builder, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion normalizeAfterInsertion)
-{
-    auto& toBlockFlow = downcast<RenderBlockFlow>(toBlock);
-    moveAllChildrenTo(builder, &toBlockFlow, normalizeAfterInsertion);
-    addFloatsToNewParent(toBlockFlow);
 }
 
 void RenderBlockFlow::addOverflowFromFloats()

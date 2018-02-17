@@ -36,6 +36,12 @@
 
 namespace WebCore {
 
+static void moveAllChildrenToInternal(RenderBoxModelObject& from, RenderElement& newParent)
+{
+    while (from.firstChild())
+        newParent.attachRendererInternal(from.detachRendererInternal(*from.firstChild()), &from);
+}
+
 static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 {
     if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())
@@ -260,7 +266,7 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
         return;
 
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
-    anonymousBlock.moveAllChildrenToInternal(*parent);
+    moveAllChildrenToInternal(anonymousBlock, *parent);
     auto toBeDestroyed = m_builder.takeChildFromRenderElement(*parent, anonymousBlock);
     // anonymousBlock is dead here.
 }
@@ -309,7 +315,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
-            nextBlock.moveAllChildrenIncludingFloatsTo(m_builder, prevBlock, RenderBoxModelObject::NormalizeAfterInsertion::No);
+            m_builder.moveAllChildrenIncludingFloatsTo(nextBlock, prevBlock, RenderTreeBuilder::NormalizeAfterInsertion::No);
 
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();
@@ -361,7 +367,7 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     auto* nextSibling = child.nextSibling();
 
     auto toBeDeleted = m_builder.takeChildFromRenderElement(parent, child);
-    child.moveAllChildrenTo(m_builder, &parent, nextSibling, RenderBoxModelObject::NormalizeAfterInsertion::No);
+    m_builder.moveAllChildrenTo(child, &parent, nextSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }
