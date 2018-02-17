@@ -65,6 +65,7 @@ public:
 
     // These functions are temporary until after all block/inline/continuation code is moved over.
     RenderPtr<RenderObject> takeChildFromRenderElement(RenderElement& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    void insertChildToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
     void childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child);

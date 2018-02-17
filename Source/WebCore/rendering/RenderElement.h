@@ -98,8 +98,6 @@ public:
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
-    void insertChildInternal(RenderPtr<RenderObject>, RenderObject* beforeChild);
-
     virtual RenderElement* hoverAncestor() const;
 
     virtual void dirtyLinesFromChangedChild(RenderObject&) { }

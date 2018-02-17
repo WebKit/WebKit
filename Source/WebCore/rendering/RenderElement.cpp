@@ -532,43 +532,6 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
     return RenderPtr<RenderObject>(&renderer);
 }
 
-void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, RenderObject* beforeChild)
-{
-    RELEASE_ASSERT_WITH_MESSAGE(!view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
-
-    ASSERT(canHaveChildren() || canHaveGeneratedChildren());
-    ASSERT(!newChildPtr->parent());
-    ASSERT(!isRenderBlockFlow() || (!newChildPtr->isTableSection() && !newChildPtr->isTableRow() && !newChildPtr->isTableCell()));
-
-    while (beforeChild && beforeChild->parent() && beforeChild->parent() != this)
-        beforeChild = beforeChild->parent();
-
-    ASSERT(!beforeChild || beforeChild->parent() == this);
-    ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
-
-    // Take the ownership.
-    auto* newChild = attachRendererInternal(WTFMove(newChildPtr), beforeChild);
-
-    newChild->initializeFragmentedFlowStateOnInsertion();
-    if (!renderTreeBeingDestroyed()) {
-        newChild->insertedIntoTree();
-        if (is<RenderElement>(*newChild))
-            RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
-    }
-
-    newChild->setNeedsLayoutAndPrefWidthsRecalc();
-    setPreferredLogicalWidthsDirty(true);
-    if (!normalChildNeedsLayout())
-        setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
-
-    if (AXObjectCache* cache = document().axObjectCache())
-        cache->childrenChanged(this, newChild);
-    if (is<RenderBlockFlow>(*this))
-        downcast<RenderBlockFlow>(*this).invalidateLineLayoutPath();
-    if (hasOutlineAutoAncestor() || outlineStyleForRepaint().outlineStyleIsAuto())
-        newChild->setHasOutlineAutoAncestor();
-}
-
 RenderBlock* RenderElement::containingBlockForFixedPosition() const
 {
     auto* renderer = parent();

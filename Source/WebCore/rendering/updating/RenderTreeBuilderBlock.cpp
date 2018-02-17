@@ -297,7 +297,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
 
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
-            blockChildrenBlock.insertChildInternal(WTFMove(blockToMove), beforeChild);
+            m_builder.insertChildToRenderElementInternal(blockChildrenBlock, WTFMove(blockToMove), beforeChild);
             next->setNeedsLayoutAndPrefWidthsRecalc();
 
             // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child

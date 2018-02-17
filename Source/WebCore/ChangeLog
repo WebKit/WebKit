@@ -1,3 +1,19 @@
+2018-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderElement::insertChildInternal() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182885
+        <rdar://problem/37617371>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChildToRenderElement):
+
 2018-02-16  Youenn Fablet  <youenn@apple.com>
 
         Allow specifying which plug-ins are supported
