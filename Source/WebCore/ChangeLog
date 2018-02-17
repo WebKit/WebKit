@@ -1,3 +1,39 @@
+2018-02-17  Darin Adler  <darin@apple.com>
+
+        Web Inspector: get rid of remaining uses of OptOutput<T>
+        https://bugs.webkit.org/show_bug.cgi?id=180607
+
+        Reviewed by Brian Burg.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildSourceRangeObject): Take a const Vector& instead of a Vector*.
+        (WebCore::InspectorStyle::buildObjectForStyle const): Pass lineEndings() instead
+        of lineEndings().get().
+        (WebCore::InspectorStyle::styleWithProperties const): Ditto.
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList): Ditto.
+        (WebCore::InspectorStyleSheet::lineEndings const): Return a Vector instead of
+        a std::unique_ptr<Vector>.
+        (WebCore::InspectorStyleSheetForInlineStyle::lineEndings const): Ditto.
+        * inspector/InspectorStyleSheet.h: Updated for the above.
+
+        * inspector/agents/InspectorCSSAgent.h: Removed some bogus const.
+        * inspector/agents/InspectorCanvasAgent.cpp: Ditto.
+        * inspector/agents/InspectorCanvasAgent.h: Ditto.
+
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp: Improved type of global strings
+        so we don't waste space with a pointer to the string.
+        (WebCore::InspectorDOMDebuggerAgent::setEventListenerBreakpoint): Removed
+        explicit creation of String, which was wasteful and unnecessary.
+        (WebCore::InspectorDOMDebuggerAgent::setInstrumentationBreakpoint): Ditto.
+        (WebCore::InspectorDOMDebuggerAgent::removeEventListenerBreakpoint): Ditto.
+        (WebCore::InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint): Ditto.
+        (WebCore::InspectorDOMDebuggerAgent::setXHRBreakpoint): Removed bogus const.
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h: Removed bogus const and use
+        final instead of override.
+        * inspector/agents/InspectorPageAgent.cpp: Ditto.
+        * inspector/agents/InspectorPageAgent.h: Ditto.
+
 2018-02-16  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Cleanup RenderTreeBuilder

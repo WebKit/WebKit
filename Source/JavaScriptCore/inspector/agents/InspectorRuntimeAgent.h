@@ -57,22 +57,22 @@ public:
 
     void enable(ErrorString&) override { m_enabled = true; }
     void disable(ErrorString&) override { m_enabled = false; }
-    void parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>&) final;
-    void evaluate(ErrorString&, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* const executionContextId, const bool* const returnByValue, const bool* const generatePreview, const bool* const saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
-    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* const generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) final;
+    void parse(ErrorString&, const String& expression, Protocol::Runtime::SyntaxErrorType* result, std::optional<String>& message, RefPtr<Protocol::Runtime::ErrorRange>&) final;
+    void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex) final;
+    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown) final;
     void releaseObject(ErrorString&, const ErrorString& objectId) final;
-    void getPreview(ErrorString&, const String& objectId, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>&) final;
-    void getProperties(ErrorString&, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
-    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* const generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
-    void getCollectionEntries(ErrorString&, const String& objectId, const String* const objectGroup, const int* const startIndex, const int* const numberToFetch, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::CollectionEntry>>& entries) final;
-    void saveResult(ErrorString&, const JSON::Object& callArgument, const int* const executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
+    void getPreview(ErrorString&, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>&) final;
+    void getProperties(ErrorString&, const String& objectId, const bool* ownProperties, const bool* generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
+    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
+    void getCollectionEntries(ErrorString&, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries) final;
+    void saveResult(ErrorString&, const JSON::Object& callArgument, const int* executionContextId, std::optional<int>& savedResultIndex) final;
     void releaseObjectGroup(ErrorString&, const String& objectGroup) final;
-    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::TypeDescription>>&) override;
+    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>&) override;
     void enableTypeProfiler(ErrorString&) override;
     void disableTypeProfiler(ErrorString&) override;
     void enableControlFlowProfiler(ErrorString&) override;
     void disableControlFlowProfiler(ErrorString&) override;
-    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
+    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
 
     bool enabled() const { return m_enabled; }
 

@@ -253,7 +253,7 @@ void CommandDomainBackendDispatcher::dispatch(long requestId, const String& meth
     if (method == "commandWithEnumReturnValue")
         commandWithEnumReturnValue(requestId, WTFMove(parameters));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'CommandDomain." + method + "' was not found");
 }
 
 void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, RefPtr<JSON::Object>&&)

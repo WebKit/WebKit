@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2018 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -177,7 +177,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
 
                 if isinstance(parameter.type, EnumType):
                     lines.append('    if (!%s) {' % objc_in_param_name)
-                    lines.append('        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, String::format("Parameter \'%%s\' of method \'%%s\' cannot be processed", "%s", "%s.%s"));' % (parameter.parameter_name, domain.domain_name, command.command_name))
+                    lines.append('        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, ASCIILiteral { "Parameter \'%s\' of method \'%s.%s\' cannot be processed" });' % (parameter.parameter_name, domain.domain_name, command.command_name))
                     lines.append('        return;')
                     lines.append('    }')
 

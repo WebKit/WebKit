@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2018 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -163,8 +163,8 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
             if parameter.is_optional:
                 if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
-                    out_parameter_assignments.append('    if (%(parameterName)s.isAssigned())' % param_args)
-                    out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), %(parameterName)s.getValue());' % param_args)
+                    out_parameter_assignments.append('    if (%(parameterName)s.has_value())' % param_args)
+                    out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), *%(parameterName)s);' % param_args)
                 else:
                     out_parameter_assignments.append('    if (%(parameterName)s)' % param_args)
                     out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), %(parameterName)s);' % param_args)
@@ -256,8 +256,8 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 out_parameter_declarations.append('    %(parameterType)s out_%(parameterName)s;' % param_args)
                 if parameter.is_optional:
                     if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
-                        out_parameter_assignments.append('        if (out_%(parameterName)s.isAssigned())' % param_args)
-                        out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s.getValue());' % param_args)
+                        out_parameter_assignments.append('        if (out_%(parameterName)s.has_value())' % param_args)
+                        out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), *out_%(parameterName)s);' % param_args)
                     else:
                         out_parameter_assignments.append('        if (out_%(parameterName)s)' % param_args)
                         out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s);' % param_args)
@@ -266,7 +266,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 else:
                     out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s);' % param_args)
 
-                if CppGenerator.should_pass_by_copy_for_return_type(parameter.type):
+                if CppGenerator.should_pass_by_copy_for_return_type(parameter.type) or parameter.is_optional and CppGenerator.should_use_wrapper_for_return_type(parameter.type):
                     method_parameters.append('out_' + parameter.parameter_name)
                 else:
                     method_parameters.append('&out_' + parameter.parameter_name)

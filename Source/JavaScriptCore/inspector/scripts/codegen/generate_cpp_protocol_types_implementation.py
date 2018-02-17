@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2018 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -205,9 +205,11 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         should_count_properties = not Generator.type_has_open_fields(object_declaration.type)
         lines = []
 
-        lines.append('#if !ASSERT_DISABLED')
         lines.append('void BindingTraits<%s>::assertValueHasExpectedType(JSON::Value* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
         lines.append("""{
+#if ASSERT_DISABLED
+    UNUSED_PARAM(value);
+#else
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -219,7 +221,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        JSON::Object::iterator %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
+        auto %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
         ASSERT(%(memberName)sPos != object->end());
         %(assertMethod)s(%(memberName)sPos->value.get());
     }""" % args)
@@ -235,7 +237,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        JSON::Object::iterator %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
+        auto %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
         if (%(memberName)sPos != object->end()) {
             %(assertMethod)s(%(memberName)sPos->value.get());""" % args)
 
@@ -247,15 +249,17 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         if should_count_properties:
             lines.append('    if (foundPropertiesCount != object->size())')
             lines.append('        FATAL("Unexpected properties in object: %s\\n", object->toJSONString().ascii().data());')
-        lines.append('}')
         lines.append('#endif // !ASSERT_DISABLED')
+        lines.append('}')
         return '\n'.join(lines)
 
     def _generate_assertion_for_enum(self, enum_member, object_declaration):
         lines = []
-        lines.append('#if !ASSERT_DISABLED')
         lines.append('void %s(JSON::Value* value)' % CppGenerator.cpp_assertion_method_for_type_member(enum_member, object_declaration))
         lines.append('{')
+        lines.append('#if ASSERT_DISABLED')
+        lines.append('    UNUSED_PARAM(value);')
+        lines.append('#else')
         lines.append('    ASSERT_ARG(value, value);')
         lines.append('    String result;')
         lines.append('    bool castSucceeded = value->asString(result);')
@@ -263,7 +267,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
 
         assert_condition = ' || '.join(['result == "%s"' % enum_value for enum_value in enum_member.type.enum_values()])
         lines.append('    ASSERT(%s);' % assert_condition)
-        lines.append('}')
         lines.append('#endif // !ASSERT_DISABLED')
+        lines.append('}')
 
         return '\n'.join(lines)

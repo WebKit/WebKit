@@ -272,7 +272,7 @@ void DomainABackendDispatcher::dispatch(long requestId, const String& method, Re
     if (method == "enable")
         enable(requestId, WTFMove(parameters));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "DomainA", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'DomainA." + method + "' was not found");
 }
 
 void DomainABackendDispatcher::enable(long requestId, RefPtr<JSON::Object>&&)
@@ -316,7 +316,7 @@ void DomainBBackendDispatcher::dispatch(long requestId, const String& method, Re
     if (method == "enable")
         enable(requestId, WTFMove(parameters));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "DomainB", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'DomainB." + method + "' was not found");
 }
 
 void DomainBBackendDispatcher::enable(long requestId, RefPtr<JSON::Object>&&)

@@ -559,25 +559,17 @@ public:
 } // Test
 
 template<> struct BindingTraits<Inspector::Protocol::Test::CastedAnimals> {
-#if !ASSERT_DISABLED
 static void assertValueHasExpectedType(JSON::Value*);
-#endif // !ASSERT_DISABLED
 };
 template<> struct BindingTraits<Inspector::Protocol::Test::TypeNeedingCast> {
 static RefPtr<Inspector::Protocol::Test::TypeNeedingCast> runtimeCast(RefPtr<JSON::Value>&& value);
-#if !ASSERT_DISABLED
 static void assertValueHasExpectedType(JSON::Value*);
-#endif // !ASSERT_DISABLED
 };
 template<> struct BindingTraits<Inspector::Protocol::Test::RecursiveObject1> {
-#if !ASSERT_DISABLED
 static void assertValueHasExpectedType(JSON::Value*);
-#endif // !ASSERT_DISABLED
 };
 template<> struct BindingTraits<Inspector::Protocol::Test::RecursiveObject2> {
-#if !ASSERT_DISABLED
 static void assertValueHasExpectedType(JSON::Value*);
-#endif // !ASSERT_DISABLED
 };
 
 namespace TestHelpers {
@@ -693,46 +685,50 @@ std::optional<Inspector::Protocol::Test::CastedAnimals> parseEnumValueFromString
 
 
 
-#if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JSON::Value* value)
 {
+#if ASSERT_DISABLED
+    UNUSED_PARAM(value);
+#else
     ASSERT_ARG(value, value);
     String result;
     bool castSucceeded = value->asString(result);
     ASSERT(castSucceeded);
     ASSERT(result == "Ducks" || result == "Hens" || result == "Crows" || result == "Flamingos");
-}
 #endif // !ASSERT_DISABLED
+}
 
-#if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(JSON::Value* value)
 {
+#if ASSERT_DISABLED
+    UNUSED_PARAM(value);
+#else
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
     {
-        JSON::Object::iterator stringPos = object->find(ASCIILiteral("string"));
+        auto stringPos = object->find(ASCIILiteral("string"));
         ASSERT(stringPos != object->end());
         BindingTraits<String>::assertValueHasExpectedType(stringPos->value.get());
     }
     {
-        JSON::Object::iterator numberPos = object->find(ASCIILiteral("number"));
+        auto numberPos = object->find(ASCIILiteral("number"));
         ASSERT(numberPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(numberPos->value.get());
     }
     {
-        JSON::Object::iterator animalsPos = object->find(ASCIILiteral("animals"));
+        auto animalsPos = object->find(ASCIILiteral("animals"));
         ASSERT(animalsPos != object->end());
         BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(animalsPos->value.get());
     }
     {
-        JSON::Object::iterator idPos = object->find(ASCIILiteral("id"));
+        auto idPos = object->find(ASCIILiteral("id"));
         ASSERT(idPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(idPos->value.get());
     }
     {
-        JSON::Object::iterator treePos = object->find(ASCIILiteral("tree"));
+        auto treePos = object->find(ASCIILiteral("tree"));
         ASSERT(treePos != object->end());
         BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(treePos->value.get());
     }
@@ -740,25 +736,25 @@ void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasEx
     int foundPropertiesCount = 5;
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-}
 #endif // !ASSERT_DISABLED
+}
 
 RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(RefPtr<JSON::Value>&& value)
 {
     RefPtr<JSON::Object> result;
     bool castSucceeded = value->asObject(result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
-#if !ASSERT_DISABLED
     BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(result.get());
-#endif  // !ASSERT_DISABLED
     COMPILE_ASSERT(sizeof(Inspector::Protocol::Test::TypeNeedingCast) == sizeof(JSON::ObjectBase), type_cast_problem);
     return static_cast<Inspector::Protocol::Test::TypeNeedingCast*>(static_cast<JSON::ObjectBase*>(result.get()));
 }
 
 
-#if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(JSON::Value* value)
 {
+#if ASSERT_DISABLED
+    UNUSED_PARAM(value);
+#else
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -766,7 +762,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
 
     int foundPropertiesCount = 0;
     {
-        JSON::Object::iterator objPos = object->find(ASCIILiteral("obj"));
+        auto objPos = object->find(ASCIILiteral("obj"));
         if (objPos != object->end()) {
             BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(objPos->value.get());
             ++foundPropertiesCount;
@@ -774,12 +770,14 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
     }
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-}
 #endif // !ASSERT_DISABLED
+}
 
-#if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(JSON::Value* value)
 {
+#if ASSERT_DISABLED
+    UNUSED_PARAM(value);
+#else
     ASSERT_ARG(value, value);
     RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
@@ -787,7 +785,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
 
     int foundPropertiesCount = 0;
     {
-        JSON::Object::iterator objPos = object->find(ASCIILiteral("obj"));
+        auto objPos = object->find(ASCIILiteral("obj"));
         if (objPos != object->end()) {
             BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(objPos->value.get());
             ++foundPropertiesCount;
@@ -795,8 +793,8 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
     }
     if (foundPropertiesCount != object->size())
         FATAL("Unexpected properties in object: %s\n", object->toJSONString().ascii().data());
-}
 #endif // !ASSERT_DISABLED
+}
 
 } // namespace Protocol
 

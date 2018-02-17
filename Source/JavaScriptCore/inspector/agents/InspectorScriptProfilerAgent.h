@@ -50,7 +50,7 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // ScriptProfilerBackendDispatcherHandler
-    void startTracking(ErrorString&, const bool* const includeSamples) override;
+    void startTracking(ErrorString&, const bool* includeSamples) override;
     void stopTracking(ErrorString&) override;
 
     void programmaticCaptureStarted();

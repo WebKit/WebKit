@@ -66,7 +66,7 @@ void InspectorScriptProfilerAgent::willDestroyFrontendAndBackend(DisconnectReaso
     }
 }
 
-void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* const includeSamples)
+void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* includeSamples)
 {
     if (m_tracking)
         return;
@@ -135,26 +135,26 @@ void InspectorScriptProfilerAgent::didEvaluateScript(double startTime, Profiling
     addEvent(startTime, endTime, reason);
 }
 
-static Inspector::Protocol::ScriptProfiler::EventType toProtocol(ProfilingReason reason)
+static Protocol::ScriptProfiler::EventType toProtocol(ProfilingReason reason)
 {
     switch (reason) {
     case ProfilingReason::API:
-        return Inspector::Protocol::ScriptProfiler::EventType::API;
+        return Protocol::ScriptProfiler::EventType::API;
     case ProfilingReason::Microtask:
-        return Inspector::Protocol::ScriptProfiler::EventType::Microtask;
+        return Protocol::ScriptProfiler::EventType::Microtask;
     case ProfilingReason::Other:
-        return Inspector::Protocol::ScriptProfiler::EventType::Other;
+        return Protocol::ScriptProfiler::EventType::Other;
     }
 
     ASSERT_NOT_REACHED();
-    return Inspector::Protocol::ScriptProfiler::EventType::Other;
+    return Protocol::ScriptProfiler::EventType::Other;
 }
 
 void InspectorScriptProfilerAgent::addEvent(double startTime, double endTime, ProfilingReason reason)
 {
     ASSERT(endTime >= startTime);
 
-    auto event = Inspector::Protocol::ScriptProfiler::Event::create()
+    auto event = Protocol::ScriptProfiler::Event::create()
         .setStartTime(startTime)
         .setEndTime(endTime)
         .setType(toProtocol(reason))

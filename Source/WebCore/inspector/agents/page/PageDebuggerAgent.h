@@ -85,7 +85,7 @@ private:
     void breakpointActionLog(JSC::ExecState&, const String&) override;
 
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
-    void setOverlayMessage(ErrorString&, const String* const) final;
+    void setOverlayMessage(ErrorString&, const String*) final;
 
     Page& m_page;
 

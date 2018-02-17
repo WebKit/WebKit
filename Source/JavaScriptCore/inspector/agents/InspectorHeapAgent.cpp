@@ -166,7 +166,7 @@ std::optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(
     return optionalNode;
 }
 
-void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, Inspector::Protocol::OptOutput<String>* resultString, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& functionDetails, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>& objectPreview)
+void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, std::optional<String>& resultString, RefPtr<Protocol::Debugger::FunctionDetails>& functionDetails, RefPtr<Protocol::Runtime::ObjectPreview>& objectPreview)
 {
     // Prevent the cell from getting collected as we look it up.
     VM& vm = m_environment.vm();
@@ -181,7 +181,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     // String preview.
     JSCell* cell = optionalNode->cell;
     if (cell->isString()) {
-        *resultString = asString(cell)->tryGetValue();
+        resultString = asString(cell)->tryGetValue();
         return;
     }
 
@@ -215,7 +215,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     objectPreview = injectedScript.previewValue(cell);
 }
 
-void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjectId, const String* const optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
+void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjectId, const String* optionalObjectGroup, RefPtr<Protocol::Runtime::RemoteObject>& result)
 {
     // Prevent the cell from getting collected as we look it up.
     VM& vm = m_environment.vm();
@@ -250,16 +250,16 @@ void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjec
     result = injectedScript.wrapObject(cell, objectGroup, true);
 }
 
-static Inspector::Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOperation(CollectionScope scope)
+static Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOperation(CollectionScope scope)
 {
     switch (scope) {
     case CollectionScope::Full:
-        return Inspector::Protocol::Heap::GarbageCollection::Type::Full;
+        return Protocol::Heap::GarbageCollection::Type::Full;
     case CollectionScope::Eden:
-        return Inspector::Protocol::Heap::GarbageCollection::Type::Partial;
+        return Protocol::Heap::GarbageCollection::Type::Partial;
     }
     ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Heap::GarbageCollection::Type::Full;
+    return Protocol::Heap::GarbageCollection::Type::Full;
 }
 
 void InspectorHeapAgent::willGarbageCollect()
@@ -301,9 +301,9 @@ void InspectorHeapAgent::clearHeapSnapshots()
     }
 }
 
-void InspectorHeapAgent::dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type type, double startTime, double endTime)
+void InspectorHeapAgent::dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type type, double startTime, double endTime)
 {
-    auto protocolObject = Inspector::Protocol::Heap::GarbageCollection::create()
+    auto protocolObject = Protocol::Heap::GarbageCollection::create()
         .setType(type)
         .setStartTime(startTime)
         .setEndTime(endTime)

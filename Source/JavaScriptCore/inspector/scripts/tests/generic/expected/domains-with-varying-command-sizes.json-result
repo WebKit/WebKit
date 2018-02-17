@@ -295,7 +295,7 @@ void Network1BackendDispatcher::dispatch(long requestId, const String& method, R
     if (method == "loadResource1")
         loadResource1(requestId, WTFMove(parameters));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network1." + method + "' was not found");
 }
 
 void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<JSON::Object>&&)
@@ -359,7 +359,7 @@ void Network3BackendDispatcher::dispatch(long requestId, const String& method, R
 
     auto findResult = dispatchMap.get().find(method);
     if (findResult == dispatchMap.get().end()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network3", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'Network3." + method + "' was not found");
         return;
     }
 
