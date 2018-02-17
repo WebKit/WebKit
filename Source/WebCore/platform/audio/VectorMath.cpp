@@ -49,43 +49,20 @@ namespace VectorMath {
 
 #if USE(ACCELERATE)
 // On the Mac we use the highly optimized versions in Accelerate.framework
-// In 32-bit mode (__ppc__ or __i386__) <Accelerate/Accelerate.h> includes <vecLib/vDSP_translate.h> which defines macros of the same name as
-// our namespaced function names, so we must handle this case differently. Other architectures (64bit, ARM, etc.) do not include this header file.
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
 {
-#if defined(__ppc__) || defined(__i386__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ::vsmul(sourceP, sourceStride, scale, destP, destStride, framesToProcess);
-#pragma clang diagnostic pop
-#else
     vDSP_vsmul(sourceP, sourceStride, scale, destP, destStride, framesToProcess);
-#endif
 }
 
 void vadd(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
-#if defined(__ppc__) || defined(__i386__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ::vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
-#pragma clang diagnostic pop
-#else
     vDSP_vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
-#endif
 }
 
 void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
-#if defined(__ppc__) || defined(__i386__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ::vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
-#pragma clang diagnostic pop
-#else
     vDSP_vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
-#endif
 }
 
 void zvmul(const float* real1P, const float* imag1P, const float* real2P, const float* imag2P, float* realDestP, float* imagDestP, size_t framesToProcess)
@@ -99,14 +76,7 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
     sc2.imagp = const_cast<float*>(imag2P);
     dest.realp = realDestP;
     dest.imagp = imagDestP;
-#if defined(__ppc__) || defined(__i386__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ::zvmul(&sc1, 1, &sc2, 1, &dest, 1, framesToProcess, 1);
-#pragma clang diagnostic pop
-#else
     vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, framesToProcess, 1);
-#endif
 }
 
 void vsma(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)

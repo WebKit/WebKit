@@ -74,14 +74,7 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, const float* s
     memcpy(inputP, sourceP, sizeof(float) * framesToProcess);
 
 #if USE(ACCELERATE)
-#if defined(__ppc__) || defined(__i386__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    conv(inputP - kernelSize + 1, 1, kernelP + kernelSize - 1, -1, destP, 1, framesToProcess, kernelSize);
-#pragma clang diagnostic pop
-#else
     vDSP_conv(inputP - kernelSize + 1, 1, kernelP + kernelSize - 1, -1, destP, 1, framesToProcess, kernelSize);
-#endif // defined(__ppc__) || defined(__i386__)
 #else
     // FIXME: The macro can be further optimized to avoid pipeline stalls. One possibility is to maintain 4 separate sums and change the macro to CONVOLVE_FOUR_SAMPLES.
 #define CONVOLVE_ONE_SAMPLE             \

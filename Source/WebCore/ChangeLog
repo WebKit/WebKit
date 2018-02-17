@@ -1,3 +1,22 @@
+2018-02-16  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Stop using non-prefixed vDSP functions in 32-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=182898
+        <rdar://problem/37195079>
+
+        Reviewed by Tim Horton.
+
+        There's no need to use non-prefixed vDSP function aliases on 32-bit builds.
+        The vDSP-prefixed versions are available on all Cocoa platforms we currently support.
+
+        * platform/audio/DirectConvolver.cpp:
+        (WebCore::DirectConvolver::process):
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::vsmul):
+        (WebCore::VectorMath::vadd):
+        (WebCore::VectorMath::vmul):
+        (WebCore::VectorMath::zvmul):
+
 2018-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228575.
