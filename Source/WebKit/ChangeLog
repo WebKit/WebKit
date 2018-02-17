@@ -1,3 +1,38 @@
+2018-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an entitlement check for service worker on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=182865
+        <rdar://problem/37505903>
+
+        Reviewed by Brady Eidson.
+
+        Added an entitlement check to enable service workers on iOS.
+
+        * Shared/mac/SandboxUtilities.h:
+        * Shared/mac/SandboxUtilities.mm:
+        (WebKit::connectedProcessHasEntitlement): Added.
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::createStorageToWebProcessConnection): Enforce the entitlement check by crashing
+        when this code is executed without the parent process having the service worker entitlement. This should
+        never happen unless someone is trying to bypass the entitlement check in UI Process since we ordinarily
+        disable service worker gracefully in WKWebView _initializeWithConfiguration.
+        (WebKit::StorageProcess::swServerForSession): Ditto.
+        (WebKit::StorageProcess::registerSWServerConnection): Ditto.
+        * StorageProcess/StorageProcess.h:
+        (WebKit::StorageProcess::parentProcessHasServiceWorkerEntitlement const): Added.
+        * StorageProcess/ios/StorageProcessIOS.mm:
+        (WebKit::StorageProcess::parentProcessHasServiceWorkerEntitlement const): Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Disable the service workers when the entitlement is
+        missing from the current process. The entitlement is enforced by WebContent and Storage process.
+        This check avoids crashing WebContent process and gracefully disabling the feature.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Enforce the entitlement check.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::parentProcessHasServiceWorkerEntitlement const): Added.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::parentProcessHasServiceWorkerEntitlement const): Added.
+
 2018-02-16  Youenn Fablet  <youenn@apple.com>
 
         Allow specifying which plug-ins are supported

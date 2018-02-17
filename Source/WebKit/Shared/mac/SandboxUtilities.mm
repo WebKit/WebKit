@@ -92,4 +92,20 @@ bool processHasEntitlement(NSString *entitlement)
     return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
 }
 
+bool connectedProcessHasEntitlement(xpc_connection_t connection, NSString *entitlement)
+{
+    audit_token_t token;
+    xpc_connection_get_audit_token(connection, &token);
+    auto task = adoptCF(SecTaskCreateWithAuditToken(NULL, token));
+
+    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (__bridge CFStringRef)entitlement, nullptr));
+    if (!value)
+        return false;
+
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return false;
+
+    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+}
+
 }

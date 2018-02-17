@@ -254,6 +254,7 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
 
 #if ENABLE(SERVICE_WORKER)
     if (isServiceWorkerProcess && !m_storageToWebProcessConnections.isEmpty()) {
+        RELEASE_ASSERT(parentProcessHasServiceWorkerEntitlement());
         ASSERT(m_waitingForServerToContextProcessConnection);
         m_serverToContextConnection = WebSWServerToContextConnection::create(m_storageToWebProcessConnections.last()->connection());
         m_waitingForServerToContextProcessConnection = false;
@@ -404,6 +405,7 @@ void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, San
 #if ENABLE(SERVICE_WORKER)
 SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 {
+    RELEASE_ASSERT(parentProcessHasServiceWorkerEntitlement());
     ASSERT(sessionID.isValid());
     auto result = m_swServers.add(sessionID, nullptr);
     if (!result.isNewEntry) {
@@ -492,6 +494,7 @@ void StorageProcess::postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier
 
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
+    RELEASE_ASSERT(parentProcessHasServiceWorkerEntitlement());
     ASSERT(!m_swServerConnections.contains(connection.identifier()));
     m_swServerConnections.add(connection.identifier(), &connection);
     swOriginStoreForSession(connection.sessionID()).registerSWServerConnection(connection);

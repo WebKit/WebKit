@@ -44,6 +44,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "SandboxUtilities.h"
 #import "UIDelegate.h"
 #import "VersionChecks.h"
 #import "ViewGestureController.h"
@@ -604,6 +605,11 @@ static void validate(WKWebViewConfiguration *configuration)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::legacyEncryptedMediaAPIEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _legacyEncryptedMediaAPIEnabled]));
+#endif
+
+#if PLATFORM(IOS) && ENABLE(SERVICE_WORKER)
+    if (!WebKit::processHasEntitlement(@"com.apple.developer.WebKit.ServiceWorkers"))
+        pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::serviceWorkersEnabledKey(), WebKit::WebPreferencesStore::Value(false));
 #endif
 
 #if PLATFORM(IOS)
