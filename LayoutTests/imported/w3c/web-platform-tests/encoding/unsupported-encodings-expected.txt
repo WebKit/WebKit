@@ -1,16 +1,16 @@
 
 PASS UTF-7 should not be supported 
 PASS utf-7 should not be supported 
-FAIL UTF-32 with BOM should decode as UTF-16LE assert_equals: Decoding with UTF-32 expected "U+0000/U+0041/U+0000/U+0042/U+0000" but got "U+0041/U+0000/U+0000/U+0000/U+0042/U+0000/U+0000/U+0000"
+PASS UTF-32 with BOM should decode as UTF-16LE 
 PASS UTF-32 with no BOM should decode as windows-1252 
-FAIL utf-32 with BOM should decode as UTF-16LE assert_equals: Decoding with utf-32 expected "U+0000/U+0041/U+0000/U+0042/U+0000" but got "U+0041/U+0000/U+0000/U+0000/U+0042/U+0000/U+0000/U+0000"
+PASS utf-32 with BOM should decode as UTF-16LE 
 PASS utf-32 with no BOM should decode as windows-1252 
-FAIL UTF-32LE with BOM should decode as UTF-16LE assert_equals: Decoding with UTF-32LE expected "U+0000/U+0041/U+0000/U+0042/U+0000" but got "U+0041/U+0000/U+0000/U+0000/U+0042/U+0000/U+0000/U+0000"
+PASS UTF-32LE with BOM should decode as UTF-16LE 
 PASS UTF-32LE with no BOM should decode as windows-1252 
-FAIL utf-32le with BOM should decode as UTF-16LE assert_equals: Decoding with utf-32le expected "U+0000/U+0041/U+0000/U+0042/U+0000" but got "U+0041/U+0000/U+0000/U+0000/U+0042/U+0000/U+0000/U+0000"
+PASS utf-32le with BOM should decode as UTF-16LE 
 PASS utf-32le with no BOM should decode as windows-1252 
 PASS UTF-32be with no BOM should decode as windows-1252 
-FAIL UTF-32be with BOM should decode as windows-1252 assert_equals: Decoding with UTF-32be expected "U+0000/U+0000/U+00FE/U+00FF/U+0000/U+0000/U+0000/U+0041/U+0000/U+0000/U+0000/U+0042" but got "U+0000/U+0000/U+0000/U+0041/U+0000/U+0000/U+0000/U+0042"
+PASS UTF-32be with BOM should decode as windows-1252 
 PASS utf-32be with no BOM should decode as windows-1252 
-FAIL utf-32be with BOM should decode as windows-1252 assert_equals: Decoding with utf-32be expected "U+0000/U+0000/U+00FE/U+00FF/U+0000/U+0000/U+0000/U+0041/U+0000/U+0000/U+0000/U+0042" but got "U+0000/U+0000/U+0000/U+0041/U+0000/U+0000/U+0000/U+0042"
+PASS utf-32be with BOM should decode as windows-1252 
 

@@ -1,3 +1,16 @@
+2018-02-16  Daniel Bates  <dabates@apple.com>
+
+        Remove dead code for UTF-32
+        https://bugs.webkit.org/show_bug.cgi?id=182900
+        <rdar://problem/37238717>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update expected results now that all sub-tests pass.
+
+        * web-platform-tests/encoding/unsupported-encodings-expected.txt:
+        * web-platform-tests/encoding/utf-32-expected.txt:
+
 2018-02-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure that changing the timing model updates styles synchronously
