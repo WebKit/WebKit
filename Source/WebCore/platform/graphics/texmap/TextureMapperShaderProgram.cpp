@@ -55,10 +55,10 @@ static inline bool compositingLogEnabled()
 // Input/output variables definition for both GLES and OpenGL < 3.2.
 // The default precision directive is only needed for GLES.
 static const char* vertexTemplateLT320Vars =
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
 #endif
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
     )
@@ -70,7 +70,7 @@ static const char* vertexTemplateLT320Vars =
         varying float v_antialias;
     );
 
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
 // Input/output variables definition for OpenGL >= 3.2.
 static const char* vertexTemplateGE320Vars =
     STRINGIFY(
@@ -167,10 +167,10 @@ static const char* fragmentTemplateHeaderCommon =
     RECT_TEXTURE_DIRECTIVE
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
 #endif
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
     )
@@ -179,7 +179,7 @@ static const char* fragmentTemplateHeaderCommon =
         uniform mat4 u_textureSpaceMatrix;
         uniform mat4 u_textureColorSpaceMatrix;
     )
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     STRINGIFY(
         precision mediump float;
     )
@@ -194,7 +194,7 @@ static const char* fragmentTemplateLT320Vars =
         varying vec2 v_transformedTexCoord;
     );
 
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
 // Input/output variables definition for OpenGL >= 3.2.
 static const char* fragmentTemplateGE320Vars =
     STRINGIFY(
@@ -390,7 +390,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     StringBuilder vertexShaderBuilder;
 
     // OpenGL >= 3.2 requires a #version directive at the beginning of the code.
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     unsigned glVersion = GLContext::current()->version();
     if (glVersion >= 320)
         vertexShaderBuilder.append(GLSL_DIRECTIVE(version 150));
@@ -400,7 +400,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     vertexShaderBuilder.append(optionsApplierBuilder.toString());
 
     // Append the appropriate input/output variable definitions.
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     vertexShaderBuilder.append(vertexTemplateLT320Vars);
 #else
     if (glVersion >= 320)
@@ -415,7 +415,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     StringBuilder fragmentShaderBuilder;
 
     // OpenGL >= 3.2 requires a #version directive at the beginning of the code.
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     if (glVersion >= 320)
         fragmentShaderBuilder.append(GLSL_DIRECTIVE(version 150));
 #endif
@@ -427,7 +427,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     fragmentShaderBuilder.append(fragmentTemplateHeaderCommon);
 
     // Append the appropriate input/output variable definitions.
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     fragmentShaderBuilder.append(fragmentTemplateLT320Vars);
 #else
     if (glVersion >= 320)

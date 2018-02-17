@@ -466,7 +466,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
     // EGL and GLX are mutually exclusive, no need for ifdefs here.
     GstGLPlatform glPlatform = webkitContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     GstGLAPI glAPI = GST_GL_API_GLES2;
 #elif USE(OPENGL)
     GstGLAPI glAPI = GST_GL_API_OPENGL;

@@ -28,7 +28,7 @@
 
 #include "Extensions3DOpenGLCommon.h"
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
@@ -129,4 +129,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // USE(OPENGL_ES_2)
+#endif // USE(OPENGL_ES)

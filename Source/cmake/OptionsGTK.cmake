@@ -246,7 +246,7 @@ if (ENABLE_OPENGL)
     # But USE_OPENGL is the opposite of ENABLE_GLES2.
     if (ENABLE_GLES2)
         find_package(OpenGLES2 REQUIRED)
-        SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES_2 TRUE)
+        SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES TRUE)
 
         if (NOT EGL_FOUND)
             message(FATAL_ERROR "EGL is needed for ENABLE_GLES2.")

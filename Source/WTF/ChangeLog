@@ -1,3 +1,18 @@
+2018-02-16  Dean Jackson  <dino@apple.com>
+
+        Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=182894
+
+        Reviewed by Tim Horton.
+
+        If we're on a Cocoa platform, define USE_OPENGL/USE_OPENGL_ES
+        depending on what we're actually going to use. In this case,
+        they are exclusive, but it doesn't appear that other platforms
+        use this approach. Ultimately the idea is to be more concerned
+        with the type of OpenGL we're using, rather than the platform.
+
+        * wtf/Platform.h: Define USE_OPENGL(_ES) for PLATFORM(COCOA).
+
 2018-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r228306 (custom memcpy/memset) because the bots say that it was not a

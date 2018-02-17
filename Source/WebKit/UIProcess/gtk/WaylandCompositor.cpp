@@ -37,7 +37,7 @@
 #include <wayland-server-protocol.h>
 #include <wtf/UUID.h>
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <WebCore/Extensions3DOpenGLES.h>
@@ -407,7 +407,7 @@ bool WaylandCompositor::initializeEGL()
     if (!m_eglContext->makeContextCurrent())
         return false;
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     std::unique_ptr<Extensions3DOpenGLES> glExtensions = std::make_unique<Extensions3DOpenGLES>(nullptr,  false);
 #else
     std::unique_ptr<Extensions3DOpenGL> glExtensions = std::make_unique<Extensions3DOpenGL>(nullptr, GLContext::current()->version() >= 320);

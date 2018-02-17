@@ -128,7 +128,7 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ZLIB_INCLUDE_DIRS}
 )
 
-if (USE_OPENGL_ES_2)
+if (USE_OPENGL_ES)
     list(APPEND WebCore_SOURCES
         platform/graphics/opengl/Extensions3DOpenGLES.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp

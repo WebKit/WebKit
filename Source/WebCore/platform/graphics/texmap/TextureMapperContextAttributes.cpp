@@ -35,7 +35,7 @@ namespace WebCore {
 
 void TextureMapperContextAttributes::initialize()
 {
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     isGLES2Compliant = true;
 
     String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));

@@ -35,7 +35,7 @@
 #include "GraphicsContext3DIOS.h"
 #endif
 
-#if USE(OPENGL_ES_2)
+#if !PLATFORM(COCOA) && USE(OPENGL_ES)
 #include "Extensions3DOpenGLES.h"
 #else
 #include "Extensions3DOpenGL.h"
@@ -57,26 +57,32 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
+
+#if USE(OPENGL_ES)
 #import <OpenGLES/ES2/glext.h>
 #import <OpenGLES/ES3/gl.h>
 // From <OpenGLES/glext.h>
 #define GL_RGBA32F_ARB                      0x8814
 #define GL_RGB32F_ARB                       0x8815
 #else
-#if USE(LIBEPOXY)
-#include "EpoxyShims.h"
-#elif USE(OPENGL_ES_2)
-#include "OpenGLESShims.h"
-#elif PLATFORM(MAC)
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <OpenGL/gl.h>
 #include <OpenGL/gl3.h>
 #include <OpenGL/gl3ext.h>
 #undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#endif
+
+#else
+
+#if USE(LIBEPOXY)
+#include "EpoxyShims.h"
+#elif USE(OPENGL_ES)
+#include "OpenGLESShims.h"
 #elif PLATFORM(GTK) || PLATFORM(WIN)
 #include "OpenGLShims.h"
 #endif
+
 #endif
 
 
@@ -392,7 +398,7 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
         variables.push_back(varyingSymbol);
 
     GC3Dint maxVaryingVectors = 0;
-#if !PLATFORM(IOS) && !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     GC3Dint maxVaryingFloats = 0;
     ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
     maxVaryingVectors = maxVaryingFloats / 4;
@@ -1514,7 +1520,7 @@ Platform3DObject GraphicsContext3D::createVertexArray()
 {
     makeContextCurrent();
     GLuint array = 0;
-#if !USE(OPENGL_ES_2) && (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
     glGenVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glGenVertexArraysAPPLE(1, &array);
@@ -1528,7 +1534,7 @@ void GraphicsContext3D::deleteVertexArray(Platform3DObject array)
         return;
     
     makeContextCurrent();
-#if !USE(OPENGL_ES_2) && (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
     glDeleteVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glDeleteVertexArraysAPPLE(1, &array);
@@ -1541,7 +1547,7 @@ GC3Dboolean GraphicsContext3D::isVertexArray(Platform3DObject array)
         return GL_FALSE;
     
     makeContextCurrent();
-#if !USE(OPENGL_ES_2) && (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
     return glIsVertexArray(array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     return glIsVertexArrayAPPLE(array);
@@ -1552,7 +1558,7 @@ GC3Dboolean GraphicsContext3D::isVertexArray(Platform3DObject array)
 void GraphicsContext3D::bindVertexArray(Platform3DObject array)
 {
     makeContextCurrent();
-#if !USE(OPENGL_ES_2) && (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
     glBindVertexArray(array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glBindVertexArrayAPPLE(array);
@@ -1845,7 +1851,7 @@ void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xo
 {
     makeContextCurrent();
 
-#if !PLATFORM(IOS) && !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     if (type == HALF_FLOAT_OES)
         type = GL_HALF_FLOAT_ARB;
 #endif

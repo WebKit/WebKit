@@ -86,7 +86,7 @@ const Platform3DObject NullPlatform3DObject = 0;
 
 namespace WebCore {
 class Extensions3D;
-#if USE(OPENGL_ES_2)
+#if !PLATFORM(COCOA) && USE(OPENGL_ES)
 class Extensions3DOpenGLES;
 #else
 class Extensions3DOpenGL;
@@ -1394,7 +1394,7 @@ private:
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 
-#if USE(OPENGL_ES_2)
+#if !PLATFORM(COCOA) && USE(OPENGL_ES)
     friend class Extensions3DOpenGLES;
     std::unique_ptr<Extensions3DOpenGLES> m_extensions;
 #else

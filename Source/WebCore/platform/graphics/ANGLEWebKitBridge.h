@@ -35,16 +35,23 @@
 #include <ANGLE/ShaderLang.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
+
+#if USE(OPENGL_ES)
 #import <OpenGLES/ES2/glext.h>
-#elif PLATFORM(MAC)
+#else
 #include <OpenGL/gl.h>
+#endif
+
 #elif PLATFORM(WIN)
 #include "OpenGLESShims.h"
+
 #elif USE(LIBEPOXY)
 // <epoxy/gl.h> already included above.
-#elif USE(OPENGL_ES_2)
+
+#elif USE(OPENGL_ES)
 #include <GLES2/gl2.h>
+
 #else
 #include "OpenGLShims.h"
 #endif

@@ -1341,7 +1341,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
                 ${OPENGL_LIBRARIES}
             )
             add_definitions(${OPENGL_DEFINITIONS})
-        elseif (USE_OPENGL_ES_2)
+        elseif (USE_OPENGL_ES)
             list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
                 ${OPENGLES2_INCLUDE_DIRS}
             )

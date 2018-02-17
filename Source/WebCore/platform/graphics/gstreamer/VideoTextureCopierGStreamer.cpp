@@ -40,7 +40,7 @@ VideoTextureCopierGStreamer::VideoTextureCopierGStreamer(ColorConversion colorCo
     glGenFramebuffers(1, &m_framebuffer);
     glGenTextures(1, &m_resultTexture);
 
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     // For OpenGL > 3.2 we need to have a VAO.
     if (GLContext::current()->version() >= 320)
         glGenVertexArrays(1, &m_vao);
@@ -65,7 +65,7 @@ VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer()
     glDeleteFramebuffers(1, &m_framebuffer);
     glDeleteBuffers(1, &m_vbo);
     glDeleteTextures(1, &m_resultTexture);
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     if (m_vao)
         glDeleteVertexArrays(1, &m_vao);
 #endif
@@ -196,7 +196,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(GLuint input
     m_shaderProgram->setMatrix(m_shaderProgram->textureColorSpaceMatrixLocation(), m_colorConversionMatrix);
 
     // Perform the copy.
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES)
     if (GLContext::current()->version() >= 320 && m_vao)
         glBindVertexArray(m_vao);
 #endif

@@ -50,7 +50,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(PlatformDisplay&
         return nullptr;
 
     static const EGLint contextAttributes[] = {
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
         EGL_CONTEXT_CLIENT_VERSION, 2,
 #endif
         EGL_NONE

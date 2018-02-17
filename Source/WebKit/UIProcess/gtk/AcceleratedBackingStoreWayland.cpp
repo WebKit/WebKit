@@ -33,7 +33,7 @@
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/RefPtrCairo.h>
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #else
 #include <WebCore/OpenGLShims.h>
@@ -116,7 +116,7 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
 
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     unsigned char* data = cairo_image_surface_get_data(m_surface.get());
     if (cairo_image_surface_get_stride(m_surface.get()) == textureSize.width() * 4)
         glReadPixels(0, 0, textureSize.width(), textureSize.height(), GL_RGBA, GL_UNSIGNED_BYTE, data);

@@ -1,3 +1,14 @@
+2018-02-16  Dean Jackson  <dino@apple.com>
+
+        Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=182894
+
+        Reviewed by Tim Horton.
+
+        Rename OPENGL_ES_2 to OPENGL_ES.
+
+        * StitchMarker/wtf/Platform.h:
+
 2018-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make run-perf-tests work with Speedometer 2.0 and re-enable the test

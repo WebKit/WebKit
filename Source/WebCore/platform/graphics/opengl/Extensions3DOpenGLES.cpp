@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
 #include "Extensions3DOpenGLES.h"
 
 #if ENABLE(GRAPHICS_CONTEXT_3D)
@@ -308,4 +308,4 @@ String Extensions3DOpenGLES::getExtensions()
 
 #endif // ENABLE(GRAPHICS_CONTEXT_3D)
 
-#endif // USE(OPENGL_ES_2)
+#endif // USE(OPENGL_ES)

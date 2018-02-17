@@ -36,7 +36,7 @@
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#elif USE(OPENGL_ES_2)
+#elif USE(OPENGL_ES)
 #define GL_GLEXT_PROTOTYPES 1
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -55,13 +55,13 @@
 namespace WebCore {
 
 static const EGLint gContextAttributes[] = {
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
     EGL_CONTEXT_CLIENT_VERSION, 2,
 #endif
     EGL_NONE
 };
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
 static const EGLenum gEGLAPIVersion = EGL_OPENGL_ES_API;
 #else
 static const EGLenum gEGLAPIVersion = EGL_OPENGL_API;
@@ -101,7 +101,7 @@ const char* GLContextEGL::lastErrorString()
 bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType)
 {
     EGLint attributeList[] = {
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 #else
         EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
@@ -235,7 +235,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(GLNativeWindowType win
     }
 
     if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE) {
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
         WTFLogAlways("Cannot create EGL context: error binding OpenGL ES API (%s)\n", lastErrorString());
 #else
         WTFLogAlways("Cannot create EGL context: error binding OpenGL API (%s)\n", lastErrorString());
@@ -275,7 +275,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSharingContext(PlatformDisplay
     }
 
     if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE) {
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
         WTFLogAlways("Cannot create EGL sharing context: error binding OpenGL ES API (%s)\n", lastErrorString());
 #else
         WTFLogAlways("Cannot create EGL sharing context: error binding OpenGL API (%s)\n", lastErrorString());

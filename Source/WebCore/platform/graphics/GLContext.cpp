@@ -28,7 +28,7 @@
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#elif USE(OPENGL_ES_2)
+#elif USE(OPENGL_ES)
 #define GL_GLEXT_PROTOTYPES 1
 #include <GLES2/gl2.h>
 #include <GLES3/gl3.h>
@@ -64,7 +64,7 @@ inline ThreadGlobalGLContext* currentContext()
 
 static bool initializeOpenGLShimsIfNeeded()
 {
-#if USE(OPENGL_ES_2) || USE(LIBEPOXY)
+#if USE(OPENGL_ES) || USE(LIBEPOXY)
     return true;
 #else
     static bool initialized = false;

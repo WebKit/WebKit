@@ -1035,9 +1035,19 @@
 #endif
 #endif
 
+#if ENABLE(WEBGL) && PLATFORM(COCOA)
+#if PLATFORM(MAC)
+#define USE_OPENGL 1
+#define USE_OPENGL_ES 0
+#else
+#define USE_OPENGL 0
+#define USE_OPENGL_ES 1
+#endif
+#endif
+
 #if ENABLE(WEBGL) && PLATFORM(WIN)
 #define USE_OPENGL 1
-#define USE_OPENGL_ES_2 1
+#define USE_OPENGL_ES 1
 #define USE_EGL 1
 #endif
 

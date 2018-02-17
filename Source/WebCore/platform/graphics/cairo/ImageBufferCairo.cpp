@@ -57,7 +57,7 @@
 #endif
 #include <cairo-gl.h>
 
-#if USE(OPENGL_ES_2)
+#if USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #else
 #include "OpenGLShims.h"
