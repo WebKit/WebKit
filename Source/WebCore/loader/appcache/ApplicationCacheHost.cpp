@@ -169,9 +169,6 @@ void ApplicationCacheHost::finishedLoadingMainResource()
 
 bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const ResourceRequest& request, const URL& originalURL)
 {
-    if (loader.options().applicationCacheMode != ApplicationCacheMode::Use)
-        return false;
-
     if (!isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request))
         return false;
     
@@ -188,9 +185,6 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const Resou
 
 bool ApplicationCacheHost::maybeLoadFallbackForRedirect(ResourceLoader* resourceLoader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    if (resourceLoader && resourceLoader->options().applicationCacheMode != ApplicationCacheMode::Use)
-        return false;
-
     if (!redirectResponse.isNull() && !protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         if (scheduleLoadFallbackResourceFromApplicationCache(resourceLoader))
             return true;
@@ -200,9 +194,6 @@ bool ApplicationCacheHost::maybeLoadFallbackForRedirect(ResourceLoader* resource
 
 bool ApplicationCacheHost::maybeLoadFallbackForResponse(ResourceLoader* resourceLoader, const ResourceResponse& response)
 {
-    if (resourceLoader && resourceLoader->options().applicationCacheMode != ApplicationCacheMode::Use)
-        return false;
-
     if (response.httpStatusCode() / 100 == 4 || response.httpStatusCode() / 100 == 5) {
         if (scheduleLoadFallbackResourceFromApplicationCache(resourceLoader))
             return true;
@@ -212,9 +203,6 @@ bool ApplicationCacheHost::maybeLoadFallbackForResponse(ResourceLoader* resource
 
 bool ApplicationCacheHost::maybeLoadFallbackForError(ResourceLoader* resourceLoader, const ResourceError& error)
 {
-    if (resourceLoader && resourceLoader->options().applicationCacheMode != ApplicationCacheMode::Use)
-        return false;
-
     if (!error.isCancellation()) {
         if (resourceLoader == m_documentLoader.mainResourceLoader())
             return maybeLoadFallbackForMainError(resourceLoader->request(), error);

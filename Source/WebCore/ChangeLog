@@ -1,3 +1,15 @@
+2018-02-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r228575.
+
+        Introduced LayoutTest crashes under GuardMalloc.
+
+        Reverted changeset:
+
+        "Use ResourceLoader to load appcache manifest"
+        https://bugs.webkit.org/show_bug.cgi?id=182861
+        https://trac.webkit.org/changeset/228575
+
 2018-02-16  Dean Jackson  <dino@apple.com>
 
         Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa
