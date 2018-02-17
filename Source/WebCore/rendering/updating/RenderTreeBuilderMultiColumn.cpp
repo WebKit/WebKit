@@ -172,12 +172,12 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     m_builder.blockBuilder().insertChild(flow, WTFMove(newFragmentedFlow), nullptr);
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
-    m_builder.moveChildrenTo(flow, &fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+    m_builder.moveChildrenTo(flow, fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     if (flow.isFieldset()) {
         // Keep legends out of the flow thread.
         for (auto& box : childrenOfType<RenderBox>(fragmentedFlow)) {
             if (box.isLegend())
-                m_builder.moveChildTo(fragmentedFlow, &flow, &box, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+                m_builder.moveChildTo(fragmentedFlow, flow, box, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         }
     }
 
@@ -185,7 +185,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
         // Keep the middle block out of the flow thread.
         for (auto& element : childrenOfType<RenderElement>(fragmentedFlow)) {
             if (!downcast<RenderLinesClampFlow>(fragmentedFlow).isChildAllowedInFragmentedFlow(flow, element))
-                m_builder.moveChildTo(fragmentedFlow, &flow, &element, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+                m_builder.moveChildTo(fragmentedFlow, flow, element, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         }
     }
 
@@ -215,7 +215,7 @@ void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
         columnSet->removeFromParentAndDestroy(m_builder);
 
     flow.clearMultiColumnFlow();
-    m_builder.moveAllChildrenTo(multiColumnFlow, &flow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+    m_builder.moveAllChildrenTo(multiColumnFlow, flow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     multiColumnFlow.removeFromParentAndDestroy(m_builder);
     for (auto& parentAndSpanner : parentAndSpannerList)
         m_builder.insertChild(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));

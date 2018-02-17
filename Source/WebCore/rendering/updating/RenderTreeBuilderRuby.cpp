@@ -142,8 +142,9 @@ void RenderTreeBuilder::Ruby::moveInlineChildren(RenderRubyBase& from, RenderRub
             m_builder.insertChildToRenderElementInternal(to, WTFMove(newToBlock));
         }
     }
+    ASSERT(toBlock);
     // Move our inline children into the target block we determined above.
-    m_builder.moveChildrenTo(from, toBlock, from.firstChild(), beforeChild, RenderTreeBuilder::NormalizeAfterInsertion::No);
+    m_builder.moveChildrenTo(from, *toBlock, from.firstChild(), beforeChild, RenderTreeBuilder::NormalizeAfterInsertion::No);
 }
 
 void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild)
@@ -163,12 +164,12 @@ void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRuby
         && lastChildThere && lastChildThere->isAnonymousBlock() && lastChildThere->childrenInline()) {
         auto* anonBlockHere = downcast<RenderBlock>(firstChildHere);
         auto* anonBlockThere = downcast<RenderBlock>(lastChildThere);
-        m_builder.moveAllChildrenTo(*anonBlockHere, anonBlockThere, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+        m_builder.moveAllChildrenTo(*anonBlockHere, *anonBlockThere, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         anonBlockHere->deleteLines();
         anonBlockHere->removeFromParentAndDestroy(m_builder);
     }
     // Move all remaining children normally.
-    m_builder.moveChildrenTo(from, &to, from.firstChild(), beforeChild, RenderTreeBuilder::NormalizeAfterInsertion::No);
+    m_builder.moveChildrenTo(from, to, from.firstChild(), beforeChild, RenderTreeBuilder::NormalizeAfterInsertion::No);
 }
 
 void RenderTreeBuilder::Ruby::moveChildren(RenderRubyBase& from, RenderRubyBase& to)
@@ -438,8 +439,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyRun& parent
                 RenderRubyBase* rightBase = rightRun.rubyBase();
                 // Collect all children in a single base, then swap the bases.
                 moveChildren(*rightBase, *base);
-                m_builder.moveChildTo(parent, &rightRun, base, RenderTreeBuilder::NormalizeAfterInsertion::No);
-                m_builder.moveChildTo(rightRun, &parent, rightBase, RenderTreeBuilder::NormalizeAfterInsertion::No);
+                m_builder.moveChildTo(parent, rightRun, *base, RenderTreeBuilder::NormalizeAfterInsertion::No);
+                m_builder.moveChildTo(rightRun, parent, *rightBase, RenderTreeBuilder::NormalizeAfterInsertion::No);
                 // The now empty ruby base will be removed below.
                 ASSERT(!parent.rubyBase()->firstChild());
             }

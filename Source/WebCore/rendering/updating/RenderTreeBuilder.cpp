@@ -286,10 +286,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
         return rubyBuilder().takeChild(downcast<RenderRubyRun>(parent), child);
 
     if (is<RenderMenuList>(parent))
-        return takeChildFromRenderMenuList(downcast<RenderMenuList>(parent), child);
+        return formControlsBuilder().takeChild(downcast<RenderMenuList>(parent), child);
 
     if (is<RenderButton>(parent))
-        return takeChildFromRenderButton(downcast<RenderButton>(parent), child);
+        return formControlsBuilder().takeChild(downcast<RenderButton>(parent), child);
 
     if (is<RenderGrid>(parent))
         return takeChildFromRenderGrid(downcast<RenderGrid>(parent), child);
@@ -377,46 +377,46 @@ void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent
     newChild->setHasOutlineAutoAncestor();
 }
 
-void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     // We assume that callers have cleared their positioned objects list for child moves so the
     // positioned renderer maps don't become stale. It would be too slow to do the map lookup on each call.
     ASSERT(normalizeAfterInsertion == NormalizeAfterInsertion::No || !is<RenderBlock>(from) || !downcast<RenderBlock>(from).hasPositionedObjects());
 
-    ASSERT(&from == child->parent());
-    ASSERT(!beforeChild || to == beforeChild->parent());
-    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (to->isRenderBlock() || to->isRenderInline())) {
+    ASSERT(&from == child.parent());
+    ASSERT(!beforeChild || &to == beforeChild->parent());
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (to.isRenderBlock() || to.isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
-        auto childToMove = takeChildFromRenderElement(from, *child);
-        insertChild(*to, WTFMove(childToMove), beforeChild);
+        auto childToMove = takeChildFromRenderElement(from, child);
+        insertChild(to, WTFMove(childToMove), beforeChild);
     } else {
-        auto childToMove = takeChildFromRenderElement(from, *child);
-        insertChildToRenderElementInternal(*to, WTFMove(childToMove), beforeChild);
+        auto childToMove = takeChildFromRenderElement(from, child);
+        insertChildToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
     }
 }
 
-void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* child, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     moveChildTo(from, to, child, nullptr, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     moveAllChildrenTo(from, to, nullptr, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     moveChildrenTo(from, to, from.firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     moveChildrenTo(from, to, startChild, endChild, nullptr, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     // This condition is rarely hit since this function is usually called on
     // anonymous blocks which can no longer carry positioned objects (see r120761)
@@ -427,7 +427,7 @@ void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxMode
             downcast<RenderBlockFlow>(from).removeFloatingObjects();
     }
 
-    ASSERT(!beforeChild || to == beforeChild->parent());
+    ASSERT(!beforeChild || &to == beforeChild->parent());
     for (RenderObject* child = startChild; child && child != endChild; ) {
         // Save our next sibling as moveChildTo will clear it.
         RenderObject* nextSibling = child->nextSibling();
@@ -449,7 +449,7 @@ void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxMode
             nextSibling = nextSibling->nextSibling();
         }
 
-        moveChildTo(from, to, child, beforeChild, normalizeAfterInsertion);
+        moveChildTo(from, to, *child, beforeChild, normalizeAfterInsertion);
         child = nextSibling;
     }
 }
@@ -460,7 +460,7 @@ void RenderTreeBuilder::moveAllChildrenIncludingFloatsTo(RenderBlock& from, Rend
         blockFlowBuilder().moveAllChildrenIncludingFloatsTo(downcast<RenderBlockFlow>(from), to, normalizeAfterInsertion);
         return;
     }
-    moveAllChildrenTo(from, &to, normalizeAfterInsertion);
+    moveAllChildrenTo(from, to, normalizeAfterInsertion);
 }
 
 void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
@@ -496,7 +496,7 @@ void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject*
         auto newBlock = parent.createAnonymousBlock();
         auto& block = *newBlock;
         insertChildToRenderElementInternal(parent, WTFMove(newBlock), inlineRunStart);
-        moveChildrenTo(parent, &block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        moveChildrenTo(parent, block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
     }
 #ifndef NDEBUG
     for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
@@ -525,7 +525,7 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
             insertChildToRenderElementInternal(*parentBox, WTFMove(newPostBox), boxToSplit.nextSibling());
-            moveChildrenTo(boxToSplit, &postBox, beforeChild, nullptr, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+            moveChildrenTo(boxToSplit, postBox, beforeChild, nullptr, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(postBox);
@@ -656,24 +656,6 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         listBuilder().updateItemMarker(downcast<RenderListItem>(renderer));
     if (is<RenderBlockFlow>(renderer))
         multiColumnBuilder().updateAfterDescendants(downcast<RenderBlockFlow>(renderer));
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child)
-{
-    auto* innerRenderer = parent.innerRenderer();
-    if (!innerRenderer || &child == innerRenderer)
-        return blockBuilder().takeChild(parent, child);
-    return takeChild(*innerRenderer, child);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderButton(RenderButton& parent, RenderObject& child)
-{
-    auto* innerRenderer = parent.innerRenderer();
-    if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
-        ASSERT(&child == innerRenderer || !innerRenderer);
-        return blockBuilder().takeChild(parent, child);
-    }
-    return takeChild(*innerRenderer, child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child)

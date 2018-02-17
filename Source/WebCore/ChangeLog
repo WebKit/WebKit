@@ -1,3 +1,44 @@
+2018-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Cleanup RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182899
+        <rdar://problem/37627888>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChild):
+        (WebCore::RenderTreeBuilder::moveChildTo):
+        (WebCore::RenderTreeBuilder::moveAllChildrenTo):
+        (WebCore::RenderTreeBuilder::moveChildrenTo):
+        (WebCore::RenderTreeBuilder::moveAllChildrenIncludingFloatsTo):
+        (WebCore::RenderTreeBuilder::makeChildrenNonInline):
+        (WebCore::RenderTreeBuilder::splitAnonymousBoxesAroundChild):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderMenuList): Deleted.
+        (WebCore::RenderTreeBuilder::takeChildFromRenderButton): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        (WebCore::RenderTreeBuilder::current):
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::dropAnonymousBoxChild):
+        * rendering/updating/RenderTreeBuilderBlockFlow.cpp:
+        (WebCore::RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloatsTo):
+        * rendering/updating/RenderTreeBuilderFormControls.cpp:
+        (WebCore::RenderTreeBuilder::FormControls::takeChild):
+        * rendering/updating/RenderTreeBuilderFormControls.h:
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::moveInlineChildren):
+        (WebCore::RenderTreeBuilder::Ruby::moveBlockChildren):
+        (WebCore::RenderTreeBuilder::Ruby::takeChild):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows):
+
 2018-02-16  Daniel Bates  <dabates@apple.com>
 
         Remove dead code for UTF-32
