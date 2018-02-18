@@ -1,3 +1,30 @@
+2018-02-18  Reza Abbasian  <rabbasian@apple.com>
+
+        Set the appropriate AutoFill context for suggested passwords.
+        https://bugs.webkit.org/show_bug.cgi?id=182718
+        <rdar://problem/36326863>
+
+        Reviewed by Wenson Hsieh and Tim Horton.
+
+        Before starting the input session, call the new delegate to query if AutoFill password suggestion assistance
+        is required for the focused element.
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        Introduce a new delegate to be called  before starting an input session to query if AutoFill password suggestion
+        assistance is required for the focused element.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession initWithContentView:focusedElementInfo:requiresStrongPasswordAssistance:]):
+        (-[WKFormInputSession requiresStrongPasswordAssistance]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        Call the delegate to find out if AutoFill suggested password assistance is required.
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView _autofillContext]): If the first responder is a password element and requires
+        assistance for AutoFill suggested password, set the appropriate AutoFill context.
+        (-[WKFormInputSession initWithContentView:focusedElementInfo:]): Deleted.
+
 2018-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Form control values are stale after dismissing and representing input view controllers

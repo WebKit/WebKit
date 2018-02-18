@@ -236,6 +236,8 @@ struct WKAutoCorrectionData {
     BOOL _needsDeferredEndScrollingSelectionUpdate;
     BOOL _isChangingFocus;
 
+    BOOL _focusRequiresStrongPasswordAssistance;
+
 #if ENABLE(DATA_INTERACTION)
     WebKit::DragDropInteractionState _dragDropInteractionState;
     RetainPtr<UIDragInteraction> _dragInteraction;

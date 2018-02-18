@@ -276,7 +276,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
-- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo;
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo requiresStrongPasswordAssistance:(BOOL)requiresStrongPasswordAssistance;
 - (void)invalidate;
 
 @end
@@ -288,15 +288,17 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
     BOOL _accessoryViewShouldNotShow;
     BOOL _forceSecureTextEntry;
+    BOOL _requiresStrongPasswordAssistance;
 }
 
-- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo requiresStrongPasswordAssistance:(BOOL)requiresStrongPasswordAssistance
 {
     if (!(self = [super init]))
         return nil;
 
     _contentView = view;
     _focusedElementInfo = elementInfo;
+    _requiresStrongPasswordAssistance = requiresStrongPasswordAssistance;
 
     return self;
 }
@@ -383,6 +385,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
     _suggestions = adoptNS([suggestions copy]);
     [suggestionDelegate setSuggestions:suggestions];
+}
+
+- (BOOL)requiresStrongPasswordAssistance
+{
+    return _requiresStrongPasswordAssistance;
 }
 
 - (void)invalidate
@@ -659,6 +666,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
     _outstandingPositionInformationRequest = std::nullopt;
+
+    _focusRequiresStrongPasswordAssistance = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform"];
@@ -4022,6 +4031,10 @@ static bool isAssistableInputType(InputType type)
     if (_assistedNodeInformation.elementType == information.elementType && _assistedNodeInformation.elementRect == information.elementRect)
         return;
 
+    _focusRequiresStrongPasswordAssistance = NO;
+    if ([inputDelegate respondsToSelector:@selector(_webView:focusRequiresStrongPasswordAssistance:)])
+        _focusRequiresStrongPasswordAssistance = [inputDelegate _webView:_webView focusRequiresStrongPasswordAssistance:focusedElementInfo.get()];
+
     BOOL editableChanged = [self setIsEditable:YES];
     _assistedNodeInformation = information;
     _inputPeripheral = nil;
@@ -4065,7 +4078,7 @@ static bool isAssistableInputType(InputType type)
     [_inputPeripheral beginEditing];
 
     if ([inputDelegate respondsToSelector:@selector(_webView:didStartInputSession:)]) {
-        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get()]);
+        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get() requiresStrongPasswordAssistance:_focusRequiresStrongPasswordAssistance]);
         [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     }
     
@@ -4081,6 +4094,7 @@ static bool isAssistableInputType(InputType type)
 
     _assistedNodeInformation.elementType = InputType::None;
     _inputPeripheral = nil;
+    _focusRequiresStrongPasswordAssistance = NO;
 
     [self _stopAssistingKeyboard];
     [_formAccessoryView hideAutoFillButton];
@@ -5105,14 +5119,18 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSDictionary *)_autofillContext
 {
-    if (_assistedNodeInformation.elementType == InputType::None || !_assistedNodeInformation.acceptsAutofilledLoginCredentials)
+    BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _assistedNodeInformation.elementType == InputType::Password;
+    if (_assistedNodeInformation.elementType == InputType::None || (!_assistedNodeInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
         return nil;
+
+    if (provideStrongPasswordAssistance)
+        return @{ @"_automaticPasswordKeyboard" : @YES };
 
     NSURL *platformURL = _assistedNodeInformation.representingPageURL;
-    if (!platformURL)
-        return nil;
+    if (platformURL)
+        return @{ @"_WebViewURL" : platformURL };
 
-    return @{ @"_WebViewURL" : platformURL };
+    return nil;
 }
 
 #pragma mark - UIDragInteractionDelegate
