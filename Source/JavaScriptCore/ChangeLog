@@ -1,3 +1,22 @@
+2018-02-18  Dominik Inführ  <dominik.infuehr@gmail.com>
+
+        Offlineasm/MIPS: immediates need to be within 16-bit signed values
+        https://bugs.webkit.org/show_bug.cgi?id=182890
+
+        Reviewed by Michael Catanzaro.
+
+        In Sequence.getModifiedListMIPS(), we allow immediate values within
+        the range -0xffff..0xffff for immediates (addresses and other
+        immediates), but then in Immediate.mipsOperand() and
+        Address.mipsOperand() we raise if immediate values are not within
+        -0x7fff..0x7fff. This is inconsistent, and broke compilation on mips
+        since r228552 made the VM structure bigger meaning we address values
+        with bigger offsets in llint. This change restricts the allowed range,
+        so that a separate load of the value is done for values outside of
+        that range.
+
+        * offlineasm/mips.rb:
+
 2018-02-17  Darin Adler  <darin@apple.com>
 
         Web Inspector: get rid of remaining uses of OptOutput<T>

@@ -713,7 +713,7 @@ class Sequence
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             if address.is_a? Address
-                (-0xffff..0xffff).include? address.offset.value
+                (-0x7fff..0x7fff).include? address.offset.value
             else
                 false
             end
@@ -721,7 +721,7 @@ class Sequence
         result = riscLowerMalformedAddressesDouble(result)
         result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep"])
         result = mipsLowerMisplacedImmediates(result)
-        result = riscLowerMalformedImmediates(result, -0xffff..0xffff)
+        result = riscLowerMalformedImmediates(result, -0x7fff..0x7fff)
         result = mipsLowerMisplacedAddresses(result)
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)
