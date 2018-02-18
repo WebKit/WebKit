@@ -77,14 +77,15 @@
 
 2018-02-16  Daniel Bates  <dabates@apple.com>
 
-        Remove dead code for UTF-32
+        Remove UTF-32 BOM parsing code
         https://bugs.webkit.org/show_bug.cgi?id=182900
         <rdar://problem/37238717>
 
         Reviewed by Alexey Proskuryakov.
 
         The UTF-32 encodings were removed from the text codec registry in r224747. So,
-        we no longer need code to encode or decode these variants.
+        we no longer need code to parse UTF-32{BE, LE} BOM or encode and decode these
+        variants.
 
         * dom/TextDecoder.cpp:
         (WebCore::codeUnitByteSize):
