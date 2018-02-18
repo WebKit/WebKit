@@ -104,6 +104,7 @@ messages -> WebPage LegacyReceiver {
     StoreSelectionForAccessibility(bool shouldStore)
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
     CancelAutoscroll()
+    RequestAssistedNodeInformation(WebKit::CallbackID callbackID)
 #endif
 
     SetControlledByAutomation(bool controlled)

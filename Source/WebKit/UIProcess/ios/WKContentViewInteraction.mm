@@ -717,6 +717,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     }
     
     _inputViewUpdateDeferrer = nullptr;
+    _assistedNodeInformation = { };
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -4032,7 +4033,7 @@ static bool isAssistableInputType(InputType type)
 #if ENABLE(EXTRA_ZOOM_MODE)
     [self presentFocusedFormControlViewController:NO];
     if (!_isChangingFocus)
-        [self presentViewControllerForAssistedNode:_assistedNodeInformation];
+        [self presentViewControllerForCurrentAssistedNode];
 #else
     [self reloadInputViews];
 #endif
@@ -4099,6 +4100,22 @@ static bool isAssistableInputType(InputType type)
         [_webView _scheduleVisibleContentRectUpdate];
 
     [_webView didEndFormControlInteraction];
+}
+
+- (void)updateCurrentAssistedNodeInformation:(Function<void(bool didUpdate)>&&)callback
+{
+    WeakObjCPtr<WKContentView> weakSelf { self };
+    auto identifierBeforeUpdate = _assistedNodeInformation.assistedNodeIdentifier;
+    _page->requestAssistedNodeInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info, auto error) {
+        if (!weakSelf || error != CallbackBase::Error::None || info.assistedNodeIdentifier != identifierBeforeUpdate) {
+            // If the assisted node may have changed in the meantime, don't overwrite assisted node information.
+            callback(false);
+            return;
+        }
+
+        weakSelf.get()->_assistedNodeInformation = info;
+        callback(true);
+    });
 }
 
 #if ENABLE(EXTRA_ZOOM_MODE)
@@ -4207,9 +4224,11 @@ static bool isAssistableInputType(InputType type)
     [_focusedFormControlViewController presentViewController:_numberPadViewController.get() animated:animated completion:nil];
 }
 
-- (void)presentViewControllerForAssistedNode:(const AssistedNodeInformation&)info
+- (void)presentViewControllerForCurrentAssistedNode
 {
-    switch (info.elementType) {
+    [self dismissAllInputViewControllers];
+
+    switch (_assistedNodeInformation.elementType) {
     case InputType::Number:
     case InputType::NumberPad:
     case InputType::Phone:
@@ -4253,7 +4272,6 @@ static bool isAssistableInputType(InputType type)
 
 - (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text
 {
-    // FIXME: Update cached AssistedNodeInformation state in the UI process.
     _page->setTextAsync(text);
 
     if (![self actionNameForFocusedFormControlController:_focusedFormControlViewController.get()] && !_assistedNodeInformation.hasNextNode && !_assistedNodeInformation.hasPreviousNode) {
@@ -4265,6 +4283,10 @@ static bool isAssistableInputType(InputType type)
 
     [_focusedFormControlViewController show:NO];
     [self dismissAllInputViewControllers];
+    [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
+        if (didUpdate)
+            [weakSelf.get()->_focusedFormControlViewController reloadData:YES];
+    }];
 }
 
 - (void)textInputControllerDidRequestDismissal:(WKTextFormControlViewController *)controller
@@ -4285,7 +4307,10 @@ static bool isAssistableInputType(InputType type)
 
 - (void)focusedFormControlControllerDidBeginEditing:(WKFocusedFormControlViewController *)controller
 {
-    [self presentViewControllerForAssistedNode:_assistedNodeInformation];
+    [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
+        if (didUpdate)
+            [weakSelf presentViewControllerForCurrentAssistedNode];
+    }];
 }
 
 - (CGRect)highlightedRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace

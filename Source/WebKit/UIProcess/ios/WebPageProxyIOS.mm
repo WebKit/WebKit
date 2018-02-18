@@ -192,6 +192,28 @@ void WebPageProxy::selectionRectsCallback(const Vector<WebCore::SelectionRect>& 
     callback->performCallbackWithReturnValue(selectionRects);
 }
 
+void WebPageProxy::assistedNodeInformationCallback(const AssistedNodeInformation& info, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<AssistedNodeInformationCallback>(callbackID);
+    if (!callback) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(info);
+}
+
+void WebPageProxy::requestAssistedNodeInformation(Function<void(const AssistedNodeInformation&, CallbackBase::Error)>&& callback)
+{
+    if (!isValid()) {
+        callback({ }, CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::RequestAssistedNodeInformation(callbackID), m_pageID);
+}
+
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate)
 {
     if (!isValid())
@@ -397,10 +419,9 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
         didReachLayoutMilestone(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
     }
 
-    if (m_hasDeferredStartAssistingNode) {
+    if (m_deferredNodeAssistanceArguments) {
         m_pageClient.startAssistingNode(m_deferredNodeAssistanceArguments->m_nodeInformation, m_deferredNodeAssistanceArguments->m_userIsInteracting, m_deferredNodeAssistanceArguments->m_blurPreviousNode,
             m_deferredNodeAssistanceArguments->m_changingActivityState, m_deferredNodeAssistanceArguments->m_userData.get());
-        m_hasDeferredStartAssistingNode = false;
         m_deferredNodeAssistanceArguments = nullptr;
     }
 }
@@ -915,7 +936,6 @@ void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     if (m_editorState.isMissingPostLayoutData) {
         m_deferredNodeAssistanceArguments = std::make_unique<NodeAssistanceArguments>(NodeAssistanceArguments { information, userIsInteracting, blurPreviousNode, changingActivityState, userDataObject });
-        m_hasDeferredStartAssistingNode = true;
         return;
     }
 
@@ -924,10 +944,7 @@ void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information
 
 void WebPageProxy::stopAssistingNode()
 {
-    if (m_hasDeferredStartAssistingNode) {
-        m_hasDeferredStartAssistingNode = false;
-        m_deferredNodeAssistanceArguments = nullptr;
-    }
+    m_deferredNodeAssistanceArguments = nullptr;
     m_pageClient.stopAssistingNode();
 }
 

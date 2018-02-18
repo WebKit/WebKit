@@ -1,3 +1,116 @@
+2018-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Form control values are stale after dismissing and representing input view controllers
+        https://bugs.webkit.org/show_bug.cgi?id=182877
+        <rdar://problem/37604395>
+
+        Reviewed by Tim Horton.
+
+        Currently, when presenting an input view controller for a focused element, we populate the initial form control
+        value using the WKContentView's assisted node information when it was last focused. However, if the user edits
+        the value of a form control, dismisses to the form control view controller (while the element is still focused)
+        and then begins editing the field again, the initial text will be the previous value of the input, since the
+        AssistedNodeInformation isn't up to date.
+
+        To fix this, we introduce a mechanism to update WKContentView's AssistedNodeInformation for the current assisted
+        node. This overwrites _assistedNodeInformation with new information computed from the web process, as long as
+        the assisted node before and after the request is made in the UI process has not changed. We accomplish this by
+        adding an identifier to AssistedNodeInformation, which is monotonically incremented when an element is focused
+        in the web process. The UI process may then use this identifier to determine whether AssistedNodeInformations
+        are describing the same focused element.
+
+        One interesting consideration here is that a normal AssistedNodeInformation update (propagated when focusing an
+        element) may be deferred in the UI process until the next layer tree commit. In the absence of the assisted node
+        identifier check, one could imagine a scenario in which the assisted node information in the UI process gets
+        "updated" from a new value to an old value:
+
+        1. The web process focuses an element and sends AssistedNodeInformation `A`.
+        2. WKContentView calls -updateCurrentAssistedNodeInformation.
+        3. The web process sends AssistedNodeInformation `B`.
+        4. `A` is received in the UI process, but deferred.
+        5. The UI process receives `B` and sets _assistedNodeInformation to `B`.
+        6. The UI process calls -_startAssistingNode: and sets _assistedNodeInformation to `A`.
+
+        This would mean that the _assistedNodeInformation is set to an earlier value, `A`, after being set to a later
+        value, `B`. However, because the AssistedNodeInformation identifier in step (2) refers to the assisted node
+        prior to step (1), the assisted node identifier in (5) would not match this identifier, and we would simply bail
+        instead of overwriting assisted node information.
+
+        We use this AssistedNodeInformation update mechanism after inserting text via input view controllers, and also
+        after reentering edit mode from the focused form control view controller. This fixes two issues where changing
+        the size of the focused element after editing it results in the focused form overlay highlighting a stale frame,
+        and also when setting the initial text when reentering edit mode for a form control that is already focused.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+
+        Add a new monotonically increasing identifier (per WebPage) which associates a AssistedNodeInformation with a
+        focused element. In the event that the web process crashes and relaunches (thus resetting this identifier),
+        AssistedNodeInformation state in the UI process is now also reset (see -cleanupInteraction), so we won't end up
+        confusing AssistedNodeInformations computed by different WebPages between a web process crash.
+
+        * UIProcess/WebPageProxy.h:
+
+        A bit of related refactoring here to remove an unnecessary bool flag that indicates whether we have a deferred
+        assisted node information. Instead, just use the presence of m_deferredNodeAssistanceArguments.
+
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add a AssistedNodeInformationCallback IPC message.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+
+        Clear out the previous AssistedNodeInformation. See above for details.
+
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView updateCurrentAssistedNodeInformation:]):
+
+        Tries to update AssistedNodeInformation for the current assisted node, invoking the completion callback when
+        finished. This may result in the assisted node information not being updated due to the current assisted node
+        changing in the time between the start of the request and the information being received in the UI process.
+
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]):
+
+        Refactored from -presentViewControllerForAssistedNode:, such that it no longer takes an AssistedNodeInformation
+        as an argument, but rather just uses WKContentView's current _assistedNodeInformation. This was just being
+        called with _assistedNodeInformation from all call sites anyways.
+
+        (-[WKContentView textInputController:didCommitText:]):
+
+        Request an AssistedNodeInformation update after setting the value of a form control; if the assisted node hasn't
+        changed, update the focused form control overlay. This is needed to handle cases where the focused element's
+        frame may have changed after inserting text (e.g. due to line wrapping), and the focused form control overlay
+        needs to be updated to reflect this change.
+
+        (-[WKContentView focusedFormControlControllerDidBeginEditing:]):
+
+        Request an AssistedNodeInformation update before reentering edit mode; if the assisted node hasn't changed since
+        the start of the request, present the appropriate input view controller.
+
+        (-[WKContentView presentViewControllerForAssistedNode:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::assistedNodeInformationCallback):
+        (WebKit::WebPageProxy::requestAssistedNodeInformation):
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        (WebKit::WebPageProxy::startAssistingNode):
+        (WebKit::WebPageProxy::stopAssistingNode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidFocus):
+
+        Increment the assisted node identifier.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAssistedNodeInformation):
+
+        Compute and return an AssistedNodeInformation.
+
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-02-16  Dean Jackson  <dino@apple.com>
 
         Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa

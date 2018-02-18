@@ -4909,6 +4909,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         m_isAssistingNodeDueToUserInteraction |= m_userIsInteracting;
 
 #if PLATFORM(IOS)
+        ++m_currentAssistedNodeIdentifier;
         AssistedNodeInformation information;
         getAssistedNodeInformation(information);
         RefPtr<API::Object> userData;

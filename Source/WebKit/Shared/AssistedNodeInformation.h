@@ -114,6 +114,8 @@ struct AssistedNodeInformation {
     WebCore::URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
 
+    uint64_t assistedNodeIdentifier { 0 };
+
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, AssistedNodeInformation&);
 };

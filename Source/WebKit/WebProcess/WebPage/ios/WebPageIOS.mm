@@ -656,6 +656,15 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
 }
 
+void WebPage::requestAssistedNodeInformation(WebKit::CallbackID callbackID)
+{
+    AssistedNodeInformation info;
+    if (m_assistedNode)
+        getAssistedNodeInformation(info);
+
+    send(Messages::WebPageProxy::AssistedNodeInformationCallback(info, callbackID));
+}
+
 #if ENABLE(DATA_INTERACTION)
 void WebPage::requestStartDataInteraction(const IntPoint& clientPosition, const IntPoint& globalPosition)
 {
@@ -2738,6 +2747,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
     information.hasNextNode = hasAssistableElement(m_assistedNode.get(), *m_page, true);
     information.hasPreviousNode = hasAssistableElement(m_assistedNode.get(), *m_page, false);
+    information.assistedNodeIdentifier = m_currentAssistedNodeIdentifier;
 
     if (is<HTMLSelectElement>(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);

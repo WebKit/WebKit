@@ -400,6 +400,7 @@ messages -> WebPageProxy {
     OverflowScrollDidEndScroll()
     ShowInspectorHighlight(struct WebCore::Highlight highlight)
     HideInspectorHighlight()
+    AssistedNodeInformationCallback(struct WebKit::AssistedNodeInformation information, WebKit::CallbackID callbackID)
 
     ShowInspectorIndication()
     HideInspectorIndication()

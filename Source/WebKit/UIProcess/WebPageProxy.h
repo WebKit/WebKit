@@ -285,6 +285,7 @@ typedef GenericCallback<const String&, double, bool> FontAtSelectionCallback;
 typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t> GestureCallback;
 typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t> TouchesCallback;
 typedef GenericCallback<const Vector<WebCore::SelectionRect>&> SelectionRectsCallback;
+typedef GenericCallback<const AssistedNodeInformation&> AssistedNodeInformationCallback;
 struct NodeAssistanceArguments {
     AssistedNodeInformation m_nodeInformation;
     bool m_userIsInteracting;
@@ -1090,6 +1091,7 @@ public:
     void setShouldRecordNavigationSnapshots(bool shouldRecordSnapshots) { m_shouldRecordNavigationSnapshots = shouldRecordSnapshots; }
     void recordAutomaticNavigationSnapshot();
     void recordNavigationSnapshot(WebBackForwardListItem&);
+    void requestAssistedNodeInformation(Function<void(const AssistedNodeInformation&, CallbackBase::Error)>&&);
 
 #if PLATFORM(COCOA)
     RefPtr<ViewSnapshot> takeViewSnapshot();
@@ -1625,6 +1627,7 @@ private:
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
+    void assistedNodeInformationCallback(const AssistedNodeInformation&, CallbackID);
 #endif // PLATFORM(IOS)
 
 #if ENABLE(DATA_DETECTION)
@@ -2081,7 +2084,6 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    bool m_hasDeferredStartAssistingNode { false };
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
     bool m_forceAlwaysUserScalable { false };
     WebCore::FloatSize m_viewportConfigurationMinimumLayoutSize;
