@@ -1,3 +1,14 @@
+2018-02-18  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] REGRESSION(r228238) Detach renderer before destroying its subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=182908
+        <rdar://problem/37619394>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/crash-when-subtree-is-still-attached-expected.txt: Added.
+        * fast/block/crash-when-subtree-is-still-attached.html: Added.
+
 2018-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228575.

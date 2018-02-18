@@ -475,16 +475,20 @@ void RenderElement::didInsertChild(RenderObject& child, RenderObject*)
 
 void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
-    if (is<RenderElement>(oldChild)) {
-        auto& child = downcast<RenderElement>(oldChild);
-        while (child.firstChild()) {
-            auto& firstChild = *child.firstChild();
-            if (auto* node = firstChild.node())
-                node->setRenderer(nullptr);
-            child.removeAndDestroyChild(builder, firstChild);
-        }
-    }
     auto toDestroy = builder.takeChild(*this, oldChild);
+    // We need to detach the subtree first so that the descendants don't have
+    // access to previous/next sublings at takeChild().
+    // FIXME: webkit.org/b/182909.
+    if (!is<RenderElement>(toDestroy.get()))
+        return;
+
+    auto& child = downcast<RenderElement>(*toDestroy.get());
+    while (child.firstChild()) {
+        auto& firstChild = *child.firstChild();
+        if (auto* node = firstChild.node())
+            node->setRenderer(nullptr);
+        child.removeAndDestroyChild(builder, firstChild);
+    }
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
