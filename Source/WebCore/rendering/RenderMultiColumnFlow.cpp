@@ -165,45 +165,6 @@ RenderPtr<RenderMultiColumnSet> RenderMultiColumnFlow::createMultiColumnSet(Rend
     return createRenderer<RenderMultiColumnSet>(*this, WTFMove(style));
 }
 
-void RenderMultiColumnFlow::handleSpannerRemoval(RenderObject& spanner)
-{
-    // The placeholder may already have been removed, but if it hasn't, do so now.
-    if (auto placeholder = spannerMap().take(&downcast<RenderBox>(spanner)))
-        placeholder->removeFromParentAndDestroy();
-
-    if (RenderObject* next = spanner.nextSibling()) {
-        if (RenderObject* previous = spanner.previousSibling()) {
-            if (previous->isRenderMultiColumnSet() && next->isRenderMultiColumnSet()) {
-                // Merge two sets that no longer will be separated by a spanner.
-                next->removeFromParentAndDestroy();
-                previous->setNeedsLayout();
-            }
-        }
-    }
-}
-
-void RenderMultiColumnFlow::fragmentedFlowRelativeWillBeRemoved(RenderObject& relative)
-{
-    invalidateFragments();
-    if (is<RenderMultiColumnSpannerPlaceholder>(relative)) {
-        // Remove the map entry for this spanner, but leave the actual spanner renderer alone. Also
-        // keep the reference to the spanner, since the placeholder may be about to be re-inserted
-        // in the tree.
-        ASSERT(relative.isDescendantOf(this));
-        spannerMap().remove(downcast<RenderMultiColumnSpannerPlaceholder>(relative).spanner());
-        return;
-    }
-    if (relative.style().columnSpan() == ColumnSpanAll) {
-        if (relative.parent() != parent())
-            return; // not a valid spanner.
-        
-        handleSpannerRemoval(relative);
-    }
-    // Note that we might end up with empty column sets if all column content is removed. That's no
-    // big deal though (and locating them would be expensive), and they will be found and re-used if
-    // content is added again later.
-}
-
 void RenderMultiColumnFlow::fragmentedFlowDescendantBoxLaidOut(RenderBox* descendant)
 {
     if (!is<RenderMultiColumnSpannerPlaceholder>(*descendant))
