@@ -1,5 +1,14 @@
 2018-02-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark http/tests/cache-storage/cache-representation.https.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=182928
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2018-02-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark inspector/console/messageRepeatCountUpdated.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=152452
 
