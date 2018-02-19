@@ -451,33 +451,26 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
         // 1. Initialize a dictionary object, output keyframe, using the following definition:
         //
         // dictionary BaseComputedKeyframe {
-        //      double?            offset = null;
-        //      double             computedOffset;
-        //      DOMString          easing = "linear";
-        //      CompositeOperation composite;
+        //      double?             offset = null;
+        //      double              computedOffset;
+        //      DOMString           easing = "linear";
+        //      CompositeOperation? composite = null;
         // };
 
-        // 2. Set offset, computedOffset, easing members of output keyframe to the respective values keyframe offset, computed keyframe offset,
-        // and keyframe-specific timing function of keyframe.
-
-        // 3. If keyframe has a keyframe-specific composite operation, set composite to that value.
+        // 2. Set offset, computedOffset, easing, composite members of output keyframe to the respective values keyframe offset, computed keyframe
+        // offset, keyframe-specific timing function and keyframe-specific composite operation of keyframe.
         BaseComputedKeyframe computedKeyframe;
         computedKeyframe.offset = m_offsets[i];
         computedKeyframe.computedOffset = keyframe.key();
         computedKeyframe.easing = m_timingFunctions[i]->cssText();
+        computedKeyframe.composite = m_compositeOperations[i];
 
         auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
-
-        // If we have a non-null CompositeOperation for this keyframes, set the JS property for it.
-        if (auto compositeOperation = m_compositeOperations[i]) {
-            PropertyDescriptor propertyDescriptor(convertEnumerationToJS(state, compositeOperation.value()), 0);
-            JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString("composite").impl(), propertyDescriptor, false);
-        }
 
         auto& style = *keyframe.style();
         auto computedStyleExtractor = ComputedStyleExtractor(m_target.get());
 
-        // 4. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
+        // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
         for (auto cssPropertyId : keyframe.properties()) {
             // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
             auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
@@ -490,7 +483,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
             JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString(propertyName).impl(), PropertyDescriptor(value, 0), false);
         }
 
-        // 5. Append output keyframe to result.
+        // 4. Append output keyframe to result.
         result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
     }
 

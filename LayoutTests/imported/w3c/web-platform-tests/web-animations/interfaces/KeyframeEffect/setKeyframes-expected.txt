@@ -1,62 +1,62 @@
 
 PASS Keyframes can be replaced with an empty keyframe 
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a two property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
-FAIL Keyframes can be replaced with a two property property-indexed keyframes specification with different numbers of values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with an invalid value assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification that needs to stringify its values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,offset,opacity" but got "computedOffset,easing,offset,opacity"
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a one property one value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a one property one non-array value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification where the first value is invalid assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,offset" but got "computedOffset,easing,offset"
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification where the second value is invalid assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with a single offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is too short assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is too long assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an empty array of offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with an embedded null value assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with a trailing null value assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with leading and trailing null values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with adjacent null values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with all null values (and too many at that) assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with a single null offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe without any specified easing assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with a single easing assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of easings assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too short assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with a single-element array of easings assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an empty array of easings assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too long assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification 
+FAIL Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a two property two value property-indexed keyframes specification 
+PASS Keyframes can be replaced with a two property property-indexed keyframes specification with different numbers of values 
+PASS Keyframes can be replaced with a property-indexed keyframes specification with an invalid value 
+PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification that needs to stringify its values 
+FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference assert_equals: value for 'left' on ComputedKeyframe #0 expected "var(--dist)" but got "auto"
+FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a one property one value property-indexed keyframes specification 
+PASS Keyframes can be replaced with a one property one non-array value property-indexed keyframes specification 
+PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification where the first value is invalid 
+PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification where the second value is invalid 
+PASS Keyframes can be replaced with a property-indexed keyframe with a single offset 
+FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.45000000000000007
+FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is too short assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is too long 
+PASS Keyframes can be replaced with a property-indexed keyframe with an empty array of offsets 
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of offsets with an embedded null value 
+FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with a trailing null value assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets with leading and trailing null values assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of offsets with adjacent null values 
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of offsets with all null values (and too many at that) 
+PASS Keyframes can be replaced with a property-indexed keyframe with a single null offset 
+FAIL Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.2 but got 0.4
+PASS Keyframes can be replaced with a property-indexed keyframe without any specified easing 
+PASS Keyframes can be replaced with a property-indexed keyframe with a single easing 
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of easings 
+FAIL Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too short assert_equals: value for 'easing' on ComputedKeyframe #2 expected "ease-in" but got "ease-out"
+PASS Keyframes can be replaced with a property-indexed keyframe with a single-element array of easings 
+PASS Keyframes can be replaced with a property-indexed keyframe with an empty array of easings 
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too long 
 PASS Keyframes can be replaced with a property-indexed keyframe with a single composite operation 
 PASS Keyframes can be replaced with a property-indexed keyframe with a composite array 
 FAIL Keyframes can be replaced with a property-indexed keyframe with a composite array that is too short assert_equals: value for 'composite' on ComputedKeyframe #2 expected "add" but got "replace"
 PASS Keyframes can be replaced with a property-indexed keyframe with a composite array that is too long 
 PASS Keyframes can be replaced with a property-indexed keyframe with a single-element composite array 
-FAIL Keyframes can be replaced with a one property one keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a one property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a two property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
-FAIL Keyframes can be replaced with a one shorthand property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a two property (a shorthand and one of its component longhands) two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a two property keyframe sequence where one property is missing from the first keyframe assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a two property keyframe sequence where one property is missing from the last keyframe assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
-FAIL Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,offset,opacity" but got "computedOffset,easing,offset,opacity"
-FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a one property one keyframe sequence 
+PASS Keyframes can be replaced with a one property two keyframe sequence 
+PASS Keyframes can be replaced with a two property two keyframe sequence 
+FAIL Keyframes can be replaced with a one shorthand property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Keyframes can be replaced with a two property (a shorthand and one of its component longhands) two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a two property keyframe sequence where one property is missing from the first keyframe 
+PASS Keyframes can be replaced with a two property keyframe sequence where one property is missing from the last keyframe 
+PASS Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values 
+FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference assert_equals: value for 'left' on ComputedKeyframe #0 expected "var(--dist)" but got "auto"
+FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
 FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for a given interior offset Type error
 FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for offsets 0 and 1 Type error
 FAIL Keyframes can be replaced with a two property four keyframe sequence Type error
-FAIL Keyframes can be replaced with a single keyframe sequence with omitted offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a single keyframe sequence with null offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a single keyframe sequence with string offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a one property keyframe sequence with some omitted offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a one property keyframe sequence with some null offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
-FAIL Keyframes can be replaced with a two property keyframe sequence with some omitted offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
-FAIL Keyframes can be replaced with a one property keyframe sequence with all omitted offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+PASS Keyframes can be replaced with a single keyframe sequence with omitted offset 
+PASS Keyframes can be replaced with a single keyframe sequence with null offset 
+PASS Keyframes can be replaced with a single keyframe sequence with string offset 
+PASS Keyframes can be replaced with a one property keyframe sequence with some omitted offsets 
+PASS Keyframes can be replaced with a one property keyframe sequence with some null offsets 
+PASS Keyframes can be replaced with a two property keyframe sequence with some omitted offsets 
+PASS Keyframes can be replaced with a one property keyframe sequence with all omitted offsets 
 FAIL Keyframes can be replaced with a keyframe sequence with different easing values, but the same easing value for a given offset Type error
 FAIL Keyframes can be replaced with a keyframe sequence with different composite values, but the same composite value for a given offset Type error
 PASS KeyframeEffect constructor throws with keyframes with an out-of-bounded positive offset 

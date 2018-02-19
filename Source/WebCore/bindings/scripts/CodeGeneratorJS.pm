@@ -2188,6 +2188,10 @@ sub GenerateDefaultValue
     if ($codeGenerator->IsEnumType($type)) {
         # FIXME: Would be nice to report an error if the value does not have quote marks around it.
         # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
+        if ($defaultValue eq "null") {
+            die if !$type->isNullable;
+            return "std::nullopt";
+        }
         my $className = GetEnumerationClassName($type, $typeScope);
         my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
         return $className . "::" . $enumerationValueName;

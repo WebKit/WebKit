@@ -73,6 +73,7 @@ public:
         std::optional<double> offset;
         double computedOffset;
         String easing { "linear" };
+        std::optional<CompositeOperation> composite;
     };
 
     Element* target() const { return m_target.get(); }
