@@ -1,3 +1,51 @@
+2018-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181166
+        <rdar://problem/37169508>
+
+        Reviewed by Youenn Fablet.
+
+        I found out that this test was flakily timing out because our jobQueues would sometimes get stuck
+        when their current job's connection or service worker (when scheduled by a service worker) would
+        go away before the job is complete.
+
+        This patch makes our job queues operation more robust by:
+        1. Cancelling all jobs from a given connection when a SWServerConnection goes away
+        2. Cancelling all jobs from a given service worker when a service worker gets terminated
+
+        We also make sure service workers created by a job get properly terminated when a job
+        is canceled to avoid leaving service workers in limbo.
+
+        No new tests, unskipped existing flaky test.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::ServiceWorkerJobData):
+        (WebCore::ServiceWorkerJobData::isolatedCopy const):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::startScriptFetch):
+        (WebCore::SWServer::scriptContextFailedToStart):
+        (WebCore::SWServer::scriptContextStarted):
+        (WebCore::SWServer::terminatePreinstallationWorker):
+        (WebCore::SWServer::installContextData):
+        (WebCore::SWServer::workerContextTerminated):
+        (WebCore::SWServer::unregisterConnection):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::removeAllJobsMatching):
+        (WebCore::SWServerJobQueue::cancelJobsFromConnection):
+        (WebCore::SWServerJobQueue::cancelJobsFromServiceWorker):
+        * workers/service/server/SWServerJobQueue.h:
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::setPreInstallationWorker):
+
 2018-02-05  Antti Koivisto  <antti@apple.com>
 
         Crash on sfgate.com because mismatching link preload types

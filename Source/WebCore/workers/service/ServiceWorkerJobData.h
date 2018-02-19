@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOriginData.h"
+#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerJobType.h"
 #include "ServiceWorkerRegistrationKey.h"
@@ -39,7 +40,7 @@ namespace WebCore {
 
 struct ServiceWorkerJobData {
     using Identifier = ServiceWorkerJobDataIdentifier;
-    explicit ServiceWorkerJobData(SWServerConnectionIdentifier);
+    ServiceWorkerJobData(SWServerConnectionIdentifier, const DocumentOrWorkerIdentifier& sourceContext);
     ServiceWorkerJobData(const ServiceWorkerJobData&) = default;
     ServiceWorkerJobData() = default;
 
@@ -49,6 +50,7 @@ struct ServiceWorkerJobData {
     URL clientCreationURL;
     SecurityOriginData topOrigin;
     URL scopeURL;
+    ServiceWorkerOrClientIdentifier sourceContext;
     ServiceWorkerJobType type;
 
     ServiceWorkerRegistrationOptions registrationOptions;
@@ -69,7 +71,7 @@ private:
 template<class Encoder>
 void ServiceWorkerJobData::encode(Encoder& encoder) const
 {
-    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL;
+    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext;
     encoder.encodeEnum(type);
     switch (type) {
     case ServiceWorkerJobType::Register:
@@ -103,6 +105,8 @@ std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decode
     jobData.topOrigin = WTFMove(*topOrigin);
 
     if (!decoder.decode(jobData.scopeURL))
+        return std::nullopt;
+    if (!decoder.decode(jobData.sourceContext))
         return std::nullopt;
     if (!decoder.decodeEnum(jobData.type))
         return std::nullopt;

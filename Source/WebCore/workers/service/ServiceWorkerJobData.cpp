@@ -35,9 +35,14 @@ ServiceWorkerJobData::ServiceWorkerJobData(const Identifier& identifier)
 {
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier)
+ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
     : m_identifier { connectionIdentifier, generateThreadSafeObjectIdentifier<ServiceWorkerJobIdentifierType>() }
 {
+    WTF::switchOn(localSourceContext, [&](DocumentIdentifier documentIdentifier) {
+        sourceContext = ServiceWorkerClientIdentifier { connectionIdentifier, documentIdentifier };
+    }, [&](ServiceWorkerIdentifier serviceWorkerIdentifier) {
+        sourceContext = serviceWorkerIdentifier;
+    });
 }
 
 ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
@@ -50,6 +55,7 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
 {
     ServiceWorkerJobData result { identifier() };
+    result.sourceContext = sourceContext;
     result.type = type;
 
     result.scriptURL = scriptURL.isolatedCopy();

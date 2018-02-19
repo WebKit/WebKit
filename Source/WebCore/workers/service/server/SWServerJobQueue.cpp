@@ -365,6 +365,41 @@ void SWServerJobQueue::finishCurrentJob()
         runNextJob();
 }
 
+void SWServerJobQueue::removeAllJobsMatching(const WTF::Function<bool(ServiceWorkerJobData&)>& matches)
+{
+    bool isFirst = true;
+    bool didRemoveFirstJob = false;
+    m_jobQueue.removeAllMatching([&](auto& job) {
+        bool shouldRemove = matches(job);
+        if (isFirst) {
+            isFirst = false;
+            if (shouldRemove)
+                didRemoveFirstJob = true;
+        }
+        return shouldRemove;
+    });
+
+    if (m_jobTimer.isActive()) {
+        if (m_jobQueue.isEmpty())
+            m_jobTimer.stop();
+    } else if (didRemoveFirstJob && !m_jobQueue.isEmpty())
+        runNextJob();
+}
+
+void SWServerJobQueue::cancelJobsFromConnection(SWServerConnectionIdentifier connectionIdentifier)
+{
+    removeAllJobsMatching([connectionIdentifier](auto& job) {
+        return job.identifier().connectionIdentifier == connectionIdentifier;
+    });
+}
+
+void SWServerJobQueue::cancelJobsFromServiceWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    removeAllJobsMatching([serviceWorkerIdentifier](auto& job) {
+        return WTF::holds_alternative<ServiceWorkerIdentifier>(job.sourceContext) && WTF::get<ServiceWorkerIdentifier>(job.sourceContext) == serviceWorkerIdentifier;
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

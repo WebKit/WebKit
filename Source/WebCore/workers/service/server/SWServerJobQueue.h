@@ -53,6 +53,10 @@ public:
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
     void didFinishInstall(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, bool wasSuccessful);
     void didResolveRegistrationPromise();
+    void cancelJobsFromConnection(SWServerConnectionIdentifier);
+    void cancelJobsFromServiceWorker(ServiceWorkerIdentifier);
+
+    bool isCurrentlyProcessingJob(const ServiceWorkerJobDataIdentifier&) const;
 
 private:
     void jobTimerFired();
@@ -66,7 +70,7 @@ private:
 
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
 
-    bool isCurrentlyProcessingJob(const ServiceWorkerJobDataIdentifier&) const;
+    void removeAllJobsMatching(const WTF::Function<bool(ServiceWorkerJobData&)>&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 
