@@ -1135,10 +1135,9 @@ if (ENABLE_INTROSPECTION)
             -DWEBKIT2_COMPILATION
             -I${CMAKE_SOURCE_DIR}/Source
             -I${WEBKIT_DIR}
-            -I${JAVASCRIPTCORE_DIR}
-            -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
             -I${DERIVED_SOURCES_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
+            -I${FORWARDING_HEADERS_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             ${WebKit2GTK_INSTALLED_HEADERS}
             ${WEBKIT_DIR}/Shared/API/glib/*.cpp
@@ -1180,8 +1179,6 @@ if (ENABLE_INTROSPECTION)
             -DWEBKIT2_COMPILATION
             -I${CMAKE_SOURCE_DIR}/Source
             -I${WEBKIT_DIR}
-            -I${JAVASCRIPTCORE_DIR}
-            -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
             -I${DERIVED_SOURCES_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
             -I${FORWARDING_HEADERS_DIR}
