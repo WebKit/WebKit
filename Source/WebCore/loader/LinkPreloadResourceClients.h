@@ -84,10 +84,12 @@ public:
         return std::unique_ptr<LinkPreloadDefaultResourceClient>(new LinkPreloadDefaultResourceClient(loader, resource));
     }
 
+#if ENABLE(VIDEO_TRACK)
     static std::unique_ptr<LinkPreloadDefaultResourceClient> create(LinkLoader& loader, CachedTextTrack& resource)
     {
         return std::unique_ptr<LinkPreloadDefaultResourceClient>(new LinkPreloadDefaultResourceClient(loader, resource));
     }
+#endif
 
     virtual ~LinkPreloadDefaultResourceClient() = default;
 
