@@ -70,7 +70,7 @@ protected:
     PlatformMediaResourceLoader() = default;
 };
 
-class PlatformMediaResource : public RefCounted<PlatformMediaResource> {
+class PlatformMediaResource : public ThreadSafeRefCounted<PlatformMediaResource> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
 public:
     PlatformMediaResource() = default;
