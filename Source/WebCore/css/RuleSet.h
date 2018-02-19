@@ -59,12 +59,13 @@ class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
 
-    RuleData(StyleRule*, unsigned selectorIndex, unsigned position);
+    RuleData(StyleRule*, unsigned selectorIndex, unsigned selectorListIndex, unsigned position);
 
     unsigned position() const { return m_position; }
     StyleRule* rule() const { return m_rule.get(); }
     const CSSSelector* selector() const { return m_rule->selectorList().selectorAt(m_selectorIndex); }
     unsigned selectorIndex() const { return m_selectorIndex; }
+    unsigned selectorListIndex() const { return m_selectorListIndex; }
 
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
     MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
@@ -75,27 +76,10 @@ public:
 
     void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
 
-#if ENABLE(CSS_SELECTOR_JIT)
-    SelectorCompilationStatus compilationStatus() const { return m_compilationStatus; }
-    JSC::MacroAssemblerCodeRef compiledSelectorCodeRef() const { return m_compiledSelectorCodeRef; }
-    void setCompiledSelector(SelectorCompilationStatus status, JSC::MacroAssemblerCodeRef codeRef) const
-    {
-        m_compilationStatus = status;
-        m_compiledSelectorCodeRef = codeRef;
-    }
-#if CSS_SELECTOR_JIT_PROFILING
-    ~RuleData()
-    {
-        if (m_compiledSelectorCodeRef.code().executableAddress())
-            dataLogF("RuleData compiled selector %d \"%s\"\n", m_compiledSelectorUseCount, selector()->selectorText().utf8().data());
-    }
-    void compiledSelectorUsed() const { m_compiledSelectorUseCount++; }
-#endif
-#endif // ENABLE(CSS_SELECTOR_JIT)
-
 private:
     RefPtr<StyleRule> m_rule;
-    unsigned m_selectorIndex : 13;
+    unsigned m_selectorIndex : 16;
+    unsigned m_selectorListIndex : 16;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
     unsigned m_position : 18;
@@ -105,25 +89,9 @@ private:
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyWhitelistType : 2;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
-#if ENABLE(CSS_SELECTOR_JIT)
-    mutable SelectorCompilationStatus m_compilationStatus;
-    mutable JSC::MacroAssemblerCodeRef m_compiledSelectorCodeRef;
-#if CSS_SELECTOR_JIT_PROFILING
-    mutable unsigned m_compiledSelectorUseCount;
-#endif
-#endif // ENABLE(CSS_SELECTOR_JIT)
 };
     
 struct SameSizeAsRuleData {
-#if ENABLE(CSS_SELECTOR_JIT)
-    unsigned compilationStatus;
-    void* compiledSelectorPointer;
-    void* codeRefPtr;
-#if CSS_SELECTOR_JIT_PROFILING
-    unsigned compiledSelectorUseCount;
-#endif
-#endif // ENABLE(CSS_SELECTOR_JIT)
-
     void* a;
     unsigned b;
     unsigned c;
@@ -152,7 +120,7 @@ public:
     void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&, StyleResolver* = 0);
 
     void addStyleRule(StyleRule*);
-    void addRule(StyleRule*, unsigned selectorIndex);
+    void addRule(StyleRule*, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage*);
     void addToRuleSet(const AtomicString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();

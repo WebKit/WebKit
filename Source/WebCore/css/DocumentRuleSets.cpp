@@ -114,7 +114,7 @@ static std::unique_ptr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
         return nullptr;
     auto ruleSet = std::make_unique<RuleSet>();
     for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex);
+        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].selectorListIndex);
     ruleSet->shrinkToFit();
     return ruleSet;
 }
@@ -187,7 +187,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomicStrin
             auto& ruleSet = matchElementArray[arrayIndex];
             if (!ruleSet)
                 ruleSet = std::make_unique<RuleSet>();
-            ruleSet->addRule(feature.rule, feature.selectorIndex);
+            ruleSet->addRule(feature.rule, feature.selectorIndex, feature.selectorListIndex);
             if (feature.invalidationSelector)
                 invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
         }

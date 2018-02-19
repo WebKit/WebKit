@@ -95,6 +95,20 @@ unsigned CSSSelectorList::componentCount() const
     return (current - m_selectorArray) + 1;
 }
 
+unsigned CSSSelectorList::listSize() const
+{
+    if (!m_selectorArray)
+        return 0;
+    unsigned size = 1;
+    CSSSelector* current = m_selectorArray;
+    while (!current->isLastInSelectorList()) {
+        if (current->isLastInTagHistory())
+            ++size;
+        ++current;
+    }
+    return size;
+}
+
 CSSSelectorList& CSSSelectorList::operator=(CSSSelectorList&& other)
 {
     deleteSelectors();

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSSelectorList.h"
+#include "CompiledSelector.h"
 #include "StyleProperties.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -139,6 +140,15 @@ public:
 
     Vector<RefPtr<StyleRule>> splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
 
+#if ENABLE(CSS_SELECTOR_JIT)
+    CompiledSelector& compiledSelectorForListIndex(unsigned index)
+    {
+        if (m_compiledSelectors.isEmpty())
+            m_compiledSelectors.grow(m_selectorList.listSize());
+        return m_compiledSelectors[index];
+    }
+#endif
+
     static unsigned averageSizeInBytes();
 
 private:
@@ -149,6 +159,10 @@ private:
 
     mutable Ref<StylePropertiesBase> m_properties;
     CSSSelectorList m_selectorList;
+
+#if ENABLE(CSS_SELECTOR_JIT)
+    Vector<CompiledSelector> m_compiledSelectors;
+#endif
 };
 
 inline const StyleProperties* StyleRule::propertiesWithoutDeferredParsing() const
