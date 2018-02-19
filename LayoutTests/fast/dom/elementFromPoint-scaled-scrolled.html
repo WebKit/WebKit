@@ -1,68 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-    body {
-        width: 2000px;
-        height: 2000px;
-    }
-    button {
-        position: absolute;
-        width: 50px;
-        height: 50px;
-    }
-    #b1 {
-        left: 200px;
-        top: 100px;
-    }
-    #b2 {
-        left: 500px;
-        top: 400px;
-    }
-</style>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
 </head>
 <body onload="runTest();" style="width:2000px;height:2000px;margin:0px;padding:100px">
-<button id="b1"></button>
-<button id="b2"></button>
+<button style="width:50px;height:50px;">B1</button><button style="width:50px;height:50px;">B2</button><button style="width:50px;height:50px;">B3</button>
+<div>This test is successful if elementFromPoint returns the correct element.</div>
+<div id="result"></div>
 <script>
 function runTest() {
-    description("This test applies page scale and scrolls the page, and checks that elementFromPoint returns the correct element.");
-    if (window.internals) {
-        window.internals.settings.setVisualViewportEnabled(true);
-        window.internals.setPageScaleFactor(2, 0, 0);
-    }
-    window.scrollTo(100, 100);
-
-    // The layout viewport hasn't been scrolled.
-    shouldBe("document.elementFromPoint(225, 125)", "b1");
-    shouldBe("document.elementFromPoint(525, 425)", "b2");
-
-    window.scrollTo(200, 200);
-
-    // b1 is now offscreen, but still within the layout viewport.
-    shouldBe("document.elementFromPoint(225, 125)", "b1");
-    shouldBe("document.elementFromPoint(525, 425)", "b2");
-
-    window.scrollTo(500, 400);
-    shouldBe("document.elementFromPoint(115, 15)", "b1");
-    shouldBe("document.elementFromPoint(415, 315)", "b2");
-
-    window.scrollTo(700, 400);
-    shouldBeNull("document.elementFromPoint(-85, 15)");
-    shouldBe("document.elementFromPoint(215, 315)", "b2");
-
-    window.scrollTo(0, 0);
     if (window.internals)
-        window.internals.setPageScaleFactor(0.5, 0, 0);
-    // b2 is now technically outside the 800x600 scaled viewport rect,
-    // but should still be found.
+        window.internals.setPageScaleFactor(2, 0, 0);
+    window.scrollTo(100,100);
 
-    shouldBe("document.elementFromPoint(525, 425)", "b2");
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
-    finishJSTest();
+    document.getElementById("result").innerText = document.elementFromPoint(125, 25).innerText;
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
+</script>
 </body>
 </html>

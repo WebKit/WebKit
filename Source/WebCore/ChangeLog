@@ -1,3 +1,27 @@
+2018-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r219342): Touch event coordinates and elementFromPoint coordinates differ
+        https://bugs.webkit.org/show_bug.cgi?id=182910
+        <rdar://problem/37533950>
+
+        Reviewed by Simon Fraser.
+
+        We reverted other changes to the definition of client coordinates
+        in r219829 due to compatibility concerns. However, we failed to revert
+        r219342 on trunk, leaving elementFromPoint() using coordinates relative
+        to the layout viewport.
+
+        Add a currently off-by-default setting to switch on layout-viewport-relative
+        client coordinates and guard the elementFromPoint changes behind it.
+        A future patch should roll r219829 back in also behind this setting, so
+        that everything remains consistent regardless of which coordinate space we choose.
+
+        * dom/TreeScope.cpp:
+        (WebCore::absolutePointIfNotClipped):
+        * page/Settings.yaml:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2018-02-19  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Don't allow PiP media playback

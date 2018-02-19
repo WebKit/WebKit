@@ -1,3 +1,26 @@
+2018-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r219342): Touch event coordinates and elementFromPoint coordinates differ
+        https://bugs.webkit.org/show_bug.cgi?id=182910
+        <rdar://problem/37533950>
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/elementFromPoint-scaled-scrolled.html:
+        Revert changes to this test made in r219342.
+
+        * fast/dom/elementFromPoint-scaled-scrolled-layout-viewport.html:
+        * fast/dom/elementFromPoint-scaled-scrolled-layout-viewport-expected.txt:
+        Add a test that is equivalent to elementFromPoint-scaled-scrolled.html after r219342,
+        which turns on the new setting. This test is disabled on iOS (like it was
+        in r219342) because it needs window.scrollTo.
+
+        * platform/ios-wk2/fast/dom/elementFromPoint-relative-to-viewport-expected.txt:
+        This now passes.
+
+        * platform/ios/TestExpectations:
+        Re-mark-failing a test that was un-marked-failing by r219342.
+
 2018-02-19  Daniel Bates  <dabates@apple.com>
 
         Do not block authentication challenge to navigated resources
