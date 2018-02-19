@@ -1,3 +1,16 @@
+2018-02-07  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: m_timeOrigin in Performance::Performance()
+        https://bugs.webkit.org/show_bug.cgi?id=182558
+        <rdar://problem/37297551>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/wpt/fetch/cors-preflight-star.any.serviceworker.html
+
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::startPreflight):
+
 2018-02-07  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Remove RenderElement::destroyLeftoverChildren.
