@@ -974,16 +974,18 @@ class Port(object):
         self._http_server = server
 
     def is_http_server_running(self):
+        if self._http_server:
+            return True
         return http_server_base.is_http_server_running()
 
-    def is_websocket_servers_running(self):
-        if self._websocket_secure_server and self._websocket_server:
-            return self._websocket_secure_server.is_running() and self._websocket_server.is_running()
-        elif self._websocket_server:
-            return self._websocket_server.is_running()
-        return False
+    def is_websocket_server_running(self):
+        if self._websocket_server:
+            return True
+        return websocket_server.is_web_socket_server_running()
 
     def is_wpt_server_running(self):
+        if self._web_platform_test_server:
+            return True
         return web_platform_test_server.is_wpt_server_running(self)
 
     def _extract_certificate_from_pem(self, pem_file, destination_certificate_file):

@@ -79,6 +79,9 @@ class LayoutTestRunner(object):
         self._test_inputs = []
         self._retrying = False
         self._current_run_results = None
+        self._did_start_http_server = False
+        self._did_start_websocket_server = False
+        self._did_start_wpt_server = False
 
         if ((self._needs_http and self._options.http) or self._needs_web_platform_test_server) and self._port.get_option("start_http_servers_if_needed"):
             self.start_servers()
@@ -190,26 +193,32 @@ class LayoutTestRunner(object):
         self._interrupt_if_at_failure_limits(run_results)
 
     def start_servers(self):
-        if self._needs_http and not self._port.is_http_server_running():
+        if self._needs_http and not self._did_start_http_server and not self._port.is_http_server_running():
             self._printer.write_update('Starting HTTP server ...')
             self._port.start_http_server()
-        if self._needs_websockets and not self._port.is_websocket_servers_running():
+            self._did_start_http_server = True
+        if self._needs_websockets and not self._did_start_websocket_server and not self._port.is_websocket_server_running():
             self._printer.write_update('Starting WebSocket server ...')
             self._port.start_websocket_server()
-        if self._needs_web_platform_test_server and not self._port.is_wpt_server_running():
+            self._did_start_websocket_server = True
+        if self._needs_web_platform_test_server and not self._did_start_wpt_server and not self._port.is_wpt_server_running():
             self._printer.write_update('Starting Web Platform Test server ...')
             self._port.start_web_platform_test_server()
+            self._did_start_wpt_server = True
 
     def stop_servers(self):
-        if self._needs_http:
+        if self._did_start_http_server:
             self._printer.write_update('Stopping HTTP server ...')
             self._port.stop_http_server()
-        if self._needs_websockets:
+            self._did_start_http_server = False
+        if self._did_start_websocket_server:
             self._printer.write_update('Stopping WebSocket server ...')
             self._port.stop_websocket_server()
-        if self._needs_web_platform_test_server:
+            self._did_start_websocket_server = False
+        if self._did_start_wpt_server:
             self._printer.write_update('Stopping Web Platform Test server ...')
             self._port.stop_web_platform_test_server()
+            self._did_start_wpt_server = False
 
     def handle(self, name, source, *args):
         method = getattr(self, '_handle_' + name)

@@ -162,7 +162,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
         def is_http_server_running():
             return self.http_started and not self.http_stopped
 
-        def is_websocket_servers_running():
+        def is_websocket_server_running():
             return self.websocket_started and not self.websocket_stopped
 
         def is_wpt_server_running():
@@ -177,7 +177,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
         port.stop_websocket_server = stop_websocket_server
         port.stop_web_platform_test_server = stop_web_platform_test_server
         port.is_http_server_running = is_http_server_running
-        port.is_websocket_servers_running = is_websocket_servers_running
+        port.is_websocket_server_running = is_websocket_server_running
         port.is_wpt_server_running = is_wpt_server_running
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
