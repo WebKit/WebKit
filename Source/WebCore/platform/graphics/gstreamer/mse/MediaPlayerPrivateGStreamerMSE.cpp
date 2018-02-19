@@ -739,23 +739,16 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> append
     ASSERT(caps);
     GST_DEBUG("track ID: %s, caps: %" GST_PTR_FORMAT, newTrack->id().string().latin1().data(), caps);
 
-    GstStructure* structure = gst_caps_get_structure(caps, 0);
-    const gchar* mediaType = gst_structure_get_name(structure);
-    GstVideoInfo info;
-
-    if (g_str_has_prefix(mediaType, "video/") && gst_video_info_from_caps(&info, caps)) {
-        float width, height;
-
-        width = info.width;
-        height = info.height * ((float) info.par_d / (float) info.par_n);
-        m_videoSize.setWidth(width);
-        m_videoSize.setHeight(height);
+    if (doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
+        std::optional<FloatSize> size = getVideoResolutionFromCaps(caps);
+        if (size.has_value())
+            m_videoSize = size.value();
     }
 
     if (firstTrackDetected)
-        m_playbackPipeline->attachTrack(appendPipeline->sourceBufferPrivate(), newTrack, structure, caps);
+        m_playbackPipeline->attachTrack(appendPipeline->sourceBufferPrivate(), newTrack, caps);
     else
-        m_playbackPipeline->reattachTrack(appendPipeline->sourceBufferPrivate(), newTrack, mediaType);
+        m_playbackPipeline->reattachTrack(appendPipeline->sourceBufferPrivate(), newTrack, caps);
 }
 
 const static HashSet<AtomicString>& codecSet()
