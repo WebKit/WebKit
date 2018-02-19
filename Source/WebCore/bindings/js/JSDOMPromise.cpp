@@ -55,6 +55,7 @@ void DOMPromise::whenSettled(std::function<void()>&& callback)
 {
     auto& state = *globalObject()->globalExec();
     auto& vm = state.vm();
+    JSLockHolder lock(vm);
     auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject(), 1, String { }, [callback = WTFMove(callback)] (ExecState*) mutable {
         callback();
         return JSC::JSValue::encode(JSC::jsUndefined());
