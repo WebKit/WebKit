@@ -5,5 +5,6 @@ PASS Verify 'left' and 'right' values are invalid for block/cross axis alignment
 PASS Verify <baseline-position> values are invalid for the justify-content property 
 PASS Verify numeric values are invalid 
 PASS Verify 'auto' values are invalid 
+PASS Verify self-position values are invalid 
 PASS Verify empty declaration is invalid 
 

@@ -1,5 +1,5 @@
 
-FAIL Checking invalid combination - justify-items: auto assert_equals: justify-items specified value is not what it should. expected "" but got "auto"
+PASS Checking invalid combination - justify-items: auto 
 PASS Checking invalid combination - justify-items: space-around 
 PASS Checking invalid combination - justify-items: auto safe 
 PASS Checking invalid combination - justify-items: auto left 

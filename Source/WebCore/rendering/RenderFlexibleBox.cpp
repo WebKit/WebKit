@@ -1336,6 +1336,7 @@ static LayoutUnit justifyContentSpaceBetweenChildren(LayoutUnit availableFreeSpa
 static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition position, LayoutUnit ascent, LayoutUnit maxAscent, bool isWrapReverse)
 {
     switch (position) {
+    case ItemPositionLegacy:
     case ItemPositionAuto:
     case ItemPositionNormal:
         ASSERT_NOT_REACHED();

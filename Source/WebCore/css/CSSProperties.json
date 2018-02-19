@@ -4738,7 +4738,6 @@
                 "aliases": [
                     "-webkit-justify-items"
                 ],
-                "initial": "initialSelfAlignment",
                 "converter": "SelfOrDefaultAlignmentData"
             },
             "specification": {

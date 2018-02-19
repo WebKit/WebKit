@@ -1296,6 +1296,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
     case ItemPositionLastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
+    case ItemPositionLegacy:
     case ItemPositionAuto:
     case ItemPositionNormal:
         break;
@@ -1363,6 +1364,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
     case ItemPositionLastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
+    case ItemPositionLegacy:
     case ItemPositionAuto:
     case ItemPositionNormal:
         break;
