@@ -29,7 +29,9 @@ namespace WebCore {
 class MediaPlayerRequestInstallMissingPluginsCallback : public RefCounted<MediaPlayerRequestInstallMissingPluginsCallback> {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    static Ref<MediaPlayerRequestInstallMissingPluginsCallback> create(WTF::Function<void (uint32_t)>&& function)
+    using MediaPlayerRequestInstallMissingPluginsCallbackFunction = std::function<void(uint32_t, MediaPlayerRequestInstallMissingPluginsCallback&)>;
+
+    static Ref<MediaPlayerRequestInstallMissingPluginsCallback> create(MediaPlayerRequestInstallMissingPluginsCallbackFunction&& function)
     {
         return adoptRef(*new MediaPlayerRequestInstallMissingPluginsCallback(WTFMove(function)));
     }
@@ -43,17 +45,17 @@ public:
     {
         if (!m_function)
             return;
-        m_function(result);
+        m_function(result, *this);
         m_function = nullptr;
     }
 
 private:
-    MediaPlayerRequestInstallMissingPluginsCallback(WTF::Function<void (uint32_t)>&& function)
+    MediaPlayerRequestInstallMissingPluginsCallback(MediaPlayerRequestInstallMissingPluginsCallbackFunction&& function)
         : m_function(WTFMove(function))
     {
     }
 
-    WTF::Function<void (uint32_t)> m_function;
+    MediaPlayerRequestInstallMissingPluginsCallbackFunction m_function;
 };
 
 } // namespace WebCore

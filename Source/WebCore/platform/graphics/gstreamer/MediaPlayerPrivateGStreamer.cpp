@@ -191,10 +191,11 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
             reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
 
     m_readyTimerHandler.stop();
-    if (m_missingPluginsCallback) {
-        m_missingPluginsCallback->invalidate();
-        m_missingPluginsCallback = nullptr;
+    for (auto& missingPluginCallback : m_missingPluginCallbacks) {
+        if (missingPluginCallback)
+            missingPluginCallback->invalidate();
     }
+    m_missingPluginCallbacks.clear();
 
     if (m_videoSink) {
         GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
@@ -1107,7 +1108,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     GST_LOG("Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_ERROR:
-        if (m_resetPipeline || m_missingPluginsCallback || m_errorOccured)
+        if (m_resetPipeline || !m_missingPluginCallbacks.isEmpty() || m_errorOccured)
             break;
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         GST_ERROR("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
@@ -1203,17 +1204,25 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
             if (gst_install_plugins_supported()) {
-                m_missingPluginsCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([this](uint32_t result) {
-                    m_missingPluginsCallback = nullptr;
+                RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = createWeakPtr()](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
+                    if (!weakThis) {
+                        GST_INFO("got missing pluging installation callback in destroyed player with result %u", result);
+                        return;
+                    }
+
+                    GST_DEBUG("got missing plugin installation callback with result %u", result);
+                    RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> protectedMissingPluginCallback = &missingPluginCallback;
+                    weakThis->m_missingPluginCallbacks.removeFirst(protectedMissingPluginCallback);
                     if (result != GST_INSTALL_PLUGINS_SUCCESS)
                         return;
 
-                    changePipelineState(GST_STATE_READY);
-                    changePipelineState(GST_STATE_PAUSED);
+                    weakThis->changePipelineState(GST_STATE_READY);
+                    weakThis->changePipelineState(GST_STATE_PAUSED);
                 });
+                m_missingPluginCallbacks.append(missingPluginCallback);
                 GUniquePtr<char> detail(gst_missing_plugin_message_get_installer_detail(message));
                 GUniquePtr<char> description(gst_missing_plugin_message_get_description(message));
-                m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), *m_missingPluginsCallback);
+                m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), *missingPluginCallback);
             }
         }
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
