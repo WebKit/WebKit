@@ -1,3 +1,17 @@
+2018-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] fast/events/message-channel-gc-4.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182104
+
+        Reviewed by Carlos Garcia Campos.
+
+        Revert r228001 because RunLoop::current isn't called in GC thread
+        anymore since r228152.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::current): Removed a template argument
+        CanBeGCThread::True of ThreadSpecific.
+
 2018-02-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Fix build with ICU configured without collation support
