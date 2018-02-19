@@ -352,6 +352,11 @@ void RenderTreeBuilder::childFlowStateChangesAndNoLongerAffectsParentBlock(Rende
     removeAnonymousWrappersForInlineChildrenIfNeeded(*child.parent());
 }
 
+void RenderTreeBuilder::multiColumnDescendantInserted(RenderMultiColumnFlow& flow, RenderObject& newDescendant)
+{
+    multiColumnBuilder().multiColumnDescendantInserted(flow, newDescendant);
+}
+
 static bool isAnonymousAndSafeToDelete(RenderElement& element)
 {
     if (!element.isAnonymous())

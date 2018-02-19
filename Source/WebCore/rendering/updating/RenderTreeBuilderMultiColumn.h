@@ -40,10 +40,12 @@ public:
     // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
     // location in the tree.
     RenderObject* resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
+    void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
 
 private:
     void createFragmentedFlow(RenderBlockFlow&);
     void destroyFragmentedFlow(RenderBlockFlow&);
+    RenderObject* processPossibleSpannerDescendant(RenderMultiColumnFlow&, RenderObject*& subtreeRoot, RenderObject& descendant);
 
     RenderTreeBuilder& m_builder;
 };

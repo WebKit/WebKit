@@ -1,3 +1,37 @@
+2018-02-09  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move multicolumn spanner mutation logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182627
+        <rdar://problem/37367284>
+
+        Reviewed by Antti Koivisto.
+
+        Move spanner triggered mutation logic to RenderTreeBuilder.
+
+        No change in functionality.
+
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::isColumnSpanningDescendant const):
+        (WebCore::findSetRendering): Deleted.
+        (WebCore::isValidColumnSpanner): Deleted.
+        (WebCore::spannerPlacehoderCandidate): Deleted.
+        (WebCore::RenderMultiColumnFlow::processPossibleSpannerDescendant): Deleted.
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted): Deleted.
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::multiColumnDescendantInserted):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::findSetRendering):
+        (WebCore::spannerPlacehoderCandidate):
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted):
+        (WebCore::RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant):
+        * rendering/updating/RenderTreeBuilderMultiColumn.h:
+
 2018-02-09  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Implement the new behavior of 'legacy' for justify-items
