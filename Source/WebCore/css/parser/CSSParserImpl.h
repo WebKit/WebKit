@@ -85,7 +85,7 @@ public:
 
     static CSSParser::ParseResult parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, const CSSParserContext&);
     static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties*, const AtomicString& propertyName, const String&, bool important, const CSSParserContext&);
-    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
+    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType);
     static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents*, CSSParser::RuleParsing);
