@@ -134,6 +134,25 @@ void Scope::clearResolver()
         m_document.didClearStyleResolver();
 }
 
+void Scope::releaseMemory()
+{
+    if (!m_shadowRoot) {
+        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
+            descendantShadowRoot->styleScope().releaseMemory();
+    }
+
+#if ENABLE(CSS_SELECTOR_JIT)
+    for (auto& sheet : m_activeStyleSheets) {
+        sheet->contents().traverseRules([] (const StyleRuleBase& rule) {
+            if (is<StyleRule>(rule))
+                downcast<StyleRule>(rule).releaseCompiledSelectors();
+            return false;
+        });
+    }
+#endif
+    clearResolver();
+}
+
 Scope& Scope::forNode(Node& node)
 {
     ASSERT(node.isConnected());
