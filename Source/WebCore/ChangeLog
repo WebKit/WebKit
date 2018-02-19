@@ -1,3 +1,16 @@
+2018-02-18  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        Fix build error after r228417 without ACCESSIBILITY
+        https://bugs.webkit.org/show_bug.cgi?id=182914
+
+        Reviewed by Chris Fleizach.
+
+        An inline empty version of AXObjectCache::deferFocusdUIElementChangeIfNeeded()
+        needs to be defined if not HAVE(ACCESSIBILITY). 
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::deferFocusedUIElementChangeIfNeeded):
+
 2018-02-18  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] REGRESSION(r228238) Detach renderer before destroying its subtree.
