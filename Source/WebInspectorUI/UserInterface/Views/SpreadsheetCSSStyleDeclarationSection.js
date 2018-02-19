@@ -119,6 +119,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             this.startEditingRuleSelector();
     }
 
+    hidden()
+    {
+        this._propertiesEditor.hidden();
+    }
+
     startEditingRuleSelector()
     {
         if (!this._selectorElement) {
