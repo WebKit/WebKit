@@ -1,3 +1,14 @@
+2018-02-05  Antti Koivisto  <antti@apple.com>
+
+        Crash on sfgate.com because mismatching link preload types
+        https://bugs.webkit.org/show_bug.cgi?id=182483
+        <rdar://problem/37065331>
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/preload/link-preload-type-mismatch-expected.txt: Added.
+        * http/tests/preload/link-preload-type-mismatch.html: Added.
+
 2018-02-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Rename gutter properties to remove "grid-" prefix
