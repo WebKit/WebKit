@@ -1,3 +1,15 @@
+2018-02-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Don't allow PiP media playback
+        https://bugs.webkit.org/show_bug.cgi?id=182930
+        <rdar://problem/37676259>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Don't enable PiP mode. Require user interaction for
+        all media types.
+
 2018-02-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228696.

@@ -174,14 +174,18 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     WebKit::InitializeWebKit2();
 
 #if PLATFORM(IOS)
+#if !ENABLE(EXTRA_ZOOM_MODE)
     _allowsPictureInPictureMediaPlayback = YES;
+#endif
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
+#if !ENABLE(EXTRA_ZOOM_MODE)
     if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
     else
+#endif
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
     _ignoresViewportScaleLimits = NO;
     _legacyEncryptedMediaAPIEnabled = NO;
