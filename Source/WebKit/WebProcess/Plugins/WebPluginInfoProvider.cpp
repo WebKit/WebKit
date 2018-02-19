@@ -145,7 +145,9 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
     if (!m_pluginCacheIsPopulated) {
         HangDetectionDisabler hangDetectionDisabler;
 
-        if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0))
+        if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
+            Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0,
+            Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
             return;
 
         m_shouldRefreshPlugins = false;
