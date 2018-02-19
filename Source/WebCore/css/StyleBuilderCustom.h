@@ -1423,8 +1423,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             styleResolver.style()->setContent(value.isNull() ? emptyAtom() : value.impl(), didSet);
             didSet = true;
             // Register the fact that the attribute value affects the style.
-            styleResolver.ruleSets().mutableFeatures().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
-            styleResolver.ruleSets().mutableFeatures().attributeLocalNamesInRules.add(attr.localName().impl());
+            styleResolver.ruleSets().mutableFeatures().registerContentAttribute(attr.localName());
         } else if (contentValue.isCounter()) {
             auto* counterValue = contentValue.counterValue();
             EListStyleType listStyleType = NoneListStyle;
@@ -1821,8 +1820,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
         styleResolver.style()->setContentAltText(value.isNull() ? emptyAtom() : value);
 
         // Register the fact that the attribute value affects the style.
-        styleResolver.ruleSets().mutableFeatures().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
-        styleResolver.ruleSets().mutableFeatures().attributeLocalNamesInRules.add(attr.localName().impl());
+        styleResolver.ruleSets().mutableFeatures().registerContentAttribute(attr.localName());
     } else
         styleResolver.style()->setContentAltText(emptyAtom());
 }

@@ -102,7 +102,6 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     if (mayAffectStyleInShadowTree) {
         // FIXME: We should do fine-grained invalidation for shadow tree.
         m_element.invalidateStyleForSubtree();
-        return;
     }
 
     if (shouldInvalidateCurrent)

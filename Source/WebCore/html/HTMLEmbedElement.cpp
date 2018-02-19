@@ -105,6 +105,11 @@ void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName&
         HTMLPlugInImageElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
+static bool hasTypeOrSrc(const HTMLEmbedElement& embed)
+{
+    return embed.hasAttributeWithoutSynchronization(typeAttr) || embed.hasAttributeWithoutSynchronization(srcAttr);
+}
+
 void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == typeAttr) {
@@ -112,6 +117,8 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // FIXME: The only difference between this and HTMLObjectElement's corresponding
         // code is that HTMLObjectElement does setNeedsWidgetUpdate(true). Consider moving
         // this up to the HTMLPlugInImageElement to be shared.
+        if (renderer() && !hasTypeOrSrc(*this))
+            invalidateStyle();
     } else if (name == codeAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
         // FIXME: Why no call to updateImageLoaderWithNewURLSoon?
@@ -119,6 +126,8 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == srcAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
         updateImageLoaderWithNewURLSoon();
+        if (renderer() && !hasTypeOrSrc(*this))
+            invalidateStyle();
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
     } else
         HTMLPlugInImageElement::parseAttribute(name, value);
@@ -191,7 +200,7 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
 
 bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 {
-    if (!hasAttributeWithoutSynchronization(typeAttr) && !hasAttributeWithoutSynchronization(srcAttr))
+    if (!hasTypeOrSrc(*this))
         return false;
 
     if (isImageType())
