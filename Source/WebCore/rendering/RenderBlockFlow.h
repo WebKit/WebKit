@@ -464,7 +464,8 @@ protected:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
     void layoutExcludedChildren(bool relayoutChildren) override;
-    
+    void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder&, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion) override;
+
 private:
     bool recomputeLogicalWidthAndColumnWidth();
     LayoutUnit columnGap() const;
@@ -476,7 +477,6 @@ private:
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 
-    void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder&, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion) override;
     void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingObjects(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 

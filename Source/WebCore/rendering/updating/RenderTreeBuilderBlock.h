@@ -36,6 +36,8 @@ public:
     void insertChild(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void insertChildIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
+    RenderPtr<RenderObject> takeChild(RenderBlock& parent, RenderObject& oldChild);
+
     void childBecameNonInline(RenderBlock& parent, RenderElement& child);
 
 private:
