@@ -40,7 +40,9 @@
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <WebCore/Extensions3DOpenGLES.h>
 #else
+#include <WebCore/Extensions3DOpenGL.h>
 #include <WebCore/OpenGLShims.h>
 #endif
 
@@ -373,11 +375,12 @@ static const struct wl_webkitgtk_interface webkitgtkInterface = {
 
 bool WaylandCompositor::initializeEGL()
 {
+    const char* extensions = eglQueryString(PlatformDisplay::sharedDisplay().eglDisplay(), EGL_EXTENSIONS);
+
     if (PlatformDisplay::sharedDisplay().eglCheckVersion(1, 5)) {
         eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImage"));
         eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImage"));
     } else {
-        const char* extensions = eglQueryString(PlatformDisplay::sharedDisplay().eglDisplay(), EGL_EXTENSIONS);
         if (GLContext::isExtensionSupported(extensions, "EGL_KHR_image_base")) {
             eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
             eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
@@ -388,22 +391,13 @@ bool WaylandCompositor::initializeEGL()
         return false;
     }
 
-    glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
-    if (!glImageTargetTexture2D) {
-        WTFLogAlways("WaylandCompositor requires glEGLImageTargetTexture2D.");
-        return false;
+    if (GLContext::isExtensionSupported(extensions, "EGL_WL_bind_wayland_display")) {
+        eglBindWaylandDisplay = reinterpret_cast<PFNEGLBINDWAYLANDDISPLAYWL>(eglGetProcAddress("eglBindWaylandDisplayWL"));
+        eglUnbindWaylandDisplay = reinterpret_cast<PFNEGLUNBINDWAYLANDDISPLAYWL>(eglGetProcAddress("eglUnbindWaylandDisplayWL"));
+        eglQueryWaylandBuffer = reinterpret_cast<PFNEGLQUERYWAYLANDBUFFERWL>(eglGetProcAddress("eglQueryWaylandBufferWL"));
     }
-
-    eglQueryWaylandBuffer = reinterpret_cast<PFNEGLQUERYWAYLANDBUFFERWL>(eglGetProcAddress("eglQueryWaylandBufferWL"));
-    if (!eglQueryWaylandBuffer) {
-        WTFLogAlways("WaylandCompositor requires eglQueryWaylandBuffer.");
-        return false;
-    }
-
-    eglBindWaylandDisplay = reinterpret_cast<PFNEGLBINDWAYLANDDISPLAYWL>(eglGetProcAddress("eglBindWaylandDisplayWL"));
-    eglUnbindWaylandDisplay = reinterpret_cast<PFNEGLUNBINDWAYLANDDISPLAYWL>(eglGetProcAddress("eglUnbindWaylandDisplayWL"));
-    if (!eglBindWaylandDisplay || !eglUnbindWaylandDisplay) {
-        WTFLogAlways("WaylandCompositor requires eglBindWaylandDisplayWL and eglUnbindWaylandDisplayWL.");
+    if (!eglBindWaylandDisplay || !eglUnbindWaylandDisplay || !eglQueryWaylandBuffer) {
+        WTFLogAlways("WaylandCompositor requires eglBindWaylandDisplayWL, eglUnbindWaylandDisplayWL and eglQueryWaylandBuffer.");
         return false;
     }
 
@@ -413,6 +407,19 @@ bool WaylandCompositor::initializeEGL()
 
     if (!m_eglContext->makeContextCurrent())
         return false;
+
+#if USE(OPENGL_ES_2)
+    std::unique_ptr<Extensions3DOpenGLES> glExtensions = std::make_unique<Extensions3DOpenGLES>(nullptr,  false);
+#else
+    std::unique_ptr<Extensions3DOpenGL> glExtensions = std::make_unique<Extensions3DOpenGL>(nullptr, GLContext::current()->version() >= 320);
+#endif
+    if (glExtensions->supports("GL_OES_EGL_image") || glExtensions->supports("GL_OES_EGL_image_external"))
+        glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
+
+    if (!glImageTargetTexture2D) {
+        WTFLogAlways("WaylandCompositor requires glEGLImageTargetTexture2D.");
+        return false;
+    }
 
     return true;
 }

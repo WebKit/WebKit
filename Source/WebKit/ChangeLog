@@ -1,3 +1,16 @@
+2018-02-08  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] WaylandCompositor misusing eglGetProcAddress
+        https://bugs.webkit.org/show_bug.cgi?id=182490
+
+        Reviewed by Michael Catanzaro.
+
+        Check that the appropriate extensions are available before calling eglGetProcAddress, as even
+        getting a non null value from it, the functionality can be disabled at runtime.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::initializeEGL):
+
 2018-02-07  Antti Koivisto  <antti@apple.com> and Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r227758): Webpage fails to load due to crash in com.apple.WebKit: WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse + 267
