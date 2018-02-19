@@ -76,6 +76,7 @@ public:
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
     void moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to);
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
+    void childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child);
     RenderObject* resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
 
@@ -91,6 +92,8 @@ private:
     class Inline;
     class SVG;
     class MathML;
+
+    void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
