@@ -5,7 +5,7 @@
 </head>
 <body id="body">
 
-<div role="group" tabindex=0 id="listbox" role="listbox">
+<div tabindex=0 id="listbox" role="listbox">
 <div id="option1" role="option" aria-selected="true">Option</div>
 <div id="option2" role="option">Option</div>
 <div id="option3" role="option">Option</div>
@@ -35,15 +35,16 @@
     if (window.accessibilityController) {
         jsTestIsAsync = true;
 
-        document.getElementById("listbox").focus();
-        listbox = window.accessibilityController.focusedElement;
+        listbox = accessibilityController.accessibleElementById("listbox");
 
         var addedNotification = window.accessibilityController.addNotificationListener(ariaCallback);
         shouldBe("addedNotification", "true");
 
         // These should each trigger a notification that the selected children changed.
         document.getElementById("option2").setAttribute("aria-selected", "true");
-        document.getElementById("option2").setAttribute("aria-selected", "false");
+        setTimeout(function() {
+            document.getElementById("option2").setAttribute("aria-selected", "false");
+        }, 1);
     }
 
 </script>

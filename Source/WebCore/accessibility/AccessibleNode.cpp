@@ -379,7 +379,7 @@ Vector<RefPtr<Element>> AccessibleNode::effectiveElementsValueForElement(Element
 void AccessibleNode::notifyAttributeChanged(const WebCore::QualifiedName& name)
 {
     if (AXObjectCache* cache = m_ownerElement.document().axObjectCache())
-        cache->handleAttributeChanged(name, &m_ownerElement);
+        cache->deferAttributeChangeIfNeeded(name, &m_ownerElement);
 }
 
 RefPtr<AccessibleNode> AccessibleNode::activeDescendant() const

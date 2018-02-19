@@ -38,13 +38,13 @@
         window.jsTestIsAsync = true;
 
         var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
-        debug("Initial expanded status: " + accessibilityController.accessibleElementById("button").isExpanded);
+        var button = accessibilityController.accessibleElementById("button");
+        debug("Initial expanded status: " + button.isExpanded);
+
+        document.getElementById("button").setAttribute("aria-expanded", "true");
 
         setTimeout(function() {
-            document.getElementById("button").setAttribute("aria-expanded", "true");
-            setTimeout(function() {
-                document.getElementById("button").setAttribute("aria-expanded", "false");
-            }, 10);
+            document.getElementById("button").setAttribute("aria-expanded", "false");
         }, 10);
     }
 

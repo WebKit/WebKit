@@ -33,7 +33,10 @@
         // Toggle through both busy state transitions.
         var busyElement = document.getElementById("body");
         busyElement.setAttribute("aria-busy", "true");
-        busyElement.setAttribute("aria-busy", "false");
+
+        setTimeout(function() {
+            busyElement.setAttribute("aria-busy", "false");
+        }, 1);
     }
 </script>
 

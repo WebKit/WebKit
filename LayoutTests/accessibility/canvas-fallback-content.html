@@ -40,6 +40,7 @@ myelement {
 description("This test makes sure that focusable elements in canvas fallback content are accessible.");
 
 if (window.testRunner && window.accessibilityController) {
+    window.jsTestIsAsync = true;
     window.testRunner.dumpAsText();
 
     function check(id, expectedRole) {
@@ -80,9 +81,15 @@ if (window.testRunner && window.accessibilityController) {
 
     // Check that the role is updated when the element changes.
     document.getElementById('focusable1').setAttribute('role', 'button');
-    check("focusable1", "AXRole: AXButton");
+    setTimeout(function() {
+        check("focusable1", "AXRole: AXButton");
+    }, 1);
+
     document.getElementById('focusable2').setAttribute('role', 'button');
-    check("focusable2", "AXRole: AXButton");
+    setTimeout(function() {
+        check("focusable2", "AXRole: AXButton");
+        finishJSTest();
+    }, 1);
 }
 
 </script>
