@@ -34,6 +34,7 @@
 #include "StorageProcessMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
@@ -101,8 +102,9 @@ private:
     String m_userAgent;
 };
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageID, const WebPreferencesStore& store)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store)
     : m_connectionToStorageProcess(WTFMove(connection))
+    , m_pageGroupID(pageGroupID)
     , m_pageID(pageID)
     , m_userAgent(standardUserAgentWithApplicationName({ }))
 {
@@ -133,7 +135,12 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
         WebCore::LibWebRTCProvider::create(),
         WebProcess::singleton().cacheStorageProvider()
     };
+
     fillWithEmptyClients(pageConfiguration);
+
+#if ENABLE(INDEXED_DATABASE)
+    pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
+#endif
 
     // FIXME: This method should be moved directly to WebCore::SWContextManager::Connection
     // If it weren't for ServiceWorkerFrameLoaderClient's dependence on WebDocumentLoader, this could already happen.
