@@ -73,7 +73,7 @@ void scavenge()
 {
     scavengeThisThread();
 
-    PerProcess<Scavenger>::get()->scavenge();
+    SafePerProcess<Scavenger>::get()->scavenge();
 }
 
 bool isEnabled(HeapKind kind)
@@ -87,7 +87,7 @@ bool isEnabled(HeapKind kind)
 void setScavengerThreadQOSClass(qos_class_t overrideClass)
 {
     std::unique_lock<StaticMutex> lock(Heap::mutex());
-    PerProcess<Scavenger>::get()->setScavengerThreadQOSClass(overrideClass);
+    SafePerProcess<Scavenger>::get()->setScavengerThreadQOSClass(overrideClass);
 }
 #endif
 

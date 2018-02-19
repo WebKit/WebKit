@@ -28,6 +28,7 @@
 #include "BPlatform.h"
 #include "DeferredDecommit.h"
 #include "Mutex.h"
+#include "PerProcess.h"
 #include "Vector.h"
 #include <condition_variable>
 #include <mutex>
@@ -91,6 +92,8 @@ private:
     Mutex m_isoScavengeLock;
     Vector<DeferredDecommit> m_deferredDecommits;
 };
+
+DECLARE_SAFE_PER_PROCESS_STORAGE(Scavenger);
 
 } // namespace bmalloc
 
