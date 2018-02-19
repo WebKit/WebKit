@@ -1069,6 +1069,7 @@ webkit.org/b/174066 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass
 webkit.org/b/153460 inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 webkit.org/b/160048 [ Debug ] inspector/codemirror/prettyprinting-javascript.html [ Pass Timeout ]
 webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Timeout ]
+webkit.org/b/152452 [ Debug ] inspector/console/messageRepeatCountUpdated.html [ Pass Timeout ]
 webkit.org/b/168926 inspector/controller/runtime-controller-import.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/createStyleSheet.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/get-system-fonts.html [ Pass Timeout ]
