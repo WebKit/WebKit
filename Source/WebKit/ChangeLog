@@ -1,3 +1,25 @@
+2018-02-19  Daniel Bates  <dabates@apple.com>
+
+        Null pointer dereference in WebPageProxy::urlSchemeHandlerForScheme()
+        https://bugs.webkit.org/show_bug.cgi?id=182905
+        <rdar://problem/37676775>
+
+        Reviewed by Alex Christensen.
+
+        Return nullptr when querying for the scheme handler of the null string.
+
+        Before a navigation is performed WebKit checks if the destination URL is associated with an app
+        unless the embedding client overrides the WKNavigationDelegate delegate callback -webView:decidePolicyForNavigationAction:decisionHandler.
+        If the URL is not associated with an app then WebKit may fall back to checking if the embedding
+        client registered a scheme handler for it. Currently we assume that the scheme is a non-null
+        string when checking the scheme handler registry. However the scheme can be a null string if
+        it is part of a malformed URL. And this leads to bad news bears when we try to use it to look
+        for a scheme handler. Instead check that the scheme is a non-null string before checking to see
+        if it is in the scheme handler registry.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::urlSchemeHandlerForScheme):
+
 2018-02-19  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Don't allow PiP media playback
