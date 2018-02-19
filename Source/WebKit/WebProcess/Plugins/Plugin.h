@@ -104,6 +104,8 @@ public:
     // Destroys the plug-in.
     void destroyPlugin();
 
+    bool isBeingDestroyed() const { return m_isBeingDestroyed; }
+
     // Returns the plug-in controller for this plug-in.
     PluginController* controller() { return m_pluginController; }
     const PluginController* controller() const { return m_pluginController; }
@@ -308,6 +310,8 @@ protected:
     Plugin(PluginType);
 
     PluginType m_type;
+
+    bool m_isBeingDestroyed { false };
 
 private:
     PluginController* m_pluginController;
