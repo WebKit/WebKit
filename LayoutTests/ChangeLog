@@ -1,3 +1,12 @@
+2018-02-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Update test expectations
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: inspector/heap/getPreview.html is
+        passing again after r228600.
+
 2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r219298): RELEASE_ASSERT(!m_owningPointerForClose) fails in WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose
