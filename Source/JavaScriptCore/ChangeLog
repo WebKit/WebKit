@@ -1,3 +1,26 @@
+2018-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        GetArrayMask should support constant folding
+        https://bugs.webkit.org/show_bug.cgi?id=182907
+
+        Reviewed by Saam Barati.
+        
+        Implement constant folding for GetArrayMask. This revealed a bug in tryGetFoldableView, where it was
+        ignoring the result of a jsDynamicCast<>(). This wasn't a bug before because it would have been
+        impossible for that function to get called with a non-null value if the value was not an array view,
+        due to type filtering in CheckArray, the fact that CheckArray had to dominate GetArrayLength, and
+        the fact that the other tryGetFoldableView overload made sure that the array mode was some typed
+        array.
+        
+        This isn't a measurable progression, but it does save a register in the codegen for typed array
+        accesses. Hopefully these improvements add up.
+
+        * assembler/AssemblerBuffer.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetFoldableView):
+
 2018-02-18  Dominik Inführ  <dominik.infuehr@gmail.com>
 
         Offlineasm/MIPS: immediates need to be within 16-bit signed values

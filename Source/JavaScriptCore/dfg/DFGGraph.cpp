@@ -1386,7 +1386,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
     if (!value)
         return nullptr;
     JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(m_vm, value);
-    if (!value)
+    if (!view)
         return nullptr;
     if (!view->length())
         return nullptr;
