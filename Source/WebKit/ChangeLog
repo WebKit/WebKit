@@ -1,3 +1,22 @@
+2018-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessarily constructing RunLoops for GC AutomaticThreads in Connection::sendMessage() after r228001
+        https://bugs.webkit.org/show_bug.cgi?id=182494
+        <rdar://problem/37147632>
+
+        Reviewed by Ryosuke Niwa.
+
+        Somebody fixed a GC crash in r228001 by allowing RunLoop::current() to be called from a
+        GC thread. However, this is still unnecessarily inefficient. Calling RunLoop::current()
+        will construct RunLoops for background GC threads (WTF::AutomaticThreads). This patches
+        updates the IPC code to call isMainThread() instead of RunLoop::isMain() in
+        Connection::sendMessage(). This should mean the same thing since this code runs in
+        WebKit2 and should be more efficient as it ends up simply calling pthread_main_np(),
+        without constructing a RunLoop.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+
 2018-02-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assertion in inlineVideoFrame
