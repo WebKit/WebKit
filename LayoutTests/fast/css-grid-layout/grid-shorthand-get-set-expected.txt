@@ -332,10 +332,10 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS element.style.gridAutoRows is "initial"
 
 Test the inherit value does not affect gutter properties (grid-*-gap)
-PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "0px"
-PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "0px"
-PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "0px"
-PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "0px"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "normal"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "normal"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "normal"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "normal"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -4304,13 +4304,41 @@
         "column-gap": {
             "codegen-properties": {
                 "aliases": [
+                    "grid-column-gap",
                     "-webkit-column-gap"
                 ],
                 "converter": "GapLength"
             },
             "specification":  {
-                "category": "css-multicol",
-                "url": "https://drafts.csswg.org/css-multicol/#column-gap"
+                "category": "css-align",
+                "url": "https://drafts.csswg.org/css-align/#column-row-gap"
+            }
+        },
+        "row-gap": {
+            "codegen-properties": {
+                "aliases": [
+                    "grid-row-gap"
+                ],
+                "converter": "GapLength"
+            },
+            "specification": {
+                "category": "css-align",
+                "url": "https://drafts.csswg.org/css-align/#column-row-gap"
+            }
+        },
+        "gap": {
+            "codegen-properties": {
+                "aliases": [
+                    "grid-gap"
+                ],
+                "longhands": [
+                    "row-gap",
+                    "column-gap"
+                ]
+            },
+            "specification": {
+                "category": "css-align",
+                "url": "https://drafts.csswg.org/css-align/#gap-shorthand"
             }
         },
         "-webkit-column-progression": {
@@ -4812,16 +4840,6 @@
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-column-end"
             }
         },
-        "grid-column-gap": {
-            "codegen-properties": {
-                "initial": "initialZeroLength",
-                "converter": "Length"
-            },
-            "specification": {
-                "category": "css-grid",
-                "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-column-gap"
-            }
-        },
         "grid-column-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnStart",
@@ -4873,16 +4891,6 @@
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-row-end"
             }
         },
-        "grid-row-gap": {
-            "codegen-properties": {
-                "initial": "initialZeroLength",
-                "converter": "Length"
-            },
-            "specification": {
-                "category": "css-grid",
-                "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-row-gap"
-            }
-        },
         "grid-row-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowStart",
@@ -4903,18 +4911,6 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-column"
-            }
-        },
-        "grid-gap": {
-            "codegen-properties": {
-                "longhands": [
-                    "grid-row-gap",
-                    "grid-column-gap"
-                ]
-            },
-            "specification": {
-                "category": "css-grid",
-                "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-gap"
             }
         },
         "grid-row": {

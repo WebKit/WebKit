@@ -50,7 +50,6 @@ public:
 
     float width { 0 };
     unsigned short count;
-    GapLength columnGap;
     BorderValue rule;
     Color visitedLinkColumnRuleColor;
 

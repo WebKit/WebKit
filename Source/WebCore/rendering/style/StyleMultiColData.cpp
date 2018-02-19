@@ -41,7 +41,6 @@ inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& other)
     : RefCounted<StyleMultiColData>()
     , width(other.width)
     , count(other.count)
-    , columnGap(other.columnGap)
     , rule(other.rule)
     , visitedLinkColumnRuleColor(other.visitedLinkColumnRuleColor)
     , autoWidth(other.autoWidth)
@@ -60,7 +59,7 @@ Ref<StyleMultiColData> StyleMultiColData::copy() const
 
 bool StyleMultiColData::operator==(const StyleMultiColData& other) const
 {
-    return width == other.width && count == other.count && columnGap == other.columnGap
+    return width == other.width && count == other.count
         && rule == other.rule && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
         && autoWidth == other.autoWidth && autoCount == other.autoCount
         && fill == other.fill && columnSpan == other.columnSpan

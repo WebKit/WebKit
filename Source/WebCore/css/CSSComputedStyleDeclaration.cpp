@@ -297,6 +297,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyColumnCount,
     CSSPropertyColumnFill,
     CSSPropertyColumnGap,
+    CSSPropertyRowGap,
     CSSPropertyWebkitColumnProgression,
     CSSPropertyColumnRuleColor,
     CSSPropertyColumnRuleStyle,
@@ -349,8 +350,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyGridTemplateRows,
     CSSPropertyGridRowEnd,
     CSSPropertyGridRowStart,
-    CSSPropertyGridColumnGap,
-    CSSPropertyGridRowGap,
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
     CSSPropertyWebkitHyphenateLimitBefore,
@@ -2929,6 +2928,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             if (style.columnGap().isNormal())
                 return cssValuePool.createIdentifierValue(CSSValueNormal);
             return zoomAdjustedPixelValueForLength(style.columnGap().length(), style);
+        case CSSPropertyRowGap:
+            if (style.rowGap().isNormal())
+                return cssValuePool.createIdentifierValue(CSSValueNormal);
+            return zoomAdjustedPixelValueForLength(style.rowGap().length(), style);
         case CSSPropertyWebkitColumnProgression:
             return cssValuePool.createValue(style.columnProgression());
         case CSSPropertyColumnRuleColor:
@@ -3111,12 +3114,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
                 return cssValuePool.createIdentifierValue(CSSValueNone);
             }
             return CSSGridTemplateAreasValue::create(style.namedGridArea(), style.namedGridAreaRowCount(), style.namedGridAreaColumnCount());
-        case CSSPropertyGridColumnGap:
-            return zoomAdjustedPixelValueForLength(style.gridColumnGap(), style);
-        case CSSPropertyGridRowGap:
-            return zoomAdjustedPixelValueForLength(style.gridRowGap(), style);
-        case CSSPropertyGridGap:
-            return getCSSPropertyValuesForGridShorthand(gridGapShorthand());
+        case CSSPropertyGap:
+            return getCSSPropertyValuesForShorthandProperties(gapShorthand());
         case CSSPropertyHeight:
             if (renderer && !renderer->isRenderSVGModelObject()) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,

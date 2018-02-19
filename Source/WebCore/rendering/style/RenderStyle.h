@@ -551,8 +551,6 @@ public:
     bool isGridAutoFlowAlgorithmDense() const { return (m_rareNonInheritedData->grid->gridAutoFlow & InternalAutoFlowAlgorithmDense); }
     const Vector<GridTrackSize>& gridAutoColumns() const { return m_rareNonInheritedData->grid->gridAutoColumns; }
     const Vector<GridTrackSize>& gridAutoRows() const { return m_rareNonInheritedData->grid->gridAutoRows; }
-    const Length& gridColumnGap() const { return m_rareNonInheritedData->grid->gridColumnGap; }
-    const Length& gridRowGap() const { return m_rareNonInheritedData->grid->gridRowGap; }
 
     const GridPosition& gridItemColumnStart() const { return m_rareNonInheritedData->gridItem->gridColumnStart; }
     const GridPosition& gridItemColumnEnd() const { return m_rareNonInheritedData->gridItem->gridColumnEnd; }
@@ -605,7 +603,8 @@ public:
     bool hasAutoColumnCount() const { return m_rareNonInheritedData->multiCol->autoCount; }
     bool specifiesColumns() const { return !hasAutoColumnCount() || !hasAutoColumnWidth() || !hasInlineColumnAxis(); }
     ColumnFill columnFill() const { return static_cast<ColumnFill>(m_rareNonInheritedData->multiCol->fill); }
-    const GapLength& columnGap() const { return m_rareNonInheritedData->multiCol->columnGap; }
+    const GapLength& columnGap() const { return m_rareNonInheritedData->columnGap; }
+    const GapLength& rowGap() const { return m_rareNonInheritedData->rowGap; }
     EBorderStyle columnRuleStyle() const { return m_rareNonInheritedData->multiCol->rule.style(); }
     unsigned short columnRuleWidth() const { return m_rareNonInheritedData->multiCol->ruleWidth(); }
     bool columnRuleIsTransparent() const { return m_rareNonInheritedData->multiCol->rule.isTransparent(); }
@@ -1097,8 +1096,6 @@ public:
     void setGridItemColumnEnd(const GridPosition& columnEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridColumnEnd, columnEndPosition); }
     void setGridItemRowStart(const GridPosition& rowStartPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowStart, rowStartPosition); }
     void setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_NESTED_VAR(m_rareNonInheritedData, gridItem, gridRowEnd, rowEndPosition); }
-    void setGridColumnGap(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, grid, gridColumnGap, WTFMove(length)); }
-    void setGridRowGap(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, grid, gridRowGap, WTFMove(length)); }
 
     void setMarqueeIncrement(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, increment, WTFMove(length)); }
     void setMarqueeSpeed(int f) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, speed, f); }
@@ -1129,7 +1126,8 @@ public:
     void setColumnCount(unsigned short c) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, false); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, c); }
     void setHasAutoColumnCount() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, true); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, 0); }
     void setColumnFill(ColumnFill columnFill) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, fill, columnFill); }
-    void setColumnGap(GapLength&& gapLength) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, columnGap, WTFMove(gapLength)); }
+    void setColumnGap(GapLength&& gapLength) { SET_VAR(m_rareNonInheritedData, columnGap, WTFMove(gapLength)); }
+    void setRowGap(GapLength&& gapLength) { SET_VAR(m_rareNonInheritedData, rowGap, WTFMove(gapLength)); }
     void setColumnRuleColor(const Color& c) { SET_BORDERVALUE_COLOR(m_rareNonInheritedData.access().multiCol, rule, c); }
     void setColumnRuleStyle(EBorderStyle b) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, rule.m_style, b); }
     void setColumnRuleWidth(unsigned short w) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, rule.m_width, w); }
@@ -1533,6 +1531,7 @@ public:
     static ColumnFill initialColumnFill() { return ColumnFillBalance; }
     static ColumnSpan initialColumnSpan() { return ColumnSpanNone; }
     static GapLength initialColumnGap() { return GapLength(); }
+    static GapLength initialRowGap() { return GapLength(); }
     static const TransformOperations& initialTransform() { static NeverDestroyed<TransformOperations> ops; return ops; }
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
@@ -1624,9 +1623,6 @@ public:
 
     static OrderedNamedGridLinesMap initialOrderedNamedGridColumnLines() { return OrderedNamedGridLinesMap(); }
     static OrderedNamedGridLinesMap initialOrderedNamedGridRowLines() { return OrderedNamedGridLinesMap(); }
-
-    static Length initialGridColumnGap() { return Length(Fixed); }
-    static Length initialGridRowGap() { return Length(Fixed); }
 
     // 'auto' is the default.
     static GridPosition initialGridItemColumnStart() { return GridPosition(); }

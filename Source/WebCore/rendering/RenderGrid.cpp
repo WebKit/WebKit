@@ -170,8 +170,8 @@ bool RenderGrid::namedGridLinesDefinitionDidChange(const RenderStyle& oldStyle) 
 std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDirection direction) const
 {
     bool isRowAxis = direction == ForColumns;
-    const Length& gap = isRowAxis ? style().gridColumnGap() : style().gridRowGap();
-    if (!gap.isPercent())
+    const GapLength& gapLength = isRowAxis ? style().columnGap() : style().rowGap();
+    if (gapLength.isNormal() || !gapLength.length().isPercent())
         return std::nullopt;
 
     return isRowAxis ? availableLogicalWidth() : availableLogicalHeightForPercentageComputation();
@@ -339,8 +339,11 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, std::optional<LayoutUnit> availableSize) const
 {
-    const Length& gap = direction == ForColumns ? style().gridColumnGap() : style().gridRowGap();
-    return valueForLength(gap, availableSize.value_or(0));
+    const GapLength& gapLength = direction == ForColumns? style().columnGap() : style().rowGap();
+    if (gapLength.isNormal())
+        return LayoutUnit();
+
+    return valueForLength(gapLength.length(), availableSize.value_or(0));
 }
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction) const

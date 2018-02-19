@@ -1179,6 +1179,7 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyWebkitAspectRatio,
     CSSPropertyColumnCount,
     CSSPropertyColumnGap,
+    CSSPropertyRowGap,
     CSSPropertyColumnRuleColor,
     CSSPropertyColumnRuleStyle,
     CSSPropertyColumnRuleWidth,

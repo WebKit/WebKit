@@ -213,6 +213,9 @@ public:
 
     unsigned isNotFinal : 1;
 
+    GapLength columnGap;
+    GapLength rowGap;
+
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

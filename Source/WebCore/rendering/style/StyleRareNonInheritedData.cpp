@@ -106,6 +106,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , resize(RenderStyle::initialResize())
     , hasAttrContent(false)
     , isNotFinal(false)
+    , columnGap(RenderStyle::initialColumnGap())
+    , rowGap(RenderStyle::initialRowGap())
 {
     maskBoxImage.setMaskDefaults();
 }
@@ -197,6 +199,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , resize(o.resize)
     , hasAttrContent(o.hasAttrContent)
     , isNotFinal(o.isNotFinal)
+    , columnGap(o.columnGap)
+    , rowGap(o.rowGap)
 {
 }
 
@@ -296,7 +300,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && breakInside == o.breakInside
         && resize == o.resize
         && hasAttrContent == o.hasAttrContent
-        && isNotFinal == o.isNotFinal;
+        && isNotFinal == o.isNotFinal
+        && columnGap == o.columnGap
+        && rowGap == o.rowGap;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const
