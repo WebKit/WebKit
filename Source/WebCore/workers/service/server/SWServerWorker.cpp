@@ -179,7 +179,7 @@ void SWServerWorker::setState(ServiceWorkerState state)
     ASSERT(registration || state == ServiceWorkerState::Redundant);
     if (registration) {
         registration->forEachConnection([&](auto& connection) {
-            connection.updateWorkerStateInClient(identifier(), state);
+            connection.updateWorkerStateInClient(this->identifier(), state);
         });
     }
 

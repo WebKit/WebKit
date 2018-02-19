@@ -524,7 +524,7 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
             return;
         }
         auto url = request.url();
-        matchRegistration(url, [request = WTFMove(request), isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
+        this->matchRegistration(url, [request = WTFMove(request), isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
             if (!m_mainDocumentError.isNull() || !m_frame) {
                 completionHandler({ });
                 return;
@@ -538,11 +538,11 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
             }
 
             // Service worker registration changed, we need to cancel the current load to restart a new one.
-            clearMainResource();
+            this->clearMainResource();
             completionHandler({ });
 
             m_serviceWorkerRegistrationData = WTFMove(registrationData);
-            loadMainResource(WTFMove(request));
+            this->loadMainResource(WTFMove(request));
             return;
         });
     });
@@ -1655,7 +1655,7 @@ void DocumentLoader::startLoadingMainResource()
                 return;
 
             m_serviceWorkerRegistrationData = WTFMove(registrationData);
-            loadMainResource(WTFMove(request));
+            this->loadMainResource(WTFMove(request));
         });
 #else
         loadMainResource(WTFMove(request));

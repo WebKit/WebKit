@@ -443,7 +443,7 @@ void SWServer::claim(SWServerWorker& worker)
 {
     auto& origin = worker.origin();
     forEachClientForOrigin(origin, [&](auto& clientData) {
-        auto* registration = doRegistrationMatching(origin.topOrigin, clientData.url);
+        auto* registration = this->doRegistrationMatching(origin.topOrigin, clientData.url);
         if (!(registration && registration->key() == worker.registrationKey()))
             return;
 
@@ -453,7 +453,7 @@ void SWServer::claim(SWServerWorker& worker)
             if (previousIdentifier == worker.identifier())
                 return;
             result.iterator->value = worker.identifier();
-            if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(previousIdentifier))
+            if (auto* controllingRegistration = this->registrationFromServiceWorkerIdentifier(previousIdentifier))
                 controllingRegistration->removeClientUsingRegistration(clientData.identifier);
         }
         registration->controlClient(clientData.identifier);
@@ -824,7 +824,7 @@ void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration
         if (!registration.key().isMatching(request.topOrigin, request.clientURL))
             return false;
 
-        registrationReady(request.identifier, registration.data());
+        this->registrationReady(request.identifier, registration.data());
         return true;
     });
 }

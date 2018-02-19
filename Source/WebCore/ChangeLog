@@ -1,3 +1,36 @@
+2018-02-19  Ms2ger  <Ms2ger@igalia.com>
+
+        Explicitly qualify some method calls on this in lamdas in Service Worker code.
+        https://bugs.webkit.org/show_bug.cgi?id=182875
+
+        Reviewed by Chris Dumez.
+
+        This is necessary for the code to build with GCC 5. Other code already
+        appears to have been adapted similarly.
+
+        No change in functionality.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::didFinishGetRegistrationsRequest):
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::updateExtendedEventsSet):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::claim):
+        (WebCore::SWServer::Connection::resolveRegistrationReadyRequests):
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::updateRegistrationState):
+        (WebCore::SWServerRegistration::setUpdateViaCache):
+        (WebCore::SWServerRegistration::setLastUpdateTime):
+        (WebCore::SWServerRegistration::fireUpdateFoundEvent):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::setState):
+
 2018-02-19  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderElement::removeAndDestroyChild() to RenderTreeBuilder

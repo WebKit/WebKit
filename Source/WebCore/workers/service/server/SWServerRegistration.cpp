@@ -99,7 +99,7 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
         serviceWorkerData = worker->data();
 
     forEachConnection([&](auto& connection) {
-        connection.updateRegistrationStateInClient(identifier(), state, serviceWorkerData);
+        connection.updateRegistrationStateInClient(this->identifier(), state, serviceWorkerData);
     });
 }
 
@@ -114,7 +114,7 @@ void SWServerRegistration::setUpdateViaCache(ServiceWorkerUpdateViaCache updateV
 {
     m_updateViaCache = updateViaCache;
     forEachConnection([&](auto& connection) {
-        connection.setRegistrationUpdateViaCache(identifier(), updateViaCache);
+        connection.setRegistrationUpdateViaCache(this->identifier(), updateViaCache);
     });
 }
 
@@ -122,14 +122,14 @@ void SWServerRegistration::setLastUpdateTime(WallTime time)
 {
     m_lastUpdateTime = time;
     forEachConnection([&](auto& connection) {
-        connection.setRegistrationLastUpdateTime(identifier(), time);
+        connection.setRegistrationLastUpdateTime(this->identifier(), time);
     });
 }
 
 void SWServerRegistration::fireUpdateFoundEvent()
 {
     forEachConnection([&](auto& connection) {
-        connection.fireUpdateFoundEvent(identifier());
+        connection.fireUpdateFoundEvent(this->identifier());
     });
 }
 
