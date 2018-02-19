@@ -135,7 +135,7 @@ void RenderTreeBuilder::Ruby::moveInlineChildren(RenderRubyBase& from, RenderRub
         }
     }
     // Move our inline children into the target block we determined above.
-    from.moveChildrenTo(toBlock, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);
+    from.moveChildrenTo(m_builder, toBlock, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);
 }
 
 void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild)
@@ -155,12 +155,12 @@ void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRuby
         && lastChildThere && lastChildThere->isAnonymousBlock() && lastChildThere->childrenInline()) {
         auto* anonBlockHere = downcast<RenderBlock>(firstChildHere);
         auto* anonBlockThere = downcast<RenderBlock>(lastChildThere);
-        anonBlockHere->moveAllChildrenTo(anonBlockThere, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
+        anonBlockHere->moveAllChildrenTo(m_builder, anonBlockThere, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
         anonBlockHere->deleteLines();
         anonBlockHere->removeFromParentAndDestroy();
     }
     // Move all remaining children normally.
-    from.moveChildrenTo(&to, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);
+    from.moveChildrenTo(m_builder, &to, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);
 }
 
 void RenderTreeBuilder::Ruby::moveChildren(RenderRubyBase& from, RenderRubyBase& to)

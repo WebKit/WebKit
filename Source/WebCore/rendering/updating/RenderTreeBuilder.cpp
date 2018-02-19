@@ -254,7 +254,7 @@ void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject*
         auto newBlock = parent.createAnonymousBlock();
         auto& block = *newBlock;
         parent.insertChildInternal(WTFMove(newBlock), inlineRunStart);
-        parent.moveChildrenTo(&block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
+        parent.moveChildrenTo(*this, &block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
     }
 #ifndef NDEBUG
     for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
@@ -283,7 +283,7 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
             parentBox->insertChildInternal(WTFMove(newPostBox), boxToSplit.nextSibling());
-            boxToSplit.moveChildrenTo(&postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
+            boxToSplit.moveChildrenTo(*this, &postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(postBox);
@@ -342,7 +342,7 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     for (current = blockParent.firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())
-            blockParent.dropAnonymousBoxChild(downcast<RenderBlock>(*current));
+            blockParent.dropAnonymousBoxChild(*this, downcast<RenderBlock>(*current));
     }
 }
 

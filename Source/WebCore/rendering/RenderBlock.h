@@ -191,7 +191,7 @@ public:
 
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
     RenderPtr<RenderBlock> createAnonymousBlock(EDisplay = BLOCK) const;
-    void dropAnonymousBoxChild(RenderBlock& child);
+    void dropAnonymousBoxChild(RenderTreeBuilder&, RenderBlock& child);
 
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
@@ -435,7 +435,7 @@ private:
     const char* renderName() const override;
 
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
-    virtual void moveAllChildrenIncludingFloatsTo(RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion normalizeAfterInsertion) { moveAllChildrenTo(&toBlock, normalizeAfterInsertion); }
+    virtual void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder& builder, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion normalizeAfterInsertion) { moveAllChildrenTo(builder, &toBlock, normalizeAfterInsertion); }
 
     bool isSelfCollapsingBlock() const override;
     virtual bool childrenPreventSelfCollapsing() const;
