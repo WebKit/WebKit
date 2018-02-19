@@ -79,7 +79,8 @@ static void copyGStreamerBuffersToAudioChannel(GstAdapter* adapter, AudioBus* bu
     if (gst_adapter_available(adapter) >= bytes) {
         gst_adapter_copy(adapter, bus->channel(channelNumber)->mutableData(), 0, bytes);
         gst_adapter_flush(adapter, bytes);
-    }
+    } else
+        bus->zero();
 }
 
 AudioSourceProviderGStreamer::AudioSourceProviderGStreamer()
@@ -201,6 +202,9 @@ GstFlowReturn AudioSourceProviderGStreamer::handleAudioBuffer(GstAppSink* sink)
 
 void AudioSourceProviderGStreamer::setClient(AudioSourceProviderClient* client)
 {
+    if (m_client)
+        return;
+
     ASSERT(client);
     m_client = client;
 

@@ -1,3 +1,13 @@
+2018-02-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][WebAudio] Winamp2-js woes
+        https://bugs.webkit.org/show_bug.cgi?id=182612
+
+        Reviewed by Xabier Rodriguez Calvar and Carlos Alberto Lopez Perez.
+
+        * webaudio/silence-after-playback-expected.wav: Added.
+        * webaudio/silence-after-playback.html: Added.
+
 2018-02-09  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Implement the new behavior of 'legacy' for justify-items

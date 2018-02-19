@@ -1,3 +1,19 @@
+2018-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][WebAudio] Winamp2-js woes
+        https://bugs.webkit.org/show_bug.cgi?id=182612
+
+        Reviewed by Xabier Rodriguez Calvar and Carlos Alberto Lopez Perez.
+
+        Test: webaudio/silence-after-playback.html
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::copyGStreamerBuffersToAudioChannel): Clear the bus if
+        the adapter can't provide enough data. This prevents a nasty noise
+        after playing songs in Winamp.
+        (WebCore::AudioSourceProviderGStreamer::setClient): No need to set
+        the client more than once, this fixes runtime warnings.
+
 2018-02-09  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move multicolumn spanner mutation logic to RenderTreeBuilder
