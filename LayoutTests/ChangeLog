@@ -1,3 +1,16 @@
+2018-02-19  Frederic Wang  <fwang@igalia.com>
+
+        IFrame is resized incorrectly on orientation change
+        https://bugs.webkit.org/show_bug.cgi?id=155198
+
+        Reviewed by Antonio Gomes.
+
+        Add a non-regression test to verify that iframes are properly resized after orientation
+        changes. This bug happened in iOS 10.0 but not in trunk.
+
+        * fast/events/ios/rotation/resize-iframe-after-orientation-change-expected.txt: Added.
+        * fast/events/ios/rotation/resize-iframe-after-orientation-change.html: Added.
+
 2018-02-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Update test expectations
