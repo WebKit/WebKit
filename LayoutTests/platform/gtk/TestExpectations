@@ -3327,6 +3327,9 @@ webkit.org/b/182103 editing/input/reveal-edit-on-paste-vertically.html [ Failure
 
 webkit.org/b/182223 fast/forms/listbox-selection.html [ Failure ]
 
+webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]
+webkit.org/b/182502 media/modern-media-controls [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
