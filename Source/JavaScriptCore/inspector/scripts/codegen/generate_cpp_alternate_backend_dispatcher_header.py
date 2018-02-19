@@ -44,23 +44,29 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
         return '%sAlternateBackendDispatchers.h' % self.protocol_name()
 
     def generate_output(self):
-        headers = [
-            '"%sProtocolTypes.h"' % self.protocol_name(),
-            '<inspector/InspectorFrontendRouter.h>',
-            '<JavaScriptCore/InspectorBackendDispatcher.h>',
-        ]
-
-        header_args = {
-            'includes': '\n'.join(['#include ' + header for header in headers]),
+        template_args = {
+            'includes': self._generate_secondary_header_includes()
         }
 
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(CppTemplates.AlternateDispatchersHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.AlternateDispatchersHeaderPrelude).substitute(None, **template_args))
         sections.append('\n'.join(filter(None, map(self._generate_handler_declarations_for_domain, domains))))
-        sections.append(Template(CppTemplates.AlternateDispatchersHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.AlternateDispatchersHeaderPostlude).substitute(None, **template_args))
         return '\n\n'.join(sections)
+
+    # Private methods.
+
+    def _generate_secondary_header_includes(self):
+        target_framework_name = self.model().framework.name
+        header_includes = [
+            ([target_framework_name], (target_framework_name, "%sProtocolTypes.h" % self.protocol_name())),
+            (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorFrontendRouter.h")),
+            (["JavaScriptCore"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h")),
+        ]
+
+        return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_handler_declarations_for_domain(self, domain):
         commands = self.commands_for_domain(domain)

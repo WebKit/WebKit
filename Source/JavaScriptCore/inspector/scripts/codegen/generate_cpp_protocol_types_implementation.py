@@ -56,7 +56,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
 
         header_args = {
             'primaryInclude': '"%sProtocolObjects.h"' % self.protocol_name(),
-            'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
+            'secondaryIncludes': self._generate_secondary_header_includes(),
         }
 
         sections = []
@@ -73,6 +73,14 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         return "\n\n".join(sections)
 
     # Private methods.
+
+    def _generate_secondary_header_includes(self):
+        header_includes = [
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Optional.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/CString.h")),
+        ]
+
+        return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_enum_mapping(self):
         if not self.assigned_enum_values():

@@ -1,3 +1,68 @@
+2018-02-06  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: protocol generator should automatically deduce the correct include style to use
+        https://bugs.webkit.org/show_bug.cgi?id=182505
+
+        Reviewed by Timothy Hatcher.
+
+        Currently the generated imports use a mix of system header imports (powered by forwarding headers)
+        and framework-style includes. Since forwarding headers are going away, this patch stops
+        using system header includes for headers that are JavaScriptCore private headers. Instead,
+        use either a relative include or a framework include.
+
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator.generate_output):
+        (CppAlternateBackendDispatcherHeaderGenerator):
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.generate_output):
+        (CppBackendDispatcherHeaderGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.generate_output):
+        (CppBackendDispatcherImplementationGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator.generate_output):
+        (CppFrontendDispatcherHeaderGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator.generate_output):
+        (CppFrontendDispatcherImplementationGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.generate_output):
+        (CppProtocolTypesHeaderGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator.generate_output):
+        (CppProtocolTypesImplementationGenerator._generate_secondary_header_includes):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator):
+        Convert existing header lists to the new entries format, which includes the
+        allowable target frameworks and the relative path to the header.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.generate_includes_from_entries):
+        Copied from the same in the builtins code generator. It still works great.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/type-with-open-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result:
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Rebaseline.
+
 2018-02-06  Keith Miller  <keith_miller@apple.com>
 
         put_to_scope/get_from_scope should not cache lexical scopes when expecting a global object
