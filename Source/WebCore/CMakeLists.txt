@@ -118,6 +118,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
     "${WEBCORE_DIR}/platform/text/icu"
+    "${WEBCORE_DIR}/platform/vr"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/line"
@@ -1525,6 +1526,7 @@ endif ()
 
 if (USE_OPENVR)
   list(APPEND WebCore_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/openvr/headers")
+  list(APPEND WebCore_INCLUDE_DIRECTORIES "${WEBCORE_DIR}/platform/vr/openvr")
   list(APPEND WebCore_LIBRARIES openvr_api)
 endif ()
 

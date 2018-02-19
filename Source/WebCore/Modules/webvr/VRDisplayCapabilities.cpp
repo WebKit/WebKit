@@ -28,31 +28,34 @@
 
 namespace WebCore {
 
-VRDisplayCapabilities::VRDisplayCapabilities() = default;
+VRDisplayCapabilities::VRDisplayCapabilities(unsigned capabilityFlags)
+{
+    m_flags = capabilityFlags;
+}
 
 bool VRDisplayCapabilities::hasPosition() const
 {
-    return false;
+    return m_flags & VRDisplayCapabilityFlags::Position;
 }
 
 bool VRDisplayCapabilities::hasOrientation() const
 {
-    return false;
+    return m_flags & VRDisplayCapabilityFlags::Orientation;
 }
 
 bool VRDisplayCapabilities::hasExternalDisplay() const
 {
-    return false;
+    return m_flags & VRDisplayCapabilityFlags::ExternalDisplay;
 }
 
 bool VRDisplayCapabilities::canPresent() const
 {
-    return false;
+    return m_flags & VRDisplayCapabilityFlags::Present;
 }
 
 unsigned VRDisplayCapabilities::maxLayer() const
 {
-    return 0;
+    return canPresent() ? 1 : 0;
 }
 
 } // namespace WebCore

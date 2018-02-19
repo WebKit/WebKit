@@ -32,9 +32,9 @@ namespace WebCore {
 
 class VRDisplayCapabilities : public RefCounted<VRDisplayCapabilities> {
 public:
-    static Ref<VRDisplayCapabilities> create()
+    static Ref<VRDisplayCapabilities> create(unsigned capabilityFlags)
     {
-        return adoptRef(*new VRDisplayCapabilities);
+        return adoptRef(*new VRDisplayCapabilities(capabilityFlags));
     }
 
     bool hasPosition() const;
@@ -44,7 +44,9 @@ public:
     unsigned maxLayer() const;
 
 private:
-    VRDisplayCapabilities();
+    VRDisplayCapabilities(unsigned capabilityFlags);
+
+    unsigned m_flags;
 };
 
 } // namespace WebCore

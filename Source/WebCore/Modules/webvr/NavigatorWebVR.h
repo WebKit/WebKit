@@ -31,13 +31,16 @@
 
 namespace WebCore {
 
+class Document;
 class Navigator;
 class Page;
 class VRDisplay;
 
 class NavigatorWebVR final : public Supplement<Page> {
 public:
-    static void getVRDisplays(Navigator&, Ref<DeferredPromise>&&);
+    using GetVRDisplaysPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<VRDisplay>>>;
+
+    static void getVRDisplays(Navigator&, Document&, GetVRDisplaysPromise&&);
     static const Vector<RefPtr<VRDisplay>>& activeVRDisplays(Navigator&);
     static bool vrEnabled(Navigator&);
 };

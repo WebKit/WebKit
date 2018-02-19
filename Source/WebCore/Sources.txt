@@ -1755,6 +1755,10 @@ platform/text/TextEncoding.cpp
 platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
 
+platform/vr/VRManager.cpp
+platform/vr/openvr/VRPlatformDisplayOpenVR.cpp
+platform/vr/openvr/VRPlatformManagerOpenVR.cpp
+
 plugins/DOMMimeType.cpp
 plugins/DOMMimeTypeArray.cpp
 plugins/DOMPlugin.cpp

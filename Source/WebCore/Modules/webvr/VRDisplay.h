@@ -37,13 +37,14 @@ class RequestAnimationFrameCallback;
 class VRDisplayCapabilities;
 class VREyeParameters;
 class VRFrameData;
+class VRPlatformDisplay;
 class VRPose;
 class VRStageParameters;
 struct VRLayerInit;
 
 class VRDisplay : public RefCounted<VRDisplay>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<VRDisplay> create(ScriptExecutionContext&);
+    static Ref<VRDisplay> create(ScriptExecutionContext&, WeakPtr<VRPlatformDisplay>&&);
 
     virtual ~VRDisplay();
 
@@ -82,7 +83,7 @@ public:
     void submitFrame();
 
 private:
-    VRDisplay(ScriptExecutionContext&);
+    VRDisplay(ScriptExecutionContext&, WeakPtr<VRPlatformDisplay>&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return VRDisplayEventTargetInterfaceType; }
@@ -98,6 +99,10 @@ private:
 
     Ref<VRDisplayCapabilities> m_capabilities;
     Ref<VREyeParameters> m_eyeParameters;
+
+    WeakPtr<VRPlatformDisplay> m_display;
+
+    const String m_displayName;
 };
 
 } // namespace WebCore

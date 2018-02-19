@@ -4514,6 +4514,9 @@
 		E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */; };
 		E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */; };
+		E18823642031F57100B42DF3 /* VRManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823632031F55D00B42DF3 /* VRManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E18823652031F57F00B42DF3 /* VRPlatformDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E18823662031F59400B42DF3 /* VRPlatformManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E18823612031F55B00B42DF3 /* VRPlatformManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */; };
 		E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; };
@@ -13870,6 +13873,10 @@
 		E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScopeCustom.cpp; sourceTree = "<group>"; };
 		E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceFromNSAttributedString.h; sourceTree = "<group>"; };
 		E18536821F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceFromNSAttributedString.mm; sourceTree = "<group>"; };
+		E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRPlatformDisplay.h; sourceTree = "<group>"; };
+		E18823612031F55B00B42DF3 /* VRPlatformManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRPlatformManager.h; sourceTree = "<group>"; };
+		E18823622031F55C00B42DF3 /* VRManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRManager.cpp; sourceTree = "<group>"; };
+		E18823632031F55D00B42DF3 /* VRManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRManager.h; sourceTree = "<group>"; };
 		E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceWebResourceHandler.h; sourceTree = "<group>"; };
 		E18C35421F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceWebResourceHandler.mm; sourceTree = "<group>"; };
 		E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedCryptoKeyWrap.h; sourceTree = "<group>"; };
@@ -23839,6 +23846,7 @@
 				516030090CC4245400C8AC25 /* posix */,
 				1A2E6E560CC551E0004A2062 /* sql */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
+				E188235F2031F50F00B42DF3 /* vr */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
 				C330A22113EC196B0000B45B /* ColorChooser.h */,
@@ -24481,6 +24489,17 @@
 				E19AC3ED1824DC7900349426 /* CryptoAlgorithmSHA512.h */,
 			);
 			path = algorithms;
+			sourceTree = "<group>";
+		};
+		E188235F2031F50F00B42DF3 /* vr */ = {
+			isa = PBXGroup;
+			children = (
+				E18823622031F55C00B42DF3 /* VRManager.cpp */,
+				E18823632031F55D00B42DF3 /* VRManager.h */,
+				E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */,
+				E18823612031F55B00B42DF3 /* VRPlatformManager.h */,
+			);
+			path = vr;
 			sourceTree = "<group>";
 		};
 		E19DA29D181995CE00088BC8 /* keys */ = {
@@ -30159,6 +30178,9 @@
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
 				1ABA80001897341200DCE9D6 /* VisitedLinkStore.h in Headers */,
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
+				E18823642031F57100B42DF3 /* VRManager.h in Headers */,
+				E18823652031F57F00B42DF3 /* VRPlatformDisplay.h in Headers */,
+				E18823662031F59400B42DF3 /* VRPlatformManager.h in Headers */,
 				BE20507A18A4586B0080647E /* VTTCue.h in Headers */,
 				7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */,
 				7AF9B20618CFB2DF00C64BEF /* VTTRegionList.h in Headers */,

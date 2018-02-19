@@ -1,3 +1,65 @@
+2018-02-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][OpenVR] Implement getVRDisplays()
+        https://bugs.webkit.org/show_bug.cgi?id=182692
+
+        Reviewed by Žan Doberšek.
+
+        This provides an implementation of Navigator's getVRDisplays()
+        method using OpenVR as backend. It queues several promises in
+        a queue and resolves them all just once. The information retrieved
+        is very minimal for the time being, but this change lays the ground
+        for all the changes that are about to land.
+
+        The VR code uses a VRManager which is the interface with the
+        platform code and the responsible for instantiating the right
+        platform code. This platform code is currently being implemented
+        using OpenVR but could we also ported in the future to OpenXR or any
+        other VR SDK.
+
+        * CMakeLists.txt:
+        * Modules/webvr/NavigatorWebVR.cpp:
+        (WebCore::NavigatorWebVR::getVRDisplays):
+        (WebCore::NavigatorWebVR::vrEnabled):
+        * Modules/webvr/NavigatorWebVR.h:
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::create):
+        (WebCore::VRDisplay::VRDisplay):
+        (WebCore::VRDisplay::isConnected const):
+        (WebCore::VRDisplay::displayName const):
+        * Modules/webvr/VRDisplay.h:
+        * Modules/webvr/VRDisplayCapabilities.cpp:
+        (WebCore::VRDisplayCapabilities::VRDisplayCapabilities):
+        (WebCore::VRDisplayCapabilities::hasPosition const):
+        (WebCore::VRDisplayCapabilities::hasOrientation const):
+        (WebCore::VRDisplayCapabilities::hasExternalDisplay const):
+        (WebCore::VRDisplayCapabilities::canPresent const):
+        (WebCore::VRDisplayCapabilities::maxLayer const):
+        * Modules/webvr/VRDisplayCapabilities.h:
+        (WebCore::VRDisplayCapabilities::create):
+        * Sources.txt:
+        * platform/vr/VRManager.cpp: Added. This is the main interface used by bindings code to
+        access VR devices data provided by platform code.
+        (WebCore::VRManager::singleton):
+        (WebCore::VRManager::VRManager):
+        (WebCore::VRManager::~VRManager):
+        (WebCore::VRManager::refreshVRDevices):
+        * platform/vr/VRManager.h: Added.
+        * platform/vr/VRPlatformDisplay.h: Added. Abstraction of a VR display system. To be
+        implemented by backends like OpenVR, OpenXR...
+        * platform/vr/VRPlatformManager.h: Added. Abstraction of the platform specific class which
+        retrieves data from VR devices. To be implemented by backends like OpenVR, OpenXR...
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp: Added.
+        (WebCore::VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.h: Added.
+        * platform/vr/openvr/VRPlatformManagerOpenVR.cpp: Added.
+        (WebCore::VRPlatformManagerOpenVR::create):
+        (WebCore::VRPlatformManagerOpenVR::VRPlatformManagerOpenVR):
+        (WebCore::VRPlatformManagerOpenVR::~VRPlatformManagerOpenVR):
+        (WebCore::VRPlatformManagerOpenVR::initOpenVR):
+        * platform/vr/openvr/VRPlatformManagerOpenVR.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-02-19  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Apply automatic minimum size clamping to spanning items too

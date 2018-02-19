@@ -26,6 +26,6 @@
 [
     EnabledAtRuntime=WebVR,
 ] partial interface Navigator {
-    Promise<sequence<VRDisplay>> getVRDisplays();
+    [CallWith=Document] Promise<sequence<VRDisplay>> getVRDisplays();
     readonly attribute FrozenArray<VRDisplay> activeVRDisplays;
 };

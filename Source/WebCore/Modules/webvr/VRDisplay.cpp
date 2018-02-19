@@ -29,21 +29,24 @@
 #include "VRDisplayCapabilities.h"
 #include "VREyeParameters.h"
 #include "VRLayerInit.h"
+#include "VRPlatformDisplay.h"
 #include "VRPose.h"
 
 namespace WebCore {
 
-Ref<VRDisplay> VRDisplay::create(ScriptExecutionContext& context)
+Ref<VRDisplay> VRDisplay::create(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>&& platformDisplay)
 {
-    auto display = adoptRef(*new VRDisplay(context));
+    auto display = adoptRef(*new VRDisplay(context, WTFMove(platformDisplay)));
     display->suspendIfNeeded();
     return display;
 }
 
-VRDisplay::VRDisplay(ScriptExecutionContext& context)
+VRDisplay::VRDisplay(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>&& platformDisplay)
     : ActiveDOMObject(&context)
-    , m_capabilities(VRDisplayCapabilities::create())
+    , m_capabilities(VRDisplayCapabilities::create(platformDisplay->getDisplayInfo().capabilityFlags))
     , m_eyeParameters(VREyeParameters::create())
+    , m_display(WTFMove(platformDisplay))
+    , m_displayName(platformDisplay->getDisplayInfo().displayName)
 {
 }
 
@@ -51,7 +54,10 @@ VRDisplay::~VRDisplay() = default;
 
 bool VRDisplay::isConnected() const
 {
-    return false;
+    if (!m_display)
+        return false;
+
+    return m_display->getDisplayInfo().isConnected;
 }
 
 bool VRDisplay::isPresenting() const
@@ -81,7 +87,7 @@ unsigned VRDisplay::displayId() const
 
 const String& VRDisplay::displayName() const
 {
-    return emptyString();
+    return m_displayName;
 }
 
 bool VRDisplay::getFrameData(VRFrameData&) const
