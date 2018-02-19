@@ -29,13 +29,13 @@
 
 #pragma once
 
+#include "Debugger.h"
+#include "InspectorAgentBase.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
-#include "bindings/ScriptValue.h"
-#include "debugger/Debugger.h"
-#include "inspector/InspectorAgentBase.h"
-#include "inspector/ScriptBreakpoint.h"
-#include "inspector/ScriptDebugListener.h"
+#include "ScriptBreakpoint.h"
+#include "ScriptDebugListener.h"
+#include "ScriptValue.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>

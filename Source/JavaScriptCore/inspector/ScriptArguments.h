@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <heap/Strong.h>
+#include "Strong.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
