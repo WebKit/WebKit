@@ -1,3 +1,29 @@
+2018-02-19  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderElement::removeAndDestroyChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182915
+        <rdar://problem/37658123>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeAndDestroyChild): Deleted.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::isChildAllowed const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromParentAndDestroy):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::willBeDestroyed):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::removeAndDestroyChild):
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+
 2018-02-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][OpenVR] Implement getVRDisplays()

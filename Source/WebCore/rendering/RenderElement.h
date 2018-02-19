@@ -87,7 +87,6 @@ public:
     bool isRenderInline() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
-    void removeAndDestroyChild(RenderTreeBuilder&, RenderObject&);
     void didInsertChild(RenderObject& child, RenderObject* beforeChild);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get

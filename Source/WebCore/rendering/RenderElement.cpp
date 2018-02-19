@@ -473,24 +473,6 @@ void RenderElement::didInsertChild(RenderObject& child, RenderObject*)
     SVGRenderSupport::childAdded(*this, child);
 }
 
-void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObject& oldChild)
-{
-    auto toDestroy = builder.takeChild(*this, oldChild);
-    // We need to detach the subtree first so that the descendants don't have
-    // access to previous/next sublings at takeChild().
-    // FIXME: webkit.org/b/182909.
-    if (!is<RenderElement>(toDestroy.get()))
-        return;
-
-    auto& child = downcast<RenderElement>(*toDestroy.get());
-    while (child.firstChild()) {
-        auto& firstChild = *child.firstChild();
-        if (auto* node = firstChild.node())
-            node->setRenderer(nullptr);
-        child.removeAndDestroyChild(builder, firstChild);
-    }
-}
-
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     child->setParent(this);
