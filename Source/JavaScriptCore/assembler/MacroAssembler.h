@@ -61,6 +61,13 @@ namespace JSC { typedef MacroAssemblerX86_64 MacroAssemblerBase; };
 
 #include "MacroAssemblerHelpers.h"
 
+namespace WTF {
+
+template<typename FunctionType>
+class ScopedLambda;
+
+} // namespace WTF
+
 namespace JSC {
 
 #if ENABLE(MASM_PROBE)
@@ -1883,6 +1890,9 @@ public:
     {
         urshift32(src, trustedImm32ForShift(amount), dest);
     }
+
+    // If the result jump is taken that means the assert passed.
+    void jitAssert(const WTF::ScopedLambda<Jump(void)>&);
 
 #if ENABLE(MASM_PROBE)
     // This function emits code to preserve the CPUState (e.g. registers),

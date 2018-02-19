@@ -1,3 +1,15 @@
+2018-02-06  Keith Miller  <keith_miller@apple.com>
+
+        put_to_scope/get_from_scope should not cache lexical scopes when expecting a global object
+        https://bugs.webkit.org/show_bug.cgi?id=182549
+        <rdar://problem/36189995>
+
+        Reviewed by Saam Barati.
+
+        * stress/var-injection-cache-invalidation.js: Added.
+        (allocateLotsOfThings):
+        (test):
+
 2018-02-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, follow up for test262 update
