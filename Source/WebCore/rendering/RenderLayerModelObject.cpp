@@ -65,7 +65,7 @@ RenderLayerModelObject::~RenderLayerModelObject()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderLayerModelObject::willBeDestroyed()
+void RenderLayerModelObject::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (isPositioned()) {
         if (style().hasViewportConstrainedPosition())
@@ -77,7 +77,7 @@ void RenderLayerModelObject::willBeDestroyed()
         destroyLayer();
     }
 
-    RenderElement::willBeDestroyed();
+    RenderElement::willBeDestroyed(builder);
     
     clearRepaintLayoutRects();
 }

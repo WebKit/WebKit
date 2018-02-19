@@ -109,7 +109,7 @@ RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderTreeBuilder& builder
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
         auto takenChild = parent.takeChild(builder, child);
-        parent.removeFromParentAndDestroy();
+        parent.removeFromParentAndDestroy(builder);
         return takenChild;
     }
 
@@ -148,7 +148,7 @@ RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderTreeBuilder& builder,
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
         auto takenChild = parent.takeChild(builder, child);
-        parent.removeFromParentAndDestroy();
+        parent.removeFromParentAndDestroy(builder);
         return takenChild;
     }
 

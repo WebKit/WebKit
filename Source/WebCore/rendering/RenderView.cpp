@@ -611,9 +611,9 @@ bool RenderView::isScrollableOrRubberbandableBox() const
     return frameView().isScrollable(defineScrollable);
 }
 
-void RenderView::willBeDestroyed()
+void RenderView::willBeDestroyed(RenderTreeBuilder& builder)
 {
-    RenderBlockFlow::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed(builder);
     // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
     if (firstChild()) {
         RenderTreeBuilder builder(*this);

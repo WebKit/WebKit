@@ -127,7 +127,7 @@ RenderBlockFlow::~RenderBlockFlow()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderBlockFlow::willBeDestroyed()
+void RenderBlockFlow::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (!renderTreeBeingDestroyed()) {
         if (firstRootBox()) {
@@ -154,7 +154,7 @@ void RenderBlockFlow::willBeDestroyed()
     blockWillBeDestroyed();
 
     // NOTE: This jumps down to RenderBox, bypassing RenderBlock since it would do duplicate work.
-    RenderBox::willBeDestroyed();
+    RenderBox::willBeDestroyed(builder);
 }
 
 RenderBlockFlow* RenderBlockFlow::previousSiblingWithOverhangingFloats(bool& parentHasFloats) const

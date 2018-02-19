@@ -63,7 +63,7 @@ public:
     void setInnerRenderer(RenderBlock&);
 
 private:
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     void element() const = delete;
 

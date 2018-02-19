@@ -88,7 +88,7 @@ RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, RenderStyle&& style)
     setInline(false);
 }
 
-void RenderWidget::willBeDestroyed()
+void RenderWidget::willBeDestroyed(RenderTreeBuilder& builder)
 {
 #if PLATFORM(IOS)
     if (hasLayer())
@@ -102,7 +102,7 @@ void RenderWidget::willBeDestroyed()
 
     setWidget(nullptr);
 
-    RenderReplaced::willBeDestroyed();
+    RenderReplaced::willBeDestroyed(builder);
 }
 
 RenderWidget::~RenderWidget()

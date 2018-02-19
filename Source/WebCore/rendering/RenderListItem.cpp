@@ -54,11 +54,11 @@ RenderListItem::~RenderListItem()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderListItem::willBeDestroyed()
+void RenderListItem::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_marker)
-        m_marker->removeFromParentAndDestroy();
-    RenderBlockFlow::willBeDestroyed();
+        m_marker->removeFromParentAndDestroy(builder);
+    RenderBlockFlow::willBeDestroyed(builder);
 }
 
 RenderStyle RenderListItem::computeMarkerStyle() const

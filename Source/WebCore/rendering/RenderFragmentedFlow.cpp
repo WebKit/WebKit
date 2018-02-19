@@ -763,10 +763,10 @@ void RenderFragmentedFlow::deleteLines()
     RenderBlockFlow::deleteLines();
 }
 
-void RenderFragmentedFlow::willBeDestroyed()
+void RenderFragmentedFlow::willBeDestroyed(RenderTreeBuilder& builder)
 {
     clearLinesToFragmentMap();
-    RenderBlockFlow::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed(builder);
 }
 
 void RenderFragmentedFlow::markFragmentsForOverflowLayoutIfNeeded()

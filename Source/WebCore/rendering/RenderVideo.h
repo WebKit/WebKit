@@ -54,7 +54,7 @@ public:
     void updateFromElement() final;
 
 private:
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
     void mediaElement() const = delete;
 
     void intrinsicSizeChanged() final;

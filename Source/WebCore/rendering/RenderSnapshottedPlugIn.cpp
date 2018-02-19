@@ -63,12 +63,12 @@ RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderSnapshottedPlugIn::willBeDestroyed()
+void RenderSnapshottedPlugIn::willBeDestroyed(RenderTreeBuilder& builder)
 {
     ASSERT(m_snapshotResource);
     m_snapshotResource->shutdown();
 
-    RenderEmbeddedObject::willBeDestroyed();
+    RenderEmbeddedObject::willBeDestroyed(builder);
 }
 
 HTMLPlugInImageElement& RenderSnapshottedPlugIn::plugInImageElement() const

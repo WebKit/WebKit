@@ -157,7 +157,7 @@ void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRuby
         auto* anonBlockThere = downcast<RenderBlock>(lastChildThere);
         anonBlockHere->moveAllChildrenTo(m_builder, anonBlockThere, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
         anonBlockHere->deleteLines();
-        anonBlockHere->removeFromParentAndDestroy();
+        anonBlockHere->removeFromParentAndDestroy(m_builder);
     }
     // Move all remaining children normally.
     from.moveChildrenTo(m_builder, &to, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);

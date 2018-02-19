@@ -352,7 +352,7 @@ RenderCounter::~RenderCounter()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderCounter::willBeDestroyed()
+void RenderCounter::willBeDestroyed(RenderTreeBuilder& builder)
 {
     view().removeRenderCounter();
 
@@ -361,7 +361,7 @@ void RenderCounter::willBeDestroyed()
         ASSERT(!m_counterNode);
     }
     
-    RenderText::willBeDestroyed();
+    RenderText::willBeDestroyed(builder);
 }
 
 const char* RenderCounter::renderName() const

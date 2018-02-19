@@ -64,14 +64,14 @@ RenderSearchField::~RenderSearchField()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderSearchField::willBeDestroyed()
+void RenderSearchField::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_searchPopup) {
         m_searchPopup->popupMenu()->disconnectClient();
         m_searchPopup = nullptr;
     }
 
-    RenderTextControlSingleLine::willBeDestroyed();
+    RenderTextControlSingleLine::willBeDestroyed(builder);
 }
 
 inline HTMLElement* RenderSearchField::resultsButtonElement() const

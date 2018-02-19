@@ -270,12 +270,12 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     childPaintInfo.context().restore();
 }
 
-void RenderSVGRoot::willBeDestroyed()
+void RenderSVGRoot::willBeDestroyed(RenderTreeBuilder& builder)
 {
     RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot&>(*this));
 
     SVGResourcesCache::clientDestroyed(*this);
-    RenderReplaced::willBeDestroyed();
+    RenderReplaced::willBeDestroyed(builder);
 }
 
 void RenderSVGRoot::insertedIntoTree()

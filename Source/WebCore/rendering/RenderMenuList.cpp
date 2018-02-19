@@ -89,7 +89,7 @@ RenderMenuList::~RenderMenuList()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderMenuList::willBeDestroyed()
+void RenderMenuList::willBeDestroyed(RenderTreeBuilder& builder)
 {
 #if !PLATFORM(IOS)
     if (m_popup)
@@ -97,7 +97,7 @@ void RenderMenuList::willBeDestroyed()
     m_popup = nullptr;
 #endif
 
-    RenderFlexibleBox::willBeDestroyed();
+    RenderFlexibleBox::willBeDestroyed(builder);
 }
 
 void RenderMenuList::setInnerRenderer(RenderBlock& innerRenderer)

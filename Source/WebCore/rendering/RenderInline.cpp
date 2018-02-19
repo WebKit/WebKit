@@ -70,7 +70,7 @@ RenderInline::RenderInline(Document& document, RenderStyle&& style)
     setChildrenInline(true);
 }
 
-void RenderInline::willBeDestroyed()
+void RenderInline::willBeDestroyed(RenderTreeBuilder& builder)
 {
 #if !ASSERT_DISABLED
     // Make sure we do not retain "this" in the continuation outline table map of our containing blocks.
@@ -107,7 +107,7 @@ void RenderInline::willBeDestroyed()
 
     m_lineBoxes.deleteLineBoxes();
 
-    RenderBoxModelObject::willBeDestroyed();
+    RenderBoxModelObject::willBeDestroyed(builder);
 }
 
 void RenderInline::updateFromStyle()

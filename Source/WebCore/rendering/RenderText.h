@@ -183,7 +183,7 @@ public:
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     virtual void setRenderedText(const String&);
     virtual UChar previousCharacter() const;

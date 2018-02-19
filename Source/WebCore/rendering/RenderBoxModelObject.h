@@ -245,7 +245,7 @@ protected:
     RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBoxModelObject(Document&, RenderStyle&&, BaseTypeFlags);
 
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
@@ -308,7 +308,7 @@ public:
 
 private:
     ContinuationChainNode& ensureContinuationChainNode();
-    void removeAndDestroyAllContinuations();
+    void removeAndDestroyAllContinuations(RenderTreeBuilder&);
 
     LayoutUnit computedCSSPadding(const Length&) const;
     

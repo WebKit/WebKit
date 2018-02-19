@@ -76,7 +76,7 @@ private:
     void layout() override;
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;

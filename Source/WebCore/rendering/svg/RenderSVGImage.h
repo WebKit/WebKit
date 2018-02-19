@@ -52,7 +52,7 @@ public:
     void paintForeground(PaintInfo&);
 
 private:
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     void element() const = delete;
 
