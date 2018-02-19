@@ -139,7 +139,7 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
-void RenderTreeBuilder::removeAndDestroyChild(RenderObject& child)
+void RenderTreeBuilder::removeAndDestroy(RenderObject& child)
 {
     ASSERT(child.parent());
     auto toDestroy = takeChild(*child.parent(), child);
@@ -154,7 +154,7 @@ void RenderTreeBuilder::removeAndDestroyChild(RenderObject& child)
         auto& firstChild = *childToDestroy.firstChild();
         if (auto* node = firstChild.node())
             node->setRenderer(nullptr);
-        removeAndDestroyChild(firstChild);
+        removeAndDestroy(firstChild);
     }
 }
 
@@ -646,7 +646,7 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
 {
     // If the tree is destroyed, there is no need for a clean-up phase.
     if (child.renderTreeBeingDestroyed()) {
-        removeAndDestroyChild(child);
+        removeAndDestroy(child);
         return;
     }
 
@@ -658,7 +658,7 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
     auto& destroyRootParent = *destroyRoot.parent();
-    removeAndDestroyChild(destroyRoot);
+    removeAndDestroy(destroyRoot);
     removeAnonymousWrappersForInlineChildrenIfNeeded(destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.

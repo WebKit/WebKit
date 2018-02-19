@@ -58,7 +58,7 @@ RenderListItem::~RenderListItem()
 void RenderListItem::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_marker)
-        builder.removeAndDestroyChild(*m_marker);
+        builder.removeAndDestroy(*m_marker);
     RenderBlockFlow::willBeDestroyed(builder);
 }
 

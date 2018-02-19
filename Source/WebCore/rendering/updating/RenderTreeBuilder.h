@@ -44,7 +44,7 @@ public:
     void insertChild(RenderTreePosition&, RenderPtr<RenderObject>);
     void insertChild(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
-    void removeAndDestroyChild(RenderObject& child);
+    void removeAndDestroy(RenderObject& child);
     RenderPtr<RenderObject> takeChild(RenderElement&, RenderObject&) WARN_UNUSED_RETURN;
 
     // NormalizeAfterInsertion::Yes ensures that the destination subtree is consistent after the insertion (anonymous wrappers etc).

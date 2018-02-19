@@ -212,11 +212,11 @@ void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
         parentAndSpannerList.append(std::make_pair(spannerOriginalParent, m_builder.takeChild(*spanner->parent(), *spanner)));
     }
     while (auto* columnSet = multiColumnFlow.firstMultiColumnSet())
-        m_builder.removeAndDestroyChild(*columnSet);
+        m_builder.removeAndDestroy(*columnSet);
 
     flow.clearMultiColumnFlow();
     m_builder.moveAllChildrenTo(multiColumnFlow, flow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
-    m_builder.removeAndDestroyChild(multiColumnFlow);
+    m_builder.removeAndDestroy(multiColumnFlow);
     for (auto& parentAndSpanner : parentAndSpannerList)
         m_builder.insertChild(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));
 }
@@ -372,13 +372,13 @@ void RenderTreeBuilder::MultiColumn::handleSpannerRemoval(RenderMultiColumnFlow&
 {
     // The placeholder may already have been removed, but if it hasn't, do so now.
     if (auto placeholder = flow.spannerMap().take(&downcast<RenderBox>(spanner)))
-        m_builder.removeAndDestroyChild(*placeholder);
+        m_builder.removeAndDestroy(*placeholder);
 
     if (auto* next = spanner.nextSibling()) {
         if (auto* previous = spanner.previousSibling()) {
             if (previous->isRenderMultiColumnSet() && next->isRenderMultiColumnSet()) {
                 // Merge two sets that no longer will be separated by a spanner.
-                m_builder.removeAndDestroyChild(*next);
+                m_builder.removeAndDestroy(*next);
                 previous->setNeedsLayout();
             }
         }

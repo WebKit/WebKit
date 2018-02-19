@@ -77,7 +77,7 @@ void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle*
 void RenderTextFragment::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_firstLetter)
-        builder.removeAndDestroyChild(*m_firstLetter);
+        builder.removeAndDestroy(*m_firstLetter);
     RenderText::willBeDestroyed(builder);
 }
 
@@ -89,9 +89,9 @@ void RenderTextFragment::setText(const String& newText, bool force)
     if (!m_firstLetter)
         return;
     if (RenderTreeBuilder::current())
-        RenderTreeBuilder::current()->removeAndDestroyChild(*m_firstLetter);
+        RenderTreeBuilder::current()->removeAndDestroy(*m_firstLetter);
     else
-        RenderTreeBuilder(*document().renderView()).removeAndDestroyChild(*m_firstLetter);
+        RenderTreeBuilder(*document().renderView()).removeAndDestroy(*m_firstLetter);
     ASSERT(!m_firstLetter);
     ASSERT(!textNode() || textNode()->renderer() == this);
 }

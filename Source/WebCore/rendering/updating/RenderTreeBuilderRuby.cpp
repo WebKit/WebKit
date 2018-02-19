@@ -166,7 +166,7 @@ void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRuby
         auto* anonBlockThere = downcast<RenderBlock>(lastChildThere);
         m_builder.moveAllChildrenTo(*anonBlockHere, *anonBlockThere, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         anonBlockHere->deleteLines();
-        m_builder.removeAndDestroyChild(*anonBlockHere);
+        m_builder.removeAndDestroy(*anonBlockHere);
     }
     // Move all remaining children normally.
     m_builder.moveChildrenTo(from, to, from.firstChild(), beforeChild, RenderTreeBuilder::NormalizeAfterInsertion::No);
@@ -393,7 +393,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsInline& p
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
         auto takenChild = m_builder.takeChild(parent, child);
-        m_builder.removeAndDestroyChild(parent);
+        m_builder.removeAndDestroy(parent);
         return takenChild;
     }
 
@@ -417,7 +417,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsBlock& pa
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
         auto takenChild = m_builder.takeChild(parent, child);
-        m_builder.removeAndDestroyChild(parent);
+        m_builder.removeAndDestroy(parent);
         return takenChild;
     }
 

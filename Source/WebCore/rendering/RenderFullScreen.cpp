@@ -61,7 +61,7 @@ RenderFullScreen::RenderFullScreen(Document& document, RenderStyle&& style)
 void RenderFullScreen::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_placeholder) {
-        builder.removeAndDestroyChild(*m_placeholder);
+        builder.removeAndDestroy(*m_placeholder);
         ASSERT(!m_placeholder);
     }
 
@@ -169,7 +169,7 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
                 if (auto* nonAnonymousChild = downcast<RenderBlock>(*child).firstChild())
                     child = nonAnonymousChild;
                 else {
-                    builder.removeAndDestroyChild(*child);
+                    builder.removeAndDestroy(*child);
                     continue;
                 }
             }
@@ -184,10 +184,10 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
         }
     }
     if (placeholder())
-        builder.removeAndDestroyChild(*placeholder());
+        builder.removeAndDestroy(*placeholder());
     ASSERT(!placeholder());
 
-    builder.removeAndDestroyChild(*this);
+    builder.removeAndDestroy(*this);
 }
 
 void RenderFullScreen::createPlaceholder(std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
