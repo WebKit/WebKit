@@ -555,33 +555,11 @@ ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Str
     // since they can be computed up-front.
     computeMissingKeyframeOffsets(parsedKeyframes);
 
-    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
-    StyleResolver& styleResolver = m_target->styleResolver();
-
     // 8. For each frame in processed keyframes, perform the following steps:
     for (auto& keyframe : parsedKeyframes) {
-        // 1. For each property-value pair in frame, parse the property value using the syntax specified for that property.
-        //    If the property value is invalid according to the syntax for the property, discard the property-value pair.
-        //    User agents that provide support for diagnosing errors in content SHOULD produce an appropriate warning
-        //    highlighting the invalid property value.
-
-        KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
-        auto renderStyle = RenderStyle::createPtr();
-        auto& styleProperties = keyframe.style;
-        for (unsigned i = 0; i < styleProperties->propertyCount(); ++i) {
-            auto cssPropertyId = styleProperties->propertyAt(i).id();
-            keyframeValue.addProperty(cssPropertyId);
-            keyframeList.addProperty(cssPropertyId);
-            styleResolver.applyPropertyToStyle(cssPropertyId, styleProperties->propertyAt(i).value(), WTFMove(renderStyle));
-            renderStyle = styleResolver.state().takeStyle();
-        }
-
-        keyframeValue.setStyle(RenderStyle::clonePtr(*renderStyle));
-        keyframeList.insert(WTFMove(keyframeValue));
-
-        // 2. Let the timing function of frame be the result of parsing the “easing” property on frame using the CSS syntax
-        //    defined for the easing property of the AnimationEffectTimingReadOnly interface.
-        //    If parsing the “easing” property fails, throw a TypeError and abort this procedure.
+        // Let the timing function of frame be the result of parsing the “easing” property on frame using the CSS syntax
+        // defined for the easing property of the AnimationEffectTimingReadOnly interface.
+        // If parsing the “easing” property fails, throw a TypeError and abort this procedure.
         auto timingFunctionResult = TimingFunction::createFromCSSText(keyframe.easing);
         if (timingFunctionResult.hasException())
             return timingFunctionResult.releaseException();
@@ -597,12 +575,43 @@ ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Str
             return timingFunctionResult.releaseException();
     }
 
-    m_blendingKeyframes = WTFMove(keyframeList);
     m_parsedKeyframes = WTFMove(parsedKeyframes);
 
-    computeStackingContextImpact();
+    updateBlendingKeyframes();
 
     return { };
+}
+
+void KeyframeEffectReadOnly::updateBlendingKeyframes()
+{
+    if (!m_target)
+        return;
+
+    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
+    StyleResolver& styleResolver = m_target->styleResolver();
+
+    for (auto& keyframe : m_parsedKeyframes) {
+        KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
+        auto renderStyle = RenderStyle::createPtr();
+        // We need to call update() on the FontCascade or we'll hit an ASSERT when parsing font-related properties.
+        renderStyle->fontCascade().update(nullptr);
+
+        auto& styleProperties = keyframe.style;
+        for (unsigned i = 0; i < styleProperties->propertyCount(); ++i) {
+            auto cssPropertyId = styleProperties->propertyAt(i).id();
+            keyframeValue.addProperty(cssPropertyId);
+            keyframeList.addProperty(cssPropertyId);
+            styleResolver.applyPropertyToStyle(cssPropertyId, styleProperties->propertyAt(i).value(), WTFMove(renderStyle));
+            renderStyle = styleResolver.state().takeStyle();
+        }
+
+        keyframeValue.setStyle(RenderStyle::clonePtr(*renderStyle));
+        keyframeList.insert(WTFMove(keyframeValue));
+    }
+
+    m_blendingKeyframes = WTFMove(keyframeList);
+
+    computeStackingContextImpact();
 }
 
 void KeyframeEffectReadOnly::computeStackingContextImpact()

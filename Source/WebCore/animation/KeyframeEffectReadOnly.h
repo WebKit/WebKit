@@ -119,6 +119,7 @@ protected:
 private:
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     void computeStackingContextImpact();
+    void updateBlendingKeyframes();
     bool shouldRunAccelerated();
 
     bool m_triggersStackingContext { false };

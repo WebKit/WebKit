@@ -1,3 +1,20 @@
+2018-02-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Decouple parsing JS keyframes and computing blending keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=182939
+        <rdar://problem/37678364>
+
+        Reviewed by Dean Jackson.
+
+        Move all the code used to create the KeyframeList into a dedicated updateBlendingKeyframes() method.
+
+        No new tests since this code change has no user-visible impact.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::processKeyframes):
+        (WebCore::KeyframeEffectReadOnly::updateBlendingKeyframes):
+        * animation/KeyframeEffectReadOnly.h:
+
 2018-02-19  Jer Noble  <jer.noble@apple.com>
 
         [EME] Add mechanism for MediaKeySession to react to HDCP changes
