@@ -95,3 +95,49 @@ class Class5:
     def func11():
         pass
     pass
+
+"""class A"""
+
+'class A'
+
+"class A"
+
+"""def A"""
+
+'def A'
+
+"def A"
+
+"""class Class6"""
+class Class6:
+    """class Class6_1"""
+    def __init__(self):
+        """class Class6_2"""
+        pass
+
+"""def Class7"""
+class Class7:
+    """def Class7_1"""
+    def __init__(self):
+        """def Class7_2"""
+        pass
+
+"""a
+class b
+"""
+
+"""a
+def b
+"""
+
+"""
+class class8
+"""
+class Class8:
+    pass
+
+    """
+    def Class8_1
+    """
+    def __init__(self):
+        pass
