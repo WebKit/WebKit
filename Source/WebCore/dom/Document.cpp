@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -126,11 +126,11 @@
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
 #include "NestingLevelIncrementer.h"
-
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
 #include "OriginAccessEntry.h"
+#include "OriginThreadLocalCache.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -218,6 +218,7 @@
 #include <ctime>
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
+#include <runtime/VM.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -5548,7 +5549,7 @@ void Document::initSecurityContext()
             // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
             // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
             // still can have other privileges that can be remembered, thereby not making them unique origins.
-            securityOrigin().enforceFilePathSeparation();
+            securityOrigin().setEnforcesFilePathSeparation();
         }
     }
     securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
@@ -7739,5 +7740,17 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
     m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this, *serviceWorkerConnection), controllingServiceWorkerIdentifier);
 }
 #endif
+
+JSC::ThreadLocalCache& Document::threadLocalCache()
+{
+    if (!m_threadLocalCache) {
+        SecurityOrigin& origin = securityOrigin();
+        if (origin.isUnique() || (origin.isLocal() && origin.enforcesFilePathSeparation()))
+            m_threadLocalCache = JSC::ThreadLocalCache::create(commonVM().heap);
+        else
+            m_threadLocalCache = OriginThreadLocalCache::create(origin);
+    }
+    return *m_threadLocalCache;
+}
 
 } // namespace WebCore

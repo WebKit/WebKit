@@ -180,7 +180,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
     , m_canLoadLocalResources { other->m_canLoadLocalResources }
     , m_storageBlockingPolicy { other->m_storageBlockingPolicy }
-    , m_enforceFilePathSeparation { other->m_enforceFilePathSeparation }
+    , m_enforcesFilePathSeparation { other->m_enforcesFilePathSeparation }
     , m_needsStorageAccessFromFileURLsQuirk { other->m_needsStorageAccessFromFileURLsQuirk }
     , m_isPotentiallyTrustworthy { other->m_isPotentiallyTrustworthy }
 {
@@ -283,7 +283,7 @@ bool SecurityOrigin::passesFileCheck(const SecurityOrigin& other) const
 {
     ASSERT(isLocal() && other.isLocal());
 
-    return !m_enforceFilePathSeparation && !other.m_enforceFilePathSeparation;
+    return !m_enforcesFilePathSeparation && !other.m_enforcesFilePathSeparation;
 }
 
 bool SecurityOrigin::canRequest(const URL& url) const
@@ -453,10 +453,10 @@ String SecurityOrigin::domainForCachePartition() const
     return emptyString();
 }
 
-void SecurityOrigin::enforceFilePathSeparation()
+void SecurityOrigin::setEnforcesFilePathSeparation()
 {
     ASSERT(isLocal());
-    m_enforceFilePathSeparation = true;
+    m_enforcesFilePathSeparation = true;
 }
 
 bool SecurityOrigin::isLocal() const
@@ -468,7 +468,7 @@ String SecurityOrigin::toString() const
 {
     if (isUnique())
         return ASCIILiteral("null");
-    if (m_protocol == "file" && m_enforceFilePathSeparation)
+    if (m_protocol == "file" && m_enforcesFilePathSeparation)
         return ASCIILiteral("null");
     return toRawString();
 }

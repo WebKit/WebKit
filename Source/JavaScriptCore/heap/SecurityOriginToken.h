@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,11 @@
 
 #pragma once
 
-#include <functional>
-#include <wtf/Vector.h>
-
 namespace JSC {
 
-class JSGlobalObject;
-class ThreadLocalCache;
-class VM;
+typedef uint64_t SecurityOriginToken;
 
-class VMEntryScope {
-public:
-    JS_EXPORT_PRIVATE VMEntryScope(VM&, JSGlobalObject*);
-    JS_EXPORT_PRIVATE ~VMEntryScope();
-
-    VM& vm() const { return m_vm; }
-    JSGlobalObject* globalObject() const { return m_globalObject; }
-
-    void addDidPopListener(std::function<void ()>);
-
-private:
-    VM& m_vm;
-    JSGlobalObject* m_globalObject;
-    Vector<std::function<void ()>> m_didPopListeners;
-    RefPtr<ThreadLocalCache> m_previousTLC;
-};
+JS_EXPORT_PRIVATE SecurityOriginToken uniqueSecurityOriginToken();
 
 } // namespace JSC
+

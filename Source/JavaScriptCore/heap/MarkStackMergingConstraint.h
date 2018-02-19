@@ -29,6 +29,9 @@
 
 namespace JSC {
 
+class Heap;
+class SlotVisitor;
+
 class MarkStackMergingConstraint : public MarkingConstraint {
 public:
     MarkStackMergingConstraint(Heap&);

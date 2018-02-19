@@ -51,6 +51,7 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
+#include <heap/ThreadLocalCache.h>
 #include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -1411,6 +1412,8 @@ public:
     bool handlingTouchEvent() const { return m_handlingTouchEvent; }
 #endif
 
+    JSC::ThreadLocalCache& threadLocalCache();
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1895,6 +1898,8 @@ private:
 #endif
 
     HashSet<ApplicationStateChangeListener*> m_applicationStateChangeListeners;
+    
+    RefPtr<JSC::ThreadLocalCache> m_threadLocalCache;
 };
 
 Element* eventTargetElementForDocument(Document*);

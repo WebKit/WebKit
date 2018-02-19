@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "SecurityOriginToken.h"
 
-#include <functional>
-#include <wtf/Vector.h>
+#include <wtf/Atomics.h>
 
 namespace JSC {
 
-class JSGlobalObject;
-class ThreadLocalCache;
-class VM;
-
-class VMEntryScope {
-public:
-    JS_EXPORT_PRIVATE VMEntryScope(VM&, JSGlobalObject*);
-    JS_EXPORT_PRIVATE ~VMEntryScope();
-
-    VM& vm() const { return m_vm; }
-    JSGlobalObject* globalObject() const { return m_globalObject; }
-
-    void addDidPopListener(std::function<void ()>);
-
-private:
-    VM& m_vm;
-    JSGlobalObject* m_globalObject;
-    Vector<std::function<void ()>> m_didPopListeners;
-    RefPtr<ThreadLocalCache> m_previousTLC;
-};
+SecurityOriginToken uniqueSecurityOriginToken()
+{
+    static SecurityOriginToken counter;
+    return WTF::atomicExchangeAdd(&counter, 1) + 1;
+}
 
 } // namespace JSC
+
