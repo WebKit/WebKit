@@ -1662,9 +1662,6 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 [ HighSierra+ ] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
 
-# <rdar://problem/33555052>
-[ HighSierra+ ] imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Skip ]
-
 # <rdar://problem/33731086>
 [ HighSierra+ ] media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 

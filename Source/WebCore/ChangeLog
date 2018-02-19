@@ -1,3 +1,23 @@
+2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r219298): RELEASE_ASSERT(!m_owningPointerForClose) fails in WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose
+        https://bugs.webkit.org/show_bug.cgi?id=174354
+        <rdar://problem/33294987>
+
+        Reviewed by Michael Catanzaro.
+
+        UniqueIDBDatabase::invokeOperationAndTransactionTimer was called
+        even after m_owningPointerForClose was set in
+        UniqueIDBDatabase::didDeleteBackingStore.
+
+        No new tests (Covered by existing tests).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        Do not start deleting the UniqueIDBDatabase. Just call invokeOperationAndTransactionTimer.
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer):
+        Assert m_owningPointerForClose is null.
+
 2018-02-18  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         Fix build error after r228417 without ACCESSIBILITY
