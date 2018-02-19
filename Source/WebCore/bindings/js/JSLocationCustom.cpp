@@ -27,9 +27,8 @@
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
 #include "RuntimeApplicationChecks.h"
-#include <runtime/JSFunction.h>
-#include <runtime/Lookup.h>
-
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/Lookup.h>
 
 namespace WebCore {
 using namespace JSC;

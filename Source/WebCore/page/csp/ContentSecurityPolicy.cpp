@@ -52,8 +52,8 @@
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
 #include "TextEncoding.h"
-#include <inspector/ScriptCallStack.h>
-#include <inspector/ScriptCallStackFactory.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>

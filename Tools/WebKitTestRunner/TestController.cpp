@@ -32,6 +32,7 @@
 #include "StringFunctions.h"
 #include "TestInvocation.h"
 #include "WebCoreTestSupport.h"
+#include <JavaScriptCore/InitializeThreading.h>
 #include <WebKit/WKArray.h>
 #include <WebKit/WKAuthenticationChallenge.h>
 #include <WebKit/WKAuthenticationDecisionListener.h>
@@ -63,7 +64,6 @@
 #include <cstdio>
 #include <ctype.h>
 #include <fstream>
-#include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>

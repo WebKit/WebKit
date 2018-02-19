@@ -33,9 +33,9 @@
 
 #include "JSDOMConvertBufferSource.h"
 #include "JSReadableStreamDefaultController.h"
-#include <runtime/JSCJSValue.h>
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/TypedArrays.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/TypedArrays.h>
 
 namespace WebCore {
 

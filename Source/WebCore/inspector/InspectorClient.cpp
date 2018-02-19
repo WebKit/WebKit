@@ -36,8 +36,7 @@
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include <interpreter/FrameTracers.h>
-
+#include <JavaScriptCore/FrameTracers.h>
 
 namespace WebCore {
 using namespace JSC;

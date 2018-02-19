@@ -28,9 +28,9 @@
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/TypedArrayInlines.h>
-#include <runtime/Uint8ClampedArray.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)

@@ -29,14 +29,14 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "ProxyRuntimeObject.h"
+#import <JavaScriptCore/Error.h>
+#import <JavaScriptCore/FunctionPrototype.h>
+#import <JavaScriptCore/PropertyNameArray.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_method.h>
-#import <runtime/Error.h>
-#import <runtime/FunctionPrototype.h>
-#import <runtime/PropertyNameArray.h>
 #import <wtf/NeverDestroyed.h>
 
 extern "C" {

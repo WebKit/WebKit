@@ -33,10 +33,9 @@
 #include "DOMJITHelpers.h"
 #include "JSDOMWrapper.h"
 #include "Node.h"
-#include <interpreter/FrameTracers.h>
-#include <jit/Snippet.h>
-#include <jit/SnippetParams.h>
-
+#include <JavaScriptCore/FrameTracers.h>
+#include <JavaScriptCore/Snippet.h>
+#include <JavaScriptCore/SnippetParams.h>
 
 namespace WebCore {
 using namespace JSC;

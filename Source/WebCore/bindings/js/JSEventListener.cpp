@@ -33,10 +33,10 @@
 #include "JSMainThreadExecStateInstrumentation.h"
 #include "ScriptController.h"
 #include "WorkerGlobalScope.h"
-#include <runtime/ExceptionHelpers.h>
-#include <runtime/JSLock.h>
-#include <runtime/VMEntryScope.h>
-#include <runtime/Watchdog.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/VMEntryScope.h>
+#include <JavaScriptCore/Watchdog.h>
 #include <wtf/Ref.h>
 
 

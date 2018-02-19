@@ -29,8 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBIndex.h"
-#include <heap/HeapInlines.h>
-
+#include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {
 using namespace JSC;

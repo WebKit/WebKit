@@ -32,7 +32,7 @@
 #include "EventTarget.h"
 #include "ServiceWorkerData.h"
 #include "URL.h"
-#include <heap/Strong.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {

@@ -24,7 +24,7 @@
 #include "ColorSpace.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-#include <runtime/Uint8ClampedArray.h>
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <heap/MarkingConstraint.h>
+#include <JavaScriptCore/MarkingConstraint.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 

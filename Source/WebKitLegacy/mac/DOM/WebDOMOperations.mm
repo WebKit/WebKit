@@ -40,6 +40,8 @@
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSCJSValue.h>
+#import <JavaScriptCore/JSLock.h>
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
@@ -55,8 +57,6 @@
 #import <WebCore/markup.h>
 #import <WebKitLegacy/DOMExtensions.h>
 #import <WebKitLegacy/DOMHTML.h>
-#import <runtime/JSCJSValue.h>
-#import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;

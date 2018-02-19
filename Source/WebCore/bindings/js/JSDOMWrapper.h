@@ -23,7 +23,7 @@
 
 #include "JSDOMGlobalObject.h"
 #include "NodeConstants.h"
-#include <runtime/JSDestructibleObject.h>
+#include <JavaScriptCore/JSDestructibleObject.h>
 
 namespace WebCore {
 

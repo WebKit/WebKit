@@ -35,8 +35,8 @@
 #include "PluginProxy.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <JavaScriptCore/JSObject.h>
 #include <WebCore/FileSystem.h>
-#include <runtime/JSObject.h>
 
 using namespace WebCore;
 

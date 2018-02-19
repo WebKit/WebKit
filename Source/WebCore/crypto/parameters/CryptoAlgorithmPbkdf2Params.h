@@ -27,8 +27,8 @@
 
 #include "BufferSource.h"
 #include "CryptoAlgorithmParameters.h"
-#include <heap/Strong.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)

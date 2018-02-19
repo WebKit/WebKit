@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <inspector/InjectedScriptHost.h>
+#include <JavaScriptCore/InjectedScriptHost.h>
 
 namespace WebCore {
 

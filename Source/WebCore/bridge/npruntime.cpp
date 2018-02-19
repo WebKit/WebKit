@@ -32,7 +32,7 @@
 #include "npruntime_priv.h"
 
 #include "c_utility.h"
-#include <runtime/Identifier.h>
+#include <JavaScriptCore/Identifier.h>
 #include <wtf/Assertions.h>
 
 #pragma GCC visibility push(default)

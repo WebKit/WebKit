@@ -26,7 +26,7 @@
 #pragma once
 
 #include "SecurityOrigin.h"
-#include <heap/ThreadLocalCache.h>
+#include <JavaScriptCore/ThreadLocalCache.h>
 
 namespace WebCore {
 

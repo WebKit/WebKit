@@ -51,11 +51,11 @@
 #include "TextTrackList.h"
 #include "TimeRanges.h"
 #include "VideoTrackList.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/VM.h>
 #include <limits>
 #include <map>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSLock.h>
-#include <runtime/VM.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {

@@ -28,10 +28,10 @@
 
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
+#import <JavaScriptCore/RegularExpression.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
-#import <yarr/RegularExpression.h>
 
 namespace WebKit {
 

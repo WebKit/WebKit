@@ -215,10 +215,11 @@
 #include "XPathExpression.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/RegularExpression.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/VM.h>
 #include <ctime>
-#include <inspector/ConsoleMessage.h>
-#include <inspector/ScriptCallStack.h>
-#include <runtime/VM.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -227,7 +228,6 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextStream.h>
-#include <yarr/RegularExpression.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionEvent.h"

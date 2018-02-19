@@ -33,7 +33,7 @@
 
 #include "Document.h"
 #include "SubtleCrypto.h"
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
 #if OS(DARWIN)

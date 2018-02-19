@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Event.h"
-#include <bindings/ScriptValue.h>
+#include <JavaScriptCore/ScriptValue.h>
 
 namespace WebCore {
 

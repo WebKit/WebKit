@@ -27,7 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
-#include <runtime/JSONObject.h>
+#include <JavaScriptCore/JSONObject.h>
 
 namespace WebCore {
 

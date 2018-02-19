@@ -27,7 +27,7 @@
 #include "JSDOMMapLike.h"
 
 #include "WebCoreJSClientData.h"
-#include <runtime/CatchScope.h>
+#include <JavaScriptCore/CatchScope.h>
 
 namespace WebCore {
 

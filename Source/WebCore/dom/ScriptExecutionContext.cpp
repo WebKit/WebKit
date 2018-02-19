@@ -54,14 +54,13 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
 #include "WorkerThread.h"
-#include <heap/StrongInlines.h>
-#include <inspector/ScriptCallStack.h>
-#include <runtime/CatchScope.h>
-#include <runtime/Exception.h>
-#include <runtime/JSPromise.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSPromise.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
-
 
 namespace WebCore {
 using namespace Inspector;

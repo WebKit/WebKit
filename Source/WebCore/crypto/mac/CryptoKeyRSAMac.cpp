@@ -35,8 +35,8 @@
 #include "CryptoKeyRSAComponents.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <heap/HeapInlines.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

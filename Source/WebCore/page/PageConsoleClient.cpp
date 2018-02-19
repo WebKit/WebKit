@@ -46,12 +46,12 @@
 #include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
-#include <bindings/ScriptValue.h>
-#include <inspector/ConsoleMessage.h>
-#include <inspector/ScriptArguments.h>
-#include <inspector/ScriptCallStack.h>
-#include <inspector/ScriptCallStackFactory.h>
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/ScriptArguments.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <JavaScriptCore/ScriptValue.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)

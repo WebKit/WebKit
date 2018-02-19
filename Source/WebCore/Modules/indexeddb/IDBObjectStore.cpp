@@ -46,11 +46,10 @@
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "SerializedScriptValue.h"
-#include <heap/HeapInlines.h>
-#include <runtime/CatchScope.h>
-#include <runtime/JSCJSValueInlines.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Locker.h>
-
 
 namespace WebCore {
 using namespace JSC;

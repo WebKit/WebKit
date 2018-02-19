@@ -35,7 +35,7 @@
 #include "JSMainThreadExecState.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
-#include <runtime/JSLock.h>
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

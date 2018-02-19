@@ -34,9 +34,9 @@
 
 #include "InspectorWebAgentBase.h"
 #include "LayoutRect.h"
-#include <inspector/InspectorBackendDispatchers.h>
-#include <inspector/InspectorFrontendDispatchers.h>
-#include <inspector/ScriptDebugListener.h>
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/ScriptDebugListener.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 

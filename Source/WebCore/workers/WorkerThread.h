@@ -26,8 +26,8 @@
 #pragma once
 
 #include "WorkerRunLoop.h"
+#include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
-#include <runtime/RuntimeFlags.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>

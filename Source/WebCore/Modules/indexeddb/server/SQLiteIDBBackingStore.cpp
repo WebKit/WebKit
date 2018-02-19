@@ -48,14 +48,13 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "ThreadSafeDataBuffer.h"
-#include <heap/HeapInlines.h>
-#include <heap/StrongInlines.h>
-#include <runtime/AuxiliaryBarrierInlines.h>
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/StructureInlines.h>
+#include <JavaScriptCore/AuxiliaryBarrierInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/NeverDestroyed.h>
-
 
 namespace WebCore {
 using namespace JSC;

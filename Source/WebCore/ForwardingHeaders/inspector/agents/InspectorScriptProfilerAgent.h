@@ -1,4 +1,0 @@
-#ifndef WebCore_FWD_InspectorScriptProfilerAgent_h
-#define WebCore_FWD_InspectorScriptProfilerAgent_h
-#include <JavaScriptCore/InspectorScriptProfilerAgent.h>
-#endif

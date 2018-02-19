@@ -181,7 +181,7 @@
 
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
-#include <runtime/JSExportMacros.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 

@@ -40,9 +40,9 @@
 #include "UserContentTypes.h"
 #include "UserStyleSheet.h"
 #include "UserStyleSheetTypes.h"
-#include <heap/HeapInlines.h>
-#include <runtime/JSCellInlines.h>
-#include <runtime/StructureInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/Language.h>
 
 namespace WebCore {

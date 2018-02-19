@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Event.h"
-#include <heap/Strong.h>
+#include <JavaScriptCore/Strong.h>
 
 namespace WebCore {
 

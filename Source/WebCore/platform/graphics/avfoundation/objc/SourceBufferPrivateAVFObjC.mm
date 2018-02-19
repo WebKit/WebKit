@@ -47,12 +47,12 @@
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 #import "WebCoreDecompressionSession.h"
 #import <AVFoundation/AVAssetTrack.h>
+#import <JavaScriptCore/TypedArrayInlines.h>
 #import <QuartzCore/CALayer.h>
 #import <map>
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
-#import <runtime/TypedArrayInlines.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/MainThread.h>

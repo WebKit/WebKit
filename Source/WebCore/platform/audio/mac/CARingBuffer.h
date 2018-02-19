@@ -29,7 +29,7 @@
 
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Lock.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>

@@ -48,6 +48,7 @@
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <Foundation/NSURLRequest.h>
+#import <JavaScriptCore/JSLock.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
@@ -60,7 +61,6 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <objc/runtime.h>
-#import <runtime/JSLock.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)

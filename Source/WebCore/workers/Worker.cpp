@@ -37,7 +37,7 @@
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
-#include <inspector/IdentifiersFactory.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

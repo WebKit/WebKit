@@ -34,12 +34,12 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
 #include "InspectorWebAgentBase.h"
-#include <inspector/InspectorBackendDispatchers.h>
-#include <inspector/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
-#include <yarr/RegularExpression.h>
 
 namespace Inspector {
 class InjectedScriptManager;

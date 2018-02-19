@@ -35,10 +35,10 @@
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
-#include <inspector/ContentSearchUtilities.h>
-#include <inspector/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <wtf/JSONValues.h>
-#include <yarr/RegularExpression.h>
 
 namespace {
 

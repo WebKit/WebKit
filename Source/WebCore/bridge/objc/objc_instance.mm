@@ -30,11 +30,11 @@
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
 #import "WebScriptObjectProtocol.h"
-#import "runtime/FunctionPrototype.h"
 #import "runtime_method.h"
-#import <runtime/Error.h>
-#import <runtime/JSLock.h>
-#import <runtime/ObjectPrototype.h>
+#import <JavaScriptCore/Error.h>
+#import <JavaScriptCore/FunctionPrototype.h>
+#import <JavaScriptCore/JSLock.h>
+#import <JavaScriptCore/ObjectPrototype.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashMap.h>
 #import <wtf/MainThread.h>

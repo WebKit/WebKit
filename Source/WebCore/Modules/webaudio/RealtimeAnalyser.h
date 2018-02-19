@@ -26,9 +26,9 @@
 
 #include "AudioArray.h"
 #include "FFTFrame.h"
+#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <memory>
-#include <runtime/Float32Array.h>
-#include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

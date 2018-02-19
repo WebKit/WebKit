@@ -51,9 +51,9 @@
 #import <AVFoundation/AVMetadataItem.h>
 #import <Foundation/NSString.h>
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/CatchScope.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <objc/runtime.h>
-#import <runtime/CatchScope.h>
 #import <wtf/text/Base64.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>

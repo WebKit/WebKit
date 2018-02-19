@@ -33,12 +33,12 @@
 #include "NetscapePluginStream.h"
 #include "PluginController.h"
 #include "ShareableBitmap.h"
+#include <JavaScriptCore/JSObject.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/URL.h>
 #include <WebCore/SharedBuffer.h>
-#include <runtime/JSObject.h>
+#include <WebCore/URL.h>
 #include <utility>
 #include <wtf/text/CString.h>
 

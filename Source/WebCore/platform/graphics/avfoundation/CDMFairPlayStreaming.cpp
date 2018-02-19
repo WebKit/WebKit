@@ -37,8 +37,8 @@
 #include "ISOTrackEncryptionBox.h"
 #include "InitDataRegistry.h"
 #include "NotImplemented.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/DataView.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/DataView.h>
 #include <wtf/Algorithms.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>

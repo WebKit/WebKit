@@ -62,7 +62,7 @@
 #include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
 #include "VisitedLinkStore.h"
-#include <heap/HeapInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)

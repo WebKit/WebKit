@@ -26,8 +26,8 @@
 #pragma once
 
 #include "CallTracerTypes.h"
-#include <inspector/InspectorProtocolObjects.h>
-#include <inspector/ScriptCallFrame.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/ScriptCallFrame.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>

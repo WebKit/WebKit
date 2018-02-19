@@ -36,8 +36,8 @@
 #include "MockMediaSourcePrivate.h"
 #include "MockTracks.h"
 #include "SourceBufferPrivateClient.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <map>
-#include <runtime/ArrayBuffer.h>
 #include <wtf/StringPrintStream.h>
 
 namespace WebCore {

@@ -1,4 +1,0 @@
-#ifndef WebCore_FWD_UnlinkedFunctionExecutable_h
-#define WebCore_FWD_UnlinkedFunctionExecutable_h
-#include <JavaScriptCore/UnlinkedFunctionExecutable.h>
-#endif

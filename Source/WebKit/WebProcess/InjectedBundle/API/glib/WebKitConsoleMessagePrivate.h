@@ -21,7 +21,7 @@
 #define WebKitConsoleMessagePrivate_h
 
 #include "WebKitConsoleMessage.h"
-#include <runtime/ConsoleTypes.h>
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

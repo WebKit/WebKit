@@ -55,7 +55,7 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetList.h"
-#include <inspector/InspectorProtocolObjects.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

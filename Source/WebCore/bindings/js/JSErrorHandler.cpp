@@ -40,8 +40,8 @@
 #include "JSEvent.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
-#include <runtime/JSLock.h>
-#include <runtime/VMEntryScope.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/VMEntryScope.h>
 #include <wtf/Ref.h>
 
 

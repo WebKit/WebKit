@@ -51,8 +51,7 @@
 #include "JSRsaKeyGenParams.h"
 #include "JSRsaOaepParams.h"
 #include "JSRsaPssParams.h"
-#include <runtime/JSONObject.h>
-
+#include <JavaScriptCore/JSONObject.h>
 
 namespace WebCore {
 using namespace JSC;

@@ -31,8 +31,8 @@
 #include "JSDOMWindowBase.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include "runtime/JSLock.h"
-#include "runtime/ObjectPrototype.h"
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/ObjectPrototype.h>
 
 namespace JSC {
 

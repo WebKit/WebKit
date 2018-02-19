@@ -59,10 +59,10 @@
 #include "WebGLLoseContext.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <heap/HeapInlines.h>
 
 namespace WebCore {
 

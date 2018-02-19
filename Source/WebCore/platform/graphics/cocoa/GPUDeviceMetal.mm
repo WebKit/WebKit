@@ -29,8 +29,8 @@
 #import "Logging.h"
 #import "WebGPULayer.h"
 
+#import <JavaScriptCore/ArrayBuffer.h>
 #import <Metal/Metal.h>
-#import <runtime/ArrayBuffer.h>
 #import <wtf/BlockObjCExceptions.h>
 
 #if ENABLE(WEBGPU)

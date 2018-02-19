@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 

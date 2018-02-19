@@ -27,8 +27,8 @@
 #define RUNTIME_FUNCTION_H_
 
 #include "BridgeJSC.h"
-#include <runtime/InternalFunction.h>
-#include <runtime/JSGlobalObject.h>
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 
 namespace JSC {
 

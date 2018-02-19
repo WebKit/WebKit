@@ -32,8 +32,8 @@
 #include "c_instance.h"
 #include "c_utility.h"
 #include "npruntime_impl.h"
-#include <runtime/JSLock.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSObject.h>
 
 namespace JSC {
 namespace Bindings {

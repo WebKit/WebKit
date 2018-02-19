@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include <heap/DeleteAllCodeEffort.h>
+#include "Timer.h"
+#include <JavaScriptCore/DeleteAllCodeEffort.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include "Timer.h"
 
 namespace WebCore {
 

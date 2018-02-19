@@ -29,9 +29,9 @@
 #include "JSNode.h"
 #include "QualifiedName.h"
 #include "ScriptController.h"
-#include <runtime/CatchScope.h>
-#include <runtime/FunctionConstructor.h>
-#include <runtime/IdentifierInlines.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/FunctionConstructor.h>
+#include <JavaScriptCore/IdentifierInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

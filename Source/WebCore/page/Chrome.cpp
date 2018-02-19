@@ -26,8 +26,8 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
-#include "FileIconLoader.h"
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "FileList.h"
 #include "FloatRect.h"
 #include "FrameLoaderClient.h"
@@ -48,7 +48,7 @@
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "WindowFeatures.h"
-#include <runtime/VM.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
 

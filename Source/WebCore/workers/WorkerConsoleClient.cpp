@@ -27,11 +27,10 @@
 #include "WorkerConsoleClient.h"
 
 #include "InspectorInstrumentation.h"
-#include <inspector/ConsoleMessage.h>
-#include <inspector/ScriptArguments.h>
-#include <inspector/ScriptCallStack.h>
-#include <inspector/ScriptCallStackFactory.h>
-
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/ScriptArguments.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 
 namespace WebCore {
 using namespace Inspector;

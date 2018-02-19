@@ -26,8 +26,8 @@
 #pragma once
 
 #include "StringAdaptors.h"
-#include <heap/HandleTypes.h>
-#include <heap/Strong.h>
+#include <JavaScriptCore/HandleTypes.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Brigand.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>

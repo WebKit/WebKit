@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <heap/HeapInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {
 

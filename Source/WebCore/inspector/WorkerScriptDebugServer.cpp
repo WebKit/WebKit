@@ -37,7 +37,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
-#include <runtime/VM.h>
+#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 

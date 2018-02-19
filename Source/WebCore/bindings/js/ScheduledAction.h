@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <heap/Strong.h>
-#include <heap/StrongInlines.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <memory>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

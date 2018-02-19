@@ -35,6 +35,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/ScriptValue.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>
@@ -69,7 +70,6 @@
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
-#include <bindings/ScriptValue.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/StringBuilder.h>
 

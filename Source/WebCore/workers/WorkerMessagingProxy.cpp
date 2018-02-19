@@ -41,11 +41,10 @@
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
 #include "WorkerInspectorProxy.h"
-#include <inspector/ScriptCallStack.h>
-#include <runtime/ConsoleTypes.h>
+#include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
-
 
 namespace WebCore {
 

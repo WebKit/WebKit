@@ -35,7 +35,7 @@
 #include "Page.h"
 #include "RenderTheme.h"
 #include "ResourceUsageThread.h"
-#include <runtime/VM.h>
+#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 

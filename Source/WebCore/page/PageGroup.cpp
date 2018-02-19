@@ -32,8 +32,8 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "StorageNamespace.h"
-#include <heap/HeapInlines.h>
-#include <runtime/StructureInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO_TRACK)

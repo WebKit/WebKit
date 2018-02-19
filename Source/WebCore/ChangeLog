@@ -1,3 +1,643 @@
+2018-02-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove WebCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182347
+
+        Reviewed by Keith Miller.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/bindings/ScriptFunctionCall.h: Removed.
+        * ForwardingHeaders/bindings/ScriptObject.h: Removed.
+        * ForwardingHeaders/bindings/ScriptValue.h: Removed.
+        * ForwardingHeaders/builtins/BuiltinNames.h: Removed.
+        * ForwardingHeaders/builtins/BuiltinUtils.h: Removed.
+        * ForwardingHeaders/builtins/JSCBuiltins.h: Removed.
+        * ForwardingHeaders/bytecode/CodeBlock.h: Removed.
+        * ForwardingHeaders/bytecode/SpeculatedType.h: Removed.
+        * ForwardingHeaders/bytecode/UnlinkedFunctionExecutable.h: Removed.
+        * ForwardingHeaders/debugger/Debugger.h: Removed.
+        * ForwardingHeaders/domjit/DOMJITAbstractHeap.h: Removed.
+        * ForwardingHeaders/domjit/DOMJITEffect.h: Removed.
+        * ForwardingHeaders/domjit/DOMJITGetterSetter.h: Removed.
+        * ForwardingHeaders/domjit/DOMJITHeapRange.h: Removed.
+        * ForwardingHeaders/domjit/DOMJITSignature.h: Removed.
+        * ForwardingHeaders/heap/BlockDirectoryInlines.h: Removed.
+        * ForwardingHeaders/heap/DeleteAllCodeEffort.h: Removed.
+        * ForwardingHeaders/heap/FastMallocAlignedMemoryAllocator.h: Removed.
+        * ForwardingHeaders/heap/GCActivityCallback.h: Removed.
+        * ForwardingHeaders/heap/GCFinalizationCallback.h: Removed.
+        * ForwardingHeaders/heap/HandleTypes.h: Removed.
+        * ForwardingHeaders/heap/Heap.h: Removed.
+        * ForwardingHeaders/heap/HeapInlines.h: Removed.
+        * ForwardingHeaders/heap/HeapObserver.h: Removed.
+        * ForwardingHeaders/heap/IncrementalSweeper.h: Removed.
+        * ForwardingHeaders/heap/LockDuringMarking.h: Removed.
+        * ForwardingHeaders/heap/MachineStackMarker.h: Removed.
+        * ForwardingHeaders/heap/MarkedBlockInlines.h: Removed.
+        * ForwardingHeaders/heap/MarkingConstraint.h: Removed.
+        * ForwardingHeaders/heap/RunningScope.h: Removed.
+        * ForwardingHeaders/heap/SimpleMarkingConstraint.h: Removed.
+        * ForwardingHeaders/heap/SlotVisitor.h: Removed.
+        * ForwardingHeaders/heap/SlotVisitorInlines.h: Removed.
+        * ForwardingHeaders/heap/Strong.h: Removed.
+        * ForwardingHeaders/heap/StrongInlines.h: Removed.
+        * ForwardingHeaders/heap/SubspaceInlines.h: Removed.
+        * ForwardingHeaders/heap/ThreadLocalCache.h: Removed.
+        * ForwardingHeaders/heap/Weak.h: Removed.
+        * ForwardingHeaders/heap/WeakInlines.h: Removed.
+        * ForwardingHeaders/inspector/ConsoleMessage.h: Removed.
+        * ForwardingHeaders/inspector/ContentSearchUtilities.h: Removed.
+        * ForwardingHeaders/inspector/IdentifiersFactory.h: Removed.
+        * ForwardingHeaders/inspector/InjectedScript.h: Removed.
+        * ForwardingHeaders/inspector/InjectedScriptBase.h: Removed.
+        * ForwardingHeaders/inspector/InjectedScriptHost.h: Removed.
+        * ForwardingHeaders/inspector/InjectedScriptManager.h: Removed.
+        * ForwardingHeaders/inspector/InjectedScriptModule.h: Removed.
+        * ForwardingHeaders/inspector/InspectorAgentBase.h: Removed.
+        * ForwardingHeaders/inspector/InspectorAgentRegistry.h: Removed.
+        * ForwardingHeaders/inspector/InspectorBackendDispatcher.h: Removed.
+        * ForwardingHeaders/inspector/InspectorBackendDispatchers.h: Removed.
+        * ForwardingHeaders/inspector/InspectorEnvironment.h: Removed.
+        * ForwardingHeaders/inspector/InspectorFrontendChannel.h: Removed.
+        * ForwardingHeaders/inspector/InspectorFrontendDispatchers.h: Removed.
+        * ForwardingHeaders/inspector/InspectorFrontendRouter.h: Removed.
+        * ForwardingHeaders/inspector/InspectorProtocolObjects.h: Removed.
+        * ForwardingHeaders/inspector/InspectorProtocolTypes.h: Removed.
+        * ForwardingHeaders/inspector/PerGlobalObjectWrapperWorld.h: Removed.
+        * ForwardingHeaders/inspector/ScriptArguments.h: Removed.
+        * ForwardingHeaders/inspector/ScriptBreakpoint.h: Removed.
+        * ForwardingHeaders/inspector/ScriptCallFrame.h: Removed.
+        * ForwardingHeaders/inspector/ScriptCallStack.h: Removed.
+        * ForwardingHeaders/inspector/ScriptCallStackFactory.h: Removed.
+        * ForwardingHeaders/inspector/ScriptDebugListener.h: Removed.
+        * ForwardingHeaders/inspector/ScriptDebugServer.h: Removed.
+        * ForwardingHeaders/inspector/agents/InspectorAgent.h: Removed.
+        * ForwardingHeaders/inspector/agents/InspectorConsoleAgent.h: Removed.
+        * ForwardingHeaders/inspector/agents/InspectorDebuggerAgent.h: Removed.
+        * ForwardingHeaders/inspector/agents/InspectorHeapAgent.h: Removed.
+        * ForwardingHeaders/inspector/agents/InspectorRuntimeAgent.h: Removed.
+        * ForwardingHeaders/inspector/agents/InspectorScriptProfilerAgent.h: Removed.
+        * ForwardingHeaders/interpreter/CallFrame.h: Removed.
+        * ForwardingHeaders/interpreter/FrameTracers.h: Removed.
+        * ForwardingHeaders/interpreter/ShadowChicken.h: Removed.
+        * ForwardingHeaders/interpreter/StackVisitor.h: Removed.
+        * ForwardingHeaders/jit/JITCode.h: Removed.
+        * ForwardingHeaders/jit/JITMathICForwards.h: Removed.
+        * ForwardingHeaders/jit/Snippet.h: Removed.
+        * ForwardingHeaders/jit/SnippetParams.h: Removed.
+        * ForwardingHeaders/jit/SpillRegistersMode.h: Removed.
+        * ForwardingHeaders/masm/X86Assembler.h: Removed.
+        * ForwardingHeaders/parser/ParserError.h: Removed.
+        * ForwardingHeaders/parser/SourceCode.h: Removed.
+        * ForwardingHeaders/parser/SourceProvider.h: Removed.
+        * ForwardingHeaders/parser/SourceProviderCache.h: Removed.
+        * ForwardingHeaders/profiler/ProfilerDatabase.h: Removed.
+        * ForwardingHeaders/runtime/ArgList.h: Removed.
+        * ForwardingHeaders/runtime/ArrayBuffer.h: Removed.
+        * ForwardingHeaders/runtime/ArrayBufferView.h: Removed.
+        * ForwardingHeaders/runtime/ArrayPrototype.h: Removed.
+        * ForwardingHeaders/runtime/AuxiliaryBarrierInlines.h: Removed.
+        * ForwardingHeaders/runtime/BooleanObject.h: Removed.
+        * ForwardingHeaders/runtime/CallData.h: Removed.
+        * ForwardingHeaders/runtime/CatchScope.h: Removed.
+        * ForwardingHeaders/runtime/CommonIdentifiers.h: Removed.
+        * ForwardingHeaders/runtime/Completion.h: Removed.
+        * ForwardingHeaders/runtime/ConfigFile.h: Removed.
+        * ForwardingHeaders/runtime/ConsoleClient.h: Removed.
+        * ForwardingHeaders/runtime/ConsoleTypes.h: Removed.
+        * ForwardingHeaders/runtime/ConstructAbility.h: Removed.
+        * ForwardingHeaders/runtime/ConstructData.h: Removed.
+        * ForwardingHeaders/runtime/DataView.h: Removed.
+        * ForwardingHeaders/runtime/DateInstance.h: Removed.
+        * ForwardingHeaders/runtime/Error.h: Removed.
+        * ForwardingHeaders/runtime/ErrorHandlingScope.h: Removed.
+        * ForwardingHeaders/runtime/ErrorInstance.h: Removed.
+        * ForwardingHeaders/runtime/ErrorPrototype.h: Removed.
+        * ForwardingHeaders/runtime/Exception.h: Removed.
+        * ForwardingHeaders/runtime/ExceptionHelpers.h: Removed.
+        * ForwardingHeaders/runtime/Float32Array.h: Removed.
+        * ForwardingHeaders/runtime/Float64Array.h: Removed.
+        * ForwardingHeaders/runtime/FunctionConstructor.h: Removed.
+        * ForwardingHeaders/runtime/FunctionExecutable.h: Removed.
+        * ForwardingHeaders/runtime/FunctionPrototype.h: Removed.
+        * ForwardingHeaders/runtime/HashMapImpl.h: Removed.
+        * ForwardingHeaders/runtime/Identifier.h: Removed.
+        * ForwardingHeaders/runtime/IdentifierInlines.h: Removed.
+        * ForwardingHeaders/runtime/InitializeThreading.h: Removed.
+        * ForwardingHeaders/runtime/Int16Array.h: Removed.
+        * ForwardingHeaders/runtime/Int32Array.h: Removed.
+        * ForwardingHeaders/runtime/Int8Array.h: Removed.
+        * ForwardingHeaders/runtime/InternalFunction.h: Removed.
+        * ForwardingHeaders/runtime/Intrinsic.h: Removed.
+        * ForwardingHeaders/runtime/IterationKind.h: Removed.
+        * ForwardingHeaders/runtime/IteratorOperations.h: Removed.
+        * ForwardingHeaders/runtime/IteratorPrototype.h: Removed.
+        * ForwardingHeaders/runtime/JSAPIValueWrapper.h: Removed.
+        * ForwardingHeaders/runtime/JSArray.h: Removed.
+        * ForwardingHeaders/runtime/JSArrayBuffer.h: Removed.
+        * ForwardingHeaders/runtime/JSArrayBufferView.h: Removed.
+        * ForwardingHeaders/runtime/JSCInlines.h: Removed.
+        * ForwardingHeaders/runtime/JSCJSValue.h: Removed.
+        * ForwardingHeaders/runtime/JSCJSValueInlines.h: Removed.
+        * ForwardingHeaders/runtime/JSCallee.h: Removed.
+        * ForwardingHeaders/runtime/JSCell.h: Removed.
+        * ForwardingHeaders/runtime/JSCellInlines.h: Removed.
+        * ForwardingHeaders/runtime/JSDataView.h: Removed.
+        * ForwardingHeaders/runtime/JSDestructibleObject.h: Removed.
+        * ForwardingHeaders/runtime/JSDestructibleObjectHeapCellType.h: Removed.
+        * ForwardingHeaders/runtime/JSExportMacros.h: Removed.
+        * ForwardingHeaders/runtime/JSFunction.h: Removed.
+        * ForwardingHeaders/runtime/JSGlobalObject.h: Removed.
+        * ForwardingHeaders/runtime/JSGlobalObjectInlines.h: Removed.
+        * ForwardingHeaders/runtime/JSInternalPromise.h: Removed.
+        * ForwardingHeaders/runtime/JSInternalPromiseDeferred.h: Removed.
+        * ForwardingHeaders/runtime/JSLock.h: Removed.
+        * ForwardingHeaders/runtime/JSMap.h: Removed.
+        * ForwardingHeaders/runtime/JSMapIterator.h: Removed.
+        * ForwardingHeaders/runtime/JSModuleLoader.h: Removed.
+        * ForwardingHeaders/runtime/JSModuleRecord.h: Removed.
+        * ForwardingHeaders/runtime/JSNativeStdFunction.h: Removed.
+        * ForwardingHeaders/runtime/JSONObject.h: Removed.
+        * ForwardingHeaders/runtime/JSObject.h: Removed.
+        * ForwardingHeaders/runtime/JSObjectInlines.h: Removed.
+        * ForwardingHeaders/runtime/JSPromise.h: Removed.
+        * ForwardingHeaders/runtime/JSPromiseConstructor.h: Removed.
+        * ForwardingHeaders/runtime/JSPromiseDeferred.h: Removed.
+        * ForwardingHeaders/runtime/JSProxy.h: Removed.
+        * ForwardingHeaders/runtime/JSRunLoopTimer.h: Removed.
+        * ForwardingHeaders/runtime/JSScriptFetchParameters.h: Removed.
+        * ForwardingHeaders/runtime/JSScriptFetcher.h: Removed.
+        * ForwardingHeaders/runtime/JSSegmentedVariableObjectHeapCellType.h: Removed.
+        * ForwardingHeaders/runtime/JSSet.h: Removed.
+        * ForwardingHeaders/runtime/JSSetIterator.h: Removed.
+        * ForwardingHeaders/runtime/JSSourceCode.h: Removed.
+        * ForwardingHeaders/runtime/JSString.h: Removed.
+        * ForwardingHeaders/runtime/JSTypedArrays.h: Removed.
+        * ForwardingHeaders/runtime/JSWithScope.h: Removed.
+        * ForwardingHeaders/runtime/Lookup.h: Removed.
+        * ForwardingHeaders/runtime/MapBase.h: Removed.
+        * ForwardingHeaders/runtime/MapData.h: Removed.
+        * ForwardingHeaders/runtime/MapDataInlines.h: Removed.
+        * ForwardingHeaders/runtime/MatchResult.h: Removed.
+        * ForwardingHeaders/runtime/Microtask.h: Removed.
+        * ForwardingHeaders/runtime/ObjectConstructor.h: Removed.
+        * ForwardingHeaders/runtime/ObjectPrototype.h: Removed.
+        * ForwardingHeaders/runtime/Operations.h: Removed.
+        * ForwardingHeaders/runtime/PrivateName.h: Removed.
+        * ForwardingHeaders/runtime/PromiseDeferredTimer.h: Removed.
+        * ForwardingHeaders/runtime/PropertyNameArray.h: Removed.
+        * ForwardingHeaders/runtime/Protect.h: Removed.
+        * ForwardingHeaders/runtime/RegExp.h: Removed.
+        * ForwardingHeaders/runtime/RegExpObject.h: Removed.
+        * ForwardingHeaders/runtime/RuntimeFlags.h: Removed.
+        * ForwardingHeaders/runtime/SamplingProfiler.h: Removed.
+        * ForwardingHeaders/runtime/ScriptFetchParameters.h: Removed.
+        * ForwardingHeaders/runtime/ScriptFetcher.h: Removed.
+        * ForwardingHeaders/runtime/StringObject.h: Removed.
+        * ForwardingHeaders/runtime/StringPrototype.h: Removed.
+        * ForwardingHeaders/runtime/Structure.h: Removed.
+        * ForwardingHeaders/runtime/StructureChain.h: Removed.
+        * ForwardingHeaders/runtime/StructureInlines.h: Removed.
+        * ForwardingHeaders/runtime/Symbol.h: Removed.
+        * ForwardingHeaders/runtime/SymbolTable.h: Removed.
+        * ForwardingHeaders/runtime/ThrowScope.h: Removed.
+        * ForwardingHeaders/runtime/TypedArrayController.h: Removed.
+        * ForwardingHeaders/runtime/TypedArrayInlines.h: Removed.
+        * ForwardingHeaders/runtime/TypedArrays.h: Removed.
+        * ForwardingHeaders/runtime/Uint16Array.h: Removed.
+        * ForwardingHeaders/runtime/Uint32Array.h: Removed.
+        * ForwardingHeaders/runtime/Uint8Array.h: Removed.
+        * ForwardingHeaders/runtime/Uint8ClampedArray.h: Removed.
+        * ForwardingHeaders/runtime/VM.h: Removed.
+        * ForwardingHeaders/runtime/VMEntryScope.h: Removed.
+        * ForwardingHeaders/runtime/Watchdog.h: Removed.
+        * ForwardingHeaders/runtime/WeakGCMap.h: Removed.
+        * ForwardingHeaders/runtime/WeakGCMapInlines.h: Removed.
+        * ForwardingHeaders/runtime/WriteBarrier.h: Removed.
+        * ForwardingHeaders/wasm/WasmModule.h: Removed.
+        * ForwardingHeaders/wasm/js/JSWebAssemblyModule.h: Removed.
+        * ForwardingHeaders/yarr/RegularExpression.h: Removed.
+        * ForwardingHeaders/yarr/Yarr.h: Removed.
+        * ForwardingHeaders/yarr/YarrInterpreter.h: Removed.
+        * ForwardingHeaders/yarr/YarrJIT.h: Removed.
+        * ForwardingHeaders/yarr/YarrPattern.h: Removed.
+        * Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm:
+        * Modules/encryptedmedia/MediaKeyMessageEvent.h:
+        * Modules/encryptedmedia/MediaKeyMessageEventInit.h:
+        * Modules/encryptedmedia/MediaKeyStatusMap.h:
+        * Modules/encryptedmedia/legacy/LegacyCDM.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h:
+        * Modules/fetch/FetchBody.cpp:
+        * Modules/fetch/FetchRequestInit.h:
+        * Modules/fetch/FetchResponse.h:
+        * Modules/indexeddb/IDBCursor.cpp:
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursorWithValue.cpp:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBIndex.cpp:
+        * Modules/indexeddb/IDBKey.cpp:
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        * Modules/mediasource/SourceBuffer.cpp:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        * Modules/webaudio/AudioBuffer.cpp:
+        * Modules/webaudio/AudioBuffer.h:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        * Modules/webaudio/WaveShaperProcessor.h:
+        * Modules/webauthn/AuthenticatorResponse.h:
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocketChannel.cpp:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        * Modules/webvr/VREyeParameters.h:
+        * Modules/webvr/VRFrameData.h:
+        * Modules/webvr/VRPose.h:
+        * Modules/webvr/VRStageParameters.h:
+        * PlatformWin.cmake:
+        * bindings/IDLTypes.h:
+        * bindings/js/BufferSource.h:
+        * bindings/js/CachedScriptFetcher.h:
+        * bindings/js/CachedScriptSourceProvider.h:
+        * bindings/js/CallTracerTypes.h:
+        * bindings/js/CommonVM.cpp:
+        * bindings/js/DOMGCOutputConstraint.cpp:
+        * bindings/js/DOMGCOutputConstraint.h:
+        * bindings/js/GCController.cpp:
+        * bindings/js/GCController.h:
+        * bindings/js/IDBBindingUtilities.cpp:
+        * bindings/js/JSCallbackData.cpp:
+        * bindings/js/JSCallbackData.h:
+        * bindings/js/JSCustomElementInterface.cpp:
+        * bindings/js/JSCustomElementInterface.h:
+        * bindings/js/JSCustomEventCustom.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMBuiltinConstructorBase.cpp:
+        * bindings/js/JSDOMConstructorBase.cpp:
+        * bindings/js/JSDOMConvertBase.h:
+        * bindings/js/JSDOMConvertBufferSource.h:
+        * bindings/js/JSDOMConvertDate.cpp:
+        * bindings/js/JSDOMConvertInterface.h:
+        * bindings/js/JSDOMConvertJSON.h:
+        * bindings/js/JSDOMConvertNumbers.cpp:
+        * bindings/js/JSDOMConvertNumbers.h:
+        * bindings/js/JSDOMConvertObject.h:
+        * bindings/js/JSDOMConvertRecord.h:
+        * bindings/js/JSDOMConvertSequences.h:
+        * bindings/js/JSDOMConvertStrings.cpp:
+        * bindings/js/JSDOMConvertUnion.h:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        * bindings/js/JSDOMExceptionHandling.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        * bindings/js/JSDOMGuardedObject.h:
+        * bindings/js/JSDOMIterator.cpp:
+        * bindings/js/JSDOMIterator.h:
+        * bindings/js/JSDOMMapLike.cpp:
+        * bindings/js/JSDOMMapLike.h:
+        * bindings/js/JSDOMPromise.cpp:
+        * bindings/js/JSDOMPromise.h:
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        * bindings/js/JSDOMPromiseDeferred.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowProxy.cpp:
+        * bindings/js/JSDOMWindowProxy.h:
+        * bindings/js/JSDOMWrapper.cpp:
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/JSDOMWrapperCache.cpp:
+        * bindings/js/JSDOMWrapperCache.h:
+        * bindings/js/JSDynamicDowncast.h:
+        * bindings/js/JSErrorHandler.cpp:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSEventListener.h:
+        * bindings/js/JSHTMLElementCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSIDBCursorWithValueCustom.cpp:
+        * bindings/js/JSIDBIndexCustom.cpp:
+        * bindings/js/JSImageDataCustom.cpp:
+        * bindings/js/JSLazyEventListener.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/js/JSMainThreadExecStateInstrumentation.h:
+        * bindings/js/JSMessageChannelCustom.cpp:
+        * bindings/js/JSMessageEventCustom.cpp:
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        * bindings/js/JSPopStateEventCustom.cpp:
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        * bindings/js/ReadableStreamDefaultController.h:
+        * bindings/js/ScheduledAction.cpp:
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCachedFrameData.cpp:
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptControllerMac.mm:
+        * bindings/js/ScriptModuleLoader.cpp:
+        * bindings/js/ScriptModuleLoader.h:
+        * bindings/js/ScriptSourceCode.h:
+        * bindings/js/ScriptState.cpp:
+        * bindings/js/ScriptWrappable.h:
+        * bindings/js/ScriptWrappableInlines.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/js/StructuredClone.cpp:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/js/WebCoreJSClientData.cpp:
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        * bindings/js/WebCoreTypedArrayController.h:
+        * bindings/js/WorkerScriptController.cpp:
+        * bindings/js/WorkerScriptController.h:
+        * bridge/NP_jsobject.cpp:
+        * bridge/c/CRuntimeObject.cpp:
+        * bridge/c/c_class.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/c/c_runtime.cpp:
+        * bridge/c/c_utility.cpp:
+        * bridge/c/c_utility.h:
+        * bridge/jsc/BridgeJSC.cpp:
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/npruntime.cpp:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/WebScriptObject.mm:
+        * bridge/objc/WebScriptObjectPrivate.h:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        * bridge/runtime_object.h:
+        * bridge/runtime_root.cpp:
+        * bridge/runtime_root.h:
+        * crypto/SubtleCrypto.cpp:
+        * crypto/SubtleCrypto.h:
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        * crypto/keys/CryptoRsaKeyAlgorithm.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        * crypto/parameters/CryptoAlgorithmEcdsaParams.h:
+        * crypto/parameters/CryptoAlgorithmHkdfParams.h:
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmPbkdf2Params.h:
+        * crypto/parameters/CryptoAlgorithmRsaHashedImportParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaHashedKeyGenParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h:
+        * css/CSSFontFaceSource.h:
+        * css/DOMMatrixReadOnly.cpp:
+        * css/DOMMatrixReadOnly.h:
+        * css/FontFace.cpp:
+        * dom/CustomElementReactionQueue.cpp:
+        * dom/CustomElementRegistry.cpp:
+        * dom/CustomEvent.cpp:
+        * dom/CustomEvent.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/ErrorEvent.cpp:
+        * dom/ErrorEvent.h:
+        * dom/LoadableScript.h:
+        * dom/MessageEvent.cpp:
+        * dom/MessageEvent.h:
+        * dom/ModuleFetchParameters.h:
+        * dom/PopStateEvent.cpp:
+        * dom/PopStateEvent.h:
+        * dom/PromiseRejectionEvent.cpp:
+        * dom/PromiseRejectionEvent.h:
+        * dom/RejectedPromiseTracker.cpp:
+        * dom/RejectedPromiseTracker.h:
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        * dom/TextEncoder.cpp:
+        * dom/TextEncoder.h:
+        * domjit/DOMJITHelpers.h:
+        * domjit/DOMJITIDLTypeFilter.h:
+        * domjit/JSDocumentDOMJIT.cpp:
+        * domjit/JSNodeDOMJIT.cpp:
+        * fileapi/BlobBuilder.cpp:
+        * fileapi/FileReader.cpp:
+        * fileapi/FileReaderLoader.cpp:
+        * fileapi/FileReaderSync.cpp:
+        * html/BaseTextInputType.cpp:
+        * html/EmailInputType.cpp:
+        * html/HTMLAllCollection.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLImageLoader.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * html/ImageData.cpp:
+        * html/ImageData.h:
+        * html/MediaEncryptedEventInit.h:
+        * html/WebKitMediaKeyError.h:
+        * html/canvas/WebGLAny.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGPUBuffer.cpp:
+        * html/canvas/WebGPURenderingContext.cpp:
+        * html/canvas/WebGPURenderingContext.h:
+        * html/track/DataCue.cpp:
+        * html/track/DataCue.h:
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/CommandLineAPIHost.h:
+        * inspector/CommandLineAPIModule.cpp:
+        * inspector/CommandLineAPIModule.h:
+        * inspector/InspectorCanvas.cpp:
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorClient.cpp:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorOverlay.cpp:
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorShaderProgram.cpp:
+        * inspector/InspectorShaderProgram.h:
+        * inspector/InspectorStyleSheet.cpp:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorWebAgentBase.h:
+        * inspector/InstrumentingAgents.h:
+        * inspector/PageScriptDebugServer.cpp:
+        * inspector/PageScriptDebugServer.h:
+        * inspector/TimelineRecordFactory.cpp:
+        * inspector/WebInjectedScriptHost.h:
+        * inspector/WebInjectedScriptManager.h:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerScriptDebugServer.cpp:
+        * inspector/WorkerScriptDebugServer.h:
+        * inspector/WorkerToPageFrontendChannel.h:
+        * inspector/agents/InspectorApplicationCacheAgent.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * inspector/agents/InspectorCSSAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        * inspector/agents/InspectorDOMStorageAgent.h:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        * inspector/agents/InspectorDatabaseAgent.h:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        * inspector/agents/InspectorLayerTreeAgent.h:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        * inspector/agents/InspectorMemoryAgent.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorWorkerAgent.h:
+        * inspector/agents/WebConsoleAgent.cpp:
+        * inspector/agents/WebConsoleAgent.h:
+        * inspector/agents/WebDebuggerAgent.h:
+        * inspector/agents/WebHeapAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.h:
+        * inspector/agents/worker/ServiceWorkerAgent.h:
+        * inspector/agents/worker/WorkerDebuggerAgent.cpp:
+        * inspector/agents/worker/WorkerRuntimeAgent.cpp:
+        * inspector/agents/worker/WorkerRuntimeAgent.h:
+        * loader/EmptyClients.cpp:
+        * page/CaptionUserPreferences.cpp:
+        * page/Chrome.cpp:
+        * page/ChromeClient.h:
+        * page/Crypto.cpp:
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        * page/OriginThreadLocalCache.h:
+        * page/PageConsoleClient.cpp:
+        * page/PageConsoleClient.h:
+        * page/PageDebuggable.cpp:
+        * page/PageGroup.cpp:
+        * page/SettingsBase.h:
+        * page/UserContentController.cpp:
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        * page/csp/ContentSecurityPolicy.cpp:
+        * page/ios/FrameIOS.mm:
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        * platform/MediaSample.h:
+        * platform/SerializedPlatformRepresentation.h:
+        * platform/SharedBuffer.h:
+        * platform/audio/mac/CARingBuffer.h:
+        * platform/cocoa/SharedBufferCocoa.mm:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/LegacyCDMSession.h:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/cocoa/GPUDeviceMetal.mm:
+        * platform/graphics/filters/FEBlend.cpp:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        * platform/graphics/filters/FEComposite.cpp:
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        * platform/graphics/filters/FETurbulence.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/iso/ISOBox.cpp:
+        * platform/graphics/iso/ISOOriginalFormatBox.cpp:
+        * platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp:
+        * platform/graphics/iso/ISOSchemeInformationBox.cpp:
+        * platform/graphics/iso/ISOSchemeTypeBox.cpp:
+        * platform/graphics/iso/ISOTrackEncryptionBox.cpp:
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        * platform/graphics/win/ImageBufferDataDirect2D.h:
+        * platform/ios/wak/WebCoreThread.mm:
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        * platform/mac/StringUtilities.mm:
+        * platform/mock/mediasource/MockBox.cpp:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        * svg/graphics/SVGImage.cpp:
+        * testing/GCObservation.cpp:
+        * testing/GCObservation.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/LegacyMockCDM.cpp:
+        * testing/MockCDMFactory.cpp:
+        * testing/js/WebCoreTestSupport.cpp:
+        * workers/Worker.cpp:
+        * workers/Worker.h:
+        * workers/WorkerConsoleClient.cpp:
+        * workers/WorkerConsoleClient.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerInspectorProxy.cpp:
+        * workers/WorkerMessagingProxy.cpp:
+        * workers/WorkerThread.h:
+        * workers/service/ExtendableEvent.cpp:
+        * workers/service/ServiceWorker.cpp:
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerClient.h:
+        * workers/service/context/ServiceWorkerInspectorProxy.cpp:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        * xml/XMLHttpRequest.cpp:
+
 2018-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rendering SVG images with same size as WebGL texture doesn't work correctly

@@ -41,7 +41,7 @@
 #include "PluginViewBase.h"
 #include "ScriptController.h"
 #include "Timer.h"
-#include <runtime/JSLock.h>
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 

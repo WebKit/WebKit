@@ -29,8 +29,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMExceptionHandling.h"
-#include <runtime/JSTypedArrays.h>
-
+#include <JavaScriptCore/JSTypedArrays.h>
 
 namespace WebCore {
 using namespace JSC;

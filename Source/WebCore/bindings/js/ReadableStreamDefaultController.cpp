@@ -34,10 +34,10 @@
 #if ENABLE(STREAMS_API)
 
 #include "WebCoreJSClientData.h"
-#include <heap/HeapInlines.h>
-#include <runtime/CatchScope.h>
-#include <runtime/IdentifierInlines.h>
-#include <runtime/JSObjectInlines.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 
 namespace WebCore {
 

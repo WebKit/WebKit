@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/JSCellInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
 #include <type_traits>
 
 namespace WebCore {

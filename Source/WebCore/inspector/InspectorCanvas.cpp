@@ -67,9 +67,9 @@
 #if ENABLE(WEBGPU)
 #include "WebGPURenderingContext.h"
 #endif
-#include <inspector/IdentifiersFactory.h>
-#include <inspector/ScriptCallStack.h>
-#include <inspector/ScriptCallStackFactory.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/CurrentTime.h>
 
 

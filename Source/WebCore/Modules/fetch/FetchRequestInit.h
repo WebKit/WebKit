@@ -28,7 +28,7 @@
 #include "FetchBody.h"
 #include "FetchHeaders.h"
 #include "FetchOptions.h"
-#include <runtime/JSCJSValue.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 

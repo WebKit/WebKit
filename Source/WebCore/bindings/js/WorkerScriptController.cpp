@@ -35,15 +35,14 @@
 #include "WebCoreJSClientData.h"
 #include "WorkerConsoleClient.h"
 #include "WorkerGlobalScope.h"
-#include <bindings/ScriptValue.h>
-#include <heap/GCActivityCallback.h>
-#include <heap/StrongInlines.h>
-#include <runtime/Completion.h>
-#include <runtime/Exception.h>
-#include <runtime/ExceptionHelpers.h>
-#include <runtime/JSLock.h>
-#include <runtime/PromiseDeferredTimer.h>
-
+#include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/GCActivityCallback.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/PromiseDeferredTimer.h>
+#include <JavaScriptCore/ScriptValue.h>
+#include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
 using namespace JSC;

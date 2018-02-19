@@ -28,11 +28,11 @@
 
 #include "PlatformExportMacros.h"
 #include "WebCoreJSBuiltinInternals.h"
-#include <heap/HeapInlines.h>
-#include <heap/LockDuringMarking.h>
-#include <heap/ThreadLocalCache.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/StructureInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/LockDuringMarking.h>
+#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/ThreadLocalCache.h>
 
 namespace WebCore {
 

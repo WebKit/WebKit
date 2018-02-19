@@ -56,22 +56,21 @@
 #include "WebCoreJSClientData.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include <debugger/Debugger.h>
-#include <heap/StrongInlines.h>
-#include <inspector/ScriptCallStack.h>
-#include <runtime/InitializeThreading.h>
-#include <runtime/JSFunction.h>
-#include <runtime/JSInternalPromise.h>
-#include <runtime/JSLock.h>
-#include <runtime/JSModuleRecord.h>
-#include <runtime/JSNativeStdFunction.h>
-#include <runtime/JSScriptFetchParameters.h>
-#include <runtime/JSScriptFetcher.h>
+#include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/InitializeThreading.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSInternalPromise.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSModuleRecord.h>
+#include <JavaScriptCore/JSNativeStdFunction.h>
+#include <JavaScriptCore/JSScriptFetchParameters.h>
+#include <JavaScriptCore/JSScriptFetcher.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
-
 
 namespace WebCore {
 using namespace JSC;

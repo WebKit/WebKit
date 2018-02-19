@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ScriptElementCachedScriptFetcher.h"
-#include <runtime/ConsoleTypes.h>
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/WTFString.h>
 

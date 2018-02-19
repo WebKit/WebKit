@@ -30,7 +30,7 @@
 #include "JSDOMConvertBase.h"
 #include "JSDOMWrapperCache.h"
 #include "JSDynamicDowncast.h"
-#include <runtime/JSTypedArrays.h>
+#include <JavaScriptCore/JSTypedArrays.h>
 
 namespace WebCore {
 

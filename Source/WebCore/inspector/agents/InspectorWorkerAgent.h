@@ -27,8 +27,8 @@
 
 #include "InspectorWebAgentBase.h"
 #include "WorkerInspectorProxy.h"
-#include <inspector/InspectorBackendDispatchers.h>
-#include <inspector/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

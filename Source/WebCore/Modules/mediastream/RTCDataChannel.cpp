@@ -34,8 +34,8 @@
 #include "MessageEvent.h"
 #include "RTCDataChannelHandler.h"
 #include "ScriptExecutionContext.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

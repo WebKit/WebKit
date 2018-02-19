@@ -28,7 +28,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include <runtime/Uint8Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 
 namespace WebCore {
 

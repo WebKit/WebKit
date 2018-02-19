@@ -30,7 +30,7 @@
 
 #include "JSDOMBinding.h"
 #include "c_instance.h"
-#include "runtime/ObjectPrototype.h"
+#include <JavaScriptCore/ObjectPrototype.h>
 
 namespace JSC {
 namespace Bindings {

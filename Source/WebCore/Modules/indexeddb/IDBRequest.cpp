@@ -47,7 +47,7 @@
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
-#include <heap/StrongInlines.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/Variant.h>
 

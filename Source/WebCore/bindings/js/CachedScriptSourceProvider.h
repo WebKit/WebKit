@@ -29,7 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
-#include <parser/SourceProvider.h>
+#include <JavaScriptCore/SourceProvider.h>
 
 namespace WebCore {
 

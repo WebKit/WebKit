@@ -24,7 +24,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include <runtime/ThrowScope.h>
+#include <JavaScriptCore/ThrowScope.h>
 
 namespace JSC {
 class CatchScope;

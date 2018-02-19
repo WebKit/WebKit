@@ -27,11 +27,11 @@
 #include "ISOVTTCue.h"
 
 #include "Logging.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/DataView.h>
-#include <runtime/Int8Array.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/TypedArrayInlines.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/Int8Array.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>

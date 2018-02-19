@@ -41,11 +41,11 @@
 #include "OffscreenCanvas.h"
 #include "ScriptState.h"
 #include "StringAdaptors.h"
-#include <inspector/IdentifiersFactory.h>
-#include <inspector/InjectedScript.h>
-#include <inspector/InjectedScriptManager.h>
-#include <inspector/InspectorProtocolObjects.h>
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/JSCInlines.h>
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"

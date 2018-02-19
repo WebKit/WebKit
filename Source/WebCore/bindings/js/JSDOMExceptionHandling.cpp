@@ -30,13 +30,12 @@
 #include "JSDOMWindow.h"
 #include "JSDynamicDowncast.h"
 #include "ScriptExecutionContext.h"
-#include <inspector/ScriptCallStack.h>
-#include <inspector/ScriptCallStackFactory.h>
-#include <runtime/ErrorHandlingScope.h>
-#include <runtime/Exception.h>
-#include <runtime/ExceptionHelpers.h>
+#include <JavaScriptCore/ErrorHandlingScope.h>
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/text/StringBuilder.h>
-
 
 namespace WebCore {
 using namespace JSC;

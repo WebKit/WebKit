@@ -31,7 +31,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include "WorkerRunLoop.h"
-#include <inspector/InspectorAgentBase.h>
+#include <JavaScriptCore/InspectorAgentBase.h>
 #include <wtf/NeverDestroyed.h>
 
 

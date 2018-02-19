@@ -27,7 +27,7 @@
 
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

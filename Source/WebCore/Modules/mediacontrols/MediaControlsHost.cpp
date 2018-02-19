@@ -39,7 +39,7 @@
 #include "RenderTheme.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
-#include <runtime/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {

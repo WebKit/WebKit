@@ -33,10 +33,10 @@
 #include "HWndDC.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <d2d1.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/TypedArrayInlines.h>
-#include <runtime/Uint8ClampedArray.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {

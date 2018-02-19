@@ -43,8 +43,8 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/Lookup.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/Lookup.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"

@@ -66,7 +66,7 @@
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
-#include <inspector/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
@@ -93,7 +93,7 @@
 #include "Settings.h"
 #endif
 
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>

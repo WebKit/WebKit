@@ -97,15 +97,14 @@
 #include "WebInjectedScriptManager.h"
 #include "XPathResult.h"
 #include "markup.h"
-#include <inspector/IdentifiersFactory.h>
-#include <inspector/InjectedScript.h>
-#include <inspector/InjectedScriptManager.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <pal/crypto/CryptoDigest.h>
-#include <runtime/JSCInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
 
 namespace WebCore {
 

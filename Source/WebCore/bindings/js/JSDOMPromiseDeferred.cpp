@@ -28,11 +28,10 @@
 
 #include "DOMWindow.h"
 #include "JSDOMWindow.h"
-#include <builtins/BuiltinNames.h>
-#include <runtime/Exception.h>
-#include <runtime/JSONObject.h>
-#include <runtime/JSPromiseConstructor.h>
-
+#include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/JSPromiseConstructor.h>
 
 namespace WebCore {
 using namespace JSC;

@@ -28,10 +28,10 @@
 
 #import "WebStringTruncator.h"
 
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/StringTruncator.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 

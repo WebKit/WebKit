@@ -28,8 +28,8 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include <heap/Weak.h>
-#include <heap/WeakInlines.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>

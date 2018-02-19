@@ -87,10 +87,10 @@
 #include "TimeRanges.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
+#include <JavaScriptCore/Uint8Array.h>
 #include <limits>
 #include <pal/SessionID.h>
 #include <pal/system/SleepDisabler.h>
-#include <runtime/Uint8Array.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
@@ -154,7 +154,7 @@
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 #include "JSMediaControlsHost.h"
 #include "MediaControlsHost.h"
-#include <bindings/ScriptObject.h>
+#include <JavaScriptCore/ScriptObject.h>
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

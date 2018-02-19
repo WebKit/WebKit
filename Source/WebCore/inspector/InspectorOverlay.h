@@ -33,7 +33,7 @@
 #include "LayoutRect.h"
 #include "NodeList.h"
 #include "Timer.h"
-#include <inspector/InspectorProtocolObjects.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Deque.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>

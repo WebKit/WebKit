@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
-#include <runtime/Uint8Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)

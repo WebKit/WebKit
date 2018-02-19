@@ -37,6 +37,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BitmapImage.h>
 #import <WebCore/Credential.h>
@@ -53,7 +54,6 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>

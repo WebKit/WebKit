@@ -27,9 +27,8 @@
 #include "FECompositeArithmeticNEON.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/text/TextStream.h>
-
-#include <runtime/Uint8ClampedArray.h>
 
 namespace WebCore {
 

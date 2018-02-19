@@ -30,7 +30,7 @@
 
 #include "DOMWindow.h"
 #include "JSDOMWindow.h"
-#include <runtime/JSProxy.h>
+#include <JavaScriptCore/JSProxy.h>
 
 namespace WebCore {
 

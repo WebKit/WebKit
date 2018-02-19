@@ -28,7 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "PlatformLayer.h"
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

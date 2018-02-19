@@ -28,9 +28,9 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
-#include <builtins/BuiltinNames.h>
-#include <runtime/CommonIdentifiers.h>
-#include <runtime/JSMap.h>
+#include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/CommonIdentifiers.h>
+#include <JavaScriptCore/JSMap.h>
 
 namespace WebCore {
 

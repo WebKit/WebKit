@@ -39,9 +39,9 @@
 #include "FontVariantBuilder.h"
 #include "JSFontFace.h"
 #include "StyleProperties.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/ArrayBufferView.h>
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

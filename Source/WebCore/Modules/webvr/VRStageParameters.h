@@ -24,7 +24,7 @@
  */
 #pragma once
 
-#include <runtime/Float32Array.h>
+#include <JavaScriptCore/Float32Array.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

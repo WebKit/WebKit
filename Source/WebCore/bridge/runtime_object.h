@@ -27,7 +27,7 @@
 #define KJS_RUNTIME_OBJECT_H
 
 #include "BridgeJSC.h"
-#include <runtime/JSGlobalObject.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 
 namespace JSC {
 namespace Bindings {

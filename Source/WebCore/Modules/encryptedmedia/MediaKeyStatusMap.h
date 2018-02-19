@@ -32,7 +32,7 @@
 
 #include "BufferSource.h"
 #include "MediaKeyStatus.h"
-#include <runtime/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

@@ -23,8 +23,8 @@
 #include "JSDOMConvertNumbers.h"
 
 #include "JSDOMExceptionHandling.h"
-#include <heap/HeapInlines.h>
-#include <runtime/JSCJSValueInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 

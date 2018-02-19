@@ -56,8 +56,8 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SocketProvider.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/JSLock.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(DIRECT2D)

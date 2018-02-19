@@ -40,15 +40,15 @@
 #include "ScriptSourceCode.h"
 #include "SubresourceIntegrity.h"
 #include "WebCoreJSClientData.h"
-#include <runtime/Completion.h>
-#include <runtime/JSInternalPromise.h>
-#include <runtime/JSInternalPromiseDeferred.h>
-#include <runtime/JSModuleRecord.h>
-#include <runtime/JSScriptFetchParameters.h>
-#include <runtime/JSScriptFetcher.h>
-#include <runtime/JSSourceCode.h>
-#include <runtime/JSString.h>
-#include <runtime/Symbol.h>
+#include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/JSInternalPromise.h>
+#include <JavaScriptCore/JSInternalPromiseDeferred.h>
+#include <JavaScriptCore/JSModuleRecord.h>
+#include <JavaScriptCore/JSScriptFetchParameters.h>
+#include <JavaScriptCore/JSScriptFetcher.h>
+#include <JavaScriptCore/JSSourceCode.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/Symbol.h>
 
 namespace WebCore {
 

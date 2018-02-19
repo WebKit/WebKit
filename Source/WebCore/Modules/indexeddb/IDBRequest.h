@@ -33,7 +33,7 @@
 #include "IDBError.h"
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
-#include <heap/Strong.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
 #include <wtf/Scope.h>
 

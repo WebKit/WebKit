@@ -36,7 +36,7 @@
 #include "AudioProcessingEvent.h"
 #include "Document.h"
 #include "EventNames.h"
-#include <runtime/Float32Array.h>
+#include <JavaScriptCore/Float32Array.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

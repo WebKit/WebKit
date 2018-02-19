@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <inspector/agents/InspectorConsoleAgent.h>
+#include <JavaScriptCore/InspectorConsoleAgent.h>
 
 namespace WebCore {
 

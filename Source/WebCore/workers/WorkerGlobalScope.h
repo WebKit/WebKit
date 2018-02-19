@@ -36,7 +36,7 @@
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
-#include <inspector/ConsoleMessage.h>
+#include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
 #include <pal/SessionID.h>
 

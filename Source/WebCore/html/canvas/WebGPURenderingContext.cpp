@@ -47,10 +47,10 @@
 #include "WebGPUTexture.h"
 #include "WebGPUTextureDescriptor.h"
 
-#include <runtime/ArrayBuffer.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/TypedArrayInlines.h>
-#include <runtime/Uint32Array.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
+#include <JavaScriptCore/Uint32Array.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 

@@ -43,8 +43,8 @@
 #include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
-#include <builtins/BuiltinNames.h>
-#include <bytecode/CodeBlock.h>
+#include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/CodeBlock.h>
 
 namespace WebCore {
 using namespace JSC;

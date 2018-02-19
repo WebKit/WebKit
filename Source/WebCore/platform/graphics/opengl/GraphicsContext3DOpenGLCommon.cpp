@@ -49,13 +49,13 @@
 #include "Logging.h"
 #include "TemporaryOpenGLSetting.h"
 #include "WebGLRenderingContextBase.h"
+#include <JavaScriptCore/RegularExpression.h>
 #include <cstring>
 #include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <yarr/RegularExpression.h>
 
 #if PLATFORM(IOS)
 #import <OpenGLES/ES2/glext.h>

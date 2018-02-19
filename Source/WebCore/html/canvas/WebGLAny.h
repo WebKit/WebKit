@@ -27,10 +27,10 @@
 
 #if ENABLE(WEBGL)
 
-#include <runtime/Float32Array.h>
-#include <runtime/Int32Array.h>
-#include <runtime/Uint32Array.h>
-#include <runtime/Uint8Array.h>
+#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Int32Array.h>
+#include <JavaScriptCore/Uint32Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 
 namespace JSC {
 class ExecState;

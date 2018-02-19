@@ -45,11 +45,11 @@
 #include "ScriptState.h"
 #include "TimelineRecordFactory.h"
 #include "WebConsoleAgent.h"
-#include <inspector/ConsoleMessage.h>
-#include <inspector/ScriptBreakpoint.h>
-#include <inspector/agents/InspectorDebuggerAgent.h>
-#include <inspector/agents/InspectorHeapAgent.h>
-#include <inspector/agents/InspectorScriptProfilerAgent.h>
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/InspectorDebuggerAgent.h>
+#include <JavaScriptCore/InspectorHeapAgent.h>
+#include <JavaScriptCore/InspectorScriptProfilerAgent.h>
+#include <JavaScriptCore/ScriptBreakpoint.h>
 #include <wtf/Stopwatch.h>
 
 #if PLATFORM(IOS)

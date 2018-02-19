@@ -32,7 +32,7 @@
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"
 #include "ServiceWorker.h"
-#include <bindings/ScriptValue.h>
+#include <JavaScriptCore/ScriptValue.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {

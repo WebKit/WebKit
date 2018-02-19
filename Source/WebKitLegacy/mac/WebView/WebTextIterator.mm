@@ -28,8 +28,8 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebTypesInternal.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/TextIterator.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
