@@ -338,8 +338,6 @@ private:
     static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 
-    static void statisticsClearThroughWebsiteDataRemovalCallback(void*);
-
     std::unique_ptr<TestInvocation> m_currentInvocation;
 
     bool m_verbose { false };

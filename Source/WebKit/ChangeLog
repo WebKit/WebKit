@@ -1,3 +1,53 @@
+2018-02-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        TestController should not exercise cocoa-specific resource load statistics APIs
+        https://bugs.webkit.org/show_bug.cgi?id=182355
+
+        Reviewed by Alex Christensen.
+
+        Remove the Cocoa testing SPI, since it's redundant with the C API. Also, add a couple
+        missing cookie partitioning callbacks to the C API.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsUpdateCookiePartitioning):
+        (WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetLastSeen:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetIsPrevalentResource:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsPrevalentResource:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsRegisteredAsSubFrameUnder:topFrameHost:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsRegisteredAsRedirectingTo:hostRedirectedTo:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetHadUserInteraction:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetHasHadNonRecentUserInteractionForHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsHadUserInteraction:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetIsGrandfathered:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsGrandfathered:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetSubframeUnderTopFrameOrigin:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetSubresourceUnderTopFrameOrigin:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetSubresourceUniqueRedirectTo:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetTimeToLiveUserInteraction:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetGrandfatheringTime:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetMaxStatisticsEntries:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetPruneEntriesDownTo:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsProcessStatisticsAndDataRecords]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:forHost:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:forHost:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSubmitTelemetry]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetNotifyPagesWhenTelemetryWasCaptured:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsResetToConsistentState]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
 2018-02-08  Don Olmstead  <don.olmstead@sony.com>
 
         Remove JavaScriptCore/ForwardingHeaders directory
