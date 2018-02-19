@@ -579,6 +579,8 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     }
 
     pop(0);
+
+    tearDownLeftoverPaginationRenderersIfNeeded(root);
 }
 
 void RenderTreeUpdater::tearDownTextRenderer(Text& text)
@@ -588,6 +590,18 @@ void RenderTreeUpdater::tearDownTextRenderer(Text& text)
         return;
     RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*renderer);
     text.setRenderer(nullptr);
+}
+
+void RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded(Element& root)
+{
+    if (&root != root.document().documentElement())
+        return;
+    for (auto* child = root.document().renderView()->firstChild(); child;) {
+        auto* nextSibling = child->nextSibling();
+        if (is<RenderMultiColumnFlow>(*child) || is<RenderMultiColumnSet>(*child))
+            RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*child);
+        child = nextSibling;
+    }
 }
 
 void RenderTreeUpdater::tearDownLeftoverShadowHostChildren(Element& host)

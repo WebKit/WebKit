@@ -89,6 +89,7 @@ private:
     static void tearDownRenderers(Element&, TeardownType);
     static void tearDownTextRenderer(Text&);
     static void tearDownLeftoverShadowHostChildren(Element&);
+    static void tearDownLeftoverPaginationRenderersIfNeeded(Element&);
 
     RenderView& renderView();
 

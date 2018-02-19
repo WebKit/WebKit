@@ -136,6 +136,7 @@ RenderElement::RenderElement(Document& document, RenderStyle&& style, BaseTypeFl
 RenderElement::~RenderElement()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
+    ASSERT(!m_firstChild);
 }
 
 RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, RendererCreationType creationType)
@@ -487,16 +488,16 @@ RenderPtr<RenderObject> RenderElement::takeChild(RenderTreeBuilder&, RenderObjec
 
 void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
-    auto toDestroy = takeChild(builder, oldChild);
-}
-
-void RenderElement::destroyLeftoverChildren()
-{
-    while (m_firstChild) {
-        if (auto* node = m_firstChild->node())
-            node->setRenderer(nullptr);
-        removeAndDestroyChild(*RenderTreeBuilder::current(), *m_firstChild);
+    if (is<RenderElement>(oldChild)) {
+        auto& child = downcast<RenderElement>(oldChild);
+        while (child.firstChild()) {
+            auto& firstChild = *child.firstChild();
+            if (auto* node = firstChild.node())
+                node->setRenderer(nullptr);
+            child.removeAndDestroyChild(builder, firstChild);
+        }
     }
+    auto toDestroy = takeChild(builder, oldChild);
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
