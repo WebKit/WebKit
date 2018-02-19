@@ -77,7 +77,7 @@ public:
 
 #if USE(GSTREAMER_GL)
     bool ensureGstGLContext();
-    static GstContext* requestGLContext(const gchar* contextType, MediaPlayerPrivateGStreamerBase*);
+    GstContext* requestGLContext(const char* contextType);
 #endif
     static bool initializeGStreamerAndRegisterWebKitElements();
     bool supportsMuting() const override { return true; }
@@ -170,6 +170,7 @@ protected:
     GstElement* createVideoSinkGL();
     GstGLContext* gstGLContext() const { return m_glContext.get(); }
     GstGLDisplay* gstGLDisplay() const { return m_glDisplay.get(); }
+    void ensureGLVideoSinkContext();
 #endif
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -244,6 +245,8 @@ protected:
 #if USE(GSTREAMER_GL)
     GRefPtr<GstGLContext> m_glContext;
     GRefPtr<GstGLDisplay> m_glDisplay;
+    GRefPtr<GstContext> m_glDisplayElementContext;
+    GRefPtr<GstContext> m_glAppElementContext;
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
 #endif
 
