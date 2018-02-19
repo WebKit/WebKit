@@ -1,3 +1,64 @@
+2018-02-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Store all parsed keyframe input information in a single structure
+        https://bugs.webkit.org/show_bug.cgi?id=182903
+
+        Reviewed by Dean Jackson.
+
+        When parsing keyframe input provided through the JS API, we used to create several data structures.
+        During parsing we would create a Vector<ProcessedKeyframe> where we would store the validated values
+        for "offset", "easing" and "composite" as well as CSS properties and CSS values as strings. 
+
+        Then we would create a KeyframeList, a class that pre-dates the work on Web Animations and is used
+        for hardware animations, with RenderStyle objects that are used for CSS property blending at runtime.
+        Once the KeyframeList was created, the Vector<ProcessedKeyframe> was discarded.
+
+        Since KeyframeList did not know about nullable offsets, timing functions and composite operations, and
+        because we do not with to modify a legacy class that we will eventually remove once all the Web Animations
+        work is complete, we also stored the parsed offsets as m_offsets, the timing functions as m_timingFunctions
+        and the composite operations as m_compositeOperations.
+
+        In this patch we rename the ProcessedKeyframe structure used temporarily during parsing to ParsedKeyframe and
+        store both the input and processed data related to a given keyframe in that single structure which we keep
+        around as m_parsedKeyframes when we finished processing the keyframes input. This update ParsedKeyframe structure
+        allows to keep around the original nullable offsets, the original CSS properties and CSS values as strings as
+        a HashMap<CSSPropertyID, String>, as well as the CSS properties and CSS values as CSSValue objects using a
+        MutableStyleProperties object. 
+
+        This has the benefit of reducing the number of members, but also pave the way for supporting read-write targets
+        where we will be able to decouple parsing keyframes and creating a KeyframeList, which requires a valid target
+        to create RenderStyle objects used for blending, since the original parsing-time information is now stored.
+
+        Finally, this allowed getKeyframes() to be more compliant by returning the CSS values as originally provided in
+        the keyframe input with shorthand properties when provided, rather than the long-hands we used to read back
+        through RenderStyle objects.
+
+        The generated KeyframeList is now stored as m_blendingKeyframes and is only used for the purpose of interfacing
+        with hardware animations and CSS property blending.
+
+        While ProcessedKeyframe was copyable due to holding only simple types, ParsedKeyframe is not since it uses a Ref
+        to hold the MutableStyleProperties. This uncovered some cases where we copied ProcessedKeyframe objects, we now
+        ensure that the ParsedKeyframe objects are moved instead, which was the correct thing to do all along.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::computeMissingKeyframeOffsets): While we used to store std::optional<double> for the computed offset,
+        we now store a simple double, which makes more sense since the computed offset is eventually a fully resolved
+        value after calling computeMissingKeyframeOffsets(). So we now compute the final computed offset without resorting
+        to intermediate nullable computed offsets.
+        (WebCore::processIterableKeyframes):
+        (WebCore::processPropertyIndexedKeyframes):
+        (WebCore::KeyframeEffectReadOnly::KeyframeEffectReadOnly):
+        (WebCore::KeyframeEffectReadOnly::copyPropertiesFromSource):
+        (WebCore::KeyframeEffectReadOnly::getKeyframes):
+        (WebCore::KeyframeEffectReadOnly::processKeyframes):
+        (WebCore::KeyframeEffectReadOnly::computeStackingContextImpact):
+        (WebCore::KeyframeEffectReadOnly::shouldRunAccelerated):
+        (WebCore::KeyframeEffectReadOnly::getAnimatedStyle):
+        (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle):
+        (WebCore::KeyframeEffectReadOnly::startOrStopAccelerated):
+        * animation/KeyframeEffectReadOnly.h:
+        (WebCore::KeyframeEffectReadOnly::ParsedKeyframe::ParsedKeyframe):
+
 2018-02-19  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Remove redundant RenderObject::removeFromParentAndDestroy

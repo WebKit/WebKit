@@ -1,14 +1,14 @@
 
 PASS Keyframes can be replaced with an empty keyframe 
 PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification 
-FAIL Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification 
+PASS Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a two property two value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a two property property-indexed keyframes specification with different numbers of values 
 PASS Keyframes can be replaced with a property-indexed keyframes specification with an invalid value 
 PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification that needs to stringify its values 
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference assert_equals: value for 'left' on ComputedKeyframe #0 expected "var(--dist)" but got "auto"
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference 
+PASS Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference in a shorthand property 
 PASS Keyframes can be replaced with a one property one value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a one property one non-array value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification where the first value is invalid 
@@ -40,13 +40,13 @@ PASS Keyframes can be replaced with a property-indexed keyframe with a single-el
 PASS Keyframes can be replaced with a one property one keyframe sequence 
 PASS Keyframes can be replaced with a one property two keyframe sequence 
 PASS Keyframes can be replaced with a two property two keyframe sequence 
-FAIL Keyframes can be replaced with a one shorthand property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
-FAIL Keyframes can be replaced with a two property (a shorthand and one of its component longhands) two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a one shorthand property two keyframe sequence 
+PASS Keyframes can be replaced with a two property (a shorthand and one of its component longhands) two keyframe sequence 
 PASS Keyframes can be replaced with a two property keyframe sequence where one property is missing from the first keyframe 
 PASS Keyframes can be replaced with a two property keyframe sequence where one property is missing from the last keyframe 
 PASS Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values 
-FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference assert_equals: value for 'left' on ComputedKeyframe #0 expected "var(--dist)" but got "auto"
-FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+PASS Keyframes can be replaced with a keyframe sequence with a CSS variable reference 
+PASS Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property 
 FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for a given interior offset Type error
 FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for offsets 0 and 1 Type error
 FAIL Keyframes can be replaced with a two property four keyframe sequence Type error

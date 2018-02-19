@@ -1,5 +1,19 @@
 2018-02-17  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Store all parsed keyframe input information in a single structure
+        https://bugs.webkit.org/show_bug.cgi?id=182903
+
+        Reviewed by Dean Jackson.
+
+        Update test expectations with progressions resulting from returning the style values as provided
+        by the keyframe input when calling getKeyframes(). 
+
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt:
+
+2018-02-17  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Accept null composite modes in keyframes
         https://bugs.webkit.org/show_bug.cgi?id=182902
 

@@ -34,6 +34,7 @@
 #include "KeyframeEffectOptions.h"
 #include "KeyframeList.h"
 #include "RenderStyle.h"
+#include "StyleProperties.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -63,12 +64,19 @@ public:
         Vector<PropertyAndValues> propertiesAndValues;
     };
 
-    struct ProcessedKeyframe {
-        String easing;
+    struct ParsedKeyframe {
         std::optional<double> offset;
-        std::optional<double> computedOffset;
+        double computedOffset;
         std::optional<CompositeOperation> composite;
-        HashMap<CSSPropertyID, String> cssPropertiesAndValues;
+        String easing;
+        RefPtr<TimingFunction> timingFunction;
+        Ref<MutableStyleProperties> style;
+        HashMap<CSSPropertyID, String> unparsedStyle;
+
+        ParsedKeyframe()
+            : style(MutableStyleProperties::create())
+        {
+        }
     };
 
     struct BaseComputedKeyframe {
@@ -113,15 +121,13 @@ private:
     void computeStackingContextImpact();
     bool shouldRunAccelerated();
 
-    Vector<std::optional<double>> m_offsets;
-    Vector<RefPtr<TimingFunction>> m_timingFunctions;
-    Vector<std::optional<CompositeOperation>> m_compositeOperations;
     bool m_triggersStackingContext { false };
     bool m_started { false };
     bool m_startedAccelerated { false };
 
     RefPtr<Element> m_target;
-    KeyframeList m_keyframes;
+    KeyframeList m_blendingKeyframes;
+    Vector<ParsedKeyframe> m_parsedKeyframes;
 };
 
 } // namespace WebCore
