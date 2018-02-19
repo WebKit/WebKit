@@ -6315,7 +6315,7 @@ void Document::setFullScreenRenderer(RenderTreeBuilder& builder, RenderFullScree
     }
 
     if (m_fullScreenRenderer)
-        m_fullScreenRenderer->removeFromParentAndDestroy(builder);
+        builder.removeAndDestroyChild(*m_fullScreenRenderer);
     ASSERT(!m_fullScreenRenderer);
 
     m_fullScreenRenderer = makeWeakPtr(renderer);

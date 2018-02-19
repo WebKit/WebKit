@@ -753,8 +753,6 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
-    void removeFromParentAndDestroy(RenderTreeBuilder&);
-
     CSSAnimationController& animation() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use

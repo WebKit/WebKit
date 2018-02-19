@@ -1,3 +1,45 @@
+2018-02-19  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Remove redundant RenderObject::removeFromParentAndDestroy
+        https://bugs.webkit.org/show_bug.cgi?id=182926
+        <rdar://problem/37674997>
+
+        Reviewed by Antti Koivisto.
+
+        Call RenderTreeBuilder::removeAndDestroyChild() directly instead. 
+
+        No change in functionality.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFullScreenRenderer):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::removeAndDestroyAllContinuations):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setText):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::willBeDestroyed):
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::willBeDestroyed):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromParentAndDestroy): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::willBeDestroyed):
+        (WebCore::RenderTextFragment::setText):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::takeChild):
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::handleSpannerRemoval):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::moveBlockChildren):
+        (WebCore::RenderTreeBuilder::Ruby::takeChild):
+
 2018-02-19  Tim Horton  <timothy_horton@apple.com>
 
         Increase text autosizing constants for extra zoom mode

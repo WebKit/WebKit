@@ -319,7 +319,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
 
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();
-            nextBlock.removeFromParentAndDestroy(m_builder);
+            m_builder.removeAndDestroyChild(nextBlock);
             next = nullptr;
         }
     }
