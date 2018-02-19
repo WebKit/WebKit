@@ -150,7 +150,7 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
             else if (ownPropertyName == "offset")
                 offset = convert<IDLNullable<IDLDouble>>(state, ownPropertyRawValue);
             else if (ownPropertyName == "composite")
-                composite = convert<IDLEnumeration<CompositeOperation>>(state, ownPropertyRawValue);
+                composite = convert<IDLNullable<IDLEnumeration<CompositeOperation>>>(state, ownPropertyRawValue);
             else {
                 auto cssPropertyId = IDLAttributeNameToAnimationPropertyName(ownPropertyName.string());
                 if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId))
@@ -184,7 +184,7 @@ static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKey
     //    dictionary BasePropertyIndexedKeyframe {
     //        (double? or sequence<double?>)                       offset = [];
     //        (DOMString or sequence<DOMString>)                   easing = [];
-    //        (CompositeOperation or sequence<CompositeOperation>) composite = [];
+    //        (CompositeOperation? or sequence<CompositeOperation?>) composite = [];
     //    };
     //
     //    Store the result of this procedure as keyframe output.
@@ -360,11 +360,13 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
         processedKeyframes[i].easing = easings[i];
 
     // 12. If the “composite” member of the property-indexed keyframe is not an empty sequence:
-    Vector<CompositeOperation> compositeModes;
-    if (WTF::holds_alternative<Vector<CompositeOperation>>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes = WTF::get<Vector<CompositeOperation>>(propertyIndexedKeyframe.baseProperties.composite);
+    Vector<std::optional<CompositeOperation>> compositeModes;
+    if (WTF::holds_alternative<Vector<std::optional<CompositeOperation>>>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes = WTF::get<Vector<std::optional<CompositeOperation>>>(propertyIndexedKeyframe.baseProperties.composite);
     else if (WTF::holds_alternative<CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite))
         compositeModes.append(WTF::get<CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite));
+    else if (WTF::holds_alternative<std::nullptr_t>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes.append(std::nullopt);
     if (!compositeModes.isEmpty()) {
         // 1. Let composite modes be a sequence of composite operations assigned from the “composite” member of property-indexed keyframe. If that member is a single composite
         //    operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.

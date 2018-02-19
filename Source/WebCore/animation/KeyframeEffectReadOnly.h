@@ -50,7 +50,7 @@ public:
     struct BasePropertyIndexedKeyframe {
         Variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
         Variant<Vector<String>, String> easing = Vector<String>();
-        Variant<Vector<CompositeOperation>, CompositeOperation> composite = Vector<CompositeOperation>();
+        Variant<std::nullptr_t, Vector<std::optional<CompositeOperation>>, CompositeOperation> composite = Vector<std::optional<CompositeOperation>>();
     };
 
     struct PropertyAndValues {
