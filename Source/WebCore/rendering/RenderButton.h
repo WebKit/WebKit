@@ -42,7 +42,6 @@ public:
     bool canBeSelectionLeaf() const override;
 
     RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) override;
-    void removeLeftoverAnonymousBlock(RenderBlock*) override { }
     bool createsAnonymousWrapper() const override { return true; }
 
     void updateFromElement() override;

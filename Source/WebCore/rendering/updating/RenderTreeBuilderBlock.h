@@ -40,6 +40,7 @@ public:
 
 private:
     void insertChildToContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void removeLeftoverAnonymousBlock(RenderBlock& anonymousBlock);
 
     RenderTreeBuilder& m_builder;
 };

@@ -74,7 +74,6 @@ private:
     bool isTextControl() const final { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
-    void removeLeftoverAnonymousBlock(RenderBlock*) override { }
     bool avoidsFloats() const override { return true; }
     bool canHaveGeneratedChildren() const override { return false; }
     

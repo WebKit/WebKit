@@ -2742,4 +2742,10 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
     }
 }
 
+void RenderBoxModelObject::moveAllChildrenToInternal(RenderElement& newParent)
+{
+    while (firstChild())
+        newParent.attachRendererInternal(detachRendererInternal(*firstChild()), this);
+}
+
 } // namespace WebCore

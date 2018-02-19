@@ -26,8 +26,12 @@
 #include "config.h"
 #include "RenderTreeBuilderBlock.h"
 
+#include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderFullScreen.h"
+#include "RenderRuby.h"
+#include "RenderRubyRun.h"
+#include "RenderTextControl.h"
 
 namespace WebCore {
 
@@ -193,7 +197,7 @@ void RenderTreeBuilder::Block::insertChildIgnoringContinuation(RenderBlock& pare
     parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
 
     if (madeBoxesNonInline && is<RenderBlock>(parent.parent()) && parent.isAnonymousBlock())
-        downcast<RenderBlock>(*parent.parent()).removeLeftoverAnonymousBlock(&parent);
+        removeLeftoverAnonymousBlock(parent);
     // parent object may be dead here
 }
 
@@ -201,8 +205,27 @@ void RenderTreeBuilder::Block::childBecameNonInline(RenderBlock& parent, RenderE
 {
     m_builder.makeChildrenNonInline(parent);
     if (parent.isAnonymousBlock() && is<RenderBlock>(parent.parent()))
-        downcast<RenderBlock>(*parent.parent()).removeLeftoverAnonymousBlock(&parent);
+        removeLeftoverAnonymousBlock(parent);
     // parent may be dead here
+}
+
+void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymousBlock)
+{
+    ASSERT(anonymousBlock.isAnonymousBlock());
+    ASSERT(!anonymousBlock.childrenInline());
+    ASSERT(anonymousBlock.parent());
+
+    if (anonymousBlock.continuation())
+        return;
+
+    auto* parent = anonymousBlock.parent();
+    if (is<RenderButton>(*parent) || is<RenderTextControl>(*parent) || is<RenderRubyAsBlock>(*parent) || is<RenderRubyRun>(*parent))
+        return;
+
+    // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
+    anonymousBlock.moveAllChildrenToInternal(*parent);
+    auto toBeDestroyed = parent->takeChildInternal(anonymousBlock);
+    // anonymousBlock is dead here.
 }
 
 }

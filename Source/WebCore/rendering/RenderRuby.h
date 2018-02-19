@@ -85,7 +85,6 @@ private:
     bool isRubyBlock() const final { return true; }
     const char* renderName() const override { return "RenderRuby (block)"; }
     bool createsAnonymousWrapper() const override { return true; }
-    void removeLeftoverAnonymousBlock(RenderBlock*) override { ASSERT_NOT_REACHED(); }
 };
 
 

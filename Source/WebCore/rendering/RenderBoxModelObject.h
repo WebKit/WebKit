@@ -290,6 +290,7 @@ public:
     {
         moveChildrenTo(toBoxModelObject, firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
     }
+    void moveAllChildrenToInternal(RenderElement& newParent);
     // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote
     // that all the kids from |startChild| onwards should be moved.
     void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
