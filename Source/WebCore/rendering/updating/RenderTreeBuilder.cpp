@@ -470,6 +470,16 @@ void RenderTreeBuilder::insertChildToRenderMathMLFenced(RenderMathMLFenced& pare
     mathMLBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderRubyAsInline(RenderRubyAsInline& parent, RenderObject& child)
+{
+    return rubyBuilder().takeChild(parent, child);
+}
+
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderRubyAsBlock(RenderRubyAsBlock& parent, RenderObject& child)
+{
+    return rubyBuilder().takeChild(parent, child);
+}
+
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
     if (is<RenderBlock>(renderer))

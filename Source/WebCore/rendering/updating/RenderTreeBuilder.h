@@ -30,6 +30,8 @@
 namespace WebCore {
 
 class RenderMathMLFenced;
+class RenderRubyAsBlock;
+class RenderRubyAsInline;
 class RenderRubyBase;
 class RenderRubyRun;
 class RenderSVGContainer;
@@ -70,6 +72,9 @@ public:
     void insertChildToRenderTableSection(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
+
+    RenderPtr<RenderObject> takeChildFromRenderRubyAsInline(RenderRubyAsInline& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChildFromRenderRubyAsBlock(RenderRubyAsBlock& parent, RenderObject& child);
 
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
