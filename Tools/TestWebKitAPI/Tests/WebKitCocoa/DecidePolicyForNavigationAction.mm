@@ -561,29 +561,6 @@ TEST(WebKit, DecidePolicyForNavigationActionFragment)
     TestWebKitAPI::Util::run(&done);
 }
 
-@interface DecidePolicyForNavigationActionForMalformedURLDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation DecidePolicyForNavigationActionForMalformedURLDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    finishedNavigation = true;
-}
-
-@end
-
-TEST(WebKit, DecidePolicyForNavigationActionForMalformedURL)
-{
-    auto webView = adoptNS([[WKWebView alloc] init]);
-    auto controller = adoptNS([[DecidePolicyForNavigationActionForMalformedURLDelegate alloc] init]);
-    [webView setNavigationDelegate:controller.get()];
-
-    finishedNavigation = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"N"]]];
-    TestWebKitAPI::Util::run(&finishedNavigation);
-}
-
 #endif
 
 #endif
