@@ -37,6 +37,7 @@
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -67,8 +68,6 @@ void TextAutoSizingValue::addTextNode(Text& node, float size)
     node.renderer()->setCandidateComputedTextSize(size);
     m_autoSizedNodes.add(&node);
 }
-
-static const float maxScaleIncrease = 1.7f;
 
 auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 {
@@ -108,6 +107,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             continue;
 
         float specifiedSize = renderer.style().fontDescription().specifiedSize();
+        float maxScaleIncrease = renderer.settings().maxTextAutosizingScaleIncrease();
         float scaleChange = averageSize / specifiedSize;
         if (scaleChange > maxScaleIncrease && firstPass) {
             firstPass = false;

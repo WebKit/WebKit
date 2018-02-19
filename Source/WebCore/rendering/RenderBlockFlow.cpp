@@ -3724,16 +3724,18 @@ static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
     return false;
 }
 
-//  For now, we auto size single lines of text the same as multiple lines.
-//  We've been experimenting with low values for single lines of text.
-static inline float oneLineTextMultiplier(float specifiedSize)
+// For now, we auto size single lines of text the same as multiple lines.
+// We've been experimenting with low values for single lines of text.
+static inline float oneLineTextMultiplier(RenderObject& renderer, float specifiedSize)
 {
-    return std::max((1.0f / log10f(specifiedSize) * 1.7f), 1.0f);
+    const float coefficient = renderer.settings().oneLineTextMultiplierCoefficient();
+    return std::max((1.0f / log10f(specifiedSize) * coefficient), 1.0f);
 }
 
-static inline float textMultiplier(float specifiedSize)
+static inline float textMultiplier(RenderObject& renderer, float specifiedSize)
 {
-    return std::max((1.0f / log10f(specifiedSize) * 1.95f), 1.0f);
+    const float coefficient = renderer.settings().multiLineTextMultiplierCoefficient();
+    return std::max((1.0f / log10f(specifiedSize) * coefficient), 1.0f);
 }
 
 void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
@@ -3787,7 +3789,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
             if (m_widthForTextAutosizing == -1)
                 m_widthForTextAutosizing = actualWidth;
 
-            float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(specifiedSize) : textMultiplier(specifiedSize);
+            float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text, specifiedSize) : textMultiplier(text, specifiedSize);
             float candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
             if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
                 document().textAutoSizing().addTextNode(*text.textNode(), candidateNewSize);

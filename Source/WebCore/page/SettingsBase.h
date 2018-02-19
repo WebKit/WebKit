@@ -114,6 +114,9 @@ public:
 
     WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
     WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
+    WEBCORE_EXPORT static float defaultOneLineTextMultiplierCoefficient();
+    WEBCORE_EXPORT static float defaultMultiLineTextMultiplierCoefficient();
+    WEBCORE_EXPORT static float defaultMaxTextAutosizingScaleIncrease();
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;

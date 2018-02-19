@@ -1,3 +1,26 @@
+2018-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        Increase text autosizing constants for extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=182919
+        <rdar://problem/37671259>
+
+        Reviewed by Wenson Hsieh.
+
+        * page/Settings.yaml:
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::defaultMinimumZoomFontSize):
+        (WebCore::SettingsBase::defaultOneLineTextMultiplierCoefficient):
+        (WebCore::SettingsBase::defaultMultiLineTextMultiplierCoefficient):
+        (WebCore::SettingsBase::defaultMaxTextAutosizingScaleIncrease):
+        * page/SettingsBase.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::oneLineTextMultiplier):
+        (WebCore::textMultiplier):
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustTextNodeSizes):
+        Make autosizing constants settings, and change their default values.
+
 2018-02-17  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Accept null composite modes in keyframes
