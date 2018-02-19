@@ -486,10 +486,9 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() c
     return m_mediaSource ? m_mediaSource->buffered() : std::make_unique<PlatformTimeRanges>();
 }
 
-void MediaPlayerPrivateGStreamerMSE::sourceChanged()
+void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
 {
-    m_source = nullptr;
-    g_object_get(m_pipeline.get(), "source", &m_source.outPtr(), nullptr);
+    m_source = sourceElement;
 
     ASSERT(WEBKIT_IS_MEDIA_SRC(m_source.get()));
 

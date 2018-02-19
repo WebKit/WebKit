@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GRefPtrGStreamer_h
-#define GRefPtrGStreamer_h
+#pragma once
+
 #if USE(GSTREAMER)
 
 #include <wtf/glib/GRefPtr.h>
@@ -42,6 +42,11 @@ typedef struct _GstMessage GstMessage;
 typedef struct _GstQuery GstQuery;
 typedef struct _WebKitVideoSink WebKitVideoSink;
 typedef struct _WebKitWebSrc WebKitWebSrc;
+
+#if USE(GSTREAMER_PLAYBIN3)
+typedef struct _GstStream GstStream;
+typedef struct _GstStreamCollection GstStreamCollection;
+#endif
 
 #if USE(GSTREAMER_GL)
 typedef struct _GstGLDisplay GstGLDisplay;
@@ -127,6 +132,16 @@ GRefPtr<WebKitWebSrc> ensureGRef(WebKitWebSrc* ptr);
 template<> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 template<> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 
+#if USE(GSTREAMER_PLAYBIN3)
+template<> GRefPtr<GstStream> adoptGRef(GstStream*);
+template<> GstStream* refGPtr<GstStream>(GstStream*);
+template<> void derefGPtr<GstStream>(GstStream*);
+
+template<> GRefPtr<GstStreamCollection> adoptGRef(GstStreamCollection*);
+template<> GstStreamCollection* refGPtr<GstStreamCollection>(GstStreamCollection*);
+template<> void derefGPtr<GstStreamCollection>(GstStreamCollection*);
+#endif
+
 #if USE(GSTREAMER_GL)
 template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);
 template<> GstGLDisplay* refGPtr<GstGLDisplay>(GstGLDisplay* ptr);
@@ -140,5 +155,3 @@ template<> void derefGPtr<GstGLContext>(GstGLContext* ptr);
 } // namespace WTF
 
 #endif // USE(GSTREAMER)
-
-#endif // GRefPtrGStreamer_h

@@ -1,3 +1,14 @@
+2018-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Playbin3 support
+        https://bugs.webkit.org/show_bug.cgi?id=182530
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/cmake/GStreamerDefinitions.cmake: New
+        USE(GSTREAMER_PLAYBIN3) feature. This should be enabled only for
+        very recent versions of GStreamer (1.14 at least) and is optional, for now.
+
 2018-02-18  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Fullscreen video is broken

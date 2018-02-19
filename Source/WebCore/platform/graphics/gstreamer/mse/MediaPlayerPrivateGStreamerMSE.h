@@ -71,7 +71,7 @@ public:
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     MediaTime maxMediaTimeSeekable() const override;
 
-    void sourceChanged() override;
+    void sourceSetup(GstElement*) override;
 
     void setReadyState(MediaPlayer::ReadyState);
     void waitForSeekCompleted();

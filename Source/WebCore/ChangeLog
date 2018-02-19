@@ -1,3 +1,101 @@
+2018-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Playbin3 support
+        https://bugs.webkit.org/show_bug.cgi?id=182530
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch introduces opt-in support for the playbin3 GStreamer
+        element. This new playback element is still considered
+        experimental but it can still be very useful for media assets
+        containing multiple tracks of the same type. In such scenario
+        audio/video decoders would be created only for the selected tracks
+        whereas playbin2 creates decoder for each track.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp: Take
+        a weak pointer of the media player instead of playbin and call the
+        player when enabling tracks. Also use the GstStream API instead of
+        inspecting the pad when playbin3 is used.
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer):
+        (WebCore::AudioTrackPrivateGStreamer::disconnect):
+        (WebCore::AudioTrackPrivateGStreamer::markAsActive):
+        (WebCore::AudioTrackPrivateGStreamer::setEnabled):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp: GstStream and
+        GstStreamCollection smart pointer support.
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstStream>):
+        (WTF::derefGPtr<GstStream>):
+        (WTF::refGPtr<GstStreamCollection>):
+        (WTF::derefGPtr<GstStreamCollection>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        Use the GstStream API instead of inspecting the pad when playbin3
+        is used.
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        (WebCore::InbandTextTrackPrivateGStreamer::disconnect):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        m_{audio,video,text}Tracks are now hashmaps, which is a bit more
+        convenient to use than Vectors.
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks): Update our
+        tracks implementations depending on the streams stored in the
+        collection.
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack): Activate the
+        given track. This method is called by the TrackPrivate
+        implementations.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        Refactored legacy (playbin2) support for track hashmap storage.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::newTextSample): Use track hashmap storage.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): React on
+        playbin3 GstStream messages, store the collection provided and
+        activate the given selected streams accordingly.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidAudioTracks): Invalidate tracks no longer needed.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidVideoTracks): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidTextTracks): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetupCallback):
+        Refactoring, use source-setup signal instead of the source
+        property which is not supported in playbin3.
+        (WebCore::MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback):
+        Promoted logging messages, GST_TRACE should be used for very
+        frequent and less interesting messages.
+        (WebCore::MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup): Called by the source-setup signal handler.
+        (WebCore::MediaPlayerPrivateGStreamer::setDownloadBuffering): Debugging message added.
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Create a
+        playbin3 element if USE(GSTREAMER_PLAYBIN3) was enabled and
+        connect to playbin2 signals otherwise.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::createWeakPtr): Promoted to public.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        New StreamCollectionChanged notification type, used the sub-class.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer): Support for GstStream API.
+        (WebCore::TrackPrivateBaseGStreamer::disconnect): Clear GstStream too.
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged): Get tags from GstStream.
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged): No need to check m_pad twice.
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged): Ditto.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp: Take
+        a weak pointer of the media player instead of playbin and call the
+        player when enabling tracks. Also use the GstStream API instead of
+        inspecting the pad when playbin3 is used.
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        (WebCore::VideoTrackPrivateGStreamer::disconnect):
+        (WebCore::VideoTrackPrivateGStreamer::markAsActive):
+        (WebCore::VideoTrackPrivateGStreamer::setSelected):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp: Pass player pointer to track constructor.
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp: Source-setup signal handler.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceSetup):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r219298): RELEASE_ASSERT(!m_owningPointerForClose) fails in WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose

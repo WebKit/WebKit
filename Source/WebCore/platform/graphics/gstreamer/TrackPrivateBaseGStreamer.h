@@ -23,13 +23,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TrackPrivateBaseGStreamer_h
-#define TrackPrivateBaseGStreamer_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
+#include <gst/gst.h>
 #include <wtf/Lock.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +41,13 @@ class TrackPrivateBaseGStreamer {
 public:
     virtual ~TrackPrivateBaseGStreamer();
 
+    enum TrackType {
+        Audio,
+        Video,
+        Text,
+        Unknown
+    };
+
     GstPad* pad() const { return m_pad.get(); }
 
     virtual void disconnect();
@@ -51,7 +58,9 @@ public:
 
 protected:
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
-
+#if USE(GSTREAMER_PLAYBIN3)
+    TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream>);
+#endif
     void notifyTrackOfActiveChanged();
     void notifyTrackOfTagsChanged();
 
@@ -67,6 +76,9 @@ protected:
     AtomicString m_label;
     AtomicString m_language;
     GRefPtr<GstPad> m_pad;
+#if USE(GSTREAMER_PLAYBIN3)
+    GRefPtr<GstStream> m_stream;
+#endif
 
 private:
     bool getLanguageCode(GstTagList* tags, AtomicString& value);
@@ -87,5 +99,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
-
-#endif // TrackPrivateBaseGStreamer_h

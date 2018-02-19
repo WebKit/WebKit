@@ -22,8 +22,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef MediaPlayerPrivateGStreamer_h
-#define MediaPlayerPrivateGStreamer_h
+#pragma once
+
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
@@ -36,13 +36,11 @@
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if ENABLE(VIDEO_TRACK)
+#include "TrackPrivateBaseGStreamer.h"
 #include <wtf/text/AtomicStringHash.h>
 #endif
 
-typedef struct _GstBuffer GstBuffer;
-typedef struct _GstMessage GstMessage;
-typedef struct _GstElement GstElement;
 typedef struct _GstMpegtsSection GstMpegtsSection;
 
 namespace WebCore {
@@ -66,6 +64,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateGStreamerBase {
 public:
     explicit MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
+
+    WeakPtr<MediaPlayerPrivateGStreamer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
     void handleMessage(GstMessage*);
@@ -116,7 +116,7 @@ public:
     virtual void durationChanged();
     void loadingFailed(MediaPlayer::NetworkState);
 
-    virtual void sourceChanged();
+    virtual void sourceSetup(GstElement*);
 
     GstElement* audioSink() const override;
     virtual void configurePlaySink() { }
@@ -131,13 +131,13 @@ public:
 
     bool isLiveStream() const override { return m_isStreaming; }
 
+    void enableTrack(TrackPrivateBaseGStreamer::TrackType, unsigned index);
+
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     static bool isAvailable();
-
-    WeakPtr<MediaPlayerPrivateGStreamer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     GstElement* createAudioSink() override;
 
@@ -153,12 +153,17 @@ private:
 
     virtual void setDownloadBuffering();
     void processBufferingStats(GstMessage*);
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if ENABLE(VIDEO_TRACK)
+#if USE(GSTREAMER_MPEGTS)
     void processMpegTsSection(GstMpegtsSection*);
 #endif
-#if ENABLE(VIDEO_TRACK)
+
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*);
+
+    void purgeInvalidAudioTracks(Vector<String> validTrackIds);
+    void purgeInvalidVideoTracks(Vector<String> validTrackIds);
+    void purgeInvalidTextTracks(Vector<String> validTrackIds);
 #endif
     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags seekType);
     virtual void updatePlaybackRate();
@@ -172,6 +177,10 @@ private:
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
     void setPlaybinURL(const URL& urlString);
+
+#if USE(GSTREAMER_PLAYBIN3)
+    void updateTracks();
+#endif
 
 protected:
     void cacheDuration();
@@ -214,7 +223,7 @@ protected:
 
     static void setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer*, GObject*);
 
-    static void sourceChangedCallback(MediaPlayerPrivateGStreamer*);
+    static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
     static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
     static void videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer*);
     static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
@@ -247,6 +256,13 @@ private:
     mutable unsigned long long m_totalBytes;
     URL m_url;
     bool m_preservesPitch;
+    bool m_isLegacyPlaybin;
+#if USE(GSTREAMER_PLAYBIN3)
+    GRefPtr<GstStreamCollection> m_streamCollection;
+#endif
+    String m_currentAudioStreamId;
+    String m_currentVideoStreamId;
+    String m_currentTextStreamId;
 #if ENABLE(WEB_AUDIO)
     std::unique_ptr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif
@@ -254,17 +270,16 @@ private:
     GRefPtr<GstElement> m_downloadBuffer;
     RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> m_missingPluginsCallback;
 #if ENABLE(VIDEO_TRACK)
-    Vector<RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
-    Vector<RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
-    Vector<RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
+    HashMap<AtomicString, RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
+    HashMap<AtomicString, RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
+    HashMap<AtomicString, RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
     RefPtr<InbandMetadataTextTrackPrivateGStreamer> m_chaptersTrack;
-#endif
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if USE(GSTREAMER_MPEGTS)
     HashMap<AtomicString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
+#endif
 #endif
     virtual bool isMediaSource() const { return false; }
 };
 }
 
 #endif // USE(GSTREAMER)
-#endif

@@ -29,23 +29,39 @@
 
 #include "VideoTrackPrivateGStreamer.h"
 
+#include "MediaPlayerPrivateGStreamer.h"
 #include <glib-object.h>
 
 namespace WebCore {
 
-VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad> pad)
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstPad> pad)
     : TrackPrivateBaseGStreamer(this, index, pad)
-    , m_playbin(playbin)
+    , m_player(player)
 {
     // FIXME: Get a real ID from the tkhd atom.
     m_id = "V" + String::number(index);
     notifyTrackOfActiveChanged();
 }
 
+#if USE(GSTREAMER_PLAYBIN3)
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
+    : TrackPrivateBaseGStreamer(this, index, stream)
+    , m_player(player)
+{
+    m_id = gst_stream_get_stream_id(stream.get());
+    notifyTrackOfActiveChanged();
+}
+#endif
+
 void VideoTrackPrivateGStreamer::disconnect()
 {
-    m_playbin.clear();
+    m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
+}
+
+void VideoTrackPrivateGStreamer::markAsActive()
+{
+    VideoTrackPrivate::setSelected(true);
 }
 
 void VideoTrackPrivateGStreamer::setSelected(bool selected)
@@ -54,8 +70,8 @@ void VideoTrackPrivateGStreamer::setSelected(bool selected)
         return;
     VideoTrackPrivate::setSelected(selected);
 
-    if (selected && m_playbin)
-        g_object_set(m_playbin.get(), "current-video", m_index, nullptr);
+    if (selected && m_player)
+        m_player->enableTrack(TrackPrivateBaseGStreamer::TrackType::Video, m_index);
 }
 
 } // namespace WebCore

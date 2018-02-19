@@ -23,20 +23,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandTextTrackPrivateGStreamer_h
-#define InbandTextTrackPrivateGStreamer_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
 #include "GRefPtrGStreamer.h"
 #include "InbandTextTrackPrivate.h"
 #include "TrackPrivateBaseGStreamer.h"
+#include <gst/gst.h>
 #include <wtf/Lock.h>
 
 namespace WebCore {
 
 class MediaPlayerPrivateGStreamer;
-typedef struct _GstSample GstSample;
 
 class InbandTextTrackPrivateGStreamer : public InbandTextTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
@@ -44,6 +43,13 @@ public:
     {
         return adoptRef(*new InbandTextTrackPrivateGStreamer(index, pad));
     }
+
+#if USE(GSTREAMER_PLAYBIN3)
+    static Ref<InbandTextTrackPrivateGStreamer> create(gint index, GRefPtr<GstStream> stream)
+    {
+        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, stream));
+    }
+#endif
 
     void disconnect() override;
 
@@ -57,6 +63,9 @@ public:
 
 private:
     InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstPad>);
+#if USE(GSTREAMER_PLAYBIN3)
+    InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstStream>);
+#endif
 
     void streamChanged();
 
@@ -64,7 +73,7 @@ private:
     void notifyTrackOfStreamChanged();
 
     gulong m_eventProbe;
-    Vector<GRefPtr<GstSample> > m_pendingSamples;
+    Vector<GRefPtr<GstSample>> m_pendingSamples;
     String m_streamId;
     Lock m_sampleMutex;
 };
@@ -72,5 +81,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
-
-#endif // InbandTextTrackPrivateGStreamer_h
