@@ -50,7 +50,7 @@ public:
         while (m_index < size) {
             CachedResourceClient* next = m_clientVector[m_index++];
             if (m_clientSet.contains(next)) {
-                ASSERT_WITH_SECURITY_IMPLICATION(T::expectedType() == CachedResourceClient::expectedType() || next->resourceClientType() == T::expectedType());
+                RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(T::expectedType() == CachedResourceClient::expectedType() || next->resourceClientType() == T::expectedType());
                 return static_cast<T*>(next);
             }
         }
