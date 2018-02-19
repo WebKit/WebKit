@@ -1,3 +1,33 @@
+2018-02-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Apply automatic minimum size clamping to spanning items too
+        https://bugs.webkit.org/show_bug.cgi?id=182684
+
+        Reviewed by Javier Fernandez.
+
+        In r225776 we added the conditions from the spec to apply
+        the automatic minimum size clamping when required
+        but only to non-spanning items.
+        See: https://drafts.csswg.org/css-grid/#min-size-auto
+
+        This patch moves the code from GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem()
+        to GridTrackSizingAlgorithmStrategy::minSizeForChild()
+        that way the clamping is applied for both spanning and non-spanning items.
+
+        This somehow reverts r225776, as it was adding some duplicated code.
+        All the checks to know if we should use that part of the spec
+        were already present in GridTrackSizingAlgorithmStrategy::minSizeForChild().
+
+        Apart from using the previous code, there's a new loop to verify
+        that the max track sizing function is fixed for all the tracks of the item.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-024.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-025.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+
 2018-02-19  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][GStreamer] Replaying a webm video twice causes the video to stop getting rendered

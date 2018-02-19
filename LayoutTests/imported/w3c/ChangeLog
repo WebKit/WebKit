@@ -1,3 +1,22 @@
+2018-02-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Apply automatic minimum size clamping to spanning items too
+        https://bugs.webkit.org/show_bug.cgi?id=182684
+
+        Reviewed by Javier Fernandez.
+
+        Update WPT tests related to this change.
+
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-022-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-022.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-023-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-023.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-024-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-024.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-025-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-025.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+
 2018-02-16  Daniel Bates  <dabates@apple.com>
 
         Remove UTF-32 BOM parsing code
