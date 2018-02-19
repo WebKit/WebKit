@@ -1,5 +1,39 @@
 2018-02-08  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] LayoutTest webaudio/silent-audio-interrupted-in-background.html makes its subsequent test flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=173916
+
+        Reviewed by Xabier Rodriguez Calvar.
+
+        This patch fixes two crashes and a runtime warning:
+
+        - The provider client configuration should be done from the main
+        thread but the no-more-pads signal of deinterleave was fired from
+        a non-main thread.
+
+        - The deinterleave pad-removed signal can be fired for a not fully
+        configured pipeline if the audio context is interrupted. So the
+        peer quark of the removed pad needs to be checked, it might be a
+        null pointer.
+
+        - The provider connects to the deinterleave signals only when a
+        client is provided, so the signal disconnection needs to check
+        that to avoid runtime warnings.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        Create a main thread notifier.
+        (WebCore::AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer):
+        Invalidate notifier and check a client was set before
+        disconnecting from deinterleave signals.
+        (WebCore::AudioSourceProviderGStreamer::handleRemovedDeinterleavePad):
+        Check validity of the pad peer.
+        (WebCore::AudioSourceProviderGStreamer::deinterleavePadsConfigured):
+        Set client from main thread.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+
+2018-02-08  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer][WebAudio] No need for version check in each loop iteration
         https://bugs.webkit.org/show_bug.cgi?id=182577
 
