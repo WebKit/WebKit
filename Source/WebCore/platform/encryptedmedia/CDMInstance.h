@@ -43,6 +43,15 @@ class SharedBuffer;
 
 struct CDMKeySystemConfiguration;
 
+class CDMInstanceClient {
+public:
+    virtual ~CDMInstanceClient() = default;
+
+    using KeyStatus = CDMKeyStatus;
+    using KeyStatusVector = Vector<std::pair<Ref<SharedBuffer>, KeyStatus>>;
+    virtual void updateKeyStatuses(KeyStatusVector&&) = 0;
+};
+
 class CDMInstance : public RefCounted<CDMInstance> {
 public:
     virtual ~CDMInstance() = default;
@@ -70,10 +79,21 @@ public:
     virtual SuccessValue setServerCertificate(Ref<SharedBuffer>&&) = 0;
     virtual SuccessValue setStorageDirectory(const String&) = 0;
 
+    enum class HDCPStatus {
+        Unknown,
+        Valid,
+        OutputRestricted,
+        OutputDownscaled,
+    };
+    virtual SuccessValue setHDCPStatus(HDCPStatus) { return Failed; }
+
+    virtual void setClient(CDMInstanceClient&) { }
+    virtual void clearClient() { }
+
     using LicenseCallback = Function<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
     virtual void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) = 0;
 
-    using KeyStatusVector = Vector<std::pair<Ref<SharedBuffer>, KeyStatus>>;
+    using KeyStatusVector = CDMInstanceClient::KeyStatusVector;
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;
     using LicenseUpdateCallback = Function<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
     virtual void updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback) = 0;

@@ -3158,6 +3158,18 @@ ExceptionOr<bool> Internals::mediaElementHasCharacteristic(HTMLMediaElement& ele
     return Exception { SyntaxError };
 }
 
+void Internals::beginSimulatedHDCPError(HTMLMediaElement& element)
+{
+    if (auto player = element.player())
+        player->beginSimulatedHDCPError();
+}
+
+void Internals::endSimulatedHDCPError(HTMLMediaElement& element)
+{
+    if (auto player = element.player())
+        player->endSimulatedHDCPError();
+}
+
 #endif
 
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)

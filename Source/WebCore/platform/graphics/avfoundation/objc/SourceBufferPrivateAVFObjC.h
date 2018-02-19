@@ -116,6 +116,7 @@ public:
     void registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"

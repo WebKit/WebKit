@@ -373,12 +373,9 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
                 protectedSelf->_parent->layerDidReceiveError(layer.get(), error.get());
             });
         } else if ([keyPath isEqualTo:@"outputObscuredDueToInsufficientExternalProtection"]) {
-            if ([[change valueForKey:NSKeyValueChangeNewKey] boolValue]) {
-                RetainPtr<NSError> error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
-                callOnMainThread([protectedSelf = WTFMove(protectedSelf), layer = WTFMove(layer), error = WTFMove(error)] {
-                    protectedSelf->_parent->layerDidReceiveError(layer.get(), error.get());
-                });
-            }
+            callOnMainThread([protectedSelf = WTFMove(protectedSelf), obscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue]] {
+                protectedSelf->_parent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+            });
         } else
             ASSERT_NOT_REACHED();
 
@@ -985,6 +982,21 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+}
+
+void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
+{
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    if (m_mediaSource->player()->cdmInstance()) {
+        m_mediaSource->player()->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+        return;
+    }
+#else
+    UNUSED_PARAM(obscured);
+#endif
+
+    RetainPtr<NSError> error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
+    layerDidReceiveError(m_displayLayer.get(), error.get());
 }
 
 #pragma clang diagnostic push

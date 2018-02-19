@@ -140,8 +140,10 @@ public:
     void playbackTargetIsWirelessDidChange();
 #endif
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION))
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+    void beginSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(true); }
+    void endSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(false); }
 #endif
 
 #if ENABLE(AVF_CAPTIONS)

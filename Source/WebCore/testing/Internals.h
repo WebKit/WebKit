@@ -463,6 +463,8 @@ public:
     Vector<String> mediaResponseContentRanges(HTMLMediaElement&);
     void simulateAudioInterruption(HTMLMediaElement&);
     ExceptionOr<bool> mediaElementHasCharacteristic(HTMLMediaElement&, const String&);
+    void beginSimulatedHDCPError(HTMLMediaElement&);
+    void endSimulatedHDCPError(HTMLMediaElement&);
 #endif
 
     bool isSelectPopupVisible(HTMLSelectElement&);

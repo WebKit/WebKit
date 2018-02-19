@@ -87,11 +87,14 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, WeakPtr<MediaK
     UNUSED_PARAM(m_useDistinctiveIdentifier);
     UNUSED_PARAM(m_closed);
     UNUSED_PARAM(m_uninitialized);
+
+    m_instance->setClient(*this);
 }
 
 MediaKeySession::~MediaKeySession()
 {
     m_keyStatuses->detachSession();
+    m_instance->clearClient();
 }
 
 const String& MediaKeySession::sessionId() const
@@ -596,7 +599,7 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     m_eventQueue.enqueueEvent(WTFMove(messageEvent));
 }
 
-void MediaKeySession::updateKeyStatuses(CDMInstance::KeyStatusVector&& inputStatuses)
+void MediaKeySession::updateKeyStatuses(CDMInstanceClient::KeyStatusVector&& inputStatuses)
 {
     // https://w3c.github.io/encrypted-media/#update-key-statuses
     // W3C Editor's Draft 09 November 2016

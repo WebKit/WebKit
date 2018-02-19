@@ -52,7 +52,7 @@ class MediaKeyStatusMap;
 class MediaKeys;
 class SharedBuffer;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMInstanceClient {
 public:
     static Ref<MediaKeySession> create(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     virtual ~MediaKeySession();
@@ -80,10 +80,12 @@ public:
 private:
     MediaKeySession(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
-    void updateKeyStatuses(CDMInstance::KeyStatusVector&&);
     void updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
+
+    // CDMInstanceClient
+    void updateKeyStatuses(CDMInstanceClient::KeyStatusVector&&) override;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }

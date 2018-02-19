@@ -420,6 +420,8 @@ enum EventThrottlingBehavior {
     [Conditional=VIDEO] sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);
     [Conditional=VIDEO] void simulateAudioInterruption(HTMLMediaElement element);
     [Conditional=VIDEO, MayThrowException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
+    [Conditional=VIDEO] void beginSimulatedHDCPError(HTMLMediaElement media);
+    [Conditional=VIDEO] void endSimulatedHDCPError(HTMLMediaElement media);
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA] void initializeMockCDM();
     [Conditional=ENCRYPTED_MEDIA] MockCDMFactory registerMockCDM();

@@ -956,6 +956,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 {
     m_player->keyNeeded(initData);
 }
+
+void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
+{
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (m_cdmInstance)
+        m_cdmInstance->setHDCPStatus(obscured ? CDMInstance::HDCPStatus::OutputRestricted : CDMInstance::HDCPStatus::Valid);
+#else
+    UNUSED_PARAM(obscured);
+#endif
+}
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

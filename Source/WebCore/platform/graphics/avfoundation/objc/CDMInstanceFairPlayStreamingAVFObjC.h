@@ -65,6 +65,8 @@ public:
     void closeSession(const String&, CloseSessionCallback) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) final;
     void storeRecordOfKeyUsage(const String&) final;
+    void setClient(CDMInstanceClient&) final;
+    void clearClient() final;
 
     const String& keySystem() const final;
 
@@ -74,6 +76,7 @@ public:
     void didFailToProvideRequest(AVContentKeyRequest *, NSError *);
     bool shouldRetryRequestForReason(AVContentKeyRequest *, NSString *);
     void sessionIdentifierChanged(NSData *);
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 
     AVContentKeySession *contentKeySession() { return m_session.get(); }
 
@@ -91,6 +94,7 @@ private:
     RetainPtr<AVContentKeyRequest> m_request;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     Vector<RetainPtr<NSData>> m_expiredSessions;
+    CDMInstanceClient* m_client;
     String m_sessionId;
 
     LicenseCallback m_requestLicenseCallback;

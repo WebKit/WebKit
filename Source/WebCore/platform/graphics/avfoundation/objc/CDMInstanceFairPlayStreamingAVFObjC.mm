@@ -409,6 +409,16 @@ void CDMInstanceFairPlayStreamingAVFObjC::storeRecordOfKeyUsage(const String&)
     // no-op; key usage data is stored automatically.
 }
 
+void CDMInstanceFairPlayStreamingAVFObjC::setClient(CDMInstanceClient& client)
+{
+    m_client = &client;
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::clearClient()
+{
+    m_client = nullptr;
+}
+
 const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
 {
     static NeverDestroyed<String> s_keySystem { ASCIILiteral("com.apple.fps") };
@@ -480,7 +490,40 @@ void CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *sessi
 
     auto sessionIdentifierString = adoptNS([[NSString alloc] initWithData:sessionIdentifier encoding:NSUTF8StringEncoding]);
     m_sessionId = sessionIdentifierString.get();
-}   
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
+{
+    if (!m_client || !m_request)
+        return;
+
+    CDMKeyStatus status;
+    if (obscured)
+        status = CDMKeyStatus::OutputRestricted;
+    else {
+        switch (m_request.get().status) {
+        case AVContentKeyRequestStatusRequestingResponse:
+        case AVContentKeyRequestStatusRetried:
+            status = CDMKeyStatus::StatusPending;
+            break;
+        case AVContentKeyRequestStatusReceivedResponse:
+        case AVContentKeyRequestStatusRenewed:
+            status = CDMKeyStatus::Usable;
+            break;
+        case AVContentKeyRequestStatusCancelled:
+            status = CDMKeyStatus::Released;
+            break;
+        case AVContentKeyRequestStatusFailed:
+            status = CDMKeyStatus::InternalError;
+            break;
+        }
+    }
+
+    auto keyStatuses = keyIDs().map([status] (const Ref<SharedBuffer>& keyID) -> KeyStatusVector::ValueType {
+        return { keyID.copyRef(), status };
+    });
+    m_client->updateKeyStatuses(WTFMove(keyStatuses));
+}
 
 }
 

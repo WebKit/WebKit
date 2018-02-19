@@ -135,6 +135,10 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     void keyNeeded(Uint8Array*);
+
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
+    void beginSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(true); }
+    void endSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(false); }
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     void initializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&);

@@ -595,6 +595,9 @@ public:
     WEBCORE_EXPORT void simulateAudioInterruption();
 #endif
 
+    WEBCORE_EXPORT void beginSimulatedHDCPError();
+    WEBCORE_EXPORT void endSimulatedHDCPError();
+
     String languageOfPrimaryAudioTrack() const;
 
     size_t extraMemoryCost() const;
