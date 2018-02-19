@@ -361,6 +361,14 @@ void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const St
         ASSERT_NOT_REACHED();
 }
 
+void NetworkProcess::getAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
+{
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::AllStorageAccessEntriesResult(networkStorageSession->getAllStorageAccessEntries(), contextId), 0);
+    else
+        ASSERT_NOT_REACHED();
+}
+
 void NetworkProcess::grantStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
 {
     bool isStorageGranted = false;

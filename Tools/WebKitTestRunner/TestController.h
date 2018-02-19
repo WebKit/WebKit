@@ -184,6 +184,8 @@ public:
     void statisticsClearThroughWebsiteDataRemoval();
     void statisticsResetToConsistentState();
 
+    void getAllStorageAccessEntries();
+
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
 

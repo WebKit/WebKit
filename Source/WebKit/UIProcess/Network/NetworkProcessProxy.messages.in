@@ -46,4 +46,5 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #endif
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     StorageAccessRequestResult(bool wasGranted, uint64_t contextId)
+    AllStorageAccessEntriesResult(Vector<String> domains, uint64_t contextId)
 }

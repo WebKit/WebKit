@@ -73,6 +73,7 @@ public:
 
     void didClearStatisticsThroughWebsiteDataRemoval();
     void didSetPartitionOrBlockCookiesForHost();
+    void didReceiveAllStorageAccessEntries(Vector<String>& domains);
 
     void didRemoveAllSessionCredentials();
     

@@ -280,7 +280,6 @@ public:
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
     void setCookieStoragePartitioningEnabled(bool);
-    void setStorageAccessAPIEnabled(bool);
 
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
@@ -398,6 +397,11 @@ public:
     void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
     void statisticsCallClearThroughWebsiteDataRemovalCallback();
     void statisticsResetToConsistentState();
+
+    // Storage Access API
+    void setStorageAccessAPIEnabled(bool);
+    void getAllStorageAccessEntries(JSValueRef callback);
+    void callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains);
 
     // Open panel
     void setOpenPanelFiles(JSValueRef);

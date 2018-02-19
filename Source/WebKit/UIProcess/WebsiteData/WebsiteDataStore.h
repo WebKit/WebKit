@@ -125,6 +125,7 @@ public:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updatePrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst);
     void hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback);
+    void getAllStorageAccessEntries(CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback);
     void removePrevalentDomains(const Vector<String>& domains);
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);

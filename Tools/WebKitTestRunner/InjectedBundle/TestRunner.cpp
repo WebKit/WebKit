@@ -652,6 +652,7 @@ enum {
     StatisticsDidRunTelemetryCallbackID,
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
     StatisticsDidSetPartitionOrBlockCookiesForHostCallbackID,
+    AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
     FirstUIScriptCallbackID = 100
@@ -785,15 +786,6 @@ void TestRunner::setCookieStoragePartitioningEnabled(bool enabled)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::setStorageAccessAPIEnabled(bool enabled)
-{
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStorageAccessAPIEnabled"));
-    
-    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(enabled));
-    
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-}
-    
 double TestRunner::preciseTime()
 {
     return currentTime();
@@ -1683,6 +1675,47 @@ void TestRunner::statisticsResetToConsistentState()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsResetToConsistentState"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+
+void TestRunner::setStorageAccessAPIEnabled(bool enabled)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStorageAccessAPIEnabled"));
+    
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(enabled));
+    
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::getAllStorageAccessEntries(JSValueRef callback)
+{
+    cacheTestRunnerCallback(AllStorageAccessEntriesCallbackID, callback);
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("GetAllStorageAccessEntries"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+
+void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    
+    StringBuilder stringBuilder;
+    stringBuilder.appendLiteral("[");
+    bool firstDomain = true;
+    for (auto& domain : domains) {
+        if (firstDomain)
+            firstDomain = false;
+        else
+            stringBuilder.appendLiteral(", ");
+        stringBuilder.appendLiteral("\"");
+        stringBuilder.append(domain);
+        stringBuilder.appendLiteral("\"");
+    }
+    stringBuilder.appendLiteral("]");
+    
+    JSValueRef result = JSValueMakeFromJSONString(context, JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data()));
+
+    callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
 
 #if PLATFORM(MAC)

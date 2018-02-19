@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "APIString.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKWebsiteDataRecordInternal.h"
@@ -654,6 +655,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 + (void)_allowWebsiteDataRecordsForAllOrigins
 {
     WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins();
+}
+
+- (void)_getAllStorageAccessEntries:(void (^)(NSArray<NSString *> *domains))completionHandler
+{
+    _websiteDataStore->websiteDataStore().getAllStorageAccessEntries([completionHandler = makeBlockPtr(completionHandler)](auto domains) {
+        Vector<RefPtr<API::Object>> apiDomains;
+        apiDomains.reserveInitialCapacity(domains.size());
+        for (auto& domain : domains)
+            apiDomains.uncheckedAppend(API::String::create(domain));
+
+        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
+    });
 }
 
 @end

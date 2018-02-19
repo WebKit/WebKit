@@ -250,6 +250,24 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveAllStorageAccessEntries")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+
+        WKArrayRef domainsArray = static_cast<WKArrayRef>(messageBody);
+        auto size = WKArrayGetSize(domainsArray);
+        Vector<String> domains;
+        domains.reserveInitialCapacity(size);
+        for (size_t i = 0; i < size; ++i) {
+            WKTypeRef item = WKArrayGetItemAtIndex(domainsArray, i);
+            if (item && WKGetTypeID(item) == WKStringGetTypeID())
+                domains.append(toWTFString(static_cast<WKStringRef>(item)));
+        }
+
+        m_testRunner->callDidReceiveAllStorageAccessEntriesCallback(domains);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllSessionCredentialsCallback")) {
         m_testRunner->callDidRemoveAllSessionCredentialsCallback();
         return;

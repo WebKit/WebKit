@@ -23,28 +23,47 @@
         }
 
         const iframeID = "TheIframeThatRequestsStorageAccess";
-        function askIframeIfItHasStorageAccess() {
-            var iframeContentWindow = document.getElementById(iframeID).contentWindow;
-            iframeContentWindow.postMessage("reportBackCookies", "http://localhost:8000");
+        function askIfIframeStillHasStorageAccess() {
+            testRunner.getAllStorageAccessEntries(function (arrayOfDomains) {
+                var passed = true;
+                for (var i = 0; i < arrayOfDomains.length; ++i) {
+                    if (arrayOfDomains[i] === "localhost") {
+                        passed = false;
+                        break;
+                    }
+                }
+                if (passed)
+                    testPassed("There is no storage access entry for localhost after iframe detach.");
+                else
+                    testFailed("There is still a storage access entry for localhost after iframe detach.");
+                finishTest();
+            });
         }
 
-        function detachIframeAndAskWhetherItStillHasStorageAccess() {
-            var theIframe = document.getElementById(iframeID);
-            theIframe.onload = askIframeIfItHasStorageAccess;
-            document.getElementsByTagName('body')[0].appendChild(theIframe);
+        function detachIframeAndCheckWhetherItStillHasStorageAccess() {
+            testRunner.getAllStorageAccessEntries(function (arrayOfDomains) {
+                var passed = false;
+                for (var i = 0; i < arrayOfDomains.length; ++i) {
+                    if (arrayOfDomains[i] === "localhost") {
+                        passed = true;
+                        break;
+                    }
+                }
+                if (passed)
+                    testPassed("There is a storage access entry for localhost.");
+                else
+                    testFailed("There is no storage access entry for localhost.");
+                var theIframe = document.getElementById(iframeID);
+                theIframe.onload = askIfIframeStillHasStorageAccess;
+                document.getElementsByTagName('body')[0].appendChild(theIframe);
+            });
         }
 
-        const expectedPassMessages = 2;
-        var passMessagesReceived = 0;
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
                 if (event.data.indexOf("PASS") !== -1) {
                     testPassed(event.data.replace("PASS ", ""));
-                    passMessagesReceived++;
-                    if (passMessagesReceived >= expectedPassMessages)
-                        finishTest();
-                    else
-                        detachIframeAndAskWhetherItStillHasStorageAccess();
+                    detachIframeAndCheckWhetherItStillHasStorageAccess();
                 } else {
                     testFailed(event.data);
                     finishTest();
@@ -60,14 +79,7 @@
             var centerX = element.offsetLeft + element.offsetWidth / 2;
             var centerY = element.offsetTop + element.offsetHeight / 2;
             UIHelper.activateAt(centerX, centerY).then(
-                function () {
-                    if (window.eventSender)
-                        eventSender.keyDown("escape");
-                    else {
-                        testFailed("No eventSender.");
-                        finishTest();
-                    }
-                },
+                function () { },
                 function () {
                     testFailed("Promise rejected.");
                     finishTest();
@@ -77,8 +89,8 @@
 
         function runTest() {
             if (document.location.hash !== "#elementActivated") {
-                activateElement(iframeID);
                 document.location.hash = "elementActivated";
+                activateElement(iframeID);
             }
         }
 
@@ -99,6 +111,8 @@
     </script>
 </head>
 <body>
-<iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="runTest()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess"></iframe>
+<div>
+    <iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="runTest()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess"></iframe>
+</div>
 </body>
 </html>
