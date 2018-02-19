@@ -1,3 +1,17 @@
+2018-02-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r228012.
+        https://bugs.webkit.org/show_bug.cgi?id=182493
+
+        "It regressed ARES-6 by 2-4%" (Requested by saamyjoon on
+        #webkit).
+
+        Reverted changeset:
+
+        "[JSC] Clean up ArraySpeciesCreate"
+        https://bugs.webkit.org/show_bug.cgi?id=182434
+        https://trac.webkit.org/changeset/228012
+
 2018-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings generator tests after r228032.
