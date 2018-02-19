@@ -1,3 +1,13 @@
+2018-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Fullscreen video is broken
+        https://bugs.webkit.org/show_bug.cgi?id=182740
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitFeatures.cmake: Enable the
+        VIDEO_USES_ELEMENT_FULLSCREEN feature on CMake ports.
+
 2018-02-16  Dean Jackson  <dino@apple.com>
 
         Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa
