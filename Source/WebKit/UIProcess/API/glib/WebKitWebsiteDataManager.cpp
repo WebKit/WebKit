@@ -350,7 +350,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
         PROP_RESOURCE_LOAD_STATISTICS_DIRECTORY,
         g_param_spec_string(
             "resource-load-statistics-directory",
-            _("Resource Load Statistics Direcory"),
+            _("Resource Load Statistics Directory"),
             _("The directory where resource load statistics will be stored"),
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
