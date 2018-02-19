@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Blocked https://localhost:8443/security/mixedContent/resources/subresource/protected-pdf.php from asking for credentials because it was loaded via an insecure redirect from http://127.0.0.1:8080/resources/redirect.php?url=https://localhost:8443/security/mixedContent/resources/subresource/protected-pdf.php.
-CONSOLE MESSAGE: Blocked https://localhost:8443/security/mixedContent/resources/subresource/protected-pdf.php from asking for credentials because it was navigated to from a secure page or went through an insecure redirect.
-ALERT: Unauthorized
-

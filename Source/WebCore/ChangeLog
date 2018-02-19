@@ -1,3 +1,27 @@
+2018-02-19  Daniel Bates  <dabates@apple.com>
+
+        Do not block authentication challenge to navigated resources
+        https://bugs.webkit.org/show_bug.cgi?id=182807
+        <rdar://problem/37481619>
+
+        Reviewed by Brent Fulgham.
+
+        Blocking the main resource from asking for credentials depending on how it was
+        navigated to could be confusing to a person and breaks web compatibility. Restore
+        the behavior before r224134.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        (WebCore::ResourceLoader::didBlockAuthenticationChallenge):
+        (WebCore::ResourceLoader::isAllowedToAskUserForCredentials const):
+        (WebCore::ResourceLoader::isMixedContent const): Deleted.
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::wasAuthenticationChallengeBlocked const):
+        (WebCore::ResourceLoader::wasInsecureRequestSeen const): Deleted.
+
 2018-02-17  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Store all parsed keyframe input information in a single structure

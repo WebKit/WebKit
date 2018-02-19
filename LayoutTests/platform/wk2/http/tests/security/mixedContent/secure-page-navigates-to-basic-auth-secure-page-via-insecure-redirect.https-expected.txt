@@ -1,0 +1,2 @@
+127.0.0.1:8443 - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
+Authenticated with username testUser.

@@ -679,10 +679,6 @@ void FrameLoader::receivedFirstData()
     ASSERT(m_frame.document());
     auto& document = *m_frame.document();
 
-    auto* mainResourceLoader = documentLoader.mainResourceLoader();
-    if (mainResourceLoader && mainResourceLoader->wasAuthenticationChallengeBlocked() && mainResourceLoader->wasInsecureRequestSeen())
-        reportAuthenticationChallengeBlocked(&m_frame, document.url(), ASCIILiteral { "it was navigated to from a secure page or went through an insecure redirect" });
-
     LinkLoader::loadLinksFromHeader(documentLoader.response().httpHeaderField(HTTPHeaderName::Link), document.url(), document, LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
     double delay;

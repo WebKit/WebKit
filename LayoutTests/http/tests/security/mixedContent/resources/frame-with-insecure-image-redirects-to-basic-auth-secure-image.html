@@ -2,18 +2,19 @@
 <html>
 <head>
 <script>
-function pass()
-{
-    window.opener.postMessage("PASS did not load image.", "*");
-}
 
-function fail()
+var allowCrossOriginSubresourcesToAskForCredentials = document.location.search.includes("?allowCrossOriginSubresourcesToAskForCredentials");
+
+function checkResult(event)
 {
-    window.opener.postMessage("FAIL did load image.", "*");
+    if (event.type == "error")
+        window.opener.postMessage((allowCrossOriginSubresourcesToAskForCredentials ? "FAIL" : "PASS") + " did not load image.", "*");
+    else if (event.type == "load")
+        window.opener.postMessage((allowCrossOriginSubresourcesToAskForCredentials ? "PASS" : "FAIL") + " did load image.", "*");
 }
 </script>
 </head>
 <body>
-<img src="http://127.0.0.1:8080/resources/redirect.php?url=https://localhost:8443/security/mixedContent/resources/subresource/protected-image.php" onerror="pass()" onload="fail()">
+<img src="http://127.0.0.1:8080/resources/redirect.php?url=https://localhost:8443/security/mixedContent/resources/subresource/protected-image.php" onerror="checkResult(event)" onload="checkResult(event)">
 </body>
 </html>

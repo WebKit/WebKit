@@ -1,3 +1,35 @@
+2018-02-19  Daniel Bates  <dabates@apple.com>
+
+        Do not block authentication challenge to navigated resources
+        https://bugs.webkit.org/show_bug.cgi?id=182807
+        <rdar://problem/37481619>
+
+        Reviewed by Brent Fulgham.
+
+        Update tests based on the new behavior.
+
+        * http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * http/tests/security/mixedContent/insecure-download-redirects-to-basic-auth-secure-download.https-expected.txt: Removed.
+        * http/tests/security/mixedContent/insecure-download-redirects-to-basic-auth-secure-download.https.html: Removed.
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.html:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-expected.txt:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-image-redirects-to-basic-auth-secure-image.html:
+        * http/tests/security/mixedContent/resources/subresource/protected-pdf.php: Removed.
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https-expected.txt:
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html:
+        * platform/wk2/http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/insecure-basic-auth-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt.
+        * platform/wk2/http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials-expected.txt: Added.
+        * platform/wk2/http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https-expected.txt: Added.
+        * platform/wk2/http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https-expected.txt: Added.
+        * platform/wk2/http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt.
+        * platform/wk2/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https-expected.txt.
+
 2018-02-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/track/track-css-matching-default.html as flaky.
