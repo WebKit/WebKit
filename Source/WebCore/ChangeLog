@@ -1,3 +1,18 @@
+2018-02-19  Dean Jackson  <dino@apple.com>
+
+        SIGFPE @ int WebCore::SVGToOTFFontConverter::scaleUnitsPerEm<int> const + 45
+        https://bugs.webkit.org/show_bug.cgi?id=182944
+        <rdar://problem/35369984>
+
+        Reviewed by Myles Maxfield.
+
+        Avoid a divide-by-zero.
+
+        Test: svg/text/font-bad-unitsperem.html
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::unitsPerEm const):
+
 2018-02-19  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r219342): Touch event coordinates and elementFromPoint coordinates differ

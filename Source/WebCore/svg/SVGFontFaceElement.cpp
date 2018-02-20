@@ -88,11 +88,15 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 unsigned SVGFontFaceElement::unitsPerEm() const
 {
-    const AtomicString& value = attributeWithoutSynchronization(units_per_emAttr);
-    if (value.isEmpty())
+    const AtomicString& valueString = attributeWithoutSynchronization(units_per_emAttr);
+    if (valueString.isEmpty())
         return FontMetrics::defaultUnitsPerEm;
 
-    return static_cast<unsigned>(ceilf(value.toFloat()));
+    auto value = static_cast<unsigned>(ceilf(valueString.toFloat()));
+    if (!value)
+        return FontMetrics::defaultUnitsPerEm;
+
+    return value;
 }
 
 int SVGFontFaceElement::xHeight() const
