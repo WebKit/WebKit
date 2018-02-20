@@ -1,3 +1,17 @@
+2018-02-13  Saam Barati  <sbarati@apple.com>
+
+        putDirectIndexSlowOrBeyondVectorLength needs to convert to dictionary indexing mode always if attributes are present
+        https://bugs.webkit.org/show_bug.cgi?id=182755
+        <rdar://problem/37080864>
+
+        Reviewed by Keith Miller.
+
+        * stress/always-enter-dictionary-indexing-mode-with-getter.js: Added.
+        (test1.o.get 10005):
+        (test1):
+        (test2.o.get 1000):
+        (test2):
+
 2018-02-13  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] cache TaggedTemplate arrays by callsite rather than by contents

@@ -1,3 +1,20 @@
+2018-02-13  Saam Barati  <sbarati@apple.com>
+
+        putDirectIndexSlowOrBeyondVectorLength needs to convert to dictionary indexing mode always if attributes are present
+        https://bugs.webkit.org/show_bug.cgi?id=182755
+        <rdar://problem/37080864>
+
+        Reviewed by Keith Miller.
+
+        putDirectIndexSlowOrBeyondVectorLength with non-zero attributes only converted
+        the object in question to a dictionary indexing mode when the index is less than
+        the vector length. This makes no sense. If we're defining a getter, setter, or read
+        only property, we must always enter the dictionary indexing mode irrespective
+        of the index in relation to the vector length.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+
 2018-02-13  Guillaume Emont  <guijemont@igalia.com>
 
         [YarrJIT][ARM] We need to save r8 as it is the initial start register
