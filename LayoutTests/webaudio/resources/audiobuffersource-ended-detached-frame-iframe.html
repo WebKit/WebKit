@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="audio-testing.js"></script>
+<script src="audiobuffersource-testing.js"></script>
+<script>
+    var context;
+    var source;
+
+    function runTest()
+    {
+        var sampleRate = 44100.0;
+        var numberOfFrames = 32;
+        context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+        source = context.createBufferSource();
+        source.buffer = createTestBuffer(context, numberOfFrames);
+        source.connect(context.destination);
+        source.onended = function()
+        {
+        }
+        source.start(0);
+        context.startRendering();
+    }
+</script>
+</body>
+</html>
