@@ -1063,10 +1063,6 @@ webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
-# CSS3 Text each-line and hanging indent not supported
-webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html [ Failure ]
-webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-inherited.html [ Failure ]
-
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
@@ -1205,7 +1201,7 @@ webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
 
-# We should consider enabling ENABLE_LINK_PREFETCH and ENABLE_CSS3_TEXT
+# We should consider enabling ENABLE_LINK_PREFETCH
 webkit.org/b/179989 http/tests/misc/prefetch-purpose.html [ Skip ]
 webkit.org/b/179989 http/tests/misc/link-rel-prefetch-and-subresource.html [ Skip ]
 webkit.org/b/179989 fast/dom/HTMLLinkElement/subresource.html [ Skip ]
@@ -1214,10 +1210,6 @@ webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onerror.html [ Skip ]
 webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
 webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Skip ]
 webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
-webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify-inherited.html [ Failure ]
-webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify.html [ Failure ]
-webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html [ Failure ]
-webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html [ Failure ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -3077,12 +3069,7 @@ webkit.org/b/163976 fast/css/user-drag-none.html [ Failure ]
 webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
 webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 
-webkit.org/b/163980 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
-webkit.org/b/163980 fast/css3-text/css3-text-justify/text-justify-none.html [ ImageOnlyFailure ]
-
 webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
-
-webkit.org/b/163982 fast/css3-text/css3-text-indent/text-indent-each-line-hanging.html [ ImageOnlyFailure ]
 
 webkit.org/b/163984 fast/dom/Window/child-window-focus.html [ Failure ]
 

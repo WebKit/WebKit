@@ -222,11 +222,6 @@ http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
-# Some CSS3 Text tests are not enabled on iOS
-webkit.org/b/76173 fast/css3-text/css3-text-align-last
-webkit.org/b/99945 fast/css3-text/css3-text-justify
-webkit.org/b/112755 fast/css3-text/css3-text-indent
-
 # Unsupported on certain OS versions
 webkit.org/b/152491 fast/text/woff2.html [ Skip ]
 
@@ -3181,12 +3176,6 @@ webkit.org/b/178669 compositing/visible-rect/iframe-no-layers.html [ Pass Failur
 # Underlines' starting and ending positions need to be pixel-snapped
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
-
-# CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
-webkit.org/b/112755 fast/css3-text/css3-text-indent/text-indent-each-line-hanging.html [ ImageOnlyFailure ]
-webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html [ Failure ]
-webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-inherited.html [ Failure ]
-webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
 
 webkit.org/b/177322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
 

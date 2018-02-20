@@ -1,3 +1,25 @@
+2018-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css3-text] Skip tests that need ENABLE_CSS3_TEXT
+        https://bugs.webkit.org/show_bug.cgi?id=182963
+
+        Unreviewed gardening.
+
+        These tests were marked in the different TestExpectations fails of each port,
+        when actually none of them were testing this code as ENABLE_CSS3_TEXT is disabled by default
+        (even in development builds).
+
+        The patch just moves the flagged tests from the port specific TestExpectations files
+        to the generic TestExpectations file skipping them.
+
+        It also removes editing/pasteboard/insert-text-decoration.html from the skipping list
+        as it should be passing for Mac an iOs too.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         null m_lastNodeInserted dereference at ReplaceSelectionCommand::InsertedNodes::lastLeafInserted
