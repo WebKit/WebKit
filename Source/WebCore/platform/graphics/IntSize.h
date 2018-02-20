@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "PlatformExportMacros.h"
 #include <algorithm>
 
 #if PLATFORM(MAC) && defined __OBJC__

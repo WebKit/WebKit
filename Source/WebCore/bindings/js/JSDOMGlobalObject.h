@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "PlatformExportMacros.h"
 #include "WebCoreJSBuiltinInternals.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>

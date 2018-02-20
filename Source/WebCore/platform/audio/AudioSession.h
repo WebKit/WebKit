@@ -26,8 +26,6 @@
 #ifndef AudioSession_h
 #define AudioSession_h
 
-#include "PlatformExportMacros.h"
-
 #if USE(AUDIO_SESSION)
 
 #include <memory>

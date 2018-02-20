@@ -27,7 +27,6 @@
 #ifndef AffineTransform_h
 #define AffineTransform_h
 
-#include "PlatformExportMacros.h"
 #include <array>
 #include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>

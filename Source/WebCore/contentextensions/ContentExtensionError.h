@@ -27,7 +27,6 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "PlatformExportMacros.h"
 #include <system_error>
 
 namespace WebCore {
