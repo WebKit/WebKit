@@ -30,6 +30,7 @@
 #import "StorageProcess.h"
 
 #import "SandboxInitializationParameters.h"
+#import "SandboxUtilities.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
@@ -56,6 +57,12 @@ void StorageProcess::initializeSandbox(const ChildProcessInitializationParameter
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.Storage" ofType:@"sb"]);
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 #endif
+}
+
+bool StorageProcess::parentProcessHasServiceWorkerEntitlement() const
+{
+    static bool hasEntitlement = connectedProcessHasEntitlement(parentProcessConnection()->xpcConnection(), @"com.apple.developer.WebKit.ServiceWorkers");
+    return hasEntitlement;
 }
 
 } // namespace WebKit

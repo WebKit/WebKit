@@ -86,6 +86,12 @@ public:
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler);
 #endif
 
+#if PLATFORM(IOS)
+    bool parentProcessHasServiceWorkerEntitlement() const;
+#else
+    bool parentProcessHasServiceWorkerEntitlement() const { return true; }
+#endif
+
 #if ENABLE(SERVICE_WORKER)
     // For now we just have one global connection to service worker context processes.
     // This will change in the future.

@@ -3163,6 +3163,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 #endif
 
+    if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkersEnabledKey()))
+        RELEASE_ASSERT(parentProcessHasServiceWorkerEntitlement());
+
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
 }

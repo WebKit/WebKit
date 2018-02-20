@@ -40,6 +40,7 @@
 #import "PluginView.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
+#import "SandboxUtilities.h"
 #import "UserData.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -390,6 +391,12 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
         return false;
 
     return eventWasHandled;
+}
+
+bool WebPage::parentProcessHasServiceWorkerEntitlement() const
+{
+    static bool hasEntitlement = connectedProcessHasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), @"com.apple.developer.WebKit.ServiceWorkers");
+    return hasEntitlement;
 }
 
 void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
