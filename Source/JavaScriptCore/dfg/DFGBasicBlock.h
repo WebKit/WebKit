@@ -87,6 +87,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
             switch (node->op()) {
             // The bitter end can contain Phantoms and the like. There will probably only be one or two nodes after the terminal. They are all no-ops and will not have any checked children.
             case Check: // This is here because it's our universal no-op.
+            case CheckVarargs:
             case Phantom:
             case PhantomLocal:
             case Flush:
@@ -116,7 +117,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
             m_nodes.insert(result.index, node);
     }
     
-    void replaceTerminal(Node*);
+    void replaceTerminal(Graph&, Node*);
     
     size_t numNodes() const { return phis.size() + size(); }
     Node* node(size_t i) const

@@ -140,6 +140,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IdentityWithProfile:
     case Phantom:
     case Check:
+    case CheckVarargs:
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
     case CheckStructureImmediate:
@@ -793,7 +794,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::DirectArguments:
             if (mode.isInBounds()) {
                 read(DirectArgumentsProperties);
-                def(HeapLocation(indexedPropertyLoc, DirectArgumentsProperties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(indexedPropertyLoc, DirectArgumentsProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(World);
@@ -802,14 +803,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             
         case Array::ScopedArguments:
             read(ScopeProperties);
-            def(HeapLocation(indexedPropertyLoc, ScopeProperties, node->child1(), node->child2()), LazyNode(node));
+            def(HeapLocation(indexedPropertyLoc, ScopeProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
             return;
             
         case Array::Int32:
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedInt32Properties);
-                def(HeapLocation(indexedPropertyLoc, IndexedInt32Properties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(indexedPropertyLoc, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(World);
@@ -820,7 +821,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedDoubleProperties);
-                def(HeapLocation(indexedPropertyLoc, IndexedDoubleProperties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(indexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(World);
@@ -831,7 +832,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedContiguousProperties);
-                def(HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(World);
@@ -864,7 +865,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Float64Array:
             read(TypedArrayProperties);
             read(MiscFields);
-            def(HeapLocation(indexedPropertyLoc, TypedArrayProperties, node->child1(), node->child2()), LazyNode(node));
+            def(HeapLocation(indexedPropertyLoc, TypedArrayProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
             return;
         // We should not get an AnyTypedArray in a GetByVal as AnyTypedArray is only created from intrinsics, which
         // are only added from Inline Caching a GetById.
@@ -1202,6 +1203,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
         
+    case GetArrayMask:
+        read(JSObject_butterflyMask);
+        def(HeapLocation(ArrayMaskLoc, JSObject_butterflyMask, node->child1()), LazyNode(node));
+        return;
+
     case GetArrayLength: {
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {

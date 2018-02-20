@@ -106,6 +106,7 @@ private:
                     relevantLocals.append(node->unlinkedLocal());
                 break;
                 
+            case CheckVarargs:
             case Check: {
                 bool sawEscape = false;
                 m_graph.doToChildren(
@@ -264,6 +265,7 @@ private:
             Node* node = block->at(nodeIndex);
             switch (node->op()) {
             case Check:
+            case CheckVarargs:
             case MovHint:
             case PutHint:
                 // We don't need to change anything with these.

@@ -173,6 +173,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:
+    case CheckVarargs:
     case CountExecution:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
@@ -329,6 +330,7 @@ inline CapabilityLevel canCompile(Node* node)
     case AtomicsIsLockFree:
     case InitializeEntrypointArguments:
     case CPUIntrinsic:
+    case GetArrayMask:
         // These are OK.
         break;
 

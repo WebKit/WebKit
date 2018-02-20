@@ -37,9 +37,13 @@ void PureValue::dump(PrintStream& out) const
     out.print(Graph::opName(op()));
     out.print("(");
     CommaPrinter comma;
-    for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
-        if (children().child(i))
-            out.print(comma, children().child(i));
+    if (defaultFlags(m_op) & NodeHasVarArgs)
+        out.print(comma, " VarArgs: firstChild=", m_children.firstChild(), " numChildren=", m_children.numChildren());
+    else {
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            if (children().child(i))
+                out.print(comma, children().child(i));
+        }
     }
     if (m_info)
         out.print(comma, m_info);

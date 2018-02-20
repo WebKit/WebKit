@@ -58,6 +58,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case Flush:
     case Phantom:
     case Check:
+    case CheckVarargs:
     case Identity:
     case IdentityWithProfile:
     case GetLocal:

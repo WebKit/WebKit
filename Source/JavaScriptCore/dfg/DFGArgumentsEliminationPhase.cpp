@@ -314,14 +314,18 @@ private:
                     break;
                     
                 case GetByVal:
-                    escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
-                    escape(node->child2(), node);
-                    escape(node->child3(), node);
+                    escapeBasedOnArrayMode(node->arrayMode(), m_graph.varArgChild(node, 0), node);
+                    escape(m_graph.varArgChild(node, 1), node);
+                    escape(m_graph.varArgChild(node, 2), node);
+                    escape(m_graph.varArgChild(node, 3), node);
                     break;
 
                 case GetArrayLength:
                     // FIXME: It would not be hard to support NewArrayWithSpread here if it is only over Spread(CreateRest) nodes.
                     escape(node->child2(), node);
+                    break;
+
+                case GetArrayMask:
                     break;
                 
                 case NewArrayWithSpread: {
@@ -371,6 +375,7 @@ private:
                     break;
 
                 case Check:
+                case CheckVarargs:
                     m_graph.doToChildren(
                         node,
                         [&] (Edge edge) {
@@ -719,9 +724,21 @@ private:
                     if (!isEliminatedAllocation(candidate))
                         break;
                     
-                    // Meh, this is kind of hackish - we use an Identity so that we can reuse the
-                    // getArrayLength() helper.
                     node->convertToIdentityOn(getArrayLength(candidate));
+                    break;
+                }
+
+                case GetArrayMask: {
+                    Node* candidate = node->child1().node();
+                    if (!isEliminatedAllocation(candidate))
+                        break;
+                    
+                    // NOTE: This is valid because the only user of this node at the moment is GetByVal.
+                    // If the candidate is eliminated, it must also be eliminated for all GetByVal users.
+                    // Therefore, we'll transform those GetByVal nodes to no longer use us. If we introduce
+                    // other users of this node, we'll need to change this code. That would be easy: just
+                    // introduce a ComputeArrayMask node, and transform this into ComputeArrayMask(getArrayLength(candidate)).
+                    node->convertToConstant(m_graph.freeze(jsNumber(0)));
                     break;
                 }
                     
@@ -733,7 +750,7 @@ private:
                     // second bounds check, but still - that's just silly.
                     // https://bugs.webkit.org/show_bug.cgi?id=143076
                     
-                    Node* candidate = node->child1().node();
+                    Node* candidate = m_graph.varArgChild(node, 0).node();
                     if (!isEliminatedAllocation(candidate))
                         break;
 
@@ -742,8 +759,8 @@ private:
                         numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
                     
                     Node* result = nullptr;
-                    if (node->child2()->isInt32Constant()) {
-                        unsigned index = node->child2()->asUInt32();
+                    if (m_graph.varArgChild(node, 1)->isInt32Constant()) {
+                        unsigned index = m_graph.varArgChild(node, 1)->asUInt32();
                         InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
                         index += numberOfArgumentsToSkip;
                         
@@ -764,7 +781,7 @@ private:
                             if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
                                 insertionSet.insertNode(
                                     nodeIndex, SpecNone, CheckInBounds, node->origin,
-                                    node->child2(), Edge(getArrayLength(candidate), Int32Use));
+                                    m_graph.varArgChild(node, 1), Edge(getArrayLength(candidate), Int32Use));
                             }
                             
                             result = insertionSet.insertNode(
@@ -780,7 +797,7 @@ private:
                             op = GetMyArgumentByValOutOfBounds;
                         result = insertionSet.insertNode(
                             nodeIndex, node->prediction(), op, node->origin, OpInfo(numberOfArgumentsToSkip),
-                            node->child1(), node->child2());
+                            m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1));
                     }
 
                     // Need to do this because we may have a data format conversion here.
@@ -944,7 +961,7 @@ private:
                                     storeValue(undefined, storeIndex);
                                 }
                                 
-                                node->remove();
+                                node->remove(m_graph);
                                 node->origin.exitOK = canExit;
                                 break;
                             }
@@ -1009,7 +1026,7 @@ private:
                                     storeValue(value, storeIndex);
                                 }
                                 
-                                node->remove();
+                                node->remove(m_graph);
                                 node->origin.exitOK = canExit;
                                 break;
                             }
@@ -1186,7 +1203,7 @@ private:
                 case GetButterfly: {
                     if (!isEliminatedAllocation(node->child1().node()))
                         break;
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                 }
 
@@ -1195,7 +1212,7 @@ private:
                     if (!isEliminatedAllocation(node->child1().node()))
                         break;
                     node->child1() = Edge(); // Remove the cell check since we've proven it's not needed and FTL lowering might botch this.
-                    node->remove();
+                    node->remove(m_graph);
                     break;
                     
                 default:

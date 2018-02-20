@@ -229,6 +229,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:
+    case CheckVarargs:
     case CheckTypeInfoFlags:
     case MultiGetByOffset:
     case ValueRep:
@@ -240,6 +241,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetByValWithThis:
     case GetIndexedPropertyStorage:
     case GetArrayLength:
+    case GetArrayMask:
     case GetVectorLength:
     case ArrayPush:
     case ArrayPop:

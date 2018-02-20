@@ -184,7 +184,7 @@ private:
                 }
                 if (value.m_structure.isSubsetOf(set)) {
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
-                    node->remove();
+                    node->remove(m_graph);
                     eliminated = true;
                     break;
                 }
@@ -196,7 +196,7 @@ private:
                 if (constant) {
                     if (constant.isCell() && constant.asCell()->inherits(m_graph.m_vm, node->classInfo())) {
                         m_interpreter.execute(indexInBlock);
-                        node->remove();
+                        node->remove(m_graph);
                         eliminated = true;
                         break;
                     }
@@ -206,7 +206,7 @@ private:
 
                 if (value.m_structure.isSubClassOf(node->classInfo())) {
                     m_interpreter.execute(indexInBlock);
-                    node->remove();
+                    node->remove(m_graph);
                     eliminated = true;
                     break;
                 }
@@ -244,7 +244,7 @@ private:
                     if (Structure* structure = jsDynamicCast<Structure*>(m_graph.m_vm, value.value())) {
                         if (set.contains(m_graph.registerStructure(structure))) {
                             m_interpreter.execute(indexInBlock);
-                            node->remove();
+                            node->remove(m_graph);
                             eliminated = true;
                             break;
                         }
@@ -264,7 +264,7 @@ private:
                         });
                     if (allGood) {
                         m_interpreter.execute(indexInBlock);
-                        node->remove();
+                        node->remove(m_graph);
                         eliminated = true;
                         break;
                     }
@@ -276,7 +276,7 @@ private:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;
-                node->remove();
+                node->remove(m_graph);
                 eliminated = true;
                 break;
             }
@@ -285,7 +285,7 @@ private:
                 if (m_state.forNode(node->child1()).m_structure.onlyStructure() != node->transition()->next)
                     break;
                 
-                node->remove();
+                node->remove(m_graph);
                 eliminated = true;
                 break;
             }
@@ -293,7 +293,7 @@ private:
             case CheckCell: {
                 if (m_state.forNode(node->child1()).value() != node->cellOperand()->value())
                     break;
-                node->remove();
+                node->remove(m_graph);
                 eliminated = true;
                 break;
             }
@@ -302,7 +302,7 @@ private:
             case CheckNotEmpty: {
                 if (m_state.forNode(node->child1()).m_type & SpecEmpty)
                     break;
-                node->remove();
+                node->remove(m_graph);
                 eliminated = true;
                 break;
             }
@@ -326,7 +326,7 @@ private:
                 }
 
                 if (constantUid == uid) {
-                    node->remove();
+                    node->remove(m_graph);
                     eliminated = true;
                 }
                 break;
@@ -337,7 +337,7 @@ private:
                 JSValue right = m_state.forNode(node->child2()).value();
                 if (left && right && left.isInt32() && right.isInt32()
                     && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32())) {
-                    node->remove();
+                    node->remove(m_graph);
                     eliminated = true;
                     break;
                 }
@@ -710,6 +710,26 @@ private:
                 break;
             }
 
+            case CheckVarargs: {
+                alreadyHandled = true;
+                m_interpreter.execute(indexInBlock);
+                unsigned targetIndex = 0;
+                for (unsigned i = 0; i < node->numChildren(); ++i) {
+                    Edge& edge = m_graph.varArgChild(node, i);
+                    if (!edge)
+                        continue;
+                    if (edge.isProved() || edge.willNotHaveCheck()) {
+                        edge = Edge();
+                        changed = true;
+                        continue;
+                    }
+                    Edge& dst = m_graph.varArgChild(node, targetIndex++);
+                    std::swap(dst, edge);
+                }
+                node->children.setNumChildren(targetIndex);
+                break;
+            }
+
             case MakeRope: {
                 for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                     Edge& edge = node->children.child(i);
@@ -998,7 +1018,7 @@ private:
             case JSConstant:
             case DoubleConstant:
             case Int52Constant:
-                node->remove();
+                node->remove(m_graph);
                 break;
             default:
                 DFG_CRASH(m_graph, node, "Bad Upsilon phi() pointer");

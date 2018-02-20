@@ -41,10 +41,9 @@ public:
     
     PureValue(NodeType op, const AdjacencyList& children, uintptr_t info)
         : m_op(op)
-        , m_children(children.sanitized())
+        , m_children(defaultFlags(op) & NodeHasVarArgs ? children : children.sanitized())
         , m_info(info)
     {
-        ASSERT(!(defaultFlags(op) & NodeHasVarArgs));
     }
     
     PureValue(NodeType op, const AdjacencyList& children, const void* ptr)
