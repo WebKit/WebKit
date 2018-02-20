@@ -708,3 +708,7 @@ touchEventEmulationEnabled:
 
 mediaCapabilitiesEnabled:
   initial: false
+
+clientCoordinatesRelativeToLayoutViewport:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames

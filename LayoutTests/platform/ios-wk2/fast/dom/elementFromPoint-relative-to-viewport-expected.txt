@@ -20,8 +20,8 @@ Zoomed out
 Test Initial
 PASS unscrolledBoxInitial is '0'
 PASS scrolledDownBoxInitial is '5'
-FAIL scrolledRightBoxInitial should be 3. Was 2.
-FAIL scrolledDownAndRightBoxInitial should be 8. Was 7.
+PASS scrolledRightBoxInitial is '3'
+PASS scrolledDownAndRightBoxInitial is '8'
 PASS successfullyParsed is true
 
 TEST COMPLETE

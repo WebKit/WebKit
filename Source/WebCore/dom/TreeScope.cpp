@@ -299,7 +299,8 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
     if (!document.frame() || !document.view())
         return std::nullopt;
 
-    if (document.frame()->settings().visualViewportEnabled()) {
+    const auto& settings = document.frame()->settings();
+    if (settings.visualViewportEnabled() && settings.clientCoordinatesRelativeToLayoutViewport()) {
         document.updateLayout();
         if (!document.view() || !document.hasLivingRenderTree())
             return std::nullopt;
