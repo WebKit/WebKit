@@ -28,12 +28,11 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaPlayerPrivateFullscreenWindow.h"
-
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Image.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/MediaPlayerPrivateFullscreenWindow.h>
 #include <wtf/RefPtr.h>
 #include <wtf/win/GDIObject.h>
 
