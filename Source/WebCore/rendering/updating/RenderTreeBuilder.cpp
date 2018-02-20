@@ -227,6 +227,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
     if (is<RenderBlockFlow>(parent))
         return blockBuilder().takeChild(downcast<RenderBlockFlow>(parent), child);
 
+    if (is<RenderBlock>(parent))
+        return blockBuilder().takeChild(downcast<RenderBlock>(parent), child);
+
     return parent.takeChild(*this, child);
 }
 
@@ -514,11 +517,6 @@ void RenderTreeBuilder::insertChildToRenderMathMLFenced(RenderMathMLFenced& pare
     mathMLBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderBlock(RenderBlock& parent, RenderObject& oldChild)
-{
-    return blockBuilder().takeChild(parent, oldChild);
-}
-
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
     if (is<RenderBlock>(renderer))
@@ -538,7 +536,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderMenuList(RenderMen
 {
     auto* innerRenderer = parent.innerRenderer();
     if (!innerRenderer || &child == innerRenderer)
-        return parent.RenderBlock::takeChild(*this, child);
+        return blockBuilder().takeChild(parent, child);
     return takeChild(*innerRenderer, child);
 }
 
@@ -547,14 +545,14 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderButton(RenderButto
     auto* innerRenderer = parent.innerRenderer();
     if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
         ASSERT(&child == innerRenderer || !innerRenderer);
-        return parent.RenderBlock::takeChild(*this, child);
+        return blockBuilder().takeChild(parent, child);
     }
     return takeChild(*innerRenderer, child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child)
 {
-    auto takenChild = parent.RenderBlock::takeChild(*this, child);
+    auto takenChild = blockBuilder().takeChild(parent, child);
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are removed.
     if (child.isOutOfFlowPositioned())

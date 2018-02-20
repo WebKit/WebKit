@@ -373,7 +373,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlockFlow& par
         if (fragmentedFlow && fragmentedFlow != &child)
             m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child);
     }
-    return parent.RenderBlock::takeChild(m_builder, child);
+    return takeChild(static_cast<RenderBlock&>(parent), child);
 }
 
 }

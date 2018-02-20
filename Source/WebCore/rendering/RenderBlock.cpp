@@ -482,11 +482,6 @@ void RenderBlock::deleteLines()
         cache->deferRecomputeIsIgnored(element());
 }
 
-RenderPtr<RenderObject> RenderBlock::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
-{
-    return builder.takeChildFromRenderBlock(*this, oldChild);
-}
-
 bool RenderBlock::childrenPreventSelfCollapsing() const
 {
     // Whether or not we collapse is dependent on whether all our normal flow children
