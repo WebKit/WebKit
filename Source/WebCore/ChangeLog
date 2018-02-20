@@ -1,29 +1,33 @@
 2018-02-20  Jason Marcell  <jmarcell@apple.com>
 
-        Cherry-pick r228825. rdar://problem/37714030
+        Cherry-pick r228601. rdar://problem/37697671
 
-    2018-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+    2018-02-20  Jason Marcell  <jmarcell@apple.com>
 
-            [iOS 11.3 Beta] Can't copy a URL from Safari and paste it into the Gmail app
-            https://bugs.webkit.org/show_bug.cgi?id=182952
-            <rdar://problem/37636190>
+            Cherry-pick r228825. rdar://problem/37714030
 
-            Reviewed by Tim Horton.
+        2018-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
-            After r220865 refactored the iOS copy codepaths to use NSItemProviders, we stopped writing the URL as plain text
-            to the pasteboard. However, this means clients that only check for "text/plain" (or one of its aliases) on the
-            pasteboard won't read any data on paste.
+                [iOS 11.3 Beta] Can't copy a URL from Safari and paste it into the Gmail app
+                https://bugs.webkit.org/show_bug.cgi?id=182952
+                <rdar://problem/37636190>
 
-            To fix this, we restore the pre-iOS 11.3 behavior of writing both the URL and plain text to the pasteboard.
-            Since we're using item providers, we also ensure that the NSURL is at a higher fidelity than the string to make
-            it clear that the data should be consumed as a URL.
+                Reviewed by Tim Horton.
 
-            This patch also rebaselines an existing drag and drop test to cover this change, and adds a new API test,
-            ActionSheetTests.CopyLinkWritesURLAndPlainText, which simulates copying a link using the share sheet and pasting
-            into a DataTransfer-dumping test harness.
+                After r220865 refactored the iOS copy codepaths to use NSItemProviders, we stopped writing the URL as plain text
+                to the pasteboard. However, this means clients that only check for "text/plain" (or one of its aliases) on the
+                pasteboard won't read any data on paste.
 
-            * platform/ios/PlatformPasteboardIOS.mm:
-            (WebCore::PlatformPasteboard::write):
+                To fix this, we restore the pre-iOS 11.3 behavior of writing both the URL and plain text to the pasteboard.
+                Since we're using item providers, we also ensure that the NSURL is at a higher fidelity than the string to make
+                it clear that the data should be consumed as a URL.
+
+                This patch also rebaselines an existing drag and drop test to cover this change, and adds a new API test,
+                ActionSheetTests.CopyLinkWritesURLAndPlainText, which simulates copying a link using the share sheet and pasting
+                into a DataTransfer-dumping test harness.
+
+                * platform/ios/PlatformPasteboardIOS.mm:
+                (WebCore::PlatformPasteboard::write):
 
 2018-02-20  Jason Marcell  <jmarcell@apple.com>
 
@@ -103,14 +107,15 @@
 
     2018-02-16  Daniel Bates  <dabates@apple.com>
 
-            Remove dead code for UTF-32
+            Remove UTF-32 BOM parsing code
             https://bugs.webkit.org/show_bug.cgi?id=182900
             <rdar://problem/37238717>
 
             Reviewed by Alexey Proskuryakov.
 
             The UTF-32 encodings were removed from the text codec registry in r224747. So,
-            we no longer need code to encode or decode these variants.
+            we no longer need code to parse UTF-32{BE, LE} BOM or encode and decode these
+            variants.
 
             * dom/TextDecoder.cpp:
             (WebCore::codeUnitByteSize):

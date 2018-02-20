@@ -1,19 +1,23 @@
 2018-02-20  Jason Marcell  <jmarcell@apple.com>
 
-        Cherry-pick r228594. rdar://problem/37697671
+        Cherry-pick r228601. rdar://problem/37697671
 
-    2018-02-16  Daniel Bates  <dabates@apple.com>
+    2018-02-20  Jason Marcell  <jmarcell@apple.com>
 
-            Remove dead code for UTF-32
-            https://bugs.webkit.org/show_bug.cgi?id=182900
-            <rdar://problem/37238717>
+            Cherry-pick r228594. rdar://problem/37697671
 
-            Reviewed by Alexey Proskuryakov.
+        2018-02-16  Daniel Bates  <dabates@apple.com>
 
-            Update expected results now that all sub-tests pass.
+                Remove UTF-32 BOM parsing code
+                https://bugs.webkit.org/show_bug.cgi?id=182900
+                <rdar://problem/37238717>
 
-            * web-platform-tests/encoding/unsupported-encodings-expected.txt:
-            * web-platform-tests/encoding/utf-32-expected.txt:
+                Reviewed by Alexey Proskuryakov.
+
+                Update expected results now that all sub-tests pass.
+
+                * web-platform-tests/encoding/unsupported-encodings-expected.txt:
+                * web-platform-tests/encoding/utf-32-expected.txt:
 
 2018-02-12  Jason Marcell  <jmarcell@apple.com>
 
