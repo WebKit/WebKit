@@ -187,7 +187,7 @@ static hb_blob_t* harfBuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData
 
 hb_face_t* HarfBuzzFace::createFace()
 {
-    auto* scaledFont = m_platformData->scaledFont();
+    auto* scaledFont = m_platformData.scaledFont();
     cairo_scaled_font_reference(scaledFont);
 
     hb_face_t* face = hb_face_create_for_tables(harfBuzzCairoGetTable, scaledFont,
@@ -202,13 +202,13 @@ hb_face_t* HarfBuzzFace::createFace()
 hb_font_t* HarfBuzzFace::createFont()
 {
     hb_font_t* font = hb_font_create(m_cacheEntry->face());
-    hb_font_set_funcs(font, harfBuzzCairoTextGetFontFuncs(), new HarfBuzzFontData { m_cacheEntry->glyphCache(), m_platformData->scaledFont() },
+    hb_font_set_funcs(font, harfBuzzCairoTextGetFontFuncs(), new HarfBuzzFontData { m_cacheEntry->glyphCache(), m_platformData.scaledFont() },
         [](void* data)
         {
             delete static_cast<HarfBuzzFontData*>(data);
         });
 
-    const float size = m_platformData->size();
+    const float size = m_platformData.size();
     if (floorf(size) == size)
         hb_font_set_ppem(font, size, size);
     int scale = floatToHarfBuzzPosition(size);

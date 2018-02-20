@@ -1,3 +1,22 @@
+2018-02-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        HarfBuzzFace should operate with a FontPlatformData reference
+        https://bugs.webkit.org/show_bug.cgi?id=182863
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of keeping a never-null pointer to FontPlatformData,
+        HarfBuzzFace should operate with a FontPlatformData reference.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::harfBuzzFace const):
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp:
+        (WebCore::HarfBuzzFace::HarfBuzzFace):
+        * platform/graphics/harfbuzz/HarfBuzzFace.h:
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::HarfBuzzFace::createFace):
+        (WebCore::HarfBuzzFace::createFont):
+
 2018-02-15  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] parent.Render*::addChild() cleanup
