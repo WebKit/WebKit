@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderMathMLFenced;
+class RenderMenuList;
 class RenderRubyAsBlock;
 class RenderRubyAsInline;
 class RenderRubyBase;
@@ -103,6 +104,7 @@ private:
     class MathML;
 
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
+    RenderPtr<RenderObject> takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child);
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
