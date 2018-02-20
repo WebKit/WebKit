@@ -1,3 +1,18 @@
+2018-02-16  Antti Koivisto  <antti@apple.com>
+
+        Assert in mixed blend animation
+        https://bugs.webkit.org/show_bug.cgi?id=182887
+        <rdar://problem/37598140>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: fast/css/calc-mixed-blend-crash.html
+
+        * platform/CalculationValue.cpp:
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+
+        Fix mismatch between the type test and the value used.
+
 2018-02-16  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBlock/RenderInline::addChildIgnoringContinuation() to RenderTreeBuilder

@@ -178,7 +178,7 @@ CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, flo
     if (m_from.isCalculated() && m_from.calculationValue().expression().type() == CalcExpressionNodeBlendLength)
         m_from = toCalcExpressionBlendLength(m_from.calculationValue().expression()).from();
     if (m_to.isCalculated() && m_to.calculationValue().expression().type() == CalcExpressionNodeBlendLength)
-        m_to = toCalcExpressionBlendLength(m_from.calculationValue().expression()).to();
+        m_to = toCalcExpressionBlendLength(m_to.calculationValue().expression()).to();
 }
 
 float CalcExpressionBlendLength::evaluate(float maxValue) const
