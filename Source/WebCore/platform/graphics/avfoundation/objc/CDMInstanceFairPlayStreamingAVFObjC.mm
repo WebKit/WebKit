@@ -34,6 +34,7 @@
 #import "SharedBuffer.h"
 #import "TextDecoder.h"
 #import <AVFoundation/AVContentKeySession.h>
+#import <objc/runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringHash.h>
@@ -106,6 +107,13 @@ static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
     UNUSED_PARAM(session);
     if (_parent)
         _parent->didFailToProvideRequest(keyRequest, err);
+}
+
+- (void)contentKeySession:(AVContentKeySession *)session contentKeyRequestDidSucceed:(AVContentKeyRequest *)keyRequest
+{
+    UNUSED_PARAM(session);
+    if (_parent)
+        _parent->requestDidSucceed(keyRequest);
 }
 
 - (BOOL)contentKeySession:(AVContentKeySession *)session shouldRetryContentKeyRequest:(AVContentKeyRequest *)keyRequest reason:(AVContentKeyRequestRetryReason)retryReason
@@ -309,10 +317,16 @@ void CDMInstanceFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseTy
     [m_request processContentKeyResponse:[getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData.createNSData().get()]];
 
     // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.
-    KeyStatusVector keyStatuses;
-    keyStatuses.reserveInitialCapacity(1);
-    keyStatuses.uncheckedAppend(std::make_pair(WTFMove(keyIDs.first()), KeyStatus::Usable));
-    callback(false, std::make_optional(WTFMove(keyStatuses)), std::nullopt, std::nullopt, Succeeded);
+    struct objc_method_description method = protocol_getMethodDescription(@protocol(AVContentKeySessionDelegate), @selector(contentKeySession:contentKeyRequestDidSucceed:), NO, YES);
+    if (!method.name) {
+        KeyStatusVector keyStatuses;
+        keyStatuses.reserveInitialCapacity(1);
+        keyStatuses.uncheckedAppend(std::make_pair(WTFMove(keyIDs.first()), KeyStatus::Usable));
+        callback(false, std::make_optional(WTFMove(keyStatuses)), std::nullopt, std::nullopt, Succeeded);
+        return;
+    }
+
+    m_updateLicenseCallback = WTFMove(callback);
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::loadSession(LicenseType licenseType, const String& sessionId, const String& origin, LoadSessionCallback callback)
@@ -469,8 +483,21 @@ void CDMInstanceFairPlayStreamingAVFObjC::didFailToProvideRequest(AVContentKeyRe
 {
     UNUSED_PARAM(request);
     UNUSED_PARAM(error);
-    if (m_requestLicenseCallback)
-        m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
+    if (m_updateLicenseCallback)
+        m_updateLicenseCallback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::requestDidSucceed(AVContentKeyRequest *request)
+{
+    UNUSED_PARAM(request);
+    if (!m_updateLicenseCallback)
+        return;
+
+    Vector<Ref<SharedBuffer>> keyIDs = this->keyIDs();
+    KeyStatusVector keyStatuses;
+    keyStatuses.reserveInitialCapacity(1);
+    keyStatuses.uncheckedAppend(std::make_pair(WTFMove(keyIDs.first()), KeyStatus::Usable));
+    m_updateLicenseCallback(false, std::make_optional(WTFMove(keyStatuses)), std::nullopt, std::nullopt, Succeeded);
 }
 
 bool CDMInstanceFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentKeyRequest *request, NSString *reason)

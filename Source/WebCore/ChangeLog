@@ -1,3 +1,20 @@
+2018-02-20  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Adopt new AVContentKeySession success delegate callback
+        https://bugs.webkit.org/show_bug.cgi?id=182974
+        <rdar://problem/36079035>
+
+        Reviewed by Eric Carlson.
+
+        Store the updateLicenseCallback if the new protocol method is present and supported.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (-[WebCoreFPSContentKeySessionDelegate contentKeySession:contentKeyRequestDidSucceed:]):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::requestDidSucceed):
+
 2018-02-19  Dean Jackson  <dino@apple.com>
 
         Handle all writing-modes in downcast

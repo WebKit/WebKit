@@ -74,6 +74,7 @@ public:
     void didProvideRenewingRequest(AVContentKeyRequest *);
     void didProvidePersistableRequest(AVContentKeyRequest *);
     void didFailToProvideRequest(AVContentKeyRequest *, NSError *);
+    void requestDidSucceed(AVContentKeyRequest *);
     bool shouldRetryRequestForReason(AVContentKeyRequest *, NSString *);
     void sessionIdentifierChanged(NSData *);
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
