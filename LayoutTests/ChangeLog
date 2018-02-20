@@ -1,3 +1,13 @@
+2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        null m_lastNodeInserted dereference at ReplaceSelectionCommand::InsertedNodes::lastLeafInserted
+        https://bugs.webkit.org/show_bug.cgi?id=161947
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/gtk/TestExpectations:
+        Unmarked editing/execCommand/crash-replacing-list-by-list.html and editing/inserting/insert-table-in-paragraph-crash.html.
+
 2018-02-19  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Implement a compact set of media controls

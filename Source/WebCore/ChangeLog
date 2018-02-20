@@ -1,3 +1,23 @@
+2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        null m_lastNodeInserted dereference at ReplaceSelectionCommand::InsertedNodes::lastLeafInserted
+        https://bugs.webkit.org/show_bug.cgi?id=161947
+
+        Reviewed by Ryosuke Niwa.
+
+        InsertedNodes happened to be empty if the inserted nodes were
+        removed. Add more checks if InsertedNodes is empty.
+
+        No new tests (Covered by existing tests).
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Return early if InsertedNodes becomes empty.
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::isEmpty): New method.
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::lastLeafInserted const):
+        Assert m_lastNodeInserted is not null.
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::pastLastLeaf const): Ditto.
+
 2018-02-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add SVGPropertyTraits::fromString() to all the SVG animated types
