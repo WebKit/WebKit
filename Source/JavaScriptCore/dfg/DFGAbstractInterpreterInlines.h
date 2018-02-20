@@ -2526,9 +2526,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case GetArrayMask:
+    case GetArrayMask: {
+        JSArrayBufferView* view = m_graph.tryGetFoldableView(forNode(node->child1()).m_value);
+        if (view) {
+            setConstant(node, jsNumber(view->butterflyIndexingMask()));
+            break;
+        }
         forNode(node).setType(SpecInt32Only);
         break;
+    }
 
     case GetVectorLength: {
         forNode(node).setType(SpecInt32Only);
