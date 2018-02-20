@@ -41,9 +41,11 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "Path.h"
 #include "PlatformContextCairo.h"
 #include "PlatformPathCairo.h"
+#include "ShadowBlur.h"
 #include <algorithm>
 #include <cairo.h>
 
@@ -173,6 +175,37 @@ enum PathDrawingStyle {
     FillAndStroke = Fill + Stroke
 };
 
+static void drawShadowLayerBuffer(PlatformContextCairo& platformContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const ShadowState& shadowState, GraphicsContext& targetContext)
+{
+    RefPtr<Image> image = layerImage.copyImage(DontCopyBackingStore);
+    if (!image)
+        return;
+
+    if (auto surface = image->nativeImageForCurrentFrame()) {
+        drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize),
+            shadowState.globalCompositeOperator, BlendModeNormal, ImageOrientation(),
+            InterpolationDefault, shadowState.globalAlpha, ShadowState(), targetContext);
+    }
+}
+
+static void fillShadowBuffer(PlatformContextCairo& platformContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect& sourceRect, const ShadowState& shadowState, GraphicsContext& targetContext)
+{
+    save(platformContext);
+
+    RefPtr<Image> image = layerImage.copyImage(DontCopyBackingStore);
+    if (image) {
+        if (auto surface = image->nativeImageForCurrentFrame())
+            clipToImageBuffer(platformContext, surface.get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
+    }
+
+    FillSource fillSource;
+    fillSource.globalAlpha = shadowState.globalAlpha;
+    fillSource.color = shadowState.color;
+    fillRect(platformContext, FloatRect(layerOrigin, sourceRect.size()), fillSource, ShadowState(), targetContext);
+
+    restore(platformContext);
+}
+
 static inline void drawPathShadow(PlatformContextCairo& platformContext, const FillSource& fillSource, const StrokeSource& strokeSource, const ShadowState& shadowState, GraphicsContext& targetContext, PathDrawingStyle drawingStyle)
 {
     ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
@@ -200,37 +233,41 @@ static inline void drawPathShadow(PlatformContextCairo& platformContext, const F
         solidFigureExtents.unite(fillExtents);
     }
 
-    GraphicsContext* shadowContext = shadow.beginShadowLayer(targetContext, solidFigureExtents);
-    if (!shadowContext)
-        return;
+    shadow.drawShadowLayer(State::getCTM(platformContext), State::getClipBounds(platformContext), solidFigureExtents,
+        [cairoContext, drawingStyle, &path, &fillSource, &strokeSource](GraphicsContext& shadowContext)
+        {
+            cairo_t* cairoShadowContext = shadowContext.platformContext()->cr();
 
-    cairo_t* cairoShadowContext = shadowContext->platformContext()->cr();
+            // It's important to copy the context properties to the new shadow
+            // context to preserve things such as the fill rule and stroke width.
+            copyContextProperties(cairoContext, cairoShadowContext);
 
-    // It's important to copy the context properties to the new shadow
-    // context to preserve things such as the fill rule and stroke width.
-    copyContextProperties(cairoContext, cairoShadowContext);
+            if (drawingStyle & Fill) {
+                cairo_save(cairoShadowContext);
+                cairo_append_path(cairoShadowContext, path.get());
+                prepareForFilling(cairoShadowContext, fillSource, NoAdjustment);
+                cairo_fill(cairoShadowContext);
+                cairo_restore(cairoShadowContext);
+            }
 
-    if (drawingStyle & Fill) {
-        cairo_save(cairoShadowContext);
-        cairo_append_path(cairoShadowContext, path.get());
-        prepareForFilling(cairoShadowContext, fillSource, NoAdjustment);
-        cairo_fill(cairoShadowContext);
-        cairo_restore(cairoShadowContext);
-    }
+            if (drawingStyle & Stroke) {
+                cairo_append_path(cairoShadowContext, path.get());
+                prepareForStroking(cairoShadowContext, strokeSource, DoNotPreserveAlpha);
+                cairo_stroke(cairoShadowContext);
+            }
+        },
+        [&platformContext, &shadowState, &cairoContext, &path, &targetContext](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect&)
+        {
+            // The original path may still be hanging around on the context and endShadowLayer
+            // will take care of properly creating a path to draw the result shadow. We remove the path
+            // temporarily and then restore it.
+            // See: https://bugs.webkit.org/show_bug.cgi?id=108897
+            cairo_new_path(cairoContext);
 
-    if (drawingStyle & Stroke) {
-        cairo_append_path(cairoShadowContext, path.get());
-        prepareForStroking(cairoShadowContext, strokeSource, DoNotPreserveAlpha);
-        cairo_stroke(cairoShadowContext);
-    }
+            drawShadowLayerBuffer(platformContext, layerImage, layerOrigin, layerSize, shadowState, targetContext);
 
-    // The original path may still be hanging around on the context and endShadowLayer
-    // will take care of properly creating a path to draw the result shadow. We remove the path
-    // temporarily and then restore it.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=108897
-    cairo_new_path(cairoContext);
-    shadow.endShadowLayer(targetContext);
-    cairo_append_path(cairoContext, path.get());
+            cairo_append_path(cairoContext, path.get());
+        });
 }
 
 static inline void fillCurrentCairoPath(PlatformContextCairo& platformContext, const FillSource& fillSource)
@@ -312,10 +349,15 @@ static void drawGlyphsShadow(PlatformContextCairo& platformContext, const Shadow
     cairo_scaled_font_glyph_extents(scaledFont, glyphs.data(), glyphs.size(), &extents);
     FloatRect fontExtentsRect(point.x() + extents.x_bearing, point.y() + extents.y_bearing, extents.width, extents.height);
 
-    if (GraphicsContext* shadowContext = shadow.beginShadowLayer(targetContext, fontExtentsRect)) {
-        drawGlyphsToContext(shadowContext->platformContext()->cr(), scaledFont, syntheticBoldOffset, glyphs);
-        shadow.endShadowLayer(targetContext);
-    }
+    shadow.drawShadowLayer(State::getCTM(platformContext), State::getClipBounds(platformContext), fontExtentsRect,
+        [scaledFont, syntheticBoldOffset, &glyphs](GraphicsContext& shadowContext)
+        {
+            drawGlyphsToContext(shadowContext.platformContext()->cr(), scaledFont, syntheticBoldOffset, glyphs);
+        },
+        [&platformContext, &shadowState, &targetContext](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect&)
+        {
+            drawShadowLayerBuffer(platformContext, layerImage, layerOrigin, layerSize, shadowState, targetContext);
+        });
 }
 
 static bool cairoSurfaceHasAlpha(cairo_surface_t* surface)
@@ -562,6 +604,8 @@ ShadowState::ShadowState(const GraphicsContextState& state)
     , blur(state.shadowBlur)
     , color(state.shadowColor)
     , ignoreTransforms(state.shadowsIgnoreTransforms)
+    , globalAlpha(state.alpha)
+    , globalCompositeOperator(state.compositeOperator)
 {
 }
 
@@ -649,7 +693,11 @@ void fillRect(PlatformContextCairo& platformContext, const FloatRect& rect, cons
 {
     if (shadowState.isVisible()) {
         ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
-        shadow.drawRectShadow(targetContext, FloatRoundedRect(rect));
+        shadow.drawRectShadow(State::getCTM(platformContext), State::getClipBounds(platformContext), FloatRoundedRect(rect),
+            [&platformContext, &shadowState, &targetContext](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect& sourceRect)
+            {
+                fillShadowBuffer(platformContext, layerImage, layerOrigin, layerSize, sourceRect, shadowState, targetContext);
+            });
     }
 
     fillRectWithColor(platformContext.cr(), rect, color);
@@ -668,7 +716,11 @@ void fillRoundedRect(PlatformContextCairo& platformContext, const FloatRoundedRe
 {
     if (shadowState.isVisible()) {
         ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
-        shadow.drawRectShadow(targetContext, rect);
+        shadow.drawRectShadow(State::getCTM(platformContext), State::getClipBounds(platformContext), rect,
+            [&platformContext, &shadowState, &targetContext](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect& sourceRect)
+            {
+                fillShadowBuffer(platformContext, layerImage, layerOrigin, layerSize, sourceRect, shadowState, targetContext);
+            });
     }
 
     cairo_t* cr = platformContext.cr();
@@ -689,7 +741,11 @@ void fillRectWithRoundedHole(PlatformContextCairo& platformContext, const FloatR
 
     if (shadowState.isRequired(platformContext)) {
         ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
-        shadow.drawInsetShadow(targetContext, rect, roundedHoleRect);
+        shadow.drawInsetShadow(State::getCTM(platformContext), State::getClipBounds(platformContext), rect, roundedHoleRect,
+            [&platformContext, &shadowState, &targetContext](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect& sourceRect)
+            {
+                fillShadowBuffer(platformContext, layerImage, layerOrigin, layerSize, sourceRect, shadowState, targetContext);
+            });
     }
 
     Path path;
@@ -813,7 +869,7 @@ void drawPattern(PlatformContextCairo& platformContext, cairo_surface_t* surface
     drawPatternToCairoContext(platformContext.cr(), surface, size, tileRect, patternTransform, phase, toCairoOperator(compositeOperator, blendMode), destRect);
 }
 
-void drawSurface(PlatformContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, GraphicsContext& context)
+void drawSurface(PlatformContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, GraphicsContext& targetContext)
 {
     // Avoid invalid cairo matrix with small values.
     if (std::fabs(destRect.width()) < 0.5f || std::fabs(destRect.height()) < 0.5f)
@@ -875,10 +931,15 @@ void drawSurface(PlatformContextCairo& platformContext, cairo_surface_t* surface
 
     ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
     if (shadow.type() != ShadowBlur::NoShadow) {
-        if (GraphicsContext* shadowContext = shadow.beginShadowLayer(context, destRect)) {
-            drawPatternToCairoContext(shadowContext->platformContext()->cr(), pattern.get(), destRect, 1);
-            shadow.endShadowLayer(context);
-        }
+        shadow.drawShadowLayer(State::getCTM(platformContext), State::getClipBounds(platformContext), destRect,
+            [&pattern, &destRect](GraphicsContext& shadowContext)
+            {
+                drawPatternToCairoContext(shadowContext.platformContext()->cr(), pattern.get(), destRect, 1);
+            },
+            [&platformContext, &shadowState, &targetContext](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect&)
+            {
+                drawShadowLayerBuffer(platformContext, layerImage, layerOrigin, layerSize, shadowState, targetContext);
+            });
     }
 
     auto* cr = platformContext.cr();

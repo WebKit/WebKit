@@ -30,7 +30,6 @@
 
 #include "GraphicsContext.h"
 #include "RefPtrCairo.h"
-#include "ShadowBlur.h"
 
 namespace WebCore {
 

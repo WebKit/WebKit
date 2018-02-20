@@ -32,6 +32,7 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -59,11 +60,15 @@ public:
     void setShadowsIgnoreTransforms(bool ignoreTransforms) { m_shadowsIgnoreTransforms = ignoreTransforms; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
 
-    GraphicsContext* beginShadowLayer(GraphicsContext&, const FloatRect& layerArea);
-    void endShadowLayer(GraphicsContext&);
-
     void drawRectShadow(GraphicsContext&, const FloatRoundedRect&);
     void drawInsetShadow(GraphicsContext&, const FloatRect&, const FloatRoundedRect& holeRect);
+
+    using DrawBufferCallback = WTF::Function<void(ImageBuffer&, const FloatPoint&, const FloatSize&, const FloatRect&)>;
+    void drawRectShadow(const AffineTransform&, const IntRect&, const FloatRoundedRect&, const DrawBufferCallback&);
+    void drawInsetShadow(const AffineTransform&, const IntRect&, const FloatRect&, const FloatRoundedRect&, const DrawBufferCallback&);
+
+    using DrawShadowCallback = WTF::Function<void(GraphicsContext&)>;
+    void drawShadowLayer(const AffineTransform&, const IntRect&, const FloatRect&, const DrawShadowCallback&, const DrawBufferCallback&);
 
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
 
@@ -76,14 +81,14 @@ private:
 
     void drawShadowBuffer(GraphicsContext&);
 
-    void adjustBlurRadius(GraphicsContext&);
+    void adjustBlurRadius(const AffineTransform&);
     
     enum ShadowDirection {
         OuterShadow,
         InnerShadow
     };
     
-    IntSize calculateLayerBoundingRect(GraphicsContext&, const FloatRect& layerArea, const IntRect& clipRect);
+    IntSize calculateLayerBoundingRect(const AffineTransform&, const FloatRect& layerArea, const IntRect& clipRect);
     IntSize templateSize(const IntSize& blurredEdgeSize, const FloatRoundedRect::Radii&) const;
 
     void drawRectShadowWithoutTiling(GraphicsContext&, const FloatRoundedRect&, const IntSize& layerSize);

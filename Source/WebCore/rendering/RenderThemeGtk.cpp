@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "FileList.h"
 #include "FileSystem.h"
+#include "FloatRoundedRect.h"
 #include "FontDescription.h"
 #include "GRefPtrGtk.h"
 #include "GUniquePtrGtk.h"

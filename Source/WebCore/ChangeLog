@@ -1,3 +1,78 @@
+2018-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Leverage ShadowBlur without using scratch buffer, target GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=182958
+
+        Reviewed by Carlos Garcia Campos.
+
+        To allow ShadowBlur usage in different threads, avoid the ShadowBlur
+        class using the scratch buffer internally. The current implementation of
+        that scratch buffer is not thread-safe and its usage in such conditions
+        can lead to crashes.
+
+        Instead, the new methods use a temporary ImageBuffer object for drawing.
+        This does negate the efficiency of possibly reusing the scratch buffer,
+        but at this point that is not yet the priority. This only affects ports
+        using Cairo for drawing.
+
+        The added methods don't require a target GraphicsContext object to be
+        passed in, instead they accept buffer draw callbacks that are invoked
+        with the temporary ImageBuffer object containing the rasterized shadow,
+        as well as position and size parameters. The CTM and clip bounds values
+        also have to be passed in manually. In CairoOperations.cpp, the provided
+        callbacks invoke commands that are equivalent in effect to those that
+        would otherwise be invoked on the target GraphicsContext object in the
+        ShadowBlur class.
+
+        For now, this approach has to avoid the tiling-based drawing of the
+        rectangular shadows in drawRectShadow() and inset shadows in
+        drawInsetShadow(), and instead stick to the non-tiling fallback. While
+        only affecting Cairo-using ports, with some refactoring it should be
+        possible to again leverage the tiling-based approach as well.
+
+        The beginShadowLayer() and endShadowLayer() functions, which are only
+        used in CairoOperations.cpp, are replaced with the drawShadowLayer()
+        method. This one accepts an additional callback that allows the caller
+        to explicitly draw the shadow shape using the provided shadowing
+        GraphicsContext object. As with the other two new methods, a temporary
+        ImageBuffer object is used, and the buffer draw callback is invoked to
+        allow caller to properly handle the shadowing output.
+
+        In CairoOperations.cpp, the new ShadowBlur methods are exercised, with
+        direct Cairo operation invocation replacing the GraphicsContext calls
+        otherwise done through ShadowBlur. ShadowState object now also has to
+        track the global alpha and the global composite operator values so that
+        it can properly rasterize the resulting shadow into the final image.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::adjustBlurRadius):
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+        (WebCore::ShadowBlur::drawRectShadow):
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawShadowLayer):
+        (WebCore::ShadowBlur::beginShadowLayer): Deleted.
+        (WebCore::ShadowBlur::endShadowLayer): Deleted.
+        * platform/graphics/ShadowBlur.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowLayerBuffer):
+        (WebCore::Cairo::fillShadowBuffer):
+        (WebCore::Cairo::drawPathShadow):
+        (WebCore::Cairo::drawGlyphsShadow):
+        (WebCore::Cairo::ShadowState::ShadowState):
+        (WebCore::Cairo::fillRect):
+        (WebCore::Cairo::fillRoundedRect):
+        (WebCore::Cairo::fillRectWithRoundedHole):
+        (WebCore::Cairo::drawSurface):
+        * platform/graphics/cairo/CairoOperations.h:
+        Default-initialize FillSource::fillRule to RULE_NONZERO.
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        Drop the ShadowBlur.h include, it's moved to CairoOperations.cpp.
+        * rendering/RenderThemeGtk.cpp:
+        Explicitly include the FloatRoundedRect.h header now that it's not
+        included through the ShadowBlur.h header via PlatformContextCairo.h.
+
 2018-02-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Use RuntimeEnabledFeatures to enable/disable WebVR

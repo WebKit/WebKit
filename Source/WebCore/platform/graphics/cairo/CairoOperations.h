@@ -90,7 +90,7 @@ struct FillSource {
     } gradient;
     Color color;
 
-    WindRule fillRule;
+    WindRule fillRule { RULE_NONZERO };
 };
 
 struct StrokeSource {
@@ -107,6 +107,7 @@ struct StrokeSource {
 };
 
 struct ShadowState {
+    ShadowState() = default;
     WEBCORE_EXPORT explicit ShadowState(const GraphicsContextState&);
 
     bool isVisible() const;
@@ -116,6 +117,9 @@ struct ShadowState {
     float blur { 0 };
     Color color;
     bool ignoreTransforms { false };
+
+    float globalAlpha { 1.0 };
+    CompositeOperator globalCompositeOperator { CompositeSourceOver };
 };
 
 void setLineCap(PlatformContextCairo&, LineCap);
