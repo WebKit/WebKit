@@ -139,15 +139,13 @@ void GraphicsContextImplCairo::setMiterLimit(float miterLimit)
 
 void GraphicsContextImplCairo::fillRect(const FloatRect& rect)
 {
-    auto& context = graphicsContext();
-    auto& state = context.state();
-    Cairo::fillRect(m_platformContext, rect, Cairo::FillSource(state), Cairo::ShadowState(state), context);
+    auto& state = graphicsContext().state();
+    Cairo::fillRect(m_platformContext, rect, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
 void GraphicsContextImplCairo::fillRect(const FloatRect& rect, const Color& color)
 {
-    auto& context = graphicsContext();
-    Cairo::fillRect(m_platformContext, rect, color, Cairo::ShadowState(context.state()), context);
+    Cairo::fillRect(m_platformContext, rect, color, Cairo::ShadowState(graphicsContext().state()));
 }
 
 void GraphicsContextImplCairo::fillRect(const FloatRect& rect, Gradient& gradient)
@@ -161,42 +159,39 @@ void GraphicsContextImplCairo::fillRect(const FloatRect& rect, Gradient& gradien
 
 void GraphicsContextImplCairo::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
 {
-    auto& context = graphicsContext();
-    CompositeOperator previousOperator = context.state().compositeOperator;
+    auto& state = graphicsContext().state();
+    CompositeOperator previousOperator = state.compositeOperator;
 
     Cairo::State::setCompositeOperation(m_platformContext, compositeOperator, blendMode);
-    Cairo::fillRect(m_platformContext, rect, color, Cairo::ShadowState(context.state()), context);
+    Cairo::fillRect(m_platformContext, rect, color, Cairo::ShadowState(state));
     Cairo::State::setCompositeOperation(m_platformContext, previousOperator, BlendModeNormal);
 }
 
 void GraphicsContextImplCairo::fillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode blendMode)
 {
-    auto& context = graphicsContext();
+    auto& state = graphicsContext().state();
 
-    CompositeOperator previousOperator = context.compositeOperation();
+    CompositeOperator previousOperator = state.compositeOperator;
     Cairo::State::setCompositeOperation(m_platformContext, previousOperator, blendMode);
 
-    Cairo::ShadowState shadowState(context.state());
-
+    Cairo::ShadowState shadowState(state);
     if (rect.isRounded())
-        Cairo::fillRoundedRect(m_platformContext, rect, color, shadowState, context);
+        Cairo::fillRoundedRect(m_platformContext, rect, color, shadowState);
     else
-        Cairo::fillRect(m_platformContext, rect.rect(), color, shadowState, context);
+        Cairo::fillRect(m_platformContext, rect.rect(), color, shadowState);
 
     Cairo::State::setCompositeOperation(m_platformContext, previousOperator, BlendModeNormal);
 }
 
 void GraphicsContextImplCairo::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color&)
 {
-    auto& context = graphicsContext();
-    Cairo::fillRectWithRoundedHole(m_platformContext, rect, roundedHoleRect, { }, Cairo::ShadowState(context.state()), context);
+    Cairo::fillRectWithRoundedHole(m_platformContext, rect, roundedHoleRect, { }, Cairo::ShadowState(graphicsContext().state()));
 }
 
 void GraphicsContextImplCairo::fillPath(const Path& path)
 {
-    auto& context = graphicsContext();
-    auto& state = context.state();
-    Cairo::fillPath(m_platformContext, path, Cairo::FillSource(state), Cairo::ShadowState(state), context);
+    auto& state = graphicsContext().state();
+    Cairo::fillPath(m_platformContext, path, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
 void GraphicsContextImplCairo::fillEllipse(const FloatRect& rect)
@@ -208,16 +203,14 @@ void GraphicsContextImplCairo::fillEllipse(const FloatRect& rect)
 
 void GraphicsContextImplCairo::strokeRect(const FloatRect& rect, float lineWidth)
 {
-    auto& context = graphicsContext();
-    auto& state = context.state();
-    Cairo::strokeRect(m_platformContext, rect, lineWidth, Cairo::StrokeSource(state), Cairo::ShadowState(state), context);
+    auto& state = graphicsContext().state();
+    Cairo::strokeRect(m_platformContext, rect, lineWidth, Cairo::StrokeSource(state), Cairo::ShadowState(state));
 }
 
 void GraphicsContextImplCairo::strokePath(const Path& path)
 {
-    auto& context = graphicsContext();
-    auto& state = context.state();
-    Cairo::strokePath(m_platformContext, path, Cairo::StrokeSource(state), Cairo::ShadowState(state), context);
+    auto& state = graphicsContext().state();
+    Cairo::strokePath(m_platformContext, path, Cairo::StrokeSource(state), Cairo::ShadowState(state));
 }
 
 void GraphicsContextImplCairo::strokeEllipse(const FloatRect& rect)
@@ -255,11 +248,10 @@ void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& g
     cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
-    auto& context = graphicsContext();
-    auto& state = context.state();
+    auto& state = graphicsContext().state();
     Cairo::drawGlyphs(m_platformContext, Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, glyphs, xOffset,
-        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor, context);
+        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor);
 }
 
 ImageDrawResult GraphicsContextImplCairo::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
@@ -280,9 +272,8 @@ ImageDrawResult GraphicsContextImplCairo::drawTiledImage(Image& image, const Flo
 void GraphicsContextImplCairo::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
 {
     UNUSED_PARAM(imageSize);
-    auto& context = graphicsContext();
-    auto& state = context.state();
-    Cairo::drawNativeImage(m_platformContext, image.get(), destRect, srcRect, compositeOperator, blendMode, orientation, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state), graphicsContext());
+    auto& state = graphicsContext().state();
+    Cairo::drawNativeImage(m_platformContext, image.get(), destRect, srcRect, compositeOperator, blendMode, orientation, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
 }
 
 void GraphicsContextImplCairo::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, CompositeOperator compositeOperator, BlendMode blendMode)

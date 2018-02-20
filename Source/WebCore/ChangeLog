@@ -1,3 +1,50 @@
+2018-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Drop target GraphicsContext usage in Cairo operations
+        https://bugs.webkit.org/show_bug.cgi?id=182964
+
+        Reviewed by Carlos Garcia Campos.
+
+        The GraphicsContext parameters in various Cairo operations are not used
+        anymore, so they can be removed. Callsites are updated to reflect this.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowLayerBuffer):
+        (WebCore::Cairo::fillShadowBuffer):
+        (WebCore::Cairo::drawPathShadow):
+        (WebCore::Cairo::drawGlyphsShadow):
+        (WebCore::Cairo::fillRect):
+        (WebCore::Cairo::fillRoundedRect):
+        (WebCore::Cairo::fillRectWithRoundedHole):
+        (WebCore::Cairo::fillPath):
+        (WebCore::Cairo::strokeRect):
+        (WebCore::Cairo::strokePath):
+        (WebCore::Cairo::drawGlyphs):
+        (WebCore::Cairo::drawNativeImage):
+        (WebCore::Cairo::drawSurface):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::platformFillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::fillRect):
+        (WebCore::GraphicsContextImplCairo::fillRoundedRect):
+        (WebCore::GraphicsContextImplCairo::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextImplCairo::fillPath):
+        (WebCore::GraphicsContextImplCairo::strokeRect):
+        (WebCore::GraphicsContextImplCairo::strokePath):
+        (WebCore::GraphicsContextImplCairo::drawGlyphs):
+        (WebCore::GraphicsContextImplCairo::drawNativeImage):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame):
+
 2018-02-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][OpenVR] Retrieve eye parameters and field of view

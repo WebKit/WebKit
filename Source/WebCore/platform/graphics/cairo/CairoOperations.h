@@ -46,7 +46,6 @@ class Color;
 class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
-class GraphicsContext;
 class Path;
 class PlatformContextCairo;
 
@@ -127,21 +126,21 @@ void setLineDash(PlatformContextCairo&, const DashArray&, float);
 void setLineJoin(PlatformContextCairo&, LineJoin);
 void setMiterLimit(PlatformContextCairo&, float);
 
-void fillRect(PlatformContextCairo&, const FloatRect&, const FillSource&, const ShadowState&, GraphicsContext&);
-void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, const ShadowState&, GraphicsContext&);
+void fillRect(PlatformContextCairo&, const FloatRect&, const FillSource&, const ShadowState&);
+void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, const ShadowState&);
 void fillRect(PlatformContextCairo&, const FloatRect&, cairo_pattern_t*);
-void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, const ShadowState&, GraphicsContext&);
-void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const FillSource&, const ShadowState&, GraphicsContext&);
-void fillPath(PlatformContextCairo&, const Path&, const FillSource&, const ShadowState&, GraphicsContext&);
-void strokeRect(PlatformContextCairo&, const FloatRect&, float, const StrokeSource&, const ShadowState&, GraphicsContext&);
-void strokePath(PlatformContextCairo&, const Path&, const StrokeSource&, const ShadowState&, GraphicsContext&);
+void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, const ShadowState&);
+void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const FillSource&, const ShadowState&);
+void fillPath(PlatformContextCairo&, const Path&, const FillSource&, const ShadowState&);
+void strokeRect(PlatformContextCairo&, const FloatRect&, float, const StrokeSource&, const ShadowState&);
+void strokePath(PlatformContextCairo&, const Path&, const StrokeSource&, const ShadowState&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
 
-void drawGlyphs(PlatformContextCairo&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&, GraphicsContext&);
+void drawGlyphs(PlatformContextCairo&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&);
 
-void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&, GraphicsContext&);
+void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&);
 void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
-void drawSurface(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, InterpolationQuality, float, const ShadowState&, GraphicsContext&);
+void drawSurface(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, InterpolationQuality, float, const ShadowState&);
 
 void drawRect(PlatformContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
 void drawLine(PlatformContextCairo&, const FloatPoint&, const FloatPoint&, StrokeStyle, const Color&, float, bool);

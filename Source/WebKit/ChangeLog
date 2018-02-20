@@ -1,3 +1,18 @@
+2018-02-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Drop target GraphicsContext usage in Cairo operations
+        https://bugs.webkit.org/show_bug.cgi?id=182964
+
+        Reviewed by Carlos Garcia Campos.
+
+        The GraphicsContext parameters in various Cairo operations are not used
+        anymore, so they can be removed. Callsites are updated to reflect this.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+
 2018-02-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser

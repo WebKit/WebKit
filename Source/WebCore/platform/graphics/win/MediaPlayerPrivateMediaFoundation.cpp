@@ -2975,7 +2975,7 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
         if (image) {
             ASSERT(context.hasPlatformContext());
             auto& state = context.state();
-            Cairo::drawSurface(*context.platformContext(), image, destRect, srcRect, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state), context);
+            Cairo::drawSurface(*context.platformContext(), image, destRect, srcRect, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
             cairo_surface_destroy(image);
         }
 #else
