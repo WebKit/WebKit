@@ -68,8 +68,11 @@
 #include "JITWorklist.h"
 #include "JSAPIValueWrapper.h"
 #include "JSArray.h"
+#include "JSAsyncFunction.h"
 #include "JSBigInt.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSCustomGetterSetterFunction.h"
 #include "JSDestructibleObjectHeapCellType.h"
 #include "JSFixedArray.h"
 #include "JSFunction.h"
@@ -131,6 +134,8 @@
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
+#include "WebAssemblyFunction.h"
+#include "WebAssemblyWrapperFunction.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
@@ -250,20 +255,31 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockSpace("JSWebAssemblyCodeBlockSpace", heap, webAssemblyCodeBlockHeapCellType.get(), fastMallocAllocator.get())
 #endif
+    , asyncFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSAsyncFunction)
+    , asyncGeneratorFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSAsyncGeneratorFunction)
+    , boundFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSBoundFunction)
+    , customGetterSetterFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSCustomGetterSetterFunction)
     , directEvalExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), DirectEvalExecutable)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge)
     , functionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionExecutable)
+    , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction)
+    , generatorFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSGeneratorFunction)
     , indirectEvalExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), IndirectEvalExecutable)
     , inferredTypeSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredType)
     , inferredValueSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredValue)
     , moduleProgramExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ModuleProgramExecutable)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable)
+    , nativeStdFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSNativeStdFunction)
     , programExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ProgramExecutable)
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData)
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure)
     , weakSetSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), JSWeakSet)
     , weakMapSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), JSWeakMap)
+#if ENABLE(WEBASSEMBLY)
+    , webAssemblyFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), WebAssemblyFunction)
+    , webAssemblyWrapperFunctionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), WebAssemblyWrapperFunction)
+#endif
     , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
     , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)
     , inferredTypesWithFinalizers(inferredTypeSpace)

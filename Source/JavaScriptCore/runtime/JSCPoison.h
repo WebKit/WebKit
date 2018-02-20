@@ -39,6 +39,7 @@ namespace JSC {
     v(JSAPIWrapperObject) \
     v(JSArrayBuffer) \
     v(JSCallbackObject) \
+    v(JSFunction) \
     v(JSGlobalObject) \
     v(JSScriptFetchParameters) \
     v(JSScriptFetcher) \

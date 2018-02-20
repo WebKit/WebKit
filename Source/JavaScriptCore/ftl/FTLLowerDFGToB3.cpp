@@ -2944,7 +2944,10 @@ private:
     {
         LValue cell = lowCell(m_node->child1());
         speculateFunction(m_node->child1(), cell);
-        setJSValue(m_out.loadPtr(cell, m_heaps.JSFunction_executable));
+        setJSValue(
+            m_out.bitXor(
+                m_out.loadPtr(cell, m_heaps.JSFunction_executable),
+                m_out.constIntPtr(JSFunctionPoison::key())));
     }
     
     void compileArrayify()
@@ -4869,7 +4872,7 @@ private:
         // We don't need memory barriers since we just fast-created the function, so it
         // must be young.
         m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
-        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
+        m_out.storePtr(weakPoisonedPointer<JSFunctionPoison>(executable), fastObject, m_heaps.JSFunction_executable);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
         
         mutatorFence();
@@ -15725,14 +15728,15 @@ private:
 
     LValue weakPointer(JSCell* pointer)
     {
-        // There are weird relationships in how optimized CodeBlocks
-        // point to other CodeBlocks. We don't want to have them be
-        // part of the weak pointer set. For example, an optimized CodeBlock
-        // having a weak pointer to itself will cause it to get collected.
-        RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(vm(), pointer));
-
         addWeakReference(pointer);
         return m_out.weakPointer(m_graph, pointer);
+    }
+    
+    template<typename Key>
+    LValue weakPoisonedPointer(JSCell* pointer)
+    {
+        addWeakReference(pointer);
+        return m_out.weakPoisonedPointer<Key>(m_graph, pointer);
     }
 
     LValue frozenPointer(FrozenValue* value)

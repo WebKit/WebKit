@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006-2009, 2015-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -61,6 +61,13 @@ class JSFunction : public JSCallee {
     friend class InternalFunction;
 
 public:
+    
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.functionSpace;
+    }
+    
     typedef JSCallee Base;
     const static unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
@@ -212,8 +219,11 @@ private:
     static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName);
     static EncodedJSValue nameGetter(ExecState*, EncodedJSValue, PropertyName);
 
-    WriteBarrier<ExecutableBase> m_executable;
-    WriteBarrier<FunctionRareData> m_rareData;
+    template<typename T>
+    using PoisonedBarrier = PoisonedWriteBarrier<JSFunctionPoison, T>;
+    
+    PoisonedBarrier<ExecutableBase> m_executable;
+    PoisonedBarrier<FunctionRareData> m_rareData;
 };
 
 } // namespace JSC
