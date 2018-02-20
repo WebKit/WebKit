@@ -1,3 +1,14 @@
+2018-02-13  Antti Koivisto  <antti@apple.com>
+
+        Crash when breakpoint hit in unload handler
+        https://bugs.webkit.org/show_bug.cgi?id=169855
+        <rdar://problem/28683567>
+
+        Reviewed by Daniel Bates and Joseph Pecoraro.
+
+        * inspector/debugger/reload-paused-expected.txt: Added.
+        * inspector/debugger/reload-paused.html: Added.
+
 2018-02-13  Nan Wang  <n_wang@apple.com>
 
         AX: Remove AccessibleNode class

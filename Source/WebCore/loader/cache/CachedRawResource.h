@@ -75,6 +75,7 @@ private:
 
     unsigned long m_identifier;
     bool m_allowEncodedDataReplacement;
+    bool m_inIncrementalDataNotify { false };
 
     struct RedirectPair {
     public:
@@ -89,6 +90,11 @@ private:
     };
 
     Vector<RedirectPair> m_redirectChain;
+
+    struct DelayedFinishLoading {
+        RefPtr<SharedBuffer> buffer;
+    };
+    std::optional<DelayedFinishLoading> m_delayedFinishLoading;
 };
 
 } // namespace WebCore
