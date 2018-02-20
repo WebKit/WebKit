@@ -157,3 +157,13 @@ void WKContextConfigurationSetShouldCaptureAudioInUIProcess(WKContextConfigurati
 {
     toImpl(configuration)->setShouldCaptureAudioInUIProcess(should);
 }
+
+bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->processSwapsOnNavigation();
+}
+
+void WKContextConfigurationSetProcessSwapsOnNavigation(WKContextConfigurationRef configuration, bool swaps)
+{
+    toImpl(configuration)->setProcessSwapsOnNavigation(swaps);
+}

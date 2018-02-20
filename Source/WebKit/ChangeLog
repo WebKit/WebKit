@@ -1,3 +1,24 @@
+2018-02-19  Brady Eidson  <beidson@apple.com>
+
+        Add WebProcessPool option for process swapping on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=182945
+
+        Reviewed by Alex Christensen.
+
+        Just the most basic groundwork for testing a new WK2 feature.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationProcessSwapsOnNavigation):
+        (WKContextConfigurationSetProcessSwapsOnNavigation):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setProcessSwapsOnNavigation:]):
+        (-[_WKProcessPoolConfiguration processSwapsOnNavigation]):
+
 2018-02-19  Daniel Bates  <dabates@apple.com>
 
         Null pointer dereference in WebPageProxy::urlSchemeHandlerForScheme()

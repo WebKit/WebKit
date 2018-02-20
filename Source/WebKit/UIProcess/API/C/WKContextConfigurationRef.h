@@ -68,6 +68,9 @@ WK_EXPORT void WKContextConfigurationSetOverrideLanguages(WKContextConfiguration
 WK_EXPORT bool WKContextConfigurationShouldCaptureAudioInUIProcess(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetShouldCaptureAudioInUIProcess(WKContextConfigurationRef configuration, bool allowed);
 
+WK_EXPORT bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetProcessSwapsOnNavigation(WKContextConfigurationRef configuration, bool swaps);
+
 #ifdef __cplusplus
 }
 #endif

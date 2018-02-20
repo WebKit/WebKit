@@ -135,6 +135,9 @@ public:
     ProcessID presentingApplicationPID() const { return m_presentingApplicationPID; }
     void setPresentingApplicationPID(ProcessID pid) { m_presentingApplicationPID = pid; }
 
+    bool processSwapsOnNavigation() const { return m_processSwapsOnNavigation; }
+    void setProcessSwapsOnNavigation(bool swaps) { m_processSwapsOnNavigation = swaps; }
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -166,6 +169,8 @@ private:
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureAudioInUIProcess { false };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };
+    bool m_processSwapsOnNavigation { false };
+
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;
 #endif

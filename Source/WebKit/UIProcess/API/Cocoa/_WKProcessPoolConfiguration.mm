@@ -227,6 +227,16 @@
     return _processPoolConfiguration->presentingApplicationPID();
 }
 
+- (void)setProcessSwapsOnNavigation:(BOOL)swaps
+{
+    _processPoolConfiguration->setProcessSwapsOnNavigation(swaps);
+}
+
+- (BOOL)processSwapsOnNavigation
+{
+    return _processPoolConfiguration->processSwapsOnNavigation();
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {
