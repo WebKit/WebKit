@@ -1,3 +1,19 @@
+2018-02-20  John Wilander  <wilander@apple.com>
+
+        Make WebResourceLoadStatisticsStore::processStatisticsAndDataRecords() call WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed() in a proper callback
+        https://bugs.webkit.org/show_bug.cgi?id=182719
+        <rdar://problem/37517370>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac-wk2/TestExpectations:
+            Marked http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html
+            as [ Pass ].
+        * platform/wk2/TestExpectations:
+            Marked http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html
+            as [ Pass ]. This should have been done already in r227223:
+            https://bugs.webkit.org/show_bug.cgi?id=181822
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Dispatch accessibleclick event

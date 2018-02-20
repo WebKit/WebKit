@@ -1,3 +1,23 @@
+2018-02-20  John Wilander  <wilander@apple.com>
+
+        Make WebResourceLoadStatisticsStore::processStatisticsAndDataRecords() call WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed() in a proper callback
+        https://bugs.webkit.org/show_bug.cgi?id=182719
+        <rdar://problem/37517370>
+
+        Reviewed by Brent Fulgham.
+
+        This will allow the page notification, statistics pruning, and persistence write
+        to be done at the right time and hopefully stabilize the layout tests including:
+        http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Now takes a callback parameter.
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+            Now calls WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
+            in a callback provided to WebResourceLoadStatisticsStore::removeDataRecords().
+
 2018-02-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Drop target GraphicsContext usage in Cairo operations

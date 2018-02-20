@@ -692,7 +692,7 @@ http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-uni
 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html [ Pass ]
 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html [ Pass ]
 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html [ Pass ]
-webkit.org/b/181223 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Skip ]
+http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 webkit.org/b/180703 http/tests/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 http/tests/resourceLoadStatistics/prune-statistics.html [ Pass ]

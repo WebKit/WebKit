@@ -185,12 +185,14 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
     m_persistentStorage.finishAllPendingWorkSynchronously();
 }
     
-void WebResourceLoadStatisticsStore::removeDataRecords()
+void WebResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& callback)
 {
     ASSERT(!RunLoop::isMain());
     
-    if (!shouldRemoveDataRecords())
+    if (!shouldRemoveDataRecords()) {
+        callback();
         return;
+    }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_activePluginTokens.clear();
@@ -199,19 +201,22 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 #endif
 
     auto prevalentResourceDomains = topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
-    if (prevalentResourceDomains.isEmpty())
+    if (prevalentResourceDomains.isEmpty()) {
+        callback();
         return;
-    
+    }
+
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
-            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = crossThreadCopy(domainsWithDeletedWebsiteData)] () mutable {
+    RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), callback = WTFMove(callback), this, protectedThis = makeRef(*this)] () mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [callback = WTFMove(callback), this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
+            m_statisticsQueue->dispatch([topDomains = crossThreadCopy(domainsWithDeletedWebsiteData), callback = WTFMove(callback), this, protectedThis = WTFMove(protectedThis)] () mutable {
                 for (auto& prevalentResourceDomain : topDomains) {
                     auto& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
                     ++statistic.dataRecordsRemoved;
                 }
                 setDataRecordsBeingRemoved(false);
+                callback();
             });
         });
     });
@@ -264,17 +269,26 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
                 setPrevalentResource(resourceStatistic);
         }
     }
-    removeDataRecords();
-
-    pruneStatisticsIfNeeded();
-
+    
     if (m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned) {
-        RunLoop::main().dispatch([] {
-            WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
+        removeDataRecords([this, protectedThis = makeRef(*this)] {
+            ASSERT(!RunLoop::isMain());
+
+            pruneStatisticsIfNeeded();
+            m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
+
+            RunLoop::main().dispatch([] {
+                WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
+            });
+        });
+    } else {
+        removeDataRecords([this, protectedThis = makeRef(*this)] {
+            ASSERT(!RunLoop::isMain());
+
+            pruneStatisticsIfNeeded();
+            m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
         });
     }
-
-    m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
 }
 
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins)
