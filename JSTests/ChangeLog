@@ -1,5 +1,16 @@
 2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] Support ArrayPop for ArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=182783
+
+        Reviewed by Saam Barati.
+
+        * stress/array-pop-array-storage.js: Added.
+        (shouldBe):
+        (test):
+
+2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Add Arrayify for ArrayStorage and SlowPutArrayStorage
         https://bugs.webkit.org/show_bug.cgi?id=182731
 
