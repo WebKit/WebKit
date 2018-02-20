@@ -36,6 +36,8 @@
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -56,12 +58,34 @@ public:
     void setScriptForVerticalGlyphSubstitution(hb_buffer_t*);
 
 private:
+    class CacheEntry : public RefCounted<CacheEntry> {
+    public:
+        using GlyphCache = HashMap<uint32_t, uint16_t>;
+
+        static Ref<CacheEntry> create(hb_face_t* face)
+        {
+            return adoptRef(*new CacheEntry(face));
+        }
+        ~CacheEntry();
+
+        hb_face_t* face() { return m_face; }
+        GlyphCache& glyphCache() { return m_glyphCache; }
+
+    private:
+        CacheEntry(hb_face_t*);
+
+        hb_face_t* m_face;
+        GlyphCache m_glyphCache;
+    };
+
+    using Cache = HashMap<uint64_t, RefPtr<CacheEntry>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    static Cache& cache();
+
     hb_face_t* createFace();
 
     FontPlatformData* m_platformData;
     uint64_t m_uniqueID;
-    hb_face_t* m_face;
-    WTF::HashMap<uint32_t, uint16_t>* m_glyphCacheForFaceCacheEntry;
+    RefPtr<CacheEntry> m_cacheEntry;
 
     hb_script_t m_scriptForVerticalText;
 };

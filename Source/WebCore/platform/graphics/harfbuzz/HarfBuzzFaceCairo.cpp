@@ -50,7 +50,7 @@
 namespace WebCore {
 
 struct HarfBuzzFontData {
-    WTF::HashMap<uint32_t, uint16_t>* glyphCacheForFaceCacheEntry;
+    WTF::HashMap<uint32_t, uint16_t>& glyphCacheForFaceCacheEntry;
     RefPtr<cairo_scaled_font_t> cairoScaledFont;
 };
 
@@ -91,7 +91,7 @@ static hb_bool_t harfBuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t uni
     auto* scaledFont = hbFontData.cairoScaledFont.get();
     ASSERT(scaledFont);
 
-    WTF::HashMap<uint32_t, uint16_t>::AddResult result = hbFontData.glyphCacheForFaceCacheEntry->add(unicode, 0);
+    auto result = hbFontData.glyphCacheForFaceCacheEntry.add(unicode, 0);
     if (result.isNewEntry) {
         cairo_glyph_t* glyphs = 0;
         int numGlyphs = 0;
@@ -201,8 +201,8 @@ hb_face_t* HarfBuzzFace::createFace()
 
 hb_font_t* HarfBuzzFace::createFont()
 {
-    hb_font_t* font = hb_font_create(m_face);
-    hb_font_set_funcs(font, harfBuzzCairoTextGetFontFuncs(), new HarfBuzzFontData { m_glyphCacheForFaceCacheEntry, m_platformData->scaledFont() },
+    hb_font_t* font = hb_font_create(m_cacheEntry->face());
+    hb_font_set_funcs(font, harfBuzzCairoTextGetFontFuncs(), new HarfBuzzFontData { m_cacheEntry->glyphCache(), m_platformData->scaledFont() },
         [](void* data)
         {
             delete static_cast<HarfBuzzFontData*>(data);

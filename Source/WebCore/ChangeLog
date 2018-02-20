@@ -1,5 +1,47 @@
 2018-02-15  Zan Dobersek  <zdobersek@igalia.com>
 
+        HarfBuzzFace: rework cache entry reference holding
+        https://bugs.webkit.org/show_bug.cgi?id=182828
+
+        Reviewed by Michael Catanzaro.
+
+        Move the FaceCacheEntry and HarfBuzzFaceCache types into the
+        HarfBuzzFace class as CacheEntry and Cache, respectively. The Cache
+        singleton is also moved there.
+
+        In the HarfBuzzFace constructor, we now don't increase the CacheEntry
+        reference, but instead just keep a reference to that object through
+        a RefPtr<CacheEntry> object. We don't need to retrieve the hb_face_t
+        object and the glyph cache HashMap in the constructor anymore, we just
+        retrieve them when necessary through that CacheEntry reference.
+
+        In the destructor, that RefPtr<CacheEntry> object is nulled out before
+        the object in Cache is removed if that's where the final reference is
+        kept.
+
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp:
+        (WebCore::HarfBuzzFace::CacheEntry::CacheEntry):
+        (WebCore::HarfBuzzFace::CacheEntry::~CacheEntry):
+        (WebCore::HarfBuzzFace::cache):
+        (WebCore::HarfBuzzFace::HarfBuzzFace):
+        (WebCore::HarfBuzzFace::~HarfBuzzFace):
+        (WebCore::HarfBuzzFace::setScriptForVerticalGlyphSubstitution):
+        (WebCore::FaceCacheEntry::create): Deleted.
+        (WebCore::FaceCacheEntry::~FaceCacheEntry): Deleted.
+        (WebCore::FaceCacheEntry::face): Deleted.
+        (WebCore::FaceCacheEntry::glyphCache): Deleted.
+        (WebCore::FaceCacheEntry::FaceCacheEntry): Deleted.
+        (WebCore::harfBuzzFaceCache): Deleted.
+        * platform/graphics/harfbuzz/HarfBuzzFace.h:
+        (WebCore::HarfBuzzFace::CacheEntry::create):
+        (WebCore::HarfBuzzFace::CacheEntry::face):
+        (WebCore::HarfBuzzFace::CacheEntry::glyphCache):
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzGetGlyph):
+        (WebCore::HarfBuzzFace::createFont):
+
+2018-02-15  Zan Dobersek  <zdobersek@igalia.com>
+
         FontPlatformData::harfBuzzFace() should return a reference
         https://bugs.webkit.org/show_bug.cgi?id=182825
 
