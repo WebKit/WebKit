@@ -201,12 +201,12 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderButton>(parent)) {
-        insertRecursiveIfNeeded(formControlsBuilder().createInnerRendererIfNeeded(downcast<RenderButton>(parent)));
+        formControlsBuilder().insertChild(downcast<RenderButton>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderMenuList>(parent)) {
-        insertRecursiveIfNeeded(formControlsBuilder().createInnerRendererIfNeeded(downcast<RenderMenuList>(parent)));
+        formControlsBuilder().insertChild(downcast<RenderMenuList>(parent), WTFMove(child), beforeChild);
         return;
     }
 

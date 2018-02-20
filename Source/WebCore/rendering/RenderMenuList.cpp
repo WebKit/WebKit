@@ -165,10 +165,10 @@ HTMLSelectElement& RenderMenuList::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-void RenderMenuList::addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject*)
+void RenderMenuList::didInsertChild(RenderObject& child, RenderObject*)
 {
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->childrenChanged(this, child.get());
+        cache->childrenChanged(this, &child);
 }
 
 void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

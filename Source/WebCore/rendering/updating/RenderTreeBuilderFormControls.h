@@ -37,10 +37,13 @@ class RenderTreeBuilder::FormControls {
 public:
     FormControls(RenderTreeBuilder&);
 
-    RenderBlock& createInnerRendererIfNeeded(RenderButton&);
-    RenderBlock& createInnerRendererIfNeeded(RenderMenuList&);
+    void insertChild(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void insertChild(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
 private:
+    RenderBlock& findOrCreateParentForChild(RenderButton&);
+    RenderBlock& findOrCreateParentForChild(RenderMenuList&);
+
     RenderTreeBuilder& m_builder;
 };
 
