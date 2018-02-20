@@ -93,6 +93,8 @@ Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStack
     Vector<ScriptCallFrame> frames;
 
     CallFrame* frame = exec->vm().topCallFrame;
+    if (!frame)
+        return ScriptCallStack::create();
     CreateScriptCallStackFunctor functor(false, frames, maxStackSize);
     frame->iterate(functor);
 
@@ -108,6 +110,8 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_
     Vector<ScriptCallFrame> frames;
 
     CallFrame* frame = exec->vm().topCallFrame;
+    if (!frame)
+        return ScriptCallStack::create();
     CreateScriptCallStackFunctor functor(true, frames, maxStackSize);
     frame->iterate(functor);
 
