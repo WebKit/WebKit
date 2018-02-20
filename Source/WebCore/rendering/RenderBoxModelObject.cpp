@@ -2558,7 +2558,7 @@ void RenderBoxModelObject::removeAndDestroyAllContinuations(RenderTreeBuilder& b
     ASSERT(continuationChainNodeMap().contains(this));
     auto& continuationChainNode = *continuationChainNodeMap().get(this);
     while (continuationChainNode.next)
-        builder.removeAndDestroyChild(*continuationChainNode.next->renderer);
+        builder.removeAndDestroy(*continuationChainNode.next->renderer);
     removeFromContinuationChain();
 }
 
