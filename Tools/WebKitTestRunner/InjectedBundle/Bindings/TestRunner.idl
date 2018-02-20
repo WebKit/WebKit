@@ -278,6 +278,9 @@ interface TestRunner {
     void setStatisticsSubframeUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
     void setStatisticsSubresourceUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
     void setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
+    void setStatisticsSubresourceUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
+    void setStatisticsTopFrameUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
+    void setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsTimeToLiveCookiePartitionFree(double seconds);
     void statisticsNotifyObserver();

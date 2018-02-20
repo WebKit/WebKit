@@ -138,9 +138,6 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     ASSERT(topFrame.document());
     ASSERT(topFrame.page());
 
-    if (frame.isMainFrame())
-        return;
-    
     auto* page = topFrame.page();
     if (!shouldLog(page))
         return;
@@ -177,8 +174,21 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
 
     if (isRedirect
         && !areDomainsAssociated(page, sourcePrimaryDomain, targetPrimaryDomain)) {
-        auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-        if (redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry)
+        bool isNewRedirectToEntry = false;
+        bool isNewRedirectFromEntry = false;
+        if (frame.isMainFrame()) {
+            auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+            isNewRedirectToEntry = redirectingOriginStatistics.topFrameUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
+            auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+            isNewRedirectFromEntry = targetStatistics.topFrameUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
+        } else {
+            auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+            isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
+            auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+            isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
+        }
+
+        if (isNewRedirectToEntry || isNewRedirectFromEntry)
             shouldCallNotificationCallback = true;
     }
 
@@ -234,7 +244,11 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
 
     if (isRedirect) {
         auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-        if (redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry)
+        bool isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
+        auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+        bool isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
+
+        if (isNewRedirectToEntry || isNewRedirectFromEntry)
             shouldCallNotificationCallback = true;
     }
 

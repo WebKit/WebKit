@@ -46,8 +46,9 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr unsigned operatingDatesWindow { 30 };
-constexpr unsigned statisticsModelVersion { 10 };
+constexpr unsigned statisticsModelVersion { 11 };
 constexpr unsigned maxImportance { 3 };
+constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
 
 template<typename T> static inline String isolatedPrimaryDomain(const T& value)
 {
@@ -224,6 +225,35 @@ void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing(
     });
 }
 
+
+unsigned WebResourceLoadStatisticsStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const WebCore::ResourceLoadStatistics& resourceStatistic, HashSet<String>& domainsThatHaveRedirectedTo, unsigned numberOfRecursiveCalls)
+{
+    if (numberOfRecursiveCalls >= maxNumberOfRecursiveCallsInRedirectTraceBack) {
+        ASSERT_NOT_REACHED();
+        WTFLogAlways("Hit %u recursive calls in redirect backtrace. Returning early.", maxNumberOfRecursiveCallsInRedirectTraceBack);
+        return numberOfRecursiveCalls;
+    }
+
+    numberOfRecursiveCalls++;
+    
+    for (auto& subresourceUniqueRedirectFromDomain : resourceStatistic.subresourceUniqueRedirectsFrom.values()) {
+        auto mapEntry = m_resourceStatisticsMap.find(subresourceUniqueRedirectFromDomain);
+        if (mapEntry == m_resourceStatisticsMap.end() || mapEntry->value.isPrevalentResource)
+            continue;
+        if (domainsThatHaveRedirectedTo.add(mapEntry->value.highLevelDomain).isNewEntry)
+            numberOfRecursiveCalls = recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(mapEntry->value, domainsThatHaveRedirectedTo, numberOfRecursiveCalls);
+    }
+    for (auto& topFrameUniqueRedirectFromDomain : resourceStatistic.topFrameUniqueRedirectsFrom.values()) {
+        auto mapEntry = m_resourceStatisticsMap.find(topFrameUniqueRedirectFromDomain);
+        if (mapEntry == m_resourceStatisticsMap.end() || mapEntry->value.isPrevalentResource)
+            continue;
+        if (domainsThatHaveRedirectedTo.add(mapEntry->value.highLevelDomain).isNewEntry)
+            numberOfRecursiveCalls = recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(mapEntry->value, domainsThatHaveRedirectedTo, numberOfRecursiveCalls);
+    }
+    
+    return numberOfRecursiveCalls;
+}
+
 void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
     ASSERT(!RunLoop::isMain());
@@ -231,7 +261,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
             if (!resourceStatistic.isPrevalentResource && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
-                resourceStatistic.isPrevalentResource = true;
+                setPrevalentResource(resourceStatistic);
         }
     }
     removeDataRecords();
@@ -448,9 +478,24 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
-        statistics.isPrevalentResource = true;
+        auto& resourceStatistic = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
+        setPrevalentResource(resourceStatistic);
     });
+}
+
+void WebResourceLoadStatisticsStore::setPrevalentResource(WebCore::ResourceLoadStatistics& resourceStatistic)
+{
+    ASSERT(!RunLoop::isMain());
+    resourceStatistic.isPrevalentResource = true;
+    HashSet<String> domainsThatHaveRedirectedTo;
+    recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(resourceStatistic, domainsThatHaveRedirectedTo, 0);
+    for (auto& domain : domainsThatHaveRedirectedTo) {
+        auto mapEntry = m_resourceStatisticsMap.find(domain);
+        if (mapEntry == m_resourceStatisticsMap.end())
+            continue;
+        ASSERT(!mapEntry->value.isPrevalentResource);
+        mapEntry->value.isPrevalentResource = true;
+    }
 }
 
 void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, WTF::Function<void (bool)>&& completionHandler)
@@ -537,6 +582,8 @@ void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& s
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubFrameDomain = isolatedPrimaryDomain(subframe)] {
         auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomain);
         statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomain);
+        // For consistency, make sure we also have a statistics entry for the top frame domain.
+        ensureResourceStatisticsForPrimaryDomain(primaryTopFrameDomain);
     });
 }
 
@@ -548,6 +595,8 @@ void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const URL
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
         auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomain);
         statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomain);
+        // For consistency, make sure we also have a statistics entry for the top frame domain.
+        ensureResourceStatisticsForPrimaryDomain(primaryTopFrameDomain);
     });
 }
 
@@ -559,6 +608,47 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& s
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
         auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomain);
         statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomain);
+        // For consistency, make sure we also have a statistics entry for the redirect domain.
+        ensureResourceStatisticsForPrimaryDomain(primaryRedirectDomain);
+    });
+}
+
+void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const URL& subresource, const URL& hostNameRedirectedFrom)
+{
+    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedFrom.isBlankURL() || hostNameRedirectedFrom.isEmpty())
+        return;
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedFrom), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomain);
+        statistics.subresourceUniqueRedirectsFrom.add(primaryRedirectDomain);
+        // For consistency, make sure we also have a statistics entry for the redirect domain.
+        ensureResourceStatisticsForPrimaryDomain(primaryRedirectDomain);
+    });
+}
+
+void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const URL& topFrameHostName, const URL& hostNameRedirectedTo)
+{
+    if (topFrameHostName.isBlankURL() || topFrameHostName.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
+        return;
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHostName)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(topFramePrimaryDomain);
+        statistics.topFrameUniqueRedirectsTo.add(primaryRedirectDomain);
+        // For consistency, make sure we also have a statistics entry for the redirect domain.
+        ensureResourceStatisticsForPrimaryDomain(primaryRedirectDomain);
+    });
+}
+
+void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const URL& topFrameHostName, const URL& hostNameRedirectedFrom)
+{
+    if (topFrameHostName.isBlankURL() || topFrameHostName.isEmpty() || hostNameRedirectedFrom.isBlankURL() || hostNameRedirectedFrom.isEmpty())
+        return;
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedFrom), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHostName)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(topFramePrimaryDomain);
+        statistics.topFrameUniqueRedirectsFrom.add(primaryRedirectDomain);
+        // For consistency, make sure we also have a statistics entry for the redirect domain.
+        ensureResourceStatisticsForPrimaryDomain(primaryRedirectDomain);
     });
 }
 

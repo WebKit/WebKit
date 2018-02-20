@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests for classification based on subresource redirect collusion.");
+    jsTestIsAsync = true;
+
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+    const subresourceOrigin1 = "http://127.0.0.2:8000/temp";
+    const subresourceOrigin2 = "http://127.0.0.3:8000/temp";
+    const subresourceOrigin3 = "http://127.0.0.4:8000/temp";
+    const subresourceOrigin4 = "http://127.0.0.5:8000/temp";
+
+    function setEnableFeature(enable) {
+        if (!enable)
+            testRunner.statisticsResetToConsistentState();
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+    }
+
+    function runTest() {
+        testRunner.statisticsNotifyObserver();
+
+        testRunner.setStatisticsSubresourceUniqueRedirectFrom(statisticsUrl, subresourceOrigin1);
+        testRunner.setStatisticsSubresourceUniqueRedirectFrom(subresourceOrigin1, subresourceOrigin2);
+        testRunner.setStatisticsSubresourceUniqueRedirectFrom(subresourceOrigin2, subresourceOrigin3);
+        testRunner.setStatisticsSubresourceUniqueRedirectFrom(subresourceOrigin3, subresourceOrigin4);
+
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
+        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host explicity set did not get set as prevalent resource.");
+        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin1))
+            testPassed("Colluding host 1 got set as prevalent resource.");
+        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin2))
+            testPassed("Colluding host 2 got set as prevalent resource.");
+        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin3))
+            testPassed("Colluding host 3 got set as prevalent resource.");
+        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin4))
+            testPassed("Colluding host 4 got set as prevalent resource.");
+        if (testRunner.isStatisticsPrevalentResource("http://localhost:8000"))
+            testPassed("Colluding localhost got set as prevalent resource after actual sub frame redirect.");
+
+        setEnableFeature(false);
+        finishJSTest();
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        setEnableFeature(true);
+
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
+        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host did not get set as non-prevalent resource.");
+    }
+</script>
+<iframe onload="runTest()" src="http://localhost:8000/resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/onclick.html"></iframe>
+</body>
+</html>

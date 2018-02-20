@@ -1,3 +1,31 @@
+2018-02-12  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources
+        https://bugs.webkit.org/show_bug.cgi?id=182664
+        <rdar://problem/37372572>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+            We now collect statistics on top frame navigational redirects too, both to and from.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+            We now collect statistics on redirects from in addition to the existing redirects to.
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+        * loader/ResourceLoadStatistics.h:
+            Three new fields:
+            - topFrameUniqueRedirectsTo
+            - topFrameUniqueRedirectsFrom
+            - subresourceUniqueRedirectsFrom
+
 2018-02-12  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderMenuList::takeChild() to RenderTreeBuilder
