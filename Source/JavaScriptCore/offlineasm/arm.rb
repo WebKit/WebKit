@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2015-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
 # Copyright (C) 2013 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -348,10 +348,6 @@ class Instruction
     end
 
     def lowerARMCommon
-        $asm.codeOrigin codeOriginString if $enableCodeOriginComments
-        $asm.annotation annotation if $enableInstrAnnotations
-        $asm.debugAnnotation codeOrigin.debugDirective if $enableDebugAnnotations
-
         case opcode
         when "addi", "addp", "addis", "addps"
             if opcode == "addis" or opcode == "addps"

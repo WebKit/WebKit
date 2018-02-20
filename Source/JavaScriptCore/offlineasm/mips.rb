@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
 # Copyright (C) 2012 MIPS Technologies, Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -825,7 +825,6 @@ end
 
 class Instruction
     def lowerMIPS
-        $asm.comment codeOriginString
         case opcode
         when "addi", "addp", "addis"
             if operands.size == 3 and operands[0].is_a? Immediate
