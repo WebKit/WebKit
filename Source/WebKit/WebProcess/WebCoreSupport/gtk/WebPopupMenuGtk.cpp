@@ -30,9 +30,8 @@
 #include "PlatformPopupMenuData.h"
 #include <WebCore/NotImplemented.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData&)
 {

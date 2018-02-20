@@ -27,9 +27,8 @@
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperGL.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
 {

@@ -34,9 +34,8 @@
 #include <wtf/glib/GLibUtilities.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if ENABLE(DEVELOPER_MODE)
 static String getExecutablePath()

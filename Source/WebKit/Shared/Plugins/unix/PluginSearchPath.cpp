@@ -28,9 +28,8 @@
 
 #include <WebCore/FileSystem.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Vector<String> pluginsDirectories()
 {

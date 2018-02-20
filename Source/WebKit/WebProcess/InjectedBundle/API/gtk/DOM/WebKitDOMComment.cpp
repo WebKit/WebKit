@@ -83,14 +83,14 @@ static gboolean webkit_dom_comment_remove_event_listener(WebKitDOMEventTarget* t
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_comment_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_comment_dispatch_event;
     iface->add_event_listener = webkit_dom_comment_add_event_listener;
     iface->remove_event_listener = webkit_dom_comment_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMComment, webkit_dom_comment, WEBKIT_DOM_TYPE_CHARACTER_DATA, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMComment, webkit_dom_comment, WEBKIT_DOM_TYPE_CHARACTER_DATA, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_comment_dom_event_target_init))
 
 static void webkit_dom_comment_class_init(WebKitDOMCommentClass* requestClass)
 {

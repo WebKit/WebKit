@@ -57,9 +57,9 @@ WebKitDOMHTMLOptionsCollection* wrapHTMLOptionsCollection(WebCore::HTMLOptionsCo
 G_DEFINE_TYPE(WebKitDOMHTMLOptionsCollection, webkit_dom_html_options_collection, WEBKIT_DOM_TYPE_HTML_COLLECTION)
 
 enum {
-    PROP_0,
-    PROP_SELECTED_INDEX,
-    PROP_LENGTH,
+    DOM_HTML_OPTIONS_COLLECTION_PROP_0,
+    DOM_HTML_OPTIONS_COLLECTION_PROP_SELECTED_INDEX,
+    DOM_HTML_OPTIONS_COLLECTION_PROP_LENGTH,
 };
 
 static void webkit_dom_html_options_collection_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -67,7 +67,7 @@ static void webkit_dom_html_options_collection_set_property(GObject* object, gui
     WebKitDOMHTMLOptionsCollection* self = WEBKIT_DOM_HTML_OPTIONS_COLLECTION(object);
 
     switch (propertyId) {
-    case PROP_SELECTED_INDEX:
+    case DOM_HTML_OPTIONS_COLLECTION_PROP_SELECTED_INDEX:
         webkit_dom_html_options_collection_set_selected_index(self, g_value_get_long(value));
         break;
     default:
@@ -81,10 +81,10 @@ static void webkit_dom_html_options_collection_get_property(GObject* object, gui
     WebKitDOMHTMLOptionsCollection* self = WEBKIT_DOM_HTML_OPTIONS_COLLECTION(object);
 
     switch (propertyId) {
-    case PROP_SELECTED_INDEX:
+    case DOM_HTML_OPTIONS_COLLECTION_PROP_SELECTED_INDEX:
         g_value_set_long(value, webkit_dom_html_options_collection_get_selected_index(self));
         break;
-    case PROP_LENGTH:
+    case DOM_HTML_OPTIONS_COLLECTION_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_html_options_collection_get_length(self));
         break;
     default:
@@ -101,7 +101,7 @@ static void webkit_dom_html_options_collection_class_init(WebKitDOMHTMLOptionsCo
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SELECTED_INDEX,
+        DOM_HTML_OPTIONS_COLLECTION_PROP_SELECTED_INDEX,
         g_param_spec_long(
             "selected-index",
             "HTMLOptionsCollection:selected-index",
@@ -111,7 +111,7 @@ static void webkit_dom_html_options_collection_class_init(WebKitDOMHTMLOptionsCo
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_HTML_OPTIONS_COLLECTION_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "HTMLOptionsCollection:length",

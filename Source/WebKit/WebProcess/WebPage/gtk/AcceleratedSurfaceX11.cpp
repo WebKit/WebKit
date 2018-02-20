@@ -37,9 +37,8 @@
 #include <gdk/gdkx.h>
 #include <wtf/RunLoop.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<AcceleratedSurfaceX11> AcceleratedSurfaceX11::create(WebPage& webPage, Client& client)
 {

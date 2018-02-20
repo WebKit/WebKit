@@ -35,10 +35,9 @@
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
+namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
-
-namespace IPC {
 
 static void encodeImage(Encoder& encoder, Image& image)
 {

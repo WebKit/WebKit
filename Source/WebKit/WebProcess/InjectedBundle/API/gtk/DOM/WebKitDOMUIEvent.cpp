@@ -57,15 +57,15 @@ WebKitDOMUIEvent* wrapUIEvent(WebCore::UIEvent* coreObject)
 G_DEFINE_TYPE(WebKitDOMUIEvent, webkit_dom_ui_event, WEBKIT_DOM_TYPE_EVENT)
 
 enum {
-    PROP_0,
-    PROP_VIEW,
-    PROP_DETAIL,
-    PROP_KEY_CODE,
-    PROP_CHAR_CODE,
-    PROP_LAYER_X,
-    PROP_LAYER_Y,
-    PROP_PAGE_X,
-    PROP_PAGE_Y,
+    DOM_UI_EVENT_PROP_0,
+    DOM_UI_EVENT_PROP_VIEW,
+    DOM_UI_EVENT_PROP_DETAIL,
+    DOM_UI_EVENT_PROP_KEY_CODE,
+    DOM_UI_EVENT_PROP_CHAR_CODE,
+    DOM_UI_EVENT_PROP_LAYER_X,
+    DOM_UI_EVENT_PROP_LAYER_Y,
+    DOM_UI_EVENT_PROP_PAGE_X,
+    DOM_UI_EVENT_PROP_PAGE_Y,
 };
 
 static void webkit_dom_ui_event_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -73,28 +73,28 @@ static void webkit_dom_ui_event_get_property(GObject* object, guint propertyId, 
     WebKitDOMUIEvent* self = WEBKIT_DOM_UI_EVENT(object);
 
     switch (propertyId) {
-    case PROP_VIEW:
+    case DOM_UI_EVENT_PROP_VIEW:
         g_value_set_object(value, webkit_dom_ui_event_get_view(self));
         break;
-    case PROP_DETAIL:
+    case DOM_UI_EVENT_PROP_DETAIL:
         g_value_set_long(value, webkit_dom_ui_event_get_detail(self));
         break;
-    case PROP_KEY_CODE:
+    case DOM_UI_EVENT_PROP_KEY_CODE:
         g_value_set_long(value, webkit_dom_ui_event_get_key_code(self));
         break;
-    case PROP_CHAR_CODE:
+    case DOM_UI_EVENT_PROP_CHAR_CODE:
         g_value_set_long(value, webkit_dom_ui_event_get_char_code(self));
         break;
-    case PROP_LAYER_X:
+    case DOM_UI_EVENT_PROP_LAYER_X:
         g_value_set_long(value, webkit_dom_ui_event_get_layer_x(self));
         break;
-    case PROP_LAYER_Y:
+    case DOM_UI_EVENT_PROP_LAYER_Y:
         g_value_set_long(value, webkit_dom_ui_event_get_layer_y(self));
         break;
-    case PROP_PAGE_X:
+    case DOM_UI_EVENT_PROP_PAGE_X:
         g_value_set_long(value, webkit_dom_ui_event_get_page_x(self));
         break;
-    case PROP_PAGE_Y:
+    case DOM_UI_EVENT_PROP_PAGE_Y:
         g_value_set_long(value, webkit_dom_ui_event_get_page_y(self));
         break;
     default:
@@ -110,7 +110,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VIEW,
+        DOM_UI_EVENT_PROP_VIEW,
         g_param_spec_object(
             "view",
             "UIEvent:view",
@@ -120,7 +120,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DETAIL,
+        DOM_UI_EVENT_PROP_DETAIL,
         g_param_spec_long(
             "detail",
             "UIEvent:detail",
@@ -130,7 +130,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_KEY_CODE,
+        DOM_UI_EVENT_PROP_KEY_CODE,
         g_param_spec_long(
             "key-code",
             "UIEvent:key-code",
@@ -140,7 +140,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHAR_CODE,
+        DOM_UI_EVENT_PROP_CHAR_CODE,
         g_param_spec_long(
             "char-code",
             "UIEvent:char-code",
@@ -150,7 +150,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LAYER_X,
+        DOM_UI_EVENT_PROP_LAYER_X,
         g_param_spec_long(
             "layer-x",
             "UIEvent:layer-x",
@@ -160,7 +160,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LAYER_Y,
+        DOM_UI_EVENT_PROP_LAYER_Y,
         g_param_spec_long(
             "layer-y",
             "UIEvent:layer-y",
@@ -170,7 +170,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PAGE_X,
+        DOM_UI_EVENT_PROP_PAGE_X,
         g_param_spec_long(
             "page-x",
             "UIEvent:page-x",
@@ -180,7 +180,7 @@ static void webkit_dom_ui_event_class_init(WebKitDOMUIEventClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PAGE_Y,
+        DOM_UI_EVENT_PROP_PAGE_Y,
         g_param_spec_long(
             "page-y",
             "UIEvent:page-y",

@@ -33,10 +33,8 @@
 #include <WebCore/WebKitSoupRequestGeneric.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
-
+using namespace WebCore;
 
 LegacyCustomProtocolManager::WebSoupRequestAsyncData::WebSoupRequestAsyncData(GRefPtr<GTask>&& requestTask, WebKitSoupRequestGeneric* requestGeneric)
     : task(WTFMove(requestTask))

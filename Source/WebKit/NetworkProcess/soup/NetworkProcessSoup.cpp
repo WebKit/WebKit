@@ -44,9 +44,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static CString buildAcceptLanguages(const Vector<String>& languages)
 {

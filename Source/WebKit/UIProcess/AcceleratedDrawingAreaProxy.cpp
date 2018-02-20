@@ -42,9 +42,8 @@
 #include <WebCore/PlatformDisplay.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 AcceleratedDrawingAreaProxy::AcceleratedDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)

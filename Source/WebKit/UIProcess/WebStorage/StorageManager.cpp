@@ -39,9 +39,8 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
 public:

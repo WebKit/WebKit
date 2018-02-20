@@ -34,9 +34,8 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 ResourceError cancelledError(const ResourceRequest& request)
 {

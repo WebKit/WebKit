@@ -67,8 +67,8 @@ WebKitDOMFileList* wrapFileList(WebCore::FileList* coreObject)
 G_DEFINE_TYPE(WebKitDOMFileList, webkit_dom_file_list, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_LENGTH,
+    DOM_FILE_LIST_PROP_0,
+    DOM_FILE_LIST_PROP_LENGTH,
 };
 
 static void webkit_dom_file_list_finalize(GObject* object)
@@ -86,7 +86,7 @@ static void webkit_dom_file_list_get_property(GObject* object, guint propertyId,
     WebKitDOMFileList* self = WEBKIT_DOM_FILE_LIST(object);
 
     switch (propertyId) {
-    case PROP_LENGTH:
+    case DOM_FILE_LIST_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_file_list_get_length(self));
         break;
     default:
@@ -116,7 +116,7 @@ static void webkit_dom_file_list_class_init(WebKitDOMFileListClass* requestClass
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_FILE_LIST_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "FileList:length",

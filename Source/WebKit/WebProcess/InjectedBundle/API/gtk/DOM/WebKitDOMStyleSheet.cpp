@@ -68,14 +68,14 @@ WebKitDOMStyleSheet* wrapStyleSheet(WebCore::StyleSheet* coreObject)
 G_DEFINE_TYPE(WebKitDOMStyleSheet, webkit_dom_style_sheet, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_TYPE,
-    PROP_DISABLED,
-    PROP_OWNER_NODE,
-    PROP_PARENT_STYLE_SHEET,
-    PROP_HREF,
-    PROP_TITLE,
-    PROP_MEDIA,
+    DOM_STYLE_SHEET_PROP_0,
+    DOM_STYLE_SHEET_PROP_TYPE,
+    DOM_STYLE_SHEET_PROP_DISABLED,
+    DOM_STYLE_SHEET_PROP_OWNER_NODE,
+    DOM_STYLE_SHEET_PROP_PARENT_STYLE_SHEET,
+    DOM_STYLE_SHEET_PROP_HREF,
+    DOM_STYLE_SHEET_PROP_TITLE,
+    DOM_STYLE_SHEET_PROP_MEDIA,
 };
 
 static void webkit_dom_style_sheet_finalize(GObject* object)
@@ -93,7 +93,7 @@ static void webkit_dom_style_sheet_set_property(GObject* object, guint propertyI
     WebKitDOMStyleSheet* self = WEBKIT_DOM_STYLE_SHEET(object);
 
     switch (propertyId) {
-    case PROP_DISABLED:
+    case DOM_STYLE_SHEET_PROP_DISABLED:
         webkit_dom_style_sheet_set_disabled(self, g_value_get_boolean(value));
         break;
     default:
@@ -107,25 +107,25 @@ static void webkit_dom_style_sheet_get_property(GObject* object, guint propertyI
     WebKitDOMStyleSheet* self = WEBKIT_DOM_STYLE_SHEET(object);
 
     switch (propertyId) {
-    case PROP_TYPE:
+    case DOM_STYLE_SHEET_PROP_TYPE:
         g_value_take_string(value, webkit_dom_style_sheet_get_content_type(self));
         break;
-    case PROP_DISABLED:
+    case DOM_STYLE_SHEET_PROP_DISABLED:
         g_value_set_boolean(value, webkit_dom_style_sheet_get_disabled(self));
         break;
-    case PROP_OWNER_NODE:
+    case DOM_STYLE_SHEET_PROP_OWNER_NODE:
         g_value_set_object(value, webkit_dom_style_sheet_get_owner_node(self));
         break;
-    case PROP_PARENT_STYLE_SHEET:
+    case DOM_STYLE_SHEET_PROP_PARENT_STYLE_SHEET:
         g_value_set_object(value, webkit_dom_style_sheet_get_parent_style_sheet(self));
         break;
-    case PROP_HREF:
+    case DOM_STYLE_SHEET_PROP_HREF:
         g_value_take_string(value, webkit_dom_style_sheet_get_href(self));
         break;
-    case PROP_TITLE:
+    case DOM_STYLE_SHEET_PROP_TITLE:
         g_value_take_string(value, webkit_dom_style_sheet_get_title(self));
         break;
-    case PROP_MEDIA:
+    case DOM_STYLE_SHEET_PROP_MEDIA:
         g_value_set_object(value, webkit_dom_style_sheet_get_media(self));
         break;
     default:
@@ -156,7 +156,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TYPE,
+        DOM_STYLE_SHEET_PROP_TYPE,
         g_param_spec_string(
             "type",
             "StyleSheet:type",
@@ -166,7 +166,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DISABLED,
+        DOM_STYLE_SHEET_PROP_DISABLED,
         g_param_spec_boolean(
             "disabled",
             "StyleSheet:disabled",
@@ -176,7 +176,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OWNER_NODE,
+        DOM_STYLE_SHEET_PROP_OWNER_NODE,
         g_param_spec_object(
             "owner-node",
             "StyleSheet:owner-node",
@@ -186,7 +186,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT_STYLE_SHEET,
+        DOM_STYLE_SHEET_PROP_PARENT_STYLE_SHEET,
         g_param_spec_object(
             "parent-style-sheet",
             "StyleSheet:parent-style-sheet",
@@ -196,7 +196,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HREF,
+        DOM_STYLE_SHEET_PROP_HREF,
         g_param_spec_string(
             "href",
             "StyleSheet:href",
@@ -206,7 +206,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TITLE,
+        DOM_STYLE_SHEET_PROP_TITLE,
         g_param_spec_string(
             "title",
             "StyleSheet:title",
@@ -216,7 +216,7 @@ static void webkit_dom_style_sheet_class_init(WebKitDOMStyleSheetClass* requestC
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_MEDIA,
+        DOM_STYLE_SHEET_PROP_MEDIA,
         g_param_spec_object(
             "media",
             "StyleSheet:media",

@@ -86,29 +86,29 @@ static gboolean webkit_dom_html_iframe_element_remove_event_listener(WebKitDOMEv
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_iframe_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_iframe_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_iframe_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_iframe_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLIFrameElement, webkit_dom_html_iframe_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLIFrameElement, webkit_dom_html_iframe_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_iframe_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_ALIGN,
-    PROP_FRAME_BORDER,
-    PROP_HEIGHT,
-    PROP_LONG_DESC,
-    PROP_MARGIN_HEIGHT,
-    PROP_MARGIN_WIDTH,
-    PROP_NAME,
-    PROP_SCROLLING,
-    PROP_SRC,
-    PROP_WIDTH,
-    PROP_CONTENT_DOCUMENT,
-    PROP_CONTENT_WINDOW,
+    DOM_HTML_IFRAME_ELEMENT_PROP_0,
+    DOM_HTML_IFRAME_ELEMENT_PROP_ALIGN,
+    DOM_HTML_IFRAME_ELEMENT_PROP_FRAME_BORDER,
+    DOM_HTML_IFRAME_ELEMENT_PROP_HEIGHT,
+    DOM_HTML_IFRAME_ELEMENT_PROP_LONG_DESC,
+    DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_HEIGHT,
+    DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_WIDTH,
+    DOM_HTML_IFRAME_ELEMENT_PROP_NAME,
+    DOM_HTML_IFRAME_ELEMENT_PROP_SCROLLING,
+    DOM_HTML_IFRAME_ELEMENT_PROP_SRC,
+    DOM_HTML_IFRAME_ELEMENT_PROP_WIDTH,
+    DOM_HTML_IFRAME_ELEMENT_PROP_CONTENT_DOCUMENT,
+    DOM_HTML_IFRAME_ELEMENT_PROP_CONTENT_WINDOW,
 };
 
 static void webkit_dom_html_iframe_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -116,34 +116,34 @@ static void webkit_dom_html_iframe_element_set_property(GObject* object, guint p
     WebKitDOMHTMLIFrameElement* self = WEBKIT_DOM_HTML_IFRAME_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALIGN:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_ALIGN:
         webkit_dom_html_iframe_element_set_align(self, g_value_get_string(value));
         break;
-    case PROP_FRAME_BORDER:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_FRAME_BORDER:
         webkit_dom_html_iframe_element_set_frame_border(self, g_value_get_string(value));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_HEIGHT:
         webkit_dom_html_iframe_element_set_height(self, g_value_get_string(value));
         break;
-    case PROP_LONG_DESC:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_LONG_DESC:
         webkit_dom_html_iframe_element_set_long_desc(self, g_value_get_string(value));
         break;
-    case PROP_MARGIN_HEIGHT:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_HEIGHT:
         webkit_dom_html_iframe_element_set_margin_height(self, g_value_get_string(value));
         break;
-    case PROP_MARGIN_WIDTH:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_WIDTH:
         webkit_dom_html_iframe_element_set_margin_width(self, g_value_get_string(value));
         break;
-    case PROP_NAME:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_NAME:
         webkit_dom_html_iframe_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_SCROLLING:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_SCROLLING:
         webkit_dom_html_iframe_element_set_scrolling(self, g_value_get_string(value));
         break;
-    case PROP_SRC:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_SRC:
         webkit_dom_html_iframe_element_set_src(self, g_value_get_string(value));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_WIDTH:
         webkit_dom_html_iframe_element_set_width(self, g_value_get_string(value));
         break;
     default:
@@ -157,40 +157,40 @@ static void webkit_dom_html_iframe_element_get_property(GObject* object, guint p
     WebKitDOMHTMLIFrameElement* self = WEBKIT_DOM_HTML_IFRAME_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALIGN:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_ALIGN:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_align(self));
         break;
-    case PROP_FRAME_BORDER:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_FRAME_BORDER:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_frame_border(self));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_HEIGHT:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_height(self));
         break;
-    case PROP_LONG_DESC:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_LONG_DESC:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_long_desc(self));
         break;
-    case PROP_MARGIN_HEIGHT:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_HEIGHT:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_margin_height(self));
         break;
-    case PROP_MARGIN_WIDTH:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_WIDTH:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_margin_width(self));
         break;
-    case PROP_NAME:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_NAME:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_name(self));
         break;
-    case PROP_SCROLLING:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_SCROLLING:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_scrolling(self));
         break;
-    case PROP_SRC:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_SRC:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_src(self));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_WIDTH:
         g_value_take_string(value, webkit_dom_html_iframe_element_get_width(self));
         break;
-    case PROP_CONTENT_DOCUMENT:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_CONTENT_DOCUMENT:
         g_value_set_object(value, webkit_dom_html_iframe_element_get_content_document(self));
         break;
-    case PROP_CONTENT_WINDOW:
+    case DOM_HTML_IFRAME_ELEMENT_PROP_CONTENT_WINDOW:
         g_value_set_object(value, webkit_dom_html_iframe_element_get_content_window(self));
         break;
     default:
@@ -207,7 +207,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALIGN,
+        DOM_HTML_IFRAME_ELEMENT_PROP_ALIGN,
         g_param_spec_string(
             "align",
             "HTMLIFrameElement:align",
@@ -217,7 +217,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FRAME_BORDER,
+        DOM_HTML_IFRAME_ELEMENT_PROP_FRAME_BORDER,
         g_param_spec_string(
             "frame-border",
             "HTMLIFrameElement:frame-border",
@@ -227,7 +227,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HEIGHT,
+        DOM_HTML_IFRAME_ELEMENT_PROP_HEIGHT,
         g_param_spec_string(
             "height",
             "HTMLIFrameElement:height",
@@ -237,7 +237,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LONG_DESC,
+        DOM_HTML_IFRAME_ELEMENT_PROP_LONG_DESC,
         g_param_spec_string(
             "long-desc",
             "HTMLIFrameElement:long-desc",
@@ -247,7 +247,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_MARGIN_HEIGHT,
+        DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_HEIGHT,
         g_param_spec_string(
             "margin-height",
             "HTMLIFrameElement:margin-height",
@@ -257,7 +257,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_MARGIN_WIDTH,
+        DOM_HTML_IFRAME_ELEMENT_PROP_MARGIN_WIDTH,
         g_param_spec_string(
             "margin-width",
             "HTMLIFrameElement:margin-width",
@@ -267,7 +267,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_HTML_IFRAME_ELEMENT_PROP_NAME,
         g_param_spec_string(
             "name",
             "HTMLIFrameElement:name",
@@ -277,7 +277,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCROLLING,
+        DOM_HTML_IFRAME_ELEMENT_PROP_SCROLLING,
         g_param_spec_string(
             "scrolling",
             "HTMLIFrameElement:scrolling",
@@ -287,7 +287,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SRC,
+        DOM_HTML_IFRAME_ELEMENT_PROP_SRC,
         g_param_spec_string(
             "src",
             "HTMLIFrameElement:src",
@@ -297,7 +297,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WIDTH,
+        DOM_HTML_IFRAME_ELEMENT_PROP_WIDTH,
         g_param_spec_string(
             "width",
             "HTMLIFrameElement:width",
@@ -307,7 +307,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CONTENT_DOCUMENT,
+        DOM_HTML_IFRAME_ELEMENT_PROP_CONTENT_DOCUMENT,
         g_param_spec_object(
             "content-document",
             "HTMLIFrameElement:content-document",
@@ -317,7 +317,7 @@ static void webkit_dom_html_iframe_element_class_init(WebKitDOMHTMLIFrameElement
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CONTENT_WINDOW,
+        DOM_HTML_IFRAME_ELEMENT_PROP_CONTENT_WINDOW,
         g_param_spec_object(
             "content-window",
             "HTMLIFrameElement:content-window",

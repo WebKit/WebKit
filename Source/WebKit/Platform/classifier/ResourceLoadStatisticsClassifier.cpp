@@ -29,9 +29,8 @@
 #include "Logging.h"
 #include <WebCore/ResourceLoadStatistics.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static const auto featureVectorLengthThreshold = 3;
 bool ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics(const ResourceLoadStatistics& resourceStatistic)

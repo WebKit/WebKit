@@ -87,21 +87,21 @@ static gboolean webkit_dom_document_fragment_remove_event_listener(WebKitDOMEven
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_document_fragment_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_document_fragment_dispatch_event;
     iface->add_event_listener = webkit_dom_document_fragment_add_event_listener;
     iface->remove_event_listener = webkit_dom_document_fragment_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocumentFragment, webkit_dom_document_fragment, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocumentFragment, webkit_dom_document_fragment, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_document_fragment_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_CHILDREN,
-    PROP_FIRST_ELEMENT_CHILD,
-    PROP_LAST_ELEMENT_CHILD,
-    PROP_CHILD_ELEMENT_COUNT,
+    DOM_DOCUMENT_FRAGMENT_PROP_0,
+    DOM_DOCUMENT_FRAGMENT_PROP_CHILDREN,
+    DOM_DOCUMENT_FRAGMENT_PROP_FIRST_ELEMENT_CHILD,
+    DOM_DOCUMENT_FRAGMENT_PROP_LAST_ELEMENT_CHILD,
+    DOM_DOCUMENT_FRAGMENT_PROP_CHILD_ELEMENT_COUNT,
 };
 
 static void webkit_dom_document_fragment_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
@@ -109,16 +109,16 @@ static void webkit_dom_document_fragment_get_property(GObject* object, guint pro
     WebKitDOMDocumentFragment* self = WEBKIT_DOM_DOCUMENT_FRAGMENT(object);
 
     switch (propertyId) {
-    case PROP_CHILDREN:
+    case DOM_DOCUMENT_FRAGMENT_PROP_CHILDREN:
         g_value_set_object(value, webkit_dom_document_fragment_get_children(self));
         break;
-    case PROP_FIRST_ELEMENT_CHILD:
+    case DOM_DOCUMENT_FRAGMENT_PROP_FIRST_ELEMENT_CHILD:
         g_value_set_object(value, webkit_dom_document_fragment_get_first_element_child(self));
         break;
-    case PROP_LAST_ELEMENT_CHILD:
+    case DOM_DOCUMENT_FRAGMENT_PROP_LAST_ELEMENT_CHILD:
         g_value_set_object(value, webkit_dom_document_fragment_get_last_element_child(self));
         break;
-    case PROP_CHILD_ELEMENT_COUNT:
+    case DOM_DOCUMENT_FRAGMENT_PROP_CHILD_ELEMENT_COUNT:
         g_value_set_ulong(value, webkit_dom_document_fragment_get_child_element_count(self));
         break;
     default:
@@ -134,7 +134,7 @@ static void webkit_dom_document_fragment_class_init(WebKitDOMDocumentFragmentCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHILDREN,
+        DOM_DOCUMENT_FRAGMENT_PROP_CHILDREN,
         g_param_spec_object(
             "children",
             "DocumentFragment:children",
@@ -144,7 +144,7 @@ static void webkit_dom_document_fragment_class_init(WebKitDOMDocumentFragmentCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FIRST_ELEMENT_CHILD,
+        DOM_DOCUMENT_FRAGMENT_PROP_FIRST_ELEMENT_CHILD,
         g_param_spec_object(
             "first-element-child",
             "DocumentFragment:first-element-child",
@@ -154,7 +154,7 @@ static void webkit_dom_document_fragment_class_init(WebKitDOMDocumentFragmentCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LAST_ELEMENT_CHILD,
+        DOM_DOCUMENT_FRAGMENT_PROP_LAST_ELEMENT_CHILD,
         g_param_spec_object(
             "last-element-child",
             "DocumentFragment:last-element-child",
@@ -164,7 +164,7 @@ static void webkit_dom_document_fragment_class_init(WebKitDOMDocumentFragmentCla
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHILD_ELEMENT_COUNT,
+        DOM_DOCUMENT_FRAGMENT_PROP_CHILD_ELEMENT_COUNT,
         g_param_spec_ulong(
             "child-element-count",
             "DocumentFragment:child-element-count",

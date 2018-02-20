@@ -29,9 +29,8 @@
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 BackingStore::BackingStore(const IntSize& size, float deviceScaleFactor, WebPageProxy& webPageProxy)
     : m_size(size)

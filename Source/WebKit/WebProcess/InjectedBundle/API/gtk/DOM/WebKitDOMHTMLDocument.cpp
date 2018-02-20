@@ -83,25 +83,25 @@ static gboolean webkit_dom_html_document_remove_event_listener(WebKitDOMEventTar
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_document_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_document_dispatch_event;
     iface->add_event_listener = webkit_dom_html_document_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_document_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLDocument, webkit_dom_html_document, WEBKIT_DOM_TYPE_DOCUMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLDocument, webkit_dom_html_document, WEBKIT_DOM_TYPE_DOCUMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_document_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_WIDTH,
-    PROP_HEIGHT,
-    PROP_DIR,
-    PROP_BG_COLOR,
-    PROP_FG_COLOR,
-    PROP_ALINK_COLOR,
-    PROP_LINK_COLOR,
-    PROP_VLINK_COLOR,
+    DOM_HTML_DOCUMENT_PROP_0,
+    DOM_HTML_DOCUMENT_PROP_WIDTH,
+    DOM_HTML_DOCUMENT_PROP_HEIGHT,
+    DOM_HTML_DOCUMENT_PROP_DIR,
+    DOM_HTML_DOCUMENT_PROP_BG_COLOR,
+    DOM_HTML_DOCUMENT_PROP_FG_COLOR,
+    DOM_HTML_DOCUMENT_PROP_ALINK_COLOR,
+    DOM_HTML_DOCUMENT_PROP_LINK_COLOR,
+    DOM_HTML_DOCUMENT_PROP_VLINK_COLOR,
 };
 
 static void webkit_dom_html_document_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -109,22 +109,22 @@ static void webkit_dom_html_document_set_property(GObject* object, guint propert
     WebKitDOMHTMLDocument* self = WEBKIT_DOM_HTML_DOCUMENT(object);
 
     switch (propertyId) {
-    case PROP_DIR:
+    case DOM_HTML_DOCUMENT_PROP_DIR:
         webkit_dom_html_document_set_dir(self, g_value_get_string(value));
         break;
-    case PROP_BG_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_BG_COLOR:
         webkit_dom_html_document_set_bg_color(self, g_value_get_string(value));
         break;
-    case PROP_FG_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_FG_COLOR:
         webkit_dom_html_document_set_fg_color(self, g_value_get_string(value));
         break;
-    case PROP_ALINK_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_ALINK_COLOR:
         webkit_dom_html_document_set_alink_color(self, g_value_get_string(value));
         break;
-    case PROP_LINK_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_LINK_COLOR:
         webkit_dom_html_document_set_link_color(self, g_value_get_string(value));
         break;
-    case PROP_VLINK_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_VLINK_COLOR:
         webkit_dom_html_document_set_vlink_color(self, g_value_get_string(value));
         break;
     default:
@@ -138,28 +138,28 @@ static void webkit_dom_html_document_get_property(GObject* object, guint propert
     WebKitDOMHTMLDocument* self = WEBKIT_DOM_HTML_DOCUMENT(object);
 
     switch (propertyId) {
-    case PROP_WIDTH:
+    case DOM_HTML_DOCUMENT_PROP_WIDTH:
         g_value_set_long(value, webkit_dom_html_document_get_width(self));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_DOCUMENT_PROP_HEIGHT:
         g_value_set_long(value, webkit_dom_html_document_get_height(self));
         break;
-    case PROP_DIR:
+    case DOM_HTML_DOCUMENT_PROP_DIR:
         g_value_take_string(value, webkit_dom_html_document_get_dir(self));
         break;
-    case PROP_BG_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_BG_COLOR:
         g_value_take_string(value, webkit_dom_html_document_get_bg_color(self));
         break;
-    case PROP_FG_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_FG_COLOR:
         g_value_take_string(value, webkit_dom_html_document_get_fg_color(self));
         break;
-    case PROP_ALINK_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_ALINK_COLOR:
         g_value_take_string(value, webkit_dom_html_document_get_alink_color(self));
         break;
-    case PROP_LINK_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_LINK_COLOR:
         g_value_take_string(value, webkit_dom_html_document_get_link_color(self));
         break;
-    case PROP_VLINK_COLOR:
+    case DOM_HTML_DOCUMENT_PROP_VLINK_COLOR:
         g_value_take_string(value, webkit_dom_html_document_get_vlink_color(self));
         break;
     default:
@@ -176,7 +176,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WIDTH,
+        DOM_HTML_DOCUMENT_PROP_WIDTH,
         g_param_spec_long(
             "width",
             "HTMLDocument:width",
@@ -186,7 +186,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HEIGHT,
+        DOM_HTML_DOCUMENT_PROP_HEIGHT,
         g_param_spec_long(
             "height",
             "HTMLDocument:height",
@@ -196,7 +196,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_DIR,
+        DOM_HTML_DOCUMENT_PROP_DIR,
         g_param_spec_string(
             "dir",
             "HTMLDocument:dir",
@@ -206,7 +206,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BG_COLOR,
+        DOM_HTML_DOCUMENT_PROP_BG_COLOR,
         g_param_spec_string(
             "bg-color",
             "HTMLDocument:bg-color",
@@ -216,7 +216,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FG_COLOR,
+        DOM_HTML_DOCUMENT_PROP_FG_COLOR,
         g_param_spec_string(
             "fg-color",
             "HTMLDocument:fg-color",
@@ -226,7 +226,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALINK_COLOR,
+        DOM_HTML_DOCUMENT_PROP_ALINK_COLOR,
         g_param_spec_string(
             "alink-color",
             "HTMLDocument:alink-color",
@@ -236,7 +236,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LINK_COLOR,
+        DOM_HTML_DOCUMENT_PROP_LINK_COLOR,
         g_param_spec_string(
             "link-color",
             "HTMLDocument:link-color",
@@ -246,7 +246,7 @@ static void webkit_dom_html_document_class_init(WebKitDOMHTMLDocumentClass* requ
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VLINK_COLOR,
+        DOM_HTML_DOCUMENT_PROP_VLINK_COLOR,
         g_param_spec_string(
             "vlink-color",
             "HTMLDocument:vlink-color",

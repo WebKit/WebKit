@@ -42,9 +42,8 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 AcceleratedDrawingArea::~AcceleratedDrawingArea()
 {

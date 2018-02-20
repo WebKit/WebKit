@@ -30,9 +30,8 @@
 #include <WebCore/URL.h>
 #include <glib/gi18n-lib.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 ResourceError printError(const URL& failingURL, const String& localizedDescription)
 {

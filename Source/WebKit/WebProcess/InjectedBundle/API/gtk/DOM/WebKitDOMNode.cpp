@@ -98,30 +98,30 @@ static gboolean webkit_dom_node_remove_event_listener(WebKitDOMEventTarget* targ
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_node_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_node_dispatch_event;
     iface->add_event_listener = webkit_dom_node_add_event_listener;
     iface->remove_event_listener = webkit_dom_node_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMNode, webkit_dom_node, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMNode, webkit_dom_node, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_node_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_NODE_NAME,
-    PROP_NODE_VALUE,
-    PROP_NODE_TYPE,
-    PROP_PARENT_NODE,
-    PROP_CHILD_NODES,
-    PROP_FIRST_CHILD,
-    PROP_LAST_CHILD,
-    PROP_PREVIOUS_SIBLING,
-    PROP_NEXT_SIBLING,
-    PROP_OWNER_DOCUMENT,
-    PROP_BASE_URI,
-    PROP_TEXT_CONTENT,
-    PROP_PARENT_ELEMENT,
+    DOM_NODE_PROP_0,
+    DOM_NODE_PROP_NODE_NAME,
+    DOM_NODE_PROP_NODE_VALUE,
+    DOM_NODE_PROP_NODE_TYPE,
+    DOM_NODE_PROP_PARENT_NODE,
+    DOM_NODE_PROP_CHILD_NODES,
+    DOM_NODE_PROP_FIRST_CHILD,
+    DOM_NODE_PROP_LAST_CHILD,
+    DOM_NODE_PROP_PREVIOUS_SIBLING,
+    DOM_NODE_PROP_NEXT_SIBLING,
+    DOM_NODE_PROP_OWNER_DOCUMENT,
+    DOM_NODE_PROP_BASE_URI,
+    DOM_NODE_PROP_TEXT_CONTENT,
+    DOM_NODE_PROP_PARENT_ELEMENT,
 };
 
 static void webkit_dom_node_finalize(GObject* object)
@@ -139,10 +139,10 @@ static void webkit_dom_node_set_property(GObject* object, guint propertyId, cons
     WebKitDOMNode* self = WEBKIT_DOM_NODE(object);
 
     switch (propertyId) {
-    case PROP_NODE_VALUE:
+    case DOM_NODE_PROP_NODE_VALUE:
         webkit_dom_node_set_node_value(self, g_value_get_string(value), nullptr);
         break;
-    case PROP_TEXT_CONTENT:
+    case DOM_NODE_PROP_TEXT_CONTENT:
         webkit_dom_node_set_text_content(self, g_value_get_string(value), nullptr);
         break;
     default:
@@ -156,43 +156,43 @@ static void webkit_dom_node_get_property(GObject* object, guint propertyId, GVal
     WebKitDOMNode* self = WEBKIT_DOM_NODE(object);
 
     switch (propertyId) {
-    case PROP_NODE_NAME:
+    case DOM_NODE_PROP_NODE_NAME:
         g_value_take_string(value, webkit_dom_node_get_node_name(self));
         break;
-    case PROP_NODE_VALUE:
+    case DOM_NODE_PROP_NODE_VALUE:
         g_value_take_string(value, webkit_dom_node_get_node_value(self));
         break;
-    case PROP_NODE_TYPE:
+    case DOM_NODE_PROP_NODE_TYPE:
         g_value_set_uint(value, webkit_dom_node_get_node_type(self));
         break;
-    case PROP_PARENT_NODE:
+    case DOM_NODE_PROP_PARENT_NODE:
         g_value_set_object(value, webkit_dom_node_get_parent_node(self));
         break;
-    case PROP_CHILD_NODES:
+    case DOM_NODE_PROP_CHILD_NODES:
         g_value_set_object(value, webkit_dom_node_get_child_nodes(self));
         break;
-    case PROP_FIRST_CHILD:
+    case DOM_NODE_PROP_FIRST_CHILD:
         g_value_set_object(value, webkit_dom_node_get_first_child(self));
         break;
-    case PROP_LAST_CHILD:
+    case DOM_NODE_PROP_LAST_CHILD:
         g_value_set_object(value, webkit_dom_node_get_last_child(self));
         break;
-    case PROP_PREVIOUS_SIBLING:
+    case DOM_NODE_PROP_PREVIOUS_SIBLING:
         g_value_set_object(value, webkit_dom_node_get_previous_sibling(self));
         break;
-    case PROP_NEXT_SIBLING:
+    case DOM_NODE_PROP_NEXT_SIBLING:
         g_value_set_object(value, webkit_dom_node_get_next_sibling(self));
         break;
-    case PROP_OWNER_DOCUMENT:
+    case DOM_NODE_PROP_OWNER_DOCUMENT:
         g_value_set_object(value, webkit_dom_node_get_owner_document(self));
         break;
-    case PROP_BASE_URI:
+    case DOM_NODE_PROP_BASE_URI:
         g_value_take_string(value, webkit_dom_node_get_base_uri(self));
         break;
-    case PROP_TEXT_CONTENT:
+    case DOM_NODE_PROP_TEXT_CONTENT:
         g_value_take_string(value, webkit_dom_node_get_text_content(self));
         break;
-    case PROP_PARENT_ELEMENT:
+    case DOM_NODE_PROP_PARENT_ELEMENT:
         g_value_set_object(value, webkit_dom_node_get_parent_element(self));
         break;
     default:
@@ -223,7 +223,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NODE_NAME,
+        DOM_NODE_PROP_NODE_NAME,
         g_param_spec_string(
             "node-name",
             "Node:node-name",
@@ -233,7 +233,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NODE_VALUE,
+        DOM_NODE_PROP_NODE_VALUE,
         g_param_spec_string(
             "node-value",
             "Node:node-value",
@@ -243,7 +243,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NODE_TYPE,
+        DOM_NODE_PROP_NODE_TYPE,
         g_param_spec_uint(
             "node-type",
             "Node:node-type",
@@ -253,7 +253,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT_NODE,
+        DOM_NODE_PROP_PARENT_NODE,
         g_param_spec_object(
             "parent-node",
             "Node:parent-node",
@@ -263,7 +263,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CHILD_NODES,
+        DOM_NODE_PROP_CHILD_NODES,
         g_param_spec_object(
             "child-nodes",
             "Node:child-nodes",
@@ -273,7 +273,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_FIRST_CHILD,
+        DOM_NODE_PROP_FIRST_CHILD,
         g_param_spec_object(
             "first-child",
             "Node:first-child",
@@ -283,7 +283,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LAST_CHILD,
+        DOM_NODE_PROP_LAST_CHILD,
         g_param_spec_object(
             "last-child",
             "Node:last-child",
@@ -293,7 +293,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PREVIOUS_SIBLING,
+        DOM_NODE_PROP_PREVIOUS_SIBLING,
         g_param_spec_object(
             "previous-sibling",
             "Node:previous-sibling",
@@ -303,7 +303,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NEXT_SIBLING,
+        DOM_NODE_PROP_NEXT_SIBLING,
         g_param_spec_object(
             "next-sibling",
             "Node:next-sibling",
@@ -313,7 +313,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_OWNER_DOCUMENT,
+        DOM_NODE_PROP_OWNER_DOCUMENT,
         g_param_spec_object(
             "owner-document",
             "Node:owner-document",
@@ -323,7 +323,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BASE_URI,
+        DOM_NODE_PROP_BASE_URI,
         g_param_spec_string(
             "base-uri",
             "Node:base-uri",
@@ -333,7 +333,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TEXT_CONTENT,
+        DOM_NODE_PROP_TEXT_CONTENT,
         g_param_spec_string(
             "text-content",
             "Node:text-content",
@@ -343,7 +343,7 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_PARENT_ELEMENT,
+        DOM_NODE_PROP_PARENT_ELEMENT,
         g_param_spec_object(
             "parent-element",
             "Node:parent-element",

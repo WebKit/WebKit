@@ -47,9 +47,8 @@
 #include <gdk/gdkx.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<BackingStoreBackendCairo> BackingStore::createBackend()
 {

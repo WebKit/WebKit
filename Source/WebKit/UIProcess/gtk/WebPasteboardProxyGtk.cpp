@@ -31,9 +31,8 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <wtf/SetForScope.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const WebSelectionData& selection)
 {

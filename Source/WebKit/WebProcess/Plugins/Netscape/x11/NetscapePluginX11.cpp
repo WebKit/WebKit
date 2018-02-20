@@ -52,9 +52,8 @@
 #include <cairo/cairo-xlib.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static inline Display* x11HostDisplay()
 {

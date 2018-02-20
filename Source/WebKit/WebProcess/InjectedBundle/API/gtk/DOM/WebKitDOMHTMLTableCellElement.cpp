@@ -84,32 +84,32 @@ static gboolean webkit_dom_html_table_cell_element_remove_event_listener(WebKitD
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_table_cell_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_table_cell_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_table_cell_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_table_cell_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLTableCellElement, webkit_dom_html_table_cell_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLTableCellElement, webkit_dom_html_table_cell_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_table_cell_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_CELL_INDEX,
-    PROP_ALIGN,
-    PROP_AXIS,
-    PROP_BG_COLOR,
-    PROP_CH,
-    PROP_CH_OFF,
-    PROP_COL_SPAN,
-    PROP_ROW_SPAN,
-    PROP_HEADERS,
-    PROP_HEIGHT,
-    PROP_NO_WRAP,
-    PROP_V_ALIGN,
-    PROP_WIDTH,
-    PROP_ABBR,
-    PROP_SCOPE,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_0,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_CELL_INDEX,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_ALIGN,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_AXIS,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_BG_COLOR,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH_OFF,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_COL_SPAN,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_ROW_SPAN,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEADERS,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEIGHT,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_NO_WRAP,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_V_ALIGN,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_WIDTH,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_ABBR,
+    DOM_HTML_TABLE_CELL_ELEMENT_PROP_SCOPE,
 };
 
 static void webkit_dom_html_table_cell_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -117,46 +117,46 @@ static void webkit_dom_html_table_cell_element_set_property(GObject* object, gui
     WebKitDOMHTMLTableCellElement* self = WEBKIT_DOM_HTML_TABLE_CELL_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ALIGN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_ALIGN:
         webkit_dom_html_table_cell_element_set_align(self, g_value_get_string(value));
         break;
-    case PROP_AXIS:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_AXIS:
         webkit_dom_html_table_cell_element_set_axis(self, g_value_get_string(value));
         break;
-    case PROP_BG_COLOR:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_BG_COLOR:
         webkit_dom_html_table_cell_element_set_bg_color(self, g_value_get_string(value));
         break;
-    case PROP_CH:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH:
         webkit_dom_html_table_cell_element_set_ch(self, g_value_get_string(value));
         break;
-    case PROP_CH_OFF:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH_OFF:
         webkit_dom_html_table_cell_element_set_ch_off(self, g_value_get_string(value));
         break;
-    case PROP_COL_SPAN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_COL_SPAN:
         webkit_dom_html_table_cell_element_set_col_span(self, g_value_get_long(value));
         break;
-    case PROP_ROW_SPAN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_ROW_SPAN:
         webkit_dom_html_table_cell_element_set_row_span(self, g_value_get_long(value));
         break;
-    case PROP_HEADERS:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEADERS:
         webkit_dom_html_table_cell_element_set_headers(self, g_value_get_string(value));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEIGHT:
         webkit_dom_html_table_cell_element_set_height(self, g_value_get_string(value));
         break;
-    case PROP_NO_WRAP:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_NO_WRAP:
         webkit_dom_html_table_cell_element_set_no_wrap(self, g_value_get_boolean(value));
         break;
-    case PROP_V_ALIGN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_V_ALIGN:
         webkit_dom_html_table_cell_element_set_v_align(self, g_value_get_string(value));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_WIDTH:
         webkit_dom_html_table_cell_element_set_width(self, g_value_get_string(value));
         break;
-    case PROP_ABBR:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_ABBR:
         webkit_dom_html_table_cell_element_set_abbr(self, g_value_get_string(value));
         break;
-    case PROP_SCOPE:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_SCOPE:
         webkit_dom_html_table_cell_element_set_scope(self, g_value_get_string(value));
         break;
     default:
@@ -170,49 +170,49 @@ static void webkit_dom_html_table_cell_element_get_property(GObject* object, gui
     WebKitDOMHTMLTableCellElement* self = WEBKIT_DOM_HTML_TABLE_CELL_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_CELL_INDEX:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_CELL_INDEX:
         g_value_set_long(value, webkit_dom_html_table_cell_element_get_cell_index(self));
         break;
-    case PROP_ALIGN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_ALIGN:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_align(self));
         break;
-    case PROP_AXIS:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_AXIS:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_axis(self));
         break;
-    case PROP_BG_COLOR:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_BG_COLOR:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_bg_color(self));
         break;
-    case PROP_CH:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_ch(self));
         break;
-    case PROP_CH_OFF:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH_OFF:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_ch_off(self));
         break;
-    case PROP_COL_SPAN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_COL_SPAN:
         g_value_set_long(value, webkit_dom_html_table_cell_element_get_col_span(self));
         break;
-    case PROP_ROW_SPAN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_ROW_SPAN:
         g_value_set_long(value, webkit_dom_html_table_cell_element_get_row_span(self));
         break;
-    case PROP_HEADERS:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEADERS:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_headers(self));
         break;
-    case PROP_HEIGHT:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEIGHT:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_height(self));
         break;
-    case PROP_NO_WRAP:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_NO_WRAP:
         g_value_set_boolean(value, webkit_dom_html_table_cell_element_get_no_wrap(self));
         break;
-    case PROP_V_ALIGN:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_V_ALIGN:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_v_align(self));
         break;
-    case PROP_WIDTH:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_WIDTH:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_width(self));
         break;
-    case PROP_ABBR:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_ABBR:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_abbr(self));
         break;
-    case PROP_SCOPE:
+    case DOM_HTML_TABLE_CELL_ELEMENT_PROP_SCOPE:
         g_value_take_string(value, webkit_dom_html_table_cell_element_get_scope(self));
         break;
     default:
@@ -229,7 +229,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CELL_INDEX,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_CELL_INDEX,
         g_param_spec_long(
             "cell-index",
             "HTMLTableCellElement:cell-index",
@@ -239,7 +239,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ALIGN,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_ALIGN,
         g_param_spec_string(
             "align",
             "HTMLTableCellElement:align",
@@ -249,7 +249,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_AXIS,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_AXIS,
         g_param_spec_string(
             "axis",
             "HTMLTableCellElement:axis",
@@ -259,7 +259,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BG_COLOR,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_BG_COLOR,
         g_param_spec_string(
             "bg-color",
             "HTMLTableCellElement:bg-color",
@@ -269,7 +269,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CH,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH,
         g_param_spec_string(
             "ch",
             "HTMLTableCellElement:ch",
@@ -279,7 +279,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_CH_OFF,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_CH_OFF,
         g_param_spec_string(
             "ch-off",
             "HTMLTableCellElement:ch-off",
@@ -289,7 +289,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_COL_SPAN,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_COL_SPAN,
         g_param_spec_long(
             "col-span",
             "HTMLTableCellElement:col-span",
@@ -299,7 +299,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ROW_SPAN,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_ROW_SPAN,
         g_param_spec_long(
             "row-span",
             "HTMLTableCellElement:row-span",
@@ -309,7 +309,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HEADERS,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEADERS,
         g_param_spec_string(
             "headers",
             "HTMLTableCellElement:headers",
@@ -319,7 +319,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_HEIGHT,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_HEIGHT,
         g_param_spec_string(
             "height",
             "HTMLTableCellElement:height",
@@ -329,7 +329,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NO_WRAP,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_NO_WRAP,
         g_param_spec_boolean(
             "no-wrap",
             "HTMLTableCellElement:no-wrap",
@@ -339,7 +339,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_V_ALIGN,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_V_ALIGN,
         g_param_spec_string(
             "v-align",
             "HTMLTableCellElement:v-align",
@@ -349,7 +349,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_WIDTH,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_WIDTH,
         g_param_spec_string(
             "width",
             "HTMLTableCellElement:width",
@@ -359,7 +359,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ABBR,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_ABBR,
         g_param_spec_string(
             "abbr",
             "HTMLTableCellElement:abbr",
@@ -369,7 +369,7 @@ static void webkit_dom_html_table_cell_element_class_init(WebKitDOMHTMLTableCell
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_SCOPE,
+        DOM_HTML_TABLE_CELL_ELEMENT_PROP_SCOPE,
         g_param_spec_string(
             "scope",
             "HTMLTableCellElement:scope",

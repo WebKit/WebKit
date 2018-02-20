@@ -30,9 +30,8 @@
 
 #include <WebCore/NotImplemented.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void PluginControllerProxy::platformInitialize(const PluginCreationParameters&)
 {

@@ -85,26 +85,26 @@ static gboolean webkit_dom_html_form_element_remove_event_listener(WebKitDOMEven
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_form_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_form_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_form_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_form_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLFormElement, webkit_dom_html_form_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLFormElement, webkit_dom_html_form_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_form_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_ACCEPT_CHARSET,
-    PROP_ACTION,
-    PROP_ENCTYPE,
-    PROP_ENCODING,
-    PROP_METHOD,
-    PROP_NAME,
-    PROP_TARGET,
-    PROP_ELEMENTS,
-    PROP_LENGTH,
+    DOM_HTML_FORM_ELEMENT_PROP_0,
+    DOM_HTML_FORM_ELEMENT_PROP_ACCEPT_CHARSET,
+    DOM_HTML_FORM_ELEMENT_PROP_ACTION,
+    DOM_HTML_FORM_ELEMENT_PROP_ENCTYPE,
+    DOM_HTML_FORM_ELEMENT_PROP_ENCODING,
+    DOM_HTML_FORM_ELEMENT_PROP_METHOD,
+    DOM_HTML_FORM_ELEMENT_PROP_NAME,
+    DOM_HTML_FORM_ELEMENT_PROP_TARGET,
+    DOM_HTML_FORM_ELEMENT_PROP_ELEMENTS,
+    DOM_HTML_FORM_ELEMENT_PROP_LENGTH,
 };
 
 static void webkit_dom_html_form_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -112,25 +112,25 @@ static void webkit_dom_html_form_element_set_property(GObject* object, guint pro
     WebKitDOMHTMLFormElement* self = WEBKIT_DOM_HTML_FORM_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ACCEPT_CHARSET:
+    case DOM_HTML_FORM_ELEMENT_PROP_ACCEPT_CHARSET:
         webkit_dom_html_form_element_set_accept_charset(self, g_value_get_string(value));
         break;
-    case PROP_ACTION:
+    case DOM_HTML_FORM_ELEMENT_PROP_ACTION:
         webkit_dom_html_form_element_set_action(self, g_value_get_string(value));
         break;
-    case PROP_ENCTYPE:
+    case DOM_HTML_FORM_ELEMENT_PROP_ENCTYPE:
         webkit_dom_html_form_element_set_enctype(self, g_value_get_string(value));
         break;
-    case PROP_ENCODING:
+    case DOM_HTML_FORM_ELEMENT_PROP_ENCODING:
         webkit_dom_html_form_element_set_encoding(self, g_value_get_string(value));
         break;
-    case PROP_METHOD:
+    case DOM_HTML_FORM_ELEMENT_PROP_METHOD:
         webkit_dom_html_form_element_set_method(self, g_value_get_string(value));
         break;
-    case PROP_NAME:
+    case DOM_HTML_FORM_ELEMENT_PROP_NAME:
         webkit_dom_html_form_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_TARGET:
+    case DOM_HTML_FORM_ELEMENT_PROP_TARGET:
         webkit_dom_html_form_element_set_target(self, g_value_get_string(value));
         break;
     default:
@@ -144,31 +144,31 @@ static void webkit_dom_html_form_element_get_property(GObject* object, guint pro
     WebKitDOMHTMLFormElement* self = WEBKIT_DOM_HTML_FORM_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_ACCEPT_CHARSET:
+    case DOM_HTML_FORM_ELEMENT_PROP_ACCEPT_CHARSET:
         g_value_take_string(value, webkit_dom_html_form_element_get_accept_charset(self));
         break;
-    case PROP_ACTION:
+    case DOM_HTML_FORM_ELEMENT_PROP_ACTION:
         g_value_take_string(value, webkit_dom_html_form_element_get_action(self));
         break;
-    case PROP_ENCTYPE:
+    case DOM_HTML_FORM_ELEMENT_PROP_ENCTYPE:
         g_value_take_string(value, webkit_dom_html_form_element_get_enctype(self));
         break;
-    case PROP_ENCODING:
+    case DOM_HTML_FORM_ELEMENT_PROP_ENCODING:
         g_value_take_string(value, webkit_dom_html_form_element_get_encoding(self));
         break;
-    case PROP_METHOD:
+    case DOM_HTML_FORM_ELEMENT_PROP_METHOD:
         g_value_take_string(value, webkit_dom_html_form_element_get_method(self));
         break;
-    case PROP_NAME:
+    case DOM_HTML_FORM_ELEMENT_PROP_NAME:
         g_value_take_string(value, webkit_dom_html_form_element_get_name(self));
         break;
-    case PROP_TARGET:
+    case DOM_HTML_FORM_ELEMENT_PROP_TARGET:
         g_value_take_string(value, webkit_dom_html_form_element_get_target(self));
         break;
-    case PROP_ELEMENTS:
+    case DOM_HTML_FORM_ELEMENT_PROP_ELEMENTS:
         g_value_set_object(value, webkit_dom_html_form_element_get_elements(self));
         break;
-    case PROP_LENGTH:
+    case DOM_HTML_FORM_ELEMENT_PROP_LENGTH:
         g_value_set_long(value, webkit_dom_html_form_element_get_length(self));
         break;
     default:
@@ -185,7 +185,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ACCEPT_CHARSET,
+        DOM_HTML_FORM_ELEMENT_PROP_ACCEPT_CHARSET,
         g_param_spec_string(
             "accept-charset",
             "HTMLFormElement:accept-charset",
@@ -195,7 +195,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ACTION,
+        DOM_HTML_FORM_ELEMENT_PROP_ACTION,
         g_param_spec_string(
             "action",
             "HTMLFormElement:action",
@@ -205,7 +205,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ENCTYPE,
+        DOM_HTML_FORM_ELEMENT_PROP_ENCTYPE,
         g_param_spec_string(
             "enctype",
             "HTMLFormElement:enctype",
@@ -215,7 +215,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ENCODING,
+        DOM_HTML_FORM_ELEMENT_PROP_ENCODING,
         g_param_spec_string(
             "encoding",
             "HTMLFormElement:encoding",
@@ -225,7 +225,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_METHOD,
+        DOM_HTML_FORM_ELEMENT_PROP_METHOD,
         g_param_spec_string(
             "method",
             "HTMLFormElement:method",
@@ -235,7 +235,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_HTML_FORM_ELEMENT_PROP_NAME,
         g_param_spec_string(
             "name",
             "HTMLFormElement:name",
@@ -245,7 +245,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TARGET,
+        DOM_HTML_FORM_ELEMENT_PROP_TARGET,
         g_param_spec_string(
             "target",
             "HTMLFormElement:target",
@@ -255,7 +255,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_ELEMENTS,
+        DOM_HTML_FORM_ELEMENT_PROP_ELEMENTS,
         g_param_spec_object(
             "elements",
             "HTMLFormElement:elements",
@@ -265,7 +265,7 @@ static void webkit_dom_html_form_element_class_init(WebKitDOMHTMLFormElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_HTML_FORM_ELEMENT_PROP_LENGTH,
         g_param_spec_long(
             "length",
             "HTMLFormElement:length",

@@ -38,9 +38,8 @@
 #include <unistd.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 class StdoutDevNullRedirector {
 public:

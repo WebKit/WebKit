@@ -32,9 +32,8 @@
 #include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void CoordinatedGraphicsScene::dispatchOnMainThread(Function<void()>&& function)
 {

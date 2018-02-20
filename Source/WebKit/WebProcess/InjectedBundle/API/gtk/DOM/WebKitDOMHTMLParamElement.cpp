@@ -84,21 +84,21 @@ static gboolean webkit_dom_html_param_element_remove_event_listener(WebKitDOMEve
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_param_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_param_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_param_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_param_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLParamElement, webkit_dom_html_param_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLParamElement, webkit_dom_html_param_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_param_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_NAME,
-    PROP_TYPE,
-    PROP_VALUE,
-    PROP_VALUE_TYPE,
+    DOM_HTML_PARAM_ELEMENT_PROP_0,
+    DOM_HTML_PARAM_ELEMENT_PROP_NAME,
+    DOM_HTML_PARAM_ELEMENT_PROP_TYPE,
+    DOM_HTML_PARAM_ELEMENT_PROP_VALUE,
+    DOM_HTML_PARAM_ELEMENT_PROP_VALUE_TYPE,
 };
 
 static void webkit_dom_html_param_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -106,16 +106,16 @@ static void webkit_dom_html_param_element_set_property(GObject* object, guint pr
     WebKitDOMHTMLParamElement* self = WEBKIT_DOM_HTML_PARAM_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_NAME:
+    case DOM_HTML_PARAM_ELEMENT_PROP_NAME:
         webkit_dom_html_param_element_set_name(self, g_value_get_string(value));
         break;
-    case PROP_TYPE:
+    case DOM_HTML_PARAM_ELEMENT_PROP_TYPE:
         webkit_dom_html_param_element_set_type_attr(self, g_value_get_string(value));
         break;
-    case PROP_VALUE:
+    case DOM_HTML_PARAM_ELEMENT_PROP_VALUE:
         webkit_dom_html_param_element_set_value(self, g_value_get_string(value));
         break;
-    case PROP_VALUE_TYPE:
+    case DOM_HTML_PARAM_ELEMENT_PROP_VALUE_TYPE:
         webkit_dom_html_param_element_set_value_type(self, g_value_get_string(value));
         break;
     default:
@@ -129,16 +129,16 @@ static void webkit_dom_html_param_element_get_property(GObject* object, guint pr
     WebKitDOMHTMLParamElement* self = WEBKIT_DOM_HTML_PARAM_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_NAME:
+    case DOM_HTML_PARAM_ELEMENT_PROP_NAME:
         g_value_take_string(value, webkit_dom_html_param_element_get_name(self));
         break;
-    case PROP_TYPE:
+    case DOM_HTML_PARAM_ELEMENT_PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_param_element_get_type_attr(self));
         break;
-    case PROP_VALUE:
+    case DOM_HTML_PARAM_ELEMENT_PROP_VALUE:
         g_value_take_string(value, webkit_dom_html_param_element_get_value(self));
         break;
-    case PROP_VALUE_TYPE:
+    case DOM_HTML_PARAM_ELEMENT_PROP_VALUE_TYPE:
         g_value_take_string(value, webkit_dom_html_param_element_get_value_type(self));
         break;
     default:
@@ -155,7 +155,7 @@ static void webkit_dom_html_param_element_class_init(WebKitDOMHTMLParamElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_NAME,
+        DOM_HTML_PARAM_ELEMENT_PROP_NAME,
         g_param_spec_string(
             "name",
             "HTMLParamElement:name",
@@ -165,7 +165,7 @@ static void webkit_dom_html_param_element_class_init(WebKitDOMHTMLParamElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TYPE,
+        DOM_HTML_PARAM_ELEMENT_PROP_TYPE,
         g_param_spec_string(
             "type",
             "HTMLParamElement:type",
@@ -175,7 +175,7 @@ static void webkit_dom_html_param_element_class_init(WebKitDOMHTMLParamElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VALUE,
+        DOM_HTML_PARAM_ELEMENT_PROP_VALUE,
         g_param_spec_string(
             "value",
             "HTMLParamElement:value",
@@ -185,7 +185,7 @@ static void webkit_dom_html_param_element_class_init(WebKitDOMHTMLParamElementCl
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VALUE_TYPE,
+        DOM_HTML_PARAM_ELEMENT_PROP_VALUE_TYPE,
         g_param_spec_string(
             "value-type",
             "HTMLParamElement:value-type",

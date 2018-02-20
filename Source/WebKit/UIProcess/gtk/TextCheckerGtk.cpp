@@ -36,9 +36,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextBreakIterator.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if ENABLE(SPELLCHECK)
 static WebCore::TextCheckerEnchant& enchantTextChecker()

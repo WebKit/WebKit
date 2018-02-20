@@ -33,9 +33,8 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NetworkSessionSoup::NetworkSessionSoup(NetworkSessionCreationParameters&& parameters)
     : NetworkSession(parameters.sessionID)

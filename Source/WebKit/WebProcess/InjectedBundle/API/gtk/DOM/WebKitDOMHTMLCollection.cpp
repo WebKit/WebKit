@@ -67,8 +67,8 @@ WebKitDOMHTMLCollection* wrapHTMLCollection(WebCore::HTMLCollection* coreObject)
 G_DEFINE_TYPE(WebKitDOMHTMLCollection, webkit_dom_html_collection, WEBKIT_DOM_TYPE_OBJECT)
 
 enum {
-    PROP_0,
-    PROP_LENGTH,
+    DOM_HTML_COLLECTION_PROP_0,
+    DOM_HTML_COLLECTION_PROP_LENGTH,
 };
 
 static void webkit_dom_html_collection_finalize(GObject* object)
@@ -86,7 +86,7 @@ static void webkit_dom_html_collection_get_property(GObject* object, guint prope
     WebKitDOMHTMLCollection* self = WEBKIT_DOM_HTML_COLLECTION(object);
 
     switch (propertyId) {
-    case PROP_LENGTH:
+    case DOM_HTML_COLLECTION_PROP_LENGTH:
         g_value_set_ulong(value, webkit_dom_html_collection_get_length(self));
         break;
     default:
@@ -116,7 +116,7 @@ static void webkit_dom_html_collection_class_init(WebKitDOMHTMLCollectionClass* 
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LENGTH,
+        DOM_HTML_COLLECTION_PROP_LENGTH,
         g_param_spec_ulong(
             "length",
             "HTMLCollection:length",

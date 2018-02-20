@@ -84,23 +84,23 @@ static gboolean webkit_dom_html_body_element_remove_event_listener(WebKitDOMEven
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_body_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_body_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_body_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_body_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLBodyElement, webkit_dom_html_body_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLBodyElement, webkit_dom_html_body_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_body_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_A_LINK,
-    PROP_BACKGROUND,
-    PROP_BG_COLOR,
-    PROP_LINK,
-    PROP_TEXT,
-    PROP_V_LINK,
+    DOM_HTML_BODY_ELEMENT_PROP_0,
+    DOM_HTML_BODY_ELEMENT_PROP_A_LINK,
+    DOM_HTML_BODY_ELEMENT_PROP_BACKGROUND,
+    DOM_HTML_BODY_ELEMENT_PROP_BG_COLOR,
+    DOM_HTML_BODY_ELEMENT_PROP_LINK,
+    DOM_HTML_BODY_ELEMENT_PROP_TEXT,
+    DOM_HTML_BODY_ELEMENT_PROP_V_LINK,
 };
 
 static void webkit_dom_html_body_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -108,22 +108,22 @@ static void webkit_dom_html_body_element_set_property(GObject* object, guint pro
     WebKitDOMHTMLBodyElement* self = WEBKIT_DOM_HTML_BODY_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_A_LINK:
+    case DOM_HTML_BODY_ELEMENT_PROP_A_LINK:
         webkit_dom_html_body_element_set_a_link(self, g_value_get_string(value));
         break;
-    case PROP_BACKGROUND:
+    case DOM_HTML_BODY_ELEMENT_PROP_BACKGROUND:
         webkit_dom_html_body_element_set_background(self, g_value_get_string(value));
         break;
-    case PROP_BG_COLOR:
+    case DOM_HTML_BODY_ELEMENT_PROP_BG_COLOR:
         webkit_dom_html_body_element_set_bg_color(self, g_value_get_string(value));
         break;
-    case PROP_LINK:
+    case DOM_HTML_BODY_ELEMENT_PROP_LINK:
         webkit_dom_html_body_element_set_link(self, g_value_get_string(value));
         break;
-    case PROP_TEXT:
+    case DOM_HTML_BODY_ELEMENT_PROP_TEXT:
         webkit_dom_html_body_element_set_text(self, g_value_get_string(value));
         break;
-    case PROP_V_LINK:
+    case DOM_HTML_BODY_ELEMENT_PROP_V_LINK:
         webkit_dom_html_body_element_set_v_link(self, g_value_get_string(value));
         break;
     default:
@@ -137,22 +137,22 @@ static void webkit_dom_html_body_element_get_property(GObject* object, guint pro
     WebKitDOMHTMLBodyElement* self = WEBKIT_DOM_HTML_BODY_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_A_LINK:
+    case DOM_HTML_BODY_ELEMENT_PROP_A_LINK:
         g_value_take_string(value, webkit_dom_html_body_element_get_a_link(self));
         break;
-    case PROP_BACKGROUND:
+    case DOM_HTML_BODY_ELEMENT_PROP_BACKGROUND:
         g_value_take_string(value, webkit_dom_html_body_element_get_background(self));
         break;
-    case PROP_BG_COLOR:
+    case DOM_HTML_BODY_ELEMENT_PROP_BG_COLOR:
         g_value_take_string(value, webkit_dom_html_body_element_get_bg_color(self));
         break;
-    case PROP_LINK:
+    case DOM_HTML_BODY_ELEMENT_PROP_LINK:
         g_value_take_string(value, webkit_dom_html_body_element_get_link(self));
         break;
-    case PROP_TEXT:
+    case DOM_HTML_BODY_ELEMENT_PROP_TEXT:
         g_value_take_string(value, webkit_dom_html_body_element_get_text(self));
         break;
-    case PROP_V_LINK:
+    case DOM_HTML_BODY_ELEMENT_PROP_V_LINK:
         g_value_take_string(value, webkit_dom_html_body_element_get_v_link(self));
         break;
     default:
@@ -169,7 +169,7 @@ static void webkit_dom_html_body_element_class_init(WebKitDOMHTMLBodyElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_A_LINK,
+        DOM_HTML_BODY_ELEMENT_PROP_A_LINK,
         g_param_spec_string(
             "a-link",
             "HTMLBodyElement:a-link",
@@ -179,7 +179,7 @@ static void webkit_dom_html_body_element_class_init(WebKitDOMHTMLBodyElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BACKGROUND,
+        DOM_HTML_BODY_ELEMENT_PROP_BACKGROUND,
         g_param_spec_string(
             "background",
             "HTMLBodyElement:background",
@@ -189,7 +189,7 @@ static void webkit_dom_html_body_element_class_init(WebKitDOMHTMLBodyElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_BG_COLOR,
+        DOM_HTML_BODY_ELEMENT_PROP_BG_COLOR,
         g_param_spec_string(
             "bg-color",
             "HTMLBodyElement:bg-color",
@@ -199,7 +199,7 @@ static void webkit_dom_html_body_element_class_init(WebKitDOMHTMLBodyElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_LINK,
+        DOM_HTML_BODY_ELEMENT_PROP_LINK,
         g_param_spec_string(
             "link",
             "HTMLBodyElement:link",
@@ -209,7 +209,7 @@ static void webkit_dom_html_body_element_class_init(WebKitDOMHTMLBodyElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TEXT,
+        DOM_HTML_BODY_ELEMENT_PROP_TEXT,
         g_param_spec_string(
             "text",
             "HTMLBodyElement:text",
@@ -219,7 +219,7 @@ static void webkit_dom_html_body_element_class_init(WebKitDOMHTMLBodyElementClas
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_V_LINK,
+        DOM_HTML_BODY_ELEMENT_PROP_V_LINK,
         g_param_spec_string(
             "v-link",
             "HTMLBodyElement:v-link",

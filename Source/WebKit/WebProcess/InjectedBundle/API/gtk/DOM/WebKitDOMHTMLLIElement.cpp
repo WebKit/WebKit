@@ -84,19 +84,19 @@ static gboolean webkit_dom_html_li_element_remove_event_listener(WebKitDOMEventT
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+static void webkit_dom_html_li_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_html_li_element_dispatch_event;
     iface->add_event_listener = webkit_dom_html_li_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_html_li_element_remove_event_listener;
 }
 
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLLIElement, webkit_dom_html_li_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
+G_DEFINE_TYPE_WITH_CODE(WebKitDOMHTMLLIElement, webkit_dom_html_li_element, WEBKIT_DOM_TYPE_HTML_ELEMENT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_html_li_element_dom_event_target_init))
 
 enum {
-    PROP_0,
-    PROP_TYPE,
-    PROP_VALUE,
+    DOM_HTML_LI_ELEMENT_PROP_0,
+    DOM_HTML_LI_ELEMENT_PROP_TYPE,
+    DOM_HTML_LI_ELEMENT_PROP_VALUE,
 };
 
 static void webkit_dom_html_li_element_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
@@ -104,10 +104,10 @@ static void webkit_dom_html_li_element_set_property(GObject* object, guint prope
     WebKitDOMHTMLLIElement* self = WEBKIT_DOM_HTML_LI_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_TYPE:
+    case DOM_HTML_LI_ELEMENT_PROP_TYPE:
         webkit_dom_html_li_element_set_type_attr(self, g_value_get_string(value));
         break;
-    case PROP_VALUE:
+    case DOM_HTML_LI_ELEMENT_PROP_VALUE:
         webkit_dom_html_li_element_set_value(self, g_value_get_long(value));
         break;
     default:
@@ -121,10 +121,10 @@ static void webkit_dom_html_li_element_get_property(GObject* object, guint prope
     WebKitDOMHTMLLIElement* self = WEBKIT_DOM_HTML_LI_ELEMENT(object);
 
     switch (propertyId) {
-    case PROP_TYPE:
+    case DOM_HTML_LI_ELEMENT_PROP_TYPE:
         g_value_take_string(value, webkit_dom_html_li_element_get_type_attr(self));
         break;
-    case PROP_VALUE:
+    case DOM_HTML_LI_ELEMENT_PROP_VALUE:
         g_value_set_long(value, webkit_dom_html_li_element_get_value(self));
         break;
     default:
@@ -141,7 +141,7 @@ static void webkit_dom_html_li_element_class_init(WebKitDOMHTMLLIElementClass* r
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_TYPE,
+        DOM_HTML_LI_ELEMENT_PROP_TYPE,
         g_param_spec_string(
             "type",
             "HTMLLIElement:type",
@@ -151,7 +151,7 @@ static void webkit_dom_html_li_element_class_init(WebKitDOMHTMLLIElementClass* r
 
     g_object_class_install_property(
         gobjectClass,
-        PROP_VALUE,
+        DOM_HTML_LI_ELEMENT_PROP_VALUE,
         g_param_spec_long(
             "value",
             "HTMLLIElement:value",
