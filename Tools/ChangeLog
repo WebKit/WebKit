@@ -1,3 +1,17 @@
+2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTR][GTK] crash log backtrace doesn't show symbol names for DatabaseProcess and NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=182953
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._get_crash_log): Removed the code to convert WebProcess name.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::webProcessName): Return the correct program name for GTK+ port.
+        (WTR::TestController::networkProcessName): Ditto.
+        (WTR::TestController::databaseProcessName): Ditto.
+
 2018-02-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228696.
