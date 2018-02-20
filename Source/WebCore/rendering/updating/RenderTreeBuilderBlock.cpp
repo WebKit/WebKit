@@ -124,7 +124,7 @@ void RenderTreeBuilder::Block::insertChildToContinuation(RenderBlock& parent, Re
     }
 
     if (child->isFloatingOrOutOfFlowPositioned()) {
-        beforeChildParent->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        m_builder.insertChildIgnoringContinuation(*beforeChildParent, WTFMove(child), beforeChild);
         return;
     }
 
@@ -133,21 +133,21 @@ void RenderTreeBuilder::Block::insertChildToContinuation(RenderBlock& parent, Re
     bool flowIsNormal = flow->isInline() || !flow->style().columnSpan();
 
     if (flow == beforeChildParent) {
-        flow->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        m_builder.insertChildIgnoringContinuation(*flow, WTFMove(child), beforeChild);
         return;
     }
 
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
     if (childIsNormal == bcpIsNormal) {
-        beforeChildParent->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+        m_builder.insertChildIgnoringContinuation(*beforeChildParent, WTFMove(child), beforeChild);
         return;
     }
     if (flowIsNormal == childIsNormal) {
-        flow->addChildIgnoringContinuation(m_builder, WTFMove(child), nullptr); // Just treat like an append.
+        m_builder.insertChildIgnoringContinuation(*flow, WTFMove(child)); // Just treat like an append.
         return;
     }
-    beforeChildParent->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
+    m_builder.insertChildIgnoringContinuation(*beforeChildParent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::Block::insertChildIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)

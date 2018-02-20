@@ -87,7 +87,6 @@ public:
     bool isRenderInline() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
-    virtual void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr);
     void removeAndDestroyChild(RenderTreeBuilder&, RenderObject&);
     void didInsertChild(RenderObject& child, RenderObject* beforeChild);
 

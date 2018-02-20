@@ -466,11 +466,6 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
     return cloneBlock;
 }
 
-void RenderBlock::addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    builder.insertChildToRenderBlockIgnoringContinuation(*this, WTFMove(newChild), beforeChild);
-}
-
 void RenderBlock::deleteLines()
 {
     if (AXObjectCache* cache = document().existingAXObjectCache())

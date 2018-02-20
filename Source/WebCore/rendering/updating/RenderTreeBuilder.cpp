@@ -258,6 +258,21 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     insertChildToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
+void RenderTreeBuilder::insertChildIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (is<RenderInline>(parent)) {
+        inlineBuilder().insertChildIgnoringContinuation(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderBlock>(parent)) {
+        blockBuilder().insertChildIgnoringContinuation(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    insertChild(parent, WTFMove(child), beforeChild);
+}
+
 RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, RenderObject& child)
 {
     if (is<RenderRubyAsInline>(parent))
@@ -323,11 +338,6 @@ void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, Render
     auto& newChild = *child.get();
     parent.insertChildInternal(WTFMove(child), beforeChild);
     parent.didInsertChild(newChild, beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    blockBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
@@ -513,11 +523,6 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
     if (isAnonymousAndSafeToDelete(destroyRootParent) && !destroyRootParent.firstChild())
         removeFromParentAndDestroyCleaningUpAnonymousWrappers(destroyRootParent);
     // WARNING: child is deleted here.
-}
-
-void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    inlineBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)

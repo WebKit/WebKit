@@ -473,11 +473,6 @@ void RenderElement::didInsertChild(RenderObject& child, RenderObject*)
     SVGRenderSupport::childAdded(*this, child);
 }
 
-void RenderElement::addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    builder.insertChild(*this, WTFMove(newChild), beforeChild);
-}
-
 void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     if (is<RenderElement>(oldChild)) {

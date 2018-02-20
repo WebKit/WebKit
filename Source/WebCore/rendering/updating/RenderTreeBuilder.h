@@ -51,8 +51,9 @@ public:
     RenderTreeBuilder(RenderView&);
     ~RenderTreeBuilder();
 
-    void insertChild(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChild(RenderTreePosition&, RenderPtr<RenderObject>);
+    void insertChild(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
     RenderPtr<RenderObject> takeChild(RenderElement&, RenderObject&) WARN_UNUSED_RETURN;
 
@@ -63,9 +64,6 @@ public:
     static RenderTreeBuilder* current() { return s_current; }
 
     // These functions are temporary until after all block/inline/continuation code is moved over.
-    void insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
-    void insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
-
     RenderPtr<RenderObject> takeChildFromRenderElement(RenderElement& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
