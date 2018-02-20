@@ -539,6 +539,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     [_currentRequest release];
     [_error release];
     [_taskDescription release];
+    callOnMainThread([resource = WTFMove(_resource)] { });
     [super dealloc];
 }
 
