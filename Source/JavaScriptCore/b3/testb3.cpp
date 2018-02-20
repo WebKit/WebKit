@@ -7963,7 +7963,7 @@ void testBranch8WithLoad8ZIndex()
 
 void testComplex(unsigned numVars, unsigned numConstructs)
 {
-    double before = monotonicallyIncreasingTimeMS();
+    MonotonicTime before = MonotonicTime::now();
     
     Procedure proc;
     BasicBlock* current = proc.addBlock();
@@ -8092,8 +8092,8 @@ void testComplex(unsigned numVars, unsigned numConstructs)
 
     compileProc(proc);
 
-    double after = monotonicallyIncreasingTimeMS();
-    dataLog(toCString("    That took ", after - before, " ms.\n"));
+    MonotonicTime after = MonotonicTime::now();
+    dataLog(toCString("    That took ", (after - before).milliseconds(), " ms.\n"));
 }
 
 void testSimplePatchpoint()

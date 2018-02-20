@@ -33,6 +33,7 @@
 #include "MarkedBlock.h"
 #include <wtf/DataLog.h>
 #include <wtf/FastBitVector.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 
@@ -112,7 +113,7 @@ public:
     void addBlock(MarkedBlock::Handle*);
     void removeBlock(MarkedBlock::Handle*);
 
-    bool isPagedOut(double deadline);
+    bool isPagedOut(MonotonicTime deadline);
     
     Lock& bitvectorLock() { return m_bitvectorLock; }
 

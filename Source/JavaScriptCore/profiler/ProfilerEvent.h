@@ -27,6 +27,7 @@
 
 #include "JSCJSValue.h"
 #include <wtf/PrintStream.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 
 namespace JSC { namespace Profiler {
@@ -40,7 +41,7 @@ public:
     {
     }
     
-    Event(double time, Bytecodes* bytecodes, Compilation* compilation, const char* summary, const CString& detail)
+    Event(WallTime time, Bytecodes* bytecodes, Compilation* compilation, const char* summary, const CString& detail)
         : m_time(time)
         , m_bytecodes(bytecodes)
         , m_compilation(compilation)
@@ -54,7 +55,7 @@ public:
         return m_bytecodes;
     }
     
-    double time() const { return m_time; }
+    WallTime time() const { return m_time; }
     Bytecodes* bytecodes() const { return m_bytecodes; }
     Compilation* compilation() const { return m_compilation; }
     const char* summary() const { return m_summary; }
@@ -64,7 +65,7 @@ public:
     JSValue toJS(ExecState*) const;
     
 private:
-    double m_time { 0 };
+    WallTime m_time { };
     Bytecodes* m_bytecodes { nullptr };
     Compilation* m_compilation { nullptr };
     const char* m_summary { nullptr };

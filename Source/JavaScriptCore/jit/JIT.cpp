@@ -58,11 +58,11 @@ using namespace std;
 
 namespace JSC {
 
-double totalBaselineCompileTime;
-double totalDFGCompileTime;
-double totalFTLCompileTime;
-double totalFTLDFGCompileTime;
-double totalFTLB3CompileTime;
+Seconds totalBaselineCompileTime;
+Seconds totalDFGCompileTime;
+Seconds totalFTLCompileTime;
+Seconds totalFTLDFGCompileTime;
+Seconds totalFTLB3CompileTime;
 
 void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
 {
@@ -589,9 +589,9 @@ void JIT::privateCompileSlowCases()
 
 void JIT::compileWithoutLinking(JITCompilationEffort effort)
 {
-    double before = 0;
+    MonotonicTime before { };
     if (UNLIKELY(computeCompileTimes()))
-        before = monotonicallyIncreasingTimeMS();
+        before = MonotonicTime::now();
     
     {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
@@ -745,9 +745,9 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
 
     m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_codeBlock, effort));
 
-    double after = 0;
+    MonotonicTime after { };
     if (UNLIKELY(computeCompileTimes())) {
-        after = monotonicallyIncreasingTimeMS();
+        after = MonotonicTime::now();
 
         if (Options::reportTotalCompileTimes())
             totalBaselineCompileTime += after - before;
@@ -755,7 +755,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     if (UNLIKELY(reportCompileTimes())) {
         CString codeBlockName = toCString(*m_codeBlock);
         
-        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", after - before, " ms.\n");
+        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", (after - before).milliseconds(), " ms.\n");
     }
 }
 
@@ -964,9 +964,9 @@ bool JIT::computeCompileTimes()
     return reportCompileTimes() || Options::reportTotalCompileTimes();
 }
 
-HashMap<CString, double> JIT::compileTimeStats()
+HashMap<CString, Seconds> JIT::compileTimeStats()
 {
-    HashMap<CString, double> result;
+    HashMap<CString, Seconds> result;
     if (Options::reportTotalCompileTimes()) {
         result.add("Total Compile Time", totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime);
         result.add("Baseline Compile Time", totalBaselineCompileTime);

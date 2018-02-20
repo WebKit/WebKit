@@ -181,7 +181,7 @@ void Database::logEvent(CodeBlock* codeBlock, const char* summary, const CString
     
     Bytecodes* bytecodes = ensureBytecodesFor(locker, codeBlock);
     Compilation* compilation = m_compilationMap.get(codeBlock);
-    m_events.append(Event(currentTime(), bytecodes, compilation, summary, detail));
+    m_events.append(Event(WallTime::now(), bytecodes, compilation, summary, detail));
 }
 
 void Database::addDatabaseToAtExit()

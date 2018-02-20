@@ -286,7 +286,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
         return;
     }
 
-    double start = currentTimeMS();
+    MonotonicTime start = MonotonicTime::now();
     m_vm.typeProfilerLog()->processLogEntries(ASCIILiteral("User Query"));
 
     for (size_t i = 0; i < locations.length(); i++) {
@@ -331,9 +331,9 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
         typeDescriptions->addItem(WTFMove(description));
     }
 
-    double end = currentTimeMS();
+    MonotonicTime end = MonotonicTime::now();
     if (verbose)
-        dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", end - start);
+        dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", (end - start).milliseconds());
 }
 
 void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)

@@ -30,13 +30,13 @@
 
 namespace JSC {
 
-const double CodeCacheMap::workingSetTime = 10.0;
+const Seconds CodeCacheMap::workingSetTime = 10_s;
 
 void CodeCacheMap::pruneSlowCase()
 {
     m_minCapacity = std::max(m_size - m_sizeAtLastPrune, static_cast<int64_t>(0));
     m_sizeAtLastPrune = m_size;
-    m_timeAtLastPrune = monotonicallyIncreasingTime();
+    m_timeAtLastPrune = MonotonicTime::now();
 
     if (m_capacity < m_minCapacity)
         m_capacity = m_minCapacity;

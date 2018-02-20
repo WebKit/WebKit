@@ -125,7 +125,7 @@ private:
     bool isStillValid();
     void reallyAdd(CommonData*);
 
-    double m_timeBeforeFTL;
+    MonotonicTime m_timeBeforeFTL;
 };
 
 #endif // ENABLE(DFG_JIT)

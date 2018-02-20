@@ -1,3 +1,74 @@
+2018-02-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove monotonicallyIncreasingTime and currentTime
+        https://bugs.webkit.org/show_bug.cgi?id=182793
+
+        Reviewed by Saam Barati.
+
+        We would like to drop monotonicallyIncreasingTime and currentTime from our tree by
+        replacing them with MonotonicTime and WallTime, which are well-typed alternatives,
+        compared to double.
+        This patch removes monotonicallyIncreasingTime and currentTime in JSC.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testComplex):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * dynbench.cpp:
+        (JSC::benchmarkImpl):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::isPagedOut):
+        * heap/BlockDirectory.h:
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/Heap.cpp:
+        (JSC::Heap::isPagedOut):
+        (JSC::Heap::sweepSynchronously):
+        * heap/Heap.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::isPagedOut):
+        * heap/MarkedSpace.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::startTiming):
+        (Inspector::InspectorConsoleAgent::stopTiming):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::compileTimeStats):
+        * jit/JIT.h:
+        * jsc.cpp:
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+        (functionPreciseTime):
+        (runJSC):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::logEvent):
+        * profiler/ProfilerEvent.cpp:
+        (JSC::Profiler::Event::toJS const):
+        * profiler/ProfilerEvent.h:
+        (JSC::Profiler::Event::Event):
+        (JSC::Profiler::Event::time const):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::CodeCacheMap):
+        (JSC::CodeCacheMap::prune):
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * testRegExp.cpp:
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+
 2018-02-14  Keith Miller  <keith_miller@apple.com>
 
         We should be able to jsDynamicCast from JSType when possible

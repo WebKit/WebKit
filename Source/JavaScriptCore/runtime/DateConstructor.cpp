@@ -161,7 +161,7 @@ static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
     VM& vm = exec->vm();
     GregorianDateTime ts;
-    msToGregorianDateTime(vm, currentTimeMS(), WTF::LocalTime, ts);
+    msToGregorianDateTime(vm, WallTime::now().secondsSinceEpoch().milliseconds(), WTF::LocalTime, ts);
     return JSValue::encode(jsNontrivialString(&vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 
