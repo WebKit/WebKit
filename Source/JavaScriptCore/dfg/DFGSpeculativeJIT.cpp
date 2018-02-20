@@ -822,13 +822,11 @@ void SpeculativeJIT::checkArray(Node* node)
         return;
     }
     
-    const ClassInfo* expectedClassInfo = 0;
-    
     switch (node->arrayMode().type()) {
     case Array::AnyTypedArray:
     case Array::String:
         RELEASE_ASSERT_NOT_REACHED(); // Should have been a Phantom(String:)
-        break;
+        return;
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
@@ -860,20 +858,6 @@ void SpeculativeJIT::checkArray(Node* node)
         noResult(m_currentNode);
         return;
     }
-    
-    RELEASE_ASSERT(expectedClassInfo);
-    
-    GPRTemporary temp(this);
-    GPRTemporary temp2(this);
-    m_jit.emitLoadStructure(*m_jit.vm(), baseReg, temp.gpr(), temp2.gpr());
-    speculationCheck(
-        BadType, JSValueSource::unboxedCell(baseReg), node,
-        m_jit.branchPtr(
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(temp.gpr(), Structure::classInfoOffset()),
-            TrustedImmPtr(PoisonedClassInfoPtr(expectedClassInfo).bits())));
-
-    noResult(m_currentNode);
 }
 
 void SpeculativeJIT::arrayify(Node* node, GPRReg baseReg, GPRReg propertyReg)

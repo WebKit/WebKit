@@ -1,3 +1,25 @@
+2018-02-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Support GetArrayLength on ArrayStorage in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=182625
+
+        Reviewed by Saam Barati.
+
+        This patch adds GetArrayLength and CheckArray + ArrayStorage & SlowPutArrayStorage support for FTL.
+        The implementation is trivial; just porting one in DFG to FTL.
+
+        This fixes several FTL compilation failures in web-tooling-benchmarks while we still need to support
+        ArrayPush, ArrayPop, Arrayify, and PutByVal.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForArrayify):
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForCheckArray):
+
 2018-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         Lock down JSFunction
