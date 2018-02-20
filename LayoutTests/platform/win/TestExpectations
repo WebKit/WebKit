@@ -275,18 +275,6 @@ fast/dom/DeviceMotion/ [ Skip ]
 fast/dom/DeviceOrientation/ [ Skip ]
 fast/dom/Window/window-properties-device-orientation.html [ Skip ]
 
-# Link prefetch is disabled by default
-fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
-fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Skip ]
-fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
-fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Skip ]
-fast/dom/HTMLLinkElement/prefetch-onerror.html [ Skip ]
-fast/dom/HTMLLinkElement/prefetch-onload.html [ Skip ]
-fast/dom/HTMLLinkElement/prefetch-too-many-clients.html [ Skip ]
-fast/dom/HTMLLinkElement/subresource.html [ Skip ]
-http/tests/misc/link-rel-prefetch-and-subresource.html [ Skip ]
-http/tests/misc/prefetch-purpose.html [ Skip ]
-
 # TODO Hyphenation is not implemented yet.
 webkit.org/b/140234 fast/text/hyphenate-character.html [ Failure ]
 webkit.org/b/140234 fast/text/hyphens.html [ Failure ]

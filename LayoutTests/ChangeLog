@@ -1,3 +1,23 @@
+2018-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Skip tests that need ENABLE_LINK_PREFETCH
+        https://bugs.webkit.org/show_bug.cgi?id=182981
+
+        Unreviewed gardening.
+
+        These tests were marked in the different TestExpectations fails of each port,
+        when actually none of them were testing this code as ENABLE_LINK_PREFETCH is disabled by default
+        (even in development builds).
+
+        The patch just moves the flagged tests from the port specific TestExpectations files
+        to the generic TestExpectations file skipping them.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-02-20  John Wilander  <wilander@apple.com>
 
         Make WebResourceLoadStatisticsStore::processStatisticsAndDataRecords() call WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed() in a proper callback

@@ -1148,8 +1148,6 @@ canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
 http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/formdata/upload-events.html
-http/tests/misc/link-rel-prefetch-and-subresource.html
-http/tests/misc/prefetch-purpose.html
 http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
 http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
 http/tests/navigation/scrollstate-after-http-equiv-refresh.html
@@ -2079,12 +2077,6 @@ fast/dom/DeviceOrientation/no-page-cache.html
 fast/dom/DeviceOrientation/no-synchronous-events.html
 fast/dom/DeviceOrientation/null-values.html
 fast/dom/DeviceOrientation/updates.html
-fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
-fast/dom/HTMLLinkElement/link-and-subresource-test.html
-fast/dom/HTMLLinkElement/prefetch-onerror.html
-fast/dom/HTMLLinkElement/prefetch-onload.html
-fast/dom/HTMLLinkElement/prefetch.link
-fast/dom/HTMLLinkElement/subresource.html
 fast/dom/MutationObserver/inline-event-listener.html
 fast/dom/Window/open-window-min-size.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html

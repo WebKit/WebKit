@@ -1596,6 +1596,18 @@ webkit.org/b/99945 fast/css3-text/css3-text-justify [ Skip ]
 webkit.org/b/112755 fast/css3-text/css3-text-indent/text-indent-each-line-hanging.html [ Skip ]
 webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle [ Skip ]
 
+# Link prefetch is disabled by default (needs ENABLE_LINK_PREFETCH)
+webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/prefetch-onerror.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/prefetch-onload.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/prefetch-too-many-clients.html [ Skip ]
+webkit.org/b/3652 fast/dom/HTMLLinkElement/subresource.html [ Skip ]
+webkit.org/b/3652 http/tests/misc/link-rel-prefetch-and-subresource.html [ Skip ]
+webkit.org/b/3652 http/tests/misc/prefetch-purpose.html [ Skip ]
+
 ### END OF -disabled tests
 ########################################
 
