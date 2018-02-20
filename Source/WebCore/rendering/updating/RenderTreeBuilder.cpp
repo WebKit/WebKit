@@ -139,6 +139,25 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
+void RenderTreeBuilder::removeAndDestroyChild(RenderObject& child)
+{
+    ASSERT(child.parent());
+    auto toDestroy = takeChild(*child.parent(), child);
+    // We need to detach the subtree first so that the descendants don't have
+    // access to previous/next sublings at takeChild().
+    // FIXME: webkit.org/b/182909.
+    if (!is<RenderElement>(toDestroy.get()))
+        return;
+
+    auto& childToDestroy = downcast<RenderElement>(*toDestroy.get());
+    while (childToDestroy.firstChild()) {
+        auto& firstChild = *childToDestroy.firstChild();
+        if (auto* node = firstChild.node())
+            node->setRenderer(nullptr);
+        removeAndDestroyChild(firstChild);
+    }
+}
+
 void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
@@ -639,7 +658,7 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
     auto& destroyRootParent = *destroyRoot.parent();
-    destroyRootParent.removeAndDestroyChild(*this, destroyRoot);
+    removeAndDestroyChild(destroyRoot);
     removeAnonymousWrappersForInlineChildrenIfNeeded(destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.

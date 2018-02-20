@@ -258,7 +258,7 @@ void RenderObject::setParent(RenderElement* parent)
 void RenderObject::removeFromParentAndDestroy(RenderTreeBuilder& builder)
 {
     ASSERT(m_parent);
-    m_parent->removeAndDestroyChild(builder, *this);
+    builder.removeAndDestroyChild(*this);
 }
 
 RenderObject* RenderObject::nextInPreOrder() const
