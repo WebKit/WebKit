@@ -1173,8 +1173,6 @@ protected:
 
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
-    void elementsFromProperty(AccessibilityChildrenVector&, AXPropertyName) const;
-    void elementsReferencedByProperty(AccessibilityChildrenVector&, AXPropertyName) const;
 
     AccessibilityObject* radioGroupAncestor() const;
 

@@ -27,7 +27,6 @@
 #include "Element.h"
 
 #include "AXObjectCache.h"
-#include "AccessibleNode.h"
 #include "Attr.h"
 #include "AttributeChangeInvalidation.h"
 #include "CSSAnimationController.h"
@@ -3546,7 +3545,7 @@ void Element::clearHasCSSAnimation()
 
 bool Element::canContainRangeEndPoint() const
 {
-    return !equalLettersIgnoringASCIICase(AccessibleNode::effectiveStringValueForElement(const_cast<Element&>(*this), AXPropertyName::Role), "img");
+    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img");
 }
 
 String Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const
@@ -3731,27 +3730,6 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations()
     if (auto timeline = document().existingTimeline())
         return timeline->animationsForElement(*this);
     return { };
-}
-
-AccessibleNode* Element::accessibleNode()
-{
-    if (!RuntimeEnabledFeatures::sharedFeatures().accessibilityObjectModelEnabled())
-        return nullptr;
-
-    ElementRareData& data = ensureElementRareData();
-    if (!data.accessibleNode())
-        data.setAccessibleNode(std::make_unique<AccessibleNode>(*this));
-    return data.accessibleNode();
-}
-
-AccessibleNode* Element::existingAccessibleNode() const
-{
-    if (!RuntimeEnabledFeatures::sharedFeatures().accessibilityObjectModelEnabled())
-        return nullptr;
-
-    if (!hasRareData())
-        return nullptr;
-    return elementRareData()->accessibleNode();
 }
 
 } // namespace WebCore

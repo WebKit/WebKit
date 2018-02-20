@@ -1,3 +1,24 @@
+2018-02-13  Nan Wang  <n_wang@apple.com>
+
+        AX: Remove AccessibleNode class
+        https://bugs.webkit.org/show_bug.cgi?id=182724
+        <rdar://problem/37486024>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/accessibility-object-model-expected.txt: Removed.
+        * accessibility/accessibility-object-model.html: Removed.
+        * accessibility/mac/AOM-bool-properties-expected.txt: Removed.
+        * accessibility/mac/AOM-bool-properties.html: Removed.
+        * accessibility/mac/AOM-number-properties-expected.txt: Removed.
+        * accessibility/mac/AOM-number-properties.html: Removed.
+        * accessibility/mac/AOM-relation-property-expected.txt: Removed.
+        * accessibility/mac/AOM-relation-property.html: Removed.
+        * accessibility/mac/AOM-string-properties-expected.txt: Removed.
+        * accessibility/mac/AOM-string-properties.html: Removed.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-02-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: defer focusedUIElement notifications

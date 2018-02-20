@@ -34,8 +34,6 @@
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
-#include "AccessibilityTableRow.h"
-#include "AccessibleNode.h"
 #include "RenderObject.h"
 #include "RenderTableSection.h"
 
@@ -83,10 +81,8 @@ bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSe
 
 bool AccessibilityARIAGrid::isMultiSelectable() const
 {
-    auto multiSelectable = boolValueForProperty(AXPropertyName::Multiselectable);
-    if (multiSelectable && !multiSelectable.value())
-        return false;
-    return true;
+    const AtomicString& ariaMultiSelectable = getAttribute(HTMLNames::aria_multiselectableAttr);
+    return !equalLettersIgnoringASCIICase(ariaMultiSelectable, "false");
 }
 
 void AccessibilityARIAGrid::addRowDescendant(AccessibilityObject* rowChild, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)

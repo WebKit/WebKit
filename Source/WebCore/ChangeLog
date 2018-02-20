@@ -1,3 +1,146 @@
+2018-02-13  Nan Wang  <n_wang@apple.com>
+
+        AX: Remove AccessibleNode class
+        https://bugs.webkit.org/show_bug.cgi?id=182724
+        <rdar://problem/37486024>
+
+        Reviewed by Chris Fleizach.
+
+        Removed all the AccessibleNode related code since AOM has
+        an alternate direction now. 
+
+        No new tests. Made sure existing tests don't break.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::findModalNodes):
+        (WebCore::nodeHasRole):
+        (WebCore::AXObjectCache::handleLiveRegionCreated):
+        (WebCore::AXObjectCache::handleMenuItemSelected):
+        (WebCore::AXObjectCache::handleModalChange):
+        (WebCore::isNodeAriaVisible):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::isMultiSelectable const):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::readOnlyValue const):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::roleValue const):
+        (WebCore::AccessibilityImageMapLink::accessibilityDescription const):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isEnabled const):
+        (WebCore::AccessibilityListBoxOption::stringValue const):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isEnabled const):
+        (WebCore::AccessibilityNodeObject::isPressed const):
+        (WebCore::AccessibilityNodeObject::isChecked const):
+        (WebCore::AccessibilityNodeObject::isMultiSelectable const):
+        (WebCore::AccessibilityNodeObject::isRequired const):
+        (WebCore::AccessibilityNodeObject::headingLevel const):
+        (WebCore::AccessibilityNodeObject::valueDescription const):
+        (WebCore::AccessibilityNodeObject::valueForRange const):
+        (WebCore::AccessibilityNodeObject::maxValueForRange const):
+        (WebCore::AccessibilityNodeObject::minValueForRange const):
+        (WebCore::AccessibilityNodeObject::ariaAccessibilityDescription const):
+        (WebCore::siblingWithAriaRole):
+        (WebCore::AccessibilityNodeObject::textForLabelElement const):
+        (WebCore::AccessibilityNodeObject::alternativeText const):
+        (WebCore::AccessibilityNodeObject::alternativeTextForWebArea const):
+        (WebCore::AccessibilityNodeObject::hierarchicalLevel const):
+        (WebCore::shouldUseAccessibilityObjectInnerText):
+        (WebCore::AccessibilityNodeObject::stringValue const):
+        (WebCore::accessibleNameForNode):
+        (WebCore::AccessibilityNodeObject::determineAriaRoleAttribute const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::readOnlyValue const):
+        (WebCore::AccessibilityObject::supportsAutoComplete const):
+        (WebCore::AccessibilityObject::autoCompleteValue const):
+        (WebCore::AccessibilityObject::ariaIsMultiline const):
+        (WebCore::AccessibilityObject::invalidStatus const):
+        (WebCore::AccessibilityObject::supportsCurrent const):
+        (WebCore::AccessibilityObject::currentState const):
+        (WebCore::AccessibilityObject::roleDescription const):
+        (WebCore::AccessibilityObject::keyShortcutsValue const):
+        (WebCore::AccessibilityObject::placeholderValue const):
+        (WebCore::AccessibilityObject::supportsARIAAttributes const):
+        (WebCore::AccessibilityObject::sortDirection const):
+        (WebCore::AccessibilityObject::supportsHasPopup const):
+        (WebCore::AccessibilityObject::hasPopupValue const):
+        (WebCore::AccessibilityObject::supportsSetSize const):
+        (WebCore::AccessibilityObject::supportsPosInSet const):
+        (WebCore::AccessibilityObject::setSize const):
+        (WebCore::AccessibilityObject::posInSet const):
+        (WebCore::AccessibilityObject::supportsPressed const):
+        (WebCore::AccessibilityObject::supportsExpanded const):
+        (WebCore::AccessibilityObject::isExpanded const):
+        (WebCore::AccessibilityObject::checkboxOrRadioValue const):
+        (WebCore::AccessibilityObject::pressedIsPresent const):
+        (WebCore::AccessibilityObject::isAXHidden const):
+        (WebCore::AccessibilityObject::ariaActiveDescendantReferencingElements const):
+        (WebCore::AccessibilityObject::ariaDetailsElements const):
+        (WebCore::AccessibilityObject::ariaDetailsReferencingElements const):
+        (WebCore::AccessibilityObject::ariaErrorMessageElements const):
+        (WebCore::AccessibilityObject::ariaErrorMessageReferencingElements const):
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentDataForChild):
+        (WebCore::AccessibilityObject::hasProperty const): Deleted.
+        (WebCore::AccessibilityObject::stringValueForProperty const): Deleted.
+        (WebCore::AccessibilityObject::boolValueForProperty const): Deleted.
+        (WebCore::AccessibilityObject::intValueForProperty const): Deleted.
+        (WebCore::AccessibilityObject::unsignedValueForProperty const): Deleted.
+        (WebCore::AccessibilityObject::doubleValueForProperty const): Deleted.
+        (WebCore::AccessibilityObject::elementValueForProperty const): Deleted.
+        (WebCore::AccessibilityObject::elementsFromProperty const): Deleted.
+        (WebCore::AccessibilityObject::elementsReferencedByProperty const): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue const):
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement const):
+        (WebCore::AccessibilityRenderObject::defaultObjectInclusion const):
+        (WebCore::AccessibilityRenderObject::isSelected const):
+        (WebCore::AccessibilityRenderObject::activeDescendant const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::orientation const):
+        (WebCore::AccessibilityRenderObject::canSetExpandedAttribute const):
+        (WebCore::AccessibilityRenderObject::liveRegionStatus const):
+        (WebCore::AccessibilityRenderObject::liveRegionRelevant const):
+        (WebCore::AccessibilityRenderObject::liveRegionAtomic const):
+        (WebCore::AccessibilityRenderObject::isBusy const):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable const):
+        (WebCore::AccessibilityTable::axColumnCount const):
+        (WebCore::AccessibilityTable::axRowCount const):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::axColumnIndex const):
+        (WebCore::AccessibilityTableCell::axRowIndex const):
+        (WebCore::AccessibilityTableCell::axColumnSpan const):
+        (WebCore::AccessibilityTableCell::axRowSpan const):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::axColumnIndex const):
+        (WebCore::AccessibilityTableRow::axRowIndex const):
+        * accessibility/AccessibleNode.cpp: Removed.
+        * accessibility/AccessibleNode.h: Removed.
+        * accessibility/AccessibleNode.idl: Removed.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Element.cpp:
+        (WebCore::Element::canContainRangeEndPoint const):
+        (WebCore::Element::accessibleNode): Deleted.
+        (WebCore::Element::existingAccessibleNode const): Deleted.
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::accessibleNode const): Deleted.
+        (WebCore::ElementRareData::setAccessibleNode): Deleted.
+        * editing/TextIterator.cpp:
+        (WebCore::isRendererReplacedElement):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::itemAccessibilityText const):
+
 2018-02-13  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderButton::takeChild() to RenderTreeBuilder
