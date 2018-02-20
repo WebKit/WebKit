@@ -187,6 +187,20 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     parent.addChild(*this, WTFMove(child), beforeChild);
 }
 
+RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, RenderObject& child)
+{
+    if (is<RenderRubyAsInline>(parent))
+        return rubyBuilder().takeChild(downcast<RenderRubyAsInline>(parent), child);
+
+    if (is<RenderRubyAsBlock>(parent))
+        return rubyBuilder().takeChild(downcast<RenderRubyAsBlock>(parent), child);
+
+    if (is<RenderRubyRun>(parent))
+        return rubyBuilder().takeChild(downcast<RenderRubyRun>(parent), child);
+
+    return parent.takeChild(*this, child);
+}
+
 void RenderTreeBuilder::insertChild(RenderTreePosition& position, RenderPtr<RenderObject> child)
 {
     insertChild(position.parent(), WTFMove(child), position.nextSibling());
@@ -474,21 +488,6 @@ void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, Re
 void RenderTreeBuilder::insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     mathMLBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderRubyAsInline(RenderRubyAsInline& parent, RenderObject& child)
-{
-    return rubyBuilder().takeChild(parent, child);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderRubyAsBlock(RenderRubyAsBlock& parent, RenderObject& child)
-{
-    return rubyBuilder().takeChild(parent, child);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderRubyRun(RenderRubyRun& parent, RenderObject& child)
-{
-    return rubyBuilder().takeChild(parent, child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderBlock(RenderBlock& parent, RenderObject& oldChild)

@@ -51,6 +51,8 @@ public:
     void insertChild(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChild(RenderTreePosition&, RenderPtr<RenderObject>);
 
+    RenderPtr<RenderObject> takeChild(RenderElement&, RenderObject&) WARN_UNUSED_RETURN;
+
     void updateAfterDescendants(RenderElement&);
 
     // This avoids having to convert all sites that need RenderTreeBuilder in one go.
@@ -73,9 +75,6 @@ public:
     void insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
-    RenderPtr<RenderObject> takeChildFromRenderRubyAsInline(RenderRubyAsInline& parent, RenderObject& child);
-    RenderPtr<RenderObject> takeChildFromRenderRubyAsBlock(RenderRubyAsBlock& parent, RenderObject& child);
-    RenderPtr<RenderObject> takeChildFromRenderRubyRun(RenderRubyRun& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderBlock(RenderBlock& parent, RenderObject& oldChild);
 
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);

@@ -115,7 +115,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         return;
 
     if (currentParent)
-        m_builder.insertChild(*newParent, currentParent->takeChild(m_builder, *markerRenderer), firstNonMarkerChild(*newParent));
+        m_builder.insertChild(*newParent, m_builder.takeChild(*currentParent, *markerRenderer), firstNonMarkerChild(*newParent));
     else
         m_builder.insertChild(*newParent, WTFMove(newMarkerRenderer), firstNonMarkerChild(*newParent));
 

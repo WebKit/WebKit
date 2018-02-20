@@ -176,7 +176,7 @@ RenderPtr<RenderObject> RenderMenuList::takeChild(RenderTreeBuilder& builder, Re
 {
     if (!m_innerBlock || &oldChild == m_innerBlock)
         return RenderFlexibleBox::takeChild(builder, oldChild);
-    return m_innerBlock->takeChild(builder, oldChild);
+    return builder.takeChild(*m_innerBlock, oldChild);
 }
 
 void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

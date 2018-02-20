@@ -387,13 +387,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsInline& p
     if (isAnonymousRubyInlineBlock(child.parent())) {
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
-        auto takenChild = parent.takeChild(m_builder, child);
+        auto takenChild = m_builder.takeChild(parent, child);
         parent.removeFromParentAndDestroy(m_builder);
         return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
-    return findRubyRunParent(child).takeChild(m_builder, child);
+    return m_builder.takeChild(findRubyRunParent(child), child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsBlock& parent, RenderObject& child)
@@ -411,13 +411,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsBlock& pa
     if (isAnonymousRubyInlineBlock(child.parent())) {
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
-        auto takenChild = parent.takeChild(m_builder, child);
+        auto takenChild = m_builder.takeChild(parent, child);
         parent.removeFromParentAndDestroy(m_builder);
         return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
-    return findRubyRunParent(child).takeChild(m_builder, child);
+    return m_builder.takeChild(findRubyRunParent(child), child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyRun& parent, RenderObject& child)

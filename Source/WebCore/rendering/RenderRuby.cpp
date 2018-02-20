@@ -60,11 +60,6 @@ void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle*
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
-RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderTreeBuilder& builder, RenderObject& child)
-{
-    return builder.takeChildFromRenderRubyAsInline(*this, child);
-}
-
 //=== ruby as block object ===
 
 RenderRubyAsBlock::RenderRubyAsBlock(Element& element, RenderStyle&& style)
@@ -78,11 +73,6 @@ void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
-}
-
-RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderTreeBuilder& builder, RenderObject& child)
-{
-    return builder.takeChildFromRenderRubyAsBlock(*this, child);
 }
 
 } // namespace WebCore

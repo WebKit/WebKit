@@ -79,7 +79,7 @@ RenderPtr<RenderObject> RenderButton::takeChild(RenderTreeBuilder& builder, Rend
         ASSERT(&oldChild == m_inner || !m_inner);
         return RenderFlexibleBox::takeChild(builder, oldChild);
     }
-    return m_inner->takeChild(builder, oldChild);
+    return builder.takeChild(*m_inner, oldChild);
 }
     
 void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const

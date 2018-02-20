@@ -497,7 +497,7 @@ void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObje
             child.removeAndDestroyChild(builder, firstChild);
         }
     }
-    auto toDestroy = takeChild(builder, oldChild);
+    auto toDestroy = builder.takeChild(*this, oldChild);
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
