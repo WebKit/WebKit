@@ -1,3 +1,23 @@
+2018-02-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Returning from Auto-PiP causes Safari to be unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=182977
+        <rdar://problem/37685981>
+
+        Reviewed by Jer Noble.
+
+        Remove the error handling added in r228115, it breaks auto-pip.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::applicationDidBecomeActive):
+        (VideoFullscreenInterfaceAVKit::enterFullscreenStandard):
+        (VideoFullscreenInterfaceAVKit::exitFullscreen):
+        (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+        (VideoFullscreenInterfaceAVKit::exitFullscreenHandler):
+        (VideoFullscreenInterfaceAVKit::enterFullscreenHandler):
+
 2018-02-20  Jer Noble  <jer.noble@apple.com>
 
         [EME] Adopt new AVContentKeySession success delegate callback
