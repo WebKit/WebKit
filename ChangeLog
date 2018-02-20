@@ -1,3 +1,14 @@
+2018-02-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][CMake] Support building with Enchant 2.x
+        https://bugs.webkit.org/show_bug.cgi?id=182933
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindEnchant.cmake: Check for both the "enchant" and "enchant-2"
+        pkg-config components, picking the first available for which the headers and
+        library are usable.
+
 2018-02-19  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Playbin3 support

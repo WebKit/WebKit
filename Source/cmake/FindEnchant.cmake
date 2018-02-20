@@ -28,19 +28,32 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(PC_ENCHANT enchant)
 
-find_path(ENCHANT_INCLUDE_DIRS
-    NAMES enchant.h
-    PATHS ${PC_ENCHANT_INCLUDEDIR}
-          ${PC_ENCHANT_INCLUDE_DIRS}
-)
+# TODO Remove the check for Enchant 1.x once all major LTS GNU/Linux
+#      distributions ship the 2.x series (probably around mid-2020).
 
-find_library(ENCHANT_LIBRARIES
-    NAMES enchant
-    PATHS ${PC_ENCHANT_LIBDIR}
-          ${PC_ENCHANT_LIBRARY_DIRS}
-)
+foreach (ENCHANT_NAME enchant-2 enchant)
+    pkg_check_modules(PC_ENCHANT ${ENCHANT_NAME})
+
+    find_path(ENCHANT_INCLUDE_DIRS
+        NAMES enchant.h
+        PATHS ${PC_ENCHANT_INCLUDEDIR}
+              ${PC_ENCHANT_INCLUDE_DIRS}
+    )
+
+    find_library(ENCHANT_LIBRARIES
+        NAMES ${ENCHANT_NAME}
+        PATHS ${PC_ENCHANT_LIBDIR}
+              ${PC_ENCHANT_LIBRARY_DIRS}
+    )
+
+    # Only stop searching if the three have been found. This covers for corner
+    # cases in which e.g. both versions of the library are installed, but the
+    # headers are usable/present for one of them.
+    if (PC_ENCHANT_FOUND AND ENCHANT_INCLUDE_DIRS AND ENCHANT_LIBRARIES)
+        break ()
+    endif ()
+endforeach (ENCHANT_NAME)
 
 mark_as_advanced(
     ENCHANT_INCLUDE_DIRS
