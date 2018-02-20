@@ -139,7 +139,7 @@ CompleteSubspace* JSCell::subspaceFor(VM& vm)
 {
     if (CellType::needsDestruction)
         return &vm.destructibleCellSpace;
-    return &vm.cellSpace;
+    return &vm.cellDangerousBitsSpace;
 }
 
 template<typename T>

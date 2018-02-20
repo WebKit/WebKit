@@ -512,6 +512,7 @@ heap/MarkingConstraintSet.cpp
 heap/MarkingConstraintSolver.cpp
 heap/MutatorScheduler.cpp
 heap/MutatorState.cpp
+heap/SecurityKind.cpp
 heap/SecurityOriginToken.cpp
 heap/SimpleMarkingConstraint.cpp
 heap/SlotVisitor.cpp
