@@ -60,7 +60,7 @@ void RenderTreeBuilder::SVG::insertChild(RenderSVGInline& parent, RenderPtr<Rend
 void RenderTreeBuilder::SVG::insertChild(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    parent.RenderReplaced::addChild(m_builder, WTFMove(child), beforeChild);
+    parent.RenderElement::addChild(m_builder, WTFMove(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
