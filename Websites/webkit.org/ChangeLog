@@ -1,3 +1,12 @@
+2018-02-20  Jon Davis  <jond@apple.com>
+
+        Add widescreen layout class for the Downloads page
+        https://bugs.webkit.org/show_bug.cgi?id=182948
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wp-content/themes/webkit/downloads.php: Added .widescreen for full-width layout.
+
 2018-02-13  Jon Davis  <jond@apple.com>
 
         Added a redirect for /nightly to /downloads/.
