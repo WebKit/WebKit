@@ -81,13 +81,11 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
     // We expect that the user has already put the function index into GPRInfo::argumentGPR1
     CCallHelpers jit;
 
+    jit.emitFunctionPrologue();
+
     const unsigned extraPaddingBytes = 0;
     RegisterSet registersToSpill = RegisterSet::allRegisters();
     registersToSpill.exclude(RegisterSet::registersToNotSaveForCCall());
-#if CPU(ARM64)
-    // We also want to spill x30 since that holds our return pc.
-    registersToSpill.set(ARM64Registers::x30);
-#endif
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
@@ -98,6 +96,7 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
 
     ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
 
+    jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(linkBuffer, ("Trigger OMG tier up"));
