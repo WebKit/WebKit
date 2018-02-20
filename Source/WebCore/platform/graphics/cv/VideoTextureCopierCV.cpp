@@ -33,7 +33,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
 #include <OpenGLES/ES3/glext.h>
 #endif
 
@@ -455,7 +455,7 @@ static StringMap& enumToStringMap()
         map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_INT_24_8));
         map.get().emplace(STRINGIFY_PAIR(GL_FLOAT_32_UNSIGNED_INT_24_8_REV));
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
         map.get().emplace(STRINGIFY_PAIR(GL_RED_INTEGER));
         map.get().emplace(STRINGIFY_PAIR(GL_RGB_INTEGER));
         map.get().emplace(STRINGIFY_PAIR(GL_RG8_SNORM));
@@ -522,7 +522,7 @@ bool VideoTextureCopierCV::initializeContextObjects()
 
     StringBuilder fragmentShaderSource;
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     fragmentShaderSource.appendLiteral("precision mediump float;\n");
     fragmentShaderSource.appendLiteral("uniform sampler2D u_texture;\n");
 #else
@@ -534,7 +534,7 @@ bool VideoTextureCopierCV::initializeContextObjects()
     fragmentShaderSource.appendLiteral("uniform int u_swapColorChannels;\n");
     fragmentShaderSource.appendLiteral("void main() {\n");
     fragmentShaderSource.appendLiteral("    vec2 texPos = vec2(v_texturePosition.x * u_textureDimensions.x, v_texturePosition.y * u_textureDimensions.y);\n");
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     fragmentShaderSource.appendLiteral("    vec4 color = texture2D(u_texture, texPos);\n");
 #else
     fragmentShaderSource.appendLiteral("    vec4 color = texture2DRect(u_texture, texPos);\n");
@@ -615,7 +615,7 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
         "   if (u_flipY == 1) {\n"
         "       normalizedPosition.y = 1.0 - normalizedPosition.y;\n"
         "   }\n"
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
         "   v_yTextureCoordinate = normalizedPosition;\n"
         "   v_uvTextureCoordinate = normalizedPosition;\n"
 #else
@@ -638,7 +638,7 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
     }
 
     String fragmentShaderSource = ASCIILiteral(
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
         "precision mediump float;\n"
         "#define SAMPLERTYPE sampler2D\n"
         "#define TEXTUREFUNC texture2D\n"
@@ -721,7 +721,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
 
     if (auto texture = m_textureCache->textureFromImage(image, outputTarget, level, internalFormat, format, type)) {
         bool swapColorChannels = false;
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
         // FIXME: Remove this workaround once rdar://problem/35834388 is fixed.
         swapColorChannels = CVPixelBufferGetPixelFormatType(image) == kCVPixelFormatType_32BGRA;
 #endif
@@ -783,7 +783,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     GC3Denum videoTextureTarget = GraphicsContext3D::TEXTURE_2D;
 #else
     GC3Denum videoTextureTarget = GL_TEXTURE_RECTANGLE_ARB;
@@ -828,7 +828,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     // Do the actual drawing.
     m_context->drawArrays(GraphicsContext3D::TRIANGLES, 0, 6);
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     // flush() must be called here in order to re-synchronize the output texture's contents across the
     // two EAGL contexts.
     m_context->flush();
@@ -858,7 +858,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
     GLfloat lowerRight[2] = { 0, 0 };
     GLfloat upperRight[2] = { 0, 0 };
     GLfloat upperLeft[2] = { 0, 0 };
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     Platform3DObject videoTextureName = CVOpenGLESTextureGetName(inputVideoTexture);
     GC3Denum videoTextureTarget = CVOpenGLESTextureGetTarget(inputVideoTexture);
     CVOpenGLESTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
@@ -915,7 +915,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(Platform3DObject vi
 
     // Configure the drawing parameters.
     m_context->uniform1i(m_textureUniformLocation, 0);
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     m_context->uniform2f(m_textureDimensionsUniformLocation, 1, 1);
 #else
     m_context->uniform2f(m_textureDimensionsUniformLocation, width, height);
@@ -931,7 +931,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(Platform3DObject vi
     m_context->vertexAttribPointer(m_positionAttributeLocation, 2, GraphicsContext3D::FLOAT, false, 0, 0);
     m_context->drawArrays(GraphicsContext3D::TRIANGLES, 0, 6);
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     // flush() must be called here in order to re-synchronize the output texture's contents across the
     // two EAGL contexts.
     m_context->flush();

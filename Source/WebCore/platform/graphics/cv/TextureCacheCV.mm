@@ -35,7 +35,7 @@ namespace WebCore {
 std::unique_ptr<TextureCacheCV> TextureCacheCV::create(GraphicsContext3D& context)
 {
     TextureCacheType cache = nullptr;
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     CVReturn error = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, nullptr, context.platformGraphicsContext3D(), nullptr, &cache);
 #else
     CVReturn error = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, nullptr, context.platformGraphicsContext3D(), CGLGetPixelFormat(context.platformGraphicsContext3D()), nullptr, &cache);
@@ -56,7 +56,7 @@ TextureCacheCV::TextureCacheCV(GraphicsContext3D& context, RetainPtr<TextureCach
 RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelBufferRef image, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type)
 {
     TextureType bareVideoTexture = nullptr;
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
     if (kCVReturnSuccess != CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, m_cache.get(), image, nullptr, outputTarget, internalFormat, width, height, format, type, level, &bareVideoTexture))
@@ -78,7 +78,7 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelB
             return;
         
         if (auto cache = weakThis->m_cache.get())
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
             CVOpenGLESTextureCacheFlush(cache, 0);
 #else
             CVOpenGLTextureCacheFlush(cache, 0);

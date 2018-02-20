@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CA)
@@ -51,34 +52,32 @@
 #endif
 
 #if PLATFORM(COCOA)
-#if PLATFORM(IOS)
+
+#if USE(OPENGL_ES)
 #include <OpenGLES/ES2/gl.h>
 #ifdef __OBJC__
 #import <OpenGLES/EAGL.h>
-#endif // __OBJC__
-#endif // PLATFORM(IOS)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS CALayer;
-OBJC_CLASS WebGLLayer;
-typedef struct __IOSurface* IOSurfaceRef;
-#else
-typedef unsigned int GLuint;
-#endif
-
-#if PLATFORM(IOS)
-#ifdef __OBJC__
 typedef EAGLContext* PlatformGraphicsContext3D;
 #else
 typedef void* PlatformGraphicsContext3D;
 #endif // __OBJC__
-#elif PLATFORM(MAC)
-typedef struct _CGLContextObject *CGLContextObj;
+#endif // USE(OPENGL_ES)
 
+#if !USE(OPENGL_ES)
+typedef struct _CGLContextObject *CGLContextObj;
 typedef CGLContextObj PlatformGraphicsContext3D;
-#else
+#endif
+
+OBJC_CLASS CALayer;
+OBJC_CLASS WebGLLayer;
+typedef struct __IOSurface* IOSurfaceRef;
+#endif // PLATFORM(COCOA)
+
+#if !PLATFORM(COCOA)
+typedef unsigned GLuint;
 typedef void* PlatformGraphicsContext3D;
 typedef void* PlatformGraphicsSurface3D;
-#endif
+#endif // !PLATFORM(COCOA)
 
 // These are currently the same among all implementations.
 const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;

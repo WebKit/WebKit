@@ -1,3 +1,29 @@
+2018-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Make more use of USE(OPENGL_ES) where it makes sense
+        https://bugs.webkit.org/show_bug.cgi?id=182957
+        <rdar://problem/37699443>
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, no behavior change.
+
+        Make use of USE(OPENGL_ES) for CoreVideo functions that differ based
+        on GL availability. Also adjust GraphicsContext3D in the same way.
+
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cv/TextureCacheCV.mm:
+        (WebCore::TextureCacheCV::create):
+        (WebCore::TextureCacheCV::textureFromImage):
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::enumToStringMap):
+        (WebCore::VideoTextureCopierCV::initializeContextObjects):
+        (WebCore::VideoTextureCopierCV::initializeUVContextObjects):
+        (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture):
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Dispatch accessibleclick event
