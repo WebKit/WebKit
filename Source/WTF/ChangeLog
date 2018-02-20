@@ -1,3 +1,16 @@
+2018-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Always inline soft linking functions to work around a clang bug
+        https://bugs.webkit.org/show_bug.cgi?id=182985
+        <rdar://problem/37587017>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/cocoa/SoftLinking.h:
+        In some cases, clang will emit a weak extern symbol for a re-declared
+        symbol that has availability attributes on it. To avoid this, always
+        inline to avoid emitting a second symbol.
+
 2018-02-16  Dean Jackson  <dino@apple.com>
 
         Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa

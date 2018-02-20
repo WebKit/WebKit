@@ -115,7 +115,7 @@
         return softLink##functionName parameterNames; \
     } \
     \
-    inline resultType functionName parameterDeclarations \
+    inline __attribute__((__always_inline__)) resultType functionName parameterDeclarations \
     { \
         return softLink##functionName parameterNames; \
     }
@@ -139,7 +139,7 @@
         return loaded; \
     } \
     \
-    __attribute__((visibility("hidden"))) resultType functionName parameterDeclarations \
+    inline __attribute__((__always_inline__)) __attribute__((visibility("hidden"))) resultType functionName parameterDeclarations \
     { \
         ASSERT(softLink##functionName); \
         return softLink##functionName parameterNames; \
@@ -477,7 +477,7 @@
         return softLink##framework##functionName parameterNames; \
     } \
     } \
-    ALWAYS_INLINE resultType functionName parameterDeclarations \
+    inline __attribute__((__always_inline__)) resultType functionName parameterDeclarations \
     {\
         return functionNamespace::softLink##framework##functionName parameterNames; \
     }
