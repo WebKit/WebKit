@@ -106,7 +106,7 @@ void RenderTreeBuilder::Inline::insertChild(RenderInline& parent, RenderPtr<Rend
 {
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* fragmentedFlow = parent.enclosingFragmentedFlow())
-        beforeChildOrPlaceholder = m_builder.resolveMovedChildForMultiColumnFlow(*fragmentedFlow, beforeChild);
+        beforeChildOrPlaceholder = m_builder.multiColumnBuilder().resolveMovedChild(*fragmentedFlow, beforeChild);
     if (parent.continuation()) {
         insertChildToContinuation(parent, WTFMove(child), beforeChildOrPlaceholder);
         return;

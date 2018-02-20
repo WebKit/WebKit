@@ -80,16 +80,10 @@ public:
 
     RenderPtr<RenderObject> takeChildFromRenderElement(RenderElement& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
-    bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
-    void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
-    RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
-    void moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to);
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
     void childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child);
-    RenderObject* resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
-    void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
 
 private:
     class FirstLetter;
@@ -104,6 +98,8 @@ private:
     class SVG;
     class MathML;
 
+    RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
+    void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
     RenderPtr<RenderObject> takeChildFromRenderMenuList(RenderMenuList& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderButton(RenderButton& parent, RenderObject& child);
