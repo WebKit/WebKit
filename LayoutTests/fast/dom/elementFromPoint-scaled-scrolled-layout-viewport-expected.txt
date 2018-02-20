@@ -1,0 +1,20 @@
+This test applies page scale and scrolls the page, and checks that elementFromPoint returns the correct element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.elementFromPoint(225, 125) is b1
+PASS document.elementFromPoint(525, 425) is b2
+PASS document.elementFromPoint(225, 125) is b1
+PASS document.elementFromPoint(525, 425) is b2
+PASS document.elementFromPoint(115, 15) is b1
+PASS document.elementFromPoint(415, 315) is b2
+PASS document.elementFromPoint(-85, 15) is null
+PASS document.elementFromPoint(215, 315) is b2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

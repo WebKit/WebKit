@@ -4931,7 +4931,8 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     ASSERT(!isRenderFragmentedFlow());
     LayoutRect hitTestArea = renderer().view().documentRect();
     if (!request.ignoreClipping()) {
-        if (renderer().settings().visualViewportEnabled()) {
+        const auto& settings = renderer().settings();
+        if (settings.visualViewportEnabled() && settings.clientCoordinatesRelativeToLayoutViewport()) {
             auto& frameView = renderer().view().frameView();
             LayoutRect absoluteLayoutViewportRect = frameView.layoutViewportRect();
             auto scaleFactor = frameView.frame().frameScaleFactor();

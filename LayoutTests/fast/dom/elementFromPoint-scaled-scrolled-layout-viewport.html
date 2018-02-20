@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        width: 2000px;
+        height: 2000px;
+    }
+    button {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+    }
+    #b1 {
+        left: 200px;
+        top: 100px;
+    }
+    #b2 {
+        left: 500px;
+        top: 400px;
+    }
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest();" style="width:2000px;height:2000px;margin:0px;padding:100px">
+<button id="b1"></button>
+<button id="b2"></button>
+<script>
+function runTest() {
+    description("This test applies page scale and scrolls the page, and checks that elementFromPoint returns the correct element.");
+    if (window.internals) {
+        window.internals.settings.setVisualViewportEnabled(true);
+        window.internals.settings.setClientCoordinatesRelativeToLayoutViewport(true);
+        window.internals.setPageScaleFactor(2, 0, 0);
+    }
+    window.scrollTo(100, 100);
+
+    // The layout viewport hasn't been scrolled.
+    shouldBe("document.elementFromPoint(225, 125)", "b1");
+    shouldBe("document.elementFromPoint(525, 425)", "b2");
+
+    window.scrollTo(200, 200);
+
+    // b1 is now offscreen, but still within the layout viewport.
+    shouldBe("document.elementFromPoint(225, 125)", "b1");
+    shouldBe("document.elementFromPoint(525, 425)", "b2");
+
+    window.scrollTo(500, 400);
+    shouldBe("document.elementFromPoint(115, 15)", "b1");
+    shouldBe("document.elementFromPoint(415, 315)", "b2");
+
+    window.scrollTo(700, 400);
+    shouldBeNull("document.elementFromPoint(-85, 15)");
+    shouldBe("document.elementFromPoint(215, 315)", "b2");
+
+    finishJSTest();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
