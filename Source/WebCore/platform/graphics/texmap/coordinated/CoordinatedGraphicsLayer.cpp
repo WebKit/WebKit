@@ -1124,9 +1124,6 @@ bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
 {
-    if (m_animations.hasActiveAnimationsOfType(AnimatedPropertyTransform))
-        return true;
-
     if (!m_layerTransform.combined().isAffine())
         return true;
 

@@ -1,3 +1,22 @@
+2018-02-20  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] whatsapp web blurry in some parts, sharp on others
+        https://bugs.webkit.org/show_bug.cgi?id=182673
+
+        Reviewed by Carlos Garcia Campos.
+
+        CoordinatedGraphicsLayer::createBackingStore() uses the scale factor returned by effectiveContentsScale(),
+        which is always 1 if selfOrAncestorHaveNonAffineTransforms() returns true. But this fuction always returns
+        true if the layer has an AnimatedPropertyTransform animation, which means that layers with those animations
+        won't use the appropriate scale factor, causing blurry renderings.
+
+        This patch removes the animations check, so animated layers properly use the required scale factor.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms):
+
 2018-02-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Leverage ShadowBlur without using scratch buffer, target GraphicsContext
