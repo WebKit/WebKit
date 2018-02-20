@@ -1,3 +1,33 @@
+2018-02-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        HarfBuzzFace should not be ref-counted
+        https://bugs.webkit.org/show_bug.cgi?id=182823
+
+        Reviewed by Carlos Garcia Campos.
+
+        The HarfBuzzFace objects shouldn't be copied along in FontPlatformData
+        copy assignment operator, which made it a requirement for that class to
+        be ref-counted. Cairo-based HarfBuzzFace implementation uses the
+        cairo_scaled_font_t object from FontPlatformData internally, but upon
+        FontPlatformData cloning that scaled font object could change, meaning
+        HarfBuzzFace object that's shared with another FontPlatformData object
+        would end up using a different cairo_scaled_font_t object from the one
+        that's been regenerated in the newly-cloned FontPlatformData object.
+
+        Instead of ref-counting the HarfBuzzFace objects, they should be handled
+        in FontPlatformData through std::unique_ptr<>. In the FontPlatformData
+        copy assignment operator, the copy target's m_harfBuzzFace object is
+        nulled out, allowing the next harfBuzzFace() call to construct an
+        object that properly leverages the cairo_scaled_font_t object that could
+        have changed during cloning.
+
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::harfBuzzFace const):
+        * platform/graphics/harfbuzz/HarfBuzzFace.h:
+        (WebCore::HarfBuzzFace::create): Deleted.
+
 2018-02-14  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderMathMLFenced::addChild() to RenderTreeBuilder
