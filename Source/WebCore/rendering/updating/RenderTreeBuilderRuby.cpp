@@ -30,6 +30,7 @@
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
 #include "RenderTreeBuilder.h"
+#include "RenderTreeBuilderBlock.h"
 
 namespace WebCore {
 
@@ -214,7 +215,8 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
             // in order to avoid automatic removal of the ruby run in case there is no
             // other child besides the old ruby text.
             parent.addChild(m_builder, WTFMove(child), beforeChild);
-            auto takenBeforeChild = parent.RenderBlockFlow::takeChild(m_builder, *beforeChild);
+            auto takenBeforeChild = m_builder.blockBuilder().takeChild(parent, *beforeChild);
+
             m_builder.insertChild(*newRun, WTFMove(takenBeforeChild));
             return;
         }
@@ -404,7 +406,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsBlock& pa
 #ifndef ASSERT_DISABLED
         ASSERT(isRubyChildForNormalRemoval(child));
 #endif
-        return parent.RenderBlockFlow::takeChild(m_builder, child);
+        return m_builder.blockBuilder().takeChild(parent, child);
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
     // just use the block's remove method.
@@ -442,13 +444,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyRun& parent
         }
     }
 
-    auto takenChild = parent.RenderBlockFlow::takeChild(m_builder, child);
+    auto takenChild = m_builder.blockBuilder().takeChild(parent, child);
 
     if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed()) {
         // Check if our base (if any) is now empty. If so, destroy it.
         RenderBlock* base = parent.rubyBase();
         if (base && !base->firstChild()) {
-            auto takenBase = parent.RenderBlockFlow::takeChild(m_builder, *base);
+            auto takenBase = m_builder.blockBuilder().takeChild(parent, *base);
             base->deleteLines();
         }
     }

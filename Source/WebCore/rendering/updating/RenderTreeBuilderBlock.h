@@ -37,6 +37,7 @@ public:
     void insertChildIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
     RenderPtr<RenderObject> takeChild(RenderBlock& parent, RenderObject& oldChild);
+    RenderPtr<RenderObject> takeChild(RenderBlockFlow& parent, RenderObject& child);
 
     void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
     void childBecameNonInline(RenderBlock& parent, RenderElement& child);
