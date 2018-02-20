@@ -7174,7 +7174,7 @@ void WebPageProxy::setURLSchemeHandlerForScheme(Ref<WebURLSchemeHandler>&& handl
 
 WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& scheme)
 {
-    return m_urlSchemeHandlersByScheme.get(scheme);
+    return scheme.isNull() ? nullptr : m_urlSchemeHandlersByScheme.get(scheme);
 }
 
 void WebPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& parameters)
