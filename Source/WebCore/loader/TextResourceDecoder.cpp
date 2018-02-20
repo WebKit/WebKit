@@ -401,8 +401,10 @@ static int findXMLEncoding(const char* str, int len, int& encodingLength)
 
 size_t TextResourceDecoder::checkForBOM(const char* data, size_t len)
 {
-    // Check for UTF-16/32 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
+    // Check for UTF-16 or UTF-8 BOM mark at the beginning, which is a sure sign of a Unicode encoding.
     // We let it override even a user-chosen encoding.
+    const size_t maximumBOMLength = 3;
+
     ASSERT(!m_checkedForBOM);
 
     size_t lengthOfBOM = 0;
@@ -416,31 +418,26 @@ size_t TextResourceDecoder::checkForBOM(const char* data, size_t len)
     unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
-    unsigned char c4 = buf2Len ? (--buf2Len, *buf2++) : 0;
 
     // Check for the BOM.
     if (c1 == 0xFF && c2 == 0xFE) {
-        if (c3 != 0 || c4 != 0) {
-            setEncoding(UTF16LittleEndianEncoding(), AutoDetectedEncoding);
-            lengthOfBOM = 2;
-        } else {
-            setEncoding(UTF32LittleEndianEncoding(), AutoDetectedEncoding);
-            lengthOfBOM = 4;
-        }
-    } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
-        setEncoding(UTF8Encoding(), AutoDetectedEncoding);
-        lengthOfBOM = 3;
+        ASSERT(UTF16LittleEndianEncoding().isValid());
+        setEncoding(UTF16LittleEndianEncoding(), AutoDetectedEncoding);
+        lengthOfBOM = 2;
     } else if (c1 == 0xFE && c2 == 0xFF) {
+        ASSERT(UTF16BigEndianEncoding().isValid());
         setEncoding(UTF16BigEndianEncoding(), AutoDetectedEncoding);
         lengthOfBOM = 2;
-    } else if (c1 == 0 && c2 == 0 && c3 == 0xFE && c4 == 0xFF) {
-        setEncoding(UTF32BigEndianEncoding(), AutoDetectedEncoding);
-        lengthOfBOM = 4;
+    } else if (c1 == 0xEF && c2 == 0xBB && c3 == 0xBF) {
+        ASSERT(UTF8Encoding().isValid());
+        setEncoding(UTF8Encoding(), AutoDetectedEncoding);
+        lengthOfBOM = 3;
     }
 
-    if (lengthOfBOM || bufferLength + len >= 4)
+    if (lengthOfBOM || bufferLength + len >= maximumBOMLength)
         m_checkedForBOM = true;
 
+    ASSERT(lengthOfBOM <= maximumBOMLength);
     return lengthOfBOM;
 }
 
@@ -532,12 +529,6 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
         return true;
     } else if (bytesEqual(ptr, 0, '<', 0, '?', 0, 'x')) {
         setEncoding(UTF16BigEndianEncoding(), AutoDetectedEncoding);
-        return true;
-    } else if (bytesEqual(ptr, '<', 0, 0, 0, '?', 0, 0, 0)) {
-        setEncoding(UTF32LittleEndianEncoding(), AutoDetectedEncoding);
-        return true;
-    } else if (bytesEqual(ptr, 0, 0, 0, '<', 0, 0, 0, '?')) {
-        setEncoding(UTF32BigEndianEncoding(), AutoDetectedEncoding);
         return true;
     }
 

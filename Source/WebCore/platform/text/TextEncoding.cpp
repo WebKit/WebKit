@@ -145,15 +145,7 @@ UChar TextEncoding::backslashAsCurrencySymbol() const
 
 bool TextEncoding::isNonByteBasedEncoding() const
 {
-    if (noExtendedTextEncodingNameUsed()) {
-        return *this == UTF16LittleEndianEncoding()
-            || *this == UTF16BigEndianEncoding();
-    }
-
-    return *this == UTF16LittleEndianEncoding()
-        || *this == UTF16BigEndianEncoding()
-        || *this == UTF32BigEndianEncoding()
-        || *this == UTF32LittleEndianEncoding();
+    return *this == UTF16LittleEndianEncoding() || *this == UTF16BigEndianEncoding();
 }
 
 bool TextEncoding::isUTF7Encoding() const
@@ -205,18 +197,6 @@ const TextEncoding& UTF16LittleEndianEncoding()
 {
     static TextEncoding globalUTF16LittleEndianEncoding("UTF-16LE");
     return globalUTF16LittleEndianEncoding;
-}
-
-const TextEncoding& UTF32BigEndianEncoding()
-{
-    static TextEncoding globalUTF32BigEndianEncoding("UTF-32BE");
-    return globalUTF32BigEndianEncoding;
-}
-
-const TextEncoding& UTF32LittleEndianEncoding()
-{
-    static TextEncoding globalUTF32LittleEndianEncoding("UTF-32LE");
-    return globalUTF32LittleEndianEncoding;
 }
 
 const TextEncoding& UTF8Encoding()

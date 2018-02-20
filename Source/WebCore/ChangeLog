@@ -1,5 +1,31 @@
 2018-02-20  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228594. rdar://problem/37697671
+
+    2018-02-16  Daniel Bates  <dabates@apple.com>
+
+            Remove dead code for UTF-32
+            https://bugs.webkit.org/show_bug.cgi?id=182900
+            <rdar://problem/37238717>
+
+            Reviewed by Alexey Proskuryakov.
+
+            The UTF-32 encodings were removed from the text codec registry in r224747. So,
+            we no longer need code to encode or decode these variants.
+
+            * dom/TextDecoder.cpp:
+            (WebCore::codeUnitByteSize):
+            * loader/TextResourceDecoder.cpp:
+            (WebCore::TextResourceDecoder::checkForBOM):
+            (WebCore::TextResourceDecoder::checkForHeadCharset):
+            * platform/text/TextEncoding.cpp:
+            (WebCore::TextEncoding::isNonByteBasedEncoding const):
+            (WebCore::UTF32BigEndianEncoding): Deleted.
+            (WebCore::UTF32LittleEndianEncoding): Deleted.
+            * platform/text/TextEncoding.h:
+
+2018-02-20  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228586. rdar://problem/37697673
 
     2018-02-16  Chris Dumez  <cdumez@apple.com>
