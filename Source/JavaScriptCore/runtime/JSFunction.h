@@ -130,14 +130,7 @@ public:
         return m_rareData.get();
     }
 
-    FunctionRareData* rareData(ExecState* exec, unsigned inlineCapacity)
-    {
-        if (UNLIKELY(!m_rareData))
-            return allocateAndInitializeRareData(exec, inlineCapacity);
-        if (UNLIKELY(!m_rareData->isObjectAllocationProfileInitialized()))
-            return initializeRareData(exec, inlineCapacity);
-        return m_rareData.get();
-    }
+    FunctionRareData* ensureRareDataAndAllocationProfile(ExecState*, unsigned inlineCapacity);
 
     FunctionRareData* rareData()
     {
@@ -160,16 +153,15 @@ public:
     // Returns the __proto__ for the |this| value if this JSFunction were to be constructed.
     JSObject* prototypeForConstruction(VM&, ExecState*);
 
+    bool canUseAllocationProfile();
+    bool canUseAllocationProfileNonInline();
+
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
 
     void finishCreation(VM&, NativeExecutable*, int length, const String& name);
     void finishCreation(VM&);
-
-    FunctionRareData* allocateRareData(VM&);
-    FunctionRareData* allocateAndInitializeRareData(ExecState*, size_t inlineCapacity);
-    FunctionRareData* initializeRareData(ExecState*, size_t inlineCapacity);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = EnumerationMode());
@@ -191,6 +183,10 @@ private:
         function->finishCreation(vm);
         return function;
     }
+
+    FunctionRareData* allocateRareData(VM&);
+    FunctionRareData* allocateAndInitializeRareData(ExecState*, size_t inlineCapacity);
+    FunctionRareData* initializeRareData(ExecState*, size_t inlineCapacity);
 
     bool hasReifiedLength() const;
     bool hasReifiedName() const;
