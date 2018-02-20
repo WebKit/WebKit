@@ -46,11 +46,11 @@ public:
     RenderMathMLFencedOperator* closeFenceRenderer() const { return m_closeFenceRenderer.get(); }
     void setCloseFenceRenderer(RenderMathMLFencedOperator& renderer) { m_closeFenceRenderer = makeWeakPtr(renderer); }
 
+    void updateFromElement();
+
 private:
     bool isRenderMathMLFenced() const final { return true; }
     const char* renderName() const final { return "RenderMathMLFenced"; }
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild) final;
-    void updateFromElement();
 
     String m_open;
     String m_close;
@@ -60,5 +60,7 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMathMLFenced, isRenderMathMLFenced())
 
 #endif // ENABLE(MATHML)

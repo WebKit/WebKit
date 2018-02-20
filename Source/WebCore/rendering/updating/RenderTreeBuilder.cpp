@@ -34,6 +34,7 @@
 #include "RenderElement.h"
 #include "RenderGrid.h"
 #include "RenderLineBreak.h"
+#include "RenderMathMLFenced.h"
 #include "RenderMenuList.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
@@ -211,6 +212,11 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
 
     if (is<RenderSVGText>(parent)) {
         svgBuilder().insertChild(downcast<RenderSVGText>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderMathMLFenced>(parent)) {
+        mathMLBuilder().insertChild(downcast<RenderMathMLFenced>(parent), WTFMove(child), beforeChild);
         return;
     }
 
@@ -505,11 +511,6 @@ void RenderTreeBuilder::insertChildToRenderTableRow(RenderTableRow& parent, Rend
 void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    mathMLBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
