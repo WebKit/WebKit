@@ -1,3 +1,43 @@
+2018-02-19  Saam Barati  <sbarati@apple.com>
+
+        Don't mark an array profile out of bounds for the cases where the DFG will convert the access to SaneChain
+        https://bugs.webkit.org/show_bug.cgi?id=182912
+        <rdar://problem/37685083>
+
+        Reviewed by Keith Miller.
+
+        In the baseline JIT and LLInt, when we loading a hole from an original array,
+        with the array prototype chain being normal, we end up marking the ArrayProfile
+        for that GetByVal as out of bounds. However, the DFG knows exactly how to
+        optimize this case by returning undefined when loading from a hole. Currently,
+        it only does this for Contiguous arrays (and sometimes Double arrays).
+        This patch just makes sure to not mark the ArrayProfile as out of bounds
+        in this scenario for Contiguous arrays, since the DFG will always optimize
+        this case.
+        
+        However, we should extend this by profiling when a GetByVal loads a hole. By
+        doing so, we can optimize this for Int32, ArrayStorage, and maybe even Double
+        arrays. That work will happen in:
+        https://bugs.webkit.org/show_bug.cgi?id=182940
+        
+        This patch is a 30-50%  speedup on JetStream's hash-map test. This patch
+        speeds up JetStream by 1% when testing on my iMac.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        (JSC::canAccessArgumentIndexQuickly): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::canAccessArgumentIndexQuickly):
+
 2018-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         GetArrayMask should support constant folding
