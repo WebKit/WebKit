@@ -38,6 +38,7 @@ public:
 
     RenderPtr<RenderObject> takeChild(RenderBlock& parent, RenderObject& oldChild);
 
+    void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
     void childBecameNonInline(RenderBlock& parent, RenderElement& child);
 
 private:

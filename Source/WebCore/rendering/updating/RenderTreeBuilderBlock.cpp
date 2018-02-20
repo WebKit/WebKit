@@ -325,7 +325,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && parent.canDropAnonymousBlockChild()) {
         // The removal has knocked us down to containing only a single anonymous
         // box. We can pull the content right back up into our box.
-        parent.dropAnonymousBoxChild(m_builder, downcast<RenderBlock>(*child));
+        dropAnonymousBoxChild(parent, downcast<RenderBlock>(*child));
     } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && parent.canDropAnonymousBlockChild()) {
         // It's possible that the removal has knocked us down to a single anonymous
         // block with floating siblings.
@@ -341,7 +341,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
                 }
             }
             if (dropAnonymousBlock)
-                parent.dropAnonymousBoxChild(m_builder, anonBlock);
+                dropAnonymousBoxChild(parent, anonBlock);
         }
     }
 
@@ -351,6 +351,18 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
             parent.deleteLines();
     }
     return takenChild;
+}
+
+void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
+{
+    parent.setNeedsLayoutAndPrefWidthsRecalc();
+    parent.setChildrenInline(child.childrenInline());
+    auto* nextSibling = child.nextSibling();
+
+    auto toBeDeleted = parent.takeChildInternal(child);
+    child.moveAllChildrenTo(m_builder, &parent, nextSibling, RenderBoxModelObject::NormalizeAfterInsertion::No);
+    // Delete the now-empty block's lines and nuke it.
+    child.deleteLines();
 }
 
 }
