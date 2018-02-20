@@ -32,6 +32,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <cstdint>
 #include <gst/app/gstappsrc.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <wtf/text/CString.h>
@@ -892,7 +893,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     else
         gst_buffer_set_size(priv->buffer.get(), static_cast<gssize>(length));
 
-    GST_BUFFER_OFFSET(priv->buffer.get()) = priv->offset;
+    uint64_t startingOffset = priv->offset;
+
     if (priv->requestedOffset == priv->offset)
         priv->requestedOffset += length;
     priv->offset += length;
@@ -902,11 +904,39 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
         gst_app_src_set_size(priv->appsrc, priv->offset);
         priv->size = priv->offset;
     }
-    GST_BUFFER_OFFSET_END(priv->buffer.get()) = priv->offset;
 
-    GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, priv->buffer.leakRef());
-    if (ret != GST_FLOW_OK && ret != GST_FLOW_EOS)
-        GST_ELEMENT_ERROR(src, CORE, FAILED, (nullptr), (nullptr));
+    // Now split the recv'd buffer into buffers that are of a size basesrc suggests. It is important not
+    // to push buffers that are too large, otherwise incorrect buffering messages can be sent from the
+    // pipeline.
+    uint64_t bufferSize = gst_buffer_get_size(priv->buffer.get());
+    uint64_t blockSize = static_cast<uint64_t>(GST_BASE_SRC_CAST(priv->appsrc)->blocksize);
+    ASSERT(blockSize);
+    GST_LOG_OBJECT(src, "Splitting the received buffer into %" PRIu64 " blocks", bufferSize / blockSize);
+    for (uint64_t currentOffset = 0; currentOffset < bufferSize; currentOffset += blockSize) {
+        uint64_t subBufferOffset = startingOffset + currentOffset;
+        uint64_t currentOffsetSize = std::min(blockSize, bufferSize - currentOffset);
+
+        GST_TRACE_OBJECT(src, "Create sub-buffer from [%" PRIu64 ", %" PRIu64 "]", currentOffset, currentOffset + currentOffsetSize);
+        GstBuffer* subBuffer = gst_buffer_copy_region(priv->buffer.get(), GST_BUFFER_COPY_ALL, currentOffset, currentOffsetSize);
+        if (UNLIKELY(!subBuffer)) {
+            GST_ELEMENT_ERROR(src, CORE, FAILED, ("Failed to allocate sub-buffer"), (nullptr));
+            break;
+        }
+
+        GST_BUFFER_OFFSET(subBuffer) = subBufferOffset;
+        GST_BUFFER_OFFSET_END(subBuffer) = subBufferOffset + currentOffsetSize;
+        GST_TRACE_OBJECT(src, "Set sub-buffer offset bounds [%" PRIu64 ", %" PRIu64 "]", GST_BUFFER_OFFSET(subBuffer), GST_BUFFER_OFFSET_END(subBuffer));
+
+        GST_TRACE_OBJECT(src, "Pushing buffer of size %" G_GSIZE_FORMAT " bytes", gst_buffer_get_size(subBuffer));
+        GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, subBuffer);
+
+        if (UNLIKELY(ret != GST_FLOW_OK && ret != GST_FLOW_EOS && ret != GST_FLOW_FLUSHING)) {
+            GST_ELEMENT_ERROR(src, CORE, FAILED, (nullptr), (nullptr));
+            break;
+        }
+    }
+
+    priv->buffer.clear();
 }
 
 void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error)
