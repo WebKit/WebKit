@@ -162,7 +162,7 @@ public:
 #endif
 
 #if USE(FREETYPE)
-    HarfBuzzFace* harfBuzzFace() const;
+    HarfBuzzFace& harfBuzzFace() const;
     bool hasCompatibleCharmap() const;
     FcFontSet* fallbacks() const;
 #endif

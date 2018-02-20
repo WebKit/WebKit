@@ -207,12 +207,11 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
         }
         hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters), length, run.startIndex, run.endIndex - run.startIndex);
 
-        HarfBuzzFace* face = fontPlatformData.harfBuzzFace();
-        ASSERT(face);
+        auto& face = fontPlatformData.harfBuzzFace();
         if (fontPlatformData.orientation() == Vertical)
-            face->setScriptForVerticalGlyphSubstitution(buffer.get());
+            face.setScriptForVerticalGlyphSubstitution(buffer.get());
 
-        HbUniquePtr<hb_font_t> harfBuzzFont(face->createFont());
+        HbUniquePtr<hb_font_t> harfBuzzFont(face.createFont());
         hb_shape(harfBuzzFont.get(), buffer.get(), features.isEmpty() ? nullptr : features.data(), features.size());
         m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, length, run.startIndex, run.endIndex));
         hb_buffer_reset(buffer.get());
