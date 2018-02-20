@@ -1,3 +1,40 @@
+2018-02-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas tab: hide navigation sidebar when viewing the overview
+        https://bugs.webkit.org/show_bug.cgi?id=182597
+        <rdar://problem/37341564>
+
+        Reviewed by Devin Rousso.
+
+        Support showing/hiding the navigation sidebar panel based on the current
+        represented object. Individual TabContentViews can opt-in to this behavior,
+        by overriding TabContentView.prototype.managesNavigationSidebarPanel.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.canShowRepresentedObject):
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.get managesNavigationSidebarPanel):
+        Hide the Canvas navigation sidebar when viewing the overview.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView):
+        (WI.ContentBrowserTabContentView.prototype.showNavigationSidebarPanel):
+        (WI.ContentBrowserTabContentView.prototype._navigationSidebarCollapsedStateDidChange):
+        (WI.ContentBrowserTabContentView.prototype._contentBrowserCurrentRepresentedObjectsDidChange):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.canShowRepresentedObject):
+        Provide default implementation that just defers to the TabContentView.
+        This exists so that a NavigationSidebarPanel that implements canShowRepresentedObject
+        will have a meaningful default to fall back on.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype._sidebarCollapsedStateDidChange):
+        (WI.TabBrowser.prototype._showNavigationSidebarPanelForTabContentView):
+
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView.prototype.get managesNavigationSidebarPanel):
+
 2018-02-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TabBar redesign: remove top-level search field and pin the Search tab

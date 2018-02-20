@@ -39,9 +39,13 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         this._contentBrowser = contentBrowser;
         this._contentBrowser.delegate = this;
 
+        this._ignoreNavigationSidebarPanelCollapsedEvent = false;
+        this._ignoreDetailsSidebarPanelCollapsedEvent = false;
+        this._ignoreDetailsSidebarPanelSelectedEvent = false;
+
         this._lastSelectedDetailsSidebarPanelSetting = new WI.Setting(identifier + "-last-selected-details-sidebar-panel", null);
 
-        this._contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.showDetailsSidebarPanels, this);
+        this._contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this._contentBrowserCurrentRepresentedObjectsDidChange, this);
         this._contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
 
         // If any content views were shown during sidebar construction, contentBrowserTreeElementForRepresentedObject() would have returned null.
@@ -134,6 +138,36 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         return true;
     }
 
+    showNavigationSidebarPanel()
+    {
+        if (!this.visible)
+            return;
+
+        if (!this.navigationSidebarPanel)
+            return;
+
+        this._ignoreNavigationSidebarPanelCollapsedEvent = true;
+
+        let currentRepresentedObjects = this._contentBrowser.currentRepresentedObjects;
+        let shouldShowSidebar = currentRepresentedObjects.some((object) => this.navigationSidebarPanel.canShowRepresentedObject(object));
+
+        if (shouldShowSidebar) {
+            if (!this.navigationSidebarPanel.parentSidebar)
+                WI.navigationSidebar.addSidebarPanel(this.navigationSidebarPanel);
+        } else if (this.navigationSidebarPanel.parentSidebar)
+            WI.navigationSidebar.removeSidebarPanel(this.navigationSidebarPanel);
+
+        if (this.navigationSidebarPanel.parentSidebar) {
+            WI.navigationSidebar.selectedSidebarPanel = this.navigationSidebarPanel;
+            WI.navigationSidebar.collapsed = this.navigationSidebarCollapsedSetting.value;
+        } else
+            WI.navigationSidebar.collapsed = true;
+
+        this._ignoreNavigationSidebarPanelCollapsedEvent = false;
+
+        this._showNavigationSidebarItem.enabled = !!this.navigationSidebarPanel.parentSidebar;
+    }
+
     showDetailsSidebarPanels()
     {
         if (!this.visible)
@@ -220,7 +254,15 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     _navigationSidebarCollapsedStateDidChange(event)
     {
+        if (!this.visible)
+            return;
+
         this._showNavigationSidebarItem.activated = !WI.navigationSidebar.collapsed;
+
+        if (this._ignoreNavigationSidebarPanelCollapsedEvent)
+            return;
+
+        this.navigationSidebarCollapsedSetting.value = WI.navigationSidebar.collapsed;
     }
 
     _detailsSidebarCollapsedStateDidChange(event)
@@ -278,5 +320,12 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             treeElement.revealAndSelect(true, false, true, true);
         else if (this.navigationSidebarPanel && this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement)
             this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
+    }
+
+    _contentBrowserCurrentRepresentedObjectsDidChange()
+    {
+        if (this.managesNavigationSidebarPanel)
+            this.showNavigationSidebarPanel();
+        this.showDetailsSidebarPanels();
     }
 };

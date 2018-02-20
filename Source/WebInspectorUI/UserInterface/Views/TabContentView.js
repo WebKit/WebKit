@@ -99,6 +99,12 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         return this._tabBarItem;
     }
 
+    get managesNavigationSidebarPanel()
+    {
+        // Implemented by subclasses.
+        return false;
+    }
+
     get managesDetailsSidebarPanels()
     {
         // Implemented by subclasses.

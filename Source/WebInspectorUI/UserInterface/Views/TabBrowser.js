@@ -321,7 +321,7 @@ WI.TabBrowser = class TabBrowser extends WI.View
         if (!tabContentView)
             return;
 
-        if (event.target === this._navigationSidebar)
+        if (event.target === this._navigationSidebar && !tabContentView.managesNavigationSidebarPanel)
             tabContentView.navigationSidebarCollapsedSetting.value = this._navigationSidebar.collapsed;
         else if (event.target === this._detailsSidebar && !tabContentView.managesDetailsSidebarPanels)
             tabContentView.detailsSidebarCollapsedSetting.value = this._detailsSidebar.collapsed;
@@ -369,6 +369,12 @@ WI.TabBrowser = class TabBrowser extends WI.View
         var navigationSidebarPanel = tabContentView.navigationSidebarPanel;
         if (!navigationSidebarPanel) {
             this._navigationSidebar.collapsed = true;
+            this._ignoreSidebarEvents = false;
+            return;
+        }
+
+        if (tabContentView.managesNavigationSidebarPanel) {
+            tabContentView.showNavigationSidebarPanel();
             this._ignoreSidebarEvents = false;
             return;
         }

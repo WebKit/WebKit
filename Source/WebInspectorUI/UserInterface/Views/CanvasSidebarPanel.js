@@ -151,6 +151,14 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         super.hidden();
     }
 
+    canShowRepresentedObject(representedObject)
+    {
+        if (representedObject instanceof WI.CanvasCollection)
+            return false;
+
+        return super.canShowRepresentedObject(representedObject);
+    }
+
     // Protected
 
     hasCustomFilters()

@@ -85,6 +85,11 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         return true;
     }
 
+    get managesNavigationSidebarPanel()
+    {
+        return true;
+    }
+
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WI.Canvas

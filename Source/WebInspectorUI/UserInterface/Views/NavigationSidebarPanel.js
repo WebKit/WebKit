@@ -201,6 +201,13 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         return true;
     }
 
+    canShowRepresentedObject(representedObject)
+    {
+        let selectedTabContentView = WI.tabBrowser.selectedTabContentView;
+        console.assert(selectedTabContentView instanceof WI.TabContentView, "Missing TabContentView for NavigationSidebarPanel.");
+        return selectedTabContentView && selectedTabContentView.canShowRepresentedObject(representedObject);
+    }
+
     saveStateToCookie(cookie)
     {
         console.assert(cookie);
