@@ -1,3 +1,24 @@
+2018-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Crash under MIMETypeRegistry::isSupportedJavaScriptMIMEType()
+        https://bugs.webkit.org/show_bug.cgi?id=182927
+        <rdar://problem/37675748>
+
+        Reviewed by Antti Koivisto.
+
+        Make it safe to call MIMETypeRegistry::isSupportedJavaScriptMIMEType() from the non-main thread.
+        It is currently being called from a background thread in the following places:
+        - ServiceWorkerJob::didReceiveResponse()
+        - WorkerGlobalScope::importScripts()
+
+        These call sites on non-main threads were added recently with the support for service workers.
+
+        No new tests, already covered by existing tests that flakily experience service worker
+        process crashes.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+
 2018-02-19  Dean Jackson  <dino@apple.com>
 
         SIGFPE @ int WebCore::SVGToOTFFontConverter::scaleUnitsPerEm<int> const + 45

@@ -492,6 +492,15 @@ bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
+
+    if (!isMainThread()) {
+        bool isSupported = false;
+        callOnMainThreadAndWait([&isSupported, mimeType = mimeType.isolatedCopy()] {
+            isSupported = isSupportedJavaScriptMIMEType(mimeType);
+        });
+        return isSupported;
+    }
+
     if (!supportedJavaScriptMIMETypes)
         initializeSupportedNonImageMimeTypes();
     return supportedJavaScriptMIMETypes->contains(mimeType);
