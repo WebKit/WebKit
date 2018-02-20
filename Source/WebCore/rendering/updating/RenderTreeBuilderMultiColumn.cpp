@@ -31,6 +31,7 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderTreeBuilder.h"
+#include "RenderTreeBuilderBlock.h"
 
 namespace WebCore {
 
@@ -168,7 +169,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     auto newFragmentedFlow = !flow.style().hasLinesClamp() ? WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK)) :  WebCore::createRenderer<RenderLinesClampFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
-    m_builder.insertChildToRenderBlock(flow, WTFMove(newFragmentedFlow));
+    m_builder.blockBuilder().insertChild(flow, WTFMove(newFragmentedFlow), nullptr);
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
     flow.moveChildrenTo(m_builder, &fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
@@ -317,7 +318,7 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
 
         // This is a guard to stop an ancestor flow thread from processing the spanner.
         gShiftingSpanner = true;
-        m_builder.insertChildToRenderBlock(*multicolContainer, WTFMove(takenDescendant), insertBeforeMulticolChild);
+        m_builder.blockBuilder().insertChild(*multicolContainer, WTFMove(takenDescendant), insertBeforeMulticolChild);
         gShiftingSpanner = false;
 
         // The spanner has now been moved out from the flow thread, but we don't want to
@@ -354,7 +355,7 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
     auto newSet = flow.createMultiColumnSet(RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), BLOCK));
     newSet->initializeStyle();
     auto& set = *newSet;
-    m_builder.insertChildToRenderBlock(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);
+    m_builder.blockBuilder().insertChild(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);
     flow.invalidateFragments();
 
     // We cannot handle immediate column set siblings at the moment (and there's no need for

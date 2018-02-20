@@ -31,6 +31,7 @@
 #include "RenderRubyRun.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
+#include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderInline.h"
 
 namespace WebCore {
@@ -199,7 +200,7 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
             // RenderRuby has already ascertained that we can add the child here.
             ASSERT(!parent.hasRubyText());
             // prepend ruby texts as first child
-            parent.addChild(m_builder, WTFMove(child), parent.firstChild());
+            m_builder.blockFlowBuilder().insertChild(parent, WTFMove(child), parent.firstChild());
             return;
         }
         if (beforeChild->isRubyText()) {
@@ -215,7 +216,7 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
             // Note: Doing it in this order and not using RenderRubyRun's methods,
             // in order to avoid automatic removal of the ruby run in case there is no
             // other child besides the old ruby text.
-            parent.addChild(m_builder, WTFMove(child), beforeChild);
+            m_builder.blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
             auto takenBeforeChild = m_builder.blockBuilder().takeChild(parent, *beforeChild);
 
             m_builder.insertChild(*newRun, WTFMove(takenBeforeChild));
@@ -252,7 +253,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
         if (!beforeBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             beforeBlock = newBlock.get();
-            m_builder.insertChildToRenderBlockFlow(parent, WTFMove(newBlock), parent.firstChild());
+            m_builder.blockFlowBuilder().insertChild(parent, WTFMove(newBlock), parent.firstChild());
         }
         beforeChild = nullptr;
         return *beforeBlock;
@@ -267,7 +268,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
         if (!afterBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             afterBlock = newBlock.get();
-            m_builder.insertChildToRenderBlockFlow(parent, WTFMove(newBlock));
+            m_builder.blockFlowBuilder().insertChild(parent, WTFMove(newBlock), nullptr);
         }
         beforeChild = nullptr;
         return *afterBlock;
@@ -296,7 +297,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
     if (!lastRun || lastRun->hasRubyText()) {
         auto newRun = RenderRubyRun::staticCreateRubyRun(&parent);
         lastRun = newRun.get();
-        m_builder.insertChildToRenderBlockFlow(parent, WTFMove(newRun), beforeChild);
+        m_builder.blockFlowBuilder().insertChild(parent, WTFMove(newRun), beforeChild);
     }
     beforeChild = nullptr;
     return *lastRun;
@@ -370,7 +371,7 @@ RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
     if (!base) {
         auto newBase = rubyRun.createRubyBase();
         base = newBase.get();
-        m_builder.insertChildToRenderBlockFlow(rubyRun, WTFMove(newBase));
+        m_builder.blockFlowBuilder().insertChild(rubyRun, WTFMove(newBase), nullptr);
     }
     return *base;
 }

@@ -3844,11 +3844,6 @@ void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
     fragmentedFlow->layoutFlowExcludedObjects(relayoutChildren);
 }
 
-void RenderBlockFlow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    builder.insertChildToRenderBlockFlow(*this, WTFMove(newChild), beforeChild);
-}
-
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)
 {
     // If we don't use columns or flow threads, then bail.
