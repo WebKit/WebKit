@@ -48,6 +48,25 @@ void RenderTreeBuilder::FormControls::insertChild(RenderMenuList& parent, Render
     parent.didInsertChild(newChild, beforeChild);
 }
 
+RenderPtr<RenderObject> RenderTreeBuilder::FormControls::takeChild(RenderMenuList& parent, RenderObject& child)
+{
+    auto* innerRenderer = parent.innerRenderer();
+    if (!innerRenderer || &child == innerRenderer)
+        return m_builder.blockBuilder().takeChild(parent, child);
+    return m_builder.takeChild(*innerRenderer, child);
+}
+
+RenderPtr<RenderObject> RenderTreeBuilder::FormControls::takeChild(RenderButton& parent, RenderObject& child)
+{
+    auto* innerRenderer = parent.innerRenderer();
+    if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
+        ASSERT(&child == innerRenderer || !innerRenderer);
+        return m_builder.blockBuilder().takeChild(parent, child);
+    }
+    return m_builder.takeChild(*innerRenderer, child);
+}
+
+
 RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderButton& parent)
 {
     auto* innerRenderer = parent.innerRenderer();

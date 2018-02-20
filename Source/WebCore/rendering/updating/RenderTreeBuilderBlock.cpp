@@ -367,7 +367,7 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     auto* nextSibling = child.nextSibling();
 
     auto toBeDeleted = m_builder.takeChildFromRenderElement(parent, child);
-    m_builder.moveAllChildrenTo(child, &parent, nextSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
+    m_builder.moveAllChildrenTo(child, parent, nextSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }
