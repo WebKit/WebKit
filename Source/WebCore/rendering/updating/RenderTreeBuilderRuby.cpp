@@ -139,7 +139,7 @@ void RenderTreeBuilder::Ruby::moveInlineChildren(RenderRubyBase& from, RenderRub
         else {
             auto newToBlock = to.createAnonymousBlock();
             toBlock = newToBlock.get();
-            to.insertChildInternal(WTFMove(newToBlock), nullptr);
+            m_builder.insertChildToRenderElementInternal(to, WTFMove(newToBlock));
         }
     }
     // Move our inline children into the target block we determined above.

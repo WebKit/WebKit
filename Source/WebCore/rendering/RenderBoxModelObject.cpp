@@ -2700,7 +2700,7 @@ void RenderBoxModelObject::moveChildTo(RenderTreeBuilder& builder, RenderBoxMode
         builder.insertChild(*toBoxModelObject, WTFMove(childToMove), beforeChild);
     } else {
         auto childToMove = builder.takeChildFromRenderElement(*this, *child);
-        toBoxModelObject->insertChildInternal(WTFMove(childToMove), beforeChild);
+        builder.insertChildToRenderElementInternal(*toBoxModelObject, WTFMove(childToMove), beforeChild);
     }
 }
 

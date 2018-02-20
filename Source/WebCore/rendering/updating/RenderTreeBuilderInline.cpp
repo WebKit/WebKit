@@ -225,9 +225,9 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (createdPre)
-        block->insertChildInternal(WTFMove(createdPre), boxFirst);
-    block->insertChildInternal(WTFMove(newBlockBox), boxFirst);
-    block->insertChildInternal(WTFMove(createdPost), boxFirst);
+        m_builder.insertChildToRenderElementInternal(*block, WTFMove(createdPre), boxFirst);
+    m_builder.insertChildToRenderElementInternal(*block, WTFMove(newBlockBox), boxFirst);
+    m_builder.insertChildToRenderElementInternal(*block, WTFMove(createdPost), boxFirst);
     block->setChildrenInline(false);
 
     if (madeNewBeforeBlock) {
@@ -236,7 +236,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
             RenderObject* no = o;
             o = no->nextSibling();
             auto childToMove = m_builder.takeChildFromRenderElement(*block, *no);
-            pre->insertChildInternal(WTFMove(childToMove), nullptr);
+            m_builder.insertChildToRenderElementInternal(*pre, WTFMove(childToMove));
             no->setNeedsLayoutAndPrefWidthsRecalc();
         }
     }
@@ -361,14 +361,14 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
         cloneBlockChild.resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
 
     // Now we are at the block level. We need to put the clone into the toBlock.
-    toBlock->insertChildInternal(WTFMove(cloneInline), nullptr);
+    m_builder.insertChildToRenderElementInternal(*toBlock, WTFMove(cloneInline));
 
     // Now take all the children after currentChild and remove them from the fromBlock
     // and put them in the toBlock.
     for (auto* current = currentChild->nextSibling(); current;) {
         auto* next = current->nextSibling();
         auto childToMove = m_builder.takeChildFromRenderElement(*fromBlock, *current);
-        toBlock->insertChildInternal(WTFMove(childToMove), nullptr);
+        m_builder.insertChildToRenderElementInternal(*toBlock, WTFMove(childToMove));
         current = next;
     }
 }

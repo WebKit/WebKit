@@ -778,6 +778,8 @@ public:
 
     virtual void willBeRemovedFromTree();
     void resetFragmentedFlowStateOnRemoval();
+    void initializeFragmentedFlowStateOnInsertion();
+    virtual void insertedIntoTree();
 
 protected:
     //////////////////////////////////////////
@@ -793,8 +795,6 @@ protected:
 
     virtual void willBeDestroyed(RenderTreeBuilder&);
 
-    virtual void insertedIntoTree();
-
     void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
     void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }
     void setPosChildNeedsLayoutBit(bool b) { m_bitfields.setPosChildNeedsLayout(b); }
@@ -803,7 +803,6 @@ protected:
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
     static void calculateBorderStyleColor(const EBorderStyle&, const BoxSide&, Color&);
 
-    void initializeFragmentedFlowStateOnInsertion();
     static FragmentedFlowState computedFragmentedFlowState(const RenderObject&);
 
 private:

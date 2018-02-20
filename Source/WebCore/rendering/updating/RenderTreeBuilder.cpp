@@ -336,8 +336,44 @@ void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, Render
         return;
     }
     auto& newChild = *child.get();
-    parent.insertChildInternal(WTFMove(child), beforeChild);
+    insertChildToRenderElementInternal(parent, WTFMove(child), beforeChild);
     parent.didInsertChild(newChild, beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
+    ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
+    ASSERT(!child->parent());
+    ASSERT(!parent.isRenderBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
+
+    while (beforeChild && beforeChild->parent() && beforeChild->parent() != &parent)
+    beforeChild = beforeChild->parent();
+
+    ASSERT(!beforeChild || beforeChild->parent() == &parent);
+    ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
+
+    // Take the ownership.
+    auto* newChild = parent.attachRendererInternal(WTFMove(child), beforeChild);
+
+    newChild->initializeFragmentedFlowStateOnInsertion();
+    if (!parent.renderTreeBeingDestroyed()) {
+        newChild->insertedIntoTree();
+        if (is<RenderElement>(*newChild))
+        RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
+    }
+
+    newChild->setNeedsLayoutAndPrefWidthsRecalc();
+    parent.setPreferredLogicalWidthsDirty(true);
+    if (!parent.normalChildNeedsLayout())
+    parent.setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
+
+    if (AXObjectCache* cache = parent.document().axObjectCache())
+    cache->childrenChanged(&parent, newChild);
+    if (is<RenderBlockFlow>(parent))
+    downcast<RenderBlockFlow>(parent).invalidateLineLayoutPath();
+    if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyleIsAuto())
+    newChild->setHasOutlineAutoAncestor();
 }
 
 void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
@@ -372,7 +408,7 @@ void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject*
 
         auto newBlock = parent.createAnonymousBlock();
         auto& block = *newBlock;
-        parent.insertChildInternal(WTFMove(newBlock), inlineRunStart);
+        insertChildToRenderElementInternal(parent, WTFMove(newBlock), inlineRunStart);
         parent.moveChildrenTo(*this, &block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
     }
 #ifndef NDEBUG
@@ -401,7 +437,7 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
             // so that the table repainting logic knows the structure is dirty.
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
-            parentBox->insertChildInternal(WTFMove(newPostBox), boxToSplit.nextSibling());
+            insertChildToRenderElementInternal(*parentBox, WTFMove(newPostBox), boxToSplit.nextSibling());
             boxToSplit.moveChildrenTo(*this, &postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
@@ -431,9 +467,9 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
         // An anonymous block must be made to wrap this inline.
         auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
         auto& block = *newBlock;
-        parent->insertChildInternal(WTFMove(newBlock), &child);
+        insertChildToRenderElementInternal(*parent, WTFMove(newBlock), &child);
         auto thisToMove = takeChildFromRenderElement(*parent, child);
-        block.insertChildInternal(WTFMove(thisToMove), nullptr);
+        insertChildToRenderElementInternal(block, WTFMove(thisToMove));
     }
 }
 
