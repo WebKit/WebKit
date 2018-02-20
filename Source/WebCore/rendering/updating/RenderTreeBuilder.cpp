@@ -161,13 +161,18 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderTableSection>(parent)) {
-        insertRecursiveIfNeeded(tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild));
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
+        if (&parent == &parentCandidate) {
+            tableBuilder().insertChild(downcast<RenderTableSection>(parent), WTFMove(child), beforeChild);
+            return;
+        }
+        insertRecursiveIfNeeded(parentCandidate);
         return;
     }
 
     if (is<RenderTable>(parent)) {
         auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild);
-        if (is<RenderTable>(parentCandidate) && &parentCandidate == &parent) {
+        if (&parentCandidate == &parent) {
             tableBuilder().insertChild(downcast<RenderTable>(parentCandidate), WTFMove(child), beforeChild);
             return;
         }
@@ -501,16 +506,6 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
 void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToRenderTable(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToRenderTableSection(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)

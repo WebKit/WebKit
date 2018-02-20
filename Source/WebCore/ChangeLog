@@ -1,5 +1,27 @@
 2018-02-15  Zalan Bujtas  <zalan@apple.com>
 
+        [RenderTreeBuilder] Move RenderTableSection::addChild() to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182835
+        <rdar://problem/37579191>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::willInsertTableRow):
+        (WebCore::RenderTableSection::addChild): Deleted.
+        * rendering/RenderTableSection.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChild): Leftover from r228529.
+        (WebCore::RenderTreeBuilder::insertChildToRenderTable): Deleted. Leftover from r228529.
+        (WebCore::RenderTreeBuilder::insertChildToRenderTableSection): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::insertChild):
+
+2018-02-15  Zalan Bujtas  <zalan@apple.com>
+
         [RenderTreeBuilder] Move RenderTable::addChild() to RenderTreeBuilder
         https://bugs.webkit.org/show_bug.cgi?id=182832
         <rdar://problem/37576362>
