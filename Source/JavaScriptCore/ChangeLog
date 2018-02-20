@@ -1,3 +1,10 @@
+2018-02-13  Saam Barati  <sbarati@apple.com>
+
+        Follup fix to r228411 for 32-bit builds. I missed a place where we used non vararg getter for child2().
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2018-02-12  Saam Barati  <sbarati@apple.com>
 
         Add a GetIndexMask node and make it an input to GetByVal for array and typed array accesses in DFG SSA
