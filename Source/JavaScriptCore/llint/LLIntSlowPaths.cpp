@@ -836,7 +836,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     LLINT_RETURN(jsBoolean(couldDelete));
 }
 
-static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue, JSValue subscript)
+static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, Instruction* pc, JSValue baseValue, JSValue subscript)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -852,10 +852,32 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue
     
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
-        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i)) {
-            scope.release();
-            return asString(baseValue)->getIndex(exec, i);
+        ArrayProfile* arrayProfile = pc[4].u.arrayProfile;
+
+        if (isJSString(baseValue)) {
+            if (asString(baseValue)->canGetIndex(i)) {
+                scope.release();
+                return asString(baseValue)->getIndex(exec, i);
+            }
+            arrayProfile->setOutOfBounds();
+        } else if (baseValue.isObject()) {
+            JSObject* object = asObject(baseValue);
+            if (object->canGetIndexQuickly(i))
+                return object->getIndexQuickly(i);
+
+            bool skipMarkingOutOfBounds = false;
+
+            if (object->indexingType() == ArrayWithContiguous && i < object->butterfly()->publicLength()) {
+                // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
+                // https://bugs.webkit.org/show_bug.cgi?id=182940
+                auto* globalObject = object->globalObject();
+                skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
+            }
+
+            if (!skipMarkingOutOfBounds && !CommonSlowPaths::canAccessArgumentIndexQuickly(*object, i))
+                arrayProfile->setOutOfBounds();
         }
+
         scope.release();
         return baseValue.get(exec, i);
     }
@@ -871,7 +893,7 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue
 LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
 {
     LLINT_BEGIN();
-    LLINT_RETURN_PROFILED(op_get_by_val, getByVal(vm, exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
+    LLINT_RETURN_PROFILED(op_get_by_val, getByVal(vm, exec, pc, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_by_val)

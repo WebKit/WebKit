@@ -1583,7 +1583,7 @@ _llint_op_get_by_val:
     bineq t2, ContiguousShape, .opGetByValNotContiguous
 
 .opGetByValIsContiguous:
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValSlow
     andi JSObject::m_butterflyIndexingMask[t0], t1
     loadi TagOffset[t3, t1, 8], t2
     loadi PayloadOffset[t3, t1, 8], t1
@@ -1591,7 +1591,7 @@ _llint_op_get_by_val:
 
 .opGetByValNotContiguous:
     bineq t2, DoubleShape, .opGetByValNotDouble
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValSlow
     andi JSObject::m_butterflyIndexingMask[t0], t1
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValSlow
@@ -1603,23 +1603,20 @@ _llint_op_get_by_val:
 .opGetByValNotDouble:
     subi ArrayStorageShape, t2
     bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValSlow
     andi JSObject::m_butterflyIndexingMask[t0], t1
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1
 
 .opGetByValDone:
     loadi 4[PC], t0
-    bieq t2, EmptyValueTag, .opGetByValOutOfBounds
+    bieq t2, EmptyValueTag, .opGetByValSlow
 .opGetByValNotEmpty:
     storei t2, TagOffset[cfr, t0, 8]
     storei t1, PayloadOffset[cfr, t0, 8]
     valueProfile(t2, t1, 20, t0)
     dispatch(constexpr op_get_by_val_length)
 
-.opGetByValOutOfBounds:
-    loadpFromInstruction(4, t0)
-    storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opGetByValSlow:
     callOpcodeSlowPath(_llint_slow_path_get_by_val)
     dispatch(constexpr op_get_by_val_length)

@@ -722,55 +722,58 @@ private:
             case Array::Double:
                 if (arrayMode.arrayClass() == Array::OriginalArray
                     && arrayMode.speculation() == Array::InBounds) {
-                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                    if (globalObject->arrayPrototypeChainIsSane()) {
-                        // Check if SaneChain will work on a per-type basis. Note that:
-                        //
-                        // 1) We don't want double arrays to sometimes return undefined, since
-                        // that would require a change to the return type and it would pessimise
-                        // things a lot. So, we'd only want to do that if we actually had
-                        // evidence that we could read from a hole. That's pretty annoying.
-                        // Likely the best way to handle that case is with an equivalent of
-                        // SaneChain for OutOfBounds. For now we just detect when Undefined and
-                        // NaN are indistinguishable according to backwards propagation, and just
-                        // use SaneChain in that case. This happens to catch a lot of cases.
-                        //
-                        // 2) We don't want int32 array loads to have to do a hole check just to
-                        // coerce to Undefined, since that would mean twice the checks.
-                        //
-                        // This has two implications. First, we have to do more checks than we'd
-                        // like. It's unfortunate that we have to do the hole check. Second,
-                        // some accesses that hit a hole will now need to take the full-blown
-                        // out-of-bounds slow path. We can fix that with:
-                        // https://bugs.webkit.org/show_bug.cgi?id=144668
+                    // Check if SaneChain will work on a per-type basis. Note that:
+                    //
+                    // 1) We don't want double arrays to sometimes return undefined, since
+                    // that would require a change to the return type and it would pessimise
+                    // things a lot. So, we'd only want to do that if we actually had
+                    // evidence that we could read from a hole. That's pretty annoying.
+                    // Likely the best way to handle that case is with an equivalent of
+                    // SaneChain for OutOfBounds. For now we just detect when Undefined and
+                    // NaN are indistinguishable according to backwards propagation, and just
+                    // use SaneChain in that case. This happens to catch a lot of cases.
+                    //
+                    // 2) We don't want int32 array loads to have to do a hole check just to
+                    // coerce to Undefined, since that would mean twice the checks.
+                    //
+                    // This has two implications. First, we have to do more checks than we'd
+                    // like. It's unfortunate that we have to do the hole check. Second,
+                    // some accesses that hit a hole will now need to take the full-blown
+                    // out-of-bounds slow path. We can fix that with:
+                    // https://bugs.webkit.org/show_bug.cgi?id=144668
+                    
+                    bool canDoSaneChain = false;
+                    switch (arrayMode.type()) {
+                    case Array::Contiguous:
+                        // This is happens to be entirely natural. We already would have
+                        // returned any JSValue, and now we'll return Undefined. We still do
+                        // the check but it doesn't require taking any kind of slow path.
+                        canDoSaneChain = true;
+                        break;
                         
-                        bool canDoSaneChain = false;
-                        switch (arrayMode.type()) {
-                        case Array::Contiguous:
-                            // This is happens to be entirely natural. We already would have
-                            // returned any JSValue, and now we'll return Undefined. We still do
-                            // the check but it doesn't require taking any kind of slow path.
+                    case Array::Double:
+                        if (!(node->flags() & NodeBytecodeUsesAsOther)) {
+                            // Holes look like NaN already, so if the user doesn't care
+                            // about the difference between Undefined and NaN then we can
+                            // do this.
                             canDoSaneChain = true;
-                            break;
-                            
-                        case Array::Double:
-                            if (!(node->flags() & NodeBytecodeUsesAsOther)) {
-                                // Holes look like NaN already, so if the user doesn't care
-                                // about the difference between Undefined and NaN then we can
-                                // do this.
-                                canDoSaneChain = true;
-                            }
-                            break;
-                            
-                        default:
-                            break;
                         }
+                        break;
                         
-                        if (canDoSaneChain) {
-                            m_graph.registerAndWatchStructureTransition(globalObject->arrayPrototype()->structure());
-                            m_graph.registerAndWatchStructureTransition(globalObject->objectPrototype()->structure());
-                            if (globalObject->arrayPrototypeChainIsSane())
-                                node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
+                    default:
+                        break;
+                    }
+                    
+                    if (canDoSaneChain) {
+                        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+                        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
+                        if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                            && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
+                            && globalObject->arrayPrototypeChainIsSane()) {
+                            m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                            m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                            node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
                         }
                     }
                 }
