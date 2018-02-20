@@ -382,7 +382,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsInline& p
 #ifndef ASSERT_DISABLED
         ASSERT(isRubyChildForNormalRemoval(child));
 #endif
-        return parent.RenderInline::takeChild(m_builder, child);
+        return m_builder.takeChildFromRenderElement(parent, child);
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
     // just use the block's remove method.

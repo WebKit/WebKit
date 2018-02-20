@@ -2696,10 +2696,10 @@ void RenderBoxModelObject::moveChildTo(RenderTreeBuilder& builder, RenderBoxMode
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (toBoxModelObject->isRenderBlock() || toBoxModelObject->isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
-        auto childToMove = takeChildInternal(*child);
+        auto childToMove = builder.takeChildFromRenderElement(*this, *child);
         builder.insertChild(*toBoxModelObject, WTFMove(childToMove), beforeChild);
     } else {
-        auto childToMove = takeChildInternal(*child);
+        auto childToMove = builder.takeChildFromRenderElement(*this, *child);
         toBoxModelObject->insertChildInternal(WTFMove(childToMove), beforeChild);
     }
 }

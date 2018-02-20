@@ -26,9 +26,14 @@
 #include "config.h"
 #include "RenderTreeBuilder.h"
 
+#include "AXObjectCache.h"
+#include "Frame.h"
+#include "FrameSelection.h"
 #include "RenderButton.h"
+#include "RenderCounter.h"
 #include "RenderElement.h"
 #include "RenderGrid.h"
+#include "RenderLineBreak.h"
 #include "RenderMenuList.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
@@ -230,7 +235,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, Rend
     if (is<RenderBlock>(parent))
         return blockBuilder().takeChild(downcast<RenderBlock>(parent), child);
 
-    return parent.takeChild(*this, child);
+    return takeChildFromRenderElement(parent, child);
 }
 
 void RenderTreeBuilder::insertChild(RenderTreePosition& position, RenderPtr<RenderObject> child)
@@ -359,7 +364,7 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
         auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
         auto& block = *newBlock;
         parent->insertChildInternal(WTFMove(newBlock), &child);
-        auto thisToMove = parent->takeChildInternal(child);
+        auto thisToMove = takeChildFromRenderElement(*parent, child);
         block.insertChildInternal(WTFMove(thisToMove), nullptr);
     }
 }
@@ -562,5 +567,65 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderGrid(RenderGrid& p
     parent.dirtyGrid();
     return takenChild;
 }
+
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderElement(RenderElement& parent, RenderObject& child)
+{
+    RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
+
+    ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
+    ASSERT(child.parent() == &parent);
+
+    if (child.isFloatingOrOutOfFlowPositioned())
+        downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
+
+    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
+    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
+    // disappears gets repainted properly.
+    if (!parent.renderTreeBeingDestroyed() && child.everHadLayout()) {
+        child.setNeedsLayoutAndPrefWidthsRecalc();
+        // We only repaint |child| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
+        if (child.isBody())
+            parent.view().repaintRootContents();
+        else
+            child.repaint();
+    }
+
+    // If we have a line box wrapper, delete it.
+    if (is<RenderBox>(child))
+        downcast<RenderBox>(child).deleteLineBoxWrapper();
+    else if (is<RenderLineBreak>(child))
+        downcast<RenderLineBreak>(child).deleteInlineBoxWrapper();
+
+    if (!parent.renderTreeBeingDestroyed() && is<RenderFlexibleBox>(parent) && !child.isFloatingOrOutOfFlowPositioned() && child.isBox())
+        downcast<RenderFlexibleBox>(parent).clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(child));
+
+    // If child is the start or end of the selection, then clear the selection to
+    // avoid problems of invalid pointers.
+    if (!parent.renderTreeBeingDestroyed() && child.isSelectionBorder())
+        parent.frame().selection().setNeedsSelectionUpdate();
+
+    if (!parent.renderTreeBeingDestroyed())
+        child.willBeRemovedFromTree();
+
+    child.resetFragmentedFlowStateOnRemoval();
+
+    // WARNING: There should be no code running between willBeRemovedFromTree() and the actual removal below.
+    // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure
+    // and the code running here would force an untimely rebuilding, leaving |child| dangling.
+    auto childToTake = parent.detachRendererInternal(child);
+
+    // rendererRemovedFromTree() walks the whole subtree. We can improve performance
+    // by skipping this step when destroying the entire tree.
+    if (!parent.renderTreeBeingDestroyed() && is<RenderElement>(*childToTake))
+        RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(*childToTake));
+
+    if (!parent.renderTreeBeingDestroyed()) {
+        if (AXObjectCache* cache = parent.document().existingAXObjectCache())
+            cache->childrenChanged(&parent);
+    }
+
+    return childToTake;
+}
+
 
 }

@@ -261,7 +261,7 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
 
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     anonymousBlock.moveAllChildrenToInternal(*parent);
-    auto toBeDestroyed = parent->takeChildInternal(anonymousBlock);
+    auto toBeDestroyed = m_builder.takeChildFromRenderElement(*parent, anonymousBlock);
     // anonymousBlock is dead here.
 }
 
@@ -270,7 +270,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
     if (parent.renderTreeBeingDestroyed())
-        return parent.RenderBox::takeChild(m_builder, oldChild);
+        return m_builder.takeChildFromRenderElement(parent, oldChild);
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
@@ -293,7 +293,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
             ASSERT(!inlineChildrenBlock.continuation());
             // Cache this value as it might get changed in setStyle() call.
             inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent.style(), BLOCK));
-            auto blockToMove = parent.takeChildInternal(inlineChildrenBlock);
+            auto blockToMove = m_builder.takeChildFromRenderElement(parent, inlineChildrenBlock);
 
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
@@ -320,7 +320,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::takeChild(RenderBlock& parent,
 
     parent.invalidateLineLayoutPath();
 
-    auto takenChild = parent.RenderBox::takeChild(m_builder, oldChild);
+    auto takenChild = m_builder.takeChildFromRenderElement(parent, oldChild);
 
     RenderObject* child = prev ? prev : next;
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && parent.canDropAnonymousBlockChild()) {
@@ -360,7 +360,7 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
     parent.setChildrenInline(child.childrenInline());
     auto* nextSibling = child.nextSibling();
 
-    auto toBeDeleted = parent.takeChildInternal(child);
+    auto toBeDeleted = m_builder.takeChildFromRenderElement(parent, child);
     child.moveAllChildrenTo(m_builder, &parent, nextSibling, RenderBoxModelObject::NormalizeAfterInsertion::No);
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();

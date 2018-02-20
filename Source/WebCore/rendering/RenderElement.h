@@ -89,7 +89,6 @@ public:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     virtual void addChild(RenderTreeBuilder&, RenderPtr<RenderObject>, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr);
-    virtual RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) WARN_UNUSED_RETURN;
     void removeAndDestroyChild(RenderTreeBuilder&, RenderObject&);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get
@@ -101,7 +100,6 @@ public:
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
     void insertChildInternal(RenderPtr<RenderObject>, RenderObject* beforeChild);
-    RenderPtr<RenderObject> takeChildInternal(RenderObject&) WARN_UNUSED_RETURN;
 
     virtual RenderElement* hoverAncestor() const;
 
