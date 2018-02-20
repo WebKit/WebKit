@@ -1,5 +1,27 @@
 2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] Support ArrayPush for ArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=182782
+
+        Reviewed by Saam Barati.
+
+        Existing array-push-multiple-storage.js covers ArrayPush(ArrayStorage) multiple arguments case.
+
+        * stress/array-push-array-storage-beyond-int32.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-push-array-storage.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-push-multiple-array-storage-beyond-int32.js: Added.
+        (shouldBe):
+        (test):
+        * stress/array-push-multiple-storage-continuous.js: Added.
+        (shouldBe):
+        (test):
+
+2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Support ArrayPop for ArrayStorage
         https://bugs.webkit.org/show_bug.cgi?id=182783
 

@@ -4475,6 +4475,100 @@ private:
             return;
         }
 
+        case Array::ArrayStorage: {
+            // This ensures that the result of ArrayPush is Int32 in AI.
+            int32_t largestPositiveInt32Length = 0x7fffffff - elementCount;
+
+            LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
+            // Refuse to handle bizarre lengths.
+            speculate(Uncountable, noValue(), nullptr, m_out.above(prevLength, m_out.constInt32(largestPositiveInt32Length)));
+
+            if (elementCount == 1) {
+                Edge& element = m_graph.varArgChild(m_node, elementOffset);
+
+                LValue value = lowJSValue(element);
+
+                LBasicBlock fastPath = m_out.newBlock();
+                LBasicBlock slowPath = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                m_out.branch(
+                    m_out.aboveOrEqual(
+                        prevLength, m_out.load32(storage, m_heaps.Butterfly_vectorLength)),
+                    rarely(slowPath), usually(fastPath));
+
+                LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
+                m_out.store64(
+                    value, m_out.baseIndex(m_heaps.ArrayStorage_vector, storage, m_out.zeroExtPtr(prevLength)));
+                LValue newLength = m_out.add(prevLength, m_out.int32One);
+                m_out.store32(newLength, storage, m_heaps.Butterfly_publicLength);
+                m_out.store32(
+                    m_out.add(m_out.load32(storage, m_heaps.ArrayStorage_numValuesInVector), m_out.int32One),
+                    storage, m_heaps.ArrayStorage_numValuesInVector);
+
+                ValueFromBlock fastResult = m_out.anchor(boxInt32(newLength));
+                m_out.jump(continuation);
+
+                m_out.appendTo(slowPath, continuation);
+                ValueFromBlock slowResult = m_out.anchor(
+                    vmCall(Int64, m_out.operation(operationArrayPush), m_callFrame, value, base));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                setJSValue(m_out.phi(Int64, fastResult, slowResult));
+                return;
+            }
+
+            LValue newLength = m_out.add(prevLength, m_out.constInt32(elementCount));
+
+            LBasicBlock fastPath = m_out.newBlock();
+            LBasicBlock slowPath = m_out.newBlock();
+            LBasicBlock setup = m_out.newBlock();
+            LBasicBlock slowCallPath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue beyondVectorLength = m_out.above(newLength, m_out.load32(storage, m_heaps.Butterfly_vectorLength));
+
+            m_out.branch(beyondVectorLength, rarely(slowPath), usually(fastPath));
+
+            LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
+            m_out.store32(newLength, storage, m_heaps.Butterfly_publicLength);
+            m_out.store32(
+                m_out.add(m_out.load32(storage, m_heaps.ArrayStorage_numValuesInVector), m_out.constInt32(elementCount)),
+                storage, m_heaps.ArrayStorage_numValuesInVector);
+            ValueFromBlock fastBufferResult = m_out.anchor(m_out.baseIndex(storage, m_out.zeroExtPtr(prevLength), ScaleEight, ArrayStorage::vectorOffset()));
+            m_out.jump(setup);
+
+            m_out.appendTo(slowPath, setup);
+            size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
+            ASSERT(scratchSize);
+            ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+            m_out.storePtr(m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
+            ValueFromBlock slowBufferResult = m_out.anchor(m_out.constIntPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
+            m_out.jump(setup);
+
+            m_out.appendTo(setup, slowCallPath);
+            LValue buffer = m_out.phi(pointerType(), fastBufferResult, slowBufferResult);
+            for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+                Edge& element = m_graph.varArgChild(m_node, elementIndex + elementOffset);
+
+                LValue value = lowJSValue(element);
+                m_out.store64(value, m_out.baseIndex(m_heaps.variables, buffer, m_out.constInt32(elementIndex), jsNumber(elementIndex)));
+            }
+            ValueFromBlock fastResult = m_out.anchor(boxInt32(newLength));
+
+            m_out.branch(beyondVectorLength, rarely(slowCallPath), usually(continuation));
+
+            m_out.appendTo(slowCallPath, continuation);
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationArrayPushMultiple), m_callFrame, base, buffer, m_out.constInt32(elementCount)));
+            m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, fastResult, slowResult));
+            return;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;
@@ -14635,7 +14729,7 @@ private:
                     m_out.bitAnd(indexingType, m_out.constInt32(IndexingShapeMask)),
                     m_out.constInt32(ArrayStorageShape)),
                 m_out.constInt32(SlowPutArrayStorageShape - ArrayStorageShape));
-            m_out.branch(isAnArrayStorageShape, usually(checkCase), usually(continuation));
+            m_out.branch(isAnArrayStorageShape, unsure(checkCase), unsure(continuation));
 
             LBasicBlock lastNext = m_out.appendTo(checkCase, trueCase);
             switch (arrayMode.arrayClass()) {
@@ -14646,14 +14740,14 @@ private:
             case Array::Array:
                 m_out.branch(
                     m_out.testNonZero32(indexingType, m_out.constInt32(IsArray)),
-                    usually(trueCase), usually(continuation));
+                    unsure(trueCase), unsure(continuation));
                 break;
 
             case Array::NonArray:
             case Array::OriginalNonArray:
                 m_out.branch(
                     m_out.testIsZero32(indexingType, m_out.constInt32(IsArray)),
-                    usually(trueCase), usually(continuation));
+                    unsure(trueCase), unsure(continuation));
                 break;
 
             case Array::PossiblyArray:
