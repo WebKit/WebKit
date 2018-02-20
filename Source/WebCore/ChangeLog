@@ -1,3 +1,26 @@
+2018-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 11.3 Beta] Can't copy a URL from Safari and paste it into the Gmail app
+        https://bugs.webkit.org/show_bug.cgi?id=182952
+        <rdar://problem/37636190>
+
+        Reviewed by Tim Horton.
+
+        After r220865 refactored the iOS copy codepaths to use NSItemProviders, we stopped writing the URL as plain text
+        to the pasteboard. However, this means clients that only check for "text/plain" (or one of its aliases) on the
+        pasteboard won't read any data on paste.
+
+        To fix this, we restore the pre-iOS 11.3 behavior of writing both the URL and plain text to the pasteboard.
+        Since we're using item providers, we also ensure that the NSURL is at a higher fidelity than the string to make
+        it clear that the data should be consumed as a URL.
+
+        This patch also rebaselines an existing drag and drop test to cover this change, and adds a new API test,
+        ActionSheetTests.CopyLinkWritesURLAndPlainText, which simulates copying a link using the share sheet and pasting
+        into a DataTransfer-dumping test harness.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2018-02-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Returning from Auto-PiP causes Safari to be unresponsive

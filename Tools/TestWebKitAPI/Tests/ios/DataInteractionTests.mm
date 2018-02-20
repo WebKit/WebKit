@@ -1580,8 +1580,14 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingURL)
     [webView stringByEvaluatingJavaScript:@"rich.innerHTML = '<a href=\"https://www.apple.com/\">This is a link.</a>'"];
     [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
-        @"dragover": @{ @"text/uri-list" : @"" },
-        @"drop": @{ @"text/uri-list" : @"https://www.apple.com/" }
+        @"dragover": @{
+            @"text/uri-list" : @"",
+            @"text/plain" : @""
+        },
+        @"drop": @{
+            @"text/uri-list" : @"https://www.apple.com/",
+            @"text/plain" : @"https://www.apple.com/"
+        }
     });
 }
 

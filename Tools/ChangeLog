@@ -1,3 +1,20 @@
+2018-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 11.3 Beta] Can't copy a URL from Safari and paste it into the Gmail app
+        https://bugs.webkit.org/show_bug.cgi?id=182952
+        <rdar://problem/37636190>
+
+        Reviewed by Tim Horton.
+
+        Adds a new iOS copy/paste test that copies an anchor element via action sheet, and checks that upon pasting,
+        both "text/plain" and "text/uri-list" are provided. Additionally tweaks an existing iOS drag and drop test to
+        check for the same behavior.
+
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-02-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser
