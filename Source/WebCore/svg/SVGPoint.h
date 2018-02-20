@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +40,6 @@ public:
     }
 
     static Ref<SVGPoint> create(const FloatPoint& initialValue = { })
-    {
-        return adoptRef(*new SVGPoint(initialValue));
-    }
-
-    static Ref<SVGPoint> create(const FloatPoint* initialValue)
     {
         return adoptRef(*new SVGPoint(initialValue));
     }
@@ -110,11 +106,6 @@ protected:
     }
 
     explicit SVGPoint(const FloatPoint& initialValue)
-        : SVGPropertyTearOff<FloatPoint>(initialValue)
-    {
-    }
-
-    explicit SVGPoint(const FloatPoint* initialValue)
         : SVGPropertyTearOff<FloatPoint>(initialValue)
     {
     }

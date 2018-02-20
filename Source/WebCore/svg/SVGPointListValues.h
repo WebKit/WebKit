@@ -34,8 +34,15 @@ public:
     String valueAsString() const;
 };
 
-template<> struct SVGPropertyTraits<SVGPointListValues> {
+template<>
+struct SVGPropertyTraits<SVGPointListValues> {
     static SVGPointListValues initialValue() { return { }; }
+    static SVGPointListValues fromString(const String& string)
+    {
+        SVGPointListValues list;
+        pointsListFromSVGData(list, string);
+        return list;
+    }
 
     using ListItemType = FloatPoint;
     using ListItemTearOff = SVGPoint;

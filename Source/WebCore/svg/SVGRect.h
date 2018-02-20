@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +21,7 @@
 #pragma once
 
 #include "SVGPropertyTearOff.h"
-#include "SVGRectTraits.h"
+#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
@@ -32,11 +33,6 @@ public:
     }
 
     static Ref<SVGRect> create(const FloatRect& initialValue = { })
-    {
-        return adoptRef(*new SVGRect(initialValue));
-    }
-
-    static Ref<SVGRect> create(const FloatRect* initialValue)
     {
         return adoptRef(*new SVGRect(initialValue));
     }
@@ -119,11 +115,6 @@ private:
     }
 
     explicit SVGRect(const FloatRect& initialValue)
-        : SVGPropertyTearOff<FloatRect>(initialValue)
-    {
-    }
-
-    explicit SVGRect(const FloatRect* initialValue)
         : SVGPropertyTearOff<FloatRect>(initialValue)
     {
     }

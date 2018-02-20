@@ -41,11 +41,6 @@ public:
         return adoptRef(*new SVGNumber(initialValue));
     }
 
-    static Ref<SVGNumber> create(const float* initialValue)
-    {
-        return adoptRef(*new SVGNumber(initialValue));
-    }
-
     template<typename T> static ExceptionOr<Ref<SVGNumber>> create(ExceptionOr<T>&& initialValue)
     {
         if (initialValue.hasException())
@@ -76,11 +71,6 @@ private:
     }
 
     explicit SVGNumber(const float& initialValue)
-        : SVGPropertyTearOff<float>(initialValue)
-    {
-    }
-
-    explicit SVGNumber(const float* initialValue)
         : SVGPropertyTearOff<float>(initialValue)
     {
     }

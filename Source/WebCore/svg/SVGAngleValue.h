@@ -56,7 +56,8 @@ private:
     float m_valueInSpecifiedUnits { 0 };
 };
 
-template<> struct SVGPropertyTraits<SVGAngleValue> {
+template<>
+struct SVGPropertyTraits<SVGAngleValue> {
     static SVGAngleValue initialValue() { return SVGAngleValue(); }
     static String toString(const SVGAngleValue& type) { return type.valueAsString(); }
 };

@@ -1,3 +1,135 @@
+2018-02-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add SVGPropertyTraits::fromString() to all the SVG animated types
+        https://bugs.webkit.org/show_bug.cgi?id=182901
+
+        Reviewed by Dean Jackson.
+
+        This is a work toward https://bugs.webkit.org/show_bug.cgi?id=168586. The
+        goal is is to templatize the SVGAnimatedType class and to use SVGPropertyTraits
+        methods inside the template functions.
+
+        * WebCore.xcodeproj/project.pbxproj: Move the enum and the SVGPropertyTraits
+        from SVGMarkerElement.h to SVGMarkerTypes.h.
+        * svg/SVGAngle.h:
+        (WebCore::SVGAngle::SVGAngle): Delete unused constructor and create() method.
+        * svg/SVGAngleValue.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::parsePoint): Deleted. Move this function to SVGParserUtilities.cpp
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::constructFromString): Use SVGPropertyTraits::fromString().
+        * svg/SVGAnimatedBoolean.cpp:
+        (WebCore::SVGAnimatedBooleanAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedColor.cpp:
+        (WebCore::SVGAnimatedColorAnimator::constructFromString): Ditto.
+        (WebCore::SVGAnimatedColorAnimator::addAnimatedTypes): Use const.
+        (WebCore::SVGAnimatedColorAnimator::calculateAnimatedValue): Ditto.
+        * svg/SVGAnimatedEnumeration.cpp:
+        (WebCore::SVGAnimatedEnumerationAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedInteger.cpp:
+        (WebCore::SVGAnimatedIntegerAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedIntegerOptionalInteger.cpp:
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedLength.cpp:
+        * svg/SVGAnimatedLengthList.cpp:
+        (WebCore::SVGAnimatedLengthListAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedNumber.cpp:
+        (WebCore::SVGAnimatedNumberAnimator::constructFromString): Ditto
+        (WebCore::parseNumberFromString):
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedNumberOptionalNumber.cpp:
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedPointList.cpp:
+        (WebCore::SVGAnimatedPointListAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedPreserveAspectRatio.cpp:
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedRect.cpp:
+        (WebCore::SVGAnimatedRectAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedString.cpp:
+        (WebCore::SVGAnimatedStringAnimator::constructFromString): Ditto.
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::constructFromString): Ditto.
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::SVGLength): Delete unused constructor and create() method.
+        * svg/SVGLengthListValues.h:
+        (WebCore::SVGPropertyTraits<SVGLengthListValues>::fromString): New SVGPropertyTraits method.
+        (WebCore::SVGPropertyTraits<SVGLengthListValues>::parse): Ditto.
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::highestEnumValue): Deleted.
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::toString): Deleted.
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::fromString): Deleted.
+        (WebCore::SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue): Deleted.
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::highestEnumValue): Deleted.
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::fromString): Deleted.
+        * svg/SVGMarkerTypes.h: Added.
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::highestEnumValue):
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::toString):
+        (WebCore::SVGPropertyTraits<SVGMarkerUnitsType>::fromString):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::highestEnumValue):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::fromString):
+        (WebCore::SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue):
+        * svg/SVGMatrix.h: Delete unused constructor and create method.
+        * svg/SVGNumber.h:
+        (WebCore::SVGNumber::SVGNumber): Ditto.
+        * svg/SVGNumberListValues.h:
+        (WebCore::SVGPropertyTraits<SVGNumberListValues>::fromString): New SVGPropertyTraits method.
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parsePoint): This is moved from SVGAnimateMotionElement.cpp
+        * svg/SVGParserUtilities.h:
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::SVGPathByteStream):
+        (WebCore::SVGPathByteStream::operator=): Add copy and move assignment operators.
+        (WebCore::SVGPathByteStream::copy const): Use the copy assignment.
+        (WebCore::SVGPathByteStream::isEmpty const): Use Data.isEmpty().
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::initialValue): New SVGPropertyTraits method.
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::fromString): Ditto.
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::addToSVGPathByteStream): Answer Simon's questions which were added in r190844.
+        * svg/SVGPoint.h:
+        (WebCore::SVGPoint::SVGPoint): Delete unused constructor and create method.
+        * svg/SVGPointListValues.h:
+        (WebCore::SVGPropertyTraits<SVGPointListValues>::fromString): New SVGPropertyTraits method.
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseAttribute): Use the move assignment operator.
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio): Delete unused constructor and create method.
+        * svg/SVGPreserveAspectRatioValue.cpp:
+        (WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue): Add new constructor.
+        * svg/SVGPreserveAspectRatioValue.h:
+        (WebCore::SVGPropertyTraits<SVGPreserveAspectRatioValue>::fromString): New SVGPropertyTraits method.
+        (WebCore::SVGPropertyTraits<SVGPreserveAspectRatioValue>::toString): Ditto.
+        * svg/SVGRect.h:
+        (WebCore::SVGRect::SVGRect): Delete unused constructor and create method.
+        * svg/SVGRectTraits.h: Removed.
+        * svg/SVGTransform.h:
+        (WebCore::SVGTransform::SVGTransform): Delete unused constructor and create method.
+        * svg/SVGTransformListValues.h:
+        (WebCore::SVGPropertyTraits<SVGTransformListValues>::fromString): New SVGPropertyTraits method.
+        * svg/properties/SVGPropertyTearOff.h: Delete unused create method.
+        * svg/properties/SVGPropertyTraits.h: New SVGPropertyTraits methods.
+        (WebCore::SVGPropertyTraits<bool>::fromString): 
+        (WebCore::SVGPropertyTraits<Color>::initialValue):
+        (WebCore::SVGPropertyTraits<Color>::fromString):
+        (WebCore::SVGPropertyTraits<Color>::parse):
+        (WebCore::SVGPropertyTraits<Color>::toString):
+        (WebCore::SVGPropertyTraits<int>::fromString):
+        (WebCore::SVGPropertyTraits<float>::fromString):
+        (WebCore::SVGPropertyTraits<float>::parse):
+        (WebCore::SVGPropertyTraits<FloatPoint>::initialValue):
+        (WebCore::SVGPropertyTraits<FloatPoint>::fromString):
+        (WebCore::SVGPropertyTraits<FloatPoint>::parse):
+        (WebCore::SVGPropertyTraits<FloatPoint>::toString):
+        (WebCore::SVGPropertyTraits<FloatRect>::initialValue):
+        (WebCore::SVGPropertyTraits<FloatRect>::fromString):
+        (WebCore::SVGPropertyTraits<FloatRect>::parse):
+        (WebCore::SVGPropertyTraits<FloatRect>::toString):
+        (WebCore::SVGPropertyTraits<String>::fromString):
+        (WebCore::SVGPropertyTraits<String>::parse):
+        (WebCore::SVGPropertyTraits<String>::toString):
+
 2018-02-19  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Implement a compact set of media controls

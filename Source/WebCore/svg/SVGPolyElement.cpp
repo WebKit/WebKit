@@ -73,7 +73,7 @@ void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         if (auto wrapper = SVGAnimatedProperty::lookupWrapper<SVGPolyElement, SVGAnimatedPointList>(this, pointsPropertyInfo()))
             static_pointer_cast<SVGAnimatedPointList>(wrapper)->detachListWrappers(newList.size());
 
-        m_points.value = newList;
+        m_points.value = WTFMove(newList);
         return;
     }
 

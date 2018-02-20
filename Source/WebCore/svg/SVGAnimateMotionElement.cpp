@@ -136,31 +136,6 @@ void SVGAnimateMotionElement::updateAnimationPath()
     updateAnimationMode();
 }
 
-static bool parsePoint(const String& s, FloatPoint& point)
-{
-    if (s.isEmpty())
-        return false;
-    auto upconvertedCharacters = StringView(s).upconvertedCharacters();
-    const UChar* cur = upconvertedCharacters;
-    const UChar* end = cur + s.length();
-    
-    if (!skipOptionalSVGSpaces(cur, end))
-        return false;
-    
-    float x = 0;
-    if (!parseNumber(cur, end, x))
-        return false;
-    
-    float y = 0;
-    if (!parseNumber(cur, end, y))
-        return false;
-    
-    point = FloatPoint(x, y);
-    
-    // disallow anything except spaces at the end
-    return !skipOptionalSVGSpaces(cur, end);
-}
-    
 void SVGAnimateMotionElement::resetAnimatedType()
 {
     if (!hasValidAttributeType())

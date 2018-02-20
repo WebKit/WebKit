@@ -33,13 +33,8 @@ SVGAnimatedNumberOptionalNumberAnimator::SVGAnimatedNumberOptionalNumberAnimator
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumberOptionalNumber(std::make_unique<std::pair<float, float>>());
-    std::pair<float, float>& animatedNumber = animatedType->numberOptionalNumber();
-    if (!parseNumberOptionalNumber(string, animatedNumber.first, animatedNumber.second)) {
-        animatedNumber.first = 0;
-        animatedNumber.second = 0;
-    }
-    return animatedType;
+    auto values = SVGPropertyTraits<std::pair<float, float>>::fromString(string);
+    return SVGAnimatedType::createNumberOptionalNumber(std::make_unique<std::pair<float, float>>(values));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

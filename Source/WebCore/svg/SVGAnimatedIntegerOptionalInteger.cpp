@@ -33,18 +33,8 @@ SVGAnimatedIntegerOptionalIntegerAnimator::SVGAnimatedIntegerOptionalIntegerAnim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createIntegerOptionalInteger(std::make_unique<std::pair<int, int>>());
-    std::pair<int, int>& animatedInteger = animatedType->integerOptionalInteger();
-    float firstNumber = 0;
-    float secondNumber = 0;
-    if (!parseNumberOptionalNumber(string, firstNumber, secondNumber)) {
-        animatedInteger.first = 0;
-        animatedInteger.second = 0;
-    } else {
-        animatedInteger.first = static_cast<int>(roundf(firstNumber));
-        animatedInteger.second = static_cast<int>(roundf(secondNumber));
-    }
-    return animatedType;
+    auto values = SVGPropertyTraits<std::pair<int, int>>::fromString(string);
+    return SVGAnimatedType::createIntegerOptionalInteger(std::make_unique<std::pair<int, int>>(values));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

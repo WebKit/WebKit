@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,11 +33,8 @@ SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGAnimationElement* animat
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumber(std::make_unique<float>());
-    float& animatedNumber = animatedType->number();
-    if (!parseNumberFromString(string, animatedNumber))
-        animatedNumber = 0;
-    return animatedType;
+    auto value = SVGPropertyTraits<float>::fromString(string);
+    return SVGAnimatedType::createNumber(std::make_unique<float>(value));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -74,9 +72,7 @@ void SVGAnimatedNumberAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnima
 
 static float parseNumberFromString(SVGAnimationElement*, const String& string)
 {
-    float number = 0;
-    parseNumberFromString(string, number);
-    return number;
+    return SVGPropertyTraits<float>::fromString(string);
 }
 
 void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)

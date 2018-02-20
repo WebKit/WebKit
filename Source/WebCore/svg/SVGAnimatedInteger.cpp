@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,9 +34,8 @@ SVGAnimatedIntegerAnimator::SVGAnimatedIntegerAnimator(SVGAnimationElement* anim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createInteger(std::make_unique<int>());
-    animatedType->integer() = string.toIntStrict();
-    return animatedType;
+    auto value = SVGPropertyTraits<int>::fromString(string);
+    return SVGAnimatedType::createInteger(std::make_unique<int>(value));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

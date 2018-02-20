@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +20,8 @@
 
 #pragma once
 
+#include "SVGPathUtilities.h"
+#include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,34 +49,47 @@ public:
     typedef Data::const_iterator DataIterator;
 
     SVGPathByteStream() { }
-    SVGPathByteStream(const Data& data) : m_data(data) { }
-    
-    bool operator==(const SVGPathByteStream& other) const
+    SVGPathByteStream(const SVGPathByteStream& other)
     {
-        return m_data == other.m_data;
+        *this = other;
     }
 
-    bool operator!=(const SVGPathByteStream& other) const
+    SVGPathByteStream(SVGPathByteStream&& other)
     {
-        return !(*this == other);
+        *this = WTFMove(other);
     }
+
+    SVGPathByteStream& operator=(const SVGPathByteStream& other)
+    {
+        if (*this == other)
+            return *this;
+        m_data = other.m_data;
+        return *this;
+    }
+
+    SVGPathByteStream& operator=(SVGPathByteStream&& other)
+    {
+        if (*this == other)
+            return *this;
+        m_data = WTFMove(other.m_data);
+        return *this;
+    }
+
+    bool operator==(const SVGPathByteStream& other) const { return m_data == other.m_data; }
+    bool operator!=(const SVGPathByteStream& other) const { return !(*this == other); }
 
     std::unique_ptr<SVGPathByteStream> copy() const
     {
-        return std::make_unique<SVGPathByteStream>(m_data);
+        return std::make_unique<SVGPathByteStream>(*this);
     }
 
     DataIterator begin() const { return m_data.begin(); }
     DataIterator end() const { return m_data.end(); }
 
     void append(unsigned char byte) { m_data.append(byte); }
-    void append(const SVGPathByteStream& other)
-    {
-        for (auto stream : other)
-            append(stream);
-    }
+    void append(const SVGPathByteStream& other) { m_data.appendVector(other.m_data); }
     void clear() { m_data.clear(); }
-    bool isEmpty() const { return !m_data.size(); }
+    bool isEmpty() const { return m_data.isEmpty(); }
     unsigned size() const { return m_data.size(); }
 
     // Only defined to let SVGAnimatedPathAnimator use the standard list code paths - this method is never called.
@@ -81,6 +97,17 @@ public:
 
 private:
     Data m_data;
+};
+
+template<>
+struct SVGPropertyTraits<SVGPathByteStream> {
+    static SVGPathByteStream initialValue() { return SVGPathByteStream(); }
+    static SVGPathByteStream fromString(const String& string)
+    {
+        SVGPathByteStream byteStream;
+        buildSVGPathByteStreamFromString(string, byteStream, UnalteredParsing);
+        return byteStream;
+    }
 };
 
 } // namespace WebCore

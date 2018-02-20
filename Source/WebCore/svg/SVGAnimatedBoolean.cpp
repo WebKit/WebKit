@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,9 +32,8 @@ SVGAnimatedBooleanAnimator::SVGAnimatedBooleanAnimator(SVGAnimationElement* anim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createBoolean(std::make_unique<bool>());
-    animatedType->boolean() = (string == "true"); // wat?
-    return animatedType;
+    auto value = SVGPropertyTraits<bool>::fromString(string);
+    return SVGAnimatedType::createBoolean(std::make_unique<bool>(value));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedBooleanAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

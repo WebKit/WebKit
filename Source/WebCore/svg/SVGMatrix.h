@@ -43,11 +43,6 @@ public:
         return adoptRef(*new SVGMatrix(initialValue));
     }
 
-    static Ref<SVGMatrix> create(const SVGMatrixValue* initialValue)
-    {
-        return adoptRef(*new SVGMatrix(initialValue));
-    }
-
     template<typename T> static ExceptionOr<Ref<SVGMatrix>> create(ExceptionOr<T>&& initialValue)
     {
         if (initialValue.hasException())

@@ -206,15 +206,15 @@ bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& fromStream, const S
 
 bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathByteStream& byStream, unsigned repeatCount)
 {
-    // Why return when streamToAppendTo is empty? Don't we still need to append?
+    // The byStream will be blended with streamToAppendTo. So streamToAppendTo has to have elements.
     if (streamToAppendTo.isEmpty() || byStream.isEmpty())
         return true;
 
-    // Is it OK to make the SVGPathByteStreamBuilder from a stream, and then clear that stream?
+    // builder is the destination of blending fromSource and bySource. The stream of builder
+    // (i.e. streamToAppendTo) has to be cleared before calling addAnimatedPath.
     SVGPathByteStreamBuilder builder(streamToAppendTo);
 
-    SVGPathByteStream fromStreamCopy = streamToAppendTo;
-    streamToAppendTo.clear();
+    SVGPathByteStream fromStreamCopy = WTFMove(streamToAppendTo);
 
     SVGPathByteStreamSource fromSource(fromStreamCopy);
     SVGPathByteStreamSource bySource(byStream);

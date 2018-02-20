@@ -42,11 +42,6 @@ public:
         return adoptRef(*new SVGAngle(initialValue));
     }
 
-    static Ref<SVGAngle> create(const SVGAngleValue* initialValue)
-    {
-        return adoptRef(*new SVGAngle(initialValue));
-    }
-
     template<typename T> static ExceptionOr<Ref<SVGAngle>> create(ExceptionOr<T>&& initialValue)
     {
         if (initialValue.hasException())
@@ -142,11 +137,6 @@ private:
     }
 
     explicit SVGAngle(const SVGAngleValue& initialValue)
-        : SVGPropertyTearOff<SVGAngleValue>(initialValue)
-    {
-    }
-
-    explicit SVGAngle(const SVGAngleValue* initialValue)
         : SVGPropertyTearOff<SVGAngleValue>(initialValue)
     {
     }

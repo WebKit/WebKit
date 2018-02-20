@@ -53,11 +53,6 @@ public:
         return adoptRef(*new Self(initialValue));
     }
 
-    static Ref<Self> create(const PropertyType* initialValue)
-    {
-        return adoptRef(*new Self(initialValue));
-    }
-
     template<typename U> static ExceptionOr<Ref<Self>> create(ExceptionOr<U>&& initialValue)
     {
         if (initialValue.hasException())

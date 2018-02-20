@@ -2,7 +2,7 @@
  * Copyright (C) 2002, 2003 The Karbon Developers
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -217,6 +217,31 @@ bool parseNumberOptionalNumber(const String& s, float& x, float& y)
         return false;
 
     return cur == end;
+}
+
+bool parsePoint(const String& s, FloatPoint& point)
+{
+    if (s.isEmpty())
+        return false;
+    auto upconvertedCharacters = StringView(s).upconvertedCharacters();
+    const UChar* cur = upconvertedCharacters;
+    const UChar* end = cur + s.length();
+
+    if (!skipOptionalSVGSpaces(cur, end))
+        return false;
+
+    float x = 0;
+    if (!parseNumber(cur, end, x))
+        return false;
+
+    float y = 0;
+    if (!parseNumber(cur, end, y))
+        return false;
+
+    point = FloatPoint(x, y);
+
+    // Disallow anything except spaces at the end.
+    return !skipOptionalSVGSpaces(cur, end);
 }
 
 bool parseRect(const String& string, FloatRect& rect)

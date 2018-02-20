@@ -31,9 +31,8 @@ SVGAnimatedPreserveAspectRatioAnimator::SVGAnimatedPreserveAspectRatioAnimator(S
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createPreserveAspectRatio(std::make_unique<SVGPreserveAspectRatioValue>());
-    animatedType->preserveAspectRatio().parse(string);
-    return animatedType;
+    auto value = SVGPropertyTraits<SVGPreserveAspectRatioValue>::fromString(string);
+    return SVGAnimatedType::createPreserveAspectRatio(std::make_unique<SVGPreserveAspectRatioValue>(value));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

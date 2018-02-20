@@ -32,9 +32,8 @@ SVGAnimatedRectAnimator::SVGAnimatedRectAnimator(SVGAnimationElement* animationE
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedRectAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createRect(std::make_unique<FloatRect>());
-    parseRect(string, animatedType->rect());
-    return animatedType;
+    auto value = SVGPropertyTraits<FloatRect>::fromString(string);
+    return SVGAnimatedType::createRect(std::make_unique<FloatRect>(value));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

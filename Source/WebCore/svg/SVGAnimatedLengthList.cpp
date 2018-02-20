@@ -33,9 +33,8 @@ SVGAnimatedLengthListAnimator::SVGAnimatedLengthListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createLengthList(std::make_unique<SVGLengthListValues>());
-    animatedType->lengthList().parse(string, m_lengthMode);
-    return animatedType;
+    auto value = SVGPropertyTraits<SVGLengthListValues>::fromString(string, m_lengthMode);
+    return SVGAnimatedType::createLengthList(std::make_unique<SVGLengthListValues>(WTFMove(value)));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

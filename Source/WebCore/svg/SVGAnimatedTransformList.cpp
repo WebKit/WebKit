@@ -41,10 +41,9 @@ SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationE
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createTransformList(std::make_unique<SVGTransformListValues>());
-    animatedType->transformList().parse(m_transformTypeString + string + ')');
-    ASSERT(animatedType->transformList().size() <= 1);
-    return animatedType;
+    auto values = SVGPropertyTraits<SVGTransformListValues>::fromString(m_transformTypeString + string + ')');
+    ASSERT(values.size() <= 1);
+    return SVGAnimatedType::createTransformList(std::make_unique<SVGTransformListValues>(WTFMove(values)));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

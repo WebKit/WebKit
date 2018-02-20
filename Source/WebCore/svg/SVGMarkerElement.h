@@ -29,74 +29,9 @@
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
+#include "SVGMarkerTypes.h"
 
 namespace WebCore {
-
-enum SVGMarkerUnitsType {
-    SVGMarkerUnitsUnknown = 0,
-    SVGMarkerUnitsUserSpaceOnUse,
-    SVGMarkerUnitsStrokeWidth
-};
-
-enum SVGMarkerOrientType {
-    SVGMarkerOrientUnknown = 0,
-    SVGMarkerOrientAuto,
-    SVGMarkerOrientAngle,
-    SVGMarkerOrientAutoStartReverse,
-
-    // Add new elements before here.
-    SVGMarkerOrientMax
-};
-
-template<>
-struct SVGPropertyTraits<SVGMarkerUnitsType> {
-    static unsigned highestEnumValue() { return SVGMarkerUnitsStrokeWidth; }
-
-    static String toString(SVGMarkerUnitsType type)
-    {
-        switch (type) {
-        case SVGMarkerUnitsUnknown:
-            return emptyString();
-        case SVGMarkerUnitsUserSpaceOnUse:
-            return ASCIILiteral("userSpaceOnUse");
-        case SVGMarkerUnitsStrokeWidth:
-            return ASCIILiteral("strokeWidth");
-        }
-
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
-
-    static SVGMarkerUnitsType fromString(const String& value)
-    {
-        if (value == "userSpaceOnUse")
-            return SVGMarkerUnitsUserSpaceOnUse;
-        if (value == "strokeWidth")
-            return SVGMarkerUnitsStrokeWidth;
-        return SVGMarkerUnitsUnknown;
-    }
-};
-
-template<>
-inline unsigned SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue() { return SVGMarkerOrientAngle; }
-
-template<> struct SVGPropertyTraits<SVGMarkerOrientType> {
-    static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
-
-    // toString is not needed, synchronizeOrientType() handles this on its own.
-
-    static SVGMarkerOrientType fromString(const String& value, SVGAngleValue& angle)
-    {
-        if (value == "auto")
-            return SVGMarkerOrientAuto;
-        if (value == "auto-start-reverse")
-            return SVGMarkerOrientAutoStartReverse;
-        auto setValueResult = angle.setValueAsString(value);
-        if (setValueResult.hasException())
-            return SVGMarkerOrientUnknown;
-        return SVGMarkerOrientAngle;
-    }
-};
 
 class SVGMarkerElement final : public SVGElement,
                                public SVGExternalResourcesRequired,

@@ -42,6 +42,7 @@ bool parseNumberFromString(const String&, float& number, bool skip = true);
 bool parseNumberOptionalNumber(const String& s, float& h, float& v);
 bool parseArcFlag(const LChar*& ptr, const LChar* end, bool& flag);
 bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag);
+bool parsePoint(const String&, FloatPoint&);
 bool parseRect(const String&, FloatRect&);
 
 template <typename CharacterType>

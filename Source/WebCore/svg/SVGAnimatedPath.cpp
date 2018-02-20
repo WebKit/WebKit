@@ -22,7 +22,6 @@
 
 #include "SVGAnimateElementBase.h"
 #include "SVGAnimatedPathSegListPropertyTearOff.h"
-#include "SVGPathUtilities.h"
 
 namespace WebCore {
 
@@ -33,9 +32,8 @@ SVGAnimatedPathAnimator::SVGAnimatedPathAnimator(SVGAnimationElement* animationE
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string)
 {
-    auto byteStream = std::make_unique<SVGPathByteStream>();
-    buildSVGPathByteStreamFromString(string, *byteStream, UnalteredParsing);
-    return SVGAnimatedType::createPath(WTFMove(byteStream));
+    auto value = SVGPropertyTraits<SVGPathByteStream>::fromString(string);
+    return SVGAnimatedType::createPath(std::make_unique<SVGPathByteStream>(WTFMove(value)));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

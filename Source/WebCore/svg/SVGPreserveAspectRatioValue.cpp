@@ -35,6 +35,11 @@ SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue()
 {
 }
 
+SVGPreserveAspectRatioValue::SVGPreserveAspectRatioValue(const String& value)
+{
+    parse(value);
+}
+
 ExceptionOr<void> SVGPreserveAspectRatioValue::setAlign(unsigned short align)
 {
     if (align == SVG_PRESERVEASPECTRATIO_UNKNOWN || align > SVG_PRESERVEASPECTRATIO_XMAXYMAX)

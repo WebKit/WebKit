@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,7 +34,8 @@ SVGAnimatedColorAnimator::SVGAnimatedColorAnimator(SVGAnimationElement& animatio
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedColorAnimator::constructFromString(const String& string)
 {
-    return SVGAnimatedType::createColor(std::make_unique<Color>(CSSParser::parseColor(string.stripWhiteSpace())));
+    auto value = SVGPropertyTraits<Color>::fromString(string);
+    return SVGAnimatedType::createColor(std::make_unique<Color>(value));
 }
 
 void SVGAnimatedColorAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
@@ -44,7 +46,7 @@ void SVGAnimatedColorAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimat
     ASSERT(to->type() == AnimatedColor);
 
     // Ignores any alpha and sets alpha on result to 100% opaque.
-    auto& fromColor = from->color();
+    const auto& fromColor = from->color();
     auto& toColor = to->color();
     toColor = { roundAndClampColorChannel(toColor.red() + fromColor.red()),
         roundAndClampColorChannel(toColor.green() + fromColor.green()),
@@ -82,7 +84,7 @@ void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned
     if (m_animationElement->toPropertyValueType() == CurrentColorValue)
         toColor = currentColor(*m_contextElement);
 
-    auto& toAtEndOfDurationColor = toAtEndOfDuration->color();
+    const auto& toAtEndOfDurationColor = toAtEndOfDuration->color();
     auto& animatedColor = animated->color();
 
     // FIXME: ExtendedColor - this will need to handle blending between colors in different color spaces,

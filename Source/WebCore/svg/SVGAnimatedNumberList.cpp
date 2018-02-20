@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,9 +33,8 @@ SVGAnimatedNumberListAnimator::SVGAnimatedNumberListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumberList(std::make_unique<SVGNumberListValues>());
-    animatedType->numberList().parse(string);
-    return animatedType;
+    auto values = SVGPropertyTraits<SVGNumberListValues>::fromString(string);
+    return SVGAnimatedType::createNumberList(std::make_unique<SVGNumberListValues>(WTFMove(values)));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

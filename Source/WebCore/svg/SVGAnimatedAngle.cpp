@@ -32,17 +32,8 @@ SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator(SVGAnimationElement* animatio
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createAngleAndEnumeration(std::make_unique<std::pair<SVGAngleValue, unsigned>>());
-    auto& animatedPair = animatedType->angleAndEnumeration();
-
-    SVGAngleValue angle;
-    SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(string, angle);
-    if (orientType > 0)
-        animatedPair.second = orientType;
-    if (orientType == SVGMarkerOrientAngle)
-        animatedPair.first = angle;
-
-    return animatedType;
+    auto values = SVGPropertyTraits<std::pair<SVGAngleValue, unsigned>>::fromString(string);
+    return SVGAnimatedType::createAngleAndEnumeration(std::make_unique<std::pair<SVGAngleValue, unsigned>>(values));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedAngleAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

@@ -36,6 +36,12 @@ public:
 
 template<> struct SVGPropertyTraits<SVGNumberListValues> {
     static SVGNumberListValues initialValue() { return { }; }
+    static SVGNumberListValues fromString(const String& string)
+    {
+        SVGNumberListValues list;
+        list.parse(string);
+        return list;
+    }
     static String toString(const SVGNumberListValues& list) { return list.valueAsString(); }
 
     using ListItemType = float;

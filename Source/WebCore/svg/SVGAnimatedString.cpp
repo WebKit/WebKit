@@ -31,9 +31,8 @@ SVGAnimatedStringAnimator::SVGAnimatedStringAnimator(SVGAnimationElement* animat
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedStringAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createString(std::make_unique<String>());
-    animatedType->string() = string;
-    return animatedType;
+    auto value = SVGPropertyTraits<String>::fromString(string);
+    return SVGAnimatedType::createString(std::make_unique<String>(value));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedStringAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

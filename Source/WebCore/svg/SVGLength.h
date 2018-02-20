@@ -57,11 +57,6 @@ public:
         return adoptRef(*new SVGLength(initialValue));
     }
 
-    static Ref<SVGLength> create(const SVGLengthValue* initialValue)
-    {
-        return adoptRef(*new SVGLength(initialValue));
-    }
-
     template<typename T> static ExceptionOr<Ref<SVGLength>> create(ExceptionOr<T>&& initialValue)
     {
         if (initialValue.hasException())
@@ -159,11 +154,6 @@ private:
     }
 
     explicit SVGLength(const SVGLengthValue& initialValue)
-        : SVGPropertyTearOff<SVGLengthValue>(initialValue)
-    {
-    }
-
-    explicit SVGLength(const SVGLengthValue* initialValue)
         : SVGPropertyTearOff<SVGLengthValue>(initialValue)
     {
     }

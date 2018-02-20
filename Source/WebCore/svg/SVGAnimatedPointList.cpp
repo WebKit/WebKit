@@ -34,9 +34,8 @@ SVGAnimatedPointListAnimator::SVGAnimatedPointListAnimator(SVGAnimationElement* 
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPointListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createPointList(std::make_unique<SVGPointListValues>());
-    pointsListFromSVGData(animatedType->pointList(), string);
-    return animatedType;
+    auto values = SVGPropertyTraits<SVGPointListValues>::fromString(string);
+    return SVGAnimatedType::createPointList(std::make_unique<SVGPointListValues>(WTFMove(values)));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPointListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

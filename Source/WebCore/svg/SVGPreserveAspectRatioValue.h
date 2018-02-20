@@ -52,6 +52,7 @@ public:
     };
 
     SVGPreserveAspectRatioValue();
+    SVGPreserveAspectRatioValue(const String&);
 
     ExceptionOr<void> setAlign(unsigned short);
     unsigned short align() const { return m_align; }
@@ -77,7 +78,15 @@ private:
 
 template<> struct SVGPropertyTraits<SVGPreserveAspectRatioValue> {
     static SVGPreserveAspectRatioValue initialValue() { return SVGPreserveAspectRatioValue(); }
-    static String toString(const SVGPreserveAspectRatioValue& type) { return type.valueAsString(); }
+    static SVGPreserveAspectRatioValue fromString(const String& string)
+    {
+        return SVGPreserveAspectRatioValue(string);
+
+    }
+    static String toString(const SVGPreserveAspectRatioValue& type)
+    {
+        return type.valueAsString();
+    }
 };
 
 } // namespace WebCore
