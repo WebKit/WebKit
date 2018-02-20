@@ -1,3 +1,18 @@
+2018-02-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Switch to UIWKTextInteractionAssistant for non-editable text
+        https://bugs.webkit.org/show_bug.cgi?id=182834
+        
+        Reviewed by Wenson Hsieh and Tim Horton.
+        
+        Switching to only using the UIWKTextInteractionAssistant. Only character granularity is now supported. 
+        Also keep the from regressing gating the keyboard bring up on user interaction. The presents of a  
+        textInteractionAssistant can no longer be used as proxy for the presence of the keyboard.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView useSelectionAssistantWithGranularity:]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
 2018-02-20  John Wilander  <wilander@apple.com>
 
         Make WebResourceLoadStatisticsStore::processStatisticsAndDataRecords() call WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed() in a proper callback

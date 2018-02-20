@@ -1867,27 +1867,18 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)useSelectionAssistantWithGranularity:(WKSelectionGranularity)selectionGranularity
 {
-    if (selectionGranularity == WKSelectionGranularityDynamic) {
-        if (_textSelectionAssistant) {
-            [_textSelectionAssistant deactivateSelection];
-            _textSelectionAssistant = nil;
-        }
-        if (!_webSelectionAssistant)
-            _webSelectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:self]);
-    } else if (selectionGranularity == WKSelectionGranularityCharacter) {
-        if (_webSelectionAssistant)
-            _webSelectionAssistant = nil;
+    if (_webSelectionAssistant)
+        _webSelectionAssistant = nil;
 
-        if (!_textSelectionAssistant)
-            _textSelectionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:self]);
-        else {
-            // Reset the gesture recognizers in case editibility has changed.
-            [_textSelectionAssistant setGestureRecognizers];
-        }
-
-        if (self.isFirstResponder && !self.suppressAssistantSelectionView)
-            [_textSelectionAssistant activateSelection];
+    if (!_textSelectionAssistant)
+        _textSelectionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:self]);
+    else {
+        // Reset the gesture recognizers in case editibility has changed.
+        [_textSelectionAssistant setGestureRecognizers];
     }
+
+    if (self.isFirstResponder && !self.suppressAssistantSelectionView)
+        [_textSelectionAssistant activateSelection];
 }
 
 - (void)clearSelection
@@ -4012,7 +4003,7 @@ static bool isAssistableInputType(InputType type)
         shouldShowKeyboard = [inputDelegate _webView:_webView focusShouldStartInputSession:focusedElementInfo.get()];
     else {
         // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
-        shouldShowKeyboard = userIsInteracting || _textSelectionAssistant || changingActivityState;
+        shouldShowKeyboard = userIsInteracting || _isChangingFocus || changingActivityState;
 #if ENABLE(DATA_INTERACTION)
         shouldShowKeyboard |= _dragDropInteractionState.isPerformingDrop();
 #endif
