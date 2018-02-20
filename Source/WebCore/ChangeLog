@@ -1,3 +1,19 @@
+2018-02-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Use RuntimeEnabledFeatures to enable/disable WebVR
+        https://bugs.webkit.org/show_bug.cgi?id=182961
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The shared feature was properly added to RuntimeEnabledFeatures some
+        time ago but the code was instead using a private method in
+        NavigatorWebVR to temporarily disable it. WebVR is enabled in
+        WebPreferences.yaml for GTK+ & WPE as default experimental feature.
+
+        * Modules/webvr/NavigatorWebVR.cpp:
+        (WebCore::NavigatorWebVR::getVRDisplays):
+        (WebCore::NavigatorWebVR::vrEnabled): Deleted.
+
 2018-02-19  Antti Koivisto  <antti@apple.com>
 
         Use selector filter when invalidating descendants

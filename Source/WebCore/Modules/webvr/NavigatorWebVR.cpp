@@ -29,14 +29,15 @@
 #include "Document.h"
 #include "JSVRDisplay.h"
 #include "Navigator.h"
+#include "RuntimeEnabledFeatures.h"
 #include "VRDisplay.h"
 #include "VRManager.h"
 
 namespace WebCore {
 
-void NavigatorWebVR::getVRDisplays(Navigator& navigator, Document& document, GetVRDisplaysPromise&& promise)
+void NavigatorWebVR::getVRDisplays(Navigator&, Document& document, GetVRDisplaysPromise&& promise)
 {
-    if (!vrEnabled(navigator)) {
+    if (!RuntimeEnabledFeatures::sharedFeatures().webVREnabled()) {
         promise.reject();
         return;
     }
@@ -59,11 +60,6 @@ const Vector<RefPtr<VRDisplay>>& NavigatorWebVR::activeVRDisplays(Navigator&)
 {
     static auto mockVector = makeNeverDestroyed(Vector<RefPtr<VRDisplay>> { });
     return mockVector;
-}
-
-bool NavigatorWebVR::vrEnabled(Navigator&)
-{
-    return false;
 }
 
 } // namespace WebCore
