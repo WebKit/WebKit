@@ -43,11 +43,13 @@ Ref<VRDisplay> VRDisplay::create(ScriptExecutionContext& context, WeakPtr<VRPlat
 
 VRDisplay::VRDisplay(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>&& platformDisplay)
     : ActiveDOMObject(&context)
-    , m_capabilities(VRDisplayCapabilities::create(platformDisplay->getDisplayInfo().capabilityFlags))
-    , m_eyeParameters(VREyeParameters::create())
     , m_display(WTFMove(platformDisplay))
-    , m_displayName(platformDisplay->getDisplayInfo().displayName)
 {
+    auto displayInfo = m_display->getDisplayInfo();
+    m_capabilities = VRDisplayCapabilities::create(displayInfo.capabilityFlags);
+    m_leftEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation[VRPlatformDisplayInfo::EyeLeft], displayInfo.eyeFieldOfView[VRPlatformDisplayInfo::EyeLeft], displayInfo.renderSize);
+    m_rightEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation[VRPlatformDisplayInfo::EyeRight], displayInfo.eyeFieldOfView[VRPlatformDisplayInfo::EyeRight], displayInfo.renderSize);
+    m_displayName = displayInfo.displayName;
 }
 
 VRDisplay::~VRDisplay() = default;
@@ -67,7 +69,7 @@ bool VRDisplay::isPresenting() const
 
 const VRDisplayCapabilities& VRDisplay::capabilities() const
 {
-    return m_capabilities;
+    return *m_capabilities;
 }
 
 VRStageParameters* VRDisplay::stageParameters() const
@@ -75,9 +77,9 @@ VRStageParameters* VRDisplay::stageParameters() const
     return nullptr;
 }
 
-const VREyeParameters& VRDisplay::getEyeParameters(VREye) const
+const VREyeParameters& VRDisplay::getEyeParameters(VREye eye) const
 {
-    return m_eyeParameters;
+    return eye == VREye::Left ? *m_leftEyeParameters : *m_rightEyeParameters;
 }
 
 unsigned VRDisplay::displayId() const

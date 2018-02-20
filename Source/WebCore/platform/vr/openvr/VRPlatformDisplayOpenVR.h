@@ -32,9 +32,13 @@ class VRPlatformDisplayOpenVR : public VRPlatformDisplay {
 public:
     explicit VRPlatformDisplayOpenVR(vr::IVRSystem*, vr::IVRChaperone*, vr::IVRCompositor*);
 
+    ~VRPlatformDisplayOpenVR() = default;
     VRPlatformDisplayInfo getDisplayInfo() override { return m_displayInfo; }
 
 private:
+    VRPlatformDisplayInfo::FieldOfView computeFieldOfView(vr::Hmd_Eye);
+    void updateEyeParameters();
+
     vr::IVRSystem* m_system;
     vr::IVRChaperone* m_chaperone;
     vr::IVRCompositor* m_compositor;

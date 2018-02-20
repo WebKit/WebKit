@@ -24,22 +24,25 @@
  */
 #pragma once
 
+#include "FloatPoint3D.h"
+#include "VRFieldOfView.h"
+#include "VRPlatformDisplay.h"
+
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class VRFieldOfView;
-
 class VREyeParameters : public RefCounted<VREyeParameters> {
 public:
-    static Ref<VREyeParameters> create()
-    {
-        return adoptRef(*new VREyeParameters);
-    }
-    ~VREyeParameters();
+    using RenderSize = VRPlatformDisplayInfo::RenderSize;
 
-    Float32Array* offset() const;
+    static Ref<VREyeParameters> create(const FloatPoint3D& offset, const VRPlatformDisplayInfo::FieldOfView& fieldOfView, const RenderSize& renderSize)
+    {
+        return adoptRef(*new VREyeParameters(offset, fieldOfView, renderSize));
+    }
+
+    Ref<Float32Array> offset() const;
 
     const VRFieldOfView& fieldOfView() const;
 
@@ -47,9 +50,11 @@ public:
     unsigned renderHeight() const;
 
 private:
-    VREyeParameters();
+    VREyeParameters(const FloatPoint3D& offset, const VRPlatformDisplayInfo::FieldOfView&, const RenderSize&);
 
     Ref<VRFieldOfView> m_fieldOfView;
+    FloatPoint3D m_offset;
+    RenderSize m_renderSize;
 };
 
 } // namespace WebCore

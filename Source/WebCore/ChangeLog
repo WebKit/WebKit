@@ -1,3 +1,51 @@
+2018-02-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][OpenVR] Retrieve eye parameters and field of view
+        https://bugs.webkit.org/show_bug.cgi?id=182962
+
+        Reviewed by Žan Doberšek.
+
+        Get the required data from OpenVR to fill in the VREyeParameters and
+        the VRFieldOfView objects.
+
+        * Modules/webvr/VRDisplay.cpp: Create some attributes in the
+        body of the constructor instead in the member initialization list to
+        avoid calling getDisplayInfo() multiple times.
+        (WebCore::VRDisplay::VRDisplay):
+        (WebCore::VRDisplay::capabilities const):
+        (WebCore::VRDisplay::getEyeParameters const):
+        * Modules/webvr/VRDisplay.h:
+        * Modules/webvr/VREyeParameters.cpp:
+        (WebCore::VREyeParameters::VREyeParameters): Added new attributes to
+        the constructor.
+        (WebCore::VREyeParameters::offset const): Return a Ref instead of
+        a raw pointer.
+        (WebCore::VREyeParameters::renderWidth const):
+        (WebCore::VREyeParameters::renderHeight const):
+        * Modules/webvr/VREyeParameters.h:
+        (WebCore::VREyeParameters::create):
+        * Modules/webvr/VRFieldOfView.cpp: Removed. All the impletementation
+        fits perfectly in the header file.
+        * Modules/webvr/VRFieldOfView.h:
+        (WebCore::VRFieldOfView::create):
+        (WebCore::VRFieldOfView::upDegrees const):
+        (WebCore::VRFieldOfView::rightDegrees const):
+        (WebCore::VRFieldOfView::downDegrees const):
+        (WebCore::VRFieldOfView::leftDegrees const):
+        (WebCore::VRFieldOfView::VRFieldOfView):
+        * Sources.txt:
+        * platform/vr/VRPlatformDisplay.h: Added some more data to the
+        VRPlatformDisplayInfo struct.
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp:
+        (WebCore::VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR):
+        (WebCore::VRPlatformDisplayOpenVR::computeFieldOfView): Computes the
+        up/down/left/right FOV angles in degrees from the raw project
+        values returned by OpenVR.
+        (WebCore::VRPlatformDisplayOpenVR::updateEyeParameters): Fills in
+        the eye parameter info.
+        (WebCore::VRPlatformDisplayOpenVR::~VRPlatformDisplayOpenVR):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.h:
+
 2018-02-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser

@@ -51,6 +51,31 @@ VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR(vr::IVRSystem* system, vr::IVRC
         VRDisplayCapabilityFlags::Orientation |
         VRDisplayCapabilityFlags::ExternalDisplay |
         VRDisplayCapabilityFlags::Present;
+
+    updateEyeParameters();
+}
+
+VRPlatformDisplayInfo::FieldOfView VRPlatformDisplayOpenVR::computeFieldOfView(vr::Hmd_Eye eye)
+{
+    float left, right, top, bottom;
+    // OpenVR returns the tangents of the half-angles from the center view axis.
+    m_system->GetProjectionRaw(static_cast<vr::Hmd_Eye>(eye), &left, &right, &top, &bottom);
+    return { -rad2deg(atanf(top)), rad2deg(atanf(bottom)), -rad2deg(atanf(left)), rad2deg(atanf(right)) };
+}
+
+void VRPlatformDisplayOpenVR::updateEyeParameters()
+{
+    for (unsigned eye = 0; eye < VRPlatformDisplayInfo::NumEyes; ++eye) {
+        m_displayInfo.eyeFieldOfView[eye] = computeFieldOfView(static_cast<vr::Hmd_Eye>(eye));
+
+        vr::HmdMatrix34_t eyeToHead = m_system->GetEyeToHeadTransform(static_cast<vr::Hmd_Eye>(eye));
+        m_displayInfo.eyeTranslation[eye].set(eyeToHead.m[0][3], eyeToHead.m[1][3], eyeToHead.m[2][3]);
+    }
+
+    uint32_t width;
+    uint32_t height;
+    m_system->GetRecommendedRenderTargetSize(&width, &height);
+    m_displayInfo.renderSize = { width, height };
 }
 
 }; // namespace WebCore

@@ -97,12 +97,15 @@ private:
     bool canSuspendForDocumentSuspension() const override;
     void stop() override;
 
-    Ref<VRDisplayCapabilities> m_capabilities;
-    Ref<VREyeParameters> m_eyeParameters;
-
     WeakPtr<VRPlatformDisplay> m_display;
 
-    const String m_displayName;
+    RefPtr<VRDisplayCapabilities> m_capabilities;
+    // We could likely store just one of the two following ones as the values should be identical
+    // (except the sign of the eye to head transform offset).
+    RefPtr<VREyeParameters> m_leftEyeParameters;
+    RefPtr<VREyeParameters> m_rightEyeParameters;
+
+    String m_displayName;
 };
 
 } // namespace WebCore

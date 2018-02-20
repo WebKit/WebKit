@@ -24,6 +24,8 @@
  */
 #pragma once
 
+#include "VRPlatformDisplay.h"
+
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -31,18 +33,29 @@ namespace WebCore {
 
 class VRFieldOfView : public RefCounted<VRFieldOfView> {
 public:
-    static Ref<VRFieldOfView> create()
+    static Ref<VRFieldOfView> create(VRPlatformDisplayInfo::FieldOfView fieldOfView)
     {
-        return adoptRef(*new VRFieldOfView);
+        return adoptRef(*new VRFieldOfView(fieldOfView));
     }
 
-    double upDegrees() const;
-    double rightDegrees() const;
-    double downDegrees() const;
-    double leftDegrees() const;
+    double upDegrees() const { return m_upDegrees; };
+    double rightDegrees() const { return m_rightDegrees; };
+    double downDegrees() const { return m_downDegrees; };
+    double leftDegrees() const { return m_leftDegrees; };
 
 private:
-    VRFieldOfView();
+    VRFieldOfView(VRPlatformDisplayInfo::FieldOfView fieldOfView)
+        : m_upDegrees(fieldOfView.upDegrees)
+        , m_rightDegrees(fieldOfView.rightDegrees)
+        , m_downDegrees(fieldOfView.downDegrees)
+        , m_leftDegrees(fieldOfView.leftDegrees)
+    {
+    }
+
+    double m_upDegrees;
+    double m_rightDegrees;
+    double m_downDegrees;
+    double m_leftDegrees;
 };
 
 } // namespace WebCore

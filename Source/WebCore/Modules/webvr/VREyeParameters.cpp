@@ -29,16 +29,22 @@
 
 namespace WebCore {
 
-VREyeParameters::VREyeParameters()
-    : m_fieldOfView(VRFieldOfView::create())
+VREyeParameters::VREyeParameters(const FloatPoint3D& offset, const VRPlatformDisplayInfo::FieldOfView& fieldOfView, const RenderSize& renderSize)
+    : m_fieldOfView(VRFieldOfView::create(fieldOfView))
+    , m_offset(offset)
+    , m_renderSize(renderSize)
 {
 }
 
-VREyeParameters::~VREyeParameters() = default;
-
-Float32Array* VREyeParameters::offset() const
+Ref<Float32Array> VREyeParameters::offset() const
 {
-    return nullptr;
+    auto offset = Float32Array::create(3);
+    RELEASE_ASSERT(offset);
+    float* offsetData = offset->data();
+    offsetData[0] = m_offset.x();
+    offsetData[1] = m_offset.y();
+    offsetData[2] = m_offset.z();
+    return offset.releaseNonNull();
 }
 
 const VRFieldOfView& VREyeParameters::fieldOfView() const
@@ -48,12 +54,12 @@ const VRFieldOfView& VREyeParameters::fieldOfView() const
 
 unsigned VREyeParameters::renderWidth() const
 {
-    return 0;
+    return m_renderSize.width;
 }
 
 unsigned VREyeParameters::renderHeight() const
 {
-    return 0;
+    return m_renderSize.height;
 }
 
 } // namespace WebCore

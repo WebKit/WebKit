@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "FloatPoint3D.h"
+
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +46,21 @@ struct VRPlatformDisplayInfo {
     bool isConnected;
     bool isMounted;
     unsigned capabilityFlags;
+
+    enum Eye { EyeLeft = 0, EyeRight, NumEyes };
+    FloatPoint3D eyeTranslation[Eye::NumEyes];
+
+    struct FieldOfView {
+        double upDegrees;
+        double downDegrees;
+        double leftDegrees;
+        double rightDegrees;
+    } eyeFieldOfView[Eye::NumEyes];
+
+    struct RenderSize {
+        unsigned width;
+        unsigned height;
+    } renderSize;
 };
 
 class VRPlatformDisplay {
