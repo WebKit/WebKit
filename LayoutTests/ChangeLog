@@ -1,3 +1,17 @@
+2018-02-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: defer focusedUIElement notifications
+        https://bugs.webkit.org/show_bug.cgi?id=182643
+        <rdar://problem/37394310>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/mac/aria-menu-item-selected-notification.html:
+             Rewrite test to accomodate that focus changes happen asynchronously.
+        * accessibility/mac/selection-notification-focus-change-expected.txt:
+        * platform/mac-wk2/accessibility/mac/selection-notification-focus-change-expected.txt:
+             The order of notifications is different now that focus changes happen later.
+
 2018-02-12  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Classify resources as prevalent based on redirects to other prevalent resources

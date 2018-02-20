@@ -46,14 +46,20 @@
         // Trigger notification through focus.
         document.getElementById("item1").focus();
 
-        // Trigger notification through aria-selected.
-        document.getElementById("item2").setAttribute("aria-selected", "true");
+        setTimeout(function() {
+            // Trigger notification through aria-selected.
+            document.getElementById("item2").setAttribute("aria-selected", "true");
 
-        // Ensure we don't get a notification when aria-selected is false.
-        document.getElementById("item2").setAttribute("aria-selected", "false");
+            setTimeout(function() {
+                // Ensure we don't get a notification when aria-selected is false.
+                document.getElementById("item2").setAttribute("aria-selected", "false");
 
-        // Trigger another notification through focus to ensure we don't
-        document.getElementById("item3").focus();
+                setTimeout(function() {
+                    // Trigger another notification through focus to ensure we don't
+                    document.getElementById("item3").focus();
+                }, 1);
+            }, 1);
+        }, 1);
     }
 
 </script>

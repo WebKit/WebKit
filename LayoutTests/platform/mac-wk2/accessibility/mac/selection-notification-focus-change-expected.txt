@@ -7,18 +7,18 @@ PASS webArea.addNotificationListener(notificationCallback) is true
 eventSender.keyDown(tabCharacter);
 Received AXSelectedTextChanged
 PASS userInfo["AXTextSelectionChangedFocus"] is true
-Received AXFocusChanged
 Received AXSelectedTextChanged
 PASS userInfo["AXTextSelectionChangedFocus"] is true
+Received AXFocusChanged
 
 PASS accessibilityController.accessibleElementById("1").isFocusable is true
 accessibilityController.accessibleElementById("1").takeFocus()
 Received AXFocusChanged
 
 eventSender.keyDown(tabCharacter)
-Received AXFocusChanged
 Received AXSelectedTextChanged
 PASS userInfo["AXTextSelectionChangedFocus"] is true
+Received AXFocusChanged
 PASS successfullyParsed is true
 
 TEST COMPLETE
