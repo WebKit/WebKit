@@ -46,6 +46,7 @@
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"
 #include "RenderText.h"
+#include "RenderTextFragment.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderFirstLetter.h"
@@ -376,6 +377,92 @@ void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent
     newChild->setHasOutlineAutoAncestor();
 }
 
+void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    // We assume that callers have cleared their positioned objects list for child moves so the
+    // positioned renderer maps don't become stale. It would be too slow to do the map lookup on each call.
+    ASSERT(normalizeAfterInsertion == NormalizeAfterInsertion::No || !is<RenderBlock>(from) || !downcast<RenderBlock>(from).hasPositionedObjects());
+
+    ASSERT(&from == child->parent());
+    ASSERT(!beforeChild || to == beforeChild->parent());
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (to->isRenderBlock() || to->isRenderInline())) {
+        // Takes care of adding the new child correctly if toBlock and fromBlock
+        // have different kind of children (block vs inline).
+        auto childToMove = takeChildFromRenderElement(from, *child);
+        insertChild(*to, WTFMove(childToMove), beforeChild);
+    } else {
+        auto childToMove = takeChildFromRenderElement(from, *child);
+        insertChildToRenderElementInternal(*to, WTFMove(childToMove), beforeChild);
+    }
+}
+
+void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* child, NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    moveChildTo(from, to, child, nullptr, normalizeAfterInsertion);
+}
+
+void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    moveAllChildrenTo(from, to, nullptr, normalizeAfterInsertion);
+}
+
+void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    moveChildrenTo(from, to, from.firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
+}
+
+void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    moveChildrenTo(from, to, startChild, endChild, nullptr, normalizeAfterInsertion);
+}
+
+void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject* to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    // This condition is rarely hit since this function is usually called on
+    // anonymous blocks which can no longer carry positioned objects (see r120761)
+    // or when fullRemoveInsert is false.
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(from)) {
+        downcast<RenderBlock>(from).removePositionedObjects(nullptr);
+        if (is<RenderBlockFlow>(from))
+            downcast<RenderBlockFlow>(from).removeFloatingObjects();
+    }
+
+    ASSERT(!beforeChild || to == beforeChild->parent());
+    for (RenderObject* child = startChild; child && child != endChild; ) {
+        // Save our next sibling as moveChildTo will clear it.
+        RenderObject* nextSibling = child->nextSibling();
+
+        // FIXME: This logic here fails to detect the first letter in certain cases
+        // and skips a valid sibling renderer (see webkit.org/b/163737).
+        // Check to make sure we're not saving the firstLetter as the nextSibling.
+        // When the |child| object will be moved, its firstLetter will be recreated,
+        // so saving it now in nextSibling would leave us with a stale object.
+        if (is<RenderTextFragment>(*child) && is<RenderText>(nextSibling)) {
+            RenderObject* firstLetterObj = nullptr;
+            if (RenderBlock* block = downcast<RenderTextFragment>(*child).blockForAccompanyingFirstLetter()) {
+                RenderElement* firstLetterContainer = nullptr;
+                block->getFirstLetter(firstLetterObj, firstLetterContainer, child);
+            }
+
+            // This is the first letter, skip it.
+            if (firstLetterObj == nextSibling)
+            nextSibling = nextSibling->nextSibling();
+        }
+
+        moveChildTo(from, to, child, beforeChild, normalizeAfterInsertion);
+        child = nextSibling;
+    }
+}
+
+void RenderTreeBuilder::moveAllChildrenIncludingFloatsTo(RenderBlock& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)
+{
+    if (is<RenderBlockFlow>(from)) {
+        blockFlowBuilder().moveAllChildrenIncludingFloatsTo(downcast<RenderBlockFlow>(from), to, normalizeAfterInsertion);
+        return;
+    }
+    moveAllChildrenTo(from, &to, normalizeAfterInsertion);
+}
+
 void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
 {
     // makeChildrenNonInline takes a block whose children are *all* inline and it
@@ -409,7 +496,7 @@ void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject*
         auto newBlock = parent.createAnonymousBlock();
         auto& block = *newBlock;
         insertChildToRenderElementInternal(parent, WTFMove(newBlock), inlineRunStart);
-        parent.moveChildrenTo(*this, &block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
+        moveChildrenTo(parent, &block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
     }
 #ifndef NDEBUG
     for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
@@ -438,7 +525,7 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
             insertChildToRenderElementInternal(*parentBox, WTFMove(newPostBox), boxToSplit.nextSibling());
-            boxToSplit.moveChildrenTo(*this, &postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
+            moveChildrenTo(boxToSplit, &postBox, beforeChild, nullptr, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(postBox);

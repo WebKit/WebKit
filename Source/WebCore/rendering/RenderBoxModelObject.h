@@ -275,30 +275,6 @@ public:
     void setFirstLetterRemainingText(RenderTextFragment&);
     void clearFirstLetterRemainingText();
 
-    // NormalizeAfterInsertion::Yes ensures that the destination subtree is consistent after the insertion (anonymous wrappers etc).
-    enum class NormalizeAfterInsertion { No, Yes };
-    void moveChildTo(RenderTreeBuilder&, RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, NormalizeAfterInsertion);
-    void moveChildTo(RenderTreeBuilder& builder, RenderBoxModelObject* toBoxModelObject, RenderObject* child, NormalizeAfterInsertion normalizeAfterInsertion)
-    {
-        moveChildTo(builder, toBoxModelObject, child, nullptr, normalizeAfterInsertion);
-    }
-    void moveAllChildrenTo(RenderTreeBuilder& builder, RenderBoxModelObject* toBoxModelObject, NormalizeAfterInsertion normalizeAfterInsertion)
-    {
-        moveAllChildrenTo(builder, toBoxModelObject, nullptr, normalizeAfterInsertion);
-    }
-    void moveAllChildrenTo(RenderTreeBuilder& builder, RenderBoxModelObject* toBoxModelObject, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
-    {
-        moveChildrenTo(builder, toBoxModelObject, firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
-    }
-    void moveAllChildrenToInternal(RenderElement& newParent);
-    // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote
-    // that all the kids from |startChild| onwards should be moved.
-    void moveChildrenTo(RenderTreeBuilder& builder, RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
-    {
-        moveChildrenTo(builder, toBoxModelObject, startChild, endChild, nullptr, normalizeAfterInsertion);
-    }
-    void moveChildrenTo(RenderTreeBuilder&, RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion);
-
     enum ScaleByEffectiveZoomOrNot { ScaleByEffectiveZoom, DoNotScaleByEffectiveZoom };
     LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot) const;
 
