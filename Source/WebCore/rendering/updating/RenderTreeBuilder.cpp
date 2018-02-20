@@ -166,7 +166,12 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderTable>(parent)) {
-        insertRecursiveIfNeeded(tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild));
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild);
+        if (is<RenderTable>(parentCandidate) && &parentCandidate == &parent) {
+            tableBuilder().insertChild(downcast<RenderTable>(parentCandidate), WTFMove(child), beforeChild);
+            return;
+        }
+        insertRecursiveIfNeeded(parentCandidate);
         return;
     }
 

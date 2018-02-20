@@ -127,8 +127,6 @@ public:
     LayoutUnit calcBorderEnd() const;
     void recalcBordersInRowDirection();
 
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) final;
-
     struct ColumnStruct {
         explicit ColumnStruct(unsigned initialSpan = 1)
             : span(initialSpan)
@@ -268,7 +266,10 @@ public:
     LayoutUnit offsetHeightForColumn(const RenderTableCol&) const;
     
     void markForPaginationRelayoutIfNeeded() final;
-    
+
+    void willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
+    void willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild);
+
 protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void simplifiedNormalFlowLayout() final;

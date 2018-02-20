@@ -184,6 +184,12 @@ void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<Render
     if (beforeChild && beforeChild->parent() != &parent)
         beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
 
+    auto& newChild = *child.get();
+    if (is<RenderTableSection>(newChild))
+        parent.willInsertTableSection(downcast<RenderTableSection>(newChild), beforeChild);
+    else if (is<RenderTableCol>(newChild))
+        parent.willInsertTableColumn(downcast<RenderTableCol>(newChild), beforeChild);
+
     parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
 }
 
