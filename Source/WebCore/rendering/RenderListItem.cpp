@@ -31,6 +31,7 @@
 #include "HTMLUListElement.h"
 #include "InlineElementBox.h"
 #include "PseudoElement.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
@@ -57,7 +58,7 @@ RenderListItem::~RenderListItem()
 void RenderListItem::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_marker)
-        m_marker->removeFromParentAndDestroy(builder);
+        builder.removeAndDestroyChild(*m_marker);
     RenderBlockFlow::willBeDestroyed(builder);
 }
 

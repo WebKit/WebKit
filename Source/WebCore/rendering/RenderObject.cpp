@@ -255,12 +255,6 @@ void RenderObject::setParent(RenderElement* parent)
     m_parent = parent;
 }
 
-void RenderObject::removeFromParentAndDestroy(RenderTreeBuilder& builder)
-{
-    ASSERT(m_parent);
-    builder.removeAndDestroyChild(*this);
-}
-
 RenderObject* RenderObject::nextInPreOrder() const
 {
     if (RenderObject* o = firstChildSlow())

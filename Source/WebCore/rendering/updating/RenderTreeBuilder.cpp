@@ -646,7 +646,7 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
 {
     // If the tree is destroyed, there is no need for a clean-up phase.
     if (child.renderTreeBeingDestroyed()) {
-        child.removeFromParentAndDestroy(*this);
+        removeAndDestroyChild(child);
         return;
     }
 
