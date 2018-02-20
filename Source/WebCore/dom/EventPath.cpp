@@ -270,6 +270,16 @@ Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& t
     return path;
 }
 
+EventPath::EventPath(const Vector<Element*>& targets)
+{
+    for (auto* target : targets) {
+        ASSERT(target);
+        Node* origin = *targets.begin();
+        if (!target->isClosedShadowHidden(*origin))
+            m_path.append(std::make_unique<EventContext>(target, target, origin));
+    }
+}
+
 EventPath::EventPath(const Vector<EventTarget*>& targets)
 {
     for (auto* target : targets) {

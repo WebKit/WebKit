@@ -116,6 +116,7 @@ interface AccessibilityUIElement {
     void increment();
     void decrement();
     void press();
+    void syncPress();
     void showMenu();
 
     // Attribute info.

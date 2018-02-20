@@ -486,6 +486,8 @@ webkit.org/b/179775 imported/w3c/web-platform-tests/XMLHttpRequest/firing-events
 
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
 
+webkit.org/b/180898 accessibility/mac/AOM-events.html [ Skip ]
+
 # User-installed fonts test infrastructure is not present in WK1
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 

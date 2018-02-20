@@ -90,8 +90,6 @@ class ScrollableArea;
 class ScrollView;
 class Widget;
 
-enum class AXPropertyName;
-
 typedef unsigned AXID;
 
 enum class AccessibilityRole {
@@ -896,14 +894,8 @@ public:
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
-
-    bool hasProperty(AXPropertyName) const;
-    const String stringValueForProperty(AXPropertyName) const;
-    std::optional<bool> boolValueForProperty(AXPropertyName) const;
-    int intValueForProperty(AXPropertyName) const;
-    unsigned unsignedValueForProperty(AXPropertyName) const;
-    double doubleValueForProperty(AXPropertyName) const;
-    Element* elementValueForProperty(AXPropertyName) const;
+    
+    void dispatchAccessibilityEvent(Event&);
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }

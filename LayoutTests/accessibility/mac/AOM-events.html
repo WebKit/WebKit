@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="button1">Click</button>
+<button id="button2">Click</button>
+<p id="p1">
+<button id="button3">Click</button>
+</p>
+
+<ul id="ul">
+<li id="li">
+<button id="button4">Click</button>
+</li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests accessibility-specific events.");
+    if (window.accessibilityController) {
+        var node;
+        var axNode;
+        var receivedAXEvent;
+        var receivedFallbackEvent;
+
+        testAccessibleClick();
+        testPreventDefault();
+        testEventBubbling();
+        testEventCapturingAndBubbling();
+    }
+
+    function testAccessibleClick() {
+        debug("\nonaccessibleclick support");
+        node = document.getElementById("button1");
+        axNode = accessibilityController.accessibleElementById("button1");
+
+        receivedAXEvent = false;
+        receivedFallbackEvent = false;
+        node.onaccessibleclick = function() {
+            receivedAXEvent = true;
+        };
+        node.onclick = function() {
+            receivedFallbackEvent = true;
+        };
+        axNode.syncPress();
+        shouldBeTrue("receivedAXEvent");
+        shouldBeTrue("receivedFallbackEvent");
+    }
+    
+    function testPreventDefault() {
+        debug("\nTest preventDefault");
+        node = document.getElementById("button2");
+        axNode = accessibilityController.accessibleElementById("button2");
+        
+        receivedAXEvent = false;
+        receivedFallbackEvent = false;
+        node.onaccessibleclick = function(evt) {
+            receivedAXEvent = true;
+            evt.preventDefault();
+        };
+        node.onclick = function() {
+            receivedFallbackEvent = true;
+        };
+        axNode.syncPress();
+        shouldBeTrue("receivedAXEvent");
+        shouldBeFalse("receivedFallbackEvent");
+    }
+    
+    function testEventBubbling() {
+        debug("\nTest event bubbling");
+        node = document.getElementById("p1");
+        axNode = accessibilityController.accessibleElementById("button3");
+
+        node.onaccessibleclick = function() {
+            receivedAXEvent = true;
+        };
+        axNode.syncPress();
+        shouldBeTrue("receivedAXEvent");
+    }
+
+    function testEventCapturingAndBubbling() {
+        debug("\nTest event capturing and bubbling");
+        var ul = document.getElementById("ul");
+        var li = document.getElementById("li");
+        var button = document.getElementById("button4");
+        axNode = accessibilityController.accessibleElementById("button4");
+        
+        var seq = [];
+        
+        // Add event listeners to each layer
+        ul.addEventListener("accessibleclick", function() {
+            seq.push("AX capture UL");
+        }, true);
+        ul.addEventListener("accessibleclick", function() {
+            seq.push("AX bubble UL");
+        }, false);
+        li.addEventListener("accessibleclick", function() {
+            seq.push("AX capture LI");
+        }, true);
+        li.addEventListener("accessibleclick", function() {
+            seq.push("AX bubble LI");
+        }, false);
+        button.addEventListener("accessibleclick", function() {
+            seq.push("AX main event listener BUTTON");
+        }, false);
+
+        axNode.syncPress();
+        seq.forEach(function (entry) {
+            debug(entry);
+        });
+    }
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

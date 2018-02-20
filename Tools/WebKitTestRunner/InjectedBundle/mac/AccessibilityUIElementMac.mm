@@ -1432,6 +1432,13 @@ void AccessibilityUIElement::press()
     END_AX_OBJC_EXCEPTIONS
 }
 
+void AccessibilityUIElement::syncPress()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilityPerformAction:@"AXSyncPressAction"];
+    END_AX_OBJC_EXCEPTIONS
+}
+
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

@@ -37,6 +37,8 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "Event.h"
+#include "EventDispatcher.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -990,6 +992,16 @@ bool AccessibilityObject::press()
     // Prefer the hit test element, if it is inside the target element.
     if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
         pressElement = hitTestElement;
+    
+    // dispatch accessibleclick event
+    if (auto* cache = axObjectCache()) {
+        if (auto* pressObject = cache->getOrCreate(pressElement)) {
+            auto event = Event::create(eventNames().accessibleclickEvent, true, true);
+            pressObject->dispatchAccessibilityEvent(event);
+            if (event->defaultPrevented())
+                return true;
+        }
+    }
     
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);
     
@@ -2139,6 +2151,17 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
     if (auto* element = this->element())
         return element->attributeWithoutSynchronization(attribute);
     return nullAtom();
+}
+
+void AccessibilityObject::dispatchAccessibilityEvent(Event& event)
+{
+    Vector<Element*> eventPath;
+    for (auto* parentObject = this; parentObject; parentObject = parentObject->parentObject()) {
+        if (auto* parentElement = parentObject->element())
+            eventPath.append(parentElement);
+    }
+    
+    EventDispatcher::dispatchEvent(eventPath, event);
 }
 
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;

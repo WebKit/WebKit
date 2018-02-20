@@ -97,6 +97,11 @@ public:
     void decrement();
     void showMenu();
     void press();
+#if PLATFORM(MAC)
+    void syncPress();
+#else
+    void syncPress() { press(); }
+#endif
 
     // Attributes - platform-independent implementations
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute);

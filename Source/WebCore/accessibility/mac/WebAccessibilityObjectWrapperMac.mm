@@ -3577,6 +3577,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([action isEqualToString:NSAccessibilityPressAction])
         [self accessibilityPerformPressAction];
     
+    // Used in layout tests, so that we don't have to wait for the async press action.
+    else if ([action isEqualToString:@"AXSyncPressAction"])
+        [self _accessibilityPerformPressAction];
+    
     else if ([action isEqualToString:NSAccessibilityShowMenuAction])
         [self accessibilityPerformShowMenuAction];
     

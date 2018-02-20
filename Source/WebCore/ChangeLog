@@ -1,3 +1,40 @@
+2018-02-20  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Dispatch accessibleclick event
+        https://bugs.webkit.org/show_bug.cgi?id=180898
+        <rdar://problem/36086710>
+
+        Reviewed by Ryosuke Niwa.
+
+        Accessibility events.
+        Spec: https://wicg.github.io/aom/spec/phase2.html
+
+        This patch allows developers to register event handlers on Elements
+        for custom accessibility events.
+
+        Accessibility events go through a capturing and bubbling phase just
+        like DOM events, but in the accessibility tree.
+
+        Implemented "accessibleclick" event.
+
+        Test: accessibility/mac/AOM-events.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        (WebCore::AccessibilityObject::dispatchAccessibilityEvent):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPerformAction:]):
+        * dom/Element.idl:
+        * dom/EventDispatcher.cpp:
+        (WebCore::dispatchEventWithType):
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventDispatcher.h:
+        * dom/EventNames.h:
+        * dom/EventPath.cpp:
+        (WebCore::EventPath::EventPath):
+        * dom/EventPath.h:
+
 2018-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 11.3 Beta] Can't copy a URL from Safari and paste it into the Gmail app

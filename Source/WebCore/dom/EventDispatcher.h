@@ -24,6 +24,7 @@
 
 namespace WebCore {
 
+class Element;
 class Event;
 class EventTarget;
 class Node;
@@ -32,6 +33,7 @@ namespace EventDispatcher {
 
 void dispatchEvent(Node&, Event&);
 void dispatchEvent(const Vector<EventTarget*>&, Event&);
+void dispatchEvent(const Vector<Element*>&, Event&);
 
 void dispatchScopedEvent(Node&, Event&);
 
