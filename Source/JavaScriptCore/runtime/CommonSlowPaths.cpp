@@ -222,7 +222,7 @@ SLOW_PATH_DECL(slow_path_create_this)
     auto& bytecode = *reinterpret_cast<OpCreateThis*>(pc);
     JSObject* result;
     JSObject* constructorAsObject = asObject(GET(bytecode.callee()).jsValue());
-    if (constructorAsObject->type() == JSFunctionType) {
+    if (constructorAsObject->type() == JSFunctionType && jsCast<JSFunction*>(constructorAsObject)->canUseAllocationProfile()) {
         JSFunction* constructor = jsCast<JSFunction*>(constructorAsObject);
         WriteBarrier<JSCell>& cachedCallee = bytecode.cachedCallee();
         if (!cachedCallee)
@@ -231,7 +231,7 @@ SLOW_PATH_DECL(slow_path_create_this)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
         size_t inlineCapacity = bytecode.inlineCapacity();
-        Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
+        Structure* structure = constructor->ensureRareDataAndAllocationProfile(exec, inlineCapacity)->objectAllocationProfile()->structure();
         result = constructEmptyObject(exec, structure);
         if (structure->hasPolyProto()) {
             JSObject* prototype = constructor->prototypeForConstruction(vm, exec);

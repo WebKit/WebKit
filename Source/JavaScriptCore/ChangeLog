@@ -1,5 +1,44 @@
 2018-02-19  Saam Barati  <sbarati@apple.com>
 
+        Don't use JSFunction's allocation profile when getting the prototype can be effectful
+        https://bugs.webkit.org/show_bug.cgi?id=182942
+        <rdar://problem/37584764>
+
+        Reviewed by Mark Lam.
+
+        Prior to this patch, the create_this implementation assumed that anything
+        that is a JSFunction can use the object allocation profile and go down the
+        fast path to allocate the |this| object. Implied by this approach is that
+        accessing the 'prototype' property of the incoming function is not an
+        effectful operation. This is inherent to the ObjectAllocationProfile 
+        data structure: it caches the prototype field. However, getting the
+        'prototype' property might be an effectful operation, e.g, it could
+        be a getter. Many variants of functions in JS have the 'prototype' property
+        as non-configurable. However, some functions, like bound functions, do not
+        have the 'prototype' field with these attributes.
+        
+        This patch adds the notion of 'canUseAllocationProfile' to JSFunction
+        and threads it through so that we only go down the fast path and use
+        the allocation profile when the prototype property is non-configurable.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::prototypeForConstruction):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::canUseAllocationProfileNonInline):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::ensureRareDataAndAllocationProfile):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::canUseAllocationProfile):
+
+2018-02-19  Saam Barati  <sbarati@apple.com>
+
         Don't mark an array profile out of bounds for the cases where the DFG will convert the access to SaneChain
         https://bugs.webkit.org/show_bug.cgi?id=182912
         <rdar://problem/37685083>
