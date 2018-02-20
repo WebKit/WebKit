@@ -1,3 +1,16 @@
+2018-02-19  Dean Jackson  <dino@apple.com>
+
+        Handle all writing-modes in downcast
+        https://bugs.webkit.org/show_bug.cgi?id=182949
+        <rdar://problem/37710687>
+
+        Reviewed by Myles Maxfield.
+
+        Test all the deprecated SVG writing modes.
+
+        * fast/writing-mode/svg-writing-modes-expected.html: Added.
+        * fast/writing-mode/svg-writing-modes.html: Added.
+
 2018-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css3-text] Skip tests that need ENABLE_CSS3_TEXT

@@ -1,3 +1,19 @@
+2018-02-19  Dean Jackson  <dino@apple.com>
+
+        Handle all writing-modes in downcast
+        https://bugs.webkit.org/show_bug.cgi?id=182949
+        <rdar://problem/37710687>
+
+        Reviewed by Myles Maxfield.
+
+        It appears we forgot to handle the deprecated "lr"
+        writing-mode value.
+
+        Test: fast/writing-mode/svg-writing-modes.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator WritingMode const):
+
 2018-02-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Drop target GraphicsContext usage in Cairo operations
