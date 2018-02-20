@@ -37,8 +37,6 @@ public:
     RenderInline(Element&, RenderStyle&&);
     RenderInline(Document&, RenderStyle&&);
 
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = 0) override;
-
     LayoutUnit marginLeft() const final;
     LayoutUnit marginRight() const final;
     LayoutUnit marginTop() const final;
