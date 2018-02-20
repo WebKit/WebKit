@@ -188,7 +188,7 @@ void RenderTreeBuilder::Inline::insertChildIgnoringContinuation(RenderInline& pa
     }
 
     auto& childToAdd = *child;
-    parent.RenderElement::addChild(m_builder, WTFMove(child), beforeChild);
+    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
     childToAdd.setNeedsLayoutAndPrefWidthsRecalc();
 }
 

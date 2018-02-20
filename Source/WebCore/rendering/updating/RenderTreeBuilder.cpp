@@ -142,7 +142,7 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
 {
     auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
         if (&parent == &parentCandidate) {
-            parent.addChild(*this, WTFMove(child), beforeChild);
+            insertChildToRenderElement(parent, WTFMove(child), beforeChild);
             return;
         }
         insertChild(parentCandidate, WTFMove(child), beforeChild);
@@ -255,7 +255,7 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
-    parent.addChild(*this, WTFMove(child), beforeChild);
+    insertChildToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, RenderObject& child)
@@ -320,7 +320,9 @@ void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, Render
         insertChild(*table, WTFMove(child));
         return;
     }
-    parent.RenderElement::insertChildInternal(WTFMove(child), beforeChild);
+    auto& newChild = *child.get();
+    parent.insertChildInternal(WTFMove(child), beforeChild);
+    parent.didInsertChild(newChild, beforeChild);
 }
 
 void RenderTreeBuilder::insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
