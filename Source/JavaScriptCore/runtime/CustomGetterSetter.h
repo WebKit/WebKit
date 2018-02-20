@@ -26,7 +26,7 @@
 #pragma once
 
 #include "JSCPoison.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
 #include "Structure.h"

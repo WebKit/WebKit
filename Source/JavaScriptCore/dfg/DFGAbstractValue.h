@@ -34,7 +34,7 @@
 #include "DFGStructureAbstractValue.h"
 #include "DFGStructureClobberState.h"
 #include "InferredType.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "ResultType.h"
 #include "SpeculatedType.h"
 #include "DumpContext.h"

@@ -38,7 +38,7 @@
 #include "Interpreter.h"
 #include "JSArray.h"
 #include "JSArrayBufferView.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSLexicalEnvironment.h"

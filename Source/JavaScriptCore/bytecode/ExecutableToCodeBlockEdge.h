@@ -27,7 +27,7 @@
 
 #include "ConcurrentJSLock.h"
 #include "IsoSubspace.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "VM.h"
 
 namespace JSC {

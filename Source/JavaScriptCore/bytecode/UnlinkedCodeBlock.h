@@ -31,7 +31,7 @@
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "LockDuringMarking.h"
 #include "ParserModes.h"
 #include "RegExp.h"

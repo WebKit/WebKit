@@ -1,3 +1,88 @@
+2018-02-14  Keith Miller  <keith_miller@apple.com>
+
+        We should be able to jsDynamicCast from JSType when possible
+        https://bugs.webkit.org/show_bug.cgi?id=182804
+
+        Reviewed by Filip Pizlo and Mark Lam.
+
+        This patch beefs up jsDynamicCast in some of the cases where we
+        can use the JSType to quickly determine if a cell is a subclass of
+        the desired type. Since all JSCells have a range of JSTypes they support,
+        if there is a range exclusive to a class and all subclasses we can use
+        that range to quickly determine if the cast should be successful.
+
+        Additionally, the JSValue versions of jsCast and jsDynamicCast now
+        call the JSCell version after checking the value is a cell.
+
+        Finally, the casting functions have been moved to a new header,
+        JSCast.h
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallVariant.h:
+        * bytecode/CodeBlock.h:
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/TrackedReferences.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGCommonData.h:
+        * dfg/DFGFrozenValue.h:
+        * dfg/DFGStructureAbstractValue.h:
+        * heap/CellContainerInlines.h:
+        * heap/ConservativeRoots.cpp:
+        * heap/GCLogging.cpp:
+        * heap/HeapInlines.h:
+        * heap/HeapSnapshotBuilder.cpp:
+        * heap/MarkedBlock.cpp:
+        * heap/MarkedBlockInlines.h:
+        * heap/SubspaceInlines.h:
+        * heap/WeakInlines.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * runtime/ArrayBufferNeuteringWatchpoint.h:
+        * runtime/BigIntPrototype.cpp:
+        * runtime/ClassInfo.h:
+        * runtime/CustomGetterSetter.h:
+        * runtime/FunctionRareData.h:
+        * runtime/GetterSetter.h:
+        * runtime/InferredType.h:
+        * runtime/InferredTypeTable.h:
+        * runtime/InferredValue.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSArray.h:
+        (JSC::JSArray::finishCreation):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::finishCreation):
+        * runtime/JSCast.h: Added.
+        (JSC::jsCast):
+        (JSC::JSCastingHelpers::jsDynamicCastGenericImpl):
+        (JSC::JSCastingHelpers::jsDynamicCastJSTypeImpl):
+        (JSC::JSCastingHelpers::JSDynamicCastTraits::cast):
+        (JSC::jsDynamicCast):
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC::jsCast): Deleted.
+        (JSC::jsDynamicCast): Deleted.
+        * runtime/JSCellInlines.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSJob.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::finishCreation):
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/NativeStdFunctionCell.h:
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.h:
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.h:
+        * tools/CellProfile.h:
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+
 2018-02-14  Michael Saboff  <msaboff@apple.com>
 
         Crash: triggerOMGTierUpThunkGenerator() doesn't align the stack pointer before calling C++ code

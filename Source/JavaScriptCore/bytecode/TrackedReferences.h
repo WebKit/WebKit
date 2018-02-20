@@ -26,7 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include <wtf/HashSet.h>
 #include <wtf/PrintStream.h>
 

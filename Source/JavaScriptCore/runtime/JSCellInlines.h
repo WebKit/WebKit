@@ -29,7 +29,7 @@
 #include "CallFrame.h"
 #include "DeferGC.h"
 #include "Handle.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "JSString.h"

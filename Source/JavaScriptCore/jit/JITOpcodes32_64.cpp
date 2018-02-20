@@ -35,7 +35,7 @@
 #include "Exception.h"
 #include "JITInlines.h"
 #include "JSArray.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSFunction.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"

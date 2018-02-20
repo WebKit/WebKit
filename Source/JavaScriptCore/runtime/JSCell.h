@@ -296,36 +296,6 @@ private:
     JS_EXPORT_PRIVATE void unlockSlow();
 };
 
-template<typename To, typename From>
-inline To jsCast(From* from)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(*from->JSCell::vm(), std::remove_pointer<To>::type::info()));
-    return static_cast<To>(from);
-}
-    
-template<typename To>
-inline To jsCast(JSValue from)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(*from.asCell()->vm(), std::remove_pointer<To>::type::info()));
-    return static_cast<To>(from.asCell());
-}
-
-template<typename To, typename From>
-inline To jsDynamicCast(VM& vm, From* from)
-{
-    if (LIKELY(from->JSCell::inherits(vm, std::remove_pointer<To>::type::info())))
-        return static_cast<To>(from);
-    return nullptr;
-}
-
-template<typename To>
-inline To jsDynamicCast(VM& vm, JSValue from)
-{
-    if (LIKELY(from.isCell() && from.asCell()->inherits(vm, std::remove_pointer<To>::type::info())))
-        return static_cast<To>(from.asCell());
-    return nullptr;
-}
-
 // FIXME: Refer to Subspace by reference.
 // https://bugs.webkit.org/show_bug.cgi?id=166988
 template<typename Type>

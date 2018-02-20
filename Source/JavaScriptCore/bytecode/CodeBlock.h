@@ -50,7 +50,7 @@
 #include "JITCode.h"
 #include "JITMathICForwards.h"
 #include "JSCPoison.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "LLIntCallLinkInfo.h"

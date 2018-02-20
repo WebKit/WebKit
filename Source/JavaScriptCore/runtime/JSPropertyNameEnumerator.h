@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSCast.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"
 #include "Structure.h"

@@ -747,6 +747,7 @@ set(JavaScriptCore_FORWARDING_HEADERS
     runtime/JSCJSValueInlines.h
     runtime/JSCPoison.h
     runtime/JSCallee.h
+    runtime/JSCast.h
     runtime/JSCell.h
     runtime/JSCellInlines.h
     runtime/JSDataView.h

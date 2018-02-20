@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FunctionExecutable.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSFunction.h"
 #include "NativeExecutable.h"
 

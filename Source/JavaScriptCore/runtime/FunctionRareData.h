@@ -26,7 +26,7 @@
 #pragma once
 
 #include "InternalFunctionAllocationProfile.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "ObjectAllocationProfile.h"
 #include "Watchpoint.h"
 

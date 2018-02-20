@@ -66,9 +66,12 @@ enum JSType : uint8_t {
     ScopedArgumentsType,
     ClonedArgumentsType,
 
+    // Start JSArray types.
     ArrayType,
     DerivedArrayType,
+    // End JSArray types.
 
+    // Start JSArrayBufferView types.
     Int8ArrayType,
     Uint8ArrayType,
     Uint8ClampedArrayType,
@@ -79,6 +82,7 @@ enum JSType : uint8_t {
     Float32ArrayType,
     Float64ArrayType,
     DataViewType,
+    // End JSArrayBufferView types.
 
     GetterSetterType,
 

@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSCast.h"
 
 #include "CallFrame.h"
 #include "JSGlobalObject.h"

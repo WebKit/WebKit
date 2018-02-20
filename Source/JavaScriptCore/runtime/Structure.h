@@ -30,7 +30,7 @@
 #include "IndexingType.h"
 #include "InferredTypeTable.h"
 #include "JSCJSValue.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSType.h"
 #include "PropertyName.h"
 #include "PropertyNameArray.h"

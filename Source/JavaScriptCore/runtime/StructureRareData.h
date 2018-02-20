@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ClassInfo.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "JSTypeInfo.h"
 #include "PropertyOffset.h"
 #include "PropertySlot.h"

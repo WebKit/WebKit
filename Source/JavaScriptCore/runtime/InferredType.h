@@ -28,7 +28,7 @@
 #include "ConcurrentJSLock.h"
 #include "InferredStructure.h"
 #include "IsoCellSet.h"
-#include "JSCell.h"
+#include "JSCast.h"
 #include "PropertyName.h"
 #include "PutByIdFlags.h"
 #include "Watchpoint.h"

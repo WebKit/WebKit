@@ -25,6 +25,7 @@
 
 #include "ArrayBufferView.h"
 #include "JSCInlines.h"
+#include "JSCast.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSObject.h"
