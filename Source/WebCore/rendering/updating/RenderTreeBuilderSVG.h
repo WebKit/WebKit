@@ -43,6 +43,11 @@ public:
     void insertChild(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void insertChild(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
+    RenderPtr<RenderObject> takeChild(RenderSVGText& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChild(RenderSVGInline& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChild(RenderSVGContainer& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChild(RenderSVGRoot& parent, RenderObject& child);
+
 private:
     RenderTreeBuilder& m_builder;
 };

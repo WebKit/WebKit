@@ -308,12 +308,6 @@ void RenderSVGRoot::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject>
     builder.insertChildToSVGRoot(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderSVGRoot::takeChild(RenderTreeBuilder& builder, RenderObject& child)
-{
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return RenderReplaced::takeChild(builder, child);
-}
-
 // RenderBox methods will expect coordinates w/o any transforms in coordinates
 // relative to our borderBox origin.  This method gives us exactly that.
 void RenderSVGRoot::buildLocalToBorderBoxTransform()

@@ -62,7 +62,6 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
     void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr) final;
-    RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) final;
 };
 
 } // namespace WebCore
