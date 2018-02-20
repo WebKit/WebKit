@@ -88,7 +88,7 @@ const iconService = new class IconService {
         let platform;
         if (layoutTraits & LayoutTraits.macOS)
             platform = "macOS";
-        else if (layoutTraits & LayoutTraits.iOS)
+        else if (layoutTraits & LayoutTraits.iOS || layoutTraits & LayoutTraits.Compact)
             platform = "iOS";
         else
             throw "Could not identify icon's platform from layout traits.";

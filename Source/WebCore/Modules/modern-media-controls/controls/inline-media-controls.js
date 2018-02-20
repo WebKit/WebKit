@@ -25,8 +25,6 @@
 
 const InsideMargin = 6; // Minimum margin to guarantee around all controls, this constant needs to stay in sync with the --inline-controls-inside-margin CSS variable.
 const BottomControlsBarHeight = 31; // This constant needs to stay in sync with the --inline-controls-bar-height CSS variable.
-const MinimumSizeToShowAnyControl = 47;
-const MaximumSizeToShowSmallProminentControl = 88;
 
 class InlineMediaControls extends MediaControls
 {

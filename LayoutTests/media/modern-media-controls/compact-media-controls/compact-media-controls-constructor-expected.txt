@@ -1,0 +1,14 @@
+Testing the CompactMediaControls constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.element.localName is "div"
+PASS mediaControls.element.className is "media-controls"
+PASS mediaControls.layoutTraits is LayoutTraits.Compact
+PASS mediaControls.placard is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

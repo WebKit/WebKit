@@ -96,6 +96,9 @@ class MediaController
 
     get layoutTraits()
     {
+        if (this.host && this.host.compactMode)
+            return LayoutTraits.Compact;
+
         let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
         if (this.isFullscreen)
             return traits | LayoutTraits.Fullscreen;
@@ -178,6 +181,14 @@ class MediaController
 
     // Private
 
+    _supportingObjectClasses()
+    {
+        if (this.layoutTraits & LayoutTraits.Compact)
+            return [PlacardSupport, PlaybackSupport];
+
+        return [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport, VolumeDownSupport, VolumeUpSupport];
+    }
+
     _updateControlsIfNeeded()
     {
         const layoutTraits = this.layoutTraits;
@@ -199,7 +210,7 @@ class MediaController
         this.controls = new ControlsClass;
         this.controls.delegate = this;
 
-        if (this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)
+        if (this.controls.autoHideController && this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)
             this.controls.autoHideController.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
 
         if (previousControls) {
@@ -212,9 +223,7 @@ class MediaController
         this._updateTextTracksClassList();
         this._updateControlsSize();
 
-        this._supportingObjects = [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport, VolumeDownSupport, VolumeUpSupport].map(SupportClass => {
-            return new SupportClass(this);
-        }, this);
+        this._supportingObjects = this._supportingObjectClasses().map(SupportClass => new SupportClass(this), this);
 
         this.controls.shouldUseSingleBarLayout = this.controls instanceof InlineMediaControls && this.isYouTubeEmbedWithTitle;
 
@@ -278,6 +287,8 @@ class MediaController
 
     _controlsClassForLayoutTraits(layoutTraits)
     {
+        if (layoutTraits & LayoutTraits.Compact)
+            return CompactMediaControls;
         if (layoutTraits & LayoutTraits.iOS)
             return IOSInlineMediaControls;
         if (layoutTraits & LayoutTraits.Fullscreen)
@@ -307,6 +318,10 @@ class MediaController
 
     _shouldControlsBeAvailable()
     {
+        // Controls are always available with compact layout.
+        if (this.layoutTraits & LayoutTraits.Compact)
+            return true;
+
         // Controls are always available while in fullscreen on macOS, and they are never available when in fullscreen on iOS.
         if (this.isFullscreen)
             return !!(this.layoutTraits & LayoutTraits.macOS);

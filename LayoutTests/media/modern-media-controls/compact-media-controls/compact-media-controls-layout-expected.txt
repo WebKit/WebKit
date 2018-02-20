@@ -1,0 +1,25 @@
+Testing the CompactMediaControls layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+With controls at their default size only the play/pause button is showing with a center style.
+PASS mediaControls.children is [mediaControls.playPauseButton]
+PASS mediaControls.playPauseButton.style is Button.Styles.Center
+
+With controls just under the minimum size to show prominent controls only the play/pause button is showing with a small-center style.
+PASS mediaControls.children is [mediaControls.playPauseButton]
+PASS mediaControls.playPauseButton.style is Button.Styles.SmallCenter
+
+With controls just under the minimum size to show any controls there are no children.
+PASS mediaControls.children.length is 0
+
+With controls above the minimum size and the error placard set only the invalid placard is shown.
+PASS mediaControls.children is [mediaControls.invalidPlacard]
+PASS mediaControls.invalidPlacard.width is mediaControls.width
+PASS mediaControls.invalidPlacard.height is mediaControls.height
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

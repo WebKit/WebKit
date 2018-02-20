@@ -49,6 +49,7 @@ enum DeviceType {
     readonly attribute boolean userGestureRequired;
     readonly attribute boolean isInMediaDocument;
     readonly attribute boolean shouldForceControlsDisplay;
+    readonly attribute boolean compactMode;
 
     readonly attribute DOMString externalDeviceDisplayName;
     readonly attribute DeviceType externalDeviceType;

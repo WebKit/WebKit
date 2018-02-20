@@ -8996,6 +8996,7 @@
 		71D6AAC11DA4EAF700B23969 /* volume@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume@2x.png"; sourceTree = "<group>"; };
 		71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomAndPan.cpp; sourceTree = "<group>"; };
 		71DCB7001568197600862271 /* JSSVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomAndPan.h; sourceTree = "<group>"; };
+		71DE2794203A9C1C0058CB51 /* compact-media-controls.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "compact-media-controls.js"; sourceTree = "<group>"; };
 		71E2183817359FB8006E6E4D /* PlugInsResources.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = PlugInsResources.h; sourceTree = "<group>"; };
 		71E2183917359FB8006E6E4D /* PlugInsResourcesData.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = PlugInsResourcesData.cpp; sourceTree = "<group>"; };
 		71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedIntegerOptionalInteger.cpp; sourceTree = "<group>"; };
@@ -19069,6 +19070,7 @@
 				716FA0DD1DB26591007323CC /* button.js */,
 				716FA0DE1DB26591007323CC /* buttons-container.css */,
 				716FA0DF1DB26591007323CC /* buttons-container.js */,
+				71DE2794203A9C1C0058CB51 /* compact-media-controls.js */,
 				717F618B1E43D61A00F37024 /* controls-bar.css */,
 				710FA74B1DEE576D004C715E /* controls-bar.js */,
 				716FA0E01DB26591007323CC /* forward-button.js */,
@@ -30710,7 +30712,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${PLATFORM_NAME}\" == \"macosx\" ]; then\nIMG_OS_PREFIX=\"macOS\"\nfi\n\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ] || [ \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]; then\nIMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX/\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\n             cat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"\n";
+			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nelse\n    IMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX/\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\n             cat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"\n";
 		};
 		A5E79CEC1E67F2CF00FB8153 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -24,6 +24,8 @@
  */
 
 const SkipSeconds = 15;
+const MinimumSizeToShowAnyControl = 47;
+const MaximumSizeToShowSmallProminentControl = 88;
 
 let mediaControlsHost;
 

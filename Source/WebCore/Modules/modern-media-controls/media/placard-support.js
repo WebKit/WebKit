@@ -36,6 +36,9 @@ class PlacardSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
+        if (this.mediaController.layoutTraits & LayoutTraits.Compact)
+            return ["error"];
+
         return ["loadstart", "error", "webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 

@@ -283,13 +283,24 @@ String MediaControlsHost::shadowRootCSSText() const
 
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType) const
 {
-
     return RenderTheme::singleton().mediaControlsBase64StringForIconNameAndType(iconName, iconType);
 }
 
 String MediaControlsHost::formattedStringForDuration(double durationInSeconds) const
 {
     return RenderTheme::singleton().mediaControlsFormattedStringForDuration(durationInSeconds);
+}
+
+bool MediaControlsHost::compactMode() const
+{
+    if (m_simulateCompactMode)
+        return true;
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    return true;
+#else
+    return false;
+#endif
 }
 
 }
