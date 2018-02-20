@@ -1,3 +1,23 @@
+2018-02-18  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] REGRESSION(r228238) Detach renderer before destroying its subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=182908
+        <rdar://problem/37619394>
+
+        Reviewed by Antti Koivisto.
+
+        Prior to r228238 we first detached the to-be-destroyed renderer and then
+        started nuking its descendants. r228238 changed the order and now the descendants are
+        destroyed while they are still attached to the tree. Apparently some of the takeChild()
+        normalization logic gets triggered now that the renderers still have access to their previous/next
+        siblings. This is unexpected and it shouldn't matter whether the subtree is still attached.
+        Let's revert it to the original order for now (see webkit.org/b/182909).
+
+        Test: fast/block/crash-when-subtree-is-still-attached.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeAndDestroyChild):
+
 2018-02-18  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Push smaller buffers from HTTP source
