@@ -1,3 +1,52 @@
+2018-02-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make KeyframeEffect target nullable and read-write
+        https://bugs.webkit.org/show_bug.cgi?id=182741
+
+        Reviewed by Dean Jackson.
+
+        We used to completely disregard null targets, for instance not parsing keyframes, but targets
+        can be null and are also supposed to be read-write for KeyframeEffect. We now update the IDL
+        for KeyframeEffect to mark the target property as read-write and update the implementation
+        to correctly handle null targets.
+
+        This revealed a few issues in our implementation by allowing more WPT tests to run. So we also
+        ensure that:
+        
+        - we don't crash when parsing font-related properties by calling update() on the generated
+        RenderStyle's FontCascade when parsing keyframes.
+
+        - CSS properties are provided as camel-case and not as hyphenated form
+
+        - values provided in keyframes dictionaries are only read for valid properties
+
+        - styles for effect targets are invalidated as soon as the timing model for that animation
+        is changed
+
+        * animation/KeyframeEffect.idl:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::invalidateElement): Add a new utility method to invalidate a given element since
+        we may want to invalidate not only the current target (m_target) but also a previous target.
+        (WebCore::IDLAttributeNameToAnimationPropertyName): Move this function below CSSPropertyIDToIDLAttributeName
+        so that it can call that function. We also check that we reject CSS properties that are not provided in
+        camel-case form (eg. "font-size" vs. "fontSize").
+        (WebCore::processIterableKeyframes): Only read the JS values if we know that the provided JS property name
+        maps to a valid CSS property.
+        (WebCore::KeyframeEffectReadOnly::processKeyframes): Allow keyframes to be processed even if the effect's
+        target is null.
+        (WebCore::KeyframeEffectReadOnly::setTarget): Notify the animation that the effect target has changed and
+        invalidate the style of the new target and the old targets, if any. We also update the blending keyframes
+        since this task may not have been completed in a previous call to processKeyframes() due to the target being
+        null at that time.
+        (WebCore::KeyframeEffectReadOnly::invalidate): Use the invalidateElement() utility.
+        * animation/KeyframeEffectReadOnly.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::effectTargetDidChange): This method is called in KeyframeEffectReadOnly::setTarget()
+        to inform the animation of the previous effect target and the new one upon a target change. This allows us to
+        forward this information onto the timeline so that we correctly add or remove the targets from the list of
+        animated elements.
+        * animation/WebAnimation.h:
+
 2018-02-19  Chris Dumez  <cdumez@apple.com>
 
         Crash under MIMETypeRegistry::isSupportedJavaScriptMIMEType()

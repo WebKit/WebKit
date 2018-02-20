@@ -135,13 +135,6 @@ FAIL font-stretch uses font-stretch behavior for composite type accumulate asser
 PASS font-style (type: discrete) has testAccumulation function 
 PASS font-style: "oblique" onto "italic" 
 FAIL font-style: "italic" onto "oblique" assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
-PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function 
-FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "'wght' 1.2"
-PASS font-variation-settings (type: discrete) has testAccumulation function 
-FAIL font-variation-settings: ""wdth" 5" onto ""wght" 1.1, "wdth" 1" assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "'wdth' 5"
-FAIL font-variation-settings: ""wght" 1.1, "wdth" 1" onto ""wdth" 5" assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "'wght' 1.1, 'wdth' 1"
-PASS font-variation-settings: "normal" onto ""wdth" 5" 
-FAIL font-variation-settings: ""wdth" 5" onto "normal" assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "'wdth' 5"
 PASS letter-spacing (type: length) has testAccumulation function 
 FAIL letter-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL letter-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "1px"

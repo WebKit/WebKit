@@ -1,6 +1,6 @@
 
-FAIL Test setting target before constructing the associated animation Attempted to assign to readonly property.
-FAIL Test setting target from null to a valid target Attempted to assign to readonly property.
-FAIL Test setting target from a valid target to null Attempted to assign to readonly property.
-FAIL Test setting target from a valid target to another target Attempted to assign to readonly property.
+PASS Test setting target before constructing the associated animation 
+PASS Test setting target from null to a valid target 
+PASS Test setting target from a valid target to null 
+PASS Test setting target from a valid target to another target 
 

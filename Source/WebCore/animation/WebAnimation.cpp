@@ -161,7 +161,19 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     // and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 }
-    
+
+void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTarget)
+{
+    if (!m_timeline)
+        return;
+
+    if (previousTarget)
+        m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
+
+    if (newTarget)
+        m_timeline->animationWasAddedToElement(*this, *newTarget);
+}
+
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)

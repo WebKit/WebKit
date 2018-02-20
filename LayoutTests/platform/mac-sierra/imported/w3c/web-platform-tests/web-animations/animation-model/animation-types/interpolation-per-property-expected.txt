@@ -160,17 +160,6 @@ PASS font-style (type: discrete) has testInterpolation function
 FAIL font-style uses discrete animation when animating between "italic" and "oblique" with linear easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
 FAIL font-style uses discrete animation when animating between "italic" and "oblique" with effect easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
 FAIL font-style uses discrete animation when animating between "italic" and "oblique" with keyframe easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
-PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function 
-FAIL font-variation-settings supports animation as float assert_equals: The value should be "wght" 1.1 at 0ms expected "\"wght\" 1.1" but got "'wght' 1.1"
-FAIL font-variation-settings supports animation as float with multiple tags assert_array_equals: The computed values should be "wdth" 1,"wght" 1.1 at 0ms property 0, expected "\"wdth\" 1" but got "'wdth' 1"
-FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms lengths differ, expected 2 got 1
-PASS font-variation-settings (type: discrete) has testInterpolation function 
-FAIL font-variation-settings uses discrete animation when animating between ""wght" 1.1, "wdth" 1" and ""wdth" 5" with linear easing assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wght" 1.1, "wdth" 1" and ""wdth" 5" with effect easing assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wght" 1.1, "wdth" 1" and ""wdth" 5" with keyframe easing assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with linear easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with effect easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing assert_equals: The value should be "wdth" 5 at 0ms expected "\"wdth\" 5" but got "normal"
 PASS letter-spacing (type: length) has testInterpolation function 
 PASS letter-spacing supports animating as a length 
 FAIL letter-spacing supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "3px"

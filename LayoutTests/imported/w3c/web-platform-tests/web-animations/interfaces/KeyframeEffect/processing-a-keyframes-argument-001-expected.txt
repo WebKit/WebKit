@@ -38,10 +38,10 @@ PASS Equivalent property-indexed and sequenced keyframes: two properties with th
 PASS Equivalent property-indexed and sequenced keyframes: two properties with different numbers of values 
 PASS Equivalent property-indexed and sequenced keyframes: same easing applied to all keyframes 
 PASS Equivalent property-indexed and sequenced keyframes: same composite applied to all keyframes 
-FAIL Keyframes are read from a custom iterator assert_equals: number of frames expected 3 but got 0
-FAIL 'easing' and 'offset' are ignored on iterable objects assert_equals: number of frames expected 3 but got 0
-FAIL Keyframes are read from a custom iterator with multiple properties specified assert_equals: number of frames expected 3 but got 0
-FAIL Keyframes are read from a custom iterator with where an offset is specified assert_equals: number of frames expected 3 but got 0
+PASS Keyframes are read from a custom iterator 
+PASS 'easing' and 'offset' are ignored on iterable objects 
+PASS Keyframes are read from a custom iterator with multiple properties specified 
+FAIL Keyframes are read from a custom iterator with where an offset is specified assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.75 but got 0.5
 FAIL Reading from a custom iterator that returns a non-object keyframe should throw assert_throws: function "() => {
     new KeyframeEffect(null, createIterable([
       { done: false, value: { left: '100px' } },
@@ -50,10 +50,10 @@ FAIL Reading from a custom iterator that returns a non-object keyframe should th
       { done: true },
     ]));
   }" did not throw
-FAIL A list of values returned from a custom iterator should be ignored assert_equals: number of frames expected 1 but got 0
-FAIL Only enumerable properties on keyframes are read assert_equals: number of frames expected 2 but got 0
-FAIL Only properties defined directly on keyframes are read assert_equals: number of frames expected 2 but got 0
-FAIL Only enumerable properties on property-indexed keyframes are read assert_equals: number of frames expected 2 but got 0
-FAIL Only properties defined directly on property-indexed keyframes are read assert_equals: number of frames expected 2 but got 0
+PASS A list of values returned from a custom iterator should be ignored 
+PASS Only enumerable properties on keyframes are read 
+PASS Only properties defined directly on keyframes are read 
+PASS Only enumerable properties on property-indexed keyframes are read 
+PASS Only properties defined directly on property-indexed keyframes are read 
 FAIL Properties are read in ascending order by Unicode codepoint assert_array_equals: property access order property 0, expected "composite" but got "marginLeft"
 

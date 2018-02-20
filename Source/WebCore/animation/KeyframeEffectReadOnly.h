@@ -87,6 +87,8 @@ public:
     };
 
     Element* target() const { return m_target.get(); }
+    void setTarget(RefPtr<Element>&&);
+
     Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::ExecState&);
 
     IterationCompositeOperation iterationComposite() const { return m_iterationCompositeOperation; }

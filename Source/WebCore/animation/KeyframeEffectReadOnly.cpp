@@ -44,30 +44,54 @@
 namespace WebCore {
 using namespace JSC;
 
-static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(String idlAttributeName)
+static inline void invalidateElement(Element* element)
 {
-    // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
-    // 1. If attribute conforms to the <custom-property-name> production, return attribute.
-    // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
-    if (idlAttributeName == "cssFloat")
-        return CSSPropertyFloat;
-    // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
-    // FIXME: we don't support the CSS "offset" property
-    // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
-    return CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
+    if (!element)
+        return;
+
+    element->invalidateStyleAndLayerComposition();
+    element->document().updateStyleIfNeeded();
 }
 
 static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
 {
     // https://drafts.csswg.org/web-animations-1/#animation-property-name-to-idl-attribute-name
     // 1. If property follows the <custom-property-name> production, return property.
+    // FIXME: We don't handle custom properties yet.
+
     // 2. If property refers to the CSS float property, return the string "cssFloat".
     if (cssPropertyId == CSSPropertyFloat)
         return "cssFloat";
+
     // 3. If property refers to the CSS offset property, return the string "cssOffset".
     // FIXME: we don't support the CSS "offset" property
+
     // 4. Otherwise, return the result of applying the CSS property to IDL attribute algorithm [CSSOM] to property.
     return getJSPropertyName(cssPropertyId);
+}
+
+static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const String& idlAttributeName)
+{
+    // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
+    // 1. If attribute conforms to the <custom-property-name> production, return attribute.
+    // FIXME: We don't handle custom properties yet.
+
+    // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
+    if (idlAttributeName == "cssFloat")
+        return CSSPropertyFloat;
+
+    // 3. If attribute is the string "cssOffset", then return an animation property representing the CSS offset property.
+    // FIXME: We don't support the CSS "offset" property.
+
+    // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
+    auto cssPropertyId = CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
+
+    // We need to check that converting the property back to IDL form yields the same result such that a property passed
+    // in non-IDL form is rejected, for instance "font-size".
+    if (idlAttributeName != CSSPropertyIDToIDLAttributeName(cssPropertyId))
+        return CSSPropertyInvalid;
+
+    return cssPropertyId;
 }
 
 static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffectReadOnly::ParsedKeyframe>& keyframes)
@@ -146,17 +170,16 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
 
         for (size_t j = 0; j < numberOfProperties; ++j) {
             auto ownPropertyName = ownPropertyNames[j];
-            auto ownPropertyRawValue = keyframe->get(&state, ownPropertyName);
             if (ownPropertyName == "easing")
-                easing = convert<IDLDOMString>(state, ownPropertyRawValue);
+                easing = convert<IDLDOMString>(state, keyframe->get(&state, ownPropertyName));
             else if (ownPropertyName == "offset")
-                offset = convert<IDLNullable<IDLDouble>>(state, ownPropertyRawValue);
+                offset = convert<IDLNullable<IDLDouble>>(state, keyframe->get(&state, ownPropertyName));
             else if (ownPropertyName == "composite")
-                composite = convert<IDLNullable<IDLEnumeration<CompositeOperation>>>(state, ownPropertyRawValue);
+                composite = convert<IDLNullable<IDLEnumeration<CompositeOperation>>>(state, keyframe->get(&state, ownPropertyName));
             else {
                 auto cssPropertyId = IDLAttributeNameToAnimationPropertyName(ownPropertyName.string());
                 if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId)) {
-                    auto stringValue = convert<IDLDOMString>(state, ownPropertyRawValue);
+                    auto stringValue = convert<IDLDOMString>(state, keyframe->get(&state, ownPropertyName));
                     if (keyframeOutput.style->setProperty(cssPropertyId, stringValue))
                         keyframeOutput.unparsedStyle.set(cssPropertyId, stringValue);
                 }
@@ -516,7 +539,7 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
 ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput)
 {
     // 1. If object is null, return an empty sequence of keyframes.
-    if (!m_target || !keyframesInput.get())
+    if (!keyframesInput.get())
         return { };
 
     VM& vm = state.vm();
@@ -625,6 +648,27 @@ void KeyframeEffectReadOnly::computeStackingContextImpact()
     }
 }
 
+void KeyframeEffectReadOnly::setTarget(RefPtr<Element>&& newTarget)
+{
+    if (m_target == newTarget)
+        return;
+
+    auto previousTarget = std::exchange(m_target, WTFMove(newTarget));
+
+    if (auto* effectAnimation = animation())
+        effectAnimation->effectTargetDidChange(previousTarget.get(), m_target.get());
+
+    updateBlendingKeyframes();
+
+    // We need to invalidate the effect now that the target has changed
+    // to ensure the effect's styles are applied to the new target right away.
+    invalidate();
+
+    // Likewise, we need to invalidate styles on the previous target so that
+    // any animated styles are removed immediately.
+    invalidateElement(previousTarget.get());
+}
+
 void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
 {
     if (!m_target)
@@ -661,11 +705,7 @@ void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
 
 void KeyframeEffectReadOnly::invalidate()
 {
-    if (!m_target)
-        return;
-
-    m_target->invalidateStyleAndLayerComposition();
-    m_target->document().updateStyleIfNeeded();
+    invalidateElement(m_target.get());
 }
 
 bool KeyframeEffectReadOnly::shouldRunAccelerated()

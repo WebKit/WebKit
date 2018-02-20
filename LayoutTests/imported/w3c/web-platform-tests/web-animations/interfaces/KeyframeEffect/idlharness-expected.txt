@@ -28,7 +28,7 @@ PASS KeyframeEffect interface object length
 PASS KeyframeEffect interface object name 
 PASS KeyframeEffect interface: existence and properties of interface prototype object 
 PASS KeyframeEffect interface: existence and properties of interface prototype object's "constructor" property 
-FAIL KeyframeEffect interface: attribute target assert_own_property: expected property "target" missing
+PASS KeyframeEffect interface: attribute target 
 PASS KeyframeEffect interface: attribute iterationComposite 
 PASS KeyframeEffect interface: attribute composite 
 PASS KeyframeEffect interface: operation setKeyframes(object) 
