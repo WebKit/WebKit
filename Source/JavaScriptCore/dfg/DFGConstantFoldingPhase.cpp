@@ -804,7 +804,7 @@ private:
                     OpInfo(node->variableAccessData()));
                 m_graph.dethread();
             } else
-                m_insertionSet.insertCheck(indexInBlock, node->origin, node->children);
+                m_insertionSet.insertCheck(m_graph, indexInBlock, node);
             m_graph.convertToConstant(node, value);
             
             changed = true;

@@ -343,7 +343,10 @@ private:
             m_interpreter.execute(node);
         }
 
-        nodeRef = m_graph.addNode((node->flags() & NodeHasVarArgs) ? CheckVarargs : Check, originalOrigin, node->children);
+        if (node->flags() & NodeHasVarArgs)
+            nodeRef = m_graph.addNode(CheckVarargs, originalOrigin, m_graph.copyVarargChildren(node));
+        else
+            nodeRef = m_graph.addNode(Check, originalOrigin, node->children);
         
         return true;
     }

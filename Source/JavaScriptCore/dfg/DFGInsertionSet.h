@@ -116,9 +116,15 @@ public:
         return insertNode(index, SpecNone, Check, origin, children);
     }
     
-    Node* insertCheck(size_t index, Node* node)
+    Node* insertCheck(Graph& graph, size_t index, Node* node)
     {
-        return insertCheck(index, node->origin, node->children);
+        if (!(node->flags() & NodeHasVarArgs))
+            return insertCheck(index, node->origin, node->children);
+
+        AdjacencyList children = graph.copyVarargChildren(node, [] (Edge edge) { return edge.willHaveCheck(); });
+        if (!children.numChildren())
+            return nullptr;
+        return insertNode(index, SpecNone, CheckVarargs, node->origin, children);
     }
     
     Node* insertCheck(size_t index, NodeOrigin origin, Edge edge)

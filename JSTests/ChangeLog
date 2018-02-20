@@ -1,3 +1,17 @@
+2018-02-20  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r228565. rdar://problem/37697682
+
+    2018-02-16  Saam Barati  <sbarati@apple.com>
+
+            Fix bugs from r228411
+            https://bugs.webkit.org/show_bug.cgi?id=182851
+            <rdar://problem/37577732>
+
+            Reviewed by JF Bastien.
+
+            * stress/constant-folding-phase-insert-check-handle-varargs.js: Added.
+
 2018-02-16  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228454. rdar://problem/37615380

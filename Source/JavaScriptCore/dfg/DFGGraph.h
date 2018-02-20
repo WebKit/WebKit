@@ -525,6 +525,22 @@ public:
             return varArgNumChildren(node);
         return AdjacencyList::Size;
     }
+
+    template <typename Function = bool(*)(Edge)>
+    AdjacencyList copyVarargChildren(Node* node, Function filter = [] (Edge) { return true; })
+    {
+        ASSERT(node->flags() & NodeHasVarArgs);
+        unsigned firstChild = m_varArgChildren.size();
+        unsigned numChildren = 0;
+        doToChildren(node, [&] (Edge edge) {
+            if (filter(edge)) {
+                ++numChildren;
+                m_varArgChildren.append(edge);
+            }
+        });
+
+        return AdjacencyList(AdjacencyList::Variable, firstChild, numChildren);
+    }
     
     Edge& varArgChild(Node* node, unsigned index)
     {
