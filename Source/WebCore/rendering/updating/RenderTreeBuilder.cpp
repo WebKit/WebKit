@@ -194,6 +194,26 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
+    if (is<RenderSVGContainer>(parent)) {
+        svgBuilder().insertChild(downcast<RenderSVGContainer>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderSVGInline>(parent)) {
+        svgBuilder().insertChild(downcast<RenderSVGInline>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderSVGRoot>(parent)) {
+        svgBuilder().insertChild(downcast<RenderSVGRoot>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (is<RenderSVGText>(parent)) {
+        svgBuilder().insertChild(downcast<RenderSVGText>(parent), WTFMove(child), beforeChild);
+        return;
+    }
+
     parent.addChild(*this, WTFMove(child), beforeChild);
 }
 
@@ -465,26 +485,6 @@ void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPt
 void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToSVGContainer(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToSVGInline(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToSVGRoot(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::insertChildToSVGText(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::insertChildToRenderTable(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)

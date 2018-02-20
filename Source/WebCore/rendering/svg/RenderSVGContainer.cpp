@@ -90,11 +90,6 @@ void RenderSVGContainer::layout()
     clearNeedsLayout();
 }
 
-void RenderSVGContainer::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    builder.insertChildToSVGContainer(*this, WTFMove(newChild), beforeChild);
-}
-
 bool RenderSVGContainer::selfWillPaint()
 {
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
