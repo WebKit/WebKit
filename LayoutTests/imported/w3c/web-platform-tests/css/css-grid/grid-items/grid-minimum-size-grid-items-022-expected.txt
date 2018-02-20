@@ -14,6 +14,36 @@ PASS .grid 12
 PASS .grid 13 
 PASS .grid 14 
 PASS .grid 15 
+PASS .grid 16 
+PASS .grid 17 
+PASS .grid 18 
+PASS .grid 19 
+PASS .grid 20 
+PASS .grid 21 
+PASS .grid 22 
+PASS .grid 23 
+PASS .grid 24 
+PASS .grid 25 
+PASS .grid 26 
+PASS .grid 27 
+PASS .grid 28 
+PASS .grid 29 
+PASS .grid 30 
+PASS .grid 31 
+PASS .grid 32 
+PASS .grid 33 
+PASS .grid 34 
+PASS .grid 35 
+PASS .grid 36 
+PASS .grid 37 
+PASS .grid 38 
+PASS .grid 39 
+PASS .grid 40 
+PASS .grid 41 
+PASS .grid 42 
+PASS .grid 43 
+PASS .grid 44 
+PASS .grid 45 
 grid-template-columns: auto;
 XXXXXXXXXX
 grid-template-columns: 0px;
@@ -36,4 +66,52 @@ grid-template-columns: minmax(auto, 0px); item border width: 10px;
 grid-template-columns: minmax(auto, 25px); item border width: 10px;
 grid-template-columns: minmax(auto, 0px); item width + margin + border + padding: 10px;
 grid-template-columns: minmax(auto, 25px); item width + margin + border + padding: 10px;
+grid content writing-mode: vertical-lr;
+
+grid-template-columns: auto;
+XXXXXXXXXX
+grid-template-columns: 0px;
+XXXXXXXXXX
+grid-template-columns: 25px;
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 0px);
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 25px);
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 0px); item height: 10px;
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 25px); item height: 10px;
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 0px); item margin height: 10px;
+grid-template-columns: minmax(auto, 25px); item margin height: 10px;
+grid-template-columns: minmax(auto, 0px); item padding height: 10px;
+grid-template-columns: minmax(auto, 25px); item padding height: 10px;
+grid-template-columns: minmax(auto, 0px); item border height: 10px;
+grid-template-columns: minmax(auto, 25px); item border height: 10px;
+grid-template-columns: minmax(auto, 0px); item height + margin + border + padding: 10px;
+grid-template-columns: minmax(auto, 25px); item height + margin + border + padding: 10px;
+grid content writing-mode: vertical-rl;
+
+grid-template-columns: auto;
+XXXXXXXXXX
+grid-template-columns: 0px;
+XXXXXXXXXX
+grid-template-columns: 25px;
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 0px);
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 25px);
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 0px); item height: 10px;
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 25px); item height: 10px;
+XXXXXXXXXX
+grid-template-columns: minmax(auto, 0px); item margin height: 10px;
+grid-template-columns: minmax(auto, 25px); item margin height: 10px;
+grid-template-columns: minmax(auto, 0px); item padding height: 10px;
+grid-template-columns: minmax(auto, 25px); item padding height: 10px;
+grid-template-columns: minmax(auto, 0px); item border height: 10px;
+grid-template-columns: minmax(auto, 25px); item border height: 10px;
+grid-template-columns: minmax(auto, 0px); item height + margin + border + padding: 10px;
+grid-template-columns: minmax(auto, 25px); item height + margin + border + padding: 10px;
 

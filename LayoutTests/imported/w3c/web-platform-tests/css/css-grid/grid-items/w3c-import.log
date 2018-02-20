@@ -131,6 +131,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-022.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-025.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-order-property-auto-placement-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-order-property-auto-placement-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-order-property-auto-placement-002-expected.html

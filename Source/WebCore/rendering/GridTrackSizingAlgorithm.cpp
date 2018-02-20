@@ -230,22 +230,7 @@ void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& spa
     } else if (trackSize.hasMaxContentMinTrackBreadth()) {
         track.setBaseSize(std::max(track.baseSize(), m_strategy->maxContentForChild(gridItem)));
     } else if (trackSize.hasAutoMinTrackBreadth()) {
-        auto minSize = m_strategy->minSizeForChild(gridItem);
-        bool isRowAxis = m_direction == GridLayoutFunctions::flowAwareDirectionForChild(*m_renderGrid, gridItem, ForColumns);
-        Length gridItemSize = isRowAxis ? gridItem.style().logicalWidth() : gridItem.style().logicalHeight();
-        Length gridItemMinSize = isRowAxis ? gridItem.style().logicalMinWidth() : gridItem.style().logicalMinHeight();
-        bool overflowIsVisible = isRowAxis ? gridItem.style().overflowInlineDirection() == OVISIBLE : gridItem.style().overflowBlockDirection() == OVISIBLE;
-
-        if (gridItemSize.isAuto() && gridItemMinSize.isAuto() && overflowIsVisible && trackSize.hasFixedMaxTrackBreadth()) {
-            auto maxTrackBreadth = valueForLength(trackSize.maxTrackBreadth().length(), availableSpace().value_or(LayoutUnit()));
-            if (minSize > maxTrackBreadth) {
-                auto marginAndBorderAndPadding = GridLayoutFunctions::marginLogicalSizeForChild(*m_renderGrid, m_direction, gridItem);
-                marginAndBorderAndPadding += isRowAxis ? gridItem.borderAndPaddingLogicalWidth() : gridItem.borderAndPaddingLogicalHeight();
-                minSize = std::max(maxTrackBreadth, marginAndBorderAndPadding);
-            }
-        }
-
-        track.setBaseSize(std::max(track.baseSize(), minSize));
+        track.setBaseSize(std::max(track.baseSize(), m_strategy->minSizeForChild(gridItem)));
     }
 
     if (trackSize.hasMinContentMaxTrackBreadth()) {
@@ -761,7 +746,24 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
     const Length& childSize = isRowAxis ? child.style().logicalWidth() : child.style().logicalHeight();
 
     bool overflowIsVisible = isRowAxis ? child.style().overflowInlineDirection() == OVISIBLE : child.style().overflowBlockDirection() == OVISIBLE;
-    if (!childSize.isAuto() || (childMinSize.isAuto() && overflowIsVisible))
+    if (childSize.isAuto() && childMinSize.isAuto() && overflowIsVisible) {
+        auto minSize = minContentForChild(child);
+        LayoutUnit maxBreadth;
+        for (auto trackPosition : m_algorithm.grid().gridItemSpan(child, direction())) {
+            GridTrackSize trackSize = m_algorithm.gridTrackSize(direction(), trackPosition);
+            if (!trackSize.hasFixedMaxTrackBreadth())
+                return minSize;
+            maxBreadth += valueForLength(trackSize.maxTrackBreadth().length(), availableSpace().value_or(LayoutUnit()));
+        }
+        if (minSize > maxBreadth) {
+            auto marginAndBorderAndPadding = GridLayoutFunctions::marginLogicalSizeForChild(*renderGrid(), direction(), child);
+            marginAndBorderAndPadding += isRowAxis ? child.borderAndPaddingLogicalWidth() : child.borderAndPaddingLogicalHeight();
+            minSize = std::max(maxBreadth, marginAndBorderAndPadding);
+        }
+        return minSize;
+    }
+
+    if (!childSize.isAuto())
         return minContentForChild(child);
 
     LayoutUnit gridAreaSize = m_algorithm.gridAreaBreadthForChild(child, childInlineDirection);
