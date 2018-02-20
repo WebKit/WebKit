@@ -24,41 +24,12 @@
  */
 
 #include "config.h"
-#include "TemplateRegistryKeyTable.h"
-
-#include "TemplateRegistryKey.h"
+#include "TemplateObjectDescriptor.h"
 
 namespace JSC {
 
-struct TemplateRegistryKeyTranslator {
-    static unsigned hash(TemplateRegistryKey* generator) { return generator->hash(); }
-    static inline bool equal(TemplateRegistryKey* key, TemplateRegistryKey* generator) { return *key == *generator; }
-    static void translate(TemplateRegistryKey*& location, TemplateRegistryKey* generator, unsigned) { location = generator; }
-};
-
-TemplateRegistryKeyTable::~TemplateRegistryKeyTable()
+TemplateObjectDescriptor::~TemplateObjectDescriptor()
 {
-    for (auto& key : m_atomicTable)
-        key->m_table = nullptr;
-}
-
-Ref<TemplateRegistryKey> TemplateRegistryKeyTable::createKey(TemplateRegistryKey::StringVector&& rawStrings, TemplateRegistryKey::OptionalStringVector&& cookedStrings)
-{
-    auto key = TemplateRegistryKey::create(WTFMove(rawStrings), WTFMove(cookedStrings));
-    auto addResult = m_atomicTable.add<TemplateRegistryKeyTranslator>(key.ptr());
-    if (addResult.isNewEntry)
-        (*addResult.iterator)->m_table = this;
-
-    return **addResult.iterator;
-}
-
-void TemplateRegistryKeyTable::unregister(TemplateRegistryKey& key)
-{
-    ASSERT(key.m_table == this);
-    auto iterator = m_atomicTable.find(&key);
-    ASSERT_WITH_MESSAGE(iterator != m_atomicTable.end(), "The TemplateRegistryKey being removed is registered in the other TemplateRegistryKeyTable.");
-    m_atomicTable.remove(iterator);
-
 }
 
 } // namespace JSC

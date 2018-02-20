@@ -36,6 +36,7 @@
 #include "JSAsyncGeneratorFunction.h"
 #include "JSBigInt.h"
 #include "JSGeneratorFunction.h"
+#include "JSTemplateObjectDescriptor.h"
 #include "Label.h"
 #include "LabelScope.h"
 #include "Nodes.h"
@@ -43,7 +44,6 @@
 #include "RegisterID.h"
 #include "StaticPropertyAnalyzer.h"
 #include "SymbolTable.h"
-#include "TemplateRegistryKey.h"
 #include "UnlinkedCodeBlock.h"
 #include <functional>
 #include <wtf/CheckedArithmetic.h>
@@ -55,7 +55,6 @@
 namespace JSC {
 
     class Identifier;
-    class JSTemplateRegistryKey;
 
     enum ExpectedFunction {
         NoExpectedFunction,
@@ -1008,7 +1007,7 @@ namespace JSC {
         using NumberMap = HashMap<double, JSValue>;
         using IdentifierStringMap = HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
         using IdentifierBigIntMap = HashMap<BigIntMapEntry, JSBigInt*>;
-        using TemplateRegistryKeyMap = HashMap<Ref<TemplateRegistryKey>, RegisterID*>;
+        using TemplateObjectDescriptorMap = HashMap<Ref<TemplateObjectDescriptor>, JSTemplateObjectDescriptor*>;
 
         // Helper for emitCall() and emitConstruct(). This works because the set of
         // expected functions have identical behavior for both call and construct
@@ -1093,7 +1092,7 @@ namespace JSC {
     public:
         JSString* addStringConstant(const Identifier&);
         JSValue addBigIntConstant(const Identifier&, uint8_t radix);
-        RegisterID* addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&&);
+        RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&);
 
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
 
@@ -1193,7 +1192,7 @@ namespace JSC {
         JSValueMap m_jsValueMap;
         IdentifierStringMap m_stringMap;
         IdentifierBigIntMap m_bigIntMap;
-        TemplateRegistryKeyMap m_templateRegistryKeyMap;
+        TemplateObjectDescriptorMap m_templateObjectDescriptorMap;
 
         StaticPropertyAnalyzer m_staticPropertyAnalyzer { &m_instructions };
 

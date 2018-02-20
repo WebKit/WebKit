@@ -32,18 +32,17 @@
 
 namespace JSC {
 
-class TemplateRegistryKeyTable;
+class TemplateObjectDescriptorTable;
 
-class TemplateRegistryKey : public RefCounted<TemplateRegistryKey> {
+class TemplateObjectDescriptor : public RefCounted<TemplateObjectDescriptor> {
 public:
-    friend class TemplateRegistryKeyTable;
     typedef Vector<String, 4> StringVector;
     typedef Vector<std::optional<String>, 4> OptionalStringVector;
 
     enum DeletedValueTag { DeletedValue };
-    TemplateRegistryKey(DeletedValueTag);
+    TemplateObjectDescriptor(DeletedValueTag);
     enum EmptyValueTag { EmptyValue };
-    TemplateRegistryKey(EmptyValueTag);
+    TemplateObjectDescriptor(EmptyValueTag);
 
     bool isDeletedValue() const { return m_rawStrings.isEmpty() && m_hash == std::numeric_limits<unsigned>::max(); }
 
@@ -54,50 +53,49 @@ public:
     const StringVector& rawStrings() const { return m_rawStrings; }
     const OptionalStringVector& cookedStrings() const { return m_cookedStrings; }
 
-    bool operator==(const TemplateRegistryKey& other) const { return m_hash == other.m_hash && m_rawStrings == other.m_rawStrings; }
-    bool operator!=(const TemplateRegistryKey& other) const { return m_hash != other.m_hash || m_rawStrings != other.m_rawStrings; }
+    bool operator==(const TemplateObjectDescriptor& other) const { return m_hash == other.m_hash && m_rawStrings == other.m_rawStrings; }
+    bool operator!=(const TemplateObjectDescriptor& other) const { return m_hash != other.m_hash || m_rawStrings != other.m_rawStrings; }
 
     struct Hasher {
-        static unsigned hash(const TemplateRegistryKey& key) { return key.hash(); }
-        static bool equal(const TemplateRegistryKey& a, const TemplateRegistryKey& b) { return a == b; }
+        static unsigned hash(const TemplateObjectDescriptor& key) { return key.hash(); }
+        static bool equal(const TemplateObjectDescriptor& a, const TemplateObjectDescriptor& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
     static unsigned calculateHash(const StringVector& rawStrings);
-    ~TemplateRegistryKey();
+    ~TemplateObjectDescriptor();
 
-private:
-    static Ref<TemplateRegistryKey> create(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
+    static Ref<TemplateObjectDescriptor> create(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
     {
-        return adoptRef(*new TemplateRegistryKey(WTFMove(rawStrings), WTFMove(cookedStrings)));
+        return adoptRef(*new TemplateObjectDescriptor(WTFMove(rawStrings), WTFMove(cookedStrings)));
     }
 
-    TemplateRegistryKey(StringVector&& rawStrings, OptionalStringVector&& cookedStrings);
+private:
+    TemplateObjectDescriptor(StringVector&& rawStrings, OptionalStringVector&& cookedStrings);
 
-    TemplateRegistryKeyTable* m_table { nullptr };
     StringVector m_rawStrings;
     OptionalStringVector m_cookedStrings;
     unsigned m_hash { 0 };
 };
 
-inline TemplateRegistryKey::TemplateRegistryKey(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
+inline TemplateObjectDescriptor::TemplateObjectDescriptor(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
     : m_rawStrings(WTFMove(rawStrings))
     , m_cookedStrings(WTFMove(cookedStrings))
     , m_hash(calculateHash(rawStrings))
 {
 }
 
-inline TemplateRegistryKey::TemplateRegistryKey(DeletedValueTag)
+inline TemplateObjectDescriptor::TemplateObjectDescriptor(DeletedValueTag)
     : m_hash(std::numeric_limits<unsigned>::max())
 {
 }
 
-inline TemplateRegistryKey::TemplateRegistryKey(EmptyValueTag)
+inline TemplateObjectDescriptor::TemplateObjectDescriptor(EmptyValueTag)
     : m_hash(0)
 {
 }
 
-inline unsigned TemplateRegistryKey::calculateHash(const StringVector& rawStrings)
+inline unsigned TemplateObjectDescriptor::calculateHash(const StringVector& rawStrings)
 {
     StringHasher hasher;
     for (const String& string : rawStrings) {
@@ -114,11 +112,11 @@ inline unsigned TemplateRegistryKey::calculateHash(const StringVector& rawString
 namespace WTF {
 template<typename T> struct DefaultHash;
 
-template<> struct DefaultHash<JSC::TemplateRegistryKey> {
-    typedef JSC::TemplateRegistryKey::Hasher Hash;
+template<> struct DefaultHash<JSC::TemplateObjectDescriptor> {
+    typedef JSC::TemplateObjectDescriptor::Hasher Hash;
 };
 
-template<> struct HashTraits<JSC::TemplateRegistryKey> : CustomHashTraits<JSC::TemplateRegistryKey> {
+template<> struct HashTraits<JSC::TemplateObjectDescriptor> : CustomHashTraits<JSC::TemplateObjectDescriptor> {
 };
 
 } // namespace WTF

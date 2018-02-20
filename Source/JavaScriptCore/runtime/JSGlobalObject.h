@@ -41,7 +41,6 @@
 #include "SpecialPointer.h"
 #include "StringPrototype.h"
 #include "SymbolPrototype.h"
-#include "TemplateRegistry.h"
 #include "VM.h"
 #include "Watchpoint.h"
 #include <JavaScriptCore/JSBase.h>
@@ -458,8 +457,6 @@ public:
     bool isStringPrototypeIteratorProtocolFastAndNonObservable();
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
-
-    TemplateRegistry m_templateRegistry;
 
     bool m_evalEnabled { true };
     bool m_webAssemblyEnabled { true };
@@ -879,8 +876,6 @@ public:
         createRareDataIfNeeded();
         return m_rareData->opaqueJSClassData;
     }
-
-    TemplateRegistry& templateRegistry() { return m_templateRegistry; }
 
     static ptrdiff_t weakRandomOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_weakRandom); }
     double weakRandomNumber() { return m_weakRandom.get(); }

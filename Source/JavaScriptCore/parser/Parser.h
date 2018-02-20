@@ -1841,6 +1841,7 @@ private:
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DebuggerParseData* m_debuggerParseData;
     CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
+    bool m_seenTaggedTemplate { false };
 };
 
 

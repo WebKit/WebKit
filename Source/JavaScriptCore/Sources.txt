@@ -835,7 +835,7 @@ runtime/JSStringIterator.cpp
 runtime/JSStringJoiner.cpp
 runtime/JSStringHeapCellType.cpp
 runtime/JSSymbolTableObject.cpp
-runtime/JSTemplateRegistryKey.cpp
+runtime/JSTemplateObjectDescriptor.cpp
 runtime/JSTypedArrayConstructors.cpp
 runtime/JSTypedArrayPrototypes.cpp
 runtime/JSTypedArrayViewConstructor.cpp
@@ -917,9 +917,7 @@ runtime/SymbolConstructor.cpp
 runtime/SymbolObject.cpp
 runtime/SymbolPrototype.cpp
 runtime/SymbolTable.cpp
-runtime/TemplateRegistry.cpp
-runtime/TemplateRegistryKey.cpp
-runtime/TemplateRegistryKeyTable.cpp
+runtime/TemplateObjectDescriptor.cpp
 runtime/TestRunnerUtils.cpp
 runtime/ThrowScope.cpp
 runtime/TypeLocationCache.cpp

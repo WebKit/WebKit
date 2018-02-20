@@ -134,6 +134,7 @@ public:
     bool isClassContext() const { return m_isClassContext; }
     bool hasTailCalls() const { return m_hasTailCalls; }
     void setHasTailCalls() { m_hasTailCalls = true; }
+    bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }
 
     void addExpressionInfo(unsigned instructionOffset, int divot,
         int startOffset, int endOffset, unsigned line, unsigned column);

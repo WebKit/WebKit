@@ -61,6 +61,7 @@ public:
     unsigned numVariables() { return m_unlinkedEvalCodeBlock->numVariables(); }
     unsigned numFunctionHoistingCandidates() { return m_unlinkedEvalCodeBlock->numFunctionHoistingCandidates(); }
     unsigned numTopLevelFunctionDecls() { return m_unlinkedEvalCodeBlock->numberOfFunctionDecls(); }
+    bool allowDirectEvalCache() const { return m_unlinkedEvalCodeBlock->allowDirectEvalCache(); }
 
 protected:
     friend class ExecutableBase;

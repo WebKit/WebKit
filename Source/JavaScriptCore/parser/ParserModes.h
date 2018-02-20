@@ -304,9 +304,10 @@ const CodeFeatures ArrowFunctionContextFeature = 1 << 7;
 const CodeFeatures SuperCallFeature =            1 << 8;
 const CodeFeatures SuperPropertyFeature =        1 << 9;
 const CodeFeatures NewTargetFeature =            1 << 10;
+const CodeFeatures NoEvalCacheFeature =          1 << 11;
 
 const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ArrowFunctionFeature | ArrowFunctionContextFeature |
-    SuperCallFeature | SuperPropertyFeature | NewTargetFeature;
+    SuperCallFeature | SuperPropertyFeature | NewTargetFeature | NoEvalCacheFeature;
 
 typedef uint8_t InnerArrowFunctionCodeFeatures;
     

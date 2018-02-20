@@ -1,3 +1,24 @@
+2018-02-13  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] cache TaggedTemplate arrays by callsite rather than by contents
+        https://bugs.webkit.org/show_bug.cgi?id=182717
+
+        Reviewed by Yusuke Suzuki.
+
+        https://github.com/tc39/ecma262/pull/890 imposes a change to template
+        literals, to allow template callsite arrays to be collected when the
+        code containing the tagged template call is collected. This spec change
+        has received concensus and been ratified.
+
+        This change eliminates the eternal map associating template contents
+        with arrays.
+
+        * stress/tagged-template-object-collect.js: Renamed from JSTests/stress/tagged-template-registry-key-collect.js.
+        * stress/tagged-template-object.js: Renamed from JSTests/stress/tagged-template-registry-key.js.
+        * stress/tagged-templates-identity.js:
+        * stress/template-string-tags-eval.js:
+        * test262.yaml:
+
 2018-02-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Support GetArrayLength on ArrayStorage in the FTL

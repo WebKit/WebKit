@@ -17,9 +17,9 @@ function tag(site)
         return tag`Hello`;
     }
 
-    shouldBe(a() === b(), true);
+    shouldBe(a() === b(), false);
     gc();
     var tagA = a();
     gc();
-    shouldBe(tagA === b(), true);
+    shouldBe(tagA === b(), false);
 }
