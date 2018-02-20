@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/PointerPreparations.h>
+
 namespace JSC {
 
 namespace LLInt {
@@ -38,8 +40,8 @@ extern "C" {
 ALWAYS_INLINE bool isLLIntPC(void* pc)
 {
     uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
-    uintptr_t llintStart = bitwise_cast<uintptr_t>(llintPCRangeStart);
-    uintptr_t llintEnd = bitwise_cast<uintptr_t>(llintPCRangeEnd);
+    uintptr_t llintStart = bitwise_cast<uintptr_t>(WTF_PREPARE_FUNCTION_POINTER_FOR_EXECUTION(llintPCRangeStart));
+    uintptr_t llintEnd = bitwise_cast<uintptr_t>(WTF_PREPARE_FUNCTION_POINTER_FOR_EXECUTION(llintPCRangeEnd));
     RELEASE_ASSERT(llintStart < llintEnd);
     return llintStart <= pcAsInt && pcAsInt <= llintEnd;
 }

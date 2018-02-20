@@ -1,5 +1,20 @@
 2018-02-12  Mark Lam  <mark.lam@apple.com>
 
+        Add more support for pointer preparations.
+        https://bugs.webkit.org/show_bug.cgi?id=182703
+        <rdar://problem/37469451>
+
+        Reviewed by Saam Barati.
+
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr):
+        * llint/LLIntPCRanges.h:
+        (JSC::LLInt::isLLIntPC):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2018-02-12  Mark Lam  <mark.lam@apple.com>
+
         Fix missing exception check in RegExpObject::matchGlobal().
         https://bugs.webkit.org/show_bug.cgi?id=182701
         <rdar://problem/37465865>
