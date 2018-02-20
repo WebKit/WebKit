@@ -49,8 +49,8 @@ function shouldNeedStyleRecalc(expected) {
     var testFunction = expected ? shouldBeTrue : shouldBeFalse;
     testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\".activator\")[0])");
     testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\".activator\")[1])");
-    shouldBeFalse("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[0])");
-    shouldBeFalse("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[1])");
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[0])");
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[1])");
 }
 
 function setId(name) {

@@ -545,6 +545,9 @@ public:
     // Elements newly added to the tree are also in this state.
     void invalidateStyleAndRenderersForSubtree();
 
+    void invalidateStyleInternal();
+    void invalidateStyleForSubtreeInternal();
+
     bool hasDisplayContents() const;
     void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
 

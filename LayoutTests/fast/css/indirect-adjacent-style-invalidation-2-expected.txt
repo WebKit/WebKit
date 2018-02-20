@@ -11,8 +11,8 @@ PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0
 PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(".activator")[0]) is true
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(".activator")[1]) is true
-PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[0]) is false
-PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[1]) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[0]) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[1]) is true
 PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 1, 2)"
 PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 1, 2)"
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(".activator")[0]) is false
@@ -21,8 +21,8 @@ PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[0
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[1]) is false
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(".activator")[0]) is true
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(".activator")[1]) is true
-PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[0]) is false
-PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[1]) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[0]) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll("target")[1]) is true
 PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
 PASS window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(".activator")[0]) is false
