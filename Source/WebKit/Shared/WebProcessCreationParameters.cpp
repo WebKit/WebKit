@@ -94,6 +94,9 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << fontWhitelist;
     encoder << terminationTimeout;
     encoder << languages;
+#if USE(GSTREAMER)
+    encoder << gstreamerOptions;
+#endif
     encoder << textCheckerState;
     encoder << fullKeyboardAccessEnabled;
     encoder << defaultRequestTimeoutInterval;
@@ -296,6 +299,10 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.languages))
         return false;
+#if USE(GSTREAMER)
+    if (!decoder.decode(parameters.gstreamerOptions))
+        return false;
+#endif
     if (!decoder.decode(parameters.textCheckerState))
         return false;
     if (!decoder.decode(parameters.fullKeyboardAccessEnabled))

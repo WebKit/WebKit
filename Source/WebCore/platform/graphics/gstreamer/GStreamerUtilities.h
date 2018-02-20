@@ -69,7 +69,7 @@ bool doCapsHaveType(const GstCaps*, const char*);
 bool areEncryptedCaps(const GstCaps*);
 void mapGstBuffer(GstBuffer*, uint32_t);
 void unmapGstBuffer(GstBuffer*);
-bool initializeGStreamer();
+bool initializeGStreamer(Vector<String>& parameters);
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
 

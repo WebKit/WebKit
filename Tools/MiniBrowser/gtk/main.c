@@ -30,6 +30,7 @@
 #include "BrowserWindow.h"
 #include <JavaScriptCore/JavaScript.h>
 #include <errno.h>
+#include <gst/gst.h>
 #include <gtk/gtk.h>
 #include <string.h>
 #include <webkit2/webkit2.h>
@@ -484,6 +485,7 @@ int main(int argc, char *argv[])
     GOptionContext *context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
+    g_option_context_add_group(context, gst_init_get_option_group());
 
     WebKitSettings *webkitSettings = webkit_settings_new();
     webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);

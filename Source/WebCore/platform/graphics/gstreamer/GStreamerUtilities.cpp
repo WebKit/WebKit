@@ -236,15 +236,21 @@ void unmapGstBuffer(GstBuffer* buffer)
     fastFree(mapInfo);
 }
 
-bool initializeGStreamer()
+bool initializeGStreamer(Vector<String>& parameters)
 {
-    if (gst_is_initialized())
-        return true;
-
     GUniqueOutPtr<GError> error;
-    // FIXME: We should probably pass the arguments from the command line.
-    bool gstInitialized = gst_init_check(nullptr, nullptr, &error.outPtr());
-    ASSERT_WITH_MESSAGE(gstInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
+    bool isGStreamerInitialized = false;
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    char** argv = g_new0(char*, parameters.size() + 2);
+    argv[0] = g_strdup("WebProcess");
+    for (unsigned i = 1; i < parameters.size(); i++)
+        argv[i] = g_strdup(parameters[i].utf8().data());
+
+    int size = g_strv_length(argv);
+    isGStreamerInitialized = gst_init_check(&size, &argv, &error.outPtr());
+    g_strfreev(argv);
+    ASSERT_WITH_MESSAGE(isGStreamerInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
 
     if (isFastMallocEnabled()) {
         const char* disableFastMalloc = getenv("WEBKIT_GST_DISABLE_FAST_MALLOC");
@@ -253,11 +259,12 @@ bool initializeGStreamer()
     }
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
-    if (gstInitialized)
+    if (isGStreamerInitialized)
         gst_mpegts_initialize();
 #endif
+#endif
 
-    return gstInitialized;
+    return isGStreamerInitialized;
 }
 
 unsigned getGstPlayFlag(const char* nick)

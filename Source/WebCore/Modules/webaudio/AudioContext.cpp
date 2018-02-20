@@ -162,10 +162,6 @@ void AudioContext::constructCommon()
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
     setPendingActivity(this);
 
-#if USE(GSTREAMER)
-    initializeGStreamer();
-#endif
-
     FFTFrame::initialize();
     
     m_listener = AudioListener::create();

@@ -1,3 +1,17 @@
+2018-02-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=173655
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The FIXME in GStreamerUtilities.cpp asks to pass the command line
+        parameters to the GStreamer initialization function.
+
+        Based on initial patch by: Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
+
+        * MiniBrowser/gtk/main.c:
+        (main): Add the group containing the Gstreamer options that the console displays.
 2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTR][GTK] crash log backtrace doesn't show symbol names for DatabaseProcess and NetworkProcess

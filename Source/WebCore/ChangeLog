@@ -1,3 +1,27 @@
+2018-02-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=173655
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The FIXME in GStreamerUtilities.cpp asks to pass the command line
+        parameters to the GStreamer initialization function.
+
+        Based on initial patch by: Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon): Removes the call to the method
+        that GStreamer initializes. It is no longer necessary.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements): Ditto
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitMSEElement): Ditto
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer): Receive the GStreamer options and initialize GStreamer.
+        * platform/graphics/gstreamer/GStreamerUtilities.h: Add vector which contains
+        GStreamer options as the input parameter of the initializeGStreamer() method.
+
 2018-02-20  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] whatsapp web blurry in some parts, sharp on others

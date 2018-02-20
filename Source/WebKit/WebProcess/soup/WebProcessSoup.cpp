@@ -28,6 +28,7 @@
 #include "WebProcess.h"
 
 #include "WebProcessCreationParameters.h"
+#include <WebCore/GStreamerUtilities.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -50,6 +51,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
 #if PLATFORM(WAYLAND)
     m_waylandCompositorDisplay = WaylandCompositorDisplay::create(parameters.waylandCompositorDisplayName);
+#endif
+#if USE(GSTREAMER)
+    WebCore::initializeGStreamer(parameters.gstreamerOptions);
 #endif
 }
 

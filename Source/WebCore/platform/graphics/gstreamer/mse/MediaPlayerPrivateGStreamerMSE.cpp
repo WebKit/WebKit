@@ -86,9 +86,6 @@ void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar re
 
 bool initializeGStreamerAndRegisterWebKitMSEElement()
 {
-    if (UNLIKELY(!initializeGStreamer()))
-        return false;
-
     registerWebKitGStreamerElements();
 
     GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");

@@ -90,6 +90,13 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 {
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
     parameters.proxySettings = m_networkProxySettings;
+
+#if USE(GSTREAMER)
+    GUniqueOutPtr<gchar> contents;
+    gsize length;
+    if (g_file_get_contents("/proc/self/cmdline", &contents.outPtr(), &length, nullptr))
+        parameters.gstreamerOptions.append(String::fromUTF8(contents.get()));
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

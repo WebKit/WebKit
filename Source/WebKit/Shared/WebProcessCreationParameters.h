@@ -111,6 +111,9 @@ struct WebProcessCreationParameters {
 
     Vector<String> fontWhitelist;
     Vector<String> languages;
+#if USE(GSTREAMER)
+    Vector<String> gstreamerOptions;
+#endif
 
     CacheModel cacheModel;
 
