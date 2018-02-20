@@ -242,7 +242,11 @@ template<typename T, typename U> inline bool operator!=(T* a, const WKRetainPtr<
     return a != b.get(); 
 }
 
+#if (defined(WIN32) || defined(_WIN32)) && !((_MSC_VER > 1900) && __clang__)
+template<typename T> inline WKRetainPtr<T> adoptWK(T) _Check_return_;
+#else
 template<typename T> inline WKRetainPtr<T> adoptWK(T) __attribute__((warn_unused_result));
+#endif
 template<typename T> inline WKRetainPtr<T> adoptWK(T o)
 {
     return WKRetainPtr<T>(AdoptWK, o);

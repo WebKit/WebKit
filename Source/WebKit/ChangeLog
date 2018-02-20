@@ -1,3 +1,15 @@
+2018-02-20  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [Win] Fix MSVC's treating __attribute__((warn_unused_result))
+        https://bugs.webkit.org/show_bug.cgi?id=182479
+
+        Reviewed by Darin Adler.
+
+        Since MSVC doesn't understand "__attribute__", "_Check_return_" is used instead.
+        If clang and VisualStudio 2017 are used, a macro with "__attriute__" will be chosen.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+
 2018-02-19  Brady Eidson  <beidson@apple.com>
 
         Add WebProcessPool option for process swapping on navigation.
