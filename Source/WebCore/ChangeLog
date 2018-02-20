@@ -1,3 +1,33 @@
+2018-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][GStreamer] Replaying a webm video twice causes the video to stop getting rendered
+        https://bugs.webkit.org/show_bug.cgi?id=176789
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Ensure the wrapped GstGLContext is set when the pipeline goes from
+        READY to PAUSED state. This is a workaround for
+        https://bugzilla.gnome.org/show_bug.cgi?id=757933.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer): Add debug statement.
+        (WebCore::MediaPlayerPrivateGStreamer::readyTimerFired): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        Ensure the wrapped GstGLContext is set when the pipeline goes from
+        READY to PAUSED state.
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd): Add debug statement.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Change the requestGLContext to be a method instead of a static
+        function. Being a static function was a requirement for the now-removed OpenWebRTC player.
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage): Add
+        debug statement, fix requestGLContext usage.
+        (WebCore::MediaPlayerPrivateGStreamerBase::requestGLContext): Refactor as method.
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer): Fix requestGLContext usage.
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL): Remove fixed FIXME.
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGLVideoSinkContext):
+        Set display and app wrapped contexts on the video sink.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2018-02-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Crash in WebCore::MediaPlayerRequestInstallMissingPluginsCallback::complete
