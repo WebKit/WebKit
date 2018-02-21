@@ -438,17 +438,25 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
 
+    // The floating ref removal support was added in https://bugzilla.gnome.org/show_bug.cgi?id=743062.
+    bool shouldAdoptRef = webkitGstCheckVersion(1, 13, 1);
     if (!m_glDisplay) {
 #if PLATFORM(X11)
 #if USE(GLX)
         if (is<PlatformDisplayX11>(sharedDisplay)) {
             GST_DEBUG("Creating X11 shared GL display");
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
+            if (shouldAdoptRef)
+                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native())));
+            else
+                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
         }
 #elif USE(EGL)
         if (is<PlatformDisplayX11>(sharedDisplay)) {
             GST_DEBUG("Creating X11 shared EGL display");
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
+            if (shouldAdoptRef)
+                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay())));
+            else
+                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
         }
 #endif
 #endif
@@ -456,14 +464,20 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 #if PLATFORM(WAYLAND)
         if (is<PlatformDisplayWayland>(sharedDisplay)) {
             GST_DEBUG("Creating Wayland shared display");
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_wayland_new_with_display(downcast<PlatformDisplayWayland>(sharedDisplay).native()));
+            if (shouldAdoptRef)
+                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_wayland_new_with_display(downcast<PlatformDisplayWayland>(sharedDisplay).native())));
+            else
+                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_wayland_new_with_display(downcast<PlatformDisplayWayland>(sharedDisplay).native()));
         }
 #endif
 
 #if PLATFORM(WPE)
         ASSERT(is<PlatformDisplayWPE>(sharedDisplay));
         GST_DEBUG("Creating WPE shared EGL display");
-        m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWPE>(sharedDisplay).eglDisplay()));
+        if (shouldAdoptRef)
+            m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWPE>(sharedDisplay).eglDisplay())));
+        else
+            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWPE>(sharedDisplay).eglDisplay()));
 #endif
 
         ASSERT(m_glDisplay);
@@ -485,7 +499,10 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
     if (!contextHandle)
         return false;
 
-    m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
+    if (shouldAdoptRef)
+        m_glContext = adoptGRef(gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
+    else
+        m_glContext = gst_gl_context_new_wrapped(m_glDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
 
     return true;
 }

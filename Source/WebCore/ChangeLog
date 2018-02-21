@@ -1,3 +1,15 @@
+2018-02-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] We need to adopt GstGlDisplays after GStreamer 1.13.1
+        https://bugs.webkit.org/show_bug.cgi?id=182996
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+        Adopt references when running with GStreamer 1.13.1 to avoid
+        memory leaks.
+
 2018-02-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Layout test media/track/track-in-band-duplicate-tracks-when-source-changes.html failing since r228617
