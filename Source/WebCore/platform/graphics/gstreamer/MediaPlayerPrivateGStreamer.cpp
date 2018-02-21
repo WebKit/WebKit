@@ -924,6 +924,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
     GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
     g_object_get(element, "n-text", &numTracks, nullptr);
 
+    GST_INFO("Media has %d text tracks", numTracks);
+
     if (useMediaSource) {
         GST_DEBUG("Tracks managed by source element. Bailing out now.");
         return;
@@ -935,12 +937,11 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
         g_signal_emit_by_name(m_pipeline.get(), "get-text-pad", i, &pad.outPtr(), nullptr);
         ASSERT(pad);
 
-        GRefPtr<GstEvent> event = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_STREAM_START, 0));
-        if (!event)
-            continue;
-
-        const char* streamId;
-        gst_event_parse_stream_start(event.get(), &streamId);
+        // We can't assume the pad has a sticky event here like implemented in
+        // InbandTextTrackPrivateGStreamer because it might be emitted after the
+        // track was created. So fallback to a dummy stream ID like in the Audio
+        // and Video tracks.
+        String streamId = "T" + String::number(i);
 
         validTextStreams.append(streamId);
         if (i < static_cast<gint>(m_textTracks.size())) {
