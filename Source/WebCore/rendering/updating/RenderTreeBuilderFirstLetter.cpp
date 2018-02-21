@@ -151,6 +151,13 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
     createRenderers(block, downcast<RenderText>(*firstLetterRenderer));
 }
 
+void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFragment)
+{
+    if (!textFragment.firstLetter())
+        return;
+    m_builder.removeAndDestroy(*textFragment.firstLetter());
+}
+
 void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
 {
     RenderElement* firstLetter = currentChild.parent();

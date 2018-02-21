@@ -59,7 +59,10 @@ RenderTextFragment::RenderTextFragment(Document& textNode, const String& text)
 {
 }
 
-RenderTextFragment::~RenderTextFragment() = default;
+RenderTextFragment::~RenderTextFragment()
+{
+    ASSERT(!m_firstLetter);
+}
 
 bool RenderTextFragment::canBeSelectionLeaf() const
 {
@@ -72,13 +75,6 @@ void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle*
 
     if (RenderBlock* block = blockForAccompanyingFirstLetter())
         block->mutableStyle().removeCachedPseudoStyle(FIRST_LETTER);
-}
-
-void RenderTextFragment::willBeDestroyed(RenderTreeBuilder& builder)
-{
-    if (m_firstLetter)
-        builder.removeAndDestroy(*m_firstLetter);
-    RenderText::willBeDestroyed(builder);
 }
 
 void RenderTextFragment::setText(const String& newText, bool force)
