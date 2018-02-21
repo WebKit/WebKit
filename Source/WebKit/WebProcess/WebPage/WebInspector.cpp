@@ -94,10 +94,12 @@ void WebInspector::openFrontendConnection(bool underTest)
     return;
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(DARWIN)
     m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     m_frontendConnection->open();
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::CreateInspectorPage(connectionClientPort, canAttachWindow(), underTest), m_page->pageID());
+#endif
 }
 
 void WebInspector::closeFrontendConnection()

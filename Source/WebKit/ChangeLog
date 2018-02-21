@@ -1,3 +1,21 @@
+2018-02-21  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Fix compile errors of WebProcess and NetworkProcess due to no implementation for windows
+        https://bugs.webkit.org/show_bug.cgi?id=182870
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openFrontendConnection):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2018-02-21  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use cmakeconfig.h rather than config.h and Platform.h

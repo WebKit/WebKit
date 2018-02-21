@@ -78,6 +78,8 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
 #elif OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
+#elif OS(WINDOWS)
+    IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.handle();
 #endif
     if (IPC::Connection::identifierIsNull(connectionIdentifier))
         return nullptr;
