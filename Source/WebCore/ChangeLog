@@ -1,3 +1,47 @@
+2018-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Make system-ui obey the user-installed-font policy
+        https://bugs.webkit.org/show_bug.cgi?id=182860
+        <rdar://problem/36158249>
+
+        Reviewed by Antti Koivisto.
+
+        We have a completely different codepath for system-ui which makes it follow the system's
+        font cascade list. This codepath (along with all the other relevant places which create
+        system fonts) needs to obey the AllowUserInstalledFonts enum. This patch is fairly
+        mechanical; we simply are hooking up the flag across SystemFontDatabase.
+
+        There are a few places which creates system fonts which this patch doesn't touch. This is
+        not a problem because all the remaining places either:
+        1) Simply pull out some attributes of the font (name, weight, size, etc.) and then throw
+        away the font object itself, or
+        2) Use the font in an environment where script cannot access the characters rendered (such
+        as DragImages or the fullscreen placeholder view or the inside of the attachment element).
+
+        Test: fast/text/user-installed-fonts/system-ui.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontDatabase::fontForPostScriptName):
+        (WebCore::fontWithFamily):
+        (WebCore::installedFontMandatoryAttributes):
+        (WebCore::createSpecificFontForInstalledFonts):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::operator== const):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::hash const):
+        (WebCore::SystemFontDatabase::systemFontCascadeList):
+        (WebCore::SystemFontDatabase::removeCascadeList):
+        (WebCore::SystemFontDatabase::computeCascadeList):
+        (WebCore::systemFontParameters):
+        (WebCore::systemFontCascadeList):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+
 2018-02-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix build after r228867.

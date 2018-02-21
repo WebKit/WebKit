@@ -52,11 +52,13 @@ struct SynthesisPair {
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, const FontDescription&, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size, bool applyWeightWidthSlopeVariations = true);
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
-RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest, float size);
+RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest, float size, AllowUserInstalledFonts);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, FontSelectionRequest, TextRenderingMode, float size);
 bool requiresCustomFallbackFont(UChar32 character);
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef);
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
+RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef, CGFloat size, AllowUserInstalledFonts);
+RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef, AllowUserInstalledFonts);
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
 

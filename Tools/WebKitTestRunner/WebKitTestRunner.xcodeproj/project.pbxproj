@@ -54,6 +54,7 @@
 		1CBA02971FD87DEE00179C7D /* FakeHelvetica-Helvetica2-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBA02921FD86EA100179C7D /* FakeHelvetica-Helvetica2-400.ttf */; };
 		1CBA02981FD87DF000179C7D /* FakeHelvetica-Helvetica-500.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBA02931FD86EA100179C7D /* FakeHelvetica-Helvetica-500.ttf */; };
 		1CBA02991FD87DF300179C7D /* FakeHelvetica-Helvetica-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBA02941FD86EA100179C7D /* FakeHelvetica-Helvetica-400.ttf */; };
+		1CEA84DD203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CEA84DC203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf */; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
 		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
@@ -226,6 +227,7 @@
 		1CBA02931FD86EA100179C7D /* FakeHelvetica-Helvetica-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FakeHelvetica-Helvetica-500.ttf"; path = "fonts/FakeHelvetica-Helvetica-500.ttf"; sourceTree = "<group>"; };
 		1CBA02941FD86EA100179C7D /* FakeHelvetica-Helvetica-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FakeHelvetica-Helvetica-400.ttf"; path = "fonts/FakeHelvetica-Helvetica-400.ttf"; sourceTree = "<group>"; };
 		1CBA02951FD86EA100179C7D /* FakeHelvetica-Helvetica2-500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "FakeHelvetica-Helvetica2-500.ttf"; path = "fonts/FakeHelvetica-Helvetica2-500.ttf"; sourceTree = "<group>"; };
+		1CEA84DC203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FakeHelvetica-ArmenianCharacter.ttf"; sourceTree = "<group>"; };
 		26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationProviderMock.cpp; sourceTree = "<group>"; };
 		26D758E6160BECDD00268472 /* GeolocationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationProviderMock.h; sourceTree = "<group>"; };
 		29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
@@ -705,6 +707,7 @@
 			isa = PBXGroup;
 			children = (
 				6510A77711EC643800410867 /* AHEM____.TTF */,
+				1CEA84DC203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf */,
 				1CBA02941FD86EA100179C7D /* FakeHelvetica-Helvetica-400.ttf */,
 				1CBA02931FD86EA100179C7D /* FakeHelvetica-Helvetica-500.ttf */,
 				1CBA02921FD86EA100179C7D /* FakeHelvetica-Helvetica2-400.ttf */,
@@ -962,6 +965,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
+				1CEA84DD203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf in Resources */,
 				1CBA02991FD87DF300179C7D /* FakeHelvetica-Helvetica-400.ttf in Resources */,
 				1CBA02981FD87DF000179C7D /* FakeHelvetica-Helvetica-500.ttf in Resources */,
 				1CBA02971FD87DEE00179C7D /* FakeHelvetica-Helvetica2-400.ttf in Resources */,

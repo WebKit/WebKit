@@ -1,3 +1,17 @@
+2018-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Make system-ui obey the user-installed-font policy
+        https://bugs.webkit.org/show_bug.cgi?id=182860
+        <rdar://problem/36158249>
+
+        Reviewed by Antti Koivisto.
+
+        Create a font, FakeHelvetica-ArmenianCharacter.ttf, which supports a particular Armenian
+        character which isn't isn't supported by any other font on the system.
+
+        * WebKitTestRunner/FakeHelvetica-ArmenianCharacter.ttf:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2018-02-20  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the 32-bit build after r228857

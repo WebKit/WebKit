@@ -893,7 +893,7 @@ public:
             CFDictionaryAddValue(attributes.get(), kCTFontFamilyNameAttribute, familyNameString.get());
             addAttributesForInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            RetainPtr<CFSetRef> mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
+            auto mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
             if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), mandatoryAttributes.get()))) {
                 auto count = CFArrayGetCount(matches.get());
                 Vector<InstalledFont> result;
@@ -923,7 +923,7 @@ public:
             CFDictionaryAddValue(attributes.get(), nameAttribute, postScriptNameString.get());
             addAttributesForInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            RetainPtr<CFSetRef> mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
+            auto mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
             auto match = adoptCF(CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptorToMatch.get(), mandatoryAttributes.get()));
             return InstalledFont(match.get());
         }).iterator->value;
@@ -1201,7 +1201,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, const Fon
 
     const auto& request = fontDescription.fontSelectionRequest();
     FontLookup fontLookup;
-    fontLookup.result = platformFontWithFamilySpecialCase(family, request, size);
+    fontLookup.result = platformFontWithFamilySpecialCase(family, request, size, fontDescription.shouldAllowUserInstalledFonts());
     if (!fontLookup.result)
         fontLookup = platformFontLookupWithFamily(family, request, size, fontDescription.shouldAllowUserInstalledFonts());
     return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, size, !fontLookup.createdFromPostScriptName);
@@ -1428,6 +1428,28 @@ void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUser
 #endif
 }
 
+RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef fontDescriptor, CGFloat size, AllowUserInstalledFonts allowUserInstalledFonts)
+{
+    auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    addAttributesForInstalledFonts(attributes.get(), allowUserInstalledFonts);
+    if (CFDictionaryGetCount(attributes.get())) {
+        auto resultFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, attributes.get()));
+        return adoptCF(CTFontCreateWithFontDescriptor(resultFontDescriptor.get(), size, nullptr));
+    }
+    return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, size, nullptr));
+}
+
+RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef font, AllowUserInstalledFonts allowUserInstalledFonts)
+{
+    auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    addAttributesForInstalledFonts(attributes.get(), allowUserInstalledFonts);
+    if (CFDictionaryGetCount(attributes.get())) {
+        auto modification = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
+        return adoptCF(CTFontCreateCopyWithAttributes(font, CTFontGetSize(font), nullptr, modification.get()));
+    }
+    return font;
+}
+
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
 {
 #if CAN_DISALLOW_USER_INSTALLED_FONTS
@@ -1451,8 +1473,8 @@ RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts all
     }
 #else
     UNUSED_PARAM(allowUserInstalledFonts);
-#endif
     return nullptr;
+#endif
 }
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)

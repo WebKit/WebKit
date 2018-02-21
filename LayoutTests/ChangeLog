@@ -1,3 +1,19 @@
+2018-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Make system-ui obey the user-installed-font policy
+        https://bugs.webkit.org/show_bug.cgi?id=182860
+        <rdar://problem/36158249>
+
+        Reviewed by Antti Koivisto.
+
+        FakeHelvetica-ArmenianCharacter.ttf is a font which supports a particular Armenian character which
+        isn't supported by any other font on the system. Installing this font will cause it to be added to
+        the 'system-ui' font cascade list. When we disable user-installed-fonts, this font should not be
+        used to render the character.
+
+        * fast/text/user-installed-fonts/system-ui-expected-mismatch.html:
+        * fast/text/user-installed-fonts/system-ui.html:
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: Keyboard focus not following VoiceOver cursor into web content or within web content.
