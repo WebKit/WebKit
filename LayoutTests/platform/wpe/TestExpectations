@@ -91,7 +91,6 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
 # These are prone to run in parallel, consuming all the memory on the system.
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]

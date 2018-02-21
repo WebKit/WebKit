@@ -1342,7 +1342,6 @@ ietestcenter/css3/flexbox/flexbox-align-center-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-align-center-002.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
-ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
 # Scrollbar tests that fail:
 webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
