@@ -1,3 +1,22 @@
+2018-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderListItem::willBeRemoved() mutation logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182943
+        <rdar://problem/37689029>
+
+        Reviewed by Antti Koivisto.
+
+        We don't need to destroy the marker in RenderListItem::willBeRemoved(), because it gets deleted
+        in RenderTreeBuilder::removeAndDestroy() together with RenderListItem (as long as the marker is
+        the RenderListItem's descendent). 
+
+        Covered by existing tests.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::~RenderListItem):
+        (WebCore::RenderListItem::willBeDestroyed): Deleted.
+        * rendering/RenderListItem.h:
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: Keyboard focus not following VoiceOver cursor into web content or within web content.
