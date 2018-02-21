@@ -1,0 +1,13 @@
+Test that assistiveTechnologyMakeFirstResponder works correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+DOM focus
+Window is still the first responder: true
+Accessibility focus
+Window is still the first responder: false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

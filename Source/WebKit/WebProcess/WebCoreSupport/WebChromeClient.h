@@ -271,6 +271,7 @@ private:
     void elementDidBlur(WebCore::Element&) final;
 
     void makeFirstResponder() final;
+    void assistiveTechnologyMakeFirstResponder() final;
 #endif
 
     void enableSuddenTermination() final;

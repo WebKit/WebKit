@@ -177,6 +177,7 @@ public:
     virtual void resetSecureInputState() = 0;
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
+    virtual void assistiveTechnologyMakeFirstResponder() = 0;
     virtual void setAcceleratedCompositingRootLayer(LayerOrView *) = 0;
     virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
     virtual RefPtr<ViewSnapshot> takeViewSnapshot() = 0;

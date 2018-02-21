@@ -248,4 +248,8 @@ interface UIScriptController {
     void overridePreference(DOMString preference, DOMString value);
 
     void setSafeAreaInsets(double top, double right, double bottom, double left);
+
+    void firstResponderSuppressionForWebView(boolean shouldSuppress);
+    void makeWindowContentViewFirstResponder();
+    readonly attribute boolean isWindowContentViewFirstResponder;
 };
