@@ -1,3 +1,19 @@
+2018-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderView::willBeRemoved() mutation logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=183009
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::~RenderView):
+        (WebCore::RenderView::willBeDestroyed): Deleted.
+        * rendering/RenderView.h:
+
 2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] USE_UPOWER causes crashes inside a chroot or on systems with broken dbus/upower
