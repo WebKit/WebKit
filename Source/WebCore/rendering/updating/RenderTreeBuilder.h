@@ -91,6 +91,7 @@ private:
     class Inline;
     class SVG;
     class MathML;
+    class Continuation;
 #if ENABLE(FULLSCREEN_API)
     class FullScreen;
 #endif
@@ -106,6 +107,7 @@ private:
     Inline& inlineBuilder() { return *m_inlineBuilder; }
     SVG& svgBuilder() { return *m_svgBuilder; }
     MathML& mathMLBuilder() { return *m_mathMLBuilder; }
+    Continuation& continuationBuilder() { return *m_continuationBuilder; }
 #if ENABLE(FULLSCREEN_API)
     FullScreen& fullScreenBuilder() { return *m_fullScreenBuilder; }
 #endif
@@ -125,6 +127,7 @@ private:
     std::unique_ptr<Inline> m_inlineBuilder;
     std::unique_ptr<SVG> m_svgBuilder;
     std::unique_ptr<MathML> m_mathMLBuilder;
+    std::unique_ptr<Continuation> m_continuationBuilder;
 #if ENABLE(FULLSCREEN_API)
     std::unique_ptr<FullScreen> m_fullScreenBuilder;
 #endif

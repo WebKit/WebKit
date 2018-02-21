@@ -50,6 +50,7 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
+#include "RenderTreeBuilderContinuation.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderFullScreen.h"
@@ -130,6 +131,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_inlineBuilder(std::make_unique<Inline>(*this))
     , m_svgBuilder(std::make_unique<SVG>(*this))
     , m_mathMLBuilder(std::make_unique<MathML>(*this))
+    , m_continuationBuilder(std::make_unique<Continuation>(*this))
 #if ENABLE(FULLSCREEN_API)
     , m_fullScreenBuilder(std::make_unique<FullScreen>(*this))
 #endif
@@ -156,6 +158,9 @@ void RenderTreeBuilder::removeAndDestroy(RenderObject& renderer)
 
     if (is<RenderTextFragment>(renderer))
         firstLetterBuilder().cleanupOnDestroy(downcast<RenderTextFragment>(renderer));
+
+    if (is<RenderBoxModelObject>(renderer))
+        continuationBuilder().cleanupOnDestroy(downcast<RenderBoxModelObject>(renderer));
 
     // We need to detach the subtree first so that the descendants don't have
     // access to previous/next sublings at takeChild().

@@ -1,3 +1,32 @@
+2018-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBoxModelObject::willBeRemoved() mutation logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=183014
+        <rdar://problem/37757428>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::~RenderBoxModelObject):
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        (WebCore::RenderBoxModelObject::continuationChainNode const):
+        (): Deleted.
+        (WebCore::RenderBoxModelObject::removeAndDestroyAllContinuations): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::RenderTreeBuilder):
+        (WebCore::RenderTreeBuilder::removeAndDestroy):
+        * rendering/updating/RenderTreeBuilder.h:
+        (WebCore::RenderTreeBuilder::continuationBuilder):
+        * rendering/updating/RenderTreeBuilderContinuation.cpp: Added.
+        (WebCore::RenderTreeBuilder::Continuation::Continuation):
+        (WebCore::RenderTreeBuilder::Continuation::cleanupOnDestroy):
+        * rendering/updating/RenderTreeBuilderContinuation.h: Added.
+
 2018-02-21  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerJob::m_lastResponse is unneeded
