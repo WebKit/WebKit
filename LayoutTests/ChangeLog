@@ -1,3 +1,10 @@
+2018-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2018-02-19  Dean Jackson  <dino@apple.com>
 
         SIGFPE @ int WebCore::SVGToOTFFontConverter::scaleUnitsPerEm<int> const + 45
