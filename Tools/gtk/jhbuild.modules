@@ -21,7 +21,6 @@
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="adwaita-icon-theme"/>
-      <dep package="gtk-doc"/>
       <dep package="icu"/>
       <dep package="libsoup"/>
       <dep package="atk"/>
@@ -365,18 +364,6 @@
             version="3.0.0"
             repo="wayland.freedesktop.org"
             hash="sha256:cde1d55e8dd70c3cbb3d1ec72f60e60000041579caa1d6a262bd9c35e93723a5"/>
-  </autotools>
-
-  <autotools id="gtk-doc" autogen-sh="configure">
-    <if condition-set="macos">
-      <autogenargs value="--with-xml-catalog=/usr/local/etc/xml/catalog"/>
-    </if>
-    <dependencies>
-      <dep package="glib"/>
-    </dependencies>
-    <branch module="/pub/GNOME/sources/gtk-doc/${version}/gtk-doc-${version}.tar.xz" version="1.25"
-            repo="ftp.gnome.org"
-            hash="sha256:1ea46ed400e6501f975acaafea31479cea8f32f911dca4dff036f59e6464fd42"/>
   </autotools>
 
   <autotools id="libdrm" autogen-sh="configure">
