@@ -101,6 +101,11 @@ enum class ServiceWorkersMode {
     Only // An error will happen if service worker is not handling the fetch. Used to bypass preflight safely.
 };
 
+enum class ApplicationCacheMode {
+    Use,
+    Bypass
+};
+
 enum class ContentEncodingSniffingPolicy {
     Sniff,
     DoNotSniff,
@@ -140,6 +145,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
     InitiatorContext initiatorContext { InitiatorContext::Document };
     ServiceWorkersMode serviceWorkersMode { ServiceWorkersMode::All };
+    ApplicationCacheMode applicationCacheMode { ApplicationCacheMode::Use };
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     // WebKit loading code is adding some HTTP headers between the application and the time service worker intercepts the fetch.

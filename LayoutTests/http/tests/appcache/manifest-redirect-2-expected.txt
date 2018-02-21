@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
 Test that a redirect makes resource caching fail.
 
 Should say SUCCESS:

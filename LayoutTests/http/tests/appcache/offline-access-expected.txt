@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because a redirection was attempted.
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test that offline applications work when there is no network access (simulated).
 
