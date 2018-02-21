@@ -1,5 +1,21 @@
 2018-02-21  Ms2ger  <Ms2ger@igalia.com>
 
+        [WTR][WPE] Correct the process names in TestController.
+        https://bugs.webkit.org/show_bug.cgi?id=178700
+
+        Reviewed by Michael Catanzaro.
+
+        Similar to r228731 for GTK.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._get_crash_log): removed the code to convert WebProcess name.
+        * WebKitTestRunner/TestController.cpp: return the correct process names for WPE.
+        (WTR::TestController::webProcessName):
+        (WTR::TestController::networkProcessName):
+        (WTR::TestController::databaseProcessName):
+
+2018-02-21  Ms2ger  <Ms2ger@igalia.com>
+
         [ATK] Remove attributeSet variable from AccessibilityUIElement::attributedStringForRange().
         https://bugs.webkit.org/show_bug.cgi?id=183000
 
