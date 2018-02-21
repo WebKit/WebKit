@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 
 #include <objc/objc.h>
 #include "GraphicsContext.h"
@@ -134,10 +134,10 @@ public:
     // an accurate result from isInUse(), it needs to be released.
     WEBCORE_EXPORT void releaseGraphicsContext();
 
-#if PLATFORM(IOS)
+#if HAVE(IOSURFACE_ACCELERATOR)
     WEBCORE_EXPORT static bool allowConversionFromFormatToFormat(Format, Format);
     WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, WTF::Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
-#endif
+#endif // HAVE(IOSURFACE_ACCELERATOR)
 
     void migrateColorSpaceToProperties();
 
@@ -164,5 +164,5 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSu
 
 } // namespace WebCore
 
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)
 

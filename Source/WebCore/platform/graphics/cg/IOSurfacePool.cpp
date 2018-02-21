@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IOSurfacePool.h"
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 
 #include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
@@ -383,4 +383,4 @@ void IOSurfacePool::showPoolStatistics(const char* reason)
 }
 
 }
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)

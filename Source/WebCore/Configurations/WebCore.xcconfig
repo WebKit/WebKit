@@ -80,7 +80,7 @@ OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(WK_UNDEFINED_
 OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -framework CoreAudio -framework Metal -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a;
 // FIXME: Reduce the number of allowable_client <rdar://problem/31823969>
 OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework MobileCoreServices -framework OpenGLES -lMobileGestalt $(WK_IOS_BINCOMPAT_LDFLAGS) -allowable_client WebKit -allowable_client iTunesU -allowable_client Casablanca -allowable_client Remote -allowable_client TVBooks -allowable_client DumpRenderTree -allowable_client WebKitTestRunner -allowable_client TestWebKitAPI;
-OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface -framework GraphicsServices $(LIBWEBRTC_LDFLAGS);
+OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface -framework IOSurfaceAccelerator -framework GraphicsServices $(LIBWEBRTC_LDFLAGS);
 OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = $(OTHER_LDFLAGS_BASE_ios) $(LIBWEBRTC_LDFLAGS);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework DataDetectorsCore -framework IOSurface -framework OpenGL -framework SystemConfiguration $(LIBWEBRTC_LDFLAGS);
 

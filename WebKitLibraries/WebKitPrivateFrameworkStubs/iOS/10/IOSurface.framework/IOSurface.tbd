@@ -14,9 +14,6 @@ exports:
       - i386
       - x86_64
     symbols:
-      - _IOSurfaceAcceleratorCreate
-      - _IOSurfaceAcceleratorGetRunLoopSource
-      - _IOSurfaceAcceleratorTransformSurface
       - _IOSurfaceAlignProperty
       - _IOSurfaceCreate
       - _IOSurfaceCreateMachPort

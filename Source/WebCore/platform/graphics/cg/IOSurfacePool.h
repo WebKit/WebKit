@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 
 #include "IOSurface.h"
 #include "IntSize.h"
@@ -103,4 +103,4 @@ private:
 };
 
 }
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)

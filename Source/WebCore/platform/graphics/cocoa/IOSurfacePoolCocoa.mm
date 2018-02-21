@@ -26,7 +26,7 @@
 #import "config.h"
 #import "IOSurfacePool.h"
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 
 #include <QuartzCore/QuartzCore.h>
 
@@ -40,4 +40,4 @@ void IOSurfacePool::platformGarbageCollectNow()
 
 }
 
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)

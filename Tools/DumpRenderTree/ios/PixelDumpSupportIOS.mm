@@ -66,7 +66,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
     int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     WebCore::FloatSize snapshotSize(viewSize);
     snapshotSize.scale(deviceScaleFactor);
 

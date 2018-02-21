@@ -38,7 +38,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/TextStream.h>
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 #include "IOSurface.h"
 #endif
 
@@ -534,7 +534,7 @@ IntSize TileController::tileSize() const
     const int kLowestCommonDenominatorMaxTileSize = 4 * 1024;
     IntSize maxTileSize(kLowestCommonDenominatorMaxTileSize, kLowestCommonDenominatorMaxTileSize);
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     IntSize surfaceSizeLimit = IOSurface::maximumSize();
     surfaceSizeLimit.scale(1 / m_deviceScaleFactor);
     maxTileSize = maxTileSize.shrunkTo(surfaceSizeLimit);

@@ -79,7 +79,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     case kCGContextTypeBitmap:
         colorSpace = CGBitmapContextGetColorSpace(cgContext);
         break;
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     case kCGContextTypeIOSurface:
         colorSpace = CGIOSurfaceContextGetColorSpace(cgContext);
         break;

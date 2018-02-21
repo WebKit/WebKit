@@ -26,7 +26,7 @@
 #import "config.h"
 #import "IOSurface.h"
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
@@ -39,11 +39,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
 #import <wtf/text/TextStream.h>
-
-#if PLATFORM(IOS)
-// Move this into the SPI header once it's possible to put inside the APPLE_INTERNAL_SDK block.
-NSString * const WebIOSurfaceAcceleratorUnwireSurfaceKey = @"UnwireSurface";
-#endif
 
 namespace WebCore {
 
@@ -388,7 +383,8 @@ void IOSurface::releaseGraphicsContext()
     m_cgContext = nullptr;
 }
 
-#if PLATFORM(IOS)
+#if HAVE(IOSURFACE_ACCELERATOR)
+
 bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format destFormat)
 {
     if ((sourceFormat == Format::RGB10 || sourceFormat == Format::RGB10A8) && destFormat == Format::YUV422)
@@ -430,12 +426,13 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
         delete callback;
     };
 
-    NSDictionary *options = @{ WebIOSurfaceAcceleratorUnwireSurfaceKey : @YES };
+    NSDictionary *options = @{ (id)kIOSurfaceAcceleratorUnwireSurfaceKey : @YES };
 
     IOReturn ret = IOSurfaceAcceleratorTransformSurface(accelerator, inSurface->surface(), destinationIOSurfaceRef, (CFDictionaryRef)options, nullptr, &completion, nullptr, nullptr);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
 }
-#endif // PLATFORM(IOS)
+
+#endif // HAVE(IOSURFACE_ACCELERATOR)
 
 void IOSurface::migrateColorSpaceToProperties()
 {
@@ -482,4 +479,4 @@ TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 
 } // namespace WebCore
 
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)

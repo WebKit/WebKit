@@ -1,3 +1,29 @@
+2018-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce HAVE(IOSURFACE_ACCELERATOR)
+        https://bugs.webkit.org/show_bug.cgi?id=182955
+        <rdar://problem/37699510>
+
+        Reviewed by Sam Weinig.
+
+        No new tests, no change in behavior.
+
+        Introduce HAVE(IOSURFACE_ACCELERATOR) and guard all uses of
+        IOSurfaceAccelerator behind it.
+
+        Rename USE(IOSURFACE) to HAVE(IOSURFACE) for accuracy.
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        * platform/graphics/ca/TileController.cpp:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        * platform/graphics/cocoa/IOSurfacePoolCocoa.mm:
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+
 2018-02-20  Chris Dumez  <cdumez@apple.com>
 
         Provisional load may get committed before receiving the decidePolicyForNavigationResponse response

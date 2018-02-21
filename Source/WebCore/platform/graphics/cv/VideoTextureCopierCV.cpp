@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 enum class PixelRange {
     Unknown,
     Video,
@@ -368,7 +368,7 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
     ASSERT(iterator != matrices.get().end());
     return iterator->second;
 }
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)
 
 VideoTextureCopierCV::VideoTextureCopierCV(GraphicsContext3D& context)
     : m_sharedContext(context)
@@ -728,7 +728,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
         return copyVideoTextureToPlatformTexture(texture.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY, swapColorChannels);
     }
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
     if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
@@ -846,7 +846,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     return true;
 #else
     return false;
-#endif // USE(IOSURFACE)
+#endif // HAVE(IOSURFACE)
 }
 
 bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVideoTexture, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)

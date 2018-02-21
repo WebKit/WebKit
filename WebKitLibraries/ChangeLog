@@ -1,3 +1,16 @@
+2018-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce HAVE(IOSURFACE_ACCELERATOR)
+        https://bugs.webkit.org/show_bug.cgi?id=182955
+        <rdar://problem/37699510>
+
+        Reviewed by Sam Weinig.
+
+        * WebKitPrivateFrameworkStubs/iOS/10/IOSurface.framework/IOSurface.tbd:
+        * WebKitPrivateFrameworkStubs/iOS/10/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/11/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        Switch IOSurfaceAccelerator symbols over to the still-private IOSurfaceAccelerator framework.
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r227211.

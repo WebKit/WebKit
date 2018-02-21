@@ -60,7 +60,7 @@ ViewSnapshotStore& ViewSnapshotStore::singleton()
     return store;
 }
 
-#if !USE(IOSURFACE)
+#if !HAVE(IOSURFACE)
 CAContext *ViewSnapshotStore::snapshottingContext()
 {
     static CAContext *context;
@@ -131,7 +131,7 @@ void ViewSnapshotStore::discardSnapshotImages()
         m_snapshotsWithImages.first()->clearImage();
 }
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<WebCore::IOSurface> surface)
 {
     return adoptRef(*new ViewSnapshot(WTFMove(surface)));
@@ -143,7 +143,7 @@ Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t ima
 }
 #endif
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 ViewSnapshot::ViewSnapshot(std::unique_ptr<WebCore::IOSurface> surface)
     : m_surface(WTFMove(surface))
 #else
@@ -162,7 +162,7 @@ ViewSnapshot::~ViewSnapshot()
     clearImage();
 }
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
 {
     ASSERT(!m_surface);
@@ -178,7 +178,7 @@ void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
 
 bool ViewSnapshot::hasImage() const
 {
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     return !!m_surface;
 #else
     return m_slotID;
@@ -192,7 +192,7 @@ void ViewSnapshot::clearImage()
 
     ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     m_surface = nullptr;
 #else
     [ViewSnapshotStore::snapshottingContext() deleteSlot:m_slotID];
@@ -201,7 +201,7 @@ void ViewSnapshot::clearImage()
 #endif
 }
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
 WebCore::IOSurface::SurfaceState ViewSnapshot::setVolatile(bool becomeVolatile)
 {
     if (ViewSnapshotStore::singleton().disableSnapshotVolatilityForTesting())
@@ -216,7 +216,7 @@ WebCore::IOSurface::SurfaceState ViewSnapshot::setVolatile(bool becomeVolatile)
 
 id ViewSnapshot::asLayerContents()
 {
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     if (!m_surface)
         return nullptr;
 
@@ -233,7 +233,7 @@ id ViewSnapshot::asLayerContents()
 
 RetainPtr<CGImageRef> ViewSnapshot::asImageForTesting()
 {
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     if (!m_surface)
         return nullptr;
 

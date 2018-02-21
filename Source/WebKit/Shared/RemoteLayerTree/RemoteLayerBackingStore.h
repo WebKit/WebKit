@@ -75,7 +75,7 @@ public:
 
     bool hasFrontBuffer() const
     {
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
         if (m_acceleratesDrawing)
             return !!m_frontBuffer.surface;
 #endif
@@ -99,7 +99,7 @@ private:
     void clearBackingStore();
     void swapToValidFrontBuffer();
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     WebCore::IOSurface::Format surfaceBufferFormat() const;
 #endif
 
@@ -115,14 +115,14 @@ private:
 
     struct Buffer {
         RefPtr<ShareableBitmap> bitmap;
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
         std::unique_ptr<WebCore::IOSurface> surface;
         bool isVolatile = false;
 #endif
 
         explicit operator bool() const
         {
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
             if (surface)
                 return true;
 #endif
@@ -137,7 +137,7 @@ private:
 
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     Buffer m_secondaryBackBuffer;
     WebCore::MachSendRight m_frontBufferSendRight;
 #endif

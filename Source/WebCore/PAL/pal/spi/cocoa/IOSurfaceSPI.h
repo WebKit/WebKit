@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !PLATFORM(IOS_SIMULATOR)
+#if HAVE(IOSURFACE)
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
@@ -113,7 +113,7 @@ IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t 
 
 WTF_EXTERN_C_END
 
-#if PLATFORM(IOS)
+#if HAVE(IOSURFACE_ACCELERATOR)
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <IOSurfaceAccelerator/IOSurfaceAccelerator.h>
@@ -127,6 +127,8 @@ typedef uint32_t IOSurfaceID;
 typedef struct __IOSurfaceAccelerator *IOSurfaceAcceleratorRef;
 
 WTF_EXTERN_C_BEGIN
+
+extern const CFStringRef kIOSurfaceAcceleratorUnwireSurfaceKey;
 
 IOReturn IOSurfaceAcceleratorCreate(CFAllocatorRef, CFDictionaryRef properties, IOSurfaceAcceleratorRef* acceleratorOut);
 CFRunLoopSourceRef IOSurfaceAcceleratorGetRunLoopSource(IOSurfaceAcceleratorRef);
@@ -144,6 +146,6 @@ IOReturn IOSurfaceAcceleratorTransformSurface(IOSurfaceAcceleratorRef, IOSurface
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-#endif // PLATFORM(IOS)
+#endif // HAVE(IOSURFACE_ACCELERATOR)
 
-#endif // !PLATFORM(IOS_SIMULATOR)
+#endif // HAVE(IOSURFACE)

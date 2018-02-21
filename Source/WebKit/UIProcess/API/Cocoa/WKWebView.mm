@@ -1871,13 +1871,14 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     WebCore::IOSurface::Format snapshotFormat = WebCore::screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGBA;
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::sRGBColorSpaceRef(), snapshotFormat);
     if (!surface)
         return nullptr;
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
 
+#if HAVE(IOSURFACE_ACCELERATOR)
     WebCore::IOSurface::Format compressedFormat = WebCore::IOSurface::Format::YUV422;
     if (WebCore::IOSurface::allowConversionFromFormatToFormat(snapshotFormat, compressedFormat)) {
         RefPtr<WebKit::ViewSnapshot> viewSnapshot = WebKit::ViewSnapshot::create(nullptr);
@@ -1888,9 +1889,10 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
         return viewSnapshot;
     }
+#endif // HAVE(IOSURFACE_ACCELERATOR)
 
     return WebKit::ViewSnapshot::create(WTFMove(surface));
-#else
+#else // HAVE(IOSURFACE)
     uint32_t slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
 
     if (!slotID)
@@ -1899,7 +1901,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     CARenderServerCaptureLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, (uint64_t)self.layer, slotID, 0, 0, &transform);
     WebCore::IntSize imageSize = WebCore::expandedIntSize(WebCore::FloatSize(snapshotSize));
     return WebKit::ViewSnapshot::create(slotID, imageSize, (imageSize.area() * 4).unsafeGet());
-#endif
+#endif // HAVE(IOSURFACE)
 }
 
 - (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale animated:(BOOL)animated
@@ -5261,7 +5263,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGFloat imageHeight = imageScale * snapshotRectInContentCoordinates.size.height;
     CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     // If we are parented and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

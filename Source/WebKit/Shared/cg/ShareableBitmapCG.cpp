@@ -73,7 +73,7 @@ static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configurati
 Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
 {
     unsigned bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow);
 #else
     return bytesPerRow;

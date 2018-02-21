@@ -56,7 +56,7 @@ void platformReleaseMemory(Critical)
     tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
 #endif
 
-#if USE(IOSURFACE)
+#if HAVE(IOSURFACE)
     IOSurfacePool::sharedPool().discardAllSurfaces();
 #endif
 }
