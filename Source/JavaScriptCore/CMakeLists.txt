@@ -339,28 +339,51 @@ foreach (_file ${JavaScriptCore_OBJECT_LUT_SOURCES})
     GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
 endforeach ()
 
-set(JavaScriptCore_FORWARDING_HEADERS
-    API/APICast.h
+set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
     API/JSBase.h
-    API/JSCTestRunnerUtils.h
-    API/JSClassRef.h
     API/JSContextRef.h
-    API/JSContextRefPrivate.h
-    API/JSHeapFinalizerPrivate.h
     API/JSObjectRef.h
-    API/JSObjectRefPrivate.h
-    API/JSRetainPtr.h
     API/JSStringRef.h
-    API/JSStringRefBSTR.h
-    API/JSStringRefCF.h
-    API/JSStringRefPrivate.h
     API/JSTypedArray.h
     API/JSValueRef.h
-    API/JSWeakObjectMapRefInternal.h
     API/JavaScript.h
-    API/JavaScriptCore.h
-    API/OpaqueJSString.h
     API/WebKitAvailability.h
+)
+
+set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
+    API/APICallbackFunction.h
+    API/APICast.h
+    API/APIUtils.h
+    API/JSAPIWrapperObject.h
+    API/JSBasePrivate.h
+    API/JSCTestRunnerUtils.h
+    API/JSCallbackConstructor.h
+    API/JSCallbackFunction.h
+    API/JSCallbackObject.h
+    API/JSCallbackObjectFunctions.h
+    API/JSClassRef.h
+    API/JSContextInternal.h
+    API/JSContextPrivate.h
+    API/JSContextRefInspectorSupport.h
+    API/JSContextRefInternal.h
+    API/JSContextRefPrivate.h
+    API/JSHeapFinalizerPrivate.h
+    API/JSManagedValueInternal.h
+    API/JSMarkingConstraintPrivate.h
+    API/JSObjectRefPrivate.h
+    API/JSRemoteInspector.h
+    API/JSRetainPtr.h
+    API/JSScriptRefPrivate.h
+    API/JSStringRefPrivate.h
+    API/JSValueInternal.h
+    API/JSVirtualMachineInternal.h
+    API/JSWeakObjectMapRefInternal.h
+    API/JSWeakObjectMapRefPrivate.h
+    API/JSWeakPrivate.h
+    API/JSWrapperMap.h
+    API/ObjCCallbackFunction.h
+    API/ObjcRuntimeExtras.h
+    API/OpaqueJSString.h
 
     assembler/ARM64Assembler.h
     assembler/ARMAssembler.h
@@ -1150,7 +1173,7 @@ WEBKIT_FRAMEWORK_DECLARE(JavaScriptCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_MAKE_FORWARDING_HEADERS(JavaScriptCore
-    FILES ${JavaScriptCore_FORWARDING_HEADERS}
+    FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS} ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
     DERIVED_SOURCE_DIRECTORIES ${DERIVED_SOURCES_DIR}/JavaScriptCore ${DERIVED_SOURCES_DIR}/JavaScriptCore/inspector
     FLATTENED
 )

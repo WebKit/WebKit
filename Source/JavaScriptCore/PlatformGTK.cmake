@@ -8,7 +8,7 @@ list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/inspector/remote/glib"
 )
 
-list(APPEND JavaScriptCore_FORWARDING_HEADERS
+list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/glib/RemoteInspectorServer.h
     inspector/remote/glib/RemoteInspectorUtils.h
 )
@@ -28,14 +28,7 @@ install(FILES "${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEB
         DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
 )
 
-install(FILES API/JavaScript.h
-              API/JSBase.h
-              API/JSContextRef.h
-              API/JSObjectRef.h
-              API/JSStringRef.h
-              API/JSTypedArray.h
-              API/JSValueRef.h
-              API/WebKitAvailability.h
+install(FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/JavaScriptCore"
 )
 

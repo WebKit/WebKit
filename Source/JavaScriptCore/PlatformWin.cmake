@@ -2,6 +2,11 @@ list(APPEND JavaScriptCore_SOURCES
     API/JSStringRefBSTR.cpp
 )
 
+list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
+    API/JSStringRefBSTR.h
+    API/JavaScriptCore.h
+)
+
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}/../include/private
 )
@@ -9,6 +14,10 @@ list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
 if (USE_CF)
     list(APPEND JavaScriptCore_SOURCES
         API/JSStringRefCF.cpp
+    )
+
+    list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
+        API/JSStringRefCF.h
     )
 
     list(APPEND JavaScriptCore_LIBRARIES
