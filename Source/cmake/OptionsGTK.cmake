@@ -81,7 +81,6 @@ WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wa
 WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notification implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_UPOWER "Whether to enable the low power mode implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
 # Private options specific to the GTK+ port. Changing these options is
@@ -338,13 +337,6 @@ if (USE_LIBHYPHEN)
     find_package(Hyphen)
     if (NOT HYPHEN_FOUND)
        message(FATAL_ERROR "libhyphen is needed for USE_LIBHYPHEN.")
-    endif ()
-endif ()
-
-if (USE_UPOWER)
-    find_package(UPowerGLib)
-    if (NOT UPOWERGLIB_FOUND)
-       message(FATAL_ERROR "upower-glib is needed for USE_UPOWER.")
     endif ()
 endif ()
 

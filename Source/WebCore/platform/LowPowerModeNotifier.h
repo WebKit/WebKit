@@ -28,15 +28,13 @@
 #include <wtf/Function.h>
 
 #if PLATFORM(IOS)
-
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebLowPowerModeObserver;
-
 #endif
 
-#if USE(UPOWER)
-#include <libupower-glib/upower.h>
+#if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
+typedef _GDBusProxy GDBusProxy;
 #endif
 
 namespace WebCore {
@@ -56,12 +54,13 @@ private:
 
     RetainPtr<WebLowPowerModeObserver> m_observer;
     LowPowerModeChangeCallback m_callback;
-#elif USE(UPOWER)
-    static void warningLevelCallback(LowPowerModeNotifier*);
-    void updateState();
+#elif USE(GLIB)
+    void updateWarningLevel();
+    void warningLevelChanged();
+    static void gPropertiesChangedCallback(LowPowerModeNotifier*, GVariant* changedProperties);
 
-    GRefPtr<UpClient> m_upClient;
-    GRefPtr<UpDevice> m_device;
+    GRefPtr<GDBusProxy> m_displayDeviceProxy;
+    GRefPtr<GCancellable> m_cancellable;
     LowPowerModeChangeCallback m_callback;
     bool m_lowPowerModeEnabled { false };
 #endif
