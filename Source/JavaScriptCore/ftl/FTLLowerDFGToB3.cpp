@@ -6550,7 +6550,12 @@ private:
     
     void compileGetArgumentCountIncludingThis()
     {
-        setInt32(m_out.load32(payloadFor(CallFrameSlot::argumentCount)));
+        VirtualRegister argumentCountRegister;
+        if (InlineCallFrame* inlineCallFrame = m_node->argumentsInlineCallFrame())
+            argumentCountRegister = inlineCallFrame->argumentCountRegister;
+        else
+            argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
+        setInt32(m_out.load32(payloadFor(argumentCountRegister)));
     }
 
     void compileSetArgumentCountIncludingThis()
