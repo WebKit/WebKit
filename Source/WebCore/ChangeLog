@@ -1,5 +1,20 @@
 2018-02-21  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Crash in Debug build when purging invalid tracks
+        https://bugs.webkit.org/show_bug.cgi?id=182997
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidAudioTracks): Clear the hashmap when there is no valid track left.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidVideoTracks): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidTextTracks): Ditto.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::getLanguageCode): Demote debugging, this appears too much at least with playbin2.
+        (WebCore::TrackPrivateBaseGStreamer::getTag): Ditto.
+
+2018-02-21  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] We need to adopt GstGlDisplays after GStreamer 1.13.1
         https://bugs.webkit.org/show_bug.cgi?id=182996
 
