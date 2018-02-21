@@ -354,6 +354,8 @@ public:
     {
     }
 
+    void clearTask();
+
     void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
@@ -364,31 +366,58 @@ public:
     void loadFinished(PlatformMediaResource&) override;
 
 private:
+    Lock m_taskLock;
     WebCoreNSURLSessionDataTask *m_task;
 };
 
+void WebCoreNSURLSessionDataTaskClient::clearTask()
+{
+    LockHolder locker(m_taskLock);
+    m_task = nullptr;
+}
+
 void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resource:resource sentBytes:bytesSent totalBytesToBeSent:totalBytesToBeSent];
 }
 
 void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resource:resource receivedResponse:response];
 }
 
 bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResource& resource, const ResourceResponse& response)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return false;
+
     return [m_task resource:resource shouldCacheResponse:response];
 }
 
 void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const char* data, int length)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resource:resource receivedData:data length:length];
 }
 
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resource:resource receivedRedirect:response request:WTFMove(request) completionHandler: [completionHandler = WTFMove(completionHandler)] (auto&& request) {
         ASSERT(isMainThread());
         completionHandler(WTFMove(request));
@@ -397,16 +426,28 @@ void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& 
 
 void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaResource& resource, const ResourceError& error)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resource:resource accessControlCheckFailedWithError:error];
 }
 
 void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resource, const ResourceError& error)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resource:resource loadFailedWithError:error];
 }
 
 void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& resource)
 {
+    LockHolder locker(m_taskLock);
+    if (!m_task)
+        return;
+
     [m_task resourceFinished:resource];
 }
 
@@ -539,7 +580,13 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     [_currentRequest release];
     [_error release];
     [_taskDescription release];
-    callOnMainThread([resource = WTFMove(_resource)] { });
+
+    if (!isMainThread() && _resource) {
+        if (auto* client = _resource->client())
+            static_cast<WebCoreNSURLSessionDataTaskClient*>(client)->clearTask();
+        callOnMainThread([resource = WTFMove(_resource)] { });
+    }
+
     [super dealloc];
 }
 

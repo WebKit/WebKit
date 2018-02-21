@@ -1,3 +1,44 @@
+2018-02-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r228708): Crash under WebCore::MediaResource::responseReceived(WebCore::CachedResource&, WebCore::ResourceResponse const&)
+        https://bugs.webkit.org/show_bug.cgi?id=183018
+        <rdar://problem/37754154>
+
+        Reviewed by Eric Carlson.
+
+        The fix at r228708 was trying to address the fact that avplayer sometimes
+        deallocates WebCoreNSURLSessionDataTask objects on a non-main thread, which
+        was not safe because its _resource data member needs to be deallocated on
+        the main thread.
+
+        The issue is that r228708 caused _resource to outlive its WebCoreNSURLSessionDataTask.
+        This is an issue because _resource has a client data member (of type WebCoreNSURLSessionDataTaskClient)
+        which has a raw pointer to the WebCoreNSURLSessionDataTask. This means that the main thread could
+        call methods like responseReceived() on the resource, which would call responseReceived() on the
+        client, which would try to call [WebCoreNSURLSessionDataTask receivedResponse:] with an invalid
+        m_task pointer.
+
+        To address the issue, I introduced a clearTask() method on WebCoreNSURLSessionDataTaskClient, which
+        gets called from a non-main thread to clear the client's m_task pointer when the task is destroyed
+        on a non-main thread. So that this is safe, every time the client tries to use m_task, we now
+        acquire a lock for thread-safety and do a null-check on m_task.
+
+        No new tests, no known reproduction case.
+
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        (WebCore::PlatformMediaResource::client):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (WebCore::WebCoreNSURLSessionDataTaskClient::clearTask):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataSent):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::shouldCacheResponse):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::redirectReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::loadFailed):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::loadFinished):
+        (-[WebCoreNSURLSessionDataTask dealloc]):
+
 2018-02-21  Youenn Fablet  <youenn@apple.com>
 
         Move AppCache loading to the NetworkProcess
