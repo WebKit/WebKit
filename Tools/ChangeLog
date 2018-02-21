@@ -1,3 +1,16 @@
+2018-02-21  Ms2ger  <Ms2ger@igalia.com>
+
+        [ATK] Remove attributeSet variable from AccessibilityUIElement::attributedStringForRange().
+        https://bugs.webkit.org/show_bug.cgi?id=183000
+
+        Reviewed by Joanmarie Diggs.
+
+        It is never initialized, but is passed to atk_attribute_set_free.
+        This caused a crash in accessibility/content-editable-as-textarea.html on the debug bots.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+
 2018-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Make system-ui obey the user-installed-font policy
