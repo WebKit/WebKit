@@ -1,5 +1,18 @@
 2018-02-21  Youenn Fablet  <youenn@apple.com>
 
+        ServiceWorkerJob::m_lastResponse is unneeded
+        https://bugs.webkit.org/show_bug.cgi?id=183013
+
+        Reviewed by Chris Dumez.
+
+        Remove this field since not used anywhere.
+
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::didReceiveResponse):
+        * workers/service/ServiceWorkerJob.h:
+
+2018-02-21  Youenn Fablet  <youenn@apple.com>
+
         Use ResourceLoader to load appcache manifest
         https://bugs.webkit.org/show_bug.cgi?id=182861
 
