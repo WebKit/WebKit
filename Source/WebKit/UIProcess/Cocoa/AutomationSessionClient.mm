@@ -48,14 +48,16 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     m_delegateMethods.acceptCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:acceptCurrentJavaScriptDialogForWebView:)];
     m_delegateMethods.messageOfCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:messageOfCurrentJavaScriptDialogForWebView:)];
     m_delegateMethods.setUserInputForCurrentJavaScriptPromptForWebView = [delegate respondsToSelector:@selector(_automationSession:setUserInput:forCurrentJavaScriptDialogForWebView:)];
+    m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:typeOfCurrentJavaScriptDialogForWebView:)];
 
-    // FIXME 28524687: these delegate methods should be removed.
+    // FIXME 37408718: these delegate methods should be removed.
     m_delegateMethods.didRequestNewWindow = [delegate respondsToSelector:@selector(_automationSessionDidRequestNewWindow:)];
     m_delegateMethods.isShowingJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:isShowingJavaScriptDialogOnPage:)];
     m_delegateMethods.dismissCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:dismissCurrentJavaScriptDialogOnPage:)];
     m_delegateMethods.acceptCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:acceptCurrentJavaScriptDialogOnPage:)];
     m_delegateMethods.messageOfCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:messageOfCurrentJavaScriptDialogOnPage:)];
     m_delegateMethods.setUserInputForCurrentJavaScriptPromptOnPage = [delegate respondsToSelector:@selector(_automationSession:setUserInput:forCurrentJavaScriptDialogOnPage:)];
+    m_delegateMethods.typeOfCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:typeOfCurrentJavaScriptDialogOnPage:)];
 }
 
 void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& session)
@@ -64,7 +66,7 @@ void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& sess
         [m_delegate.get() _automationSessionDidDisconnectFromRemote:wrapper(session)];
 }
 
-// FIXME 28524687: support for WKPageRef-based delegate methods should be removed.
+// FIXME 37408718: support for WKPageRef-based delegate methods should be removed.
 // Until these are removed, prefer to use the WKWebView delegate methods if implemented.
 WebPageProxy* AutomationSessionClient::didRequestNewWindow(WebAutomationSession& session)
 {
@@ -123,10 +125,27 @@ void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAu
         [m_delegate.get() _automationSession:wrapper(session) setUserInput:value forCurrentJavaScriptDialogOnPage:toAPI(&page)];
 }
 
-std::optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&)
+static std::optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAutomationSessionJavaScriptDialogType type)
 {
-    // FIXME: Implement it. This is only used in WebAutomationSession::setUserInputForCurrentJavaScriptPrompt() so for now we return
-    // always Prompt type for compatibility.
+    switch (type) {
+    case _WKAutomationSessionJavaScriptDialogTypeNone:
+        return std::nullopt;
+    case _WKAutomationSessionJavaScriptDialogTypePrompt:
+        return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
+    case _WKAutomationSessionJavaScriptDialogTypeConfirm:
+        return API::AutomationSessionClient::JavaScriptDialogType::Confirm;
+    case _WKAutomationSessionJavaScriptDialogTypeAlert:
+        return API::AutomationSessionClient::JavaScriptDialogType::Alert;
+    }
+}
+
+std::optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
+{
+    if (m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView)
+        return toImpl([m_delegate.get() _automationSession:wrapper(session) typeOfCurrentJavaScriptDialogForWebView:fromWebPageProxy(page)]);
+    if (m_delegateMethods.typeOfCurrentJavaScriptDialogOnPage)
+        return toImpl([m_delegate.get() _automationSession:wrapper(session) typeOfCurrentJavaScriptDialogOnPage:toAPI(&page)]);
+
     return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
 }
 
