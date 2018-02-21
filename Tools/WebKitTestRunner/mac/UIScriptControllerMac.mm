@@ -241,8 +241,12 @@ void UIScriptController::platformPlayBackEventStream(JSStringRef eventStream, JS
 
 void UIScriptController::firstResponderSuppressionForWebView(bool shouldSuppress)
 {
+#if WK_API_ENABLED
     auto* webView = TestController::singleton().mainWebView()->platformView();
     [webView _setShouldSuppressFirstResponderChanges:shouldSuppress];
+#else
+    UNUSED_PARAM(shouldSuppress);
+#endif
 }
 
 void UIScriptController::makeWindowContentViewFirstResponder()

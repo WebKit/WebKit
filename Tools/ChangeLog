@@ -1,3 +1,10 @@
+2018-02-20  Timothy Horton  <timothy_horton@apple.com>
+
+        Try to fix the 32-bit build after r228857
+
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::firstResponderSuppressionForWebView):
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: Keyboard focus not following VoiceOver cursor into web content or within web content.
