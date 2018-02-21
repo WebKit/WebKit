@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+ 2.19.91
+==================
+
+What's new in WebKitGTK+ 2.19.91?
+
+  - Add ENABLE_ADDRESS_SANITIZER to make it easier to build with asan support.
+  - Fix a crash a under Wayland when using mesa software rasterization.
+  - Make fullscreen video work again.
+  - Fix handling of missing GStreamer elements.
+  - Fix rendering when webm video is played twice.
+  - Fix kinetic scrolling sometimes jumping around.
+  - Fix build with ICU configured without collation support.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
+==================
 WebKitGTK+ 2.19.90
 ==================
 

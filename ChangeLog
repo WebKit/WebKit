@@ -1,3 +1,9 @@
+2018-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.91 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-02-18  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Fullscreen video is broken
