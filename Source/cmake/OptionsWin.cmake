@@ -146,3 +146,7 @@ set(WebKitLegacy_LIBRARY_TYPE SHARED)
 
 find_package(ICU REQUIRED)
 add_definitions(-DUCHAR_TYPE=wchar_t)
+
+# If <winsock2.h> is not included before <windows.h> redefinition errors occur
+# unless _WINSOCKAPI_ is defined before <windows.h> is included
+add_definitions(-D_WINSOCKAPI_=)

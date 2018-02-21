@@ -1,3 +1,12 @@
+2018-02-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Use cmakeconfig.h rather than config.h and Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=182883
+
+        Reviewed by Per Arne Vollan.
+
+        * WebKitPrefix.h:
+
 2018-02-16  Dean Jackson  <dino@apple.com>
 
         Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa

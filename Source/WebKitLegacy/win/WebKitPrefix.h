@@ -26,10 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-
 // Needed for limit defines, like INTMAX_MAX, which is used by the std C++ library
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS

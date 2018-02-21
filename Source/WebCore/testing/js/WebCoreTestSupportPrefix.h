@@ -42,17 +42,9 @@
 #endif
 
 #if OS(WINDOWS)
-
-#if !USE(CURL)
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-#endif
-
 #undef WEBCORE_EXPORT
 #define WEBCORE_EXPORT WTF_IMPORT_DECLARATION
 #define WEBCORE_TESTSUPPORT_EXPORT WTF_EXPORT_DECLARATION
-
 #else
 
 #include <pthread.h>

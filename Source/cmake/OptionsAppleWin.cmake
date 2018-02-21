@@ -7,9 +7,6 @@ include(OptionsWin)
 SET_AND_EXPOSE_TO_BUILD(USE_CF ON)
 SET_AND_EXPOSE_TO_BUILD(USE_CFURLCONNECTION ON)
 
-set(USE_CA 1)
-set(USE_ICU_UNICODE 1)
-
 # Libraries where find_package does not work
 set(COREFOUNDATION_LIBRARY CoreFoundation${DEBUG_SUFFIX})
 set(LIBXML2_LIBRARIES libxml2${DEBUG_SUFFIX})
@@ -22,7 +19,10 @@ set(ZLIB_LIBRARIES zdll${DEBUG_SUFFIX})
 # set(USE_DIRECT2D 1)
 
 if (${USE_DIRECT2D})
-    add_definitions(-DUSE_DIRECT2D=1)
+    SET_AND_EXPOSE_TO_BUILD(USE_DIRECT2D ON)
+else ()
+    SET_AND_EXPOSE_TO_BUILD(USE_CA ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_CG ON)
 endif ()
 
 # Warnings as errors (ignore narrowing conversions)

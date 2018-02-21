@@ -1,3 +1,14 @@
+2018-02-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Use cmakeconfig.h rather than config.h and Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=182883
+
+        Reviewed by Per Arne Vollan.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] USE_UPOWER causes crashes inside a chroot or on systems with broken dbus/upower

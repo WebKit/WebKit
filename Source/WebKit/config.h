@@ -34,14 +34,8 @@
 #include <wtf/DisallowCType.h>
 
 #if PLATFORM(WIN)
-
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-
 #undef WEBCORE_EXPORT
 #define WEBCORE_EXPORT WTF_EXPORT_DECLARATION
-
 #endif // PLATFORM(WIN)
 
 #ifdef __cplusplus

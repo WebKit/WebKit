@@ -41,17 +41,6 @@
 #define HAVE_FUNC_USLEEP 1
 #endif /* __APPLE__ */
 
-#if OS(WINDOWS)
-
-// CURL needs winsock, so don't prevent inclusion of it
-#if !USE(CURL)
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-#endif
-
-#endif /* OS(WINDOWS) */
-
 // Using CMake with Unix makefiles does not use prefix headers.
 #if PLATFORM(MAC) && defined(BUILDING_WITH_CMAKE)
 #include "WebCorePrefix.h"
@@ -70,23 +59,6 @@
 #endif
 
 #include <wtf/DisallowCType.h>
-
-#if PLATFORM(WIN)
-#if PLATFORM(WIN_CAIRO)
-#undef USE_CG
-#define USE_CURL 1
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-#elif USE(DIRECT2D)
-#undef USE_CA
-#undef USE_CG
-#elif !USE(WINGDI)
-#define USE_CG 1
-#undef USE_CAIRO
-#undef USE_CURL
-#endif
-#endif
 
 #if PLATFORM(MAC) || PLATFORM(WPE)
 #define USE_NEW_THEME 1
