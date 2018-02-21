@@ -1,3 +1,28 @@
+2018-02-14  Brian Burg  <bburg@apple.com>
+
+        Web Automation: combine session commands to resize and move top-level browsing contexts
+        https://bugs.webkit.org/show_bug.cgi?id=182749
+        <rdar://problem/37515170>
+
+        Reviewed by Andy Estes.
+
+        Since moving and resizing the window are both accomplished by setting the window frame,
+        and the W3C WebDriver specification has a Get/Set Window Rect command, it's time to
+        deduplicate these two methods which basically do the same thing.
+
+        Adopt modern JSON::Value getters that return std::optional<float>. I have been trying
+        to move the protocol over to this style wholesale, but it is probably easier to do
+        this conversion in smaller pieces. And so, I have started to do so.
+
+        This change is covered by existing WebDriver tests.
+
+        * UIProcess/Automation/Automation.json: Add new command.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext): Added.
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext): Deleted.
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext): Deleted.
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2018-02-20  Brian Burg  <bburg@apple.com>
 
         ASSERT under WebAutomationSession::setProcessPool() when running W3C test suite a second time
