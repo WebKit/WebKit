@@ -1,3 +1,22 @@
+2018-02-21  Ms2ger  <Ms2ger@igalia.com>
+
+        [GCrypt] Remove unsound assertion from CryptoKeyRSA::exportData().
+        https://bugs.webkit.org/show_bug.cgi?id=183001
+
+        Reviewed by Philippe Normand.
+
+        This function is called from structured cloning, in particular when storing
+        a key in IndexedDB. This would trip the assertion if the key in question is
+        non-exportable.
+
+        The assertion was copied from the macOS implementation in r172389; it was
+        subsequently removed there in r172898 to handle this case.
+
+        Test: crypto/subtle/rsa-indexeddb-non-exportable.html
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::exportData const): remove assertion.
+
 2018-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Make system-ui obey the user-installed-font policy
