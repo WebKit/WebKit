@@ -55,7 +55,7 @@ public:
     bool isPresenting() const;
 
     const VRDisplayCapabilities& capabilities() const;
-    VRStageParameters* stageParameters() const;
+    RefPtr<VRStageParameters> stageParameters() const;
 
     const VREyeParameters& getEyeParameters(VREye) const;
 
@@ -104,6 +104,7 @@ private:
     // (except the sign of the eye to head transform offset).
     RefPtr<VREyeParameters> m_leftEyeParameters;
     RefPtr<VREyeParameters> m_rightEyeParameters;
+    RefPtr<VRStageParameters> m_stageParameters;
 
     String m_displayName;
 };

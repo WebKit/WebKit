@@ -38,6 +38,7 @@ public:
 private:
     VRPlatformDisplayInfo::FieldOfView computeFieldOfView(vr::Hmd_Eye);
     void updateEyeParameters();
+    void updateStageParameters();
 
     vr::IVRSystem* m_system;
     vr::IVRChaperone* m_chaperone;

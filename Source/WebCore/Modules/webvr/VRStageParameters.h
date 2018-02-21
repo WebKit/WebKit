@@ -24,25 +24,33 @@
  */
 #pragma once
 
+#include "TransformationMatrix.h"
+
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class VRStageParameters : public RefCounted<VRStageParameters> {
 public:
-    static Ref<VRStageParameters> create()
+    static RefPtr<VRStageParameters> create(const std::optional<TransformationMatrix>& sittingToStandingTransform, const std::optional<FloatSize>& playAreaBounds)
     {
-        return adoptRef(*new VRStageParameters);
+        if (!sittingToStandingTransform || !playAreaBounds)
+            return nullptr;
+
+        return adoptRef(*new VRStageParameters(sittingToStandingTransform.value(), playAreaBounds.value()));
     }
 
-    Float32Array* sittingToStandingTransform() const;
+    Ref<Float32Array> sittingToStandingTransform() const;
 
     float sizeX() const;
     float sizeZ() const;
 
 private:
-    VRStageParameters();
+    VRStageParameters(const TransformationMatrix& sittingToStandingTransform, const FloatSize& playAreaBounds);
+
+    FloatSize m_playAreaBounds;
+    TransformationMatrix m_sittingToStandingTransform;
 };
 
 } // namespace WebCore

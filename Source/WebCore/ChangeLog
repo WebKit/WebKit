@@ -1,3 +1,32 @@
+2018-02-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][OpenVR] Retrieve stage parameters
+        https://bugs.webkit.org/show_bug.cgi?id=182976
+
+        Reviewed by Žan Doberšek.
+
+        Use OpenVR to retrieve stage parameters, i.e., play area size and
+        the transformation from sitting to standing position. It includes
+        the same fallback used by Firefox to provide sensible values in case
+        we cannot get the required information from the VR SDK (it's quite
+        common not to have defined a play area).
+
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::stageParameters const):
+        * Modules/webvr/VRDisplay.h:
+        * Modules/webvr/VRStageParameters.cpp:
+        (WebCore::VRStageParameters::VRStageParameters):
+        (WebCore::VRStageParameters::sittingToStandingTransform const):
+        (WebCore::VRStageParameters::sizeX const):
+        (WebCore::VRStageParameters::sizeZ const):
+        * Modules/webvr/VRStageParameters.h:
+        (WebCore::VRStageParameters::create):
+        * platform/vr/VRPlatformDisplay.h:
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp:
+        (WebCore::VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR):
+        (WebCore::VRPlatformDisplayOpenVR::updateStageParameters):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.h:
+
 2018-02-21  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Create a Wayland GL display instead of EGL

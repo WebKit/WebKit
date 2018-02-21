@@ -21,6 +21,7 @@
 #pragma once
 
 #include "FloatPoint3D.h"
+#include "TransformationMatrix.h"
 
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -61,6 +62,9 @@ struct VRPlatformDisplayInfo {
         unsigned width;
         unsigned height;
     } renderSize;
+
+    std::optional<FloatSize> playAreaBounds;
+    std::optional<TransformationMatrix> sittingToStandingTransform;
 };
 
 class VRPlatformDisplay {

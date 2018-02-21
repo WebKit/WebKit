@@ -53,6 +53,7 @@ VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR(vr::IVRSystem* system, vr::IVRC
         VRDisplayCapabilityFlags::Present;
 
     updateEyeParameters();
+    updateStageParameters();
 }
 
 VRPlatformDisplayInfo::FieldOfView VRPlatformDisplayOpenVR::computeFieldOfView(vr::Hmd_Eye eye)
@@ -76,6 +77,25 @@ void VRPlatformDisplayOpenVR::updateEyeParameters()
     uint32_t height;
     m_system->GetRecommendedRenderTargetSize(&width, &height);
     m_displayInfo.renderSize = { width, height };
+}
+
+void VRPlatformDisplayOpenVR::updateStageParameters()
+{
+    float playAreaWidth = 1;
+    float playAreaDepth = 1;
+    if (!m_chaperone->GetPlayAreaSize(&playAreaWidth, &playAreaDepth)) {
+        // Fallback to sensible values, 1mx1m play area and 0.75m high seated position. We do as
+        // Firefox does.
+        m_displayInfo.sittingToStandingTransform = TransformationMatrix();
+        m_displayInfo.sittingToStandingTransform->setM42(0.75);
+    } else {
+        vr::HmdMatrix34_t transformMatrix = m_system->GetSeatedZeroPoseToStandingAbsoluteTrackingPose();
+        m_displayInfo.sittingToStandingTransform = TransformationMatrix(transformMatrix.m[0][0], transformMatrix.m[1][0], transformMatrix.m[2][0], 0,
+            transformMatrix.m[0][1], transformMatrix.m[1][1], transformMatrix.m[2][1], 0,
+            transformMatrix.m[0][2], transformMatrix.m[1][2], transformMatrix.m[2][2], 0,
+            transformMatrix.m[0][3], transformMatrix.m[1][3], transformMatrix.m[2][3], 1);
+    }
+    m_displayInfo.playAreaBounds = FloatSize(playAreaWidth, playAreaDepth);
 }
 
 }; // namespace WebCore

@@ -31,6 +31,7 @@
 #include "VRLayerInit.h"
 #include "VRPlatformDisplay.h"
 #include "VRPose.h"
+#include "VRStageParameters.h"
 
 namespace WebCore {
 
@@ -72,9 +73,10 @@ const VRDisplayCapabilities& VRDisplay::capabilities() const
     return *m_capabilities;
 }
 
-VRStageParameters* VRDisplay::stageParameters() const
+RefPtr<VRStageParameters> VRDisplay::stageParameters() const
 {
-    return nullptr;
+    auto displayInfo = m_display->getDisplayInfo();
+    return VRStageParameters::create(displayInfo.sittingToStandingTransform, displayInfo.playAreaBounds);
 }
 
 const VREyeParameters& VRDisplay::getEyeParameters(VREye eye) const
