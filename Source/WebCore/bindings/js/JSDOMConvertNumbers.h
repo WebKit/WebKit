@@ -29,6 +29,7 @@
 #include "JSDOMConvertBase.h"
 #include "JSDOMExceptionHandling.h"
 #include <runtime/JSCJSValueInlines.h>
+#include <JavaScriptCore/PureNaN.h>
 
 namespace WebCore {
 
@@ -383,13 +384,13 @@ template<> struct JSConverter<IDLUnrestrictedDouble> {
 
     static JSC::JSValue convert(Type value)
     {
-        return JSC::jsNumber(value);
+        return JSC::jsNumber(JSC::purifyNaN(value));
     }
 
     // Add overload for MediaTime.
     static JSC::JSValue convert(MediaTime value)
     {
-        return JSC::jsNumber(value.toDouble());
+        return JSC::jsNumber(JSC::purifyNaN(value.toDouble()));
     }
 };
 
