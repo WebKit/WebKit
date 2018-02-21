@@ -477,10 +477,11 @@ static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutoma
 
 int main(int argc, char *argv[])
 {
-    gtk_init(&argc, &argv);
 #if ENABLE_DEVELOPER_MODE
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 #endif
+
+    gtk_init(&argc, &argv);
 
     GOptionContext *context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, commandLineOptions, 0);

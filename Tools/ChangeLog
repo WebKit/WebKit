@@ -1,3 +1,15 @@
+2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unsafe g_setenv use in MiniBrowser main
+        https://bugs.webkit.org/show_bug.cgi?id=182978
+
+        Reviewed by Carlos Garcia Campos.
+
+        setenv (and g_setenv) will randomly crash if called too late.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2018-02-21  Aakash Jain  <aakash_jain@apple.com>
 
         webkitpy NetworkTransaction should retry on URLError
@@ -166,6 +178,7 @@
 
         * MiniBrowser/gtk/main.c:
         (main): Add the group containing the Gstreamer options that the console displays.
+
 2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTR][GTK] crash log backtrace doesn't show symbol names for DatabaseProcess and NetworkProcess
