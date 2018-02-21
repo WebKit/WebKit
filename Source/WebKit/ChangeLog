@@ -1,3 +1,26 @@
+2018-02-20  Brian Burg  <bburg@apple.com>
+
+        ASSERT under WebAutomationSession::setProcessPool() when running W3C test suite a second time
+        https://bugs.webkit.org/show_bug.cgi?id=182991
+        <rdar://problem/37620578>
+
+        Reviewed by Timothy Hatcher.
+
+        Sometimes when running more than one session end-to-end with the same browser instance,
+        UIProcess would crash under addMessageReceiver because another WebAutomationSession was still
+        registered. This is hard to reproduce, but upon code inspection, the receiver management code
+        is somewhat problematic because it only runs when the WebAutomationSession destructor runs.
+        In some cases the client could retain two sessions and cause the first one to never remove itself
+        as the message receiver.
+
+        Instead of unregistering the session as a message receiver underneath the session's destructor,
+        do this whenever a new session supplants an old session since there is only one active session at a time.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::~WebAutomationSession):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setAutomationSession):
+
 2018-02-20  Tim Horton  <timothy_horton@apple.com>
 
         Introduce HAVE(IOSURFACE_ACCELERATOR)
