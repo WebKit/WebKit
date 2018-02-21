@@ -1,3 +1,15 @@
+2018-02-21  Chris Dumez  <cdumez@apple.com>
+
+        VTTCue constructor should use 'double' type for startTime / endTime
+        https://bugs.webkit.org/show_bug.cgi?id=182988
+
+        Reviewed by Eric Carlson.
+
+        Update existing test to reflect behavior change.
+
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+
 2018-02-21  Ms2ger  <Ms2ger@gmail.com>
 
         Test gardening.

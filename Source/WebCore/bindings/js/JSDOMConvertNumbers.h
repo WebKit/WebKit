@@ -360,6 +360,7 @@ template<> struct JSConverter<IDLDouble> {
 
     static JSC::JSValue convert(Type value)
     {
+        ASSERT(!std::isnan(value));
         return JSC::jsNumber(value);
     }
 };

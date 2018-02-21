@@ -1,3 +1,34 @@
+2018-02-21  Chris Dumez  <cdumez@apple.com>
+
+        VTTCue constructor should use 'double' type for startTime / endTime
+        https://bugs.webkit.org/show_bug.cgi?id=182988
+
+        Reviewed by Eric Carlson.
+
+        VTTCue constructor should use 'double' type for startTime / endTime, not
+        'unrestricted double':
+        - https://w3c.github.io/webvtt/#the-vttcue-interface
+
+        Otherwise, we end up potentially returning NaN for TextTrackCue.startTime / endTime,
+        even though those correctly use type 'double':
+        - https://html.spec.whatwg.org/multipage/media.html#texttrackcue
+
+        The new behavior is consistent with Firefox and Chrome.
+
+        No new tests, updated existing test.
+
+        * bindings/js/JSDOMConvertNumbers.h:
+        (WebCore::JSConverter<IDLDouble>::convert):
+        Add assertion to make sure our implementation never tries to return NaN
+        for an IDL attribute of type 'double'. This would be invalid as per Web
+        IDL spec and would crash if the NaN being returned was impure as JSValue
+        could not store it as a double.
+
+        * html/track/VTTCue.idl:
+        Update constructor parameters to use 'double' type instead of 'unrestricted
+        double', as per:
+        - https://w3c.github.io/webvtt/#the-vttcue-interface
+
 2018-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderTextFragment::willBeRemoved() mutation logic to RenderTreeBuilder
