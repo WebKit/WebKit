@@ -114,58 +114,37 @@ if (NOT PORT STREQUAL "GTK")
     set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
 endif ()
 
-# Macros for determining HAVE values.
-macro(_HAVE_CHECK_INCLUDE _variable _header)
-    check_include_file(${_header} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
-endmacro()
-
-macro(_HAVE_CHECK_FUNCTION _variable _function)
-    check_function_exists(${_function} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
-endmacro()
-
-macro(_HAVE_CHECK_SYMBOL _variable _symbol _header)
-    check_symbol_exists(${_symbol} ${_header} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
-endmacro()
-
-macro(_HAVE_CHECK_STRUCT _variable _struct _member _header)
-    check_struct_has_member(${_struct} ${_member} ${_header} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
-endmacro()
-
 # Check whether features.h header exists.
 # Including glibc's one defines __GLIBC__, that is used in Platform.h
-_HAVE_CHECK_INCLUDE(HAVE_FEATURES_H features.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_FEATURES_H features.h)
 
 # Check for headers
-_HAVE_CHECK_INCLUDE(HAVE_ERRNO_H errno.h)
-_HAVE_CHECK_INCLUDE(HAVE_LANGINFO_H langinfo.h)
-_HAVE_CHECK_INCLUDE(HAVE_MMAP sys/mman.h)
-_HAVE_CHECK_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
-_HAVE_CHECK_INCLUDE(HAVE_STRINGS_H strings.h)
-_HAVE_CHECK_INCLUDE(HAVE_SYS_PARAM_H sys/param.h)
-_HAVE_CHECK_INCLUDE(HAVE_SYS_TIME_H sys/time.h)
-_HAVE_CHECK_INCLUDE(HAVE_SYS_TIMEB_H sys/timeb.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_ERRNO_H errno.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_LANGINFO_H langinfo.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_MMAP sys/mman.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_PTHREAD_NP_H pthread_np.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_STRINGS_H strings.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_PARAM_H sys/param.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_TIME_H sys/time.h)
+WEBKIT_CHECK_HAVE_INCLUDE(HAVE_SYS_TIMEB_H sys/timeb.h)
 
 # Check for functions
-_HAVE_CHECK_FUNCTION(HAVE_ALIGNED_MALLOC _aligned_malloc)
-_HAVE_CHECK_FUNCTION(HAVE_ISDEBUGGERPRESENT IsDebuggerPresent)
-_HAVE_CHECK_FUNCTION(HAVE_LOCALTIME_R localtime_r)
-_HAVE_CHECK_FUNCTION(HAVE_STRNSTR strnstr)
-_HAVE_CHECK_FUNCTION(HAVE_TIMEGM timegm)
-_HAVE_CHECK_FUNCTION(HAVE_VASPRINTF vasprintf)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_ALIGNED_MALLOC _aligned_malloc)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_ISDEBUGGERPRESENT IsDebuggerPresent)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_LOCALTIME_R localtime_r)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_STRNSTR strnstr)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_TIMEGM timegm)
+WEBKIT_CHECK_HAVE_FUNCTION(HAVE_VASPRINTF vasprintf)
 
 # Check for symbols
-_HAVE_CHECK_SYMBOL(HAVE_REGEX_H regexec regex.h)
+WEBKIT_CHECK_HAVE_SYMBOL(HAVE_REGEX_H regexec regex.h)
 # Windows has signal.h but is missing symbols that are used in calls to signal.
-_HAVE_CHECK_SYMBOL(HAVE_SIGNAL_H SIGTRAP signal.h)
+WEBKIT_CHECK_HAVE_SYMBOL(HAVE_SIGNAL_H SIGTRAP signal.h)
 
 # Check for struct members
-_HAVE_CHECK_STRUCT(HAVE_STAT_BIRTHTIME "struct stat" st_birthtime sys/stat.h)
-_HAVE_CHECK_STRUCT(HAVE_TM_GMTOFF "struct tm" tm_gmtoff time.h)
-_HAVE_CHECK_STRUCT(HAVE_TM_ZONE "struct tm" tm_zone time.h)
+WEBKIT_CHECK_HAVE_STRUCT(HAVE_STAT_BIRTHTIME "struct stat" st_birthtime sys/stat.h)
+WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_GMTOFF "struct tm" tm_gmtoff time.h)
+WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_ZONE "struct tm" tm_zone time.h)
 
 # Check for int types
 check_type_size("__int128_t" INT128_VALUE)
