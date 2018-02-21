@@ -1,5 +1,40 @@
 2018-02-20  Chris Dumez  <cdumez@apple.com>
 
+        Provisional load may get committed before receiving the decidePolicyForNavigationResponse response
+        https://bugs.webkit.org/show_bug.cgi?id=182720
+        <rdar://problem/37515204>
+
+        Reviewed by Alex Christensen.
+
+        Wait for the policy response from the client after receiving a resource response,
+        before sending the NetworkResourceLoader::ContinueDidReceiveResponse IPC back to
+        the NetworkProcess. Otherwise, the network process may start sending us data and
+        we may end up committing the provisional load before receiving the policy decision
+        fron the client.
+
+        Change is covered by new API test.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::deliverResponseAndData):
+        (WebCore::ResourceLoader::loadDataURL):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveResponseAsync):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveResponsePolicy):
+        (WebCore::SubresourceLoader::willCancel):
+        * loader/SubresourceLoader.h:
+        * loader/ios/PreviewLoader.mm:
+        (-[WebPreviewLoader _sendDidReceiveResponseIfNecessary]):
+
+2018-02-20  Chris Dumez  <cdumez@apple.com>
+
         Crash under JSC::JSCell::toNumber(JSC::ExecState*)
         https://bugs.webkit.org/show_bug.cgi?id=182984
         <rdar://problem/37694346>

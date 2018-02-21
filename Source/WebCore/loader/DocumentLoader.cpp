@@ -783,7 +783,12 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     }
 #endif
 
+    if (auto* mainResourceLoader = this->mainResourceLoader())
+        mainResourceLoader->markInAsyncResponsePolicyCheck();
     frameLoader()->checkContentPolicy(m_response, [this, protectedThis = makeRef(*this)](PolicyAction policy) {
+        if (auto* mainResourceLoader = this->mainResourceLoader())
+            mainResourceLoader->didReceiveResponsePolicy();
+
         continueAfterContentPolicy(policy);
     });
 }

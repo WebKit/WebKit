@@ -60,7 +60,7 @@ private:
     void init(ResourceRequest&&, CompletionHandler<void(bool)>&&) override;
 
     void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback) override;
-    void didReceiveResponse(const ResourceResponse&) override;
+    void didReceiveResponse(const ResourceResponse&, CompletionHandler<void()>&& policyCompletionHandler) override;
     void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
     void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(const NetworkLoadMetrics&) override;

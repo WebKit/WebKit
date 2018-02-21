@@ -93,7 +93,7 @@ void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
     if (!hasLoader())
         return;
 
-    m_coreLoader->didReceiveResponse(response);
+    m_coreLoader->didReceiveResponse(response, nullptr);
 }
 
 void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)

@@ -288,10 +288,12 @@ bool SubresourceLoader::shouldCreatePreviewLoaderForResponse(const ResourceRespo
 
 #endif
 
-void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
+void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, CompletionHandler<void()>&& policyCompletionHandler)
 {
     ASSERT(!response.isNull());
     ASSERT(m_state == Initialized);
+
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
 
 #if USE(QUICK_LOOK)
     if (shouldCreatePreviewLoaderForResponse(response)) {
@@ -335,7 +337,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
             if (m_frame && m_frame->page())
                 m_frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultPass, ShouldSample::Yes);
             if (!reachedTerminalState())
-                ResourceLoader::didReceiveResponse(revalidationResponse);
+                ResourceLoader::didReceiveResponse(revalidationResponse, [completionHandlerCaller = WTFMove(completionHandlerCaller)] { });
             return;
         }
         // Did not get 304 response, continue as a regular resource load.
@@ -356,36 +358,49 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     if (reachedTerminalState())
         return;
 
-    ResourceLoader::didReceiveResponse(response);
-    if (reachedTerminalState())
-        return;
-
-    // FIXME: Main resources have a different set of rules for multipart than images do.
-    // Hopefully we can merge those 2 paths.
-    if (response.isMultipart() && m_resource->type() != CachedResource::MainResource) {
-        m_loadingMultipartContent = true;
-
-        // We don't count multiParts in a CachedResourceLoader's request count
-        m_requestCountTracker = std::nullopt;
-        if (!m_resource->isImage()) {
-            cancel();
+    bool isResponseMultipart = response.isMultipart();
+    ResourceLoader::didReceiveResponse(response, [this, protectedThis = WTFMove(protectedThis), isResponseMultipart, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
+        if (reachedTerminalState())
             return;
+
+        // FIXME: Main resources have a different set of rules for multipart than images do.
+        // Hopefully we can merge those 2 paths.
+        if (isResponseMultipart && m_resource->type() != CachedResource::MainResource) {
+            m_loadingMultipartContent = true;
+
+            // We don't count multiParts in a CachedResourceLoader's request count
+            m_requestCountTracker = std::nullopt;
+            if (!m_resource->isImage()) {
+                cancel();
+                return;
+            }
         }
-    }
 
-    auto* buffer = resourceData();
-    if (m_loadingMultipartContent && buffer && buffer->size()) {
-        // The resource data will change as the next part is loaded, so we need to make a copy.
-        m_resource->finishLoading(buffer->copy().ptr());
-        clearResourceData();
-        // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.
-        // After the first multipart section is complete, signal to delegates that this load is "finished"
-        NetworkLoadMetrics emptyMetrics;
-        m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
-        didFinishLoadingOnePart(emptyMetrics);
-    }
+        auto* buffer = resourceData();
+        if (m_loadingMultipartContent && buffer && buffer->size()) {
+            // The resource data will change as the next part is loaded, so we need to make a copy.
+            m_resource->finishLoading(buffer->copy().ptr());
+            clearResourceData();
+            // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.
+            // After the first multipart section is complete, signal to delegates that this load is "finished"
+            NetworkLoadMetrics emptyMetrics;
+            m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
+            didFinishLoadingOnePart(emptyMetrics);
+        }
 
-    checkForHTTPStatusCodeError();
+        checkForHTTPStatusCodeError();
+
+        if (m_inAsyncResponsePolicyCheck)
+            m_policyForResponseCompletionHandler = completionHandlerCaller.release();
+    });
+}
+
+void SubresourceLoader::didReceiveResponsePolicy()
+{
+    ASSERT(m_inAsyncResponsePolicyCheck);
+    m_inAsyncResponsePolicyCheck = false;
+    if (auto completionHandler = WTFMove(m_policyForResponseCompletionHandler))
+        completionHandler();
 }
 
 void SubresourceLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
@@ -658,6 +673,9 @@ void SubresourceLoader::willCancel(const ResourceError& error)
         return;
     ASSERT(!reachedTerminalState());
     LOG(ResourceLoading, "Cancelled load of '%s'.\n", m_resource->url().string().latin1().data());
+
+    if (auto policyForResponseCompletionHandler = WTFMove(m_policyForResponseCompletionHandler))
+        policyForResponseCompletionHandler();
 
     Ref<SubresourceLoader> protectedThis(*this);
 #if PLATFORM(IOS)

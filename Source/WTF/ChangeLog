@@ -1,3 +1,19 @@
+2018-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Provisional load may get committed before receiving the decidePolicyForNavigationResponse response
+        https://bugs.webkit.org/show_bug.cgi?id=182720
+        <rdar://problem/37515204>
+
+        Reviewed by Alex Christensen.
+
+        Add convenience CompletionHandlerCallingScope class which calls its CompletionHandler
+        when destroyed, and provides a release() methods to manually call the completionHandler.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandlerCallingScope::CompletionHandlerCallingScope):
+        (WTF::CompletionHandlerCallingScope::~CompletionHandlerCallingScope):
+        (WTF::CompletionHandlerCallingScope::CompletionHandler<void):
+
 2018-02-20  Tim Horton  <timothy_horton@apple.com>
 
         Always inline soft linking functions to work around a clang bug

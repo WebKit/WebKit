@@ -130,7 +130,7 @@ static PreviewLoaderClient& emptyClient()
     _resourceLoader->documentLoader()->setPreviewConverter(WTFMove(_converter));
 
     _hasSentDidReceiveResponse = YES;
-    _resourceLoader->didReceiveResponse(response);
+    _resourceLoader->didReceiveResponse(response, nullptr);
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived

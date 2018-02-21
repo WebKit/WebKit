@@ -141,9 +141,10 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
         if (response.url().isNull())
             response.setURL(m_loader->request().url());
 
-        m_loader->didReceiveResponse(response);
-        if (auto callback = WTFMove(m_callback))
-            callback(Result::Succeeded);
+        m_loader->didReceiveResponse(response, [this, protectedThis = WTFMove(protectedThis)] {
+            if (auto callback = WTFMove(m_callback))
+                callback(Result::Succeeded);
+        });
     });
 }
 

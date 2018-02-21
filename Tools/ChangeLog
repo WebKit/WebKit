@@ -1,3 +1,17 @@
+2018-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Provisional load may get committed before receiving the decidePolicyForNavigationResponse response
+        https://bugs.webkit.org/show_bug.cgi?id=182720
+        <rdar://problem/37515204>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm:
+        (-[TestAsyncNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Dispatch accessibleclick event

@@ -31,6 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
+static bool shouldAccept = true;
 static bool navigationComplete = false;
 static bool navigationFailed = false;
 
@@ -66,7 +67,7 @@ static bool navigationFailed = false;
     int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
     dispatch_after(when, dispatch_get_main_queue(), ^{
-        decisionHandler(WKNavigationResponsePolicyAllow);
+        decisionHandler(shouldAccept ? WKNavigationResponsePolicyAllow : WKNavigationResponsePolicyCancel);
     });
 }
 @end
@@ -82,10 +83,31 @@ TEST(WebKit, RespondToPolicyForNavigationResponseAsynchronously)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
+    shouldAccept = true;
+    navigationFailed = false;
+    navigationComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_FALSE(navigationFailed);
+}
+
+TEST(WebKit, PolicyForNavigationResponseCancelAsynchronously)
+{
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegate = adoptNS([[TestAsyncNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+
+    shouldAccept = false;
+    navigationFailed = false;
+    navigationComplete = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    TestWebKitAPI::Util::run(&navigationComplete);
+
+    EXPECT_TRUE(navigationFailed);
 }
 
 } // namespace TestWebKitAPI

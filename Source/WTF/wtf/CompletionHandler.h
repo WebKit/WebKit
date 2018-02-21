@@ -64,6 +64,28 @@ private:
     mutable WTF::Function<Out(In...)> m_function;
 };
 
+class CompletionHandlerCallingScope {
+public:
+    CompletionHandlerCallingScope(CompletionHandler<void()>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    { }
+
+    ~CompletionHandlerCallingScope()
+    {
+        if (m_completionHandler)
+            m_completionHandler();
+    }
+
+    CompletionHandlerCallingScope(CompletionHandlerCallingScope&&) = default;
+    CompletionHandlerCallingScope& operator=(CompletionHandlerCallingScope&&) = default;
+
+    CompletionHandler<void()> release() { return WTFMove(m_completionHandler); }
+
+private:
+    CompletionHandler<void()> m_completionHandler;
+};
+
 } // namespace WTF
 
 using WTF::CompletionHandler;
+using WTF::CompletionHandlerCallingScope;

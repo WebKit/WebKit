@@ -97,9 +97,10 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
     });
 }
 
-void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& response)
+void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& response, CompletionHandler<void()>&& policyCompletionHandler)
 {
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
 
     m_client->didReceiveResponse(this, response);
 
@@ -107,21 +108,21 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
     if (!m_client)
         return;
 
-    ResourceLoader::didReceiveResponse(response);
+    ResourceLoader::didReceiveResponse(response, [this, protectedThis = WTFMove(protectedThis), response, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
+        // Don't continue if the stream is cancelled
+        if (!m_client)
+            return;
 
-    // Don't continue if the stream is cancelled
-    if (!m_client)
-        return;
+        if (!response.isHTTP())
+            return;
 
-    if (!response.isHTTP())
-        return;
-    
-    if (m_client->wantsAllStreams())
-        return;
+        if (m_client->wantsAllStreams())
+            return;
 
-    // Status code can be null when serving from a Web archive.
-    if (response.httpStatusCode() && (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400))
-        cancel(frameLoader()->client().fileDoesNotExistError(response));
+        // Status code can be null when serving from a Web archive.
+        if (response.httpStatusCode() && (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400))
+            cancel(frameLoader()->client().fileDoesNotExistError(response));
+    });
 }
 
 void NetscapePlugInStreamLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)

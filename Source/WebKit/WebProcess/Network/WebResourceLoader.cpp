@@ -107,19 +107,21 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponse for '%s'. Status %d.", m_coreLoader->url().string().latin1().data(), response.httpStatusCode());
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", status = %d)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID, response.httpStatusCode());
 
-    Ref<WebResourceLoader> protect(*this);
+    Ref<WebResourceLoader> protectedThis(*this);
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(m_coreLoader.get(), response))
         return;
 
-    m_coreLoader->didReceiveResponse(response);
+    CompletionHandler<void()> policyDecisionCompletionHandler;
+    if (needsContinueDidReceiveResponseMessage) {
+        policyDecisionCompletionHandler = [this, protectedThis = WTFMove(protectedThis)] {
+            // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function().
+            if (m_coreLoader)
+                send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
+        };
+    }
 
-    // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function(). 
-    if (!m_coreLoader)
-        return;
-
-    if (needsContinueDidReceiveResponseMessage)
-        send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
+    m_coreLoader->didReceiveResponse(response, WTFMove(policyDecisionCompletionHandler));
 }
 
 void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
