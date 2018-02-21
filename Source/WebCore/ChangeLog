@@ -1,3 +1,27 @@
+2018-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Crash under JSC::JSCell::toNumber(JSC::ExecState*)
+        https://bugs.webkit.org/show_bug.cgi?id=182984
+        <rdar://problem/37694346>
+
+        Reviewed by Mark Lam.
+
+        The issue was caused by DOMMatrix attributes potentially returning "impure"
+        NaN values. We would call JSC::jsNumber(double) to construct the JSValue
+        but this is only safe for pure NaN values. Make sure we purify the double
+        returned by the implementation for IDL attributes of type 'unrestricted double'
+        before calling JSC::jsNumber(double).
+
+        No new tests, extended existing test.
+
+        * bindings/js/JSDOMConvertNumbers.h:
+        (WebCore::JSConverter<IDLUnrestrictedDouble>::convert):
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testImpureNaNUnrestrictedDouble const):
+        (WebCore::TypeConversions::testImpureNaN2UnrestrictedDouble const):
+        (WebCore::TypeConversions::testQuietNaNUnrestrictedDouble const):
+        * testing/TypeConversions.idl:
+
 2018-02-20  Tim Horton  <timothy_horton@apple.com>
 
         Make more use of USE(OPENGL_ES) where it makes sense

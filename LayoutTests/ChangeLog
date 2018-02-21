@@ -1,3 +1,16 @@
+2018-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Crash under JSC::JSCell::toNumber(JSC::ExecState*)
+        https://bugs.webkit.org/show_bug.cgi?id=182984
+        <rdar://problem/37694346>
+
+        Reviewed by Mark Lam.
+
+        Add layout test coverage.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+
 2018-02-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark two imported/w3c/web-platform-tests/2dcontext/imagebitmap tests as flaky on iOS.

@@ -1211,6 +1211,10 @@ PASS converter.testSequenceRecord()['key'] is ['value', 'other value']
 PASS converter.setTestSequenceRecord({ 'Ä': ['value'] }) threw exception TypeError: Type error.
 converter.setTestSequenceRecord({ 'Ã¿': ['value'] })
 PASS converter.testSequenceRecord()['Ã¿'] is ['value']
+PASS converter.testImpureNaNUnrestrictedDouble is NaN
+PASS converter.testImpureNaN2UnrestrictedDouble is NaN
+PASS converter.testQuietNaNUnrestrictedDouble is NaN
+PASS converter.testPureNaNUnrestrictedDouble is NaN
 PASS successfullyParsed is true
 
 TEST COMPLETE
