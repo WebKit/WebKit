@@ -1,3 +1,11 @@
+2018-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix distcheck.
+
+        Remove symbols found in version script but not in library.
+
+        * webkitglib-symbols.map:
+
 2018-02-19  Daniel Bates  <dabates@apple.com>
 
         Null pointer dereference in WebPageProxy::urlSchemeHandlerForScheme()
