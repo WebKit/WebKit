@@ -57,6 +57,10 @@ class NetworkTransaction(object):
                 self._check_for_timeout()
                 _log.warn("Received HTTP status %s loading \"%s\".  Retrying in %s seconds..." % (e.code, e.filename, self._backoff_seconds))
                 self._sleep()
+            except urllib2.URLError as e:
+                self._check_for_timeout()
+                _log.warn("Received URLError: {}. Retrying in {} seconds...".format(e.reason, self._backoff_seconds))
+                self._sleep()
 
     def _check_for_timeout(self):
         if self._total_sleep + self._backoff_seconds > self._timeout_seconds:

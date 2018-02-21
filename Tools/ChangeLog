@@ -1,3 +1,13 @@
+2018-02-21  Aakash Jain  <aakash_jain@apple.com>
+
+        webkitpy NetworkTransaction should retry on URLError
+        https://bugs.webkit.org/show_bug.cgi?id=182987
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        (NetworkTransaction.run): Retry on urllib2.URLError.
+
 2018-02-21  Ms2ger  <Ms2ger@igalia.com>
 
         [WTR][WPE] Correct the process names in TestController.
