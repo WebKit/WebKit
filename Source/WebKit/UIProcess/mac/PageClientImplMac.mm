@@ -174,6 +174,11 @@ bool PageClientImpl::isViewFocused()
     return m_impl->isFocused();
 }
 
+void PageClientImpl::assistiveTechnologyMakeFirstResponder()
+{
+    [[m_view window] makeFirstResponder:m_view];
+}
+    
 void PageClientImpl::makeFirstResponder()
 {
     if (m_shouldSuppressFirstResponderChanges)

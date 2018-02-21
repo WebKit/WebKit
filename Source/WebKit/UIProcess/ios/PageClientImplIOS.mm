@@ -383,6 +383,11 @@ void PageClientImpl::notifyInputContextAboutDiscardedComposition()
     notImplemented();
 }
 
+void PageClientImpl::assistiveTechnologyMakeFirstResponder()
+{
+    notImplemented();
+}
+
 void PageClientImpl::makeFirstResponder()
 {
     notImplemented();

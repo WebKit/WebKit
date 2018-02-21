@@ -362,6 +362,7 @@ public:
     virtual void makeFirstResponder(NSResponder *) { }
     // Focuses on the containing view associated with this page.
     virtual void makeFirstResponder() { }
+    virtual void assistiveTechnologyMakeFirstResponder() { }
 #endif
 
 #if PLATFORM(IOS)

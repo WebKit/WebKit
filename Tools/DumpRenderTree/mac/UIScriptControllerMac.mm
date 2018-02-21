@@ -167,6 +167,19 @@ void UIScriptController::platformPlayBackEventStream(JSStringRef, JSValueRef)
 {
 }
 
+void UIScriptController::firstResponderSuppressionForWebView(bool)
+{
+}
+
+void UIScriptController::makeWindowContentViewFirstResponder()
+{
+}
+
+bool UIScriptController::isWindowContentViewFirstResponder() const
+{
+    return false;
+}
+
 }
 
 #endif // PLATFORM(MAC)

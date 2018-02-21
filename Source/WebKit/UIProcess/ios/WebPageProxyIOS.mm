@@ -798,6 +798,11 @@ void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference
     m_pageClient.accessibilityWebProcessTokenReceived(data);
 }    
 
+void WebPageProxy::assistiveTechnologyMakeFirstResponder()
+{
+    notImplemented();
+}
+    
 void WebPageProxy::makeFirstResponder()
 {
     notImplemented();

@@ -1,3 +1,19 @@
+2018-02-20  Nan Wang  <n_wang@apple.com>
+
+        AX: Keyboard focus not following VoiceOver cursor into web content or within web content.
+        https://bugs.webkit.org/show_bug.cgi?id=182752
+        <rdar://problem/37518233>
+
+        Reviewed by Ryosuke Niwa.
+
+        Call the assistive technology specific method for becoming first responder.
+
+        Test: accessibility/mac/accessibility-make-first-responder.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilitySetValue:forAttribute:]):
+        * page/ChromeClient.h:
+
 2018-02-20  Tim Horton  <timothy_horton@apple.com>
 
         Introduce HAVE(IOSURFACE_ACCELERATOR)

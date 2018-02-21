@@ -488,6 +488,8 @@ webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-req
 
 webkit.org/b/180898 accessibility/mac/AOM-events.html [ Skip ]
 
+webkit.org/b/182752 accessibility/mac/accessibility-make-first-responder.html [ Skip ]
+
 # User-installed fonts test infrastructure is not present in WK1
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 

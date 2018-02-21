@@ -1,3 +1,28 @@
+2018-02-20  Nan Wang  <n_wang@apple.com>
+
+        AX: Keyboard focus not following VoiceOver cursor into web content or within web content.
+        https://bugs.webkit.org/show_bug.cgi?id=182752
+        <rdar://problem/37518233>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::assistiveTechnologyMakeFirstResponder):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::assistiveTechnologyMakeFirstResponder):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::assistiveTechnologyMakeFirstResponder):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::assistiveTechnologyMakeFirstResponder):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::assistiveTechnologyMakeFirstResponder):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2018-02-14  Brian Burg  <bburg@apple.com>
 
         Web Automation: combine session commands to resize and move top-level browsing contexts

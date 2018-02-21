@@ -239,4 +239,22 @@ void UIScriptController::platformPlayBackEventStream(JSStringRef eventStream, JS
     playBackEvents(m_context, (NSString *)stream.get(), callback);
 }
 
+void UIScriptController::firstResponderSuppressionForWebView(bool shouldSuppress)
+{
+    auto* webView = TestController::singleton().mainWebView()->platformView();
+    [webView _setShouldSuppressFirstResponderChanges:shouldSuppress];
+}
+
+void UIScriptController::makeWindowContentViewFirstResponder()
+{
+    NSWindow *window = [TestController::singleton().mainWebView()->platformView() window];
+    [window makeFirstResponder:[window contentView]];
+}
+
+bool UIScriptController::isWindowContentViewFirstResponder() const
+{
+    NSWindow *window = [TestController::singleton().mainWebView()->platformView() window];
+    return [window firstResponder] == [window contentView];
+}
+
 } // namespace WTR

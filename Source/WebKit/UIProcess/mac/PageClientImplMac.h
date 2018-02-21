@@ -154,6 +154,7 @@ private:
     void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState) override;
 
     void makeFirstResponder() override;
+    void assistiveTechnologyMakeFirstResponder() override;
     void setShouldSuppressFirstResponderChanges(bool shouldSuppress) override { m_shouldSuppressFirstResponderChanges = shouldSuppress; }
 
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;

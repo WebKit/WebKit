@@ -86,6 +86,7 @@ private:
     void resetSecureInputState() override;
     void notifyInputContextAboutDiscardedComposition() override;
     void makeFirstResponder() override;
+    void assistiveTechnologyMakeFirstResponder() override;
     WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
     WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;

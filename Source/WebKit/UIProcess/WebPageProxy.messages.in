@@ -343,6 +343,7 @@ messages -> WebPageProxy {
     StopSpeaking()
 
     MakeFirstResponder()
+    AssistiveTechnologyMakeFirstResponder()
 
     # Spotlight
     SearchWithSpotlight(String string)

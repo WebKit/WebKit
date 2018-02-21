@@ -808,6 +808,7 @@ public:
     String stringSelectionForPasteboard();
     RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
     void makeFirstResponder();
+    void assistiveTechnologyMakeFirstResponder();
 
     ColorSpaceData colorSpace();
 #endif

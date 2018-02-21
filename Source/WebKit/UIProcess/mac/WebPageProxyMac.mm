@@ -353,6 +353,11 @@ void WebPageProxy::makeFirstResponder()
     m_pageClient.makeFirstResponder();
 }
 
+void WebPageProxy::assistiveTechnologyMakeFirstResponder()
+{
+    m_pageClient.assistiveTechnologyMakeFirstResponder();
+}
+
 ColorSpaceData WebPageProxy::colorSpace()
 {
     return m_pageClient.colorSpace();

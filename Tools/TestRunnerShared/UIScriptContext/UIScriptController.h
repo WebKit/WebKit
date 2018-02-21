@@ -174,6 +174,10 @@ public:
 
     void setSafeAreaInsets(double top, double right, double bottom, double left);
 
+    void firstResponderSuppressionForWebView(bool);
+    void makeWindowContentViewFirstResponder();
+    bool isWindowContentViewFirstResponder() const;
+
 private:
     UIScriptController(UIScriptContext&);
     
