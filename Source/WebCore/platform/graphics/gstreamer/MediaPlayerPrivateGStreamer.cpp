@@ -1455,50 +1455,23 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 
 void MediaPlayerPrivateGStreamer::purgeInvalidAudioTracks(Vector<String> validTrackIds)
 {
-    if (validTrackIds.isEmpty()) {
-        m_audioTracks.clear();
-        return;
-    }
-    for (auto audioTrackId : m_audioTracks.keys()) {
-        if (validTrackIds.contains(audioTrackId))
-            continue;
-        auto track = m_audioTracks.get(audioTrackId);
-        track->disconnect();
-        m_player->removeAudioTrack(*track);
-        m_audioTracks.remove(audioTrackId);
-    }
+    m_audioTracks.removeIf([validTrackIds](auto& keyAndValue) {
+        return !validTrackIds.contains(keyAndValue.key);
+    });
 }
 
 void MediaPlayerPrivateGStreamer::purgeInvalidVideoTracks(Vector<String> validTrackIds)
 {
-    if (validTrackIds.isEmpty()) {
-        m_videoTracks.clear();
-        return;
-    }
-    for (auto videoTrackId : m_videoTracks.keys()) {
-        if (validTrackIds.contains(videoTrackId))
-            continue;
-        auto track = m_videoTracks.get(videoTrackId);
-        track->disconnect();
-        m_player->removeVideoTrack(*track);
-        m_videoTracks.remove(videoTrackId);
-    }
+    m_videoTracks.removeIf([validTrackIds](auto& keyAndValue) {
+        return !validTrackIds.contains(keyAndValue.key);
+    });
 }
 
 void MediaPlayerPrivateGStreamer::purgeInvalidTextTracks(Vector<String> validTrackIds)
 {
-    if (validTrackIds.isEmpty()) {
-        m_textTracks.clear();
-        return;
-    }
-    for (auto textTrackId : m_textTracks.keys()) {
-        if (validTrackIds.contains(textTrackId))
-            continue;
-        auto track = m_textTracks.get(textTrackId);
-        track->disconnect();
-        m_player->removeTextTrack(*track);
-        m_textTracks.remove(textTrackId);
-    }
+    m_textTracks.removeIf([validTrackIds](auto& keyAndValue) {
+        return !validTrackIds.contains(keyAndValue.key);
+    });
 }
 #endif
 
