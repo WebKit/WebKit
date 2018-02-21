@@ -1,5 +1,27 @@
 2018-02-21  Youenn Fablet  <youenn@apple.com>
 
+        Move AppCache loading to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=178540
+        <rdar://problem/37119346>
+
+        Reviewed by Alex Christensen.
+
+        There is no guarantee that aborting in an event handler will be executed before some loads finish,
+        as the events are fired asynchronously.
+        Making tests less flaky by waiting some time before fnishing some loads.
+
+        * http/tests/appcache/abort-cache-onchecking.html:
+        * http/tests/appcache/resource-redirect-2-expected.txt:
+        * http/tests/appcache/resources/abort-cache-onchecking-resource-404.manifest:
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest: Removed.
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.php: Added.
+        * http/tests/appcache/resources/abort-cache-ondownloading.manifest:
+        * http/tests/appcache/resources/abort-cache-ondownloading.text: Removed.
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.php: Added.
+        * http/tests/appcache/resources/not-exist.vob.php: Added.
+
+2018-02-21  Youenn Fablet  <youenn@apple.com>
+
         Use ResourceLoader to load appcache manifest
         https://bugs.webkit.org/show_bug.cgi?id=182861
 

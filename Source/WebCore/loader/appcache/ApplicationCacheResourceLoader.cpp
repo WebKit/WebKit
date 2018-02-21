@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-RefPtr<ApplicationCacheResourceLoader> ApplicationCacheResourceLoader::create(CachedResourceLoader& loader, ResourceRequest&& request, CompletionHandler<void(ResourceOrError&&)>&& callback)
+RefPtr<ApplicationCacheResourceLoader> ApplicationCacheResourceLoader::create(unsigned type, CachedResourceLoader& loader, ResourceRequest&& request, CompletionHandler<void(ResourceOrError&&)>&& callback)
 {
     ResourceLoaderOptions options;
     options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
-    options.credentials = FetchOptions::Credentials::SameOrigin;
+    options.credentials = FetchOptions::Credentials::Include;
     options.applicationCacheMode = ApplicationCacheMode::Bypass;
     CachedResourceRequest cachedResourceRequest { WTFMove(request), options };
     auto resource = loader.requestRawResource(WTFMove(cachedResourceRequest));
@@ -42,11 +42,12 @@ RefPtr<ApplicationCacheResourceLoader> ApplicationCacheResourceLoader::create(Ca
         callback(makeUnexpected(Error::CannotCreateResource));
         return nullptr;
     }
-    return adoptRef(*new ApplicationCacheResourceLoader { WTFMove(resource.value()), WTFMove(callback) });
+    return adoptRef(*new ApplicationCacheResourceLoader { type, WTFMove(resource.value()), WTFMove(callback) });
 }
 
-ApplicationCacheResourceLoader::ApplicationCacheResourceLoader(CachedResourceHandle<CachedRawResource>&& resource, CompletionHandler<void(ResourceOrError&&)>&& callback)
-    : m_resource(WTFMove(resource))
+ApplicationCacheResourceLoader::ApplicationCacheResourceLoader(unsigned type, CachedResourceHandle<CachedRawResource>&& resource, CompletionHandler<void(ResourceOrError&&)>&& callback)
+    : m_type(type)
+    , m_resource(WTFMove(resource))
     , m_callback(WTFMove(callback))
 {
     m_resource->addClient(*this);
@@ -78,7 +79,22 @@ void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, 
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 
-    receivedManifestResponse(response);
+    if (response.httpStatusCode() == 404 || response.httpStatusCode() == 410) {
+        cancel(Error::NotFound);
+        return;
+    }
+
+    if (response.httpStatusCode() == 304) {
+        notifyFinished(*m_resource);
+        return;
+    }
+
+    if (response.httpStatusCode() / 100 != 2) {
+        cancel(Error::NotOK);
+        return;
+    }
+
+    m_applicationCacheResource = ApplicationCacheResource::create(m_resource->url(), response, m_type);
 }
 
 void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const char* data, int length)
@@ -86,10 +102,17 @@ void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const char* d
     m_applicationCacheResource->data().append(data, length);
 }
 
-void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& callback)
+void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceRequest&& newRequest, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& callback)
 {
-    cancel(Error::RedirectForbidden);
-    callback({ });
+    m_hasRedirection = true;
+    bool isRedirectionDisallowed = (m_type & ApplicationCacheResource::Type::Manifest) || (m_type & ApplicationCacheResource::Explicit) || (m_type & ApplicationCacheResource::Fallback);
+
+    if (isRedirectionDisallowed) {
+        cancel(Error::RedirectForbidden);
+        callback({ });
+        return;
+    }
+    callback(WTFMove(newRequest));
 }
 
 void ApplicationCacheResourceLoader::notifyFinished(CachedResource& resource)
@@ -109,26 +132,6 @@ void ApplicationCacheResourceLoader::notifyFinished(CachedResource& resource)
     std::swap(resourceHandle, m_resource);
     if (resourceHandle)
         resourceHandle->removeClient(*this);
-}
-
-void ApplicationCacheResourceLoader::receivedManifestResponse(const ResourceResponse& response)
-{
-    if (response.httpStatusCode() == 404 || response.httpStatusCode() == 410) {
-        cancel(Error::NotFound);
-        return;
-    }
-
-    if (response.httpStatusCode() == 304) {
-        notifyFinished(*m_resource);
-        return;
-    }
-
-    if (response.httpStatusCode() / 100 != 2) {
-        cancel(Error::NotOK);
-        return;
-    }
-
-    m_applicationCacheResource = ApplicationCacheResource::create(m_resource->url(), response, ApplicationCacheResource::Manifest);
 }
 
 } // namespace WebCore

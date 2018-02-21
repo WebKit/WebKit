@@ -41,17 +41,17 @@ public:
     enum class Error { Abort, NetworkError, CannotCreateResource, NotFound, NotOK, RedirectForbidden };
     using ResourceOrError = Expected<RefPtr<ApplicationCacheResource>, Error>;
 
-    static RefPtr<ApplicationCacheResourceLoader> create(CachedResourceLoader&, ResourceRequest&&, CompletionHandler<void(ResourceOrError&&)>&&);
+    static RefPtr<ApplicationCacheResourceLoader> create(unsigned, CachedResourceLoader&, ResourceRequest&&, CompletionHandler<void(ResourceOrError&&)>&&);
     ~ApplicationCacheResourceLoader();
 
     void cancel(Error = Error::Abort);
 
     const CachedResource* resource() const { return m_resource.get(); }
+    bool hasRedirection() const { return m_hasRedirection; }
+    unsigned type() const { return m_type; }
 
 private:
-    explicit ApplicationCacheResourceLoader(CachedResourceHandle<CachedRawResource>&&, CompletionHandler<void(ResourceOrError&&)>&&);
-
-    void receivedManifestResponse(const ResourceResponse&);
+    explicit ApplicationCacheResourceLoader(unsigned, CachedResourceHandle<CachedRawResource>&&, CompletionHandler<void(ResourceOrError&&)>&&);
 
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&) final;
@@ -59,9 +59,11 @@ private:
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
     void notifyFinished(CachedResource&) final;
 
+    unsigned m_type;
     CachedResourceHandle<CachedRawResource> m_resource;
     RefPtr<ApplicationCacheResource> m_applicationCacheResource;
     CompletionHandler<void(ResourceOrError&&)> m_callback;
+    bool m_hasRedirection { false };
 };
 
 } // namespace WebCore

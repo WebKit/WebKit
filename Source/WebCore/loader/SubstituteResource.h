@@ -49,6 +49,8 @@ protected:
     {
     }
 
+    ResourceResponse& resourceResponse() { return m_response; }
+
 private:
     URL m_url;
     ResourceResponse m_response;

@@ -1,3 +1,54 @@
+2018-02-21  Youenn Fablet  <youenn@apple.com>
+
+        Move AppCache loading to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=178540
+        <rdar://problem/37119346>
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        Use ApplicationResourceLoader for cache entry loading.
+        Remove all ResourceHandle use from ApplicationCacheGroup.
+        Renamed m_loader in m_manifestLoader and added a new m_entryLoader to load cache entries.
+
+        Updated ApplicationCacheResourceLoader to handle different types of CachedResource.
+        This allows in particular to handle redirections based on the resource type and create the ApplicationCacheResource with the right type.
+        Use Include as credentials mode as per specification.
+
+        Add a new ApplicationCache ResourceResonse::Source.
+        This allows fixing an assertion and should allow better inspector support if needs be.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::responseSource):
+        * loader/ResourceLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        * loader/SubstituteResource.h:
+        (WebCore::SubstituteResource::resourceResponse):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::stopLoading):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingEntry):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didFailLoadingEntry):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::ApplicationCacheResource):
+        * loader/appcache/ApplicationCacheResourceLoader.cpp:
+        (WebCore::ApplicationCacheResourceLoader::create):
+        (WebCore::ApplicationCacheResourceLoader::ApplicationCacheResourceLoader):
+        (WebCore::ApplicationCacheResourceLoader::responseReceived):
+        (WebCore::ApplicationCacheResourceLoader::redirectReceived):
+        * loader/appcache/ApplicationCacheResourceLoader.h:
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo const):
+        * testing/Internals.cpp:
+        (WebCore::responseSourceToString):
+
 2018-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBoxModelObject::willBeRemoved() mutation logic to RenderTreeBuilder

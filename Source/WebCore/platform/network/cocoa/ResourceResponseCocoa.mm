@@ -78,7 +78,7 @@ void ResourceResponse::disableLazyInitialization()
 
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
-    ASSERT(m_nsResponse || source() == Source::ServiceWorker);
+    ASSERT(m_nsResponse || source() == Source::ServiceWorker || source() == Source::ApplicationCache);
     CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
 
     if (!cfResponse)

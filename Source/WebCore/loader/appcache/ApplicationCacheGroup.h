@@ -28,7 +28,6 @@
 #include "ApplicationCacheResourceLoader.h"
 #include "DOMApplicationCache.h"
 #include "URL.h"
-#include "ResourceHandleClient.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -42,7 +41,6 @@ class ApplicationCacheStorage;
 class Document;
 class DocumentLoader;
 class Frame;
-class ResourceHandle;
 class SecurityOrigin;
 
 enum ApplicationCacheUpdateOption {
@@ -50,7 +48,7 @@ enum ApplicationCacheUpdateOption {
     ApplicationCacheUpdateWithoutBrowsingContext
 };
 
-class ApplicationCacheGroup final : private ResourceHandleClient {
+class ApplicationCacheGroup {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -103,24 +101,11 @@ private:
 
     void scheduleReachedMaxAppCacheSizeCallback();
 
-    RefPtr<ResourceHandle> createResourceHandle(const URL&, ApplicationCacheResource* newestCachedResource);
-
-    // For normal resource loading, WebKit client is asked about each resource individually. Since application cache does not belong to any particular document,
-    // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
-    bool shouldUseCredentialStorage(ResourceHandle*) override { return true; }
-
-    // ResourceHandleClient
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) final;
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) final;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) final;
-#endif
-    void didReceiveData(ResourceHandle*, const char*, unsigned length, int encodedDataLength) final;
-    void didFinishLoading(ResourceHandle*) final;
-    void didFail(ResourceHandle*, const ResourceError&) final;
-
     void didFinishLoadingManifest();
     void didFailLoadingManifest(ApplicationCacheResourceLoader::Error);
+
+    void didFailLoadingEntry(ApplicationCacheResourceLoader::Error, const URL&);
+    void didFinishLoadingEntry(const URL&);
 
     void didReachMaxAppCacheSize();
     void didReachOriginQuota(int64_t totalSpaceNeeded);
@@ -193,13 +178,12 @@ private:
     // the course of action in case of this failure (i.e. call the ChromeClient callback or run the failure steps).
     bool m_calledReachedMaxAppCacheSize { false };
     
-    RefPtr<ResourceHandle> m_currentHandle;
     RefPtr<ApplicationCacheResource> m_currentResource;
+    RefPtr<ApplicationCacheResourceLoader> m_entryLoader;
     unsigned long m_currentResourceIdentifier;
 
     RefPtr<ApplicationCacheResource> m_manifestResource;
-
-    RefPtr<ApplicationCacheResourceLoader> m_loader;
+    RefPtr<ApplicationCacheResourceLoader> m_manifestLoader;
 
     int64_t m_availableSpaceInQuota;
     bool m_originQuotaExceededPreviously { false };

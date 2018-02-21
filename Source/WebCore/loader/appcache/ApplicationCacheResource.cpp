@@ -36,6 +36,7 @@ ApplicationCacheResource::ApplicationCacheResource(const URL& url, const Resourc
     , m_estimatedSizeInStorage(0)
     , m_path(path)
 {
+    resourceResponse().setSource(ResourceResponse::Source::ApplicationCache);
 }
 
 void ApplicationCacheResource::deliver(ResourceLoader& loader)

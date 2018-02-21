@@ -139,7 +139,7 @@ public:
     WEBCORE_EXPORT std::optional<WallTime> lastModified() const;
     ParsedContentRange& contentRange() const;
 
-    enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker };
+    enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache };
     WEBCORE_EXPORT Source source() const;
     void setSource(Source source) { m_source = source; }
 

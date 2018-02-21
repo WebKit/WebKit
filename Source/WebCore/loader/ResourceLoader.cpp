@@ -437,6 +437,7 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
         break;
     case ResourceResponse::Source::MemoryCache:
     case ResourceResponse::Source::MemoryCacheAfterValidation:
+    case ResourceResponse::Source::ApplicationCache:
     case ResourceResponse::Source::Unknown:
         return;
     }
