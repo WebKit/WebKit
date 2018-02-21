@@ -93,6 +93,7 @@
 
 #if PLATFORM(WAYLAND)
 #include "PlatformDisplayWayland.h"
+#include <gst/gl/wayland/gstgldisplay_wayland.h>
 #elif PLATFORM(WPE)
 #include "PlatformDisplayWPE.h"
 #endif
@@ -436,24 +437,32 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
         return true;
 
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+
     if (!m_glDisplay) {
 #if PLATFORM(X11)
 #if USE(GLX)
-        if (is<PlatformDisplayX11>(sharedDisplay))
+        if (is<PlatformDisplayX11>(sharedDisplay)) {
+            GST_DEBUG("Creating X11 shared GL display");
             m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
+        }
 #elif USE(EGL)
-        if (is<PlatformDisplayX11>(sharedDisplay))
+        if (is<PlatformDisplayX11>(sharedDisplay)) {
+            GST_DEBUG("Creating X11 shared EGL display");
             m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
+        }
 #endif
 #endif
 
 #if PLATFORM(WAYLAND)
-        if (is<PlatformDisplayWayland>(sharedDisplay))
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay()));
+        if (is<PlatformDisplayWayland>(sharedDisplay)) {
+            GST_DEBUG("Creating Wayland shared display");
+            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_wayland_new_with_display(downcast<PlatformDisplayWayland>(sharedDisplay).native()));
+        }
 #endif
 
 #if PLATFORM(WPE)
         ASSERT(is<PlatformDisplayWPE>(sharedDisplay));
+        GST_DEBUG("Creating WPE shared EGL display");
         m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWPE>(sharedDisplay).eglDisplay()));
 #endif
 
