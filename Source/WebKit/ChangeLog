@@ -1,3 +1,20 @@
+2018-02-21  Brian Burg  <bburg@apple.com>
+
+        Web Automation: failed provisional loads cause "Navigate To" command to hang
+        https://bugs.webkit.org/show_bug.cgi?id=183007
+        <rdar://problem/37751819>
+
+        Reviewed by Andy Estes.
+
+        This hang was revealed by WPT test current_url.py::get_current_url_file_protocol. Now the
+        test simply fails because Safari chooses a policy of 'Ignore' for externally-opened files.
+        I filed an upstream issue with the test here: https://github.com/w3c/webdriver/issues/1232
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        Notify the session that the load failed in the frame, just like we do
+        for non-provisional failed loads and successful loads.
+
 2018-02-20  Nan Wang  <n_wang@apple.com>
 
         AX: Keyboard focus not following VoiceOver cursor into web content or within web content.
