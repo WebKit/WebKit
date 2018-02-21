@@ -396,6 +396,7 @@
 		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
 		119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */; };
 		119340A31FEE024000935F1E /* RenderTreeBuilderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */; };
+		11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */; };
 		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5640,6 +5641,8 @@
 		11C5F12C2004231E0001AE60 /* RenderTreeBuilderSVG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderSVG.cpp; sourceTree = "<group>"; };
 		11C5F132200527F80001AE60 /* RenderTreeBuilderMathML.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderMathML.cpp; sourceTree = "<group>"; };
 		11C5F134200527F90001AE60 /* RenderTreeBuilderMathML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderMathML.h; sourceTree = "<group>"; };
+		11CB2786203BA570004A1DC9 /* RenderTreeBuilderFullScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderFullScreen.cpp; sourceTree = "<group>"; };
+		11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFullScreen.h; sourceTree = "<group>"; };
 		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
 		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
@@ -24859,6 +24862,8 @@
 				E47C39261FE6E0DC00BBBC6B /* RenderTreeBuilderFirstLetter.h */,
 				119340941FED715500935F1E /* RenderTreeBuilderFormControls.cpp */,
 				119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */,
+				11CB2786203BA570004A1DC9 /* RenderTreeBuilderFullScreen.cpp */,
+				11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */,
 				11C5F1162003E7750001AE60 /* RenderTreeBuilderInline.cpp */,
 				11C5F1182003E7760001AE60 /* RenderTreeBuilderInline.h */,
 				E47C392B1FE6E0DF00BBBC6B /* RenderTreeBuilderList.cpp */,
@@ -29340,6 +29345,7 @@
 				119340A31FEE024000935F1E /* RenderTreeBuilderBlock.h in Headers */,
 				E47C39301FE6E0FD00BBBC6B /* RenderTreeBuilderFirstLetter.h in Headers */,
 				119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */,
+				11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */,
 				E47C39321FE6E10500BBBC6B /* RenderTreeBuilderList.h in Headers */,
 				E47C39331FE6E10800BBBC6B /* RenderTreeBuilderMultiColumn.h in Headers */,
 				1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */,

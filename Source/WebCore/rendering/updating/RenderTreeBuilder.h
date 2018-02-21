@@ -91,6 +91,9 @@ private:
     class Inline;
     class SVG;
     class MathML;
+#if ENABLE(FULLSCREEN_API)
+    class FullScreen;
+#endif
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
@@ -103,6 +106,9 @@ private:
     Inline& inlineBuilder() { return *m_inlineBuilder; }
     SVG& svgBuilder() { return *m_svgBuilder; }
     MathML& mathMLBuilder() { return *m_mathMLBuilder; }
+#if ENABLE(FULLSCREEN_API)
+    FullScreen& fullScreenBuilder() { return *m_fullScreenBuilder; }
+#endif
 
     RenderView& m_view;
     RenderTreeBuilder* m_previous { nullptr };
@@ -119,6 +125,9 @@ private:
     std::unique_ptr<Inline> m_inlineBuilder;
     std::unique_ptr<SVG> m_svgBuilder;
     std::unique_ptr<MathML> m_mathMLBuilder;
+#if ENABLE(FULLSCREEN_API)
+    std::unique_ptr<FullScreen> m_fullScreenBuilder;
+#endif
 };
 
 }

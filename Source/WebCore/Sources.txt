@@ -2015,6 +2015,7 @@ rendering/updating/RenderTreeBuilderBlock.cpp
 rendering/updating/RenderTreeBuilderBlockFlow.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
 rendering/updating/RenderTreeBuilderFormControls.cpp
+rendering/updating/RenderTreeBuilderFullScreen.cpp
 rendering/updating/RenderTreeBuilderInline.cpp
 rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMathML.cpp

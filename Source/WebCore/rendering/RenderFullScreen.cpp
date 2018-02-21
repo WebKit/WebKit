@@ -58,14 +58,9 @@ RenderFullScreen::RenderFullScreen(Document& document, RenderStyle&& style)
     setReplaced(false); 
 }
 
-void RenderFullScreen::willBeDestroyed(RenderTreeBuilder& builder)
+RenderFullScreen::~RenderFullScreen()
 {
-    if (m_placeholder) {
-        builder.removeAndDestroy(*m_placeholder);
-        ASSERT(!m_placeholder);
-    }
-
-    RenderFlexibleBox::willBeDestroyed(builder);
+    ASSERT(!m_placeholder);
 }
 
 static RenderStyle createFullScreenStyle()
