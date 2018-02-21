@@ -1,3 +1,14 @@
+2018-02-21  Charlie Turner  <cturner@igalia.com>
+
+        Rebaseline web animations tests after r228717
+        https://bugs.webkit.org/show_bug.cgi?id=182970
+
+        Reviewed by Antoine Quint.
+
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Added.
+
 2018-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Make system-ui obey the user-installed-font policy
