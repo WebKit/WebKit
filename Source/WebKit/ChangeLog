@@ -1,3 +1,14 @@
+2018-02-22  Youenn Fablet  <youenn@apple.com>
+
+        Add release logging for CacheStorage::Engine disk related functions
+        https://bugs.webkit.org/show_bug.cgi?id=183042
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::writeFile):
+        (WebKit::CacheStorage::Engine::readFile):
+
 2018-02-22  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228902.
