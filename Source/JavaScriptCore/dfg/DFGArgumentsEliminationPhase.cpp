@@ -708,6 +708,8 @@ private:
                     if (!isEliminatedAllocation(candidate))
                         break;
 
+                    // FIXME: This should be an assert:
+                    // https://bugs.webkit.org/show_bug.cgi?id=182982
                     if (node->child2()->op() != PhantomClonedArguments)
                         break;
 

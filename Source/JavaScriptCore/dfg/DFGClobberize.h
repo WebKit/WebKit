@@ -35,6 +35,7 @@
 #include "DFGPureValue.h"
 #include "DOMJITCallDOMGetterSnippet.h"
 #include "DOMJITSignature.h"
+#include "InlineCallFrame.h"
 #include "JSFixedArray.h"
 
 namespace JSC { namespace DFG {
@@ -702,10 +703,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(StackLoc, AbstractHeap(Stack, CallFrameSlot::callee)), LazyNode(node));
         return;
         
-    case GetArgumentCountIncludingThis:
-        read(AbstractHeap(Stack, CallFrameSlot::argumentCount));
-        def(HeapLocation(StackPayloadLoc, AbstractHeap(Stack, CallFrameSlot::argumentCount)), LazyNode(node));
+    case GetArgumentCountIncludingThis: {
+        auto heap = AbstractHeap(Stack, remapOperand(node->argumentsInlineCallFrame(), VirtualRegister(CallFrameSlot::argumentCount)));
+        read(heap);
+        def(HeapLocation(StackPayloadLoc, heap), LazyNode(node));
         return;
+    }
 
     case SetArgumentCountIncludingThis:
         write(AbstractHeap(Stack, CallFrameSlot::argumentCount));

@@ -91,16 +91,8 @@ Node* emitCodeToGetArgumentsArrayLength(
             nodeIndex, origin, jsNumber(argumentsSize));
     }
     
-    Node* argumentCount;
-    if (!inlineCallFrame)
-        argumentCount = insertionSet.insertNode(nodeIndex, SpecInt32Only, GetArgumentCountIncludingThis, origin);
-    else {
-        VirtualRegister argumentCountRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
-        
-        argumentCount = insertionSet.insertNode(
-            nodeIndex, SpecInt32Only, GetStack, origin,
-            OpInfo(graph.m_stackAccessData.add(argumentCountRegister, FlushedInt32)));
-    }
+    Node* argumentCount = insertionSet.insertNode(nodeIndex,
+        SpecInt32Only, GetArgumentCountIncludingThis, origin, OpInfo(inlineCallFrame));
 
     Node* result = insertionSet.insertNode(
         nodeIndex, SpecInt32Only, ArithSub, origin, OpInfo(Arith::Unchecked),

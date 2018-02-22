@@ -11309,7 +11309,12 @@ void SpeculativeJIT::compileGetCallee(Node* node)
 void SpeculativeJIT::compileGetArgumentCountIncludingThis(Node* node)
 {
     GPRTemporary result(this);
-    m_jit.load32(JITCompiler::payloadFor(CallFrameSlot::argumentCount), result.gpr());
+    VirtualRegister argumentCountRegister;
+    if (InlineCallFrame* inlineCallFrame = node->argumentsInlineCallFrame())
+        argumentCountRegister = inlineCallFrame->argumentCountRegister;
+    else
+        argumentCountRegister = VirtualRegister(CallFrameSlot::argumentCount);
+    m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), result.gpr());
     int32Result(result.gpr(), node);
 }
 
