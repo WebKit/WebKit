@@ -1,3 +1,14 @@
+2018-02-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r228349): ImageBitmap builtin is now runtime guarded
+        https://bugs.webkit.org/show_bug.cgi?id=183056
+        <rdar://problem/37799067>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::WebInspectorUI):
+
 2018-02-22  Youenn Fablet  <youenn@apple.com>
 
         Caches::initialize should call all pending initialization callbacks in case of error

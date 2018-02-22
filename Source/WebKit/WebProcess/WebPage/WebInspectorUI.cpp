@@ -50,6 +50,7 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
     , m_frontendAPIDispatcher(page)
 {
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
+    RuntimeEnabledFeatures::sharedFeatures().setImageBitmapOffscreenCanvasEnabled(true);
 }
 
 void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
