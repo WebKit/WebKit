@@ -48,19 +48,14 @@ static String defaultCookieJarPath()
     if (cookieJarPath)
         return cookieJarPath;
 
-    String cookieJarDirectory = FileSystem::localUserSpecificStorageDirectory();
-
-    if (!FileSystem::makeAllDirectories(cookieJarDirectory))
-        return defaultFileName;
-
-    return FileSystem::pathByAppendingComponent(cookieJarDirectory, defaultFileName);
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);
 }
 
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
     : m_sessionID(sessionID)
     , m_context(context)
     , m_cookieStorage(makeUniqueRef<CookieJarCurlDatabase>())
-    , m_cookieDatabase(defaultCookieJarPath())
+    , m_cookieDatabase(makeUniqueRef<CookieJarDB>(defaultCookieJarPath()))
 {
 }
 
@@ -71,6 +66,17 @@ NetworkStorageSession::~NetworkStorageSession()
 NetworkingContext* NetworkStorageSession::context() const
 {
     return m_context.get();
+}
+
+void NetworkStorageSession::setCookieDatabase(UniqueRef<CookieJarDB>&& cookieDatabase) const
+{
+    m_cookieDatabase = WTFMove(cookieDatabase);
+}
+
+CookieJarDB& NetworkStorageSession::cookieDatabase() const
+{
+    m_cookieDatabase->open();
+    return m_cookieDatabase;
 }
 
 static std::unique_ptr<NetworkStorageSession>& defaultSession()

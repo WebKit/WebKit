@@ -45,7 +45,8 @@ namespace WebKit {
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-    notImplemented();
+    if (!parameters.cookiePersistentStorageFile.isEmpty())
+        supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStorageFile);
 }
 
 void NetworkProcess::platformSetURLCacheSize(unsigned, uint64_t)

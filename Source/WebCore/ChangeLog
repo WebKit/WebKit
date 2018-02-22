@@ -1,3 +1,23 @@
+2018-02-21  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Curl Cookie Database File should be configurable using NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=182751
+
+        Reviewed by Youenn Fablet.
+
+        No change in behavior.
+
+        Adding support to set a custom CookieJar Database.
+        Took CookieJarDB::open() out of its constructor because both the Network and Web process
+        were trying to open the journal files but one process was failing due to a lack of permission.
+        Now the database file is lazily opened and only the Network process will try to open the database.
+        Some cleanup was done to CookieJarDB too.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/curl/CookieJarDB.cpp:
+        * platform/network/curl/CookieJarDB.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+
 2018-02-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r228708): Crash under WebCore::MediaResource::responseReceived(WebCore::CachedResource&, WebCore::ResourceResponse const&)

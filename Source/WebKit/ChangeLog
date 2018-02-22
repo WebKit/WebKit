@@ -1,3 +1,20 @@
+2018-02-21  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Curl Cookie Database File should be configurable using NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=182751
+
+        Reviewed by Youenn Fablet.
+
+        Adding a cookiePersistentStorageFile parameter to Curl's NetworkProcessCreationParameters.
+        This parameter is based on Soup's cookiePersistentStoragePath.
+        This parameter is not used yet, it is added to prepare for WinCairo WebKit support.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+
 2018-02-21  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: provide a way to ask clients the type of a JavaScript dialog

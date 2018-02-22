@@ -26,6 +26,8 @@
 #include "CookieJarDB.h"
 
 #include "CookieUtil.h"
+#include "FileSystem.h"
+#include "Logging.h"
 #include "SQLiteFileSystem.h"
 #include "URL.h"
 
@@ -69,21 +71,25 @@ namespace WebCore {
 
 void CookieJarDB::setEnabled(bool enable)
 {
-    CookieJarDB::m_cookieEnable = enable;
+    m_isEnabled = enable;
 }
 
 CookieJarDB::CookieJarDB(const String& databasePath)
     : m_databasePath(databasePath)
 {
-    checkDatabaseCorruptionAndRemoveIfNeeded();
-
-    if (!openDatabase())
-        return;
 }
 
 CookieJarDB::~CookieJarDB()
 {
     closeDatabase();
+}
+
+void CookieJarDB::open()
+{
+    if (!m_database.isOpen()) {
+        checkDatabaseCorruptionAndRemoveIfNeeded();
+        openDatabase();
+    }
 }
 
 bool CookieJarDB::openDatabase()
@@ -112,6 +118,9 @@ bool CookieJarDB::openDatabase()
     }
 
     if (!existsDatabaseFile) {
+        if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_databasePath)))
+            LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8().data());
+
         if (m_database.open(m_databasePath, false)) {
             bool databaseValidity = true;
             databaseValidity &= (executeSimpleSql(CREATE_COOKIE_TABLE_SQL) == SQLITE_DONE);
@@ -230,7 +239,7 @@ bool CookieJarDB::isEnabled()
     if (m_databasePath.isEmpty())
         return false;
 
-    return m_cookieEnable;
+    return m_isEnabled;
 }
 
 bool CookieJarDB::searchCookies(const String& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session, Vector<Cookie>& results)

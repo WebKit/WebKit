@@ -127,7 +127,8 @@ public:
     ~NetworkStorageSession();
 
     const CookieJarCurl& cookieStorage() const { return m_cookieStorage; };
-    CookieJarDB& cookieDatabase() const { return m_cookieDatabase; };
+    CookieJarDB& cookieDatabase() const;
+    void setCookieDatabase(UniqueRef<CookieJarDB>&&) const;
 
     NetworkingContext* context() const;
 #else
@@ -165,7 +166,7 @@ private:
     RefPtr<NetworkingContext> m_context;
 
     UniqueRef<CookieJarCurl> m_cookieStorage;
-    mutable CookieJarDB m_cookieDatabase;
+    mutable UniqueRef<CookieJarDB> m_cookieDatabase;
 #else
     RefPtr<NetworkingContext> m_context;
 #endif

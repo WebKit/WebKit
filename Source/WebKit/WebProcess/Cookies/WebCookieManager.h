@@ -60,6 +60,8 @@ public:
 
 #if USE(SOUP)
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
+#elif USE(CURL)
+    void setCookiePersistentStorage(const String& storagePath);
 #endif
 
     void notifyCookiesDidChange(PAL::SessionID);

@@ -40,6 +40,7 @@ class CookieJarDB {
     WTF_MAKE_NONCOPYABLE(CookieJarDB);
 
 public:
+    void open();
     bool isEnabled();
     void setEnabled(bool);
 
@@ -56,7 +57,7 @@ public:
 
 private:
 
-    bool m_cookieEnable {true};
+    bool m_isEnabled {true};
     String m_databasePath;
 
     bool m_detectedDatabaseCorruption {false};
