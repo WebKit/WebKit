@@ -188,6 +188,11 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         return;
     }
 
+    String origin = request.httpOrigin();
+    URL url { URL(), origin.isEmpty() ? referrer : origin };
+    URL serviceWorkerURL = serviceWorkerThreadProxy->scriptURL();
+    RELEASE_ASSERT(!url.protocolIsInHTTPFamily() || !serviceWorkerURL.protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(url, serviceWorkerURL));
+
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier);
     std::optional<ServiceWorkerClientIdentifier> clientId;
     if (options.clientIdentifier)

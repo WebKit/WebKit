@@ -1,3 +1,17 @@
+2018-02-22  Youenn Fablet  <youenn@apple.com>
+
+        Add release asserts for service worker fetch and postMessage events
+        https://bugs.webkit.org/show_bug.cgi?id=183025
+        rdar://problem/37765052
+
+        Reviewed by Daniel Bates.
+
+        Add assertion to protect interception of a fetch load by a service worker with
+        a different origin from the page.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+
 2018-02-22  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Fix some build errors in service workers code

@@ -1,3 +1,20 @@
+2018-02-22  Youenn Fablet  <youenn@apple.com>
+
+        Add release asserts for service worker fetch and postMessage events
+        https://bugs.webkit.org/show_bug.cgi?id=183025
+        rdar://problem/37765052
+
+        Reviewed by Daniel Bates.
+
+        Add release assertion so that a service worker will only dispatch a message event
+        for clients and service workers with the same origin.
+        No change of behavior.
+
+        * platform/network/ResourceRequestBase.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::postMessageToServiceWorker):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+
 2018-02-22  Miguel Gomez  <magomez@igalia.com>
 
         including both gl3.h and gl2.h when USE_OPENGL_ES is enabled
