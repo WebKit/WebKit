@@ -1,5 +1,22 @@
 2018-02-21  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228895. rdar://problem/37767705
+
+    2018-02-21  Youenn Fablet  <youenn@apple.com>
+
+            ServiceWorkerJob::m_lastResponse is unneeded
+            https://bugs.webkit.org/show_bug.cgi?id=183013
+
+            Reviewed by Chris Dumez.
+
+            Remove this field since not used anywhere.
+
+            * workers/service/ServiceWorkerJob.cpp:
+            (WebCore::ServiceWorkerJob::didReceiveResponse):
+            * workers/service/ServiceWorkerJob.h:
+
+2018-02-21  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228903. rdar://problem/37765339
 
     2018-02-21  Chris Dumez  <cdumez@apple.com>

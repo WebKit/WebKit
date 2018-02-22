@@ -107,7 +107,6 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
     ASSERT(!m_completed);
     ASSERT(m_scriptLoader);
 
-    m_lastResponse = response;
     // Extract a MIME type from the response's header list. If this MIME type (ignoring parameters) is not a JavaScript MIME type, then:
     if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(response.mimeType())) {
         // Invoke Reject Job Promise with job and "SecurityError" DOMException.
