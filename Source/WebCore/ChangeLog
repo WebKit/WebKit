@@ -1,3 +1,23 @@
+2018-02-21  Tim Horton  <timothy_horton@apple.com>
+
+        Include all Cocoa sources in all Cocoa platform builds
+        https://bugs.webkit.org/show_bug.cgi?id=183026
+        <rdar://problem/37513101>
+
+        Reviewed by Dan Bernstein.
+
+        Similar to r228571, don't have separate Sources files for iOS and Mac.
+        All sources now have #ifdefs that ensure that only the right ones
+        build on the right platforms. This makes it much easier to reason
+        about what builds where by just looking at the sources.
+
+        * SourcesCocoa.txt:
+        * SourcesIOS.txt: Removed.
+        * SourcesMac.txt: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/WebContentReader.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+
 2018-02-21  Youenn Fablet  <youenn@apple.com>
 
         Make SubstituteResource take a ResourceResponse r-value

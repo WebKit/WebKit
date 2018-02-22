@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
 #include "DisplayCaptureSourceCocoa.h"
+#include "IOSurface.h"
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #include <CoreGraphics/CGDisplayStream.h>
 #include <wtf/Lock.h>

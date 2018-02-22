@@ -21,9 +21,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+Modules/mediasession/WebMediaSessionManager.cpp
+
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 
+accessibility/ios/AccessibilityObjectIOS.mm
+accessibility/ios/AXObjectCacheIOS.mm
+accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+
+accessibility/mac/AXObjectCacheMac.mm
+accessibility/mac/AccessibilityObjectMac.mm
+accessibility/mac/WebAccessibilityObjectWrapperMac.mm @no-unify
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm @no-unify
 
 bindings/js/ScriptControllerMac.mm
@@ -58,6 +67,10 @@ crypto/mac/CryptoKeyMac.cpp
 crypto/mac/CryptoKeyRSAMac.cpp
 crypto/mac/SerializedCryptoKeyWrapMac.mm
 
+dom/DataTransferMac.mm
+
+dom/ios/TouchEvents.cpp
+
 editing/SelectionRectGatherer.cpp
 editing/SmartReplaceCF.cpp
 
@@ -68,7 +81,17 @@ editing/cocoa/WebArchiveResourceFromNSAttributedString.mm
 editing/cocoa/WebArchiveResourceWebResourceHandler.mm
 editing/cocoa/WebContentReaderCocoa.mm
 
+editing/ios/DictationCommandIOS.cpp
+editing/ios/EditorIOS.mm
+editing/ios/WebContentReaderIOS.mm
+
+editing/mac/AlternativeTextUIController.mm
+editing/mac/DictionaryLookup.mm
+editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
+editing/mac/TextAlternativeWithRange.mm
+editing/mac/TextUndoInsertionMarkupMac.mm
+editing/mac/WebContentReaderMac.mm
 
 editing/ios/AutofillElements.cpp
 
@@ -76,6 +99,9 @@ fileapi/FileCocoa.mm
 
 html/shadow/ImageControlsRootElement.cpp
 html/shadow/YouTubeEmbedShadowElement.cpp
+
+html/shadow/mac/ImageControlsButtonElementMac.cpp
+html/shadow/mac/ImageControlsRootElementMac.cpp
 
 history/mac/HistoryItemMac.mm
 
@@ -86,6 +112,8 @@ loader/archive/cf/LegacyWebArchiveMac.mm
 
 loader/cocoa/DiskCacheMonitorCocoa.mm
 loader/cocoa/SubresourceLoaderCocoa.mm
+
+loader/ios/PreviewLoader.mm
 
 loader/mac/DocumentLoaderMac.cpp
 loader/mac/LoaderNSURLExtras.mm
@@ -99,22 +127,44 @@ page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/SettingsBaseCocoa.mm
 
+page/ios/EventHandlerIOS.mm
+page/ios/FrameIOS.mm
+page/ios/WebEventRegion.mm
+
 page/mac/ChromeMac.mm
 page/mac/DragControllerMac.mm
+page/mac/EventHandlerMac.mm
 page/mac/PageMac.mm
+page/mac/ServicesOverlayController.mm
+page/mac/TextIndicatorWindow.mm
+page/mac/WheelEventDeltaFilterMac.mm
 
 page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollingMomentumCalculator.cpp
 
 page/scrolling/cocoa/ScrollingStateNode.mm
 
+page/scrolling/ios/ScrollingCoordinatorIOS.mm
+page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm
+page/scrolling/ios/ScrollingTreeIOS.cpp
+
+page/scrolling/mac/ScrollingCoordinatorMac.mm
+page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
+page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingThreadMac.mm
 page/scrolling/mac/ScrollingTreeFixedNode.mm
+page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
+page/scrolling/mac/ScrollingTreeMac.cpp
 page/scrolling/mac/ScrollingTreeStickyNode.mm
 
 platform/audio/AudioSession.cpp
 
 platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+
+platform/audio/ios/AudioDestinationIOS.cpp @no-unify
+platform/audio/ios/AudioFileReaderIOS.cpp @no-unify
+platform/audio/ios/AudioSessionIOS.mm @no-unify
+platform/audio/ios/MediaSessionManagerIOS.mm @no-unify
 
 platform/audio/mac/CAAudioStreamDescription.cpp
 platform/audio/mac/AudioSampleBufferList.cpp
@@ -137,17 +187,18 @@ platform/cf/RunLoopObserver.cpp
 platform/cf/SharedBufferCF.cpp
 platform/cf/URLCF.cpp
 
-platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreVideoSoftLink.cpp
+platform/cocoa/DataDetectorsCoreSoftLink.mm
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/FileSystemCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
-platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/MachSendRight.cpp
+platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/cocoa/ParentalControlsContentFilter.mm
+platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/ScrollController.mm
@@ -165,6 +216,9 @@ platform/cocoa/WebCoreNSErrorExtras.mm
 platform/gamepad/cocoa/GameControllerGamepad.mm
 platform/gamepad/cocoa/GameControllerGamepadProvider.mm
 
+platform/gamepad/mac/HIDGamepad.cpp
+platform/gamepad/mac/HIDGamepadProvider.cpp
+
 platform/graphics/MediaPlaybackTargetPicker.cpp
 
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
@@ -172,8 +226,10 @@ platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify
 platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp @no-unify
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp @no-unify
+platform/graphics/avfoundation/MediaPlaybackTargetMac.mm @no-unify
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp @no-unify
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @no-unify
+platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp @no-unify
 
 platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify
 platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm @no-unify
@@ -186,6 +242,7 @@ platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm @no-unify
@@ -281,10 +338,25 @@ platform/graphics/cv/VideoTextureCopierCV.cpp
 platform/graphics/gpu/Texture.cpp
 platform/graphics/gpu/TilingData.cpp
 
+platform/graphics/ios/DisplayRefreshMonitorIOS.mm
+platform/graphics/ios/FontCacheIOS.mm
+platform/graphics/ios/IconIOS.mm
+
+platform/graphics/mac/ColorMac.mm
 platform/graphics/mac/ComplexTextControllerCoreText.mm
+platform/graphics/mac/DisplayRefreshMonitorMac.cpp
+platform/graphics/mac/FloatPointMac.mm
+platform/graphics/mac/FloatRectMac.mm
+platform/graphics/mac/FloatSizeMac.mm
+platform/graphics/mac/FontCacheMac.mm
 platform/graphics/mac/FontCustomPlatformData.cpp
 platform/graphics/mac/GlyphPageMac.cpp
+platform/graphics/mac/IconMac.mm
 platform/graphics/mac/ImageMac.mm
+platform/graphics/mac/IntPointMac.mm
+platform/graphics/mac/IntRectMac.mm
+platform/graphics/mac/IntSizeMac.mm
+platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/mac/SimpleFontDataCoreText.cpp
 platform/graphics/mac/WebLayer.mm
 
@@ -296,18 +368,116 @@ platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
 platform/graphics/opentype/OpenTypeCG.cpp
 
+platform/ios/CursorIOS.cpp
+platform/ios/Device.cpp
+platform/ios/DeviceMotionClientIOS.mm
+platform/ios/DeviceOrientationClientIOS.mm
+platform/ios/DragImageIOS.mm
+platform/ios/EventLoopIOS.mm
+platform/ios/KeyEventIOS.mm
+platform/ios/LegacyTileCache.mm
+platform/ios/LegacyTileGrid.mm
+platform/ios/LegacyTileGridTile.mm
+platform/ios/LegacyTileLayer.mm
+platform/ios/LegacyTileLayerPool.mm
+platform/ios/LowPowerModeNotifierIOS.mm
+platform/ios/PasteboardIOS.mm
+platform/ios/PlatformEventFactoryIOS.mm
+platform/ios/PlatformPasteboardIOS.mm
+platform/ios/PlatformScreenIOS.mm
+platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
+platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
+platform/ios/QuickLook.mm
+platform/ios/QuickLookSoftLink.mm
+platform/ios/RemoteCommandListenerIOS.mm
+platform/ios/ScrollAnimatorIOS.mm
+platform/ios/ScrollbarThemeIOS.mm
+platform/ios/ScrollViewIOS.mm
+platform/ios/SelectionRect.cpp
+platform/ios/SSLKeyGeneratorIOS.cpp
+platform/ios/SystemMemoryIOS.cpp
+platform/ios/ThemeIOS.mm @no-unify
+platform/ios/TileControllerMemoryHandlerIOS.cpp
+platform/ios/UserAgentIOS.mm
+platform/ios/ValidationBubbleIOS.mm @no-unify
+platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify
+platform/ios/WebAVPlayerController.mm
+platform/ios/WebBackgroundTaskController.mm
+platform/ios/WebCoreMotionManager.mm
+platform/ios/WebEvent.mm
+platform/ios/WebItemProviderPasteboard.mm @no-unify
+platform/ios/WebSQLiteDatabaseTrackerClient.mm
+platform/ios/WebVideoFullscreenControllerAVKit.mm
+platform/ios/WidgetIOS.mm
+
+platform/ios/wak/FloatingPointEnvironment.cpp
+platform/ios/wak/WAKScrollView.mm
+platform/ios/wak/WAKView.mm @no-unify
+platform/ios/wak/WAKWindow.mm
+platform/ios/wak/WebCoreThread.mm
+platform/ios/wak/WebCoreThreadRun.cpp
+platform/ios/wak/WebCoreThreadSystemInterface.cpp
+platform/ios/wak/WKContentObservation.cpp
+platform/ios/wak/WKGraphics.mm
+platform/ios/wak/WKView.mm
+
+platform/mac/BlacklistUpdater.mm
+platform/mac/CursorMac.mm
 platform/mac/DragDataMac.mm
+platform/mac/DragImageMac.mm
+platform/mac/EventLoopMac.mm
+platform/mac/FileSystemMac.mm
+platform/mac/KeyEventMac.mm @no-unify
+platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
+platform/mac/LocalCurrentGraphicsContext.mm
 platform/mac/LoggingMac.mm
 platform/mac/MediaRemoteSoftLink.cpp
+platform/mac/NSScrollerImpDetails.mm
+platform/mac/PasteboardMac.mm
+platform/mac/PasteboardWriter.mm
+platform/mac/PlatformEventFactoryMac.mm
+platform/mac/PlatformPasteboardMac.mm
+platform/mac/PlatformScreenMac.mm
+platform/mac/PlatformSpeechSynthesizerMac.mm
+platform/mac/PluginBlacklist.mm
 platform/mac/PublicSuffixMac.mm
+platform/mac/PowerObserverMac.cpp
+platform/mac/RemoteCommandListenerMac.mm
+platform/mac/SSLKeyGeneratorMac.mm
+platform/mac/ScrollAnimatorMac.mm @no-unify
+platform/mac/ScrollViewMac.mm
+platform/mac/ScrollbarThemeMac.mm @no-unify
 platform/mac/SerializedPlatformRepresentationMac.mm
 platform/mac/StringUtilities.mm
+platform/mac/SuddenTermination.mm
+platform/mac/ThemeMac.mm
+platform/mac/ThreadCheck.mm @no-unify
 platform/mac/URLMac.mm
+platform/mac/UserActivityMac.mm
+platform/mac/UserAgentMac.mm
+platform/mac/ValidationBubbleMac.mm
+platform/mac/VideoFullscreenInterfaceMac.mm
+platform/mac/WebCoreFullScreenPlaceholderView.mm
+platform/mac/WebCoreFullScreenWarningView.mm
+platform/mac/WebCoreFullScreenWindow.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
+platform/mac/WebGLBlacklist.mm
+platform/mac/WebNSAttributedStringExtras.mm
+platform/mac/WebPlaybackControlsManager.mm
+platform/mac/WidgetMac.mm
 
-platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
+platform/mediasession/mac/MediaSessionInterruptionProviderMac.mm
+
+platform/mediastream/ios/AVAudioSessionCaptureDevice.mm
+platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
+platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify
+
 platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp
+platform/mediastream/mac/AVCaptureDeviceManager.mm @no-unify
+platform/mediastream/mac/AVMediaCaptureSource.mm @no-unify
+platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
+platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
 
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MediaPlaybackTargetMock.cpp
@@ -329,6 +499,10 @@ platform/network/cocoa/ResourceRequestCocoa.mm
 platform/network/cocoa/ResourceResponseCocoa.mm
 platform/network/cocoa/WebCoreNSURLSession.mm @no-unify
 
+platform/network/ios/NetworkStateNotifierIOS.mm
+platform/network/ios/PreviewConverter.mm
+platform/network/ios/WebCoreURLResponseIOS.mm
+
 platform/network/mac/AuthenticationMac.mm
 platform/network/mac/BlobDataFileReferenceMac.mm
 platform/network/mac/CertificateInfoMac.mm
@@ -336,6 +510,7 @@ platform/network/mac/CookieJarMac.mm
 platform/network/mac/CookieStorageMac.mm
 platform/network/mac/CredentialStorageMac.mm
 platform/network/mac/FormDataStreamMac.mm
+platform/network/mac/NetworkStateNotifierMac.cpp
 platform/network/mac/ResourceErrorMac.mm
 platform/network/mac/ResourceHandleMac.mm
 platform/network/mac/SynchronousLoaderClient.mm
@@ -347,12 +522,20 @@ platform/posix/FileSystemPOSIX.cpp
 
 platform/text/cf/HyphenationCF.cpp
 
+platform/text/ios/LocalizedDateCache.mm
+platform/text/ios/TextEncodingRegistryIOS.mm
+
 platform/text/mac/LocaleMac.mm
 platform/text/mac/TextBoundaries.mm
+platform/text/mac/TextEncodingRegistryMac.mm
 
 rendering/RenderThemeCocoa.mm
+rendering/RenderThemeIOS.mm
+rendering/RenderThemeMac.mm
 rendering/TextAutoSizing.cpp
 
+platform/mediastream/mac/CoreAudioCaptureDevice.cpp
+platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp
 platform/mediastream/mac/CoreAudioCaptureSource.cpp
 platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp
 platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp
@@ -418,5 +601,26 @@ platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
     JSApplePayShippingMethodSelectedEvent.cpp
     JSApplePayShippingMethodUpdate.cpp
     JSApplePayValidateMerchantEvent.cpp
+
+#endif
+
+#if ENABLE_MAC_GESTURE_EVENTS
+
+    dom/mac/GestureEvents.cpp
+    JSGestureEvent.cpp
+
+#endif
+
+#if ENABLE_IOS_TOUCH_EVENTS
+
+    JSTouch.cpp
+    JSTouchEvent.cpp
+    JSTouchList.cpp
+
+#end
+
+#if ENABLE_IOS_GESTURE_EVENTS
+
+    JSGestureEvent.cpp
 
 #endif

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DocumentFragment.h"
 #include "Frame.h"
 #include "Pasteboard.h"
 #include "Range.h"
