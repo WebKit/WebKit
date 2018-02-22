@@ -1,3 +1,23 @@
+2018-02-22  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorage::Engine::Caches::writeRecord is not always calling the completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=183055
+
+        Reviewed by Chris Dumez.
+
+        Add a completion handler to Storage::store.
+        Use it instead in Caches::writeRecord.
+        This ensures that the Cache add/put promise will be called once all write operations have been done.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::writeRecord):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::WriteOperation::WriteOperation):
+        (WebKit::NetworkCache::Storage::finishWriteOperation):
+        (WebKit::NetworkCache::Storage::store):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::store):
+
 2018-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an entitlement check for service worker on iOS

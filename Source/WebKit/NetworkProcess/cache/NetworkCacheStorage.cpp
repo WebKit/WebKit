@@ -100,15 +100,17 @@ bool Storage::ReadOperation::finish()
 struct Storage::WriteOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler)
+    WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void()>&& completionHandler)
         : storage(storage)
         , record(record)
         , mappedBodyHandler(WTFMove(mappedBodyHandler))
+        , completionHandler(WTFMove(completionHandler))
     { }
     Ref<Storage> storage;
 
     const Record record;
     const MappedBodyHandler mappedBodyHandler;
+    CompletionHandler<void()> completionHandler;
 
     std::atomic<unsigned> activeCount { 0 };
 };
@@ -800,6 +802,9 @@ void Storage::finishWriteOperation(WriteOperation& writeOperation)
 
     auto protectedThis = makeRef(*this);
 
+    if (writeOperation.completionHandler)
+        writeOperation.completionHandler();
+
     m_activeWriteOperations.remove(&writeOperation);
     dispatchPendingWriteOperations();
 
@@ -832,7 +837,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     dispatchPendingReadOperations();
 }
 
-void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
+void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!record.key.isNull());
@@ -840,7 +845,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     if (!m_capacity)
         return;
 
-    auto writeOperation = std::make_unique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler));
+    auto writeOperation = std::make_unique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler), WTFMove(completionHandler));
     m_pendingWriteOperations.prepend(WTFMove(writeOperation));
 
     // Add key to the filter already here as we do lookups from the pending operations too.

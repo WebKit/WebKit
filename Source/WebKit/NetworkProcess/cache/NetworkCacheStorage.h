@@ -30,6 +30,7 @@
 #include "NetworkCacheKey.h"
 #include <WebCore/Timer.h>
 #include <wtf/BloomFilter.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -62,7 +63,7 @@ public:
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
     typedef Function<void (const Data& mappedBody)> MappedBodyHandler;
-    void store(const Record&, MappedBodyHandler&&);
+    void store(const Record&, MappedBodyHandler&&, CompletionHandler<void()>&& = { });
 
     void remove(const Key&);
     void remove(const Vector<Key>&, Function<void ()>&&);

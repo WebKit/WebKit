@@ -3,31 +3,27 @@
 <body>
     <script>
 var cache;
-function doTest()
+async function doTest()
 {
     if (window.location.hash === "#check") {
-        self.caches.keys().then(keys => {
-            window.parent.postMessage(keys.length === 1 && keys[0] === "testCacheName", "*");
-        });
+        let keys = await self.caches.keys();
+        window.parent.postMessage(keys.length === 1 && keys[0] === "testCacheName", "*");
         return;
     }
 
     if (window.location.hash === "#remove") {
-        self.caches.open("testCacheName").then(c => {
-            cache = c
-            self.caches.delete("testCacheName").then(() => {
-                window.parent.postMessage("removed", "*");
-            });
-        });
+        let cache = await self.caches.open("testCacheName");
+        await self.caches.delete("testCacheName");
+        window.parent.postMessage("removed", "*");
         return;
     }
 
     var cacheName = "testCacheName";
     if (window.location.hash.indexOf("#name=") === 0)
         cacheName = window.location.hash.substring(6);
-    self.caches.open(cacheName).then(() => {
-        window.parent.postMessage("ready", "*");
-    });
+    let cache = await self.caches.open(cacheName);
+    await cache.put(new Request('testurl'), new Response('test body'));
+    window.parent.postMessage("ready", "*");
 }
 doTest();
     </script>

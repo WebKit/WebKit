@@ -470,10 +470,11 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
 
     if (!shouldPersist()) {
         m_volatileStorage.set(recordInformation.key, WTFMove(record));
+        callback(std::nullopt);
         return;
     }
 
-    m_storage->store(Cache::encode(recordInformation, record), [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](const Data&) {
+    m_storage->store(Cache::encode(recordInformation, record), { }, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)]() {
         callback(std::nullopt);
     });
 }
