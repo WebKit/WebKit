@@ -284,7 +284,7 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
     uint32_t remoteLayerClientID = 0;
     
     if (creationParameters.artificialPluginInitializationDelayEnabled) {
-        unsigned artificialPluginInitializationDelay = 5;
+        Seconds artificialPluginInitializationDelay { 5_s };
         sleep(artificialPluginInitializationDelay);
     }
 

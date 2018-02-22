@@ -92,10 +92,10 @@ struct Benchmark {
                 });
         }
     
-        sleepMS(100);
+        sleep(100_ms);
         lock.unlock();
     
-        sleep(secondsPerTest);
+        sleep(Seconds { secondsPerTest });
     
         keepGoing = false;
         lock.lock();

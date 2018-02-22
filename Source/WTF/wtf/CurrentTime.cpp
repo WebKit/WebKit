@@ -327,7 +327,7 @@ Seconds currentCPUTime()
 #endif
 }
 
-void sleep(double value)
+void sleep(Seconds value)
 {
     // It's very challenging to find portable ways of sleeping for less than a second. On UNIX, you want to
     // use usleep() but it's hard to #include it in a portable way (you'd think it's in unistd.h, but then
@@ -337,7 +337,7 @@ void sleep(double value)
     Lock fakeLock;
     Condition fakeCondition;
     LockHolder fakeLocker(fakeLock);
-    fakeCondition.waitFor(fakeLock, Seconds(value));
+    fakeCondition.waitFor(fakeLock, value);
 }
 
 } // namespace WTF

@@ -46,8 +46,8 @@ namespace WebKit {
 
 static const size_t notSet = static_cast<size_t>(-1);
 
-static const double s_minPollingIntervalInSeconds = 1;
-static const double s_maxPollingIntervalInSeconds = 5;
+static const Seconds s_minPollingInterval { 1_s };
+static const Seconds s_maxPollingInterval { 5_s };
 static const double s_minUsedMemoryPercentageForPolling = 50;
 static const double s_maxUsedMemoryPercentageForPolling = 90;
 static const int s_memoryPresurePercentageThreshold = 95;
@@ -198,17 +198,17 @@ static int systemMemoryUsedAsPercentage()
     return ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
 }
 
-static inline double pollIntervalForUsedMemoryPercentage(int usedPercentage)
+static inline Seconds pollIntervalForUsedMemoryPercentage(int usedPercentage)
 {
     // Use a different poll interval depending on the currently memory used,
     // to avoid polling too often when the system is under low memory usage.
     if (usedPercentage < s_minUsedMemoryPercentageForPolling)
-        return s_maxPollingIntervalInSeconds;
+        return s_maxPollingInterval;
 
     if (usedPercentage >= s_maxUsedMemoryPercentageForPolling)
-        return s_minPollingIntervalInSeconds;
+        return s_minPollingInterval;
 
-    return s_minPollingIntervalInSeconds + (s_maxPollingIntervalInSeconds - s_minPollingIntervalInSeconds) *
+    return s_minPollingInterval + (s_maxPollingInterval - s_minPollingInterval) *
         ((usedPercentage - s_minUsedMemoryPercentageForPolling) / (s_maxUsedMemoryPercentageForPolling - s_minUsedMemoryPercentageForPolling));
 }
 
@@ -249,7 +249,7 @@ MemoryPressureMonitor::MemoryPressureMonitor()
         return;
 
     Thread::create("MemoryPressureMonitor", [this] {
-        double pollInterval = s_maxPollingIntervalInSeconds;
+        Seconds pollInterval = s_maxPollingInterval;
         while (true) {
             sleep(pollInterval);
 

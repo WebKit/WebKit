@@ -282,8 +282,6 @@ constexpr Seconds operator"" _ns(unsigned long long nanoseconds)
 
 } // inline seconds_literals
 
-WTF_EXPORT_PRIVATE void sleep(Seconds);
-
 } // namespace WTF
 
 namespace std {
