@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#include "SharedBuffer.h"
+#include <WebCore/SharedBuffer.h>
 
 using namespace WebCore;
 

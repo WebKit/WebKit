@@ -28,12 +28,10 @@
 #include "WebPage.h"
 
 #include "EditorState.h"
-#include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WebFrame.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include "WindowsKeyboardCodes.h"
 #include <WebCore/BackForwardController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
@@ -41,11 +39,13 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserAgent.h>
+#include <WebCore/WindowsKeyboardCodes.h>
 
 using namespace WebCore;
 

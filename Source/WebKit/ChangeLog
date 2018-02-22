@@ -1,3 +1,13 @@
+2018-02-22  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Fix compile errors in WebPageWin.cpp and WebProcessWin.cpp due to WebCore forwarding header paths
+        https://bugs.webkit.org/show_bug.cgi?id=182969
+
+        Reviewed by Konstantin Tokarev.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        * WebProcess/win/WebProcessWin.cpp:
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove sleep(double) and sleepMS(double) interfaces
