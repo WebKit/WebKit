@@ -34,7 +34,7 @@
 namespace WebCore {
 
 inline ArchiveResource::ArchiveResource(Ref<SharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
-    : SubstituteResource(url, response, WTFMove(data))
+    : SubstituteResource(URL { url }, ResourceResponse { response }, WTFMove(data))
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
     , m_frameName(frameName)

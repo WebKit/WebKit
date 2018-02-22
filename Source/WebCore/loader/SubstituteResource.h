@@ -42,14 +42,12 @@ public:
     virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(m_response, m_data->copy()); }
 
 protected:
-    SubstituteResource(const URL& url, const ResourceResponse& response, Ref<SharedBuffer>&& data)
-        : m_url(url)
-        , m_response(response)
+    SubstituteResource(URL&& url, ResourceResponse&& response, Ref<SharedBuffer>&& data)
+        : m_url(WTFMove(url))
+        , m_response(WTFMove(response))
         , m_data(WTFMove(data))
     {
     }
-
-    ResourceResponse& resourceResponse() { return m_response; }
 
 private:
     URL m_url;

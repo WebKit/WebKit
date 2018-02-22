@@ -38,14 +38,8 @@ public:
         Foreign = 1 << 3,
         Fallback = 1 << 4
     };
-        
-    static Ref<ApplicationCacheResource> create(const URL& url, const ResourceResponse& response, unsigned type, RefPtr<SharedBuffer> buffer = SharedBuffer::create(), const String& path = String())
-    {
-        ASSERT(!url.hasFragmentIdentifier());
-        if (!buffer)
-            buffer = SharedBuffer::create();
-        return adoptRef(*new ApplicationCacheResource(url, response, type, buffer.releaseNonNull(), path));
-    }
+
+    static Ref<ApplicationCacheResource> create(const URL&, const ResourceResponse&, unsigned type, RefPtr<SharedBuffer>&& = SharedBuffer::create(), const String& path = String());
 
     unsigned type() const { return m_type; }
     void addType(unsigned type);
@@ -63,7 +57,7 @@ public:
 #endif
     
 private:
-    ApplicationCacheResource(const URL&, const ResourceResponse&, unsigned type, Ref<SharedBuffer>&&, const String& path);
+    ApplicationCacheResource(URL&&, ResourceResponse&&, unsigned type, Ref<SharedBuffer>&&, const String& path);
 
     void deliver(ResourceLoader&) override;
 

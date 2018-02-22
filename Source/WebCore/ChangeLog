@@ -1,3 +1,27 @@
+2018-02-21  Youenn Fablet  <youenn@apple.com>
+
+        Make SubstituteResource take a ResourceResponse r-value
+        https://bugs.webkit.org/show_bug.cgi?id=183020
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+        Make SubstituteResource take a ResourceResponse r-value.
+        Update ArchiveResource accordingly.
+        Take benefit of that in ApplicationCacheResource to set the response source to ApplicationCache
+        before passing it to SubstituteResource constructor.
+
+        * loader/SubstituteResource.h:
+        (WebCore::SubstituteResource::SubstituteResource):
+        (WebCore::SubstituteResource::resourceResponse): Deleted.
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::create):
+        (WebCore::ApplicationCacheResource::ApplicationCacheResource):
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::create): Deleted.
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::ArchiveResource):
+
 2018-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] ::willBeRemoved() does not need RenderTreeBuilder anymore.
