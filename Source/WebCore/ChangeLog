@@ -1,5 +1,21 @@
 2018-02-22  Chris Dumez  <cdumez@apple.com>
 
+        ServiceWorkerContainer::startScriptFetchForJob() fails to isolate copy the registrationKey before passing it to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=183050
+        <rdar://problem/37796881>
+
+        Reviewed by Youenn Fablet.
+
+        Create an isolated copy of the registrationKey before passing it to the main thread in ServiceWorkerContainer's
+        startScriptFetchForJob() / jobFinishedLoadingScript() / jobFailedLoadingScript().
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+
+2018-02-22  Chris Dumez  <cdumez@apple.com>
+
         ServiceWorkerContainer::scheduleJob() fails to isolate copy the jobData before passing it to the main thread
         https://bugs.webkit.org/show_bug.cgi?id=183046
         <rdar://problem/37793395>
