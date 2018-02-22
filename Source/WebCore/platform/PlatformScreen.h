@@ -30,6 +30,8 @@
 #endif
 
 #if PLATFORM(MAC)
+#include <wtf/HashMap.h>
+
 OBJC_CLASS NSScreen;
 OBJC_CLASS NSWindow;
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -77,6 +79,7 @@ WEBCORE_EXPORT CGColorSpaceRef screenColorSpace(Widget* = nullptr);
 #endif
 
 #if PLATFORM(MAC)
+struct ScreenProperties;
 
 NSScreen *screen(NSWindow *);
 NSScreen *screen(PlatformDisplayID);
@@ -85,6 +88,11 @@ WEBCORE_EXPORT FloatRect toUserSpace(const NSRect&, NSWindow *destination);
 WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
 NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+WEBCORE_EXPORT void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>&);
+WEBCORE_EXPORT void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>&);
+#endif
 
 #endif
 

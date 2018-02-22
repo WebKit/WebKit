@@ -31,6 +31,7 @@
 #import "FloatRect.h"
 #import "FrameView.h"
 #import "HostWindow.h"
+#import "ScreenProperties.h"
 #import <ColorSync/ColorSync.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
@@ -112,13 +113,56 @@ bool screenHasInvertedColors()
     return CGDisplayUsesInvertedPolarity();
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenProperties)
+{
+    for (NSScreen *screen in [NSScreen screens]) {
+        FloatRect screenAvailableRect = [screen visibleFrame];
+        screenAvailableRect.setY(NSMaxY([screen frame]) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
+        FloatRect screenRect = [screen frame];
+        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect});
+    }
+}
+
+static HashMap<PlatformDisplayID, ScreenProperties>& screenProperties()
+{
+    static NeverDestroyed<HashMap<PlatformDisplayID, ScreenProperties>> screenProperties;
+    return screenProperties;
+}
+
+void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>& properties)
+{
+    screenProperties() = properties;
+}
+#endif
+
 FloatRect screenRect(Widget* widget)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (!screenProperties().isEmpty()) {
+        auto displayIDForWidget = displayID(widget);
+        if (displayIDForWidget && screenProperties().contains(displayIDForWidget))
+            return screenProperties().get(displayIDForWidget).screenRect;
+        // Return property of the first screen if the screen is not found in the map.
+        auto iter = screenProperties().begin();
+        return screenProperties().get(iter->key).screenRect;
+    }
+#endif
     return toUserSpace([screen(widget) frame], window(widget));
 }
 
 FloatRect screenAvailableRect(Widget* widget)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (!screenProperties().isEmpty()) {
+        auto displayIDForWidget = displayID(widget);
+        if (displayIDForWidget && screenProperties().contains(displayIDForWidget))
+            return screenProperties().get(displayIDForWidget).screenAvailableRect;
+        // Return property of the first screen if the screen is not found in the map.
+        auto iter = screenProperties().begin();
+        return screenProperties().get(iter->key).screenAvailableRect;
+    }
+#endif
     return toUserSpace([screen(widget) visibleFrame], window(widget));
 }
 

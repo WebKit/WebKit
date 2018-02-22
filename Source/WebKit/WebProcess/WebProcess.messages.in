@@ -124,4 +124,8 @@ messages -> WebProcess LegacyReceiver {
     DidCheckRemotePortForActivity(uint64_t callbackIdentifier, bool hasActivity)
     CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port, uint64_t callbackIdentifier)
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    SetScreenProperties(HashMap<uint32_t, WebCore::ScreenProperties> screenProperties);
+#endif
 }

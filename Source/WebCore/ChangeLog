@@ -1,3 +1,30 @@
+2018-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        The WebContent process should not use NSScreen in the screenAvailableRect/screenRect implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=182855
+
+        Reviewed by Brent Fulgham.
+
+        On macOS, the functions screenAvailableRect and screenRect is implemented using NSScreen, which is communicating
+        with the WindowServer. To avoid this WindowServer communication from the WebContent process when calling
+        screenAvailableRect and screenRect, it is possible to let the UIProcess send a message to the WebContent
+        process whenever there is a change in the display properties, and have the WebContent process cache these
+        display properties. This message should also be sent to a newly started WebContent process.
+
+        No new tests, covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PlatformScreen.h:
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::getScreenProperties):
+        (WebCore::screenProperties):
+        (WebCore::setScreenProperties):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/ScreenProperties.h: Added.
+        (WebCore::ScreenProperties::encode const):
+        (WebCore::ScreenProperties::decode):
+
 2018-02-21  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Curl Cookie Database File should be configurable using NetworkProcessCreationParameters

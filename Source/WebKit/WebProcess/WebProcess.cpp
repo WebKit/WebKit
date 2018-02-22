@@ -1678,4 +1678,11 @@ void WebProcess::registerServiceWorkerClients(PAL::SessionID sessionID)
 
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+void WebProcess::setScreenProperties(const HashMap<uint32_t, WebCore::ScreenProperties>& properties)
+{
+    WebCore::setScreenProperties(properties);
+}
+#endif
+
 } // namespace WebKit
