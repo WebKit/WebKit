@@ -43,7 +43,7 @@
 
     function fireDataModificationHandlerAndContinue() {
         testRunner.installStatisticsDidScanDataRecordsCallback(function() {
-            runTest();
+            setTimeout(runTest, 500);
         });
         testRunner.statisticsProcessStatisticsAndDataRecords();
     }

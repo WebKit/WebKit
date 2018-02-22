@@ -1,3 +1,14 @@
+2018-02-21  John Wilander  <wilander@apple.com>
+
+        Add delay to make cookie purge catch up when running http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html
+        https://bugs.webkit.org/show_bug.cgi?id=183024
+        <rdar://problem/37765207>
+
+        Unreviewed test gardening.
+
+        * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html:
+            Added a setTimeout() delay.
+
 2018-02-21  Youenn Fablet  <youenn@apple.com>
 
         Move AppCache loading to the NetworkProcess
