@@ -362,7 +362,7 @@ void RenderQuote::updateTextRenderer(RenderTreeBuilder& builder)
         renderText->dirtyLineBoxes(false);
         return;
     }
-    builder.insertChild(*this, createRenderer<RenderTextFragment>(document(), m_text));
+    builder.attach(*this, createRenderer<RenderTextFragment>(document(), m_text));
 }
 
 String RenderQuote::computeText() const

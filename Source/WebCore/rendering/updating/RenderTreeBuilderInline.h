@@ -33,8 +33,8 @@ class RenderTreeBuilder::Inline {
 public:
     Inline(RenderTreeBuilder&);
 
-    void insertChild(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    void insertChildIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attachIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
     // Make this private once all the mutation code is in RenderTreeBuilder.
     void childBecameNonInline(RenderInline& parent, RenderElement& child);

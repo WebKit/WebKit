@@ -33,11 +33,11 @@ class RenderTreeBuilder::Block {
 public:
     Block(RenderTreeBuilder&);
 
-    void insertChild(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    void insertChildIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attachIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    RenderPtr<RenderObject> takeChild(RenderBlock& parent, RenderObject& oldChild);
-    RenderPtr<RenderObject> takeChild(RenderBlockFlow& parent, RenderObject& child);
+    RenderPtr<RenderObject> detach(RenderBlock& parent, RenderObject& oldChild);
+    RenderPtr<RenderObject> detach(RenderBlockFlow& parent, RenderObject& child);
 
     void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
     void childBecameNonInline(RenderBlock& parent, RenderElement& child);

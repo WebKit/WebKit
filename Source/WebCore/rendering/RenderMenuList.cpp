@@ -165,7 +165,7 @@ HTMLSelectElement& RenderMenuList::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-void RenderMenuList::didInsertChild(RenderObject& child, RenderObject*)
+void RenderMenuList::didAttachChild(RenderObject& child, RenderObject*)
 {
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this, &child);
@@ -279,9 +279,9 @@ void RenderMenuList::setText(const String& s)
         m_buttonText = makeWeakPtr(*newButtonText);
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
-            RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
+            RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));
         else
-            RenderTreeBuilder(*document().renderView()).insertChild(*this, WTFMove(newButtonText));
+            RenderTreeBuilder(*document().renderView()).attach(*this, WTFMove(newButtonText));
     }
 
     adjustInnerStyle();

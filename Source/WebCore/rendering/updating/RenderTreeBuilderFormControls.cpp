@@ -36,34 +36,34 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::FormControls::insertChild(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::FormControls::attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    m_builder.blockBuilder().insertChild(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
 }
 
-void RenderTreeBuilder::FormControls::insertChild(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::FormControls::attach(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& newChild = *child.get();
-    m_builder.blockBuilder().insertChild(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
-    parent.didInsertChild(newChild, beforeChild);
+    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+    parent.didAttachChild(newChild, beforeChild);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::FormControls::takeChild(RenderMenuList& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderMenuList& parent, RenderObject& child)
 {
     auto* innerRenderer = parent.innerRenderer();
     if (!innerRenderer || &child == innerRenderer)
-        return m_builder.blockBuilder().takeChild(parent, child);
-    return m_builder.takeChild(*innerRenderer, child);
+        return m_builder.blockBuilder().detach(parent, child);
+    return m_builder.detach(*innerRenderer, child);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::FormControls::takeChild(RenderButton& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& parent, RenderObject& child)
 {
     auto* innerRenderer = parent.innerRenderer();
     if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
         ASSERT(&child == innerRenderer || !innerRenderer);
-        return m_builder.blockBuilder().takeChild(parent, child);
+        return m_builder.blockBuilder().detach(parent, child);
     }
-    return m_builder.takeChild(*innerRenderer, child);
+    return m_builder.detach(*innerRenderer, child);
 }
 
 
@@ -75,7 +75,7 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderB
 
     auto wrapper = parent.createAnonymousBlock(parent.style().display());
     innerRenderer = wrapper.get();
-    m_builder.blockBuilder().insertChild(parent, WTFMove(wrapper), nullptr);
+    m_builder.blockBuilder().attach(parent, WTFMove(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
@@ -88,7 +88,7 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderM
 
     auto wrapper = parent.createAnonymousBlock();
     innerRenderer = wrapper.get();
-    m_builder.blockBuilder().insertChild(parent, WTFMove(wrapper), nullptr);
+    m_builder.blockBuilder().attach(parent, WTFMove(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }

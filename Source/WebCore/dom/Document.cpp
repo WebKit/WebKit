@@ -2320,7 +2320,7 @@ void Document::destroyRenderTree()
         RenderTreeBuilder builder(*m_renderView);
         // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
         while (m_renderView->firstChild())
-            builder.removeAndDestroy(*m_renderView->firstChild());
+            builder.destroy(*m_renderView->firstChild());
         m_renderView->destroy();
     }
     m_renderView.release();
@@ -6321,7 +6321,7 @@ void Document::setFullScreenRenderer(RenderTreeBuilder& builder, RenderFullScree
     }
 
     if (m_fullScreenRenderer)
-        builder.removeAndDestroy(*m_fullScreenRenderer);
+        builder.destroy(*m_fullScreenRenderer);
     ASSERT(!m_fullScreenRenderer);
 
     m_fullScreenRenderer = makeWeakPtr(renderer);

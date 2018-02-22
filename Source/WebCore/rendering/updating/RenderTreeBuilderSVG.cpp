@@ -40,75 +40,75 @@ RenderTreeBuilder::SVG::SVG(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::SVG::insertChild(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::SVG::attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
-void RenderTreeBuilder::SVG::insertChild(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.inlineBuilder().insertChild(parent, WTFMove(child), beforeChild);
+    m_builder.inlineBuilder().attach(parent, WTFMove(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(parent))
         textAncestor->subtreeChildWasAdded(&childToAdd);
 }
 
-void RenderTreeBuilder::SVG::insertChild(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
-void RenderTreeBuilder::SVG::insertChild(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::SVG::attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
-    m_builder.blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
+    m_builder.blockFlowBuilder().attach(parent, WTFMove(child), beforeChild);
 
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
     parent.subtreeChildWasAdded(&childToAdd);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGText& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGText& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     parent.subtreeChildWillBeRemoved(&child, affectedAttributes);
-    auto takenChild = m_builder.blockBuilder().takeChild(parent, child);
+    auto takenChild = m_builder.blockBuilder().detach(parent, child);
     parent.subtreeChildWasRemoved(affectedAttributes);
     return takenChild;
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGInline& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGInline& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(parent);
     if (!textAncestor)
-        return m_builder.takeChildFromRenderElement(parent, child);
+        return m_builder.detachFromRenderElement(parent, child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     textAncestor->subtreeChildWillBeRemoved(&child, affectedAttributes);
-    auto takenChild = m_builder.takeChildFromRenderElement(parent, child);
+    auto takenChild = m_builder.detachFromRenderElement(parent, child);
     textAncestor->subtreeChildWasRemoved(affectedAttributes);
     return takenChild;
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGContainer& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGContainer& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return m_builder.takeChildFromRenderElement(parent, child);
+    return m_builder.detachFromRenderElement(parent, child);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::takeChild(RenderSVGRoot& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGRoot& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return m_builder.takeChildFromRenderElement(parent, child);
+    return m_builder.detachFromRenderElement(parent, child);
 }
 
 }

@@ -383,7 +383,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     }
 #endif
 
-    m_builder.insertChild(insertionPosition, WTFMove(newRenderer));
+    m_builder.attach(insertionPosition, WTFMove(newRenderer));
 
     if (AXObjectCache* cache = m_document.axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&element);
@@ -457,14 +457,14 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
         auto newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
         newDisplayContentsAnonymousWrapper->initializeStyle();
         auto& displayContentsAnonymousWrapper = *newDisplayContentsAnonymousWrapper;
-        m_builder.insertChild(renderTreePosition, WTFMove(newDisplayContentsAnonymousWrapper));
+        m_builder.attach(renderTreePosition, WTFMove(newDisplayContentsAnonymousWrapper));
 
         textRenderer->setInlineWrapperForDisplayContents(&displayContentsAnonymousWrapper);
-        m_builder.insertChild(displayContentsAnonymousWrapper, WTFMove(textRenderer));
+        m_builder.attach(displayContentsAnonymousWrapper, WTFMove(textRenderer));
         return;
     }
 
-    m_builder.insertChild(renderTreePosition, WTFMove(textRenderer));
+    m_builder.attach(renderTreePosition, WTFMove(textRenderer));
 }
 
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
@@ -551,7 +551,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             GeneratedContent::removeAfterPseudoElement(element);
 
             if (auto* renderer = element.renderer()) {
-                RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*renderer);
+                RenderTreeBuilder::current()->destroyAndCleanUpAnonymousWrappers(*renderer);
                 element.setRenderer(nullptr);
             }
 
@@ -588,7 +588,7 @@ void RenderTreeUpdater::tearDownTextRenderer(Text& text)
     auto* renderer = text.renderer();
     if (!renderer)
         return;
-    RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*renderer);
+    RenderTreeBuilder::current()->destroyAndCleanUpAnonymousWrappers(*renderer);
     text.setRenderer(nullptr);
 }
 
@@ -599,7 +599,7 @@ void RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded(Element& roo
     for (auto* child = root.document().renderView()->firstChild(); child;) {
         auto* nextSibling = child->nextSibling();
         if (is<RenderMultiColumnFlow>(*child) || is<RenderMultiColumnSet>(*child))
-            RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*child);
+            RenderTreeBuilder::current()->destroyAndCleanUpAnonymousWrappers(*child);
         child = nextSibling;
     }
 }

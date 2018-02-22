@@ -155,7 +155,7 @@ void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFr
 {
     if (!textFragment.firstLetter())
         return;
-    m_builder.removeAndDestroy(*textFragment.firstLetter());
+    m_builder.destroy(*textFragment.firstLetter());
 }
 
 void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
@@ -181,8 +181,8 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
-            auto toMove = m_builder.takeChild(*firstLetter, *child);
-            m_builder.insertChild(*newFirstLetter, WTFMove(toMove));
+            auto toMove = m_builder.detach(*firstLetter, *child);
+            m_builder.attach(*newFirstLetter, WTFMove(toMove));
         }
 
         RenderObject* nextSibling = firstLetter->nextSibling();
@@ -192,8 +192,8 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
             remainingText->setFirstLetter(*newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(*remainingText);
         }
-        m_builder.removeAndDestroy(*firstLetter);
-        m_builder.insertChild(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
+        m_builder.destroy(*firstLetter);
+        m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
         return;
     }
 
@@ -213,7 +213,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
     newFirstLetter->setIsFirstLetter();
 
     auto& firstLetter = *newFirstLetter;
-    m_builder.insertChild(*firstLetterContainer, WTFMove(newFirstLetter), &currentTextChild);
+    m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), &currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
     // string. We want the original string before it got transformed in case first-letter has
@@ -248,7 +248,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
 
         auto* textNode = currentTextChild.textNode();
         auto* beforeChild = currentTextChild.nextSibling();
-        m_builder.removeAndDestroy(currentTextChild);
+        m_builder.destroy(currentTextChild);
 
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.
@@ -260,14 +260,14 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
             newRemainingText = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, length, oldText.length() - length);
 
         RenderTextFragment& remainingText = *newRemainingText;
-        m_builder.insertChild(*firstLetterContainer, WTFMove(newRemainingText), beforeChild);
+        m_builder.attach(*firstLetterContainer, WTFMove(newRemainingText), beforeChild);
         remainingText.setFirstLetter(firstLetter);
         firstLetter.setFirstLetterRemainingText(remainingText);
 
         // construct text fragment for the first letter
         auto letter = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, 0, length);
 
-        m_builder.insertChild(firstLetter, WTFMove(letter));
+        m_builder.attach(firstLetter, WTFMove(letter));
     }
 }
 
