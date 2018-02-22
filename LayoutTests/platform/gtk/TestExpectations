@@ -1916,6 +1916,14 @@ webkit.org/b/182790 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-delete
 
 webkit.org/b/182989 http/wpt/beacon/beacon-quota.html [ Pass Failure ]
 
+webkit.org/b/183034 imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html [ Pass Crash ]
+
+webkit.org/b/183035 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight.html [ Failure Pass ]
+
+webkit.org/b/183036 fast/events/message-port.html [ Timeout Pass ]
+
+webkit.org/b/183037 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3298,6 +3306,8 @@ webkit.org/b/182763 accessibility/gtk/caret-offsets.html [ Timeout ]
 
 webkit.org/b/182765 fast/backgrounds/background-leakage-transforms.html [ Failure ImageOnlyFailure ]
 webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
+
+webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
