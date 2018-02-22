@@ -1,3 +1,14 @@
+2018-02-22  Youenn Fablet  <youenn@apple.com>
+
+        WorkerCacheStorageConnection::doRemove can assert in case two frames try to delete the same cache at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=183041
+
+        Reviewed by Chris Dumez.
+
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::doRemove): Update the assertion to accept the
+        case of an already deleted cache, i.e. returned identifer is 0.
+
 2018-02-22  Alejandro G. Castro  <alex@igalia.com>
 
         Remove some code leftovers in LibWebRTCMediaEndpoint and RealtimeOutgoingVideoSource classes

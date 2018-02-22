@@ -124,7 +124,7 @@ void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t
 {
     callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier] () mutable {
         mainThreadConnection->remove(cacheIdentifier, [workerThread = WTFMove(workerThread), requestIdentifier, cacheIdentifier] (const CacheIdentifierOrError& result) mutable {
-            ASSERT_UNUSED(cacheIdentifier, !result.has_value() || result.value().identifier == cacheIdentifier);
+            ASSERT_UNUSED(cacheIdentifier, !result.has_value() || !result.value().identifier || result.value().identifier == cacheIdentifier);
             workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().removeCompleted(requestIdentifier, result);
             }, WorkerRunLoop::defaultMode());
