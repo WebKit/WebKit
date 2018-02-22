@@ -34,6 +34,7 @@ class SessionID;
 namespace WebCore {
 
 class SWClientConnection;
+class SecurityOrigin;
 class ServiceWorkerJob;
 
 class WEBCORE_EXPORT ServiceWorkerProvider {

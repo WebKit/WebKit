@@ -41,6 +41,7 @@
 #include "WebSWServerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
 #include "WebToStorageProcessConnection.h"
+#include <WebCore/DocumentIdentifier.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SWServerRegistration.h>
@@ -49,6 +50,7 @@
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
+#include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <wtf/MainThread.h>
 
 using namespace PAL;

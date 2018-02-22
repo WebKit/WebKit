@@ -287,6 +287,7 @@ set(WebKit_SOURCES
 
     StorageProcess/ServiceWorker/WebSWOriginStore.cpp
     StorageProcess/ServiceWorker/WebSWServerConnection.cpp
+    StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp
 
     UIProcess/BackgroundProcessResponsivenessTimer.cpp
     UIProcess/ChildProcessProxy.cpp
@@ -300,6 +301,7 @@ set(WebKit_SOURCES
     UIProcess/RemoteWebInspectorProxy.cpp
     UIProcess/ResourceLoadStatisticsPersistentStorage.cpp
     UIProcess/ResponsivenessTimer.cpp
+    UIProcess/ServiceWorkerProcessProxy.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
     UIProcess/UIMessagePortChannelProvider.cpp
@@ -630,6 +632,7 @@ set(WebKit_MESSAGES_IN_FILES
     StorageProcess/IndexedDB/WebIDBConnectionToClient.messages.in
 
     StorageProcess/ServiceWorker/WebSWServerConnection.messages.in
+    StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/RemoteWebInspectorProxy.messages.in

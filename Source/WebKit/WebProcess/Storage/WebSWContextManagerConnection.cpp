@@ -53,6 +53,8 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
+#include <WebCore/ServiceWorkerClientQueryOptions.h>
+#include <WebCore/ServiceWorkerJobDataIdentifier.h>
 #include <WebCore/UserAgent.h>
 #include <pal/SessionID.h>
 
@@ -107,7 +109,11 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
     : m_connectionToStorageProcess(WTFMove(connection))
     , m_pageGroupID(pageGroupID)
     , m_pageID(pageID)
+#if PLATFORM(COCOA)
     , m_userAgent(standardUserAgentWithApplicationName({ }))
+#else
+    , m_userAgent(standardUserAgent())
+#endif
 {
     updatePreferencesStore(store);
 }

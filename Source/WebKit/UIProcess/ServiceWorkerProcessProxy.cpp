@@ -23,8 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#include "config.h"
 #include "ServiceWorkerProcessProxy.h"
+
+#if ENABLE(SERVICE_WORKER)
 
 #include "AuthenticationChallengeProxy.h"
 #include "WebCredential.h"
@@ -100,3 +102,5 @@ void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageI
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SERVICE_WORKER)

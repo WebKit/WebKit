@@ -1,3 +1,19 @@
+2018-02-22  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Fix some build errors in service workers code
+        https://bugs.webkit.org/show_bug.cgi?id=182966
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt: add missing files.
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp: add missing includes.
+        * UIProcess/ServiceWorkerProcessProxy.cpp: use #include rather than #import in C++; add missing ifdef.
+        * UIProcess/ServiceWorkerProcessProxy.h: add missing ifdef.
+        * WebProcess/Storage/WebSWClientConnection.cpp: add missing includes.
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp: add missing includes.
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+          call the function that exists outside cocoa.
+
 2018-02-21  Per Arne Vollan  <pvollan@apple.com>
 
         The WebContent process should not use NSScreen in the screenAvailableRect/screenRect implementations.

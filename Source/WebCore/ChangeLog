@@ -1,3 +1,14 @@
+2018-02-22  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Fix some build errors in service workers code
+        https://bugs.webkit.org/show_bug.cgi?id=182966
+
+        Reviewed by Žan Doberšek.
+
+        No new tests: no change in behavior.
+
+        * workers/service/ServiceWorkerProvider.h: add missing forward declaration.
+
 2018-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderObject::insertedInto() mutation logic to RenderTreeBuilder

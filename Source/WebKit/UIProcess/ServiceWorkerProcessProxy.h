@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(SERVICE_WORKER)
+
 #include "WebProcessProxy.h"
 
 namespace WebKit {
@@ -57,3 +59,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(SERVICE_WORKER)
