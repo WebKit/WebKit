@@ -1,3 +1,75 @@
+2018-02-22  Mark Lam  <mark.lam@apple.com>
+
+        Refactor MacroAssembler code to improve reuse and extensibility.
+        https://bugs.webkit.org/show_bug.cgi?id=183054
+        <rdar://problem/37797337>
+
+        Reviewed by Saam Barati.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/MacroAssembler.cpp:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::canCompact):
+        (JSC::MacroAssemblerARM64::computeJumpType):
+        (JSC::MacroAssemblerARM64::jumpSizeDelta):
+        (JSC::MacroAssemblerARM64::link):
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load64WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store64WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::getEffectiveAddress):
+        (JSC::MacroAssemblerARM64::branchDoubleNonZero):
+        (JSC::MacroAssemblerARM64::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerARM64::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::moveConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        (JSC::MacroAssemblerARM64::call):
+        (JSC::MacroAssemblerARM64::jump):
+        (JSC::MacroAssemblerARM64::tailRecursiveCall):
+        (JSC::MacroAssemblerARM64::setCarry):
+        (JSC::MacroAssemblerARM64::reemitInitialMoveWithPatch):
+        (JSC::MacroAssemblerARM64::isBreakpoint):
+        (JSC::MacroAssemblerARM64::invert):
+        (JSC::MacroAssemblerARM64::readCallTarget):
+        (JSC::MacroAssemblerARM64::replaceWithVMHalt):
+        (JSC::MacroAssemblerARM64::replaceWithJump):
+        (JSC::MacroAssemblerARM64::maxJumpReplacementSize):
+        (JSC::MacroAssemblerARM64::patchableJumpSize):
+        (JSC::MacroAssemblerARM64::repatchCall):
+        (JSC::MacroAssemblerARM64::makeBranch):
+        (JSC::MacroAssemblerARM64::makeCompareAndBranch):
+        (JSC::MacroAssemblerARM64::makeTestBitAndBranch):
+        (JSC::MacroAssemblerARM64::ARM64Condition):
+        (JSC::MacroAssemblerARM64::moveWithFixedWidth):
+        (JSC::MacroAssemblerARM64::load):
+        (JSC::MacroAssemblerARM64::store):
+        (JSC::MacroAssemblerARM64::tryLoadWithOffset):
+        (JSC::MacroAssemblerARM64::tryLoadSignedWithOffset):
+        (JSC::MacroAssemblerARM64::tryStoreWithOffset):
+        (JSC::MacroAssemblerARM64::jumpAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/ProbeStack.h:
+        - Removed a forward declaration of an obsolete class.
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove sleep(double) and sleepMS(double) interfaces

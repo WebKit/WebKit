@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc.
+ * Copyright (C) 2008-2018 Apple Inc.
  * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
@@ -34,7 +34,9 @@
 
 namespace JSC {
 
-class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
+using Assembler = TARGET_ASSEMBLER;
+
+class MacroAssemblerARM : public AbstractMacroAssembler<Assembler> {
     static const int DoubleConditionMask = 0x0f;
     static const int DoubleConditionBitSpecial = 0x10;
     COMPILE_ASSERT(!(DoubleConditionBitSpecial & DoubleConditionMask), DoubleConditionBitSpecial_should_not_interfere_with_ARMAssembler_Condition_codes);
