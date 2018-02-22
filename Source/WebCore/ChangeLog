@@ -1,3 +1,16 @@
+2018-02-22  Miguel Gomez  <magomez@igalia.com>
+
+        including both gl3.h and gl2.h when USE_OPENGL_ES is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=183008
+
+        Reviewed by Michael Catanzaro.
+
+        Don't include GLES3 headers as we stick to GLES2 API resources.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/GLContext.cpp:
+
 2018-02-22  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Fix some build errors in service workers code
