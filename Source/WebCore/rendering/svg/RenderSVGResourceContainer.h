@@ -67,7 +67,7 @@ private:
     void addClient(RenderElement&);
     void removeClient(RenderElement&);
 
-    void willBeDestroyed(RenderTreeBuilder&) final;
+    void willBeDestroyed() final;
     void registerResource();
 
     AtomicString m_id;

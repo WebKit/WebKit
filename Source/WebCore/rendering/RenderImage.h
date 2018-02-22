@@ -77,7 +77,7 @@ public:
     bool hasNonBitmapImage() const;
 
 protected:
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;

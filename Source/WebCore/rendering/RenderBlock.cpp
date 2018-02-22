@@ -343,7 +343,7 @@ RenderBlock::~RenderBlock()
 }
 
 // Note that this is not called for RenderBlockFlows.
-void RenderBlock::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderBlock::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed()) {
         if (parent())
@@ -352,7 +352,7 @@ void RenderBlock::willBeDestroyed(RenderTreeBuilder& builder)
 
     blockWillBeDestroyed();
 
-    RenderBox::willBeDestroyed(builder);
+    RenderBox::willBeDestroyed();
 }
 
 void RenderBlock::blockWillBeDestroyed()

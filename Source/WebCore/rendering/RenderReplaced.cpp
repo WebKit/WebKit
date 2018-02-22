@@ -72,12 +72,12 @@ RenderReplaced::RenderReplaced(Document& document, RenderStyle&& style, const La
 
 RenderReplaced::~RenderReplaced() = default;
 
-void RenderReplaced::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderReplaced::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed() && parent())
         parent()->dirtyLinesFromChangedChild(*this);
 
-    RenderBox::willBeDestroyed(builder);
+    RenderBox::willBeDestroyed();
 }
 
 void RenderReplaced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

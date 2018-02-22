@@ -68,7 +68,7 @@ public:
     bool scrolledToRight() const override;
 
 private:
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
     void element() const = delete;
 

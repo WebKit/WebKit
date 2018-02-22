@@ -65,7 +65,7 @@ public:
     void didInsertChild(RenderObject& child, RenderObject* beforeChild);
 
 private:
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
     void element() const = delete;
 

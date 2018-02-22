@@ -35,7 +35,7 @@ public:
 
 protected:
     RenderSVGBlock(SVGGraphicsElement&, RenderStyle&&);
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
 private:
     void element() const = delete;

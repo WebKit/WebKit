@@ -62,12 +62,12 @@ RenderVideo::~RenderVideo()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderVideo::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderVideo::willBeDestroyed()
 {
     if (auto player = videoElement().player())
         player->setVisible(false);
 
-    RenderMedia::willBeDestroyed(builder);
+    RenderMedia::willBeDestroyed();
 }
 
 void RenderVideo::visibleInViewportStateChanged()

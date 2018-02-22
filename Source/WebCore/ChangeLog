@@ -1,3 +1,104 @@
+2018-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] ::willBeRemoved() does not need RenderTreeBuilder anymore.
+        https://bugs.webkit.org/show_bug.cgi?id=183019
+        <rdar://problem/37761421>
+
+        Reviewed by Antti Koivisto.
+
+        All the willBeDestroyed() mutations have been moved over to RenderTreeBuilder. 
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::willBeDestroyed):
+        * rendering/RenderCounter.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderElement.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::willBeDestroyed):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::willBeDestroyed):
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::willBeDestroyed):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::willBeDestroyed):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::willBeDestroyed):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::willBeDestroyed):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::willBeDestroyed):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::willBeDestroyed):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::willBeDestroyed):
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::willBeDestroyed):
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::willBeDestroyed):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::willBeDestroyed):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::willBeDestroyed):
+        * rendering/RenderVideo.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::willBeDestroyed):
+        * rendering/RenderWidget.h:
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::willBeDestroyed):
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::willBeDestroyed):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::willBeDestroyed):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::willBeDestroyed):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::willBeDestroyed):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::willBeDestroyed):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::willBeDestroyed):
+        * rendering/svg/RenderSVGText.h:
+
 2018-02-21  Per Arne Vollan  <pvollan@apple.com>
 
         The WebContent process should not use NSScreen in the screenAvailableRect/screenRect implementations.

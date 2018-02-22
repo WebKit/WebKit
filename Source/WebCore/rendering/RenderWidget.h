@@ -77,7 +77,7 @@ public:
 protected:
     RenderWidget(HTMLFrameOwnerElement&, RenderStyle&&);
 
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;

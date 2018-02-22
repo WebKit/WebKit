@@ -52,7 +52,7 @@ public:
 #endif
 
 private:
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
     void element() const = delete;
 
