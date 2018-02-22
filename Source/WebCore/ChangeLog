@@ -1,5 +1,19 @@
 2018-02-22  Chris Dumez  <cdumez@apple.com>
 
+        ResourceRequestBase::isolatedCopy() fails to isolate copy the cachePartition
+        https://bugs.webkit.org/show_bug.cgi?id=183059
+        <rdar://problem/37800202>
+
+        Reviewed by Youenn Fablet.
+
+        Update ResourceRequestBase::setAsIsolatedCopy() to call isolatedCopy() on the cachePartition as well,
+        given that it is a String and it would not be safe to send it to another thread otherwise.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy):
+
+2018-02-22  Chris Dumez  <cdumez@apple.com>
+
         ServiceWorkerContainer::startScriptFetchForJob() fails to isolate copy the registrationKey before passing it to the main thread
         https://bugs.webkit.org/show_bug.cgi?id=183050
         <rdar://problem/37796881>
