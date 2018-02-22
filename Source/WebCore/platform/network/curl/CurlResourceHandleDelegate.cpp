@@ -76,6 +76,7 @@ ResourceHandleInternal* CurlResourceHandleDelegate::d()
 
 void CurlResourceHandleDelegate::curlDidSendData(CurlRequest& request, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
+    UNUSED_PARAM(request);
     ASSERT(isMainThread());
 
     if (cancelledOrClientless())
@@ -144,6 +145,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, co
 
 void CurlResourceHandleDelegate::curlDidReceiveBuffer(CurlRequest& request, Ref<SharedBuffer>&& buffer)
 {
+    UNUSED_PARAM(request);
     ASSERT(isMainThread());
 
     if (cancelledOrClientless())
@@ -168,6 +170,7 @@ void CurlResourceHandleDelegate::curlDidComplete(CurlRequest& request)
 
 void CurlResourceHandleDelegate::curlDidFailWithError(CurlRequest& request, const ResourceError& resourceError)
 {
+    UNUSED_PARAM(request);
     ASSERT(isMainThread());
 
     if (cancelledOrClientless())

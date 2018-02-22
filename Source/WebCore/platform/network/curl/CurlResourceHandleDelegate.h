@@ -39,7 +39,7 @@ class ResourceHandle;
 class ResourceHandleClient;
 class ResourceHandleInternal;
 
-class CurlResourceHandleDelegate : public CurlRequestClient {
+class CurlResourceHandleDelegate final : public CurlRequestClient {
     WTF_MAKE_NONCOPYABLE(CurlResourceHandleDelegate); WTF_MAKE_FAST_ALLOCATED;
 public:
     CurlResourceHandleDelegate(ResourceHandle&);
@@ -48,14 +48,14 @@ public:
 
     // CurlRequestClient methods
 
-    void ref();
-    void deref();
+    void ref() final;
+    void deref() final;
 
-    void curlDidSendData(CurlRequest&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-    void curlDidReceiveResponse(CurlRequest&, const CurlResponse&) override;
-    void curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&) override;
-    void curlDidComplete(CurlRequest&) override;
-    void curlDidFailWithError(CurlRequest&, const ResourceError&) override;
+    void curlDidSendData(CurlRequest&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
+    void curlDidReceiveResponse(CurlRequest&, const CurlResponse&) final;
+    void curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&) final;
+    void curlDidComplete(CurlRequest&) final;
+    void curlDidFailWithError(CurlRequest&, const ResourceError&) final;
 
 private:
     ResourceHandle& m_handle;
