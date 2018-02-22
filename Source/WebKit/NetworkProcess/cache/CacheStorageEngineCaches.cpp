@@ -150,6 +150,10 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
     storeOrigin([this, callback = WTFMove(callback)] (std::optional<Error>&& error) mutable {
         if (error) {
             callback(Error::WriteDisk);
+
+            auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
+            for (auto& callback : pendingCallbacks)
+                callback(Error::WriteDisk);
             return;
         }
 
@@ -175,6 +179,10 @@ void Caches::initializeSize(WebCore::DOMCacheEngine::CompletionCallback&& callba
 {
     if (!m_storage) {
         callback(Error::Internal);
+
+        auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
+        for (auto& callback : pendingCallbacks)
+            callback(Error::Internal);
         return;
     }
 
