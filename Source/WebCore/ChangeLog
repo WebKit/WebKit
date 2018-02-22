@@ -1,3 +1,21 @@
+2018-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderObject::insertedInto() mutation logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=183022
+        <rdar://problem/37764326>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChildToRenderElementInternal):
+        (WebCore::RenderTreeBuilder::moveChildrenTo):
+        (WebCore::RenderTreeBuilder::multiColumnDescendantInserted): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+
 2018-02-21  Tim Horton  <timothy_horton@apple.com>
 
         Include all Cocoa sources in all Cocoa platform builds
