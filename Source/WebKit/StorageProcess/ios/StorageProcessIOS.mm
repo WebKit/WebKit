@@ -61,7 +61,7 @@ void StorageProcess::initializeSandbox(const ChildProcessInitializationParameter
 
 bool StorageProcess::parentProcessHasServiceWorkerEntitlement() const
 {
-    static bool hasEntitlement = connectedProcessHasEntitlement(parentProcessConnection()->xpcConnection(), @"com.apple.developer.WebKit.ServiceWorkers");
+    static bool hasEntitlement = connectedProcessHasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
     return hasEntitlement;
 }
 

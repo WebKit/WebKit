@@ -39,6 +39,6 @@ bool processHasContainer();
 String pathForProcessContainer();
 
 bool processHasEntitlement(NSString *entitlement);
-bool connectedProcessHasEntitlement(xpc_connection_t, NSString *entitlement);
+bool connectedProcessHasEntitlement(xpc_connection_t, const char *entitlement);
 
 }

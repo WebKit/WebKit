@@ -392,7 +392,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 
 bool WebPage::parentProcessHasServiceWorkerEntitlement() const
 {
-    static bool hasEntitlement = connectedProcessHasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), @"com.apple.developer.WebKit.ServiceWorkers");
+    static bool hasEntitlement = connectedProcessHasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
     return hasEntitlement;
 }
 

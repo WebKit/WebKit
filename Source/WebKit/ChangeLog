@@ -1,3 +1,20 @@
+2018-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an entitlement check for service worker on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=182865
+
+        Reviewed by Dan Bernstein.
+
+        Addressed Dan's comment by using xpc_connection_copy_entitlement_value instead of obtaining the audit token first.
+
+        * Shared/mac/SandboxUtilities.h:
+        * Shared/mac/SandboxUtilities.mm:
+        (WebKit::connectedProcessHasEntitlement):
+        * StorageProcess/ios/StorageProcessIOS.mm:
+        (WebKit::StorageProcess::parentProcessHasServiceWorkerEntitlement const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::parentProcessHasServiceWorkerEntitlement const):
+
 2018-02-22  Youenn Fablet  <youenn@apple.com>
 
         Fetch event release assert should take into account the fetch mode

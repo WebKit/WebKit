@@ -28,6 +28,7 @@
 
 #import <array>
 #import <sys/param.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -92,20 +93,13 @@ bool processHasEntitlement(NSString *entitlement)
     return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
 }
 
-bool connectedProcessHasEntitlement(xpc_connection_t connection, NSString *entitlement)
+bool connectedProcessHasEntitlement(xpc_connection_t connection, const char *entitlement)
 {
-    audit_token_t token;
-    xpc_connection_get_audit_token(connection, &token);
-    auto task = adoptCF(SecTaskCreateWithAuditToken(NULL, token));
-
-    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (__bridge CFStringRef)entitlement, nullptr));
+    auto value = adoptOSObject(xpc_connection_copy_entitlement_value(connection, entitlement));
     if (!value)
         return false;
 
-    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
-        return false;
-
-    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+    return xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
 }
 
 }
