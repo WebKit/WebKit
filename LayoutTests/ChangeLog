@@ -1,3 +1,16 @@
+2018-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Document.open() cancels existing provisional load but not navigation policy check
+        https://bugs.webkit.org/show_bug.cgi?id=183012
+        <rdar://problem/37755831>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/Document/open-with-pending-load-async-policy-expected.txt: Added.
+        * fast/dom/Document/open-with-pending-load-async-policy.html: Added.
+
 2018-02-22  Matt Lewis  <jlewis3@apple.com>
 
         Updated expectations for http/tests/appcache/404-resource-with-slow-main-resource.php.

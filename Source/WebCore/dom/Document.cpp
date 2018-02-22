@@ -142,6 +142,7 @@
 #include "PlugInsResources.h"
 #include "PluginDocument.h"
 #include "PointerLockController.h"
+#include "PolicyChecker.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "PublicSuffix.h"
@@ -2618,6 +2619,8 @@ void Document::open(Document* responsibleDocument)
             }
         }
 
+        if (m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy())
+            m_frame->loader().policyChecker().stopCheck();
         if (m_frame->loader().state() == FrameStateProvisional)
             m_frame->loader().stopAllLoaders();
     }

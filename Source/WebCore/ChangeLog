@@ -1,3 +1,28 @@
+2018-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Document.open() cancels existing provisional load but not navigation policy check
+        https://bugs.webkit.org/show_bug.cgi?id=183012
+        <rdar://problem/37755831>
+
+        Reviewed by Alex Christensen.
+
+        Test: fast/dom/Document/open-with-pending-load-async-policy.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        The existing code was calling FrameLoader::stopAllLoaders() when the loader's state
+        is FrameStateProvisional. The issue is that the FrameLoader's state only gets set
+        to FrameStateProvisional after the policy decision for the navigation is made.
+        This means that we fail to cancel a pending load if is still in the policy decision
+        stage, which can happen when the policy decision is made asynchronously. We now
+        also cancel such pending navigation policy checks as well.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        Make sure the m_delegateIsDecidingNavigationPolicy flag gets reset inside the
+        lambda. Otherwise, it gets reset too early when the policy decision is made
+        asynchronously.
+
 2018-02-22  Youenn Fablet  <youenn@apple.com>
 
         Add release asserts for service worker fetch and postMessage events
