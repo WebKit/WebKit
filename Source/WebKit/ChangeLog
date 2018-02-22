@@ -1,3 +1,16 @@
+2018-02-22  Youenn Fablet  <youenn@apple.com>
+
+        Fetch event release assert should take into account the fetch mode
+        https://bugs.webkit.org/show_bug.cgi?id=183047
+
+        Reviewed by Chris Dumez.
+
+        In case of navigation tasks, we should use the request URL and not the origin of the loading client.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::isValidFetch):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+
 2018-02-22  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Fix compile errors in WebPageWin.cpp and WebProcessWin.cpp due to WebCore forwarding header paths

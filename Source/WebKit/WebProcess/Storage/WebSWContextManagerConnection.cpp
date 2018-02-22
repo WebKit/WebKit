@@ -180,6 +180,23 @@ void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(std::optiona
         m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage), 0);
 }
 
+static inline bool isValidFetch(const ResourceRequest& request, const FetchOptions& options, const URL& serviceWorkerURL, const String& referrer)
+{
+    // For exotic service workers, do not enforce checks.
+    if (!serviceWorkerURL.protocolIsInHTTPFamily())
+        return true;
+
+    if (options.mode == FetchOptions::Mode::Navigate)
+        return protocolHostAndPortAreEqual(request.url(), serviceWorkerURL);
+
+    String origin = request.httpOrigin();
+    URL url { URL(), origin.isEmpty() ? referrer : origin };
+    if (!url.protocolIsInHTTPFamily())
+        return true;
+
+    return protocolHostAndPortAreEqual(url, serviceWorkerURL);
+}
+
 void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData, String&& referrer)
 {
     auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
@@ -188,10 +205,7 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         return;
     }
 
-    String origin = request.httpOrigin();
-    URL url { URL(), origin.isEmpty() ? referrer : origin };
-    URL serviceWorkerURL = serviceWorkerThreadProxy->scriptURL();
-    RELEASE_ASSERT(!url.protocolIsInHTTPFamily() || !serviceWorkerURL.protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(url, serviceWorkerURL));
+    RELEASE_ASSERT(isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer));
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier);
     std::optional<ServiceWorkerClientIdentifier> clientId;
