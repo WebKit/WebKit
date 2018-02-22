@@ -37,11 +37,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
-#include <pal/cf/CoreMediaSoftLink.h>
-#include "CoreVideoSoftLink.h"
-
 namespace WebCore {
-using namespace PAL;
 
 RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&& videoSource)
     : m_videoSource(WTFMove(videoSource))

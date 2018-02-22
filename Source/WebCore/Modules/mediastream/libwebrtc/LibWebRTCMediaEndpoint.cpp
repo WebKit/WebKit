@@ -54,10 +54,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
-#include <pal/cf/CoreMediaSoftLink.h>
-
 namespace WebCore {
-using namespace PAL;
 
 LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client)
     : m_peerConnectionBackend(peerConnection)
