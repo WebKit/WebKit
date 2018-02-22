@@ -1,3 +1,16 @@
+2018-02-22  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r228902.
+
+        This broke internal builds.
+
+        Reverted changeset:
+
+        "[Cocoa] Web Automation: provide a way to ask clients the type
+        of a JavaScript dialog"
+        https://bugs.webkit.org/show_bug.cgi?id=182660
+        https://trac.webkit.org/changeset/228902
+
 2018-02-22  Youenn Fablet  <youenn@apple.com>
 
         Add release asserts for service worker fetch and postMessage events
