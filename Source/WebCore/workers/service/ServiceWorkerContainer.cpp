@@ -238,11 +238,11 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 
     setPendingActivity(this);
 
-    auto jobData = job->data();
+    auto& jobData = job->data();
     auto result = m_jobMap.add(job->identifier(), WTFMove(job));
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    callOnMainThread([connection = m_swConnection, contextIdentifier = this->contextIdentifier(), jobData = WTFMove(jobData)] {
+    callOnMainThread([connection = m_swConnection, contextIdentifier = this->contextIdentifier(), jobData = jobData.isolatedCopy()] {
         connection->scheduleJob(contextIdentifier, jobData);
     });
 }

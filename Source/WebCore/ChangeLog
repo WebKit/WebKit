@@ -1,3 +1,17 @@
+2018-02-22  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkerContainer::scheduleJob() fails to isolate copy the jobData before passing it to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=183046
+        <rdar://problem/37793395>
+
+        Reviewed by Youenn Fablet.
+
+        Make sure we isolate copy the jobData before passing it to the main thread in ServiceWorkerContainer::scheduleJob().
+        The jobData contains Strings / URLs so it is not safe to have non-isolated copies of it on various threads.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+
 2018-02-22  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix warning on clang.
