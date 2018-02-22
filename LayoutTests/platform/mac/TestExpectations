@@ -1723,3 +1723,6 @@ webkit.org/b/182833 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 webkit.org/b/182589 fast/dom/adopt-node-crash-2.html [ Pass Failure ]
 
 webkit.org/b/181612 [ Debug ] webanimations/animation-opacity-animation-crash.html [ Pass Failure ]
+
+webkit.org/b/172241 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
+
