@@ -1,5 +1,22 @@
 2018-02-23  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/37836719
+
+    2018-02-23  Chris Dumez  <cdumez@apple.com>
+
+            Add release asserts for service worker fetch and postMessage events
+            https://bugs.webkit.org/show_bug.cgi?id=183025
+            <rdar://problem/37765052>
+
+            Reviewed by Chris Dumez.
+
+            Moving from release assert to early exit with release logging.
+
+            * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+            (WebKit::WebSWContextManagerConnection::startFetch):
+
+2018-02-23  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228930. rdar://problem/37836719
 
     2018-02-22  Youenn Fablet  <youenn@apple.com>

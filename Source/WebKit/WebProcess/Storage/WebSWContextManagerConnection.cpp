@@ -199,7 +199,12 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         return;
     }
 
-    RELEASE_ASSERT(isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer));
+    if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
+        RELEASE_LOG_ERROR_IF(!serviceWorkerThreadProxy->sessionID().isEphemeral(), ServiceWorker, "%p - WebSWContextManagerConnection::startFetch - Service Worker received an invalid fetch due to origin", this);
+        m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch(serverConnectionIdentifier, fetchIdentifier), 0);
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier);
     std::optional<ServiceWorkerClientIdentifier> clientId;

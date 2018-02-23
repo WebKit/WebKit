@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "ExtendableMessageEvent.h"
 #include "JSDOMPromise.h"
+#include "Logging.h"
 #include "NetworkStateNotifier.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
@@ -120,14 +121,22 @@ void ServiceWorkerThread::postMessageToServiceWorker(MessageWithMessagePorts&& m
         if (WTF::holds_alternative<ServiceWorkerClientData>(sourceData)) {
             RefPtr<ServiceWorkerClient> sourceClient = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerClientData>(sourceData)));
 
-            RELEASE_ASSERT(!sourceClient->url().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceClient->url()));
+            if (sourceClient->url().protocolIsInHTTPFamily() && serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() && !protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceClient->url())) {
+                RELEASE_LOG_ERROR_IF(!context.sessionID().isEphemeral(), ServiceWorker, "ServiceWorkerThread::postMessageToServiceWorker - Received message from invalid service worker client due to origin - context is %p\n", &context);
+                ASSERT_NOT_REACHED();
+                return;
+            }
 
             sourceOrigin = SecurityOrigin::create(sourceClient->url());
             source = WTFMove(sourceClient);
         } else {
             RefPtr<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerData>(sourceData)));
 
-            RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceWorker->scriptURL()));
+            if (sourceWorker->scriptURL().protocolIsInHTTPFamily() && serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() && !protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceWorker->scriptURL())) {
+                RELEASE_LOG_ERROR_IF(!context.sessionID().isEphemeral(), ServiceWorker, "ServiceWorkerThread::postMessageToServiceWorker - Received message from invalid service worker due to origin - context is %p\n", &context);
+                ASSERT_NOT_REACHED();
+                return;
+            }
 
             sourceOrigin = SecurityOrigin::create(sourceWorker->scriptURL());
             source = WTFMove(sourceWorker);
