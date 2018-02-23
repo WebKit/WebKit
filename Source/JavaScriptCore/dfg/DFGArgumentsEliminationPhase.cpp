@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -708,11 +708,7 @@ private:
                     if (!isEliminatedAllocation(candidate))
                         break;
 
-                    // FIXME: This should be an assert:
-                    // https://bugs.webkit.org/show_bug.cgi?id=182982
-                    if (node->child2()->op() != PhantomClonedArguments)
-                        break;
-
+                    ASSERT(candidate->op() == PhantomClonedArguments);
                     ASSERT(node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset);
 
                     // Meh, this is kind of hackish - we use an Identity so that we can reuse the
