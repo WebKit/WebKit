@@ -26,9 +26,10 @@
 #include "GRefPtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
-
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
+#include <mutex>
+#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -236,34 +237,54 @@ void unmapGstBuffer(GstBuffer* buffer)
     fastFree(mapInfo);
 }
 
-bool initializeGStreamer(Vector<String>& parameters)
+Vector<String> extractGStreamerOptionsFromCommandLine()
 {
-    GUniqueOutPtr<GError> error;
-    bool isGStreamerInitialized = false;
+    GUniqueOutPtr<char> contents;
+    gsize length;
+    if (!g_file_get_contents("/proc/self/cmdline", &contents.outPtr(), &length, nullptr))
+        return { };
+
+    Vector<String> options;
+    auto optionsString = String::fromUTF8(contents.get(), length);
+    optionsString.split('\0', false, [&options](StringView item) {
+        if (item.startsWith("--gst"))
+            options.append(item.toString());
+    });
+    return options;
+}
+
+bool initializeGStreamer(std::optional<Vector<String>>&& options)
+{
+    static std::once_flag onceFlag;
+    static bool isGStreamerInitialized;
+    std::call_once(onceFlag, [options = WTFMove(options)] {
+        isGStreamerInitialized = false;
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    char** argv = g_new0(char*, parameters.size() + 2);
-    argv[0] = g_strdup("WebProcess");
-    for (unsigned i = 1; i < parameters.size(); i++)
-        argv[i] = g_strdup(parameters[i].utf8().data());
+        Vector<String> parameters = options.value_or(extractGStreamerOptionsFromCommandLine());
+        char** argv = g_new0(char*, parameters.size() + 2);
+        int argc = parameters.size() + 1;
+        argv[0] = g_strdup(g_get_prgname());
+        for (unsigned i = 0; i < parameters.size(); i++)
+            argv[i + 1] = g_strdup(parameters[i].utf8().data());
 
-    int size = g_strv_length(argv);
-    isGStreamerInitialized = gst_init_check(&size, &argv, &error.outPtr());
-    g_strfreev(argv);
-    ASSERT_WITH_MESSAGE(isGStreamerInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
+        GUniqueOutPtr<GError> error;
+        isGStreamerInitialized = gst_init_check(&argc, &argv, &error.outPtr());
+        ASSERT_WITH_MESSAGE(isGStreamerInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
+        g_strfreev(argv);
 
-    if (isFastMallocEnabled()) {
-        const char* disableFastMalloc = getenv("WEBKIT_GST_DISABLE_FAST_MALLOC");
-        if (!disableFastMalloc || !strcmp(disableFastMalloc, "0"))
-            gst_allocator_set_default(GST_ALLOCATOR(g_object_new(gst_allocator_fast_malloc_get_type(), nullptr)));
-    }
+        if (isFastMallocEnabled()) {
+            const char* disableFastMalloc = getenv("WEBKIT_GST_DISABLE_FAST_MALLOC");
+            if (!disableFastMalloc || !strcmp(disableFastMalloc, "0"))
+                gst_allocator_set_default(GST_ALLOCATOR(g_object_new(gst_allocator_fast_malloc_get_type(), nullptr)));
+        }
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
-    if (isGStreamerInitialized)
-        gst_mpegts_initialize();
+        if (isGStreamerInitialized)
+            gst_mpegts_initialize();
 #endif
 #endif
-
+    });
     return isGStreamerInitialized;
 }
 

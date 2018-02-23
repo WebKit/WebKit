@@ -1,3 +1,28 @@
+2018-02-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=173655
+        <rdar://problem/37706341>
+
+        Reviewed by Philippe Normand.
+
+        Do not assume gst is only used in the WebProcess, the MIMETypeRegistry also uses gst to get the list of
+        supported media types. Move the code to extract gst options from the process command line to a helper function
+        and use it in the UI process to pass the options to the WebProcess, but also in the current process when gst is
+        initialized without providing options.
+
+        Fixes several unit tests that use MIMETypeRegistry in the UI process.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::extractGStreamerOptionsFromCommandLine): Helper to get the gst options from the current process
+        command line.
+        (WebCore::initializeGStreamer): Ensure this is called once. Get the gst options from the given vector or extract
+        it from the command line if not provided.
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements): Bring back the gst
+        initialization here.
+
 2018-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] HTTP totalBytes query returns 0 after seeking (sometimes)

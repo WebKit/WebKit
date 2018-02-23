@@ -35,6 +35,7 @@
 #include "WebProcessMessages.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/GStreamerUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -92,10 +93,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.proxySettings = m_networkProxySettings;
 
 #if USE(GSTREAMER)
-    GUniqueOutPtr<gchar> contents;
-    gsize length;
-    if (g_file_get_contents("/proc/self/cmdline", &contents.outPtr(), &length, nullptr))
-        parameters.gstreamerOptions.append(String::fromUTF8(contents.get()));
+    parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif
 }
 

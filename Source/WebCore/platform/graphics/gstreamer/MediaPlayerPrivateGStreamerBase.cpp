@@ -139,6 +139,9 @@ void registerWebKitGStreamerElements()
 
 bool MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements()
 {
+    if (!initializeGStreamer())
+        return false;
+
     registerWebKitGStreamerElements();
 
     GRefPtr<GstElementFactory> srcFactory = adoptGRef(gst_element_factory_find("webkitwebsrc"));

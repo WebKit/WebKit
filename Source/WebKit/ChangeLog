@@ -1,3 +1,23 @@
+2018-02-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=173655
+        <rdar://problem/37706341>
+
+        Reviewed by Philippe Normand.
+
+        Actually pass the gst command line options to the WebProcess. The options in /proc/self/cmdline are separated by
+        null characters, so we are effectively passing always the first option only, which is the program name. Then, in
+        the web process we always ignore the first option and providing WebProcess unconditionally, so we were doing
+        nothing.
+
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Use WebCore::extractGStreamerOptionsFromCommandLine()
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Move the vector.
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove currentTime() / currentTimeMS()

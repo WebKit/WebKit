@@ -53,7 +53,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     m_waylandCompositorDisplay = WaylandCompositorDisplay::create(parameters.waylandCompositorDisplayName);
 #endif
 #if USE(GSTREAMER)
-    WebCore::initializeGStreamer(parameters.gstreamerOptions);
+    WebCore::initializeGStreamer(WTFMove(parameters.gstreamerOptions));
 #endif
 }
 

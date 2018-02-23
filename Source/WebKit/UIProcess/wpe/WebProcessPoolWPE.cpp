@@ -36,6 +36,7 @@
 #include "WebProcessMessages.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/GStreamerUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <cstdlib>
@@ -92,6 +93,10 @@ WTF::String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
+#if USE(GSTREAMER)
+    parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
+#endif
+
 }
 
 void WebProcessPool::platformInvalidateContext()
