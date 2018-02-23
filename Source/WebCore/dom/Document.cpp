@@ -6306,18 +6306,16 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0_s);
 }
 
-void Document::setFullScreenRenderer(RenderTreeBuilder& builder, RenderFullScreen* renderer)
+void Document::setFullScreenRenderer(RenderTreeBuilder& builder, RenderFullScreen& renderer)
 {
-    if (renderer == m_fullScreenRenderer)
+    if (&renderer == m_fullScreenRenderer)
         return;
 
-    if (renderer) {
-        if (m_savedPlaceholderRenderStyle)
-            renderer->createPlaceholder(WTFMove(m_savedPlaceholderRenderStyle), m_savedPlaceholderFrameRect);
-        else if (m_fullScreenRenderer && m_fullScreenRenderer->placeholder()) {
-            auto* placeholder = m_fullScreenRenderer->placeholder();
-            renderer->createPlaceholder(RenderStyle::clonePtr(placeholder->style()), placeholder->frameRect());
-        }
+    if (m_savedPlaceholderRenderStyle)
+        builder.createPlaceholderForFullScreen(renderer, WTFMove(m_savedPlaceholderRenderStyle), m_savedPlaceholderFrameRect);
+    else if (m_fullScreenRenderer && m_fullScreenRenderer->placeholder()) {
+        auto* placeholder = m_fullScreenRenderer->placeholder();
+        builder.createPlaceholderForFullScreen(renderer, RenderStyle::clonePtr(placeholder->style()), placeholder->frameRect());
     }
 
     if (m_fullScreenRenderer)

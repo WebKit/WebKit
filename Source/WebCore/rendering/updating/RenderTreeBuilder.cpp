@@ -358,6 +358,13 @@ void RenderTreeBuilder::attach(RenderTreePosition& position, RenderPtr<RenderObj
     attach(position.parent(), WTFMove(child), position.nextSibling());
 }
 
+#if ENABLE(FULLSCREEN_API)
+void RenderTreeBuilder::createPlaceholderForFullScreen(RenderFullScreen& renderer, std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
+{
+    fullScreenBuilder().createPlaceholder(renderer, WTFMove(style), frameRect);
+}
+#endif
+
 void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (tableBuilder().childRequiresTable(parent, *child)) {

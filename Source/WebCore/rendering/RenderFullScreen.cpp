@@ -38,17 +38,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFullScreen);
 
-class RenderFullScreenPlaceholder final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderFullScreenPlaceholder);
-public:
-    RenderFullScreenPlaceholder(Document& document, RenderStyle&& style)
-        : RenderBlockFlow(document, WTFMove(style))
-    {
-    }
+RenderFullScreenPlaceholder::RenderFullScreenPlaceholder(Document& document, RenderStyle&& style)
+    : RenderBlockFlow(document, WTFMove(style))
+{
+}
 
-private:
-    bool isRenderFullScreenPlaceholder() const override { return true; }
-};
+bool RenderFullScreenPlaceholder::isRenderFullScreenPlaceholder() const
+{
+    return true;
+}
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFullScreenPlaceholder);
 
@@ -101,7 +99,7 @@ RenderPtr<RenderFullScreen> RenderFullScreen::wrapNewRenderer(RenderTreeBuilder&
     builder.attach(fullscreenRenderer, WTFMove(renderer));
     fullscreenRenderer.setNeedsLayoutAndPrefWidthsRecalc();
 
-    document.setFullScreenRenderer(builder, &fullscreenRenderer);
+    document.setFullScreenRenderer(builder, fullscreenRenderer);
 
     return newFullscreenRenderer;
 }
@@ -138,7 +136,7 @@ void RenderFullScreen::wrapExistingRenderer(RenderElement& renderer, Document& d
     builder.attach(fullscreenRenderer, WTFMove(toMove));
     fullscreenRenderer.setNeedsLayoutAndPrefWidthsRecalc();
 
-    document.setFullScreenRenderer(builder, &fullscreenRenderer);
+    document.setFullScreenRenderer(builder, fullscreenRenderer);
 }
 
 void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
@@ -183,30 +181,6 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
     ASSERT(!placeholder());
 
     builder.destroy(*this);
-}
-
-void RenderFullScreen::createPlaceholder(std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
-{
-    if (style->width().isAuto())
-        style->setWidth(Length(frameRect.width(), Fixed));
-    if (style->height().isAuto())
-        style->setHeight(Length(frameRect.height(), Fixed));
-
-    if (m_placeholder) {
-        m_placeholder->setStyle(WTFMove(*style));
-        return;
-    }
-
-    if (!parent())
-        return;
-
-    auto newPlaceholder = createRenderer<RenderFullScreenPlaceholder>(document(), WTFMove(*style));
-    newPlaceholder->initializeStyle();
-
-    m_placeholder = makeWeakPtr(*newPlaceholder);
-
-    RenderTreeBuilder::current()->attach(*parent(), WTFMove(newPlaceholder), this);
-    parent()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 }

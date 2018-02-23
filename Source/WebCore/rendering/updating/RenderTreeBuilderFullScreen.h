@@ -38,6 +38,7 @@ class RenderTreeBuilder::FullScreen {
 public:
     FullScreen(RenderTreeBuilder&);
 
+    void createPlaceholder(RenderFullScreen&, std::unique_ptr<RenderStyle>, const LayoutRect&);
     void cleanupOnDestroy(RenderFullScreen&);
 
 private:
