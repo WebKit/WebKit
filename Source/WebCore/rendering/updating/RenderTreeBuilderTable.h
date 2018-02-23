@@ -37,6 +37,7 @@ class RenderTableRow;
 class RenderTreeBuilder;
 
 class RenderTreeBuilder::Table {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Table(RenderTreeBuilder&);
 

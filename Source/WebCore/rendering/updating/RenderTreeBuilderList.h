@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class RenderTreeBuilder::List {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     List(RenderTreeBuilder&);
 

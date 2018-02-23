@@ -35,6 +35,7 @@ class RenderSVGRoot;
 class RenderSVGText;
 
 class RenderTreeBuilder::SVG {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SVG(RenderTreeBuilder&);
 

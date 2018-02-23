@@ -32,6 +32,7 @@ namespace WebCore {
 class RenderElement;
 
 class RenderTreeBuilder::FirstLetter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FirstLetter(RenderTreeBuilder&);
 

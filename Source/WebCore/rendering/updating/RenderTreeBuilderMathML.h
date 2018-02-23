@@ -34,6 +34,7 @@ class RenderMathMLFenced;
 class RenderMathMLFencedOperator;
 
 class RenderTreeBuilder::MathML {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     MathML(RenderTreeBuilder&);
 
