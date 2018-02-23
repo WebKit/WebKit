@@ -37,12 +37,11 @@
 
 namespace WebCore {
 
-static const double capacityDecayTime = 5;
+static const Seconds capacityDecayTime { 5_s };
 
 LegacyTileLayerPool::LegacyTileLayerPool()
     : m_totalBytes(0)
     , m_capacity(0)
-    , m_lastAddTime(0)
     , m_needsPrune(false)
 {
 }
@@ -88,7 +87,7 @@ void LegacyTileLayerPool::addLayer(const RetainPtr<LegacyTileLayer>& layer)
     listOfLayersWithSize(layerSize).prepend(layer);
     m_totalBytes += bytesBackingLayerWithPixelSize(layerSize);
 
-    m_lastAddTime = currentTime();
+    m_lastAddTime = WallTime::now();
     schedulePrune();
 }
 
@@ -115,7 +114,7 @@ void LegacyTileLayerPool::setCapacity(unsigned capacity)
 unsigned LegacyTileLayerPool::decayedCapacity() const
 {
     // Decay to one quarter over capacityDecayTime
-    double timeSinceLastAdd = currentTime() - m_lastAddTime;
+    Seconds timeSinceLastAdd = WallTime::now() - m_lastAddTime;
     if (timeSinceLastAdd > capacityDecayTime)
         return m_capacity / 4;
     float decayProgess = float(timeSinceLastAdd / capacityDecayTime);
@@ -157,7 +156,7 @@ void LegacyTileLayerPool::prune()
         // still have a backing store.
         oldestReuseList.removeLast();
     }
-    if (currentTime() - m_lastAddTime <= capacityDecayTime)
+    if (WallTime::now() - m_lastAddTime <= capacityDecayTime)
         schedulePrune();
 }
 

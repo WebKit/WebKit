@@ -36,7 +36,7 @@
 #include <WebCore/NotImplemented.h>
 #include <string.h>
 #include <sys/sysinfo.h>
-#include <wtf/CurrentTime.h>
+#include <wtf/WallTime.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
 
@@ -95,9 +95,9 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
 {
     WebMemoryStatistics webKitMemoryStats;
 
-    double now = currentTime();
+    WallTime now = WallTime::now();
 
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Timestamp"), now);
+    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Timestamp"), now.secondsSinceEpoch().seconds());
 
     ProcessMemoryStatus processMemoryStatus;
     currentProcessMemoryStatus(processMemoryStatus);

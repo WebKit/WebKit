@@ -335,7 +335,7 @@ void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
     webPage->send(Messages::WebPageProxy::DidCancelClientRedirectForFrame(m_frame->frameID()));
 }
 
-void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url, double interval, double fireDate)
+void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url, double interval, WallTime fireDate)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

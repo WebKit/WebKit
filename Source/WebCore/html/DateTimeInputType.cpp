@@ -58,7 +58,7 @@ DateComponents::Type DateTimeInputType::dateType() const
 
 Decimal DateTimeInputType::defaultValueForStepUp() const
 {
-    return Decimal::fromDouble(currentTimeMS());
+    return Decimal::fromDouble(WallTime::now().secondsSinceEpoch().milliseconds());
 }
 
 StepRange DateTimeInputType::createStepRange(AnyStepHandling anyStepHandling) const

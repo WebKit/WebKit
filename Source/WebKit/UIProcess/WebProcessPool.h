@@ -314,7 +314,7 @@ public:
     Ref<API::Dictionary> plugInAutoStartOriginHashes() const;
     void setPlugInAutoStartOriginHashes(API::Dictionary&);
     void setPlugInAutoStartOrigins(API::Array&);
-    void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, double time);
+    void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, WallTime);
 
     // Network Process Management
     NetworkProcessProxy& ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore = nullptr);

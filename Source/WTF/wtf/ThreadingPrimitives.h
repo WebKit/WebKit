@@ -34,6 +34,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WallTime.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -100,8 +101,7 @@ public:
     
     WTF_EXPORT_PRIVATE void wait(Mutex& mutex);
     // Returns true if the condition was signaled before absoluteTime, false if the absoluteTime was reached or is in the past.
-    // The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the same time zone as WTF::currentTime().
-    WTF_EXPORT_PRIVATE bool timedWait(Mutex&, double absoluteTime);
+    WTF_EXPORT_PRIVATE bool timedWait(Mutex&, WallTime absoluteTime);
     WTF_EXPORT_PRIVATE void signal();
     WTF_EXPORT_PRIVATE void broadcast();
     
@@ -110,9 +110,8 @@ private:
 };
 
 #if OS(WINDOWS)
-// The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the same time zone as WTF::currentTime().
 // Returns an interval in milliseconds suitable for passing to one of the Win32 wait functions (e.g., ::WaitForSingleObject).
-WTF_EXPORT_PRIVATE DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime);
+WTF_EXPORT_PRIVATE DWORD absoluteTimeToWaitTimeoutInterval(WallTime absoluteTime);
 #endif
 
 } // namespace WTF

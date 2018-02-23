@@ -283,12 +283,12 @@ void InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame(WebPage& pa
     m_client.didCancelClientRedirectForFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage& page, WebFrame& frame, const String& url, double delay, double date)
+void InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame(WebPage& page, WebFrame& frame, const String& url, double delay, WallTime date)
 {
     if (!m_client.willPerformClientRedirectForFrame)
         return;
 
-    m_client.willPerformClientRedirectForFrame(toAPI(&page), toAPI(&frame), toURLRef(url.impl()), delay, date, m_client.base.clientInfo);
+    m_client.willPerformClientRedirectForFrame(toAPI(&page), toAPI(&frame), toURLRef(url.impl()), delay, date.secondsSinceEpoch().seconds(), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage& page, WebFrame& frame)

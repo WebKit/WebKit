@@ -29,7 +29,7 @@
 #include <WebKit/WKGeolocationManager.h>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
+#include <wtf/WallTime.h>
 
 namespace WTR {
 
@@ -65,7 +65,7 @@ GeolocationProviderMock::~GeolocationProviderMock()
 
 void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
 {
-    m_position.adopt(WKGeolocationPositionCreate_c(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed, providesFloorLevel, floorLevel));
+    m_position.adopt(WKGeolocationPositionCreate_c(WallTime::now().secondsSinceEpoch().seconds(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed, providesFloorLevel, floorLevel));
 
     m_hasError = false;
     m_errorMessage.clear();

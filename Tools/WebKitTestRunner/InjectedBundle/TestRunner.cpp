@@ -788,7 +788,7 @@ void TestRunner::setCookieStoragePartitioningEnabled(bool enabled)
 
 double TestRunner::preciseTime()
 {
-    return currentTime();
+    return WallTime::now().secondsSinceEpoch().seconds();
 }
 
 void TestRunner::setUserStyleSheetEnabled(bool enabled)

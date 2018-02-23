@@ -49,7 +49,7 @@
 #include "HTMLParserIdioms.h"
 #include "ScriptDisallowedScope.h"
 #include "TextEncoding.h"
-#include <wtf/CurrentTime.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -59,7 +59,7 @@ static int64_t generateFormDataIdentifier()
 {
     // Initialize to the current time to reduce the likelihood of generating
     // identifiers that overlap with those from past/future browser sessions.
-    static int64_t nextIdentifier = static_cast<int64_t>(currentTime() * 1000000.0);
+    static int64_t nextIdentifier = static_cast<int64_t>(WallTime::now().secondsSinceEpoch().microseconds());
     return ++nextIdentifier;
 }
 

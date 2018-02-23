@@ -47,6 +47,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -268,7 +269,7 @@ public:
 
     void completed();
     bool allAncestorsAreComplete() const; // including this
-    void clientRedirected(const URL&, double delay, double fireDate, LockBackForwardList);
+    void clientRedirected(const URL&, double delay, WallTime fireDate, LockBackForwardList);
     void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
 
     WEBCORE_EXPORT void setOriginalURLForDownloadRequest(ResourceRequest&);

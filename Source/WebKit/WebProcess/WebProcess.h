@@ -280,9 +280,9 @@ private:
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
     bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash, PAL::SessionID);
-    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, PAL::SessionID);
-    void resetPlugInAutoStartOriginDefaultHashes(const HashMap<unsigned, double>& hashes);
-    void resetPlugInAutoStartOriginHashes(const HashMap<PAL::SessionID, HashMap<unsigned, double>>& hashes);
+    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, WallTime expirationTime, PAL::SessionID);
+    void resetPlugInAutoStartOriginDefaultHashes(const HashMap<unsigned, WallTime>& hashes);
+    void resetPlugInAutoStartOriginHashes(const HashMap<PAL::SessionID, HashMap<unsigned, WallTime>>& hashes);
 
     void platformSetCacheModel(CacheModel);
 
@@ -386,7 +386,7 @@ private:
 #endif
     RefPtr<WebInspectorInterruptDispatcher> m_webInspectorInterruptDispatcher;
 
-    HashMap<PAL::SessionID, HashMap<unsigned, double>> m_plugInAutoStartOriginHashes;
+    HashMap<PAL::SessionID, HashMap<unsigned, WallTime>> m_plugInAutoStartOriginHashes;
     HashSet<String> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel { false };

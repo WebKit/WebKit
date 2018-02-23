@@ -161,7 +161,7 @@ struct WebProcessCreationParameters {
     HashMap<String, bool> notificationPermissions;
 #endif
 
-    HashMap<PAL::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
+    HashMap<PAL::SessionID, HashMap<unsigned, WallTime>> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

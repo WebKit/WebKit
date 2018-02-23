@@ -354,12 +354,12 @@ void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
         frameLoadDelegate->didCancelClientRedirectForFrame(webView, m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url, double delay, double fireDate)
+void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url, double delay, WallTime fireDate)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
     if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->willPerformClientRedirectToURL(webView, BString(url.string()), delay, MarshallingHelpers::CFAbsoluteTimeToDATE(fireDate), m_webFrame);
+        frameLoadDelegate->willPerformClientRedirectToURL(webView, BString(url.string()), delay, MarshallingHelpers::CFAbsoluteTimeToDATE(fireDate.secondsSinceEpoch().seconds()), m_webFrame);
 }
 
 void WebFrameLoaderClient::dispatchDidChangeLocationWithinPage()

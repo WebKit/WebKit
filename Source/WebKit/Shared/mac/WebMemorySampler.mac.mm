@@ -37,7 +37,7 @@
 #import <mach/task.h>
 #import <malloc/malloc.h>
 #import <notify.h>
-#import <wtf/CurrentTime.h>
+#import <wtf/WallTime.h>
 
 using namespace WebCore;
 using namespace JSC;
@@ -140,10 +140,10 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     
     size_t residentSize = sampleProcessCommittedBytes();
 
-    double now = currentTime();
+    WallTime now = WallTime::now();
         
     webKitMemoryStats.keys.append(String("Timestamp"));
-    webKitMemoryStats.values.append(now);
+    webKitMemoryStats.values.append(now.secondsSinceEpoch().seconds());
     webKitMemoryStats.keys.append(String("Total Bytes of Memory In Use"));
     webKitMemoryStats.values.append(totalBytesInUse);
     webKitMemoryStats.keys.append(String("Fast Malloc Zone Bytes"));

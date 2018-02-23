@@ -39,6 +39,7 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <sys/time.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 

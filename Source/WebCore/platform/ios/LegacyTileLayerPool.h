@@ -77,7 +77,7 @@ private:
     unsigned m_capacity;
     Lock m_layerPoolMutex;
 
-    double m_lastAddTime;
+    WallTime m_lastAddTime;
     bool m_needsPrune;
 
     friend NeverDestroyed<LegacyTileLayerPool>;

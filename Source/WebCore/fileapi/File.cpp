@@ -81,7 +81,7 @@ static BlobPropertyBag convertPropertyBag(const File::PropertyBag& initialBag)
 File::File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
     : Blob(WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
     , m_name(filename)
-    , m_overrideLastModifiedDate(propertyBag.lastModified.value_or(currentTimeMS()))
+    , m_overrideLastModifiedDate(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
 {
 }
 
@@ -116,7 +116,7 @@ double File::lastModified() const
     if (FileSystem::getFileModificationTime(m_path, modificationTime) && FileSystem::isValidFileTime(modificationTime))
         result = modificationTime * msPerSecond;
     else
-        result = currentTime() * msPerSecond;
+        result = WallTime::now().secondsSinceEpoch().milliseconds();
 
     return WTF::timeClip(result);
 }

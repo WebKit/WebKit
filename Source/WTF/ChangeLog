@@ -1,5 +1,37 @@
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Remove currentTime() / currentTimeMS()
+        https://bugs.webkit.org/show_bug.cgi?id=183052
+
+        Reviewed by Mark Lam.
+
+        This patch removes WTF::currentTime() and WTF::currentTimeMS().
+        We have fancy WallTime APIs. It has strong types like WallTime and Seconds,
+        and this reduces the chance of bugs mixing doubles which represent milliseconds
+        and seconds.
+
+        * wtf/Condition.h:
+        * wtf/CurrentTime.cpp:
+        (WTF::currentTime):
+        (WTF::WallTime::now):
+        * wtf/CurrentTime.h:
+        (WTF::currentTimeMS): Deleted.
+        * wtf/DateMath.h:
+        (WTF::jsCurrentTime):
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionallyImpl):
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::ThreadCondition::timedWait):
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadCondition::timedWait):
+        (WTF::absoluteTimeToWaitTimeoutInterval):
+        * wtf/WallTime.cpp:
+        (WTF::WallTime::now): Deleted.
+        * wtf/WallTime.h:
+
+2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Remove sleep(double) and sleepMS(double) interfaces
         https://bugs.webkit.org/show_bug.cgi?id=183038
 

@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <wtf/Condition.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/ThreadGroup.h>
 #include <wtf/Vector.h>
 

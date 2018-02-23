@@ -73,7 +73,7 @@ public:
 
     void didClearWindowObjectForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;
     void didCancelClientRedirectForFrame(WebPage&, WebFrame&) override;
-    void willPerformClientRedirectForFrame(WebPage&, WebFrame&, const WTF::String&, double /*delay*/, double /*date*/) override;
+    void willPerformClientRedirectForFrame(WebPage&, WebFrame&, const WTF::String&, double /*delay*/, WallTime /*date*/) override;
     void didHandleOnloadEventsForFrame(WebPage&, WebFrame&) override;
 
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&) override;

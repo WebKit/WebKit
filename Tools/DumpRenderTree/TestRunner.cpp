@@ -48,12 +48,12 @@
 #include <locale.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
@@ -1768,7 +1768,7 @@ static JSValueRef setBackingScaleFactorCallback(JSContextRef context, JSObjectRe
 
 static JSValueRef preciseTimeCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    return JSValueMakeNumber(context, WTF::currentTime());
+    return JSValueMakeNumber(context, WallTime::now().secondsSinceEpoch().seconds());
 }
 
 static JSValueRef imageCountInGeneralPasteboardCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

@@ -1,3 +1,58 @@
+2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove currentTime() / currentTimeMS()
+        https://bugs.webkit.org/show_bug.cgi?id=183052
+
+        Reviewed by Mark Lam.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::haveSuitableCachedPosition):
+        * dom/DOMTimeStamp.h:
+        (WebCore::convertSecondsToDOMTimeStamp):
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::lastModified const):
+        * history/HistoryItem.cpp:
+        (WebCore::generateSequenceNumber):
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::defaultValueForStepUp const):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::defaultValueForStepUp const):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::defaultValueForStepUp const):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::defaultValueForStepUp const):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        (WebCore::InspectorNetworkAgent::willSendWebSocketHandshakeRequest):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FormSubmission.cpp:
+        (WebCore::generateFormDataIdentifier):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clientRedirected):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/NavigationScheduler.cpp:
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/History.h:
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::startFadeAnimation):
+        (WebCore::PageOverlay::fadeAnimationTimerFired):
+        * page/PageOverlay.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/ios/LegacyTileLayerPool.h:
+        * platform/ios/LegacyTileLayerPool.mm:
+        (WebCore::LegacyTileLayerPool::LegacyTileLayerPool):
+        (WebCore::LegacyTileLayerPool::addLayer):
+        (WebCore::LegacyTileLayerPool::decayedCapacity const):
+        (WebCore::LegacyTileLayerPool::prune):
+        * platform/ios/SystemMemoryIOS.cpp:
+        (WebCore::systemMemoryLevel):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+
 2018-02-22  Per Arne Vollan  <pvollan@apple.com>
 
         The WebContent process should not use NSScreen in the screenDepth implementation.

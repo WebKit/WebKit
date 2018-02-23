@@ -35,6 +35,7 @@
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
+#include <wtf/CurrentTime.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>

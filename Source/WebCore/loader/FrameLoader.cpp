@@ -2075,7 +2075,7 @@ void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgres
     m_sentRedirectNotification = false;
 }
 
-void FrameLoader::clientRedirected(const URL& url, double seconds, double fireDate, LockBackForwardList lockBackForwardList)
+void FrameLoader::clientRedirected(const URL& url, double seconds, WallTime fireDate, LockBackForwardList lockBackForwardList)
 {
     m_client.dispatchWillPerformClientRedirect(url, seconds, fireDate);
     

@@ -38,6 +38,7 @@
 #include "PluginProcessConnectionMessages.h"
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/SetForScope.h>
 
 #if !OS(WINDOWS)

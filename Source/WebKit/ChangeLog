@@ -1,3 +1,59 @@
+2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove currentTime() / currentTimeMS()
+        https://bugs.webkit.org/show_bug.cgi?id=183052
+
+        Reviewed by Mark Lam.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        * PluginProcess/WebProcessConnection.cpp:
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::WebMemorySampler::sampleWebKit const):
+        * Shared/mac/WebMemorySampler.mac.mm:
+        (WebKit::WebMemorySampler::sampleWebKit const):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::setIconDataForIconURL):
+        (WebKit::IconDatabase::synchronousLoadDecisionForIconURL):
+        (WebKit::IconDatabase::performURLImport):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::expirationTimeFromNow):
+        (WebKit::PlugInAutoStartProvider::addAutoStartOriginHash):
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsTableCopy const):
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTable):
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest):
+        (WebKit::PlugInAutoStartProvider::didReceiveUserInteraction):
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        (WebKit::WebProcessPool::startMemorySampler):
+        (WebKit::WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::willPerformClientRedirectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_webSQLiteDatabaseTracker):
+        (WebKit::WebProcess::isPlugInAutoStartOriginHash):
+        (WebKit::WebProcess::plugInDidStartFromOrigin):
+        (WebKit::WebProcess::didAddPlugInAutoStartOriginHash):
+        (WebKit::WebProcess::resetPlugInAutoStartOriginDefaultHashes):
+        (WebKit::WebProcess::resetPlugInAutoStartOriginHashes):
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+
 2018-02-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r228349): ImageBitmap builtin is now runtime guarded

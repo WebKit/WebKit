@@ -1,3 +1,19 @@
+2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove currentTime() / currentTimeMS()
+        https://bugs.webkit.org/show_bug.cgi?id=183052
+
+        Reviewed by Mark Lam.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebDownload.h:
+        * WebDownloadCFNet.cpp:
+        (WebDownload::didStart):
+        (WebDownload::didReceiveData):
+        (WebDownload::didFinish):
+
 2018-02-21  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use cmakeconfig.h rather than config.h and Platform.h

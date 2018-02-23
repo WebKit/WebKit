@@ -33,6 +33,7 @@
 #include <glib.h>
 #include <iostream>
 #include <libsoup/soup.h>
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 

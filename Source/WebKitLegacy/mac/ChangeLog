@@ -1,3 +1,14 @@
+2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove currentTime() / currentTimeMS()
+        https://bugs.webkit.org/show_bug.cgi?id=183052
+
+        Reviewed by Mark Lam.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+
 2018-02-16  Youenn Fablet  <youenn@apple.com>
 
         Allow specifying which plug-ins are supported
