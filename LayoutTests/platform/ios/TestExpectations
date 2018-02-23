@@ -3200,6 +3200,7 @@ media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ S
 media/modern-media-controls/seek-backward-support [ Skip ]
 media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
+media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
 media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
 media/modern-media-controls/volume-down-support [ Skip ]
 media/modern-media-controls/volume-up-support [ Skip ]

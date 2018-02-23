@@ -1,3 +1,36 @@
+2018-02-22  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r228445): A big pause button shows over YouTube videos if you tap "Tap To Unmute" on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183074
+        <rdar://problem/37747028>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html
+
+        In the fix for webkit.org/b/182668, we made it so that when the "controls" attribute is absent from a media
+        element we stop listening to the bulk of media events and prevent controls from updating any DOM properties
+        so as to minimize the amount of CPU usage by the Web process.
+
+        An unfortunate side effect was that, if the media controls were disabled at the time the video starts playing,
+        the StartSupport class would thus not catch the "play" event and would not be able to set the "hasPlayed"
+        property to "true" on the MediaController, which would then prevent the _shouldShowStartButton() from returning
+        "false". As a result, if the "controls" attribute was turned back on after the media started playing, they
+        would default to showing the start button, which would be then in the play state, ie. showing the pause icon.
+
+        We now set the "hasPlayed" property in the "play" event handler on MediaController, which is always registered
+        regardless of the "controls" attribute setting. We also ensure we invalidate the "showStartButton" property on
+        the media controls when StartSupport is enabled, which is the case when the "controls" attribute is toggled back
+        to "true" from a previous "false" value.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.handleEvent):
+        * Modules/modern-media-controls/media/start-support.js:
+        (StartSupport):
+        (StartSupport.prototype.enable):
+        (StartSupport.prototype.handleEvent):
+        (StartSupport.prototype._updateShowsStartButton):
+
 2018-02-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer][MiniBrowser] Honor GStreamer command line parameters in MiniBrowser

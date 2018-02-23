@@ -169,6 +169,8 @@ class MediaController
             // We must immediately perform layouts so that we don't lag behind the media layout size.
             scheduler.flushScheduledLayoutCallbacks();
         } else if (event.currentTarget === this.media) {
+            if (event.type === "play")
+                this.hasPlayed = true;
             this._updateControlsIfNeeded();
             this._updateControlsAvailability();
             if (event.type === "webkitpresentationmodechanged")

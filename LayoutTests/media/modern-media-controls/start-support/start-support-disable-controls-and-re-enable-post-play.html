@@ -1,0 +1,52 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>StartSupport</code> behavior when the media starts playing while controls are disabled and controls become active post-play.");
+
+const shadowRoot = document.querySelector("div#shadow");
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+media.addEventListener("createTouch" in document ? "touchstart" : "click", event => {
+    try {
+        media.play();
+    } catch(e) {
+        debug("Calling media.play() failed");
+        finishJSTest();
+    }
+});
+
+media.addEventListener("play", () => {
+    debug("");
+    debug("Obtained the 'play' event.");
+    shouldBeTrue("mediaController.controls.showsStartButton");
+
+    debug("");
+    debug("Turning controls back on.");
+    media.controls = true;
+    shouldBecomeEqual("mediaController.controls.showsStartButton", "false", () => {
+        debug("");
+        shadowRoot.remove();
+        media.remove();
+        finishJSTest();
+    });
+}, { once: true });
+
+media.addEventListener("canplay", () => {
+    debug("Starting the video.");
+    pressOnElement(media);
+}, { once: true });
+
+debug("Disabling controls.");
+media.controls = false;
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,3 +1,19 @@
+2018-02-22  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r228445): A big pause button shows over YouTube videos if you tap "Tap To Unmute" on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183074
+        <rdar://problem/37747028>
+
+        Reviewed by Eric Carlson.
+
+        Add a new test that set controls on the video, then immediately removes them, plays the video and turns the controls
+        back on as soon as the video starts to check that the "showsStartButton" property is false on the media controls.
+        Prior to this patch this test would fail.
+
+        * media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-02-22  Youenn Fablet  <youenn@apple.com>
 
         CacheStorage::Engine::Caches::writeRecord is not always calling the completion handler
