@@ -1,5 +1,5 @@
 function foo() {
-    var value = bar(DFGTrue());
+    var value = bar($vm.dfgTrue());
     fiatInt52(value);
     fiatInt52(value);
 }

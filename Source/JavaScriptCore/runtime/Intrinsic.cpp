@@ -213,6 +213,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "UnderscoreProtoIntrinsic";
     case DFGTrueIntrinsic:
         return "DFGTrueIntrinsic";
+    case FTLTrueIntrinsic:
+        return "FTLTrueIntrinsic";
     case OSRExitIntrinsic:
         return "OSRExitIntrinsic";
     case IsFinalTierIntrinsic:

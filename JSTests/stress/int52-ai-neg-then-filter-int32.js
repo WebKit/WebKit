@@ -1,6 +1,6 @@
 function foo(a, b) {
     var o = {f:42};
-    if (DFGTrue())
+    if ($vm.dfgTrue())
         o.f = -(a + b);
     return o.f | 0;
 }

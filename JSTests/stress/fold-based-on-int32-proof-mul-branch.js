@@ -1,8 +1,8 @@
 function foo(a, b) {
-    var value = DFGTrue() ? -0 : "foo";
+    var value = $vm.dfgTrue() ? -0 : "foo";
     if (a * b == value)
-        return [DFGTrue(), true];
-    return [DFGTrue(), false];
+        return [$vm.dfgTrue(), true];
+    return [$vm.dfgTrue(), false];
 }
 noInline(foo);
 

@@ -1,6 +1,6 @@
 function foo(a, i, p) {
-    if (p || !DFGTrue())
-        return [DFGTrue(), a[(i - (DFGTrue() ? 2147483646 : 0)) | 0], a[i], a[(i + (DFGTrue() ? 2147483646 : 0)) | 0], DFGTrue()];
+    if (p || !$vm.dfgTrue())
+        return [$vm.dfgTrue(), a[(i - ($vm.dfgTrue() ? 2147483646 : 0)) | 0], a[i], a[(i + ($vm.dfgTrue() ? 2147483646 : 0)) | 0], $vm.dfgTrue()];
     return [12];
 }
 

@@ -11,7 +11,7 @@ noInline(getX);
 
 function foo(index) {
     var result = false;
-    var x = getX(DFGTrue());
+    var x = getX($vm.dfgTrue());
 
     x * 2;
 

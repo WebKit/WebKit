@@ -1,5 +1,5 @@
 function foo(a, b) {
-    if (DFGTrue())
+    if ($vm.dfgTrue())
         a = b = 2000000000;
     var c = a + b;
     if (isFinalTier())

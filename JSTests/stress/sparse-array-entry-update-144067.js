@@ -36,7 +36,7 @@ for (var i = 0; i < 5; i++)
 
 function useMemoryToTriggerGCs() {
     var arr = [];
-    var limit = DFGTrue() ? 10000 : 100;
+    var limit = $vm.dfgTrue() ? 10000 : 100;
     for (var i = 0; i < limit; i++)
         arr[i] = { a: "using" + i, b: "up" + i, c: "memory" + i };
     return arr;

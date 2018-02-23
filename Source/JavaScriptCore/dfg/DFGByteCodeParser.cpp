@@ -2779,6 +2779,12 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         set(VirtualRegister(resultOperand), jsConstant(jsBoolean(true)));
         return true;
     }
+
+    case FTLTrueIntrinsic: {
+        insertChecks();
+        set(VirtualRegister(resultOperand), jsConstant(jsBoolean(isFTL(m_graph.m_plan.mode))));
+        return true;
+    }
         
     case OSRExitIntrinsic: {
         insertChecks();

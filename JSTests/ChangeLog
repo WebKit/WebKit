@@ -1,3 +1,69 @@
+2018-02-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement $vm.ftlTrue function for FTL testing
+        https://bugs.webkit.org/show_bug.cgi?id=183071
+
+        Reviewed by Mark Lam.
+
+        * stress/dead-fiat-value-to-int52-then-exit-not-double.js:
+        (foo):
+        * stress/dead-fiat-value-to-int52-then-exit-not-int52.js:
+        (foo):
+        * stress/dead-fiat-value-to-int52.js:
+        (foo):
+        * stress/dead-osr-entry-value.js:
+        (foo):
+        * stress/fiat-value-to-int52-then-exit-not-double.js:
+        (foo):
+        * stress/fiat-value-to-int52-then-exit-not-int52.js:
+        (foo):
+        * stress/fiat-value-to-int52-then-fail-to-fold.js:
+        (foo):
+        * stress/fiat-value-to-int52-then-fold.js:
+        (foo):
+        * stress/fiat-value-to-int52.js:
+        (foo):
+        * stress/fold-based-on-int32-proof-mul-branch.js:
+        (foo):
+        * stress/fold-profiled-call-to-call.js:
+        (foo):
+        * stress/fold-to-double-constant-then-exit.js:
+        (foo):
+        * stress/fold-to-int52-constant-then-exit.js:
+        (foo):
+        * stress/fold-to-primitive-in-cfa.js:
+        (foo):
+        * stress/fold-to-primitive-to-identity-in-cfa.js:
+        (foo):
+        * stress/has-indexed-property-array-storage-ftl.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        * stress/has-indexed-property-slow-put-array-storage-ftl.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        * stress/int52-ai-add-then-filter-int32.js:
+        (foo):
+        * stress/int52-ai-mul-and-clean-neg-zero-then-filter-int32.js:
+        (foo):
+        * stress/int52-ai-mul-then-filter-int32.js:
+        (foo):
+        * stress/int52-ai-neg-then-filter-int32.js:
+        (foo):
+        * stress/int52-ai-sub-then-filter-int32.js:
+        (foo):
+        * stress/licm-pre-header-cannot-exit-nested.js:
+        (foo):
+        * stress/licm-pre-header-cannot-exit.js:
+        (foo):
+        * stress/sparse-array-entry-update-144067.js:
+        (useMemoryToTriggerGCs):
+        * stress/test-spec-misc.js:
+        (foo):
+        * stress/tricky-array-bounds-checks.js:
+        (foo):
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Support HasIndexedProperty for ArrayStorage and SlowPutArrayStorage
