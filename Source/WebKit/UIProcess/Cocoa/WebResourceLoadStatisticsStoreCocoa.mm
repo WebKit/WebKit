@@ -48,6 +48,8 @@ void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
         Seconds grandfatheringTime([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsGrandfatheringTime"]);
         if (grandfatheringTime > 0_s && grandfatheringTime <= 24_h * 7)
             setGrandfatheringTime(grandfatheringTime);
+
+        setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
     });
 }
 

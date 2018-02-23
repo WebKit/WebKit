@@ -1,3 +1,14 @@
+2018-02-23  John Wilander  <wilander@apple.com>
+
+        Introduce ITP debug logging as an opt-in developer feature
+        https://bugs.webkit.org/show_bug.cgi?id=183065
+        <rdar://problem/37803761>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Assertions.h:
+            Introduces RELEASE_LOG_INFO() and RELEASE_LOG_INFO_IF().
+
 2018-02-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         warning: unused variable 'InitialBufferSize' in Assertions.cpp

@@ -1,3 +1,29 @@
+2018-02-23  John Wilander  <wilander@apple.com>
+
+        Introduce ITP debug logging as an opt-in developer feature
+        https://bugs.webkit.org/show_bug.cgi?id=183065
+        <rdar://problem/37803761>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/Logging.h:
+            Added a dedicated channel for Resource Load Statistics debug logging
+            since this will be part of a developer-facing feature and should not
+            be mixed with general Resource Load Statistics logging.
+        * UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm:
+        (WebKit::WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded):
+            Now picks up the user default setting for
+            ResourceLoadStatisticsDebugLoggingEnabled.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Now logs for which domains it purges website data if
+            ResourceLoadStatisticsDebugLoggingEnabled is set.
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning):
+            Now logs for which domains it partitions and blocks cookies
+            in third-party contexts if ResourceLoadStatisticsDebugLoggingEnabled
+            is set.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-02-23  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Correct sandbox violation during media playback

@@ -456,9 +456,11 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #else
 #define RELEASE_LOG(      channel, format, ...) os_log(      LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR(channel, format, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
+#define RELEASE_LOG_INFO(channel, format, ...) os_log_info(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
 
 #define RELEASE_LOG_IF(      isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG(      channel, format, ##__VA_ARGS__); } while (0)
 #define RELEASE_LOG_ERROR_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG_INFO_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_INFO(channel, format, ##__VA_ARGS__); } while (0)
 
 #define RELEASE_LOG_WITH_LEVEL(channel, logLevel, format, ...) do { \
     if (LOG_CHANNEL(channel).level >= (logLevel)) \

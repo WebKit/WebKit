@@ -176,6 +176,8 @@ private:
 
     void resetCookiePartitioningState();
 
+    void setDebugLogggingEnabled(bool enabled) { m_debugLoggingEnabled  = enabled; }
+
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
 #endif
@@ -219,6 +221,8 @@ private:
     HashSet<uint64_t> m_activePluginTokens;
 #endif
     bool m_dataRecordsBeingRemoved { false };
+
+    bool m_debugLoggingEnabled { false };
 
     Function<void (const String&)> m_statisticsTestingCallback;
 };

@@ -64,6 +64,7 @@ extern "C" {
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \
+    M(ResourceLoadStatisticsDebug) \
     M(Selection) \
     M(ServiceWorker) \
     M(SessionState) \
