@@ -237,6 +237,7 @@ inline CapabilityLevel canCompile(Node* node)
     case BooleanToNumber:
     case HasGenericProperty:
     case HasStructureProperty:
+    case HasIndexedProperty:
     case GetDirectPname:
     case GetEnumerableLength:
     case GetIndexedPropertyStorage:
@@ -385,17 +386,6 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
-        }
-        break;
-    case HasIndexedProperty:
-        switch (node->arrayMode().type()) {
-        case Array::ForceExit:
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-            break;
-        default:
-            return CannotCompile;
         }
         break;
     case GetByVal:

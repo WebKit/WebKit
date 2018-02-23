@@ -9839,19 +9839,20 @@ private:
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
-            LBasicBlock checkHole = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock lastNext = nullptr;
 
             if (!m_node->arrayMode().isInBounds()) {
+                LBasicBlock checkHole = m_out.newBlock();
                 m_out.branch(
                     m_out.aboveOrEqual(
                         index, m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength)),
                     rarely(slowCase), usually(checkHole));
+                lastNext = m_out.appendTo(checkHole, slowCase);
             } else
-                m_out.jump(checkHole);
+                lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-            LBasicBlock lastNext = m_out.appendTo(checkHole, slowCase);
             LValue checkHoleResultValue =
                 m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_node->child2())));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
@@ -9875,19 +9876,20 @@ private:
             
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
             
-            LBasicBlock checkHole = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock lastNext = nullptr;
             
             if (!m_node->arrayMode().isInBounds()) {
+                LBasicBlock checkHole = m_out.newBlock();
                 m_out.branch(
                     m_out.aboveOrEqual(
                         index, m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength)),
                     rarely(slowCase), usually(checkHole));
+                lastNext = m_out.appendTo(checkHole, slowCase);
             } else
-                m_out.jump(checkHole);
+                lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-            LBasicBlock lastNext = m_out.appendTo(checkHole, slowCase);
             LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_node->child2()));
             LValue checkHoleResultValue = m_out.doubleEqual(doubleValue, doubleValue);
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
@@ -9903,10 +9905,52 @@ private:
             setBoolean(m_out.phi(Int32, checkHoleResult, slowResult));
             return;
         }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return;
+
+        case Array::ArrayStorage: {
+            LValue base = lowCell(m_node->child1());
+            LValue index = lowInt32(m_node->child2());
+            LValue storage = lowStorage(m_node->child3());
+            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
+
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock lastNext = nullptr;
+
+            if (!m_node->arrayMode().isInBounds()) {
+                LBasicBlock checkHole = m_out.newBlock();
+                m_out.branch(
+                    m_out.aboveOrEqual(
+                        index, m_out.load32NonNegative(storage, m_heaps.Butterfly_vectorLength)),
+                    rarely(slowCase), usually(checkHole));
+                lastNext = m_out.appendTo(checkHole, slowCase);
+            } else
+                lastNext = m_out.insertNewBlocksBefore(slowCase);
+
+            LValue checkHoleResultValue =
+                m_out.notZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_node->child2())));
+            ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
+            m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(m_out.equal(
+                m_out.constInt64(JSValue::encode(jsBoolean(true))),
+                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(Int32, checkHoleResult, slowResult));
+            break;
+        }
+
+        default: {
+            LValue base = lowCell(m_node->child1());
+            LValue index = lowInt32(m_node->child2());
+            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
+            setBoolean(m_out.equal(
+                m_out.constInt64(JSValue::encode(jsBoolean(true))),
+                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            break;
+        }
         }
     }
 
