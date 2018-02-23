@@ -32,6 +32,8 @@ namespace WebCore {
 struct ScreenProperties {
     FloatRect screenAvailableRect;
     FloatRect screenRect;
+    int screenDepth { 0 };
+    int screenDepthPerComponent { 0 };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ScreenProperties> decode(Decoder&);
@@ -40,7 +42,7 @@ struct ScreenProperties {
 template<class Encoder>
 void ScreenProperties::encode(Encoder& encoder) const
 {
-    encoder << screenAvailableRect << screenRect;
+    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent;
 }
 
 template<class Decoder>
@@ -56,7 +58,18 @@ std::optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
     if (!screenRect)
         return std::nullopt;
 
-    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect) } };
+    std::optional<int> screenDepth;
+    decoder >> screenDepth;
+    if (!screenDepth)
+        return std::nullopt;
+
+    std::optional<int> screenDepthPerComponent;
+    decoder >> screenDepthPerComponent;
+    if (!screenDepthPerComponent)
+        return std::nullopt;
+    
+    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect), WTFMove(*screenDepth), WTFMove(*screenDepthPerComponent) } };
 }
 
 } // namespace WebCore
+

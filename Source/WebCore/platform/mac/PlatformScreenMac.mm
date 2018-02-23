@@ -91,16 +91,6 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
-int screenDepth(Widget* widget)
-{
-    return NSBitsPerPixelFromDepth(screen(widget).depth);
-}
-
-int screenDepthPerComponent(Widget* widget)
-{
-    return NSBitsPerSampleFromDepth(screen(widget).depth);
-}
-
 bool screenIsMonochrome(Widget*)
 {
     // This is a system-wide accessibility setting, same on all screens.
@@ -120,7 +110,9 @@ void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenPro
         FloatRect screenAvailableRect = [screen visibleFrame];
         screenAvailableRect.setY(NSMaxY([screen frame]) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
         FloatRect screenRect = [screen frame];
-        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect});
+        int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
+        int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
+        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, screenDepth, screenDepthPerComponent });
     }
 }
 
@@ -134,19 +126,45 @@ void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>& pro
 {
     screenProperties() = properties;
 }
+    
+static ScreenProperties getScreenProperties(Widget* widget)
+{
+    auto displayIDForWidget = displayID(widget);
+    if (displayIDForWidget && screenProperties().contains(displayIDForWidget))
+        return screenProperties().get(displayIDForWidget);
+    // Return property of the first screen if the screen is not found in the map.
+    auto iter = screenProperties().begin();
+    return screenProperties().get(iter->key);
+}
 #endif
+
+int screenDepth(Widget* widget)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (!screenProperties().isEmpty()) {
+        ASSERT(getScreenProperties(widget).screenDepth);
+        return getScreenProperties(widget).screenDepth;
+    }
+#endif
+    return NSBitsPerPixelFromDepth(screen(widget).depth);
+}
+
+int screenDepthPerComponent(Widget* widget)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    if (!screenProperties().isEmpty()) {
+        ASSERT(getScreenProperties(widget).screenDepthPerComponent);
+        return getScreenProperties(widget).screenDepthPerComponent;
+    }
+#endif
+    return NSBitsPerSampleFromDepth(screen(widget).depth);
+}
 
 FloatRect screenRect(Widget* widget)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if (!screenProperties().isEmpty()) {
-        auto displayIDForWidget = displayID(widget);
-        if (displayIDForWidget && screenProperties().contains(displayIDForWidget))
-            return screenProperties().get(displayIDForWidget).screenRect;
-        // Return property of the first screen if the screen is not found in the map.
-        auto iter = screenProperties().begin();
-        return screenProperties().get(iter->key).screenRect;
-    }
+    if (!screenProperties().isEmpty())
+        return getScreenProperties(widget).screenRect;
 #endif
     return toUserSpace([screen(widget) frame], window(widget));
 }
@@ -155,12 +173,7 @@ FloatRect screenAvailableRect(Widget* widget)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     if (!screenProperties().isEmpty()) {
-        auto displayIDForWidget = displayID(widget);
-        if (displayIDForWidget && screenProperties().contains(displayIDForWidget))
-            return screenProperties().get(displayIDForWidget).screenAvailableRect;
-        // Return property of the first screen if the screen is not found in the map.
-        auto iter = screenProperties().begin();
-        return screenProperties().get(iter->key).screenAvailableRect;
+        return getScreenProperties(widget).screenAvailableRect;
     }
 #endif
     return toUserSpace([screen(widget) visibleFrame], window(widget));

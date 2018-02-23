@@ -1,3 +1,27 @@
+2018-02-22  Per Arne Vollan  <pvollan@apple.com>
+
+        The WebContent process should not use NSScreen in the screenDepth implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=183048
+
+        Reviewed by Brent Fulgham.
+
+        NSScreen method calls should be done in the UIProcess, since these calls will communicate with
+        the WindowServer. The screen depth property can be retrieved in the UIProcess, and sent to the
+        WebContent process, where it is cached. Whenever screen properties change, the UIProcess will
+        send the new screen properties to the WebProcess.
+
+        No new tests, covered by existing tests.
+
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenProperties::encode const):
+        (WebCore::ScreenProperties::decode):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::getScreenProperties):
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2018-02-22  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Rename insertChild() -> attach(), takeChild() -> detach() and removeAndDestroy() -> destroy()
