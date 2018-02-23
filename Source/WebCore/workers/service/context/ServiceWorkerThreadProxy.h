@@ -65,6 +65,8 @@ public:
 
     WEBCORE_EXPORT std::unique_ptr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
+    const URL& scriptURL() const { return m_document->url(); }
+
     // Public only for testing purposes.
     WEBCORE_TESTSUPPORT_EXPORT void notifyNetworkStateChange(bool isOnline);
 
