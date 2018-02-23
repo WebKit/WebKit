@@ -3221,6 +3221,7 @@ media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Ski
 media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
+media/modern-media-controls/start-support/start-support-disable-controls-and-re-enable-post-play.html [ Skip ]
 
 # There is no focus state for on iOS
 media/modern-media-controls/button/button-focus-state.html [ Skip ]
