@@ -223,8 +223,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     JSWebAssemblyTable* table = m_instance->table();
 
     const Vector<Wasm::Segment::Ptr>& data = moduleInformation.data;
-    JSWebAssemblyMemory* jsMemory = m_instance->memory();
-
+    
     std::optional<JSValue> exception;
 
     auto forEachElement = [&] (auto fn) {
@@ -250,8 +249,8 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     };
 
     auto forEachSegment = [&] (auto fn) {
-        uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory().memory());
-        uint64_t sizeInBytes = jsMemory->memory().size();
+        uint8_t* memory = reinterpret_cast<uint8_t*>(m_instance->instance().cachedMemory());
+        uint64_t sizeInBytes = m_instance->instance().cachedMemorySize();
 
         for (const Wasm::Segment::Ptr& segment : data) {
             uint32_t offset = segment->offset.isGlobalImport()

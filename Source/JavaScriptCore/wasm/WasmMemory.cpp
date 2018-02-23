@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WasmMemory.h"
+#include "WasmInstance.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -377,6 +378,11 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
 
     auto success = [&] () {
         m_growSuccessCallback(GrowSuccessTag, oldPageCount, newPageCount);
+        // Update cache for instance
+        for (auto& instance : m_instances) {
+            if (instance.get() != nullptr)
+                instance.get()->updateCachedMemory();
+        }
         return oldPageCount;
     };
 
@@ -435,6 +441,18 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
 
     RELEASE_ASSERT_NOT_REACHED();
     return oldPageCount;
+}
+
+void Memory::registerInstance(Instance* instance)
+{
+    size_t count = m_instances.size();
+    for (size_t index = 0; index < count; index++) {
+        if (m_instances.at(index).get() == nullptr) {
+            m_instances.at(index) = instance->createWeakPtr();
+            return;
+        }
+    }
+    m_instances.append(instance->createWeakPtr());
 }
 
 void Memory::dump(PrintStream& out) const

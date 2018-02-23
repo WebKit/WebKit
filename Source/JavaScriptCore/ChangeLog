@@ -1,3 +1,39 @@
+2018-02-23  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        WebAssembly: cache memory address / size on instance
+        https://bugs.webkit.org/show_bug.cgi?id=177305
+
+        Reviewed by JF Bastien.
+
+        Cache memory address/size in wasm:Instance to avoid load wasm:Memory 
+        object during access to memory and memory size property in JiT
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::cachedMemory const):
+        (JSC::Wasm::Instance::cachedMemorySize const):
+        (JSC::Wasm::Instance::createWeakPtr):
+        (JSC::Wasm::Instance::setMemory):
+        (JSC::Wasm::Instance::updateCachedMemory):
+        (JSC::Wasm::Instance::offsetOfCachedMemory):
+        (JSC::Wasm::Instance::offsetOfCachedMemorySize):
+        (JSC::Wasm::Instance::offsetOfCachedIndexingMask):
+        (JSC::Wasm::Instance::allocationSize):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::registerInstance):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::indexingMask):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2018-02-23  Saam Barati  <sbarati@apple.com>
 
         ArgumentsEliminationPhase has a branch on GetByOffset that should be an assert
