@@ -42,9 +42,9 @@ public:
     Ruby(RenderTreeBuilder&);
 
     void attach(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    RenderPtr<RenderObject> detach(RenderRubyAsInline& parent, RenderObject& child);
-    RenderPtr<RenderObject> detach(RenderRubyAsBlock& parent, RenderObject& child);
-    RenderPtr<RenderObject> detach(RenderRubyRun& parent, RenderObject& child);
+    RenderPtr<RenderObject> detach(RenderRubyAsInline& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderRubyAsBlock& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderRubyRun& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
     void moveChildren(RenderRubyBase& from, RenderRubyBase& to);
 

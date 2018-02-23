@@ -1,3 +1,17 @@
+2018-02-23  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Add WARN_UNUSED_RETURN to detach()
+        https://bugs.webkit.org/show_bug.cgi?id=183073
+        <rdar://problem/37814585>
+
+        Reviewed by Antti Koivisto.
+
+        So that we don't destroy a renderer accidentally.
+
+        * rendering/updating/RenderTreeBuilderBlock.h:
+        * rendering/updating/RenderTreeBuilderRuby.h:
+        * rendering/updating/RenderTreeBuilderSVG.h:
+
 2018-02-22  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r228445): A big pause button shows over YouTube videos if you tap "Tap To Unmute" on iOS
