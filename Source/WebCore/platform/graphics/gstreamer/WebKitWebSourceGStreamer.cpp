@@ -618,7 +618,7 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"webkit+http", "webkit+https", "blob", nullptr };
+    static const char* protocols[] = {"webkit+http", "webkit+https", "webkit+blob", nullptr };
     return protocols;
 }
 
