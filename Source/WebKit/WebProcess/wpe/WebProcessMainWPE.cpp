@@ -48,6 +48,10 @@ public:
             WTF::sleep(30_s);
 #endif
 
+        // Required for GStreamer initialization.
+        // FIXME: This should be probably called in other processes as well.
+        g_set_prgname("WPEWebProcess");
+
         return true;
     }
 
