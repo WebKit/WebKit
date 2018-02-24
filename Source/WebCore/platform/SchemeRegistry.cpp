@@ -113,8 +113,15 @@ static const URLSchemesMap& builtinLocalURLSchemes()
     return schemes;
 }
 
+static Lock& localURLSchemesLock()
+{
+    static NeverDestroyed<Lock> lock;
+    return lock;
+}
+
 static URLSchemesMap& localURLSchemes()
 {
+    ASSERT(localURLSchemesLock().isHeld());
     static NeverDestroyed<URLSchemesMap> localSchemes = builtinLocalURLSchemes();
     return localSchemes;
 }
@@ -139,8 +146,15 @@ const Vector<String>& builtinSecureSchemes()
     return schemes;
 }
 
+static Lock& secureSchemesLock()
+{
+    static NeverDestroyed<Lock> lock;
+    return lock;
+}
+
 static URLSchemesMap& secureSchemes()
 {
+    ASSERT(secureSchemesLock().isHeld());
     static auto secureSchemes = makeNeverDestroyedSchemeSet(builtinSecureSchemes);
     return secureSchemes;
 }
@@ -201,20 +215,20 @@ static URLSchemesMap& notAllowingJavascriptURLsSchemes()
 
 void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 {
+    if (scheme.isNull())
+        return;
+
+    Locker<Lock> locker(localURLSchemesLock());
     localURLSchemes().add(scheme);
 }
 
 void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
 {
+    Locker<Lock> locker(localURLSchemesLock());
     if (builtinLocalURLSchemes().contains(scheme))
         return;
 
     localURLSchemes().remove(scheme);
-}
-
-const URLSchemesMap& SchemeRegistry::localSchemes()
-{
-    return localURLSchemes();
 }
 
 static URLSchemesMap& schemesAllowingLocalStorageAccessInPrivateBrowsing()
@@ -275,7 +289,11 @@ static URLSchemesMap& alwaysRevalidatedSchemes()
 
 bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
-    return !scheme.isNull() && localURLSchemes().contains(scheme);
+    if (scheme.isNull())
+        return false;
+
+    Locker<Lock> locker(localURLSchemesLock());
+    return localURLSchemes().contains(scheme);
 }
 
 void SchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
@@ -306,12 +324,18 @@ void SchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
 {
     if (scheme.isNull())
         return;
+
+    Locker<Lock> locker(secureSchemesLock());
     secureSchemes().add(scheme);
 }
 
 bool SchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
 {
-    return !scheme.isNull() && secureSchemes().contains(scheme);
+    if (scheme.isNull())
+        return false;
+
+    Locker<Lock> locker(secureSchemesLock());
+    return secureSchemes().contains(scheme);
 }
 
 void SchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)

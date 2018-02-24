@@ -1,3 +1,51 @@
+2018-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Crash under SchemeRegistry::shouldTreatURLSchemeAsLocal(WTF::String const&)
+        https://bugs.webkit.org/show_bug.cgi?id=183066
+        <rdar://problem/37804111>
+
+        Reviewed by Ryosuke Niwa.
+
+        SecurityOrigin objects are constructed on various threads. However, someone added a
+        shouldTreatAsPotentiallyTrustworthy() call to the SecurityOrigin constructor which
+        was not thread safe. This is because this function relies on SchemeRegistry::shouldTreatURLSchemeAsSecure()
+        and SchemeRegistry::shouldTreatURLSchemeAsLocal() which were relying on global static HashMaps without
+        locks.
+
+        Update SecurityOrigin to initialize m_isPotentiallyTrustworthy lazily, to avoid paying
+        initialization cost in the constructor. This is only queries by SecurityContext::isSecureContext().
+
+        Make SchemeRegistry::shouldTreatURLSchemeAsLocal() and SchemeRegistry::shouldTreatURLSchemeAsSecure()
+        thread-safe, since they are needed to initialize SecurityOrigin::m_isPotentiallyTrustworthy from
+        various threads.
+
+        SchemeRegistry::shouldTreatURLSchemeAsSecure() is only called from SecurityOrigin (which requires
+        thread-safety), and getUserMedia() which is not hot code so the extra locking there should not
+        be an issue.
+
+        SchemeRegistry::shouldTreatURLSchemeAsLocal() is called from SecurityOrigin (which requires thread-
+        safety). It is also called from isQuickLookPreviewURL(), MHTMLArchive::create(), Page::userStyleSheetLocationChanged(),
+        isRemoteWebArchive() and HTMLPlugInImageElement. All these are not hot code so I do not think
+        we need a fast path.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::isLoopbackIPAddress):
+        (WebCore::shouldTreatAsPotentiallyTrustworthy):
+        (WebCore::SecurityOrigin::isPotentiallyTrustworthy const):
+        (WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress):
+        * page/SecurityOrigin.h:
+        * platform/SchemeRegistry.cpp:
+        (WebCore::localURLSchemesLock):
+        (WebCore::localURLSchemes):
+        (WebCore::secureSchemesLock):
+        (WebCore::secureSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::registerURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure):
+        * platform/SchemeRegistry.h:
+
 2018-02-23  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Cookie Database files are wrongfully getting deleted when the database is opened
