@@ -254,6 +254,8 @@ void JIT_OPERATION operationPutDynamicVar(ExecState*, JSObject* scope, EncodedJS
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 
+int32_t JIT_OPERATION operationNumberIsInteger(ExecState*, EncodedJSValue);
+
 size_t JIT_OPERATION operationDefaultHasInstance(ExecState*, JSCell* value, JSCell* proto);
 
 char* JIT_OPERATION operationNewRawObject(ExecState*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
