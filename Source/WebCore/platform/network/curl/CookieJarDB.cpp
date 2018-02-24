@@ -172,22 +172,19 @@ void CookieJarDB::flagDatabaseCorruption()
     if (isOnMemory())
         return;
 
-    FILE* f = fopen(getCorruptionMarkerPath().utf8().data(), "wb");
-    fclose(f);
+    auto handle = FileSystem::openFile(getCorruptionMarkerPath(), FileSystem::FileOpenMode::Write);
+    if (FileSystem::isHandleValid(handle))
+        FileSystem::closeFile(handle);
 }
 
 bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()
 {
-    if (isOnMemory())
-        return false;
+    if (!isOnMemory() && FileSystem::fileExists(getCorruptionMarkerPath())) {
+        deleteAllDatabaseFiles();
+        return true;
+    }
 
-    struct stat st;
-    int ret = stat(getCorruptionMarkerPath().utf8().data(), &st);
-    if (!ret)
-        return false;
-
-    deleteAllDatabaseFiles();
-    return true;
+    return false;
 }
 
 bool CookieJarDB::checkSQLiteReturnCode(int actual, int expected)

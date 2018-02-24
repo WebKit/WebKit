@@ -1,3 +1,15 @@
+2018-02-23  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Cookie Database files are wrongfully getting deleted when the database is opened
+        https://bugs.webkit.org/show_bug.cgi?id=183051
+
+        Reviewed by Per Arne Vollan.
+
+        The file stat logic was backwards causing a wrongful detection of database corruption.
+        Fixed the logic and abstracted these calls to use FileSystem.
+
+        * platform/network/curl/CookieJarDB.cpp:
+
 2018-02-23  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Make RenderTreeBuilder::* classes WTF_MAKE_FAST_ALLOCATED
