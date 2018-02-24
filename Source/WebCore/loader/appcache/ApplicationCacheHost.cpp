@@ -182,7 +182,10 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const Resou
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
 
-    m_documentLoader.scheduleSubstituteResourceLoad(loader, *resource);
+    if (resource)
+        m_documentLoader.scheduleSubstituteResourceLoad(loader, *resource);
+    else
+        m_documentLoader.scheduleCannotShowURLError(loader);
     return true;
 }
 

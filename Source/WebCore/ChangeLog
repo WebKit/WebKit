@@ -1,3 +1,33 @@
+2018-02-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Null-dereference of the second argument `resource` of DocumentLoader::scheduleSubstituteResourceLoad
+        https://bugs.webkit.org/show_bug.cgi?id=182920
+
+        Reviewed by Darin Adler.
+
+        A test case
+        imported/w3c/web-platform-tests/html/browsers/offline/appcache/workers/appcache-worker.html
+        always crashes due to a null-dereference if compiled and optimized
+        by GCC 7.2. The second argument `resource` of
+        DocumentLoader::scheduleSubstituteResourceLoad can be null if the
+        resource can't be found in cache. I guess GCC optimizes inline
+        HashMap::add based on assuming the `resource` never becomes null
+        because its type is SubstituteResource&.
+
+        This changes introduces a new method
+        DocumentLoader::scheduleCannotShowURLError because it looks tricky
+        to pass a nullptr to the second argument of
+        scheduleSubstituteResourceLoad.
+
+        No new tests (Covered by existing tests).
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleCannotShowURLError): Added a new method.
+        * loader/DocumentLoader.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        Call scheduleCannotShowURLError if the resource not found in the appcache.
+
 2018-02-17  Darin Adler  <darin@apple.com>
 
         Prepare for ExtendedColor changes (first step)
