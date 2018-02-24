@@ -140,6 +140,8 @@ TEST(ActionSheetTests, DataDetectorsLinkIsNotPresentedAsALink)
     EXPECT_TRUE(runTest(@"０８０８０８０８０８０"));
 }
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 static void presentActionSheetAndChooseAction(WKWebView *webView, ActionSheetObserver *observer, CGPoint location, _WKElementActionType actionType)
 {
     __block RetainPtr<_WKElementAction> copyAction;
@@ -293,6 +295,8 @@ TEST(ActionSheetTests, CopyLinkWritesURLAndPlainText)
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"rawHTMLData.textContent"]);
 }
+
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 } // namespace TestWebKitAPI
 

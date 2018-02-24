@@ -1,3 +1,12 @@
+2018-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the TestWebKitAPI build after r228825.
+
+        I removed a `>= iOS 11` check in r228825, but forgot that this was also neeed to guard against tvOS and watchOS
+        builds. This fixes the build by restoring the compile-time guard and also makes it explicit for these platforms.
+
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove currentTime() / currentTimeMS()
