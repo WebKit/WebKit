@@ -532,7 +532,7 @@ bool JPEGImageDecoder::setFailed()
 }
 
 template <J_COLOR_SPACE colorSpace>
-void setPixel(ImageFrame& buffer, RGBA32* currentAddress, JSAMPARRAY samples, int column)
+void setPixel(ImageFrame& buffer, uint32_t* currentAddress, JSAMPARRAY samples, int column)
 {
     JSAMPLE* jsample = *samples + column * (colorSpace == JCS_RGB ? 3 : 4);
 
@@ -575,7 +575,7 @@ bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
         if (destY < 0)
             continue;
 
-        RGBA32* currentAddress = buffer.backingStore()->pixelAt(0, destY);
+        auto* currentAddress = buffer.backingStore()->pixelAt(0, destY);
         for (int x = 0; x < width; ++x) {
             setPixel<colorSpace>(buffer, currentAddress, samples, isScaled ? m_scaledColumns[x] : x);
             ++currentAddress;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@ NativeImagePtr ImageBackingStore::image() const
 {
     m_pixels->ref();
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(
-        reinterpret_cast<unsigned char*>(const_cast<RGBA32*>(m_pixelsPtr)),
-        CAIRO_FORMAT_ARGB32, size().width(), size().height(), size().width() * sizeof(RGBA32)));
+        reinterpret_cast<unsigned char*>(const_cast<uint32_t*>(m_pixelsPtr)),
+        CAIRO_FORMAT_ARGB32, size().width(), size().height(), size().width() * sizeof(uint32_t)));
     static cairo_user_data_key_t s_surfaceDataKey;
     cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, m_pixels.get(), [](void* data) { static_cast<SharedBuffer*>(data)->deref(); });
 

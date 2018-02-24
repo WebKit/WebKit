@@ -129,7 +129,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
 {
     Color textColor = style.visitedDependentColor(CSSPropertyColor);
     Color c = blockFlow().selectionBackgroundColor();
-    if (!c.isValid() || !c.alpha())
+    if (!c.isVisible())
         return;
 
     // If the text color ends up being the same as the selection background, invert the selection

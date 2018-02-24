@@ -1,3 +1,78 @@
+2018-02-17  Darin Adler  <darin@apple.com>
+
+        Prepare for ExtendedColor changes (first step)
+        https://bugs.webkit.org/show_bug.cgi?id=182904
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createColorValue): Use HashMap::ensure.
+        (WebCore::CSSValuePool::createFontFamilyValue): Ditto.
+        (WebCore::CSSValuePool::createFontFaceValue): Ditto.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::maybeParseValue): Tightened up
+        the logic a bit.
+
+        * html/canvas/CanvasRenderingContext2D.cpp: Removed many unneeded includes.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::recordAction): Updated for Ref instead of
+        RefPtr and to use move semantics.
+        (WebCore::buildArrayForAffineTransform): Return Ref instead of RefPtr.
+        (WebCore::buildArrayForVector): Ditto.
+        (WebCore::InspectorCanvas::buildInitialState): Ditto. Also use auto more.
+        (WebCore::InspectorCanvas::buildAction): Ditto.
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient): Ditto.
+        (WebCore::InspectorCanvas::buildArrayForCanvasPattern): Ditto.
+        (WebCore::InspectorCanvas::buildArrayForImageData): Ditto.
+        * inspector/InspectorCanvas.h: Updated for the above. Also us "using" instead
+        of typedef and removed unneeded ErrorString typedef and some includes.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Use auto and Ref.
+
+        * platform/DragData.h: Used pragma once and reorganized includes a bit.
+
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::frameBytes const): Use uint32_t instead of RGBA32 to
+        prepare for removal of the RGBA32 type coming in a future patch.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::cacheNativeImageAtIndex): Ditto.
+        (WebCore::ImageSource::canUseAsyncDecoding): Ditto.
+
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm: Tweaked #if for Mac-only
+        code to use PLATFORM(MAC) to be easier to read.
+        (WebCore::GraphicsContext::focusRingColor): Use sRGBColorSpaceRef instead of
+        calling CGColorSpaceCreateWithName each time.
+
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp: Added include needed
+        now that it was removed from some header.
+
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h: Use uint32_t
+        instead of RGBA32 to prepare for removal of the RGBA32 type coming in a future patch.
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameBytesAtIndex const): Ditto.
+        * platform/image-decoders/cairo/ImageBackingStoreCairo.cpp:
+        (WebCore::ImageBackingStore::image const): Ditto.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow): Ditto.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::setPixel): Ditto.
+        (WebCore::JPEGImageDecoder::outputScanlines): Ditto.
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable): Ditto.
+        (WebCore::PNGImageDecoder::frameComplete): Ditto.
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decodeFrame): Ditto.
+        (WebCore::WEBPImageDecoder::applyPostProcessing): Ditto.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::color): Added comments.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paintSelection): Use Color::isVisible.
+
 2018-02-23  Chris Dumez  <cdumez@apple.com>
 
         Crash under SchemeRegistry::shouldTreatURLSchemeAsLocal(WTF::String const&)

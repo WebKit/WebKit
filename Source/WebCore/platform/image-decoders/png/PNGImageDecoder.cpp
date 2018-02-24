@@ -513,7 +513,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     }
 
     // Write the decoded row pixels to the frame buffer.
-    RGBA32* address = buffer.backingStore()->pixelAt(0, y);
+    auto* address = buffer.backingStore()->pixelAt(0, y);
     int width = scaledSize().width();
     unsigned char nonTrivialAlphaMask = 0;
 
@@ -827,7 +827,7 @@ void PNGImageDecoder::frameComplete()
         png_bytep row = interlaceBuffer;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
-            RGBA32* address = buffer.backingStore()->pixelAt(rect.x(), y);
+            auto* address = buffer.backingStore()->pixelAt(rect.x(), y);
             for (int x = rect.x(); x < rect.maxX(); ++x, pixel += colorChannels) {
                 unsigned alpha = hasAlpha ? pixel[3] : 255;
                 nonTrivialAlpha |= alpha < 255;

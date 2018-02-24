@@ -182,7 +182,7 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
     WebPDecBuffer decoderBuffer;
     WebPInitDecBuffer(&decoderBuffer);
     decoderBuffer.colorspace = MODE_RGBA;
-    decoderBuffer.u.RGBA.stride = webpFrame.width * sizeof(RGBA32);
+    decoderBuffer.u.RGBA.stride = webpFrame.width * sizeof(uint32_t);
     decoderBuffer.u.RGBA.size = decoderBuffer.u.RGBA.stride * webpFrame.height;
     decoderBuffer.is_external_memory = 1;
     std::unique_ptr<unsigned char[]> p(new uint8_t[decoderBuffer.u.RGBA.size]());
@@ -276,8 +276,8 @@ void WEBPImageDecoder::applyPostProcessing(size_t frameIndex, WebPIDecoder* deco
         const int canvasY = top + y;
         for (int x = 0; x < decodedWidth; x++) {
             const int canvasX = left + x;
-            RGBA32* address = buffer.backingStore()->pixelAt(canvasX, canvasY);
-            uint8_t* pixel = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(RGBA32);
+            auto* address = buffer.backingStore()->pixelAt(canvasX, canvasY);
+            uint8_t* pixel = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(uint32_t);
             if (blend && (pixel[3] < 255))
                 buffer.backingStore()->blendPixel(address, pixel[0], pixel[1], pixel[2], pixel[3]);
             else

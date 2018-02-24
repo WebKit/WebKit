@@ -44,7 +44,7 @@
 #import "WKGraphicsInternal.h"
 #endif
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 #import "LocalCurrentGraphicsContext.h"
 #endif
 
@@ -55,20 +55,17 @@
 
 namespace WebCore {
 
-// NSColor, NSBezierPath, and NSGraphicsContext
-// calls in this file are all exception-safe, so we don't block
-// exceptions for those.
+// NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
+// so we don't block exceptions.
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
+
 CGColorRef GraphicsContext::focusRingColor()
 {
-    static CGColorRef color;
-    if (!color) {
+    static CGColorRef color = [] {
         CGFloat colorComponents[] = { 0.5, 0.75, 1.0, 1.0 };
-        auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        color = CGColorCreate(colorSpace.get(), colorComponents);
-    }
-
+        return CGColorCreate(sRGBColorSpaceRef(), colorComponents);
+    }();
     return color;
 }
 
@@ -111,7 +108,8 @@ static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRi
     CGContextAddPath(context, focusRingPath);
     return drawFocusRingAtTime(context, std::numeric_limits<double>::max());
 }
-#endif // !PLATFORM(IOS)
+
+#endif // PLATFORM(MAC)
 
 void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
@@ -163,7 +161,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeO
 
 void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     if (paintingDisabled())
         return;
 
@@ -186,6 +184,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
 }
 
 #if PLATFORM(MAC)
+
 static NSImage *findImage(NSString* firstChoiceName, NSString* secondChoiceName, bool& usingDot)
 {
     // Eventually we should be able to get rid of the secondChoiceName. For the time being we need both to keep
@@ -197,10 +196,16 @@ static NSImage *findImage(NSString* firstChoiceName, NSString* secondChoiceName,
     usingDot = image;
     return image;
 }
+
+// FIXME: Should use RetainPtr instead of handwritten retain/release.
 static NSImage *spellingImage = nullptr;
 static NSImage *grammarImage = nullptr;
 static NSImage *correctionImage = nullptr;
-#else
+
+#endif
+
+#if PLATFORM (IOS)
+
 static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* resourceName)
 {
     RetainPtr<CGImageRef> image = adoptCF(WKGraphicsCreateImageFromBundleWithName(resourceName));
@@ -208,7 +213,8 @@ static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* reso
     usingDot = true;
     return adoptCF(WKCreatePatternFromCGImage(image.get()));
 }
-#endif // PLATFORM(MAC)
+
+#endif
 
 void GraphicsContext::updateDocumentMarkerResources()
 {

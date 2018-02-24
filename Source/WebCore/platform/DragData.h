@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DragData_h
-#define DragData_h
+#pragma once
 
 #include "Color.h"
 #include "DragActions.h"
 #include "IntPoint.h"
-
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
-#include <wtf/text/WTFString.h>
 
 #ifdef __OBJC__ 
 #import <Foundation/Foundation.h>
@@ -47,7 +45,6 @@ typedef void* DragDataRef;
 
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
-#include <wtf/text/WTFString.h>
 #elif PLATFORM(GTK)
 namespace WebCore {
 class SelectionData;
@@ -146,5 +143,3 @@ private:
 };
     
 }
-
-#endif // !DragData_h

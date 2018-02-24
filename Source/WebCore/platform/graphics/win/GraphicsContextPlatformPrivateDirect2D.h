@@ -96,7 +96,7 @@ private:
     void recomputeStrokeStyle();
 
     COMPtr<ID2D1RenderTarget> m_renderTarget;
-    HashMap<RGBA32, COMPtr<ID2D1SolidColorBrush>> m_solidColoredBrushCache;
+    HashMap<uint32_t, COMPtr<ID2D1SolidColorBrush>> m_solidColoredBrushCache;
     COMPtr<ID2D1SolidColorBrush> m_whiteBrush;
     COMPtr<ID2D1SolidColorBrush> m_zeroBrush;
     COMPtr<ID2D1StrokeStyle> m_d2dStrokeStyle;

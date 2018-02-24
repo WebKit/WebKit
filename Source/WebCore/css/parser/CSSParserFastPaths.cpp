@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2018 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -1290,7 +1290,6 @@ static RefPtr<CSSValueList> parseSimpleTransformList(const CharType* chars, unsi
 static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, const String& string)
 {
     ASSERT(!string.isEmpty());
-
     if (propertyID != CSSPropertyTransform)
         return nullptr;
     if (string.is8Bit())
@@ -1309,20 +1308,15 @@ static RefPtr<CSSValue> parseCaretColor(const String& string, CSSParserMode pars
 
 RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode)
 {
-    RefPtr<CSSValue> result = parseSimpleLengthValue(propertyID, string, parserMode);
-    if (result)
+    if (auto result = parseSimpleLengthValue(propertyID, string, parserMode))
         return result;
     if (propertyID == CSSPropertyCaretColor)
         return parseCaretColor(string, parserMode);
     if (isColorPropertyID(propertyID))
         return parseColor(string, parserMode);
-    result = parseKeywordValue(propertyID, string, parserMode);
-    if (result)
+    if (auto result = parseKeywordValue(propertyID, string, parserMode))
         return result;
-    result = parseSimpleTransform(propertyID, string);
-    if (result)
-        return result;
-    return nullptr;
+    return parseSimpleTransform(propertyID, string);
 }
 
 } // namespace WebCore

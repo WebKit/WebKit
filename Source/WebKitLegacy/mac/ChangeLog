@@ -1,3 +1,13 @@
+2018-02-17  Darin Adler  <darin@apple.com>
+
+        Prepare for ExtendedColor changes (first step)
+        https://bugs.webkit.org/show_bug.cgi?id=182904
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]): Use colorFromNSColor.
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove currentTime() / currentTimeMS()

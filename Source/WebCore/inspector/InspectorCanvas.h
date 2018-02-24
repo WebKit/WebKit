@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,6 @@
 #include "CallTracerTypes.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/ScriptCallFrame.h>
-#include <wtf/HashMap.h>
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -46,8 +43,6 @@ class HTMLVideoElement;
 class ImageBitmap;
 class ImageData;
 class InstrumentingAgents;
-
-typedef String ErrorString;
 
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
@@ -87,7 +82,7 @@ private:
     void appendActionSnapshotIfNeeded();
     String getCanvasContentAsDataURL();
 
-    typedef Variant<
+    using DuplicateDataVariant = Variant<
         CanvasGradient*,
         CanvasPattern*,
         HTMLCanvasElement*,
@@ -99,14 +94,14 @@ private:
         ImageBitmap*,
         Inspector::ScriptCallFrame,
         String
-    > DuplicateDataVariant;
+    >;
 
     int indexForData(DuplicateDataVariant);
-    RefPtr<Inspector::Protocol::Recording::InitialState> buildInitialState();
-    RefPtr<JSON::ArrayOf<JSON::Value>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
-    RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
-    RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
-    RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
+    Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
+    Ref<JSON::ArrayOf<JSON::Value>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
+    Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
+    Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
+    Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
 
     String m_identifier;
     CanvasRenderingContext& m_context;
@@ -126,4 +121,3 @@ private:
 };
 
 } // namespace WebCore
-

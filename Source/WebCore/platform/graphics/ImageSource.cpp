@@ -264,7 +264,7 @@ void ImageSource::cacheNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t i
     decodedSizeDecreased(frame.clear());
 
     // Do not cache the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
-    size_t frameBytes = size().unclampedArea() * sizeof(RGBA32);
+    size_t frameBytes = size().unclampedArea() * sizeof(uint32_t);
     if (!WTF::isInBounds<unsigned>(frameBytes + decodedSize()))
         return;
 
@@ -314,7 +314,7 @@ bool ImageSource::canUseAsyncDecoding()
     if (!isDecoderAvailable())
         return false;
     // FIXME: figure out the best heuristic for enabling async image decoding.
-    return size().area() * sizeof(RGBA32) >= (frameCount() > 1 ? 100 * KB : 500 * KB);
+    return size().area() * sizeof(uint32_t) >= (frameCount() > 1 ? 100 * KB : 500 * KB);
 }
 
 void ImageSource::startAsyncDecodingQueue()

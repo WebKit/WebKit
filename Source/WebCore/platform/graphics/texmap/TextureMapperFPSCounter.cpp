@@ -25,6 +25,7 @@
 
 #include "TextureMapper.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

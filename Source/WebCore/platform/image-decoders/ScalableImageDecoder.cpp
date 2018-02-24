@@ -196,7 +196,7 @@ unsigned ScalableImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel)
     if (m_frameBufferCache.size() <= index)
         return 0;
     // FIXME: Use the dimension of the requested frame.
-    return (m_size.area() * sizeof(RGBA32)).unsafeGet();
+    return (m_size.area() * sizeof(uint32_t)).unsafeGet();
 }
 
 Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const

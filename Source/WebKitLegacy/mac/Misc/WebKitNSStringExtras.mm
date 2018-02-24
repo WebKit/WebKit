@@ -28,6 +28,7 @@
 
 #import "WebKitNSStringExtras.h"
 
+#import <WebCore/ColorMac.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/LoaderNSURLExtras.h>
@@ -87,15 +88,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
 
-        CGFloat red;
-        CGFloat green;
-        CGFloat blue;
-        CGFloat alpha;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
-#pragma clang diagnostic pop
-        graphicsContext.setFillColor(Color(static_cast<float>(red * 255), static_cast<float>(green * 255.0f), static_cast<float>(blue * 255.0f), static_cast<float>(alpha * 255.0f)));
+        graphicsContext.setFillColor(colorFromNSColor(textColor));
         webCoreFont.drawText(graphicsContext, run, FloatPoint(point.x, flipped ? point.y : -point.y));
 
         if (!flipped)

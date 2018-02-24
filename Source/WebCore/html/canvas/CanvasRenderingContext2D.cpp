@@ -36,33 +36,18 @@
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
-#include "FloatQuad.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
-#include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "Path2D.h"
-#include "RenderElement.h"
-#include "RenderImage.h"
-#include "RenderLayer.h"
 #include "RenderTheme.h"
-#include "SecurityOrigin.h"
-#include "StrokeStyleApplier.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/TextStream.h>
-
-#if USE(CG) && !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#endif
 
 namespace WebCore {
 
