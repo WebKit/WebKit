@@ -1,3 +1,41 @@
+2018-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Service workers do not work well inside Web.app
+        https://bugs.webkit.org/show_bug.cgi?id=183105
+        <rdar://problem/37864140>
+
+        Reviewed by Youenn Fablet.
+
+        SessionID::defaultSessionID() was hardcoded in the ServiceWorkerThread constructor
+        instead of using the sessionID of the SWServer that created the service worker thread.
+        As a result, when the Service Worker would establish a SWClientConnection to the
+        server, it would use the wrong sessionID and would end up using a different SWServer
+        (Since we have a different SWServer instance per sessionID). As a result,
+        ServiceWorkerRegistration / ServiceWorker objects inside the service worker would not
+        be kept in sync with the server (since they registered themselves with the wrong
+        SWServer).
+
+        Covered by new API test.
+
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::createPageForServiceWorker):
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/RegistrationStore.h:
+        (WebCore::RegistrationStore::server):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::updateWorker):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::contextData const):
+
 2018-02-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Null-dereference of the second argument `resource` of DocumentLoader::scheduleSubstituteResourceLoad

@@ -1,3 +1,17 @@
+2018-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Service workers do not work well inside Web.app
+        https://bugs.webkit.org/show_bug.cgi?id=183105
+        <rdar://problem/37864140>
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didReceiveMessage):
+        We were failing to forward IPC messages to the ChildProcess class here. As a result,
+        the ChildProcess::RegisterURLSchemeServiceWorkersCanHandle IPC was being ignored
+        by the StorageProcess.
+
 2018-02-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE breakage fix.

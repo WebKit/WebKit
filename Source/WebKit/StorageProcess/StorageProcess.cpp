@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageProcess.h"
 
+#include "ChildProcessMessages.h"
 #include "StorageProcessCreationParameters.h"
 #include "StorageProcessMessages.h"
 #include "StorageProcessProxyMessages.h"
@@ -135,6 +136,11 @@ void StorageProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 
     if (decoder.messageReceiverName() == Messages::StorageProcess::messageReceiverName()) {
         didReceiveStorageProcessMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::ChildProcess::messageReceiverName()) {
+        ChildProcess::didReceiveMessage(connection, decoder);
         return;
     }
 

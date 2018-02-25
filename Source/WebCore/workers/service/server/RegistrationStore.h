@@ -59,6 +59,8 @@ public:
     void databaseFailedToOpen();
     void databaseOpenedAndRecordsImported();
 
+    SWServer& server() { return m_server; };
+
 private:
     void scheduleDatabasePushIfNecessary();
     void pushChangesToDatabase(WTF::CompletionHandler<void()>&&);
