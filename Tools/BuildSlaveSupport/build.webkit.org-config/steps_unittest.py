@@ -7,11 +7,6 @@ import unittest
 import make_passwords_json
 import json
 
-from buildbot.status.builder import SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
-from buildbot.steps import source
-from steps import (CheckOutSource, Run32bitJSCTests, RunAndUploadPerfTests, RunBenchmarkTests,
-                   RunJavaScriptCoreTests, RunLLINTCLoopTests, RunTest262Tests, RunUnitTests, RunWebKitTests)
-
 # Show DepricationWarnings come from buildbot - it isn't default with Python 2.7 or newer.
 # See https://bugs.webkit.org/show_bug.cgi?id=90161 for details.
 import warnings
