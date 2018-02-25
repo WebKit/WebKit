@@ -1,3 +1,20 @@
+2018-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Disable downloadable binary fonts by default
+        https://bugs.webkit.org/show_bug.cgi?id=183102
+        <rdar://problem/37860699>
+
+        Reviewed by Tim Horton.
+
+        Disable downloadable binary fonts by default in extra zoom mode by making the initial value of
+        `downloadableBinaryFontsEnabled` conditional. Layout tests are not possible at this time; test to be added once
+        layout test support is in place.
+
+        * page/Settings.yaml:
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::defaultDownloadableBinaryFontsEnabled):
+        * page/SettingsBase.h:
+
 2018-02-25  Chris Dumez  <cdumez@apple.com>
 
         Service workers do not work well inside Web.app

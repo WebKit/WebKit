@@ -120,6 +120,15 @@ float SettingsBase::defaultMaxTextAutosizingScaleIncrease()
 #endif
 }
 
+bool SettingsBase::defaultDownloadableBinaryFontsEnabled()
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    return false;
+#else
+    return true;
+#endif
+}
+
 #if !PLATFORM(COCOA)
 const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
 {

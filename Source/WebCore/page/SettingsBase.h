@@ -117,6 +117,7 @@ public:
     WEBCORE_EXPORT static float defaultOneLineTextMultiplierCoefficient();
     WEBCORE_EXPORT static float defaultMultiLineTextMultiplierCoefficient();
     WEBCORE_EXPORT static float defaultMaxTextAutosizingScaleIncrease();
+    WEBCORE_EXPORT static bool defaultDownloadableBinaryFontsEnabled();
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
