@@ -1,3 +1,14 @@
+2018-02-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK Debug build fix after r228942.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::iconDatabaseSyncThread):
+        (WebKit::IconDatabase::syncThreadMainLoop):
+        (WebKit::IconDatabase::readFromDatabase):
+        (WebKit::IconDatabase::writeToDatabase):
+        (WebKit::IconDatabase::cleanupSyncThread):
+
 2018-02-25  Chris Dumez  <cdumez@apple.com>
 
         Service workers do not work well inside Web.app
