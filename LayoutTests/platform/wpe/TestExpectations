@@ -1158,3 +1158,10 @@ webkit.org/b/182244 http/tests/appcache/fail-on-update-2.html [ Failure ]
 webkit.org/b/182244 http/tests/appcache/fail-on-update.html [ Pass Failure ]
 
 webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Pass Failure ]
+
+# testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
+webkit.org/b/183144 fast/dom/Window/window-focus-self.html
+webkit.org/b/183144 fast/events/blur-focus-window-should-blur-focus-element.html
+webkit.org/b/183144 fast/selectors/querySelector-window-inactive.html
+webkit.org/b/183144 fast/selectors/selection-window-inactive.html
+webkit.org/b/183144 scrollbars/corner-resizer-window-inactive.html

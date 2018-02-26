@@ -1,3 +1,22 @@
+2018-02-26  Daniel Bates  <dabates@apple.com>
+
+        testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=81736
+        <rdar://problem/11088268>
+
+        Remove some tests from the platform-independent WebKit2 TestExpectation file that
+        now pass on iOS and Mac following r189959 and r211910, respectively. Mark these
+        tests are failing on GTK and WPE. For GTK we need to fix <https://bugs.webkit.org/show_bug.cgi?id=183140>
+        For WPE we need to fix <https://bugs.webkit.org/show_bug.cgi?id=183144>.
+
+        The test fast/selectors/querySelector-window-inactive.html still fails on WebKit2,
+        but for a different reason. See <https://bugs.webkit.org/show_bug.cgi?id=183140>
+        for more details.
+
+        * platform/gtk/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-02-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226745.

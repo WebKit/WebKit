@@ -141,14 +141,6 @@ http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
 
-# testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
-# https://bugs.webkit.org/show_bug.cgi?id=81736 rdar://problem/11088268
-fast/events/blur-focus-window-should-blur-focus-element.html
-fast/selectors/querySelector-window-inactive.html
-fast/selectors/selection-window-inactive.html
-fast/dom/Window/window-focus-self.html
-scrollbars/corner-resizer-window-inactive.html
-
 # WebKitTestRunner needs to implement testRunner.closeIdleLocalStorageDatabases().
 # https://bugs.webkit.org/show_bug.cgi?id=103861
 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
@@ -728,4 +720,7 @@ webkit.org/b/172662 [ Debug ] http/tests/cache/disk-cache/redirect-chain-limits.
 webkit.org/b/174471 webrtc/filtering-ice-candidate-after-reload.html [ Pass Timeout ]
 
 webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
+
+webkit.org/b/183139 fast/events/blur-focus-window-should-blur-focus-element.html
+webkit.org/b/183140 fast/selectors/querySelector-window-inactive.html
 
