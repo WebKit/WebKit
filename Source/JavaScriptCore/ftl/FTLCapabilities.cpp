@@ -319,6 +319,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ArraySlice:
     case ArrayIndexOf:
     case ArrayPop:
+    case ArrayPush:
     case ParseInt:
     case AtomicsAdd:
     case AtomicsAnd:
@@ -436,16 +437,6 @@ inline CapabilityLevel canCompile(Node* node)
         }
         break;
     case PutByValWithThis:
-        break;
-    case ArrayPush:
-        switch (node->arrayMode().type()) {
-        case Array::Int32:
-        case Array::Contiguous:
-        case Array::Double:
-            break;
-        default:
-            return CannotCompile;
-        }
         break;
     default:
         // Don't know how to handle anything else.

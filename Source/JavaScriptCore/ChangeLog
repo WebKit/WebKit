@@ -1,5 +1,20 @@
 2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] Support ArrayPush for ArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=182782
+
+        Reviewed by Saam Barati.
+
+        This patch adds support for ArrayPush(ArrayStorage). We just port ArrayPush(ArrayStorage) in DFG to FTL.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+
+2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Support ArrayPop for ArrayStorage
         https://bugs.webkit.org/show_bug.cgi?id=182783
 
