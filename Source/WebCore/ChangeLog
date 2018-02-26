@@ -1,3 +1,24 @@
+2018-02-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the procedure to set the start time
+        https://bugs.webkit.org/show_bug.cgi?id=183137
+
+        Reviewed by Dean Jackson.
+
+        Implement the procedure to set the start time as setBindingsStartTime() and use the setStartTime() method as
+        an internal method to set the m_startTime instance variable and invalidate the timing model rather than run
+        the entire procedure which should only be called when setting the "startTime" property through the JS API.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::setBindingsStartTime):
+        (WebCore::WebAnimation::setStartTime):
+        (WebCore::WebAnimation::silentlySetCurrentTime):
+        (WebCore::WebAnimation::finish):
+        (WebCore::WebAnimation::updateFinishedState):
+        (WebCore::WebAnimation::runPendingPlayTask):
+        (WebCore::WebAnimation::runPendingPauseTask):
+
 2018-02-26  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Cookies are not being added to the Cookie field in Request Headers
