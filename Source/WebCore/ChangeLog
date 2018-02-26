@@ -1,3 +1,15 @@
+2018-02-26  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Cookies are not being added to the Cookie field in Request Headers
+        https://bugs.webkit.org/show_bug.cgi?id=183095
+
+        Reviewed by Alex Christensen.
+
+        Populating the Cookie request header field now that cookies are no longer handled in libcurl.
+
+        * platform/network/curl/CookieJarCurlDatabase.cpp: Renaming the httpOnly variable as its actual use wasn't clear
+        * platform/network/curl/ResourceHandleCurl.cpp:
+
 2018-02-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure setting the hold time invalidates the timing model

@@ -38,16 +38,16 @@
 
 namespace WebCore {
 
-static String cookiesForSession(const NetworkStorageSession& session, const URL&, const URL& url, bool httponly)
+static String cookiesForSession(const NetworkStorageSession& session, const URL&, const URL& url, bool forHTTPHeader)
 {
     StringBuilder cookies;
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
-    auto isHttpOnly = (httponly ? std::nullopt : std::optional<bool> {false});
+    auto searchHTTPOnly = (forHTTPHeader ? std::nullopt : std::optional<bool> {false});
     auto secure = url.protocolIs("https") ? std::nullopt : std::optional<bool> {false};
 
     Vector<Cookie> results;
-    if (cookieJarDB.searchCookies(url.string(), isHttpOnly, secure, std::nullopt, results)) {
+    if (cookieJarDB.searchCookies(url.string(), searchHTTPOnly, secure, std::nullopt, results)) {
         for (auto result : results) {
             if (!cookies.isEmpty())
                 cookies.append("; ");

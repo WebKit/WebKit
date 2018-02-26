@@ -33,6 +33,7 @@
 #if USE(CURL)
 
 #include "CookieJarCurl.h"
+#include "CookiesStrategy.h"
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
 #include "CurlContext.h"
@@ -40,6 +41,7 @@
 #include "FileSystem.h"
 #include "HTTPParsers.h"
 #include "Logging.h"
+#include "NetworkStorageSession.h"
 #include "ResourceHandleInternal.h"
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
@@ -131,6 +133,13 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request)
             d->m_addedCacheValidationHeaders = true;
         }
     }
+
+    auto& storageSession = NetworkStorageSession::defaultStorageSession();
+    auto& cookieJar = storageSession.cookieStorage();
+    auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
+    if (!cookieHeaderField.isEmpty())
+        request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
 
     CurlRequest::ShouldSuspend shouldSuspend = d->m_defersLoading ? CurlRequest::ShouldSuspend::Yes : CurlRequest::ShouldSuspend::No;
     auto curlRequest = CurlRequest::create(request, *delegate(), shouldSuspend, CurlRequest::EnableMultipart::Yes);
