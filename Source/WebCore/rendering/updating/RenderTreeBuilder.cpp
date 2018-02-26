@@ -32,6 +32,7 @@
 #include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderElement.h"
+#include "RenderFullScreen.h"
 #include "RenderGrid.h"
 #include "RenderLineBreak.h"
 #include "RenderMathMLFenced.h"
@@ -51,6 +52,7 @@
 #include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
+#include "RenderTreeBuilderFullScreen.h"
 #include "RenderTreeBuilderInline.h"
 #include "RenderTreeBuilderList.h"
 #include "RenderTreeBuilderMathML.h"
@@ -128,6 +130,9 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_inlineBuilder(std::make_unique<Inline>(*this))
     , m_svgBuilder(std::make_unique<SVG>(*this))
     , m_mathMLBuilder(std::make_unique<MathML>(*this))
+#if ENABLE(FULLSCREEN_API)
+    , m_fullScreenBuilder(std::make_unique<FullScreen>(*this))
+#endif
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -139,10 +144,16 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
-void RenderTreeBuilder::removeAndDestroy(RenderObject& child)
+void RenderTreeBuilder::removeAndDestroy(RenderObject& renderer)
 {
-    ASSERT(child.parent());
-    auto toDestroy = takeChild(*child.parent(), child);
+    ASSERT(renderer.parent());
+    auto toDestroy = takeChild(*renderer.parent(), renderer);
+
+#if ENABLE(FULLSCREEN_API)
+    if (is<RenderFullScreen>(renderer))
+        fullScreenBuilder().cleanupOnDestroy(downcast<RenderFullScreen>(renderer));
+#endif
+
     // We need to detach the subtree first so that the descendants don't have
     // access to previous/next sublings at takeChild().
     // FIXME: webkit.org/b/182909.

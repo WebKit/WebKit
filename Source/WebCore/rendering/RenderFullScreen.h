@@ -34,6 +34,7 @@ class RenderFullScreen final : public RenderFlexibleBox {
     WTF_MAKE_ISO_ALLOCATED(RenderFullScreen);
 public:
     RenderFullScreen(Document&, RenderStyle&&);
+    virtual ~RenderFullScreen();
 
     const char* renderName() const override { return "RenderFullScreen"; }
 
@@ -48,7 +49,6 @@ public:
     
 private:
     bool isRenderFullScreen() const override { return true; }
-    void willBeDestroyed(RenderTreeBuilder&) override;
     bool isFlexibleBoxImpl() const override { return true; }
 
 protected:
