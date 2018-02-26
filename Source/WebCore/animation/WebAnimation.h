@@ -118,6 +118,7 @@ private:
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
+    void setHoldTime(std::optional<Seconds>);
     std::optional<Seconds> currentTime(RespectHoldTime) const;
     ExceptionOr<void> silentlySetCurrentTime(std::optional<Seconds>);
     void finishNotificationSteps();

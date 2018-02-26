@@ -5,15 +5,15 @@ PASS Test exceptions when finishing non-running animation
 PASS Test exceptions when finishing infinite animation 
 PASS Test finishing of animation 
 PASS Test finishing of animation with a current time past the effect end 
-TIMEOUT Test finishing of reversed animation Test timed out
-NOTRUN Test finishing of reversed animation with a current time less than zero 
-NOTRUN Test finish() while paused 
+FAIL Test finishing of reversed animation assert_equals: After finishing a reversed animation the currentTime should be set to zero expected 0 but got -0
+PASS Test finishing of reversed animation with a current time less than zero 
+PASS Test finish() while paused 
 PASS Test finish() while pause-pending with positive playbackRate 
 PASS Test finish() while pause-pending with negative playbackRate 
 PASS Test finish() while play-pending 
-NOTRUN Test finish() during aborted pause 
-NOTRUN Test resetting of computed style 
-NOTRUN Test finish() resolves finished promise synchronously 
-NOTRUN Test finish() resolves finished promise synchronously with an animation without a target 
+PASS Test finish() during aborted pause 
+PASS Test resetting of computed style 
+PASS Test finish() resolves finished promise synchronously 
+TIMEOUT Test finish() resolves finished promise synchronously with an animation without a target Test timed out
 NOTRUN Test normally finished animation resolves finished promise synchronously with an animation without a target 
 
