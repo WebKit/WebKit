@@ -224,7 +224,7 @@ RenderBoxModelObject::~RenderBoxModelObject()
     ASSERT(!continuation());
 }
 
-void RenderBoxModelObject::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderBoxModelObject::willBeDestroyed()
 {
     if (hasContinuationChainNode())
         removeFromContinuationChain();
@@ -235,7 +235,7 @@ void RenderBoxModelObject::willBeDestroyed(RenderTreeBuilder& builder)
     if (!renderTreeBeingDestroyed())
         view().imageQualityController().rendererWillBeDestroyed(*this);
 
-    RenderLayerModelObject::willBeDestroyed(builder);
+    RenderLayerModelObject::willBeDestroyed();
 }
 
 bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const

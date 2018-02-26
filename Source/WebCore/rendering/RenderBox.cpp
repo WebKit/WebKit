@@ -150,7 +150,7 @@ RenderBox::~RenderBox()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderBox::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderBox::willBeDestroyed()
 {
     if (frame().eventHandler().autoscrollRenderer() == this)
         frame().eventHandler().stopAutoscrollTimer(true);
@@ -170,7 +170,7 @@ void RenderBox::willBeDestroyed(RenderTreeBuilder& builder)
         view().unregisterBoxWithScrollSnapPositions(*this);
 #endif
 
-    RenderBoxModelObject::willBeDestroyed(builder);
+    RenderBoxModelObject::willBeDestroyed();
 }
 
 RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentContainer* fragment) const

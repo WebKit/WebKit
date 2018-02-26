@@ -791,7 +791,7 @@ protected:
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
-    virtual void willBeDestroyed(RenderTreeBuilder&);
+    virtual void willBeDestroyed();
 
     void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
     void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }

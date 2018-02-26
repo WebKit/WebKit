@@ -1428,7 +1428,7 @@ bool RenderObject::isSelectionBorder() const
         || view().selection().end() == this;
 }
 
-void RenderObject::willBeDestroyed(RenderTreeBuilder&)
+void RenderObject::willBeDestroyed()
 {
     ASSERT(!m_parent);
     ASSERT(renderTreeBeingDestroyed() || !is<RenderElement>(*this) || !view().frameView().hasSlowRepaintObject(downcast<RenderElement>(*this)));
@@ -1479,7 +1479,7 @@ void RenderObject::destroy()
         downcast<RenderBoxModelObject>(*this).layer()->willBeDestroyed();
 #endif
 
-    willBeDestroyed(*RenderTreeBuilder::current());
+    willBeDestroyed();
 
     if (is<RenderWidget>(*this)) {
         downcast<RenderWidget>(*this).deref();

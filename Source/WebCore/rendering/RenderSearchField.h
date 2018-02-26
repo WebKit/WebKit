@@ -48,7 +48,7 @@ public:
 private:
     bool isSearchField() const final { return true; }
 
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     void updateFromElement() override;
     EVisibility visibilityForCancelButton() const;

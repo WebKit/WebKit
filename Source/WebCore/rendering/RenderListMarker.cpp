@@ -1134,11 +1134,11 @@ RenderListMarker::~RenderListMarker()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderListMarker::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderListMarker::willBeDestroyed()
 {
     if (m_image)
         m_image->removeClient(this);
-    RenderBox::willBeDestroyed(builder);
+    RenderBox::willBeDestroyed();
 }
 
 void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

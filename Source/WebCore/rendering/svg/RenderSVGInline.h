@@ -58,7 +58,7 @@ private:
 
     std::unique_ptr<InlineFlowBox> createInlineFlowBox() final;
 
-    void willBeDestroyed(RenderTreeBuilder&) final;
+    void willBeDestroyed() final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 

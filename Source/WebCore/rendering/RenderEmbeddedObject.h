@@ -66,7 +66,7 @@ protected:
 
 protected:
     void layout() override;
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
 private:
     const char* renderName() const override { return "RenderEmbeddedObject"; }

@@ -57,10 +57,10 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
 
 RenderSVGImage::~RenderSVGImage() = default;
 
-void RenderSVGImage::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderSVGImage::willBeDestroyed()
 {
     imageResource().shutdown();
-    RenderSVGModelObject::willBeDestroyed(builder);
+    RenderSVGModelObject::willBeDestroyed();
 }
 
 SVGImageElement& RenderSVGImage::imageElement() const

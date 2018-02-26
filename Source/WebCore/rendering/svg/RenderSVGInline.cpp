@@ -101,10 +101,10 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight()), UseTransforms, wasFixed));
 }
 
-void RenderSVGInline::willBeDestroyed(RenderTreeBuilder& builder)
+void RenderSVGInline::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(*this);
-    RenderInline::willBeDestroyed(builder);
+    RenderInline::willBeDestroyed();
 }
 
 void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

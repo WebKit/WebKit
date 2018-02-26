@@ -73,7 +73,7 @@ protected:
     RenderLayerModelObject(Document&, RenderStyle&&, BaseTypeFlags);
 
     void createLayer();
-    void willBeDestroyed(RenderTreeBuilder&) override;
+    void willBeDestroyed() override;
 
 private:
     std::unique_ptr<RenderLayer> m_layer;
