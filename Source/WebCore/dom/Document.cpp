@@ -2317,6 +2317,9 @@ void Document::destroyRenderTree()
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
     {
         RenderTreeBuilder builder(*m_renderView);
+        // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
+        while (m_renderView->firstChild())
+            builder.removeAndDestroy(*m_renderView->firstChild());
         m_renderView->destroy();
     }
     m_renderView.release();

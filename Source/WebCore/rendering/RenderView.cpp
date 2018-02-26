@@ -103,7 +103,10 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     setPositionState(AbsolutePosition); // to 0,0 :)
 }
 
-RenderView::~RenderView() = default;
+RenderView::~RenderView()
+{
+    ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
+}
 
 void RenderView::scheduleLazyRepaint(RenderBox& renderer)
 {
@@ -609,16 +612,6 @@ bool RenderView::isScrollableOrRubberbandableBox() const
     // the main frame; subframes and overflow areas have to have content that can be scrolled to in order to rubber-band.
     FrameView::Scrollability defineScrollable = frame().ownerElement() ? FrameView::Scrollability::Scrollable : FrameView::Scrollability::ScrollableOrRubberbandable;
     return frameView().isScrollable(defineScrollable);
-}
-
-void RenderView::willBeDestroyed(RenderTreeBuilder& builder)
-{
-    RenderBlockFlow::willBeDestroyed(builder);
-    // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
-    while (firstChild())
-        builder.removeAndDestroy(*firstChild());
-
-    ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
 }
 
 void RenderView::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
