@@ -24,6 +24,7 @@
 #include <wtf/text/CString.h>
 
 CString getCurrentExecutablePath();
+CString getCurrentExecutableName();
 
 // These might be added to glib in the future, but in the meantime they're defined here.
 #ifndef GULONG_TO_POINTER

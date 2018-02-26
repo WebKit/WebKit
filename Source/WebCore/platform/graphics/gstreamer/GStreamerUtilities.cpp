@@ -264,7 +264,7 @@ bool initializeGStreamer(std::optional<Vector<String>>&& options)
         Vector<String> parameters = options.value_or(extractGStreamerOptionsFromCommandLine());
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
-        argv[0] = g_strdup(g_get_prgname());
+        argv[0] = g_strdup(getCurrentExecutableName().data());
         for (unsigned i = 0; i < parameters.size(); i++)
             argv[i + 1] = g_strdup(parameters[i].utf8().data());
 

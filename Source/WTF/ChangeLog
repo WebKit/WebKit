@@ -1,3 +1,16 @@
+2018-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] User current executable name instead of g_get_prgname() for gst_init
+        https://bugs.webkit.org/show_bug.cgi?id=183119
+
+        Reviewed by Philippe Normand.
+
+        Add getCurrentExecutableName() helper function to get the name of the current executable.
+
+        * wtf/glib/GLibUtilities.cpp:
+        (getCurrentExecutableName): Get the basename of getCurrentExecutablePath() falling back to g_get_prgname().
+        * wtf/glib/GLibUtilities.h:
+
 2018-02-23  John Wilander  <wilander@apple.com>
 
         Introduce ITP debug logging as an opt-in developer feature
