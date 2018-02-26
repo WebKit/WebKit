@@ -168,6 +168,7 @@ localizedStrings["Cancel comparison"] = "Cancel comparison";
 localizedStrings["Canvas"] = "Canvas";
 localizedStrings["Canvas %d"] = "Canvas %d";
 localizedStrings["Canvas %s"] = "Canvas %s";
+localizedStrings["Canvas Element"] = "Canvas Element";
 localizedStrings["Canvases"] = "Canvases";
 localizedStrings["Cap"] = "Cap";
 localizedStrings["Caps"] = "Caps";

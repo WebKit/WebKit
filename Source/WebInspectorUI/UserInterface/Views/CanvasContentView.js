@@ -52,6 +52,10 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
         }
 
+        this._canvasElementButtonNavigationItem = new WI.ButtonNavigationItem("canvas-element", WI.UIString("Canvas Element"), "Images/Markup.svg", 16, 16);
+        this._canvasElementButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._canvasElementButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._canvasElementButtonClicked, this);
+
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.refresh, this);
@@ -112,7 +116,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         let navigationBar = new WI.NavigationBar;
         if (this._recordButtonNavigationItem)
             navigationBar.addNavigationItem(this._recordButtonNavigationItem);
-
+        navigationBar.addNavigationItem(this._canvasElementButtonNavigationItem);
         navigationBar.addNavigationItem(this._refreshButtonNavigationItem);
 
         header.append(navigationBar.element);
@@ -316,6 +320,29 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         }).catch((error) => {
             this._updatePixelSize();
         });
+    }
+
+    _canvasElementButtonClicked(event)
+    {
+        let contextMenu = WI.ContextMenu.createFromEvent(event.data.nativeEvent);
+
+        if (this._canvasNode)
+            WI.appendContextMenuItemsForDOMNode(contextMenu, this._canvasNode);
+
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WI.UIString("Log Canvas Context"), () => {
+            WI.RemoteObject.resolveCanvasContext(this.representedObject, WI.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
+                if (!remoteObject)
+                    return;
+
+                const text = WI.UIString("Selected Canvas Context");
+                const addSpecialUserLogClass = true;
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+            });
+        });
+
+        contextMenu.show();
     }
 
     _showGridButtonClicked()

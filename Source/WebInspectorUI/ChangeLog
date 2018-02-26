@@ -1,3 +1,19 @@
+2018-02-26  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: Scroll into view / Inspect element if Canvas has DOM node
+        https://bugs.webkit.org/show_bug.cgi?id=181769
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Images/Markup.svg: Added.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._canvasElementButtonClicked):
+
 2018-02-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas tab: hide navigation sidebar when viewing the overview
