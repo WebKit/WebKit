@@ -3897,7 +3897,6 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RefPtr<RegisterID> constructor;
     bool needsHomeObject = false;
 
-    // FIXME: Make the prototype non-configurable & non-writable.
     if (m_constructorExpression) {
         ASSERT(m_constructorExpression->isFuncExprNode());
         FunctionMetadataNode* metadata = static_cast<FuncExprNode*>(m_constructorExpression)->metadata();

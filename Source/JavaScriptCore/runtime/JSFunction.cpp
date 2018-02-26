@@ -139,9 +139,12 @@ FunctionRareData* JSFunction::allocateRareData(VM& vm)
 
 JSObject* JSFunction::prototypeForConstruction(VM& vm, ExecState* exec)
 {
+    // This code assumes getting the prototype is not effectful. That's only
+    // true when we can use the allocation profile.
+    ASSERT(canUseAllocationProfile()); 
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSValue prototype = get(exec, vm.propertyNames->prototype);
-    ASSERT_UNUSED(scope, !scope.exception());
+    scope.releaseAssertNoException();
     if (prototype.isObject())
         return asObject(prototype);
 
@@ -151,6 +154,7 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, ExecState* exec)
 FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, size_t inlineCapacity)
 {
     ASSERT(!m_rareData);
+    ASSERT(canUseAllocationProfile());
     VM& vm = exec->vm();
     JSObject* prototype = prototypeForConstruction(vm, exec);
     FunctionRareData* rareData = FunctionRareData::create(vm);
@@ -167,6 +171,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, siz
 FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineCapacity)
 {
     ASSERT(!!m_rareData);
+    ASSERT(canUseAllocationProfile());
     VM& vm = exec->vm();
     JSObject* prototype = prototypeForConstruction(vm, exec);
     m_rareData->initializeObjectAllocationProfile(vm, globalObject(vm), prototype, inlineCapacity, this);
@@ -374,6 +379,13 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     }
 
     if (propertyName == vm.propertyNames->prototype && thisObject->jsExecutable()->hasPrototypeProperty() && !thisObject->jsExecutable()->isClassConstructorFunction()) {
+        // NOTE: class constructors define the prototype property in bytecode using
+        // defineOwnProperty, which ends up calling into this code (see our defineOwnProperty
+        // implementation below). The bytecode will end up doing the proper definition
+        // with the property being non-writable/non-configurable. However, we must ignore
+        // the initial materialization of the property so that the defineOwnProperty call
+        // from bytecode succeeds. Otherwise, the materialization here would prevent the
+        // defineOwnProperty from being able to overwrite the property.
         unsigned attributes;
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
