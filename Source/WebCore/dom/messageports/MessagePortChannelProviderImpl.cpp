@@ -82,11 +82,8 @@ void MessagePortChannelProviderImpl::messagePortClosed(const MessagePortIdentifi
 void MessagePortChannelProviderImpl::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
     performActionOnMainThread([registry = &m_registry, message = WTFMove(message), remoteTarget]() mutable {
-        bool wasFirstMessageInQueue = registry->didPostMessageToRemote(WTFMove(message), remoteTarget);
-        if (wasFirstMessageInQueue) {
-            if (auto remotePort = MessagePort::existingMessagePortForIdentifier(remoteTarget))
-                remotePort->messageAvailable();
-        }
+        if (registry->didPostMessageToRemote(WTFMove(message), remoteTarget))
+            MessagePort::notifyMessageAvailable(remoteTarget);
     });
 }
 
@@ -119,13 +116,7 @@ void MessagePortChannelProviderImpl::checkProcessLocalPortForActivity(const Mess
 {
     ASSERT(isMainThread());
 
-    auto port = MessagePort::existingMessagePortForIdentifier(identifier);
-    if (!port) {
-        callback(MessagePortChannelProvider::HasActivity::No);
-        return;
-    }
-
-    callback(port->isLocallyReachable() ? HasActivity::Yes : HasActivity::No);
+    callback(MessagePort::isExistingMessagePortLocallyReachable(identifier) ? HasActivity::Yes : HasActivity::No);
 }
 
 
