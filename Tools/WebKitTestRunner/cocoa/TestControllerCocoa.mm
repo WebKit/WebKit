@@ -195,7 +195,7 @@ void TestController::cocoaResetStateToConsistentValues()
     [[_WKUserContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"TestContentExtensions" completionHandler:^(NSError *error) {
         doneRemoving = true;
     }];
-    platformRunUntil(doneRemoving, 0);
+    platformRunUntil(doneRemoving, noTimeout);
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
     if (PlatformWebView* webView = mainWebView())

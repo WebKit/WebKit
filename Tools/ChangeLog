@@ -1,3 +1,72 @@
+2018-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Various crashes in WebKitTestRunner, especially when system is under heavy load
+        https://bugs.webkit.org/show_bug.cgi?id=183109
+
+        Reviewed by Tim Horton.
+
+        WebKitTestRunner had many places where it sent messages to WebContent with a timeout,
+        but it didn't handle the timeout when it did occur. Nearly all of those would result
+        in logic errors and failing tests, and most would even result in stack corruption,
+        as the response handler modified local variables.
+
+        There is only one timeout scenario that we actually mean to handle in WKTR. That's
+        when a test freezes after it is done (e.g. an infinite loop in beforeunload) - we don't
+        want to blame the next test for freezing, so we silently relaunch WebContent.
+        Everything else is cargo cult code that never worked.
+
+        This patch addresses the crashes, and actually makes tests pass a lot more on an
+        overloaded system.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Moved m_doneResetting assignment
+        to where it's actually needed, for clarity.
+        (WTR::TestController::reattachPageToWebProcess): This function used to always hit
+        and ignore message timeout, as m_doneResetting is only updated by navigation callback
+        when the state is Resetting. This change makes it faster.
+        (WTR::TestController::platformResetStateToConsistentValues): Style fix.
+        (WTR::TestController::clearServiceWorkerRegistrations): Timing out here wasn't
+        handled in a meaningful manner, and would even corrupt the stack.
+        (WTR::TestController::clearDOMCache): Ditto.
+        (WTR::TestController::clearDOMCaches): Ditto.
+        (WTR::TestController::hasDOMCache): Ditto.
+        (WTR::TestController::domCacheSize): Ditto.
+        (WTR::TestController::isStatisticsPrevalentResource): Ditto.
+        (WTR::TestController::isStatisticsRegisteredAsSubFrameUnder): Ditto.
+        (WTR::TestController::isStatisticsRegisteredAsRedirectingTo): Ditto.
+        (WTR::TestController::isStatisticsHasHadUserInteraction): Ditto.
+        (WTR::TestController::isStatisticsGrandfathered): Ditto.
+        (WTR::TestController::statisticsUpdateCookiePartitioning): Ditto.
+        (WTR::TestController::statisticsSetShouldPartitionCookiesForHost): Ditto.
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore): Ditto.
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours): Ditto.
+        (WTR::TestController::statisticsClearThroughWebsiteDataRemoval): Ditto.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::shortTimeout const): Made shortTimeout shorter (on a hunch).
+        (WTR::TestInvocation::invoke): Removed a timeout waiting for initial response. There
+        is never a logical reason for such a timeout, as we always have a new or responsive
+        WebContent process here.
+        (WTR::TestInvocation::dumpResults): Removed another timeout that we don't know how to
+        properly handle.
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Removed assignment to
+        m_errorMessage, which had no effect in this context.
+
+        * WebKitTestRunner/TestInvocation.h: Removed no longer used code.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues): Use a named constant for
+        no timeout.
+        
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest): Removed a useless timeout.
+        Not sure if timing out here would corrupt the stack or not, but there is no reason
+        to impose arbitrary limits on individual steps of a test.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest): Use a named constant for
+        no timeout.
+
 2018-02-25  Ali Juma  <ajuma@chromium.org>
 
         Unreviewed. Change my status to committer.

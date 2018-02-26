@@ -119,9 +119,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
             doneResizing = true;
         }];
 
-        platformRunUntil(doneResizing, 10);
-        if (!doneResizing)
-            WTFLogAlways("Timed out waiting for view resize to complete in platformConfigureViewForTest()");
+        platformRunUntil(doneResizing, noTimeout);
     }
     
     // We also pass data to InjectedBundle::beginTesting() to have it call
