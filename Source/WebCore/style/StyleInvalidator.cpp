@@ -158,7 +158,7 @@ void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* f
             if (parent == previousElement) {
                 parentStack.append(parent);
                 if (filter)
-                    filter->pushParent(parent);
+                    filter->pushParentInitializingIfNeeded(*parent);
             } else {
                 while (parentStack.last() != parent) {
                     parentStack.removeLast();
@@ -223,7 +223,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         break;
     }
     case MatchElement::Ancestor: {
-        invalidateStyleForDescendants(element, nullptr);
+        SelectorFilter filter;
+        invalidateStyleForDescendants(element, &filter);
         break;
     }
     case MatchElement::DirectSibling:
@@ -247,10 +248,14 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
                 invalidateIfNeeded(siblingChild, nullptr);
         }
         break;
-    case MatchElement::AncestorSibling:
-        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
-            invalidateStyleForDescendants(*sibling, nullptr);
+    case MatchElement::AncestorSibling: {
+        SelectorFilter filter;
+        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+            filter.popParentsUntil(element.parentElement());
+            invalidateStyleForDescendants(*sibling, &filter);
+        }
         break;
+    }
     case MatchElement::Host:
         // FIXME: Handle this here as well.
         break;

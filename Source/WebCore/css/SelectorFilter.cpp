@@ -63,7 +63,16 @@ bool SelectorFilter::parentStackIsConsistent(const ContainerNode* parentNode) co
     return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode;
 }
 
-void SelectorFilter::pushParentStackFrame(Element* parent)
+void SelectorFilter::initializeParentStack(Element& parent)
+{
+    Vector<Element*, 20> ancestors;
+    for (auto* ancestor = &parent; ancestor; ancestor = ancestor->parentElement())
+        ancestors.append(ancestor);
+    for (unsigned i = ancestors.size(); i--;)
+        pushParent(ancestors[i]);
+}
+
+void SelectorFilter::pushParent(Element* parent)
 {
     ASSERT(m_parentStack.isEmpty() || m_parentStack.last().element == parent->parentElement());
     ASSERT(!m_parentStack.isEmpty() || !parent->parentElement());
@@ -77,7 +86,16 @@ void SelectorFilter::pushParentStackFrame(Element* parent)
         m_ancestorIdentifierFilter.add(parentFrame.identifierHashes[i]);
 }
 
-void SelectorFilter::popParentStackFrame()
+void SelectorFilter::pushParentInitializingIfNeeded(Element& parent)
+{
+    if (UNLIKELY(m_parentStack.isEmpty())) {
+        initializeParentStack(parent);
+        return;
+    }
+    pushParent(&parent);
+}
+
+void SelectorFilter::popParent()
 {
     ASSERT(!m_parentStack.isEmpty());
     const ParentStackFrame& parentFrame = m_parentStack.last();
@@ -91,9 +109,13 @@ void SelectorFilter::popParentStackFrame()
     }
 }
 
-void SelectorFilter::pushParent(Element* parent)
+void SelectorFilter::popParentsUntil(Element* parent)
 {
-    pushParentStackFrame(parent);
+    while (!m_parentStack.isEmpty()) {
+        if (parent && m_parentStack.last().element == parent)
+            return;
+        popParent();
+    }
 }
 
 struct CollectedSelectorHashes {

@@ -1,3 +1,45 @@
+2018-02-19  Antti Koivisto  <antti@apple.com>
+
+        Use selector filter when invalidating descendants
+        https://bugs.webkit.org/show_bug.cgi?id=182839
+        <rdar://problem/37581072>
+
+        Reviewed by Zalan Bujtas.
+
+        We can make descendant invalidation faster by enabling filtering.
+
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::initializeParentStack):
+
+            Traverse and reverse the ancestor chain, and push it.
+
+        (WebCore::SelectorFilter::pushParent):
+        (WebCore::SelectorFilter::pushParentInitializingIfNeeded):
+
+            Add a version of pushParent that can initialize the stack.
+
+        (WebCore::SelectorFilter::popParent):
+        (WebCore::SelectorFilter::popParentsUntil):
+
+            Pop until a given parent element.
+
+        (WebCore::SelectorFilter::pushParentStackFrame): Deleted.
+        (WebCore::SelectorFilter::popParentStackFrame): Deleted.
+
+            These were the same as push/popParent.
+
+        * css/SelectorFilter.h:
+        (WebCore::SelectorFilter::popParent): Deleted.
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateStyleForDescendants):
+
+            Use pushParentInitializingIfNeeded.
+
+        (WebCore::Style::Invalidator::invalidateStyleWithMatchElement):
+
+            Use selector filter when doing descendant tree invalidation.
+            Make sure to pop it until the parent when reusing.
+
 2018-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         null m_lastNodeInserted dereference at ReplaceSelectionCommand::InsertedNodes::lastLeafInserted
