@@ -36,6 +36,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -340,6 +341,55 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
     log("Exception: " + e);
 }
 </script>
+)SWRESOURCE";
+
+static const char* mainBytesForSessionIDTest = R"SWRESOURCE(
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log(event.data);
+});
+
+try {
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    worker = reg.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            worker.postMessage("TEST");
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+
+</script>
+)SWRESOURCE";
+
+static const char* scriptBytesForSessionIDTest = R"SWRESOURCE(
+
+var wasActivated = false;
+
+self.addEventListener("activate", event => {
+    event.waitUntil(clients.claim().then( () => {
+        wasActivated = true;
+    }));
+});
+
+self.addEventListener("message", (event) => {
+    if (wasActivated && registration.active)
+        event.source.postMessage("PASS: activation successful");
+    else
+        event.source.postMessage("FAIL: failed to activate");
+});
+
 )SWRESOURCE";
 
 TEST(ServiceWorkers, Basic)
@@ -928,7 +978,57 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
-
 #endif // WK_HAVE_C_SPI
+
+TEST(ServiceWorkers, NonDefaultSessionID)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    NSURL *serviceWorkersPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/ServiceWorkers/" stringByExpandingTildeInPath] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtURL:serviceWorkersPath error:nil];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkersPath.path]);
+    NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<_WKWebsiteDataStoreConfiguration> websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = serviceWorkersPath;
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
+
+    configuration.get().websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
+
+    RetainPtr<SWMessageHandlerWithExpectedMessage> messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainBytesForSessionIDTest });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytesForSessionIDTest });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    expectedMessage = "PASS: activation successful";
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    webView = nullptr;
+
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkersPath.path]);
+
+    [configuration.get().websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
+        EXPECT_EQ(1u, [websiteDataRecords count]);
+        EXPECT_TRUE([websiteDataRecords[0].displayName isEqualToString:@"sw host"]);
+
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
 
 #endif // WK_API_ENABLED

@@ -31,6 +31,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "URL.h"
 #include "WorkerType.h"
+#include <pal/SessionID.h>
 
 #if ENABLE(SERVICE_WORKER)
 
@@ -44,6 +45,7 @@ struct ServiceWorkerContextData {
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     URL scriptURL;
     WorkerType workerType;
+    PAL::SessionID sessionID;
     bool loadedFromDisk;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -55,7 +57,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << scriptURL << workerType << loadedFromDisk;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << scriptURL << workerType << sessionID << loadedFromDisk;
 }
 
 template<class Decoder>
@@ -91,11 +93,15 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decodeEnum(workerType))
         return std::nullopt;
 
+    PAL::SessionID sessionID;
+    if (!decoder.decode(sessionID))
+        return std::nullopt;
+
     bool loadedFromDisk;
     if (!decoder.decode(loadedFromDisk))
         return std::nullopt;
 
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), workerType, loadedFromDisk }};
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), workerType, sessionID, loadedFromDisk }};
 }
 
 } // namespace WebCore

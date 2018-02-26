@@ -48,9 +48,11 @@ URL static inline topOriginURL(const SecurityOrigin& origin)
     return url;
 }
 
-static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
+static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy, PAL::SessionID sessionID)
 {
     auto page = makeUniqueRef<Page>(WTFMove(configuration));
+    page->setSessionID(sessionID);
+
     auto& mainFrame = page->mainFrame();
     mainFrame.loader().initForSynthesizedDocument({ });
     auto document = Document::createNonRenderedPlaceholder(&mainFrame, data.scriptURL);
@@ -84,7 +86,7 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
 }
 
 ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, PAL::SessionID sessionID, String&& userAgent, CacheStorageProvider& cacheStorageProvider, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
-    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
+    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy, data.sessionID))
     , m_document(*m_page->mainFrame().document())
     , m_serviceWorkerThread(ServiceWorkerThread::create(data, sessionID, WTFMove(userAgent), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)

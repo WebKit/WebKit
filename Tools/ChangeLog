@@ -1,3 +1,19 @@
+2018-02-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r228978. rdar://problem/37909154
+
+    2018-02-25  Chris Dumez  <cdumez@apple.com>
+
+            Service workers do not work well inside Web.app
+            https://bugs.webkit.org/show_bug.cgi?id=183105
+            <rdar://problem/37864140>
+
+            Reviewed by Youenn Fablet.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2018-02-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228859. rdar://problem/37734496
