@@ -739,5 +739,10 @@ shouldThrow("converter.setTestSequenceRecord({ '\u0100': ['value'] })");
 evalAndLog("converter.setTestSequenceRecord({ '\u00FF': ['value'] })");
 shouldBe("converter.testSequenceRecord()['\u00FF']", "['value']");
 
+shouldBe("converter.testImpureNaNUnrestrictedDouble", "NaN");
+shouldBe("converter.testImpureNaN2UnrestrictedDouble", "NaN");
+shouldBe("converter.testQuietNaNUnrestrictedDouble", "NaN");
+shouldBe("converter.testPureNaNUnrestrictedDouble", "NaN");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>

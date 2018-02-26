@@ -56,6 +56,11 @@
     attribute [EnforceRange] unsigned long long testEnforceRangeUnsignedLongLong;
     attribute [Clamp] unsigned long long testClampUnsignedLongLong;
 
+    readonly attribute unrestricted double testImpureNaNUnrestrictedDouble;
+    readonly attribute unrestricted double testImpureNaN2UnrestrictedDouble;
+    readonly attribute unrestricted double testQuietNaNUnrestrictedDouble;
+    readonly attribute unrestricted double testPureNaNUnrestrictedDouble;
+
     attribute DOMString testString;
     attribute ByteString testByteString;
     attribute USVString testUSVString;
