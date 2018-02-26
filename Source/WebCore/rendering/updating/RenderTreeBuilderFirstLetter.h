@@ -36,6 +36,7 @@ public:
     FirstLetter(RenderTreeBuilder&);
 
     void updateAfterDescendants(RenderBlock&);
+    void cleanupOnDestroy(RenderTextFragment&);
 
 private:
     void updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild);

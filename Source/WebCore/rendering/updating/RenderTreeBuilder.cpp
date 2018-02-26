@@ -154,6 +154,9 @@ void RenderTreeBuilder::removeAndDestroy(RenderObject& renderer)
         fullScreenBuilder().cleanupOnDestroy(downcast<RenderFullScreen>(renderer));
 #endif
 
+    if (is<RenderTextFragment>(renderer))
+        firstLetterBuilder().cleanupOnDestroy(downcast<RenderTextFragment>(renderer));
+
     // We need to detach the subtree first so that the descendants don't have
     // access to previous/next sublings at takeChild().
     // FIXME: webkit.org/b/182909.

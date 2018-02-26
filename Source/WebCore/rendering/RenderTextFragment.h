@@ -60,7 +60,6 @@ public:
 private:
     bool isTextFragment() const override { return true; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    void willBeDestroyed(RenderTreeBuilder&) override;
 
     UChar previousCharacter() const override;
 
