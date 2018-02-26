@@ -1141,13 +1141,17 @@ void ReplaceSelectionCommand::doApply()
         node = next;
     }
 
+    if (insertedNodes.isEmpty())
+        return;
     removeUnrenderedTextNodesAtEnds(insertedNodes);
 
     if (!handledStyleSpans)
         handleStyleSpans(insertedNodes);
 
     // Mutation events (bug 20161) may have already removed the inserted content
-    if (!insertedNodes.firstNodeInserted() || !insertedNodes.firstNodeInserted()->isConnected())
+    if (insertedNodes.isEmpty())
+        return;
+    if (!insertedNodes.firstNodeInserted()->isConnected())
         return;
 
     VisiblePosition startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.firstNodeInserted());
@@ -1168,8 +1172,12 @@ void ReplaceSelectionCommand::doApply()
     }
     
     makeInsertedContentRoundTrippableWithHTMLTreeBuilder(insertedNodes);
+    if (insertedNodes.isEmpty())
+        return;
 
     removeRedundantStylesAndKeepStyleSpanInline(insertedNodes);
+    if (insertedNodes.isEmpty())
+        return;
 
     if (m_sanitizeFragment)
         applyCommandToComposite(SimplifyMarkupCommand::create(document(), insertedNodes.firstNodeInserted(), insertedNodes.pastLastLeaf()));

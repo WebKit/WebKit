@@ -69,15 +69,17 @@ private:
         void willRemoveNode(Node*);
         void didReplaceNode(Node*, Node* newNode);
 
+        bool isEmpty() { return !m_firstNodeInserted; }
         Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
-        Node* lastLeafInserted() const { return m_lastNodeInserted->lastDescendant(); }
+        Node* lastLeafInserted() const
+        {
+            ASSERT(m_lastNodeInserted);
+            return m_lastNodeInserted->lastDescendant();
+        }
         Node* pastLastLeaf() const
         {
-            if (m_lastNodeInserted) {
-                ASSERT(lastLeafInserted());
-                return NodeTraversal::next(*lastLeafInserted());
-            }
-            return nullptr;
+            ASSERT(m_lastNodeInserted);
+            return NodeTraversal::next(*lastLeafInserted());
         }
 
     private:
