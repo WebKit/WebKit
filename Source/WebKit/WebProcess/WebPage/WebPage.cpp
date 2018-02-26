@@ -3180,8 +3180,13 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 #endif
 
-    if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkersEnabledKey()))
-        RELEASE_ASSERT(parentProcessHasServiceWorkerEntitlement());
+#if ENABLE(SERVICE_WORKER)
+    if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkersEnabledKey())) {
+        ASSERT(parentProcessHasServiceWorkerEntitlement());
+        if (!parentProcessHasServiceWorkerEntitlement())
+            RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(false);
+    }
+#endif
 
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);

@@ -1,3 +1,21 @@
+2018-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assertion in WebPage::updatePreferences
+        https://bugs.webkit.org/show_bug.cgi?id=183075
+
+        Reviewed by Youenn Fablet and Chris Dumez.
+
+        Replaced the release assertion added in r228589 with a more graceful disabling of the feature when the entitlement is missing.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didReceiveMessage): Added an early exit with an entitlement check to disable the feature.
+        (WebKit::StorageProcess::initializeWebsiteDataStore): Ditto.
+        (WebKit::StorageProcess::createStorageToWebProcessConnection): Replaced the release assertion with a debug assertion.
+        (WebKit::StorageProcess::swServerForSession): Removed the assertion. This code can be reached when the service worker is disabled.
+        (WebKit::StorageProcess::registerSWServerConnection): Replaced the release assertion with a debug assertion.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Disable the feature instead of crashing when the entitlement is missing.
+
 2018-02-26  Chris Dumez  <cdumez@apple.com>
 
         Regression(r223431): Crash under didReceiveChallenge in NetworkSessionCocoa
