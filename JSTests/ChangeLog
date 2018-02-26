@@ -1,3 +1,12 @@
+2018-02-20  Saam Barati  <sbarati@apple.com>
+
+        DFG::VarargsForwardingPhase should eliminate getting argument length
+        https://bugs.webkit.org/show_bug.cgi?id=182959
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/forward-arguments-dont-escape-on-arguments-length.js: Added.
+
 2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Support ArrayPush for ArrayStorage

@@ -346,6 +346,11 @@ public:
                     }
                     break;
                 }
+                case GetArgumentCountIncludingThis: {
+                    if (InlineCallFrame* inlineCallFrame = node->argumentsInlineCallFrame())
+                        VALIDATE((node), inlineCallFrame->isVarargs());
+                    break;
+                }
                 default:
                     break;
                 }

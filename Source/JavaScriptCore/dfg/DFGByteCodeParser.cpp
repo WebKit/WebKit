@@ -1352,13 +1352,10 @@ void ByteCodeParser::emitFunctionChecks(CallVariant callee, Node* callTarget, Vi
 Node* ByteCodeParser::getArgumentCount()
 {
     Node* argumentCount;
-    if (m_inlineStackTop->m_inlineCallFrame) {
-        if (m_inlineStackTop->m_inlineCallFrame->isVarargs())
-            argumentCount = get(VirtualRegister(CallFrameSlot::argumentCount));
-        else
-            argumentCount = jsConstant(m_graph.freeze(jsNumber(m_inlineStackTop->m_inlineCallFrame->argumentCountIncludingThis))->value());
-    } else
-        argumentCount = addToGraph(GetArgumentCountIncludingThis, OpInfo(0), OpInfo(SpecInt32Only));
+    if (m_inlineStackTop->m_inlineCallFrame && !m_inlineStackTop->m_inlineCallFrame->isVarargs())
+        argumentCount = jsConstant(m_graph.freeze(jsNumber(m_inlineStackTop->m_inlineCallFrame->argumentCountIncludingThis))->value());
+    else
+        argumentCount = addToGraph(GetArgumentCountIncludingThis, OpInfo(m_inlineStackTop->m_inlineCallFrame), OpInfo(SpecInt32Only));
     return argumentCount;
 }
 

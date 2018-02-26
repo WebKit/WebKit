@@ -1265,6 +1265,12 @@ public:
         return m_opInfo.as<LoadVarargsData*>();
     }
 
+    InlineCallFrame* argumentsInlineCallFrame()
+    {
+        ASSERT(op() == GetArgumentCountIncludingThis);
+        return m_opInfo.as<InlineCallFrame*>();
+    }
+
     bool hasQueriedType()
     {
         return op() == IsCellWithType;
