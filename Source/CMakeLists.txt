@@ -18,6 +18,9 @@ if (ENABLE_API_TESTS)
 endif ()
 
 if (USE_OPENVR)
+    # OpenVR is compiled with -stdlib=libc++ as default if Clang is used.
+    # Disable USE_LIBCXX not to use -stdlib=libc++.
+    option(USE_LIBCXX "Uses libc++ instead of libstdc++" OFF)
     add_subdirectory(ThirdParty/openvr)
 endif ()
 
