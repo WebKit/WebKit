@@ -1,5 +1,12 @@
 2018-02-26  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, USE_GSTREAMER_PLAYBIN3 build fix.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        There is no such ENABLE_GSTREAMER_PLAYBIN3.
+
+2018-02-26  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, manual rollout of r228866 causing EGL_BAD_CONTEXT errors
 
         * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:

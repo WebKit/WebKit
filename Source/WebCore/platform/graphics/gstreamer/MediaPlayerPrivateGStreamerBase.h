@@ -211,7 +211,7 @@ protected:
         TextChanged = 1 << 5,
 #endif
         SizeChanged = 1 << 6,
-#if ENABLE(GSTREAMER_PLAYBIN3)
+#if USE(GSTREAMER_PLAYBIN3)
         StreamCollectionChanged = 1 << 7
 #endif
     };
