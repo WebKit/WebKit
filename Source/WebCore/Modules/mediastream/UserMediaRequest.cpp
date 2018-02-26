@@ -87,7 +87,7 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 static bool isSecure(DocumentLoader& documentLoader)
 {
     auto& response = documentLoader.response();
-    if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url()))
+    if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url().host()))
         return true;
     return SchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
         && response.certificateInfo()
