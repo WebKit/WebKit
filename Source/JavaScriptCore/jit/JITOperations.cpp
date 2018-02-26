@@ -1724,27 +1724,6 @@ int32_t JIT_OPERATION operationInstanceOfCustom(ExecState* exec, EncodedJSValue 
 
 }
 
-static bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
-{
-    switch (object.structure()->typeInfo().type()) {
-    case DirectArgumentsType: {
-        DirectArguments* directArguments = jsCast<DirectArguments*>(&object);
-        if (directArguments->isMappedArgumentInDFG(index))
-            return true;
-        break;
-    }
-    case ScopedArgumentsType: {
-        ScopedArguments* scopedArguments = jsCast<ScopedArguments*>(&object);
-        if (scopedArguments->isMappedArgumentInDFG(index))
-            return true;
-        break;
-    }
-    default:
-        break;
-    }
-    return false;
-}
-
 static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, ByValInfo* byValInfo, ReturnAddressPtr returnAddress)
 {
     VM& vm = exec->vm();
@@ -1781,7 +1760,16 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
             if (object->canGetIndexQuickly(i))
                 return object->getIndexQuickly(i);
 
-            if (!canAccessArgumentIndexQuickly(*object, i)) {
+            bool skipMarkingOutOfBounds = false;
+
+            if (object->indexingType() == ArrayWithContiguous && i < object->butterfly()->publicLength()) {
+                // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
+                // https://bugs.webkit.org/show_bug.cgi?id=182940
+                auto* globalObject = object->globalObject();
+                skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
+            }
+
+            if (!skipMarkingOutOfBounds && !CommonSlowPaths::canAccessArgumentIndexQuickly(*object, i)) {
                 // FIXME: This will make us think that in-bounds typed array accesses are actually
                 // out-of-bounds.
                 // https://bugs.webkit.org/show_bug.cgi?id=149886
@@ -1950,7 +1938,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
-    if (!canAccessArgumentIndexQuickly(*object, index)) {
+    if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index)) {
         // FIXME: This will make us think that in-bounds typed array accesses are actually
         // out-of-bounds.
         // https://bugs.webkit.org/show_bug.cgi?id=149886
@@ -1974,7 +1962,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(ExecState* exec,
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
-    if (!canAccessArgumentIndexQuickly(*object, index)) {
+    if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index)) {
         // FIXME: This will make us think that in-bounds typed array accesses are actually
         // out-of-bounds.
         // https://bugs.webkit.org/show_bug.cgi?id=149886

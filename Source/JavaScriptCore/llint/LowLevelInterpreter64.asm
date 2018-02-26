@@ -1514,20 +1514,20 @@ _llint_op_get_by_val:
     bineq t2, ContiguousShape, .opGetByValNotContiguous
 
 .opGetByValIsContiguous:
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValSlow
     andi JSObject::m_butterflyIndexingMask[t0], t1
     loadisFromInstruction(1, t0)
     loadq [t3, t1, 8], t2
-    btqz t2, .opGetByValOutOfBounds
+    btqz t2, .opGetByValSlow
     jmp .opGetByValDone
 
 .opGetByValNotContiguous:
     bineq t2, DoubleShape, .opGetByValNotDouble
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValSlow
     andi JSObject::m_butterflyIndexingMask[t0], t1
     loadisFromInstruction(1 ,t0)
     loadd [t3, t1, 8], ft0
-    bdnequn ft0, ft0, .opGetByValOutOfBounds
+    bdnequn ft0, ft0, .opGetByValSlow
     fd2q ft0, t2
     subq tagTypeNumber, t2
     jmp .opGetByValDone
@@ -1535,21 +1535,16 @@ _llint_op_get_by_val:
 .opGetByValNotDouble:
     subi ArrayStorageShape, t2
     bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValNotIndexedStorage
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValSlow
     andi JSObject::m_butterflyIndexingMask[t0], t1
     loadisFromInstruction(1, t0)
     loadq ArrayStorage::m_vector[t3, t1, 8], t2
-    btqz t2, .opGetByValOutOfBounds
+    btqz t2, .opGetByValSlow
 
 .opGetByValDone:
     storeq t2, [cfr, t0, 8]
     valueProfile(t2, 5, t0)
     dispatch(constexpr op_get_by_val_length)
-
-.opGetByValOutOfBounds:
-    loadpFromInstruction(4, t0)
-    storeb 1, ArrayProfile::m_outOfBounds[t0]
-    jmp .opGetByValSlow
 
 .opGetByValNotIndexedStorage:
     # First lets check if we even have a typed array. This lets us do some boilerplate up front.

@@ -27,8 +27,10 @@
 
 #include "CodeBlock.h"
 #include "CodeSpecializationKind.h"
+#include "DirectArguments.h"
 #include "ExceptionHelpers.h"
 #include "FunctionCodeBlock.h"
+#include "ScopedArguments.h"
 #include "SlowPathReturnType.h"
 #include "StackAlignment.h"
 #include "VMInlines.h"
@@ -200,6 +202,27 @@ inline void tryCacheGetFromScopeGlobal(
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
         }
     }
+}
+
+inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
+{
+    switch (object.structure()->typeInfo().type()) {
+    case DirectArgumentsType: {
+        DirectArguments* directArguments = jsCast<DirectArguments*>(&object);
+        if (directArguments->isMappedArgumentInDFG(index))
+            return true;
+        break;
+    }
+    case ScopedArgumentsType: {
+        ScopedArguments* scopedArguments = jsCast<ScopedArguments*>(&object);
+        if (scopedArguments->isMappedArgumentInDFG(index))
+            return true;
+        break;
+    }
+    default:
+        break;
+    }
+    return false;
 }
 
 } // namespace CommonSlowPaths
