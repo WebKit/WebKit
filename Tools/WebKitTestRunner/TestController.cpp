@@ -891,6 +891,8 @@ const char* TestController::webProcessName()
     return "com.apple.WebKit.WebContent.Development";
 #elif PLATFORM(GTK)
     return "WebKitWebProcess";
+#elif PLATFORM(WPE)
+    return "WPEWebProcess";
 #else
     return "WebProcess";
 #endif
@@ -905,6 +907,8 @@ const char* TestController::networkProcessName()
     return "com.apple.WebKit.Networking.Development";
 #elif PLATFORM(GTK)
     return "WebKitNetworkProcess";
+#elif PLATFORM(WPE)
+    return "WPENetworkProcess";
 #else
     return "NetworkProcess";
 #endif
@@ -923,6 +927,8 @@ const char* TestController::databaseProcessName()
     return "com.apple.WebKit.Storage.Development";
 #elif PLATFORM(GTK)
     return "WebKitStorageProcess";
+#elif PLATFORM(WPE)
+    return "WPEStorageProcess";
 #else
     return "DatabaseProcess";
 #endif
