@@ -71,9 +71,7 @@ WebAutomationSession::WebAutomationSession()
 WebAutomationSession::~WebAutomationSession()
 {
     ASSERT(!m_client);
-
-    if (m_processPool)
-        m_processPool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
+    ASSERT(!m_processPool);
 }
 
 void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClient>&& client)
