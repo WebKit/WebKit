@@ -313,67 +313,52 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
 }
 
-void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const JSON::Object& sizeObject, Ref<ResizeWindowOfBrowsingContextCallback>&& callback)
+void WebAutomationSession::setWindowFrameOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const JSON::Object* optionalOriginObject, const JSON::Object* optionalSizeObject, Ref<SetWindowFrameOfBrowsingContextCallback>&& callback)
 {
 #if PLATFORM(IOS)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
-    float width;
-    if (!sizeObject.getDouble(WTF::ASCIILiteral("width"), width))
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'width' parameter was not found or invalid.");
+    std::optional<float> x;
+    std::optional<float> y;
+    if (optionalOriginObject) {
+        if (!(x = optionalOriginObject->getNumber<float>(WTF::ASCIILiteral("x"))))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'x' parameter was not found or invalid.");
 
-    float height;
-    if (!sizeObject.getDouble(WTF::ASCIILiteral("height"), height))
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'height' parameter was not found or invalid.");
+        if (!(y = optionalOriginObject->getNumber<float>(WTF::ASCIILiteral("y"))))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid.");
 
-    if (width < 0)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'width' parameter had an invalid value.");
+        if (x.value() < 0)
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'x' parameter had an invalid value.");
 
-    if (height < 0)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'height' parameter had an invalid value.");
+        if (y.value() < 0)
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'y' parameter had an invalid value.");
+    }
+
+    std::optional<float> width;
+    std::optional<float> height;
+    if (optionalSizeObject) {
+        if (!(width = optionalSizeObject->getNumber<float>(WTF::ASCIILiteral("width"))))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'width' parameter was not found or invalid.");
+
+        if (!(height = optionalSizeObject->getNumber<float>(WTF::ASCIILiteral("height"))))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'height' parameter was not found or invalid.");
+
+        if (width.value() < 0)
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'width' parameter had an invalid value.");
+
+        if (height.value() < 0)
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'height' parameter had an invalid value.");
+    }
 
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    page->getWindowFrameWithCallback([callback = WTFMove(callback), page = makeRef(*page), width, height](WebCore::FloatRect originalFrame) mutable {
-        WebCore::FloatRect newFrame = WebCore::FloatRect(originalFrame.location(), WebCore::FloatSize(width, height));
-        if (newFrame == originalFrame)
-            return callback->sendSuccess();
+    // FIXME (§10.7.2 Step 10): We need to exit fullscreen before setting the frame.
+    // FIXME (§10.7.2 Step 11): We need to de-miniaturize the window before setting the frame.
 
-        page->setWindowFrame(newFrame);
-        callback->sendSuccess();
-    });
-#endif
-}
-
-void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const JSON::Object& positionObject, Ref<MoveWindowOfBrowsingContextCallback>&& callback)
-{
-#if PLATFORM(IOS)
-    FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
-#else
-    float x;
-    if (!positionObject.getDouble(WTF::ASCIILiteral("x"), x))
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'x' parameter was not found or invalid.");
-
-    float y;
-    if (!positionObject.getDouble(WTF::ASCIILiteral("y"), y))
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid.");
-
-    if (x < 0)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'x' parameter had an invalid value.");
-
-    if (y < 0)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'y' parameter had an invalid value.");
-
-    WebPageProxy* page = webPageProxyForHandle(handle);
-    if (!page)
-        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-
-    WebCore::FloatRect originalFrame;
-    page->getWindowFrameWithCallback([callback = WTFMove(callback), page = makeRef(*page), x, y](WebCore::FloatRect originalFrame) mutable {
-
-        WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x, y), originalFrame.size());
+    page->getWindowFrameWithCallback([callback = WTFMove(callback), page = makeRef(*page), width, height, x, y](WebCore::FloatRect originalFrame) mutable {
+        WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x.value_or(originalFrame.location().x()), y.value_or(originalFrame.location().y())), WebCore::FloatSize(width.value_or(originalFrame.size().width()), height.value_or(originalFrame.size().height())));
         if (newFrame == originalFrame)
             return callback->sendSuccess();
 

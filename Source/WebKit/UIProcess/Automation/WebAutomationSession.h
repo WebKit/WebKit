@@ -122,8 +122,7 @@ public:
     void createBrowsingContext(Inspector::ErrorString&, String*) override;
     void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
     void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
-    void resizeWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const JSON::Object& size, Ref<ResizeWindowOfBrowsingContextCallback>&&) final;
-    void moveWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const JSON::Object& position, Ref<MoveWindowOfBrowsingContextCallback>&&) final;
+    void setWindowFrameOfBrowsingContext(Inspector::ErrorString&, const String& handle, const JSON::Object* origin, const JSON::Object* size, Ref<SetWindowFrameOfBrowsingContextCallback>&&) final;
     void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&&) override;
     void goBackInBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&&) override;
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&&) override;

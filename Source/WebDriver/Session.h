@@ -121,8 +121,6 @@ private:
     void closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
 
     void getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&&);
-    void moveToplevelBrowsingContextWindow(double x, double y, Function<void (CommandResult&&)>&&);
-    void resizeToplevelBrowsingContextWindow(double width, double height, Function<void (CommandResult&&)>&&);
 
     std::optional<String> pageLoadStrategyString() const;
 

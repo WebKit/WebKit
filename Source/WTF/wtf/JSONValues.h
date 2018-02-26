@@ -217,6 +217,19 @@ protected:
         return value->asInteger(output);
     }
 
+    template<class T> std::optional<T> getNumber(const String& name) const
+    {
+        RefPtr<Value> value;
+        if (!getValue(name, value))
+            return std::nullopt;
+
+        T result;
+        if (!value->asDouble(result))
+            return std::nullopt;
+
+        return result;
+    }
+
     bool getString(const String& name, String& output) const;
     bool getObject(const String& name, RefPtr<Object>&) const;
     bool getArray(const String& name, RefPtr<Array>&) const;
@@ -260,6 +273,7 @@ public:
     using ObjectBase::getBoolean;
     using ObjectBase::getInteger;
     using ObjectBase::getDouble;
+    using ObjectBase::getNumber;
     using ObjectBase::getString;
     using ObjectBase::getObject;
     using ObjectBase::getArray;
@@ -472,3 +486,4 @@ public:
 namespace JSON {
 using namespace WTF::JSONImpl;
 }
+
