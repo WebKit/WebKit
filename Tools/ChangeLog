@@ -1,3 +1,15 @@
+2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unsafe g_setenv use in MiniBrowser main
+        https://bugs.webkit.org/show_bug.cgi?id=182978
+
+        Reviewed by Carlos Garcia Campos.
+
+        setenv (and g_setenv) will randomly crash if called too late.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2018-02-21  Ms2ger  <Ms2ger@igalia.com>
 
         [WTR][WPE] Correct the process names in TestController.
@@ -166,6 +178,7 @@
         (-[TestAsyncNavigationDelegate webView:didFinishNavigation:]):
         (-[TestAsyncNavigationDelegate webView:didFailNavigation:withError:]):
         (-[TestAsyncNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+
         (-[TestAsyncNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
         (-[TestAsyncNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
         (TestWebKitAPI::TEST):
