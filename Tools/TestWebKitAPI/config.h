@@ -45,7 +45,7 @@
 
 #include <stdint.h>
 
-#if !PLATFORM(IOS) && !PLATFORM(WIN) && !defined(BUILDING_JSCONLY__)
+#if !PLATFORM(IOS) && !defined(BUILDING_JSCONLY__) && (!PLATFORM(WIN) || defined(BUILDING_WIN_CAIRO_WEBKIT))
 #include <WebKit/WebKit2_C.h>
 #endif
 

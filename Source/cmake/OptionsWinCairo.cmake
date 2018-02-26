@@ -4,6 +4,7 @@ include(OptionsWin)
 
 if (ENABLE_WIN_CAIRO_WEBKIT)
     set(ENABLE_WEBKIT ON)
+    add_definitions(-DBUILDING_WIN_CAIRO_WEBKIT=1)
 endif ()
 
 find_package(Cairo 1.14.10 REQUIRED)

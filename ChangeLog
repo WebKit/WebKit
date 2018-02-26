@@ -1,3 +1,15 @@
+2018-02-26  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] WebKit2_C.h should be included for TestWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=182682
+
+        Reviewed by Yusuke Suzuki.
+
+        Added a new definition "BUILDING_WIN_CAIRO_WEBKIT" to specify
+        the wincairo webkit build.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2018-02-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][OpenVR] Linkage errors happen because only OpenVR is compiled with -stdlib=libc++ if Clang is used
