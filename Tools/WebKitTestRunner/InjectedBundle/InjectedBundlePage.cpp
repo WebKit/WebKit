@@ -1978,11 +1978,11 @@ void InjectedBundlePage::dumpBackForwardList(StringBuilder& stringBuilder)
     for (unsigned i = WKBundleBackForwardListGetForwardListCount(list); i; --i) {
         WKRetainPtr<WKBundleBackForwardListItemRef> item = adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, i));
         // Something is wrong if the item from the last test is in the forward part of the list.
-        ASSERT(!WKBundleBackForwardListItemIsSame(item.get(), m_previousTestBackForwardListItem.get()));
+        ASSERT(!m_previousTestBackForwardListItem || !WKBundleBackForwardListItemIsSame(item.get(), m_previousTestBackForwardListItem.get()));
         itemsToPrint.append(item);
     }
 
-    ASSERT(!WKBundleBackForwardListItemIsSame(adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, 0)).get(), m_previousTestBackForwardListItem.get()));
+    ASSERT(!m_previousTestBackForwardListItem || !WKBundleBackForwardListItemIsSame(adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, 0)).get(), m_previousTestBackForwardListItem.get()));
 
     itemsToPrint.append(adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, 0)));
 
@@ -1991,7 +1991,7 @@ void InjectedBundlePage::dumpBackForwardList(StringBuilder& stringBuilder)
     int backListCount = WKBundleBackForwardListGetBackListCount(list);
     for (int i = -1; i >= -backListCount; --i) {
         WKRetainPtr<WKBundleBackForwardListItemRef> item = adoptWK(WKBundleBackForwardListCopyItemAtIndex(list, i));
-        if (WKBundleBackForwardListItemIsSame(item.get(), m_previousTestBackForwardListItem.get()))
+        if (m_previousTestBackForwardListItem && WKBundleBackForwardListItemIsSame(item.get(), m_previousTestBackForwardListItem.get()))
             break;
         itemsToPrint.append(item);
     }

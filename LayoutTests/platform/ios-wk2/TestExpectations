@@ -335,7 +335,6 @@ http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
 
 # HTTP tests that assert:
-http/tests/navigation/new-window-redirect-history.html
 http/tests/plugins/plugin-document-has-focus.html
 http/tests/security/inactive-document-with-empty-security-origin.html
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
