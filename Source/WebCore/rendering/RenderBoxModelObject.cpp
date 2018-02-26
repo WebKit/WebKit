@@ -81,20 +81,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
 // an anonymous block (that houses other blocks) or it will be an inline flow.
 // <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as
 // its continuation but the <b> will just have an inline as its continuation.
-
-struct RenderBoxModelObject::ContinuationChainNode {
-    WeakPtr<RenderBoxModelObject> renderer;
-    ContinuationChainNode* previous { nullptr };
-    ContinuationChainNode* next { nullptr };
-
-    ContinuationChainNode(RenderBoxModelObject&);
-    ~ContinuationChainNode();
-
-    void insertAfter(ContinuationChainNode&);
-
-    WTF_MAKE_FAST_ALLOCATED;
-};
-
 RenderBoxModelObject::ContinuationChainNode::ContinuationChainNode(RenderBoxModelObject& renderer)
     : renderer(makeWeakPtr(renderer))
 {
@@ -235,14 +221,11 @@ RenderBoxModelObject::RenderBoxModelObject(Document& document, RenderStyle&& sty
 RenderBoxModelObject::~RenderBoxModelObject()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
+    ASSERT(!continuation());
 }
 
 void RenderBoxModelObject::willBeDestroyed(RenderTreeBuilder& builder)
 {
-    if (continuation() && !isContinuation()) {
-        removeAndDestroyAllContinuations(builder);
-        ASSERT(!continuation());
-    }
     if (hasContinuationChainNode())
         removeFromContinuationChain();
 
@@ -2525,6 +2508,10 @@ RenderInline* RenderBoxModelObject::inlineContinuation() const
     return nullptr;
 }
 
+RenderBoxModelObject::ContinuationChainNode* RenderBoxModelObject::continuationChainNode() const
+{
+    return continuationChainNodeMap().get(this);
+}
 
 void RenderBoxModelObject::insertIntoContinuationChainAfter(RenderBoxModelObject& afterRenderer)
 {
@@ -2549,17 +2536,6 @@ auto RenderBoxModelObject::ensureContinuationChainNode() -> ContinuationChainNod
     return *continuationChainNodeMap().ensure(this, [&] {
         return std::make_unique<ContinuationChainNode>(*this);
     }).iterator->value;
-}
-
-void RenderBoxModelObject::removeAndDestroyAllContinuations(RenderTreeBuilder& builder)
-{
-    ASSERT(!isContinuation());
-    ASSERT(hasContinuationChainNode());
-    ASSERT(continuationChainNodeMap().contains(this));
-    auto& continuationChainNode = *continuationChainNodeMap().get(this);
-    while (continuationChainNode.next)
-        builder.removeAndDestroy(*continuationChainNode.next->renderer);
-    removeFromContinuationChain();
 }
 
 RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
