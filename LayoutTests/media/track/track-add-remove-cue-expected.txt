@@ -48,13 +48,9 @@ EXPECTED (newCue.size == '100') OK
 EXPECTED (newCue.align == 'middle') OK
 
 *** Create an old-style cue with an id.
-RUN(oldStyleCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?'))
-EXPECTED (oldStyleCue.id == '') OK
-EXPECTED (oldStyleCue.startTime.toString() == 'NaN') OK
-EXPECTED (oldStyleCue.endTime == '33') OK
-*** Make sure the old-style cue is not inserted because its start time is not a number.
-EXPECTED (testTrack.track.cues.length == '5') OK
-RUN(testTrack.track.addCue(oldStyleCue))
+RUN(invalidCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?'))
+TypeError: The provided value is non-finite
+EXPECTED (window.invalidCue == 'undefined') OK
 EXPECTED (testTrack.track.cues.length == '5') OK
 
 *** Remove a cue created with addCue().

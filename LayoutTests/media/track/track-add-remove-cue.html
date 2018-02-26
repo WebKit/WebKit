@@ -62,13 +62,9 @@
                 testExpected("newCue.align", "middle");
 
                 consoleWrite("<br>*** Create an old-style cue with an id.");
-                run("oldStyleCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?')");
-                testExpected("oldStyleCue.id", "");
-                testExpected("oldStyleCue.startTime.toString()", "NaN");
-                testExpected("oldStyleCue.endTime", 33);
-                consoleWrite("*** Make sure the old-style cue is not inserted because its start time is not a number.");
-                testExpected("testTrack.track.cues.length", 5);
-                run("testTrack.track.addCue(oldStyleCue)");
+                run("invalidCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?')");
+                testExpected("window.invalidCue", undefined);
+
                 testExpected("testTrack.track.cues.length", 5);
 
                 consoleWrite("<br>*** Remove a cue created with addCue().");

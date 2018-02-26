@@ -25,7 +25,7 @@
 
 [
     Conditional=VIDEO_TRACK,
-    Constructor(unrestricted double startTime, unrestricted double endTime, DOMString text),
+    Constructor(double startTime, double endTime, DOMString text),
     ConstructorCallWith=ScriptExecutionContext,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
