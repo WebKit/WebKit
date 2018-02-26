@@ -47,6 +47,7 @@ struct VRPlatformDisplayInfo {
     bool isConnected;
     bool isMounted;
     unsigned capabilityFlags;
+    uint32_t displayIdentifier;
 
     enum Eye { EyeLeft = 0, EyeRight, NumEyes };
     FloatPoint3D eyeTranslation[Eye::NumEyes];

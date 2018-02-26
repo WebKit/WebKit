@@ -40,6 +40,8 @@ private:
     void updateEyeParameters();
     void updateStageParameters();
 
+    static uint32_t s_displayIdentifier;
+
     vr::IVRSystem* m_system;
     vr::IVRChaperone* m_chaperone;
     vr::IVRCompositor* m_compositor;

@@ -59,18 +59,18 @@ public:
 
     const VREyeParameters& getEyeParameters(VREye) const;
 
-    unsigned displayId() const;
-    const String& displayName() const;
+    const String& displayName() const { return m_displayName; }
+    uint32_t displayId() const { return m_displayId; }
 
     bool getFrameData(VRFrameData&) const;
 
     Ref<VRPose> getPose() const;
     void resetPose();
 
-    double depthNear() const;
-    void setDepthNear(double);
-    double depthFar() const;
-    void setDepthFar(double);
+    double depthNear() const { return m_depthNear; }
+    void setDepthNear(double depthNear) { m_depthNear = depthNear; }
+    double depthFar() const { return m_depthFar; }
+    void setDepthFar(double depthFar) { m_depthFar = depthFar; }
 
     long requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(unsigned);
@@ -107,6 +107,10 @@ private:
     RefPtr<VRStageParameters> m_stageParameters;
 
     String m_displayName;
+    uint32_t m_displayId;
+
+    double m_depthNear { 0.01 }; // Default value from the specs.
+    double m_depthFar { 10000 }; // Default value from the specs.
 };
 
 } // namespace WebCore

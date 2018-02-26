@@ -27,11 +27,14 @@
 
 namespace WebCore {
 
+uint32_t VRPlatformDisplayOpenVR::s_displayIdentifier = 0;
+
 VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR(vr::IVRSystem* system, vr::IVRChaperone* chaperone, vr::IVRCompositor* compositor)
     : m_system(system)
     , m_chaperone(chaperone)
     , m_compositor(compositor)
 {
+    m_displayInfo.displayIdentifier = ++s_displayIdentifier;
     m_displayInfo.isConnected = m_system->IsTrackedDeviceConnected(vr::k_unTrackedDeviceIndex_Hmd);
 
     StringBuilder stringBuilder;

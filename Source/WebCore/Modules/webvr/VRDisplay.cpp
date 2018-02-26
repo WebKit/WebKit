@@ -50,6 +50,7 @@ VRDisplay::VRDisplay(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>
     m_capabilities = VRDisplayCapabilities::create(displayInfo.capabilityFlags);
     m_leftEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation[VRPlatformDisplayInfo::EyeLeft], displayInfo.eyeFieldOfView[VRPlatformDisplayInfo::EyeLeft], displayInfo.renderSize);
     m_rightEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation[VRPlatformDisplayInfo::EyeRight], displayInfo.eyeFieldOfView[VRPlatformDisplayInfo::EyeRight], displayInfo.renderSize);
+    m_displayId = displayInfo.displayIdentifier;
     m_displayName = displayInfo.displayName;
 }
 
@@ -84,16 +85,6 @@ const VREyeParameters& VRDisplay::getEyeParameters(VREye eye) const
     return eye == VREye::Left ? *m_leftEyeParameters : *m_rightEyeParameters;
 }
 
-unsigned VRDisplay::displayId() const
-{
-    return 0;
-}
-
-const String& VRDisplay::displayName() const
-{
-    return m_displayName;
-}
-
 bool VRDisplay::getFrameData(VRFrameData&) const
 {
     return false;
@@ -105,24 +96,6 @@ Ref<VRPose> VRDisplay::getPose() const
 }
 
 void VRDisplay::resetPose()
-{
-}
-
-double VRDisplay::depthNear() const
-{
-    return 0;
-}
-
-void VRDisplay::setDepthNear(double)
-{
-}
-
-double VRDisplay::depthFar() const
-{
-    return 0;
-}
-
-void VRDisplay::setDepthFar(double)
 {
 }
 
