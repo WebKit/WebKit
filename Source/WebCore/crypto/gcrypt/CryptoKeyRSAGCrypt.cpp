@@ -645,8 +645,6 @@ auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
 
 std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
 {
-    ASSERT(extractable());
-
     switch (type()) {
     case CryptoKeyType::Public:
         return CryptoKeyRSAComponents::createPublic(getRSAKeyParameter(m_platformKey, "n"), getRSAKeyParameter(m_platformKey, "e"));
