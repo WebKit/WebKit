@@ -1,3 +1,15 @@
+2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] USE_UPOWER causes crashes inside a chroot or on systems with broken dbus/upower
+        https://bugs.webkit.org/show_bug.cgi?id=181825
+
+        Reviewed by Carlos Garcia Campos.
+
+        Get rid of the upower-glib dependency. We will use upower's D-Bus API instead.
+
+        * Source/cmake/FindUPowerGLib.cmake: Removed.
+        * Source/cmake/OptionsGTK.cmake:
+
 2018-02-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][CMake] Support building with Enchant 2.x

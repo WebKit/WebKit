@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2017 Collabora Ltd.
+ *  Copyright (C) 2018 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,35 +20,83 @@
 #include "config.h"
 #include "LowPowerModeNotifier.h"
 
-#if USE(UPOWER)
+#include <cstring>
+#include <gio/gio.h>
+
 namespace WebCore {
 
+static const char kWarningLevel[] = "WarningLevel";
+
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
-    : m_upClient(adoptGRef(up_client_new()))
-    , m_device(adoptGRef(up_client_get_display_device(m_upClient.get())))
+    : m_cancellable(adoptGRef(g_cancellable_new()))
     , m_callback(WTFMove(callback))
 {
-    updateState();
+    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES),
+        nullptr, "org.freedesktop.UPower", "/org/freedesktop/UPower/devices/DisplayDevice", "org.freedesktop.UPower.Device", m_cancellable.get(),
+        [](GObject*, GAsyncResult* result, gpointer userData) {
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                return;
 
-    g_signal_connect_swapped(m_device.get(), "notify::warning-level", G_CALLBACK(warningLevelCallback), this);
+            auto* self = static_cast<LowPowerModeNotifier*>(userData);
+            if (proxy) {
+                GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
+                if (nameOwner) {
+                    self->m_displayDeviceProxy = WTFMove(proxy);
+                    self->updateWarningLevel();
+                    g_signal_connect_swapped(self->m_displayDeviceProxy.get(), "g-properties-changed", G_CALLBACK(gPropertiesChangedCallback), self);
+                    return;
+                }
+            }
+
+            // Now, if there is no name owner, it would be good to try to
+            // connect to a Flatpak battery status portal instead.
+            // Unfortunately, no such portal currently exists.
+            self->m_cancellable = nullptr;
+    }, this);
 }
 
-void LowPowerModeNotifier::updateState()
+void LowPowerModeNotifier::updateWarningLevel()
 {
-    UpDeviceLevel warningLevel;
-    g_object_get(G_OBJECT(m_device.get()), "warning-level", &warningLevel, nullptr);
-    m_lowPowerModeEnabled = warningLevel > UP_DEVICE_LEVEL_NONE && warningLevel <= UP_DEVICE_LEVEL_ACTION;
+    GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_get_cached_property(m_displayDeviceProxy.get(), kWarningLevel));
+    if (!variant) {
+        m_lowPowerModeEnabled = false;
+        return;
+    }
+
+    // 0: Unknown
+    // 1: None
+    // 2: Discharging (only for universal power supplies)
+    // 3: Low
+    // 4: Critical
+    // 5: Action
+    m_lowPowerModeEnabled = g_variant_get_uint32(variant.get()) > 1;
 }
 
-void LowPowerModeNotifier::warningLevelCallback(LowPowerModeNotifier* notifier)
+void LowPowerModeNotifier::warningLevelChanged()
 {
-    notifier->updateState();
-    notifier->m_callback(notifier->m_lowPowerModeEnabled);
+    updateWarningLevel();
+    m_callback(m_lowPowerModeEnabled);
+}
+
+void LowPowerModeNotifier::gPropertiesChangedCallback(LowPowerModeNotifier* self, GVariant* changedProperties)
+{
+    GUniqueOutPtr<GVariantIter> iter;
+    g_variant_get(changedProperties, "a{sv}", &iter.outPtr());
+
+    const char* propertyName;
+    while (g_variant_iter_next(iter.get(), "{&sv}", &propertyName, nullptr)) {
+        if (!strcmp(propertyName, kWarningLevel)) {
+            self->warningLevelChanged();
+            break;
+        }
+    }
 }
 
 LowPowerModeNotifier::~LowPowerModeNotifier()
 {
-    g_signal_handlers_disconnect_by_data(m_device.get(), this);
+    g_cancellable_cancel(m_cancellable.get());
 }
 
 bool LowPowerModeNotifier::isLowPowerModeEnabled() const
@@ -55,5 +104,4 @@ bool LowPowerModeNotifier::isLowPowerModeEnabled() const
     return m_lowPowerModeEnabled;
 }
 
-}
-#endif
+} // namespace WebCore

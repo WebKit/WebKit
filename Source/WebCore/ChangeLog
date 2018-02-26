@@ -1,3 +1,28 @@
+2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] USE_UPOWER causes crashes inside a chroot or on systems with broken dbus/upower
+        https://bugs.webkit.org/show_bug.cgi?id=181825
+
+        Reviewed by Carlos Garcia Campos.
+
+        We could fix this crash, but that would not be good enough, because upower-glib is a
+        synchronous API that wraps D-Bus calls. That's not acceptable for use in the web process.
+        Rewrite LowPowerModeNotifierGLib to use upower's D-Bus API directly, instead.
+
+        Note that this also enables LowPowerModeNotifier for WPE, since the USE(UPOWER) build
+        flag is no longer needed.
+
+        * platform/LowPowerModeNotifier.cpp:
+        * platform/LowPowerModeNotifier.h:
+        * platform/glib/LowPowerModeNotifierGLib.cpp:
+        (WebCore::LowPowerModeNotifier::LowPowerModeNotifier):
+        (WebCore::LowPowerModeNotifier::updateWarningLevel):
+        (WebCore::LowPowerModeNotifier::warningLevelChanged):
+        (WebCore::LowPowerModeNotifier::gPropertiesChangedCallback):
+        (WebCore::LowPowerModeNotifier::~LowPowerModeNotifier):
+        (WebCore::LowPowerModeNotifier::updateState): Deleted.
+        (WebCore::LowPowerModeNotifier::warningLevelCallback): Deleted.
+
 2018-02-21  Chris Dumez  <cdumez@apple.com>
 
         VTTCue constructor should use 'double' type for startTime / endTime
