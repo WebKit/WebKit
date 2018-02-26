@@ -1678,32 +1678,9 @@ void DocumentLoader::startLoadingMainResource()
     });
 }
 
-static inline FetchOptions::Cache toFetchOptionsCache(ResourceRequestCachePolicy policy)
-{
-    // We are setting FetchOptions::Cache values to keep current behavior consistency.
-    // FIXME: We should merge FetchOptions::Cache with ResourceRequestCachePolicy and merge related class members.
-    switch (policy) {
-    case UseProtocolCachePolicy:
-        return FetchOptions::Cache::Default;
-    case ReloadIgnoringCacheData:
-        return FetchOptions::Cache::Reload;
-    case ReturnCacheDataElseLoad:
-        return FetchOptions::Cache::Default;
-    case ReturnCacheDataDontLoad:
-        return FetchOptions::Cache::Default;
-    case DoNotUseAnyCache:
-        return FetchOptions::Cache::NoStore;
-    case RefreshAnyCacheData:
-        return FetchOptions::Cache::NoCache;
-    }
-    return FetchOptions::Cache::Default;
-}
-
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
-    ResourceLoaderOptions mainResourceLoadOptions { SendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::Navigate, IncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching };
-    mainResourceLoadOptions.cache = toFetchOptionsCache(request.cachePolicy());
-
+    static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::Navigate, IncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching);
     CachedResourceRequest mainResourceRequest(ResourceRequest(request), mainResourceLoadOptions);
     if (!m_frame->isMainFrame() && m_frame->document()) {
         // If we are loading the main resource of a subframe, use the cache partition of the main document.
