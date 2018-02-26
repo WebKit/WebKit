@@ -374,11 +374,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
 
-    if (parameters.shouldAlwaysUseComplexTextCodePath)
-        setAlwaysUsesComplexTextCodePath(true);
+    setAlwaysUsesComplexTextCodePath(parameters.shouldAlwaysUseComplexTextCodePath);
 
-    if (parameters.shouldUseFontSmoothing)
-        setShouldUseFontSmoothing(true);
+    setShouldUseFontSmoothing(parameters.shouldUseFontSmoothing);
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
