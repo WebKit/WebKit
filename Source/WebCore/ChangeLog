@@ -1,3 +1,11 @@
+2018-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, manual rollout of r228866 causing EGL_BAD_CONTEXT errors
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+        Create an EGL display, even in Wayland.
+
 2018-02-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][OpenVR] Retrieve displayId and the z-depth of eye view frustum

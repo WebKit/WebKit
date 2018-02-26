@@ -468,9 +468,9 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
         if (is<PlatformDisplayWayland>(sharedDisplay)) {
             GST_DEBUG("Creating Wayland shared display");
             if (shouldAdoptRef)
-                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_wayland_new_with_display(downcast<PlatformDisplayWayland>(sharedDisplay).native())));
+                m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay())));
             else
-                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_wayland_new_with_display(downcast<PlatformDisplayWayland>(sharedDisplay).native()));
+                m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay()));
         }
 #endif
 
