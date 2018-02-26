@@ -1,3 +1,23 @@
+2018-02-26  Charlie Turner  <cturner@igalia.com>
+
+        Fix build error with !LOG_DISABLED
+        https://bugs.webkit.org/show_bug.cgi?id=183049
+
+        Reviewed by Philippe Normand.
+
+        The following error message was being reported when doing a
+        release build with -DLOG_DISABLED=0:
+
+        ../../Source/WebCore/dom/messageports/MessagePortChannel.cpp: In member function ‘void WebCore::MessagePortChannel::entanglePortWithProcess(const WebCore::MessagePortIdentifier&, WebCore::ProcessIdentifier)’:
+../../Source/WebCore/dom/messageports/MessagePortChannel.cpp:85:111: error: ‘logString’ was not declared in this scope
+     LOG(MessagePorts, "MessagePortChannel %s (%p) entangling port %s (that port has %zu messages available)", logString().utf8().data(), this, port.logString().utf8().data(), m_pendingMessages[i].size());
+
+        Other uses of logString are guarded by !LOG_DISABLED rather than
+        NDEBUG, which was the cause of this issue.
+
+        * dom/messageports/MessagePortChannel.h: Guard using !LOG_DISABLED
+        rather than NDEBUG.
+
 2018-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] User current executable name instead of g_get_prgname() for gst_init

@@ -60,7 +60,7 @@ public:
 
     uint64_t beingTransferredCount();
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
     String logString() const { return makeString(m_ports[0].logString(), ":", m_ports[1].logString()); }
 #endif
 
