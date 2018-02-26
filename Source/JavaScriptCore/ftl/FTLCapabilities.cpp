@@ -67,6 +67,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckStructure:
     case CheckStructureOrEmpty:
     case DoubleAsInt32:
+    case Arrayify:
     case ArrayifyToStructure:
     case PutStructure:
     case GetButterfly:
@@ -339,16 +340,6 @@ inline CapabilityLevel canCompile(Node* node)
         // for capabilities before optimization. It would be a deep error to remove this
         // case because it would prevent us from catching bugs where the FTL backend
         // pipeline failed to optimize out an Identity.
-        break;
-    case Arrayify:
-        switch (node->arrayMode().type()) {
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-            break;
-        default:
-            return CannotCompile;
-        }
         break;
     case CheckArray:
         switch (node->arrayMode().type()) {

@@ -723,37 +723,6 @@ void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan)
         RELEASE_ASSERT_NOT_REACHED();
     }
 }
-    
-JITCompiler::Jump SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, ArrayMode arrayMode, IndexingType shape)
-{
-    switch (arrayMode.arrayClass()) {
-    case Array::OriginalArray: {
-        CRASH();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
-        JITCompiler::Jump result; // I already know that VC++ takes unkindly to the expression "return Jump()", so I'm doing it this way in anticipation of someone eventually using VC++ to compile the DFG.
-        return result;
-#endif
-    }
-        
-    case Array::Array:
-        m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
-        return m_jit.branch32(
-            MacroAssembler::NotEqual, tempGPR, TrustedImm32(IsArray | shape));
-        
-    case Array::NonArray:
-    case Array::OriginalNonArray:
-        m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
-        return m_jit.branch32(
-            MacroAssembler::NotEqual, tempGPR, TrustedImm32(shape));
-        
-    case Array::PossiblyArray:
-        m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
-        return m_jit.branch32(MacroAssembler::NotEqual, tempGPR, TrustedImm32(shape));
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
-    return JITCompiler::Jump();
-}
 
 JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, ArrayMode arrayMode)
 {
@@ -764,42 +733,68 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
     case Array::Double:
     case Array::Contiguous:
     case Array::Undecided:
-        return jumpSlowForUnwantedArrayMode(tempGPR, arrayMode, arrayMode.shapeMask());
+    case Array::ArrayStorage: {
+        IndexingType shape = arrayMode.shapeMask();
+        switch (arrayMode.arrayClass()) {
+        case Array::OriginalArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            return result;
 
-    case Array::ArrayStorage:
+        case Array::Array:
+            m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
+            result.append(m_jit.branch32(
+                MacroAssembler::NotEqual, tempGPR, TrustedImm32(IsArray | shape)));
+            return result;
+
+        case Array::NonArray:
+        case Array::OriginalNonArray:
+            m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
+            result.append(m_jit.branch32(
+                MacroAssembler::NotEqual, tempGPR, TrustedImm32(shape)));
+            return result;
+
+        case Array::PossiblyArray:
+            m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
+            result.append(m_jit.branch32(MacroAssembler::NotEqual, tempGPR, TrustedImm32(shape)));
+            return result;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return result;
+    }
+
     case Array::SlowPutArrayStorage: {
         ASSERT(!arrayMode.isJSArrayWithOriginalStructure());
-        
-        if (arrayMode.isJSArray()) {
-            if (arrayMode.isSlowPut()) {
-                result.append(
-                    m_jit.branchTest32(
-                        MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(IsArray)));
-                m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
-                m_jit.sub32(TrustedImm32(ArrayStorageShape), tempGPR);
-                result.append(
-                    m_jit.branch32(
-                        MacroAssembler::Above, tempGPR,
-                        TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape)));
-                break;
-            }
-            m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
+
+        switch (arrayMode.arrayClass()) {
+        case Array::OriginalArray:
+            RELEASE_ASSERT_NOT_REACHED();
+            return result;
+
+        case Array::Array:
             result.append(
-                m_jit.branch32(MacroAssembler::NotEqual, tempGPR, TrustedImm32(IsArray | ArrayStorageShape)));
+                m_jit.branchTest32(
+                    MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(IsArray)));
+            break;
+
+        case Array::NonArray:
+        case Array::OriginalNonArray:
+            result.append(
+                m_jit.branchTest32(
+                    MacroAssembler::NonZero, tempGPR, MacroAssembler::TrustedImm32(IsArray)));
+            break;
+
+        case Array::PossiblyArray:
             break;
         }
+
         m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
-        if (arrayMode.isSlowPut()) {
-            m_jit.sub32(TrustedImm32(ArrayStorageShape), tempGPR);
-            result.append(
-                m_jit.branch32(
-                    MacroAssembler::Above, tempGPR,
-                    TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape)));
-            break;
-        }
+        m_jit.sub32(TrustedImm32(ArrayStorageShape), tempGPR);
         result.append(
-            m_jit.branch32(MacroAssembler::NotEqual, tempGPR, TrustedImm32(ArrayStorageShape)));
-        break;
+            m_jit.branch32(
+                MacroAssembler::Above, tempGPR,
+                TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape)));
+        return result;
     }
     default:
         CRASH();

@@ -1,3 +1,26 @@
+2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Add Arrayify for ArrayStorage and SlowPutArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=182731
+
+        Reviewed by Saam Barati.
+
+        * stress/arrayify-array-storage-array.js: Added.
+        (shouldBe):
+        (testArrayStorage):
+        * stress/arrayify-array-storage-non-array.js: Added.
+        (shouldBe):
+        (testArrayStorage):
+        * stress/arrayify-array-storage.js: Added.
+        (shouldBe):
+        (testArrayStorage):
+        * stress/arrayify-slow-put-array-storage-pass-array-storage.js: Added.
+        (shouldBe):
+        (testArrayStorage):
+        * stress/arrayify-slow-put-array-storage.js: Added.
+        (shouldBe):
+        (testArrayStorage):
+
 2018-02-19  Saam Barati  <sbarati@apple.com>
 
         Don't use JSFunction's allocation profile when getting the prototype can be effectful

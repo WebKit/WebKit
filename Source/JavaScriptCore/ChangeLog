@@ -1,3 +1,28 @@
+2018-02-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Add Arrayify for ArrayStorage and SlowPutArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=182731
+
+        Reviewed by Saam Barati.
+
+        This patch adds support for Arrayify(ArrayStorage/SlowPutArrayStorage) to FTL.
+        Due to ArrayifyToStructure and CheckArray changes, necessary changes for
+        supporting Arrayify in FTL are already done. Just allowing it in FTLCapabilities.cpp
+        is enough.
+
+        We fix FTL's CheckArray logic. Previously, CheckArray(SlowPutArrayStorage) does not pass
+        ArrayStorage in FTL. But now it passes this as DFG does. Moreover, we fix DFG's CheckArray
+        where CheckArray(ArrayStorage+NonArray) can pass ArrayStorage+Array.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForArrayify):
+
 2018-02-19  Saam Barati  <sbarati@apple.com>
 
         Don't use JSFunction's allocation profile when getting the prototype can be effectful

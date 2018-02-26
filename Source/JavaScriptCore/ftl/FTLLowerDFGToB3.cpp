@@ -14550,15 +14550,14 @@ private:
         case Array::Double:
         case Array::Contiguous:
         case Array::Undecided:
-        case Array::ArrayStorage:
-        case Array::SlowPutArrayStorage: {
+        case Array::ArrayStorage: {
             IndexingType shape = arrayMode.shapeMask();
             LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc);
 
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
                 DFG_CRASH(m_graph, m_node, "Unexpected original array");
-                return 0;
+                return nullptr;
 
             case Array::Array:
                 return m_out.equal(
@@ -14577,6 +14576,54 @@ private:
                     m_out.constInt32(shape));
             }
             break;
+        }
+
+        case Array::SlowPutArrayStorage: {
+            ASSERT(!arrayMode.isJSArrayWithOriginalStructure());
+            LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc);
+
+            LBasicBlock trueCase = m_out.newBlock();
+            LBasicBlock checkCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            ValueFromBlock falseValue = m_out.anchor(m_out.booleanFalse);
+            LValue isAnArrayStorageShape = m_out.belowOrEqual(
+                m_out.sub(
+                    m_out.bitAnd(indexingType, m_out.constInt32(IndexingShapeMask)),
+                    m_out.constInt32(ArrayStorageShape)),
+                m_out.constInt32(SlowPutArrayStorageShape - ArrayStorageShape));
+            m_out.branch(isAnArrayStorageShape, usually(checkCase), usually(continuation));
+
+            LBasicBlock lastNext = m_out.appendTo(checkCase, trueCase);
+            switch (arrayMode.arrayClass()) {
+            case Array::OriginalArray:
+                DFG_CRASH(m_graph, m_node, "Unexpected original array");
+                return nullptr;
+
+            case Array::Array:
+                m_out.branch(
+                    m_out.testNonZero32(indexingType, m_out.constInt32(IsArray)),
+                    usually(trueCase), usually(continuation));
+                break;
+
+            case Array::NonArray:
+            case Array::OriginalNonArray:
+                m_out.branch(
+                    m_out.testIsZero32(indexingType, m_out.constInt32(IsArray)),
+                    usually(trueCase), usually(continuation));
+                break;
+
+            case Array::PossiblyArray:
+                m_out.jump(trueCase);
+                break;
+            }
+
+            m_out.appendTo(trueCase, continuation);
+            ValueFromBlock trueValue = m_out.anchor(m_out.booleanTrue);
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            return m_out.phi(Int32, falseValue, trueValue);
         }
 
         default:
