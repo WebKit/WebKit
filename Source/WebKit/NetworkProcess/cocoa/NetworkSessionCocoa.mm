@@ -289,6 +289,11 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
+    if (!_session) {
+        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+        return;
+    }
+
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveChallenge", taskIdentifier);
     
@@ -342,7 +347,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         };
         networkDataTask->didReceiveChallenge(challenge, WTFMove(challengeCompletionHandler));
     } else {
-        auto downloadID = _session->downloadID(task.taskIdentifier);
+        auto downloadID = _session->downloadID(taskIdentifier);
         if (downloadID.downloadID()) {
             if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID)) {
                 // Received an authentication challenge for a download being resumed.

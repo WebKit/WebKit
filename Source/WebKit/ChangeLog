@@ -1,3 +1,21 @@
+2018-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r223431): Crash under didReceiveChallenge in NetworkSessionCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=183134
+        <rdar://problem/36339049>
+
+        Reviewed by Alex Christensen.
+
+        Like other delegates functions in this file, it is possible for didReceiveChallenge to get called
+        after _session has been nulled out. Other delegate functions already had early returns when
+        _session is null. However, such early return was missing in didReceiveChallenge.
+
+        This patch ends the early return to didReceiveChallenge so that we do not end up calling
+        _session->downloadID(taskIdentifier) on a null _session.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
 2018-02-26  Youenn Fablet  <youenn@apple.com>
 
         MessagePort is not always destroyed in the right thread
