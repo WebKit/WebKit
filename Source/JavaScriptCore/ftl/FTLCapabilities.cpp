@@ -318,6 +318,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallDOMGetter:
     case ArraySlice:
     case ArrayIndexOf:
+    case ArrayPop:
     case ParseInt:
     case AtomicsAdd:
     case AtomicsAnd:
@@ -437,7 +438,6 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByValWithThis:
         break;
     case ArrayPush:
-    case ArrayPop:
         switch (node->arrayMode().type()) {
         case Array::Int32:
         case Array::Contiguous:

@@ -4748,6 +4748,49 @@ private:
             return;
         }
 
+        case Array::ArrayStorage: {
+            LBasicBlock vectorLengthCheckCase = m_out.newBlock();
+            LBasicBlock popCheckCase = m_out.newBlock();
+            LBasicBlock fastCase = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
+
+            Vector<ValueFromBlock, 3> results;
+            results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
+            m_out.branch(
+                m_out.isZero32(prevLength), rarely(continuation), usually(vectorLengthCheckCase));
+
+            LBasicBlock lastNext = m_out.appendTo(vectorLengthCheckCase, popCheckCase);
+            LValue newLength = m_out.sub(prevLength, m_out.int32One);
+            m_out.branch(
+                m_out.aboveOrEqual(newLength, m_out.load32(storage, m_heaps.Butterfly_vectorLength)), rarely(slowCase), usually(popCheckCase));
+
+            m_out.appendTo(popCheckCase, fastCase);
+            TypedPointer pointer = m_out.baseIndex(m_heaps.ArrayStorage_vector, storage, m_out.zeroExtPtr(newLength));
+            LValue result = m_out.load64(pointer);
+            m_out.branch(m_out.notZero64(result), usually(fastCase), rarely(slowCase));
+
+            m_out.appendTo(fastCase, slowCase);
+            m_out.store32(newLength, storage, m_heaps.Butterfly_publicLength);
+            m_out.store64(m_out.int64Zero, pointer);
+            m_out.store32(
+                m_out.sub(m_out.load32(storage, m_heaps.ArrayStorage_numValuesInVector), m_out.int32One),
+                storage, m_heaps.ArrayStorage_numValuesInVector);
+            results.append(m_out.anchor(result));
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowCase, continuation);
+            results.append(m_out.anchor(vmCall(
+                Int64, m_out.operation(operationArrayPop), m_callFrame, base)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, results));
+            return;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;

@@ -45,6 +45,7 @@ namespace JSC { namespace FTL {
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(ArrayBuffer_data, ArrayBuffer::offsetOfData()) \
+    macro(ArrayStorage_numValuesInVector, ArrayStorage::numValuesInVectorOffset()) \
     macro(Butterfly_arrayBuffer, Butterfly::offsetOfArrayBuffer()) \
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
     macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
