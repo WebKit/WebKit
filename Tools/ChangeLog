@@ -1,3 +1,16 @@
+2018-02-27  Aakash Jain  <aakash_jain@apple.com>
+
+        webkitpy Bugzilla transactions should retry on URLError
+        https://bugs.webkit.org/show_bug.cgi?id=183156
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla): Use NetworkTransaction.
+        (Bugzilla._fetch_bug_page_by_url):
+        (Bugzilla.bug_id_for_attachment_id):
+        (Bugzilla.get_bug_id_for_attachment_id):
+
 2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Implement additional SPI for adjusting viewport shrink-to-fit behavior

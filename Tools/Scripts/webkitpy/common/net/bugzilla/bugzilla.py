@@ -46,6 +46,7 @@ from .bug import Bug
 from webkitpy.common.config import committers
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.credentials import Credentials
+from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
@@ -468,6 +469,9 @@ class Bugzilla(object):
     def _fetch_bug_page(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
         _log.info("Fetching: %s" % bug_url)
+        return NetworkTransaction().run(lambda: self._fetch_bug_page_by_url(bug_url))
+
+    def _fetch_bug_page_by_url(self, bug_url):
         return self.browser.open(bug_url)
 
     def fetch_bug_dictionary(self, bug_id):
@@ -501,6 +505,9 @@ class Bugzilla(object):
         return int(match.group('bug_id'))
 
     def bug_id_for_attachment_id(self, attachment_id):
+        return NetworkTransaction().run(lambda: self.get_bug_id_for_attachment_id(attachment_id))
+
+    def get_bug_id_for_attachment_id(self, attachment_id):
         self.authenticate()
 
         attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
