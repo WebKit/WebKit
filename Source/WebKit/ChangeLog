@@ -1,3 +1,18 @@
+2018-02-27  Tim Horton  <timothy_horton@apple.com>
+
+        Stop using deprecated CADisplay SPI
+        https://bugs.webkit.org/show_bug.cgi?id=183150
+        <rdar://problem/37918297>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/FrontBoardServicesSPI.h: Added.
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        Switch to the more modern way of getting the display name.
+
 2018-02-26  Youenn Fablet  <youenn@apple.com>
 
         Caches::m_storage should be set to null in case of error at initialization time

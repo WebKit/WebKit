@@ -310,9 +310,9 @@ typedef enum {
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
 @end
 
-@class CADisplay;
+@class FBSDisplayConfiguration;
 @interface UIScreen ()
-- (CADisplay *)_display;
+@property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
 @end
 
 @interface UIScrollView ()
