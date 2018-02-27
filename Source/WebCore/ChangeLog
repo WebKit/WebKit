@@ -1,3 +1,20 @@
+2018-02-27  Tim Horton  <timothy_horton@apple.com>
+
+        Ensure target triple is propagated correctly to DerivedSources.make
+        https://bugs.webkit.org/show_bug.cgi?id=183189
+        <rdar://problem/37959694>
+
+        Reviewed by Dan Bernstein.
+
+        If we don't propagate the target triple, we can sometimes build with
+        the wrong options enabled.
+
+        * Configurations/Base.xcconfig:
+        Mentioning LLVM_TARGET_TRIPLE_SUFFIX here is required to get it to be available to scripts.
+
+        * DerivedSources.make:
+        Propagate the target triple into our compiler invocations.
+
 2018-02-27  Doug Russell  <doug@getitdownonpaper.com>
 
         AX: Spell check and style attributes should be optional when fetching attributed string

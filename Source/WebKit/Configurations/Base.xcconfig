@@ -127,3 +127,6 @@ SUPPORTS_TEXT_BASED_API[sdk=appletv*] = NO;
 SUPPORTS_TEXT_BASED_API[sdk=watch*] = NO;
 OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++14 -fno-rtti -DRELEASE_WITHOUT_OPTIMIZATIONS;
 TAPI_VERIFY_MODE[sdk=iphone*] = Pedantic;
+
+// This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
+LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);
