@@ -1,3 +1,12 @@
+2018-02-27  Karlen Simonyan  <szkarlen@gmail.com>
+
+        [Win64] JSCOnly compile error using VS2017 and cmake
+        https://bugs.webkit.org/show_bug.cgi?id=183176
+
+        Reviewed by Alex Christensen.
+
+        * wtf/PlatformJSCOnly.cmake:
+
 2018-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] User current executable name instead of g_get_prgname() for gst_init

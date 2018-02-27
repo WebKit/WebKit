@@ -10,6 +10,9 @@ if (WIN32)
         win/CPUTimeWin.cpp
         win/LanguageWin.cpp
     )
+    list(APPEND WTF_HEADERS
+        text/win/WCharStringExtras.h
+    )
 else ()
     list(APPEND WTF_SOURCES
         UniStdExtras.cpp
