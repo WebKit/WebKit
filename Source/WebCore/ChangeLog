@@ -1,3 +1,9 @@
+2018-02-26  Dan Bernstein  <mitz@apple.com>
+
+        Removed references to files that were removed in r228912.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed references to SourcesIOS.txt and SourcesMac.txt.
+
 2018-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Tweak UA stylesheet to improve legibility of rendered text

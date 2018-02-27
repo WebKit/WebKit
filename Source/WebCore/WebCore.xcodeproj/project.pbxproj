@@ -8084,8 +8084,6 @@
 		52F10863162B6D82009AC81E /* MixedContentChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MixedContentChecker.h; sourceTree = "<group>"; };
 		52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSScrollerImpDetails.mm; sourceTree = "<group>"; };
 		530A63421FA3E33B0026A545 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
-		530A63441FA3E33C0026A545 /* SourcesMac.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesMac.txt; sourceTree = "<group>"; };
-		530A63451FA3E33D0026A545 /* SourcesIOS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesIOS.txt; sourceTree = "<group>"; };
 		530A63461FA3E33D0026A545 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
 		5317612013C516690026E454 /* StyleFlexibleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFlexibleBoxData.cpp; sourceTree = "<group>"; };
 		5317612113C516690026E454 /* StyleFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleFlexibleBoxData.h; sourceTree = "<group>"; };
@@ -15274,8 +15272,6 @@
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				530A63461FA3E33D0026A545 /* Sources.txt */,
 				530A63421FA3E33B0026A545 /* SourcesCocoa.txt */,
-				530A63451FA3E33D0026A545 /* SourcesIOS.txt */,
-				530A63441FA3E33C0026A545 /* SourcesMac.txt */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
 				93F19B1908245E59001E9ABC /* Info.plist */,
 				971145FE14EF006E00674FD9 /* Modules */,
