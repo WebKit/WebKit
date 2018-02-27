@@ -1,3 +1,9 @@
+2018-02-27  Antoine Quint  <graouts@apple.com>
+
+        Unreviewed, marking a number of Web Animations WPT tests non-flaky.
+
+        * TestExpectations:
+
 2018-02-27  Frederic Wang  <fwang@igalia.com>
 
         Relayout frames after AsyncFrameScrolling or FrameFlattening option is changed
