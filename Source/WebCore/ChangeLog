@@ -1,3 +1,28 @@
+2018-02-27  Doug Russell  <doug@getitdownonpaper.com>
+
+        AX: Spell check and style attributes should be optional when fetching attributed string
+        https://bugs.webkit.org/show_bug.cgi?id=160744
+
+        Reviewed by Chris Fleizach.
+
+        The overhead of fetching a spell checked attributed string via AX API is substantial. 
+        In some cases on the order of 7/8 of the total time spent fetching the string.
+
+        This change introduces the new attribute AXAttributedStringForTextMarkerRangeWithOptions which accepts an NSDictionary as it's parameter with keys "AXTextMarkerRange" (AXTextMarkerRangeRef) and "AXSpellCheck" (NSNumber(BOOL)).
+
+        AXAttributedStringForTextMarkerRange will remain unchanged.
+
+        Tests: accessibility/mac/attributed-string/attributed-string-for-range-with-options.html
+               accessibility/mac/attributed-string/attributed-string-for-range.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributedStringAppendText):
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:spellCheck:]):
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForRange:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]): Deleted.
+
 2018-02-27  Daniel Bates  <dabates@apple.com>
 
         Standardize terminology for marked text

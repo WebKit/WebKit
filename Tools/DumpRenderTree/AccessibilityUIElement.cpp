@@ -881,6 +881,29 @@ static JSValueRef stringForTextMarkerRangeCallback(JSContextRef context, JSObjec
     return JSValueMakeString(context, markerRangeString.get());    
 }
 
+static JSValueRef attributedStringForTextMarkerRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarkerRange* markerRange = 0;
+    if (argumentCount == 1)
+        markerRange = toTextMarkerRange(JSValueToObject(context, arguments[0], exception));
+
+    JSRetainPtr<JSStringRef> markerRangeString(Adopt, toAXElement(thisObject)->attributedStringForTextMarkerRange(markerRange));
+    return JSValueMakeString(context, markerRangeString.get());
+}
+
+static JSValueRef attributedStringForTextMarkerRangeWithOptionsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarkerRange* markerRange = nullptr;
+    bool includeSpellCheck = false;
+    if (argumentCount == 2) {
+        markerRange = toTextMarkerRange(JSValueToObject(context, arguments[0], exception));
+        includeSpellCheck = JSValueToBoolean(context, arguments[1]);
+    }
+
+    JSRetainPtr<JSStringRef> markerRangeString(Adopt, toAXElement(thisObject)->attributedStringForTextMarkerRangeWithOptions(markerRange, includeSpellCheck));
+    return JSValueMakeString(context, markerRangeString.get());
+}
+
 static JSValueRef endTextMarkerForBoundsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int x = 0;
@@ -957,7 +980,7 @@ static JSValueRef endTextMarkerForTextMarkerRangeCallback(JSContextRef context, 
 
 static JSValueRef accessibilityElementForTextMarkerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityTextMarker* marker = 0;
+    AccessibilityTextMarker* marker = nullptr;
     if (argumentCount == 1)
         marker = toTextMarker(JSValueToObject(context, arguments[0], exception));
     
@@ -1636,6 +1659,16 @@ JSStringRef AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMa
     return 0;
 }
 
+JSStringRef AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    return nullptr;
+}
+
+JSStringRef AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck)
+{
+    return nullptr;
+}
+
 bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
 {
     return false;
@@ -1908,6 +1941,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "nextTextMarker", nextTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "previousTextMarker", previousTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForTextMarkerRange", stringForTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributedStringForTextMarkerRange", attributedStringForTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributedStringForTextMarkerRangeWithOptions", attributedStringForTextMarkerRangeWithOptionsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "leftWordTextMarkerRangeForTextMarker", leftWordTextMarkerRangeForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "rightWordTextMarkerRangeForTextMarker", rightWordTextMarkerRangeForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "previousWordStartTextMarkerForTextMarker", previousWordStartTextMarkerForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

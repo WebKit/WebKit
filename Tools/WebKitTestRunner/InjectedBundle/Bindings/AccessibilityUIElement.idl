@@ -209,6 +209,8 @@ interface AccessibilityUIElement {
     AccessibilityTextMarker nextTextMarker(AccessibilityTextMarker marker);
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker marker);
     DOMString stringForTextMarkerRange(AccessibilityTextMarkerRange range);
+    DOMString attributedStringForTextMarkerRange(AccessibilityTextMarkerRange range);
+    DOMString attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange range, boolean includeSpellCheck);
     long textMarkerRangeLength(AccessibilityTextMarkerRange range);
     boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);
     long indexForTextMarker(AccessibilityTextMarker marker);

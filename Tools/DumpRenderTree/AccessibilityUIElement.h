@@ -278,6 +278,8 @@ public:
     bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);
     
     JSStringRef stringForTextMarkerRange(AccessibilityTextMarkerRange*);
+    JSStringRef attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);
+    JSStringRef attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool includeSpellCheck);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     int indexForTextMarker(AccessibilityTextMarker*);

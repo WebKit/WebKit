@@ -1711,6 +1711,44 @@ JSStringRef AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMa
     return nullptr;
 }
 
+static JSStringRef createJSStringRef(id string)
+{
+    if (!string)
+        return nullptr;
+    id mutableString = [[[NSMutableString alloc] init] autorelease];
+    id attributes = [string attributesAtIndex:0 effectiveRange:nil];
+    id attributeEnumerationBlock = ^(NSDictionary<NSString *, id> *attrs, NSRange range, BOOL *stop) {
+        BOOL misspelled = [[attrs objectForKey:NSAccessibilityMisspelledTextAttribute] boolValue];
+        if (misspelled)
+            misspelled = [[attrs objectForKey:NSAccessibilityMarkedMisspelledTextAttribute] boolValue];
+        if (misspelled)
+            [mutableString appendString:@"Misspelled, "];
+        id font = [attributes objectForKey:(id)kAXFontTextAttribute];
+        if (font)
+            [mutableString appendFormat:@"%@ - %@, ", (id)kAXFontTextAttribute, font];
+    };
+    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:(NSAttributedStringEnumerationOptions)0 usingBlock:attributeEnumerationBlock];
+    [mutableString appendString:[string string]];
+    return [mutableString createJSStringRef];
+}
+
+JSStringRef AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
+{
+    id string = [m_element accessibilityAttributeValue:@"AXAttributedStringForTextMarkerRange" forParameter:(id)markerRange->platformTextMarkerRange()];
+    return createJSStringRef(string);
+}
+
+JSStringRef AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange* markerRange, bool includeSpellCheck)
+{
+    id parameter = nil;
+    if (includeSpellCheck)
+        parameter = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:includeSpellCheck], @"AXSpellCheck", (id)markerRange->platformTextMarkerRange(), @"AXTextMarkerRange", nil];
+    else
+        parameter = (id)markerRange->platformTextMarkerRange();
+    id string = [m_element accessibilityAttributeValue:@"AXAttributedStringForTextMarkerRangeWithOptions" forParameter:parameter];
+    return createJSStringRef(string);
+}
+
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
