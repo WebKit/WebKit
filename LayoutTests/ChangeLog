@@ -1,3 +1,11 @@
+2018-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Work towards rdar://problem/36837397.
+
+        Unreviewed test gardening.
+
+        * inspector/canvas/recording-2d-expected.txt:
+
 2018-02-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229027. rdar://problem/37909130
