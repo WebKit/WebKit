@@ -1,3 +1,10 @@
+2018-02-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, skip FTL tests if FTL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=183071
+
+        * Scripts/run-jsc-stress-tests:
+
 2018-02-26  Don Olmstead  <don.olmstead@sony.com>
 
         Fix WebCore includes within WebKitLegacy
