@@ -109,9 +109,9 @@ void DocumentWriter::clear()
         m_encoding = String();
 }
 
-void DocumentWriter::begin()
+bool DocumentWriter::begin()
 {
-    begin(URL());
+    return begin(URL());
 }
 
 Ref<Document> DocumentWriter::createDocument(const URL& url)
@@ -127,7 +127,7 @@ Ref<Document> DocumentWriter::createDocument(const URL& url)
     return DOMImplementation::createDocument(m_mimeType, m_frame, url);
 }
 
-void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument)
+bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument)
 {
     // We grab a local copy of the URL because it's easy for callers to supply
     // a URL that will be deallocated during the execution of this function.
@@ -165,7 +165,7 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     // m_frame->loader().clear() might fire unload event which could remove the view of the document.
     // Bail out if document has no view.
     if (!document->view())
-        return;
+        return false;
 
     if (!shouldReuseDefaultView)
         m_frame->script().updatePlatformScriptObjects();
@@ -196,6 +196,7 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         m_frame->view()->setContentsSize(IntSize());
 
     m_state = StartedWritingState;
+    return true;
 }
 
 TextResourceDecoder* DocumentWriter::createDecoderIfNeeded()

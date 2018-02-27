@@ -1,3 +1,19 @@
+2018-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Add some more release logging related to DocumentWriter::addData crash
+        https://bugs.webkit.org/show_bug.cgi?id=183141
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+        Add some additional release logging to verify whether DocumentWriter::begin was called and exited before updating its state.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/DocumentWriter.h:
+
 2018-02-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the procedure to set the start time
