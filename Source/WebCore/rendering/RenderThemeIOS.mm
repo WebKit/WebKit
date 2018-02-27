@@ -1799,6 +1799,15 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+
+String RenderThemeIOS::extraDefaultStyleSheet()
+{
+    return "* { -webkit-text-size-adjust: auto !important; -webkit-hyphens: auto !important; }";
+}
+
+#endif
+
 } // namespace WebCore
 
 #endif //PLATFORM(IOS)

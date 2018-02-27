@@ -1,3 +1,18 @@
+2018-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Tweak UA stylesheet to improve legibility of rendered text
+        https://bugs.webkit.org/show_bug.cgi?id=183142
+        <rdar://problem/37912966>
+
+        Reviewed by Tim Horton.
+
+        Force text-size-adjust and hyphens to be always on in EXTRA_ZOOM_MODE. To accomplish this, we override the extra
+        style sheet in RenderTheme to include these two style rules.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::extraDefaultStyleSheet):
+
 2018-02-26  Don Olmstead  <don.olmstead@sony.com>
 
         Fix WebCore includes within WebKitLegacy

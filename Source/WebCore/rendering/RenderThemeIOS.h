@@ -128,6 +128,10 @@ private:
 
     void purgeCaches() override;
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+    String extraDefaultStyleSheet() final;
+#endif
+
     const Color& shadowColor() const;
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
