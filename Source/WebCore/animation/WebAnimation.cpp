@@ -80,47 +80,60 @@ void WebAnimation::timingModelDidChange()
         m_timeline->timingModelDidChange();
 }
 
-void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& effect)
+void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
 {
     // 3.4.3. Setting the target effect of an animation
     // https://drafts.csswg.org/web-animations-1/#setting-the-target-effect
 
+    // 1. Let old effect be the current target effect of animation, if any.
+    auto oldEffect = m_effect;
+
     // 2. If new effect is the same object as old effect, abort this procedure.
-    if (effect == m_effect)
+    if (newEffect == oldEffect)
         return;
 
     // 3. If new effect is null and old effect is not null, run the procedure to reset an animation's pending tasks on animation.
-    if (!effect && m_effect)
+    if (!newEffect && oldEffect)
         resetPendingTasks();
 
-    if (m_effect) {
-        m_effect->setAnimation(nullptr);
+    // 4. If animation has a pending pause task, reschedule that task to run as soon as animation is ready.
+    if (hasPendingPauseTask())
+        setTimeToRunPendingPauseTask(TimeToRunPendingTask::WhenReady);
 
-        // Update the Element to Animation map.
-        if (m_timeline && is<KeyframeEffect>(m_effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
-            auto* target = keyframeEffect->target();
-            if (target)
+    // 5. If animation has a pending play task, reschedule that task to run as soon as animation is ready to play new effect.
+    if (hasPendingPlayTask())
+        setTimeToRunPendingPlayTask(TimeToRunPendingTask::WhenReady);
+
+    // 6. If new effect is not null and if new effect is the target effect of another animation, previous animation, run the
+    // procedure to set the target effect of an animation (this procedure) on previous animation passing null as new effect.
+    if (newEffect && newEffect->animation())
+        newEffect->animation()->setEffect(nullptr);
+
+    // 7. Let the target effect of animation be new effect.
+    m_effect = WTFMove(newEffect);
+
+    // 8. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
+    // and the synchronously notify flag set to false.
+    updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
+
+    // Update the effect-to-animation relationships and the timeline's animation map.
+    if (oldEffect) {
+        oldEffect->setAnimation(nullptr);
+        if (m_timeline && is<KeyframeEffect>(oldEffect)) {
+            if (auto* target = downcast<KeyframeEffect>(oldEffect.get())->target())
                 m_timeline->animationWasRemovedFromElement(*this, *target);
         }
     }
 
-    if (effect) {
-        // An animation effect can only be associated with a single animation.
-        if (effect->animation())
-            effect->animation()->setEffect(nullptr);
-
-        effect->setAnimation(this);
-
-        if (m_timeline && is<KeyframeEffect>(effect)) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(effect.get());
-            auto* target = keyframeEffect->target();
-            if (target)
+    if (m_effect) {
+        m_effect->setAnimation(this);
+        if (m_timeline && is<KeyframeEffect>(m_effect)) {
+            if (auto* target = downcast<KeyframeEffect>(m_effect.get())->target())
                 m_timeline->animationWasAddedToElement(*this, *target);
         }
     }
 
-    m_effect = WTFMove(effect);
+    timingModelDidChange();
 }
 
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)

@@ -1,5 +1,20 @@
 2018-02-26  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Implement the procedure to set the target effect of an animation
+        https://bugs.webkit.org/show_bug.cgi?id=183146
+
+        Reviewed by Dean Jackson.
+
+        We only had a partial implementation of setEffect() and we now update it to cover the entire
+        implementation as mandated by the spec. While this doesn't yield any WPT results changes, this
+        patch will help getting a significant number of new PASS results when we get around to implement
+        correct support for async procedures (pending pause/play tasks and promises) in the next patch.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffect):
+
+2018-02-26  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Update the playState implementation
         https://bugs.webkit.org/show_bug.cgi?id=183145
 
