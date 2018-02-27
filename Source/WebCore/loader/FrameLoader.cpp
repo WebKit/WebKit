@@ -488,6 +488,8 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         DatabaseManager::singleton().stopDatabases(*document, nullptr);
     }
 
+    policyChecker().stopCheck();
+
     // FIXME: This will cancel redirection timer, which really needs to be restarted when restoring the frame from b/f cache.
     m_frame.navigationScheduler().cancel();
 }

@@ -1,3 +1,17 @@
+2018-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r228430.
+
+        Roll out r228430 now that it is no longer needed after r228852.
+
+        No new tests, initial fix is still covered by WebKit.RespondToPolicyForNavigationResponseAsynchronously
+        API test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::schedule):
+
 2018-02-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Correct implementation of pending tasks and promises
