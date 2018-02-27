@@ -26,7 +26,7 @@
 #ifndef GDIUtilties_h
 #define GDIUtilties_h
 
-#include <IntPoint.h>
+#include "IntPoint.h"
 
 #include <windows.h>
 

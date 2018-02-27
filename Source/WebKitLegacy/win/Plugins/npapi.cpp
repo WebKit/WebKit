@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-
-#include "Page.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginView.h"
-#include "npruntime_internal.h"
+#include <WebCore/Page.h>
+#include <WebCore/npruntime_internal.h>
 
 using namespace WebCore;
 

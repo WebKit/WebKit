@@ -27,17 +27,18 @@
 #ifndef PluginPackage_h
 #define PluginPackage_h
 
-#include "FileSystem.h"
 #include "PlatformModule.h"
 #include "PluginQuirkSet.h"
-#include "Timer.h"
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#include "npruntime_internal.h"
-#endif
+#include <WebCore/FileSystem.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#include <WebCore/npruntime_internal.h>
+#endif
 
 namespace WebCore {
 

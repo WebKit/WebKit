@@ -28,7 +28,6 @@
 
 #include "WebInspectorClient.h"
 
-#include "WebCoreBundleWin.h"
 #include "WebInspectorDelegate.h"
 #include "WebKit.h"
 #include "WebMutableURLRequest.h"
@@ -43,6 +42,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/WebCoreBundleWin.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wchar.h>
 #include <wtf/RetainPtr.h>

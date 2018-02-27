@@ -27,7 +27,7 @@
 
 #include "MiniBrowser.h"
 #include "PageLoadTestClient.h"
-#include <COMPtr.h>
+#include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comip.h>
 #include <commctrl.h>

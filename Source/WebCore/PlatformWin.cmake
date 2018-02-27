@@ -167,6 +167,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     css/parser
 
+    html/canvas
     html/forms
     html/parser
     html/shadow

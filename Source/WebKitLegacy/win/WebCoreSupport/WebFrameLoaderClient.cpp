@@ -34,7 +34,6 @@
 #include "DefaultPolicyDelegate.h"
 #include "EmbeddedWidget.h"
 #include "MarshallingHelpers.h"
-#include "NotImplemented.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 #include "PluginView.h"
@@ -76,6 +75,7 @@
 #include <WebCore/HistoryItem.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RenderWidget.h>

@@ -30,7 +30,6 @@
 #include "CFDictionaryPropertyBag.h"
 #include "COMPropertyBag.h"
 #include "DOMCoreClasses.h"
-#include "HTMLFrameOwnerElement.h"
 #include "MarshallingHelpers.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
@@ -78,6 +77,7 @@
 #include <WebCore/HTMLAppletElement.h>
 #include <WebCore/HTMLFormControlElement.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
@@ -109,7 +109,7 @@
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #elif USE(CAIRO)
-#include "PlatformContextCairo.h"
+#include <WebCore/PlatformContextCairo.h>
 #include <cairo-win32.h>
 #endif
 

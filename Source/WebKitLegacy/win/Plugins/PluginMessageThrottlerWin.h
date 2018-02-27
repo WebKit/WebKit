@@ -27,7 +27,7 @@
 #ifndef PluginMessageThrottlerWin_h
 #define PluginMessageThrottlerWin_h
 
-#include "Timer.h"
+#include <WebCore/Timer.h>
 
 #include <windows.h>
 

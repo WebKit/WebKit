@@ -25,15 +25,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
-#include "config.h"
 #include "PluginPackage.h"
 
-#include "MIMETypeRegistry.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
-#include "Timer.h"
-#include "npruntime_impl.h"
+#include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/Timer.h>
+#include <WebCore/npruntime_impl.h>
 #include <shlwapi.h>
 #include <string.h>
 #include <wtf/StdLibExtras.h>

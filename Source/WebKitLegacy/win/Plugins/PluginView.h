@@ -28,12 +28,12 @@
 #ifndef PluginView_h
 #define PluginView_h
 
-#include "FrameLoadRequest.h"
-#include "IntRect.h"
-#include "MediaCanStartListener.h"
-#include "PluginViewBase.h"
-#include "ResourceRequest.h"
-#include "Timer.h"
+#include <WebCore/FrameLoadRequest.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/MediaCanStartListener.h>
+#include <WebCore/PluginViewBase.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -42,7 +42,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginStream.h"
-#include "npruntime_internal.h"
+#include <WebCore/npruntime_internal.h>
 #endif
 
 typedef PlatformWidget PlatformPluginWidget;

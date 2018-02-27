@@ -1,3 +1,36 @@
+2018-02-26  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix WebCore includes within WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=183147
+
+        Reviewed by Tim Horton.
+
+        * Plugins/PluginDatabase.cpp:
+        * Plugins/PluginDatabaseWin.cpp:
+        * Plugins/PluginDebug.cpp:
+        * Plugins/PluginDebug.h:
+        * Plugins/PluginMainThreadScheduler.cpp:
+        * Plugins/PluginMessageThrottlerWin.cpp:
+        * Plugins/PluginMessageThrottlerWin.h:
+        * Plugins/PluginPackage.cpp:
+        * Plugins/PluginPackage.h:
+        * Plugins/PluginPackageWin.cpp:
+        * Plugins/PluginStream.cpp:
+        * Plugins/PluginStream.h:
+        * Plugins/PluginView.cpp:
+        * Plugins/PluginView.h:
+        * Plugins/PluginViewWin.cpp:
+        * Plugins/npapi.cpp:
+        * WebCoreSupport/WebChromeClient.cpp:
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebFrame.cpp:
+        * WebKitMessageLoop.cpp:
+        * WebView.cpp:
+        * storage/WebDatabaseProvider.cpp:
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove currentTime() / currentTimeMS()

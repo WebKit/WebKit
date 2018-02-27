@@ -605,7 +605,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& database
 }
 
 // FIXME: Move this include to the top of the file with the other includes.
-#include "ApplicationCacheStorage.h"
+#include <WebCore/ApplicationCacheStorage.h>
 
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {

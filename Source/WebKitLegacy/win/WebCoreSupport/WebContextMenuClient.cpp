@@ -25,7 +25,6 @@
 
 #include "WebContextMenuClient.h"
 
-#include "UserGestureIndicator.h"
 #include "WebElementPropertyBag.h"
 #include "WebLocalizableStrings.h"
 #include "WebView.h"
@@ -37,6 +36,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/UserGestureIndicator.h>
 
 using namespace WebCore;
 

@@ -1,3 +1,15 @@
+2018-02-26  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix WebCore includes within WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=183147
+
+        Reviewed by Tim Horton.
+
+        No new tests. No change in behavior.
+
+        * PlatformWin.cmake:
+        * platform/win/GDIUtilities.h:
+
 2018-02-26  Youenn Fablet  <youenn@apple.com>
 
         Add some more release logging related to DocumentWriter::addData crash

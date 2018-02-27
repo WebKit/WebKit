@@ -25,10 +25,10 @@
 
 #include "WebPlatformStrategies.h"
 
-#include "FrameLoader.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebResourceLoadScheduler.h"
 #include <WebCore/BlobRegistryImpl.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>

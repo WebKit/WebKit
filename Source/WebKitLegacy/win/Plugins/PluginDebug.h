@@ -26,8 +26,8 @@
 #ifndef PluginDebug_h
 #define PluginDebug_h
 
-#include "Logging.h"
-#include "npruntime_internal.h"
+#include <WebCore/Logging.h>
+#include <WebCore/npruntime_internal.h>
 #include <wtf/text/CString.h>
 
 #define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugins, "%s\n", prettyNameForNPError(err))

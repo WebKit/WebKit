@@ -24,12 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "PluginDatabase.h"
 
-#include "Frame.h"
-#include "URL.h"
 #include "PluginPackage.h"
+#include <WebCore/Frame.h>
+#include <WebCore/URL.h>
 #include <stdlib.h>
 #include <wtf/text/CString.h>
 

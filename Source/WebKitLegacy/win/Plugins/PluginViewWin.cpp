@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
 #include "PluginView.h"
 
 #include "PluginDatabase.h"
@@ -75,7 +74,7 @@
 #include <wtf/win/GDIObject.h>
 
 #if USE(CAIRO)
-#include "PlatformContextCairo.h"
+#include <WebCore/PlatformContextCairo.h>
 #include <cairo-win32.h>
 #endif
 

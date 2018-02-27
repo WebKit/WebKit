@@ -25,12 +25,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
 #include "PluginDatabase.h"
 
-#include "Frame.h"
-#include "URL.h"
 #include "PluginPackage.h"
+#include <WebCore/Frame.h>
+#include <WebCore/URL.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/win/WCharStringExtras.h>
 

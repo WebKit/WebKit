@@ -26,14 +26,14 @@
 
 #pragma once
 
-#include "FileSystem.h"
-#include "URL.h"
-#include "NetscapePlugInStreamLoader.h"
 #include "PluginQuirkSet.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "Timer.h"
-#include "npruntime_internal.h"
+#include <WebCore/FileSystem.h>
+#include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/Timer.h>
+#include <WebCore/URL.h>
+#include <WebCore/npruntime_internal.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
