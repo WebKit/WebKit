@@ -43,6 +43,10 @@
 #import <QuartzCore/CALayerPrivate.h>
 #import <QuartzCore/QuartzCorePrivate.h>
 
+#if PLATFORM(IOS)
+#import <QuartzCore/CADisplay.h>
+#endif
+
 #if PLATFORM(MAC)
 #import <QuartzCore/CARenderCG.h>
 #endif
@@ -95,6 +99,15 @@ typedef struct _CARenderContext CARenderContext;
 @property BOOL needsLayoutOnGeometryChange;
 @property BOOL shadowPathIsBounds;
 @end
+
+#if PLATFORM(IOS)
+@interface CADisplay : NSObject
+@end
+
+@interface CADisplay ()
+@property (nonatomic, readonly) NSString *name;
+@end
+#endif
 
 #if ENABLE(FILTERS_LEVEL_2)
 @interface CABackdropLayer : CALayer

@@ -1,3 +1,15 @@
+2018-02-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r229055.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Stop using deprecated CADisplay SPI"
+        https://bugs.webkit.org/show_bug.cgi?id=183150
+        https://trac.webkit.org/changeset/229055
+
 2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Implement additional SPI for adjusting viewport shrink-to-fit behavior

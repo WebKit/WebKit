@@ -635,7 +635,6 @@
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
-		2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */; };
 		2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */; };
 		2D4D2C821DF60BF3002EB10C /* InteractionInformationRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4D2C801DF60BF3002EB10C /* InteractionInformationRequest.cpp */; };
 		2D50365E1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */; };
@@ -3004,7 +3003,6 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
-		2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrontBoardServicesSPI.h; sourceTree = "<group>"; };
 		2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InteractionInformationRequest.h; path = ios/InteractionInformationRequest.h; sourceTree = "<group>"; };
 		2D4D2C801DF60BF3002EB10C /* InteractionInformationRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InteractionInformationRequest.cpp; path = ios/InteractionInformationRequest.cpp; sourceTree = "<group>"; };
 		2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebGestureEventMac.mm; sourceTree = "<group>"; };
@@ -8492,7 +8490,6 @@
 				CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */,
 				07A8F3861E64A8F900B668E8 /* CelestialSPI.h */,
 				CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */,
-				2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */,
 				CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */,
 				CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */,
 				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
@@ -8847,7 +8844,6 @@
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
-				2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */,
 				CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
