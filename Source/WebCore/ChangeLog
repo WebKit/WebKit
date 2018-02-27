@@ -1,3 +1,16 @@
+2018-02-26  Mark Lam  <mark.lam@apple.com>
+
+        Modernize FINALIZE_CODE and peer macros to use __VA_ARGS__ arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=183159
+        <rdar://problem/37930837>
+
+        Reviewed by Keith Miller.
+
+        No new tests needed because this is just a refactoring patch.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+
 2018-02-26  Dan Bernstein  <mitz@apple.com>
 
         Removed references to files that were removed in r228912.

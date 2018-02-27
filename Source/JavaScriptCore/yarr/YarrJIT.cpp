@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3488,14 +3488,14 @@ public:
 
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
-                jitObject.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ("Match-only 8-bit regular expression")));
+                jitObject.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, "Match-only 8-bit regular expression"));
             else
-                jitObject.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ("Match-only 16-bit regular expression")));
+                jitObject.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, "Match-only 16-bit regular expression"));
         } else {
             if (m_charSize == Char8)
-                jitObject.set8BitCode(FINALIZE_CODE(linkBuffer, ("8-bit regular expression")));
+                jitObject.set8BitCode(FINALIZE_CODE(linkBuffer, "8-bit regular expression"));
             else
-                jitObject.set16BitCode(FINALIZE_CODE(linkBuffer, ("16-bit regular expression")));
+                jitObject.set16BitCode(FINALIZE_CODE(linkBuffer, "16-bit regular expression"));
         }
         if (m_failureReason)
             jitObject.setFallBackWithFailureReason(*m_failureReason);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -170,7 +170,7 @@ namespace JSC {
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
-            return FINALIZE_CODE(patchBuffer, ("Specialized thunk for %s", thunkKind));
+            return FINALIZE_CODE(patchBuffer, "Specialized thunk for %s", thunkKind);
         }
 
         // Assumes that the target function uses fpRegister0 as the first argument
