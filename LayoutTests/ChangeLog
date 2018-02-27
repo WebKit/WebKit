@@ -1,3 +1,10 @@
+2018-02-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2018-02-27  Doug Russell  <doug@getitdownonpaper.com>
 
         AX: Spell check and style attributes should be optional when fetching attributed string

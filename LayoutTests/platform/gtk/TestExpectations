@@ -1074,7 +1074,7 @@ fast/events/webkit-media-key-events-constructor.html [ Skip ]
 
 # eventSender.callAfterScrollingCompletes doesn't work.
 webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure ]
-webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure ]
+webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure Pass ]
 
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
@@ -1307,6 +1307,8 @@ webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
 webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
 
 webkit.org/b/182106 media/video-multiple-concurrent-playback.html [ Crash Pass Timeout ]
+
+webkit.org/b/183180 imported/blink/fast/forms/time-multiple-fields/time-multiple-fields-crash-by-focus-on-unload.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1924,6 +1926,8 @@ webkit.org/b/183036 fast/events/message-port.html [ Timeout Pass ]
 
 webkit.org/b/183037 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Timeout Pass ]
 
+webkit.org/b/183188 imported/blink/svg/as-image/image-change-with-equal-sizes.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2248,6 +2252,10 @@ webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 
 webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Pass Failure ]
 
+webkit.org/b/183181 inspector/heap/getPreview.html [ Pass Timeout ]
+
+webkit.org/b/183186 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html [ Pass Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2489,8 +2497,6 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Pass Failure ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure Pass ]
-
-webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING

@@ -47,6 +47,13 @@
             }
         }
     },
+    "TestWebKitWebContext": {
+        "subtests": {
+            "/webkit/WebKitWebContext/uri-scheme": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/183183"}}
+            }
+        }
+    },
     "TestWebKitWebView": {
         "subtests": {
             "/webkit/WebKitWebView/backend": {
@@ -97,6 +104,9 @@
                 "expected": {"all": {"slow": true}}
             },
             "WTF_WordLock.ContendedLongSection": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_WordLock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true}}
             }
         }

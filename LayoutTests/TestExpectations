@@ -465,7 +465,6 @@ webkit.org/b/136754 css3/flexbox/csswg/flex-flexitem-percentage-prescation.html 
 webkit.org/b/136754 css3/flexbox/csswg/flex-items-flexibility.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-lines/multi-line-wrap-reverse-column-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-lines/multi-line-wrap-with-column-reverse.html [ ImageOnlyFailure ]
-webkit.org/b/136754 css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_generated-container.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_justifycontent-center-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_min-height-auto.html [ ImageOnlyFailure ]
