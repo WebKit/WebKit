@@ -31,7 +31,7 @@ namespace WebCore {
 
 class RenderedDocumentMarker;
 
-struct MarkerSubrange {
+struct MarkedText {
     // Sorted by paint order
     enum Type {
         Unmarked,
@@ -48,8 +48,8 @@ struct MarkerSubrange {
         DraggedContent,
     };
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    MarkerSubrange() = default;
-    MarkerSubrange(unsigned startOffset, unsigned endOffset, Type type, const RenderedDocumentMarker* marker = nullptr)
+    MarkedText() = default;
+    MarkedText(unsigned startOffset, unsigned endOffset, Type type, const RenderedDocumentMarker* marker = nullptr)
         : startOffset { startOffset }
         , endOffset { endOffset }
         , type { type }
@@ -63,15 +63,15 @@ struct MarkerSubrange {
     const RenderedDocumentMarker* marker { nullptr };
 
     bool isEmpty() const { return endOffset <= startOffset; }
-    bool operator!=(const MarkerSubrange& other) const { return !(*this == other); }
-    bool operator==(const MarkerSubrange& other) const
+    bool operator!=(const MarkedText& other) const { return !(*this == other); }
+    bool operator==(const MarkedText& other) const
     {
         return startOffset == other.startOffset && endOffset == other.endOffset && type == other.type && marker == other.marker;
     }
 };
 
 enum class OverlapStrategy { None, Frontmost };
-WEBCORE_EXPORT Vector<MarkerSubrange> subdivide(const Vector<MarkerSubrange>&, OverlapStrategy = OverlapStrategy::None);
+WEBCORE_EXPORT Vector<MarkedText> subdivide(const Vector<MarkedText>&, OverlapStrategy = OverlapStrategy::None);
 
 }
 

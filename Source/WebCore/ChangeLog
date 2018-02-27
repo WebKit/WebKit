@@ -1,3 +1,64 @@
+2018-02-27  Daniel Bates  <dabates@apple.com>
+
+        Standardize terminology for marked text
+        https://bugs.webkit.org/show_bug.cgi?id=180999
+
+        Reviewed by Zalan Bujtas.
+
+        The name MarkerSubrange is a misnomer for a data structure that associates a text subrange with a type
+        and optional document marker. In particular, a MarkerSubrange may not always correspond to a document
+        marker. For instance, selected text is represented using a MarkerSubrange that does not have a
+        corresponding document marker. Let's standardize on the phrase "marked text" as the canonical way to
+        describe these tagged text subranges.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect const):
+        (WebCore::InlineTextBox::MarkedTextStyle::areBackgroundMarkedTextStylesEqual):
+        (WebCore::InlineTextBox::MarkedTextStyle::areForegroundMarkedTextStylesEqual):
+        (WebCore::InlineTextBox::MarkedTextStyle::areDecorationMarkedTextStylesEqual):
+        (WebCore::InlineTextBox::StyledMarkedText::StyledMarkedText):
+        (WebCore::createMarkedTextFromSelectionInBox):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintPlatformDocumentMarkers):
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        (WebCore::InlineTextBox::computeStyleForUnmarkedMarkedText const):
+        (WebCore::InlineTextBox::resolveStyleForMarkedText):
+        (WebCore::InlineTextBox::subdivideAndResolveStyle):
+        (WebCore::InlineTextBox::coalesceAdjacentMarkedTexts):
+        (WebCore::InlineTextBox::collectMarkedTextsForDraggedContent):
+        (WebCore::InlineTextBox::collectMarkedTextsForDocumentMarkers):
+        (WebCore::InlineTextBox::paintMarkedTexts):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::areBackgroundMarkerSubrangeStylesEqual): Deleted.
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::areForegroundMarkerSubrangeStylesEqual): Deleted.
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::areDecorationMarkerSubrangeStylesEqual): Deleted.
+        (WebCore::InlineTextBox::StyledMarkerSubrange::StyledMarkerSubrange): Deleted.
+        (WebCore::createMarkerSubrangeFromSelectionInBox): Deleted.
+        (WebCore::InlineTextBox::computeStyleForUnmarkedMarkerSubrange const): Deleted.
+        (WebCore::InlineTextBox::resolveStyleForSubrange): Deleted.
+        (WebCore::InlineTextBox::coalesceAdjacentSubranges): Deleted.
+        (WebCore::InlineTextBox::collectSubrangesForDraggedContent): Deleted.
+        (WebCore::InlineTextBox::collectSubrangesForDocumentMarkers): Deleted.
+        (WebCore::InlineTextBox::paintMarkerSubranges): Deleted.
+        (WebCore::InlineTextBox::paintTextSubrangeBackground): Deleted.
+        (WebCore::InlineTextBox::paintTextSubrangeForeground): Deleted.
+        (WebCore::InlineTextBox::paintTextSubrangeDecoration): Deleted.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::paintMarkedTexts):
+        (WebCore::InlineTextBox::paintMarkerSubranges): Deleted.
+        * rendering/MarkedText.cpp: Renamed from Source/WebCore/rendering/MarkerSubrange.cpp.
+        (WebCore::subdivide):
+        * rendering/MarkedText.h: Renamed from Source/WebCore/rendering/MarkerSubrange.h.
+        (WebCore::MarkedText::MarkedText):
+        (WebCore::MarkedText::isEmpty const):
+        (WebCore::MarkedText::operator!= const):
+        (WebCore::MarkedText::operator== const):
+
 2018-02-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r228430.

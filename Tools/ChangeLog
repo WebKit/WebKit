@@ -1,3 +1,22 @@
+2018-02-27  Daniel Bates  <dabates@apple.com>
+
+        Standardize terminology for marked text
+        https://bugs.webkit.org/show_bug.cgi?id=180999
+
+        Reviewed by Zalan Bujtas.
+
+        The name MarkerSubrange is a misnomer for a data structure that associates a text subrange with a type
+        and optional document marker. In particular, a MarkerSubrange may not always correspond to a document
+        marker. For instance, selected text is represented using a MarkerSubrange that does not have a
+        corresponding document marker. Let's standardize on the phrase "marked text" as the canonical way to
+        describe these tagged text subranges.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp: Added.
+        (WebCore::operator<<):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/MarkerSubrange.cpp: Removed.
+
 2018-02-27  Aakash Jain  <aakash_jain@apple.com>
 
         webkitpy Bugzilla transactions should retry on URLError
