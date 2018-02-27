@@ -1,3 +1,30 @@
+2018-02-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Support PutByVal(ArrayStorage/SlowPutArrayStorage)
+        https://bugs.webkit.org/show_bug.cgi?id=182965
+
+        Reviewed by Saam Barati.
+
+        This patch extends FTL coverage for PutByVal by adding ArrayStorage and SlwoPutArrayStorage support.
+        Basically large part of the patch is porting from DFG code. Since PutByVal already emits CheckInBounds
+        for InBounds case, we do not have OutOfBounds check for that case.
+        This is the last change for FTL to support all the types of DFG nodes except for CreateThis.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::contiguousPutByValOutOfBounds):
+        For consistency, we use operationPutByValXXX and operationPutByValDirectXXX.
+        But except for SlowPutArrayStorage case, basically it is meaningless since
+        we do not have indexed accessors.
+
 2018-02-26  Saam Barati  <sbarati@apple.com>
 
         validateStackAccess should not validate if the offset is within the stack bounds

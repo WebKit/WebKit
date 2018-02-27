@@ -420,6 +420,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
             break;
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
