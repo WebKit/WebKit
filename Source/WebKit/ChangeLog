@@ -1,3 +1,28 @@
+2018-02-27  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Make it possible to set suggestions in extra zoom mode.
+        https://bugs.webkit.org/show_bug.cgi?id=183154
+        <rdar://problem/35227450>
+
+        Reviewed by Tim Horton.
+
+        In extra zoom mode, when presenting WKFocusedFormControlViewController, make it the inputDelegate for
+        WKContentView. This is needed to ensure we can capture/cache the suggestions when _WKInputSession's
+        suggestions is updated. Later, when we present WKTextInputViewController, we can pass the cached
+        suggestions.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentFocusedFormControlViewController:]): Set _focusedFormControlViewController as
+            the inputDelegate for WKContentView.
+        (-[WKContentView dismissFocusedFormControlViewController:]): Null the inputDelegate on dismissal.
+        (-[WKContentView presentTextInputViewController:]): Pass the suggestions from WKFocusedFormControlViewController to
+            WKTextInputViewController when the latter is presented.
+        (-[WKContentView textInputController:didCommitText:]): Call the new delegate method textInputController:didCommitText:withSuggestion:.
+        (-[WKContentView textInputController:didCommitText:withSuggestion:]): When a suggestions is selected, insert the
+            suggestion which will notify the client.
+        (-[WKContentView focusedFormControllerDidUpdateSuggestions:]): Called when the suggestion is updated after the input
+            view controller is presented.
+
 2018-02-27  Tim Horton  <timothy_horton@apple.com>
 
         Stop using deprecated CADisplay SPI

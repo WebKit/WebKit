@@ -4208,6 +4208,7 @@ static bool isAssistableInputType(InputType type)
     _focusedFormControlViewController = adoptNS([[WKFocusedFormControlViewController alloc] init]);
     [_focusedFormControlViewController setDelegate:self];
     [[UIViewController _viewControllerForFullScreenPresentationFromView:self] presentViewController:_focusedFormControlViewController.get() animated:animated completion:nil];
+    [self setInputDelegate:_focusedFormControlViewController.get()];
 }
 
 - (void)dismissNumberPadViewController:(BOOL)animated
@@ -4226,6 +4227,7 @@ static bool isAssistableInputType(InputType type)
 
     [_focusedFormControlViewController dismissViewControllerAnimated:animated completion:nil];
     _focusedFormControlViewController = nil;
+    [self setInputDelegate:nil];
 }
 
 - (void)presentNumberPadViewController:(BOOL)animated
@@ -4273,6 +4275,8 @@ static bool isAssistableInputType(InputType type)
     _textInputViewController = adoptNS([[WKTextInputViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
     [_textInputViewController setDelegate:self];
     [_focusedFormControlViewController presentViewController:_textInputViewController.get() animated:animated completion:nil];
+
+    [_textInputViewController setSuggestions:[_focusedFormControlViewController suggestions]];
 }
 
 - (void)dismissTextInputViewController:(BOOL)animated
@@ -4286,7 +4290,15 @@ static bool isAssistableInputType(InputType type)
 
 - (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text
 {
-    _page->setTextAsync(text);
+    [self textInputController:controller didCommitText:text withSuggestion:nil];
+}
+
+- (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text withSuggestion:(UITextSuggestion *)suggestion
+{
+    if (suggestion)
+        [self insertTextSuggestion:suggestion];
+    else
+        _page->setTextAsync(text);
 
     if (![self actionNameForFocusedFormControlController:_focusedFormControlViewController.get()] && !_assistedNodeInformation.hasNextNode && !_assistedNodeInformation.hasPreviousNode) {
         // In this case, there's no point in collapsing down to the form control focus UI because there's nothing the user could potentially do
@@ -4369,6 +4381,11 @@ static bool isAssistableInputType(InputType type)
 - (BOOL)hasPreviousNodeForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
 {
     return _assistedNodeInformation.hasPreviousNode;
+}
+
+- (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlViewController *)controller
+{
+    [_textInputViewController setSuggestions:controller.suggestions];
 }
 
 #pragma mark - WKSelectMenuViewControllerDelegate
