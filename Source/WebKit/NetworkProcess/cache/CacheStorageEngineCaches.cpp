@@ -154,6 +154,8 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
             auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
             for (auto& callback : pendingCallbacks)
                 callback(Error::WriteDisk);
+
+            m_storage = nullptr;
             return;
         }
 
@@ -166,6 +168,8 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
                 auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
                 for (auto& callback : pendingCallbacks)
                     callback(result.error());
+
+                m_storage = nullptr;
                 return;
             }
             m_caches = WTFMove(result.value());
