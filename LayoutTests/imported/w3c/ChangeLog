@@ -1,3 +1,27 @@
+2018-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correct implementation of pending tasks and promises
+        https://bugs.webkit.org/show_bug.cgi?id=183161
+
+        Reviewed by Dean Jackson.
+
+        Update test expectations with progressions (+32 WPT PASS).
+
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/finish-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/finished-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/onfinish-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/pause-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/pending-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/startTime-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/play-states-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+
 2018-02-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update the playState implementation

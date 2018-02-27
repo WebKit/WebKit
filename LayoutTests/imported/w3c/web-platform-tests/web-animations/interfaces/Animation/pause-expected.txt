@@ -1,6 +1,6 @@
 
 PASS pause() a running animation 
-FAIL pause() from idle assert_true: initially pause-pending expected true got false
+PASS pause() from idle 
 PASS pause() from idle with a negative playbackRate 
 PASS pause() from idle with a negative playbackRate and endless effect 
 PASS pause() on a finished animation 

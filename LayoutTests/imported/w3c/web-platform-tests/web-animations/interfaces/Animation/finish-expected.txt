@@ -5,7 +5,7 @@ PASS Test exceptions when finishing non-running animation
 PASS Test exceptions when finishing infinite animation 
 PASS Test finishing of animation 
 PASS Test finishing of animation with a current time past the effect end 
-FAIL Test finishing of reversed animation assert_equals: After finishing a reversed animation the currentTime should be set to zero expected 0 but got -0
+PASS Test finishing of reversed animation 
 PASS Test finishing of reversed animation with a current time less than zero 
 PASS Test finish() while paused 
 PASS Test finish() while pause-pending with positive playbackRate 

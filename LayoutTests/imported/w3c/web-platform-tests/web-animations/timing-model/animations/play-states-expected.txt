@@ -9,6 +9,6 @@ PASS reports 'running' when playback rate < 0 and current time = target effect e
 PASS reports 'running' when playback rate > 0 and current time = 0 
 PASS reports 'running' when playback rate = 0 and current time = 0 
 PASS reports 'finished' when playback rate < 0 and current time = 0 
-FAIL reports 'finished' when playback rate > 0 and current time = target effect end and there is a pending play task assert_equals: Sanity check: start time should be unresolved expected (object) null but got (number) 121
-FAIL reports 'running' when playback rate > 0 and current time < target effect end and there is a pending play task assert_equals: Sanity check: start time should be unresolved expected (object) null but got (number) 121
+PASS reports 'finished' when playback rate > 0 and current time = target effect end and there is a pending play task 
+PASS reports 'running' when playback rate > 0 and current time < target effect end and there is a pending play task 
 

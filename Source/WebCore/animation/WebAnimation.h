@@ -35,6 +35,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -79,10 +80,10 @@ public:
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
-    ReadyPromise& ready() { return m_readyPromise; }
+    ReadyPromise& ready() { return m_readyPromise.get(); }
 
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
-    FinishedPromise& finished() { return m_finishedPromise; }
+    FinishedPromise& finished() { return m_finishedPromise.get(); }
 
     void cancel();
     ExceptionOr<void> finish();
@@ -144,8 +145,8 @@ private:
     bool m_isStopped { false };
     bool m_finishNotificationStepsMicrotaskPending;
     bool m_scheduledMicrotask;
-    ReadyPromise m_readyPromise;
-    FinishedPromise m_finishedPromise;
+    UniqueRef<ReadyPromise> m_readyPromise;
+    UniqueRef<FinishedPromise> m_finishedPromise;
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
 

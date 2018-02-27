@@ -1,3 +1,57 @@
+2018-02-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correct implementation of pending tasks and promises
+        https://bugs.webkit.org/show_bug.cgi?id=183161
+
+        Reviewed by Dean Jackson.
+
+        We had an incorrect implementation of the spec due to two misinterpretations.
+
+        The first one is about pending tasks (play and pause) which the spec says should
+        be performed by "scheduling a task". In WebCore, this means using postTask() on a
+        ScriptExecutionContext, such as Document. One of the big practical changes is that
+        calling play() on an animation correctly sets its startTime to null (unresolved)
+        immediately after the call to play() returns before setting it to a resolved value
+        when the task is performed asynchronously. As a result, the playState is now always
+        accurate.
+
+        The second one is about promises where new promises need to be created in certain
+        situations called out by the spec. We used to call clear() on them, but this merely
+        resets the fulfillment or rejection state of the promise, while the spec requires
+        a different object to be returned for the promise. We now create our promises using
+        makeUniqueRef<> when new promise objects are expected to be created.
+
+        This patch also corrects a few smaller bugs and spec compliant issues, called out
+        below, related to pending tasks and promises uncovered while looking at relevant
+        WPT tests.
+
+        * animation/DocumentTimeline.h: Expose the Document used to create this timeline such
+        that it may be used by WebAnimation objects registered for this timeline when scheduling
+        a task is required via postTask().
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::WebAnimation):
+        (WebCore::WebAnimation::setBindingsStartTime):
+        (WebCore::WebAnimation::setCurrentTime):
+        (WebCore::WebAnimation::cancel): Ensure the finished promise has not already been fulfilled
+        before rejecting it. While the spec does not specifically call this out, a promise may not
+        be rejected after being fulfilled, and we would hit an ASSERT if we didn't also check that
+        it was in the correct pending state before attemping to reject it.
+        (WebCore::WebAnimation::resetPendingTasks):
+        (WebCore::WebAnimation::finish):
+        (WebCore::WebAnimation::updateFinishedState):
+        (WebCore::WebAnimation::finishNotificationSteps):
+        (WebCore::WebAnimation::play): We used to only check for a pending pause task before canceling
+        that task, but the spec says to check for either a pending pause or play task (ie. pending())
+        and to cancel whichever is scheduled.
+        (WebCore::WebAnimation::runPendingPlayTask): We were missing an assertion called out by the
+        spec when running a pending task.
+        (WebCore::WebAnimation::pause):
+        (WebCore::WebAnimation::runPendingPauseTask):
+        (WebCore::WebAnimation::updatePendingTasks): We now use postTask() on the animation's associated
+        timeline's document to schedule pending tasks for which the criteria to run are met, ie. there
+        is an associated timeline.
+        * animation/WebAnimation.h:
+
 2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Implement additional SPI for adjusting viewport shrink-to-fit behavior

@@ -2,7 +2,7 @@
 PASS Reversing an animation inverts the playback rate 
 PASS Reversing an animation plays a pausing animation 
 PASS Reversing an animation maintains the same current time 
-FAIL Reversing an animation does not cause it to leave the pending state assert_true: The animation is pending before we call reverse expected true got false
+PASS Reversing an animation does not cause it to leave the pending state 
 PASS Reversing an animation does not cause it to resolve the ready promise 
 PASS Reversing an animation when playbackRate > 0 and currentTime > effect end should make it play from the end 
 PASS Reversing an animation when playbackRate > 0 and currentTime < 0 should make it play from the end 

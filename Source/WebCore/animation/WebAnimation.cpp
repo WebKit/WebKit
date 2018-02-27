@@ -60,8 +60,8 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffectReadOn
 
 WebAnimation::WebAnimation(Document& document)
     : ActiveDOMObject(&document)
-    , m_readyPromise(*this, &WebAnimation::readyPromiseResolve)
-    , m_finishedPromise(*this, &WebAnimation::finishedPromiseResolve)
+    , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve))
+    , m_finishedPromise(makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve))
 {
     suspendIfNeeded();
 }
@@ -245,7 +245,7 @@ void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
     if (pending()) {
         setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
         setTimeToRunPendingPlayTask(TimeToRunPendingTask::NotScheduled);
-        m_readyPromise.resolve(*this);
+        m_readyPromise->resolve(*this);
     }
 
     // 7. Run the procedure to update an animation’s finished state for animation with the did seek flag set to true, and the synchronously notify flag set to false.
@@ -368,7 +368,7 @@ ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
         // 3. Cancel the pending pause task.
         setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
         // 4. Resolve animation's current ready promise with animation.
-        m_readyPromise.resolve(*this);
+        m_readyPromise->resolve(*this);
     }
 
     // 3. Run the procedure to update an animation's finished state for animation with the did seek flag set to true, and the synchronously notify flag set to false.
@@ -462,10 +462,11 @@ void WebAnimation::cancel()
         resetPendingTasks();
 
         // 2. Reject the current finished promise with a DOMException named "AbortError".
-        m_finishedPromise.reject(Exception { AbortError });
+        if (!m_finishedPromise->isFulfilled())
+            m_finishedPromise->reject(Exception { AbortError });
 
         // 3. Let current finished promise be a new (pending) Promise object.
-        m_finishedPromise.clear();
+        m_finishedPromise = makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve);
 
         // 4. Create an AnimationPlaybackEvent, cancelEvent.
         // 5. Set cancelEvent's type attribute to cancel.
@@ -526,11 +527,11 @@ void WebAnimation::resetPendingTasks()
         setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
 
     // 4. Reject animation's current ready promise with a DOMException named "AbortError".
-    m_readyPromise.reject(Exception { AbortError });
+    m_readyPromise->reject(Exception { AbortError });
 
     // 5. Let animation's current ready promise be the result of creating a new resolved Promise object.
-    m_readyPromise.clear();
-    m_readyPromise.resolve(*this);
+    m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
+    m_readyPromise->resolve(*this);
 }
 
 ExceptionOr<void> WebAnimation::finish()
@@ -564,13 +565,13 @@ ExceptionOr<void> WebAnimation::finish()
         // 2. Cancel the pending pause task.
         setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
         // 3. Resolve the current ready promise of animation with animation.
-        m_readyPromise.resolve(*this);
+        m_readyPromise->resolve(*this);
     }
 
     // 6. If there is a pending play task and start time is resolved, cancel that task and resolve the current ready promise of animation with animation.
     if (hasPendingPlayTask() && m_startTime) {
         setTimeToRunPendingPlayTask(TimeToRunPendingTask::NotScheduled);
-        m_readyPromise.resolve(*this);
+        m_readyPromise->resolve(*this);
     }
 
     // 7. Run the procedure to update an animation's finished state animation with the did seek flag set to true, and the synchronously notify flag set to true.
@@ -634,7 +635,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
     auto currentFinishedState = playState() == PlayState::Finished;
 
     // 5. If current finished state is true and the current finished promise is not yet resolved, perform the following steps:
-    if (currentFinishedState && !m_finishedPromise.isFulfilled()) {
+    if (currentFinishedState && !m_finishedPromise->isFulfilled()) {
         if (synchronouslyNotify == SynchronouslyNotify::Yes) {
             // If synchronously notify is true, cancel any queued microtask to run the finish notification steps for this animation,
             // and run the finish notification steps immediately.
@@ -650,8 +651,8 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
 
     // 6. If current finished state is false and animation's current finished promise is already resolved, set animation's current
     // finished promise to a new (pending) Promise object.
-    if (!currentFinishedState && m_finishedPromise.isFulfilled())
-        m_finishedPromise.clear();
+    if (!currentFinishedState && m_finishedPromise->isFulfilled())
+        m_finishedPromise = makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve);
 }
 
 void WebAnimation::scheduleMicrotaskIfNeeded()
@@ -684,7 +685,7 @@ void WebAnimation::finishNotificationSteps()
         return;
 
     // 2. Resolve animation's current finished promise object with animation.
-    m_finishedPromise.resolve(*this);
+    m_finishedPromise->resolve(*this);
 
     // 3. Create an AnimationPlaybackEvent, finishEvent.
     // 4. Set finishEvent's type attribute to finish.
@@ -741,8 +742,9 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     }
 
     // 4. If animation has a pending play task or a pending pause task,
-    if (hasPendingPauseTask()) {
+    if (pending()) {
         // 1. Cancel that task.
+        setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
         setTimeToRunPendingPlayTask(TimeToRunPendingTask::NotScheduled);
         // 2. Set has pending ready promise to true.
         hasPendingReadyPromise = true;
@@ -758,7 +760,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
     // 7. If has pending ready promise is false, let animation's current ready promise be a new (pending) Promise object.
     if (!hasPendingReadyPromise)
-        m_readyPromise.clear();
+        m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
 
     // 8. Schedule a task to run as soon as animation is ready.
     setTimeToRunPendingPlayTask(TimeToRunPendingTask::WhenReady);
@@ -782,10 +784,13 @@ void WebAnimation::runPendingPlayTask()
 
     m_timeToRunPendingPlayTask = TimeToRunPendingTask::NotScheduled;
 
-    // 1. Let ready time be the time value of the timeline associated with animation at the moment when animation became ready.
+    // 1. Assert that at least one of animation’s start time or hold time is resolved.
+    ASSERT(m_startTime || m_holdTime);
+
+    // 2. Let ready time be the time value of the timeline associated with animation at the moment when animation became ready.
     auto readyTime = m_timeline->currentTime();
 
-    // 2. If animation's start time is unresolved, perform the following steps:
+    // 3. If animation's start time is unresolved, perform the following steps:
     if (!m_startTime) {
         // 1. Let new start time be the result of evaluating ready time - hold time / animation playback rate for animation.
         // If the animation playback rate is zero, let new start time be simply ready time.
@@ -799,10 +804,10 @@ void WebAnimation::runPendingPlayTask()
         setStartTime(newStartTime);
     }
 
-    // 3. Resolve animation's current ready promise with animation.
-    m_readyPromise.resolve(*this);
+    // 4. Resolve animation's current ready promise with animation.
+    m_readyPromise->resolve(*this);
 
-    // 4. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
+    // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 }
 
@@ -846,7 +851,7 @@ ExceptionOr<void> WebAnimation::pause()
 
     // 6. If has pending ready promise is false, set animation's current ready promise to a new (pending) Promise object.
     if (!hasPendingReadyPromise)
-        m_readyPromise.clear();
+        m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
 
     // 7. Schedule a task to be executed at the first possible moment after the user agent has performed any processing necessary
     //    to suspend the playback of animation's target effect, if any.
@@ -919,7 +924,7 @@ void WebAnimation::runPendingPauseTask()
     setStartTime(std::nullopt);
 
     // 4. Resolve animation's current ready promise with animation.
-    m_readyPromise.resolve(*this);
+    m_readyPromise->resolve(*this);
 
     // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the
     //    synchronously notify flag set to false.
@@ -928,12 +933,24 @@ void WebAnimation::runPendingPauseTask()
 
 void WebAnimation::updatePendingTasks()
 {
-    if (m_timeToRunPendingPauseTask == TimeToRunPendingTask::ASAP && m_timeline)
-        runPendingPauseTask();
+    if (hasPendingPauseTask() && is<DocumentTimeline>(m_timeline)) {
+        if (auto document = downcast<DocumentTimeline>(*m_timeline).document()) {
+            document->postTask([this, protectedThis = makeRef(*this)] (auto&) {
+                if (this->hasPendingPauseTask() && m_timeline)
+                    this->runPendingPauseTask();
+            });
+        }
+    }
 
     // FIXME: This should only happen if we're ready, at the moment we think we're ready if we have a timeline.
-    if (m_timeToRunPendingPlayTask == TimeToRunPendingTask::WhenReady && m_timeline)
-        runPendingPlayTask();
+    if (hasPendingPlayTask() && is<DocumentTimeline>(m_timeline)) {
+        if (auto document = downcast<DocumentTimeline>(*m_timeline).document()) {
+            document->postTask([this, protectedThis = makeRef(*this)] (auto&) {
+                if (this->hasPendingPlayTask() && m_timeline)
+                    this->runPendingPlayTask();
+            });
+        }
+    }
 }
 
 Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const

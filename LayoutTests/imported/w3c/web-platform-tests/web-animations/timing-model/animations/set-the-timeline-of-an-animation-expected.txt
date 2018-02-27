@@ -4,15 +4,15 @@ PASS After setting timeline on animation paused outside active interval it is st
 PASS After setting timeline on an idle animation without a start time it is still idle 
 PASS After setting timeline on an idle animation with a start time it is running 
 PASS After setting timeline on an idle animation with a sufficiently ancient start time it is finished 
-FAIL After setting timeline on a play-pending animation it begins playing after pending assert_true: Animation is still play-pending after setting timeline expected true got false
-FAIL After setting timeline on a pause-pending animation it becomes paused after pending assert_true: Animation is still pause-pending after setting timeline expected true got false
+PASS After setting timeline on a play-pending animation it begins playing after pending 
+PASS After setting timeline on a pause-pending animation it becomes paused after pending 
 PASS After clearing timeline on paused animation it is still paused 
 PASS After clearing timeline on finished animation it is idle 
 PASS After clearing timeline on running animation it is idle 
 PASS After clearing timeline on idle animation it is still idle 
-FAIL After clearing timeline on play-pending animation it is still pending assert_true: expected true got false
-FAIL After clearing and re-setting timeline on play-pending animation it begins to play assert_true: expected true got false
-FAIL After clearing timeline on a pause-pending animation it is still pending assert_true: expected true got false
-FAIL After clearing and re-setting timeline on a pause-pending animation it completes pausing assert_true: expected true got false
+PASS After clearing timeline on play-pending animation it is still pending 
+PASS After clearing and re-setting timeline on play-pending animation it begins to play 
+PASS After clearing timeline on a pause-pending animation it is still pending 
+PASS After clearing and re-setting timeline on a pause-pending animation it completes pausing 
 PASS After clearing and re-setting timeline on an animation in the middle of an aborted pause, it continues playing using the same start time 
 
