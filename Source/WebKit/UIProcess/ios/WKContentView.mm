@@ -425,6 +425,7 @@ private:
         _sizeChangedSinceLastVisibleContentRectUpdate,
         isChangingObscuredInsetsInteractively,
         _webView._allowsViewportShrinkToFit,
+        _webView._forceHorizontalViewportShrinkToFit,
         enclosedInScrollableAncestorView,
         timestamp,
         velocityData.horizontalVelocity,

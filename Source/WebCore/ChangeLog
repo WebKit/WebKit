@@ -1,5 +1,47 @@
 2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [Extra zoom mode] Implement additional SPI for adjusting viewport shrink-to-fit behavior
+        https://bugs.webkit.org/show_bug.cgi?id=183100
+        <rdar://problem/37840987>
+
+        Reviewed by Tim Horton.
+
+        Introduce new customization options to ViewportConfiguration. The first is m_forceHorizontalShrinkToFit, which
+        (when set to true) forces the viewport to scale using shrink-to-fit heuristics, regardless of whether
+        "shrink-to-fit=no" is specified via viewport parameters or if content width did not exceed minimum layout size.
+        The second is m_viewSize, which reflects the true size of the viewport. See WebKit ChangeLog for more details.
+
+        Tests: ViewportSizingTests.ForceShrinkToFitViewportOverridesViewportParameters
+               ViewportSizingTests.ShrinkToFitViewportWithMinimumAllowedLayoutWidth
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize):
+
+        Plumb the real size of the view alongside the minimum layout size when updating the minimum layout size.
+
+        (WebCore::ViewportConfiguration::setForceHorizontalShrinkToFit):
+        (WebCore::ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints const):
+
+        Bail early and return true if forceHorizontalShrinkToFit is set. This forces shrink-to-fit even in cases where
+        "shrink-to-fit" is set to "no", or content dimensions don't exceed layout dimensions.
+
+        (WebCore::ViewportConfiguration::initialScaleFromSize const):
+
+        Use view dimensions rather than minimum layout dimensions when computing the initial scale. Minimum layout size
+        is no longer always equal to the size of the view if the client has specified a minimum allowed layout width. As
+        such, when computing the initial scale, to ensure that the content (which was laid out using the minimum layout
+        size) fits within the real viewport, we need to divide real viewport dimensions by content dimensions.
+
+        (WebCore::ViewportConfiguration::minimumScale const):
+
+        Similarly, use view size instead of minimum layout size to compute minimum scale.
+
+        (WebCore::ViewportConfiguration::description const):
+        * page/ViewportConfiguration.h:
+
+2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the debug build after r228877.
 
         In the case where CAN_DISALLOW_USER_INSTALLED_FONTS is enabled, this function doesn't return anything when

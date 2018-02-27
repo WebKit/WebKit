@@ -49,6 +49,7 @@ ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
     , m_canIgnoreScalingConstraints(false)
     , m_forceAlwaysUserScalable(false)
+    , m_forceHorizontalShrinkToFit(false)
 {
     // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
     // Those are the original iPhone configuration.
@@ -82,12 +83,14 @@ bool ViewportConfiguration::setContentsSize(const IntSize& contentSize)
     return true;
 }
 
-bool ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutSize)
+bool ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutSize, const FloatSize& viewSize)
 {
-    if (m_minimumLayoutSize == minimumLayoutSize)
+    if (m_minimumLayoutSize == minimumLayoutSize && m_viewSize == viewSize)
         return false;
 
     m_minimumLayoutSize = minimumLayoutSize;
+    m_viewSize = viewSize;
+
     updateConfiguration();
     return true;
 }
@@ -100,6 +103,15 @@ bool ViewportConfiguration::setViewportArguments(const ViewportArguments& viewpo
     LOG_WITH_STREAM(Viewports, stream << "ViewportConfiguration::setViewportArguments " << viewportArguments);
     m_viewportArguments = viewportArguments;
     updateConfiguration();
+    return true;
+}
+
+bool ViewportConfiguration::setForceHorizontalShrinkToFit(bool forceHorizontalShrinkToFit)
+{
+    if (m_forceHorizontalShrinkToFit == forceHorizontalShrinkToFit)
+        return false;
+
+    m_forceHorizontalShrinkToFit = forceHorizontalShrinkToFit;
     return true;
 }
 
@@ -122,6 +134,9 @@ bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
 {
     if (!m_canIgnoreScalingConstraints)
         return false;
+
+    if (m_forceHorizontalShrinkToFit)
+        return true;
 
     if (!m_configuration.allowsShrinkToFit)
         return false;
@@ -167,14 +182,14 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
 
     // If not, it is up to us to determine the initial scale.
     // We want a scale small enough to fit the document width-wise.
-    const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double initialScale = 0;
     if (width > 0 && !shouldIgnoreVerticalScalingConstraints())
-        initialScale = minimumLayoutSize.width() / width;
+        initialScale = m_viewSize.width() / width;
 
     // Prevent the initial scale from shrinking to a height smaller than our view's minimum height.
-    if (height > 0 && height * initialScale < minimumLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
-        initialScale = minimumLayoutSize.height() / height;
+    if (height > 0 && height * initialScale < m_viewSize.height() && !shouldIgnoreHorizontalScalingConstraints())
+        initialScale = m_viewSize.height() / height;
+
     return std::min(std::max(initialScale, shouldIgnoreScalingConstraints ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
 }
 
@@ -200,14 +215,13 @@ double ViewportConfiguration::minimumScale() const
     if (m_forceAlwaysUserScalable)
         minimumScale = std::min(minimumScale, forceAlwaysUserScalableMinimumScale);
 
-    const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double contentWidth = m_contentSize.width();
-    if (contentWidth > 0 && contentWidth * minimumScale < minimumLayoutSize.width() && !shouldIgnoreVerticalScalingConstraints())
-        minimumScale = minimumLayoutSize.width() / contentWidth;
+    if (contentWidth > 0 && contentWidth * minimumScale < m_viewSize.width() && !shouldIgnoreVerticalScalingConstraints())
+        minimumScale = m_viewSize.width() / contentWidth;
 
     double contentHeight = m_contentSize.height();
-    if (contentHeight > 0 && contentHeight * minimumScale < minimumLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
-        minimumScale = minimumLayoutSize.height() / contentHeight;
+    if (contentHeight > 0 && contentHeight * minimumScale < m_viewSize.height() && !shouldIgnoreHorizontalScalingConstraints())
+        minimumScale = m_viewSize.height() / contentHeight;
 
     minimumScale = std::min(std::max(minimumScale, m_configuration.minimumScale), m_configuration.maximumScale);
 
@@ -490,6 +504,7 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("ignoring horizontal scaling constraints", shouldIgnoreHorizontalScalingConstraints() ? "true" : "false");
     ts.dumpProperty("ignoring vertical scaling constraints", shouldIgnoreVerticalScalingConstraints() ? "true" : "false");
     ts.dumpProperty("avoids unsafe area", avoidsUnsafeArea() ? "true" : "false");
+    ts.dumpProperty("force horizontal shrink to fit", m_forceHorizontalShrinkToFit ? "true" : "false");
     
     ts.endGroup();
 

@@ -1,3 +1,105 @@
+2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Implement additional SPI for adjusting viewport shrink-to-fit behavior
+        https://bugs.webkit.org/show_bug.cgi?id=183100
+        <rdar://problem/37840987>
+
+        Reviewed by Tim Horton.
+
+        Add new SPI hooks to provide finer control over certain aspects of the shrink-to-fit viewport heuristic.
+        Currently, in certain cases of iPad multitasking, Safari allows shrinking content to fit by default. This means
+        that even when "width=device-width" is used, if the contents of the page are too wide to fit within the
+        viewport's width, we'll adjust the initial scale such that the viewport can fit all of the content.
+
+        However, in certain viewport dimensions, this heuristic is insufficient to ensure that pages are laid out and
+        displayed properly within the viewport. Namely, one could imagine that an element with a hard-coded width that
+        is larger than the real viewport width would cause all other elements with dimensions relative to the body to be
+        excessively shrunk down once shrink-to-fit is applied, so the page would still look broken even if the contents
+        of the page all fit within the viewport.
+
+        To mitigate this, we decouple the notions of minimum layout size from the size of the actual viewport (which we
+        simply refer to as "view size"). This allows us to introduce a mechanism where we lay out the page at a given
+        minimum layout size that is larger than the size of the view; later, when we determine the initial scale, we
+        then apply shrink-to-fit scaling using the view size rather than the minimum layout size. This grants us the
+        ability to lay out content as if our view were large, but still ensure that the contents of the page fit within
+        the actual view.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode const):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::forceHorizontalShrinkToFit const):
+        (WebKit::operator==):
+
+        Plumb the forceHorizontalShrinkToFit flag through VisibleContentRectUpdateInfo.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        Plumb viewSize through IPC to WebPage.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
+        Start off WKWebView flags at their initial values.
+
+        (-[WKWebView _minimumAllowedLayoutWidth]):
+        (-[WKWebView _setMinimumAllowedLayoutWidth:]):
+
+        This provides the minimum width at which the page will lay out, such that if the view width dips below this
+        value, we'll use this minimum allowed layout width instead. 0 by default.
+
+        (-[WKWebView activeMinimumLayoutSizes:]):
+
+        Refactor this from a static function to a helper method on WKWebView that computes both the minimum layout size
+        (which takes minimum allowed layout width into account) as well as the real view size. Refactor all call sites
+        to use this new method, and also propagate the view size down via IPC, alongside the minimum layout size.
+
+        (-[WKWebView _dispatchSetMinimumLayoutSize:viewSize:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _setMinimumLayoutSizeOverride:]):
+        (-[WKWebView _setForceHorizontalViewportShrinkToFit:]):
+        (-[WKWebView _forceHorizontalViewportShrinkToFit]):
+
+        Setting this flag to YES forces us to always shrink-to-fit in the horizontal axis. NO by default.
+
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+        (activeMinimumLayoutSize): Deleted.
+
+        More refactoring to replace activeMinimumLayoutSize() with -activeMinimumLayoutSizes:.
+
+        (-[WKWebView _dispatchSetMinimumLayoutSize:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+
+        Pass _forceHorizontalViewportShrinkToFit into the visible content rect update.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSize):
+
+        Plumb viewSize alongside the existing minimumLayoutSize.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        Set forceHorizontalShrinkToFit on the viewport configuration here.
+
 2018-02-27  Tim Horton  <timothy_horton@apple.com>
 
         Stop using deprecated CADisplay SPI

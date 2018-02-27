@@ -1,3 +1,20 @@
+2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Implement additional SPI for adjusting viewport shrink-to-fit behavior
+        https://bugs.webkit.org/show_bug.cgi?id=183100
+        <rdar://problem/37840987>
+
+        Reviewed by Tim Horton.
+
+        Add API tests that exercise -_setMinimumAllowedLayoutWidth: and -_setForceHorizontalViewportShrinkToFit:. See
+        WebKit ChangeLog for more detail.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ViewportSizingTests.mm: Added.
+        (TestWebKitAPI::while):
+        (viewportTestPageMarkup):
+        (TestWebKitAPI::TEST):
+
 2018-02-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, skip FTL tests if FTL is disabled

@@ -53,6 +53,7 @@ void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << m_isFirstUpdateForNewViewSize;
     encoder << m_isChangingObscuredInsetsInteractively;
     encoder << m_allowShrinkToFit;
+    encoder << m_forceHorizontalShrinkToFit;
     encoder << m_enclosedInScrollableAncestorView;
 }
 
@@ -92,6 +93,8 @@ bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentR
         return false;
     if (!decoder.decode(result.m_allowShrinkToFit))
         return false;
+    if (!decoder.decode(result.m_forceHorizontalShrinkToFit))
+        return false;
     if (!decoder.decode(result.m_enclosedInScrollableAncestorView))
         return false;
 
@@ -130,6 +133,8 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
         ts.dumpProperty("enclosedInScrollableAncestorView", info.enclosedInScrollableAncestorView());
 
     ts.dumpProperty("timestamp", info.timestamp().secondsSinceEpoch().value());
+    ts.dumpProperty("allowShrinkToFit", info.allowShrinkToFit());
+    ts.dumpProperty("forceHorizontalShrinkToFit", info.forceHorizontalShrinkToFit());
     if (info.horizontalVelocity())
         ts.dumpProperty("horizontalVelocity", info.horizontalVelocity());
     if (info.verticalVelocity())
