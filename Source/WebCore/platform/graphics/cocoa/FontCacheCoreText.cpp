@@ -1473,8 +1473,8 @@ RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts all
     }
 #else
     UNUSED_PARAM(allowUserInstalledFonts);
-    return nullptr;
 #endif
+    return nullptr;
 }
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)

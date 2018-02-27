@@ -1,3 +1,14 @@
+2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the debug build after r228877.
+
+        In the case where CAN_DISALLOW_USER_INSTALLED_FONTS is enabled, this function doesn't return anything when
+        allowUserInstalledFonts != AllowUserInstalledFonts::No. Fix the build by moving `return nullptr;` back out of
+        the `#else`.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::installedFontMandatoryAttributes):
+
 2018-02-27  Milan Crha  <mcrha@redhat.com>
 
         Potential privacy issue: DNS prefetching can be re-enabled
