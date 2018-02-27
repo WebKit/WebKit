@@ -41,6 +41,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include "StorageMap.h"
@@ -267,6 +268,22 @@ void SettingsBase::setNeedsRecalcStyleInAllFrames()
 {
     if (m_page)
         m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void SettingsBase::setNeedsRelayoutAllFrames()
+{
+    if (!m_page)
+        return;
+
+    for (auto* frame = m_page->mainFrame().tree().traverseNext(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->ownerRenderer())
+            frame->ownerRenderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    }
+
+    if (auto* mainDocument = m_page->mainFrame().document()) {
+        if (auto* frameView = mainDocument->view())
+            frameView->layoutContext().scheduleLayout();
+    }
 }
 
 void SettingsBase::mediaTypeOverrideChanged()

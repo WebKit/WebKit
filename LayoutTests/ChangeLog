@@ -1,3 +1,17 @@
+2018-02-27  Frederic Wang  <fwang@igalia.com>
+
+        Relayout frames after AsyncFrameScrolling or FrameFlattening option is changed
+        https://bugs.webkit.org/show_bug.cgi?id=183081
+
+        Reviewed by Antonio Gomes.
+
+        Add a test to check whether an iframe changes its flattening status after one of the option
+        AsyncFrameScrolling/FrameFlattening is enabled/disabled.
+
+        * platform/ios-simulator/TestExpectations: Remove failure.
+        * platform/ios/fast/frames/flattening/iframe-flattening-async-frame-scrolling-dynamic-expected.txt: Added.
+        * platform/ios/fast/frames/flattening/iframe-flattening-async-frame-scrolling-dynamic.html: Added.
+
 2018-02-26  Daniel Bates  <dabates@apple.com>
 
         testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
