@@ -58,6 +58,19 @@ bool EventTarget::isNode() const
     return false;
 }
 
+static bool siteQuirksForceNonPassive(const Document& document)
+{
+#if !PLATFORM(IOS)
+    UNUSED_PARAM(document);
+    return false;
+#else
+    String hostName = document.topDocument().url().host();
+    // We have to consider all the localized versions of
+    // Google pages, which are generally on different domains.
+    return hostName.containsIgnoringASCIICase(".google.") || startsWithLettersIgnoringASCIICase(hostName, "google.");
+#endif
+}
+
 bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     auto passive = options.passive;
@@ -66,11 +79,11 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
         if (is<DOMWindow>(*this)) {
             auto& window = downcast<DOMWindow>(*this);
             if (auto* document = window.document())
-                passive = document->settings().passiveTouchListenersAsDefaultOnDocument();
+                passive = document->settings().passiveTouchListenersAsDefaultOnDocument() && !siteQuirksForceNonPassive(*document);
         } else if (is<Node>(*this)) {
             auto& node = downcast<Node>(*this);
             if (is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node)
-                passive = node.document().settings().passiveTouchListenersAsDefaultOnDocument();
+                passive = node.document().settings().passiveTouchListenersAsDefaultOnDocument() && !siteQuirksForceNonPassive(node.document());
         }
     }
 
