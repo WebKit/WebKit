@@ -1,3 +1,15 @@
+2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review comment after r229049.
+        https://bugs.webkit.org/show_bug.cgi?id=183142
+
+        Reviewed by Tim Horton.
+
+        Wrap a newly added string literal with ASCIILiteral.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::extraDefaultStyleSheet):
+
 2018-02-26  Mark Lam  <mark.lam@apple.com>
 
         Modernize FINALIZE_CODE and peer macros to use __VA_ARGS__ arguments.
