@@ -1,5 +1,16 @@
 2018-02-26  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Update the playState implementation
+        https://bugs.webkit.org/show_bug.cgi?id=183145
+
+        Reviewed by Dean Jackson.
+
+        Update test expectations with slightly different failures later on in a couple of tests.
+
+        * web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+
+2018-02-26  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Implement the procedure to set the start time
         https://bugs.webkit.org/show_bug.cgi?id=183137
 

@@ -1,3 +1,21 @@
+2018-02-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update the playState implementation
+        https://bugs.webkit.org/show_bug.cgi?id=183145
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations spec has changed since we first implemented the playState property and the "pending"
+        enum value has been dropped since then (there is a separate "pending" property which we also implement).
+        We update our implementation to match the latest spec text. This does not change WPT test results a lot,
+        but this patch will help getting a significant number of new PASS results when we get around to implementing
+        correct support for async procedures (pending pause/play tasks and promises) in a couple of patches.
+  
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::playState const):
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.idl:
+
 2018-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Address post-review comment after r229049.

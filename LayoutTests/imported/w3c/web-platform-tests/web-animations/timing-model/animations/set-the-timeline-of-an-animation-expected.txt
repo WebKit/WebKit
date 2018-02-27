@@ -4,8 +4,8 @@ PASS After setting timeline on animation paused outside active interval it is st
 PASS After setting timeline on an idle animation without a start time it is still idle 
 PASS After setting timeline on an idle animation with a start time it is running 
 PASS After setting timeline on an idle animation with a sufficiently ancient start time it is finished 
-FAIL After setting timeline on a play-pending animation it begins playing after pending assert_true: Animation is initially play-pending expected true got false
-FAIL After setting timeline on a pause-pending animation it becomes paused after pending assert_true: Animation is initially pause-pending expected true got false
+FAIL After setting timeline on a play-pending animation it begins playing after pending assert_true: Animation is still play-pending after setting timeline expected true got false
+FAIL After setting timeline on a pause-pending animation it becomes paused after pending assert_true: Animation is still pause-pending after setting timeline expected true got false
 PASS After clearing timeline on paused animation it is still paused 
 PASS After clearing timeline on finished animation it is idle 
 PASS After clearing timeline on running animation it is idle 

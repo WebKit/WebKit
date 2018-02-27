@@ -73,7 +73,7 @@ public:
     double playbackRate() const { return m_playbackRate; }
     void setPlaybackRate(double, Silently silently = Silently::No );
 
-    enum class PlayState { Idle, Pending, Running, Paused, Finished };
+    enum class PlayState { Idle, Running, Paused, Finished };
     PlayState playState() const;
 
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }

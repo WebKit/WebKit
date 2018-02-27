@@ -397,24 +397,30 @@ void WebAnimation::setPlaybackRate(double newPlaybackRate, Silently silently)
 
 auto WebAnimation::playState() const -> PlayState
 {
-    // Section 3.5.19. Play states
+    // 3.5.19 Play states
+    // https://drafts.csswg.org/web-animations/#play-states
 
-    // Animation has a pending play task or a pending pause task → pending
-    if (pending())
-        return PlayState::Pending;
+    // The play state of animation, animation, at a given moment is the state corresponding to the
+    // first matching condition from the following:
 
-    // The current time of animation is unresolved → idle
+    // The current time of animation is unresolved, and animation does not have either a pending
+    // play task or a pending pause task,
+    // → idle
     auto animationCurrentTime = currentTime();
-    if (!animationCurrentTime)
+    if (!animationCurrentTime && !pending())
         return PlayState::Idle;
 
-    // The start time of animation is unresolved → paused
-    if (!startTime())
+    // Animation has a pending pause task, or both the start time of animation is unresolved and it does not
+    // have a pending play task,
+    // → paused
+    if (hasPendingPauseTask() || (!m_startTime && !hasPendingPlayTask()))
         return PlayState::Paused;
 
-    // For animation, animation playback rate > 0 and current time ≥ target effect end; or
-    // animation playback rate < 0 and current time ≤ 0 → finished
-    if ((m_playbackRate > 0 && animationCurrentTime.value() >= effectEndTime()) || (m_playbackRate < 0 && animationCurrentTime.value() <= 0_s))
+    // For animation, current time is resolved and either of the following conditions are true:
+    // playback rate > 0 and current time ≥ target effect end; or
+    // playback rate < 0 and current time ≤ 0,
+    // → finished
+    if (animationCurrentTime && ((m_playbackRate > 0 && animationCurrentTime.value() >= effectEndTime()) || (m_playbackRate < 0 && animationCurrentTime.value() <= 0_s)))
         return PlayState::Finished;
 
     // Otherwise → running
