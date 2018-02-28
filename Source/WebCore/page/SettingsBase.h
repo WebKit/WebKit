@@ -164,7 +164,6 @@ protected:
 
     // Helpers used by generated Settings.cpp.
     void setNeedsRecalcStyleInAllFrames();
-    void setNeedsRelayoutAllFrames();
     void mediaTypeOverrideChanged();
     void imagesEnabledChanged();
     void scriptEnabledChanged();

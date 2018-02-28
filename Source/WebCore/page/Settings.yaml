@@ -356,10 +356,8 @@ maximumPlugInSnapshotAttempts:
 frameFlattening:
   type: FrameFlattening
   initial: FrameFlattening::Disabled
-  onChange: setNeedsRelayoutAllFrames
 asyncFrameScrollingEnabled:
   initial: false
-  onChange: setNeedsRelayoutAllFrames
 
 webSecurityEnabled:
   initial: true
