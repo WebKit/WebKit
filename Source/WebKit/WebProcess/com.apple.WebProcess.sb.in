@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2018 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -78,10 +78,11 @@
        file-ioctl
     (literal "/dev/dtracehelper"))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (allow network-outbound
     (literal "/private/var/run/asl_input")
     (literal "/private/var/run/syslog"))
-
+#endif
 
 ;;; Allow creation of core dumps.
 (allow file-write-create
@@ -139,27 +140,6 @@
         (iokit-property "rgcs")
         (iokit-property "ggcs")
         (iokit-property "bgcs")))))
-
-
-;;; (system-network) - Allow access to the network.
-(define (system-network)
-    (allow file-read*
-        (literal "/Library/Preferences/com.apple.networkd.plist"))
-    (allow mach-lookup
-        (global-name "com.apple.SystemConfiguration.PPPController")
-        (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
-        (global-name "com.apple.nehelper")
-        (global-name "com.apple.networkd")
-        (global-name "com.apple.nsurlstorage-cache")
-        (global-name "com.apple.symptomsd")
-        (global-name "com.apple.usymptomsd"))
-    (allow network-outbound
-        (control-name "com.apple.netsrc")
-        (control-name "com.apple.network.statistics"))
-    (allow system-socket
-        (require-all (socket-domain AF_SYSTEM)
-        (socket-protocol 2)) ; SYSPROTO_CONTROL
-    (socket-domain AF_ROUTE)))
 
 ;;;
 ;;; End rules originally copied from 'system.sb'
@@ -645,11 +625,13 @@
 (system-graphics)
 
 ;; Networking
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (system-network)
 (allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 ;; CFNetwork
@@ -662,8 +644,10 @@
        (global-name "com.apple.GSSCred")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.notification_center"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (allow network-outbound
        (remote udp))
+#endif
 (allow user-preference-read
     (preference-domain
         "com.apple.Kerberos"

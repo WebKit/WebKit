@@ -229,8 +229,6 @@
 (allow-create-directory
     (home-literal "/Library/Caches/com.apple.DictionaryServices"))
 
-(allow-network-common)
-
 ; <rdar://problem/8548856> Sub-TLF: Sandbox change for apps for read-only access to the dictionary directory/data
 (allow file-read*
     ; XXX - /Library ought to be allowed in all UI profiles but isn't (CF, MobileSafari)
@@ -381,8 +379,6 @@
 
 ;; AWD logging
 (awd-log-directory "com.apple.WebKit.WebContent")
-
-(network-client (remote tcp) (remote udp))
 
 ;; Allow ManagedPreference access
 (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
