@@ -1,5 +1,14 @@
 2018-02-27  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=183094
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-02-27  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark fast/dom/Window/window-focus-self.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=183164
 
