@@ -1,0 +1,22 @@
+<html>
+<body>
+<script>
+var scope = "/appcache/resources";
+var script = "/appcache/service-worker-proxy.js";
+
+async function registerServiceWorker()
+{
+    var registration = await navigator.serviceWorker.register(script, { scope : scope });
+    await new Promise(resolve => {
+        if (registration.active)
+            resolve(registration);
+        worker = registration.installing;
+        worker.addEventListener("statechange", () => {
+            if (worker.state === "activated")
+                resolve(registration);
+        });
+    });
+}
+</script>
+</body>
+</html>
