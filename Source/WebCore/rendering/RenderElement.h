@@ -351,7 +351,6 @@ private:
 
     // FIXME: Get rid of this hack.
     // Store state between styleWillChange and styleDidChange
-    static bool s_affectsParentBlock;
     static bool s_noLongerAffectsParentBlock;
 };
 
