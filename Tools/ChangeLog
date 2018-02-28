@@ -1,3 +1,26 @@
+2018-02-28  John Wilander  <wilander@apple.com>
+
+        Add a second tier of prevalence to facilitate telemetry on very prevalent domains
+        https://bugs.webkit.org/show_bug.cgi?id=183218
+        <rdar://problem/37992388>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            Added two new testRunner functions:
+            - setStatisticsVeryPrevalentResource()
+            - isStatisticsVeryPrevalentResource()
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsVeryPrevalentResource):
+        (WTR::TestRunner::isStatisticsVeryPrevalentResource):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsVeryPrevalentResource):
+        (WTR::TestController::isStatisticsVeryPrevalentResource):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2018-02-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Remove concept of 'future' versions (Follow-up fix)

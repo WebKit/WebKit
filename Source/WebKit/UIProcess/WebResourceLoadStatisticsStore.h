@@ -97,7 +97,9 @@ public:
     void hasHadUserInteraction(const WebCore::URL&, WTF::Function<void (bool)>&&);
     void setLastSeen(const WebCore::URL&, Seconds);
     void setPrevalentResource(const WebCore::URL&);
+    void setVeryPrevalentResource(const WebCore::URL&);
     void isPrevalentResource(const WebCore::URL&, WTF::Function<void (bool)>&&);
+    void isVeryPrevalentResource(const WebCore::URL&, WTF::Function<void(bool)>&&);
     void isRegisteredAsSubFrameUnder(const WebCore::URL& subFrame, const WebCore::URL& topFrame, WTF::Function<void (bool)>&&);
     void isRegisteredAsRedirectingTo(const WebCore::URL& hostRedirectedFrom, const WebCore::URL& hostRedirectedTo, WTF::Function<void (bool)>&&);
     void clearPrevalentResource(const WebCore::URL&);
@@ -171,7 +173,7 @@ private:
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
     unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const WebCore::ResourceLoadStatistics&, HashSet<String>& domainsThatHaveRedirectedTo, unsigned numberOfRecursiveCalls);
-    void setPrevalentResource(WebCore::ResourceLoadStatistics&);
+    void setPrevalentResource(WebCore::ResourceLoadStatistics&, ResourceLoadPrevalence);
     void processStatisticsAndDataRecords();
 
     void resetCookiePartitioningState();

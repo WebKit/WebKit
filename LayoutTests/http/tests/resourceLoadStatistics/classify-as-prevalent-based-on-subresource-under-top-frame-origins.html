@@ -17,6 +17,8 @@
     function completeTest() {
         if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
             testFailed("Host did not get classified as prevalent resource.");
+        if (testRunner.isStatisticsVeryPrevalentResource(statisticsUrl))
+            testFailed("Host got classified as very prevalent resource.");
         else
             testPassed("Host classified as prevalent resource.");
 

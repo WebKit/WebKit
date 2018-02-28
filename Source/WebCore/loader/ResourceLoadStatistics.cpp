@@ -84,6 +84,7 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 
     // Prevalent Resource
     encoder.encodeBool("isPrevalentResource", isPrevalentResource);
+    encoder.encodeBool("isVeryPrevalentResource", isVeryPrevalentResource);
     encoder.encodeUInt32("dataRecordsRemoved", dataRecordsRemoved);
 
     encoder.encodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction);
@@ -148,6 +149,11 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
     // Prevalent Resource
     if (!decoder.decodeBool("isPrevalentResource", isPrevalentResource))
         return false;
+
+    if (modelVersion >= 12) {
+        if (!decoder.decodeBool("isVeryPrevalentResource", isPrevalentResource))
+            return false;
+    }
 
     if (!decoder.decodeUInt32("dataRecordsRemoved", dataRecordsRemoved))
         return false;
@@ -250,6 +256,7 @@ String ResourceLoadStatistics::toString() const
 
     // Prevalent Resource
     appendBoolean(builder, "isPrevalentResource", isPrevalentResource);
+    appendBoolean(builder, "    isVeryPrevalentResource", isVeryPrevalentResource);
     builder.appendLiteral("    dataRecordsRemoved: ");
     builder.appendNumber(dataRecordsRemoved);
     builder.append('\n');
@@ -316,6 +323,7 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 
     // Prevalent resource stats
     isPrevalentResource |= other.isPrevalentResource;
+    isVeryPrevalentResource |= other.isVeryPrevalentResource;
     dataRecordsRemoved = std::max(dataRecordsRemoved, other.dataRecordsRemoved);
     
     // In-memory only

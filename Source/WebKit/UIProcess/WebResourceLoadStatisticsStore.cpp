@@ -49,7 +49,7 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr unsigned operatingDatesWindow { 30 };
-constexpr unsigned statisticsModelVersion { 11 };
+constexpr unsigned statisticsModelVersion { 12 };
 constexpr unsigned maxImportance { 3 };
 constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
 
@@ -292,8 +292,12 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-            if (!resourceStatistic.isPrevalentResource && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
-                setPrevalentResource(resourceStatistic);
+            if (!resourceStatistic.isVeryPrevalentResource) {
+                auto currentPrevalence = resourceStatistic.isPrevalentResource ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low;
+                auto newPrevalence = m_resourceLoadStatisticsClassifier.calculateResourcePrevalence(resourceStatistic, currentPrevalence);
+                if (newPrevalence != currentPrevalence)
+                    setPrevalentResource(resourceStatistic, newPrevalence);
+            }
         }
     }
     
@@ -520,14 +524,28 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
         auto& resourceStatistic = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
-        setPrevalentResource(resourceStatistic);
+        setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
     });
 }
 
-void WebResourceLoadStatisticsStore::setPrevalentResource(WebCore::ResourceLoadStatistics& resourceStatistic)
+void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const URL& url)
+{
+    ASSERT(isMainThread());
+
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
+        auto& resourceStatistic = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
+        setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::VeryHigh);
+    });
+}
+
+void WebResourceLoadStatisticsStore::setPrevalentResource(WebCore::ResourceLoadStatistics& resourceStatistic, ResourceLoadPrevalence newPrevalence)
 {
     ASSERT(!RunLoop::isMain());
     resourceStatistic.isPrevalentResource = true;
+    resourceStatistic.isVeryPrevalentResource = newPrevalence == ResourceLoadPrevalence::VeryHigh;
     HashSet<String> domainsThatHaveRedirectedTo;
     recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(resourceStatistic, domainsThatHaveRedirectedTo, 0);
     for (auto& domain : domainsThatHaveRedirectedTo) {
@@ -551,6 +569,24 @@ void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, WTF::Fu
         bool isPrevalentResource = mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource;
         RunLoop::main().dispatch([isPrevalentResource, completionHandler = WTFMove(completionHandler)] {
             completionHandler(isPrevalentResource);
+        });
+    });
+}
+
+void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const URL& url, WTF::Function<void(bool)>&& completionHandler)
+{
+    ASSERT(isMainThread());
+
+    if (url.isBlankURL() || url.isEmpty()) {
+        completionHandler(false);
+        return;
+    }
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)] () mutable {
+        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
+        bool isVeryPrevalentResource = mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource && mapEntry->value.isVeryPrevalentResource;
+        RunLoop::main().dispatch([isVeryPrevalentResource, completionHandler = WTFMove(completionHandler)] {
+            completionHandler(isVeryPrevalentResource);
         });
     });
 }
@@ -585,6 +621,7 @@ void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url)
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
         auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.isPrevalentResource = false;
+        statistics.isVeryPrevalentResource = false;
     });
 }
 

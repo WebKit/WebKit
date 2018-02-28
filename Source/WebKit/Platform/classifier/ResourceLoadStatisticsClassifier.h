@@ -31,11 +31,17 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
+enum ResourceLoadPrevalence {
+    Low = 1 << 0,
+    High = 1 << 1,
+    VeryHigh = 1 << 2,
+};
+
 class ResourceLoadStatisticsClassifier {
 public:
     ResourceLoadStatisticsClassifier() = default;
     virtual ~ResourceLoadStatisticsClassifier() = default;
-    bool hasPrevalentResourceCharacteristics(const WebCore::ResourceLoadStatistics& resourceStatistic);
+    ResourceLoadPrevalence calculateResourcePrevalence(const WebCore::ResourceLoadStatistics& resourceStatistic, ResourceLoadPrevalence currentPrevalence);
 protected:
     virtual bool classify(unsigned subresourceUnderTopFrameOriginsCount, unsigned subresourceUniqueRedirectsToCount, unsigned subframeUnderTopFrameOriginsCount)
     {

@@ -1,3 +1,42 @@
+2018-02-28  John Wilander  <wilander@apple.com>
+
+        Add a second tier of prevalence to facilitate telemetry on very prevalent domains
+        https://bugs.webkit.org/show_bug.cgi?id=183218
+        <rdar://problem/37992388>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/classifier/ResourceLoadStatisticsClassifier.cpp:
+        (WebKit::vectorLength):
+            New convenience function.
+        (WebKit::ResourceLoadStatisticsClassifier::calculateResourcePrevalence):
+            Renamed from ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics().
+            Now returns a value from the enum ResourceLoadPrevalence.
+        (WebKit::ResourceLoadStatisticsClassifier::classifyWithVectorThreshold):
+            Now uses the new vectorLength() convenience function.
+        (WebKit::ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics): Deleted.
+            Renamed to ResourceLoadStatisticsClassifier::calculateResourcePrevalence().
+        * Platform/classifier/ResourceLoadStatisticsClassifier.h:
+            Added enum ResourceLoadPrevalence.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+            Handling of the new boolean field isVeryPrevalentResource.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsVeryPrevalentResource):
+            Test infrastructure.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+            All of these are for handling of the two-tier classification.
+            Also bumped the statisticsModelVersion to 12.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of NetworkingContext in WebKit

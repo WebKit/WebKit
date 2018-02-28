@@ -1,3 +1,23 @@
+2018-02-28  John Wilander  <wilander@apple.com>
+
+        Add a second tier of prevalence to facilitate telemetry on very prevalent domains
+        https://bugs.webkit.org/show_bug.cgi?id=183218
+        <rdar://problem/37992388>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics.html: Added.
+        * platform/wk2/TestExpectations:
+            New test marked as [ Pass ].
+
 2018-02-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable three resourceLoadStatistics tests on iOS Simulator Debug because they frequently time out.

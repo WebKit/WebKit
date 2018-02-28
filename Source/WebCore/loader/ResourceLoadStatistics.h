@@ -87,6 +87,7 @@ struct ResourceLoadStatistics {
 
     // Prevalent resource stats
     bool isPrevalentResource { false };
+    bool isVeryPrevalentResource { false };
     unsigned dataRecordsRemoved { 0 };
     unsigned timesAccessedAsFirstPartyDueToUserInteraction { 0 };
     unsigned timesAccessedAsFirstPartyDueToStorageAccessAPI { 0 };

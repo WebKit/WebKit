@@ -32,9 +32,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-static const auto featureVectorLengthThreshold = 3;
-bool ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics(const ResourceLoadStatistics& resourceStatistic)
+static double vectorLength(unsigned a, unsigned b, unsigned c)
 {
+    return sqrt(a * a + b * b + c * c);
+}
+
+static const auto featureVectorLengthThresholdHigh = 3;
+static const auto featureVectorLengthThresholdVeryHigh = 30;
+ResourceLoadPrevalence ResourceLoadStatisticsClassifier::calculateResourcePrevalence(const ResourceLoadStatistics& resourceStatistic, ResourceLoadPrevalence currentPrevalence)
+{
+    ASSERT(currentPrevalence != VeryHigh);
+
     auto subresourceUnderTopFrameOriginsCount = resourceStatistic.subresourceUnderTopFrameOrigins.size();
     auto subresourceUniqueRedirectsToCount = resourceStatistic.subresourceUniqueRedirectsTo.size();
     auto subframeUnderTopFrameOriginsCount = resourceStatistic.subframeUnderTopFrameOrigins.size();
@@ -43,22 +51,29 @@ bool ResourceLoadStatisticsClassifier::hasPrevalentResourceCharacteristics(const
     if (!subresourceUnderTopFrameOriginsCount
         && !subresourceUniqueRedirectsToCount
         && !subframeUnderTopFrameOriginsCount
-        && !topFrameUniqueRedirectsToCount)
-        return false;
-    
-    if (subresourceUnderTopFrameOriginsCount > featureVectorLengthThreshold
-        || subresourceUniqueRedirectsToCount > featureVectorLengthThreshold
-        || subframeUnderTopFrameOriginsCount > featureVectorLengthThreshold
-        || topFrameUniqueRedirectsToCount > featureVectorLengthThreshold)
-        return true;
+        && !topFrameUniqueRedirectsToCount) {
+        ASSERT(currentPrevalence == Low);
+        return Low;
+    }
 
-    return classify(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount);
+    if (vectorLength(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount) > featureVectorLengthThresholdVeryHigh)
+        return VeryHigh;
+
+    if (currentPrevalence == High
+        || subresourceUnderTopFrameOriginsCount > featureVectorLengthThresholdHigh
+        || subresourceUniqueRedirectsToCount > featureVectorLengthThresholdHigh
+        || subframeUnderTopFrameOriginsCount > featureVectorLengthThresholdHigh
+        || topFrameUniqueRedirectsToCount > featureVectorLengthThresholdHigh
+        || classify(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount))
+        return High;
+
+    return Low;
 }
 
 bool ResourceLoadStatisticsClassifier::classifyWithVectorThreshold(unsigned a, unsigned b, unsigned c)
 {
     LOG(ResourceLoadStatistics, "ResourceLoadStatisticsClassifier::classifyWithVectorThreshold(): Classified with threshold.");
-    return sqrt(a * a + b * b + c * c) > featureVectorLengthThreshold;
+    return vectorLength(a, b, c) > featureVectorLengthThresholdHigh;
 }
     
 }

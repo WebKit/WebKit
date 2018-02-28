@@ -36,14 +36,24 @@
             testFailed("Host explicity set did not get set as prevalent resource.");
         if (testRunner.isStatisticsPrevalentResource(subresourceOrigin1))
             testPassed("Colluding host 1 got set as prevalent resource.");
+        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin1))
+            testFailed("Colluding host 1 got classified as very prevalent resource.");
         if (testRunner.isStatisticsPrevalentResource(subresourceOrigin2))
             testPassed("Colluding host 2 got set as prevalent resource.");
+        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin2))
+            testFailed("Colluding host 2 got classified as very prevalent resource.");
         if (testRunner.isStatisticsPrevalentResource(subresourceOrigin3))
             testPassed("Colluding host 3 got set as prevalent resource.");
+        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin3))
+            testFailed("Colluding host 3 got classified as very prevalent resource.");
         if (testRunner.isStatisticsPrevalentResource(subresourceOrigin4))
             testPassed("Colluding host 4 got set as prevalent resource.");
+        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin4))
+            testFailed("Colluding host 4 got classified as very prevalent resource.");
         if (testRunner.isStatisticsPrevalentResource("http://localhost:8000"))
             testPassed("Colluding localhost got set as prevalent resource after actual sub frame redirect.");
+        if (testRunner.isStatisticsVeryPrevalentResource("http://localhost:8000"))
+            testFailed("Colluding localhost got classified as very prevalent resource.");
 
         setEnableFeature(false);
         finishJSTest();

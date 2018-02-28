@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test for classification as very prevalent based on mixed statistics.");
+    jsTestIsAsync = true;
+
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+    var topFrameOrigins = [];
+    const startNum = 2;
+    const numberOfSubresourceDomains = 30;
+    for (var i = startNum; i < numberOfSubresourceDomains + startNum; ++i)
+        topFrameOrigins.push("http://127.0.0." + i + ":8000/temp")
+
+    function setEnableFeature(enable) {
+        if (!enable)
+            testRunner.statisticsResetToConsistentState();
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+    }
+
+    function completeTest() {
+        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host did not get classified as prevalent resource.");
+        if (!testRunner.isStatisticsVeryPrevalentResource(statisticsUrl))
+            testFailed("Host did not get classified as very prevalent resource.");
+        else
+            testPassed("Host classified as very prevalent resource.");
+
+        setEnableFeature(false);
+        finishJSTest();
+    }
+
+    function runTestRunnerTest() {
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+ 
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
+        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host started out as prevalent resource.");
+
+        var i = 0;
+        while (i < numberOfSubresourceDomains) {
+            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i]);
+            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i]);
+            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i]);
+
+            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+1]);
+            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+1]);
+            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i+1]);
+
+            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+2]);
+            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+2]);
+            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i+2]);
+            i += 3;
+        }
+
+        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+        testRunner.statisticsProcessStatisticsAndDataRecords();
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        setEnableFeature(true);
+        runTestRunnerTest();
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

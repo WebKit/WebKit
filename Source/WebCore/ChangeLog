@@ -1,3 +1,22 @@
+2018-02-28  John Wilander  <wilander@apple.com>
+
+        Add a second tier of prevalence to facilitate telemetry on very prevalent domains
+        https://bugs.webkit.org/show_bug.cgi?id=183218
+        <rdar://problem/37992388>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics.html
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+            Handling of the new boolean field isVeryPrevalentResource.
+        * loader/ResourceLoadStatistics.h:
+            Added the new boolean field isVeryPrevalentResource.
+
 2018-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of NetworkingContext in WebKit
