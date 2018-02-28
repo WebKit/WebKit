@@ -893,3 +893,5 @@ webkit.org/b/182630 http/tests/workers/service/basic-messageport.html [ Pass Fai
 webkit.org/b/177198 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Pass Failure ]
 
 webkit.org/b/182849 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Failure ]
+
+webkit.org/b/183164 fast/dom/Window/window-focus-self.html [ Pass Failure ]
