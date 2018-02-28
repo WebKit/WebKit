@@ -297,7 +297,7 @@ function createSampleBuildRequestWithOwnedCommitAndPatch(platform, test, order)
         'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test, 'order': order});
 }
 
-function samplePendingBuildData(buildRequestId, buildTime, builderId)
+function samplePendingBuildRequestData(buildRequestId, buildTime, builderId)
 {
     return {
         "builderid": builderId || 102,
@@ -315,10 +315,10 @@ function samplePendingBuildData(buildRequestId, buildTime, builderId)
     };
 }
 
-function samplePendingBuild(buildRequestId, buildTime, builderName)
+function samplePendingBuildRequests(buildRequestId, buildTime, builderName)
 {
     return {
-        "buildrequests" : [samplePendingBuildData(buildRequestId, buildTime, builderNameToIDMap()[builderName])]
+        "buildrequests" : [samplePendingBuildRequestData(buildRequestId, buildTime, builderNameToIDMap()[builderName])]
     };
 }
 
@@ -370,7 +370,7 @@ function sampleFinishedBuild(buildRequestId, workerName, builderName)
     };
 }
 
-function samplePendingBuildDeprecated(buildRequestId, buildTime, slaveName)
+function samplePendingBuildRequestDeprecated(buildRequestId, buildTime, slaveName)
 {
     return {
         'builderName': 'ABTest-iPad-RunBenchmark-Tests',
@@ -1275,7 +1275,7 @@ describe('BuildbotSyncer', () => {
     describe('BuildbotBuildEntry', () => {
         it('should create BuildbotBuildEntry for pending build', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
-            const buildbotData = samplePendingBuild();
+            const buildbotData = samplePendingBuildRequests();
             const pendingEntries = buildbotData.buildrequests.map((entry) => new BuildbotBuildEntry(syncer, entry));
 
             assert.equal(pendingEntries.length, 1);
@@ -1452,7 +1452,7 @@ describe('BuildbotSyncer', () => {
         it('should create BuildbotBuildEntry for pending builds', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
             let promise = syncer.pullBuildbot();
-            requests[0].resolve([samplePendingBuildDeprecated()]);
+            requests[0].resolve([samplePendingBuildRequestDeprecated()]);
             return promise.then((entries) => {
                 assert.equal(entries.length, 1);
                 let entry = entries[0];
@@ -1521,7 +1521,7 @@ describe('BuildbotSyncer', () => {
             let promise = syncer.pullBuildbot(5);
             assert.equal(requests.length, 1);
 
-            requests[0].resolve([samplePendingBuildDeprecated(123)]);
+            requests[0].resolve([samplePendingBuildRequestDeprecated(123)]);
 
             return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
@@ -1568,7 +1568,7 @@ describe('BuildbotSyncer', () => {
             let promise = syncer.pullBuildbot(5);
             assert.equal(requests.length, 1);
 
-            requests[0].resolve([samplePendingBuildDeprecated(456, 2), samplePendingBuildDeprecated(123, 1)]);
+            requests[0].resolve([samplePendingBuildRequestDeprecated(456, 2), samplePendingBuildRequestDeprecated(123, 1)]);
 
             return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
@@ -1625,7 +1625,7 @@ describe('BuildbotSyncer', () => {
             let promise = syncer.pullBuildbot(5);
             assert.equal(requests.length, 1);
 
-            requests[0].resolve([samplePendingBuildDeprecated()]);
+            requests[0].resolve([samplePendingBuildRequestDeprecated()]);
 
             return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
@@ -1652,7 +1652,7 @@ describe('BuildbotSyncer', () => {
             let promise = syncer.pullBuildbot(5);
             assert.equal(requests.length, 1);
 
-            requests[0].resolve([samplePendingBuildDeprecated()]);
+            requests[0].resolve([samplePendingBuildRequestDeprecated()]);
 
             return MockRemoteAPI.waitForRequest().then(() => {
                 assert.equal(requests.length, 2);
@@ -1801,7 +1801,7 @@ describe('BuildbotSyncer', () => {
         it('should not schedule a build if builder has a pending build on the maching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
-            pullBuildbotWithAssertion(syncer, [samplePendingBuildDeprecated()], {}).then(() => {
+            pullBuildbotWithAssertion(syncer, [samplePendingBuildRequestDeprecated()], {}).then(() => {
                 const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
                 syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 0);
@@ -1811,7 +1811,7 @@ describe('BuildbotSyncer', () => {
         it('should schedule a build if builder only has a pending build on a non-maching slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[1];
 
-            return pullBuildbotWithAssertion(syncer, [samplePendingBuildDeprecated(1, 1, 'another-slave')], {}).then(() => {
+            return pullBuildbotWithAssertion(syncer, [samplePendingBuildRequestDeprecated(1, 1, 'another-slave')], {}).then(() => {
                 const request = createSampleBuildRequest(MockModels.ipad, MockModels.speedometer);
                 syncer.scheduleRequestInGroupIfAvailable(request, [request], null);
                 assert.equal(requests.length, 1);
