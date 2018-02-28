@@ -133,7 +133,7 @@ static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const URL& 
     processProxyServers(proxyServers, proxiesForURL.get(), cfURL.get());
 }
 
-Vector<ProxyServer> proxyServersForURL(const URL& url, const NetworkingContext*)
+Vector<ProxyServer> proxyServersForURL(const URL& url)
 {
     Vector<ProxyServer> proxyServers;
     

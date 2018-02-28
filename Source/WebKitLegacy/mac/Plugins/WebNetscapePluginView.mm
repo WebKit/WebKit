@@ -2162,7 +2162,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             if (!URL)
                 break;
 
-            Vector<ProxyServer> proxyServers = proxyServersForURL(URL, 0);
+            Vector<ProxyServer> proxyServers = proxyServersForURL(URL);
             CString proxiesUTF8 = toString(proxyServers).utf8();
             
             *value = static_cast<char*>(NPN_MemAlloc(proxiesUTF8.length()));

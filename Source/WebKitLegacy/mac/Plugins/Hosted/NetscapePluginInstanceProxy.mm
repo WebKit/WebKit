@@ -1616,7 +1616,7 @@ bool NetscapePluginInstanceProxy::getProxy(data_t urlData, mach_msg_type_number_
     if (!url)
         return false;
 
-    Vector<ProxyServer> proxyServers = proxyServersForURL(url, 0);
+    Vector<ProxyServer> proxyServers = proxyServersForURL(url);
     WTF::CString proxyStringUTF8 = toString(proxyServers).utf8();
 
     proxyLength = proxyStringUTF8.length();

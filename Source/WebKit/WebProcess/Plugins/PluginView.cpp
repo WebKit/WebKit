@@ -57,7 +57,6 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
-#include <WebCore/NetworkingContext.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ProtectionSpace.h>
@@ -1572,9 +1571,7 @@ float PluginView::contentsScaleFactor()
     
 String PluginView::proxiesForURL(const String& urlString)
 {
-    const FrameLoader* frameLoader = frame() ? &frame()->loader() : 0;
-    const NetworkingContext* context = frameLoader ? frameLoader->networkingContext() : 0;
-    Vector<ProxyServer> proxyServers = proxyServersForURL(URL(URL(), urlString), context);
+    Vector<ProxyServer> proxyServers = proxyServersForURL(URL(URL(), urlString));
     return toString(proxyServers);
 }
 

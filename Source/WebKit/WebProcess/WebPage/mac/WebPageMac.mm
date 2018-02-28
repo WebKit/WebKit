@@ -73,7 +73,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/NetworkStorageSession.h>
-#import <WebCore/NetworkingContext.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
@@ -683,8 +682,9 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setValue:(NSString*)userAgent(url) forHTTPHeaderField:@"User-Agent"];
     NSCachedURLResponse *cachedResponse;
-    if (CFURLStorageSessionRef storageSession = corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
-        cachedResponse = cachedResponseForRequest(storageSession, request);
+    auto* storageSession = NetworkStorageSession::storageSession(corePage()->sessionID());
+    if (CFURLStorageSessionRef platformSession = storageSession ? storageSession->platformSession() : nullptr)
+        cachedResponse = cachedResponseForRequest(platformSession, request);
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
@@ -697,8 +697,9 @@ static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const URL& ur
     RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
     [request setValue:(NSString *)webPage->userAgent(url) forHTTPHeaderField:@"User-Agent"];
 
-    if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
-        return cachedResponseForRequest(storageSession, request.get());
+    auto* storageSession = NetworkStorageSession::storageSession(webPage->corePage()->sessionID());
+    if (CFURLStorageSessionRef platformSession = storageSession ? storageSession->platformSession() : nullptr)
+        return cachedResponseForRequest(platformSession, request.get());
 
     return [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
 }

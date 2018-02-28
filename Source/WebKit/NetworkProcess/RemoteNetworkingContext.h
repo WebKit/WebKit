@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <WebCore/NetworkingContext.h>
 #include <pal/SessionID.h>
 
 namespace WebKit {

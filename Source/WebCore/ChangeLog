@@ -1,3 +1,27 @@
+2018-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce use of NetworkingContext in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=183213
+
+        Reviewed by Brady Eidson.
+
+        NetworkingContext is intended to be used only with ResourceHandle, which is now only used in WebKitLegacy.
+        Now that we don't use ResourceHandle in the WebProcess, everything that was done through the NetworkingContext
+        can now be done a cleaner way with no change in behavior.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * loader/LoaderStrategy.h:
+        * platform/network/ProxyServer.h:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        (WebCore::proxyServersForURL):
+        * platform/network/curl/ProxyServerCurl.cpp:
+        (WebCore::proxyServersForURL):
+        * platform/network/soup/ProxyServerSoup.cpp:
+        (WebCore::proxyServersForURL):
+
 2018-02-28  Zalan Bujtas  <zalan@apple.com>
 
         Remove RenderElement::s_affectsParentBlock

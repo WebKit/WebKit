@@ -52,7 +52,6 @@
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/NetworkingContext.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PasteboardItemInfo.h>

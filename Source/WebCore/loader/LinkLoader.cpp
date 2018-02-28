@@ -268,7 +268,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
         if (equalIgnoringASCIICase(crossOrigin, "anonymous") && document.securityOrigin().canAccess(SecurityOrigin::create(href)))
             storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
         ASSERT(document.frame()->loader().networkingContext());
-        platformStrategies()->loaderStrategy()->preconnectTo(*document.frame()->loader().networkingContext(), href, storageCredentialsPolicy, [weakDocument = document.createWeakPtr(), href](ResourceError error) {
+        platformStrategies()->loaderStrategy()->preconnectTo(document.frame()->loader(), href, storageCredentialsPolicy, [weakDocument = document.createWeakPtr(), href](ResourceError error) {
             if (!weakDocument)
                 return;
 
