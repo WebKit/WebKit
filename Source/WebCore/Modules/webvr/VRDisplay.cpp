@@ -47,11 +47,11 @@ VRDisplay::VRDisplay(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>
     , m_display(WTFMove(platformDisplay))
 {
     auto displayInfo = m_display->getDisplayInfo();
-    m_capabilities = VRDisplayCapabilities::create(displayInfo.capabilityFlags);
-    m_leftEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation[VRPlatformDisplayInfo::EyeLeft], displayInfo.eyeFieldOfView[VRPlatformDisplayInfo::EyeLeft], displayInfo.renderSize);
-    m_rightEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation[VRPlatformDisplayInfo::EyeRight], displayInfo.eyeFieldOfView[VRPlatformDisplayInfo::EyeRight], displayInfo.renderSize);
-    m_displayId = displayInfo.displayIdentifier;
-    m_displayName = displayInfo.displayName;
+    m_capabilities = VRDisplayCapabilities::create(displayInfo.capabilityFlags());
+    m_leftEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation(VRPlatformDisplayInfo::EyeLeft), displayInfo.eyeFieldOfView(VRPlatformDisplayInfo::EyeLeft), displayInfo.renderSize());
+    m_rightEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation(VRPlatformDisplayInfo::EyeRight), displayInfo.eyeFieldOfView(VRPlatformDisplayInfo::EyeRight), displayInfo.renderSize());
+    m_displayId = displayInfo.displayIdentifier();
+    m_displayName = displayInfo.displayName();
 }
 
 VRDisplay::~VRDisplay() = default;
@@ -61,7 +61,7 @@ bool VRDisplay::isConnected() const
     if (!m_display)
         return false;
 
-    return m_display->getDisplayInfo().isConnected;
+    return m_display->getDisplayInfo().isConnected();
 }
 
 bool VRDisplay::isPresenting() const
@@ -77,7 +77,7 @@ const VRDisplayCapabilities& VRDisplay::capabilities() const
 RefPtr<VRStageParameters> VRDisplay::stageParameters() const
 {
     auto displayInfo = m_display->getDisplayInfo();
-    return VRStageParameters::create(displayInfo.sittingToStandingTransform, displayInfo.playAreaBounds);
+    return VRStageParameters::create(displayInfo.sittingToStandingTransform(), displayInfo.playAreaBounds());
 }
 
 const VREyeParameters& VRDisplay::getEyeParameters(VREye eye) const

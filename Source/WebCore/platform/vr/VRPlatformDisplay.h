@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
-enum VRDisplayCapabilityFlags {
+typedef unsigned VRDisplayCapabilityFlags;
+
+enum VRDisplayCapabilityFlag {
     None = 0,
     Position = 1 << 1,
     Orientation = 1 << 2,
@@ -42,30 +44,63 @@ enum VRDisplayCapabilityFlags {
  * the info from the display. Note that it's fairly unlikely that a VR application would only
  * require just a few pieces of information from the device.
 */
-struct VRPlatformDisplayInfo {
-    String displayName;
-    bool isConnected;
-    bool isMounted;
-    unsigned capabilityFlags;
-    uint32_t displayIdentifier;
+class VRPlatformDisplayInfo {
+public:
+    const String displayName() const { return m_displayName; }
+    void setDisplayName(String&& displayName) { m_displayName = WTFMove(displayName); }
+
+    bool isConnected() const { return m_isConnected; }
+    void setIsConnected(bool isConnected) { m_isConnected = isConnected; }
+
+    bool isMounted() const { return m_isMounted; }
+    void setIsMounted(bool isMounted) { m_isMounted = isMounted; }
+
+    const VRDisplayCapabilityFlags& capabilityFlags() const { return m_capabilityFlags; }
+    void setCapabilityFlags(const VRDisplayCapabilityFlags& flags) { m_capabilityFlags = flags; }
+
+    uint32_t displayIdentifier() const { return m_displayIdentifier; }
+    void setDisplayIdentifier(uint32_t displayIdentifier) { m_displayIdentifier = displayIdentifier; }
 
     enum Eye { EyeLeft = 0, EyeRight, NumEyes };
-    FloatPoint3D eyeTranslation[Eye::NumEyes];
+    const FloatPoint3D& eyeTranslation(Eye eye) const { return m_eyeTranslation[eye]; }
+    void setEyeTranslation(Eye eye, const FloatPoint3D& translation) { m_eyeTranslation[eye] = translation; }
 
     struct FieldOfView {
         double upDegrees;
         double downDegrees;
         double leftDegrees;
         double rightDegrees;
-    } eyeFieldOfView[Eye::NumEyes];
+    };
+    const FieldOfView& eyeFieldOfView(Eye eye) const { return m_eyeFieldOfView[eye]; }
+    void setEyeFieldOfView(Eye eye, const FieldOfView& fieldOfView) { m_eyeFieldOfView[eye] = fieldOfView; }
 
     struct RenderSize {
         unsigned width;
         unsigned height;
-    } renderSize;
+    };
+    const RenderSize& renderSize() const { return m_renderSize; }
+    void setRenderSize(const RenderSize& renderSize) { m_renderSize = renderSize; }
 
-    std::optional<FloatSize> playAreaBounds;
-    std::optional<TransformationMatrix> sittingToStandingTransform;
+    void setPlayAreaBounds(const FloatSize& playAreaBounds) { m_playAreaBounds = playAreaBounds; }
+    const std::optional<FloatSize>& playAreaBounds() const { return m_playAreaBounds; }
+
+    void setSittingToStandingTransform(const TransformationMatrix& transform) { m_sittingToStandingTransform = transform; }
+    const std::optional<TransformationMatrix>& sittingToStandingTransform() const { return m_sittingToStandingTransform; }
+
+private:
+    String m_displayName;
+    bool m_isConnected;
+    bool m_isMounted;
+    VRDisplayCapabilityFlags m_capabilityFlags;
+    uint32_t m_displayIdentifier;
+
+    FloatPoint3D m_eyeTranslation[Eye::NumEyes];
+
+    RenderSize m_renderSize;
+    FieldOfView m_eyeFieldOfView[Eye::NumEyes];
+
+    std::optional<FloatSize> m_playAreaBounds;
+    std::optional<TransformationMatrix> m_sittingToStandingTransform;
 };
 
 class VRPlatformDisplay {

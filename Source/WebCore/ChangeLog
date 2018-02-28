@@ -1,3 +1,58 @@
+2018-02-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Convert VRPlatformDisplayInfo into a class
+        https://bugs.webkit.org/show_bug.cgi?id=183162
+
+        Reviewed by Žan Doberšek.
+
+        In preparation for further changes we're transforming the
+        VRPlatformDisplayInfo into a class. All the members are now private
+        and the class provides the needed getters/setters.
+
+        Apart from that VRDisplayCapabilityFlags is now just an unsigned and
+        the different flags are defined in VRDisplayCapabilityFlag enum.
+        Another cleanup was the removal of VRDisplayCapabilities.cpp as
+        everything can be implemented in the header.
+
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::VRDisplay):
+        (WebCore::VRDisplay::isConnected const):
+        (WebCore::VRDisplay::stageParameters const):
+        * Modules/webvr/VRDisplayCapabilities.cpp: Removed.
+        * Modules/webvr/VRDisplayCapabilities.h:
+        (WebCore::VRDisplayCapabilities::hasPosition const):
+        (WebCore::VRDisplayCapabilities::hasOrientation const):
+        (WebCore::VRDisplayCapabilities::hasExternalDisplay const):
+        (WebCore::VRDisplayCapabilities::canPresent const):
+        (WebCore::VRDisplayCapabilities::maxLayer const):
+        (WebCore::VRDisplayCapabilities::VRDisplayCapabilities):
+        * Sources.txt:
+        * platform/vr/VRPlatformDisplay.h:
+        (WebCore::VRPlatformDisplayInfo::displayName const):
+        (WebCore::VRPlatformDisplayInfo::setDisplayName):
+        (WebCore::VRPlatformDisplayInfo::isConnected const):
+        (WebCore::VRPlatformDisplayInfo::setIsConnected):
+        (WebCore::VRPlatformDisplayInfo::isMounted const):
+        (WebCore::VRPlatformDisplayInfo::setIsMounted):
+        (WebCore::VRPlatformDisplayInfo::capabilityFlags const):
+        (WebCore::VRPlatformDisplayInfo::setCapabilityFlags):
+        (WebCore::VRPlatformDisplayInfo::displayIdentifier const):
+        (WebCore::VRPlatformDisplayInfo::setDisplayIdentifier):
+        (WebCore::VRPlatformDisplayInfo::eyeTranslation const):
+        (WebCore::VRPlatformDisplayInfo::setEyeTranslation):
+        (WebCore::VRPlatformDisplayInfo::eyeFieldOfView const):
+        (WebCore::VRPlatformDisplayInfo::setEyeFieldOfView):
+        (WebCore::VRPlatformDisplayInfo::renderSize const):
+        (WebCore::VRPlatformDisplayInfo::setRenderSize):
+        (WebCore::VRPlatformDisplayInfo::setPlayAreaBounds):
+        (WebCore::VRPlatformDisplayInfo::playAreaBounds const):
+        (WebCore::VRPlatformDisplayInfo::setSittingToStandingTransform):
+        (WebCore::VRPlatformDisplayInfo::sittingToStandingTransform const):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp:
+        (WebCore::VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR):
+        (WebCore::VRPlatformDisplayOpenVR::updateEyeParameters):
+        (WebCore::VRPlatformDisplayOpenVR::updateStageParameters):
+
 2018-02-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229060.

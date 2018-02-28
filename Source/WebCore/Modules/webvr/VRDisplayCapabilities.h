@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "VRPlatformDisplay.h"
+
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -37,14 +39,17 @@ public:
         return adoptRef(*new VRDisplayCapabilities(capabilityFlags));
     }
 
-    bool hasPosition() const;
-    bool hasOrientation() const;
-    bool hasExternalDisplay() const;
-    bool canPresent() const;
-    unsigned maxLayer() const;
+    bool hasPosition() const { return m_flags & VRDisplayCapabilityFlag::Position; }
+    bool hasOrientation() const { return m_flags & VRDisplayCapabilityFlag::Orientation; }
+    bool hasExternalDisplay() const { return m_flags & VRDisplayCapabilityFlag::ExternalDisplay; }
+    bool canPresent() const { return m_flags & VRDisplayCapabilityFlag::Present; }
+    unsigned maxLayer() const { return canPresent() ? 1 : 0; }
 
 private:
-    VRDisplayCapabilities(unsigned capabilityFlags);
+    VRDisplayCapabilities(unsigned capabilityFlags)
+        : m_flags(capabilityFlags)
+    {
+    }
 
     unsigned m_flags;
 };
