@@ -120,8 +120,7 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
 
 void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier& identifier, uint64_t callbackIdentifier)
 {
-    auto port = MessagePort::existingMessagePortForIdentifier(identifier);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidCheckProcessLocalPortForActivity(callbackIdentifier, port && port->isLocallyReachable()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidCheckProcessLocalPortForActivity { callbackIdentifier, MessagePort::isExistingMessagePortLocallyReachable(identifier) }, 0);
 }
 
 void WebMessagePortChannelProvider::checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&)

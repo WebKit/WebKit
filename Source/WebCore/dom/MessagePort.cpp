@@ -56,12 +56,8 @@ void MessagePort::ref() const
 
 void MessagePort::deref() const
 {
-    // MessagePort::existingMessagePortForIdentifier() is unique in that it holds a raw pointer to a MessagePort
-    // but might create a RefPtr from it.
-    // If that happens on one thread at the same time that a MessagePort is being deref'ed and destroyed on a
-    // different thread then Bad Things could happen.
-    // This custom deref() function is designed to handle that contention by guaranteeing that nobody can be
-    // creating a RefPtr inside existingMessagePortForIdentifier while the object is mid-deletion.
+    // This custom deref() function ensures that as long as the lock to allMessagePortsLock is taken, no MessagePort will be destroyed.
+    // This allows isExistingMessagePortLocallyReachable and notifyMessageAvailable to easily query the map and manipulate MessagePort instances.
 
     if (!--m_refCount) {
         Locker<Lock> locker(allMessagePortsLock());
@@ -74,11 +70,19 @@ void MessagePort::deref() const
     }
 }
 
-RefPtr<MessagePort> MessagePort::existingMessagePortForIdentifier(const MessagePortIdentifier& identifier)
+bool MessagePort::isExistingMessagePortLocallyReachable(const MessagePortIdentifier& identifier)
 {
     Locker<Lock> locker(allMessagePortsLock());
+    auto* port = allMessagePorts().get(identifier);
+    return port && port->isLocallyReachable();
+}
 
-    return allMessagePorts().get(identifier);
+void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier)
+{
+    Locker<Lock> locker(allMessagePortsLock());
+    if (auto* port = allMessagePorts().get(identifier))
+        port->messageAvailable();
+
 }
 
 Ref<MessagePort> MessagePort::create(ScriptExecutionContext& scriptExecutionContext, const MessagePortIdentifier& local, const MessagePortIdentifier& remote)

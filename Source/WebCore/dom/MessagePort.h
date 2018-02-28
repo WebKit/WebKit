@@ -57,7 +57,9 @@ public:
     // Returns nullptr if the passed-in vector is empty.
     static ExceptionOr<TransferredMessagePortArray> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
     static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, TransferredMessagePortArray&&);
-    WEBCORE_EXPORT static RefPtr<MessagePort> existingMessagePortForIdentifier(const MessagePortIdentifier&);
+
+    WEBCORE_EXPORT static bool isExistingMessagePortLocallyReachable(const MessagePortIdentifier&);
+    WEBCORE_EXPORT static void notifyMessageAvailable(const MessagePortIdentifier&);
 
     WEBCORE_EXPORT void messageAvailable();
     bool started() const { return m_started; }
