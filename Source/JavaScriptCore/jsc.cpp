@@ -77,6 +77,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <thread>
 #include <type_traits>
 #include <wtf/CommaPrinter.h>
@@ -853,12 +855,16 @@ static void convertShebangToJSComment(Vector<char>& buffer)
 
 static RefPtr<Uint8Array> fillBufferWithContentsOfFile(FILE* file)
 {
-    fseek(file, 0, SEEK_END);
-    size_t bufferCapacity = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    if (fseek(file, 0, SEEK_END) == -1)
+        return nullptr;
+    long bufferCapacity = ftell(file);
+    if (bufferCapacity == -1)
+        return nullptr;
+    if (fseek(file, 0, SEEK_SET) == -1)
+        return nullptr;
     RefPtr<Uint8Array> result = Uint8Array::create(bufferCapacity);
     size_t readSize = fread(result->data(), 1, bufferCapacity, file);
-    if (readSize != bufferCapacity)
+    if (readSize != static_cast<size_t>(bufferCapacity))
         return nullptr;
     return result;
 }
@@ -881,9 +887,13 @@ static bool fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
 {
     // We might have injected "use strict"; at the top.
     size_t initialSize = buffer.size();
-    fseek(file, 0, SEEK_END);
-    size_t bufferCapacity = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    if (fseek(file, 0, SEEK_END) == -1)
+        return false;
+    long bufferCapacity = ftell(file);
+    if (bufferCapacity == -1)
+        return false;
+    if (fseek(file, 0, SEEK_SET) == -1)
+        return false;
     buffer.resize(bufferCapacity + initialSize);
     size_t readSize = fread(buffer.data() + initialSize, 1, buffer.size(), file);
     return readSize == buffer.size() - initialSize;
@@ -918,9 +928,23 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>&
     // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247.aspx#maxpath
     // Use long UNC to pass the long path name to the Windows APIs.
     String longUNCPathName = WTF::makeString("\\\\?\\", fileName);
-    FILE* f = _wfopen(stringToNullTerminatedWChar(longUNCPathName).data(), L"rb");
+    auto pathName = stringToNullTerminatedWChar(longUNCPathName);
+    struct _stat status { };
+    if (_wstat(pathName.data(), &status))
+        return false;
+    if ((status.st_mode & S_IFMT) != S_IFREG)
+        return false;
+
+    FILE* f = _wfopen(pathName.data(), L"rb");
 #else
-    FILE* f = fopen(fileName.utf8().data(), "r");
+    auto pathName = fileName.utf8();
+    struct stat status { };
+    if (stat(pathName.data(), &status))
+        return false;
+    if ((status.st_mode & S_IFMT) != S_IFREG)
+        return false;
+
+    FILE* f = fopen(pathName.data(), "r");
 #endif
     if (!f) {
         fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
