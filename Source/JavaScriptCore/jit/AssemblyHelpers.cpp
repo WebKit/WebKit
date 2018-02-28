@@ -944,7 +944,7 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
     call(scratch);
 
     move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
-    storePtr(TrustedImmPtr(0), GPRInfo::regT0);
+    storePtr(TrustedImmPtr(nullptr), GPRInfo::regT0);
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
@@ -987,7 +987,7 @@ void AssemblyHelpers::sanitizeStackInline(VM& vm, GPRReg scratch)
     loadPtr(vm.addressOfLastStackTop(), scratch);
     Jump done = branchPtr(BelowOrEqual, stackPointerRegister, scratch);
     Label loop = label();
-    storePtr(TrustedImmPtr(0), scratch);
+    storePtr(TrustedImmPtr(nullptr), scratch);
     addPtr(TrustedImmPtr(sizeof(void*)), scratch);
     branchPtr(Above, stackPointerRegister, scratch).linkTo(loop, this);
     done.link(this);

@@ -224,7 +224,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         if (argCount) {
             // The GC should not look at this buffer at all, these aren't JSValues.
             jit.move(CCallHelpers::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::argumentGPR0);
-            jit.storePtr(CCallHelpers::TrustedImmPtr(0), GPRInfo::argumentGPR0);
+            jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), GPRInfo::argumentGPR0);
         }
 
         uint64_t (*callFunc)(ExecState*, JSObject*, SignatureIndex, uint64_t*) =
@@ -505,7 +505,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     CallLinkInfo* callLinkInfo = callLinkInfos.add();
     callLinkInfo->setUpCall(CallLinkInfo::Call, CodeOrigin(), importJSCellGPRReg);
     JIT::DataLabelPtr targetToCheck;
-    JIT::TrustedImmPtr initialRightValue(0);
+    JIT::TrustedImmPtr initialRightValue(nullptr);
     JIT::Jump slowPath = jit.branchPtrWithPatch(MacroAssembler::NotEqual, importJSCellGPRReg, targetToCheck, initialRightValue);
     JIT::Call fastCall = jit.nearCall();
     JIT::Jump done = jit.jump();
