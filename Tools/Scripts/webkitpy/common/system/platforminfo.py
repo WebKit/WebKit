@@ -32,7 +32,7 @@ import sys
 import platform
 
 from webkitpy.common.version import Version
-from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.system.executive import Executive
 
 
@@ -114,10 +114,15 @@ class PlatformInfo(object):
         # Windows-2008ServerR2-6.1.7600
         return self._platform_module.platform()
 
-    def os_version_name(self, table=PUBLIC_TABLE):
+    def os_version_name(self, table=None):
         if not self.os_version:
             return None
-        return VersionNameMap.map(self).to_name(self.os_version, table=table)
+        if table:
+            return VersionNameMap.map(self).to_name(self.os_version, table=table)
+        version_name = VersionNameMap.map(self).to_name(self.os_version, table=PUBLIC_TABLE)
+        if not version_name:
+            version_name = VersionNameMap.map(self).to_name(self.os_version, table=INTERNAL_TABLE)
+        return version_name
 
     def total_bytes_memory(self):
         if self.is_mac():

@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.version import Version
-from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 
 
 class MockPlatformInfo(object):
@@ -62,10 +62,15 @@ class MockPlatformInfo(object):
     def display_name(self):
         return "MockPlatform 1.0"
 
-    def os_version_name(self, table=PUBLIC_TABLE):
+    def os_version_name(self, table=None):
         if not self.os_version:
             return None
-        return VersionNameMap.map(self).to_name(self.os_version, table=table)
+        if table:
+            return VersionNameMap.map(self).to_name(self.os_version, table=table)
+        version_name = VersionNameMap.map(self).to_name(self.os_version, table=PUBLIC_TABLE)
+        if not version_name:
+            version_name = VersionNameMap.map(self).to_name(self.os_version, table=INTERNAL_TABLE)
+        return version_name
 
     def total_bytes_memory(self):
         return 3 * 1024 * 1024 * 1024  # 3GB is a reasonable amount of ram to mock.

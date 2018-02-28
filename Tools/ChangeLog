@@ -1,3 +1,19 @@
+2018-02-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Remove concept of 'future' versions (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=183184
+        <rdar://problem/37958594>
+
+        Reviewed by David Kilzer.
+
+        The factory also relies on future in a non-obvious way.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.os_version_name): Check both public and internal version mapping
+        when returning a version name.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.os_version_name): Ditto.
+
 2018-02-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE fixup after r229080.
