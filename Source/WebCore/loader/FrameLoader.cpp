@@ -1530,6 +1530,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
     }
 
+    m_frame.navigationScheduler().cancel(true);
+
     policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, loader, formState, [this, allowNavigationToInvalidURL] (const ResourceRequest& request, FormState* formState, bool shouldContinue) {
         continueLoadAfterNavigationPolicy(request, formState, shouldContinue, allowNavigationToInvalidURL);
     });

@@ -289,6 +289,10 @@ imported/w3c/web-platform-tests/background-fetch [ Skip ]
 # This is a resources folder.
 http/tests/workers/service/other_resources [ Skip ]
 
+# These are resource files.
+http/wpt/html/browsers/browsing-the-web/navigating-across-documents/click.html
+http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
+
 # We fail this reftest
 webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
 

@@ -1,3 +1,34 @@
+2018-02-28  Chris Dumez  <cdumez@apple.com>
+
+        html/browsers/browsing-the-web/navigating-across-documents/006.html fails with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183168
+        <rdar://problem/37951341>
+
+        Reviewed by Alex Christensen.
+
+        The test has an anchor element with both a 'click' event handler which submits a form
+        and an href attribute. When clicking the link, as per specification, things happen in
+        this order:
+        1. We fire the click event at the anchor, which will execute the event handler and submit the form.
+           Submitting the form *schedules* a navigation to 'click.html'.
+        2. We execute the anchor activation code which *navigates* to 'href.html'. The navigation to
+           'href' is supposed to cancel the pending navigation to 'click.html' and we should navigate
+           to 'href.html', which is what the test asserts.
+
+        The issue for us is that we do not cancel pending navigations until after the navigation
+        policy decision is made, when the provisional loads actually starts, in FrameLoader::provisionalLoadStarted().
+        Because the policy decision for the navigation can now be made asynchronously, the NavigationScheduler
+        timer can now fire while the decision is made and we'll submit the form, thus navigating to
+        'click.html'.
+
+        To address the issue, we now cancel any pending navigations in FrameLoader::loadWithDocumentLoader(),
+        *before* doing the policy check for the navigation.
+
+        Test: http/wpt/html/browsers/browsing-the-web/navigating-across-documents/006.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2018-02-28  John Wilander  <wilander@apple.com>
 
         Add a second tier of prevalence to facilitate telemetry on very prevalent domains
