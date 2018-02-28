@@ -1,3 +1,21 @@
+2018-02-27  Youenn Fablet  <youenn@apple.com>
+
+        Do not trigger a service worker match in case of document redirection if it will be already served by AppCache
+        https://bugs.webkit.org/show_bug.cgi?id=183185
+        <rdar://problem/37693796>
+
+        Reviewed by Chris Dumez.
+
+        Disabling service worker matching in case there is a substitute data.
+        Otherwise there is a risk for a double load, substitute data first and the new load
+        triggered if matching a new registration.
+        A future fix should first do service worker registration matching and if there is no registration query appcache.
+
+        Test: http/tests/appcache/main-resource-redirect-with-sw.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::redirectReceived):
+
 2018-02-27  Tim Horton  <timothy_horton@apple.com>
 
         Ensure target triple is propagated correctly to DerivedSources.make

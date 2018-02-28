@@ -519,7 +519,7 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
 #if ENABLE(SERVICE_WORKER)
     bool isRedirectionFromServiceWorker = redirectResponse.source() == ResourceResponse::Source::ServiceWorker;
     willSendRequest(WTFMove(request), redirectResponse, [isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
-        if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
+        if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame || m_substituteData.isValid()) {
             completionHandler({ });
             return;
         }

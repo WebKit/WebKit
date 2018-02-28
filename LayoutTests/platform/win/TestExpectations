@@ -3715,6 +3715,7 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/int
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 http/tests/cache-storage [ Skip ]
 http/wpt/cache-storage [ Skip ]
+http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 
 
 # Flaky tests on Windows:

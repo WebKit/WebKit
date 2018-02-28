@@ -1056,6 +1056,7 @@ webkit.org/b/175419 http/tests/workers/service [ Skip ]
 webkit.org/b/175419 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 webkit.org/b/178576 http/wpt/service-workers [ Failure ]
 webkit.org/b/178576 imported/w3c/web-platform-tests/service-workers [ Skip ]
+http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 
 webkit.org/b/178316 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
 webkit.org/b/178316 http/wpt/cache-storage [ Skip ]
