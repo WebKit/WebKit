@@ -43,6 +43,7 @@ from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.version_name_map import INTERNAL_TABLE
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions
 from webkitpy.port.image_diff import ImageDiffer
@@ -97,11 +98,11 @@ def bind_mock_apple_additions():
         @staticmethod
         def version_name_mapping(platform=None):
             result = VersionNameMap(platform)
-            result.mapping['internal'] = {}
+            result.mapping[INTERNAL_TABLE] = {}
             for platform in result.mapping[PUBLIC_TABLE]:
-                result.mapping['internal'][platform] = {}
+                result.mapping[INTERNAL_TABLE][platform] = {}
                 for name, version in result.mapping[PUBLIC_TABLE][platform].iteritems():
-                    result.mapping['internal'][platform]['add-' + name] = version
+                    result.mapping[INTERNAL_TABLE][platform]['add-' + name] = version
             return result
 
     # apple_additions is a memoized function. Take advantage of this fact and manipulate the cache

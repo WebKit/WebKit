@@ -25,7 +25,7 @@ import traceback
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
-from webkitpy.common.version_name_map import VersionNameMap
+from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.config import apple_additions
 from webkitpy.port.darwin import DarwinPort
@@ -37,8 +37,7 @@ _log = logging.getLogger(__name__)
 class IOSPort(DarwinPort):
     port_name = "ios"
 
-    VERSION_MIN = Version(11)
-    VERSION_MAX = Version(12)
+    CURRENT_VERSION = Version(11)
 
     def __init__(self, host, port_name, **kwargs):
         super(IOSPort, self).__init__(host, port_name, **kwargs)
@@ -95,20 +94,31 @@ class IOSPort(DarwinPort):
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'
-        # If we don't have a specified version, that means we using the port without an SDK.
-        # This usually means we're doing some type of testing.In this case, don't add version fallbacks
+
+        versions_to_fallback = []
+        if self.ios_version() == self.CURRENT_VERSION:
+            versions_to_fallback = [self.CURRENT_VERSION]
+        elif self.ios_version():
+            temp_version = Version(self.ios_version().major)
+            while temp_version != self.CURRENT_VERSION:
+                versions_to_fallback.append(Version.from_iterable(temp_version))
+                if temp_version < self.CURRENT_VERSION:
+                    temp_version.major += 1
+                else:
+                    temp_version.major -= 1
+
         expectations = []
-        if apple_additions() and self.ios_version():
-            apple_name = VersionNameMap.map(self.host.platform).to_name(self.ios_version(), platform=IOSPort.port_name, table='internal').lower().replace(' ', '')
-        else:
+        for version in versions_to_fallback:
             apple_name = None
-        if self.ios_version():
+            if apple_additions():
+                apple_name = VersionNameMap.map(self.host.platform).to_name(version, platform=IOSPort.port_name, table=INTERNAL_TABLE)
+
             if apple_name:
-                expectations.append(self._apple_baseline_path('{}-{}-{}'.format(self.port_name, apple_name, wk_string)))
-            expectations.append(self._webkit_baseline_path('{}-{}-{}'.format(self.port_name, self.ios_version().major, wk_string)))
+                expectations.append(self._apple_baseline_path('{}-{}-{}'.format(self.port_name, apple_name.lower().replace(' ', ''), wk_string)))
+            expectations.append(self._webkit_baseline_path('{}-{}-{}'.format(self.port_name, version.major, wk_string)))
             if apple_name:
-                expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, apple_name)))
-            expectations.append(self._webkit_baseline_path('{}-{}'.format(self.port_name, self.ios_version().major)))
+                expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, apple_name.lower().replace(' ', ''))))
+            expectations.append(self._webkit_baseline_path('{}-{}'.format(self.port_name, version.major)))
 
         if apple_additions():
             expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, wk_string)))
@@ -117,10 +127,13 @@ class IOSPort(DarwinPort):
             expectations.append(self._apple_baseline_path(self.port_name))
         expectations.append(self._webkit_baseline_path(self.port_name))
 
-        if self.ios_version():
+        for version in versions_to_fallback:
+            apple_name = None
+            if apple_additions():
+                apple_name = VersionNameMap.map(self.host.platform).to_name(version, platform=IOSPort.port_name, table=INTERNAL_TABLE)
             if apple_name:
-                expectations.append(self._apple_baseline_path('{}-{}'.format(IOSPort.port_name, apple_name)))
-            expectations.append(self._webkit_baseline_path('{}-{}'.format(IOSPort.port_name, self.ios_version().major)))
+                expectations.append(self._apple_baseline_path('{}-{}'.format(IOSPort.port_name, apple_name.lower().replace(' ', ''))))
+            expectations.append(self._webkit_baseline_path('{}-{}'.format(IOSPort.port_name, version.major)))
 
         if apple_additions():
             expectations.append(self._apple_baseline_path('{}-{}'.format(IOSPort.port_name, wk_string)))

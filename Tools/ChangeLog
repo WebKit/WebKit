@@ -1,3 +1,53 @@
+2018-02-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Remove concept of 'future'
+        https://bugs.webkit.org/show_bug.cgi?id=183184
+        <rdar://problem/37958594>
+
+        Reviewed by Aakash Jain.
+
+        Remove concept of 'future' from expectations and instead
+        use a system of inheritance centered around the current version
+        of an OS for Mac and iOS.
+
+        Inheritance works like so:
+
+        | ....
+        V Future
+        > High Sierra (mac)
+        ^ mac-sierra
+        | mac-elcapitan
+        | ....
+
+        This does not change expectation inheritance for any currently running
+        configurations, it generalizes the logic already used.
+
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__): Remove all future versions.
+        (VersionNameMap.mapping_for_platform): Return empty dicts instead of
+        asserting.
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort):
+        (ApplePort._allowed_versions): Return all available versions.
+        (ApplePort._generate_all_test_configurations): Instead of picking from a set
+        of allowed versions, assume that every specified version is allowed.
+        (ApplePort._port_name_with_version): Deleted.
+        * Scripts/webkitpy/port/darwin.py: Add CURRENT_VERSION overridden by subclasses.
+        (DarwinPort):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        (IOSPort.default_baseline_search_path): Use system of inheritance centered around
+        the current version.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        (MacPort.__init__): Use current version by default.
+        (MacPort.default_baseline_search_path): Use system of inheritance centered around
+        the current version.
+        (MacPort.configuration_specifier_macros): Use the same set of version names
+        supported in default_baseline_search_path.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_versions): Remove 'future' tests.
+
 2018-02-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening

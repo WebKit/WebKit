@@ -34,6 +34,7 @@ import re
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version import Version
+from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.config import apple_additions
 from webkitpy.port.darwin import DarwinPort
@@ -44,8 +45,7 @@ _log = logging.getLogger(__name__)
 class MacPort(DarwinPort):
     port_name = "mac"
 
-    VERSION_MIN = Version(10, 6)
-    VERSION_MAX = Version(10, 14)
+    CURRENT_VERSION = Version(10, 13)
 
     SDK = 'macosx'
 
@@ -61,37 +61,49 @@ class MacPort(DarwinPort):
         elif self.host.platform.is_mac():
             self._os_version = self.host.platform.os_version
         else:
-            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
-            self._os_version = sorted_versions[sorted_versions.index(self.VERSION_MAX) - 1]
+            self._os_version = MacPort.CURRENT_VERSION
+        assert self._os_version
+        assert self._os_version.major == 10
 
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
 
     @memoized
     def default_baseline_search_path(self):
+        versions_to_fallback = []
         version_name_map = VersionNameMap.map(self.host.platform)
-        if self._os_version < self.VERSION_MIN or self._os_version >= self.VERSION_MAX:
-            version_fallback = [self._os_version]
+
+        if self._os_version == self.CURRENT_VERSION:
+            versions_to_fallback = [self.CURRENT_VERSION]
         else:
-            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
-            version_fallback = sorted_versions[sorted_versions.index(self._os_version):-1]
+            temp_version = Version(self._os_version.major, self._os_version.minor)
+            while temp_version != self.CURRENT_VERSION:
+                versions_to_fallback.append(Version.from_iterable(temp_version))
+                if temp_version < self.CURRENT_VERSION:
+                    temp_version.minor += 1
+                else:
+                    temp_version.minor -= 1
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'
 
         expectations = []
-        for version in version_fallback:
-            version_name = version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '')
+        for version in versions_to_fallback:
+            version_name = version_name_map.to_name(version, platform=self.port_name)
+            if version_name:
+                standardized_version_name = version_name.lower().replace(' ', '')
+            apple_name = None
             if apple_additions():
-                apple_name = version_name_map.to_name(version, platform=self.port_name, table='internal')
-            else:
-                apple_name = None
+                apple_name = version_name_map.to_name(version, platform=self.port_name, table=INTERNAL_TABLE)
+
             if apple_name:
                 expectations.append(self._apple_baseline_path('mac-{}-{}'.format(apple_name.lower().replace(' ', ''), wk_string)))
-            expectations.append(self._webkit_baseline_path('mac-{}-{}'.format(version_name, wk_string)))
+            if version_name:
+                expectations.append(self._webkit_baseline_path('mac-{}-{}'.format(standardized_version_name, wk_string)))
             if apple_name:
                 expectations.append(self._apple_baseline_path('mac-{}'.format(apple_name.lower().replace(' ', ''))))
-            expectations.append(self._webkit_baseline_path('mac-{}'.format(version_name)))
+            if version_name:
+                expectations.append(self._webkit_baseline_path('mac-{}'.format(standardized_version_name)))
 
         if apple_additions():
             expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, wk_string)))
@@ -106,15 +118,21 @@ class MacPort(DarwinPort):
 
     @memoized
     def configuration_specifier_macros(self):
-        map = {}
+        config_map = {}
         version_name_map = VersionNameMap.map(self.host.platform)
-        sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
-        for version in sorted_versions:
-            list = []
-            for newer in sorted_versions[sorted_versions.index(version):]:
-                list.append(version_name_map.to_name(newer, platform=self.port_name).lower().replace(' ', ''))
-            map[version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') + '+'] = list
-        return map
+        for version in self._allowed_versions():
+            version_names = []
+            for newer in self._allowed_versions()[self._allowed_versions().index(version):]:
+                version_name = version_name_map.to_name(newer, platform=self.port_name)
+                if not version_name:
+                    version_name = version_name_map.to_name(newer, platform=self.port_name, table=INTERNAL_TABLE)
+                version_names.append(version_name.lower().replace(' ', ''))
+            for table in [PUBLIC_TABLE, INTERNAL_TABLE]:
+                version_name = version_name_map.to_name(version, platform=self.port_name, table=table)
+                if not version_name:
+                    continue
+                config_map[version_name.lower().replace(' ', '') + '+'] = version_names
+        return config_map
 
     def setup_environ_for_server(self, server_name=None):
         env = super(MacPort, self).setup_environ_for_server(server_name)

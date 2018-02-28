@@ -36,6 +36,7 @@ _log = logging.getLogger(__name__)
 
 class DarwinPort(ApplePort):
 
+    CURRENT_VERSION = None
     SDK = None
 
     def __init__(self, host, port_name, **kwargs):
