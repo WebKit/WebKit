@@ -843,6 +843,18 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTe
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
+{
+    notImplemented();
+    return nullptr;
+}
+
 bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
 {
     notImplemented();
