@@ -973,8 +973,11 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
     // Here, now we consider moduleKey as the fileName.
     Vector<char> utf8;
-    if (!fetchModuleFromLocalFileSystem(moduleKey, utf8))
-        return deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
+    if (!fetchModuleFromLocalFileSystem(moduleKey, utf8)) {
+        auto result = deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
+        scope.releaseAssertNoException();
+        return result;
+    }
 
     auto result = deferred->resolve(exec, JSSourceCode::create(vm, makeSource(stringFromUTF(utf8), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
     scope.releaseAssertNoException();
