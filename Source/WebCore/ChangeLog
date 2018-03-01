@@ -1,3 +1,25 @@
+2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Color emojis in WebKitGTK+ for great justice
+        https://bugs.webkit.org/show_bug.cgi?id=183155
+
+        Reviewed by Michael Catanzaro.
+
+        Emojis are actually rendered if there's an emoji font installed in the system, but the size is so tiny that we
+        don't see them. This is because for some reason the matrix we are getting from fontconfig contains a scale,
+        which we don't expect. We only get the fontconfig matrix to apply rotations in case of oblique fonts, and then we
+        always apply the scale for the computed pixel font size. Ignoring the fontconfig matrix scale fixes the issue.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::fontWeightToFontconfigWeight): Moved here since it's now used by configurePatternForFontDescription().
+        (WebCore::configurePatternForFontDescription): Helper function to apply the same options for fallback pattern.
+        (WebCore::createFontConfigPatternForCharacters): Use configurePatternForFontDescription().
+        (WebCore::findBestFontGivenFallbacks): Adopt the returned reference.
+        (WebCore::FontCache::systemFallbackForCharacters): Clean it up.
+        (WebCore::FontCache::createFontPlatformData): Use configurePatternForFontDescription().
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::buildScaledFont): Ignore the scale returned by fontconfig matrix.
+
 2018-02-28  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] text samples no longer processed
