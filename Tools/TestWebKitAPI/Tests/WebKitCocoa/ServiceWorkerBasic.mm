@@ -54,6 +54,7 @@ struct ResourceInfo {
 static bool done;
 
 static String expectedMessage;
+static String retrievedString;
 
 @interface SWMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -978,6 +979,122 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+static const char* regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
+<script>
+async function getResult()
+{
+    var result = await window.internals.cacheStorageEngineRepresentation();
+    window.webkit.messageHandlers.sw.postMessage(result);
+}
+getResult();
+</script>
+)SWRESOURCE";
+
+@interface DirectoryPageMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation DirectoryPageMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    retrievedString = [message body];
+    done = true;
+}
+@end
+
+TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
+{
+    ASSERT(mainBytes);
+    ASSERT(scriptBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+
+    RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler->resources.set("sw://host/regularPageGrabbingCacheStorageDirectory.html", ResourceInfo { @"text/html", regularPageGrabbingCacheStorageDirectory });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_TRUE([[configuration websiteDataStore] _hasRegisteredServiceWorker]);
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageGrabbingCacheStorageDirectory.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_TRUE(retrievedString.contains("/Caches/TestWebKitAPI/WebKit/CacheStorage"));
+
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
+{
+    ASSERT(mainBytes);
+    ASSERT(scriptBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    auto websiteDataStore = [configuration websiteDataStore];
+    [websiteDataStore _setCacheStorageDirectory:@"/var/tmp"];
+    [websiteDataStore _setServiceWorkerRegistrationDirectory:@"/var/tmp"];
+
+    RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler->resources.set("sw://host/regularPageGrabbingCacheStorageDirectory.html", ResourceInfo { @"text/html", regularPageGrabbingCacheStorageDirectory });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_TRUE([websiteDataStore _hasRegisteredServiceWorker]);
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageGrabbingCacheStorageDirectory.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""));
+
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 #endif // WK_HAVE_C_SPI
 
 TEST(ServiceWorkers, NonDefaultSessionID)

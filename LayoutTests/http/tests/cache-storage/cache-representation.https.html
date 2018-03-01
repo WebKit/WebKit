@@ -14,7 +14,7 @@
 
     function checkCaches(hasPersistent, hasRemoved, name, value) {
         test(() => {
-            var results = JSON.parse(value);
+            var results = JSON.parse(value).origins;
             assert_equals(results.length, 1);
             var caches = results[0].caches;
             assert_equals(!!caches["persistent"].length, hasPersistent, "persistent");

@@ -1,3 +1,22 @@
+2018-03-01  Youenn Fablet  <youenn@apple.com>
+
+        Add API test to validate setting of service worker and cache storage directories
+        https://bugs.webkit.org/show_bug.cgi?id=182543
+
+        Reviewed by Chris Dumez.
+
+        Add cache engine directory path to its representation dump.
+        This is used in API tests to check that the path is correctly set.
+
+        Add a way for to know whether a service worker was registered from a WKWebsiteDataStore.
+        This is used in API tests to check that the path is correctly set.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::representation):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _hasRegisteredServiceWorker]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
 2018-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix some errors due to some mach port APIs being unavailable on watchOS

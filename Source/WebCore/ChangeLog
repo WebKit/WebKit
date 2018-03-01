@@ -1,5 +1,28 @@
 2018-03-01  Youenn Fablet  <youenn@apple.com>
 
+        Add API test to validate setting of service worker and cache storage directories
+        https://bugs.webkit.org/show_bug.cgi?id=182543
+
+        Reviewed by Chris Dumez.
+
+        Covered by API tests.
+
+        Add getters to service worker registration directory.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::serviceWorkerRegistrationDirectory):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * workers/service/SWClientConnection.h:
+        * workers/service/server/RegistrationDatabase.h:
+        (WebCore::RegistrationDatabase::serviceWorkerRegistrationDirectory const):
+        * workers/service/server/RegistrationStore.h:
+        (WebCore::RegistrationStore::serviceWorkerRegistrationDirectory const):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::serviceWorkerRegistrationDirectory const):
+
+2018-03-01  Youenn Fablet  <youenn@apple.com>
+
         SWServer::removeClientServiceWorkerRegistration should not log an error if there is no registration
         https://bugs.webkit.org/show_bug.cgi?id=183248
 

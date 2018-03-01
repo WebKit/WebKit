@@ -475,7 +475,9 @@ String Engine::representation()
 {
     bool isFirst = true;
     StringBuilder builder;
-    builder.append("[");
+    builder.append("{ \"path\": \"");
+    builder.append(m_rootPath);
+    builder.append("\", \"origins\": [");
     for (auto& keyValue : m_caches) {
         if (!isFirst)
             builder.append(",");
@@ -489,7 +491,7 @@ String Engine::representation()
         keyValue.value->appendRepresentation(builder);
         builder.append("}");
     }
-    builder.append("\n]");
+    builder.append("]}");
     return builder.toString();
 }
 

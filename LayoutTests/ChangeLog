@@ -1,3 +1,16 @@
+2018-03-01  Youenn Fablet  <youenn@apple.com>
+
+        Add API test to validate setting of service worker and cache storage directories
+        https://bugs.webkit.org/show_bug.cgi?id=182543
+
+        Reviewed by Chris Dumez.
+
+        Updated tests according new engine representation.
+
+        * http/tests/cache-storage/cache-clearing-origin.https.html:
+        * http/tests/cache-storage/cache-origins.https.html:
+        * http/tests/cache-storage/cache-representation.https.html:
+
 2018-03-01  Daniel Bates  <dabates@apple.com>
 
         CSS ::selection stroke-color and stroke-width are not applied to selected text in text fields

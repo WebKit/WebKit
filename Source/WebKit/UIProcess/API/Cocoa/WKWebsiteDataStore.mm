@@ -37,6 +37,7 @@
 #import "WebsiteDataFetchOption.h"
 #import "_WKWebsiteDataStoreConfiguration.h"
 #import <WebCore/URL.h>
+#import <WebKit/ServiceWorkerProcessProxy.h>
 #import <wtf/BlockPtr.h>
 
 using namespace WebCore;
@@ -339,6 +340,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
     });
+}
+
+- (bool)_hasRegisteredServiceWorker
+{
+    return WebKit::ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(_websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory());
 }
 
 @end
