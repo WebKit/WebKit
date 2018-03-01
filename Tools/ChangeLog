@@ -1,3 +1,13 @@
+2018-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update WebKit.CustomHeaderFields API test after r229133.
+
+        We no longer do policy checks for 'about:blank'.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[CustomHeaderFieldsDelegate webView:startURLSchemeTask:]):
+        (TEST):
+
 2018-02-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Remove concept of 'future' versions (Follow-up fix 2)

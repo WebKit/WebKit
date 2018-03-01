@@ -747,9 +747,6 @@ static void respond(id <WKURLSchemeTask>task, NSString *html = nil)
         expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask);
         thirdTestDone = true;
-    } else if ([path isEqualToString:@"/createaboutblankiframe"]) {
-        expectHeaders(urlSchemeTask, true);
-        respond(urlSchemeTask, @"<script>start=()=>{var s = document.createElement('script');s.text=\"fetch('test:///requestfromaboutblank')\";document.getElementById('iframeid').contentWindow.document.body.appendChild(s);}</script><body><iframe src='about:blank' id=iframeid onload='start()'></iframe></body>");
     } else if ([path isEqualToString:@"/requestfromaboutblank"]) {
         expectHeaders(urlSchemeTask, true);
         respond(urlSchemeTask);
@@ -779,12 +776,6 @@ TEST(WebKit, CustomHeaderFields)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://toporigin/nestedtop"]]];
     TestWebKitAPI::Util::run(&thirdTestDone);
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///createaboutblankiframe"]]];
-    TestWebKitAPI::Util::run(&fourthTestDone);
-    fourthTestDone = false;
-    [webView reload];
-    TestWebKitAPI::Util::run(&fourthTestDone);
 }
 
 @interface PopUpPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
