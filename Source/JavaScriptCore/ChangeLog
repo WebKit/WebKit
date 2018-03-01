@@ -1,3 +1,19 @@
+2018-02-28  JF Bastien  <jfbastien@apple.com>
+
+        GC should sweep code block before deleting
+        https://bugs.webkit.org/show_bug.cgi?id=183229
+        <rdar://problem/32767615>
+
+        Reviewed by Saam Barati, Fil Pizlo.
+
+        Stub routines shouldn't get deleted before codeblocks have been
+        swept, otherwise there's a small race window where the codeblock
+        thinks it's still reachable.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepInFinalize):
+
 2018-02-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSC crash with `import("")`
