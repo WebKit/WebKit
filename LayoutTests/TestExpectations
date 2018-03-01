@@ -176,7 +176,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redire
 # Different failure string each test run due to a random number being dumped in test output
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html [ Skip ]
 
-webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
 webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]

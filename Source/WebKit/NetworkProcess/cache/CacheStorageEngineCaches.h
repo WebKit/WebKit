@@ -80,7 +80,7 @@ public:
 private:
     Caches(Engine&, WebCore::ClientOrigin&&, String&& rootPath, uint64_t quota);
 
-    void initializeSize(WebCore::DOMCacheEngine::CompletionCallback&&);
+    void initializeSize();
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
 

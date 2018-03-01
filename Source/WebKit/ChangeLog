@@ -1,5 +1,27 @@
 2018-03-01  Youenn Fablet  <youenn@apple.com>
 
+        LayoutTest imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=179248
+        <rdar://problem/35377756>
+
+        Reviewed by Chris Dumez.
+
+        WebKitTestRunner is clearing caches for every test but there might still be some on-going cache activity due to a previous test.
+        In that case, the activity might try to open the Caches object at the same time the files are deleted by the clearing task.
+        If the new test is trying to open the same caches, it will also receive the same error, hence the console log message.
+
+        To fix that issue, we clear the initialization pending callbacks when clearing the caches.
+        This prevents the new test to receive the error since the new test should only start some cache activity after the cache clear task is done.
+        Made refactoring to append the first callback into the list of pending callbacks.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::initializeSize):
+        (WebKit::CacheStorage::Caches::clear):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+
+2018-03-01  Youenn Fablet  <youenn@apple.com>
+
         Add API test to validate setting of service worker and cache storage directories
         https://bugs.webkit.org/show_bug.cgi?id=182543
 

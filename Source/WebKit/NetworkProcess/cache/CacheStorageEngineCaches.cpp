@@ -144,13 +144,13 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
         callback(Error::WriteDisk);
         return;
     }
+
+    m_pendingInitializationCallbacks.append(WTFMove(callback));
     m_storage = storage.releaseNonNull();
     m_storage->writeWithoutWaiting();
 
-    storeOrigin([this, callback = WTFMove(callback)] (std::optional<Error>&& error) mutable {
+    storeOrigin([this] (std::optional<Error>&& error) mutable {
         if (error) {
-            callback(Error::WriteDisk);
-
             auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
             for (auto& callback : pendingCallbacks)
                 callback(Error::WriteDisk);
@@ -159,12 +159,10 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
             return;
         }
 
-        readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) mutable {
+        readCachesFromDisk([this](Expected<Vector<Cache>, Error>&& result) mutable {
             makeDirty();
 
             if (!result.has_value()) {
-                callback(result.error());
-
                 auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
                 for (auto& callback : pendingCallbacks)
                     callback(result.error());
@@ -174,16 +172,14 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
             }
             m_caches = WTFMove(result.value());
 
-            initializeSize(WTFMove(callback));
+            initializeSize();
         });
     });
 }
 
-void Caches::initializeSize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
+void Caches::initializeSize()
 {
     if (!m_storage) {
-        callback(Error::Internal);
-
         auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
         for (auto& callback : pendingCallbacks)
             callback(Error::Internal);
@@ -191,12 +187,10 @@ void Caches::initializeSize(WebCore::DOMCacheEngine::CompletionCallback&& callba
     }
 
     uint64_t size = 0;
-    m_storage->traverse({ }, 0, [protectedThis = makeRef(*this), this, protectedStorage = makeRef(*m_storage), callback = WTFMove(callback), size](const auto* storage, const auto& information) mutable {
+    m_storage->traverse({ }, 0, [protectedThis = makeRef(*this), this, protectedStorage = makeRef(*m_storage), size](const auto* storage, const auto& information) mutable {
         if (!storage) {
             m_size = size;
             m_isInitialized = true;
-            callback(std::nullopt);
-
             auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
             for (auto& callback : pendingCallbacks)
                 callback(std::nullopt);
@@ -224,6 +218,10 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
         });
         return;
     }
+
+    auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
+    for (auto& callback : pendingCallbacks)
+        callback(Error::Internal);
 
     if (m_engine)
         m_engine->removeFile(cachesListFilename(m_rootPath));
