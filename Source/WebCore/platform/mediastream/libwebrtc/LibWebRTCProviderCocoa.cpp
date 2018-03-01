@@ -27,23 +27,11 @@
 #include "LibWebRTCProviderCocoa.h"
 
 #if USE(LIBWEBRTC)
+
 #include "VideoToolBoxDecoderFactory.h"
 #include "VideoToolBoxEncoderFactory.h"
-#include <wtf/darwin/WeakLinking.h>
-#endif
 
 namespace WebCore {
-
-UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
-{
-#if USE(LIBWEBRTC) && PLATFORM(COCOA)
-    return makeUniqueRef<LibWebRTCProviderCocoa>();
-#else
-    return makeUniqueRef<LibWebRTCProvider>();
-#endif
-}
-
-#if USE(LIBWEBRTC)
 
 std::unique_ptr<cricket::WebRtcVideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
 {
@@ -71,15 +59,6 @@ void LibWebRTCProviderCocoa::setActive(bool value)
         m_encoderFactory->setActive(value);
 }
 
-#endif // USE(LIBWEBRTC)
-
-bool LibWebRTCProvider::webRTCAvailable()
-{
-#if USE(LIBWEBRTC)
-    return !isNullFunctionPointer(rtc::LogMessage::LogToDebug);
-#else
-    return true;
-#endif
-}
-
 } // namespace WebCore
+
+#endif
