@@ -94,8 +94,6 @@ struct SameSizeAsRenderElement : public RenderObject {
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-bool RenderElement::s_noLongerAffectsParentBlock = false;
-    
 inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderObject(elementOrDocument)
     , m_baseTypeFlags(baseTypeFlags)
@@ -748,9 +746,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             downcast<RenderBox>(*this).removeFloatingOrPositionedChildFromBlockLists();
         }
 
-        s_noLongerAffectsParentBlock = ((!isFloating() && newStyle.isFloating()) || (!isOutOfFlowPositioned() && newStyle.hasOutOfFlowPosition()))
-            && parent() && parent()->isRenderBlock();
-
         // reset style flags
         if (diff == StyleDifferenceLayout || diff == StyleDifferenceLayoutPositionedMovementOnly) {
             setFloating(false);
@@ -764,8 +759,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         setHasOverflowClip(false);
         setHasTransformRelatedProperty(false);
         setHasReflection(false);
-    } else
-        s_noLongerAffectsParentBlock = false;
+    }
 
     bool newStyleSlowScroll = false;
     if (newStyle.hasFixedBackgroundImage() && !settings().fixedBackgroundsPaintRelativeToDocument()) {
@@ -798,6 +792,12 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 }
 #endif
 
+bool RenderElement::noLongerAffectsParentBlock(const RenderStyle& oldStyle) const
+{
+    return parent() && parent()->isRenderBlock()
+        && ((!oldStyle.isFloating() && style().isFloating()) || (!oldStyle.hasOutOfFlowPosition() && style().hasOutOfFlowPosition()));
+}
+
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, m_style.backgroundLayers());
@@ -818,7 +818,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
             RenderTreeBuilder::current()->childFlowStateChangesAndAffectsParentBlock(*this);
     }
 
-    if (s_noLongerAffectsParentBlock)
+    if (oldStyle && noLongerAffectsParentBlock(*oldStyle))
         RenderTreeBuilder::current()->childFlowStateChangesAndNoLongerAffectsParentBlock(*this);
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
