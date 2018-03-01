@@ -32,6 +32,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 
 #if OS(WINDOWS)
@@ -120,18 +121,25 @@ public:
     // HTTP/2
     bool isHttp2Enabled() const;
 
+    // Timeout
+    Seconds dnsCacheTimeout() const { return m_dnsCacheTimeout; }
+    Seconds connectTimeout() const { return m_connectTimeout; }
+
 #ifndef NDEBUG
     FILE* getLogFile() const { return m_logFile; }
     bool isVerbose() const { return m_verbose; }
 #endif
 
 private:
+    CurlContext();
+    void initShareHandle();
+
     ProxyInfo m_proxy;
     CurlShareHandle m_shareHandle;
     CurlSSLHandle m_sslHandle;
 
-    CurlContext();
-    void initShareHandle();
+    Seconds m_dnsCacheTimeout { Seconds::fromMinutes(5) };
+    Seconds m_connectTimeout { 30.0 };
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
@@ -250,8 +258,9 @@ public:
 
     void enableProxyIfExists();
 
-    void enableTimeout();
-    void setTimeout(long timeoutMilliseconds);
+    void setDnsCacheTimeout(Seconds);
+    void setConnectTimeout(Seconds);
+    void setTimeout(Seconds);
 
     // Callback function
     void setHeaderCallbackFunction(curl_write_callback, void*);

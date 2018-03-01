@@ -194,10 +194,10 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->enableShareHandle();
     m_curlHandle->enableAllowedProtocols();
     m_curlHandle->enableAcceptEncoding();
-    m_curlHandle->enableTimeout();
 
-    long timeoutMilliseconds = (m_request.timeoutInterval() > 0.0) ? static_cast<long>(m_request.timeoutInterval() * 1000.0) : 0;
-    m_curlHandle->setTimeout(timeoutMilliseconds);
+    m_curlHandle->setTimeout(Seconds(m_request.timeoutInterval()));
+    m_curlHandle->setDnsCacheTimeout(CurlContext::singleton().dnsCacheTimeout());
+    m_curlHandle->setConnectTimeout(CurlContext::singleton().connectTimeout());
 
     m_curlHandle->enableProxyIfExists();
 

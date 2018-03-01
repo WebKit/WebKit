@@ -1,3 +1,31 @@
+2018-03-01  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Split DNS cache expiration and connection timeout setting.
+        https://bugs.webkit.org/show_bug.cgi?id=182979
+
+        It was mis-implemented and was named ambiguous name 'enableTimeout'.
+        Implement each feature correctly.
+
+        Reviewed by Per Arne Vollan.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::EnvironmentVariableReader::read):
+        (WebCore::EnvironmentVariableReader::defined):
+        (WebCore::EnvironmentVariableReader::readAs):
+        (WebCore::EnvironmentVariableReader::sscanTemplate):
+        (WebCore::EnvironmentVariableReader::sscanTemplate<unsigned>):
+        (WebCore::CurlContext::CurlContext):
+        (WebCore::safeTimeValue):
+        (WebCore::CurlHandle::setDnsCacheTimeout):
+        (WebCore::CurlHandle::setConnectTimeout):
+        (WebCore::CurlHandle::setTimeout):
+        (WebCore::CurlHandle::enableTimeout): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlContext::dnsCacheTimeout const):
+        (WebCore::CurlContext::connectTimeout const):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+
 2018-03-01  Zalan Bujtas  <zalan@apple.com>
 
         Remove RenderElement::s_noLongerAffectsParentBlock

@@ -42,6 +42,33 @@
 
 namespace WebCore {
 
+class EnvironmentVariableReader {
+public:
+    const char* read(const char* name) { return ::getenv(name); }
+    bool defined(const char* name) { return read(name) != nullptr; }
+
+    template<typename T> std::optional<T> readAs(const char* name)
+    {
+        if (const char* valueStr = read(name)) {
+            T value;
+            if (sscanf(valueStr, sscanTemplate<T>(), &value) == 1)
+                return value;
+        }
+
+        return std::nullopt;
+    }
+
+private:
+    template<typename T> const char* sscanTemplate()
+    {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    // define specialized member function for specific type.
+    template<> constexpr const char* sscanTemplate<unsigned>() { return "%u"; }
+};
+
 // CurlContext -------------------------------------------------------------------
 
 CurlContext& CurlContext::singleton()
@@ -54,10 +81,18 @@ CurlContext::CurlContext()
 {
     initShareHandle();
 
-#ifndef NDEBUG
-    m_verbose = getenv("DEBUG_CURL");
+    EnvironmentVariableReader envVar;
 
-    char* logFile = getenv("CURL_LOG_FILE");
+    if (auto value = envVar.readAs<unsigned>("WEBKIT_CURL_DNS_CACHE_TIMEOUT"))
+        m_dnsCacheTimeout = Seconds(*value);
+
+    if (auto value = envVar.readAs<unsigned>("WEBKIT_CURL_CONNECT_TIMEOUT"))
+        m_connectTimeout = Seconds(*value);
+
+#ifndef NDEBUG
+    m_verbose = envVar.defined("DEBUG_CURL");
+
+    auto logFile = envVar.read("CURL_LOG_FILE");
     if (logFile)
         m_logFile = fopen(logFile, "a");
 #endif
@@ -447,16 +482,25 @@ void CurlHandle::enableProxyIfExists()
     }
 }
 
-void CurlHandle::enableTimeout()
+static CURLoption safeTimeValue(double time)
 {
-    static const long dnsCacheTimeout = 5 * 60; // [sec.]
-
-    curl_easy_setopt(m_handle, CURLOPT_DNS_CACHE_TIMEOUT, dnsCacheTimeout);
+    auto value = static_cast<unsigned>(time >= 0.0 ? time : 0);
+    return static_cast<CURLoption>(value);
 }
 
-void CurlHandle::setTimeout(long timeoutMilliseconds)
+void CurlHandle::setDnsCacheTimeout(Seconds timeout)
 {
-    curl_easy_setopt(m_handle, CURLOPT_TIMEOUT_MS, timeoutMilliseconds);
+    curl_easy_setopt(m_handle, CURLOPT_DNS_CACHE_TIMEOUT, safeTimeValue(timeout.seconds()));
+}
+
+void CurlHandle::setConnectTimeout(Seconds timeout)
+{
+    curl_easy_setopt(m_handle, CURLOPT_CONNECTTIMEOUT, safeTimeValue(timeout.seconds()));
+}
+
+void CurlHandle::setTimeout(Seconds timeout)
+{
+    curl_easy_setopt(m_handle, CURLOPT_TIMEOUT_MS, safeTimeValue(timeout.milliseconds()));
 }
 
 void CurlHandle::setHeaderCallbackFunction(curl_write_callback callbackFunc, void* userData)
