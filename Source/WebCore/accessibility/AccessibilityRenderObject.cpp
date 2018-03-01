@@ -1757,6 +1757,9 @@ void AccessibilityRenderObject::setValue(const String& string)
 {
     if (!m_renderer || !is<Element>(m_renderer->node()))
         return;
+    if (dispatchAccessibleSetValueEvent(string))
+        return;
+    
     Element& element = downcast<Element>(*m_renderer->node());
     RenderObject& renderer = *m_renderer;
     

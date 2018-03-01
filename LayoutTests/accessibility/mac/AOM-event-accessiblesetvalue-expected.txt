@@ -1,0 +1,28 @@
+button
+contenteditable new value
+
+scrollbar
+This tests accessiblesetvalue event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test Combobox.
+combobox accessible set value to: combobox new value
+
+Test Contenteditable.
+contenteditable accessible set value to: contenteditable new value
+
+Test Slider.
+slider accessible set value to: 70
+
+Test Scrollbar.
+scroller accessible set value to: 60
+
+Test that accessiblesetvalue event can only be dispatched to nodes that support setting their values.
+PASS receivedAXEvent is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

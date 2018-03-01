@@ -46,6 +46,7 @@ namespace WebCore {
     macro(DOMSubtreeModified) \
     macro(abort) \
     macro(accessibleclick) \
+    macro(accessiblesetvalue) \
     macro(activate) \
     macro(active) \
     macro(addsourcebuffer) \

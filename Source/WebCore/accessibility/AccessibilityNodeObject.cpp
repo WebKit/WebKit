@@ -2083,7 +2083,7 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
     if (isMeter())
         return false;
 
-    if (isProgressIndicator() || isSlider())
+    if (isProgressIndicator() || isSlider() || isScrollbar())
         return true;
 
 #if PLATFORM(GTK)

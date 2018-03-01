@@ -895,7 +895,8 @@ public:
     const AtomicString& getAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
     
-    void dispatchAccessibilityEvent(Event&);
+    bool dispatchAccessibilityEvent(Event&);
+    bool dispatchAccessibleSetValueEvent(const String&);
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }

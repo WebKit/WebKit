@@ -1,3 +1,46 @@
+2018-02-28  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Dispatch accessiblesetvalue event
+        https://bugs.webkit.org/show_bug.cgi?id=183021
+        <rdar://problem/37764242>
+
+        Reviewed by Chris Fleizach.
+
+        Accessibility events.
+        Spec: https://wicg.github.io/aom/spec/phase2.html
+
+        Added a new event type AccessibleSetValueEvent. 
+
+        Test: accessibility/mac/AOM-event-accessiblesetvalue.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetValueAttribute const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        (WebCore::AccessibilityObject::dispatchAccessibilityEvent):
+        (WebCore::AccessibilityObject::dispatchAccessibleSetValueEvent):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setValue):
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::setValue):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::setValue):
+        * accessibility/AccessibleSetValueEvent.cpp: Added.
+        (WebCore::AccessibleSetValueEvent::AccessibleSetValueEvent):
+        * accessibility/AccessibleSetValueEvent.h: Added.
+        (WebCore::AccessibleSetValueEvent::create):
+        (WebCore::AccessibleSetValueEvent::value const):
+        * accessibility/AccessibleSetValueEvent.idl: Added.
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+
 2018-02-28  Chris Dumez  <cdumez@apple.com>
 
         html/browsers/browsing-the-web/navigating-across-documents/006.html fails with async policy delegates

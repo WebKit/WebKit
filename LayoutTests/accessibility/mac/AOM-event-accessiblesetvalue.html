@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test-pre.js"></script>
+<div id="content">
+
+<button id="button">button</button>
+<div contenteditable="true" id="contenteditable">current</div>
+<div id="combobox" role="combobox" aria-expanded="false" aria-label="Test"></div>
+<input id="slider" type="range">
+<div id="scroller" aria-valuenow="55" role="scrollbar">scrollbar</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests accessiblesetvalue event.");
+
+    if (window.accessibilityController) {
+       jsTestIsAsync = true;
+       
+       var node;
+       var axNode;
+       var receivedAXEvent = false;
+       
+       testCombobox();
+       
+       function testCanSetValue() {
+           debug("\nTest that accessiblesetvalue event can only be dispatched to nodes that support setting their values.");
+           node = document.getElementById("button");
+           axNode = accessibilityController.accessibleElementById("button");
+           node.onaccessiblesetvalue = function(event) {
+              receivedAXEvent = true;
+              debug("This shouldn't be reached.");
+           };
+           axNode.setValue("test value");
+           
+           setTimeout(
+               function(){
+                   shouldBeFalse("receivedAXEvent");
+                   finishJSTest();
+               }, 
+               50);
+       }
+       
+       function testCombobox() {
+           debug("\nTest Combobox."); 
+           node = document.getElementById("combobox");
+           axNode = accessibilityController.accessibleElementById("combobox");
+           node.onaccessiblesetvalue = function(event) {
+              debug("combobox accessible set value to: " + event.value);
+              testContenteditable();
+           };
+           axNode.setValue("combobox new value");
+       }
+       
+       function testContenteditable() {
+           debug("\nTest Contenteditable."); 
+           node = document.getElementById("contenteditable");
+           axNode = accessibilityController.accessibleElementById("contenteditable");
+           node.onaccessiblesetvalue = function(event) {
+              debug("contenteditable accessible set value to: " + event.value);
+              testSlider();
+           };
+           axNode.setValue("contenteditable new value");
+       }
+       
+       function testSlider() {
+           debug("\nTest Slider."); 
+           node = document.getElementById("slider");
+           axNode = accessibilityController.accessibleElementById("slider");
+           node.onaccessiblesetvalue = function(event) {
+              debug("slider accessible set value to: " + event.value);
+              testScrollbar();
+           };
+           axNode.setValue("70");
+       }
+       
+       function testScrollbar() {
+           debug("\nTest Scrollbar."); 
+           node = document.getElementById("scroller");
+           axNode = accessibilityController.accessibleElementById("scroller");
+           node.onaccessiblesetvalue = function(event) {
+              debug("scroller accessible set value to: " + event.value);
+              testCanSetValue();
+           };
+           axNode.setValue("60");
+       }
+
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

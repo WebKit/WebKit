@@ -360,6 +360,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webvr/VRLayerInit.idl \
     $(WebCore)/Modules/webvr/VRPose.idl \
     $(WebCore)/Modules/webvr/VRStageParameters.idl \
+    $(WebCore)/accessibility/AccessibleSetValueEvent.idl \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffectReadOnly.idl \
     $(WebCore)/animation/AnimationEffectTiming.idl \

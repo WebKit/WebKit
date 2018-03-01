@@ -33,6 +33,7 @@
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"
+#include "AccessibleSetValueEvent.h"
 #include "DOMTokenList.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -997,8 +998,7 @@ bool AccessibilityObject::press()
     if (auto* cache = axObjectCache()) {
         if (auto* pressObject = cache->getOrCreate(pressElement)) {
             auto event = Event::create(eventNames().accessibleclickEvent, true, true);
-            pressObject->dispatchAccessibilityEvent(event);
-            if (event->defaultPrevented())
+            if (pressObject->dispatchAccessibilityEvent(event))
                 return true;
         }
     }
@@ -2153,7 +2153,7 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
     return nullAtom();
 }
 
-void AccessibilityObject::dispatchAccessibilityEvent(Event& event)
+bool AccessibilityObject::dispatchAccessibilityEvent(Event& event)
 {
     Vector<Element*> eventPath;
     for (auto* parentObject = this; parentObject; parentObject = parentObject->parentObject()) {
@@ -2162,6 +2162,17 @@ void AccessibilityObject::dispatchAccessibilityEvent(Event& event)
     }
     
     EventDispatcher::dispatchEvent(eventPath, event);
+    
+    // return true if preventDefault() was called, so that we don't execute the fallback behavior.
+    return event.defaultPrevented();
+}
+
+bool AccessibilityObject::dispatchAccessibleSetValueEvent(const String& value)
+{
+    if (!canSetValueAttribute())
+        return false;
+    auto event = AccessibleSetValueEvent::create(eventNames().accessiblesetvalueEvent, value);
+    return dispatchAccessibilityEvent(event);
 }
 
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;

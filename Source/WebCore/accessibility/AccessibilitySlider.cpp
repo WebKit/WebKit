@@ -128,6 +128,9 @@ float AccessibilitySlider::minValueForRange() const
 
 void AccessibilitySlider::setValue(const String& value)
 {
+    if (dispatchAccessibleSetValueEvent(value))
+        return;
+
     HTMLInputElement* input = inputElement();
     
     if (input->value() == value)

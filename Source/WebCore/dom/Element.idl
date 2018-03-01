@@ -143,6 +143,7 @@
 
     // Accessibility events.
     [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessibleclick;
+    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessiblesetvalue;
 };
 
 dictionary ShadowRootInit {
