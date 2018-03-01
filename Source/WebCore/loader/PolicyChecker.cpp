@@ -123,6 +123,9 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 
     loader->setLastCheckedRequest(ResourceRequest(request));
 
+    if (request.url() == blankURL())
+        return function(WTFMove(request), formState, true);
+
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
     if (!request.isNull() && isQuickLookPreviewURL(request.url()))

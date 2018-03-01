@@ -1,3 +1,20 @@
+2018-03-01  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html fails with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183225
+        <rdar://problem/38003828>
+
+        Reviewed by Alex Christensen.
+
+        Bypass navigation policy check when loading about:blank. This does not seem necessary and it would not
+        be Web-compatible for such policy check to happen synchronously. This is because an iframe without src
+        or src="about:blank" should load synchronously as per HTML specification.
+
+        Test: http/wpt/html/browsers/windows/browsing-context.html
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+
 2018-03-01  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Linker errors in some curl files due to missing exports
