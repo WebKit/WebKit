@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test for Partitioned and Unpartitioned Cookie Deletion</title>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="/js-test-resources/js-test.js"></script>
 </head>
 <body>
 <script>
+    description("Test for partitioned and unpartitioned cookie deletion.");
+    jsTestIsAsync = true;
+
     const partitionHost = "127.0.0.1:8000";
     const thirdPartyOrigin = "http://localhost:8000";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
@@ -28,7 +30,7 @@
 
     function finishTest() {
         setEnableFeature(false);
-        testRunner.notifyDone();
+        finishJSTest();
     }
 
     function openIframe(url, onLoadHandler) {
@@ -92,7 +94,6 @@
         testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
         testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
 
-        testRunner.waitUntilDone();
         testRunner.dumpChildFramesAsText();
         document.location.hash = "step1";
 
