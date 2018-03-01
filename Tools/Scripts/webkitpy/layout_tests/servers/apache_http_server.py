@@ -92,20 +92,20 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         config_file_path = self._copy_apache_config_file(self.tests_dir, output_dir)
 
         start_cmd = [executable,
-            '-f', "\"%s\"" % config_file_path,
-            '-C', "\'DocumentRoot \"%s\"\'" % document_root,
-            '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
-            '-c', "\'PHPINIDir \"%s\"\'" % php_ini_dir,
-            '-c', "\'CustomLog \"%s\" common\'" % access_log,
-            '-c', "\'ErrorLog \"%s\"\'" % error_log,
-            '-c', "\'PidFile %s'" % self._pid_file,
+            '-f', config_file_path,
+            '-C', 'DocumentRoot "%s"' % document_root,
+            '-c', 'TypesConfig "%s"' % mime_types_path,
+            '-c', 'PHPINIDir "%s"' % php_ini_dir,
+            '-c', 'CustomLog "%s" common' % access_log,
+            '-c', 'ErrorLog "%s"' % error_log,
+            '-c', 'PidFile "%s"' % self._pid_file,
             '-k', "start"]
 
         for alias in self.aliases():
-            start_cmd.extend(['-c', "\'Alias %s \"%s\"'" % (alias[0], alias[1])])
+            start_cmd.extend(['-c', 'Alias %s "%s"' % (alias[0], alias[1])])
 
         if not port_obj.host.platform.is_win():
-            start_cmd.extend(['-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", ""))])
+            start_cmd.extend(['-C', 'User "%s"' % os.environ.get("USERNAME", os.environ.get("USER", ""))])
 
         enable_ipv6 = self._port_obj.http_server_supports_ipv6()
         # Perform part of the checks Apache's APR does when trying to listen to
@@ -125,34 +125,31 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         for mapping in self._mappings:
             port = mapping['port']
 
-            start_cmd += ['-C', "\'Listen %s%d\'" % (bind_address, port)]
+            start_cmd += ['-C', 'Listen %s%d' % (bind_address, port)]
 
             # We listen to both IPv4 and IPv6 loop-back addresses, but ignore
             # requests to 8000 from random users on network.
             # See https://bugs.webkit.org/show_bug.cgi?id=37104
             if enable_ipv6:
-                start_cmd += ['-C', "\'Listen [::1]:%d\'" % port]
+                start_cmd += ['-C', 'Listen [::1]:%d' % port]
 
         if additional_dirs:
             for alias, path in additional_dirs.iteritems():
-                start_cmd += ['-c', "\'Alias %s \"%s\"\'" % (alias, path),
+                start_cmd += ['-c', 'Alias %s "%s"' % (alias, path),
                         # Disable CGI handler for additional dirs.
-                        '-c', "\'<Location %s>\'" % alias,
-                        '-c', "\'RemoveHandler .cgi .pl\'",
-                        '-c', "\'</Location>\'"]
+                        '-c', '<Location %s>' % alias,
+                        '-c', 'RemoveHandler .cgi .pl',
+                        '-c', '</Location>']
 
         stop_cmd = [executable,
-            '-f', "\"%s\"" % config_file_path,
-            '-c', "\'PidFile %s'" % self._pid_file,
+            '-f', config_file_path,
+            '-c', 'PidFile "%s"' % self._pid_file,
             '-k', "stop"]
 
-        start_cmd.extend(['-c', "\'SSLCertificateFile %s\'" % cert_file])
-        # Join the string here so that Cygwin/Windows and Mac/Linux
-        # can use the same code. Otherwise, we could remove the single
-        # quotes above and keep cmd as a sequence.
-        # FIXME: It's unclear if this is still needed.
-        self._start_cmd = " ".join(start_cmd)
-        self._stop_cmd = " ".join(stop_cmd)
+        start_cmd.extend(['-c', 'SSLCertificateFile "%s"' % cert_file])
+
+        self._start_cmd = start_cmd
+        self._stop_cmd = stop_cmd
 
     def _copy_apache_config_file(self, test_dir, output_dir):
         """Copy apache config file and returns the path to use.
@@ -217,13 +214,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             raise http_server_base.ServerError('Failed to stop %s: pid file still exists' % self._name)
 
     def _run(self, cmd):
-        # Use shell=True because we join the arguments into a string for
-        # the sake of Window/Cygwin and it needs quoting that breaks
-        # shell=False.
-        # FIXME: We should not need to be joining shell arguments into strings.
-        # shell=True is a trail of tears.
-        # Note: Not thread safe: http://bugs.python.org/issue2320
-        process = self._executive.popen(cmd, shell=True, stderr=self._executive.PIPE)
+        process = self._executive.popen(cmd, stderr=self._executive.PIPE)
         process.wait()
         retval = process.returncode
         err = process.stderr.read()
