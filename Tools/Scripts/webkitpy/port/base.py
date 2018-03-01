@@ -49,7 +49,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -774,7 +774,10 @@ class Port(object):
         expectations, determining search paths, and logging information."""
         if self._os_version is None:
             return None
-        return VersionNameMap.map(self.host.platform).to_name(self._os_version, table=PUBLIC_TABLE)
+        result = VersionNameMap.map(self.host.platform).to_name(self._os_version, table=PUBLIC_TABLE)
+        if not result:
+            result = VersionNameMap.map(self.host.platform).to_name(self._os_version, table=INTERNAL_TABLE)
+        return result
 
     def get_option(self, name, default_value=None):
         return getattr(self._options, name, default_value)

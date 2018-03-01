@@ -1,3 +1,23 @@
+2018-02-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Remove concept of 'future' versions (Follow-up fix 2)
+        https://bugs.webkit.org/show_bug.cgi?id=183184
+        <rdar://problem/37958594>
+
+        Reviewed by Aakash Jain.
+
+        Unlisted Apple versions can't run webkitpy tests because they don't
+        have specified port names.
+
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.determine_full_port_name): Return valid port name for unnamed
+        versions.
+        * Scripts/webkitpy/port/base.py:
+        (Port.version_name): Check both public and internal version mapping
+        when returning a version name.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.__init__): If no os version is defined, use the current version.
+
 2018-02-28  John Wilander  <wilander@apple.com>
 
         Add a second tier of prevalence to facilitate telemetry on very prevalent domains

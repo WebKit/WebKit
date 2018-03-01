@@ -60,10 +60,12 @@ class ApplePort(Port):
             # That convention means that we're supposed to use the version currently
             # being run, so this won't work if you're not on mac or win (respectively).
             # If you're not on the o/s in question, you must specify a full version or -future (cf. above).
-            if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False):
+            if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False) and host.platform.os_version_name():
                 port_name = cls.port_name + '-' + host.platform.os_version_name().lower().replace(' ', '')
-            else:
+            elif host.platform.os_version_name():
                 port_name = cls.port_name + '-' + host.platform.os_version_name().lower().replace(' ', '') + '-wk2'
+            else:
+                port_name = cls.port_name + '-wk2'
         elif getattr(options, 'webkit_test_runner', False) and  '-wk2' not in port_name:
             port_name += '-wk2'
 

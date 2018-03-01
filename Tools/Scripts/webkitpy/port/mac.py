@@ -56,13 +56,13 @@ class MacPort(DarwinPort):
     def __init__(self, host, port_name, **kwargs):
         DarwinPort.__init__(self, host, port_name, **kwargs)
         version_name_map = VersionNameMap.map(host.platform)
+        self._os_version = None
         if port_name.split('-') > 1:
             self._os_version = version_name_map.from_name(port_name.split('-')[1])[1]
         elif self.host.platform.is_mac():
             self._os_version = self.host.platform.os_version
-        else:
+        if not self._os_version:
             self._os_version = MacPort.CURRENT_VERSION
-        assert self._os_version
         assert self._os_version.major == 10
 
     def _build_driver_flags(self):
