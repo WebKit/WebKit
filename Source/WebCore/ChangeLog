@@ -1,3 +1,14 @@
+2018-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Temporarily enable user-installed-fonts everywhere until we can stop crashing on launch
+        https://bugs.webkit.org/show_bug.cgi?id=183255
+
+        Unreviewed.
+
+        Tests are already disabled.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+
 2018-03-01  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Split DNS cache expiration and connection timeout setting.
