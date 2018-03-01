@@ -52,7 +52,6 @@ ResourceLoadPrevalence ResourceLoadStatisticsClassifier::calculateResourcePreval
         && !subresourceUniqueRedirectsToCount
         && !subframeUnderTopFrameOriginsCount
         && !topFrameUniqueRedirectsToCount) {
-        ASSERT(currentPrevalence == Low);
         return Low;
     }
 
