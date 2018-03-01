@@ -983,16 +983,15 @@ void MediaPlayerPrivateGStreamer::newTextSample()
         bool found = FALSE;
         const gchar* id;
         gst_event_parse_stream_start(streamStartEvent.get(), &id);
-        for (size_t i = 0; i < m_textTracks.size(); ++i) {
-            RefPtr<InbandTextTrackPrivateGStreamer> track = m_textTracks.get(id);
-            if (track) {
+        for (auto& track : m_textTracks.values()) {
+            if (!strcmp(track->streamId().utf8().data(), id)) {
                 track->handleSample(sample);
                 found = true;
                 break;
             }
         }
         if (!found)
-            GST_WARNING("Got sample with unknown stream ID.");
+            GST_WARNING("Got sample with unknown stream ID %s.", id);
     } else
         GST_WARNING("Unable to handle sample with no stream start event.");
 }
