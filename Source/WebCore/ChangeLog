@@ -1,3 +1,18 @@
+2018-02-28  Tim Horton  <timothy_horton@apple.com>
+
+        Push WTF_PLATFORM_IOS down into preprocessor.pm instead of trying to determine it inside
+        https://bugs.webkit.org/show_bug.cgi?id=183193
+
+        Reviewed by Andy Estes.
+
+        * DerivedSources.make:
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        Instead of trying to discern WTF_PLATFORM_IOS inside preprocessor.pm,
+        push it down from DerivedSources.make. Also clean up DerivedSources.make
+        a tiny bit by adding a variable, FEATURE_AND_PLATFORM_DEFINES, which
+        contains both FEATURE_DEFINES and WTF_PLATFORM macros if needed.
+
 2018-02-28  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Dispatch accessiblesetvalue event

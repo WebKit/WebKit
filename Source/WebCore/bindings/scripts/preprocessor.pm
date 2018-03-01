@@ -63,7 +63,6 @@ sub applyPreprocessor
     if ($Config::Config{"osname"} eq "darwin") {
         push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
         push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
-        $defines .= " WTF_PLATFORM_IOS" if defined $ENV{PLATFORM_NAME} && $ENV{PLATFORM_NAME} !~ /macosx/;
     }
 
     # Remove double quotations from $defines and extract macros.
