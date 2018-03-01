@@ -77,10 +77,6 @@
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 
-#if PLATFORM(MAC)
-#import <WebCore/ScrollbarThemeMac.h>
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 #import <AXRuntime/AXDefines.h>
 #import <AXRuntime/AXNotificationConstants.h>
@@ -88,6 +84,10 @@
 #define kAXPidStatusChangedNotification 0
 #endif
 
+#endif
+
+#if PLATFORM(MAC)
+#import <WebCore/ScrollbarThemeMac.h>
 #endif
 
 #if USE(OS_STATE)
