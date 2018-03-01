@@ -1,3 +1,25 @@
+2018-03-01  Alejandro G. Castro  <alex@igalia.com>
+
+        Make LibWebRTCProvider port agnostic again after r215424
+        https://bugs.webkit.org/show_bug.cgi?id=183080
+
+        Reviewed by Youenn Fablet.
+
+        In the r215424 commit the webRTCAvailable function started to use a function from the DARWIN platform,
+        we have moved that code to the cocoa class and created a glib implementation that will be used in the future
+        to implement the LibWebRTCProviderGlib class.
+
+        No new tests, this is a refactor.
+
+        * Sources.txt: Add the compilation of the new file.
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp: Remove the webRTCAvailable function from this file.
+        (WebCore::LibWebRTCProvider::create): We want to use this even when LIBWEBRTC is not used.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProvider::webRTCAvailable): Moved the code from the LibWebRTCProvider class.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp:
+        (WebCore::LibWebRTCProvider::webRTCAvailable): Add the glib implementation, basically true, we are always
+        linking libwebrtc for the moment in these situations.
+
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Color emojis in WebKitGTK+ for great justice

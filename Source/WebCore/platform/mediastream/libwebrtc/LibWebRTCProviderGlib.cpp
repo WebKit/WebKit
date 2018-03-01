@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,63 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LibWebRTCProviderCocoa.h"
-
-#if USE(LIBWEBRTC)
-#include "VideoToolBoxDecoderFactory.h"
-#include "VideoToolBoxEncoderFactory.h"
-#include <wtf/darwin/WeakLinking.h>
-#endif
-
 namespace WebCore {
 
 UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 {
-#if USE(LIBWEBRTC) && PLATFORM(COCOA)
-    return makeUniqueRef<LibWebRTCProviderCocoa>();
+#if USE(LIBWEBRTC) && (PLATFORM(GTK) || PLATFORM(WPE))
+    return makeUniqueRef<LibWebRTCProviderGlib>();
 #else
     return makeUniqueRef<LibWebRTCProvider>();
 #endif
 }
 
-#if USE(LIBWEBRTC)
-
-std::unique_ptr<cricket::WebRtcVideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
-{
-    ASSERT(!m_decoderFactory);
-    auto decoderFactory = std::make_unique<VideoToolboxVideoDecoderFactory>();
-    m_decoderFactory = decoderFactory.get();
-
-    return WTFMove(decoderFactory);
-}
-
-std::unique_ptr<cricket::WebRtcVideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()
-{
-    ASSERT(!m_encoderFactory);
-    auto encoderFactory = std::make_unique<VideoToolboxVideoEncoderFactory>();
-    m_encoderFactory = encoderFactory.get();
-
-    return WTFMove(encoderFactory);
-}
-
-void LibWebRTCProviderCocoa::setActive(bool value)
-{
-    if (m_decoderFactory)
-        m_decoderFactory->setActive(value);
-    if (m_encoderFactory)
-        m_encoderFactory->setActive(value);
-}
-
-#endif // USE(LIBWEBRTC)
-
 bool LibWebRTCProvider::webRTCAvailable()
 {
-#if USE(LIBWEBRTC)
-    return !isNullFunctionPointer(rtc::LogMessage::LogToDebug);
-#else
     return true;
-#endif
 }
 
 } // namespace WebCore
