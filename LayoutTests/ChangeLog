@@ -1,3 +1,17 @@
+2018-03-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win][DRT] Implement setSpatialNavigationEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=183166
+
+        Reviewed by Per Arne Vollan.
+
+        * platform/win/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt:
+        * platform/wincairo/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt: Added.
+        This test requires an expectation for every platform. AppleWin had one but it must've been a copy-paste job?
+
+        * platform/win/TestExpectations:
+        Enable fast/spatial-navigation tests on AppleWin too.
+
 2018-03-01  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html fails with async policy delegates

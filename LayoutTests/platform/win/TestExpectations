@@ -225,9 +225,6 @@ fast/events/mouseover-button.html [ Skip ]
 # TODO Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html [ Skip ]
 
-# TODO Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
-fast/spatial-navigation/ [ Skip ]
-
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]

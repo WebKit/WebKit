@@ -534,8 +534,19 @@ void TestRunner::setXSSAuditorEnabled(bool enabled)
 
 void TestRunner::setSpatialNavigationEnabled(bool enabled)
 {
-    // FIXME: Implement for SpatialNavigation layout tests.
-    fprintf(testResult, "ERROR: TestRunner::setSpatialNavigationEnabled(bool) not implemented\n");
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate6> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    prefsPrivate->setSpatialNavigationEnabled(enabled);
 }
 
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)

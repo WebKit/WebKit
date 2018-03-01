@@ -1,3 +1,22 @@
+2018-03-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win][DRT] Implement setSpatialNavigationEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=183166
+
+        Reviewed by Per Arne Vollan.
+
+        Create a non-dummy implementation of the private preference in Win WKL to support layout tests.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::spatialNavigationEnabled):
+        (WebPreferences::setSpatialNavigationEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2018-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of NetworkingContext in WebKit

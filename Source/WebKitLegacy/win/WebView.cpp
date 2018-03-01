@@ -5474,6 +5474,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setWebGLEnabled(true);
 #endif // ENABLE(WEBGL)
 
+    hr = prefsPrivate->spatialNavigationEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setSpatialNavigationEnabled(!!enabled);
+
     hr = prefsPrivate->isDNSPrefetchingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

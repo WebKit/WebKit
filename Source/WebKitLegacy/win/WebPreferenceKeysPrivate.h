@@ -146,6 +146,8 @@
 
 #define WebKitCustomDragCursorsEnabledPreferenceKey "WebKitCustomDragCursorsEnabled"
 
+#define WebKitSpatialNavigationEnabledPreferenceKey "WebKitSpatialNavigationEnabled"
+
 #define WebKitDNSPrefetchingEnabledPreferenceKey "WebKitDNSPrefetchingEnabled"
 
 #define WebKitFullScreenEnabledPreferenceKey "WebKitFullScreenEnabled"

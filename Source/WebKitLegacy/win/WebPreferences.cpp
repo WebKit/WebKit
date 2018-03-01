@@ -285,6 +285,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitShowDebugBordersPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitSpatialNavigationEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitDNSPrefetchingEnabledPreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitHyperlinkAuditingEnabledPreferenceKey), kCFBooleanTrue);
@@ -1725,6 +1727,20 @@ HRESULT WebPreferences::customDragCursorsEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitCustomDragCursorsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::spatialNavigationEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitSpatialNavigationEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setSpatialNavigationEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitSpatialNavigationEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

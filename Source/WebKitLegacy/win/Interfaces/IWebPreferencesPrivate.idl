@@ -221,4 +221,6 @@ interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
     HRESULT setVisualViewportAPIEnabled([in] BOOL enabled);
     HRESULT fetchAPIKeepAliveEnabled([out, retval] BOOL* enabled);
     HRESULT setFetchAPIKeepAliveEnabled([in] BOOL enabled);
+    HRESULT spatialNavigationEnabled([out, retval] BOOL *enabled);
+    HRESULT setSpatialNavigationEnabled([in] BOOL enabled);
 }

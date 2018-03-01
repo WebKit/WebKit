@@ -1184,7 +1184,7 @@ static JSValueRef setXSSAuditorEnabledCallback(JSContextRef context, JSObjectRef
 
 static JSValueRef setSpatialNavigationEnabledCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    // Has mac implementation.
+    // Has mac & windows implementation.
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
