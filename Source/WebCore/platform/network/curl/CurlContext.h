@@ -103,7 +103,7 @@ public:
         const String url() const;
     };
 
-    static CurlContext& singleton();
+    WEBCORE_EXPORT static CurlContext& singleton();
 
     virtual ~CurlContext();
 

@@ -128,7 +128,7 @@ public:
 
     const CookieJarCurl& cookieStorage() const { return m_cookieStorage; };
     CookieJarDB& cookieDatabase() const;
-    void setCookieDatabase(UniqueRef<CookieJarDB>&&) const;
+    WEBCORE_EXPORT void setCookieDatabase(UniqueRef<CookieJarDB>&&) const;
 
     NetworkingContext* context() const;
 #else

@@ -1,3 +1,18 @@
+2018-03-01  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Linker errors in some curl files due to missing exports
+        https://bugs.webkit.org/show_bug.cgi?id=183238
+
+        Reviewed by Alex Christensen.
+
+        No new tests, no change in behavior.
+
+        Adding WEBCORE_EXPORT to functions now used in WebKit.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/curl/CookieJarDB.h:
+        * platform/network/curl/CurlContext.h:
+
 2018-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229130.

@@ -52,8 +52,8 @@ public:
     int deleteCookies(const String& url);
     int deleteAllCookies();
 
-    CookieJarDB(const String& databasePath);
-    ~CookieJarDB();
+    WEBCORE_EXPORT CookieJarDB(const String& databasePath);
+    WEBCORE_EXPORT ~CookieJarDB();
 
 private:
 
