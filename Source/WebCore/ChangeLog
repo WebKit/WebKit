@@ -1,3 +1,18 @@
+2018-03-01  Youenn Fablet  <youenn@apple.com>
+
+        SWServer::removeClientServiceWorkerRegistration should not log an error if there is no registration
+        https://bugs.webkit.org/show_bug.cgi?id=183248
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+        Removed the error logging.
+        As can be seen from running api and layout tests, a web process can ask a registration to be unregistered
+        and by the time it goes to the StorageProcess, the registration is already cleared.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::removeClientServiceWorkerRegistration):
+
 2018-03-01  Daniel Bates  <dabates@apple.com>
 
         CSS ::selection stroke-color and stroke-width are not applied to selected text in text fields

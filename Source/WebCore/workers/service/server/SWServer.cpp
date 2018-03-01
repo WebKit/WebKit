@@ -481,13 +481,8 @@ void SWServer::addClientServiceWorkerRegistration(Connection& connection, Servic
 
 void SWServer::removeClientServiceWorkerRegistration(Connection& connection, ServiceWorkerRegistrationIdentifier identifier)
 {
-    auto* registration = m_registrationsByID.get(identifier);
-    if (!registration) {
-        LOG_ERROR("Request to remove client-side ServiceWorkerRegistration from non-existent server-side registration");
-        return;
-    }
-    
-    registration->removeClientServiceWorkerRegistration(connection.identifier());
+    if (auto* registration = m_registrationsByID.get(identifier))
+        registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, WorkerType type)
