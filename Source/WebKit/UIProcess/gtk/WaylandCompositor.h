@@ -113,6 +113,7 @@ public:
     void bindSurfaceToWebPage(Surface*, uint64_t pageID);
     void registerWebPage(WebPageProxy&);
     void unregisterWebPage(WebPageProxy&);
+    void willDestroySurface(Surface*);
 
     bool getTexture(WebPageProxy&, unsigned&, WebCore::IntSize&);
 
