@@ -40,12 +40,15 @@
         var input = document.getElementById("input");
         debug("DOM focus");
         input.focus();
-        testRunner.runUIScript(isWindowFirstResponderScript(), function(result) {
-            debug("Window is still the first responder: " + result);
-            input.blur();
-            // 2. Now make sure accessibility focus will make web content the first responder.
-            testAccessibilityMakeFirstResonder();
-        });
+        // Give it some delay for the IPC to happen.
+        setTimeout(function(){ 
+            testRunner.runUIScript(isWindowFirstResponderScript(), function(result) {
+                debug("Window is still the first responder: " + result);
+                input.blur();
+                // 2. Now make sure accessibility focus will make web content the first responder.
+                testAccessibilityMakeFirstResonder();
+            });
+        }, 100);
     }
     
     function testAccessibilityMakeFirstResonder() {
@@ -53,10 +56,13 @@
             var inputObj = accessibilityController.accessibleElementById("input");
             debug("Accessibility focus")
             inputObj.takeFocus();
-            testRunner.runUIScript(isWindowFirstResponderScript(), function(result) {
-                debug("Window is still the first responder: " + result);
-                finishTest();
-            });
+            // Give it some delay for the IPC to happen.
+            setTimeout(function(){ 
+                testRunner.runUIScript(isWindowFirstResponderScript(), function(result) {
+                    debug("Window is still the first responder: " + result);
+                    finishTest();
+                });
+            }, 100);
         }
     }
     
