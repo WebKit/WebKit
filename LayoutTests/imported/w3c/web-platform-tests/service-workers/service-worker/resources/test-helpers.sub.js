@@ -122,11 +122,14 @@ function wait_for_state(test, worker, state) {
     }
   }
 
-  return new Promise(test.step_func(function(resolve) {
+  return new Promise(test.step_func(function(resolve, reject) {
       worker.addEventListener('statechange', test.step_func(function() {
           if (worker.state === state)
             resolve(state);
         }));
+        test.step_timeout(() => {
+            reject("wait_for_state timed out, waiting for state " + state + ", worker state is " + worker.state);
+        }, 10000);
     }));
 }
 
