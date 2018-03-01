@@ -1,3 +1,18 @@
+2018-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix some errors due to some mach port APIs being unavailable on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=183262
+        <rdar://problem/38028521>
+
+        Reviewed by Tim Horton.
+
+        Minor build fix; mach_port_guard and mach_port_unguard are not available on this platform.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::platformInitialize):
+        (IPC::Connection::open):
+
 2018-03-01  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed build fix after r229140.
