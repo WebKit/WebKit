@@ -34,11 +34,21 @@
 
 namespace WebCore {
 
-NSScrollerStyle recommendedScrollerStyle()
+std::optional<bool> ScrollerStyle::m_useOverlayScrollbars;
+
+NSScrollerStyle ScrollerStyle::recommendedScrollerStyle()
 {
+    if (m_useOverlayScrollbars.has_value())
+        return *m_useOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
+    
     if (DeprecatedGlobalSettings::usesOverlayScrollbars())
         return NSScrollerStyleOverlay;
     return [NSScroller preferredScrollerStyle];
+}
+
+void ScrollerStyle::setUseOverlayScrollbars(bool useOverlayScrollbars)
+{
+    m_useOverlayScrollbars = useOverlayScrollbars;
 }
 
 }

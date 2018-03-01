@@ -57,6 +57,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MemoryRelease.h>
+#import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebCoreNSURLExtras.h>
@@ -75,6 +76,10 @@
 #if PLATFORM(IOS)
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+
+#if PLATFORM(MAC)
+#import <WebCore/ScrollbarThemeMac.h>
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AXRuntime/AXDefines.h>
@@ -555,5 +560,18 @@ void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 }
 #endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
+{
+    ScrollerStyle::setUseOverlayScrollbars(useOverlayScrollbars);
+
+    ScrollbarTheme& theme = ScrollbarTheme::theme();
+    if (theme.isMockTheme())
+        return;
+
+    static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
+}
+#endif    
 
 } // namespace WebKit

@@ -1,3 +1,36 @@
+2018-03-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Scrollbar preferences are ignored when the WebContent process doesn't have access to the WindowServer.
+        https://bugs.webkit.org/show_bug.cgi?id=183231
+        <rdar://problem/37793457>
+
+        Reviewed by Brent Fulgham.
+
+        When the WebContent process doesn't have access to the WindowServer, the scrollbars are always of the overlay type.
+        The notification about scrollbar preferences is never received by the WebContent process when there is no
+        WindowServer access. This can be fixed by adding an observer of scrollbar preferences in the UI process, and
+        notifying the WebProcess about this by sending it a message. This message should also contain the preferred
+        scrollbar type, since the call '[NSScroller preferredScrollerStyle]' will always return the overlay style when
+        there is no WindowServer access.
+
+        No new tests, covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/NSScrollerImpDetails.mm:
+        (WebCore::ScrollerStyle::recommendedScrollerStyle):
+        (WebCore::ScrollerStyle::setUseOverlayScrollbars):
+        (WebCore::recommendedScrollerStyle): Deleted.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar const):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar const):
+        (WebCore::ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbarsChanged):
+
 2018-03-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Temporarily enable user-installed-fonts everywhere until we can stop crashing on launch

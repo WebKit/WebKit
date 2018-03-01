@@ -372,6 +372,7 @@ private:
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     void setScreenProperties(const HashMap<uint32_t, WebCore::ScreenProperties>&);
+    void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
 #endif
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;

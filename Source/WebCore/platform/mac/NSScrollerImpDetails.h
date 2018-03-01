@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,19 @@
 
 #if USE(APPKIT)
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
-NSScrollerStyle recommendedScrollerStyle();
+class ScrollerStyle {
+public:
+    static NSScrollerStyle recommendedScrollerStyle();
+
+    WEBCORE_EXPORT static void setUseOverlayScrollbars(bool);
+    
+private:
+    static std::optional<bool> m_useOverlayScrollbars;
+};
 
 }
 

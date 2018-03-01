@@ -36,7 +36,7 @@ public:
     ScrollbarThemeMac();
     virtual ~ScrollbarThemeMac();
 
-    void preferencesChanged();
+    WEBCORE_EXPORT void preferencesChanged();
 
     void updateEnabledState(Scrollbar&) override;
 

@@ -558,6 +558,15 @@ void WebProcessPool::registerNotificationObservers()
         TextChecker::didChangeAutomaticDashSubstitutionEnabled();
         textCheckerStateChanged();
     }];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    m_scrollerStyleNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSPreferredScrollerStyleDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        auto scrollbarStyle = [NSScroller preferredScrollerStyle];
+        for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
+            processPool->sendToAllProcesses(Messages::WebProcess::ScrollerStylePreferenceChanged(scrollbarStyle));
+    }];
+#endif
+
 #endif // !PLATFORM(IOS)
 }
 
@@ -569,6 +578,9 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticSpellingCorrectionNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticQuoteSubstitutionNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticDashSubstitutionNotificationObserver.get()];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
+#endif
 #endif // !PLATFORM(IOS)
 }
 

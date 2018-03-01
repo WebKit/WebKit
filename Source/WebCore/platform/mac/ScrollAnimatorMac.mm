@@ -635,7 +635,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
     m_scrollerImpPairDelegate = adoptNS([[WebScrollerImpPairDelegate alloc] initWithScrollableArea:&scrollableArea]);
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
     [m_scrollerImpPair setDelegate:m_scrollerImpPairDelegate.get()];
-    [m_scrollerImpPair setScrollerStyle:recommendedScrollerStyle()];
+    [m_scrollerImpPair setScrollerStyle:ScrollerStyle::recommendedScrollerStyle()];
 }
 
 ScrollAnimatorMac::~ScrollAnimatorMac()
@@ -815,7 +815,7 @@ void ScrollAnimatorMac::mouseMovedInContentArea()
 void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
     // At this time, only legacy scrollbars needs to send notifications here.
-    if (recommendedScrollerStyle() != NSScrollerStyleLegacy)
+    if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleLegacy)
         return;
 
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
@@ -828,7 +828,7 @@ void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
     // At this time, only legacy scrollbars needs to send notifications here.
-    if (recommendedScrollerStyle() != NSScrollerStyleLegacy)
+    if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleLegacy)
         return;
 
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
@@ -1047,7 +1047,7 @@ void ScrollAnimatorMac::horizontalScrollbarLayerDidChange()
 bool ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scrollbar)
 {
     // Non-overlay scrollbars should always participate in hit testing.
-    if (recommendedScrollerStyle() != NSScrollerStyleOverlay)
+    if (ScrollerStyle::recommendedScrollerStyle() != NSScrollerStyleOverlay)
         return true;
 
     if (scrollbar->isAlphaLocked())

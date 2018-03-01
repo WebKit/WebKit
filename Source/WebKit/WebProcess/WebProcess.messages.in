@@ -126,6 +126,7 @@ messages -> WebProcess LegacyReceiver {
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    SetScreenProperties(HashMap<uint32_t, WebCore::ScreenProperties> screenProperties);
+    SetScreenProperties(HashMap<uint32_t, WebCore::ScreenProperties> screenProperties)
+    ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
 #endif
 }
