@@ -2797,6 +2797,10 @@ fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
 # Selectors don't seem to work properly
 webkit.org/b/117322 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/selectors/selection-window-inactive-stroke-color.html  [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/selectors/selection-window-inactive-text-shadow.html  [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/selectors/text-field-selection-window-inactive-stroke-color.html  [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/selectors/text-field-selection-window-inactive-text-shadow.html  [ ImageOnlyFailure ]
 webkit.org/b/140519 [ Debug ] fast/selectors/querySelector-id-with-multiple-elements-with-same-id.html [ Skip ]  # Crashing
 fast/selectors/querySelector-window-inactive.html [ Failure ]
 fast/selectors/read-only-read-write-input-basics.html [ Failure ]

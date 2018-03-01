@@ -1,3 +1,41 @@
+2018-03-01  Daniel Bates  <dabates@apple.com>
+
+        CSS ::selection stroke-color and stroke-width are not applied to selected text in text fields
+        and ::selection:window-inactive stroke-color and stroke-width are never applied
+        https://bugs.webkit.org/show_bug.cgi?id=183178
+
+        Reviewed by David Hyatt.
+
+        This change fixes the following two issues:
+            1. Properties stroke-color and stroke-width are not applied to the ::selection pseudo-
+               element of text fields.
+            2. Properties stroke-color and stroke-width are never applied to ::selection:window-inactive
+               pseudo elements.
+
+        Currently when computing the paint styles for selected text we query the cached styles for
+        the ::selection pseudo element on the renderer. Text fields are implemented using a User Agent
+        shadow DOM. With regards to issue (1) the renderer queried was the inner most renderer for
+        the text in the text field. But it should have been the shadow host renderer (i.e. the renderer
+        for the <input>). With regards to issue (2) we cannot retrieve cached styles for the
+        ::selection pseudo element because it can be effected by a pseudo class, :window-inactive,
+        which matches when the page is deactivated (i.e. the window is in the background as the user
+        made another window the frontmost window). Both of these issues are fixed by making use
+        of RenderElement::selectionPseudoStyle().
+
+        Tests: fast/selectors/selection-window-inactive-stroke-color.html
+               fast/selectors/selection-window-inactive-text-shadow.html
+               fast/selectors/text-field-selection-stroke-color.html
+               fast/selectors/text-field-selection-text-shadow.html
+               fast/selectors/text-field-selection-window-inactive-stroke-color.html
+               fast/selectors/text-field-selection-window-inactive-text-shadow.html
+
+        * rendering/RenderText.h:
+        (WebCore::RenderText::selectionPseudoStyle const): Add a convenience function that turns
+        around and calls the function of the same name on its parent.
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextSelectionPaintStyle): Modified to use RenderText::selectionPseudoStyle()
+        instead of directly querying for the cached styles for the ::selection pseudo element.
+
 2018-03-01  Per Arne Vollan  <pvollan@apple.com>
 
         Scrollbar preferences are ignored when the WebContent process doesn't have access to the WindowServer.

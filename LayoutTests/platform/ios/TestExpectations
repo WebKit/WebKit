@@ -105,6 +105,16 @@ editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ WontFix
 fast/writing-mode/english-bt-text-with-spelling-marker.html [ WontFix ]
 fast/writing-mode/english-rl-text-with-spelling-marker.html [ WontFix ]
 
+# UIKit draws selection on iOS
+fast/selectors/input-with-selection-pseudo-element.html [ WontFix ]
+fast/selectors/selection-window-inactive.html [ WontFix ]
+fast/selectors/selection-window-inactive-stroke-color.html  [ WontFix ]
+fast/selectors/selection-window-inactive-text-shadow.html  [ WontFix ]
+fast/selectors/text-field-selection-stroke-color.html  [ WontFix ]
+fast/selectors/text-field-selection-text-shadow.html  [ WontFix ]
+fast/selectors/text-field-selection-window-inactive-stroke-color.html  [ WontFix ]
+fast/selectors/text-field-selection-window-inactive-text-shadow.html  [ WontFix ]
+
 # Plugins are not supported on iOS
 plugins
 compositing/plugins
@@ -1940,9 +1950,7 @@ fast/ruby/ruby-inline-style-not-updated-with-before-after-content.html [ Failure
 fast/ruby/ruby-inline-style-not-updated.html [ Failure ]
 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
 fast/ruby/ruby-line-height.html [ Failure ]
-fast/selectors/input-with-selection-pseudo-element.html [ ImageOnlyFailure ]
 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
-fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 fast/spatial-navigation/snav-1st-stop.html [ Failure ]
 fast/spatial-navigation/snav-clipped-overflowed-content.html [ Failure ]

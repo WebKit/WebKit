@@ -54,6 +54,7 @@ public:
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
+    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
     virtual String originalText() const;
 
@@ -290,6 +291,11 @@ inline Color RenderText::selectionForegroundColor() const
 inline Color RenderText::selectionEmphasisMarkColor() const
 {
     return parent()->selectionEmphasisMarkColor();
+}
+
+inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
+{
+    return parent()->selectionPseudoStyle();
 }
 
 inline RenderText* Text::renderer() const

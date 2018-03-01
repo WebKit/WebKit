@@ -147,7 +147,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
     if (emphasisMarkForeground.isValid() && emphasisMarkForeground != selectionPaintStyle.emphasisMarkColor)
         selectionPaintStyle.emphasisMarkColor = emphasisMarkForeground;
 
-    if (auto* pseudoStyle = renderer.getCachedPseudoStyle(SELECTION)) {
+    if (auto pseudoStyle = renderer.selectionPseudoStyle()) {
         const ShadowData* shadow = paintInfo.forceTextColor() ? nullptr : pseudoStyle->textShadow();
         if (shadow != selectionShadow)
             selectionShadow = shadow;

@@ -1,3 +1,36 @@
+2018-03-01  Daniel Bates  <dabates@apple.com>
+
+        CSS ::selection stroke-color and stroke-width are not applied to selected text in text fields
+        and ::selection:window-inactive stroke-color and stroke-width are never applied
+        https://bugs.webkit.org/show_bug.cgi?id=183178
+
+        Reviewed by David Hyatt.
+
+        Add tests to ensure that we paint ::selection stroke-color and stroke-width for selected text
+        in text fields. Add tests to ensure that we apply ::selection:window-inactive stroke-color
+        and stroke-width to selected text when the page is deactivated.
+
+        * fast/selectors/selection-window-inactive-stroke-color-expected.html: Added.
+        * fast/selectors/selection-window-inactive-stroke-color.html: Added.
+        * fast/selectors/selection-window-inactive-text-shadow-expected.html: Added.
+        * fast/selectors/selection-window-inactive-text-shadow.html: Added.
+        * fast/selectors/text-field-selection-stroke-color-expected.html: Added.
+        * fast/selectors/text-field-selection-stroke-color.html: Added.
+        * fast/selectors/text-field-selection-text-shadow-expected.html: Added.
+        * fast/selectors/text-field-selection-text-shadow.html: Added.
+        * fast/selectors/text-field-selection-window-inactive-stroke-color-expected.html: Added.
+        * fast/selectors/text-field-selection-window-inactive-stroke-color.html: Added.
+        * fast/selectors/text-field-selection-window-inactive-text-shadow-expected.html: Added.
+        * fast/selectors/text-field-selection-window-inactive-text-shadow.html: Added.
+        * platform/gtk/TestExpectations: Skip the ::selection:window-inactive tests until we fix
+        <https://bugs.webkit.org/show_bug.cgi?id=183143>.
+        * platform/ios/TestExpectations: Mark the tests as won't fix since UIKit draws selection on iOS.
+        * platform/win/TestExpectations: Mark tests as image failures an associated with <https://bugs.webkit.org/show_bug.cgi?id=117322>.
+        Windows does not seem to be updating selectors when the window is deactivated or window deactivation,
+        testRunner.setWindowIsKey() is broken.
+        * platform/wpe/TestExpectations: Skip the ::selection:window-inactive tests until we fix
+        <https://bugs.webkit.org/show_bug.cgi?id=183144>.
+
 2018-03-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win][DRT] Implement setSpatialNavigationEnabled.
