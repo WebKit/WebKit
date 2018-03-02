@@ -1,3 +1,13 @@
+2018-03-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Annotate more classes with WTF_MAKE_FAST_ALLOCATED
+        https://bugs.webkit.org/show_bug.cgi?id=183279
+
+        Reviewed by JF Bastien.
+
+        * wtf/SimpleStats.h:
+        * wtf/ThreadGroup.h:
+
 2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove monotonicallyIncreasingTime

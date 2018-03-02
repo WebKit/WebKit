@@ -40,6 +40,7 @@ struct CurrentThreadState {
 };
     
 class MachineThreads {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(MachineThreads);
 public:
     MachineThreads();

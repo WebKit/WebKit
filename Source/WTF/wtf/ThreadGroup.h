@@ -35,6 +35,8 @@ namespace WTF {
 enum class ThreadGroupAddResult { NewlyAdded, AlreadyAdded, NotAdded };
 
 class ThreadGroup : public std::enable_shared_from_this<ThreadGroup> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ThreadGroup);
 public:
     friend class Thread;
 

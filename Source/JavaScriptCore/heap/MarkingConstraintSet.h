@@ -35,6 +35,8 @@ class Heap;
 class MarkingConstraintSolver;
 
 class MarkingConstraintSet {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(MarkingConstraintSet);
 public:
     MarkingConstraintSet(Heap&);
     ~MarkingConstraintSet();

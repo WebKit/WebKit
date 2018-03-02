@@ -75,7 +75,10 @@ typename MapType::KeyType keyForThunk(MapType& map, MacroAssemblerCodePtr ptr)
 }
 
 class Thunks {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Thunks);
 public:
+    Thunks() = default;
     MacroAssemblerCodeRef getSlowPathCallThunk(const SlowPathCallKey& key)
     {
         return generateIfNecessary(

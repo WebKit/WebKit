@@ -43,8 +43,8 @@ class VM;
 // once they hasOneRef() and nobody is running code from that CodeBlock.
 
 class CodeBlockSet {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CodeBlockSet);
-
 public:
     CodeBlockSet();
     ~CodeBlockSet();
