@@ -1,3 +1,29 @@
+2018-03-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html crashes with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183294
+        <rdar://problem/38073596>
+
+        Reviewed by Youenn Fablet.
+
+        Drop code that was added to SubresourceLoader::willCancel() in r228852. The purpose of this code
+        was to make sure that SubresourceLoader::m_policyForResponseCompletionHandler always gets called,
+        even when the load is cancelled. However, this code is not needed (since m_policyForResponseCompletionHandler
+        is a CompletionHandler, an assertion will be hit if we fail to call it and we'll know). Calling
+        the completionHandler inside SubresourceLoader::willCancel() is too early and leads to crashes.
+
+        The completionHandler currently gets called DocumentLoader::responseReceived() via a call to
+        mainResourceLoader->didReceiveResponsePolicy(). Note that in r229177, we made sure that the
+        call to didReceiveResponsePolicy() happens *after* the call to continueAfterContentPolicy()
+        to maintain our non-async policy delegate behavior. However, continueAfterContentPolicy()
+        would end up calling willCancel() and call the completionHandler when shouldContinue was
+        false.
+
+        Test: http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willCancel):
+
 2018-03-02  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229185 and r229184

@@ -1,5 +1,18 @@
 2018-03-02  Chris Dumez  <cdumez@apple.com>
 
+        imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html crashes with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183294
+        <rdar://problem/38073596>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate-expected.txt: Added.
+        * http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html: Added.
+
+2018-03-02  Chris Dumez  <cdumez@apple.com>
+
         fast/events/before-unload-remove-itself.html crashes with async policy delegates
         https://bugs.webkit.org/show_bug.cgi?id=183290
         <rdar://problem/38069045>

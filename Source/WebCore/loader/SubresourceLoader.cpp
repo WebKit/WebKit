@@ -674,9 +674,6 @@ void SubresourceLoader::willCancel(const ResourceError& error)
     ASSERT(!reachedTerminalState());
     LOG(ResourceLoading, "Cancelled load of '%s'.\n", m_resource->url().string().latin1().data());
 
-    if (auto policyForResponseCompletionHandler = WTFMove(m_policyForResponseCompletionHandler))
-        policyForResponseCompletionHandler();
-
     Ref<SubresourceLoader> protectedThis(*this);
 #if PLATFORM(IOS)
     m_state = m_state == Uninitialized ? CancelledWhileInitializing : Finishing;

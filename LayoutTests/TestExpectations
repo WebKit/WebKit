@@ -174,6 +174,11 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redire
 
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
+# Console log lines may appear in a different order so we silence them.
+http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/181897 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/181900 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr ]
@@ -613,7 +618,6 @@ imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.h
 
 imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure ]
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
-webkit.org/b/167380 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Failure Pass ]
 
 # Flaky tests due to always changing assertion error message
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
