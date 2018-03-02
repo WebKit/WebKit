@@ -1,5 +1,13 @@
 2018-03-02  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] Unreviewed gardening
+
+        * platform/gtk/TestExpectations: Add
+        imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html,
+        which started failing in the bots.
+
+2018-03-02  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK][WPE] Update js/dom static properties after r229112
 
         Unreviewed gardening.
