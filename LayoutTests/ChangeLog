@@ -1,3 +1,11 @@
+2018-03-02  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Update js/dom static properties after r229112
+
+        Unreviewed gardening.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r222843): [HarfBuzz] Combining enclosed keycap not correctly handled
