@@ -189,6 +189,11 @@ void Caches::initializeSize()
     uint64_t size = 0;
     m_storage->traverse({ }, 0, [protectedThis = makeRef(*this), this, protectedStorage = makeRef(*m_storage), size](const auto* storage, const auto& information) mutable {
         if (!storage) {
+            if (m_pendingInitializationCallbacks.isEmpty()) {
+                // Caches was cleared so let's not get initialized.
+                m_storage = nullptr;
+                return;
+            }
             m_size = size;
             m_isInitialized = true;
             auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);

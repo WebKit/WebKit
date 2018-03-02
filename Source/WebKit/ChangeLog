@@ -1,5 +1,21 @@
 2018-03-02  Youenn Fablet  <youenn@apple.com>
 
+        LayoutTest imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=179248
+        <rdar://problem/35377756>
+
+        Reviewed by Chris Dumez.
+
+        In case we go up to the initializeSize step and Caches was cleared
+        between the time we stated to initialize and the time we got there,
+        we need to make as if Caches was not initialized,
+        thus keeping m_isInitialized to false and m_storage to nullptr.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initializeSize):
+
+2018-03-02  Youenn Fablet  <youenn@apple.com>
+
         Clients should register to StorageProcess with their service worker registration identifier
         https://bugs.webkit.org/show_bug.cgi?id=182313
         <rdar://problem/38044403>
