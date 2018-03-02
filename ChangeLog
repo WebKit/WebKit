@@ -1,3 +1,12 @@
+2018-03-02  Don Olmstead  <don.olmstead@sony.com>
+
+        Add clang-format configuration
+        https://bugs.webkit.org/show_bug.cgi?id=183302
+
+        Reviewed by Ryosuke Niwa.
+
+        * .clang-format: Added.
+
 2018-03-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] configure failure for aarch64
