@@ -307,10 +307,7 @@ void SWServerRegistration::activate()
 
     // For each service worker client who is using registration:
     // - Set client's active worker to registration's active worker.
-    for (auto keyValue : m_clientsUsingRegistration) {
-        for (auto& clientIdentifier : keyValue.value)
-            m_server.setClientActiveWorker(ServiceWorkerClientIdentifier { keyValue.key, clientIdentifier }, activeWorker()->identifier());
-    }
+
     // - Invoke Notify Controller Change algorithm with client as the argument.
     notifyClientsOfControllerChange();
 
