@@ -198,7 +198,6 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     m_scaledFont = other.m_scaledFont;
 
     // This will be re-created on demand.
-    m_fallbacks = nullptr;
     m_harfBuzzFace = nullptr;
 
     return *this;
@@ -243,21 +242,6 @@ HarfBuzzFace& FontPlatformData::harfBuzzFace() const
     if (!m_harfBuzzFace)
         m_harfBuzzFace = std::make_unique<HarfBuzzFace>(const_cast<FontPlatformData&>(*this), hash());
     return *m_harfBuzzFace;
-}
-
-FcFontSet* FontPlatformData::fallbacks() const
-{
-    if (m_fallbacks)
-        return m_fallbacks.get();
-
-    if (m_pattern) {
-        FcResult fontConfigResult;
-        FcUniquePtr<FcFontSet> unpreparedFallbacks(FcFontSort(nullptr, m_pattern.get(), FcTrue, nullptr, &fontConfigResult));
-        m_fallbacks.reset(FcFontSetCreate());
-        for (int i = 0; i < unpreparedFallbacks.get()->nfont; i++)
-            FcFontSetAdd(m_fallbacks.get(), FcFontRenderPrepare(nullptr, m_pattern.get(), unpreparedFallbacks.get()->fonts[i]));
-    }
-    return m_fallbacks.get();
 }
 
 bool FontPlatformData::isFixedPitch() const
