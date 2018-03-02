@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPDFView.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(WKPDFVIEW)
 
 #import "APIFindClient.h"
 #import "APIUIClient.h"
@@ -892,4 +892,4 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #pragma clang diagnostic pop
 
-#endif /* PLATFORM(IOS) */
+#endif // PLATFORM(IOS) && ENABLE(WKPDFVIEW)

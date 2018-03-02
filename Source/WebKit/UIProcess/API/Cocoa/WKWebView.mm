@@ -1294,9 +1294,10 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 - (BOOL)_isBackground
 {
+#if ENABLE(WKPDFVIEW)
     if ([self _isDisplayingPDF])
         return [(WKPDFView *)_customContentView isBackground];
-
+#endif
     return [_contentView isBackground];
 }
 
@@ -5402,22 +5403,34 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (BOOL)_isDisplayingPDF
 {
+#if ENABLE(WKPDFVIEW)
     return [_customContentView isKindOfClass:[WKPDFView class]];
+#else
+    return NO;
+#endif
 }
 
 - (NSData *)_dataForDisplayedPDF
 {
+#if ENABLE(WKPDFVIEW)
     if (![self _isDisplayingPDF])
         return nil;
     CGPDFDocumentRef pdfDocument = [(WKPDFView *)_customContentView pdfDocument];
     return [(NSData *)CGDataProviderCopyData(CGPDFDocumentGetDataProvider(pdfDocument)) autorelease];
+#else
+    return nil;
+#endif
 }
 
 - (NSString *)_suggestedFilenameForDisplayedPDF
 {
+#if ENABLE(WKPDFVIEW)
     if (![self _isDisplayingPDF])
         return nil;
     return [(WKPDFView *)_customContentView.get() suggestedFilename];
+#else
+    return nil;
+#endif
 }
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter

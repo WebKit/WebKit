@@ -1,3 +1,21 @@
+2018-03-02  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to disable WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=183281
+        <rdar://problem/38060815>
+
+        Reviewed by Dan Bates.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isBackground]):
+        (-[WKWebView _isDisplayingPDF]):
+        (-[WKWebView _dataForDisplayedPDF]):
+        (-[WKWebView _suggestedFilenameForDisplayedPDF]):
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry init]):
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+
 2018-03-02  Youenn Fablet  <youenn@apple.com>
 
         WebProcessProxy should handle its completion handler at destruction time

@@ -160,6 +160,12 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_DOWNLOAD_ATTRIBUTE 0
 #endif
 
+#if !defined(ENABLE_WKPDFVIEW)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#define ENABLE_WKPDFVIEW 1
+#endif
+#endif
+
 #endif /* PLATFORM(IOS) */
 
 /* --------- Apple MAC port (not IOS) --------- */

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(WKPDFVIEW)
 
 #import "CorePDFSPI.h"
 #import "WKActionSheetAssistant.h"
@@ -37,4 +37,4 @@
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && ENABLE(WKPDFVIEW)

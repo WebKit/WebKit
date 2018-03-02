@@ -51,8 +51,10 @@ using namespace WebKit;
     if (!(self = [super init]))
         return nil;
 
+#if ENABLE(WKPDFVIEW)
     for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
         [self registerProvider:[WKPDFView class] forMIMEType:mimeType];
+#endif
 
     return self;
 }
