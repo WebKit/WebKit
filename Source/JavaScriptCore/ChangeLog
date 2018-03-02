@@ -1,3 +1,17 @@
+2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ASSERTION FAILED: matchContextualKeyword(m_vm->propertyNames->async)
+        https://bugs.webkit.org/show_bug.cgi?id=183173
+
+        Reviewed by Saam Barati.
+
+        Classifier could propagate an error which does not occur at the first token
+        of the given expression. We should check whether the given token is "async"
+        instead of assertion.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+
 2018-03-01  Saam Barati  <sbarati@apple.com>
 
         We need to clear cached structures when having a bad time

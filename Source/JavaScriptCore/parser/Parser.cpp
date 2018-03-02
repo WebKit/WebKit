@@ -3637,9 +3637,10 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
             restoreSavePoint(savePoint);
             bool isAsyncArrow = false;
             if (UNLIKELY(classifier.indicatesPossibleAsyncArrowFunction())) {
-                ASSERT(matchContextualKeyword(m_vm->propertyNames->async));
-                next();
-                isAsyncArrow = !m_lexer->prevTerminator();
+                if (matchContextualKeyword(m_vm->propertyNames->async)) {
+                    next();
+                    isAsyncArrow = !m_lexer->prevTerminator();
+                }
             }
             if (isArrowFunctionParameters()) {
                 if (wasOpenParen)
