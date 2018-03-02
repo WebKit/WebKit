@@ -99,7 +99,7 @@ static inline void updateVaryInformation(RecordInformation& recordInformation, c
 RecordInformation Cache::toRecordInformation(const Record& record)
 {
     Key key { ASCIILiteral("record"), m_uniqueName, { }, createCanonicalUUIDString(), m_caches.salt() };
-    RecordInformation recordInformation { WTFMove(key), monotonicallyIncreasingTimeMS(), record.identifier, 0 , record.responseBodySize, record.request.url(), false, { } };
+    RecordInformation recordInformation { WTFMove(key), MonotonicTime::now().secondsSinceEpoch().milliseconds(), record.identifier, 0 , record.responseBodySize, record.request.url(), false, { } };
 
     updateVaryInformation(recordInformation, record.request, record.response);
 

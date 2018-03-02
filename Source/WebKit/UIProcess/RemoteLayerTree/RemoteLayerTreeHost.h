@@ -58,7 +58,7 @@ public:
     typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
     LayerAnimationDelegateMap& animationDelegates() { return m_animationDelegates; }
 
-    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *, double startTime);
+    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *, MonotonicTime startTime);
     void animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *);
 
     void clearLayers();

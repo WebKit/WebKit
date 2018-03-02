@@ -109,23 +109,23 @@ void DisplayCaptureSourceCocoa::startProducingData()
     RealtimeMediaSourceCenter::singleton().videoFactory().setActiveSource(*this);
 #endif
 
-    m_startTime = monotonicallyIncreasingTime();
+    m_startTime = MonotonicTime::now();
     m_timer.startRepeating(1_ms * lround(1000 / frameRate()));
 }
 
 void DisplayCaptureSourceCocoa::stopProducingData()
 {
     m_timer.stop();
-    m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;
-    m_startTime = NAN;
+    m_elapsedTime += MonotonicTime::now() - m_startTime;
+    m_startTime = MonotonicTime::nan();
 }
 
-double DisplayCaptureSourceCocoa::elapsedTime()
+Seconds DisplayCaptureSourceCocoa::elapsedTime()
 {
     if (std::isnan(m_startTime))
         return m_elapsedTime;
 
-    return m_elapsedTime + (monotonicallyIncreasingTime() - m_startTime);
+    return m_elapsedTime + (MonotonicTime::now() - m_startTime);
 }
 
 bool DisplayCaptureSourceCocoa::applyFrameRate(double rate)

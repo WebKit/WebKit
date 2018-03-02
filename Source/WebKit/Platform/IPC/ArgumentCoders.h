@@ -29,6 +29,7 @@
 #include "Encoder.h"
 #include <utility>
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/SHA1.h>
 #include <wtf/WallTime.h>
 

@@ -260,9 +260,9 @@ void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
         return;
     }
 
-    double startTime = monotonicallyIncreasingTime();
+    MonotonicTime startTime = MonotonicTime::now();
     VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, [this, displaying, startTime](OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
-        double deltaRatio = (monotonicallyIncreasingTime() - startTime) / CMTimeGetSeconds(presentationDuration);
+        double deltaRatio = (MonotonicTime::now() - startTime).seconds() / CMTimeGetSeconds(presentationDuration);
 
         updateQosWithDecodeTimeStatistics(deltaRatio);
         handleDecompressionOutput(displaying, status, infoFlags, imageBuffer, presentationTimeStamp, presentationDuration);

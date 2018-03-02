@@ -219,7 +219,7 @@ private:
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*);
     virtual bool platformCALayerRespondsToLayoutChanges() const { return true; }
 
-    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) { }
+    virtual void platformCALayerAnimationStarted(MonotonicTime beginTime) { }
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesBottomUp; }
     virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) { }
     virtual bool platformCALayerShowDebugBorders() const { return false; }
@@ -2048,7 +2048,7 @@ RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(const MediaTime& time
         return 0;
 
 #if !LOG_DISABLED
-    double start = monotonicallyIncreasingTime();
+    MonotonicTime start = MonotonicTime::now();
 #endif
 
     AVCFAssetImageGeneratorSetMaximumSize(m_imageGenerator.get(), CGSize(rect.size()));
@@ -2056,8 +2056,8 @@ RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(const MediaTime& time
     RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawimage.get(), adoptCF(CGColorSpaceCreateDeviceRGB()).get()));
 
 #if !LOG_DISABLED
-    double duration = monotonicallyIncreasingTime() - start;
-    LOG(Media, "AVFWrapper::createImageForTimeInRect(%p) - creating image took %.4f", this, narrowPrecisionToFloat(duration));
+    Seconds duration = MonotonicTime::now() - start;
+    LOG(Media, "AVFWrapper::createImageForTimeInRect(%p) - creating image took %.4f", this, narrowPrecisionToFloat(duration.seconds()));
 #endif
 
     return image;

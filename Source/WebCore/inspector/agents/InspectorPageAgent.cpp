@@ -292,7 +292,7 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 
 double InspectorPageAgent::timestamp()
 {
-    return m_environment.executionStopwatch()->elapsedTime();
+    return m_environment.executionStopwatch()->elapsedTime().seconds();
 }
 
 void InspectorPageAgent::enable(ErrorString&)

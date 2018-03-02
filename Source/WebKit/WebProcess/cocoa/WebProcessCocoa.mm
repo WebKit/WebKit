@@ -539,13 +539,13 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
 void WebProcess::destroyRenderingResources()
 {
 #if !RELEASE_LOG_DISABLED
-    double startTime = monotonicallyIncreasingTime();
+    MonotonicTime startTime = MonotonicTime::now();
 #endif
     CABackingStoreCollectBlocking();
 #if !RELEASE_LOG_DISABLED
-    double endTime = monotonicallyIncreasingTime();
+    MonotonicTime endTime = MonotonicTime::now();
 #endif
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::destroyRenderingResources() took %.2fms", this, (endTime - startTime) * 1000.0);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::destroyRenderingResources() took %.2fms", this, (endTime - startTime).milliseconds());
 }
 
 // FIXME: This should live somewhere else, and it should have the implementation in line instead of calling out to WKSI.

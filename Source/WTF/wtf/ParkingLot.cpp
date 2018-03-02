@@ -133,7 +133,7 @@ public:
         ThreadData** currentPtr = &queueHead;
         ThreadData* previous = nullptr;
 
-        double time = monotonicallyIncreasingTimeMS();
+        MonotonicTime time = MonotonicTime::now();
         bool timeToBeFair = false;
         if (time > nextFairTime)
             timeToBeFair = true;
@@ -170,7 +170,7 @@ public:
         }
         
         if (timeToBeFair && didDequeue)
-            nextFairTime = time + random.get();
+            nextFairTime = time + Seconds::fromMilliseconds(random.get());
 
         ASSERT(!!queueHead == !!queueTail);
     }
@@ -193,7 +193,7 @@ public:
     // this lock.
     WordLock lock;
     
-    double nextFairTime { 0 };
+    MonotonicTime nextFairTime;
     
     WeakRandom random;
 

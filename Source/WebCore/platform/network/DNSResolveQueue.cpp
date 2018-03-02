@@ -61,7 +61,6 @@ DNSResolveQueue::DNSResolveQueue()
     : m_timer(*this, &DNSResolveQueue::timerFired)
     , m_requestsInFlight(0)
     , m_isUsingProxy(true)
-    , m_lastProxyEnabledStatusCheckTime(0)
 {
     // isUsingProxy will return the initial value of m_isUsingProxy at first on
     // platforms that have an asynchronous implementation of updateIsUsingProxy,
@@ -74,8 +73,8 @@ DNSResolveQueue::DNSResolveQueue()
 // fake internal address, local caches may keep it even after re-connecting to another network.
 bool DNSResolveQueue::isUsingProxy()
 {
-    double time = monotonicallyIncreasingTime();
-    static const double minimumProxyCheckDelay = 5;
+    MonotonicTime time = MonotonicTime::now();
+    static const Seconds minimumProxyCheckDelay = 5_s;
     if (time - m_lastProxyEnabledStatusCheckTime > minimumProxyCheckDelay) {
         m_lastProxyEnabledStatusCheckTime = time;
         updateIsUsingProxy();

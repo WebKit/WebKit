@@ -870,9 +870,9 @@ Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(RenderProgress&) c
     return 0_s;
 }
 
-double RenderThemeIOS::animationDurationForProgressBar(RenderProgress&) const
+Seconds RenderThemeIOS::animationDurationForProgressBar(RenderProgress&) const
 {
-    return 0;
+    return 0_s;
 }
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)

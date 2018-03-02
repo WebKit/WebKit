@@ -220,7 +220,7 @@ RetainPtr<CMSampleBufferRef> ScreenDisplayCaptureSourceMac::sampleBufferFromPixe
     if (!pixelBuffer)
         return nullptr;
 
-    CMTime sampleTime = CMTimeMake((elapsedTime() + .1) * 100, 100);
+    CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * 100).seconds(), 100);
     CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
@@ -388,7 +388,7 @@ void ScreenDisplayCaptureSourceMac::frameAvailable(CGDisplayStreamFrameStatus st
         return;
 
     LockHolder lock(m_currentFrameMutex);
-    m_lastFrameTime = monotonicallyIncreasingTime();
+    m_lastFrameTime = MonotonicTime::now();
     m_currentFrame = frameSurface;
 }
 

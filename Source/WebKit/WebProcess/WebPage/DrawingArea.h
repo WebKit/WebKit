@@ -91,7 +91,7 @@ public:
     virtual void setViewExposedRect(std::optional<WebCore::FloatRect>) = 0;
     virtual std::optional<WebCore::FloatRect> viewExposedRect() const = 0;
 
-    virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, const String& /*key*/, double /*startTime*/) { }
+    virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, const String& /*key*/, MonotonicTime /*startTime*/) { }
     virtual void acceleratedAnimationDidEnd(uint64_t /*layerID*/, const String& /*key*/) { }
     virtual void addFence(const WebCore::MachSendRight&) { }
 #endif

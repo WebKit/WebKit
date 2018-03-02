@@ -37,7 +37,7 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
-static const double releaseUnusedSecondsTolerance = 1;
+static const Seconds releaseUnusedSecondsTolerance { 1_s };
 static const Seconds releaseUnusedBuffersTimerInterval = { 500_ms };
 
 namespace WebCore {
@@ -163,7 +163,7 @@ void TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired()
         return;
 
     auto buffers = WTFMove(m_usedBuffers);
-    double minUsedTime = monotonicallyIncreasingTime() - releaseUnusedSecondsTolerance;
+    MonotonicTime minUsedTime = MonotonicTime::now() - releaseUnusedSecondsTolerance;
 
     for (auto& buffer : buffers) {
         if (buffer && buffer->lastUsedTime() >= minUsedTime)

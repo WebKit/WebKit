@@ -53,7 +53,7 @@ protected:
     void startProducingData() override;
     void stopProducingData() override;
 
-    double elapsedTime();
+    Seconds elapsedTime();
     bool applyFrameRate(double) override;
 
 private:
@@ -70,8 +70,8 @@ private:
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
-    double m_startTime { NAN };
-    double m_elapsedTime { 0 };
+    MonotonicTime m_startTime { MonotonicTime::nan() };
+    Seconds m_elapsedTime { 0_s };
 
     RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
 };

@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,23 +39,21 @@ public:
 
     const String& id() const { return m_id; }
     unsigned index() const { return m_index; }
-    double lastUpdateTime() const { return m_lastUpdateTime; }
-    double connectTime() const { return m_connectTime; }
+    MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
+    MonotonicTime connectTime() const { return m_connectTime; }
     virtual const Vector<double>& axisValues() const = 0;
     virtual const Vector<double>& buttonValues() const = 0;
 
 protected:
     explicit PlatformGamepad(unsigned index)
         : m_index(index)
-        , m_lastUpdateTime(0.0)
-        , m_connectTime(0.0)
     {
     }
 
     String m_id;
     unsigned m_index;
-    double m_lastUpdateTime;
-    double m_connectTime;
+    MonotonicTime m_lastUpdateTime;
+    MonotonicTime m_connectTime;
 };
 
 } // namespace WebCore

@@ -87,11 +87,11 @@ public:
 
     bool computeExtentOfAnimation(Element&, LayoutRect&) const;
 
-    double beginAnimationUpdateTime();
+    MonotonicTime beginAnimationUpdateTime();
     
     void beginAnimationUpdate();
     void endAnimationUpdate();
-    void receivedStartTimeResponse(double);
+    void receivedStartTimeResponse(MonotonicTime);
     
     void addToAnimationsWaitingForStyle(AnimationBase*);
     void removeFromAnimationsWaitingForStyle(AnimationBase*);
@@ -122,7 +122,7 @@ private:
 
     void styleAvailable();
     void fireEventsAndUpdateStyle();
-    void startTimeResponse(double t);
+    void startTimeResponse(MonotonicTime);
 
     HashMap<RefPtr<Element>, RefPtr<CompositeAnimation>> m_compositeAnimations;
     Timer m_animationTimer;
@@ -139,7 +139,7 @@ private:
     Vector<Ref<Element>> m_elementChangesToDispatch;
     HashSet<Document*> m_suspendedDocuments;
 
-    std::optional<double> m_beginAnimationUpdateTime;
+    std::optional<MonotonicTime> m_beginAnimationUpdateTime;
 
     using AnimationsSet = HashSet<RefPtr<AnimationBase>>;
     AnimationsSet m_animationsWaitingForStyle;

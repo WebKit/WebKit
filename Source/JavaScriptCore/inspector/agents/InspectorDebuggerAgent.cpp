@@ -1041,7 +1041,7 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState& scriptState, 
         .setProbeId(action.identifier)
         .setBatchId(batchId)
         .setSampleId(sampleId)
-        .setTimestamp(m_injectedScriptManager.inspectorEnvironment().executionStopwatch()->elapsedTime())
+        .setTimestamp(m_injectedScriptManager.inspectorEnvironment().executionStopwatch()->elapsedTime().seconds())
         .setPayload(WTFMove(payload))
         .release();
     m_frontendDispatcher->didSampleProbe(WTFMove(result));

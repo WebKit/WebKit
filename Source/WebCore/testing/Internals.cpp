@@ -4256,7 +4256,7 @@ ExceptionOr<void> Internals::setMediaDeviceState(const String& id, const String&
 
 void Internals::delayMediaStreamTrackSamples(MediaStreamTrack& track, float delay)
 {
-    track.source().delaySamples(delay);
+    track.source().delaySamples(Seconds { delay });
 }
 
 void Internals::setMediaStreamTrackMuted(MediaStreamTrack& track, bool muted)

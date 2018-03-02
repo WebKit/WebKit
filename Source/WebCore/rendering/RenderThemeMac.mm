@@ -1078,9 +1078,9 @@ Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress&) c
     return progressAnimationFrameRate;
 }
 
-double RenderThemeMac::animationDurationForProgressBar(RenderProgress&) const
+Seconds RenderThemeMac::animationDurationForProgressBar(RenderProgress&) const
 {
-    return progressAnimationNumFrames * progressAnimationFrameRate.value();
+    return progressAnimationFrameRate * progressAnimationNumFrames;
 }
 
 void RenderThemeMac::adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const

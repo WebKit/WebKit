@@ -75,7 +75,7 @@ private:
 
     Timer m_pruneTimer;
 
-    double m_lastAddTime;
+    MonotonicTime m_lastAddTime;
 };
 
 }

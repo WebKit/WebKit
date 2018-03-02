@@ -125,7 +125,7 @@ public:
     WEBCORE_EXPORT void setShapeLayerPath(const Path&) override;
     WEBCORE_EXPORT void setShapeLayerWindRule(WindRule) override;
 
-    WEBCORE_EXPORT void suspendAnimations(double time) override;
+    WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
     WEBCORE_EXPORT void resumeAnimations() override;
 
     WEBCORE_EXPORT bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
@@ -186,7 +186,7 @@ private:
     bool platformCALayerRespondsToLayoutChanges() const override { return false; }
     WEBCORE_EXPORT void platformCALayerCustomSublayersChanged(PlatformCALayer*) override;
 
-    WEBCORE_EXPORT void platformCALayerAnimationStarted(const String& animationKey, CFTimeInterval beginTime) override;
+    WEBCORE_EXPORT void platformCALayerAnimationStarted(const String& animationKey, MonotonicTime beginTime) override;
     WEBCORE_EXPORT void platformCALayerAnimationEnded(const String& animationKey) override;
     CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return contentsOrientation(); }
     WEBCORE_EXPORT void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip, GraphicsLayerPaintBehavior) override;
@@ -239,9 +239,9 @@ private:
     LayerMap* primaryLayerClones() const { return m_structuralLayer.get() ? m_structuralLayerClones.get() : m_layerClones.get(); }
     LayerMap* animatedLayerClones(AnimatedPropertyID) const;
 
-    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
-    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset, const FloatSize& boxSize);
-    bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
+    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, const FloatSize& boxSize);
+    bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset);
 
     // Return autoreleased animation (use RetainPtr?)
     Ref<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive);
@@ -440,9 +440,9 @@ private:
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
-    void setAnimationOnLayer(PlatformCAAnimation&, AnimatedPropertyID, const String& animationName, int index, int subIndex, double timeOffset);
+    void setAnimationOnLayer(PlatformCAAnimation&, AnimatedPropertyID, const String& animationName, int index, int subIndex, Seconds timeOffset);
     bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index, int subINdex);
-    void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, int subIndex, double timeOffset);
+    void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, int subIndex, Seconds timeOffset);
 
     enum MoveOrCopy { Move, Copy };
     static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
@@ -457,8 +457,8 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation);
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, double timeOffset);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,
@@ -561,7 +561,7 @@ private:
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, double timeOffset)
+        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, Seconds timeOffset)
             : m_animation(WTFMove(caAnimation))
             , m_name(animationName)
             , m_property(property)
@@ -575,7 +575,7 @@ private:
         AnimatedPropertyID m_property;
         int m_index;
         int m_subIndex;
-        double m_timeOffset;
+        Seconds m_timeOffset;
     };
     
     // Uncommitted transitions and animations.
@@ -583,13 +583,13 @@ private:
     
     enum Action { Remove, Pause };
     struct AnimationProcessingAction {
-        AnimationProcessingAction(Action action = Remove, double timeOffset = 0)
+        AnimationProcessingAction(Action action = Remove, Seconds timeOffset = 0_s)
             : action(action)
             , timeOffset(timeOffset)
         {
         }
         Action action;
-        double timeOffset; // only used for pause
+        Seconds timeOffset; // only used for pause
     };
     typedef HashMap<String, AnimationProcessingAction> AnimationsToProcessMap;
     AnimationsToProcessMap m_animationsToProcess;

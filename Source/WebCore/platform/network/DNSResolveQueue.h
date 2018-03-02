@@ -62,7 +62,7 @@ private:
     HashSet<String> m_names;
     std::atomic<int> m_requestsInFlight;
     bool m_isUsingProxy;
-    double m_lastProxyEnabledStatusCheckTime;
+    MonotonicTime m_lastProxyEnabledStatusCheckTime;
 };
 
 }

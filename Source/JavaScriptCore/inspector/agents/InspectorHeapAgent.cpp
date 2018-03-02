@@ -103,7 +103,7 @@ void InspectorHeapAgent::snapshot(ErrorString&, double* timestamp, String* snaps
     HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler());
     snapshotBuilder.buildSnapshot();
 
-    *timestamp = m_environment.executionStopwatch()->elapsedTime();
+    *timestamp = m_environment.executionStopwatch()->elapsedTime().seconds();
     *snapshotData = snapshotBuilder.json([&] (const HeapSnapshotNode& node) {
         if (Structure* structure = node.cell->structure(vm)) {
             if (JSGlobalObject* globalObject = structure->globalObject()) {
@@ -273,7 +273,7 @@ void InspectorHeapAgent::willGarbageCollect()
 void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 {
     if (!m_enabled) {
-        m_gcStartTime = NAN;
+        m_gcStartTime = Seconds::nan();
         return;
     }
 
@@ -284,10 +284,10 @@ void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 
     // FIXME: Include number of bytes freed by collection.
 
-    double endTime = m_environment.executionStopwatch()->elapsedTime();
+    Seconds endTime = m_environment.executionStopwatch()->elapsedTime();
     dispatchGarbageCollectedEvent(protocolTypeForHeapOperation(scope), m_gcStartTime, endTime);
 
-    m_gcStartTime = NAN;
+    m_gcStartTime = Seconds::nan();
 }
 
 void InspectorHeapAgent::clearHeapSnapshots()
@@ -301,12 +301,12 @@ void InspectorHeapAgent::clearHeapSnapshots()
     }
 }
 
-void InspectorHeapAgent::dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type type, double startTime, double endTime)
+void InspectorHeapAgent::dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type type, Seconds startTime, Seconds endTime)
 {
     auto protocolObject = Protocol::Heap::GarbageCollection::create()
         .setType(type)
-        .setStartTime(startTime)
-        .setEndTime(endTime)
+        .setStartTime(startTime.seconds())
+        .setEndTime(endTime.seconds())
         .release();
 
     m_frontendDispatcher->garbageCollected(WTFMove(protocolObject));

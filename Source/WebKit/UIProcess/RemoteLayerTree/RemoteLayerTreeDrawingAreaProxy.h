@@ -45,7 +45,7 @@ public:
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
 
-    void acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime);
+    void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key);
 
     uint64_t nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID + 1; }

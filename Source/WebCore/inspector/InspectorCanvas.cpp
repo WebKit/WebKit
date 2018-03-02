@@ -148,7 +148,7 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
 
         m_frames->addItem(WTFMove(frame));
 
-        m_currentFrameStartTime = monotonicallyIncreasingTimeMS();
+        m_currentFrameStartTime = MonotonicTime::now();
     }
 
     appendActionSnapshotIfNeeded();
@@ -185,9 +185,9 @@ void InspectorCanvas::finalizeFrame()
 {
     if (m_frames && m_frames->length() && !std::isnan(m_currentFrameStartTime)) {
         auto currentFrame = static_cast<Inspector::Protocol::Recording::Frame*>(m_frames->get(m_frames->length() - 1).get());
-        currentFrame->setDuration(monotonicallyIncreasingTimeMS() - m_currentFrameStartTime);
+        currentFrame->setDuration((MonotonicTime::now() - m_currentFrameStartTime).milliseconds());
 
-        m_currentFrameStartTime = NAN;
+        m_currentFrameStartTime = MonotonicTime::nan();
     }
 
     m_currentActions = nullptr;

@@ -45,11 +45,6 @@
 #include <WebCore/PaymentHeaders.h>
 #endif
 
-namespace WTF {
-class MonotonicTime;
-class Seconds;
-}
-
 namespace WebCore {
 class AffineTransform;
 class AuthenticationChallenge;
@@ -164,16 +159,6 @@ using IDBKeyPath = Variant<String, Vector<String>>;
 }
 
 namespace IPC {
-
-template<> struct ArgumentCoder<WTF::MonotonicTime> {
-    static void encode(Encoder&, const WTF::MonotonicTime&);
-    static bool decode(Decoder&, WTF::MonotonicTime&);
-};
-
-template<> struct ArgumentCoder<WTF::Seconds> {
-    static void encode(Encoder&, const WTF::Seconds&);
-    static bool decode(Decoder&, WTF::Seconds&);
-};
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
     static void encode(Encoder&, const WebCore::AffineTransform&);

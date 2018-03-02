@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static const double releaseUnusedSecondsTolerance = 3;
+static const Seconds releaseUnusedSecondsTolerance { 3_s };
 static const Seconds releaseUnusedTexturesTimerInterval { 500_ms };
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -72,7 +72,7 @@ void BitmapTexturePool::scheduleReleaseUnusedTextures()
 void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 {
     // Delete entries, which have been unused in releaseUnusedSecondsTolerance.
-    double minUsedTime = monotonicallyIncreasingTime() - releaseUnusedSecondsTolerance;
+    MonotonicTime minUsedTime = MonotonicTime::now() - releaseUnusedSecondsTolerance;
 
     if (!m_textures.isEmpty()) {
         m_textures.removeAllMatching([&minUsedTime](const Entry& entry) {

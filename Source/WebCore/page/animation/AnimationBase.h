@@ -102,9 +102,9 @@ public:
     void updateStateMachine(AnimationStateInput, double param);
 
     // Animation has actually started, at passed time
-    void onAnimationStartResponse(double startTime)
+    void onAnimationStartResponse(MonotonicTime startTime)
     {
-        updateStateMachine(AnimationStateInput::StartTimeSet, startTime);
+        updateStateMachine(AnimationStateInput::StartTimeSet, startTime.secondsSinceEpoch().seconds());
     }
 
     // Called to change to or from paused state

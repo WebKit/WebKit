@@ -1156,8 +1156,8 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
     if (valueList.property() == AnimatedPropertyTransform)
         listsMatch = validateTransformOperations(valueList, ignoredHasBigRotation) >= 0;
 
-    m_lastAnimationStartTime = monotonicallyIncreasingTime() - delayAsNegativeTimeOffset;
-    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, listsMatch, m_lastAnimationStartTime, 0, TextureMapperAnimation::AnimationState::Playing));
+    m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, listsMatch, m_lastAnimationStartTime, 0_s, TextureMapperAnimation::AnimationState::Playing));
     m_animationStartedTimer.startOneShot(0_s);
     didChangeAnimations();
     return true;
@@ -1165,7 +1165,7 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
 
 void CoordinatedGraphicsLayer::pauseAnimation(const String& animationName, double time)
 {
-    m_animations.pause(animationName, time);
+    m_animations.pause(animationName, Seconds(time));
     didChangeAnimations();
 }
 
@@ -1175,7 +1175,7 @@ void CoordinatedGraphicsLayer::removeAnimation(const String& animationName)
     didChangeAnimations();
 }
 
-void CoordinatedGraphicsLayer::suspendAnimations(double time)
+void CoordinatedGraphicsLayer::suspendAnimations(MonotonicTime time)
 {
     m_animations.suspend(time);
     didChangeAnimations();

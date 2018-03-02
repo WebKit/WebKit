@@ -107,7 +107,7 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_groupEndTimestamp(MediaTime::zeroTime())
     , m_buffered(TimeRanges::create())
     , m_appendState(WaitingForSegment)
-    , m_timeOfBufferingMonitor(monotonicallyIncreasingTime())
+    , m_timeOfBufferingMonitor(MonotonicTime::now())
     , m_pendingRemoveStart(MediaTime::invalidTime())
     , m_pendingRemoveEnd(MediaTime::invalidTime())
     , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
@@ -1915,14 +1915,14 @@ void SourceBuffer::didDropSample()
 
 void SourceBuffer::monitorBufferingRate()
 {
-    double now = monotonicallyIncreasingTime();
-    double interval = now - m_timeOfBufferingMonitor;
-    double rateSinceLastMonitor = m_bufferedSinceLastMonitor / interval;
+    MonotonicTime now = MonotonicTime::now();
+    Seconds interval = now - m_timeOfBufferingMonitor;
+    double rateSinceLastMonitor = m_bufferedSinceLastMonitor / interval.seconds();
 
     m_timeOfBufferingMonitor = now;
     m_bufferedSinceLastMonitor = 0;
 
-    m_averageBufferRate += (interval * ExponentialMovingAverageCoefficient) * (rateSinceLastMonitor - m_averageBufferRate);
+    m_averageBufferRate += (interval.seconds() * ExponentialMovingAverageCoefficient) * (rateSinceLastMonitor - m_averageBufferRate);
 
     LOG(MediaSource, "SourceBuffer::monitorBufferingRate(%p) - m_avegareBufferRate: %lf", this, m_averageBufferRate);
 }

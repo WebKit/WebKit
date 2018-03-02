@@ -28,7 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
-#include <wtf/CurrentTime.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -78,12 +78,12 @@ const unsigned bytesPerSample = 2;
 
 void LibWebRTCAudioModule::StartPlayoutOnAudioThread()
 {
-    double startTime = WTF::monotonicallyIncreasingTimeMS();
+    MonotonicTime startTime = MonotonicTime::now();
     while (true) {
         PollFromSource();
 
-        double now = WTF::monotonicallyIncreasingTimeMS();
-        double sleepFor = pollInterval - remainder(now - startTime, pollInterval);
+        MonotonicTime now = MonotonicTime::now();
+        double sleepFor = pollInterval - remainder((now - startTime).milliseconds(), pollInterval);
         m_audioTaskRunner->SleepMs(sleepFor);
         if (!m_isPlaying)
             return;

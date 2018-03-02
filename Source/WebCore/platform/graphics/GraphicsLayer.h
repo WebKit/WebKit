@@ -454,7 +454,7 @@ public:
     virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
     virtual void removeAnimation(const String& /*animationName*/) { }
 
-    WEBCORE_EXPORT virtual void suspendAnimations(double time);
+    WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
     WEBCORE_EXPORT virtual void resumeAnimations();
 
     // Layer contents

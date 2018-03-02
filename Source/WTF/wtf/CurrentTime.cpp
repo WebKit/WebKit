@@ -250,17 +250,11 @@ WallTime WallTime::now()
     return fromRawSeconds(currentTime());
 }
 
+MonotonicTime MonotonicTime::now()
+{
 #if USE(GLIB)
-
-double monotonicallyIncreasingTime()
-{
-    return static_cast<double>(g_get_monotonic_time() / 1000000.0);
-}
-
+    return fromRawSeconds(static_cast<double>(g_get_monotonic_time() / 1000000.0));
 #elif OS(DARWIN)
-
-double monotonicallyIncreasingTime()
-{
     // Based on listing #2 from Apple QA 1398, but modified to be thread-safe.
     static mach_timebase_info_data_t timebaseInfo;
     static std::once_flag initializeTimerOnceFlag;
@@ -270,31 +264,20 @@ double monotonicallyIncreasingTime()
         ASSERT(timebaseInfo.denom);
     });
 
-    return (mach_absolute_time() * timebaseInfo.numer) / (1.0e9 * timebaseInfo.denom);
-}
-
+    return fromRawSeconds((mach_absolute_time() * timebaseInfo.numer) / (1.0e9 * timebaseInfo.denom));
 #elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(NETBSD)
-
-double monotonicallyIncreasingTime()
-{
     struct timespec ts { };
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    return static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9;
-}
-
+    return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
 #else
-
-double monotonicallyIncreasingTime()
-{
     static double lastTime = 0;
     double currentTimeNow = currentTime();
     if (currentTimeNow < lastTime)
         return lastTime;
     lastTime = currentTimeNow;
-    return currentTimeNow;
-}
-
+    return fromRawSeconds(currentTimeNow);
 #endif
+}
 
 Seconds currentCPUTime()
 {

@@ -31,6 +31,7 @@
 #include "InspectorFrontendDispatchers.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Seconds.h>
 
 namespace JSC {
 struct HeapSnapshotNode;
@@ -68,7 +69,7 @@ public:
 protected:
     void clearHeapSnapshots();
 
-    virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, double startTime, double endTime);
+    virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime);
 
 private:
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(ErrorString&, unsigned heapObjectIdentifier);
@@ -80,7 +81,7 @@ private:
 
     bool m_enabled { false };
     bool m_tracking { false };
-    double m_gcStartTime { NAN };
+    Seconds m_gcStartTime { Seconds::nan() };
 };
 
 } // namespace Inspector

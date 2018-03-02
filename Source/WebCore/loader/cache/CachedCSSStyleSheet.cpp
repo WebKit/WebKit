@@ -186,7 +186,7 @@ RefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(const CS
     if (m_parsedStyleSheetCache->parserContext() != context)
         return nullptr;
 
-    didAccessDecodedData(monotonicallyIncreasingTime());
+    didAccessDecodedData(MonotonicTime::now());
 
     return m_parsedStyleSheetCache;
 }

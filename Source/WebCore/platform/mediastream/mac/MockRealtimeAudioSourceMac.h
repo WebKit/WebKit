@@ -54,7 +54,7 @@ private:
     bool applySampleSize(int) final { return false; }
 
     void emitSampleBuffers(uint32_t);
-    void render(double) final;
+    void render(Seconds) final;
     void reconfigure();
 
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;

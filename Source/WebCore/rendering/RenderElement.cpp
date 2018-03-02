@@ -1857,9 +1857,9 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const RenderStyle& styl
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
         }
-        paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet(), needsRepaint);
+        paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint);
     } else
-        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, page().focusController().timeSinceFocusWasSet(), needsRepaint);
+        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint);
     if (needsRepaint)
         page().focusController().setFocusedElementNeedsRepaint();
 #else

@@ -49,7 +49,7 @@
 namespace WebCore {
 
 static const int cDefaultCacheCapacity = 8192 * 1024;
-static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
+static const Seconds cMinDelayBeforeLiveDecodedPrune { 1_s };
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 
 MemoryCache& MemoryCache::singleton()
@@ -297,9 +297,9 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
         return;
     SetForScope<bool> reentrancyProtector(m_inPruneResources, true);
 
-    double currentTime = FrameView::currentPaintTimeStamp();
+    MonotonicTime currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
-        currentTime = monotonicallyIncreasingTime();
+        currentTime = MonotonicTime::now();
     
     // Destroy any decoded data in live objects that we can.
     // Start from the head, since this is the least recently accessed of the objects.
@@ -324,7 +324,7 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
         ASSERT(current->hasClients());
         if (current->isLoaded() && current->decodedSize()) {
             // Check to see if the remaining resources are too new to prune.
-            double elapsedTime = currentTime - current->m_lastDecodedAccessTime;
+            Seconds elapsedTime = currentTime - current->m_lastDecodedAccessTime;
             if (!shouldDestroyDecodedDataForAllLiveResources && elapsedTime < cMinDelayBeforeLiveDecodedPrune)
                 return;
 

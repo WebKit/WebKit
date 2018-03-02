@@ -27,6 +27,7 @@
 #define ControlStates_h
 
 #include <wtf/RetainPtr.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -80,8 +81,8 @@ public:
     bool isDirty() const { return m_isDirty; }
     void setDirty(bool d) { m_isDirty = d; }
 
-    double timeSinceControlWasFocused() const { return m_timeSinceControlWasFocused; }
-    void setTimeSinceControlWasFocused(double time) { m_timeSinceControlWasFocused = time; }
+    Seconds timeSinceControlWasFocused() const { return m_timeSinceControlWasFocused; }
+    void setTimeSinceControlWasFocused(Seconds time) { m_timeSinceControlWasFocused = time; }
 
 #if PLATFORM(COCOA)
     PlatformControlInstance platformControl() const { return m_controlInstance.get(); }
@@ -93,7 +94,7 @@ private:
     bool m_initialized { false };
     bool m_needsRepaint { false };
     bool m_isDirty { false };
-    double m_timeSinceControlWasFocused { 0 };
+    Seconds m_timeSinceControlWasFocused { 0_s };
 #if PLATFORM(COCOA)
     RetainPtr<PlatformControlInstance> m_controlInstance;
 #endif

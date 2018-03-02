@@ -59,8 +59,8 @@ namespace WTF {
 // we wait longer to try again (s_maximumHoldOffTime).
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
-static const unsigned s_minimumHoldOffTime = 5;
-static const unsigned s_maximumHoldOffTime = 30;
+static const Seconds s_minimumHoldOffTime { 5_s };
+static const Seconds s_maximumHoldOffTime { 30_s };
 static const size_t s_minimumBytesFreedToUseMinimumHoldOffTime = 1 * MB;
 static const unsigned s_holdOffMultiplier = 20;
 
@@ -277,7 +277,7 @@ void MemoryPressureHandler::holdOffTimerFired()
     install();
 }
 
-void MemoryPressureHandler::holdOff(unsigned seconds)
+void MemoryPressureHandler::holdOff(Seconds seconds)
 {
     m_holdOffTimer.startOneShot(seconds);
 }
@@ -293,13 +293,13 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 {
     uninstall();
 
-    double startTime = monotonicallyIncreasingTime();
+    MonotonicTime startTime = MonotonicTime::now();
     int64_t processMemory = processMemoryUsage();
     releaseMemory(critical, synchronous);
     int64_t bytesFreed = processMemory - processMemoryUsage();
-    unsigned holdOffTime = s_maximumHoldOffTime;
+    Seconds holdOffTime = s_maximumHoldOffTime;
     if (bytesFreed > 0 && static_cast<size_t>(bytesFreed) >= s_minimumBytesFreedToUseMinimumHoldOffTime)
-        holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
+        holdOffTime = (MonotonicTime::now() - startTime) * s_holdOffMultiplier;
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
 

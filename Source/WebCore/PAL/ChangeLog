@@ -1,3 +1,15 @@
+2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove monotonicallyIncreasingTime
+        https://bugs.webkit.org/show_bug.cgi?id=182911
+
+        Reviewed by Michael Catanzaro.
+
+        * pal/system/ClockGeneric.cpp:
+        (PAL::ClockGeneric::currentTime const):
+        (PAL::ClockGeneric::now const):
+        * pal/system/ClockGeneric.h:
+
 2018-02-27  Tim Horton  <timothy_horton@apple.com>
 
         Stop using deprecated CADisplay SPI

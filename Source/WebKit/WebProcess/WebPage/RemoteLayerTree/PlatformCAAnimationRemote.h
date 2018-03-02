@@ -267,7 +267,7 @@ public:
         String keyPath;
         PlatformCAAnimation::AnimationType animationType;
 
-        double beginTime;
+        CFTimeInterval beginTime;
         double duration;
         double timeOffset;
         float repeatCount;

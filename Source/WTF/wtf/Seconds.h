@@ -27,6 +27,7 @@
 #define WTF_Seconds_h
 
 #include <wtf/MathExtras.h>
+#include <wtf/Optional.h>
 
 namespace WTF {
 
@@ -87,6 +88,11 @@ public:
     static constexpr Seconds infinity()
     {
         return Seconds(std::numeric_limits<double>::infinity());
+    }
+
+    static constexpr Seconds nan()
+    {
+        return Seconds(std::numeric_limits<double>::quiet_NaN());
     }
     
     explicit constexpr operator bool() const { return !!m_value; }
@@ -212,6 +218,33 @@ public:
     Seconds isolatedCopy() const
     {
         return *this;
+    }
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << m_value;
+    }
+
+    template<class Decoder>
+    static std::optional<Seconds> decode(Decoder& decoder)
+    {
+        std::optional<double> seconds;
+        decoder >> seconds;
+        if (!seconds)
+            return std::nullopt;
+        return Seconds(*seconds);
+    }
+
+    template<class Decoder>
+    static bool decode(Decoder& decoder, Seconds& seconds)
+    {
+        double value;
+        if (!decoder.decode(value))
+            return false;
+
+        seconds = Seconds(value);
+        return true;
     }
 
 private:

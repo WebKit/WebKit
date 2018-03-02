@@ -120,13 +120,13 @@ private:
 
     struct TileCohortInfo {
         TileCohort cohort;
-        double creationTime; // in monotonicallyIncreasingTime().
-        TileCohortInfo(TileCohort inCohort, double inTime)
+        MonotonicTime creationTime;
+        TileCohortInfo(TileCohort inCohort, MonotonicTime inTime)
             : cohort(inCohort)
             , creationTime(inTime)
         { }
 
-        double timeUntilExpiration();
+        Seconds timeUntilExpiration();
     };
 
     void removeAllTiles();

@@ -71,7 +71,7 @@ RetainPtr<CMSampleBufferRef> MockRealtimeVideoSourceMac::CMSampleBufferFromPixel
         if (!pixelBuffer)
         return nullptr;
 
-    CMTime sampleTime = CMTimeMake((elapsedTime() + .1) * videoSampleRate, videoSampleRate);
+    CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * videoSampleRate).seconds(), videoSampleRate);
     CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;

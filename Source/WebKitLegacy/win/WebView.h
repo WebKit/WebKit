@@ -568,7 +568,7 @@ private:
     DWORD m_lastDropEffect { 0 };
 
     // GraphicsLayerClient
-    void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, double time) override;
+    void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, MonotonicTime) override;
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip, WebCore::GraphicsLayerPaintBehavior) override;
 

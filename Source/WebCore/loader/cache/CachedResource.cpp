@@ -672,7 +672,7 @@ void CachedResource::setEncodedSize(unsigned size)
     }
 }
 
-void CachedResource::didAccessDecodedData(double timeStamp)
+void CachedResource::didAccessDecodedData(MonotonicTime timeStamp)
 {
     m_lastDecodedAccessTime = timeStamp;
     

@@ -380,7 +380,7 @@ struct MediaElementSessionInfo {
     const MediaElementSession* session;
     MediaElementSession::PlaybackControlsPurpose purpose;
 
-    double timeOfLastUserInteraction;
+    MonotonicTime timeOfLastUserInteraction;
     bool canShowControlsManager : 1;
     bool isVisibleInViewportOrFullscreen : 1;
     bool isLargeEnoughForMainContent : 1;
@@ -2124,7 +2124,7 @@ void HTMLMediaElement::startProgressEventTimer()
     if (m_progressEventTimer.isActive())
         return;
 
-    m_previousProgressTime = monotonicallyIncreasingTime();
+    m_previousProgressTime = MonotonicTime::now();
     // 350ms is not magic, it is in the spec!
     m_progressEventTimer.startRepeating(350_ms);
 }
@@ -2815,8 +2815,8 @@ void HTMLMediaElement::progressEventTimerFired()
     if (m_networkState != NETWORK_LOADING)
         return;
 
-    double time = monotonicallyIncreasingTime();
-    double timedelta = time - m_previousProgressTime;
+    MonotonicTime time = MonotonicTime::now();
+    Seconds timedelta = time - m_previousProgressTime;
 
     if (m_player->didLoadingProgress()) {
         scheduleEvent(eventNames().progressEvent);
@@ -2825,7 +2825,7 @@ void HTMLMediaElement::progressEventTimerFired()
         updateRenderer();
         if (hasMediaControls())
             mediaControls()->bufferingProgressed();
-    } else if (timedelta > 3.0 && !m_sentStalledEvent) {
+    } else if (timedelta > 3_s && !m_sentStalledEvent) {
         scheduleEvent(eventNames().stalledEvent);
         m_sentStalledEvent = true;
         setShouldDelayLoadEvent(false);
@@ -3106,7 +3106,7 @@ void HTMLMediaElement::refreshCachedTime() const
         return;
     }
 
-    m_clockTimeAtLastCachedTimeUpdate = monotonicallyIncreasingTime();
+    m_clockTimeAtLastCachedTimeUpdate = MonotonicTime::now();
 }
 
 void HTMLMediaElement::invalidateCachedTime() const
@@ -3118,9 +3118,9 @@ void HTMLMediaElement::invalidateCachedTime() const
     // Don't try to cache movie time when playback first starts as the time reported by the engine
     // sometimes fluctuates for a short amount of time, so the cached time will be off if we take it
     // too early.
-    static const double minimumTimePlayingBeforeCacheSnapshot = 0.5;
+    static const Seconds minimumTimePlayingBeforeCacheSnapshot = 500_ms;
 
-    m_minimumClockTimeToUpdateCachedTime = monotonicallyIncreasingTime() + minimumTimePlayingBeforeCacheSnapshot;
+    m_minimumClockTimeToUpdateCachedTime = MonotonicTime::now() + minimumTimePlayingBeforeCacheSnapshot;
 }
 
 // playback state
@@ -3153,15 +3153,15 @@ MediaTime HTMLMediaElement::currentMediaTime() const
     }
 
     // Is it too soon use a cached time?
-    double now = monotonicallyIncreasingTime();
+    MonotonicTime now = MonotonicTime::now();
     double maximumDurationToCacheMediaTime = m_player->maximumDurationToCacheMediaTime();
 
     if (maximumDurationToCacheMediaTime && m_cachedTime.isValid() && !m_paused && now > m_minimumClockTimeToUpdateCachedTime) {
-        double clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
+        Seconds clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
 
         // Not too soon, use the cached time only if it hasn't expired.
-        if (clockDelta < maximumDurationToCacheMediaTime) {
-            MediaTime adjustedCacheTime = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta);
+        if (clockDelta.seconds() < maximumDurationToCacheMediaTime) {
+            MediaTime adjustedCacheTime = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta.seconds());
 
 #if LOG_CACHED_TIME_WARNINGS
             MediaTime delta = adjustedCacheTime - m_player->currentTime();
@@ -3174,8 +3174,8 @@ MediaTime HTMLMediaElement::currentMediaTime() const
 
 #if LOG_CACHED_TIME_WARNINGS
     if (maximumDurationToCacheMediaTime && now > m_minimumClockTimeToUpdateCachedTime && m_cachedTime != MediaPlayer::invalidTime()) {
-        double clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
-        MediaTime delta = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta) - m_player->currentTime();
+        Seconds clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
+        MediaTime delta = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta.seconds()) - m_player->currentTime();
         WARNING_LOG(LOGIDENTIFIER, "cached time was ", delta, " seconds off of media time when it expired");
     }
 #endif
@@ -3816,7 +3816,7 @@ void HTMLMediaElement::startPlaybackProgressTimer()
     if (m_playbackProgressTimer.isActive())
         return;
 
-    m_previousProgressTime = monotonicallyIncreasingTime();
+    m_previousProgressTime = MonotonicTime::now();
     m_playbackProgressTimer.startRepeating(maxTimeupdateEventFrequency);
 }
 

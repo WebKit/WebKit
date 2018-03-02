@@ -104,7 +104,7 @@ bool SpeechSynthesis::paused() const
 void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance& utterance)
 {
     ASSERT(!m_currentSpeechUtterance);
-    utterance.setStartTime(monotonicallyIncreasingTime());
+    utterance.setStartTime(MonotonicTime::now());
     m_currentSpeechUtterance = &utterance;
     m_isPaused = false;
 
@@ -164,7 +164,7 @@ void SpeechSynthesis::resume()
 
 void SpeechSynthesis::fireEvent(const AtomicString& type, SpeechSynthesisUtterance& utterance, unsigned long charIndex, const String& name)
 {
-    utterance.dispatchEvent(SpeechSynthesisEvent::create(type, charIndex, (monotonicallyIncreasingTime() - utterance.startTime()), name));
+    utterance.dispatchEvent(SpeechSynthesisEvent::create(type, charIndex, (MonotonicTime::now() - utterance.startTime()).seconds(), name));
 }
 
 void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance& utterance, bool errorOccurred)

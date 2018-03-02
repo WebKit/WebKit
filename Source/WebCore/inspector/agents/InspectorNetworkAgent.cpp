@@ -194,10 +194,10 @@ static Ref<JSON::Object> buildObjectForHeaders(const HTTPHeaderMap& headers)
 Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
     MonotonicTime startTime = resourceLoader.loadTiming().startTime();
-    double startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
+    Seconds startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
 
     return Inspector::Protocol::Network::ResourceTiming::create()
-        .setStartTime(startTimeInInspector)
+        .setStartTime(startTimeInInspector.seconds())
         .setDomainLookupStart(timing.domainLookupStart.milliseconds())
         .setDomainLookupEnd(timing.domainLookupEnd.milliseconds())
         .setConnectStart(timing.connectStart.milliseconds())
@@ -340,7 +340,7 @@ InspectorNetworkAgent::~InspectorNetworkAgent()
 
 double InspectorNetworkAgent::timestamp()
 {
-    return m_environment.executionStopwatch()->elapsedTime();
+    return m_environment.executionStopwatch()->elapsedTime().seconds();
 }
 
 void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type)
@@ -486,8 +486,8 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
     double elapsedFinishTime;
     if (resourceLoader && networkLoadMetrics.isComplete()) {
         MonotonicTime startTime = resourceLoader->loadTiming().startTime();
-        double startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
-        elapsedFinishTime = startTimeInInspector + networkLoadMetrics.responseEnd.seconds();
+        Seconds startTimeInInspector = m_environment.executionStopwatch()->elapsedTimeSince(startTime);
+        elapsedFinishTime = (startTimeInInspector + networkLoadMetrics.responseEnd).seconds();
     } else
         elapsedFinishTime = timestamp();
 

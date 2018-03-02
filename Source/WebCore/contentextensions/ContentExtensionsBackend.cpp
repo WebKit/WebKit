@@ -74,7 +74,7 @@ void ContentExtensionsBackend::removeAllContentExtensions()
 std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double addedTimeStart = monotonicallyIncreasingTime();
+    MonotonicTime addedTimeStart = MonotonicTime::now();
 #endif
     if (m_contentExtensions.isEmpty()
         || !resourceLoadInfo.resourceURL.isValid()
@@ -132,8 +132,8 @@ std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForRe
             stylesheetIdentifiers.append(contentExtension->identifier());
     }
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double addedTimeEnd = monotonicallyIncreasingTime();
-    dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart) * 1.0e6, resourceLoadInfo.resourceURL.string().utf8().data());
+    MonotonicTime addedTimeEnd = MonotonicTime::now();
+    dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());
 #endif
     return { WTFMove(finalActions), WTFMove(stylesheetIdentifiers) };
 }

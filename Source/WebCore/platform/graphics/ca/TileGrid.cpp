@@ -402,9 +402,9 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
                 for (auto& cohort : m_cohortList) {
                     if (cohort.cohort != tileInfo.cohort)
                         continue;
-                    double timeUntilCohortExpires = cohort.timeUntilExpiration();
-                    if (timeUntilCohortExpires > 0) {
-                        minimumRevalidationTimerDuration = std::min(minimumRevalidationTimerDuration, Seconds { timeUntilCohortExpires });
+                    Seconds timeUntilCohortExpires = cohort.timeUntilExpiration();
+                    if (timeUntilCohortExpires > 0_s) {
+                        minimumRevalidationTimerDuration = std::min(minimumRevalidationTimerDuration, timeUntilCohortExpires);
                         needsTileRevalidation = true;
                     } else
                         tileLayer->removeFromSuperlayer();
@@ -504,7 +504,7 @@ TileGrid::TileCohort TileGrid::nextTileCohort() const
 
 void TileGrid::startedNewCohort(TileCohort cohort)
 {
-    m_cohortList.append(TileCohortInfo(cohort, monotonicallyIncreasingTime()));
+    m_cohortList.append(TileCohortInfo(cohort, MonotonicTime::now()));
 #if PLATFORM(IOS)
     if (!m_controller.isInWindow())
         tileControllerMemoryHandler().tileControllerGainedUnparentedTiles(&m_controller);
@@ -530,10 +530,10 @@ void TileGrid::scheduleCohortRemoval()
         m_cohortRemovalTimer.startRepeating(cohortRemovalTimerSeconds);
 }
 
-double TileGrid::TileCohortInfo::timeUntilExpiration()
+Seconds TileGrid::TileCohortInfo::timeUntilExpiration()
 {
-    double cohortLifeTimeSeconds = 2;
-    double timeThreshold = monotonicallyIncreasingTime() - cohortLifeTimeSeconds;
+    Seconds cohortLifeTimeSeconds = 2_s;
+    MonotonicTime timeThreshold = MonotonicTime::now() - cohortLifeTimeSeconds;
     return creationTime - timeThreshold;
 }
 
@@ -544,7 +544,7 @@ void TileGrid::cohortRemovalTimerFired()
         return;
     }
 
-    while (!m_cohortList.isEmpty() && m_cohortList.first().timeUntilExpiration() < 0) {
+    while (!m_cohortList.isEmpty() && m_cohortList.first().timeUntilExpiration() < 0_s) {
         TileCohortInfo firstCohort = m_cohortList.takeFirst();
         removeTilesInCohort(firstCohort.cohort);
     }

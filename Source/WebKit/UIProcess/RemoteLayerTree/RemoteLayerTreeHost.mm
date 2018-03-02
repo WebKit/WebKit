@@ -158,7 +158,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
     m_layers.remove(layerID);
 }
 
-void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, double startTime)
+void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, MonotonicTime startTime)
 {
     CALayer *layer = asLayer(getLayer(layerID));
     if (!layer)

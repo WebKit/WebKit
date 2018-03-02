@@ -58,11 +58,11 @@ public:
 
     // Debugger::ProfilingClient
     bool isAlreadyProfiling() const override;
-    double willEvaluateScript() override;
-    void didEvaluateScript(double, JSC::ProfilingReason) override;
+    Seconds willEvaluateScript() override;
+    void didEvaluateScript(Seconds, JSC::ProfilingReason) override;
 
 private:
-    void addEvent(double startTime, double endTime, JSC::ProfilingReason);
+    void addEvent(Seconds startTime, Seconds endTime, JSC::ProfilingReason);
     void trackingComplete();
     void stopSamplingWhenDisconnecting();
 

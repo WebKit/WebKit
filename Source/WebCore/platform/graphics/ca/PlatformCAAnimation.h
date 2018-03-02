@@ -31,6 +31,7 @@
 #include "FloatPoint3D.h"
 #include "TransformationMatrix.h"
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 

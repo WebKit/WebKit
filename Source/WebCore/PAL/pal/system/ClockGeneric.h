@@ -27,6 +27,7 @@
 #pragma once
 
 #include "Clock.h"
+#include <wtf/MonotonicTime.h>
 
 namespace PAL {
 
@@ -45,13 +46,13 @@ private:
     void stop() override;
     bool isRunning() const override { return m_running; }
 
-    double now() const;
+    MonotonicTime now() const;
 
     bool m_running;
     double m_rate;
     double m_offset;
-    double m_startTime;
-    mutable double m_lastTime;
+    MonotonicTime m_startTime;
+    mutable MonotonicTime m_lastTime;
 };
 
 }

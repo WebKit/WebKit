@@ -81,7 +81,7 @@ struct Benchmark {
 
         volatile bool keepGoing = true;
 
-        double before = monotonicallyIncreasingTime();
+        MonotonicTime before = MonotonicTime::now();
     
         Lock numIterationsLock;
         uint64_t numIterations = 0;
@@ -121,9 +121,9 @@ struct Benchmark {
         for (unsigned threadIndex = numThreadGroups * numThreadsPerGroup; threadIndex--;)
             threads[threadIndex]->waitForCompletion();
 
-        double after = monotonicallyIncreasingTime();
+        MonotonicTime after = MonotonicTime::now();
     
-        reportResult(name, numIterations / (after - before) / 1000);
+        reportResult(name, numIterations / (after - before).seconds() / 1000);
     }
 };
 

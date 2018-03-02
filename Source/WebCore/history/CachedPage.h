@@ -60,7 +60,7 @@ public:
 
 private:
     Page& m_page;
-    double m_expirationTime;
+    MonotonicTime m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
 #if ENABLE(VIDEO_TRACK)
     bool m_needsCaptionPreferencesChanged { false };

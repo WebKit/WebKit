@@ -214,7 +214,7 @@ private:
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;
 
-    double m_timeOfBufferingMonitor;
+    MonotonicTime m_timeOfBufferingMonitor;
     double m_bufferedSinceLastMonitor { 0 };
     double m_averageBufferRate { 0 };
 

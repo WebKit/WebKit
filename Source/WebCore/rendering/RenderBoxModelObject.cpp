@@ -201,7 +201,7 @@ void RenderBoxModelObject::animationFinished(const String& name)
     layer()->backing()->animationFinished(name);
 }
 
-void RenderBoxModelObject::suspendAnimations(double time)
+void RenderBoxModelObject::suspendAnimations(MonotonicTime time)
 {
     ASSERT(hasLayer());
     ASSERT(isComposited());

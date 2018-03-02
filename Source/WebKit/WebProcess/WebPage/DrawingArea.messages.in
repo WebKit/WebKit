@@ -34,7 +34,7 @@ messages -> DrawingArea {
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
     CommitTransientZoom(double scale, WebCore::FloatPoint origin)
     
-    AcceleratedAnimationDidStart(uint64_t layerID, String key, double startTime)
+    AcceleratedAnimationDidStart(uint64_t layerID, String key, MonotonicTime startTime)
     AcceleratedAnimationDidEnd(uint64_t layerID, String key)
     
     AddTransactionCallbackID(WebKit::CallbackID callbackID)

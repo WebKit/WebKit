@@ -33,11 +33,6 @@
 
 namespace WTF {
 
-MonotonicTime MonotonicTime::now()
-{
-    return fromRawSeconds(monotonicallyIncreasingTime());
-}
-
 WallTime MonotonicTime::approximateWallTime() const
 {
     return *this - now() + WallTime::now();

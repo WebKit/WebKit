@@ -1,3 +1,20 @@
+2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove monotonicallyIncreasingTime
+        https://bugs.webkit.org/show_bug.cgi?id=182911
+
+        Reviewed by Michael Catanzaro.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerAnimationStarted):
+        * Plugins/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin):
+        (WebCore::PluginMessageThrottlerWin::appendMessage):
+        * Plugins/PluginMessageThrottlerWin.h:
+        * WebView.cpp:
+        (WebView::notifyAnimationStarted):
+        * WebView.h:
+
 2018-03-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win][DRT] Implement setSpatialNavigationEnabled.

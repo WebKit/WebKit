@@ -66,7 +66,7 @@ namespace WebCore {
         PluginMessage* m_freeInlineMessages;
 
         Timer m_messageThrottleTimer;
-        double m_lastMessageTime;
+        MonotonicTime m_lastMessageTime;
     };
 
 } // namespace WebCore

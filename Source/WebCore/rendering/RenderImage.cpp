@@ -543,7 +543,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
 
 #if PLATFORM(MAC)
     bool needsRepaint;
-    paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet(), needsRepaint);
+    paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint);
     if (needsRepaint)
         page().focusController().setFocusedElementNeedsRepaint();
 #else

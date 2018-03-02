@@ -35,8 +35,8 @@ using namespace Inspector;
 
 struct GarbageCollectionData {
     Inspector::Protocol::Heap::GarbageCollection::Type type;
-    double startTime;
-    double endTime;
+    Seconds startTime;
+    Seconds endTime;
 };
 
 class SendGarbageCollectionEventsTask {
@@ -110,7 +110,7 @@ void WebHeapAgent::disable(ErrorString& errorString)
     InspectorHeapAgent::disable(errorString);
 }
 
-void WebHeapAgent::dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type type, double startTime, double endTime)
+void WebHeapAgent::dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type type, Seconds startTime, Seconds endTime)
 {
     // Dispatch the event asynchronously because this method may be
     // called between collection and sweeping and we don't want to

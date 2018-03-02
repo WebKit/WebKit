@@ -909,7 +909,7 @@ void IconDatabase::iconDatabaseSyncThread()
 #endif
 
     // Uncomment the following line to simulate a long lasting URL import (*HUGE* icon databases, or network home directories)
-    // while (monotonicallyIncreasingTime() - timeStamp < 10);
+    // while (MonotonicTime::now() - timeStamp < 10_s);
 
     // Read in URL mappings from the database
     LOG(IconDatabase, "(THREAD) Starting iconURL import");

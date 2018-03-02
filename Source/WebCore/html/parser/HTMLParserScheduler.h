@@ -54,7 +54,7 @@ public:
     ~PumpSession();
 
     unsigned processedTokens;
-    double startTime;
+    MonotonicTime startTime;
     bool didSeeScript;
 };
 
@@ -94,20 +94,20 @@ private:
         session.processedTokens = 1;
         session.didSeeScript = false;
 
-        // monotonicallyIncreasingTime() can be expensive. By delaying, we avoided calling
-        // monotonicallyIncreasingTime() when constructing non-yielding PumpSessions.
+        // MonotonicTime::now() can be expensive. By delaying, we avoided calling
+        // MonotonicTime::now() when constructing non-yielding PumpSessions.
         if (!session.startTime) {
-            session.startTime = monotonicallyIncreasingTime();
+            session.startTime = MonotonicTime::now();
             return false;
         }
 
-        double elapsedTime = monotonicallyIncreasingTime() - session.startTime;
+        Seconds elapsedTime = MonotonicTime::now() - session.startTime;
         return elapsedTime > m_parserTimeLimit;
     }
 
     HTMLDocumentParser& m_parser;
 
-    double m_parserTimeLimit;
+    Seconds m_parserTimeLimit;
     Timer m_continueNextChunkTimer;
     bool m_isSuspendedWithActiveTimer;
 #if !ASSERT_DISABLED

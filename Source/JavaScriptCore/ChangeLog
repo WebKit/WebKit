@@ -1,5 +1,35 @@
 2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Remove monotonicallyIncreasingTime
+        https://bugs.webkit.org/show_bug.cgi?id=182911
+
+        Reviewed by Michael Catanzaro.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::willEvaluateScript):
+        (JSC::Debugger::didEvaluateScript):
+        * debugger/Debugger.h:
+        * debugger/ScriptProfilingScope.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::snapshot):
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+        (Inspector::InspectorHeapAgent::dispatchGarbageCollectedEvent):
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::willEvaluateScript):
+        (Inspector::InspectorScriptProfilerAgent::didEvaluateScript):
+        (Inspector::InspectorScriptProfilerAgent::addEvent):
+        (Inspector::buildSamples):
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/SamplingProfiler.h:
+
+2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         ASSERTION FAILED: matchContextualKeyword(m_vm->propertyNames->async)
         https://bugs.webkit.org/show_bug.cgi?id=183173
 

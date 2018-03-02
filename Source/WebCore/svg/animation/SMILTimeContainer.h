@@ -73,13 +73,13 @@ private:
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);
 
-    double m_beginTime;
-    double m_pauseTime;
-    double m_accumulatedActiveTime;
-    double m_resumeTime;
-    double m_presetStartTime;
+    MonotonicTime m_beginTime;
+    MonotonicTime m_pauseTime;
+    Seconds m_accumulatedActiveTime { 0_s };
+    MonotonicTime m_resumeTime;
+    Seconds m_presetStartTime { 0_s };
 
-    bool m_documentOrderIndexesDirty;
+    bool m_documentOrderIndexesDirty { false };
     
     Timer m_timer;
 
@@ -91,7 +91,7 @@ private:
     SVGSVGElement& m_ownerSVGElement;
 
 #ifndef NDEBUG
-    bool m_preventScheduledAnimationsChanges;
+    bool m_preventScheduledAnimationsChanges { false };
 #endif
 };
 

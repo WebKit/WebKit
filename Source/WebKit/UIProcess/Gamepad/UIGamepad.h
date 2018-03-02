@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -54,7 +55,7 @@ private:
     String m_id;
     Vector<double> m_axisValues;
     Vector<double> m_buttonValues;
-    double m_lastUpdateTime;
+    MonotonicTime m_lastUpdateTime;
 };
 
 }

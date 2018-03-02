@@ -136,7 +136,7 @@ public:
     enum class PlaybackControlsPurpose { ControlsManager, NowPlaying };
     bool canShowControlsManager(PlaybackControlsPurpose) const;
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
-    double mostRecentUserInteractionTime() const;
+    MonotonicTime mostRecentUserInteractionTime() const;
 
     bool allowsPlaybackControlsForAutoplayingAudio() const;
     bool allowsNowPlayingControlsVisibility() const override;
@@ -185,7 +185,7 @@ private:
     bool m_hasPlaybackTargetAvailabilityListeners { false };
 #endif
 
-    double m_mostRecentUserInteractionTime { 0 };
+    MonotonicTime m_mostRecentUserInteractionTime;
 
     mutable bool m_isMainContent { false };
     Timer m_mainContentCheckTimer;

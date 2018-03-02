@@ -1,3 +1,61 @@
+2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove monotonicallyIncreasingTime
+        https://bugs.webkit.org/show_bug.cgi?id=182911
+
+        Reviewed by Michael Catanzaro.
+
+        This patch drops monotonicallyIncreasingTime and monotonicallyIncreasingTimeMS.
+        We have MonotonicTime API instead. This offers strongly typed MonotonicTime,
+        Seconds etc. This reduces the chance of bugs mixing doubles which represent milliseconds
+        and seconds.
+
+        Large part of this patch is mechanical one: replacing monotonicallyIncreasingTime with
+        MonotonicTime, using MonotonicTime and Seconds instead of raw doubles.
+
+        But this patch actually finds some bugs (but it is a bit difficult to show it as a test).
+        One is mixing media time (CACurrentMediaTime()) and MonotonicTime. Basically they are
+        super close because both uses mach_absolute_time(). But they would be slightly different.
+        So we should not mix them.
+
+        The second bug is GraphicsLayer::suspendAnimations(double). While CA ports (Apple, AppleWin,
+        iOS etc.) use this double as MonotonicTime, GTK and WPE use this double as Seconds (timeOffset).
+        This patch fixes it and now the signature becomes GraphicsLayer::suspendAnimations(MonotonicTime).
+
+        In this patch, we still uses bunch of double for Seconds. But fixing them at this patch increases
+        the size of this larger and larger. So some of them remains double. This should be fixed in
+        subsequent patches.
+
+        * benchmarks/ConditionSpeedTest.cpp:
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/CurrentTime.cpp:
+        (WTF::MonotonicTime::now):
+        (WTF::monotonicallyIncreasingTime): Deleted.
+        * wtf/CurrentTime.h:
+        (WTF::monotonicallyIncreasingTimeMS): Deleted.
+        * wtf/MemoryPressureHandler.h:
+        * wtf/MonotonicTime.cpp:
+        (WTF::MonotonicTime::now): Deleted.
+        * wtf/MonotonicTime.h:
+        * wtf/ParkingLot.cpp:
+        * wtf/Seconds.h:
+        (WTF::Seconds::nan):
+        * wtf/Stopwatch.h:
+        (WTF::Stopwatch::reset):
+        (WTF::Stopwatch::start):
+        (WTF::Stopwatch::stop):
+        (WTF::Stopwatch::elapsedTime):
+        (WTF::Stopwatch::elapsedTimeSince):
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::EventFDPoller::EventFDPoller):
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        * wtf/win/MemoryPressureHandlerWin.cpp:
+        (WTF::MemoryPressureHandler::holdOff):
+
 2018-03-02  Dan Bernstein  <mitz@apple.com>
 
         Safari uses WebContent.Development when loading injected bundle embedded in its app bundle

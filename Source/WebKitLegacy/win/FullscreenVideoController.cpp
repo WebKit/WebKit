@@ -185,7 +185,7 @@ private:
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*);
     virtual bool platformCALayerRespondsToLayoutChanges() const { return true; }
 
-    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) { }
+    virtual void platformCALayerAnimationStarted(MonotonicTime beginTime) { }
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesBottomUp; }
     virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) { }
     virtual bool platformCALayerShowDebugBorders() const { return false; }

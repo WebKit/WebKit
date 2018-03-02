@@ -154,7 +154,7 @@ private:
 
     void uninstall();
 
-    void holdOff(unsigned);
+    void holdOff(Seconds);
 
     MemoryPressureHandler();
     ~MemoryPressureHandler() = delete;

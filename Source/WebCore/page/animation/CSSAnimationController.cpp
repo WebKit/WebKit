@@ -433,11 +433,11 @@ bool CSSAnimationControllerPrivate::pauseTransitionAtTime(Element& element, cons
     return false;
 }
 
-double CSSAnimationControllerPrivate::beginAnimationUpdateTime()
+MonotonicTime CSSAnimationControllerPrivate::beginAnimationUpdateTime()
 {
     ASSERT(m_beginAnimationUpdateCount);
     if (!m_beginAnimationUpdateTime)
-        m_beginAnimationUpdateTime = monotonicallyIncreasingTime();
+        m_beginAnimationUpdateTime = MonotonicTime::now();
 
     return m_beginAnimationUpdateTime.value();
 }
@@ -460,9 +460,9 @@ void CSSAnimationControllerPrivate::endAnimationUpdate()
     --m_beginAnimationUpdateCount;
 }
 
-void CSSAnimationControllerPrivate::receivedStartTimeResponse(double time)
+void CSSAnimationControllerPrivate::receivedStartTimeResponse(MonotonicTime time)
 {
-    LOG(Animations, "CSSAnimationControllerPrivate %p receivedStartTimeResponse %f", this, time);
+    LOG(Animations, "CSSAnimationControllerPrivate %p receivedStartTimeResponse %f", this, time.secondsSinceEpoch().seconds());
 
     m_waitingForAsyncStartNotification = false;
     startTimeResponse(time);
@@ -563,7 +563,7 @@ void CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeRespo
         m_waitingForAsyncStartNotification = false;
 }
 
-void CSSAnimationControllerPrivate::startTimeResponse(double time)
+void CSSAnimationControllerPrivate::startTimeResponse(MonotonicTime time)
 {
     // Go through list of waiters and send them on their way
 
@@ -697,9 +697,9 @@ bool CSSAnimationController::computeExtentOfAnimation(RenderElement& renderer, L
     return m_data->computeExtentOfAnimation(*renderer.element(), bounds);
 }
 
-void CSSAnimationController::notifyAnimationStarted(RenderElement& renderer, double startTime)
+void CSSAnimationController::notifyAnimationStarted(RenderElement& renderer, MonotonicTime startTime)
 {
-    LOG(Animations, "CSSAnimationController %p notifyAnimationStarted on renderer %p, time=%f", this, &renderer, startTime);
+    LOG(Animations, "CSSAnimationController %p notifyAnimationStarted on renderer %p, time=%f", this, &renderer, startTime.secondsSinceEpoch().seconds());
     UNUSED_PARAM(renderer);
 
     AnimationUpdateBlock animationUpdateBlock(this);

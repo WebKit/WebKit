@@ -57,7 +57,7 @@ static int _notifyTokens[3];
 // this is 1 / s_holdOffMultiplier percent of the time.
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
-static const unsigned s_minimumHoldOffTime = 5;
+static const Seconds s_minimumHoldOffTime { 5_s };
 #if !PLATFORM(IOS)
 static const unsigned s_holdOffMultiplier = 20;
 #endif
@@ -152,13 +152,15 @@ void MemoryPressureHandler::uninstall()
         notify_cancel(token);
 }
 
-void MemoryPressureHandler::holdOff(unsigned seconds)
+void MemoryPressureHandler::holdOff(Seconds seconds)
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         _timer_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
         if (_timer_event_source) {
             dispatch_set_context(_timer_event_source, this);
-            dispatch_source_set_timer(_timer_event_source, dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, 1 * s_minimumHoldOffTime);
+            // FIXME: The final argument `s_minimumHoldOffTime.seconds()` seems wrong.
+            // https://bugs.webkit.org/show_bug.cgi?id=183277
+            dispatch_source_set_timer(_timer_event_source, dispatch_time(DISPATCH_TIME_NOW, seconds.seconds() * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, s_minimumHoldOffTime.seconds());
             dispatch_source_set_event_handler(_timer_event_source, ^{
                 if (_timer_event_source) {
                     dispatch_source_cancel(_timer_event_source);
@@ -176,13 +178,13 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 {
 #if !PLATFORM(IOS)
     uninstall();
-    double startTime = monotonicallyIncreasingTime();
+    MonotonicTime startTime = MonotonicTime::now();
 #endif
 
     releaseMemory(critical, synchronous);
 
 #if !PLATFORM(IOS)
-    unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
+    Seconds holdOffTime = (MonotonicTime::now() - startTime) * s_holdOffMultiplier;
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 #endif
 }

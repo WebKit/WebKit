@@ -247,12 +247,12 @@ void Debugger::setProfilingClient(ProfilingClient* client)
     m_profilingClient = client;
 }
 
-double Debugger::willEvaluateScript()
+Seconds Debugger::willEvaluateScript()
 {
     return m_profilingClient->willEvaluateScript();
 }
 
-void Debugger::didEvaluateScript(double startTime, ProfilingReason reason)
+void Debugger::didEvaluateScript(Seconds startTime, ProfilingReason reason)
 {
     m_profilingClient->didEvaluateScript(startTime, reason);
 }

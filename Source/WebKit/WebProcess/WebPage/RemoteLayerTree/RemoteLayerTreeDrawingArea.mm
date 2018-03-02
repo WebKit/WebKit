@@ -208,7 +208,7 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
     flushLayers();
 }
 
-void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)
+void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime)
 {
     m_remoteLayerTreeContext->animationDidStart(layerID, key, startTime);
 }

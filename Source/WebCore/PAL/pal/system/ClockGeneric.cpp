@@ -54,7 +54,7 @@ double ClockGeneric::currentTime() const
 {
     if (m_running)
         m_lastTime = now();
-    return ((m_lastTime - m_startTime) * m_rate) + m_offset;
+    return ((m_lastTime - m_startTime).seconds() * m_rate) + m_offset;
 }
 
 void ClockGeneric::setPlayRate(double rate)
@@ -83,9 +83,9 @@ void ClockGeneric::stop()
     m_running = false;
 }
 
-double ClockGeneric::now() const
+MonotonicTime ClockGeneric::now() const
 {
-    return monotonicallyIncreasingTime();
+    return MonotonicTime::now();
 }
 
 }

@@ -1079,9 +1079,9 @@ Seconds RenderTheme::animationRepeatIntervalForProgressBar(RenderProgress&) cons
     return 0_s;
 }
 
-double RenderTheme::animationDurationForProgressBar(RenderProgress&) const
+Seconds RenderTheme::animationDurationForProgressBar(RenderProgress&) const
 {
-    return 0;
+    return 0_s;
 }
 
 void RenderTheme::adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const

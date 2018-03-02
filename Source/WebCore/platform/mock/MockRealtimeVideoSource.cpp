@@ -154,23 +154,23 @@ void MockRealtimeVideoSource::startProducingData()
         setHeight(480);
     }
 
-    m_startTime = monotonicallyIncreasingTime();
+    m_startTime = MonotonicTime::now();
     m_timer.startRepeating(1_ms * lround(1000 / frameRate()));
 }
 
 void MockRealtimeVideoSource::stopProducingData()
 {
     m_timer.stop();
-    m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;
-    m_startTime = NAN;
+    m_elapsedTime += MonotonicTime::now() - m_startTime;
+    m_startTime = MonotonicTime::nan();
 }
 
-double MockRealtimeVideoSource::elapsedTime()
+Seconds MockRealtimeVideoSource::elapsedTime()
 {
     if (std::isnan(m_startTime))
         return m_elapsedTime;
 
-    return m_elapsedTime + (monotonicallyIncreasingTime() - m_startTime);
+    return m_elapsedTime + (MonotonicTime::now() - m_startTime);
 }
 
 void MockRealtimeVideoSource::updateSettings(RealtimeMediaSourceSettings& settings)
@@ -326,7 +326,7 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 
 void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 {
-    unsigned milliseconds = lround(elapsedTime() * 1000);
+    unsigned milliseconds = lround(elapsedTime().milliseconds());
     unsigned seconds = milliseconds / 1000 % 60;
     unsigned minutes = seconds / 60 % 60;
     unsigned hours = minutes / 60 % 60;
@@ -409,17 +409,17 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     }
 }
 
-void MockRealtimeVideoSource::delaySamples(float delta)
+void MockRealtimeVideoSource::delaySamples(Seconds delta)
 {
-    m_delayUntil = monotonicallyIncreasingTime() + delta;
+    m_delayUntil = MonotonicTime::now() + delta;
 }
 
 void MockRealtimeVideoSource::generateFrame()
 {
     if (m_delayUntil) {
-        if (m_delayUntil < monotonicallyIncreasingTime())
+        if (m_delayUntil < MonotonicTime::now())
             return;
-        m_delayUntil = 0;
+        m_delayUntil = MonotonicTime();
     }
 
     ImageBuffer* buffer = imageBuffer();

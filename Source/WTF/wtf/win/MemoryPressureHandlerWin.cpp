@@ -85,7 +85,7 @@ void MemoryPressureHandler::uninstall()
     m_installed = false;
 }
 
-void MemoryPressureHandler::holdOff(unsigned seconds)
+void MemoryPressureHandler::holdOff(Seconds seconds)
 {
 }
 

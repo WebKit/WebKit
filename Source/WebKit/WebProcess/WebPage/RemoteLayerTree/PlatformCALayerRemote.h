@@ -67,7 +67,7 @@ public:
     void addAnimationForKey(const String& key, WebCore::PlatformCAAnimation&) override;
     void removeAnimationForKey(const String& key) override;
     RefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
-    void animationStarted(const String& key, CFTimeInterval beginTime) override;
+    void animationStarted(const String& key, MonotonicTime beginTime) override;
     void animationEnded(const String& key) override;
 
     void setMask(WebCore::PlatformCALayer*) override;

@@ -179,7 +179,7 @@ private:
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatRect m_needsDisplayRect;
     TextureMapperAnimations m_animations;
-    double m_animationStartTime;
+    MonotonicTime m_animationStartTime;
 
     IntSize m_committedScrollOffset;
     bool m_isScrollable;

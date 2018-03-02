@@ -58,7 +58,7 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     m_id = makeString(String(m_gcController.get().vendorName), ASCIILiteral(" Extended Gamepad"));
 
     m_extendedGamepad.get().valueChangedHandler = ^(GCExtendedGamepad *, GCControllerElement *) {
-        m_lastUpdateTime = monotonicallyIncreasingTime();
+        m_lastUpdateTime = MonotonicTime::now();
         GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
         m_hadButtonPresses = false;
     };
@@ -149,7 +149,7 @@ void GameControllerGamepad::setupAsGamepad()
     m_id = makeString(String(m_gcController.get().vendorName), ASCIILiteral(" Gamepad"));
 
     m_gamepad.get().valueChangedHandler = ^(GCGamepad *, GCControllerElement *) {
-        m_lastUpdateTime = monotonicallyIncreasingTime();
+        m_lastUpdateTime = MonotonicTime::now();
         GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
         m_hadButtonPresses = false;
     };

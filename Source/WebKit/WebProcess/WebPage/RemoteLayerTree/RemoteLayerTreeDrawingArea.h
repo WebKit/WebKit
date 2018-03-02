@@ -88,7 +88,7 @@ private:
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
     std::optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
 
-    void acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime) override;
+    void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime) override;
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key) override;
 
 #if PLATFORM(IOS)

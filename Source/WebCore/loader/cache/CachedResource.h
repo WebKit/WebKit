@@ -291,7 +291,7 @@ protected:
 
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
-    void didAccessDecodedData(double timeStamp);
+    void didAccessDecodedData(MonotonicTime timeStamp);
 
     virtual void didReplaceSharedBufferContents() { }
 
@@ -334,7 +334,7 @@ private:
     RefPtr<SecurityOrigin> m_origin;
     AtomicString m_initiatorName;
 
-    double m_lastDecodedAccessTime { 0 }; // Used as a "thrash guard" in the cache
+    MonotonicTime m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
 
     unsigned m_encodedSize { 0 };
     unsigned m_decodedSize { 0 };

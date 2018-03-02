@@ -585,7 +585,7 @@ void Element::setActive(bool flag, bool pause)
         // "up" state. Once you assume this, you can just delay for 100ms - that time (assuming that after you
         // leave this method, it will be about that long before the flush of the up state happens again).
 #ifdef HAVE_FUNC_USLEEP
-        double startTime = monotonicallyIncreasingTime();
+        MonotonicTime startTime = MonotonicTime::now();
 #endif
 
         document().updateStyleIfNeeded();
@@ -597,9 +597,9 @@ void Element::setActive(bool flag, bool pause)
         // FIXME: Come up with a less ridiculous way of doing this.
 #ifdef HAVE_FUNC_USLEEP
         // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
-        double remainingTime = 0.1 - (monotonicallyIncreasingTime() - startTime);
-        if (remainingTime > 0)
-            usleep(static_cast<useconds_t>(remainingTime * 1000000.0));
+        Seconds remainingTime = 100_ms - (MonotonicTime::now() - startTime);
+        if (remainingTime > 0_s)
+            usleep(static_cast<useconds_t>(remainingTime.microseconds()));
 #endif
     }
 }

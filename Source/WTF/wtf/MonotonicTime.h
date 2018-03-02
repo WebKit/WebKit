@@ -38,9 +38,6 @@ class PrintStream;
 // possibly don't count downtime. This uses floating point internally so that you can reason about
 // infinity and other things that arise in math. It's acceptable to use this to wrap NaN times,
 // negative times, and infinite times, so long as they are all relative to the same clock.
-// Specifically, MonotonicTime should be used in agreement with the principle that
-// MonotonicTime::now().secondsSinceEpoch().value() is the same as
-// WTF::monotonicallyIncreasingTime().
 class MonotonicTime {
 public:
     static const ClockType clockType = ClockType::Monotonic;
@@ -48,9 +45,8 @@ public:
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - MonotonicTime().
     constexpr MonotonicTime() { }
     
-    // Call this if you know for sure that the double represents time according to
-    // WTF::monotonicallyIncreasingTime(). It must be in seconds and it must be from the same time
-    // source.
+    // Call this if you know for sure that the double represents monotonic time according to the
+    // same time source as MonotonicTime. It must be in seconds.
     static constexpr MonotonicTime fromRawSeconds(double value)
     {
         return MonotonicTime(value);
@@ -141,6 +137,34 @@ public:
     {
         return *this;
     }
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << m_value;
+    }
+
+    template<class Decoder>
+    static std::optional<MonotonicTime> decode(Decoder& decoder)
+    {
+        std::optional<double> time;
+        decoder >> time;
+        if (!time)
+            return std::nullopt;
+        return MonotonicTime::fromRawSeconds(*time);
+    }
+
+    template<class Decoder>
+    static bool decode(Decoder& decoder, MonotonicTime& time)
+    {
+        double value;
+        if (!decoder.decode(value))
+            return false;
+
+        time = MonotonicTime::fromRawSeconds(value);
+        return true;
+    }
+
 private:
     constexpr MonotonicTime(double rawValue)
         : m_value(rawValue)

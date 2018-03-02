@@ -44,7 +44,7 @@ public:
 
 private:
     RetainPtr<_NSScrollingPredominantAxisFilter> m_predominantAxisFilter;
-    double m_beginFilteringDeltasTime { 0 };
+    MonotonicTime m_beginFilteringDeltasTime;
 };
 
 } // namespace WebCore

@@ -37,17 +37,6 @@
 
 namespace WTF {
 
-// Provides a monotonically increasing time in seconds since an arbitrary point in the past.
-// On unsupported platforms, this function only guarantees the result will be non-decreasing.
-// Result of this function increases monotonically even when clock time goes back due to
-// NTP or manual adjustments, so it is better suited for elapsed time measurement.
-WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
-
-inline double monotonicallyIncreasingTimeMS()
-{
-    return monotonicallyIncreasingTime() * 1000.0;
-}
-
 // Returns the current CPU time of the current thread.
 // Precision varies depending on platform but is usually as good or better
 // than a millisecond.
@@ -58,8 +47,6 @@ WTF_EXPORT_PRIVATE void sleep(Seconds);
 } // namespace WTF
 
 using WTF::currentCPUTime;
-using WTF::monotonicallyIncreasingTime;
-using WTF::monotonicallyIncreasingTimeMS;
 using WTF::sleep;
 
 #endif // CurrentTime_h

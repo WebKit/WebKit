@@ -56,7 +56,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedPageCounter, ("Cached
 
 CachedPage::CachedPage(Page& page)
     : m_page(page)
-    , m_expirationTime(monotonicallyIncreasingTime() + page.settings().backForwardCacheExpirationInterval())
+    , m_expirationTime(MonotonicTime::now() + Seconds(page.settings().backForwardCacheExpirationInterval()))
     , m_cachedMainFrame(std::make_unique<CachedFrame>(page.mainFrame()))
 {
 #ifndef NDEBUG
@@ -183,7 +183,7 @@ void CachedPage::clear()
 
 bool CachedPage::hasExpired() const
 {
-    return monotonicallyIncreasingTime() > m_expirationTime;
+    return MonotonicTime::now() > m_expirationTime;
 }
 
 } // namespace WebCore

@@ -108,7 +108,7 @@ public:
     bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
     void pauseAnimation(const String&, double) override;
     void removeAnimation(const String&) override;
-    void suspendAnimations(double time) override;
+    void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
     bool usesContentsLayer() const override { return m_platformLayer || m_compositedImage; }
 
@@ -228,7 +228,7 @@ private:
     PlatformLayer* m_platformLayer;
     Timer m_animationStartedTimer;
     TextureMapperAnimations m_animations;
-    double m_lastAnimationStartTime { 0.0 };
+    MonotonicTime m_lastAnimationStartTime;
 
     ScrollableArea* m_scrollableArea;
 };

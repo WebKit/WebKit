@@ -836,7 +836,7 @@ bool FocusController::setFocusedElement(Element* element, Frame& newFocusedFrame
     if (newDocument->focusedElement() == element)
         m_page.editorClient().setInputMethodState(element->shouldUseInputMethod());
 
-    m_focusSetTime = monotonicallyIncreasingTime();
+    m_focusSetTime = MonotonicTime::now();
     m_focusRepaintTimer.stop();
 
     return true;
@@ -1123,9 +1123,9 @@ void FocusController::focusRepaintTimerFired()
         focusedElement->renderer()->repaint();
 }
 
-double FocusController::timeSinceFocusWasSet() const
+Seconds FocusController::timeSinceFocusWasSet() const
 {
-    return monotonicallyIncreasingTime() - m_focusSetTime;
+    return MonotonicTime::now() - m_focusSetTime;
 }
 
 } // namespace WebCore

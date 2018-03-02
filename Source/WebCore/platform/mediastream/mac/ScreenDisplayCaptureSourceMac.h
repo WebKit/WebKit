@@ -106,7 +106,7 @@ private:
 
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
 
-    double m_lastFrameTime { NAN };
+    MonotonicTime m_lastFrameTime { MonotonicTime::nan() };
     uint32_t m_displayID { 0 };
     bool m_isRunning { false };
     bool m_observingDisplayChanges { false };

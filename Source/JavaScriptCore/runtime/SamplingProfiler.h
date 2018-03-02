@@ -137,7 +137,7 @@ public:
     };
 
     struct UnprocessedStackTrace {
-        double timestamp;
+        Seconds timestamp;
         void* topPC;
         bool topFrameIsLLInt;
         void* llintPC;
@@ -145,7 +145,7 @@ public:
     };
 
     struct StackTrace {
-        double timestamp;
+        Seconds timestamp;
         Vector<StackFrame> frames;
         StackTrace()
         { }
@@ -193,7 +193,7 @@ private:
     Vector<StackTrace> m_stackTraces;
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces;
     Seconds m_timingInterval;
-    double m_lastTime;
+    Seconds m_lastTime;
     Lock m_lock;
     RefPtr<Thread> m_thread;
     RefPtr<Thread> m_jscExecutionThread;

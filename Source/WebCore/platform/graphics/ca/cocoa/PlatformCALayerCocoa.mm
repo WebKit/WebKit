@@ -93,9 +93,9 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
     return platformCALayer;
 }
 
-static double mediaTimeToCurrentTime(CFTimeInterval t)
+static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 {
-    return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
+    return MonotonicTime::now() + Seconds(t - CACurrentMediaTime());
 }
 
 // Delegate for animationDidStart callback
@@ -118,7 +118,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
     if (!m_owner)
         return;
 
-    CFTimeInterval startTime;
+    MonotonicTime startTime;
     if (hasExplicitBeginTime(animation)) {
         // We don't know what time CA used to commit the animation, so just use the current time
         // (even though this will be slightly off).
@@ -378,7 +378,7 @@ PlatformCALayerCocoa::~PlatformCALayerCocoa()
         [static_cast<WebTiledBackingLayer *>(m_layer.get()) invalidate];
 }
 
-void PlatformCALayerCocoa::animationStarted(const String& animationKey, CFTimeInterval beginTime)
+void PlatformCALayerCocoa::animationStarted(const String& animationKey, MonotonicTime beginTime)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationStarted(animationKey, beginTime);

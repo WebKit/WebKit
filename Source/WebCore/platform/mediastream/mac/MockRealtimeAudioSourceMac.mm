@@ -130,12 +130,12 @@ void MockRealtimeAudioSourceMac::reconfigure()
     m_formatDescription = adoptCF(formatDescription);
 }
 
-void MockRealtimeAudioSourceMac::render(double delta)
+void MockRealtimeAudioSourceMac::render(Seconds delta)
 {
     if (!m_audioBufferList)
         reconfigure();
 
-    uint32_t totalFrameCount = alignTo16Bytes(delta * sampleRate());
+    uint32_t totalFrameCount = alignTo16Bytes(delta.seconds() * sampleRate());
     uint32_t frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
 
     while (frameCount) {

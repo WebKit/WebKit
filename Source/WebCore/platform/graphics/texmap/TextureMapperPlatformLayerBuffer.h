@@ -28,7 +28,7 @@
 #include "BitmapTextureGL.h"
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayer.h"
-#include <wtf/CurrentTime.h>
+#include <wtf/MonotonicTime.h>
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
@@ -48,8 +48,8 @@ public:
     bool canReuseWithoutReset(const IntSize&, GLint internalFormat);
     BitmapTextureGL& textureGL() { return static_cast<BitmapTextureGL&>(*m_texture); }
 
-    inline void markUsed() { m_timeLastUsed = monotonicallyIncreasingTime(); }
-    double lastUsedTime() const { return m_timeLastUsed; }
+    inline void markUsed() { m_timeLastUsed = MonotonicTime::now(); }
+    MonotonicTime lastUsedTime() const { return m_timeLastUsed; }
 
     class UnmanagedBufferDataHolder {
         WTF_MAKE_NONCOPYABLE(UnmanagedBufferDataHolder);
@@ -68,7 +68,7 @@ public:
 private:
 
     RefPtr<BitmapTexture> m_texture;
-    double m_timeLastUsed { 0 };
+    MonotonicTime m_timeLastUsed;
 
     GLuint m_textureID;
     IntSize m_size;

@@ -7310,7 +7310,7 @@ HRESULT WebView::nextDisplayIsSynchronous()
     return S_OK;
 }
 
-void WebView::notifyAnimationStarted(const GraphicsLayer*, const String&, double)
+void WebView::notifyAnimationStarted(const GraphicsLayer*, const String&, MonotonicTime)
 {
     // We never set any animations on our backing layer.
     ASSERT_NOT_REACHED();

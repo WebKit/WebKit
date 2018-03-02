@@ -324,7 +324,7 @@ void CACFLayerTreeHost::notifyAnimationsStarted()
     // Send currentTime to the pending animations. This function is called by CACF in a callback
     // which occurs after the drawInContext calls. So currentTime is very close to the time
     // the animations actually start
-    double currentTime = monotonicallyIncreasingTime();
+    MonotonicTime currentTime = MonotonicTime::now();
 
     HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
     for (HashSet<RefPtr<PlatformCALayer> >::iterator it = m_pendingAnimatedLayers.begin(); it != end; ++it)

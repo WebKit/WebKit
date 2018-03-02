@@ -184,18 +184,18 @@ class MaximumDurationTracker {
 public:
     explicit MaximumDurationTracker(double *maxDuration)
         : m_maxDuration(maxDuration)
-        , m_start(monotonicallyIncreasingTime())
+        , m_start(MonotonicTime::now())
     {
     }
 
     ~MaximumDurationTracker()
     {
-        *m_maxDuration = std::max(*m_maxDuration, monotonicallyIncreasingTime() - m_start);
+        *m_maxDuration = std::max(*m_maxDuration, (MonotonicTime::now() - m_start).seconds());
     }
 
 private:
     double* m_maxDuration;
-    double m_start;
+    MonotonicTime m_start;
 };
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)

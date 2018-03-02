@@ -352,7 +352,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
 Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(String&& ruleJSON)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double loadExtensionStartTime = monotonicallyIncreasingTime();
+    MonotonicTime loadExtensionStartTime = MonotonicTime::now();
 #endif
     RefPtr<VM> vm = VM::create();
 
@@ -371,8 +371,8 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(String&& r
         return makeUnexpected(ContentExtensionError::JSONContainsNoRules);
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double loadExtensionEndTime = monotonicallyIncreasingTime();
-    dataLogF("Time spent loading extension %f\n", (loadExtensionEndTime - loadExtensionStartTime));
+    MonotonicTime loadExtensionEndTime = MonotonicTime::now();
+    dataLogF("Time spent loading extension %f\n", (loadExtensionEndTime - loadExtensionStartTime).seconds());
 #endif
 
     return WTFMove(*ruleList);

@@ -1,3 +1,305 @@
+2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove monotonicallyIncreasingTime
+        https://bugs.webkit.org/show_bug.cgi?id=182911
+
+        Reviewed by Michael Catanzaro.
+
+        While generic code uses MonotonicTime, CAAnimation uses media time (CFTimeInterval).
+        At this boundary, we convert MonotonicTime to media time, this is the same logic to
+        the code before this patch.
+
+        * Modules/gamepad/Gamepad.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::monitorBufferingRate):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::startSpeakingImmediately):
+        (WebCore::SpeechSynthesis::fireEvent):
+        * Modules/speech/SpeechSynthesisUtterance.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::parseRuleList):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad const):
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::hasExpired const):
+        * history/CachedPage.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::startProgressEventTimer):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        (WebCore::HTMLMediaElement::refreshCachedTime const):
+        (WebCore::HTMLMediaElement::invalidateCachedTime const):
+        (WebCore::HTMLMediaElement::currentMediaTime const):
+        (WebCore::HTMLMediaElement::startPlaybackProgressTimer):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::removeBehaviorRestriction):
+        (WebCore::MediaElementSession::mostRecentUserInteractionTime const):
+        (WebCore::MediaElementSession::resetPlaybackSessionState):
+        * html/MediaElementSession.h:
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::PumpSession::PumpSession):
+        (WebCore::HTMLParserScheduler::HTMLParserScheduler):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::checkForYield):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::finalizeFrame):
+        * inspector/InspectorCanvas.h:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::startTracking):
+        (WebCore::InspectorMemoryAgent::didHandleMemoryPressure):
+        (WebCore::InspectorMemoryAgent::collectSample):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForTiming):
+        (WebCore::InspectorNetworkAgent::timestamp):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::timestamp):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::timestamp):
+        * inspector/agents/WebHeapAgent.cpp:
+        (WebCore::WebHeapAgent::dispatchGarbageCollectedEvent):
+        * inspector/agents/WebHeapAgent.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didDraw):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::didAccessDecodedData):
+        * loader/cache/CachedResource.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        * page/EventHandler.cpp:
+        (WebCore::MaximumDurationTracker::MaximumDurationTracker):
+        (WebCore::MaximumDurationTracker::~MaximumDurationTracker):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedElement):
+        (WebCore::FocusController::timeSinceFocusWasSet const):
+        * page/FocusController.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::didPaintContents):
+        * page/FrameView.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::beginAnimationUpdateTime const):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::onAnimationStartResponse):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::beginAnimationUpdateTime):
+        (WebCore::CSSAnimationControllerPrivate::receivedStartTimeResponse):
+        (WebCore::CSSAnimationControllerPrivate::startTimeResponse):
+        (WebCore::CSSAnimationController::notifyAnimationStarted):
+        * page/animation/CSSAnimationController.h:
+        * page/animation/CSSAnimationControllerPrivate.h:
+        * page/mac/WheelEventDeltaFilterMac.h:
+        * page/mac/WheelEventDeltaFilterMac.mm:
+        (WebCore::WheelEventDeltaFilterMac::beginFilteringDeltas):
+        (WebCore::WheelEventDeltaFilterMac::updateFromDelta):
+        (WebCore::WheelEventDeltaFilterMac::endFilteringDeltas):
+        * platform/ControlStates.h:
+        (WebCore::ControlStates::timeSinceControlWasFocused const):
+        (WebCore::ControlStates::setTimeSinceControlWasFocused):
+        * platform/PlatformSpeechSynthesisUtterance.h:
+        (WebCore::PlatformSpeechSynthesisUtterance::startTime const):
+        (WebCore::PlatformSpeechSynthesisUtterance::setStartTime):
+        * platform/gamepad/PlatformGamepad.h:
+        (WebCore::PlatformGamepad::lastUpdateTime const):
+        (WebCore::PlatformGamepad::connectTime const):
+        (WebCore::PlatformGamepad::PlatformGamepad):
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        (WebCore::GameControllerGamepad::setupAsExtendedGamepad):
+        (WebCore::GameControllerGamepad::setupAsGamepad):
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::HIDGamepad):
+        (WebCore::HIDGamepad::valueChanged):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::suspendAnimations):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::notifyAnimationStarted):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::LayerClient::platformCALayerAnimationStarted):
+        (WebCore::AVFWrapper::createImageForTimeInRect):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::pauseAnimation):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::setAnimationOnLayer):
+        (WebCore::GraphicsLayerCA::pauseCAAnimationOnLayer):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::LayerPropertyAnimation::LayerPropertyAnimation):
+        (WebCore::GraphicsLayerCA::AnimationProcessingAction::AnimationProcessingAction):
+        * platform/graphics/ca/LayerPool.cpp:
+        (WebCore::LayerPool::LayerPool):
+        (WebCore::LayerPool::addLayer):
+        (WebCore::LayerPool::decayedCapacity const):
+        (WebCore::LayerPool::pruneTimerFired):
+        * platform/graphics/ca/LayerPool.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerAnimationStarted):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::startedNewCohort):
+        (WebCore::TileGrid::TileCohortInfo::timeUntilExpiration):
+        (WebCore::TileGrid::cohortRemovalTimerFired):
+        * platform/graphics/ca/TileGrid.h:
+        (WebCore::TileGrid::TileCohortInfo::TileCohortInfo):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (mediaTimeToCurrentTime):
+        (-[WebAnimationDelegate animationDidStart:]):
+        (PlatformCALayerCocoa::animationStarted):
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::notifyAnimationsStarted):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::animationStarted):
+        (PlatformCALayerWin::layerTreeAsString const):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::decodeSample):
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+        * platform/graphics/texmap/BitmapTexturePool.h:
+        (WebCore::BitmapTexturePool::Entry::markIsInUse):
+        (WebCore::BitmapTexturePool::Entry::canBeReleased const):
+        (): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        (WebCore::GraphicsLayerTextureMapper::pauseAnimation):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        (WebCore::TextureMapperAnimation::apply):
+        (WebCore::TextureMapperAnimation::pause):
+        (WebCore::TextureMapperAnimation::resume):
+        (WebCore::TextureMapperAnimation::computeTotalRunningTime):
+        (WebCore::TextureMapperAnimations::pause):
+        (WebCore::TextureMapperAnimations::suspend):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        (WebCore::TextureMapperAnimation::startTime const):
+        (WebCore::TextureMapperAnimation::pauseTime const):
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        (WebCore::TextureMapperFPSCounter::TextureMapperFPSCounter):
+        (WebCore::TextureMapperFPSCounter::updateFPSAndDisplay):
+        * platform/graphics/texmap/TextureMapperFPSCounter.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        (WebCore::TextureMapperPlatformLayerBuffer::markUsed):
+        (WebCore::TextureMapperPlatformLayerBuffer::lastUsedTime const):
+        (): Deleted.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        (WebCore::CoordinatedGraphicsLayer::pauseAnimation):
+        (WebCore::CoordinatedGraphicsLayer::suspendAnimations):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp:
+        (WebCore::LibWebRTCAudioModule::StartPlayoutOnAudioThread):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::startProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::stopProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::elapsedTime):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::render):
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer):
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::sampleBufferFromPixelBuffer):
+        (WebCore::ScreenDisplayCaptureSourceMac::frameAvailable):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        (WebCore::MockRealtimeAudioSource::stopProducingData):
+        (WebCore::MockRealtimeAudioSource::elapsedTime):
+        (WebCore::MockRealtimeAudioSource::tick):
+        (WebCore::MockRealtimeAudioSource::delaySamples):
+        * platform/mock/MockRealtimeAudioSource.h:
+        (WebCore::MockRealtimeAudioSource::render):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::startProducingData):
+        (WebCore::MockRealtimeVideoSource::stopProducingData):
+        (WebCore::MockRealtimeVideoSource::elapsedTime):
+        (WebCore::MockRealtimeVideoSource::drawText):
+        (WebCore::MockRealtimeVideoSource::delaySamples):
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        * platform/mock/MockRealtimeVideoSource.h:
+        * platform/network/DNSResolveQueue.cpp:
+        (WebCore::DNSResolveQueue::DNSResolveQueue):
+        (WebCore::DNSResolveQueue::isUsingProxy):
+        * platform/network/DNSResolveQueue.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::suspendAnimations):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::notifyAnimationStarted):
+        (WebCore::RenderLayerBacking::suspendAnimations):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didPaintBacking):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::animationProgress const):
+        (WebCore::RenderProgress::updateAnimationState):
+        * rendering/RenderProgress.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::animationDurationForProgressBar const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::animationDurationForProgressBar const):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::animationDurationForProgressBar const):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::animationDurationForProgressBar const):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::elapsed const):
+        (WebCore::SMILTimeContainer::isActive const):
+        (WebCore::SMILTimeContainer::isPaused const):
+        (WebCore::SMILTimeContainer::isStarted const):
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::pause):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::setElapsed):
+        (WebCore::SMILTimeContainer::timerFired):
+        * svg/animation/SMILTimeContainer.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::delayMediaStreamTrackSamples):
+        * testing/MockGamepad.cpp:
+        (WebCore::MockGamepad::MockGamepad):
+        (WebCore::MockGamepad::updateDetails):
+        (WebCore::MockGamepad::setAxisValue):
+        (WebCore::MockGamepad::setButtonValue):
+
 2018-03-02  Alejandro G. Castro  <alex@igalia.com>
 
         Make LibWebRTCProvider port agnostic again after r215424

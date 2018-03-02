@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT Element* previousFocusableElement(Node&);
 
     void setFocusedElementNeedsRepaint();
-    double timeSinceFocusWasSet() const;
+    Seconds timeSinceFocusWasSet() const;
 
 private:
     void setActiveInternal(bool);
@@ -122,7 +122,7 @@ private:
     ActivityState::Flags m_activityState;
 
     Timer m_focusRepaintTimer;
-    double m_focusSetTime;
+    MonotonicTime m_focusSetTime;
 };
 
 } // namespace WebCore

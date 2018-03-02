@@ -311,7 +311,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         return ContentExtensionError::JSONTopURLAndDomainConditions;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double patternPartitioningStart = monotonicallyIncreasingTime();
+    MonotonicTime patternPartitioningStart = MonotonicTime::now();
 #endif
     
     client.writeSource(ruleJSON);
@@ -402,8 +402,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     actionLocations.clear();
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double patternPartitioningEnd = monotonicallyIncreasingTime();
-    dataLogF("    Time spent partitioning the rules into groups: %f\n", (patternPartitioningEnd - patternPartitioningStart));
+    MonotonicTime patternPartitioningEnd = MonotonicTime::now();
+    dataLogF("    Time spent partitioning the rules into groups: %f\n", (patternPartitioningEnd - patternPartitioningStart).seconds());
 #endif
 
     LOG_LARGE_STRUCTURES(filtersWithoutConditions, filtersWithoutConditions.memoryUsed());
@@ -411,7 +411,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     LOG_LARGE_STRUCTURES(topURLFilters, topURLFilters.memoryUsed());
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double totalNFAToByteCodeBuildTimeStart = monotonicallyIncreasingTime();
+    MonotonicTime totalNFAToByteCodeBuildTimeStart = MonotonicTime::now();
 #endif
 
     compileToBytecode(WTFMove(filtersWithoutConditions), WTFMove(universalActionsWithoutConditions), [&](Vector<DFABytecode>&& bytecode) {
@@ -425,8 +425,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     });
     
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    double totalNFAToByteCodeBuildTimeEnd = monotonicallyIncreasingTime();
-    dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart));
+    MonotonicTime totalNFAToByteCodeBuildTimeEnd = MonotonicTime::now();
+    dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());
 
     dataLogF("    Number of machines without condition filters: %d (total bytecode size = %d)\n", machinesWithoutConditionsCount, totalBytecodeSizeForMachinesWithoutConditions);
     dataLogF("    Number of machines with condition filters: %d (total bytecode size = %d)\n", machinesWithConditionsCount, totalBytecodeSizeForMachinesWithConditions);

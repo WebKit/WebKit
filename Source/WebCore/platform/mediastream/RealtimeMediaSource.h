@@ -219,7 +219,7 @@ public:
     void captureFailed();
 
     // Testing only
-    virtual void delaySamples(float) { };
+    virtual void delaySamples(Seconds) { };
 
 protected:
     RealtimeMediaSource(const String& id, Type, const String& name);

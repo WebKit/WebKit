@@ -63,7 +63,7 @@ public:
     void addAnimationForKey(const String& key, PlatformCAAnimation&) override;
     void removeAnimationForKey(const String& key) override;
     RefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
-    void animationStarted(const String& key, CFTimeInterval beginTime) override;
+    void animationStarted(const String& key, MonotonicTime beginTime) override;
     void animationEnded(const String& key) override;
 
     void setMask(PlatformCALayer*) override;

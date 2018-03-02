@@ -24,6 +24,7 @@
 
 #include "FloatPoint.h"
 #include "TransformationMatrix.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -38,8 +39,8 @@ public:
 
 private:
     bool m_isShowingFPS;
-    double m_fpsInterval;
-    double m_fpsTimestamp;
+    Seconds m_fpsInterval;
+    MonotonicTime m_fpsTimestamp;
     int m_lastFPS;
     int m_frameCount;
 };

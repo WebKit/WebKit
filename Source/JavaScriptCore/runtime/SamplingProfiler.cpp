@@ -336,7 +336,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
 {
     ASSERT(m_lock.isLocked());
     if (m_vm.entryScope) {
-        double nowTime = m_stopwatch->elapsedTime();
+        Seconds nowTime = m_stopwatch->elapsedTime();
 
         auto machineThreadsLocker = holdLock(m_vm.heap.machineThreads().getLock());
         LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());

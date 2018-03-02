@@ -169,7 +169,7 @@ private:
 #endif
 
     Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
-    double animationDurationForProgressBar(RenderProgress&) const override;
+    Seconds animationDurationForProgressBar(RenderProgress&) const override;
     void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;

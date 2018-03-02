@@ -59,8 +59,8 @@ public:
     float pitch() const { return m_platformUtterance->pitch(); }
     void setPitch(float pitch) { m_platformUtterance->setPitch(pitch); }
 
-    double startTime() const { return m_platformUtterance->startTime(); }
-    void setStartTime(double startTime) { m_platformUtterance->setStartTime(startTime); }
+    MonotonicTime startTime() const { return m_platformUtterance->startTime(); }
+    void setStartTime(MonotonicTime startTime) { m_platformUtterance->setStartTime(startTime); }
 
     using RefCounted::ref;
     using RefCounted::deref;

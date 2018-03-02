@@ -77,7 +77,7 @@ private:
         void didDraw();
 
         WebPageProxy& m_webPage;
-        double m_startTime { 0 };
+        MonotonicTime m_startTime;
         WTF::Function<void (CallbackBase::Error)> m_callback;
         RunLoop::Timer<DrawingMonitor> m_timer;
     };

@@ -1650,7 +1650,7 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
     ASSERT(m_imageGenerator);
 
 #if !RELEASE_LOG_DISABLED
-    double start = monotonicallyIncreasingTime();
+    MonotonicTime start = MonotonicTime::now();
 #endif
 
     [m_imageGenerator.get() setMaximumSize:CGSize(rect.size())];
@@ -1658,7 +1658,7 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
     RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawImage.get(), sRGBColorSpaceRef()));
 
 #if !RELEASE_LOG_DISABLED
-    DEBUG_LOG(LOGIDENTIFIER, "creating image took ", monotonicallyIncreasingTime() - start);
+    DEBUG_LOG(LOGIDENTIFIER, "creating image took ", (MonotonicTime::now() - start).seconds());
 #endif
 
     return image;
@@ -2350,13 +2350,13 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
     }
 
 #if !RELEASE_LOG_DISABLED
-    double start = monotonicallyIncreasingTime();
+    MonotonicTime start = MonotonicTime::now();
 #endif
 
     m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
 
 #if !RELEASE_LOG_DISABLED
-    DEBUG_LOG(LOGIDENTIFIER, "creating buffer took ", monotonicallyIncreasingTime() - start);
+    DEBUG_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
 #endif
 }
 

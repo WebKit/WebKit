@@ -52,11 +52,11 @@ private:
             : m_texture(WTFMove(texture))
         { }
 
-        void markIsInUse() { m_lastUsedTime = monotonicallyIncreasingTime(); }
-        bool canBeReleased (double minUsedTime) const { return m_lastUsedTime < minUsedTime && m_texture->refCount() == 1; }
+        void markIsInUse() { m_lastUsedTime = MonotonicTime::now(); }
+        bool canBeReleased (MonotonicTime minUsedTime) const { return m_lastUsedTime < minUsedTime && m_texture->refCount() == 1; }
 
         RefPtr<BitmapTexture> m_texture;
-        double m_lastUsedTime { 0.0 };
+        MonotonicTime m_lastUsedTime;
     };
 
     void scheduleReleaseUnusedTextures();

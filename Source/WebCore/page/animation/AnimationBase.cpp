@@ -698,7 +698,7 @@ void AnimationBase::freezeAtTime(double t)
         // If we haven't started yet, make it as if we started.
         LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animationState));
         m_animationState = AnimationState::StartWaitResponse;
-        onAnimationStartResponse(monotonicallyIncreasingTime());
+        onAnimationStartResponse(MonotonicTime::now());
     }
 
     ASSERT(m_startTime); // If m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
@@ -708,7 +708,7 @@ void AnimationBase::freezeAtTime(double t)
         m_pauseTime = m_startTime.value_or(0) + t - m_animation->delay();
 
     if (auto* renderer = compositedRenderer())
-        renderer->suspendAnimations(m_pauseTime.value());
+        renderer->suspendAnimations(MonotonicTime::fromRawSeconds(m_pauseTime.value()));
 }
 
 double AnimationBase::beginAnimationUpdateTime() const
@@ -716,7 +716,7 @@ double AnimationBase::beginAnimationUpdateTime() const
     if (!m_compositeAnimation)
         return 0;
 
-    return m_compositeAnimation->animationController().beginAnimationUpdateTime();
+    return m_compositeAnimation->animationController().beginAnimationUpdateTime().secondsSinceEpoch().seconds();
 }
 
 double AnimationBase::getElapsedTime() const

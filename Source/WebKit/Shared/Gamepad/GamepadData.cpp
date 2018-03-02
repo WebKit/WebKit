@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues, double lastUpdateTime)
+GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime)
     : m_index(index)
     , m_axisValues(axisValues)
     , m_buttonValues(buttonValues)
@@ -41,7 +41,7 @@ GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const
 {
 }
 
-GamepadData::GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues, double lastUpdateTime)
+GamepadData::GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime)
     : m_index(index)
     , m_id(id)
     , m_axisValues(axisValues)

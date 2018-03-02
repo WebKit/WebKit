@@ -177,8 +177,8 @@ void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 
 void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
 {
-    int64_t timestampMicroSeconds = monotonicallyIncreasingTimeMS() * 1000;
-    webrtc::VideoFrame frame(buffer, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation, timestampMicroSeconds);
+    MonotonicTime timestamp = MonotonicTime::now();
+    webrtc::VideoFrame frame(buffer, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation, static_cast<int64_t>(timestamp.secondsSinceEpoch().microseconds()));
     for (auto* sink : m_sinks)
         sink->OnFrame(frame);
 }

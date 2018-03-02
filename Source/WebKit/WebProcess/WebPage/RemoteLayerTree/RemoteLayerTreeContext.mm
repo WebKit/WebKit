@@ -143,7 +143,7 @@ void RemoteLayerTreeContext::willStartAnimationOnLayer(PlatformCALayerRemote& la
     m_layersWithAnimations.add(layer.layerID(), &layer);
 }
 
-void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, double startTime)
+void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, MonotonicTime startTime)
 {
     auto it = m_layersWithAnimations.find(layerID);
     if (it != m_layersWithAnimations.end())

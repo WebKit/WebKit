@@ -40,11 +40,11 @@ public:
     TextureMapperAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, double, double, AnimationState);
+    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, MonotonicTime, Seconds, AnimationState);
     WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
 
     void apply(Client&);
-    void pause(double);
+    void pause(Seconds);
     void resume();
     bool isActive() const;
 
@@ -53,23 +53,23 @@ public:
     const FloatSize& boxSize() const { return m_boxSize; }
     const RefPtr<Animation> animation() const { return m_animation; }
     bool listsMatch() const { return m_listsMatch; }
-    double startTime() const { return m_startTime; }
-    double pauseTime() const { return m_pauseTime; }
+    MonotonicTime startTime() const { return m_startTime; }
+    Seconds pauseTime() const { return m_pauseTime; }
     AnimationState state() const { return m_state; }
 
 private:
     void applyInternal(Client&, const AnimationValue& from, const AnimationValue& to, float progress);
-    double computeTotalRunningTime();
+    Seconds computeTotalRunningTime();
 
     String m_name;
     KeyframeValueList m_keyframes;
     FloatSize m_boxSize;
     RefPtr<Animation> m_animation;
     bool m_listsMatch;
-    double m_startTime;
-    double m_pauseTime;
-    double m_totalRunningTime;
-    double m_lastRefreshedTime;
+    MonotonicTime m_startTime;
+    Seconds m_pauseTime;
+    Seconds m_totalRunningTime;
+    MonotonicTime m_lastRefreshedTime;
     AnimationState m_state;
 };
 
@@ -80,8 +80,8 @@ public:
     void add(const TextureMapperAnimation&);
     void remove(const String& name);
     void remove(const String& name, AnimatedPropertyID);
-    void pause(const String&, double);
-    void suspend(double);
+    void pause(const String&, Seconds);
+    void suspend(MonotonicTime);
     void resume();
 
     void apply(TextureMapperAnimation::Client&);

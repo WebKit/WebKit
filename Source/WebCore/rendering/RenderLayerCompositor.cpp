@@ -560,7 +560,7 @@ void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer& layer, const Gr
 void RenderLayerCompositor::didPaintBacking(RenderLayerBacking*)
 {
     auto& frameView = m_renderView.frameView();
-    frameView.setLastPaintTime(monotonicallyIncreasingTime());
+    frameView.setLastPaintTime(MonotonicTime::now());
     if (frameView.milestonesPendingPaint())
         frameView.firePaintRelatedMilestonesIfNeeded();
 }

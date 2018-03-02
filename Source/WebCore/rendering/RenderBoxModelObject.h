@@ -231,7 +231,7 @@ public:
     void animationPaused(double timeOffset, const String& name);
     void animationFinished(const String& name);
 
-    void suspendAnimations(double time = 0);
+    void suspendAnimations(MonotonicTime = MonotonicTime());
 
     RenderBoxModelObject* continuation() const;
     WEBCORE_EXPORT RenderInline* inlineContinuation() const;

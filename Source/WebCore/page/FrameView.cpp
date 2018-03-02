@@ -124,7 +124,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FrameView);
 
-double FrameView::sCurrentPaintTimeStamp = 0.0;
+MonotonicTime FrameView::sCurrentPaintTimeStamp { };
 
 // The maximum number of updateEmbeddedObjects iterations that should be done before returning.
 static const unsigned maxUpdateEmbeddedObjectsIterations = 2;
@@ -272,7 +272,7 @@ void FrameView::reset()
     m_lastZoomFactor = 1.0f;
     m_isTrackingRepaints = false;
     m_trackedRepaintRects.clear();
-    m_lastPaintTime = 0;
+    m_lastPaintTime = MonotonicTime();
     m_paintBehavior = PaintBehaviorNormal;
     m_isPainting = false;
     m_visuallyNonEmptyCharacterCount = 0;
@@ -4015,7 +4015,7 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
 
     if (paintingState.isTopLevelPainter)
-        sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
+        sCurrentPaintTimeStamp = MonotonicTime::now();
 
     paintingState.paintBehavior = m_paintBehavior;
     
@@ -4049,7 +4049,7 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
         notifyWidgetsInAllFrames(DidPaintFlattened);
 
     m_paintBehavior = paintingState.paintBehavior;
-    m_lastPaintTime = monotonicallyIncreasingTime();
+    m_lastPaintTime = MonotonicTime::now();
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -4058,7 +4058,7 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
 #endif
 
     if (paintingState.isTopLevelPainter)
-        sCurrentPaintTimeStamp = 0;
+        sCurrentPaintTimeStamp = MonotonicTime();
 
     if (!context.paintingDisabled()) {
         InspectorInstrumentation::didPaint(*renderView(), dirtyRect);
