@@ -161,13 +161,12 @@ public:
     
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
-    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier);
+    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
 
     using RunServiceWorkerCallback = WTF::Function<void(bool, SWServerToContextConnection&)>;
     WEBCORE_EXPORT void runServiceWorkerIfNecessary(ServiceWorkerIdentifier, RunServiceWorkerCallback&&);
 
-    void setClientActiveWorker(ServiceWorkerClientIdentifier, ServiceWorkerIdentifier);
     void resolveRegistrationReadyRequests(SWServerRegistration&);
 
     void addRegistrationFromStore(ServiceWorkerContextData&&);
@@ -221,7 +220,7 @@ private:
     };
     HashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClientData> m_clientsById;
-    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerIdentifier> m_clientToControllingWorker;
+    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerRegistrationIdentifier> m_clientToControllingRegistration;
 
     UniqueRef<SWOriginStore> m_originStore;
     RegistrationStore m_registrationStore;

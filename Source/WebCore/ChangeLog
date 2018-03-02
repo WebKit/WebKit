@@ -1,5 +1,25 @@
 2018-03-01  Youenn Fablet  <youenn@apple.com>
 
+        Clients should register to StorageProcess with their service worker registration identifier
+        https://bugs.webkit.org/show_bug.cgi?id=182313
+
+        Reviewed by Chris Dumez.
+
+        No observable change of behavior in regular conditions.
+        When service worker process crashes, the service worker identifiers sent by the WebProcess might be wrong
+        and we will not be able to retrieve the registration from these identifiers.
+        The storage process will be able to still process correctly messages coming from the WebProcess to register clients of the registration.
+        Otherwise, there is a chance that WebProcess clients will not be added to the SWServerRegistration.m_clientsUsingRegistration maps.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setServiceWorkerConnection):
+        * workers/service/SWClientConnection.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::registerServiceWorkerClient):
+        * workers/service/server/SWServer.h:
+
+2018-03-01  Youenn Fablet  <youenn@apple.com>
+
         Add API test to validate setting of service worker and cache storage directories
         https://bugs.webkit.org/show_bug.cgi?id=182543
 
