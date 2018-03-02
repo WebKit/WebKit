@@ -417,7 +417,7 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
 
     Vector<ServiceWorkerClientData> matchingClients;
     forEachClientForOrigin(worker.origin(), [&](auto& clientData) {
-        if (!options.includeUncontrolled && worker.data().registrationIdentifier != m_clientToControllingRegistration.get(clientData.identifier))
+        if (!options.includeUncontrolled && worker.identifier() != m_clientToControllingWorker.get(clientData.identifier))
             return;
         if (options.type != ServiceWorkerClientType::All && options.type != clientData.type)
             return;
@@ -447,13 +447,13 @@ void SWServer::claim(SWServerWorker& worker)
         if (!(registration && registration->key() == worker.registrationKey()))
             return;
 
-        auto result = m_clientToControllingRegistration.add(clientData.identifier, registration->identifier());
+        auto result = m_clientToControllingWorker.add(clientData.identifier, worker.identifier());
         if (!result.isNewEntry) {
             auto previousIdentifier = result.iterator->value;
-            if (previousIdentifier == registration->identifier())
+            if (previousIdentifier == worker.identifier())
                 return;
-            result.iterator->value = registration->identifier();
-            if (auto* controllingRegistration = m_registrationsByID.get(previousIdentifier))
+            result.iterator->value = worker.identifier();
+            if (auto* controllingRegistration = this->registrationFromServiceWorkerIdentifier(previousIdentifier))
                 controllingRegistration->removeClientUsingRegistration(clientData.identifier);
         }
         registration->controlClient(clientData.identifier);
@@ -726,6 +726,11 @@ SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData&
     return (selectedRegistration && !selectedRegistration->isUninstalling()) ? selectedRegistration : nullptr;
 }
 
+void SWServer::setClientActiveWorker(ServiceWorkerClientIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    m_clientToControllingWorker.set(clientIdentifier, serviceWorkerIdentifier);
+}
+
 SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier identifier)
 {
     auto iterator = m_runningOrTerminatingWorkers.find(identifier);
@@ -735,7 +740,7 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
     return m_registrations.get(iterator->value->registrationKey());
 }
 
-void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier)
+void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier)
 {
     auto clientIdentifier = data.identifier;
     auto addResult = m_clientsById.add(clientIdentifier, WTFMove(data));
@@ -747,16 +752,14 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     clientIdentifiersForOrigin.identifiers.append(clientIdentifier);
     clientIdentifiersForOrigin.terminateServiceWorkersTimer = nullptr;
 
-    if (!controllingServiceWorkerRegistrationIdentifier)
+    if (!controllingServiceWorkerIdentifier)
         return;
 
-    auto* controllingRegistration = m_registrationsByID.get(*controllingServiceWorkerRegistrationIdentifier);
-    if (!controllingRegistration || !controllingRegistration->activeWorker())
-        return;
-
-    controllingRegistration->addClientUsingRegistration(clientIdentifier);
-    auto result = m_clientToControllingRegistration.add(clientIdentifier, *controllingServiceWorkerRegistrationIdentifier);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(*controllingServiceWorkerIdentifier)) {
+        controllingRegistration->addClientUsingRegistration(clientIdentifier);
+        auto result = m_clientToControllingWorker.add(clientIdentifier, *controllingServiceWorkerIdentifier);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
 }
 
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier clientIdentifier)
@@ -783,14 +786,14 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
         iterator->value.terminateServiceWorkersTimer->startOneShot(terminationDelay);
     }
 
-    auto registrationIterator = m_clientToControllingRegistration.find(clientIdentifier);
-    if (registrationIterator == m_clientToControllingRegistration.end())
+    auto workerIterator = m_clientToControllingWorker.find(clientIdentifier);
+    if (workerIterator == m_clientToControllingWorker.end())
         return;
 
-    if (auto* registration = m_registrationsByID.get(registrationIterator->value))
-        registration->removeClientUsingRegistration(clientIdentifier);
+    if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(workerIterator->value))
+        controllingRegistration->removeClientUsingRegistration(clientIdentifier);
 
-    m_clientToControllingRegistration.remove(registrationIterator);
+    m_clientToControllingWorker.remove(workerIterator);
 }
 
 void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registration)
