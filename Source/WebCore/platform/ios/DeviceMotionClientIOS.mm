@@ -29,7 +29,7 @@
 
 #import "WebCoreMotionManager.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
 
 namespace WebCore {
 
@@ -113,4 +113,4 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)

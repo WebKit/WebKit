@@ -23,15 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebCoreMotionManager_h
-#define WebCoreMotionManager_h
+#pragma once
 
 #import "DeviceMotionClientIOS.h"
 #import "DeviceOrientationClientIOS.h"
 #import <CoreLocation/CoreLocation.h>
 #import <wtf/HashCountedSet.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
 
 #import <CoreMotion/CoreMotion.h>
 
@@ -57,6 +56,4 @@ const float kMotionUpdateInterval = 1.0f / 60.0f;
 - (BOOL)headingAvailable;
 @end
 
-#endif
-
-#endif // WebCoreMotionManager_h
+#endif // PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)

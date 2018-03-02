@@ -1,5 +1,17 @@
 2018-03-02  Tim Horton  <timothy_horton@apple.com>
 
+        Make the !ENABLE(DEVICE_ORIENTATION) iOS build succeed
+        https://bugs.webkit.org/show_bug.cgi?id=183296
+
+        Reviewed by Dan Bernstein.
+
+        * platform/ios/DeviceMotionClientIOS.h:
+        * platform/ios/DeviceMotionClientIOS.mm:
+        * platform/ios/WebCoreMotionManager.h:
+        * platform/ios/WebCoreMotionManager.mm:
+
+2018-03-02  Tim Horton  <timothy_horton@apple.com>
+
         Make it possible to build for iOS without Celestial
         https://bugs.webkit.org/show_bug.cgi?id=183295
         <rdar://problem/38074468>
