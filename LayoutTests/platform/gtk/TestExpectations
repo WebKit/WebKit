@@ -3398,22 +3398,6 @@ fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
-# We don't support emoji genders, but half the reftests pass anyway.
-fast/text/emoji-gender-2-3.html [ Pass ]
-fast/text/emoji-gender-2-4.html [ Pass ]
-fast/text/emoji-gender-2-5.html [ Pass ]
-fast/text/emoji-gender-2-6.html [ Pass ]
-fast/text/emoji-gender-2-7.html [ Pass ]
-fast/text/emoji-gender-2-8.html [ Pass ]
-fast/text/emoji-gender-2-9.html [ Pass ]
-fast/text/emoji-gender-fe0f-3.html [ Pass ]
-fast/text/emoji-gender-fe0f-4.html [ Pass ]
-fast/text/emoji-gender-fe0f-5.html [ Pass ]
-fast/text/emoji-gender-fe0f-6.html [ Pass ]
-fast/text/emoji-gender-fe0f-7.html [ Pass ]
-fast/text/emoji-gender-fe0f-8.html [ Pass ]
-fast/text/emoji-gender-fe0f-9.html [ Pass ]
-
 transitions/svg-text-shadow-transition.html [ Pass ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]

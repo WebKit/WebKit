@@ -1,5 +1,16 @@
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r222843): [HarfBuzz] Combining enclosed keycap not correctly handled
+        https://bugs.webkit.org/show_bug.cgi?id=183246
+
+        Reviewed by Michael Catanzaro.
+
+        * fast/text/combining-enclosing-keycap-expected.txt: Added.
+        * platform/gtk/fast/text/combining-enclosing-keycap.html: Added.
+        * platform/gtk/TestExpectations:
+
+2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [FreeType] Remove FontPlatformData fallbacks
         https://bugs.webkit.org/show_bug.cgi?id=183210
 

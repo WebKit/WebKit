@@ -1,5 +1,31 @@
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r222843): [HarfBuzz] Combining enclosed keycap not correctly handled
+        https://bugs.webkit.org/show_bug.cgi?id=183246
+
+        Reviewed by Michael Catanzaro.
+
+        We are not correctly handling the combining enclosed keycap since we switched to use
+        ComplexTextController. This is because fontForCombiningCharacterSequence() always returns the font of the first
+        character, without checking if that font can render the whole sequence or not. Before 222843, the shaper did
+        that check when creating the text runs. In this case the sequence was split and a different font was used for the
+        text and the mark. This patch makes fontForCombiningCharacterSequence() try to find a suitable font for the
+        whole sequence, first looking at the CSS fallbacks and finally at system ones. The result is much better than
+        the old one, because we use the same font for both the text and the mark. If there isn't any font to render the
+        mark, then we fallback to use the first character font, since we will end up rendering the missing glyph
+        character, it's better to use the same font than the first character one.
+
+        Test: fast/text/combining-enclosing-keycap.html
+
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const): Check if the first charatcer font can render
+        the whole sequence, trying with fallbacks otherwise.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::canRenderCombiningCharacterSequence const): Check if the font face has glyphs for the whole
+        sequence not just the first character.
+
+2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [FreeType] Remove FontPlatformData fallbacks
         https://bugs.webkit.org/show_bug.cgi?id=183210
 

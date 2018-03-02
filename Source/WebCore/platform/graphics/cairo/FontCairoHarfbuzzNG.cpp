@@ -29,6 +29,7 @@
 
 #if USE(CAIRO)
 
+#include "FontCache.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include <unicode/normlzr.h>
 
@@ -58,7 +59,25 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
     if (!iterator.consume(character, clusterLength))
         return nullptr;
 
-    return glyphDataForCharacter(character, false, NormalVariant).font;
+    const Font* baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
+    if (baseFont && (static_cast<int32_t>(clusterLength) == normalizedLength || baseFont->canRenderCombiningCharacterSequence(characters, length)))
+        return baseFont;
+
+    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
+        const Font* fallbackFont = fallbackRangesAt(i).fontForCharacter(character);
+        if (!fallbackFont || fallbackFont == baseFont)
+            continue;
+
+        if (fallbackFont->canRenderCombiningCharacterSequence(characters, length))
+            return fallbackFont;
+    }
+
+    if (auto systemFallback = FontCache::singleton().systemFallbackForCharacters(m_fontDescription, baseFont, false, characters, length)) {
+        if (systemFallback->canRenderCombiningCharacterSequence(characters, length))
+            return systemFallback.get();
+    }
+
+    return baseFont;
 }
 
 } // namespace WebCore
