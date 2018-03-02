@@ -102,7 +102,8 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
             return;
         DispatchPtr<dispatch_data_t> fileDataPtr(fileData);
         Data data(fileDataPtr);
-        completionHandler(data, error);
+        auto callback = WTFMove(completionHandler);
+        callback(data, error);
         didCallCompletionHandler = true;
     }).get());
 }
@@ -112,9 +113,10 @@ void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, Functio
     RefPtr<IOChannel> channel(this);
     auto dispatchData = data.dispatchData();
     auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
-    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, BlockPtr<void(bool, dispatch_data_t, int)>::fromCallable([channel, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t fileData, int error) {
+    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, BlockPtr<void(bool, dispatch_data_t, int)>::fromCallable([channel, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done);
-        completionHandler(error);
+        auto callback = WTFMove(completionHandler);
+        callback(error);
     }).get());
 }
 
