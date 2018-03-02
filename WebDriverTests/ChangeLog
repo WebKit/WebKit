@@ -1,5 +1,11 @@
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed gardening. Skip new action tests added in r229166.
+
+        * TestExpectations.json:
+
+2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update W3C WebDriver imported tests.
 
         * imported/w3c/importer.json:
