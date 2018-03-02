@@ -1,5 +1,26 @@
 2018-03-02  Chris Dumez  <cdumez@apple.com>
 
+        fast/events/before-unload-remove-itself.html crashes with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183290
+        <rdar://problem/38069045>
+
+        Reviewed by Alex Christensen.
+
+        When the navigation policy happens asynchronously, it is now possible for the
+        Frame / FrameLoader to get destroyed between the point that policyChecker().checkNavigationPolicy()
+        is called and when continueLoadAfterNavigationPolicy() is called.
+
+        To address the issue, we now protect the Frame and capture it in the lambda passed
+        to policyChecker().checkNavigationPolicy().
+
+        Test: fast/events/before-unload-remove-itself-async-delegate.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
+2018-03-02  Chris Dumez  <cdumez@apple.com>
+
         Converting a load to a download does not work with async policy delegates
         https://bugs.webkit.org/show_bug.cgi?id=183254
         <rdar://problem/38035334>
