@@ -71,6 +71,7 @@ CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CF
 CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);
 extern const SecAsn1Template kSecAsn1AlgorithmIDTemplate[];
 extern const SecAsn1Template kSecAsn1SubjectPublicKeyInfoTemplate[];
+uint32_t SecTaskGetCodeSignStatus(SecTaskRef);
 #endif
 
 #if HAVE(SEC_TRUST_SERIALIZATION)
