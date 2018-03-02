@@ -854,6 +854,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     platformResetStateToConsistentValues();
 
     m_shouldDecideNavigationPolicyAfterDelay = false;
+    m_shouldDecideResponsePolicyAfterDelay = false;
 
     setNavigationGesturesEnabled(false);
     
@@ -2228,17 +2229,28 @@ void TestController::decidePolicyForNavigationResponse(WKPageRef, WKNavigationRe
 
 void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef navigationResponse, WKFramePolicyListenerRef listener)
 {
-    // Even though Response was already checked by WKBundlePagePolicyClient, the check did not include plugins
-    // so we have to re-check again.
-    if (WKNavigationResponseCanShowMIMEType(navigationResponse)) {
-        WKFramePolicyListenerUse(listener);
-        return;
-    }
+    WKRetainPtr<WKNavigationResponseRef> retainedNavigationResponse { navigationResponse };
+    WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
 
-    if (m_shouldDownloadUndisplayableMIMETypes)
-        WKFramePolicyListenerDownload(listener);
+    bool shouldDownloadUndisplayableMIMETypes = m_shouldDownloadUndisplayableMIMETypes;
+    auto decisionFunction = [shouldDownloadUndisplayableMIMETypes, retainedNavigationResponse, retainedListener]() {
+        // Even though Response was already checked by WKBundlePagePolicyClient, the check did not include plugins
+        // so we have to re-check again.
+        if (WKNavigationResponseCanShowMIMEType(retainedNavigationResponse.get())) {
+            WKFramePolicyListenerUse(retainedListener.get());
+            return;
+        }
+
+        if (shouldDownloadUndisplayableMIMETypes)
+            WKFramePolicyListenerDownload(retainedListener.get());
+        else
+            WKFramePolicyListenerIgnore(retainedListener.get());
+    };
+
+    if (m_shouldDecideResponsePolicyAfterDelay)
+        RunLoop::main().dispatch(WTFMove(decisionFunction));
     else
-        WKFramePolicyListenerIgnore(listener);
+        decisionFunction();
 }
 
 void TestController::didNavigateWithNavigationData(WKContextRef, WKPageRef, WKNavigationDataRef navigationData, WKFrameRef frame, const void* clientInfo)

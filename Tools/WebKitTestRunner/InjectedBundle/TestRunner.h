@@ -329,6 +329,8 @@ public:
 
     bool shouldDecideNavigationPolicyAfterDelay() const { return m_shouldDecideNavigationPolicyAfterDelay; }
     void setShouldDecideNavigationPolicyAfterDelay(bool);
+    bool shouldDecideResponsePolicyAfterDelay() const { return m_shouldDecideResponsePolicyAfterDelay; }
+    void setShouldDecideResponsePolicyAfterDelay(bool);
     void setNavigationGesturesEnabled(bool);
     void setIgnoresViewportScaleLimits(bool);
     void setShouldDownloadUndisplayableMIMETypes(bool);
@@ -475,6 +477,7 @@ private:
     double m_databaseMaxQuota;
 
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
+    bool m_shouldDecideResponsePolicyAfterDelay { false };
     bool m_shouldFinishAfterDownload { false };
 
     bool m_userStyleSheetEnabled;

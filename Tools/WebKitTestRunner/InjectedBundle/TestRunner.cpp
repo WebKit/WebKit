@@ -1111,6 +1111,14 @@ void TestRunner::setShouldDecideNavigationPolicyAfterDelay(bool value)
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
 }
 
+void TestRunner::setShouldDecideResponsePolicyAfterDelay(bool value)
+{
+    m_shouldDecideResponsePolicyAfterDelay = value;
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetShouldDecideResponsePolicyAfterDelay"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
 void TestRunner::setNavigationGesturesEnabled(bool value)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetNavigationGesturesEnabled"));

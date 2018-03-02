@@ -1,3 +1,16 @@
+2018-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Converting a load to a download does not work with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183254
+        <rdar://problem/38035334>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html: Added.
+
 2018-03-02  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Unreviewed gardening

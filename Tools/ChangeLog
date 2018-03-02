@@ -1,3 +1,29 @@
+2018-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Converting a load to a download does not work with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183254
+        <rdar://problem/38035334>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test infrastructure for responding to the decidePolicyForNavigationResponse
+        delegate asynchronously.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForResponse):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setShouldDecideResponsePolicyAfterDelay):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::shouldDecideResponsePolicyAfterDelay const):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::decidePolicyForNavigationResponse):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setShouldDecideResponsePolicyAfterDelay):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2018-03-01  Youenn Fablet  <youenn@apple.com>
 
         Add API test to validate setting of service worker and cache storage directories

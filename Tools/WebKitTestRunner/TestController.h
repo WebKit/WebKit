@@ -148,6 +148,7 @@ public:
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
 
     void setShouldDecideNavigationPolicyAfterDelay(bool value) { m_shouldDecideNavigationPolicyAfterDelay = value; }
+    void setShouldDecideResponsePolicyAfterDelay(bool value) { m_shouldDecideResponsePolicyAfterDelay = value; }
 
     void setNavigationGesturesEnabled(bool value);
     void setIgnoresViewportScaleLimits(bool);
@@ -415,6 +416,7 @@ private:
     bool m_shouldShowTouches { false };
     
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
+    bool m_shouldDecideResponsePolicyAfterDelay { false };
 
     WKRetainPtr<WKArrayRef> m_openPanelFileURLs;
 

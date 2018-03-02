@@ -705,6 +705,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetShouldDecideResponsePolicyAfterDelay")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setShouldDecideResponsePolicyAfterDelay(WKBooleanGetValue(value));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetNavigationGesturesEnabled")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);

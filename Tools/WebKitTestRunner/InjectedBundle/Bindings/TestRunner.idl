@@ -90,6 +90,7 @@ interface TestRunner {
     void setAsynchronousSpellCheckingEnabled(boolean value);
     void setPrinting();
     void setShouldDecideNavigationPolicyAfterDelay(boolean value);
+    void setShouldDecideResponsePolicyAfterDelay(boolean value);
     void setNavigationGesturesEnabled(boolean value);
     void setIgnoresViewportScaleLimits(boolean value);
     void setShouldDownloadUndisplayableMIMETypes(boolean value);

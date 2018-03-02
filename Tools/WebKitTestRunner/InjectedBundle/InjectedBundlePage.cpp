@@ -1367,7 +1367,8 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNewWindowAction(WKBu
 
 WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePageRef page, WKBundleFrameRef, WKURLResponseRef response, WKURLRequestRef, WKTypeRef*)
 {
-    if (InjectedBundle::singleton().testRunner()->isPolicyDelegateEnabled() && WKURLResponseIsAttachment(response)) {
+    auto& injectedBundle = InjectedBundle::singleton();
+    if (injectedBundle.testRunner()->isPolicyDelegateEnabled() && WKURLResponseIsAttachment(response)) {
         StringBuilder stringBuilder;
         WKRetainPtr<WKStringRef> filename = adoptWK(WKURLResponseCopySuggestedFilename(response));
         stringBuilder.appendLiteral("Policy delegate: resource is an attachment, suggested file name \'");
@@ -1375,6 +1376,9 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePag
         stringBuilder.appendLiteral("\'\n");
         InjectedBundle::singleton().outputText(stringBuilder.toString());
     }
+
+    if (injectedBundle.testRunner()->shouldDecideResponsePolicyAfterDelay())
+        return WKBundlePagePolicyActionPassThrough;
 
     WKRetainPtr<WKStringRef> mimeType = adoptWK(WKURLResponseCopyMIMEType(response));
     return WKBundlePageCanShowMIMEType(page, mimeType.get()) ? WKBundlePagePolicyActionUse : WKBundlePagePolicyActionPassThrough;
