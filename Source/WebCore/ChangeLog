@@ -1,3 +1,33 @@
+2018-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Loads for a Document controlled by a Service Worker should not use AppCache
+        https://bugs.webkit.org/show_bug.cgi?id=183148
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+
+        Postponing document loading through app cache after matching service worker registration.
+        Trying to load through app cache only if there is no service worker registration.
+
+        Disabling app cache for any load that has a service worker registration identifier.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::tryLoadingRequestFromApplicationCache):
+        (WebCore::DocumentLoader::tryLoadingRedirectRequestFromApplicationCache):
+        (WebCore::DocumentLoader::restartLoadingDueToServiceWorkerRegistrationChange):
+        (WebCore::DocumentLoader::scheduleSubstituteResourceLoad):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentLoader.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+        (WebCore::ApplicationCacheHost::maybeLoadMainResourceForRedirect):
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        (WebCore::ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache):
+        * loader/appcache/ApplicationCacheHost.h:
+
 2018-03-02  Chris Dumez  <cdumez@apple.com>
 
         fast/events/before-unload-remove-itself.html crashes with async policy delegates

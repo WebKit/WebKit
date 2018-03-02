@@ -89,8 +89,8 @@ public:
     void selectCacheWithoutManifest();
     void selectCacheWithManifest(const URL& manifestURL);
 
-    void maybeLoadMainResource(ResourceRequest&, SubstituteData&);
-    void maybeLoadMainResourceForRedirect(ResourceRequest&, SubstituteData&);
+    void maybeLoadMainResource(const ResourceRequest&, SubstituteData&);
+    void maybeLoadMainResourceForRedirect(const ResourceRequest&, SubstituteData&);
     bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
     void mainResourceDataReceived(const char* data, int length, long long encodedDataLength, bool allAtOnce);
     void finishedLoadingMainResource();

@@ -367,7 +367,11 @@ private:
     bool isMultipartReplacingLoad() const;
     bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
 
-    void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
+    bool tryLoadingRequestFromApplicationCache();
+    bool tryLoadingRedirectRequestFromApplicationCache(const ResourceRequest&);
+#if ENABLE(SERVICE_WORKER)
+    void restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&&, std::optional<ServiceWorkerRegistrationData>&&);
+#endif
     void continueAfterContentPolicy(PolicyAction);
 
     void stopLoadingForPolicyChange();

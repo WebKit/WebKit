@@ -75,7 +75,7 @@ void ApplicationCacheHost::selectCacheWithManifest(const URL& manifestURL)
     ApplicationCacheGroup::selectCache(*m_documentLoader.frame(), manifestURL);
 }
 
-void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, SubstituteData& substituteData)
+void ApplicationCacheHost::maybeLoadMainResource(const ResourceRequest& request, SubstituteData& substituteData)
 {
     // Check if this request should be loaded from the application cache
     if (!substituteData.isValid() && isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(request)) {
@@ -104,7 +104,7 @@ void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, Subst
     }
 }
 
-void ApplicationCacheHost::maybeLoadMainResourceForRedirect(ResourceRequest& request, SubstituteData& substituteData)
+void ApplicationCacheHost::maybeLoadMainResourceForRedirect(const ResourceRequest& request, SubstituteData& substituteData)
 {
     ASSERT(status() == UNCACHED);
     maybeLoadMainResource(request, substituteData);
@@ -177,6 +177,11 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const Resou
     
     if (request.url() != originalURL)
         return false;
+
+#if ENABLE(SERVICE_WORKER)
+    if (loader.options().serviceWorkerRegistrationIdentifier)
+        return false;
+#endif
 
     ApplicationCacheResource* resource;
     if (!shouldLoadResourceFromApplicationCache(request, resource))
@@ -453,8 +458,16 @@ bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceReq
 
 bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader* loader, ApplicationCache* cache)
 {
+    if (!loader)
+        return false;
+
     if (!isApplicationCacheEnabled() && !isApplicationCacheBlockedForRequest(loader->request()))
         return false;
+
+#if ENABLE(SERVICE_WORKER)
+    if (loader->options().serviceWorkerRegistrationIdentifier)
+        return false;
+#endif
 
     ApplicationCacheResource* resource;
     if (!getApplicationCacheFallbackResource(loader->request(), resource, cache))

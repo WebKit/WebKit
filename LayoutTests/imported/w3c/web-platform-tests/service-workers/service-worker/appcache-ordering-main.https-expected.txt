@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
-FAIL serviceworkers take priority over appcaches assert_unreached: unexpected rejection: assert_false: but serviceworkers should take priority expected false got true Reached unreachable code
+PASS serviceworkers take priority over appcaches 
 
