@@ -1,3 +1,13 @@
+2018-03-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Add the "com.apple.security.cs.disable-library-validation” entitlement to the Plugin Process
+        https://bugs.webkit.org/show_bug.cgi?id=183252
+        <rdar://problem/37887136>
+
+        Reviewed by David Kilzer.
+
+        * Configurations/PluginService.entitlements:
+
 2018-03-01  Youenn Fablet  <youenn@apple.com>
 
         Clients should register to StorageProcess with their service worker registration identifier
