@@ -852,13 +852,7 @@ webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworke
 
 webkit.org/b/176078 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Pass Failure ]
 
-webkit.org/b/179351 imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html [ Pass Failure ]
-
 webkit.org/b/173742 security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Pass Failure ]
-
-webkit.org/b/179194 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Slow ]
-
-webkit.org/b/180982 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Slow ]
 
 webkit.org/b/181167 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Pass Failure ]
 
@@ -871,8 +865,6 @@ webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
 
 webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
-webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html [ Pass Failure ]
-webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Pass Failure ]
 
 webkit.org/b/181839 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Pass Timeout ]
 
@@ -889,8 +881,6 @@ webkit.org/b/182341 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/179352 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
 
 webkit.org/b/182630 http/tests/workers/service/basic-messageport.html [ Pass Failure ]
-
-webkit.org/b/177198 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Pass Failure ]
 
 webkit.org/b/182849 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Failure ]
 
