@@ -146,6 +146,9 @@ WebProcessProxy::~WebProcessProxy()
 
     while (m_numberOfTimesSuddenTerminationWasDisabled-- > 0)
         WebCore::enableSuddenTermination();
+
+    for (auto& callback : m_localPortActivityCompletionHandlers.values())
+        callback(MessagePortChannelProvider::HasActivity::No);
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
