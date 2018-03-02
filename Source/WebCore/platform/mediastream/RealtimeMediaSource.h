@@ -205,8 +205,8 @@ public:
     virtual void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&);
     std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
 
-    virtual bool supportsConstraints(const MediaConstraints&, String&);
-    virtual bool supportsConstraint(const MediaConstraint&) const;
+    bool supportsConstraints(const MediaConstraints&, String&);
+    bool supportsConstraint(const MediaConstraint&) const;
 
     virtual void settingsDidChange();
 
@@ -231,11 +231,12 @@ protected:
 
     enum class SelectType { ForApplyConstraints, ForSupportsConstraints };
     bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&, SelectType);
-    virtual double fitnessDistance(const MediaConstraint&);
-    virtual bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+    double fitnessDistance(const MediaConstraint&);
+    void applyConstraint(const MediaConstraint&);
+    void applyConstraints(const FlattenedConstraint&);
+    bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+
     virtual bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
-    virtual void applyConstraint(const MediaConstraint&);
-    virtual void applyConstraints(const FlattenedConstraint&);
     virtual void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
 
     void notifyMutedObservers() const;
