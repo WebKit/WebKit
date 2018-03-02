@@ -1,5 +1,14 @@
 2018-03-02  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the build after r229185 and r229184
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::exernalDeviceDisplayNameForPlayer):
+        * platform/ios/DeviceOrientationClientIOS.h:
+        * platform/ios/DeviceOrientationClientIOS.mm:
+
+2018-03-02  Tim Horton  <timothy_horton@apple.com>
+
         Make the !ENABLE(DEVICE_ORIENTATION) iOS build succeed
         https://bugs.webkit.org/show_bug.cgi?id=183296
 

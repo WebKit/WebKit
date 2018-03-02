@@ -2885,6 +2885,7 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
 
     return displayName;
 #else
+    UNUSED_PARAM(player);
     return nil;
 #endif
 }
