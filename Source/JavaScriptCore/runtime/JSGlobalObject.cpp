@@ -1170,10 +1170,15 @@ ObjectsWithBrokenIndexingFinder::ObjectsWithBrokenIndexingFinder(
 {
 }
 
+inline bool hasBrokenIndexing(IndexingType type)
+{
+    return type && !hasSlowPutArrayStorage(type);
+}
+
 inline bool hasBrokenIndexing(JSObject* object)
 {
     IndexingType type = object->indexingType();
-    return type && !hasSlowPutArrayStorage(type);
+    return hasBrokenIndexing(type);
 }
 
 inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
@@ -1181,32 +1186,48 @@ inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
     if (!cell->isObject())
         return;
     
+    VM& vm = m_globalObject->vm();
+
+    // We only want to have a bad time in the affected global object, not in the entire
+    // VM. But we have to be careful, since there may be objects that claim to belong to
+    // a different global object that have prototypes from our global object.
+    auto isInEffectedGlobalObject = [&] (JSObject* object) {
+        for (JSObject* current = object; ;) {
+            if (current->globalObject() == m_globalObject)
+                return true;
+            
+            JSValue prototypeValue = current->getPrototypeDirect(vm);
+            if (prototypeValue.isNull())
+                return false;
+            current = asObject(prototypeValue);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
     JSObject* object = asObject(cell);
+
+    if (JSFunction* function = jsDynamicCast<JSFunction*>(vm, object)) {
+        if (FunctionRareData* rareData = function->rareData()) {
+            // We only use this to cache JSFinalObjects. They do not start off with a broken indexing type.
+            ASSERT(!(rareData->objectAllocationStructure() && hasBrokenIndexing(rareData->objectAllocationStructure()->indexingType())));
+
+            if (Structure* structure = rareData->internalFunctionAllocationStructure()) {
+                if (hasBrokenIndexing(structure->indexingType())) {
+                    bool isRelevantGlobalObject = (structure->globalObject() == m_globalObject)
+                        || (structure->hasMonoProto() && !structure->storedPrototype().isNull() && isInEffectedGlobalObject(asObject(structure->storedPrototype())));
+                    if (isRelevantGlobalObject)
+                        rareData->clearInternalFunctionAllocationProfile();
+                }
+            }
+        }
+    }
 
     // Run this filter first, since it's cheap, and ought to filter out a lot of objects.
     if (!hasBrokenIndexing(object))
         return;
     
-    // We only want to have a bad time in the affected global object, not in the entire
-    // VM. But we have to be careful, since there may be objects that claim to belong to
-    // a different global object that have prototypes from our global object.
-    bool foundGlobalObject = false;
-    VM& vm = m_globalObject->vm();
-    for (JSObject* current = object; ;) {
-        if (current->globalObject() == m_globalObject) {
-            foundGlobalObject = true;
-            break;
-        }
-        
-        JSValue prototypeValue = current->getPrototypeDirect(vm);
-        if (prototypeValue.isNull())
-            break;
-        current = asObject(prototypeValue);
-    }
-    if (!foundGlobalObject)
-        return;
-    
-    m_foundObjects.append(object);
+    if (isInEffectedGlobalObject(object))
+        m_foundObjects.append(object);
 }
 
 IterationStatus ObjectsWithBrokenIndexingFinder::operator()(HeapCell* cell, HeapCell::Kind kind) const
@@ -1227,7 +1248,9 @@ void JSGlobalObject::haveABadTime(VM& vm)
     
     if (isHavingABadTime())
         return;
-    
+
+    vm.structureCache.clear(); // We may be caching array structures in here.
+
     // Make sure that all allocations or indexed storage transitions that are inlining
     // the assumption that it's safe to transition to a non-SlowPut array storage don't
     // do so anymore.
