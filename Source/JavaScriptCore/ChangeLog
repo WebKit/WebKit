@@ -1,3 +1,13 @@
+2018-03-02  Mark Lam  <mark.lam@apple.com>
+
+        Make the LLInt probe work for ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=183298
+        <rdar://problem/38077413>
+
+        Reviewed by Filip Pizlo.
+
+        * llint/LowLevelInterpreter.asm:
+
 2018-03-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Annotate more classes with WTF_MAKE_FAST_ALLOCATED

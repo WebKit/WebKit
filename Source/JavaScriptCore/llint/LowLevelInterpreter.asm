@@ -492,23 +492,46 @@ end
 #         end
 #     )
 #
-if X86_64
+if X86_64 or ARM64
     macro probe(action)
         # save all the registers that the LLInt may use.
+        if ARM64
+            push cfr, lr
+        end
         push a0, a1
         push a2, a3
         push t0, t1
         push t2, t3
         push t4, t5
+        if ARM64
+            push csr0, csr1
+            push csr2, csr3
+            push csr4, csr5
+            push csr6, csr7
+            push csr8, csr9
+        end
 
         action()
 
         # restore all the registers we saved previously.
+        if ARM64
+            pop csr9, csr8
+            pop csr7, csr6
+            pop csr5, csr4
+            pop csr3, csr2
+            pop csr1, csr0
+        end
         pop t5, t4
         pop t3, t2
         pop t1, t0
         pop a3, a2
         pop a1, a0
+        if ARM64
+            pop lr, cfr
+        end
+    end
+else
+    macro probe(action)
     end
 end
 
