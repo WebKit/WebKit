@@ -284,7 +284,7 @@ typedef enum {
   NPDrawingModelQuickDraw = 0,
 #endif
   NPDrawingModelCoreGraphics = 1,
-  NPDrawingModelOpenGL = 2,
+  NPDrawingModelOpenGL = 2, // Note: This is not supported.
   NPDrawingModelCoreAnimation = 3
 } NPDrawingModel;
 
@@ -582,21 +582,6 @@ typedef struct NP_CGContext
   void *window; /* A WindowRef or NULL for the Cocoa event model. */
 #endif
 } NP_CGContext;
-
-/*
- * NP_GLContext is the type of the NPWindow's 'window' when the plugin specifies NPDrawingModelOpenGL as its
- * drawing model.
- */
-
-typedef struct NP_GLContext
-{
-  CGLContextObj context;
-#ifdef NP_NO_CARBON
-  NPNSWindow *window;
-#else
-  void *window; /* Can be either an NSWindow or a WindowRef depending on the event model */
-#endif
-} NP_GLContext;
 
 typedef enum {
   NPCocoaEventDrawRect = 1,
