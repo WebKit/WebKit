@@ -1,3 +1,16 @@
+2018-03-03  Yoav Weiss  <yoav@yoav.ws>
+
+        Link headers for subresources are not being processed
+        https://bugs.webkit.org/show_bug.cgi?id=181789
+
+        Reviewed by Youenn Fablet.
+
+        Adds tests to make sure Link headers on subresources are being processed.
+
+        * http/tests/preload/link-header-on-subresource-expected.txt: Added.
+        * http/tests/preload/link-header-on-subresource.html: Added.
+        * http/tests/preload/resources/dummy-preloads-subresource.css.php: Added.
+
 2018-03-02  Youenn Fablet  <youenn@apple.com>
 
         Service worker test gardening

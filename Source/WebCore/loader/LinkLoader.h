@@ -54,7 +54,7 @@ public:
     bool loadLink(const LinkRelAttribute&, const URL&, const String& as, const String& media, const String& type, const String& crossOrigin, Document&);
     static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
-    enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty };
+    enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
     static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
     static bool isSupportedType(CachedResource::Type, const String& mimeType);
 

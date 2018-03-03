@@ -97,11 +97,8 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     for (auto& header : headerSet) {
         if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
             continue;
-        if (mediaAttributeCheck == MediaAttributeCheck::MediaAttributeNotEmpty) {
-            if (header.media().isEmpty())
-                continue;
-        } else {
-            if (!header.media().isEmpty())
+        if ((mediaAttributeCheck == MediaAttributeCheck::MediaAttributeNotEmpty && header.media().isEmpty())
+            || (mediaAttributeCheck == MediaAttributeCheck::MediaAttributeEmpty && !header.media().isEmpty())) {
                 continue;
         }
 
