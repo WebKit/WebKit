@@ -34,6 +34,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -152,6 +153,9 @@ public:
     bool shouldLogCookieInformation() const { return m_logCookieInformation; }
 #endif
 
+    void setSessionIsControlledByAutomation(PAL::SessionID, bool);
+    bool sessionIsControlledByAutomation(PAL::SessionID) const;
+
 private:
     NetworkProcess();
     ~NetworkProcess();
@@ -258,6 +262,7 @@ private:
 #if ENABLE(SERVER_PRECONNECT)
     HashMap<uint64_t, WeakPtr<PreconnectTask>> m_waitingPreconnectTasks;
 #endif
+    HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);
