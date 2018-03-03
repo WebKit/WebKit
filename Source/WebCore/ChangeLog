@@ -1,3 +1,13 @@
+2018-03-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove RunLoop and RunLoop::Timer's interface using double as seconds
+        https://bugs.webkit.org/show_bug.cgi?id=183293
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture):
+
 2018-03-02  Dean Jackson  <dino@apple.com>
 
         Remove NP_GLContext since it is unsupported

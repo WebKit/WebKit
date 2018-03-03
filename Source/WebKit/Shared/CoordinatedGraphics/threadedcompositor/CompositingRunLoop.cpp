@@ -161,7 +161,7 @@ void CompositingRunLoop::scheduleUpdate(LockHolder& stateLocker)
     switch (m_state.update) {
     case UpdateState::Idle:
         m_state.update = UpdateState::Scheduled;
-        m_updateTimer.startOneShot(0);
+        m_updateTimer.startOneShot(0_s);
         return;
     case UpdateState::Scheduled:
         return;
@@ -204,7 +204,7 @@ void CompositingRunLoop::compositionCompleted(LockHolder& stateLocker)
         if (m_state.pendingUpdate) {
             m_state.pendingUpdate = false;
             m_state.update = UpdateState::Scheduled;
-            m_updateTimer.startOneShot(0);
+            m_updateTimer.startOneShot(0_s);
             return;
         }
 
@@ -236,7 +236,7 @@ void CompositingRunLoop::updateCompleted(LockHolder& stateLocker)
         if (m_state.pendingUpdate) {
             m_state.pendingUpdate = false;
             m_state.update = UpdateState::Scheduled;
-            m_updateTimer.startOneShot(0);
+            m_updateTimer.startOneShot(0_s);
             return;
         }
 

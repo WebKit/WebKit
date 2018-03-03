@@ -258,13 +258,13 @@ RunLoop::TimerBase::~TimerBase()
     stop(locker);
 }
 
-void RunLoop::TimerBase::start(double interval, bool repeating)
+void RunLoop::TimerBase::start(Seconds interval, bool repeating)
 {
     LockHolder locker(m_runLoop->m_loopLock);
     stop(locker);
     m_scheduledTask = ScheduledTask::create([this] {
         fired();
-    }, Seconds(interval), repeating);
+    }, interval, repeating);
     m_runLoop->scheduleAndWakeUp(locker, *m_scheduledTask);
 }
 

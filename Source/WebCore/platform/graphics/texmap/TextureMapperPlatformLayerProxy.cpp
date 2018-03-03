@@ -218,7 +218,7 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture()
             if (prevBuffer->hasManagedTexture())
                 appendToUnusedBuffers(WTFMove(prevBuffer));
         };
-    m_compositorThreadUpdateTimer->startOneShot(0);
+    m_compositorThreadUpdateTimer->startOneShot(0_s);
 }
 
 bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(Function<void()>&& updateFunction)

@@ -76,7 +76,7 @@ void ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback()
 {
     if (!m_compositor)
         return;
-    m_displayRefreshTimer.startOneShot(0);
+    m_displayRefreshTimer.startOneShot(0_s);
 }
 
 void ThreadedDisplayRefreshMonitor::invalidate()
