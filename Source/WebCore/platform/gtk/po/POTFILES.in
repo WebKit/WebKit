@@ -6,7 +6,6 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp
 ../../../WebKit/Shared/WebErrors.cpp
-../../../WebKit/Shared/glib/WebErrorsGlib.cpp
 ../../../WebKit/Shared/gtk/WebErrorsGtk.cpp
 ../../../WebKit/Shared/soup/WebErrorsSoup.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp
