@@ -1,3 +1,15 @@
+2018-03-03  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move styleDidChange mutation logic to RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=183273
+        <rdar://problem/38054892>
+
+        Reviewed by Antti Koivisto.
+
+        This is just a different repaint order.
+
+        * fast/repaint/absolute-position-change-containing-block-expected.txt:
+
 2018-03-03  Yoav Weiss  <yoav@yoav.ws>
 
         Link headers for subresources are not being processed

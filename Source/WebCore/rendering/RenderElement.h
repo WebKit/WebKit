@@ -282,8 +282,6 @@ protected:
     
     bool isVisibleInViewport() const;
 
-    bool noLongerAffectsParentBlock(const RenderStyle& oldStyle) const;
-
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
     void node() const = delete;

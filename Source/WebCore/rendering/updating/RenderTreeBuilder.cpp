@@ -513,6 +513,50 @@ void RenderTreeBuilder::moveAllChildrenIncludingFloats(RenderBlock& from, Render
     moveAllChildren(from, to, normalizeAfterInsertion);
 }
 
+void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, RenderStyle& oldStyle)
+{
+    if (!renderer.parent())
+        return;
+
+    auto& parent = *renderer.parent();
+
+    bool wasFloating = oldStyle.isFloating();
+    bool wasOufOfFlowPositioned = oldStyle.hasOutOfFlowPosition();
+    bool isFloating = renderer.style().isFloating();
+    bool isOutOfFlowPositioned = renderer.style().hasOutOfFlowPosition();
+    bool startsAffectingParent = false;
+    bool noLongerAffectsParent = false;
+
+    if (is<RenderBlock>(parent))
+        noLongerAffectsParent = (!wasFloating && isFloating) || (!wasOufOfFlowPositioned && isOutOfFlowPositioned);
+
+    if (is<RenderBlockFlow>(parent) || is<RenderInline>(parent)) {
+        startsAffectingParent = (wasFloating || wasOufOfFlowPositioned) && !isFloating && !isOutOfFlowPositioned;
+        ASSERT(!startsAffectingParent || !noLongerAffectsParent);
+    }
+
+    if (startsAffectingParent) {
+        // We have gone from not affecting the inline status of the parent flow to suddenly
+        // having an impact. See if there is a mismatch between the parent flow's
+        // childrenInline() state and our state.
+        renderer.setInline(renderer.style().isDisplayInlineType());
+        if (renderer.isInline() != renderer.parent()->childrenInline())
+            childFlowStateChangesAndAffectsParentBlock(renderer);
+        return;
+    }
+
+    if (noLongerAffectsParent) {
+        childFlowStateChangesAndNoLongerAffectsParentBlock(renderer);
+
+        if (is<RenderBlockFlow>(renderer)) {
+            // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
+            // It copies the logic of RenderBlock::addChildIgnoringContinuation
+            if (isFloating && renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
+                move(downcast<RenderBoxModelObject>(parent), downcast<RenderBoxModelObject>(*renderer.previousSibling()), renderer, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        }
+    }
+}
+
 void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
 {
     // makeChildrenNonInline takes a block whose children are *all* inline and it
