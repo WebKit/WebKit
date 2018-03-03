@@ -78,7 +78,6 @@ Shared/Plugins/unix/PluginSearchPath.cpp
 Shared/cairo/ShareableBitmapCairo.cpp @no-unify
 
 Shared/glib/WebContextMenuItemGlib.cpp
-Shared/glib/WebErrorsGlib.cpp
 
 Shared/gtk/ArgumentCodersGtk.cpp
 Shared/gtk/NativeWebKeyboardEventGtk.cpp

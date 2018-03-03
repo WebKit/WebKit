@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +33,8 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 ResourceError blockedError(const ResourceRequest& request)
 {
@@ -76,5 +77,17 @@ ResourceError internalError(const URL& url)
 {
     return ResourceError(API::Error::webKitErrorDomain(), API::Error::General::Internal, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }
+
+#if !PLATFORM(COCOA)
+ResourceError cancelledError(const ResourceRequest& request)
+{
+    return ResourceError(API::Error::webKitNetworkErrorDomain(), API::Error::Network::Cancelled, request.url(), WEB_UI_STRING("Load request cancelled", "Load request cancelled"));
+}
+
+ResourceError fileDoesNotExistError(const ResourceResponse& response)
+{
+    return ResourceError(API::Error::webKitNetworkErrorDomain(), API::Error::Network::FileDoesNotExist, response.url(), WEB_UI_STRING("File does not exist", "The requested file doesn't exist"));
+}
+#endif
 
 } // namespace WebKit

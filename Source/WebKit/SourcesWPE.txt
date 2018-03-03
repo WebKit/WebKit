@@ -73,7 +73,6 @@ Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 Shared/cairo/ShareableBitmapCairo.cpp
 
 Shared/glib/WebContextMenuItemGlib.cpp
-Shared/glib/WebErrorsGlib.cpp
 
 Shared/linux/WebMemorySamplerLinux.cpp
 
