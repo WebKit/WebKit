@@ -1,3 +1,22 @@
+2018-03-02  Brian Burg  <bburg@apple.com>
+
+        Web Automation: script evaluations via WebDriver should have a user gesture indicator
+        https://bugs.webkit.org/show_bug.cgi?id=183230
+        <rdar://problem/37959739>
+
+        Reviewed by Andy Estes.
+
+        APIs that normally require a user gesture should just work when using via WebDriver.
+        To support cases where tests need to simulate user actions with JavaScript, use a
+        fake user gesture, similar to how -[WKWebView evaluateJavaScript:] forces a user
+        gesture when clients evaluate JavaScript in their web view.
+
+        No new tests, this is covered by W3C tests that use the Fullscreen API.
+        This API does nothing if there is no user gesture; with this patch, it just works.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+
 2018-03-04  Tim Horton  <timothy_horton@apple.com>
 
         Make !ENABLE(DATA_DETECTION) iOS build actually succeed
