@@ -1,3 +1,13 @@
+2018-03-04  Dan Bernstein  <mitz@apple.com>
+
+        Building with ONLY_ACTIVE_ARCH=NO and ARCHS=x86_64 fails
+        https://bugs.webkit.org/show_bug.cgi?id=183320
+
+        Reviewed by Tim Horton.
+
+        * Configurations/PluginService.32.xcconfig: If the Apple build tool specifies
+          RC_ARCHS=x86_64, then let the service build for x86_64, but don’t install it.
+
 2018-03-03  Brent Fulgham  <bfulgham@apple.com>
 
         Notify the NetworkProcess when a session is servicing an automation client
