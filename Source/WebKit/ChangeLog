@@ -1,3 +1,16 @@
+2018-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        Make !ENABLE(DATA_DETECTION) iOS build actually succeed
+        https://bugs.webkit.org/show_bug.cgi?id=183283
+        <rdar://problem/38062148>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        Guard some more code with ENABLE(DATA_DETECTION).
+
 2018-03-04  Dan Bernstein  <mitz@apple.com>
 
         Building with ONLY_ACTIVE_ARCH=NO and ARCHS=x86_64 fails
