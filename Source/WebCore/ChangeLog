@@ -1,3 +1,20 @@
+2018-03-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Delete incorrect version of clampTo() function from SVGToOTFFontConversion.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=183165
+
+        Reviewed by Darin Adler.
+
+        Some of the calls in SVGToOTFFontConversion.cpp were directed to the function
+        in MathExtras.h while the rest were directed to this local static function.
+        There should not be two versions with the same name while they are supposed
+        to do the same thing. Besides, the local version does not work correctly
+        if the type of the argument's max limit is less the max limit of the returned
+        type, e.g. char -> uint16_t.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::clampTo): Deleted.
+
 2018-03-03  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move styleDidChange mutation logic to RenderTreeUpdater
