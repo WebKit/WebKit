@@ -46,7 +46,7 @@ endif ()
 target_link_libraries(gtest
     WTF
 )
-add_dependencies(gtest JavaScriptCoreForwardingHeaders)
+add_dependencies(gtest JavaScriptCorePrivateForwardingHeaders)
 
 if (CMAKE_USE_PTHREADS_INIT)
     target_link_libraries(gtest ${CMAKE_THREAD_LIBS_INIT})
