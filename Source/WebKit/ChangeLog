@@ -1,3 +1,49 @@
+2018-03-05  Jeff Miller  <jeffm@apple.com>
+
+        Expose still more WKPreferences SPI to match C SPI
+        https://bugs.webkit.org/show_bug.cgi?id=183045
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setAllowsInlineMediaPlayback:]):
+        (-[WKPreferences _allowsInlineMediaPlayback]):
+        (-[WKPreferences _setApplePayEnabled:]):
+        (-[WKPreferences _applePayEnabled]):
+        (-[WKPreferences _setDNSPrefetchingEnabled:]):
+        (-[WKPreferences _dnsPrefetchingEnabled]):
+        (-[WKPreferences _setInlineMediaPlaybackRequiresPlaysInlineAttribute:]):
+        (-[WKPreferences _inlineMediaPlaybackRequiresPlaysInlineAttribute]):
+        (-[WKPreferences _setInvisibleMediaAutoplayNotPermitted:]):
+        (-[WKPreferences _invisibleMediaAutoplayNotPermitted]):
+        (-[WKPreferences _setLegacyEncryptedMediaAPIEnabled:]):
+        (-[WKPreferences _legacyEncryptedMediaAPIEnabled]):
+        (-[WKPreferences _setMainContentUserGestureOverrideEnabled:]):
+        (-[WKPreferences _mainContentUserGestureOverrideEnabled]):
+        (-[WKPreferences _setMediaStreamEnabled:]):
+        (-[WKPreferences _mediaStreamEnabled]):
+        (-[WKPreferences _setNeedsStorageAccessFromFileURLsQuirk:]):
+        (-[WKPreferences _needsStorageAccessFromFileURLsQuirk]):
+        (-[WKPreferences _setPDFPluginEnabled:]):
+        (-[WKPreferences _pdfPluginEnabled]):
+        (-[WKPreferences _setRequiresUserGestureForAudioPlayback:]):
+        (-[WKPreferences _requiresUserGestureForAudioPlayback]):
+        (-[WKPreferences _setRequiresUserGestureForVideoPlayback:]):
+        (-[WKPreferences _requiresUserGestureForVideoPlayback]):
+        (-[WKPreferences _setServiceControlsEnabled:]):
+        (-[WKPreferences _serviceControlsEnabled]):
+        (-[WKPreferences _setShowsToolTipOverTruncatedText:]):
+        (-[WKPreferences _showsToolTipOverTruncatedText]):
+        (-[WKPreferences _setTextAreasAreResizable:]):
+        (-[WKPreferences _textAreasAreResizable]):
+        (-[WKPreferences _setUseGiantTiles:]):
+        (-[WKPreferences _useGiantTiles]):
+        (-[WKPreferences _setWantsBalancedSetDefersLoadingBehavior:]):
+        (-[WKPreferences _wantsBalancedSetDefersLoadingBehavior]):
+        (-[WKPreferences _setWebAudioEnabled:]):
+        (-[WKPreferences _webAudioEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Automation: clicking on a disabled option element shouldn't produce an error

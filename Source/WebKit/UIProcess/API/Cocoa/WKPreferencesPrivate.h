@@ -161,6 +161,24 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setStandardFontFamily:) NSString *_standardFontFamily WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setNotificationsEnabled:) BOOL _notificationsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setBackspaceKeyNavigationEnabled:) BOOL _backspaceKeyNavigationEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setAllowsInlineMediaPlayback:) BOOL _allowsInlineMediaPlayback WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setApplePayEnabled:) BOOL _applePayEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setDNSPrefetchingEnabled:) BOOL _dnsPrefetchingEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setInlineMediaPlaybackRequiresPlaysInlineAttribute:) BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setInvisibleMediaAutoplayNotPermitted:) BOOL _invisibleMediaAutoplayNotPermitted WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setLegacyEncryptedMediaAPIEnabled:) BOOL _legacyEncryptedMediaAPIEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setMainContentUserGestureOverrideEnabled:) BOOL _mainContentUserGestureOverrideEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setMediaStreamEnabled:) BOOL _mediaStreamEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setNeedsStorageAccessFromFileURLsQuirk:) BOOL _needsStorageAccessFromFileURLsQuirk WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setPDFPluginEnabled:) BOOL _pdfPluginEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setRequiresUserGestureForAudioPlayback:) BOOL _requiresUserGestureForAudioPlayback WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setRequiresUserGestureForVideoPlayback:) BOOL _requiresUserGestureForVideoPlayback WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setShowsToolTipOverTruncatedText:) BOOL _showsToolTipOverTruncatedText WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setTextAreasAreResizable:) BOOL _textAreasAreResizable WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setUseGiantTiles:) BOOL _useGiantTiles WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setWantsBalancedSetDefersLoadingBehavior:) BOOL _wantsBalancedSetDefersLoadingBehavior WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setWebAudioEnabled:) BOOL _webAudioEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 @end
