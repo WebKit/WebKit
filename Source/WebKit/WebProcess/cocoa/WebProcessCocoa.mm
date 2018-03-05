@@ -70,6 +70,7 @@
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
+#import <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
 #import <UIKit/UIAccessibility.h>

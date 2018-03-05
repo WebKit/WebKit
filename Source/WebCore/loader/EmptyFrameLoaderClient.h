@@ -75,7 +75,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void dispatchDidDispatchOnloadEvents() final { }
     void dispatchDidReceiveServerRedirectForProvisionalLoad() final { }
     void dispatchDidCancelClientRedirect() final { }
-    void dispatchWillPerformClientRedirect(const URL&, double, double) final { }
+    void dispatchWillPerformClientRedirect(const URL&, double, WallTime) final { }
     void dispatchDidChangeLocationWithinPage() final { }
     void dispatchDidPushStateWithinPage() final { }
     void dispatchDidReplaceStateWithinPage() final { }

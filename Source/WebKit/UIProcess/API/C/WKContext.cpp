@@ -574,7 +574,7 @@ void WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(WKConte
 {
     if (!dictionaryRef)
         return;
-    toImpl(contextRef)->setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(*toImpl(dictionaryRef), time);
+    toImpl(contextRef)->setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(*toImpl(dictionaryRef), WallTime::fromRawSeconds(time));
 }
 
 void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arrayRef)

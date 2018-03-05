@@ -78,7 +78,7 @@ String MonthInputType::serializeWithMilliseconds(double value) const
 
 Decimal MonthInputType::defaultValueForStepUp() const
 {
-    double current = currentTimeMS();
+    double current = WallTime::now().secondsSinceEpoch().milliseconds();
     int offset = calculateLocalTimeOffset(current).offset / msPerMinute;
     current += offset * msPerMinute;
 

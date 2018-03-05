@@ -74,9 +74,9 @@
 #import <WebKit/WebStorageManagerPrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WallTime.h>
 
 #if !PLATFORM(IOS)
 #import <wtf/SoftLinking.h>
@@ -447,9 +447,9 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
     WebGeolocationPosition *position = nil;
     if (!providesAltitude && !providesAltitudeAccuracy && !providesHeading && !providesSpeed) {
         // Test the exposed API.
-        position = [[WebGeolocationPosition alloc] initWithTimestamp:currentTime() latitude:latitude longitude:longitude accuracy:accuracy];
+        position = [[WebGeolocationPosition alloc] initWithTimestamp:WallTime::now().secondsSinceEpoch().seconds() latitude:latitude longitude:longitude accuracy:accuracy];
     } else {
-        WebCore::GeolocationPosition geolocationPosition { currentTime(), latitude, longitude, accuracy };
+        WebCore::GeolocationPosition geolocationPosition { WallTime::now().secondsSinceEpoch().seconds(), latitude, longitude, accuracy };
         if (providesAltitude)
             geolocationPosition.altitude = altitude;
         if (providesAltitudeAccuracy)

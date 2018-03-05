@@ -468,7 +468,7 @@ bool Geolocation::haveSuitableCachedPosition(const PositionOptions& options)
         return false;
     if (!options.maximumAge)
         return false;
-    DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(currentTime());
+    DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(WallTime::now().secondsSinceEpoch());
     return cachedPosition->timestamp() > currentTimeMillis - options.maximumAge;
 }
 

@@ -34,6 +34,7 @@
 #include "LinkIcon.h"
 #include <functional>
 #include <wtf/Forward.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -159,7 +160,7 @@ public:
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
     virtual void dispatchDidChangeProvisionalURL() { }
     virtual void dispatchDidCancelClientRedirect() = 0;
-    virtual void dispatchWillPerformClientRedirect(const URL&, double interval, double fireDate) = 0;
+    virtual void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate) = 0;
     virtual void dispatchDidChangeMainDocument() { }
     virtual void dispatchWillChangeDocument() { }
     virtual void dispatchDidNavigateWithinPage() { }

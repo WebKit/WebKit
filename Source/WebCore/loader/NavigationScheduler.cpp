@@ -135,7 +135,7 @@ protected:
         m_haveToldClient = true;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
-        frame.loader().clientRedirected(m_url, delay(), currentTime() + timer.nextFireInterval().value(), lockBackForwardList());
+        frame.loader().clientRedirected(m_url, delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
     void didStopTimer(Frame& frame, bool newLoadInProgress) override
@@ -283,7 +283,7 @@ public:
         m_haveToldClient = true;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
-        frame.loader().clientRedirected(m_submission->requestURL(), delay(), currentTime() + timer.nextFireInterval().value(), lockBackForwardList());
+        frame.loader().clientRedirected(m_submission->requestURL(), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
     void didStopTimer(Frame& frame, bool newLoadInProgress) override

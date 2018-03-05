@@ -65,7 +65,7 @@ DateComponents::Type TimeInputType::dateType() const
 
 Decimal TimeInputType::defaultValueForStepUp() const
 {
-    double current = currentTimeMS();
+    double current = WallTime::now().secondsSinceEpoch().milliseconds();
     int offset = calculateLocalTimeOffset(current).offset / msPerMinute;
     current += offset * msPerMinute;
 

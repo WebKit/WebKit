@@ -28,6 +28,7 @@
 #include "SameDocumentNavigationType.h"
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -80,7 +81,7 @@ public:
 
     virtual void didClearWindowObjectForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
     virtual void didCancelClientRedirectForFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
-    virtual void willPerformClientRedirectForFrame(WebKit::WebPage&, WebKit::WebFrame&, const WTF::String&, double /*delay*/, double /*date*/) { }
+    virtual void willPerformClientRedirectForFrame(WebKit::WebPage&, WebKit::WebFrame&, const WTF::String&, double /*delay*/, WallTime /*date*/) { }
     virtual void didHandleOnloadEventsForFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
 
     virtual void globalObjectIsAvailableForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }

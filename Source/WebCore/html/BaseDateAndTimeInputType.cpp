@@ -86,7 +86,7 @@ bool BaseDateAndTimeInputType::typeMismatch() const
 
 Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
 {
-    double ms = currentTimeMS();
+    double ms = WallTime::now().secondsSinceEpoch().milliseconds();
     int offset = calculateLocalTimeOffset(ms).offset / msPerMinute;
     return Decimal::fromDouble(ms + (offset * msPerMinute));
 }

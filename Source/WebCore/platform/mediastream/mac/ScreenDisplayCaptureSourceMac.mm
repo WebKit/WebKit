@@ -36,6 +36,7 @@
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
+#include <wtf/CurrentTime.h>
 
 #include "CoreVideoSoftLink.h"
 

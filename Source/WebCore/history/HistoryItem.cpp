@@ -34,8 +34,8 @@
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
 #include <stdio.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -44,7 +44,7 @@ static long long generateSequenceNumber()
 {
     // Initialize to the current time to reduce the likelihood of generating
     // identifiers that overlap with those from past/future browser sessions.
-    static long long next = static_cast<long long>(currentTime() * 1000000.0);
+    static long long next = static_cast<long long>(WallTime::now().secondsSinceEpoch().microseconds());
     return ++next;
 }
 

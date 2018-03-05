@@ -552,7 +552,7 @@ void ThreadCondition::wait(Mutex& mutex)
     m_condition.timedWait(mutex.impl(), INFINITE);
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
+bool ThreadCondition::timedWait(Mutex& mutex, WallTime absoluteTime)
 {
     DWORD interval = absoluteTimeToWaitTimeoutInterval(absoluteTime);
 
@@ -575,19 +575,19 @@ void ThreadCondition::broadcast()
     m_condition.signal(true); // Unblock all threads.
 }
 
-DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
+DWORD absoluteTimeToWaitTimeoutInterval(WallTime absoluteTime)
 {
-    double currentTime = WTF::currentTime();
+    WallTime currentTime = WallTime::now();
 
     // Time is in the past - return immediately.
     if (absoluteTime < currentTime)
         return 0;
 
     // Time is too far in the future (and would overflow unsigned long) - wait forever.
-    if (absoluteTime - currentTime > static_cast<double>(INT_MAX) / 1000.0)
+    if ((absoluteTime - currentTime) > Seconds::fromMilliseconds(INT_MAX))
         return INFINITE;
 
-    return static_cast<DWORD>((absoluteTime - currentTime) * 1000.0);
+    return static_cast<DWORD>((absoluteTime - currentTime).milliseconds());
 }
 
 // Remove this workaround code when <rdar://problem/31793213> is fixed.

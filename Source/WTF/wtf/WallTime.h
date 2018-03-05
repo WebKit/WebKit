@@ -37,8 +37,8 @@ class PrintStream;
 // The current time according to a wall clock (aka real time clock). This uses floating point
 // internally so that you can reason about infinity and other things that arise in math. It's
 // acceptable to use this to wrap NaN times, negative times, and infinite times, so long as they
-// are relative to the same clock. Specifically, WallTime should be used in agreement with the
-// principle that WallTime::now().secondsSinceEpoch().value() is the same as WTF::currentTime().
+// are relative to the same clock. Use this only if wall clock time is needed. For elapsed time
+// measurement use MonotonicTime instead.
 class WallTime {
 public:
     static const ClockType clockType = ClockType::Wall;

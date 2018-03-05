@@ -67,7 +67,7 @@ static bool checkIntegrityOnOpen = false;
 
 // We are not interested in icons that have been unused for more than
 // 30 days, delete them even if they have not been explicitly released.
-static const int notUsedIconExpirationTime = 60*60*24*30;
+static const Seconds notUsedIconExpirationTime { 60*60*24*30 };
 
 #if !LOG_DISABLED || !ERROR_DISABLED
 static String urlForLogging(const String& url)
@@ -546,7 +546,7 @@ void IconDatabase::setIconDataForIconURL(RefPtr<SharedBuffer>&& data, const Stri
 
         // Update the data and set the time stamp
         icon->setImageData(WTFMove(data));
-        icon->setTimestamp((int)currentTime());
+        icon->setTimestamp((int)WallTime::now().secondsSinceEpoch().seconds());
 
         // Copy the current retaining pageURLs - if any - to notify them of the change
         pageURLs.appendRange(icon->retainingPageURLs().begin(), icon->retainingPageURLs().end());
@@ -657,7 +657,7 @@ IconDatabase::IconLoadDecision IconDatabase::synchronousLoadDecisionForIconURL(c
         LockHolder locker(m_urlAndIconLock);
         if (IconRecord* icon = m_iconURLToRecordMap.get(iconURL)) {
             LOG(IconDatabase, "Found expiration time on a present icon based on existing IconRecord");
-            return static_cast<int>(currentTime()) - static_cast<int>(icon->getTimestamp()) > iconExpirationTime ? IconLoadDecision::Yes : IconLoadDecision::No;
+            return static_cast<int>(WallTime::now().secondsSinceEpoch().seconds()) - static_cast<int>(icon->getTimestamp()) > iconExpirationTime ? IconLoadDecision::Yes : IconLoadDecision::No;
         }
     }
 
@@ -1079,7 +1079,7 @@ void IconDatabase::performURLImport()
     // Note that IconInfo.stamp is only set when the icon data is retrieved from the server (and thus is not updated whether
     // we use it or not). This code works anyway because the IconDatabase downloads icons again if they are older than 4 days,
     // so if the timestamp goes back in time more than those 30 days we can be sure that the icon was not used at all.
-    String importQuery = String::format("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > %.0f;", floor(currentTime() - notUsedIconExpirationTime));
+    String importQuery = String::format("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > %.0f;", floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds()));
 
     SQLiteStatement query(m_syncDB, importQuery);
 

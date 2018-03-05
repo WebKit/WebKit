@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <wtf/Condition.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
