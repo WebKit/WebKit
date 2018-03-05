@@ -1,3 +1,18 @@
+2018-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        dump-class-layout mishandles duplicates base classes and miscomputes padding
+        https://bugs.webkit.org/show_bug.cgi?id=183311
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/dump-class-layout:
+        (verify_type):
+        (verify_type_recursive):
+        Keep a list of seen (offset, type) that we have output and don't re-output them.
+        The Python types list the base classes as members multiple times as you iterate
+        through the members, so just ignore them if we have seem them already at a
+        specific offset.
+
 2018-03-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][Wayland] The GTK Wayland bot exits early because of assertions related with libsecret since r221925

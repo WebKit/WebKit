@@ -28,7 +28,8 @@ import sys
 import getopt
 import argparse
 import os
-import subprocess;
+import subprocess
+from sets import Set
 
 
 framework = "WebCore"
@@ -57,7 +58,8 @@ def import_lldb():
 
 def verify_type(target, type):
     typename = type.GetName()
-    (end_offset, padding) = verify_type_recursive(target, type, None, 0, 0, 0)
+    seenBefore = Set()
+    (end_offset, padding) = verify_type_recursive(target, type, None, 0, 0, 0, seenBefore)
     byte_size = type.GetByteSize()
     print 'Total byte size: %u' % (byte_size)
     print 'Total pad bytes: %u' % (padding)
@@ -65,7 +67,7 @@ def verify_type(target, type):
         print 'Padding percentage: %2.2f %%' % ((float(padding) / float(byte_size)) * 100.0)
     print
 
-def verify_type_recursive(target, type, member_name, depth, base_offset, padding):
+def verify_type_recursive(target, type, member_name, depth, base_offset, padding, seenBefore):
     prev_end_offset = base_offset
     typename = type.GetName()
     byte_size = type.GetByteSize()
@@ -85,6 +87,11 @@ def verify_type_recursive(target, type, member_name, depth, base_offset, padding
             member_total_offset = member_offset + base_offset
             member_byte_size = member_type.GetByteSize()
             member_is_class_or_struct = False
+
+            if (member_offset, member_name) in seenOffset:
+                continue
+            seenOffset.add((member_offset, member_name))
+
             if member_type_class == lldb.eTypeClassStruct or member_type_class == lldb.eTypeClassClass:
                 member_is_class_or_struct = True
             if member_idx == 0 and member_offset == target.GetAddressByteSize() and type.IsPolymorphicClass():
@@ -98,7 +105,7 @@ def verify_type_recursive(target, type, member_name, depth, base_offset, padding
                     print '%+4u <%3u> %s<PADDING>' % (prev_end_offset, member_padding, '    ' * (depth + 1))
 
             if member_is_class_or_struct:
-                (prev_end_offset, padding) = verify_type_recursive(target, member_canonical_type, member_name, depth + 1, member_total_offset, padding)
+                (prev_end_offset, padding) = verify_type_recursive(target, member_canonical_type, member_name, depth + 1, member_total_offset, padding, seenBefore)
             else:
                 prev_end_offset = member_total_offset + member_byte_size
                 member_typename = member_type.GetName()
