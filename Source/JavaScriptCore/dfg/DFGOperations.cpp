@@ -743,54 +743,37 @@ void JIT_OPERATION operationPutByValCellSymbolNonStrict(ExecState* exec, JSCell*
     putByValCellInternal<false, false>(exec, vm, cell, asSymbol(symbol)->privateName(), JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
     if (index >= 0) {
-        array->putByIndexInline(exec, index, JSValue::decode(encodedValue), true);
+        object->putByIndexInline(exec, index, JSValue::decode(encodedValue), true);
         return;
     }
     
-    PutPropertySlot slot(array, true);
-    array->methodTable(vm)->put(
-        array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    PutPropertySlot slot(object, true);
+    object->methodTable(vm)->put(
+        object, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
-void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
     if (index >= 0) {
-        array->putByIndexInline(exec, index, JSValue::decode(encodedValue), false);
+        object->putByIndexInline(exec, index, JSValue::decode(encodedValue), false);
         return;
     }
     
-    PutPropertySlot slot(array, false);
-    array->methodTable(*vm)->put(
-        array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    PutPropertySlot slot(object, false);
+    object->methodTable(*vm)->put(
+        object, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
-void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, double value)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
-    
-    if (index >= 0) {
-        array->putByIndexInline(exec, index, jsValue, true);
-        return;
-    }
-    
-    PutPropertySlot slot(array, true);
-    array->methodTable(*vm)->put(
-        array, exec, Identifier::from(exec, index), jsValue, slot);
-}
-
-void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* array, int32_t index, double value)
+void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, double value)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -798,13 +781,62 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* 
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
     
     if (index >= 0) {
-        array->putByIndexInline(exec, index, jsValue, false);
+        object->putByIndexInline(exec, index, jsValue, true);
         return;
     }
     
-    PutPropertySlot slot(array, false);
-    array->methodTable(*vm)->put(
-        array, exec, Identifier::from(exec, index), jsValue, slot);
+    PutPropertySlot slot(object, true);
+    object->methodTable(*vm)->put(
+        object, exec, Identifier::from(exec, index), jsValue, slot);
+}
+
+void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
+    
+    if (index >= 0) {
+        object->putByIndexInline(exec, index, jsValue, false);
+        return;
+    }
+    
+    PutPropertySlot slot(object, false);
+    object->methodTable(*vm)->put(
+        object, exec, Identifier::from(exec, index), jsValue, slot);
+}
+
+void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
+
+    if (index >= 0) {
+        object->putDirectIndex(exec, index, jsValue, 0, PutDirectIndexShouldThrow);
+        return;
+    }
+
+    PutPropertySlot slot(object, true);
+    object->putDirect(vm, Identifier::from(exec, index), jsValue, slot);
+}
+
+void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
+
+    if (index >= 0) {
+        object->putDirectIndex(exec, index, jsValue);
+        return;
+    }
+
+    PutPropertySlot slot(object, false);
+    object->putDirect(vm, Identifier::from(exec, index), jsValue, slot);
 }
 
 void JIT_OPERATION operationPutByValDirectStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
@@ -871,31 +903,31 @@ void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(ExecState* exec, J
     putByValCellInternal<false, true>(exec, vm, cell, asSymbol(symbol)->privateName(), JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     if (index >= 0) {
-        array->putDirectIndex(exec, index, JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
+        object->putDirectIndex(exec, index, JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
         return;
     }
     
-    PutPropertySlot slot(array, true);
-    array->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    PutPropertySlot slot(object, true);
+    object->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
     if (index >= 0) {
-        array->putDirectIndex(exec, index, JSValue::decode(encodedValue));
+        object->putDirectIndex(exec, index, JSValue::decode(encodedValue));
         return;
     }
     
-    PutPropertySlot slot(array, false);
-    array->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    PutPropertySlot slot(object, false);
+    object->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 EncodedJSValue JIT_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)

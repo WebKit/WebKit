@@ -59,6 +59,8 @@ AbstractHeapRepository::AbstractHeapRepository()
 #undef ABSTRACT_FIELD_INITIALIZATION
     
     , JSCell_freeListNext(JSCell_header)
+    , ArrayStorage_publicLength(Butterfly_publicLength)
+    , ArrayStorage_vectorLength(Butterfly_vectorLength)
     
 #define INDEXED_ABSTRACT_HEAP_INITIALIZATION(name, offset, size) , name(&root, #name, offset, size)
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_INITIALIZATION)

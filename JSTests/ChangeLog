@@ -1,3 +1,21 @@
+2018-02-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Support PutByVal(ArrayStorage/SlowPutArrayStorage)
+        https://bugs.webkit.org/show_bug.cgi?id=182965
+
+        Reviewed by Saam Barati.
+
+        * stress/put-by-val-array-storage.js: Added.
+        (shouldBe):
+        (testArrayStorageInBounds):
+        * stress/put-by-val-direct-out-of-bounds-setter.js: Added.
+        (shouldBe):
+        (testInt32.createBuiltin):
+        (set for):
+        * stress/put-by-val-slow-put-array-storage.js: Added.
+        (shouldBe):
+        (testArrayStorageInBounds):
+
 2018-02-26  Saam Barati  <sbarati@apple.com>
 
         validateStackAccess should not validate if the offset is within the stack bounds
