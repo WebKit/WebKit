@@ -106,7 +106,7 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
             TimeoutTimer()
                 : timer(RunLoop::main(), this, &TimeoutTimer::fired)
             {
-                timer.startOneShot(1.0 / 60);
+                timer.startOneShot(1_s / 60);
             }
 
             void fired() { RunLoop::main().stop(); }

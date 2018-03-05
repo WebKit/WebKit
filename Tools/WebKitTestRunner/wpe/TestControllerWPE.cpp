@@ -71,7 +71,7 @@ void TestController::platformRunUntil(bool& condition, double timeout)
 
     timeoutTimer.timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
     if (timeout >= 0)
-        timeoutTimer.timer.startOneShot(timeout);
+        timeoutTimer.timer.startOneShot(Seconds(timeout));
 
     RunLoop::main().run();
 

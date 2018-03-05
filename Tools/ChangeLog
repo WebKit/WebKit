@@ -1,3 +1,14 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, attempt to fix WPE build
+
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage):
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformRunUntil):
+
 2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively

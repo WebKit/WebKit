@@ -52,7 +52,7 @@ void TestRunner::platformInitialize()
 void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
     if (!m_waitToDumpWatchdogTimer.isActive())
-        m_waitToDumpWatchdogTimer.startOneShot(m_timeout / 1000.0);
+        m_waitToDumpWatchdogTimer.startOneShot(1_ms * m_timeout);
 }
 
 void TestRunner::installFakeHelvetica(JSStringRef configuration)
