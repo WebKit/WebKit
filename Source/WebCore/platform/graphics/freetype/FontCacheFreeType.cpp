@@ -78,60 +78,35 @@ static bool configurePatternForFontDescription(FcPattern* pattern, const FontDes
     return true;
 }
 
-static RefPtr<FcPattern> createFontConfigPatternForCharacters(const FontDescription& fontDescription, const UChar* characters, int bufferLength)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font*, bool, const UChar* characters, unsigned length)
 {
-    RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
     FcUniquePtr<FcCharSet> fontConfigCharSet(FcCharSetCreate());
-
-    UTF16UChar32Iterator iterator(characters, bufferLength);
+    UTF16UChar32Iterator iterator(characters, length);
     UChar32 character = iterator.next();
     while (character != iterator.end()) {
         FcCharSetAddChar(fontConfigCharSet.get(), character);
         character = iterator.next();
     }
 
+    RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
     FcPatternAddCharSet(pattern.get(), FC_CHARSET, fontConfigCharSet.get());
 
     FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
 
-    if (!configurePatternForFontDescription(pattern.get(), fontDescription))
+    if (!configurePatternForFontDescription(pattern.get(), description))
         return nullptr;
 
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
     cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
     FcDefaultSubstitute(pattern.get());
-    return pattern;
-}
-
-static RefPtr<FcPattern> findBestFontGivenFallbacks(const FontPlatformData& fontData, FcPattern* pattern)
-{
-    FcFontSet* fallbacks = fontData.fallbacks();
-    if (!fallbacks)
-        return nullptr;
 
     FcResult fontConfigResult;
-    return adoptRef(FcFontSetMatch(nullptr, &fallbacks, 1, pattern, &fontConfigResult));
-}
-
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, unsigned length)
-{
-    RefPtr<FcPattern> pattern = createFontConfigPatternForCharacters(description, characters, length);
-    if (!pattern)
+    RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(nullptr, pattern.get(), &fontConfigResult));
+    if (!resultPattern)
         return nullptr;
 
-
-    if (RefPtr<FcPattern> fallbackPattern = findBestFontGivenFallbacks(originalFontData->platformData(), pattern.get())) {
-        FontPlatformData alternateFontData(fallbackPattern.get(), description);
-        return fontForPlatformData(alternateFontData);
-    }
-
-    FcResult fontConfigResult;
-    if (RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(nullptr, pattern.get(), &fontConfigResult))) {
-        FontPlatformData alternateFontData(resultPattern.get(), description);
-        return fontForPlatformData(alternateFontData);
-    }
-
-    return nullptr;
+    FontPlatformData alternateFontData(resultPattern.get(), description);
+    return fontForPlatformData(alternateFontData);
 }
 
 static Vector<String> patternToFamilies(FcPattern& pattern)
