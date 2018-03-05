@@ -1,5 +1,33 @@
 2018-02-23  Zalan Bujtas  <zalan@apple.com>
 
+        [RenderTreeBuilder] Move RenderFullScreen::createPlaceholder to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=183027
+        <rdar://problem/37773058>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFullScreenRenderer):
+        * dom/Document.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreenPlaceholder::RenderFullScreenPlaceholder):
+        (WebCore::RenderFullScreenPlaceholder::isRenderFullScreenPlaceholder const):
+        (WebCore::RenderFullScreen::wrapNewRenderer):
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+        (): Deleted.
+        (WebCore::RenderFullScreen::createPlaceholder): Deleted.
+        * rendering/RenderFullScreen.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::createPlaceholderForFullScreen):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderFullScreen.cpp:
+        (WebCore::RenderTreeBuilder::FullScreen::createPlaceholder):
+        * rendering/updating/RenderTreeBuilderFullScreen.h:
+
+2018-02-23  Zalan Bujtas  <zalan@apple.com>
+
         [RenderTreeBuilder] Add WARN_UNUSED_RETURN to detach()
         https://bugs.webkit.org/show_bug.cgi?id=183073
         <rdar://problem/37814585>

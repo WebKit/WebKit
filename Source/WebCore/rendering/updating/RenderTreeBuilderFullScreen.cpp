@@ -37,6 +37,30 @@ RenderTreeBuilder::FullScreen::FullScreen(RenderTreeBuilder& builder)
 {
 }
 
+void RenderTreeBuilder::FullScreen::createPlaceholder(RenderFullScreen& renderer, std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
+{
+    if (style->width().isAuto())
+        style->setWidth(Length(frameRect.width(), Fixed));
+    if (style->height().isAuto())
+        style->setHeight(Length(frameRect.height(), Fixed));
+
+    if (auto* placeHolder = renderer.placeholder()) {
+        placeHolder->setStyle(WTFMove(*style));
+        return;
+    }
+
+    if (!renderer.parent())
+        return;
+
+    auto newPlaceholder = createRenderer<RenderFullScreenPlaceholder>(renderer.document(), WTFMove(*style));
+    newPlaceholder->initializeStyle();
+
+    renderer.setPlaceholder(*newPlaceholder);
+
+    m_builder.attach(*renderer.parent(), WTFMove(newPlaceholder), &renderer);
+    renderer.parent()->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 void RenderTreeBuilder::FullScreen::cleanupOnDestroy(RenderFullScreen& fullScreenRenderer)
 {
     if (!fullScreenRenderer.placeholder())

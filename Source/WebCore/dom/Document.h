@@ -1131,7 +1131,7 @@ public:
     WEBCORE_EXPORT void webkitWillExitFullScreenForElement(Element*);
     WEBCORE_EXPORT void webkitDidExitFullScreenForElement(Element*);
     
-    void setFullScreenRenderer(RenderTreeBuilder&, RenderFullScreen*);
+    void setFullScreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer.get(); }
 
     void fullScreenChangeDelayTimerFired();
