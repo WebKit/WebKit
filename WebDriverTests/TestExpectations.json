@@ -207,6 +207,9 @@
     "imported/w3c/webdriver/tests/actions/mouse_dblclick.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
     },
+    "imported/w3c/webdriver/tests/actions/pointer_origin.py": {
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
+    },
     "imported/w3c/webdriver/tests/actions/sequence.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
     },
