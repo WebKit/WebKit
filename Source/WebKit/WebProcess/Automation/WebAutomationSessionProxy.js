@@ -46,6 +46,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
         if (typeof functionValue !== "function")
             throw new TypeError("Script did not evaluate to a function.");
 
+        this._clearStaleNodes();
+
         let argumentValues = argumentStrings.map(this._jsonParse, this);
 
         let timeoutIdentifier = 0;
@@ -70,6 +72,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     nodeForIdentifier(identifier)
     {
+        this._clearStaleNodes();
         try {
             return this._nodeForIdentifier(identifier);
         } catch (error) {
@@ -134,6 +137,16 @@ let AutomationSessionProxy = class AutomationSessionProxy
         this._idToNodeMap.set(identifier, node);
 
         return identifier;
+    }
+
+    _clearStaleNodes()
+    {
+        for (var [node, identifier] of this._nodeToIdMap) {
+            if (!document.contains(node)) {
+                this._nodeToIdMap.delete(node);
+                this._idToNodeMap.delete(identifier);
+            }
+        }
     }
 };
 
