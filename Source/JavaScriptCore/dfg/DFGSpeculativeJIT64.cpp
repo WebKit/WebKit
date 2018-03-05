@@ -4644,7 +4644,51 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
         break;
     }
-        
+
+    case NumberIsInteger: {
+        JSValueOperand value(this, node->child1());
+        GPRTemporary result(this, Reuse, value);
+
+        FPRTemporary temp1(this);
+        FPRTemporary temp2(this);
+
+        JSValueRegs valueRegs = JSValueRegs(value.gpr());
+        GPRReg resultGPR = value.gpr();
+
+        FPRReg tempFPR1 = temp1.fpr();
+        FPRReg tempFPR2 = temp2.fpr();
+
+        MacroAssembler::JumpList done;
+
+        auto isInt32 = m_jit.branchIfInt32(valueRegs);
+        auto notNumber = m_jit.branchIfNotDoubleKnownNotInt32(valueRegs);
+
+        // We're a double here.
+        m_jit.unboxDouble(valueRegs.gpr(), resultGPR, tempFPR1);
+        m_jit.urshift64(TrustedImm32(52), resultGPR);
+        m_jit.and32(TrustedImm32(0x7ff), resultGPR);
+        auto notNanNorInfinity = m_jit.branch32(JITCompiler::NotEqual, TrustedImm32(0x7ff), resultGPR);
+        m_jit.move(TrustedImm32(ValueFalse), resultGPR);
+        done.append(m_jit.jump());
+
+        notNanNorInfinity.link(&m_jit);
+        m_jit.roundTowardZeroDouble(tempFPR1, tempFPR2);
+        m_jit.compareDouble(JITCompiler::DoubleEqual, tempFPR1, tempFPR2, resultGPR);
+        m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
+        done.append(m_jit.jump());
+
+        isInt32.link(&m_jit);
+        m_jit.move(TrustedImm32(ValueTrue), resultGPR);
+        done.append(m_jit.jump());
+
+        notNumber.link(&m_jit);
+        m_jit.move(TrustedImm32(ValueFalse), resultGPR);
+
+        done.link(&m_jit);
+        jsValueResult(resultGPR, node, DataFormatJSBoolean);
+        break;
+    }
+
     case MapHash: {
         switch (node->child1().useKind()) {
         case BooleanUse:

@@ -1,3 +1,52 @@
+2018-02-23  Saam Barati  <sbarati@apple.com>
+
+        Make Number.isInteger an intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=183088
+
+        Reviewed by JF Bastien.
+
+        When profiling the ML subtest in ARES, I noticed it was spending some
+        time in Number.isInteger. This patch makes that operation an intrinsic
+        in the DFG/FTL. It might be a speedup by 1% or so on that subtest, but
+        it's likely not an aggregate speedup on ARES. However, it is definitely
+        faster than calling into a builtin function, so we might as well have
+        it as an intrinsic.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberIsInteger):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxDouble):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        (JSC::numberConstructorFuncIsInteger):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::isIntegerImpl):
+
 2018-02-23  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: cache memory address / size on instance

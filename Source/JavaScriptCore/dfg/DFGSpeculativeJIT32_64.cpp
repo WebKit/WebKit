@@ -4405,6 +4405,17 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NumberIsInteger: {
+        JSValueOperand input(this, node->child1());
+        JSValueRegs inputRegs = input.jsValueRegs();
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationNumberIsInteger, resultGPR, inputRegs);
+        booleanResult(resultGPR, node);
+        break;
+    }
+
     case IsObject: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value, TagWord);

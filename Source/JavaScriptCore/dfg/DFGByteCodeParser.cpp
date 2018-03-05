@@ -3126,6 +3126,17 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case NumberIsIntegerIntrinsic: {
+        if (argumentCountIncludingThis < 2)
+            return false;
+
+        insertChecks();
+        Node* input = get(virtualRegisterForArgument(1, registerOffset));
+        Node* result = addToGraph(NumberIsInteger, input);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
     case CPUMfenceIntrinsic:
     case CPURdtscIntrinsic:
     case CPUCpuidIntrinsic:

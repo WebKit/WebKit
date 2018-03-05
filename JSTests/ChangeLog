@@ -1,3 +1,12 @@
+2018-02-23  Saam Barati  <sbarati@apple.com>
+
+        Make Number.isInteger an intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=183088
+
+        Reviewed by JF Bastien.
+
+        * stress/number-is-integer-intrinsic.js: Added.
+
 2018-02-23  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: cache memory address / size on instance

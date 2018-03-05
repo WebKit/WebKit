@@ -77,6 +77,7 @@ enum Intrinsic {
     StringPrototypeSliceIntrinsic,
     StringPrototypeToLowerCaseIntrinsic,
     NumberPrototypeToStringIntrinsic,
+    NumberIsIntegerIntrinsic,
     IMulIntrinsic,
     RandomIntrinsic,
     FRoundIntrinsic,
