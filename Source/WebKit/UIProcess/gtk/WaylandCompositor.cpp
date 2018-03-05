@@ -350,6 +350,7 @@ static const struct wl_compositor_interface compositorInterface = {
             wl_resource_set_implementation(surfaceResource, &surfaceInterface, new WaylandCompositor::Surface(),
                 [](struct wl_resource* resource) {
                     auto* surface = static_cast<WaylandCompositor::Surface*>(wl_resource_get_user_data(resource));
+                    WaylandCompositor::singleton().willDestroySurface(surface);
                     delete surface;
                 });
         } else
@@ -560,6 +561,16 @@ void WaylandCompositor::unregisterWebPage(WebPageProxy& webPage)
 {
     if (auto* surface = m_pageMap.take(&webPage))
         surface->setWebPage(nullptr);
+}
+
+void WaylandCompositor::willDestroySurface(Surface* surface)
+{
+    for (auto it : m_pageMap) {
+        if (it.value == surface) {
+            it.value = nullptr;
+            return;
+        }
+    }
 }
 
 } // namespace WebKit
