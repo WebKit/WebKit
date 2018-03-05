@@ -1,3 +1,17 @@
+2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use __builtin_xxx_overflow for CheckedArithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=183319
+
+        Reviewed by Darin Adler.
+
+        GCC and Clang has the builtins for arithmetic operations with overflow flags.
+        CheckedArithmetic operations can be done with this builtins. Since the compiler
+        can use overflow flags, potentially this is more efficient. CheckedArithmetic
+        already has TestWebKitAPI tests and we ensured the tests pass.
+
+        * wtf/CheckedArithmetic.h:
+
 2018-03-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove RunLoop and RunLoop::Timer's interface using double as seconds
