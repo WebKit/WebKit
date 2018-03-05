@@ -46,7 +46,39 @@ void FontCache::platformInit()
         ASSERT_NOT_REACHED();
 }
 
-static RefPtr<FcPattern> createFontConfigPatternForCharacters(const UChar* characters, int bufferLength)
+static int fontWeightToFontconfigWeight(FontSelectionValue weight)
+{
+    if (weight < FontSelectionValue(150))
+        return FC_WEIGHT_THIN;
+    if (weight < FontSelectionValue(250))
+        return FC_WEIGHT_ULTRALIGHT;
+    if (weight < FontSelectionValue(350))
+        return FC_WEIGHT_LIGHT;
+    if (weight < FontSelectionValue(450))
+        return FC_WEIGHT_REGULAR;
+    if (weight < FontSelectionValue(550))
+        return FC_WEIGHT_MEDIUM;
+    if (weight < FontSelectionValue(650))
+        return FC_WEIGHT_SEMIBOLD;
+    if (weight < FontSelectionValue(750))
+        return FC_WEIGHT_BOLD;
+    if (weight < FontSelectionValue(850))
+        return FC_WEIGHT_EXTRABOLD;
+    return FC_WEIGHT_ULTRABLACK;
+}
+
+static bool configurePatternForFontDescription(FcPattern* pattern, const FontDescription& fontDescription)
+{
+    if (!FcPatternAddInteger(pattern, FC_SLANT, fontDescription.italic() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
+        return false;
+    if (!FcPatternAddInteger(pattern, FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
+        return false;
+    if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fontDescription.computedPixelSize()))
+        return false;
+    return true;
+}
+
+static RefPtr<FcPattern> createFontConfigPatternForCharacters(const FontDescription& fontDescription, const UChar* characters, int bufferLength)
 {
     RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
     FcUniquePtr<FcCharSet> fontConfigCharSet(FcCharSetCreate());
@@ -61,6 +93,10 @@ static RefPtr<FcPattern> createFontConfigPatternForCharacters(const UChar* chara
     FcPatternAddCharSet(pattern.get(), FC_CHARSET, fontConfigCharSet.get());
 
     FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
+
+    if (!configurePatternForFontDescription(pattern.get(), fontDescription))
+        return nullptr;
+
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
     cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
     FcDefaultSubstitute(pattern.get());
@@ -74,26 +110,28 @@ static RefPtr<FcPattern> findBestFontGivenFallbacks(const FontPlatformData& font
         return nullptr;
 
     FcResult fontConfigResult;
-    return FcFontSetMatch(nullptr, &fallbacks, 1, pattern, &fontConfigResult);
+    return adoptRef(FcFontSetMatch(nullptr, &fallbacks, 1, pattern, &fontConfigResult));
 }
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, unsigned length)
 {
-    RefPtr<FcPattern> pattern = createFontConfigPatternForCharacters(characters, length);
-    const FontPlatformData& fontData = originalFontData->platformData();
+    RefPtr<FcPattern> pattern = createFontConfigPatternForCharacters(description, characters, length);
+    if (!pattern)
+        return nullptr;
 
-    RefPtr<FcPattern> fallbackPattern = findBestFontGivenFallbacks(fontData, pattern.get());
-    if (fallbackPattern) {
+
+    if (RefPtr<FcPattern> fallbackPattern = findBestFontGivenFallbacks(originalFontData->platformData(), pattern.get())) {
         FontPlatformData alternateFontData(fallbackPattern.get(), description);
         return fontForPlatformData(alternateFontData);
     }
 
     FcResult fontConfigResult;
-    RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(nullptr, pattern.get(), &fontConfigResult));
-    if (!resultPattern)
-        return nullptr;
-    FontPlatformData alternateFontData(resultPattern.get(), description);
-    return fontForPlatformData(alternateFontData);
+    if (RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(nullptr, pattern.get(), &fontConfigResult))) {
+        FontPlatformData alternateFontData(resultPattern.get(), description);
+        return fontForPlatformData(alternateFontData);
+    }
+
+    return nullptr;
 }
 
 static Vector<String> patternToFamilies(FcPattern& pattern)
@@ -168,27 +206,6 @@ static String getFamilyNameStringFromFamily(const AtomicString& family)
 #endif
 
     return "";
-}
-
-static int fontWeightToFontconfigWeight(FontSelectionValue weight)
-{
-    if (weight < FontSelectionValue(150))
-        return FC_WEIGHT_THIN;
-    if (weight < FontSelectionValue(250))
-        return FC_WEIGHT_ULTRALIGHT;
-    if (weight < FontSelectionValue(350))
-        return FC_WEIGHT_LIGHT;
-    if (weight < FontSelectionValue(450))
-        return FC_WEIGHT_REGULAR;
-    if (weight < FontSelectionValue(550))
-        return FC_WEIGHT_MEDIUM;
-    if (weight < FontSelectionValue(650))
-        return FC_WEIGHT_SEMIBOLD;
-    if (weight < FontSelectionValue(750))
-        return FC_WEIGHT_BOLD;
-    if (weight < FontSelectionValue(850))
-        return FC_WEIGHT_EXTRABOLD;
-    return FC_WEIGHT_ULTRABLACK;
 }
 
 // This is based on Chromium BSD code from Skia (src/ports/SkFontMgr_fontconfig.cpp). It is a
@@ -345,12 +362,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(familyNameString.utf8().data())))
         return nullptr;
 
-    bool italic = fontDescription.italic();
-    if (!FcPatternAddInteger(pattern.get(), FC_SLANT, italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
-        return nullptr;
-    if (!FcPatternAddInteger(pattern.get(), FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
-        return nullptr;
-    if (!FcPatternAddDouble(pattern.get(), FC_PIXEL_SIZE, fontDescription.computedPixelSize()))
+    if (!configurePatternForFontDescription(pattern.get(), fontDescription))
         return nullptr;
 
     // The strategy is originally from Skia (src/ports/SkFontHost_fontconfig.cpp):
