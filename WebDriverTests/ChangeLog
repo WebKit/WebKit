@@ -1,3 +1,15 @@
+2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update Selenium WebDriver imported tests.
+
+        * imported/selenium/importer.json:
+        * imported/selenium/py/selenium/__init__.py:
+        * imported/selenium/py/selenium/common/exceptions.py:
+        * imported/selenium/py/selenium/webdriver/__init__.py:
+        * imported/selenium/py/selenium/webdriver/remote/webelement.py:
+        * imported/selenium/py/selenium/webdriver/safari/webdriver.py:
+        * imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py:
+
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed gardening. Skip new action tests added in r229166.
