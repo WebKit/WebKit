@@ -387,7 +387,7 @@ void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent
     ASSERT(!parent.isRenderBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
 
     while (beforeChild && beforeChild->parent() && beforeChild->parent() != &parent)
-    beforeChild = beforeChild->parent();
+        beforeChild = beforeChild->parent();
 
     ASSERT(!beforeChild || beforeChild->parent() == &parent);
     ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
@@ -398,21 +398,26 @@ void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent
     newChild->initializeFragmentedFlowStateOnInsertion();
     if (!parent.renderTreeBeingDestroyed()) {
         newChild->insertedIntoTree();
+
+        auto* fragmentedFlow = newChild->enclosingFragmentedFlow();
+        if (is<RenderMultiColumnFlow>(fragmentedFlow))
+            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
+
         if (is<RenderElement>(*newChild))
-        RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
+            RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
     }
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
     parent.setPreferredLogicalWidthsDirty(true);
     if (!parent.normalChildNeedsLayout())
-    parent.setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
+        parent.setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
 
     if (AXObjectCache* cache = parent.document().axObjectCache())
-    cache->childrenChanged(&parent, newChild);
+        cache->childrenChanged(&parent, newChild);
     if (is<RenderBlockFlow>(parent))
-    downcast<RenderBlockFlow>(parent).invalidateLineLayoutPath();
+        downcast<RenderBlockFlow>(parent).invalidateLineLayoutPath();
     if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyleIsAuto())
-    newChild->setHasOutlineAutoAncestor();
+        newChild->setHasOutlineAutoAncestor();
 }
 
 void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
@@ -484,7 +489,7 @@ void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxMode
 
             // This is the first letter, skip it.
             if (firstLetterObj == nextSibling)
-            nextSibling = nextSibling->nextSibling();
+                nextSibling = nextSibling->nextSibling();
         }
 
         moveChildTo(from, to, *child, beforeChild, normalizeAfterInsertion);
@@ -630,11 +635,6 @@ void RenderTreeBuilder::childFlowStateChangesAndNoLongerAffectsParentBlock(Rende
 {
     ASSERT(child.parent());
     removeAnonymousWrappersForInlineChildrenIfNeeded(*child.parent());
-}
-
-void RenderTreeBuilder::multiColumnDescendantInserted(RenderMultiColumnFlow& flow, RenderObject& newDescendant)
-{
-    multiColumnBuilder().multiColumnDescendantInserted(flow, newDescendant);
 }
 
 static bool isAnonymousAndSafeToDelete(RenderElement& element)

@@ -1449,13 +1449,8 @@ void RenderObject::willBeDestroyed()
 void RenderObject::insertedIntoTree()
 {
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
-
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);
-
-    auto* fragmentedFlow = enclosingFragmentedFlow();
-    if (is<RenderMultiColumnFlow>(fragmentedFlow))
-        RenderTreeBuilder::current()->multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *this);
 }
 
 void RenderObject::willBeRemovedFromTree()

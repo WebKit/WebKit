@@ -56,7 +56,6 @@ public:
 
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
     void childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child);
-    void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
 
 private:
     void insertChildIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
