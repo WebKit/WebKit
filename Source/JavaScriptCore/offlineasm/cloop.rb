@@ -480,71 +480,26 @@ def cloopEmitOpAndBranch(operands, operator, type, conditionTest)
     $asm.putc "}"
 end
 
-def cloopAddOverflowTest(operands, type)
-    case type
-    when :int32
-        tempType = "int32_t"
-        signBit = "SIGN_BIT32"
-    else
-        raise "Unimplemented type"
-    end
-
-    $asm.putc "    #{tempType} a = #{operands[0].clValue(type)};"
-    $asm.putc "    #{tempType} b = #{operands[1].clValue(type)};"
-    $asm.putc "    // sign(b) sign(a) | Overflows if:"
-    $asm.putc "    // 0       0       | sign(b+a) = 1 (pos + pos != neg)"
-    $asm.putc "    // 0       1       | never"
-    $asm.putc "    // 1       0       | never"
-    $asm.putc "    // 1       1       | sign(b+a) = 0 (neg + neg != pos)"
-    "((#{signBit}(b) == #{signBit}(a)) && (#{signBit}(b+a) != #{signBit}(a)))"
-end
-
-def cloopSubOverflowTest(operands, type)
-    case type
-    when :int32
-        tempType = "int32_t"
-        signBit = "SIGN_BIT32"
-    else
-        raise "Unimplemented type"
-    end
-
-    $asm.putc "    #{tempType} a = #{operands[0].clValue(type)};"
-    $asm.putc "    #{tempType} b = #{operands[1].clValue(type)};"
-    $asm.putc "    // sign(b) sign(a) | Overflows if:"
-    $asm.putc "    // 0       0       | never"
-    $asm.putc "    // 0       1       | sign(b-a) = 1 (pos - neg != pos)"
-    $asm.putc "    // 1       0       | sign(b-a) = 0 (neg - pos != pos)"
-    $asm.putc "    // 1       1       | never"
-    "((#{signBit}(b) != #{signBit}(a)) && (#{signBit}(b-a) == #{signBit}(a)))"
-end
-
-def cloopMulOverflowTest(operands, type)
-    case type
-    when :int32
-        tempType = "uint32_t"
-    else
-        raise "Unimplemented type"
-    end
-    $asm.putc "    #{tempType} a = #{operands[0].clValue(type)};"
-    $asm.putc "    #{tempType} b = #{operands[1].clValue(type)};"
-    "((b | a) >> 15)"
-end
-
 def cloopEmitOpAndBranchIfOverflow(operands, operator, type)
+    case type
+    when :int32
+        tempType = "int32_t"
+    else
+        raise "Unimplemented type"
+    end
+
     $asm.putc "{"
 
     # Emit the overflow test based on the operands and the type:
     case operator
-    when "+"; overflowTest = cloopAddOverflowTest(operands, type)
-    when "-"; overflowTest = cloopSubOverflowTest(operands, type)
-    when "*"; overflowTest = cloopMulOverflowTest(operands, type)
+    when "+"; operation = "add"
+    when "-"; operation = "sub"
+    when "*"; operation = "multiply"
     else
         raise "Unimplemented opeartor"
     end
 
-    $asm.putc "    bool didOverflow = #{overflowTest};"
-    $asm.putc "    #{operands[1].clValue(type)} = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
-    $asm.putc "    if (didOverflow)"
+    $asm.putc "    if (!WTF::ArithmeticOperations<#{tempType}, #{tempType}, #{tempType}>::#{operation}(#{operands[1].clValue(type)}, #{operands[0].clValue(type)}, #{operands[1].clValue(type)}))"
     $asm.putc "        goto #{operands[2].cLabel};"
     $asm.putc "}"
 end

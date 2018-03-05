@@ -1,3 +1,17 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use WTF::ArithmeticOperations for CLoop overflow operations
+        https://bugs.webkit.org/show_bug.cgi?id=183324
+
+        Reviewed by JF Bastien.
+
+        We have WTF::ArithmeticOperations which has operations with overflow checking.
+        This is suitable for CLoop's overflow checking operations. This patch emits
+        WTF::ArithmeticOperations for CLoop's overflow checking operations. And it is
+        lowered to optimized code using CPU's overflow flag.
+
+        * offlineasm/cloop.rb:
+
 2018-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Split JSC header copying into public and private targets
