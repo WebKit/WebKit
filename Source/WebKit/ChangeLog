@@ -1,5 +1,22 @@
 2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Automation: clicking on a disabled option element shouldn't produce an error
+        https://bugs.webkit.org/show_bug.cgi?id=183284
+
+        Reviewed by Brian Burg.
+
+        This was expected by selenium, but the WebDriver spec says we should simply do nothing in those cases.
+
+        14.1 Element Click.
+        https://w3c.github.io/webdriver/webdriver-spec.html#element-click
+
+        Fixes: imported/w3c/webdriver/tests/element_click/select.py::test_option_disabled
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::selectOptionElement):
+
+2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Automation: stale elements not detected when removed from the DOM
         https://bugs.webkit.org/show_bug.cgi?id=183278
 
