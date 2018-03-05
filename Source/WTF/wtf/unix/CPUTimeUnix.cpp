@@ -44,4 +44,11 @@ std::optional<CPUTime> CPUTime::get()
     return CPUTime { MonotonicTime::now(), timevalToSeconds(resource.ru_utime), timevalToSeconds(resource.ru_stime) };
 }
 
+Seconds CPUTime::forCurrentThread()
+{
+    struct timespec ts { };
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+    return Seconds(ts.tv_sec) + Seconds::fromNanoseconds(ts.tv_nsec);
+}
+
 }

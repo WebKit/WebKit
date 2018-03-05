@@ -35,7 +35,6 @@
 #include "SuperSampler.h"
 #include "ThreadLocalCacheInlines.h"
 #include "VM.h"
-#include <wtf/CurrentTime.h>
 
 namespace JSC {
 

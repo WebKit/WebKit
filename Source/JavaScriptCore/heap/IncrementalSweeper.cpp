@@ -31,7 +31,6 @@
 #include "JSString.h"
 #include "MarkedBlock.h"
 #include "JSCInlines.h"
-#include <wtf/CurrentTime.h>
 
 namespace JSC {
 

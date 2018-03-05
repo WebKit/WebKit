@@ -28,7 +28,6 @@
 
 #include "Logging.h"
 #include <memory>
-#include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>

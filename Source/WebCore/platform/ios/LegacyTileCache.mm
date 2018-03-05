@@ -40,7 +40,6 @@
 #include "WebCoreThreadRun.h"
 #include <CoreText/CoreText.h>
 #include <pal/spi/cocoa/QuartzCoreSPI.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RAMSize.h>
 

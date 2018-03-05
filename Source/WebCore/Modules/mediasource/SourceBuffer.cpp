@@ -56,7 +56,6 @@
 #include <JavaScriptCore/VM.h>
 #include <limits>
 #include <map>
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

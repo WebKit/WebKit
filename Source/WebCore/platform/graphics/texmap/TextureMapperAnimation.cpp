@@ -21,7 +21,6 @@
 #include "TextureMapperAnimation.h"
 
 #include "LayoutSize.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

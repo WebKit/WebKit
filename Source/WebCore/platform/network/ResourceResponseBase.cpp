@@ -33,7 +33,6 @@
 #include "MIMETypeRegistry.h"
 #include "ParsedContentRange.h"
 #include "ResourceResponse.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>

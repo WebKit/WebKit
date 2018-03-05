@@ -39,7 +39,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>

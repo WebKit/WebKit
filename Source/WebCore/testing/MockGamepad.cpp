@@ -28,8 +28,6 @@
 
 #if ENABLE(GAMEPAD)
 
-#include <wtf/CurrentTime.h>
-
 namespace WebCore {
 
 MockGamepad::MockGamepad(unsigned index, const String& gamepadID, unsigned axisCount, unsigned buttonCount)

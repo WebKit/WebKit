@@ -28,7 +28,6 @@
 #if ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS))
 #include "GameControllerGamepadProvider.h"
 #include <GameController/GameController.h>
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

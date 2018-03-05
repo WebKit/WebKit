@@ -37,7 +37,6 @@
 #include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
 #include <wtf/text/CString.h>
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

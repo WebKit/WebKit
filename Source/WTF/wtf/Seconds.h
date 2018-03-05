@@ -251,6 +251,8 @@ private:
     double m_value { 0 };
 };
 
+WTF_EXPORT_PRIVATE void sleep(Seconds);
+
 inline namespace seconds_literals {
 
 constexpr Seconds operator"" _min(long double minutes)
@@ -316,6 +318,8 @@ constexpr Seconds operator"" _ns(unsigned long long nanoseconds)
 } // inline seconds_literals
 
 } // namespace WTF
+
+using WTF::sleep;
 
 namespace std {
 

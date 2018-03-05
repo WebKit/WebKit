@@ -35,7 +35,6 @@
 #include "Logging.h"
 #include "Settings.h"
 #include "Timer.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>

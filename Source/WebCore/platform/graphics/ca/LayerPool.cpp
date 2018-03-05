@@ -27,7 +27,6 @@
 #include "LayerPool.h"
 
 #include "Logging.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

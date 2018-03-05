@@ -33,7 +33,6 @@
 #import <CoreMedia/CMBufferQueue.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/StringPrintStream.h>

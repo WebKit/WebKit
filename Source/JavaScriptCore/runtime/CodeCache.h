@@ -37,7 +37,6 @@
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 

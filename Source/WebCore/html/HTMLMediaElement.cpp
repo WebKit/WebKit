@@ -92,7 +92,6 @@
 #include <pal/SessionID.h>
 #include <pal/system/SleepDisabler.h>
 #include <wtf/Algorithms.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryPressureHandler.h>

@@ -99,7 +99,6 @@
 #include "WheelEventDeltaFilter.h"
 #include "WindowsKeyboardCodes.h"
 #include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

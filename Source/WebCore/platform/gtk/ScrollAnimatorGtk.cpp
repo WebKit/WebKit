@@ -35,7 +35,6 @@
 #include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

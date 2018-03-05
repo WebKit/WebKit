@@ -34,7 +34,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
-#include <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
 #include <WebCore/InspectorOverlay.h>

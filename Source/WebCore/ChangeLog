@@ -1,3 +1,111 @@
+2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively
+        https://bugs.webkit.org/show_bug.cgi?id=183312
+
+        Reviewed by Mark Lam.
+
+        Remove wtf/CurrentTime.h include pragma.
+
+        * Modules/geolocation/Geolocation.cpp:
+        * Modules/mediasource/SourceBuffer.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        * Modules/speech/SpeechSynthesis.cpp:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        * contentextensions/ContentExtensionParser.cpp:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        * dom/Event.cpp:
+        * dom/ScriptedAnimationController.cpp:
+        * dom/SimulatedClick.cpp:
+        * fileapi/File.cpp:
+        * fileapi/FileReader.cpp:
+        * history/CachedPage.cpp:
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/DateTimeInputType.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/MediaController.cpp:
+        * html/MediaElementSession.cpp:
+        * html/MonthInputType.cpp:
+        * html/TimeInputType.cpp:
+        * html/parser/HTMLParserScheduler.h:
+        * inspector/InspectorCanvas.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/LoadTiming.cpp:
+        * loader/NavigationScheduler.cpp:
+        * loader/ProgressTracker.cpp:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/MemoryCache.cpp:
+        * page/DOMTimer.cpp:
+        * page/DOMWindow.cpp:
+        * page/DragController.cpp:
+        * page/EventHandler.cpp:
+        * page/FocusController.cpp:
+        * page/FrameView.cpp:
+        * page/Page.cpp:
+        * page/Performance.cpp:
+        * page/PerformanceTiming.cpp:
+        * page/animation/AnimationBase.cpp:
+        * page/animation/CSSAnimationController.cpp:
+        * page/mac/WheelEventDeltaFilterMac.mm:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        * platform/ScrollAnimationKinetic.cpp:
+        * platform/ScrollAnimationSmooth.cpp:
+        * platform/ThreadTimers.cpp:
+        * platform/Timer.cpp:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        * platform/cocoa/ScrollController.mm:
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        * platform/graphics/BitmapImage.cpp:
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/LayerPool.cpp:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        * platform/graphics/texmap/BitmapTexturePool.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapper.cpp:
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        * platform/graphics/win/GraphicsLayerDirect2D.cpp:
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        * platform/ios/LegacyTileCache.mm:
+        * platform/ios/LegacyTileLayerPool.mm:
+        * platform/ios/ScrollViewIOS.mm:
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        * platform/network/CacheValidation.cpp:
+        * platform/network/DNSResolveQueue.cpp:
+        * platform/network/ResourceResponseBase.cpp:
+        * platform/network/curl/CurlCacheEntry.cpp:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/text/TextEncodingRegistry.cpp:
+        * platform/text/win/LocaleWin.cpp:
+        * platform/win/MainThreadSharedTimerWin.cpp:
+        * platform/win/PlatformMouseEventWin.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderProgress.cpp:
+        * svg/animation/SMILTimeContainer.cpp:
+        * testing/MockGamepad.cpp:
+        * workers/WorkerRunLoop.cpp:
+
 2018-03-04  Tim Horton  <timothy_horton@apple.com>
 
         Make !ENABLE(DATA_DETECTION) iOS build actually succeed

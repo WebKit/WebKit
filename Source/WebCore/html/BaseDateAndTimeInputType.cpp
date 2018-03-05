@@ -39,7 +39,6 @@
 #include "KeyboardEvent.h"
 #include "PlatformLocale.h"
 #include <limits>
-#include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>

@@ -39,7 +39,6 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/VM.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/Expected.h>
 #include <wtf/text/WTFString.h>
 

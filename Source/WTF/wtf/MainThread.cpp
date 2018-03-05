@@ -29,7 +29,6 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include "CurrentTime.h"
 #include "Deque.h"
 #include "MonotonicTime.h"
 #include "StdLibExtras.h"

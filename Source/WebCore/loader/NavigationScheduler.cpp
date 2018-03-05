@@ -53,7 +53,6 @@
 #include "PolicyChecker.h"
 #include "ScriptController.h"
 #include "UserGestureIndicator.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

@@ -28,7 +28,6 @@
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
 #include <QuartzCore/CABase.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>

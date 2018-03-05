@@ -98,7 +98,6 @@
 #include "WheelEventTestTrigger.h"
 #include <wtf/text/TextStream.h>
 
-#include <wtf/CurrentTime.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>

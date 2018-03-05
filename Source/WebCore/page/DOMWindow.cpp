@@ -109,7 +109,6 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <algorithm>
 #include <memory>
-#include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>

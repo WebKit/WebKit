@@ -35,7 +35,6 @@
 #include <type_traits>
 #include <unistd.h>
 #include <wtf/Condition.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>

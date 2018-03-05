@@ -31,7 +31,6 @@
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorClient.h"
 #include "Logging.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

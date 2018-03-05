@@ -32,7 +32,6 @@
 #include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include "TypeLocation.h"
-#include <wtf/CurrentTime.h>
 
 
 namespace JSC {

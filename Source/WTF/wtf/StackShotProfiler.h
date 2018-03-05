@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/ProcessID.h>

@@ -1,3 +1,16 @@
+2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively
+        https://bugs.webkit.org/show_bug.cgi?id=183312
+
+        Reviewed by Mark Lam.
+
+        Remove wtf/CurrentTime.h include pragma.
+
+        * WebDownload.cpp:
+        * WebDownloadCFNet.cpp:
+        * WebDropSource.cpp:
+
 2018-03-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove monotonicallyIncreasingTime

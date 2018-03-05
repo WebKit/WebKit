@@ -117,7 +117,6 @@
 #include <WebCore/Settings.h>
 #include <WebCore/URLParser.h>
 #include <WebCore/UserGestureIndicator.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>

@@ -44,7 +44,6 @@
 #include "TransitionEvent.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

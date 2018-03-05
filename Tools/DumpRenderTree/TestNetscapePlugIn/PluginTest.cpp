@@ -28,9 +28,9 @@
 #include "PluginObject.h"
 #include <assert.h>
 #include <string.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
+#include <wtf/Seconds.h>
 
 #if defined(XP_UNIX) || defined(ANDROID)
 #include <unistd.h>

@@ -44,7 +44,6 @@
 #include "SourceCode.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/JSONValues.h>
 
 namespace Inspector {

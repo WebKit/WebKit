@@ -51,7 +51,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)

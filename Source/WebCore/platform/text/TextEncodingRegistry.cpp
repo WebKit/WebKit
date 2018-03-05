@@ -37,7 +37,6 @@
 #include <mutex>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>

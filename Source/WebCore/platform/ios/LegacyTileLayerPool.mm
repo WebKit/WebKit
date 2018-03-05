@@ -31,7 +31,6 @@
 #include "LegacyTileLayer.h"
 #include "LegacyTileGrid.h"
 #include "Logging.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 

@@ -27,7 +27,7 @@
 #include "Watchdog.h"
 
 #include "CallFrame.h"
-#include <wtf/CurrentTime.h>
+#include <wtf/CPUTime.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -70,7 +70,7 @@ bool Watchdog::shouldTerminate(ExecState* exec)
     // spurious wakes.
     m_deadline = MonotonicTime::infinity();
 
-    auto cpuTime = currentCPUTime();
+    auto cpuTime = CPUTime::forCurrentThread();
     if (cpuTime < m_cpuDeadline) {
         auto remainingCPUTime = m_cpuDeadline - cpuTime;
         startTimer(remainingCPUTime);
@@ -131,7 +131,7 @@ void Watchdog::startTimer(Seconds timeLimit)
     ASSERT(hasTimeLimit());
     ASSERT(timeLimit <= m_timeLimit);
 
-    m_cpuDeadline = currentCPUTime() + timeLimit;
+    m_cpuDeadline = CPUTime::forCurrentThread() + timeLimit;
     auto now = MonotonicTime::now();
     auto deadline = now + timeLimit;
 

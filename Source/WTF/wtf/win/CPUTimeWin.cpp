@@ -60,4 +60,14 @@ std::optional<CPUTime> CPUTime::get()
     return CPUTime { MonotonicTime::now(), fileTimeToSeconds(userTime), fileTimeToSeconds(kernelTime) };
 }
 
+Seconds CPUTime::forCurrentThread()
+{
+    FILETIME userTime, kernelTime, creationTime, exitTime;
+
+    BOOL ret = GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime, &userTime);
+    ASSERT_UNUSED(ret, ret);
+
+    return fileTimeToSeconds(userTime) + fileTimeToSeconds(kernelTime);
+}
+
 }

@@ -57,7 +57,6 @@
 #include <unistd.h>
 #endif
 #include <wtf/CompletionHandler.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>

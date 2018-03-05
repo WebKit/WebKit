@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MonotonicTime.h"
 
-#include "CurrentTime.h"
 #include "PrintStream.h"
 #include "TimeWithDynamicClockType.h"
 #include "WallTime.h"

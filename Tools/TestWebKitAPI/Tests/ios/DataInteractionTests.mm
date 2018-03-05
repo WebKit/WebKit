@@ -40,7 +40,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebItemProviderPasteboard.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
-#import <wtf/CurrentTime.h>
+#import <wtf/Seconds.h>
 
 typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);

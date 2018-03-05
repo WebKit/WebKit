@@ -1,5 +1,55 @@
 2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively
+        https://bugs.webkit.org/show_bug.cgi?id=183312
+
+        Reviewed by Mark Lam.
+
+        1. currentCPUTime to CPUTime.h. It is now defined as CPUTime::forCurrentThread.
+        We also removes fallback implementation for currentCPUTime since (1) that implementation
+        is wrong and (2) no environments we support needs this.
+
+        2. sleep(Seconds) to Seconds.h. Since sleep(MonotonicTime) and sleep(WallTime) are defined
+        in MonotonicTime.h and WallTime.h, this code move is natural.
+
+        3. Remove wtf/CurrentTime.h since nothing is defined now. But we keep CurrentTime.cpp to
+        consolidate various time-source implementations in one place.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks/ConditionSpeedTest.cpp:
+        * benchmarks/LockFairnessTest.cpp:
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/CMakeLists.txt:
+        * wtf/CPUTime.h:
+        * wtf/CurrentTime.cpp:
+        (WTF::currentCPUTime): Deleted.
+        (WTF::sleep): Deleted.
+        * wtf/CurrentTime.h: Removed.
+        * wtf/DateMath.cpp:
+        * wtf/DebugUtilities.h:
+        * wtf/FastMalloc.cpp:
+        * wtf/MainThread.cpp:
+        * wtf/MonotonicTime.cpp:
+        * wtf/ParkingLot.cpp:
+        * wtf/Seconds.cpp:
+        (WTF::sleep):
+        * wtf/Seconds.h:
+        * wtf/StackShotProfiler.h:
+        * wtf/Stopwatch.h:
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/ThreadingWin.cpp:
+        * wtf/cocoa/CPUTimeCocoa.mm:
+        (WTF::CPUTime::forCurrentThread):
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        * wtf/unix/CPUTimeUnix.cpp:
+        (WTF::CPUTime::forCurrentThread):
+        * wtf/win/CPUTimeWin.cpp:
+        (WTF::CPUTime::forCurrentThread):
+        * wtf/win/RunLoopWin.cpp:
+
+2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Use __builtin_xxx_overflow for CheckedArithmetic
         https://bugs.webkit.org/show_bug.cgi?id=183319
 

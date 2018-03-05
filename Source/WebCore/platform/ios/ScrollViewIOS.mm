@@ -40,7 +40,6 @@
 #import "WKViewPrivate.h"
 #import "WebCoreFrameView.h"
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/CurrentTime.h>
 
 using namespace std;
 

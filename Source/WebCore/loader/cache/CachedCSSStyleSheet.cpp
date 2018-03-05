@@ -34,7 +34,6 @@
 #include "SharedBuffer.h"
 #include "StyleSheetContents.h"
 #include "TextResourceDecoder.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

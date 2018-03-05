@@ -28,7 +28,6 @@
 
 #include "ChildProcessMain.h"
 #include "WebProcess.h"
-#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 

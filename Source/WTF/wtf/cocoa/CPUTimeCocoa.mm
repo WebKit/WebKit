@@ -26,9 +26,12 @@
 #import "config.h"
 #import "CPUTime.h"
 
-#import <mach/mach_init.h>
+#import <mach/mach.h>
+#import <mach/mach_time.h>
 #import <mach/task.h>
 #import <mach/task_info.h>
+#import <mach/thread_info.h>
+#import <sys/time.h>
 
 namespace WTF {
 
@@ -65,6 +68,18 @@ std::optional<CPUTime> CPUTime::get()
     systemTime += timeValueToMicroseconds(taskInfoData.system_time);
 
     return CPUTime { MonotonicTime::now(), Seconds::fromMicroseconds(userTime), Seconds::fromMicroseconds(systemTime) };
+}
+
+Seconds CPUTime::forCurrentThread()
+{
+    mach_msg_type_number_t infoCount = THREAD_BASIC_INFO_COUNT;
+    thread_basic_info_data_t info;
+
+    mach_port_t threadPort = mach_thread_self();
+    thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
+    mach_port_deallocate(mach_task_self(), threadPort);
+
+    return Seconds(info.user_time.seconds + info.system_time.seconds) + Seconds::fromMicroseconds(info.user_time.microseconds + info.system_time.microseconds);
 }
 
 }

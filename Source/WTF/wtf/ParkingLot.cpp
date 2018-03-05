@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ParkingLot.h"
 
-#include "CurrentTime.h"
 #include "DataLog.h"
 #include "HashFunctions.h"
 #include "StringPrintStream.h"

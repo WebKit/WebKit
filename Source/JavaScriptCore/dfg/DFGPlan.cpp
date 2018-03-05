@@ -79,7 +79,6 @@
 #include "ProfilerDatabase.h"
 #include "TrackedReferences.h"
 #include "VMInlines.h"
-#include <wtf/CurrentTime.h>
 
 #if ENABLE(FTL_JIT)
 #include "FTLCapabilities.h"

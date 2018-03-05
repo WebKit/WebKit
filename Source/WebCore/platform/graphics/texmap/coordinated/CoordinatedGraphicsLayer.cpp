@@ -33,7 +33,6 @@
 #include "NicosiaPaintingEngine.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
-#include <wtf/CurrentTime.h>
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
 #endif

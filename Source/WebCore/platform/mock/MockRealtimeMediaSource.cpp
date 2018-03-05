@@ -39,7 +39,6 @@
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceSettings.h"
 #include <math.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 

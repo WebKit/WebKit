@@ -32,7 +32,6 @@
 
 #include "FloatPoint.h"
 #include "ScrollableArea.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

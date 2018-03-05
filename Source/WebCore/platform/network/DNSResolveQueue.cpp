@@ -27,7 +27,6 @@
 #include "config.h"
 #include "DNSResolveQueue.h"
 
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

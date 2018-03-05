@@ -33,7 +33,6 @@
 #include <gtk/gtk.h>
 #include <libintl.h>
 #include <libsoup/soup.h>
-#include <wtf/CurrentTime.h>
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>

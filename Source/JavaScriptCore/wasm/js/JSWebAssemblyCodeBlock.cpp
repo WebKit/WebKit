@@ -34,7 +34,6 @@
 #include "WasmModuleInformation.h"
 #include "WasmToJS.h"
 
-#include <wtf/CurrentTime.h>
 
 namespace JSC {
 

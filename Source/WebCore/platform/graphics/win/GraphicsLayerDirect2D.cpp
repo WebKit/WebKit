@@ -32,7 +32,6 @@
 #include "GraphicsLayerFactory.h"
 #include "NotImplemented.h"
 #include <limits.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>

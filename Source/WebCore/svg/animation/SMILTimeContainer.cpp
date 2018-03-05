@@ -31,7 +31,6 @@
 #include "Page.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

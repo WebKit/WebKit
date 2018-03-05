@@ -35,7 +35,6 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include <wtf/CurrentTime.h>
 
 #include <Windows.h>
 

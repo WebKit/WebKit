@@ -41,7 +41,6 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include <algorithm>
-#include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

@@ -31,7 +31,6 @@
 #include "Performance.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

@@ -33,7 +33,6 @@
 #import <UIKit/UITouch.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/WAKAppKitStubs.h>
-#import <wtf/CurrentTime.h>
 
 namespace WebKit {
 

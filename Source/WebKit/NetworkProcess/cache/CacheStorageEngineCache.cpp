@@ -34,7 +34,6 @@
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/HTTPParsers.h>
 #include <pal/SessionID.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>

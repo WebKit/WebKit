@@ -35,7 +35,6 @@
 #if USE(PTHREADS)
 
 #include <errno.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RawPointer.h>

@@ -40,7 +40,6 @@
 #include "NetworkLoadMetrics.h"
 #include "Performance.h"
 #include "ResourceResponse.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

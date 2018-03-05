@@ -27,7 +27,6 @@
 #define WTF_DebugUtilities_h
 
 #include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
 
 #define SLEEP_THREAD_FOR_DEBUGGER() \

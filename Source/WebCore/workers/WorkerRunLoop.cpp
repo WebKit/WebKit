@@ -39,7 +39,6 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/PromiseDeferredTimer.h>
-#include <wtf/CurrentTime.h>
 
 #if USE(GLIB)
 #include <glib.h>

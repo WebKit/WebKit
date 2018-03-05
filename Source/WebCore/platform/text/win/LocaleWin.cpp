@@ -36,7 +36,6 @@
 #include "LocalizedStrings.h"
 #include <limits>
 #include <windows.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
 #include <wtf/Language.h>

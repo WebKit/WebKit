@@ -28,8 +28,6 @@
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
-#import <wtf/CurrentTime.h>
-
 using namespace WebCore;
 
 namespace WebKit {

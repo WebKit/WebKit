@@ -31,7 +31,6 @@
 #include "GDIUtilities.h"
 #include "PlatformCALayer.h"
 #include <QuartzCore/CACFLayer.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/SoftLinking.h>
 

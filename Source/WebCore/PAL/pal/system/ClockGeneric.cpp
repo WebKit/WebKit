@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ClockGeneric.h"
 
-#include <wtf/CurrentTime.h>
 
 namespace PAL {
 

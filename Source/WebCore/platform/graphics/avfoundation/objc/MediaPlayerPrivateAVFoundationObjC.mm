@@ -78,7 +78,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>

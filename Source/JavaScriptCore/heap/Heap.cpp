@@ -81,7 +81,6 @@
 #if PLATFORM(IOS)
 #include <bmalloc/bmalloc.h>
 #endif
-#include <wtf/CurrentTime.h>
 #include <wtf/ListDump.h>
 #include <wtf/MainThread.h>
 #include <wtf/ParallelVectorIterator.h>

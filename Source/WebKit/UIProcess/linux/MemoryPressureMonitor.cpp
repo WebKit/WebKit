@@ -38,7 +38,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
 

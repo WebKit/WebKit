@@ -31,7 +31,6 @@
 #import "WheelEventTestTrigger.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
-#import <wtf/CurrentTime.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #import "ScrollSnapAnimatorState.h"

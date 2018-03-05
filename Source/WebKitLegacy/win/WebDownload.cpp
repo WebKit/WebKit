@@ -44,7 +44,6 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WebCore;

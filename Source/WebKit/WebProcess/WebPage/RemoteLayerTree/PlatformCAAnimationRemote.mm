@@ -36,7 +36,6 @@
 #import <WebCore/TimingFunction.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/TextStream.h>
 

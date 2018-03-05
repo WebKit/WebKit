@@ -91,7 +91,6 @@
 #include <errno.h>
 #include <process.h>
 #include <windows.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>

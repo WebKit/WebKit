@@ -27,7 +27,6 @@
 #include "GraphicsContext.h"
 
 #include "COMPtr.h"
-#include "CurrentTime.h"
 #include "DisplayListRecorder.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContextPlatformPrivateDirect2D.h"

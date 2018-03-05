@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include <type_traits>
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>

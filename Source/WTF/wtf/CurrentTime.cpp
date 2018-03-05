@@ -32,12 +32,8 @@
  */
 
 #include "config.h"
-#include "CurrentTime.h"
 #include "MonotonicTime.h"
 #include "WallTime.h"
-
-#include "Condition.h"
-#include "Lock.h"
 
 #if OS(DARWIN)
 #include <mach/mach.h>
@@ -277,56 +273,6 @@ MonotonicTime MonotonicTime::now()
     lastTime = currentTimeNow;
     return fromRawSeconds(currentTimeNow);
 #endif
-}
-
-Seconds currentCPUTime()
-{
-#if OS(DARWIN)
-    mach_msg_type_number_t infoCount = THREAD_BASIC_INFO_COUNT;
-    thread_basic_info_data_t info;
-
-    // Get thread information
-    mach_port_t threadPort = mach_thread_self();
-    thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
-    mach_port_deallocate(mach_task_self(), threadPort);
-
-    return Seconds(info.user_time.seconds + info.system_time.seconds) + Seconds::fromMicroseconds(info.user_time.microseconds + info.system_time.microseconds);
-#elif OS(WINDOWS)
-    union {
-        FILETIME fileTime;
-        unsigned long long fileTimeAsLong;
-    } userTime, kernelTime;
-    
-    // GetThreadTimes won't accept null arguments so we pass these even though
-    // they're not used.
-    FILETIME creationTime, exitTime;
-    
-    GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
-
-    return Seconds::fromMicroseconds((userTime.fileTimeAsLong + kernelTime.fileTimeAsLong) / 10);
-#elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(NETBSD)
-    struct timespec ts { };
-    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
-    return Seconds(ts.tv_sec) + Seconds::fromNanoseconds(ts.tv_nsec);
-#else
-    // FIXME: We should return the time the current thread has spent executing.
-
-    static MonotonicTime firstTime = MonotonicTime::now();
-    return MonotonicTime::now() - firstTime;
-#endif
-}
-
-void sleep(Seconds value)
-{
-    // It's very challenging to find portable ways of sleeping for less than a second. On UNIX, you want to
-    // use usleep() but it's hard to #include it in a portable way (you'd think it's in unistd.h, but then
-    // you'd be wrong on some OSX SDKs). Also, usleep() won't save you on Windows. Hence, bottoming out in
-    // lock code, which already solves the sleeping problem, is probably for the best.
-    
-    Lock fakeLock;
-    Condition fakeCondition;
-    LockHolder fakeLocker(fakeLock);
-    fakeCondition.waitFor(fakeLock, value);
 }
 
 } // namespace WTF

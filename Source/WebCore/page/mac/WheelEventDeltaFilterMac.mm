@@ -30,7 +30,6 @@
 
 #import "FloatPoint.h"
 #import <pal/spi/mac/NSScrollingInputFilterSPI.h>
-#import <wtf/CurrentTime.h>
 
 namespace WebCore {
 

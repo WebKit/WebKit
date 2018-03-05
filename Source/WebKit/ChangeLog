@@ -1,3 +1,35 @@
+2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively
+        https://bugs.webkit.org/show_bug.cgi?id=183312
+
+        Reviewed by Mark Lam.
+
+        Remove wtf/CurrentTime.h include pragma.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        * Platform/IPC/Connection.cpp:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        * PluginProcess/WebProcessConnection.cpp:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        * WebProcess/Gamepad/WebGamepad.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/win/WebProcessMainWin.cpp:
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+
 2018-03-02  Brian Burg  <bburg@apple.com>
 
         Web Automation: script evaluations via WebDriver should have a user gesture indicator

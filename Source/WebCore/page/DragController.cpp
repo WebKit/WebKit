@@ -89,7 +89,6 @@
 #include "SelectionRect.h"
 #endif
 
-#include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SetForScope.h>
 #endif

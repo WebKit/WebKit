@@ -60,7 +60,6 @@
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

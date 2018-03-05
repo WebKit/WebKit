@@ -42,7 +42,6 @@
 #import <wtf/text/TextStream.h>
 
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/Deque.h>
 #import <wtf/text/CString.h>
 

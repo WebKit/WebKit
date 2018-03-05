@@ -31,7 +31,6 @@
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <IOKit/hid/IOHIDValue.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

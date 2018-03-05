@@ -31,7 +31,6 @@
 #include "ToyLocks.h"
 #include <thread>
 #include <unistd.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

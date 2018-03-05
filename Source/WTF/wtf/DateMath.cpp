@@ -74,7 +74,6 @@
 
 #include "Assertions.h"
 #include "ASCIICType.h"
-#include "CurrentTime.h"
 #include "MathExtras.h"
 #include "StdLibExtras.h"
 

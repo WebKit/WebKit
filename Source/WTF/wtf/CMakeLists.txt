@@ -41,7 +41,6 @@ set(WTF_HEADERS
     CrossThreadTaskHandler.h
     CryptographicUtilities.h
     CryptographicallyRandomNumber.h
-    CurrentTime.h
     DataLog.h
     DateMath.h
     DebugUtilities.h

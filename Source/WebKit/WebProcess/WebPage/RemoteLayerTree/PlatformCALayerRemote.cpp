@@ -38,7 +38,6 @@
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/TiledBacking.h>
-#import <wtf/CurrentTime.h>
 
 using namespace WebCore;
 

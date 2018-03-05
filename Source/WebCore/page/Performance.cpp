@@ -46,7 +46,6 @@
 #include "PerformanceUserTiming.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

@@ -42,7 +42,6 @@
 #include "WebCoreInstanceHandle.h"
 #include <limits.h>
 #include <QuartzCore/CABase.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/win/GDIObject.h>
 

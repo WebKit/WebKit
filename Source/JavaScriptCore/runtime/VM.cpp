@@ -136,7 +136,6 @@
 #include "WeakGCMapInlines.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
 #include <wtf/SimpleStats.h>

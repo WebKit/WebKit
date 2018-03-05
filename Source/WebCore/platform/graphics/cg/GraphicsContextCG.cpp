@@ -43,7 +43,6 @@
 #include "Timer.h"
 #include "URL.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/TextStream.h>

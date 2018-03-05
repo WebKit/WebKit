@@ -37,7 +37,6 @@
 #include <mutex>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <syslog.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/StringPrintStream.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>

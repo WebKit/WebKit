@@ -31,7 +31,6 @@
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include "ThreadableBlobRegistry.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/text/WTFString.h>
 

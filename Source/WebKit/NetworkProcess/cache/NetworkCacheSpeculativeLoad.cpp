@@ -34,7 +34,6 @@
 #include "NetworkSession.h"
 #include "SessionTracker.h"
 #include <pal/SessionID.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {

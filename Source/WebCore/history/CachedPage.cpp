@@ -40,7 +40,6 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "VisitedLinkState.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 

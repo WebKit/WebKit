@@ -30,7 +30,6 @@
 
 #import "WebCoreThread.h"
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/MainThread.h>
 
 using WebCore::DisplayRefreshMonitorIOS;

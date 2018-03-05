@@ -102,7 +102,6 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/markup.h>
-#import <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
 #import "WebMailDelegate.h"

@@ -30,7 +30,6 @@
 
 #include "GamepadData.h"
 #include "Logging.h"
-#include <wtf/CurrentTime.h>
 
 
 namespace WebKit {

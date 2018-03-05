@@ -33,7 +33,6 @@
 #include "PlatformStrategies.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

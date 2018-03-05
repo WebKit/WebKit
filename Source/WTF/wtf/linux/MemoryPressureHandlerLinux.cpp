@@ -36,7 +36,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>

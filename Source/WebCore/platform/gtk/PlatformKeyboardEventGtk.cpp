@@ -37,7 +37,6 @@
 #include "WindowsKeyboardCodes.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {

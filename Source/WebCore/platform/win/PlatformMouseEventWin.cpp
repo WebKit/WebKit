@@ -30,7 +30,6 @@
 #include "GDIUtilities.h"
 #include "HWndDC.h"
 #include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <windows.h>
 #include <windowsx.h>

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 
-#include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 
 #if USE(GLIB_EVENT_LOOP)

@@ -34,7 +34,6 @@
 #include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
 #include "UserGestureIndicator.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

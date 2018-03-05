@@ -29,7 +29,6 @@
 
 #include "BitmapTexture.h"
 #include "TextureMapperContextAttributes.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {

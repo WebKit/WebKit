@@ -42,7 +42,6 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

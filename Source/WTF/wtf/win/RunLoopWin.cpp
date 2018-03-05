@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include <wtf/CurrentTime.h>
 #include <wtf/WindowsExtras.h>
 
 namespace WTF {

@@ -112,7 +112,6 @@
 #include "VoidCallback.h"
 #include "WebGLStateTracker.h"
 #include "Widget.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>

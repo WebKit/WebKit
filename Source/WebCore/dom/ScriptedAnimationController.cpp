@@ -41,7 +41,6 @@
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
 #include <algorithm>
-#include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/StringBuilder.h>

@@ -437,7 +437,6 @@
 		A8A47273151A825A004123FF /* CryptographicallyRandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicallyRandomNumber.cpp; sourceTree = "<group>"; };
 		A8A47274151A825A004123FF /* CryptographicallyRandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicallyRandomNumber.h; sourceTree = "<group>"; };
 		A8A47275151A825A004123FF /* CurrentTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurrentTime.cpp; sourceTree = "<group>"; };
-		A8A47276151A825A004123FF /* CurrentTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentTime.h; sourceTree = "<group>"; };
 		A8A47277151A825A004123FF /* DataLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataLog.cpp; sourceTree = "<group>"; };
 		A8A47278151A825A004123FF /* DataLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLog.h; sourceTree = "<group>"; };
 		A8A47279151A825A004123FF /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
@@ -840,7 +839,6 @@
 				E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */,
 				E15556F418A0CC18006F48FB /* CryptographicUtilities.h */,
 				A8A47275151A825A004123FF /* CurrentTime.cpp */,
-				A8A47276151A825A004123FF /* CurrentTime.h */,
 				A8A47277151A825A004123FF /* DataLog.cpp */,
 				A8A47278151A825A004123FF /* DataLog.h */,
 				A8A47279151A825A004123FF /* DateMath.cpp */,
@@ -855,10 +853,10 @@
 				A8A4727F151A825A004123FF /* DispatchPtr.h */,
 				0F4570421BE5B58F0062A629 /* Dominators.h */,
 				A8A47280151A825A004123FF /* DoublyLinkedList.h */,
-				FE05FAE61FDB214300093230 /* DumbPtrTraits.h */,
-				AD653DA82006B6C200D820D7 /* DumbValueTraits.h */,
 				A8A47297151A825A004123FF /* dtoa.cpp */,
 				A8A47298151A825A004123FF /* dtoa.h */,
+				FE05FAE61FDB214300093230 /* DumbPtrTraits.h */,
+				AD653DA82006B6C200D820D7 /* DumbValueTraits.h */,
 				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,
 				AD7C434A1DD2A4A70026888B /* Expected.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
@@ -1092,7 +1090,6 @@
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
-				FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */,
 				0F66B2881DC97BAB004A1D3F /* WallTime.cpp */,
 				0F66B2891DC97BAB004A1D3F /* WallTime.h */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
@@ -1101,6 +1098,7 @@
 				0FE4479B1B7AAA03009498EB /* WordLock.h */,
 				E4A0AD371A96245500536DF6 /* WorkQueue.cpp */,
 				E4A0AD381A96245500536DF6 /* WorkQueue.h */,
+				FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */,
 			);
 			path = wtf;
 			sourceTree = "<group>";
@@ -1424,7 +1422,6 @@
 				0F66B28A1DC97BAB004A1D3F /* ClockType.cpp in Sources */,
 				A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */,
 				A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */,
-				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
 				0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */,
 				0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,
@@ -1533,6 +1530,7 @@
 				0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */,
 				E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */,
 				E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */,
+				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
 				A8A47445151A825B004123FF /* WTFString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -42,7 +42,6 @@
 #include "PositionError.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 #include <wtf/text/StringBuilder.h>
 

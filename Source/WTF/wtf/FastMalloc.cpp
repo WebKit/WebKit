@@ -27,7 +27,6 @@
 #include "FastMalloc.h"
 
 #include "CheckedArithmetic.h"
-#include "CurrentTime.h"
 #include <limits>
 #include <string.h>
 #include <wtf/DataLog.h>

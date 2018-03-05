@@ -27,7 +27,6 @@
 #include "ScrollAnimationKinetic.h"
 
 #include "ScrollableArea.h"
-#include <wtf/CurrentTime.h>
 
 /*
  * PerAxisData is a port of GtkKineticScrolling as of GTK+ 3.20,
