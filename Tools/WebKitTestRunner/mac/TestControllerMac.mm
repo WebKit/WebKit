@@ -149,7 +149,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
             NSLog(@"%@", [error helpAnchor]);
         doneCompiling = true;
     }];
-    platformRunUntil(doneCompiling, 0);
+    platformRunUntil(doneCompiling, noTimeout);
 #endif
 }
 

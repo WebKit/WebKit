@@ -60,7 +60,6 @@ public:
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
-    void dumpWebProcessUnresponsiveness();
     static void dumpWebProcessUnresponsiveness(const char* errorMessage);
     void outputText(const WTF::String&);
 
@@ -119,13 +118,11 @@ private:
 
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };
-    bool m_webProcessIsUnresponsive { false };
 
     StringBuilder m_textOutput;
     WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
-    std::string m_errorMessage;
     
     std::unique_ptr<UIScriptContext> m_UIScriptContext;
     UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
