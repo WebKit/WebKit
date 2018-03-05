@@ -1,3 +1,10 @@
+2018-03-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, add baseline for fast/text/combining-enclosing-keycap.html.
+
+        * platform/ios/fast/text/combining-enclosing-keycap-expected.txt: Added.
+        * platform/mac/fast/text/combining-enclosing-keycap-expected.txt: Added.
+
 2018-03-05  Ali Juma  <ajuma@chromium.org>
 
         imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html times out with async policy delegates
