@@ -3920,3 +3920,5 @@ webkit.org/b/182694 imported/mozilla/svg/smil/repeat/indefinite-repeat-1.svg [ C
 webkit.org/b/182694 imported/mozilla/svg/smil/restart/reset-2.svg [ Crash ]
 webkit.org/b/182694 imported/mozilla/svg/smil/sort/sort-startAfter-1.svg [ Crash ]
 webkit.org/b/182694 fast/css/disabled-author-styles.html [ Timeout ]
+
+webkit.org/b/183322 http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ Failure ]

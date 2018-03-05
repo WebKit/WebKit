@@ -1,3 +1,12 @@
+2018-03-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html as failure on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=183322
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-03-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Delete incorrect version of clampTo() function from SVGToOTFFontConversion.cpp
