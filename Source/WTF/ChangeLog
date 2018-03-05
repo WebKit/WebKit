@@ -1,3 +1,12 @@
+2018-02-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        warning: unused variable 'InitialBufferSize' in Assertions.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=183076
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Assertions.cpp: Moved the definition of InitialBufferSize to inside #if.
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove currentTime() / currentTimeMS()

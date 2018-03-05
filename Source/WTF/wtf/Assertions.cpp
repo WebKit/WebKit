@@ -87,8 +87,6 @@ static void logToStderr(const char* buffer)
     fputs(buffer, stderr);
 }
 
-static const constexpr unsigned InitialBufferSize { 256 };
-
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
 {
@@ -105,6 +103,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 #pragma clang diagnostic pop
 #endif
         CFIndex length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str.get()), kCFStringEncodingUTF8);
+        constexpr unsigned InitialBufferSize { 256 };
         Vector<char, InitialBufferSize> buffer(length + 1);
 
         CFStringGetCString(str.get(), buffer.data(), length, kCFStringEncodingUTF8);
