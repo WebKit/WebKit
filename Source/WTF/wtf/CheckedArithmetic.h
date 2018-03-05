@@ -271,7 +271,11 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_add_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_add_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         if (signsMatch(lhs, rhs)) {
             if (lhs >= 0) {
@@ -291,7 +295,11 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_sub_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_sub_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         if (!signsMatch(lhs, rhs)) {
             if (lhs >= 0) {
@@ -310,7 +318,11 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_mul_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_mul_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         if (signsMatch(lhs, rhs)) {
             if (lhs >= 0) {
@@ -345,7 +357,11 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool add(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_add_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_add_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         ResultType temp = lhs + rhs;
         if (temp < lhs)
@@ -358,7 +374,11 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool sub(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_sub_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_sub_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         ResultType temp = lhs - rhs;
         if (temp > lhs)
@@ -371,7 +391,11 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_mul_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_mul_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         if (!lhs || !rhs) {
             result = 0;
@@ -392,7 +416,11 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
     static inline bool add(int64_t lhs, int64_t rhs, ResultType& result)
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_add_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_add_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         int64_t temp = lhs + rhs;
         if (temp < std::numeric_limits<ResultType>::min())
@@ -407,7 +435,11 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
     static inline bool sub(int64_t lhs, int64_t rhs, ResultType& result)
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_sub_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_sub_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         int64_t temp = lhs - rhs;
         if (temp < std::numeric_limits<ResultType>::min())
@@ -422,7 +454,11 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
     static inline bool multiply(int64_t lhs, int64_t rhs, ResultType& result)
     {
 #if COMPILER(GCC_OR_CLANG)
-        return !__builtin_mul_overflow(lhs, rhs, &result);
+        ResultType temp;
+        if (__builtin_mul_overflow(lhs, rhs, &temp))
+            return false;
+        result = temp;
+        return true;
 #else
         int64_t temp = lhs * rhs;
         if (temp < std::numeric_limits<ResultType>::min())
