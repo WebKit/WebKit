@@ -128,16 +128,8 @@ public:
             : m_value(structure.get())
         { }
         
-        // This is only here so that TrustedImmPtr(0) does not confuse the C++
-        // overload handling rules.
-        explicit TrustedImmPtr(int value)
-            : m_value(value)
-        {
-            ASSERT(!value);
-        }
-
         explicit TrustedImmPtr(std::nullptr_t)
-            : m_value(0)
+            : m_value(nullptr)
         { }
 
         explicit TrustedImmPtr(FrozenValue* value)

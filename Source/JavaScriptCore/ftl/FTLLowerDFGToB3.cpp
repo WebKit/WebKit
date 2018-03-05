@@ -7118,7 +7118,7 @@ private:
                 CCallHelpers::DataLabelPtr targetToCheck;
                 CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
                     CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(0));
+                    CCallHelpers::TrustedImmPtr(nullptr));
 
                 CCallHelpers::Call fastCall = jit.nearCall();
                 CCallHelpers::Jump done = jit.jump();
@@ -7438,7 +7438,7 @@ private:
                 CCallHelpers::DataLabelPtr targetToCheck;
                 CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
                     CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(0));
+                    CCallHelpers::TrustedImmPtr(nullptr));
 
                 callLinkInfo->setFrameShuffleData(shuffleData);
                 CallFrameShuffler(jit, shuffleData).prepareForTailCall();
@@ -8008,7 +8008,7 @@ private:
                 CCallHelpers::DataLabelPtr targetToCheck;
                 CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
                     CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(0));
+                    CCallHelpers::TrustedImmPtr(nullptr));
                 
                 CCallHelpers::Call fastCall;
                 CCallHelpers::Jump done;

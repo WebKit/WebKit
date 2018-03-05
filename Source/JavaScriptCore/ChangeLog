@@ -1,3 +1,89 @@
+2018-02-27  Keith Miller  <keith_miller@apple.com>
+
+        Replace TrustedImmPtr(0) with TrustedImmPtr(nullptr)
+        https://bugs.webkit.org/show_bug.cgi?id=183195
+
+        Reviewed by Mark Lam.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::TrustedImmPtr):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::patchableBranchPtr):
+        (JSC::MacroAssembler::patchableBranchPtrWithPatch):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM::storePtrWithPatch):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::call):
+        (JSC::MacroAssemblerARM64::tailRecursiveCall):
+        (JSC::MacroAssemblerARM64::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM64::patchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARM64::storePtrWithPatch):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::patchableBranchPtr):
+        (JSC::MacroAssemblerARMv7::patchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::storePtrWithPatch):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::storePtrWithPatch):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::branchPtrWithPatch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::callWithSlowPathReturnType):
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileToLowerCase):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::TrustedImmPtr):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall):
+        (JSC::AssemblyHelpers::sanitizeStackInline):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::initParenContextFreeList):
+        (JSC::Yarr::YarrGenerator::storeToFrameWithPatch):
+        (JSC::Yarr::YarrGenerator::generate):
+
 2018-02-26  Mark Lam  <mark.lam@apple.com>
 
         Modernize FINALIZE_CODE and peer macros to use __VA_ARGS__ arguments.

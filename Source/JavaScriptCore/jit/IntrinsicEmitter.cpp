@@ -112,7 +112,7 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
             MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
             TrustedImm32(WastefulTypedArray));
 
-        jit.move(TrustedImmPtr(0), valueGPR);
+        jit.move(TrustedImmPtr(nullptr), valueGPR);
         CCallHelpers::Jump done = jit.jump();
 
         notEmptyByteOffset.link(&jit);

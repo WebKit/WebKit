@@ -176,7 +176,7 @@ public:
         move(X86Registers::esp, X86Registers::ecx);
         add64(TrustedImm32(4 * sizeof(int64_t)), X86Registers::ecx);
 
-        DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister());
+        DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
         Call result = Call(m_assembler.call(scratchRegister()), Call::Linkable);
 
         add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
@@ -214,7 +214,7 @@ public:
         // In addition, we need to allocate 16 bytes for two more parameters, since the call can have up to 6 parameters.
         sub64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
 #endif
-        DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister());
+        DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
         Call result = Call(m_assembler.call(scratchRegister()), Call::Linkable);
 #if OS(WINDOWS)
         add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
@@ -232,7 +232,7 @@ public:
 
     Call tailRecursiveCall()
     {
-        DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister());
+        DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister()));
         ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPATCH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
@@ -241,7 +241,7 @@ public:
     Call makeTailRecursiveCall(Jump oldJump)
     {
         oldJump.link(this);
-        DataLabelPtr label = moveWithPatch(TrustedImmPtr(0), scratchRegister());
+        DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister()));
         ASSERT_UNUSED(label, differenceBetween(label, newJump) == REPATCH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
@@ -1414,13 +1414,13 @@ public:
         return DataLabelPtr(this);
     }
 
-    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         dataLabel = moveWithPatch(initialRightValue, scratchRegister());
         return branch64(cond, left, scratchRegister());
     }
 
-    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         dataLabel = moveWithPatch(initialRightValue, scratchRegister());
         return branch64(cond, left, scratchRegister());

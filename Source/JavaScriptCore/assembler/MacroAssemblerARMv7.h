@@ -1875,13 +1875,13 @@ public:
         return DataLabelPtr(this);
     }
 
-    ALWAYS_INLINE Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    ALWAYS_INLINE Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
         return branch32(cond, left, dataTempRegister);
     }
 
-    ALWAYS_INLINE Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    ALWAYS_INLINE Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         load32(left, addressTempRegister);
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
@@ -1895,7 +1895,7 @@ public:
         return branch32(cond, addressTempRegister, dataTempRegister);
     }
     
-    PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
+    PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(nullptr))
     {
         m_makeJumpPatchable = true;
         Jump result = branch32(cond, left, TrustedImm32(right));
@@ -1927,7 +1927,7 @@ public:
         return PatchableJump(result);
     }
 
-    PatchableJump patchableBranchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    PatchableJump patchableBranchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         m_makeJumpPatchable = true;
         Jump result = branchPtrWithPatch(cond, left, dataLabel, initialRightValue);
@@ -1958,7 +1958,7 @@ public:
         store32(dataTempRegister, address);
         return label;
     }
-    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(ImplicitAddress address) { return storePtrWithPatch(TrustedImmPtr(0), address); }
+    ALWAYS_INLINE DataLabelPtr storePtrWithPatch(ImplicitAddress address) { return storePtrWithPatch(TrustedImmPtr(nullptr), address); }
 
 
     ALWAYS_INLINE Call tailRecursiveCall()

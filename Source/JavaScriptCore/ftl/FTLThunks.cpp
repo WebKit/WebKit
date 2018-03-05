@@ -97,7 +97,7 @@ static MacroAssemblerCodeRef genericGenerationThunkGenerator(
     
     // Make sure we tell the GC that we're not using the scratch buffer anymore.
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT1);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(0), GPRInfo::regT1);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::regT1);
     
     // Prepare for tail call.
     while (numberOfRequiredPops--)

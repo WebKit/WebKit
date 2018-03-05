@@ -2377,7 +2377,7 @@ public:
         return label;
     }
 
-    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         m_fixedWidth = true;
         dataLabel = moveWithPatch(initialRightValue, immTempRegister);
@@ -2386,7 +2386,7 @@ public:
         return temp;
     }
 
-    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    Jump branchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(nullptr))
     {
         m_fixedWidth = true;
         load32(left, dataTempRegister);
@@ -2417,7 +2417,7 @@ public:
 
     DataLabelPtr storePtrWithPatch(ImplicitAddress address)
     {
-        return storePtrWithPatch(TrustedImmPtr(0), address);
+        return storePtrWithPatch(TrustedImmPtr(nullptr), address);
     }
 
     Call tailRecursiveCall()

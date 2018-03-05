@@ -211,7 +211,7 @@ void ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall(Macr
     RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
     
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratchGPR);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(0), scratchGPR);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(nullptr), scratchGPR);
 
     // Restore double registers first.
     unsigned count = usedRegisters.numberOfSetGPRs();

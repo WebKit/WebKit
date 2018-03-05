@@ -782,7 +782,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             CCallHelpers::Jump slowCase = jit.branchPtrWithPatch(
                 CCallHelpers::NotEqual, loadedValueGPR, addressOfLinkFunctionCheck,
-                CCallHelpers::TrustedImmPtr(0));
+                CCallHelpers::TrustedImmPtr(nullptr));
 
             fastPathCall = jit.nearCall();
             if (m_type == Getter)
@@ -987,7 +987,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 }
 
                 for (size_t offset = oldSize; offset < newSize; offset += sizeof(void*))
-                    jit.storePtr(CCallHelpers::TrustedImmPtr(0), CCallHelpers::Address(scratchGPR, -static_cast<ptrdiff_t>(offset + sizeof(JSValue) + sizeof(void*))));
+                    jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(scratchGPR, -static_cast<ptrdiff_t>(offset + sizeof(JSValue) + sizeof(void*))));
             } else {
                 // Handle the case where we are allocating out-of-line using an operation.
                 RegisterSet extraRegistersToPreserve;
