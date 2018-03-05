@@ -43,10 +43,10 @@ public:
     void attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child);
-    RenderPtr<RenderObject> detach(RenderSVGInline& parent, RenderObject& child);
-    RenderPtr<RenderObject> detach(RenderSVGContainer& parent, RenderObject& child);
-    RenderPtr<RenderObject> detach(RenderSVGRoot& parent, RenderObject& child);
+    RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderSVGInline& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderSVGContainer& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderSVGRoot& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
 private:
     RenderTreeBuilder& m_builder;
