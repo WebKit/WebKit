@@ -1,3 +1,19 @@
+2018-02-26  Saam Barati  <sbarati@apple.com>
+
+        validateStackAccess should not validate if the offset is within the stack bounds
+        https://bugs.webkit.org/show_bug.cgi?id=183067
+        <rdar://problem/37749988>
+
+        Reviewed by Mark Lam.
+
+        The validation rule was saying that any load from the stack must be
+        within the stack bounds of the frame. However, it's natural for a user
+        of B3 to emit code that may be outside of B3's stack bounds, but guard
+        such a load with a branch. The FTL does exactly this with GetMyArgumentByVal.
+        B3 is wrong to assert that this is a static property about all stack loads.
+
+        * b3/B3Validate.cpp:
+
 2018-02-23  Saam Barati  <sbarati@apple.com>
 
         Make Number.isInteger an intrinsic

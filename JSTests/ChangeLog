@@ -1,3 +1,17 @@
+2018-02-26  Saam Barati  <sbarati@apple.com>
+
+        validateStackAccess should not validate if the offset is within the stack bounds
+        https://bugs.webkit.org/show_bug.cgi?id=183067
+        <rdar://problem/37749988>
+
+        Reviewed by Mark Lam.
+
+        * stress/dont-validate-stack-offset-in-b3-because-it-might-be-guarded-by-control-flow.js: Added.
+        (assert):
+        (test.a):
+        (test.b):
+        (test):
+
 2018-02-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, skip FTL tests if FTL is disabled
