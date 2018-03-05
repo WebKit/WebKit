@@ -1378,10 +1378,16 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
     m_host->sendCommandToBackend(ASCIILiteral("waitForNavigationToComplete"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             auto result = CommandResult::fail(WTFMove(response.responseObject));
-            if (result.errorCode() == CommandResult::ErrorCode::NoSuchFrame) {
+            switch (result.errorCode()) {
+            case CommandResult::ErrorCode::NoSuchWindow:
+                // Window was closed, reset the top level browsing context and ignore the error.
+                m_toplevelBrowsingContext = std::nullopt;
+                break;
+            case CommandResult::ErrorCode::NoSuchFrame:
                 // Navigation destroyed the current frame, switch to top level browsing context and ignore the error.
                 switchToBrowsingContext(std::nullopt);
-            } else {
+                break;
+            default:
                 completionHandler(WTFMove(result));
                 return;
             }
