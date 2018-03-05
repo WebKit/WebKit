@@ -1,3 +1,19 @@
+2018-03-05  Antti Koivisto  <antti@apple.com>
+
+        Don't invalidate all children when doing insertion/deletion in presence of backward positional selectors
+        https://bugs.webkit.org/show_bug.cgi?id=183325
+        <rdar://problem/38134480>
+
+        Reviewed by Zalan Bujtas.
+
+        It is sufficient to invalidate siblings before the mutation point.
+
+        * dom/Element.cpp:
+        (WebCore::checkForSiblingStyleChanges):
+
+        We already do sibling walk in the case of forwards positional rules and sibling combinators. The work
+        done here is insignifant compared to cost of overinvalidating.
+
 2018-03-05  Ali Juma  <ajuma@chromium.org>
 
         imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html times out with async policy delegates
