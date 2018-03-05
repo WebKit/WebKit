@@ -42,6 +42,7 @@
 #include "GlyphBuffer.h"
 #include "OpenTypeTypes.h"
 #include "RefPtrCairo.h"
+#include "SurrogatePairAwareTextIterator.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -199,8 +200,7 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
     UErrorCode error = U_ZERO_ERROR;
     Vector<UChar, 4> normalizedCharacters(length);
     int32_t normalizedLength = unorm_normalize(characters, length, UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], length, &error);
-    // Can't render if we have an error or no composition occurred.
-    if (U_FAILURE(error) || (static_cast<size_t>(normalizedLength) == length))
+    if (U_FAILURE(error))
         return false;
 
     CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
@@ -208,10 +208,16 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
     if (!face)
         return false;
 
-    if (FcFreeTypeCharIndex(face, normalizedCharacters[0]))
-        addResult.iterator->value = true;
+    UChar32 character;
+    unsigned clusterLength = 0;
+    SurrogatePairAwareTextIterator iterator(normalizedCharacters.data(), 0, normalizedLength, normalizedLength);
+    for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
+        if (!FcFreeTypeCharIndex(face, character))
+            return false;
+    }
 
-    return addResult.iterator->value;
+    addResult.iterator->value = true;
+    return true;
 }
 #endif
 
