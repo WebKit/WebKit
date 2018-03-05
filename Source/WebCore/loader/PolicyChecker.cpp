@@ -145,6 +145,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
     ResourceRequest requestCopy = request;
     m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, didReceiveRedirectResponse, formState, [this, function = WTFMove(function), request = WTFMove(requestCopy), formState = makeRefPtr(formState), suggestedFilename = WTFMove(suggestedFilename)](PolicyAction policyAction) mutable {
+        m_delegateIsDecidingNavigationPolicy = false;
+
         switch (policyAction) {
         case PolicyAction::Download:
             m_frame.loader().setOriginalURLForDownloadRequest(request);
@@ -161,7 +163,6 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
         }
         ASSERT_NOT_REACHED();
     });
-    m_delegateIsDecidingNavigationPolicy = false;
 }
 
 void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, const ResourceRequest& request, FormState* formState, const String& frameName, NewWindowPolicyDecisionFunction&& function)
