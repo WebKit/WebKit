@@ -39,7 +39,6 @@ class SchemeRegistry {
 public:
     WEBCORE_EXPORT static void registerURLSchemeAsLocal(const String&);
     static void removeURLSchemeRegisteredAsLocal(const String&);
-    static const URLSchemesMap& localSchemes();
 
     WEBCORE_EXPORT static bool shouldTreatURLSchemeAsLocal(const String&);
     WEBCORE_EXPORT static bool isBuiltinScheme(const String&);
