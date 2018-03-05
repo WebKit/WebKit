@@ -1,5 +1,5 @@
 function foo(x) {
-    if (DFGTrue())
+    if ($vm.dfgTrue())
         x = "hello";
     return x + " world";
 }

@@ -4,7 +4,7 @@ function foo(object, predicate) {
     for (var j = 0; j < 10; ++j) {
         var result = 0;
         var i = 0;
-        if (DFGTrue())
+        if ($vm.dfgTrue())
             predicate = 42;
         while (predicate >= 42) {
             result += object.array[i++];

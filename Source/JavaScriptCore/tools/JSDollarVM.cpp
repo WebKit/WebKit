@@ -1049,6 +1049,13 @@ static EncodedJSValue JSC_HOST_CALL functionDFGTrue(ExecState*)
     return JSValue::encode(jsBoolean(false));
 }
 
+// Returns true if the current frame is a FTL frame.
+// Usage: isFTL = $vm.ftlTrue()
+static EncodedJSValue JSC_HOST_CALL functionFTLTrue(ExecState*)
+{
+    return JSValue::encode(jsBoolean(false));
+}
+
 static EncodedJSValue JSC_HOST_CALL functionCpuMfence(ExecState*)
 {
 #if CPU(X86_64) && !OS(WINDOWS)
@@ -1759,6 +1766,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "crash", functionCrash, 0);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "dfgTrue"), 0, functionDFGTrue, DFGTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "ftlTrue"), 0, functionFTLTrue, FTLTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuMfence"), 0, functionCpuMfence, CPUMfenceIntrinsic, 0);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuRdtsc"), 0, functionCpuRdtsc, CPURdtscIntrinsic, 0);

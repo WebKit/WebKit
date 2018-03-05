@@ -1,3 +1,28 @@
+2018-02-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement $vm.ftlTrue function for FTL testing
+        https://bugs.webkit.org/show_bug.cgi?id=183071
+
+        Reviewed by Mark Lam.
+
+        Add $vm.ftlTrue, which becomes true if the caller is compiled in FTL.
+        This is useful for testing whether the caller function is compiled in FTL.
+
+        We also remove duplicate DFGTrue function in jsc.cpp. We have $vm.dfgTrue.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionFalse1):
+        (functionFalse2): Deleted.
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionFTLTrue):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Support HasIndexedProperty for ArrayStorage and SlowPutArrayStorage

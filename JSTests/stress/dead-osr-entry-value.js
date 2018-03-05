@@ -3,7 +3,7 @@ function foo() {
     var result = 0;
     OSRExit();
     for (var i = 0; i < 10000; ++i) {
-        if (!DFGTrue())
+        if (!$vm.dfgTrue())
             result += o.f;
     }
     return result;

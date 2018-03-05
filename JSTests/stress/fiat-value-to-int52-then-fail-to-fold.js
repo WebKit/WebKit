@@ -1,5 +1,5 @@
 function foo() {
-    return fiatInt52(DFGTrue() ? 5.5 : 42) + 1;
+    return fiatInt52($vm.dfgTrue() ? 5.5 : 42) + 1;
 }
 
 noInline(foo);

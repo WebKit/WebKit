@@ -1,5 +1,5 @@
 function foo(f) {
-    if (DFGTrue())
+    if ($vm.dfgTrue())
         f = bar;
     return f().f;
 }
