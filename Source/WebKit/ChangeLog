@@ -1,3 +1,22 @@
+2018-03-01  Antti Koivisto  <antti@apple.com>
+
+        Crash when updating cache entry after validation in apps that uses class A file protection
+        https://bugs.webkit.org/show_bug.cgi?id=183242
+        <rdar://problem/33289058>
+
+        Reviewed by Chris Dumez.
+
+        When validating a cache entry, we keep it alive until we get a network response. With 304 response
+        we then update the headers of this existing entry. This accesses the body data of the entry which
+        may be backed by a mapped file. If the app uses class A protection, user might have locked
+        the device and the entry might have become inaccessible, leading to a crash.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::setNeedsValidation):
+
+        In case of class A protection, pull the data to a memory buffer immediately before starting a revalidation request.
+        This makes the window where the file could become inaccessible much shorter (since it no longer depends on network).
+
 2018-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r221514): [GTK] UI process crash in WebKit::WaylandCompositor::Surface::flushPendingFrameCallbacks
