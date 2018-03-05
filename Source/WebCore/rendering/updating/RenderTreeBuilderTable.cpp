@@ -70,7 +70,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
                 if (is<RenderTableRow>(*lastChildParent)) {
                     auto newCell = RenderTableCell::createAnonymousWithParentRenderer(parent);
                     auto& cell = *newCell;
-                    m_builder.insertChild(*lastChildParent, WTFMove(newCell), beforeChild);
+                    m_builder.attach(*lastChildParent, WTFMove(newCell), beforeChild);
                     beforeChild = nullptr;
                     return cell;
                 }
@@ -79,7 +79,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
     }
     auto newCell = RenderTableCell::createAnonymousWithParentRenderer(parent);
     auto& cell = *newCell;
-    m_builder.insertChild(parent, WTFMove(newCell), beforeChild);
+    m_builder.attach(parent, WTFMove(newCell), beforeChild);
     beforeChild = nullptr;
     return cell;
 }
@@ -114,7 +114,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
 
     auto newRow = RenderTableRow::createAnonymousWithParentRenderer(parent);
     auto& row = *newRow;
-    m_builder.insertChild(parent, WTFMove(newRow), beforeChild);
+    m_builder.attach(parent, WTFMove(newRow), beforeChild);
     beforeChild = nullptr;
     return row;
 }
@@ -156,25 +156,25 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
 
     auto newSection = RenderTableSection::createAnonymousWithParentRenderer(parent);
     auto& section = *newSection;
-    m_builder.insertChild(parent, WTFMove(newSection), beforeChild);
+    m_builder.attach(parent, WTFMove(newSection), beforeChild);
     beforeChild = nullptr;
     return section;
 }
 
-void RenderTreeBuilder::Table::insertChild(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::Table::attach(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != &parent)
         beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
 
     auto& newChild = *child.get();
     ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
-    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
     // FIXME: child should always be a RenderTableCell at this point.
     if (is<RenderTableCell>(newChild))
         parent.didInsertTableCell(downcast<RenderTableCell>(newChild), beforeChild);
 }
 
-void RenderTreeBuilder::Table::insertChild(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::Table::attach(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != &parent)
         beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
@@ -183,10 +183,10 @@ void RenderTreeBuilder::Table::insertChild(RenderTableSection& parent, RenderPtr
     if (is<RenderTableRow>(*child.get()))
         parent.willInsertTableRow(downcast<RenderTableRow>(*child.get()), beforeChild);
     ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
-    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
-void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::Table::attach(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != &parent)
         beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
@@ -197,7 +197,7 @@ void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<Render
     else if (is<RenderTableCol>(newChild))
         parent.willInsertTableColumn(downcast<RenderTableCol>(newChild), beforeChild);
 
-    m_builder.insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
 bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, const RenderObject& child)
@@ -248,8 +248,8 @@ void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTabl
             currentRow = currentRow->nextRow();
             continue;
         }
-        m_builder.moveAllChildrenTo(*currentRow, *rowToInsertInto, RenderTreeBuilder::NormalizeAfterInsertion::No);
-        auto toDestroy = m_builder.takeChild(*section, *currentRow);
+        m_builder.moveAllChildren(*currentRow, *rowToInsertInto, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        auto toDestroy = m_builder.detach(*section, *currentRow);
         currentRow = currentRow->nextRow();
     }
     if (rowToInsertInto)

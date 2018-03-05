@@ -1,3 +1,159 @@
+2018-02-22  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Rename insertChild() -> attach(), takeChild() -> detach() and removeAndDestroy() -> destroy()
+        https://bugs.webkit.org/show_bug.cgi?id=183061
+        <rdar://problem/37800269>
+
+        Reviewed by Ryosuke Niwa.
+
+        ...and moveChildTo() -> move() (moveChildrenTo() -> moveChildren()),
+        removeFromParentAndDestroyCleaningUpAnonymousWrappers() -> destroyAndCleanUpAnonymousWrappers()
+
+        No change in functionality.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::setFullScreenRenderer):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setText):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::didAttachChild):
+        (WebCore::RenderElement::didInsertChild): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::wrapNewRenderer):
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        (WebCore::RenderFullScreen::createPlaceholder):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::didAttachChild):
+        (RenderMenuList::setText):
+        (RenderMenuList::didInsertChild): Deleted.
+        * rendering/RenderMenuList.h:
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::updateTextRenderer):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::setText):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::destroy):
+        (WebCore::RenderTreeBuilder::attach):
+        (WebCore::RenderTreeBuilder::attachIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::detach):
+        (WebCore::RenderTreeBuilder::attachToRenderElement):
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+        (WebCore::RenderTreeBuilder::move):
+        (WebCore::RenderTreeBuilder::moveAllChildren):
+        (WebCore::RenderTreeBuilder::moveChildren):
+        (WebCore::RenderTreeBuilder::moveAllChildrenIncludingFloats):
+        (WebCore::RenderTreeBuilder::makeChildrenNonInline):
+        (WebCore::RenderTreeBuilder::splitAnonymousBoxesAroundChild):
+        (WebCore::RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock):
+        (WebCore::RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers):
+        (WebCore::RenderTreeBuilder::detachFromRenderGrid):
+        (WebCore::RenderTreeBuilder::detachFromRenderElement):
+        (WebCore::RenderTreeBuilder::attachToRenderGrid):
+        (WebCore::RenderTreeBuilder::removeAndDestroy): Deleted.
+        (WebCore::RenderTreeBuilder::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildIgnoringContinuation): Deleted.
+        (WebCore::RenderTreeBuilder::takeChild): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToRenderElement): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToRenderElementInternal): Deleted.
+        (WebCore::RenderTreeBuilder::moveChildTo): Deleted.
+        (WebCore::RenderTreeBuilder::moveAllChildrenTo): Deleted.
+        (WebCore::RenderTreeBuilder::moveChildrenTo): Deleted.
+        (WebCore::RenderTreeBuilder::moveAllChildrenIncludingFloatsTo): Deleted.
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers): Deleted.
+        (WebCore::RenderTreeBuilder::takeChildFromRenderGrid): Deleted.
+        (WebCore::RenderTreeBuilder::takeChildFromRenderElement): Deleted.
+        (WebCore::RenderTreeBuilder::insertChildToRenderGrid): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::attach):
+        (WebCore::RenderTreeBuilder::Block::insertChildToContinuation):
+        (WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::Block::removeLeftoverAnonymousBlock):
+        (WebCore::RenderTreeBuilder::Block::detach):
+        (WebCore::RenderTreeBuilder::Block::dropAnonymousBoxChild):
+        (WebCore::RenderTreeBuilder::Block::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::Block::insertChildIgnoringContinuation): Deleted.
+        (WebCore::RenderTreeBuilder::Block::takeChild): Deleted.
+        * rendering/updating/RenderTreeBuilderBlock.h:
+        * rendering/updating/RenderTreeBuilderBlockFlow.cpp:
+        (WebCore::RenderTreeBuilder::BlockFlow::attach):
+        (WebCore::RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloats):
+        (WebCore::RenderTreeBuilder::BlockFlow::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloatsTo): Deleted.
+        * rendering/updating/RenderTreeBuilderBlockFlow.h:
+        * rendering/updating/RenderTreeBuilderContinuation.cpp:
+        (WebCore::RenderTreeBuilder::Continuation::cleanupOnDestroy):
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::cleanupOnDestroy):
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+        * rendering/updating/RenderTreeBuilderFormControls.cpp:
+        (WebCore::RenderTreeBuilder::FormControls::attach):
+        (WebCore::RenderTreeBuilder::FormControls::detach):
+        (WebCore::RenderTreeBuilder::FormControls::findOrCreateParentForChild):
+        (WebCore::RenderTreeBuilder::FormControls::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::FormControls::takeChild): Deleted.
+        * rendering/updating/RenderTreeBuilderFormControls.h:
+        * rendering/updating/RenderTreeBuilderFullScreen.cpp:
+        (WebCore::RenderTreeBuilder::FullScreen::cleanupOnDestroy):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::attach):
+        (WebCore::RenderTreeBuilder::Inline::insertChildToContinuation):
+        (WebCore::RenderTreeBuilder::Inline::attachIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::Inline::splitFlow):
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+        (WebCore::RenderTreeBuilder::Inline::childBecameNonInline):
+        (WebCore::RenderTreeBuilder::Inline::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::Inline::insertChildIgnoringContinuation): Deleted.
+        * rendering/updating/RenderTreeBuilderInline.h:
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+        * rendering/updating/RenderTreeBuilderMathML.cpp:
+        (WebCore::RenderTreeBuilder::MathML::makeFences):
+        (WebCore::RenderTreeBuilder::MathML::attach):
+        (WebCore::RenderTreeBuilder::MathML::insertChild): Deleted.
+        * rendering/updating/RenderTreeBuilderMathML.h:
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant):
+        (WebCore::RenderTreeBuilder::MultiColumn::handleSpannerRemoval):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::moveInlineChildren):
+        (WebCore::RenderTreeBuilder::Ruby::moveBlockChildren):
+        (WebCore::RenderTreeBuilder::Ruby::attach):
+        (WebCore::RenderTreeBuilder::Ruby::findOrCreateParentForChild):
+        (WebCore::RenderTreeBuilder::Ruby::rubyBaseSafe):
+        (WebCore::RenderTreeBuilder::Ruby::detach):
+        (WebCore::RenderTreeBuilder::Ruby::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::Ruby::takeChild): Deleted.
+        * rendering/updating/RenderTreeBuilderRuby.h:
+        * rendering/updating/RenderTreeBuilderSVG.cpp:
+        (WebCore::RenderTreeBuilder::SVG::attach):
+        (WebCore::RenderTreeBuilder::SVG::detach):
+        (WebCore::RenderTreeBuilder::SVG::insertChild): Deleted.
+        (WebCore::RenderTreeBuilder::SVG::takeChild): Deleted.
+        * rendering/updating/RenderTreeBuilderSVG.h:
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::findOrCreateParentForChild):
+        (WebCore::RenderTreeBuilder::Table::attach):
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows):
+        (WebCore::RenderTreeBuilder::Table::insertChild): Deleted.
+        * rendering/updating/RenderTreeBuilderTable.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::RenderTreeUpdater::createTextRenderer):
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        (WebCore::RenderTreeUpdater::tearDownTextRenderer):
+        (WebCore::RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded):
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::createContentRenderers):
+
 2018-02-22  Chris Dumez  <cdumez@apple.com>
 
         ResourceRequestBase::isolatedCopy() fails to isolate copy the cachePartition

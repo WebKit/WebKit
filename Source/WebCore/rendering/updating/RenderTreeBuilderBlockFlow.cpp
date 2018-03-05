@@ -35,19 +35,19 @@ RenderTreeBuilder::BlockFlow::BlockFlow(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::BlockFlow::insertChild(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (parent.multiColumnFlow() && (!parent.isFieldset() || !child->isLegend()))
-        return m_builder.insertChild(*parent.multiColumnFlow(), WTFMove(child), beforeChild);
+        return m_builder.attach(*parent.multiColumnFlow(), WTFMove(child), beforeChild);
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* containingFragmentedFlow = parent.enclosingFragmentedFlow())
         beforeChildOrPlaceholder = m_builder.multiColumnBuilder().resolveMovedChild(*containingFragmentedFlow, beforeChild);
-    m_builder.blockBuilder().insertChild(parent, WTFMove(child), beforeChildOrPlaceholder);
+    m_builder.blockBuilder().attach(parent, WTFMove(child), beforeChildOrPlaceholder);
 }
 
-void RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::BlockFlow::moveAllChildrenIncludingFloats(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)
 {
-    m_builder.moveAllChildrenTo(from, to, normalizeAfterInsertion);
+    m_builder.moveAllChildren(from, to, normalizeAfterInsertion);
     from.addFloatsToNewParent(downcast<RenderBlockFlow>(to));
 }
 

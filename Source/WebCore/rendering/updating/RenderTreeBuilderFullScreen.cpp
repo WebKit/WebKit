@@ -41,7 +41,7 @@ void RenderTreeBuilder::FullScreen::cleanupOnDestroy(RenderFullScreen& fullScree
 {
     if (!fullScreenRenderer.placeholder())
         return;
-    m_builder.removeAndDestroy(*fullScreenRenderer.placeholder());
+    m_builder.destroy(*fullScreenRenderer.placeholder());
 }
 
 }

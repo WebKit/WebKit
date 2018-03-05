@@ -33,8 +33,8 @@ class RenderTreeBuilder::BlockFlow {
 public:
     BlockFlow(RenderTreeBuilder&);
 
-    void insertChild(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    void moveAllChildrenIncludingFloatsTo(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion);
+    void attach(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void moveAllChildrenIncludingFloats(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion);
 
 private:
     RenderTreeBuilder& m_builder;

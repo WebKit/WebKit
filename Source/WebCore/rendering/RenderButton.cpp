@@ -106,9 +106,9 @@ void RenderButton::setText(const String& str)
         m_buttonText = makeWeakPtr(*newButtonText);
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
-            RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
+            RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));
         else
-            RenderTreeBuilder(*document().renderView()).insertChild(*this, WTFMove(newButtonText));
+            RenderTreeBuilder(*document().renderView()).attach(*this, WTFMove(newButtonText));
         return;
     }
 
@@ -117,9 +117,9 @@ void RenderButton::setText(const String& str)
         return;
     }
     if (RenderTreeBuilder::current())
-        RenderTreeBuilder::current()->removeAndDestroy(*m_buttonText);
+        RenderTreeBuilder::current()->destroy(*m_buttonText);
     else
-        RenderTreeBuilder(*document().renderView()).removeAndDestroy(*m_buttonText);
+        RenderTreeBuilder(*document().renderView()).destroy(*m_buttonText);
 }
 
 String RenderButton::text() const

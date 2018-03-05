@@ -146,10 +146,10 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
-void RenderTreeBuilder::removeAndDestroy(RenderObject& renderer)
+void RenderTreeBuilder::destroy(RenderObject& renderer)
 {
     ASSERT(renderer.parent());
-    auto toDestroy = takeChild(*renderer.parent(), renderer);
+    auto toDestroy = detach(*renderer.parent(), renderer);
 
 #if ENABLE(FULLSCREEN_API)
     if (is<RenderFullScreen>(renderer))
@@ -163,7 +163,7 @@ void RenderTreeBuilder::removeAndDestroy(RenderObject& renderer)
         continuationBuilder().cleanupOnDestroy(downcast<RenderBoxModelObject>(renderer));
 
     // We need to detach the subtree first so that the descendants don't have
-    // access to previous/next sublings at takeChild().
+    // access to previous/next sublings at detach().
     // FIXME: webkit.org/b/182909.
     if (!is<RenderElement>(toDestroy.get()))
         return;
@@ -173,18 +173,18 @@ void RenderTreeBuilder::removeAndDestroy(RenderObject& renderer)
         auto& firstChild = *childToDestroy.firstChild();
         if (auto* node = firstChild.node())
             node->setRenderer(nullptr);
-        removeAndDestroy(firstChild);
+        destroy(firstChild);
     }
 }
 
-void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
         if (&parent == &parentCandidate) {
-            insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+            attachToRenderElement(parent, WTFMove(child), beforeChild);
             return;
         }
-        insertChild(parentCandidate, WTFMove(child), beforeChild);
+        attach(parentCandidate, WTFMove(child), beforeChild);
     };
 
     ASSERT(&parent.view() == &m_view);
@@ -197,7 +197,7 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     if (is<RenderTableRow>(parent)) {
         auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild);
         if (&parentCandidate == &parent) {
-            tableBuilder().insertChild(downcast<RenderTableRow>(parentCandidate), WTFMove(child), beforeChild);
+            tableBuilder().attach(downcast<RenderTableRow>(parentCandidate), WTFMove(child), beforeChild);
             return;
         }
         insertRecursiveIfNeeded(parentCandidate);
@@ -207,7 +207,7 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     if (is<RenderTableSection>(parent)) {
         auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
         if (&parent == &parentCandidate) {
-            tableBuilder().insertChild(downcast<RenderTableSection>(parent), WTFMove(child), beforeChild);
+            tableBuilder().attach(downcast<RenderTableSection>(parent), WTFMove(child), beforeChild);
             return;
         }
         insertRecursiveIfNeeded(parentCandidate);
@@ -217,7 +217,7 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     if (is<RenderTable>(parent)) {
         auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild);
         if (&parentCandidate == &parent) {
-            tableBuilder().insertChild(downcast<RenderTable>(parentCandidate), WTFMove(child), beforeChild);
+            tableBuilder().attach(downcast<RenderTable>(parentCandidate), WTFMove(child), beforeChild);
             return;
         }
         insertRecursiveIfNeeded(parentCandidate);
@@ -235,130 +235,130 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderRubyRun>(parent)) {
-        rubyBuilder().insertChild(downcast<RenderRubyRun>(parent), WTFMove(child), beforeChild);
+        rubyBuilder().attach(downcast<RenderRubyRun>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderButton>(parent)) {
-        formControlsBuilder().insertChild(downcast<RenderButton>(parent), WTFMove(child), beforeChild);
+        formControlsBuilder().attach(downcast<RenderButton>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderMenuList>(parent)) {
-        formControlsBuilder().insertChild(downcast<RenderMenuList>(parent), WTFMove(child), beforeChild);
+        formControlsBuilder().attach(downcast<RenderMenuList>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderSVGContainer>(parent)) {
-        svgBuilder().insertChild(downcast<RenderSVGContainer>(parent), WTFMove(child), beforeChild);
+        svgBuilder().attach(downcast<RenderSVGContainer>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderSVGInline>(parent)) {
-        svgBuilder().insertChild(downcast<RenderSVGInline>(parent), WTFMove(child), beforeChild);
+        svgBuilder().attach(downcast<RenderSVGInline>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderSVGRoot>(parent)) {
-        svgBuilder().insertChild(downcast<RenderSVGRoot>(parent), WTFMove(child), beforeChild);
+        svgBuilder().attach(downcast<RenderSVGRoot>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderSVGText>(parent)) {
-        svgBuilder().insertChild(downcast<RenderSVGText>(parent), WTFMove(child), beforeChild);
+        svgBuilder().attach(downcast<RenderSVGText>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderMathMLFenced>(parent)) {
-        mathMLBuilder().insertChild(downcast<RenderMathMLFenced>(parent), WTFMove(child), beforeChild);
+        mathMLBuilder().attach(downcast<RenderMathMLFenced>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderGrid>(parent)) {
-        insertChildToRenderGrid(downcast<RenderGrid>(parent), WTFMove(child), beforeChild);
+        attachToRenderGrid(downcast<RenderGrid>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderBlockFlow>(parent)) {
-        blockFlowBuilder().insertChild(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
+        blockFlowBuilder().attach(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderBlock>(parent)) {
-        blockBuilder().insertChild(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
+        blockBuilder().attach(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderInline>(parent)) {
-        inlineBuilder().insertChild(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
+        inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
         return;
     }
 
-    insertChildToRenderElement(parent, WTFMove(child), beforeChild);
+    attachToRenderElement(parent, WTFMove(child), beforeChild);
 }
 
-void RenderTreeBuilder::insertChildIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (is<RenderInline>(parent)) {
-        inlineBuilder().insertChildIgnoringContinuation(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
+        inlineBuilder().attachIgnoringContinuation(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderBlock>(parent)) {
-        blockBuilder().insertChildIgnoringContinuation(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
+        blockBuilder().attachIgnoringContinuation(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
         return;
     }
 
-    insertChild(parent, WTFMove(child), beforeChild);
+    attach(parent, WTFMove(child), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::takeChild(RenderElement& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child)
 {
     if (is<RenderRubyAsInline>(parent))
-        return rubyBuilder().takeChild(downcast<RenderRubyAsInline>(parent), child);
+        return rubyBuilder().detach(downcast<RenderRubyAsInline>(parent), child);
 
     if (is<RenderRubyAsBlock>(parent))
-        return rubyBuilder().takeChild(downcast<RenderRubyAsBlock>(parent), child);
+        return rubyBuilder().detach(downcast<RenderRubyAsBlock>(parent), child);
 
     if (is<RenderRubyRun>(parent))
-        return rubyBuilder().takeChild(downcast<RenderRubyRun>(parent), child);
+        return rubyBuilder().detach(downcast<RenderRubyRun>(parent), child);
 
     if (is<RenderMenuList>(parent))
-        return formControlsBuilder().takeChild(downcast<RenderMenuList>(parent), child);
+        return formControlsBuilder().detach(downcast<RenderMenuList>(parent), child);
 
     if (is<RenderButton>(parent))
-        return formControlsBuilder().takeChild(downcast<RenderButton>(parent), child);
+        return formControlsBuilder().detach(downcast<RenderButton>(parent), child);
 
     if (is<RenderGrid>(parent))
-        return takeChildFromRenderGrid(downcast<RenderGrid>(parent), child);
+        return detachFromRenderGrid(downcast<RenderGrid>(parent), child);
 
     if (is<RenderSVGText>(parent))
-        return svgBuilder().takeChild(downcast<RenderSVGText>(parent), child);
+        return svgBuilder().detach(downcast<RenderSVGText>(parent), child);
 
     if (is<RenderSVGInline>(parent))
-        return svgBuilder().takeChild(downcast<RenderSVGInline>(parent), child);
+        return svgBuilder().detach(downcast<RenderSVGInline>(parent), child);
 
     if (is<RenderSVGContainer>(parent))
-        return svgBuilder().takeChild(downcast<RenderSVGContainer>(parent), child);
+        return svgBuilder().detach(downcast<RenderSVGContainer>(parent), child);
 
     if (is<RenderSVGRoot>(parent))
-        return svgBuilder().takeChild(downcast<RenderSVGRoot>(parent), child);
+        return svgBuilder().detach(downcast<RenderSVGRoot>(parent), child);
 
     if (is<RenderBlockFlow>(parent))
-        return blockBuilder().takeChild(downcast<RenderBlockFlow>(parent), child);
+        return blockBuilder().detach(downcast<RenderBlockFlow>(parent), child);
 
     if (is<RenderBlock>(parent))
-        return blockBuilder().takeChild(downcast<RenderBlock>(parent), child);
+        return blockBuilder().detach(downcast<RenderBlock>(parent), child);
 
-    return takeChildFromRenderElement(parent, child);
+    return detachFromRenderElement(parent, child);
 }
 
-void RenderTreeBuilder::insertChild(RenderTreePosition& position, RenderPtr<RenderObject> child)
+void RenderTreeBuilder::attach(RenderTreePosition& position, RenderPtr<RenderObject> child)
 {
-    insertChild(position.parent(), WTFMove(child), position.nextSibling());
+    attach(position.parent(), WTFMove(child), position.nextSibling());
 }
 
-void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (tableBuilder().childRequiresTable(parent, *child)) {
         RenderTable* table;
@@ -368,18 +368,18 @@ void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, Render
         else {
             auto newTable = RenderTable::createAnonymousWithParentRenderer(parent);
             table = newTable.get();
-            insertChild(parent, WTFMove(newTable), beforeChild);
+            attach(parent, WTFMove(newTable), beforeChild);
         }
 
-        insertChild(*table, WTFMove(child));
+        attach(*table, WTFMove(child));
         return;
     }
     auto& newChild = *child.get();
-    insertChildToRenderElementInternal(parent, WTFMove(child), beforeChild);
-    parent.didInsertChild(newChild, beforeChild);
+    attachToRenderElementInternal(parent, WTFMove(child), beforeChild);
+    parent.didAttachChild(newChild, beforeChild);
 }
 
-void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
@@ -420,7 +420,7 @@ void RenderTreeBuilder::insertChildToRenderElementInternal(RenderElement& parent
         newChild->setHasOutlineAutoAncestor();
 }
 
-void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     // We assume that callers have cleared their positioned objects list for child moves so the
     // positioned renderer maps don't become stale. It would be too slow to do the map lookup on each call.
@@ -431,35 +431,35 @@ void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelOb
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (to.isRenderBlock() || to.isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
-        auto childToMove = takeChildFromRenderElement(from, child);
-        insertChild(to, WTFMove(childToMove), beforeChild);
+        auto childToMove = detachFromRenderElement(from, child);
+        attach(to, WTFMove(childToMove), beforeChild);
     } else {
-        auto childToMove = takeChildFromRenderElement(from, child);
-        insertChildToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
+        auto childToMove = detachFromRenderElement(from, child);
+        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
     }
 }
 
-void RenderTreeBuilder::moveChildTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, NormalizeAfterInsertion normalizeAfterInsertion)
 {
-    moveChildTo(from, to, child, nullptr, normalizeAfterInsertion);
+    move(from, to, child, nullptr, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveAllChildren(RenderBoxModelObject& from, RenderBoxModelObject& to, NormalizeAfterInsertion normalizeAfterInsertion)
 {
-    moveAllChildrenTo(from, to, nullptr, normalizeAfterInsertion);
+    moveAllChildren(from, to, nullptr, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveAllChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveAllChildren(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
-    moveChildrenTo(from, to, from.firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
+    moveChildren(from, to, from.firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
-    moveChildrenTo(from, to, startChild, endChild, nullptr, normalizeAfterInsertion);
+    moveChildren(from, to, startChild, endChild, nullptr, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     // This condition is rarely hit since this function is usually called on
     // anonymous blocks which can no longer carry positioned objects (see r120761)
@@ -492,18 +492,18 @@ void RenderTreeBuilder::moveChildrenTo(RenderBoxModelObject& from, RenderBoxMode
                 nextSibling = nextSibling->nextSibling();
         }
 
-        moveChildTo(from, to, *child, beforeChild, normalizeAfterInsertion);
+        move(from, to, *child, beforeChild, normalizeAfterInsertion);
         child = nextSibling;
     }
 }
 
-void RenderTreeBuilder::moveAllChildrenIncludingFloatsTo(RenderBlock& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)
+void RenderTreeBuilder::moveAllChildrenIncludingFloats(RenderBlock& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion normalizeAfterInsertion)
 {
     if (is<RenderBlockFlow>(from)) {
-        blockFlowBuilder().moveAllChildrenIncludingFloatsTo(downcast<RenderBlockFlow>(from), to, normalizeAfterInsertion);
+        blockFlowBuilder().moveAllChildrenIncludingFloats(downcast<RenderBlockFlow>(from), to, normalizeAfterInsertion);
         return;
     }
-    moveAllChildrenTo(from, to, normalizeAfterInsertion);
+    moveAllChildren(from, to, normalizeAfterInsertion);
 }
 
 void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
@@ -538,8 +538,8 @@ void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject*
 
         auto newBlock = parent.createAnonymousBlock();
         auto& block = *newBlock;
-        insertChildToRenderElementInternal(parent, WTFMove(newBlock), inlineRunStart);
-        moveChildrenTo(parent, block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        attachToRenderElementInternal(parent, WTFMove(newBlock), inlineRunStart);
+        moveChildren(parent, block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
     }
 #ifndef NDEBUG
     for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
@@ -567,8 +567,8 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
             // so that the table repainting logic knows the structure is dirty.
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
-            insertChildToRenderElementInternal(*parentBox, WTFMove(newPostBox), boxToSplit.nextSibling());
-            moveChildrenTo(boxToSplit, postBox, beforeChild, nullptr, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+            attachToRenderElementInternal(*parentBox, WTFMove(newPostBox), boxToSplit.nextSibling());
+            moveChildren(boxToSplit, postBox, beforeChild, nullptr, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(postBox);
@@ -597,9 +597,9 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
         // An anonymous block must be made to wrap this inline.
         auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
         auto& block = *newBlock;
-        insertChildToRenderElementInternal(*parent, WTFMove(newBlock), &child);
-        auto thisToMove = takeChildFromRenderElement(*parent, child);
-        insertChildToRenderElementInternal(block, WTFMove(thisToMove));
+        attachToRenderElementInternal(*parent, WTFMove(newBlock), &child);
+        auto thisToMove = detachFromRenderElement(*parent, child);
+        attachToRenderElementInternal(block, WTFMove(thisToMove));
     }
 }
 
@@ -661,11 +661,11 @@ static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
     return *destroyRoot;
 }
 
-void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child)
+void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& child)
 {
     // If the tree is destroyed, there is no need for a clean-up phase.
     if (child.renderTreeBeingDestroyed()) {
-        removeAndDestroy(child);
+        destroy(child);
         return;
     }
 
@@ -677,12 +677,12 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
     auto& destroyRootParent = *destroyRoot.parent();
-    removeAndDestroy(destroyRoot);
+    destroy(destroyRoot);
     removeAnonymousWrappersForInlineChildrenIfNeeded(destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(destroyRootParent) && !destroyRootParent.firstChild())
-        removeFromParentAndDestroyCleaningUpAnonymousWrappers(destroyRootParent);
+        destroyAndCleanUpAnonymousWrappers(destroyRootParent);
     // WARNING: child is deleted here.
 }
 
@@ -696,9 +696,9 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         multiColumnBuilder().updateAfterDescendants(downcast<RenderBlockFlow>(renderer));
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderGrid(RenderGrid& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& parent, RenderObject& child)
 {
-    auto takenChild = blockBuilder().takeChild(parent, child);
+    auto takenChild = blockBuilder().detach(parent, child);
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are removed.
     if (child.isOutOfFlowPositioned())
@@ -709,7 +709,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderGrid(RenderGrid& p
     return takenChild;
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderElement(RenderElement& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
 
@@ -768,10 +768,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderElement(RenderElem
     return childToTake;
 }
 
-void RenderTreeBuilder::insertChildToRenderGrid(RenderGrid& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attachToRenderGrid(RenderGrid& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& newChild = *child;
-    blockBuilder().insertChild(parent, WTFMove(child), beforeChild);
+    blockBuilder().attach(parent, WTFMove(child), beforeChild);
 
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are added.

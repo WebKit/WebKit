@@ -44,7 +44,7 @@ void RenderTreeBuilder::Continuation::cleanupOnDestroy(RenderBoxModelObject& ren
     ASSERT(renderer.continuationChainNode());
     auto& continuationChainNode = *renderer.continuationChainNode();
     while (continuationChainNode.next)
-        m_builder.removeAndDestroy(*continuationChainNode.next->renderer);
+        m_builder.destroy(*continuationChainNode.next->renderer);
     renderer.removeFromContinuationChain();
 }
 

@@ -85,9 +85,9 @@ void RenderTextFragment::setText(const String& newText, bool force)
     if (!m_firstLetter)
         return;
     if (RenderTreeBuilder::current())
-        RenderTreeBuilder::current()->removeAndDestroy(*m_firstLetter);
+        RenderTreeBuilder::current()->destroy(*m_firstLetter);
     else
-        RenderTreeBuilder(*document().renderView()).removeAndDestroy(*m_firstLetter);
+        RenderTreeBuilder(*document().renderView()).destroy(*m_firstLetter);
     ASSERT(!m_firstLetter);
     ASSERT(!textNode() || textNode()->renderer() == this);
 }

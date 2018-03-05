@@ -48,14 +48,14 @@ RenderPtr<RenderMathMLFencedOperator> RenderTreeBuilder::MathML::createMathMLOpe
 void RenderTreeBuilder::MathML::makeFences(RenderMathMLFenced& parent)
 {
     auto openFence = createMathMLOperator(parent, parent.openingBrace(), MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
-    m_builder.blockBuilder().insertChild(parent, WTFMove(openFence), parent.firstChild());
+    m_builder.blockBuilder().attach(parent, WTFMove(openFence), parent.firstChild());
 
     auto closeFence = createMathMLOperator(parent, parent.closingBrace(), MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
     parent.setCloseFenceRenderer(*closeFence);
-    m_builder.blockBuilder().insertChild(parent, WTFMove(closeFence), nullptr);
+    m_builder.blockBuilder().attach(parent, WTFMove(closeFence), nullptr);
 }
 
-void RenderTreeBuilder::MathML::insertChild(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::MathML::attach(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     // make the fences if the render object is empty
     if (!parent.firstChild()) {
@@ -96,14 +96,14 @@ void RenderTreeBuilder::MathML::insertChild(RenderMathMLFenced& parent, RenderPt
 
     if (beforeChild) {
         // Adding |x| before an existing |y| e.g. in element (y) - first insert our new child |x|, then its separator, to get (x, y).
-        m_builder.blockBuilder().insertChild(parent, WTFMove(child), beforeChild);
+        m_builder.blockBuilder().attach(parent, WTFMove(child), beforeChild);
         if (separatorRenderer)
-            m_builder.blockBuilder().insertChild(parent, WTFMove(separatorRenderer), beforeChild);
+            m_builder.blockBuilder().attach(parent, WTFMove(separatorRenderer), beforeChild);
     } else {
         // Adding |y| at the end of an existing element e.g. (x) - insert the separator first before the closing fence, then |y|, to get (x, y).
         if (separatorRenderer)
-            m_builder.blockBuilder().insertChild(parent, WTFMove(separatorRenderer), parent.closeFenceRenderer());
-        m_builder.blockBuilder().insertChild(parent, WTFMove(child), parent.closeFenceRenderer());
+            m_builder.blockBuilder().attach(parent, WTFMove(separatorRenderer), parent.closeFenceRenderer());
+        m_builder.blockBuilder().attach(parent, WTFMove(child), parent.closeFenceRenderer());
     }
 }
 

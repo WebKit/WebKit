@@ -37,7 +37,7 @@ class RenderTreeBuilder::MathML {
 public:
     MathML(RenderTreeBuilder&);
 
-    void insertChild(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
 private:
     void makeFences(RenderMathMLFenced& parent);
