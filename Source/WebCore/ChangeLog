@@ -1,3 +1,21 @@
+2018-03-05  Ali Juma  <ajuma@chromium.org>
+
+        imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html times out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183297
+
+        Reviewed by Chris Dumez.
+
+        When a FrameLoader's policy document loader is cleared after receiving a navigation policy decision
+        to not continue loading, we still need to trigger a check for load completion, since this loader or
+        an ancestor loader may have been in state isLoadingInAPISense only because of the existence of
+        the just-cleared policy document loader. Without triggering this check, these loaders may never
+        call WebFrameLoaderClient::dispatchDidFinishLoad.
+
+        Test: http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+
 2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively

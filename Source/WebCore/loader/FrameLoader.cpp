@@ -3159,6 +3159,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             clientRedirectCancelledOrFinished(false);
 
         setPolicyDocumentLoader(nullptr);
+        checkLoadComplete();
 
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back. For sanity,
