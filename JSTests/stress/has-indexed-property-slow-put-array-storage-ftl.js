@@ -1,4 +1,4 @@
-//@ runFTLNoCJIT
+//@ if $isFTLPlatform then runFTLNoCJIT else skip end
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
