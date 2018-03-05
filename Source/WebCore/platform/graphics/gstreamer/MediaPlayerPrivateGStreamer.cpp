@@ -216,7 +216,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
 static void convertToInternalProtocol(URL& url)
 {
-    if (url.protocolIsInHTTPFamily())
+    if (url.protocolIsInHTTPFamily() || url.protocolIsBlob())
         url.setProtocol("webkit+" + url.protocol());
 }
 

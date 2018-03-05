@@ -1,3 +1,18 @@
+2018-02-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] media/video-src-blob-using-open-panel.html crashes in Debug
+        https://bugs.webkit.org/show_bug.cgi?id=183005
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Test: media/video-src-blob-using-open-panel.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::convertToInternalProtocol): Also convert blob URIs
+        because they're handled by our httpsrc element.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcGetProtocols): Prefix blob URIs too, for consistency purpose.
+
 2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove currentTime() / currentTimeMS()
