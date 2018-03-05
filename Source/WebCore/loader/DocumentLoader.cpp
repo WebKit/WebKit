@@ -1432,6 +1432,12 @@ void DocumentLoader::scheduleSubstituteResourceLoad(ResourceLoader& loader, Subs
     deliverSubstituteResourcesAfterDelay();
 }
 
+void DocumentLoader::scheduleCannotShowURLError(ResourceLoader& loader)
+{
+    m_pendingSubstituteResources.set(&loader, nullptr);
+    deliverSubstituteResourcesAfterDelay();
+}
+
 void DocumentLoader::addResponse(const ResourceResponse& response)
 {
     if (!m_stopRecordingResponses)

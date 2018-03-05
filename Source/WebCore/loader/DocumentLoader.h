@@ -184,6 +184,7 @@ public:
 #endif
 
     void scheduleSubstituteResourceLoad(ResourceLoader&, SubstituteResource&);
+    void scheduleCannotShowURLError(ResourceLoader&);
 
     // Return the ArchiveResource for the URL only when loading an Archive
     WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&) const;
