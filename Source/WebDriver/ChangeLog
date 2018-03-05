@@ -1,3 +1,18 @@
+2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: Also ignore NoSuchwindow errors when waiting for navigation to complete
+        https://bugs.webkit.org/show_bug.cgi?id=183280
+
+        Reviewed by Brian Burg.
+
+        We currently ignore NoSuchFrame, but navigation or previous command might have closed the window too.
+
+        Fixes: imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py::testClickingOnAButtonThatClosesAnOpenWindowDoesNotCauseTheBrowserToHang
+               imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py::testCanCallGetWindowHandlesAfterClosingAWindow
+
+        * Session.cpp:
+        (WebDriver::Session::waitForNavigationToComplete): Ignore NoSuchWindow errors.
+
 2018-02-14  Brian Burg  <bburg@apple.com>
 
         Web Automation: combine session commands to resize and move top-level browsing contexts
