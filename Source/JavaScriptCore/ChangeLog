@@ -1,3 +1,16 @@
+2018-02-28  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Fix compile error in debug builds by invoking unpoisoned().
+
+        Reviewed by Mark Lam.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr): Fix compile error.
+        (JSC::MacroAssemblerCodePtr::createFromExecutableAddress()): Ditto.
+        (JSC::MacroAssemblerCodePtr::dataLocation()): Ditto.
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::dumpDisjunction): use %zu for printf'ing size_t.
+
 2018-02-28  JF Bastien  <jfbastien@apple.com>
 
         GC should sweep code block before deleting

@@ -290,7 +290,7 @@ public:
     {
         m_value.assertIsPoisoned();
         ASSERT(value);
-        ASSERT_VALID_CODE_POINTER(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value.unpoisoned());
     }
     
     static MacroAssemblerCodePtr createFromExecutableAddress(void* value)
@@ -310,7 +310,7 @@ public:
     {
         ASSERT(ra.value());
         m_value.assertIsPoisoned();
-        ASSERT_VALID_CODE_POINTER(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value.unpoisoned());
     }
 
     PoisonedMasmPtr poisonedPtr() const { return m_value; }
@@ -327,7 +327,7 @@ public:
     T dataLocation() const
     {
         m_value.assertIsPoisoned();
-        ASSERT_VALID_CODE_POINTER(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value.unpoisoned());
         return bitwise_cast<T>(m_value ? m_value.unpoisoned<char*>() - 1 : nullptr);
     }
 #else

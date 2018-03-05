@@ -2125,7 +2125,7 @@ public:
         auto outputTermIndexAndNest = [&](size_t index, unsigned termNesting) {
             for (unsigned nestingDepth = 0; nestingDepth < termIndexNest; nestingDepth++)
                 out.print("  ");
-            out.printf("%4lu", index);
+            out.printf("%4zu", index);
             for (unsigned nestingDepth = 0; nestingDepth < termNesting; nestingDepth++)
                 out.print("  ");
         };
