@@ -60,7 +60,7 @@ void initializeSuperSampler()
                         else
                             out++;
                     }
-                    sleepMS(sleepQuantum);
+                    sleep(Seconds::fromMilliseconds(sleepQuantum));
                 }
                 printSuperSamplerState();
                 if (static_cast<int32_t>(g_superSamplerCount) < 0)

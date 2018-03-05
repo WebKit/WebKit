@@ -26,6 +26,7 @@
 #include "PluginTest.h"
 
 #include <string.h>
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 

@@ -69,10 +69,5 @@ void Seconds::dump(PrintStream& out) const
     out.print(m_value, " sec");
 }
 
-void sleep(Seconds value)
-{
-    sleep(value.value());
-}
-
 } // namespace WTF
 

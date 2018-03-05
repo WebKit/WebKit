@@ -26,6 +26,7 @@
 #include "PluginTest.h"
 
 #include "PluginObject.h"
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 
@@ -48,7 +49,7 @@ InvokeDestroysPluginWithinNPP_New::InvokeDestroysPluginWithinNPP_New(NPP npp, co
 NPError InvokeDestroysPluginWithinNPP_New::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData *saved)
 {
     // Give the WebProcess enough time to be deadlocked waiting for the PluginProcess if things aren't working correctly.
-    usleep(15000);
+    sleep(15_ms);
     
     NPObject* windowObject = 0;
     if (NPN_GetValue(NPNVWindowNPObject, &windowObject) != NPERR_NO_ERROR)

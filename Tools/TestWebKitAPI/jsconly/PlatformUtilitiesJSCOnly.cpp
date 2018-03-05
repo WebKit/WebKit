@@ -50,7 +50,7 @@ void run(bool* done)
 
 void sleep(double seconds)
 {
-    WTF::sleep(seconds);
+    WTF::sleep(Seconds { seconds });
 }
 
 } // namespace Util

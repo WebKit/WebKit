@@ -28,6 +28,7 @@
 #include "PluginObject.h"
 #include <assert.h>
 #include <string.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 
@@ -81,11 +82,7 @@ void PluginTest::indicateTestFailure()
     // This should really be an assert, but there's no way for the test framework
     // to know that the plug-in process crashed, so we'll just sleep for a while
     // to ensure that the test times out.
-#if defined(XP_WIN)
-    ::Sleep(100000);
-#else
-    sleep(1000);
-#endif
+    sleep(1000_s);
 }
 
 NPError PluginTest::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved)

@@ -26,6 +26,7 @@
 #include "PluginTest.h"
 
 #include "PluginObject.h"
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 
@@ -48,7 +49,7 @@ EvaluteJSWithinNPP_New::EvaluteJSWithinNPP_New(NPP npp, const string& identifier
 NPError EvaluteJSWithinNPP_New::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData *saved)
 {
     // Give the WebProcess enough time to be deadlocked waiting for the PluginProcess.
-    usleep(15000);
+    sleep(15_ms);
     executeScript("var theLocation = window.location;");
     return NPERR_NO_ERROR;
 }

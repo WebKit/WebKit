@@ -115,7 +115,7 @@ struct Benchmark {
             }
         }
 
-        sleep(secondsPerTest);
+        sleep(Seconds { secondsPerTest });
         keepGoing = false;
     
         for (unsigned threadIndex = numThreadGroups * numThreadsPerGroup; threadIndex--;)
