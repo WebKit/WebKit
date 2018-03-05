@@ -1,5 +1,11 @@
 2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, attempt to fix Apple port build
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, attempt to fix WPE build
 
         * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
