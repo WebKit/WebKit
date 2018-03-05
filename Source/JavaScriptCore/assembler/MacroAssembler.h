@@ -30,30 +30,35 @@
 #include "JSCJSValue.h"
 
 #if CPU(ARM_THUMB2)
+#define TARGET_ASSEMBLER ARMv7Assembler
+#define TARGET_MACROASSEMBLER MacroAssemblerARMv7
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 
 #elif CPU(ARM64)
+#define TARGET_ASSEMBLER ARM64Assembler
+#define TARGET_MACROASSEMBLER MacroAssemblerARM64
 #include "MacroAssemblerARM64.h"
-namespace JSC { typedef MacroAssemblerARM64 MacroAssemblerBase; };
 
 #elif CPU(ARM_TRADITIONAL)
+#define TARGET_ASSEMBLER ARMAssembler
+#define TARGET_MACROASSEMBLER MacroAssemblerARM
 #include "MacroAssemblerARM.h"
-namespace JSC { typedef MacroAssemblerARM MacroAssemblerBase; };
 
 #elif CPU(MIPS)
+#define TARGET_ASSEMBLER MIPSAssembler
+#define TARGET_MACROASSEMBLER MacroAssemblerMIPS
 #include "MacroAssemblerMIPS.h"
-namespace JSC {
-typedef MacroAssemblerMIPS MacroAssemblerBase;
-};
 
 #elif CPU(X86)
+#define TARGET_ASSEMBLER X86Assembler
+#define TARGET_MACROASSEMBLER MacroAssemblerX86
 #include "MacroAssemblerX86.h"
-namespace JSC { typedef MacroAssemblerX86 MacroAssemblerBase; };
 
 #elif CPU(X86_64)
+#define TARGET_ASSEMBLER X86Assembler
+#define TARGET_MACROASSEMBLER MacroAssemblerX86_64
 #include "MacroAssemblerX86_64.h"
-namespace JSC { typedef MacroAssemblerX86_64 MacroAssemblerBase; };
 
 #else
 #error "The MacroAssembler is not supported on this platform."
@@ -85,6 +90,8 @@ struct PrintRecord;
 typedef Vector<PrintRecord> PrintRecordList;
 
 } // namespace Printer
+
+using MacroAssemblerBase = TARGET_MACROASSEMBLER;
 
 class MacroAssembler : public MacroAssemblerBase {
 public:

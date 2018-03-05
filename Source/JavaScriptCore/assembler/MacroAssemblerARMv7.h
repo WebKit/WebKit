@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,9 @@
 
 namespace JSC {
 
-class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
+using Assembler = TARGET_ASSEMBLER;
+
+class MacroAssemblerARMv7 : public AbstractMacroAssembler<Assembler> {
     static const RegisterID dataTempRegister = ARMRegisters::ip;
     static const RegisterID addressTempRegister = ARMRegisters::r6;
 
