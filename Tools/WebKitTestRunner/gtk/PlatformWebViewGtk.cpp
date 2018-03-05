@@ -57,11 +57,32 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
 PlatformWebView::~PlatformWebView()
 {
     gtk_widget_destroy(m_window);
+    if (m_otherWindow)
+        gtk_widget_destroy(m_otherWindow);
 }
 
 void PlatformWebView::setWindowIsKey(bool isKey)
 {
+    if (m_windowIsKey == isKey)
+        return;
+
     m_windowIsKey = isKey;
+
+    if (isKey) {
+        if (m_otherWindow) {
+            gtk_widget_destroy(m_otherWindow);
+            m_otherWindow = nullptr;
+        }
+        gtk_window_present(GTK_WINDOW(m_window));
+    } else {
+        ASSERT(!m_otherWindow);
+        m_otherWindow = gtk_window_new(GTK_WINDOW_POPUP);
+        gtk_widget_show_all(m_otherWindow);
+        gtk_window_present(GTK_WINDOW(m_otherWindow));
+    }
+
+    while (gtk_events_pending())
+        gtk_main_iteration();
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode sizingMode)

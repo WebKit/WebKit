@@ -2383,20 +2383,7 @@ webkit.org/b/157179 fast/events/drag-customData.html  [ Timeout ]
 webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
 webkit.org/b/157179 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Timeout ]
 
-# testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
-webkit.org/b/183143 fast/dom/Window/window-focus-self.html
 webkit.org/b/183143 fast/events/blur-focus-window-should-blur-focus-element.html
-webkit.org/b/183143 fast/selectors/querySelector-window-inactive.html
-webkit.org/b/183143 fast/selectors/selection-window-inactive.html
-webkit.org/b/183143 scrollbars/corner-resizer-window-inactive.html
-webkit.org/b/183143 fast/selectors/selection-window-inactive-stroke-color-expected.html
-webkit.org/b/183143 fast/selectors/selection-window-inactive-stroke-color.html
-webkit.org/b/183143 fast/selectors/selection-window-inactive-text-shadow-expected.html
-webkit.org/b/183143 fast/selectors/selection-window-inactive-text-shadow.html
-webkit.org/b/183143 fast/selectors/text-field-selection-window-inactive-stroke-color-expected.html
-webkit.org/b/183143 fast/selectors/text-field-selection-window-inactive-stroke-color.html
-webkit.org/b/183143 fast/selectors/text-field-selection-window-inactive-text-shadow-expected.html
-webkit.org/b/183143 fast/selectors/text-field-selection-window-inactive-text-shadow.html
 
 # Need support for internals.settings.setDeviceSupportsMouse
 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html

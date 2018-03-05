@@ -1,3 +1,19 @@
+2018-03-05  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Implement WTR's PlatformWebView::setWindowIsKey()
+        https://bugs.webkit.org/show_bug.cgi?id=183143
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implement ::setWindowIsKey() by keeping a second window to be
+        presented when the webview's window is to lose its key status.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::setWindowIsKey):
+
 2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix Apple port build
