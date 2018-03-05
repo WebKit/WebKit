@@ -1,3 +1,12 @@
+2018-03-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] configure failure for aarch64
+        https://bugs.webkit.org/show_bug.cgi?id=183268
+
+        Unreviewed build fix. This failure is caused by a simple typo.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2018-02-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] USE_UPOWER causes crashes inside a chroot or on systems with broken dbus/upower
