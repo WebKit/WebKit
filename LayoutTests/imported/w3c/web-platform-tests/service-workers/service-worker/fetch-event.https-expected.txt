@@ -1,4 +1,5 @@
 
+
 PASS Service Worker headers in the request of a fetch event 
 PASS Service Worker responds to fetch event with string 
 PASS Service Worker responds to fetch event with blob body 
@@ -11,7 +12,7 @@ PASS Service Worker responds to fetch event with POST form
 PASS Multiple calls of respondWith must throw InvalidStateErrors 
 PASS Service Worker event.respondWith must set the used flag 
 PASS Service Worker should expose FetchEvent URL fragments. 
-PASS Service Worker responds to fetch event with the correct cache types 
+FAIL Service Worker responds to fetch event with the correct cache types assert_unreached: unexpected rejection: assert_equals: expected "no-cache" but got "default" Reached unreachable code
 PASS Service Worker should intercept EventSource 
 PASS Service Worker responds to fetch event with the correct integrity_metadata 
 PASS FetchEvent#body is a string 
