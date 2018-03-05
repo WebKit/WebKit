@@ -24,72 +24,72 @@
  */
 
 #include "config.h"
-#include "MarkerSubrange.h"
+#include "MarkedText.h"
 
-#include <wtf/HashSet.h>
 #include <algorithm>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-Vector<MarkerSubrange> subdivide(const Vector<MarkerSubrange>& subranges, OverlapStrategy overlapStrategy)
+Vector<MarkedText> subdivide(const Vector<MarkedText>& markedTexts, OverlapStrategy overlapStrategy)
 {
-    if (subranges.isEmpty())
+    if (markedTexts.isEmpty())
         return { };
 
     struct Offset {
         enum Kind { Begin, End };
         Kind kind;
-        unsigned value; // Copy of subrange.startOffset/endOffset to avoid the need to branch based on kind.
-        const MarkerSubrange* subrange;
+        unsigned value; // Copy of markedText.startOffset/endOffset to avoid the need to branch based on kind.
+        const MarkedText* markedText;
     };
 
     // 1. Build table of all offsets.
     Vector<Offset> offsets;
-    ASSERT(subranges.size() < std::numeric_limits<unsigned>::max() / 2);
-    unsigned numberOfSubranges = subranges.size();
-    unsigned numberOfOffsets = 2 * numberOfSubranges;
+    ASSERT(markedTexts.size() < std::numeric_limits<unsigned>::max() / 2);
+    unsigned numberOfMarkedTexts = markedTexts.size();
+    unsigned numberOfOffsets = 2 * numberOfMarkedTexts;
     offsets.reserveInitialCapacity(numberOfOffsets);
-    for (auto& subrange : subranges) {
-        offsets.uncheckedAppend({ Offset::Begin, subrange.startOffset, &subrange });
-        offsets.uncheckedAppend({ Offset::End, subrange.endOffset, &subrange });
+    for (auto& markedText : markedTexts) {
+        offsets.uncheckedAppend({ Offset::Begin, markedText.startOffset, &markedText });
+        offsets.uncheckedAppend({ Offset::End, markedText.endOffset, &markedText });
     }
 
     // 2. Sort offsets such that begin offsets are in paint order and end offsets are in reverse paint order.
     std::sort(offsets.begin(), offsets.end(), [] (const Offset& a, const Offset& b) {
-        return a.value < b.value || (a.value == b.value && a.kind == b.kind && a.kind == Offset::Begin && a.subrange->type < b.subrange->type)
-        || (a.value == b.value && a.kind == b.kind && a.kind == Offset::End && a.subrange->type > b.subrange->type);
+        return a.value < b.value || (a.value == b.value && a.kind == b.kind && a.kind == Offset::Begin && a.markedText->type < b.markedText->type)
+        || (a.value == b.value && a.kind == b.kind && a.kind == Offset::End && a.markedText->type > b.markedText->type);
     });
 
     // 3. Compute intersection.
-    Vector<MarkerSubrange> result;
-    result.reserveInitialCapacity(numberOfSubranges);
-    HashSet<const MarkerSubrange*> processedSubranges;
+    Vector<MarkedText> result;
+    result.reserveInitialCapacity(numberOfMarkedTexts);
+    HashSet<const MarkedText*> processedMarkedTexts;
     unsigned offsetSoFar = offsets[0].value;
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
         if (offsets[i].value > offsets[i - 1].value) {
             if (overlapStrategy == OverlapStrategy::Frontmost) {
                 std::optional<unsigned> frontmost;
                 for (unsigned j = 0; j < i; ++j) {
-                    if (!processedSubranges.contains(offsets[j].subrange) && (!frontmost || offsets[j].subrange->type > offsets[*frontmost].subrange->type))
+                    if (!processedMarkedTexts.contains(offsets[j].markedText) && (!frontmost || offsets[j].markedText->type > offsets[*frontmost].markedText->type))
                         frontmost = j;
                 }
                 if (frontmost)
-                    result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].subrange->type, offsets[*frontmost].subrange->marker });
+                    result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].markedText->type, offsets[*frontmost].markedText->marker });
             } else {
-                // The appended subranges may not be in paint order. We will fix this up at the end of this function.
+                // The appended marked texts may not be in paint order. We will fix this up at the end of this function.
                 for (unsigned j = 0; j < i; ++j) {
-                    if (!processedSubranges.contains(offsets[j].subrange))
-                        result.append({ offsetSoFar, offsets[i].value, offsets[j].subrange->type, offsets[j].subrange->marker });
+                    if (!processedMarkedTexts.contains(offsets[j].markedText))
+                        result.append({ offsetSoFar, offsets[i].value, offsets[j].markedText->type, offsets[j].markedText->marker });
                 }
             }
             offsetSoFar = offsets[i].value;
         }
         if (offsets[i].kind == Offset::End)
-            processedSubranges.add(offsets[i].subrange);
+            processedMarkedTexts.add(offsets[i].markedText);
     }
-    // Fix up; sort the subranges so that they are in paint order.
+    // Fix up; sort the marked texts so that they are in paint order.
     if (overlapStrategy == OverlapStrategy::None)
-        std::sort(result.begin(), result.end(), [] (const MarkerSubrange& a, const MarkerSubrange& b) { return a.startOffset < b.startOffset || (a.startOffset == b.startOffset && a.type < b.type); });
+        std::sort(result.begin(), result.end(), [] (const MarkedText& a, const MarkedText& b) { return a.startOffset < b.startOffset || (a.startOffset == b.startOffset && a.type < b.type); });
     return result;
 }
 
