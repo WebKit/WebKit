@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,7 @@ std::unique_ptr<B3::Compilation> compile(B3::Procedure& proc)
     LinkBuffer linkBuffer(jit, nullptr);
 
     return std::make_unique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, ("testair compilation")), proc.releaseByproducts());
+        FINALIZE_CODE(linkBuffer, "testair compilation"), proc.releaseByproducts());
 }
 
 template<typename T, typename... Arguments>

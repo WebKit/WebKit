@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), c
     jit.jump(JSInterfaceJIT::regT0);
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, ("LLInt %s prologue thunk", thunkKind));
+    return FINALIZE_CODE(patchBuffer, "LLInt %s prologue thunk", thunkKind);
 }
 
 MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM* vm)

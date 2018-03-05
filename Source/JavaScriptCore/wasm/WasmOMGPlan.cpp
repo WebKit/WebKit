@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,7 +98,7 @@ void OMGPlan::work(CompilationEffort)
     }
 
     omgEntrypoint.compilation = std::make_unique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, ("WebAssembly OMG function[%i] %s", m_functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
+        FINALIZE_CODE(linkBuffer, "WebAssembly OMG function[%i] %s", m_functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);

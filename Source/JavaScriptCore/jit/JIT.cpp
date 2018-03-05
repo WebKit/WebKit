@@ -870,7 +870,7 @@ CompilationResult JIT::link()
     
     CodeRef result = FINALIZE_CODE(
         patchBuffer,
-        ("Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data()));
+        "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data());
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
         static_cast<double>(result.size()) /

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1079,9 +1079,9 @@ void linkPolymorphicCall(
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer,
-            ("Polymorphic call stub for %s, return point %p, targets %s",
+            "Polymorphic call stub for %s, return point %p, targets %s",
                 isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
-                toCString(listDump(callCases)).data())),
+                toCString(listDump(callCases)).data()),
         vm, owner, exec->callerFrame(), callLinkInfo, callCases,
         WTFMove(fastCounts)));
     

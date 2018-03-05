@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
     RELEASE_ASSERT(throwWasmException);
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(call, FunctionPtr(throwWasmException));
-    return FINALIZE_CODE(linkBuffer, ("Throw exception from Wasm"));
+    return FINALIZE_CODE(linkBuffer, "Throw exception from Wasm");
 }
 
 MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
@@ -73,7 +73,7 @@ MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLoc
     auto jumpToExceptionHandler = jit.jump();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
-    return FINALIZE_CODE(linkBuffer, ("Throw stack overflow from Wasm"));
+    return FINALIZE_CODE(linkBuffer, "Throw stack overflow from Wasm");
 }
 
 MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
@@ -99,7 +99,7 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
     jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(linkBuffer, ("Trigger OMG tier up"));
+    return FINALIZE_CODE(linkBuffer, "Trigger OMG tier up");
 }
 
 static Thunks* thunks;

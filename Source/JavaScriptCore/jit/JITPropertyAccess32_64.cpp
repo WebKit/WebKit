@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,7 +178,7 @@ JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
     jit.ret();
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, ("String get_by_val stub"));
+    return FINALIZE_CODE(patchBuffer, "String get_by_val stub");
 }
 
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)

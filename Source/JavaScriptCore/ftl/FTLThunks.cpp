@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,7 +119,7 @@ static MacroAssemblerCodeRef genericGenerationThunkGenerator(
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     patchBuffer.link(functionCall, generationFunction);
-    return FINALIZE_CODE(patchBuffer, ("%s", name));
+    return FINALIZE_CODE(patchBuffer, "%s", name);
 }
 
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
@@ -224,7 +224,7 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(const SlowPathCallKey& key)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     patchBuffer.link(call, FunctionPtr(key.callTarget()));
-    return FINALIZE_CODE(patchBuffer, ("FTL slow path call thunk for %s", toCString(key).data()));
+    return FINALIZE_CODE(patchBuffer, "FTL slow path call thunk for %s", toCString(key).data());
 }
 
 } } // namespace JSC::FTL

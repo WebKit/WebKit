@@ -116,7 +116,7 @@ static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, J
             return makeUnexpected(BindingFailure::OutOfMemory);
 
         linkBuffer.link(call, throwBadI64);
-        return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex));
+        return FINALIZE_CODE(linkBuffer, "WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex);
     }
     
     return MacroAssemblerCodeRef();
@@ -342,7 +342,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         linkBuffer.link(call, callFunc);
         linkBuffer.link(exceptionCall, doUnwinding);
 
-        return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
+        return FINALIZE_CODE(linkBuffer, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
     }
 
     // Note: We don't need to perform a stack check here since WasmB3IRGenerator
@@ -654,7 +654,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
 
-    return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
+    return FINALIZE_CODE(patchBuffer, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
 }
 
 void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* wasmInstance)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,8 +114,8 @@ protected:
 };
 
 // Helper for the creation of simple stub routines that need no help from the GC.
-#define FINALIZE_CODE_FOR_STUB(codeBlock, patchBuffer, dataLogFArguments) \
-    (adoptRef(new JITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), dataLogFArguments))))
+#define FINALIZE_CODE_FOR_STUB(codeBlock, patchBuffer, ...) \
+    (adoptRef(new JITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), __VA_ARGS__))))
 
 } // namespace JSC
 
