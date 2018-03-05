@@ -878,7 +878,7 @@ webkit.org/b/177663 media/W3C/video/events/event_progress_manual.html [ Pass Fai
 
 webkit.org/b/182341 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html [ Pass Failure ]
 
-webkit.org/b/179352 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
+webkit.org/b/179352 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure Slow ]
 
 webkit.org/b/182630 http/tests/workers/service/basic-messageport.html [ Pass Failure ]
 

@@ -1,3 +1,14 @@
+2018-03-05  Youenn Fablet  <youenn@apple.com>
+
+        Service worker test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=183264
+        <rdar://problem/38048743>
+
+        Unreviewed.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-03-05  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] fast/events/blur-focus-window-should-blur-focus-element.html failing
