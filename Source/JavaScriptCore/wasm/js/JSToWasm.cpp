@@ -175,24 +175,21 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
     if (!!info.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
 
-        if (!Context::useFastTLS())
-            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, Instance::offsetOfMemory()), baseMemory);
-        else {
+        if (Context::useFastTLS())
             jit.loadWasmContextInstance(baseMemory);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Instance::offsetOfMemory()), baseMemory);
-        }
 
+        GPRReg currentInstanceGPR = Context::useFastTLS() ? baseMemory : wasmContextInstanceGPR;
         if (mode != MemoryMode::Signaling) {
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfIndexingMask()), pinnedRegs.indexingMask);
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedIndexingMask()), pinnedRegs.indexingMask);
             const auto& sizeRegs = pinnedRegs.sizeRegisters;
             ASSERT(sizeRegs.size() >= 1);
             ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfSize()), sizeRegs[0].sizeRegister);
+            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemorySize()), sizeRegs[0].sizeRegister);
             for (unsigned i = 1; i < sizeRegs.size(); ++i)
                 jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
         }
 
-        jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfMemory()), baseMemory);
+        jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
     }
 
     CCallHelpers::Call call = jit.threadSafePatchableNearCall();
