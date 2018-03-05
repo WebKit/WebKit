@@ -1,5 +1,13 @@
 2018-03-05  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] fast/events/blur-focus-window-should-blur-focus-element.html failing
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Move this test to the failing test section.
+
+2018-03-05  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK] Implement WTR's PlatformWebView::setWindowIsKey()
         https://bugs.webkit.org/show_bug.cgi?id=183143
 
