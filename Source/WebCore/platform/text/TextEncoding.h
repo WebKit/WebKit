@@ -67,8 +67,6 @@ const TextEncoding& ASCIIEncoding();
 const TextEncoding& Latin1Encoding();
 const TextEncoding& UTF16BigEndianEncoding();
 const TextEncoding& UTF16LittleEndianEncoding();
-const TextEncoding& UTF32BigEndianEncoding();
-const TextEncoding& UTF32LittleEndianEncoding();
 WEBCORE_EXPORT const TextEncoding& UTF8Encoding();
 WEBCORE_EXPORT const TextEncoding& WindowsLatin1Encoding();
 

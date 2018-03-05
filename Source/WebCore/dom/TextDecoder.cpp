@@ -87,11 +87,7 @@ String TextDecoder::prependBOMIfNecessary(const String& decoded)
 
 static size_t codeUnitByteSize(const TextEncoding& encoding)
 {
-    if (encoding.isByteBasedEncoding())
-        return 1;
-    if (encoding == UTF32BigEndianEncoding() || encoding == UTF32LittleEndianEncoding())
-        return 4;
-    return 2;
+    return encoding.isByteBasedEncoding() ? 1 : 2;
 }
 
 ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType> input, DecodeOptions options)
