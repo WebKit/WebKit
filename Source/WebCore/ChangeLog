@@ -1,3 +1,24 @@
+2018-03-01  Zalan Bujtas  <zalan@apple.com>
+
+        Remove RenderElement::s_noLongerAffectsParentBlock
+        https://bugs.webkit.org/show_bug.cgi?id=183196
+        <rdar://problem/38030797>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the hack to track floating/out-of-flow changes between styleWillChange and styleDidChange.
+
+        Covered by existing tests.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::noLongerAffectsParentBlock const):
+        (WebCore::RenderElement::styleDidChange):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::noLongerAffectsParentBlock const): Deleted.
+
 2018-03-01  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html fails with async policy delegates

@@ -2022,7 +2022,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     }
     // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
     // It copies the logic of RenderBlock::addChildIgnoringContinuation
-    if (noLongerAffectsParentBlock() && style().isFloating() && previousSibling() && previousSibling()->isAnonymousBlock())
+    if (oldStyle && noLongerAffectsParentBlock(*oldStyle) && style().isFloating() && previousSibling() && previousSibling()->isAnonymousBlock())
         RenderTreeBuilder::current()->move(downcast<RenderBoxModelObject>(*parent()), downcast<RenderBoxModelObject>(*previousSibling()), *this, RenderTreeBuilder::NormalizeAfterInsertion::No);
 
     if (diff >= StyleDifferenceRepaint) {
