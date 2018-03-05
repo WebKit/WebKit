@@ -36,22 +36,36 @@
 namespace WebCore {
 
 // Salt to separate otherwise identical string hashes so a class-selector like .article won't match <article> elements.
-enum { TagNameSalt = 13, IdAttributeSalt = 17, ClassAttributeSalt = 19 };
+enum { TagNameSalt = 13, IdSalt = 17, ClassSalt = 19, AttributeSalt = 23 };
 
-static inline void collectElementIdentifierHashes(const Element* element, Vector<unsigned, 4>& identifierHashes)
+static bool isExcludedAttribute(const AtomicString& name)
 {
-    AtomicString tagLowercaseLocalName = element->localName().convertToASCIILowercase();
+    return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
+}
+
+static inline void collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
+{
+    AtomicString tagLowercaseLocalName = element.localName().convertToASCIILowercase();
     identifierHashes.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
 
-    auto& id = element->idForStyleResolution();
+    auto& id = element.idForStyleResolution();
     if (!id.isNull())
-        identifierHashes.append(id.impl()->existingHash() * IdAttributeSalt);
-    const StyledElement* styledElement = element->isStyledElement() ? static_cast<const StyledElement*>(element) : 0;
-    if (styledElement && styledElement->hasClass()) {
-        const SpaceSplitString& classNames = styledElement->classNames();
+        identifierHashes.append(id.impl()->existingHash() * IdSalt);
+
+    if (element.hasClass()) {
+        const SpaceSplitString& classNames = element.classNames();
         size_t count = classNames.size();
         for (size_t i = 0; i < count; ++i)
-            identifierHashes.append(classNames[i].impl()->existingHash() * ClassAttributeSalt);
+            identifierHashes.append(classNames[i].impl()->existingHash() * ClassSalt);
+    }
+    
+    if (element.hasAttributesWithoutUpdate()) {
+        for (auto& attribute : element.attributesIterator()) {
+            auto attributeName = element.isHTMLElement() ? attribute.localName() : attribute.localName().convertToASCIILowercase();
+            if (isExcludedAttribute(attributeName))
+                continue;
+            identifierHashes.append(attributeName.impl()->existingHash() * AttributeSalt);
+        }
     }
 }
 
@@ -80,7 +94,7 @@ void SelectorFilter::pushParent(Element* parent)
     ParentStackFrame& parentFrame = m_parentStack.last();
     // Mix tags, class names and ids into some sort of weird bouillabaisse.
     // The filter is used for fast rejection of child and descendant selectors.
-    collectElementIdentifierHashes(parent, parentFrame.identifierHashes);
+    collectElementIdentifierHashes(*parent, parentFrame.identifierHashes);
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
         m_ancestorIdentifierFilter.add(parentFrame.identifierHashes[i]);
@@ -123,6 +137,7 @@ struct CollectedSelectorHashes {
     HashVector ids;
     HashVector classes;
     HashVector tags;
+    HashVector attributes;
 };
 
 static inline void collectSimpleSelectorHash(CollectedSelectorHashes& collectedHashes, const CSSSelector& selector)
@@ -130,16 +145,28 @@ static inline void collectSimpleSelectorHash(CollectedSelectorHashes& collectedH
     switch (selector.match()) {
     case CSSSelector::Id:
         if (!selector.value().isEmpty())
-            collectedHashes.ids.append(selector.value().impl()->existingHash() * IdAttributeSalt);
+            collectedHashes.ids.append(selector.value().impl()->existingHash() * IdSalt);
         break;
     case CSSSelector::Class:
         if (!selector.value().isEmpty())
-            collectedHashes.classes.append(selector.value().impl()->existingHash() * ClassAttributeSalt);
+            collectedHashes.classes.append(selector.value().impl()->existingHash() * ClassSalt);
         break;
     case CSSSelector::Tag: {
         auto& tagLowercaseLocalName = selector.tagLowercaseLocalName();
         if (tagLowercaseLocalName != starAtom())
             collectedHashes.tags.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
+        break;
+    }
+    case CSSSelector::Exact:
+    case CSSSelector::Set:
+    case CSSSelector::List:
+    case CSSSelector::Hyphen:
+    case CSSSelector::Contain:
+    case CSSSelector::Begin:
+    case CSSSelector::End: {
+        auto attributeName = selector.attributeCanonicalLocalName().convertToASCIILowercase();
+        if (!isExcludedAttribute(attributeName))
+            collectedHashes.attributes.append(attributeName.impl()->existingHash() * AttributeSalt);
         break;
     }
     default:
@@ -203,6 +230,8 @@ static SelectorFilter::Hashes chooseSelectorHashesForFilter(const CollectedSelec
 
     // There is a limited number of slots. Prefer more specific selector types.
     if (copyHashes(collectedSelectorHashes.ids))
+        return resultHashes;
+    if (copyHashes(collectedSelectorHashes.attributes))
         return resultHashes;
     if (copyHashes(collectedSelectorHashes.classes))
         return resultHashes;
