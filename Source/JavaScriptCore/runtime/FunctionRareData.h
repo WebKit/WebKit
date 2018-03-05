@@ -88,6 +88,10 @@ public:
     {
         return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, globalObject, this, prototype, baseStructure);
     }
+    void clearInternalFunctionAllocationProfile()
+    {
+        m_internalFunctionAllocationProfile.clear();
+    }
 
     Structure* getBoundFunctionStructure() { return m_boundFunctionStructure.get(); }
     void setBoundFunctionStructure(VM& vm, Structure* structure) { m_boundFunctionStructure.set(vm, this, structure); }
