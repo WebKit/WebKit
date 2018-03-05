@@ -28,6 +28,7 @@
       <dep package="pango"/>
       <dep package="llvm"/>
       <dep package="shared-mime-info"/>
+      <dep package="libsecret"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
       <if condition-set="linux">
@@ -487,6 +488,23 @@
             version="1.6.3"
             repo="freedesktop.org"
             hash="sha256:74da2798728e79c3aedfffa268d8fe811c3766ca3708309c0dc45502be137da1"/>
+  </autotools>
+
+
+  <!-- libsecret is only built if the system version is less than 0.18.6 (unreleased
+       as of writing this) in order to cherry pick a fix for a bug that causes crashes
+       with layout tests. -->
+  <autotools id="libsecret" autogen-sh="configure">
+    <pkg-config>libsecret-1.pc</pkg-config>
+    <branch repo="ftp.gnome.org"
+            version="0.18.6"
+            module="/pub/GNOME/sources/libsecret/0.18/libsecret-0.18.5.tar.xz"
+            hash="sha256:9ce7bd8dd5831f2786c935d82638ac428fa085057cc6780aba0e39375887ccb3">
+    <patch file="libsecret-secret-methods-Don-t-unref-NULL-when-search-fails.patch" strip="1"/>
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
   </autotools>
 
   <distutils id="meson" python3="1">
