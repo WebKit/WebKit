@@ -1,3 +1,19 @@
+2018-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Support HasIndexedProperty for ArrayStorage and SlowPutArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=182792
+
+        Reviewed by Mark Lam.
+
+        This patch adds HasIndexedProperty for ArrayStorage and SlowPutArrayStorage in FTL.
+        HasIndexedProperty with ArrayStorage frequently causes FTL compilation failures
+        in web-tooling-benchmarks.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+
 2018-02-22  Mark Lam  <mark.lam@apple.com>
 
         Refactor MacroAssembler code to improve reuse and extensibility.
