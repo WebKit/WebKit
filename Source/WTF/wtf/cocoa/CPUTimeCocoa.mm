@@ -76,7 +76,8 @@ Seconds CPUTime::forCurrentThread()
     thread_basic_info_data_t info;
 
     mach_port_t threadPort = mach_thread_self();
-    thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
+    auto ret = thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
+    RELEASE_ASSERT(ret == KERN_SUCCESS);
     mach_port_deallocate(mach_task_self(), threadPort);
 
     return Seconds(info.user_time.seconds + info.system_time.seconds) + Seconds::fromMicroseconds(info.user_time.microseconds + info.system_time.microseconds);

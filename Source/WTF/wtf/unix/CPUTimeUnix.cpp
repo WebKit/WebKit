@@ -47,7 +47,8 @@ std::optional<CPUTime> CPUTime::get()
 Seconds CPUTime::forCurrentThread()
 {
     struct timespec ts { };
-    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+    int ret = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+    RELEASE_ASSERT(!ret);
     return Seconds(ts.tv_sec) + Seconds::fromNanoseconds(ts.tv_nsec);
 }
 

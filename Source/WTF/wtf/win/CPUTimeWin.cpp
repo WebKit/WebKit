@@ -65,7 +65,7 @@ Seconds CPUTime::forCurrentThread()
     FILETIME userTime, kernelTime, creationTime, exitTime;
 
     BOOL ret = GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime, &userTime);
-    ASSERT_UNUSED(ret, ret);
+    RELEASE_ASSERT(ret);
 
     return fileTimeToSeconds(userTime) + fileTimeToSeconds(kernelTime);
 }
