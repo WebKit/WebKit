@@ -35,6 +35,7 @@ class RenderElement;
 class RenderFullScreen;
 
 class RenderTreeBuilder::FullScreen {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FullScreen(RenderTreeBuilder&);
 

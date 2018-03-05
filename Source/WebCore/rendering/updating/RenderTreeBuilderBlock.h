@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderTreeBuilder::Block {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Block(RenderTreeBuilder&);
 

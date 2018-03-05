@@ -34,6 +34,7 @@ class Element;
 class RenderQuote;
 
 class RenderTreeUpdater::GeneratedContent {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GeneratedContent(RenderTreeUpdater&);
 

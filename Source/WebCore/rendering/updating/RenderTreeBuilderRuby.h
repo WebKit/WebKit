@@ -38,6 +38,7 @@ class RenderRubyRun;
 class RenderTreeBuilder;
 
 class RenderTreeBuilder::Ruby {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Ruby(RenderTreeBuilder&);
 

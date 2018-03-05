@@ -32,6 +32,7 @@ namespace WebCore {
 class RenderBoxModelObject;
 
 class RenderTreeBuilder::Continuation {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Continuation(RenderTreeBuilder&);
 

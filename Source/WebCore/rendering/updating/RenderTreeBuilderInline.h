@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderTreeBuilder::Inline {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Inline(RenderTreeBuilder&);
 

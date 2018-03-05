@@ -34,6 +34,7 @@ class RenderButton;
 class RenderMenuList;
 
 class RenderTreeBuilder::FormControls {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FormControls(RenderTreeBuilder&);
 
