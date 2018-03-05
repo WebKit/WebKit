@@ -1,3 +1,18 @@
+2018-02-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WK2] http/tests/navigation/new-window-redirect-history.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=127683
+
+        Reviewed by Dan Bernstein.
+
+        m_previousTestBackForwardListItem was null for the new window.
+        m_previousTestBackForwardListItem is initialized only for the main
+        window in InjectedBundlePage::prepare.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpBackForwardList):
+        Do null-check of m_previousTestBackForwardListItem.
+
 2018-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Various crashes in WebKitTestRunner, especially when system is under heavy load
