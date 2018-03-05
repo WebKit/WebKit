@@ -1,3 +1,22 @@
+2018-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Automation: stale elements not detected when removed from the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=183278
+
+        Reviewed by Brian Burg.
+
+        We detect stale elements when the page is reloaded because the maps are recreated, but if an element is removed
+        from the DOM for the same document we keep the nodes in the maps. We should clear stale elements before
+        accessing the maps.
+
+        Fixes: imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py::testExpectedConditionStalenessOf
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype.evaluateJavaScriptFunction): Call _clearStaleNodes()
+        (let.AutomationSessionProxy.prototype.nodeForIdentifier): Ditto.
+        (let.AutomationSessionProxy.prototype._clearStaleNodes): Check if cached nodes are still in document and remove them
+        from the maps if they aren't.
+
 2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively
