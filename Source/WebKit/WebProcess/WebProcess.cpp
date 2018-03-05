@@ -1061,9 +1061,7 @@ void WebProcess::didCheckRemotePortForActivity(uint64_t callbackIdentifier, bool
 
 void WebProcess::messagesAvailableForPort(const MessagePortIdentifier& identifier)
 {
-    auto port = MessagePort::existingMessagePortForIdentifier(identifier);
-    if (port)
-        port->messageAvailable();
+    MessagePort::notifyMessageAvailable(identifier);
 }
 
 #if ENABLE(GAMEPAD)
