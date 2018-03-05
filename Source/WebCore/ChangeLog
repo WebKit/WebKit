@@ -1,5 +1,22 @@
 2018-02-23  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] HTTP totalBytes query returns 0 after seeking (sometimes)
+        https://bugs.webkit.org/show_bug.cgi?id=183002
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init): Initialize member variables. Also no need
+        to set the appsrc size at that point.
+        (webKitWebSrcStop): There is no need to reset the size when
+        seeking. Size should in most cases represent the Content-Length
+        response attribute, even when seeking.
+        (webKitWebSrcStart): No need to reset the size attribute.
+        (webKitWebSrcQueryWithParent): Let appsrc handle DURATION queries.
+        (CachedResourceStreamingClient::responseReceived): Emit duration notification one time only.
+
+2018-02-23  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] media/video-src-blob-using-open-panel.html crashes in Debug
         https://bugs.webkit.org/show_bug.cgi?id=183005
 
