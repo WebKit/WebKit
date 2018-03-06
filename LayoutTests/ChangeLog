@@ -1,3 +1,15 @@
+2018-03-05  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/onload-policy-ignore-for-frame.html is timing out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183337
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/loader/onload-policy-ignore-for-frame-async-delegates-expected.txt: Added.
+        * fast/loader/onload-policy-ignore-for-frame-async-delegates.html: Added.
+
 2018-03-05  Andy Estes  <aestes@apple.com>
 
         [Mac] Teach WebCore::Pasteboard about file promise drags

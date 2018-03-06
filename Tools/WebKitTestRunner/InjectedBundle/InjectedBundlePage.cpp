@@ -1321,9 +1321,6 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
         injectedBundle.outputText(stringBuilder.toString());
     }
 
-    if (injectedBundle.testRunner()->shouldDecideNavigationPolicyAfterDelay())
-        return WKBundlePagePolicyActionPassThrough;
-
     if (!injectedBundle.testRunner()->isPolicyDelegateEnabled()) {
         WKRetainPtr<WKStringRef> downloadAttributeRef(AdoptWK, WKBundleNavigationActionCopyDownloadAttribute(navigationAction));
         String downloadAttribute = toWTFString(downloadAttributeRef);
@@ -1353,6 +1350,10 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
 
     stringBuilder.append('\n');
     injectedBundle.outputText(stringBuilder.toString());
+
+    if (injectedBundle.testRunner()->shouldDecideNavigationPolicyAfterDelay())
+        return WKBundlePagePolicyActionPassThrough;
+
     injectedBundle.testRunner()->notifyDone();
 
     if (injectedBundle.testRunner()->isPolicyDelegatePermissive())

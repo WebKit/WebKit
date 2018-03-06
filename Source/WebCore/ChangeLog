@@ -1,3 +1,20 @@
+2018-03-05  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/onload-policy-ignore-for-frame.html is timing out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183337
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure we call checkCompleted() before calling checkLoadComplete() in
+        FrameLoader::continueLoadAfterNavigationPolicy() when the client tells us
+        to ignore the navigation, so that we properly recognize that the load is
+        done. This matches what is already done in FrameLoader::receivedMainResourceError().
+
+        Test: fast/loader/onload-policy-ignore-for-frame-async-delegates.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+
 2018-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Allow user-installed fonts to be disabled
