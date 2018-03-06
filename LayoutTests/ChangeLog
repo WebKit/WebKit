@@ -1,3 +1,14 @@
+2018-03-06  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Add new baseline after r229177
+
+        Unreviewed gardening.
+
+        This baseline is needed because our mimetype database recognizes
+        the type of the file in the test and therefore the extension gets
+        added to the downloaded file.
+        * platform/gtk/fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate-expected.txt: Added.
+
 2018-03-06  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, add baseline for fast/text/combining-enclosing-keycap.html.
