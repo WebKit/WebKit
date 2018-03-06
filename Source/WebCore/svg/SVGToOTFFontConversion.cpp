@@ -264,7 +264,7 @@ private:
     int m_descent;
     unsigned m_featureCountGSUB;
     unsigned m_tablesAppendedCount;
-    char m_weight;
+    uint8_t m_weight;
     bool m_italic;
     bool m_error { false };
 };
@@ -499,7 +499,7 @@ void SVGToOTFFontConverter::appendOS2Table()
 
     append16(2); // Version
     append16(clampTo<int16_t>(averageAdvance));
-    append16(clampTo<uint16_t>(m_weight)); // Weight class
+    append16(m_weight); // Weight class
     append16(5); // Width class
     append16(0); // Protected font
     // WebKit handles these superscripts and subscripts
@@ -525,7 +525,7 @@ void SVGToOTFFontConverter::appendOS2Table()
             for (auto& segment : segments) {
                 bool ok;
                 int value = segment.toInt(&ok);
-                if (ok && value >= 0 && value <= 0xFF)
+                if (ok && value >= std::numeric_limits<uint8_t>::min() && value <= std::numeric_limits<uint8_t>::max())
                     panoseBytes[numPanoseBytes++] = value;
             }
         }
@@ -1461,7 +1461,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
             bool ok;
             int value = segment.toInt(ok);
             if (ok && value >= 0 && value < 1000) {
-                m_weight = (value + 50) / 100;
+                m_weight = std::max(std::min((value + 50) / 100, static_cast<int>(std::numeric_limits<uint8_t>::max())), static_cast<int>(std::numeric_limits<uint8_t>::min()));
                 break;
             }
         }

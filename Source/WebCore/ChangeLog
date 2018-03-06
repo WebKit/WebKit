@@ -1,3 +1,16 @@
+2018-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Change the type of SVGToOTFFontConverter::m_weight to be not a char
+        https://bugs.webkit.org/show_bug.cgi?id=183339
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there is no behavior change.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendOS2Table):
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter):
+
 2018-03-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add a new CSSAnimation subclass of WebAnimation
