@@ -972,6 +972,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->cssAnimationTriggersEnabled();
 }
 
+- (void)_setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:(BOOL)enabled
+{
+    _preferences->setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(enabled);
+}
+
+- (BOOL)_cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled
+{
+    return _preferences->cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled();
+}
+
 - (void)_setStandardFontFamily:(NSString *)family
 {
     _preferences->setStandardFontFamily(family);

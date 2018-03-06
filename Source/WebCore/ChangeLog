@@ -1,3 +1,19 @@
+2018-03-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add a new runtime flag to control whether CSS Animations and CSS Transitions should run using the Web Animations timeline
+        https://bugs.webkit.org/show_bug.cgi?id=183370
+        <rdar://problem/38180729>
+
+        Reviewed by Dean Jackson.
+
+        Before we start creating WebAnimation objects to perform CSS Animations and CSS Transitions, which will replace the existing codepath
+        involving CSSAnimationController and CompositeAnimation, we need a runtime flag that will allow all the new code to be turned off by
+        default while we bring this feature up.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled const):
+
 2018-03-06  Daniel Bates  <dabates@apple.com>
 
         Make more use of USE(OPENGL_ES) and replace typedefs with C++11 using statements

@@ -99,6 +99,11 @@ CSSAnimationTriggersEnabled:
   webcoreName: animationTriggersEnabled
   condition: ENABLE(CSS_ANIMATIONS_LEVEL_2)
 
+CSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+
 ForceFTPDirectoryListings:
   type: bool
   defaultValue: false
