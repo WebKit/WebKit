@@ -1,3 +1,10 @@
+2018-03-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, fixed incorrect name of test expectation file.
+
+        * platform/win/fast/text/combining-enclosing-keycap-expected.txt: Copied from LayoutTests/platform/win/fast/text/combining-enclosing-keycap.txt.
+        * platform/win/fast/text/combining-enclosing-keycap.txt: Removed.
+
 2018-03-06  Nan Wang  <n_wang@apple.com>
 
         AX: Flaky test after r229310
