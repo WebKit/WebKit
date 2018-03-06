@@ -61,10 +61,9 @@ public:
     virtual ~CoordinatedGraphicsSceneClient() { }
     virtual void renderNextFrame() = 0;
     virtual void updateViewport() = 0;
-    virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
 };
 
-class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public WebCore::TextureMapperLayer::ScrollingClient
+class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>
 #if USE(COORDINATED_GRAPHICS_THREADED)
     , public WebCore::TextureMapperPlatformLayerProxy::Compositor
 #endif
@@ -76,10 +75,6 @@ public:
     void applyStateChanges(const Vector<WebCore::CoordinatedGraphicsState>&);
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, const WebCore::FloatPoint&, WebCore::TextureMapper::PaintFlags = 0);
     void detach();
-
-    WebCore::TextureMapperLayer* findScrollableContentsLayerAt(const WebCore::FloatPoint&);
-
-    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
     // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.

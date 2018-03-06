@@ -1,5 +1,39 @@
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove unused scrolling-related code in TextureMapperLayer, CoordinatedGraphics stack
+        https://bugs.webkit.org/show_bug.cgi?id=183340
+
+        Reviewed by Michael Catanzaro.
+
+        With most of the scrolling-related code in TextureMapperLayer on the
+        chopping block, we can now drop the ScrollingClient inheritance and the
+        commitScrollOffset() virtual method implementation. This enables
+        removing the whole commitScrollOffset() call chain that ran from
+        CoordinatedGraphicsScene through CoordinatedLayerTreeHost and
+        CompositingCoordinator to the affected CoordinatedGraphicsLayer object.
+
+        The CoordinatedGraphicsScene::findScrollableContentsLayerAt() method is
+        also unused and can be deleted.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::setLayerState):
+        (WebKit::CoordinatedGraphicsScene::createLayer):
+        (WebKit::CoordinatedGraphicsScene::commitScrollOffset): Deleted.
+        (WebKit::CoordinatedGraphicsScene::findScrollableContentsLayerAt): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::commitScrollOffset): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::commitScrollOffset): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::commitScrollOffset): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Apply TextureMapperLayer animations with a single MonotonicTime value
         https://bugs.webkit.org/show_bug.cgi?id=183360
 

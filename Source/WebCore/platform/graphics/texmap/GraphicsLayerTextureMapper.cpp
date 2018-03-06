@@ -45,7 +45,6 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(Type layerType, GraphicsL
     , m_fixedToViewport(false)
     , m_debugBorderWidth(0)
     , m_contentsLayer(0)
-    , m_isScrollable(false)
 {
 }
 
@@ -344,24 +343,6 @@ void GraphicsLayerTextureMapper::setShowRepaintCounter(bool show)
     notifyChange(DebugVisualsChange);
 }
 
-void GraphicsLayerTextureMapper::didCommitScrollOffset(const IntSize& offset)
-{
-    if (offset.isZero())
-        return;
-
-    m_committedScrollOffset = offset;
-    notifyChange(CommittedScrollOffsetChange);
-}
-
-void GraphicsLayerTextureMapper::setIsScrollable(bool isScrollable)
-{
-    if (m_isScrollable == isScrollable)
-        return;
-
-    m_isScrollable = isScrollable;
-    notifyChange(IsScrollableChange);
-}
-
 void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
     prepareBackingStoreIfNeeded();
@@ -485,12 +466,6 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
 
     if (m_changeMask & FixedToViewporChange)
         m_layer.setFixedToViewport(fixedToViewport());
-
-    if (m_changeMask & IsScrollableChange)
-        m_layer.setIsScrollable(isScrollable());
-
-    if (m_changeMask & CommittedScrollOffsetChange)
-        m_layer.didCommitScrollOffset(m_committedScrollOffset);
 
     m_changeMask = NoChanges;
 }

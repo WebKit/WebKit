@@ -236,11 +236,6 @@ void CoordinatedLayerTreeHost::scheduleAnimation()
     m_layerFlushTimer.startOneShot(1_s * m_coordinator.nextAnimationServiceTime());
 }
 
-void CoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
-{
-    m_coordinator.commitScrollOffset(layerID, offset);
-}
-
 void CoordinatedLayerTreeHost::clearUpdateAtlases()
 {
     m_coordinator.clearUpdateAtlases();

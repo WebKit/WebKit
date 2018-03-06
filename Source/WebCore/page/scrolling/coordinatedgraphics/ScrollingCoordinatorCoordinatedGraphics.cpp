@@ -98,24 +98,6 @@ void ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints(Scro
     }
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange(ScrollableArea& scrollableArea)
-{
-    auto* layer = downcast<CoordinatedGraphicsLayer>(scrollLayerForScrollableArea(scrollableArea));
-    if (!layer)
-        return;
-
-    layer->setScrollableArea(&scrollableArea);
-}
-
-void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(ScrollableArea& scrollableArea)
-{
-    auto* layer = downcast<CoordinatedGraphicsLayer>(scrollLayerForScrollableArea(scrollableArea));
-    if (!layer)
-        return;
-
-    layer->setScrollableArea(nullptr);
-}
-
 bool ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate(FrameView& frameView, const IntPoint& scrollPosition)
 {
     if (!frameView.delegatesScrolling())

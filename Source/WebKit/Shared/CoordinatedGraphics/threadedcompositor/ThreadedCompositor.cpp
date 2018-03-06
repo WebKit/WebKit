@@ -169,12 +169,6 @@ void ThreadedCompositor::renderNextFrame()
     m_client.renderNextFrame();
 }
 
-void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& offset)
-{
-    ASSERT(RunLoop::isMain());
-    m_client.commitScrollOffset(layerID, offset);
-}
-
 void ThreadedCompositor::updateViewport()
 {
     m_compositingRunLoop->scheduleUpdate();

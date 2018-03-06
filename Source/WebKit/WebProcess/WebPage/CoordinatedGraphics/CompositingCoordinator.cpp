@@ -354,12 +354,6 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
     notifyFlushRequired(layer);
 }
 
-void CompositingCoordinator::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
-{
-    if (auto* layer = m_registeredLayers.get(layerID))
-        layer->commitScrollOffset(offset);
-}
-
 void CompositingCoordinator::renderNextFrame()
 {
     for (auto& atlas : m_updateAtlases)

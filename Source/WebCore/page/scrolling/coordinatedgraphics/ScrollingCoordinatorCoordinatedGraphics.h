@@ -45,9 +45,6 @@ public:
     void updateNodeLayer(ScrollingNodeID, GraphicsLayer*) override;
     void updateNodeViewportConstraints(ScrollingNodeID, const ViewportConstraints&) override;
 
-    void scrollableAreaScrollLayerDidChange(ScrollableArea&) override;
-    void willDestroyScrollableArea(ScrollableArea&) override;
-
     bool requestScrollPositionUpdate(FrameView&, const IntPoint&) override;
 
 private:

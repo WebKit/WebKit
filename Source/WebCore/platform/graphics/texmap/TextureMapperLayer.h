@@ -41,7 +41,6 @@ public:
 
     class ScrollingClient {
     public:
-        virtual void commitScrollOffset(uint32_t layerID, const IntSize& offset) = 0;
     };
 
     TextureMapperLayer()
@@ -53,8 +52,6 @@ public:
         , m_textureMapper(0)
         , m_fixedToViewport(false)
         , m_id(0)
-        , m_scrollClient(0)
-        , m_isScrollable(false)
         , m_patternTransformDirty(false)
     { }
 
@@ -65,13 +62,6 @@ public:
 
     const Vector<TextureMapperLayer*>& children() const { return m_children; }
     TextureMapperLayer* findScrollableContentsLayerAt(const FloatPoint& pos);
-
-    void setScrollClient(ScrollingClient* scrollClient) { m_scrollClient = scrollClient; }
-    void scrollBy(const WebCore::FloatSize&);
-
-    void didCommitScrollOffset(const IntSize&);
-    void setIsScrollable(bool isScrollable) { m_isScrollable = isScrollable; }
-    bool isScrollable() const { return m_isScrollable; }
 
     TextureMapper* textureMapper() const { return rootLayer().m_textureMapper; }
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
@@ -143,7 +133,7 @@ private:
     static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 
     RefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
-    FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta - m_userScrollOffset; }
+    FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
     bool isAncestorFixedToViewport() const;
     TransformationMatrix replicaTransform();
     void removeFromParent();
@@ -193,12 +183,6 @@ private:
     float m_currentOpacity;
     FilterOperations m_currentFilters;
     float m_centerZ;
-
-    template<class HitTestCondition> TextureMapperLayer* hitTest(const FloatPoint&, HitTestCondition);
-    static bool scrollableLayerHitTestCondition(TextureMapperLayer*, const FloatPoint&);
-
-    FloatSize mapScrollOffset(const FloatSize&);
-    void commitScrollOffset(const FloatSize&);
 
     struct State {
         FloatPoint pos;
@@ -253,10 +237,6 @@ private:
     FloatSize m_scrollPositionDelta;
     bool m_fixedToViewport;
     uint32_t m_id;
-    ScrollingClient* m_scrollClient;
-    bool m_isScrollable;
-    FloatSize m_userScrollOffset;
-    FloatSize m_accumulatedScrollOffsetFractionalPart;
     TransformationMatrix m_patternTransform;
     bool m_patternTransformDirty;
 };

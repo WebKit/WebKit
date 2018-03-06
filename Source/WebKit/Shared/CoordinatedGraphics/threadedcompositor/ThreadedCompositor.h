@@ -56,7 +56,6 @@ public:
     class Client {
     public:
         virtual void renderNextFrame() = 0;
-        virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
 
         virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
         virtual void didDestroyGLContext() = 0;
@@ -97,7 +96,6 @@ private:
     // CoordinatedGraphicsSceneClient
     void renderNextFrame() override;
     void updateViewport() override;
-    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 
     void renderLayerTree();
     void sceneUpdateFinished();

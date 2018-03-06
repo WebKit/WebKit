@@ -141,7 +141,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_compositedNativeImagePtr(0)
     , m_platformLayer(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
-    , m_scrollableArea(0)
 {
     static CoordinatedLayerID nextLayerID = 1;
     m_id = nextLayerID++;
@@ -548,29 +547,6 @@ void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect, Shou
     addRepaintRect(rect);
 }
 
-void CoordinatedGraphicsLayer::setScrollableArea(ScrollableArea* scrollableArea)
-{
-    bool oldScrollable = isScrollable();
-    m_scrollableArea = scrollableArea;
-    if (oldScrollable == isScrollable())
-        return;
-
-    m_layerState.isScrollable = isScrollable();
-    m_layerState.flagsChanged = true;
-    didChangeLayerState();
-}
-
-void CoordinatedGraphicsLayer::commitScrollOffset(const IntSize& offset)
-{
-    if (!isScrollable() || offset.isZero())
-        return;
-
-    m_scrollableArea->notifyScrollPositionChanged(m_scrollableArea->scrollPosition() + offset);
-    m_layerState.committedScrollOffset += offset;
-    m_layerState.committedScrollOffsetChanged = true;
-    didChangeLayerState();
-}
-
 void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
 {
     if (m_fixedToViewport == isFixed)
@@ -669,7 +645,6 @@ void CoordinatedGraphicsLayer::syncLayerState()
         m_layerState.masksToBounds = masksToBounds();
         m_layerState.preserves3D = preserves3D();
         m_layerState.fixedToViewport = fixedToViewport();
-        m_layerState.isScrollable = isScrollable();
     }
 
     if (m_layerState.debugVisualsChanged) {
@@ -775,7 +750,6 @@ void CoordinatedGraphicsLayer::resetLayerState()
     m_layerState.tilesToCreate.clear();
     m_layerState.tilesToRemove.clear();
     m_layerState.tilesToUpdate.clear();
-    m_layerState.committedScrollOffset = IntSize();
 }
 
 bool CoordinatedGraphicsLayer::imageBackingVisible()

@@ -103,7 +103,6 @@ struct CoordinatedGraphicsLayerState {
             bool platformLayerUpdated: 1;
             bool platformLayerShouldSwapBuffers: 1;
             bool isScrollableChanged: 1;
-            bool committedScrollOffsetChanged: 1;
             bool contentsTilingChanged: 1;
         };
         unsigned changeMask;
@@ -169,8 +168,6 @@ struct CoordinatedGraphicsLayerState {
 #if USE(COORDINATED_GRAPHICS_THREADED)
     RefPtr<TextureMapperPlatformLayerProxy> platformLayerProxy;
 #endif
-
-    IntSize committedScrollOffset;
 
     bool hasPendingChanges() const
     {

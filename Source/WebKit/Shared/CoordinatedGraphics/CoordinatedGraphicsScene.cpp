@@ -274,12 +274,7 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
             else
                 m_fixedLayers.remove(id);
         }
-
-        layer->setIsScrollable(layerState.isScrollable);
     }
-
-    if (layerState.committedScrollOffsetChanged)
-        layer->didCommitScrollOffset(layerState.committedScrollOffset);
 
     prepareContentBackingStore(layer, commitScope);
 
@@ -309,7 +304,6 @@ void CoordinatedGraphicsScene::createLayer(CoordinatedLayerID id)
 {
     std::unique_ptr<TextureMapperLayer> newLayer = std::make_unique<TextureMapperLayer>();
     newLayer->setID(id);
-    newLayer->setScrollClient(this);
     m_layers.add(id, WTFMove(newLayer));
 }
 
@@ -598,16 +592,6 @@ void CoordinatedGraphicsScene::purgeGLResources()
     m_backingStores.clear();
 }
 
-void CoordinatedGraphicsScene::commitScrollOffset(uint32_t layerID, const IntSize& offset)
-{
-    if (!m_client)
-        return;
-    dispatchOnMainThread([this, layerID, offset] {
-        if (m_client)
-            m_client->commitScrollOffset(layerID, offset);
-    });
-}
-
 void CoordinatedGraphicsScene::setLayerAnimationsIfNeeded(TextureMapperLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
     if (!state.animationsChanged)
@@ -631,11 +615,6 @@ void CoordinatedGraphicsScene::setActive(bool active)
     m_isActive = active;
     if (m_isActive)
         renderNextFrame();
-}
-
-TextureMapperLayer* CoordinatedGraphicsScene::findScrollableContentsLayerAt(const FloatPoint& point)
-{
-    return rootLayer() ? rootLayer()->findScrollableContentsLayerAt(point) : 0;
 }
 
 } // namespace WebKit

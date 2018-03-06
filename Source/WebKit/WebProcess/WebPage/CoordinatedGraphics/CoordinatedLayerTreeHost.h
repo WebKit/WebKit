@@ -61,7 +61,6 @@ protected:
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     void renderNextFrame();
-    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
 

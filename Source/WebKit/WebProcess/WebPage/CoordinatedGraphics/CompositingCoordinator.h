@@ -79,7 +79,6 @@ public:
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     void renderNextFrame();
-    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
     void createRootLayer(const WebCore::IntSize&);
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }

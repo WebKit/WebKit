@@ -1,5 +1,58 @@
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove unused scrolling-related code in TextureMapperLayer, CoordinatedGraphics stack
+        https://bugs.webkit.org/show_bug.cgi?id=183340
+
+        Reviewed by Michael Catanzaro.
+
+        TextureMapperLayer::scrollBy() method is completely unused and can be
+        removed. This opens the gates on removing majority of scrolling-related
+        code in TextureMapperLayer, CoordinatedGraphicsLayer and
+        CoordinatedGraphicsScene classes, along with smaller bits in other
+        closely-associated classes.
+
+        We're able to remove two virtual method overrides in the
+        ScrollingCoordinatorCoordinatedGraphics class.
+
+        TextureMapperLayer can drop the ScrollingClient member variable, along
+        with multiple others. Various unused methods in that class are removed
+        as well.
+
+        CoordinatedGraphicsLayer and GraphicsLayerTextureMapper can both remove
+        the custom scrolling state tracking.
+
+        No new tests -- no change in behavior.
+
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea): Deleted.
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::GraphicsLayerTextureMapper::didCommitScrollOffset): Deleted.
+        (WebCore::GraphicsLayerTextureMapper::setIsScrollable): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::hitTest): Deleted.
+        (WebCore::TextureMapperLayer::scrollableLayerHitTestCondition): Deleted.
+        (WebCore::TextureMapperLayer::findScrollableContentsLayerAt): Deleted.
+        (WebCore::TextureMapperLayer::mapScrollOffset): Deleted.
+        (WebCore::TextureMapperLayer::commitScrollOffset): Deleted.
+        (WebCore::TextureMapperLayer::scrollBy): Deleted.
+        (WebCore::TextureMapperLayer::didCommitScrollOffset): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::resetLayerState):
+        (WebCore::CoordinatedGraphicsLayer::setScrollableArea): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::commitScrollOffset): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Apply TextureMapperLayer animations with a single MonotonicTime value
         https://bugs.webkit.org/show_bug.cgi?id=183360
 

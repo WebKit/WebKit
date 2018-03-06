@@ -85,11 +85,6 @@ private:
             m_layerTreeHost.renderNextFrame();
         }
 
-        void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override
-        {
-            m_layerTreeHost.commitScrollOffset(layerID, offset);
-        }
-
         uint64_t nativeSurfaceHandleForCompositing() override
         {
             return m_layerTreeHost.nativeSurfaceHandleForCompositing();
