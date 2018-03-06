@@ -3490,6 +3490,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
     {
         LocalRegister parentElement(m_registerAllocator);
         generateWalkToParentElement(failureCases, parentElement);
+        generateAddStyleRelationIfResolvingStyle(parentElement, Style::Relation::ChildrenAffectedByForwardPositionalRules);
     }
 
     Vector<std::pair<int, int>, 32> validSubsetFilters;
@@ -3501,9 +3502,6 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
     }
     if (validSubsetFilters.isEmpty())
         return;
-
-    if (!isAdjacentRelation(fragment.relationToRightFragment))
-        generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByPreviousSibling);
 
     // Setup the counter at 1.
     LocalRegisterWithPreference elementCounter(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
@@ -3521,7 +3519,6 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
 
         Assembler::JumpList noCachedChildIndexCases;
         generateWalkToPreviousAdjacentElement(noMoreSiblingsCases, previousSibling);
-        generateAddStyleRelationIfResolvingStyle(previousSibling, Style::Relation::AffectsNextSibling);
         noCachedChildIndexCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(previousSibling, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagHasRareData())));
         {
             LocalRegister elementRareData(m_registerAllocator);
@@ -3537,7 +3534,6 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
 
         Assembler::Label loopStart = m_assembler.label();
         generateWalkToPreviousAdjacentElement(noMoreSiblingsCases, previousSibling);
-        generateAddStyleRelationIfResolvingStyle(previousSibling, Style::Relation::AffectsNextSibling);
         m_assembler.add32(Assembler::TrustedImm32(1), elementCounter);
         m_assembler.jump().linkTo(loopStart, &m_assembler);
         noMoreSiblingsCases.link(&m_assembler);
@@ -3554,6 +3550,7 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
     {
         LocalRegister parentElement(m_registerAllocator);
         generateWalkToParentElement(failureCases, parentElement);
+        generateAddStyleRelationIfResolvingStyle(parentElement, Style::Relation::ChildrenAffectedByForwardPositionalRules);
     }
 
     // The initial element must match the selector list.
@@ -3568,9 +3565,6 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
     }
     if (validSubsetFilters.isEmpty())
         return;
-
-    if (!isAdjacentRelation(fragment.relationToRightFragment))
-        generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByPreviousSibling);
 
     for (const NthChildOfSelectorInfo* nthChildOfSelectorInfo : validSubsetFilters) {
         // Setup the counter at 1.
@@ -3587,7 +3581,6 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
             Assembler::Label loopStart = m_assembler.label();
 
             generateWalkToPreviousAdjacentElement(noMoreSiblingsCases, previousSibling);
-            generateAddStyleRelationIfResolvingStyle(previousSibling, Style::Relation::AffectsNextSibling);
 
             Assembler::JumpList localFailureCases;
             generateElementMatchesSelectorList(localFailureCases, previousSibling, nthChildOfSelectorInfo->selectorList);

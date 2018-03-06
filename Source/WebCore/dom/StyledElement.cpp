@@ -24,6 +24,7 @@
 #include "config.h"
 #include "StyledElement.h"
 
+#include "AttributeChangeInvalidation.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
@@ -145,6 +146,19 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, At
     InspectorInstrumentation::didInvalidateStyleAttr(document(), *this);
 }
 
+static bool shouldSynchronizeStyleAttributeImmediatelyForInvalidation(StyledElement& element)
+{
+    // In rare case there is a complex attribute selector targeting style attribute (like "[style] ~ div") we need to synchronize immediately.
+    auto* ruleSets = element.styleResolver().ruleSets().attributeInvalidationRuleSets(styleAttr->localName());
+    if (!ruleSets)
+        return false;
+    for (auto& ruleSet : *ruleSets) {
+        if (ruleSet.matchElement != MatchElement::Subject)
+            return true;
+    }
+    return false;
+}
+
 void StyledElement::invalidateStyleAttribute()
 {
     if (usesStyleBasedEditability(*inlineStyle()))
@@ -152,6 +166,15 @@ void StyledElement::invalidateStyleAttribute()
 
     elementData()->setStyleAttributeIsDirty(true);
     invalidateStyle();
+
+    if (shouldSynchronizeStyleAttributeImmediatelyForInvalidation(*this)) {
+        if (auto* inlineStyle = this->inlineStyle()) {
+            elementData()->setStyleAttributeIsDirty(false);
+            auto newValue = inlineStyle->asText();
+            Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
+            setSynchronizedLazyAttribute(styleAttr, newValue);
+        }
+    }
 }
 
 void StyledElement::inlineStyleChanged()

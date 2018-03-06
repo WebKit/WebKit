@@ -123,13 +123,10 @@ static inline bool isLastOfType(const Element& element, const QualifiedName& typ
     return true;
 }
 
-static inline int countElementsBefore(SelectorChecker::CheckingContext& checkingContext, const Element& element)
+static inline int countElementsBefore(const Element& element)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-
-        addStyleRelation(checkingContext, *sibling, Style::Relation::AffectsNextSibling);
-
         unsigned index = sibling->childIndex();
         if (index) {
             count += index;
@@ -140,12 +137,10 @@ static inline int countElementsBefore(SelectorChecker::CheckingContext& checking
     return count;
 }
 
-static inline int countElementsOfTypeBefore(SelectorChecker::CheckingContext& checkingContext, const Element& element, const QualifiedName& type)
+static inline int countElementsOfTypeBefore(const Element& element, const QualifiedName& type)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-        addStyleRelation(checkingContext, *sibling, Style::Relation::AffectsNextSibling);
-
         if (sibling->hasTagName(type))
             ++count;
     }
@@ -837,7 +832,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassNthChild:
             if (!selector.parseNth())
                 break;
-            if (element.parentElement()) {
+            if (auto* parentElement = element.parentElement()) {
+                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByForwardPositionalRules);
+
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
                     unsigned selectorListSpecificity;
                     if (!matchSelectorList(checkingContext, context, element, *selectorList, selectorListSpecificity))
@@ -845,19 +842,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
                 }
 
-                addStyleRelation(checkingContext, element, Style::Relation::AffectedByPreviousSibling);
-
                 int count = 1;
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
                     for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-                        addStyleRelation(checkingContext, *sibling, Style::Relation::AffectsNextSibling);
-
                         unsigned ignoredSpecificity;
                         if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
                 } else {
-                    count += countElementsBefore(checkingContext, element);
+                    count += countElementsBefore(element);
                     addStyleRelation(checkingContext, element, Style::Relation::NthChildIndex, count);
                 }
 
@@ -869,10 +862,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             if (!selector.parseNth())
                 break;
 
-            if (element.parentElement()) {
-                addStyleRelation(checkingContext, element, Style::Relation::AffectedByPreviousSibling);
+            if (auto* parentElement = element.parentElement()) {
+                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByForwardPositionalRules);
 
-                int count = 1 + countElementsOfTypeBefore(checkingContext, element, element.tagQName());
+                int count = 1 + countElementsOfTypeBefore(element, element.tagQName());
                 if (selector.matchNth(count))
                     return true;
             }

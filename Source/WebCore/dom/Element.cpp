@@ -2073,9 +2073,13 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         }
     }
 
-    // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
     // We have to invalidate everything following the insertion point in the forward case, and everything before the insertion point in the
     // backward case.
+    if (parent.childrenAffectedByForwardPositionalRules()) {
+        for (auto* next = elementAfterChange; next; next = next->nextElementSibling())
+            next->invalidateStyleForSubtree();
+    }
+    // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
     if (parent.childrenAffectedByBackwardPositionalRules()) {
         for (auto* previous = elementBeforeChange; previous; previous = previous->previousElementSibling())
             previous->invalidateStyleForSubtree();
@@ -2809,6 +2813,11 @@ void Element::setChildrenAffectedByDrag()
     ensureElementRareData().setChildrenAffectedByDrag(true);
 }
 
+void Element::setChildrenAffectedByForwardPositionalRules()
+{
+    ensureElementRareData().setChildrenAffectedByForwardPositionalRules(true);
+}
+
 void Element::setChildrenAffectedByBackwardPositionalRules()
 {
     ensureElementRareData().setChildrenAffectedByBackwardPositionalRules(true);
@@ -2834,6 +2843,7 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
         return false;
     return rareDataStyleAffectedByActive()
         || rareDataChildrenAffectedByDrag()
+        || rareDataChildrenAffectedByForwardPositionalRules()
         || rareDataChildrenAffectedByBackwardPositionalRules()
         || rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules();
 }
@@ -2860,6 +2870,12 @@ bool Element::rareDataChildrenAffectedByDrag() const
 {
     ASSERT(hasRareData());
     return elementRareData()->childrenAffectedByDrag();
+}
+
+bool Element::rareDataChildrenAffectedByForwardPositionalRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByForwardPositionalRules();
 }
 
 bool Element::rareDataChildrenAffectedByBackwardPositionalRules() const
