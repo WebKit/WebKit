@@ -8,6 +8,11 @@
 <input type="text" id="input">
 <button id="button">button</button>
 
+<div id="combo" tabindex=0 role="combobox" aria-expanded="false" aria-label="Test">
+<div role="listbox">
+<div role="option">option 1</div>
+</div></div>
+
 <select id="group" multiple="multiple">
     <option id="option">Option 1</option>
     <option>Option 2</option>
@@ -73,8 +78,8 @@
 
         function testShowContextMenu() {
             debug("\nTest accessiblecontextmenu");
-            node = document.getElementById("button");
-            axNode = accessibilityController.accessibleElementById("button");
+            node = document.getElementById("combo");
+            axNode = accessibilityController.accessibleElementById("combo");
 
             node.onaccessiblecontextmenu = function() {
                 debug("received accessiblecontextmenu event");

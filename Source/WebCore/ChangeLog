@@ -1,3 +1,22 @@
+2018-03-06  Nan Wang  <n_wang@apple.com>
+
+        AX: Flaky test after r229310
+        https://bugs.webkit.org/show_bug.cgi?id=183376
+        <rdar://problem/38188685>
+
+        Reviewed by Chris Fleizach.
+
+        The test that forces the context menu to show sometimes locks up 
+        the test runner. Also, we missed a case where calling AXShowMenu
+        action on a combobox is not dispatching the accessibility event.
+
+        Using the combobox example to test the event dispatching in order to
+        avoid the test hang.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPerformShowMenuAction]):
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+
 2018-03-06  Chris Dumez  <cdumez@apple.com>
 
         fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html fails with async policy delegates

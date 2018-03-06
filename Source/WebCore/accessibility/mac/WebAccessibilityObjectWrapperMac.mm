@@ -3521,6 +3521,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformShowMenuAction
 {
+    if (m_object && m_object->dispatchAccessibilityEventWithType(AccessibilityEventType::ContextMenu))
+        return;
+    
     if (m_object->roleValue() == AccessibilityRole::ComboBox)
         m_object->setIsExpanded(true);
     else {
@@ -3537,9 +3540,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     Page* page = m_object->page();
     if (!page)
-        return;
-    
-    if (m_object->dispatchAccessibilityEventWithType(AccessibilityEventType::ContextMenu))
         return;
     
     IntRect rect = snappedIntRect(m_object->elementRect());

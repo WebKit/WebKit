@@ -1,3 +1,14 @@
+2018-03-06  Nan Wang  <n_wang@apple.com>
+
+        AX: Flaky test after r229310
+        https://bugs.webkit.org/show_bug.cgi?id=183376
+        <rdar://problem/38188685>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/AOM-events-all-expected.txt:
+        * accessibility/mac/AOM-events-all.html:
+
 2018-03-06  Chris Dumez  <cdumez@apple.com>
 
         fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html fails with async policy delegates

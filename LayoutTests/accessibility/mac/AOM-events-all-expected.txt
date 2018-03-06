@@ -1,4 +1,6 @@
-  button  
+  button
+option 1
+
 This tests all accessibility events.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
