@@ -6715,6 +6715,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     NSArray* types = draggingInfo.draggingPasteboard.types;
     if (![types containsObject:WebArchivePboardType] && ![types containsObject:legacyFilenamesPasteboardType()] && [types containsObject:legacyFilesPromisePasteboardType()]) {
+        
+        // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
+        // guaranteed that the count of UTIs equals the count of files, since some clients only write
+        // unique UTIs.
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:legacyFilesPromisePasteboardType()];
         if (![files isKindOfClass:[NSArray class]]) {
             delete dragData;

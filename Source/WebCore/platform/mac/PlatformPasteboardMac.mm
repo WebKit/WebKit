@@ -65,6 +65,10 @@ int PlatformPasteboard::numberOfFiles() const
 {
     Vector<String> files;
     getPathnamesForType(files, String(legacyFilenamesPasteboardType()));
+
+    // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
+    // guaranteed that the count of UTIs equals the count of files, since some clients only write
+    // unique UTIs.
     if (!files.size())
         getPathnamesForType(files, String(legacyFilesPromisePasteboardType()));
     return files.size();

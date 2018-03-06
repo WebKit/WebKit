@@ -1,3 +1,62 @@
+2018-03-05  Andy Estes  <aestes@apple.com>
+
+        [Mac] Teach WebCore::Pasteboard about file promise drags
+        https://bugs.webkit.org/show_bug.cgi?id=183314
+        <rdar://problem/38105493>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/DumpRenderTreeFileDraggingSource.h:
+        * DumpRenderTree/DumpRenderTreeFileDraggingSource.m:
+        (-[DumpRenderTreeFileDraggingSource initWithPromisedFileURLs:]):
+        (-[DumpRenderTreeFileDraggingSource dealloc]):
+
+        Taught DumpRenderTreeFileDraggingSource to store the promised file URLs.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+
+        Called +[DumpRenderTreeDraggingInfo clearAllFilePromiseReceivers] after running a test.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (-[DumpRenderTreeFilePromiseReceiver initWithPromisedUTIs:]):
+        (-[DumpRenderTreeFilePromiseReceiver fileTypes]):
+        (-[DumpRenderTreeFilePromiseReceiver fileNames]):
+        (-[DumpRenderTreeFilePromiseReceiver dealloc]):
+        (copyFile):
+        (-[DumpRenderTreeFilePromiseReceiver receivePromisedFilesAtDestination:options:operationQueue:reader:]):
+
+        We can't instantiate real NSFilePromiseReceivers in DumpRenderTree. They rely on the
+        pasteboard server to generate unique file URLs, which is incompatible with our swizzled
+        NSPasteboard.
+
+        Instead, create a subclass of NSFilePromiseReceiver that implements its own promise resolution.
+        -receivePromisedFilesAtDestination:... asks its DumpRenderTreeFileDraggingSource for the
+        array of file URLs, then copies each to the destination directory on the specified operation
+        queue. It emulates how NSPasteboard tries to find a unique destination name by appending
+        numbers to the file name.
+
+        All receivers are collected in a global array that is cleared when each test finishes.
+        DumpRenderTreeFilePromiseReceiver will delete the files it copied in -dealloc.
+
+        (+[DumpRenderTreeDraggingInfo clearAllFilePromiseReceivers]):
+        (-[DumpRenderTreeDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        
+        If NSFilesPromisePboardType is on the pasteboard and classArray contains
+        NSFilePromiseReceiver, construct a DumpRenderTreeFilePromiseReceiver, add it to the array of
+        all file promise receivers, then wrap it in an NSDraggingItem and call block.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController beginDragWithFilePromises:]):
+
+        Implement eventSender.beginDragWithFilePromises() by placing file UTIs on the pasteboard
+        with type NSFilesPromisePboardType, creating a DumpRenderTreeFileDraggingSource with the
+        file URLs, and creating a new DumpRenderTreeDraggingInfo and passing it to
+        -[WebView draggingEntered:].
+
 2018-03-05  Aakash Jain  <aakash_jain@apple.com>
 
         [webkitpy] Bugzilla class should use NetworkTransaction for network operations

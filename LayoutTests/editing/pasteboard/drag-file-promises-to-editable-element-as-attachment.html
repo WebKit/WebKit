@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="editable" contentEditable=true style="width:200px; height:200px"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('If we drag file promises onto an editable area, then attachments should be inserted into the editable area.');
+jsTestIsAsync = true;
+
+var editable = document.getElementById("editable");
+editable.addEventListener("drop", () => window.setTimeout(() => {
+    var resultChildren = editable.children;
+    fileNames = "";
+    for (var i = 0; i < resultChildren.length; i++) {
+        attachment = resultChildren[i];
+        shouldBeEqualToString('attachment.nodeName', 'ATTACHMENT');
+        fileNames += attachment.file.name + " ";
+    }
+    shouldBeEqualToString('fileNames', 'apple.gif mozilla.gif drop-file-svg.svg ');
+    editable.innerHTML = '';
+    finishJSTest();
+}, 0));
+
+if (window.eventSender)
+    dragFilesOntoEditable(['resources/apple.gif', 'resources/mozilla.gif', 'resources/drop-file-svg.svg']);
+
+function moveMouseToCenterOfElement(element)
+{
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function dragFilesOntoEditable(files)
+{
+    eventSender.beginDragWithFilePromises(files);
+    moveMouseToCenterOfElement(editable);
+    eventSender.mouseUp();
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

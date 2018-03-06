@@ -1,5 +1,50 @@
 2018-03-05  Andy Estes  <aestes@apple.com>
 
+        [Mac] Teach WebCore::Pasteboard about file promise drags
+        https://bugs.webkit.org/show_bug.cgi?id=183314
+        <rdar://problem/38105493>
+
+        Reviewed by Darin Adler.
+
+        While WebKit does support receiving file promise drags (since r210360), WebCore::Pasteboard
+        has not been instructed on how to read their file paths. When the various pasteboard readers
+        ask for file paths after a file promise drop, they receive an empty vector. This impacts
+        various features, most notably the DataTransfer API.
+
+        Pasteboard actually cannot learn about promised file paths from the pasteboard itself, as
+        the pasteboard only contains the dragged files' UTIs. Promised file paths aren't known until
+        the WebKits call -[NSFilePromiseReceiver receivePromisedFilesAtDestination:...], at which
+        point the file paths are passed to WebCore as part of WebCore::DragData.
+
+        When we construct new Pasteboards for drag and drop, we need to store any promised file
+        paths from the DragData. Then, when the various pasteboard readers ask for file paths and
+        NSFilesPromisePboardType is on the pasteboard, we can return these promised file paths.
+
+        Tests: editing/pasteboard/data-transfer-items-drag-drop-file-promise.html
+               editing/pasteboard/data-transfer-items-drop-file-promise.html
+               editing/pasteboard/datatransfer-items-drop-plaintext-file-promise.html
+               editing/pasteboard/datatransfer-types-dropping-text-file-promise.html
+               editing/pasteboard/drag-file-promises-to-editable-element-as-URLs.html
+               editing/pasteboard/drag-file-promises-to-editable-element-as-attachment.html
+               editing/pasteboard/file-input-files-access-promise.html
+
+        * platform/FileSystem.h:
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::Pasteboard):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsPromise const):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::createForDragAndDrop):
+        (WebCore::toString):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readFilePaths):
+        (WebCore::absoluteURLsFromPasteboardFilenames): Deleted.
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::numberOfFiles const):
+
+2018-03-05  Andy Estes  <aestes@apple.com>
+
         [Mac] Fix the build
 
         * Modules/applepay/ApplePaySession.cpp:

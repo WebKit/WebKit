@@ -133,6 +133,13 @@ fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 
 # TODO Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/datatransfer-items-drop-plaintext-file.html
+editing/pasteboard/datatransfer-items-drop-plaintext-file-promise.html [ Skip ]
+editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Skip ]
+editing/pasteboard/data-transfer-items-drag-drop-file-promise.html [ Skip ]
+editing/pasteboard/data-transfer-items-drop-file-promise.html [ Skip ]
+editing/pasteboard/drag-file-promises-to-editable-element-as-URLs.html [ Skip ]
+editing/pasteboard/drag-file-promises-to-editable-element-as-attachment.html [ Skip ]
+editing/pasteboard/file-input-files-access-promise.html [ Skip ]
 fast/events/drop-handler-should-not-stop-navigate.html [ Skip ]
 fast/events/drag-in-frames.html [ Skip ]
 fast/events/drag-to-navigate.html [ Skip ]

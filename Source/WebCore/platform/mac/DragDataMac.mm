@@ -246,6 +246,8 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
 
 bool DragData::containsPromise() const
 {
+    // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, why do we
+    // think promises should only contain one file (or UTI)?
     Vector<String> files;
 #if PLATFORM(MAC)
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(legacyFilesPromisePasteboardType()), m_pasteboardName);

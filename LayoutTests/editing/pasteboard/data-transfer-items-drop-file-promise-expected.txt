@@ -1,0 +1,9 @@
+
+*** Handling drop ***
+
+Types => data
+Files => ""
+Item list
+[0] => (name = 'apple.gif', size = 1476 bytes, type = 'image/gif')
+File list
+[0] => (name = 'apple.gif', size = 1476 bytes, type = 'image/gif')

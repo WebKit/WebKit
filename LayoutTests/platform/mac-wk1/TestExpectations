@@ -6,17 +6,24 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 fast/forms/attributed-strings.html [ Pass ]
-editing/pasteboard/drag-drop-href-as-url.html [ Pass ]
 editing/pasteboard/data-transfer-get-data-on-drop-custom.html [ Pass ]
 editing/pasteboard/data-transfer-get-data-on-drop-plain-text.html [ Pass ]
 editing/pasteboard/data-transfer-get-data-on-drop-rich-text.html [ Pass ]
 editing/pasteboard/data-transfer-get-data-on-drop-url.html [ Pass ]
 editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html [ Pass ]
+editing/pasteboard/data-transfer-items-drag-drop-file-promise.html [ Pass ]
+editing/pasteboard/data-transfer-items-drop-file.html [ Pass ]
+editing/pasteboard/data-transfer-items-drop-file-promise.html [ Pass ]
 editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-origin.html [ Pass ]
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html [ Pass ]
-editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Pass ]
-editing/pasteboard/data-transfer-items-drop-file.html [ Pass ]
+editing/pasteboard/datatransfer-items-drop-plaintext-file-promise.html [ Pass ]
+editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Pass ]
+editing/pasteboard/drag-drop-href-as-url.html [ Pass ]
+editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
+editing/pasteboard/drag-file-promises-to-editable-element-as-URLs.html [ Pass ]
+editing/pasteboard/drag-file-promises-to-editable-element-as-attachment.html [ Pass ]
+editing/pasteboard/file-input-files-access-promise.html [ Pass ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////

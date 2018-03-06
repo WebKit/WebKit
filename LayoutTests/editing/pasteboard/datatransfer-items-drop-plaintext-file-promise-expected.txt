@@ -1,0 +1,17 @@
+This tests accessing DataTransferItemList when dropping a file promise. To manually test, drag and drop LayoutTests/editing/resources/text-pasteboard-data.txt from another app (e.g. Finder) to the box below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dataTransfer.items.length is 1
+PASS dataTransfer.items[0].kind is "file"
+PASS dataTransfer.items[0].type is "text/plain"
+PASS file = dataTransfer.items[0].getAsFile(); file is not null
+PASS file.name is "text-pasteboard-data.txt"
+PASS reader = new FileReader(); reader.onload = () => checkFileContent(reader.result); reader.readAsText(file); did not throw exception.
+PASS "hello, world." is "hello, world."
+PASS dataTransfer.items[0].getAsFile() is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

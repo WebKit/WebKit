@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,113 @@
 #if !PLATFORM(IOS)
 
 #import "DumpRenderTree.h"
+#import "DumpRenderTreeFileDraggingSource.h"
+#import "DumpRenderTreePasteboard.h"
 #import "EventSendingController.h"
 #import <WebKit/WebKit.h>
+#import <wtf/RetainPtr.h>
+
+@interface NSDraggingItem ()
+- (void)setItem:(id)item;
+@end
+
+@interface DumpRenderTreeFilePromiseReceiver : NSFilePromiseReceiver {
+    RetainPtr<NSArray<NSString *>> _promisedUTIs;
+    RetainPtr<NSMutableArray<NSURL *>> _destinationURLs;
+    DumpRenderTreeFileDraggingSource *_draggingSource;
+}
+
+- (instancetype)initWithPromisedUTIs:(NSArray<NSString *> *)promisedUTIs;
+
+@property (nonatomic, retain) DumpRenderTreeFileDraggingSource *draggingSource;
+
+@end
+
+@implementation DumpRenderTreeFilePromiseReceiver
+
+@synthesize draggingSource=_draggingSource;
+
+- (instancetype)initWithPromisedUTIs:(NSArray<NSString *> *)promisedUTIs
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _promisedUTIs = adoptNS([promisedUTIs copy]);
+    _destinationURLs = adoptNS([NSMutableArray new]);
+    return self;
+}
+
+- (NSArray<NSString *> *)fileTypes
+{
+    return _promisedUTIs.get();
+}
+
+- (NSArray<NSString *> *)fileNames
+{
+    NSMutableArray *fileNames = [NSMutableArray arrayWithCapacity:[_destinationURLs count]];
+    for (NSURL *url in _destinationURLs.get())
+        [fileNames addObject:url.lastPathComponent];
+    return fileNames;
+}
+
+- (void)dealloc
+{
+    // WebKit does not delete promised files it receives into NSTemporaryDirectory() (it should!),
+    // so we need to. Failing to do so could result in unpredictable file names in a subsequent test
+    // that promises a file with the same name as one of these destination URLs.
+
+    for (NSURL *destinationURL in _destinationURLs.get()) {
+        assert([destinationURL.path hasPrefix:NSTemporaryDirectory()]);
+        [NSFileManager.defaultManager removeItemAtURL:destinationURL error:nil];
+    }
+
+    [_draggingSource release];
+    [super dealloc];
+}
+
+static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError *&error)
+{
+    // Emulate how CFPasteboard finds unique destination file names by inserting " 2", " 3", and so
+    // on between the file name's base and extension until a new file is successfully created in
+    // the destination directory.
+
+    NSUInteger number = 2;
+    NSString *fileName = sourceURL.lastPathComponent;
+    NSURL *destinationURL = [NSURL fileURLWithPath:fileName relativeToURL:destinationDirectory];
+    while (![NSFileManager.defaultManager copyItemAtURL:sourceURL toURL:destinationURL error:&error]) {
+        if (error.domain != NSCocoaErrorDomain || error.code != NSFileWriteFileExistsError)
+            return nil;
+
+        NSString *newFileName = [NSString stringWithFormat:@"%@ %lu.%@", fileName.stringByDeletingPathExtension, (unsigned long)number++, fileName.pathExtension];
+        destinationURL = [NSURL fileURLWithPath:newFileName relativeToURL:destinationDirectory];
+        error = nil;
+    }
+
+    return destinationURL;
+}
+
+- (void)receivePromisedFilesAtDestination:(NSURL *)destinationDirectory options:(NSDictionary *)options operationQueue:(NSOperationQueue *)operationQueue reader:(void (^)(NSURL *fileURL, NSError * __nullable errorOrNil))reader
+{
+    // Layout tests need files to be received in a predictable order, so execute operations in serial.
+    operationQueue.maxConcurrentOperationCount = 1;
+
+    NSArray<NSURL *> *sourceURLs = _draggingSource.promisedFileURLs;
+    for (NSURL *sourceURL in sourceURLs) {
+        [operationQueue addOperationWithBlock:^{
+            NSError *error = nil;
+            NSURL *destinationURL = copyFile(sourceURL, destinationDirectory, error);
+            if (destinationURL) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_destinationURLs addObject:destinationURL];
+                });
+            }
+
+            reader(destinationURL, error);
+        }];
+    }
+}
+
+@end
 
 @implementation DumpRenderTreeDraggingInfo
 
@@ -137,9 +242,47 @@
     // Ignored.
 }
 
-- (void)enumerateDraggingItemsWithOptions:(NSEnumerationOptions)enumOpts forView:(NSView *)view classes:(NSArray *)classArray searchOptions:(NSDictionary *)searchOptions usingBlock:(void (^)(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop))block
+static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
 {
-    // Ignored.
+    static NSMutableArray<NSFilePromiseReceiver *> *allReceivers = [[NSMutableArray alloc] init];
+    return allReceivers;
+}
+
++ (void)clearAllFilePromiseReceivers
+{
+    [allFilePromiseReceivers() removeAllObjects];
+}
+
+- (void)enumerateDraggingItemsWithOptions:(NSEnumerationOptions)enumOptions forView:(NSView *)view classes:(NSArray *)classArray searchOptions:(NSDictionary *)searchOptions usingBlock:(void (^)(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop))block
+{
+    assert(!enumOptions);
+    assert(!searchOptions.count);
+
+    BOOL stop = NO;
+    for (Class classObject in classArray) {
+        if (classObject != NSFilePromiseReceiver.class)
+            continue;
+
+        id promisedUTIs = [draggingPasteboard propertyListForType:NSFilesPromisePboardType];
+        if (![promisedUTIs isKindOfClass:NSArray.class])
+            return;
+
+        for (id object in promisedUTIs) {
+            if (![object isKindOfClass:NSString.class])
+                return;
+        }
+
+        auto receiver = adoptNS([[DumpRenderTreeFilePromiseReceiver alloc] initWithPromisedUTIs:promisedUTIs]);
+        [receiver setDraggingSource:draggingSource];
+        [allFilePromiseReceivers() addObject:receiver.get()];
+
+        auto item = adoptNS([NSDraggingItem new]);
+        [item setItem:receiver.get()];
+
+        block(item.get(), 0, &stop);
+        if (stop)
+            return;
+    }
 }
 
 -(NSSpringLoadingHighlight)springLoadingHighlight

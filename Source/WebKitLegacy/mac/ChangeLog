@@ -1,3 +1,16 @@
+2018-03-05  Andy Estes  <aestes@apple.com>
+
+        [Mac] Teach WebCore::Pasteboard about file promise drags
+        https://bugs.webkit.org/show_bug.cgi?id=183314
+        <rdar://problem/38105493>
+
+        Reviewed by Darin Adler.
+
+        Added a FIXME comment.
+
+        * WebView/WebView.mm:
+        (-[WebView performDragOperation:]):
+
 2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively
