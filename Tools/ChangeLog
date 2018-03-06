@@ -1,3 +1,11 @@
+2018-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        DumpRenderTree build fix
+
+        Unreviewed.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+
 2018-03-05  Andy Estes  <aestes@apple.com>
 
         [Mac] Teach WebCore::Pasteboard about file promise drags

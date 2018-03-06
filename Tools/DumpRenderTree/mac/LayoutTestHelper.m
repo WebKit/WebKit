@@ -41,6 +41,16 @@
 #import <stdio.h>
 #import <stdlib.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+
+#include <ColorSync/ColorSyncPriv.h>
+
+#else
+
+CFUUIDRef CGDisplayCreateUUIDFromDisplayID(uint32_t displayID);
+
+#endif
+
 // This is a simple helper app that changes the color profile of the main display
 // to GenericRGB and back when done. This program is managed by the layout
 // test script, so it can do the job for multiple DumpRenderTree while they are
