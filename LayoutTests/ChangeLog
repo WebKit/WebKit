@@ -1,3 +1,10 @@
+2018-03-06  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Mark a few Wayland tests as failing
+
+        Unreviewed gardening
+        * platform/gtk-wayland/TestExpectations:
+
 2018-03-06  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] Disable tests that run out of memory
