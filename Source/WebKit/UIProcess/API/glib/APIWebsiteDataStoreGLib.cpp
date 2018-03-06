@@ -60,8 +60,7 @@ String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 
 String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
 {
-    // FIXME: Implement
-    return { };
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "serviceworkers");
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory()
