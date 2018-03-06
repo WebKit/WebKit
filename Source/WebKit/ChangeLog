@@ -1,3 +1,21 @@
+2018-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        NetworkDataTask should enable logging for automation clients
+        https://bugs.webkit.org/show_bug.cgi?id=183378
+        <rdar://problem/38189556>
+
+        Reviewed by Brian Burg.
+
+        The NetworkDataTaskCocoa class was only logging if the SessionID object allowed logging.
+        It should also be considering whether the current session is working on behalf of an
+        automation client. If so, it should allow logging.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCocoa::isAlwaysOnLoggingAllowed const):
+
 2018-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix.
