@@ -1,5 +1,43 @@
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Clean up CoordinatedImageBacking
+        https://bugs.webkit.org/show_bug.cgi?id=183332
+
+        Reviewed by Carlos Garcia Campos.
+
+        Clean up the CoordinatedImageBacking class. Prefer reference values in
+        class functions, methods and member variables, where possible. Move
+        member variables into a more sensible order. Initialize a few member
+        variables at the place of declaration.
+
+        Drop releaseSurfaceIfNeeded() and updateVisibilityIfNeeded() methods,
+        integrating them into the update() method, which was the only place
+        where they were called from.
+
+        We don't have to keep a reference to the buffer object, since we're
+        not using it internally after it's been passed to the client's
+        updateImageBacking() implementation.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncImageBacking):
+        (WebCore::CoordinatedGraphicsLayer::releaseImageBackingIfNeeded):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::CoordinatedImageBacking::getCoordinatedImageBackingID):
+        (WebCore::CoordinatedImageBacking::CoordinatedImageBacking):
+        (WebCore::CoordinatedImageBacking::addHost):
+        (WebCore::CoordinatedImageBacking::removeHost):
+        (WebCore::CoordinatedImageBacking::update):
+        (WebCore::CoordinatedImageBacking::clearContentsTimerFired):
+        (WebCore::CoordinatedImageBacking::create): Deleted.
+        (WebCore::CoordinatedImageBacking::markDirty): Deleted.
+        (WebCore::CoordinatedImageBacking::releaseSurfaceIfNeeded): Deleted.
+        (WebCore::CoordinatedImageBacking::updateVisibilityIfNeeded): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.h:
+
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         GraphicsLayerTextureMapper: remove the setAnimations() method
         https://bugs.webkit.org/show_bug.cgi?id=183358
 

@@ -213,7 +213,7 @@ void CompositingCoordinator::syncLayerState(CoordinatedLayerID id, CoordinatedGr
 
 Ref<CoordinatedImageBacking> CompositingCoordinator::createImageBackingIfNeeded(Image& image)
 {
-    CoordinatedImageBackingID imageID = CoordinatedImageBacking::getCoordinatedImageBackingID(&image);
+    CoordinatedImageBackingID imageID = CoordinatedImageBacking::getCoordinatedImageBackingID(image);
     auto addResult = m_imageBackings.ensure(imageID, [this, &image] {
         return CoordinatedImageBacking::create(*this, image);
     });

@@ -1,5 +1,16 @@
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Clean up CoordinatedImageBacking
+        https://bugs.webkit.org/show_bug.cgi?id=183332
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::createImageBackingIfNeeded):
+        Adjust call to CoordinatedImageBacking::getCoordinatedImageBackingID().
+
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         CoordinatedGraphicsScene: properly limit data specific to state commit operation
         https://bugs.webkit.org/show_bug.cgi?id=183326
 

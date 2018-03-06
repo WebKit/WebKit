@@ -628,13 +628,13 @@ void CoordinatedGraphicsLayer::syncImageBacking()
         ASSERT(!shouldHaveBackingStore());
         ASSERT(m_compositedImage);
 
-        bool imageInstanceReplaced = m_coordinatedImageBacking && (m_coordinatedImageBacking->id() != CoordinatedImageBacking::getCoordinatedImageBackingID(m_compositedImage.get()));
+        bool imageInstanceReplaced = m_coordinatedImageBacking && (m_coordinatedImageBacking->id() != CoordinatedImageBacking::getCoordinatedImageBackingID(*m_compositedImage));
         if (imageInstanceReplaced)
             releaseImageBackingIfNeeded();
 
         if (!m_coordinatedImageBacking) {
             m_coordinatedImageBacking = m_coordinator->createImageBackingIfNeeded(*m_compositedImage);
-            m_coordinatedImageBacking->addHost(this);
+            m_coordinatedImageBacking->addHost(*this);
             m_layerState.imageID = m_coordinatedImageBacking->id();
         }
 
@@ -790,7 +790,7 @@ void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
         return;
 
     ASSERT(m_coordinator);
-    m_coordinatedImageBacking->removeHost(this);
+    m_coordinatedImageBacking->removeHost(*this);
     m_coordinatedImageBacking = nullptr;
     m_layerState.imageID = InvalidCoordinatedImageBackingID;
     m_layerState.imageChanged = true;

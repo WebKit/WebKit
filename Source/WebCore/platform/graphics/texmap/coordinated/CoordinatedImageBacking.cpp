@@ -35,130 +35,96 @@
 
 namespace WebCore {
 
-CoordinatedImageBackingID CoordinatedImageBacking::getCoordinatedImageBackingID(Image* image)
+CoordinatedImageBackingID CoordinatedImageBacking::getCoordinatedImageBackingID(Image& image)
 {
     // CoordinatedImageBacking keeps a RefPtr<Image> member, so the same Image pointer can not refer two different instances until CoordinatedImageBacking releases the member.
-    return reinterpret_cast<CoordinatedImageBackingID>(image);
-}
-
-Ref<CoordinatedImageBacking> CoordinatedImageBacking::create(Client& client, Ref<Image>&& image)
-{
-    return adoptRef(*new CoordinatedImageBacking(client, WTFMove(image)));
+    return reinterpret_cast<CoordinatedImageBackingID>(&image);
 }
 
 CoordinatedImageBacking::CoordinatedImageBacking(Client& client, Ref<Image>&& image)
-    : m_client(&client)
+    : m_client(client)
+    , m_id(getCoordinatedImageBackingID(image))
     , m_image(WTFMove(image))
-    , m_id(getCoordinatedImageBackingID(m_image.get()))
     , m_clearContentsTimer(*this, &CoordinatedImageBacking::clearContentsTimerFired)
-    , m_isDirty(false)
-    , m_isVisible(false)
 {
-    // FIXME: We would need to decode a small image directly into a GraphicsSurface.
-    // http://webkit.org/b/101426
-
-    m_client->createImageBacking(id());
+    m_client.createImageBacking(m_id);
 }
 
 CoordinatedImageBacking::~CoordinatedImageBacking() = default;
 
-void CoordinatedImageBacking::addHost(Host* host)
+void CoordinatedImageBacking::addHost(Host& host)
 {
-    ASSERT(!m_hosts.contains(host));
-    m_hosts.append(host);
+    ASSERT(!m_hosts.contains(&host));
+    m_hosts.add(&host);
 }
 
-void CoordinatedImageBacking::removeHost(Host* host)
+void CoordinatedImageBacking::removeHost(Host& host)
 {
-    size_t position = m_hosts.find(host);
-    ASSERT(position != notFound);
-    m_hosts.remove(position);
+    m_hosts.remove(&host);
 
     if (m_hosts.isEmpty())
-        m_client->removeImageBacking(id());
+        m_client.removeImageBacking(m_id);
 }
 
-void CoordinatedImageBacking::markDirty()
-{
-    m_isDirty = true;
-}
+static const Seconds clearContentsTimerInterval { 3_s };
 
 void CoordinatedImageBacking::update()
 {
-    releaseSurfaceIfNeeded();
+    bool previousIsVisible = m_isVisible;
+    m_isVisible = std::any_of(m_hosts.begin(), m_hosts.end(),
+        [](auto* host)
+        {
+            return host->imageBackingVisible();
+        });
 
-    bool changedToVisible;
-    updateVisibilityIfNeeded(changedToVisible);
-    if (!m_isVisible)
+    if (!m_isVisible) {
+        if (previousIsVisible) {
+            ASSERT(!m_clearContentsTimer.isActive());
+            m_clearContentsTimer.startOneShot(clearContentsTimerInterval);
+        }
         return;
+    }
 
+    bool changedToVisible = !previousIsVisible;
+    if (m_clearContentsTimer.isActive()) {
+        m_clearContentsTimer.stop();
+        // We don't want to update the texture if we didn't remove the texture.
+        changedToVisible = false;
+    }
+
+    auto nativeImagePtr = m_image->nativeImageForCurrentFrame();
     if (!changedToVisible) {
         if (!m_isDirty)
             return;
 
-        if (m_nativeImagePtr == m_image->nativeImageForCurrentFrame()) {
+        if (m_nativeImagePtr == nativeImagePtr) {
             m_isDirty = false;
             return;
         }
     }
 
-    m_buffer = Nicosia::Buffer::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-    ASSERT(m_buffer);
+    m_nativeImagePtr = WTFMove(nativeImagePtr);
 
-    Nicosia::PaintingContext::paint(*m_buffer,
+    auto buffer = Nicosia::Buffer::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
+    Nicosia::PaintingContext::paint(buffer,
         [this](GraphicsContext& context)
         {
             IntRect rect(IntPoint::zero(), IntSize(m_image->size()));
             context.save();
             context.clip(rect);
-            context.drawImage(*m_image, rect, rect);
+            context.drawImage(m_image, rect, rect);
             context.restore();
         });
 
-    m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
-
-    m_client->updateImageBacking(id(), m_buffer.copyRef());
+    m_client.updateImageBacking(m_id, WTFMove(buffer));
     m_isDirty = false;
-}
-
-void CoordinatedImageBacking::releaseSurfaceIfNeeded()
-{
-    m_buffer = nullptr;
-}
-
-static const Seconds clearContentsTimerInterval { 3_s };
-
-void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
-{
-    bool previousIsVisible = m_isVisible;
-
-    m_isVisible = false;
-    for (auto& host : m_hosts) {
-        if (host->imageBackingVisible()) {
-            m_isVisible = true;
-            break;
-        }
-    }
-
-    bool changedToInvisible = previousIsVisible && !m_isVisible;
-    if (changedToInvisible) {
-        ASSERT(!m_clearContentsTimer.isActive());
-        m_clearContentsTimer.startOneShot(clearContentsTimerInterval);
-    }
-
-    changedToVisible = !previousIsVisible && m_isVisible;
-
-    if (m_isVisible && m_clearContentsTimer.isActive()) {
-        m_clearContentsTimer.stop();
-        // We don't want to update the texture if we didn't remove the texture.
-        changedToVisible = false;
-    }
 }
 
 void CoordinatedImageBacking::clearContentsTimerFired()
 {
-    m_client->clearImageBackingContents(id());
+    m_client.clearImageBackingContents(m_id);
 }
 
 } // namespace WebCore
+
 #endif

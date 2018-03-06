@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef CoordinatedImageBacking_h
-#define CoordinatedImageBacking_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -56,17 +54,20 @@ public:
         virtual bool imageBackingVisible() = 0;
     };
 
-    static Ref<CoordinatedImageBacking> create(Client&, Ref<Image>&&);
+    static Ref<CoordinatedImageBacking> create(Client& client, Ref<Image>&& image)
+    {
+        return adoptRef(*new CoordinatedImageBacking(client, WTFMove(image)));
+    }
     virtual ~CoordinatedImageBacking();
 
-    static CoordinatedImageBackingID getCoordinatedImageBackingID(Image*);
+    static CoordinatedImageBackingID getCoordinatedImageBackingID(Image&);
     CoordinatedImageBackingID id() const { return m_id; }
 
-    void addHost(Host*);
-    void removeHost(Host*);
+    void addHost(Host&);
+    void removeHost(Host&);
 
     // When a new image is updated or an animated gif is progressed, CoordinatedGraphicsLayer calls markDirty().
-    void markDirty();
+    void markDirty() { m_isDirty = true; }
 
     // Create, remove or update its backing.
     void update();
@@ -74,26 +75,21 @@ public:
 private:
     CoordinatedImageBacking(Client&, Ref<Image>&&);
 
-    void releaseSurfaceIfNeeded();
-    void updateVisibilityIfNeeded(bool& changedToVisible);
     void clearContentsTimerFired();
 
-    Client* m_client;
-    RefPtr<Image> m_image;
-    NativeImagePtr m_nativeImagePtr;
-    CoordinatedImageBackingID m_id;
-    Vector<Host*> m_hosts;
+    Client& m_client;
+    HashSet<Host*> m_hosts;
 
-    RefPtr<Nicosia::Buffer> m_buffer;
+    CoordinatedImageBackingID m_id;
+    Ref<Image> m_image;
+    NativeImagePtr m_nativeImagePtr;
 
     Timer m_clearContentsTimer;
 
-    bool m_isDirty;
-    bool m_isVisible;
-
+    bool m_isDirty { false };
+    bool m_isVisible { false };
 };
 
 } // namespace WebCore
-#endif // USE(COORDINATED_GRAPHICS)
 
-#endif // CoordinatedImageBacking_h
+#endif // USE(COORDINATED_GRAPHICS)
