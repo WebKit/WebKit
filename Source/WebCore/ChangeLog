@@ -1,3 +1,11 @@
+2018-03-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, remove unused variables.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeSpeakAs):
+        (WebCore::consumeHangingPunctuation):
+
 2018-03-05  Chris Dumez  <cdumez@apple.com>
 
         fast/loader/onload-policy-ignore-for-frame.html is timing out with async policy delegates

@@ -3615,7 +3615,6 @@ static RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range)
         return consumeIdent(range);
     
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    std::bitset<numCSSValueKeywords> seenValues;
     
     bool seenNormal = false;
     bool seenSpellOut = false;
@@ -3661,7 +3660,6 @@ static RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
         return consumeIdent(range);
     
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    std::bitset<numCSSValueKeywords> seenValues;
 
     bool seenForceEnd = false;
     bool seenAllowEnd = false;
