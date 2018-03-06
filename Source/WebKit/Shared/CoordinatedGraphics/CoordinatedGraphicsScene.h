@@ -97,14 +97,23 @@ public:
     void releaseUpdateAtlases(const Vector<uint32_t>&);
 
 private:
+    struct CommitScope {
+        CommitScope() = default;
+        CommitScope(CommitScope&) = delete;
+        CommitScope& operator=(const CommitScope&) = delete;
+
+        Vector<RefPtr<CoordinatedBackingStore>> releasedImageBackings;
+        HashSet<RefPtr<CoordinatedBackingStore>> backingStoresWithPendingBuffers;
+    };
+
     void setRootLayerID(WebCore::CoordinatedLayerID);
     void createLayers(const Vector<WebCore::CoordinatedLayerID>&);
     void deleteLayers(const Vector<WebCore::CoordinatedLayerID>&);
-    void setLayerState(WebCore::CoordinatedLayerID, const WebCore::CoordinatedGraphicsLayerState&);
+    void setLayerState(WebCore::CoordinatedLayerID, const WebCore::CoordinatedGraphicsLayerState&, CommitScope&);
     void setLayerChildrenIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void updateTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void updateTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&, CommitScope&);
     void createTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void removeTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void removeTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&, CommitScope&);
     void setLayerFiltersIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
     void setLayerAnimationsIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
     void syncPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
@@ -114,11 +123,11 @@ private:
     void createUpdateAtlas(uint32_t atlasID, RefPtr<Nicosia::Buffer>&&);
     void removeUpdateAtlas(uint32_t atlasID);
 
-    void syncImageBackings(const WebCore::CoordinatedGraphicsState&);
+    void syncImageBackings(const WebCore::CoordinatedGraphicsState&, CommitScope&);
     void createImageBacking(WebCore::CoordinatedImageBackingID);
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>&&);
-    void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
-    void removeImageBacking(WebCore::CoordinatedImageBackingID);
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>&&, CommitScope&);
+    void clearImageBackingContents(WebCore::CoordinatedImageBackingID, CommitScope&);
+    void removeImageBacking(WebCore::CoordinatedImageBackingID, CommitScope&);
 
     WebCore::TextureMapperLayer* layerByID(WebCore::CoordinatedLayerID id)
     {
@@ -139,14 +148,12 @@ private:
     void deleteLayer(WebCore::CoordinatedLayerID);
 
     void assignImageBackingToLayer(WebCore::TextureMapperLayer*, WebCore::CoordinatedImageBackingID);
-    void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
-    void commitPendingBackingStoreOperations();
 
-    void prepareContentBackingStore(WebCore::TextureMapperLayer*);
+    void prepareContentBackingStore(WebCore::TextureMapperLayer*, CommitScope&);
     void createBackingStoreIfNeeded(WebCore::TextureMapperLayer*);
     void removeBackingStoreIfNeeded(WebCore::TextureMapperLayer*);
-    void resetBackingStoreSizeToLayerSize(WebCore::TextureMapperLayer*);
+    void resetBackingStoreSizeToLayerSize(WebCore::TextureMapperLayer*, CommitScope&);
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     void onNewBufferAvailable() override;
@@ -156,10 +163,7 @@ private:
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 
     HashMap<WebCore::CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore>> m_imageBackings;
-    Vector<RefPtr<CoordinatedBackingStore>> m_releasedImageBackings;
-
     HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore>> m_backingStores;
-    HashSet<RefPtr<CoordinatedBackingStore>> m_backingStoresWithPendingBuffers;
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> m_platformLayerProxies;

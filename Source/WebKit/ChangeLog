@@ -1,3 +1,40 @@
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        CoordinatedGraphicsScene: properly limit data specific to state commit operation
+        https://bugs.webkit.org/show_bug.cgi?id=183326
+
+        Reviewed by Sergio Villar Senin.
+
+        In the process of state commit in CoordinatedGraphicsScene, the released
+        image backings and backing stores with pending updates are stored in
+        Vector and HashSet objects, respectively. Instead of these two objects
+        being member variables on the CoordinatedGraphicsScene class, keep them
+        in the CommitScope structure that's limited to the operations done in
+        the commitSceneState() method.
+
+        The two member variables are dropped, and the CommitScope object is
+        passed by reference to any helper method that needs to append either
+        kind of object to the respective container. At the end of the state
+        commit, backing stores with pending updates have those updates applied,
+        and the two containers are cleared out as the CommitScope object is
+        destroyed.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::setLayerState):
+        (WebKit::CoordinatedGraphicsScene::prepareContentBackingStore):
+        (WebKit::CoordinatedGraphicsScene::resetBackingStoreSizeToLayerSize):
+        (WebKit::CoordinatedGraphicsScene::removeTilesIfNeeded):
+        (WebKit::CoordinatedGraphicsScene::updateTilesIfNeeded):
+        (WebKit::CoordinatedGraphicsScene::syncImageBackings):
+        (WebKit::CoordinatedGraphicsScene::updateImageBacking):
+        (WebKit::CoordinatedGraphicsScene::clearImageBackingContents):
+        (WebKit::CoordinatedGraphicsScene::removeImageBacking):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        (WebKit::CoordinatedGraphicsScene::removeReleasedImageBackingsIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::commitPendingBackingStoreOperations): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Fix std::make_unique / new[] using system malloc
