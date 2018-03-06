@@ -540,9 +540,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 
     for (auto& backingStore : commitScope.backingStoresWithPendingBuffers)
         backingStore->commitTileOperations(*m_textureMapper);
-
-    commitScope.releasedImageBackings.clear();
-    commitScope.backingStoresWithPendingBuffers.clear();
 }
 
 void CoordinatedGraphicsScene::renderNextFrame()

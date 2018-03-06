@@ -1,5 +1,15 @@
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Addressing further review feedback for patch landed in r229315.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::commitSceneState): There's no need for
+        explicit calls of the clear() method on both containers in the CommitScope
+        objects, the destructors invoked for these objects from the CommitScope
+        destructor will have the same effect.
+
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Remove unused scrolling-related code in TextureMapperLayer, CoordinatedGraphics stack
         https://bugs.webkit.org/show_bug.cgi?id=183340
 
