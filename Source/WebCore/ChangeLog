@@ -1,3 +1,32 @@
+2018-03-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add a new CSSAnimation subclass of WebAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=183371
+        <rdar://problem/38181724>
+
+        Reviewed by Dean Jackson.
+
+        Adding a new CSSAnimation subclass which we will create in a later patch while resolving styles
+        upon identifying that a new CSS Animation has been added to an element.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/CSSAnimation.cpp: Added.
+        (WebCore::CSSAnimation::create):
+        (WebCore::CSSAnimation::CSSAnimation):
+        * animation/CSSAnimation.h: Added.
+        * animation/CSSAnimation.idl: Added.
+        * animation/KeyframeEffectReadOnly.cpp
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::isCSSAnimation const):
+        * animation/WebAnimation.idl:
+        * bindings/js/JSWebAnimationCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-03-06  Ms2ger  <Ms2ger@igalia.com>
 
         Explicitly qualify some method calls on this in lambdas in Service Worker code.

@@ -49,6 +49,7 @@ namespace WebCore {
     macro(Clients) \
     macro(Credential) \
     macro(CredentialsContainer) \
+    macro(CSSAnimation) \
     macro(CustomElementRegistry) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum AnimationPlayState {
-    "idle",
-    "running",
-    "paused",
-    "finished"
-};
+#include "config.h"
+#include "CSSAnimation.h"
 
-[
-    ActiveDOMObject,
-    EnabledAtRuntime=WebAnimations,
-    InterfaceName=Animation,
-    CustomConstructor(),
-    CustomToJSObject
-] interface WebAnimation : EventTarget {
-    attribute DOMString id;
-    attribute AnimationEffectReadOnly? effect;
-    attribute AnimationTimeline? timeline;
-    [ImplementedAs=bindingsStartTime] attribute double? startTime;
-    [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
-    attribute double playbackRate;
-    readonly attribute AnimationPlayState playState;
-    readonly attribute boolean pending;
-    attribute EventHandler onfinish;
-    attribute EventHandler oncancel;
-    readonly attribute Promise<WebAnimation> ready;
-    readonly attribute Promise<WebAnimation> finished;
-    void cancel();
-    [MayThrowException] void finish();
-    [MayThrowException] void play();
-    [MayThrowException] void pause();
-    [MayThrowException] void reverse();
-};
+#include "Animation.h"
+#include "Element.h"
+
+namespace WebCore {
+
+Ref<CSSAnimation> CSSAnimation::create(Element& target, const Animation&)
+{
+    auto& document = target.document();
+
+    auto result = adoptRef(*new CSSAnimation(document));
+
+    return result;
+}
+
+CSSAnimation::CSSAnimation(Document& document)
+    : WebAnimation(document)
+{
+}
+
+
+} // namespace WebCore

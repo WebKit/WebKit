@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,11 +46,13 @@ class Document;
 class Element;
 class RenderStyle;
 
-class WebAnimation final : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
+class WebAnimation : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*);
     static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*, AnimationTimeline*);
     ~WebAnimation();
+
+    virtual bool isCSSAnimation() const { return false; }
 
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }
@@ -108,9 +110,10 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-private:
+protected:
     explicit WebAnimation(Document&);
 
+private:
     enum class RespectHoldTime { Yes, No };
     enum class AutoRewind { Yes, No };
     enum class TimeToRunPendingTask { NotScheduled, ASAP, WhenReady };
@@ -163,3 +166,8 @@ private:
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+static bool isType(const WebCore::WebAnimation& value) { return value.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
