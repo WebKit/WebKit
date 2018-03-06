@@ -1,3 +1,27 @@
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r229309): s_exceptionInstructions allocation change causing crashes in LLInt on WPE
+        https://bugs.webkit.org/show_bug.cgi?id=183366
+
+        Reviewed by Michael Catanzaro.
+
+        Have the TestRunnerInjectedBundle CMake library link against libraries
+        in the WebKitTestRunnerInjectedBundle_LIBRARIES list, and not the
+        WebKitTestRunner_LIBRARIES list, which is used for the WebKitTestRunner
+        executable. This allows narrowing down the libraries to only those that
+        are necessary for the injected bundle shared object.
+
+        The GTK+ port already has this list specified, adding one for the WPE
+        port.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        Link the TestRunnerInjectedBundle library against the libraries in the
+        WebKitTestRunnerInjectedBundle_LIBRARIES list.
+        * WebKitTestRunner/PlatformWPE.cmake:
+        Specify the WebKitTestRunnerInjectedBundle_LIBRARIES list, including the
+        basic system dependencies, WebCoreTestSupport and WebKit. This follows
+        the GTK+ port.
+
 2018-03-06  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] Disable tests that run out of memory

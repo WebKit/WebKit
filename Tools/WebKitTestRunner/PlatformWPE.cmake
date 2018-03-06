@@ -34,6 +34,13 @@ list(APPEND WebKitTestRunner_LIBRARIES
     WPEHeadlessViewBackend
 )
 
+set(WebKitTestRunnerInjectedBundle_LIBRARIES
+    ${CAIRO_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    WebCoreTestSupport
+    WebKit
+)
+
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/wpe/AccessibilityControllerWPE.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/wpe/AccessibilityUIElementWPE.cpp

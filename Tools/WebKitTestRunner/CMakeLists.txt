@@ -109,7 +109,7 @@ include_directories(${WebKitTestRunner_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES})
 
 add_library(TestRunnerInjectedBundle SHARED ${WebKitTestRunnerInjectedBundle_SOURCES})
-target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunner_LIBRARIES})
+target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunnerInjectedBundle_LIBRARIES})
 add_dependencies(TestRunnerInjectedBundle WebKitTestRunnerInjectedBundleBindings)
 
 add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
