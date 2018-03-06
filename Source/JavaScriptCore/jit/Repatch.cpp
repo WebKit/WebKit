@@ -944,10 +944,10 @@ void linkPolymorphicCall(
     
     Vector<int64_t> caseValues(callCases.size());
     Vector<CallToCodePtr> calls(callCases.size());
-    std::unique_ptr<uint32_t[]> fastCounts;
+    UniqueArray<uint32_t> fastCounts;
     
     if (!isWebAssembly && callerCodeBlock->jitType() != JITCode::topTierJIT())
-        fastCounts = std::make_unique<uint32_t[]>(callCases.size());
+        fastCounts = makeUniqueArray<uint32_t>(callCases.size());
     
     for (size_t i = 0; i < callCases.size(); ++i) {
         if (fastCounts)

@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "WEBPImageDecoder.h"
+#include <wtf/UniqueArray.h>
 
 #if USE(WEBP)
 
@@ -185,7 +186,7 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
     decoderBuffer.u.RGBA.stride = webpFrame.width * sizeof(uint32_t);
     decoderBuffer.u.RGBA.size = decoderBuffer.u.RGBA.stride * webpFrame.height;
     decoderBuffer.is_external_memory = 1;
-    std::unique_ptr<unsigned char[]> p(new uint8_t[decoderBuffer.u.RGBA.size]());
+    auto p = makeUniqueArray<uint8_t>(decoderBuffer.u.RGBA.size);
     decoderBuffer.u.RGBA.rgba = p.get();
     if (!decoderBuffer.u.RGBA.rgba) {
         setFailed();

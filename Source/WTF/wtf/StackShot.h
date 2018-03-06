@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/UniqueArray.h>
 
 namespace WTF {
 
@@ -37,7 +38,7 @@ public:
         : m_size(size)
     {
         if (size) {
-            m_array = std::make_unique<void*[]>(size);
+            m_array = makeUniqueArray<void*>(size);
             int intSize = size;
             WTFGetBacktrace(m_array.get(), &intSize);
             RELEASE_ASSERT(static_cast<size_t>(intSize) <= size);
@@ -55,7 +56,7 @@ public:
     
     StackShot& operator=(const StackShot& other)
     {
-        std::unique_ptr<void*[]> newArray = std::make_unique<void*[]>(other.m_size);
+        auto newArray = makeUniqueArray<void*>(other.m_size);
         for (size_t i = other.m_size; i--;)
             newArray[i] = other.m_array[i];
         m_size = other.m_size;
@@ -106,8 +107,8 @@ public:
     
 private:
     static void** deletedValueArray() { return bitwise_cast<void**>(static_cast<uintptr_t>(1)); }
-    
-    std::unique_ptr<void*[]> m_array;
+
+    UniqueArray<void*> m_array;
     size_t m_size { 0 };
 };
 

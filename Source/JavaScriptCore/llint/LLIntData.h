@@ -66,7 +66,7 @@ private:
     static void resetStats();
     static void saveStats();
 
-    static Instruction* s_exceptionInstructions;
+    static Instruction s_exceptionInstructions[maxOpcodeLength + 1];
     static Opcode s_opcodeMap[numOpcodeIDs];
     static OpcodeStatsArray* s_opcodeStatsArray;
 

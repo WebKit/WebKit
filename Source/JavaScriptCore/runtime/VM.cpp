@@ -539,11 +539,6 @@ VM::~VM()
     delete clientData;
     delete m_regExpCache;
 
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    if (m_regExpPatternContexBuffer)
-        delete[] m_regExpPatternContexBuffer;
-#endif
-
 #if ENABLE(REGEXP_TRACING)
     delete m_rtTraceList;
 #endif
@@ -911,8 +906,8 @@ char* VM::acquireRegExpPatternContexBuffer()
 
     m_regExpPatternContextLock.lock();
     if (!m_regExpPatternContexBuffer)
-        m_regExpPatternContexBuffer = new char[VM::patternContextBufferSize];
-    return m_regExpPatternContexBuffer;
+        m_regExpPatternContexBuffer = makeUniqueArray<char>(VM::patternContextBufferSize);
+    return m_regExpPatternContexBuffer.get();
 }
 
 void VM::releaseRegExpPatternContexBuffer()

@@ -30,10 +30,8 @@
 
 bool WindowsSystemProxy::getSystemHttpProxy(char* buffer, int bufferLen, int* port)
 {
-    std::unique_ptr<TCHAR[]> tRegBuffer = std::make_unique<TCHAR[]>(bufferLen);
-    std::unique_ptr<TCHAR[]> tHost = std::make_unique<TCHAR[]>(bufferLen);
-    if (!tRegBuffer || !tHost)
-        return false;
+    Vector<TCHAR> tRegBuffer(bufferLen);
+    Vector<TCHAR> tHost(bufferLen);
     DWORD type;
     DWORD size;
     HKEY key;
@@ -51,16 +49,16 @@ bool WindowsSystemProxy::getSystemHttpProxy(char* buffer, int bufferLen, int* po
         L"ProxyServer",
         nullptr,
         &type,
-        (LPBYTE)tRegBuffer.get(),
+        (LPBYTE)tRegBuffer.data(),
         &size);
 
     if (ret != ERROR_SUCCESS)
         return false;
 
-    if (!parseProxyString(tRegBuffer.get(), tHost.get(), bufferLen, port))
+    if (!parseProxyString(tRegBuffer.data(), tHost.data(), bufferLen, port))
         return false;
 
-    wcstombs(buffer, tHost.get(), bufferLen);
+    wcstombs(buffer, tHost.data(), bufferLen);
     buffer[bufferLen-1] = '\0';
     return true;
 }

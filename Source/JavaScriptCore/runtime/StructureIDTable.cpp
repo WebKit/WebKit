@@ -33,7 +33,7 @@ namespace JSC {
 
 StructureIDTable::StructureIDTable()
     : m_firstFreeOffset(0)
-    , m_table(std::make_unique<StructureOrOffset[]>(s_initialSize))
+    , m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
     , m_size(0)
     , m_capacity(s_initialSize)
 {
@@ -45,7 +45,7 @@ StructureIDTable::StructureIDTable()
 void StructureIDTable::resize(size_t newCapacity)
 {
     // Create the new table.
-    auto newTable = std::make_unique<StructureOrOffset[]>(newCapacity);
+    auto newTable = makeUniqueArray<StructureOrOffset>(newCapacity);
 
     // Copy the contents of the old table to the new table.
     memcpy(newTable.get(), table(), m_capacity * sizeof(StructureOrOffset));

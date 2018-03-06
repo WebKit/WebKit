@@ -421,8 +421,8 @@ void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 
         output(0)->setNumberOfChannels(numberOfChannels);
 
-        m_sourceChannels = std::make_unique<const float*[]>(numberOfChannels);
-        m_destinationChannels = std::make_unique<float*[]>(numberOfChannels);
+        m_sourceChannels = makeUniqueArray<const float*>(numberOfChannels);
+        m_destinationChannels = makeUniqueArray<float*>(numberOfChannels);
 
         for (unsigned i = 0; i < numberOfChannels; ++i) 
             m_sourceChannels[i] = buffer->channelData(i)->data();

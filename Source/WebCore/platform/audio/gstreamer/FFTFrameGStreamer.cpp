@@ -43,7 +43,7 @@ namespace WebCore {
 FFTFrame::FFTFrame(unsigned fftSize)
     : m_FFTSize(fftSize)
     , m_log2FFTSize(static_cast<unsigned>(log2(fftSize)))
-    , m_complexData(std::make_unique<GstFFTF32Complex[]>(unpackedFFTDataSize(m_FFTSize)))
+    , m_complexData(makeUniqueArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize)))
     , m_realData(unpackedFFTDataSize(m_FFTSize))
     , m_imagData(unpackedFFTDataSize(m_FFTSize))
 {
@@ -66,7 +66,7 @@ FFTFrame::FFTFrame()
 FFTFrame::FFTFrame(const FFTFrame& frame)
     : m_FFTSize(frame.m_FFTSize)
     , m_log2FFTSize(frame.m_log2FFTSize)
-    , m_complexData(std::make_unique<GstFFTF32Complex[]>(unpackedFFTDataSize(m_FFTSize)))
+    , m_complexData(makeUniqueArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize)))
     , m_realData(unpackedFFTDataSize(frame.m_FFTSize))
     , m_imagData(unpackedFFTDataSize(frame.m_FFTSize))
 {

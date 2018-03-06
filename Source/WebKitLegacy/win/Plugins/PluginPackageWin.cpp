@@ -170,19 +170,19 @@ bool PluginPackage::fetchInfo()
     if (versionInfoSize == 0)
         return false;
 
-    auto versionInfoData = std::make_unique<char[]>(versionInfoSize);
+    Vector<char> versionInfoData(versionInfoSize);
 
-    if (!GetFileVersionInfoW(stringToNullTerminatedWChar(m_path).data(), 0, versionInfoSize, versionInfoData.get()))
+    if (!GetFileVersionInfoW(stringToNullTerminatedWChar(m_path).data(), 0, versionInfoSize, versionInfoData.data()))
         return false;
 
-    m_name = getVersionInfo(versionInfoData.get(), "ProductName");
-    m_description = getVersionInfo(versionInfoData.get(), "FileDescription");
+    m_name = getVersionInfo(versionInfoData.data(), "ProductName");
+    m_description = getVersionInfo(versionInfoData.data(), "FileDescription");
     if (m_name.isNull() || m_description.isNull())
         return false;
 
     VS_FIXEDFILEINFO* info;
     UINT infoSize;
-    if (!VerQueryValueW(versionInfoData.get(), L"\\", (LPVOID*) &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
+    if (!VerQueryValueW(versionInfoData.data(), L"\\", (LPVOID*) &info, &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
         return false;
     m_moduleVersion.leastSig = info->dwFileVersionLS;
     m_moduleVersion.mostSig = info->dwFileVersionMS;
@@ -191,11 +191,11 @@ bool PluginPackage::fetchInfo()
         return false;
 
     Vector<String> types;
-    getVersionInfo(versionInfoData.get(), "MIMEType").split('|', types);
+    getVersionInfo(versionInfoData.data(), "MIMEType").split('|', types);
     Vector<String> extensionLists;
-    getVersionInfo(versionInfoData.get(), "FileExtents").split('|', extensionLists);
+    getVersionInfo(versionInfoData.data(), "FileExtents").split('|', extensionLists);
     Vector<String> descriptions;
-    getVersionInfo(versionInfoData.get(), "FileOpenName").split('|', descriptions);
+    getVersionInfo(versionInfoData.data(), "FileOpenName").split('|', descriptions);
 
     for (unsigned i = 0; i < types.size(); i++) {
         String type = types[i].convertToASCIILowercase();

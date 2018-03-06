@@ -210,18 +210,16 @@ CFArrayRef MarshallingHelpers::safeArrayToStringArray(SAFEARRAY* inArray)
     if (SUCCEEDED(hr))
         hr = ::SafeArrayGetUBound(inArray, 1, &uBound);
     long len = (SUCCEEDED(hr)) ? (uBound-lBound+1) : 0;
-    CFStringRef* items = 0;
+    Vector<CFStringRef> items;
     if (len > 0) {
-        items = new CFStringRef[len];
+        items.resize(len);
         for (; lBound <= uBound; lBound++) {
             BString str;
             hr = ::SafeArrayGetElement(inArray, &lBound, &str);
             items[lBound] = BSTRToCFStringRef(str);
         }
     }
-    CFArrayRef result = CFArrayCreate(0, (const void**)items, len, &kCFTypeArrayCallBacks);
-    if (items)
-        delete[] items;
+    CFArrayRef result = CFArrayCreate(0, (const void**)items.data(), len, &kCFTypeArrayCallBacks);
     return result;
 }
 
@@ -232,18 +230,16 @@ CFArrayRef MarshallingHelpers::safeArrayToIntArray(SAFEARRAY* inArray)
     if (SUCCEEDED(hr))
         hr = ::SafeArrayGetUBound(inArray, 1, &uBound);
     long len = (SUCCEEDED(hr)) ? (uBound-lBound+1) : 0;
-    CFNumberRef* items = 0;
+    Vector<CFNumberRef> items;
     if (len > 0) {
-        items = new CFNumberRef[len];
+        items.resize(len);
         for (; lBound <= uBound; lBound++) {
             int num = 0;
             hr = ::SafeArrayGetElement(inArray, &lBound, &num);
             items[lBound] = SUCCEEDED(hr) ? intToCFNumberRef(num) : kCFNumberNaN;
         }
     }
-    CFArrayRef result = CFArrayCreate(0, (const void**) items, len, &kCFTypeArrayCallBacks);
-    if (items)
-        delete[] items;
+    CFArrayRef result = CFArrayCreate(0, (const void**)items.data(), len, &kCFTypeArrayCallBacks);
     return result;
 }
 

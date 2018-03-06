@@ -150,12 +150,12 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
 {
     size_t prefixLength = strlen(prefix);
     size_t formatLength = strlen(format);
-    auto formatWithPrefix = std::make_unique<char[]>(prefixLength + formatLength + 1);
-    memcpy(formatWithPrefix.get(), prefix, prefixLength);
-    memcpy(formatWithPrefix.get() + prefixLength, format, formatLength);
+    Vector<char> formatWithPrefix(prefixLength + formatLength + 1);
+    memcpy(formatWithPrefix.data(), prefix, prefixLength);
+    memcpy(formatWithPrefix.data() + prefixLength, format, formatLength);
     formatWithPrefix[prefixLength + formatLength] = 0;
 
-    vprintf_stderr_common(formatWithPrefix.get(), args);
+    vprintf_stderr_common(formatWithPrefix.data(), args);
 }
 
 static void vprintf_stderr_with_trailing_newline(const char* format, va_list args)
@@ -166,12 +166,12 @@ static void vprintf_stderr_with_trailing_newline(const char* format, va_list arg
         return;
     }
 
-    auto formatWithNewline = std::make_unique<char[]>(formatLength + 2);
-    memcpy(formatWithNewline.get(), format, formatLength);
+    Vector<char> formatWithNewline(formatLength + 2);
+    memcpy(formatWithNewline.data(), format, formatLength);
     formatWithNewline[formatLength] = '\n';
     formatWithNewline[formatLength + 1] = 0;
 
-    vprintf_stderr_common(formatWithNewline.get(), args);
+    vprintf_stderr_common(formatWithNewline.data(), args);
 }
 
 #if COMPILER(GCC_OR_CLANG)

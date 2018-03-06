@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/UniqueArray.h>
 
 namespace WTF {
 class TextStream;
@@ -138,8 +139,8 @@ private:
 // Blend two lengths to produce a new length that is in between them. Used for animation.
 Length blend(const Length& from, const Length& to, double progress);
 
-std::unique_ptr<Length[]> newCoordsArray(const String&, int& length);
-std::unique_ptr<Length[]> newLengthArray(const String&, int& length);
+UniqueArray<Length> newCoordsArray(const String&, int& length);
+UniqueArray<Length> newLengthArray(const String&, int& length);
 
 inline Length::Length(LengthType type)
     : m_intValue(0), m_hasQuirk(false), m_type(type), m_isFloat(false)

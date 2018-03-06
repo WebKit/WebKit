@@ -31,6 +31,8 @@ namespace WTF {
 
 template<typename T>
 struct SystemFree {
+    static_assert(std::is_trivially_destructible<T>::value, "");
+
     void operator()(T* pointer) const
     {
         free(const_cast<typename std::remove_cv<T>::type*>(pointer));
@@ -39,11 +41,12 @@ struct SystemFree {
 
 template<typename T>
 struct SystemFree<T[]> {
+    static_assert(std::is_trivially_destructible<T>::value, "");
+
     void operator()(T* pointer) const
     {
         free(const_cast<typename std::remove_cv<T>::type*>(pointer));
     }
-
 };
 
 } // namespace WTF

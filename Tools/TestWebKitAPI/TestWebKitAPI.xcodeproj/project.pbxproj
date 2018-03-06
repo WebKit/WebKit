@@ -718,6 +718,7 @@
 		D34E08761E4E42E1005FF14A /* WKWebViewGetContents.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */; };
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
 		E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */; };
+		E324A6F02041C82000A76593 /* UniqueArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E398BC0F2041C76300387136 /* UniqueArray.cpp */; };
 		E373D7911F2CF35200C6FAAF /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3953F951F2CF32100A76A2E /* Signals.cpp */; };
 		E38A0D351FD50CC300E98C8B /* Threading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38A0D341FD50CBC00E98C8B /* Threading.cpp */; };
 		E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */; };
@@ -1845,6 +1846,7 @@
 		E19DB9781B32137C00DB38D4 /* NavigatorLanguage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigatorLanguage.mm; sourceTree = "<group>"; };
 		E38A0D341FD50CBC00E98C8B /* Threading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Threading.cpp; sourceTree = "<group>"; };
 		E3953F951F2CF32100A76A2E /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
+		E398BC0F2041C76300387136 /* UniqueArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueArray.cpp; sourceTree = "<group>"; };
 		E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
 		E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TypingStyleCrash.mm; sourceTree = "<group>"; };
@@ -2777,6 +2779,7 @@
 				E38A0D341FD50CBC00E98C8B /* Threading.cpp */,
 				5311BD5D1EA9490D00525281 /* ThreadMessages.cpp */,
 				0F2C20B71DCD544800542D9E /* Time.cpp */,
+				E398BC0F2041C76300387136 /* UniqueArray.cpp */,
 				5C5E633D1D0B67940085A025 /* UniqueRef.cpp */,
 				7CD0D5AA1D5534DE000CC9E1 /* Variant.cpp */,
 				BC55F5F814AD78EE00484BE1 /* Vector.cpp */,
@@ -3341,6 +3344,7 @@
 				E38A0D351FD50CC300E98C8B /* Threading.cpp in Sources */,
 				5311BD5E1EA9490E00525281 /* ThreadMessages.cpp in Sources */,
 				0F2C20B81DCD545000542D9E /* Time.cpp in Sources */,
+				E324A6F02041C82000A76593 /* UniqueArray.cpp in Sources */,
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				7C83FC711D5535A8001DFBCD /* Variant.cpp in Sources */,
 				7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */,

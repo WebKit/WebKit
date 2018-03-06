@@ -37,6 +37,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CA)
@@ -1261,7 +1262,7 @@ public:
         RetainPtr<CGImageRef> m_cgImage;
         RetainPtr<CGImageRef> m_decodedImage;
         RetainPtr<CFDataRef> m_pixelData;
-        std::unique_ptr<uint8_t[]> m_formalizedRGBA8Data;
+        UniqueArray<uint8_t> m_formalizedRGBA8Data;
 #endif
         Image* m_image;
         ImageHtmlDomSource m_imageHtmlDomSource;

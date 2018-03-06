@@ -165,6 +165,7 @@ private:
 };
 
 class ArgList {
+    WTF_MAKE_FAST_ALLOCATED;
     friend class Interpreter;
     friend class JIT;
 public:

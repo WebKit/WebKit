@@ -1,3 +1,47 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix std::make_unique / new[] using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=182975
+
+        Reviewed by JF Bastien.
+
+        If we use `make_unique<char[]>(num)` or `new char[num]`, allocation is
+        done by the system malloc instead of bmalloc. This patch fixes this issue
+        by following three changes.
+
+        1. Introduce UniqueArray<T>. It allocates memory from FastMalloc. While C++
+        array with `new` need to hold the size to call destructor correctly, our
+        UniqueArray only supports type T which does not have a non trivial destructor.
+        It reduces the allocation size since we do not need to track the size of the
+        array compared to standard `new T[]`. This is basically usable if we want to
+        have raw array which pointer won't be changed even if the container is moved.
+        In addition, we also extend UniqueArray<T> for types which have non trivial
+        destructors.
+
+        2. Use Vector<T> instead.
+
+        3. Annotate allocated types with MAKE_FAST_ALLOCATED. Since it introduces
+        new[] and delete[] operators, make_unique<T[]>(num) will allocate memory
+        from FastMalloc.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+        * wtf/CMakeLists.txt:
+        * wtf/FastMalloc.h:
+        (WTF::FastFree::operator() const):
+        (WTF::FastFree<T::operator() const):
+        * wtf/MallocPtr.h:
+        (WTF::MallocPtr::operator bool const):
+        * wtf/StackShot.h:
+        (WTF::StackShot::StackShot):
+        (WTF::StackShot::operator=):
+        * wtf/SystemFree.h:
+        (WTF::SystemFree<T::operator() const):
+        * wtf/UniqueArray.h: Copied from Source/WebKit/Platform/win/LoggingWin.cpp.
+        (WTF::makeUniqueArray):
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::forceInitialize):
+
 2018-03-05  Michael Saboff  <msaboff@apple.com>
 
         Start using MAP_JIT for macOS

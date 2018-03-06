@@ -159,8 +159,8 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
         amountOfNodeWhiteSpace = 0;
     else
         amountOfNodeWhiteSpace = Graph::amountOfNodeWhiteSpace(context);
-    auto prefixBuffer = std::make_unique<char[]>(prefixLength + amountOfNodeWhiteSpace + 1);
-    memcpy(prefixBuffer.get(), prefix, prefixLength);
+    Vector<char> prefixBuffer(prefixLength + amountOfNodeWhiteSpace + 1);
+    memcpy(prefixBuffer.data(), prefix, prefixLength);
     for (int i = 0; i < amountOfNodeWhiteSpace; ++i)
         prefixBuffer[i + prefixLength] = ' ';
     prefixBuffer[prefixLength + amountOfNodeWhiteSpace] = 0;
@@ -169,7 +169,7 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
     CodeLocationLabel end = linkBuffer.locationOf(currentLabel);
     previousLabel = currentLabel;
     ASSERT(end.executableAddress<uintptr_t>() >= start.executableAddress<uintptr_t>());
-    disassemble(start, end.executableAddress<uintptr_t>() - start.executableAddress<uintptr_t>(), prefixBuffer.get(), out);
+    disassemble(start, end.executableAddress<uintptr_t>() - start.executableAddress<uintptr_t>(), prefixBuffer.data(), out);
 }
 
 } } // namespace JSC::DFG

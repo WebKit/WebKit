@@ -232,6 +232,7 @@ set(WTF_HEADERS
     Unexpected.h
     UniStdExtras.h
     UnionFind.h
+    UniqueArray.h
     UniqueRef.h
     UnsafePointer.h
     VMTags.h

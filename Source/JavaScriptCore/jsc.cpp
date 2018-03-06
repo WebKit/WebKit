@@ -718,17 +718,17 @@ static std::optional<DirectoryName> currentWorkingDirectory()
     // In Windows, wchar_t is the UTF-16LE.
     // https://msdn.microsoft.com/en-us/library/dd374081.aspx
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
-    auto buffer = std::make_unique<wchar_t[]>(bufferLength);
-    DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.get());
-    String directoryString = wcharToString(buffer.get(), lengthNotIncludingNull);
+    Vector<wchar_t> buffer(bufferLength);
+    DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.data());
+    String directoryString = wcharToString(buffer.data(), lengthNotIncludingNull);
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"))
         return std::nullopt;
 #else
-    auto buffer = std::make_unique<char[]>(PATH_MAX);
-    if (!getcwd(buffer.get(), PATH_MAX))
+    Vector<char> buffer(PATH_MAX);
+    if (!getcwd(buffer.data(), PATH_MAX))
         return std::nullopt;
-    String directoryString = String::fromUTF8(buffer.get());
+    String directoryString = String::fromUTF8(buffer.data());
 #endif
     if (directoryString.isEmpty())
         return std::nullopt;

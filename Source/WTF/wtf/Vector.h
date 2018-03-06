@@ -65,10 +65,15 @@ struct VectorDestructor<true, T>
 template <bool needsInitialization, bool canInitializeWithMemset, typename T>
 struct VectorInitializer;
 
-template<bool ignore, typename T>
-struct VectorInitializer<false, ignore, T>
+template<bool canInitializeWithMemset, typename T>
+struct VectorInitializer<false, canInitializeWithMemset, T>
 {
     static void initialize(T*, T*) {}
+
+    static void forceInitialize(T* begin, T* end)
+    {
+        VectorInitializer<true, canInitializeWithMemset, T>::forceInitialize(begin, end);
+    }
 };
 
 template<typename T>
@@ -77,7 +82,12 @@ struct VectorInitializer<true, false, T>
     static void initialize(T* begin, T* end) 
     {
         for (T* cur = begin; cur != end; ++cur)
-            new (NotNull, cur) T;
+            new (NotNull, cur) T();
+    }
+
+    static void forceInitialize(T* begin, T* end)
+    {
+        initialize(begin, end);
     }
 };
 
@@ -87,6 +97,11 @@ struct VectorInitializer<true, true, T>
     static void initialize(T* begin, T* end) 
     {
         memset(begin, 0, reinterpret_cast<char*>(end) - reinterpret_cast<char*>(begin));
+    }
+
+    static void forceInitialize(T* begin, T* end)
+    {
+        initialize(begin, end);
     }
 };
 
@@ -228,6 +243,11 @@ struct VectorTypeOperations
     static void initialize(T* begin, T* end)
     {
         VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initialize(begin, end);
+    }
+
+    static void forceInitialize(T* begin, T* end)
+    {
+        VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::forceInitialize(begin, end);
     }
 
     static void move(T* src, T* srcEnd, T* dst)

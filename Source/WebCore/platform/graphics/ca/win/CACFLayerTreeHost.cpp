@@ -43,6 +43,7 @@
 #include <limits.h>
 #include <QuartzCore/CABase.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/win/GDIObject.h>
 
 #ifdef DEBUG_ALL
@@ -261,7 +262,7 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
     }
 
     DWORD dataSize = ::GetRegionData(region.get(), 0, 0);
-    auto regionDataBuffer = std::make_unique<unsigned char[]>(dataSize);
+    auto regionDataBuffer = makeUniqueArray<unsigned char>(dataSize);
     RGNDATA* regionData = reinterpret_cast<RGNDATA*>(regionDataBuffer.get());
     if (!::GetRegionData(region.get(), dataSize, regionData))
         return;

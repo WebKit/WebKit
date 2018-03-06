@@ -44,9 +44,9 @@
 
 namespace WebCore {
 
-static std::unique_ptr<char[]> createCopy(const char* data, int length)
+static UniqueArray<char> createCopy(const char* data, int length)
 {
-    std::unique_ptr<char[]> copy(new char[length]);
+    auto copy = makeUniqueArray<char>(length);
     memcpy(copy.get(), data, length);
 
     return copy;
@@ -98,7 +98,7 @@ bool SocketStreamHandleImpl::readData(CURL* curlHandle)
     ASSERT(!isMainThread());
 
     const size_t bufferSize = 1024;
-    std::unique_ptr<char[]> data(new char[bufferSize]);
+    auto data = makeUniqueArray<char>(bufferSize);
     size_t bytesRead = 0;
 
     CURLcode ret = curl_easy_recv(curlHandle, data.get(), bufferSize, &bytesRead);

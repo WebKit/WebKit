@@ -1,3 +1,50 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix std::make_unique / new[] using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=182975
+
+        Reviewed by JF Bastien.
+
+        Use Vector, FAST_ALLOCATED, or UniqueArray instead.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        * bytecode/BytecodeKills.h:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+        * jit/PolymorphicCallStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jsc.cpp:
+        (currentWorkingDirectory):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        * runtime/ArgList.h:
+        * runtime/StructureChain.h:
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::StructureIDTable):
+        (JSC::StructureIDTable::resize):
+        * runtime/StructureIDTable.h:
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::TypeProfilerLog):
+        (JSC::TypeProfilerLog::initializeLog): Deleted.
+        * runtime/TypeProfilerLog.h:
+        (JSC::TypeProfilerLog::TypeProfilerLog): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        (JSC::VM::acquireRegExpPatternContexBuffer):
+        * runtime/VM.h:
+        * testRegExp.cpp:
+        (runFromFiles):
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::HeapVerifier):
+        * tools/HeapVerifier.h:
+
 2018-03-05  Mark Lam  <mark.lam@apple.com>
 
         JITThunk functions should only be called when the JIT is enabled.

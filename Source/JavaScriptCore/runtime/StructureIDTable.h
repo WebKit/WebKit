@@ -26,6 +26,7 @@
 #pragma once
 
 #include "UnusedPointer.h"
+#include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -107,10 +108,10 @@ private:
     
     static const size_t s_initialSize = 256;
 
-    Vector<std::unique_ptr<StructureOrOffset[]>> m_oldTables;
+    Vector<UniqueArray<StructureOrOffset>> m_oldTables;
 
     uint32_t m_firstFreeOffset;
-    std::unique_ptr<StructureOrOffset[]> m_table;
+    UniqueArray<StructureOrOffset> m_table;
 
     size_t m_size;
     size_t m_capacity;

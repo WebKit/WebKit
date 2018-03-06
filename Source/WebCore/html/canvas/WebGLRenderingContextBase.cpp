@@ -99,6 +99,7 @@
 #include <JavaScriptCore/Uint32Array.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -1553,7 +1554,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "copyTexSubImage2D", "Texture has unknown internal format");
             return;
         }
-        std::unique_ptr<unsigned char[]> zero;
+        UniqueArray<unsigned char> zero;
         if (width && height) {
             unsigned size;
             GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, nullptr);
@@ -1561,7 +1562,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
                 synthesizeGLError(error, "copyTexSubImage2D", "bad dimensions");
                 return;
             }
-            zero = std::make_unique<unsigned char[]>(size);
+            zero = makeUniqueArray<unsigned char>(size);
             if (!zero) {
                 synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexSubImage2D", "out of memory");
                 return;
@@ -5761,7 +5762,7 @@ std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GC3Duint nu
             || attribValue.value[2] != m_vertexAttrib0BufferValue[2]
             || attribValue.value[3] != m_vertexAttrib0BufferValue[3])) {
 
-        auto bufferData = std::make_unique<GC3Dfloat[]>(bufferSize);
+        auto bufferData = makeUniqueArray<GC3Dfloat>(bufferSize);
         for (GC3Duint ii = 0; ii < numVertex + 1; ++ii) {
             bufferData[ii * 4] = attribValue.value[0];
             bufferData[ii * 4 + 1] = attribValue.value[1];
@@ -5907,15 +5908,14 @@ String WebGLRenderingContextBase::ensureNotNull(const String& text) const
 }
 
 WebGLRenderingContextBase::LRUImageBufferCache::LRUImageBufferCache(int capacity)
-    : m_buffers(std::make_unique<std::unique_ptr<ImageBuffer>[]>(capacity))
-    , m_capacity(capacity)
+    : m_buffers(capacity)
 {
 }
 
 ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size)
 {
-    int i;
-    for (i = 0; i < m_capacity; ++i) {
+    size_t i;
+    for (i = 0; i < m_buffers.size(); ++i) {
         ImageBuffer* buf = m_buffers[i].get();
         if (!buf)
             break;
@@ -5930,7 +5930,8 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
     std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, Unaccelerated);
     if (!temp)
         return nullptr;
-    i = std::min(m_capacity - 1, i);
+    ASSERT(m_buffers.size() > 0);
+    i = std::min(m_buffers.size() - 1, i);
     m_buffers[i] = WTFMove(temp);
 
     ImageBuffer* buf = m_buffers[i].get();
@@ -5938,9 +5939,9 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
     return buf;
 }
 
-void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(int idx)
+void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(size_t idx)
 {
-    for (int i = idx; i > 0; --i)
+    for (size_t i = idx; i > 0; --i)
         m_buffers[i].swap(m_buffers[i-1]);
 }
 

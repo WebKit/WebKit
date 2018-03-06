@@ -45,6 +45,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/StreamBuffer.h>
 #include <wtf/Threading.h>
+#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -76,7 +77,7 @@ private:
     void didOpenSocket();
 
     struct SocketData {
-        SocketData(std::unique_ptr<char[]>&& source, size_t length)
+        SocketData(UniqueArray<char>&& source, size_t length)
         {
             data = WTFMove(source);
             size = length;
@@ -89,7 +90,7 @@ private:
             other.size = 0;
         }
 
-        std::unique_ptr<char[]> data;
+        UniqueArray<char> data;
         size_t size { 0 };
     };
 

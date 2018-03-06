@@ -89,7 +89,7 @@ void BytecodeLivenessAnalysis::computeKills(CodeBlock* codeBlock, BytecodeKills&
     FastBitVector out;
 
     result.m_codeBlock = codeBlock;
-    result.m_killSets = std::make_unique<BytecodeKills::KillSet[]>(codeBlock->instructions().size());
+    result.m_killSets = makeUniqueArray<BytecodeKills::KillSet>(codeBlock->instructions().size());
     
     for (std::unique_ptr<BytecodeBasicBlock>& block : m_graph.basicBlocksInReverseOrder()) {
         if (block->isEntryBlock() || block->isExitBlock())

@@ -517,9 +517,8 @@ protected:
         // The pointer returned is owned by the image buffer map.
         ImageBuffer* imageBuffer(const IntSize& size);
     private:
-        void bubbleToFront(int idx);
-        std::unique_ptr<std::unique_ptr<ImageBuffer>[]> m_buffers;
-        int m_capacity;
+        void bubbleToFront(size_t idx);
+        Vector<std::unique_ptr<ImageBuffer>> m_buffers;
     };
     LRUImageBufferCache m_generatedImageCache { 0 };
 

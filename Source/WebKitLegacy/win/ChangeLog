@@ -1,3 +1,22 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix std::make_unique / new[] using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=182975
+
+        Reviewed by JF Bastien.
+
+        Use Vector instead.
+
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::safeArrayToStringArray):
+        (MarshallingHelpers::safeArrayToIntArray):
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        * WebPreferences.cpp:
+        (WebPreferences::copyWebKitPreferencesToCFPreferences):
+        * WebView.cpp:
+        (WebView::onMenuCommand):
+
 2018-03-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Move currentCPUTime and sleep(Seconds) to CPUTime.h and Seconds.h respectively

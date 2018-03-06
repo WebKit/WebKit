@@ -450,12 +450,12 @@ static CString getShaderLog(GLuint shader)
     if (!logLength)
         return { };
 
-    auto info = std::make_unique<GLchar[]>(logLength);
+    Vector<GLchar> info(logLength);
     GLsizei infoLength = 0;
-    glGetShaderInfoLog(shader, logLength, &infoLength, info.get());
+    glGetShaderInfoLog(shader, logLength, &infoLength, info.data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return { info.get(), stringLength };
+    return { info.data(), stringLength };
 }
 
 static CString getProgramLog(GLuint program)
@@ -465,12 +465,12 @@ static CString getProgramLog(GLuint program)
     if (!logLength)
         return { };
 
-    auto info = std::make_unique<GLchar[]>(logLength);
+    Vector<GLchar> info(logLength);
     GLsizei infoLength = 0;
-    glGetProgramInfoLog(program, logLength, &infoLength, info.get());
+    glGetProgramInfoLog(program, logLength, &infoLength, info.data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return { info.get(), stringLength };
+    return { info.data(), stringLength };
 }
 #endif
 

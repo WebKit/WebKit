@@ -38,6 +38,7 @@
 
 #include <pal/SessionID.h>
 #include <wtf/StreamBuffer.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -76,7 +77,7 @@ private:
     GRefPtr<GPollableOutputStream> m_outputStream;
     GRefPtr<GSource> m_writeReadySource;
     GRefPtr<GCancellable> m_cancellable;
-    std::unique_ptr<char[]> m_readBuffer;
+    UniqueArray<char> m_readBuffer;
 
     StreamBuffer<char, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;

@@ -69,6 +69,7 @@
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/text/SymbolRegistry.h>
 #include <wtf/text/WTFString.h>
 #if ENABLE(REGEXP_TRACING)
@@ -685,7 +686,7 @@ public:
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     static constexpr size_t patternContextBufferSize = 8192; // Space allocated to save nested parenthesis context
-    char* m_regExpPatternContexBuffer { nullptr };
+    UniqueArray<char> m_regExpPatternContexBuffer;
     Lock m_regExpPatternContextLock;
     char* acquireRegExpPatternContexBuffer();
     void releaseRegExpPatternContexBuffer();

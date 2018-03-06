@@ -28,6 +28,7 @@
 #include "CellList.h"
 #include "Heap.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/UniqueArray.h>
 
 namespace JSC {
 
@@ -64,6 +65,8 @@ public:
 
 private:
     struct GCCycle {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
         GCCycle()
             : before("Before Marking")
             , after("After Marking")
@@ -107,7 +110,7 @@ private:
     int m_currentCycle;
     int m_numberOfCycles;
     bool m_didPrintLogs { false };
-    std::unique_ptr<GCCycle[]> m_cycles;
+    UniqueArray<GCCycle> m_cycles;
 };
 
 } // namespace JSC

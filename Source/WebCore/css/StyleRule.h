@@ -26,6 +26,7 @@
 #include "StyleProperties.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -149,7 +150,7 @@ public:
     CompiledSelector& compiledSelectorForListIndex(unsigned index)
     {
         if (!m_compiledSelectors)
-            m_compiledSelectors = std::make_unique<CompiledSelector[]>(m_selectorList.listSize());
+            m_compiledSelectors = makeUniqueArray<CompiledSelector>(m_selectorList.listSize());
         return m_compiledSelectors[index];
     }
     void releaseCompiledSelectors() const
@@ -170,7 +171,7 @@ private:
     CSSSelectorList m_selectorList;
 
 #if ENABLE(CSS_SELECTOR_JIT)
-    mutable std::unique_ptr<CompiledSelector[]> m_compiledSelectors;
+    mutable UniqueArray<CompiledSelector> m_compiledSelectors;
 #endif
 };
 

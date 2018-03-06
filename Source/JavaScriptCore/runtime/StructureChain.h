@@ -29,6 +29,7 @@
 #include "JSObject.h"
 #include "Structure.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 
 namespace JSC {
 
@@ -70,7 +71,7 @@ protected:
         for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
             ++size;
 
-        std::unique_ptr<WriteBarrier<Structure>[]> vector = std::make_unique<WriteBarrier<Structure>[]>(size + 1);
+        auto vector = makeUniqueArray<WriteBarrier<Structure>>(size + 1);
 
         size_t i = 0;
         for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
@@ -85,7 +86,7 @@ private:
     friend class LLIntOffsetsExtractor;
 
     StructureChain(VM&, Structure*);
-    std::unique_ptr<WriteBarrier<Structure>[]> m_vector;
+    UniqueArray<WriteBarrier<Structure>> m_vector;
 };
 
 } // namespace JSC

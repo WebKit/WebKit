@@ -478,7 +478,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     // but it would premultiply the alpha channel as a side effect.
     // Prefer to mannually Convert 16bit per-component formats to RGBA8 formats instead.
     if (bitsPerComponent == 16) {
-        m_formalizedRGBA8Data = std::make_unique<uint8_t[]>(m_imageWidth * m_imageHeight * 4);
+        m_formalizedRGBA8Data = makeUniqueArray<uint8_t>((Checked<size_t>(m_imageWidth) * m_imageHeight * 4U).unsafeGet());
         const uint16_t* source = reinterpret_cast<const uint16_t*>(m_imagePixelData);
         uint8_t* destination = m_formalizedRGBA8Data.get();
         const ptrdiff_t srcStrideInElements = bytesPerRow / sizeof(uint16_t);

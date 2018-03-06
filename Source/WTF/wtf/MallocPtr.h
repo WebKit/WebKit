@@ -66,6 +66,11 @@ public:
         return std::exchange(m_ptr, nullptr);
     }
 
+    explicit operator bool() const
+    {
+        return m_ptr;
+    }
+
     bool operator!() const
     {
         return !m_ptr;

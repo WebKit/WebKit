@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CodeBlock.h"
+#include <wtf/UniqueArray.h>
 
 namespace JSC {
 
@@ -74,6 +75,7 @@ private:
     friend class BytecodeLivenessAnalysis;
 
     class KillSet {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         KillSet()
             : m_word(0)
@@ -170,7 +172,7 @@ private:
     };
     
     CodeBlock* m_codeBlock;
-    std::unique_ptr<KillSet[]> m_killSets;
+    UniqueArray<KillSet> m_killSets;
 };
 
 } // namespace JSC

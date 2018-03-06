@@ -31,6 +31,7 @@
 #include "CallVariant.h"
 #include "GCAwareJITStubRoutine.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -84,7 +85,7 @@ public:
     PolymorphicCallStubRoutine(
         const MacroAssemblerCodeRef&, VM&, const JSCell* owner,
         ExecState* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
-        std::unique_ptr<uint32_t[]> fastCounts);
+        UniqueArray<uint32_t>&& fastCounts);
     
     virtual ~PolymorphicCallStubRoutine();
     
@@ -100,7 +101,7 @@ protected:
 
 private:
     Vector<WriteBarrier<JSCell>, 2> m_variants;
-    std::unique_ptr<uint32_t[]> m_fastCounts;
+    UniqueArray<uint32_t> m_fastCounts;
     Bag<PolymorphicCallNode> m_callNodes;
 };
 

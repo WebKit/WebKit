@@ -54,6 +54,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/ThreadSpecific.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -168,7 +169,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
         return;
     int totalBytes = totalBytesChecked.unsafeGet();
 
-    auto pixels = std::make_unique<unsigned char[]>(totalBytes);
+    auto pixels = makeUniqueArray<unsigned char>(totalBytes);
     if (!pixels)
         return;
 
@@ -668,11 +669,11 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
 
     if (length) {
         GLsizei size = 0;
-        auto info = std::make_unique<GLchar[]>(length);
-        ::glGetShaderInfoLog(shader, length, &size, info.get());
+        Vector<GLchar> info(length);
+        ::glGetShaderInfoLog(shader, length, &size, info.data());
 
         Platform3DObject shaders[2] = { shader, 0 };
-        entry.log = getUnmangledInfoLog(shaders, 1, String(info.get()));
+        entry.log = getUnmangledInfoLog(shaders, 1, String(info.data(), size));
     }
 
     if (compileStatus != GL_TRUE) {
@@ -851,18 +852,18 @@ bool GraphicsContext3D::getActiveAttribImpl(Platform3DObject program, GC3Duint i
     makeContextCurrent();
     GLint maxAttributeSize = 0;
     ::glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeSize);
-    auto name = std::make_unique<GLchar[]>(maxAttributeSize); // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes null termination.
+    Vector<GLchar> name(maxAttributeSize); // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes null termination.
     GLsizei nameLength = 0;
     GLint size = 0;
     GLenum type = 0;
-    ::glGetActiveAttrib(program, index, maxAttributeSize, &nameLength, &size, &type, name.get());
+    ::glGetActiveAttrib(program, index, maxAttributeSize, &nameLength, &size, &type, name.data());
     if (!nameLength)
         return false;
     
-    String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, String(name.get(), nameLength));
+    String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, String(name.data(), nameLength));
     
 #ifndef NDEBUG
-    String uniformName(name.get(), nameLength);
+    String uniformName(name.data(), nameLength);
     LOG(WebGL, "Program %d is mapping active attribute %d from '%s' to '%s'", program, index, uniformName.utf8().data(), originalName.utf8().data());
 #endif
 
@@ -898,18 +899,18 @@ bool GraphicsContext3D::getActiveUniformImpl(Platform3DObject program, GC3Duint 
     GLint maxUniformSize = 0;
     ::glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformSize);
 
-    auto name = std::make_unique<GLchar[]>(maxUniformSize); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination.
+    Vector<GLchar> name(maxUniformSize); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination.
     GLsizei nameLength = 0;
     GLint size = 0;
     GLenum type = 0;
-    ::glGetActiveUniform(program, index, maxUniformSize, &nameLength, &size, &type, name.get());
+    ::glGetActiveUniform(program, index, maxUniformSize, &nameLength, &size, &type, name.data());
     if (!nameLength)
         return false;
     
-    String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_UNIFORM, String(name.get(), nameLength));
+    String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_UNIFORM, String(name.data(), nameLength));
     
 #ifndef NDEBUG
-    String uniformName(name.get(), nameLength);
+    String uniformName(name.data(), nameLength);
     LOG(WebGL, "Program %d is mapping active uniform %d from '%s' to '%s'", program, index, uniformName.utf8().data(), originalName.utf8().data());
 #endif
     
@@ -1699,14 +1700,14 @@ String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
         return String(); 
 
     GLsizei size = 0;
-    auto info = std::make_unique<GLchar[]>(length);
-    ::glGetProgramInfoLog(program, length, &size, info.get());
+    Vector<GLchar> info(length);
+    ::glGetProgramInfoLog(program, length, &size, info.data());
 
     GC3Dsizei count;
     Platform3DObject shaders[2];
     getAttachedShaders(program, 2, &count, shaders);
 
-    return getUnmangledInfoLog(shaders, count, String(info.get()));
+    return getUnmangledInfoLog(shaders, count, String(info.data(), size));
 }
 
 void GraphicsContext3D::getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value)
@@ -1770,11 +1771,11 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
         return String(); 
 
     GLsizei size = 0;
-    auto info = std::make_unique<GLchar[]>(length);
-    ::glGetShaderInfoLog(shader, length, &size, info.get());
+    Vector<GLchar> info(length);
+    ::glGetShaderInfoLog(shader, length, &size, info.data());
 
     Platform3DObject shaders[2] = { shader, 0 };
-    return getUnmangledInfoLog(shaders, 1, String(info.get()));
+    return getUnmangledInfoLog(shaders, 1, String(info.data(), size));
 }
 
 String GraphicsContext3D::getShaderSource(Platform3DObject shader)

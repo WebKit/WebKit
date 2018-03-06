@@ -44,6 +44,7 @@
 #include "Color.h"
 #include <png.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UniqueArray.h>
 
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
 #define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
@@ -120,7 +121,6 @@ public:
         , m_currentBufferSize(0)
         , m_decodingSizeOnly(false)
         , m_hasAlpha(false)
-        , m_interlaceBuffer(0)
     {
         m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
         m_info = png_create_info_struct(m_png);
@@ -143,8 +143,7 @@ public:
         if (m_png && m_info)
             // This will zero the pointers.
             png_destroy_read_struct(&m_png, &m_info, 0);
-        delete[] m_interlaceBuffer;
-        m_interlaceBuffer = 0;
+        m_interlaceBuffer.reset();
         m_readOffset = 0;
     }
 
@@ -188,8 +187,8 @@ public:
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     bool hasAlpha() const { return m_hasAlpha; }
 
-    png_bytep interlaceBuffer() const { return m_interlaceBuffer; }
-    void createInterlaceBuffer(int size) { m_interlaceBuffer = new png_byte[size]; }
+    png_bytep interlaceBuffer() const { return m_interlaceBuffer.get(); }
+    void createInterlaceBuffer(int size) { m_interlaceBuffer = makeUniqueArray<png_byte>(size); }
 
 private:
     png_structp m_png;
@@ -198,7 +197,7 @@ private:
     unsigned m_currentBufferSize;
     bool m_decodingSizeOnly;
     bool m_hasAlpha;
-    png_bytep m_interlaceBuffer;
+    UniqueArray<png_byte> m_interlaceBuffer;
 };
 
 PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)

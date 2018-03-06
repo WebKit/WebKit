@@ -38,6 +38,7 @@
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <d2d1.h>
 #include <wtf/Assertions.h>
+#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -134,7 +135,7 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     unsigned srcBytesPerRow = 4 * sourceSize.width();
     const uint8_t* srcRows = source.data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
 
-    uint8_t* row = new uint8_t[srcBytesPerRow];
+    auto row = makeUniqueArray<uint8_t>(srcBytesPerRow);
 
     for (int y = 0; y < height.unsafeGet(); ++y) {
         for (int x = 0; x < width.unsafeGet(); x++) {
@@ -146,17 +147,15 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
                 row[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
                 row[basex + 3] = alpha;
             } else
-                reinterpret_cast<uint32_t*>(row + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+                reinterpret_cast<uint32_t*>(row.get() + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
         }
 
         D2D1_RECT_U dstRect = D2D1::RectU(destPoint.x(), destPoint.y() + y, destPoint.x() + size.width(), destPoint.y() + y + 1);
-        hr = bitmap->CopyFromMemory(&dstRect, row, srcBytesPerRow);
+        hr = bitmap->CopyFromMemory(&dstRect, row.get(), srcBytesPerRow);
         ASSERT(SUCCEEDED(hr));
 
         srcRows += srcBytesPerRow;
     }
-
-    delete[] row;
 }
 
 } // namespace WebCore

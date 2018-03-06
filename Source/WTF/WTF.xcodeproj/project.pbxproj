@@ -601,6 +601,7 @@
 		DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicUtilities.cpp; sourceTree = "<group>"; };
 		E15556F418A0CC18006F48FB /* CryptographicUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicUtilities.h; sourceTree = "<group>"; };
+		E300E521203D645F00DA79BE /* UniqueArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueArray.h; sourceTree = "<group>"; };
 		E311FB151F0A568B003C08DE /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
@@ -1081,6 +1082,7 @@
 				149EF16216BBFE0D000A4331 /* TriState.h */,
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
 				A8A4735C151A825B004123FF /* UnionFind.h */,
+				E300E521203D645F00DA79BE /* UniqueArray.h */,
 				5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */,
 				CD7600FF1F90A3CA00026E26 /* UnsafePointer.h */,
 				7AFEC6B01EB22B5900DADE36 /* UUID.cpp */,

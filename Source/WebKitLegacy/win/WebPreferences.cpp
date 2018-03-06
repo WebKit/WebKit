@@ -534,9 +534,9 @@ void WebPreferences::copyWebKitPreferencesToCFPreferences(CFDictionaryRef dict)
     CFStringRef didRemoveDefaultsKey = CFSTR(WebKitDidMigrateDefaultSettingsFromSafari3BetaPreferenceKey);
     bool omitDefaults = !booleanValueForPreferencesValue(CFDictionaryGetValue(dict, didRemoveDefaultsKey));
 
-    auto keys = std::make_unique<CFTypeRef[]>(count);
-    auto values = std::make_unique<CFTypeRef[]>(count);
-    CFDictionaryGetKeysAndValues(dict, keys.get(), values.get());
+    Vector<CFTypeRef> keys(count);
+    Vector<CFTypeRef> values(count);
+    CFDictionaryGetKeysAndValues(dict, keys.data(), values.data());
 
     for (int i = 0; i < count; ++i) {
         if (!keys[i] || !values[i] || CFGetTypeID(keys[i]) != CFStringGetTypeID())

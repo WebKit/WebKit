@@ -1,3 +1,18 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix std::make_unique / new[] using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=182975
+
+        Reviewed by JF Bastien.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/UniqueArray.cpp: Copied from Source/WebKit/Platform/win/LoggingWin.cpp.
+        (TestWebKitAPI::NonTrivialDestructor::NonTrivialDestructor):
+        (TestWebKitAPI::NonTrivialDestructor::~NonTrivialDestructor):
+        (TestWebKitAPI::NonTrivialDestructor::setLog):
+        (TestWebKitAPI::TEST):
+
 2018-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         DumpRenderTree build fix

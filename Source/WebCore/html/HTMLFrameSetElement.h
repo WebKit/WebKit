@@ -24,7 +24,7 @@
 #pragma once
 
 #include "HTMLElement.h"
-#include <memory>
+#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -67,8 +67,8 @@ private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
-    std::unique_ptr<Length[]> m_rowLengths;
-    std::unique_ptr<Length[]> m_colLengths;
+    UniqueArray<Length> m_rowLengths;
+    UniqueArray<Length> m_colLengths;
 
     int m_totalRows;
     int m_totalCols;

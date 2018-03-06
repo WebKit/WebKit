@@ -47,7 +47,7 @@
 
 namespace JSC { namespace LLInt {
 
-Instruction* Data::s_exceptionInstructions = 0;
+Instruction Data::s_exceptionInstructions[maxOpcodeLength + 1] = { };
 Opcode Data::s_opcodeMap[numOpcodeIDs] = { };
 OpcodeStatsArray* Data::s_opcodeStatsArray = nullptr;
 
@@ -57,8 +57,6 @@ extern "C" void llint_entry(void*);
 
 void initialize()
 {
-    Data::s_exceptionInstructions = new Instruction[maxOpcodeLength + 1];
-
 #if !ENABLE(JIT)
     CLoop::initialize();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include <wtf/UniqueArray.h>
 
-#if ENABLE(CSS_SELECTOR_JIT)
+using namespace WTF;
 
-#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+namespace TestWebKitAPI {
 
-namespace WebCore {
-
-class SelectorCompilationStatus {
+static unsigned numberOfConstructions { 0 };
+class NonTrivialDestructor {
 public:
-    enum Status {
-        NotCompiled,
-        CannotCompile,
-        SimpleSelectorChecker,
-        SelectorCheckerWithCheckingContext
-    };
+    NonTrivialDestructor()
+    {
+        numberOfConstructions++;
+    }
 
-    SelectorCompilationStatus()
-        : m_status(NotCompiled)
-    { }
+    ~NonTrivialDestructor()
+    {
+        (*m_log)++;
+    }
 
-    SelectorCompilationStatus(Status status)
-        : m_status(status)
-    { }
-
-    operator Status() const { return m_status; }
+    void setLog(unsigned* log)
+    {
+        m_log = log;
+    }
 
 private:
-    Status m_status;
+    unsigned* m_log { nullptr };
 };
 
-struct CompiledSelector {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    SelectorCompilationStatus status;
-    JSC::MacroAssemblerCodeRef codeRef;
-#if defined(CSS_SELECTOR_JIT_PROFILING) && CSS_SELECTOR_JIT_PROFILING
-    unsigned useCount { 0 };
-#endif
-};
-
+TEST(WTF_UniqueArray, NonTrivialDestructor)
+{
+    unsigned size = 42;
+    unsigned log = 0;
+    {
+        EXPECT_EQ(0U, log);
+        auto array = makeUniqueArray<NonTrivialDestructor>(size);
+        EXPECT_EQ(0U, log);
+        EXPECT_EQ(size, numberOfConstructions);
+        for (unsigned i = 0; i < size; ++i)
+            array[i].setLog(&log);
+    }
+    EXPECT_EQ(log, size);
 }
 
-#endif
+TEST(WTF_UniqueArray, TrivialDestructor)
+{
+    unsigned size = 42;
+    {
+        auto array = makeUniqueArray<unsigned>(size);
+        for (unsigned i = 0; i < size; ++i) {
+            EXPECT_EQ(0U, array[i]) << i;
+            array[i] = 42;
+        }
+        for (unsigned i = 0; i < size; ++i)
+            EXPECT_EQ(42U, array[i]);
+    }
+}
+
+} // namespace TestWebKitAPI

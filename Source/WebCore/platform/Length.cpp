@@ -89,7 +89,7 @@ static unsigned countCharacter(StringImpl& string, UChar character)
     return count;
 }
 
-std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
+UniqueArray<Length> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
     StringBuffer<UChar> spacified(length);
@@ -105,7 +105,7 @@ std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
     str = str->simplifyWhiteSpace();
 
     len = countCharacter(*str, ' ') + 1;
-    auto r = std::make_unique<Length[]>(len);
+    auto r = makeUniqueArray<Length>(len);
 
     int i = 0;
     unsigned pos = 0;
@@ -123,7 +123,7 @@ std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
     return r;
 }
 
-std::unique_ptr<Length[]> newLengthArray(const String& string, int& len)
+UniqueArray<Length> newLengthArray(const String& string, int& len)
 {
     RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
     if (!str->length()) {
@@ -132,7 +132,7 @@ std::unique_ptr<Length[]> newLengthArray(const String& string, int& len)
     }
 
     len = countCharacter(*str, ',') + 1;
-    auto r = std::make_unique<Length[]>(len);
+    auto r = makeUniqueArray<Length>(len);
 
     int i = 0;
     unsigned pos = 0;

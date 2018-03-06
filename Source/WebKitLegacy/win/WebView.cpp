@@ -1784,8 +1784,8 @@ void WebView::onMenuCommand(WPARAM wParam, LPARAM lParam)
     menuItemInfo.fMask = MIIM_STRING;
     ::GetMenuItemInfo(hMenu, index, true, &menuItemInfo);
 
-    auto buffer = std::make_unique<WCHAR[]>(menuItemInfo.cch + 1);
-    menuItemInfo.dwTypeData = buffer.get();
+    Vector<WCHAR> buffer(menuItemInfo.cch + 1);
+    menuItemInfo.dwTypeData = buffer.data();
     menuItemInfo.cch++;
     menuItemInfo.fMask |= MIIM_ID;
 
@@ -1794,7 +1794,7 @@ void WebView::onMenuCommand(WPARAM wParam, LPARAM lParam)
     ::DestroyMenu(m_currentContextMenu);
     m_currentContextMenu = nullptr;
 
-    String title(buffer.get(), menuItemInfo.cch);
+    String title(buffer.data(), menuItemInfo.cch);
     ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
 
     if (action >= ContextMenuItemBaseApplicationTag) {

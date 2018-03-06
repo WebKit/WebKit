@@ -44,6 +44,7 @@ G_END_DECLS
 
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -107,7 +108,7 @@ private:
 #if USE(WEBAUDIO_GSTREAMER)
     GstFFTF32* m_fft;
     GstFFTF32* m_inverseFft;
-    std::unique_ptr<GstFFTF32Complex[]> m_complexData;
+    UniqueArray<GstFFTF32Complex> m_complexData;
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_GSTREAMER)

@@ -43,7 +43,7 @@ HeapVerifier::HeapVerifier(Heap* heap, unsigned numberOfGCCyclesToRecord)
     , m_numberOfCycles(numberOfGCCyclesToRecord)
 {
     RELEASE_ASSERT(m_numberOfCycles > 0);
-    m_cycles = std::make_unique<GCCycle[]>(m_numberOfCycles);
+    m_cycles = makeUniqueArray<GCCycle>(m_numberOfCycles);
 }
 
 const char* HeapVerifier::phaseName(HeapVerifier::Phase phase)

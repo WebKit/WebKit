@@ -163,34 +163,33 @@ void SandboxExtension::HandleArray::allocate(size_t size)
     if (!size)
         return;
 
-    ASSERT(!m_data);
+    ASSERT(m_data.isEmpty());
 
-    m_data = std::make_unique<SandboxExtension::Handle[]>(size);
-    m_size = size;
+    m_data.resize(size);
 }
 
 SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_size); 
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < m_data.size());
     return m_data[i];
 }
 
 const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_size);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < m_data.size());
     return m_data[i];
 }
 
 size_t SandboxExtension::HandleArray::size() const
 {
-    return m_size;
+    return m_data.size();
 }
 
 void SandboxExtension::HandleArray::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<uint64_t>(size());
-    for (size_t i = 0; i < m_size; ++i)
-        encoder << m_data[i];
+    for (auto& handle : m_data)
+        encoder << handle;
 }
 
 bool SandboxExtension::HandleArray::decode(IPC::Decoder& decoder, SandboxExtension::HandleArray& handles)

@@ -1,3 +1,27 @@
+2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix std::make_unique / new[] using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=182975
+
+        Reviewed by JF Bastien.
+
+        Use Vector instead.
+
+        * NetworkProcess/win/SystemProxyWin.cpp:
+        (WindowsSystemProxy::getSystemHttpProxy):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        (IPC::Connection::sendOutputMessage):
+        * Platform/win/LoggingWin.cpp:
+        (WebKit::logLevelString):
+        * Shared/SandboxExtension.h:
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::HandleArray::allocate):
+        (WebKit::SandboxExtension::HandleArray::operator[]):
+        (WebKit::SandboxExtension::HandleArray::operator[] const):
+        (WebKit::SandboxExtension::HandleArray::size const):
+        (WebKit::SandboxExtension::HandleArray::encode const):
+
 2018-03-05  Andy Estes  <aestes@apple.com>
 
         [Mac] Teach WebCore::Pasteboard about file promise drags

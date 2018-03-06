@@ -40,6 +40,7 @@
 #include "Region.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -340,7 +341,7 @@ void flipImageSurfaceVertically(cairo_surface_t* surface)
     int halfHeight = size.height() / 2;
 
     uint8_t* source = static_cast<uint8_t*>(cairo_image_surface_get_data(surface));
-    std::unique_ptr<uint8_t[]> tmp = std::make_unique<uint8_t[]>(stride);
+    auto tmp = makeUniqueArray<uint8_t>(stride);
 
     for (int i = 0; i < halfHeight; ++i) {
         uint8_t* top = source + (i * stride);
