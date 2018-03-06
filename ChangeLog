@@ -1,3 +1,9 @@
+2018-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.92 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-03-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] configure failure for aarch64

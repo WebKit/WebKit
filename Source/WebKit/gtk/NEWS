@@ -1,4 +1,22 @@
 ==================
+WebKitGTK+ 2.19.92
+==================
+
+What's new in WebKitGTK+ 2.19.92?
+
+  - Ensure DNS prefetching cannot be re-enabled if disabled by settings.
+  - Fix seek sometimes not working.
+  - Fix rendering of emojis that were using the wrong scale factor in some cases.
+  - Fix rendering of combining enclosed keycap.
+  - Fix rendering scale of some layers in HiDPI.
+  - Fix a crash in Wayland when closing the web view.
+  - Fix crashes upower crashes when running inside a chroot or on systems with broken dbus/upower.
+  - Fix memory leaks in GStreamer media backend when using GStreamer 1.14.
+  - Fix the build with Enchant 2.x.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Indonesian.
+
+==================
 WebKitGTK+ 2.19.91
 ==================
 
