@@ -1,3 +1,10 @@
+2018-03-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix.
+
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+
 2018-03-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add a new runtime flag to control whether CSS Animations and CSS Transitions should run using the Web Animations timeline
