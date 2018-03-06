@@ -1,3 +1,15 @@
+2018-03-05  Michael Saboff  <msaboff@apple.com>
+
+        Start using MAP_JIT for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=183353
+
+        Reviewed by Filip Pizlo.
+
+        Unify setting this flag for both iOS and macOS.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+
 2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, follow-up after r229209

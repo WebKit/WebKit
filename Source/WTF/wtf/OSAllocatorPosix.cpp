@@ -71,7 +71,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
         protection |= PROT_EXEC;
 
     int flags = MAP_PRIVATE | MAP_ANON;
-#if PLATFORM(IOS)
+#if OS(DARWIN)
     if (executable)
         flags |= MAP_JIT;
 #endif
