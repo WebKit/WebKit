@@ -62,6 +62,8 @@ public:
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomicString& className) const;
     const Vector<InvalidationRuleSet>* attributeInvalidationRuleSets(const AtomicString& attributeName) const;
 
+    bool hasComplexSelectorsForStyleAttribute() const;
+
     void setIsForShadowScope() { m_isForShadowScope = true; }
 
     void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = b; }
@@ -94,6 +96,7 @@ private:
     mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
     mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
+    mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 };
 
 inline const RuleFeatureSet& DocumentRuleSets::features() const

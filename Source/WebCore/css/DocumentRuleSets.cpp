@@ -169,6 +169,7 @@ void DocumentRuleSets::collectFeatures() const
 
     m_classInvalidationRuleSets.clear();
     m_attributeInvalidationRuleSets.clear();
+    m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
 
     m_features.shrinkToFit();
 }
@@ -208,6 +209,25 @@ const Vector<InvalidationRuleSet>* DocumentRuleSets::classInvalidationRuleSets(c
 const Vector<InvalidationRuleSet>* DocumentRuleSets::attributeInvalidationRuleSets(const AtomicString& attributeName) const
 {
     return ensureInvalidationRuleSets(attributeName, m_attributeInvalidationRuleSets, m_features.attributeRules);
+}
+
+bool DocumentRuleSets::hasComplexSelectorsForStyleAttribute() const
+{
+    auto compute = [&] {
+        auto* ruleSets = attributeInvalidationRuleSets(HTMLNames::styleAttr->localName());
+        if (!ruleSets)
+            return false;
+        for (auto& ruleSet : *ruleSets) {
+            if (ruleSet.matchElement != MatchElement::Subject)
+                return true;
+        }
+        return false;
+    };
+
+    if (!m_cachedHasComplexSelectorsForStyleAttribute)
+        m_cachedHasComplexSelectorsForStyleAttribute = compute();
+
+    return *m_cachedHasComplexSelectorsForStyleAttribute;
 }
 
 } // namespace WebCore

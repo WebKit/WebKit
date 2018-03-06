@@ -1,3 +1,23 @@
+2018-03-06  Antti Koivisto  <antti@apple.com>
+
+        Cache hasComplexSelectorsForStyleAttribute bit
+        https://bugs.webkit.org/show_bug.cgi?id=183363
+
+        Reviewed by Andreas Kling.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::collectFeatures const):
+        (WebCore::DocumentRuleSets::hasComplexSelectorsForStyleAttribute const):
+
+        Cache the bit to avoid hash lookups.
+
+        * css/DocumentRuleSets.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        (WebCore::shouldSynchronizeStyleAttributeImmediatelyForInvalidation): Deleted.
+
+        Move code to DocumentRuleSets.
+
 2018-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Change the type of SVGToOTFFontConverter::m_weight to be not a char
