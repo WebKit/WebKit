@@ -1,5 +1,26 @@
 2018-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Allow user-installed fonts to be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=183349
+
+        Rubber stamped by Brent Fulgham.
+
+        Tests: fast/text/user-installed-font.html
+               fast/text/user-installed-fonts/disable.html
+               fast/text/user-installed-fonts/shadow-disable.html
+               fast/text/user-installed-fonts/shadow-family-disable.html
+               fast/text/user-installed-fonts/shadow-family.html
+               fast/text/user-installed-fonts/shadow-postscript-disable.html
+               fast/text/user-installed-fonts/shadow-postscript-family-disable.html
+               fast/text/user-installed-fonts/shadow-postscript-family.html
+               fast/text/user-installed-fonts/shadow-postscript.html
+               fast/text/user-installed-fonts/shadow.html
+               fast/text/user-installed-fonts/system-ui.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+
+2018-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Silence OpenGL and OpenGL ES deprecation warnings in newer SDKs
         https://bugs.webkit.org/show_bug.cgi?id=183350
 
