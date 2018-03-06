@@ -1,3 +1,12 @@
+2018-03-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Silence OpenGL and OpenGL ES deprecation warnings in newer SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=183350
+
+        Unreviewed.
+
+        * Configurations/WebCore.xcconfig:
+
 2018-03-05  Andy Estes  <aestes@apple.com>
 
         [Mac] Teach WebCore::Pasteboard about file promise drags
