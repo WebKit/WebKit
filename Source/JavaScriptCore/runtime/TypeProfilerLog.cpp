@@ -46,7 +46,7 @@ TypeProfilerLog::TypeProfilerLog()
     , m_currentLogEntryPtr(m_logStartPtr)
     , m_logEndPtr(m_logStartPtr + m_logSize)
 {
-    ASSERT(!m_logStartPtr);
+    ASSERT(m_logStartPtr);
 }
 
 TypeProfilerLog::~TypeProfilerLog()
