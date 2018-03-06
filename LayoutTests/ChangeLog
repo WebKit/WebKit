@@ -1,3 +1,17 @@
+2018-03-05  Yoav Weiss  <yoav@yoav.ws>
+
+        Support for preconnect Link headers
+        https://bugs.webkit.org/show_bug.cgi?id=181657
+
+        Reviewed by Darin Adler.
+
+        Add test to see Link preconnect headers trigger a connection.
+
+        * http/tests/preconnect/link-header-rel-preconnect-http-expected.txt: Added.
+        * http/tests/preconnect/link-header-rel-preconnect-http.html: Added.
+        * http/tests/preconnect/resources/header-preconnect.php: Added.
+        * platform/win/TestExpectations: Skipped the preconnect test directory, rather than the individual files in it.
+
 2018-03-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html as slow.
