@@ -273,9 +273,6 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 {
     PaymentAuthorizationResult convertedResult;
 
-    std::optional<ApplePayError::Code> errorCode;
-    std::optional<ApplePayError::ContactField> contactField;
-
     switch (result.status) {
     case ApplePaySession::STATUS_SUCCESS:
         convertedResult.status = PaymentAuthorizationStatus::Success;

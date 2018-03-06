@@ -1,3 +1,10 @@
+2018-03-05  Andy Estes  <aestes@apple.com>
+
+        [Mac] Fix the build
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate): Removed unused variables.
+
 2018-03-05  Antti Koivisto  <antti@apple.com>
 
         Don't invalidate all children when doing insertion/deletion in presence of backward positional selectors
