@@ -1,3 +1,28 @@
+2018-03-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Ensure system appearance is default for web content
+        https://bugs.webkit.org/show_bug.cgi?id=183354
+        <rdar://problem/36975571>
+        <rdar://problem/38162381>
+
+        Make sure the the system appearance for web content is default, and
+        consolidate that code to a single class.
+
+        Reviewed by Tim Horton.
+
+        Not currently testable, will add tests in a future patch.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/LocalDefaultSystemAppearance.h: Added.
+        * platform/mac/LocalDefaultSystemAppearance.mm: Added.
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+        (WebCore::LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance):
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreThemeView init]):
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2018-03-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add a new runtime flag to control whether CSS Animations and CSS Transitions should run using the Web Animations timeline

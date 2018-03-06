@@ -45,6 +45,7 @@
 #import "Image.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
 #import "Page.h"
@@ -494,6 +495,7 @@ void RenderThemeMac::platformColorsDidChange()
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
 {
+    LocalDefaultSystemAppearance localAppearence;
     return m_systemColorCache.ensure(cssValueID, [this, cssValueID] () -> Color {
         auto selectCocoaColor = [cssValueID] () -> SEL {
             switch (cssValueID) {

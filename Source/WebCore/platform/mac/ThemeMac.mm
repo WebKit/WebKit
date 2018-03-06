@@ -34,6 +34,7 @@
 #import "ImageBuffer.h"
 #import "LengthSize.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "ScrollView.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
@@ -66,6 +67,16 @@ static BOOL themeWindowHasKeyAppearance;
 @end
 
 @implementation WebCoreThemeView
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    WebCore::LocalDefaultSystemAppearance localAppearence;
+    [self setAppearance:[NSAppearance currentAppearance]];
+    return self;
+}
 
 - (NSWindow *)window
 {
@@ -676,6 +687,7 @@ static inline bool drawCellOrFocusRingIntoRectWithView(NSCell *cell, NSRect rect
 bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsContext& context, const FloatRect& rect, NSView *view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
 {
     ASSERT(drawButtonCell || drawFocusRing);
+    LocalDefaultSystemAppearance localAppearence;
     bool needsRepaint = false;
     if (useImageBuffer) {
         NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
