@@ -359,13 +359,13 @@ private:
 
     void urlSelected(FrameLoadRequest&&, Event*);
 
-    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, FormState*, AllowNavigationToInvalidURL); // Calls continueLoadAfterNavigationPolicy
+    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, FormState*, AllowNavigationToInvalidURL, CompletionHandler<void()>&&); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*); // Calls loadWithDocumentLoader
 
-    void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&, LockHistory, FrameLoadType, FormState*, AllowNavigationToInvalidURL); // Calls loadWithDocumentLoader
+    void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&, LockHistory, FrameLoadType, FormState*, AllowNavigationToInvalidURL, CompletionHandler<void()>&&); // Calls loadWithDocumentLoader
 
-    void loadPostRequest(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, FormState*);
-    void loadURL(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, FormState*);
+    void loadPostRequest(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, FormState*, CompletionHandler<void()>&&);
+    void loadURL(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, FormState*, CompletionHandler<void()>&&);
 
     bool shouldReload(const URL& currentURL, const URL& destinationURL);
 

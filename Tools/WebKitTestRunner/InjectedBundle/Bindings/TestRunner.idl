@@ -316,6 +316,8 @@ interface TestRunner {
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
 
+    readonly attribute boolean didCancelClientRedirect;
+
     void removeAllSessionCredentials(object callback);
 
     void getApplicationManifestThen(object callback);

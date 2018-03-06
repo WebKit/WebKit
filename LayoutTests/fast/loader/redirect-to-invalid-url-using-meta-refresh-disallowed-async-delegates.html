@@ -4,8 +4,11 @@
 <meta http-equiv="refresh" content="0; url=http://A=a%B=b">
 <script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpFrameLoadCallbacks();
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
 jsTestIsAsync = true;
 </script>
 </head>

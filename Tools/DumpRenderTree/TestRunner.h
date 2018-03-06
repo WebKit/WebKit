@@ -380,6 +380,9 @@ public:
     const std::vector<std::string>& openPanelFiles() const { return m_openPanelFiles; }
     void setOpenPanelFiles(JSContextRef, JSValueRef);
 
+    bool didCancelClientRedirect() const { return m_didCancelClientRedirect; }
+    void setDidCancelClientRedirect(bool value) { m_didCancelClientRedirect = value; }
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 
@@ -445,6 +448,7 @@ private:
     bool m_customFullScreenBehavior;
     bool m_hasPendingWebNotificationClick;
     bool m_dumpJSConsoleLogInStdErr { false };
+    bool m_didCancelClientRedirect { false };
 
     double m_databaseDefaultQuota;
     double m_databaseMaxQuota;

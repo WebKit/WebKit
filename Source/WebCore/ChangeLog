@@ -1,3 +1,41 @@
+2018-03-06  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html fails with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183345
+
+        Reviewed by Alex Christensen.
+
+        FrameLoader::loadURL() was calling loadWithNavigationAction() and then resetting the
+        m_quickRedirectComing flag right after. This works if the navigation policy decision
+        triggered by loadWithNavigationAction() is made synchronously. However, when it is
+        made asynchronously, the flag gets reset too early, before the policy decision
+        handler has been called. This is an issue because the policy decision handler
+        relies on the m_quickRedirectComing flag.
+
+        Similarly, FrameLoader::loadFrameRequest() was calling loadPostRequest() / loadURL()
+        and then focusing a frame right after. This does not work as intended when the navigation
+        policy decision is made asynchronously.
+
+        To address the issue, we now pass a completion handler that gets called when the operation
+        has actually completion, after the policy decision has been made. This maintains the
+        behavior in place with synchronous policy delegates.
+
+        Test: fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+
 2018-03-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add a new CSSTransition subclass of WebAnimation

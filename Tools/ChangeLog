@@ -1,3 +1,29 @@
+2018-03-06  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html fails with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183345
+
+        Reviewed by Alex Christensen.
+
+        Add layout test infrastructure so a test can know when didCancelClientRedirectForFrame has
+        been called. The tests used to rely on a 0-timer but this does not work when the client
+        responds to the navigation policy asynchronously.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (getDidCancelClientRedirect):
+        (TestRunner::staticValues):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::didCancelClientRedirect const):
+        (TestRunner::setDidCancelClientRedirect):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didCancelClientRedirectForFrame:]):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didCancelClientRedirectForFrame):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::didCancelClientRedirect const):
+        (WTR::TestRunner::setDidCancelClientRedirect):
+
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r229309): s_exceptionInstructions allocation change causing crashes in LLInt on WPE

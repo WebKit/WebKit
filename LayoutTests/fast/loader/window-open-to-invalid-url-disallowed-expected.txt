@@ -1,7 +1,15 @@
-main frame - willPerformClientRedirectToURL: http://A=a%B=b 
 main frame - didFinishDocumentLoadForFrame
+main frame - willPerformClientRedirectToURL: http://A=a%B=b 
+main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 main frame - didCancelClientRedirectForFrame
 Tests that we do not open a new window to an invalid URL. This test PASSED if you see an entry in the dumped frame load callbacks of the form: "willPerformClientRedirectToURL: http://A=a%B=b" followed by "didCancelClientRedirectForFrame".
 
-Note, this test must be run in DumpRenderTree.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS win.testRunner.didCancelClientRedirect became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

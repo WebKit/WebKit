@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
+if (window.testRunner)
     testRunner.dumpFrameLoadCallbacks();
-    testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
 </script>
 </head>
 <body>
-<p>Tests that we do not redirect to an invalid URL initiated by JavaScript. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: http://A=a%B=b&quot; followed by &quot;didCancelClientRedirectForFrame&quot;.</p>
-<p>Note, this test must be run in DumpRenderTree.</p>
 <script>
-window.location.href = "http://A=a%B=b";
-window.setTimeout(function() {
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 0);
+description("Tests that we do not redirect to an invalid URL initiated by JavaScript. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: http://A=a%B=b&quot; followed by &quot;didCancelClientRedirectForFrame&quot;.");
+onload = function() {
+    window.location.href = "http://A=a%B=b";
+    shouldBecomeEqual("testRunner.didCancelClientRedirect", "true", finishJSTest);
+}
 </script>
 </body>
 </html>

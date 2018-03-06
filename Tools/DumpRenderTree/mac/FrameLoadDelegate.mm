@@ -404,6 +404,7 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didCancelClientRedirectForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
+    gTestRunner->setDidCancelClientRedirect(true);
 }
 
 - (void)webView:(WebView *)sender didFinishDocumentLoadForFrame:(WebFrame *)frame

@@ -1,3 +1,29 @@
+2018-03-06  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html fails with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183345
+
+        Reviewed by Alex Christensen.
+
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates-expected.txt: Added.
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html: Added.
+        Add layout test coverage.
+
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt:
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html:
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-expected.txt:
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html:
+        * fast/loader/window-open-to-invalid-url-disallowed-expected.txt:
+        * fast/loader/window-open-to-invalid-url-disallowed.html:
+        * platform/mac-wk1/fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt:
+        * platform/mac-wk1/fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates-expected.txt: Added.
+        * platform/mac-wk1/fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-expected.txt:
+        * platform/mac-wk1/fast/loader/window-open-to-invalid-url-disallowed-expected.txt:
+        Update tests that were relying on a 0-timer to make sure that didCancelClientRedirectForFrame was
+        called to rely on our new test infrastructure instead. This is needed so that these tests keep passing
+        once we make policy delegates asynchronous by default. Without this, the didCancelClientRedirectForFrame lines
+        would be missing in the tests' output.
+
 2018-03-06  Youenn Fablet  <youenn@apple.com>
 
         Service worker test gardening

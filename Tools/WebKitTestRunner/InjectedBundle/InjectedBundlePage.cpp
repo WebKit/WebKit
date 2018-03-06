@@ -1006,10 +1006,10 @@ void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundleFrameRef frame)
     if (!injectedBundle.isTestRunning())
         return;
 
-    if (!injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
-        return;
+    if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
+        dumpLoadEvent(frame, "didCancelClientRedirectForFrame");
 
-    dumpLoadEvent(frame, "didCancelClientRedirectForFrame");
+    injectedBundle.testRunner()->setDidCancelClientRedirect(true);
 }
 
 void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKURLRef url, double delay, double date)
