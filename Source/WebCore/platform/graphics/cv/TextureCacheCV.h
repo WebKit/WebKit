@@ -46,12 +46,12 @@ class TextureCacheCV {
 public:
     static std::unique_ptr<TextureCacheCV> create(GraphicsContext3D&);
 
-#if PLATFORM(IOS)
-    typedef CVOpenGLESTextureCacheRef  TextureCacheType;
-    typedef CVOpenGLESTextureRef TextureType;
+#if USE(OPENGL_ES)
+    using TextureCacheType = CVOpenGLESTextureCacheRef;
+    using TextureType = CVOpenGLESTextureRef;
 #else
-    typedef CVOpenGLTextureCacheRef  TextureCacheType;
-    typedef CVOpenGLTextureRef TextureType;
+    using TextureCacheType = CVOpenGLTextureCacheRef;
+    using TextureType = CVOpenGLTextureRef;
 #endif
 
     TextureCacheCV(GraphicsContext3D&, RetainPtr<TextureCacheType>&&);

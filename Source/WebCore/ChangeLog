@@ -1,3 +1,12 @@
+2018-03-06  Daniel Bates  <dabates@apple.com>
+
+        Make more use of USE(OPENGL_ES) and replace typedefs with C++11 using statements
+        in TextureCacheCV.h
+
+        Rubber-stamped by Tim Horton.
+
+        * platform/graphics/cv/TextureCacheCV.h:
+
 2018-03-06  Antti Koivisto  <antti@apple.com>
 
         Cache hasComplexSelectorsForStyleAttribute bit
