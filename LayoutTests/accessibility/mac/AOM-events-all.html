@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test-pre.js"></script>
+<div id="content">
+
+<input type="range" min="0" max="100" value="25" step="25" id="slider"/>
+<input type="text" id="input">
+<button id="button">button</button>
+
+<select id="group" multiple="multiple">
+    <option id="option">Option 1</option>
+    <option>Option 2</option>
+</select>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests all accessibility events.");
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+       
+        var node;
+        var axNode;
+        
+        testIncrementDecrement();
+       
+        function testIncrementDecrement() {
+            debug("\nTest accessibleincrement and accessibledecrement");
+            node = document.getElementById("slider");
+            axNode = accessibilityController.accessibleElementById("slider");
+
+            node.onaccessibleincrement = function() {
+                debug("received accessibleincrement event");
+            };
+            node.onaccessibledecrement = function() {
+                debug("received accessibledecrement event");
+            };
+            axNode.increment();
+            axNode.decrement();
+
+            testFocus();
+        }
+
+        function testFocus() {
+            debug("\nTest accessiblefocus");
+            node = document.getElementById("input");
+            axNode = accessibilityController.accessibleElementById("input");
+
+            node.onaccessiblefocus = function() {
+                debug("received accessiblefocus event");
+                testScrollIntoView();
+            };
+            axNode.takeFocus();
+        }
+
+        function testScrollIntoView() {
+            debug("\nTest accessiblescrollintoview");
+            node = document.getElementById("button");
+            axNode = accessibilityController.accessibleElementById("button");
+
+            node.onaccessiblescrollintoview = function() {
+                debug("received accessiblescrollintoview event");
+                testShowContextMenu();
+            };
+            axNode.scrollToMakeVisible();
+        }
+
+        function testShowContextMenu() {
+            debug("\nTest accessiblecontextmenu");
+            node = document.getElementById("button");
+            axNode = accessibilityController.accessibleElementById("button");
+
+            node.onaccessiblecontextmenu = function() {
+                debug("received accessiblecontextmenu event");
+                testSelect();
+            };
+            axNode.showMenu();
+        }
+
+        function testSelect() {
+            debug("\nTest accessibleselect");
+            node = document.getElementById("option");
+            axNode = accessibilityController.accessibleElementById("group");
+            node.onaccessibleselect = function() {
+                debug("received accessibleselect event");
+                finishJSTest();
+            }
+            axNode.setSelectedChildAtIndex(0);
+        }
+
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

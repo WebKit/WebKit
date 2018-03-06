@@ -1,3 +1,15 @@
+2018-03-06  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: More accessibility events support
+        https://bugs.webkit.org/show_bug.cgi?id=183023
+        <rdar://problem/37764380>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/AOM-events-all-expected.txt: Added.
+        * accessibility/mac/AOM-events-all.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2018-03-05  Yoav Weiss  <yoav@yoav.ws>
 
         Support for preconnect Link headers

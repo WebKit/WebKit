@@ -997,8 +997,7 @@ bool AccessibilityObject::press()
     // dispatch accessibleclick event
     if (auto* cache = axObjectCache()) {
         if (auto* pressObject = cache->getOrCreate(pressElement)) {
-            auto event = Event::create(eventNames().accessibleclickEvent, true, true);
-            if (pressObject->dispatchAccessibilityEvent(event))
+            if (pressObject->dispatchAccessibilityEventWithType(AccessibilityEventType::Click))
                 return true;
         }
     }
@@ -2153,10 +2152,12 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
     return nullAtom();
 }
 
-bool AccessibilityObject::dispatchAccessibilityEvent(Event& event)
+bool AccessibilityObject::dispatchAccessibilityEvent(Event& event) const
 {
     Vector<Element*> eventPath;
     for (auto* parentObject = this; parentObject; parentObject = parentObject->parentObject()) {
+        if (parentObject->isWebArea())
+            break;
         if (auto* parentElement = parentObject->element())
             eventPath.append(parentElement);
     }
@@ -2167,7 +2168,43 @@ bool AccessibilityObject::dispatchAccessibilityEvent(Event& event)
     return event.defaultPrevented();
 }
 
-bool AccessibilityObject::dispatchAccessibleSetValueEvent(const String& value)
+bool AccessibilityObject::dispatchAccessibilityEventWithType(AccessibilityEventType type) const
+{
+    AtomicString eventName;
+    switch (type) {
+    case AccessibilityEventType::ContextMenu:
+        eventName = eventNames().accessiblecontextmenuEvent;
+        break;
+    case AccessibilityEventType::Click:
+        eventName = eventNames().accessibleclickEvent;
+        break;
+    case AccessibilityEventType::Decrement:
+        eventName = eventNames().accessibledecrementEvent;
+        break;
+    case AccessibilityEventType::Dismiss:
+        eventName = eventNames().accessibledismissEvent;
+        break;
+    case AccessibilityEventType::Focus:
+        eventName = eventNames().accessiblefocusEvent;
+        break;
+    case AccessibilityEventType::Increment:
+        eventName = eventNames().accessibleincrementEvent;
+        break;
+    case AccessibilityEventType::ScrollIntoView:
+        eventName = eventNames().accessiblescrollintoviewEvent;
+        break;
+    case AccessibilityEventType::Select:
+        eventName = eventNames().accessibleselectEvent;
+        break;
+    default:
+        return false;
+    }
+    
+    auto event = Event::create(eventName, true, true);
+    return dispatchAccessibilityEvent(event);
+}
+
+bool AccessibilityObject::dispatchAccessibleSetValueEvent(const String& value) const
 {
     if (!canSetValueAttribute())
         return false;
@@ -2924,6 +2961,8 @@ bool AccessibilityObject::isOnscreen() const
 
 void AccessibilityObject::scrollToMakeVisible() const
 {
+    if (dispatchAccessibilityEventWithType(AccessibilityEventType::ScrollIntoView))
+        return;
     IntRect objectRect = snappedIntRect(boundingBoxRect());
     objectRect.setLocation(IntPoint());
     scrollToMakeVisibleWithSubFocus(objectRect);

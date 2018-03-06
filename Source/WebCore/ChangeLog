@@ -1,3 +1,54 @@
+2018-03-06  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: More accessibility events support
+        https://bugs.webkit.org/show_bug.cgi?id=183023
+        <rdar://problem/37764380>
+
+        Reviewed by Chris Fleizach.
+
+        Accessibility events.
+        Spec: https://wicg.github.io/aom/spec/phase2.html
+
+        This change adds support for these new events:
+          accessiblecontextmenu
+          accessibledecrement
+          accessibledismiss
+          accessiblefocus
+          accessibleincrement
+          accessiblescrollintoview
+          accessibleselect
+
+        Note: The show context menu action is only supported on macOS now.
+        The dismiss action is not implemented for all the platforms yet.
+
+        Test: accessibility/mac/AOM-events-all.html
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::setSelected):
+        * accessibility/AccessibilityMediaObject.cpp:
+        (WebCore::AccessibilityMediaObject::increment):
+        (WebCore::AccessibilityMediaObject::decrement):
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::setSelected):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::increment):
+        (WebCore::AccessibilityNodeObject::decrement):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        (WebCore::AccessibilityObject::dispatchAccessibilityEvent const):
+        (WebCore::AccessibilityObject::dispatchAccessibilityEventWithType const):
+        (WebCore::AccessibilityObject::dispatchAccessibleSetValueEvent const):
+        (WebCore::AccessibilityObject::scrollToMakeVisible const):
+        (WebCore::AccessibilityObject::dispatchAccessibilityEvent): Deleted.
+        (WebCore::AccessibilityObject::dispatchAccessibleSetValueEvent): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setFocused):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        * dom/Element.idl:
+        * dom/EventNames.h:
+
 2018-03-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Fix std::make_unique / new[] using system malloc

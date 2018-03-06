@@ -1707,6 +1707,9 @@ bool AccessibilityRenderObject::isFocused() const
 
 void AccessibilityRenderObject::setFocused(bool on)
 {
+    if (on && dispatchAccessibilityEventWithType(AccessibilityEventType::Focus))
+        return;
+    
     if (!canSetFocusAttribute())
         return;
     

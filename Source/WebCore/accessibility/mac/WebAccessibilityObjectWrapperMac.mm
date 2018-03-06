@@ -3539,6 +3539,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (!page)
         return;
     
+    if (m_object->dispatchAccessibilityEventWithType(AccessibilityEventType::ContextMenu))
+        return;
+    
     IntRect rect = snappedIntRect(m_object->elementRect());
     FrameView* frameView = m_object->documentFrameView();
     

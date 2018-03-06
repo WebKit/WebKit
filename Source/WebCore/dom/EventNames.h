@@ -45,8 +45,15 @@ namespace WebCore {
     macro(DOMNodeRemovedFromDocument) \
     macro(DOMSubtreeModified) \
     macro(abort) \
+    macro(accessiblecontextmenu) \
     macro(accessibleclick) \
+    macro(accessibledecrement) \
+    macro(accessibledismiss) \
+    macro(accessiblefocus) \
+    macro(accessibleincrement) \
+    macro(accessiblescrollintoview) \
     macro(accessiblesetvalue) \
+    macro(accessibleselect) \
     macro(activate) \
     macro(active) \
     macro(addsourcebuffer) \

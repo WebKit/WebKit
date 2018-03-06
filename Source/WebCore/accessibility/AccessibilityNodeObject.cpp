@@ -1072,12 +1072,16 @@ void AccessibilityNodeObject::alterSliderValue(bool increase)
     
 void AccessibilityNodeObject::increment()
 {
+    if (dispatchAccessibilityEventWithType(AccessibilityEventType::Increment))
+        return;
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
     alterSliderValue(true);
 }
 
 void AccessibilityNodeObject::decrement()
 {
+    if (dispatchAccessibilityEventWithType(AccessibilityEventType::Decrement))
+        return;
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
     alterSliderValue(false);
 }
