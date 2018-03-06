@@ -59,6 +59,7 @@ class NetworkTransaction(object):
                 self._sleep()
             except urllib2.URLError as e:
                 self._check_for_timeout()
+                # FIXME: Log the URL which resulted in URLError.
                 _log.warn("Received URLError: {}. Retrying in {} seconds...".format(e.reason, self._backoff_seconds))
                 self._sleep()
 

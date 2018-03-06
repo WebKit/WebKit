@@ -1,3 +1,33 @@
+2018-03-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [webkitpy] Bugzilla class should use NetworkTransaction for network operations
+        https://bugs.webkit.org/show_bug.cgi?id=183222
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.open_url): Method which uses NetworkTransaction for opening url.
+        (Bugzilla.fetch_user): Used self.open_url instead of directly calling browser.open().
+        (Bugzilla.add_user_to_groups): Ditto.
+        (Bugzilla._fetch_bug_page): Ditto.
+        (Bugzilla.fetch_attachment_contents): Ditto.
+        (Bugzilla.get_bug_id_for_attachment_id): Ditto.
+        (Bugzilla.authenticate): Ditto.
+        (Bugzilla.add_attachment_to_bug): Ditto.
+        (Bugzilla.add_patch_to_bug): Ditto.
+        (Bugzilla.create_bug): Ditto.
+        (Bugzilla.clear_attachment_flags): Ditto.
+        (Bugzilla.set_flag_on_attachment): Ditto.
+        (Bugzilla.obsolete_attachment): Ditto.
+        (Bugzilla.add_cc_to_bug): Ditto.
+        (Bugzilla.post_comment_to_bug): Ditto.
+        (Bugzilla.close_bug_as_fixed): Ditto.
+        (Bugzilla.reassign_bug): Ditto.
+        (Bugzilla.reopen_bug): Ditto.
+        (Bugzilla._fetch_bug_page_by_url): Deleted, not required anymore.
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        (NetworkTransaction.run): Added a FIXME.
+
 2018-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         dump-class-layout mishandles duplicates base classes and miscomputes padding
