@@ -53,6 +53,7 @@ public:
     ~WebAnimation();
 
     virtual bool isCSSAnimation() const { return false; }
+    virtual bool isCSSTransition() const { return false; }
 
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }

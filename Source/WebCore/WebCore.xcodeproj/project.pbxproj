@@ -8829,6 +8829,11 @@
 		711FB0751DC7688F00C4C708 /* placard-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "placard-support.js"; sourceTree = "<group>"; };
 		712157C01DCCCA0700AA7A92 /* macos-fullscreen-media-controls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "macos-fullscreen-media-controls.css"; sourceTree = "<group>"; };
 		712157C11DCCCA0700AA7A92 /* macos-fullscreen-media-controls.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "macos-fullscreen-media-controls.js"; sourceTree = "<group>"; };
+		7123C1822047399200789392 /* JSCSSTransition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSTransition.cpp; sourceTree = "<group>"; };
+		7123C1842047399300789392 /* JSCSSTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSTransition.h; sourceTree = "<group>"; };
+		7123C185204739B900789392 /* CSSTransition.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSTransition.idl; sourceTree = "<group>"; };
+		7123C186204739BA00789392 /* CSSTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSTransition.h; sourceTree = "<group>"; };
+		7123C187204739BB00789392 /* CSSTransition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTransition.cpp; sourceTree = "<group>"; };
 		71247E261FEA5F60008C08CE /* JSKeyframeAnimationOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSKeyframeAnimationOptions.h; sourceTree = "<group>"; };
 		71247E281FEA5F61008C08CE /* JSIterationCompositeOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIterationCompositeOperation.cpp; sourceTree = "<group>"; };
 		71247E291FEA5F62008C08CE /* JSKeyframeAnimationOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyframeAnimationOptions.cpp; sourceTree = "<group>"; };
@@ -15539,6 +15544,8 @@
 				7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */,
 				71B28424203CEC0B0036AA5D /* JSCSSAnimation.cpp */,
 				71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */,
+				7123C1822047399200789392 /* JSCSSTransition.cpp */,
+				7123C1842047399300789392 /* JSCSSTransition.h */,
 				71025EDB1F99F1A8004A250C /* JSDocumentTimeline.cpp */,
 				71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */,
 				712BE4841FE867C2002031CC /* JSFillMode.cpp */,
@@ -19215,6 +19222,9 @@
 				71C29E30203CE76B008F36D2 /* CSSAnimation.h */,
 				71C29E31203CE76C008F36D2 /* CSSAnimation.idl */,
 				713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */,
+				7123C187204739BB00789392 /* CSSTransition.cpp */,
+				7123C186204739BA00789392 /* CSSTransition.h */,
+				7123C185204739B900789392 /* CSSTransition.idl */,
 				71025EC41F99F096004A250C /* DocumentTimeline.cpp */,
 				71025EC51F99F096004A250C /* DocumentTimeline.h */,
 				71025ECA1F99F096004A250C /* DocumentTimeline.idl */,

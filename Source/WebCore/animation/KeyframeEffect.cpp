@@ -26,6 +26,8 @@
 #include "config.h"
 #include "KeyframeEffect.h"
 
+#include "AnimationEffectTiming.h"
+
 namespace WebCore {
 using namespace JSC;
 

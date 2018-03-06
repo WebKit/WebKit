@@ -29,6 +29,7 @@
 #include "JSAnimationEffectReadOnly.h"
 #include "JSAnimationTimeline.h"
 #include "JSCSSAnimation.h"
+#include "JSCSSTransition.h"
 #include "JSDOMConstructor.h"
 
 namespace WebCore {
@@ -39,6 +40,8 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<WebAni
 {
     if (value->isCSSAnimation())
         return createWrapper<CSSAnimation>(globalObject, WTFMove(value));
+    if (value->isCSSTransition())
+        return createWrapper<CSSTransition>(globalObject, WTFMove(value));
     return createWrapper<WebAnimation>(globalObject, WTFMove(value));
 }
 

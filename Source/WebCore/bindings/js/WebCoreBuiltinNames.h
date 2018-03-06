@@ -50,6 +50,7 @@ namespace WebCore {
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \
+    macro(CSSTransition) \
     macro(CustomElementRegistry) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \

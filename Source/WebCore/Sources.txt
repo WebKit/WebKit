@@ -337,6 +337,7 @@ animation/AnimationEffectTimingReadOnly.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
+animation/CSSTransition.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectReadOnly.cpp
@@ -2438,6 +2439,7 @@ JSCryptoKeyUsage.cpp
 JSCryptoRsaHashedKeyAlgorithm.cpp
 JSCryptoRsaKeyAlgorithm.cpp
 JSCSSAnimation.cpp
+JSCSSTransition.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSDocumentTimeline.cpp

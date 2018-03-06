@@ -1,3 +1,30 @@
+2018-03-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add a new CSSTransition subclass of WebAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=183373
+        <rdar://problem/38181985>
+
+        Reviewed by Dean Jackson.
+
+        Adding a new CSSAnimation subclass which we will create in a later patch while resolving styles
+        upon identifying that a new CSS Animation has been added to an element.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/CSSTransition.cpp: Added.
+        (WebCore::CSSTransition::create):
+        (WebCore::CSSTransition::CSSTransition):
+        * animation/CSSTransition.h: Added.
+        * animation/CSSTransition.idl: Added.
+        * animation/KeyframeEffect.cpp:
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::isCSSTransition const):
+        * bindings/js/JSWebAnimationCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-03-06  Megan Gardner  <megan_gardner@apple.com>
 
         Ensure system appearance is default for web content

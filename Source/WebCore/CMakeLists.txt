@@ -450,6 +450,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
     animation/CSSAnimation.idl
+    animation/CSSTransition.idl
     animation/CompositeOperation.idl
     animation/ComputedTimingProperties.idl
     animation/DocumentTimeline.idl
