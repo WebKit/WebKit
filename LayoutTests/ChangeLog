@@ -1,3 +1,13 @@
+2018-03-06  Youenn Fablet  <youenn@apple.com>
+
+        Service worker test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=183264
+        <rdar://problem/38048743>
+
+        Unreviewed.
+
+        * TestExpectations: mark test as slow in Debug.
+
 2018-03-06  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Add new baseline after r229177
