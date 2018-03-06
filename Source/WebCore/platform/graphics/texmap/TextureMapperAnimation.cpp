@@ -192,12 +192,12 @@ TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& oth
 {
 }
 
-void TextureMapperAnimation::apply(Client& client)
+void TextureMapperAnimation::apply(Client& client, MonotonicTime time)
 {
     if (!isActive())
         return;
 
-    Seconds totalRunningTime = computeTotalRunningTime();
+    Seconds totalRunningTime = computeTotalRunningTime(time);
     double normalizedValue = normalizedAnimationValue(totalRunningTime.seconds(), m_animation->duration(), m_animation->direction(), m_animation->iterationCount());
 
     if (m_animation->iterationCount() != Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_animation->duration() * m_animation->iterationCount()) {
@@ -253,13 +253,13 @@ void TextureMapperAnimation::resume()
     m_lastRefreshedTime = MonotonicTime::now();
 }
 
-Seconds TextureMapperAnimation::computeTotalRunningTime()
+Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
 {
     if (m_state == AnimationState::Paused)
         return m_pauseTime;
 
     MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
-    m_lastRefreshedTime = MonotonicTime::now();
+    m_lastRefreshedTime = time;
     m_totalRunningTime += m_lastRefreshedTime - oldLastRefreshedTime;
     return m_totalRunningTime;
 }
@@ -330,10 +330,10 @@ void TextureMapperAnimations::resume()
         animation.resume();
 }
 
-void TextureMapperAnimations::apply(TextureMapperAnimation::Client& client)
+void TextureMapperAnimations::apply(TextureMapperAnimation::Client& client, MonotonicTime time)
 {
     for (auto& animation : m_animations)
-        animation.apply(client);
+        animation.apply(client, time);
 }
 
 bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const

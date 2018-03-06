@@ -119,14 +119,14 @@ public:
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(RefPtr<TextureMapperBackingStore>&&);
 
-    void syncAnimations();
+    void syncAnimations(MonotonicTime);
     bool descendantsOrSelfHaveRunningAnimations() const;
 
     void paint();
 
     void setScrollPositionDeltaIfNeeded(const FloatSize&);
 
-    void applyAnimationsRecursively();
+    void applyAnimationsRecursively(MonotonicTime);
     void addChild(TextureMapperLayer*);
 
 private:

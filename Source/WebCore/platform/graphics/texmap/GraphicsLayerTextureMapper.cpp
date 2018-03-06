@@ -366,7 +366,7 @@ void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
     prepareBackingStoreIfNeeded();
     commitLayerChanges();
-    m_layer.syncAnimations();
+    m_layer.syncAnimations(MonotonicTime::now());
 }
 
 void GraphicsLayerTextureMapper::prepareBackingStoreIfNeeded()

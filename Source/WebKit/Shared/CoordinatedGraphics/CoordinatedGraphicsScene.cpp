@@ -103,7 +103,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
 #endif
 
     currentRootLayer->setTextureMapper(m_textureMapper.get());
-    currentRootLayer->applyAnimationsRecursively();
+    currentRootLayer->applyAnimationsRecursively(MonotonicTime::now());
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 

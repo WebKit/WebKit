@@ -1,5 +1,39 @@
 2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Apply TextureMapperLayer animations with a single MonotonicTime value
+        https://bugs.webkit.org/show_bug.cgi?id=183360
+
+        Reviewed by Sergio Villar Senin.
+
+        When animations are being applied on the TextureMapperLayer tree, the
+        monotonic time value is retrieved repeatedly in TextureMapperAnimation
+        class. Instead of spawning repeated syscalls that are required to obtain
+        the time value, TextureMapperLayer::applyAnimationsRecursively() now
+        accepts a MonotonicTime value that should be used for all animation
+        updates.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::apply):
+        (WebCore::TextureMapperAnimation::computeTotalRunningTime):
+        (WebCore::TextureMapperAnimations::apply):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        (WebCore::TextureMapperAnimation::keyframes const):
+        (WebCore::TextureMapperAnimation::animation const):
+        (WebCore::TextureMapperAnimation::boxSize const): Deleted.
+        (WebCore::TextureMapperAnimation::listsMatch const): Deleted.
+        (WebCore::TextureMapperAnimation::startTime const): Deleted.
+        (WebCore::TextureMapperAnimation::pauseTime const): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::applyAnimationsRecursively):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Clean up CoordinatedImageBacking
         https://bugs.webkit.org/show_bug.cgi?id=183332
 

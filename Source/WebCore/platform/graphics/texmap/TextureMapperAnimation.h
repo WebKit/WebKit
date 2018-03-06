@@ -43,23 +43,19 @@ public:
     TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, MonotonicTime, Seconds, AnimationState);
     WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
 
-    void apply(Client&);
+    void apply(Client&, MonotonicTime);
     void pause(Seconds);
     void resume();
     bool isActive() const;
 
     const String& name() const { return m_name; }
     const KeyframeValueList& keyframes() const { return m_keyframes; }
-    const FloatSize& boxSize() const { return m_boxSize; }
     const RefPtr<Animation> animation() const { return m_animation; }
-    bool listsMatch() const { return m_listsMatch; }
-    MonotonicTime startTime() const { return m_startTime; }
-    Seconds pauseTime() const { return m_pauseTime; }
     AnimationState state() const { return m_state; }
 
 private:
     void applyInternal(Client&, const AnimationValue& from, const AnimationValue& to, float progress);
-    Seconds computeTotalRunningTime();
+    Seconds computeTotalRunningTime(MonotonicTime);
 
     String m_name;
     KeyframeValueList m_keyframes;
@@ -84,7 +80,7 @@ public:
     void suspend(MonotonicTime);
     void resume();
 
-    void apply(TextureMapperAnimation::Client&);
+    void apply(TextureMapperAnimation::Client&, MonotonicTime);
 
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }

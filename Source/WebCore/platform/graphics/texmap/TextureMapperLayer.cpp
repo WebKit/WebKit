@@ -661,16 +661,16 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
         });
 }
 
-void TextureMapperLayer::applyAnimationsRecursively()
+void TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 {
-    syncAnimations();
+    syncAnimations(time);
     for (auto* child : m_children)
-        child->applyAnimationsRecursively();
+        child->applyAnimationsRecursively(time);
 }
 
-void TextureMapperLayer::syncAnimations()
+void TextureMapperLayer::syncAnimations(MonotonicTime time)
 {
-    m_animations.apply(*this);
+    m_animations.apply(*this, time);
     if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyTransform))
         m_currentTransform.setLocalTransform(m_state.transform);
     if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity))
