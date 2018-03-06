@@ -1,5 +1,22 @@
 2018-03-05  Mark Lam  <mark.lam@apple.com>
 
+        JITThunk functions should only be called when the JIT is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=183351
+        <rdar://problem/38160091>
+
+        Reviewed by Keith Miller.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+
+2018-03-05  Mark Lam  <mark.lam@apple.com>
+
         Gardening: build fix.
 
         Not reviewed.
