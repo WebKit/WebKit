@@ -22,4 +22,4 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: modules
-  cmd: runModules
+  cmd: defaultRunModules unless parseRunCommands

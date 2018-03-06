@@ -1,4 +1,4 @@
-//@ noNoLLIntRunLayoutTest if $architecture == "arm" and $hostOS == "darwin"
+//@ noNoLLIntRunLayoutTest if $architecture == "arm"
 
 description(
 "Tests that performing an OSR entry into a loop with a hoisted structure check, where the loop may clobber the world, works."

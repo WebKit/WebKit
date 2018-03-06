@@ -972,14 +972,14 @@ def runES6(mode)
     addRunCommand("default", args, noisyOutputHandler, errorHandler)
 end
 
-def runModules
+def defaultRunModules(noLLInt: true)
     run("default-modules", "-m")
 
     if !$jitTests
         return
     end
 
-    run("no-llint-modules", "-m", "--useLLInt=false")
+    run("no-llint-modules", "-m", "--useLLInt=false") if noLLInt
     run("no-cjit-validate-phases-modules", "-m", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
     run("dfg-eager-modules", "-m", *EAGER_OPTIONS)
     run("dfg-eager-no-cjit-validate-modules", "-m", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
@@ -992,6 +992,10 @@ def runModules
     run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
     run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
     run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+end
+
+def noNoLLIntRunModules
+    defaultRunModules(noLLInt: false)
 end
 
 def runWebAssembly
