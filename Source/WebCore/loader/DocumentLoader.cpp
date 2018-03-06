@@ -1683,7 +1683,7 @@ void DocumentLoader::startLoadingMainResource()
                 return;
 
             m_serviceWorkerRegistrationData = WTFMove(registrationData);
-            if (!m_serviceWorkerRegistrationData && tryLoadingRequestFromApplicationCache())
+            if (!m_serviceWorkerRegistrationData && this->tryLoadingRequestFromApplicationCache())
                 return;
             this->loadMainResource(WTFMove(request));
         });

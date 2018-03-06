@@ -421,7 +421,7 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
             auto registrationIdentifier = m_clientToControllingRegistration.get(clientData.identifier);
             if (worker.data().registrationIdentifier != registrationIdentifier)
                 return;
-            if (&worker != activeWorkerFromRegistrationID(registrationIdentifier))
+            if (&worker != this->activeWorkerFromRegistrationID(registrationIdentifier))
                 return;
         }
         if (options.type != ServiceWorkerClientType::All && options.type != clientData.type)
