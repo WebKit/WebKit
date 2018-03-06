@@ -1,3 +1,18 @@
+2018-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        GraphicsLayerTextureMapper: remove the setAnimations() method
+        https://bugs.webkit.org/show_bug.cgi?id=183358
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the GraphicsLayerTextureMapper::setAnimations() method. This was
+        not called from anywhere, and is not the way animations are generated
+        for a given GraphicsLayer object (that would be addAnimation() method).
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setAnimations): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+
 2018-03-06  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: More accessibility events support

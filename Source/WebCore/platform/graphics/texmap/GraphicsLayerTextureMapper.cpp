@@ -606,13 +606,6 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     return true;
 }
 
-void GraphicsLayerTextureMapper::setAnimations(const TextureMapperAnimations& animations)
-{
-    m_animations = animations;
-    notifyChange(AnimationChange);
-}
-
-
 void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, double timeOffset)
 {
     m_animations.pause(animationName, Seconds(timeOffset));

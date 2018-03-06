@@ -100,8 +100,6 @@ public:
     float debugBorderWidth() const { return m_debugBorderWidth; }
     void setRepaintCount(int);
 
-    void setAnimations(const TextureMapperAnimations&);
-
 private:
     // GraphicsLayer
     bool isGraphicsLayerTextureMapper() const override { return true; }
