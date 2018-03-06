@@ -885,3 +885,5 @@ webkit.org/b/182630 http/tests/workers/service/basic-messageport.html [ Pass Fai
 webkit.org/b/182849 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Failure ]
 
 webkit.org/b/183164 fast/dom/Window/window-focus-self.html [ Pass Failure ]
+
+webkit.org/b/180982 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Slow ]
