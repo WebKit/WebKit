@@ -1,3 +1,17 @@
+2018-03-07  Frederic Wang  <fwang@igalia.com>
+
+        Relayout frames after AsyncFrameScrolling or FrameFlattening option is changed
+        https://bugs.webkit.org/show_bug.cgi?id=183081
+
+        Reviewed by Antonio Gomes.
+
+        Add a test to check whether an iframe changes its flattening status after one of the option
+        AsyncFrameScrolling/FrameFlattening is enabled/disabled.
+
+        * platform/ios-simulator/TestExpectations: Remove failure for scrolling-in-object.html.
+        * platform/ios/fast/frames/flattening/iframe-flattening-async-frame-scrolling-dynamic-expected.txt: Added.
+        * platform/ios/fast/frames/flattening/iframe-flattening-async-frame-scrolling-dynamic.html: Added.
+
 2018-03-07  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/wpt/resource-timing/rt-initiatorType-media.html as a flaky crash on Windows.
