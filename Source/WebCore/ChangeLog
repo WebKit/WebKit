@@ -1,3 +1,18 @@
+2018-03-07  Sihui Liu  <sihui_liu@apple.com>
+
+        replaceState cause back/forward malfunction on html page with <base href="/"> tag
+        https://bugs.webkit.org/show_bug.cgi?id=182678
+        <rdar://problem/37517821>
+
+        Reviewed by Chris Dumez.
+
+        replaceState should not change URL when the URL argument is NULL, but should change URL when the URL argument is an empty string.
+
+        Test: http/tests/history/replacestate-no-url.html
+
+        * page/History.cpp:
+        (WebCore::History::urlForState):
+
 2018-03-07  Antti Koivisto  <antti@apple.com>
 
         Don't invalidate descendants for sibling combinators unless needed

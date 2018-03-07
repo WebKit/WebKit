@@ -156,11 +156,9 @@ void History::go(Document& document, int distance)
 
 URL History::urlForState(const String& urlString)
 {
-    URL baseURL = m_frame->document()->baseURL();
-    if (urlString.isEmpty())
-        return baseURL;
-
-    return URL(baseURL, urlString);
+    if (urlString.isNull())
+        return m_frame->document()->url();
+    return m_frame->document()->completeURL(urlString);
 }
 
 ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString, StateObjectType stateObjectType)

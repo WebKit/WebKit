@@ -1,3 +1,18 @@
+2018-03-07  Sihui Liu  <sihui_liu@apple.com>
+
+        replaceState cause back/forward malfunction on html page with <base href="/"> tag
+        https://bugs.webkit.org/show_bug.cgi?id=182678
+        <rdar://problem/37517821>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/history/replacestate-no-url-expected.txt: Added.
+        * http/tests/history/replacestate-no-url.html: Added.
+        Add layout test coverage.
+
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange-expected.txt:
+        Rebaseline a layout test as empty string for URL is handled differently.
+
 2018-03-07  Chris Dumez  <cdumez@apple.com>
 
         http/tests/misc/location-replace-crossdomain.html is failing with async policy delegates
