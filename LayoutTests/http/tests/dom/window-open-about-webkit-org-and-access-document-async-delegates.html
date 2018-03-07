@@ -11,6 +11,8 @@
         if (window.testRunner) {
             testRunner.setCanOpenWindows();
             testRunner.setPopupBlockingEnabled(false);
+            if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+                testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
         }
 
         function finish()

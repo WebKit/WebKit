@@ -1,3 +1,25 @@
+2018-03-07  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/dom/window-open-about-webkit-org-and-access-document.html is failing with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183394
+
+        Reviewed by Alex Christensen.
+
+        http/tests/dom/window-open-about-webkit-org-and-access-document.html is failing with async policy delegates.
+        The issue is that the test calls window.open() with a cross-origin URL and then right away tries to access
+        newWindow.document, expecting it to throw. However, there is no guarantee that the cross origin URL has
+        started loading at this point. In particular, when the navigation policy decision is made asynchronously,
+        the URL is initially "about:blank" and it is OK to access the newWindow's document at this point.
+
+        We would normally rely on the window's load event before doing the check. However, this would not work
+        here since the window is cross origin. As a result, I am using a setInterval() in order to wait for the
+        cross-origin URL to load and for newWindow.document to start throwing.
+
+        * http/tests/dom/window-open-about-webkit-org-and-access-document-async-delegates-expected.txt: Added.
+        * http/tests/dom/window-open-about-webkit-org-and-access-document-async-delegates.html: Added.
+        * http/tests/dom/window-open-about-webkit-org-and-access-document-expected.txt:
+        * http/tests/dom/window-open-about-webkit-org-and-access-document.html:
+
 2018-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         HTML `pattern` attribute should set `u` flag for regular expressions
