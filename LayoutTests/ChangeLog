@@ -1,3 +1,11 @@
+2018-03-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix incorrect test expectations for http/wpt/resource-timing/rt-initiatorType-media.html.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-03-07  Chris Dumez  <cdumez@apple.com>
 
         http/tests/dom/window-open-about-webkit-org-and-access-document.html is failing with async policy delegates
