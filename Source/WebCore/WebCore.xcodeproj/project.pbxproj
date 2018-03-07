@@ -30662,7 +30662,7 @@
 				A5E79CEC1E67F2CF00FB8153 /* Make Frameworks Symbolic Link */,
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
-				5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */,
+				5D87BC0711E43BDE00702B6F /* Copy ICU Headers */,
 				3717D7E717ECC573003C276D /* Copy Scripts */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				CD0DBF001422765700280263 /* Copy Audio Resources */,
@@ -30874,19 +30874,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"$SRCROOT/Info.plist\";\nfi;\n";
 		};
-		5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */ = {
+		5D87BC0711E43BDE00702B6F /* Copy ICU Headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Forwarding and ICU Headers";
+			name = "Copy ICU Headers";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
+			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
 		};
 		5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
