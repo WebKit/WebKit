@@ -1,3 +1,15 @@
+2018-03-06  Youenn Fablet  <youenn@apple.com>
+
+        didReceiveServerRedirectForProvisionalNavigation is not called in case of document redirection with service worker registration change
+        https://bugs.webkit.org/show_bug.cgi?id=183299
+        <rdar://problem/37547029>
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/service-workers/navigation-redirect-main-frame-worker.js: Added.
+        * http/wpt/service-workers/navigation-redirect-main-frame.https-expected.txt: Added.
+        * http/wpt/service-workers/navigation-redirect-main-frame.https.html: Added.
+
 2018-03-06  Chris Dumez  <cdumez@apple.com>
 
         http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html is flaky

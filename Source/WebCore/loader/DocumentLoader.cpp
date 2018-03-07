@@ -695,8 +695,12 @@ void DocumentLoader::restartLoadingDueToServiceWorkerRegistrationChange(Resource
 {
     clearMainResource();
 
+    ASSERT(!isCommitted());
     m_serviceWorkerRegistrationData = WTFMove(registrationData);
     loadMainResource(WTFMove(request));
+
+    if (m_mainResource)
+        frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 #endif
 

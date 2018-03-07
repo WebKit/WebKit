@@ -215,6 +215,9 @@ public:
     bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
     bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
 
+    bool didReceiveServerRedirectForProvisionalNavigation() const;
+    void clearDidReceiveServerRedirectForProvisionalNavigation();
+
     bool waitToDump() const { return m_waitToDump; }
     void waitToDumpWatchdogTimerFired();
     void invalidateWaitToDumpWatchdogTimer();

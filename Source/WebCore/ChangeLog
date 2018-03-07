@@ -1,3 +1,21 @@
+2018-03-06  Youenn Fablet  <youenn@apple.com>
+
+        didReceiveServerRedirectForProvisionalNavigation is not called in case of document redirection with service worker registration change
+        https://bugs.webkit.org/show_bug.cgi?id=183299
+        <rdar://problem/37547029>
+
+        Reviewed by Alex Christensen.
+
+        In case of redirection with service worker registration change, we cancel the load and create a new one.
+        This prevent ResourceLoader::willSendRequestInternal to call the didReceiveServerRedirectForProvisionalNavigation
+        callback. We thus explictly call this callback after restarting the load with the new service worker step.
+        We only call this callback if the main resource is there as we do not want to call it if it was blocked by content extension.
+
+        Test: http/wpt/service-workers/navigation-redirect-main-frame.https.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::restartLoadingDueToServiceWorkerRegistrationChange):
+
 2018-03-06  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Remove unnecessary copied ResourceRequest member variable.

@@ -1,3 +1,29 @@
+2018-03-06  Youenn Fablet  <youenn@apple.com>
+
+        didReceiveServerRedirectForProvisionalNavigation is not called in case of document redirection with service worker registration change
+        https://bugs.webkit.org/show_bug.cgi?id=183299
+        <rdar://problem/37547029>
+
+        Reviewed by Alex Christensen.
+
+        Add support for checking whether this callback is called.
+        Used in the added layout test.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::didReceiveServerRedirectForProvisionalNavigation const):
+        (WTR::TestRunner::clearDidReceiveServerRedirectForProvisionalNavigation):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didReceiveServerRedirectForProvisionalNavigation):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::didReceiveServerRedirectForProvisionalNavigation const):
+        (WTR::TestController::clearDidReceiveServerRedirectForProvisionalNavigation):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2018-03-06  Chris Dumez  <cdumez@apple.com>
 
         fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html fails with async policy delegates

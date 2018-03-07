@@ -163,6 +163,9 @@ interface TestRunner {
     void setDefersLoading(boolean flag);
     void setStopProvisionalFrameLoads();
 
+    readonly attribute boolean didReceiveServerRedirectForProvisionalNavigation;
+    void clearDidReceiveServerRedirectForProvisionalNavigation();
+
     // Focus testing.
     void addChromeInputField(object callback);
     void removeChromeInputField(object callback);
