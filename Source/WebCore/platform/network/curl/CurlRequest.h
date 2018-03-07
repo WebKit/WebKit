@@ -71,6 +71,7 @@ public:
     void suspend();
     void resume();
 
+    const ResourceRequest& resourceRequest() const { return m_request; }
     bool isSyncRequest() const { return m_isSyncRequest; }
     bool isCompleted() const { return !m_curlHandle; }
     bool isCancelled() const { return m_cancelled; }

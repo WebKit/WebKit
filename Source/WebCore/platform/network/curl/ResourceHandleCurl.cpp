@@ -83,9 +83,9 @@ bool ResourceHandle::start()
         return true;
     }
 
-    d->m_curlRequest = createCurlRequest(d->m_currentRequest);
+    d->m_curlRequest = createCurlRequest(d->m_firstRequest);
 
-    if (auto credential = getCredential(d->m_currentRequest, false))
+    if (auto credential = getCredential(d->m_firstRequest, false))
         d->m_curlRequest->setUserPass(credential->first, credential->second);
 
     d->m_curlRequest->start();
@@ -111,35 +111,44 @@ bool ResourceHandle::cancelledOrClientless()
     return !client();
 }
 
-Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request)
+void ResourceHandle::addCacheValidationHeaders(ResourceRequest& request)
 {
     ASSERT(isMainThread());
 
-    // CurlCache : append additional cache information
     d->m_addedCacheValidationHeaders = false;
 
-    bool hasCacheHeaders = request.httpHeaderFields().contains(HTTPHeaderName::IfModifiedSince) || request.httpHeaderFields().contains(HTTPHeaderName::IfNoneMatch);
-    if (!hasCacheHeaders) {
-        auto& cache = CurlCacheManager::singleton();
-        URL cacheUrl = request.url();
-        cacheUrl.removeFragmentIdentifier();
+    auto hasCacheHeaders = request.httpHeaderFields().contains(HTTPHeaderName::IfModifiedSince) || request.httpHeaderFields().contains(HTTPHeaderName::IfNoneMatch);
+    if (hasCacheHeaders)
+        return;
 
-        if (cache.isCached(cacheUrl)) {
-            cache.addCacheEntryClient(cacheUrl, this);
+    auto& cache = CurlCacheManager::singleton();
+    URL cacheUrl = request.url();
+    cacheUrl.removeFragmentIdentifier();
 
-            for (const auto& entry : cache.requestHeaders(cacheUrl))
-                request.addHTTPHeaderField(entry.key, entry.value);
+    if (cache.isCached(cacheUrl)) {
+        cache.addCacheEntryClient(cacheUrl, this);
 
-            d->m_addedCacheValidationHeaders = true;
-        }
+        for (const auto& entry : cache.requestHeaders(cacheUrl))
+            request.addHTTPHeaderField(entry.key, entry.value);
+
+        d->m_addedCacheValidationHeaders = true;
     }
+}
 
-    auto& storageSession = NetworkStorageSession::defaultStorageSession();
-    auto& cookieJar = storageSession.cookieStorage();
-    auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
-    if (!cookieHeaderField.isEmpty())
-        request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
+Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request, RequestStatus status)
+{
+    ASSERT(isMainThread());
+
+    if (status == RequestStatus::NewRequest) {
+        addCacheValidationHeaders(request);
+
+        auto& storageSession = NetworkStorageSession::defaultStorageSession();
+        auto& cookieJar = storageSession.cookieStorage();
+        auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+        String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
+        if (!cookieHeaderField.isEmpty())
+            request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
+    }
 
     CurlRequest::ShouldSuspend shouldSuspend = d->m_defersLoading ? CurlRequest::ShouldSuspend::Yes : CurlRequest::ShouldSuspend::No;
     auto curlRequest = CurlRequest::create(request, *delegate(), shouldSuspend, CurlRequest::EnableMultipart::Yes);
@@ -361,12 +370,13 @@ void ResourceHandle::restartRequestWithCredential(const String& user, const Stri
     if (!d->m_curlRequest)
         return;
     
-    bool isSyncRequest = d->m_curlRequest->isSyncRequest();
+    auto wasSyncRequest = d->m_curlRequest->isSyncRequest();
+    auto previousRequest = d->m_curlRequest->resourceRequest();
     d->m_curlRequest->cancel();
 
-    d->m_curlRequest = createCurlRequest(d->m_currentRequest);
+    d->m_curlRequest = createCurlRequest(previousRequest, RequestStatus::ReusedRequest);
     d->m_curlRequest->setUserPass(user, password);
-    d->m_curlRequest->start(isSyncRequest);
+    d->m_curlRequest->start(wasSyncRequest);
 }
 
 void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
@@ -489,19 +499,17 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
     if (cancelledOrClientless() || !d->m_curlRequest)
         return;
 
-    d->m_currentRequest = WTFMove(request);
-
-    bool isSyncRequest = d->m_curlRequest->isSyncRequest();
+    auto wasSyncRequest = d->m_curlRequest->isSyncRequest();
     d->m_curlRequest->cancel();
 
-    d->m_curlRequest = createCurlRequest(d->m_currentRequest);
+    d->m_curlRequest = createCurlRequest(request);
 
-    if (protocolHostAndPortAreEqual(d->m_currentRequest.url(), delegate()->response().url())) {
-        if (auto credential = getCredential(d->m_currentRequest, true))
+    if (protocolHostAndPortAreEqual(request.url(), delegate()->response().url())) {
+        if (auto credential = getCredential(request, true))
             d->m_curlRequest->setUserPass(credential->first, credential->second);
     }
 
-    d->m_curlRequest->start(isSyncRequest);
+    d->m_curlRequest->start(wasSyncRequest);
 }
 
 void ResourceHandle::handleDataURL()

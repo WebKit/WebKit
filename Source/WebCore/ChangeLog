@@ -1,3 +1,22 @@
+2018-03-06  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Remove unnecessary copied ResourceRequest member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=183010
+
+        Reviewed by Youenn Fablet.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::resourceRequest const):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::addCacheValidationHeaders):
+        (WebCore::ResourceHandle::createCurlRequest):
+        (WebCore::ResourceHandle::restartRequestWithCredential):
+        (WebCore::ResourceHandle::continueAfterWillSendRequest):
+
 2018-03-06  Nan Wang  <n_wang@apple.com>
 
         AX: Flaky test after r229310

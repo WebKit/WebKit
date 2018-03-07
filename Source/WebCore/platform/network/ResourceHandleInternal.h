@@ -76,7 +76,7 @@ public:
         , m_defersLoading(defersLoading)
         , m_shouldContentSniff(shouldContentSniff)
         , m_shouldContentEncodingSniff(shouldContentEncodingSniff)
-#if USE(CFURLCONNECTION) || USE(CURL)
+#if USE(CFURLCONNECTION)
         , m_currentRequest(request)
 #endif
 #if USE(SOUP)
@@ -129,7 +129,6 @@ public:
 #if USE(CURL)
     std::unique_ptr<CurlResourceHandleDelegate> m_delegate;
     
-    ResourceRequest m_currentRequest;
     bool m_cancelled { false };
     unsigned m_redirectCount { 0 };
     unsigned m_authFailureCount { 0 };
