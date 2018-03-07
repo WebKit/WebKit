@@ -282,6 +282,9 @@
             "test_no_browsing_context": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
+            "test_closed_context": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_disabled_element_not_resettable": {
                 "expected": {"all": {"status": ["PASS"]}}
             },

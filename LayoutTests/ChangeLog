@@ -1,3 +1,24 @@
+2018-03-07  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=183402
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: skip some more appcache-sw tests.
+        * platform/wpe/TestExpectations:
+          - Mark http/tests/appcache/different-https-origin-resource-main.html as passing after r228892.
+          - Mark fast/canvas/canvas-createPattern-video-modify.html as passing after r228221.
+          - Mark storage/indexeddb/modern/index-3-private.html as passing since r228560.
+          - Skip some more appcache - service worker tests.
+          - Mark some svg/animations tests as flaky (as they already are on GTK).
+          - Mark imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.html as passing after r228983.
+          - Mark http/tests/appcache/fail-on-update-2.html as flaky.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Added baseline.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Added baseline.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Added baseline.
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt: rebaseline.
+
 2018-03-07  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] fast/animation/request-animation-frame-during-modal.html sometimes crashing

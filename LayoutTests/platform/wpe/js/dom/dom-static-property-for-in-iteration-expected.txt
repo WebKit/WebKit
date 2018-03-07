@@ -133,8 +133,15 @@ PASS a["clientWidth"] is 0
 PASS a["clientHeight"] is 0
 PASS a["innerHTML"] is nerget
 PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
+PASS a["onaccessiblecontextmenu"] is null
 PASS a["onaccessibleclick"] is null
+PASS a["onaccessibledecrement"] is null
+PASS a["onaccessibledismiss"] is null
+PASS a["onaccessiblefocus"] is null
+PASS a["onaccessibleincrement"] is null
+PASS a["onaccessiblescrollintoview"] is null
 PASS a["onaccessiblesetvalue"] is null
+PASS a["onaccessibleselect"] is null
 PASS a["oncopy"] is null
 PASS a["oncut"] is null
 PASS a["onpaste"] is null
