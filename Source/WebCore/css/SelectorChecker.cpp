@@ -362,7 +362,8 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
     case CSSSelector::DirectAdjacent:
         {
-            addStyleRelation(checkingContext, *context.element, Style::Relation::AffectedByPreviousSibling);
+            auto relation = context.isMatchElement ? Style::Relation::AffectedByPreviousSibling : Style::Relation::DescendantsAffectedByPreviousSibling;
+            addStyleRelation(checkingContext, *context.element, relation);
 
             Element* previousElement = context.element->previousElementSibling();
             if (!previousElement)
@@ -382,8 +383,9 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
-    case CSSSelector::IndirectAdjacent:
-        addStyleRelation(checkingContext, *context.element, Style::Relation::AffectedByPreviousSibling);
+    case CSSSelector::IndirectAdjacent: {
+        auto relation = context.isMatchElement ? Style::Relation::AffectedByPreviousSibling : Style::Relation::DescendantsAffectedByPreviousSibling;
+        addStyleRelation(checkingContext, *context.element, relation);
 
         nextContext.element = context.element->previousElementSibling();
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
@@ -402,7 +404,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
                 return MatchResult::updateWithMatchType(result, matchType);
         };
         return MatchResult::fails(Match::SelectorFailsAllSiblings);
-
+    }
     case CSSSelector::Subselector:
         {
             // a selector is invalid if something follows a pseudo-element

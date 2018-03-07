@@ -1484,7 +1484,11 @@ static void invalidateForSiblingCombinators(Element* sibling)
 {
     for (; sibling; sibling = sibling->nextElementSibling()) {
         if (sibling->styleIsAffectedByPreviousSibling())
-            sibling->invalidateStyleForSubtreeInternal();
+            sibling->invalidateStyleInternal();
+        if (sibling->descendantsAffectedByPreviousSibling()) {
+            for (auto* siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+                siblingChild->invalidateStyleForSubtreeInternal();
+        }
         if (!sibling->affectsNextSiblingElementStyle())
             return;
     }

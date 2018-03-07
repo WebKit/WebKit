@@ -422,11 +422,8 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
     return std::max(a, b);
 }
 
-static inline bool fragmentMatchesTheRightmostElement(SelectorContext selectorContext, const SelectorFragment& fragment)
+static inline bool fragmentMatchesTheRightmostElement(const SelectorFragment& fragment)
 {
-    // Return true if the position of this fragment is Rightmost in the root fragments.
-    // In this case, we should use the RenderStyle stored in the CheckingContext.
-    ASSERT_UNUSED(selectorContext, selectorContext != SelectorContext::QuerySelector);
     return fragment.relationToRightFragment == FragmentRelation::Rightmost && fragment.positionInRootFragments == FragmentPositionInRootFragments::Rightmost;
 }
 
@@ -1734,7 +1731,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     Assembler::JumpList failureOnFunctionEntry;
     // Test selector's pseudo element equals to requested PseudoId.
     if (m_selectorContext != SelectorContext::QuerySelector && m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
-        ASSERT_WITH_MESSAGE(fragmentMatchesTheRightmostElement(m_selectorContext, m_selectorFragments.first()), "Matching pseudo elements only make sense for the rightmost fragment.");
+        ASSERT_WITH_MESSAGE(fragmentMatchesTheRightmostElement(m_selectorFragments.first()), "Matching pseudo elements only make sense for the rightmost fragment.");
         generateRequestedPseudoElementEqualsToSelectorPseudoElement(failureOnFunctionEntry, m_selectorFragments.first(), checkingContextRegister);
     }
 
@@ -1895,8 +1892,12 @@ void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assem
             generateIndirectAdjacentTreeWalker(failureCases, fragment);
             break;
         }
-        if (shouldMarkStyleIsAffectedByPreviousSibling(fragment))
-            generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByPreviousSibling);
+        if (shouldMarkStyleIsAffectedByPreviousSibling(fragment)) {
+            if (fragmentMatchesTheRightmostElement(fragment))
+                generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByPreviousSibling);
+            else
+                generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::DescendantsAffectedByPreviousSibling);
+        }
         generateBacktrackingTailsIfNeeded(failureCases, fragment);
     }
 
@@ -3731,7 +3732,7 @@ void SelectorCodeGenerator::generateElementHasPseudoElement(Assembler::JumpList&
 {
     ASSERT_UNUSED(fragment, fragment.pseudoElementSelector);
     ASSERT_WITH_MESSAGE(m_selectorContext != SelectorContext::QuerySelector, "When the fragment has pseudo element, the selector becomes CannotMatchAnything for QuerySelector and this test function is not called.");
-    ASSERT_WITH_MESSAGE_UNUSED(fragment, fragmentMatchesTheRightmostElement(m_selectorContext, fragment), "Virtual pseudo elements handling is only effective in the rightmost fragment. If the current fragment is not rightmost fragment, CSS JIT compiler makes it CannotMatchAnything in fragment construction phase, so never reach here.");
+    ASSERT_WITH_MESSAGE_UNUSED(fragment, fragmentMatchesTheRightmostElement(fragment), "Virtual pseudo elements handling is only effective in the rightmost fragment. If the current fragment is not rightmost fragment, CSS JIT compiler makes it CannotMatchAnything in fragment construction phase, so never reach here.");
 }
 
 void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment& fragment, Assembler::RegisterID checkingContext)
@@ -3741,7 +3742,7 @@ void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudo
     // Make sure that the requested pseudoId equals to the pseudo element of the rightmost fragment.
     // If the rightmost fragment doesn't have a pseudo element, the requested pseudoId need to be NOPSEUDO to succeed the matching.
     // Otherwise, if the requested pseudoId is not NOPSEUDO, the requested pseudoId need to equal to the pseudo element of the rightmost fragment.
-    if (fragmentMatchesTheRightmostElement(m_selectorContext, fragment)) {
+    if (fragmentMatchesTheRightmostElement(fragment)) {
         if (!fragment.pseudoElementSelector)
             failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(NOPSEUDO)));
         else {

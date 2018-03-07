@@ -1,5 +1,48 @@
 2018-03-07  Antti Koivisto  <antti@apple.com>
 
+        Don't invalidate descendants for sibling combinators unless needed
+        https://bugs.webkit.org/show_bug.cgi?id=183410
+        <rdar://problem/38227297>
+
+        Reviewed by Zalan Bujtas.
+
+        If we know the matched sibling combinator doesn't affect descendants we shouldn't invalidate them.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively const):
+
+            Use different bit for the descendant case.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentMatchesTheRightmostElement):
+
+            Remove unneeded context assert.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+
+            Use different bit for the descendant case.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPseudoElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement):
+        * dom/Element.cpp:
+        (WebCore::invalidateForSiblingCombinators):
+
+            Invalidate the target sibling or all descendants based on the bits.
+
+        * dom/Element.h:
+        (WebCore::Element::descendantsAffectedByPreviousSibling const):
+        (WebCore::Element::setDescendantsAffectedByPreviousSibling const):
+        * dom/Node.h:
+        * style/StyleRelations.cpp:
+        (WebCore::Style::commitRelationsToRenderStyle):
+        (WebCore::Style::commitRelations):
+        * style/StyleRelations.h:
+
+            Add DescendantsAffectedByPreviousSibling bit. AffectedByPreviousSibling is now just about the target element.
+
+2018-03-07  Antti Koivisto  <antti@apple.com>
+
         checkForSiblingStyleChanges should use internal versions of the invalidation functions
         https://bugs.webkit.org/show_bug.cgi?id=183405
         <rdar://problem/38218310>

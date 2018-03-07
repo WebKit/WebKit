@@ -569,7 +569,7 @@ protected:
         IsStyledElementFlag = 1 << 3,
         IsHTMLFlag = 1 << 4,
         IsSVGFlag = 1 << 5,
-        // One free bit left.
+        DescendantsAffectedByPreviousSiblingFlag = 1 << 6,
         ChildNeedsStyleRecalcFlag = 1 << 7,
         IsConnectedFlag = 1 << 8,
         IsLinkFlag = 1 << 9,
