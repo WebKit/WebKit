@@ -26,29 +26,28 @@
  */
 
 #include "config.h"
-#include "DNS.h"
-#include "DNSResolveQueue.h"
+#include "DNSResolveQueueCFNet.h"
 
-#include "URL.h"
+#include "NotImplemented.h"
 #include "Timer.h"
+#include "URL.h"
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(IOS)
-#include <CFNetwork/CFNetwork.h>
-#endif
-
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
+#endif
+
+#if PLATFORM(WIN) || PLATFORM(IOS)
 #include <CFNetwork/CFNetwork.h>
 #endif
 
 namespace WebCore {
 
-void DNSResolveQueue::updateIsUsingProxy()
+void DNSResolveQueueCFNet::updateIsUsingProxy()
 {
     RetainPtr<CFDictionaryRef> proxySettings = adoptCF(CFNetworkCopySystemProxySettings());
     if (!proxySettings) {
@@ -78,7 +77,7 @@ static void clientCallback(CFHostRef theHost, CFHostInfoType, const CFStreamErro
     CFRelease(theHost);
 }
 
-void DNSResolveQueue::platformResolve(const String& hostname)
+void DNSResolveQueueCFNet::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
@@ -101,12 +100,14 @@ void DNSResolveQueue::platformResolve(const String& hostname)
     CFHostStartInfoResolution(leakedHost, kCFHostAddresses, 0);
 }
 
-void prefetchDNS(const String& hostname)
+void DNSResolveQueueCFNet::resolve(const String& /* hostname */, uint64_t /* identifier */, DNSCompletionHandler&& /* completionHandler */)
 {
-    ASSERT(isMainThread());
-    if (hostname.isEmpty())
-        return;
-    DNSResolveQueue::singleton().add(hostname);
+    notImplemented();
+}
+
+void DNSResolveQueueCFNet::stopResolve(uint64_t /* identifier */)
+{
+    notImplemented();
 }
 
 }

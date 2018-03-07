@@ -25,14 +25,14 @@
  */
 
 #include "config.h"
-#include "DNS.h"
-#include "DNSResolveQueue.h"
+#include "DNSResolveQueueSoup.h"
 
 #if USE(SOUP)
 
 #include "NetworkStorageSession.h"
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -76,7 +76,7 @@ static void proxyResolvedForHttpsUriCallback(GObject* source, GAsyncResult* resu
     didResolveProxy(G_PROXY_RESOLVER(source), result, &isUsingHttpsProxy, static_cast<bool*>(userData));
 }
 
-void DNSResolveQueue::updateIsUsingProxy()
+void DNSResolveQueueSoup::updateIsUsingProxy()
 {
     GRefPtr<GProxyResolver> resolver;
     g_object_get(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
@@ -91,20 +91,101 @@ static void resolvedCallback(SoupAddress*, guint, void*)
     DNSResolveQueue::singleton().decrementRequestCount();
 }
 
-void DNSResolveQueue::platformResolve(const String& hostname)
+static void resolvedWithObserverCallback(SoupAddress* address, guint status, void* data)
+{
+    ASSERT(data);
+    auto* resolveQueue = static_cast<DNSResolveQueueSoup*>(data);
+
+    uint64_t identifier = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(address), "identifier"));
+
+    auto completionAndCancelHandlers = resolveQueue->takeCompletionAndCancelHandlers(identifier);
+
+    if (!completionAndCancelHandlers)
+        return;
+
+    auto completionHandler = WTFMove(completionAndCancelHandlers.get()->first);
+
+    if (status != SOUP_STATUS_OK) {
+        DNSError error = DNSError::Unknown;
+
+        switch (status) {
+        case SOUP_STATUS_CANT_RESOLVE:
+            error = DNSError::CannotResolve;
+            break;
+        case SOUP_STATUS_CANCELLED:
+            error = DNSError::Cancelled;
+            break;
+        case SOUP_STATUS_OK:
+        default:
+            ASSERT_NOT_REACHED();
+        };
+
+        completionHandler(makeUnexpected(error));
+        return;
+    }
+
+    if (!soup_address_is_resolved(address)) {
+        completionHandler(makeUnexpected(DNSError::Unknown));
+        return;
+    }
+
+    Vector<WebCore::IPAddress> addresses;
+    addresses.reserveInitialCapacity(1);
+    int len;
+    auto* ipAddress = reinterpret_cast<const struct sockaddr_in*>(soup_address_get_sockaddr(address, &len));
+    for (unsigned i = 0; i < sizeof(*ipAddress) / len; i++)
+        addresses.uncheckedAppend(WebCore::IPAddress(ipAddress[i]));
+
+    completionHandler(addresses);
+}
+
+std::unique_ptr<DNSResolveQueueSoup::CompletionAndCancelHandlers> DNSResolveQueueSoup::takeCompletionAndCancelHandlers(uint64_t identifier)
+{
+    ASSERT(isMainThread());
+
+    auto completionAndCancelHandlers = m_completionAndCancelHandlers.take(identifier);
+
+    if (!completionAndCancelHandlers)
+        return nullptr;
+
+    return WTFMove(completionAndCancelHandlers);
+}
+
+void DNSResolveQueueSoup::removeCancelAndCompletionHandler(uint64_t identifier)
+{
+    ASSERT(isMainThread());
+
+    m_completionAndCancelHandlers.remove(identifier);
+}
+
+void DNSResolveQueueSoup::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
     soup_session_prefetch_dns(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
 }
 
-void prefetchDNS(const String& hostname)
+void DNSResolveQueueSoup::resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
 {
     ASSERT(isMainThread());
-    if (hostname.isEmpty())
-        return;
 
-    DNSResolveQueue::singleton().add(hostname);
+    auto address = adoptGRef(soup_address_new(hostname.utf8().data(), 0));
+    auto cancellable = adoptGRef(g_cancellable_new());
+    soup_address_resolve_async(address.get(), soup_session_get_async_context(WebCore::NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession()), cancellable.get(), resolvedWithObserverCallback, this);
+
+    g_object_set_data(G_OBJECT(address.get()), "identifier", GUINT_TO_POINTER(identifier));
+
+    m_completionAndCancelHandlers.add(identifier, std::make_unique<DNSResolveQueueSoup::CompletionAndCancelHandlers>(WTFMove(completionHandler), WTFMove(cancellable)));
+}
+
+void DNSResolveQueueSoup::stopResolve(uint64_t identifier)
+{
+    ASSERT(isMainThread());
+
+    if (auto completionAndCancelHandler = m_completionAndCancelHandlers.take(identifier)) {
+        g_cancellable_cancel(completionAndCancelHandler.get()->second.get());
+        completionAndCancelHandler.get()->first(makeUnexpected(DNSError::Cancelled));
+    }
 }
 
 }

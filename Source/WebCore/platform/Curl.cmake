@@ -21,7 +21,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlResourceHandleDelegate.cpp
     platform/network/curl/CurlSSLHandle.cpp
     platform/network/curl/CurlSSLVerifier.cpp
-    platform/network/curl/DNSCurl.cpp
+    platform/network/curl/DNSResolveQueueCurl.cpp
     platform/network/curl/NetworkStorageSessionCurl.cpp
     platform/network/curl/ProxyServerCurl.cpp
     platform/network/curl/ResourceErrorCurl.cpp

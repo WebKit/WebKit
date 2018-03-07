@@ -23,44 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NetworkRTCResolver.h"
+#pragma once
 
 #if USE(LIBWEBRTC)
 
-#include <wtf/Expected.h>
+#include "NetworkRTCResolver.h"
+
+#include <CFNetwork/CFHost.h>
 
 namespace WebKit {
 
-// FIXME: Use the function after removing the NetworkRTCResolverCocoa.
-#if !PLATFORM(COCOA)
-std::unique_ptr<NetworkRTCResolver> NetworkRTCResolver::create(uint64_t identifier, WebCore::DNSCompletionHandler&& completionHandler)
-{
-    return std::unique_ptr<NetworkRTCResolver>(new NetworkRTCResolver(identifier, WTFMove(completionHandler)));
-}
-#endif
+// FIXME: Remove this class when we complete the implementation of the DNSResolveQueueCFNet.
+class NetworkRTCResolverCocoa final : public NetworkRTCResolver {
+public:
+    explicit NetworkRTCResolverCocoa(uint64_t identifier, WebCore::DNSCompletionHandler&&);
+    ~NetworkRTCResolverCocoa() final;
 
-NetworkRTCResolver::NetworkRTCResolver(uint64_t identifier, WebCore::DNSCompletionHandler&& completionHandler)
-    : m_identifier(identifier)
-    , m_completionHandler(WTFMove(completionHandler))
-{
-}
+    void start(const String& address) final;
+    void stop() final;
 
-NetworkRTCResolver::~NetworkRTCResolver()
-{
-    if (auto completionHandler = WTFMove(m_completionHandler))
-        completionHandler(makeUnexpected(WebCore::DNSError::Unknown));
-}
+    void completed(WebCore::DNSAddressesOrError&&);
 
-void NetworkRTCResolver::start(const String& address)
-{
-    WebCore::resolveDNS(address, m_identifier, WTFMove(m_completionHandler));
-}
-
-void NetworkRTCResolver::stop()
-{
-    WebCore::stopResolveDNS(m_identifier);
-}
+private:
+    RetainPtr<CFHostRef> m_host;
+};
 
 } // namespace WebKit
 

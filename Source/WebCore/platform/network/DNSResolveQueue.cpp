@@ -27,6 +27,14 @@
 #include "config.h"
 #include "DNSResolveQueue.h"
 
+#if USE(SOUP)
+#include "DNSResolveQueueSoup.h"
+#elif USE(CURL)
+#include "DNSResolveQueueCurl.h"
+#elif USE(CF)
+#include "DNSResolveQueueCFNet.h"
+#endif
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -51,7 +59,7 @@ static const Seconds resolvingRetryDelay { 100_ms };
 
 DNSResolveQueue& DNSResolveQueue::singleton()
 {
-    static NeverDestroyed<DNSResolveQueue> queue;
+    static NeverDestroyed<DNSResolveQueuePlatform> queue;
 
     return queue;
 }
@@ -59,7 +67,6 @@ DNSResolveQueue& DNSResolveQueue::singleton()
 DNSResolveQueue::DNSResolveQueue()
     : m_timer(*this, &DNSResolveQueue::timerFired)
     , m_requestsInFlight(0)
-    , m_isUsingProxy(true)
 {
     // isUsingProxy will return the initial value of m_isUsingProxy at first on
     // platforms that have an asynchronous implementation of updateIsUsingProxy,

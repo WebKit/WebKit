@@ -23,14 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DNS_h
-#define DNS_h
+#pragma once
+
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#include <netinet/in.h>
+#elif PLATFORM(WIN)
+#include <winsock2.h>
+#endif
 
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-WEBCORE_EXPORT void prefetchDNS(const String& hostname);
-}
+class WEBCORE_EXPORT IPAddress {
+public:
+    explicit IPAddress(const struct sockaddr_in& address)
+    {
+        memset(&m_address, 0, sizeof(struct sockaddr_in));
+        m_address = address;
+    }
 
-#endif
+    const struct in_addr& getSinAddr() { return m_address.sin_addr; };
+
+private:
+    struct sockaddr_in m_address;
+};
+
+enum class DNSError { Unknown, CannotResolve, Cancelled };
+
+using DNSAddressesOrError = Expected<Vector<WebCore::IPAddress>, DNSError>;
+using DNSCompletionHandler = WTF::CompletionHandler<void(DNSAddressesOrError&&)>;
+
+WEBCORE_EXPORT void prefetchDNS(const String& hostname);
+WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
+WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
+
+}

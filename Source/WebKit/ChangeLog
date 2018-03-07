@@ -1,3 +1,35 @@
+2018-03-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Make NetworkRTCResolver port agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=178855
+
+        Reviewed by Youenn Fablet.
+
+        Create a specific Cocoa class to isolate the generic code in the base class, make the base implementation port
+        agnostic and dependent on DNS API in the platform directory which encapsulates the platform specific details.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp: Create an alias class name defined per platform to instantiate the resolver.
+        (WebKit::NetworkRTCProvider::createResolver): Used the alias class name and receive a new IPAddress class that is not
+        dependent on rtc libwebrtc library.
+        * NetworkProcess/webrtc/NetworkRTCResolver.cpp: Remove the platform specific code. Use the DNS API to implement the
+        platform specific code in the default start and stop methods. Add the identifier of the resolve operation to the class.
+        (WebKit::NetworkRTCResolver::NetworkRTCResolver): Add the identifier in the initialization.
+        (WebKit::NetworkRTCResolver::~NetworkRTCResolver): Remove the platform specific code.
+        (WebKit::NetworkRTCResolver::completed): Ditto.
+        (WebKit::NetworkRTCResolver::start): Add a new implementation using the DNS API.
+        (WebKit::NetworkRTCResolver::stop): Ditto
+        * NetworkProcess/webrtc/NetworkRTCResolver.h: Remove the platform specific code and use the DNSResolveQueue for a general
+        solution to implement the platform specific code. Avoid using the IPAddress class that depends on libwertc classes to make
+        it more general regarding DNS name resolution.
+        (WebKit::NetworkRTCResolver::start): Make this class virtual.
+        (WebKit::NetworkRTCResolver::stop): Ditto.
+        * NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp: Copied Cocoa code from Source/WebKit/NetworkProcess/webrtc/NetworkRTCResolver.cpp.
+        Now this class overrides the start and stop methods that use DNS, cocoa implementation should use the DNS methods in the future and
+        remove this class, making sure all the platform specific class is in the platform directory.
+        * NetworkProcess/webrtc/NetworkRTCResolverCocoa.h: Copied Cocoa code from Source/WebKit/NetworkProcess/webrtc/NetworkRTCResolver.h.
+        * PlatformGTK.cmake: Add NetworkRTCResolver compilation for GTK.
+        * WebKit.xcodeproj/project.pbxproj: Add the NetworkRTCResolverCocoa class to the compilation.
+
 2018-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         NetworkDataTask should enable logging for automation clients

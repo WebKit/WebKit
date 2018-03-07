@@ -482,7 +482,7 @@ platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MediaPlaybackTargetMock.cpp
 
-platform/network/cf/DNSCFNet.cpp
+platform/network/cf/DNSResolveQueueCFNet.cpp
 platform/network/cf/FormDataStreamCFNet.cpp
 platform/network/cf/NetworkStorageSessionCFNet.cpp
 platform/network/cf/ProxyServerCFNet.cpp

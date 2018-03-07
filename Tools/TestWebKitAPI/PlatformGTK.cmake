@@ -87,6 +87,7 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/ComplexTextController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/DNS.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileMonitor.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/GridPosition.cpp

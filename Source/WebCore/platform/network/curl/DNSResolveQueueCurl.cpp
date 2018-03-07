@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,55 +20,38 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DNSResolveQueue_h
-#define DNSResolveQueue_h
+#include "config.h"
+#include "DNSResolveQueueCurl.h"
 
-#include "DNS.h"
-#include "Timer.h"
-#include <atomic>
-#include <wtf/Forward.h>
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
+#if USE(CURL)
+
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-class DNSResolveQueue {
-    friend NeverDestroyed<DNSResolveQueue>;
+void DNSResolveQueueCurl::updateIsUsingProxy()
+{
+    notImplemented();
+}
 
-public:
-    DNSResolveQueue();
-    virtual ~DNSResolveQueue() = default;
+void DNSResolveQueueCurl::platformResolve(const String& /* hostname */)
+{
+    notImplemented();
+}
 
-    static DNSResolveQueue& singleton();
+void DNSResolveQueueCurl::resolve(const String& /* hostname */, uint64_t /* identifier */, DNSCompletionHandler&& /* completionHandler */)
+{
+    notImplemented();
+}
 
-    virtual void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) = 0;
-    virtual void stopResolve(uint64_t identifier) = 0;
-    void add(const String& hostname);
-    void decrementRequestCount()
-    {
-        --m_requestsInFlight;
-    }
-
-protected:
-    bool isUsingProxy();
-
-    bool m_isUsingProxy { true };
-
-private:
-    virtual void updateIsUsingProxy() = 0;
-    virtual void platformResolve(const String&) = 0;
-    void timerFired();
-
-    Timer m_timer;
-
-    HashSet<String> m_names;
-    std::atomic<int> m_requestsInFlight;
-    MonotonicTime m_lastProxyEnabledStatusCheckTime;
-};
+void DNSResolveQueueCurl::stopResolve(uint64_t /* identifier */)
+{
+    notImplemented();
+}
 
 }
 
-#endif // DNSResolveQueue_h
+#endif

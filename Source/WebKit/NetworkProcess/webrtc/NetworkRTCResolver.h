@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "RTCNetwork.h"
-#include <CFNetwork/CFHost.h>
+#include <WebCore/DNS.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,22 +36,17 @@ namespace WebKit {
 
 class NetworkRTCResolver {
 public:
-    enum class Error { Unknown, Cancelled };
+    static std::unique_ptr<NetworkRTCResolver> create(uint64_t identifier, WebCore::DNSCompletionHandler&&);
 
-    using AddressesOrError = Expected<std::reference_wrapper<const Vector<RTCNetwork::IPAddress>>, Error>;
-    using CompletionHandler = WTF::CompletionHandler<void(AddressesOrError&&)>;
+    NetworkRTCResolver(uint64_t identifier, WebCore::DNSCompletionHandler&&);
+    virtual ~NetworkRTCResolver();
 
-    explicit NetworkRTCResolver(CompletionHandler&&);
-    ~NetworkRTCResolver();
+    virtual void start(const String& address);
+    virtual void stop();
 
-    void start(const String& address);
-    void stop();
-
-    void completed(const Vector<RTCNetwork::IPAddress>&);
-
-private:
-    CompletionHandler m_completionHandler;
-    RetainPtr<CFHostRef> m_host;
+protected:
+    uint64_t m_identifier;
+    WebCore::DNSCompletionHandler m_completionHandler;
 };
 
 } // namespace WebKit

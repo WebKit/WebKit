@@ -1,3 +1,64 @@
+2018-03-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Make NetworkRTCResolver port agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=178855
+
+        Reviewed by Youenn Fablet.
+
+        Add new API in the DNSResolveQueue allowing to revolve hostnames and get the result. Add platform
+        specific code for soup platform and refactor the other platforms. Added new API to the DNS API header
+        and move the general code to the DNS.cpp file, that way we can reuse that code in all the platforms
+        and leave the ResolveQueue class of the platforms in a file.
+
+        No new tests because this is a refactor.
+
+        * PlatformAppleWin.cmake: Move the DNSCFNet class to DNSResolveQueueCFNet.
+        * PlatformMac.cmake: Ditto.
+        * Sources.txt: Add the DNS.cpp for compilation.
+        * SourcesCocoa.txt: Move the DNSCFNet class to DNSResolveQueueCFNet.
+        * WebCore.xcodeproj/project.pbxproj: Move the DNSCFNet class to DNSResolveQueueCFNet, add the DNS.cpp
+        for compilation. Add the new DNSResolveQueueCFNet class.
+        * platform/Curl.cmake: Move the DNSCFNet class to DNSResolveQueueCurl.
+        * platform/network/DNS.cpp: Add this file with the default implementation of the DNS functions for
+        all the platforms.
+        (WebCore::prefetchDNS): Copied from every platform implementation.
+        (WebCore::resolveDNS): Add the function, resolves a hostname, receives the identifier of the operation
+        and the completion handler.
+        (WebCore::stopResolveDNS): Add the function, stops a resolution operation, receives the identifier
+        of the operation.
+        * platform/network/DNS.h: Add the new APIs resolveDNS and stopResolveDNS with the classes used for the
+        implementation.
+        (WebCore::IPAddress::IPAddress): Add this class used to send the resolved address information, it does
+        not depend on libwebrtc rtc classes.
+        (WebCore::IPAddress::get): Get a reference to the struct sockaddr_in in the IPAddress class.
+        (WebCore::DNSCompletionHandler): Add this CompletionHandler type to be used when resolving the DNS
+        address.
+        * platform/network/DNSResolveQueue.cpp: Add the DNSResolveQueue platform instantiation in the singleton.
+        (WebCore::DNSResolveQueue::singleton): Use DNSResolveQueue platform classes when creating the singleton..
+        (WebCore::DNSResolveQueue::resolve): Add this method to get the address of a hostname, it sends the
+        identifier and the completion handler to use when returning the result.
+        (WebCore::DNSResolveQueue::stopResolve): Add this method to stop the resolve operation when required.
+        * platform/network/DNSResolveQueue.h: Add the new methods and make the class abstract, so that every
+        platform can implement the functions.
+        * platform/network/cf/DNSResolveQueueCFNet.cpp: Renamed from Source/WebCore/platform/network/cf/DNSCFNet.cpp.
+        Add the methods to the new class DNSResolveQueueCFNet, move the prefetchDNS to the DNS.cpp general
+        implementation.
+        * platform/network/cf/DNSResolveQueueCFNet.h: Add the new class inheriting from the DNSResolveQueue. Add the
+        new methods, we have to implement these methods and move the NetworkRTCResolver for COCOA code here.
+        (WebCore::DNSResolveQueueCF::resolve): Dummy method, not implemented.
+        (WebCore::DNSResolveQueueCF::stopResolve): Ditto.
+        * platform/network/curl/DNSResolveQueueCurl.cpp: Renamed from Source/WebCore/platform/network/curl/DNSCurl.cpp.
+        * platform/network/curl/DNSResolveQueueCurl.h: Add the new class inheriting from the DNSResolveQueue.
+        (WebCore::DNSResolveQueueCurl::resolve): Ditto.
+        (WebCore::DNSResolveQueueCurl::stopResolve): Ditto.
+        * platform/network/soup/DNSResolveQueueSoup.h: New class inheriting from the DNSResolveQueue class, adding
+        a HasMap with the active operations, it allows stopping them.
+        * platform/network/soup/DNSResolveQueueSoup.cpp: Renamed from Source/WebCore/platform/network/curl/DNSSoup.cpp.
+        (WebCore::resolvedWithObserverCallback): Called when the result address from the soup platform is ready,
+        sends the address to the completion handler.
+        (WebCore::DNSResolveQueueSoup::resolve): Launch the resolve operation with the soup library.
+        (WebCore::DNSResolveQueueSoup::stopResolve): Stop the resolve operation on process with a GCancellable.
+
 2018-03-06  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Stop copying ForwardingHeaders directory that no longer exists

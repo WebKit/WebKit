@@ -1709,6 +1709,7 @@ platform/network/CacheValidation.cpp
 platform/network/Cookie.cpp
 platform/network/CredentialBase.cpp
 platform/network/CredentialStorage.cpp
+platform/network/DNS.cpp
 platform/network/DNSResolveQueue.cpp
 platform/network/DataURLDecoder.cpp
 platform/network/FormData.cpp

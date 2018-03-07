@@ -50,7 +50,7 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/CookieJarCFNet.cpp
     platform/network/cf/CookieStorageCFNet.cpp
     platform/network/cf/CredentialStorageCFNet.cpp
-    platform/network/cf/DNSCFNet.cpp
+    platform/network/cf/DNSResolveQueueCFNet.cpp
     platform/network/cf/FormDataStreamCFNet.cpp
     platform/network/cf/LoaderRunLoopCF.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp

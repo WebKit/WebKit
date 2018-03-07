@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +20,26 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DNS.h"
+#pragma once
+
 #include "DNSResolveQueue.h"
-
-#if USE(CURL)
-
-#include "NotImplemented.h"
 
 namespace WebCore {
 
-void DNSResolveQueue::updateIsUsingProxy()
-{
-    notImplemented();
-}
+class DNSResolveQueueCFNet final : public DNSResolveQueue {
+public:
+    DNSResolveQueueCFNet() = default;
+    void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
+    void stopResolve(uint64_t identifier) final;
 
-void DNSResolveQueue::platformResolve(const String& /* hostname */)
-{
-    notImplemented();
-}
+private:
+    void updateIsUsingProxy() final;
+    void platformResolve(const String&) final;
+};
 
-void prefetchDNS(const String& /* hostname */)
-{
-    notImplemented();
-}
+using DNSResolveQueuePlatform = DNSResolveQueueCFNet;
 
 }
-
-#endif

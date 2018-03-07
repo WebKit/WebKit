@@ -915,6 +915,7 @@
 		410482CD1DDD324C00F006D0 /* RTCNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */; };
 		410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 410482CC1DDD2FB500F006D0 /* RTCNetwork.h */; };
 		4112B5551FA0EA7A00E67875 /* NetworkRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */; };
+		4112B5551FA0EA7A00E67986 /* NetworkRTCResolverCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */; };
 		411B22641E371BA6004F7363 /* LibWebRTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B22621E371244004F7363 /* LibWebRTCNetwork.h */; };
 		413075A91DE85F2C0039EC69 /* NetworkRTCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413075981DE84FB00039EC69 /* NetworkRTCSocket.cpp */; };
 		413075AA1DE85F300039EC69 /* NetworkRTCMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4130759A1DE84FB00039EC69 /* NetworkRTCMonitor.cpp */; };
@@ -3287,6 +3288,8 @@
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
 		4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCResolver.cpp; path = NetworkProcess/webrtc/NetworkRTCResolver.cpp; sourceTree = "<group>"; };
 		4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolver.h; path = NetworkProcess/webrtc/NetworkRTCResolver.h; sourceTree = "<group>"; };
+		4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCResolverCocoa.cpp; path = NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp; sourceTree = "<group>"; };
+		4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolverCocoa.h; path = NetworkProcess/webrtc/NetworkRTCResolverCocoa.h; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
 		413075981DE84FB00039EC69 /* NetworkRTCSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCSocket.cpp; path = NetworkProcess/webrtc/NetworkRTCSocket.cpp; sourceTree = "<group>"; };
 		413075991DE84FB00039EC69 /* NetworkRTCSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCSocket.h; path = NetworkProcess/webrtc/NetworkRTCSocket.h; sourceTree = "<group>"; };
@@ -6236,6 +6239,8 @@
 				41DC45981E3D6ED600B11F51 /* NetworkRTCProvider.messages.in */,
 				4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */,
 				4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */,
+				4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */,
+				4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */,
 				413075981DE84FB00039EC69 /* NetworkRTCSocket.cpp */,
 				413075991DE84FB00039EC69 /* NetworkRTCSocket.h */,
 				4130759D1DE84FB00039EC69 /* NetworkRTCSocket.messages.in */,
@@ -10621,6 +10626,7 @@
 				41DC45971E3D6E2200B11F51 /* NetworkRTCProvider.cpp in Sources */,
 				51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */,
 				4112B5551FA0EA7A00E67875 /* NetworkRTCResolver.cpp in Sources */,
+				4112B5551FA0EA7A00E67986 /* NetworkRTCResolverCocoa.cpp in Sources */,
 				413075A91DE85F2C0039EC69 /* NetworkRTCSocket.cpp in Sources */,
 				51F060E11654318500F3281D /* NetworkRTCSocketMessageReceiver.cpp in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
