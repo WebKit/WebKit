@@ -8,29 +8,31 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_sender.h"
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/rate_limiter.h"
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_cvo.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/playout_delay_oracle.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender_audio.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender_video.h"
-#include "webrtc/modules/rtp_rtcp/source/time_util.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "logging/rtc_event_log/events/rtc_event_rtp_packet_outgoing.h"
+#include "logging/rtc_event_log/rtc_event_log.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/rtp_rtcp/include/rtp_cvo.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/playout_delay_oracle.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_sender_audio.h"
+#include "modules/rtp_rtcp/source/rtp_sender_video.h"
+#include "modules/rtp_rtcp/source/time_util.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/rate_limiter.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -232,20 +234,21 @@ int32_t RTPSender::RegisterPayload(
   if (payload_type_map_.end() != it) {
     // We already use this payload type.
     RtpUtility::Payload* payload = it->second;
-    assert(payload);
+    RTC_DCHECK(payload);
 
     // Check if it's the same as we already have.
     if (RtpUtility::StringCompare(
             payload->name, payload_name, RTP_PAYLOAD_NAME_SIZE - 1)) {
-      if (audio_configured_ && payload->audio &&
-          payload->typeSpecific.Audio.frequency == frequency &&
-          (payload->typeSpecific.Audio.rate == rate ||
-           payload->typeSpecific.Audio.rate == 0 || rate == 0)) {
-        payload->typeSpecific.Audio.rate = rate;
-        // Ensure that we update the rate if new or old is zero.
-        return 0;
+      if (audio_configured_ && payload->typeSpecific.is_audio()) {
+        auto& p = payload->typeSpecific.audio_payload();
+        if (rtc::SafeEq(p.format.clockrate_hz, frequency) &&
+            (p.rate == rate || p.rate == 0 || rate == 0)) {
+          p.rate = rate;
+          // Ensure that we update the rate if new or old is zero.
+          return 0;
+        }
       }
-      if (!audio_configured_ && !payload->audio) {
+      if (!audio_configured_ && !payload->typeSpecific.is_audio()) {
         return 0;
       }
     }
@@ -288,9 +291,8 @@ void RTPSender::SetSendPayloadType(int8_t payload_type) {
 }
 
 void RTPSender::SetMaxRtpPacketSize(size_t max_packet_size) {
-  // Sanity check.
-  RTC_DCHECK(max_packet_size >= 100 && max_packet_size <= IP_PACKET_SIZE)
-      << "Invalid max payload length: " << max_packet_size;
+  RTC_DCHECK_GE(max_packet_size, 100);
+  RTC_DCHECK_LE(max_packet_size, IP_PACKET_SIZE);
   rtc::CritScope lock(&send_critsect_);
   max_packet_size_ = max_packet_size;
 }
@@ -326,7 +328,7 @@ void RTPSender::SetRtxPayloadType(int payload_type,
   RTC_DCHECK_LE(payload_type, 127);
   RTC_DCHECK_LE(associated_payload_type, 127);
   if (payload_type < 0) {
-    LOG(LS_ERROR) << "Invalid RTX payload type: " << payload_type << ".";
+    RTC_LOG(LS_ERROR) << "Invalid RTX payload type: " << payload_type << ".";
     return;
   }
 
@@ -338,7 +340,7 @@ int32_t RTPSender::CheckPayloadType(int8_t payload_type,
   rtc::CritScope lock(&send_critsect_);
 
   if (payload_type < 0) {
-    LOG(LS_ERROR) << "Invalid payload_type " << payload_type << ".";
+    RTC_LOG(LS_ERROR) << "Invalid payload_type " << payload_type << ".";
     return -1;
   }
   if (payload_type_ == payload_type) {
@@ -350,16 +352,17 @@ int32_t RTPSender::CheckPayloadType(int8_t payload_type,
   std::map<int8_t, RtpUtility::Payload*>::iterator it =
       payload_type_map_.find(payload_type);
   if (it == payload_type_map_.end()) {
-    LOG(LS_WARNING) << "Payload type " << static_cast<int>(payload_type)
-                    << " not registered.";
+    RTC_LOG(LS_WARNING) << "Payload type " << static_cast<int>(payload_type)
+                        << " not registered.";
     return -1;
   }
   SetSendPayloadType(payload_type);
   RtpUtility::Payload* payload = it->second;
-  assert(payload);
-  if (!payload->audio && !audio_configured_) {
-    video_->SetVideoCodecType(payload->typeSpecific.Video.videoCodecType);
-    *video_type = payload->typeSpecific.Video.videoCodecType;
+  RTC_DCHECK(payload);
+  if (payload->typeSpecific.is_video() && !audio_configured_) {
+    video_->SetVideoCodecType(
+        payload->typeSpecific.video_payload().videoCodecType);
+    *video_type = payload->typeSpecific.video_payload().videoCodecType;
   }
   return 0;
 }
@@ -372,7 +375,8 @@ bool RTPSender::SendOutgoingData(FrameType frame_type,
                                  size_t payload_size,
                                  const RTPFragmentationHeader* fragmentation,
                                  const RTPVideoHeader* rtp_header,
-                                 uint32_t* transport_frame_id_out) {
+                                 uint32_t* transport_frame_id_out,
+                                 int64_t expected_retransmission_time_ms) {
   uint32_t ssrc;
   uint16_t sequence_number;
   uint32_t rtp_timestamp;
@@ -391,25 +395,36 @@ bool RTPSender::SendOutgoingData(FrameType frame_type,
   }
   RtpVideoCodecTypes video_type = kRtpVideoGeneric;
   if (CheckPayloadType(payload_type, &video_type) != 0) {
-    LOG(LS_ERROR) << "Don't send data with unknown payload type: "
-                  << static_cast<int>(payload_type) << ".";
+    RTC_LOG(LS_ERROR) << "Don't send data with unknown payload type: "
+                      << static_cast<int>(payload_type) << ".";
     return false;
+  }
+
+  switch (frame_type) {
+    case kAudioFrameSpeech:
+    case kAudioFrameCN:
+      RTC_CHECK(audio_configured_);
+      break;
+    case kVideoFrameKey:
+    case kVideoFrameDelta:
+      RTC_CHECK(!audio_configured_);
+      break;
+    case kEmptyFrame:
+      break;
   }
 
   bool result;
   if (audio_configured_) {
     TRACE_EVENT_ASYNC_STEP1("webrtc", "Audio", rtp_timestamp, "Send", "type",
                             FrameTypeToString(frame_type));
-    assert(frame_type == kAudioFrameSpeech || frame_type == kAudioFrameCN ||
-           frame_type == kEmptyFrame);
-
+    // The only known way to produce of RTPFragmentationHeader for audio is
+    // to use the AudioCodingModule directly.
+    RTC_DCHECK(fragmentation == nullptr);
     result = audio_->SendAudio(frame_type, payload_type, rtp_timestamp,
-                               payload_data, payload_size, fragmentation);
+                               payload_data, payload_size);
   } else {
     TRACE_EVENT_ASYNC_STEP1("webrtc", "Video", capture_time_ms,
                             "Send", "type", FrameTypeToString(frame_type));
-    assert(frame_type != kAudioFrameSpeech && frame_type != kAudioFrameCN);
-
     if (frame_type == kEmptyFrame)
       return true;
 
@@ -420,7 +435,8 @@ bool RTPSender::SendOutgoingData(FrameType frame_type,
 
     result = video_->SendVideo(video_type, frame_type, payload_type,
                                rtp_timestamp, capture_time_ms, payload_data,
-                               payload_size, fragmentation, rtp_header);
+                               payload_size, fragmentation, rtp_header,
+                               expected_retransmission_time_ms);
   }
 
   rtc::CritScope cs(&statistics_crit_);
@@ -505,7 +521,7 @@ size_t RTPSender::SendPadData(size_t bytes,
           break;
         }
         if (!ssrc_) {
-          LOG(LS_ERROR)  << "SSRC unset.";
+          RTC_LOG(LS_ERROR) << "SSRC unset.";
           return 0;
         }
 
@@ -536,7 +552,7 @@ size_t RTPSender::SendPadData(size_t bytes,
           capture_time_ms += (now_ms - last_timestamp_time_ms_);
         }
         if (!ssrc_rtx_) {
-          LOG(LS_ERROR)  << "RTX SSRC unset.";
+          RTC_LOG(LS_ERROR) << "RTX SSRC unset.";
           return 0;
         }
         RTC_DCHECK(ssrc_rtx_);
@@ -632,8 +648,8 @@ bool RTPSender::SendPacketToNetwork(const RtpPacketToSend& packet,
                      ? static_cast<int>(packet.size())
                      : -1;
     if (event_log_ && bytes_sent > 0) {
-      event_log_->LogRtpHeader(kOutgoingPacket, packet.data(), packet.size(),
-                               pacing_info.probe_cluster_id);
+      event_log_->Log(rtc::MakeUnique<RtcEventRtpPacketOutgoing>(
+          packet, pacing_info.probe_cluster_id));
     }
   }
   TRACE_EVENT_INSTANT2(TRACE_DISABLED_BY_DEFAULT("webrtc_rtp"),
@@ -641,7 +657,7 @@ bool RTPSender::SendPacketToNetwork(const RtpPacketToSend& packet,
                        "sent", bytes_sent);
   // TODO(pwestin): Add a separate bitrate for sent bitrate after pacer.
   if (bytes_sent <= 0) {
-    LOG(LS_WARNING) << "Transport failed to send packet.";
+    RTC_LOG(LS_WARNING) << "Transport failed to send packet.";
     return false;
   }
   return true;
@@ -670,8 +686,8 @@ void RTPSender::OnReceivedNack(
     const int32_t bytes_sent = ReSendPacket(seq_no, 5 + avg_rtt);
     if (bytes_sent < 0) {
       // Failed to send one Sequence number. Give up the rest in this nack.
-      LOG(LS_WARNING) << "Failed resending RTP packet " << seq_no
-                      << ", Discard rest of packets.";
+      RTC_LOG(LS_WARNING) << "Failed resending RTP packet " << seq_no
+                          << ", Discard rest of packets.";
       break;
     }
   }
@@ -736,6 +752,14 @@ bool RTPSender::PrepareAndSendPacket(std::unique_ptr<RtpPacketToSend> packet,
     packet_to_send = packet_rtx.get();
   }
 
+  // Bug webrtc:7859. While FEC is invoked from rtp_sender_video, and not after
+  // the pacer, these modifications of the header below are happening after the
+  // FEC protection packets are calculated. This will corrupt recovered packets
+  // at the same place. It's not an issue for extensions, which are present in
+  // all the packets (their content just may be incorrect on recovered packets).
+  // In case of VideoTimingExtension, since it's present not in every packet,
+  // data after rtp header may be corrupted if these packets are protected by
+  // the FEC.
   int64_t now_ms = clock_->TimeInMilliseconds();
   int64_t diff_ms = now_ms - capture_time_ms;
   packet_to_send->SetExtension<TransmissionOffset>(kTimestampTicksPerMs *
@@ -918,7 +942,7 @@ void RTPSender::UpdateDelayStatistics(int64_t capture_time_ms, int64_t now_ms) {
     return;
 
   uint32_t ssrc;
-  int avg_delay_ms = 0;
+  int64_t avg_delay_ms = 0;
   int max_delay_ms = 0;
   {
     rtc::CritScope lock(&send_critsect_);
@@ -944,8 +968,8 @@ void RTPSender::UpdateDelayStatistics(int64_t capture_time_ms, int64_t now_ms) {
       return;
     avg_delay_ms = (avg_delay_ms + num_delays / 2) / num_delays;
   }
-  send_side_delay_observer_->SendSideDelayUpdated(avg_delay_ms, max_delay_ms,
-                                                  ssrc);
+  send_side_delay_observer_->SendSideDelayUpdated(
+      rtc::dchecked_cast<int>(avg_delay_ms), max_delay_ms, ssrc);
 }
 
 void RTPSender::UpdateOnSendPacket(int packet_id,
@@ -1094,11 +1118,11 @@ rtc::Optional<uint32_t> RTPSender::FlexfecSsrc() const {
   if (video_) {
     return video_->FlexfecSsrc();
   }
-  return rtc::Optional<uint32_t>();
+  return rtc::nullopt;
 }
 
 void RTPSender::SetCsrcs(const std::vector<uint32_t>& csrcs) {
-  assert(csrcs.size() <= kRtpCsrcSize);
+  RTC_DCHECK_LE(csrcs.size(), kRtpCsrcSize);
   rtc::CritScope lock(&send_critsect_);
   csrcs_ = csrcs;
 }
@@ -1124,19 +1148,12 @@ int32_t RTPSender::SendTelephoneEvent(uint8_t key,
   return audio_->SendTelephoneEvent(key, time_ms, level);
 }
 
-int32_t RTPSender::SetAudioPacketSize(uint16_t packet_size_samples) {
-  if (!audio_configured_) {
-    return -1;
-  }
-  return 0;
-}
-
 int32_t RTPSender::SetAudioLevel(uint8_t level_d_bov) {
   return audio_->SetAudioLevel(level_d_bov);
 }
 
 RtpVideoCodecTypes RTPSender::VideoCodecType() const {
-  assert(!audio_configured_ && "Sender is an audio stream!");
+  RTC_DCHECK(!audio_configured_) << "Sender is an audio stream!";
   return video_->VideoCodecType();
 }
 
@@ -1279,6 +1296,26 @@ void RTPSender::UpdateRtpOverhead(const RtpPacketToSend& packet) {
     overhead_bytes_per_packet = rtp_overhead_bytes_per_packet_;
   }
   overhead_observer_->OnOverheadChanged(overhead_bytes_per_packet);
+}
+
+int64_t RTPSender::LastTimestampTimeMs() const {
+  rtc::CritScope lock(&send_critsect_);
+  return last_timestamp_time_ms_;
+}
+
+void RTPSender::SendKeepAlive(uint8_t payload_type) {
+  std::unique_ptr<RtpPacketToSend> packet = AllocatePacket();
+  packet->SetPayloadType(payload_type);
+  // Set marker bit and timestamps in the same manner as plain padding packets.
+  packet->SetMarker(false);
+  {
+    rtc::CritScope lock(&send_critsect_);
+    packet->SetTimestamp(last_rtp_timestamp_);
+    packet->set_capture_time_ms(capture_time_ms_);
+  }
+  AssignSequenceNumber(packet.get());
+  SendToNetwork(std::move(packet), StorageType::kDontRetransmit,
+                RtpPacketSender::Priority::kLowPriority);
 }
 
 }  // namespace webrtc

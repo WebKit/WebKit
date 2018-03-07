@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/mouse_cursor_monitor.h"
+#include "modules/desktop_capture/mouse_cursor_monitor.h"
 
 #include <assert.h>
 
@@ -18,14 +18,16 @@
 #include <Cocoa/Cocoa.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "webrtc/base/macutils.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/mac/desktop_configuration.h"
-#include "webrtc/modules/desktop_capture/mac/desktop_configuration_monitor.h"
-#include "webrtc/modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
-#include "webrtc/modules/desktop_capture/mouse_cursor.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/mac/desktop_configuration.h"
+#include "modules/desktop_capture/mac/desktop_configuration_monitor.h"
+#include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
+#include "modules/desktop_capture/mac/window_list_utils.h"
+#include "modules/desktop_capture/mouse_cursor.h"
+#include "rtc_base/macutils.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -94,11 +96,6 @@ MouseCursorMonitorMac::MouseCursorMonitorMac(
       full_screen_chrome_window_detector_(
           options.full_screen_chrome_window_detector()) {
   assert(window_id == kCGNullWindowID || screen_id == kInvalidScreenId);
-  if (screen_id != kInvalidScreenId &&
-      rtc::GetOSVersionName() < rtc::kMacOSLion) {
-    // Single screen capture is not supported on pre OS X 10.7.
-    screen_id_ = kFullDesktopScreenId;
-  }
 }
 
 MouseCursorMonitorMac::~MouseCursorMonitorMac() {}
@@ -126,17 +123,7 @@ void MouseCursorMonitorMac::Capture() {
   MacDesktopConfiguration configuration =
       configuration_monitor_->desktop_configuration();
   configuration_monitor_->Unlock();
-  float scale = 1.0f;
-
-  // Find the dpi to physical pixel scale for the screen where the mouse cursor
-  // is.
-  for (MacDisplayConfigurations::iterator it = configuration.displays.begin();
-       it != configuration.displays.end(); ++it) {
-    if (it->bounds.Contains(position)) {
-      scale = it->dip_to_pixel_scale;
-      break;
-    }
-  }
+  float scale = GetScaleFactorAtPosition(configuration, position);
 
   CaptureImage(scale);
 
@@ -240,22 +227,24 @@ void MouseCursorMonitorMac::Capture() {
         state = OUTSIDE;
         position.set(-1, -1);
       }
-    } else {
-      position.subtract(configuration.bounds.top_left());
     }
   }
-  if (state == INSIDE) {
-    // Convert Density Independent Pixel to physical pixel.
-    position = DesktopVector(round(position.x() * scale),
-                             round(position.y() * scale));
-  }
+  // Convert Density Independent Pixel to physical pixel.
+  position = DesktopVector(round(position.x() * scale),
+                           round(position.y() * scale));
+  // TODO(zijiehe): Remove this overload.
   callback_->OnMouseCursorPosition(state, position);
+  callback_->OnMouseCursorPosition(
+      position.subtract(configuration.bounds.top_left()));
 }
 
 void MouseCursorMonitorMac::CaptureImage(float scale) {
   NSCursor* nscursor = [NSCursor currentSystemCursor];
 
   NSImage* nsimage = [nscursor image];
+  if (nsimage == nil || !nsimage.isValid) {
+    return;
+  }
   NSSize nssize = [nsimage size];  // DIP size
 
   // No need to caputre cursor image if it's unchanged since last capture.
@@ -328,6 +317,12 @@ MouseCursorMonitor* MouseCursorMonitor::CreateForScreen(
     const DesktopCaptureOptions& options,
     ScreenId screen) {
   return new MouseCursorMonitorMac(options, kCGNullWindowID, screen);
+}
+
+std::unique_ptr<MouseCursorMonitor> MouseCursorMonitor::Create(
+    const DesktopCaptureOptions& options) {
+  return std::unique_ptr<MouseCursorMonitor>(
+      CreateForScreen(options, kFullDesktopScreenId));
 }
 
 }  // namespace webrtc

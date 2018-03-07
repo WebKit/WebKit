@@ -11,24 +11,24 @@
 #ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ALIGNED_ARRAY_
 #define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ALIGNED_ARRAY_
 
-#include "webrtc/base/checks.h"
-#include "webrtc/system_wrappers/include/aligned_malloc.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/aligned_malloc.h"
 
 namespace webrtc {
 
 // Wrapper class for aligned arrays. Every row (and the first dimension) are
 // aligned to the given byte alignment.
-template<typename T> class AlignedArray {
+template <typename T>
+class AlignedArray {
  public:
   AlignedArray(size_t rows, size_t cols, size_t alignment)
-      : rows_(rows),
-        cols_(cols) {
+      : rows_(rows), cols_(cols) {
     RTC_CHECK_GT(alignment, 0);
-    head_row_ = static_cast<T**>(AlignedMalloc(rows_ * sizeof(*head_row_),
-                                               alignment));
+    head_row_ =
+        static_cast<T**>(AlignedMalloc(rows_ * sizeof(*head_row_), alignment));
     for (size_t i = 0; i < rows_; ++i) {
-      head_row_[i] = static_cast<T*>(AlignedMalloc(cols_ * sizeof(**head_row_),
-                                                   alignment));
+      head_row_[i] = static_cast<T*>(
+          AlignedMalloc(cols_ * sizeof(**head_row_), alignment));
     }
   }
 
@@ -39,13 +39,9 @@ template<typename T> class AlignedArray {
     AlignedFree(head_row_);
   }
 
-  T* const* Array() {
-    return head_row_;
-  }
+  T* const* Array() { return head_row_; }
 
-  const T* const* Array() const {
-    return head_row_;
-  }
+  const T* const* Array() const { return head_row_; }
 
   T* Row(size_t row) {
     RTC_CHECK_LE(row, rows_);
@@ -67,13 +63,9 @@ template<typename T> class AlignedArray {
     return Row(row)[col];
   }
 
-  size_t rows() const {
-    return rows_;
-  }
+  size_t rows() const { return rows_; }
 
-  size_t cols() const {
-    return cols_;
-  }
+  size_t cols() const { return cols_; }
 
  private:
   size_t rows_;

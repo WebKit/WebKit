@@ -11,13 +11,13 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_quality_test.h"
-#include "webrtc/modules/audio_coding/neteq/tools/output_audio_file.h"
-#include "webrtc/modules/audio_coding/neteq/tools/output_wav_file.h"
-#include "webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
+#include "modules/audio_coding/neteq/tools/output_audio_file.h"
+#include "modules/audio_coding/neteq/tools/output_wav_file.h"
+#include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
+#include "rtc_base/checks.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace test {
@@ -26,6 +26,17 @@ const uint8_t kPayloadType = 95;
 const int kOutputSizeMs = 10;
 const int kInitSeed = 0x12345678;
 const int kPacketLossTimeUnitMs = 10;
+
+const std::string& DefaultInFilename() {
+  static const std::string path =
+      ResourcePath("audio_coding/speech_mono_16kHz", "pcm");
+  return path;
+}
+
+const std::string& DefaultOutFilename() {
+  static const std::string path = OutputPath() + "neteq_quality_test_out.pcm";
+  return path;
+}
 
 // Common validator for file names.
 static bool ValidateFilename(const std::string& value, bool write) {
@@ -36,133 +47,28 @@ static bool ValidateFilename(const std::string& value, bool write) {
   return true;
 }
 
-// Define switch for input file name.
-static bool ValidateInFilename(const char* flagname, const std::string& value) {
-  if (!ValidateFilename(value, false)) {
-    printf("Invalid input filename.");
-    return false;
-  }
-  return true;
-}
-
-DEFINE_string(
-    in_filename,
-    ResourcePath("audio_coding/speech_mono_16kHz", "pcm"),
-    "Filename for input audio (specify sample rate with --input_sample_rate ,"
+DEFINE_string(in_filename, DefaultInFilename().c_str(),
+    "Filename for input audio (specify sample rate with --input_sample_rate, "
     "and channels with --channels).");
 
-static const bool in_filename_dummy =
-    RegisterFlagValidator(&FLAGS_in_filename, &ValidateInFilename);
+DEFINE_int(input_sample_rate, 16000, "Sample rate of input file in Hz.");
 
-// Define switch for sample rate.
-static bool ValidateSampleRate(const char* flagname, int32_t value) {
-  if (value == 8000 || value == 16000 || value == 32000 || value == 48000)
-    return true;
-  printf("Invalid sample rate should be 8000, 16000, 32000 or 48000 Hz.");
-  return false;
-}
+DEFINE_int(channels, 1, "Number of channels in input audio.");
 
-DEFINE_int32(input_sample_rate, 16000, "Sample rate of input file in Hz.");
+DEFINE_string(out_filename, DefaultOutFilename().c_str(),
+    "Name of output audio file.");
 
-static const bool sample_rate_dummy =
-    RegisterFlagValidator(&FLAGS_input_sample_rate, &ValidateSampleRate);
+DEFINE_int(runtime_ms, 10000, "Simulated runtime (milliseconds).");
 
-// Define switch for channels.
-static bool ValidateChannels(const char* flagname, int32_t value) {
-  if (value == 1)
-    return true;
-  printf("Invalid number of channels, current support only 1.");
-  return false;
-}
+DEFINE_int(packet_loss_rate, 10, "Percentile of packet loss.");
 
-DEFINE_int32(channels, 1, "Number of channels in input audio.");
-
-static const bool channels_dummy =
-    RegisterFlagValidator(&FLAGS_channels, &ValidateChannels);
-
-// Define switch for output file name.
-static bool ValidateOutFilename(const char* flagname,
-                                const std::string& value) {
-  if (!ValidateFilename(value, true)) {
-    printf("Invalid output filename.");
-    return false;
-  }
-  return true;
-}
-
-DEFINE_string(out_filename,
-              OutputPath() + "neteq_quality_test_out.pcm",
-              "Name of output audio file.");
-
-static const bool out_filename_dummy =
-    RegisterFlagValidator(&FLAGS_out_filename, &ValidateOutFilename);
-
-// Define switch for packet loss rate.
-static bool ValidatePacketLossRate(const char* /* flag_name */, int32_t value) {
-  if (value >= 0 && value <= 100)
-    return true;
-  printf("Invalid packet loss percentile, should be between 0 and 100.");
-  return false;
-}
-
-// Define switch for runtime.
-static bool ValidateRuntime(const char* flagname, int32_t value) {
-  if (value > 0)
-    return true;
-  printf("Invalid runtime, should be greater than 0.");
-  return false;
-}
-
-DEFINE_int32(runtime_ms, 10000, "Simulated runtime (milliseconds).");
-
-static const bool runtime_dummy =
-    RegisterFlagValidator(&FLAGS_runtime_ms, &ValidateRuntime);
-
-DEFINE_int32(packet_loss_rate, 10, "Percentile of packet loss.");
-
-static const bool packet_loss_rate_dummy =
-    RegisterFlagValidator(&FLAGS_packet_loss_rate, &ValidatePacketLossRate);
-
-// Define switch for random loss mode.
-static bool ValidateRandomLossMode(const char* /* flag_name */, int32_t value) {
-  if (value >= 0 && value <= 2)
-    return true;
-  printf("Invalid random packet loss mode, should be between 0 and 2.");
-  return false;
-}
-
-DEFINE_int32(random_loss_mode, 1,
+DEFINE_int(random_loss_mode, 1,
     "Random loss mode: 0--no loss, 1--uniform loss, 2--Gilbert Elliot loss.");
-static const bool random_loss_mode_dummy =
-    RegisterFlagValidator(&FLAGS_random_loss_mode, &ValidateRandomLossMode);
 
-// Define switch for burst length.
-static bool ValidateBurstLength(const char* /* flag_name */, int32_t value) {
-  if (value >= kPacketLossTimeUnitMs)
-    return true;
-  printf("Invalid burst length, should be greater than %d ms.",
-         kPacketLossTimeUnitMs);
-  return false;
-}
-
-DEFINE_int32(burst_length, 30,
+DEFINE_int(burst_length, 30,
     "Burst length in milliseconds, only valid for Gilbert Elliot loss.");
 
-static const bool burst_length_dummy =
-    RegisterFlagValidator(&FLAGS_burst_length, &ValidateBurstLength);
-
-// Define switch for drift factor.
-static bool ValidateDriftFactor(const char* /* flag_name */, double value) {
-  if (value > -0.1)
-    return true;
-  printf("Invalid drift factor, should be greater than -0.1.");
-  return false;
-}
-
-DEFINE_double(drift_factor, 0.0, "Time drift factor.");
-
-static const bool drift_factor_dummy =
-    RegisterFlagValidator(&FLAGS_drift_factor, &ValidateDriftFactor);
+DEFINE_float(drift_factor, 0.0, "Time drift factor.");
 
 // ProbTrans00Solver() is to calculate the transition probability from no-loss
 // state to itself in a modified Gilbert Elliot packet loss model. The result is
@@ -211,11 +117,11 @@ NetEqQualityTest::NetEqQualityTest(int block_duration_ms,
                                    int out_sampling_khz,
                                    NetEqDecoder decoder_type)
     : decoder_type_(decoder_type),
-      channels_(static_cast<size_t>(FLAGS_channels)),
+      channels_(static_cast<size_t>(FLAG_channels)),
       decoded_time_ms_(0),
       decodable_time_ms_(0),
-      drift_factor_(FLAGS_drift_factor),
-      packet_loss_rate_(FLAGS_packet_loss_rate),
+      drift_factor_(FLAG_drift_factor),
+      packet_loss_rate_(FLAG_packet_loss_rate),
       block_duration_ms_(block_duration_ms),
       in_sampling_khz_(in_sampling_khz),
       out_sampling_khz_(out_sampling_khz),
@@ -223,13 +129,43 @@ NetEqQualityTest::NetEqQualityTest(int block_duration_ms,
           static_cast<size_t>(in_sampling_khz_ * block_duration_ms_)),
       payload_size_bytes_(0),
       max_payload_bytes_(0),
-      in_file_(new ResampleInputAudioFile(FLAGS_in_filename,
-                                          FLAGS_input_sample_rate,
+      in_file_(new ResampleInputAudioFile(FLAG_in_filename,
+                                          FLAG_input_sample_rate,
                                           in_sampling_khz * 1000)),
       rtp_generator_(
           new RtpGenerator(in_sampling_khz_, 0, 0, decodable_time_ms_)),
       total_payload_size_bytes_(0) {
-  const std::string out_filename = FLAGS_out_filename;
+  // Flag validation
+  RTC_CHECK(ValidateFilename(FLAG_in_filename, false))
+      << "Invalid input filename.";
+
+  RTC_CHECK(FLAG_input_sample_rate == 8000 || FLAG_input_sample_rate == 16000 ||
+            FLAG_input_sample_rate == 32000 || FLAG_input_sample_rate == 48000)
+      << "Invalid sample rate should be 8000, 16000, 32000 or 48000 Hz.";
+
+  RTC_CHECK_EQ(FLAG_channels, 1)
+      << "Invalid number of channels, current support only 1.";
+
+  RTC_CHECK(ValidateFilename(FLAG_out_filename, true))
+      << "Invalid output filename.";
+
+  RTC_CHECK_GT(FLAG_runtime_ms, 0)
+      << "Invalid runtime, should be greater than 0.";
+
+  RTC_CHECK(FLAG_packet_loss_rate >= 0 && FLAG_packet_loss_rate <= 100)
+      << "Invalid packet loss percentile, should be between 0 and 100.";
+
+  RTC_CHECK(FLAG_random_loss_mode >= 0 && FLAG_random_loss_mode <= 2)
+      << "Invalid random packet loss mode, should be between 0 and 2.";
+
+  RTC_CHECK_GE(FLAG_burst_length, kPacketLossTimeUnitMs)
+      << "Invalid burst length, should be greater than or equal to "
+      << kPacketLossTimeUnitMs << " ms.";
+
+  RTC_CHECK_GT(FLAG_drift_factor, -0.1)
+      << "Invalid drift factor, should be greater than -0.1.";
+
+  const std::string out_filename = FLAG_out_filename;
   const std::string log_filename = out_filename + ".log";
   log_file_.open(log_filename.c_str(), std::ofstream::out);
   RTC_CHECK(log_file_.is_open());
@@ -298,7 +234,7 @@ void NetEqQualityTest::SetUp() {
   rtp_generator_->set_drift_factor(drift_factor_);
 
   int units = block_duration_ms_ / kPacketLossTimeUnitMs;
-  switch (FLAGS_random_loss_mode) {
+  switch (FLAG_random_loss_mode) {
     case 1: {
       // |unit_loss_rate| is the packet loss rate for each unit time interval
       // (kPacketLossTimeUnitMs). Since a packet loss event is generated if any
@@ -312,8 +248,8 @@ void NetEqQualityTest::SetUp() {
       break;
     }
     case 2: {
-      // |FLAGS_burst_length| should be integer times of kPacketLossTimeUnitMs.
-      ASSERT_EQ(0, FLAGS_burst_length % kPacketLossTimeUnitMs);
+      // |FLAG_burst_length| should be integer times of kPacketLossTimeUnitMs.
+      ASSERT_EQ(0, FLAG_burst_length % kPacketLossTimeUnitMs);
 
       // We do not allow 100 percent packet loss in Gilbert Elliot model, which
       // makes no sense.
@@ -331,7 +267,7 @@ void NetEqQualityTest::SetUp() {
       // prob_trans_00 ^ (units - 1) = (loss_rate - 1) / prob_trans_10 *
       //     prob_trans_00 + (1 - loss_rate) * (1 + 1 / prob_trans_10).
       double loss_rate = 0.01f * packet_loss_rate_;
-      double prob_trans_10 = 1.0f * kPacketLossTimeUnitMs / FLAGS_burst_length;
+      double prob_trans_10 = 1.0f * kPacketLossTimeUnitMs / FLAG_burst_length;
       double prob_trans_00 = ProbTrans00Solver(units, loss_rate, prob_trans_10);
       loss_model_.reset(new GilbertElliotLoss(1.0f - prob_trans_10,
                                               1.0f - prob_trans_00));
@@ -415,7 +351,7 @@ int NetEqQualityTest::DecodeBlock() {
 void NetEqQualityTest::Simulate() {
   int audio_size_samples;
 
-  while (decoded_time_ms_ < FLAGS_runtime_ms) {
+  while (decoded_time_ms_ < FLAG_runtime_ms) {
     // Assume 10 packets in packets buffer.
     while (decodable_time_ms_ - 10 * block_duration_ms_ < decoded_time_ms_) {
       ASSERT_TRUE(in_file_->Read(in_size_samples_ * channels_, &in_data_[0]));
@@ -432,7 +368,7 @@ void NetEqQualityTest::Simulate() {
     }
   }
   Log() << "Average bit rate was "
-        << 8.0f * total_payload_size_bytes_ / FLAGS_runtime_ms
+        << 8.0f * total_payload_size_bytes_ / FLAG_runtime_ms
         << " kbps"
         << std::endl;
 }

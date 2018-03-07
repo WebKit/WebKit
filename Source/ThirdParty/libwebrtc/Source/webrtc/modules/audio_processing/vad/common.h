@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_VAD_COMMON_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_VAD_COMMON_H_
+#ifndef MODULES_AUDIO_PROCESSING_VAD_COMMON_H_
+#define MODULES_AUDIO_PROCESSING_VAD_COMMON_H_
 
 #include <stddef.h>
 
@@ -26,4 +26,4 @@ struct AudioFeatures {
   bool silence;
 };
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_VAD_COMMON_H_
+#endif  // MODULES_AUDIO_PROCESSING_VAD_COMMON_H_

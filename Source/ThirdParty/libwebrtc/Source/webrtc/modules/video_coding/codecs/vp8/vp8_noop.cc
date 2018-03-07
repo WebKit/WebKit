@@ -13,8 +13,8 @@
 #error
 #endif  // !defined(RTC_DISABLE_VP8)
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
+#include "rtc_base/checks.h"
+#include "modules/video_coding/codecs/vp8/include/vp8.h"
 
 namespace webrtc {
 
@@ -22,7 +22,7 @@ bool VP8Encoder::IsSupported() {
   return false;
 }
 
-VP8Encoder* VP8Encoder::Create() {
+std::unique_ptr<VP8Encoder> VP8Encoder::Create() {
   RTC_NOTREACHED();
   return nullptr;
 }
@@ -31,7 +31,7 @@ bool VP8Decoder::IsSupported() {
   return false;
 }
 
-VP8Decoder* VP8Decoder::Create() {
+std::unique_ptr<VP8Decoder> VP8Decoder::Create() {
   RTC_NOTREACHED();
   return nullptr;
 }

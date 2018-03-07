@@ -8,16 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/screen_capture_utils.h"
+#include "modules/desktop_capture/win/screen_capture_utils.h"
 
 #include <windows.h>
 
-#include "webrtc/base/checks.h"
+#include <string>
+#include <vector>
+
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/win32.h"
 
 namespace webrtc {
 
-bool GetScreenList(DesktopCapturer::SourceList* screens) {
-  RTC_DCHECK(screens->size() == 0);
+bool GetScreenList(DesktopCapturer::SourceList* screens,
+                   std::vector<std::string>* device_names /* = nullptr */) {
+  RTC_DCHECK_EQ(screens->size(), 0U);
+  if (device_names) {
+    RTC_DCHECK_EQ(device_names->size(), 0U);
+  }
 
   BOOL enum_result = TRUE;
   for (int device_index = 0;; ++device_index) {
@@ -34,6 +43,9 @@ bool GetScreenList(DesktopCapturer::SourceList* screens) {
       continue;
 
     screens->push_back({device_index, std::string()});
+    if (device_names) {
+      device_names->push_back(rtc::ToUtf8(device.DeviceName));
+    }
   }
   return true;
 }
@@ -53,13 +65,17 @@ bool IsScreenValid(DesktopCapturer::SourceId screen, std::wstring* device_key) {
   return !!enum_result;
 }
 
+DesktopRect GetFullscreenRect() {
+  return DesktopRect::MakeXYWH(GetSystemMetrics(SM_XVIRTUALSCREEN),
+                               GetSystemMetrics(SM_YVIRTUALSCREEN),
+                               GetSystemMetrics(SM_CXVIRTUALSCREEN),
+                               GetSystemMetrics(SM_CYVIRTUALSCREEN));
+}
+
 DesktopRect GetScreenRect(DesktopCapturer::SourceId screen,
                           const std::wstring& device_key) {
   if (screen == kFullDesktopScreenId) {
-    return DesktopRect::MakeXYWH(GetSystemMetrics(SM_XVIRTUALSCREEN),
-                                 GetSystemMetrics(SM_YVIRTUALSCREEN),
-                                 GetSystemMetrics(SM_CXVIRTUALSCREEN),
-                                 GetSystemMetrics(SM_CYVIRTUALSCREEN));
+    return GetFullscreenRect();
   }
 
   DISPLAY_DEVICE device;

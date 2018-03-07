@@ -1,3 +1,43 @@
+2017-12-18  Youenn Fablet  <youenn@apple.com>
+
+        Update to libwebrtc revision 4e70a72571dd26b85c2385e9c618e343428df5d3
+        https://bugs.webkit.org/show_bug.cgi?id=180843
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        Moving H264 codecs and factories to libwebrtc.
+        Updating LibWebRTCProvider according new libwebrtc API.
+        Updating ref counting according new libwebrtc API.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        (WebCore::LibWebRTCMediaEndpoint::AddRef const):
+        (WebCore::LibWebRTCMediaEndpoint::Release const):
+        (WTF::LogArgument<webrtc::RTCStats>::toString):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::createPeerConnectionFactory):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa):
+        (WebCore::LibWebRTCProviderCocoa::createDecoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::setActive):
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h:
+        * platform/mediastream/libwebrtc/VideoToolBoxDecoderFactory.cpp: Removed.
+        * platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.cpp: Removed.
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::ConvertToI420):
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setH264HardwareEncoderAllowed):
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2018-03-07  Sihui Liu  <sihui_liu@apple.com>
 
         replaceState cause back/forward malfunction on html page with <base href="/"> tag

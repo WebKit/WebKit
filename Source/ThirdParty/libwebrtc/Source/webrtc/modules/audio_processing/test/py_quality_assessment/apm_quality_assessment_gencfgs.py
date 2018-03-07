@@ -8,7 +8,7 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 """Generate .json files with which the APM module can be tested using the
-   apm_quality_assessment.py script.
+   apm_quality_assessment.py script and audioproc_f as APM simulator.
 """
 
 import logging
@@ -26,8 +26,8 @@ def _GenerateDefaultOverridden(config_override):
   writes a new APM configuration file.
 
   The default settings are loaded via "-all_default".
-  Check "src/webrtc/modules/audio_processing/test/audioproc_float.cc" and search
-  for "if (FLAGS_all_default) {".
+  Check "src/modules/audio_processing/test/audioproc_float.cc" and search
+  for "if (FLAG_all_default) {".
 
   For instance, in 55eb6d621489730084927868fed195d3645a9ec9 the default is this:
   settings.use_aec = rtc::Optional<bool>(true);

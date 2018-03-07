@@ -10,12 +10,12 @@
 
 #include <stdio.h>
 
-#include "webrtc/base/flags.h"
-#include "webrtc/base/stringencode.h"
-#include "webrtc/test/field_trial.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/run_test.h"
-#include "webrtc/video/video_quality_test.h"
+#include "rtc_base/flags.h"
+#include "rtc_base/stringencode.h"
+#include "test/field_trial.h"
+#include "test/gtest.h"
+#include "test/run_test.h"
+#include "video/video_quality_test.h"
 
 namespace webrtc {
 namespace flags {
@@ -67,6 +67,16 @@ int NumTemporalLayers() {
 DEFINE_string(codec, "VP8", "Video codec to use.");
 std::string Codec() {
   return static_cast<std::string>(FLAG_codec);
+}
+
+DEFINE_string(rtc_event_log_name, "", "Filename for rtc event log.");
+std::string RtcEventLogName() {
+  return static_cast<std::string>(FLAG_rtc_event_log_name);
+}
+
+DEFINE_string(rtp_dump_name, "", "Filename for dumped received RTP stream.");
+std::string RtpDumpName() {
+  return static_cast<std::string>(FLAG_rtp_dump_name);
 }
 
 DEFINE_int(selected_tl,
@@ -127,7 +137,15 @@ int StdPropagationDelayMs() {
   return static_cast<int>(FLAG_std_propagation_delay_ms);
 }
 
-DEFINE_int(selected_stream, 0, "ID of the stream to show or analyze.");
+DEFINE_int(num_streams, 0, "Number of streams to show or analyze.");
+int NumStreams() {
+  return static_cast<int>(FLAG_num_streams);
+}
+
+DEFINE_int(selected_stream,
+           0,
+           "ID of the stream to show or analyze. "
+           "Set to the number of streams to show them all.");
 int SelectedStream() {
   return static_cast<int>(FLAG_selected_stream);
 }
@@ -200,6 +218,13 @@ int MinTransmitBitrateKbps() {
   return FLAG_min_transmit_bitrate;
 }
 
+DEFINE_bool(generate_slides,
+           false,
+           "Whether to use randomly generated slides or read them from files.");
+bool GenerateSlides() {
+  return static_cast<int>(FLAG_generate_slides);
+}
+
 DEFINE_int(slide_change_interval,
            10,
            "Interval (in seconds) between simulated slide changes.");
@@ -259,14 +284,20 @@ void Loopback() {
                   flags::MinTransmitBitrateKbps() * 1000,
                   false,  // ULPFEC disabled.
                   false,  // FlexFEC disabled.
-                  flags::EncodedFramePath(),
                   ""};
-  params.screenshare = {true, flags::SlideChangeInterval(),
+  params.screenshare = {true, flags::GenerateSlides(),
+                        flags::SlideChangeInterval(),
                         flags::ScrollDuration(), flags::Slides()};
   params.analyzer = {"screenshare", 0.0, 0.0, flags::DurationSecs(),
       flags::OutputFilename(), flags::GraphTitle()};
   params.pipe = pipe_config;
-  params.logs = flags::FLAG_logs;
+  params.logging = {flags::FLAG_logs, flags::RtcEventLogName(),
+                    flags::RtpDumpName(), flags::EncodedFramePath()};
+
+  if (flags::NumStreams() > 1 && flags::Stream0().empty() &&
+      flags::Stream1().empty()) {
+    params.ss.infer_streams = true;
+  }
 
   std::vector<std::string> stream_descriptors;
   stream_descriptors.push_back(flags::Stream0());
@@ -275,7 +306,7 @@ void Loopback() {
   SL_descriptors.push_back(flags::SL0());
   SL_descriptors.push_back(flags::SL1());
   VideoQualityTest::FillScalabilitySettings(
-      &params, stream_descriptors, flags::SelectedStream(),
+      &params, stream_descriptors, flags::NumStreams(), flags::SelectedStream(),
       flags::NumSpatialLayers(), flags::SelectedSL(), SL_descriptors);
 
   VideoQualityTest test;
@@ -295,8 +326,11 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  webrtc::test::InitFieldTrialsFromString(
-      webrtc::flags::FLAG_force_fieldtrials);
+  // InitFieldTrialsFromString needs a reference to an std::string instance,
+  // with a scope that outlives the test.
+  std::string field_trials = webrtc::flags::FLAG_force_fieldtrials;
+  webrtc::test::InitFieldTrialsFromString(field_trials);
+
   webrtc::test::RunTest(webrtc::Loopback);
   return 0;
 }

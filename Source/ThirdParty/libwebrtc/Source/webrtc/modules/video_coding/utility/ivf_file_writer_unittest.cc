@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/utility/ivf_file_writer.h"
+#include "modules/video_coding/utility/ivf_file_writer.h"
 
 #include <memory>
 
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/timeutils.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 

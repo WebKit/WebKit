@@ -10,10 +10,10 @@
 
 #include <pthread.h>
 
-#include "webrtc/base/ignore_wundef.h"
-#include "webrtc/modules/video_coding/codecs/test/android_test_initializer.h"
-#include "webrtc/sdk/android/src/jni/classreferenceholder.h"
-#include "webrtc/sdk/android/src/jni/jni_helpers.h"
+#include "modules/video_coding/codecs/test/android_test_initializer.h"
+#include "rtc_base/ignore_wundef.h"
+#include "sdk/android/src/jni/classreferenceholder.h"
+#include "sdk/android/src/jni/jni_helpers.h"
 
 // Note: this dependency is dangerous since it reaches into Chromium's base.
 // There's a risk of e.g. macro clashes. This file may only be used in tests.
@@ -23,7 +23,7 @@ RTC_PUSH_IGNORING_WUNDEF()
 #include "base/android/jni_android.h"
 RTC_POP_IGNORING_WUNDEF()
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -40,10 +40,10 @@ void EnsureInitializedOnce() {
   JavaVM* jvm = NULL;
   RTC_CHECK_EQ(0, jni->GetJavaVM(&jvm));
 
-  jint ret = webrtc_jni::InitGlobalJniVariables(jvm);
+  jint ret = jni::InitGlobalJniVariables(jvm);
   RTC_DCHECK_GE(ret, 0);
 
-  webrtc_jni::LoadGlobalClassReferenceHolder();
+  jni::LoadGlobalClassReferenceHolder();
 }
 
 }  // namespace

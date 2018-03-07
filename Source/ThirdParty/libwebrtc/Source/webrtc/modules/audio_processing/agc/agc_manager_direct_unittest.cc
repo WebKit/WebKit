@@ -8,23 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/agc/agc_manager_direct.h"
+#include "modules/audio_processing/agc/agc_manager_direct.h"
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_processing/agc/mock_agc.h"
-#include "webrtc/modules/audio_processing/include/mock_audio_processing.h"
-#include "webrtc/system_wrappers/include/trace.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/trace_to_stderr.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_processing/agc/mock_agc.h"
+#include "modules/audio_processing/include/mock_audio_processing.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::DoAll;
-using ::testing::Eq;
-using ::testing::Mock;
 using ::testing::Return;
 using ::testing::SetArgPointee;
-using ::testing::SetArgReferee;
 
 namespace webrtc {
 namespace {
@@ -97,7 +92,6 @@ class AgcManagerDirectTest : public ::testing::Test {
   test::MockGainControl gctrl_;
   TestVolumeCallbacks volume_;
   AgcManagerDirect manager_;
-  test::TraceToStderr trace_to_stderr;
 };
 
 TEST_F(AgcManagerDirectTest, StartupMinVolumeConfigurationIsRespected) {

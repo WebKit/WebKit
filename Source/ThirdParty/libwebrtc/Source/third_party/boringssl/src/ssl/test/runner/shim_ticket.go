@@ -62,7 +62,7 @@ func DecryptShimTicket(in []byte) ([]byte, error) {
 	// Decrypt in-place.
 	iv := in[:block.BlockSize()]
 	in = in[block.BlockSize():]
-	if l := len(in); l == 0 || l % block.BlockSize() != 0 {
+	if l := len(in); l == 0 || l%block.BlockSize() != 0 {
 		return nil, errors.New("tls: ticket ciphertext not a multiple of the block size")
 	}
 	out := make([]byte, len(in))

@@ -11,8 +11,8 @@
 // This file contains structures used for retrieving statistics from an ongoing
 // libjingle session.
 
-#ifndef WEBRTC_API_STATSTYPES_H_
-#define WEBRTC_API_STATSTYPES_H_
+#ifndef API_STATSTYPES_H_
+#define API_STATSTYPES_H_
 
 #include <algorithm>
 #include <list>
@@ -20,12 +20,12 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/stringencode.h"
-#include "webrtc/base/thread_checker.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/stringencode.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -104,9 +104,12 @@ class StatsReport {
     kStatsValueNameBytesReceived,
     kStatsValueNameBytesSent,
     kStatsValueNameCodecImplementationName,
+    kStatsValueNameConcealedSamples,
+    kStatsValueNameConcealmentEvents,
     kStatsValueNameDataChannelId,
     kStatsValueNameFramesDecoded,
     kStatsValueNameFramesEncoded,
+    kStatsValueNameJitterBufferDelay,
     kStatsValueNameMediaType,
     kStatsValueNamePacketsLost,
     kStatsValueNamePacketsReceived,
@@ -117,6 +120,9 @@ class StatsReport {
     kStatsValueNameSelectedCandidatePairId,
     kStatsValueNameSsrc,
     kStatsValueNameState,
+    kStatsValueNameTotalAudioEnergy,
+    kStatsValueNameTotalSamplesDuration,
+    kStatsValueNameTotalSamplesReceived,
     kStatsValueNameTransportId,
     kStatsValueNameSentPingRequestsTotal,
     kStatsValueNameSentPingRequestsBeforeFirstResponse,
@@ -144,6 +150,7 @@ class StatsReport {
     kStatsValueNameCodecName,
     kStatsValueNameComponent,
     kStatsValueNameContentName,
+    kStatsValueNameContentType,
     kStatsValueNameCpuLimitedResolution,
     kStatsValueNameCurrentDelayMs,
     kStatsValueNameDecodeMs,
@@ -178,7 +185,9 @@ class StatsReport {
     kStatsValueNameFrameWidthInput,
     kStatsValueNameFrameWidthReceived,
     kStatsValueNameFrameWidthSent,
+    kStatsValueNameHasEnteredLowResolution,
     kStatsValueNameInitiator,
+    kStatsValueNameInterframeDelayMaxMs,  // Max over last 10 seconds.
     kStatsValueNameIssuerId,
     kStatsValueNameJitterBufferMs,
     kStatsValueNameJitterReceived,
@@ -202,14 +211,23 @@ class StatsReport {
     kStatsValueNameRenderDelayMs,
     kStatsValueNameResidualEchoLikelihood,
     kStatsValueNameResidualEchoLikelihoodRecentMax,
+    kStatsValueNameAnaBitrateActionCounter,
+    kStatsValueNameAnaChannelActionCounter,
+    kStatsValueNameAnaDtxActionCounter,
+    kStatsValueNameAnaFecActionCounter,
+    kStatsValueNameAnaFrameLengthIncreaseCounter,
+    kStatsValueNameAnaFrameLengthDecreaseCounter,
+    kStatsValueNameAnaUplinkPacketLossFraction,
     kStatsValueNameRetransmitBitrate,
     kStatsValueNameRtt,
     kStatsValueNameSecondaryDecodedRate,
+    kStatsValueNameSecondaryDiscardedRate,
     kStatsValueNameSendPacketsDiscarded,
     kStatsValueNameSpeechExpandRate,
     kStatsValueNameSrtpCipher,
     kStatsValueNameTargetDelayMs,
     kStatsValueNameTargetEncBitrate,
+    kStatsValueNameTimingFrameInfo,  // Result of |TimingFrameInfo::ToString|
     kStatsValueNameTrackId,
     kStatsValueNameTransmitBitrate,
     kStatsValueNameTransportType,
@@ -320,7 +338,7 @@ class StatsReport {
 
    private:
     rtc::ThreadChecker thread_checker_;
-    mutable int ref_count_ ACCESS_ON(thread_checker_) = 0;
+    mutable int ref_count_ RTC_ACCESS_ON(thread_checker_) = 0;
 
     const Type type_;
     // TODO(tommi): Use C++ 11 union and make value_ const.
@@ -426,4 +444,4 @@ class StatsCollection {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_STATSTYPES_H_
+#endif  // API_STATSTYPES_H_

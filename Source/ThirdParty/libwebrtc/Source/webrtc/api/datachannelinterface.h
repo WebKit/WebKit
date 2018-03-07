@@ -11,16 +11,15 @@
 // This file contains interfaces for DataChannels
 // http://dev.w3.org/2011/webrtc/editor/webrtc.html#rtcdatachannel
 
-#ifndef WEBRTC_API_DATACHANNELINTERFACE_H_
-#define WEBRTC_API_DATACHANNELINTERFACE_H_
+#ifndef API_DATACHANNELINTERFACE_H_
+#define API_DATACHANNELINTERFACE_H_
 
 #include <string>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/refcount.h"
-
+#include "rtc_base/basictypes.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/refcount.h"
 
 namespace webrtc {
 
@@ -181,4 +180,4 @@ class DataChannelInterface : public rtc::RefCountInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_DATACHANNELINTERFACE_H_
+#endif  // API_DATACHANNELINTERFACE_H_

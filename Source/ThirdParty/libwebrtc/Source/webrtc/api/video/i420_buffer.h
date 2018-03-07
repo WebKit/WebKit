@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_VIDEO_I420_BUFFER_H_
-#define WEBRTC_API_VIDEO_I420_BUFFER_H_
+#ifndef API_VIDEO_I420_BUFFER_H_
+#define API_VIDEO_I420_BUFFER_H_
 
 #include <memory>
 
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/api/video/video_frame_buffer.h"
-#include "webrtc/system_wrappers/include/aligned_malloc.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_frame_buffer.h"
+#include "system_wrappers/include/aligned_malloc.h"
 
 namespace webrtc {
 
@@ -108,4 +108,4 @@ class I420Buffer : public I420BufferInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_VIDEO_I420_BUFFER_H_
+#endif  // API_VIDEO_I420_BUFFER_H_

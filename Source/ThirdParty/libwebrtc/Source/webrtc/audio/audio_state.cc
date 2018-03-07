@@ -8,13 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/audio/audio_state.h"
+#include "audio/audio_state.h"
 
-#include "webrtc/base/atomicops.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/voice_engine/include/voe_errors.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "rtc_base/atomicops.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/thread.h"
+#include "voice_engine/transmit_mixer.h"
 
 namespace webrtc {
 namespace internal {
@@ -23,25 +25,14 @@ AudioState::AudioState(const AudioState::Config& config)
     : config_(config),
       voe_base_(config.voice_engine),
       audio_transport_proxy_(voe_base_->audio_transport(),
-                             voe_base_->audio_processing(),
+                             config_.audio_processing.get(),
                              config_.audio_mixer) {
   process_thread_checker_.DetachFromThread();
   RTC_DCHECK(config_.audio_mixer);
-
-  // Only one AudioState should be created per VoiceEngine.
-  RTC_CHECK(voe_base_->RegisterVoiceEngineObserver(*this) != -1);
-
-  auto* const device = voe_base_->audio_device_module();
-  RTC_DCHECK(device);
-
-  // This is needed for the Chrome implementation of RegisterAudioCallback.
-  device->RegisterAudioCallback(nullptr);
-  device->RegisterAudioCallback(&audio_transport_proxy_);
 }
 
 AudioState::~AudioState() {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
-  voe_base_->DeRegisterVoiceEngineObserver();
 }
 
 VoiceEngine* AudioState::voice_engine() {
@@ -56,38 +47,61 @@ rtc::scoped_refptr<AudioMixer> AudioState::mixer() {
 
 bool AudioState::typing_noise_detected() const {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
-  rtc::CritScope lock(&crit_sect_);
-  return typing_noise_detected_;
+  // TODO(solenberg): Remove const_cast once AudioState owns transmit mixer
+  //                  functionality.
+  voe::TransmitMixer* transmit_mixer =
+      const_cast<AudioState*>(this)->voe_base_->transmit_mixer();
+  return transmit_mixer->typing_noise_detected();
+}
+
+void AudioState::SetPlayout(bool enabled) {
+  RTC_LOG(INFO) << "SetPlayout(" << enabled << ")";
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  const bool currently_enabled = (null_audio_poller_ == nullptr);
+  if (enabled == currently_enabled) {
+    return;
+  }
+  VoEBase* const voe = VoEBase::GetInterface(voice_engine());
+  RTC_DCHECK(voe);
+  if (enabled) {
+    null_audio_poller_.reset();
+  }
+  // Will stop/start playout of the underlying device, if necessary, and
+  // remember the setting for when it receives subsequent calls of
+  // StartPlayout.
+  voe->SetPlayout(enabled);
+  if (!enabled) {
+    null_audio_poller_ =
+        rtc::MakeUnique<NullAudioPoller>(&audio_transport_proxy_);
+  }
+  voe->Release();
+}
+
+void AudioState::SetRecording(bool enabled) {
+  RTC_LOG(INFO) << "SetRecording(" << enabled << ")";
+  RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  // TODO(henrika): keep track of state as in SetPlayout().
+  VoEBase* const voe = VoEBase::GetInterface(voice_engine());
+  RTC_DCHECK(voe);
+  // Will stop/start recording of the underlying device, if necessary, and
+  // remember the setting for when it receives subsequent calls of
+  // StartPlayout.
+  voe->SetRecording(enabled);
+  voe->Release();
 }
 
 // Reference count; implementation copied from rtc::RefCountedObject.
-int AudioState::AddRef() const {
-  return rtc::AtomicOps::Increment(&ref_count_);
+void AudioState::AddRef() const {
+  rtc::AtomicOps::Increment(&ref_count_);
 }
 
 // Reference count; implementation copied from rtc::RefCountedObject.
-int AudioState::Release() const {
-  int count = rtc::AtomicOps::Decrement(&ref_count_);
-  if (!count) {
+rtc::RefCountReleaseStatus AudioState::Release() const {
+  if (rtc::AtomicOps::Decrement(&ref_count_) == 0) {
     delete this;
+    return rtc::RefCountReleaseStatus::kDroppedLastRef;
   }
-  return count;
-}
-
-void AudioState::CallbackOnError(int channel_id, int err_code) {
-  RTC_DCHECK(process_thread_checker_.CalledOnValidThread());
-
-  // All call sites in VoE, as of this writing, specify -1 as channel_id.
-  RTC_DCHECK(channel_id == -1);
-  LOG(LS_INFO) << "VoiceEngine error " << err_code << " reported on channel "
-               << channel_id << ".";
-  if (err_code == VE_TYPING_NOISE_WARNING) {
-    rtc::CritScope lock(&crit_sect_);
-    typing_noise_detected_ = true;
-  } else if (err_code == VE_TYPING_NOISE_OFF_WARNING) {
-    rtc::CritScope lock(&crit_sect_);
-    typing_noise_detected_ = false;
-  }
+  return rtc::RefCountReleaseStatus::kOtherRefsRemained;
 }
 }  // namespace internal
 

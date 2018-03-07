@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/level_estimator_impl.h"
+#include "modules/audio_processing/level_estimator_impl.h"
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/rms_level.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/rms_level.h"
 
 namespace webrtc {
 

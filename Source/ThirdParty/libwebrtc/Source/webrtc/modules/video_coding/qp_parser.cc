@@ -8,16 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/qp_parser.h"
+#include "modules/video_coding/qp_parser.h"
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/video_coding/utility/vp8_header_parser.h"
-#include "webrtc/modules/video_coding/utility/vp9_uncompressed_header_parser.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/video_coding/utility/vp8_header_parser.h"
+#include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
 
 namespace webrtc {
 
-bool QpParser::GetQp(const VCMEncodedFrame&, int*) {
-  return false;
+bool QpParser::GetQp(const VCMEncodedFrame& frame, int* qp) {
+    switch (frame.CodecSpecific()->codecType) {
+#if !RTC_DISABLE_VP8
+    case kVideoCodecVP8:
+      // QP range: [0, 127].
+      return vp8::GetQp(frame.Buffer(), frame.Length(), qp);
+#endif
+#if !RTC_DISABLE_VP9
+    case kVideoCodecVP9:
+      // QP range: [0, 255].
+      return vp9::GetQp(frame.Buffer(), frame.Length(), qp);
+#endif
+    default:
+      return false;
+  }
 }
 
 }  // namespace webrtc

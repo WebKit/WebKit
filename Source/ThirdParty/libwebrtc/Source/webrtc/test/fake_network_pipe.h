@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_FAKE_NETWORK_PIPE_H_
-#define WEBRTC_TEST_FAKE_NETWORK_PIPE_H_
+#ifndef TEST_FAKE_NETWORK_PIPE_H_
+#define TEST_FAKE_NETWORK_PIPE_H_
 
 #include <string.h>
 #include <map>
@@ -17,11 +17,11 @@
 #include <queue>
 #include <set>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/random.h"
-#include "webrtc/common_types.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/random.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -114,21 +114,20 @@ class FakeNetworkPipe {
                   const FakeNetworkPipe::Config& config,
                   std::unique_ptr<Demuxer> demuxer,
                   uint64_t seed);
-  ~FakeNetworkPipe();
-
+  virtual ~FakeNetworkPipe();
 
   // Sets a new configuration. This won't affect packets already in the pipe.
   void SetConfig(const FakeNetworkPipe::Config& config);
 
   // Sends a new packet to the link.
-  void SendPacket(const uint8_t* packet, size_t packet_length);
+  virtual void SendPacket(const uint8_t* packet, size_t packet_length);
 
   // Must not be called in parallel with SendPacket or Process.
   void SetReceiver(PacketReceiver* receiver);
 
   // Processes the network queues and trigger PacketReceiver::IncomingPacket for
   // packets ready to be delivered.
-  void Process();
+  virtual void Process();
   int64_t TimeUntilNextProcess() const;
 
   // Get statistics.
@@ -137,7 +136,7 @@ class FakeNetworkPipe {
   size_t dropped_packets() { return dropped_packets_; }
   size_t sent_packets() { return sent_packets_; }
 
- private:
+ protected:
   Clock* const clock_;
   rtc::CriticalSection lock_;
   const std::unique_ptr<Demuxer> demuxer_;
@@ -176,9 +175,11 @@ class FakeNetworkPipe {
 
   int64_t last_log_time_;
 
+  int64_t capacity_delay_error_bytes_ = 0;
+
   RTC_DISALLOW_COPY_AND_ASSIGN(FakeNetworkPipe);
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_FAKE_NETWORK_PIPE_H_
+#endif  // TEST_FAKE_NETWORK_PIPE_H_

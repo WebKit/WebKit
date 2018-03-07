@@ -30,7 +30,7 @@ extern "C" {
 static int hwaes_capable(void) {
   return CRYPTO_is_ARMv8_AES_capable();
 }
-#endif  /* !NO_ASM && (AES || AARCH64) */
+#endif  // !NO_ASM && (AES || AARCH64)
 
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_PPC64LE)
 #define HWAES
@@ -38,7 +38,7 @@ static int hwaes_capable(void) {
 static int hwaes_capable(void) {
   return CRYPTO_is_PPC64LE_vcrypto_capable();
 }
-#endif  /* !NO_ASM && PPC64LE */
+#endif  // !NO_ASM && PPC64LE
 
 
 #if defined(HWAES)
@@ -56,8 +56,8 @@ void aes_hw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out, size_t len,
 
 #else
 
-/* If HWAES isn't defined then we provide dummy functions for each of the hwaes
- * functions. */
+// If HWAES isn't defined then we provide dummy functions for each of the hwaes
+// functions.
 static int hwaes_capable(void) { return 0; }
 
 static int aes_hw_set_encrypt_key(const uint8_t *user_key, int bits,
@@ -91,10 +91,10 @@ static void aes_hw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
   abort();
 }
 
-#endif  /* !HWAES */
+#endif  // !HWAES
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_AES_INTERNAL_H */
+#endif  // OPENSSL_HEADER_AES_INTERNAL_H

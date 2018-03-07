@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/suppression_filter.h"
+#include "modules/audio_processing/aec3/suppression_filter.h"
 
 #include <math.h>
 #include <algorithm>
@@ -16,8 +16,8 @@
 #include <functional>
 #include <numeric>
 
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/modules/audio_processing/utility/ooura_fft.h"
+#include "modules/audio_processing/utility/ooura_fft.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 namespace {

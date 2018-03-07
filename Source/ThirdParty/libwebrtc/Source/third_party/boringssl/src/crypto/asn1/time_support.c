@@ -171,7 +171,7 @@ int OPENSSL_gmtime_adj(struct tm *tm, int off_day, long offset_sec) {
   return 1;
 }
 
-int OPENSSL_gmtime_diff(int *pday, int *psec, const struct tm *from,
+int OPENSSL_gmtime_diff(int *out_days, int *out_secs, const struct tm *from,
                         const struct tm *to) {
   int from_sec, to_sec, diff_sec;
   long from_jd, to_jd, diff_day;
@@ -195,11 +195,11 @@ int OPENSSL_gmtime_diff(int *pday, int *psec, const struct tm *from,
     diff_sec -= SECS_PER_DAY;
   }
 
-  if (pday) {
-    *pday = (int)diff_day;
+  if (out_days) {
+    *out_days = (int)diff_day;
   }
-  if (psec) {
-    *psec = diff_sec;
+  if (out_secs) {
+    *out_secs = diff_sec;
   }
 
   return 1;

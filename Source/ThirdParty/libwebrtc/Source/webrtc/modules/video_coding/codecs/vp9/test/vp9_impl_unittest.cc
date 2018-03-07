@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/modules/video_coding/codecs/vp9/include/vp9.h"
-#include "webrtc/modules/video_coding/codecs/test/video_codec_test.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/codecs/vp9/include/vp9.h"
+#include "modules/video_coding/codecs/test/video_codec_test.h"
 
 namespace webrtc {
 
@@ -20,9 +20,13 @@ constexpr uint32_t kTimestampIncrementPerFrame = 3000;
 
 class TestVp9Impl : public VideoCodecTest {
  protected:
-  VideoEncoder* CreateEncoder() override { return VP9Encoder::Create(); }
+  std::unique_ptr<VideoEncoder> CreateEncoder() override {
+    return VP9Encoder::Create();
+  }
 
-  VideoDecoder* CreateDecoder() override { return VP9Decoder::Create(); }
+  std::unique_ptr<VideoDecoder> CreateDecoder() override {
+    return VP9Decoder::Create();
+  }
 
   VideoCodec codec_settings() override {
     VideoCodec codec_settings;

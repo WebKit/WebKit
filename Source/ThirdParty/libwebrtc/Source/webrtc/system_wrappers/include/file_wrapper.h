@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FILE_WRAPPER_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FILE_WRAPPER_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_FILE_WRAPPER_H_
+#define SYSTEM_WRAPPERS_INCLUDE_FILE_WRAPPER_H_
 
 #include <stddef.h>
 #include <stdio.h>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/common_types.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/criticalsection.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Implementation of an InStream and OutStream that can read (exclusive) or
 // write from/to a file.
@@ -85,4 +85,4 @@ class FileWrapper : public InStream, public OutStream {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FILE_WRAPPER_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_FILE_WRAPPER_H_

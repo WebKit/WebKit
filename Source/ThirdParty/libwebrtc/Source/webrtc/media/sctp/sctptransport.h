@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_SCTP_SCTPTRANSPORT_H_
-#define WEBRTC_MEDIA_SCTP_SCTPTRANSPORT_H_
+#ifndef MEDIA_SCTP_SCTPTRANSPORT_H_
+#define MEDIA_SCTP_SCTPTRANSPORT_H_
 
 #include <errno.h>
 
@@ -18,14 +18,14 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/asyncinvoker.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/thread.h"
+#include "rtc_base/asyncinvoker.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/thread.h"
 // For SendDataParams/ReceiveDataParams.
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/media/sctp/sctptransportinternal.h"
+#include "media/base/mediachannel.h"
+#include "media/sctp/sctptransportinternal.h"
 
 // Defined by "usrsctplib/usrsctp.h"
 struct sockaddr_conn;
@@ -190,4 +190,4 @@ class SctpTransportFactory : public SctpTransportInternalFactory {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_SCTP_SCTPTRANSPORT_H_
+#endif  // MEDIA_SCTP_SCTPTRANSPORT_H_

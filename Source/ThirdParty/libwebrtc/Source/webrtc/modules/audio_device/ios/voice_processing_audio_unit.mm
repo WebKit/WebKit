@@ -8,12 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "webrtc/modules/audio_device/ios/voice_processing_audio_unit.h"
+#import "modules/audio_device/ios/voice_processing_audio_unit.h"
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/metrics.h"
 
 #import "WebRTC/RTCLogging.h"
-#import "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h"
+#import "sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h"
 
 #if !defined(NDEBUG)
 static void LogStreamDescription(AudioStreamBasicDescription description) {
@@ -53,6 +54,21 @@ static const int kMaxNumberOfAudioUnitInitializeAttempts = 5;
 static const AudioUnitElement kInputBus = 1;
 // A VP I/O unit's bus 0 connects to output hardware (speaker).
 static const AudioUnitElement kOutputBus = 0;
+
+// Returns the automatic gain control (AGC) state on the processed microphone
+// signal. Should be on by default for Voice Processing audio units.
+static OSStatus GetAGCState(AudioUnit audio_unit, UInt32* enabled) {
+  RTC_DCHECK(audio_unit);
+  UInt32 size = sizeof(*enabled);
+  OSStatus result = AudioUnitGetProperty(audio_unit,
+                                         kAUVoiceIOProperty_VoiceProcessingEnableAGC,
+                                         kAudioUnitScope_Global,
+                                         kInputBus,
+                                         enabled,
+                                         &size);
+  RTCLog(@"VPIO unit AGC: %u", static_cast<unsigned int>(*enabled));
+  return result;
+}
 
 VoiceProcessingAudioUnit::VoiceProcessingAudioUnit(
     VoiceProcessingAudioUnitObserver* observer)
@@ -231,6 +247,64 @@ bool VoiceProcessingAudioUnit::Initialize(Float64 sample_rate) {
   if (result == noErr) {
     RTCLog(@"Voice Processing I/O unit is now initialized.");
   }
+
+  // AGC should be enabled by default for Voice Processing I/O units but it is
+  // checked below and enabled explicitly if needed. This scheme is used
+  // to be absolutely sure that the AGC is enabled since we have seen cases
+  // where only zeros are recorded and a disabled AGC could be one of the
+  // reasons why it happens.
+  int agc_was_enabled_by_default = 0;
+  UInt32 agc_is_enabled = 0;
+  result = GetAGCState(vpio_unit_, &agc_is_enabled);
+  if (result != noErr) {
+    RTCLogError(@"Failed to get AGC state (1st attempt). "
+                 "Error=%ld.",
+                (long)result);
+    // Example of error code: kAudioUnitErr_NoConnection (-10876).
+    // All error codes related to audio units are negative and are therefore
+    // converted into a postive value to match the UMA APIs.
+    RTC_HISTOGRAM_COUNTS_SPARSE_100000(
+        "WebRTC.Audio.GetAGCStateErrorCode1", (-1) * result);
+  } else if (agc_is_enabled) {
+    // Remember that the AGC was enabled by default. Will be used in UMA.
+    agc_was_enabled_by_default = 1;
+  } else {
+    // AGC was initially disabled => try to enable it explicitly.
+    UInt32 enable_agc = 1;
+    result =
+        AudioUnitSetProperty(vpio_unit_,
+                             kAUVoiceIOProperty_VoiceProcessingEnableAGC,
+                             kAudioUnitScope_Global, kInputBus, &enable_agc,
+                             sizeof(enable_agc));
+    if (result != noErr) {
+      RTCLogError(@"Failed to enable the built-in AGC. "
+                   "Error=%ld.",
+                  (long)result);
+      RTC_HISTOGRAM_COUNTS_SPARSE_100000(
+          "WebRTC.Audio.SetAGCStateErrorCode", (-1) * result);
+    }
+    result = GetAGCState(vpio_unit_, &agc_is_enabled);
+    if (result != noErr) {
+      RTCLogError(@"Failed to get AGC state (2nd attempt). "
+                   "Error=%ld.",
+                  (long)result);
+      RTC_HISTOGRAM_COUNTS_SPARSE_100000(
+          "WebRTC.Audio.GetAGCStateErrorCode2", (-1) * result);
+    }
+  }
+
+  // Track if the built-in AGC was enabled by default (as it should) or not.
+  RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.BuiltInAGCWasEnabledByDefault",
+                        agc_was_enabled_by_default);
+  RTCLog(@"WebRTC.Audio.BuiltInAGCWasEnabledByDefault: %d",
+         agc_was_enabled_by_default);
+  // As a final step, add an UMA histogram for tracking the AGC state.
+  // At this stage, the AGC should be enabled, and if it is not, more work is
+  // needed to find out the root cause.
+  RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.BuiltInAGCIsEnabled", agc_is_enabled);
+  RTCLog(@"WebRTC.Audio.BuiltInAGCIsEnabled: %u",
+         static_cast<unsigned int>(agc_is_enabled));
+
   state_ = kInitialized;
   return true;
 }
@@ -350,7 +424,7 @@ AudioStreamBasicDescription VoiceProcessingAudioUnit::GetFormat(
   // - avoid resampling in the I/O unit by using the hardware sample rate
   // - linear PCM => noncompressed audio data format with one frame per packet
   // - no need to specify interleaving since only mono is supported
-  AudioStreamBasicDescription format = {0};
+  AudioStreamBasicDescription format;
   RTC_DCHECK_EQ(1, kRTCAudioSessionPreferredNumberOfChannels);
   format.mSampleRate = sample_rate;
   format.mFormatID = kAudioFormatLinearPCM;

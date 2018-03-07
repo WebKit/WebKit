@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_FAKE_DESKTOP_CAPTURER_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_FAKE_DESKTOP_CAPTURER_H_
+#ifndef MODULES_DESKTOP_CAPTURE_FAKE_DESKTOP_CAPTURER_H_
+#define MODULES_DESKTOP_CAPTURE_FAKE_DESKTOP_CAPTURER_H_
 
 #include <memory>
 
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/desktop_capture_types.h"
-#include "webrtc/modules/desktop_capture/desktop_frame_generator.h"
-#include "webrtc/modules/desktop_capture/shared_memory.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_frame_generator.h"
+#include "modules/desktop_capture/shared_memory.h"
 
 namespace webrtc {
 
@@ -73,4 +73,4 @@ class FakeDesktopCapturer : public DesktopCapturer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_FAKE_DESKTOP_CAPTURER_H_
+#endif  // MODULES_DESKTOP_CAPTURE_FAKE_DESKTOP_CAPTURER_H_

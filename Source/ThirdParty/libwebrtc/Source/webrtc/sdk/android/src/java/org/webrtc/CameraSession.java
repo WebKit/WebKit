@@ -25,6 +25,9 @@ interface CameraSession {
     void onCameraError(CameraSession session, String error);
     void onCameraDisconnected(CameraSession session);
     void onCameraClosed(CameraSession session);
+    void onFrameCaptured(CameraSession session, VideoFrame frame);
+
+    // The old way of passing frames. Will be removed eventually.
     void onByteBufferFrameCaptured(
         CameraSession session, byte[] data, int width, int height, int rotation, long timestamp);
     void onTextureFrameCaptured(CameraSession session, int width, int height, int oesTextureId,

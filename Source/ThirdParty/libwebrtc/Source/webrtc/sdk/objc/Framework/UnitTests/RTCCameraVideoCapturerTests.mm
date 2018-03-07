@@ -14,11 +14,12 @@
 #import <UIKit/UIKit.h>
 #endif
 
-#include "webrtc/base/gunit.h"
+#include "rtc_base/gunit.h"
 
 #import <WebRTC/RTCCameraVideoCapturer.h>
 #import <WebRTC/RTCDispatcher.h>
 #import <WebRTC/RTCVideoFrame.h>
+#import "AVCaptureSession+DevicePosition.h"
 
 #if TARGET_OS_IPHONE
 // Helper method.
@@ -64,16 +65,19 @@ CMSampleBufferRef createTestSampleBufferRef() {
 @interface RTCCameraVideoCapturerTests : NSObject
 @property(nonatomic, strong) id delegateMock;
 @property(nonatomic, strong) id deviceMock;
+@property(nonatomic, strong) id captureConnectionMock;
 @property(nonatomic, strong) RTCCameraVideoCapturer *capturer;
 @end
 
 @implementation RTCCameraVideoCapturerTests
 @synthesize delegateMock = _delegateMock;
+@synthesize captureConnectionMock = _captureConnectionMock;
 @synthesize capturer = _capturer;
 @synthesize deviceMock = _deviceMock;
 
 - (void)setup {
   self.delegateMock = OCMProtocolMock(@protocol(RTCVideoCapturerDelegate));
+  self.captureConnectionMock = OCMClassMock([AVCaptureConnection class]);
   self.capturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:self.delegateMock];
   self.deviceMock = [self createDeviceMock];
 }
@@ -169,7 +173,7 @@ CMSampleBufferRef createTestSampleBufferRef() {
   // when
   [self.capturer captureOutput:self.capturer.captureSession.outputs[0]
          didOutputSampleBuffer:sampleBuffer
-                fromConnection:nil];
+                fromConnection:self.captureConnectionMock];
 
   // then
   [self.delegateMock verify];
@@ -203,7 +207,7 @@ CMSampleBufferRef createTestSampleBufferRef() {
 
   [self.capturer captureOutput:self.capturer.captureSession.outputs[0]
          didOutputSampleBuffer:sampleBuffer
-                fromConnection:nil];
+                fromConnection:self.captureConnectionMock];
 
   [self.delegateMock verify];
 
@@ -215,46 +219,230 @@ CMSampleBufferRef createTestSampleBufferRef() {
 #endif
 }
 
+- (void)testRotationCamera:(AVCaptureDevicePosition)camera
+           withOrientation:(UIDeviceOrientation)deviceOrientation {
+#if TARGET_OS_IPHONE
+  // Mock the AVCaptureConnection as we will get the camera position from the connection's
+  // input ports.
+  AVCaptureDeviceInput *inputPortMock = OCMClassMock([AVCaptureDeviceInput class]);
+  AVCaptureInputPort *captureInputPort = OCMClassMock([AVCaptureInputPort class]);
+  NSArray *inputPortsArrayMock = @[captureInputPort];
+  AVCaptureDevice *captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(((AVCaptureConnection *)self.captureConnectionMock).inputPorts).
+      andReturn(inputPortsArrayMock);
+  OCMStub(captureInputPort.input).andReturn(inputPortMock);
+  OCMStub(inputPortMock.device).andReturn(captureDeviceMock);
+  OCMStub(captureDeviceMock.position).andReturn(camera);
+
+  // UpsideDown -> RTCVideoRotation_0.
+  UIDevice *currentDeviceMock = OCMClassMock([UIDevice class]);
+  OCMStub(currentDeviceMock.orientation).andReturn(deviceOrientation);
+  id classMock = OCMClassMock([UIDevice class]);
+  OCMStub([classMock currentDevice]).andReturn(currentDeviceMock);
+
+  CMSampleBufferRef sampleBuffer = createTestSampleBufferRef();
+
+  [[self.delegateMock expect] capturer:self.capturer
+                  didCaptureVideoFrame:[OCMArg checkWithBlock:^BOOL(RTCVideoFrame *expectedFrame) {
+    if (camera == AVCaptureDevicePositionFront) {
+      if (deviceOrientation == UIDeviceOrientationLandscapeLeft) {
+        EXPECT_EQ(expectedFrame.rotation, RTCVideoRotation_180);
+      } else if (deviceOrientation == UIDeviceOrientationLandscapeRight) {
+        EXPECT_EQ(expectedFrame.rotation, RTCVideoRotation_0);
+      }
+    } else if (camera == AVCaptureDevicePositionBack) {
+      if (deviceOrientation == UIDeviceOrientationLandscapeLeft) {
+        EXPECT_EQ(expectedFrame.rotation, RTCVideoRotation_0);
+      } else if (deviceOrientation == UIDeviceOrientationLandscapeRight) {
+        EXPECT_EQ(expectedFrame.rotation, RTCVideoRotation_180);
+      }
+    }
+    return YES;
+  }]];
+
+  NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+  [center postNotificationName:UIDeviceOrientationDidChangeNotification object:nil];
+
+  // We need to wait for the dispatch to finish.
+  WAIT(0, 1000);
+
+  [self.capturer captureOutput:self.capturer.captureSession.outputs[0]
+         didOutputSampleBuffer:sampleBuffer
+                fromConnection:self.captureConnectionMock];
+
+  [self.delegateMock verify];
+
+  [(id)currentDeviceMock stopMocking];
+  currentDeviceMock = nil;
+  [classMock stopMocking];
+  classMock = nil;
+  CFRelease(sampleBuffer);
+#endif
+}
+
+- (void)setExif:(CMSampleBufferRef)sampleBuffer {
+  CFMutableDictionaryRef exif = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+  CFDictionarySetValue(exif, CFSTR("LensModel"), CFSTR("iPhone SE back camera 4.15mm f/2.2"));
+  CMSetAttachment(sampleBuffer, CFSTR("{Exif}"), exif, kCMAttachmentMode_ShouldPropagate);
+}
+
+- (void)testRotationFrame {
+#if TARGET_OS_IPHONE
+  // Mock the AVCaptureConnection as we will get the camera position from the connection's
+  // input ports.
+  AVCaptureDeviceInput *inputPortMock = OCMClassMock([AVCaptureDeviceInput class]);
+  AVCaptureInputPort *captureInputPort = OCMClassMock([AVCaptureInputPort class]);
+  NSArray *inputPortsArrayMock = @[captureInputPort];
+  AVCaptureDevice *captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(((AVCaptureConnection *)self.captureConnectionMock).inputPorts).
+      andReturn(inputPortsArrayMock);
+  OCMStub(captureInputPort.input).andReturn(inputPortMock);
+  OCMStub(inputPortMock.device).andReturn(captureDeviceMock);
+  OCMStub(captureDeviceMock.position).andReturn(AVCaptureDevicePositionFront);
+
+  // UpsideDown -> RTCVideoRotation_0.
+  UIDevice *currentDeviceMock = OCMClassMock([UIDevice class]);
+  OCMStub(currentDeviceMock.orientation).andReturn(UIDeviceOrientationLandscapeLeft);
+  id classMock = OCMClassMock([UIDevice class]);
+  OCMStub([classMock currentDevice]).andReturn(currentDeviceMock);
+
+  CMSampleBufferRef sampleBuffer = createTestSampleBufferRef();
+
+  [[self.delegateMock expect] capturer:self.capturer
+                  didCaptureVideoFrame:[OCMArg checkWithBlock:^BOOL(RTCVideoFrame *expectedFrame) {
+    // Front camera and landscape left should return 180. But the frame says its from the back
+    // camera, so rotation should be 0.
+    EXPECT_EQ(expectedFrame.rotation, RTCVideoRotation_0);
+    return YES;
+  }]];
+
+  NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+  [center postNotificationName:UIDeviceOrientationDidChangeNotification object:nil];
+
+  // We need to wait for the dispatch to finish.
+  WAIT(0, 1000);
+
+  [self setExif:sampleBuffer];
+
+  [self.capturer captureOutput:self.capturer.captureSession.outputs[0]
+         didOutputSampleBuffer:sampleBuffer
+                fromConnection:self.captureConnectionMock];
+
+  [self.delegateMock verify];
+
+  [(id)currentDeviceMock stopMocking];
+  currentDeviceMock = nil;
+  [classMock stopMocking];
+  classMock = nil;
+  CFRelease(sampleBuffer);
+#endif
+}
+
+- (void)testImageExif {
+#if TARGET_OS_IPHONE
+  CMSampleBufferRef sampleBuffer = createTestSampleBufferRef();
+  [self setExif:sampleBuffer];
+
+  AVCaptureDevicePosition cameraPosition = [AVCaptureSession
+                                            devicePositionForSampleBuffer:sampleBuffer];
+  EXPECT_EQ(cameraPosition, AVCaptureDevicePositionBack);
+#endif
+}
+
 @end
 
-TEST(RTCCameraVideoCapturerTests, SetupSession) {
+// TODO(kthelgason): Reenable these tests on simulator.
+// See bugs.webrtc.org/7813
+#if TARGET_IPHONE_SIMULATOR
+#define MAYBE_TEST(f, name) TEST(f, DISABLED_##name)
+#else
+#define MAYBE_TEST TEST
+#endif
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, SetupSession) {
   RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
   [test setup];
   [test testSetupSession];
   [test tearDown];
 }
 
-TEST(RTCCameraVideoCapturerTests, SetupSessionOutput) {
+MAYBE_TEST(RTCCameraVideoCapturerTests, SetupSessionOutput) {
   RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
   [test setup];
   [test testSetupSessionOutput];
   [test tearDown];
 }
 
-TEST(RTCCameraVideoCapturerTests, SupportedFormatsForDevice) {
+MAYBE_TEST(RTCCameraVideoCapturerTests, SupportedFormatsForDevice) {
   RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
   [test setup];
   [test testSupportedFormatsForDevice];
   [test tearDown];
 }
 
-TEST(RTCCameraVideoCapturerTests, CaptureDevices) {
+MAYBE_TEST(RTCCameraVideoCapturerTests, CaptureDevices) {
   RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
   [test setup];
   [test testCaptureDevices];
   [test tearDown];
 }
 
-TEST(RTCCameraVideoCapturerTests, DelegateCallbackNotCalledWhenInvalidBuffer) {
+MAYBE_TEST(RTCCameraVideoCapturerTests, DelegateCallbackNotCalledWhenInvalidBuffer) {
   RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
   [test setup];
   [test testDelegateCallbackNotCalledWhenInvalidBuffer];
   [test tearDown];
 }
 
-TEST(RTCCameraVideoCapturerTests, DelegateCallbackWithValidBufferAndOrientationUpdate) {
+MAYBE_TEST(RTCCameraVideoCapturerTests, DelegateCallbackWithValidBufferAndOrientationUpdate) {
   RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
   [test setup];
   [test testDelegateCallbackWithValidBufferAndOrientationUpdate];
+  [test tearDown];
+}
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, RotationCameraBackLandscapeLeft) {
+  RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
+  [test setup];
+  [test testRotationCamera:AVCaptureDevicePositionBack
+           withOrientation:UIDeviceOrientationLandscapeLeft];
+  [test tearDown];
+}
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, RotationCameraFrontLandscapeLeft) {
+  RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
+  [test setup];
+  [test testRotationCamera:AVCaptureDevicePositionFront
+           withOrientation:UIDeviceOrientationLandscapeLeft];
+  [test tearDown];
+}
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, RotationCameraBackLandscapeRight) {
+  RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
+  [test setup];
+  [test testRotationCamera:AVCaptureDevicePositionBack
+           withOrientation:UIDeviceOrientationLandscapeRight];
+  [test tearDown];
+}
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, RotationCameraFrontLandscapeRight) {
+  RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
+  [test setup];
+  [test testRotationCamera:AVCaptureDevicePositionFront
+           withOrientation:UIDeviceOrientationLandscapeRight];
+  [test tearDown];
+}
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, RotationCameraFrame) {
+  RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
+  [test setup];
+  [test testRotationFrame];
+  [test tearDown];
+}
+
+MAYBE_TEST(RTCCameraVideoCapturerTests, ImageExif) {
+  RTCCameraVideoCapturerTests *test = [[RTCCameraVideoCapturerTests alloc] init];
+  [test setup];
+  [test testImageExif];
   [test tearDown];
 }

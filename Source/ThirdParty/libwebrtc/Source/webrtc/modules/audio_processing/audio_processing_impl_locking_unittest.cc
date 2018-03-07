@@ -8,22 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/audio_processing_impl.h"
+#include "modules/audio_processing/audio_processing_impl.h"
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/platform_thread.h"
-#include "webrtc/base/random.h"
-#include "webrtc/config.h"
-#include "webrtc/modules/audio_processing/test/test_utils.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/sleep.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/test/test_utils.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/random.h"
+#include "system_wrappers/include/sleep.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -84,7 +83,7 @@ class RandomGenerator {
 
  private:
   rtc::CriticalSection crit_;
-  Random rand_gen_ GUARDED_BY(crit_);
+  Random rand_gen_ RTC_GUARDED_BY(crit_);
 };
 
 // Variables related to the audio data and formats.
@@ -301,8 +300,8 @@ class FrameCounters {
 
  private:
   rtc::CriticalSection crit_;
-  int render_count GUARDED_BY(crit_) = 0;
-  int capture_count GUARDED_BY(crit_) = 0;
+  int render_count RTC_GUARDED_BY(crit_) = 0;
+  int capture_count RTC_GUARDED_BY(crit_) = 0;
 };
 
 // Class for handling the capture side processing.

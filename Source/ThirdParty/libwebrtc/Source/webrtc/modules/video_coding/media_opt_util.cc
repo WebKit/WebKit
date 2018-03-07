@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/media_opt_util.h"
+#include "modules/video_coding/media_opt_util.h"
 
 #include <float.h>
 #include <limits.h>
@@ -17,11 +17,11 @@
 #include <algorithm>
 #include <limits>
 
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h"
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
-#include "webrtc/modules/video_coding/fec_rate_table.h"
-#include "webrtc/modules/video_coding/nack_fec_tables.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_common_types.h"
+#include "modules/video_coding/include/video_coding_defines.h"
+#include "modules/video_coding/fec_rate_table.h"
+#include "modules/video_coding/nack_fec_tables.h"
 
 namespace webrtc {
 // Max value of loss rates in off-line model

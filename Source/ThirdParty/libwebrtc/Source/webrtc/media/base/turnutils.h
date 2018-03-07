@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_TURNUTILS_H_
-#define WEBRTC_MEDIA_BASE_TURNUTILS_H_
+#ifndef MEDIA_BASE_TURNUTILS_H_
+#define MEDIA_BASE_TURNUTILS_H_
 
 #include <cstddef>
 #include <cstdint>
@@ -27,4 +27,4 @@ bool UnwrapTurnPacket(const uint8_t* packet,
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_TURNUTILS_H_
+#endif  // MEDIA_BASE_TURNUTILS_H_

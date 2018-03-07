@@ -1,4 +1,11 @@
-#!/usr/bin/env perl
+#! /usr/bin/env perl
+# Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved.
+#
+# Licensed under the OpenSSL license (the "License").  You may not use
+# this file except in compliance with the License.  You can obtain a copy
+# in the file LICENSE in the source distribution or at
+# https://www.openssl.org/source/license.html
+
 #
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
@@ -27,6 +34,8 @@
 # measurements for favourable packet size, one divisible by 96.
 # Applications using the EVP interface will observe a few percent
 # worse performance.]
+#
+# Knights Landing processes 1 byte in 1.25 cycles (measured with EVP).
 #
 # [1] http://rt.openssl.org/Ticket/Display.html?id=2900&user=guest&pass=guest
 # [2] http://www.intel.com/content/dam/www/public/us/en/documents/software-support/enabling-high-performance-gcm.pdf
@@ -77,6 +86,7 @@ $code=<<___;
 .type	_aesni_ctr32_ghash_6x,\@abi-omnipotent
 .align	32
 _aesni_ctr32_ghash_6x:
+.cfi_startproc
 	vmovdqu		0x20($const),$T2	# borrow $T2, .Lone_msb
 	sub		\$6,$len
 	vpxor		$Z0,$Z0,$Z0		# $Z0   = 0
@@ -401,6 +411,7 @@ _aesni_ctr32_ghash_6x:
 	vpxor		$Z0,$Xi,$Xi		# modulo-scheduled
 
 	ret
+.cfi_endproc
 .size	_aesni_ctr32_ghash_6x,.-_aesni_ctr32_ghash_6x
 ___
 ######################################################################
@@ -413,6 +424,7 @@ $code.=<<___;
 .type	aesni_gcm_decrypt,\@function,6
 .align	32
 aesni_gcm_decrypt:
+.cfi_startproc
 	xor	$ret,$ret
 
 	# We call |_aesni_ctr32_ghash_6x|, which requires at least 96 (0x60)
@@ -421,12 +433,19 @@ aesni_gcm_decrypt:
 	jb	.Lgcm_dec_abort
 
 	lea	(%rsp),%rax			# save stack pointer
+.cfi_def_cfa_register	%rax
 	push	%rbx
+.cfi_push	%rbx
 	push	%rbp
+.cfi_push	%rbp
 	push	%r12
+.cfi_push	%r12
 	push	%r13
+.cfi_push	%r13
 	push	%r14
+.cfi_push	%r14
 	push	%r15
+.cfi_push	%r15
 ___
 $code.=<<___ if ($win64);
 	lea	-0xa8(%rsp),%rsp
@@ -526,15 +545,23 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-48(%rax),%r15
+.cfi_restore	%r15
 	mov	-40(%rax),%r14
+.cfi_restore	%r14
 	mov	-32(%rax),%r13
+.cfi_restore	%r13
 	mov	-24(%rax),%r12
+.cfi_restore	%r12
 	mov	-16(%rax),%rbp
+.cfi_restore	%rbp
 	mov	-8(%rax),%rbx
+.cfi_restore	%rbx
 	lea	(%rax),%rsp		# restore %rsp
+.cfi_def_cfa_register	%rsp
 .Lgcm_dec_abort:
 	mov	$ret,%rax		# return value
 	ret
+.cfi_endproc
 .size	aesni_gcm_decrypt,.-aesni_gcm_decrypt
 ___
 
@@ -542,6 +569,7 @@ $code.=<<___;
 .type	_aesni_ctr32_6x,\@abi-omnipotent
 .align	32
 _aesni_ctr32_6x:
+.cfi_startproc
 	vmovdqu		0x00-0x80($key),$Z0	# borrow $Z0 for $rndkey
 	vmovdqu		0x20($const),$T2	# borrow $T2, .Lone_msb
 	lea		-1($rounds),%r13
@@ -628,12 +656,14 @@ _aesni_ctr32_6x:
 	vpshufb		$Ii,$T1,$T1		# next counter value
 	vpxor		$Z0,$inout5,$inout5
 	jmp	.Loop_ctr32
+.cfi_endproc
 .size	_aesni_ctr32_6x,.-_aesni_ctr32_6x
 
 .globl	aesni_gcm_encrypt
 .type	aesni_gcm_encrypt,\@function,6
 .align	32
 aesni_gcm_encrypt:
+.cfi_startproc
 	xor	$ret,$ret
 
 	# We call |_aesni_ctr32_6x| twice, each call consuming 96 bytes of
@@ -643,12 +673,19 @@ aesni_gcm_encrypt:
 	jb	.Lgcm_enc_abort
 
 	lea	(%rsp),%rax			# save stack pointer
+.cfi_def_cfa_register	%rax
 	push	%rbx
+.cfi_push	%rbx
 	push	%rbp
+.cfi_push	%rbp
 	push	%r12
+.cfi_push	%r12
 	push	%r13
+.cfi_push	%r13
 	push	%r14
+.cfi_push	%r14
 	push	%r15
+.cfi_push	%r15
 ___
 $code.=<<___ if ($win64);
 	lea	-0xa8(%rsp),%rsp
@@ -920,15 +957,23 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	mov	-48(%rax),%r15
+.cfi_restore	%r15
 	mov	-40(%rax),%r14
+.cfi_restore	%r14
 	mov	-32(%rax),%r13
+.cfi_restore	%r13
 	mov	-24(%rax),%r12
+.cfi_restore	%r12
 	mov	-16(%rax),%rbp
+.cfi_restore	%rbp
 	mov	-8(%rax),%rbx
+.cfi_restore	%rbx
 	lea	(%rax),%rsp		# restore %rsp
+.cfi_def_cfa_register	%rsp
 .Lgcm_enc_abort:
 	mov	$ret,%rax		# return value
 	ret
+.cfi_endproc
 .size	aesni_gcm_encrypt,.-aesni_gcm_encrypt
 ___
 

@@ -10,16 +10,21 @@
 
 package org.appspot.apprtc;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -68,7 +73,7 @@ import java.util.concurrent.TimeUnit;
  *      correct value, and then returns to back to correct reading.  Both when
  *      jumping up and back down we might create faulty CPU load readings.
  */
-
+@TargetApi(Build.VERSION_CODES.KITKAT)
 class CpuMonitor {
   private static final String TAG = "CpuMonitor";
   private static final int MOVING_AVERAGE_SAMPLES = 5;
@@ -151,7 +156,16 @@ class CpuMonitor {
     }
   }
 
+  public static boolean isSupported() {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        && Build.VERSION.SDK_INT < Build.VERSION_CODES.N;
+  }
+
   public CpuMonitor(Context context) {
+    if (!isSupported()) {
+      throw new RuntimeException("CpuMonitor is not supported on this Android version.");
+    }
+
     Log.d(TAG, "CpuMonitor ctor.");
     appContext = context.getApplicationContext();
     userCpuUsage = new MovingAverage(MOVING_AVERAGE_SAMPLES);
@@ -177,6 +191,8 @@ class CpuMonitor {
     scheduleCpuUtilizationTask();
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public synchronized void reset() {
     if (executor != null) {
       Log.d(TAG, "reset");
@@ -185,14 +201,20 @@ class CpuMonitor {
     }
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public synchronized int getCpuUsageCurrent() {
     return doubleToPercent(userCpuUsage.getCurrent() + systemCpuUsage.getCurrent());
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public synchronized int getCpuUsageAverage() {
     return doubleToPercent(userCpuUsage.getAverage() + systemCpuUsage.getAverage());
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public synchronized int getFrequencyScaleAverage() {
     return doubleToPercent(frequencyScale.getAverage());
   }
@@ -224,23 +246,19 @@ class CpuMonitor {
   }
 
   private void init() {
-    try {
-      FileReader fin = new FileReader("/sys/devices/system/cpu/present");
-      try {
-        BufferedReader reader = new BufferedReader(fin);
-        Scanner scanner = new Scanner(reader).useDelimiter("[-\n]");
-        scanner.nextInt(); // Skip leading number 0.
-        cpusPresent = 1 + scanner.nextInt();
-        scanner.close();
-      } catch (Exception e) {
-        Log.e(TAG, "Cannot do CPU stats due to /sys/devices/system/cpu/present parsing problem");
-      } finally {
-        fin.close();
-      }
+    try (FileInputStream fin = new FileInputStream("/sys/devices/system/cpu/present");
+         InputStreamReader streamReader = new InputStreamReader(fin, Charset.forName("UTF-8"));
+         BufferedReader reader = new BufferedReader(streamReader);
+         Scanner scanner = new Scanner(reader).useDelimiter("[-\n]");) {
+      scanner.nextInt(); // Skip leading number 0.
+      cpusPresent = 1 + scanner.nextInt();
+      scanner.close();
     } catch (FileNotFoundException e) {
       Log.e(TAG, "Cannot do CPU stats since /sys/devices/system/cpu/present is missing");
     } catch (IOException e) {
       Log.e(TAG, "Error closing file");
+    } catch (Exception e) {
+      Log.e(TAG, "Cannot do CPU stats due to /sys/devices/system/cpu/present parsing problem");
     }
 
     cpuFreqMax = new long[cpusPresent];
@@ -437,14 +455,11 @@ class CpuMonitor {
    */
   private long readFreqFromFile(String fileName) {
     long number = 0;
-    try {
-      BufferedReader reader = new BufferedReader(new FileReader(fileName));
-      try {
-        String line = reader.readLine();
-        number = parseLong(line);
-      } finally {
-        reader.close();
-      }
+    try (FileInputStream stream = new FileInputStream(fileName);
+         InputStreamReader streamReader = new InputStreamReader(stream, Charset.forName("UTF-8"));
+         BufferedReader reader = new BufferedReader(streamReader)) {
+      String line = reader.readLine();
+      number = parseLong(line);
     } catch (FileNotFoundException e) {
       // CPU core is off, so file with its scaling frequency .../cpufreq/scaling_cur_freq
       // is not present. This is not an error.
@@ -473,37 +488,31 @@ class CpuMonitor {
     long userTime = 0;
     long systemTime = 0;
     long idleTime = 0;
-    try {
-      BufferedReader reader = new BufferedReader(new FileReader("/proc/stat"));
-      try {
-        // line should contain something like this:
-        // cpu  5093818 271838 3512830 165934119 101374 447076 272086 0 0 0
-        //       user    nice  system     idle   iowait  irq   softirq
-        String line = reader.readLine();
-        String[] lines = line.split("\\s+");
-        int length = lines.length;
-        if (length >= 5) {
-          userTime = parseLong(lines[1]); // user
-          userTime += parseLong(lines[2]); // nice
-          systemTime = parseLong(lines[3]); // system
-          idleTime = parseLong(lines[4]); // idle
-        }
-        if (length >= 8) {
-          userTime += parseLong(lines[5]); // iowait
-          systemTime += parseLong(lines[6]); // irq
-          systemTime += parseLong(lines[7]); // softirq
-        }
-      } catch (Exception e) {
-        Log.e(TAG, "Problems parsing /proc/stat", e);
-        return null;
-      } finally {
-        reader.close();
+    try (FileInputStream stream = new FileInputStream("/proc/stat");
+         InputStreamReader streamReader = new InputStreamReader(stream, Charset.forName("UTF-8"));
+         BufferedReader reader = new BufferedReader(streamReader)) {
+      // line should contain something like this:
+      // cpu  5093818 271838 3512830 165934119 101374 447076 272086 0 0 0
+      //       user    nice  system     idle   iowait  irq   softirq
+      String line = reader.readLine();
+      String[] lines = line.split("\\s+");
+      int length = lines.length;
+      if (length >= 5) {
+        userTime = parseLong(lines[1]); // user
+        userTime += parseLong(lines[2]); // nice
+        systemTime = parseLong(lines[3]); // system
+        idleTime = parseLong(lines[4]); // idle
+      }
+      if (length >= 8) {
+        userTime += parseLong(lines[5]); // iowait
+        systemTime += parseLong(lines[6]); // irq
+        systemTime += parseLong(lines[7]); // softirq
       }
     } catch (FileNotFoundException e) {
       Log.e(TAG, "Cannot open /proc/stat for reading", e);
       return null;
-    } catch (IOException e) {
-      Log.e(TAG, "Problems reading /proc/stat", e);
+    } catch (Exception e) {
+      Log.e(TAG, "Problems parsing /proc/stat", e);
       return null;
     }
     return new ProcStat(userTime, systemTime, idleTime);

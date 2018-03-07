@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/histogram.h"
+#include "modules/video_coding/histogram.h"
 
 #include <algorithm>
 
-#include "webrtc/modules/video_coding/sequence_number_util.h"
+#include "rtc_base/numerics/sequence_number_util.h"
 
 namespace webrtc {
 namespace video_coding {

@@ -8,17 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_
+#define MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_
 
 #include <memory>
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/api/audio_codecs/g722/audio_encoder_g722_config.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/codecs/g722/g722_interface.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/g722/audio_encoder_g722_config.h"
+#include "modules/audio_coding/codecs/g722/g722_interface.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -26,17 +25,9 @@ struct CodecInst;
 
 class AudioEncoderG722Impl final : public AudioEncoder {
  public:
-  static rtc::Optional<AudioEncoderG722Config> SdpToConfig(
-      const SdpAudioFormat& format);
-
   AudioEncoderG722Impl(const AudioEncoderG722Config& config, int payload_type);
   explicit AudioEncoderG722Impl(const CodecInst& codec_inst);
-  AudioEncoderG722Impl(int payload_type, const SdpAudioFormat& format);
   ~AudioEncoderG722Impl() override;
-
-  static constexpr const char* GetPayloadName() { return "G722"; }
-  static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
-      const SdpAudioFormat& format);
 
   int SampleRateHz() const override;
   size_t NumChannels() const override;
@@ -74,4 +65,4 @@ class AudioEncoderG722Impl final : public AudioEncoder {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_G722_AUDIO_ENCODER_G722_H_

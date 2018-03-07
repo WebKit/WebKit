@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_UTILITY_VP8_HEADER_PARSER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_UTILITY_VP8_HEADER_PARSER_H_
+#ifndef MODULES_VIDEO_CODING_UTILITY_VP8_HEADER_PARSER_H_
+#define MODULES_VIDEO_CODING_UTILITY_VP8_HEADER_PARSER_H_
 
 #include <stdint.h>
 #include <stdio.h>
@@ -65,4 +65,4 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_UTILITY_VP8_HEADER_PARSER_H_
+#endif  // MODULES_VIDEO_CODING_UTILITY_VP8_HEADER_PARSER_H_

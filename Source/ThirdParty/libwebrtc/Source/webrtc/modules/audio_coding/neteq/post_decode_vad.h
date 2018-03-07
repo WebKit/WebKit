@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
+#define MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
 
 #include <string>  // size_t
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_audio/vad/include/webrtc_vad.h"
-#include "webrtc/common_types.h"  // NULL
-#include "webrtc/modules/audio_coding/neteq/defines.h"
-#include "webrtc/modules/audio_coding/neteq/packet.h"
-#include "webrtc/typedefs.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "common_audio/vad/include/webrtc_vad.h"
+#include "common_types.h"  // NOLINT(build/include)  // NULL
+#include "modules/audio_coding/neteq/defines.h"
+#include "modules/audio_coding/neteq/packet.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -69,4 +69,4 @@ class PostDecodeVad {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_

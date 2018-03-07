@@ -18,7 +18,7 @@ rtc_source_set("aec_dump") {
   ]
 
   deps = [
-    "../../../base:rtc_base_approved",
+    "../../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -49,7 +49,7 @@ rtc_source_set("mock_aec_dump_unittests") {
   deps = [
     ":mock_aec_dump",
     "..:audio_processing",
-    "../../../base:rtc_base_approved",
+    "../../../rtc_base:rtc_base_approved",
     "//testing/gtest",
   ]
 }
@@ -73,10 +73,10 @@ if (rtc_enable_protobuf) {
     ]
 
     deps = [
-      "../../../base:protobuf_utils",
-      "../../../base:rtc_base_approved",
-      "../../../base:rtc_task_queue",
       "../../../modules:module_api",
+      "../../../rtc_base:protobuf_utils",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:rtc_task_queue",
       "../../../system_wrappers",
     ]
 
@@ -90,8 +90,8 @@ if (rtc_enable_protobuf) {
       ":aec_dump_impl",
       "..:aec_dump_interface",
       "..:audioproc_debug_proto",
-      "../../../base:rtc_task_queue",
       "../../../modules:module_api",
+      "../../../rtc_base:rtc_task_queue",
       "../../../test:test_support",
       "//testing/gtest",
     ]

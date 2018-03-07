@@ -48,7 +48,6 @@ CHECKOUT_ROOT_DIR = os.path.realpath(os.path.join(CHECKOUT_SRC_DIR, os.pardir))
 sys.path.append(os.path.join(CHECKOUT_SRC_DIR, 'build'))
 import find_depot_tools
 find_depot_tools.add_depot_tools_to_path()
-from gclient import GClientKeywords
 
 CLANG_UPDATE_SCRIPT_URL_PATH = 'tools/clang/scripts/update.py'
 CLANG_UPDATE_SCRIPT_LOCAL_PATH = os.path.join(CHECKOUT_SRC_DIR, 'tools',
@@ -62,11 +61,14 @@ class RollError(Exception):
   pass
 
 
+def VarLookup(local_scope):
+  return lambda var_name: local_scope['vars'][var_name]
+
+
 def ParseDepsDict(deps_content):
   local_scope = {}
-  var = GClientKeywords.VarImpl({}, local_scope)
   global_scope = {
-    'Var': var.Lookup,
+    'Var': VarLookup(local_scope),
     'deps_os': {},
   }
   exec(deps_content, global_scope, local_scope)
@@ -333,10 +335,8 @@ def UpdateDepsFile(deps_filename, old_cr_revision, new_cr_revision,
     local_dep_dir = os.path.join(CHECKOUT_ROOT_DIR, dep.path)
     if not os.path.isdir(local_dep_dir):
       raise RollError(
-          'Cannot find local directory %s. Either run\n'
-          'gclient sync --deps=all\n'
-          'or make sure the .gclient file for your solution contains all '
-          'platforms in the target_os list, i.e.\n'
+          'Cannot find local directory %s. Make sure the .gclient file\n'
+          'contains all platforms in the target_os list, i.e.\n'
           'target_os = ["android", "unix", "mac", "ios", "win"];\n'
           'Then run "gclient sync" again.' % local_dep_dir)
     _, stderr = _RunCommand(

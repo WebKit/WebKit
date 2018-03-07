@@ -21,9 +21,9 @@ rtc_static_library("audio_frame_operations") {
 
   deps = [
     "../..:webrtc_common",
-    "../../base:rtc_base_approved",
     "../../modules:module_api",
     "../../modules/audio_coding:audio_format_conversion",
+    "../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -35,8 +35,8 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":audio_frame_operations",
-      "../../base:rtc_base_approved",
       "../../modules:module_api",
+      "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
       "//testing/gtest",
     ]

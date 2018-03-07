@@ -7,13 +7,13 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_TEST_RTP_FILE_WRITER_H_
-#define WEBRTC_TEST_RTP_FILE_WRITER_H_
+#ifndef TEST_RTP_FILE_WRITER_H_
+#define TEST_RTP_FILE_WRITER_H_
 
 #include <string>
 
-#include "webrtc/common_types.h"
-#include "webrtc/test/rtp_file_reader.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "test/rtp_file_reader.h"
 
 namespace webrtc {
 namespace test {
@@ -30,4 +30,4 @@ class RtpFileWriter {
 };
 }  // namespace test
 }  // namespace webrtc
-#endif  // WEBRTC_TEST_RTP_FILE_WRITER_H_
+#endif  // TEST_RTP_FILE_WRITER_H_

@@ -8,20 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/include/video_codec_initializer.h"
+#include "modules/video_coding/include/video_codec_initializer.h"
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/include/video_bitrate_allocator.h"
-#include "webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h"
-#include "webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
-#include "webrtc/modules/video_coding/utility/default_video_bitrate_allocator.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "common_video/include/video_bitrate_allocator.h"
+#include "modules/video_coding/codecs/vp8/screenshare_layers.h"
+#include "modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
+#include "modules/video_coding/codecs/vp8/temporal_layers.h"
+#include "modules/video_coding/include/video_coding_defines.h"
+#include "modules/video_coding/utility/default_video_bitrate_allocator.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
+namespace {
+bool TemporalLayersConfigured(const std::vector<VideoStream>& streams) {
+  for (const VideoStream& stream : streams) {
+    if (stream.temporal_layer_thresholds_bps.size() > 0)
+      return true;
+  }
+  return false;
+}
+}  // namespace
 
 bool VideoCodecInitializer::SetupCodec(
     const VideoEncoderConfig& config,
@@ -33,11 +42,10 @@ bool VideoCodecInitializer::SetupCodec(
   *codec =
       VideoEncoderConfigToVideoCodec(config, streams, settings.payload_name,
                                      settings.payload_type, nack_enabled);
-
+#if !defined(RTC_DISABLE_VP8)
   std::unique_ptr<TemporalLayersFactory> tl_factory;
   switch (codec->codecType) {
     case kVideoCodecVP8: {
-#if !defined(RTC_DISABLE_VP8)
       if (!codec->VP8()->tl_factory) {
         if (codec->mode == kScreensharing &&
             (codec->numberOfSimulcastStreams > 1 ||
@@ -51,7 +59,6 @@ bool VideoCodecInitializer::SetupCodec(
         }
         codec->VP8()->tl_factory = tl_factory.get();
       }
-#endif
       break;
     }
     default: {
@@ -61,7 +68,7 @@ bool VideoCodecInitializer::SetupCodec(
     }
   }
   *bitrate_allocator = CreateBitrateAllocator(*codec, std::move(tl_factory));
-
+#endif
   return true;
 }
 
@@ -72,13 +79,13 @@ VideoCodecInitializer::CreateBitrateAllocator(
   std::unique_ptr<VideoBitrateAllocator> rate_allocator;
 
   switch (codec.codecType) {
-#if !defined(RTC_DISABLE_VP8)
     case kVideoCodecVP8: {
+#if !defined(RTC_DISABLE_VP8)
       // Set up default VP8 temporal layer factory, if not provided.
       rate_allocator.reset(
           new SimulcastRateAllocator(codec, std::move(tl_factory)));
-    } break;
 #endif
+    } break;
     default:
       rate_allocator.reset(new DefaultVideoBitrateAllocator(codec));
   }
@@ -99,8 +106,7 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
 
   VideoCodec video_codec;
   memset(&video_codec, 0, sizeof(video_codec));
-  video_codec.codecType = PayloadNameToCodecType(payload_name)
-                              .value_or(VideoCodecType::kVideoCodecGeneric);
+  video_codec.codecType = PayloadStringToCodecType(payload_name);
 
   switch (config.content_type) {
     case VideoEncoderConfig::ContentType::kRealtimeVideo:
@@ -125,13 +131,10 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
         *video_codec.VP8() = VideoEncoder::GetDefaultVp8Settings();
       video_codec.VP8()->numberOfTemporalLayers = static_cast<unsigned char>(
           streams.back().temporal_layer_thresholds_bps.size() + 1);
-      bool temporal_layers_configured = false;
-      for (const VideoStream& stream : streams) {
-        if (stream.temporal_layer_thresholds_bps.size() > 0)
-          temporal_layers_configured = true;
-      }
-      if (nack_enabled && !temporal_layers_configured) {
-        LOG(LS_INFO) << "No temporal layers and nack enabled -> resilience off";
+
+      if (nack_enabled && !TemporalLayersConfigured(streams)) {
+        RTC_LOG(LS_INFO)
+            << "No temporal layers and nack enabled -> resilience off";
         video_codec.VP8()->resilience = kResilienceOff;
       }
       break;
@@ -148,6 +151,13 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
       }
       video_codec.VP9()->numberOfTemporalLayers = static_cast<unsigned char>(
           streams.back().temporal_layer_thresholds_bps.size() + 1);
+
+      if (nack_enabled && !TemporalLayersConfigured(streams) &&
+          video_codec.VP9()->numberOfSpatialLayers == 1) {
+        RTC_LOG(LS_INFO) << "No temporal or spatial layers and nack enabled -> "
+                         << "resilience off";
+        video_codec.VP9()->resilienceOn = false;
+      }
       break;
     }
     case kVideoCodecH264: {

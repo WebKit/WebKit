@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_GENERATOR_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_GENERATOR_H_
+#ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_GENERATOR_H_
+#define MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_GENERATOR_H_
 
 #include <memory>
 
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
-#include "webrtc/modules/desktop_capture/desktop_region.h"
-#include "webrtc/modules/desktop_capture/shared_memory.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/shared_memory.h"
 
 namespace webrtc {
 
@@ -118,4 +118,4 @@ class BlackWhiteDesktopFramePainter final : public DesktopFramePainter {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_GENERATOR_H_
+#endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_GENERATOR_H_

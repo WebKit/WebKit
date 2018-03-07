@@ -10,25 +10,27 @@
 
 #include <utility>
 
-#include "webrtc/base/fakeclock.h"
-#include "webrtc/base/ignore_wundef.h"
-#include "webrtc/base/protobuf_utils.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/controller_manager.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/mock/mock_controller.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
+#include "modules/audio_coding/audio_network_adaptor/mock/mock_controller.h"
+#include "modules/audio_coding/audio_network_adaptor/mock/mock_debug_dump_writer.h"
+#include "rtc_base/fakeclock.h"
+#include "rtc_base/ignore_wundef.h"
+#include "rtc_base/protobuf_utils.h"
+#include "test/gtest.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
 RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_coding/audio_network_adaptor/config.pb.h"
 #else
-#include "webrtc/modules/audio_coding/audio_network_adaptor/config.pb.h"
+#include "modules/audio_coding/audio_network_adaptor/config.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 #endif
 
 namespace webrtc {
 
+using ::testing::_;
 using ::testing::NiceMock;
 
 namespace {
@@ -122,41 +124,38 @@ TEST(ControllerManagerTest, ControllersInDefaultOrderOnEmptyNetworkMetrics) {
   auto states = CreateControllerManager();
   // |network_metrics| are empty, and the controllers are supposed to follow the
   // default order.
-  CheckControllersOrder(&states, rtc::Optional<int>(), rtc::Optional<float>(),
+  CheckControllersOrder(&states, rtc::nullopt, rtc::nullopt,
                         {0, 1, 2, 3});
 }
 
 TEST(ControllerManagerTest, ControllersWithoutCharPointAtEndAndInDefaultOrder) {
   auto states = CreateControllerManager();
-  CheckControllersOrder(&states, rtc::Optional<int>(0),
-                        rtc::Optional<float>(0.0),
+  CheckControllersOrder(&states, 0,
+                        0.0,
                         {kNumControllers - 2, kNumControllers - 1, -1, -1});
 }
 
 TEST(ControllerManagerTest, ControllersWithCharPointDependOnNetworkMetrics) {
   auto states = CreateControllerManager();
-  CheckControllersOrder(
-      &states, rtc::Optional<int>(kChracteristicBandwithBps[1]),
-      rtc::Optional<float>(kChracteristicPacketLossFraction[1]),
-      {kNumControllers - 2, kNumControllers - 1, 1, 0});
+  CheckControllersOrder(&states, kChracteristicBandwithBps[1],
+                        kChracteristicPacketLossFraction[1],
+                        {kNumControllers - 2, kNumControllers - 1, 1, 0});
 }
 
 TEST(ControllerManagerTest, DoNotReorderBeforeMinReordingTime) {
   rtc::ScopedFakeClock fake_clock;
   auto states = CreateControllerManager();
-  CheckControllersOrder(
-      &states, rtc::Optional<int>(kChracteristicBandwithBps[0]),
-      rtc::Optional<float>(kChracteristicPacketLossFraction[0]),
-      {kNumControllers - 2, kNumControllers - 1, 0, 1});
+  CheckControllersOrder(&states, kChracteristicBandwithBps[0],
+                        kChracteristicPacketLossFraction[0],
+                        {kNumControllers - 2, kNumControllers - 1, 0, 1});
   fake_clock.AdvanceTime(
       rtc::TimeDelta::FromMilliseconds(kMinReorderingTimeMs - 1));
   // Move uplink bandwidth and packet loss fraction to the other controller's
   // characteristic point, which would cause controller manager to reorder the
   // controllers if time had reached min reordering time.
-  CheckControllersOrder(
-      &states, rtc::Optional<int>(kChracteristicBandwithBps[1]),
-      rtc::Optional<float>(kChracteristicPacketLossFraction[1]),
-      {kNumControllers - 2, kNumControllers - 1, 0, 1});
+  CheckControllersOrder(&states, kChracteristicBandwithBps[1],
+                        kChracteristicPacketLossFraction[1],
+                        {kNumControllers - 2, kNumControllers - 1, 0, 1});
 }
 
 TEST(ControllerManagerTest, ReorderBeyondMinReordingTimeAndMinDistance) {
@@ -169,16 +168,14 @@ TEST(ControllerManagerTest, ReorderBeyondMinReordingTimeAndMinDistance) {
                                         2.0f;
   // Set network metrics to be in the middle between the characteristic points
   // of two controllers.
-  CheckControllersOrder(&states, rtc::Optional<int>(kBandwidthBps),
-                        rtc::Optional<float>(kPacketLossFraction),
+  CheckControllersOrder(&states, kBandwidthBps, kPacketLossFraction,
                         {kNumControllers - 2, kNumControllers - 1, 0, 1});
   fake_clock.AdvanceTime(
       rtc::TimeDelta::FromMilliseconds(kMinReorderingTimeMs));
   // Then let network metrics move a little towards the other controller.
-  CheckControllersOrder(
-      &states, rtc::Optional<int>(kBandwidthBps - kMinBandwithChangeBps - 1),
-      rtc::Optional<float>(kPacketLossFraction),
-      {kNumControllers - 2, kNumControllers - 1, 1, 0});
+  CheckControllersOrder(&states, kBandwidthBps - kMinBandwithChangeBps - 1,
+                        kPacketLossFraction,
+                        {kNumControllers - 2, kNumControllers - 1, 1, 0});
 }
 
 TEST(ControllerManagerTest, DoNotReorderIfNetworkMetricsChangeTooSmall) {
@@ -191,16 +188,14 @@ TEST(ControllerManagerTest, DoNotReorderIfNetworkMetricsChangeTooSmall) {
                                         2.0f;
   // Set network metrics to be in the middle between the characteristic points
   // of two controllers.
-  CheckControllersOrder(&states, rtc::Optional<int>(kBandwidthBps),
-                        rtc::Optional<float>(kPacketLossFraction),
+  CheckControllersOrder(&states, kBandwidthBps, kPacketLossFraction,
                         {kNumControllers - 2, kNumControllers - 1, 0, 1});
   fake_clock.AdvanceTime(
       rtc::TimeDelta::FromMilliseconds(kMinReorderingTimeMs));
   // Then let network metrics move a little towards the other controller.
-  CheckControllersOrder(
-      &states, rtc::Optional<int>(kBandwidthBps - kMinBandwithChangeBps + 1),
-      rtc::Optional<float>(kPacketLossFraction),
-      {kNumControllers - 2, kNumControllers - 1, 0, 1});
+  CheckControllersOrder(&states, kBandwidthBps - kMinBandwithChangeBps + 1,
+                        kPacketLossFraction,
+                        {kNumControllers - 2, kNumControllers - 1, 0, 1});
 }
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -310,29 +305,66 @@ void CheckControllersOrder(const std::vector<Controller*>& controllers,
     // initial values.
     switch (expected_types[i]) {
       case ControllerType::FEC:
-        EXPECT_EQ(rtc::Optional<bool>(kInitialFecEnabled),
-                  encoder_config.enable_fec);
+        EXPECT_EQ(kInitialFecEnabled, encoder_config.enable_fec);
         break;
       case ControllerType::CHANNEL:
-        EXPECT_EQ(rtc::Optional<size_t>(kIntialChannelsToEncode),
-                  encoder_config.num_channels);
+        EXPECT_EQ(kIntialChannelsToEncode, encoder_config.num_channels);
         break;
       case ControllerType::DTX:
-        EXPECT_EQ(rtc::Optional<bool>(kInitialDtxEnabled),
-                  encoder_config.enable_dtx);
+        EXPECT_EQ(kInitialDtxEnabled, encoder_config.enable_dtx);
         break;
       case ControllerType::FRAME_LENGTH:
-        EXPECT_EQ(rtc::Optional<int>(kInitialFrameLengthMs),
-                  encoder_config.frame_length_ms);
+        EXPECT_EQ(kInitialFrameLengthMs, encoder_config.frame_length_ms);
         break;
       case ControllerType::BIT_RATE:
-        EXPECT_EQ(rtc::Optional<int>(kInitialBitrateBps),
-                  encoder_config.bitrate_bps);
+        EXPECT_EQ(kInitialBitrateBps, encoder_config.bitrate_bps);
     }
   }
 }
 
+MATCHER_P(ControllerManagerEqual, value, "") {
+  ProtoString value_string;
+  ProtoString arg_string;
+  EXPECT_TRUE(arg.SerializeToString(&arg_string));
+  EXPECT_TRUE(value.SerializeToString(&value_string));
+  return arg_string == value_string;
+}
+
 }  // namespace
+
+TEST(ControllerManagerTest, DebugDumpLoggedWhenCreateFromConfigString) {
+  audio_network_adaptor::config::ControllerManager config;
+  config.set_min_reordering_time_ms(kMinReorderingTimeMs);
+  config.set_min_reordering_squared_distance(kMinReorderingSquareDistance);
+
+  AddFecControllerConfig(&config);
+  AddChannelControllerConfig(&config);
+  AddDtxControllerConfig(&config);
+  AddFrameLengthControllerConfig(&config);
+  AddBitrateControllerConfig(&config);
+
+  ProtoString config_string;
+  config.SerializeToString(&config_string);
+
+  constexpr size_t kNumEncoderChannels = 2;
+  const std::vector<int> encoder_frame_lengths_ms = {20, 60};
+
+  constexpr int64_t kClockInitialTimeMs = 12345678;
+  rtc::ScopedFakeClock fake_clock;
+  fake_clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(kClockInitialTimeMs));
+  auto debug_dump_writer =
+      std::unique_ptr<MockDebugDumpWriter>(new NiceMock<MockDebugDumpWriter>());
+  EXPECT_CALL(*debug_dump_writer, Die());
+  EXPECT_CALL(*debug_dump_writer,
+              DumpControllerManagerConfig(ControllerManagerEqual(config),
+                                          kClockInitialTimeMs));
+
+  ControllerManagerImpl::Create(config_string, kNumEncoderChannels,
+                                encoder_frame_lengths_ms, kMinBitrateBps,
+                                kIntialChannelsToEncode, kInitialFrameLengthMs,
+                                kInitialBitrateBps, kInitialFecEnabled,
+                                kInitialDtxEnabled, debug_dump_writer.get());
+}
 
 TEST(ControllerManagerTest, CreateFromConfigStringAndCheckDefaultOrder) {
   audio_network_adaptor::config::ControllerManager config;
@@ -404,10 +436,8 @@ TEST(ControllerManagerTest, CreateFromConfigStringAndCheckReordering) {
   auto states = CreateControllerManager(config_string);
 
   Controller::NetworkMetrics metrics;
-  metrics.uplink_bandwidth_bps =
-      rtc::Optional<int>(kChracteristicBandwithBps[0]);
-  metrics.uplink_packet_loss_fraction =
-      rtc::Optional<float>(kChracteristicPacketLossFraction[0]);
+  metrics.uplink_bandwidth_bps = kChracteristicBandwithBps[0];
+  metrics.uplink_packet_loss_fraction = kChracteristicPacketLossFraction[0];
 
   auto controllers = states.controller_manager->GetSortedControllers(metrics);
   CheckControllersOrder(controllers,
@@ -416,10 +446,8 @@ TEST(ControllerManagerTest, CreateFromConfigStringAndCheckReordering) {
                             ControllerType::CHANNEL, ControllerType::DTX,
                             ControllerType::BIT_RATE});
 
-  metrics.uplink_bandwidth_bps =
-      rtc::Optional<int>(kChracteristicBandwithBps[1]);
-  metrics.uplink_packet_loss_fraction =
-      rtc::Optional<float>(kChracteristicPacketLossFraction[1]);
+  metrics.uplink_bandwidth_bps = kChracteristicBandwithBps[1];
+  metrics.uplink_packet_loss_fraction = kChracteristicPacketLossFraction[1];
   fake_clock.AdvanceTime(
       rtc::TimeDelta::FromMilliseconds(kMinReorderingTimeMs - 1));
   controllers = states.controller_manager->GetSortedControllers(metrics);

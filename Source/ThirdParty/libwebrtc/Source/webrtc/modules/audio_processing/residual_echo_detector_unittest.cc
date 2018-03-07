@@ -10,8 +10,8 @@
 
 #include <vector>
 
-#include "webrtc/modules/audio_processing/residual_echo_detector.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/residual_echo_detector.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

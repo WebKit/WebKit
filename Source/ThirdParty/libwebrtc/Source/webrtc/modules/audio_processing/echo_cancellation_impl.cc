@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/echo_cancellation_impl.h"
+#include "modules/audio_processing/echo_cancellation_impl.h"
 
 #include <string.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
-#include "webrtc/modules/audio_processing/aec/echo_cancellation.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/aec/aec_core.h"
+#include "modules/audio_processing/aec/echo_cancellation.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

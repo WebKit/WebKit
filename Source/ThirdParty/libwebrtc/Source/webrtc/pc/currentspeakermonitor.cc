@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/currentspeakermonitor.h"
+#include "pc/currentspeakermonitor.h"
 
 #include <vector>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/media/base/streamparams.h"
-#include "webrtc/pc/audiomonitor.h"
+#include "media/base/streamparams.h"
+#include "pc/audiomonitor.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 
@@ -169,7 +169,7 @@ void CurrentSpeakerMonitor::OnAudioMonitor(
   if (earliest_permitted_switch_time_ <= now &&
       current_speaker_ssrc_ != loudest_speaker_ssrc) {
     current_speaker_ssrc_ = loudest_speaker_ssrc;
-    LOG(LS_INFO) << "Current speaker changed to " << current_speaker_ssrc_;
+    RTC_LOG(LS_INFO) << "Current speaker changed to " << current_speaker_ssrc_;
     earliest_permitted_switch_time_ = now + min_time_between_switches_;
     SignalUpdate(this, current_speaker_ssrc_);
   }

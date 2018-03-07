@@ -25,8 +25,19 @@ import sys
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir,
-                                        os.pardir))
+SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir))
+
+NO_TOOLS_ERROR_MESSAGE = (
+  'Could not find PESQ or POLQA at %s.\n'
+  '\n'
+  'To fix this run:\n'
+  '  python %s %s\n'
+  '\n'
+  'Note that these tools are Google-internal due to licensing, so in order to '
+  'use them you will have to get your own license and manually put them in the '
+  'right location.\n'
+  'See https://cs.chromium.org/chromium/src/third_party/webrtc/tools_webrtc/'
+  'download_tools.py?rcl=bbceb76f540159e2dba0701ac03c514f01624130&l=13')
 
 
 def _LogCommand(command):
@@ -43,7 +54,14 @@ def _ParseArgs():
   parser.add_argument('--android', action='store_true',
       help='Perform the test on a connected Android device instead.')
   parser.add_argument('--adb-path', help='Path to adb binary.', default='adb')
+
+  # Ignore Chromium-specific flags
+  parser.add_argument('--isolated-script-test-output',
+                      type=str, default=None)
+  parser.add_argument('--isolated-script-test-perf-output',
+                      type=str, default=None)
   args = parser.parse_args()
+
   return args
 
 
@@ -56,17 +74,31 @@ def _GetPlatform():
     return 'linux'
 
 
-def _DownloadTools():
+def _GetExtension():
+  return '.exe' if sys.platform == 'win32' else ''
+
+
+def _GetPathToTools():
   tools_dir = os.path.join(SRC_DIR, 'tools_webrtc')
   toolchain_dir = os.path.join(tools_dir, 'audio_quality')
 
-  # Download PESQ and POLQA.
-  download_script = os.path.join(tools_dir, 'download_tools.py')
-  command = [sys.executable, download_script, toolchain_dir]
-  subprocess.check_call(_LogCommand(command))
+  platform = _GetPlatform()
+  ext = _GetExtension()
 
-  pesq_path = os.path.join(toolchain_dir, _GetPlatform(), 'pesq')
-  polqa_path = os.path.join(toolchain_dir, _GetPlatform(), 'PolqaOem64')
+  pesq_path = os.path.join(toolchain_dir, platform, 'pesq' + ext)
+  if not os.path.isfile(pesq_path):
+    pesq_path = None
+
+  polqa_path = os.path.join(toolchain_dir, platform, 'PolqaOem64' + ext)
+  if not os.path.isfile(polqa_path):
+    polqa_path = None
+
+  if (platform != 'mac' and not polqa_path) or not pesq_path:
+    logging.error(NO_TOOLS_ERROR_MESSAGE,
+                  toolchain_dir,
+                  os.path.join(tools_dir, 'download_tools.py'),
+                  toolchain_dir)
+
   return pesq_path, polqa_path
 
 
@@ -141,15 +173,8 @@ def _RunPolqa(executable_path, reference_file, degraded_file):
   # Analyze audio.
   command = [executable_path, '-q', '-LC', 'NB',
              '-Ref', reference_file, '-Test', degraded_file]
-  try:
-    process = subprocess.Popen(_LogCommand(command),
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  except OSError as e:
-    if e.errno == os.errno.ENOENT:
-      logging.warning('POLQA executable missing, skipping test.')
-      return {}
-    else:
-      raise
+  process = subprocess.Popen(_LogCommand(command),
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = process.communicate()
 
   # Find the scores in stdout of POLQA.
@@ -177,7 +202,9 @@ def main():
 
   args = _ParseArgs()
 
-  pesq_path, polqa_path = _DownloadTools()
+  pesq_path, polqa_path = _GetPathToTools()
+  if pesq_path is None:
+    return 1
 
   out_dir = os.path.join(args.build_dir, '..')
   if args.android:
@@ -190,7 +217,7 @@ def main():
   # Check if POLQA can run at all, or skip the 48 kHz tests entirely.
   example_path = os.path.join(SRC_DIR, 'resources',
                               'voice_engine', 'audio_tiny48.wav')
-  if _RunPolqa(polqa_path, example_path, example_path):
+  if polqa_path and _RunPolqa(polqa_path, example_path, example_path):
     analyzers.append(Analyzer(_RunPolqa, polqa_path, 48000))
 
   for analyzer in analyzers:

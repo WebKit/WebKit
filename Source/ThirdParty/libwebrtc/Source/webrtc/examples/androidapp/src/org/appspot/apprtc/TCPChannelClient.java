@@ -11,24 +11,24 @@
 package org.appspot.apprtc;
 
 import android.util.Log;
-
-import org.webrtc.ThreadUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
+import org.webrtc.ThreadUtils;
 
 /**
  * Replacement for WebSocketChannelClient for direct communication between two IP addresses. Handles
  * the signaling between the two clients using a TCP connection.
- *
- * <p>All public methods should be called from a looper executor thread
+ * <p>
+ * All public methods should be called from a looper executor thread
  * passed in a constructor, otherwise exception will be thrown.
  * All events are dispatched on the same thread.
  */
@@ -56,8 +56,8 @@ public class TCPChannelClient {
    * that IP. If not, instead connects to the IP.
    *
    * @param eventListener Listener that will receive events from the client.
-   * @param ip IP address to listen on or connect to.
-   * @param port Port to listen on or connect to.
+   * @param ip            IP address to listen on or connect to.
+   * @param port          Port to listen on or connect to.
    */
   public TCPChannelClient(
       ExecutorService executor, TCPChannelEvents eventListener, String ip, int port) {
@@ -132,6 +132,7 @@ public class TCPChannelClient {
      * @return Socket connection, null if connection failed.
      */
     public abstract Socket connect();
+
     /** Returns true if sockets is a server rawSocket. */
     public abstract boolean isServer();
 
@@ -165,8 +166,10 @@ public class TCPChannelClient {
         }
 
         try {
-          out = new PrintWriter(rawSocket.getOutputStream(), true);
-          in = new BufferedReader(new InputStreamReader(rawSocket.getInputStream()));
+          out = new PrintWriter(
+              new OutputStreamWriter(rawSocket.getOutputStream(), Charset.forName("UTF-8")), true);
+          in = new BufferedReader(
+              new InputStreamReader(rawSocket.getInputStream(), Charset.forName("UTF-8")));
         } catch (IOException e) {
           reportError("Failed to open IO on rawSocket: " + e.getMessage());
           return;
@@ -218,9 +221,7 @@ public class TCPChannelClient {
       disconnect();
     }
 
-    /**
-     * Closes the rawSocket if it is still open. Also fires the onTCPClose event.
-     */
+    /** Closes the rawSocket if it is still open. Also fires the onTCPClose event. */
     public void disconnect() {
       try {
         synchronized (rawSocketLock) {

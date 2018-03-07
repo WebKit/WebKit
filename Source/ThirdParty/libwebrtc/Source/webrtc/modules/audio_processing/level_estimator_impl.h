@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_ESTIMATOR_IMPL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_ESTIMATOR_IMPL_H_
+#ifndef MODULES_AUDIO_PROCESSING_LEVEL_ESTIMATOR_IMPL_H_
+#define MODULES_AUDIO_PROCESSING_LEVEL_ESTIMATOR_IMPL_H_
 
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 
@@ -38,10 +38,10 @@ class LevelEstimatorImpl : public LevelEstimator {
 
  private:
   rtc::CriticalSection* const crit_ = nullptr;
-  bool enabled_ GUARDED_BY(crit_) = false;
-  std::unique_ptr<RmsLevel> rms_ GUARDED_BY(crit_);
+  bool enabled_ RTC_GUARDED_BY(crit_) = false;
+  std::unique_ptr<RmsLevel> rms_ RTC_GUARDED_BY(crit_);
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(LevelEstimatorImpl);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_ESTIMATOR_IMPL_H_
+#endif  // MODULES_AUDIO_PROCESSING_LEVEL_ESTIMATOR_IMPL_H_

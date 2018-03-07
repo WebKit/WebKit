@@ -10,12 +10,12 @@
 
 #define _USE_MATH_DEFINES
 
-#include "webrtc/modules/audio_processing/beamformer/covariance_matrix_generator.h"
+#include "modules/audio_processing/beamformer/covariance_matrix_generator.h"
 
 #include <cmath>
 
-#include "webrtc/modules/audio_processing/beamformer/matrix_test_helpers.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/beamformer/matrix_test_helpers.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

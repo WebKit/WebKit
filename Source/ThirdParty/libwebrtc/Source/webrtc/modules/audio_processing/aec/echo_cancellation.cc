@@ -11,20 +11,20 @@
 /*
  * Contains the API functions for the AEC.
  */
-#include "webrtc/modules/audio_processing/aec/echo_cancellation.h"
+#include "modules/audio_processing/aec/echo_cancellation.h"
 
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
 extern "C" {
-#include "webrtc/common_audio/ring_buffer.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/ring_buffer.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 }
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
-#include "webrtc/modules/audio_processing/aec/aec_resampler.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_processing/aec/aec_core.h"
+#include "modules/audio_processing/aec/aec_resampler.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -105,15 +105,15 @@ int Aec::instance_count = 0;
 // (controlled by knownDelay)
 static void EstBufDelayNormal(Aec* aecInst);
 static void EstBufDelayExtended(Aec* aecInst);
-static int ProcessNormal(Aec* self,
-                         const float* const* near,
+static int ProcessNormal(Aec* aecInst,
+                         const float* const* nearend,
                          size_t num_bands,
                          float* const* out,
                          size_t num_samples,
                          int16_t reported_delay_ms,
                          int32_t skew);
-static void ProcessExtended(Aec* self,
-                            const float* const* near,
+static void ProcessExtended(Aec* aecInst,
+                            const float* const* nearend,
                             size_t num_bands,
                             float* const* out,
                             size_t num_samples,
@@ -531,12 +531,12 @@ AecCore* WebRtcAec_aec_core(void* handle) {
   return reinterpret_cast<Aec*>(handle)->aec;
 }
 
-static int ProcessNormal(Aec* aecpc,
+static int ProcessNormal(Aec* aecInst,
                          const float* const* nearend,
                          size_t num_bands,
                          float* const* out,
-                         size_t nrOfSamples,
-                         int16_t msInSndCardBuf,
+                         size_t num_samples,
+                         int16_t reported_delay_ms,
                          int32_t skew) {
   int retVal = 0;
   size_t i;
@@ -545,47 +545,48 @@ static int ProcessNormal(Aec* aecpc,
   const float minSkewEst = -0.5f;
   const float maxSkewEst = 1.0f;
 
-  msInSndCardBuf =
-      msInSndCardBuf > kMaxTrustedDelayMs ? kMaxTrustedDelayMs : msInSndCardBuf;
+  reported_delay_ms =
+      reported_delay_ms > kMaxTrustedDelayMs ? kMaxTrustedDelayMs :
+      reported_delay_ms;
   // TODO(andrew): we need to investigate if this +10 is really wanted.
-  msInSndCardBuf += 10;
-  aecpc->msInSndCardBuf = msInSndCardBuf;
+  reported_delay_ms += 10;
+  aecInst->msInSndCardBuf = reported_delay_ms;
 
-  if (aecpc->skewMode == kAecTrue) {
-    if (aecpc->skewFrCtr < 25) {
-      aecpc->skewFrCtr++;
+  if (aecInst->skewMode == kAecTrue) {
+    if (aecInst->skewFrCtr < 25) {
+      aecInst->skewFrCtr++;
     } else {
-      retVal = WebRtcAec_GetSkew(aecpc->resampler, skew, &aecpc->skew);
+      retVal = WebRtcAec_GetSkew(aecInst->resampler, skew, &aecInst->skew);
       if (retVal == -1) {
-        aecpc->skew = 0;
+        aecInst->skew = 0;
         retVal = AEC_BAD_PARAMETER_WARNING;
       }
 
-      aecpc->skew /= aecpc->sampFactor * nrOfSamples;
+      aecInst->skew /= aecInst->sampFactor * num_samples;
 
-      if (aecpc->skew < 1.0e-3 && aecpc->skew > -1.0e-3) {
-        aecpc->resample = kAecFalse;
+      if (aecInst->skew < 1.0e-3 && aecInst->skew > -1.0e-3) {
+        aecInst->resample = kAecFalse;
       } else {
-        aecpc->resample = kAecTrue;
+        aecInst->resample = kAecTrue;
       }
 
-      if (aecpc->skew < minSkewEst) {
-        aecpc->skew = minSkewEst;
-      } else if (aecpc->skew > maxSkewEst) {
-        aecpc->skew = maxSkewEst;
+      if (aecInst->skew < minSkewEst) {
+        aecInst->skew = minSkewEst;
+      } else if (aecInst->skew > maxSkewEst) {
+        aecInst->skew = maxSkewEst;
       }
 
-      aecpc->data_dumper->DumpRaw("aec_skew", 1, &aecpc->skew);
+      aecInst->data_dumper->DumpRaw("aec_skew", 1, &aecInst->skew);
     }
   }
 
-  nBlocks10ms = nrOfSamples / (FRAME_LEN * aecpc->rate_factor);
+  nBlocks10ms = num_samples / (FRAME_LEN * aecInst->rate_factor);
 
-  if (aecpc->startup_phase) {
+  if (aecInst->startup_phase) {
     for (i = 0; i < num_bands; ++i) {
       // Only needed if they don't already point to the same place.
       if (nearend[i] != out[i]) {
-        memcpy(out[i], nearend[i], sizeof(nearend[i][0]) * nrOfSamples);
+        memcpy(out[i], nearend[i], sizeof(nearend[i][0]) * num_samples);
       }
     }
 
@@ -593,82 +594,83 @@ static int ProcessNormal(Aec* aecpc,
     // AEC is disabled until the system delay is OK
 
     // Mechanism to ensure that the system delay is reasonably stable.
-    if (aecpc->checkBuffSize) {
-      aecpc->checkBufSizeCtr++;
+    if (aecInst->checkBuffSize) {
+      aecInst->checkBufSizeCtr++;
       // Before we fill up the far-end buffer we require the system delay
       // to be stable (+/-8 ms) compared to the first value. This
       // comparison is made during the following 6 consecutive 10 ms
       // blocks. If it seems to be stable then we start to fill up the
       // far-end buffer.
-      if (aecpc->counter == 0) {
-        aecpc->firstVal = aecpc->msInSndCardBuf;
-        aecpc->sum = 0;
+      if (aecInst->counter == 0) {
+        aecInst->firstVal = aecInst->msInSndCardBuf;
+        aecInst->sum = 0;
       }
 
-      if (abs(aecpc->firstVal - aecpc->msInSndCardBuf) <
-          WEBRTC_SPL_MAX(0.2 * aecpc->msInSndCardBuf, sampMsNb)) {
-        aecpc->sum += aecpc->msInSndCardBuf;
-        aecpc->counter++;
+      if (abs(aecInst->firstVal - aecInst->msInSndCardBuf) <
+          WEBRTC_SPL_MAX(0.2 * aecInst->msInSndCardBuf, sampMsNb)) {
+        aecInst->sum += aecInst->msInSndCardBuf;
+        aecInst->counter++;
       } else {
-        aecpc->counter = 0;
+        aecInst->counter = 0;
       }
 
-      if (aecpc->counter * nBlocks10ms >= 6) {
+      if (aecInst->counter * nBlocks10ms >= 6) {
         // The far-end buffer size is determined in partitions of
         // PART_LEN samples. Use 75% of the average value of the system
         // delay as buffer size to start with.
-        aecpc->bufSizeStart =
-            WEBRTC_SPL_MIN((3 * aecpc->sum * aecpc->rate_factor * 8) /
-                               (4 * aecpc->counter * PART_LEN),
+        aecInst->bufSizeStart =
+            WEBRTC_SPL_MIN((3 * aecInst->sum * aecInst->rate_factor * 8) /
+                               (4 * aecInst->counter * PART_LEN),
                            kMaxBufSizeStart);
         // Buffer size has now been determined.
-        aecpc->checkBuffSize = 0;
+        aecInst->checkBuffSize = 0;
       }
 
-      if (aecpc->checkBufSizeCtr * nBlocks10ms > 50) {
+      if (aecInst->checkBufSizeCtr * nBlocks10ms > 50) {
         // For really bad systems, don't disable the echo canceller for
         // more than 0.5 sec.
-        aecpc->bufSizeStart = WEBRTC_SPL_MIN(
-            (aecpc->msInSndCardBuf * aecpc->rate_factor * 3) / 40,
+        aecInst->bufSizeStart = WEBRTC_SPL_MIN(
+            (aecInst->msInSndCardBuf * aecInst->rate_factor * 3) / 40,
             kMaxBufSizeStart);
-        aecpc->checkBuffSize = 0;
+        aecInst->checkBuffSize = 0;
       }
     }
 
     // If |checkBuffSize| changed in the if-statement above.
-    if (!aecpc->checkBuffSize) {
+    if (!aecInst->checkBuffSize) {
       // The system delay is now reasonably stable (or has been unstable
       // for too long). When the far-end buffer is filled with
       // approximately the same amount of data as reported by the system
       // we end the startup phase.
       int overhead_elements =
-          WebRtcAec_system_delay(aecpc->aec) / PART_LEN - aecpc->bufSizeStart;
+          WebRtcAec_system_delay(aecInst->aec) / PART_LEN -
+          aecInst->bufSizeStart;
       if (overhead_elements == 0) {
         // Enable the AEC
-        aecpc->startup_phase = 0;
+        aecInst->startup_phase = 0;
       } else if (overhead_elements > 0) {
         // TODO(bjornv): Do we need a check on how much we actually
         // moved the read pointer? It should always be possible to move
         // the pointer |overhead_elements| since we have only added data
         // to the buffer and no delay compensation nor AEC processing
         // has been done.
-        WebRtcAec_AdjustFarendBufferSizeAndSystemDelay(aecpc->aec,
+        WebRtcAec_AdjustFarendBufferSizeAndSystemDelay(aecInst->aec,
                                                        overhead_elements);
 
         // Enable the AEC
-        aecpc->startup_phase = 0;
+        aecInst->startup_phase = 0;
       }
     }
   } else {
     // AEC is enabled.
-    EstBufDelayNormal(aecpc);
+    EstBufDelayNormal(aecInst);
 
     // Call the AEC.
     // TODO(bjornv): Re-structure such that we don't have to pass
-    // |aecpc->knownDelay| as input. Change name to something like
+    // |aecInst->knownDelay| as input. Change name to something like
     // |system_buffer_diff|.
-    WebRtcAec_ProcessFrames(aecpc->aec, nearend, num_bands, nrOfSamples,
-                            aecpc->knownDelay, out);
+    WebRtcAec_ProcessFrames(aecInst->aec, nearend, num_bands, num_samples,
+                            aecInst->knownDelay, out);
   }
 
   return retVal;
@@ -749,9 +751,9 @@ static void ProcessExtended(Aec* self,
   }
 }
 
-static void EstBufDelayNormal(Aec* aecpc) {
-  int nSampSndCard = aecpc->msInSndCardBuf * sampMsNb * aecpc->rate_factor;
-  int current_delay = nSampSndCard - WebRtcAec_system_delay(aecpc->aec);
+static void EstBufDelayNormal(Aec* aecInst) {
+  int nSampSndCard = aecInst->msInSndCardBuf * sampMsNb * aecInst->rate_factor;
+  int current_delay = nSampSndCard - WebRtcAec_system_delay(aecInst->aec);
   int delay_difference = 0;
 
   // Before we proceed with the delay estimate filtering we:
@@ -761,54 +763,55 @@ static void EstBufDelayNormal(Aec* aecpc) {
   //    be negative.
 
   // 1) Compensating for the frame(s) that will be read/processed.
-  current_delay += FRAME_LEN * aecpc->rate_factor;
+  current_delay += FRAME_LEN * aecInst->rate_factor;
 
   // 2) Account for resampling frame delay.
-  if (aecpc->skewMode == kAecTrue && aecpc->resample == kAecTrue) {
+  if (aecInst->skewMode == kAecTrue && aecInst->resample == kAecTrue) {
     current_delay -= kResamplingDelay;
   }
 
   // 3) Compensate for non-causality, if needed, by flushing one block.
   if (current_delay < PART_LEN) {
     current_delay +=
-        WebRtcAec_AdjustFarendBufferSizeAndSystemDelay(aecpc->aec, 1) *
+        WebRtcAec_AdjustFarendBufferSizeAndSystemDelay(aecInst->aec, 1) *
         PART_LEN;
   }
 
   // We use -1 to signal an initialized state in the "extended" implementation;
   // compensate for that.
-  aecpc->filtDelay = aecpc->filtDelay < 0 ? 0 : aecpc->filtDelay;
-  aecpc->filtDelay =
+  aecInst->filtDelay = aecInst->filtDelay < 0 ? 0 : aecInst->filtDelay;
+  aecInst->filtDelay =
       WEBRTC_SPL_MAX(0, static_cast<int16_t>(0.8 *
-                                             aecpc->filtDelay +
+                                             aecInst->filtDelay +
                                              0.2 * current_delay));
 
-  delay_difference = aecpc->filtDelay - aecpc->knownDelay;
+  delay_difference = aecInst->filtDelay - aecInst->knownDelay;
   if (delay_difference > 224) {
-    if (aecpc->lastDelayDiff < 96) {
-      aecpc->timeForDelayChange = 0;
+    if (aecInst->lastDelayDiff < 96) {
+      aecInst->timeForDelayChange = 0;
     } else {
-      aecpc->timeForDelayChange++;
+      aecInst->timeForDelayChange++;
     }
-  } else if (delay_difference < 96 && aecpc->knownDelay > 0) {
-    if (aecpc->lastDelayDiff > 224) {
-      aecpc->timeForDelayChange = 0;
+  } else if (delay_difference < 96 && aecInst->knownDelay > 0) {
+    if (aecInst->lastDelayDiff > 224) {
+      aecInst->timeForDelayChange = 0;
     } else {
-      aecpc->timeForDelayChange++;
+      aecInst->timeForDelayChange++;
     }
   } else {
-    aecpc->timeForDelayChange = 0;
+    aecInst->timeForDelayChange = 0;
   }
-  aecpc->lastDelayDiff = delay_difference;
+  aecInst->lastDelayDiff = delay_difference;
 
-  if (aecpc->timeForDelayChange > 25) {
-    aecpc->knownDelay = WEBRTC_SPL_MAX((int)aecpc->filtDelay - 160, 0);
+  if (aecInst->timeForDelayChange > 25) {
+    aecInst->knownDelay = WEBRTC_SPL_MAX((int)aecInst->filtDelay - 160, 0);
   }
 }
 
-static void EstBufDelayExtended(Aec* self) {
-  int reported_delay = self->msInSndCardBuf * sampMsNb * self->rate_factor;
-  int current_delay = reported_delay - WebRtcAec_system_delay(self->aec);
+static void EstBufDelayExtended(Aec* aecInst) {
+  int reported_delay = aecInst->msInSndCardBuf * sampMsNb *
+      aecInst->rate_factor;
+  int current_delay = reported_delay - WebRtcAec_system_delay(aecInst->aec);
   int delay_difference = 0;
 
   // Before we proceed with the delay estimate filtering we:
@@ -818,46 +821,48 @@ static void EstBufDelayExtended(Aec* self) {
   //    be negative.
 
   // 1) Compensating for the frame(s) that will be read/processed.
-  current_delay += FRAME_LEN * self->rate_factor;
+  current_delay += FRAME_LEN * aecInst->rate_factor;
 
   // 2) Account for resampling frame delay.
-  if (self->skewMode == kAecTrue && self->resample == kAecTrue) {
+  if (aecInst->skewMode == kAecTrue && aecInst->resample == kAecTrue) {
     current_delay -= kResamplingDelay;
   }
 
   // 3) Compensate for non-causality, if needed, by flushing two blocks.
   if (current_delay < PART_LEN) {
     current_delay +=
-        WebRtcAec_AdjustFarendBufferSizeAndSystemDelay(self->aec, 2) * PART_LEN;
+        WebRtcAec_AdjustFarendBufferSizeAndSystemDelay(aecInst->aec, 2) *
+        PART_LEN;
   }
 
-  if (self->filtDelay == -1) {
-    self->filtDelay = WEBRTC_SPL_MAX(0, 0.5 * current_delay);
+  if (aecInst->filtDelay == -1) {
+    aecInst->filtDelay = WEBRTC_SPL_MAX(0, 0.5 * current_delay);
   } else {
-    self->filtDelay = WEBRTC_SPL_MAX(
-        0, static_cast<int16_t>(0.95 * self->filtDelay + 0.05 * current_delay));
+    aecInst->filtDelay = WEBRTC_SPL_MAX(
+        0, static_cast<int16_t>(0.95 * aecInst->filtDelay + 0.05 *
+                                current_delay));
   }
 
-  delay_difference = self->filtDelay - self->knownDelay;
+  delay_difference = aecInst->filtDelay - aecInst->knownDelay;
   if (delay_difference > 384) {
-    if (self->lastDelayDiff < 128) {
-      self->timeForDelayChange = 0;
+    if (aecInst->lastDelayDiff < 128) {
+      aecInst->timeForDelayChange = 0;
     } else {
-      self->timeForDelayChange++;
+      aecInst->timeForDelayChange++;
     }
-  } else if (delay_difference < 128 && self->knownDelay > 0) {
-    if (self->lastDelayDiff > 384) {
-      self->timeForDelayChange = 0;
+  } else if (delay_difference < 128 && aecInst->knownDelay > 0) {
+    if (aecInst->lastDelayDiff > 384) {
+      aecInst->timeForDelayChange = 0;
     } else {
-      self->timeForDelayChange++;
+      aecInst->timeForDelayChange++;
     }
   } else {
-    self->timeForDelayChange = 0;
+    aecInst->timeForDelayChange = 0;
   }
-  self->lastDelayDiff = delay_difference;
+  aecInst->lastDelayDiff = delay_difference;
 
-  if (self->timeForDelayChange > 25) {
-    self->knownDelay = WEBRTC_SPL_MAX((int)self->filtDelay - 256, 0);
+  if (aecInst->timeForDelayChange > 25) {
+    aecInst->knownDelay = WEBRTC_SPL_MAX((int)aecInst->filtDelay - 256, 0);
   }
 }
 }  // namespace webrtc

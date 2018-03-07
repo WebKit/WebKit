@@ -13,6 +13,7 @@
 #import <WebRTC/RTCMacros.h>
 
 @class RTCIceServer;
+@class RTCIntervalRange;
 
 /**
  * Represents the ice transport policy. This exposes the same states in C++,
@@ -83,6 +84,15 @@ RTC_EXPORT
 @property(nonatomic, assign) RTCCandidateNetworkPolicy candidateNetworkPolicy;
 @property(nonatomic, assign)
     RTCContinualGatheringPolicy continualGatheringPolicy;
+
+/** By default, the PeerConnection will use a limited number of IPv6 network
+ *  interfaces, in order to avoid too many ICE candidate pairs being created
+ *  and delaying ICE completion.
+ *
+ *  Can be set to INT_MAX to effectively disable the limit.
+ */
+@property(nonatomic, assign) int maxIPv6Networks;
+
 @property(nonatomic, assign) int audioJitterBufferMaxPackets;
 @property(nonatomic, assign) BOOL audioJitterBufferFastAccelerate;
 @property(nonatomic, assign) int iceConnectionReceivingTimeout;
@@ -108,6 +118,13 @@ RTC_EXPORT
  *  check packets.
  */
 @property(nonatomic, copy, nullable) NSNumber *iceCheckMinInterval;
+
+/** ICE Periodic Regathering
+ *  If set, WebRTC will periodically create and propose candidates without
+ *  starting a new ICE generation. The regathering happens continuously with
+ *  interval specified in milliseconds by the uniform distribution [a, b].
+ */
+@property(nonatomic, strong, nullable) RTCIntervalRange *iceRegatherIntervalRange;
 
 - (instancetype)init;
 

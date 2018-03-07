@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "webrtc/api/mediaconstraintsinterface.h"
+#include "api/mediaconstraintsinterface.h"
 
 namespace webrtc {
 

@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "webrtc/base/gunit.h"
+#include "rtc_base/gunit.h"
 
 #import "NSString+StdString.h"
 #import "RTCConfiguration+Private.h"
@@ -59,7 +59,15 @@
     RTCPeerConnection *peerConnection =
         [factory peerConnectionWithConfiguration:config constraints:contraints delegate:nil];
     newConfig = peerConnection.configuration;
+
+    EXPECT_TRUE([peerConnection setBweMinBitrateBps:[NSNumber numberWithInt:100000]
+                                  currentBitrateBps:[NSNumber numberWithInt:5000000]
+                                      maxBitrateBps:[NSNumber numberWithInt:500000000]]);
+    EXPECT_FALSE([peerConnection setBweMinBitrateBps:[NSNumber numberWithInt:2]
+                                   currentBitrateBps:[NSNumber numberWithInt:1]
+                                       maxBitrateBps:nil]);
   }
+
   EXPECT_EQ([config.iceServers count], [newConfig.iceServers count]);
   RTCIceServer *newServer = newConfig.iceServers[0];
   RTCIceServer *origServer = config.iceServers[0];

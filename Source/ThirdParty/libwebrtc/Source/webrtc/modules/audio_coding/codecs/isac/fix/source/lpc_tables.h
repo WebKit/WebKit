@@ -15,10 +15,10 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_LPC_TABLES_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_LPC_TABLES_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_LPC_TABLES_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_LPC_TABLES_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 /* indices of KLT coefficients used */
 extern const uint16_t WebRtcIsacfix_kSelIndGain[12];
@@ -94,4 +94,4 @@ extern const int16_t WebRtcIsacfix_kMeansGainQ8[KLT_NUM_MODELS][12];
 
 extern const int32_t WebRtcIsacfix_kMeansShapeQ17[3][108];
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_LPC_TABLES_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_LPC_TABLES_H_ */

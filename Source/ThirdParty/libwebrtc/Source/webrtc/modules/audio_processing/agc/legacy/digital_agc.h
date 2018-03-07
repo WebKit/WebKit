@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
+#define MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
 
 #ifdef WEBRTC_AGC_DEBUG_DUMP
 #include <stdio.h>
 #endif
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // the 32 most significant bits of A(19) * B(26) >> 13
 #define AGC_MUL32(A, B) (((B) >> 13) * (A) + (((0x00001FFF & (B)) * (A)) >> 13))
@@ -76,4 +76,4 @@ int32_t WebRtcAgc_CalculateGainTable(int32_t* gainTable,         // Q16
                                      uint8_t limiterEnable,
                                      int16_t analogTarget);
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_

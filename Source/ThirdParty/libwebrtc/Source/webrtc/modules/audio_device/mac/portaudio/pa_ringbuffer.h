@@ -1,5 +1,5 @@
-#ifndef WEBRTC_AUDIO_DEVICE_PA_RINGBUFFER_H
-#define WEBRTC_AUDIO_DEVICE_PA_RINGBUFFER_H
+#ifndef AUDIO_DEVICE_PA_RINGBUFFER_H_
+#define AUDIO_DEVICE_PA_RINGBUFFER_H_
 /*
  * $Id: pa_ringbuffer.h 1421 2009-11-18 16:09:05Z bjornroche $
  * Portable Audio I/O Library

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/call/audio_send_stream.h"
+#include "call/audio_send_stream.h"
 
 #include <string>
 

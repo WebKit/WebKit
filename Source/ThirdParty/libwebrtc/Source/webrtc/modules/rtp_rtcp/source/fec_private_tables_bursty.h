@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_BURSTY_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_BURSTY_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_BURSTY_H_
+#define MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_BURSTY_H_
 
 // This file contains a set of packets masks for the FEC code. The masks in
 // this table are specifically designed to favor recovery of bursty/consecutive
@@ -25,7 +25,7 @@
 // (i.e., more packets/symbols in the code, so larger (k,m), i.e.,  k > 4,
 // m > 3).
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace fec_private_tables {
@@ -628,29 +628,29 @@ const uint8_t kMaskBursty12_12[24] = {
   0x00, 0x30
 };
 
-const uint8_t* kPacketMaskBursty1[1] = {
+const uint8_t* const kPacketMaskBursty1[1] = {
   kMaskBursty1_1
 };
 
-const uint8_t* kPacketMaskBursty2[2] = {
+const uint8_t* const kPacketMaskBursty2[2] = {
   kMaskBursty2_1,
   kMaskBursty2_2
 };
 
-const uint8_t* kPacketMaskBursty3[3] = {
+const uint8_t* const kPacketMaskBursty3[3] = {
   kMaskBursty3_1,
   kMaskBursty3_2,
   kMaskBursty3_3
 };
 
-const uint8_t* kPacketMaskBursty4[4] = {
+const uint8_t* const kPacketMaskBursty4[4] = {
   kMaskBursty4_1,
   kMaskBursty4_2,
   kMaskBursty4_3,
   kMaskBursty4_4
 };
 
-const uint8_t* kPacketMaskBursty5[5] = {
+const uint8_t* const kPacketMaskBursty5[5] = {
   kMaskBursty5_1,
   kMaskBursty5_2,
   kMaskBursty5_3,
@@ -658,7 +658,7 @@ const uint8_t* kPacketMaskBursty5[5] = {
   kMaskBursty5_5
 };
 
-const uint8_t* kPacketMaskBursty6[6] = {
+const uint8_t* const kPacketMaskBursty6[6] = {
   kMaskBursty6_1,
   kMaskBursty6_2,
   kMaskBursty6_3,
@@ -667,7 +667,7 @@ const uint8_t* kPacketMaskBursty6[6] = {
   kMaskBursty6_6
 };
 
-const uint8_t* kPacketMaskBursty7[7] = {
+const uint8_t* const kPacketMaskBursty7[7] = {
   kMaskBursty7_1,
   kMaskBursty7_2,
   kMaskBursty7_3,
@@ -677,7 +677,7 @@ const uint8_t* kPacketMaskBursty7[7] = {
   kMaskBursty7_7
 };
 
-const uint8_t* kPacketMaskBursty8[8] = {
+const uint8_t* const kPacketMaskBursty8[8] = {
   kMaskBursty8_1,
   kMaskBursty8_2,
   kMaskBursty8_3,
@@ -688,7 +688,7 @@ const uint8_t* kPacketMaskBursty8[8] = {
   kMaskBursty8_8
 };
 
-const uint8_t* kPacketMaskBursty9[9] = {
+const uint8_t* const kPacketMaskBursty9[9] = {
   kMaskBursty9_1,
   kMaskBursty9_2,
   kMaskBursty9_3,
@@ -700,7 +700,7 @@ const uint8_t* kPacketMaskBursty9[9] = {
   kMaskBursty9_9
 };
 
-const uint8_t* kPacketMaskBursty10[10] = {
+const uint8_t* const kPacketMaskBursty10[10] = {
   kMaskBursty10_1,
   kMaskBursty10_2,
   kMaskBursty10_3,
@@ -713,7 +713,7 @@ const uint8_t* kPacketMaskBursty10[10] = {
   kMaskBursty10_10
 };
 
-const uint8_t* kPacketMaskBursty11[11] = {
+const uint8_t* const kPacketMaskBursty11[11] = {
   kMaskBursty11_1,
   kMaskBursty11_2,
   kMaskBursty11_3,
@@ -727,7 +727,7 @@ const uint8_t* kPacketMaskBursty11[11] = {
   kMaskBursty11_11
 };
 
-const uint8_t* kPacketMaskBursty12[12] = {
+const uint8_t* const kPacketMaskBursty12[12] = {
   kMaskBursty12_1,
   kMaskBursty12_2,
   kMaskBursty12_3,
@@ -742,7 +742,7 @@ const uint8_t* kPacketMaskBursty12[12] = {
   kMaskBursty12_12
 };
 
-const uint8_t** kPacketMaskBurstyTbl[12] = {
+const uint8_t* const* const kPacketMaskBurstyTbl[12] = {
   kPacketMaskBursty1,
   kPacketMaskBursty2,
   kPacketMaskBursty3,
@@ -759,4 +759,4 @@ const uint8_t** kPacketMaskBurstyTbl[12] = {
 
 }  // namespace fec_private_tables
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_BURSTY_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_BURSTY_H_

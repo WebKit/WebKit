@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/erle_estimator.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec3/erle_estimator.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -18,6 +18,7 @@ namespace {
 constexpr int kLowFrequencyLimit = kFftLengthBy2 / 2;
 
 void VerifyErle(const std::array<float, kFftLengthBy2Plus1>& erle,
+                float erle_time_domain,
                 float reference_lf,
                 float reference_hf) {
   std::for_each(
@@ -26,6 +27,7 @@ void VerifyErle(const std::array<float, kFftLengthBy2Plus1>& erle,
   std::for_each(
       erle.begin() + kLowFrequencyLimit, erle.end(),
       [reference_hf](float a) { EXPECT_NEAR(reference_hf, a, 0.001); });
+  EXPECT_NEAR(reference_lf, erle_time_domain, 0.001);
 }
 
 }  // namespace
@@ -36,7 +38,7 @@ TEST(ErleEstimator, Estimates) {
   std::array<float, kFftLengthBy2Plus1> E2;
   std::array<float, kFftLengthBy2Plus1> Y2;
 
-  ErleEstimator estimator;
+  ErleEstimator estimator(1.f, 8.f, 1.5f);
 
   // Verifies that the ERLE estimate is properley increased to higher values.
   X2.fill(500 * 1000.f * 1000.f);
@@ -45,7 +47,7 @@ TEST(ErleEstimator, Estimates) {
   for (size_t k = 0; k < 200; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 8.f, 1.5f);
+  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 8.f, 1.5f);
 
   // Verifies that the ERLE is not immediately decreased when the ERLE in the
   // data decreases.
@@ -53,13 +55,13 @@ TEST(ErleEstimator, Estimates) {
   for (size_t k = 0; k < 98; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 8.f, 1.5f);
+  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 8.f, 1.5f);
 
   // Verifies that the minimum ERLE is eventually achieved.
   for (size_t k = 0; k < 1000; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 1.f, 1.f);
+  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 1.f, 1.f);
 
   // Verifies that the ERLE estimate is is not updated for low-level render
   // signals.
@@ -68,6 +70,6 @@ TEST(ErleEstimator, Estimates) {
   for (size_t k = 0; k < 200; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 1.f, 1.f);
+  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 1.f, 1.f);
 }
 }  // namespace webrtc

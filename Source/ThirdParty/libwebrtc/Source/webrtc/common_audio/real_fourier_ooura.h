@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_REAL_FOURIER_OOURA_H_
-#define WEBRTC_COMMON_AUDIO_REAL_FOURIER_OOURA_H_
+#ifndef COMMON_AUDIO_REAL_FOURIER_OOURA_H_
+#define COMMON_AUDIO_REAL_FOURIER_OOURA_H_
 
 #include <complex>
 #include <memory>
 
-#include "webrtc/common_audio/real_fourier.h"
+#include "common_audio/real_fourier.h"
 
 namespace webrtc {
 
@@ -41,5 +41,5 @@ class RealFourierOoura : public RealFourier {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_AUDIO_REAL_FOURIER_OOURA_H_
+#endif  // COMMON_AUDIO_REAL_FOURIER_OOURA_H_
 

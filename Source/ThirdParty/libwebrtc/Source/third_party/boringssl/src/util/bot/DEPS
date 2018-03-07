@@ -14,21 +14,24 @@
 
 vars = {
   'chromium_git': 'https://chromium.googlesource.com',
+
+  'checkout_clang': False,
+  'checkout_fuzzer': False,
+  'checkout_sde': False,
 }
 
 deps = {
-  'boringssl/util/bot/gyp':
-    Var('chromium_git') + '/external/gyp.git' + '@' + 'eb296f67da078ec01f5e3a9ea9cdc6d26d680161',
-}
-
-deps_os = {
-  'android': {
-    'boringssl/util/bot/android_tools':
-      Var('chromium_git') + '/android_tools.git' + '@' + 'cb6bc21107001e2f2eeee2707b482b2b755baf51',
+  'boringssl/util/bot/android_tools': {
+    'url': Var('chromium_git') + '/android_tools.git' + '@' + 'ca0bd083872ad925881736fe2bedc3ff855e08f5',
+    'condition': 'checkout_android',
   },
-  'unix': {
-    'boringssl/util/bot/libFuzzer':
-      Var('chromium_git') + '/chromium/llvm-project/llvm/lib/Fuzzer.git' + '@' + '16f5f743c188c836d32cdaf349d5d3effb8a3518',
+
+  'boringssl/util/bot/gyp':
+    Var('chromium_git') + '/external/gyp.git' + '@' + 'd61a9397e668fa9843c4aa7da9e79460fe590bfb',
+
+  'boringssl/util/bot/libFuzzer': {
+    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' + '@' + '06fb50cc1f0197398c8a70658928a3b91912e68a',
+    'condition': 'checkout_fuzzer',
   },
 }
 
@@ -41,6 +44,7 @@ hooks = [
   {
     'name': 'cmake_linux64',
     'pattern': '.',
+    'condition': 'host_os == "linux"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=linux*',
@@ -50,8 +54,19 @@ hooks = [
     ],
   },
   {
+    'name': 'cmake_linux64_extract',
+    'pattern': '.',
+    'condition': 'host_os == "linux"',
+    'action': [ 'python',
+                'boringssl/util/bot/extract.py',
+                'boringssl/util/bot/cmake-linux64.tar.gz',
+                'boringssl/util/bot/cmake-linux64/',
+    ],
+  },
+  {
     'name': 'cmake_mac',
     'pattern': '.',
+    'condition': 'host_os == "mac"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=darwin',
@@ -61,8 +76,19 @@ hooks = [
     ],
   },
   {
+    'name': 'cmake_mac_extract',
+    'pattern': '.',
+    'condition': 'host_os == "mac"',
+    'action': [ 'python',
+                'boringssl/util/bot/extract.py',
+                'boringssl/util/bot/cmake-mac.tar.gz',
+                'boringssl/util/bot/cmake-mac/',
+    ],
+  },
+  {
     'name': 'cmake_win32',
     'pattern': '.',
+    'condition': 'host_os == "win"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
@@ -72,8 +98,19 @@ hooks = [
     ],
   },
   {
+    'name': 'cmake_win32_extract',
+    'pattern': '.',
+    'condition': 'host_os == "win"',
+    'action': [ 'python',
+                'boringssl/util/bot/extract.py',
+                'boringssl/util/bot/cmake-win32.zip',
+                'boringssl/util/bot/cmake-win32/',
+    ],
+  },
+  {
     'name': 'perl_win32',
     'pattern': '.',
+    'condition': 'host_os == "win"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
@@ -83,8 +120,20 @@ hooks = [
     ],
   },
   {
+    'name': 'perl_win32_extract',
+    'pattern': '.',
+    'condition': 'host_os == "win"',
+    'action': [ 'python',
+                'boringssl/util/bot/extract.py',
+                '--no-prefix',
+                'boringssl/util/bot/perl-win32.zip',
+                'boringssl/util/bot/perl-win32/',
+    ],
+  },
+  {
     'name': 'yasm_win32',
     'pattern': '.',
+    'condition': 'host_os == "win"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
@@ -96,6 +145,7 @@ hooks = [
   {
     'name': 'win_toolchain',
     'pattern': '.',
+    'condition': 'host_os == "win"',
     'action': [ 'python',
                 'boringssl/util/bot/vs_toolchain.py',
                 'update',
@@ -104,45 +154,29 @@ hooks = [
   {
     'name': 'clang',
     'pattern': '.',
+    'condition': 'checkout_clang',
     'action': [ 'python',
                 'boringssl/util/bot/update_clang.py',
     ],
   },
   {
-    'name': 'cmake_linux64_extract',
+    'name': 'sde_linux64',
     'pattern': '.',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/cmake-linux64.tar.gz',
-                'boringssl/util/bot/cmake-linux64/',
+    'condition': 'checkout_sde and host_os == "linux"',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--bucket', 'chrome-boringssl-sde',
+                '-s', 'boringssl/util/bot/sde-linux64.tar.bz2.sha1'
     ],
   },
   {
-    'name': 'cmake_mac_extract',
+    'name': 'sde_linux64_extract',
     'pattern': '.',
+    'condition': 'checkout_sde and host_os == "linux"',
     'action': [ 'python',
                 'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/cmake-mac.tar.gz',
-                'boringssl/util/bot/cmake-mac/',
-    ],
-  },
-  {
-    'name': 'cmake_win32_extract',
-    'pattern': '.',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/cmake-win32.zip',
-                'boringssl/util/bot/cmake-win32/',
-    ],
-  },
-  {
-    'name': 'perl_win32_extract',
-    'pattern': '.',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                '--no-prefix',
-                'boringssl/util/bot/perl-win32.zip',
-                'boringssl/util/bot/perl-win32/',
+                'boringssl/util/bot/sde-linux64.tar.bz2',
+                'boringssl/util/bot/sde-linux64/',
     ],
   },
 ]

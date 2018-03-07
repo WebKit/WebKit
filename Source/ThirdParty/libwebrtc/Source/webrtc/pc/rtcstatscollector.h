@@ -8,28 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_RTCSTATSCOLLECTOR_H_
-#define WEBRTC_PC_RTCSTATSCOLLECTOR_H_
+#ifndef PC_RTCSTATSCOLLECTOR_H_
+#define PC_RTCSTATSCOLLECTOR_H_
 
 #include <map>
 #include <memory>
 #include <set>
+#include <string>
 #include <vector>
 
-#include "webrtc/api/stats/rtcstats_objects.h"
-#include "webrtc/api/stats/rtcstatscollectorcallback.h"
-#include "webrtc/api/stats/rtcstatsreport.h"
-#include "webrtc/base/asyncinvoker.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/sslidentity.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/call/call.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/pc/datachannel.h"
-#include "webrtc/pc/trackmediainfomap.h"
+#include "api/optional.h"
+#include "api/stats/rtcstats_objects.h"
+#include "api/stats/rtcstatscollectorcallback.h"
+#include "api/stats/rtcstatsreport.h"
+#include "call/call.h"
+#include "media/base/mediachannel.h"
+#include "pc/datachannel.h"
+#include "pc/trackmediainfomap.h"
+#include "rtc_base/asyncinvoker.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/sslidentity.h"
+#include "rtc_base/timeutils.h"
 
 namespace cricket {
 class Candidate;
@@ -194,4 +195,4 @@ const char* DataStateToRTCDataChannelStateForTesting(
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_RTCSTATSCOLLECTOR_H_
+#endif  // PC_RTCSTATSCOLLECTOR_H_

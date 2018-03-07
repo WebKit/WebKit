@@ -19,14 +19,15 @@
 #include "../fipsmodule/rand/internal.h"
 
 
-/* g_buffering_enabled is true if fork-unsafe buffering has been enabled. */
+// g_buffering_enabled is true if fork-unsafe buffering has been enabled.
 static int g_buffering_enabled = 0;
 
-/* g_lock protects |g_buffering_enabled|. */
+// g_lock protects |g_buffering_enabled|.
 static struct CRYPTO_STATIC_MUTEX g_lock = CRYPTO_STATIC_MUTEX_INIT;
 
+#if !defined(OPENSSL_WINDOWS)
 void RAND_enable_fork_unsafe_buffering(int fd) {
-  /* We no longer support setting the file-descriptor with this function. */
+  // We no longer support setting the file-descriptor with this function.
   if (fd != -1) {
     abort();
   }
@@ -35,6 +36,7 @@ void RAND_enable_fork_unsafe_buffering(int fd) {
   g_buffering_enabled = 1;
   CRYPTO_STATIC_MUTEX_unlock_write(&g_lock);
 }
+#endif
 
 int rand_fork_unsafe_buffering_enabled(void) {
   CRYPTO_STATIC_MUTEX_lock_read(&g_lock);

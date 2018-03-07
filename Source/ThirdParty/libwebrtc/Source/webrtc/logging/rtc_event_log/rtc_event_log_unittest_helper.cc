@@ -8,24 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/logging/rtc_event_log/rtc_event_log_unittest_helper.h"
+#include "logging/rtc_event_log/rtc_event_log_unittest_helper.h"
 
 #include <string.h>
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "rtc_base/checks.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 // Files generated at build-time by the protobuf compiler.
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
 #else
-#include "webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
+#include "logging/rtc_event_log/rtc_event_log.pb.h"
 #endif
 
 namespace webrtc {
@@ -49,12 +50,14 @@ BandwidthUsage GetRuntimeDetectorState(
 rtclog::BweProbeResult::ResultType GetProbeResultType(
     ProbeFailureReason failure_reason) {
   switch (failure_reason) {
-    case kInvalidSendReceiveInterval:
+    case ProbeFailureReason::kInvalidSendReceiveInterval:
       return rtclog::BweProbeResult::INVALID_SEND_RECEIVE_INTERVAL;
-    case kInvalidSendReceiveRatio:
+    case ProbeFailureReason::kInvalidSendReceiveRatio:
       return rtclog::BweProbeResult::INVALID_SEND_RECEIVE_RATIO;
-    case kTimeout:
+    case ProbeFailureReason::kTimeout:
       return rtclog::BweProbeResult::TIMEOUT;
+    case ProbeFailureReason::kLast:
+      RTC_NOTREACHED();
   }
   RTC_NOTREACHED();
   return rtclog::BweProbeResult::SUCCESS;
@@ -176,6 +179,7 @@ void RtcEventLogTestHelper::VerifyVideoReceiveStreamConfig(
     const ParsedRtcEventLog& parsed_log,
     size_t index,
     const rtclog::StreamConfig& config) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::VIDEO_RECEIVER_CONFIG_EVENT, event.type());
@@ -246,6 +250,7 @@ void RtcEventLogTestHelper::VerifyVideoSendStreamConfig(
     const ParsedRtcEventLog& parsed_log,
     size_t index,
     const rtclog::StreamConfig& config) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::VIDEO_SENDER_CONFIG_EVENT, event.type());
@@ -287,6 +292,7 @@ void RtcEventLogTestHelper::VerifyAudioReceiveStreamConfig(
     const ParsedRtcEventLog& parsed_log,
     size_t index,
     const rtclog::StreamConfig& config) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::AUDIO_RECEIVER_CONFIG_EVENT, event.type());
@@ -326,6 +332,7 @@ void RtcEventLogTestHelper::VerifyAudioSendStreamConfig(
     const ParsedRtcEventLog& parsed_log,
     size_t index,
     const rtclog::StreamConfig& config) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::AUDIO_SENDER_CONFIG_EVENT, event.type());
@@ -349,36 +356,66 @@ void RtcEventLogTestHelper::VerifyAudioSendStreamConfig(
   VerifyStreamConfigsAreEqual(config, parsed_config);
 }
 
-void RtcEventLogTestHelper::VerifyRtpEvent(const ParsedRtcEventLog& parsed_log,
-                                           size_t index,
-                                           PacketDirection direction,
-                                           const uint8_t* header,
-                                           size_t header_size,
-                                           size_t total_size) {
+void RtcEventLogTestHelper::VerifyIncomingRtpEvent(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    const RtpPacketReceived& expected_packet) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::RTP_EVENT, event.type());
   const rtclog::RtpPacket& rtp_packet = event.rtp_packet();
   ASSERT_TRUE(rtp_packet.has_incoming());
-  EXPECT_EQ(direction == kIncomingPacket, rtp_packet.incoming());
+  EXPECT_TRUE(rtp_packet.incoming());
   ASSERT_TRUE(rtp_packet.has_packet_length());
-  EXPECT_EQ(total_size, rtp_packet.packet_length());
+  EXPECT_EQ(expected_packet.size(), rtp_packet.packet_length());
+  size_t header_size = expected_packet.headers_size();
   ASSERT_TRUE(rtp_packet.has_header());
-  ASSERT_EQ(header_size, rtp_packet.header().size());
-  for (size_t i = 0; i < header_size; i++) {
-    EXPECT_EQ(header[i], static_cast<uint8_t>(rtp_packet.header()[i]));
-  }
+  EXPECT_THAT(testing::make_tuple(expected_packet.data(), header_size),
+              testing::ElementsAreArray(rtp_packet.header().data(),
+                                        rtp_packet.header().size()));
 
   // Check consistency of the parser.
   PacketDirection parsed_direction;
   uint8_t parsed_header[1500];
   size_t parsed_header_size, parsed_total_size;
   parsed_log.GetRtpHeader(index, &parsed_direction, parsed_header,
-                          &parsed_header_size, &parsed_total_size);
-  EXPECT_EQ(direction, parsed_direction);
-  ASSERT_EQ(header_size, parsed_header_size);
-  EXPECT_EQ(0, std::memcmp(header, parsed_header, header_size));
-  EXPECT_EQ(total_size, parsed_total_size);
+                          &parsed_header_size, &parsed_total_size, nullptr);
+  EXPECT_EQ(kIncomingPacket, parsed_direction);
+  EXPECT_THAT(testing::make_tuple(expected_packet.data(), header_size),
+              testing::ElementsAreArray(parsed_header, parsed_header_size));
+  EXPECT_EQ(expected_packet.size(), parsed_total_size);
+}
+
+void RtcEventLogTestHelper::VerifyOutgoingRtpEvent(
+    const ParsedRtcEventLog& parsed_log,
+    size_t index,
+    const RtpPacketToSend& expected_packet) {
+  ASSERT_LT(index, parsed_log.events_.size());
+  const rtclog::Event& event = parsed_log.events_[index];
+  ASSERT_TRUE(IsValidBasicEvent(event));
+  ASSERT_EQ(rtclog::Event::RTP_EVENT, event.type());
+  const rtclog::RtpPacket& rtp_packet = event.rtp_packet();
+  ASSERT_TRUE(rtp_packet.has_incoming());
+  EXPECT_FALSE(rtp_packet.incoming());
+  ASSERT_TRUE(rtp_packet.has_packet_length());
+  EXPECT_EQ(expected_packet.size(), rtp_packet.packet_length());
+  size_t header_size = expected_packet.headers_size();
+  ASSERT_TRUE(rtp_packet.has_header());
+  EXPECT_THAT(testing::make_tuple(expected_packet.data(), header_size),
+              testing::ElementsAreArray(rtp_packet.header().data(),
+                                        rtp_packet.header().size()));
+
+  // Check consistency of the parser.
+  PacketDirection parsed_direction;
+  uint8_t parsed_header[1500];
+  size_t parsed_header_size, parsed_total_size;
+  parsed_log.GetRtpHeader(index, &parsed_direction, parsed_header,
+                          &parsed_header_size, &parsed_total_size, nullptr);
+  EXPECT_EQ(kOutgoingPacket, parsed_direction);
+  EXPECT_THAT(testing::make_tuple(expected_packet.data(), header_size),
+              testing::ElementsAreArray(parsed_header, parsed_header_size));
+  EXPECT_EQ(expected_packet.size(), parsed_total_size);
 }
 
 void RtcEventLogTestHelper::VerifyRtcpEvent(const ParsedRtcEventLog& parsed_log,
@@ -386,6 +423,7 @@ void RtcEventLogTestHelper::VerifyRtcpEvent(const ParsedRtcEventLog& parsed_log,
                                             PacketDirection direction,
                                             const uint8_t* packet,
                                             size_t total_size) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::RTCP_EVENT, event.type());
@@ -413,6 +451,7 @@ void RtcEventLogTestHelper::VerifyPlayoutEvent(
     const ParsedRtcEventLog& parsed_log,
     size_t index,
     uint32_t ssrc) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::AUDIO_PLAYOUT_EVENT, event.type());
@@ -432,6 +471,7 @@ void RtcEventLogTestHelper::VerifyBweLossEvent(
     int32_t bitrate,
     uint8_t fraction_loss,
     int32_t total_packets) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::LOSS_BASED_BWE_UPDATE, event.type());
@@ -459,6 +499,7 @@ void RtcEventLogTestHelper::VerifyBweDelayEvent(
     size_t index,
     int32_t bitrate,
     BandwidthUsage detector_state) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   ASSERT_EQ(rtclog::Event::DELAY_BASED_BWE_UPDATE, event.type());
@@ -494,6 +535,7 @@ void RtcEventLogTestHelper::VerifyAudioNetworkAdaptation(
 void RtcEventLogTestHelper::VerifyLogStartEvent(
     const ParsedRtcEventLog& parsed_log,
     size_t index) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   EXPECT_EQ(rtclog::Event::LOG_START, event.type());
@@ -502,6 +544,7 @@ void RtcEventLogTestHelper::VerifyLogStartEvent(
 void RtcEventLogTestHelper::VerifyLogEndEvent(
     const ParsedRtcEventLog& parsed_log,
     size_t index) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   EXPECT_EQ(rtclog::Event::LOG_END, event.type());
@@ -514,6 +557,7 @@ void RtcEventLogTestHelper::VerifyBweProbeCluster(
     uint32_t bitrate_bps,
     uint32_t min_probes,
     uint32_t min_bytes) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   EXPECT_EQ(rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT, event.type());
@@ -536,6 +580,7 @@ void RtcEventLogTestHelper::VerifyProbeResultSuccess(
     size_t index,
     uint32_t id,
     uint32_t bitrate_bps) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   EXPECT_EQ(rtclog::Event::BWE_PROBE_RESULT_EVENT, event.type());
@@ -556,6 +601,7 @@ void RtcEventLogTestHelper::VerifyProbeResultFailure(
     size_t index,
     uint32_t id,
     ProbeFailureReason failure_reason) {
+  ASSERT_LT(index, parsed_log.events_.size());
   const rtclog::Event& event = parsed_log.events_[index];
   ASSERT_TRUE(IsValidBasicEvent(event));
   EXPECT_EQ(rtclog::Event::BWE_PROBE_RESULT_EVENT, event.type());

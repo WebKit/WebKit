@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/field_trial.h"
+#include "test/field_trial.h"
 
 #include <algorithm>
 #include <cassert>
@@ -17,8 +17,8 @@
 #include <map>
 #include <string>
 
-#include "webrtc/system_wrappers/include/field_trial.h"
-#include "webrtc/system_wrappers/include/field_trial_default.h"
+#include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/field_trial_default.h"
 
 namespace webrtc {
 namespace {
@@ -67,7 +67,7 @@ void InitFieldTrialsFromString(const std::string& trials_string) {
       return;
     }
   }
-  // Using fprintf as LOG does not print when this is called early in main.
+  // Using fprintf as RTC_LOG does not print when this is called early in main.
   fprintf(stderr, "Invalid field trials string.\n");
 
   // Using abort so it crashes in both debug and release mode.

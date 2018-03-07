@@ -1,30 +1,32 @@
 /* Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
-*
-*  Use of this source code is governed by a BSD-style license
-*  that can be found in the LICENSE file in the root of the source
-*  tree. An additional intellectual property rights grant can be found
-*  in the file PATENTS.  All contributing project authors may
-*  be found in the AUTHORS file in the root of the source tree.
-*/
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
 
-#include "webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h"
+#include "modules/video_coding/codecs/vp8/screenshare_layers.h"
 
 #include <stdlib.h>
 
 #include <algorithm>
+#include <memory>
 
-#include "webrtc/base/checks.h"
-#include "vpx/vpx_encoder.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/metrics.h"
 #include "vpx/vp8cx.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "vpx/vpx_encoder.h"
 
 namespace webrtc {
 
 static const int kOneSecond90Khz = 90000;
-static const int kMinTimeBetweenSyncs = kOneSecond90Khz * 5;
-static const int kMaxTimeBetweenSyncs = kOneSecond90Khz * 10;
+static const int kMinTimeBetweenSyncs = kOneSecond90Khz * 2;
+static const int kMaxTimeBetweenSyncs = kOneSecond90Khz * 4;
 static const int kQpDeltaThresholdForSync = 8;
 static const int kMinBitrateKbpsForQpBoost = 500;
 
@@ -54,6 +56,23 @@ webrtc::TemporalLayers* ScreenshareTemporalLayersFactory::Create(
   return tl;
 }
 
+std::unique_ptr<webrtc::TemporalLayersChecker>
+ScreenshareTemporalLayersFactory::CreateChecker(
+    int simulcast_id,
+    int temporal_layers,
+    uint8_t initial_tl0_pic_idx) const {
+  webrtc::TemporalLayersChecker* tlc;
+  if (simulcast_id == 0) {
+    tlc =
+        new webrtc::TemporalLayersChecker(temporal_layers, initial_tl0_pic_idx);
+  } else {
+    TemporalLayersFactory rt_tl_factory;
+    return rt_tl_factory.CreateChecker(simulcast_id, temporal_layers,
+                                       initial_tl0_pic_idx);
+  }
+  return std::unique_ptr<webrtc::TemporalLayersChecker>(tlc);
+}
+
 ScreenshareLayers::ScreenshareLayers(int num_temporal_layers,
                                      uint8_t initial_tl0_pic_idx,
                                      Clock* clock)
@@ -79,12 +98,6 @@ ScreenshareLayers::~ScreenshareLayers() {
   UpdateHistograms();
 }
 
-int ScreenshareLayers::GetTemporalLayerId(
-    const TemporalLayers::FrameConfig& tl_config) const {
-  // Codec does not use temporal layers for screenshare.
-  return 0;
-}
-
 uint8_t ScreenshareLayers::Tl0PicIdx() const {
   return tl0_pic_idx_;
 }
@@ -96,7 +109,6 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
     // TODO(pbos): Consider updating only last, and not all buffers.
     TemporalLayers::FrameConfig tl_config(
         kReferenceAndUpdate, kReferenceAndUpdate, kReferenceAndUpdate);
-    tl_config.pattern_idx = static_cast<int>(TemporalLayerState::kTl1);
     return tl_config;
   }
 
@@ -152,11 +164,17 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
       last_emitted_tl0_timestamp_ = unwrapped_timestamp;
       break;
     case 1:
-      if (TimeToSync(unwrapped_timestamp)) {
-        last_sync_timestamp_ = unwrapped_timestamp;
-        layer_state = TemporalLayerState::kTl1Sync;
+      if (layers_[1].state != TemporalLayer::State::kDropped) {
+        if (TimeToSync(unwrapped_timestamp)) {
+          last_sync_timestamp_ = unwrapped_timestamp;
+          layer_state = TemporalLayerState::kTl1Sync;
+        } else {
+          layer_state = TemporalLayerState::kTl1;
+        }
       } else {
-        layer_state = TemporalLayerState::kTl1;
+        layer_state = last_sync_timestamp_ == unwrapped_timestamp
+                          ? TemporalLayerState::kTl1Sync
+                          : TemporalLayerState::kTl1;
       }
       break;
     case -1:
@@ -178,21 +196,24 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
       // TL0 only references and updates 'last'.
       tl_config =
           TemporalLayers::FrameConfig(kReferenceAndUpdate, kNone, kNone);
+      tl_config.packetizer_temporal_idx = 0;
       break;
     case TemporalLayerState::kTl1:
       // TL1 references both 'last' and 'golden' but only updates 'golden'.
       tl_config =
           TemporalLayers::FrameConfig(kReference, kReferenceAndUpdate, kNone);
+      tl_config.packetizer_temporal_idx = 1;
       break;
     case TemporalLayerState::kTl1Sync:
       // Predict from only TL0 to allow participants to switch to the high
       // bitrate stream. Updates 'golden' so that TL1 can continue to refer to
       // and update 'golden' from this point on.
       tl_config = TemporalLayers::FrameConfig(kReference, kUpdate, kNone);
+      tl_config.packetizer_temporal_idx = 1;
       break;
   }
 
-  tl_config.pattern_idx = static_cast<int>(layer_state);
+  tl_config.layer_sync = layer_state == TemporalLayerState::kTl1Sync;
   return tl_config;
 }
 
@@ -269,36 +290,24 @@ void ScreenshareLayers::PopulateCodecSpecific(
     const TemporalLayers::FrameConfig& tl_config,
     CodecSpecificInfoVP8* vp8_info,
     uint32_t timestamp) {
-  int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
   if (number_of_temporal_layers_ == 1) {
     vp8_info->temporalIdx = kNoTemporalIdx;
     vp8_info->layerSync = false;
     vp8_info->tl0PicIdx = kNoTl0PicIdx;
   } else {
-    TemporalLayerState layer_state =
-        static_cast<TemporalLayerState>(tl_config.pattern_idx);
-    switch (layer_state) {
-      case TemporalLayerState::kDrop:
-        RTC_NOTREACHED();
-        break;
-      case TemporalLayerState::kTl0:
-        vp8_info->temporalIdx = 0;
-        break;
-      case TemporalLayerState::kTl1:
-      case TemporalLayerState::kTl1Sync:
-        vp8_info->temporalIdx = 1;
-        break;
-    }
+    int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
+    vp8_info->temporalIdx = tl_config.packetizer_temporal_idx;
+    vp8_info->layerSync = tl_config.layer_sync;
     if (frame_is_keyframe) {
       vp8_info->temporalIdx = 0;
       last_sync_timestamp_ = unwrapped_timestamp;
+      vp8_info->layerSync = true;
     } else if (last_base_layer_sync_ && vp8_info->temporalIdx != 0) {
       // Regardless of pattern the frame after a base layer sync will always
       // be a layer sync.
       last_sync_timestamp_ = unwrapped_timestamp;
+      vp8_info->layerSync = true;
     }
-    vp8_info->layerSync = last_sync_timestamp_ != -1 &&
-                          last_sync_timestamp_ == unwrapped_timestamp;
     if (vp8_info->temporalIdx == 0) {
       tl0_pic_idx_++;
     }
@@ -443,8 +452,9 @@ void ScreenshareLayers::UpdateHistograms() {
     int total_frames = stats_.num_tl0_frames_ + stats_.num_tl1_frames_;
     RTC_HISTOGRAM_COUNTS_10000(
         "WebRTC.Video.Screenshare.FramesPerDrop",
-        (stats_.num_dropped_frames_ == 0 ? 0 : total_frames /
-                                                   stats_.num_dropped_frames_));
+        (stats_.num_dropped_frames_ == 0
+             ? 0
+             : total_frames / stats_.num_dropped_frames_));
     RTC_HISTOGRAM_COUNTS_10000(
         "WebRTC.Video.Screenshare.FramesPerOvershoot",
         (stats_.num_overshoots_ == 0 ? 0
@@ -465,5 +475,4 @@ void ScreenshareLayers::UpdateHistograms() {
     }
   }
 }
-
 }  // namespace webrtc

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_FIR_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_FIR_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_FIR_H_
+#define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_FIR_H_
 
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/psfb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/psfb.h"
+#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -59,4 +59,4 @@ class Fir : public Psfb {
 };
 }  // namespace rtcp
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_FIR_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_FIR_H_

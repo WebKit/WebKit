@@ -9,13 +9,13 @@
  */
 
 // Note: the class cannot be used for reading and writing at the same time.
-#ifndef WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_UTILITY_H_
-#define WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_UTILITY_H_
+#ifndef MODULES_MEDIA_FILE_MEDIA_FILE_UTILITY_H_
+#define MODULES_MEDIA_FILE_MEDIA_FILE_UTILITY_H_
 
 #include <stdio.h>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/media_file/media_file_defines.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/media_file/media_file_defines.h"
 
 namespace webrtc {
 class InStream;
@@ -25,7 +25,7 @@ class ModuleFileUtility
 {
 public:
 
-    ModuleFileUtility(const int32_t id);
+    ModuleFileUtility();
     ~ModuleFileUtility();
 
     // Prepare for playing audio from stream.
@@ -228,6 +228,7 @@ private:
         kCodecL16_8Khz,
         kCodecL16_16kHz,
         kCodecL16_32Khz,
+        kCodecL16_48Khz,
         kCodecPcmu,
         kCodecPcma,
         kCodecIlbc20Ms,
@@ -257,8 +258,6 @@ private:
     // chunks if reading WAV.
     size_t _readSizeBytes;
 
-    int32_t _id;
-
     uint32_t _stopPointInMs;
     uint32_t _startPointInMs;
     uint32_t _playoutPositionMs;
@@ -279,4 +278,4 @@ private:
     uint8_t _tempData[WAV_MAX_BUFFER_SIZE];
 };
 }  // namespace webrtc
-#endif // WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_UTILITY_H_
+#endif // MODULES_MEDIA_FILE_MEDIA_FILE_UTILITY_H_

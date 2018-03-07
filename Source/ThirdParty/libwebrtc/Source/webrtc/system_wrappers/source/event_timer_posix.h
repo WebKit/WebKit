@@ -8,24 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_SOURCE_EVENT_POSIX_H_
-#define WEBRTC_SYSTEM_WRAPPERS_SOURCE_EVENT_POSIX_H_
+#ifndef SYSTEM_WRAPPERS_SOURCE_EVENT_POSIX_H_
+#define SYSTEM_WRAPPERS_SOURCE_EVENT_POSIX_H_
 
-#include "webrtc/system_wrappers/include/event_wrapper.h"
+#include "system_wrappers/include/event_wrapper.h"
 
 #include <memory>
 
 #include <pthread.h>
 #include <time.h>
 
-#include "webrtc/base/platform_thread.h"
+#include "rtc_base/platform_thread.h"
 
 namespace webrtc {
 
-enum State {
-  kUp = 1,
-  kDown = 2
-};
+enum State { kUp = 1, kDown = 2 };
 
 class EventTimerPosix : public EventTimerWrapper {
  public:
@@ -47,16 +44,16 @@ class EventTimerPosix : public EventTimerWrapper {
 
   virtual rtc::PlatformThread* CreateThread();
 
-  pthread_cond_t  cond_;
+  pthread_cond_t cond_;
   pthread_mutex_t mutex_;
   bool event_set_;
 
   // TODO(pbos): Remove unique_ptr and use PlatformThread directly.
   std::unique_ptr<rtc::PlatformThread> timer_thread_;
   std::unique_ptr<EventTimerPosix> timer_event_;
-  timespec       created_at_;
+  timespec created_at_;
 
-  bool          periodic_;
+  bool periodic_;
   unsigned long time_ms_;
   unsigned long count_;
   bool is_stopping_;
@@ -64,4 +61,4 @@ class EventTimerPosix : public EventTimerWrapper {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_SOURCE_EVENT_POSIX_H_
+#endif  // SYSTEM_WRAPPERS_SOURCE_EVENT_POSIX_H_

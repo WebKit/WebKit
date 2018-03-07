@@ -435,3 +435,8 @@ unsigned char *ASN1_STRING_data(ASN1_STRING *x)
 {
     return M_ASN1_STRING_data(x);
 }
+
+const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *x)
+{
+    return x->data;
+}

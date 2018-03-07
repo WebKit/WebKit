@@ -24,8 +24,8 @@ struct TestConfig {
   bool is_server = false;
   bool is_dtls = false;
   int resume_count = 0;
+  std::string write_settings;
   bool fallback_scsv = false;
-  std::string digest_prefs;
   std::vector<int> signing_prefs;
   std::vector<int> verify_prefs;
   std::string key_file;
@@ -53,6 +53,7 @@ struct TestConfig {
   std::string host_name;
   std::string advertise_alpn;
   std::string expected_alpn;
+  std::string expected_late_alpn;
   std::string expected_advertised_alpn;
   std::string select_alpn;
   bool decline_alpn = false;
@@ -67,6 +68,7 @@ struct TestConfig {
   std::string expected_signed_cert_timestamps;
   int min_version = 0;
   int max_version = 0;
+  int expect_version = 0;
   int mtu = 0;
   bool implicit_handshake = false;
   bool use_early_callback = false;
@@ -84,12 +86,14 @@ struct TestConfig {
   bool tls_unique = false;
   bool expect_ticket_renewal = false;
   bool expect_no_session = false;
-  bool expect_early_data_info = false;
+  bool expect_ticket_supports_early_data = false;
   bool expect_accept_early_data = false;
   bool expect_reject_early_data = false;
+  bool expect_no_offer_early_data = false;
   bool use_ticket_callback = false;
   bool renew_ticket = false;
   bool enable_early_data = false;
+  int tls13_variant = 0;
   bool enable_client_custom_extension = false;
   bool enable_server_custom_extension = false;
   bool custom_extension_skip = false;
@@ -99,6 +103,7 @@ struct TestConfig {
   bool shim_shuts_down = false;
   bool verify_fail = false;
   bool verify_peer = false;
+  bool verify_peer_if_no_obc = false;
   bool expect_verify_result = false;
   std::string signed_cert_timestamps;
   int expect_total_renegotiations = 0;
@@ -123,10 +128,8 @@ struct TestConfig {
   int expect_cipher_no_aes = 0;
   std::string expect_peer_cert_file;
   int resumption_delay = 0;
-  bool retain_only_sha256_client_cert_initial = false;
-  bool retain_only_sha256_client_cert_resume = false;
-  bool expect_sha256_client_cert_initial = false;
-  bool expect_sha256_client_cert_resume = false;
+  bool retain_only_sha256_client_cert = false;
+  bool expect_sha256_client_cert = false;
   bool read_with_unfinished_write = false;
   bool expect_secure_renegotiation = false;
   bool expect_no_secure_renegotiation = false;
@@ -139,9 +142,12 @@ struct TestConfig {
   bool handshake_twice = false;
   bool allow_unknown_alpn_protos = false;
   bool enable_ed25519 = false;
+  bool use_custom_verify_callback = false;
+  std::string expect_msg_callback;
 };
 
-bool ParseConfig(int argc, char **argv, bool is_resume, TestConfig *out_config);
+bool ParseConfig(int argc, char **argv, TestConfig *out_initial,
+                 TestConfig *out_resume, TestConfig *out_retry);
 
 
 #endif  // HEADER_TEST_CONFIG

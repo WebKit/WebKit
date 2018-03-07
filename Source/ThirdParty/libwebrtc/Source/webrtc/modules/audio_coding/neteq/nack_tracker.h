@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_NACK_TRACKER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_NACK_TRACKER_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_NACK_TRACKER_H_
+#define MODULES_AUDIO_CODING_NETEQ_NACK_TRACKER_H_
 
 #include <vector>
 #include <map>
 
-#include "webrtc/base/gtest_prod_util.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "rtc_base/gtest_prod_util.h"
 
 //
 // The NackTracker class keeps track of the lost packets, an estimate of
@@ -205,4 +205,4 @@ class NackTracker {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_NACK_TRACKER_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_NACK_TRACKER_H_

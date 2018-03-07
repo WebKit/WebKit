@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_RTPSENDER_H_
-#define WEBRTC_API_RTPSENDER_H_
+#ifndef API_RTPSENDER_H_
+#define API_RTPSENDER_H_
 
 // Including this file is deprecated. It is no longer part of the public API.
 // This only includes the file in its new location for backwards compatibility.
-#include "webrtc/pc/rtpsender.h"
+#include "pc/rtpsender.h"
 
-#endif  // WEBRTC_API_RTPSENDER_H_
+#endif  // API_RTPSENDER_H_

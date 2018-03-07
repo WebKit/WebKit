@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/ns/nsx_core.h"
+#include "modules/audio_processing/ns/nsx_core.h"
 
 #include <arm_neon.h>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 // Constants to compensate for shifting signal log(2^shifts).
 const int16_t WebRtcNsx_kLogTable[9] = {

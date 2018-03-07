@@ -10,17 +10,18 @@
 
 package org.webrtc;
 
+import android.annotation.TargetApi;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.SystemClock;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import org.webrtc.EglBase;
+import org.webrtc.VideoFrame.TextureBuffer;
 
 /**
  * Helper class to create and synchronize access to a SurfaceTexture. The caller will get notified
@@ -36,10 +37,8 @@ public class SurfaceTextureHelper {
   private static final String TAG = "SurfaceTextureHelper";
   /**
    * Callback interface for being notified that a new texture frame is available. The calls will be
-   * made on a dedicated thread with a bound EGLContext. The thread will be the same throughout the
-   * lifetime of the SurfaceTextureHelper instance, but different from the thread calling the
-   * SurfaceTextureHelper constructor. The callee is not allowed to make another EGLContext current
-   * on the calling thread.
+   * made on the SurfaceTextureHelper handler thread, with a bound EGLContext. The callee is not
+   * allowed to make another EGLContext current on the calling thread.
    */
   public interface OnTextureFrameAvailableListener {
     abstract void onTextureFrameAvailable(
@@ -51,6 +50,7 @@ public class SurfaceTextureHelper {
    * thread and handler is created for handling the SurfaceTexture. May return null if EGL fails to
    * initialize a pixel buffer surface and make it current.
    */
+  @CalledByNative
   public static SurfaceTextureHelper create(
       final String threadName, final EglBase.Context sharedContext) {
     final HandlerThread thread = new HandlerThread(threadName);
@@ -124,13 +124,24 @@ public class SurfaceTextureHelper {
 
     oesTextureId = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
     surfaceTexture = new SurfaceTexture(oesTextureId);
-    surfaceTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
-      @Override
-      public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-        hasPendingTexture = true;
-        tryDeliverTextureFrame();
-      }
-    });
+    setOnFrameAvailableListener(surfaceTexture, (SurfaceTexture st) -> {
+      hasPendingTexture = true;
+      tryDeliverTextureFrame();
+    }, handler);
+  }
+
+  @TargetApi(21)
+  private static void setOnFrameAvailableListener(SurfaceTexture surfaceTexture,
+      SurfaceTexture.OnFrameAvailableListener listener, Handler handler) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      surfaceTexture.setOnFrameAvailableListener(listener, handler);
+    } else {
+      // The documentation states that the listener will be called on an arbitrary thread, but in
+      // pratice, it is always the thread on which the SurfaceTexture was constructed. There are
+      // assertions in place in case this ever changes. For API >= 21, we use the new API to
+      // explicitly specify the handler.
+      surfaceTexture.setOnFrameAvailableListener(listener);
+    }
   }
 
   /**
@@ -182,6 +193,7 @@ public class SurfaceTextureHelper {
    * onTextureFrameAvailable(). Only one texture frame can be in flight at once, so you must call
    * this function in order to receive a new frame.
    */
+  @CalledByNative
   public void returnTextureFrame() {
     handler.post(new Runnable() {
       @Override
@@ -205,6 +217,7 @@ public class SurfaceTextureHelper {
    * stopped when the texture frame has been returned by a call to returnTextureFrame(). You are
    * guaranteed to not receive any more onTextureFrameAvailable() after this function returns.
    */
+  @CalledByNative
   public void dispose() {
     Logging.d(TAG, "dispose()");
     ThreadUtils.invokeAtFrontUninterruptibly(handler, new Runnable() {
@@ -218,8 +231,11 @@ public class SurfaceTextureHelper {
     });
   }
 
-  public void textureToYUV(final ByteBuffer buf, final int width, final int height,
-      final int stride, final int textureId, final float[] transformMatrix) {
+  /** Deprecated, use textureToYuv. */
+  @Deprecated
+  @SuppressWarnings("deprecation") // yuvConverter.convert is deprecated
+  void textureToYUV(final ByteBuffer buf, final int width, final int height, final int stride,
+      final int textureId, final float[] transformMatrix) {
     if (textureId != oesTextureId) {
       throw new IllegalStateException("textureToByteBuffer called with unexpected textureId");
     }
@@ -233,6 +249,20 @@ public class SurfaceTextureHelper {
         yuvConverter.convert(buf, width, height, stride, textureId, transformMatrix);
       }
     });
+  }
+
+  /**
+   * Posts to the correct thread to convert |textureBuffer| to I420.
+   */
+  public VideoFrame.I420Buffer textureToYuv(final TextureBuffer textureBuffer) {
+    final VideoFrame.I420Buffer[] result = new VideoFrame.I420Buffer[1];
+    ThreadUtils.invokeAtFrontUninterruptibly(handler, () -> {
+      if (yuvConverter == null) {
+        yuvConverter = new YuvConverter();
+      }
+      result[0] = yuvConverter.convert(textureBuffer);
+    });
+    return result[0];
   }
 
   private void updateTexImage() {
@@ -276,5 +306,23 @@ public class SurfaceTextureHelper {
     surfaceTexture.release();
     eglBase.release();
     handler.getLooper().quit();
+  }
+
+  /**
+   * Creates a VideoFrame buffer backed by this helper's texture. The |width| and |height| should
+   * match the dimensions of the data placed in the texture. The correct |transformMatrix| may be
+   * obtained from callbacks to OnTextureFrameAvailableListener.
+   *
+   * The returned TextureBuffer holds a reference to the SurfaceTextureHelper that created it. The
+   * buffer calls returnTextureFrame() when it is released.
+   */
+  public TextureBuffer createTextureBuffer(int width, int height, Matrix transformMatrix) {
+    return new TextureBufferImpl(
+        width, height, TextureBuffer.Type.OES, oesTextureId, transformMatrix, this, new Runnable() {
+          @Override
+          public void run() {
+            returnTextureFrame();
+          }
+        });
   }
 }

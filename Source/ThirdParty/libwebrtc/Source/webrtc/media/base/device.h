@@ -8,10 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_DEVICE_H_
-#define WEBRTC_MEDIA_BASE_DEVICE_H_
+#ifndef MEDIA_BASE_DEVICE_H_
+#define MEDIA_BASE_DEVICE_H_
 
-#include "webrtc/base/stringencode.h"
+#include <string>
+
+#include "rtc_base/stringencode.h"
 
 namespace cricket {
 
@@ -31,4 +33,4 @@ struct Device {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_DEVICE_H_
+#endif  // MEDIA_BASE_DEVICE_H_

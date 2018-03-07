@@ -8,17 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/statistics_calculator.h"
+#include "modules/audio_coding/neteq/statistics_calculator.h"
 
 #include <assert.h>
 #include <string.h>  // memset
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/modules/audio_coding/neteq/decision_logic.h"
-#include "webrtc/modules/audio_coding/neteq/delay_manager.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "modules/audio_coding/neteq/delay_manager.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -123,14 +122,14 @@ StatisticsCalculator::StatisticsCalculator()
       lost_timestamps_(0),
       timestamps_since_last_report_(0),
       secondary_decoded_samples_(0),
+      discarded_secondary_packets_(0),
       delayed_packet_outage_counter_(
           "WebRTC.Audio.DelayedPacketOutageEventsPerMinute",
           60000,  // 60 seconds report interval.
           100),
       excess_buffer_delay_("WebRTC.Audio.AverageExcessBufferDelayMs",
                            60000,  // 60 seconds report interval.
-                           1000) {
-}
+                           1000) {}
 
 StatisticsCalculator::~StatisticsCalculator() = default;
 
@@ -141,6 +140,7 @@ void StatisticsCalculator::Reset() {
   expanded_speech_samples_ = 0;
   expanded_noise_samples_ = 0;
   secondary_decoded_samples_ = 0;
+  discarded_secondary_packets_ = 0;
   waiting_times_.clear();
 }
 
@@ -150,22 +150,44 @@ void StatisticsCalculator::ResetMcu() {
   timestamps_since_last_report_ = 0;
 }
 
-void StatisticsCalculator::ExpandedVoiceSamples(size_t num_samples) {
+void StatisticsCalculator::ExpandedVoiceSamples(size_t num_samples,
+                                                bool is_new_concealment_event) {
   expanded_speech_samples_ += num_samples;
+  ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples));
+  lifetime_stats_.concealment_events += is_new_concealment_event;
 }
 
-void StatisticsCalculator::ExpandedNoiseSamples(size_t num_samples) {
+void StatisticsCalculator::ExpandedNoiseSamples(size_t num_samples,
+                                                bool is_new_concealment_event) {
   expanded_noise_samples_ += num_samples;
+  ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples));
+  lifetime_stats_.concealment_events += is_new_concealment_event;
 }
 
 void StatisticsCalculator::ExpandedVoiceSamplesCorrection(int num_samples) {
   expanded_speech_samples_ =
       AddIntToSizeTWithLowerCap(num_samples, expanded_speech_samples_);
+  ConcealedSamplesCorrection(num_samples);
 }
 
 void StatisticsCalculator::ExpandedNoiseSamplesCorrection(int num_samples) {
   expanded_noise_samples_ =
       AddIntToSizeTWithLowerCap(num_samples, expanded_noise_samples_);
+  ConcealedSamplesCorrection(num_samples);
+}
+
+void StatisticsCalculator::ConcealedSamplesCorrection(int num_samples) {
+  if (num_samples < 0) {
+    // Store negative correction to subtract from future positive additions.
+    // See also the function comment in the header file.
+    concealed_samples_correction_ -= num_samples;
+    return;
+  }
+
+  const size_t canceled_out =
+      std::min(static_cast<size_t>(num_samples), concealed_samples_correction_);
+  concealed_samples_correction_ -= canceled_out;
+  lifetime_stats_.concealed_samples += num_samples - canceled_out;
 }
 
 void StatisticsCalculator::PreemptiveExpandedSamples(size_t num_samples) {
@@ -184,6 +206,10 @@ void StatisticsCalculator::PacketsDiscarded(size_t num_packets) {
   discarded_packets_ += num_packets;
 }
 
+void StatisticsCalculator::SecondaryPacketsDiscarded(size_t num_packets) {
+  discarded_secondary_packets_ += num_packets;
+}
+
 void StatisticsCalculator::LostSamples(size_t num_samples) {
   lost_timestamps_ += num_samples;
 }
@@ -200,6 +226,12 @@ void StatisticsCalculator::IncreaseCounter(size_t num_samples, int fs_hz) {
     timestamps_since_last_report_ = 0;
     discarded_packets_ = 0;
   }
+  lifetime_stats_.total_samples_received += num_samples;
+}
+
+void StatisticsCalculator::JitterBufferDelay(size_t num_samples,
+                                             uint64_t waiting_time_ms) {
+  lifetime_stats_.jitter_buffer_delay_ms += waiting_time_ms * num_samples;
 }
 
 void StatisticsCalculator::SecondaryDecodedSamples(int num_samples) {
@@ -227,31 +259,16 @@ void StatisticsCalculator::GetNetworkStatistics(
     int fs_hz,
     size_t num_samples_in_buffers,
     size_t samples_per_packet,
-    const DelayManager& delay_manager,
-    const DecisionLogic& decision_logic,
     NetEqNetworkStatistics *stats) {
-  if (fs_hz <= 0 || !stats) {
-    assert(false);
-    return;
-  }
+  RTC_DCHECK_GT(fs_hz, 0);
+  RTC_DCHECK(stats);
 
   stats->added_zero_samples = added_zero_samples_;
   stats->current_buffer_size_ms =
       static_cast<uint16_t>(num_samples_in_buffers * 1000 / fs_hz);
-  const int ms_per_packet = rtc::dchecked_cast<int>(
-      decision_logic.packet_length_samples() / (fs_hz / 1000));
-  stats->preferred_buffer_size_ms = (delay_manager.TargetLevel() >> 8) *
-      ms_per_packet;
-  stats->jitter_peaks_found = delay_manager.PeakFound();
-  stats->clockdrift_ppm =
-      rtc::saturated_cast<int32_t>(delay_manager.EstimatedClockDriftPpm());
 
   stats->packet_loss_rate =
       CalculateQ14Ratio(lost_timestamps_, timestamps_since_last_report_);
-
-  const size_t discarded_samples = discarded_packets_ * samples_per_packet;
-  stats->packet_discard_rate =
-      CalculateQ14Ratio(discarded_samples, timestamps_since_last_report_);
 
   stats->accelerate_rate =
       CalculateQ14Ratio(accelerate_samples_, timestamps_since_last_report_);
@@ -270,6 +287,13 @@ void StatisticsCalculator::GetNetworkStatistics(
   stats->secondary_decoded_rate =
       CalculateQ14Ratio(secondary_decoded_samples_,
                         timestamps_since_last_report_);
+
+  const size_t discarded_secondary_samples =
+      discarded_secondary_packets_ * samples_per_packet;
+  stats->secondary_discarded_rate = CalculateQ14Ratio(
+      discarded_secondary_samples,
+      static_cast<uint32_t>(discarded_secondary_samples +
+        secondary_decoded_samples_));
 
   if (waiting_times_.size() == 0) {
     stats->mean_waiting_time_ms = -1;
@@ -298,6 +322,22 @@ void StatisticsCalculator::GetNetworkStatistics(
   // Reset counters.
   ResetMcu();
   Reset();
+}
+
+void StatisticsCalculator::PopulateDelayManagerStats(
+    int ms_per_packet,
+    const DelayManager& delay_manager,
+    NetEqNetworkStatistics* stats) {
+  RTC_DCHECK(stats);
+  stats->preferred_buffer_size_ms =
+      (delay_manager.TargetLevel() >> 8) * ms_per_packet;
+  stats->jitter_peaks_found = delay_manager.PeakFound();
+  stats->clockdrift_ppm =
+      rtc::saturated_cast<int32_t>(delay_manager.EstimatedClockDriftPpm());
+}
+
+NetEqLifetimeStatistics StatisticsCalculator::GetLifetimeStatistics() const {
+  return lifetime_stats_;
 }
 
 uint16_t StatisticsCalculator::CalculateQ14Ratio(size_t numerator,

@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_VIDEO_CODECS_VIDEO_DECODER_H_
-#define WEBRTC_API_VIDEO_CODECS_VIDEO_DECODER_H_
+#ifndef API_VIDEO_CODECS_VIDEO_DECODER_H_
+#define API_VIDEO_CODECS_VIDEO_DECODER_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/include/video_frame.h"
-#include "webrtc/typedefs.h"
+#include "api/video/video_frame.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "common_video/include/video_frame.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -84,4 +84,4 @@ class VideoDecoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_VIDEO_CODECS_VIDEO_DECODER_H_
+#endif  // API_VIDEO_CODECS_VIDEO_DECODER_H_

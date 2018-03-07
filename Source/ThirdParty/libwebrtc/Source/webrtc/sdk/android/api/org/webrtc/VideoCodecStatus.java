@@ -35,6 +35,7 @@ public enum VideoCodecStatus {
     this.number = number;
   }
 
+  @CalledByNative
   public int getNumber() {
     return number;
   }

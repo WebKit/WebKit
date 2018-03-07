@@ -8,42 +8,50 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <string.h>
+
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 
-#include "gflags/gflags.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
-#include "webrtc/test/rtp_file_writer.h"
+#include "logging/rtc_event_log/rtc_event_log.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/flags.h"
+#include "test/rtp_file_writer.h"
 
 namespace {
 
 using MediaType = webrtc::ParsedRtcEventLog::MediaType;
 
-DEFINE_bool(noaudio,
-            false,
-            "Excludes audio packets from the converted RTPdump file.");
-DEFINE_bool(novideo,
-            false,
-            "Excludes video packets from the converted RTPdump file.");
-DEFINE_bool(nodata,
-            false,
-            "Excludes data packets from the converted RTPdump file.");
-DEFINE_bool(nortp,
-            false,
-            "Excludes RTP packets from the converted RTPdump file.");
-DEFINE_bool(nortcp,
-            false,
-            "Excludes RTCP packets from the converted RTPdump file.");
+DEFINE_bool(
+    audio,
+    true,
+    "Use --noaudio to exclude audio packets from the converted RTPdump file.");
+DEFINE_bool(
+    video,
+    true,
+    "Use --novideo to exclude video packets from the converted RTPdump file.");
+DEFINE_bool(
+    data,
+    true,
+    "Use --nodata to exclude data packets from the converted RTPdump file.");
+DEFINE_bool(
+    rtp,
+    true,
+    "Use --nortp to exclude RTP packets from the converted RTPdump file.");
+DEFINE_bool(
+    rtcp,
+    true,
+    "Use --nortcp to exclude RTCP packets from the converted RTPdump file.");
 DEFINE_string(ssrc,
               "",
               "Store only packets with this SSRC (decimal or hex, the latter "
               "starting with 0x).");
+DEFINE_bool(help, false, "Prints this message.");
 
 // Parses the input string for a valid SSRC. If a valid SSRC is found, it is
 // written to the output variable |ssrc|, and true is returned. Otherwise,
@@ -73,22 +81,25 @@ int main(int argc, char* argv[]) {
       "Tool for converting an RtcEventLog file to an RTP dump file.\n"
       "Run " +
       program_name +
-      " --helpshort for usage.\n"
+      " --help for usage.\n"
       "Example usage:\n" +
       program_name + " input.rel output.rtp\n";
-  google::SetUsageMessage(usage);
-  google::ParseCommandLineFlags(&argc, &argv, true);
-
-  if (argc != 3) {
-    std::cout << google::ProgramUsage();
-    return 0;
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
+      FLAG_help || argc != 3) {
+    std::cout << usage;
+    if (FLAG_help) {
+      rtc::FlagList::Print(nullptr, false);
+      return 0;
+    }
+    return 1;
   }
+
   std::string input_file = argv[1];
   std::string output_file = argv[2];
 
   uint32_t ssrc_filter = 0;
-  if (!FLAGS_ssrc.empty())
-    RTC_CHECK(ParseSsrc(FLAGS_ssrc, &ssrc_filter))
+  if (strlen(FLAG_ssrc) > 0)
+    RTC_CHECK(ParseSsrc(FLAG_ssrc, &ssrc_filter))
         << "Flag verification has failed.";
 
   webrtc::ParsedRtcEventLog parsed_stream;
@@ -116,12 +127,12 @@ int main(int argc, char* argv[]) {
     // some required fields and we attempt to access them. We could consider
     // a softer failure option, but it does not seem useful to generate
     // RTP dumps based on broken event logs.
-    if (!FLAGS_nortp &&
+    if (FLAG_rtp &&
         parsed_stream.GetEventType(i) == webrtc::ParsedRtcEventLog::RTP_EVENT) {
       webrtc::test::RtpPacket packet;
       webrtc::PacketDirection direction;
       parsed_stream.GetRtpHeader(i, &direction, packet.data, &packet.length,
-                                 &packet.original_length);
+                                 &packet.original_length, nullptr);
       if (packet.original_length > packet.length)
         header_only = true;
       packet.time_ms = parsed_stream.GetTimestamp(i) / 1000;
@@ -137,13 +148,13 @@ int main(int argc, char* argv[]) {
       rtp_parser.Parse(&parsed_header);
       MediaType media_type =
           parsed_stream.GetMediaType(parsed_header.ssrc, direction);
-      if (FLAGS_noaudio && media_type == MediaType::AUDIO)
+      if (!FLAG_audio && media_type == MediaType::AUDIO)
         continue;
-      if (FLAGS_novideo && media_type == MediaType::VIDEO)
+      if (!FLAG_video && media_type == MediaType::VIDEO)
         continue;
-      if (FLAGS_nodata && media_type == MediaType::DATA)
+      if (!FLAG_data && media_type == MediaType::DATA)
         continue;
-      if (!FLAGS_ssrc.empty()) {
+      if (strlen(FLAG_ssrc) > 0) {
         const uint32_t packet_ssrc =
             webrtc::ByteReader<uint32_t>::ReadBigEndian(
                 reinterpret_cast<const uint8_t*>(packet.data + 8));
@@ -154,9 +165,8 @@ int main(int argc, char* argv[]) {
       rtp_writer->WritePacket(&packet);
       rtp_counter++;
     }
-    if (!FLAGS_nortcp &&
-        parsed_stream.GetEventType(i) ==
-            webrtc::ParsedRtcEventLog::RTCP_EVENT) {
+    if (FLAG_rtcp && parsed_stream.GetEventType(i) ==
+                         webrtc::ParsedRtcEventLog::RTCP_EVENT) {
       webrtc::test::RtpPacket packet;
       webrtc::PacketDirection direction;
       parsed_stream.GetRtcpPacket(i, &direction, packet.data, &packet.length);
@@ -175,13 +185,13 @@ int main(int argc, char* argv[]) {
       const uint32_t packet_ssrc = webrtc::ByteReader<uint32_t>::ReadBigEndian(
           reinterpret_cast<const uint8_t*>(packet.data + 4));
       MediaType media_type = parsed_stream.GetMediaType(packet_ssrc, direction);
-      if (FLAGS_noaudio && media_type == MediaType::AUDIO)
+      if (!FLAG_audio && media_type == MediaType::AUDIO)
         continue;
-      if (FLAGS_novideo && media_type == MediaType::VIDEO)
+      if (!FLAG_video && media_type == MediaType::VIDEO)
         continue;
-      if (FLAGS_nodata && media_type == MediaType::DATA)
+      if (!FLAG_data && media_type == MediaType::DATA)
         continue;
-      if (!FLAGS_ssrc.empty()) {
+      if (strlen(FLAG_ssrc) > 0) {
         if (packet_ssrc != ssrc_filter)
           continue;
       }

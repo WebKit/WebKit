@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCDataChannelConfiguration.h"
 
-#include "webrtc/api/datachannelinterface.h"
+#include "api/datachannelinterface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

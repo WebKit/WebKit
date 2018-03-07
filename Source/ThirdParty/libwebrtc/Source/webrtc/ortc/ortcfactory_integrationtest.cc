@@ -11,16 +11,18 @@
 #include <memory>
 #include <utility>  // For std::pair, std::move.
 
-#include "webrtc/api/ortc/ortcfactoryinterface.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/fakenetwork.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/ortc/testrtpparameters.h"
-#include "webrtc/p2p/base/udptransport.h"
-#include "webrtc/pc/test/fakeaudiocapturemodule.h"
-#include "webrtc/pc/test/fakeperiodicvideocapturer.h"
-#include "webrtc/pc/test/fakevideotrackrenderer.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/ortc/ortcfactoryinterface.h"
+#include "ortc/testrtpparameters.h"
+#include "p2p/base/udptransport.h"
+#include "pc/test/fakeaudiocapturemodule.h"
+#include "pc/test/fakeperiodicvideocapturer.h"
+#include "pc/test/fakevideotrackrenderer.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/fakenetwork.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/virtualsocketserver.h"
 
 namespace {
 
@@ -77,14 +79,18 @@ class OrtcFactoryIntegrationTest : public testing::Test {
     virtual_socket_server_.SetDefaultRoute(kIPv4LocalHostAddress);
     network_thread_.Start();
     // Need to create after network thread is started.
-    ortc_factory1_ = OrtcFactoryInterface::Create(
-                         &network_thread_, nullptr, &fake_network_manager_,
-                         nullptr, fake_audio_capture_module1_)
-                         .MoveValue();
-    ortc_factory2_ = OrtcFactoryInterface::Create(
-                         &network_thread_, nullptr, &fake_network_manager_,
-                         nullptr, fake_audio_capture_module2_)
-                         .MoveValue();
+    ortc_factory1_ =
+        OrtcFactoryInterface::Create(
+            &network_thread_, nullptr, &fake_network_manager_, nullptr,
+            fake_audio_capture_module1_, CreateBuiltinAudioEncoderFactory(),
+            CreateBuiltinAudioDecoderFactory())
+            .MoveValue();
+    ortc_factory2_ =
+        OrtcFactoryInterface::Create(
+            &network_thread_, nullptr, &fake_network_manager_, nullptr,
+            fake_audio_capture_module2_, CreateBuiltinAudioEncoderFactory(),
+            CreateBuiltinAudioDecoderFactory())
+            .MoveValue();
   }
 
  protected:
@@ -128,29 +134,29 @@ class OrtcFactoryIntegrationTest : public testing::Test {
   // empty if RTCP muxing is used. |transport_controllers| can be empty if
   // these transports are being created using a default transport controller.
   RtpTransportPair CreateRtpTransportPair(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       const UdpTransportPair& rtp_udp_transports,
       const UdpTransportPair& rtcp_udp_transports,
       const RtpTransportControllerPair& transport_controllers) {
     auto transport_result1 = ortc_factory1_->CreateRtpTransport(
-        rtcp_parameters, rtp_udp_transports.first.get(),
+        parameters, rtp_udp_transports.first.get(),
         rtcp_udp_transports.first.get(), transport_controllers.first.get());
     auto transport_result2 = ortc_factory2_->CreateRtpTransport(
-        rtcp_parameters, rtp_udp_transports.second.get(),
+        parameters, rtp_udp_transports.second.get(),
         rtcp_udp_transports.second.get(), transport_controllers.second.get());
     return {transport_result1.MoveValue(), transport_result2.MoveValue()};
   }
 
   SrtpTransportPair CreateSrtpTransportPair(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       const UdpTransportPair& rtp_udp_transports,
       const UdpTransportPair& rtcp_udp_transports,
       const RtpTransportControllerPair& transport_controllers) {
     auto transport_result1 = ortc_factory1_->CreateSrtpTransport(
-        rtcp_parameters, rtp_udp_transports.first.get(),
+        parameters, rtp_udp_transports.first.get(),
         rtcp_udp_transports.first.get(), transport_controllers.first.get());
     auto transport_result2 = ortc_factory2_->CreateSrtpTransport(
-        rtcp_parameters, rtp_udp_transports.second.get(),
+        parameters, rtp_udp_transports.second.get(),
         rtcp_udp_transports.second.get(), transport_controllers.second.get());
     return {transport_result1.MoveValue(), transport_result2.MoveValue()};
   }
@@ -158,18 +164,18 @@ class OrtcFactoryIntegrationTest : public testing::Test {
   // For convenience when |rtcp_udp_transports| and |transport_controllers|
   // aren't needed.
   RtpTransportPair CreateRtpTransportPair(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       const UdpTransportPair& rtp_udp_transports) {
-    return CreateRtpTransportPair(rtcp_parameters, rtp_udp_transports,
+    return CreateRtpTransportPair(parameters, rtp_udp_transports,
                                   UdpTransportPair(),
                                   RtpTransportControllerPair());
   }
 
   SrtpTransportPair CreateSrtpTransportPairAndSetKeys(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       const UdpTransportPair& rtp_udp_transports) {
     SrtpTransportPair srtp_transports = CreateSrtpTransportPair(
-        rtcp_parameters, rtp_udp_transports, UdpTransportPair(),
+        parameters, rtp_udp_transports, UdpTransportPair(),
         RtpTransportControllerPair());
     EXPECT_TRUE(srtp_transports.first->SetSrtpSendKey(kTestCryptoParams1).ok());
     EXPECT_TRUE(
@@ -182,10 +188,10 @@ class OrtcFactoryIntegrationTest : public testing::Test {
   }
 
   SrtpTransportPair CreateSrtpTransportPairAndSetMismatchingKeys(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       const UdpTransportPair& rtp_udp_transports) {
     SrtpTransportPair srtp_transports = CreateSrtpTransportPair(
-        rtcp_parameters, rtp_udp_transports, UdpTransportPair(),
+        parameters, rtp_udp_transports, UdpTransportPair(),
         RtpTransportControllerPair());
     EXPECT_TRUE(srtp_transports.first->SetSrtpSendKey(kTestCryptoParams1).ok());
     EXPECT_TRUE(
@@ -317,8 +323,16 @@ class OrtcFactoryIntegrationTest : public testing::Test {
               fake_video_renderer1.num_rendered_frames() > kDefaultNumFrames &&
               fake_audio_capture_module2_->frames_received() >
                   kDefaultNumFrames &&
-              fake_video_renderer1.num_rendered_frames() > kDefaultNumFrames,
-          kDefaultTimeout);
+              fake_video_renderer2.num_rendered_frames() > kDefaultNumFrames,
+          kDefaultTimeout) << "Audio capture module 1 received "
+                           << fake_audio_capture_module1_->frames_received()
+                           << " frames, Video renderer 1 rendered "
+                           << fake_video_renderer1.num_rendered_frames()
+                           << " frames, Audio capture module 2 received "
+                           << fake_audio_capture_module2_->frames_received()
+                           << " frames, Video renderer 2 rendered "
+                           << fake_video_renderer2.num_rendered_frames()
+                           << " frames.";
     } else {
       WAIT(false, kReceivingDuration);
       rendered_video_frames1_ = fake_video_renderer1.num_rendered_frames();
@@ -463,6 +477,7 @@ TEST_F(OrtcFactoryIntegrationTest, SetTrackWhileSending) {
 //
 // Uses muxed RTCP, and minimal parameters with hard-coded configs that are
 // known to work.
+#if !(defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_64_BITS) && !defined(NDEBUG))
 TEST_F(OrtcFactoryIntegrationTest,
        BasicTwoWayAudioVideoRtpSendersAndReceivers) {
   auto udp_transports = CreateAndConnectUdpTransportPair();
@@ -482,6 +497,7 @@ TEST_F(OrtcFactoryIntegrationTest,
   BasicTwoWayRtpSendersAndReceiversTest(std::move(srtp_transports),
                                         expect_success);
 }
+#endif
 
 // Tests that the packets cannot be decoded if the keys are mismatched.
 TEST_F(OrtcFactoryIntegrationTest, SrtpSendersAndReceiversWithMismatchingKeys) {
@@ -548,18 +564,18 @@ TEST_F(OrtcFactoryIntegrationTest,
   // transport controller.
   auto transport_controllers = CreateRtpTransportControllerPair();
 
-  RtcpParameters audio_rtcp_parameters;
-  audio_rtcp_parameters.mux = false;
-  auto audio_srtp_transports =
-      CreateSrtpTransportPair(audio_rtcp_parameters, audio_rtp_udp_transports,
-                              audio_rtcp_udp_transports, transport_controllers);
+  RtpTransportParameters audio_rtp_transport_parameters;
+  audio_rtp_transport_parameters.rtcp.mux = false;
+  auto audio_srtp_transports = CreateSrtpTransportPair(
+      audio_rtp_transport_parameters, audio_rtp_udp_transports,
+      audio_rtcp_udp_transports, transport_controllers);
 
-  RtcpParameters video_rtcp_parameters;
-  video_rtcp_parameters.mux = false;
-  video_rtcp_parameters.reduced_size = true;
-  auto video_srtp_transports =
-      CreateSrtpTransportPair(video_rtcp_parameters, video_rtp_udp_transports,
-                              video_rtcp_udp_transports, transport_controllers);
+  RtpTransportParameters video_rtp_transport_parameters;
+  video_rtp_transport_parameters.rtcp.mux = false;
+  video_rtp_transport_parameters.rtcp.reduced_size = true;
+  auto video_srtp_transports = CreateSrtpTransportPair(
+      video_rtp_transport_parameters, video_rtp_udp_transports,
+      video_rtcp_udp_transports, transport_controllers);
 
   // Set keys for SRTP transports.
   audio_srtp_transports.first->SetSrtpSendKey(kTestCryptoParams1);

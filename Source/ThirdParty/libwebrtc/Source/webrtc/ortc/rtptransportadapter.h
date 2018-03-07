@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_ORTC_RTPTRANSPORTADAPTER_H_
-#define WEBRTC_ORTC_RTPTRANSPORTADAPTER_H_
+#ifndef ORTC_RTPTRANSPORTADAPTER_H_
+#define ORTC_RTPTRANSPORTADAPTER_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/ortc/srtptransportinterface.h"
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/media/base/streamparams.h"
-#include "webrtc/ortc/rtptransportcontrolleradapter.h"
-#include "webrtc/pc/channel.h"
+#include "api/ortc/srtptransportinterface.h"
+#include "api/rtcerror.h"
+#include "media/base/streamparams.h"
+#include "ortc/rtptransportcontrolleradapter.h"
+#include "pc/channel.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/sigslot.h"
 
 namespace webrtc {
 
@@ -36,13 +36,13 @@ class RtpTransportAdapter : public SrtpTransportInterface {
   // |rtp| can't be null. |rtcp| can if RTCP muxing is used immediately (meaning
   // |rtcp_parameters.mux| is also true).
   static RTCErrorOr<std::unique_ptr<RtpTransportInterface>> CreateProxied(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& rtcp_parameters,
       PacketTransportInterface* rtp,
       PacketTransportInterface* rtcp,
       RtpTransportControllerAdapter* rtp_transport_controller);
 
   static RTCErrorOr<std::unique_ptr<SrtpTransportInterface>> CreateSrtpProxied(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& rtcp_parameters,
       PacketTransportInterface* rtp,
       PacketTransportInterface* rtcp,
       RtpTransportControllerAdapter* rtp_transport_controller);
@@ -52,8 +52,8 @@ class RtpTransportAdapter : public SrtpTransportInterface {
   // RtpTransportInterface implementation.
   PacketTransportInterface* GetRtpPacketTransport() const override;
   PacketTransportInterface* GetRtcpPacketTransport() const override;
-  RTCError SetRtcpParameters(const RtcpParameters& parameters) override;
-  RtcpParameters GetRtcpParameters() const override { return rtcp_parameters_; }
+  RTCError SetParameters(const RtpTransportParameters& parameters) override;
+  RtpTransportParameters GetParameters() const override { return parameters_; }
 
   // SRTP specific implementation.
   RTCError SetSrtpSendKey(const cricket::CryptoParams& params) override;
@@ -82,7 +82,7 @@ class RtpTransportAdapter : public SrtpTransportInterface {
   RtpTransportAdapter* GetInternal() override { return this; }
 
  private:
-  RtpTransportAdapter(const RtcpParameters& rtcp_parameters,
+  RtpTransportAdapter(const RtcpParameters& rtcp_params,
                       PacketTransportInterface* rtp,
                       PacketTransportInterface* rtcp,
                       RtpTransportControllerAdapter* rtp_transport_controller,
@@ -90,11 +90,11 @@ class RtpTransportAdapter : public SrtpTransportInterface {
 
   PacketTransportInterface* rtp_packet_transport_;
   PacketTransportInterface* rtcp_packet_transport_;
-  RtpTransportControllerAdapter* rtp_transport_controller_;
+  RtpTransportControllerAdapter* const rtp_transport_controller_;
   // Non-null if this class owns the transport controller.
   std::unique_ptr<RtpTransportControllerInterface>
       owned_rtp_transport_controller_;
-  RtcpParameters rtcp_parameters_;
+  RtpTransportParameters parameters_;
 
   // SRTP specific members.
   rtc::Optional<cricket::CryptoParams> send_key_;
@@ -106,4 +106,4 @@ class RtpTransportAdapter : public SrtpTransportInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_ORTC_RTPTRANSPORTADAPTER_H_
+#endif  // ORTC_RTPTRANSPORTADAPTER_H_

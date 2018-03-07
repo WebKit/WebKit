@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_DEVICE_AUDIO_MIXER_MANAGER_MAC_H
-#define WEBRTC_AUDIO_DEVICE_AUDIO_MIXER_MANAGER_MAC_H
+#ifndef AUDIO_DEVICE_AUDIO_MIXER_MANAGER_MAC_H_
+#define AUDIO_DEVICE_AUDIO_MIXER_MANAGER_MAC_H_
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/system_wrappers/include/trace.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/logging.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #include <CoreAudio/CoreAudio.h>
 
@@ -28,7 +28,6 @@ class AudioMixerManagerMac {
   int32_t SpeakerVolume(uint32_t& volume) const;
   int32_t MaxSpeakerVolume(uint32_t& maxVolume) const;
   int32_t MinSpeakerVolume(uint32_t& minVolume) const;
-  int32_t SpeakerVolumeStepSize(uint16_t& stepSize) const;
   int32_t SpeakerVolumeIsAvailable(bool& available);
   int32_t SpeakerMuteIsAvailable(bool& available);
   int32_t SetSpeakerMute(bool enable);
@@ -38,15 +37,11 @@ class AudioMixerManagerMac {
   int32_t MicrophoneMuteIsAvailable(bool& available);
   int32_t SetMicrophoneMute(bool enable);
   int32_t MicrophoneMute(bool& enabled) const;
-  int32_t MicrophoneBoostIsAvailable(bool& available);
-  int32_t SetMicrophoneBoost(bool enable);
-  int32_t MicrophoneBoost(bool& enabled) const;
   int32_t MicrophoneVolumeIsAvailable(bool& available);
   int32_t SetMicrophoneVolume(uint32_t volume);
   int32_t MicrophoneVolume(uint32_t& volume) const;
   int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const;
   int32_t MinMicrophoneVolume(uint32_t& minVolume) const;
-  int32_t MicrophoneVolumeStepSize(uint16_t& stepSize) const;
   int32_t Close();
   int32_t CloseSpeaker();
   int32_t CloseMicrophone();
@@ -54,19 +49,16 @@ class AudioMixerManagerMac {
   bool MicrophoneIsInitialized() const;
 
  public:
-  AudioMixerManagerMac(const int32_t id);
+  AudioMixerManagerMac();
   ~AudioMixerManagerMac();
 
  private:
-  static void logCAMsg(const TraceLevel level,
-                       const TraceModule module,
-                       const int32_t id,
+  static void logCAMsg(const rtc::LoggingSeverity sev,
                        const char* msg,
                        const char* err);
 
  private:
   rtc::CriticalSection _critSect;
-  int32_t _id;
 
   AudioDeviceID _inputDeviceID;
   AudioDeviceID _outputDeviceID;

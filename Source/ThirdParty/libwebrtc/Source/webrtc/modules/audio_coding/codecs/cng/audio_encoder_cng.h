@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_
+#define MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_audio/vad/include/vad.h"
-#include "webrtc/modules/audio_coding/codecs/cng/webrtc_cng.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "common_audio/vad/include/vad.h"
+#include "modules/audio_coding/codecs/cng/webrtc_cng.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -69,7 +69,7 @@ class AudioEncoderCng final : public AudioEncoder {
       float uplink_recoverable_packet_loss_fraction) override;
   void OnReceivedUplinkBandwidth(
       int target_audio_bitrate_bps,
-      rtc::Optional<int64_t> probing_interval_ms) override;
+      rtc::Optional<int64_t> bwe_period_ms) override;
 
  private:
   EncodedInfo EncodePassive(size_t frames_to_encode,
@@ -93,4 +93,4 @@ class AudioEncoderCng final : public AudioEncoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_CNG_AUDIO_ENCODER_CNG_H_

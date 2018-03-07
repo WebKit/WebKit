@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h"
+#include "sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h"
 
 #include "libyuv/convert.h"
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
+#include "api/video/i420_buffer.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -115,7 +115,7 @@ bool CoreVideoFrameBuffer::CropAndScaleTo(
                 kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
   CVReturn cv_ret = CVPixelBufferLockBaseAddress(output_pixel_buffer, 0);
   if (cv_ret != kCVReturnSuccess) {
-    LOG(LS_ERROR) << "Failed to lock base address: " << cv_ret;
+    RTC_LOG(LS_ERROR) << "Failed to lock base address: " << cv_ret;
     return false;
   }
   const int dst_width = CVPixelBufferGetWidth(output_pixel_buffer);

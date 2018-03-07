@@ -11,7 +11,6 @@
 package org.webrtc;
 
 import android.content.Context;
-
 import java.util.List;
 
 // Base interface for all VideoCapturers to implement.
@@ -31,6 +30,9 @@ public interface VideoCapturer {
     // owned by VideoCapturer.
     void onTextureFrameCaptured(int width, int height, int oesTextureId, float[] transformMatrix,
         int rotation, long timestamp);
+
+    // Delivers a captured frame. Called on a Java thread owned by VideoCapturer.
+    void onFrameCaptured(VideoFrame frame);
   }
 
   /**

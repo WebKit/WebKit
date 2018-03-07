@@ -62,7 +62,7 @@
 
 
 static const uint32_t des_skb[8][64] = {
-    {/* for C bits (numbered as per FIPS 46) 1 2 3 4 5 6 */
+    {  // for C bits (numbered as per FIPS 46) 1 2 3 4 5 6
      0x00000000L, 0x00000010L, 0x20000000L, 0x20000010L, 0x00010000L,
      0x00010010L, 0x20010000L, 0x20010010L, 0x00000800L, 0x00000810L,
      0x20000800L, 0x20000810L, 0x00010800L, 0x00010810L, 0x20010800L,
@@ -76,7 +76,7 @@ static const uint32_t des_skb[8][64] = {
      0x20080020L, 0x20080030L, 0x00090020L, 0x00090030L, 0x20090020L,
      0x20090030L, 0x00080820L, 0x00080830L, 0x20080820L, 0x20080830L,
      0x00090820L, 0x00090830L, 0x20090820L, 0x20090830L, },
-    {/* for C bits (numbered as per FIPS 46) 7 8 10 11 12 13 */
+    {  // for C bits (numbered as per FIPS 46) 7 8 10 11 12 13
      0x00000000L, 0x02000000L, 0x00002000L, 0x02002000L, 0x00200000L,
      0x02200000L, 0x00202000L, 0x02202000L, 0x00000004L, 0x02000004L,
      0x00002004L, 0x02002004L, 0x00200004L, 0x02200004L, 0x00202004L,
@@ -90,7 +90,7 @@ static const uint32_t des_skb[8][64] = {
      0x10002400L, 0x12002400L, 0x10200400L, 0x12200400L, 0x10202400L,
      0x12202400L, 0x10000404L, 0x12000404L, 0x10002404L, 0x12002404L,
      0x10200404L, 0x12200404L, 0x10202404L, 0x12202404L, },
-    {/* for C bits (numbered as per FIPS 46) 14 15 16 17 19 20 */
+    {  // for C bits (numbered as per FIPS 46) 14 15 16 17 19 20
      0x00000000L, 0x00000001L, 0x00040000L, 0x00040001L, 0x01000000L,
      0x01000001L, 0x01040000L, 0x01040001L, 0x00000002L, 0x00000003L,
      0x00040002L, 0x00040003L, 0x01000002L, 0x01000003L, 0x01040002L,
@@ -104,7 +104,7 @@ static const uint32_t des_skb[8][64] = {
      0x08040200L, 0x08040201L, 0x09000200L, 0x09000201L, 0x09040200L,
      0x09040201L, 0x08000202L, 0x08000203L, 0x08040202L, 0x08040203L,
      0x09000202L, 0x09000203L, 0x09040202L, 0x09040203L, },
-    {/* for C bits (numbered as per FIPS 46) 21 23 24 26 27 28 */
+    {  // for C bits (numbered as per FIPS 46) 21 23 24 26 27 28
      0x00000000L, 0x00100000L, 0x00000100L, 0x00100100L, 0x00000008L,
      0x00100008L, 0x00000108L, 0x00100108L, 0x00001000L, 0x00101000L,
      0x00001100L, 0x00101100L, 0x00001008L, 0x00101008L, 0x00001108L,
@@ -118,7 +118,7 @@ static const uint32_t des_skb[8][64] = {
      0x04020100L, 0x04120100L, 0x04020008L, 0x04120008L, 0x04020108L,
      0x04120108L, 0x04021000L, 0x04121000L, 0x04021100L, 0x04121100L,
      0x04021008L, 0x04121008L, 0x04021108L, 0x04121108L, },
-    {/* for D bits (numbered as per FIPS 46) 1 2 3 4 5 6 */
+    {  // for D bits (numbered as per FIPS 46) 1 2 3 4 5 6
      0x00000000L, 0x10000000L, 0x00010000L, 0x10010000L, 0x00000004L,
      0x10000004L, 0x00010004L, 0x10010004L, 0x20000000L, 0x30000000L,
      0x20010000L, 0x30010000L, 0x20000004L, 0x30000004L, 0x20010004L,
@@ -132,7 +132,7 @@ static const uint32_t des_skb[8][64] = {
      0x00111000L, 0x10111000L, 0x00101004L, 0x10101004L, 0x00111004L,
      0x10111004L, 0x20101000L, 0x30101000L, 0x20111000L, 0x30111000L,
      0x20101004L, 0x30101004L, 0x20111004L, 0x30111004L, },
-    {/* for D bits (numbered as per FIPS 46) 8 9 11 12 13 14 */
+    {  // for D bits (numbered as per FIPS 46) 8 9 11 12 13 14
      0x00000000L, 0x08000000L, 0x00000008L, 0x08000008L, 0x00000400L,
      0x08000400L, 0x00000408L, 0x08000408L, 0x00020000L, 0x08020000L,
      0x00020008L, 0x08020008L, 0x00020400L, 0x08020400L, 0x00020408L,
@@ -146,7 +146,7 @@ static const uint32_t des_skb[8][64] = {
      0x02000009L, 0x0A000009L, 0x02000401L, 0x0A000401L, 0x02000409L,
      0x0A000409L, 0x02020001L, 0x0A020001L, 0x02020009L, 0x0A020009L,
      0x02020401L, 0x0A020401L, 0x02020409L, 0x0A020409L, },
-    {/* for D bits (numbered as per FIPS 46) 16 17 18 19 20 21 */
+    {  // for D bits (numbered as per FIPS 46) 16 17 18 19 20 21
      0x00000000L, 0x00000100L, 0x00080000L, 0x00080100L, 0x01000000L,
      0x01000100L, 0x01080000L, 0x01080100L, 0x00000010L, 0x00000110L,
      0x00080010L, 0x00080110L, 0x01000010L, 0x01000110L, 0x01080010L,
@@ -160,7 +160,7 @@ static const uint32_t des_skb[8][64] = {
      0x00280200L, 0x00280300L, 0x01200200L, 0x01200300L, 0x01280200L,
      0x01280300L, 0x00200210L, 0x00200310L, 0x00280210L, 0x00280310L,
      0x01200210L, 0x01200310L, 0x01280210L, 0x01280310L, },
-    {/* for D bits (numbered as per FIPS 46) 22 23 24 25 27 28 */
+    {  // for D bits (numbered as per FIPS 46) 22 23 24 25 27 28
      0x00000000L, 0x04000000L, 0x00040000L, 0x04040000L, 0x00000002L,
      0x04000002L, 0x00040002L, 0x04040002L, 0x00002000L, 0x04002000L,
      0x00042000L, 0x04042000L, 0x00002002L, 0x04002002L, 0x00042002L,
@@ -176,7 +176,7 @@ static const uint32_t des_skb[8][64] = {
      0x00002822L, 0x04002822L, 0x00042822L, 0x04042822L, }};
 
 static const uint32_t DES_SPtrans[8][64] = {
-    {/* nibble 0 */
+    {  // nibble 0
      0x02080800L, 0x00080000L, 0x02000002L, 0x02080802L, 0x02000000L,
      0x00080802L, 0x00080002L, 0x02000002L, 0x00080802L, 0x02080800L,
      0x02080000L, 0x00000802L, 0x02000802L, 0x02000000L, 0x00000000L,
@@ -190,7 +190,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x02080000L, 0x02000802L, 0x02000000L, 0x00000802L, 0x00080002L,
      0x00000000L, 0x00080000L, 0x02000000L, 0x02000802L, 0x02080800L,
      0x00000002L, 0x02080002L, 0x00000800L, 0x00080802L, },
-    {/* nibble 1 */
+    {  // nibble 1
      0x40108010L, 0x00000000L, 0x00108000L, 0x40100000L, 0x40000010L,
      0x00008010L, 0x40008000L, 0x00108000L, 0x00008000L, 0x40100010L,
      0x00000010L, 0x40008000L, 0x00100010L, 0x40108000L, 0x40100000L,
@@ -204,7 +204,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x00000000L, 0x40000010L, 0x00000010L, 0x40108010L, 0x00108000L,
      0x40100000L, 0x40100010L, 0x00100000L, 0x00008010L, 0x40008000L,
      0x40008010L, 0x00000010L, 0x40100000L, 0x00108000L, },
-    {/* nibble 2 */
+    {  // nibble 2
      0x04000001L, 0x04040100L, 0x00000100L, 0x04000101L, 0x00040001L,
      0x04000000L, 0x04000101L, 0x00040100L, 0x04000100L, 0x00040000L,
      0x04040000L, 0x00000001L, 0x04040101L, 0x00000101L, 0x00000001L,
@@ -218,7 +218,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x04000000L, 0x04040101L, 0x00040000L, 0x04000100L, 0x04000101L,
      0x00040100L, 0x04000100L, 0x00000000L, 0x04040001L, 0x00000101L,
      0x04000001L, 0x00040101L, 0x00000100L, 0x04040000L, },
-    {/* nibble 3 */
+    {  // nibble 3
      0x00401008L, 0x10001000L, 0x00000008L, 0x10401008L, 0x00000000L,
      0x10400000L, 0x10001008L, 0x00400008L, 0x10401000L, 0x10000008L,
      0x10000000L, 0x00001008L, 0x10000008L, 0x00401008L, 0x00400000L,
@@ -232,7 +232,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x00401008L, 0x00400000L, 0x10401008L, 0x00000008L, 0x10001000L,
      0x00401008L, 0x00400008L, 0x00401000L, 0x10400000L, 0x10001008L,
      0x00001008L, 0x10000000L, 0x10000008L, 0x10401000L, },
-    {/* nibble 4 */
+    {  // nibble 4
      0x08000000L, 0x00010000L, 0x00000400L, 0x08010420L, 0x08010020L,
      0x08000400L, 0x00010420L, 0x08010000L, 0x00010000L, 0x00000020L,
      0x08000020L, 0x00010400L, 0x08000420L, 0x08010020L, 0x08010400L,
@@ -246,7 +246,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x00000000L, 0x08010420L, 0x08010020L, 0x08010400L, 0x00000420L,
      0x00010000L, 0x00010400L, 0x08010020L, 0x08000400L, 0x00000420L,
      0x00000020L, 0x00010420L, 0x08010000L, 0x08000020L, },
-    {/* nibble 5 */
+    {  // nibble 5
      0x80000040L, 0x00200040L, 0x00000000L, 0x80202000L, 0x00200040L,
      0x00002000L, 0x80002040L, 0x00200000L, 0x00002040L, 0x80202040L,
      0x00202000L, 0x80000000L, 0x80002000L, 0x80000040L, 0x80200000L,
@@ -260,7 +260,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x00200000L, 0x80002040L, 0x80000040L, 0x80200000L, 0x00202040L,
      0x00000000L, 0x00002000L, 0x80000040L, 0x80002040L, 0x80202000L,
      0x80200000L, 0x00002040L, 0x00000040L, 0x80200040L, },
-    {/* nibble 6 */
+    {  // nibble 6
      0x00004000L, 0x00000200L, 0x01000200L, 0x01000004L, 0x01004204L,
      0x00004004L, 0x00004200L, 0x00000000L, 0x01000000L, 0x01000204L,
      0x00000204L, 0x01004000L, 0x00000004L, 0x01004200L, 0x01004000L,
@@ -274,7 +274,7 @@ static const uint32_t DES_SPtrans[8][64] = {
      0x01000200L, 0x00004200L, 0x00000204L, 0x00004000L, 0x01004204L,
      0x01000000L, 0x01004200L, 0x00000004L, 0x00004004L, 0x01004204L,
      0x01000004L, 0x01004200L, 0x01004000L, 0x00004004L, },
-    {/* nibble 7 */
+    {  // nibble 7
      0x20800080L, 0x20820000L, 0x00020080L, 0x00000000L, 0x20020000L,
      0x00800080L, 0x20800000L, 0x20820080L, 0x00000080L, 0x20000000L,
      0x00820000L, 0x00020080L, 0x00820080L, 0x20020080L, 0x20000080L,
@@ -305,9 +305,9 @@ void DES_set_key(const DES_cblock *key, DES_key_schedule *schedule) {
   c2l(in, c);
   c2l(in, d);
 
-  /* do PC1 in 47 simple operations :-)
-   * Thanks to John Fletcher (john_fletcher@lccmail.ocf.llnl.gov)
-   * for the inspiration. :-) */
+  // do PC1 in 47 simple operations :-)
+  // Thanks to John Fletcher (john_fletcher@lccmail.ocf.llnl.gov)
+  // for the inspiration. :-)
   PERM_OP(d, c, t, 4, 0x0f0f0f0fL);
   HPERM_OP(c, t, -2, 0xcccc0000L);
   HPERM_OP(d, t, -2, 0xcccc0000L);
@@ -328,8 +328,8 @@ void DES_set_key(const DES_cblock *key, DES_key_schedule *schedule) {
     }
     c &= 0x0fffffffL;
     d &= 0x0fffffffL;
-    /* could be a few less shifts but I am to lazy at this
-     * point in time to investigate */
+    // could be a few less shifts but I am to lazy at this
+    // point in time to investigate
     s = des_skb[0][(c) & 0x3f] |
         des_skb[1][((c >> 6L) & 0x03) | ((c >> 7L) & 0x3c)] |
         des_skb[2][((c >> 13L) & 0x0f) | ((c >> 14L) & 0x30)] |
@@ -340,7 +340,7 @@ void DES_set_key(const DES_cblock *key, DES_key_schedule *schedule) {
         des_skb[6][(d >> 15L) & 0x3f] |
         des_skb[7][((d >> 21L) & 0x0f) | ((d >> 22L) & 0x30)];
 
-    /* table contained 0213 4657 */
+    // table contained 0213 4657
     t2 = ((t << 16L) | (s & 0x0000ffffL)) & 0xffffffffL;
     schedule->subkeys[i][0] = ROTATE(t2, 30) & 0xffffffffL;
 
@@ -385,18 +385,18 @@ static void DES_encrypt1(uint32_t *data, const DES_key_schedule *ks, int enc) {
   l = data[1];
 
   IP(r, l);
-  /* Things have been modified so that the initial rotate is done outside
-   * the loop.  This required the DES_SPtrans values in sp.h to be
-   * rotated 1 bit to the right. One perl script later and things have a
-   * 5% speed up on a sparc2. Thanks to Richard Outerbridge
-   * <71755.204@CompuServe.COM> for pointing this out. */
-  /* clear the top bits on machines with 8byte longs */
-  /* shift left by 2 */
+  // Things have been modified so that the initial rotate is done outside
+  // the loop.  This required the DES_SPtrans values in sp.h to be
+  // rotated 1 bit to the right. One perl script later and things have a
+  // 5% speed up on a sparc2. Thanks to Richard Outerbridge
+  // <71755.204@CompuServe.COM> for pointing this out.
+  // clear the top bits on machines with 8byte longs
+  // shift left by 2
   r = ROTATE(r, 29) & 0xffffffffL;
   l = ROTATE(l, 29) & 0xffffffffL;
 
-  /* I don't know if it is worth the effort of loop unrolling the
-   * inner loop */
+  // I don't know if it is worth the effort of loop unrolling the
+  // inner loop
   if (enc) {
     D_ENCRYPT(ks, l, r, 0);
     D_ENCRYPT(ks, r, l, 1);
@@ -433,7 +433,7 @@ static void DES_encrypt1(uint32_t *data, const DES_key_schedule *ks, int enc) {
     D_ENCRYPT(ks, r, l, 0);
   }
 
-  /* rotate and clear the top bits on machines with 8byte longs */
+  // rotate and clear the top bits on machines with 8byte longs
   l = ROTATE(l, 3) & 0xffffffffL;
   r = ROTATE(r, 3) & 0xffffffffL;
 
@@ -448,17 +448,17 @@ static void DES_encrypt2(uint32_t *data, const DES_key_schedule *ks, int enc) {
   r = data[0];
   l = data[1];
 
-  /* Things have been modified so that the initial rotate is done outside the
-   * loop.  This required the DES_SPtrans values in sp.h to be rotated 1 bit to
-   * the right. One perl script later and things have a 5% speed up on a
-   * sparc2. Thanks to Richard Outerbridge <71755.204@CompuServe.COM> for
-   * pointing this out. */
-  /* clear the top bits on machines with 8byte longs */
+  // Things have been modified so that the initial rotate is done outside the
+  // loop.  This required the DES_SPtrans values in sp.h to be rotated 1 bit to
+  // the right. One perl script later and things have a 5% speed up on a
+  // sparc2. Thanks to Richard Outerbridge <71755.204@CompuServe.COM> for
+  // pointing this out.
+  // clear the top bits on machines with 8byte longs
   r = ROTATE(r, 29) & 0xffffffffL;
   l = ROTATE(l, 29) & 0xffffffffL;
 
-  /* I don't know if it is worth the effort of loop unrolling the
-   * inner loop */
+  // I don't know if it is worth the effort of loop unrolling the
+  // inner loop
   if (enc) {
     D_ENCRYPT(ks, l, r, 0);
     D_ENCRYPT(ks, r, l, 1);
@@ -494,7 +494,7 @@ static void DES_encrypt2(uint32_t *data, const DES_key_schedule *ks, int enc) {
     D_ENCRYPT(ks, l, r, 1);
     D_ENCRYPT(ks, r, l, 0);
   }
-  /* rotate and clear the top bits on machines with 8byte longs */
+  // rotate and clear the top bits on machines with 8byte longs
   data[0] = ROTATE(l, 3) & 0xffffffffL;
   data[1] = ROTATE(r, 3) & 0xffffffffL;
 }
@@ -764,7 +764,7 @@ void DES_ede2_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
 }
 
 
-/* Deprecated functions. */
+// Deprecated functions.
 
 void DES_set_key_unchecked(const DES_cblock *key, DES_key_schedule *schedule) {
   DES_set_key(key, schedule);

@@ -21,16 +21,13 @@ rtc_static_library("system_wrappers") {
     "include/cpu_info.h",
     "include/event_wrapper.h",
     "include/file_wrapper.h",
-    "include/fix_interlocked_exchange_pointer_win.h",
     "include/ntp_time.h",
     "include/rtp_to_ntp_estimator.h",
     "include/rw_lock_wrapper.h",
     "include/sleep.h",
-    "include/static_instance.h",
     "include/timestamp_extrapolator.h",
-    "include/trace.h",
     "source/aligned_malloc.cc",
-    "source/atomic32_win.cc",
+    "source/atomic32.cc",
     "source/clock.cc",
     "source/cpu_features.cc",
     "source/cpu_info.cc",
@@ -48,18 +45,14 @@ rtc_static_library("system_wrappers") {
     "source/rw_lock_win.h",
     "source/sleep.cc",
     "source/timestamp_extrapolator.cc",
-    "source/trace_impl.cc",
-    "source/trace_impl.h",
-    "source/trace_posix.cc",
-    "source/trace_posix.h",
-    "source/trace_win.cc",
-    "source/trace_win.h",
   ]
 
   defines = []
   libs = []
   deps = [
     "..:webrtc_common",
+    "../api:optional",
+    "../modules:module_api_public",
   ]
   public_deps = [
     ":cpu_features_api",
@@ -68,11 +61,6 @@ rtc_static_library("system_wrappers") {
   ]
 
   if (is_android) {
-    sources += [
-      "include/logcat_trace_context.h",
-      "source/logcat_trace_context.cc",
-    ]
-
     defines += [ "WEBRTC_THREAD_RR" ]
 
     deps += [ ":cpu_features_android" ]
@@ -90,13 +78,8 @@ rtc_static_library("system_wrappers") {
     libs += [ "rt" ]
   }
 
-  if (is_linux || is_android) {
-    sources += [ "source/atomic32_non_darwin_unix.cc" ]
-  }
-
   if (is_ios || is_mac) {
     defines += [ "WEBRTC_THREAD_RR" ]
-    sources += [ "source/atomic32_darwin.cc" ]
   }
 
   # TODO(jschuh): Bug 1348: fix this warning.
@@ -107,10 +90,10 @@ rtc_static_library("system_wrappers") {
 
     cflags = [ "/wd4334" ]  # Ignore warning on shift operator promotion.
 
-    # Windows needs //webrtc/base:rtc_base due to include of webrtc/base/win32.h
-    # in source/clock.cc.
+    # Windows needs ../rtc_base:rtc_base due to include of
+    # webrtc/rtc_base/win32.h in source/clock.cc.
     # TODO(kjellander): Remove (bugs.webrtc.org/6828)
-    deps += [ "../base:rtc_base" ]
+    deps += [ "../rtc_base:rtc_base" ]
   }
 
   if (is_win && is_clang) {
@@ -118,7 +101,10 @@ rtc_static_library("system_wrappers") {
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
-  deps += [ "../base:rtc_base_approved" ]
+  deps += [
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_numerics",
+  ]
 }
 
 rtc_source_set("cpu_features_api") {
@@ -148,11 +134,11 @@ rtc_source_set("metrics_api") {
   ]
   deps = [
     "..:webrtc_common",
-    "../base:rtc_base_approved",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
-rtc_static_library("field_trial_default") {
+rtc_source_set("field_trial_default") {
   sources = [
     "include/field_trial_default.h",
     "source/field_trial_default.cc",
@@ -162,14 +148,14 @@ rtc_static_library("field_trial_default") {
   ]
 }
 
-rtc_static_library("metrics_default") {
+rtc_source_set("metrics_default") {
   sources = [
     "include/metrics_default.h",
     "source/metrics_default.cc",
   ]
   deps = [
     ":metrics_api",
-    "../base:rtc_base_approved",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -228,7 +214,7 @@ if (rtc_include_tests) {
       ":metrics_default",
       ":system_wrappers",
       "..:webrtc_common",
-      "../base:rtc_base_approved",
+      "../rtc_base:rtc_base_approved",
       "../test:test_main",
       "//testing/gtest",
     ]

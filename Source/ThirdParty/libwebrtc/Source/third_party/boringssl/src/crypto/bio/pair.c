@@ -63,22 +63,22 @@
 
 
 struct bio_bio_st {
-  BIO *peer; /* NULL if buf == NULL.
-              * If peer != NULL, then peer->ptr is also a bio_bio_st,
-              * and its "peer" member points back to us.
-              * peer != NULL iff init != 0 in the BIO. */
+  BIO *peer;  // NULL if buf == NULL.
+              // If peer != NULL, then peer->ptr is also a bio_bio_st,
+              // and its "peer" member points back to us.
+              // peer != NULL iff init != 0 in the BIO.
 
-  /* This is for what we write (i.e. reading uses peer's struct): */
-  int closed;    /* valid iff peer != NULL */
-  size_t len;    /* valid iff buf != NULL; 0 if peer == NULL */
-  size_t offset; /* valid iff buf != NULL; 0 if len == 0 */
+  // This is for what we write (i.e. reading uses peer's struct):
+  int closed;     // valid iff peer != NULL
+  size_t len;     // valid iff buf != NULL; 0 if peer == NULL
+  size_t offset;  // valid iff buf != NULL; 0 if len == 0
   size_t size;
-  uint8_t *buf; /* "size" elements (if != NULL) */
+  uint8_t *buf;  // "size" elements (if != NULL)
 
-  size_t request; /* valid iff peer != NULL; 0 if len != 0,
-                   * otherwise set by peer to number of bytes
-                   * it (unsuccessfully) tried to read,
-                   * never more than buffer space (size-len) warrants. */
+  size_t request;  // valid iff peer != NULL; 0 if len != 0,
+                   // otherwise set by peer to number of bytes
+                   // it (unsuccessfully) tried to read,
+                   // never more than buffer space (size-len) warrants.
 };
 
 static int bio_new(BIO *bio) {
@@ -90,7 +90,7 @@ static int bio_new(BIO *bio) {
   }
   OPENSSL_memset(b, 0, sizeof(struct bio_bio_st));
 
-  b->size = 17 * 1024; /* enough for one TLS record (just a default) */
+  b->size = 17 * 1024;  // enough for one TLS record (just a default)
   bio->ptr = b;
   return 1;
 }
@@ -165,7 +165,7 @@ static int bio_read(BIO *bio, char *buf, int size_) {
   assert(peer_b != NULL);
   assert(peer_b->buf != NULL);
 
-  peer_b->request = 0; /* will be set in "retry_read" situation */
+  peer_b->request = 0;  // will be set in "retry_read" situation
 
   if (buf == NULL || size == 0) {
     return 0;
@@ -173,30 +173,30 @@ static int bio_read(BIO *bio, char *buf, int size_) {
 
   if (peer_b->len == 0) {
     if (peer_b->closed) {
-      return 0; /* writer has closed, and no data is left */
+      return 0;  // writer has closed, and no data is left
     } else {
-      BIO_set_retry_read(bio); /* buffer is empty */
+      BIO_set_retry_read(bio);  // buffer is empty
       if (size <= peer_b->size) {
         peer_b->request = size;
       } else {
-        /* don't ask for more than the peer can
-         * deliver in one write */
+        // don't ask for more than the peer can
+        // deliver in one write
         peer_b->request = peer_b->size;
       }
       return -1;
     }
   }
 
-  /* we can read */
+  // we can read
   if (peer_b->len < size) {
     size = peer_b->len;
   }
 
-  /* now read "size" bytes */
+  // now read "size" bytes
   rest = size;
 
   assert(rest > 0);
-  /* one or two iterations */
+  // one or two iterations
   do {
     size_t chunk;
 
@@ -204,7 +204,7 @@ static int bio_read(BIO *bio, char *buf, int size_) {
     if (peer_b->offset + rest <= peer_b->size) {
       chunk = rest;
     } else {
-      /* wrap around ring buffer */
+      // wrap around ring buffer
       chunk = peer_b->size - peer_b->offset;
     }
     assert(peer_b->offset + chunk <= peer_b->size);
@@ -220,7 +220,7 @@ static int bio_read(BIO *bio, char *buf, int size_) {
       }
       buf += chunk;
     } else {
-      /* buffer now empty, no need to advance "buf" */
+      // buffer now empty, no need to advance "buf"
       assert(chunk == rest);
       peer_b->offset = 0;
     }
@@ -248,7 +248,7 @@ static int bio_write(BIO *bio, const char *buf, int num_) {
 
   b->request = 0;
   if (b->closed) {
-    /* we already closed */
+    // we already closed
     OPENSSL_PUT_ERROR(BIO, BIO_R_BROKEN_PIPE);
     return -1;
   }
@@ -256,20 +256,20 @@ static int bio_write(BIO *bio, const char *buf, int num_) {
   assert(b->len <= b->size);
 
   if (b->len == b->size) {
-    BIO_set_retry_write(bio); /* buffer is full */
+    BIO_set_retry_write(bio);  // buffer is full
     return -1;
   }
 
-  /* we can write */
+  // we can write
   if (num > b->size - b->len) {
     num = b->size - b->len;
   }
 
-  /* now write "num" bytes */
+  // now write "num" bytes
   rest = num;
 
   assert(rest > 0);
-  /* one or two iterations */
+  // one or two iterations
   do {
     size_t write_offset;
     size_t chunk;
@@ -280,12 +280,12 @@ static int bio_write(BIO *bio, const char *buf, int num_) {
     if (write_offset >= b->size) {
       write_offset -= b->size;
     }
-    /* b->buf[write_offset] is the first byte we can write to. */
+    // b->buf[write_offset] is the first byte we can write to.
 
     if (write_offset + rest <= b->size) {
       chunk = rest;
     } else {
-      /* wrap around ring buffer */
+      // wrap around ring buffer
       chunk = b->size - write_offset;
     }
 
@@ -363,15 +363,15 @@ static long bio_ctrl(BIO *bio, int cmd, long num, void *ptr) {
   assert(b != NULL);
 
   switch (cmd) {
-    /* specific CTRL codes */
+    // specific CTRL codes
 
     case BIO_C_GET_WRITE_BUF_SIZE:
       ret = (long)b->size;
       break;
 
     case BIO_C_GET_WRITE_GUARANTEE:
-      /* How many bytes can the caller feed to the next write
-       * without having to keep any? */
+      // How many bytes can the caller feed to the next write
+      // without having to keep any?
       if (b->peer == NULL || b->closed) {
         ret = 0;
       } else {
@@ -380,28 +380,28 @@ static long bio_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       break;
 
     case BIO_C_GET_READ_REQUEST:
-      /* If the peer unsuccessfully tried to read, how many bytes
-       * were requested?  (As with BIO_CTRL_PENDING, that number
-       * can usually be treated as boolean.) */
+      // If the peer unsuccessfully tried to read, how many bytes
+      // were requested?  (As with BIO_CTRL_PENDING, that number
+      // can usually be treated as boolean.)
       ret = (long)b->request;
       break;
 
     case BIO_C_RESET_READ_REQUEST:
-      /* Reset request.  (Can be useful after read attempts
-       * at the other side that are meant to be non-blocking,
-       * e.g. when probing SSL_read to see if any data is
-       * available.) */
+      // Reset request.  (Can be useful after read attempts
+      // at the other side that are meant to be non-blocking,
+      // e.g. when probing SSL_read to see if any data is
+      // available.)
       b->request = 0;
       ret = 1;
       break;
 
     case BIO_C_SHUTDOWN_WR:
-      /* similar to shutdown(..., SHUT_WR) */
+      // similar to shutdown(..., SHUT_WR)
       b->closed = 1;
       ret = 1;
       break;
 
-    /* standard CTRL codes follow */
+    // standard CTRL codes follow
 
     case BIO_CTRL_GET_CLOSE:
       ret = bio->shutdown;
@@ -453,7 +453,7 @@ static long bio_ctrl(BIO *bio, int cmd, long num, void *ptr) {
 
 static const BIO_METHOD methods_biop = {
     BIO_TYPE_BIO,    "BIO pair", bio_write, bio_read, NULL /* puts */,
-    NULL /* gets */, bio_ctrl,   bio_new,   bio_free, NULL /* callback_ctrl */
+    NULL /* gets */, bio_ctrl,   bio_new,   bio_free, NULL /* callback_ctrl */,
 };
 
 static const BIO_METHOD *bio_s_bio(void) { return &methods_biop; }

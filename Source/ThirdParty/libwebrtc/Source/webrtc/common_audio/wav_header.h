@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_WAV_HEADER_H_
-#define WEBRTC_COMMON_AUDIO_WAV_HEADER_H_
+#ifndef COMMON_AUDIO_WAV_HEADER_H_
+#define COMMON_AUDIO_WAV_HEADER_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -61,4 +61,4 @@ bool ReadWavHeader(ReadableWav* readable,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_AUDIO_WAV_HEADER_H_
+#endif  // COMMON_AUDIO_WAV_HEADER_H_

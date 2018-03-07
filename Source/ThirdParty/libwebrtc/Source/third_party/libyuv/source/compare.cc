@@ -110,12 +110,17 @@ uint32 ARGBDetect(const uint8* argb, int stride_argb, int width, int height) {
   return fourcc;
 }
 
+// NEON version accumulates in 16 bit shorts which overflow at 65536 bytes.
+// So actual maximum is 1 less loop, which is 64436 - 32 bytes.
+
 LIBYUV_API
 uint64 ComputeHammingDistance(const uint8* src_a,
                               const uint8* src_b,
                               int count) {
-  const int kBlockSize = 65536;
-  int remainder = count & (kBlockSize - 1) & ~31;
+  const int kBlockSize = 1 << 15;  // 32768;
+  const int kSimdSize = 64;
+  // SIMD for multiple of 64, and C for remainder
+  int remainder = count & (kBlockSize - 1) & ~(kSimdSize - 1);
   uint64 diff = 0;
   int i;
   uint32 (*HammingDistance)(const uint8* src_a, const uint8* src_b, int count) =
@@ -125,14 +130,24 @@ uint64 ComputeHammingDistance(const uint8* src_a,
     HammingDistance = HammingDistance_NEON;
   }
 #endif
-#if defined(HAS_HAMMINGDISTANCE_X86)
-  if (TestCpuFlag(kCpuHasX86)) {
-    HammingDistance = HammingDistance_X86;
+#if defined(HAS_HAMMINGDISTANCE_SSSE3)
+  if (TestCpuFlag(kCpuHasSSSE3)) {
+    HammingDistance = HammingDistance_SSSE3;
+  }
+#endif
+#if defined(HAS_HAMMINGDISTANCE_SSE42)
+  if (TestCpuFlag(kCpuHasSSE42)) {
+    HammingDistance = HammingDistance_SSE42;
   }
 #endif
 #if defined(HAS_HAMMINGDISTANCE_AVX2)
   if (TestCpuFlag(kCpuHasAVX2)) {
     HammingDistance = HammingDistance_AVX2;
+  }
+#endif
+#if defined(HAS_HAMMINGDISTANCE_MSA)
+  if (TestCpuFlag(kCpuHasMSA)) {
+    HammingDistance = HammingDistance_MSA;
   }
 #endif
 #ifdef _OPENMP
@@ -148,7 +163,7 @@ uint64 ComputeHammingDistance(const uint8* src_a,
     src_a += remainder;
     src_b += remainder;
   }
-  remainder = count & 31;
+  remainder = count & (kSimdSize - 1);
   if (remainder) {
     diff += HammingDistance_C(src_a, src_b, remainder);
   }
@@ -184,6 +199,11 @@ uint64 ComputeSumSquareError(const uint8* src_a,
   if (TestCpuFlag(kCpuHasAVX2)) {
     // Note only used for multiples of 32 so count is not checked.
     SumSquareError = SumSquareError_AVX2;
+  }
+#endif
+#if defined(HAS_SUMSQUAREERROR_MSA)
+  if (TestCpuFlag(kCpuHasMSA)) {
+    SumSquareError = SumSquareError_MSA;
   }
 #endif
 #ifdef _OPENMP

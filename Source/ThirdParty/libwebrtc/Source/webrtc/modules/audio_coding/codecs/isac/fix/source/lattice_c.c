@@ -16,7 +16,7 @@
 
 #include "settings.h"
 #include "signal_processing_library.h"
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 /* Filter ar_g_Q0[] and ar_f_Q0[] through an AR filter with coefficients
  * cth_Q15[] and sth_Q15[].

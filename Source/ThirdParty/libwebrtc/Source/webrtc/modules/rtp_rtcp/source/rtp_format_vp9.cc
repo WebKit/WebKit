@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_format_vp9.h"
+#include "modules/rtp_rtcp/source/rtp_format_vp9.h"
 
 #include <assert.h>
 #include <string.h>
 
 #include <cmath>
 
-#include "webrtc/base/bitbuffer.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/bitbuffer.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 #define RETURN_FALSE_ON_ERROR(x) \
   if (!(x)) {                    \
@@ -472,24 +472,6 @@ RtpPacketizerVp9::RtpPacketizerVp9(const RTPVideoHeaderVP9& hdr,
 RtpPacketizerVp9::~RtpPacketizerVp9() {
 }
 
-ProtectionType RtpPacketizerVp9::GetProtectionType() {
-  bool protect =
-      hdr_.temporal_idx == 0 || hdr_.temporal_idx == kNoTemporalIdx;
-  return protect ? kProtectedPacket : kUnprotectedPacket;
-}
-
-StorageType RtpPacketizerVp9::GetStorageType(uint32_t retransmission_settings) {
-  StorageType storage = kAllowRetransmission;
-  if (hdr_.temporal_idx == 0 &&
-      !(retransmission_settings & kRetransmitBaseLayer)) {
-    storage = kDontRetransmit;
-  } else if (hdr_.temporal_idx != kNoTemporalIdx && hdr_.temporal_idx > 0 &&
-             !(retransmission_settings & kRetransmitHigherLayers)) {
-    storage = kDontRetransmit;
-  }
-  return storage;
-}
-
 std::string RtpPacketizerVp9::ToString() {
   return "RtpPacketizerVp9";
 }
@@ -507,22 +489,23 @@ size_t RtpPacketizerVp9::SetPayloadData(
 // Splits payload in minimal number of roughly equal in size packets.
 void RtpPacketizerVp9::GeneratePackets() {
   if (max_payload_length_ < PayloadDescriptorLength(hdr_) + 1) {
-    LOG(LS_ERROR) << "Payload header and one payload byte won't fit in the "
-                     "first packet.";
+    RTC_LOG(LS_ERROR) << "Payload header and one payload byte won't fit in the "
+                         "first packet.";
     return;
   }
   if (max_payload_length_ < PayloadDescriptorLengthMinusSsData(hdr_) + 1 +
                                 last_packet_reduction_len_) {
-    LOG(LS_ERROR) << "Payload header and one payload byte won't fit in the last"
-                     " packet.";
+    RTC_LOG(LS_ERROR)
+        << "Payload header and one payload byte won't fit in the last"
+           " packet.";
     return;
   }
   if (payload_size_ == 1 &&
       max_payload_length_ <
           PayloadDescriptorLength(hdr_) + 1 + last_packet_reduction_len_) {
-    LOG(LS_ERROR) << "Can't fit header and payload into single packet, but "
-                     "payload size is one: no way to generate packets with "
-                     "nonzero payload.";
+    RTC_LOG(LS_ERROR) << "Can't fit header and payload into single packet, but "
+                         "payload size is one: no way to generate packets with "
+                         "nonzero payload.";
     return;
   }
 
@@ -678,19 +661,19 @@ bool RtpPacketizerVp9::WriteHeader(const PacketInfo& packet_info,
 
   // Add fields that are present.
   if (i_bit && !WritePictureId(hdr_, &writer)) {
-    LOG(LS_ERROR) << "Failed writing VP9 picture id.";
+    RTC_LOG(LS_ERROR) << "Failed writing VP9 picture id.";
     return false;
   }
   if (l_bit && !WriteLayerInfo(hdr_, &writer)) {
-    LOG(LS_ERROR) << "Failed writing VP9 layer info.";
+    RTC_LOG(LS_ERROR) << "Failed writing VP9 layer info.";
     return false;
   }
   if (p_bit && f_bit && !WriteRefIndices(hdr_, &writer)) {
-    LOG(LS_ERROR) << "Failed writing VP9 ref indices.";
+    RTC_LOG(LS_ERROR) << "Failed writing VP9 ref indices.";
     return false;
   }
   if (v_bit && !WriteSsData(hdr_, &writer)) {
-    LOG(LS_ERROR) << "Failed writing VP9 SS data.";
+    RTC_LOG(LS_ERROR) << "Failed writing VP9 SS data.";
     return false;
   }
 
@@ -708,7 +691,7 @@ bool RtpDepacketizerVp9::Parse(ParsedPayload* parsed_payload,
                                size_t payload_length) {
   assert(parsed_payload != nullptr);
   if (payload_length == 0) {
-    LOG(LS_ERROR) << "Payload length is zero.";
+    RTC_LOG(LS_ERROR) << "Payload length is zero.";
     return false;
   }
 
@@ -739,24 +722,23 @@ bool RtpDepacketizerVp9::Parse(ParsedPayload* parsed_payload,
   vp9->beginning_of_frame = b_bit ? true : false;
   vp9->end_of_frame = e_bit ? true : false;
   vp9->ss_data_available = v_bit ? true : false;
-  vp9->spatial_idx = 0;
 
   // Parse fields that are present.
   if (i_bit && !ParsePictureId(&parser, vp9)) {
-    LOG(LS_ERROR) << "Failed parsing VP9 picture id.";
+    RTC_LOG(LS_ERROR) << "Failed parsing VP9 picture id.";
     return false;
   }
   if (l_bit && !ParseLayerInfo(&parser, vp9)) {
-    LOG(LS_ERROR) << "Failed parsing VP9 layer info.";
+    RTC_LOG(LS_ERROR) << "Failed parsing VP9 layer info.";
     return false;
   }
   if (p_bit && f_bit && !ParseRefIndices(&parser, vp9)) {
-    LOG(LS_ERROR) << "Failed parsing VP9 ref indices.";
+    RTC_LOG(LS_ERROR) << "Failed parsing VP9 ref indices.";
     return false;
   }
   if (v_bit) {
     if (!ParseSsData(&parser, vp9)) {
-      LOG(LS_ERROR) << "Failed parsing VP9 SS data.";
+      RTC_LOG(LS_ERROR) << "Failed parsing VP9 SS data.";
       return false;
     }
     if (vp9->spatial_layer_resolution_present) {
@@ -772,7 +754,7 @@ bool RtpDepacketizerVp9::Parse(ParsedPayload* parsed_payload,
   assert(rem_bits % 8 == 0);
   parsed_payload->payload_length = rem_bits / 8;
   if (parsed_payload->payload_length == 0) {
-    LOG(LS_ERROR) << "Failed parsing VP9 payload data.";
+    RTC_LOG(LS_ERROR) << "Failed parsing VP9 payload data.";
     return false;
   }
   parsed_payload->payload =

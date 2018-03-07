@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_PSEUDOTCP_H_
-#define WEBRTC_P2P_BASE_PSEUDOTCP_H_
+#ifndef P2P_BASE_PSEUDOTCP_H_
+#define P2P_BASE_PSEUDOTCP_H_
 
 #include <list>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/stream.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/stream.h"
 
 namespace cricket {
 
@@ -239,4 +239,4 @@ class PseudoTcp {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_PSEUDOTCP_H_
+#endif  // P2P_BASE_PSEUDOTCP_H_

@@ -49,14 +49,15 @@
 // The variant defined with BEGIN_OWNED_PROXY_MAP does not use
 // refcounting, and instead just takes ownership of the object being proxied.
 
-#ifndef WEBRTC_API_PROXY_H_
-#define WEBRTC_API_PROXY_H_
+#ifndef API_PROXY_H_
+#define API_PROXY_H_
 
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/event.h"
-#include "webrtc/base/thread.h"
+#include "rtc_base/event.h"
+#include "rtc_base/refcountedobject.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -122,25 +123,14 @@ class SynchronousMethodCall
     : public rtc::MessageData,
       public rtc::MessageHandler {
  public:
-  explicit SynchronousMethodCall(rtc::MessageHandler* proxy)
-      : e_(), proxy_(proxy) {}
-  ~SynchronousMethodCall() {}
+  explicit SynchronousMethodCall(rtc::MessageHandler* proxy);
+  ~SynchronousMethodCall() override;
 
-  void Invoke(const rtc::Location& posted_from, rtc::Thread* t) {
-    if (t->IsCurrent()) {
-      proxy_->OnMessage(nullptr);
-    } else {
-      e_.reset(new rtc::Event(false, false));
-      t->Post(posted_from, this, 0);
-      e_->Wait(rtc::Event::kForever);
-    }
-  }
+  void Invoke(const rtc::Location& posted_from, rtc::Thread* t);
 
  private:
-  void OnMessage(rtc::Message*) {
-    proxy_->OnMessage(nullptr);
-    e_->Set();
-  }
+  void OnMessage(rtc::Message*) override;
+
   std::unique_ptr<rtc::Event> e_;
   rtc::MessageHandler* proxy_;
 };
@@ -579,4 +569,4 @@ class MethodCall5 : public rtc::Message,
 
 }  // namespace webrtc
 
-#endif  //  WEBRTC_API_PROXY_H_
+#endif  //  API_PROXY_H_

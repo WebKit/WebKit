@@ -10,12 +10,12 @@
 
 #include <memory>
 
-#include "webrtc/modules/desktop_capture/mouse_cursor_monitor.h"
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/mouse_cursor.h"
-#include "webrtc/test/gtest.h"
+#include "modules/desktop_capture/mouse_cursor_monitor.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/mouse_cursor.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

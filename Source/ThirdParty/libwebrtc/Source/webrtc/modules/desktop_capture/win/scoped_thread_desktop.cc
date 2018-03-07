@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/scoped_thread_desktop.h"
+#include "modules/desktop_capture/win/scoped_thread_desktop.h"
 
-#include "webrtc/modules/desktop_capture/win/desktop.h"
+#include "modules/desktop_capture/win/desktop.h"
 
 namespace webrtc {
 

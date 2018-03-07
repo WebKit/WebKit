@@ -83,7 +83,7 @@ int ASN1_item_sign_ctx(const ASN1_ITEM *it,
 {
     EVP_PKEY *pkey;
     unsigned char *buf_in = NULL, *buf_out = NULL;
-    size_t inl = 0, outl = 0, outll = 0;
+    size_t inl = 0, outl = 0;
 
     pkey = EVP_PKEY_CTX_get0_pkey(ctx->pctx);
 
@@ -96,7 +96,7 @@ int ASN1_item_sign_ctx(const ASN1_ITEM *it,
     }
 
     inl = ASN1_item_i2d(asn, &buf_in, it);
-    outll = outl = EVP_PKEY_size(pkey);
+    outl = EVP_PKEY_size(pkey);
     buf_out = OPENSSL_malloc((unsigned int)outl);
     if ((buf_in == NULL) || (buf_out == NULL)) {
         outl = 0;
@@ -122,13 +122,7 @@ int ASN1_item_sign_ctx(const ASN1_ITEM *it,
     signature->flags |= ASN1_STRING_FLAG_BITS_LEFT;
  err:
     EVP_MD_CTX_cleanup(ctx);
-    if (buf_in != NULL) {
-        OPENSSL_cleanse((char *)buf_in, (unsigned int)inl);
-        OPENSSL_free(buf_in);
-    }
-    if (buf_out != NULL) {
-        OPENSSL_cleanse((char *)buf_out, outll);
-        OPENSSL_free(buf_out);
-    }
+    OPENSSL_free(buf_in);
+    OPENSSL_free(buf_out);
     return (outl);
 }

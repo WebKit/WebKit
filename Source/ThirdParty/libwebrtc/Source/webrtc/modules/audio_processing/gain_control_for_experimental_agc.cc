@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/gain_control_for_experimental_agc.h"
+#include "modules/audio_processing/gain_control_for_experimental_agc.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 

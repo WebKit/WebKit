@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_ORTC_ORTCFACTORY_H_
-#define WEBRTC_ORTC_ORTCFACTORY_H_
+#ifndef ORTC_ORTCFACTORY_H_
+#define ORTC_ORTCFACTORY_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/api/ortc/ortcfactoryinterface.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/media/base/mediaengine.h"
-#include "webrtc/media/engine/webrtcmediaengine.h"
-#include "webrtc/pc/channelmanager.h"
+#include "api/ortc/ortcfactoryinterface.h"
+#include "media/base/mediaengine.h"
+#include "media/engine/webrtcmediaengine.h"
+#include "pc/channelmanager.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -38,19 +38,21 @@ class OrtcFactory : public OrtcFactoryInterface {
       rtc::NetworkManager* network_manager,
       rtc::PacketSocketFactory* socket_factory,
       AudioDeviceModule* adm,
-      std::unique_ptr<cricket::MediaEngineInterface> media_engine);
+      std::unique_ptr<cricket::MediaEngineInterface> media_engine,
+      rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
+      rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory);
 
   RTCErrorOr<std::unique_ptr<RtpTransportControllerInterface>>
   CreateRtpTransportController() override;
 
   RTCErrorOr<std::unique_ptr<RtpTransportInterface>> CreateRtpTransport(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       PacketTransportInterface* rtp,
       PacketTransportInterface* rtcp,
       RtpTransportControllerInterface* transport_controller) override;
 
   RTCErrorOr<std::unique_ptr<SrtpTransportInterface>> CreateSrtpTransport(
-      const RtcpParameters& rtcp_parameters,
+      const RtpTransportParameters& parameters,
       PacketTransportInterface* rtp,
       PacketTransportInterface* rtcp,
       RtpTransportControllerInterface* transport_controller) override;
@@ -101,7 +103,12 @@ class OrtcFactory : public OrtcFactoryInterface {
               rtc::Thread* signaling_thread,
               rtc::NetworkManager* network_manager,
               rtc::PacketSocketFactory* socket_factory,
-              AudioDeviceModule* adm);
+              AudioDeviceModule* adm,
+              rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
+              rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory);
+
+  RTCErrorOr<std::unique_ptr<RtpTransportControllerInterface>>
+  CreateRtpTransportController(const RtpTransportParameters& parameters);
 
   // Thread::Invoke doesn't support move-only arguments, so we need to remove
   // the unique_ptr wrapper from media_engine. TODO(deadbeef): Fix this.
@@ -111,7 +118,9 @@ class OrtcFactory : public OrtcFactoryInterface {
       rtc::NetworkManager* network_manager,
       rtc::PacketSocketFactory* socket_factory,
       AudioDeviceModule* adm,
-      cricket::MediaEngineInterface* media_engine);
+      cricket::MediaEngineInterface* media_engine,
+      rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
+      rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory);
 
   // Performs initialization that can fail. Called by factory method after
   // construction, and if it fails, no object is returned.
@@ -148,4 +157,4 @@ class OrtcFactory : public OrtcFactoryInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_ORTC_ORTCFACTORY_H_
+#endif  // ORTC_ORTCFACTORY_H_

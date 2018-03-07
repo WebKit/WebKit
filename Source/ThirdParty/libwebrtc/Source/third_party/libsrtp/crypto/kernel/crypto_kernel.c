@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright(c) 2001-2006,2013 Cisco Systems, Inc.
+ * Copyright(c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,10 +72,10 @@ extern srtp_debug_module_t mod_alloc;
  */
 
 extern srtp_cipher_type_t srtp_null_cipher;
-extern srtp_cipher_type_t srtp_aes_icm;
+extern srtp_cipher_type_t srtp_aes_icm_128;
+extern srtp_cipher_type_t srtp_aes_icm_256;
 #ifdef OPENSSL
 extern srtp_cipher_type_t srtp_aes_icm_192;
-extern srtp_cipher_type_t srtp_aes_icm_256;
 extern srtp_cipher_type_t srtp_aes_gcm_128_openssl;
 extern srtp_cipher_type_t srtp_aes_gcm_256_openssl;
 #endif
@@ -122,7 +122,7 @@ srtp_err_status_t srtp_crypto_kernel_init ()
     }
 
     /* initialize error reporting system */
-    status = srtp_err_reporting_init("crypto");
+    status = srtp_err_reporting_init();
     if (status) {
         return status;
     }
@@ -154,7 +154,11 @@ srtp_err_status_t srtp_crypto_kernel_init ()
     if (status) {
         return status;
     }
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm, SRTP_AES_ICM);
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm_128, SRTP_AES_ICM_128);
+    if (status) {
+        return status;
+    }
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm_256, SRTP_AES_ICM_256);
     if (status) {
         return status;
     }
@@ -163,19 +167,15 @@ srtp_err_status_t srtp_crypto_kernel_init ()
         return status;
     }
 #ifdef OPENSSL
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm_192, SRTP_AES_192_ICM);
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm_192, SRTP_AES_ICM_192);
     if (status) {
         return status;
     }
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm_256, SRTP_AES_256_ICM);
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_128_openssl, SRTP_AES_GCM_128);
     if (status) {
         return status;
     }
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_128_openssl, SRTP_AES_128_GCM);
-    if (status) {
-        return status;
-    }
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_256_openssl, SRTP_AES_256_GCM);
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_256_openssl, SRTP_AES_GCM_256);
     if (status) {
         return status;
     }
@@ -210,45 +210,34 @@ srtp_err_status_t srtp_crypto_kernel_status ()
     srtp_err_status_t status;
     srtp_kernel_cipher_type_t  *ctype = crypto_kernel.cipher_type_list;
     srtp_kernel_auth_type_t    *atype = crypto_kernel.auth_type_list;
-    srtp_kernel_debug_module_t *dm    = crypto_kernel.debug_module_list;
 
     /* for each cipher type, describe and test */
     while (ctype != NULL) {
-        printf("cipher: %s\n", ctype->cipher_type->description);
-        printf("  self-test: ");
+        srtp_err_report(srtp_err_level_info, "cipher: %s\n", ctype->cipher_type->description);
+        srtp_err_report(srtp_err_level_info, "  self-test: ");
         status = srtp_cipher_type_self_test(ctype->cipher_type);
         if (status) {
-            printf("failed with error code %d\n", status);
+            srtp_err_report(srtp_err_level_error, "failed with error code %d\n", status);
             exit(status);
         }
-        printf("passed\n");
+        srtp_err_report(srtp_err_level_info, "passed\n");
         ctype = ctype->next;
     }
 
     /* for each auth type, describe and test */
     while (atype != NULL) {
-        printf("auth func: %s\n", atype->auth_type->description);
-        printf("  self-test: ");
+        srtp_err_report(srtp_err_level_info, "auth func: %s\n", atype->auth_type->description);
+        srtp_err_report(srtp_err_level_info, "  self-test: ");
         status = srtp_auth_type_self_test(atype->auth_type);
         if (status) {
-            printf("failed with error code %d\n", status);
+            srtp_err_report(srtp_err_level_error, "failed with error code %d\n", status);
             exit(status);
         }
-        printf("passed\n");
+        srtp_err_report(srtp_err_level_info, "passed\n");
         atype = atype->next;
     }
 
-    /* describe each debug module */
-    printf("debug modules loaded:\n");
-    while (dm != NULL) {
-        printf("  %s ", dm->mod->name);
-        if (dm->mod->on) {
-            printf("(on)\n");
-        } else{
-            printf("(off)\n");
-        }
-        dm = dm->next;
-    }
+    srtp_crypto_kernel_list_debug_modules();
 
     return srtp_err_status_ok;
 }
@@ -258,13 +247,13 @@ srtp_err_status_t srtp_crypto_kernel_list_debug_modules ()
     srtp_kernel_debug_module_t *dm = crypto_kernel.debug_module_list;
 
     /* describe each debug module */
-    printf("debug modules loaded:\n");
+    srtp_err_report(srtp_err_level_info, "debug modules loaded:\n");
     while (dm != NULL) {
-        printf("  %s ", dm->mod->name);
+        srtp_err_report(srtp_err_level_info, "  %s ", dm->mod->name);
         if (dm->mod->on) {
-            printf("(on)\n");
+            srtp_err_report(srtp_err_level_info, "(on)\n");
         } else{
-            printf("(off)\n");
+            srtp_err_report(srtp_err_level_info, "(off)\n");
         }
         dm = dm->next;
     }
@@ -566,7 +555,7 @@ srtp_err_status_t srtp_crypto_kernel_load_debug_module (srtp_debug_module_t *new
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_crypto_kernel_set_debug_module (char *name, int on)
+srtp_err_status_t srtp_crypto_kernel_set_debug_module (const char *name, int on)
 {
     srtp_kernel_debug_module_t *kdm;
 

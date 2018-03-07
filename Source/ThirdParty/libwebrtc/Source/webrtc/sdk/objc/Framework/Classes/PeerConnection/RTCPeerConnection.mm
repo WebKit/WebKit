@@ -17,6 +17,7 @@
 #import "RTCLegacyStatsReport+Private.h"
 #import "RTCMediaConstraints+Private.h"
 #import "RTCMediaStream+Private.h"
+#import "RTCPeerConnection+Native.h"
 #import "RTCPeerConnectionFactory+Private.h"
 #import "RTCRtpReceiver+Private.h"
 #import "RTCRtpSender+Private.h"
@@ -25,8 +26,8 @@
 
 #include <memory>
 
-#include "webrtc/api/jsepicecandidate.h"
-#include "webrtc/base/checks.h"
+#include "api/jsepicecandidate.h"
+#include "rtc_base/checks.h"
 
 NSString * const kRTCPeerConnectionErrorDomain =
     @"org.webrtc.RTCPeerConnection";
@@ -367,6 +368,27 @@ void PeerConnectionDelegateAdapter::OnIceCandidatesRemoved(
       new rtc::RefCountedObject<webrtc::SetSessionDescriptionObserverAdapter>(
           completionHandler));
   _peerConnection->SetRemoteDescription(observer, sdp.nativeDescription);
+}
+
+- (BOOL)setBweMinBitrateBps:(nullable NSNumber *)minBitrateBps
+          currentBitrateBps:(nullable NSNumber *)currentBitrateBps
+              maxBitrateBps:(nullable NSNumber *)maxBitrateBps {
+  webrtc::PeerConnectionInterface::BitrateParameters params;
+  if (minBitrateBps != nil) {
+    params.min_bitrate_bps = rtc::Optional<int>(minBitrateBps.intValue);
+  }
+  if (currentBitrateBps != nil) {
+    params.current_bitrate_bps = rtc::Optional<int>(currentBitrateBps.intValue);
+  }
+  if (maxBitrateBps != nil) {
+    params.max_bitrate_bps = rtc::Optional<int>(maxBitrateBps.intValue);
+  }
+  return _peerConnection->SetBitrate(params).ok();
+}
+
+- (void)setBitrateAllocationStrategy:
+        (std::unique_ptr<rtc::BitrateAllocationStrategy>)bitrateAllocationStrategy {
+  _peerConnection->SetBitrateAllocationStrategy(std::move(bitrateAllocationStrategy));
 }
 
 - (BOOL)startRtcEventLogWithFilePath:(NSString *)filePath

@@ -12,23 +12,23 @@
 #include <cstring>
 #include <numeric>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/race_checker.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/audio_device/audio_device_impl.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/modules/audio_device/include/mock_audio_transport.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "api/optional.h"
+#include "modules/audio_device/audio_device_impl.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/mock_audio_transport.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/thread_annotations.h"
+#include "rtc_base/thread_checker.h"
+#include "rtc_base/timeutils.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -173,10 +173,10 @@ class FifoAudioStream : public AudioStream {
   rtc::CriticalSection lock_;
   rtc::RaceChecker race_checker_;
 
-  std::list<Buffer16> fifo_ GUARDED_BY(lock_);
-  size_t write_count_ GUARDED_BY(race_checker_) = 0;
-  size_t max_size_ GUARDED_BY(race_checker_) = 0;
-  size_t written_elements_ GUARDED_BY(race_checker_) = 0;
+  std::list<Buffer16> fifo_ RTC_GUARDED_BY(lock_);
+  size_t write_count_ RTC_GUARDED_BY(race_checker_) = 0;
+  size_t max_size_ RTC_GUARDED_BY(race_checker_) = 0;
+  size_t written_elements_ RTC_GUARDED_BY(race_checker_) = 0;
 };
 
 // Inserts periodic impulses and measures the latency between the time of
@@ -293,10 +293,10 @@ class LatencyAudioStream : public AudioStream {
   rtc::ThreadChecker read_thread_checker_;
   rtc::ThreadChecker write_thread_checker_;
 
-  rtc::Optional<int64_t> pulse_time_ GUARDED_BY(lock_);
-  std::vector<int> latencies_ GUARDED_BY(race_checker_);
-  size_t read_count_ ACCESS_ON(read_thread_checker_) = 0;
-  size_t write_count_ ACCESS_ON(write_thread_checker_) = 0;
+  rtc::Optional<int64_t> pulse_time_ RTC_GUARDED_BY(lock_);
+  std::vector<int> latencies_ RTC_GUARDED_BY(race_checker_);
+  size_t read_count_ RTC_ACCESS_ON(read_thread_checker_) = 0;
+  size_t write_count_ RTC_ACCESS_ON(write_thread_checker_) = 0;
 };
 
 // Mocks the AudioTransport object and proxies actions for the two callbacks
@@ -340,7 +340,7 @@ class MockAudioTransport : public test::MockAudioTransport {
                                       const bool typing_status,
                                       uint32_t& new_mic_level) {
     EXPECT_TRUE(rec_mode()) << "No test is expecting these callbacks.";
-    LOG(INFO) << "+";
+    RTC_LOG(INFO) << "+";
     // Store audio parameters once in the first callback. For all other
     // callbacks, verify that the provided audio parameters are maintained and
     // that each callback corresponds to 10ms for any given sample rate.
@@ -379,7 +379,7 @@ class MockAudioTransport : public test::MockAudioTransport {
                                int64_t* elapsed_time_ms,
                                int64_t* ntp_time_ms) {
     EXPECT_TRUE(play_mode()) << "No test is expecting these callbacks.";
-    LOG(INFO) << "-";
+    RTC_LOG(INFO) << "-";
     // Store audio parameters once in the first callback. For all other
     // callbacks, verify that the provided audio parameters are maintained and
     // that each callback corresponds to 10ms for any given sample rate.
@@ -461,17 +461,21 @@ class AudioDeviceTest : public ::testing::Test {
     // rtc::LogMessage::LogTimestamps();
     // rtc::LogMessage::LogThreads();
     audio_device_ =
-        AudioDeviceModule::Create(0, AudioDeviceModule::kPlatformDefaultAudio);
+        AudioDeviceModule::Create(AudioDeviceModule::kPlatformDefaultAudio);
     EXPECT_NE(audio_device_.get(), nullptr);
     AudioDeviceModule::AudioLayer audio_layer;
     int got_platform_audio_layer =
         audio_device_->ActiveAudioLayer(&audio_layer);
-    if (got_platform_audio_layer != 0 ||
-        audio_layer == AudioDeviceModule::kLinuxAlsaAudio) {
+    // First, ensure that a valid audio layer can be activated.
+    if (got_platform_audio_layer != 0) {
       requirements_satisfied_ = false;
     }
+    // Next, verify that the ADM can be initialized.
     if (requirements_satisfied_) {
-      EXPECT_EQ(0, audio_device_->Init());
+      requirements_satisfied_ = (audio_device_->Init() == 0);
+    }
+    // Finally, ensure that at least one valid device exists in each direction.
+    if (requirements_satisfied_) {
       const int16_t num_playout_devices = audio_device_->PlayoutDevices();
       const int16_t num_record_devices = audio_device_->RecordingDevices();
       requirements_satisfied_ =
@@ -574,6 +578,52 @@ TEST_F(AudioDeviceTest, StartStopRecording) {
   StopRecording();
 }
 
+// Tests Init/Stop/Init recording without any registered audio callback.
+// See https://bugs.chromium.org/p/webrtc/issues/detail?id=8041 for details
+// on why this test is useful.
+TEST_F(AudioDeviceTest, InitStopInitRecording) {
+  SKIP_TEST_IF_NOT(requirements_satisfied());
+  EXPECT_EQ(0, audio_device()->InitRecording());
+  EXPECT_TRUE(audio_device()->RecordingIsInitialized());
+  StopRecording();
+  EXPECT_EQ(0, audio_device()->InitRecording());
+  StopRecording();
+}
+
+// Tests Init/Stop/Init recording while playout is active.
+TEST_F(AudioDeviceTest, InitStopInitRecordingWhilePlaying) {
+  SKIP_TEST_IF_NOT(requirements_satisfied());
+  StartPlayout();
+  EXPECT_EQ(0, audio_device()->InitRecording());
+  EXPECT_TRUE(audio_device()->RecordingIsInitialized());
+  StopRecording();
+  EXPECT_EQ(0, audio_device()->InitRecording());
+  StopRecording();
+  StopPlayout();
+}
+
+// Tests Init/Stop/Init playout without any registered audio callback.
+TEST_F(AudioDeviceTest, InitStopInitPlayout) {
+  SKIP_TEST_IF_NOT(requirements_satisfied());
+  EXPECT_EQ(0, audio_device()->InitPlayout());
+  EXPECT_TRUE(audio_device()->PlayoutIsInitialized());
+  StopPlayout();
+  EXPECT_EQ(0, audio_device()->InitPlayout());
+  StopPlayout();
+}
+
+// Tests Init/Stop/Init playout while recording is active.
+TEST_F(AudioDeviceTest, InitStopInitPlayoutWhileRecording) {
+  SKIP_TEST_IF_NOT(requirements_satisfied());
+  StartRecording();
+  EXPECT_EQ(0, audio_device()->InitPlayout());
+  EXPECT_TRUE(audio_device()->PlayoutIsInitialized());
+  StopPlayout();
+  EXPECT_EQ(0, audio_device()->InitPlayout());
+  StopPlayout();
+  StopRecording();
+}
+
 // Start playout and verify that the native audio layer starts asking for real
 // audio samples to play out using the NeedMorePlayData() callback.
 // Note that we can't add expectations on audio parameters in EXPECT_CALL
@@ -657,8 +707,9 @@ TEST_F(AudioDeviceTest, RunPlayoutAndRecordingInFullDuplex) {
   StopPlayout();
   // This thresholds is set rather high to accommodate differences in hardware
   // in several devices. The main idea is to capture cases where a very large
-  // latency is built up.
-  EXPECT_LE(audio_stream.average_size(), 5u);
+  // latency is built up. See http://bugs.webrtc.org/7744 for examples on
+  // bots where relatively large average latencies can happen.
+  EXPECT_LE(audio_stream.average_size(), 25u);
   PRINT("\n");
 }
 

@@ -8,18 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/audio_processing_impl.h"
+#include "modules/audio_processing/audio_processing_impl.h"
 
-#include "webrtc/config.h"
-#include "webrtc/modules/audio_processing/test/test_utils.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/test/test_utils.h"
+#include "modules/include/module_common_types.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::Invoke;
-using ::testing::Return;
 
 namespace webrtc {
+namespace {
 
 class MockInitialize : public AudioProcessingImpl {
  public:
@@ -27,10 +26,15 @@ class MockInitialize : public AudioProcessingImpl {
       : AudioProcessingImpl(config) {}
 
   MOCK_METHOD0(InitializeLocked, int());
-  int RealInitializeLocked() NO_THREAD_SAFETY_ANALYSIS {
+  int RealInitializeLocked() RTC_NO_THREAD_SAFETY_ANALYSIS {
     return AudioProcessingImpl::InitializeLocked();
   }
+
+  MOCK_CONST_METHOD0(AddRef, void());
+  MOCK_CONST_METHOD0(Release, rtc::RefCountReleaseStatus());
 };
+
+}  // namespace
 
 TEST(AudioProcessingImplTest, AudioParameterChangeTriggersInit) {
   webrtc::Config config;
@@ -45,8 +49,7 @@ TEST(AudioProcessingImplTest, AudioParameterChangeTriggersInit) {
   // Call with the default parameters; there should be an init.
   frame.num_channels_ = 1;
   SetFrameSampleRate(&frame, 16000);
-  EXPECT_CALL(mock, InitializeLocked())
-      .Times(1);
+  EXPECT_CALL(mock, InitializeLocked()).Times(0);
   EXPECT_NOERR(mock.ProcessStream(&frame));
   EXPECT_NOERR(mock.ProcessReverseStream(&frame));
 

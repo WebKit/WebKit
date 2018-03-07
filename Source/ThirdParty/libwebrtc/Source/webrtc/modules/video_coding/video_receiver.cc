@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/modules/video_coding/encoded_frame.h"
-#include "webrtc/modules/video_coding/jitter_buffer.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/modules/video_coding/video_coding_impl.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/jitter_buffer.h"
+#include "modules/video_coding/packet.h"
+#include "modules/video_coding/video_coding_impl.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace vcm {
@@ -264,9 +264,9 @@ int32_t VideoReceiver::Decode(uint16_t maxWaitTimeMs) {
                               clock_->TimeInMilliseconds());
 
   if (first_frame_received_()) {
-    LOG(LS_INFO) << "Received first "
-                 << (frame->Complete() ? "complete" : "incomplete")
-                 << " decodable video frame";
+    RTC_LOG(LS_INFO) << "Received first "
+                     << (frame->Complete() ? "complete" : "incomplete")
+                     << " decodable video frame";
   }
 
   const int32_t ret = Decode(*frame);
@@ -320,24 +320,7 @@ int32_t VideoReceiver::Decode(const VCMEncodedFrame& frame) {
   if (decoder == nullptr) {
     return VCM_NO_CODEC_REGISTERED;
   }
-  // Decode a frame
-  int32_t ret = decoder->Decode(frame, clock_->TimeInMilliseconds());
-
-  // Check for failed decoding, run frame type request callback if needed.
-  bool request_key_frame = false;
-  if (ret < 0) {
-    request_key_frame = true;
-  }
-
-  if (!frame.Complete() || frame.MissingFrame()) {
-    request_key_frame = true;
-    ret = VCM_OK;
-  }
-  if (request_key_frame) {
-    rtc::CritScope cs(&process_crit_);
-    _scheduleKeyRequest = true;
-  }
-  return ret;
+  return decoder->Decode(frame, clock_->TimeInMilliseconds());
 }
 
 // Register possible receive codecs, can be called multiple times

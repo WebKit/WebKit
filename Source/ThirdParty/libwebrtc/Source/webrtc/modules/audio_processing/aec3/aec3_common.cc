@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 
-#include "webrtc/typedefs.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
+#include "typedefs.h"  // NOLINT(build/include)
+#include "system_wrappers/include/cpu_features_wrapper.h"
 
 namespace webrtc {
 

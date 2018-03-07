@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/testsupport/metrics/video_metrics.h"
+#include "test/testsupport/metrics/video_metrics.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -16,10 +16,10 @@
 #include <algorithm>  // min_element, max_element
 #include <memory>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/test/frame_utils.h"
+#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "test/frame_utils.h"
 #include "libyuv/convert.h"
 
 namespace webrtc {

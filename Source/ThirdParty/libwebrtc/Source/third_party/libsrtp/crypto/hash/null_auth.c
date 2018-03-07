@@ -10,7 +10,7 @@
 
 /*
  *
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,8 +86,7 @@ static srtp_err_status_t srtp_null_auth_dealloc (srtp_auth_t *a)
     extern const srtp_auth_type_t srtp_null_auth;
 
     /* zeroize entire state*/
-    octet_string_set_to_zero((uint8_t*)a,
-                             sizeof(srtp_null_auth_ctx_t) + sizeof(srtp_auth_t));
+    octet_string_set_to_zero(a, sizeof(srtp_null_auth_ctx_t) + sizeof(srtp_auth_t));
 
     /* free memory */
     srtp_crypto_free(a);

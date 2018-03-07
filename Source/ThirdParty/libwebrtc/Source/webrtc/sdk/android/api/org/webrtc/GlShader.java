@@ -82,12 +82,20 @@ public class GlShader {
    * |buffer| with |dimension| number of components per vertex.
    */
   public void setVertexAttribArray(String label, int dimension, FloatBuffer buffer) {
+    setVertexAttribArray(label, dimension, 0 /* stride */, buffer);
+  }
+
+  /**
+   * Enable and upload a vertex array for attribute |label|. The vertex data is specified in
+   * |buffer| with |dimension| number of components per vertex and specified |stride|.
+   */
+  public void setVertexAttribArray(String label, int dimension, int stride, FloatBuffer buffer) {
     if (program == -1) {
       throw new RuntimeException("The program has been released");
     }
     int location = getAttribLocation(label);
     GLES20.glEnableVertexAttribArray(location);
-    GLES20.glVertexAttribPointer(location, dimension, GLES20.GL_FLOAT, false, 0, buffer);
+    GLES20.glVertexAttribPointer(location, dimension, GLES20.GL_FLOAT, false, stride, buffer);
     GlUtil.checkNoGLES2Error("setVertexAttribArray");
   }
 

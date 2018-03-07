@@ -9,10 +9,10 @@
  */
 
 
-#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_COMPLEX_FFT_TABLES_H_
-#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_COMPLEX_FFT_TABLES_H_
+#ifndef COMMON_AUDIO_SIGNAL_PROCESSING_COMPLEX_FFT_TABLES_H_
+#define COMMON_AUDIO_SIGNAL_PROCESSING_COMPLEX_FFT_TABLES_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 static const int16_t kSinTable1024[] = {
        0,    201,    402,    603,    804,   1005,   1206,   1406,
@@ -145,4 +145,4 @@ static const int16_t kSinTable1024[] = {
    -1607,  -1406,  -1206,  -1005,   -804,   -603,   -402,   -201
 };
 
-#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_COMPLEX_FFT_TABLES_H_
+#endif  // COMMON_AUDIO_SIGNAL_PROCESSING_COMPLEX_FFT_TABLES_H_

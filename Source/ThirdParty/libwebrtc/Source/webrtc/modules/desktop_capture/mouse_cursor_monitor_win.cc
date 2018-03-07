@@ -8,19 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/mouse_cursor_monitor.h"
+#include "modules/desktop_capture/mouse_cursor_monitor.h"
 
 #include <assert.h>
 #include <string.h>
 
 #include <memory>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
-#include "webrtc/modules/desktop_capture/mouse_cursor.h"
-#include "webrtc/modules/desktop_capture/win/cursor.h"
-#include "webrtc/modules/desktop_capture/win/window_capture_utils.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/mouse_cursor.h"
+#include "modules/desktop_capture/win/cursor.h"
+#include "modules/desktop_capture/win/screen_capture_utils.h"
+#include "modules/desktop_capture/win/window_capture_utils.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -102,7 +104,8 @@ void MouseCursorMonitorWin::Capture() {
   CURSORINFO cursor_info;
   cursor_info.cbSize = sizeof(CURSORINFO);
   if (!GetCursorInfo(&cursor_info)) {
-    LOG_F(LS_ERROR) << "Unable to get cursor info. Error = " << GetLastError();
+    RTC_LOG_F(LS_ERROR) << "Unable to get cursor info. Error = "
+                        << GetLastError();
     return;
   }
 
@@ -136,6 +139,7 @@ void MouseCursorMonitorWin::Capture() {
   if (mode_ != SHAPE_AND_POSITION)
     return;
 
+  // CURSORINFO::ptScreenPos is in full desktop coordinate.
   DesktopVector position(cursor_info.ptScreenPos.x, cursor_info.ptScreenPos.y);
   bool inside = cursor_info.flags == CURSOR_SHOWING;
 
@@ -161,7 +165,9 @@ void MouseCursorMonitorWin::Capture() {
     position = position.subtract(rect.top_left());
   }
 
+  // TODO(zijiehe): Remove this overload.
   callback_->OnMouseCursorPosition(inside ? INSIDE : OUTSIDE, position);
+  callback_->OnMouseCursorPosition(position);
 }
 
 DesktopRect MouseCursorMonitorWin::GetScreenRect() {
@@ -202,6 +208,12 @@ MouseCursorMonitor* MouseCursorMonitor::CreateForScreen(
     const DesktopCaptureOptions& options,
     ScreenId screen) {
   return new MouseCursorMonitorWin(screen);
+}
+
+std::unique_ptr<MouseCursorMonitor> MouseCursorMonitor::Create(
+    const DesktopCaptureOptions& options) {
+  return std::unique_ptr<MouseCursorMonitor>(
+      CreateForScreen(options, kFullDesktopScreenId));
 }
 
 }  // namespace webrtc

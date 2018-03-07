@@ -11,7 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/api/jsepsessiondescription.h"
+#include "api/jsepsessiondescription.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {

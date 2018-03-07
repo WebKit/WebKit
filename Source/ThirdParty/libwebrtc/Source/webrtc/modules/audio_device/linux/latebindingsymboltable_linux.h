@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_DEVICE_LATEBINDINGSYMBOLTABLE_LINUX_H
-#define WEBRTC_AUDIO_DEVICE_LATEBINDINGSYMBOLTABLE_LINUX_H
+#ifndef AUDIO_DEVICE_LATEBINDINGSYMBOLTABLE_LINUX_H_
+#define AUDIO_DEVICE_LATEBINDINGSYMBOLTABLE_LINUX_H_
 
 #include <assert.h>
 #include <stddef.h>  // for NULL
 #include <string.h>
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
 // This file provides macros for creating "symbol table" classes to simplify the
 // dynamic loading of symbols from DLLs. Currently the implementation only
@@ -175,4 +175,4 @@ const char *const ClassName##_kSymbolNames[ClassName##_SYMBOL_TABLE_SIZE] = {
 }  // namespace adm_linux
 }  // namespace webrtc
 
-#endif  // WEBRTC_ADM_LATEBINDINGSYMBOLTABLE_LINUX_H
+#endif  // ADM_LATEBINDINGSYMBOLTABLE_LINUX_H_

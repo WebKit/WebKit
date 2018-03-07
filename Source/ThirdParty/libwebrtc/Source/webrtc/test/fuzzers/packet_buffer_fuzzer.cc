@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/packet_buffer.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/video_coding/packet_buffer.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

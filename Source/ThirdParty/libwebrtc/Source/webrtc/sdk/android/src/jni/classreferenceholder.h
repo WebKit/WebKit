@@ -13,29 +13,40 @@
 // stack.  Consequently, we only look up all classes once in app/webrtc.
 // http://developer.android.com/training/articles/perf-jni.html#faq_FindClass
 
-#ifndef WEBRTC_SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
-#define WEBRTC_SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
+#ifndef SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
+#define SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
+
+// TODO(magjed): Remove this whole file and replace with either generated JNI
+// code or class_loader.h.
 
 #include <jni.h>
 #include <map>
 #include <string>
 
-namespace webrtc_jni {
+namespace webrtc {
+namespace jni {
 
 // LoadGlobalClassReferenceHolder must be called in JNI_OnLoad.
 void LoadGlobalClassReferenceHolder();
 // FreeGlobalClassReferenceHolder must be called in JNI_UnLoad.
 void FreeGlobalClassReferenceHolder();
 
+// Deprecated. Most cases of finding classes should be done with generated JNI
+// code, and the few remaining cases should use the function from
+// class_loader.h.
 // Returns a global reference guaranteed to be valid for the lifetime of the
 // process.
 jclass FindClass(JNIEnv* jni, const char* name);
 
-// Convenience macro defining JNI-accessible methods in the org.webrtc package.
-// Eliminates unnecessary boilerplate and line-wraps, reducing visual clutter.
-#define JOW(rettype, name) \
-  extern "C" JNIEXPORT rettype JNICALL Java_org_webrtc_##name
+}  // namespace jni
+}  // namespace webrtc
+
+// TODO(magjed): Remove once external clients are updated.
+namespace webrtc_jni {
+
+using webrtc::jni::LoadGlobalClassReferenceHolder;
+using webrtc::jni::FreeGlobalClassReferenceHolder;
 
 }  // namespace webrtc_jni
 
-#endif  // WEBRTC_SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
+#endif  // SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_

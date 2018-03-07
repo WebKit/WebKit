@@ -8,20 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
 
 #include <utility>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
-#include "webrtc/modules/remote_bitrate_estimator/inter_arrival.h"
-#include "webrtc/modules/remote_bitrate_estimator/overuse_detector.h"
-#include "webrtc/modules/remote_bitrate_estimator/overuse_estimator.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/typedefs.h"
+#include "modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "modules/remote_bitrate_estimator/inter_arrival.h"
+#include "modules/remote_bitrate_estimator/overuse_detector.h"
+#include "modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/metrics.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -55,7 +53,7 @@ RemoteBitrateEstimatorSingleStream::RemoteBitrateEstimatorSingleStream(
       last_process_time_(-1),
       process_interval_ms_(kProcessIntervalMs),
       uma_recorded_(false) {
-  LOG(LS_INFO) << "RemoteBitrateEstimatorSingleStream: Instantiating.";
+  RTC_LOG(LS_INFO) << "RemoteBitrateEstimatorSingleStream: Instantiating.";
 }
 
 RemoteBitrateEstimatorSingleStream::~RemoteBitrateEstimatorSingleStream() {

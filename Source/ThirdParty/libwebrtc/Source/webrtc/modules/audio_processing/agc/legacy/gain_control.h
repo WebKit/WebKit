@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
+#define MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Errors
 #define AGC_UNSPECIFIED_ERROR 18000
@@ -244,4 +244,4 @@ int WebRtcAgc_Init(void* agcInst,
 }
 #endif
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC_LEGACY_GAIN_CONTROL_H_

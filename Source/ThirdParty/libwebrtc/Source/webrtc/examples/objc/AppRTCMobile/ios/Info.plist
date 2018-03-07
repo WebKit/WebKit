@@ -9,7 +9,7 @@
   <key>CFBundleDisplayName</key>
   <string>AppRTCMobile</string>
   <key>CFBundleExecutable</key>
-  <string>AppRTCMobile</string>
+  <string>${EXECUTABLE_NAME}</string>
   <key>CFBundleIcons</key>
   <dict>
     <key>CFBundlePrimaryIcon</key>
@@ -17,6 +17,8 @@
       <key>CFBundleIconFiles</key>
       <array>
         <string>Icon.png</string>
+        <string>Icon-120.png</string>
+        <string>Icon-180.png</string>
       </array>
     </dict>
   </dict>
@@ -25,7 +27,7 @@
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>AppRTCMobile</string>
+  <string>${EXECUTABLE_NAME}</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
@@ -51,6 +53,9 @@
   <key>UISupportedInterfaceOrientations</key>
   <array>
     <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
   </array>
   <key>UIAppFonts</key>
   <array>
@@ -65,6 +70,8 @@
   <string>Camera access needed for video calling</string>
   <key>NSMicrophoneUsageDescription</key>
   <string>Microphone access needed for video calling</string>
+  <key>UIFileSharingEnabled</key>
+  <true/>
   <key>UILaunchImages</key>
   <array>
     <dict>

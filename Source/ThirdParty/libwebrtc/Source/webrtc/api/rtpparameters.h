@@ -8,16 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_RTPPARAMETERS_H_
-#define WEBRTC_API_RTPPARAMETERS_H_
+#ifndef API_RTPPARAMETERS_H_
+#define API_RTPPARAMETERS_H_
 
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "webrtc/api/mediatypes.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/config.h"
+#include "api/mediatypes.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -85,10 +84,10 @@ struct RtcpFeedback {
   rtc::Optional<RtcpFeedbackMessageType> message_type;
 
   // Constructors for convenience.
-  RtcpFeedback() {}
-  explicit RtcpFeedback(RtcpFeedbackType type) : type(type) {}
-  RtcpFeedback(RtcpFeedbackType type, RtcpFeedbackMessageType message_type)
-      : type(type), message_type(message_type) {}
+  RtcpFeedback();
+  explicit RtcpFeedback(RtcpFeedbackType type);
+  RtcpFeedback(RtcpFeedbackType type, RtcpFeedbackMessageType message_type);
+  ~RtcpFeedback();
 
   bool operator==(const RtcpFeedback& o) const {
     return type == o.type && message_type == o.message_type;
@@ -100,6 +99,9 @@ struct RtcpFeedback {
 // RtpParameters. This represents the static capabilities of an endpoint's
 // implementation of a codec.
 struct RtpCodecCapability {
+  RtpCodecCapability();
+  ~RtpCodecCapability();
+
   // Build MIME "type/subtype" string from |name| and |kind|.
   std::string mime_type() const { return MediaTypeToString(kind) + "/" + name; }
 
@@ -196,10 +198,10 @@ struct RtpHeaderExtensionCapability {
   bool preferred_encrypt = false;
 
   // Constructors for convenience.
-  RtpHeaderExtensionCapability() = default;
-  explicit RtpHeaderExtensionCapability(const std::string& uri) : uri(uri) {}
-  RtpHeaderExtensionCapability(const std::string& uri, int preferred_id)
-      : uri(uri), preferred_id(preferred_id) {}
+  RtpHeaderExtensionCapability();
+  explicit RtpHeaderExtensionCapability(const std::string& uri);
+  RtpHeaderExtensionCapability(const std::string& uri, int preferred_id);
+  ~RtpHeaderExtensionCapability();
 
   bool operator==(const RtpHeaderExtensionCapability& o) const {
     return uri == o.uri && preferred_id == o.preferred_id &&
@@ -210,7 +212,83 @@ struct RtpHeaderExtensionCapability {
   }
 };
 
-// See webrtc/config.h. Has "uri" and "id" fields.
+// RTP header extension, see RFC 5285.
+struct RtpExtension {
+  RtpExtension();
+  RtpExtension(const std::string& uri, int id);
+  RtpExtension(const std::string& uri, int id, bool encrypt);
+  ~RtpExtension();
+  std::string ToString() const;
+  bool operator==(const RtpExtension& rhs) const {
+    return uri == rhs.uri && id == rhs.id && encrypt == rhs.encrypt;
+  }
+  static bool IsSupportedForAudio(const std::string& uri);
+  static bool IsSupportedForVideo(const std::string& uri);
+  // Return "true" if the given RTP header extension URI may be encrypted.
+  static bool IsEncryptionSupported(const std::string& uri);
+
+  // Returns the named header extension if found among all extensions,
+  // nullptr otherwise.
+  static const RtpExtension* FindHeaderExtensionByUri(
+      const std::vector<RtpExtension>& extensions,
+      const std::string& uri);
+
+  // Return a list of RTP header extensions with the non-encrypted extensions
+  // removed if both the encrypted and non-encrypted extension is present for
+  // the same URI.
+  static std::vector<RtpExtension> FilterDuplicateNonEncrypted(
+      const std::vector<RtpExtension>& extensions);
+
+  // Header extension for audio levels, as defined in:
+  // http://tools.ietf.org/html/draft-ietf-avtext-client-to-mixer-audio-level-03
+  static const char kAudioLevelUri[];
+  static const int kAudioLevelDefaultId;
+
+  // Header extension for RTP timestamp offset, see RFC 5450 for details:
+  // http://tools.ietf.org/html/rfc5450
+  static const char kTimestampOffsetUri[];
+  static const int kTimestampOffsetDefaultId;
+
+  // Header extension for absolute send time, see url for details:
+  // http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time
+  static const char kAbsSendTimeUri[];
+  static const int kAbsSendTimeDefaultId;
+
+  // Header extension for coordination of video orientation, see url for
+  // details:
+  // http://www.etsi.org/deliver/etsi_ts/126100_126199/126114/12.07.00_60/ts_126114v120700p.pdf
+  static const char kVideoRotationUri[];
+  static const int kVideoRotationDefaultId;
+
+  // Header extension for video content type. E.g. default or screenshare.
+  static const char kVideoContentTypeUri[];
+  static const int kVideoContentTypeDefaultId;
+
+  // Header extension for video timing.
+  static const char kVideoTimingUri[];
+  static const int kVideoTimingDefaultId;
+
+  // Header extension for transport sequence number, see url for details:
+  // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions
+  static const char kTransportSequenceNumberUri[];
+  static const int kTransportSequenceNumberDefaultId;
+
+  static const char kPlayoutDelayUri[];
+  static const int kPlayoutDelayDefaultId;
+
+  // Encryption of Header Extensions, see RFC 6904 for details:
+  // https://tools.ietf.org/html/rfc6904
+  static const char kEncryptHeaderExtensionsUri[];
+
+  // Inclusive min and max IDs for one-byte header extensions, per RFC5285.
+  static const int kMinId;
+  static const int kMaxId;
+
+  std::string uri;
+  int id = 0;
+  bool encrypt = false;
+};
+
 // TODO(deadbeef): This is missing the "encrypt" flag, which is unimplemented.
 typedef RtpExtension RtpHeaderExtensionParameters;
 
@@ -222,10 +300,10 @@ struct RtpFecParameters {
   FecMechanism mechanism = FecMechanism::RED;
 
   // Constructors for convenience.
-  RtpFecParameters() = default;
-  explicit RtpFecParameters(FecMechanism mechanism) : mechanism(mechanism) {}
-  RtpFecParameters(FecMechanism mechanism, uint32_t ssrc)
-      : ssrc(ssrc), mechanism(mechanism) {}
+  RtpFecParameters();
+  explicit RtpFecParameters(FecMechanism mechanism);
+  RtpFecParameters(FecMechanism mechanism, uint32_t ssrc);
+  ~RtpFecParameters();
 
   bool operator==(const RtpFecParameters& o) const {
     return ssrc == o.ssrc && mechanism == o.mechanism;
@@ -239,14 +317,18 @@ struct RtpRtxParameters {
   rtc::Optional<uint32_t> ssrc;
 
   // Constructors for convenience.
-  RtpRtxParameters() = default;
-  explicit RtpRtxParameters(uint32_t ssrc) : ssrc(ssrc) {}
+  RtpRtxParameters();
+  explicit RtpRtxParameters(uint32_t ssrc);
+  ~RtpRtxParameters();
 
   bool operator==(const RtpRtxParameters& o) const { return ssrc == o.ssrc; }
   bool operator!=(const RtpRtxParameters& o) const { return !(*this == o); }
 };
 
 struct RtpEncodingParameters {
+  RtpEncodingParameters();
+  ~RtpEncodingParameters();
+
   // If unset, a value is chosen by the implementation.
   //
   // Note that the chosen value is NOT returned by GetParameters, because it
@@ -338,6 +420,9 @@ struct RtpEncodingParameters {
 };
 
 struct RtpCodecParameters {
+  RtpCodecParameters();
+  ~RtpCodecParameters();
+
   // Build MIME "type/subtype" string from |name| and |kind|.
   std::string mime_type() const { return MediaTypeToString(kind) + "/" + name; }
 
@@ -400,6 +485,9 @@ struct RtpCodecParameters {
 // endpoint. An application can use these capabilities to construct an
 // RtpParameters.
 struct RtpCapabilities {
+  RtpCapabilities();
+  ~RtpCapabilities();
+
   // Supported codecs.
   std::vector<RtpCodecCapability> codecs;
 
@@ -422,6 +510,9 @@ struct RtpCapabilities {
 // RtpParameters, because our API includes an additional "RtpTransport"
 // abstraction on which RTCP parameters are set.
 struct RtpParameters {
+  RtpParameters();
+  ~RtpParameters();
+
   // Used when calling getParameters/setParameters with a PeerConnection
   // RtpSender, to ensure that outdated parameters are not unintentionally
   // applied successfully.
@@ -455,4 +546,4 @@ struct RtpParameters {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_RTPPARAMETERS_H_
+#endif  // API_RTPPARAMETERS_H_

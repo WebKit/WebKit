@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_packet_source_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_packet_source_input.h"
 
 #include <algorithm>
 #include <limits>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/neteq/tools/rtc_event_log_source.h"
-#include "webrtc/modules/audio_coding/neteq/tools/rtp_file_source.h"
+#include "modules/audio_coding/neteq/tools/rtc_event_log_source.h"
+#include "modules/audio_coding/neteq/tools/rtp_file_source.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -25,12 +25,12 @@ NetEqPacketSourceInput::NetEqPacketSourceInput() : next_output_event_ms_(0) {}
 rtc::Optional<int64_t> NetEqPacketSourceInput::NextPacketTime() const {
   return packet_
              ? rtc::Optional<int64_t>(static_cast<int64_t>(packet_->time_ms()))
-             : rtc::Optional<int64_t>();
+             : rtc::nullopt;
 }
 
 rtc::Optional<RTPHeader> NetEqPacketSourceInput::NextHeader() const {
   return packet_ ? rtc::Optional<RTPHeader>(packet_->header())
-                 : rtc::Optional<RTPHeader>();
+                 : rtc::nullopt;
 }
 
 void NetEqPacketSourceInput::LoadNextPacket() {
@@ -78,7 +78,7 @@ void NetEqRtpDumpInput::AdvanceOutputEvent() {
     *next_output_event_ms_ += kOutputPeriodMs;
   }
   if (!NextPacketTime()) {
-    next_output_event_ms_ = rtc::Optional<int64_t>();
+    next_output_event_ms_ = rtc::nullopt;
   }
 }
 
@@ -97,14 +97,13 @@ NetEqEventLogInput::NetEqEventLogInput(const std::string& file_name,
 }
 
 rtc::Optional<int64_t> NetEqEventLogInput::NextOutputEventTime() const {
-  return rtc::Optional<int64_t>(next_output_event_ms_);
+  return next_output_event_ms_;
 }
 
 void NetEqEventLogInput::AdvanceOutputEvent() {
-  next_output_event_ms_ =
-      rtc::Optional<int64_t>(source_->NextAudioOutputEventMs());
+  next_output_event_ms_ = source_->NextAudioOutputEventMs();
   if (*next_output_event_ms_ == std::numeric_limits<int64_t>::max()) {
-    next_output_event_ms_ = rtc::Optional<int64_t>();
+    next_output_event_ms_ = rtc::nullopt;
   }
 }
 

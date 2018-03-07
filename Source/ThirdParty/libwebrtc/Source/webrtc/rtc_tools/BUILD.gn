@@ -1,0 +1,359 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//third_party/protobuf/proto_library.gni")
+import("../webrtc.gni")
+
+group("rtc_tools") {
+  # This target shall build all targets in tools/.
+  testonly = true
+
+  public_deps = [
+    ":command_line_parser",
+    ":frame_analyzer",
+    ":video_quality_analysis",
+  ]
+  if (!build_with_chromium) {
+    public_deps += [
+      ":frame_editor",
+      ":psnr_ssim_analyzer",
+      ":rgba_to_i420_converter",
+    ]
+    if (rtc_include_internal_audio_device) {
+      public_deps += [ ":force_mic_volume_max" ]
+    }
+    if (rtc_enable_protobuf) {
+      public_deps += [ ":chart_proto" ]
+    }
+  }
+
+  if (rtc_include_tests) {
+    public_deps += [
+      ":activity_metric",
+      ":tools_unittests",
+    ]
+    if (rtc_enable_protobuf) {
+      public_deps += [
+        ":event_log_visualizer",
+        ":rtp_analyzer",
+        "network_tester",
+      ]
+    }
+  }
+}
+
+rtc_static_library("command_line_parser") {
+  sources = [
+    "simple_command_line_parser.cc",
+    "simple_command_line_parser.h",
+  ]
+  deps = [
+    "../rtc_base:gtest_prod",
+    "../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_static_library("video_quality_analysis") {
+  sources = [
+    "frame_analyzer/video_quality_analysis.cc",
+    "frame_analyzer/video_quality_analysis.h",
+  ]
+
+  public_deps = [
+    "../common_video",
+  ]
+}
+
+rtc_executable("frame_analyzer") {
+  sources = [
+    "frame_analyzer/frame_analyzer.cc",
+  ]
+
+  deps = [
+    ":command_line_parser",
+    ":video_quality_analysis",
+    "//build/win:default_exe_manifest",
+  ]
+}
+
+# Only expose the targets needed by Chromium (e.g. frame_analyzer) to avoid
+# building a lot of redundant code as part of Chromium builds.
+if (!build_with_chromium) {
+  rtc_executable("psnr_ssim_analyzer") {
+    sources = [
+      "psnr_ssim_analyzer/psnr_ssim_analyzer.cc",
+    ]
+
+    deps = [
+      ":command_line_parser",
+      ":video_quality_analysis",
+      "//build/win:default_exe_manifest",
+    ]
+  }
+
+  rtc_static_library("reference_less_video_analysis_lib") {
+    sources = [
+      "frame_analyzer/reference_less_video_analysis_lib.cc",
+      "frame_analyzer/reference_less_video_analysis_lib.h",
+    ]
+
+    deps = [
+      ":video_quality_analysis",
+    ]
+  }
+
+  rtc_executable("reference_less_video_analysis") {
+    sources = [
+      "frame_analyzer/reference_less_video_analysis.cc",
+    ]
+
+    deps = [
+      ":command_line_parser",
+      ":reference_less_video_analysis_lib",
+      "//build/win:default_exe_manifest",
+    ]
+  }
+
+  rtc_executable("rgba_to_i420_converter") {
+    sources = [
+      "converter/converter.cc",
+      "converter/converter.h",
+      "converter/rgba_to_i420_converter.cc",
+    ]
+
+    deps = [
+      ":command_line_parser",
+      "../common_video",
+      "//build/win:default_exe_manifest",
+    ]
+  }
+
+  rtc_static_library("frame_editing_lib") {
+    sources = [
+      "frame_editing/frame_editing_lib.cc",
+      "frame_editing/frame_editing_lib.h",
+    ]
+
+    # TODO(jschuh): Bug 1348: fix this warning.
+    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    deps = [
+      "..:webrtc_common",
+      "../common_video",
+    ]
+  }
+
+  rtc_executable("frame_editor") {
+    sources = [
+      "frame_editing/frame_editing.cc",
+    ]
+
+    deps = [
+      ":command_line_parser",
+      ":frame_editing_lib",
+      "//build/win:default_exe_manifest",
+    ]
+  }
+
+  # It doesn't make sense to build this tool without the ADM enabled.
+  if (rtc_include_internal_audio_device) {
+    rtc_executable("force_mic_volume_max") {
+      sources = [
+        "force_mic_volume_max/force_mic_volume_max.cc",
+      ]
+
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+
+      deps = [
+        "../modules/audio_device",
+        "../system_wrappers:system_wrappers_default",
+        "//build/win:default_exe_manifest",
+      ]
+    }
+  }
+
+  if (rtc_enable_protobuf) {
+    proto_library("chart_proto") {
+      sources = [
+        "event_log_visualizer/chart.proto",
+      ]
+      proto_out_dir = "rtc_tools/event_log_visualizer"
+    }
+
+    rtc_static_library("event_log_visualizer_utils") {
+      sources = [
+        "event_log_visualizer/analyzer.cc",
+        "event_log_visualizer/analyzer.h",
+        "event_log_visualizer/plot_base.cc",
+        "event_log_visualizer/plot_base.h",
+        "event_log_visualizer/plot_protobuf.cc",
+        "event_log_visualizer/plot_protobuf.h",
+        "event_log_visualizer/plot_python.cc",
+        "event_log_visualizer/plot_python.h",
+      ]
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+      defines = [ "ENABLE_RTC_EVENT_LOG" ]
+      deps = [
+        "../call:call_interfaces",
+        "../call:video_stream_api",
+        "../logging:rtc_event_log_impl",
+        "../logging:rtc_event_log_parser",
+        "../modules:module_api",
+        "../modules/audio_coding:ana_debug_dump_proto",
+        "../modules/audio_coding:neteq_tools",
+        "../rtc_base:rtc_base_approved",
+        "../rtc_base:rtc_numerics",
+
+        # TODO(kwiberg): Remove this dependency.
+        "../api/audio_codecs:audio_codecs_api",
+        "../modules/congestion_controller",
+        "../modules/pacing",
+        "../modules/rtp_rtcp",
+        "../system_wrappers:system_wrappers_default",
+        "//build/config:exe_and_shlib_deps",
+      ]
+      public_deps = [
+        ":chart_proto",
+        "../logging:rtc_event_log_parser",
+      ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  if (rtc_enable_protobuf) {
+    rtc_executable("event_log_visualizer") {
+      testonly = true
+      sources = [
+        "event_log_visualizer/main.cc",
+      ]
+
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+
+      defines = [ "ENABLE_RTC_EVENT_LOG" ]
+      deps = [
+        ":event_log_visualizer_utils",
+        "../rtc_base:rtc_base_approved",
+        "../test:field_trial",
+        "../test:test_support",
+      ]
+    }
+  }
+
+  rtc_executable("activity_metric") {
+    testonly = true
+    sources = [
+      "agc/activity_metric.cc",
+    ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    deps = [
+      "../modules:module_api",
+      "../modules/audio_processing",
+      "../rtc_base:rtc_base_approved",
+      "../system_wrappers:metrics_default",
+      "../test:test_support",
+      "//build/win:default_exe_manifest",
+      "//testing/gtest",
+    ]
+  }
+
+  tools_unittests_resources = [
+    "../resources/foreman_cif.yuv",
+    "../resources/reference_less_video_test_file.y4m",
+    "../resources/video_quality_analysis_frame.txt",
+  ]
+
+  if (is_ios) {
+    bundle_data("tools_unittests_bundle_data") {
+      testonly = true
+      sources = tools_unittests_resources
+      outputs = [
+        "{{bundle_resources_dir}}/{{source_file_part}}",
+      ]
+    }
+  }
+
+  rtc_test("tools_unittests") {
+    testonly = true
+
+    sources = [
+      "frame_analyzer/reference_less_video_analysis_unittest.cc",
+      "frame_analyzer/video_quality_analysis_unittest.cc",
+      "frame_editing/frame_editing_unittest.cc",
+      "sanitizers_unittest.cc",
+      "simple_command_line_parser_unittest.cc",
+    ]
+
+    # TODO(jschuh): Bug 1348: fix this warning.
+    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    deps = [
+      ":command_line_parser",
+      ":frame_editing_lib",
+      ":reference_less_video_analysis_lib",
+      ":video_quality_analysis",
+      "../rtc_base",
+      "../test:test_main",
+      "//testing/gtest",
+    ]
+
+    if (rtc_enable_protobuf) {
+      deps += [ "network_tester:network_tester_unittests" ]
+    }
+
+    data = tools_unittests_resources
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+      shard_timeout = 900
+    }
+    if (is_ios) {
+      deps += [ ":tools_unittests_bundle_data" ]
+    }
+  }
+
+  if (rtc_enable_protobuf) {
+    copy("rtp_analyzer") {
+      sources = [
+        "py_event_log_analyzer/misc.py",
+        "py_event_log_analyzer/pb_parse.py",
+        "py_event_log_analyzer/rtp_analyzer.py",
+        "py_event_log_analyzer/rtp_analyzer.sh",
+      ]
+      outputs = [
+        "$root_build_dir/{{source_file_part}}",
+      ]
+      deps = [
+        "../logging:rtc_event_log_proto",
+      ]
+    }
+  }
+}

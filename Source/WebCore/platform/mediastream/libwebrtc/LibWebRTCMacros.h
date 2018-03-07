@@ -34,7 +34,7 @@
 #define WEBRTC_IOS
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #define WEBRTC_MAC
 #endif
 

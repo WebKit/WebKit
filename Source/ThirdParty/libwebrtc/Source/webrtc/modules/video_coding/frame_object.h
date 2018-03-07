@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_FRAME_OBJECT_H_
-#define WEBRTC_MODULES_VIDEO_CODING_FRAME_OBJECT_H_
+#ifndef MODULES_VIDEO_CODING_FRAME_OBJECT_H_
+#define MODULES_VIDEO_CODING_FRAME_OBJECT_H_
 
-#include "webrtc/base/optional.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/encoded_frame.h"
+#include "api/optional.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/encoded_frame.h"
 
 namespace webrtc {
 namespace video_coding {
@@ -42,19 +42,21 @@ class FrameObject : public webrtc::VCMEncodedFrame {
   //                 been implemented.
   virtual bool delayed_by_retransmission() const { return 0; }
 
-  size_t size() { return _length; }
+  size_t size() const { return _length; }
+
+  bool is_keyframe() const { return num_references == 0; }
 
   // The tuple (|picture_id|, |spatial_layer|) uniquely identifies a frame
   // object. For codec types that don't necessarily have picture ids they
   // have to be constructed from the header data relevant to that codec.
-  uint16_t picture_id;
+  int64_t picture_id;
   uint8_t spatial_layer;
   uint32_t timestamp;
 
   // TODO(philipel): Add simple modify/access functions to prevent adding too
   // many |references|.
   size_t num_references;
-  uint16_t references[kMaxFrameReferences];
+  int64_t references[kMaxFrameReferences];
   bool inter_layer_predicted;
 };
 
@@ -99,4 +101,4 @@ class RtpFrameObject : public FrameObject {
 }  // namespace video_coding
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_FRAME_OBJECT_H_
+#endif  // MODULES_VIDEO_CODING_FRAME_OBJECT_H_

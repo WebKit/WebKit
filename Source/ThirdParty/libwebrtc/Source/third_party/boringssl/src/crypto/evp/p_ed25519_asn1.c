@@ -24,12 +24,8 @@
 
 
 static void ed25519_free(EVP_PKEY *pkey) {
-  if (pkey->pkey.ptr != NULL) {
-    ED25519_KEY *key = pkey->pkey.ptr;
-    OPENSSL_cleanse(key, sizeof(ED25519_KEY));
-    OPENSSL_free(key);
-    pkey->pkey.ptr = NULL;
-  }
+  OPENSSL_free(pkey->pkey.ptr);
+  pkey->pkey.ptr = NULL;
 }
 
 static int set_pubkey(EVP_PKEY *pkey, const uint8_t pubkey[32]) {
@@ -61,9 +57,9 @@ static int set_privkey(EVP_PKEY *pkey, const uint8_t privkey[64]) {
 }
 
 static int ed25519_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  /* See draft-ietf-curdle-pkix-04, section 4. */
+  // See draft-ietf-curdle-pkix-04, section 4.
 
-  /* The parameters must be omitted. Public keys have length 32. */
+  // The parameters must be omitted. Public keys have length 32.
   if (CBS_len(params) != 0 ||
       CBS_len(key) != 32) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
@@ -76,7 +72,7 @@ static int ed25519_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 static int ed25519_pub_encode(CBB *out, const EVP_PKEY *pkey) {
   const ED25519_KEY *key = pkey->pkey.ptr;
 
-  /* See draft-ietf-curdle-pkix-04, section 4. */
+  // See draft-ietf-curdle-pkix-04, section 4.
   CBB spki, algorithm, oid, key_bitstring;
   if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -100,10 +96,10 @@ static int ed25519_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
 }
 
 static int ed25519_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  /* See draft-ietf-curdle-pkix-04, section 7. */
+  // See draft-ietf-curdle-pkix-04, section 7.
 
-  /* Parameters must be empty. The key is a 32-byte value wrapped in an extra
-   * OCTET STRING layer. */
+  // Parameters must be empty. The key is a 32-byte value wrapped in an extra
+  // OCTET STRING layer.
   CBS inner;
   if (CBS_len(params) != 0 ||
       !CBS_get_asn1(key, &inner, CBS_ASN1_OCTETSTRING) ||
@@ -113,8 +109,8 @@ static int ed25519_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
     return 0;
   }
 
-  /* The PKCS#8 encoding stores only the 32-byte seed, so we must recover the
-   * full representation which we use from it. */
+  // The PKCS#8 encoding stores only the 32-byte seed, so we must recover the
+  // full representation which we use from it.
   uint8_t pubkey[32], privkey[64];
   ED25519_keypair_from_seed(pubkey, privkey, CBS_data(&inner));
   return set_privkey(out, privkey);
@@ -127,7 +123,7 @@ static int ed25519_priv_encode(CBB *out, const EVP_PKEY *pkey) {
     return 0;
   }
 
-  /* See draft-ietf-curdle-pkix-04, section 7. */
+  // See draft-ietf-curdle-pkix-04, section 7.
   CBB pkcs8, algorithm, oid, private_key, inner;
   if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||
@@ -136,8 +132,8 @@ static int ed25519_priv_encode(CBB *out, const EVP_PKEY *pkey) {
       !CBB_add_bytes(&oid, ed25519_asn1_meth.oid, ed25519_asn1_meth.oid_len) ||
       !CBB_add_asn1(&pkcs8, &private_key, CBS_ASN1_OCTETSTRING) ||
       !CBB_add_asn1(&private_key, &inner, CBS_ASN1_OCTETSTRING) ||
-      /* The PKCS#8 encoding stores only the 32-byte seed which is the first 32
-       * bytes of the private key. */
+      // The PKCS#8 encoding stores only the 32-byte seed which is the first 32
+      // bytes of the private key.
       !CBB_add_bytes(&inner, key->key.priv, 32) ||
       !CBB_flush(out)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);

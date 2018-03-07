@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCProvider.h>
-#include <webrtc/base/asyncpacketsocket.h>
+#include <webrtc/rtc_base/asyncpacketsocket.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 

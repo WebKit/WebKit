@@ -184,6 +184,9 @@ class FileTest {
   // instructions.
   void InjectInstruction(const std::string &key, const std::string &value);
 
+  // SkipCurrent passes the current test case. Unused attributes are ignored.
+  void SkipCurrent();
+
  private:
   void ClearTest();
   void ClearInstructions();
@@ -243,4 +246,4 @@ int FileTestMain(const FileTest::Options &opts);
 // name of a test file embedded in the test binary.
 void FileTestGTest(const char *path, std::function<void(FileTest *)> run_test);
 
-#endif /* OPENSSL_HEADER_CRYPTO_TEST_FILE_TEST_H */
+#endif  // OPENSSL_HEADER_CRYPTO_TEST_FILE_TEST_H

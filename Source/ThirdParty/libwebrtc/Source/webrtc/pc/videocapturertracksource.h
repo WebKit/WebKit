@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_VIDEOCAPTURERTRACKSOURCE_H_
-#define WEBRTC_PC_VIDEOCAPTURERTRACKSOURCE_H_
+#ifndef PC_VIDEOCAPTURERTRACKSOURCE_H_
+#define PC_VIDEOCAPTURERTRACKSOURCE_H_
 
 #include <memory>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/base/asyncinvoker.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/media/base/videocapturer.h"
-#include "webrtc/media/base/videocommon.h"
-#include "webrtc/pc/videotracksource.h"
+#include "api/mediastreaminterface.h"
+#include "media/base/videocapturer.h"
+#include "media/base/videocommon.h"
+#include "pc/videotracksource.h"
+#include "rtc_base/asyncinvoker.h"
+#include "rtc_base/sigslot.h"
 
 // VideoCapturerTrackSource implements VideoTrackSourceInterface. It owns a
 // cricket::VideoCapturer and make sure the camera is started at a resolution
@@ -76,4 +76,4 @@ class VideoCapturerTrackSource : public VideoTrackSource,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_VIDEOCAPTURERTRACKSOURCE_H_
+#endif  // PC_VIDEOCAPTURERTRACKSOURCE_H_

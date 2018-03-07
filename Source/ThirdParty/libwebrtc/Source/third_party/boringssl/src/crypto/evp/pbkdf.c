@@ -65,7 +65,7 @@
 int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
                       const uint8_t *salt, size_t salt_len, unsigned iterations,
                       const EVP_MD *digest, size_t key_len, uint8_t *out_key) {
-  /* See RFC 8018, section 5.2. */
+  // See RFC 8018, section 5.2.
   int ret = 0;
   size_t md_len = EVP_MD_size(digest);
   uint32_t i = 1;
@@ -88,7 +88,7 @@ int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
     i_buf[2] = (uint8_t)((i >> 8) & 0xff);
     i_buf[3] = (uint8_t)(i & 0xff);
 
-    /* Compute U_1. */
+    // Compute U_1.
     uint8_t digest_tmp[EVP_MAX_MD_SIZE];
     if (!HMAC_Init_ex(&hctx, NULL, 0, NULL, NULL) ||
         !HMAC_Update(&hctx, salt, salt_len) ||
@@ -99,7 +99,7 @@ int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
 
     OPENSSL_memcpy(out_key, digest_tmp, todo);
     for (unsigned j = 1; j < iterations; j++) {
-      /* Compute the remaining U_* values and XOR. */
+      // Compute the remaining U_* values and XOR.
       if (!HMAC_Init_ex(&hctx, NULL, 0, NULL, NULL) ||
           !HMAC_Update(&hctx, digest_tmp, md_len) ||
           !HMAC_Final(&hctx, digest_tmp, NULL)) {
@@ -115,17 +115,17 @@ int PKCS5_PBKDF2_HMAC(const char *password, size_t password_len,
     i++;
   }
 
-  /* RFC 8018 describes iterations (c) as being a "positive integer", so a
-   * value of 0 is an error.
-   *
-   * Unfortunately not all consumers of PKCS5_PBKDF2_HMAC() check their return
-   * value, expecting it to succeed and unconditionally using |out_key|.  As a
-   * precaution for such callsites in external code, the old behavior of
-   * iterations < 1 being treated as iterations == 1 is preserved, but
-   * additionally an error result is returned.
-   *
-   * TODO(eroman): Figure out how to remove this compatibility hack, or change
-   * the default to something more sensible like 2048. */
+  // RFC 8018 describes iterations (c) as being a "positive integer", so a
+  // value of 0 is an error.
+  //
+  // Unfortunately not all consumers of PKCS5_PBKDF2_HMAC() check their return
+  // value, expecting it to succeed and unconditionally using |out_key|.  As a
+  // precaution for such callsites in external code, the old behavior of
+  // iterations < 1 being treated as iterations == 1 is preserved, but
+  // additionally an error result is returned.
+  //
+  // TODO(eroman): Figure out how to remove this compatibility hack, or change
+  // the default to something more sensible like 2048.
   if (iterations == 0) {
     goto err;
   }

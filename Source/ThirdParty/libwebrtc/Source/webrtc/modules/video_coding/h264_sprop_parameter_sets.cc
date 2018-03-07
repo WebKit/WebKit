@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/h264_sprop_parameter_sets.h"
+#include "modules/video_coding/h264_sprop_parameter_sets.h"
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/base64.h"
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/logging.h"
+#include "rtc_base/base64.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/logging.h"
 
 namespace {
 
@@ -29,20 +29,20 @@ namespace webrtc {
 
 bool H264SpropParameterSets::DecodeSprop(const std::string& sprop) {
   size_t separator_pos = sprop.find(',');
-  LOG(LS_INFO) << "Parsing sprop \"" << sprop << "\"";
+  RTC_LOG(LS_INFO) << "Parsing sprop \"" << sprop << "\"";
   if ((separator_pos <= 0) || (separator_pos >= sprop.length() - 1)) {
-    LOG(LS_WARNING) << "Invalid seperator position " << separator_pos << " *"
-                    << sprop << "*";
+    RTC_LOG(LS_WARNING) << "Invalid seperator position " << separator_pos
+                        << " *" << sprop << "*";
     return false;
   }
   std::string sps_str = sprop.substr(0, separator_pos);
   std::string pps_str = sprop.substr(separator_pos + 1, std::string::npos);
   if (!DecodeAndConvert(sps_str, &sps_)) {
-    LOG(LS_WARNING) << "Failed to decode sprop/sps *" << sprop << "*";
+    RTC_LOG(LS_WARNING) << "Failed to decode sprop/sps *" << sprop << "*";
     return false;
   }
   if (!DecodeAndConvert(pps_str, &pps_)) {
-    LOG(LS_WARNING) << "Failed to decode sprop/pps *" << sprop << "*";
+    RTC_LOG(LS_WARNING) << "Failed to decode sprop/pps *" << sprop << "*";
     return false;
   }
   return true;

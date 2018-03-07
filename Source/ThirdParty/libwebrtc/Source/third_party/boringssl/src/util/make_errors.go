@@ -110,7 +110,7 @@ func makeErrors(reset bool) error {
 	}
 
 	for _, name := range filenames {
-		if !strings.HasSuffix(name, ".c") {
+		if !strings.HasSuffix(name, ".c") && !strings.HasSuffix(name, ".cc") {
 			continue
 		}
 
@@ -136,7 +136,12 @@ func makeErrors(reset bool) error {
 	if err := writeHeaderFile(newHeaderFile, headerFile, prefix, reasons); err != nil {
 		return err
 	}
-	os.Rename(headerPath+".tmp", headerPath)
+	// Windows forbids renaming an open file.
+	headerFile.Close()
+	newHeaderFile.Close()
+	if err := os.Rename(headerPath+".tmp", headerPath); err != nil {
+		return err
+	}
 
 	dataFile, err := os.OpenFile(dataPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {

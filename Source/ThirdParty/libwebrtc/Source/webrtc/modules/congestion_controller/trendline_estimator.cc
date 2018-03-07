@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/trendline_estimator.h"
+#include "modules/congestion_controller/trendline_estimator.h"
 
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "api/optional.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -39,8 +39,8 @@ rtc::Optional<double> LinearFitSlope(
     denominator += (point.first - x_avg) * (point.first - x_avg);
   }
   if (denominator == 0)
-    return rtc::Optional<double>();
-  return rtc::Optional<double>(numerator / denominator);
+    return rtc::nullopt;
+  return numerator / denominator;
 }
 }  // namespace
 

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/vcm_capturer.h"
+#include "test/vcm_capturer.h"
 
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/video_capture/video_capture_factory.h"
-#include "webrtc/video_send_stream.h"
+#include "modules/video_capture/video_capture_factory.h"
+#include "rtc_base/logging.h"
+#include "call/video_send_stream.h"
 namespace webrtc {
 namespace test {
 
@@ -60,8 +60,9 @@ VcmCapturer* VcmCapturer::Create(size_t width,
                                  size_t capture_device_index) {
   std::unique_ptr<VcmCapturer> vcm_capturer(new VcmCapturer());
   if (!vcm_capturer->Init(width, height, target_fps, capture_device_index)) {
-    LOG(LS_WARNING) << "Failed to create VcmCapturer(w = " << width
-                    << ", h = " << height << ", fps = " << target_fps << ")";
+    RTC_LOG(LS_WARNING) << "Failed to create VcmCapturer(w = " << width
+                        << ", h = " << height << ", fps = " << target_fps
+                        << ")";
     return nullptr;
   }
   return vcm_capturer.release();

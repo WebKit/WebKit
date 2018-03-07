@@ -10,7 +10,7 @@
 
 #import "RTCMediaSource+Private.h"
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 @implementation RTCMediaSource {
   RTCMediaSourceType _type;

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_CONVERSION_H_
-#define WEBRTC_AUDIO_CONVERSION_H_
+#ifndef AUDIO_CONVERSION_H_
+#define AUDIO_CONVERSION_H_
 
 namespace webrtc {
 
@@ -24,4 +24,4 @@ inline float Q14ToFloat(uint32_t v) {
 }
 }  // namespace webrtc
 
-#endif  // WEBRTC_AUDIO_CONVERSION_H_
+#endif  // AUDIO_CONVERSION_H_

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_TCP_H_
-#define WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_TCP_H_
+#ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_TCP_H_
+#define MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_TCP_H_
 
 #include <vector>
 
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe.h"
+#include "modules/remote_bitrate_estimator/test/bwe.h"
 
 namespace webrtc {
 namespace testing {
@@ -35,4 +35,4 @@ class TcpBweReceiver : public BweReceiver {
 }  // namespace bwe
 }  // namespace testing
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_TCP_H_
+#endif  // MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_TCP_H_

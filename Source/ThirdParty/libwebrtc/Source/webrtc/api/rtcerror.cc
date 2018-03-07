@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/rtcerror.h"
+#include "api/rtcerror.h"
 
-#include "webrtc/base/arraysize.h"
+#include "rtc_base/arraysize.h"
 
 namespace {
 
@@ -61,6 +61,11 @@ RTCError::~RTCError() {
   if (have_string_message_) {
     string_message_.~basic_string();
   }
+}
+
+// static
+RTCError RTCError::OK() {
+  return RTCError();
 }
 
 const char* RTCError::message() const {

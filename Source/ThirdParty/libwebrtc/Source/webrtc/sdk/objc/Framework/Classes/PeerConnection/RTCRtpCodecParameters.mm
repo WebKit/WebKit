@@ -13,8 +13,8 @@
 #import "NSString+StdString.h"
 #import "WebRTC/RTCMediaStreamTrack.h"  // For "kind" strings.
 
-#include "webrtc/base/checks.h"
-#include "webrtc/media/base/mediaconstants.h"
+#include "media/base/mediaconstants.h"
+#include "rtc_base/checks.h"
 
 const NSString * const kRTCRtxCodecName = @(cricket::kRtxCodecName);
 const NSString * const kRTCRedCodecName = @(cricket::kRedCodecName);

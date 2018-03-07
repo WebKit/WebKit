@@ -9,14 +9,14 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP9_VP9_IMPL_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP9_VP9_IMPL_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_VP9_VP9_IMPL_H_
+#define MODULES_VIDEO_CODING_CODECS_VP9_VP9_IMPL_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/modules/video_coding/codecs/vp9/include/vp9.h"
-#include "webrtc/modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
+#include "modules/video_coding/codecs/vp9/include/vp9.h"
+#include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
 
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_decoder.h"
@@ -169,4 +169,4 @@ class VP9DecoderImpl : public VP9Decoder {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP9_VP9_IMPL_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_VP9_VP9_IMPL_H_

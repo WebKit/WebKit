@@ -49,4 +49,11 @@ set(
   crypto/fipsmodule/rand/ctrdrbg_vectors.txt
   crypto/hmac_extra/hmac_tests.txt
   crypto/poly1305/poly1305_tests.txt
+  crypto/x509/many_constraints.pem
+  crypto/x509/many_names1.pem
+  crypto/x509/many_names2.pem
+  crypto/x509/many_names3.pem
+  crypto/x509/some_names1.pem
+  crypto/x509/some_names2.pem
+  crypto/x509/some_names3.pem
 )

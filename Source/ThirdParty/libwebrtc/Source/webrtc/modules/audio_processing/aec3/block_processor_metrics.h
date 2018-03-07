@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_METRICS_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_METRICS_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_METRICS_H_
+#define MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_METRICS_H_
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -44,4 +44,4 @@ class BlockProcessorMetrics {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_METRICS_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC3_BLOCK_PROCESSOR_METRICS_H_

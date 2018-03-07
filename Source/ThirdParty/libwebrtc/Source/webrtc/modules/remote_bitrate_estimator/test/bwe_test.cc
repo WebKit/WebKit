@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test.h"
 
 #include <memory>
 #include <sstream>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_framework.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/metric_recorder.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_receiver.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
-#include "webrtc/test/testsupport/perf_test.h"
+#include "modules/include/module_common_types.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_framework.h"
+#include "modules/remote_bitrate_estimator/test/metric_recorder.h"
+#include "modules/remote_bitrate_estimator/test/packet_receiver.h"
+#include "modules/remote_bitrate_estimator/test/packet_sender.h"
+#include "rtc_base/arraysize.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
+#include "test/testsupport/perf_test.h"
 
 using std::vector;
 
@@ -217,23 +217,23 @@ void BweTest::PrintResults(double max_throughput_kbps,
   double utilization = throughput_kbps.GetMean() / max_throughput_kbps;
   webrtc::test::PrintResult("BwePerformance", GetTestName(), "Utilization",
                             utilization * 100.0, "%", false);
+  webrtc::test::PrintResult(
+      "BwePerformance", GetTestName(), "Utilization var coeff",
+      throughput_kbps.GetStdDev() / throughput_kbps.GetMean(), "", false);
   std::stringstream ss;
-  ss << throughput_kbps.GetStdDev() / throughput_kbps.GetMean();
-  webrtc::test::PrintResult("BwePerformance", GetTestName(),
-                            "Utilization var coeff", ss.str(), "", false);
   for (auto& kv : flow_throughput_kbps) {
     ss.str("");
     ss << "Throughput flow " << kv.first;
     webrtc::test::PrintResultMeanAndError("BwePerformance", GetTestName(),
-                                          ss.str(), kv.second.AsString(),
-                                          "kbps", false);
+                                          ss.str(), kv.second.GetMean(),
+                                          kv.second.GetStdDev(), "kbps", false);
   }
   for (auto& kv : flow_delay_ms) {
     ss.str("");
     ss << "Delay flow " << kv.first;
     webrtc::test::PrintResultMeanAndError("BwePerformance", GetTestName(),
-                                          ss.str(), kv.second.AsString(), "ms",
-                                          false);
+                                          ss.str(), kv.second.GetMean(),
+                                          kv.second.GetStdDev(), "ms", false);
   }
   double fairness_index = 1.0;
   if (!flow_throughput_kbps.empty()) {

@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/TestStereo.h"
+#include "modules/audio_coding/test/TestStereo.h"
 
 #include <assert.h>
 
 #include <string>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/test/utility.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -108,19 +108,17 @@ void TestPackStereo::set_lost_packet(bool lost) {
 }
 
 TestStereo::TestStereo(int test_mode)
-    : acm_a_(AudioCodingModule::Create(0)),
-      acm_b_(AudioCodingModule::Create(1)),
+    : acm_a_(AudioCodingModule::Create()),
+      acm_b_(AudioCodingModule::Create()),
       channel_a2b_(NULL),
       test_cntr_(0),
       pack_size_samp_(0),
       pack_size_bytes_(0),
-      counter_(0)
-#ifdef WEBRTC_CODEC_G722
-      , g722_pltype_(0)
-#endif
-      , l16_8khz_pltype_(-1)
-      , l16_16khz_pltype_(-1)
-      , l16_32khz_pltype_(-1)
+      counter_(0),
+      g722_pltype_(0),
+      l16_8khz_pltype_(-1),
+      l16_16khz_pltype_(-1),
+      l16_32khz_pltype_(-1)
 #ifdef PCMA_AND_PCMU
       , pcma_pltype_(-1)
       , pcmu_pltype_(-1)
@@ -128,7 +126,7 @@ TestStereo::TestStereo(int test_mode)
 #ifdef WEBRTC_CODEC_OPUS
       , opus_pltype_(-1)
 #endif
-      {
+{
   // test_mode = 0 for silent test (auto test)
   test_mode_ = test_mode;
 }
@@ -217,7 +215,6 @@ void TestStereo::Perform() {
 
   // All codecs are tested for all allowed sampling frequencies, rates and
   // packet sizes.
-#ifdef WEBRTC_CODEC_G722
   if (test_mode_ != 0) {
     printf("===========================================================\n");
     printf("Test number: %d\n", test_cntr_ + 1);
@@ -246,7 +243,7 @@ void TestStereo::Perform() {
       g722_pltype_);
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
-#endif
+
   if (test_mode_ != 0) {
     printf("===========================================================\n");
     printf("Test number: %d\n", test_cntr_ + 1);
@@ -419,7 +416,6 @@ void TestStereo::Perform() {
   audio_channels = 1;
   codec_channels = 2;
 
-#ifdef WEBRTC_CODEC_G722
   if (test_mode_ != 0) {
     printf("===============================================================\n");
     printf("Test number: %d\n", test_cntr_ + 1);
@@ -432,7 +428,7 @@ void TestStereo::Perform() {
       g722_pltype_);
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
-#endif
+
   if (test_mode_ != 0) {
     printf("===============================================================\n");
     printf("Test number: %d\n", test_cntr_ + 1);
@@ -512,7 +508,6 @@ void TestStereo::Perform() {
   codec_channels = 1;
   channel_a2b_->set_codec_mode(kMono);
 
-#ifdef WEBRTC_CODEC_G722
   // Run stereo audio and mono codec.
   if (test_mode_ != 0) {
     printf("===============================================================\n");
@@ -533,7 +528,7 @@ void TestStereo::Perform() {
   EXPECT_EQ(0, acm_a_->SetVAD(false, false, VADNormal));
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
-#endif
+
   if (test_mode_ != 0) {
     printf("===============================================================\n");
     printf("Test number: %d\n", test_cntr_ + 1);
@@ -659,9 +654,7 @@ void TestStereo::Perform() {
   // Print out which codecs were tested, and which were not, in the run.
   if (test_mode_ != 0) {
     printf("\nThe following codecs was INCLUDED in the test:\n");
-#ifdef WEBRTC_CODEC_G722
     printf("   G.722\n");
-#endif
     printf("   PCM16\n");
     printf("   G.711\n");
 #ifdef WEBRTC_CODEC_OPUS

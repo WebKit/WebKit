@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_STREAMCOLLECTION_H_
-#define WEBRTC_PC_STREAMCOLLECTION_H_
+#ifndef PC_STREAMCOLLECTION_H_
+#define PC_STREAMCOLLECTION_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/peerconnectioninterface.h"
+#include "api/peerconnectioninterface.h"
 
 namespace webrtc {
 
@@ -105,4 +105,4 @@ class StreamCollection : public StreamCollectionInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_STREAMCOLLECTION_H_
+#endif  // PC_STREAMCOLLECTION_H_

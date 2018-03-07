@@ -7,14 +7,14 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_MODULES_VIDEO_CODING_UTILITY_MOCK_MOCK_FRAME_DROPPER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_UTILITY_MOCK_MOCK_FRAME_DROPPER_H_
+#ifndef MODULES_VIDEO_CODING_UTILITY_MOCK_MOCK_FRAME_DROPPER_H_
+#define MODULES_VIDEO_CODING_UTILITY_MOCK_MOCK_FRAME_DROPPER_H_
 
 #include <string>
 
-#include "webrtc/modules/video_coding/utility/frame_dropper.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/typedefs.h"
+#include "modules/video_coding/utility/frame_dropper.h"
+#include "test/gmock.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -31,4 +31,4 @@ class MockFrameDropper : public FrameDropper {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_UTILITY_MOCK_MOCK_FRAME_DROPPER_H_
+#endif  // MODULES_VIDEO_CODING_UTILITY_MOCK_MOCK_FRAME_DROPPER_H_

@@ -17,14 +17,14 @@
 // from WebRTC too.
 // https://bugs.chromium.org/p/webrtc/issues/detail?id=5617
 
-#ifndef WEBRTC_API_MEDIACONSTRAINTSINTERFACE_H_
-#define WEBRTC_API_MEDIACONSTRAINTSINTERFACE_H_
+#ifndef API_MEDIACONSTRAINTSINTERFACE_H_
+#define API_MEDIACONSTRAINTSINTERFACE_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/api/peerconnectioninterface.h"
+#include "api/optional.h"
+#include "api/peerconnectioninterface.h"
 
 namespace webrtc {
 
@@ -49,9 +49,6 @@ class MediaConstraintsInterface {
    public:
     bool FindFirst(const std::string& key, std::string* value) const;
   };
-
-  virtual const Constraints& GetMandatory() const = 0;
-  virtual const Constraints& GetOptional() const = 0;
 
   // Constraint keys used by a local video source.
   // Specified by draft-alvestrand-constraints-resolution-00b
@@ -125,9 +122,10 @@ class MediaConstraintsInterface {
   // stripped by Chrome before passed down to Libjingle.
   static const char kInternalConstraintPrefix[];
 
- protected:
-  // Dtor protected as objects shouldn't be deleted via this interface
-  virtual ~MediaConstraintsInterface() {}
+  virtual ~MediaConstraintsInterface() = default;
+
+  virtual const Constraints& GetMandatory() const = 0;
+  virtual const Constraints& GetOptional() const = 0;
 };
 
 bool FindConstraint(const MediaConstraintsInterface* constraints,
@@ -151,4 +149,4 @@ void CopyConstraintsIntoAudioOptions(
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_MEDIACONSTRAINTSINTERFACE_H_
+#endif  // API_MEDIACONSTRAINTSINTERFACE_H_

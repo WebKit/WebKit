@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/voice_engine/audio_level.h"
+#include "voice_engine/audio_level.h"
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 namespace voe {
@@ -48,7 +48,17 @@ void AudioLevel::Clear() {
   current_level_full_range_ = 0;
 }
 
-void AudioLevel::ComputeLevel(const AudioFrame& audioFrame) {
+double AudioLevel::TotalEnergy() const {
+  rtc::CritScope cs(&crit_sect_);
+  return total_energy_;
+}
+
+double AudioLevel::TotalDuration() const {
+  rtc::CritScope cs(&crit_sect_);
+  return total_duration_;
+}
+
+void AudioLevel::ComputeLevel(const AudioFrame& audioFrame, double duration) {
   // Check speech level (works for 2 channels as well)
   int16_t abs_value = audioFrame.muted() ? 0 :
       WebRtcSpl_MaxAbsValueW16(
@@ -83,6 +93,18 @@ void AudioLevel::ComputeLevel(const AudioFrame& audioFrame) {
     // Decay the absolute maximum (divide by 4)
     abs_max_ >>= 2;
   }
+
+  // See the description for "totalAudioEnergy" in the WebRTC stats spec
+  // (https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats-totalaudioenergy)
+  // for an explanation of these formulas. In short, we need a value that can
+  // be used to compute RMS audio levels over different time intervals, by
+  // taking the difference between the results from two getStats calls. To do
+  // this, the value needs to be of units "squared sample value * time".
+  double additional_energy =
+      static_cast<double>(current_level_full_range_) / INT16_MAX;
+  additional_energy *= additional_energy;
+  total_energy_ += additional_energy * duration;
+  total_duration_ += duration;
 }
 
 }  // namespace voe

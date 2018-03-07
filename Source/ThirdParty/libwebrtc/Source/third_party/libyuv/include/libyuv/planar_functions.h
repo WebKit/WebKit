@@ -69,6 +69,32 @@ void MergeUVPlane(const uint8* src_u,
                   int width,
                   int height);
 
+// Split interleaved RGB plane into separate R, G and B planes.
+LIBYUV_API
+void SplitRGBPlane(const uint8* src_rgb,
+                   int src_stride_rgb,
+                   uint8* dst_r,
+                   int dst_stride_r,
+                   uint8* dst_g,
+                   int dst_stride_g,
+                   uint8* dst_b,
+                   int dst_stride_b,
+                   int width,
+                   int height);
+
+// Merge separate R, G and B planes into one interleaved RGB plane.
+LIBYUV_API
+void MergeRGBPlane(const uint8* src_r,
+                   int src_stride_r,
+                   const uint8* src_g,
+                   int src_stride_g,
+                   const uint8* src_b,
+                   int src_stride_b,
+                   uint8* dst_rgb,
+                   int dst_stride_rgb,
+                   int width,
+                   int height);
+
 // Copy I400.  Supports inverting.
 LIBYUV_API
 int I400ToI400(const uint8* src_y,
@@ -720,7 +746,7 @@ int I420Interpolate(const uint8* src0_y,
                     int interpolation);
 
 #if defined(__pnacl__) || defined(__CLR_VER) || \
-    (defined(__i386__) && !defined(__SSE2__))
+    (defined(__i386__) && !defined(__SSE__) && !defined(__clang__))
 #define LIBYUV_DISABLE_X86
 #endif
 // MemorySanitizer does not support assembly code yet. http://crbug.com/344505

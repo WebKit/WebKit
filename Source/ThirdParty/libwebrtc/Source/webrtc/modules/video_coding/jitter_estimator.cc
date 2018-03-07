@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/jitter_estimator.h"
+#include "modules/video_coding/jitter_estimator.h"
 
 #include <assert.h>
 #include <math.h>
@@ -16,10 +16,10 @@
 #include <string.h>
 #include <string>
 
-#include "webrtc/modules/video_coding/internal_defines.h"
-#include "webrtc/modules/video_coding/rtt_filter.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "modules/video_coding/internal_defines.h"
+#include "modules/video_coding/rtt_filter.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 

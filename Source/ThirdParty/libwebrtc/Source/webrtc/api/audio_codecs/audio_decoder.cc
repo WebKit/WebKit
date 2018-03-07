@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder.h"
 
 #include <assert.h>
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/sanitizer.h"
-#include "webrtc/base/trace_event.h"
+#include "api/array_view.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/sanitizer.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -39,7 +39,7 @@ class OldStyleEncodedFrame final : public AudioDecoder::EncodedAudioFrame {
     const int ret = decoder_->Decode(
         payload_.data(), payload_.size(), decoder_->SampleRateHz(),
         decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
-    return ret < 0 ? rtc::Optional<DecodeResult>()
+    return ret < 0 ? rtc::nullopt
                    : rtc::Optional<DecodeResult>(
                          {static_cast<size_t>(ret), speech_type});
   }

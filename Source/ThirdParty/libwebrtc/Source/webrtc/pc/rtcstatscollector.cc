@@ -8,23 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/rtcstatscollector.h"
+#include "pc/rtcstatscollector.h"
 
 #include <memory>
 #include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/p2p/base/candidate.h"
-#include "webrtc/p2p/base/p2pconstants.h"
-#include "webrtc/p2p/base/port.h"
-#include "webrtc/pc/peerconnection.h"
-#include "webrtc/pc/webrtcsession.h"
+#include "api/candidate.h"
+#include "api/mediastreaminterface.h"
+#include "api/peerconnectioninterface.h"
+#include "media/base/mediachannel.h"
+#include "p2p/base/p2pconstants.h"
+#include "p2p/base/port.h"
+#include "pc/peerconnection.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/stringutils.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -75,7 +77,7 @@ std::string RTCTransportStatsIDFromTransportChannel(
 }
 
 std::string RTCTransportStatsIDFromBaseChannel(
-    const ProxyTransportMap& proxy_to_transport,
+    const std::map<std::string, std::string>& proxy_to_transport,
     const cricket::BaseChannel& base_channel) {
   auto proxy_it = proxy_to_transport.find(base_channel.content_name());
   if (proxy_it == proxy_to_transport.cend())
@@ -158,6 +160,24 @@ const char* DtlsTransportStateToRTCDtlsTransportState(
       RTC_NOTREACHED();
       return nullptr;
   }
+}
+
+const char* NetworkAdapterTypeToStatsType(rtc::AdapterType type) {
+  switch (type) {
+    case rtc::ADAPTER_TYPE_CELLULAR:
+      return RTCNetworkType::kCellular;
+    case rtc::ADAPTER_TYPE_ETHERNET:
+      return RTCNetworkType::kEthernet;
+    case rtc::ADAPTER_TYPE_WIFI:
+      return RTCNetworkType::kWifi;
+    case rtc::ADAPTER_TYPE_VPN:
+      return RTCNetworkType::kVpn;
+    case rtc::ADAPTER_TYPE_UNKNOWN:
+    case rtc::ADAPTER_TYPE_LOOPBACK:
+      return RTCNetworkType::kUnknown;
+  }
+  RTC_NOTREACHED();
+  return nullptr;
 }
 
 double DoubleAudioLevelFromIntAudioLevel(int audio_level) {
@@ -339,6 +359,13 @@ const std::string& ProduceIceCandidateStats(
     else
       candidate_stats.reset(new RTCRemoteIceCandidateStats(id, timestamp_us));
     candidate_stats->transport_id = transport_id;
+    if (is_local) {
+      candidate_stats->network_type =
+          NetworkAdapterTypeToStatsType(candidate.network_type());
+    } else {
+      // We don't expect to know the adapter type of remote candidates.
+      RTC_DCHECK_EQ(rtc::ADAPTER_TYPE_UNKNOWN, candidate.network_type());
+    }
     candidate_stats->ip = candidate.address().ipaddr().ToString();
     candidate_stats->port = static_cast<int32_t>(candidate.address().port());
     candidate_stats->protocol = candidate.protocol();
@@ -374,13 +401,16 @@ ProduceMediaStreamTrackStatsFromVoiceSenderInfo(
     audio_track_stats->audio_level = DoubleAudioLevelFromIntAudioLevel(
         voice_sender_info.audio_level);
   }
-  if (voice_sender_info.echo_return_loss != -100) {
-    audio_track_stats->echo_return_loss = static_cast<double>(
-        voice_sender_info.echo_return_loss);
+  audio_track_stats->total_audio_energy = voice_sender_info.total_input_energy;
+  audio_track_stats->total_samples_duration =
+      voice_sender_info.total_input_duration;
+  if (voice_sender_info.apm_statistics.echo_return_loss) {
+    audio_track_stats->echo_return_loss =
+        *voice_sender_info.apm_statistics.echo_return_loss;
   }
-  if (voice_sender_info.echo_return_loss_enhancement != -100) {
-    audio_track_stats->echo_return_loss_enhancement = static_cast<double>(
-        voice_sender_info.echo_return_loss_enhancement);
+  if (voice_sender_info.apm_statistics.echo_return_loss_enhancement) {
+    audio_track_stats->echo_return_loss_enhancement =
+        *voice_sender_info.apm_statistics.echo_return_loss_enhancement;
   }
   return audio_track_stats;
 }
@@ -405,6 +435,17 @@ ProduceMediaStreamTrackStatsFromVoiceReceiverInfo(
     audio_track_stats->audio_level = DoubleAudioLevelFromIntAudioLevel(
         voice_receiver_info.audio_level);
   }
+  audio_track_stats->jitter_buffer_delay =
+      voice_receiver_info.jitter_buffer_delay_seconds;
+  audio_track_stats->total_audio_energy =
+      voice_receiver_info.total_output_energy;
+  audio_track_stats->total_samples_received =
+      voice_receiver_info.total_samples_received;
+  audio_track_stats->total_samples_duration =
+      voice_receiver_info.total_output_duration;
+  audio_track_stats->concealed_samples = voice_receiver_info.concealed_samples;
+  audio_track_stats->concealment_events =
+      voice_receiver_info.concealment_events;
   return audio_track_stats;
 }
 
@@ -574,9 +615,9 @@ rtc::scoped_refptr<RTCStatsCollector> RTCStatsCollector::Create(
 RTCStatsCollector::RTCStatsCollector(PeerConnection* pc,
                                      int64_t cache_lifetime_us)
     : pc_(pc),
-      signaling_thread_(pc->session()->signaling_thread()),
-      worker_thread_(pc->session()->worker_thread()),
-      network_thread_(pc->session()->network_thread()),
+      signaling_thread_(pc->signaling_thread()),
+      worker_thread_(pc->worker_thread()),
+      network_thread_(pc->network_thread()),
       num_pending_partial_reports_(0),
       partial_report_timestamp_us_(0),
       cache_timestamp_us_(0),
@@ -622,26 +663,24 @@ void RTCStatsCollector::GetStatsReport(
     // Prepare |channel_name_pairs_| for use in
     // |ProducePartialResultsOnNetworkThread|.
     channel_name_pairs_.reset(new ChannelNamePairs());
-    if (pc_->session()->voice_channel()) {
-      channel_name_pairs_->voice = rtc::Optional<ChannelNamePair>(
-          ChannelNamePair(pc_->session()->voice_channel()->content_name(),
-                          pc_->session()->voice_channel()->transport_name()));
+    if (pc_->voice_channel()) {
+      channel_name_pairs_->voice =
+          ChannelNamePair(pc_->voice_channel()->content_name(),
+                          pc_->voice_channel()->transport_name());
     }
-    if (pc_->session()->video_channel()) {
-      channel_name_pairs_->video = rtc::Optional<ChannelNamePair>(
-          ChannelNamePair(pc_->session()->video_channel()->content_name(),
-                          pc_->session()->video_channel()->transport_name()));
+    if (pc_->video_channel()) {
+      channel_name_pairs_->video =
+          ChannelNamePair(pc_->video_channel()->content_name(),
+                          pc_->video_channel()->transport_name());
     }
-    if (pc_->session()->rtp_data_channel()) {
+    if (pc_->rtp_data_channel()) {
       channel_name_pairs_->data =
-          rtc::Optional<ChannelNamePair>(ChannelNamePair(
-              pc_->session()->rtp_data_channel()->content_name(),
-              pc_->session()->rtp_data_channel()->transport_name()));
+          ChannelNamePair(pc_->rtp_data_channel()->content_name(),
+                          pc_->rtp_data_channel()->transport_name());
     }
-    if (pc_->session()->sctp_content_name()) {
-      channel_name_pairs_->data = rtc::Optional<ChannelNamePair>(
-          ChannelNamePair(*pc_->session()->sctp_content_name(),
-                          *pc_->session()->sctp_transport_name()));
+    if (pc_->sctp_content_name()) {
+      channel_name_pairs_->data = ChannelNamePair(*pc_->sctp_content_name(),
+                                                  *pc_->sctp_transport_name());
     }
     // Prepare |track_media_info_map_| for use in
     // |ProducePartialResultsOnNetworkThread| and
@@ -656,7 +695,7 @@ void RTCStatsCollector::GetStatsReport(
     // thread.
     // TODO(holmer): To avoid the hop we could move BWE and BWE stats to the
     // network thread, where it more naturally belongs.
-    call_stats_ = pc_->session()->GetCallStats();
+    call_stats_ = pc_->GetCallStats();
 
     invoker_.AsyncInvoke<void>(
         RTC_FROM_HERE, network_thread_,
@@ -702,7 +741,7 @@ void RTCStatsCollector::ProducePartialResultsOnNetworkThread(
       timestamp_us);
 
   std::unique_ptr<SessionStats> session_stats =
-      pc_->session()->GetStats(*channel_name_pairs_);
+      pc_->GetSessionStats(*channel_name_pairs_);
   if (session_stats) {
     std::map<std::string, CertificateStatsPair> transport_cert_stats =
         PrepareTransportCertificateStats_n(*session_stats);
@@ -751,6 +790,11 @@ void RTCStatsCollector::AddPartialResults_s(
     channel_name_pairs_.reset();
     track_media_info_map_.reset();
     track_to_id_.clear();
+    // Trace WebRTC Stats when getStats is called on Javascript.
+    // This allows access to WebRTC stats from trace logs. To enable them,
+    // select the "webrtc_stats" category when recording traces.
+    TRACE_EVENT_INSTANT1("webrtc_stats", "webrtc_stats", "report",
+                         cached_report_->ToJson());
     DeliverCachedReport();
   }
 }
@@ -957,7 +1001,7 @@ void RTCStatsCollector::ProduceRTPStreamStats_n(
   // Audio
   if (track_media_info_map.voice_media_info()) {
     std::string transport_id = RTCTransportStatsIDFromBaseChannel(
-        session_stats.proxy_to_transport, *pc_->session()->voice_channel());
+        session_stats.proxy_to_transport, *pc_->voice_channel());
     RTC_DCHECK(!transport_id.empty());
     // Inbound
     for (const cricket::VoiceReceiverInfo& voice_receiver_info :
@@ -1019,7 +1063,7 @@ void RTCStatsCollector::ProduceRTPStreamStats_n(
   // Video
   if (track_media_info_map.video_media_info()) {
     std::string transport_id = RTCTransportStatsIDFromBaseChannel(
-        session_stats.proxy_to_transport, *pc_->session()->video_channel());
+        session_stats.proxy_to_transport, *pc_->video_channel());
     RTC_DCHECK(!transport_id.empty());
     // Inbound
     for (const cricket::VideoReceiverInfo& video_receiver_info :
@@ -1154,14 +1198,13 @@ RTCStatsCollector::PrepareTransportCertificateStats_n(
   for (const auto& transport_stats : session_stats.transport_stats) {
     CertificateStatsPair certificate_stats_pair;
     rtc::scoped_refptr<rtc::RTCCertificate> local_certificate;
-    if (pc_->session()->GetLocalCertificate(
-        transport_stats.second.transport_name, &local_certificate)) {
+    if (pc_->GetLocalCertificate(transport_stats.second.transport_name,
+                                 &local_certificate)) {
       certificate_stats_pair.local =
           local_certificate->ssl_certificate().GetStats();
     }
     std::unique_ptr<rtc::SSLCertificate> remote_certificate =
-        pc_->session()->GetRemoteSSLCertificate(
-            transport_stats.second.transport_name);
+        pc_->GetRemoteSSLCertificate(transport_stats.second.transport_name);
     if (remote_certificate) {
       certificate_stats_pair.remote = remote_certificate->GetStats();
     }
@@ -1176,16 +1219,16 @@ std::unique_ptr<TrackMediaInfoMap>
 RTCStatsCollector::PrepareTrackMediaInfoMap_s() const {
   RTC_DCHECK(signaling_thread_->IsCurrent());
   std::unique_ptr<cricket::VoiceMediaInfo> voice_media_info;
-  if (pc_->session()->voice_channel()) {
+  if (pc_->voice_channel()) {
     voice_media_info.reset(new cricket::VoiceMediaInfo());
-    if (!pc_->session()->voice_channel()->GetStats(voice_media_info.get())) {
+    if (!pc_->voice_channel()->GetStats(voice_media_info.get())) {
       voice_media_info.reset();
     }
   }
   std::unique_ptr<cricket::VideoMediaInfo> video_media_info;
-  if (pc_->session()->video_channel()) {
+  if (pc_->video_channel()) {
     video_media_info.reset(new cricket::VideoMediaInfo());
-    if (!pc_->session()->video_channel()->GetStats(video_media_info.get())) {
+    if (!pc_->video_channel()->GetStats(video_media_info.get())) {
       video_media_info.reset();
     }
   }
@@ -1201,38 +1244,16 @@ std::map<MediaStreamTrackInterface*, std::string>
 RTCStatsCollector::PrepareTrackToID_s() const {
   RTC_DCHECK(signaling_thread_->IsCurrent());
   std::map<MediaStreamTrackInterface*, std::string> track_to_id;
-#if defined(WEBRTC_WEBKIT_BUILD)
-  for (auto& sender : pc_->GetSenders()) {
+  for (auto sender : pc_->GetSenders()) {
     auto track = sender->track();
-    if (!track)
-      continue;
-    track_to_id[track.get()] = track->id();
+    if (track)
+      track_to_id[track.get()] = track->id();
   }
-  for (auto& receiver : pc_->GetReceivers()) {
+  for (auto receiver : pc_->GetReceivers()) {
     auto track = receiver->track();
-    if (!track)
-      continue;
-    track_to_id[track.get()] = track->id();
+    if (track)
+      track_to_id[track.get()] = track->id();
   }
-#else
-  StreamCollectionInterface* local_and_remote_streams[] =
-      { pc_->local_streams().get(), pc_->remote_streams().get() };
-  for (auto& streams : local_and_remote_streams) {
-    if (streams) {
-      for (size_t i = 0; i < streams->count(); ++i) {
-        MediaStreamInterface* stream = streams->at(i);
-        for (const rtc::scoped_refptr<AudioTrackInterface>& audio_track :
-             stream->GetAudioTracks()) {
-          track_to_id[audio_track.get()] = audio_track->id();
-        }
-        for (const rtc::scoped_refptr<VideoTrackInterface>& video_track :
-             stream->GetVideoTracks()) {
-          track_to_id[video_track.get()] = video_track->id();
-        }
-      }
-    }
-  }
-#endif
   return track_to_id;
 }
 

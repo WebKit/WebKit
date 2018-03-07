@@ -140,4 +140,4 @@ void *realloc(void *ptr, size_t size) {
 
 }  // extern "C"
 
-#endif  /* defined(linux) && GLIBC && !ARM && !AARCH64 && !ASAN */
+#endif  // defined(linux) && GLIBC && !ARM && !AARCH64 && !ASAN

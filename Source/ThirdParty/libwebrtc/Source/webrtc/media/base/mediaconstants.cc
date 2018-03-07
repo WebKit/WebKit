@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/mediaconstants.h"
+#include "media/base/mediaconstants.h"
 
 #include <string>
 

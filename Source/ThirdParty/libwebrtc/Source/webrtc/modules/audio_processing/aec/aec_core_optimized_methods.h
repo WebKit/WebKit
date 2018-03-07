@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC_AEC_CORE_OPTIMIZED_METHODS_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC_AEC_CORE_OPTIMIZED_METHODS_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC_AEC_CORE_OPTIMIZED_METHODS_H_
+#define MODULES_AUDIO_PROCESSING_AEC_AEC_CORE_OPTIMIZED_METHODS_H_
 
 #include <memory>
 
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_processing/aec/aec_core.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -77,4 +77,4 @@ extern WebRtcAecWindowData WebRtcAec_WindowData;
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC_AEC_CORE_OPTIMIZED_METHODS_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC_AEC_CORE_OPTIMIZED_METHODS_H_

@@ -8,13 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/rtpsender.h"
+#include "pc/rtpsender.h"
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/pc/localaudiosource.h"
+#include <vector>
+
+#include "api/mediastreaminterface.h"
+#include "pc/localaudiosource.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -45,16 +47,19 @@ void LocalAudioSinkAdapter::SetSink(cricket::AudioSource::Sink* sink) {
 }
 
 AudioRtpSender::AudioRtpSender(AudioTrackInterface* track,
-                               const std::string& stream_id,
+                               const std::vector<std::string>& stream_ids,
                                cricket::VoiceChannel* channel,
                                StatsCollector* stats)
     : id_(track->id()),
-      stream_id_(stream_id),
+      stream_ids_(stream_ids),
       channel_(channel),
       stats_(stats),
       track_(track),
       cached_track_enabled_(track->enabled()),
       sink_adapter_(new LocalAudioSinkAdapter()) {
+  // TODO(steveanton): Relax this constraint once more Unified Plan work is
+  // done.
+  RTC_CHECK(stream_ids_.size() == 1U);
   track_->RegisterObserver(this);
   track_->AddSink(sink_adapter_.get());
   CreateDtmfSender();
@@ -64,7 +69,8 @@ AudioRtpSender::AudioRtpSender(AudioTrackInterface* track,
                                cricket::VoiceChannel* channel,
                                StatsCollector* stats)
     : id_(track->id()),
-      stream_id_(rtc::CreateRandomUuid()),
+      // TODO(steveanton): With Unified Plan this should be empty.
+      stream_ids_({rtc::CreateRandomUuid()}),
       channel_(channel),
       stats_(stats),
       track_(track),
@@ -78,7 +84,8 @@ AudioRtpSender::AudioRtpSender(AudioTrackInterface* track,
 AudioRtpSender::AudioRtpSender(cricket::VoiceChannel* channel,
                                StatsCollector* stats)
     : id_(rtc::CreateRandomUuid()),
-      stream_id_(rtc::CreateRandomUuid()),
+      // TODO(steveanton): With Unified Plan this should be empty.
+      stream_ids_({rtc::CreateRandomUuid()}),
       channel_(channel),
       stats_(stats),
       sink_adapter_(new LocalAudioSinkAdapter()) {
@@ -93,13 +100,13 @@ AudioRtpSender::~AudioRtpSender() {
 
 bool AudioRtpSender::CanInsertDtmf() {
   if (!channel_) {
-    LOG(LS_ERROR) << "CanInsertDtmf: No audio channel exists.";
+    RTC_LOG(LS_ERROR) << "CanInsertDtmf: No audio channel exists.";
     return false;
   }
   // Check that this RTP sender is active (description has been applied that
   // matches an SSRC to its ID).
   if (!ssrc_) {
-    LOG(LS_ERROR) << "CanInsertDtmf: Sender does not have SSRC.";
+    RTC_LOG(LS_ERROR) << "CanInsertDtmf: Sender does not have SSRC.";
     return false;
   }
   return channel_->CanInsertDtmf();
@@ -107,15 +114,15 @@ bool AudioRtpSender::CanInsertDtmf() {
 
 bool AudioRtpSender::InsertDtmf(int code, int duration) {
   if (!channel_) {
-    LOG(LS_ERROR) << "CanInsertDtmf: No audio channel exists.";
+    RTC_LOG(LS_ERROR) << "CanInsertDtmf: No audio channel exists.";
     return false;
   }
   if (!ssrc_) {
-    LOG(LS_ERROR) << "CanInsertDtmf: Sender does not have SSRC.";
+    RTC_LOG(LS_ERROR) << "CanInsertDtmf: Sender does not have SSRC.";
     return false;
   }
   if (!channel_->InsertDtmf(ssrc_, code, duration)) {
-    LOG(LS_ERROR) << "Failed to insert DTMF to channel.";
+    RTC_LOG(LS_ERROR) << "Failed to insert DTMF to channel.";
     return false;
   }
   return true;
@@ -139,12 +146,12 @@ void AudioRtpSender::OnChanged() {
 bool AudioRtpSender::SetTrack(MediaStreamTrackInterface* track) {
   TRACE_EVENT0("webrtc", "AudioRtpSender::SetTrack");
   if (stopped_) {
-    LOG(LS_ERROR) << "SetTrack can't be called on a stopped RtpSender.";
+    RTC_LOG(LS_ERROR) << "SetTrack can't be called on a stopped RtpSender.";
     return false;
   }
   if (track && track->kind() != MediaStreamTrackInterface::kAudioKind) {
-    LOG(LS_ERROR) << "SetTrack called on audio RtpSender with " << track->kind()
-                  << " track.";
+    RTC_LOG(LS_ERROR) << "SetTrack called on audio RtpSender with "
+                      << track->kind() << " track.";
     return false;
   }
   AudioTrackInterface* audio_track = static_cast<AudioTrackInterface*>(track);
@@ -243,9 +250,10 @@ void AudioRtpSender::Stop() {
 }
 
 void AudioRtpSender::SetAudioSend() {
-  RTC_DCHECK(!stopped_ && can_send_track());
+  RTC_DCHECK(!stopped_);
+  RTC_DCHECK(can_send_track());
   if (!channel_) {
-    LOG(LS_ERROR) << "SetAudioSend: No audio channel exists.";
+    RTC_LOG(LS_ERROR) << "SetAudioSend: No audio channel exists.";
     return;
   }
   cricket::AudioOptions options;
@@ -264,7 +272,7 @@ void AudioRtpSender::SetAudioSend() {
   cricket::AudioSource* source = sink_adapter_.get();
   RTC_DCHECK(source != nullptr);
   if (!channel_->SetAudioSend(ssrc_, track_->enabled(), &options, source)) {
-    LOG(LS_ERROR) << "SetAudioSend: ssrc is incorrect: " << ssrc_;
+    RTC_LOG(LS_ERROR) << "SetAudioSend: ssrc is incorrect: " << ssrc_;
   }
 }
 
@@ -272,12 +280,12 @@ void AudioRtpSender::ClearAudioSend() {
   RTC_DCHECK(ssrc_ != 0);
   RTC_DCHECK(!stopped_);
   if (!channel_) {
-    LOG(LS_WARNING) << "ClearAudioSend: No audio channel exists.";
+    RTC_LOG(LS_WARNING) << "ClearAudioSend: No audio channel exists.";
     return;
   }
   cricket::AudioOptions options;
   if (!channel_->SetAudioSend(ssrc_, false, &options, nullptr)) {
-    LOG(LS_WARNING) << "ClearAudioSend: ssrc is incorrect: " << ssrc_;
+    RTC_LOG(LS_WARNING) << "ClearAudioSend: ssrc is incorrect: " << ssrc_;
   }
 }
 
@@ -288,7 +296,7 @@ void AudioRtpSender::CreateDtmfSender() {
   rtc::scoped_refptr<DtmfSenderInterface> sender(
       DtmfSender::Create(track_, rtc::Thread::Current(), this));
   if (!sender.get()) {
-    LOG(LS_ERROR) << "CreateDtmfSender failed on DtmfSender::Create.";
+    RTC_LOG(LS_ERROR) << "CreateDtmfSender failed on DtmfSender::Create.";
     RTC_NOTREACHED();
   }
   dtmf_sender_proxy_ =
@@ -296,21 +304,25 @@ void AudioRtpSender::CreateDtmfSender() {
 }
 
 VideoRtpSender::VideoRtpSender(VideoTrackInterface* track,
-                               const std::string& stream_id,
+                               const std::vector<std::string>& stream_ids,
                                cricket::VideoChannel* channel)
     : id_(track->id()),
-      stream_id_(stream_id),
+      stream_ids_({stream_ids}),
       channel_(channel),
       track_(track),
       cached_track_enabled_(track->enabled()),
       cached_track_content_hint_(track->content_hint()) {
+  // TODO(steveanton): Relax this constraint once more Unified Plan work is
+  // done.
+  RTC_CHECK(stream_ids_.size() == 1U);
   track_->RegisterObserver(this);
 }
 
 VideoRtpSender::VideoRtpSender(VideoTrackInterface* track,
                                cricket::VideoChannel* channel)
     : id_(track->id()),
-      stream_id_(rtc::CreateRandomUuid()),
+      // TODO(steveanton): With Unified Plan this should be empty.
+      stream_ids_({rtc::CreateRandomUuid()}),
       channel_(channel),
       track_(track),
       cached_track_enabled_(track->enabled()),
@@ -320,7 +332,8 @@ VideoRtpSender::VideoRtpSender(VideoTrackInterface* track,
 
 VideoRtpSender::VideoRtpSender(cricket::VideoChannel* channel)
     : id_(rtc::CreateRandomUuid()),
-      stream_id_(rtc::CreateRandomUuid()),
+      // TODO(steveanton): With Unified Plan this should be empty.
+      stream_ids_({rtc::CreateRandomUuid()}),
       channel_(channel) {}
 
 VideoRtpSender::~VideoRtpSender() {
@@ -343,12 +356,12 @@ void VideoRtpSender::OnChanged() {
 bool VideoRtpSender::SetTrack(MediaStreamTrackInterface* track) {
   TRACE_EVENT0("webrtc", "VideoRtpSender::SetTrack");
   if (stopped_) {
-    LOG(LS_ERROR) << "SetTrack can't be called on a stopped RtpSender.";
+    RTC_LOG(LS_ERROR) << "SetTrack can't be called on a stopped RtpSender.";
     return false;
   }
   if (track && track->kind() != MediaStreamTrackInterface::kVideoKind) {
-    LOG(LS_ERROR) << "SetTrack called on video RtpSender with " << track->kind()
-                  << " track.";
+    RTC_LOG(LS_ERROR) << "SetTrack called on video RtpSender with "
+                      << track->kind() << " track.";
     return false;
   }
   VideoTrackInterface* video_track = static_cast<VideoTrackInterface*>(track);
@@ -395,7 +408,7 @@ bool VideoRtpSender::SetParameters(const RtpParameters& parameters) {
 }
 
 rtc::scoped_refptr<DtmfSenderInterface> VideoRtpSender::GetDtmfSender() const {
-  LOG(LS_ERROR) << "Tried to get DTMF sender from video sender.";
+  RTC_LOG(LS_ERROR) << "Tried to get DTMF sender from video sender.";
   return nullptr;
 }
 
@@ -430,25 +443,26 @@ void VideoRtpSender::Stop() {
 }
 
 void VideoRtpSender::SetVideoSend() {
-  RTC_DCHECK(!stopped_ && can_send_track());
+  RTC_DCHECK(!stopped_);
+  RTC_DCHECK(can_send_track());
   if (!channel_) {
-    LOG(LS_ERROR) << "SetVideoSend: No video channel exists.";
+    RTC_LOG(LS_ERROR) << "SetVideoSend: No video channel exists.";
     return;
   }
   cricket::VideoOptions options;
   VideoTrackSourceInterface* source = track_->GetSource();
   if (source) {
-    options.is_screencast = rtc::Optional<bool>(source->is_screencast());
+    options.is_screencast = source->is_screencast();
     options.video_noise_reduction = source->needs_denoising();
   }
   switch (cached_track_content_hint_) {
     case VideoTrackInterface::ContentHint::kNone:
       break;
     case VideoTrackInterface::ContentHint::kFluid:
-      options.is_screencast = rtc::Optional<bool>(false);
+      options.is_screencast = false;
       break;
     case VideoTrackInterface::ContentHint::kDetailed:
-      options.is_screencast = rtc::Optional<bool>(true);
+      options.is_screencast = true;
       break;
   }
   if (!channel_->SetVideoSend(ssrc_, track_->enabled(), &options, track_)) {
@@ -460,7 +474,7 @@ void VideoRtpSender::ClearVideoSend() {
   RTC_DCHECK(ssrc_ != 0);
   RTC_DCHECK(!stopped_);
   if (!channel_) {
-    LOG(LS_WARNING) << "SetVideoSend: No video channel exists.";
+    RTC_LOG(LS_WARNING) << "SetVideoSend: No video channel exists.";
     return;
   }
   // Allow SetVideoSend to fail since |enable| is false and |source| is null.

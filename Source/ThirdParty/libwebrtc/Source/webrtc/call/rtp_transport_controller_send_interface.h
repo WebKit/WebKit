@@ -8,13 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_CALL_RTP_TRANSPORT_CONTROLLER_SEND_INTERFACE_H_
-#define WEBRTC_CALL_RTP_TRANSPORT_CONTROLLER_SEND_INTERFACE_H_
+#ifndef CALL_RTP_TRANSPORT_CONTROLLER_SEND_INTERFACE_H_
+#define CALL_RTP_TRANSPORT_CONTROLLER_SEND_INTERFACE_H_
 
 namespace webrtc {
 
+class PacedSender;
 class PacketRouter;
 class RtpPacketSender;
+struct RtpKeepAliveConfig;
 class SendSideCongestionController;
 class TransportFeedbackObserver;
 
@@ -45,13 +47,27 @@ class RtpTransportControllerSendInterface {
  public:
   virtual ~RtpTransportControllerSendInterface() {}
   virtual PacketRouter* packet_router() = 0;
+  virtual PacedSender* pacer() = 0;
   // Currently returning the same pointer, but with different types.
   virtual SendSideCongestionController* send_side_cc() = 0;
   virtual TransportFeedbackObserver* transport_feedback_observer() = 0;
 
   virtual RtpPacketSender* packet_sender() = 0;
+  virtual const RtpKeepAliveConfig& keepalive_config() const = 0;
+
+  // SetAllocatedSendBitrateLimits sets bitrates limits imposed by send codec
+  // settings.
+  // |min_send_bitrate_bps| is the total minimum send bitrate required by all
+  // sending streams.  This is the minimum bitrate the PacedSender will use.
+  // Note that SendSideCongestionController::OnNetworkChanged can still be
+  // called with a lower bitrate estimate. |max_padding_bitrate_bps| is the max
+  // bitrate the send streams request for padding. This can be higher than the
+  // current network estimate and tells the PacedSender how much it should max
+  // pad unless there is real packets to send.
+  virtual void SetAllocatedSendBitrateLimits(int min_send_bitrate_bps,
+                                             int max_padding_bitrate_bps) = 0;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_CALL_RTP_TRANSPORT_CONTROLLER_SEND_INTERFACE_H_
+#endif  // CALL_RTP_TRANSPORT_CONTROLLER_SEND_INTERFACE_H_

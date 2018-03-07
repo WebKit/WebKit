@@ -12,9 +12,9 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-/* This implementation of poly1305 is by Andrew Moon
- * (https://github.com/floodyberry/poly1305-donna) and released as public
- * domain. */
+// This implementation of poly1305 is by Andrew Moon
+// (https://github.com/floodyberry/poly1305-donna) and released as public
+// domain.
 
 #include <openssl/poly1305.h>
 
@@ -28,7 +28,7 @@
 
 #if defined(OPENSSL_WINDOWS) || !defined(OPENSSL_X86_64)
 
-/* We can assume little-endian. */
+// We can assume little-endian.
 static uint32_t U8TO32_LE(const uint8_t *m) {
   uint32_t r;
   OPENSSL_memcpy(&r, m, sizeof(r));
@@ -55,9 +55,9 @@ static inline struct poly1305_state_st *poly1305_aligned_state(
   return (struct poly1305_state_st *)(((uintptr_t)state + 63) & ~63);
 }
 
-/* poly1305_blocks updates |state| given some amount of input data. This
- * function may only be called with a |len| that is not a multiple of 16 at the
- * end of the data. Otherwise the input must be buffered into 16 byte blocks. */
+// poly1305_blocks updates |state| given some amount of input data. This
+// function may only be called with a |len| that is not a multiple of 16 at the
+// end of the data. Otherwise the input must be buffered into 16 byte blocks.
 static void poly1305_update(struct poly1305_state_st *state, const uint8_t *in,
                             size_t len) {
   uint32_t t0, t1, t2, t3;
@@ -123,7 +123,7 @@ poly1305_donna_mul:
     goto poly1305_donna_16bytes;
   }
 
-/* final bytes */
+// final bytes
 poly1305_donna_atmost15bytes:
   if (!len) {
     return;
@@ -168,7 +168,7 @@ void CRYPTO_poly1305_init(poly1305_state *statep, const uint8_t key[32]) {
   t2 = U8TO32_LE(key + 8);
   t3 = U8TO32_LE(key + 12);
 
-  /* precompute multipliers */
+  // precompute multipliers
   state->r0 = t0 & 0x3ffffff;
   t0 >>= 26;
   t0 |= t1 << 6;
@@ -187,7 +187,7 @@ void CRYPTO_poly1305_init(poly1305_state *statep, const uint8_t key[32]) {
   state->s3 = state->r3 * 5;
   state->s4 = state->r4 * 5;
 
-  /* init state */
+  // init state
   state->h0 = 0;
   state->h1 = 0;
   state->h2 = 0;
@@ -315,4 +315,4 @@ void CRYPTO_poly1305_finish(poly1305_state *statep, uint8_t mac[16]) {
   U32TO8_LE(&mac[12], f3);
 }
 
-#endif  /* OPENSSL_WINDOWS || !OPENSSL_X86_64 */
+#endif  // OPENSSL_WINDOWS || !OPENSSL_X86_64

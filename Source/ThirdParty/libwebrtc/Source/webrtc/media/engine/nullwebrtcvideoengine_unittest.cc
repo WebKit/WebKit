@@ -8,11 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/engine/nullwebrtcvideoengine.h"
-#include "webrtc/media/engine/webrtcvoiceengine.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/mock_audio_decoder_factory.h"
-#include "webrtc/test/mock_audio_encoder_factory.h"
+#include "media/engine/nullwebrtcvideoengine.h"
+#include "media/engine/webrtcvoiceengine.h"
+#include "modules/audio_device/include/mock_audio_device.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "test/gtest.h"
+#include "test/mock_audio_decoder_factory.h"
+#include "test/mock_audio_encoder_factory.h"
 
 namespace cricket {
 
@@ -24,25 +26,23 @@ class WebRtcMediaEngineNullVideo
       const rtc::scoped_refptr<webrtc::AudioEncoderFactory>&
           audio_encoder_factory,
       const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
-          audio_decoder_factory,
-      WebRtcVideoEncoderFactory* video_encoder_factory,
-      WebRtcVideoDecoderFactory* video_decoder_factory)
+          audio_decoder_factory)
       : CompositeMediaEngine<WebRtcVoiceEngine, NullWebRtcVideoEngine>(
-            adm,
-            audio_encoder_factory,
-            audio_decoder_factory,
-            nullptr) {
-    video_.SetExternalDecoderFactory(video_decoder_factory);
-    video_.SetExternalEncoderFactory(video_encoder_factory);
-  }
+            std::forward_as_tuple(adm,
+                                  audio_encoder_factory,
+                                  audio_decoder_factory,
+                                  nullptr,
+                                  webrtc::AudioProcessing::Create()),
+            std::forward_as_tuple()) {}
 };
 
 // Simple test to check if NullWebRtcVideoEngine implements the methods
 // required by CompositeMediaEngine.
 TEST(NullWebRtcVideoEngineTest, CheckInterface) {
+  testing::NiceMock<webrtc::test::MockAudioDeviceModule> adm;
   WebRtcMediaEngineNullVideo engine(
-      nullptr, webrtc::MockAudioEncoderFactory::CreateUnusedFactory(),
-      webrtc::MockAudioDecoderFactory::CreateUnusedFactory(), nullptr, nullptr);
+      &adm, webrtc::MockAudioEncoderFactory::CreateUnusedFactory(),
+      webrtc::MockAudioDecoderFactory::CreateUnusedFactory());
   EXPECT_TRUE(engine.Init());
 }
 

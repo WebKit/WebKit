@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 

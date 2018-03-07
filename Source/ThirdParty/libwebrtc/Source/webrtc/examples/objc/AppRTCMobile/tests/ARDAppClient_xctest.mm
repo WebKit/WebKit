@@ -13,7 +13,7 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <XCTest/XCTest.h>
 
-#include "webrtc/base/ssladapter.h"
+#include "rtc_base/ssladapter.h"
 
 #import "WebRTC/RTCMediaConstraints.h"
 #import "WebRTC/RTCPeerConnectionFactory.h"
@@ -21,7 +21,6 @@
 #import "ARDAppClient+Internal.h"
 #import "ARDJoinResponse+Internal.h"
 #import "ARDMessageResponse+Internal.h"
-#import "ARDSDPUtils.h"
 #import "ARDSettingsModel.h"
 
 @interface ARDAppClientTest : XCTestCase
@@ -230,7 +229,7 @@
 // Test to see that we get a local video connection
 // Note this will currently pass even when no camera is connected as a local
 // video track is created regardless (Perhaps there should be a test for that...)
-#if !TARGET_OS_SIMULATOR // Expect to fail on simulator due to no camera support
+#if !TARGET_IPHONE_SIMULATOR // Expect to fail on simulator due to no camera support
 - (void)testSessionShouldGetLocalVideoTrackCallback {
   ARDAppClient *caller = nil;
   NSString *roomId = @"testRoom";

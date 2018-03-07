@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/buffer_level_filter.h"
+#include "modules/audio_coding/neteq/buffer_level_filter.h"
 
 #include <algorithm>  // Provide access to std::max.
 
@@ -40,9 +40,9 @@ void BufferLevelFilter::Update(size_t buffer_size_packets,
     // value of |time_stretched_samples| from |filtered_current_level_| after
     // converting |time_stretched_samples| from samples to packets in Q8.
     // Make sure that the filtered value remains non-negative.
-    filtered_current_level_ = std::max(0,
-        filtered_current_level_ -
-        (time_stretched_samples << 8) / static_cast<int>(packet_len_samples));
+    filtered_current_level_ = std::max(
+        0, filtered_current_level_ - (time_stretched_samples * (1 << 8)) /
+                                         static_cast<int>(packet_len_samples));
   }
 }
 

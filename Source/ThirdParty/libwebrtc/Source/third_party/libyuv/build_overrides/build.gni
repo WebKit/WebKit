@@ -6,14 +6,6 @@
 # in the file PATENTS. All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-# Using same overrides as WebRTC
-# See https://bugs.chromium.org/p/webrtc/issues/detail?id=5453.
-# Some WebRTC targets require the 10.7 deployment version of the Mac SDK and a
-# 10.11 min SDK but those targets are only used in non-Chromium builds. We can
-# remove this when Chromium drops 10.6 support and also requires 10.7.
-mac_sdk_min_build_override = "10.11"
-mac_deployment_target_build_override = "10.7"
-
 # Some non-Chromium builds don't use Chromium's third_party/binutils.
 linux_use_bundled_binutils_override = true
 

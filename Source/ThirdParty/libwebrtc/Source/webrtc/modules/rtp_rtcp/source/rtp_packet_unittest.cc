@@ -7,14 +7,14 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
-#include "webrtc/base/random.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "rtc_base/random.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -31,10 +31,13 @@ constexpr uint32_t kTimestamp = 0x65431278;
 constexpr uint8_t kTransmissionOffsetExtensionId = 1;
 constexpr uint8_t kAudioLevelExtensionId = 9;
 constexpr uint8_t kRtpStreamIdExtensionId = 0xa;
+constexpr uint8_t kRtpMidExtensionId = 0xb;
+constexpr uint8_t kVideoTimingExtensionId = 0xc;
 constexpr int32_t kTimeOffset = 0x56ce;
 constexpr bool kVoiceActive = true;
 constexpr uint8_t kAudioLevel = 0x5a;
 constexpr char kStreamId[] = "streamid";
+constexpr char kMid[] = "mid";
 constexpr size_t kMaxPaddingSize = 224u;
 // clang-format off
 constexpr uint8_t kMinimumPacket[] = {
@@ -66,6 +69,13 @@ constexpr uint8_t kPacketWithRsid[] = {
     'e',  'a',  'm',  'i',
     'd' , 0x00, 0x00, 0x00};
 
+constexpr uint8_t kPacketWithMid[] = {
+    0x90, kPayloadType, kSeqNumFirstByte, kSeqNumSecondByte,
+    0x65, 0x43, 0x12, 0x78,
+    0x12, 0x34, 0x56, 0x78,
+    0xbe, 0xde, 0x00, 0x01,
+    0xb2, 'm', 'i', 'd'};
+
 constexpr uint32_t kCsrcs[] = {0x34567890, 0x32435465};
 constexpr uint8_t kPayload[] = {'p', 'a', 'y', 'l', 'o', 'a', 'd'};
 constexpr uint8_t kPacketPaddingSize = 8;
@@ -88,8 +98,19 @@ constexpr uint8_t kPacketWithInvalidExtension[] = {
     (kTransmissionOffsetExtensionId << 4) | 6,  // (6+1)-byte extension, but
            'e',  'x',  't',                     // Transmission Offset
      'd',  'a',  't',  'a',                     // expected to be 3-bytes.
-     'p',  'a',  'y',  'l',  'o',  'a',  'd'
-};
+     'p',  'a',  'y',  'l',  'o',  'a',  'd'};
+
+constexpr uint8_t kPacketWithLegacyTimingExtension[] = {
+    0x90, kPayloadType, kSeqNumFirstByte, kSeqNumSecondByte,
+    0x65, 0x43, 0x12, 0x78,  // kTimestamp.
+    0x12, 0x34, 0x56, 0x78,  // kSSrc.
+    0xbe, 0xde, 0x00, 0x04,    // Extension block of size 4 x 32bit words.
+    (kVideoTimingExtensionId << 4)
+      | VideoTimingExtension::kValueSizeBytes - 2,  // Old format without flags.
+          0x00, 0x01, 0x00,
+    0x02, 0x00, 0x03, 0x00,
+    0x04, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00};
 // clang-format on
 }  // namespace
 
@@ -157,6 +178,22 @@ TEST(RtpPacketTest, TryToCreateWithLongRsid) {
   extensions.Register<RtpStreamId>(kRtpStreamIdExtensionId);
   RtpPacketToSend packet(&extensions);
   EXPECT_FALSE(packet.SetExtension<RtpStreamId>(kLongStreamId));
+}
+
+TEST(RtpPacketTest, TryToCreateWithEmptyMid) {
+  RtpPacketToSend::ExtensionManager extensions;
+  extensions.Register<RtpMid>(kRtpMidExtensionId);
+  RtpPacketToSend packet(&extensions);
+  EXPECT_FALSE(packet.SetExtension<RtpMid>(""));
+}
+
+TEST(RtpPacketTest, TryToCreateWithLongMid) {
+  RtpPacketToSend::ExtensionManager extensions;
+  constexpr char kLongMid[] = "LoooooooooonogMid";
+  ASSERT_EQ(strlen(kLongMid), 17u);
+  extensions.Register<RtpMid>(kRtpMidExtensionId);
+  RtpPacketToSend packet(&extensions);
+  EXPECT_FALSE(packet.SetExtension<RtpMid>(kLongMid));
 }
 
 TEST(RtpPacketTest, CreateWithExtensionsWithoutManager) {
@@ -445,6 +482,17 @@ TEST(RtpPacketTest, ParseDynamicSizeExtension) {
   EXPECT_FALSE(packet.GetExtension<RepairedRtpStreamId>(&repaired_rsid));
 }
 
+TEST(RtpPacketTest, ParseWithMid) {
+  RtpPacketReceived::ExtensionManager extensions;
+  extensions.Register<RtpMid>(kRtpMidExtensionId);
+  RtpPacketReceived packet(&extensions);
+  ASSERT_TRUE(packet.Parse(kPacketWithMid, sizeof(kPacketWithMid)));
+
+  std::string mid;
+  EXPECT_TRUE(packet.GetExtension<RtpMid>(&mid));
+  EXPECT_EQ(mid, kMid);
+}
+
 TEST(RtpPacketTest, RawExtensionFunctionsAcceptZeroIdAndReturnFalse) {
   RtpPacketReceived::ExtensionManager extensions;
   RtpPacketReceived packet(&extensions);
@@ -460,6 +508,59 @@ TEST(RtpPacketTest, RawExtensionFunctionsAcceptZeroIdAndReturnFalse) {
   const uint8_t kExtension[] = {'e', 'x', 't'};
   EXPECT_FALSE(packet.SetRawExtension(kInvalidId, kExtension));
   EXPECT_THAT(packet.AllocateRawExtension(kInvalidId, 3), IsEmpty());
+}
+
+TEST(RtpPacketTest, CreateAndParseTimingFrameExtension) {
+  // Create a packet with video frame timing extension populated.
+  RtpPacketToSend::ExtensionManager send_extensions;
+  send_extensions.Register(kRtpExtensionVideoTiming, kVideoTimingExtensionId);
+  RtpPacketToSend send_packet(&send_extensions);
+  send_packet.SetPayloadType(kPayloadType);
+  send_packet.SetSequenceNumber(kSeqNum);
+  send_packet.SetTimestamp(kTimestamp);
+  send_packet.SetSsrc(kSsrc);
+
+  VideoSendTiming timing;
+  timing.encode_start_delta_ms = 1;
+  timing.encode_finish_delta_ms = 2;
+  timing.packetization_finish_delta_ms = 3;
+  timing.pacer_exit_delta_ms = 4;
+  timing.flags =
+      TimingFrameFlags::kTriggeredByTimer + TimingFrameFlags::kTriggeredBySize;
+
+  send_packet.SetExtension<VideoTimingExtension>(timing);
+
+  // Serialize the packet and then parse it again.
+  RtpPacketReceived::ExtensionManager extensions;
+  extensions.Register<VideoTimingExtension>(kVideoTimingExtensionId);
+  RtpPacketReceived receive_packet(&extensions);
+  EXPECT_TRUE(receive_packet.Parse(send_packet.Buffer()));
+
+  VideoSendTiming receivied_timing;
+  EXPECT_TRUE(
+      receive_packet.GetExtension<VideoTimingExtension>(&receivied_timing));
+
+  // Only check first and last timestamp (covered by other tests) plus flags.
+  EXPECT_EQ(receivied_timing.encode_start_delta_ms,
+            timing.encode_start_delta_ms);
+  EXPECT_EQ(receivied_timing.pacer_exit_delta_ms, timing.pacer_exit_delta_ms);
+  EXPECT_EQ(receivied_timing.flags, timing.flags);
+}
+
+TEST(RtpPacketTest, ParseLegacyTimingFrameExtension) {
+  // Parse the modified packet.
+  RtpPacketReceived::ExtensionManager extensions;
+  extensions.Register<VideoTimingExtension>(kVideoTimingExtensionId);
+  RtpPacketReceived packet(&extensions);
+  EXPECT_TRUE(packet.Parse(kPacketWithLegacyTimingExtension,
+                           sizeof(kPacketWithLegacyTimingExtension)));
+  VideoSendTiming receivied_timing;
+  EXPECT_TRUE(packet.GetExtension<VideoTimingExtension>(&receivied_timing));
+
+  // Check first and last timestamp are still OK. Flags should now be 0.
+  EXPECT_EQ(receivied_timing.encode_start_delta_ms, 1);
+  EXPECT_EQ(receivied_timing.pacer_exit_delta_ms, 4);
+  EXPECT_EQ(receivied_timing.flags, 0);
 }
 
 }  // namespace webrtc

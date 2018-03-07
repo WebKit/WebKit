@@ -9,43 +9,41 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_CONGESTION_WINDOW_H_
-#define WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_CONGESTION_WINDOW_H_
+#ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_CONGESTION_WINDOW_H_
+#define MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_CONGESTION_WINDOW_H_
 
-#include <climits>
-#include <list>
-#include <map>
-#include <memory>
-#include <utility>
-#include <vector>
+#include "modules/remote_bitrate_estimator/test/estimators/bbr.h"
 
-#include "webrtc/logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/send_time_history.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe.h"
+#include "api/optional.h"
 
 namespace webrtc {
 namespace testing {
 namespace bwe {
 class CongestionWindow {
  public:
-  void set_gain(float gain);
-  size_t data_inflight();
-  int64_t GetCongestionWindow();
+  CongestionWindow();
+  ~CongestionWindow();
+  int GetCongestionWindow(BbrBweSender::Mode mode,
+                          int64_t bandwidth_estimate,
+                          rtc::Optional<int64_t> min_rtt,
+                          float gain);
+  int GetTargetCongestionWindow(int64_t bandwidth_estimate,
+                                rtc::Optional<int64_t> min_rtt,
+                                float gain);
+  // Packet sent from sender, meaning it is inflight until we receive it and we
+  // should add packet's size to data_inflight.
+  void PacketSent(size_t sent_packet_size);
 
-  // Packet sent from sender, meaning it is inflight
-  // until we receive it and we should add packet's size to data_inflight.
-  void PacketSent();
+  // Ack was received by sender, meaning packet is no longer inflight.
+  void AckReceived(size_t received_packet_size);
 
-  // Ack was received by sender, meaning
-  // packet is no longer inflight.
-  void AckReceived();
+  size_t data_inflight() { return data_inflight_bytes_; }
 
-  // Returnes whether or not data inflight has been under
-  // fixed value for past x rounds and y ms.
-  bool DataInflightDecreased();
+ private:
+  size_t data_inflight_bytes_;
 };
 }  // namespace bwe
 }  // namespace testing
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_CONGESTION_WINDOW_H_
+#endif  // MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_CONGESTION_WINDOW_H_

@@ -45,15 +45,64 @@ config("audio_device_warnings_config") {
   }
 }
 
-rtc_static_library("audio_device") {
+rtc_source_set("audio_device") {
+  public_deps = [
+    ":audio_device_generic",
+  ]
+  if (rtc_include_internal_audio_device && is_ios) {
+    public_deps += [ ":audio_device_ios_objc" ]
+  }
+}
+
+if (rtc_include_internal_audio_device && is_ios) {
+  rtc_source_set("audio_device_ios_objc") {
+    visibility = [ ":audio_device" ]
+    sources = [
+      "ios/audio_device_ios.h",
+      "ios/audio_device_ios.mm",
+      "ios/audio_device_not_implemented_ios.mm",
+      "ios/audio_session_observer.h",
+      "ios/objc/RTCAudioSessionDelegateAdapter.h",
+      "ios/objc/RTCAudioSessionDelegateAdapter.mm",
+      "ios/voice_processing_audio_unit.h",
+      "ios/voice_processing_audio_unit.mm",
+    ]
+    libs = [
+      "AudioToolbox.framework",
+      "AVFoundation.framework",
+      "Foundation.framework",
+      "UIKit.framework",
+    ]
+    deps = [
+      ":audio_device_generic",
+      "../../api:array_view",
+      "../../rtc_base:gtest_prod",
+      "../../rtc_base:rtc_base",
+      "../../sdk:audio_objc",
+      "../../sdk:common_objc",
+      "../../system_wrappers:metrics_api",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}
+
+rtc_source_set("audio_device_generic") {
+  visibility = [
+    ":audio_device",
+    ":audio_device_ios_objc",
+  ]
   public_configs = [ ":audio_device_config" ]
 
   deps = [
     "..:module_api",
     "../..:webrtc_common",
-    "../../base:rtc_base_approved",
-    "../../base:rtc_task_queue",
+    "../../api:array_view",
     "../../common_audio",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_task_queue",
     "../../system_wrappers",
     "../utility",
   ]
@@ -175,30 +224,6 @@ rtc_static_library("audio_device") {
           "CoreGraphics.framework",
         ]
       }
-      if (is_ios) {
-        public_deps = [
-          "../../base:gtest_prod",
-          "../../base:rtc_base",
-          "../../sdk:objc_audio",
-          "../../sdk:objc_common",
-        ]
-        sources += [
-          "ios/audio_device_ios.h",
-          "ios/audio_device_ios.mm",
-          "ios/audio_device_not_implemented_ios.mm",
-          "ios/audio_session_observer.h",
-          "ios/objc/RTCAudioSessionDelegateAdapter.h",
-          "ios/objc/RTCAudioSessionDelegateAdapter.mm",
-          "ios/voice_processing_audio_unit.h",
-          "ios/voice_processing_audio_unit.mm",
-        ]
-        libs = [
-          "AudioToolbox.framework",
-          "AVFoundation.framework",
-          "Foundation.framework",
-          "UIKit.framework",
-        ]
-      }
       if (is_win) {
         sources += [
           "win/audio_device_core_win.cc",
@@ -266,23 +291,45 @@ rtc_source_set("mock_audio_device") {
 }
 
 if (rtc_include_tests) {
+  # TODO(kthelgason): Reenable these tests on simulator.
+  # See bugs.webrtc.org/7812
+  if (is_ios && !use_ios_simulator) {
+    rtc_source_set("audio_device_ios_objc_unittests") {
+      testonly = true
+      visibility = [ ":*" ]
+      sources = [
+        "ios/audio_device_unittest_ios.mm",
+      ]
+      deps = [
+        ":audio_device",
+        ":mock_audio_device",
+        "../../rtc_base:rtc_base_approved",
+        "../../sdk:audio_objc",
+        "../../system_wrappers",
+        "../../test:test_support",
+        "//testing/gmock",
+        "//third_party/ocmock",
+      ]
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+    }
+  }
+
   rtc_source_set("audio_device_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "fine_audio_buffer_unittest.cc",
     ]
     deps = [
       ":audio_device",
       ":mock_audio_device",
-      "../../base:rtc_base_approved",
-      "../../system_wrappers:system_wrappers",
+      "../../api:array_view",
+      "../../api:optional",
+      "../../rtc_base:rtc_base_approved",
+      "../../system_wrappers",
       "../../test:test_support",
       "../utility:utility",
       "//testing/gmock",
@@ -304,46 +351,18 @@ if (rtc_include_tests) {
       ]
       deps += [
         "../../../base",
-        "//webrtc/sdk/android:libjingle_peerconnection_java",
+        "../../sdk/android:libjingle_peerconnection_java",
       ]
-    }
-    if (is_ios) {
-      sources += [ "ios/audio_device_unittest_ios.mm" ]
-      deps += [ "//third_party/ocmock" ]
     }
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
   }
-
-  if (!is_ios) {
-    # These tests do not work on ios, see
-    # https://bugs.chromium.org/p/webrtc/issues/detail?id=4755
-    rtc_executable("audio_device_tests") {
-      testonly = true
-      sources = [
-        "test/audio_device_test_api.cc",
-        "test/audio_device_test_defines.h",
-      ]
-      deps = [
-        ":audio_device",
-        "../..:webrtc_common",
-        "../../base:rtc_base_approved",
-        "../../system_wrappers",
-        "../../test:test_main",
-        "../../test:test_support",
-        "../rtp_rtcp",
-        "../utility",
-        "//testing/gtest",
-      ]
-      public_configs = [ ":audio_device_config" ]
-    }
-  }
 }
 
 if (!build_with_chromium && is_android) {
-  android_library("audio_device_java") {
+  rtc_android_library("audio_device_java") {
     java_files = [
       "android/java/src/org/webrtc/voiceengine/BuildInfo.java",
       "android/java/src/org/webrtc/voiceengine/WebRtcAudioEffects.java",
@@ -353,7 +372,7 @@ if (!build_with_chromium && is_android) {
       "android/java/src/org/webrtc/voiceengine/WebRtcAudioUtils.java",
     ]
     deps = [
-      "//webrtc/base:base_java",
+      "../../rtc_base:base_java",
     ]
   }
 }

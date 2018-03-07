@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_UTILITY_INCLUDE_JVM_ANDROID_H_
-#define WEBRTC_MODULES_UTILITY_INCLUDE_JVM_ANDROID_H_
+#ifndef MODULES_UTILITY_INCLUDE_JVM_ANDROID_H_
+#define MODULES_UTILITY_INCLUDE_JVM_ANDROID_H_
 
 #include <jni.h>
 
 #include <memory>
 #include <string>
 
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/modules/utility/include/helpers_android.h"
+#include "modules/utility/include/helpers_android.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -185,4 +185,4 @@ class JVM {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_UTILITY_INCLUDE_JVM_ANDROID_H_
+#endif  // MODULES_UTILITY_INCLUDE_JVM_ANDROID_H_

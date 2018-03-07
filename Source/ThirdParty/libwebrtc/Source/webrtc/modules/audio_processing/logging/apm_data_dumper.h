@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
+#ifndef MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
+#define MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
 
 #include <stdio.h>
 
@@ -17,9 +17,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_audio/wav_file.h"
+#include "api/array_view.h"
+#include "common_audio/wav_file.h"
+#include "rtc_base/constructormagic.h"
 
 // Check to verify that the define is properly set.
 #if !defined(WEBRTC_APM_DEBUG_DUMP) || \
@@ -209,4 +209,4 @@ class ApmDataDumper {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_
+#endif  // MODULES_AUDIO_PROCESSING_LOGGING_APM_DATA_DUMPER_H_

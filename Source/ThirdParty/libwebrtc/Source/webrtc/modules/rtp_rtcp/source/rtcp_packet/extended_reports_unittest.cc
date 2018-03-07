@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
 
-#include "webrtc/base/random.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/rtcp_packet_parser.h"
+#include "rtc_base/random.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/rtcp_packet_parser.h"
 
 using testing::ElementsAre;
 using testing::ElementsAreArray;

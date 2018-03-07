@@ -54,10 +54,6 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#if !defined(_POSIX_C_SOURCE)
-#define _POSIX_C_SOURCE 201410L  /* needed for strdup, snprintf, vprintf etc */
-#endif
-
 #include <openssl/mem.h>
 
 #include <assert.h>
@@ -76,29 +72,53 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include "internal.h"
 
 
-void *OPENSSL_realloc_clean(void *ptr, size_t old_size, size_t new_size) {
+#define OPENSSL_MALLOC_PREFIX 8
+
+
+void *OPENSSL_malloc(size_t size) {
+  void *ptr = malloc(size + OPENSSL_MALLOC_PREFIX);
   if (ptr == NULL) {
+    return NULL;
+  }
+
+  *(size_t *)ptr = size;
+
+  return ((uint8_t *)ptr) + OPENSSL_MALLOC_PREFIX;
+}
+
+void OPENSSL_free(void *orig_ptr) {
+  if (orig_ptr == NULL) {
+    return;
+  }
+
+  void *ptr = ((uint8_t *)orig_ptr) - OPENSSL_MALLOC_PREFIX;
+
+  size_t size = *(size_t *)ptr;
+  OPENSSL_cleanse(ptr, size + OPENSSL_MALLOC_PREFIX);
+  free(ptr);
+}
+
+void *OPENSSL_realloc(void *orig_ptr, size_t new_size) {
+  if (orig_ptr == NULL) {
     return OPENSSL_malloc(new_size);
   }
 
-  if (new_size == 0) {
-    return NULL;
-  }
-
-  /* We don't support shrinking the buffer. Note the memcpy that copies
-   * |old_size| bytes to the new buffer, below. */
-  if (new_size < old_size) {
-    return NULL;
-  }
+  void *ptr = ((uint8_t *)orig_ptr) - OPENSSL_MALLOC_PREFIX;
+  size_t old_size = *(size_t *)ptr;
 
   void *ret = OPENSSL_malloc(new_size);
   if (ret == NULL) {
     return NULL;
   }
 
-  OPENSSL_memcpy(ret, ptr, old_size);
-  OPENSSL_cleanse(ptr, old_size);
-  OPENSSL_free(ptr);
+  size_t to_copy = new_size;
+  if (old_size < to_copy) {
+    to_copy = old_size;
+  }
+
+  memcpy(ret, orig_ptr, to_copy);
+  OPENSSL_free(orig_ptr);
+
   return ret;
 }
 
@@ -114,7 +134,7 @@ void OPENSSL_cleanse(void *ptr, size_t len) {
      detect memset_s, it would be better to use that. */
   __asm__ __volatile__("" : : "r"(ptr) : "memory");
 #endif
-#endif  /* !OPENSSL_NO_ASM */
+#endif  // !OPENSSL_NO_ASM
 }
 
 int CRYPTO_memcmp(const void *in_a, const void *in_b, size_t len) {
@@ -130,7 +150,7 @@ int CRYPTO_memcmp(const void *in_a, const void *in_b, size_t len) {
 }
 
 uint32_t OPENSSL_hash32(const void *ptr, size_t len) {
-  /* These are the FNV-1a parameters for 32 bits. */
+  // These are the FNV-1a parameters for 32 bits.
   static const uint32_t kPrime = 16777619u;
   static const uint32_t kOffsetBasis = 2166136261u;
 
@@ -155,31 +175,54 @@ size_t OPENSSL_strnlen(const char *s, size_t len) {
   return len;
 }
 
-#if defined(OPENSSL_WINDOWS)
+char *OPENSSL_strdup(const char *s) {
+  const size_t len = strlen(s) + 1;
+  char *ret = OPENSSL_malloc(len);
+  if (ret == NULL) {
+    return NULL;
+  }
+  OPENSSL_memcpy(ret, s, len);
+  return ret;
+}
 
-char *OPENSSL_strdup(const char *s) { return _strdup(s); }
+int OPENSSL_tolower(int c) {
+  if (c >= 'A' && c <= 'Z') {
+    return c + ('a' - 'A');
+  }
+  return c;
+}
 
 int OPENSSL_strcasecmp(const char *a, const char *b) {
-  return _stricmp(a, b);
+  for (size_t i = 0;; i++) {
+    const int aa = OPENSSL_tolower(a[i]);
+    const int bb = OPENSSL_tolower(b[i]);
+
+    if (aa < bb) {
+      return -1;
+    } else if (aa > bb) {
+      return 1;
+    } else if (aa == 0) {
+      return 0;
+    }
+  }
 }
 
 int OPENSSL_strncasecmp(const char *a, const char *b, size_t n) {
-  return _strnicmp(a, b, n);
+  for (size_t i = 0; i < n; i++) {
+    const int aa = OPENSSL_tolower(a[i]);
+    const int bb = OPENSSL_tolower(b[i]);
+
+    if (aa < bb) {
+      return -1;
+    } else if (aa > bb) {
+      return 1;
+    } else if (aa == 0) {
+      return 0;
+    }
+  }
+
+  return 0;
 }
-
-#else
-
-char *OPENSSL_strdup(const char *s) { return strdup(s); }
-
-int OPENSSL_strcasecmp(const char *a, const char *b) {
-  return strcasecmp(a, b);
-}
-
-int OPENSSL_strncasecmp(const char *a, const char *b, size_t n) {
-  return strncasecmp(a, b, n);
-}
-
-#endif
 
 int BIO_snprintf(char *buf, size_t n, const char *format, ...) {
   va_list args;

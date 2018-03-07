@@ -10,8 +10,8 @@
 
 #include <memory>
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
+#include "test/gtest.h"
 
 // A threshold curve divides 2D space into three domains - below, on and above
 // the threshold curve.

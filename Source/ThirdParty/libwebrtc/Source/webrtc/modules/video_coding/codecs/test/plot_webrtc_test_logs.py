@@ -18,11 +18,12 @@ import re
 import matplotlib.pyplot as plt
 
 # Log events.
-EVENT_START = 'RUN      ] CodecSettings/PlotVideoProcessorIntegrationTest.'
-EVENT_END = 'OK ] CodecSettings/PlotVideoProcessorIntegrationTest.'
+EVENT_START = \
+  'RUN      ] CodecSettings/VideoProcessorIntegrationTestParameterized.'
+EVENT_END = 'OK ] CodecSettings/VideoProcessorIntegrationTestParameterized.'
 
 # Metrics to plot, tuple: (name to parse in file, label to use when plotting).
-BITRATE = ('Target Bitrate', 'target bitrate (kbps)')
+BITRATE = ('Target bitrate', 'target bitrate (kbps)')
 WIDTH = ('Width', 'width')
 HEIGHT = ('Height', 'height')
 FILENAME = ('Filename', 'clip')
@@ -30,18 +31,19 @@ CODEC_TYPE = ('Codec type', 'Codec')
 ENCODER_IMPLEMENTATION_NAME = ('Encoder implementation name', 'enc name')
 DECODER_IMPLEMENTATION_NAME = ('Decoder implementation name', 'dec name')
 CODEC_IMPLEMENTATION_NAME = ('Codec implementation name', 'codec name')
-CORES = ('#CPU cores used', 'CPU cores used')
+CORES = ('# CPU cores used', 'CPU cores used')
 DENOISING = ('Denoising', 'denoising')
 RESILIENCE = ('Resilience', 'resilience')
 ERROR_CONCEALMENT = ('Error concealment', 'error concealment')
 QP = ('Average QP', 'avg QP')
+CPU_USAGE = ('CPU usage %', 'CPU usage (%)')
 PSNR = ('PSNR avg', 'PSNR (dB)')
 SSIM = ('SSIM avg', 'SSIM')
-ENC_BITRATE = ('Encoding bitrate', 'encoded bitrate (kbps)')
+ENC_BITRATE = ('Encoded bitrate', 'encoded bitrate (kbps)')
 FRAMERATE = ('Frame rate', 'fps')
-NUM_FRAMES = ('Number of processed frames', 'num frames')
-NUM_DROPPED_FRAMES = ('Number of dropped frames', 'num dropped frames')
-NUM_FRAMES_TO_TARGET = ('Number of frames to approach target rate',
+NUM_FRAMES = ('# processed frames', 'num frames')
+NUM_DROPPED_FRAMES = ('# dropped frames', 'num dropped frames')
+NUM_FRAMES_TO_TARGET = ('# frames to convergence',
                         'frames to reach target rate')
 ENCODE_TIME = ('Encoding time', 'encode time (us)')
 ENCODE_TIME_AVG = ('Encoding time', 'encode time (us) avg')
@@ -92,6 +94,7 @@ RESULTS = [
   ENCODE_TIME_AVG,
   DECODE_TIME_AVG,
   QP,
+  CPU_USAGE,
   AVG_KEY_FRAME_SIZE,
   AVG_NON_KEY_FRAME_SIZE,
 ]

@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 
-#include "webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "webrtc/modules/desktop_capture/desktop_capturer_differ_wrapper.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capturer_differ_wrapper.h"
 
 namespace webrtc {
 
@@ -31,6 +31,10 @@ bool DesktopCapturer::SelectSource(SourceId id) {
 }
 
 bool DesktopCapturer::FocusOnSelectedSource() {
+  return false;
+}
+
+bool DesktopCapturer::IsOccluded(const DesktopVector& pos) {
   return false;
 }
 

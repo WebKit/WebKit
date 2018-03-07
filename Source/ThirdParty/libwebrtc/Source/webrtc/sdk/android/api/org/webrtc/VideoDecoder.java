@@ -18,9 +18,14 @@ public interface VideoDecoder {
   /** Settings passed to the decoder by WebRTC. */
   public class Settings {
     public final int numberOfCores;
+    public final int width;
+    public final int height;
 
-    public Settings(int numberOfCores) {
+    @CalledByNative("Settings")
+    public Settings(int numberOfCores, int width, int height) {
       this.numberOfCores = numberOfCores;
+      this.width = width;
+      this.height = height;
     }
   }
 
@@ -50,20 +55,23 @@ public interface VideoDecoder {
    * Initializes the decoding process with specified settings. Will be called on the decoding thread
    * before any decode calls.
    */
-  void initDecode(Settings settings, Callback decodeCallback);
+  @CalledByNative VideoCodecStatus initDecode(Settings settings, Callback decodeCallback);
   /**
    * Called when the decoder is no longer needed. Any more calls to decode will not be made.
    */
-  void release();
+  @CalledByNative VideoCodecStatus release();
   /**
    * Request the decoder to decode a frame.
    */
-  void decode(EncodedImage frame, DecodeInfo info);
+  @CalledByNative VideoCodecStatus decode(EncodedImage frame, DecodeInfo info);
   /**
    * The decoder should return true if it prefers late decoding. That is, it can not decode
    * infinite number of frames before the decoded frame is consumed.
    */
-  boolean getPrefersLateDecoding();
-  /** Should return a descriptive name for the implementation. */
-  String getImplementationName();
+  @CalledByNative boolean getPrefersLateDecoding();
+  /**
+   * Should return a descriptive name for the implementation. Gets called once and cached. May be
+   * called from arbitrary thread.
+   */
+  @CalledByNative String getImplementationName();
 }

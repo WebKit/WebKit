@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 
-#include "webrtc/modules/video_processing/util/denoiser_filter_c.h"
+#include "modules/video_processing/util/denoiser_filter_c.h"
 
 namespace webrtc {
 

@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCMediaStreamTrack.h"
 
-#include "webrtc/api/mediastreaminterface.h"
+#include "api/mediastreaminterface.h"
 
 typedef NS_ENUM(NSInteger, RTCMediaStreamTrackType) {
   RTCMediaStreamTrackTypeAudio,

@@ -33,7 +33,7 @@
     executable may be configured explicitly by setting `GO_EXECUTABLE`.
 
   * To build the x86 and x86\_64 assembly, your assembler must support AVX2
-    instructions and MOVBE. If using GNU binutils, you must have 2.22 or later.
+    instructions and MOVBE. If using GNU binutils, you must have 2.22 or later
 
 ## Building
 

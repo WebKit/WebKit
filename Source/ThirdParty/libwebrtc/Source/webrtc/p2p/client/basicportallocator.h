@@ -8,25 +8,27 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_CLIENT_BASICPORTALLOCATOR_H_
-#define WEBRTC_P2P_CLIENT_BASICPORTALLOCATOR_H_
+#ifndef P2P_CLIENT_BASICPORTALLOCATOR_H_
+#define P2P_CLIENT_BASICPORTALLOCATOR_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/p2p/base/portallocator.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/messagequeue.h"
-#include "webrtc/base/network.h"
-#include "webrtc/base/thread.h"
+#include "api/turncustomizer.h"
+#include "p2p/base/portallocator.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/messagequeue.h"
+#include "rtc_base/network.h"
+#include "rtc_base/thread.h"
 
 namespace cricket {
 
 class BasicPortAllocator : public PortAllocator {
  public:
   BasicPortAllocator(rtc::NetworkManager* network_manager,
-                     rtc::PacketSocketFactory* socket_factory);
+                     rtc::PacketSocketFactory* socket_factory,
+                     webrtc::TurnCustomizer* customizer = nullptr);
   explicit BasicPortAllocator(rtc::NetworkManager* network_manager);
   BasicPortAllocator(rtc::NetworkManager* network_manager,
                      rtc::PacketSocketFactory* socket_factory,
@@ -36,16 +38,10 @@ class BasicPortAllocator : public PortAllocator {
                      const rtc::SocketAddress& relay_server_udp,
                      const rtc::SocketAddress& relay_server_tcp,
                      const rtc::SocketAddress& relay_server_ssl);
-  virtual ~BasicPortAllocator();
+  ~BasicPortAllocator() override;
 
   // Set to kDefaultNetworkIgnoreMask by default.
-  void SetNetworkIgnoreMask(int network_ignore_mask) override {
-    // TODO(phoglund): implement support for other types than loopback.
-    // See https://code.google.com/p/webrtc/issues/detail?id=4288.
-    // Then remove set_network_ignore_list from NetworkManager.
-    network_ignore_mask_ = network_ignore_mask;
-  }
-
+  void SetNetworkIgnoreMask(int network_ignore_mask) override;
   int network_ignore_mask() const { return network_ignore_mask_; }
 
   rtc::NetworkManager* network_manager() const { return network_manager_; }
@@ -94,9 +90,9 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
                             int component,
                             const std::string& ice_ufrag,
                             const std::string& ice_pwd);
-  ~BasicPortAllocatorSession();
+  ~BasicPortAllocatorSession() override;
 
-  virtual BasicPortAllocator* allocator() { return allocator_; }
+  virtual BasicPortAllocator* allocator();
   rtc::Thread* network_thread() { return network_thread_; }
   rtc::PacketSocketFactory* socket_factory() { return socket_factory_; }
 
@@ -104,14 +100,15 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
   void StartGettingPorts() override;
   void StopGettingPorts() override;
   void ClearGettingPorts() override;
-  bool IsGettingPorts() override { return state_ == SessionState::GATHERING; }
-  bool IsCleared() const override { return state_ == SessionState::CLEARED; }
-  bool IsStopped() const override { return state_ == SessionState::STOPPED; }
+  bool IsGettingPorts() override;
+  bool IsCleared() const override;
+  bool IsStopped() const override;
   // These will all be cricket::Ports.
   std::vector<PortInterface*> ReadyPorts() const override;
   std::vector<Candidate> ReadyCandidates() const override;
   bool CandidatesAllocationDone() const override;
   void RegatherOnFailedNetworks() override;
+  void RegatherOnAllNetworks() override;
   void PruneAllPorts() override;
 
  protected:
@@ -185,7 +182,7 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
   void OnConfigStop();
   void AllocatePorts();
   void OnAllocate();
-  void DoAllocate();
+  void DoAllocate(bool disable_equivalent_phases);
   void OnNetworksChanged();
   void OnAllocationSequenceObjectsCreated();
   void DisableEquivalentPhases(rtc::Network* network,
@@ -203,6 +200,9 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
   PortData* FindPort(Port* port);
   std::vector<rtc::Network*> GetNetworks();
   std::vector<rtc::Network*> GetFailedNetworks();
+  void Regather(const std::vector<rtc::Network*>& networks,
+                bool disable_equivalent_phases,
+                IceRegatheringReason reason);
 
   bool CheckCandidateFilter(const Candidate& c) const;
   bool CandidatePairable(const Candidate& c, const Port* port) const;
@@ -263,6 +263,8 @@ struct PortConfiguration : public rtc::MessageData {
                     const std::string& username,
                     const std::string& password);
 
+  ~PortConfiguration() override;
+
   // Returns addresses of both the explicitly configured STUN servers,
   // and TURN servers that should be used as STUN servers.
   ServerAddresses StunServers();
@@ -300,7 +302,7 @@ class AllocationSequence : public rtc::MessageHandler,
                      rtc::Network* network,
                      PortConfiguration* config,
                      uint32_t flags);
-  ~AllocationSequence();
+  ~AllocationSequence() override;
   void Init();
   void Clear();
   void OnNetworkFailed();
@@ -323,10 +325,7 @@ class AllocationSequence : public rtc::MessageHandler,
   void Stop();
 
   // MessageHandler
-  void OnMessage(rtc::Message* msg);
-
-  void EnableProtocol(ProtocolType proto);
-  bool ProtocolEnabled(ProtocolType proto) const;
+  void OnMessage(rtc::Message* msg) override;
 
   // Signal from AllocationSequence, when it's done with allocating ports.
   // This signal is useful, when port allocation fails which doesn't result
@@ -361,7 +360,8 @@ class AllocationSequence : public rtc::MessageHandler,
   BasicPortAllocatorSession* session_;
   bool network_failed_ = false;
   rtc::Network* network_;
-  rtc::IPAddress ip_;
+  // Compared with the new best IP in DisableEquivalentPhases.
+  rtc::IPAddress previous_best_ip_;
   PortConfiguration* config_;
   State state_;
   uint32_t flags_;
@@ -375,4 +375,4 @@ class AllocationSequence : public rtc::MessageHandler,
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_CLIENT_BASICPORTALLOCATOR_H_
+#endif  // P2P_CLIENT_BASICPORTALLOCATOR_H_

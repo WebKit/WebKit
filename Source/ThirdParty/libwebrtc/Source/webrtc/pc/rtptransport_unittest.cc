@@ -9,47 +9,73 @@
  */
 
 #include <string>
+#include <utility>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/p2p/base/fakepackettransport.h"
-#include "webrtc/pc/rtptransport.h"
+#include "p2p/base/fakepackettransport.h"
+#include "pc/rtptransport.h"
+#include "pc/rtptransporttestutil.h"
+#include "rtc_base/gunit.h"
 
 namespace webrtc {
 
 constexpr bool kMuxDisabled = false;
 constexpr bool kMuxEnabled = true;
+constexpr uint16_t kLocalNetId = 1;
+constexpr uint16_t kRemoteNetId = 2;
+constexpr int kLastPacketId = 100;
+constexpr int kTransportOverheadPerPacket = 28;  // Ipv4(20) + UDP(8).
 
 TEST(RtpTransportTest, SetRtcpParametersCantDisableRtcpMux) {
   RtpTransport transport(kMuxDisabled);
-  RtcpParameters params;
-  transport.SetRtcpParameters(params);
-  params.mux = false;
-  EXPECT_FALSE(transport.SetRtcpParameters(params).ok());
+  RtpTransportParameters params;
+  transport.SetParameters(params);
+  params.rtcp.mux = false;
+  EXPECT_FALSE(transport.SetParameters(params).ok());
 }
 
 TEST(RtpTransportTest, SetRtcpParametersEmptyCnameUsesExisting) {
   static const char kName[] = "name";
   RtpTransport transport(kMuxDisabled);
-  RtcpParameters params_with_name;
-  params_with_name.cname = kName;
-  transport.SetRtcpParameters(params_with_name);
-  EXPECT_EQ(transport.GetRtcpParameters().cname, kName);
+  RtpTransportParameters params_with_name;
+  params_with_name.rtcp.cname = kName;
+  transport.SetParameters(params_with_name);
+  EXPECT_EQ(transport.GetParameters().rtcp.cname, kName);
 
-  RtcpParameters params_without_name;
-  transport.SetRtcpParameters(params_without_name);
-  EXPECT_EQ(transport.GetRtcpParameters().cname, kName);
+  RtpTransportParameters params_without_name;
+  transport.SetParameters(params_without_name);
+  EXPECT_EQ(transport.GetParameters().rtcp.cname, kName);
+}
+
+TEST(RtpTransportTest, SetRtpTransportKeepAliveNotSupported) {
+  // Tests that we warn users that keep-alive isn't supported yet.
+  // TODO(sprang): Wire up keep-alive and remove this test.
+  RtpTransport transport(kMuxDisabled);
+  RtpTransportParameters params;
+  params.keepalive.timeout_interval_ms = 1;
+  auto result = transport.SetParameters(params);
+  EXPECT_FALSE(result.ok());
+  EXPECT_EQ(RTCErrorType::INVALID_MODIFICATION, result.type());
 }
 
 class SignalObserver : public sigslot::has_slots<> {
  public:
   explicit SignalObserver(RtpTransport* transport) {
     transport->SignalReadyToSend.connect(this, &SignalObserver::OnReadyToSend);
+    transport->SignalNetworkRouteChanged.connect(
+        this, &SignalObserver::OnNetworkRouteChanged);
   }
+
   bool ready() const { return ready_; }
   void OnReadyToSend(bool ready) { ready_ = ready; }
 
+  rtc::Optional<rtc::NetworkRoute> network_route() { return network_route_; }
+  void OnNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute> network_route) {
+    network_route_ = std::move(network_route);
+  }
+
  private:
   bool ready_ = false;
+  rtc::Optional<rtc::NetworkRoute> network_route_;
 };
 
 TEST(RtpTransportTest, SettingRtcpAndRtpSignalsReady) {
@@ -116,6 +142,61 @@ TEST(RtpTransportTest, EnablingRtcpMuxSignalsReady) {
   EXPECT_TRUE(observer.ready());
 }
 
+// Tests the SignalNetworkRoute is fired when setting a packet transport.
+TEST(RtpTransportTest, SetRtpTransportWithNetworkRouteChanged) {
+  RtpTransport transport(kMuxDisabled);
+  SignalObserver observer(&transport);
+  rtc::FakePacketTransport fake_rtp("fake_rtp");
+
+  EXPECT_FALSE(observer.network_route());
+
+  rtc::NetworkRoute network_route;
+  // Set a non-null RTP transport with a new network route.
+  network_route.connected = true;
+  network_route.local_network_id = kLocalNetId;
+  network_route.remote_network_id = kRemoteNetId;
+  network_route.last_sent_packet_id = kLastPacketId;
+  network_route.packet_overhead = kTransportOverheadPerPacket;
+  fake_rtp.SetNetworkRoute(rtc::Optional<rtc::NetworkRoute>(network_route));
+  transport.SetRtpPacketTransport(&fake_rtp);
+  ASSERT_TRUE(observer.network_route());
+  EXPECT_EQ(network_route, *(observer.network_route()));
+  EXPECT_EQ(kTransportOverheadPerPacket,
+            observer.network_route()->packet_overhead);
+  EXPECT_EQ(kLastPacketId, observer.network_route()->last_sent_packet_id);
+
+  // Set a null RTP transport.
+  transport.SetRtpPacketTransport(nullptr);
+  EXPECT_FALSE(observer.network_route());
+}
+
+TEST(RtpTransportTest, SetRtcpTransportWithNetworkRouteChanged) {
+  RtpTransport transport(kMuxDisabled);
+  SignalObserver observer(&transport);
+  rtc::FakePacketTransport fake_rtcp("fake_rtcp");
+
+  EXPECT_FALSE(observer.network_route());
+
+  rtc::NetworkRoute network_route;
+  // Set a non-null RTCP transport with a new network route.
+  network_route.connected = true;
+  network_route.local_network_id = kLocalNetId;
+  network_route.remote_network_id = kRemoteNetId;
+  network_route.last_sent_packet_id = kLastPacketId;
+  network_route.packet_overhead = kTransportOverheadPerPacket;
+  fake_rtcp.SetNetworkRoute(rtc::Optional<rtc::NetworkRoute>(network_route));
+  transport.SetRtcpPacketTransport(&fake_rtcp);
+  ASSERT_TRUE(observer.network_route());
+  EXPECT_EQ(network_route, *(observer.network_route()));
+  EXPECT_EQ(kTransportOverheadPerPacket,
+            observer.network_route()->packet_overhead);
+  EXPECT_EQ(kLastPacketId, observer.network_route()->last_sent_packet_id);
+
+  // Set a null RTCP transport.
+  transport.SetRtcpPacketTransport(nullptr);
+  EXPECT_FALSE(observer.network_route());
+}
+
 class SignalCounter : public sigslot::has_slots<> {
  public:
   explicit SignalCounter(RtpTransport* transport) {
@@ -150,29 +231,6 @@ TEST(RtpTransportTest, ChangingReadyToSendStateOnlySignalsWhenChanged) {
   transport.SetRtcpMuxEnabled(false);
   EXPECT_EQ(observer.count(), 2);
 }
-
-class SignalPacketReceivedCounter : public sigslot::has_slots<> {
- public:
-  explicit SignalPacketReceivedCounter(RtpTransport* transport) {
-    transport->SignalPacketReceived.connect(
-        this, &SignalPacketReceivedCounter::OnPacketReceived);
-  }
-  int rtcp_count() const { return rtcp_count_; }
-  int rtp_count() const { return rtp_count_; }
-
- private:
-  void OnPacketReceived(bool rtcp,
-                        rtc::CopyOnWriteBuffer&,
-                        const rtc::PacketTime&) {
-    if (rtcp) {
-      ++rtcp_count_;
-    } else {
-      ++rtp_count_;
-    }
-  }
-  int rtcp_count_ = 0;
-  int rtp_count_ = 0;
-};
 
 // Test that SignalPacketReceived fires with rtcp=true when a RTCP packet is
 // received.

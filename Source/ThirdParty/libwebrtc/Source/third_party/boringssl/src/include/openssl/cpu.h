@@ -68,28 +68,28 @@ extern "C" {
 #endif
 
 
-/* Runtime CPU feature support */
+// Runtime CPU feature support
 
 
 #if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
-/* OPENSSL_ia32cap_P contains the Intel CPUID bits when running on an x86 or
- * x86-64 system.
- *
- *   Index 0:
- *     EDX for CPUID where EAX = 1
- *     Bit 20 is always zero
- *     Bit 28 is adjusted to reflect whether the data cache is shared between
- *       multiple logical cores
- *     Bit 30 is used to indicate an Intel CPU
- *   Index 1:
- *     ECX for CPUID where EAX = 1
- *     Bit 11 is used to indicate AMD XOP support, not SDBG
- *   Index 2:
- *     EBX for CPUID where EAX = 7
- *   Index 3 is set to zero.
- *
- * Note: the CPUID bits are pre-adjusted for the OSXSAVE bit and the YMM and XMM
- * bits in XCR0, so it is not necessary to check those. */
+// OPENSSL_ia32cap_P contains the Intel CPUID bits when running on an x86 or
+// x86-64 system.
+//
+//   Index 0:
+//     EDX for CPUID where EAX = 1
+//     Bit 20 is always zero
+//     Bit 28 is adjusted to reflect whether the data cache is shared between
+//       multiple logical cores
+//     Bit 30 is used to indicate an Intel CPU
+//   Index 1:
+//     ECX for CPUID where EAX = 1
+//     Bit 11 is used to indicate AMD XOP support, not SDBG
+//   Index 2:
+//     EBX for CPUID where EAX = 7
+//   Index 3 is set to zero.
+//
+// Note: the CPUID bits are pre-adjusted for the OSXSAVE bit and the YMM and XMM
+// bits in XCR0, so it is not necessary to check those.
 extern uint32_t OPENSSL_ia32cap_P[4];
 
 #if defined(BORINGSSL_FIPS)
@@ -105,25 +105,25 @@ static inline const uint32_t *OPENSSL_ia32cap_get(void) {
 #if defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
 
 #if defined(OPENSSL_APPLE)
-/* iOS builds use the static ARM configuration. */
+// iOS builds use the static ARM configuration.
 #define OPENSSL_STATIC_ARMCAP
 #endif
 
 #if !defined(OPENSSL_STATIC_ARMCAP)
 
-/* CRYPTO_is_NEON_capable_at_runtime returns true if the current CPU has a NEON
- * unit. Note that |OPENSSL_armcap_P| also exists and contains the same
- * information in a form that's easier for assembly to use. */
+// CRYPTO_is_NEON_capable_at_runtime returns true if the current CPU has a NEON
+// unit. Note that |OPENSSL_armcap_P| also exists and contains the same
+// information in a form that's easier for assembly to use.
 OPENSSL_EXPORT char CRYPTO_is_NEON_capable_at_runtime(void);
 
-/* CRYPTO_is_NEON_capable returns true if the current CPU has a NEON unit. If
- * this is known statically then it returns one immediately. */
+// CRYPTO_is_NEON_capable returns true if the current CPU has a NEON unit. If
+// this is known statically then it returns one immediately.
 static inline int CRYPTO_is_NEON_capable(void) {
-  /* Only statically skip the runtime lookup on aarch64. On arm, one CPU is
-   * known to have a broken NEON unit which is known to fail with on some
-   * hand-written NEON assembly. For now, continue to apply the workaround even
-   * when the compiler is instructed to freely emit NEON code. See
-   * https://crbug.com/341598 and https://crbug.com/606629. */
+  // Only statically skip the runtime lookup on aarch64. On arm, one CPU is
+  // known to have a broken NEON unit which is known to fail with on some
+  // hand-written NEON assembly. For now, continue to apply the workaround even
+  // when the compiler is instructed to freely emit NEON code. See
+  // https://crbug.com/341598 and https://crbug.com/606629.
 #if defined(__ARM_NEON__) && !defined(OPENSSL_ARM)
   return 1;
 #else
@@ -132,17 +132,21 @@ static inline int CRYPTO_is_NEON_capable(void) {
 }
 
 #if defined(OPENSSL_ARM)
-/* CRYPTO_has_broken_NEON returns one if the current CPU is known to have a
- * broken NEON unit. See https://crbug.com/341598. */
+// CRYPTO_has_broken_NEON returns one if the current CPU is known to have a
+// broken NEON unit. See https://crbug.com/341598.
 OPENSSL_EXPORT int CRYPTO_has_broken_NEON(void);
+
+// CRYPTO_needs_hwcap2_workaround returns one if the ARMv8 AArch32 AT_HWCAP2
+// workaround was needed. See https://crbug.com/boringssl/46.
+OPENSSL_EXPORT int CRYPTO_needs_hwcap2_workaround(void);
 #endif
 
-/* CRYPTO_is_ARMv8_AES_capable returns true if the current CPU supports the
- * ARMv8 AES instruction. */
+// CRYPTO_is_ARMv8_AES_capable returns true if the current CPU supports the
+// ARMv8 AES instruction.
 int CRYPTO_is_ARMv8_AES_capable(void);
 
-/* CRYPTO_is_ARMv8_PMULL_capable returns true if the current CPU supports the
- * ARMv8 PMULL instruction. */
+// CRYPTO_is_ARMv8_PMULL_capable returns true if the current CPU supports the
+// ARMv8 PMULL instruction.
 int CRYPTO_is_ARMv8_PMULL_capable(void);
 
 #else
@@ -171,22 +175,22 @@ static inline int CRYPTO_is_ARMv8_PMULL_capable(void) {
 #endif
 }
 
-#endif  /* OPENSSL_STATIC_ARMCAP */
-#endif  /* OPENSSL_ARM || OPENSSL_AARCH64 */
+#endif  // OPENSSL_STATIC_ARMCAP
+#endif  // OPENSSL_ARM || OPENSSL_AARCH64
 
 #if defined(OPENSSL_PPC64LE)
 
-/* CRYPTO_is_PPC64LE_vcrypto_capable returns true iff the current CPU supports
- * the Vector.AES category of instructions. */
+// CRYPTO_is_PPC64LE_vcrypto_capable returns true iff the current CPU supports
+// the Vector.AES category of instructions.
 int CRYPTO_is_PPC64LE_vcrypto_capable(void);
 
 extern unsigned long OPENSSL_ppc64le_hwcap2;
 
-#endif  /* OPENSSL_PPC64LE */
+#endif  // OPENSSL_PPC64LE
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_CPU_H */
+#endif  // OPENSSL_HEADER_CPU_H

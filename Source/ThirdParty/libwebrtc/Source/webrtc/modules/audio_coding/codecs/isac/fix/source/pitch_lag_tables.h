@@ -15,10 +15,10 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 /********************* Pitch Filter Lag Coefficient Tables ************************/
 
@@ -98,4 +98,4 @@ extern const int16_t WebRtcIsacfix_kMeanLag2Hi[67];
 extern const int16_t WebRtcIsacfix_kMeanLag4Hi[34];
 
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_ */

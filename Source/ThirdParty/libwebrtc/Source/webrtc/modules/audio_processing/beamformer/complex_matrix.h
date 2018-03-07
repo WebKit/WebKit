@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_COMPLEX_MATRIX_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_COMPLEX_MATRIX_H_
+#ifndef MODULES_AUDIO_PROCESSING_BEAMFORMER_COMPLEX_MATRIX_H_
+#define MODULES_AUDIO_PROCESSING_BEAMFORMER_COMPLEX_MATRIX_H_
 
 #include <complex>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/beamformer/matrix.h"
+#include "modules/audio_processing/beamformer/matrix.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -93,4 +93,4 @@ class ComplexMatrix : public Matrix<complex<T> > {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_COMPLEX_MATRIX_H_
+#endif  // MODULES_AUDIO_PROCESSING_BEAMFORMER_COMPLEX_MATRIX_H_

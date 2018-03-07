@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2006 Cisco Systems, Inc.
+ * Copyright (c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -184,7 +184,7 @@ test_dtls_srtp(void) {
   memset(key, 0xff, key_len);
   memset(salt, 0xee, salt_len);
   srtp_append_salt_to_key(key, key_len, salt, salt_len);
-  policy.key  = key;
+  policy.key = key;
 
   /* initialize SRTP policy from profile  */
   err = srtp_crypto_policy_set_from_profile_for_rtp(&policy.rtp, profile);

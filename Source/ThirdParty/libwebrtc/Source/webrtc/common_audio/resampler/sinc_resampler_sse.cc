@@ -11,7 +11,7 @@
 // Modified from the Chromium original:
 // src/media/base/simd/sinc_resampler_sse.cc
 
-#include "webrtc/common_audio/resampler/sinc_resampler.h"
+#include "common_audio/resampler/sinc_resampler.h"
 
 #include <xmmintrin.h>
 

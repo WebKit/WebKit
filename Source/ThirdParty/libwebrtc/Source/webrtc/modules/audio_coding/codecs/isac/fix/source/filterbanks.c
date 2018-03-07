@@ -23,7 +23,7 @@
 #include "codec.h"
 #include "filterbank_tables.h"
 #include "settings.h"
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 // Declare a function pointer.
 AllpassFilter2FixDec16 WebRtcIsacfix_AllpassFilter2FixDec16;

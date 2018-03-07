@@ -1336,3 +1336,19 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 
 # See draft-ietf-curdle-pkix-04.
 1 3 101 112 : ED25519
+
+ : ChaCha20-Poly1305 : chacha20-poly1305
+
+# NIDs for TLS 1.2 cipher suite key exchanges.
+ : KxRSA : kx-rsa
+ : KxECDHE : kx-ecdhe
+ : KxPSK : kx-psk
+
+# NIDs for TLS 1.2 cipher suite authentication types.
+ : AuthRSA : auth-rsa
+ : AuthECDSA : auth-ecdsa
+ : AuthPSK : auth-psk
+
+# TLS 1.3 cipher suites do not specify key exchange or authentication.
+ : KxANY : kx-any
+ : AuthANY : auth-any

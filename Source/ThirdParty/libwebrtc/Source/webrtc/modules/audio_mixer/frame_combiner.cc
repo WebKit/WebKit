@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_mixer/frame_combiner.h"
+#include "modules/audio_mixer/frame_combiner.h"
 
 #include <algorithm>
 #include <array>
 #include <functional>
 #include <memory>
 
-#include "webrtc/audio/utility/audio_frame_operations.h"
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_mixer/audio_frame_manipulator.h"
-#include "webrtc/modules/audio_mixer/audio_mixer_impl.h"
+#include "api/array_view.h"
+#include "audio/utility/audio_frame_operations.h"
+#include "modules/audio_mixer/audio_frame_manipulator.h"
+#include "modules/audio_mixer/audio_mixer_impl.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace {
@@ -112,7 +112,7 @@ void CombineMultipleFrames(
     RTC_DCHECK(limiter);
     const int error = limiter->ProcessStream(audio_frame_for_mixing);
     if (error != limiter->kNoError) {
-      LOG_F(LS_ERROR) << "Error from AudioProcessing: " << error;
+      RTC_LOG_F(LS_ERROR) << "Error from AudioProcessing: " << error;
       RTC_NOTREACHED();
     }
 
@@ -193,7 +193,7 @@ void FrameCombiner::Combine(const std::vector<AudioFrame*>& mix_list,
   // value '0', because it is only supported in the one channel case and
   // is then updated in the helper functions.
   audio_frame_for_mixing->UpdateFrame(
-      -1, 0, nullptr, samples_per_channel, sample_rate, AudioFrame::kUndefined,
+      0, nullptr, samples_per_channel, sample_rate, AudioFrame::kUndefined,
       AudioFrame::kVadUnknown, number_of_channels);
 
   const bool use_limiter_this_round = use_apm_limiter_ && number_of_streams > 1;

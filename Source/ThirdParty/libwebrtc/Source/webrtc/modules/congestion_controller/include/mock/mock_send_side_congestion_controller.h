@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_SEND_SIDE_CONGESTION_CONTROLLER_H_
-#define WEBRTC_MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_SEND_SIDE_CONGESTION_CONTROLLER_H_
+#ifndef MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_SEND_SIDE_CONGESTION_CONTROLLER_H_
+#define MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_SEND_SIDE_CONGESTION_CONTROLLER_H_
 
-#include "webrtc/modules/congestion_controller/include/send_side_congestion_controller.h"
-#include "webrtc/test/gmock.h"
+#include "modules/congestion_controller/include/send_side_congestion_controller.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 namespace test {
@@ -21,11 +21,11 @@ class MockSendSideCongestionController : public SendSideCongestionController {
  public:
   MockSendSideCongestionController(const Clock* clock,
                                    RtcEventLog* event_log,
-                                   PacketRouter* packet_router)
+                                   PacedSender* paced_sender)
       : SendSideCongestionController(clock,
                                      nullptr /* observer */,
                                      event_log,
-                                     packet_router) {}
+                                     paced_sender) {}
 
   MOCK_METHOD3(SetBweBitrates,
                void(int min_bitrate_bps,
@@ -36,4 +36,4 @@ class MockSendSideCongestionController : public SendSideCongestionController {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_SEND_SIDE_CONGESTION_CONTROLLER_H_
+#endif  // MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_SEND_SIDE_CONGESTION_CONTROLLER_H_

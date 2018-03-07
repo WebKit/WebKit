@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
+#define MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/race_checker.h"
-#include "webrtc/base/swap_queue.h"
-#include "webrtc/modules/audio_processing/aec3/block_framer.h"
-#include "webrtc/modules/audio_processing/aec3/block_processor.h"
-#include "webrtc/modules/audio_processing/aec3/cascaded_biquad_filter.h"
-#include "webrtc/modules/audio_processing/aec3/frame_blocker.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/aec3/block_framer.h"
+#include "modules/audio_processing/aec3/block_processor.h"
+#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
+#include "modules/audio_processing/aec3/frame_blocker.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/swap_queue.h"
 
 namespace webrtc {
 
@@ -60,23 +60,27 @@ class Aec3RenderQueueItemVerifier {
 //
 // The class is supposed to be used in a non-concurrent manner apart from the
 // AnalyzeRender call which can be called concurrently with the other methods.
-class EchoCanceller3 {
+class EchoCanceller3 : public EchoControl {
  public:
   // Normal c-tor to use.
-  EchoCanceller3(int sample_rate_hz, bool use_highpass_filter);
+  EchoCanceller3(const EchoCanceller3Config& config,
+                 int sample_rate_hz,
+                 bool use_highpass_filter);
   // Testing c-tor that is used only for testing purposes.
   EchoCanceller3(int sample_rate_hz,
                  bool use_highpass_filter,
                  std::unique_ptr<BlockProcessor> block_processor);
-  ~EchoCanceller3();
+  ~EchoCanceller3() override;
   // Analyzes and stores an internal copy of the split-band domain render
   // signal.
-  void AnalyzeRender(AudioBuffer* farend);
+  void AnalyzeRender(AudioBuffer* farend) override;
   // Analyzes the full-band domain capture signal to detect signal saturation.
-  void AnalyzeCapture(AudioBuffer* capture);
+  void AnalyzeCapture(AudioBuffer* capture) override;
   // Processes the split-band domain capture signal in order to remove any echo
   // present in the signal.
-  void ProcessCapture(AudioBuffer* capture, bool level_change);
+  void ProcessCapture(AudioBuffer* capture, bool level_change) override;
+  // Collect current metrics from the echo canceller.
+  Metrics GetMetrics() const override;
 
   // Signals whether an external detector has detected echo leakage from the
   // echo canceller.
@@ -88,10 +92,7 @@ class EchoCanceller3 {
   }
 
   // Validates a config.
-  static bool Validate(const AudioProcessing::Config::EchoCanceller3& config);
-  // Dumps a config to a string.
-  static std::string ToString(
-      const AudioProcessing::Config::EchoCanceller3& config);
+  static bool Validate(const EchoCanceller3Config& config);
 
  private:
   class RenderWriter;
@@ -103,7 +104,8 @@ class EchoCanceller3 {
   rtc::RaceChecker render_race_checker_;
 
   // State that is accessed by the AnalyzeRender call.
-  std::unique_ptr<RenderWriter> render_writer_ GUARDED_BY(render_race_checker_);
+  std::unique_ptr<RenderWriter> render_writer_
+      RTC_GUARDED_BY(render_race_checker_);
 
   // State that may be accessed by the capture thread.
   static int instance_count_;
@@ -111,24 +113,25 @@ class EchoCanceller3 {
   const int sample_rate_hz_;
   const int num_bands_;
   const size_t frame_length_;
-  BlockFramer output_framer_ GUARDED_BY(capture_race_checker_);
-  FrameBlocker capture_blocker_ GUARDED_BY(capture_race_checker_);
-  FrameBlocker render_blocker_ GUARDED_BY(capture_race_checker_);
+  BlockFramer output_framer_ RTC_GUARDED_BY(capture_race_checker_);
+  FrameBlocker capture_blocker_ RTC_GUARDED_BY(capture_race_checker_);
+  FrameBlocker render_blocker_ RTC_GUARDED_BY(capture_race_checker_);
   SwapQueue<std::vector<std::vector<float>>, Aec3RenderQueueItemVerifier>
       render_transfer_queue_;
   std::unique_ptr<BlockProcessor> block_processor_
-      GUARDED_BY(capture_race_checker_);
+      RTC_GUARDED_BY(capture_race_checker_);
   std::vector<std::vector<float>> render_queue_output_frame_
-      GUARDED_BY(capture_race_checker_);
+      RTC_GUARDED_BY(capture_race_checker_);
   std::unique_ptr<CascadedBiQuadFilter> capture_highpass_filter_
-      GUARDED_BY(capture_race_checker_);
-  bool saturated_microphone_signal_ GUARDED_BY(capture_race_checker_) = false;
-  std::vector<std::vector<float>> block_ GUARDED_BY(capture_race_checker_);
+      RTC_GUARDED_BY(capture_race_checker_);
+  bool saturated_microphone_signal_ RTC_GUARDED_BY(capture_race_checker_) =
+      false;
+  std::vector<std::vector<float>> block_ RTC_GUARDED_BY(capture_race_checker_);
   std::vector<rtc::ArrayView<float>> sub_frame_view_
-      GUARDED_BY(capture_race_checker_);
+      RTC_GUARDED_BY(capture_race_checker_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(EchoCanceller3);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_

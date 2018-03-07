@@ -8,13 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h"
+#include "modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h"
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -78,6 +79,8 @@ void BlankDetectorDesktopCapturerWrapper::OnCaptureResult(
     last_frame_is_blank_ = IsBlankFrame(*frame);
     is_first_frame_ = false;
   }
+  RTC_HISTOGRAM_BOOLEAN("WebRTC.DesktopCapture.BlankFrameDetected",
+                        last_frame_is_blank_);
   if (!last_frame_is_blank_) {
     non_blank_frame_received_ = true;
     callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));

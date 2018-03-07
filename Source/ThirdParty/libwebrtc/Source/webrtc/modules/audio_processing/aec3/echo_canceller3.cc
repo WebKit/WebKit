@@ -7,12 +7,12 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/audio_processing/aec3/echo_canceller3.h"
+#include "modules/audio_processing/aec3/echo_canceller3.h"
 
 #include <sstream>
 
-#include "webrtc/base/atomicops.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/atomicops.h"
 
 namespace webrtc {
 
@@ -146,7 +146,7 @@ class EchoCanceller3::RenderWriter {
                int frame_length,
                int num_bands);
   ~RenderWriter();
-  void Insert(AudioBuffer* render);
+  void Insert(AudioBuffer* input);
 
  private:
   ApmDataDumper* data_dumper_;
@@ -200,11 +200,13 @@ void EchoCanceller3::RenderWriter::Insert(AudioBuffer* input) {
 
 int EchoCanceller3::instance_count_ = 0;
 
-EchoCanceller3::EchoCanceller3(int sample_rate_hz, bool use_highpass_filter)
+EchoCanceller3::EchoCanceller3(const EchoCanceller3Config& config,
+                               int sample_rate_hz,
+                               bool use_highpass_filter)
     : EchoCanceller3(sample_rate_hz,
                      use_highpass_filter,
                      std::unique_ptr<BlockProcessor>(
-                         BlockProcessor::Create(sample_rate_hz))) {}
+                         BlockProcessor::Create(config, sample_rate_hz))) {}
 EchoCanceller3::EchoCanceller3(int sample_rate_hz,
                                bool use_highpass_filter,
                                std::unique_ptr<BlockProcessor> block_processor)
@@ -321,16 +323,14 @@ void EchoCanceller3::ProcessCapture(AudioBuffer* capture, bool level_change) {
                         LowestBandRate(sample_rate_hz_), 1);
 }
 
-std::string EchoCanceller3::ToString(
-    const AudioProcessing::Config::EchoCanceller3& config) {
-  std::stringstream ss;
-  ss << "{"
-     << "enabled: " << (config.enabled ? "true" : "false") << "}";
-  return ss.str();
+EchoControl::Metrics EchoCanceller3::GetMetrics() const {
+  RTC_DCHECK_RUNS_SERIALIZED(&capture_race_checker_);
+  Metrics metrics;
+  block_processor_->GetMetrics(&metrics);
+  return metrics;
 }
 
-bool EchoCanceller3::Validate(
-    const AudioProcessing::Config::EchoCanceller3& config) {
+bool EchoCanceller3::Validate(const EchoCanceller3Config& config) {
   return true;
 }
 
@@ -354,6 +354,21 @@ void EchoCanceller3::EmptyRenderQueue() {
     frame_to_buffer =
         render_transfer_queue_.Remove(&render_queue_output_frame_);
   }
+}
+
+EchoCanceller3Factory::EchoCanceller3Factory() {}
+
+EchoCanceller3Factory::EchoCanceller3Factory(const EchoCanceller3Config& config)
+    : config_(config) {
+  // Revert to default configuration if needed.
+  if (!EchoCanceller3::Validate(config_)) {
+    config_ = EchoCanceller3Config();
+  }
+}
+
+std::unique_ptr<EchoControl> EchoCanceller3Factory::Create(int sample_rate_hz) {
+  return std::unique_ptr<EchoControl>(
+      new EchoCanceller3(config_, sample_rate_hz, true));
 }
 
 }  // namespace webrtc

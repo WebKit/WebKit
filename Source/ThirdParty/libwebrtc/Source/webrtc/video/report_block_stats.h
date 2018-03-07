@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VIDEO_REPORT_BLOCK_STATS_H_
-#define WEBRTC_VIDEO_REPORT_BLOCK_STATS_H_
+#ifndef VIDEO_REPORT_BLOCK_STATS_H_
+#define VIDEO_REPORT_BLOCK_STATS_H_
 
 #include <map>
 #include <vector>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 
@@ -58,5 +58,5 @@ class ReportBlockStats {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_REPORT_BLOCK_STATS_H_
+#endif  // VIDEO_REPORT_BLOCK_STATS_H_
 

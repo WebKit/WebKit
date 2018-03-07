@@ -8,21 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/residual_echo_detector.h"
+#include "modules/audio_processing/residual_echo_detector.h"
 
 #include <algorithm>
 #include <numeric>
 
-#include "webrtc/base/atomicops.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/atomicops.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace {
 
 float Power(rtc::ArrayView<const float> input) {
-  if (input.size() == 0) {
+  if (input.empty()) {
     return 0.f;
   }
   return std::inner_product(input.begin(), input.end(), input.begin(), 0.f) /
@@ -141,19 +141,19 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
         read_index -= kLookbackFrames;
       }
       RTC_DCHECK_LT(read_index, render_power_.size());
-      LOG_F(LS_ERROR) << "Echo detector internal state: {"
-                      << "Echo likelihood: " << echo_likelihood_
-                      << ", Best Delay: " << best_delay << ", Covariance: "
-                      << covariances_[best_delay].covariance()
-                      << ", Last capture power: " << capture_power
-                      << ", Capture mean: " << capture_mean
-                      << ", Capture_standard deviation: "
-                      << capture_std_deviation
-                      << ", Last render power: " << render_power_[read_index]
-                      << ", Render mean: " << render_power_mean_[read_index]
-                      << ", Render standard deviation: "
-                      << render_power_std_dev_[read_index]
-                      << ", Reliability: " << reliability_ << "}";
+      RTC_LOG_F(LS_ERROR) << "Echo detector internal state: {"
+                          << "Echo likelihood: " << echo_likelihood_
+                          << ", Best Delay: " << best_delay << ", Covariance: "
+                          << covariances_[best_delay].covariance()
+                          << ", Last capture power: " << capture_power
+                          << ", Capture mean: " << capture_mean
+                          << ", Capture_standard deviation: "
+                          << capture_std_deviation << ", Last render power: "
+                          << render_power_[read_index]
+                          << ", Render mean: " << render_power_mean_[read_index]
+                          << ", Render standard deviation: "
+                          << render_power_std_dev_[read_index]
+                          << ", Reliability: " << reliability_ << "}";
       log_counter_++;
     }
   }

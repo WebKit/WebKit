@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/engine/fakewebrtccall.h"
+#include "media/engine/fakewebrtccall.h"
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/api/call/audio_sink.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/platform_file.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/rtputils.h"
+#include "api/call/audio_sink.h"
+#include "media/base/rtputils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/platform_file.h"
 
 namespace cricket {
 FakeAudioSendStream::FakeAudioSendStream(
@@ -61,6 +61,11 @@ void FakeAudioSendStream::SetMuted(bool muted) {
 }
 
 webrtc::AudioSendStream::Stats FakeAudioSendStream::GetStats() const {
+  return stats_;
+}
+
+webrtc::AudioSendStream::Stats FakeAudioSendStream::GetStats(
+    bool /*has_remote_tracks*/) const {
   return stats_;
 }
 
@@ -189,7 +194,7 @@ void FakeVideoSendStream::OnFrame(const webrtc::VideoFrame& frame) {
     video_streams_ = encoder_config_.video_stream_factory->CreateEncoderStreams(
         frame.width(), frame.height(), encoder_config_);
   }
-  last_frame_ = rtc::Optional<webrtc::VideoFrame>(frame);
+  last_frame_ = frame;
 }
 
 void FakeVideoSendStream::SetStats(
@@ -327,26 +332,28 @@ void FakeVideoReceiveStream::EnableEncodedFrameRecording(rtc::PlatformFile file,
   rtc::ClosePlatformFile(file);
 }
 
+void FakeVideoReceiveStream::AddSecondarySink(
+    webrtc::RtpPacketSinkInterface* sink) {}
+
+void FakeVideoReceiveStream::RemoveSecondarySink(
+    const webrtc::RtpPacketSinkInterface* sink) {}
+
 FakeFlexfecReceiveStream::FakeFlexfecReceiveStream(
     const webrtc::FlexfecReceiveStream::Config& config)
-    : config_(config), receiving_(false) {}
+    : config_(config) {}
 
 const webrtc::FlexfecReceiveStream::Config&
 FakeFlexfecReceiveStream::GetConfig() const {
   return config_;
 }
 
-void FakeFlexfecReceiveStream::Start() {
-  receiving_ = true;
-}
-
-void FakeFlexfecReceiveStream::Stop() {
-  receiving_ = false;
-}
-
 // TODO(brandtr): Implement when the stats have been designed.
 webrtc::FlexfecReceiveStream::Stats FakeFlexfecReceiveStream::GetStats() const {
   return webrtc::FlexfecReceiveStream::Stats();
+}
+
+void FakeFlexfecReceiveStream::OnRtpPacket(const webrtc::RtpPacketReceived&) {
+  RTC_NOTREACHED() << "Not implemented.";
 }
 
 FakeCall::FakeCall(const webrtc::Call::Config& config)
@@ -591,6 +598,12 @@ void FakeCall::SetBitrateConfig(
 void FakeCall::SetBitrateConfigMask(
     const webrtc::Call::Config::BitrateConfigMask& mask) {
   // TODO(zstein): not implemented
+}
+
+void FakeCall::SetBitrateAllocationStrategy(
+    std::unique_ptr<rtc::BitrateAllocationStrategy>
+        bitrate_allocation_strategy) {
+  // TODO(alexnarest): not implemented
 }
 
 void FakeCall::SignalChannelNetworkState(webrtc::MediaType media,

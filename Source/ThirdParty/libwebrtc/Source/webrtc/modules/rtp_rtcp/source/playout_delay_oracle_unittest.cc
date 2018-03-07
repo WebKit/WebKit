@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/playout_delay_oracle.h"
+#include "modules/rtp_rtcp/source/playout_delay_oracle.h"
 
-#include "webrtc/base/logging.h"
-#include "webrtc/test/gtest.h"
+#include "rtc_base/logging.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -26,8 +26,8 @@ class PlayoutDelayOracleTest : public ::testing::Test {
  protected:
   void ReportRTCPFeedback(int ssrc, int seq_num) {
     RTCPReportBlock report_block;
-    report_block.sourceSSRC = ssrc;
-    report_block.extendedHighSeqNum = seq_num;
+    report_block.source_ssrc = ssrc;
+    report_block.extended_highest_sequence_number = seq_num;
     report_blocks_.push_back(report_block);
     playout_delay_oracle_.OnReceivedRtcpReportBlocks(report_blocks_);
   }

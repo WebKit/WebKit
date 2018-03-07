@@ -1,13 +1,8 @@
 fbarchard@chromium.org
 magjed@chromium.org
-torbjorng@chromium.org
 
-per-file *.gyp=kjellander@chromium.org
-per-file *.gn=kjellander@chromium.org
+per-file *.gn=phoglund@chromium.org
 per-file .gitignore=*
 per-file AUTHORS=*
 per-file DEPS=*
-per-file PRESUBMIT.py=kjellander@chromium.org
-per-file gyp_libyuv.py=kjellander@chromium.org
-per-file setup_links.py=*
-per-file sync_chromium.py=kjellander@chromium.org
+per-file PRESUBMIT.py=phoglund@chromium.org

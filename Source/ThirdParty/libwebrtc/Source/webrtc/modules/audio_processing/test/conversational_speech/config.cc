@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/conversational_speech/config.h"
+#include "modules/audio_processing/test/conversational_speech/config.h"
 
 namespace webrtc {
 namespace test {

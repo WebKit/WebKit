@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/encoder_rtcp_feedback.h"
+#include "video/encoder_rtcp_feedback.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/video/vie_encoder.h"
+#include "rtc_base/checks.h"
+#include "video/video_stream_encoder.h"
 
 static const int kMinKeyFrameRequestIntervalMs = 300;
 
@@ -19,10 +19,10 @@ namespace webrtc {
 
 EncoderRtcpFeedback::EncoderRtcpFeedback(Clock* clock,
                                          const std::vector<uint32_t>& ssrcs,
-                                         ViEEncoder* encoder)
+                                         VideoStreamEncoder* encoder)
     : clock_(clock),
       ssrcs_(ssrcs),
-      vie_encoder_(encoder),
+      video_stream_encoder_(encoder),
       time_last_intra_request_ms_(ssrcs.size(), -1) {
   RTC_DCHECK(!ssrcs.empty());
 }
@@ -49,8 +49,8 @@ void EncoderRtcpFeedback::OnReceivedIntraFrameRequest(uint32_t ssrc) {
   RTC_DCHECK(HasSsrc(ssrc));
   size_t index = GetStreamIndex(ssrc);
   {
-    // TODO(mflodman): Move to ViEEncoder after some more changes making it
-    // easier to test there.
+    // TODO(mflodman): Move to VideoStreamEncoder after some more changes making
+    // it easier to test there.
     int64_t now_ms = clock_->TimeInMilliseconds();
     rtc::CritScope lock(&crit_);
     if (time_last_intra_request_ms_[index] + kMinKeyFrameRequestIntervalMs >
@@ -60,7 +60,7 @@ void EncoderRtcpFeedback::OnReceivedIntraFrameRequest(uint32_t ssrc) {
     time_last_intra_request_ms_[index] = now_ms;
   }
 
-  vie_encoder_->OnReceivedIntraFrameRequest(index);
+  video_stream_encoder_->OnReceivedIntraFrameRequest(index);
 }
 
 }  // namespace webrtc

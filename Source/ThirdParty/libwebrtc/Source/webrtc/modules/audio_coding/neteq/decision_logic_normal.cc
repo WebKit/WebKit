@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/decision_logic_normal.h"
+#include "modules/audio_coding/neteq/decision_logic_normal.h"
 
 #include <assert.h>
 
 #include <algorithm>
 
-#include "webrtc/modules/audio_coding/neteq/buffer_level_filter.h"
-#include "webrtc/modules/audio_coding/neteq/decoder_database.h"
-#include "webrtc/modules/audio_coding/neteq/delay_manager.h"
-#include "webrtc/modules/audio_coding/neteq/expand.h"
-#include "webrtc/modules/audio_coding/neteq/packet_buffer.h"
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "modules/audio_coding/neteq/buffer_level_filter.h"
+#include "modules/audio_coding/neteq/decoder_database.h"
+#include "modules/audio_coding/neteq/delay_manager.h"
+#include "modules/audio_coding/neteq/expand.h"
+#include "modules/audio_coding/neteq/packet_buffer.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 
@@ -189,10 +189,9 @@ Operations DecisionLogicNormal::FuturePacketAvailable(
   // If previous was comfort noise, then no merge is needed.
   if (prev_mode == kModeRfc3389Cng ||
       prev_mode == kModeCodecInternalCng) {
-    // Keep the same delay as before the CNG (or maximum 70 ms in buffer as
-    // safety precaution), but make sure that the number of samples in buffer
-    // is no higher than 4 times the optimal level. (Note that TargetLevel()
-    // is in Q8.)
+    // Keep the same delay as before the CNG, but make sure that the number of
+    // samples in buffer is no higher than 4 times the optimal level. (Note that
+    // TargetLevel() is in Q8.)
     if (static_cast<uint32_t>(generated_noise_samples + target_timestamp) >=
             available_timestamp ||
         cur_size_samples >

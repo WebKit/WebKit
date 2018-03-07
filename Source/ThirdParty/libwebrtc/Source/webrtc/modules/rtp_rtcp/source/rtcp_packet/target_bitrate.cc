@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -62,18 +62,12 @@ TargetBitrate::BitrateItem::BitrateItem(uint8_t spatial_layer,
 //  If VP9 SVC is used, there will be only one SSRC, so each spatial and
 //  temporal layer combo used shall be specified in the TargetBitrate packet.
 
-TargetBitrate::TargetBitrate() {}
-TargetBitrate::~TargetBitrate() {}
+TargetBitrate::TargetBitrate() = default;
+TargetBitrate::TargetBitrate(const TargetBitrate&) = default;
+TargetBitrate& TargetBitrate::operator=(const TargetBitrate&) = default;
+TargetBitrate::~TargetBitrate() = default;
 
-bool TargetBitrate::Parse(const uint8_t* block, uint16_t block_length) {
-  if (block_length < 1) {
-    LOG(LS_WARNING)
-        << "Cannot parse TargetBitrate RTCP packet: Too little payload data ("
-        << kTargetBitrateHeaderSizeBytes << " bytes needed, got "
-        << block_length * 4 << ").";
-    return false;
-  }
-
+void TargetBitrate::Parse(const uint8_t* block, uint16_t block_length) {
   // Validate block header (should already have been parsed and checked).
   RTC_DCHECK_EQ(block[0], kBlockType);
   RTC_DCHECK_EQ(block_length, ByteReader<uint16_t>::ReadBigEndian(&block[2]));
@@ -91,8 +85,6 @@ bool TargetBitrate::Parse(const uint8_t* block, uint16_t block_length) {
     index += kBitrateItemSizeBytes;
     AddTargetBitrate((layers >> 4) & 0x0F, layers & 0x0F, bitrate_kbps);
   }
-
-  return true;
 }
 
 void TargetBitrate::AddTargetBitrate(uint8_t spatial_layer,
@@ -118,7 +110,8 @@ size_t TargetBitrate::BlockLength() const {
 void TargetBitrate::Create(uint8_t* buffer) const {
   buffer[0] = kBlockType;
   buffer[1] = 0;  // Reserved.
-  const size_t block_length_words = (BlockLength() / 4) - 1;
+  uint16_t block_length_words =
+      rtc::dchecked_cast<uint16_t>((BlockLength() / 4) - 1);
   ByteWriter<uint16_t>::WriteBigEndian(&buffer[2], block_length_words);
 
   size_t index = kTargetBitrateHeaderSizeBytes;

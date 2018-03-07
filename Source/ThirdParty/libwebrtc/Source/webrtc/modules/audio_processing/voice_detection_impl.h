@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_VOICE_DETECTION_IMPL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_VOICE_DETECTION_IMPL_H_
+#ifndef MODULES_AUDIO_PROCESSING_VOICE_DETECTION_IMPL_H_
+#define MODULES_AUDIO_PROCESSING_VOICE_DETECTION_IMPL_H_
 
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 
@@ -43,16 +43,16 @@ class VoiceDetectionImpl : public VoiceDetection {
  private:
   class Vad;
   rtc::CriticalSection* const crit_;
-  bool enabled_ GUARDED_BY(crit_) = false;
-  bool stream_has_voice_ GUARDED_BY(crit_) = false;
-  bool using_external_vad_ GUARDED_BY(crit_) = false;
-  Likelihood likelihood_ GUARDED_BY(crit_) = kLowLikelihood;
-  int frame_size_ms_ GUARDED_BY(crit_) = 10;
-  size_t frame_size_samples_ GUARDED_BY(crit_) = 0;
-  int sample_rate_hz_ GUARDED_BY(crit_) = 0;
-  std::unique_ptr<Vad> vad_ GUARDED_BY(crit_);
+  bool enabled_ RTC_GUARDED_BY(crit_) = false;
+  bool stream_has_voice_ RTC_GUARDED_BY(crit_) = false;
+  bool using_external_vad_ RTC_GUARDED_BY(crit_) = false;
+  Likelihood likelihood_ RTC_GUARDED_BY(crit_) = kLowLikelihood;
+  int frame_size_ms_ RTC_GUARDED_BY(crit_) = 10;
+  size_t frame_size_samples_ RTC_GUARDED_BY(crit_) = 0;
+  int sample_rate_hz_ RTC_GUARDED_BY(crit_) = 0;
+  std::unique_ptr<Vad> vad_ RTC_GUARDED_BY(crit_);
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(VoiceDetectionImpl);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_VOICE_DETECTION_IMPL_H_
+#endif  // MODULES_AUDIO_PROCESSING_VOICE_DETECTION_IMPL_H_

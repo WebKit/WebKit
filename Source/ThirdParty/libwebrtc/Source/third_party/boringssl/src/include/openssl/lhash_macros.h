@@ -16,7 +16,7 @@
 #error "Don't include this file directly. Include lhash.h"
 #endif
 
-/* ASN1_OBJECT */
+// ASN1_OBJECT
 #define lh_ASN1_OBJECT_new(hash, comp)                                       \
   ((LHASH_OF(ASN1_OBJECT) *)lh_new(                                          \
       CHECKED_CAST(lhash_hash_func, uint32_t(*)(const ASN1_OBJECT *), hash), \
@@ -56,7 +56,7 @@
                arg);
 
 
-/* CONF_VALUE */
+// CONF_VALUE
 #define lh_CONF_VALUE_new(hash, comp)                                       \
   ((LHASH_OF(CONF_VALUE) *)lh_new(                                          \
       CHECKED_CAST(lhash_hash_func, uint32_t(*)(const CONF_VALUE *), hash), \
@@ -94,7 +94,7 @@
                arg);
 
 
-/* CRYPTO_BUFFER */
+// CRYPTO_BUFFER
 #define lh_CRYPTO_BUFFER_new(hash, comp)                                       \
   ((LHASH_OF(CRYPTO_BUFFER) *)lh_new(                                          \
       CHECKED_CAST(lhash_hash_func, uint32_t(*)(const CRYPTO_BUFFER *), hash), \
@@ -134,7 +134,7 @@
                arg);
 
 
-/* SSL_SESSION */
+// SSL_SESSION
 #define lh_SSL_SESSION_new(hash, comp)                                       \
   ((LHASH_OF(SSL_SESSION) *)lh_new(                                          \
       CHECKED_CAST(lhash_hash_func, uint32_t(*)(const SSL_SESSION *), hash), \

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_SMOOTHING_FILTER_H_
-#define WEBRTC_COMMON_AUDIO_SMOOTHING_FILTER_H_
+#ifndef COMMON_AUDIO_SMOOTHING_FILTER_H_
+#define COMMON_AUDIO_SMOOTHING_FILTER_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "api/optional.h"
+#include "rtc_base/constructormagic.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -69,4 +69,4 @@ class SmoothingFilterImpl final : public SmoothingFilter {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_AUDIO_SMOOTHING_FILTER_H_
+#endif  // COMMON_AUDIO_SMOOTHING_FILTER_H_

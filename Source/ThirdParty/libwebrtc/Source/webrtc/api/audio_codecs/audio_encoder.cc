@@ -8,12 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_encoder.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/trace_event.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
+
+ANAStats::ANAStats() = default;
+ANAStats::~ANAStats() = default;
+ANAStats::ANAStats(const ANAStats&) = default;
 
 AudioEncoder::EncodedInfo::EncodedInfo() = default;
 AudioEncoder::EncodedInfo::EncodedInfo(const EncodedInfo&) = default;
@@ -81,7 +85,7 @@ void AudioEncoder::OnReceivedUplinkRecoverablePacketLossFraction(
     float uplink_recoverable_packet_loss_fraction) {}
 
 void AudioEncoder::OnReceivedTargetAudioBitrate(int target_audio_bitrate_bps) {
-  OnReceivedUplinkBandwidth(target_audio_bitrate_bps, rtc::Optional<int64_t>());
+  OnReceivedUplinkBandwidth(target_audio_bitrate_bps, rtc::nullopt);
 }
 
 void AudioEncoder::OnReceivedUplinkBandwidth(
@@ -94,5 +98,9 @@ void AudioEncoder::OnReceivedOverhead(size_t overhead_bytes_per_packet) {}
 
 void AudioEncoder::SetReceiverFrameLengthRange(int min_frame_length_ms,
                                                int max_frame_length_ms) {}
+
+ANAStats AudioEncoder::GetANAStats() const {
+  return ANAStats();
+}
 
 }  // namespace webrtc

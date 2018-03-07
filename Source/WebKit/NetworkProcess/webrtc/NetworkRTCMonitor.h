@@ -28,9 +28,9 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/base/network.h>
-#include <webrtc/base/sigslot.h>
-#include <webrtc/base/thread.h>
+#include <webrtc/rtc_base/network.h>
+#include <webrtc/rtc_base/sigslot.h>
+#include <webrtc/rtc_base/thread.h>
 
 namespace IPC {
 class Connection;

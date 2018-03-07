@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_performance_test.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/perf_test.h"
-#include "webrtc/typedefs.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "modules/audio_coding/neteq/tools/neteq_performance_test.h"
+#include "test/gtest.h"
+#include "test/testsupport/perf_test.h"
+#include "typedefs.h"  // NOLINT(build/include)
+#include "system_wrappers/include/field_trial.h"
 
 // Runs a test with 10% packet losses and 10% clock drift, to exercise
 // both loss concealment and time-stretching code.

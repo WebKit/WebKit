@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/iSACTest.h"
+#include "modules/audio_coding/test/iSACTest.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -23,10 +23,10 @@
 #include <time.h>
 #endif
 
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/test/utility.h"
+#include "system_wrappers/include/event_wrapper.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
@@ -67,8 +67,8 @@ int16_t SetISAConfig(ACMTestISACConfig& isacConfig, AudioCodingModule* acm,
 }
 
 ISACTest::ISACTest(int testMode)
-    : _acmA(AudioCodingModule::Create(1)),
-      _acmB(AudioCodingModule::Create(2)),
+    : _acmA(AudioCodingModule::Create()),
+      _acmB(AudioCodingModule::Create()),
       _testMode(testMode) {}
 
 ISACTest::~ISACTest() {}

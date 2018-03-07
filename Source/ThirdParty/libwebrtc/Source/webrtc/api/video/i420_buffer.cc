@@ -7,18 +7,18 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/api/video/i420_buffer.h"
+#include "api/video/i420_buffer.h"
 
 #include <string.h>
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/keep_ref_until_done.h"
 #include "libyuv/convert.h"
 #include "libyuv/planar_functions.h"
 #include "libyuv/scale.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/keep_ref_until_done.h"
 
 // Aligning pointer to 64 bytes for improved performance, e.g. use SIMD.
 static const int kBufferAlignment = 64;

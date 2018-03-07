@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCVideoTrack.h"
 
-#include "webrtc/api/mediastreaminterface.h"
+#include "api/mediastreaminterface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

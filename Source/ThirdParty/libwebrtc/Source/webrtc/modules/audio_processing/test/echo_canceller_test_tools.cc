@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "modules/audio_processing/test/echo_canceller_test_tools.h"
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -24,7 +24,7 @@ template <typename T>
 void DelayBuffer<T>::Delay(rtc::ArrayView<const T> x,
                            rtc::ArrayView<T> x_delayed) {
   RTC_DCHECK_EQ(x.size(), x_delayed.size());
-  if (buffer_.size() == 0) {
+  if (buffer_.empty()) {
     std::copy(x.begin(), x.end(), x_delayed.begin());
   } else {
     for (size_t k = 0; k < x.size(); ++k) {

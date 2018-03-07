@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright(c) 2001-2006 Cisco Systems, Inc.
+ * Copyright(c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,27 +47,18 @@
 #endif
 
 #include "err.h"
-
-
-/*  srtp_err_level reflects the level of errors that are reported  */
-
-srtp_err_reporting_level_t srtp_err_level = srtp_err_level_none;
+#include "datatypes.h"
+#include <string.h>
 
 /* srtp_err_file is the FILE to which errors are reported */
 
 static FILE *srtp_err_file = NULL;
 
-srtp_err_status_t srtp_err_reporting_init (const char *ident)
+srtp_err_status_t srtp_err_reporting_init ()
 {
-
-    /*
-     * Believe it or not, openlog doesn't return an error on failure.
-     * But then, neither does the syslog() call...
-     */
-
 #ifdef ERR_REPORTING_STDOUT
     srtp_err_file = stdout;
-#elif defined(USE_ERR_REPORTING_FILE)
+#elif defined(ERR_REPORTING_FILE)
     /* open file for error reporting */
     srtp_err_file = fopen(ERR_REPORTING_FILE, "w");
     if (srtp_err_file == NULL) {
@@ -78,22 +69,38 @@ srtp_err_status_t srtp_err_reporting_init (const char *ident)
     return srtp_err_status_ok;
 }
 
-void srtp_err_report (int priority, const char *format, ...)
+static srtp_err_report_handler_func_t * srtp_err_report_handler = NULL;
+
+srtp_err_status_t srtp_install_err_report_handler(srtp_err_report_handler_func_t func)
+{
+    srtp_err_report_handler = func;
+    return srtp_err_status_ok;
+}
+
+void srtp_err_report (srtp_err_reporting_level_t level, const char *format, ...)
 {
     va_list args;
-
-    if (priority <= srtp_err_level) {
-
+    if (srtp_err_file != NULL) {
         va_start(args, format);
-        if (srtp_err_file != NULL) {
-            vfprintf(srtp_err_file, format, args);
-            /*      fprintf(srtp_err_file, "\n"); */
+        vfprintf(srtp_err_file, format, args);
+        va_end(args);
+    }
+    if (srtp_err_report_handler != NULL) {
+        va_start(args, format);
+        char msg[512];
+        if (vsnprintf(msg, sizeof(msg), format, args) > 0) {
+            /* strip trailing \n, callback should not have one */
+            size_t l = strlen(msg);
+            if (l && msg[l-1] == '\n') {
+                msg[l-1] = '\0';
+            }
+            srtp_err_report_handler(level, msg);
+            /*
+             * NOTE, need to be carefull, there is a potential that octet_string_set_to_zero() could
+             * call srtp_err_report() in the future, leading to recursion
+             */
+            octet_string_set_to_zero(msg, sizeof(msg));
         }
         va_end(args);
     }
-}
-
-void srtp_err_reporting_set_level (srtp_err_reporting_level_t lvl)
-{
-    srtp_err_level = lvl;
 }

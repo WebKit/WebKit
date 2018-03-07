@@ -8,37 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_H_
-#define WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_H_
+#ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_H_
+#define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_H_
 
-#include "webrtc/base/optional.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/optional.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
 namespace webrtc {
-
-struct AudioEncoderRuntimeConfig {
-  AudioEncoderRuntimeConfig();
-  AudioEncoderRuntimeConfig(const AudioEncoderRuntimeConfig& other);
-  ~AudioEncoderRuntimeConfig();
-  rtc::Optional<int> bitrate_bps;
-  rtc::Optional<int> frame_length_ms;
-  // Note: This is what we tell the encoder. It doesn't have to reflect
-  // the actual NetworkMetrics; it's subject to our decision.
-  rtc::Optional<float> uplink_packet_loss_fraction;
-  rtc::Optional<bool> enable_fec;
-  rtc::Optional<bool> enable_dtx;
-
-  // Some encoders can encode fewer channels than the actual input to make
-  // better use of the bandwidth. |num_channels| sets the number of channels
-  // to encode.
-  rtc::Optional<size_t> num_channels;
-};
 
 // An AudioNetworkAdaptor optimizes the audio experience by suggesting a
 // suitable runtime configuration (bit rate, frame length, FEC, etc.) to the
 // encoder based on network metrics.
 class AudioNetworkAdaptor {
  public:
-
   virtual ~AudioNetworkAdaptor() = default;
 
   virtual void SetUplinkBandwidth(int uplink_bandwidth_bps) = 0;
@@ -60,8 +43,10 @@ class AudioNetworkAdaptor {
   virtual void StartDebugDump(FILE* file_handle) = 0;
 
   virtual void StopDebugDump() = 0;
+
+  virtual ANAStats GetStats() const = 0;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_H_
+#endif  // MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_H_

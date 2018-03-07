@@ -8,21 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_receiver_video.h"
+#include "modules/rtp_rtcp/source/rtp_receiver_video.h"
 
 #include <assert.h>
 #include <string.h>
 
 #include <memory>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_cvo.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_payload_registry.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_format.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_format_video_generic.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/include/rtp_cvo.h"
+#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
+#include "modules/rtp_rtcp/source/rtp_format.h"
+#include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -44,7 +44,8 @@ bool RTPReceiverVideo::ShouldReportCsrcChanges(uint8_t payload_type) const {
 }
 
 int32_t RTPReceiverVideo::OnNewPayloadTypeCreated(
-    const CodecInst& audio_codec) {
+    int payload_type,
+    const SdpAudioFormat& audio_format) {
   RTC_NOTREACHED();
   return 0;
 }
@@ -54,12 +55,12 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
                                          bool is_red,
                                          const uint8_t* payload,
                                          size_t payload_length,
-                                         int64_t timestamp_ms,
-                                         bool is_first_packet) {
+                                         int64_t timestamp_ms) {
   TRACE_EVENT2(TRACE_DISABLED_BY_DEFAULT("webrtc_rtp"), "Video::ParseRtp",
                "seqnum", rtp_header->header.sequenceNumber, "timestamp",
                rtp_header->header.timestamp);
-  rtp_header->type.Video.codec = specific_payload.Video.videoCodecType;
+  rtp_header->type.Video.codec =
+      specific_payload.video_payload().videoCodecType;
 
   RTC_DCHECK_GE(payload_length, rtp_header->header.paddingLength);
   const size_t payload_data_length =
@@ -71,18 +72,17 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
   }
 
   if (first_packet_received_()) {
-    LOG(LS_INFO) << "Received first video RTP packet";
+    RTC_LOG(LS_INFO) << "Received first video RTP packet";
   }
 
   // We are not allowed to hold a critical section when calling below functions.
   std::unique_ptr<RtpDepacketizer> depacketizer(
       RtpDepacketizer::Create(rtp_header->type.Video.codec));
   if (depacketizer.get() == NULL) {
-    LOG(LS_ERROR) << "Failed to create depacketizer.";
+    RTC_LOG(LS_ERROR) << "Failed to create depacketizer.";
     return -1;
   }
 
-  rtp_header->type.Video.is_first_packet_in_frame = is_first_packet;
   RtpDepacketizer::ParsedPayload parsed_payload;
   if (!depacketizer->Parse(&parsed_payload, payload, payload_data_length))
     return -1;
@@ -91,7 +91,7 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
   rtp_header->type = parsed_payload.type;
   rtp_header->type.Video.rotation = kVideoRotation_0;
   rtp_header->type.Video.content_type = VideoContentType::UNSPECIFIED;
-  rtp_header->type.Video.video_timing.is_timing_frame = false;
+  rtp_header->type.Video.video_timing.flags = TimingFrameFlags::kInvalid;
 
   // Retrieve the video rotation information.
   if (rtp_header->header.extension.hasVideoRotation) {
@@ -107,7 +107,6 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
   if (rtp_header->header.extension.has_video_timing) {
     rtp_header->type.Video.video_timing =
         rtp_header->header.extension.video_timing;
-    rtp_header->type.Video.video_timing.is_timing_frame = true;
   }
 
   rtp_header->type.Video.playout_delay =

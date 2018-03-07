@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AECM_AECM_DEFINES_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AECM_AECM_DEFINES_H_
+#ifndef MODULES_AUDIO_PROCESSING_AECM_AECM_DEFINES_H_
+#define MODULES_AUDIO_PROCESSING_AECM_AECM_DEFINES_H_
 
 #define AECM_DYNAMIC_Q                 /* Turn on/off dynamic Q-domain. */
 

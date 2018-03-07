@@ -28,7 +28,7 @@ rtc_static_library("primitives") {
 
   deps = [
     "../..:webrtc_common",
-    "../../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+    "../../rtc_base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
   ]
 }
 
@@ -36,12 +36,6 @@ if (rtc_include_tests) {
   rtc_source_set("desktop_capture_modules_tests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_tests" ]
-    }
     sources = []
     deps = []
     if (rtc_desktop_capture_supported) {
@@ -49,8 +43,8 @@ if (rtc_include_tests) {
         ":desktop_capture_mock",
         ":primitives",
         ":screen_drawer",
-        "../../base:rtc_base",
-        "../../base:rtc_base_approved",
+        "../../rtc_base:rtc_base",
+        "../../rtc_base:rtc_base_approved",
         "../../system_wrappers",
         "../../test:test_support",
         "../../test:video_test_support",
@@ -58,6 +52,7 @@ if (rtc_include_tests) {
       sources += [
         "screen_capturer_integration_test.cc",
         "screen_drawer_unittest.cc",
+        "window_finder_unittest.cc",
       ]
     }
   }
@@ -65,14 +60,9 @@ if (rtc_include_tests) {
   rtc_source_set("desktop_capture_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "blank_detector_desktop_capturer_wrapper_unittest.cc",
+      "cropped_desktop_frame_unittest.cc",
       "desktop_and_cursor_composer_unittest.cc",
       "desktop_capturer_differ_wrapper_unittest.cc",
       "desktop_frame_rotation_unittest.cc",
@@ -88,13 +78,15 @@ if (rtc_include_tests) {
       "win/cursor_unittest.cc",
       "win/cursor_unittest_resources.h",
       "win/cursor_unittest_resources.rc",
+      "win/screen_capture_utils_unittest.cc",
+      "win/screen_capturer_win_directx_unittest.cc",
     ]
     deps = [
       ":desktop_capture",
       ":desktop_capture_mock",
       ":primitives",
       "../..:webrtc_common",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
       "../../test:test_support",
       "//testing/gmock",
@@ -125,13 +117,15 @@ if (rtc_include_tests) {
       "screen_drawer.cc",
       "screen_drawer.h",
       "screen_drawer_linux.cc",
+      "screen_drawer_lock_posix.cc",
+      "screen_drawer_lock_posix.h",
       "screen_drawer_mac.cc",
       "screen_drawer_win.cc",
     ]
 
     deps = [
       ":primitives",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
     ]
   }
@@ -145,26 +139,62 @@ if (rtc_include_tests) {
     ]
 
     sources = [
-      "desktop_frame_generator.cc",
-      "desktop_frame_generator.h",
-      "fake_desktop_capturer.cc",
-      "fake_desktop_capturer.h",
       "mock_desktop_capturer_callback.cc",
       "mock_desktop_capturer_callback.h",
     ]
 
     deps = [
       ":primitives",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
     ]
   }
 }
 
-rtc_static_library("desktop_capture") {
+rtc_source_set("desktop_capture") {
+  public_deps = [
+    ":desktop_capture_generic",
+  ]
+  if (is_mac) {
+    public_deps += [ ":desktop_capture_objc" ]
+  }
+}
+
+if (is_mac) {
+  rtc_source_set("desktop_capture_objc") {
+    visibility = [ ":desktop_capture" ]
+    sources = [
+      "mac/desktop_configuration.mm",
+      "mouse_cursor_monitor_mac.mm",
+      "screen_capturer_mac.mm",
+      "window_capturer_mac.mm",
+      "window_finder_mac.h",
+      "window_finder_mac.mm",
+    ]
+    deps = [
+      ":desktop_capture_generic",
+      ":primitives",
+      "../../rtc_base:rtc_base",
+      "../../rtc_base:rtc_base_approved",
+    ]
+    libs = [
+      "AppKit.framework",
+      "IOKit.framework",
+      "OpenGL.framework",
+    ]
+  }
+}
+
+rtc_static_library("desktop_capture_generic") {
+  visibility = [
+    ":desktop_capture",
+    ":desktop_capture_objc",
+  ]
   sources = [
     "blank_detector_desktop_capturer_wrapper.cc",
     "blank_detector_desktop_capturer_wrapper.h",
+    "capture_result_desktop_capturer_wrapper.cc",
+    "capture_result_desktop_capturer_wrapper.h",
     "cropped_desktop_frame.cc",
     "cropped_desktop_frame.h",
     "cropping_window_capturer.cc",
@@ -178,16 +208,21 @@ rtc_static_library("desktop_capture") {
     "desktop_capturer.h",
     "desktop_capturer_differ_wrapper.cc",
     "desktop_capturer_differ_wrapper.h",
+    "desktop_capturer_wrapper.cc",
+    "desktop_capturer_wrapper.h",
+    "desktop_frame_generator.cc",
+    "desktop_frame_generator.h",
     "desktop_frame_rotation.cc",
     "desktop_frame_rotation.h",
     "desktop_frame_win.cc",
     "desktop_frame_win.h",
     "differ_block.cc",
     "differ_block.h",
+    "fake_desktop_capturer.cc",
+    "fake_desktop_capturer.h",
     "fallback_desktop_capturer_wrapper.cc",
     "fallback_desktop_capturer_wrapper.h",
     "mac/desktop_configuration.h",
-    "mac/desktop_configuration.mm",
     "mac/desktop_configuration_monitor.cc",
     "mac/desktop_configuration_monitor.h",
     "mac/full_screen_chrome_window_detector.cc",
@@ -199,16 +234,14 @@ rtc_static_library("desktop_capture") {
     "mouse_cursor.cc",
     "mouse_cursor.h",
     "mouse_cursor_monitor.h",
-    "mouse_cursor_monitor_mac.mm",
     "mouse_cursor_monitor_win.cc",
-    "resolution_change_detector.cc",
-    "resolution_change_detector.h",
+    "resolution_tracker.cc",
+    "resolution_tracker.h",
     "rgba_color.cc",
     "rgba_color.h",
     "screen_capture_frame_queue.h",
     "screen_capturer_helper.cc",
     "screen_capturer_helper.h",
-    "screen_capturer_mac.mm",
     "screen_capturer_win.cc",
     "win/cursor.cc",
     "win/cursor.h",
@@ -216,6 +249,8 @@ rtc_static_library("desktop_capture") {
     "win/d3d_device.h",
     "win/desktop.cc",
     "win/desktop.h",
+    "win/display_configuration_monitor.cc",
+    "win/display_configuration_monitor.h",
     "win/dxgi_adapter_duplicator.cc",
     "win/dxgi_adapter_duplicator.h",
     "win/dxgi_context.cc",
@@ -245,8 +280,11 @@ rtc_static_library("desktop_capture") {
     "win/screen_capturer_win_magnifier.h",
     "win/window_capture_utils.cc",
     "win/window_capture_utils.h",
-    "window_capturer_mac.mm",
     "window_capturer_win.cc",
+    "window_finder.cc",
+    "window_finder.h",
+    "window_finder_win.cc",
+    "window_finder_win.h",
   ]
 
   if (use_x11) {
@@ -254,8 +292,14 @@ rtc_static_library("desktop_capture") {
       "mouse_cursor_monitor_x11.cc",
       "screen_capturer_x11.cc",
       "window_capturer_x11.cc",
+      "window_finder_x11.cc",
+      "window_finder_x11.h",
       "x11/shared_x_display.cc",
       "x11/shared_x_display.h",
+      "x11/window_list_utils.cc",
+      "x11/window_list_utils.h",
+      "x11/x_atom_cache.cc",
+      "x11/x_atom_cache.h",
       "x11/x_error_trap.cc",
       "x11/x_error_trap.h",
       "x11/x_server_pixel_buffer.cc",
@@ -272,14 +316,6 @@ rtc_static_library("desktop_capture") {
     ]
   }
 
-  if (is_mac) {
-    libs = [
-      "AppKit.framework",
-      "IOKit.framework",
-      "OpenGL.framework",
-    ]
-  }
-
   if (is_win) {
     libs = [
       "d3d11.lib",
@@ -290,7 +326,8 @@ rtc_static_library("desktop_capture") {
   deps = [
     ":primitives",
     "../..:webrtc_common",
-    "../../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+    "../../api:refcountedbase",
+    "../../rtc_base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
     "../../system_wrappers",
     "//third_party/libyuv",
   ]

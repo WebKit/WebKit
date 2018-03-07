@@ -33,17 +33,18 @@ rtc_static_library("ortc") {
   # PeerConnection code shares, so that ortc can depend on that instead of
   # libjingle_peerconnection.
   deps = [
-    "../api/audio_codecs:builtin_audio_decoder_factory",
-    "../api/audio_codecs:builtin_audio_encoder_factory",
-    "../base:rtc_base",
-    "../base:rtc_base_approved",
+    "../api:optional",
     "../call:call_interfaces",
+    "../call:rtp_sender",
     "../logging:rtc_event_log_api",
     "../media:rtc_media",
     "../media:rtc_media_base",
+    "../modules/audio_processing:audio_processing",
     "../p2p:rtc_p2p",
     "../pc:libjingle_peerconnection",
     "../pc:rtc_pc",
+    "../rtc_base:rtc_base",
+    "../rtc_base:rtc_base_approved",
   ]
 
   public_deps = [
@@ -75,14 +76,17 @@ if (rtc_include_tests) {
 
     deps = [
       ":ortc",
-      "../base:rtc_base",
-      "../base:rtc_base_approved",
-      "../base:rtc_base_tests_main",
-      "../base:rtc_base_tests_utils",
+      "../api:libjingle_peerconnection_api",
+      "../api/audio_codecs:builtin_audio_decoder_factory",
+      "../api/audio_codecs:builtin_audio_encoder_factory",
       "../media:rtc_media_tests_utils",
       "../p2p:p2p_test_utils",
       "../p2p:rtc_p2p",
       "../pc:pc_test_utils",
+      "../rtc_base:rtc_base",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_main",
+      "../rtc_base:rtc_base_tests_utils",
       "../system_wrappers:metrics_default",
     ]
 

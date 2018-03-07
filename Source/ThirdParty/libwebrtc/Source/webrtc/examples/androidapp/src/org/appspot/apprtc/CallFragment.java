@@ -26,9 +26,7 @@ import org.webrtc.RendererCommon.ScalingType;
  * Fragment for call control.
  */
 public class CallFragment extends Fragment {
-  private View controlView;
   private TextView contactView;
-  private ImageButton disconnectButton;
   private ImageButton cameraSwitchButton;
   private ImageButton videoScalingButton;
   private ImageButton toggleMuteButton;
@@ -52,16 +50,16 @@ public class CallFragment extends Fragment {
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    controlView = inflater.inflate(R.layout.fragment_call, container, false);
+    View controlView = inflater.inflate(R.layout.fragment_call, container, false);
 
     // Create UI controls.
-    contactView = (TextView) controlView.findViewById(R.id.contact_name_call);
-    disconnectButton = (ImageButton) controlView.findViewById(R.id.button_call_disconnect);
-    cameraSwitchButton = (ImageButton) controlView.findViewById(R.id.button_call_switch_camera);
-    videoScalingButton = (ImageButton) controlView.findViewById(R.id.button_call_scaling_mode);
-    toggleMuteButton = (ImageButton) controlView.findViewById(R.id.button_call_toggle_mic);
-    captureFormatText = (TextView) controlView.findViewById(R.id.capture_format_text_call);
-    captureFormatSlider = (SeekBar) controlView.findViewById(R.id.capture_format_slider_call);
+    contactView = controlView.findViewById(R.id.contact_name_call);
+    ImageButton disconnectButton = controlView.findViewById(R.id.button_call_disconnect);
+    cameraSwitchButton = controlView.findViewById(R.id.button_call_switch_camera);
+    videoScalingButton = controlView.findViewById(R.id.button_call_scaling_mode);
+    toggleMuteButton = controlView.findViewById(R.id.button_call_toggle_mic);
+    captureFormatText = controlView.findViewById(R.id.capture_format_text_call);
+    captureFormatSlider = controlView.findViewById(R.id.capture_format_slider_call);
 
     // Add buttons click events.
     disconnectButton.setOnClickListener(new View.OnClickListener() {

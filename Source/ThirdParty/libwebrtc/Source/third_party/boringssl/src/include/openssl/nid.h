@@ -4198,6 +4198,42 @@ extern "C" {
 #define NID_ED25519 949
 #define OBJ_ED25519 1L, 3L, 101L, 112L
 
+#define SN_chacha20_poly1305 "ChaCha20-Poly1305"
+#define LN_chacha20_poly1305 "chacha20-poly1305"
+#define NID_chacha20_poly1305 950
+
+#define SN_kx_rsa "KxRSA"
+#define LN_kx_rsa "kx-rsa"
+#define NID_kx_rsa 951
+
+#define SN_kx_ecdhe "KxECDHE"
+#define LN_kx_ecdhe "kx-ecdhe"
+#define NID_kx_ecdhe 952
+
+#define SN_kx_psk "KxPSK"
+#define LN_kx_psk "kx-psk"
+#define NID_kx_psk 953
+
+#define SN_auth_rsa "AuthRSA"
+#define LN_auth_rsa "auth-rsa"
+#define NID_auth_rsa 954
+
+#define SN_auth_ecdsa "AuthECDSA"
+#define LN_auth_ecdsa "auth-ecdsa"
+#define NID_auth_ecdsa 955
+
+#define SN_auth_psk "AuthPSK"
+#define LN_auth_psk "auth-psk"
+#define NID_auth_psk 956
+
+#define SN_kx_any "KxANY"
+#define LN_kx_any "kx-any"
+#define NID_kx_any 957
+
+#define SN_auth_any "AuthANY"
+#define LN_auth_any "auth-any"
+#define NID_auth_any 958
+
 
 #if defined(__cplusplus)
 } /* extern C */

@@ -36,7 +36,7 @@
 #include "WebRTCResolverMessages.h"
 #include "WebRTCSocketMessages.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/base/asyncpacketsocket.h>
+#include <webrtc/rtc_base/asyncpacketsocket.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 

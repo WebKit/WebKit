@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/call/rampup_tests.h"
+#include "call/rampup_tests.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/platform_thread.h"
-#include "webrtc/test/encoder_settings.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/perf_test.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/platform_thread.h"
+#include "test/encoder_settings.h"
+#include "test/gtest.h"
+#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 namespace {
@@ -54,6 +54,7 @@ RampUpTester::RampUpTester(size_t num_video_streams,
       report_perf_stats_(report_perf_stats),
       sender_call_(nullptr),
       send_stream_(nullptr),
+      send_transport_(nullptr),
       start_bitrate_bps_(start_bitrate_bps),
       min_run_time_ms_(min_run_time_ms),
       expected_bitrate_bps_(0),
@@ -89,9 +90,11 @@ void RampUpTester::OnVideoStreamsCreated(
   send_stream_ = send_stream;
 }
 
-test::PacketTransport* RampUpTester::CreateSendTransport(Call* sender_call) {
+test::PacketTransport* RampUpTester::CreateSendTransport(
+    test::SingleThreadedTaskQueueForTesting* task_queue,
+    Call* sender_call) {
   send_transport_ = new test::PacketTransport(
-      sender_call, this, test::PacketTransport::kSender,
+      task_queue, sender_call, this, test::PacketTransport::kSender,
       test::CallTest::payload_type_map_, forward_transport_config_);
   return send_transport_;
 }
@@ -199,21 +202,22 @@ void RampUpTester::ModifyVideoConfigs(
     recv_config.rtp.nack.rtp_history_ms = send_config->rtp.nack.rtp_history_ms;
 
     if (red_) {
-      recv_config.rtp.ulpfec.red_payload_type =
+      recv_config.rtp.red_payload_type =
           send_config->rtp.ulpfec.red_payload_type;
-      recv_config.rtp.ulpfec.ulpfec_payload_type =
+      recv_config.rtp.ulpfec_payload_type =
           send_config->rtp.ulpfec.ulpfec_payload_type;
       if (rtx_) {
-        recv_config.rtp.ulpfec.red_rtx_payload_type =
-            send_config->rtp.ulpfec.red_rtx_payload_type;
+        recv_config.rtp.rtx_associated_payload_types
+            [send_config->rtp.ulpfec.red_rtx_payload_type] =
+            send_config->rtp.ulpfec.red_payload_type;
       }
     }
 
     if (rtx_) {
       recv_config.rtp.rtx_ssrc = video_rtx_ssrcs_[i];
       recv_config.rtp
-          .rtx_payload_types[send_config->encoder_settings.payload_type] =
-          send_config->rtp.rtx.payload_type;
+          .rtx_associated_payload_types[send_config->rtp.rtx.payload_type] =
+          send_config->encoder_settings.payload_type;
     }
     ++i;
   }
@@ -414,19 +418,21 @@ RampUpDownUpTester::~RampUpDownUpTester() {}
 
 void RampUpDownUpTester::PollStats() {
   do {
-    if (send_stream_) {
+    int transmit_bitrate_bps = 0;
+    bool suspended = false;
+    if (num_video_streams_ > 0) {
       webrtc::VideoSendStream::Stats stats = send_stream_->GetStats();
-      int transmit_bitrate_bps = 0;
       for (auto it : stats.substreams) {
         transmit_bitrate_bps += it.second.total_bitrate_bps;
       }
-      EvolveTestState(transmit_bitrate_bps, stats.suspended);
-    } else if (num_audio_streams_ > 0 && sender_call_ != nullptr) {
+      suspended = stats.suspended;
+    }
+    if (num_audio_streams_ > 0 && sender_call_ != nullptr) {
       // An audio send stream doesn't have bitrate stats, so the call send BW is
       // currently used instead.
-      int transmit_bitrate_bps = sender_call_->GetStats().send_bandwidth_bps;
-      EvolveTestState(transmit_bitrate_bps, false);
+      transmit_bitrate_bps = sender_call_->GetStats().send_bandwidth_bps;
     }
+    EvolveTestState(transmit_bitrate_bps, suspended);
   } while (!stop_event_.Wait(kPollIntervalMs));
 }
 
@@ -580,7 +586,9 @@ TEST_F(RampUpTest, UpDownUpTransportSequenceNumberRtx) {
 
 // TODO(holmer): Tests which don't report perf stats should be moved to a
 // different executable since they per definition are not perf tests.
-TEST_F(RampUpTest, UpDownUpTransportSequenceNumberPacketLoss) {
+// This test is disabled because it crashes on Linux, and is flaky on other
+// platforms. See: crbug.com/webrtc/7919
+TEST_F(RampUpTest, DISABLED_UpDownUpTransportSequenceNumberPacketLoss) {
   std::vector<int> loss_rates = {20, 0, 0, 0};
   RampUpDownUpTester test(1, 0, 1, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,

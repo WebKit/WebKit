@@ -7,11 +7,11 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
-#define WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
+#ifndef MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
+#define MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/typedefs.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -41,4 +41,4 @@ class RtpHeaderParser {
   virtual bool DeregisterRtpHeaderExtension(RTPExtensionType type) = 0;
 };
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
+#endif  // MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_

@@ -8,15 +8,34 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/stats/rtcstats.h"
+#include "api/stats/rtcstats.h"
 
+#include <cmath>
 #include <cstring>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/stats/test/rtcteststats.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/json.h"
+#include "stats/test/rtcteststats.h"
 
 namespace webrtc {
+
+namespace {
+
+// JSON stores numbers as floating point numbers with 53 significant bits, which
+// amounts to about 15.95 decimal digits. Thus, when comparing large numbers
+// processed by JSON, that's all the precision we should expect.
+const double JSON_EPSILON = 1e-15;
+
+// We do this since Google Test doesn't support relative error.
+// This is computed as follows:
+// If |a - b| / |a| < EPS, then |a - b| < |a| * EPS, so |a| * EPS is the
+// maximum expected error.
+double GetExpectedError(const double expected_value) {
+  return JSON_EPSILON * fabs(expected_value);
+}
+
+}  // namespace
 
 class RTCChildStats : public RTCStats {
  public:
@@ -194,6 +213,122 @@ TEST(RTCStatsTest, RTCStatsGrandChild) {
   const RTCGrandChildStats& copy = copy_ptr->cast_to<RTCGrandChildStats>();
   EXPECT_EQ(*copy.child_int, *stats.child_int);
   EXPECT_EQ(*copy.grandchild_int, *stats.grandchild_int);
+}
+
+TEST(RTCStatsTest, RTCStatsPrintsValidJson) {
+  std::string id = "statsId";
+  int timestamp = 42;
+  bool m_bool = true;
+  int m_int32 = 123;
+  int64_t m_int64 = 1234567890123456499L;
+  double m_double = 123.4567890123456499;
+  std::string m_string = "123";
+
+  std::vector<bool> sequence_bool;
+  std::vector<int32_t> sequence_int32;
+  sequence_int32.push_back(static_cast<int32_t>(1));
+  std::vector<int64_t> sequence_int64;
+  sequence_int64.push_back(static_cast<int64_t>(-1234567890123456499L));
+  sequence_int64.push_back(static_cast<int64_t>(1));
+  sequence_int64.push_back(static_cast<int64_t>(1234567890123456499L));
+  std::vector<double> sequence_double;
+  sequence_double.push_back(123.4567890123456499);
+  sequence_double.push_back(1234567890123.456499);
+  std::vector<std::string> sequence_string;
+  sequence_string.push_back(std::string("four"));
+
+  RTCTestStats stats(id, timestamp);
+  stats.m_bool = m_bool;
+  stats.m_int32 = m_int32;
+  stats.m_int64 = m_int64;
+  stats.m_double = m_double;
+  stats.m_string = m_string;
+  stats.m_sequence_bool = sequence_bool;
+  stats.m_sequence_int32 = sequence_int32;
+  stats.m_sequence_int64 = sequence_int64;
+  stats.m_sequence_double = sequence_double;
+  stats.m_sequence_string = sequence_string;
+
+  Json::Value json_output;
+  EXPECT_TRUE(Json::Reader().parse(stats.ToJson(), json_output));
+
+  EXPECT_TRUE(rtc::GetStringFromJsonObject(json_output, "id", &id));
+  EXPECT_TRUE(rtc::GetIntFromJsonObject(json_output, "timestamp", &timestamp));
+  EXPECT_TRUE(rtc::GetBoolFromJsonObject(json_output, "mBool", &m_bool));
+  EXPECT_TRUE(rtc::GetIntFromJsonObject(json_output, "mInt32", &m_int32));
+  EXPECT_TRUE(rtc::GetDoubleFromJsonObject(json_output, "mDouble", &m_double));
+  EXPECT_TRUE(rtc::GetStringFromJsonObject(json_output, "mString", &m_string));
+
+  Json::Value json_array;
+
+  EXPECT_TRUE(
+      rtc::GetValueFromJsonObject(json_output, "mSequenceBool", &json_array));
+  EXPECT_TRUE(rtc::JsonArrayToBoolVector(json_array, &sequence_bool));
+
+  EXPECT_TRUE(
+      rtc::GetValueFromJsonObject(json_output, "mSequenceInt32", &json_array));
+  EXPECT_TRUE(rtc::JsonArrayToIntVector(json_array, &sequence_int32));
+
+  EXPECT_TRUE(
+      rtc::GetValueFromJsonObject(json_output, "mSequenceDouble", &json_array));
+  EXPECT_TRUE(rtc::JsonArrayToDoubleVector(json_array, &sequence_double));
+
+  EXPECT_TRUE(
+      rtc::GetValueFromJsonObject(json_output, "mSequenceString", &json_array));
+  EXPECT_TRUE(rtc::JsonArrayToStringVector(json_array, &sequence_string));
+
+  EXPECT_EQ(id, stats.id());
+  EXPECT_EQ(timestamp, stats.timestamp_us());
+  EXPECT_EQ(m_bool, *stats.m_bool);
+  EXPECT_EQ(m_int32, *stats.m_int32);
+  EXPECT_EQ(m_string, *stats.m_string);
+  EXPECT_EQ(sequence_bool, *stats.m_sequence_bool);
+  EXPECT_EQ(sequence_int32, *stats.m_sequence_int32);
+  EXPECT_EQ(sequence_string, *stats.m_sequence_string);
+
+  EXPECT_NEAR(m_double, *stats.m_double, GetExpectedError(*stats.m_double));
+
+  EXPECT_EQ(sequence_double.size(), stats.m_sequence_double->size());
+  for (size_t i = 0; i < stats.m_sequence_double->size(); ++i) {
+    EXPECT_NEAR(sequence_double[i], stats.m_sequence_double->at(i),
+                GetExpectedError(stats.m_sequence_double->at(i)));
+  }
+
+  // We read mInt64 as double since JSON stores all numbers as doubles, so there
+  // is not enough precision to represent large numbers.
+  double m_int64_as_double;
+  std::vector<double> sequence_int64_as_double;
+
+  EXPECT_TRUE(
+      rtc::GetDoubleFromJsonObject(json_output, "mInt64", &m_int64_as_double));
+
+  EXPECT_TRUE(
+      rtc::GetValueFromJsonObject(json_output, "mSequenceInt64", &json_array));
+  EXPECT_TRUE(
+      rtc::JsonArrayToDoubleVector(json_array, &sequence_int64_as_double));
+
+  double stats_m_int64_as_double = static_cast<double>(*stats.m_int64);
+  EXPECT_NEAR(m_int64_as_double, stats_m_int64_as_double,
+              GetExpectedError(stats_m_int64_as_double));
+
+  EXPECT_EQ(sequence_int64_as_double.size(), stats.m_sequence_int64->size());
+  for (size_t i = 0; i < stats.m_sequence_int64->size(); ++i) {
+    const double stats_value_as_double =
+        static_cast<double>((*stats.m_sequence_int64)[i]);
+    EXPECT_NEAR(sequence_int64_as_double[i], stats_value_as_double,
+                GetExpectedError(stats_value_as_double));
+  }
+
+  // Neither stats.m_uint32 nor stats.m_uint64 are defined, so "mUint64" and
+  // "mUint32" should not be part of the generated JSON object.
+  int m_uint32;
+  int m_uint64;
+  EXPECT_FALSE(stats.m_uint32.is_defined());
+  EXPECT_FALSE(stats.m_uint64.is_defined());
+  EXPECT_FALSE(rtc::GetIntFromJsonObject(json_output, "mUint32", &m_uint32));
+  EXPECT_FALSE(rtc::GetIntFromJsonObject(json_output, "mUint64", &m_uint64));
+
+  std::cout << stats.ToJson() << std::endl;
 }
 
 // Death tests.

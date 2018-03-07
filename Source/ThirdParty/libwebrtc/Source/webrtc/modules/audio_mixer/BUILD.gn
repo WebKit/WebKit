@@ -40,8 +40,9 @@ rtc_static_library("audio_mixer_impl") {
     ":audio_frame_manipulator",
     "..:module_api",
     "../..:webrtc_common",
+    "../../api:array_view",
     "../../audio/utility:audio_frame_operations",
-    "../../base:rtc_base_approved",
+    "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
     "../audio_processing",
   ]
@@ -61,7 +62,7 @@ rtc_static_library("audio_frame_manipulator") {
   deps = [
     "..:module_api",
     "../../audio/utility",
-    "../../base:rtc_base_approved",
+    "../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -69,12 +70,6 @@ if (rtc_include_tests) {
   rtc_source_set("audio_mixer_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "audio_frame_manipulator_unittest.cc",
       "audio_mixer_impl_unittest.cc",
@@ -88,10 +83,11 @@ if (rtc_include_tests) {
       ":audio_frame_manipulator",
       ":audio_mixer_impl",
       "..:module_api",
+      "../../api:array_view",
       "../../api:audio_mixer_api",
       "../../audio/utility:audio_frame_operations",
-      "../../base:rtc_base",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_task_queue",
       "../../test:test_support",
       "//testing/gmock",
     ]

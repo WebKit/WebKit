@@ -47,3 +47,12 @@ exec_script_whitelist = [
   "//build/toolchain/win/BUILD.gn",
 ]
 
+default_args = {
+  mac_sdk_min = "10.11"
+
+  # LibYUV does not want to switch to C++14 yet.
+  use_cxx11 = true
+
+  # LibYUV relies on Chromium's Android test infrastructure.
+  use_cxx11_on_android = false
+}

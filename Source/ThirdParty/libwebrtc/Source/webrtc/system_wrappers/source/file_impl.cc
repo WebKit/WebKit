@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/include/file_wrapper.h"
+#include "system_wrappers/include/file_wrapper.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -17,7 +17,7 @@
 #include <string.h>
 #endif
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

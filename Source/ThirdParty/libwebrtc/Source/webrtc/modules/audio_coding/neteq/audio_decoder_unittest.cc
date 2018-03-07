@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/audio_decoder_impl.h"
-
 #include <assert.h>
 #include <stdlib.h>
 
@@ -17,23 +15,23 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
-#include "webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
-#include "webrtc/modules/audio_coding/codecs/g722/audio_decoder_g722.h"
-#include "webrtc/modules/audio_coding/codecs/g722/audio_encoder_g722.h"
-#include "webrtc/modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
-#include "webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/include/audio_decoder_isacfix.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"
-#include "webrtc/modules/audio_coding/codecs/isac/main/include/audio_decoder_isac.h"
-#include "webrtc/modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"
-#include "webrtc/modules/audio_coding/codecs/opus/audio_decoder_opus.h"
-#include "webrtc/modules/audio_coding/codecs/opus/audio_encoder_opus.h"
-#include "webrtc/modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
-#include "webrtc/modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
-#include "webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
+#include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
+#include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
+#include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
+#include "modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
+#include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
+#include "modules/audio_coding/codecs/isac/fix/include/audio_decoder_isacfix.h"
+#include "modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"
+#include "modules/audio_coding/codecs/isac/main/include/audio_decoder_isac.h"
+#include "modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"
+#include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
+#include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
+#include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
+#include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
@@ -315,12 +313,11 @@ class AudioDecoderIlbcTest : public AudioDecoderTest {
     codec_input_rate_hz_ = 8000;
     frame_size_ = 240;
     data_length_ = 10 * frame_size_;
-    decoder_ = new AudioDecoderIlbc;
+    decoder_ = new AudioDecoderIlbcImpl;
     assert(decoder_);
-    AudioEncoderIlbc::Config config;
+    AudioEncoderIlbcConfig config;
     config.frame_size_ms = 30;
-    config.payload_type = payload_type_;
-    audio_encoder_.reset(new AudioEncoderIlbc(config));
+    audio_encoder_.reset(new AudioEncoderIlbcImpl(config, payload_type_));
   }
 
   // Overload the default test since iLBC's function WebRtcIlbcfix_NetEqPlc does
@@ -351,14 +348,14 @@ class AudioDecoderIsacFloatTest : public AudioDecoderTest {
     codec_input_rate_hz_ = 16000;
     frame_size_ = 480;
     data_length_ = 10 * frame_size_;
-    AudioEncoderIsac::Config config;
+    AudioEncoderIsacFloatImpl::Config config;
     config.payload_type = payload_type_;
     config.sample_rate_hz = codec_input_rate_hz_;
     config.adaptive_mode = false;
     config.frame_size_ms =
         1000 * static_cast<int>(frame_size_) / codec_input_rate_hz_;
-    audio_encoder_.reset(new AudioEncoderIsac(config));
-    decoder_ = new AudioDecoderIsac(codec_input_rate_hz_);
+    audio_encoder_.reset(new AudioEncoderIsacFloatImpl(config));
+    decoder_ = new AudioDecoderIsacFloatImpl(codec_input_rate_hz_);
   }
 };
 
@@ -368,14 +365,14 @@ class AudioDecoderIsacSwbTest : public AudioDecoderTest {
     codec_input_rate_hz_ = 32000;
     frame_size_ = 960;
     data_length_ = 10 * frame_size_;
-    AudioEncoderIsac::Config config;
+    AudioEncoderIsacFloatImpl::Config config;
     config.payload_type = payload_type_;
     config.sample_rate_hz = codec_input_rate_hz_;
     config.adaptive_mode = false;
     config.frame_size_ms =
         1000 * static_cast<int>(frame_size_) / codec_input_rate_hz_;
-    audio_encoder_.reset(new AudioEncoderIsac(config));
-    decoder_ = new AudioDecoderIsac(codec_input_rate_hz_);
+    audio_encoder_.reset(new AudioEncoderIsacFloatImpl(config));
+    decoder_ = new AudioDecoderIsacFloatImpl(codec_input_rate_hz_);
   }
 };
 
@@ -385,14 +382,14 @@ class AudioDecoderIsacFixTest : public AudioDecoderTest {
     codec_input_rate_hz_ = 16000;
     frame_size_ = 480;
     data_length_ = 10 * frame_size_;
-    AudioEncoderIsacFix::Config config;
+    AudioEncoderIsacFixImpl::Config config;
     config.payload_type = payload_type_;
     config.sample_rate_hz = codec_input_rate_hz_;
     config.adaptive_mode = false;
     config.frame_size_ms =
         1000 * static_cast<int>(frame_size_) / codec_input_rate_hz_;
-    audio_encoder_.reset(new AudioEncoderIsacFix(config));
-    decoder_ = new AudioDecoderIsacFix(codec_input_rate_hz_);
+    audio_encoder_.reset(new AudioEncoderIsacFixImpl(config));
+    decoder_ = new AudioDecoderIsacFixImpl(codec_input_rate_hz_);
   }
 };
 
@@ -418,7 +415,7 @@ class AudioDecoderG722StereoTest : public AudioDecoderTest {
     codec_input_rate_hz_ = 16000;
     frame_size_ = 160;
     data_length_ = 10 * frame_size_;
-    decoder_ = new AudioDecoderG722Stereo;
+    decoder_ = new AudioDecoderG722StereoImpl;
     assert(decoder_);
     AudioEncoderG722Config config;
     config.frame_size_ms = 10;
@@ -433,12 +430,11 @@ class AudioDecoderOpusTest : public AudioDecoderTest {
     codec_input_rate_hz_ = 48000;
     frame_size_ = 480;
     data_length_ = 10 * frame_size_;
-    decoder_ = new AudioDecoderOpus(1);
-    AudioEncoderOpus::Config config;
+    decoder_ = new AudioDecoderOpusImpl(1);
+    AudioEncoderOpusConfig config;
     config.frame_size_ms = static_cast<int>(frame_size_) / 48;
-    config.payload_type = payload_type_;
-    config.application = AudioEncoderOpus::kVoip;
-    audio_encoder_.reset(new AudioEncoderOpus(config));
+    config.application = AudioEncoderOpusConfig::ApplicationMode::kVoip;
+    audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(config, payload_type_);
   }
 };
 
@@ -447,13 +443,12 @@ class AudioDecoderOpusStereoTest : public AudioDecoderOpusTest {
   AudioDecoderOpusStereoTest() : AudioDecoderOpusTest() {
     channels_ = 2;
     delete decoder_;
-    decoder_ = new AudioDecoderOpus(2);
-    AudioEncoderOpus::Config config;
+    decoder_ = new AudioDecoderOpusImpl(2);
+    AudioEncoderOpusConfig config;
     config.frame_size_ms = static_cast<int>(frame_size_) / 48;
     config.num_channels = 2;
-    config.payload_type = payload_type_;
-    config.application = AudioEncoderOpus::kAudio;
-    audio_encoder_.reset(new AudioEncoderOpus(config));
+    config.application = AudioEncoderOpusConfig::ApplicationMode::kAudio;
+    audio_encoder_ = AudioEncoderOpus::MakeAudioEncoder(config, payload_type_);
   }
 };
 
@@ -467,7 +462,7 @@ TEST_F(AudioDecoderPcmUTest, EncodeDecode) {
 
 namespace {
 int SetAndGetTargetBitrate(AudioEncoder* audio_encoder, int rate) {
-  audio_encoder->OnReceivedUplinkBandwidth(rate, rtc::Optional<int64_t>());
+  audio_encoder->OnReceivedUplinkBandwidth(rate, rtc::nullopt);
   return audio_encoder->GetTargetBitrate();
 }
 void TestSetAndGetTargetBitratesWithFixedCodec(AudioEncoder* audio_encoder,
@@ -630,67 +625,6 @@ TEST_F(AudioDecoderOpusStereoTest, EncodeDecode) {
 
 TEST_F(AudioDecoderOpusStereoTest, SetTargetBitrate) {
   TestOpusSetTargetBitrates(audio_encoder_.get());
-}
-
-namespace {
-#ifdef WEBRTC_CODEC_ILBC
-const bool has_ilbc = true;
-#else
-const bool has_ilbc = false;
-#endif
-#if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
-const bool has_isac = true;
-#else
-const bool has_isac = false;
-#endif
-#ifdef WEBRTC_CODEC_ISAC
-const bool has_isac_swb = true;
-#else
-const bool has_isac_swb = false;
-#endif
-#ifdef WEBRTC_CODEC_G722
-const bool has_g722 = true;
-#else
-const bool has_g722 = false;
-#endif
-#ifdef WEBRTC_CODEC_OPUS
-const bool has_opus = true;
-#else
-const bool has_opus = false;
-#endif
-}  // namespace
-
-TEST(AudioDecoder, CodecSupported) {
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCMu));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCMa));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCMu_2ch));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCMa_2ch));
-  EXPECT_EQ(has_ilbc, CodecSupported(NetEqDecoder::kDecoderILBC));
-  EXPECT_EQ(has_isac, CodecSupported(NetEqDecoder::kDecoderISAC));
-  EXPECT_EQ(has_isac_swb, CodecSupported(NetEqDecoder::kDecoderISACswb));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16B));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16Bwb));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16Bswb32kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16Bswb48kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16B_2ch));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16Bwb_2ch));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16Bswb32kHz_2ch));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16Bswb48kHz_2ch));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderPCM16B_5ch));
-  EXPECT_EQ(has_g722, CodecSupported(NetEqDecoder::kDecoderG722));
-  EXPECT_EQ(has_g722, CodecSupported(NetEqDecoder::kDecoderG722_2ch));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderRED));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT16kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT32kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderAVT48kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGnb));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGwb));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGswb32kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderCNGswb48kHz));
-  EXPECT_TRUE(CodecSupported(NetEqDecoder::kDecoderArbitrary));
-  EXPECT_EQ(has_opus, CodecSupported(NetEqDecoder::kDecoderOpus));
-  EXPECT_EQ(has_opus, CodecSupported(NetEqDecoder::kDecoderOpus_2ch));
 }
 
 }  // namespace webrtc

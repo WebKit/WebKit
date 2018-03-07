@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
-#define WEBRTC_MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
+#ifndef MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
+#define MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
 
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/media/base/videosinkinterface.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/video_capture/video_capture_defines.h"
+#include "api/video/video_rotation.h"
+#include "media/base/videosinkinterface.h"
+#include "modules/include/module.h"
+#include "modules/video_capture/video_capture_defines.h"
 
 namespace webrtc {
 
@@ -118,4 +118,4 @@ protected:
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
+#endif  // MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_

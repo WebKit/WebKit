@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/mediatypes.h"
+#include "api/mediatypes.h"
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/base/checks.h"
+#include "api/mediastreaminterface.h"
+#include "rtc_base/checks.h"
 
 namespace {
 static const char* kMediaTypeData = "data";

@@ -75,7 +75,7 @@ static int parse_integer(CBS *cbs, BIGNUM **out) {
 
 static int marshal_integer(CBB *cbb, BIGNUM *bn) {
   if (bn == NULL) {
-    /* A DSA object may be missing some components. */
+    // A DSA object may be missing some components.
     OPENSSL_PUT_ERROR(DSA, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }

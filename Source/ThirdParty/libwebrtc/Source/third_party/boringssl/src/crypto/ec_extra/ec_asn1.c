@@ -67,9 +67,9 @@
 #include "../internal.h"
 
 
-static const uint8_t kParametersTag =
+static const unsigned kParametersTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0;
-static const uint8_t kPublicKeyTag =
+static const unsigned kPublicKeyTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 1;
 
 EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
@@ -83,14 +83,14 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
     return NULL;
   }
 
-  /* Parse the optional parameters field. */
+  // Parse the optional parameters field.
   EC_GROUP *inner_group = NULL;
   EC_KEY *ret = NULL;
   if (CBS_peek_asn1_tag(&ec_private_key, kParametersTag)) {
-    /* Per SEC 1, as an alternative to omitting it, one is allowed to specify
-     * this field and put in a NULL to mean inheriting this value. This was
-     * omitted in a previous version of this logic without problems, so leave it
-     * unimplemented. */
+    // Per SEC 1, as an alternative to omitting it, one is allowed to specify
+    // this field and put in a NULL to mean inheriting this value. This was
+    // omitted in a previous version of this logic without problems, so leave it
+    // unimplemented.
     CBS child;
     if (!CBS_get_asn1(&ec_private_key, &child, kParametersTag)) {
       OPENSSL_PUT_ERROR(EC, EC_R_DECODE_ERROR);
@@ -103,7 +103,7 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
     if (group == NULL) {
       group = inner_group;
     } else if (EC_GROUP_cmp(group, inner_group, NULL) != 0) {
-      /* If a group was supplied externally, it must match. */
+      // If a group was supplied externally, it must match.
       OPENSSL_PUT_ERROR(EC, EC_R_GROUP_MISMATCH);
       goto err;
     }
@@ -123,9 +123,9 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
     goto err;
   }
 
-  /* Although RFC 5915 specifies the length of the key, OpenSSL historically
-   * got this wrong, so accept any length. See upstream's
-   * 30cd4ff294252c4b6a4b69cbef6a5b4117705d22. */
+  // Although RFC 5915 specifies the length of the key, OpenSSL historically
+  // got this wrong, so accept any length. See upstream's
+  // 30cd4ff294252c4b6a4b69cbef6a5b4117705d22.
   ret->priv_key =
       BN_bin2bn(CBS_data(&private_key), CBS_len(&private_key), NULL);
   ret->pub_key = EC_POINT_new(group);
@@ -143,12 +143,12 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
     uint8_t padding;
     if (!CBS_get_asn1(&ec_private_key, &child, kPublicKeyTag) ||
         !CBS_get_asn1(&child, &public_key, CBS_ASN1_BITSTRING) ||
-        /* As in a SubjectPublicKeyInfo, the byte-encoded public key is then
-         * encoded as a BIT STRING with bits ordered as in the DER encoding. */
+        // As in a SubjectPublicKeyInfo, the byte-encoded public key is then
+        // encoded as a BIT STRING with bits ordered as in the DER encoding.
         !CBS_get_u8(&public_key, &padding) ||
         padding != 0 ||
-        /* Explicitly check |public_key| is non-empty to save the conversion
-         * form later. */
+        // Explicitly check |public_key| is non-empty to save the conversion
+        // form later.
         CBS_len(&public_key) == 0 ||
         !EC_POINT_oct2point(group, ret->pub_key, CBS_data(&public_key),
                             CBS_len(&public_key), NULL) ||
@@ -157,17 +157,17 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
       goto err;
     }
 
-    /* Save the point conversion form.
-     * TODO(davidben): Consider removing this. */
+    // Save the point conversion form.
+    // TODO(davidben): Consider removing this.
     ret->conv_form =
         (point_conversion_form_t)(CBS_data(&public_key)[0] & ~0x01);
   } else {
-    /* Compute the public key instead. */
+    // Compute the public key instead.
     if (!EC_POINT_mul(group, ret->pub_key, ret->priv_key, NULL, NULL, NULL)) {
       goto err;
     }
-    /* Remember the original private-key-only encoding.
-     * TODO(davidben): Consider removing this. */
+    // Remember the original private-key-only encoding.
+    // TODO(davidben): Consider removing this.
     ret->enc_flag |= EC_PKEY_NO_PUBKEY;
   }
 
@@ -176,7 +176,7 @@ EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
     goto err;
   }
 
-  /* Ensure the resulting key is valid. */
+  // Ensure the resulting key is valid.
   if (!EC_KEY_check_key(ret)) {
     goto err;
   }
@@ -218,13 +218,13 @@ int EC_KEY_marshal_private_key(CBB *cbb, const EC_KEY *key,
     }
   }
 
-  /* TODO(fork): replace this flexibility with sensible default? */
+  // TODO(fork): replace this flexibility with sensible default?
   if (!(enc_flags & EC_PKEY_NO_PUBKEY) && key->pub_key != NULL) {
     CBB child, public_key;
     if (!CBB_add_asn1(&ec_private_key, &child, kPublicKeyTag) ||
         !CBB_add_asn1(&child, &public_key, CBS_ASN1_BITSTRING) ||
-        /* As in a SubjectPublicKeyInfo, the byte-encoded public key is then
-         * encoded as a BIT STRING with bits ordered as in the DER encoding. */
+        // As in a SubjectPublicKeyInfo, the byte-encoded public key is then
+        // encoded as a BIT STRING with bits ordered as in the DER encoding.
         !CBB_add_u8(&public_key, 0 /* padding */) ||
         !EC_POINT_point2cbb(&public_key, key->group, key->pub_key,
                             key->conv_form, NULL) ||
@@ -242,8 +242,8 @@ int EC_KEY_marshal_private_key(CBB *cbb, const EC_KEY *key,
   return 1;
 }
 
-/* is_unsigned_integer returns one if |cbs| is a valid unsigned DER INTEGER and
- * zero otherwise. */
+// is_unsigned_integer returns one if |cbs| is a valid unsigned DER INTEGER and
+// zero otherwise.
 static int is_unsigned_integer(const CBS *cbs) {
   if (CBS_len(cbs) == 0) {
     return 0;
@@ -251,20 +251,20 @@ static int is_unsigned_integer(const CBS *cbs) {
   uint8_t byte = CBS_data(cbs)[0];
   if ((byte & 0x80) ||
       (byte == 0 && CBS_len(cbs) > 1 && (CBS_data(cbs)[1] & 0x80) == 0)) {
-    /* Negative or not minimally-encoded. */
+    // Negative or not minimally-encoded.
     return 0;
   }
   return 1;
 }
 
-/* kPrimeFieldOID is the encoding of 1.2.840.10045.1.1. */
+// kPrimeFieldOID is the encoding of 1.2.840.10045.1.1.
 static const uint8_t kPrimeField[] = {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x01, 0x01};
 
 static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
                                       CBS *out_b, CBS *out_base_x,
                                       CBS *out_base_y, CBS *out_order) {
-  /* See RFC 3279, section 2.3.5. Note that RFC 3279 calls this structure an
-   * ECParameters while RFC 5480 calls it a SpecifiedECDomain. */
+  // See RFC 3279, section 2.3.5. Note that RFC 3279 calls this structure an
+  // ECParameters while RFC 5480 calls it a SpecifiedECDomain.
   CBS params, field_id, field_type, curve, base;
   uint64_t version;
   if (!CBS_get_asn1(in, &params, CBS_ASN1_SEQUENCE) ||
@@ -280,7 +280,7 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
       !CBS_get_asn1(&params, &curve, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&curve, out_a, CBS_ASN1_OCTETSTRING) ||
       !CBS_get_asn1(&curve, out_b, CBS_ASN1_OCTETSTRING) ||
-      /* |curve| has an optional BIT STRING seed which we ignore. */
+      // |curve| has an optional BIT STRING seed which we ignore.
       !CBS_get_asn1(&params, &base, CBS_ASN1_OCTETSTRING) ||
       !CBS_get_asn1(&params, out_order, CBS_ASN1_INTEGER) ||
       !is_unsigned_integer(out_order)) {
@@ -288,11 +288,11 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
     return 0;
   }
 
-  /* |params| has an optional cofactor which we ignore. With the optional seed
-   * in |curve|, a group already has arbitrarily many encodings. Parse enough to
-   * uniquely determine the curve. */
+  // |params| has an optional cofactor which we ignore. With the optional seed
+  // in |curve|, a group already has arbitrarily many encodings. Parse enough to
+  // uniquely determine the curve.
 
-  /* Require that the base point use uncompressed form. */
+  // Require that the base point use uncompressed form.
   uint8_t form;
   if (!CBS_get_u8(&base, &form) || form != POINT_CONVERSION_UNCOMPRESSED) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_FORM);
@@ -310,10 +310,10 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
   return 1;
 }
 
-/* integers_equal returns one if |a| and |b| are equal, up to leading zeros, and
- * zero otherwise. */
+// integers_equal returns one if |a| and |b| are equal, up to leading zeros, and
+// zero otherwise.
 static int integers_equal(const CBS *a, const uint8_t *b, size_t b_len) {
-  /* Remove leading zeros from |a| and |b|. */
+  // Remove leading zeros from |a| and |b|.
   CBS a_copy = *a;
   while (CBS_len(&a_copy) > 0 && CBS_data(&a_copy)[0] == 0) {
     CBS_skip(&a_copy, 1);
@@ -332,7 +332,7 @@ EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs) {
     return NULL;
   }
 
-  /* Look for a matching curve. */
+  // Look for a matching curve.
   const struct built_in_curves *const curves = OPENSSL_built_in_curves();
   for (size_t i = 0; i < OPENSSL_NUM_BUILT_IN_CURVES; i++) {
     const struct built_in_curve *curve = &curves->curves[i];
@@ -374,32 +374,32 @@ EC_GROUP *EC_KEY_parse_parameters(CBS *cbs) {
     return EC_KEY_parse_curve_name(cbs);
   }
 
-  /* OpenSSL sometimes produces ECPrivateKeys with explicitly-encoded versions
-   * of named curves.
-   *
-   * TODO(davidben): Remove support for this. */
+  // OpenSSL sometimes produces ECPrivateKeys with explicitly-encoded versions
+  // of named curves.
+  //
+  // TODO(davidben): Remove support for this.
   CBS prime, a, b, base_x, base_y, order;
   if (!parse_explicit_prime_curve(cbs, &prime, &a, &b, &base_x, &base_y,
                                   &order)) {
     return NULL;
   }
 
-  /* Look for a matching prime curve. */
+  // Look for a matching prime curve.
   const struct built_in_curves *const curves = OPENSSL_built_in_curves();
   for (size_t i = 0; i < OPENSSL_NUM_BUILT_IN_CURVES; i++) {
     const struct built_in_curve *curve = &curves->curves[i];
-    const unsigned param_len = curve->data->param_len;
-    /* |curve->data->data| is ordered p, a, b, x, y, order, each component
-     * zero-padded up to the field length. Although SEC 1 states that the
-     * Field-Element-to-Octet-String conversion also pads, OpenSSL mis-encodes
-     * |a| and |b|, so this comparison must allow omitting leading zeros. (This
-     * is relevant for P-521 whose |b| has a leading 0.) */
-    if (integers_equal(&prime, curve->data->data, param_len) &&
-        integers_equal(&a, curve->data->data + param_len, param_len) &&
-        integers_equal(&b, curve->data->data + param_len * 2, param_len) &&
-        integers_equal(&base_x, curve->data->data + param_len * 3, param_len) &&
-        integers_equal(&base_y, curve->data->data + param_len * 4, param_len) &&
-        integers_equal(&order, curve->data->data + param_len * 5, param_len)) {
+    const unsigned param_len = curve->param_len;
+    // |curve->params| is ordered p, a, b, x, y, order, each component
+    // zero-padded up to the field length. Although SEC 1 states that the
+    // Field-Element-to-Octet-String conversion also pads, OpenSSL mis-encodes
+    // |a| and |b|, so this comparison must allow omitting leading zeros. (This
+    // is relevant for P-521 whose |b| has a leading 0.)
+    if (integers_equal(&prime, curve->params, param_len) &&
+        integers_equal(&a, curve->params + param_len, param_len) &&
+        integers_equal(&b, curve->params + param_len * 2, param_len) &&
+        integers_equal(&base_x, curve->params + param_len * 3, param_len) &&
+        integers_equal(&base_y, curve->params + param_len * 4, param_len) &&
+        integers_equal(&order, curve->params + param_len * 5, param_len)) {
       return EC_GROUP_new_by_curve_name(curve->nid);
     }
   }
@@ -420,8 +420,8 @@ int EC_POINT_point2cbb(CBB *out, const EC_GROUP *group, const EC_POINT *point,
 }
 
 EC_KEY *d2i_ECPrivateKey(EC_KEY **out, const uint8_t **inp, long len) {
-  /* This function treats its |out| parameter differently from other |d2i|
-   * functions. If supplied, take the group from |*out|. */
+  // This function treats its |out| parameter differently from other |d2i|
+  // functions. If supplied, take the group from |*out|.
   const EC_GROUP *group = NULL;
   if (out != NULL && *out != NULL) {
     group = EC_KEY_get0_group(*out);
@@ -515,7 +515,7 @@ EC_KEY *o2i_ECPublicKey(EC_KEY **keyp, const uint8_t **inp, long len) {
     OPENSSL_PUT_ERROR(EC, ERR_R_EC_LIB);
     return NULL;
   }
-  /* save the point conversion form */
+  // save the point conversion form
   ret->conv_form = (point_conversion_form_t)(*inp[0] & ~0x01);
   *inp += len;
   return ret;
@@ -534,7 +534,7 @@ int i2o_ECPublicKey(const EC_KEY *key, uint8_t **outp) {
                                0, NULL);
 
   if (outp == NULL || buf_len == 0) {
-    /* out == NULL => just return the length of the octet string */
+    // out == NULL => just return the length of the octet string
     return buf_len;
   }
 

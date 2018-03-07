@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/system_wrappers/include/metrics_default.h"
-#include "webrtc/test/gtest.h"
+#include "system_wrappers/include/metrics_default.h"
+#include "system_wrappers/include/metrics.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -54,9 +54,7 @@ class MetricsDefaultTest : public ::testing::Test {
   MetricsDefaultTest() {}
 
  protected:
-  virtual void SetUp() {
-    metrics::Reset();
-  }
+  virtual void SetUp() { metrics::Reset(); }
 };
 
 TEST_F(MetricsDefaultTest, Reset) {

@@ -15,8 +15,8 @@
  *
  */
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/checks.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 int32_t WebRtcSpl_SqrtLocal(int32_t in);
 

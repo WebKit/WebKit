@@ -10,7 +10,7 @@
 
 /*
  *
- * Copyright (c) 2013, Cisco Systems, Inc.
+ * Copyright (c) 2013-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,8 +93,8 @@ static srtp_err_status_t srtp_aes_gcm_openssl_alloc (srtp_cipher_t **c, int key_
     /*
      * Verify the key_len is valid for one of: AES-128/256
      */
-    if (key_len != SRTP_AES_128_GCM_KEYSIZE_WSALT &&
-        key_len != SRTP_AES_256_GCM_KEYSIZE_WSALT) {
+    if (key_len != SRTP_AES_GCM_128_KEY_LEN_WSALT &&
+        key_len != SRTP_AES_GCM_256_KEY_LEN_WSALT) {
         return (srtp_err_status_bad_param);
     }
 
@@ -131,16 +131,16 @@ static srtp_err_status_t srtp_aes_gcm_openssl_alloc (srtp_cipher_t **c, int key_
 
     /* setup cipher attributes */
     switch (key_len) {
-    case SRTP_AES_128_GCM_KEYSIZE_WSALT:
+    case SRTP_AES_GCM_128_KEY_LEN_WSALT:
         (*c)->type = &srtp_aes_gcm_128_openssl;
-        (*c)->algorithm = SRTP_AES_128_GCM;
-        gcm->key_size = SRTP_AES_128_KEYSIZE;
+        (*c)->algorithm = SRTP_AES_GCM_128;
+        gcm->key_size = SRTP_AES_128_KEY_LEN;
         gcm->tag_len = tlen;
         break;
-    case SRTP_AES_256_GCM_KEYSIZE_WSALT:
+    case SRTP_AES_GCM_256_KEY_LEN_WSALT:
         (*c)->type = &srtp_aes_gcm_256_openssl;
-        (*c)->algorithm = SRTP_AES_256_GCM;
-        gcm->key_size = SRTP_AES_256_KEYSIZE;
+        (*c)->algorithm = SRTP_AES_GCM_256;
+        gcm->key_size = SRTP_AES_256_KEY_LEN;
         gcm->tag_len = tlen;
         break;
     }
@@ -162,9 +162,9 @@ static srtp_err_status_t srtp_aes_gcm_openssl_dealloc (srtp_cipher_t *c)
     ctx = (srtp_aes_gcm_ctx_t*)c->state;
     if (ctx) {
         EVP_CIPHER_CTX_free(ctx->ctx);
-	/* zeroize the key material */
-	octet_string_set_to_zero((uint8_t*)ctx, sizeof(srtp_aes_gcm_ctx_t));
-	srtp_crypto_free(ctx);
+        /* zeroize the key material */
+        octet_string_set_to_zero(ctx, sizeof(srtp_aes_gcm_ctx_t));
+        srtp_crypto_free(ctx);
     }
 
     /* free memory */
@@ -189,10 +189,10 @@ static srtp_err_status_t srtp_aes_gcm_openssl_context_init (void* cv, const uint
     debug_print(srtp_mod_aes_gcm, "key:  %s", srtp_octet_string_hex_string(key, c->key_size));
 
     switch (c->key_size) {
-    case SRTP_AES_256_KEYSIZE:
+    case SRTP_AES_256_KEY_LEN:
         evp = EVP_aes_256_gcm();
         break;
-    case SRTP_AES_128_KEYSIZE:
+    case SRTP_AES_128_KEY_LEN:
         evp = EVP_aes_128_gcm();
         break;
     default:
@@ -386,7 +386,7 @@ static const char srtp_aes_gcm_256_openssl_description[] = "AES-256 GCM using op
  * values we're derived from independent test code
  * using OpenSSL.
  */
-static const uint8_t srtp_aes_gcm_test_case_0_key[SRTP_AES_128_GCM_KEYSIZE_WSALT] = {
+static const uint8_t srtp_aes_gcm_test_case_0_key[SRTP_AES_GCM_128_KEY_LEN_WSALT] = {
     0xfe, 0xff, 0xe9, 0x92, 0x86, 0x65, 0x73, 0x1c,
     0x6d, 0x6a, 0x8f, 0x94, 0x67, 0x30, 0x83, 0x08,
     0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -430,7 +430,7 @@ static const uint8_t srtp_aes_gcm_test_case_0_ciphertext[76] = {
 };
 
 static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_0a = {
-    SRTP_AES_128_GCM_KEYSIZE_WSALT,      /* octets in key            */
+    SRTP_AES_GCM_128_KEY_LEN_WSALT,      /* octets in key            */
     srtp_aes_gcm_test_case_0_key,        /* key                      */
     srtp_aes_gcm_test_case_0_iv,         /* packet index             */
     60,                                  /* octets in plaintext      */
@@ -444,7 +444,7 @@ static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_0a = {
 };
 
 static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_0 = {
-    SRTP_AES_128_GCM_KEYSIZE_WSALT,      /* octets in key            */
+    SRTP_AES_GCM_128_KEY_LEN_WSALT,      /* octets in key            */
     srtp_aes_gcm_test_case_0_key,        /* key                      */
     srtp_aes_gcm_test_case_0_iv,         /* packet index             */
     60,                                  /* octets in plaintext      */
@@ -457,7 +457,7 @@ static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_0 = {
     &srtp_aes_gcm_test_case_0a           /* pointer to next testcase */
 };
 
-static const uint8_t srtp_aes_gcm_test_case_1_key[SRTP_AES_256_GCM_KEYSIZE_WSALT] = {
+static const uint8_t srtp_aes_gcm_test_case_1_key[SRTP_AES_GCM_256_KEY_LEN_WSALT] = {
     0xfe, 0xff, 0xe9, 0x92, 0x86, 0x65, 0x73, 0x1c,
     0xa5, 0x59, 0x09, 0xc5, 0x54, 0x66, 0x93, 0x1c,
     0xaf, 0xf5, 0x26, 0x9a, 0x21, 0xd5, 0x14, 0xb2,
@@ -504,7 +504,7 @@ static const uint8_t srtp_aes_gcm_test_case_1_ciphertext[76] = {
 };
 
 static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_1a = {
-    SRTP_AES_256_GCM_KEYSIZE_WSALT,      /* octets in key            */
+    SRTP_AES_GCM_256_KEY_LEN_WSALT,      /* octets in key            */
     srtp_aes_gcm_test_case_1_key,        /* key                      */
     srtp_aes_gcm_test_case_1_iv,         /* packet index             */
     60,                                  /* octets in plaintext      */
@@ -518,7 +518,7 @@ static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_1a = {
 };
 
 static const srtp_cipher_test_case_t srtp_aes_gcm_test_case_1 = {
-    SRTP_AES_256_GCM_KEYSIZE_WSALT,      /* octets in key            */
+    SRTP_AES_GCM_256_KEY_LEN_WSALT,      /* octets in key            */
     srtp_aes_gcm_test_case_1_key,        /* key                      */
     srtp_aes_gcm_test_case_1_iv,         /* packet index             */
     60,                                  /* octets in plaintext      */
@@ -545,7 +545,7 @@ const srtp_cipher_type_t srtp_aes_gcm_128_openssl = {
     srtp_aes_gcm_openssl_get_tag,
     srtp_aes_gcm_128_openssl_description,
     &srtp_aes_gcm_test_case_0,
-    SRTP_AES_128_GCM
+    SRTP_AES_GCM_128
 };
 
 /*
@@ -562,6 +562,6 @@ const srtp_cipher_type_t srtp_aes_gcm_256_openssl = {
     srtp_aes_gcm_openssl_get_tag,
     srtp_aes_gcm_256_openssl_description,
     &srtp_aes_gcm_test_case_1,
-    SRTP_AES_256_GCM
+    SRTP_AES_GCM_256
 };
 

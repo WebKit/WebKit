@@ -54,14 +54,14 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-/* Altivec-optimized SHA1 in C. This is tested on ppc64le only.
- *
- * References:
- * https://software.intel.com/en-us/articles/improving-the-performance-of-the-secure-hash-algorithm-1
- * http://arctic.org/~dean/crypto/sha1.html
- *
- * This code used the generic SHA-1 from OpenSSL as a basis and AltiVec
- * optimisations were added on top. */
+// Altivec-optimized SHA1 in C. This is tested on ppc64le only.
+//
+// References:
+// https://software.intel.com/en-us/articles/improving-the-performance-of-the-secure-hash-algorithm-1
+// http://arctic.org/~dean/crypto/sha1.html
+//
+// This code used the generic SHA-1 from OpenSSL as a basis and AltiVec
+// optimisations were added on top.
 
 #include <openssl/sha.h>
 
@@ -76,11 +76,11 @@ static uint32_t rotate(uint32_t a, int n) { return (a << n) | (a >> (32 - n)); }
 typedef vector unsigned int vec_uint32_t;
 typedef vector unsigned char vec_uint8_t;
 
-/* Vector constants */
+// Vector constants
 static const vec_uint8_t k_swap_endianness = {3,  2,  1, 0, 7,  6,  5,  4,
                                               11, 10, 9, 8, 15, 14, 13, 12};
 
-/* Shift amounts for byte and bit shifts and rotations */
+// Shift amounts for byte and bit shifts and rotations
 static const vec_uint8_t k_4_bytes = {32, 32, 32, 32, 32, 32, 32, 32,
                                       32, 32, 32, 32, 32, 32, 32, 32};
 static const vec_uint8_t k_12_bytes = {96, 96, 96, 96, 96, 96, 96, 96,
@@ -91,18 +91,18 @@ static const vec_uint8_t k_12_bytes = {96, 96, 96, 96, 96, 96, 96, 96,
 #define K_40_59 0x8f1bbcdcUL
 #define K_60_79 0xca62c1d6UL
 
-/* Vector versions of the above. */
+// Vector versions of the above.
 static const vec_uint32_t K_00_19_x_4 = {K_00_19, K_00_19, K_00_19, K_00_19};
 static const vec_uint32_t K_20_39_x_4 = {K_20_39, K_20_39, K_20_39, K_20_39};
 static const vec_uint32_t K_40_59_x_4 = {K_40_59, K_40_59, K_40_59, K_40_59};
 static const vec_uint32_t K_60_79_x_4 = {K_60_79, K_60_79, K_60_79, K_60_79};
 
-/* vector message scheduling: compute message schedule for round i..i+3 where i
- * is divisible by 4. We return the schedule w[i..i+3] as a vector. In
- * addition, we also precompute sum w[i..+3] and an additive constant K. This
- * is done to offload some computation of f() in the integer execution units.
- *
- * Byte shifting code below may not be correct for big-endian systems. */
+// vector message scheduling: compute message schedule for round i..i+3 where i
+// is divisible by 4. We return the schedule w[i..i+3] as a vector. In
+// addition, we also precompute sum w[i..+3] and an additive constant K. This
+// is done to offload some computation of f() in the integer execution units.
+//
+// Byte shifting code below may not be correct for big-endian systems.
 static vec_uint32_t sched_00_15(vec_uint32_t *pre_added, const void *data,
                                 vec_uint32_t k) {
   const vector unsigned char unaligned_data =
@@ -113,17 +113,17 @@ static vec_uint32_t sched_00_15(vec_uint32_t *pre_added, const void *data,
   return w;
 }
 
-/* Compute w[i..i+3] using these steps for i in [16, 20, 24, 28]
- *
- * w'[i  ]  = (w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]) <<< 1
- * w'[i+1]  = (w[i-2] ^ w[i-7] ^ w[i-13] ^ w[i-15]) <<< 1
- * w'[i+2]  = (w[i-1] ^ w[i-6] ^ w[i-12] ^ w[i-14]) <<< 1
- * w'[i+3]  = (     0 ^ w[i-5] ^ w[i-11] ^ w[i-13]) <<< 1
- *
- * w[  i] = w'[  i]
- * w[i+1] = w'[i+1]
- * w[i+2] = w'[i+2]
- * w[i+3] = w'[i+3] ^ (w'[i] <<< 1) */
+// Compute w[i..i+3] using these steps for i in [16, 20, 24, 28]
+//
+// w'[i  ]  = (w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]) <<< 1
+// w'[i+1]  = (w[i-2] ^ w[i-7] ^ w[i-13] ^ w[i-15]) <<< 1
+// w'[i+2]  = (w[i-1] ^ w[i-6] ^ w[i-12] ^ w[i-14]) <<< 1
+// w'[i+3]  = (     0 ^ w[i-5] ^ w[i-11] ^ w[i-13]) <<< 1
+//
+// w[  i] = w'[  i]
+// w[i+1] = w'[i+1]
+// w[i+2] = w'[i+2]
+// w[i+3] = w'[i+3] ^ (w'[i] <<< 1)
 static vec_uint32_t sched_16_31(vec_uint32_t *pre_added, vec_uint32_t minus_4,
                                 vec_uint32_t minus_8, vec_uint32_t minus_12,
                                 vec_uint32_t minus_16, vec_uint32_t k) {
@@ -138,8 +138,8 @@ static vec_uint32_t sched_16_31(vec_uint32_t *pre_added, vec_uint32_t minus_4,
   return w;
 }
 
-/* Compute w[i..i+3] using this relation for i in [32, 36, 40 ... 76]
- * w[i] = (w[i-6] ^ w[i-16] ^ w[i-28] ^ w[i-32]), 2) <<< 2 */
+// Compute w[i..i+3] using this relation for i in [32, 36, 40 ... 76]
+// w[i] = (w[i-6] ^ w[i-16] ^ w[i-28] ^ w[i-32]), 2) <<< 2
 static vec_uint32_t sched_32_79(vec_uint32_t *pre_added, vec_uint32_t minus_4,
                                 vec_uint32_t minus_8, vec_uint32_t minus_16,
                                 vec_uint32_t minus_28, vec_uint32_t minus_32,
@@ -152,17 +152,17 @@ static vec_uint32_t sched_32_79(vec_uint32_t *pre_added, vec_uint32_t minus_4,
   return w;
 }
 
-/* As pointed out by Wei Dai <weidai@eskimo.com>, F() below can be simplified
- * to the code in F_00_19. Wei attributes these optimisations to Peter
- * Gutmann's SHS code, and he attributes it to Rich Schroeppel. #define
- * F(x,y,z) (((x) & (y))  |  ((~(x)) & (z))) I've just become aware of another
- * tweak to be made, again from Wei Dai, in F_40_59, (x&a)|(y&a) -> (x|y)&a */
+// As pointed out by Wei Dai <weidai@eskimo.com>, F() below can be simplified
+// to the code in F_00_19. Wei attributes these optimisations to Peter
+// Gutmann's SHS code, and he attributes it to Rich Schroeppel. #define
+// F(x,y,z) (((x) & (y))  |  ((~(x)) & (z))) I've just become aware of another
+// tweak to be made, again from Wei Dai, in F_40_59, (x&a)|(y&a) -> (x|y)&a
 #define F_00_19(b, c, d) ((((c) ^ (d)) & (b)) ^ (d))
 #define F_20_39(b, c, d) ((b) ^ (c) ^ (d))
 #define F_40_59(b, c, d) (((b) & (c)) | (((b) | (c)) & (d)))
 #define F_60_79(b, c, d) F_20_39(b, c, d)
 
-/* We pre-added the K constants during message scheduling. */
+// We pre-added the K constants during message scheduling.
 #define BODY_00_19(i, a, b, c, d, e, f)                         \
   do {                                                          \
     (f) = w[i] + (e) + rotate((a), 5) + F_00_19((b), (c), (d)); \
@@ -318,7 +318,7 @@ void sha1_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
     BODY_60_79(74, E, T, A, B, C, D);
     BODY_60_79(75, D, E, T, A, B, C);
 
-    /* We don't use the last value */
+    // We don't use the last value
     (void)sched_32_79(vw + 19, w72, w68, w60, w48, w44, k);
     BODY_60_79(76, C, D, E, T, A, B);
     BODY_60_79(77, B, C, D, E, T, A);
@@ -345,7 +345,7 @@ void sha1_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
   }
 }
 
-#endif  /* OPENSSL_PPC64LE */
+#endif  // OPENSSL_PPC64LE
 
 #undef K_00_19
 #undef K_20_39

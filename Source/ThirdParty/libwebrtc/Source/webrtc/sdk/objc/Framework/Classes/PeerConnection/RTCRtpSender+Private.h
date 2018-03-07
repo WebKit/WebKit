@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCRtpSender.h"
 
-#include "webrtc/api/rtpsenderinterface.h"
+#include "api/rtpsenderinterface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

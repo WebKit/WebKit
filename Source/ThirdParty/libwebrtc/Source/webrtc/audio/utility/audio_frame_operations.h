@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
-#define WEBRTC_AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
+#ifndef AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
+#define AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
 
 #include <stddef.h>
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -120,4 +120,4 @@ class AudioFrameOperations {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
+#endif  // AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_

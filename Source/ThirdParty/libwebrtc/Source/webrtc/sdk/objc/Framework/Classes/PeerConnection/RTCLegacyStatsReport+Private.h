@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCLegacyStatsReport.h"
 
-#include "webrtc/api/statstypes.h"
+#include "api/statstypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
-#define WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
+#ifndef MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
+#define MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
 
 #if defined(WEBRTC_WIN)
 // This is a workaround on Windows due to the fact that some Windows
@@ -21,11 +21,11 @@
 #include <windows.h>
 #endif
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
+#include "api/video/video_frame.h"
+#include "modules/include/module.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/include/video_coding_defines.h"
+#include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
 
@@ -73,16 +73,6 @@ class VideoCodingModule : public Module {
 
   // DEPRECATED.
   static VideoCodingModule* Create(Clock* clock, EventFactory* event_factory);
-
-  // Get supported codec settings using codec type
-  //
-  // Input:
-  //      - codecType      : The codec type to get settings for
-  //      - codec          : Memory where the codec settings will be stored
-  //
-  // Return value     : VCM_OK,              on success
-  //                    VCM_PARAMETER_ERROR  if codec not supported
-  static void Codec(VideoCodecType codecType, VideoCodec* codec);
 
   /*
   *   Sender
@@ -428,4 +418,4 @@ class VideoCodingModule : public Module {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
+#endif  // MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_

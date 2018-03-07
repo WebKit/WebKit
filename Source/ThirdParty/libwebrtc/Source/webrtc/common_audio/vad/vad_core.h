@@ -13,11 +13,11 @@
  * This header file includes the descriptions of the core VAD calls.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_VAD_VAD_CORE_H_
-#define WEBRTC_COMMON_AUDIO_VAD_VAD_CORE_H_
+#ifndef COMMON_AUDIO_VAD_VAD_CORE_H_
+#define COMMON_AUDIO_VAD_VAD_CORE_H_
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 enum { kNumChannels = 6 };  // Number of frequency bands (named channels).
 enum { kNumGaussians = 2 };  // Number of Gaussians per channel in the GMM.
@@ -109,4 +109,4 @@ int WebRtcVad_CalcVad16khz(VadInstT* inst, const int16_t* speech_frame,
 int WebRtcVad_CalcVad8khz(VadInstT* inst, const int16_t* speech_frame,
                           size_t frame_length);
 
-#endif  // WEBRTC_COMMON_AUDIO_VAD_VAD_CORE_H_
+#endif  // COMMON_AUDIO_VAD_VAD_CORE_H_

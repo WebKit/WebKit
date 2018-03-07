@@ -22,6 +22,9 @@ int main(int argc, const char* argv[]) {
   int has_arm = TestCpuFlag(kCpuHasARM);
   int has_mips = TestCpuFlag(kCpuHasMIPS);
   int has_x86 = TestCpuFlag(kCpuHasX86);
+  (void)argc;
+  (void)argv;
+
 #if defined(__i386__) || defined(__x86_64__) || \
     defined(_M_IX86) || defined(_M_X64)
   if (has_x86) {
@@ -76,20 +79,32 @@ int main(int argc, const char* argv[]) {
     int has_sse42 = TestCpuFlag(kCpuHasSSE42);
     int has_avx = TestCpuFlag(kCpuHasAVX);
     int has_avx2 = TestCpuFlag(kCpuHasAVX2);
-    int has_avx3 = TestCpuFlag(kCpuHasAVX3);
     int has_erms = TestCpuFlag(kCpuHasERMS);
     int has_fma3 = TestCpuFlag(kCpuHasFMA3);
-    int has_f16c = TestCpuFlag(kCpuHasF16C);
+    int has_f16c = TestCpuFlag(kCpuHasF16C); 
+    int has_gfni = TestCpuFlag(kCpuHasGFNI);
+    int has_avx512bw = TestCpuFlag(kCpuHasAVX512BW);
+    int has_avx512vl = TestCpuFlag(kCpuHasAVX512VL);
+    int has_avx512vbmi = TestCpuFlag(kCpuHasAVX512VBMI);
+    int has_avx512vbmi2 = TestCpuFlag(kCpuHasAVX512VBMI2);
+    int has_avx512vbitalg = TestCpuFlag(kCpuHasAVX512VBITALG);
+    int has_avx512vpopcntdq = TestCpuFlag(kCpuHasAVX512VPOPCNTDQ);
     printf("Has SSE2 %x\n", has_sse2);
     printf("Has SSSE3 %x\n", has_ssse3);
     printf("Has SSE4.1 %x\n", has_sse41);
     printf("Has SSE4.2 %x\n", has_sse42);
     printf("Has AVX %x\n", has_avx);
     printf("Has AVX2 %x\n", has_avx2);
-    printf("Has AVX3 %x\n", has_avx3);
     printf("Has ERMS %x\n", has_erms);
     printf("Has FMA3 %x\n", has_fma3);
     printf("Has F16C %x\n", has_f16c);
+    printf("Has GFNI %x\n", has_gfni);
+    printf("Has AVX512BW %x\n", has_avx512bw);
+    printf("Has AVX512VL %x\n", has_avx512vl);
+    printf("Has AVX512VBMI %x\n", has_avx512vbmi);
+    printf("Has AVX512VBMI2 %x\n", has_avx512vbmi2);
+    printf("Has AVX512VBITALG %x\n", has_avx512vbitalg);
+    printf("Has AVX512VPOPCNTDQ %x\n", has_avx512vpopcntdq);
   }
   return 0;
 }

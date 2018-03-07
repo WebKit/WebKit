@@ -27,8 +27,6 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSMainNibFile</key>
-	<string>${MAIN_NIB_FILE}</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UISupportedInterfaceOrientation</key>

@@ -128,15 +128,15 @@ int SHA224_Final(uint8_t *md, SHA256_CTX *ctx) {
 #define HASH_CTX SHA256_CTX
 #define HASH_CBLOCK 64
 
-/* Note that FIPS180-2 discusses "Truncation of the Hash Function Output."
- * default: case below covers for it. It's not clear however if it's permitted
- * to truncate to amount of bytes not divisible by 4. I bet not, but if it is,
- * then default: case shall be extended. For reference. Idea behind separate
- * cases for pre-defined lenghts is to let the compiler decide if it's
- * appropriate to unroll small loops.
- *
- * TODO(davidben): The small |md_len| case is one of the few places a low-level
- * hash 'final' function can fail. This should never happen. */
+// Note that FIPS180-2 discusses "Truncation of the Hash Function Output."
+// default: case below covers for it. It's not clear however if it's permitted
+// to truncate to amount of bytes not divisible by 4. I bet not, but if it is,
+// then default: case shall be extended. For reference. Idea behind separate
+// cases for pre-defined lenghts is to let the compiler decide if it's
+// appropriate to unroll small loops.
+//
+// TODO(davidben): The small |md_len| case is one of the few places a low-level
+// hash 'final' function can fail. This should never happen.
 #define HASH_MAKE_STRING(c, s)                              \
   do {                                                      \
     uint32_t ll;                                            \
@@ -196,9 +196,9 @@ static const uint32_t K256[64] = {
 
 #define ROTATE(a, n) (((a) << (n)) | ((a) >> (32 - (n))))
 
-/* FIPS specification refers to right rotations, while our ROTATE macro
- * is left one. This is why you might notice that rotation coefficients
- * differ from those observed in FIPS document by 32-N... */
+// FIPS specification refers to right rotations, while our ROTATE macro
+// is left one. This is why you might notice that rotation coefficients
+// differ from those observed in FIPS document by 32-N...
 #define Sigma0(x) (ROTATE((x), 30) ^ ROTATE((x), 19) ^ ROTATE((x), 10))
 #define Sigma1(x) (ROTATE((x), 26) ^ ROTATE((x), 21) ^ ROTATE((x), 7))
 #define sigma0(x) (ROTATE((x), 25) ^ ROTATE((x), 14) ^ ((x) >> 3))
@@ -314,7 +314,7 @@ static void sha256_block_data_order(uint32_t *state, const uint8_t *data,
   }
 }
 
-#endif /* !SHA256_ASM */
+#endif  // !SHA256_ASM
 
 #undef DATA_ORDER_IS_BIG_ENDIAN
 #undef HASH_CTX

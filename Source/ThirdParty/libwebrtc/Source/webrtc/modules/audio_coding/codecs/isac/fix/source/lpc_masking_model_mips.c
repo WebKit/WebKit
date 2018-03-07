@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/lpc_masking_model.h"
+#include "modules/audio_coding/codecs/isac/fix/source/lpc_masking_model.h"
 
 // MIPS DSPR2 optimization for function WebRtcIsacfix_CalculateResidualEnergy
 // Bit-exact with WebRtcIsacfix_CalculateResidualEnergyC from file

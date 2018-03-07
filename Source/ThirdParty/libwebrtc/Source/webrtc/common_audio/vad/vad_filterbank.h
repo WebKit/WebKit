@@ -12,11 +12,11 @@
  * This file includes feature calculating functionality used in vad_core.c.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
-#define WEBRTC_COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
+#ifndef COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
+#define COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
 
-#include "webrtc/common_audio/vad/vad_core.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/vad/vad_core.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Takes |data_length| samples of |data_in| and calculates the logarithm of the
 // energy of each of the |kNumChannels| = 6 frequency bands used by the VAD:
@@ -41,4 +41,4 @@
 int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
                                     size_t data_length, int16_t* features);
 
-#endif  // WEBRTC_COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
+#endif  // COMMON_AUDIO_VAD_VAD_FILTERBANK_H_

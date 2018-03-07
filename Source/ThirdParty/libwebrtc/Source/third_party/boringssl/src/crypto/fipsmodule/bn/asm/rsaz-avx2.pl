@@ -83,9 +83,9 @@ die "can't locate x86_64-xlate.pl";
 # versions, but BoringSSL is intended to be used with pre-generated perlasm
 # output, so this isn't useful anyway.
 #
-# TODO(davidben): Enable these after testing. $avx goes up to 2 and $addx to 1.
+# TODO(davidben): Set $addx to one once build problems are resolved.
 $avx = 2;
-$addx = 1;
+$addx = 0;
 
 open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT = *OUT;

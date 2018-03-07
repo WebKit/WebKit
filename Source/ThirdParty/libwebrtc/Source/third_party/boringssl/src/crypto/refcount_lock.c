@@ -50,4 +50,4 @@ int CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count) {
   return ret;
 }
 
-#endif  /* OPENSSL_C11_ATOMIC */
+#endif  // OPENSSL_C11_ATOMIC

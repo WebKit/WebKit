@@ -11,10 +11,11 @@
 #include <jni.h>
 
 #include "third_party/libyuv/include/libyuv/scale.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
-namespace webrtc_jni {
+namespace webrtc {
+namespace jni {
 
 extern "C" JNIEXPORT void JNICALL
 Java_org_webrtc_VideoFileRenderer_nativeI420Scale(JNIEnv* jni,
@@ -60,26 +61,9 @@ Java_org_webrtc_VideoFileRenderer_nativeI420Scale(JNIEnv* jni,
       width, height, dst_y, dst_stride_y, dst_u, dst_stride_u, dst_v,
       dst_stride_v, dstWidth, dstHeight, libyuv::kFilterBilinear);
   if (ret) {
-    LOG(LS_ERROR) << "Error scaling I420 frame: " << ret;
+    RTC_LOG(LS_ERROR) << "Error scaling I420 frame: " << ret;
   }
 }
 
-extern "C" JNIEXPORT jobject JNICALL
-Java_org_webrtc_VideoFileRenderer_nativeCreateNativeByteBuffer(JNIEnv* jni,
-                                                               jclass,
-                                                               jint size) {
-  void* new_data = ::operator new(size);
-  jobject byte_buffer = jni->NewDirectByteBuffer(new_data, size);
-  return byte_buffer;
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_org_webrtc_VideoFileRenderer_nativeFreeNativeByteBuffer(
-    JNIEnv* jni,
-    jclass,
-    jobject byte_buffer) {
-  void* data = jni->GetDirectBufferAddress(byte_buffer);
-  ::operator delete(data);
-}
-
-}  // namespace webrtc_jni
+}  // namespace jni
+}  // namespace webrtc

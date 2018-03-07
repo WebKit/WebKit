@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_TESTSUPPORT_FRAME_READER_H_
-#define WEBRTC_TEST_TESTSUPPORT_FRAME_READER_H_
+#ifndef TEST_TESTSUPPORT_FRAME_READER_H_
+#define TEST_TESTSUPPORT_FRAME_READER_H_
 
 #include <stdio.h>
 
 #include <string>
 
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 class I420Buffer;
@@ -72,4 +72,4 @@ class YuvFrameReaderImpl : public FrameReader {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_TESTSUPPORT_FRAME_READER_H_
+#endif  // TEST_TESTSUPPORT_FRAME_READER_H_

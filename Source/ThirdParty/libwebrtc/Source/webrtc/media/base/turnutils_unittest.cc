@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/turnutils.h"
+#include "media/base/turnutils.h"
 
 #include <stddef.h>
 
-#include "webrtc/base/gunit.h"
+#include "rtc_base/gunit.h"
 
 namespace cricket {
 

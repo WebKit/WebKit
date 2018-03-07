@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #if ORIGINAL_OPT
-uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count) {
+uint32 HammingDistance_C1(const uint8* src_a, const uint8* src_b, int count) {
   uint32 diff = 0u;
 
   int i;
@@ -58,6 +58,16 @@ uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count) {
     src_a += 4;
     src_b += 4;
   }
+
+  for (; i < count; ++i) {
+    uint32 x = *src_a ^ *src_b;
+    uint32 u = x - ((x >> 1) & 0x55);
+    u = ((u >> 2) & 0x33) + (u & 0x33);
+    diff += (u + (u >> 4)) & 0x0f;
+    src_a += 1;
+    src_b += 1;
+  }
+
   return diff;
 }
 

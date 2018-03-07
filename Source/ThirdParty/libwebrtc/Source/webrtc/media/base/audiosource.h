@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_AUDIOSOURCE_H_
-#define WEBRTC_MEDIA_BASE_AUDIOSOURCE_H_
+#ifndef MEDIA_BASE_AUDIOSOURCE_H_
+#define MEDIA_BASE_AUDIOSOURCE_H_
 
 #include <cstddef>
 
@@ -46,4 +46,4 @@ class AudioSource {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_AUDIOSOURCE_H_
+#endif  // MEDIA_BASE_AUDIOSOURCE_H_

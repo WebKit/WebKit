@@ -65,9 +65,9 @@
 
 
 static int dsa_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  /* See RFC 3279, section 2.3.2. */
+  // See RFC 3279, section 2.3.2.
 
-  /* Parameters may or may not be present. */
+  // Parameters may or may not be present.
   DSA *dsa;
   if (CBS_len(params) == 0) {
     dsa = DSA_new();
@@ -105,7 +105,7 @@ static int dsa_pub_encode(CBB *out, const EVP_PKEY *key) {
   const DSA *dsa = key->pkey.dsa;
   const int has_params = dsa->p != NULL && dsa->q != NULL && dsa->g != NULL;
 
-  /* See RFC 5480, section 2. */
+  // See RFC 5480, section 2.
   CBB spki, algorithm, oid, key_bitstring;
   if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -125,9 +125,9 @@ static int dsa_pub_encode(CBB *out, const EVP_PKEY *key) {
 }
 
 static int dsa_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  /* See PKCS#11, v2.40, section 2.5. */
+  // See PKCS#11, v2.40, section 2.5.
 
-  /* Decode parameters. */
+  // Decode parameters.
   BN_CTX *ctx = NULL;
   DSA *dsa = DSA_parse_parameters(params);
   if (dsa == NULL || CBS_len(params) != 0) {
@@ -141,18 +141,18 @@ static int dsa_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
     goto err;
   }
 
-  /* Decode the key. */
+  // Decode the key.
   if (!BN_parse_asn1_unsigned(key, dsa->priv_key) ||
       CBS_len(key) != 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     goto err;
   }
 
-  /* Calculate the public key. */
+  // Calculate the public key.
   ctx = BN_CTX_new();
   if (ctx == NULL ||
-      !BN_mod_exp_mont(dsa->pub_key, dsa->g, dsa->priv_key, dsa->p, ctx,
-                       NULL)) {
+      !BN_mod_exp_mont_consttime(dsa->pub_key, dsa->g, dsa->priv_key, dsa->p,
+                                 ctx, NULL)) {
     goto err;
   }
 
@@ -173,7 +173,7 @@ static int dsa_priv_encode(CBB *out, const EVP_PKEY *key) {
     return 0;
   }
 
-  /* See PKCS#11, v2.40, section 2.5. */
+  // See PKCS#11, v2.40, section 2.5.
   CBB pkcs8, algorithm, oid, private_key;
   if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||
@@ -245,7 +245,7 @@ static void int_dsa_free(EVP_PKEY *pkey) { DSA_free(pkey->pkey.dsa); }
 
 const EVP_PKEY_ASN1_METHOD dsa_asn1_meth = {
   EVP_PKEY_DSA,
-  /* 1.2.840.10040.4.1 */
+  // 1.2.840.10040.4.1
   {0x2a, 0x86, 0x48, 0xce, 0x38, 0x04, 0x01}, 7,
 
   dsa_pub_decode,

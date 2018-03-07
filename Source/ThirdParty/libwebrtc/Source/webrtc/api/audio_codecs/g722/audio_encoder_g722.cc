@@ -8,25 +8,44 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/audio_codecs/g722/audio_encoder_g722.h"
+#include "api/audio_codecs/g722/audio_encoder_g722.h"
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/modules/audio_coding/codecs/g722/audio_encoder_g722.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/string_to_number.h"
 
 namespace webrtc {
 
 rtc::Optional<AudioEncoderG722Config> AudioEncoderG722::SdpToConfig(
     const SdpAudioFormat& format) {
-  return AudioEncoderG722Impl::SdpToConfig(format);
+  if (STR_CASE_CMP(format.name.c_str(), "g722") != 0 ||
+      format.clockrate_hz != 8000) {
+    return rtc::nullopt;
+  }
+
+  AudioEncoderG722Config config;
+  config.num_channels = rtc::checked_cast<int>(format.num_channels);
+  auto ptime_iter = format.parameters.find("ptime");
+  if (ptime_iter != format.parameters.end()) {
+    auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+    if (ptime && *ptime > 0) {
+      const int whole_packets = *ptime / 10;
+      config.frame_size_ms = rtc::SafeClamp<int>(whole_packets * 10, 10, 60);
+    }
+  }
+  return config.IsOk() ? rtc::Optional<AudioEncoderG722Config>(config)
+                       : rtc::nullopt;
 }
 
 void AudioEncoderG722::AppendSupportedEncoders(
     std::vector<AudioCodecSpec>* specs) {
-  const SdpAudioFormat fmt = {"g722", 8000, 1};
+  const SdpAudioFormat fmt = {"G722", 8000, 1};
   const AudioCodecInfo info = QueryAudioEncoder(*SdpToConfig(fmt));
   specs->push_back({fmt, info});
 }

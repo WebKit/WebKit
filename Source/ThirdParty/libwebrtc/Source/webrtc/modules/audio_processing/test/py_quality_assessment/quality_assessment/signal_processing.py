@@ -10,6 +10,7 @@
 """
 
 import array
+import enum
 import logging
 import os
 import sys
@@ -29,6 +30,7 @@ except ImportError:
 
 try:
   import scipy.signal
+  import scipy.fftpack
 except ImportError:
   logging.critical('Cannot import the third-party Python package scipy')
   sys.exit(1)
@@ -39,6 +41,12 @@ from . import exceptions
 class SignalProcessingUtils(object):
   """Collection of signal processing utilities.
   """
+
+  @enum.unique
+  class MixPadding(enum.Enum):
+    NO_PADDING = 0
+    ZERO_PADDING = 1
+    LOOP = 2
 
   def __init__(self):
     pass
@@ -86,24 +94,123 @@ class SignalProcessingUtils(object):
     return number_of_samples / signal.channels
 
   @classmethod
-  def GenerateWhiteNoise(cls, signal):
-    """Generates white noise.
+  def GenerateSilence(cls, duration=1000, sample_rate=48000):
+    """Generates silence.
 
-    White noise is generated with the same duration and in the same format as a
-    given signal.
+    This method can also be used to create a template AudioSegment instance.
+    A template can then be used with other Generate*() methods accepting an
+    AudioSegment instance as argument.
 
     Args:
-      signal: AudioSegment instance.
+      duration: duration in ms.
+      sample_rate: sample rate.
+
+    Returns:
+      AudioSegment instance.
+    """
+    return pydub.AudioSegment.silent(duration, sample_rate)
+
+  @classmethod
+  def GeneratePureTone(cls, template, frequency=440.0):
+    """Generates a pure tone.
+
+    The pure tone is generated with the same duration and in the same format of
+    the given template signal.
+
+    Args:
+      template: AudioSegment instance.
+      frequency: Frequency of the pure tone in Hz.
+
+    Return:
+      AudioSegment instance.
+    """
+    if frequency > template.frame_rate >> 1:
+      raise exceptions.SignalProcessingException('Invalid frequency')
+
+    generator = pydub.generators.Sine(
+        sample_rate=template.frame_rate,
+        bit_depth=template.sample_width * 8,
+        freq=frequency)
+
+    return generator.to_audio_segment(
+        duration=len(template),
+        volume=0.0)
+
+  @classmethod
+  def GenerateWhiteNoise(cls, template):
+    """Generates white noise.
+
+    The white noise is generated with the same duration and in the same format
+    of the given template signal.
+
+    Args:
+      template: AudioSegment instance.
 
     Return:
       AudioSegment instance.
     """
     generator = pydub.generators.WhiteNoise(
-        sample_rate=signal.frame_rate,
-        bit_depth=signal.sample_width * 8)
+        sample_rate=template.frame_rate,
+        bit_depth=template.sample_width * 8)
     return generator.to_audio_segment(
-        duration=len(signal),
+        duration=len(template),
         volume=0.0)
+
+  @classmethod
+  def AudioSegmentToRawData(cls, signal):
+    samples = signal.get_array_of_samples()
+    if samples.typecode != 'h':
+      raise exceptions.SignalProcessingException('Unsupported samples type')
+    return np.array(signal.get_array_of_samples(), np.int16)
+
+  @classmethod
+  def Fft(cls, signal, normalize=True):
+    if signal.channels != 1:
+      raise NotImplementedError('multiple-channel FFT not implemented')
+    x = cls.AudioSegmentToRawData(signal).astype(np.float32)
+    if normalize:
+      x /= max(abs(np.max(x)), 1.0)
+    y = scipy.fftpack.fft(x)
+    return y[:len(y) / 2]
+
+  @classmethod
+  def DetectHardClipping(cls, signal, threshold=2):
+    """Detects hard clipping.
+
+    Hard clipping is simply detected by counting samples that touch either the
+    lower or upper bound too many times in a row (according to |threshold|).
+    The presence of a single sequence of samples meeting such property is enough
+    to label the signal as hard clipped.
+
+    Args:
+      signal: AudioSegment instance.
+      threshold: minimum number of samples at full-scale in a row.
+
+    Returns:
+      True if hard clipping is detect, False otherwise.
+    """
+    if signal.channels != 1:
+      raise NotImplementedError('multiple-channel clipping not implemented')
+    if signal.sample_width != 2:  # Note that signal.sample_width is in bytes.
+      raise exceptions.SignalProcessingException(
+          'hard-clipping detection only supported for 16 bit samples')
+    samples = cls.AudioSegmentToRawData(signal)
+
+    # Detect adjacent clipped samples.
+    samples_type_info = np.iinfo(samples.dtype)
+    mask_min = samples == samples_type_info.min
+    mask_max = samples == samples_type_info.max
+
+    def HasLongSequence(vector, min_legth=threshold):
+      """Returns True if there are one or more long sequences of True flags."""
+      seq_length = 0
+      for b in vector:
+        seq_length = seq_length + 1 if b else 0
+        if seq_length >= min_legth:
+          return True
+      return False
+
+    return HasLongSequence(mask_min) or HasLongSequence(mask_max)
 
   @classmethod
   def ApplyImpulseResponse(cls, signal, impulse_response):
@@ -183,18 +290,24 @@ class SignalProcessingUtils(object):
         })
 
   @classmethod
-  def MixSignals(cls, signal, noise, target_snr=0.0, bln_pad_shortest=False):
-    """Mixes two signals with a target SNR.
+  def MixSignals(cls, signal, noise, target_snr=0.0,
+                 pad_noise=MixPadding.NO_PADDING):
+    """Mixes |signal| and |noise| with a target SNR.
 
-    Mix two signals with a desired SNR by scaling noise (noise).
+    Mix |signal| and |noise| with a desired SNR by scaling |noise|.
     If the target SNR is +/- infinite, a copy of signal/noise is returned.
+    If |signal| is shorter than |noise|, the length of the mix equals that of
+    |signal|. Otherwise, the mix length depends on whether padding is applied.
+    When padding is not applied, that is |pad_noise| is set to NO_PADDING
+    (default), the mix length equals that of |noise| - i.e., |signal| is
+    truncated. Otherwise, |noise| is extended and the resulting mix has the same
+    length of |signal|.
 
     Args:
       signal: AudioSegment instance (signal).
       noise: AudioSegment instance (noise).
       target_snr: float, numpy.Inf or -numpy.Inf (dB).
-      bln_pad_shortest: if True, it pads the shortest signal with silence at the
-                        end.
+      pad_noise: SignalProcessingUtils.MixPadding, default: NO_PADDING.
 
     Returns:
       An AudioSegment instance.
@@ -221,28 +334,23 @@ class SignalProcessingUtils(object):
       raise exceptions.SignalProcessingException(
           'cannot mix a signal with -Inf power')
 
-    # Pad signal (if necessary). If noise is the shortest, the AudioSegment
-    # overlay() method implictly pads noise. Hence, the only case to handle
-    # is signal shorter than noise and bln_pad_shortest True.
-    if bln_pad_shortest:
-      signal_duration = len(signal)
-      noise_duration = len(noise)
-      logging.warning('mix signals with padding')
-      logging.warning('  signal: %d ms', signal_duration)
-      logging.warning('  noise: %d ms', noise_duration)
-      padding_duration = noise_duration - signal_duration
-      if padding_duration > 0:  # That is signal_duration < noise_duration.
-        logging.debug('  padding: %d ms', padding_duration)
-        padding = pydub.AudioSegment.silent(
-            duration=padding_duration,
-            frame_rate=signal.frame_rate)
-        logging.debug('  signal (pre): %d ms', len(signal))
-        signal = signal + padding
-        logging.debug('  signal (post): %d ms', len(signal))
-
-        # Update power.
-        signal_power = float(signal.dBFS)
-
-    # Mix signals using the target SNR.
+    # Mix.
     gain_db = signal_power - noise_power - target_snr
-    return cls.Normalize(signal.overlay(noise.apply_gain(gain_db)))
+    signal_duration = len(signal)
+    noise_duration = len(noise)
+    if signal_duration <= noise_duration:
+      # Ignore |pad_noise|, |noise| is truncated if longer that |signal|, the
+      # mix will have the same length of |signal|.
+      return signal.overlay(noise.apply_gain(gain_db))
+    elif pad_noise == cls.MixPadding.NO_PADDING:
+      # |signal| is longer than |noise|, but no padding is applied to |noise|.
+      # Truncate |signal|.
+      return noise.overlay(signal, gain_during_overlay=gain_db)
+    elif pad_noise == cls.MixPadding.ZERO_PADDING:
+      # TODO(alessiob): Check that this works as expected.
+      return signal.overlay(noise.apply_gain(gain_db))
+    elif pad_noise == cls.MixPadding.LOOP:
+      # |signal| is longer than |noise|, extend |noise| by looping.
+      return signal.overlay(noise.apply_gain(gain_db), loop=True)
+    else:
+      raise exceptions.SignalProcessingException('invalid padding type')

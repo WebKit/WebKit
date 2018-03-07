@@ -15,7 +15,7 @@
 #import "RTCRtpParameters+Private.h"
 #import "WebRTC/RTCLogging.h"
 
-#include "webrtc/api/mediastreaminterface.h"
+#include "api/mediastreaminterface.h"
 
 @implementation RTCRtpSender {
   rtc::scoped_refptr<webrtc::RtpSenderInterface> _nativeRtpSender;

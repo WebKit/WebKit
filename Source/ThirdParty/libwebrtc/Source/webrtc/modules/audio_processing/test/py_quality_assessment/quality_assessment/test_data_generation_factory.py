@@ -11,6 +11,7 @@
 
 import logging
 
+from . import exceptions
 from . import test_data_generation
 
 
@@ -21,8 +22,23 @@ class TestDataGeneratorFactory(object):
   generators will be produced.
   """
 
-  def __init__(self, aechen_ir_database_path):
+  def __init__(self, aechen_ir_database_path, noise_tracks_path,
+               copy_with_identity):
+    """Ctor.
+
+    Args:
+      aechen_ir_database_path: Path to the Aechen Impulse Response database.
+      noise_tracks_path: Path to the noise tracks to add.
+      copy_with_identity: Flag indicating whether the identity generator has to
+                          make copies of the clean speech input files.
+    """
+    self._output_directory_prefix = None
     self._aechen_ir_database_path = aechen_ir_database_path
+    self._noise_tracks_path = noise_tracks_path
+    self._copy_with_identity = copy_with_identity
+
+  def SetOutputDirectoryPrefix(self, prefix):
+    self._output_directory_prefix = prefix
 
   def GetInstance(self, test_data_generators_class):
     """Creates an TestDataGenerator instance given a class object.
@@ -30,12 +46,26 @@ class TestDataGeneratorFactory(object):
     Args:
       test_data_generators_class: TestDataGenerator class object (not an
                                   instance).
+
+    Returns:
+      TestDataGenerator instance.
     """
+    if self._output_directory_prefix is None:
+      raise exceptions.InitializationException(
+          'The output directory prefix for test data generators is not set')
     logging.debug('factory producing %s', test_data_generators_class)
+
     if test_data_generators_class == (
+        test_data_generation.IdentityTestDataGenerator):
+      return test_data_generation.IdentityTestDataGenerator(
+          self._output_directory_prefix, self._copy_with_identity)
+    elif test_data_generators_class == (
         test_data_generation.ReverberationTestDataGenerator):
       return test_data_generation.ReverberationTestDataGenerator(
-          self._aechen_ir_database_path)
+          self._output_directory_prefix, self._aechen_ir_database_path)
+    elif test_data_generators_class == (
+        test_data_generation.AdditiveNoiseTestDataGenerator):
+      return test_data_generation.AdditiveNoiseTestDataGenerator(
+          self._output_directory_prefix, self._noise_tracks_path)
     else:
-      # By default, no arguments in the constructor.
-      return test_data_generators_class()
+      return test_data_generators_class(self._output_directory_prefix)

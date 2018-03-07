@@ -11,8 +11,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/base/thread.h"
-#include "webrtc/p2p/base/pseudotcp.h"
+#include "p2p/base/pseudotcp.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 class FakeIPseudoTcpNotify : public cricket::IPseudoTcpNotify {

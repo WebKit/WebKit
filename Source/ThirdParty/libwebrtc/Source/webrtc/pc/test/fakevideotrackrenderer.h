@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_TEST_FAKEVIDEOTRACKRENDERER_H_
-#define WEBRTC_PC_TEST_FAKEVIDEOTRACKRENDERER_H_
+#ifndef PC_TEST_FAKEVIDEOTRACKRENDERER_H_
+#define PC_TEST_FAKEVIDEOTRACKRENDERER_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/media/base/fakevideorenderer.h"
+#include "api/mediastreaminterface.h"
+#include "media/base/fakevideorenderer.h"
 
 namespace webrtc {
 
 class FakeVideoTrackRenderer : public cricket::FakeVideoRenderer {
  public:
-  FakeVideoTrackRenderer(VideoTrackInterface* video_track)
+  explicit FakeVideoTrackRenderer(VideoTrackInterface* video_track)
       : video_track_(video_track) {
     video_track_->AddOrUpdateSink(this, rtc::VideoSinkWants());
   }
@@ -30,4 +30,4 @@ class FakeVideoTrackRenderer : public cricket::FakeVideoRenderer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_TEST_FAKEVIDEOTRACKRENDERER_H_
+#endif  // PC_TEST_FAKEVIDEOTRACKRENDERER_H_

@@ -8,16 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/g722/audio_encoder_g722.h"
+#include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
 
 #include <algorithm>
 
 #include <limits>
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/base/string_to_number.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/g722/g722_interface.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/g722/g722_interface.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 
@@ -33,27 +32,6 @@ AudioEncoderG722Config CreateConfig(const CodecInst& codec_inst) {
 }
 
 }  // namespace
-
-rtc::Optional<AudioEncoderG722Config> AudioEncoderG722Impl::SdpToConfig(
-    const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), "g722") != 0 ||
-      format.clockrate_hz != 8000) {
-    return rtc::Optional<AudioEncoderG722Config>();
-  }
-
-  AudioEncoderG722Config config;
-  config.num_channels = rtc::dchecked_cast<int>(format.num_channels);
-  auto ptime_iter = format.parameters.find("ptime");
-  if (ptime_iter != format.parameters.end()) {
-    auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
-    if (ptime && *ptime > 0) {
-      const int whole_packets = *ptime / 10;
-      config.frame_size_ms = std::max(10, std::min(whole_packets * 10, 60));
-    }
-  }
-  return config.IsOk() ? rtc::Optional<AudioEncoderG722Config>(config)
-                       : rtc::Optional<AudioEncoderG722Config>();
-}
 
 AudioEncoderG722Impl::AudioEncoderG722Impl(const AudioEncoderG722Config& config,
                                            int payload_type)
@@ -78,25 +56,7 @@ AudioEncoderG722Impl::AudioEncoderG722Impl(const AudioEncoderG722Config& config,
 AudioEncoderG722Impl::AudioEncoderG722Impl(const CodecInst& codec_inst)
     : AudioEncoderG722Impl(CreateConfig(codec_inst), codec_inst.pltype) {}
 
-AudioEncoderG722Impl::AudioEncoderG722Impl(int payload_type,
-                                           const SdpAudioFormat& format)
-    : AudioEncoderG722Impl(*SdpToConfig(format), payload_type) {}
-
 AudioEncoderG722Impl::~AudioEncoderG722Impl() = default;
-
-rtc::Optional<AudioCodecInfo> AudioEncoderG722Impl::QueryAudioEncoder(
-    const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), GetPayloadName()) == 0) {
-    const auto config_opt = SdpToConfig(format);
-    if (format.clockrate_hz == 8000 && config_opt) {
-      RTC_DCHECK(config_opt->IsOk());
-      return rtc::Optional<AudioCodecInfo>(
-          {rtc::dchecked_cast<int>(kSampleRateHz),
-           rtc::dchecked_cast<size_t>(config_opt->num_channels), 64000});
-    }
-  }
-  return rtc::Optional<AudioCodecInfo>();
-}
 
 int AudioEncoderG722Impl::SampleRateHz() const {
   return kSampleRateHz;

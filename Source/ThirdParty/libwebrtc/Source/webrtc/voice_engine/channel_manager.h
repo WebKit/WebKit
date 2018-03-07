@@ -8,19 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VOICE_ENGINE_CHANNEL_MANAGER_H
-#define WEBRTC_VOICE_ENGINE_CHANNEL_MANAGER_H
+#ifndef VOICE_ENGINE_CHANNEL_MANAGER_H_
+#define VOICE_ENGINE_CHANNEL_MANAGER_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/random.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/system_wrappers/include/atomic32.h"
-#include "webrtc/typedefs.h"
-#include "webrtc/voice_engine/include/voe_base.h"
+#include "api/refcountedbase.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/random.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "system_wrappers/include/atomic32.h"
+#include "typedefs.h"  // NOLINT(build/include)
+#include "voice_engine/include/voe_base.h"
 
 namespace webrtc {
 
@@ -49,26 +50,24 @@ class Channel;
 class ChannelOwner {
  public:
   explicit ChannelOwner(Channel* channel);
-  ChannelOwner(const ChannelOwner& channel_owner);
+  ChannelOwner(const ChannelOwner& channel_owner) = default;
 
-  ~ChannelOwner();
+  ~ChannelOwner() = default;
 
-  ChannelOwner& operator=(const ChannelOwner& other);
+  ChannelOwner& operator=(const ChannelOwner& other) = default;
 
   Channel* channel() const { return channel_ref_->channel.get(); }
   bool IsValid() { return channel_ref_->channel.get() != NULL; }
-  int use_count() const { return channel_ref_->ref_count.Value(); }
  private:
   // Shared instance of a Channel. Copying ChannelOwners increase the reference
   // count and destroying ChannelOwners decrease references. Channels are
   // deleted when no references to them are held.
-  struct ChannelRef {
+  struct ChannelRef : public rtc::RefCountedBase {
     ChannelRef(Channel* channel);
     const std::unique_ptr<Channel> channel;
-    Atomic32 ref_count;
   };
 
-  ChannelRef* channel_ref_;
+  rtc::scoped_refptr<ChannelRef> channel_ref_;
 };
 
 class ChannelManager {
@@ -125,4 +124,4 @@ class ChannelManager {
 }  // namespace voe
 }  // namespace webrtc
 
-#endif  // WEBRTC_VOICE_ENGINE_CHANNEL_MANAGER_H
+#endif  // VOICE_ENGINE_CHANNEL_MANAGER_H_

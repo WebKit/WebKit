@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/conversational_speech/multiend_call.h"
+#include "modules/audio_processing/test/conversational_speech/multiend_call.h"
 
 #include <algorithm>
 #include <iterator>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/pathutils.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/pathutils.h"
 
 namespace webrtc {
 namespace test {
@@ -59,12 +59,13 @@ bool MultiEndCall::CreateAudioTrackReaders() {
     if (sample_rate_hz_ == 0) {
       sample_rate_hz_ = wavreader->SampleRate();
     } else if (sample_rate_hz_ != wavreader->SampleRate()) {
-      LOG(LS_ERROR) << "All the audio tracks should have the same sample rate.";
+      RTC_LOG(LS_ERROR)
+          << "All the audio tracks should have the same sample rate.";
       return false;
     }
 
     if (wavreader->NumChannels() != 1) {
-      LOG(LS_ERROR) << "Only mono audio tracks supported.";
+      RTC_LOG(LS_ERROR) << "Only mono audio tracks supported.";
       return false;
     }
 
@@ -118,14 +119,14 @@ bool MultiEndCall::CheckTiming() {
         turn.offset, it->second->SampleRate());
     std::size_t begin_timestamp = last_turn.end + offset_samples;
     std::size_t end_timestamp = begin_timestamp + it->second->NumSamples();
-    LOG(LS_INFO) << "turn #" << turn_index << " " << begin_timestamp
-        << "-" << end_timestamp << " ms";
+    RTC_LOG(LS_INFO) << "turn #" << turn_index << " " << begin_timestamp << "-"
+                     << end_timestamp << " ms";
 
     // The order is invalid if the offset is negative and its absolute value is
     // larger then the duration of the previous turn.
     if (offset_samples < 0 && -offset_samples > static_cast<int>(
         last_turn.end - last_turn.begin)) {
-      LOG(LS_ERROR) << "invalid order";
+      RTC_LOG(LS_ERROR) << "invalid order";
       return false;
     }
 
@@ -133,7 +134,7 @@ bool MultiEndCall::CheckTiming() {
     // current interval falls in the last two turns.
     if (turn_index > 1 && in_interval(begin_timestamp, last_turn)
         && in_interval(begin_timestamp, second_last_turn)) {
-      LOG(LS_ERROR) << "cross-talk with 3+ speakers";
+      RTC_LOG(LS_ERROR) << "cross-talk with 3+ speakers";
       return false;
     }
 
@@ -158,8 +159,7 @@ bool MultiEndCall::CheckTiming() {
 
   // Detect self cross-talk.
   for (const std::string& speaker_name : speaker_names_) {
-    LOG(LS_INFO) << "checking self cross-talk for <"
-        << speaker_name << ">";
+    RTC_LOG(LS_INFO) << "checking self cross-talk for <" << speaker_name << ">";
 
     // Copy all turns for this speaker to new vector.
     std::vector<SpeakingTurn> speaking_turns_for_name;
@@ -177,7 +177,7 @@ bool MultiEndCall::CheckTiming() {
             return a.end > b.begin; });
 
     if (overlap != speaking_turns_for_name.end()) {
-      LOG(LS_ERROR) << "Self cross-talk detected";
+      RTC_LOG(LS_ERROR) << "Self cross-talk detected";
       return false;
     }
   }

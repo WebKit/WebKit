@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
+#define MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 #if defined(WEBRTC_HAS_NEON)
 #include <arm_neon.h>
 #endif
@@ -23,9 +23,9 @@
 #include <array>
 #include <functional>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace aec3 {
@@ -209,4 +209,4 @@ class VectorMath {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC3_VECTOR_MATH_H_

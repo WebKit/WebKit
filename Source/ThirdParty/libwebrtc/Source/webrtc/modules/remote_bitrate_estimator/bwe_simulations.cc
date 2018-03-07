@@ -10,14 +10,13 @@
 
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_receiver.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test.h"
+#include "modules/remote_bitrate_estimator/test/packet_receiver.h"
+#include "modules/remote_bitrate_estimator/test/packet_sender.h"
+#include "rtc_base/constructormagic.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace testing {
@@ -123,9 +122,64 @@ TEST_P(BweSimulation, Choke1000kbps500kbps1000kbps) {
   RunFor(60 * 1000);
 }
 
+TEST_P(BweSimulation, SimulationsCompiled) {
+  AdaptiveVideoSource source(0, 30, 300, 0, 0);
+  PacedVideoSender sender(&uplink_, &source, GetParam());
+  int zero = 0;
+  // CreateFlowIds() doesn't support passing int as a flow id, so we pass
+  // pointer instead.
+  DelayFilter delay(&uplink_, CreateFlowIds(&zero, 1));
+  delay.SetOneWayDelayMs(100);
+  ChokeFilter filter(&uplink_, 0);
+  RateCounterFilter counter(&uplink_, 0, "Receiver", bwe_names[GetParam()]);
+  PacketReceiver receiver(&uplink_, 0, GetParam(), true, true);
+  filter.set_max_delay_ms(500);
+  filter.set_capacity_kbps(1000);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(500);
+  RunFor(50 * 1000);
+  filter.set_capacity_kbps(1000);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(200);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(50);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(200);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(500);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(300);
+  RunFor(60 * 1000);
+  filter.set_capacity_kbps(1000);
+  RunFor(60 * 1000);
+  const int kStartingCapacityKbps = 150;
+  const int kEndingCapacityKbps = 1500;
+  const int kStepKbps = 5;
+  const int kStepTimeMs = 1000;
+  for (int i = kStartingCapacityKbps; i <= kEndingCapacityKbps;
+       i += kStepKbps) {
+    filter.set_capacity_kbps(i);
+    RunFor(kStepTimeMs);
+  }
+  for (int i = kEndingCapacityKbps; i >= kStartingCapacityKbps;
+       i -= kStepKbps) {
+    filter.set_capacity_kbps(i);
+    RunFor(kStepTimeMs);
+  }
+  filter.set_capacity_kbps(150);
+  RunFor(120 * 1000);
+  filter.set_capacity_kbps(500);
+  RunFor(60 * 1000);
+}
+
 TEST_P(BweSimulation, PacerChoke1000kbps500kbps1000kbps) {
   AdaptiveVideoSource source(0, 30, 300, 0, 0);
   PacedVideoSender sender(&uplink_, &source, GetParam());
+  const int kFlowId = 0;
+  // CreateFlowIds() doesn't support passing int as a flow id, so we pass
+  // pointer instead.
+  DelayFilter delay(&uplink_, CreateFlowIds(&kFlowId, 1));
+  delay.SetOneWayDelayMs(100);
   ChokeFilter filter(&uplink_, 0);
   RateCounterFilter counter(&uplink_, 0, "Receiver", bwe_names[GetParam()]);
   PacketReceiver receiver(&uplink_, 0, GetParam(), true, true);
@@ -263,6 +317,11 @@ TEST_P(BweSimulation, LinearDecreasingCapacity) {
 TEST_P(BweSimulation, PacerGoogleWifiTrace3Mbps) {
   PeriodicKeyFrameSource source(0, 30, 300, 0, 0, 1000);
   PacedVideoSender sender(&uplink_, &source, GetParam());
+  int kFlowId = 0;
+  // CreateFlowIds() doesn't support passing int as a flow id, so we pass
+  // pointer instead.
+  DelayFilter delay(&uplink_, CreateFlowIds(&kFlowId, 1));
+  delay.SetOneWayDelayMs(100);
   RateCounterFilter counter1(&uplink_, 0, "sender_output",
                              bwe_names[GetParam()]);
   TraceBasedDeliveryFilter filter(&uplink_, 0, "link_capacity");

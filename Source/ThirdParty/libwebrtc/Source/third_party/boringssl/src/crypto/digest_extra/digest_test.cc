@@ -21,6 +21,7 @@
 #include <gtest/gtest.h>
 
 #include <openssl/asn1.h>
+#include <openssl/bytestring.h>
 #include <openssl/crypto.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
@@ -31,6 +32,7 @@
 #include <openssl/sha.h>
 
 #include "../internal.h"
+#include "../test/test_util.h"
 
 
 struct MD {
@@ -214,4 +216,45 @@ TEST(DigestTest, Getters) {
   EXPECT_EQ(EVP_sha1(), EVP_get_digestbyobj(obj.get()));
   EXPECT_EQ(EVP_md5_sha1(), EVP_get_digestbyobj(OBJ_nid2obj(NID_md5_sha1)));
   EXPECT_EQ(EVP_sha1(), EVP_get_digestbyobj(OBJ_nid2obj(NID_sha1)));
+}
+
+TEST(DigestTest, ASN1) {
+  bssl::ScopedCBB cbb;
+  ASSERT_TRUE(CBB_init(cbb.get(), 0));
+  EXPECT_FALSE(EVP_marshal_digest_algorithm(cbb.get(), EVP_md5_sha1()));
+
+  static const uint8_t kSHA256[] = {0x30, 0x0d, 0x06, 0x09, 0x60,
+                                    0x86, 0x48, 0x01, 0x65, 0x03,
+                                    0x04, 0x02, 0x01, 0x05, 0x00};
+  static const uint8_t kSHA256NoParam[] = {0x30, 0x0b, 0x06, 0x09, 0x60,
+                                           0x86, 0x48, 0x01, 0x65, 0x03,
+                                           0x04, 0x02, 0x01};
+  static const uint8_t kSHA256GarbageParam[] = {
+      0x30, 0x0e, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
+      0x65, 0x03, 0x04, 0x02, 0x01, 0x02, 0x01, 0x2a};
+
+  // Serialize SHA-256.
+  cbb.Reset();
+  ASSERT_TRUE(CBB_init(cbb.get(), 0));
+  ASSERT_TRUE(EVP_marshal_digest_algorithm(cbb.get(), EVP_sha256()));
+  uint8_t *der;
+  size_t der_len;
+  ASSERT_TRUE(CBB_finish(cbb.get(), &der, &der_len));
+  bssl::UniquePtr<uint8_t> free_der(der);
+  EXPECT_EQ(Bytes(kSHA256), Bytes(der, der_len));
+
+  // Parse SHA-256.
+  CBS cbs;
+  CBS_init(&cbs, kSHA256, sizeof(kSHA256));
+  EXPECT_EQ(EVP_sha256(), EVP_parse_digest_algorithm(&cbs));
+  EXPECT_EQ(0u, CBS_len(&cbs));
+
+  // Missing parameters are tolerated for compatibility.
+  CBS_init(&cbs, kSHA256NoParam, sizeof(kSHA256NoParam));
+  EXPECT_EQ(EVP_sha256(), EVP_parse_digest_algorithm(&cbs));
+  EXPECT_EQ(0u, CBS_len(&cbs));
+
+  // Garbage parameters are not.
+  CBS_init(&cbs, kSHA256GarbageParam, sizeof(kSHA256GarbageParam));
+  EXPECT_FALSE(EVP_parse_digest_algorithm(&cbs));
 }

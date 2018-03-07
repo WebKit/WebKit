@@ -10,19 +10,19 @@
 
 #include <memory>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/pcm16b/pcm16b.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/test/utility.h"
+#include "modules/include/module_common_types.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
 class TargetDelayTest : public ::testing::Test {
  protected:
-  TargetDelayTest() : acm_(AudioCodingModule::Create(0)) {}
+  TargetDelayTest() : acm_(AudioCodingModule::Create()) {}
 
   ~TargetDelayTest() {}
 

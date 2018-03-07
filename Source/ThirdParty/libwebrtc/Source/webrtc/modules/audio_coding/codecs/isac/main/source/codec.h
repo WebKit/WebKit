@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_
 
 #include "structs.h"
 
@@ -230,4 +230,4 @@ void WebRtcIsac_Dir2Lat(double* a, int orderCoef, float* sth, float* cth);
 
 void WebRtcIsac_AutoCorr(double* r, const double* x, size_t N, size_t order);
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_ */

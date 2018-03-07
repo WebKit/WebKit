@@ -11,8 +11,8 @@
 // This file contains platform-specific typedefs and defines.
 // Much of it is derived from Chromium's build/build_config.h.
 
-#ifndef WEBRTC_TYPEDEFS_H_
-#define WEBRTC_TYPEDEFS_H_
+#ifndef TYPEDEFS_H_
+#define TYPEDEFS_H_
 
 // Processor architecture detection.  For more info on what's defined, see:
 //   http://msdn.microsoft.com/en-us/library/b0084kay.aspx
@@ -122,4 +122,4 @@
 #define RTC_UNUSED(x) static_cast<void>(x)
 #endif  // RTC_UNUSED
 
-#endif  // WEBRTC_TYPEDEFS_H_
+#endif  // TYPEDEFS_H_

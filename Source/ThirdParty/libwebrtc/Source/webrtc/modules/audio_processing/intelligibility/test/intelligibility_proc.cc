@@ -8,15 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "gflags/gflags.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/common_audio/include/audio_util.h"
-#include "webrtc/common_audio/wav_file.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/intelligibility/intelligibility_enhancer.h"
-#include "webrtc/modules/audio_processing/noise_suppression_impl.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/channel_buffer.h"
+#include "common_audio/include/audio_util.h"
+#include "common_audio/wav_file.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/intelligibility/intelligibility_enhancer.h"
+#include "modules/audio_processing/noise_suppression_impl.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/flags.h"
 
 using std::complex;
 
@@ -26,16 +25,24 @@ namespace {
 DEFINE_string(clear_file, "speech.wav", "Input file with clear speech.");
 DEFINE_string(noise_file, "noise.wav", "Input file with noise data.");
 DEFINE_string(out_file, "proc_enhanced.wav", "Enhanced output file.");
+DEFINE_bool(help, false, "Print this message.");
 
-// void function for gtest
-void void_main(int argc, char* argv[]) {
-  google::SetUsageMessage(
-      "\n\nInput files must be little-endian 16-bit signed raw PCM.\n");
-  google::ParseCommandLineFlags(&argc, &argv, true);
+int int_main(int argc, char* argv[]) {
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true)) {
+    return 1;
+  }
+  if (FLAG_help) {
+    rtc::FlagList::Print(nullptr, false);
+    return 0;
+  }
+  if (argc != 1) {
+    printf("\n\nInput files must be little-endian 16-bit signed raw PCM.\n");
+    return 0;
+  }
 
-  WavReader in_file(FLAGS_clear_file);
-  WavReader noise_file(FLAGS_noise_file);
-  WavWriter out_file(FLAGS_out_file, in_file.sample_rate(),
+  WavReader in_file(FLAG_clear_file);
+  WavReader noise_file(FLAG_noise_file);
+  WavWriter out_file(FLAG_out_file, in_file.sample_rate(),
                      in_file.num_channels());
   rtc::CriticalSection crit;
   NoiseSuppressionImpl ns(&crit);
@@ -77,12 +84,13 @@ void void_main(int argc, char* argv[]) {
     FloatToFloatS16(in.data(), in.size(), in.data());
     out_file.WriteSamples(in.data(), in.size());
   }
+
+  return 0;
 }
 
 }  // namespace
 }  // namespace webrtc
 
 int main(int argc, char* argv[]) {
-  webrtc::void_main(argc, argv);
-  return 0;
+  return webrtc::int_main(argc, argv);
 }

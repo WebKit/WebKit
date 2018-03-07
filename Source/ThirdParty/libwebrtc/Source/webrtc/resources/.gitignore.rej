@@ -1,0 +1,23 @@
+diff a/Source/ThirdParty/libwebrtc/Source/webrtc/resources/.gitignore b/Source/ThirdParty/libwebrtc/Source/webrtc/resources/.gitignore	(rejected hunks)
+@@ -0,0 +1,21 @@
++**/*.aecdump
++**/*.bin
++**/*.byte
++**/*.chn
++**/*.dat
++**/*.frames
++**/*.gai
++**/*.jpg
++**/*.pb
++**/*.pcap
++**/*.pcm
++**/*.rtp
++**/*.rtpdump
++**/*.rx
++**/*.txt
++**/*.wav
++**/*.y4m
++**/*.yuv
++**/*.BIT*
++**/*.INP
++**/*.OUT*

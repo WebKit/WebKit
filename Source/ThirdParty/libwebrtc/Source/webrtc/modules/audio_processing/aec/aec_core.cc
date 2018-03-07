@@ -12,7 +12,7 @@
  * The core AEC algorithm, which is presented with time-aligned signals.
  */
 
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
+#include "modules/audio_processing/aec/aec_core.h"
 
 #include <algorithm>
 #include <math.h>
@@ -20,19 +20,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 extern "C" {
-#include "webrtc/common_audio/ring_buffer.h"
+#include "common_audio/ring_buffer.h"
 }
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_processing/aec/aec_common.h"
-#include "webrtc/modules/audio_processing/aec/aec_core_optimized_methods.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
-#include "webrtc/modules/audio_processing/utility/delay_estimator_wrapper.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_processing/aec/aec_common.h"
+#include "modules/audio_processing/aec/aec_core_optimized_methods.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/utility/delay_estimator_wrapper.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "system_wrappers/include/metrics.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace {
@@ -206,16 +206,21 @@ void BlockBuffer::ExtractExtendedBlock(float extended_block[PART_LEN2]) {
 
   // Extract the previous block.
   WebRtc_MoveReadPtr(buffer_, -1);
-  WebRtc_ReadBuffer(buffer_, reinterpret_cast<void**>(&block_ptr),
-                    &extended_block[0], 1);
-  if (block_ptr != &extended_block[0]) {
+  size_t read_elements = WebRtc_ReadBuffer(
+      buffer_, reinterpret_cast<void**>(&block_ptr), &extended_block[0], 1);
+  if (read_elements == 0u) {
+    std::fill_n(&extended_block[0], PART_LEN, 0.0f);
+  } else if (block_ptr != &extended_block[0]) {
     memcpy(&extended_block[0], block_ptr, PART_LEN * sizeof(float));
   }
 
   // Extract the current block.
-  WebRtc_ReadBuffer(buffer_, reinterpret_cast<void**>(&block_ptr),
-                    &extended_block[PART_LEN], 1);
-  if (block_ptr != &extended_block[PART_LEN]) {
+  read_elements =
+      WebRtc_ReadBuffer(buffer_, reinterpret_cast<void**>(&block_ptr),
+                        &extended_block[PART_LEN], 1);
+  if (read_elements == 0u) {
+    std::fill_n(&extended_block[PART_LEN], PART_LEN, 0.0f);
+  } else if (block_ptr != &extended_block[PART_LEN]) {
     memcpy(&extended_block[PART_LEN], block_ptr, PART_LEN * sizeof(float));
   }
 }
@@ -831,8 +836,6 @@ static void UpdateDelayMetrics(AecCore* self) {
   // Reset histogram.
   memset(self->delay_histogram, 0, sizeof(self->delay_histogram));
   self->num_delay_values = 0;
-
-  return;
 }
 
 static void ScaledInverseFft(const OouraFft& ooura_fft,

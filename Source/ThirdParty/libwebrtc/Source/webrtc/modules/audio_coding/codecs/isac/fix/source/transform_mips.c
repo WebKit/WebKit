@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/codec.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/fft.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/fft.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 
 // The tables are defined in transform_tables.c file.
 extern const int16_t WebRtcIsacfix_kCosTab1[FRAMESAMPLES/2];

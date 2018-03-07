@@ -8,11 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_WEBRTCVIDEODECODERFACTORY_H_
-#define WEBRTC_MEDIA_ENGINE_WEBRTCVIDEODECODERFACTORY_H_
+#ifndef MEDIA_ENGINE_WEBRTCVIDEODECODERFACTORY_H_
+#define MEDIA_ENGINE_WEBRTCVIDEODECODERFACTORY_H_
 
-#include "webrtc/base/refcount.h"
-#include "webrtc/common_types.h"
+#include <string>
+
+#include "common_types.h"  // NOLINT(build/include)
+#include "media/base/codec.h"
+#include "rtc_base/refcount.h"
 
 namespace webrtc {
 class VideoDecoder;
@@ -24,17 +27,25 @@ struct VideoDecoderParams {
   std::string receive_stream_id;
 };
 
+// Deprecated. Use webrtc::VideoDecoderFactory instead.
+// https://bugs.chromium.org/p/webrtc/issues/detail?id=7925
 class WebRtcVideoDecoderFactory {
  public:
   // Caller takes the ownership of the returned object and it should be released
   // by calling DestroyVideoDecoder().
-  virtual webrtc::VideoDecoder* CreateVideoDecoder(
-      webrtc::VideoCodecType type) = 0;
+  virtual webrtc::VideoDecoder* CreateVideoDecoderWithParams(
+      const VideoCodec& codec,
+      VideoDecoderParams params);
+
+  // DEPRECATED.
+  // These methods should not be used by new code and will eventually be
+  // removed. See http://crbug.com/webrtc/8140.
+  virtual webrtc::VideoDecoder* CreateVideoDecoder(webrtc::VideoCodecType type);
+
   virtual webrtc::VideoDecoder* CreateVideoDecoderWithParams(
       webrtc::VideoCodecType type,
-      VideoDecoderParams) {
-    return CreateVideoDecoder(type);
-  }
+      VideoDecoderParams params);
+
   virtual ~WebRtcVideoDecoderFactory() {}
 
   virtual void DestroyVideoDecoder(webrtc::VideoDecoder* decoder) = 0;
@@ -42,4 +53,4 @@ class WebRtcVideoDecoderFactory {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_ENGINE_WEBRTCVIDEODECODERFACTORY_H_
+#endif  // MEDIA_ENGINE_WEBRTCVIDEODECODERFACTORY_H_

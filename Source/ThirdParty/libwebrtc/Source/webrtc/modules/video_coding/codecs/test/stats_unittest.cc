@@ -8,39 +8,35 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/codecs/test/stats.h"
+#include "modules/video_coding/codecs/test/stats.h"
 
-#include "webrtc/test/gtest.h"
-#include "webrtc/typedefs.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
 
 TEST(StatsTest, TestEmptyObject) {
   Stats stats;
-  EXPECT_EQ(0u, stats.stats_.size());
-  stats.PrintSummary();  // should not crash
+  stats.PrintSummary();  // Should not crash.
 }
 
 TEST(StatsTest, AddSingleFrame) {
-  const int kFrameNumber = 0;
   Stats stats;
-  stats.NewFrame(kFrameNumber);
-  EXPECT_EQ(1u, stats.stats_.size());
-  FrameStatistic* frame_stat = &stats.stats_[0];
-  EXPECT_EQ(kFrameNumber, frame_stat->frame_number);
+  FrameStatistic* frame_stat = stats.AddFrame();
+  EXPECT_EQ(0, frame_stat->frame_number);
+  EXPECT_EQ(1u, stats.size());
 }
 
 TEST(StatsTest, AddMultipleFrames) {
   Stats stats;
   const int kNumFrames = 1000;
   for (int i = 0; i < kNumFrames; ++i) {
-    FrameStatistic& frame_stat = stats.NewFrame(i);
-    EXPECT_EQ(i, frame_stat.frame_number);
+    FrameStatistic* frame_stat = stats.AddFrame();
+    EXPECT_EQ(i, frame_stat->frame_number);
   }
-  EXPECT_EQ(kNumFrames, static_cast<int>(stats.stats_.size()));
+  EXPECT_EQ(kNumFrames, static_cast<int>(stats.size()));
 
-  stats.PrintSummary();  // should not crash
+  stats.PrintSummary();  // Should not crash.
 }
 
 }  // namespace test

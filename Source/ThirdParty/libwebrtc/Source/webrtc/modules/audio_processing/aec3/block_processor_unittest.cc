@@ -8,22 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/block_processor.h"
+#include "modules/audio_processing/aec3/block_processor.h"
 
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/random.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/mock/mock_echo_remover.h"
-#include "webrtc/modules/audio_processing/aec3/mock/mock_render_delay_buffer.h"
-#include "webrtc/modules/audio_processing/aec3/mock/mock_render_delay_controller.h"
-#include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/mock/mock_echo_remover.h"
+#include "modules/audio_processing/aec3/mock/mock_render_delay_buffer.h"
+#include "modules/audio_processing/aec3/mock/mock_render_delay_controller.h"
+#include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/random.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -37,7 +37,7 @@ using testing::_;
 // methods are callable.
 void RunBasicSetupAndApiCallTest(int sample_rate_hz) {
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create(sample_rate_hz));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz));
   std::vector<std::vector<float>> block(NumBandsForRate(sample_rate_hz),
                                         std::vector<float>(kBlockSize, 0.f));
 
@@ -49,7 +49,7 @@ void RunBasicSetupAndApiCallTest(int sample_rate_hz) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 void RunRenderBlockSizeVerificationTest(int sample_rate_hz) {
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create(sample_rate_hz));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz));
   std::vector<std::vector<float>> block(
       NumBandsForRate(sample_rate_hz), std::vector<float>(kBlockSize - 1, 0.f));
 
@@ -58,7 +58,7 @@ void RunRenderBlockSizeVerificationTest(int sample_rate_hz) {
 
 void RunCaptureBlockSizeVerificationTest(int sample_rate_hz) {
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create(sample_rate_hz));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz));
   std::vector<std::vector<float>> block(
       NumBandsForRate(sample_rate_hz), std::vector<float>(kBlockSize - 1, 0.f));
 
@@ -70,7 +70,7 @@ void RunRenderNumBandsVerificationTest(int sample_rate_hz) {
                                      ? NumBandsForRate(sample_rate_hz) + 1
                                      : 1;
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create(sample_rate_hz));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz));
   std::vector<std::vector<float>> block(wrong_num_bands,
                                         std::vector<float>(kBlockSize, 0.f));
 
@@ -82,7 +82,7 @@ void RunCaptureNumBandsVerificationTest(int sample_rate_hz) {
                                      ? NumBandsForRate(sample_rate_hz) + 1
                                      : 1;
   std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create(sample_rate_hz));
+      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz));
   std::vector<std::vector<float>> block(wrong_num_bands,
                                         std::vector<float>(kBlockSize, 0.f));
 
@@ -125,8 +125,8 @@ TEST(BlockProcessor, DISABLED_DelayControllerIntegration) {
     EXPECT_CALL(*render_delay_buffer_mock, Delay())
         .Times(kNumBlocks + 1)
         .WillRepeatedly(Return(0));
-    std::unique_ptr<BlockProcessor> block_processor(
-        BlockProcessor::Create(rate, std::move(render_delay_buffer_mock)));
+    std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create(
+        EchoCanceller3Config(), rate, std::move(render_delay_buffer_mock)));
 
     std::vector<std::vector<float>> render_block(
         NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
@@ -180,7 +180,7 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
         .Times(kNumBlocks);
 
     std::unique_ptr<BlockProcessor> block_processor(BlockProcessor::Create(
-        rate, std::move(render_delay_buffer_mock),
+        EchoCanceller3Config(), rate, std::move(render_delay_buffer_mock),
         std::move(render_delay_controller_mock), std::move(echo_remover_mock)));
 
     std::vector<std::vector<float>> render_block(
@@ -206,7 +206,9 @@ TEST(BlockProcessor, BasicSetupAndApiCalls) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(BlockProcessor, VerifyRenderBlockSizeCheck) {
+// TODO(gustaf): Re-enable the test once the issue with memory leaks during
+// DEATH tests on test bots has been fixed.
+TEST(BlockProcessor, DISABLED_VerifyRenderBlockSizeCheck) {
   for (auto rate : {8000, 16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunRenderBlockSizeVerificationTest(rate);
@@ -238,7 +240,8 @@ TEST(BlockProcessor, VerifyCaptureNumBandsCheck) {
 
 // Verifiers that the verification for null ProcessCapture input works.
 TEST(BlockProcessor, NullProcessCaptureParameter) {
-  EXPECT_DEATH(std::unique_ptr<BlockProcessor>(BlockProcessor::Create(8000))
+  EXPECT_DEATH(std::unique_ptr<BlockProcessor>(
+                   BlockProcessor::Create(EchoCanceller3Config(), 8000))
                    ->ProcessCapture(false, false, nullptr),
                "");
 }
@@ -247,7 +250,8 @@ TEST(BlockProcessor, NullProcessCaptureParameter) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
 TEST(BlockProcessor, DISABLED_WrongSampleRate) {
-  EXPECT_DEATH(std::unique_ptr<BlockProcessor>(BlockProcessor::Create(8001)),
+  EXPECT_DEATH(std::unique_ptr<BlockProcessor>(
+                   BlockProcessor::Create(EchoCanceller3Config(), 8001)),
                "");
 }
 

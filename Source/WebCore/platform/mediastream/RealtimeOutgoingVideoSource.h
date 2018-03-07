@@ -34,7 +34,7 @@
 #include "MediaStreamTrackPrivate.h"
 #include <Timer.h>
 #include <webrtc/api/mediastreaminterface.h>
-#include <webrtc/base/optional.h>
+#include <webrtc/api/optional.h>
 #include <webrtc/common_video/include/i420_buffer_pool.h>
 #include <webrtc/media/base/videosinkinterface.h>
 #include <wtf/Optional.h>
@@ -51,8 +51,12 @@ public:
     bool setSource(Ref<MediaStreamTrackPrivate>&&);
     MediaStreamTrackPrivate& source() const { return m_videoSource.get(); }
 
-    int AddRef() const final { ref(); return refCount(); }
-    int Release() const final { deref(); return refCount(); }
+    void AddRef() const final { ref(); }
+    rtc::RefCountReleaseStatus Release() const final
+    {
+        deref();
+        return refCount() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+    }
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 

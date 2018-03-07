@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_MOCKS_MOCK_RTP_RTCP_H_
-#define WEBRTC_MODULES_RTP_RTCP_MOCKS_MOCK_RTP_RTCP_H_
+#ifndef MODULES_RTP_RTCP_MOCKS_MOCK_RTP_RTCP_H_
+#define MODULES_RTP_RTCP_MOCKS_MOCK_RTP_RTCP_H_
 
 #include <set>
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "webrtc/test/gmock.h"
+#include "api/optional.h"
+#include "modules/include/module.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "rtc_base/checks.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -42,7 +42,7 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(RegisterSyncModule, int32_t(RtpRtcp* module));
   MOCK_METHOD0(DeRegisterSyncModule, int32_t());
   MOCK_METHOD2(IncomingRtcpPacket,
-               int32_t(const uint8_t* incoming_packet, size_t packet_length));
+               void(const uint8_t* incoming_packet, size_t packet_length));
   MOCK_METHOD1(SetRemoteSSRC, void(uint32_t ssrc));
   MOCK_METHOD4(IncomingAudioNTP,
                int32_t(uint32_t audio_received_ntp_secs,
@@ -147,7 +147,6 @@ class MockRtpRtcp : public RtpRtcp {
                      void(StreamDataCounters*, StreamDataCounters*));
   MOCK_CONST_METHOD3(GetRtpPacketLossStats,
                      void(bool, uint32_t, struct RtpPacketLossStats*));
-  MOCK_METHOD1(RemoteRTCPStat, int32_t(RTCPSenderInfo* sender_info));
   MOCK_CONST_METHOD1(RemoteRTCPStat,
                      int32_t(std::vector<RTCPReportBlock>* receive_blocks));
   MOCK_METHOD4(SetRTCPApplicationSpecificData,
@@ -158,10 +157,9 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(SetRTCPVoIPMetrics, int32_t(const RTCPVoIPMetric* voip_metric));
   MOCK_METHOD1(SetRtcpXrRrtrStatus, void(bool enable));
   MOCK_CONST_METHOD0(RtcpXrRrtrStatus, bool());
-  MOCK_CONST_METHOD0(REMB, bool());
-  MOCK_METHOD1(SetREMBStatus, void(bool enable));
-  MOCK_METHOD2(SetREMBData,
+  MOCK_METHOD2(SetRemb,
                void(uint32_t bitrate, const std::vector<uint32_t>& ssrcs));
+  MOCK_METHOD0(UnsetRemb, void());
   MOCK_CONST_METHOD0(TMMBR, bool());
   MOCK_METHOD1(SetTMMBRStatus, void(bool enable));
   MOCK_METHOD1(OnBandwidthEstimateUpdate, void(uint16_t bandwidth_kbit));
@@ -175,7 +173,6 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(RegisterRtcpStatisticsCallback, void(RtcpStatisticsCallback*));
   MOCK_METHOD0(GetRtcpStatisticsCallback, RtcpStatisticsCallback*());
   MOCK_METHOD1(SendFeedbackPacket, bool(const rtcp::TransportFeedback& packet));
-  MOCK_METHOD1(SetAudioPacketSize, int32_t(uint16_t packet_size_samples));
   MOCK_METHOD3(SendTelephoneEventOutband,
                int32_t(uint8_t key, uint16_t time_ms, uint8_t level));
   MOCK_METHOD1(SetSendREDPayloadType, int32_t(int8_t payload_type));
@@ -211,4 +208,4 @@ class MockRtpRtcp : public RtpRtcp {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_MOCKS_MOCK_RTP_RTCP_H_
+#endif  // MODULES_RTP_RTCP_MOCKS_MOCK_RTP_RTCP_H_

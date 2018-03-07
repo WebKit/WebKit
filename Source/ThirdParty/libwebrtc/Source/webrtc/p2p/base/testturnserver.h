@@ -8,17 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_TESTTURNSERVER_H_
-#define WEBRTC_P2P_BASE_TESTTURNSERVER_H_
+#ifndef P2P_BASE_TESTTURNSERVER_H_
+#define P2P_BASE_TESTTURNSERVER_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/stun.h"
-#include "webrtc/p2p/base/turnserver.h"
-#include "webrtc/base/asyncudpsocket.h"
-#include "webrtc/base/thread.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/stun.h"
+#include "p2p/base/turnserver.h"
+#include "rtc_base/asyncudpsocket.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/sslidentity.h"
+#include "rtc_base/thread.h"
 
 namespace cricket {
 
@@ -81,14 +83,28 @@ class TestTurnServer : public TurnAuthInterface {
       server_.AddInternalSocket(
           rtc::AsyncUDPSocket::Create(thread_->socketserver(), int_addr),
           proto);
-    } else if (proto == cricket::PROTO_TCP) {
+    } else if (proto == cricket::PROTO_TCP || proto == cricket::PROTO_TLS) {
       // For TCP we need to create a server socket which can listen for incoming
       // new connections.
       rtc::AsyncSocket* socket =
           thread_->socketserver()->CreateAsyncSocket(SOCK_STREAM);
+      if (proto == cricket::PROTO_TLS) {
+        // For TLS, wrap the TCP socket with an SSL adapter. The adapter must
+        // be configured with a self-signed certificate for testing.
+        // Additionally, the client will not present a valid certificate, so we
+        // must not fail when checking the peer's identity.
+        rtc::SSLAdapter* adapter = rtc::SSLAdapter::Create(socket);
+        adapter->SetRole(rtc::SSL_SERVER);
+        adapter->SetIdentity(
+            rtc::SSLIdentity::Generate("test turn server", rtc::KeyParams()));
+        adapter->SetIgnoreBadCert(true);
+        socket = adapter;
+      }
       socket->Bind(int_addr);
       socket->Listen(5);
       server_.AddInternalServerSocket(socket, proto);
+    } else {
+      RTC_NOTREACHED() << "Unknown protocol type: " << proto;
     }
   }
 
@@ -119,4 +135,4 @@ class TestTurnServer : public TurnAuthInterface {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_TESTTURNSERVER_H_
+#endif  // P2P_BASE_TESTTURNSERVER_H_

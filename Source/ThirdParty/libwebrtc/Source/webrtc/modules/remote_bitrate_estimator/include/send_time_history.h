@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_SEND_TIME_HISTORY_H_
-#define WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_SEND_TIME_HISTORY_H_
+#ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_SEND_TIME_HISTORY_H_
+#define MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_SEND_TIME_HISTORY_H_
 
 #include <map>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 class Clock;
@@ -38,14 +38,18 @@ class SendTimeHistory {
   // thus be non-null and have the sequence_number field set.
   bool GetFeedback(PacketFeedback* packet_feedback, bool remove);
 
+  size_t GetOutstandingBytes(uint16_t local_net_id,
+                             uint16_t remote_net_id) const;
+
  private:
   const Clock* const clock_;
   const int64_t packet_age_limit_ms_;
   SequenceNumberUnwrapper seq_num_unwrapper_;
   std::map<int64_t, PacketFeedback> history_;
+  rtc::Optional<int64_t> latest_acked_seq_num_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(SendTimeHistory);
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_SEND_TIME_HISTORY_H_
+#endif  // MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_SEND_TIME_HISTORY_H_

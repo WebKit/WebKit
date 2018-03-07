@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VIDEO_OVERUSE_FRAME_DETECTOR_H_
-#define WEBRTC_VIDEO_OVERUSE_FRAME_DETECTOR_H_
+#ifndef VIDEO_OVERUSE_FRAME_DETECTOR_H_
+#define VIDEO_OVERUSE_FRAME_DETECTOR_H_
 
 #include <list>
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/numerics/exp_filter.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/sequenced_task_checker.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/video_coding/utility/quality_scaler.h"
+#include "api/optional.h"
+#include "modules/video_coding/utility/quality_scaler.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/numerics/exp_filter.h"
+#include "rtc_base/sequenced_task_checker.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -133,31 +133,32 @@ class OveruseFrameDetector {
 
   // Stats metrics.
   CpuOveruseMetricsObserver* const metrics_observer_;
-  rtc::Optional<CpuOveruseMetrics> metrics_ GUARDED_BY(task_checker_);
+  rtc::Optional<CpuOveruseMetrics> metrics_ RTC_GUARDED_BY(task_checker_);
 
-  int64_t num_process_times_ GUARDED_BY(task_checker_);
+  int64_t num_process_times_ RTC_GUARDED_BY(task_checker_);
 
-  int64_t last_capture_time_us_ GUARDED_BY(task_checker_);
-  int64_t last_processed_capture_time_us_ GUARDED_BY(task_checker_);
+  int64_t last_capture_time_us_ RTC_GUARDED_BY(task_checker_);
+  int64_t last_processed_capture_time_us_ RTC_GUARDED_BY(task_checker_);
 
   // Number of pixels of last captured frame.
-  int num_pixels_ GUARDED_BY(task_checker_);
-  int max_framerate_ GUARDED_BY(task_checker_);
-  int64_t last_overuse_time_ms_ GUARDED_BY(task_checker_);
-  int checks_above_threshold_ GUARDED_BY(task_checker_);
-  int num_overuse_detections_ GUARDED_BY(task_checker_);
-  int64_t last_rampup_time_ms_ GUARDED_BY(task_checker_);
-  bool in_quick_rampup_ GUARDED_BY(task_checker_);
-  int current_rampup_delay_ms_ GUARDED_BY(task_checker_);
+  int num_pixels_ RTC_GUARDED_BY(task_checker_);
+  int max_framerate_ RTC_GUARDED_BY(task_checker_);
+  int64_t last_overuse_time_ms_ RTC_GUARDED_BY(task_checker_);
+  int checks_above_threshold_ RTC_GUARDED_BY(task_checker_);
+  int num_overuse_detections_ RTC_GUARDED_BY(task_checker_);
+  int64_t last_rampup_time_ms_ RTC_GUARDED_BY(task_checker_);
+  bool in_quick_rampup_ RTC_GUARDED_BY(task_checker_);
+  int current_rampup_delay_ms_ RTC_GUARDED_BY(task_checker_);
 
   // TODO(asapersson): Can these be regular members (avoid separate heap
   // allocs)?
-  const std::unique_ptr<SendProcessingUsage> usage_ GUARDED_BY(task_checker_);
-  std::list<FrameTiming> frame_timing_ GUARDED_BY(task_checker_);
+  const std::unique_ptr<SendProcessingUsage> usage_
+      RTC_GUARDED_BY(task_checker_);
+  std::list<FrameTiming> frame_timing_ RTC_GUARDED_BY(task_checker_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(OveruseFrameDetector);
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_OVERUSE_FRAME_DETECTOR_H_
+#endif  // VIDEO_OVERUSE_FRAME_DETECTOR_H_

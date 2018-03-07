@@ -8,10 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "webrtc/media/engine/webrtcmediaengine.h"
-#include "webrtc/test/gtest.h"
+#include <memory>
+
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "media/engine/webrtcmediaengine.h"
+#include "test/gtest.h"
 
 using webrtc::RtpExtension;
 
@@ -145,6 +147,38 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundant) {
   EXPECT_NE(filtered[0].uri, filtered[1].uri);
 }
 
+TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantEncrypted_1) {
+  std::vector<RtpExtension> extensions;
+  extensions.push_back(webrtc::RtpExtension("b", 1));
+  extensions.push_back(webrtc::RtpExtension("b", 2, true));
+  extensions.push_back(webrtc::RtpExtension("c", 3));
+  extensions.push_back(webrtc::RtpExtension("b", 4));
+  std::vector<webrtc::RtpExtension> filtered =
+      FilterRtpExtensions(extensions, SupportedExtensions2, true);
+  EXPECT_EQ(3, filtered.size());
+  EXPECT_TRUE(IsSorted(filtered));
+  EXPECT_EQ(filtered[0].uri, filtered[1].uri);
+  EXPECT_NE(filtered[0].encrypt, filtered[1].encrypt);
+  EXPECT_NE(filtered[0].uri, filtered[2].uri);
+  EXPECT_NE(filtered[1].uri, filtered[2].uri);
+}
+
+TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantEncrypted_2) {
+  std::vector<RtpExtension> extensions;
+  extensions.push_back(webrtc::RtpExtension("b", 1, true));
+  extensions.push_back(webrtc::RtpExtension("b", 2));
+  extensions.push_back(webrtc::RtpExtension("c", 3));
+  extensions.push_back(webrtc::RtpExtension("b", 4));
+  std::vector<webrtc::RtpExtension> filtered =
+      FilterRtpExtensions(extensions, SupportedExtensions2, true);
+  EXPECT_EQ(3, filtered.size());
+  EXPECT_TRUE(IsSorted(filtered));
+  EXPECT_EQ(filtered[0].uri, filtered[1].uri);
+  EXPECT_NE(filtered[0].encrypt, filtered[1].encrypt);
+  EXPECT_NE(filtered[0].uri, filtered[2].uri);
+  EXPECT_NE(filtered[1].uri, filtered[2].uri);
+}
+
 TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_1) {
   std::vector<RtpExtension> extensions;
   extensions.push_back(
@@ -158,6 +192,27 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_1) {
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
   EXPECT_EQ(1, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
+}
+
+TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBweEncrypted_1) {
+  std::vector<RtpExtension> extensions;
+  extensions.push_back(
+      RtpExtension(RtpExtension::kTransportSequenceNumberUri, 3));
+  extensions.push_back(
+      RtpExtension(RtpExtension::kTransportSequenceNumberUri, 4, true));
+  extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 9));
+  extensions.push_back(RtpExtension(RtpExtension::kAbsSendTimeUri, 6));
+  extensions.push_back(
+      RtpExtension(RtpExtension::kTransportSequenceNumberUri, 1));
+  extensions.push_back(
+      RtpExtension(RtpExtension::kTransportSequenceNumberUri, 2, true));
+  extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
+  std::vector<webrtc::RtpExtension> filtered =
+      FilterRtpExtensions(extensions, SupportedExtensions2, true);
+  EXPECT_EQ(2, filtered.size());
+  EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
+  EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[1].uri);
+  EXPECT_NE(filtered[0].encrypt, filtered[1].encrypt);
 }
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_2) {
@@ -179,12 +234,6 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_3) {
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
   EXPECT_EQ(1, filtered.size());
   EXPECT_EQ(RtpExtension::kTimestampOffsetUri, filtered[0].uri);
-}
-
-TEST(WebRtcMediaEngineFactoryTest, CreateOldApi) {
-  std::unique_ptr<MediaEngineInterface> engine(
-      WebRtcMediaEngineFactory::Create(nullptr, nullptr, nullptr));
-  EXPECT_TRUE(engine);
 }
 
 TEST(WebRtcMediaEngineFactoryTest, CreateWithBuiltinDecoders) {

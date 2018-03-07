@@ -12,10 +12,10 @@
 // This header file includes the inline functions in
 // the fix point signal processing library.
 
-#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_H_
-#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_H_
+#ifndef COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_H_
+#define COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_H_
 
-#include "webrtc/base/compile_assert_c.h"
+#include "rtc_base/compile_assert_c.h"
 
 extern const int8_t kWebRtcSpl_CountLeadingZeros32_Table[64];
 
@@ -64,11 +64,11 @@ static __inline int WebRtcSpl_CountLeadingZeros64(uint64_t n) {
 }
 
 #ifdef WEBRTC_ARCH_ARM_V7
-#include "webrtc/common_audio/signal_processing/include/spl_inl_armv7.h"
+#include "common_audio/signal_processing/include/spl_inl_armv7.h"
 #else
 
 #if defined(MIPS32_LE)
-#include "webrtc/common_audio/signal_processing/include/spl_inl_mips.h"
+#include "common_audio/signal_processing/include/spl_inl_mips.h"
 #endif
 
 #if !defined(MIPS_DSP_R1_LE)
@@ -151,4 +151,4 @@ static __inline int32_t WebRtc_MulAccumW16(int16_t a, int16_t b, int32_t c) {
 
 #endif  // WEBRTC_ARCH_ARM_V7
 
-#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_H_
+#endif  // COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_H_

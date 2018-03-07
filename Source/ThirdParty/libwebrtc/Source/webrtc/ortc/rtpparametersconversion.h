@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_ORTC_RTPPARAMETERSCONVERSION_H_
-#define WEBRTC_ORTC_RTPPARAMETERSCONVERSION_H_
+#ifndef ORTC_RTPPARAMETERSCONVERSION_H_
+#define ORTC_RTPPARAMETERSCONVERSION_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/api/rtpparameters.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/media/base/codec.h"
-#include "webrtc/pc/mediasession.h"
+#include "api/optional.h"
+#include "api/rtcerror.h"
+#include "api/rtpparameters.h"
+#include "media/base/codec.h"
+#include "pc/mediasession.h"
 
 namespace webrtc {
 
@@ -105,4 +105,4 @@ RtpParameters ToRtpParameters(
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_ORTC_RTPPARAMETERSCONVERSION_H_
+#endif  // ORTC_RTPPARAMETERSCONVERSION_H_

@@ -8,18 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_
+#define MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_
 
 #include <array>
 
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/fft_data.h"
 
 namespace webrtc {
 
 // Stores the values being returned from the echo subtractor.
 struct SubtractorOutput {
+  std::array<float, kBlockSize> s_main;
   std::array<float, kBlockSize> e_main;
   std::array<float, kBlockSize> e_shadow;
   FftData E_main;
@@ -27,6 +28,7 @@ struct SubtractorOutput {
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
 
   void Reset() {
+    s_main.fill(0.f);
     e_main.fill(0.f);
     e_shadow.fill(0.f);
     E_main.re.fill(0.f);
@@ -38,4 +40,4 @@ struct SubtractorOutput {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_H_

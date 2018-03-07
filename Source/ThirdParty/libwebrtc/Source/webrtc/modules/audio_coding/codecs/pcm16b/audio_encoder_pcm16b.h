@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
+#define MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
+#include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -31,11 +31,6 @@ class AudioEncoderPcm16B final : public AudioEncoderPcm {
   explicit AudioEncoderPcm16B(const Config& config)
       : AudioEncoderPcm(config, config.sample_rate_hz) {}
   explicit AudioEncoderPcm16B(const CodecInst& codec_inst);
-  AudioEncoderPcm16B(int payload_type, const SdpAudioFormat& format);
-
-  static constexpr const char* GetPayloadName() { return "L16"; }
-  static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
-      const SdpAudioFormat& format);
 
  protected:
   size_t EncodeCall(const int16_t* audio,
@@ -52,4 +47,4 @@ class AudioEncoderPcm16B final : public AudioEncoderPcm {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_PCM16B_AUDIO_ENCODER_PCM16B_H_

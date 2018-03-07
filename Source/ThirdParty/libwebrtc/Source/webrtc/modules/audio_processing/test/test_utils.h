@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_
+#ifndef MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_
+#define MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_
 
 #include <math.h>
 #include <iterator>
@@ -18,11 +18,11 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/common_audio/wav_file.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "common_audio/channel_buffer.h"
+#include "common_audio/wav_file.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -155,4 +155,4 @@ std::vector<Point> ParseArrayGeometry(const std::string& mic_positions);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_
+#endif  // MODULES_AUDIO_PROCESSING_TEST_TEST_UTILS_H_

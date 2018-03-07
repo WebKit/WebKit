@@ -660,6 +660,7 @@ OPENSSL_EXPORT int ASN1_STRING_length(const ASN1_STRING *x);
 OPENSSL_EXPORT void ASN1_STRING_length_set(ASN1_STRING *x, int n);
 OPENSSL_EXPORT int ASN1_STRING_type(ASN1_STRING *x);
 OPENSSL_EXPORT unsigned char * ASN1_STRING_data(ASN1_STRING *x);
+OPENSSL_EXPORT const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *x);
 
 DECLARE_ASN1_FUNCTIONS(ASN1_BIT_STRING)
 OPENSSL_EXPORT int		i2c_ASN1_BIT_STRING(ASN1_BIT_STRING *a,unsigned char **pp);
@@ -736,7 +737,6 @@ OPENSSL_EXPORT int i2a_ASN1_OBJECT(BIO *bp,ASN1_OBJECT *a);
 OPENSSL_EXPORT int i2a_ASN1_STRING(BIO *bp, ASN1_STRING *a, int type);
 OPENSSL_EXPORT int i2t_ASN1_OBJECT(char *buf,int buf_len,ASN1_OBJECT *a);
 
-OPENSSL_EXPORT int a2d_ASN1_OBJECT(unsigned char *out,int olen, const char *buf, int num);
 OPENSSL_EXPORT ASN1_OBJECT *ASN1_OBJECT_create(int nid, unsigned char *data,int len, const char *sn, const char *ln);
 
 OPENSSL_EXPORT int ASN1_INTEGER_set(ASN1_INTEGER *a, long v);
@@ -875,8 +875,6 @@ OPENSSL_EXPORT ASN1_TYPE *ASN1_generate_v3(char *str, X509V3_CTX *cnf);
 extern "C++" {
 
 namespace bssl {
-
-BORINGSSL_MAKE_STACK_DELETER(ASN1_OBJECT, ASN1_OBJECT_free)
 
 BORINGSSL_MAKE_DELETER(ASN1_OBJECT, ASN1_OBJECT_free)
 BORINGSSL_MAKE_DELETER(ASN1_STRING, ASN1_STRING_free)

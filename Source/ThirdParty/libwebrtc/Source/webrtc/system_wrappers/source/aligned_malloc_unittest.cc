@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/include/aligned_malloc.h"
+#include "system_wrappers/include/aligned_malloc.h"
 
 #include <memory>
 
@@ -18,8 +18,8 @@
 #include <stdint.h>
 #endif
 
-#include "webrtc/test/gtest.h"
-#include "webrtc/typedefs.h"
+#include "test/gtest.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -30,7 +30,7 @@ bool CorrectUsage(size_t size, size_t alignment) {
   if (scoped.get() == NULL) {
     return false;
   }
-  const uintptr_t scoped_address = reinterpret_cast<uintptr_t> (scoped.get());
+  const uintptr_t scoped_address = reinterpret_cast<uintptr_t>(scoped.get());
   return 0u == scoped_address % alignment;
 }
 
@@ -41,10 +41,10 @@ TEST(AlignedMalloc, GetRightAlign) {
   std::unique_ptr<char, AlignedFreeDeleter> scoped(
       static_cast<char*>(AlignedMalloc(size, alignment)));
   EXPECT_TRUE(scoped.get() != NULL);
-  const uintptr_t aligned_address = reinterpret_cast<uintptr_t> (scoped.get());
+  const uintptr_t aligned_address = reinterpret_cast<uintptr_t>(scoped.get());
   const uintptr_t misaligned_address = aligned_address - left_misalignment;
-  const char* misaligned_ptr = reinterpret_cast<const char*>(
-      misaligned_address);
+  const char* misaligned_ptr =
+      reinterpret_cast<const char*>(misaligned_address);
   const char* realigned_ptr = GetRightAlign(misaligned_ptr, alignment);
   EXPECT_EQ(scoped.get(), realigned_ptr);
 }
@@ -80,4 +80,3 @@ TEST(AlignedMalloc, AlignTo128Bytes) {
 }
 
 }  // namespace webrtc
-

@@ -244,7 +244,7 @@ static int x509_name_ex_d2i(ASN1_VALUE **val,
             entry->set = i;
             if (!sk_X509_NAME_ENTRY_push(nm.x->entries, entry))
                 goto err;
-            sk_X509_NAME_ENTRY_set(entries, j, NULL);
+            (void)sk_X509_NAME_ENTRY_set(entries, j, NULL);
         }
     }
     ret = x509_name_canon(nm.x);
@@ -492,7 +492,7 @@ static int asn1_string_canon(ASN1_STRING *out, ASN1_STRING *in)
             }
             while (!(*from & 0x80) && isspace(*from));
         } else {
-            *to++ = tolower(*from);
+            *to++ = OPENSSL_tolower(*from);
             from++;
             i++;
         }
@@ -526,19 +526,16 @@ static int i2d_name_canon(STACK_OF(STACK_OF_X509_NAME_ENTRY) * _intname,
 
 int X509_NAME_set(X509_NAME **xn, X509_NAME *name)
 {
-    X509_NAME *in;
-
-    if (!xn || !name)
-        return (0);
-
-    if (*xn != name) {
-        in = X509_NAME_dup(name);
-        if (in != NULL) {
-            X509_NAME_free(*xn);
-            *xn = in;
-        }
-    }
-    return (*xn != NULL);
+    if ((name = X509_NAME_dup(name)) == NULL)
+        return 0;
+    X509_NAME_free(*xn);
+    *xn = name;
+    return 1;
 }
 
 IMPLEMENT_ASN1_SET_OF(X509_NAME_ENTRY)
+
+int X509_NAME_ENTRY_set(const X509_NAME_ENTRY *ne)
+{
+    return ne->set;
+}

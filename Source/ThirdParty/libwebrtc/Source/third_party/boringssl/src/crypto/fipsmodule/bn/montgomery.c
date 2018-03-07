@@ -114,6 +114,7 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/thread.h>
+#include <openssl/type_check.h>
 
 #include "internal.h"
 #include "../../internal.h"
@@ -187,18 +188,18 @@ int BN_MONT_CTX_set(BN_MONT_CTX *mont, const BIGNUM *mod, BN_CTX *ctx) {
     return 0;
   }
 
-  /* Save the modulus. */
+  // Save the modulus.
   if (!BN_copy(&mont->N, mod)) {
     OPENSSL_PUT_ERROR(BN, ERR_R_INTERNAL_ERROR);
     return 0;
   }
 
-  /* Find n0 such that n0 * N == -1 (mod r).
-   *
-   * Only certain BN_BITS2<=32 platforms actually make use of n0[1]. For the
-   * others, we could use a shorter R value and use faster |BN_ULONG|-based
-   * math instead of |uint64_t|-based math, which would be double-precision.
-   * However, currently only the assembler files know which is which. */
+  // Find n0 such that n0 * N == -1 (mod r).
+  //
+  // Only certain BN_BITS2<=32 platforms actually make use of n0[1]. For the
+  // others, we could use a shorter R value and use faster |BN_ULONG|-based
+  // math instead of |uint64_t|-based math, which would be double-precision.
+  // However, currently only the assembler files know which is which.
   uint64_t n0 = bn_mont_n0(mod);
   mont->n0[0] = (BN_ULONG)n0;
 #if BN_MONT_CTX_N0_LIMBS == 2
@@ -207,14 +208,13 @@ int BN_MONT_CTX_set(BN_MONT_CTX *mont, const BIGNUM *mod, BN_CTX *ctx) {
   mont->n0[1] = 0;
 #endif
 
-  /* Save RR = R**2 (mod N). R is the smallest power of 2**BN_BITS such that R
-   * > mod. Even though the assembly on some 32-bit platforms works with 64-bit
-   * values, using |BN_BITS2| here, rather than |BN_MONT_CTX_N0_LIMBS *
-   * BN_BITS2|, is correct because R**2 will still be a multiple of the latter
-   * as |BN_MONT_CTX_N0_LIMBS| is either one or two.
-   *
-   * XXX: This is not constant time with respect to |mont->N|, but it should
-   * be. */
+  // Save RR = R**2 (mod N). R is the smallest power of 2**BN_BITS2 such that R
+  // > mod. Even though the assembly on some 32-bit platforms works with 64-bit
+  // values, using |BN_BITS2| here, rather than |BN_MONT_CTX_N0_LIMBS *
+  // BN_BITS2|, is correct because R**2 will still be a multiple of the latter
+  // as |BN_MONT_CTX_N0_LIMBS| is either one or two.
+  //
+  // XXX: This is not constant time with respect to |mont->N|, but it should be.
   unsigned lgBigR = (BN_num_bits(mod) + (BN_BITS2 - 1)) / BN_BITS2 * BN_BITS2;
   if (!bn_mod_exp_base_2_vartime(&mont->RR, lgBigR * 2, &mont->N)) {
     return 0;
@@ -260,87 +260,75 @@ int BN_to_montgomery(BIGNUM *ret, const BIGNUM *a, const BN_MONT_CTX *mont,
   return BN_mod_mul_montgomery(ret, a, &mont->RR, mont, ctx);
 }
 
+static int bn_from_montgomery_in_place(BN_ULONG *r, size_t num_r, BN_ULONG *a,
+                                       size_t num_a, const BN_MONT_CTX *mont) {
+  const BN_ULONG *n = mont->N.d;
+  size_t num_n = mont->N.top;
+  if (num_r != num_n || num_a != 2 * num_n) {
+    OPENSSL_PUT_ERROR(BN, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    return 0;
+  }
+
+  // Add multiples of |n| to |r| until R = 2^(nl * BN_BITS2) divides it. On
+  // input, we had |r| < |n| * R, so now |r| < 2 * |n| * R. Note that |r|
+  // includes |carry| which is stored separately.
+  BN_ULONG n0 = mont->n0[0];
+  BN_ULONG carry = 0;
+  for (size_t i = 0; i < num_n; i++) {
+    BN_ULONG v = bn_mul_add_words(a + i, n, num_n, a[i] * n0);
+    v += carry + a[i + num_n];
+    carry |= (v != a[i + num_n]);
+    carry &= (v <= a[i + num_n]);
+    a[i + num_n] = v;
+  }
+
+  // Shift |num_n| words to divide by R. We have |a| < 2 * |n|. Note that |a|
+  // includes |carry| which is stored separately.
+  a += num_n;
+
+  // |a| thus requires at most one additional subtraction |n| to be reduced.
+  // Subtract |n| and select the answer in constant time.
+  OPENSSL_COMPILE_ASSERT(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
+                         crypto_word_t_too_small);
+  BN_ULONG v = bn_sub_words(r, a, n, num_n) - carry;
+  // |v| is one if |a| - |n| underflowed or zero if it did not. Note |v| cannot
+  // be -1. That would imply the subtraction did not fit in |num_n| words, and
+  // we know at most one subtraction is needed.
+  v = 0u - v;
+  for (size_t i = 0; i < num_n; i++) {
+    r[i] = constant_time_select_w(v, a[i], r[i]);
+    a[i] = 0;
+  }
+  return 1;
+}
+
 static int BN_from_montgomery_word(BIGNUM *ret, BIGNUM *r,
                                    const BN_MONT_CTX *mont) {
-  BN_ULONG *ap, *np, *rp, n0, v, carry;
-  int nl, max, i;
-
   const BIGNUM *n = &mont->N;
-  nl = n->top;
-  if (nl == 0) {
+  if (n->top == 0) {
     ret->top = 0;
     return 1;
   }
 
-  max = (2 * nl); /* carry is stored separately */
-  if (!bn_wexpand(r, max)) {
+  int max = (2 * n->top);  // carry is stored separately
+  if (!bn_wexpand(r, max) ||
+      !bn_wexpand(ret, n->top)) {
     return 0;
   }
-
-  r->neg ^= n->neg;
-  np = n->d;
-  rp = r->d;
-
-  /* clear the top words of T */
+  // Clear the top words of |r|.
   if (max > r->top) {
-    OPENSSL_memset(&rp[r->top], 0, (max - r->top) * sizeof(BN_ULONG));
+    OPENSSL_memset(r->d + r->top, 0, (max - r->top) * sizeof(BN_ULONG));
   }
-
   r->top = max;
-  n0 = mont->n0[0];
+  ret->top = n->top;
 
-  for (carry = 0, i = 0; i < nl; i++, rp++) {
-    v = bn_mul_add_words(rp, np, nl, (rp[0] * n0) & BN_MASK2);
-    v = (v + carry + rp[nl]) & BN_MASK2;
-    carry |= (v != rp[nl]);
-    carry &= (v <= rp[nl]);
-    rp[nl] = v;
-  }
-
-  if (!bn_wexpand(ret, nl)) {
+  if (!bn_from_montgomery_in_place(ret->d, ret->top, r->d, r->top, mont)) {
     return 0;
   }
-  ret->top = nl;
   ret->neg = r->neg;
-
-  rp = ret->d;
-  ap = &(r->d[nl]);
-
-  {
-    BN_ULONG *nrp;
-    uintptr_t m;
-
-    v = bn_sub_words(rp, ap, np, nl) - carry;
-    /* if subtraction result is real, then trick unconditional memcpy below to
-     * perform in-place "refresh" instead of actual copy. */
-    m = (0u - (uintptr_t)v);
-    nrp = (BN_ULONG *)(((uintptr_t)rp & ~m) | ((uintptr_t)ap & m));
-
-    for (i = 0, nl -= 4; i < nl; i += 4) {
-      BN_ULONG t1, t2, t3, t4;
-
-      t1 = nrp[i + 0];
-      t2 = nrp[i + 1];
-      t3 = nrp[i + 2];
-      ap[i + 0] = 0;
-      t4 = nrp[i + 3];
-      ap[i + 1] = 0;
-      rp[i + 0] = t1;
-      ap[i + 2] = 0;
-      rp[i + 1] = t2;
-      ap[i + 3] = 0;
-      rp[i + 2] = t3;
-      rp[i + 3] = t4;
-    }
-
-    for (nl += 4; i < nl; i++) {
-      rp[i] = nrp[i], ap[i] = 0;
-    }
-  }
 
   bn_correct_top(r);
   bn_correct_top(ret);
-
   return 1;
 }
 
@@ -371,7 +359,7 @@ int BN_mod_mul_montgomery(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
 #else
   int num = mont->N.top;
 
-  /* |bn_mul_mont| requires at least 128 bits of limbs, at least for x86. */
+  // |bn_mul_mont| requires at least 128 bits of limbs, at least for x86.
   if (num < (128 / BN_BITS2) ||
       a->top != num ||
       b->top != num) {
@@ -382,7 +370,7 @@ int BN_mod_mul_montgomery(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
     return 0;
   }
   if (!bn_mul_mont(r->d, a->d, b->d, mont->N.d, mont->n0, num)) {
-    /* The check above ensures this won't happen. */
+    // The check above ensures this won't happen.
     assert(0);
     OPENSSL_PUT_ERROR(BN, ERR_R_INTERNAL_ERROR);
     return 0;
@@ -417,7 +405,7 @@ static int bn_mod_mul_montgomery_fallback(BIGNUM *r, const BIGNUM *a,
     }
   }
 
-  /* reduce from aRR to aR */
+  // reduce from aRR to aR
   if (!BN_from_montgomery_word(r, tmp, mont)) {
     goto err;
   }
@@ -426,5 +414,70 @@ static int bn_mod_mul_montgomery_fallback(BIGNUM *r, const BIGNUM *a,
 
 err:
   BN_CTX_end(ctx);
+  return ret;
+}
+
+int bn_to_montgomery_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
+                           size_t num_a, const BN_MONT_CTX *mont) {
+  return bn_mod_mul_montgomery_small(r, num_r, a, num_a, mont->RR.d,
+                                     mont->RR.top, mont);
+}
+
+int bn_from_montgomery_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
+                             size_t num_a, const BN_MONT_CTX *mont) {
+  size_t num_n = mont->N.top;
+  if (num_a > 2 * num_n || num_r != num_n || num_n > BN_SMALL_MAX_WORDS) {
+    OPENSSL_PUT_ERROR(BN, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    return 0;
+  }
+  BN_ULONG tmp[BN_SMALL_MAX_WORDS * 2];
+  size_t num_tmp = 2 * num_n;
+  OPENSSL_memcpy(tmp, a, num_a * sizeof(BN_ULONG));
+  OPENSSL_memset(tmp + num_a, 0, (num_tmp - num_a) * sizeof(BN_ULONG));
+  int ret = bn_from_montgomery_in_place(r, num_r, tmp, num_tmp, mont);
+  OPENSSL_cleanse(tmp, num_tmp * sizeof(BN_ULONG));
+  return ret;
+}
+
+int bn_mod_mul_montgomery_small(BN_ULONG *r, size_t num_r, const BN_ULONG *a,
+                                size_t num_a, const BN_ULONG *b, size_t num_b,
+                                const BN_MONT_CTX *mont) {
+  size_t num_n = mont->N.top;
+  if (num_r != num_n || num_a + num_b > 2 * num_n ||
+      num_n > BN_SMALL_MAX_WORDS) {
+    OPENSSL_PUT_ERROR(BN, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    return 0;
+  }
+
+#if defined(OPENSSL_BN_ASM_MONT)
+  // |bn_mul_mont| requires at least 128 bits of limbs, at least for x86.
+  if (num_n >= (128 / BN_BITS2) &&
+      num_a == num_n &&
+      num_b == num_n) {
+    if (!bn_mul_mont(r, a, b, mont->N.d, mont->n0, num_n)) {
+      assert(0);  // The check above ensures this won't happen.
+      OPENSSL_PUT_ERROR(BN, ERR_R_INTERNAL_ERROR);
+      return 0;
+    }
+    return 1;
+  }
+#endif
+
+  // Compute the product.
+  BN_ULONG tmp[2 * BN_SMALL_MAX_WORDS];
+  size_t num_tmp = 2 * num_n;
+  size_t num_ab = num_a + num_b;
+  if (a == b && num_a == num_b) {
+    if (!bn_sqr_small(tmp, num_ab, a, num_a)) {
+      return 0;
+    }
+  } else if (!bn_mul_small(tmp, num_ab, a, num_a, b, num_b)) {
+    return 0;
+  }
+
+  // Zero-extend to full width and reduce.
+  OPENSSL_memset(tmp + num_ab, 0, (num_tmp - num_ab) * sizeof(BN_ULONG));
+  int ret = bn_from_montgomery_in_place(r, num_r, tmp, num_tmp, mont);
+  OPENSSL_cleanse(tmp, num_tmp * sizeof(BN_ULONG));
   return ret;
 }

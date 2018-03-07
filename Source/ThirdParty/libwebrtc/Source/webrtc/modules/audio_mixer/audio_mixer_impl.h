@@ -8,21 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
-#define WEBRTC_MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
+#ifndef MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
+#define MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/audio/audio_mixer.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/base/race_checker.h"
-#include "webrtc/modules/audio_mixer/frame_combiner.h"
-#include "webrtc/modules/audio_mixer/output_rate_calculator.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "api/audio/audio_mixer.h"
+#include "modules/audio_mixer/frame_combiner.h"
+#include "modules/audio_mixer/output_rate_calculator.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/thread_annotations.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -60,7 +60,8 @@ class AudioMixerImpl : public AudioMixer {
   void RemoveSource(Source* audio_source) override;
 
   void Mix(size_t number_of_channels,
-           AudioFrame* audio_frame_for_mixing) override LOCKS_EXCLUDED(crit_);
+           AudioFrame* audio_frame_for_mixing) override
+      RTC_LOCKS_EXCLUDED(crit_);
 
   // Returns true if the source was mixed last round. Returns
   // false and logs an error if the source was never added to the
@@ -80,7 +81,7 @@ class AudioMixerImpl : public AudioMixer {
   // Compute what audio sources to mix from audio_source_list_. Ramp
   // in and out. Update mixed status. Mixes up to
   // kMaximumAmountOfMixedAudioSources audio sources.
-  AudioFrameList GetAudioFromSources() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  AudioFrameList GetAudioFromSources() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Add/remove the MixerAudioSource to the specified
   // MixerAudioSource list.
@@ -97,17 +98,17 @@ class AudioMixerImpl : public AudioMixer {
 
   std::unique_ptr<OutputRateCalculator> output_rate_calculator_;
   // The current sample frequency and sample size when mixing.
-  int output_frequency_ GUARDED_BY(race_checker_);
-  size_t sample_size_ GUARDED_BY(race_checker_);
+  int output_frequency_ RTC_GUARDED_BY(race_checker_);
+  size_t sample_size_ RTC_GUARDED_BY(race_checker_);
 
   // List of all audio sources. Note all lists are disjunct
-  SourceStatusList audio_source_list_ GUARDED_BY(crit_);  // May be mixed.
+  SourceStatusList audio_source_list_ RTC_GUARDED_BY(crit_);  // May be mixed.
 
   // Component that handles actual adding of audio frames.
-  FrameCombiner frame_combiner_ GUARDED_BY(race_checker_);
+  FrameCombiner frame_combiner_ RTC_GUARDED_BY(race_checker_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(AudioMixerImpl);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_
+#endif  // MODULES_AUDIO_MIXER_AUDIO_MIXER_IMPL_H_

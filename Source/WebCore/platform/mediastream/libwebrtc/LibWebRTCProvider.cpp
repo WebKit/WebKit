@@ -30,10 +30,13 @@
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <dlfcn.h>
+#include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
+#include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
-#include <webrtc/base/physicalsocketserver.h>
+#include <webrtc/modules/audio_processing/include/audio_processing.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
+#include <webrtc/rtc_base/physicalsocketserver.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 #endif
@@ -149,7 +152,7 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
 
 rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread, LibWebRTCAudioModule* audioModule)
 {
-    return webrtc::CreatePeerConnectionFactory(networkThread, networkThread, signalingThread, audioModule, createEncoderFactory().release(), createDecoderFactory().release());
+    return webrtc::CreatePeerConnectionFactory(networkThread, networkThread, signalingThread, audioModule, webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr);
 }
 
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)

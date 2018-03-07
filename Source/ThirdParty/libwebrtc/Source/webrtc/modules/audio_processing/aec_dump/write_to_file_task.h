@@ -8,26 +8,26 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC_DUMP_WRITE_TO_FILE_TASK_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC_DUMP_WRITE_TO_FILE_TASK_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC_DUMP_WRITE_TO_FILE_TASK_H_
+#define MODULES_AUDIO_PROCESSING_AEC_DUMP_WRITE_TO_FILE_TASK_H_
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/ignore_wundef.h"
-#include "webrtc/base/platform_file.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/system_wrappers/include/file_wrapper.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/ignore_wundef.h"
+#include "rtc_base/platform_file.h"
+#include "rtc_base/task_queue.h"
+#include "system_wrappers/include/file_wrapper.h"
 
 // Files generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_processing/debug.pb.h"
 #else
-#include "webrtc/modules/audio_processing/debug.pb.h"
+#include "modules/audio_processing/debug.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 
@@ -55,4 +55,4 @@ class WriteToFileTask : public rtc::QueuedTask {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC_DUMP_WRITE_TO_FILE_TASK_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC_DUMP_WRITE_TO_FILE_TASK_H_

@@ -15,12 +15,12 @@
  * For specific function calls, see bottom of file.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
-#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
+#ifndef COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
+#define COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
 
 #include <string.h>
-#include "webrtc/common_audio/signal_processing/dot_product_with_scale.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/signal_processing/dot_product_with_scale.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Macros specific for the fixed point implementation
 #define WEBRTC_SPL_WORD16_MAX       32767
@@ -102,7 +102,7 @@ extern "C" {
   memcpy(v1, v2, (length) * sizeof(int16_t))
 
 // inline functions:
-#include "webrtc/common_audio/signal_processing/include/spl_inl.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
 
 // Initialize SPL. Currently it contains only function pointer initialization.
 // If the underlying platform is known to be ARM-Neon (WEBRTC_HAS_NEON defined),
@@ -906,7 +906,7 @@ void WebRtcSpl_SynthesisQMF(const int16_t* low_band,
 #ifdef __cplusplus
 }
 #endif  // __cplusplus
-#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
+#endif  // COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SIGNAL_PROCESSING_LIBRARY_H_
 
 //
 // WebRtcSpl_AddSatW16(...)

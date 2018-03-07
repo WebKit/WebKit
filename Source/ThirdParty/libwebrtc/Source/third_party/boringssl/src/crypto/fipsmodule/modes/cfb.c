@@ -72,7 +72,8 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
       n = (n + 1) % 16;
     }
 #if STRICT_ALIGNMENT
-    if (((size_t)in | (size_t)out | (size_t)ivec) % sizeof(size_t) != 0) {
+    if (((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
+        0) {
       while (l < len) {
         if (n == 0) {
           (*block)(ivec, ivec, key);
@@ -88,7 +89,9 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
     while (len >= 16) {
       (*block)(ivec, ivec, key);
       for (; n < 16; n += sizeof(size_t)) {
-        *(size_t *)(out + n) = *(size_t *)(ivec + n) ^= *(size_t *)(in + n);
+        size_t tmp = load_word_le(ivec + n) ^ load_word_le(in + n);
+        store_word_le(ivec + n, tmp);
+        store_word_le(out + n, tmp);
       }
       len -= 16;
       out += 16;
@@ -112,9 +115,11 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
       --len;
       n = (n + 1) % 16;
     }
-    if (STRICT_ALIGNMENT && ((size_t)in | (size_t)out | (size_t)ivec) % sizeof(size_t) != 0) {
+    if (STRICT_ALIGNMENT &&
+        ((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
+            0) {
       while (l < len) {
-        unsigned char c;
+        uint8_t c;
         if (n == 0) {
           (*block)(ivec, ivec, key);
         }
@@ -129,9 +134,9 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
     while (len >= 16) {
       (*block)(ivec, ivec, key);
       for (; n < 16; n += sizeof(size_t)) {
-        size_t t = *(size_t *)(in + n);
-        *(size_t *)(out + n) = *(size_t *)(ivec + n) ^ t;
-        *(size_t *)(ivec + n) = t;
+        size_t t = load_word_le(in + n);
+        store_word_le(out + n, load_word_le(ivec + n) ^ t);
+        store_word_le(ivec + n, t);
       }
       len -= 16;
       out += 16;
@@ -166,23 +171,23 @@ static void cfbr_encrypt_block(const uint8_t *in, uint8_t *out, unsigned nbits,
     return;
   }
 
-  /* fill in the first half of the new IV with the current IV */
+  // fill in the first half of the new IV with the current IV
   OPENSSL_memcpy(ovec, ivec, 16);
-  /* construct the new IV */
+  // construct the new IV
   (*block)(ivec, ivec, key);
   num = (nbits + 7) / 8;
   if (enc) {
-    /* encrypt the input */
+    // encrypt the input
     for (n = 0; n < num; ++n) {
       out[n] = (ovec[16 + n] = in[n] ^ ivec[n]);
     }
   } else {
-    /* decrypt the input */
+    // decrypt the input
     for (n = 0; n < num; ++n) {
       out[n] = (ovec[16 + n] = in[n]) ^ ivec[n];
     }
   }
-  /* shift ovec left... */
+  // shift ovec left...
   rem = nbits % 8;
   num = nbits / 8;
   if (rem == 0) {
@@ -193,10 +198,10 @@ static void cfbr_encrypt_block(const uint8_t *in, uint8_t *out, unsigned nbits,
     }
   }
 
-  /* it is not necessary to cleanse ovec, since the IV is not secret */
+  // it is not necessary to cleanse ovec, since the IV is not secret
 }
 
-/* N.B. This expects the input to be packed, MS bit first */
+// N.B. This expects the input to be packed, MS bit first
 void CRYPTO_cfb128_1_encrypt(const uint8_t *in, uint8_t *out, size_t bits,
                              const void *key, uint8_t ivec[16], unsigned *num,
                              int enc, block128_f block) {
@@ -227,4 +232,3 @@ void CRYPTO_cfb128_8_encrypt(const unsigned char *in, unsigned char *out,
     cfbr_encrypt_block(&in[n], &out[n], 8, key, ivec, enc, block);
   }
 }
-

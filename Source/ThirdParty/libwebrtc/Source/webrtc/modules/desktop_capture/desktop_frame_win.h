@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
+#ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
+#define MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
 
 #include <memory>
 
 #include <windows.h>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/typedefs.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -47,5 +47,5 @@ class DesktopFrameWin : public DesktopFrame {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
+#endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
 

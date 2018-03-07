@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
-#define WEBRTC_COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
+#ifndef COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
+#define COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
 
-#include "webrtc/base/race_checker.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/common_video/video_render_frames.h"
-#include "webrtc/media/base/videosinkinterface.h"
+#include "common_video/video_render_frames.h"
+#include "media/base/videosinkinterface.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/task_queue.h"
 
 namespace webrtc {
 
@@ -41,4 +41,4 @@ class IncomingVideoStream : public rtc::VideoSinkInterface<VideoFrame> {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_
+#endif  // COMMON_VIDEO_INCLUDE_INCOMING_VIDEO_STREAM_H_

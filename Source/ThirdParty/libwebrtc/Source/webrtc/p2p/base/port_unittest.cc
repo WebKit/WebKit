@@ -8,31 +8,32 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <list>
 #include <memory>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/crc32.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/natserver.h"
-#include "webrtc/base/natsocketfactory.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/stringutils.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/jseptransport.h"
-#include "webrtc/p2p/base/relayport.h"
-#include "webrtc/p2p/base/stunport.h"
-#include "webrtc/p2p/base/tcpport.h"
-#include "webrtc/p2p/base/testrelayserver.h"
-#include "webrtc/p2p/base/teststunserver.h"
-#include "webrtc/p2p/base/testturnserver.h"
-#include "webrtc/p2p/base/turnport.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/jseptransport.h"
+#include "p2p/base/relayport.h"
+#include "p2p/base/stunport.h"
+#include "p2p/base/tcpport.h"
+#include "p2p/base/testrelayserver.h"
+#include "p2p/base/teststunserver.h"
+#include "p2p/base/testturnserver.h"
+#include "p2p/base/turnport.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/crc32.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/natserver.h"
+#include "rtc_base/natsocketfactory.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/stringutils.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/virtualsocketserver.h"
 
 using rtc::AsyncPacketSocket;
 using rtc::Buffer;
@@ -109,7 +110,6 @@ class TestPort : public Port {
            const std::string& type,
            rtc::PacketSocketFactory* factory,
            rtc::Network* network,
-           const rtc::IPAddress& ip,
            uint16_t min_port,
            uint16_t max_port,
            const std::string& username_fragment,
@@ -118,7 +118,6 @@ class TestPort : public Port {
              type,
              factory,
              network,
-             ip,
              min_port,
              max_port,
              username_fragment,
@@ -144,7 +143,9 @@ class TestPort : public Port {
   }
 
   virtual void PrepareAddress() {
-    rtc::SocketAddress addr(ip(), min_port());
+    // Act as if the socket was bound to the best IP on the network, to the
+    // first port in the allowed range.
+    rtc::SocketAddress addr(Network()->GetBestIP(), min_port());
     AddAddress(addr, addr, rtc::SocketAddress(), "udp", "", "", Type(),
                ICE_TYPE_PREFERENCE_HOST, 0, "", true);
   }
@@ -334,7 +335,7 @@ class TestChannel : public sigslot::has_slots<> {
 
   void OnDestroyed(Connection* conn) {
     ASSERT_EQ(conn_, conn);
-    LOG(INFO) << "OnDestroy connection " << conn << " deleted";
+    RTC_LOG(INFO) << "OnDestroy connection " << conn << " deleted";
     conn_ = NULL;
     // When the connection is destroyed, also clear these fields so future
     // connections are possible.
@@ -382,7 +383,6 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
   PortTest()
       : ss_(new rtc::VirtualSocketServer()),
         main_(ss_.get()),
-        network_("unittest", "unittest", rtc::IPAddress(INADDR_ANY), 32),
         socket_factory_(rtc::Thread::Current()),
         nat_factory1_(ss_.get(), kNatAddr1, SocketAddress()),
         nat_factory2_(ss_.get(), kNatAddr2, SocketAddress()),
@@ -401,7 +401,6 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
         password_(rtc::CreateRandomString(ICE_PWD_LENGTH)),
         role_conflict_(false),
         ports_destroyed_(0) {
-    network_.AddIP(rtc::IPAddress(INADDR_ANY));
   }
 
  protected:
@@ -483,32 +482,36 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
     TestConnectivity("ssltcp", port1, RelayName(rtype, proto), port2,
                      rtype == RELAY_GTURN, false, true, true);
   }
+
+  rtc::Network* MakeNetwork(const SocketAddress& addr) {
+    networks_.emplace_back("unittest", "unittest", addr.ipaddr(), 32);
+    networks_.back().AddIP(addr.ipaddr());
+    return &networks_.back();
+  }
+
   // helpers for above functions
   UDPPort* CreateUdpPort(const SocketAddress& addr) {
     return CreateUdpPort(addr, &socket_factory_);
   }
   UDPPort* CreateUdpPort(const SocketAddress& addr,
                          PacketSocketFactory* socket_factory) {
-    return UDPPort::Create(&main_, socket_factory, &network_, addr.ipaddr(), 0,
-                           0, username_, password_, std::string(), true);
+    return UDPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
+                           username_, password_, std::string(), true);
   }
   TCPPort* CreateTcpPort(const SocketAddress& addr) {
     return CreateTcpPort(addr, &socket_factory_);
   }
   TCPPort* CreateTcpPort(const SocketAddress& addr,
                         PacketSocketFactory* socket_factory) {
-    return TCPPort::Create(&main_, socket_factory, &network_,
-                           addr.ipaddr(), 0, 0, username_, password_,
-                           true);
+    return TCPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
+                           username_, password_, true);
   }
   StunPort* CreateStunPort(const SocketAddress& addr,
                            rtc::PacketSocketFactory* factory) {
     ServerAddresses stun_servers;
     stun_servers.insert(kStunAddr);
-    return StunPort::Create(&main_, factory, &network_,
-                            addr.ipaddr(), 0, 0,
-                            username_, password_, stun_servers,
-                            std::string());
+    return StunPort::Create(&main_, factory, MakeNetwork(addr), 0, 0, username_,
+                            password_, stun_servers, std::string());
   }
   Port* CreateRelayPort(const SocketAddress& addr, RelayType rtype,
                         ProtocolType int_proto, ProtocolType ext_proto) {
@@ -530,10 +533,11 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
                            PacketSocketFactory* socket_factory,
                            ProtocolType int_proto, ProtocolType ext_proto,
                            const rtc::SocketAddress& server_addr) {
-    return TurnPort::Create(&main_, socket_factory, &network_, addr.ipaddr(), 0,
-                            0, username_, password_,
-                            ProtocolAddress(server_addr, int_proto),
-                            kRelayCredentials, 0, std::string());
+    return TurnPort::Create(
+        &main_, socket_factory, MakeNetwork(addr), 0, 0, username_, password_,
+        ProtocolAddress(server_addr, int_proto), kRelayCredentials, 0,
+        std::string(), std::vector<std::string>(), std::vector<std::string>(),
+        nullptr);
   }
   RelayPort* CreateGturnPort(const SocketAddress& addr,
                              ProtocolType int_proto, ProtocolType ext_proto) {
@@ -547,8 +551,8 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
     // TODO(pthatcher):  Remove GTURN.
     // Generate a username with length of 16 for Gturn only.
     std::string username = rtc::CreateRandomString(kGturnUserNameLength);
-    return RelayPort::Create(&main_, &socket_factory_, &network_, addr.ipaddr(),
-                             0, 0, username, password_);
+    return RelayPort::Create(&main_, &socket_factory_, MakeNetwork(addr), 0, 0,
+                             username, password_);
     // TODO: Add an external address for ext_proto, so that the
     // other side can connect to this port using a non-UDP protocol.
   }
@@ -598,10 +602,6 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
           return "gturn(?)";
       }
     }
-  }
-
-  void SetNetworkType(rtc::AdapterType adapter_type) {
-    network_.set_type(adapter_type);
   }
 
   void TestCrossFamilyPorts(int type);
@@ -764,8 +764,8 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
   TestPort* CreateTestPort(const rtc::SocketAddress& addr,
                            const std::string& username,
                            const std::string& password) {
-    TestPort* port =  new TestPort(&main_, "test", &socket_factory_, &network_,
-                                   addr.ipaddr(), 0, 0, username, password);
+    TestPort* port = new TestPort(&main_, "test", &socket_factory_,
+                                  MakeNetwork(addr), 0, 0, username, password);
     port->SignalRoleConflict.connect(this, &PortTest::OnRoleConflict);
     return port;
   }
@@ -777,6 +777,15 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
     TestPort* port = CreateTestPort(addr, username, password);
     port->SetIceRole(role);
     port->SetIceTiebreaker(tiebreaker);
+    return port;
+  }
+  // Overload to create a test port given an rtc::Network directly.
+  TestPort* CreateTestPort(rtc::Network* network,
+                           const std::string& username,
+                           const std::string& password) {
+    TestPort* port = new TestPort(&main_, "test", &socket_factory_, network, 0,
+                                  0, username, password);
+    port->SignalRoleConflict.connect(this, &PortTest::OnRoleConflict);
     return port;
   }
 
@@ -799,9 +808,12 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
   rtc::VirtualSocketServer* vss() { return ss_.get(); }
 
  private:
+  // When a "create port" helper method is called with an IP, we create a
+  // Network with that IP and add it to this list. Using a list instead of a
+  // vector so that when it grows, pointers aren't invalidated.
+  std::list<rtc::Network> networks_;
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
   rtc::AutoSocketServerThread main_;
-  rtc::Network network_;
   rtc::BasicPacketSocketFactory socket_factory_;
   std::unique_ptr<rtc::NATServer> nat_server1_;
   std::unique_ptr<rtc::NATServer> nat_server2_;
@@ -823,7 +835,7 @@ void PortTest::TestConnectivity(const char* name1, Port* port1,
                                 bool accept, bool same_addr1,
                                 bool same_addr2, bool possible) {
   rtc::ScopedFakeClock clock;
-  LOG(LS_INFO) << "Test: " << name1 << " to " << name2 << ": ";
+  RTC_LOG(LS_INFO) << "Test: " << name1 << " to " << name2 << ": ";
   port1->set_component(cricket::ICE_CANDIDATE_COMPONENT_DEFAULT);
   port2->set_component(cricket::ICE_CANDIDATE_COMPONENT_DEFAULT);
 
@@ -1931,10 +1943,11 @@ TEST_F(PortTest, TestUseCandidateAttribute) {
 // change, the network cost of the local candidates will change. Also tests that
 // the remote network costs are updated with the stun binding requests.
 TEST_F(PortTest, TestNetworkCostChange) {
+  rtc::Network* test_network = MakeNetwork(kLocalAddr1);
   std::unique_ptr<TestPort> lport(
-      CreateTestPort(kLocalAddr1, "lfrag", "lpass"));
+      CreateTestPort(test_network, "lfrag", "lpass"));
   std::unique_ptr<TestPort> rport(
-      CreateTestPort(kLocalAddr2, "rfrag", "rpass"));
+      CreateTestPort(test_network, "rfrag", "rpass"));
   lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
   lport->SetIceTiebreaker(kTiebreaker1);
   rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
@@ -1950,7 +1963,7 @@ TEST_F(PortTest, TestNetworkCostChange) {
   }
 
   // Change the network type to wifi.
-  SetNetworkType(rtc::ADAPTER_TYPE_WIFI);
+  test_network->set_type(rtc::ADAPTER_TYPE_WIFI);
   EXPECT_EQ(rtc::kNetworkCostLow, lport->network_cost());
   for (const cricket::Candidate& candidate : lport->Candidates()) {
     EXPECT_EQ(rtc::kNetworkCostLow, candidate.network_cost());
@@ -1960,16 +1973,16 @@ TEST_F(PortTest, TestNetworkCostChange) {
   Connection* lconn =
       lport->CreateConnection(rport->Candidates()[0], Port::ORIGIN_MESSAGE);
   // Change the network type to cellular.
-  SetNetworkType(rtc::ADAPTER_TYPE_CELLULAR);
+  test_network->set_type(rtc::ADAPTER_TYPE_CELLULAR);
   EXPECT_EQ(rtc::kNetworkCostHigh, lport->network_cost());
   for (const cricket::Candidate& candidate : lport->Candidates()) {
     EXPECT_EQ(rtc::kNetworkCostHigh, candidate.network_cost());
   }
 
-  SetNetworkType(rtc::ADAPTER_TYPE_WIFI);
+  test_network->set_type(rtc::ADAPTER_TYPE_WIFI);
   Connection* rconn =
       rport->CreateConnection(lport->Candidates()[0], Port::ORIGIN_MESSAGE);
-  SetNetworkType(rtc::ADAPTER_TYPE_CELLULAR);
+  test_network->set_type(rtc::ADAPTER_TYPE_CELLULAR);
   lconn->Ping(0);
   // The rconn's remote candidate cost is rtc::kNetworkCostLow, but the ping
   // contains an attribute of network cost of rtc::kNetworkCostHigh. Once the
@@ -1988,10 +2001,11 @@ TEST_F(PortTest, TestNetworkCostChange) {
 }
 
 TEST_F(PortTest, TestNetworkInfoAttribute) {
+  rtc::Network* test_network = MakeNetwork(kLocalAddr1);
   std::unique_ptr<TestPort> lport(
-      CreateTestPort(kLocalAddr1, "lfrag", "lpass"));
+      CreateTestPort(test_network, "lfrag", "lpass"));
   std::unique_ptr<TestPort> rport(
-      CreateTestPort(kLocalAddr2, "rfrag", "rpass"));
+      CreateTestPort(test_network, "rfrag", "rpass"));
   lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
   lport->SetIceTiebreaker(kTiebreaker1);
   rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
@@ -2017,7 +2031,7 @@ TEST_F(PortTest, TestNetworkInfoAttribute) {
 
   // Set the network type to be cellular so its cost will be kNetworkCostHigh.
   // Send a fake ping from rport to lport.
-  SetNetworkType(rtc::ADAPTER_TYPE_CELLULAR);
+  test_network->set_type(rtc::ADAPTER_TYPE_CELLULAR);
   uint16_t rnetwork_id = 8;
   rport->Network()->set_id(rnetwork_id);
   Connection* rconn =

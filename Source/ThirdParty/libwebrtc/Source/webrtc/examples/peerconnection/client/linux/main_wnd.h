@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_LINUX_MAIN_WND_H_
-#define WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_LINUX_MAIN_WND_H_
+#ifndef EXAMPLES_PEERCONNECTION_CLIENT_LINUX_MAIN_WND_H_
+#define EXAMPLES_PEERCONNECTION_CLIENT_LINUX_MAIN_WND_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/examples/peerconnection/client/main_wnd.h"
-#include "webrtc/examples/peerconnection/client/peer_connection_client.h"
+#include "examples/peerconnection/client/main_wnd.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
 
 // Forward declarations.
 typedef struct _GtkWidget GtkWidget;
@@ -123,4 +123,4 @@ class GtkMainWnd : public MainWindow {
   int draw_buffer_size_;
 };
 
-#endif  // WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_LINUX_MAIN_WND_H_
+#endif  // EXAMPLES_PEERCONNECTION_CLIENT_LINUX_MAIN_WND_H_

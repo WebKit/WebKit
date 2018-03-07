@@ -8,91 +8,89 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
-#include <string>
+#include <algorithm>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/agc2/gain_controller2.h"
-#include "webrtc/modules/audio_processing/agc2/digital_gain_applier.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/agc2/gain_controller2.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
 
 namespace {
 
-constexpr size_t kNumFrames = 480u;
+constexpr size_t kFrameSizeMs = 10u;
 constexpr size_t kStereo = 2u;
 
 void SetAudioBufferSamples(float value, AudioBuffer* ab) {
+  // Sets all the samples in |ab| to |value|.
   for (size_t k = 0; k < ab->num_channels(); ++k) {
-    auto channel = rtc::ArrayView<float>(ab->channels_f()[k], ab->num_frames());
-    for (auto& sample : channel) { sample = value; }
+    std::fill(ab->channels_f()[k], ab->channels_f()[k] + ab->num_frames(),
+              value);
   }
-}
-
-template<typename Functor>
-bool CheckAudioBufferSamples(Functor validator, AudioBuffer* ab) {
-  for (size_t k = 0; k < ab->num_channels(); ++k) {
-    auto channel = rtc::ArrayView<float>(ab->channels_f()[k], ab->num_frames());
-    for (auto& sample : channel) { if (!validator(sample)) { return false; } }
-  }
-  return true;
-}
-
-bool TestDigitalGainApplier(float sample_value, float gain, float expected) {
-  AudioBuffer ab(kNumFrames, kStereo, kNumFrames, kStereo, kNumFrames);
-  SetAudioBufferSamples(sample_value, &ab);
-
-  DigitalGainApplier gain_applier;
-  for (size_t k = 0; k < ab.num_channels(); ++k) {
-    auto channel_view = rtc::ArrayView<float>(
-        ab.channels_f()[k], ab.num_frames());
-    gain_applier.Process(gain, channel_view);
-  }
-
-  auto check_expectation = [expected](float sample) {
-      return sample == expected; };
-  return CheckAudioBufferSamples(check_expectation, &ab);
 }
 
 }  // namespace
 
-TEST(GainController2, Instance) {
-  std::unique_ptr<GainController2> gain_controller2;
-  gain_controller2.reset(new GainController2(
-      AudioProcessing::kSampleRate48kHz));
+TEST(GainController2, CreateApplyConfig) {
+  // Instances GainController2 and applies different configurations.
+  std::unique_ptr<GainController2> gain_controller2(new GainController2());
+
+  // Check that the default config is valid.
+  AudioProcessing::Config::GainController2 config;
+  EXPECT_TRUE(GainController2::Validate(config));
+  gain_controller2->ApplyConfig(config);
+
+  // Check that attenuation is not allowed.
+  config.fixed_gain_db = -5.f;
+  EXPECT_FALSE(GainController2::Validate(config));
+
+  // Check that valid configurations are applied.
+  for (const float& fixed_gain_db : {0.f, 5.f, 10.f, 50.f}) {
+    config.fixed_gain_db = fixed_gain_db;
+    EXPECT_TRUE(GainController2::Validate(config));
+    gain_controller2->ApplyConfig(config);
+  }
 }
 
 TEST(GainController2, ToString) {
-  AudioProcessing::Config config;
+  // Tests GainController2::ToString().
+  AudioProcessing::Config::GainController2 config;
+  config.fixed_gain_db = 5.f;
 
-  config.gain_controller2.enabled = false;
-  EXPECT_EQ("{enabled: false}",
-            GainController2::ToString(config.gain_controller2));
+  config.enabled = false;
+  EXPECT_EQ("{enabled: false, fixed_gain_dB: 5}",
+            GainController2::ToString(config));
 
-  config.gain_controller2.enabled = true;
-  EXPECT_EQ("{enabled: true}",
-            GainController2::ToString(config.gain_controller2));
-}
-
-TEST(GainController2, DigitalGainApplierProcess) {
-  EXPECT_TRUE(TestDigitalGainApplier(1000.0f, 0.5, 500.0f));
-}
-
-TEST(GainController2, DigitalGainApplierCheckClipping) {
-  EXPECT_TRUE(TestDigitalGainApplier(30000.0f, 1.5, 32767.0f));
-  EXPECT_TRUE(TestDigitalGainApplier(-30000.0f, 1.5, -32767.0f));
+  config.enabled = true;
+  EXPECT_EQ("{enabled: true, fixed_gain_dB: 5}",
+            GainController2::ToString(config));
 }
 
 TEST(GainController2, Usage) {
-  std::unique_ptr<GainController2> gain_controller2;
-  gain_controller2.reset(new GainController2(
-      AudioProcessing::kSampleRate48kHz));
-  AudioBuffer ab(kNumFrames, kStereo, kNumFrames, kStereo, kNumFrames);
-  SetAudioBufferSamples(1000.0f, &ab);
+  // Tests GainController2::Process() on an AudioBuffer instance.
+  std::unique_ptr<GainController2> gain_controller2(new GainController2());
+  gain_controller2->Initialize(AudioProcessing::kSampleRate48kHz);
+  const size_t num_frames = rtc::CheckedDivExact<size_t>(
+      kFrameSizeMs * AudioProcessing::kSampleRate48kHz, 1000);
+  AudioBuffer ab(num_frames, kStereo, num_frames, kStereo, num_frames);
+  constexpr float sample_value = 1000.f;
+  SetAudioBufferSamples(sample_value, &ab);
+  AudioProcessing::Config::GainController2 config;
+
+  // Check that samples are not modified when the fixed gain is 0 dB.
+  ASSERT_EQ(config.fixed_gain_db, 0.f);
+  gain_controller2->ApplyConfig(config);
   gain_controller2->Process(&ab);
+  EXPECT_EQ(ab.channels_f()[0][0], sample_value);
+
+  // Check that samples are amplified when the fixed gain is greater than 0 dB.
+  config.fixed_gain_db = 5.f;
+  gain_controller2->ApplyConfig(config);
+  gain_controller2->Process(&ab);
+  EXPECT_LT(sample_value, ab.channels_f()[0][0]);
 }
 
 }  // namespace test

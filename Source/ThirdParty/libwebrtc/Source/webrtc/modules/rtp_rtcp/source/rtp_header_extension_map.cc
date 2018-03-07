@@ -8,18 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace {
-
-using RtpUtility::Word32Align;
 
 struct ExtensionInfo {
   RTPExtensionType type;
@@ -42,6 +39,7 @@ constexpr ExtensionInfo kExtensions[] = {
     CreateExtensionInfo<VideoTimingExtension>(),
     CreateExtensionInfo<RtpStreamId>(),
     CreateExtensionInfo<RepairedRtpStreamId>(),
+    CreateExtensionInfo<RtpMid>(),
 };
 
 // Because of kRtpExtensionNone, NumberOfExtension is 1 bigger than the actual
@@ -53,9 +51,9 @@ static_assert(arraysize(kExtensions) ==
 }  // namespace
 
 constexpr RTPExtensionType RtpHeaderExtensionMap::kInvalidType;
-constexpr uint8_t RtpHeaderExtensionMap::kInvalidId;
-constexpr uint8_t RtpHeaderExtensionMap::kMinId;
-constexpr uint8_t RtpHeaderExtensionMap::kMaxId;
+constexpr int RtpHeaderExtensionMap::kInvalidId;
+constexpr int RtpHeaderExtensionMap::kMinId;
+constexpr int RtpHeaderExtensionMap::kMaxId;
 
 RtpHeaderExtensionMap::RtpHeaderExtensionMap() {
   for (auto& type : types_)
@@ -71,7 +69,7 @@ RtpHeaderExtensionMap::RtpHeaderExtensionMap(
     RegisterByUri(extension.id, extension.uri);
 }
 
-bool RtpHeaderExtensionMap::RegisterByType(uint8_t id, RTPExtensionType type) {
+bool RtpHeaderExtensionMap::RegisterByType(int id, RTPExtensionType type) {
   for (const ExtensionInfo& extension : kExtensions)
     if (type == extension.type)
       return Register(id, extension.type, extension.uri);
@@ -79,12 +77,12 @@ bool RtpHeaderExtensionMap::RegisterByType(uint8_t id, RTPExtensionType type) {
   return false;
 }
 
-bool RtpHeaderExtensionMap::RegisterByUri(uint8_t id, const std::string& uri) {
+bool RtpHeaderExtensionMap::RegisterByUri(int id, const std::string& uri) {
   for (const ExtensionInfo& extension : kExtensions)
     if (uri == extension.uri)
       return Register(id, extension.type, extension.uri);
-  LOG(LS_WARNING) << "Unknown extension uri:'" << uri
-                  << "', id: " << static_cast<int>(id) << '.';
+  RTC_LOG(LS_WARNING) << "Unknown extension uri:'" << uri << "', id: " << id
+                      << '.';
   return false;
 }
 
@@ -101,7 +99,10 @@ size_t RtpHeaderExtensionMap::GetTotalLengthInBytes(
   }
   if (values_size == 0)
     return 0;
-  return Word32Align(kRtpOneByteHeaderLength + values_size);
+  size_t size = kRtpOneByteHeaderLength + values_size;
+  // Round up to the nearest size that is a multiple of 4.
+  // Which is same as round down (size + 3).
+  return size + 3 - (size + 3) % 4;
 }
 
 int32_t RtpHeaderExtensionMap::Deregister(RTPExtensionType type) {
@@ -113,35 +114,36 @@ int32_t RtpHeaderExtensionMap::Deregister(RTPExtensionType type) {
   return 0;
 }
 
-bool RtpHeaderExtensionMap::Register(uint8_t id,
+bool RtpHeaderExtensionMap::Register(int id,
                                      RTPExtensionType type,
                                      const char* uri) {
   RTC_DCHECK_GT(type, kRtpExtensionNone);
   RTC_DCHECK_LT(type, kRtpExtensionNumberOfExtensions);
 
   if (id < kMinId || id > kMaxId) {
-    LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
-                    << "' with invalid id:" << static_cast<int>(id) << ".";
+    RTC_LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
+                        << "' with invalid id:" << id << ".";
     return false;
   }
 
   if (GetType(id) == type) {  // Same type/id pair already registered.
-    LOG(LS_VERBOSE) << "Reregistering extension uri:'" << uri
-                    << "', id:" << static_cast<int>(id);
+    RTC_LOG(LS_VERBOSE) << "Reregistering extension uri:'" << uri
+                        << "', id:" << id;
     return true;
   }
 
   if (GetType(id) != kInvalidType) {  // |id| used by another extension type.
-    LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
-                    << "', id:" << static_cast<int>(id)
-                    << ". Id already in use by extension type "
-                    << static_cast<int>(GetType(id));
+    RTC_LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
+                        << "', id:" << id
+                        << ". Id already in use by extension type "
+                        << static_cast<int>(GetType(id));
     return false;
   }
   RTC_DCHECK(!IsRegistered(type));
 
   types_[id] = type;
-  ids_[type] = id;
+  // There is a run-time check above id fits into uint8_t.
+  ids_[type] = static_cast<uint8_t>(id);
   return true;
 }
 

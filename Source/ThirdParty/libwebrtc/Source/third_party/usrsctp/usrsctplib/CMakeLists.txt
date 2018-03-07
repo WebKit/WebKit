@@ -29,13 +29,166 @@
 # SUCH DAMAGE.
 #
 
-cmake_minimum_required(VERSION 2.6)
 
-# Debug build type as default
-if (NOT CMAKE_BUILD_TYPE)
-    message(STATUS "No build type selected, using DEBUG")
-    set(CMAKE_BUILD_TYPE "DEBUG")
-endif()
+#################################################
+# INCLUDE MODULES AND SETTINGS
+#################################################
 
-add_subdirectory(usrsctplib)
-add_subdirectory(programs)
+set(VERSION "1.0.0")
+
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix "\${prefix}")
+set(libdir "\${exec_prefix}/lib")
+set(includedir "\${prefix}/include/usrsctp")
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_MACOSX_RPATH 1)
+
+add_definitions(-D__Userspace__)
+add_definitions(-D__Userspace_os_${CMAKE_SYSTEM_NAME})
+
+
+#################################################
+# OS DEPENDENT
+#################################################
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_definitions(-D_GNU_SOURCE)
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wno-address-of-packed-member")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member")
+endif ()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+    add_definitions(-U__FreeBSD__)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wno-address-of-packed-member -Wno-unknown-warning-option")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member -Wno-unknown-warning-option")
+endif ()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-U__APPLE__)
+    add_definitions(-D__APPLE_USE_RFC_2292)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}     -Wno-address-of-packed-member -Wno-deprecated-declarations")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member -Wno-deprecated-declarations")
+endif ()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "DragonFly")
+    add_definitions(-U__DragonFly__)
+endif ()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "NetBSD")
+    add_definitions(-U__NetBSD__)
+endif ()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+    add_definitions(-U__OpenBSD__)
+endif ()
+
+
+#################################################
+# LIBRARY FILES
+#################################################
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+list(APPEND usrsctp_root_HEADERS
+    user_atomic.h
+    user_environment.h
+    user_inpcb.h
+    user_ip_icmp.h
+    user_ip6_var.h
+    user_malloc.h
+    user_mbuf.h
+    user_queue.h
+    user_recv_thread.h
+    user_route.h
+    user_socketvar.h
+    user_uma.h
+    usrsctp.h
+)
+
+list(APPEND usrsctp_netinet_HEADERS
+    netinet/sctp_asconf.h
+    netinet/sctp_auth.h
+    netinet/sctp_bsd_addr.h
+    netinet/sctp_callout.h
+    netinet/sctp_constants.h
+    netinet/sctp_crc32.h
+    netinet/sctp_header.h
+    netinet/sctp_indata.h
+    netinet/sctp_input.h
+    netinet/sctp_lock_userspace.h
+    netinet/sctp_os_userspace.h
+    netinet/sctp_os.h
+    netinet/sctp_output.h
+    netinet/sctp_pcb.h
+    netinet/sctp_peeloff.h
+    netinet/sctp_process_lock.h
+    netinet/sctp_sha1.h
+    netinet/sctp_structs.h
+    netinet/sctp_sysctl.h
+    netinet/sctp_timer.h
+    netinet/sctp_uio.h
+    netinet/sctp_var.h
+    netinet/sctputil.h
+    netinet/sctp.h
+)
+
+list(APPEND usrsctp_netinet6_HEADERS
+    netinet6/sctp6_var.h
+)
+
+list(APPEND usrsctp_HEADERS
+    ${usrsctp_root_HEADERS}
+    ${usrsctp_netinet_HEADERS}
+    ${usrsctp_netinet6_HEADERS}
+)
+
+list(APPEND usrsctp_SOURCES
+    netinet/sctp_asconf.c
+    netinet/sctp_auth.c
+    netinet/sctp_bsd_addr.c
+    netinet/sctp_callout.c
+    netinet/sctp_cc_functions.c
+    netinet/sctp_crc32.c
+    netinet/sctp_indata.c
+    netinet/sctp_input.c
+    netinet/sctp_output.c
+    netinet/sctp_pcb.c
+    netinet/sctp_peeloff.c
+    netinet/sctp_sha1.c
+    netinet/sctp_ss_functions.c
+    netinet/sctp_sysctl.c
+    netinet/sctp_timer.c
+    netinet/sctp_userspace.c
+    netinet/sctp_usrreq.c
+    netinet/sctputil.c
+    netinet6/sctp6_usrreq.c
+    user_environment.c
+    user_mbuf.c
+    user_recv_thread.c
+    user_socket.c
+)
+
+add_library(usrsctp SHARED ${usrsctp_SOURCES} ${usrsctp_HEADERS})
+add_library(usrsctp-static STATIC ${usrsctp_SOURCES} ${usrsctp_HEADERS})
+
+if (WIN32)
+    message(STATUS "link library: ws2_32")
+    target_link_libraries(usrsctp ws2_32)
+    target_link_libraries(usrsctp-static ws2_32)
+endif ()
+
+set_target_properties(usrsctp-static PROPERTIES OUTPUT_NAME "usrsctp")
+set_target_properties(usrsctp PROPERTIES IMPORT_SUFFIX "_import.lib")
+set_target_properties(usrsctp PROPERTIES SOVERSION 1 VERSION 1.0.0)
+
+if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
+    SET(CMAKE_INSTALL_LIBDIR lib)
+endif ()
+
+
+#################################################
+# INSTALL LIBRARY AND HEADER
+#################################################
+
+install(TARGETS usrsctp usrsctp-static DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES usrsctp.h DESTINATION include)

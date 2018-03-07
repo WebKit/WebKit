@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/fec_controller_rplr_based.h"
+#include "modules/audio_coding/audio_network_adaptor/fec_controller_rplr_based.h"
 
 #include <limits>
 #include <utility>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -48,9 +48,9 @@ void FecControllerRplrBased::MakeDecision(AudioEncoderRuntimeConfig* config) {
 
   fec_enabled_ = fec_enabled_ ? !FecDisablingDecision() : FecEnablingDecision();
 
-  config->enable_fec = rtc::Optional<bool>(fec_enabled_);
-  config->uplink_packet_loss_fraction = rtc::Optional<float>(
-      uplink_recoverable_packet_loss_ ? *uplink_recoverable_packet_loss_ : 0.0);
+  config->enable_fec = fec_enabled_;
+  config->uplink_packet_loss_fraction =
+      uplink_recoverable_packet_loss_ ? *uplink_recoverable_packet_loss_ : 0.0;
 }
 
 bool FecControllerRplrBased::FecEnablingDecision() const {

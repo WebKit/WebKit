@@ -8,59 +8,91 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "RTCFileVideoCapturer.h"
+#import "WebRTC/RTCFileVideoCapturer.h"
 
 #import "WebRTC/RTCLogging.h"
+#import "WebRTC/RTCVideoFrameBuffer.h"
+
+NSString *const kRTCFileVideoCapturerErrorDomain = @"org.webrtc.RTCFileVideoCapturer";
+
+typedef NS_ENUM(NSInteger, RTCFileVideoCapturerErrorCode) {
+  RTCFileVideoCapturerErrorCode_CapturerRunning = 2000,
+  RTCFileVideoCapturerErrorCode_FileNotFound
+};
+
+typedef NS_ENUM(NSInteger, RTCFileVideoCapturerStatus) {
+  RTCFileVideoCapturerStatusNotInitialized,
+  RTCFileVideoCapturerStatusStarted,
+  RTCFileVideoCapturerStatusStopped
+};
 
 @implementation RTCFileVideoCapturer {
   AVAssetReader *_reader;
   AVAssetReaderTrackOutput *_outTrack;
-  BOOL _capturerStopped;
+  RTCFileVideoCapturerStatus _status;
   CMTime _lastPresentationTime;
   dispatch_queue_t _frameQueue;
+  NSURL *_fileURL;
 }
 
-- (void)startCapturingFromFileNamed:(NSString *)nameOfFile {
+- (void)startCapturingFromFileNamed:(NSString *)nameOfFile
+                            onError:(RTCFileVideoCapturerErrorBlock)errorBlock {
+  if (_status == RTCFileVideoCapturerStatusStarted) {
+    NSError *error =
+        [NSError errorWithDomain:kRTCFileVideoCapturerErrorDomain
+                            code:RTCFileVideoCapturerErrorCode_CapturerRunning
+                        userInfo:@{NSUnderlyingErrorKey : @"Capturer has been started."}];
+
+    errorBlock(error);
+    return;
+  } else {
+    _status = RTCFileVideoCapturerStatusStarted;
+  }
+
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    if (_reader && _reader.status == AVAssetReaderStatusReading) {
-      RTCLog("Capturer exists and reads another file. Start capture request failed.");
-      return;
-    }
     NSString *pathForFile = [self pathForFileName:nameOfFile];
     if (!pathForFile) {
-      RTCLog("File %@ not found in bundle", nameOfFile);
+      NSString *errorString =
+          [NSString stringWithFormat:@"File %@ not found in bundle", nameOfFile];
+      NSError *error = [NSError errorWithDomain:kRTCFileVideoCapturerErrorDomain
+                                           code:RTCFileVideoCapturerErrorCode_FileNotFound
+                                       userInfo:@{NSUnderlyingErrorKey : errorString}];
+      errorBlock(error);
       return;
     }
 
     _lastPresentationTime = CMTimeMake(0, 0);
 
-    NSURL *URLForFile = [NSURL fileURLWithPath:pathForFile];
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:URLForFile options:nil];
-
-    NSArray *allTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-    NSError *error = nil;
-    _reader = [[AVAssetReader alloc] initWithAsset:asset error:&error];
-    if (error) {
-      RTCLog("File reader failed with error: %@", error);
-      return;
-    }
-
-    NSDictionary *options = @{
-      (NSString *)
-      kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
-    };
-    _outTrack = [[AVAssetReaderTrackOutput alloc] initWithTrack:allTracks.firstObject
-                                                 outputSettings:options];
-    [_reader addOutput:_outTrack];
-
-    [_reader startReading];
-    RTCLog(@"File capturer started reading");
-    [self readNextBuffer];
+    _fileURL = [NSURL fileURLWithPath:pathForFile];
+    [self setupReaderOnError:errorBlock];
   });
 }
 
+- (void)setupReaderOnError:(RTCFileVideoCapturerErrorBlock)errorBlock {
+  AVURLAsset *asset = [AVURLAsset URLAssetWithURL:_fileURL options:nil];
+
+  NSArray *allTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+  NSError *error = nil;
+
+  _reader = [[AVAssetReader alloc] initWithAsset:asset error:&error];
+  if (error) {
+    errorBlock(error);
+    return;
+  }
+
+  NSDictionary *options = @{
+    (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
+  };
+  _outTrack =
+      [[AVAssetReaderTrackOutput alloc] initWithTrack:allTracks.firstObject outputSettings:options];
+  [_reader addOutput:_outTrack];
+
+  [_reader startReading];
+  RTCLog(@"File capturer started reading");
+  [self readNextBuffer];
+}
 - (void)stopCapture {
-  _capturerStopped = YES;
+  _status = RTCFileVideoCapturerStatusStopped;
   RTCLog(@"File capturer stopped.");
 }
 
@@ -87,9 +119,16 @@
 }
 
 - (void)readNextBuffer {
-  if (_reader.status != AVAssetReaderStatusReading || _capturerStopped) {
+  if (_status == RTCFileVideoCapturerStatusStopped) {
     [_reader cancelReading];
     _reader = nil;
+    return;
+  }
+
+  if (_reader.status == AVAssetReaderStatusCompleted) {
+    [_reader cancelReading];
+    _reader = nil;
+    [self setupReaderOnError:nil];
     return;
   }
 
@@ -133,10 +172,11 @@
       return;
     }
 
+    RTCCVPixelBuffer *rtcPixelBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
     NSTimeInterval timeStampSeconds = CACurrentMediaTime();
     int64_t timeStampNs = lroundf(timeStampSeconds * NSEC_PER_SEC);
     RTCVideoFrame *videoFrame =
-        [[RTCVideoFrame alloc] initWithPixelBuffer:pixelBuffer rotation:0 timeStampNs:timeStampNs];
+        [[RTCVideoFrame alloc] initWithBuffer:rtcPixelBuffer rotation:0 timeStampNs:timeStampNs];
     CFRelease(sampleBuffer);
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

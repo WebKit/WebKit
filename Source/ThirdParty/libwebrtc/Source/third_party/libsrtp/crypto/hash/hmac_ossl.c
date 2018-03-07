@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright(c) 2013, Cisco Systems, Inc.
+ * Copyright(c) 2013-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -125,14 +125,13 @@ static srtp_err_status_t srtp_hmac_dealloc (srtp_auth_t *a)
     HMAC_CTX_cleanup(hmac_ctx);
 
     /* zeroize entire state*/
-    octet_string_set_to_zero((uint8_t*)a,
-                             sizeof(HMAC_CTX) + sizeof(srtp_auth_t));
+    octet_string_set_to_zero(a, sizeof(HMAC_CTX) + sizeof(srtp_auth_t));
 
 #else
     HMAC_CTX_free(hmac_ctx);
 
     /* zeroize entire state*/
-    octet_string_set_to_zero((uint8_t*)a, sizeof(srtp_auth_t));
+    octet_string_set_to_zero(a, sizeof(srtp_auth_t));
 #endif
 
     /* free memory */

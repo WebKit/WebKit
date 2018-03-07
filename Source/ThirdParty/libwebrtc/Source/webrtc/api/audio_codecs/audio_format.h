@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_AUDIO_CODECS_AUDIO_FORMAT_H_
-#define WEBRTC_API_AUDIO_CODECS_AUDIO_FORMAT_H_
+#ifndef API_AUDIO_CODECS_AUDIO_FORMAT_H_
+#define API_AUDIO_CODECS_AUDIO_FORMAT_H_
 
 #include <map>
 #include <ostream>
 #include <string>
 #include <utility>
 
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -139,4 +139,4 @@ std::ostream& operator<<(std::ostream& os, const AudioCodecSpec& acs);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_AUDIO_CODECS_AUDIO_FORMAT_H_
+#endif  // API_AUDIO_CODECS_AUDIO_FORMAT_H_

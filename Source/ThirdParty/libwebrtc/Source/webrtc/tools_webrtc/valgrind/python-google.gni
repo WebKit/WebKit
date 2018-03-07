@@ -1,0 +1,27 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+python_google = [
+  "../tools/python/google/__init__.py",
+  "../tools/python/google/gethash_timer.py",
+  "../tools/python/google/httpd_config/httpd.conf",
+  "../tools/python/google/httpd_config/httpd2.conf",
+  "../tools/python/google/httpd_config/httpd2.pem",
+  "../tools/python/google/httpd_config/httpd2_linux.conf",
+  "../tools/python/google/httpd_config/httpd2_mac.conf",
+  "../tools/python/google/httpd_config/mime.types",
+  "../tools/python/google/httpd_config/root_ca_cert.pem",
+  "../tools/python/google/httpd_utils.py",
+  "../tools/python/google/logging_utils.py",
+  "../tools/python/google/path_utils.py",
+  "../tools/python/google/platform_utils.py",
+  "../tools/python/google/platform_utils_linux.py",
+  "../tools/python/google/platform_utils_mac.py",
+  "../tools/python/google/platform_utils_win.py",
+  "../tools/python/google/process_utils.py",
+]

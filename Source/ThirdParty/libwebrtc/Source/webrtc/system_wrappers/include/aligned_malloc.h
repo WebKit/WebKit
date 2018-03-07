@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ALIGNED_MALLOC_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ALIGNED_MALLOC_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_ALIGNED_MALLOC_H_
+#define SYSTEM_WRAPPERS_INCLUDE_ALIGNED_MALLOC_H_
 
 // The functions declared here
 // 1) Allocates block of aligned memory.
@@ -36,12 +36,12 @@ void AlignedFree(void* mem_block);
 
 // Templated versions to facilitate usage of aligned malloc without casting
 // to and from void*.
-template<typename T>
+template <typename T>
 T* GetRightAlign(const T* ptr, size_t alignment) {
-  return reinterpret_cast<T*>(GetRightAlign(reinterpret_cast<const void*>(ptr),
-                                            alignment));
+  return reinterpret_cast<T*>(
+      GetRightAlign(reinterpret_cast<const void*>(ptr), alignment));
 }
-template<typename T>
+template <typename T>
 T* AlignedMalloc(size_t size, size_t alignment) {
   return reinterpret_cast<T*>(AlignedMalloc(size, alignment));
 }
@@ -49,11 +49,9 @@ T* AlignedMalloc(size_t size, size_t alignment) {
 // Deleter for use with unique_ptr. E.g., use as
 //   std::unique_ptr<Foo, AlignedFreeDeleter> foo;
 struct AlignedFreeDeleter {
-  inline void operator()(void* ptr) const {
-    AlignedFree(ptr);
-  }
+  inline void operator()(void* ptr) const { AlignedFree(ptr); }
 };
 
 }  // namespace webrtc
 
-#endif // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ALIGNED_MALLOC_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_ALIGNED_MALLOC_H_

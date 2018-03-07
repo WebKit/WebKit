@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -52,14 +52,14 @@ bool Tmmbn::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.fmt(), kFeedbackMessageType);
 
   if (packet.payload_size_bytes() < kCommonFeedbackLength) {
-    LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
-                    << " is too small for TMMBN.";
+    RTC_LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
+                        << " is too small for TMMBN.";
     return false;
   }
   size_t items_size_bytes = packet.payload_size_bytes() - kCommonFeedbackLength;
   if (items_size_bytes % TmmbItem::kLength != 0) {
-    LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
-                    << " is not valid for TMMBN.";
+    RTC_LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
+                        << " is not valid for TMMBN.";
     return false;
   }
   ParseCommonFeedback(packet.payload());

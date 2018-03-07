@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
+#define MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
 
 #include <list>
 #include <memory>
 #include <vector>
 
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/forward_error_correction.h"
 
 namespace webrtc {
 
@@ -47,11 +47,6 @@ class UlpfecGenerator {
  public:
   UlpfecGenerator();
   ~UlpfecGenerator();
-
-  static std::unique_ptr<RedPacket> BuildRedPacket(const uint8_t* data_buffer,
-                                                   size_t payload_length,
-                                                   size_t rtp_header_length,
-                                                   int red_payload_type);
 
   void SetFecParameters(const FecProtectionParams& params);
 
@@ -112,4 +107,4 @@ class UlpfecGenerator {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_

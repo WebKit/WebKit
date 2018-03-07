@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 public class Camera1CapturerUsingByteBufferTest {
   static final String TAG = "Camera1CapturerUsingByteBufferTest";
 
-  private class TestObjectFactory extends CameraVideoCapturerTestFixtures.TestObjectFactory {
+  private static class TestObjectFactory extends CameraVideoCapturerTestFixtures.TestObjectFactory {
     @Override
     public boolean isCapturingToTexture() {
       return false;

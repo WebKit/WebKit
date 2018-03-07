@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_mixer/frame_combiner.h"
+#include "modules/audio_mixer/frame_combiner.h"
 
 #include <numeric>
 #include <sstream>
 #include <string>
 
-#include "webrtc/audio/utility/audio_frame_operations.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_mixer/gain_change_calculator.h"
-#include "webrtc/modules/audio_mixer/sine_wave_generator.h"
-#include "webrtc/test/gtest.h"
+#include "audio/utility/audio_frame_operations.h"
+#include "modules/audio_mixer/gain_change_calculator.h"
+#include "modules/audio_mixer/sine_wave_generator.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -53,8 +53,7 @@ AudioFrame audio_frame_for_mixing;
 
 void SetUpFrames(int sample_rate_hz, int number_of_channels) {
   for (auto* frame : {&frame1, &frame2}) {
-    frame->UpdateFrame(-1, 0, nullptr,
-                       rtc::CheckedDivExact(sample_rate_hz, 100),
+    frame->UpdateFrame(0, nullptr, rtc::CheckedDivExact(sample_rate_hz, 100),
                        sample_rate_hz, AudioFrame::kNormalSpeech,
                        AudioFrame::kVadActive, number_of_channels);
   }

@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_FRAME_LENGTH_CONTROLLER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_FRAME_LENGTH_CONTROLLER_H_
+#ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_FRAME_LENGTH_CONTROLLER_H_
+#define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_FRAME_LENGTH_CONTROLLER_H_
 
 #include <map>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/controller.h"
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -35,6 +35,8 @@ class FrameLengthController final : public Controller {
            int min_encoder_bitrate_bps,
            float fl_increasing_packet_loss_fraction,
            float fl_decreasing_packet_loss_fraction,
+           int fl_increase_overhead_offset,
+           int fl_decrease_overhead_offset,
            std::map<FrameLengthChange, int> fl_changing_bandwidths_bps);
     Config(const Config& other);
     ~Config();
@@ -45,6 +47,10 @@ class FrameLengthController final : public Controller {
     float fl_increasing_packet_loss_fraction;
     // Uplink packet loss fraction below which frame length should decrease.
     float fl_decreasing_packet_loss_fraction;
+    // Offset to apply to overhead calculation when increasing frame length.
+    int fl_increase_overhead_offset;
+    // Offset to apply to overhead calculation when decreasing frame length.
+    int fl_decrease_overhead_offset;
     std::map<FrameLengthChange, int> fl_changing_bandwidths_bps;
   };
 
@@ -73,9 +79,13 @@ class FrameLengthController final : public Controller {
 
   rtc::Optional<size_t> overhead_bytes_per_packet_;
 
+  // True if the previous frame length decision was an increase, otherwise
+  // false.
+  bool prev_decision_increase_ = false;
+
   RTC_DISALLOW_COPY_AND_ASSIGN(FrameLengthController);
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_FRAME_LENGTH_CONTROLLER_H_
+#endif  // MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_FRAME_LENGTH_CONTROLLER_H_

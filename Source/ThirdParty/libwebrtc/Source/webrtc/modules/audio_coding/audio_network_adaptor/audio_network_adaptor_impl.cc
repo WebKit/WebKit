@@ -8,12 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
+#include "modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
 
 #include <utility>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/timeutils.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -40,75 +41,78 @@ AudioNetworkAdaptorImpl::AudioNetworkAdaptorImpl(
                                    kEventLogMinBitrateChangeBps,
                                    kEventLogMinBitrateChangeFraction,
                                    kEventLogMinPacketLossChangeFraction)
-              : nullptr) {
+              : nullptr),
+      enable_bitrate_adaptation_(
+          webrtc::field_trial::IsEnabled("WebRTC-Audio-BitrateAdaptation")),
+      enable_dtx_adaptation_(
+          webrtc::field_trial::IsEnabled("WebRTC-Audio-DtxAdaptation")),
+      enable_fec_adaptation_(
+          webrtc::field_trial::IsEnabled("WebRTC-Audio-FecAdaptation")),
+      enable_channel_adaptation_(
+          webrtc::field_trial::IsEnabled("WebRTC-Audio-ChannelAdaptation")),
+      enable_frame_length_adaptation_(webrtc::field_trial::IsEnabled(
+          "WebRTC-Audio-FrameLengthAdaptation")) {
   RTC_DCHECK(controller_manager_);
 }
 
 AudioNetworkAdaptorImpl::~AudioNetworkAdaptorImpl() = default;
 
 void AudioNetworkAdaptorImpl::SetUplinkBandwidth(int uplink_bandwidth_bps) {
-  last_metrics_.uplink_bandwidth_bps = rtc::Optional<int>(uplink_bandwidth_bps);
+  last_metrics_.uplink_bandwidth_bps = uplink_bandwidth_bps;
   DumpNetworkMetrics();
 
   Controller::NetworkMetrics network_metrics;
-  network_metrics.uplink_bandwidth_bps =
-      rtc::Optional<int>(uplink_bandwidth_bps);
+  network_metrics.uplink_bandwidth_bps = uplink_bandwidth_bps;
   UpdateNetworkMetrics(network_metrics);
 }
 
 void AudioNetworkAdaptorImpl::SetUplinkPacketLossFraction(
     float uplink_packet_loss_fraction) {
-  last_metrics_.uplink_packet_loss_fraction =
-      rtc::Optional<float>(uplink_packet_loss_fraction);
+  last_metrics_.uplink_packet_loss_fraction = uplink_packet_loss_fraction;
   DumpNetworkMetrics();
 
   Controller::NetworkMetrics network_metrics;
-  network_metrics.uplink_packet_loss_fraction =
-      rtc::Optional<float>(uplink_packet_loss_fraction);
+  network_metrics.uplink_packet_loss_fraction = uplink_packet_loss_fraction;
   UpdateNetworkMetrics(network_metrics);
 }
 
 void AudioNetworkAdaptorImpl::SetUplinkRecoverablePacketLossFraction(
     float uplink_recoverable_packet_loss_fraction) {
   last_metrics_.uplink_recoverable_packet_loss_fraction =
-      rtc::Optional<float>(uplink_recoverable_packet_loss_fraction);
+      uplink_recoverable_packet_loss_fraction;
   DumpNetworkMetrics();
 
   Controller::NetworkMetrics network_metrics;
   network_metrics.uplink_recoverable_packet_loss_fraction =
-      rtc::Optional<float>(uplink_recoverable_packet_loss_fraction);
+      uplink_recoverable_packet_loss_fraction;
   UpdateNetworkMetrics(network_metrics);
 }
 
 void AudioNetworkAdaptorImpl::SetRtt(int rtt_ms) {
-  last_metrics_.rtt_ms = rtc::Optional<int>(rtt_ms);
+  last_metrics_.rtt_ms = rtt_ms;
   DumpNetworkMetrics();
 
   Controller::NetworkMetrics network_metrics;
-  network_metrics.rtt_ms = rtc::Optional<int>(rtt_ms);
+  network_metrics.rtt_ms = rtt_ms;
   UpdateNetworkMetrics(network_metrics);
 }
 
 void AudioNetworkAdaptorImpl::SetTargetAudioBitrate(
     int target_audio_bitrate_bps) {
-  last_metrics_.target_audio_bitrate_bps =
-      rtc::Optional<int>(target_audio_bitrate_bps);
+  last_metrics_.target_audio_bitrate_bps = target_audio_bitrate_bps;
   DumpNetworkMetrics();
 
   Controller::NetworkMetrics network_metrics;
-  network_metrics.target_audio_bitrate_bps =
-      rtc::Optional<int>(target_audio_bitrate_bps);
+  network_metrics.target_audio_bitrate_bps = target_audio_bitrate_bps;
   UpdateNetworkMetrics(network_metrics);
 }
 
 void AudioNetworkAdaptorImpl::SetOverhead(size_t overhead_bytes_per_packet) {
-  last_metrics_.overhead_bytes_per_packet =
-      rtc::Optional<size_t>(overhead_bytes_per_packet);
+  last_metrics_.overhead_bytes_per_packet = overhead_bytes_per_packet;
   DumpNetworkMetrics();
 
   Controller::NetworkMetrics network_metrics;
-  network_metrics.overhead_bytes_per_packet =
-      rtc::Optional<size_t>(overhead_bytes_per_packet);
+  network_metrics.overhead_bytes_per_packet = overhead_bytes_per_packet;
   UpdateNetworkMetrics(network_metrics);
 }
 
@@ -117,6 +121,54 @@ AudioEncoderRuntimeConfig AudioNetworkAdaptorImpl::GetEncoderRuntimeConfig() {
   for (auto& controller :
        controller_manager_->GetSortedControllers(last_metrics_))
     controller->MakeDecision(&config);
+
+  // Update ANA stats.
+  auto increment_opt = [](rtc::Optional<uint32_t>& a) {
+    a = a.value_or(0) + 1;
+  };
+  if (prev_config_) {
+    if (config.bitrate_bps != prev_config_->bitrate_bps) {
+      increment_opt(stats_.bitrate_action_counter);
+    }
+    if (config.enable_dtx != prev_config_->enable_dtx) {
+      increment_opt(stats_.dtx_action_counter);
+    }
+    if (config.enable_fec != prev_config_->enable_fec) {
+      increment_opt(stats_.fec_action_counter);
+    }
+    if (config.frame_length_ms && prev_config_->frame_length_ms) {
+      if (*config.frame_length_ms > *prev_config_->frame_length_ms) {
+        increment_opt(stats_.frame_length_increase_counter);
+      } else if (*config.frame_length_ms < *prev_config_->frame_length_ms) {
+        increment_opt(stats_.frame_length_decrease_counter);
+      }
+    }
+    if (config.num_channels != prev_config_->num_channels) {
+      increment_opt(stats_.channel_action_counter);
+    }
+    if (config.uplink_packet_loss_fraction) {
+      stats_.uplink_packet_loss_fraction = *config.uplink_packet_loss_fraction;
+    }
+  }
+  prev_config_ = config;
+
+  // Prevent certain controllers from taking action (determined by field trials)
+  if (!enable_bitrate_adaptation_ && config.bitrate_bps) {
+    config.bitrate_bps.reset();
+  }
+  if (!enable_dtx_adaptation_ && config.enable_dtx) {
+    config.enable_dtx.reset();
+  }
+  if (!enable_fec_adaptation_ && config.enable_fec) {
+    config.enable_fec.reset();
+    config.uplink_packet_loss_fraction.reset();
+  }
+  if (!enable_frame_length_adaptation_ && config.frame_length_ms) {
+    config.frame_length_ms.reset();
+  }
+  if (!enable_channel_adaptation_ && config.num_channels) {
+    config.num_channels.reset();
+  }
 
   if (debug_dump_writer_)
     debug_dump_writer_->DumpEncoderRuntimeConfig(config, rtc::TimeMillis());
@@ -133,6 +185,10 @@ void AudioNetworkAdaptorImpl::StartDebugDump(FILE* file_handle) {
 
 void AudioNetworkAdaptorImpl::StopDebugDump() {
   debug_dump_writer_.reset(nullptr);
+}
+
+ANAStats AudioNetworkAdaptorImpl::GetStats() const {
+  return stats_;
 }
 
 void AudioNetworkAdaptorImpl::DumpNetworkMetrics() {

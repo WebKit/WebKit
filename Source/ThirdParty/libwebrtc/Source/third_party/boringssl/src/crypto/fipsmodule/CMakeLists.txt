@@ -193,14 +193,3 @@ else()
     ${BCM_ASM_SOURCES}
   )
 endif()
-
-add_executable(
-  example_mul
-
-  ec/example_mul.c
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(example_mul crypto)
-add_dependencies(all_tests example_mul)

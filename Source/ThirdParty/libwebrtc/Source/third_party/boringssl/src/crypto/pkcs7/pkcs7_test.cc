@@ -25,8 +25,8 @@
 #include "../test/test_util.h"
 
 
-/* kPKCS7NSS contains the certificate chain of mail.google.com, as saved by NSS
- * using the Chrome UI. */
+// kPKCS7NSS contains the certificate chain of mail.google.com, as saved by NSS
+// using the Chrome UI.
 static const uint8_t kPKCS7NSS[] = {
     0x30, 0x80, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07,
     0x02, 0xa0, 0x80, 0x30, 0x80, 0x02, 0x01, 0x01, 0x31, 0x00, 0x30, 0x80,
@@ -272,7 +272,7 @@ static const uint8_t kPKCS7NSS[] = {
     0x00, 0x00, 0x00,
 };
 
-/* kPKCS7Windows is the Equifax root certificate, as exported by Windows 7. */
+// kPKCS7Windows is the Equifax root certificate, as exported by Windows 7.
 static const uint8_t kPKCS7Windows[] = {
     0x30, 0x82, 0x02, 0xb1, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d,
     0x01, 0x07, 0x02, 0xa0, 0x82, 0x02, 0xa2, 0x30, 0x82, 0x02, 0x9e, 0x02,
@@ -334,8 +334,8 @@ static const uint8_t kPKCS7Windows[] = {
     0xcd, 0x5a, 0x2a, 0x82, 0xb2, 0x37, 0x79, 0x31, 0x00,
 };
 
-/* kOpenSSLCRL is the Equifax CRL, converted to PKCS#7 form by:
- *   openssl crl2pkcs7 -inform DER -in secureca.crl  */
+// kOpenSSLCRL is the Equifax CRL, converted to PKCS#7 form by:
+//   openssl crl2pkcs7 -inform DER -in secureca.crl
 static const uint8_t kOpenSSLCRL[] = {
     0x30, 0x82, 0x03, 0x85, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d,
     0x01, 0x07, 0x02, 0xa0, 0x82, 0x03, 0x76, 0x30, 0x82, 0x03, 0x72, 0x02,
@@ -415,9 +415,9 @@ static const uint8_t kOpenSSLCRL[] = {
     0xf0, 0x00, 0x54, 0x31, 0x00,
 };
 
-/* kPEMCert is the result of exporting the mail.google.com certificate from
- * Chrome and then running it through:
- *   openssl pkcs7 -inform DER -in mail.google.com -outform PEM */
+// kPEMCert is the result of exporting the mail.google.com certificate from
+// Chrome and then running it through:
+//   openssl pkcs7 -inform DER -in mail.google.com -outform PEM
 static const char kPEMCert[] =
     "-----BEGIN PKCS7-----\n"
     "MIID+wYJKoZIhvcNAQcCoIID7DCCA+gCAQExADALBgkqhkiG9w0BBwGgggPQMIID\n"

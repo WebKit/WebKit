@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
+#include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 
 #include <utility>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -129,8 +130,15 @@ bool FallbackDesktopCapturerWrapper::SelectSource(SourceId id) {
   if (main_capturer_permanent_error_) {
     return secondary_capturer_->SelectSource(id);
   }
-  return main_capturer_->SelectSource(id) &&
-         secondary_capturer_->SelectSource(id);
+  const bool main_capturer_result = main_capturer_->SelectSource(id);
+  RTC_HISTOGRAM_BOOLEAN(
+      "WebRTC.DesktopCapture.PrimaryCapturerSelectSourceError",
+      main_capturer_result);
+  if (!main_capturer_result) {
+    main_capturer_permanent_error_ = true;
+  }
+
+  return secondary_capturer_->SelectSource(id);
 }
 
 bool FallbackDesktopCapturerWrapper::FocusOnSelectedSource() {
@@ -141,10 +149,23 @@ bool FallbackDesktopCapturerWrapper::FocusOnSelectedSource() {
          secondary_capturer_->FocusOnSelectedSource();
 }
 
+bool FallbackDesktopCapturerWrapper::IsOccluded(const DesktopVector& pos) {
+  // Returns true if either capturer returns true.
+  if (main_capturer_permanent_error_) {
+    return secondary_capturer_->IsOccluded(pos);
+  }
+  return main_capturer_->IsOccluded(pos) ||
+         secondary_capturer_->IsOccluded(pos);
+}
+
 void FallbackDesktopCapturerWrapper::OnCaptureResult(
     Result result,
     std::unique_ptr<DesktopFrame> frame) {
   RTC_DCHECK(callback_);
+  RTC_HISTOGRAM_BOOLEAN("WebRTC.DesktopCapture.PrimaryCapturerError",
+                        result != Result::SUCCESS);
+  RTC_HISTOGRAM_BOOLEAN("WebRTC.DesktopCapture.PrimaryCapturerPermanentError",
+                        result == Result::ERROR_PERMANENT);
   if (result == Result::SUCCESS) {
     callback_->OnCaptureResult(result, std::move(frame));
     return;

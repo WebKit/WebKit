@@ -8,12 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/opus/opus_interface.h"
-#include "webrtc/modules/audio_coding/codecs/opus/opus_inst.h"
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_quality_test.h"
+#include "modules/audio_coding/codecs/opus/opus_interface.h"
+#include "modules/audio_coding/codecs/opus/opus_inst.h"
+#include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
+#include "rtc_base/flags.h"
 
-using google::RegisterFlagValidator;
-using google::ParseCommandLineFlags;
 using testing::InitGoogleTest;
 
 namespace webrtc {
@@ -23,79 +22,24 @@ namespace {
 static const int kOpusBlockDurationMs = 20;
 static const int kOpusSamplingKhz = 48;
 
-// Define switch for bit rate.
-static bool ValidateBitRate(const char* flagname, int32_t value) {
-  if (value >= 6 && value <= 510)
-    return true;
-  printf("Invalid bit rate, should be between 6 and 510 kbps.");
-  return false;
-}
+DEFINE_int(bit_rate_kbps, 32, "Target bit rate (kbps).");
 
-DEFINE_int32(bit_rate_kbps, 32, "Target bit rate (kbps).");
-
-static const bool bit_rate_dummy =
-    RegisterFlagValidator(&FLAGS_bit_rate_kbps, &ValidateBitRate);
-
-// Define switch for complexity.
-static bool ValidateComplexity(const char* flagname, int32_t value) {
-  if (value >= -1 && value <= 10)
-    return true;
-  printf("Invalid complexity setting, should be between 0 and 10.");
-  return false;
-}
-
-DEFINE_int32(complexity, 10, "Complexity: 0 ~ 10 -- defined as in Opus"
+DEFINE_int(complexity, 10, "Complexity: 0 ~ 10 -- defined as in Opus"
     "specification.");
 
-static const bool complexity_dummy =
-    RegisterFlagValidator(&FLAGS_complexity, &ValidateComplexity);
+DEFINE_int(maxplaybackrate, 48000, "Maximum playback rate (Hz).");
 
-// Define switch for maxplaybackrate
-DEFINE_int32(maxplaybackrate, 48000, "Maximum playback rate (Hz).");
+DEFINE_int(application, 0, "Application mode: 0 -- VOIP, 1 -- Audio.");
 
-// Define switch for application mode.
-static bool ValidateApplication(const char* flagname, int32_t value) {
-  if (value != 0 && value != 1) {
-    printf("Invalid application mode, should be 0 or 1.");
-    return false;
-  }
-  return true;
-}
-
-DEFINE_int32(application, 0, "Application mode: 0 -- VOIP, 1 -- Audio.");
-
-static const bool application_dummy =
-    RegisterFlagValidator(&FLAGS_application, &ValidateApplication);
-
-// Define switch for reported packet loss rate.
-static bool ValidatePacketLossRate(const char* flagname, int32_t value) {
-  if (value >= 0 && value <= 100)
-    return true;
-  printf("Invalid packet loss percentile, should be between 0 and 100.");
-  return false;
-}
-
-DEFINE_int32(reported_loss_rate, 10, "Reported percentile of packet loss.");
-
-static const bool reported_loss_rate_dummy =
-    RegisterFlagValidator(&FLAGS_reported_loss_rate, &ValidatePacketLossRate);
+DEFINE_int(reported_loss_rate, 10, "Reported percentile of packet loss.");
 
 DEFINE_bool(fec, false, "Enable FEC for encoding (-nofec to disable).");
 
 DEFINE_bool(dtx, false, "Enable DTX for encoding (-nodtx to disable).");
 
-// Define switch for number of sub packets to repacketize.
-static bool ValidateSubPackets(const char* flagname, int32_t value) {
-  if (value >= 1 && value <= 3)
-    return true;
-  printf("Invalid number of sub packets, should be between 1 and 3.");
-  return false;
-}
-DEFINE_int32(sub_packets, 1, "Number of sub packets to repacketize.");
-static const bool sub_packets_dummy =
-    RegisterFlagValidator(&FLAGS_sub_packets, &ValidateSubPackets);
+DEFINE_int(sub_packets, 1, "Number of sub packets to repacketize.");
 
-}  // namepsace
+}  // namespace
 
 class NetEqOpusQualityTest : public NetEqQualityTest {
  protected:
@@ -119,7 +63,7 @@ class NetEqOpusQualityTest : public NetEqQualityTest {
 };
 
 NetEqOpusQualityTest::NetEqOpusQualityTest()
-    : NetEqQualityTest(kOpusBlockDurationMs * FLAGS_sub_packets,
+    : NetEqQualityTest(kOpusBlockDurationMs * FLAG_sub_packets,
                        kOpusSamplingKhz,
                        kOpusSamplingKhz,
                        NetEqDecoder::kDecoderOpus),
@@ -127,18 +71,34 @@ NetEqOpusQualityTest::NetEqOpusQualityTest()
       repacketizer_(NULL),
       sub_block_size_samples_(
           static_cast<size_t>(kOpusBlockDurationMs * kOpusSamplingKhz)),
-      bit_rate_kbps_(FLAGS_bit_rate_kbps),
-      fec_(FLAGS_fec),
-      dtx_(FLAGS_dtx),
-      complexity_(FLAGS_complexity),
-      maxplaybackrate_(FLAGS_maxplaybackrate),
-      target_loss_rate_(FLAGS_reported_loss_rate),
-      sub_packets_(FLAGS_sub_packets) {
+      bit_rate_kbps_(FLAG_bit_rate_kbps),
+      fec_(FLAG_fec),
+      dtx_(FLAG_dtx),
+      complexity_(FLAG_complexity),
+      maxplaybackrate_(FLAG_maxplaybackrate),
+      target_loss_rate_(FLAG_reported_loss_rate),
+      sub_packets_(FLAG_sub_packets) {
+  // Flag validation
+  RTC_CHECK(FLAG_bit_rate_kbps >= 6 && FLAG_bit_rate_kbps <= 510)
+      << "Invalid bit rate, should be between 6 and 510 kbps.";
+
+  RTC_CHECK(FLAG_complexity >= -1 && FLAG_complexity <= 10)
+      << "Invalid complexity setting, should be between 0 and 10.";
+
+  RTC_CHECK(FLAG_application == 0 || FLAG_application == 1)
+      << "Invalid application mode, should be 0 or 1.";
+
+  RTC_CHECK(FLAG_reported_loss_rate >= 0 && FLAG_reported_loss_rate <= 100)
+      << "Invalid packet loss percentile, should be between 0 and 100.";
+
+  RTC_CHECK(FLAG_sub_packets >= 1 && FLAG_sub_packets <= 3)
+      << "Invalid number of sub packets, should be between 1 and 3.";
+
   // Redefine decoder type if input is stereo.
   if (channels_ > 1) {
     decoder_type_ = NetEqDecoder::kDecoderOpus_2ch;
   }
-  application_ = FLAGS_application;
+  application_ = FLAG_application;
 }
 
 void NetEqOpusQualityTest::SetUp() {

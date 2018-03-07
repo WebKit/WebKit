@@ -10,12 +10,12 @@
 
 #include <SLES/OpenSLES_Android.h>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/format_macros.h"
-#include "webrtc/modules/audio_device/android/audio_manager.h"
-#include "webrtc/modules/audio_device/android/build_info.h"
-#include "webrtc/modules/audio_device/android/ensure_initialized.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_device/android/audio_manager.h"
+#include "modules/audio_device/android/build_info.h"
+#include "modules/audio_device/android/ensure_initialized.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/format_macros.h"
+#include "test/gtest.h"
 
 #define PRINT(...) fprintf(stderr, __VA_ARGS__);
 
@@ -134,6 +134,16 @@ TEST_F(AudioManagerTest, IsLowLatencyRecordSupported) {
 TEST_F(AudioManagerTest, IsProAudioSupported) {
   PRINT("%sPro audio support: %s\n", kTag,
         audio_manager()->IsProAudioSupported() ? "Yes" : "No");
+}
+
+// Verify that playout side is configured for mono by default.
+TEST_F(AudioManagerTest, IsStereoPlayoutSupported) {
+  EXPECT_FALSE(audio_manager()->IsStereoPlayoutSupported());
+}
+
+// Verify that recording side is configured for mono by default.
+TEST_F(AudioManagerTest, IsStereoRecordSupported) {
+  EXPECT_FALSE(audio_manager()->IsStereoRecordSupported());
 }
 
 TEST_F(AudioManagerTest, ShowAudioParameterInfo) {

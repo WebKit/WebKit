@@ -11,12 +11,12 @@
 // Syncable is used by RtpStreamsSynchronizer in VideoReceiveStream, and
 // implemented by AudioReceiveStream.
 
-#ifndef WEBRTC_CALL_SYNCABLE_H_
-#define WEBRTC_CALL_SYNCABLE_H_
+#ifndef CALL_SYNCABLE_H_
+#define CALL_SYNCABLE_H_
 
 #include <stdint.h>
 
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -40,4 +40,4 @@ class Syncable {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_CALL_SYNCABLE_H_
+#endif  // CALL_SYNCABLE_H_

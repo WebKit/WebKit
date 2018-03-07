@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_video/h264/sps_parser.h"
+#include "common_video/h264/sps_parser.h"
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/base/bitbuffer.h"
-#include "webrtc/base/logging.h"
+#include "common_video/h264/h264_common.h"
+#include "rtc_base/bitbuffer.h"
+#include "rtc_base/logging.h"
 
 typedef rtc::Optional<webrtc::SpsParser::SpsState> OptionalSps;
 
@@ -108,7 +108,8 @@ rtc::Optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
       // see/use them in practice, so we'll just reject the full sps if we see
       // any provided.
       if (seq_scaling_list_present_flags > 0) {
-        LOG(LS_WARNING) << "SPS contains scaling lists, which are unsupported.";
+        RTC_LOG(LS_WARNING)
+            << "SPS contains scaling lists, which are unsupported.";
         return OptionalSps();
       }
     }

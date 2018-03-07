@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
+#ifndef MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
+#define MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
 
 #include <cstdint>
 #include <map>
 #include <memory>
 #include <vector>
 
-#include "webrtc/modules/include/module_common_types.h"
+#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 
@@ -54,4 +54,4 @@ class H264SpsPpsTracker {
 }  // namespace video_coding
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
+#endif  // MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_

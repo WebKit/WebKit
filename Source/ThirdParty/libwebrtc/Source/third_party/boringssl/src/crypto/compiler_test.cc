@@ -149,11 +149,11 @@ TEST(CompilerTest, IntegerRepresentation) {
   CheckRepresentation(static_cast<uint64_t>(0));
 }
 
-// Converting pointers to integers and doing arithmetic on those values are both
-// defined. Converting those values back into pointers is undefined, but, for
-// aliasing checks, we require that the implementation-defined result of that
-// computation commutes with pointer arithmetic.
 TEST(CompilerTest, PointerRepresentation) {
+  // Converting pointers to integers and doing arithmetic on those values are
+  // both defined. Converting those values back into pointers is undefined,
+  // but, for aliasing checks, we require that the implementation-defined
+  // result of that computation commutes with pointer arithmetic.
   char chars[256];
   for (size_t i = 0; i < sizeof(chars); i++) {
     EXPECT_EQ(reinterpret_cast<uintptr_t>(chars) + i,
@@ -165,4 +165,11 @@ TEST(CompilerTest, PointerRepresentation) {
     EXPECT_EQ(reinterpret_cast<uintptr_t>(ints) + i * sizeof(int),
               reinterpret_cast<uintptr_t>(ints + i));
   }
+
+  // nullptr must be represented by all zeros in memory. This is necessary so
+  // structs may be initialized by memset(0).
+  int *null = nullptr;
+  uint8_t bytes[sizeof(null)] = {0};
+  EXPECT_EQ(Bytes(bytes),
+            Bytes(reinterpret_cast<uint8_t *>(&null), sizeof(null)));
 }

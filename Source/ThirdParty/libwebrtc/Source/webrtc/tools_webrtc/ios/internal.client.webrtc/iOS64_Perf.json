@@ -1,0 +1,28 @@
+{
+  "comments": [
+    "Tests for 64-bit iOS devices."
+  ],
+  "xcode version": "9.0",
+  "gn_args": [
+    "goma_dir=\"$(goma_dir)\"",
+    "is_component_build=false",
+    "is_debug=false",
+    "target_cpu=\"arm64\"",
+    "target_os=\"ios\"",
+    "use_goma=true"
+  ],
+  "env": {
+    "MAC_TOOLCHAIN_REVISION": "8E2002-1"
+  },
+  "use_analyze": false,
+  "additional_compile_targets": [ "all" ],
+  "configuration": "Release",
+  "bucket": "chromium-webrtc",
+  "tests": [
+    {
+      "include": "perf_tests.json",
+      "device type": "iPhone 7",
+      "os": "11.0.3"
+    }
+  ]
+}

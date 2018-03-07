@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_LOCALAUDIOSOURCE_H_
-#define WEBRTC_PC_LOCALAUDIOSOURCE_H_
+#ifndef PC_LOCALAUDIOSOURCE_H_
+#define PC_LOCALAUDIOSOURCE_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/notifier.h"
-#include "webrtc/media/base/mediachannel.h"
+#include "api/mediastreaminterface.h"
+#include "api/notifier.h"
+#include "media/base/mediachannel.h"
 
 // LocalAudioSource implements AudioSourceInterface.
 // This contains settings for switching audio processing on and off.
@@ -52,4 +52,4 @@ class LocalAudioSource : public Notifier<AudioSourceInterface> {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_LOCALAUDIOSOURCE_H_
+#endif  // PC_LOCALAUDIOSOURCE_H_

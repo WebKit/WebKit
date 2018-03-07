@@ -10,15 +10,15 @@
 
 #include <memory>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_payload_registry.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_receiver.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_receiver_impl.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
+#include "modules/rtp_rtcp/include/rtp_receiver.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
+#include "modules/rtp_rtcp/source/rtp_receiver_impl.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -34,7 +34,6 @@ const uint32_t kSsrc1 = 123;
 const uint32_t kSsrc2 = 124;
 const uint32_t kCsrc1 = 111;
 const uint32_t kCsrc2 = 222;
-const bool kInOrder = true;
 
 static uint32_t rtp_timestamp(int64_t time_ms) {
   return static_cast<uint32_t>(time_ms * kTestRate / 1000);
@@ -51,12 +50,8 @@ class RtpReceiverTest : public ::testing::Test {
                                              &mock_rtp_data_,
                                              nullptr,
                                              &rtp_payload_registry_)) {
-    CodecInst voice_codec = {};
-    voice_codec.pltype = kPcmuPayloadType;
-    voice_codec.plfreq = 8000;
-    voice_codec.rate = kTestRate;
-    memcpy(voice_codec.plname, "PCMU", 5);
-    rtp_receiver_->RegisterReceivePayload(voice_codec);
+    rtp_receiver_->RegisterReceivePayload(kPcmuPayloadType,
+                                          SdpAudioFormat("PCMU", 8000, 1));
   }
   ~RtpReceiverTest() {}
 
@@ -90,10 +85,11 @@ TEST_F(RtpReceiverTest, GetSources) {
   header.numCSRCs = 2;
   header.arrOfCSRCs[0] = kCsrc1;
   header.arrOfCSRCs[1] = kCsrc2;
-  PayloadUnion payload_specific = {AudioPayload()};
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
 
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   auto sources = rtp_receiver_->GetSources();
   // One SSRC source and two CSRC sources.
   EXPECT_THAT(sources, UnorderedElementsAre(
@@ -105,7 +101,7 @@ TEST_F(RtpReceiverTest, GetSources) {
   // contributing source object with same source id and updated timestamp.
   fake_clock_.AdvanceTimeMilliseconds(1);
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   sources = rtp_receiver_->GetSources();
   now_ms = fake_clock_.TimeInMilliseconds();
   EXPECT_THAT(sources, UnorderedElementsAre(
@@ -140,10 +136,11 @@ TEST_F(RtpReceiverTest, GetSourcesChangeSSRC) {
   header.payloadType = kPcmuPayloadType;
   header.ssrc = kSsrc1;
   header.timestamp = rtp_timestamp(now_ms);
-  PayloadUnion payload_specific = {AudioPayload()};
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
 
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   auto sources = rtp_receiver_->GetSources();
   EXPECT_THAT(sources, UnorderedElementsAre(
                            RtpSource(now_ms, kSsrc1, RtpSourceType::SSRC)));
@@ -155,7 +152,7 @@ TEST_F(RtpReceiverTest, GetSourcesChangeSSRC) {
   header.ssrc = kSsrc2;
   header.timestamp = rtp_timestamp(now_ms);
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   sources = rtp_receiver_->GetSources();
   EXPECT_THAT(sources, UnorderedElementsAre(
                            RtpSource(prev_time_ms, kSsrc1, RtpSourceType::SSRC),
@@ -169,7 +166,7 @@ TEST_F(RtpReceiverTest, GetSourcesChangeSSRC) {
   prev_time_ms = now_ms;
   now_ms = fake_clock_.TimeInMilliseconds();
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   sources = rtp_receiver_->GetSources();
   EXPECT_THAT(sources, UnorderedElementsAre(
                            RtpSource(prev_time_ms, kSsrc2, RtpSourceType::SSRC),
@@ -179,7 +176,7 @@ TEST_F(RtpReceiverTest, GetSourcesChangeSSRC) {
   fake_clock_.AdvanceTimeMilliseconds(kGetSourcesTimeoutMs);
   now_ms = fake_clock_.TimeInMilliseconds();
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   sources = rtp_receiver_->GetSources();
   EXPECT_THAT(sources, UnorderedElementsAre(
                            RtpSource(now_ms, kSsrc1, RtpSourceType::SSRC)));
@@ -191,16 +188,16 @@ TEST_F(RtpReceiverTest, GetSourcesRemoveOutdatedSource) {
   RTPHeader header;
   header.payloadType = kPcmuPayloadType;
   header.timestamp = rtp_timestamp(now_ms);
-  PayloadUnion payload_specific = {AudioPayload()};
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
   header.numCSRCs = 1;
   size_t kSourceListSize = 20;
 
   for (size_t i = 0; i < kSourceListSize; ++i) {
     header.ssrc = i;
     header.arrOfCSRCs[0] = (i + 1);
-    EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(header, kTestPayload,
-                                                 sizeof(kTestPayload),
-                                                 payload_specific, !kInOrder));
+    EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+        header, kTestPayload, sizeof(kTestPayload), payload_specific));
   }
 
   RtpSource source(0, 0, RtpSourceType::SSRC);
@@ -238,7 +235,7 @@ TEST_F(RtpReceiverTest, GetSourcesRemoveOutdatedSource) {
   header.ssrc = kSsrc1;
   header.arrOfCSRCs[0] = kCsrc1;
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
-      header, kTestPayload, sizeof(kTestPayload), payload_specific, !kInOrder));
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
   auto rtp_receiver_impl = static_cast<RtpReceiverImpl*>(rtp_receiver_.get());
   auto ssrc_sources = rtp_receiver_impl->ssrc_sources_for_testing();
   ASSERT_EQ(1u, ssrc_sources.size());
@@ -253,6 +250,223 @@ TEST_F(RtpReceiverTest, GetSourcesRemoveOutdatedSource) {
   EXPECT_EQ(RtpSourceType::CSRC, csrc_sources.begin()->source_type());
   EXPECT_EQ(fake_clock_.TimeInMilliseconds(),
             csrc_sources.begin()->timestamp_ms());
+}
+
+// The audio level from the RTPHeader extension should be stored in the
+// RtpSource with the matching SSRC.
+TEST_F(RtpReceiverTest, GetSourcesContainsAudioLevelExtension) {
+  RTPHeader header;
+  int64_t time1_ms = fake_clock_.TimeInMilliseconds();
+  header.payloadType = kPcmuPayloadType;
+  header.ssrc = kSsrc1;
+  header.timestamp = rtp_timestamp(time1_ms);
+  header.extension.hasAudioLevel = true;
+  header.extension.audioLevel = 10;
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  auto sources = rtp_receiver_->GetSources();
+  EXPECT_THAT(sources, UnorderedElementsAre(RtpSource(
+                           time1_ms, kSsrc1, RtpSourceType::SSRC, 10)));
+
+  // Receive a packet from a different SSRC with a different level and check
+  // that they are both remembered.
+  fake_clock_.AdvanceTimeMilliseconds(1);
+  int64_t time2_ms = fake_clock_.TimeInMilliseconds();
+  header.ssrc = kSsrc2;
+  header.timestamp = rtp_timestamp(time2_ms);
+  header.extension.hasAudioLevel = true;
+  header.extension.audioLevel = 20;
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  sources = rtp_receiver_->GetSources();
+  EXPECT_THAT(sources,
+              UnorderedElementsAre(
+                  RtpSource(time1_ms, kSsrc1, RtpSourceType::SSRC, 10),
+                  RtpSource(time2_ms, kSsrc2, RtpSourceType::SSRC, 20)));
+
+  // Receive a packet from the first SSRC again and check that the level is
+  // updated.
+  fake_clock_.AdvanceTimeMilliseconds(1);
+  int64_t time3_ms = fake_clock_.TimeInMilliseconds();
+  header.ssrc = kSsrc1;
+  header.timestamp = rtp_timestamp(time3_ms);
+  header.extension.hasAudioLevel = true;
+  header.extension.audioLevel = 30;
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  sources = rtp_receiver_->GetSources();
+  EXPECT_THAT(sources,
+              UnorderedElementsAre(
+                  RtpSource(time3_ms, kSsrc1, RtpSourceType::SSRC, 30),
+                  RtpSource(time2_ms, kSsrc2, RtpSourceType::SSRC, 20)));
+}
+
+TEST_F(RtpReceiverTest,
+       MissingAudioLevelHeaderExtensionClearsRtpSourceAudioLevel) {
+  RTPHeader header;
+  int64_t time1_ms = fake_clock_.TimeInMilliseconds();
+  header.payloadType = kPcmuPayloadType;
+  header.ssrc = kSsrc1;
+  header.timestamp = rtp_timestamp(time1_ms);
+  header.extension.hasAudioLevel = true;
+  header.extension.audioLevel = 10;
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  auto sources = rtp_receiver_->GetSources();
+  EXPECT_THAT(sources, UnorderedElementsAre(RtpSource(
+                           time1_ms, kSsrc1, RtpSourceType::SSRC, 10)));
+
+  // Receive a second packet without the audio level header extension and check
+  // that the audio level is cleared.
+  fake_clock_.AdvanceTimeMilliseconds(1);
+  int64_t time2_ms = fake_clock_.TimeInMilliseconds();
+  header.timestamp = rtp_timestamp(time2_ms);
+  header.extension.hasAudioLevel = false;
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  sources = rtp_receiver_->GetSources();
+  EXPECT_THAT(sources, UnorderedElementsAre(
+                           RtpSource(time2_ms, kSsrc1, RtpSourceType::SSRC)));
+}
+
+TEST_F(RtpReceiverTest, UpdatesTimestampsIfAndOnlyIfPacketArrivesInOrder) {
+  RTPHeader header;
+  int64_t time1_ms = fake_clock_.TimeInMilliseconds();
+  header.payloadType = kPcmuPayloadType;
+  header.ssrc = kSsrc1;
+  header.timestamp = rtp_timestamp(time1_ms);
+  header.extension.hasAudioLevel = true;
+  header.extension.audioLevel = 10;
+  header.sequenceNumber = 0xfff0;
+
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
+  uint32_t latest_timestamp;
+  int64_t latest_receive_time_ms;
+
+  // No packet received yet.
+  EXPECT_FALSE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                  &latest_receive_time_ms));
+  // Initial packet
+  const uint32_t timestamp_1 = header.timestamp;
+  const int64_t receive_time_1 = fake_clock_.TimeInMilliseconds();
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_1);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_1);
+
+  // Late packet, timestamp not recorded.
+  fake_clock_.AdvanceTimeMilliseconds(10);
+  header.timestamp -= 900;
+  header.sequenceNumber -= 2;
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_1);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_1);
+
+  // New packet, still late, no wraparound.
+  fake_clock_.AdvanceTimeMilliseconds(10);
+  header.timestamp += 1800;
+  header.sequenceNumber += 1;
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_1);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_1);
+
+  // New packet, new timestamp recorded
+  fake_clock_.AdvanceTimeMilliseconds(10);
+  header.timestamp += 900;
+  header.sequenceNumber += 2;
+  const uint32_t timestamp_2 = header.timestamp;
+  const int64_t receive_time_2 = fake_clock_.TimeInMilliseconds();
+  const uint16_t seqno_2 = header.sequenceNumber;
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_2);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_2);
+
+  // New packet, timestamp wraps around
+  fake_clock_.AdvanceTimeMilliseconds(10);
+  header.timestamp += 900;
+  header.sequenceNumber += 20;
+  const uint32_t timestamp_3 = header.timestamp;
+  const int64_t receive_time_3 = fake_clock_.TimeInMilliseconds();
+  EXPECT_LT(header.sequenceNumber, seqno_2);  // Wrap-around
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_3);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_3);
+}
+
+TEST_F(RtpReceiverTest, UpdatesTimestampsWhenStreamResets) {
+  RTPHeader header;
+  int64_t time1_ms = fake_clock_.TimeInMilliseconds();
+  header.payloadType = kPcmuPayloadType;
+  header.ssrc = kSsrc1;
+  header.timestamp = rtp_timestamp(time1_ms);
+  header.extension.hasAudioLevel = true;
+  header.extension.audioLevel = 10;
+  header.sequenceNumber = 0xfff0;
+
+  const PayloadUnion payload_specific{
+      AudioPayload{SdpAudioFormat("foo", 8000, 1), 0}};
+  uint32_t latest_timestamp;
+  int64_t latest_receive_time_ms;
+
+  // No packet received yet.
+  EXPECT_FALSE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                  &latest_receive_time_ms));
+  // Initial packet
+  const uint32_t timestamp_1 = header.timestamp;
+  const int64_t receive_time_1 = fake_clock_.TimeInMilliseconds();
+  const uint16_t seqno_1 = header.sequenceNumber;
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_1);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_1);
+
+  // Packet with far in the past seqno, but unlikely to be a wrap-around.
+  // Treated as a seqno discontinuity, and timestamp is recorded.
+  fake_clock_.AdvanceTimeMilliseconds(10);
+  header.timestamp += 900;
+  header.sequenceNumber = 0x9000;
+
+  const uint32_t timestamp_2 = header.timestamp;
+  const int64_t receive_time_2 = fake_clock_.TimeInMilliseconds();
+  const uint16_t seqno_2 = header.sequenceNumber;
+  EXPECT_LT(seqno_1 - seqno_2, 0x8000);  // In the past.
+
+  EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+      header, kTestPayload, sizeof(kTestPayload), payload_specific));
+  EXPECT_TRUE(rtp_receiver_->GetLatestTimestamps(&latest_timestamp,
+                                                 &latest_receive_time_ms));
+  EXPECT_EQ(latest_timestamp, timestamp_2);
+  EXPECT_EQ(latest_receive_time_ms, receive_time_2);
 }
 
 }  // namespace webrtc

@@ -21,16 +21,16 @@
 #include "../../internal.h"
 
 
-/* byte_reverse reverses the order of the bytes in |b->c|. */
+// byte_reverse reverses the order of the bytes in |b->c|.
 static void byte_reverse(polyval_block *b) {
   const uint64_t t = CRYPTO_bswap8(b->u[0]);
   b->u[0] = CRYPTO_bswap8(b->u[1]);
   b->u[1] = t;
 }
 
-/* reverse_and_mulX_ghash interprets the bytes |b->c| as a reversed element of
- * the GHASH field, multiplies that by 'x' and serialises the result back into
- * |b|, but with GHASH's backwards bit ordering. */
+// reverse_and_mulX_ghash interprets the bytes |b->c| as a reversed element of
+// the GHASH field, multiplies that by 'x' and serialises the result back into
+// |b|, but with GHASH's backwards bit ordering.
 static void reverse_and_mulX_ghash(polyval_block *b) {
   uint64_t hi = b->u[0];
   uint64_t lo = b->u[1];
@@ -44,11 +44,11 @@ static void reverse_and_mulX_ghash(polyval_block *b) {
   b->u[1] = CRYPTO_bswap8(hi);
 }
 
-/* POLYVAL(H, X_1, ..., X_n) =
- * ByteReverse(GHASH(mulX_GHASH(ByteReverse(H)), ByteReverse(X_1), ...,
- * ByteReverse(X_n))).
- *
- * See https://tools.ietf.org/html/draft-irtf-cfrg-gcmsiv-02#appendix-A. */
+// POLYVAL(H, X_1, ..., X_n) =
+// ByteReverse(GHASH(mulX_GHASH(ByteReverse(H)), ByteReverse(X_1), ...,
+// ByteReverse(X_n))).
+//
+// See https://tools.ietf.org/html/draft-irtf-cfrg-gcmsiv-02#appendix-A.
 
 void CRYPTO_POLYVAL_init(struct polyval_ctx *ctx, const uint8_t key[16]) {
   polyval_block H;

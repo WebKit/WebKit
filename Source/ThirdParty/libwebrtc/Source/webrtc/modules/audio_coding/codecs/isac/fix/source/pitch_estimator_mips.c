@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/base/compile_assert_c.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/compile_assert_c.h"
 
 extern int32_t WebRtcIsacfix_Log2Q8(uint32_t x);
 

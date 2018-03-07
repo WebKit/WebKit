@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/examples/peerconnection/server/utils.h"
+#include "examples/peerconnection/server/utils.h"
 
 #include <stdio.h>
 
-#include "webrtc/base/stringencode.h"
+#include "rtc_base/stringencode.h"
 
 using rtc::ToString;
 

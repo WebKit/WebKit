@@ -14,12 +14,12 @@
 #include <set>
 #include <utility>
 
-#include "webrtc/base/random.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/modules/video_coding/frame_object.h"
-#include "webrtc/modules/video_coding/packet_buffer.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/video_coding/frame_object.h"
+#include "modules/video_coding/packet_buffer.h"
+#include "rtc_base/random.h"
+#include "rtc_base/refcount.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace video_coding {
@@ -54,16 +54,18 @@ class FakePacketBuffer : public PacketBuffer {
 class TestRtpFrameReferenceFinder : public ::testing::Test,
                                     public OnCompleteFrameCallback {
  protected:
+  static constexpr uint64_t kUnwrappedSequenceStart = 1000000000000000000UL;
+
   TestRtpFrameReferenceFinder()
       : rand_(0x8739211),
         ref_packet_buffer_(new FakePacketBuffer()),
         reference_finder_(new RtpFrameReferenceFinder(this)),
         frames_from_callback_(FrameComp()) {}
 
-  uint16_t Rand() { return rand_.Rand(std::numeric_limits<uint16_t>::max()); }
+  uint16_t Rand() { return rand_.Rand<uint16_t>(); }
 
   void OnCompleteFrame(std::unique_ptr<FrameObject> frame) override {
-    uint16_t pid = frame->picture_id;
+    int64_t pid = frame->picture_id;
     uint16_t sidx = frame->spatial_layer;
     auto frame_it = frames_from_callback_.find(std::make_pair(pid, sidx));
     if (frame_it != frames_from_callback_.end()) {
@@ -203,7 +205,10 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
   // delivered from the packet buffer, and if so, if it has the references
   // specified by |refs|.
   template <typename... T>
-  void CheckReferences(uint16_t pid, uint16_t sidx, T... refs) const {
+  void CheckReferences(int64_t picture_id_offset,
+                       uint16_t sidx,
+                       T... refs) const {
+    int64_t pid = kUnwrappedSequenceStart + picture_id_offset;
     auto frame_it = frames_from_callback_.find(std::make_pair(pid, sidx));
     if (frame_it == frames_from_callback_.end()) {
       ADD_FAILURE() << "Could not find frame with (pid:sidx): (" << pid << ":"
@@ -211,54 +216,51 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
       return;
     }
 
-    std::set<uint16_t> actual_refs;
-    for (uint8_t r = 0; r < frame_it->second->num_references; ++r) {
+    std::set<int64_t> actual_refs;
+    for (uint8_t r = 0; r < frame_it->second->num_references; ++r)
       actual_refs.insert(frame_it->second->references[r]);
-    }
 
-    std::set<uint16_t> expected_refs;
+    std::set<int64_t> expected_refs;
     RefsToSet(&expected_refs, refs...);
 
     ASSERT_EQ(expected_refs, actual_refs);
   }
 
   template <typename... T>
-  void CheckReferencesGeneric(uint16_t pid, T... refs) const {
+  void CheckReferencesGeneric(int64_t pid, T... refs) const {
     CheckReferences(pid, 0, refs...);
   }
 
   template <typename... T>
-  void CheckReferencesVp8(uint16_t pid, T... refs) const {
+  void CheckReferencesVp8(int64_t pid, T... refs) const {
     CheckReferences(pid, 0, refs...);
   }
 
   template <typename... T>
-  void CheckReferencesVp9(uint16_t pid, uint8_t sidx, T... refs) const {
+  void CheckReferencesVp9(int64_t pid, uint8_t sidx, T... refs) const {
     CheckReferences(pid, sidx, refs...);
   }
 
   template <typename... T>
-  void RefsToSet(std::set<uint16_t>* m, uint16_t ref, T... refs) const {
-    m->insert(ref);
+  void RefsToSet(std::set<int64_t>* m, int64_t ref, T... refs) const {
+    m->insert(ref + kUnwrappedSequenceStart);
     RefsToSet(m, refs...);
   }
 
-  void RefsToSet(std::set<uint16_t>* m) const {}
+  void RefsToSet(std::set<int64_t>* m) const {}
 
   Random rand_;
   rtc::scoped_refptr<FakePacketBuffer> ref_packet_buffer_;
   std::unique_ptr<RtpFrameReferenceFinder> reference_finder_;
   struct FrameComp {
-    bool operator()(const std::pair<uint16_t, uint8_t> f1,
-                    const std::pair<uint16_t, uint8_t> f2) const {
+    bool operator()(const std::pair<int64_t, uint8_t> f1,
+                    const std::pair<int64_t, uint8_t> f2) const {
       if (f1.first == f2.first)
         return f1.second < f2.second;
       return f1.first < f2.first;
     }
   };
-  std::map<std::pair<uint16_t, uint8_t>,
-           std::unique_ptr<FrameObject>,
-           FrameComp>
+  std::map<std::pair<int64_t, uint8_t>, std::unique_ptr<FrameObject>, FrameComp>
       frames_from_callback_;
 };
 
@@ -281,8 +283,8 @@ TEST_F(TestRtpFrameReferenceFinder, PaddingPacketsReordered) {
   InsertGeneric(sn + 2, sn + 3, false);
 
   EXPECT_EQ(2UL, frames_from_callback_.size());
-  CheckReferencesGeneric(sn);
-  CheckReferencesGeneric(sn + 3, sn);
+  CheckReferencesGeneric(0);
+  CheckReferencesGeneric(3, 0);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, PaddingPacketsReorderedMultipleKeyframes) {
@@ -364,16 +366,16 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8NoPictureId) {
   InsertVp8(sn + 21, sn + 21, false);
 
   ASSERT_EQ(10UL, frames_from_callback_.size());
-  CheckReferencesVp8(sn + 2);
-  CheckReferencesVp8(sn + 4, sn + 2);
-  CheckReferencesVp8(sn + 8, sn + 4);
-  CheckReferencesVp8(sn + 9, sn + 8);
-  CheckReferencesVp8(sn + 11, sn + 9);
-  CheckReferencesVp8(sn + 12);
-  CheckReferencesVp8(sn + 17, sn + 12);
-  CheckReferencesVp8(sn + 18, sn + 17);
-  CheckReferencesVp8(sn + 20, sn + 18);
-  CheckReferencesVp8(sn + 21, sn + 20);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(6, 2);
+  CheckReferencesVp8(7, 6);
+  CheckReferencesVp8(9, 7);
+  CheckReferencesVp8(10);
+  CheckReferencesVp8(15, 10);
+  CheckReferencesVp8(16, 15);
+  CheckReferencesVp8(18, 16);
+  CheckReferencesVp8(19, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp8NoPictureIdReordered) {
@@ -391,16 +393,16 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8NoPictureIdReordered) {
   InsertVp8(sn + 21, sn + 21, false);
 
   ASSERT_EQ(10UL, frames_from_callback_.size());
-  CheckReferencesVp8(sn + 2);
-  CheckReferencesVp8(sn + 4, sn + 2);
-  CheckReferencesVp8(sn + 8, sn + 4);
-  CheckReferencesVp8(sn + 9, sn + 8);
-  CheckReferencesVp8(sn + 11, sn + 9);
-  CheckReferencesVp8(sn + 12);
-  CheckReferencesVp8(sn + 17, sn + 12);
-  CheckReferencesVp8(sn + 18, sn + 17);
-  CheckReferencesVp8(sn + 20, sn + 18);
-  CheckReferencesVp8(sn + 21, sn + 20);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(6, 2);
+  CheckReferencesVp8(7, 6);
+  CheckReferencesVp8(9, 7);
+  CheckReferencesVp8(10);
+  CheckReferencesVp8(15, 10);
+  CheckReferencesVp8(16, 15);
+  CheckReferencesVp8(18, 16);
+  CheckReferencesVp8(19, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp8KeyFrameReferences) {
@@ -408,7 +410,7 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8KeyFrameReferences) {
   InsertVp8(sn, sn, true);
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
-  CheckReferencesVp8(sn);
+  CheckReferencesVp8(0);
 }
 
 // Test with 1 temporal layer.
@@ -422,10 +424,10 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayers_0) {
   InsertVp8(sn + 3, sn + 3, false, pid + 3, 0, 4);
 
   ASSERT_EQ(4UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid + 1);
-  CheckReferencesVp8(pid + 3, pid + 2);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 1);
+  CheckReferencesVp8(3, 2);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp8DuplicateTl1Frames) {
@@ -441,12 +443,12 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8DuplicateTl1Frames) {
   InsertVp8(sn + 5, sn + 5, false, pid + 5, 1, 2);
 
   ASSERT_EQ(6UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid);
-  CheckReferencesVp8(pid + 3, pid + 1, pid + 2);
-  CheckReferencesVp8(pid + 4, pid + 2);
-  CheckReferencesVp8(pid + 5, pid + 3, pid + 4);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(3, 1, 2);
+  CheckReferencesVp8(4, 2);
+  CheckReferencesVp8(5, 3, 4);
 }
 
 // Test with 1 temporal layer.
@@ -463,13 +465,13 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayersReordering_0) {
   InsertVp8(sn + 4, sn + 4, false, pid + 4, 0, 5);
 
   ASSERT_EQ(7UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid + 1);
-  CheckReferencesVp8(pid + 3, pid + 2);
-  CheckReferencesVp8(pid + 4, pid + 3);
-  CheckReferencesVp8(pid + 5, pid + 4);
-  CheckReferencesVp8(pid + 6, pid + 5);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 1);
+  CheckReferencesVp8(3, 2);
+  CheckReferencesVp8(4, 3);
+  CheckReferencesVp8(5, 4);
+  CheckReferencesVp8(6, 5);
 }
 
 // Test with 2 temporal layers in a 01 pattern.
@@ -483,10 +485,10 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayers_01) {
   InsertVp8(sn + 3, sn + 3, false, pid + 3, 1, 0);
 
   ASSERT_EQ(4UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid);
-  CheckReferencesVp8(pid + 3, pid + 1, pid + 2);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(3, 1, 2);
 }
 
 // Test with 2 temporal layers in a 01 pattern.
@@ -504,14 +506,14 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayersReordering_01) {
   InsertVp8(sn + 7, sn + 7, false, pid + 7, 1, 2);
 
   ASSERT_EQ(8UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid);
-  CheckReferencesVp8(pid + 3, pid + 1, pid + 2);
-  CheckReferencesVp8(pid + 4, pid + 2);
-  CheckReferencesVp8(pid + 5, pid + 3, pid + 4);
-  CheckReferencesVp8(pid + 6, pid + 4);
-  CheckReferencesVp8(pid + 7, pid + 5, pid + 6);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(3, 1, 2);
+  CheckReferencesVp8(4, 2);
+  CheckReferencesVp8(5, 3, 4);
+  CheckReferencesVp8(6, 4);
+  CheckReferencesVp8(7, 5, 6);
 }
 
 // Test with 3 temporal layers in a 0212 pattern.
@@ -533,18 +535,18 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayers_0212) {
   InsertVp8(sn + 11, sn + 11, false, pid + 11, 2, 57);
 
   ASSERT_EQ(12UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid);
-  CheckReferencesVp8(pid + 3, pid, pid + 1, pid + 2);
-  CheckReferencesVp8(pid + 4, pid);
-  CheckReferencesVp8(pid + 5, pid + 2, pid + 3, pid + 4);
-  CheckReferencesVp8(pid + 6, pid + 2, pid + 4);
-  CheckReferencesVp8(pid + 7, pid + 4, pid + 5, pid + 6);
-  CheckReferencesVp8(pid + 8, pid + 4);
-  CheckReferencesVp8(pid + 9, pid + 8);
-  CheckReferencesVp8(pid + 10, pid + 8);
-  CheckReferencesVp8(pid + 11, pid + 8, pid + 9, pid + 10);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(3, 0, 1, 2);
+  CheckReferencesVp8(4, 0);
+  CheckReferencesVp8(5, 2, 3, 4);
+  CheckReferencesVp8(6, 2, 4);
+  CheckReferencesVp8(7, 4, 5, 6);
+  CheckReferencesVp8(8, 4);
+  CheckReferencesVp8(9, 8);
+  CheckReferencesVp8(10, 8);
+  CheckReferencesVp8(11, 8, 9, 10);
 }
 
 // Test with 3 temporal layers in a 0212 pattern.
@@ -557,8 +559,8 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayersMissingFrame_0212) {
   InsertVp8(sn + 3, sn + 3, false, pid + 3, 2, 55, false);
 
   ASSERT_EQ(2UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 2, pid);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(2, 0);
 }
 
 // Test with 3 temporal layers in a 0212 pattern.
@@ -580,18 +582,18 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8TemporalLayersReordering_0212) {
   InsertVp8(sn + 10, sn + 10, false, pid + 10, 1, 57, true);
 
   ASSERT_EQ(12UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid);
-  CheckReferencesVp8(pid + 3, pid, pid + 1, pid + 2);
-  CheckReferencesVp8(pid + 4, pid);
-  CheckReferencesVp8(pid + 5, pid + 2, pid + 3, pid + 4);
-  CheckReferencesVp8(pid + 6, pid + 2, pid + 4);
-  CheckReferencesVp8(pid + 7, pid + 4, pid + 5, pid + 6);
-  CheckReferencesVp8(pid + 8, pid + 4);
-  CheckReferencesVp8(pid + 9, pid + 8);
-  CheckReferencesVp8(pid + 10, pid + 8);
-  CheckReferencesVp8(pid + 11, pid + 8, pid + 9, pid + 10);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(3, 0, 1, 2);
+  CheckReferencesVp8(4, 0);
+  CheckReferencesVp8(5, 2, 3, 4);
+  CheckReferencesVp8(6, 2, 4);
+  CheckReferencesVp8(7, 4, 5, 6);
+  CheckReferencesVp8(8, 4);
+  CheckReferencesVp8(9, 8);
+  CheckReferencesVp8(10, 8);
+  CheckReferencesVp8(11, 8, 9, 10);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp8InsertManyFrames_0212) {
@@ -600,6 +602,7 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8InsertManyFrames_0212) {
 
   const int keyframes_to_insert = 50;
   const int frames_per_keyframe = 120;  // Should be a multiple of 4.
+  int64_t offset = 0;
   uint8_t tl0 = 128;
 
   for (int k = 0; k < keyframes_to_insert; ++k) {
@@ -607,29 +610,31 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8InsertManyFrames_0212) {
     InsertVp8(sn + 1, sn + 1, false, pid + 1, 2, tl0, true);
     InsertVp8(sn + 2, sn + 2, false, pid + 2, 1, tl0, true);
     InsertVp8(sn + 3, sn + 3, false, pid + 3, 2, tl0, false);
-    CheckReferencesVp8(pid);
-    CheckReferencesVp8(pid + 1, pid);
-    CheckReferencesVp8(pid + 2, pid);
-    CheckReferencesVp8(pid + 3, pid, pid + 1, pid + 2);
+    CheckReferencesVp8(offset);
+    CheckReferencesVp8(offset + 1, offset);
+    CheckReferencesVp8(offset + 2, offset);
+    CheckReferencesVp8(offset + 3, offset, offset + 1, offset + 2);
     frames_from_callback_.clear();
     ++tl0;
 
     for (int f = 4; f < frames_per_keyframe; f += 4) {
       uint16_t sf = sn + f;
       uint16_t pidf = pid + f;
+      int64_t offsetf = offset + f;
 
       InsertVp8(sf, sf, false, pidf, 0, tl0, false);
       InsertVp8(sf + 1, sf + 1, false, pidf + 1, 2, tl0, false);
       InsertVp8(sf + 2, sf + 2, false, pidf + 2, 1, tl0, false);
       InsertVp8(sf + 3, sf + 3, false, pidf + 3, 2, tl0, false);
-      CheckReferencesVp8(pidf, pidf - 4);
-      CheckReferencesVp8(pidf + 1, pidf, pidf - 1, pidf - 2);
-      CheckReferencesVp8(pidf + 2, pidf, pidf - 2);
-      CheckReferencesVp8(pidf + 3, pidf, pidf + 1, pidf + 2);
+      CheckReferencesVp8(offsetf, offsetf - 4);
+      CheckReferencesVp8(offsetf + 1, offsetf, offsetf - 1, offsetf - 2);
+      CheckReferencesVp8(offsetf + 2, offsetf, offsetf - 2);
+      CheckReferencesVp8(offsetf + 3, offsetf, offsetf + 1, offsetf + 2);
       frames_from_callback_.clear();
       ++tl0;
     }
 
+    offset += frames_per_keyframe;
     pid += frames_per_keyframe;
     sn += frames_per_keyframe;
   }
@@ -650,13 +655,13 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8LayerSync) {
   InsertVp8(sn + 7, sn + 7, false, pid + 7, 1, 3, false);
 
   ASSERT_EQ(7UL, frames_from_callback_.size());
-  CheckReferencesVp8(pid);
-  CheckReferencesVp8(pid + 1, pid);
-  CheckReferencesVp8(pid + 2, pid);
-  CheckReferencesVp8(pid + 4, pid + 2);
-  CheckReferencesVp8(pid + 5, pid + 4);
-  CheckReferencesVp8(pid + 6, pid + 4);
-  CheckReferencesVp8(pid + 7, pid + 6, pid + 5);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(4, 2);
+  CheckReferencesVp8(5, 4);
+  CheckReferencesVp8(6, 4);
+  CheckReferencesVp8(7, 6, 5);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp8Tl1SyncFrameAfterTl1Frame) {
@@ -666,9 +671,34 @@ TEST_F(TestRtpFrameReferenceFinder, Vp8Tl1SyncFrameAfterTl1Frame) {
   InsertVp8(1003, 1003, false, 5, 1, 248, true);   // due to this frame.
 
   ASSERT_EQ(3UL, frames_from_callback_.size());
-  CheckReferencesVp8(1);
-  CheckReferencesVp8(3, 1);
-  CheckReferencesVp8(5, 3);
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(4, 2);
+}
+
+TEST_F(TestRtpFrameReferenceFinder, Vp8DetectMissingFrame_0212) {
+  InsertVp8(1, 1, true, 1, 0, 1, false);
+  InsertVp8(2, 2, false, 2, 2, 1, true);
+  InsertVp8(3, 3, false, 3, 1, 1, true);
+  InsertVp8(4, 4, false, 4, 2, 1, false);
+
+  InsertVp8(6, 6, false, 6, 2, 2, false);
+  InsertVp8(7, 7, false, 7, 1, 2, false);
+  InsertVp8(8, 8, false, 8, 2, 2, false);
+  ASSERT_EQ(4UL, frames_from_callback_.size());
+
+  InsertVp8(5, 5, false, 5, 0, 2, false);
+  ASSERT_EQ(8UL, frames_from_callback_.size());
+
+  CheckReferencesVp8(0);
+  CheckReferencesVp8(1, 0);
+  CheckReferencesVp8(2, 0);
+  CheckReferencesVp8(3, 2, 1, 0);
+
+  CheckReferencesVp8(4, 0);
+  CheckReferencesVp8(5, 4, 3, 2);
+  CheckReferencesVp8(6, 4, 2);
+  CheckReferencesVp8(7, 6, 5, 4);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofInsertOneFrame) {
@@ -679,7 +709,7 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofInsertOneFrame) {
 
   InsertVp9Gof(sn, sn, true, pid, 0, 0, 0, false, &ss);
 
-  CheckReferencesVp9(pid, 0);
+  CheckReferencesVp9(0, 0);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9NoPictureIdReordered) {
@@ -697,16 +727,16 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9NoPictureIdReordered) {
   InsertVp9Gof(sn + 18, sn + 18, false);
 
   ASSERT_EQ(10UL, frames_from_callback_.size());
-  CheckReferencesVp9(sn + 2, 0);
-  CheckReferencesVp9(sn + 4, 0, sn + 2);
-  CheckReferencesVp9(sn + 8, 0, sn + 4);
-  CheckReferencesVp9(sn + 9, 0, sn + 8);
-  CheckReferencesVp9(sn + 11, 0, sn + 9);
-  CheckReferencesVp9(sn + 12, 0);
-  CheckReferencesVp9(sn + 17, 0, sn + 12);
-  CheckReferencesVp9(sn + 18, 0, sn + 17);
-  CheckReferencesVp9(sn + 20, 0, sn + 18);
-  CheckReferencesVp9(sn + 21, 0, sn + 20);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(6, 0, 2);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(9, 0, 7);
+  CheckReferencesVp9(10, 0);
+  CheckReferencesVp9(15, 0, 10);
+  CheckReferencesVp9(16, 0, 15);
+  CheckReferencesVp9(18, 0, 16);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_0) {
@@ -737,26 +767,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_0) {
   InsertVp9Gof(sn + 19, sn + 19, false, pid + 19, 0, 0, 19, false);
 
   ASSERT_EQ(20UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid + 1);
-  CheckReferencesVp9(pid + 3, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid + 3);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 5);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 7);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 9);
-  CheckReferencesVp9(pid + 11, 0, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 11);
-  CheckReferencesVp9(pid + 13, 0, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 13);
-  CheckReferencesVp9(pid + 15, 0, pid + 14);
-  CheckReferencesVp9(pid + 16, 0, pid + 15);
-  CheckReferencesVp9(pid + 17, 0, pid + 16);
-  CheckReferencesVp9(pid + 18, 0, pid + 17);
-  CheckReferencesVp9(pid + 19, 0, pid + 18);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 1);
+  CheckReferencesVp9(3, 0, 2);
+  CheckReferencesVp9(4, 0, 3);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 5);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(8, 0, 7);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 9);
+  CheckReferencesVp9(11, 0, 10);
+  CheckReferencesVp9(12, 0, 11);
+  CheckReferencesVp9(13, 0, 12);
+  CheckReferencesVp9(14, 0, 13);
+  CheckReferencesVp9(15, 0, 14);
+  CheckReferencesVp9(16, 0, 15);
+  CheckReferencesVp9(17, 0, 16);
+  CheckReferencesVp9(18, 0, 17);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_0) {
@@ -787,26 +817,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_0) {
   InsertVp9Gof(sn + 18, sn + 18, false, pid + 18, 0, 0, 18, false);
 
   ASSERT_EQ(20UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid + 1);
-  CheckReferencesVp9(pid + 3, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid + 3);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 5);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 7);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 9);
-  CheckReferencesVp9(pid + 11, 0, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 11);
-  CheckReferencesVp9(pid + 13, 0, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 13);
-  CheckReferencesVp9(pid + 15, 0, pid + 14);
-  CheckReferencesVp9(pid + 16, 0, pid + 15);
-  CheckReferencesVp9(pid + 17, 0, pid + 16);
-  CheckReferencesVp9(pid + 18, 0, pid + 17);
-  CheckReferencesVp9(pid + 19, 0, pid + 18);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 1);
+  CheckReferencesVp9(3, 0, 2);
+  CheckReferencesVp9(4, 0, 3);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 5);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(8, 0, 7);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 9);
+  CheckReferencesVp9(11, 0, 10);
+  CheckReferencesVp9(12, 0, 11);
+  CheckReferencesVp9(13, 0, 12);
+  CheckReferencesVp9(14, 0, 13);
+  CheckReferencesVp9(15, 0, 14);
+  CheckReferencesVp9(16, 0, 15);
+  CheckReferencesVp9(17, 0, 16);
+  CheckReferencesVp9(18, 0, 17);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_01) {
@@ -826,12 +856,12 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_01) {
   InsertVp9Gof(sn + 11, sn + 11, false, pid + 11, 0, 1, 5, false);
 
   ASSERT_EQ(6UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 4, 0);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 10);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(4, 0);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 10);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_0212) {
@@ -846,10 +876,10 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_0212) {
   InsertVp9Gof(sn + 3, sn + 3, false, pid + 3, 0, 2, 0, false);
 
   ASSERT_EQ(4UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 1, pid + 2);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 1, 2);
 
   // Skip frames with tl0 = 1
 
@@ -859,26 +889,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_0212) {
   InsertVp9Gof(sn + 11, sn + 11, false, pid + 11, 0, 2, 2, false);
 
   ASSERT_EQ(8UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid + 8, 0);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 9, pid + 10);
+  CheckReferencesVp9(8, 0);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 9, 10);
 
   // Now insert frames with tl0 = 1
   InsertVp9Gof(sn + 4, sn + 4, true, pid + 4, 0, 0, 1, false, &ss);
   InsertVp9Gof(sn + 7, sn + 7, false, pid + 7, 0, 2, 1, false);
 
   ASSERT_EQ(9UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid + 4, 0);
+  CheckReferencesVp9(4, 0);
 
   // Rest of frames belonging to tl0 = 1
   InsertVp9Gof(sn + 5, sn + 5, false, pid + 5, 0, 2, 1, false);
   InsertVp9Gof(sn + 6, sn + 6, false, pid + 6, 0, 1, 1, true);  // up-switch
 
   ASSERT_EQ(12UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(7, 0, 6);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_01) {
@@ -909,26 +939,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_01) {
   InsertVp9Gof(sn + 19, sn + 19, false, pid + 19, 0, 1, 9, false);
 
   ASSERT_EQ(20UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid + 2);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 6);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 10);
-  CheckReferencesVp9(pid + 13, 0, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 12);
-  CheckReferencesVp9(pid + 15, 0, pid + 14);
-  CheckReferencesVp9(pid + 16, 0, pid + 14);
-  CheckReferencesVp9(pid + 17, 0, pid + 16);
-  CheckReferencesVp9(pid + 18, 0, pid + 16);
-  CheckReferencesVp9(pid + 19, 0, pid + 18);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 2);
+  CheckReferencesVp9(4, 0, 2);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(8, 0, 6);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 10);
+  CheckReferencesVp9(12, 0, 10);
+  CheckReferencesVp9(13, 0, 12);
+  CheckReferencesVp9(14, 0, 12);
+  CheckReferencesVp9(15, 0, 14);
+  CheckReferencesVp9(16, 0, 14);
+  CheckReferencesVp9(17, 0, 16);
+  CheckReferencesVp9(18, 0, 16);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_01) {
@@ -959,26 +989,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_01) {
   InsertVp9Gof(sn + 18, sn + 18, false, pid + 18, 0, 0, 9, false);
 
   ASSERT_EQ(20UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid + 2);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 6);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 10);
-  CheckReferencesVp9(pid + 13, 0, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 12);
-  CheckReferencesVp9(pid + 15, 0, pid + 14);
-  CheckReferencesVp9(pid + 16, 0, pid + 14);
-  CheckReferencesVp9(pid + 17, 0, pid + 16);
-  CheckReferencesVp9(pid + 18, 0, pid + 16);
-  CheckReferencesVp9(pid + 19, 0, pid + 18);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 2);
+  CheckReferencesVp9(4, 0, 2);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(8, 0, 6);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 10);
+  CheckReferencesVp9(12, 0, 10);
+  CheckReferencesVp9(13, 0, 12);
+  CheckReferencesVp9(14, 0, 12);
+  CheckReferencesVp9(15, 0, 14);
+  CheckReferencesVp9(16, 0, 14);
+  CheckReferencesVp9(17, 0, 16);
+  CheckReferencesVp9(18, 0, 16);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_0212) {
@@ -1009,26 +1039,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_0212) {
   InsertVp9Gof(sn + 19, sn + 19, false, pid + 19, 0, 2, 4, false);
 
   ASSERT_EQ(20UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 1, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 5, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 4);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 9, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 8);
-  CheckReferencesVp9(pid + 13, 0, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 12);
-  CheckReferencesVp9(pid + 15, 0, pid + 13, pid + 14);
-  CheckReferencesVp9(pid + 16, 0, pid + 12);
-  CheckReferencesVp9(pid + 17, 0, pid + 16);
-  CheckReferencesVp9(pid + 18, 0, pid + 16);
-  CheckReferencesVp9(pid + 19, 0, pid + 17, pid + 18);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(4, 0, 0);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(7, 0, 5, 6);
+  CheckReferencesVp9(8, 0, 4);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(12, 0, 8);
+  CheckReferencesVp9(13, 0, 12);
+  CheckReferencesVp9(14, 0, 12);
+  CheckReferencesVp9(15, 0, 13, 14);
+  CheckReferencesVp9(16, 0, 12);
+  CheckReferencesVp9(17, 0, 16);
+  CheckReferencesVp9(18, 0, 16);
+  CheckReferencesVp9(19, 0, 17, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_0212) {
@@ -1059,26 +1089,26 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_0212) {
   InsertVp9Gof(sn + 18, sn + 18, false, pid + 18, 0, 1, 4, false);
 
   ASSERT_EQ(20UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 1, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 5, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 4);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 9, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 8);
-  CheckReferencesVp9(pid + 13, 0, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 12);
-  CheckReferencesVp9(pid + 15, 0, pid + 13, pid + 14);
-  CheckReferencesVp9(pid + 16, 0, pid + 12);
-  CheckReferencesVp9(pid + 17, 0, pid + 16);
-  CheckReferencesVp9(pid + 18, 0, pid + 16);
-  CheckReferencesVp9(pid + 19, 0, pid + 17, pid + 18);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(4, 0, 0);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(7, 0, 5, 6);
+  CheckReferencesVp9(8, 0, 4);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(12, 0, 8);
+  CheckReferencesVp9(13, 0, 12);
+  CheckReferencesVp9(14, 0, 12);
+  CheckReferencesVp9(15, 0, 13, 14);
+  CheckReferencesVp9(16, 0, 12);
+  CheckReferencesVp9(17, 0, 16);
+  CheckReferencesVp9(18, 0, 16);
+  CheckReferencesVp9(19, 0, 17, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersUpSwitch_02120212) {
@@ -1105,22 +1135,22 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersUpSwitch_02120212) {
   InsertVp9Gof(sn + 15, sn + 15, false, pid + 15, 0, 2, 3, false);
 
   ASSERT_EQ(16UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 1, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid);
-  CheckReferencesVp9(pid + 5, 0, pid + 3, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 2, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 4);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 9, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 8);
-  CheckReferencesVp9(pid + 13, 0, pid + 11, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 10, pid + 12);
-  CheckReferencesVp9(pid + 15, 0, pid + 13, pid + 14);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(4, 0, 0);
+  CheckReferencesVp9(5, 0, 3, 4);
+  CheckReferencesVp9(6, 0, 2, 4);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(8, 0, 4);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(12, 0, 8);
+  CheckReferencesVp9(13, 0, 11, 12);
+  CheckReferencesVp9(14, 0, 10, 12);
+  CheckReferencesVp9(15, 0, 13, 14);
 }
 
 TEST_F(TestRtpFrameReferenceFinder,
@@ -1148,22 +1178,22 @@ TEST_F(TestRtpFrameReferenceFinder,
   InsertVp9Gof(sn + 14, sn + 14, false, pid + 14, 0, 1, 3, false);
 
   ASSERT_EQ(16UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 1, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid);
-  CheckReferencesVp9(pid + 5, 0, pid + 3, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 2, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 4);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 9, pid + 10);
-  CheckReferencesVp9(pid + 12, 0, pid + 8);
-  CheckReferencesVp9(pid + 13, 0, pid + 11, pid + 12);
-  CheckReferencesVp9(pid + 14, 0, pid + 10, pid + 12);
-  CheckReferencesVp9(pid + 15, 0, pid + 13, pid + 14);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(4, 0, 0);
+  CheckReferencesVp9(5, 0, 3, 4);
+  CheckReferencesVp9(6, 0, 2, 4);
+  CheckReferencesVp9(7, 0, 6);
+  CheckReferencesVp9(8, 0, 4);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(12, 0, 8);
+  CheckReferencesVp9(13, 0, 11, 12);
+  CheckReferencesVp9(14, 0, 10, 12);
+  CheckReferencesVp9(15, 0, 13, 14);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_01_0212) {
@@ -1187,18 +1217,18 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_01_0212) {
   InsertVp9Gof(sn + 9, sn + 9, false, pid + 9, 0, 2, 3, false);
 
   ASSERT_EQ(12UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid + 1, 0, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 3, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid);
-  CheckReferencesVp9(pid + 5, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 7, 0, pid + 5, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 4);
-  CheckReferencesVp9(pid + 9, 0, pid + 8);
-  CheckReferencesVp9(pid + 10, 0, pid + 8);
-  CheckReferencesVp9(pid + 11, 0, pid + 9, pid + 10);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(1, 0, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(3, 0, 2);
+  CheckReferencesVp9(4, 0, 0);
+  CheckReferencesVp9(5, 0, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(7, 0, 5, 6);
+  CheckReferencesVp9(8, 0, 4);
+  CheckReferencesVp9(9, 0, 8);
+  CheckReferencesVp9(10, 0, 8);
+  CheckReferencesVp9(11, 0, 9, 10);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeOneFrame) {
@@ -1208,7 +1238,7 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeOneFrame) {
   InsertVp9Flex(sn, sn, true, pid, 0, 0, 0, false);
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
+  CheckReferencesVp9(0, 0);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeTwoSpatialLayers) {
@@ -1231,20 +1261,20 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeTwoSpatialLayers) {
   InsertVp9Flex(sn + 13, sn + 13, false, pid + 8, 1, 0, 4, false, {1});
 
   ASSERT_EQ(14UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid, 1);
-  CheckReferencesVp9(pid + 1, 1, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 2, 1, pid + 1);
-  CheckReferencesVp9(pid + 3, 1, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 1, pid + 3);
-  CheckReferencesVp9(pid + 5, 1, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 1, pid + 5);
-  CheckReferencesVp9(pid + 7, 1, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 1, pid + 7);
+  CheckReferencesVp9(0, 0);
+  CheckReferencesVp9(0, 1);
+  CheckReferencesVp9(1, 1, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(2, 1, 1);
+  CheckReferencesVp9(3, 1, 2);
+  CheckReferencesVp9(4, 0, 2);
+  CheckReferencesVp9(4, 1, 3);
+  CheckReferencesVp9(5, 1, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(6, 1, 5);
+  CheckReferencesVp9(7, 1, 6);
+  CheckReferencesVp9(8, 0, 6);
+  CheckReferencesVp9(8, 1, 7);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeTwoSpatialLayersReordered) {
@@ -1267,248 +1297,27 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeTwoSpatialLayersReordered) {
   InsertVp9Flex(sn + 12, sn + 12, false, pid + 8, 0, 0, 4, false, {2});
 
   ASSERT_EQ(14UL, frames_from_callback_.size());
-  CheckReferencesVp9(pid, 0);
-  CheckReferencesVp9(pid, 1);
-  CheckReferencesVp9(pid + 1, 1, pid);
-  CheckReferencesVp9(pid + 2, 0, pid);
-  CheckReferencesVp9(pid + 2, 1, pid + 1);
-  CheckReferencesVp9(pid + 3, 1, pid + 2);
-  CheckReferencesVp9(pid + 4, 0, pid + 2);
-  CheckReferencesVp9(pid + 4, 1, pid + 3);
-  CheckReferencesVp9(pid + 5, 1, pid + 4);
-  CheckReferencesVp9(pid + 6, 0, pid + 4);
-  CheckReferencesVp9(pid + 6, 1, pid + 5);
-  CheckReferencesVp9(pid + 7, 1, pid + 6);
-  CheckReferencesVp9(pid + 8, 0, pid + 6);
-  CheckReferencesVp9(pid + 8, 1, pid + 7);
-}
-
-// TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-//                 around M59).
-TEST_F(TestRtpFrameReferenceFinder, Vp9PidFix_PidJumpsForwardNoTl0PicIdx) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode1);
-
-  VCMPacket packet;
-  packet.timestamp = 0;
-  packet.codec = kVideoCodecVP9;
-  packet.frameType = kVideoFrameKey;
-  packet.markerBit = true;
-  packet.video_header.codecHeader.VP9.flexible_mode = false;
-  packet.video_header.codecHeader.VP9.picture_id = 0;
-  packet.video_header.codecHeader.VP9.temporal_idx = kNoTemporalIdx;
-  packet.video_header.codecHeader.VP9.spatial_idx = kNoSpatialIdx;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = kNoTl0PicIdx;
-  packet.video_header.codecHeader.VP9.temporal_up_switch = true;
-  packet.video_header.codecHeader.VP9.ss_data_available = true;
-  packet.video_header.codecHeader.VP9.gof = ss;
-
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 1;
-  packet.video_header.codecHeader.VP9.picture_id = 5000;
-
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  ASSERT_EQ(2UL, frames_from_callback_.size());
   CheckReferencesVp9(0, 0);
-  CheckReferencesVp9(128, 0);
+  CheckReferencesVp9(0, 1);
+  CheckReferencesVp9(1, 1, 0);
+  CheckReferencesVp9(2, 0, 0);
+  CheckReferencesVp9(2, 1, 1);
+  CheckReferencesVp9(3, 1, 2);
+  CheckReferencesVp9(4, 0, 2);
+  CheckReferencesVp9(4, 1, 3);
+  CheckReferencesVp9(5, 1, 4);
+  CheckReferencesVp9(6, 0, 4);
+  CheckReferencesVp9(6, 1, 5);
+  CheckReferencesVp9(7, 1, 6);
+  CheckReferencesVp9(8, 0, 6);
+  CheckReferencesVp9(8, 1, 7);
 }
 
-// TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-//                 around M59).
-TEST_F(TestRtpFrameReferenceFinder, Vp9PidFix_PidJumpsBackwardThenForward) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode1);
+TEST_F(TestRtpFrameReferenceFinder, WrappingFlexReference) {
+  InsertVp9Flex(0, 0, false, 0, 0, 0, 0, false, {1});
 
-  VCMPacket packet;
-  packet.timestamp = 0;
-  packet.codec = kVideoCodecVP9;
-  packet.frameType = kVideoFrameKey;
-  packet.markerBit = true;
-  packet.video_header.codecHeader.VP9.flexible_mode = false;
-  packet.video_header.codecHeader.VP9.picture_id = 1;
-  packet.video_header.codecHeader.VP9.temporal_idx = 0;
-  packet.video_header.codecHeader.VP9.spatial_idx = 0;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 0;
-  packet.video_header.codecHeader.VP9.temporal_up_switch = true;
-  packet.video_header.codecHeader.VP9.ss_data_available = true;
-  packet.video_header.codecHeader.VP9.gof = ss;
-
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  // Timestamp goes forward but pid goes backwards.
-  packet.timestamp = 1;
-  packet.video_header.codecHeader.VP9.picture_id = 0;
-
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 2;
-  packet.video_header.codecHeader.VP9.picture_id = 5000;
-
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  ASSERT_EQ(3UL, frames_from_callback_.size());
-  CheckReferencesVp9(1, 0);
-  CheckReferencesVp9(129, 0);
-  CheckReferencesVp9(257, 0);
-}
-
-// TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-//                 around M59).
-TEST_F(TestRtpFrameReferenceFinder, Vp9PidFix_Tl0JumpsBackwardThenForward) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode1);
-
-  VCMPacket packet;
-  packet.timestamp = 0;
-  packet.codec = kVideoCodecVP9;
-  packet.frameType = kVideoFrameKey;
-  packet.markerBit = true;
-  packet.video_header.codecHeader.VP9.flexible_mode = false;
-  packet.video_header.codecHeader.VP9.picture_id = 0;
-  packet.video_header.codecHeader.VP9.temporal_idx = 0;
-  packet.video_header.codecHeader.VP9.spatial_idx = 0;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 1;
-  packet.video_header.codecHeader.VP9.temporal_up_switch = true;
-  packet.video_header.codecHeader.VP9.ss_data_available = true;
-  packet.video_header.codecHeader.VP9.gof = ss;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 1;
-  packet.video_header.codecHeader.VP9.picture_id = 1;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 0;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 2;
-  packet.frameType = kVideoFrameDelta;
-  packet.video_header.codecHeader.VP9.picture_id = 2;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 2;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 3;
-  packet.frameType = kVideoFrameKey;
-  packet.video_header.codecHeader.VP9.ss_data_available = true;
-  packet.video_header.codecHeader.VP9.picture_id = 3;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 129;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  ASSERT_EQ(4UL, frames_from_callback_.size());
-  CheckReferencesVp9(0, 0);
-  CheckReferencesVp9(128, 0);
-  CheckReferencesVp9(129, 0, 128);
-  CheckReferencesVp9(257, 0);
-}
-
-// TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-//                 around M59).
-TEST_F(TestRtpFrameReferenceFinder, Vp9PidFix_PidSmallJumpForward) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode1);
-
-  VCMPacket packet;
-  packet.timestamp = 0;
-  packet.codec = kVideoCodecVP9;
-  packet.frameType = kVideoFrameKey;
-  packet.markerBit = true;
-  packet.video_header.codecHeader.VP9.flexible_mode = false;
-  packet.video_header.codecHeader.VP9.picture_id = 1;
-  packet.video_header.codecHeader.VP9.temporal_idx = 0;
-  packet.video_header.codecHeader.VP9.spatial_idx = 0;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 1;
-  packet.video_header.codecHeader.VP9.temporal_up_switch = true;
-  packet.video_header.codecHeader.VP9.ss_data_available = true;
-  packet.video_header.codecHeader.VP9.gof = ss;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 1;
-  packet.video_header.codecHeader.VP9.picture_id = 2;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 2;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 2;
-  packet.video_header.codecHeader.VP9.picture_id = 3;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 2;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 2;
-  packet.video_header.codecHeader.VP9.picture_id = 4;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 1;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  ASSERT_EQ(4UL, frames_from_callback_.size());
-  CheckReferencesVp9(1, 0);
-  CheckReferencesVp9(2, 0);
-  CheckReferencesVp9(3, 0);
-  CheckReferencesVp9(131, 0);
-}
-
-// TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-//                 around M59).
-TEST_F(TestRtpFrameReferenceFinder, Vp9PidFix_DropOldFrame) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode1);
-
-  VCMPacket packet;
-  packet.timestamp = 0;
-  packet.codec = kVideoCodecVP9;
-  packet.frameType = kVideoFrameKey;
-  packet.markerBit = true;
-  packet.video_header.codecHeader.VP9.flexible_mode = false;
-  packet.video_header.codecHeader.VP9.picture_id = 1;
-  packet.video_header.codecHeader.VP9.temporal_idx = 0;
-  packet.video_header.codecHeader.VP9.spatial_idx = 0;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 1;
-  packet.video_header.codecHeader.VP9.temporal_up_switch = true;
-  packet.video_header.codecHeader.VP9.ss_data_available = true;
-  packet.video_header.codecHeader.VP9.gof = ss;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 1;
-  packet.video_header.codecHeader.VP9.picture_id = 0;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 2;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  packet.timestamp = 0;
-  packet.video_header.codecHeader.VP9.picture_id = 3;
-  packet.video_header.codecHeader.VP9.tl0_pic_idx = 2;
-  ref_packet_buffer_->InsertPacket(&packet);
-  reference_finder_->ManageFrame(std::unique_ptr<RtpFrameObject>(
-      new RtpFrameObject(ref_packet_buffer_, 0, 0, 0, 0, 0)));
-
-  ASSERT_EQ(2UL, frames_from_callback_.size());
-  CheckReferencesVp9(1, 0);
-  CheckReferencesVp9(129, 0);
+  ASSERT_EQ(1UL, frames_from_callback_.size());
+  CheckReferencesVp9(1, 0, 0);
 }
 
 }  // namespace video_coding

@@ -11,8 +11,8 @@
 // This file contains constants that are used by multiple global
 // codec definitions (modules/video_coding/codecs/*/include/*_globals.h)
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
+#define MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
 
 namespace webrtc {
 
@@ -23,4 +23,4 @@ const int kNoKeyIdx = -1;
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_INTERFACE_COMMON_CONSTANTS_H_

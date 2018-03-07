@@ -69,10 +69,10 @@
 #    else
 #      define __ARMEL__
 #    endif
-  /* Why doesn't gcc define __ARM_ARCH__? Instead it defines
-   * bunch of below macros. See all_architectires[] table in
-   * gcc/config/arm/arm.c. On a side note it defines
-   * __ARMEL__/__ARMEB__ for little-/big-endian. */
+  // Why doesn't gcc define __ARM_ARCH__? Instead it defines
+  // bunch of below macros. See all_architectires[] table in
+  // gcc/config/arm/arm.c. On a side note it defines
+  // __ARMEL__/__ARMEB__ for little-/big-endian.
 #  elif	defined(__ARM_ARCH)
 #    define __ARM_ARCH__ __ARM_ARCH
 #  elif	defined(__ARM_ARCH_8A__)
@@ -98,24 +98,24 @@
 # endif
 #endif
 
-/* Even when building for 32-bit ARM, support for aarch64 crypto instructions
- * will be included. */
+// Even when building for 32-bit ARM, support for aarch64 crypto instructions
+// will be included.
 #define __ARM_MAX_ARCH__ 8
 
-/* ARMV7_NEON is true when a NEON unit is present in the current CPU. */
+// ARMV7_NEON is true when a NEON unit is present in the current CPU.
 #define ARMV7_NEON (1 << 0)
 
-/* ARMV8_AES indicates support for hardware AES instructions. */
+// ARMV8_AES indicates support for hardware AES instructions.
 #define ARMV8_AES (1 << 2)
 
-/* ARMV8_SHA1 indicates support for hardware SHA-1 instructions. */
+// ARMV8_SHA1 indicates support for hardware SHA-1 instructions.
 #define ARMV8_SHA1 (1 << 3)
 
-/* ARMV8_SHA256 indicates support for hardware SHA-256 instructions. */
+// ARMV8_SHA256 indicates support for hardware SHA-256 instructions.
 #define ARMV8_SHA256 (1 << 4)
 
-/* ARMV8_PMULL indicates support for carryless multiplication. */
+// ARMV8_PMULL indicates support for carryless multiplication.
 #define ARMV8_PMULL (1 << 5)
 
 
-#endif  /* OPENSSL_HEADER_ARM_ARCH_H */
+#endif  // OPENSSL_HEADER_ARM_ARCH_H

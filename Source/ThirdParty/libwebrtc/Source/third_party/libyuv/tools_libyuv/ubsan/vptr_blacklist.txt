@@ -19,3 +19,7 @@
 # Example:
 # src:*/third_party/protobuf/src/google/protobuf/compiler/plugin.pb.cc
 
+#############################################################################
+# UBsan goes into an infinite recursion when __dynamic_cast instrumented with
+# "vptr". See crbug.com/609786.
+src:*/third_party/libc\+\+abi/trunk/src/private_typeinfo.cpp

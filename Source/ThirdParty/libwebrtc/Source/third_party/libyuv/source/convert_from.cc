@@ -657,6 +657,42 @@ int I420ToRAW(const uint8* src_y,
                            width, height);
 }
 
+// Convert H420 to RGB24.
+LIBYUV_API
+int H420ToRGB24(const uint8* src_y,
+                int src_stride_y,
+                const uint8* src_u,
+                int src_stride_u,
+                const uint8* src_v,
+                int src_stride_v,
+                uint8* dst_rgb24,
+                int dst_stride_rgb24,
+                int width,
+                int height) {
+  return I420ToRGB24Matrix(src_y, src_stride_y, src_u, src_stride_u, src_v,
+                           src_stride_v, dst_rgb24, dst_stride_rgb24,
+                           &kYuvH709Constants, width, height);
+}
+
+// Convert H420 to RAW.
+LIBYUV_API
+int H420ToRAW(const uint8* src_y,
+              int src_stride_y,
+              const uint8* src_u,
+              int src_stride_u,
+              const uint8* src_v,
+              int src_stride_v,
+              uint8* dst_raw,
+              int dst_stride_raw,
+              int width,
+              int height) {
+  return I420ToRGB24Matrix(src_y, src_stride_y, src_v,
+                           src_stride_v,  // Swap U and V
+                           src_u, src_stride_u, dst_raw, dst_stride_raw,
+                           &kYvuH709Constants,  // Use Yvu matrix
+                           width, height);
+}
+
 // Convert I420 to ARGB1555.
 LIBYUV_API
 int I420ToARGB1555(const uint8* src_y,
@@ -1075,8 +1111,8 @@ int I420ToRGB565Dither(const uint8* src_y,
     for (y = 0; y < height; ++y) {
       I422ToARGBRow(src_y, src_u, src_v, row_argb, &kYuvI601Constants, width);
       ARGBToRGB565DitherRow(row_argb, dst_rgb565,
-                            *(uint32*)(dither4x4 + ((y & 3) << 2)),
-                            width);  // NOLINT
+                            *(uint32*)(dither4x4 + ((y & 3) << 2)),  // NOLINT
+                            width);                                  // NOLINT
       dst_rgb565 += dst_stride_rgb565;
       src_y += src_stride_y;
       if (y & 1) {

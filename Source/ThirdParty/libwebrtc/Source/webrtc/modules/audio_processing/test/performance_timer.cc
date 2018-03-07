@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/performance_timer.h"
+#include "modules/audio_processing/test/performance_timer.h"
 
 #include <math.h>
 
 #include <numeric>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -27,7 +27,7 @@ PerformanceTimer::PerformanceTimer(int num_frames_to_process)
 PerformanceTimer::~PerformanceTimer() = default;
 
 void PerformanceTimer::StartTimer() {
-  start_timestamp_us_ = rtc::Optional<int64_t>(clock_->TimeInMicroseconds());
+  start_timestamp_us_ = clock_->TimeInMicroseconds();
 }
 
 void PerformanceTimer::StopTimer() {

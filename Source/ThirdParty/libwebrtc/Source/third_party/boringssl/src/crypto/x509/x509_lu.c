@@ -58,7 +58,6 @@
 #include <string.h>
 
 #include <openssl/err.h>
-#include <openssl/lhash.h>
 #include <openssl/mem.h>
 #include <openssl/thread.h>
 #include <openssl/x509.h>
@@ -434,6 +433,19 @@ void X509_OBJECT_free_contents(X509_OBJECT *a)
     }
 }
 
+int X509_OBJECT_get_type(const X509_OBJECT *a)
+{
+    return a->type;
+}
+
+X509 *X509_OBJECT_get0_X509(const X509_OBJECT *a)
+{
+    if (a == NULL || a->type != X509_LU_X509) {
+        return NULL;
+    }
+    return a->data.x509;
+}
+
 static int x509_object_idx_cnt(STACK_OF(X509_OBJECT) *h, int type,
                                X509_NAME *name, int *pnmatch)
 {
@@ -494,6 +506,11 @@ X509_OBJECT *X509_OBJECT_retrieve_by_subject(STACK_OF(X509_OBJECT) *h,
     if (idx == -1)
         return NULL;
     return sk_X509_OBJECT_value(h, idx);
+}
+
+STACK_OF(X509_OBJECT) *X509_STORE_get0_objects(X509_STORE *st)
+{
+    return st->objs;
 }
 
 STACK_OF (X509) * X509_STORE_get1_certs(X509_STORE_CTX *ctx, X509_NAME *nm)
@@ -682,6 +699,11 @@ int X509_STORE_set_trust(X509_STORE *ctx, int trust)
 int X509_STORE_set1_param(X509_STORE *ctx, X509_VERIFY_PARAM *param)
 {
     return X509_VERIFY_PARAM_set1(ctx->param, param);
+}
+
+X509_VERIFY_PARAM *X509_STORE_get0_param(X509_STORE *ctx)
+{
+    return ctx->param;
 }
 
 void X509_STORE_set_verify_cb(X509_STORE *ctx,

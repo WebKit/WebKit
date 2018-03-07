@@ -56,7 +56,7 @@
 #include "../../internal.h"
 
 
-/* kDefaultIV is the default IV value given in RFC 3394, 2.2.3.1. */
+// kDefaultIV is the default IV value given in RFC 3394, 2.2.3.1.
 static const uint8_t kDefaultIV[] = {
     0xa6, 0xa6, 0xa6, 0xa6, 0xa6, 0xa6, 0xa6, 0xa6,
 };
@@ -65,7 +65,7 @@ static const unsigned kBound = 6;
 
 int AES_wrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
                  const uint8_t *in, size_t in_len) {
-  /* See RFC 3394, section 2.2.1. */
+  // See RFC 3394, section 2.2.1.
 
   if (in_len > INT_MAX - 8 || in_len < 8 || in_len % 8 != 0) {
     return -1;
@@ -101,7 +101,7 @@ int AES_wrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
 
 int AES_unwrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
                    const uint8_t *in, size_t in_len) {
-  /* See RFC 3394, section 2.2.2. */
+  // See RFC 3394, section 2.2.2.
 
   if (in_len > INT_MAX || in_len < 16 || in_len % 8 != 0) {
     return -1;

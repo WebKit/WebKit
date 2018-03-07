@@ -10,8 +10,8 @@
 
 #include <memory>
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/test/gtest.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

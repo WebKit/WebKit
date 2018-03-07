@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_AUDIO_AUDIO_MIXER_H_
-#define WEBRTC_API_AUDIO_AUDIO_MIXER_H_
+#ifndef API_AUDIO_AUDIO_MIXER_H_
+#define API_AUDIO_AUDIO_MIXER_H_
 
 #include <memory>
 
-#include "webrtc/base/refcount.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/refcount.h"
 
 namespace webrtc {
 
@@ -77,4 +77,4 @@ class AudioMixer : public rtc::RefCountInterface {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_AUDIO_AUDIO_MIXER_H_
+#endif  // API_AUDIO_AUDIO_MIXER_H_

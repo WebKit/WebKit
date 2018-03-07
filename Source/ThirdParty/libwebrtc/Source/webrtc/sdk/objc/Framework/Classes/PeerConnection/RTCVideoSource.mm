@@ -10,9 +10,9 @@
 
 #import "RTCVideoSource+Private.h"
 
-#include "webrtc/api/videosourceproxy.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/sdk/objc/Framework/Classes/Video/objcvideotracksource.h"
+#include "api/videosourceproxy.h"
+#include "rtc_base/checks.h"
+#include "sdk/objc/Framework/Classes/Video/objcvideotracksource.h"
 
 static webrtc::ObjcVideoTrackSource *getObjcVideoSource(
     const rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> nativeSource) {

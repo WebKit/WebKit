@@ -73,13 +73,6 @@ int ECDSA_sign(int type, const uint8_t *digest, size_t digest_len, uint8_t *sig,
                                    (EC_KEY*) eckey /* cast away const */);
   }
 
-  return ECDSA_sign_ex(type, digest, digest_len, sig, sig_len, NULL, NULL,
-                       eckey);
-}
-
-int ECDSA_sign_ex(int type, const uint8_t *digest, size_t digest_len,
-                  uint8_t *sig, unsigned int *sig_len, const BIGNUM *kinv,
-                  const BIGNUM *r, const EC_KEY *eckey) {
   int ret = 0;
   ECDSA_SIG *s = NULL;
 
@@ -89,7 +82,7 @@ int ECDSA_sign_ex(int type, const uint8_t *digest, size_t digest_len,
     goto err;
   }
 
-  s = ECDSA_do_sign_ex(digest, digest_len, kinv, r, eckey);
+  s = ECDSA_do_sign(digest, digest_len, eckey);
   if (s == NULL) {
     *sig_len = 0;
     goto err;
@@ -120,17 +113,17 @@ int ECDSA_verify(int type, const uint8_t *digest, size_t digest_len,
   int ret = 0;
   uint8_t *der = NULL;
 
-  /* Decode the ECDSA signature. */
+  // Decode the ECDSA signature.
   s = ECDSA_SIG_from_bytes(sig, sig_len);
   if (s == NULL) {
     goto err;
   }
 
-  /* Defend against potential laxness in the DER parser. */
+  // Defend against potential laxness in the DER parser.
   size_t der_len;
   if (!ECDSA_SIG_to_bytes(&der, &der_len, s) ||
       der_len != sig_len || OPENSSL_memcmp(sig, der, sig_len) != 0) {
-    /* This should never happen. crypto/bytestring is strictly DER. */
+    // This should never happen. crypto/bytestring is strictly DER.
     OPENSSL_PUT_ERROR(ECDSA, ERR_R_INTERNAL_ERROR);
     goto err;
   }
@@ -219,8 +212,8 @@ int ECDSA_SIG_to_bytes(uint8_t **out_bytes, size_t *out_len,
   return 1;
 }
 
-/* der_len_len returns the number of bytes needed to represent a length of |len|
- * in DER. */
+// der_len_len returns the number of bytes needed to represent a length of |len|
+// in DER.
 static size_t der_len_len(size_t len) {
   if (len < 0x80) {
     return 1;
@@ -234,18 +227,18 @@ static size_t der_len_len(size_t len) {
 }
 
 size_t ECDSA_SIG_max_len(size_t order_len) {
-  /* Compute the maximum length of an |order_len| byte integer. Defensively
-   * assume that the leading 0x00 is included. */
+  // Compute the maximum length of an |order_len| byte integer. Defensively
+  // assume that the leading 0x00 is included.
   size_t integer_len = 1 /* tag */ + der_len_len(order_len + 1) + 1 + order_len;
   if (integer_len < order_len) {
     return 0;
   }
-  /* An ECDSA signature is two INTEGERs. */
+  // An ECDSA signature is two INTEGERs.
   size_t value_len = 2 * integer_len;
   if (value_len < integer_len) {
     return 0;
   }
-  /* Add the header. */
+  // Add the header.
   size_t ret = 1 /* tag */ + der_len_len(value_len) + value_len;
   if (ret < value_len) {
     return 0;

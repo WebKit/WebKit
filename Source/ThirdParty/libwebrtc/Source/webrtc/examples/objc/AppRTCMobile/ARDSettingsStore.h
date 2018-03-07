@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dictionary of values to store
  */
 + (void)setDefaultsForVideoResolution:(NSString *)videoResolution
-                           videoCodec:(NSString *)videoCodec
+                           videoCodec:(NSData *)videoCodec
                               bitrate:(nullable NSNumber *)bitrate
                             audioOnly:(BOOL)audioOnly
                         createAecDump:(BOOL)createAecDump
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
                  useManualAudioConfig:(BOOL)useManualAudioConfig;
 
 @property(nonatomic) NSString *videoResolution;
-@property(nonatomic) NSString *videoCodec;
+@property(nonatomic) NSData *videoCodec;
 
 /**
  * Returns current max bitrate number stored in the store.

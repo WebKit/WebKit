@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/congestion_controller_unittests_helper.h"
+#include "modules/congestion_controller/congestion_controller_unittests_helper.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/test/gtest.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 void ComparePacketFeedbackVectors(const std::vector<PacketFeedback>& truth,

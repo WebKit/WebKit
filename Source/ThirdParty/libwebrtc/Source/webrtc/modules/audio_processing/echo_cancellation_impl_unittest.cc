@@ -10,9 +10,9 @@
 
 #include <memory>
 
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec/aec_core.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

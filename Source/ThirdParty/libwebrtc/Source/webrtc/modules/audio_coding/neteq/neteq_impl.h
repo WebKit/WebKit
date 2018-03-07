@@ -8,26 +8,26 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
+#define MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
-#include "webrtc/modules/audio_coding/neteq/defines.h"
-#include "webrtc/modules/audio_coding/neteq/include/neteq.h"
-#include "webrtc/modules/audio_coding/neteq/packet.h"  // Declare PacketList.
-#include "webrtc/modules/audio_coding/neteq/random_vector.h"
-#include "webrtc/modules/audio_coding/neteq/rtcp.h"
-#include "webrtc/modules/audio_coding/neteq/statistics_calculator.h"
-#include "webrtc/modules/audio_coding/neteq/tick_timer.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "api/optional.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/audio_coding/neteq/defines.h"
+#include "modules/audio_coding/neteq/include/neteq.h"
+#include "modules/audio_coding/neteq/packet.h"  // Declare PacketList.
+#include "modules/audio_coding/neteq/random_vector.h"
+#include "modules/audio_coding/neteq/rtcp.h"
+#include "modules/audio_coding/neteq/statistics_calculator.h"
+#include "modules/audio_coding/neteq/tick_timer.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_annotations.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -185,6 +185,8 @@ class NetEqImpl : public webrtc::NetEq {
   // and a new report period is started with the call.
   void GetRtcpStatistics(RtcpStatistics* stats) override;
 
+  NetEqLifetimeStatistics GetLifetimeStatistics() const override;
+
   // Same as RtcpStatistics(), but does not reset anything.
   void GetRtcpStatisticsNoReset(RtcpStatistics* stats) override;
 
@@ -242,12 +244,12 @@ class NetEqImpl : public webrtc::NetEq {
   int InsertPacketInternal(const RTPHeader& rtp_header,
                            rtc::ArrayView<const uint8_t> payload,
                            uint32_t receive_timestamp)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Delivers 10 ms of audio data. The data is written to |audio_frame|.
   // Returns 0 on success, otherwise an error code.
   int GetAudioInternal(AudioFrame* audio_frame, bool* muted)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Provides a decision to the GetAudioInternal method. The decision what to
   // do is written to |operation|. Packets to decode are written to
@@ -257,7 +259,7 @@ class NetEqImpl : public webrtc::NetEq {
   int GetDecision(Operations* operation,
                   PacketList* packet_list,
                   DtmfEvent* dtmf_event,
-                  bool* play_dtmf) EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+                  bool* play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Decodes the speech packets in |packet_list|, and writes the results to
   // |decoded_buffer|, which is allocated to hold |decoded_buffer_length|
@@ -269,12 +271,13 @@ class NetEqImpl : public webrtc::NetEq {
              Operations* operation,
              int* decoded_length,
              AudioDecoder::SpeechType* speech_type)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method to Decode(). Performs codec internal CNG.
-  int DecodeCng(AudioDecoder* decoder, int* decoded_length,
+  int DecodeCng(AudioDecoder* decoder,
+                int* decoded_length,
                 AudioDecoder::SpeechType* speech_type)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method to Decode(). Performs the actual decoding.
   int DecodeLoop(PacketList* packet_list,
@@ -282,22 +285,22 @@ class NetEqImpl : public webrtc::NetEq {
                  AudioDecoder* decoder,
                  int* decoded_length,
                  AudioDecoder::SpeechType* speech_type)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the Normal class to perform the normal operation.
   void DoNormal(const int16_t* decoded_buffer,
                 size_t decoded_length,
                 AudioDecoder::SpeechType speech_type,
-                bool play_dtmf) EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+                bool play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the Merge class to perform the merge operation.
   void DoMerge(int16_t* decoded_buffer,
                size_t decoded_length,
                AudioDecoder::SpeechType speech_type,
-               bool play_dtmf) EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+               bool play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the Expand class to perform the expand operation.
-  int DoExpand(bool play_dtmf) EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  int DoExpand(bool play_dtmf) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the Accelerate class to perform the accelerate
   // operation.
@@ -305,135 +308,143 @@ class NetEqImpl : public webrtc::NetEq {
                    size_t decoded_length,
                    AudioDecoder::SpeechType speech_type,
                    bool play_dtmf,
-                   bool fast_accelerate) EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+                   bool fast_accelerate)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the PreemptiveExpand class to perform the
   // preemtive expand operation.
   int DoPreemptiveExpand(int16_t* decoded_buffer,
                          size_t decoded_length,
                          AudioDecoder::SpeechType speech_type,
-                         bool play_dtmf) EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+                         bool play_dtmf)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Sub-method which calls the ComfortNoise class to generate RFC 3389 comfort
   // noise. |packet_list| can either contain one SID frame to update the
   // noise parameters, or no payload at all, in which case the previously
   // received parameters are used.
   int DoRfc3389Cng(PacketList* packet_list, bool play_dtmf)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Calls the audio decoder to generate codec-internal comfort noise when
   // no packet was received.
   void DoCodecInternalCng(const int16_t* decoded_buffer, size_t decoded_length)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Calls the DtmfToneGenerator class to generate DTMF tones.
   int DoDtmf(const DtmfEvent& dtmf_event, bool* play_dtmf)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Produces packet-loss concealment using alternative methods. If the codec
   // has an internal PLC, it is called to generate samples. Otherwise, the
   // method performs zero-stuffing.
   void DoAlternativePlc(bool increase_timestamp)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Overdub DTMF on top of |output|.
   int DtmfOverdub(const DtmfEvent& dtmf_event,
                   size_t num_channels,
-                  int16_t* output) const EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+                  int16_t* output) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Extracts packets from |packet_buffer_| to produce at least
   // |required_samples| samples. The packets are inserted into |packet_list|.
   // Returns the number of samples that the packets in the list will produce, or
   // -1 in case of an error.
   int ExtractPackets(size_t required_samples, PacketList* packet_list)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Resets various variables and objects to new values based on the sample rate
   // |fs_hz| and |channels| number audio channels.
   void SetSampleRateAndChannels(int fs_hz, size_t channels)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Returns the output type for the audio produced by the latest call to
   // GetAudio().
-  OutputType LastOutputType() EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  OutputType LastOutputType() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Updates Expand and Merge.
   virtual void UpdatePlcComponents(int fs_hz, size_t channels)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Creates DecisionLogic object with the mode given by |playout_mode_|.
-  virtual void CreateDecisionLogic() EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  virtual void CreateDecisionLogic() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   rtc::CriticalSection crit_sect_;
-  const std::unique_ptr<TickTimer> tick_timer_ GUARDED_BY(crit_sect_);
+  const std::unique_ptr<TickTimer> tick_timer_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<BufferLevelFilter> buffer_level_filter_
-      GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<DecoderDatabase> decoder_database_
-      GUARDED_BY(crit_sect_);
-  const std::unique_ptr<DelayManager> delay_manager_ GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
+  const std::unique_ptr<DelayManager> delay_manager_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<DelayPeakDetector> delay_peak_detector_
-      GUARDED_BY(crit_sect_);
-  const std::unique_ptr<DtmfBuffer> dtmf_buffer_ GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
+  const std::unique_ptr<DtmfBuffer> dtmf_buffer_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<DtmfToneGenerator> dtmf_tone_generator_
-      GUARDED_BY(crit_sect_);
-  const std::unique_ptr<PacketBuffer> packet_buffer_ GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
+  const std::unique_ptr<PacketBuffer> packet_buffer_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<RedPayloadSplitter> red_payload_splitter_
-      GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<TimestampScaler> timestamp_scaler_
-      GUARDED_BY(crit_sect_);
-  const std::unique_ptr<PostDecodeVad> vad_ GUARDED_BY(crit_sect_);
-  const std::unique_ptr<ExpandFactory> expand_factory_ GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
+  const std::unique_ptr<PostDecodeVad> vad_ RTC_GUARDED_BY(crit_sect_);
+  const std::unique_ptr<ExpandFactory> expand_factory_
+      RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<AccelerateFactory> accelerate_factory_
-      GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<PreemptiveExpandFactory> preemptive_expand_factory_
-      GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
 
-  std::unique_ptr<BackgroundNoise> background_noise_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<DecisionLogic> decision_logic_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<AudioMultiVector> algorithm_buffer_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<SyncBuffer> sync_buffer_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<Expand> expand_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<Normal> normal_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<Merge> merge_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<Accelerate> accelerate_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<PreemptiveExpand> preemptive_expand_ GUARDED_BY(crit_sect_);
-  RandomVector random_vector_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<ComfortNoise> comfort_noise_ GUARDED_BY(crit_sect_);
-  Rtcp rtcp_ GUARDED_BY(crit_sect_);
-  StatisticsCalculator stats_ GUARDED_BY(crit_sect_);
-  int fs_hz_ GUARDED_BY(crit_sect_);
-  int fs_mult_ GUARDED_BY(crit_sect_);
-  int last_output_sample_rate_hz_ GUARDED_BY(crit_sect_);
-  size_t output_size_samples_ GUARDED_BY(crit_sect_);
-  size_t decoder_frame_length_ GUARDED_BY(crit_sect_);
-  Modes last_mode_ GUARDED_BY(crit_sect_);
-  Operations last_operation_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<int16_t[]> mute_factor_array_ GUARDED_BY(crit_sect_);
-  size_t decoded_buffer_length_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<int16_t[]> decoded_buffer_ GUARDED_BY(crit_sect_);
-  uint32_t playout_timestamp_ GUARDED_BY(crit_sect_);
-  bool new_codec_ GUARDED_BY(crit_sect_);
-  uint32_t timestamp_ GUARDED_BY(crit_sect_);
-  bool reset_decoder_ GUARDED_BY(crit_sect_);
-  rtc::Optional<uint8_t> current_rtp_payload_type_ GUARDED_BY(crit_sect_);
-  rtc::Optional<uint8_t> current_cng_rtp_payload_type_ GUARDED_BY(crit_sect_);
-  uint32_t ssrc_ GUARDED_BY(crit_sect_);
-  bool first_packet_ GUARDED_BY(crit_sect_);
-  const BackgroundNoiseMode background_noise_mode_ GUARDED_BY(crit_sect_);
-  NetEqPlayoutMode playout_mode_ GUARDED_BY(crit_sect_);
-  bool enable_fast_accelerate_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<NackTracker> nack_ GUARDED_BY(crit_sect_);
-  bool nack_enabled_ GUARDED_BY(crit_sect_);
-  const bool enable_muted_state_ GUARDED_BY(crit_sect_);
-  AudioFrame::VADActivity last_vad_activity_ GUARDED_BY(crit_sect_) =
+  std::unique_ptr<BackgroundNoise> background_noise_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<DecisionLogic> decision_logic_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<AudioMultiVector> algorithm_buffer_
+      RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<SyncBuffer> sync_buffer_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<Expand> expand_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<Normal> normal_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<Merge> merge_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<Accelerate> accelerate_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<PreemptiveExpand> preemptive_expand_
+      RTC_GUARDED_BY(crit_sect_);
+  RandomVector random_vector_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<ComfortNoise> comfort_noise_ RTC_GUARDED_BY(crit_sect_);
+  Rtcp rtcp_ RTC_GUARDED_BY(crit_sect_);
+  StatisticsCalculator stats_ RTC_GUARDED_BY(crit_sect_);
+  int fs_hz_ RTC_GUARDED_BY(crit_sect_);
+  int fs_mult_ RTC_GUARDED_BY(crit_sect_);
+  int last_output_sample_rate_hz_ RTC_GUARDED_BY(crit_sect_);
+  size_t output_size_samples_ RTC_GUARDED_BY(crit_sect_);
+  size_t decoder_frame_length_ RTC_GUARDED_BY(crit_sect_);
+  Modes last_mode_ RTC_GUARDED_BY(crit_sect_);
+  Operations last_operation_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<int16_t[]> mute_factor_array_ RTC_GUARDED_BY(crit_sect_);
+  size_t decoded_buffer_length_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<int16_t[]> decoded_buffer_ RTC_GUARDED_BY(crit_sect_);
+  uint32_t playout_timestamp_ RTC_GUARDED_BY(crit_sect_);
+  bool new_codec_ RTC_GUARDED_BY(crit_sect_);
+  uint32_t timestamp_ RTC_GUARDED_BY(crit_sect_);
+  bool reset_decoder_ RTC_GUARDED_BY(crit_sect_);
+  rtc::Optional<uint8_t> current_rtp_payload_type_ RTC_GUARDED_BY(crit_sect_);
+  rtc::Optional<uint8_t> current_cng_rtp_payload_type_
+      RTC_GUARDED_BY(crit_sect_);
+  uint32_t ssrc_ RTC_GUARDED_BY(crit_sect_);
+  bool first_packet_ RTC_GUARDED_BY(crit_sect_);
+  const BackgroundNoiseMode background_noise_mode_ RTC_GUARDED_BY(crit_sect_);
+  NetEqPlayoutMode playout_mode_ RTC_GUARDED_BY(crit_sect_);
+  bool enable_fast_accelerate_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<NackTracker> nack_ RTC_GUARDED_BY(crit_sect_);
+  bool nack_enabled_ RTC_GUARDED_BY(crit_sect_);
+  const bool enable_muted_state_ RTC_GUARDED_BY(crit_sect_);
+  AudioFrame::VADActivity last_vad_activity_ RTC_GUARDED_BY(crit_sect_) =
       AudioFrame::kVadPassive;
   std::unique_ptr<TickTimer::Stopwatch> generated_noise_stopwatch_
-      GUARDED_BY(crit_sect_);
-  std::vector<uint32_t> last_decoded_timestamps_ GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
+  std::vector<uint32_t> last_decoded_timestamps_ RTC_GUARDED_BY(crit_sect_);
+  const bool use_dtx_delay_fix_ RTC_GUARDED_BY(crit_sect_);
 
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(NetEqImpl);
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_NETEQ_IMPL_H_

@@ -8,16 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/screen_capturer_win_directx.h"
+#include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 
+#include <algorithm>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/win/screen_capture_utils.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 
@@ -36,11 +39,69 @@ bool ScreenCapturerWinDirectx::RetrieveD3dInfo(D3dInfo* info) {
   return DxgiDuplicatorController::Instance()->RetrieveD3dInfo(info);
 }
 
-ScreenCapturerWinDirectx::ScreenCapturerWinDirectx(
-    const DesktopCaptureOptions& options)
-    : callback_(nullptr) {}
+// static
+bool ScreenCapturerWinDirectx::IsCurrentSessionSupported() {
+  return DxgiDuplicatorController::IsCurrentSessionSupported();
+}
 
-ScreenCapturerWinDirectx::~ScreenCapturerWinDirectx() {}
+// static
+bool ScreenCapturerWinDirectx::GetScreenListFromDeviceNames(
+    const std::vector<std::string>& device_names,
+    DesktopCapturer::SourceList* screens) {
+  RTC_DCHECK(screens->empty());
+
+  DesktopCapturer::SourceList gdi_screens;
+  std::vector<std::string> gdi_names;
+  if (!GetScreenList(&gdi_screens, &gdi_names)) {
+    return false;
+  }
+
+  RTC_DCHECK_EQ(gdi_screens.size(), gdi_names.size());
+
+  ScreenId max_screen_id = -1;
+  for (const DesktopCapturer::Source& screen : gdi_screens) {
+    max_screen_id = std::max(max_screen_id, screen.id);
+  }
+
+  for (const auto& device_name : device_names) {
+    const auto it = std::find(
+        gdi_names.begin(), gdi_names.end(), device_name);
+    if (it == gdi_names.end()) {
+      // devices_names[i] has not been found in gdi_names, so use max_screen_id.
+      max_screen_id++;
+      screens->push_back({ max_screen_id });
+    } else {
+      screens->push_back({ gdi_screens[it - gdi_names.begin()] });
+    }
+  }
+
+  return true;
+}
+
+// static
+int ScreenCapturerWinDirectx::GetIndexFromScreenId(
+    ScreenId id,
+    const std::vector<std::string>& device_names) {
+  DesktopCapturer::SourceList screens;
+  if (!GetScreenListFromDeviceNames(device_names, &screens)) {
+    return -1;
+  }
+
+  RTC_DCHECK_EQ(device_names.size(), screens.size());
+
+  for (size_t i = 0; i < screens.size(); i++) {
+    if (screens[i].id == id) {
+      return static_cast<int>(i);
+    }
+  }
+
+  return -1;
+}
+
+ScreenCapturerWinDirectx::ScreenCapturerWinDirectx()
+    : controller_(DxgiDuplicatorController::Instance()) {}
+
+ScreenCapturerWinDirectx::~ScreenCapturerWinDirectx() = default;
 
 void ScreenCapturerWinDirectx::Start(Callback* callback) {
   RTC_DCHECK(!callback_);
@@ -67,23 +128,35 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
 
   DxgiDuplicatorController::Result result;
   if (current_screen_id_ == kFullDesktopScreenId) {
-    result = DxgiDuplicatorController::Instance()->Duplicate(
-        frames_.current_frame());
+    result = controller_->Duplicate(frames_.current_frame());
   } else {
-    result = DxgiDuplicatorController::Instance()->DuplicateMonitor(
+    result = controller_->DuplicateMonitor(
         frames_.current_frame(), current_screen_id_);
   }
 
   using DuplicateResult = DxgiDuplicatorController::Result;
+  if (result != DuplicateResult::SUCCEEDED) {
+    RTC_LOG(LS_ERROR) << "DxgiDuplicatorController failed to capture desktop, "
+                         "error code "
+                      << DxgiDuplicatorController::ResultName(result);
+  }
   switch (result) {
+    case DuplicateResult::UNSUPPORTED_SESSION: {
+      RTC_LOG(LS_ERROR)
+          << "Current binary is running on a session not supported "
+             "by DirectX screen capturer.";
+      callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
+      break;
+    }
     case DuplicateResult::FRAME_PREPARE_FAILED: {
-      LOG(LS_ERROR) << "Failed to allocate a new DesktopFrame.";
+      RTC_LOG(LS_ERROR) << "Failed to allocate a new DesktopFrame.";
       // This usually means we do not have enough memory or SharedMemoryFactory
       // cannot work correctly.
       callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
       break;
     }
     case DuplicateResult::INVALID_MONITOR_ID: {
+      RTC_LOG(LS_ERROR) << "Invalid monitor id " << current_screen_id_;
       callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
       break;
     }
@@ -106,29 +179,33 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
 }
 
 bool ScreenCapturerWinDirectx::GetSourceList(SourceList* sources) {
-  int screen_count = DxgiDuplicatorController::Instance()->ScreenCount();
-  for (int i = 0; i < screen_count; i++) {
-    sources->push_back({i});
+  std::vector<std::string> device_names;
+  if (!controller_->GetDeviceNames(&device_names)) {
+    return false;
   }
-  return true;
+
+  return GetScreenListFromDeviceNames(device_names, sources);
 }
 
 bool ScreenCapturerWinDirectx::SelectSource(SourceId id) {
-  if (id == current_screen_id_) {
-    return true;
-  }
-
   if (id == kFullDesktopScreenId) {
     current_screen_id_ = id;
     return true;
   }
 
-  int screen_count = DxgiDuplicatorController::Instance()->ScreenCount();
-  if (id >= 0 && id < screen_count) {
-    current_screen_id_ = id;
-    return true;
+  std::vector<std::string> device_names;
+  if (!controller_->GetDeviceNames(&device_names)) {
+    return false;
   }
-  return false;
+
+  int index;
+  index = GetIndexFromScreenId(id, device_names);
+  if (index == -1) {
+    return false;
+  }
+
+  current_screen_id_ = index;
+  return true;
 }
 
 }  // namespace webrtc

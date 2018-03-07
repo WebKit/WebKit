@@ -11,14 +11,14 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/media/base/fakenetworkinterface.h"
-#include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/media/base/rtpdataengine.h"
-#include "webrtc/media/base/rtputils.h"
+#include "media/base/fakenetworkinterface.h"
+#include "media/base/mediaconstants.h"
+#include "media/base/rtpdataengine.h"
+#include "media/base/rtputils.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/ssladapter.h"
 
 class FakeDataReceiver : public sigslot::has_slots<> {
  public:

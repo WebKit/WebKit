@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/voice_engine/transport_feedback_packet_loss_tracker.h"
+#include "voice_engine/transport_feedback_packet_loss_tracker.h"
 
 #include <limits>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/mod_ops.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/mod_ops.h"
 
 namespace {
 constexpr uint16_t kSeqNumHalf = 0x8000u;
@@ -348,20 +348,18 @@ rtc::Optional<float>
 TransportFeedbackPacketLossTracker::PlrState::GetMetric() const {
   const size_t total = num_lost_packets_ + num_received_packets_;
   if (total < min_num_acked_packets_) {
-    return rtc::Optional<float>();
+    return rtc::nullopt;
   } else {
-    return rtc::Optional<float>(
-        static_cast<float>(num_lost_packets_) / total);
+    return static_cast<float>(num_lost_packets_) / total;
   }
 }
 
 rtc::Optional<float>
 TransportFeedbackPacketLossTracker::RplrState::GetMetric() const {
   if (num_acked_pairs_ < min_num_acked_pairs_) {
-    return rtc::Optional<float>();
+    return rtc::nullopt;
   } else {
-    return rtc::Optional<float>(
-        static_cast<float>(num_recoverable_losses_) / num_acked_pairs_);
+    return static_cast<float>(num_recoverable_losses_) / num_acked_pairs_;
   }
 }
 

@@ -10,12 +10,12 @@
 
 #include <memory>
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/system_wrappers/include/metrics_default.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/video/call_stats.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "system_wrappers/include/metrics.h"
+#include "system_wrappers/include/metrics_default.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "video/call_stats.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;

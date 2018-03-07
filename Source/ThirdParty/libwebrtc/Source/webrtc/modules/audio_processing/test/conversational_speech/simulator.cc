@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/conversational_speech/simulator.h"
+#include "modules/audio_processing/test/conversational_speech/simulator.h"
 
 #include <set>
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/pathutils.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/common_audio/wav_file.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/wavreader_interface.h"
+#include "api/array_view.h"
+#include "common_audio/wav_file.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/pathutils.h"
+#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 namespace test {
@@ -43,13 +43,13 @@ std::unique_ptr<std::map<std::string, SpeakerOutputFilePaths>>
   for (const auto& speaker_name : speaker_names) {
     const rtc::Pathname near_end_path(
         output_path, "s_" + speaker_name + "-near_end.wav");
-    LOG(LS_VERBOSE) << "The near-end audio track will be created in "
-        << near_end_path.pathname() << ".";
+    RTC_LOG(LS_VERBOSE) << "The near-end audio track will be created in "
+                        << near_end_path.pathname() << ".";
 
     const rtc::Pathname far_end_path(
         output_path, "s_" + speaker_name + "-far_end.wav");
-    LOG(LS_VERBOSE) << "The far-end audio track will be created in "
-        << far_end_path.pathname() << ".";
+    RTC_LOG(LS_VERBOSE) << "The far-end audio track will be created in "
+                        << far_end_path.pathname() << ".";
 
     // Add to map.
     speaker_output_file_paths_map->emplace(

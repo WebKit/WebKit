@@ -74,7 +74,12 @@ const (
 	cppGuard     = "#if defined(__cplusplus)"
 	commentStart = "/* "
 	commentEnd   = " */"
+	lineComment  = "// "
 )
+
+func isComment(line string) bool {
+	return strings.HasPrefix(line, commentStart) || strings.HasPrefix(line, lineComment)
+}
 
 func extractComment(lines []string, lineNo int) (comment []string, rest []string, restLineNo int, err error) {
 	if len(lines) == 0 {
@@ -84,7 +89,10 @@ func extractComment(lines []string, lineNo int) (comment []string, rest []string
 	restLineNo = lineNo
 	rest = lines
 
-	if !strings.HasPrefix(rest[0], commentStart) {
+	var isBlock bool
+	if strings.HasPrefix(rest[0], commentStart) {
+		isBlock = true
+	} else if !strings.HasPrefix(rest[0], lineComment) {
 		panic("extractComment called on non-comment")
 	}
 	commentParagraph := rest[0][len(commentStart):]
@@ -92,25 +100,34 @@ func extractComment(lines []string, lineNo int) (comment []string, rest []string
 	restLineNo++
 
 	for len(rest) > 0 {
-		i := strings.Index(commentParagraph, commentEnd)
-		if i >= 0 {
-			if i != len(commentParagraph)-len(commentEnd) {
-				err = fmt.Errorf("garbage after comment end on line %d", restLineNo)
+		if isBlock {
+			i := strings.Index(commentParagraph, commentEnd)
+			if i >= 0 {
+				if i != len(commentParagraph)-len(commentEnd) {
+					err = fmt.Errorf("garbage after comment end on line %d", restLineNo)
+					return
+				}
+				commentParagraph = commentParagraph[:i]
+				if len(commentParagraph) > 0 {
+					comment = append(comment, commentParagraph)
+				}
 				return
 			}
-			commentParagraph = commentParagraph[:i]
+		}
+
+		line := rest[0]
+		if isBlock {
+			if !strings.HasPrefix(line, " *") {
+				err = fmt.Errorf("comment doesn't start with block prefix on line %d: %s", restLineNo, line)
+				return
+			}
+		} else if !strings.HasPrefix(line, "//") {
 			if len(commentParagraph) > 0 {
 				comment = append(comment, commentParagraph)
 			}
 			return
 		}
-
-		line := rest[0]
-		if !strings.HasPrefix(line, " *") {
-			err = fmt.Errorf("comment doesn't start with block prefix on line %d: %s", restLineNo, line)
-			return
-		}
-		if len(line) == 2 || line[2] != '/' {
+		if len(line) == 2 || !isBlock || line[2] != '/' {
 			line = line[2:]
 		}
 		if strings.HasPrefix(line, "   ") {
@@ -309,7 +326,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 	}
 
 	oldLines = lines
-	if len(lines) > 0 && strings.HasPrefix(lines[0], commentStart) {
+	if len(lines) > 0 && isComment(lines[0]) {
 		comment, rest, restLineNo, err := extractComment(lines, lineNo)
 		if err != nil {
 			return nil, err
@@ -345,7 +362,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 
 		var section HeaderSection
 
-		if strings.HasPrefix(line, commentStart) {
+		if isComment(line) {
 			comment, rest, restLineNo, err := extractComment(lines, lineNo)
 			if err != nil {
 				return nil, err
@@ -380,7 +397,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 
 			var comment []string
 			var decl string
-			if strings.HasPrefix(line, commentStart) {
+			if isComment(line) {
 				comment, lines, lineNo, err = extractComment(lines, lineNo)
 				if err != nil {
 					return nil, err
@@ -459,7 +476,13 @@ func firstSentence(paragraphs []string) string {
 	return s
 }
 
+// markupPipeWords converts |s| into an HTML string, safe to be included outside
+// a tag, while also marking up words surrounded by |.
 func markupPipeWords(allDecls map[string]string, s string) template.HTML {
+	// It is safe to look for '|' in the HTML-escaped version of |s|
+	// below. The escaped version cannot include '|' instead tags because
+	// there are no tags by construction.
+	s = template.HTMLEscapeString(s)
 	ret := ""
 
 	for {
@@ -549,12 +572,12 @@ func generate(outPath string, config *Config) (map[string]string, error) {
       <a href="headers.html">All headers</a>
     </div>
 
-    {{range .Preamble}}<p>{{. | html | markupPipeWords}}</p>{{end}}
+    {{range .Preamble}}<p>{{. | markupPipeWords}}</p>{{end}}
 
     <ol>
       {{range .Sections}}
         {{if not .IsPrivate}}
-          {{if .Anchor}}<li class="header"><a href="#{{.Anchor}}">{{.Preamble | firstSentence | html | markupPipeWords}}</a></li>{{end}}
+          {{if .Anchor}}<li class="header"><a href="#{{.Anchor}}">{{.Preamble | firstSentence | markupPipeWords}}</a></li>{{end}}
           {{range .Decls}}
             {{if .Anchor}}<li><a href="#{{.Anchor}}"><tt>{{.Name}}</tt></a></li>{{end}}
           {{end}}
@@ -567,14 +590,14 @@ func generate(outPath string, config *Config) (map[string]string, error) {
         <div class="section" {{if .Anchor}}id="{{.Anchor}}"{{end}}>
         {{if .Preamble}}
           <div class="sectionpreamble">
-          {{range .Preamble}}<p>{{. | html | markupPipeWords}}</p>{{end}}
+          {{range .Preamble}}<p>{{. | markupPipeWords}}</p>{{end}}
           </div>
         {{end}}
 
         {{range .Decls}}
           <div class="decl" {{if .Anchor}}id="{{.Anchor}}"{{end}}>
           {{range .Comment}}
-            <p>{{. | html | markupPipeWords | newlinesToBR | markupFirstWord}}</p>
+            <p>{{. | markupPipeWords | newlinesToBR | markupFirstWord}}</p>
           {{end}}
           <pre>{{.Decl}}</pre>
           </div>

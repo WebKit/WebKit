@@ -9,7 +9,15 @@
 """Unit tests for the apm_quality_assessment module.
 """
 
+import os
+import sys
 import unittest
+
+SRC = os.path.abspath(os.path.join(
+    os.path.dirname((__file__)), os.pardir, os.pardir, os.pardir))
+sys.path.append(os.path.join(SRC, 'third_party', 'pymock'))
+
+import mock
 
 import apm_quality_assessment
 
@@ -19,6 +27,7 @@ class TestSimulationScript(unittest.TestCase):
 
   def testMain(self):
     # Exit with error code if no arguments are passed.
-    with self.assertRaises(SystemExit) as cm:
+    with self.assertRaises(SystemExit) as cm, mock.patch.object(
+        sys, 'argv', ['apm_quality_assessment.py']):
       apm_quality_assessment.main()
     self.assertGreater(cm.exception.code, 0)

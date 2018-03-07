@@ -12,7 +12,7 @@
 // It's intended to set sane defaults, such as removing logging for further
 // fuzzing efficiency.
 
-#include "webrtc/base/logging.h"
+#include "rtc_base/logging.h"
 
 namespace {
 bool g_initialized = false;

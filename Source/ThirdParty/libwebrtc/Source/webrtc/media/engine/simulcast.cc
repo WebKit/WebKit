@@ -9,13 +9,15 @@
  */
 
 #include <stdio.h>
+#include <algorithm>
+#include <string>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/media/base/streamparams.h"
-#include "webrtc/media/engine/constants.h"
-#include "webrtc/media/engine/simulcast.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "media/base/streamparams.h"
+#include "media/engine/constants.h"
+#include "media/engine/simulcast.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace cricket {
 
@@ -147,14 +149,14 @@ int FindSimulcastMinBitrateBps(int width, int height) {
 bool SlotSimulcastMaxResolution(size_t max_layers, int* width, int* height) {
   int index = FindSimulcastFormatIndex(*width, *height, max_layers);
   if (index == -1) {
-    LOG(LS_ERROR) << "SlotSimulcastMaxResolution";
+    RTC_LOG(LS_ERROR) << "SlotSimulcastMaxResolution";
     return false;
   }
 
   *width = kSimulcastFormats[index].width;
   *height = kSimulcastFormats[index].height;
-  LOG(LS_INFO) << "SlotSimulcastMaxResolution to width:" << *width
-               << " height:" << *height;
+  RTC_LOG(LS_INFO) << "SlotSimulcastMaxResolution to width:" << *width
+                   << " height:" << *height;
   return true;
 }
 
@@ -207,7 +209,7 @@ std::vector<webrtc::VideoStream> GetSimulcastConfig(size_t max_streams,
     streams[0].height = height;
     streams[0].max_qp = max_qp;
     streams[0].max_framerate = 5;
-    streams[0].min_bitrate_bps = kMinVideoBitrateKbps * 1000;
+    streams[0].min_bitrate_bps = kMinVideoBitrateBps;
     streams[0].target_bitrate_bps = config.tl0_bitrate_kbps * 1000;
     streams[0].max_bitrate_bps = config.tl1_bitrate_kbps * 1000;
     streams[0].temporal_layer_thresholds_bps.clear();
@@ -298,8 +300,9 @@ ScreenshareLayerConfig ScreenshareLayerConfig::GetDefault() {
   ScreenshareLayerConfig config(kScreenshareDefaultTl0BitrateKbps,
                                 kScreenshareDefaultTl1BitrateKbps);
   if (!group.empty() && !FromFieldTrialGroup(group, &config)) {
-    LOG(LS_WARNING) << "Unable to parse WebRTC-ScreenshareLayerRates"
-                       " field trial group: '" << group << "'.";
+    RTC_LOG(LS_WARNING) << "Unable to parse WebRTC-ScreenshareLayerRates"
+                           " field trial group: '"
+                        << group << "'.";
   }
   return config;
 }

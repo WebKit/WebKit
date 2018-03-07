@@ -25,7 +25,7 @@
 @ r12: constant #16384
 @ r6, r7, r8, r10, r11: scratch
 
-#include "webrtc/system_wrappers/include/asm_defines.h"
+#include "system_wrappers/include/asm_defines.h"
 #include "settings.h"
 
 GLOBAL_FUNCTION WebRtcIsacfix_FilterArLoop

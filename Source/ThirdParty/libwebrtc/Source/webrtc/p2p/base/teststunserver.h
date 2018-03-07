@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_TESTSTUNSERVER_H_
-#define WEBRTC_P2P_BASE_TESTSTUNSERVER_H_
+#ifndef P2P_BASE_TESTSTUNSERVER_H_
+#define P2P_BASE_TESTSTUNSERVER_H_
 
-#include "webrtc/p2p/base/stunserver.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/thread.h"
+#include "p2p/base/stunserver.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/thread.h"
 
 namespace cricket {
 
@@ -21,14 +21,7 @@ namespace cricket {
 class TestStunServer : StunServer {
  public:
   static TestStunServer* Create(rtc::Thread* thread,
-                                const rtc::SocketAddress& addr) {
-    rtc::AsyncSocket* socket =
-        thread->socketserver()->CreateAsyncSocket(addr.family(), SOCK_DGRAM);
-    rtc::AsyncUDPSocket* udp_socket =
-        rtc::AsyncUDPSocket::Create(socket, addr);
-
-    return new TestStunServer(udp_socket);
-  }
+                                const rtc::SocketAddress& addr);
 
   // Set a fake STUN address to return to the client.
   void set_fake_stun_addr(const rtc::SocketAddress& addr) {
@@ -39,15 +32,7 @@ class TestStunServer : StunServer {
   explicit TestStunServer(rtc::AsyncUDPSocket* socket) : StunServer(socket) {}
 
   void OnBindingRequest(StunMessage* msg,
-                        const rtc::SocketAddress& remote_addr) override {
-    if (fake_stun_addr_.IsNil()) {
-      StunServer::OnBindingRequest(msg, remote_addr);
-    } else {
-      StunMessage response;
-      GetStunBindReqponse(msg, fake_stun_addr_, &response);
-      SendResponse(response, remote_addr);
-    }
-  }
+                        const rtc::SocketAddress& remote_addr) override;
 
  private:
   rtc::SocketAddress fake_stun_addr_;
@@ -55,4 +40,4 @@ class TestStunServer : StunServer {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_TESTSTUNSERVER_H_
+#endif  // P2P_BASE_TESTSTUNSERVER_H_

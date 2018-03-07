@@ -23,7 +23,7 @@ const (
 	alertRecordOverflow         alert = 22
 	alertDecompressionFailure   alert = 30
 	alertHandshakeFailure       alert = 40
-	alertNoCertficate           alert = 41
+	alertNoCertificate          alert = 41
 	alertBadCertificate         alert = 42
 	alertUnsupportedCertificate alert = 43
 	alertCertificateRevoked     alert = 44
@@ -37,6 +37,7 @@ const (
 	alertProtocolVersion        alert = 70
 	alertInsufficientSecurity   alert = 71
 	alertInternalError          alert = 80
+	alertInappropriateFallback  alert = 86
 	alertUserCanceled           alert = 90
 	alertNoRenegotiation        alert = 100
 	alertMissingExtension       alert = 109
@@ -55,6 +56,7 @@ var alertText = map[alert]string{
 	alertRecordOverflow:         "record overflow",
 	alertDecompressionFailure:   "decompression failure",
 	alertHandshakeFailure:       "handshake failure",
+	alertNoCertificate:          "no certificate",
 	alertBadCertificate:         "bad certificate",
 	alertUnsupportedCertificate: "unsupported certificate",
 	alertCertificateRevoked:     "revoked certificate",
@@ -68,6 +70,7 @@ var alertText = map[alert]string{
 	alertProtocolVersion:        "protocol version not supported",
 	alertInsufficientSecurity:   "insufficient security level",
 	alertInternalError:          "internal error",
+	alertInappropriateFallback:  "inappropriate fallback",
 	alertUserCanceled:           "user canceled",
 	alertNoRenegotiation:        "no renegotiation",
 	alertMissingExtension:       "missing extension",

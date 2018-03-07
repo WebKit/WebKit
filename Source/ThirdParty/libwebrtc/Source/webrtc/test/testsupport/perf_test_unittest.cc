@@ -8,26 +8,31 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/testsupport/perf_test.h"
+#include "test/testsupport/perf_test.h"
 
 #include <string>
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
 
 TEST(PerfTest, AppendResult) {
+  testing::internal::CaptureStdout();
   std::string expected = "RESULT measurementmodifier: trace= 42 units\n";
-  std::string output;
-  AppendResult(output, "measurement", "modifier", "trace", 42, "units", false);
-  EXPECT_EQ(expected, output);
-  std::cout << output;
+  PrintResult("measurement", "modifier", "trace", 42, "units", false);
 
   expected += "*RESULT foobar: baz= 7 widgets\n";
-  AppendResult(output, "foo", "bar", "baz", 7, "widgets", true);
+  PrintResult("foo", "bar", "baz", 7, "widgets", true);
+
+  expected += "RESULT foobar: baz= {1,2} lemurs\n";
+  PrintResultMeanAndError("foo", "bar", "baz", 1, 2, "lemurs", false);
+
+  expected += "RESULT foobar: baz= [1,2,3] units\n";
+  PrintResultList("foo", "bar", "baz", {1, 2, 3}, "units", false);
+
+  std::string output = testing::internal::GetCapturedStdout();
   EXPECT_EQ(expected, output);
-  std::cout << output;
 }
 
 }  // namespace test

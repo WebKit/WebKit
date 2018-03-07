@@ -10,10 +10,10 @@
 
 #include <memory>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/fec_test_helper.h"
-#include "webrtc/modules/rtp_rtcp/source/ulpfec_generator.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/fec_test_helper.h"
+#include "modules/rtp_rtcp/source/ulpfec_generator.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -43,8 +43,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     ByteWriter<uint16_t>::WriteBigEndian(&packet[2], seq_num++);
     i += payload_size + rtp_header_length;
     // Make sure sequence numbers are increasing.
-    std::unique_ptr<RedPacket> red_packet = UlpfecGenerator::BuildRedPacket(
-        packet.get(), payload_size, rtp_header_length, kRedPayloadType);
     const bool protect = data[i++] % 2 == 1;
     if (protect) {
       generator.AddRtpPacketAndGenerateFec(packet.get(), payload_size,

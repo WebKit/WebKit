@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_PAYLOAD_REGISTRY_H_
-#define WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_PAYLOAD_REGISTRY_H_
+#ifndef MODULES_RTP_RTCP_INCLUDE_RTP_PAYLOAD_REGISTRY_H_
+#define MODULES_RTP_RTCP_INCLUDE_RTP_PAYLOAD_REGISTRY_H_
 
 #include <map>
 #include <set>
 
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/optional.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 
-struct CodecInst;
 class VideoCodec;
 
 class RTPPayloadRegistry {
@@ -34,13 +34,14 @@ class RTPPayloadRegistry {
   // Replace all audio receive payload types with the given map.
   void SetAudioReceivePayloads(std::map<int, SdpAudioFormat> codecs);
 
-  int32_t RegisterReceivePayload(const CodecInst& audio_codec,
+  int32_t RegisterReceivePayload(int payload_type,
+                                 const SdpAudioFormat& audio_format,
                                  bool* created_new_payload_type);
   int32_t RegisterReceivePayload(const VideoCodec& video_codec);
 
   int32_t DeRegisterReceivePayload(int8_t payload_type);
 
-  int32_t ReceivePayloadType(const CodecInst& audio_codec,
+  int32_t ReceivePayloadType(const SdpAudioFormat& audio_format,
                              int8_t* payload_type) const;
   int32_t ReceivePayloadType(const VideoCodec& video_codec,
                              int8_t* payload_type) const;
@@ -53,25 +54,12 @@ class RTPPayloadRegistry {
 
   void SetRtxPayloadType(int payload_type, int associated_payload_type);
 
-  bool IsRtx(const RTPHeader& header) const;
-
-  bool RestoreOriginalPacket(uint8_t* restored_packet,
-                             const uint8_t* packet,
-                             size_t* packet_length,
-                             uint32_t original_ssrc,
-                             const RTPHeader& header);
-
   bool IsRed(const RTPHeader& header) const;
-
-  // Returns true if the media of this RTP packet is encapsulated within an
-  // extra header, such as RTX or RED.
-  bool IsEncapsulated(const RTPHeader& header) const;
-
-  bool GetPayloadSpecifics(uint8_t payload_type, PayloadUnion* payload) const;
 
   int GetPayloadTypeFrequency(uint8_t payload_type) const;
 
-  const RtpUtility::Payload* PayloadTypeToPayload(uint8_t payload_type) const;
+  rtc::Optional<RtpUtility::Payload> PayloadTypeToPayload(
+      uint8_t payload_type) const;
 
   void ResetLastReceivedPayloadTypes() {
     rtc::CritScope cs(&crit_sect_);
@@ -108,7 +96,7 @@ class RTPPayloadRegistry {
  private:
   // Prunes the payload type map of the specific payload type, if it exists.
   void DeregisterAudioCodecOrRedTypeRegardlessOfPayloadType(
-      const CodecInst& audio_codec);
+      const SdpAudioFormat& audio_format);
 
   bool IsRtxInternal(const RTPHeader& header) const;
   // Returns the payload type for the payload with name |payload_name|, or -1 if
@@ -126,16 +114,17 @@ class RTPPayloadRegistry {
   uint32_t ssrc_rtx_;
   // Only warn once per payload type, if an RTX packet is received but
   // no associated payload type found in |rtx_payload_type_map_|.
-  std::set<int> payload_types_with_suppressed_warnings_ GUARDED_BY(crit_sect_);
+  std::set<int> payload_types_with_suppressed_warnings_
+      RTC_GUARDED_BY(crit_sect_);
 
   // As a first step in splitting this class up in separate cases for audio and
   // video, DCHECK that no instance is used for both audio and video.
 #if RTC_DCHECK_IS_ON
-  bool used_for_audio_ GUARDED_BY(crit_sect_) = false;
-  bool used_for_video_ GUARDED_BY(crit_sect_) = false;
+  bool used_for_audio_ RTC_GUARDED_BY(crit_sect_) = false;
+  bool used_for_video_ RTC_GUARDED_BY(crit_sect_) = false;
 #endif
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_PAYLOAD_REGISTRY_H_
+#endif  // MODULES_RTP_RTCP_INCLUDE_RTP_PAYLOAD_REGISTRY_H_

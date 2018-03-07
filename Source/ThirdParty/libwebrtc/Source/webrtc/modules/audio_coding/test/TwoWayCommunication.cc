@@ -20,30 +20,28 @@
 #include <Windows.h>
 #endif
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/test/PCMFile.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/typedefs.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/test/PCMFile.h"
+#include "modules/audio_coding/test/utility.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 #define MAX_FILE_NAME_LENGTH_BYTE 500
 
 TwoWayCommunication::TwoWayCommunication(int testMode)
-    : _acmA(AudioCodingModule::Create(1)),
-      _acmRefA(AudioCodingModule::Create(3)),
+    : _acmA(AudioCodingModule::Create()),
+      _acmRefA(AudioCodingModule::Create()),
       _testMode(testMode) {
   AudioCodingModule::Config config;
   // The clicks will be more obvious in FAX mode. TODO(henrik.lundin) Really?
   config.neteq_config.playout_mode = kPlayoutFax;
-  config.id = 2;
   config.decoder_factory = CreateBuiltinAudioDecoderFactory();
   _acmB.reset(AudioCodingModule::Create(config));
-  config.id = 4;
   _acmRefB.reset(AudioCodingModule::Create(config));
 }
 
@@ -62,7 +60,7 @@ TwoWayCommunication::~TwoWayCommunication() {
 
 void TwoWayCommunication::ChooseCodec(uint8_t* codecID_A,
                                       uint8_t* codecID_B) {
-  std::unique_ptr<AudioCodingModule> tmpACM(AudioCodingModule::Create(0));
+  std::unique_ptr<AudioCodingModule> tmpACM(AudioCodingModule::Create());
   uint8_t noCodec = tmpACM->NumberOfCodecs();
   CodecInst codecInst;
   printf("List of Supported Codecs\n");

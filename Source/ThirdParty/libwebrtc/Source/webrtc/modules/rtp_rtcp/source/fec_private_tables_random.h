@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_RANDOM_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_RANDOM_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_RANDOM_H_
+#define MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_RANDOM_H_
 
 // This file contains a set of packets masks for the FEC code. The masks in
 // this table are specifically designed to favor recovery to random loss.
 // These packet masks are defined to protect up to maximum of 48 media packets.
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace fec_private_tables {
@@ -23148,29 +23148,29 @@ const uint8_t kMaskRandom9_9[18] = {
   0x09, 0x00
 };
 
-const uint8_t* kPacketMaskRandom1[1] = {
+const uint8_t* const kPacketMaskRandom1[1] = {
   kMaskRandom1_1
 };
 
-const uint8_t* kPacketMaskRandom2[2] = {
+const uint8_t* const kPacketMaskRandom2[2] = {
   kMaskRandom2_1,
   kMaskRandom2_2
 };
 
-const uint8_t* kPacketMaskRandom3[3] = {
+const uint8_t* const kPacketMaskRandom3[3] = {
   kMaskRandom3_1,
   kMaskRandom3_2,
   kMaskRandom3_3
 };
 
-const uint8_t* kPacketMaskRandom4[4] = {
+const uint8_t* const kPacketMaskRandom4[4] = {
   kMaskRandom4_1,
   kMaskRandom4_2,
   kMaskRandom4_3,
   kMaskRandom4_4
 };
 
-const uint8_t* kPacketMaskRandom5[5] = {
+const uint8_t* const kPacketMaskRandom5[5] = {
   kMaskRandom5_1,
   kMaskRandom5_2,
   kMaskRandom5_3,
@@ -23178,7 +23178,7 @@ const uint8_t* kPacketMaskRandom5[5] = {
   kMaskRandom5_5
 };
 
-const uint8_t* kPacketMaskRandom6[6] = {
+const uint8_t* const kPacketMaskRandom6[6] = {
   kMaskRandom6_1,
   kMaskRandom6_2,
   kMaskRandom6_3,
@@ -23187,7 +23187,7 @@ const uint8_t* kPacketMaskRandom6[6] = {
   kMaskRandom6_6
 };
 
-const uint8_t* kPacketMaskRandom7[7] = {
+const uint8_t* const kPacketMaskRandom7[7] = {
   kMaskRandom7_1,
   kMaskRandom7_2,
   kMaskRandom7_3,
@@ -23197,7 +23197,7 @@ const uint8_t* kPacketMaskRandom7[7] = {
   kMaskRandom7_7
 };
 
-const uint8_t* kPacketMaskRandom8[8] = {
+const uint8_t* const kPacketMaskRandom8[8] = {
   kMaskRandom8_1,
   kMaskRandom8_2,
   kMaskRandom8_3,
@@ -23208,7 +23208,7 @@ const uint8_t* kPacketMaskRandom8[8] = {
   kMaskRandom8_8
 };
 
-const uint8_t* kPacketMaskRandom9[9] = {
+const uint8_t* const kPacketMaskRandom9[9] = {
   kMaskRandom9_1,
   kMaskRandom9_2,
   kMaskRandom9_3,
@@ -23220,7 +23220,7 @@ const uint8_t* kPacketMaskRandom9[9] = {
   kMaskRandom9_9
 };
 
-const uint8_t* kPacketMaskRandom10[10] = {
+const uint8_t* const kPacketMaskRandom10[10] = {
   kMaskRandom10_1,
   kMaskRandom10_2,
   kMaskRandom10_3,
@@ -23233,7 +23233,7 @@ const uint8_t* kPacketMaskRandom10[10] = {
   kMaskRandom10_10
 };
 
-const uint8_t* kPacketMaskRandom11[11] = {
+const uint8_t* const kPacketMaskRandom11[11] = {
   kMaskRandom11_1,
   kMaskRandom11_2,
   kMaskRandom11_3,
@@ -23247,7 +23247,7 @@ const uint8_t* kPacketMaskRandom11[11] = {
   kMaskRandom11_11
 };
 
-const uint8_t* kPacketMaskRandom12[12] = {
+const uint8_t* const kPacketMaskRandom12[12] = {
   kMaskRandom12_1,
   kMaskRandom12_2,
   kMaskRandom12_3,
@@ -23262,7 +23262,7 @@ const uint8_t* kPacketMaskRandom12[12] = {
   kMaskRandom12_12
 };
 
-const uint8_t* kPacketMaskRandom13[13] = {
+const uint8_t* const kPacketMaskRandom13[13] = {
   kMaskRandom13_1,
   kMaskRandom13_2,
   kMaskRandom13_3,
@@ -23278,7 +23278,7 @@ const uint8_t* kPacketMaskRandom13[13] = {
   kMaskRandom13_13
 };
 
-const uint8_t* kPacketMaskRandom14[14] = {
+const uint8_t* const kPacketMaskRandom14[14] = {
   kMaskRandom14_1,
   kMaskRandom14_2,
   kMaskRandom14_3,
@@ -23295,7 +23295,7 @@ const uint8_t* kPacketMaskRandom14[14] = {
   kMaskRandom14_14
 };
 
-const uint8_t* kPacketMaskRandom15[15] = {
+const uint8_t* const kPacketMaskRandom15[15] = {
   kMaskRandom15_1,
   kMaskRandom15_2,
   kMaskRandom15_3,
@@ -23313,7 +23313,7 @@ const uint8_t* kPacketMaskRandom15[15] = {
   kMaskRandom15_15
 };
 
-const uint8_t* kPacketMaskRandom16[16] = {
+const uint8_t* const kPacketMaskRandom16[16] = {
   kMaskRandom16_1,
   kMaskRandom16_2,
   kMaskRandom16_3,
@@ -23332,7 +23332,7 @@ const uint8_t* kPacketMaskRandom16[16] = {
   kMaskRandom16_16
 };
 
-const uint8_t* kPacketMaskRandom17[17] = {
+const uint8_t* const kPacketMaskRandom17[17] = {
   kMaskRandom17_1,
   kMaskRandom17_2,
   kMaskRandom17_3,
@@ -23352,7 +23352,7 @@ const uint8_t* kPacketMaskRandom17[17] = {
   kMaskRandom17_17
 };
 
-const uint8_t* kPacketMaskRandom18[18] = {
+const uint8_t* const kPacketMaskRandom18[18] = {
   kMaskRandom18_1,
   kMaskRandom18_2,
   kMaskRandom18_3,
@@ -23373,7 +23373,7 @@ const uint8_t* kPacketMaskRandom18[18] = {
   kMaskRandom18_18
 };
 
-const uint8_t* kPacketMaskRandom19[19] = {
+const uint8_t* const kPacketMaskRandom19[19] = {
   kMaskRandom19_1,
   kMaskRandom19_2,
   kMaskRandom19_3,
@@ -23395,7 +23395,7 @@ const uint8_t* kPacketMaskRandom19[19] = {
   kMaskRandom19_19
 };
 
-const uint8_t* kPacketMaskRandom20[20] = {
+const uint8_t* const kPacketMaskRandom20[20] = {
   kMaskRandom20_1,
   kMaskRandom20_2,
   kMaskRandom20_3,
@@ -23418,7 +23418,7 @@ const uint8_t* kPacketMaskRandom20[20] = {
   kMaskRandom20_20
 };
 
-const uint8_t* kPacketMaskRandom21[21] = {
+const uint8_t* const kPacketMaskRandom21[21] = {
   kMaskRandom21_1,
   kMaskRandom21_2,
   kMaskRandom21_3,
@@ -23442,7 +23442,7 @@ const uint8_t* kPacketMaskRandom21[21] = {
   kMaskRandom21_21
 };
 
-const uint8_t* kPacketMaskRandom22[22] = {
+const uint8_t* const kPacketMaskRandom22[22] = {
   kMaskRandom22_1,
   kMaskRandom22_2,
   kMaskRandom22_3,
@@ -23467,7 +23467,7 @@ const uint8_t* kPacketMaskRandom22[22] = {
   kMaskRandom22_22
 };
 
-const uint8_t* kPacketMaskRandom23[23] = {
+const uint8_t* const kPacketMaskRandom23[23] = {
   kMaskRandom23_1,
   kMaskRandom23_2,
   kMaskRandom23_3,
@@ -23493,7 +23493,7 @@ const uint8_t* kPacketMaskRandom23[23] = {
   kMaskRandom23_23
 };
 
-const uint8_t* kPacketMaskRandom24[24] = {
+const uint8_t* const kPacketMaskRandom24[24] = {
   kMaskRandom24_1,
   kMaskRandom24_2,
   kMaskRandom24_3,
@@ -23520,7 +23520,7 @@ const uint8_t* kPacketMaskRandom24[24] = {
   kMaskRandom24_24
 };
 
-const uint8_t* kPacketMaskRandom25[25] = {
+const uint8_t* const kPacketMaskRandom25[25] = {
   kMaskRandom25_1,
   kMaskRandom25_2,
   kMaskRandom25_3,
@@ -23548,7 +23548,7 @@ const uint8_t* kPacketMaskRandom25[25] = {
   kMaskRandom25_25
 };
 
-const uint8_t* kPacketMaskRandom26[26] = {
+const uint8_t* const kPacketMaskRandom26[26] = {
   kMaskRandom26_1,
   kMaskRandom26_2,
   kMaskRandom26_3,
@@ -23577,7 +23577,7 @@ const uint8_t* kPacketMaskRandom26[26] = {
   kMaskRandom26_26
 };
 
-const uint8_t* kPacketMaskRandom27[27] = {
+const uint8_t* const kPacketMaskRandom27[27] = {
   kMaskRandom27_1,
   kMaskRandom27_2,
   kMaskRandom27_3,
@@ -23607,7 +23607,7 @@ const uint8_t* kPacketMaskRandom27[27] = {
   kMaskRandom27_27
 };
 
-const uint8_t* kPacketMaskRandom28[28] = {
+const uint8_t* const kPacketMaskRandom28[28] = {
   kMaskRandom28_1,
   kMaskRandom28_2,
   kMaskRandom28_3,
@@ -23638,7 +23638,7 @@ const uint8_t* kPacketMaskRandom28[28] = {
   kMaskRandom28_28
 };
 
-const uint8_t* kPacketMaskRandom29[29] = {
+const uint8_t* const kPacketMaskRandom29[29] = {
   kMaskRandom29_1,
   kMaskRandom29_2,
   kMaskRandom29_3,
@@ -23670,7 +23670,7 @@ const uint8_t* kPacketMaskRandom29[29] = {
   kMaskRandom29_29
 };
 
-const uint8_t* kPacketMaskRandom30[30] = {
+const uint8_t* const kPacketMaskRandom30[30] = {
   kMaskRandom30_1,
   kMaskRandom30_2,
   kMaskRandom30_3,
@@ -23703,7 +23703,7 @@ const uint8_t* kPacketMaskRandom30[30] = {
   kMaskRandom30_30
 };
 
-const uint8_t* kPacketMaskRandom31[31] = {
+const uint8_t* const kPacketMaskRandom31[31] = {
   kMaskRandom31_1,
   kMaskRandom31_2,
   kMaskRandom31_3,
@@ -23737,7 +23737,7 @@ const uint8_t* kPacketMaskRandom31[31] = {
   kMaskRandom31_31
 };
 
-const uint8_t* kPacketMaskRandom32[32] = {
+const uint8_t* const kPacketMaskRandom32[32] = {
   kMaskRandom32_1,
   kMaskRandom32_2,
   kMaskRandom32_3,
@@ -23772,7 +23772,7 @@ const uint8_t* kPacketMaskRandom32[32] = {
   kMaskRandom32_32
 };
 
-const uint8_t* kPacketMaskRandom33[33] = {
+const uint8_t* const kPacketMaskRandom33[33] = {
   kMaskRandom33_1,
   kMaskRandom33_2,
   kMaskRandom33_3,
@@ -23808,7 +23808,7 @@ const uint8_t* kPacketMaskRandom33[33] = {
   kMaskRandom33_33
 };
 
-const uint8_t* kPacketMaskRandom34[34] = {
+const uint8_t* const kPacketMaskRandom34[34] = {
   kMaskRandom34_1,
   kMaskRandom34_2,
   kMaskRandom34_3,
@@ -23845,7 +23845,7 @@ const uint8_t* kPacketMaskRandom34[34] = {
   kMaskRandom34_34
 };
 
-const uint8_t* kPacketMaskRandom35[35] = {
+const uint8_t* const kPacketMaskRandom35[35] = {
   kMaskRandom35_1,
   kMaskRandom35_2,
   kMaskRandom35_3,
@@ -23883,7 +23883,7 @@ const uint8_t* kPacketMaskRandom35[35] = {
   kMaskRandom35_35
 };
 
-const uint8_t* kPacketMaskRandom36[36] = {
+const uint8_t* const kPacketMaskRandom36[36] = {
   kMaskRandom36_1,
   kMaskRandom36_2,
   kMaskRandom36_3,
@@ -23922,7 +23922,7 @@ const uint8_t* kPacketMaskRandom36[36] = {
   kMaskRandom36_36
 };
 
-const uint8_t* kPacketMaskRandom37[37] = {
+const uint8_t* const kPacketMaskRandom37[37] = {
   kMaskRandom37_1,
   kMaskRandom37_2,
   kMaskRandom37_3,
@@ -23962,7 +23962,7 @@ const uint8_t* kPacketMaskRandom37[37] = {
   kMaskRandom37_37
 };
 
-const uint8_t* kPacketMaskRandom38[38] = {
+const uint8_t* const kPacketMaskRandom38[38] = {
   kMaskRandom38_1,
   kMaskRandom38_2,
   kMaskRandom38_3,
@@ -24003,7 +24003,7 @@ const uint8_t* kPacketMaskRandom38[38] = {
   kMaskRandom38_38
 };
 
-const uint8_t* kPacketMaskRandom39[39] = {
+const uint8_t* const kPacketMaskRandom39[39] = {
   kMaskRandom39_1,
   kMaskRandom39_2,
   kMaskRandom39_3,
@@ -24045,7 +24045,7 @@ const uint8_t* kPacketMaskRandom39[39] = {
   kMaskRandom39_39
 };
 
-const uint8_t* kPacketMaskRandom40[40] = {
+const uint8_t* const kPacketMaskRandom40[40] = {
   kMaskRandom40_1,
   kMaskRandom40_2,
   kMaskRandom40_3,
@@ -24088,7 +24088,7 @@ const uint8_t* kPacketMaskRandom40[40] = {
   kMaskRandom40_40
 };
 
-const uint8_t* kPacketMaskRandom41[41] = {
+const uint8_t* const kPacketMaskRandom41[41] = {
   kMaskRandom41_1,
   kMaskRandom41_2,
   kMaskRandom41_3,
@@ -24132,7 +24132,7 @@ const uint8_t* kPacketMaskRandom41[41] = {
   kMaskRandom41_41
 };
 
-const uint8_t* kPacketMaskRandom42[42] = {
+const uint8_t* const kPacketMaskRandom42[42] = {
   kMaskRandom42_1,
   kMaskRandom42_2,
   kMaskRandom42_3,
@@ -24177,7 +24177,7 @@ const uint8_t* kPacketMaskRandom42[42] = {
   kMaskRandom42_42
 };
 
-const uint8_t* kPacketMaskRandom43[43] = {
+const uint8_t* const kPacketMaskRandom43[43] = {
   kMaskRandom43_1,
   kMaskRandom43_2,
   kMaskRandom43_3,
@@ -24223,7 +24223,7 @@ const uint8_t* kPacketMaskRandom43[43] = {
   kMaskRandom43_43
 };
 
-const uint8_t* kPacketMaskRandom44[44] = {
+const uint8_t* const kPacketMaskRandom44[44] = {
   kMaskRandom44_1,
   kMaskRandom44_2,
   kMaskRandom44_3,
@@ -24270,7 +24270,7 @@ const uint8_t* kPacketMaskRandom44[44] = {
   kMaskRandom44_44
 };
 
-const uint8_t* kPacketMaskRandom45[45] = {
+const uint8_t* const kPacketMaskRandom45[45] = {
   kMaskRandom45_1,
   kMaskRandom45_2,
   kMaskRandom45_3,
@@ -24318,7 +24318,7 @@ const uint8_t* kPacketMaskRandom45[45] = {
   kMaskRandom45_45
 };
 
-const uint8_t* kPacketMaskRandom46[46] = {
+const uint8_t* const kPacketMaskRandom46[46] = {
   kMaskRandom46_1,
   kMaskRandom46_2,
   kMaskRandom46_3,
@@ -24367,7 +24367,7 @@ const uint8_t* kPacketMaskRandom46[46] = {
   kMaskRandom46_46
 };
 
-const uint8_t* kPacketMaskRandom47[47] = {
+const uint8_t* const kPacketMaskRandom47[47] = {
   kMaskRandom47_1,
   kMaskRandom47_2,
   kMaskRandom47_3,
@@ -24417,7 +24417,7 @@ const uint8_t* kPacketMaskRandom47[47] = {
   kMaskRandom47_47
 };
 
-const uint8_t* kPacketMaskRandom48[48] = {
+const uint8_t* const kPacketMaskRandom48[48] = {
   kMaskRandom48_1,
   kMaskRandom48_2,
   kMaskRandom48_3,
@@ -24468,7 +24468,7 @@ const uint8_t* kPacketMaskRandom48[48] = {
   kMaskRandom48_48
 };
 
-const uint8_t** kPacketMaskRandomTbl[48] = {
+const uint8_t* const* const kPacketMaskRandomTbl[48] = {
   kPacketMaskRandom1,
   kPacketMaskRandom2,
   kPacketMaskRandom3,
@@ -24521,4 +24521,4 @@ const uint8_t** kPacketMaskRandomTbl[48] = {
 
 }  // namespace fec_private_tables
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_RANDOM_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_FEC_PRIVATE_TABLES_RANDOM_H_

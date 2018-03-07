@@ -8,24 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_STUNPROBER_STUNPROBER_H_
-#define WEBRTC_P2P_STUNPROBER_STUNPROBER_H_
+#ifndef P2P_STUNPROBER_STUNPROBER_H_
+#define P2P_STUNPROBER_STUNPROBER_H_
 
 #include <set>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/asyncinvoker.h"
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/bytebuffer.h"
-#include "webrtc/base/callback.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/ipaddress.h"
-#include "webrtc/base/network.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/asyncinvoker.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/bytebuffer.h"
+#include "rtc_base/callback.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/ipaddress.h"
+#include "rtc_base/network.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/thread_checker.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace rtc {
 class AsyncPacketSocket;
@@ -69,7 +69,8 @@ class StunProber : public sigslot::has_slots<> {
   };
 
   struct Stats {
-    Stats() {}
+    Stats();
+    ~Stats();
 
     // |raw_num_request_sent| is the total number of requests
     // sent. |num_request_sent| is the count of requests against a server where
@@ -100,7 +101,7 @@ class StunProber : public sigslot::has_slots<> {
   StunProber(rtc::PacketSocketFactory* socket_factory,
              rtc::Thread* thread,
              const rtc::NetworkManager::NetworkList& networks);
-  virtual ~StunProber();
+  ~StunProber() override;
 
   // Begin performing the probe test against the |servers|. If
   // |shared_socket_mode| is false, each request will be done with a new socket.
@@ -153,17 +154,12 @@ class StunProber : public sigslot::has_slots<> {
   // AsyncCallback.
   class ObserverAdapter : public Observer {
    public:
+    ObserverAdapter();
+    ~ObserverAdapter() override;
+
     void set_callback(AsyncCallback callback) { callback_ = callback; }
-    void OnPrepared(StunProber* stunprober, Status status) {
-      if (status == SUCCESS) {
-        stunprober->Start(this);
-      } else {
-        callback_(stunprober, status);
-      }
-    }
-    void OnFinished(StunProber* stunprober, Status status) {
-      callback_(stunprober, status);
-    }
+    void OnPrepared(StunProber* stunprober, Status status) override;
+    void OnFinished(StunProber* stunprober, Status status) override;
 
    private:
     AsyncCallback callback_;
@@ -253,4 +249,4 @@ class StunProber : public sigslot::has_slots<> {
 
 }  // namespace stunprober
 
-#endif  // WEBRTC_P2P_STUNPROBER_STUNPROBER_H_
+#endif  // P2P_STUNPROBER_STUNPROBER_H_

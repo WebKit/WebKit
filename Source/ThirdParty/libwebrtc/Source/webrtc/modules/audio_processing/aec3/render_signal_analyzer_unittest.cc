@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/render_signal_analyzer.h"
+#include "modules/audio_processing/aec3/render_signal_analyzer.h"
 
 #include <math.h>
 #include <array>
 #include <vector>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/random.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_fft.h"
-#include "webrtc/modules/audio_processing/aec3/fft_data.h"
-#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
-#include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/render_buffer.h"
+#include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "rtc_base/random.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -69,7 +69,7 @@ TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
     RandomizeSampleVector(&random_generator, x[0]);
     fft.PaddedFft(x[0], x_old, &X);
     render_buffer.Insert(x);
-    analyzer.Update(render_buffer, rtc::Optional<size_t>(0));
+    analyzer.Update(render_buffer, 0);
   }
 
   mask.fill(1.f);
@@ -99,7 +99,7 @@ TEST(RenderSignalAnalyzer, NarrowBandDetection) {
                       &sample_counter, x[0]);
       render_buffer.Insert(x);
       analyzer.Update(render_buffer, known_delay ? rtc::Optional<size_t>(0)
-                                                 : rtc::Optional<size_t>());
+                                                 : rtc::nullopt);
     }
   };
 

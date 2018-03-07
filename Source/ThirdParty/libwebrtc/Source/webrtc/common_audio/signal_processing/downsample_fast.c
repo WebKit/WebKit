@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/sanitizer.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/sanitizer.h"
 
 // TODO(Bjornv): Change the function parameter order to WebRTC code style.
 // C version of WebRtcSpl_DownsampleFast() for generic platforms.

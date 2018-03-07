@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_MULTIEND_CALL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_MULTIEND_CALL_H_
+#ifndef MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_MULTIEND_CALL_H_
+#define MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_MULTIEND_CALL_H_
 
 #include <stddef.h>
 #include <map>
@@ -19,11 +19,11 @@
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/timing.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/wavreader_abstract_factory.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/wavreader_interface.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/test/conversational_speech/timing.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_abstract_factory.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 namespace test {
@@ -90,4 +90,4 @@ class MultiEndCall {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_MULTIEND_CALL_H_
+#endif  // MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_MULTIEND_CALL_H_

@@ -8,22 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VOICE_ENGINE_TRANSMIT_MIXER_H
-#define WEBRTC_VOICE_ENGINE_TRANSMIT_MIXER_H
+#ifndef VOICE_ENGINE_TRANSMIT_MIXER_H_
+#define VOICE_ENGINE_TRANSMIT_MIXER_H_
 
 #include <memory>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/common_audio/resampler/include/push_resampler.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_processing/typing_detection.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/voice_engine/audio_level.h"
-#include "webrtc/voice_engine/file_player.h"
-#include "webrtc/voice_engine/file_recorder.h"
-#include "webrtc/voice_engine/include/voe_base.h"
-#include "webrtc/voice_engine/monitor_module.h"
-#include "webrtc/voice_engine/voice_engine_defines.h"
+#include "common_audio/resampler/include/push_resampler.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_processing/typing_detection.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/criticalsection.h"
+#include "voice_engine/audio_level.h"
+#include "voice_engine/include/voe_base.h"
 
 #if !defined(WEBRTC_ANDROID) && !defined(WEBRTC_IOS)
 #define WEBRTC_VOICE_ENGINE_TYPING_DETECTION 1
@@ -39,20 +35,16 @@ namespace voe {
 
 class ChannelManager;
 class MixedAudio;
-class Statistics;
 
-class TransmitMixer : public FileCallback {
+class TransmitMixer {
 public:
-    static int32_t Create(TransmitMixer*& mixer, uint32_t instanceId);
+    static int32_t Create(TransmitMixer*& mixer);
 
     static void Destroy(TransmitMixer*& mixer);
 
-    int32_t SetEngineInformation(ProcessThread& processThread,
-                                 Statistics& engineStatistics,
-                                 ChannelManager& channelManager);
+    void SetEngineInformation(ChannelManager* channelManager);
 
-    int32_t SetAudioProcessingModule(
-        AudioProcessing* audioProcessingModule);
+    int32_t SetAudioProcessingModule(AudioProcessing* audioProcessingModule);
 
     int32_t PrepareDemux(const void* audioSamples,
                          size_t nSamples,
@@ -76,79 +68,27 @@ public:
     // 'virtual' to allow mocking.
     virtual int16_t AudioLevelFullRange() const;
 
-    bool IsRecordingCall();
+    // See description of "totalAudioEnergy" in the WebRTC stats spec:
+    // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats-totalaudioenergy
+    // 'virtual' to allow mocking.
+    virtual double GetTotalInputEnergy() const;
 
-    bool IsRecordingMic();
-
-    int StartPlayingFileAsMicrophone(const char* fileName,
-                                     bool loop,
-                                     FileFormats format,
-                                     int startPosition,
-                                     float volumeScaling,
-                                     int stopPosition,
-                                     const CodecInst* codecInst);
-
-    int StartPlayingFileAsMicrophone(InStream* stream,
-                                     FileFormats format,
-                                     int startPosition,
-                                     float volumeScaling,
-                                     int stopPosition,
-                                     const CodecInst* codecInst);
-
-    int StopPlayingFileAsMicrophone();
-
-    int IsPlayingFileAsMicrophone() const;
-
-    int StartRecordingMicrophone(const char* fileName,
-                                 const CodecInst* codecInst);
-
-    int StartRecordingMicrophone(OutStream* stream,
-                                 const CodecInst* codecInst);
-
-    int StopRecordingMicrophone();
-
-    int StartRecordingCall(const char* fileName, const CodecInst* codecInst);
-
-    int StartRecordingCall(OutStream* stream, const CodecInst* codecInst);
-
-    int StopRecordingCall();
-
-    void SetMixWithMicStatus(bool mix);
-
-    int32_t RegisterVoiceEngineObserver(VoiceEngineObserver& observer);
+    // 'virtual' to allow mocking.
+    virtual double GetTotalInputDuration() const;
 
     virtual ~TransmitMixer();
-
-#if WEBRTC_VOICE_ENGINE_TYPING_DETECTION
-    // Periodic callback from the MonitorModule.
-    void OnPeriodicProcess();
-#endif
-
-    // FileCallback
-    void PlayNotification(const int32_t id,
-                          const uint32_t durationMs);
-
-    void RecordNotification(const int32_t id,
-                            const uint32_t durationMs);
-
-    void PlayFileEnded(const int32_t id);
-
-    void RecordFileEnded(const int32_t id);
 
   // Virtual to allow mocking.
   virtual void EnableStereoChannelSwapping(bool enable);
   bool IsStereoChannelSwappingEnabled();
 
+  // Virtual to allow mocking.
+  virtual bool typing_noise_detected() const;
+
 protected:
-#if WEBRTC_VOICE_ENGINE_TYPING_DETECTION
-    TransmitMixer() : _monitorModule(this) {}
-#else
     TransmitMixer() = default;
-#endif
 
 private:
-    TransmitMixer(uint32_t instanceId);
-
     // Gets the maximum sample rate and number of channels over all currently
     // sending codecs.
     void GetSendCodecInfo(int* max_sample_rate, size_t* max_channels);
@@ -157,51 +97,30 @@ private:
                             size_t nSamples,
                             size_t nChannels,
                             int samplesPerSec);
-    int32_t RecordAudioToFile(uint32_t mixingFrequency);
-
-    int32_t MixOrReplaceAudioWithFile(
-        int mixingFrequency);
 
     void ProcessAudio(int delay_ms, int clock_drift, int current_mic_level,
                       bool key_pressed);
 
 #if WEBRTC_VOICE_ENGINE_TYPING_DETECTION
-    void TypingDetection(bool keyPressed);
+    void TypingDetection(bool key_pressed);
 #endif
 
     // uses
-    Statistics* _engineStatisticsPtr = nullptr;
     ChannelManager* _channelManagerPtr = nullptr;
     AudioProcessing* audioproc_ = nullptr;
-    VoiceEngineObserver* _voiceEngineObserverPtr = nullptr;
-    ProcessThread* _processThreadPtr = nullptr;
 
     // owns
     AudioFrame _audioFrame;
     PushResampler<int16_t> resampler_;  // ADM sample rate -> mixing rate
-    std::unique_ptr<FilePlayer> file_player_;
-    std::unique_ptr<FileRecorder> file_recorder_;
-    std::unique_ptr<FileRecorder> file_call_recorder_;
-    int _filePlayerId = 0;
-    int _fileRecorderId = 0;
-    int _fileCallRecorderId = 0;
-    bool _filePlaying = false;
-    bool _fileRecording = false;
-    bool _fileCallRecording = false;
     voe::AudioLevel _audioLevel;
-    // protect file instances and their variables in MixedParticipants()
-    rtc::CriticalSection _critSect;
-    rtc::CriticalSection _callbackCritSect;
 
 #if WEBRTC_VOICE_ENGINE_TYPING_DETECTION
-    MonitorModule<TransmitMixer> _monitorModule;
-    webrtc::TypingDetection _typingDetection;
-    bool _typingNoiseWarningPending = false;
-    bool _typingNoiseDetected = false;
+    webrtc::TypingDetection typing_detection_;
 #endif
 
-    int _instanceId = 0;
-    bool _mixFileWithMicrophone = false;
+    rtc::CriticalSection lock_;
+    bool typing_noise_detected_ RTC_GUARDED_BY(lock_) = false;
+
     uint32_t _captureLevel = 0;
     bool stereo_codec_ = false;
     bool swap_stereo_channels_ = false;
@@ -209,4 +128,4 @@ private:
 }  // namespace voe
 }  // namespace webrtc
 
-#endif  // WEBRTC_VOICE_ENGINE_TRANSMIT_MIXER_H
+#endif  // VOICE_ENGINE_TRANSMIT_MIXER_H_

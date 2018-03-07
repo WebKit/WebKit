@@ -94,7 +94,7 @@ static int parse_key_type(CBS *cbs, int *out_type) {
 }
 
 EVP_PKEY *EVP_parse_public_key(CBS *cbs) {
-  /* Parse the SubjectPublicKeyInfo. */
+  // Parse the SubjectPublicKeyInfo.
   CBS spki, algorithm, key;
   int type;
   uint8_t padding;
@@ -103,22 +103,22 @@ EVP_PKEY *EVP_parse_public_key(CBS *cbs) {
       !parse_key_type(&algorithm, &type) ||
       !CBS_get_asn1(&spki, &key, CBS_ASN1_BITSTRING) ||
       CBS_len(&spki) != 0 ||
-      /* Every key type defined encodes the key as a byte string with the same
-       * conversion to BIT STRING. */
+      // Every key type defined encodes the key as a byte string with the same
+      // conversion to BIT STRING.
       !CBS_get_u8(&key, &padding) ||
       padding != 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     return NULL;
   }
 
-  /* Set up an |EVP_PKEY| of the appropriate type. */
+  // Set up an |EVP_PKEY| of the appropriate type.
   EVP_PKEY *ret = EVP_PKEY_new();
   if (ret == NULL ||
       !EVP_PKEY_set_type(ret, type)) {
     goto err;
   }
 
-  /* Call into the type-specific SPKI decoding function. */
+  // Call into the type-specific SPKI decoding function.
   if (ret->ameth->pub_decode == NULL) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     goto err;
@@ -144,7 +144,7 @@ int EVP_marshal_public_key(CBB *cbb, const EVP_PKEY *key) {
 }
 
 EVP_PKEY *EVP_parse_private_key(CBS *cbs) {
-  /* Parse the PrivateKeyInfo. */
+  // Parse the PrivateKeyInfo.
   CBS pkcs8, algorithm, key;
   uint64_t version;
   int type;
@@ -158,16 +158,16 @@ EVP_PKEY *EVP_parse_private_key(CBS *cbs) {
     return NULL;
   }
 
-  /* A PrivateKeyInfo ends with a SET of Attributes which we ignore. */
+  // A PrivateKeyInfo ends with a SET of Attributes which we ignore.
 
-  /* Set up an |EVP_PKEY| of the appropriate type. */
+  // Set up an |EVP_PKEY| of the appropriate type.
   EVP_PKEY *ret = EVP_PKEY_new();
   if (ret == NULL ||
       !EVP_PKEY_set_type(ret, type)) {
     goto err;
   }
 
-  /* Call into the type-specific PrivateKeyInfo decoding function. */
+  // Call into the type-specific PrivateKeyInfo decoding function.
   if (ret->ameth->priv_decode == NULL) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_ALGORITHM);
     goto err;
@@ -240,12 +240,12 @@ EVP_PKEY *d2i_PrivateKey(int type, EVP_PKEY **out, const uint8_t **inp,
     return NULL;
   }
 
-  /* Parse with the legacy format. */
+  // Parse with the legacy format.
   CBS cbs;
   CBS_init(&cbs, *inp, (size_t)len);
   EVP_PKEY *ret = old_priv_decode(&cbs, type);
   if (ret == NULL) {
-    /* Try again with PKCS#8. */
+    // Try again with PKCS#8.
     ERR_clear_error();
     CBS_init(&cbs, *inp, (size_t)len);
     ret = EVP_parse_private_key(&cbs);
@@ -267,8 +267,8 @@ EVP_PKEY *d2i_PrivateKey(int type, EVP_PKEY **out, const uint8_t **inp,
   return ret;
 }
 
-/* num_elements parses one SEQUENCE from |in| and returns the number of elements
- * in it. On parse error, it returns zero. */
+// num_elements parses one SEQUENCE from |in| and returns the number of elements
+// in it. On parse error, it returns zero.
 static size_t num_elements(const uint8_t *in, size_t in_len) {
   CBS cbs, sequence;
   CBS_init(&cbs, in, (size_t)in_len);
@@ -295,7 +295,7 @@ EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp, long len) {
     return NULL;
   }
 
-  /* Parse the input as a PKCS#8 PrivateKeyInfo. */
+  // Parse the input as a PKCS#8 PrivateKeyInfo.
   CBS cbs;
   CBS_init(&cbs, *inp, (size_t)len);
   EVP_PKEY *ret = EVP_parse_private_key(&cbs);
@@ -309,7 +309,7 @@ EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp, long len) {
   }
   ERR_clear_error();
 
-  /* Count the elements to determine the legacy key format. */
+  // Count the elements to determine the legacy key format.
   switch (num_elements(*inp, (size_t)len)) {
     case 4:
       return d2i_PrivateKey(EVP_PKEY_EC, out, inp, len);

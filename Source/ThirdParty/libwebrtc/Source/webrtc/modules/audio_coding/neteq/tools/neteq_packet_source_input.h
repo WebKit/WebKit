@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_
+#define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_
 
 #include <map>
 #include <string>
 
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_input.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 namespace test {
@@ -81,4 +81,4 @@ class NetEqEventLogInput final : public NetEqPacketSourceInput {
 
 }  // namespace test
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_

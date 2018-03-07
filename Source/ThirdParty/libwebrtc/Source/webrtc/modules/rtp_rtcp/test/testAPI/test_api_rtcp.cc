@@ -12,15 +12,16 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/rate_limiter.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_receiver_audio.h"
-#include "webrtc/modules/rtp_rtcp/test/testAPI/test_api.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_receiver_audio.h"
+#include "modules/rtp_rtcp/test/testAPI/test_api.h"
+#include "rtc_base/rate_limiter.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -133,9 +134,11 @@ class RtpRtcpRtcpTest : public ::testing::Test {
     memcpy(voice_codec.plname, "PCMU", 5);
 
     EXPECT_EQ(0, module1->RegisterSendPayload(voice_codec));
-    EXPECT_EQ(0, rtp_receiver1_->RegisterReceivePayload(voice_codec));
+    EXPECT_EQ(0, rtp_receiver1_->RegisterReceivePayload(
+                     voice_codec.pltype, CodecInstToSdp(voice_codec)));
     EXPECT_EQ(0, module2->RegisterSendPayload(voice_codec));
-    EXPECT_EQ(0, rtp_receiver2_->RegisterReceivePayload(voice_codec));
+    EXPECT_EQ(0, rtp_receiver2_->RegisterReceivePayload(
+                     voice_codec.pltype, CodecInstToSdp(voice_codec)));
 
     // We need to send one RTP packet to get the RTCP packet to be accepted by
     // the receiving module.
@@ -235,13 +238,14 @@ TEST_F(RtpRtcpRtcpTest, RemoteRTCPStatRemote) {
   ASSERT_EQ(1u, report_blocks.size());
 
   // |test_ssrc+1| is the SSRC of module2 that send the report.
-  EXPECT_EQ(test_ssrc+1, report_blocks[0].remoteSSRC);
-  EXPECT_EQ(test_ssrc, report_blocks[0].sourceSSRC);
+  EXPECT_EQ(test_ssrc + 1, report_blocks[0].sender_ssrc);
+  EXPECT_EQ(test_ssrc, report_blocks[0].source_ssrc);
 
-  EXPECT_EQ(0u, report_blocks[0].cumulativeLost);
-  EXPECT_LT(0u, report_blocks[0].delaySinceLastSR);
-  EXPECT_EQ(test_sequence_number, report_blocks[0].extendedHighSeqNum);
-  EXPECT_EQ(0u, report_blocks[0].fractionLost);
+  EXPECT_EQ(0u, report_blocks[0].packets_lost);
+  EXPECT_LT(0u, report_blocks[0].delay_since_last_sender_report);
+  EXPECT_EQ(test_sequence_number,
+            report_blocks[0].extended_highest_sequence_number);
+  EXPECT_EQ(0u, report_blocks[0].fraction_lost);
 }
 
 }  // namespace

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_RELAYPORT_H_
-#define WEBRTC_P2P_BASE_RELAYPORT_H_
+#ifndef P2P_BASE_RELAYPORT_H_
+#define P2P_BASE_RELAYPORT_H_
 
 #include <deque>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "webrtc/p2p/base/port.h"
-#include "webrtc/p2p/base/stunrequest.h"
+#include "p2p/base/port.h"
+#include "p2p/base/stunrequest.h"
 
 namespace cricket {
 
@@ -38,13 +38,12 @@ class RelayPort : public Port {
   static RelayPort* Create(rtc::Thread* thread,
                            rtc::PacketSocketFactory* factory,
                            rtc::Network* network,
-                           const rtc::IPAddress& ip,
                            uint16_t min_port,
                            uint16_t max_port,
                            const std::string& username,
                            const std::string& password) {
-    return new RelayPort(thread, factory, network, ip, min_port, max_port,
-                         username, password);
+    return new RelayPort(thread, factory, network, min_port, max_port, username,
+                         password);
   }
   ~RelayPort() override;
 
@@ -60,19 +59,11 @@ class RelayPort : public Port {
   int SetOption(rtc::Socket::Option opt, int value) override;
   int GetOption(rtc::Socket::Option opt, int* value) override;
   int GetError() override;
-  bool SupportsProtocol(const std::string& protocol) const override {
-    // Relay port may create both TCP and UDP connections.
-    return true;
-  }
+  bool SupportsProtocol(const std::string& protocol) const override;
+  ProtocolType GetProtocol() const override;
 
   const ProtocolAddress * ServerAddress(size_t index) const;
   bool IsReady() { return ready_; }
-
-  ProtocolType GetProtocol() const override {
-    // We shouldn't be using RelayPort, but we need to provide an
-    // implementation here.
-    return PROTO_UDP;
-  }
 
   // Used for testing.
   sigslot::signal1<const ProtocolAddress*> SignalConnectFailure;
@@ -82,7 +73,6 @@ class RelayPort : public Port {
   RelayPort(rtc::Thread* thread,
             rtc::PacketSocketFactory* factory,
             rtc::Network*,
-            const rtc::IPAddress& ip,
             uint16_t min_port,
             uint16_t max_port,
             const std::string& username,
@@ -121,4 +111,4 @@ class RelayPort : public Port {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_RELAYPORT_H_
+#endif  // P2P_BASE_RELAYPORT_H_

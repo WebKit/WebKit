@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODEC_INTERFACE_H_
-#define WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODEC_INTERFACE_H_
+#ifndef MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODEC_INTERFACE_H_
+#define MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODEC_INTERFACE_H_
 
 #include <vector>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/api/video_codecs/video_decoder.h"
-#include "webrtc/api/video_codecs/video_encoder.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/include/video_error_codes.h"
-#include "webrtc/typedefs.h"
+#include "api/video/video_frame.h"
+#include "api/video_codecs/video_decoder.h"
+#include "api/video_codecs/video_encoder.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/include/video_error_codes.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -73,11 +73,17 @@ struct CodecSpecificInfoH264 {
   H264PacketizationMode packetization_mode;
 };
 
+struct CodecSpecificInfoStereo {
+  VideoCodecType associated_codec_type;
+  StereoIndices indices;
+};
+
 union CodecSpecificInfoUnion {
   CodecSpecificInfoGeneric generic;
   CodecSpecificInfoVP8 VP8;
   CodecSpecificInfoVP9 VP9;
   CodecSpecificInfoH264 H264;
+  CodecSpecificInfoStereo stereo;
 };
 
 // Note: if any pointers are added to this struct or its sub-structs, it
@@ -92,4 +98,4 @@ struct CodecSpecificInfo {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODEC_INTERFACE_H_
+#endif  // MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODEC_INTERFACE_H_

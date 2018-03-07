@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_COREVIDEO_FRAME_BUFFER_H_
-#define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_COREVIDEO_FRAME_BUFFER_H_
+#ifndef SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_COREVIDEO_FRAME_BUFFER_H_
+#define SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_COREVIDEO_FRAME_BUFFER_H_
 
 #include <CoreVideo/CoreVideo.h>
 
 #include <vector>
 
-#include "webrtc/common_video/include/video_frame_buffer.h"
+#include "common_video/include/video_frame_buffer.h"
 
 namespace webrtc {
 
@@ -63,4 +63,4 @@ class CoreVideoFrameBuffer : public VideoFrameBuffer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_COREVIDEO_FRAME_BUFFER_H_
+#endif  // SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_COREVIDEO_FRAME_BUFFER_H_

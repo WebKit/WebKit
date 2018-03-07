@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCTracing.h"
 
-#include "webrtc/base/event_tracer.h"
+#include "rtc_base/event_tracer.h"
 
 void RTCSetupInternalTracer() {
   rtc::tracing::SetupInternalTracer();

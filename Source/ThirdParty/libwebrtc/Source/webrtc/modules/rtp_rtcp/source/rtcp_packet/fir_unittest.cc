@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/fir.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
 
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/rtcp_packet_parser.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/rtcp_packet_parser.h"
 
 using testing::AllOf;
 using testing::ElementsAre;

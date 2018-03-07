@@ -221,7 +221,7 @@
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-#include "H264VideoToolboxEncoder.h"
+//#include "H264VideoToolboxEncoder.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -4181,11 +4181,10 @@ void Internals::setPageVisibility(bool isVisible)
 #if ENABLE(WEB_RTC)
 void Internals::setH264HardwareEncoderAllowed(bool allowed)
 {
-#if PLATFORM(MAC)
-    H264VideoToolboxEncoder::setHardwareEncoderForWebRTCAllowed(allowed);
-#else
-    UNUSED_PARAM(allowed);
-#endif
+    auto* document = contextDocument();
+    if (!document || !document->page())
+        return;
+    document->page()->libWebRTCProvider().setH264HardwareEncoderAllowed(allowed);
 }
 #endif
 

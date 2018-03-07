@@ -8,8 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/resampler/include/resampler.h"
-#include "webrtc/test/gtest.h"
+#include <array>
+
+#include "common_audio/resampler/include/resampler.h"
+#include "test/gtest.h"
 
 // TODO(andrew): this is a work-in-progress. Many more tests are needed.
 
@@ -50,6 +52,8 @@ class ResamplerTest : public testing::Test {
   virtual void SetUp();
   virtual void TearDown();
 
+  void ResetIfNeededAndPush(int in_rate, int out_rate, int num_channels);
+
   Resampler rs_;
   int16_t data_in_[kDataSize];
   int16_t data_out_[kDataSize];
@@ -63,6 +67,26 @@ void ResamplerTest::SetUp() {
 }
 
 void ResamplerTest::TearDown() {}
+
+void ResamplerTest::ResetIfNeededAndPush(int in_rate,
+                                         int out_rate,
+                                         int num_channels) {
+  std::ostringstream ss;
+  ss << "Input rate: " << in_rate << ", output rate: " << out_rate
+     << ", channel count: " << num_channels;
+  SCOPED_TRACE(ss.str());
+
+  if (ValidRates(in_rate, out_rate)) {
+    size_t in_length = static_cast<size_t>(in_rate / 100);
+    size_t out_length = 0;
+    EXPECT_EQ(0, rs_.ResetIfNeeded(in_rate, out_rate, num_channels));
+    EXPECT_EQ(0,
+              rs_.Push(data_in_, in_length, data_out_, kDataSize, out_length));
+    EXPECT_EQ(static_cast<size_t>(out_rate / 100), out_length);
+  } else {
+    EXPECT_EQ(-1, rs_.ResetIfNeeded(in_rate, out_rate, num_channels));
+  }
+}
 
 TEST_F(ResamplerTest, Reset) {
   // The only failure mode for the constructor is if Reset() fails. For the
@@ -131,6 +155,19 @@ TEST_F(ResamplerTest, Stereo) {
                                 kChannels));
       }
     }
+  }
+}
+
+// Try multiple resets between a few supported and unsupported rates.
+TEST_F(ResamplerTest, MultipleResets) {
+  constexpr size_t kNumChanges = 5;
+  constexpr std::array<int, kNumChanges> kInRates = {
+      {8000, 44000, 44000, 32000, 32000}};
+  constexpr std::array<int, kNumChanges> kOutRates = {
+      {16000, 48000, 48000, 16000, 16000}};
+  constexpr std::array<int, kNumChanges> kNumChannels = {{2, 2, 2, 2, 1}};
+  for (size_t i = 0; i < kNumChanges; ++i) {
+    ResetIfNeededAndPush(kInRates[i], kOutRates[i], kNumChannels[i]);
   }
 }
 

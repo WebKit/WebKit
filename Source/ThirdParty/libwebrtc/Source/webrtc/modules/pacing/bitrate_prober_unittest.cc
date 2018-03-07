@@ -10,8 +10,8 @@
 
 #include <limits>
 
-#include "webrtc/modules/pacing/bitrate_prober.h"
-#include "webrtc/test/gtest.h"
+#include "modules/pacing/bitrate_prober.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

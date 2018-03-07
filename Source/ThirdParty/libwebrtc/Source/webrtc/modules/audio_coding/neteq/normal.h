@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_NORMAL_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_NORMAL_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_NORMAL_H_
+#define MODULES_AUDIO_CODING_NETEQ_NORMAL_H_
 
 #include <string.h>  // Access to size_t.
 
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
-#include "webrtc/modules/audio_coding/neteq/defines.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/audio_coding/neteq/defines.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -72,4 +72,4 @@ class Normal {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_NORMAL_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_NORMAL_H_

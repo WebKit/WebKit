@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_MOCK_AUDIO_ENCODER_H_
-#define WEBRTC_TEST_MOCK_AUDIO_ENCODER_H_
+#ifndef TEST_MOCK_AUDIO_ENCODER_H_
+#define TEST_MOCK_AUDIO_ENCODER_H_
 
 #include <string>
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
-#include "webrtc/base/array_view.h"
-#include "webrtc/test/gmock.h"
+#include "api/array_view.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -104,4 +104,4 @@ class MockAudioEncoder : public AudioEncoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_MOCK_AUDIO_ENCODER_H_
+#endif  // TEST_MOCK_AUDIO_ENCODER_H_

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_MOCK_BEAMFORMER_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_MOCK_BEAMFORMER_H_
+#ifndef MODULES_AUDIO_PROCESSING_BEAMFORMER_MOCK_BEAMFORMER_H_
+#define MODULES_AUDIO_PROCESSING_BEAMFORMER_MOCK_BEAMFORMER_H_
 
 #include <vector>
 
-#include "webrtc/modules/audio_processing/beamformer/nonlinear_beamformer.h"
-#include "webrtc/test/gmock.h"
+#include "modules/audio_processing/beamformer/nonlinear_beamformer.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -36,4 +36,4 @@ class MockNonlinearBeamformer : public NonlinearBeamformer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_MOCK_BEAMFORMER_H_
+#endif  // MODULES_AUDIO_PROCESSING_BEAMFORMER_MOCK_BEAMFORMER_H_

@@ -8,13 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_WEBRTCVIDEOENCODERFACTORY_H_
-#define WEBRTC_MEDIA_ENGINE_WEBRTCVIDEOENCODERFACTORY_H_
+#ifndef MEDIA_ENGINE_WEBRTCVIDEOENCODERFACTORY_H_
+#define MEDIA_ENGINE_WEBRTCVIDEOENCODERFACTORY_H_
 
+#include <string>
 #include <vector>
 
-#include "webrtc/common_types.h"
-#include "webrtc/media/base/codec.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "media/base/codec.h"
 
 namespace webrtc {
 class VideoEncoder;
@@ -22,6 +23,8 @@ class VideoEncoder;
 
 namespace cricket {
 
+// Deprecated. Use webrtc::VideoEncoderFactory instead.
+// https://bugs.chromium.org/p/webrtc/issues/detail?id=7925
 class WebRtcVideoEncoderFactory {
  public:
   virtual ~WebRtcVideoEncoderFactory() {}
@@ -36,16 +39,12 @@ class WebRtcVideoEncoderFactory {
 
   // Returns true if encoders created by this factory of the given codec type
   // will use internal camera sources, meaning that they don't require/expect
-  // frames to be delivered via webrtc::VideoEncoder::Encode. This flag is used
-  // as the internal_source parameter to
-  // webrtc::ViEExternalCodec::RegisterExternalSendCodec.
-  virtual bool EncoderTypeHasInternalSource(webrtc::VideoCodecType) const {
-    return false;
-  }
+  // frames to be delivered via webrtc::VideoEncoder::Encode.
+  virtual bool EncoderTypeHasInternalSource(webrtc::VideoCodecType type) const;
 
   virtual void DestroyVideoEncoder(webrtc::VideoEncoder* encoder) = 0;
 };
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_ENGINE_WEBRTCVIDEOENCODERFACTORY_H_
+#endif  // MEDIA_ENGINE_WEBRTCVIDEOENCODERFACTORY_H_

@@ -8,19 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_capture/video_capture_impl.h"
+#include "modules/video_capture/video_capture_impl.h"
 
 #include <stdlib.h>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_capture/video_capture_config.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "api/video/i420_buffer.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "libyuv.h"  // NOLINT
+#include "modules/include/module_common_types.h"
+#include "modules/video_capture/video_capture_config.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/refcountedobject.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -53,7 +55,8 @@ int32_t VideoCaptureImpl::RotationFromDegrees(int degrees,
       *rotation = kVideoRotation_270;
       return 0;
     default:
-      return -1;;
+      return -1;
+      ;
   }
 }
 
@@ -86,29 +89,28 @@ VideoCaptureImpl::VideoCaptureImpl()
       _lastProcessFrameTimeNanos(rtc::TimeNanos()),
       _rotateFrame(kVideoRotation_0),
       apply_rotation_(false) {
-    _requestedCapability.width = kDefaultWidth;
-    _requestedCapability.height = kDefaultHeight;
-    _requestedCapability.maxFPS = 30;
-    _requestedCapability.videoType = VideoType::kI420;
-    memset(_incomingFrameTimesNanos, 0, sizeof(_incomingFrameTimesNanos));
+  _requestedCapability.width = kDefaultWidth;
+  _requestedCapability.height = kDefaultHeight;
+  _requestedCapability.maxFPS = 30;
+  _requestedCapability.videoType = VideoType::kI420;
+  memset(_incomingFrameTimesNanos, 0, sizeof(_incomingFrameTimesNanos));
 }
 
-VideoCaptureImpl::~VideoCaptureImpl()
-{
-    DeRegisterCaptureDataCallback();
-    if (_deviceUniqueId)
-        delete[] _deviceUniqueId;
+VideoCaptureImpl::~VideoCaptureImpl() {
+  DeRegisterCaptureDataCallback();
+  if (_deviceUniqueId)
+    delete[] _deviceUniqueId;
 }
 
 void VideoCaptureImpl::RegisterCaptureDataCallback(
     rtc::VideoSinkInterface<VideoFrame>* dataCallBack) {
-    rtc::CritScope cs(&_apiCs);
-    _dataCallBack = dataCallBack;
+  rtc::CritScope cs(&_apiCs);
+  _dataCallBack = dataCallBack;
 }
 
 void VideoCaptureImpl::DeRegisterCaptureDataCallback() {
-    rtc::CritScope cs(&_apiCs);
-    _dataCallBack = NULL;
+  rtc::CritScope cs(&_apiCs);
+  _dataCallBack = NULL;
 }
 int32_t VideoCaptureImpl::DeliverCapturedFrame(VideoFrame& captureFrame) {
   UpdateFrameCount();  // frame count used for local frame rate callback.
@@ -120,68 +122,88 @@ int32_t VideoCaptureImpl::DeliverCapturedFrame(VideoFrame& captureFrame) {
   return 0;
 }
 
-int32_t VideoCaptureImpl::IncomingFrame(
-    uint8_t* videoFrame,
-    size_t videoFrameLength,
-    const VideoCaptureCapability& frameInfo,
-    int64_t captureTime/*=0*/)
-{
-    rtc::CritScope cs(&_apiCs);
+int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
+                                        size_t videoFrameLength,
+                                        const VideoCaptureCapability& frameInfo,
+                                        int64_t captureTime /*=0*/) {
+  rtc::CritScope cs(&_apiCs);
 
-    const int32_t width = frameInfo.width;
-    const int32_t height = frameInfo.height;
+  const int32_t width = frameInfo.width;
+  const int32_t height = frameInfo.height;
 
-    TRACE_EVENT1("webrtc", "VC::IncomingFrame", "capture_time", captureTime);
+  TRACE_EVENT1("webrtc", "VC::IncomingFrame", "capture_time", captureTime);
 
-    // Not encoded, convert to I420.
-    if (frameInfo.videoType != VideoType::kMJPEG &&
-        CalcBufferSize(frameInfo.videoType, width, abs(height)) !=
-            videoFrameLength) {
-      LOG(LS_ERROR) << "Wrong incoming frame length.";
-      return -1;
+  // Not encoded, convert to I420.
+  if (frameInfo.videoType != VideoType::kMJPEG &&
+      CalcBufferSize(frameInfo.videoType, width, abs(height)) !=
+          videoFrameLength) {
+    RTC_LOG(LS_ERROR) << "Wrong incoming frame length.";
+    return -1;
+  }
+
+  int stride_y = width;
+  int stride_uv = (width + 1) / 2;
+  int target_width = width;
+  int target_height = height;
+
+  // SetApplyRotation doesn't take any lock. Make a local copy here.
+  bool apply_rotation = apply_rotation_;
+
+  if (apply_rotation) {
+    // Rotating resolution when for 90/270 degree rotations.
+    if (_rotateFrame == kVideoRotation_90 ||
+        _rotateFrame == kVideoRotation_270) {
+      target_width = abs(height);
+      target_height = width;
     }
+  }
 
-    int stride_y = width;
-    int stride_uv = (width + 1) / 2;
-    int target_width = width;
-    int target_height = height;
+  // Setting absolute height (in case it was negative).
+  // In Windows, the image starts bottom left, instead of top left.
+  // Setting a negative source height, inverts the image (within LibYuv).
 
-    // SetApplyRotation doesn't take any lock. Make a local copy here.
-    bool apply_rotation = apply_rotation_;
+  // TODO(nisse): Use a pool?
+  rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(
+      target_width, abs(target_height), stride_y, stride_uv, stride_uv);
 
-    if (apply_rotation) {
-      // Rotating resolution when for 90/270 degree rotations.
-      if (_rotateFrame == kVideoRotation_90 ||
-          _rotateFrame == kVideoRotation_270) {
-        target_width = abs(height);
-        target_height = width;
-      }
+  libyuv::RotationMode rotation_mode = libyuv::kRotate0;
+  if (apply_rotation) {
+    switch (_rotateFrame) {
+      case kVideoRotation_0:
+        rotation_mode = libyuv::kRotate0;
+        break;
+      case kVideoRotation_90:
+        rotation_mode = libyuv::kRotate90;
+        break;
+      case kVideoRotation_180:
+        rotation_mode = libyuv::kRotate180;
+        break;
+      case kVideoRotation_270:
+        rotation_mode = libyuv::kRotate270;
+        break;
     }
+  }
 
-    // Setting absolute height (in case it was negative).
-    // In Windows, the image starts bottom left, instead of top left.
-    // Setting a negative source height, inverts the image (within LibYuv).
+  const int conversionResult = libyuv::ConvertToI420(
+      videoFrame, videoFrameLength, buffer.get()->MutableDataY(),
+      buffer.get()->StrideY(), buffer.get()->MutableDataU(),
+      buffer.get()->StrideU(), buffer.get()->MutableDataV(),
+      buffer.get()->StrideV(), 0, 0,  // No Cropping
+      width, height, target_width, target_height, rotation_mode,
+      ConvertVideoType(frameInfo.videoType));
+  if (conversionResult < 0) {
+    RTC_LOG(LS_ERROR) << "Failed to convert capture frame from type "
+                      << static_cast<int>(frameInfo.videoType) << "to I420.";
+    return -1;
+  }
 
-    // TODO(nisse): Use a pool?
-    rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(
-        target_width, abs(target_height), stride_y, stride_uv, stride_uv);
-    const int conversionResult = ConvertToI420(
-        frameInfo.videoType, videoFrame, 0, 0,  // No cropping
-        width, height, videoFrameLength,
-        apply_rotation ? _rotateFrame : kVideoRotation_0, buffer.get());
-    if (conversionResult < 0) {
-      LOG(LS_ERROR) << "Failed to convert capture frame from type "
-                    << static_cast<int>(frameInfo.videoType) << "to I420.";
-      return -1;
-    }
+  VideoFrame captureFrame(buffer, 0, rtc::TimeMillis(),
+                          !apply_rotation ? _rotateFrame : kVideoRotation_0);
+  captureFrame.set_ntp_time_ms(captureTime);
 
-    VideoFrame captureFrame(buffer, 0, rtc::TimeMillis(),
-                            !apply_rotation ? _rotateFrame : kVideoRotation_0);
-    captureFrame.set_ntp_time_ms(captureTime);
+  DeliverCapturedFrame(captureFrame);
 
-    DeliverCapturedFrame(captureFrame);
-
-    return 0;
+  return 0;
 }
 
 int32_t VideoCaptureImpl::SetCaptureRotation(VideoRotation rotation) {

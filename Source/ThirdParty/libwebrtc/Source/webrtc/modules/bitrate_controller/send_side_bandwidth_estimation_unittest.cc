@@ -11,11 +11,28 @@
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "webrtc/modules/bitrate_controller/send_side_bandwidth_estimation.h"
-#include "webrtc/test/gtest.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
+#include "modules/bitrate_controller/send_side_bandwidth_estimation.h"
+#include "test/gtest.h"
 
 namespace webrtc {
+
+MATCHER(LossBasedBweUpdateWithBitrateOnly, "") {
+  if (arg->GetType() != RtcEvent::Type::BweUpdateLossBased) {
+    return false;
+  }
+  auto bwe_event = static_cast<RtcEventBweUpdateLossBased*>(arg);
+  return bwe_event->bitrate_bps_ > 0 && bwe_event->fraction_loss_ == 0;
+}
+
+MATCHER(LossBasedBweUpdateWithBitrateAndLossFraction, "") {
+  if (arg->GetType() != RtcEvent::Type::BweUpdateLossBased) {
+    return false;
+  }
+  auto bwe_event = static_cast<RtcEventBweUpdateLossBased*>(arg);
+  return bwe_event->bitrate_bps_ > 0 && bwe_event->fraction_loss_ > 0;
+}
 
 void TestProbing(bool use_delay_based) {
   MockRtcEventLog event_log;
@@ -65,9 +82,10 @@ TEST(SendSideBweTest, InitialDelayBasedBweWithProbing) {
 
 TEST(SendSideBweTest, DoesntReapplyBitrateDecreaseWithoutFollowingRemb) {
   MockRtcEventLog event_log;
-  EXPECT_CALL(event_log, LogLossBasedBweUpdate(testing::Gt(0), 0, 0)).Times(1);
+  EXPECT_CALL(event_log, LogProxy(LossBasedBweUpdateWithBitrateOnly()))
+      .Times(1);
   EXPECT_CALL(event_log,
-              LogLossBasedBweUpdate(testing::Gt(0), testing::Gt(0), 0))
+              LogProxy(LossBasedBweUpdateWithBitrateAndLossFraction()))
       .Times(2);
   SendSideBandwidthEstimation bwe(&event_log);
   static const int kMinBitrateBps = 100000;
@@ -117,5 +135,34 @@ TEST(SendSideBweTest, DoesntReapplyBitrateDecreaseWithoutFollowingRemb) {
   EXPECT_EQ(kFractionLoss, fraction_loss);
   EXPECT_EQ(kRttMs, rtt_ms);
 }
+
+TEST(SendSideBweTest, SettingSendBitrateOverridesDelayBasedEstimate) {
+  ::testing::NiceMock<MockRtcEventLog> event_log;
+  SendSideBandwidthEstimation bwe(&event_log);
+  static const int kMinBitrateBps = 10000;
+  static const int kMaxBitrateBps = 10000000;
+  static const int kInitialBitrateBps = 300000;
+  static const int kDelayBasedBitrateBps = 350000;
+  static const int kForcedHighBitrate = 2500000;
+
+  int64_t now_ms = 0;
+  int bitrate_bps;
+  uint8_t fraction_loss;
+  int64_t rtt_ms;
+
+  bwe.SetMinMaxBitrate(kMinBitrateBps, kMaxBitrateBps);
+  bwe.SetSendBitrate(kInitialBitrateBps);
+
+  bwe.UpdateDelayBasedEstimate(now_ms, kDelayBasedBitrateBps);
+  bwe.UpdateEstimate(now_ms);
+  bwe.CurrentEstimate(&bitrate_bps, &fraction_loss, &rtt_ms);
+  EXPECT_GE(bitrate_bps, kInitialBitrateBps);
+  EXPECT_LE(bitrate_bps, kDelayBasedBitrateBps);
+
+  bwe.SetSendBitrate(kForcedHighBitrate);
+  bwe.CurrentEstimate(&bitrate_bps, &fraction_loss, &rtt_ms);
+  EXPECT_EQ(bitrate_bps, kForcedHighBitrate);
+}
+
 
 }  // namespace webrtc

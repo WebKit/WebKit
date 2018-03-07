@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_TEST_ANDROIDTESTINITIALIZER_H_
-#define WEBRTC_PC_TEST_ANDROIDTESTINITIALIZER_H_
+#ifndef PC_TEST_ANDROIDTESTINITIALIZER_H_
+#define PC_TEST_ANDROIDTESTINITIALIZER_H_
 
 namespace webrtc {
 
@@ -17,4 +17,4 @@ void InitializeAndroidObjects();
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_TEST_ANDROIDTESTINITIALIZER_H_
+#endif  // PC_TEST_ANDROIDTESTINITIALIZER_H_

@@ -8,19 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/audio_processing_simulator.h"
+#include "modules/audio_processing/test/audio_processing_simulator.h"
 
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/stringutils.h"
-#include "webrtc/common_audio/include/audio_util.h"
-#include "webrtc/modules/audio_processing/aec_dump/aec_dump_factory.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
+#include "common_audio/include/audio_util.h"
+#include "modules/audio_processing/aec_dump/aec_dump_factory.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/test/fake_recording_device.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 
 namespace webrtc {
 namespace test {
@@ -80,14 +83,22 @@ void CopyToAudioFrame(const ChannelBuffer<float>& src, AudioFrame* dest) {
 
 AudioProcessingSimulator::AudioProcessingSimulator(
     const SimulationSettings& settings)
-    : settings_(settings), worker_queue_("file_writer_task_queue") {
+    : settings_(settings),
+      analog_mic_level_(settings.initial_mic_level),
+      fake_recording_device_(
+          settings.initial_mic_level,
+          settings_.simulate_mic_gain ? *settings.simulated_mic_kind : 0),
+      worker_queue_("file_writer_task_queue") {
   if (settings_.ed_graph_output_filename &&
-      settings_.ed_graph_output_filename->size() > 0) {
+      !settings_.ed_graph_output_filename->empty()) {
     residual_echo_likelihood_graph_writer_.open(
         *settings_.ed_graph_output_filename);
     RTC_CHECK(residual_echo_likelihood_graph_writer_.is_open());
     WriteEchoLikelihoodGraphFileHeader(&residual_echo_likelihood_graph_writer_);
   }
+
+  if (settings_.simulate_mic_gain)
+    RTC_LOG(LS_VERBOSE) << "Simulating analog mic gain";
 }
 
 AudioProcessingSimulator::~AudioProcessingSimulator() {
@@ -105,6 +116,34 @@ AudioProcessingSimulator::ScopedTimer::~ScopedTimer() {
 }
 
 void AudioProcessingSimulator::ProcessStream(bool fixed_interface) {
+  // Optionally use the fake recording device to simulate analog gain.
+  if (settings_.simulate_mic_gain) {
+    if (settings_.aec_dump_input_filename) {
+      // When the analog gain is simulated and an AEC dump is used as input, set
+      // the undo level to |aec_dump_mic_level_| to virtually restore the
+      // unmodified microphone signal level.
+      fake_recording_device_.SetUndoMicLevel(aec_dump_mic_level_);
+    }
+
+    if (fixed_interface) {
+      fake_recording_device_.SimulateAnalogGain(&fwd_frame_);
+    } else {
+      fake_recording_device_.SimulateAnalogGain(in_buf_.get());
+    }
+
+    // Notify the current mic level to AGC.
+    RTC_CHECK_EQ(AudioProcessing::kNoError,
+                 ap_->gain_control()->set_stream_analog_level(
+                     fake_recording_device_.MicLevel()));
+  } else {
+    // Notify the current mic level to AGC.
+    RTC_CHECK_EQ(AudioProcessing::kNoError,
+                 ap_->gain_control()->set_stream_analog_level(
+                     settings_.aec_dump_input_filename ? aec_dump_mic_level_
+                                                       : analog_mic_level_));
+  }
+
+  // Process the current audio frame.
   if (fixed_interface) {
     {
       const auto st = ScopedTimer(mutable_proc_time());
@@ -116,6 +155,14 @@ void AudioProcessingSimulator::ProcessStream(bool fixed_interface) {
     RTC_CHECK_EQ(AudioProcessing::kNoError,
                  ap_->ProcessStream(in_buf_->channels(), in_config_,
                                     out_config_, out_buf_->channels()));
+  }
+
+  // Store the mic level suggested by AGC.
+  // Note that when the analog gain is simulated and an AEC dump is used as
+  // input, |analog_mic_level_| will not be used with set_stream_analog_level().
+  analog_mic_level_ = ap_->gain_control()->stream_analog_level();
+  if (settings_.simulate_mic_gain) {
+    fake_recording_device_.SetMicLevel(analog_mic_level_);
   }
 
   if (buffer_writer_) {
@@ -195,6 +242,8 @@ void AudioProcessingSimulator::SetupBuffersConfigsOutputs(
   rev_frame_.num_channels_ = reverse_input_num_channels;
 
   if (settings_.use_verbose_logging) {
+    rtc::LogMessage::LogToDebug(rtc::LS_VERBOSE);
+
     std::cout << "Sample rates:" << std::endl;
     std::cout << " Forward input: " << input_sample_rate_hz << std::endl;
     std::cout << " Forward output: " << output_sample_rate_hz << std::endl;
@@ -257,6 +306,7 @@ void AudioProcessingSimulator::DestroyAudioProcessor() {
 void AudioProcessingSimulator::CreateAudioProcessor() {
   Config config;
   AudioProcessing::Config apm_config;
+  std::unique_ptr<EchoControlFactory> echo_control_factory;
   if (settings_.use_bf && *settings_.use_bf) {
     config.Set<Beamforming>(new Beamforming(
         true, ParseArrayGeometry(*settings_.microphone_positions),
@@ -269,11 +319,12 @@ void AudioProcessingSimulator::CreateAudioProcessor() {
   if (settings_.use_ie) {
     config.Set<Intelligibility>(new Intelligibility(*settings_.use_ie));
   }
-  if (settings_.use_aec3) {
-    apm_config.echo_canceller3.enabled = *settings_.use_aec3;
-  }
   if (settings_.use_agc2) {
     apm_config.gain_controller2.enabled = *settings_.use_agc2;
+    apm_config.gain_controller2.fixed_gain_db = settings_.agc2_fixed_gain_db;
+  }
+  if (settings_.use_aec3 && *settings_.use_aec3) {
+    echo_control_factory.reset(new EchoCanceller3Factory());
   }
   if (settings_.use_lc) {
     apm_config.level_controller.enabled = *settings_.use_lc;
@@ -296,7 +347,8 @@ void AudioProcessingSimulator::CreateAudioProcessor() {
     apm_config.residual_echo_detector.enabled = *settings_.use_ed;
   }
 
-  ap_.reset(AudioProcessing::Create(config));
+  ap_.reset(AudioProcessing::Create(config, nullptr,
+                                    std::move(echo_control_factory), nullptr));
   RTC_CHECK(ap_);
 
   ap_->ApplyConfig(apm_config);

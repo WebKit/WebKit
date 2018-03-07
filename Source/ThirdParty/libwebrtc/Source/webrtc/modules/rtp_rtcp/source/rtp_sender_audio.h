@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
+#define MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
 
-#include "webrtc/common_types.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/onetimeevent.h"
-#include "webrtc/modules/rtp_rtcp/source/dtmf_queue.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/source/dtmf_queue.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
+#include "modules/rtp_rtcp/source/rtp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/onetimeevent.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -39,8 +39,7 @@ class RTPSenderAudio {
                  int8_t payload_type,
                  uint32_t capture_timestamp,
                  const uint8_t* payload_data,
-                 size_t payload_size,
-                 const RTPFragmentationHeader* fragmentation);
+                 size_t payload_size);
 
   // Store the audio level in dBov for
   // header-extension-for-audio-level-indication.
@@ -68,8 +67,8 @@ class RTPSenderAudio {
   // DTMF.
   bool dtmf_event_is_on_ = false;
   bool dtmf_event_first_packet_sent_ = false;
-  int8_t dtmf_payload_type_ GUARDED_BY(send_audio_critsect_) = -1;
-  uint32_t dtmf_payload_freq_ GUARDED_BY(send_audio_critsect_) = 8000;
+  int8_t dtmf_payload_type_ RTC_GUARDED_BY(send_audio_critsect_) = -1;
+  uint32_t dtmf_payload_freq_ RTC_GUARDED_BY(send_audio_critsect_) = 8000;
   uint32_t dtmf_timestamp_ = 0;
   uint32_t dtmf_length_samples_ = 0;
   int64_t dtmf_time_last_sent_ = 0;
@@ -78,16 +77,16 @@ class RTPSenderAudio {
   DtmfQueue dtmf_queue_;
 
   // VAD detection, used for marker bit.
-  bool inband_vad_active_ GUARDED_BY(send_audio_critsect_) = false;
-  int8_t cngnb_payload_type_ GUARDED_BY(send_audio_critsect_) = -1;
-  int8_t cngwb_payload_type_ GUARDED_BY(send_audio_critsect_) = -1;
-  int8_t cngswb_payload_type_ GUARDED_BY(send_audio_critsect_) = -1;
-  int8_t cngfb_payload_type_ GUARDED_BY(send_audio_critsect_) = -1;
-  int8_t last_payload_type_ GUARDED_BY(send_audio_critsect_) = -1;
+  bool inband_vad_active_ RTC_GUARDED_BY(send_audio_critsect_) = false;
+  int8_t cngnb_payload_type_ RTC_GUARDED_BY(send_audio_critsect_) = -1;
+  int8_t cngwb_payload_type_ RTC_GUARDED_BY(send_audio_critsect_) = -1;
+  int8_t cngswb_payload_type_ RTC_GUARDED_BY(send_audio_critsect_) = -1;
+  int8_t cngfb_payload_type_ RTC_GUARDED_BY(send_audio_critsect_) = -1;
+  int8_t last_payload_type_ RTC_GUARDED_BY(send_audio_critsect_) = -1;
 
   // Audio level indication.
   // (https://datatracker.ietf.org/doc/draft-lennox-avt-rtp-audio-level-exthdr/)
-  uint8_t audio_level_dbov_ GUARDED_BY(send_audio_critsect_) = 0;
+  uint8_t audio_level_dbov_ RTC_GUARDED_BY(send_audio_critsect_) = 0;
   OneTimeEvent first_packet_sent_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RTPSenderAudio);
@@ -95,4 +94,4 @@ class RTPSenderAudio {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_

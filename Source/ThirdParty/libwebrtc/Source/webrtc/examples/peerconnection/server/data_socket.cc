@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/examples/peerconnection/server/data_socket.h"
+#include "examples/peerconnection/server/data_socket.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -18,7 +18,7 @@
 #include <unistd.h>
 #endif
 
-#include "webrtc/examples/peerconnection/server/utils.h"
+#include "examples/peerconnection/server/utils.h"
 
 static const char kHeaderTerminator[] = "\r\n\r\n";
 static const int kHeaderTerminatorLength = sizeof(kHeaderTerminator) - 1;

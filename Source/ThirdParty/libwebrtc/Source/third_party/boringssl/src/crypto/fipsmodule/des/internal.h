@@ -80,7 +80,7 @@ extern "C" {
     *((c)++) = (unsigned char)(((l) >> 24L) & 0xff); \
   } while (0)
 
-/* NOTE - c is not incremented as per c2l */
+// NOTE - c is not incremented as per c2l
 #define c2ln(c, l1, l2, n)                     \
   do {                                         \
     (c) += (n);                                \
@@ -88,42 +88,56 @@ extern "C" {
     switch (n) {                               \
       case 8:                                  \
         (l2) = ((uint32_t)(*(--(c)))) << 24L;  \
+        OPENSSL_FALLTHROUGH;                   \
       case 7:                                  \
         (l2) |= ((uint32_t)(*(--(c)))) << 16L; \
+        OPENSSL_FALLTHROUGH;                   \
       case 6:                                  \
         (l2) |= ((uint32_t)(*(--(c)))) << 8L;  \
+        OPENSSL_FALLTHROUGH;                   \
       case 5:                                  \
         (l2) |= ((uint32_t)(*(--(c))));        \
+        OPENSSL_FALLTHROUGH;                   \
       case 4:                                  \
         (l1) = ((uint32_t)(*(--(c)))) << 24L;  \
+        OPENSSL_FALLTHROUGH;                   \
       case 3:                                  \
         (l1) |= ((uint32_t)(*(--(c)))) << 16L; \
+        OPENSSL_FALLTHROUGH;                   \
       case 2:                                  \
         (l1) |= ((uint32_t)(*(--(c)))) << 8L;  \
+        OPENSSL_FALLTHROUGH;                   \
       case 1:                                  \
         (l1) |= ((uint32_t)(*(--(c))));        \
     }                                          \
   } while (0)
 
-/* NOTE - c is not incremented as per l2c */
+// NOTE - c is not incremented as per l2c
 #define l2cn(l1, l2, c, n)                                \
   do {                                                    \
     (c) += (n);                                           \
     switch (n) {                                          \
       case 8:                                             \
         *(--(c)) = (unsigned char)(((l2) >> 24L) & 0xff); \
+        OPENSSL_FALLTHROUGH;                              \
       case 7:                                             \
         *(--(c)) = (unsigned char)(((l2) >> 16L) & 0xff); \
+        OPENSSL_FALLTHROUGH;                              \
       case 6:                                             \
         *(--(c)) = (unsigned char)(((l2) >> 8L) & 0xff);  \
+        OPENSSL_FALLTHROUGH;                              \
       case 5:                                             \
         *(--(c)) = (unsigned char)(((l2)) & 0xff);        \
+        OPENSSL_FALLTHROUGH;                              \
       case 4:                                             \
         *(--(c)) = (unsigned char)(((l1) >> 24L) & 0xff); \
+        OPENSSL_FALLTHROUGH;                              \
       case 3:                                             \
         *(--(c)) = (unsigned char)(((l1) >> 16L) & 0xff); \
+        OPENSSL_FALLTHROUGH;                              \
       case 2:                                             \
         *(--(c)) = (unsigned char)(((l1) >> 8L) & 0xff);  \
+        OPENSSL_FALLTHROUGH;                              \
       case 1:                                             \
         *(--(c)) = (unsigned char)(((l1)) & 0xff);        \
     }                                                     \
@@ -218,7 +232,7 @@ how to use xors :-) I got it to its final state.
 
 
 #if defined(__cplusplus)
-} /* extern C */
+}  // extern C
 #endif
 
-#endif /* OPENSSL_HEADER_DES_INTERNAL_H */
+#endif  // OPENSSL_HEADER_DES_INTERNAL_H

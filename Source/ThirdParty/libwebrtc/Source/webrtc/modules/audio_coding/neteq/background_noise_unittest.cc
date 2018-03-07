@@ -10,9 +10,9 @@
 
 // Unit tests for BackgroundNoise class.
 
-#include "webrtc/modules/audio_coding/neteq/background_noise.h"
+#include "modules/audio_coding/neteq/background_noise.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/testsupport/fileutils.h"
+#include "test/testsupport/fileutils.h"
 
 #include <stdio.h>
 
@@ -17,10 +17,10 @@
 #include <list>
 #include <string>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/pathutils.h"
-#include "webrtc/test/gtest.h"
+#include "api/optional.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/pathutils.h"
+#include "test/gtest.h"
 
 #ifdef WIN32
 #define chdir _chdir

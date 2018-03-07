@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_TEST_ACMTEST_H_
-#define WEBRTC_MODULES_AUDIO_CODING_TEST_ACMTEST_H_
+#ifndef MODULES_AUDIO_CODING_TEST_ACMTEST_H_
+#define MODULES_AUDIO_CODING_TEST_ACMTEST_H_
 
 class ACMTest {
  public:
@@ -18,4 +18,4 @@ class ACMTest {
   virtual void Perform() = 0;
 };
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_TEST_ACMTEST_H_
+#endif  // MODULES_AUDIO_CODING_TEST_ACMTEST_H_

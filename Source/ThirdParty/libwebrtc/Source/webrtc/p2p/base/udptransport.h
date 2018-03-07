@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_UDPTRANSPORT_H_
-#define WEBRTC_P2P_BASE_UDPTRANSPORT_H_
+#ifndef P2P_BASE_UDPTRANSPORT_H_
+#define P2P_BASE_UDPTRANSPORT_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/api/ortc/udptransportinterface.h"
-#include "webrtc/base/asyncpacketsocket.h"  // For PacketOptions.
-#include "webrtc/base/optional.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/p2p/base/packettransportinternal.h"
+#include "api/optional.h"
+#include "api/ortc/udptransportinterface.h"
+#include "p2p/base/packettransportinternal.h"
+#include "rtc_base/asyncpacketsocket.h"  // For PacketOptions.
+#include "rtc_base/thread_checker.h"
 
 namespace rtc {
 class AsyncPacketSocket;
@@ -38,7 +38,7 @@ class UdpTransport : public rtc::PacketTransportInternal,
   // |socket| must be non-null.
   UdpTransport(const std::string& transport_name,
                std::unique_ptr<rtc::AsyncPacketSocket> socket);
-  ~UdpTransport();
+  ~UdpTransport() override;
 
   // Overrides of UdpTransportInterface, used by the API consumer.
   rtc::SocketAddress GetLocalAddress() const override;
@@ -46,12 +46,9 @@ class UdpTransport : public rtc::PacketTransportInternal,
   rtc::SocketAddress GetRemoteAddress() const override;
 
   // Overrides of PacketTransportInternal, used by webrtc internally.
-  std::string debug_name() const override { return transport_name_; }
+  const std::string& transport_name() const override;
 
-  bool receiving() const override {
-    // TODO(johan): Implement method and signal.
-    return true;
-  }
+  bool receiving() const override;
 
   bool writable() const override;
 
@@ -60,12 +57,14 @@ class UdpTransport : public rtc::PacketTransportInternal,
                  const rtc::PacketOptions& options,
                  int flags) override;
 
-  int SetOption(rtc::Socket::Option opt, int value) override { return 0; }
+  int SetOption(rtc::Socket::Option opt, int value) override;
 
-  int GetError() override { return send_error_; }
+  int GetError() override;
+
+  rtc::Optional<rtc::NetworkRoute> network_route() const override;
 
  protected:
-  PacketTransportInternal* GetInternal() override { return this; }
+  PacketTransportInternal* GetInternal() override;
 
  private:
   void OnSocketReadPacket(rtc::AsyncPacketSocket* socket,
@@ -76,6 +75,7 @@ class UdpTransport : public rtc::PacketTransportInternal,
   void OnSocketSentPacket(rtc::AsyncPacketSocket* socket,
                           const rtc::SentPacket& packet);
   bool IsLocalConsistent();
+
   std::string transport_name_;
   int send_error_ = 0;
   std::unique_ptr<rtc::AsyncPacketSocket> socket_;
@@ -86,4 +86,4 @@ class UdpTransport : public rtc::PacketTransportInternal,
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_UDPTRANSPORT_H_
+#endif  // P2P_BASE_UDPTRANSPORT_H_

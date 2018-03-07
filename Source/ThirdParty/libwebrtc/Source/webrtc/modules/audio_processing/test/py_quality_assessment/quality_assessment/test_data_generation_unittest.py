@@ -29,7 +29,7 @@ class TestTestDataGenerators(unittest.TestCase):
   def setUp(self):
     """Create temporary folders."""
     self._base_output_path = tempfile.mkdtemp()
-    self._input_noise_cache_path = tempfile.mkdtemp()
+    self._test_data_cache_path = tempfile.mkdtemp()
     self._fake_air_db_path = tempfile.mkdtemp()
 
     # Fake AIR DB impulse responses.
@@ -49,13 +49,13 @@ class TestTestDataGenerators(unittest.TestCase):
   def tearDown(self):
     """Recursively delete temporary folders."""
     shutil.rmtree(self._base_output_path)
-    shutil.rmtree(self._input_noise_cache_path)
+    shutil.rmtree(self._test_data_cache_path)
     shutil.rmtree(self._fake_air_db_path)
 
   def testTestDataGenerators(self):
     # Preliminary check.
     self.assertTrue(os.path.exists(self._base_output_path))
-    self.assertTrue(os.path.exists(self._input_noise_cache_path))
+    self.assertTrue(os.path.exists(self._test_data_cache_path))
 
     # Check that there is at least one registered test data generator.
     registered_classes = (
@@ -64,11 +64,15 @@ class TestTestDataGenerators(unittest.TestCase):
     self.assertGreater(len(registered_classes), 0)
 
     # Instance generators factory.
-    generators_factory = (
-        test_data_generation_factory.TestDataGeneratorFactory(
-            aechen_ir_database_path=self._fake_air_db_path))
+    generators_factory = test_data_generation_factory.TestDataGeneratorFactory(
+        aechen_ir_database_path=self._fake_air_db_path,
+        noise_tracks_path=test_data_generation.  \
+                          AdditiveNoiseTestDataGenerator.  \
+                          DEFAULT_NOISE_TRACKS_PATH,
+        copy_with_identity=False)
+    generators_factory.SetOutputDirectoryPrefix('datagen-')
 
-    # Use a sample input file as clean input signal.
+    # Use a simple input file as clean input signal.
     input_signal_filepath = os.path.join(
         os.getcwd(), 'probing_signals', 'tone-880.wav')
     self.assertTrue(os.path.exists(input_signal_filepath))
@@ -86,13 +90,60 @@ class TestTestDataGenerators(unittest.TestCase):
       # Generate the noisy input - reference pairs.
       generator.Generate(
           input_signal_filepath=input_signal_filepath,
-          input_noise_cache_path=self._input_noise_cache_path,
+          test_data_cache_path=self._test_data_cache_path,
           base_output_path=self._base_output_path)
 
       # Perform checks.
       self._CheckGeneratedPairsListSizes(generator)
       self._CheckGeneratedPairsSignalDurations(generator, input_signal)
       self._CheckGeneratedPairsOutputPaths(generator)
+
+  def testTestidentityDataGenerator(self):
+    # Preliminary check.
+    self.assertTrue(os.path.exists(self._base_output_path))
+    self.assertTrue(os.path.exists(self._test_data_cache_path))
+
+    # Use a simple input file as clean input signal.
+    input_signal_filepath = os.path.join(
+        os.getcwd(), 'probing_signals', 'tone-880.wav')
+    self.assertTrue(os.path.exists(input_signal_filepath))
+
+    def GetNoiseReferenceFilePaths(identity_generator):
+      noisy_signal_filepaths = identity_generator.noisy_signal_filepaths
+      reference_signal_filepaths = identity_generator.reference_signal_filepaths
+      assert noisy_signal_filepaths.keys() == reference_signal_filepaths.keys()
+      assert len(noisy_signal_filepaths.keys()) == 1
+      key = noisy_signal_filepaths.keys()[0]
+      return noisy_signal_filepaths[key], reference_signal_filepaths[key]
+
+    # Test the |copy_with_identity| flag.
+    for copy_with_identity in [False, True]:
+      # Instance the generator through the factory.
+      factory = test_data_generation_factory.TestDataGeneratorFactory(
+        aechen_ir_database_path='', noise_tracks_path='',
+        copy_with_identity=copy_with_identity)
+      factory.SetOutputDirectoryPrefix('datagen-')
+      generator = factory.GetInstance(
+          test_data_generation.IdentityTestDataGenerator)
+      # Check |copy_with_identity| is set correctly.
+      self.assertEqual(copy_with_identity, generator.copy_with_identity)
+
+      # Generate test data and extract the paths to the noise and the reference
+      # files.
+      generator.Generate(
+          input_signal_filepath=input_signal_filepath,
+          test_data_cache_path=self._test_data_cache_path,
+          base_output_path=self._base_output_path)
+      noisy_signal_filepath, reference_signal_filepath = (
+          GetNoiseReferenceFilePaths(generator))
+
+      # Check that a copy is made if and only if |copy_with_identity| is True.
+      if copy_with_identity:
+        self.assertNotEqual(noisy_signal_filepath, input_signal_filepath)
+        self.assertNotEqual(reference_signal_filepath, input_signal_filepath)
+      else:
+        self.assertEqual(noisy_signal_filepath, input_signal_filepath)
+        self.assertEqual(reference_signal_filepath, input_signal_filepath)
 
   def _CheckGeneratedPairsListSizes(self, generator):
     config_names = generator.config_names

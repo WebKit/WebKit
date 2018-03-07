@@ -8,26 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/ulpfec_receiver_impl.h"
+#include "modules/rtp_rtcp/source/ulpfec_receiver_impl.h"
 
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_receiver_video.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_receiver_video.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
-UlpfecReceiver* UlpfecReceiver::Create(RecoveredPacketReceiver* callback) {
-  return new UlpfecReceiverImpl(callback);
+UlpfecReceiver* UlpfecReceiver::Create(uint32_t ssrc,
+                                       RecoveredPacketReceiver* callback) {
+  return new UlpfecReceiverImpl(ssrc, callback);
 }
 
-UlpfecReceiverImpl::UlpfecReceiverImpl(RecoveredPacketReceiver* callback)
-    : recovered_packet_callback_(callback),
-      fec_(ForwardErrorCorrection::CreateUlpfec()) {}
+UlpfecReceiverImpl::UlpfecReceiverImpl(uint32_t ssrc,
+                                       RecoveredPacketReceiver* callback)
+    : ssrc_(ssrc),
+      recovered_packet_callback_(callback),
+      fec_(ForwardErrorCorrection::CreateUlpfec(ssrc_)) {}
 
 UlpfecReceiverImpl::~UlpfecReceiverImpl() {
   received_packets_.clear();
@@ -72,13 +75,19 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
     const uint8_t* incoming_rtp_packet,
     size_t packet_length,
     uint8_t ulpfec_payload_type) {
+  if (header.ssrc != ssrc_) {
+    RTC_LOG(LS_WARNING)
+        << "Received RED packet with different SSRC than expected; dropping.";
+    return -1;
+  }
+
   rtc::CritScope cs(&crit_sect_);
 
   uint8_t red_header_length = 1;
   size_t payload_data_length = packet_length - header.headerLength;
 
   if (payload_data_length == 0) {
-    LOG(LS_WARNING) << "Corrupt/truncated FEC packet.";
+    RTC_LOG(LS_WARNING) << "Corrupt/truncated FEC packet.";
     return -1;
   }
 
@@ -90,6 +99,7 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
   // Get payload type from RED header and sequence number from RTP header.
   uint8_t payload_type = incoming_rtp_packet[header.headerLength] & 0x7f;
   received_packet->is_fec = payload_type == ulpfec_payload_type;
+  received_packet->ssrc = header.ssrc;
   received_packet->seq_num = header.sequenceNumber;
 
   uint16_t block_length = 0;
@@ -97,7 +107,7 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
     // f bit set in RED header, i.e. there are more than one RED header blocks.
     red_header_length = 4;
     if (payload_data_length < red_header_length + 1u) {
-      LOG(LS_WARNING) << "Corrupt/truncated FEC packet.";
+      RTC_LOG(LS_WARNING) << "Corrupt/truncated FEC packet.";
       return -1;
     }
 
@@ -106,7 +116,7 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
     timestamp_offset += incoming_rtp_packet[header.headerLength + 2];
     timestamp_offset = timestamp_offset >> 2;
     if (timestamp_offset != 0) {
-      LOG(LS_WARNING) << "Corrupt payload found.";
+      RTC_LOG(LS_WARNING) << "Corrupt payload found.";
       return -1;
     }
 
@@ -115,13 +125,13 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
 
     // Check next RED header block.
     if (incoming_rtp_packet[header.headerLength + 4] & 0x80) {
-      LOG(LS_WARNING) << "More than 2 blocks in packet not supported.";
+      RTC_LOG(LS_WARNING) << "More than 2 blocks in packet not supported.";
       return -1;
     }
     // Check that the packet is long enough to contain data in the following
     // block.
     if (block_length > payload_data_length - (red_header_length + 1)) {
-      LOG(LS_WARNING) << "Block length longer than packet.";
+      RTC_LOG(LS_WARNING) << "Block length longer than packet.";
       return -1;
     }
   }
@@ -155,6 +165,7 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
     second_received_packet->pkt = new ForwardErrorCorrection::Packet;
 
     second_received_packet->is_fec = true;
+    second_received_packet->ssrc = header.ssrc;
     second_received_packet->seq_num = header.sequenceNumber;
     ++packet_counter_.num_fec_packets;
 
@@ -205,23 +216,22 @@ int32_t UlpfecReceiverImpl::AddReceivedRedPacket(
   return 0;
 }
 
+// TODO(nisse): Drop always-zero return value.
 int32_t UlpfecReceiverImpl::ProcessReceivedFec() {
   crit_sect_.Enter();
-  if (!received_packets_.empty()) {
+  for (const auto& received_packet : received_packets_) {
     // Send received media packet to VCM.
-    if (!received_packets_.front()->is_fec) {
-      ForwardErrorCorrection::Packet* packet = received_packets_.front()->pkt;
+    if (!received_packet->is_fec) {
+      ForwardErrorCorrection::Packet* packet = received_packet->pkt;
       crit_sect_.Leave();
       recovered_packet_callback_->OnRecoveredPacket(packet->data,
                                                     packet->length);
       crit_sect_.Enter();
     }
-    if (fec_->DecodeFec(&received_packets_, &recovered_packets_) != 0) {
-      crit_sect_.Leave();
-      return -1;
-    }
-    RTC_DCHECK(received_packets_.empty());
+    fec_->DecodeFec(*received_packet, &recovered_packets_);
   }
+  received_packets_.clear();
+
   // Send any recovered media packets to VCM.
   for (const auto& recovered_packet : recovered_packets_) {
     if (recovered_packet->returned) {
@@ -230,11 +240,13 @@ int32_t UlpfecReceiverImpl::ProcessReceivedFec() {
     }
     ForwardErrorCorrection::Packet* packet = recovered_packet->pkt;
     ++packet_counter_.num_recovered_packets;
+    // Set this flag first; in case the recovered packet carries a RED
+    // header, OnRecoveredPacket will recurse back here.
+    recovered_packet->returned = true;
     crit_sect_.Leave();
     recovered_packet_callback_->OnRecoveredPacket(packet->data,
                                                   packet->length);
     crit_sect_.Enter();
-    recovered_packet->returned = true;
   }
   crit_sect_.Leave();
   return 0;

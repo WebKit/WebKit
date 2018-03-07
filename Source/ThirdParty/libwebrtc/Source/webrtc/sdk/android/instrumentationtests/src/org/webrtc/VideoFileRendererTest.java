@@ -23,11 +23,17 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Random;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BaseJUnit4ClassRunner.class)
 public class VideoFileRendererTest {
+  @Before
+  public void setUp() {
+    NativeLibrary.initialize(new NativeLibrary.DefaultLoader());
+  }
+
   @Test
   @SmallTest
   public void testYuvRenderingToFile() throws InterruptedException, IOException {

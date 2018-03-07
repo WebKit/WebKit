@@ -10,14 +10,13 @@
 
 #include <memory>
 
-#include "webrtc/base/fakesslidentity.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/network.h"
-#include "webrtc/p2p/base/fakedtlstransport.h"
-#include "webrtc/p2p/base/fakeicetransport.h"
+#include "p2p/base/fakedtlstransport.h"
+#include "p2p/base/fakeicetransport.h"
+#include "rtc_base/fakesslidentity.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/network.h"
 
 using cricket::JsepTransport;
-using cricket::TransportChannel;
 using cricket::FakeDtlsTransport;
 using cricket::FakeIceTransport;
 using cricket::IceRole;

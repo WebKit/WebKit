@@ -47,6 +47,9 @@ public class WebRtcAudioRecord {
   // but the wait times out afther this amount of time.
   private static final long AUDIO_RECORD_THREAD_JOIN_TIMEOUT_MS = 2000;
 
+  private static final int DEFAULT_AUDIO_SOURCE = getDefaultAudioSource();
+  private static int audioSource = DEFAULT_AUDIO_SOURCE;
+
   private final long nativeAudioRecord;
 
   private WebRtcAudioEffects effects = null;
@@ -168,11 +171,6 @@ public class WebRtcAudioRecord {
 
   private int initRecording(int sampleRate, int channels) {
     Logging.d(TAG, "initRecording(sampleRate=" + sampleRate + ", channels=" + channels + ")");
-    if (!WebRtcAudioUtils.hasPermission(
-            ContextUtils.getApplicationContext(), android.Manifest.permission.RECORD_AUDIO)) {
-      reportWebRtcAudioRecordInitError("RECORD_AUDIO permission is missing");
-      return -1;
-    }
     if (audioRecord != null) {
       reportWebRtcAudioRecordInitError("InitRecording called twice without StopRecording.");
       return -1;
@@ -205,7 +203,7 @@ public class WebRtcAudioRecord {
     int bufferSizeInBytes = Math.max(BUFFER_SIZE_FACTOR * minBufferSize, byteBuffer.capacity());
     Logging.d(TAG, "bufferSizeInBytes: " + bufferSizeInBytes);
     try {
-      audioRecord = new AudioRecord(AudioSource.VOICE_COMMUNICATION, sampleRate, channelConfig,
+      audioRecord = new AudioRecord(audioSource, sampleRate, channelConfig,
           AudioFormat.ENCODING_PCM_16BIT, bufferSizeInBytes);
     } catch (IllegalArgumentException e) {
       reportWebRtcAudioRecordInitError("AudioRecord ctor error: " + e.getMessage());
@@ -293,6 +291,17 @@ public class WebRtcAudioRecord {
   private native void nativeCacheDirectBufferAddress(ByteBuffer byteBuffer, long nativeAudioRecord);
 
   private native void nativeDataIsRecorded(int bytes, long nativeAudioRecord);
+
+  @SuppressWarnings("NoSynchronizedMethodCheck")
+  public static synchronized void setAudioSource(int source) {
+    Logging.w(TAG, "Audio source is changed from: " + audioSource
+            + " to " + source);
+    audioSource = source;
+  }
+
+  private static int getDefaultAudioSource() {
+    return AudioSource.VOICE_COMMUNICATION;
+  }
 
   // Sets all recorded samples to zero if |mute| is true, i.e., ensures that
   // the microphone is muted.

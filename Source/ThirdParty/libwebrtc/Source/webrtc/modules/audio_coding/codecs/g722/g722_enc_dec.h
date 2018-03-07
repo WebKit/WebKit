@@ -31,7 +31,7 @@
 #if !defined(_G722_ENC_DEC_H_)
 #define _G722_ENC_DEC_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 /*! \page g722_page G.722 encoding and decoding
 \section g722_page_sec_1 What does it do?

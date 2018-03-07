@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_BLOCK_MEAN_CALCULATOR_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_BLOCK_MEAN_CALCULATOR_H_
+#ifndef MODULES_AUDIO_PROCESSING_UTILITY_BLOCK_MEAN_CALCULATOR_H_
+#define MODULES_AUDIO_PROCESSING_UTILITY_BLOCK_MEAN_CALCULATOR_H_
 
 #include <stddef.h>
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -49,4 +49,4 @@ class BlockMeanCalculator {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_BLOCK_MEAN_CALCULATOR_H_
+#endif  // MODULES_AUDIO_PROCESSING_UTILITY_BLOCK_MEAN_CALCULATOR_H_

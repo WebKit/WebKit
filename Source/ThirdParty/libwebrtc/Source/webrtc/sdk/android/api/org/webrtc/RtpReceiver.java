@@ -52,7 +52,7 @@ public class RtpReceiver {
       nativeUnsetObserver(nativeRtpReceiver, nativeObserver);
       nativeObserver = 0;
     }
-    free(nativeRtpReceiver);
+    JniCommon.nativeReleaseRef(nativeRtpReceiver);
   }
 
   public void SetObserver(Observer observer) {
@@ -73,8 +73,6 @@ public class RtpReceiver {
   private static native RtpParameters nativeGetParameters(long nativeRtpReceiver);
 
   private static native String nativeId(long nativeRtpReceiver);
-
-  private static native void free(long nativeRtpReceiver);
 
   private static native long nativeSetObserver(long nativeRtpReceiver, Observer observer);
 

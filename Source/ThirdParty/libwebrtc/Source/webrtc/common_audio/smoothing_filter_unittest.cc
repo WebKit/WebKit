@@ -11,9 +11,9 @@
 #include <cmath>
 #include <memory>
 
-#include "webrtc/base/fakeclock.h"
-#include "webrtc/common_audio/smoothing_filter.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/smoothing_filter.h"
+#include "rtc_base/fakeclock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -132,8 +132,7 @@ TEST(SmoothingFilterTest, GetAverageOutputsEmptyBeforeFirstSample) {
   EXPECT_FALSE(states.smoothing_filter.GetAverage());
   constexpr float kFirstSample = 1.2345f;
   states.smoothing_filter.AddSample(kFirstSample);
-  EXPECT_EQ(rtc::Optional<float>(kFirstSample),
-            states.smoothing_filter.GetAverage());
+  EXPECT_EQ(kFirstSample, states.smoothing_filter.GetAverage());
 }
 
 TEST(SmoothingFilterTest, CannotChangeTimeConstantDuringInitialization) {

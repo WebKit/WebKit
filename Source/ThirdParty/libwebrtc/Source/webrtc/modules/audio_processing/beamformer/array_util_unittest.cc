@@ -11,12 +11,12 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
-#include "webrtc/modules/audio_processing/beamformer/array_util.h"
+#include "modules/audio_processing/beamformer/array_util.h"
 
 #include <math.h>
 #include <vector>
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

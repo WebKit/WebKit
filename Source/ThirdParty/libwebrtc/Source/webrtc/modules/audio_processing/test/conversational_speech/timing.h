@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
+#ifndef MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
+#define MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/array_view.h"
+#include "api/array_view.h"
 
 namespace webrtc {
 namespace test {
@@ -43,4 +43,4 @@ void SaveTiming(const std::string& timing_filepath,
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_
+#endif  // MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_TIMING_H_

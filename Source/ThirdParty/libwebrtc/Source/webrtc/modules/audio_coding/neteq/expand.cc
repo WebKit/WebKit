@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/expand.h"
+#include "modules/audio_coding/neteq/expand.h"
 
 #include <assert.h>
 #include <string.h>  // memset
@@ -16,14 +16,14 @@
 #include <algorithm>  // min, max
 #include <limits>  // numeric_limits<T>
 
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/neteq/background_noise.h"
-#include "webrtc/modules/audio_coding/neteq/cross_correlation.h"
-#include "webrtc/modules/audio_coding/neteq/dsp_helper.h"
-#include "webrtc/modules/audio_coding/neteq/random_vector.h"
-#include "webrtc/modules/audio_coding/neteq/statistics_calculator.h"
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/background_noise.h"
+#include "modules/audio_coding/neteq/cross_correlation.h"
+#include "modules/audio_coding/neteq/dsp_helper.h"
+#include "modules/audio_coding/neteq/random_vector.h"
+#include "modules/audio_coding/neteq/statistics_calculator.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

@@ -11,7 +11,7 @@
 #import "WebRTC/UIDevice+RTCDevice.h"
 
 #include <memory>
-#include <sys/sysctl.h>
+#import <sys/utsname.h>
 
 @implementation UIDevice (RTCDevice)
 
@@ -33,6 +33,16 @@
     @"iPhone7,2": @(RTCDeviceTypeIPhone6),
     @"iPhone8,1": @(RTCDeviceTypeIPhone6S),
     @"iPhone8,2": @(RTCDeviceTypeIPhone6SPlus),
+    @"iPhone9,1": @(RTCDeviceTypeIPhone7),
+    @"iPhone9,2": @(RTCDeviceTypeIPhone7Plus),
+    @"iPhone9,3": @(RTCDeviceTypeIPhone7),
+    @"iPhone9,4": @(RTCDeviceTypeIPhone7Plus),
+    @"iPhone10,1": @(RTCDeviceTypeIPhone8),
+    @"iPhone10,2": @(RTCDeviceTypeIPhone8Plus),
+    @"iPhone10,3": @(RTCDeviceTypeIPhoneX),
+    @"iPhone10,4": @(RTCDeviceTypeIPhone8),
+    @"iPhone10,5": @(RTCDeviceTypeIPhone8Plus),
+    @"iPhone10,6": @(RTCDeviceTypeIPhoneX),
     @"iPod1,1": @(RTCDeviceTypeIPodTouch1G),
     @"iPod2,1": @(RTCDeviceTypeIPodTouch2G),
     @"iPod3,1": @(RTCDeviceTypeIPodTouch3G),
@@ -60,109 +70,19 @@
     @"x86_64": @(RTCDeviceTypeSimulatorx86_64),
   };
 
-  size_t size = 0;
-  sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-  std::unique_ptr<char[]> machine;
-  machine.reset(new char[size]);
-  sysctlbyname("hw.machine", machine.get(), &size, NULL, 0);
-  NSString *machineName = [[NSString alloc] initWithCString:machine.get()
-                                                   encoding:NSUTF8StringEncoding];
   RTCDeviceType deviceType = RTCDeviceTypeUnknown;
-  NSNumber *typeNumber = machineNameToType[machineName];
+  NSNumber *typeNumber = machineNameToType[[self machineName]];
   if (typeNumber) {
     deviceType = static_cast<RTCDeviceType>(typeNumber.integerValue);
   }
   return deviceType;
 }
 
-+ (NSString *)stringForDeviceType:(RTCDeviceType)deviceType {
-  switch (deviceType) {
-    case RTCDeviceTypeUnknown:
-      return @"Unknown";
-    case RTCDeviceTypeIPhone1G:
-      return @"iPhone 1G";
-    case RTCDeviceTypeIPhone3G:
-      return @"iPhone 3G";
-    case RTCDeviceTypeIPhone3GS:
-      return @"iPhone 3GS";
-    case RTCDeviceTypeIPhone4:
-      return @"iPhone 4";
-    case RTCDeviceTypeIPhone4Verizon:
-      return @"iPhone 4 Verizon";
-    case RTCDeviceTypeIPhone4S:
-      return @"iPhone 4S";
-    case RTCDeviceTypeIPhone5GSM:
-      return @"iPhone 5 (GSM)";
-    case RTCDeviceTypeIPhone5GSM_CDMA:
-      return @"iPhone 5 (GSM+CDMA)";
-    case RTCDeviceTypeIPhone5CGSM:
-      return @"iPhone 5C (GSM)";
-    case RTCDeviceTypeIPhone5CGSM_CDMA:
-      return @"iPhone 5C (GSM+CDMA)";
-    case RTCDeviceTypeIPhone5SGSM:
-      return @"iPhone 5S (GSM)";
-    case RTCDeviceTypeIPhone5SGSM_CDMA:
-      return @"iPhone 5S (GSM+CDMA)";
-    case RTCDeviceTypeIPhone6Plus:
-      return @"iPhone 6 Plus";
-    case RTCDeviceTypeIPhone6:
-      return @"iPhone 6";
-    case RTCDeviceTypeIPhone6S:
-      return @"iPhone 6S";
-    case RTCDeviceTypeIPhone6SPlus:
-      return @"iPhone 6S Plus";
-    case RTCDeviceTypeIPodTouch1G:
-      return @"iPod Touch 1G";
-    case RTCDeviceTypeIPodTouch2G:
-      return @"iPod Touch 2G";
-    case RTCDeviceTypeIPodTouch3G:
-      return @"iPod Touch 3G";
-    case RTCDeviceTypeIPodTouch4G:
-      return @"iPod Touch 4G";
-    case RTCDeviceTypeIPodTouch5G:
-      return @"iPod Touch 5G";
-    case RTCDeviceTypeIPad:
-      return @"iPad";
-    case RTCDeviceTypeIPad2Wifi:
-      return @"iPad 2 (WiFi)";
-    case RTCDeviceTypeIPad2GSM:
-      return @"iPad 2 (GSM)";
-    case RTCDeviceTypeIPad2CDMA:
-      return @"iPad 2 (CDMA)";
-    case RTCDeviceTypeIPad2Wifi2:
-      return @"iPad 2 (WiFi) 2";
-    case RTCDeviceTypeIPadMiniWifi:
-      return @"iPad Mini (WiFi)";
-    case RTCDeviceTypeIPadMiniGSM:
-      return @"iPad Mini (GSM)";
-    case RTCDeviceTypeIPadMiniGSM_CDMA:
-      return @"iPad Mini (GSM+CDMA)";
-    case RTCDeviceTypeIPad3Wifi:
-      return @"iPad 3 (WiFi)";
-    case RTCDeviceTypeIPad3GSM_CDMA:
-      return @"iPad 3 (GSM+CDMA)";
-    case RTCDeviceTypeIPad3GSM:
-      return @"iPad 3 (GSM)";
-    case RTCDeviceTypeIPad4Wifi:
-      return @"iPad 4 (WiFi)";
-    case RTCDeviceTypeIPad4GSM:
-      return @"iPad 4 (GSM)";
-    case RTCDeviceTypeIPad4GSM_CDMA:
-      return @"iPad 4 (GSM+CDMA)";
-    case RTCDeviceTypeIPadAirWifi:
-      return @"iPad Air (WiFi)";
-    case RTCDeviceTypeIPadAirCellular:
-      return @"iPad Air (Cellular)";
-    case RTCDeviceTypeIPadMini2GWifi:
-      return @"iPad Mini 2G (Wifi)";
-    case RTCDeviceTypeIPadMini2GCellular:
-      return @"iPad Mini 2G (Cellular)";
-    case RTCDeviceTypeSimulatori386:
-      return @"i386 Simulator";
-    case RTCDeviceTypeSimulatorx86_64:
-      return @"x86_64 Simulator";
-  }
-  return @"Unknown";
++ (NSString *)machineName {
+  struct utsname systemInfo;
+  uname(&systemInfo);
+  return [[NSString alloc] initWithCString:systemInfo.machine
+                                  encoding:NSUTF8StringEncoding];
 }
 
 + (double)currentDeviceSystemVersion {
@@ -171,6 +91,10 @@
 
 + (BOOL)isIOS9OrLater {
   return [self currentDeviceSystemVersion] >= 9.0;
+}
+
++ (BOOL)isIOS11OrLater {
+  return [self currentDeviceSystemVersion] >= 11.0;
 }
 
 @end

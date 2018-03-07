@@ -118,9 +118,9 @@ static BIGNUM *euclid(BIGNUM *a, BIGNUM *b) {
   BIGNUM *t;
   int shifts = 0;
 
-  /* 0 <= b <= a */
+  // 0 <= b <= a
   while (!BN_is_zero(b)) {
-    /* 0 < b <= a */
+    // 0 < b <= a
 
     if (BN_is_odd(a)) {
       if (BN_is_odd(b)) {
@@ -136,7 +136,7 @@ static BIGNUM *euclid(BIGNUM *a, BIGNUM *b) {
           b = t;
         }
       } else {
-        /* a odd - b even */
+        // a odd - b even
         if (!BN_rshift1(b, b)) {
           goto err;
         }
@@ -147,7 +147,7 @@ static BIGNUM *euclid(BIGNUM *a, BIGNUM *b) {
         }
       }
     } else {
-      /* a is even */
+      // a is even
       if (BN_is_odd(b)) {
         if (!BN_rshift1(a, a)) {
           goto err;
@@ -158,7 +158,7 @@ static BIGNUM *euclid(BIGNUM *a, BIGNUM *b) {
           b = t;
         }
       } else {
-        /* a even - b even */
+        // a even - b even
         if (!BN_rshift1(a, a)) {
           goto err;
         }
@@ -168,7 +168,7 @@ static BIGNUM *euclid(BIGNUM *a, BIGNUM *b) {
         shifts++;
       }
     }
-    /* 0 <= b <= a */
+    // 0 <= b <= a
   }
 
   if (shifts) {
@@ -224,7 +224,7 @@ err:
   return ret;
 }
 
-/* solves ax == 1 (mod n) */
+// solves ax == 1 (mod n)
 static int bn_mod_inverse_general(BIGNUM *out, int *out_no_inverse,
                                   const BIGNUM *a, const BIGNUM *n,
                                   BN_CTX *ctx);
@@ -264,30 +264,29 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
   }
   A->neg = 0;
   sign = -1;
-  /* From  B = a mod |n|,  A = |n|  it follows that
-   *
-   *      0 <= B < A,
-   *     -sign*X*a  ==  B   (mod |n|),
-   *      sign*Y*a  ==  A   (mod |n|).
-   */
+  // From  B = a mod |n|,  A = |n|  it follows that
+  //
+  //      0 <= B < A,
+  //     -sign*X*a  ==  B   (mod |n|),
+  //      sign*Y*a  ==  A   (mod |n|).
 
-  /* Binary inversion algorithm; requires odd modulus. This is faster than the
-   * general algorithm if the modulus is sufficiently small (about 400 .. 500
-   * bits on 32-bit systems, but much more on 64-bit systems) */
+  // Binary inversion algorithm; requires odd modulus. This is faster than the
+  // general algorithm if the modulus is sufficiently small (about 400 .. 500
+  // bits on 32-bit systems, but much more on 64-bit systems)
   int shift;
 
   while (!BN_is_zero(B)) {
-    /*      0 < B < |n|,
-     *      0 < A <= |n|,
-     * (1) -sign*X*a  ==  B   (mod |n|),
-     * (2)  sign*Y*a  ==  A   (mod |n|) */
+    //      0 < B < |n|,
+    //      0 < A <= |n|,
+    // (1) -sign*X*a  ==  B   (mod |n|),
+    // (2)  sign*Y*a  ==  A   (mod |n|)
 
-    /* Now divide  B  by the maximum possible power of two in the integers,
-     * and divide  X  by the same value mod |n|.
-     * When we're done, (1) still holds. */
+    // Now divide  B  by the maximum possible power of two in the integers,
+    // and divide  X  by the same value mod |n|.
+    // When we're done, (1) still holds.
     shift = 0;
     while (!BN_is_bit_set(B, shift)) {
-      /* note that 0 < B */
+      // note that 0 < B
       shift++;
 
       if (BN_is_odd(X)) {
@@ -295,7 +294,7 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
           goto err;
         }
       }
-      /* now X is even, so we can easily divide it by two */
+      // now X is even, so we can easily divide it by two
       if (!BN_rshift1(X, X)) {
         goto err;
       }
@@ -306,10 +305,10 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
       }
     }
 
-    /* Same for A and Y. Afterwards, (2) still holds. */
+    // Same for A and Y. Afterwards, (2) still holds.
     shift = 0;
     while (!BN_is_bit_set(A, shift)) {
-      /* note that 0 < A */
+      // note that 0 < A
       shift++;
 
       if (BN_is_odd(Y)) {
@@ -317,7 +316,7 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
           goto err;
         }
       }
-      /* now Y is even */
+      // now Y is even
       if (!BN_rshift1(Y, Y)) {
         goto err;
       }
@@ -328,32 +327,32 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
       }
     }
 
-    /* We still have (1) and (2).
-     * Both  A  and  B  are odd.
-     * The following computations ensure that
-     *
-     *     0 <= B < |n|,
-     *      0 < A < |n|,
-     * (1) -sign*X*a  ==  B   (mod |n|),
-     * (2)  sign*Y*a  ==  A   (mod |n|),
-     *
-     * and that either  A  or  B  is even in the next iteration. */
+    // We still have (1) and (2).
+    // Both  A  and  B  are odd.
+    // The following computations ensure that
+    //
+    //     0 <= B < |n|,
+    //      0 < A < |n|,
+    // (1) -sign*X*a  ==  B   (mod |n|),
+    // (2)  sign*Y*a  ==  A   (mod |n|),
+    //
+    // and that either  A  or  B  is even in the next iteration.
     if (BN_ucmp(B, A) >= 0) {
-      /* -sign*(X + Y)*a == B - A  (mod |n|) */
+      // -sign*(X + Y)*a == B - A  (mod |n|)
       if (!BN_uadd(X, X, Y)) {
         goto err;
       }
-      /* NB: we could use BN_mod_add_quick(X, X, Y, n), but that
-       * actually makes the algorithm slower */
+      // NB: we could use BN_mod_add_quick(X, X, Y, n), but that
+      // actually makes the algorithm slower
       if (!BN_usub(B, B, A)) {
         goto err;
       }
     } else {
-      /*  sign*(X + Y)*a == A - B  (mod |n|) */
+      //  sign*(X + Y)*a == A - B  (mod |n|)
       if (!BN_uadd(Y, Y, X)) {
         goto err;
       }
-      /* as above, BN_mod_add_quick(Y, Y, X, n) would slow things down */
+      // as above, BN_mod_add_quick(Y, Y, X, n) would slow things down
       if (!BN_usub(A, A, B)) {
         goto err;
       }
@@ -366,20 +365,20 @@ int BN_mod_inverse_odd(BIGNUM *out, int *out_no_inverse, const BIGNUM *a,
     goto err;
   }
 
-  /* The while loop (Euclid's algorithm) ends when
-   *      A == gcd(a,n);
-   * we have
-   *       sign*Y*a  ==  A  (mod |n|),
-   * where  Y  is non-negative. */
+  // The while loop (Euclid's algorithm) ends when
+  //      A == gcd(a,n);
+  // we have
+  //       sign*Y*a  ==  A  (mod |n|),
+  // where  Y  is non-negative.
 
   if (sign < 0) {
     if (!BN_sub(Y, n, Y)) {
       goto err;
     }
   }
-  /* Now  Y*a  ==  A  (mod |n|).  */
+  // Now  Y*a  ==  A  (mod |n|).
 
-  /* Y*a == 1  (mod |n|) */
+  // Y*a == 1  (mod |n|)
   if (!Y->neg && BN_ucmp(Y, n) < 0) {
     if (!BN_copy(R, Y)) {
       goto err;
@@ -470,11 +469,11 @@ err:
   return ret;
 }
 
-/* bn_mod_inverse_general is the general inversion algorithm that works for
- * both even and odd |n|. It was specifically designed to contain fewer
- * branches that may leak sensitive information; see "New Branch Prediction
- * Vulnerabilities in OpenSSL and Necessary Software Countermeasures" by
- * Onur Acıçmez, Shay Gueron, and Jean-Pierre Seifert. */
+// bn_mod_inverse_general is the general inversion algorithm that works for
+// both even and odd |n|. It was specifically designed to contain fewer
+// branches that may leak sensitive information; see "New Branch Prediction
+// Vulnerabilities in OpenSSL and Necessary Software Countermeasures" by
+// Onur Acıçmez, Shay Gueron, and Jean-Pierre Seifert.
 static int bn_mod_inverse_general(BIGNUM *out, int *out_no_inverse,
                                   const BIGNUM *a, const BIGNUM *n,
                                   BN_CTX *ctx) {
@@ -505,58 +504,53 @@ static int bn_mod_inverse_general(BIGNUM *out, int *out_no_inverse,
   A->neg = 0;
 
   sign = -1;
-  /* From  B = a mod |n|,  A = |n|  it follows that
-   *
-   *      0 <= B < A,
-   *     -sign*X*a  ==  B   (mod |n|),
-   *      sign*Y*a  ==  A   (mod |n|).
-   */
+  // From  B = a mod |n|,  A = |n|  it follows that
+  //
+  //      0 <= B < A,
+  //     -sign*X*a  ==  B   (mod |n|),
+  //      sign*Y*a  ==  A   (mod |n|).
 
   while (!BN_is_zero(B)) {
     BIGNUM *tmp;
 
-    /*
-     *      0 < B < A,
-     * (*) -sign*X*a  ==  B   (mod |n|),
-     *      sign*Y*a  ==  A   (mod |n|)
-     */
+    //      0 < B < A,
+    // (*) -sign*X*a  ==  B   (mod |n|),
+    //      sign*Y*a  ==  A   (mod |n|)
 
-    /* (D, M) := (A/B, A%B) ... */
+    // (D, M) := (A/B, A%B) ...
     if (!BN_div(D, M, A, B, ctx)) {
       goto err;
     }
 
-    /* Now
-     *      A = D*B + M;
-     * thus we have
-     * (**)  sign*Y*a  ==  D*B + M   (mod |n|).
-     */
+    // Now
+    //      A = D*B + M;
+    // thus we have
+    // (**)  sign*Y*a  ==  D*B + M   (mod |n|).
 
-    tmp = A; /* keep the BIGNUM object, the value does not matter */
+    tmp = A;  // keep the BIGNUM object, the value does not matter
 
-    /* (A, B) := (B, A mod B) ... */
+    // (A, B) := (B, A mod B) ...
     A = B;
     B = M;
-    /* ... so we have  0 <= B < A  again */
+    // ... so we have  0 <= B < A  again
 
-    /* Since the former  M  is now  B  and the former  B  is now  A,
-     * (**) translates into
-     *       sign*Y*a  ==  D*A + B    (mod |n|),
-     * i.e.
-     *       sign*Y*a - D*A  ==  B    (mod |n|).
-     * Similarly, (*) translates into
-     *      -sign*X*a  ==  A          (mod |n|).
-     *
-     * Thus,
-     *   sign*Y*a + D*sign*X*a  ==  B  (mod |n|),
-     * i.e.
-     *        sign*(Y + D*X)*a  ==  B  (mod |n|).
-     *
-     * So if we set  (X, Y, sign) := (Y + D*X, X, -sign),  we arrive back at
-     *      -sign*X*a  ==  B   (mod |n|),
-     *       sign*Y*a  ==  A   (mod |n|).
-     * Note that  X  and  Y  stay non-negative all the time.
-     */
+    // Since the former  M  is now  B  and the former  B  is now  A,
+    // (**) translates into
+    //       sign*Y*a  ==  D*A + B    (mod |n|),
+    // i.e.
+    //       sign*Y*a - D*A  ==  B    (mod |n|).
+    // Similarly, (*) translates into
+    //      -sign*X*a  ==  A          (mod |n|).
+    //
+    // Thus,
+    //   sign*Y*a + D*sign*X*a  ==  B  (mod |n|),
+    // i.e.
+    //        sign*(Y + D*X)*a  ==  B  (mod |n|).
+    //
+    // So if we set  (X, Y, sign) := (Y + D*X, X, -sign),  we arrive back at
+    //      -sign*X*a  ==  B   (mod |n|),
+    //       sign*Y*a  ==  A   (mod |n|).
+    // Note that  X  and  Y  stay non-negative all the time.
 
     if (!BN_mul(tmp, D, X, ctx)) {
       goto err;
@@ -565,7 +559,7 @@ static int bn_mod_inverse_general(BIGNUM *out, int *out_no_inverse,
       goto err;
     }
 
-    M = Y; /* keep the BIGNUM object, the value does not matter */
+    M = Y;  // keep the BIGNUM object, the value does not matter
     Y = X;
     X = tmp;
     sign = -sign;
@@ -577,22 +571,20 @@ static int bn_mod_inverse_general(BIGNUM *out, int *out_no_inverse,
     goto err;
   }
 
-  /*
-   * The while loop (Euclid's algorithm) ends when
-   *      A == gcd(a,n);
-   * we have
-   *       sign*Y*a  ==  A  (mod |n|),
-   * where  Y  is non-negative.
-   */
+  // The while loop (Euclid's algorithm) ends when
+  //      A == gcd(a,n);
+  // we have
+  //       sign*Y*a  ==  A  (mod |n|),
+  // where  Y  is non-negative.
 
   if (sign < 0) {
     if (!BN_sub(Y, n, Y)) {
       goto err;
     }
   }
-  /* Now  Y*a  ==  A  (mod |n|).  */
+  // Now  Y*a  ==  A  (mod |n|).
 
-  /* Y*a == 1  (mod |n|) */
+  // Y*a == 1  (mod |n|)
   if (!Y->neg && BN_ucmp(Y, n) < 0) {
     if (!BN_copy(R, Y)) {
       goto err;

@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,39 +68,36 @@ extern "C" {
  */
 
 typedef enum {
-    srtp_err_level_emergency = 0,
-    srtp_err_level_alert,
-    srtp_err_level_critical,
     srtp_err_level_error,
     srtp_err_level_warning,
-    srtp_err_level_notice,
     srtp_err_level_info,
-    srtp_err_level_debug,
-    srtp_err_level_none
+    srtp_err_level_debug
 } srtp_err_reporting_level_t;
 
 /*
  * err_reporting_init prepares the error system.  If
- * ERR_REPORTING_SYSLOG is defined, it will open syslog.
+ * ERR_REPORTING_STDOUT is defined, it will log to stdout.
  *
- * The ident argument is a string that will be prepended to
- * all syslog messages.  It is conventionally argv[0].
  */
 
-srtp_err_status_t srtp_err_reporting_init(const char *ident);
+srtp_err_status_t srtp_err_reporting_init(void);
+
+typedef void (srtp_err_report_handler_func_t)(srtp_err_reporting_level_t level, const char * msg);
+
+srtp_err_status_t srtp_install_err_report_handler(srtp_err_report_handler_func_t func);
 
 /*
- * keydaemon_report_error reports a 'printf' formatted error
- * string, followed by a an arg list.  The priority argument
- * is equivalent to that defined for syslog.
+ * srtp_err_report reports a 'printf' formatted error
+ * string, followed by a an arg list.  The level argument
+ * is one of srtp_err_reporting_level_t.
  *
- * Errors will be reported to ERR_REPORTING_FILE, if defined, and to
- * syslog, if ERR_REPORTING_SYSLOG is defined.
+ * Errors will be reported to stdout, if ERR_REPORTING_STDOUT
+ * is defined.
  *
  */
 
 void
-srtp_err_report(int priority, const char *format, ...);
+srtp_err_report(srtp_err_reporting_level_t level, const char *format, ...);
 
 
 /*
@@ -112,26 +109,19 @@ typedef struct {
     const char *name; /* printable name for debug module      */
 } srtp_debug_module_t;
 
-#ifdef ENABLE_DEBUGGING
+#ifdef ENABLE_DEBUG_LOGGING
 
-#define debug_on(mod)  (mod).on = 1
+#define debug_print(mod, format, arg)                  \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)
+#define debug_print2(mod, format, arg1, arg2)                  \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg1, arg2)
 
-#define debug_off(mod) (mod).on = 0
+#else
 
-/* use err_report() to report debug message */
 #define debug_print(mod, format, arg)                  \
     if (mod.on) srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)
 #define debug_print2(mod, format, arg1, arg2)                  \
     if (mod.on) srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg1, arg2)
-
-#else
-
-/* define macros to do nothing */
-#define debug_print(mod, format, arg)
-
-#define debug_on(mod)
-
-#define debug_off(mod)
 
 #endif
 

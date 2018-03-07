@@ -32,9 +32,41 @@
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
-
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
+
+namespace libyuv {
+extern "C" {
+typedef enum RotationMode {
+  kRotate0 = 0,      // No rotation.
+  kRotate90 = 90,    // Rotate 90 degrees clockwise.
+  kRotate180 = 180,  // Rotate 180 degrees.
+  kRotate270 = 270,  // Rotate 270 degrees clockwise.
+
+  // Deprecated.
+  kRotateNone = 0,
+  kRotateClockwise = 90,
+  kRotateCounterClockwise = 270,
+} RotationModeEnum;
+
+int ConvertToI420(const uint8_t* src_frame,
+                  size_t src_size,
+                  uint8_t* dst_y,
+                  int dst_stride_y,
+                  uint8_t* dst_u,
+                  int dst_stride_u,
+                  uint8_t* dst_v,
+                  int dst_stride_v,
+                  int crop_x,
+                  int crop_y,
+                  int src_width,
+                  int src_height,
+                  int crop_width,
+                  int crop_height,
+                  RotationMode rotation,
+                  uint32_t format);
+}
+}
 
 namespace WebCore {
 using namespace PAL;
@@ -52,6 +84,34 @@ Ref<RealtimeOutgoingVideoSourceCocoa> RealtimeOutgoingVideoSourceCocoa::create(R
 RealtimeOutgoingVideoSourceCocoa::RealtimeOutgoingVideoSourceCocoa(Ref<MediaStreamTrackPrivate>&& videoSource)
     : RealtimeOutgoingVideoSource(WTFMove(videoSource))
 {
+}
+
+static inline int ConvertToI420(webrtc::VideoType src_video_type,
+                  const uint8_t* src_frame,
+                  int crop_x,
+                  int crop_y,
+                  int src_width,
+                  int src_height,
+                  size_t sample_size,
+                  libyuv::RotationMode rotation,
+                  webrtc::I420Buffer* dst_buffer) {
+  int dst_width = dst_buffer->width();
+  int dst_height = dst_buffer->height();
+  // LibYuv expects pre-rotation values for dst.
+  // Stride values should correspond to the destination values.
+  if (rotation == libyuv::kRotate90 || rotation == libyuv::kRotate270) {
+    std::swap(dst_width, dst_height);
+  }
+  return libyuv::ConvertToI420(
+      src_frame, sample_size,
+      dst_buffer->MutableDataY(), dst_buffer->StrideY(),
+      dst_buffer->MutableDataU(), dst_buffer->StrideU(),
+      dst_buffer->MutableDataV(), dst_buffer->StrideV(),
+      crop_x, crop_y,
+      src_width, src_height,
+      dst_width, dst_height,
+      rotation,
+      webrtc::ConvertVideoType(src_video_type));
 }
 
 void RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample& sample)
@@ -112,10 +172,10 @@ void RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated(MediaStreamTrackPriva
         return;
     }
     if (pixelFormatType == kCVPixelFormatType_32BGRA)
-        webrtc::ConvertToI420(webrtc::VideoType::kARGB, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
+        ConvertToI420(webrtc::VideoType::kARGB, source, 0, 0, m_width, m_height, 0, libyuv::kRotate0, newBuffer);
     else {
         ASSERT(pixelFormatType == kCVPixelFormatType_32ARGB);
-        webrtc::ConvertToI420(webrtc::VideoType::kBGRA, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
+        ConvertToI420(webrtc::VideoType::kBGRA, source, 0, 0, m_width, m_height, 0, libyuv::kRotate0, newBuffer);
     }
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0)

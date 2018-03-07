@@ -12,15 +12,15 @@
 
 #include <memory>
 
-#include "webrtc/base/asyncresolverinterface.h"
-#include "webrtc/base/bind.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/teststunserver.h"
-#include "webrtc/p2p/stunprober/stunprober.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/teststunserver.h"
+#include "p2p/stunprober/stunprober.h"
+#include "rtc_base/asyncresolverinterface.h"
+#include "rtc_base/bind.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/virtualsocketserver.h"
 
 using stunprober::StunProber;
 using stunprober::AsyncCallback;

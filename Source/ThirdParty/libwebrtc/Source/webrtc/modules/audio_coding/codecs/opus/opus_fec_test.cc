@@ -10,14 +10,14 @@
 
 #include <memory>
 
-#include "webrtc/base/format_macros.h"
-#include "webrtc/modules/audio_coding/codecs/opus/opus_interface.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_coding/codecs/opus/opus_interface.h"
+#include "rtc_base/format_macros.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
-using ::std::string;
-using ::std::tr1::tuple;
-using ::std::tr1::get;
+using std::string;
+using std::tuple;
+using std::get;
 using ::testing::TestWithParam;
 
 namespace webrtc {
@@ -227,13 +227,19 @@ TEST_P(OpusFecTest, RandomPacketLossTest) {
   }
 }
 
-const coding_param param_set[] =
-    {::std::tr1::make_tuple(1, 64000, string("audio_coding/testfile32kHz"),
-                            string("pcm")),
-     ::std::tr1::make_tuple(1, 32000, string("audio_coding/testfile32kHz"),
-                            string("pcm")),
-     ::std::tr1::make_tuple(2, 64000, string("audio_coding/teststereo32kHz"),
-                            string("pcm"))};
+const coding_param param_set[] = {
+    std::make_tuple(1,
+                    64000,
+                    string("audio_coding/testfile32kHz"),
+                    string("pcm")),
+    std::make_tuple(1,
+                    32000,
+                    string("audio_coding/testfile32kHz"),
+                    string("pcm")),
+    std::make_tuple(2,
+                    64000,
+                    string("audio_coding/teststereo32kHz"),
+                    string("pcm"))};
 
 // 64 kbps, stereo
 INSTANTIATE_TEST_CASE_P(AllTest, OpusFecTest,

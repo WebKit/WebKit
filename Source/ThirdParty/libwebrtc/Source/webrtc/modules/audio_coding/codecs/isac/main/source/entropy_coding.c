@@ -42,7 +42,7 @@ static const uint16_t kOneBitEqualProbCdf[3] = {
     0, 32768, 65535 };
 
 /* Pointer to cdf array for encoder bandwidth (12 vs 16 kHz) indicator. */
-static const uint16_t* kOneBitEqualProbCdf_ptr[1] = {
+static const uint16_t* const kOneBitEqualProbCdf_ptr[1] = {
     kOneBitEqualProbCdf };
 
 /*
@@ -1843,7 +1843,7 @@ static const uint16_t kBwCdf[25] = {
     62804, 65535 };
 
 /* pointer to cdf array for estimated bandwidth */
-static const uint16_t* kBwCdfPtr[1] = { kBwCdf };
+static const uint16_t* const kBwCdfPtr[1] = { kBwCdf };
 
 /* initial cdf index for decoder of estimated bandwidth*/
 static const uint16_t kBwInitIndex[1] = { 7 };

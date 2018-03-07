@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_TESTUTILS_H_
-#define WEBRTC_MEDIA_BASE_TESTUTILS_H_
+#ifndef MEDIA_BASE_TESTUTILS_H_
+#define MEDIA_BASE_TESTUTILS_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/window.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/media/base/videocapturer.h"
-#include "webrtc/media/base/videocommon.h"
+#include "media/base/mediachannel.h"
+#include "media/base/videocapturer.h"
+#include "media/base/videocommon.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/window.h"
 
 namespace rtc {
 class ByteBufferReader;
@@ -148,4 +148,4 @@ cricket::StreamParams CreatePrimaryWithFecFrStreamParams(
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_TESTUTILS_H_
+#endif  // MEDIA_BASE_TESTUTILS_H_

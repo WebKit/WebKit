@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_H_
+#ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_H_
+#define MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -19,9 +19,9 @@
 #include <type_traits>
 #include <vector>
 
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/desktop_capture_types.h"
-#include "webrtc/modules/desktop_capture/shared_memory.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
+#include "modules/desktop_capture/shared_memory.h"
 
 namespace webrtc {
 
@@ -104,6 +104,10 @@ class DesktopCapturer {
 
   // Gets a list of sources current capturer supports. Returns false in case of
   // a failure.
+  // For DesktopCapturer implementations to capture screens, this function
+  // should return monitors.
+  // For DesktopCapturer implementations to capture windows, this function
+  // should only return root windows owned by applications.
   virtual bool GetSourceList(SourceList* sources);
 
   // Selects a source to be captured. Returns false in case of a failure (e.g.
@@ -114,6 +118,13 @@ class DesktopCapturer {
   // Returns false in case of a failure or no source has been selected or the
   // implementation does not support this functionality.
   virtual bool FocusOnSelectedSource();
+
+  // Returns true if the |pos| on the selected source is covered by other
+  // elements on the display, and is not visible to the users.
+  // |pos| is in full desktop coordinates, i.e. the top-left monitor always
+  // starts from (0, 0).
+  // The return value if |pos| is out of the scope of the source is undefined.
+  virtual bool IsOccluded(const DesktopVector& pos);
 
   // Creates a DesktopCapturer instance which targets to capture windows.
   static std::unique_ptr<DesktopCapturer> CreateWindowCapturer(
@@ -140,5 +151,5 @@ class DesktopCapturer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_H_
+#endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_H_
 

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
+#define MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
 
 // TODO(turajs): Add description of function.
 double Loudness2Db(double loudness);
@@ -20,4 +20,4 @@ double Db2Loudness(double db);
 
 double Dbfs2Loudness(double dbfs);
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC_UTILITY_H_

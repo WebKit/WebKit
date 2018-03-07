@@ -32,16 +32,17 @@ else
 fi
 
 # Customize probing signals, test data generators and scores if needed.
-PROBING_SIGNALS=(probing_signals/*.wav)
+CAPTURE_SIGNALS=(probing_signals/*.wav)
 TEST_DATA_GENERATORS=( \
     "identity" \
     "white_noise" \
-    "environmental_noise" \
-    "reverberation" \
+    # "environmental_noise" \
+    # "reverberation" \
 )
 SCORES=( \
-    "polqa" \
-    "audio_level" \
+    # "polqa" \
+    "audio_level_peak" \
+    "audio_level_mean" \
 )
 OUTPUT_PATH=output
 
@@ -59,8 +60,8 @@ fi
 
 # Start one process for each "probing signal"-"test data source" pair.
 chmod +x apm_quality_assessment.py
-for probing_signal_filepath in "${PROBING_SIGNALS[@]}" ; do
-  probing_signal_name="$(basename $probing_signal_filepath)"
+for capture_signal_filepath in "${CAPTURE_SIGNALS[@]}" ; do
+  probing_signal_name="$(basename $capture_signal_filepath)"
   probing_signal_name="${probing_signal_name%.*}"
   for test_data_gen_name in "${TEST_DATA_GENERATORS[@]}" ; do
     LOG_FILE="${OUTPUT_PATH}/apm_qa-${probing_signal_name}-"`
@@ -70,7 +71,7 @@ for probing_signal_filepath in "${PROBING_SIGNALS[@]}" ; do
     ./apm_quality_assessment.py \
         --polqa_path ${POLQA_PATH}\
         --air_db_path ${AECHEN_IR_DATABASE_PATH}\
-        -i ${probing_signal_filepath} \
+        -i ${capture_signal_filepath} \
         -o ${OUTPUT_PATH} \
         -t ${test_data_gen_name} \
         -c "${APM_CONFIGS[@]}" \
@@ -78,7 +79,7 @@ for probing_signal_filepath in "${PROBING_SIGNALS[@]}" ; do
   done
 done
 
-# Join.
+# Join Python processes running apm_quality_assessment.py.
 wait
 
 # Export results.

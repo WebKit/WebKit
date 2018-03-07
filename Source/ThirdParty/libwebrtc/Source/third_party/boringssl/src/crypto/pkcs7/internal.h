@@ -22,28 +22,28 @@ extern "C" {
 #endif
 
 
-/* pkcs7_parse_header reads the non-certificate/non-CRL prefix of a PKCS#7
- * SignedData blob from |cbs| and sets |*out| to point to the rest of the
- * input. If the input is in BER format, then |*der_bytes| will be set to a
- * pointer that needs to be freed by the caller once they have finished
- * processing |*out| (which will be pointing into |*der_bytes|).
- *
- * It returns one on success or zero on error. On error, |*der_bytes| is
- * NULL. */
+// pkcs7_parse_header reads the non-certificate/non-CRL prefix of a PKCS#7
+// SignedData blob from |cbs| and sets |*out| to point to the rest of the
+// input. If the input is in BER format, then |*der_bytes| will be set to a
+// pointer that needs to be freed by the caller once they have finished
+// processing |*out| (which will be pointing into |*der_bytes|).
+//
+// It returns one on success or zero on error. On error, |*der_bytes| is
+// NULL.
 int pkcs7_parse_header(uint8_t **der_bytes, CBS *out, CBS *cbs);
 
-/* pkcs7_bundle writes a PKCS#7, SignedData structure to |out| and then calls
- * |cb| with a CBB to which certificate or CRL data can be written, and the
- * opaque context pointer, |arg|. The callback can return zero to indicate an
- * error.
- *
- * pkcs7_bundle returns one on success or zero on error. */
+// pkcs7_bundle writes a PKCS#7, SignedData structure to |out| and then calls
+// |cb| with a CBB to which certificate or CRL data can be written, and the
+// opaque context pointer, |arg|. The callback can return zero to indicate an
+// error.
+//
+// pkcs7_bundle returns one on success or zero on error.
 int pkcs7_bundle(CBB *out, int (*cb)(CBB *out, const void *arg),
                  const void *arg);
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_PKCS7_INTERNAL_H */
+#endif  // OPENSSL_HEADER_PKCS7_INTERNAL_H

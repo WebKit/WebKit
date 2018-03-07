@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/APITest.h"
+#include "modules/audio_coding/test/APITest.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -19,16 +19,15 @@
 #include <ostream>
 #include <string>
 
-#include "webrtc/base/platform_thread.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/system_wrappers/include/trace.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/test/utility.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/event_wrapper.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -48,8 +47,8 @@ void APITest::Wait(uint32_t waitLengthMs) {
 }
 
 APITest::APITest()
-    : _acmA(AudioCodingModule::Create(1)),
-      _acmB(AudioCodingModule::Create(2)),
+    : _acmA(AudioCodingModule::Create()),
+      _acmB(AudioCodingModule::Create()),
       _channel_A2B(NULL),
       _channel_B2A(NULL),
       _writeToFile(true),
@@ -259,14 +258,7 @@ int16_t APITest::SetUp() {
   // B
   _outFreqHzB = _outFileB.SamplingFrequency();
 
-  //Trace::SetEncryptedTraceFile("ACMAPITestEncrypted.txt");
-
   char print[11];
-
-  // Create a trace file.
-  Trace::CreateTrace();
-  Trace::SetTraceFile(
-      (webrtc::test::OutputPath() + "acm_api_trace.txt").c_str());
 
   printf("\nRandom Test (y/n)?");
   EXPECT_TRUE(fgets(print, 10, stdin) != NULL);
@@ -752,8 +744,6 @@ void APITest::TestDelay(char side) {
             networkStat.jitterPeaksFound);
     fprintf(stdout, "packet-size rate........ %d\n",
             networkStat.currentPacketLossRate);
-    fprintf(stdout, "discard rate............ %d\n",
-            networkStat.currentDiscardRate);
     fprintf(stdout, "expand rate............. %d\n",
             networkStat.currentExpandRate);
     fprintf(stdout, "speech expand rate...... %d\n",
@@ -764,6 +754,8 @@ void APITest::TestDelay(char side) {
             networkStat.currentAccelerateRate);
     fprintf(stdout, "Secondary decoded rate.. %d\n",
             networkStat.currentSecondaryDecodedRate);
+    fprintf(stdout, "Secondary discarded rate.%d\n",
+            networkStat.currentSecondaryDiscardedRate);
     fprintf(stdout, "Clock-drift............. %d\n", networkStat.clockDriftPPM);
     fprintf(stdout, "Mean waiting time....... %d\n",
             networkStat.meanWaitingTimeMs);
@@ -824,7 +816,7 @@ void APITest::TestRegisteration(char sendSide) {
   if (!myCodec) {
     CodecInst ci;
     AudioCodingModule::Codec(_codecCntrA, &ci);
-    myCodec = rtc::Optional<CodecInst>(ci);
+    myCodec = ci;
   }
 
   if (!_randomTest) {

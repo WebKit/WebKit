@@ -12,9 +12,9 @@
 // webrtc/api/audio_codecs/builtin_audio_decoder_factory.h instead!
 // TODO(kwiberg): Remove it.
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_BUILTIN_AUDIO_DECODER_FACTORY_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_BUILTIN_AUDIO_DECODER_FACTORY_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_BUILTIN_AUDIO_DECODER_FACTORY_H_
+#define MODULES_AUDIO_CODING_CODECS_BUILTIN_AUDIO_DECODER_FACTORY_H_
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_BUILTIN_AUDIO_DECODER_FACTORY_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_BUILTIN_AUDIO_DECODER_FACTORY_H_

@@ -9,8 +9,8 @@
  */
 
 #include <assert.h>
-#include "webrtc/pc/audiomonitor.h"
-#include "webrtc/pc/voicechannel.h"
+#include "pc/audiomonitor.h"
+#include "pc/voicechannel.h"
 
 namespace cricket {
 

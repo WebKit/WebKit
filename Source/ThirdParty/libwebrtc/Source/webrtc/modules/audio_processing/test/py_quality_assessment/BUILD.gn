@@ -22,8 +22,10 @@ copy("scripts") {
     "README.md",
     "apm_quality_assessment.py",
     "apm_quality_assessment.sh",
+    "apm_quality_assessment_boxplot.py",
     "apm_quality_assessment_export.py",
     "apm_quality_assessment_gencfgs.py",
+    "apm_quality_assessment_optimize.py",
   ]
   outputs = [
     "$root_build_dir/py_quality_assessment/{{source_file_part}}",
@@ -33,7 +35,7 @@ copy("scripts") {
     ":lib",
     ":output",
     "../..:audioproc_f",
-    "//resources/audio_processing/test/py_quality_assessment:probing_signals",
+    "../../../../resources/audio_processing/test/py_quality_assessment:probing_signals",
   ]
 }
 
@@ -52,13 +54,21 @@ copy("lib") {
   testonly = true
   sources = [
     "quality_assessment/__init__.py",
+    "quality_assessment/annotations.py",
     "quality_assessment/audioproc_wrapper.py",
+    "quality_assessment/collect_data.py",
     "quality_assessment/data_access.py",
+    "quality_assessment/echo_path_simulation.py",
+    "quality_assessment/echo_path_simulation_factory.py",
     "quality_assessment/eval_scores.py",
     "quality_assessment/eval_scores_factory.py",
     "quality_assessment/evaluation.py",
     "quality_assessment/exceptions.py",
     "quality_assessment/export.py",
+    "quality_assessment/export_unittest.py",
+    "quality_assessment/external_vad.py",
+    "quality_assessment/input_mixer.py",
+    "quality_assessment/input_signal_creator.py",
     "quality_assessment/results.css",
     "quality_assessment/results.js",
     "quality_assessment/signal_processing.py",
@@ -71,7 +81,7 @@ copy("lib") {
     "$root_build_dir/py_quality_assessment/quality_assessment/{{source_file_part}}",
   ]
   deps = [
-    "//resources/audio_processing/test/py_quality_assessment:noise_tracks",
+    "../../../../resources/audio_processing/test/py_quality_assessment:noise_tracks",
   ]
 }
 
@@ -90,9 +100,11 @@ group("unit_tests") {
   testonly = true
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
   deps = [
+    ":apm_vad",
     ":fake_polqa",
     ":lib_unit_tests",
     ":scripts_unit_tests",
+    ":vad",
   ]
 }
 
@@ -104,15 +116,42 @@ rtc_executable("fake_polqa") {
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
   output_name = "py_quality_assessment/quality_assessment/fake_polqa"
   deps = [
-    "//webrtc:webrtc_common",
-    "//webrtc/base:rtc_base_approved",
+    "../../../..:webrtc_common",
+    "../../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_executable("vad") {
+  sources = [
+    "quality_assessment/vad.cc",
+  ]
+  deps = [
+    "../../../..:webrtc_common",
+    "../../../../common_audio",
+    "../../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_executable("apm_vad") {
+  sources = [
+    "quality_assessment/apm_vad.cc",
+  ]
+  deps = [
+    "../..",
+    "../../../..:webrtc_common",
+    "../../../../common_audio",
+    "../../../../rtc_base:rtc_base_approved",
   ]
 }
 
 copy("lib_unit_tests") {
   testonly = true
   sources = [
+    "quality_assessment/annotations_unittest.py",
+    "quality_assessment/echo_path_simulation_unittest.py",
     "quality_assessment/eval_scores_unittest.py",
+    "quality_assessment/fake_external_vad.py",
+    "quality_assessment/input_mixer_unittest.py",
     "quality_assessment/signal_processing_unittest.py",
     "quality_assessment/simulation_unittest.py",
     "quality_assessment/test_data_generation_unittest.py",

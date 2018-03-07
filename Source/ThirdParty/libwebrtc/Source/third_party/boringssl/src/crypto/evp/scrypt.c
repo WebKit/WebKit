@@ -18,25 +18,25 @@
 #include "../internal.h"
 
 
-/* This file implements scrypt, described in RFC 7914.
- *
- * Note scrypt refers to both "blocks" and a "block size" parameter, r. These
- * are two different notions of blocks. A Salsa20 block is 64 bytes long,
- * represented in this implementation by 16 |uint32_t|s. |r| determines the
- * number of 64-byte Salsa20 blocks in a scryptBlockMix block, which is 2 * |r|
- * Salsa20 blocks. This implementation refers to them as Salsa20 blocks and
- * scrypt blocks, respectively. */
+// This file implements scrypt, described in RFC 7914.
+//
+// Note scrypt refers to both "blocks" and a "block size" parameter, r. These
+// are two different notions of blocks. A Salsa20 block is 64 bytes long,
+// represented in this implementation by 16 |uint32_t|s. |r| determines the
+// number of 64-byte Salsa20 blocks in a scryptBlockMix block, which is 2 * |r|
+// Salsa20 blocks. This implementation refers to them as Salsa20 blocks and
+// scrypt blocks, respectively.
 
-/* A block_t is a Salsa20 block. */
+// A block_t is a Salsa20 block.
 typedef struct { uint32_t words[16]; } block_t;
 
 OPENSSL_COMPILE_ASSERT(sizeof(block_t) == 64, block_t_has_padding);
 
 #define R(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
 
-/* salsa208_word_specification implements the Salsa20/8 core function, also
- * described in RFC 7914, section 3. It modifies the block at |inout|
- * in-place. */
+// salsa208_word_specification implements the Salsa20/8 core function, also
+// described in RFC 7914, section 3. It modifies the block at |inout|
+// in-place.
 static void salsa208_word_specification(block_t *inout) {
   block_t x;
   OPENSSL_memcpy(&x, inout, sizeof(x));
@@ -81,16 +81,16 @@ static void salsa208_word_specification(block_t *inout) {
   }
 }
 
-/* xor_block sets |*out| to be |*a| XOR |*b|. */
+// xor_block sets |*out| to be |*a| XOR |*b|.
 static void xor_block(block_t *out, const block_t *a, const block_t *b) {
   for (size_t i = 0; i < 16; i++) {
     out->words[i] = a->words[i] ^ b->words[i];
   }
 }
 
-/* scryptBlockMix implements the function described in RFC 7914, section 4. B'
- * is written to |out|. |out| and |B| may not alias and must be each one scrypt
- * block (2 * |r| Salsa20 blocks) long. */
+// scryptBlockMix implements the function described in RFC 7914, section 4. B'
+// is written to |out|. |out| and |B| may not alias and must be each one scrypt
+// block (2 * |r| Salsa20 blocks) long.
 static void scryptBlockMix(block_t *out, const block_t *B, uint64_t r) {
   assert(out != B);
 
@@ -100,19 +100,19 @@ static void scryptBlockMix(block_t *out, const block_t *B, uint64_t r) {
     xor_block(&X, &X, &B[i]);
     salsa208_word_specification(&X);
 
-    /* This implements the permutation in step 3. */
+    // This implements the permutation in step 3.
     OPENSSL_memcpy(&out[i / 2 + (i & 1) * r], &X, sizeof(X));
   }
 }
 
-/* scryptROMix implements the function described in RFC 7914, section 5.  |B| is
- * an scrypt block (2 * |r| Salsa20 blocks) and is modified in-place. |T| and
- * |V| are scratch space allocated by the caller. |T| must have space for one
- * scrypt block (2 * |r| Salsa20 blocks). |V| must have space for |N| scrypt
- * blocks (2 * |r| * |N| Salsa20 blocks). */
+// scryptROMix implements the function described in RFC 7914, section 5.  |B| is
+// an scrypt block (2 * |r| Salsa20 blocks) and is modified in-place. |T| and
+// |V| are scratch space allocated by the caller. |T| must have space for one
+// scrypt block (2 * |r| Salsa20 blocks). |V| must have space for |N| scrypt
+// blocks (2 * |r| * |N| Salsa20 blocks).
 static void scryptROMix(block_t *B, uint64_t r, uint64_t N, block_t *T,
                         block_t *V) {
-  /* Steps 1 and 2. */
+  // Steps 1 and 2.
   OPENSSL_memcpy(V, B, 2 * r * sizeof(block_t));
   for (uint64_t i = 1; i < N; i++) {
     scryptBlockMix(&V[2 * r * i /* scrypt block i */],
@@ -120,9 +120,9 @@ static void scryptROMix(block_t *B, uint64_t r, uint64_t N, block_t *T,
   }
   scryptBlockMix(B, &V[2 * r * (N - 1) /* scrypt block N-1 */], r);
 
-  /* Step 3. */
+  // Step 3.
   for (uint64_t i = 0; i < N; i++) {
-    /* Note this assumes |N| <= 2^32 and is a power of 2. */
+    // Note this assumes |N| <= 2^32 and is a power of 2.
     uint32_t j = B[2 * r - 1].words[0] & (N - 1);
     for (size_t k = 0; k < 2 * r; k++) {
       xor_block(&T[k], &B[k], &V[2 * r * j + k]);
@@ -131,16 +131,16 @@ static void scryptROMix(block_t *B, uint64_t r, uint64_t N, block_t *T,
   }
 }
 
-/* SCRYPT_PR_MAX is the maximum value of p * r. This is equivalent to the
- * bounds on p in section 6:
- *
- *   p <= ((2^32-1) * hLen) / MFLen iff
- *   p <= ((2^32-1) * 32) / (128 * r) iff
- *   p * r <= (2^30-1) */
+// SCRYPT_PR_MAX is the maximum value of p * r. This is equivalent to the
+// bounds on p in section 6:
+//
+//   p <= ((2^32-1) * hLen) / MFLen iff
+//   p <= ((2^32-1) * 32) / (128 * r) iff
+//   p * r <= (2^30-1)
 #define SCRYPT_PR_MAX ((1 << 30) - 1)
 
-/* SCRYPT_MAX_MEM is the default maximum memory that may be allocated by
- * |EVP_PBE_scrypt|. */
+// SCRYPT_MAX_MEM is the default maximum memory that may be allocated by
+// |EVP_PBE_scrypt|.
 #define SCRYPT_MAX_MEM (1024 * 1024 * 32)
 
 int EVP_PBE_scrypt(const char *password, size_t password_len,
@@ -148,18 +148,18 @@ int EVP_PBE_scrypt(const char *password, size_t password_len,
                    uint64_t p, size_t max_mem, uint8_t *out_key,
                    size_t key_len) {
   if (r == 0 || p == 0 || p > SCRYPT_PR_MAX / r ||
-      /* |N| must be a power of two. */
+      // |N| must be a power of two.
       N < 2 || (N & (N - 1)) ||
-      /* We only support |N| <= 2^32 in |scryptROMix|. */
+      // We only support |N| <= 2^32 in |scryptROMix|.
       N > UINT64_C(1) << 32 ||
-      /* Check that |N| < 2^(128×r / 8). */
+      // Check that |N| < 2^(128×r / 8).
       (16 * r <= 63 && N >= UINT64_C(1) << (16 * r))) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_PARAMETERS);
     return 0;
   }
 
-  /* Determine the amount of memory needed. B, T, and V are |p|, 1, and |N|
-   * scrypt blocks, respectively. Each scrypt block is 2*|r| |block_t|s. */
+  // Determine the amount of memory needed. B, T, and V are |p|, 1, and |N|
+  // scrypt blocks, respectively. Each scrypt block is 2*|r| |block_t|s.
   if (max_mem == 0) {
     max_mem = SCRYPT_MAX_MEM;
   }
@@ -171,8 +171,8 @@ int EVP_PBE_scrypt(const char *password, size_t password_len,
     return 0;
   }
 
-  /* Allocate and divide up the scratch space. |max_mem| fits in a size_t, which
-   * is no bigger than uint64_t, so none of these operations may overflow. */
+  // Allocate and divide up the scratch space. |max_mem| fits in a size_t, which
+  // is no bigger than uint64_t, so none of these operations may overflow.
   OPENSSL_COMPILE_ASSERT(UINT64_MAX >= ((size_t)-1), size_t_exceeds_u64);
   size_t B_blocks = p * 2 * r;
   size_t B_bytes = B_blocks * sizeof(block_t);

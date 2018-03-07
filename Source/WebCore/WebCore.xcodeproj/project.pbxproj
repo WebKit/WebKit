@@ -1045,7 +1045,6 @@
 		413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413C2C331BC29A7B0075204C /* JSDOMConstructor.h */; };
 		413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */ = {isa = PBXBuildFile; fileRef = 413E00781DB0E4DE002341D2 /* MemoryRelease.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B82031D6DF0D90077EBE3 /* StructuredClone.h */; };
-		414C25D71E9EFEDE00BEE141 /* H264VideoToolBoxEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414C25D61E9EF7C000BEE141 /* H264VideoToolBoxEncoder.mm */; };
 		414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415071581685067300C3C7B3 /* SelectorFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 415071561685067300C3C7B3 /* SelectorFilter.h */; };
 		415080361E3F00AD0051D75D /* LibWebRTCAudioModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */; };
@@ -1108,7 +1107,6 @@
 		41D129D31F3D0F1600D15E47 /* CacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129DB1F3D143800D15E47 /* FetchHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F54F831C50C4F600338488 /* FetchHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		41D7E5571F73085500E26991 /* VideoToolBoxDecoderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D7E5551F73085000E26991 /* VideoToolBoxDecoderFactory.cpp */; };
 		41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */; };
@@ -7212,8 +7210,6 @@
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
 		41C7E1081E6AA37C0027B4DE /* CanvasCaptureMediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasCaptureMediaStreamTrack.idl; sourceTree = "<group>"; };
-		41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoToolBoxEncoderFactory.cpp; path = libwebrtc/VideoToolBoxEncoderFactory.cpp; sourceTree = "<group>"; };
-		41CAD71D1EA0905700178164 /* VideoToolBoxEncoderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoToolBoxEncoderFactory.h; path = libwebrtc/VideoToolBoxEncoderFactory.h; sourceTree = "<group>"; };
 		41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodyConsumer.cpp; sourceTree = "<group>"; };
 		41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodyConsumer.h; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
@@ -7223,8 +7219,6 @@
 		41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageConnection.h; sourceTree = "<group>"; };
 		41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageProvider.h; sourceTree = "<group>"; };
 		41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioFormat.h; path = libwebrtc/LibWebRTCAudioFormat.h; sourceTree = "<group>"; };
-		41D7E5541F73085000E26991 /* VideoToolBoxDecoderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoToolBoxDecoderFactory.h; path = libwebrtc/VideoToolBoxDecoderFactory.h; sourceTree = "<group>"; };
-		41D7E5551F73085000E26991 /* VideoToolBoxDecoderFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoToolBoxDecoderFactory.cpp; path = libwebrtc/VideoToolBoxDecoderFactory.cpp; sourceTree = "<group>"; };
 		41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSDOMBindingInternals.js; sourceTree = "<group>"; };
 		41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMapLike.cpp; sourceTree = "<group>"; };
 		41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMMapLike.h; sourceTree = "<group>"; };
@@ -16599,10 +16593,6 @@
 				415747441E38699E00E914D8 /* LibWebRTCProvider.h */,
 				41B28B381F860BD100FB52AC /* LibWebRTCProviderCocoa.cpp */,
 				41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */,
-				41D7E5551F73085000E26991 /* VideoToolBoxDecoderFactory.cpp */,
-				41D7E5541F73085000E26991 /* VideoToolBoxDecoderFactory.h */,
-				41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */,
-				41CAD71D1EA0905700178164 /* VideoToolBoxEncoderFactory.h */,
 			);
 			name = libwebrtc;
 			sourceTree = "<group>";
@@ -31050,7 +31040,6 @@
 				515BE1911D54F5FB00DD7C68 /* GamepadProvider.cpp in Sources */,
 				837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */,
 				6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */,
-				414C25D71E9EFEDE00BEE141 /* H264VideoToolBoxEncoder.mm in Sources */,
 				7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */,
 				A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */,
 				1AC900C31943C0FC008625B5 /* HTTPHeaderNames.cpp in Sources */,
@@ -31738,8 +31727,6 @@
 				837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */,
 				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
 				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManager.mm in Sources */,
-				41D7E5571F73085500E26991 /* VideoToolBoxDecoderFactory.cpp in Sources */,
-				41CAD71E1EA090A100178164 /* VideoToolBoxEncoderFactory.cpp in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,
@@ -31903,6 +31890,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					PAL,
+					ForwardingHeaders,
+					/usr/include/libxslt,
+					/usr/include/libxml2,
+					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
+					"$(HEADER_SEARCH_PATHS)",
+					"$(SRCROOT)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
+				);
 			};
 			name = Debug;
 		};
@@ -31910,6 +31909,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					PAL,
+					ForwardingHeaders,
+					/usr/include/libxslt,
+					/usr/include/libxml2,
+					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
+					"$(HEADER_SEARCH_PATHS)",
+					"$(SRCROOT)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
+				);
 			};
 			name = Release;
 		};
@@ -31918,6 +31929,18 @@
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
+				HEADER_SEARCH_PATHS = (
+					PAL,
+					ForwardingHeaders,
+					/usr/include/libxslt,
+					/usr/include/libxml2,
+					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
+					"$(HEADER_SEARCH_PATHS)",
+					"$(SRCROOT)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
+				);
 			};
 			name = Production;
 		};
@@ -31951,6 +31974,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					PAL,
+					ForwardingHeaders,
+					/usr/include/libxslt,
+					/usr/include/libxml2,
+					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
+					"$(HEADER_SEARCH_PATHS)",
+					"$(SRCROOT)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
+				);
 			};
 			name = Debug;
 		};
@@ -31958,6 +31993,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					PAL,
+					ForwardingHeaders,
+					/usr/include/libxslt,
+					/usr/include/libxml2,
+					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
+					"$(HEADER_SEARCH_PATHS)",
+					"$(SRCROOT)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
+				);
 			};
 			name = Release;
 		};
@@ -31965,6 +32012,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					PAL,
+					ForwardingHeaders,
+					/usr/include/libxslt,
+					/usr/include/libxml2,
+					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
+					"$(HEADER_SEARCH_PATHS)",
+					"$(SRCROOT)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
+				);
 			};
 			name = Production;
 		};

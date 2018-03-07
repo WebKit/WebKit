@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/localaudiosource.h"
+#include "pc/localaudiosource.h"
 
 #include <vector>
 
-#include "webrtc/api/mediaconstraintsinterface.h"
-#include "webrtc/media/base/mediaengine.h"
+#include "api/mediaconstraintsinterface.h"
+#include "media/base/mediaengine.h"
 
 using webrtc::MediaConstraintsInterface;
 using webrtc::MediaSourceInterface;

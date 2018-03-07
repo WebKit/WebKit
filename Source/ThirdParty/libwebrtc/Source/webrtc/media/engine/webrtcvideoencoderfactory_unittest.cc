@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/engine/webrtcvideoencoderfactory.h"
+#include "media/engine/webrtcvideoencoderfactory.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 class WebRtcVideoEncoderFactoryForTest
     : public cricket::WebRtcVideoEncoderFactory {

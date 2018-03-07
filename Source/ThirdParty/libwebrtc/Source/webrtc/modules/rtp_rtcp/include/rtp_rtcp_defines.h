@@ -8,18 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_RTCP_DEFINES_H_
-#define WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_RTCP_DEFINES_H_
+#ifndef MODULES_RTP_RTCP_INCLUDE_RTP_RTCP_DEFINES_H_
+#define MODULES_RTP_RTCP_INCLUDE_RTP_RTCP_DEFINES_H_
 
 #include <stddef.h>
 #include <list>
 #include <vector>
 
-#include "webrtc/base/deprecation.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/typedefs.h"
+#include "api/audio_codecs/audio_format.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module_common_types.h"
+#include "rtc_base/deprecation.h"
+#include "system_wrappers/include/clock.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #define RTCP_CNAME_SIZE 256    // RFC 3550 page 44, including null termination
 #define IP_PACKET_SIZE 1500    // we assume ethernet
@@ -40,9 +41,8 @@ const int kBogusRtpRateForAudioRtcp = 8000;
 const uint8_t kRtpHeaderSize = 12;
 
 struct AudioPayload {
-    uint32_t    frequency;
-    size_t      channels;
-    uint32_t    rate;
+  SdpAudioFormat format;
+  uint32_t rate;
 };
 
 struct VideoPayload {
@@ -51,9 +51,39 @@ struct VideoPayload {
   H264::Profile h264_profile;
 };
 
-union PayloadUnion {
-    AudioPayload Audio;
-    VideoPayload Video;
+class PayloadUnion {
+ public:
+  explicit PayloadUnion(const AudioPayload& payload);
+  explicit PayloadUnion(const VideoPayload& payload);
+  PayloadUnion(const PayloadUnion&);
+  PayloadUnion(PayloadUnion&&);
+  ~PayloadUnion();
+
+  PayloadUnion& operator=(const PayloadUnion&);
+  PayloadUnion& operator=(PayloadUnion&&);
+
+  bool is_audio() const { return audio_payload_.has_value(); }
+  bool is_video() const { return video_payload_.has_value(); }
+  const AudioPayload& audio_payload() const {
+    RTC_DCHECK(audio_payload_);
+    return *audio_payload_;
+  }
+  const VideoPayload& video_payload() const {
+    RTC_DCHECK(video_payload_);
+    return *video_payload_;
+  }
+  AudioPayload& audio_payload() {
+    RTC_DCHECK(audio_payload_);
+    return *audio_payload_;
+  }
+  VideoPayload& video_payload() {
+    RTC_DCHECK(video_payload_);
+    return *video_payload_;
+  }
+
+ private:
+  rtc::Optional<AudioPayload> audio_payload_;
+  rtc::Optional<VideoPayload> video_payload_;
 };
 
 enum RTPAliveType { kRtpDead = 0, kRtpNoRtp = 1, kRtpAlive = 2 };
@@ -80,6 +110,7 @@ enum RTPExtensionType {
   kRtpExtensionVideoTiming,
   kRtpExtensionRtpStreamId,
   kRtpExtensionRepairedRtpStreamId,
+  kRtpExtensionMid,
   kRtpExtensionNumberOfExtensions  // Must be the last entity in the enum.
 };
 
@@ -112,11 +143,16 @@ enum KeyFrameRequestMethod { kKeyFrameReqPliRtcp, kKeyFrameReqFirRtcp };
 
 enum RtpRtcpPacketType { kPacketRtp = 0, kPacketKeepAlive = 1 };
 
+// kConditionallyRetransmitHigherLayers allows retransmission of video frames
+// in higher layers if either the last frame in that layer was too far back in
+// time, or if we estimate that a new frame will be available in a lower layer
+// in a shorter time than it would take to request and receive a retransmission.
 enum RetransmissionMode : uint8_t {
   kRetransmitOff = 0x0,
   kRetransmitFECPackets = 0x1,
   kRetransmitBaseLayer = 0x2,
   kRetransmitHigherLayers = 0x4,
+  kConditionallyRetransmitHigherLayers = 0x8,
   kRetransmitAllPackets = 0xFF
 };
 
@@ -129,46 +165,43 @@ enum RtxMode {
 
 const size_t kRtxHeaderSize = 2;
 
-struct RTCPSenderInfo {
-    uint32_t NTPseconds;
-    uint32_t NTPfraction;
-    uint32_t RTPtimeStamp;
-    uint32_t sendPacketCount;
-    uint32_t sendOctetCount;
-};
-
 struct RTCPReportBlock {
   RTCPReportBlock()
-      : remoteSSRC(0), sourceSSRC(0), fractionLost(0), cumulativeLost(0),
-        extendedHighSeqNum(0), jitter(0), lastSR(0),
-        delaySinceLastSR(0) {}
+      : sender_ssrc(0),
+        source_ssrc(0),
+        fraction_lost(0),
+        packets_lost(0),
+        extended_highest_sequence_number(0),
+        jitter(0),
+        last_sender_report_timestamp(0),
+        delay_since_last_sender_report(0) {}
 
-  RTCPReportBlock(uint32_t remote_ssrc,
+  RTCPReportBlock(uint32_t sender_ssrc,
                   uint32_t source_ssrc,
                   uint8_t fraction_lost,
-                  uint32_t cumulative_lost,
-                  uint32_t extended_high_sequence_number,
+                  uint32_t packets_lost,
+                  uint32_t extended_highest_sequence_number,
                   uint32_t jitter,
-                  uint32_t last_sender_report,
+                  uint32_t last_sender_report_timestamp,
                   uint32_t delay_since_last_sender_report)
-      : remoteSSRC(remote_ssrc),
-        sourceSSRC(source_ssrc),
-        fractionLost(fraction_lost),
-        cumulativeLost(cumulative_lost),
-        extendedHighSeqNum(extended_high_sequence_number),
+      : sender_ssrc(sender_ssrc),
+        source_ssrc(source_ssrc),
+        fraction_lost(fraction_lost),
+        packets_lost(packets_lost),
+        extended_highest_sequence_number(extended_highest_sequence_number),
         jitter(jitter),
-        lastSR(last_sender_report),
-        delaySinceLastSR(delay_since_last_sender_report) {}
+        last_sender_report_timestamp(last_sender_report_timestamp),
+        delay_since_last_sender_report(delay_since_last_sender_report) {}
 
   // Fields as described by RFC 3550 6.4.2.
-  uint32_t remoteSSRC;  // SSRC of sender of this report.
-  uint32_t sourceSSRC;  // SSRC of the RTP packet sender.
-  uint8_t fractionLost;
-  uint32_t cumulativeLost;  // 24 bits valid.
-  uint32_t extendedHighSeqNum;
+  uint32_t sender_ssrc;  // SSRC of sender of this report.
+  uint32_t source_ssrc;  // SSRC of the RTP packet sender.
+  uint8_t fraction_lost;
+  uint32_t packets_lost;  // 24 bits valid.
+  uint32_t extended_highest_sequence_number;
   uint32_t jitter;
-  uint32_t lastSR;
-  uint32_t delaySinceLastSR;
+  uint32_t last_sender_report_timestamp;
+  uint32_t delay_since_last_sender_report;
 };
 
 typedef std::list<RTCPReportBlock> ReportBlockList;
@@ -217,12 +250,9 @@ class RtpFeedback {
   /*
   *   channels    - number of channels in codec (1 = mono, 2 = stereo)
   */
-  virtual int32_t OnInitializeDecoder(
-      int8_t payload_type,
-      const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-      int frequency,
-      size_t channels,
-      uint32_t rate) = 0;
+  virtual int32_t OnInitializeDecoder(int payload_type,
+                                      const SdpAudioFormat& audio_format,
+                                      uint32_t rate) = 0;
 
   virtual void OnIncomingSSRCChanged(uint32_t ssrc) = 0;
 
@@ -398,10 +428,8 @@ class NullRtpFeedback : public RtpFeedback {
  public:
   ~NullRtpFeedback() override {}
 
-  int32_t OnInitializeDecoder(int8_t payload_type,
-                              const char payloadName[RTP_PAYLOAD_NAME_SIZE],
-                              int frequency,
-                              size_t channels,
+  int32_t OnInitializeDecoder(int payload_type,
+                              const SdpAudioFormat& audio_format,
                               uint32_t rate) override;
 
   void OnIncomingSSRCChanged(uint32_t ssrc) override {}
@@ -409,10 +437,8 @@ class NullRtpFeedback : public RtpFeedback {
 };
 
 inline int32_t NullRtpFeedback::OnInitializeDecoder(
-    int8_t payload_type,
-    const char payloadName[RTP_PAYLOAD_NAME_SIZE],
-    int frequency,
-    size_t channels,
+    int payload_type,
+    const SdpAudioFormat& audio_format,
     uint32_t rate) {
   return 0;
 }
@@ -451,6 +477,14 @@ class RtpPacketSender {
                             int64_t capture_time_ms,
                             size_t bytes,
                             bool retransmission) = 0;
+
+  // Currently audio traffic is not accounted by pacer and passed through.
+  // With the introduction of audio BWE audio traffic will be accounted for
+  // the pacer budget calculation. The audio traffic still will be injected
+  // at high priority.
+  // TODO(alexnarest): Make it pure virtual after rtp_sender_unittest will be
+  // updated to support it
+  virtual void SetAccountForAudioPackets(bool account_for_audio) {}
 };
 
 class TransportSequenceNumberAllocator {
@@ -462,4 +496,4 @@ class TransportSequenceNumberAllocator {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_INCLUDE_RTP_RTCP_DEFINES_H_
+#endif  // MODULES_RTP_RTCP_INCLUDE_RTP_RTCP_DEFINES_H_

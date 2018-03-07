@@ -10,14 +10,14 @@
 
 // Common definition for video, including fourcc and VideoFormat.
 
-#ifndef WEBRTC_MEDIA_BASE_VIDEOCOMMON_H_  // NOLINT
-#define WEBRTC_MEDIA_BASE_VIDEOCOMMON_H_
+#ifndef MEDIA_BASE_VIDEOCOMMON_H_
+#define MEDIA_BASE_VIDEOCOMMON_H_
 
 #include <stdint.h>
 
 #include <string>
 
-#include "webrtc/base/timeutils.h"
+#include "rtc_base/timeutils.h"
 
 namespace cricket {
 
@@ -226,4 +226,4 @@ struct VideoFormat : VideoFormatPod {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_VIDEOCOMMON_H_  // NOLINT
+#endif  // MEDIA_BASE_VIDEOCOMMON_H_

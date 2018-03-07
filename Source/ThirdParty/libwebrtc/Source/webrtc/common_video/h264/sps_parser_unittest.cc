@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_video/h264/sps_parser.h"
+#include "common_video/h264/sps_parser.h"
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/bitbuffer.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/test/gtest.h"
+#include "common_video/h264/h264_common.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/bitbuffer.h"
+#include "rtc_base/buffer.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H
-#define WEBRTC_AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H
+#ifndef AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H_
+#define AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H_
 
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/modules/audio_device/linux/pulseaudiosymboltable_linux.h"
-#include "webrtc/typedefs.h"
-#include "webrtc/base/thread_checker.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
+#include "rtc_base/thread_checker.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #include <pulse/pulseaudio.h>
 #include <stdint.h>
@@ -37,7 +37,6 @@ public:
     int32_t SpeakerVolume(uint32_t& volume) const;
     int32_t MaxSpeakerVolume(uint32_t& maxVolume) const;
     int32_t MinSpeakerVolume(uint32_t& minVolume) const;
-    int32_t SpeakerVolumeStepSize(uint16_t& stepSize) const;
     int32_t SpeakerVolumeIsAvailable(bool& available);
     int32_t SpeakerMuteIsAvailable(bool& available);
     int32_t SetSpeakerMute(bool enable);
@@ -47,15 +46,11 @@ public:
     int32_t MicrophoneMuteIsAvailable(bool& available);
     int32_t SetMicrophoneMute(bool enable);
     int32_t MicrophoneMute(bool& enabled) const;
-    int32_t MicrophoneBoostIsAvailable(bool& available);
-    int32_t SetMicrophoneBoost(bool enable);
-    int32_t MicrophoneBoost(bool& enabled) const;
     int32_t MicrophoneVolumeIsAvailable(bool& available);
     int32_t SetMicrophoneVolume(uint32_t volume);
     int32_t MicrophoneVolume(uint32_t& volume) const;
     int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const;
     int32_t MinMicrophoneVolume(uint32_t& minVolume) const;
-    int32_t MicrophoneVolumeStepSize(uint16_t& stepSize) const;
     int32_t SetPulseAudioObjects(pa_threaded_mainloop* mainloop,
                                  pa_context* context);
     int32_t Close();
@@ -65,7 +60,7 @@ public:
     bool MicrophoneIsInitialized() const;
 
 public:
-    AudioMixerManagerLinuxPulse(const int32_t id);
+    AudioMixerManagerLinuxPulse();
     ~AudioMixerManagerLinuxPulse();
 
 private:
@@ -89,7 +84,6 @@ private:
     bool GetSourceInfoByIndex(int device_index) const;
 
 private:
-    int32_t _id;
     int16_t _paOutputDeviceIndex;
     int16_t _paInputDeviceIndex;
 

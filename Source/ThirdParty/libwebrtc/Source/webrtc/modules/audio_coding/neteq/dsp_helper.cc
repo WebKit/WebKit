@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/dsp_helper.h"
+#include "modules/audio_coding/neteq/dsp_helper.h"
 
 #include <assert.h>
 #include <string.h>  // Access to memset.
 
 #include <algorithm>  // Access to min, max.
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 namespace webrtc {
 

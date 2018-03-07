@@ -70,6 +70,7 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 
 #include <gtest/gtest.h>
 
+#include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
 #include <openssl/digest.h>
@@ -206,6 +207,27 @@ static bool SetupContext(FileTest *t, EVP_PKEY_CTX *ctx) {
       return false;
     }
   }
+  if (t->HasAttribute("OAEPDigest")) {
+    const EVP_MD *digest = GetDigest(t, t->GetAttributeOrDie("OAEPDigest"));
+    if (digest == nullptr || !EVP_PKEY_CTX_set_rsa_oaep_md(ctx, digest)) {
+      return false;
+    }
+  }
+  if (t->HasAttribute("OAEPLabel")) {
+    std::vector<uint8_t> label;
+    if (!t->GetBytes(&label, "OAEPLabel")) {
+      return false;
+    }
+    // For historical reasons, |EVP_PKEY_CTX_set0_rsa_oaep_label| expects to be
+    // take ownership of the input.
+    bssl::UniquePtr<uint8_t> buf(
+        reinterpret_cast<uint8_t *>(BUF_memdup(label.data(), label.size())));
+    if (!buf ||
+        !EVP_PKEY_CTX_set0_rsa_oaep_label(ctx, buf.get(), label.size())) {
+      return false;
+    }
+    buf.release();
+  }
   return true;
 }
 
@@ -239,6 +261,9 @@ static bool TestEVP(FileTest *t, KeyMap *key_map) {
   } else if (t->GetType() == "VerifyMessage") {
     md_op_init = EVP_DigestVerifyInit;
     is_verify = true;
+  } else if (t->GetType() == "Encrypt") {
+    key_op_init = EVP_PKEY_encrypt_init;
+    key_op = EVP_PKEY_encrypt;
   } else {
     ADD_FAILURE() << "Unknown test " << t->GetType();
     return false;
@@ -316,8 +341,58 @@ static bool TestEVP(FileTest *t, KeyMap *key_map) {
     return false;
   }
   actual.resize(len);
-  if (!key_op(ctx.get(), actual.data(), &len, input.data(), input.size()) ||
-      !t->GetBytes(&output, "Output")) {
+  if (!key_op(ctx.get(), actual.data(), &len, input.data(), input.size())) {
+    return false;
+  }
+
+  // Encryption is non-deterministic, so we check by decrypting.
+  if (t->HasAttribute("CheckDecrypt")) {
+    size_t plaintext_len;
+    ctx.reset(EVP_PKEY_CTX_new(key, nullptr));
+    if (!ctx ||
+        !EVP_PKEY_decrypt_init(ctx.get()) ||
+        (digest != nullptr &&
+         !EVP_PKEY_CTX_set_signature_md(ctx.get(), digest)) ||
+        !SetupContext(t, ctx.get()) ||
+        !EVP_PKEY_decrypt(ctx.get(), nullptr, &plaintext_len, actual.data(),
+                          actual.size())) {
+      return false;
+    }
+    output.resize(plaintext_len);
+    if (!EVP_PKEY_decrypt(ctx.get(), output.data(), &plaintext_len,
+                          actual.data(), actual.size())) {
+      ADD_FAILURE() << "Could not decrypt result.";
+      return false;
+    }
+    output.resize(plaintext_len);
+    EXPECT_EQ(Bytes(input), Bytes(output)) << "Decrypted result mismatch.";
+    return true;
+  }
+
+  // Some signature schemes are non-deterministic, so we check by verifying.
+  if (t->HasAttribute("CheckVerify")) {
+    ctx.reset(EVP_PKEY_CTX_new(key, nullptr));
+    if (!ctx ||
+        !EVP_PKEY_verify_init(ctx.get()) ||
+        (digest != nullptr &&
+         !EVP_PKEY_CTX_set_signature_md(ctx.get(), digest)) ||
+        !SetupContext(t, ctx.get())) {
+      return false;
+    }
+    if (t->HasAttribute("VerifyPSSSaltLength") &&
+        !EVP_PKEY_CTX_set_rsa_pss_saltlen(
+            ctx.get(),
+            atoi(t->GetAttributeOrDie("VerifyPSSSaltLength").c_str()))) {
+      return false;
+    }
+    EXPECT_TRUE(EVP_PKEY_verify(ctx.get(), actual.data(), actual.size(),
+                                input.data(), input.size()))
+        << "Could not verify result.";
+    return true;
+  }
+
+  // By default, check by comparing the result against Output.
+  if (!t->GetBytes(&output, "Output")) {
     return false;
   }
   actual.resize(len);
@@ -335,7 +410,6 @@ TEST(EVPTest, TestVectors) {
       EXPECT_EQ(t->GetAttributeOrDie("Error"), ERR_reason_error_string(err));
     } else if (!result) {
       ADD_FAILURE() << "Operation unexpectedly failed.";
-      ERR_print_errors_fp(stdout);
     }
   });
 }

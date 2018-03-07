@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/level_controller/gain_selector.h"
+#include "modules/audio_processing/level_controller/gain_selector.h"
 
 #include <math.h>
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/level_controller/level_controller_constants.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/level_controller/level_controller_constants.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

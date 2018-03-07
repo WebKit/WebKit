@@ -20,7 +20,7 @@
  * WebRtcSpl_ScaleAndAddVectorsWithRoundC()
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 void WebRtcSpl_VectorBitShiftW16(int16_t *res, size_t length,
                                  const int16_t *in, int16_t right_shifts)

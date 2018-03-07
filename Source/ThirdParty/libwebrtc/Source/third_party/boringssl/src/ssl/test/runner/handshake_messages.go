@@ -7,6 +7,7 @@ package runner
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 func writeLen(buf []byte, v, size int) {
@@ -33,6 +34,11 @@ func newByteBuilder() *byteBuilder {
 
 func (bb *byteBuilder) len() int {
 	return len(*bb.buf) - bb.start - bb.prefixLen
+}
+
+func (bb *byteBuilder) data() []byte {
+	bb.flush()
+	return (*bb.buf)[bb.start+bb.prefixLen:]
 }
 
 func (bb *byteBuilder) flush() {
@@ -112,11 +118,126 @@ func (bb *byteBuilder) createChild(lengthPrefixSize int) *byteBuilder {
 }
 
 func (bb *byteBuilder) discardChild() {
-	if bb.child != nil {
+	if bb.child == nil {
 		return
 	}
+	*bb.buf = (*bb.buf)[:bb.child.start]
 	bb.child = nil
-	*bb.buf = (*bb.buf)[:bb.start]
+}
+
+type byteReader []byte
+
+func (br *byteReader) readInternal(out *byteReader, n int) bool {
+	if len(*br) < n {
+		return false
+	}
+	*out = (*br)[:n]
+	*br = (*br)[n:]
+	return true
+}
+
+func (br *byteReader) readBytes(out *[]byte, n int) bool {
+	var child byteReader
+	if !br.readInternal(&child, n) {
+		return false
+	}
+	*out = []byte(child)
+	return true
+}
+
+func (br *byteReader) readUint(out *uint64, n int) bool {
+	var b []byte
+	if !br.readBytes(&b, n) {
+		return false
+	}
+	*out = 0
+	for _, v := range b {
+		*out <<= 8
+		*out |= uint64(v)
+	}
+	return true
+}
+
+func (br *byteReader) readU8(out *uint8) bool {
+	var b []byte
+	if !br.readBytes(&b, 1) {
+		return false
+	}
+	*out = b[0]
+	return true
+}
+
+func (br *byteReader) readU16(out *uint16) bool {
+	var v uint64
+	if !br.readUint(&v, 2) {
+		return false
+	}
+	*out = uint16(v)
+	return true
+}
+
+func (br *byteReader) readU24(out *uint32) bool {
+	var v uint64
+	if !br.readUint(&v, 3) {
+		return false
+	}
+	*out = uint32(v)
+	return true
+}
+
+func (br *byteReader) readU32(out *uint32) bool {
+	var v uint64
+	if !br.readUint(&v, 4) {
+		return false
+	}
+	*out = uint32(v)
+	return true
+}
+
+func (br *byteReader) readU64(out *uint64) bool {
+	return br.readUint(out, 8)
+}
+
+func (br *byteReader) readLengthPrefixed(out *byteReader, n int) bool {
+	var length uint64
+	return br.readUint(&length, n) &&
+		uint64(len(*br)) >= length &&
+		br.readInternal(out, int(length))
+}
+
+func (br *byteReader) readLengthPrefixedBytes(out *[]byte, n int) bool {
+	var length uint64
+	return br.readUint(&length, n) &&
+		uint64(len(*br)) >= length &&
+		br.readBytes(out, int(length))
+}
+
+func (br *byteReader) readU8LengthPrefixed(out *byteReader) bool {
+	return br.readLengthPrefixed(out, 1)
+}
+func (br *byteReader) readU8LengthPrefixedBytes(out *[]byte) bool {
+	return br.readLengthPrefixedBytes(out, 1)
+}
+
+func (br *byteReader) readU16LengthPrefixed(out *byteReader) bool {
+	return br.readLengthPrefixed(out, 2)
+}
+func (br *byteReader) readU16LengthPrefixedBytes(out *[]byte) bool {
+	return br.readLengthPrefixedBytes(out, 2)
+}
+
+func (br *byteReader) readU24LengthPrefixed(out *byteReader) bool {
+	return br.readLengthPrefixed(out, 3)
+}
+func (br *byteReader) readU24LengthPrefixedBytes(out *[]byte) bool {
+	return br.readLengthPrefixedBytes(out, 3)
+}
+
+func (br *byteReader) readU32LengthPrefixed(out *byteReader) bool {
+	return br.readLengthPrefixed(out, 4)
+}
+func (br *byteReader) readU32LengthPrefixedBytes(out *[]byte) bool {
+	return br.readLengthPrefixedBytes(out, 4)
 }
 
 type keyShareEntry struct {
@@ -125,9 +246,8 @@ type keyShareEntry struct {
 }
 
 type pskIdentity struct {
-	keModes   []byte
-	authModes []byte
-	ticket    []uint8
+	ticket              []uint8
+	obfuscatedTicketAge uint32
 }
 
 type clientHelloMsg struct {
@@ -148,8 +268,9 @@ type clientHelloMsg struct {
 	keyShares               []keyShareEntry
 	trailingKeyShareData    bool
 	pskIdentities           []pskIdentity
+	pskKEModes              []byte
+	pskBinders              [][]uint8
 	hasEarlyData            bool
-	earlyDataContext        []byte
 	tls13Cookie             []byte
 	ticketSupported         bool
 	sessionTicket           []uint8
@@ -159,13 +280,17 @@ type clientHelloMsg struct {
 	alpnProtocols           []string
 	duplicateExtension      bool
 	channelIDSupported      bool
-	npnLast                 bool
+	npnAfterAlpn            bool
 	extendedMasterSecret    bool
 	srtpProtectionProfiles  []uint16
 	srtpMasterKeyIdentifier string
 	sctListSupported        bool
 	customExtension         string
 	hasGREASEExtension      bool
+	pskBinderFirst          bool
+	omitExtensions          bool
+	emptyExtensions         bool
+	pad                     int
 }
 
 func (m *clientHelloMsg) equal(i interface{}) bool {
@@ -191,8 +316,9 @@ func (m *clientHelloMsg) equal(i interface{}) bool {
 		eqKeyShareEntryLists(m.keyShares, m1.keyShares) &&
 		m.trailingKeyShareData == m1.trailingKeyShareData &&
 		eqPSKIdentityLists(m.pskIdentities, m1.pskIdentities) &&
+		bytes.Equal(m.pskKEModes, m1.pskKEModes) &&
+		eqByteSlices(m.pskBinders, m1.pskBinders) &&
 		m.hasEarlyData == m1.hasEarlyData &&
-		bytes.Equal(m.earlyDataContext, m1.earlyDataContext) &&
 		bytes.Equal(m.tls13Cookie, m1.tls13Cookie) &&
 		m.ticketSupported == m1.ticketSupported &&
 		bytes.Equal(m.sessionTicket, m1.sessionTicket) &&
@@ -203,13 +329,17 @@ func (m *clientHelloMsg) equal(i interface{}) bool {
 		eqStrings(m.alpnProtocols, m1.alpnProtocols) &&
 		m.duplicateExtension == m1.duplicateExtension &&
 		m.channelIDSupported == m1.channelIDSupported &&
-		m.npnLast == m1.npnLast &&
+		m.npnAfterAlpn == m1.npnAfterAlpn &&
 		m.extendedMasterSecret == m1.extendedMasterSecret &&
 		eqUint16s(m.srtpProtectionProfiles, m1.srtpProtectionProfiles) &&
 		m.srtpMasterKeyIdentifier == m1.srtpMasterKeyIdentifier &&
 		m.sctListSupported == m1.sctListSupported &&
 		m.customExtension == m1.customExtension &&
-		m.hasGREASEExtension == m1.hasGREASEExtension
+		m.hasGREASEExtension == m1.hasGREASEExtension &&
+		m.pskBinderFirst == m1.pskBinderFirst &&
+		m.omitExtensions == m1.omitExtensions &&
+		m.emptyExtensions == m1.emptyExtensions &&
+		m.pad == m1.pad
 }
 
 func (m *clientHelloMsg) marshal() []byte {
@@ -236,12 +366,26 @@ func (m *clientHelloMsg) marshal() []byte {
 	compressionMethods.addBytes(m.compressionMethods)
 
 	extensions := hello.addU16LengthPrefixed()
+	if len(m.pskIdentities) > 0 && m.pskBinderFirst {
+		extensions.addU16(extensionPreSharedKey)
+		pskExtension := extensions.addU16LengthPrefixed()
+
+		pskIdentities := pskExtension.addU16LengthPrefixed()
+		for _, psk := range m.pskIdentities {
+			pskIdentities.addU16LengthPrefixed().addBytes(psk.ticket)
+			pskIdentities.addU32(psk.obfuscatedTicketAge)
+		}
+		pskBinders := pskExtension.addU16LengthPrefixed()
+		for _, binder := range m.pskBinders {
+			pskBinders.addU8LengthPrefixed().addBytes(binder)
+		}
+	}
 	if m.duplicateExtension {
 		// Add a duplicate bogus extension at the beginning and end.
 		extensions.addU16(0xffff)
 		extensions.addU16(0) // 0-length for empty extension
 	}
-	if m.nextProtoNeg && !m.npnLast {
+	if m.nextProtoNeg && !m.npnAfterAlpn {
 		extensions.addU16(extensionNextProtoNeg)
 		extensions.addU16(0) // The length is always 0
 	}
@@ -297,9 +441,7 @@ func (m *clientHelloMsg) marshal() []byte {
 		extensions.addU16(extensionSupportedPoints)
 		supportedPointsList := extensions.addU16LengthPrefixed()
 		supportedPoints := supportedPointsList.addU8LengthPrefixed()
-		for _, pointFormat := range m.supportedPoints {
-			supportedPoints.addU8(pointFormat)
-		}
+		supportedPoints.addBytes(m.supportedPoints)
 	}
 	if m.hasKeyShares {
 		extensions.addU16(extensionKeyShare)
@@ -316,23 +458,14 @@ func (m *clientHelloMsg) marshal() []byte {
 			keyShares.addU8(0)
 		}
 	}
-	if len(m.pskIdentities) > 0 {
-		extensions.addU16(extensionPreSharedKey)
-		pskExtension := extensions.addU16LengthPrefixed()
-
-		pskIdentities := pskExtension.addU16LengthPrefixed()
-		for _, psk := range m.pskIdentities {
-			pskIdentities.addU8LengthPrefixed().addBytes(psk.keModes)
-			pskIdentities.addU8LengthPrefixed().addBytes(psk.authModes)
-			pskIdentities.addU16LengthPrefixed().addBytes(psk.ticket)
-		}
+	if len(m.pskKEModes) > 0 {
+		extensions.addU16(extensionPSKKeyExchangeModes)
+		pskModesExtension := extensions.addU16LengthPrefixed()
+		pskModesExtension.addU8LengthPrefixed().addBytes(m.pskKEModes)
 	}
 	if m.hasEarlyData {
 		extensions.addU16(extensionEarlyData)
-		earlyDataIndication := extensions.addU16LengthPrefixed()
-
-		context := earlyDataIndication.addU8LengthPrefixed()
-		context.addBytes(m.earlyDataContext)
+		extensions.addU16(0) // The length is zero.
 	}
 	if len(m.tls13Cookie) > 0 {
 		extensions.addU16(extensionCookie)
@@ -383,7 +516,7 @@ func (m *clientHelloMsg) marshal() []byte {
 		extensions.addU16(extensionChannelID)
 		extensions.addU16(0) // Length is always 0
 	}
-	if m.nextProtoNeg && m.npnLast {
+	if m.nextProtoNeg && m.npnAfterAlpn {
 		extensions.addU16(extensionNextProtoNeg)
 		extensions.addU16(0) // Length is always 0
 	}
@@ -404,11 +537,7 @@ func (m *clientHelloMsg) marshal() []byte {
 
 		srtpProtectionProfiles := useSrtpExt.addU16LengthPrefixed()
 		for _, p := range m.srtpProtectionProfiles {
-			// An SRTPProtectionProfile is defined as uint8[2],
-			// not uint16. For some reason, we're storing it
-			// as a uint16.
-			srtpProtectionProfiles.addU8(byte(p >> 8))
-			srtpProtectionProfiles.addU8(byte(p))
+			srtpProtectionProfiles.addU16(p)
 		}
 		srtpMki := useSrtpExt.addU8LengthPrefixed()
 		srtpMki.addBytes([]byte(m.srtpMasterKeyIdentifier))
@@ -422,67 +551,96 @@ func (m *clientHelloMsg) marshal() []byte {
 		customExt := extensions.addU16LengthPrefixed()
 		customExt.addBytes([]byte(m.customExtension))
 	}
+	// The PSK extension must be last (draft-ietf-tls-tls13-18 section 4.2.6).
+	if len(m.pskIdentities) > 0 && !m.pskBinderFirst {
+		extensions.addU16(extensionPreSharedKey)
+		pskExtension := extensions.addU16LengthPrefixed()
 
-	if extensions.len() == 0 {
+		pskIdentities := pskExtension.addU16LengthPrefixed()
+		for _, psk := range m.pskIdentities {
+			pskIdentities.addU16LengthPrefixed().addBytes(psk.ticket)
+			pskIdentities.addU32(psk.obfuscatedTicketAge)
+		}
+		pskBinders := pskExtension.addU16LengthPrefixed()
+		for _, binder := range m.pskBinders {
+			pskBinders.addU8LengthPrefixed().addBytes(binder)
+		}
+	}
+
+	if m.pad != 0 && hello.len()%m.pad != 0 {
+		extensions.addU16(extensionPadding)
+		padding := extensions.addU16LengthPrefixed()
+		// Note hello.len() has changed at this point from the length
+		// prefix.
+		if l := hello.len() % m.pad; l != 0 {
+			padding.addBytes(make([]byte, m.pad-l))
+		}
+	}
+
+	if m.omitExtensions || m.emptyExtensions {
+		// Silently erase any extensions which were sent.
 		hello.discardChild()
+		if m.emptyExtensions {
+			hello.addU16(0)
+		}
 	}
 
 	m.raw = handshakeMsg.finish()
+	// Sanity-check padding.
+	if m.pad != 0 && (len(m.raw)-4)%m.pad != 0 {
+		panic(fmt.Sprintf("%d is not a multiple of %d", len(m.raw)-4, m.pad))
+	}
 	return m.raw
 }
 
+func parseSignatureAlgorithms(reader *byteReader, out *[]signatureAlgorithm) bool {
+	var sigAlgs byteReader
+	if !reader.readU16LengthPrefixed(&sigAlgs) {
+		return false
+	}
+	*out = make([]signatureAlgorithm, 0, len(sigAlgs)/2)
+	for len(sigAlgs) > 0 {
+		var v uint16
+		if !sigAlgs.readU16(&v) {
+			return false
+		}
+		*out = append(*out, signatureAlgorithm(v))
+	}
+	return true
+}
+
 func (m *clientHelloMsg) unmarshal(data []byte) bool {
-	if len(data) < 42 {
-		return false
-	}
 	m.raw = data
-	m.vers = uint16(data[4])<<8 | uint16(data[5])
-	m.random = data[6:38]
-	sessionIdLen := int(data[38])
-	if sessionIdLen > 32 || len(data) < 39+sessionIdLen {
+	reader := byteReader(data[4:])
+	if !reader.readU16(&m.vers) ||
+		!reader.readBytes(&m.random, 32) ||
+		!reader.readU8LengthPrefixedBytes(&m.sessionId) ||
+		len(m.sessionId) > 32 {
 		return false
 	}
-	m.sessionId = data[39 : 39+sessionIdLen]
-	data = data[39+sessionIdLen:]
 	if m.isDTLS {
-		if len(data) < 1 {
+		if !reader.readU8LengthPrefixedBytes(&m.cookie) ||
+			len(m.cookie) > 32 {
 			return false
 		}
-		cookieLen := int(data[0])
-		if cookieLen > 32 || len(data) < 1+cookieLen {
+	}
+	var cipherSuites byteReader
+	if !reader.readU16LengthPrefixed(&cipherSuites) ||
+		!reader.readU8LengthPrefixedBytes(&m.compressionMethods) {
+		return false
+	}
+
+	m.cipherSuites = make([]uint16, 0, len(cipherSuites)/2)
+	for len(cipherSuites) > 0 {
+		var v uint16
+		if !cipherSuites.readU16(&v) {
 			return false
 		}
-		m.cookie = data[1 : 1+cookieLen]
-		data = data[1+cookieLen:]
-	}
-	if len(data) < 2 {
-		return false
-	}
-	// cipherSuiteLen is the number of bytes of cipher suite numbers. Since
-	// they are uint16s, the number must be even.
-	cipherSuiteLen := int(data[0])<<8 | int(data[1])
-	if cipherSuiteLen%2 == 1 || len(data) < 2+cipherSuiteLen {
-		return false
-	}
-	numCipherSuites := cipherSuiteLen / 2
-	m.cipherSuites = make([]uint16, numCipherSuites)
-	for i := 0; i < numCipherSuites; i++ {
-		m.cipherSuites[i] = uint16(data[2+2*i])<<8 | uint16(data[3+2*i])
-		if m.cipherSuites[i] == scsvRenegotiation {
+		m.cipherSuites = append(m.cipherSuites, v)
+		if v == scsvRenegotiation {
 			m.secureRenegotiation = []byte{}
 		}
 	}
-	data = data[2+cipherSuiteLen:]
-	if len(data) < 1 {
-		return false
-	}
-	compressionMethodsLen := int(data[0])
-	if len(data) < 1+compressionMethodsLen {
-		return false
-	}
-	m.compressionMethods = data[1 : 1+compressionMethodsLen]
-
-	data = data[1+compressionMethodsLen:]
 
 	m.nextProtoNeg = false
 	m.serverName = ""
@@ -490,7 +648,6 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 	m.keyShares = nil
 	m.pskIdentities = nil
 	m.hasEarlyData = false
-	m.earlyDataContext = nil
 	m.ticketSupported = false
 	m.sessionTicket = nil
 	m.signatureAlgorithms = nil
@@ -499,279 +656,198 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 	m.extendedMasterSecret = false
 	m.customExtension = ""
 
-	if len(data) == 0 {
+	if len(reader) == 0 {
 		// ClientHello is optionally followed by extension data
 		return true
 	}
-	if len(data) < 2 {
+
+	var extensions byteReader
+	if !reader.readU16LengthPrefixed(&extensions) || len(reader) != 0 {
 		return false
 	}
-
-	extensionsLength := int(data[0])<<8 | int(data[1])
-	data = data[2:]
-	if extensionsLength != len(data) {
-		return false
-	}
-
-	for len(data) != 0 {
-		if len(data) < 4 {
+	for len(extensions) > 0 {
+		var extension uint16
+		var body byteReader
+		if !extensions.readU16(&extension) ||
+			!extensions.readU16LengthPrefixed(&body) {
 			return false
 		}
-		extension := uint16(data[0])<<8 | uint16(data[1])
-		length := int(data[2])<<8 | int(data[3])
-		data = data[4:]
-		if len(data) < length {
-			return false
-		}
-
 		switch extension {
 		case extensionServerName:
-			if length < 2 {
+			var names byteReader
+			if !body.readU16LengthPrefixed(&names) || len(body) != 0 {
 				return false
 			}
-			numNames := int(data[0])<<8 | int(data[1])
-			d := data[2:]
-			for i := 0; i < numNames; i++ {
-				if len(d) < 3 {
-					return false
-				}
-				nameType := d[0]
-				nameLen := int(d[1])<<8 | int(d[2])
-				d = d[3:]
-				if len(d) < nameLen {
+			for len(names) > 0 {
+				var nameType byte
+				var name []byte
+				if !names.readU8(&nameType) ||
+					!names.readU16LengthPrefixedBytes(&name) {
 					return false
 				}
 				if nameType == 0 {
-					m.serverName = string(d[0:nameLen])
-					break
+					m.serverName = string(name)
 				}
-				d = d[nameLen:]
 			}
 		case extensionNextProtoNeg:
-			if length > 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.nextProtoNeg = true
 		case extensionStatusRequest:
-			m.ocspStapling = length > 0 && data[0] == statusTypeOCSP
+			m.ocspStapling = len(body) > 0 && body[0] == statusTypeOCSP
 		case extensionSupportedCurves:
 			// http://tools.ietf.org/html/rfc4492#section-5.5.1
-			if length < 2 {
+			var curves byteReader
+			if !body.readU16LengthPrefixed(&curves) || len(body) != 0 {
 				return false
 			}
-			l := int(data[0])<<8 | int(data[1])
-			if l%2 == 1 || length != l+2 {
-				return false
-			}
-			numCurves := l / 2
-			m.supportedCurves = make([]CurveID, numCurves)
-			d := data[2:]
-			for i := 0; i < numCurves; i++ {
-				m.supportedCurves[i] = CurveID(d[0])<<8 | CurveID(d[1])
-				d = d[2:]
+			m.supportedCurves = make([]CurveID, 0, len(curves)/2)
+			for len(curves) > 0 {
+				var v uint16
+				if !curves.readU16(&v) {
+					return false
+				}
+				m.supportedCurves = append(m.supportedCurves, CurveID(v))
 			}
 		case extensionSupportedPoints:
 			// http://tools.ietf.org/html/rfc4492#section-5.5.2
-			if length < 1 {
+			if !body.readU8LengthPrefixedBytes(&m.supportedPoints) || len(body) != 0 {
 				return false
 			}
-			l := int(data[0])
-			if length != l+1 {
-				return false
-			}
-			m.supportedPoints = make([]uint8, l)
-			copy(m.supportedPoints, data[1:])
 		case extensionSessionTicket:
 			// http://tools.ietf.org/html/rfc5077#section-3.2
 			m.ticketSupported = true
-			m.sessionTicket = data[:length]
+			m.sessionTicket = []byte(body)
 		case extensionKeyShare:
 			// draft-ietf-tls-tls13 section 6.3.2.3
-			if length < 2 {
+			var keyShares byteReader
+			if !body.readU16LengthPrefixed(&keyShares) || len(body) != 0 {
 				return false
 			}
-			l := int(data[0])<<8 | int(data[1])
-			if l != length-2 {
-				return false
-			}
-			d := data[2:length]
 			m.hasKeyShares = true
-			for len(d) > 0 {
-				// The next KeyShareEntry contains a NamedGroup (2 bytes) and a
-				// key_exchange (2-byte length prefix with at least 1 byte of content).
-				if len(d) < 5 {
+			for len(keyShares) > 0 {
+				var entry keyShareEntry
+				var group uint16
+				if !keyShares.readU16(&group) ||
+					!keyShares.readU16LengthPrefixedBytes(&entry.keyExchange) {
 					return false
 				}
-				entry := keyShareEntry{}
-				entry.group = CurveID(d[0])<<8 | CurveID(d[1])
-				keyExchLen := int(d[2])<<8 | int(d[3])
-				d = d[4:]
-				if len(d) < keyExchLen {
-					return false
-				}
-				entry.keyExchange = d[:keyExchLen]
-				d = d[keyExchLen:]
+				entry.group = CurveID(group)
 				m.keyShares = append(m.keyShares, entry)
 			}
 		case extensionPreSharedKey:
-			// draft-ietf-tls-tls13 section 6.3.2.4
-			if length < 2 {
+			// draft-ietf-tls-tls13-18 section 4.2.6
+			var psks, binders byteReader
+			if !body.readU16LengthPrefixed(&psks) ||
+				!body.readU16LengthPrefixed(&binders) ||
+				len(body) != 0 {
 				return false
 			}
-			l := int(data[0])<<8 | int(data[1])
-			if l != length-2 {
-				return false
-			}
-			d := data[2:length]
-			for len(d) > 0 {
+			for len(psks) > 0 {
 				var psk pskIdentity
-
-				if len(d) < 1 {
+				if !psks.readU16LengthPrefixedBytes(&psk.ticket) ||
+					!psks.readU32(&psk.obfuscatedTicketAge) {
 					return false
 				}
-				keModesLen := int(d[0])
-				d = d[1:]
-				if len(d) < keModesLen {
-					return false
-				}
-				psk.keModes = d[:keModesLen]
-				d = d[keModesLen:]
-
-				if len(d) < 1 {
-					return false
-				}
-				authModesLen := int(d[0])
-				d = d[1:]
-				if len(d) < authModesLen {
-					return false
-				}
-				psk.authModes = d[:authModesLen]
-				d = d[authModesLen:]
-				if len(d) < 2 {
-					return false
-				}
-				pskLen := int(d[0])<<8 | int(d[1])
-				d = d[2:]
-
-				if len(d) < pskLen {
-					return false
-				}
-				psk.ticket = d[:pskLen]
 				m.pskIdentities = append(m.pskIdentities, psk)
-				d = d[pskLen:]
+			}
+			for len(binders) > 0 {
+				var binder []byte
+				if !binders.readU8LengthPrefixedBytes(&binder) {
+					return false
+				}
+				m.pskBinders = append(m.pskBinders, binder)
+			}
+
+			// There must be the same number of identities as binders.
+			if len(m.pskIdentities) != len(m.pskBinders) {
+				return false
+			}
+		case extensionPSKKeyExchangeModes:
+			// draft-ietf-tls-tls13-18 section 4.2.7
+			if !body.readU8LengthPrefixedBytes(&m.pskKEModes) || len(body) != 0 {
+				return false
 			}
 		case extensionEarlyData:
 			// draft-ietf-tls-tls13 section 6.3.2.5
-			if length < 1 {
-				return false
-			}
-			l := int(data[0])
-			if length != l+1 {
+			if len(body) != 0 {
 				return false
 			}
 			m.hasEarlyData = true
-			m.earlyDataContext = data[1:length]
 		case extensionCookie:
-			if length < 2 {
+			if !body.readU16LengthPrefixedBytes(&m.tls13Cookie) || len(body) != 0 {
 				return false
 			}
-			l := int(data[0])<<8 | int(data[1])
-			if l != length-2 || l == 0 {
-				return false
-			}
-			m.tls13Cookie = data[2 : 2+l]
 		case extensionSignatureAlgorithms:
 			// https://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
-			if length < 2 || length&1 != 0 {
+			if !parseSignatureAlgorithms(&body, &m.signatureAlgorithms) || len(body) != 0 {
 				return false
-			}
-			l := int(data[0])<<8 | int(data[1])
-			if l != length-2 {
-				return false
-			}
-			n := l / 2
-			d := data[2:]
-			m.signatureAlgorithms = make([]signatureAlgorithm, n)
-			for i := range m.signatureAlgorithms {
-				m.signatureAlgorithms[i] = signatureAlgorithm(d[0])<<8 | signatureAlgorithm(d[1])
-				d = d[2:]
 			}
 		case extensionSupportedVersions:
-			if length < 1+2 {
+			var versions byteReader
+			if !body.readU8LengthPrefixed(&versions) || len(body) != 0 {
 				return false
 			}
-			l := int(data[0])
-			if l != length-1 || l%2 == 1 || l < 2 {
-				return false
-			}
-			n := l / 2
-			d := data[1:]
-			m.supportedVersions = make([]uint16, n)
-			for i := range m.supportedVersions {
-				m.supportedVersions[i] = uint16(d[0])<<8 | uint16(d[1])
-				d = d[2:]
-			}
-		case extensionRenegotiationInfo:
-			if length < 1 || length != int(data[0])+1 {
-				return false
-			}
-			m.secureRenegotiation = data[1:length]
-		case extensionALPN:
-			if length < 2 {
-				return false
-			}
-			l := int(data[0])<<8 | int(data[1])
-			if l != length-2 {
-				return false
-			}
-			d := data[2:length]
-			for len(d) != 0 {
-				stringLen := int(d[0])
-				d = d[1:]
-				if stringLen == 0 || stringLen > len(d) {
+			m.supportedVersions = make([]uint16, 0, len(versions)/2)
+			for len(versions) > 0 {
+				var v uint16
+				if !versions.readU16(&v) {
 					return false
 				}
-				m.alpnProtocols = append(m.alpnProtocols, string(d[:stringLen]))
-				d = d[stringLen:]
+				m.supportedVersions = append(m.supportedVersions, v)
+			}
+		case extensionRenegotiationInfo:
+			if !body.readU8LengthPrefixedBytes(&m.secureRenegotiation) || len(body) != 0 {
+				return false
+			}
+		case extensionALPN:
+			var protocols byteReader
+			if !body.readU16LengthPrefixed(&protocols) || len(body) != 0 {
+				return false
+			}
+			for len(protocols) > 0 {
+				var protocol []byte
+				if !protocols.readU8LengthPrefixedBytes(&protocol) {
+					return false
+				}
+				m.alpnProtocols = append(m.alpnProtocols, string(protocol))
 			}
 		case extensionChannelID:
-			if length > 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.channelIDSupported = true
 		case extensionExtendedMasterSecret:
-			if length != 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.extendedMasterSecret = true
 		case extensionUseSRTP:
-			if length < 2 {
+			var profiles byteReader
+			var mki []byte
+			if !body.readU16LengthPrefixed(&profiles) ||
+				!body.readU8LengthPrefixedBytes(&mki) ||
+				len(body) != 0 {
 				return false
 			}
-			l := int(data[0])<<8 | int(data[1])
-			if l > length-2 || l%2 != 0 {
-				return false
+			m.srtpProtectionProfiles = make([]uint16, 0, len(profiles)/2)
+			for len(profiles) > 0 {
+				var v uint16
+				if !profiles.readU16(&v) {
+					return false
+				}
+				m.srtpProtectionProfiles = append(m.srtpProtectionProfiles, v)
 			}
-			n := l / 2
-			m.srtpProtectionProfiles = make([]uint16, n)
-			d := data[2:length]
-			for i := 0; i < n; i++ {
-				m.srtpProtectionProfiles[i] = uint16(d[0])<<8 | uint16(d[1])
-				d = d[2:]
-			}
-			if len(d) < 1 || int(d[0]) != len(d)-1 {
-				return false
-			}
-			m.srtpMasterKeyIdentifier = string(d[1:])
+			m.srtpMasterKeyIdentifier = string(mki)
 		case extensionSignedCertificateTimestamp:
-			if length != 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.sctListSupported = true
 		case extensionCustom:
-			m.customExtension = string(data[:length])
+			m.customExtension = string(body)
 		}
-		data = data[length:]
 
 		if isGREASEValue(extension) {
 			m.hasGREASEExtension = true
@@ -782,23 +858,24 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 }
 
 type serverHelloMsg struct {
-	raw                 []byte
-	isDTLS              bool
-	vers                uint16
-	versOverride        uint16
-	random              []byte
-	sessionId           []byte
-	cipherSuite         uint16
-	hasKeyShare         bool
-	keyShare            keyShareEntry
-	hasPSKIdentity      bool
-	pskIdentity         uint16
-	useCertAuth         bool
-	earlyDataIndication bool
-	compressionMethod   uint8
-	customExtension     string
-	unencryptedALPN     string
-	extensions          serverExtensions
+	raw                   []byte
+	isDTLS                bool
+	vers                  uint16
+	versOverride          uint16
+	supportedVersOverride uint16
+	random                []byte
+	sessionId             []byte
+	cipherSuite           uint16
+	hasKeyShare           bool
+	keyShare              keyShareEntry
+	hasPSKIdentity        bool
+	pskIdentity           uint16
+	compressionMethod     uint8
+	customExtension       string
+	unencryptedALPN       string
+	omitExtensions        bool
+	emptyExtensions       bool
+	extensions            serverExtensions
 }
 
 func (m *serverHelloMsg) marshal() []byte {
@@ -819,17 +896,19 @@ func (m *serverHelloMsg) marshal() []byte {
 	}
 	if m.versOverride != 0 {
 		hello.addU16(m.versOverride)
+	} else if isResumptionExperiment(m.vers) {
+		hello.addU16(VersionTLS12)
 	} else {
 		hello.addU16(m.vers)
 	}
 
 	hello.addBytes(m.random)
-	if vers < VersionTLS13 {
+	if vers < VersionTLS13 || isResumptionExperiment(m.vers) {
 		sessionId := hello.addU8LengthPrefixed()
 		sessionId.addBytes(m.sessionId)
 	}
 	hello.addU16(m.cipherSuite)
-	if vers < VersionTLS13 {
+	if vers < VersionTLS13 || isResumptionExperiment(m.vers) {
 		hello.addU8(m.compressionMethod)
 	}
 
@@ -848,13 +927,14 @@ func (m *serverHelloMsg) marshal() []byte {
 			extensions.addU16(2) // Length
 			extensions.addU16(m.pskIdentity)
 		}
-		if m.useCertAuth {
-			extensions.addU16(extensionSignatureAlgorithms)
-			extensions.addU16(0) // Length
-		}
-		if m.earlyDataIndication {
-			extensions.addU16(extensionEarlyData)
-			extensions.addU16(0) // Length
+		if isResumptionExperiment(m.vers) || m.supportedVersOverride != 0 {
+			extensions.addU16(extensionSupportedVersions)
+			extensions.addU16(2) // Length
+			if m.supportedVersOverride != 0 {
+				extensions.addU16(m.supportedVersOverride)
+			} else {
+				extensions.addU16(m.vers)
+			}
 		}
 		if len(m.customExtension) > 0 {
 			extensions.addU16(extensionCustom)
@@ -870,9 +950,18 @@ func (m *serverHelloMsg) marshal() []byte {
 			protocolName.addBytes([]byte(m.unencryptedALPN))
 		}
 	} else {
-		m.extensions.marshal(extensions, vers)
-		if extensions.len() == 0 {
+		m.extensions.marshal(extensions)
+		if m.omitExtensions || m.emptyExtensions {
+			// Silently erasing server extensions will break the handshake. Instead,
+			// assert that tests which use this field also disable all features which
+			// would write an extension.
+			if extensions.len() != 0 {
+				panic(fmt.Sprintf("ServerHello unexpectedly contained extensions: %x, %+v", extensions.data(), m))
+			}
 			hello.discardChild()
+			if m.emptyExtensions {
+				hello.addU16(0)
+			}
 		}
 	}
 
@@ -881,104 +970,98 @@ func (m *serverHelloMsg) marshal() []byte {
 }
 
 func (m *serverHelloMsg) unmarshal(data []byte) bool {
-	if len(data) < 42 {
+	m.raw = data
+	reader := byteReader(data[4:])
+	if !reader.readU16(&m.vers) ||
+		!reader.readBytes(&m.random, 32) {
 		return false
 	}
-	m.raw = data
-	m.vers = uint16(data[4])<<8 | uint16(data[5])
 	vers, ok := wireToVersion(m.vers, m.isDTLS)
 	if !ok {
 		return false
 	}
-	m.random = data[6:38]
-	data = data[38:]
-	if vers < VersionTLS13 {
-		sessionIdLen := int(data[0])
-		if sessionIdLen > 32 || len(data) < 1+sessionIdLen {
+	if vers < VersionTLS13 || isResumptionExperiment(m.vers) {
+		if !reader.readU8LengthPrefixedBytes(&m.sessionId) {
 			return false
 		}
-		m.sessionId = data[1 : 1+sessionIdLen]
-		data = data[1+sessionIdLen:]
 	}
-	if len(data) < 2 {
+	if !reader.readU16(&m.cipherSuite) {
 		return false
 	}
-	m.cipherSuite = uint16(data[0])<<8 | uint16(data[1])
-	data = data[2:]
-	if vers < VersionTLS13 {
-		if len(data) < 1 {
+	if vers < VersionTLS13 || isResumptionExperiment(m.vers) {
+		if !reader.readU8(&m.compressionMethod) {
 			return false
 		}
-		m.compressionMethod = data[0]
-		data = data[1:]
 	}
 
-	if len(data) == 0 && m.vers < VersionTLS13 {
+	if len(reader) == 0 && m.vers < VersionTLS13 {
 		// Extension data is optional before TLS 1.3.
 		m.extensions = serverExtensions{}
+		m.omitExtensions = true
 		return true
 	}
-	if len(data) < 2 {
+
+	var extensions byteReader
+	if !reader.readU16LengthPrefixed(&extensions) || len(reader) != 0 {
 		return false
 	}
 
-	extensionsLength := int(data[0])<<8 | int(data[1])
-	data = data[2:]
-	if len(data) != extensionsLength {
-		return false
+	// Parse out the version from supported_versions if available.
+	if m.vers == VersionTLS12 {
+		extensionsCopy := extensions
+		for len(extensionsCopy) > 0 {
+			var extension uint16
+			var body byteReader
+			if !extensionsCopy.readU16(&extension) ||
+				!extensionsCopy.readU16LengthPrefixed(&body) {
+				return false
+			}
+			if extension == extensionSupportedVersions {
+				if !body.readU16(&m.vers) || len(body) != 0 {
+					return false
+				}
+				vers, ok = wireToVersion(m.vers, m.isDTLS)
+				if !ok {
+					return false
+				}
+			}
+		}
 	}
 
 	if vers >= VersionTLS13 {
-		for len(data) != 0 {
-			if len(data) < 4 {
+		for len(extensions) > 0 {
+			var extension uint16
+			var body byteReader
+			if !extensions.readU16(&extension) ||
+				!extensions.readU16LengthPrefixed(&body) {
 				return false
 			}
-			extension := uint16(data[0])<<8 | uint16(data[1])
-			length := int(data[2])<<8 | int(data[3])
-			data = data[4:]
-
-			if len(data) < length {
-				return false
-			}
-			d := data[:length]
-			data = data[length:]
-
 			switch extension {
 			case extensionKeyShare:
 				m.hasKeyShare = true
-				if len(d) < 4 {
+				var group uint16
+				if !body.readU16(&group) ||
+					!body.readU16LengthPrefixedBytes(&m.keyShare.keyExchange) ||
+					len(body) != 0 {
 					return false
 				}
-				m.keyShare.group = CurveID(uint16(d[0])<<8 | uint16(d[1]))
-				keyExchLen := int(d[2])<<8 | int(d[3])
-				if keyExchLen != len(d)-4 {
-					return false
-				}
-				m.keyShare.keyExchange = make([]byte, keyExchLen)
-				copy(m.keyShare.keyExchange, d[4:])
+				m.keyShare.group = CurveID(group)
 			case extensionPreSharedKey:
-				if len(d) != 2 {
+				if !body.readU16(&m.pskIdentity) || len(body) != 0 {
 					return false
 				}
-				m.pskIdentity = uint16(d[0])<<8 | uint16(d[1])
 				m.hasPSKIdentity = true
-			case extensionSignatureAlgorithms:
-				if len(d) != 0 {
+			case extensionSupportedVersions:
+				if !isResumptionExperiment(m.vers) {
 					return false
 				}
-				m.useCertAuth = true
-			case extensionEarlyData:
-				if len(d) != 0 {
-					return false
-				}
-				m.earlyDataIndication = true
 			default:
 				// Only allow the 3 extensions that are sent in
 				// the clear in TLS 1.3.
 				return false
 			}
 		}
-	} else if !m.extensions.unmarshal(data, vers) {
+	} else if !m.extensions.unmarshal(extensions, vers) {
 		return false
 	}
 
@@ -1001,7 +1084,7 @@ func (m *encryptedExtensionsMsg) marshal() []byte {
 	encryptedExtensions := encryptedExtensionsMsg.addU24LengthPrefixed()
 	if !m.empty {
 		extensions := encryptedExtensions.addU16LengthPrefixed()
-		m.extensions.marshal(extensions, VersionTLS13)
+		m.extensions.marshal(extensions)
 	}
 
 	m.raw = encryptedExtensionsMsg.finish()
@@ -1010,30 +1093,18 @@ func (m *encryptedExtensionsMsg) marshal() []byte {
 
 func (m *encryptedExtensionsMsg) unmarshal(data []byte) bool {
 	m.raw = data
-	if len(data) < 6 {
+	reader := byteReader(data[4:])
+	var extensions byteReader
+	if !reader.readU16LengthPrefixed(&extensions) || len(reader) != 0 {
 		return false
 	}
-	if data[0] != typeEncryptedExtensions {
-		return false
-	}
-	msgLen := int(data[1])<<16 | int(data[2])<<8 | int(data[3])
-	data = data[4:]
-	if len(data) != msgLen {
-		return false
-	}
-	extLen := int(data[0])<<8 | int(data[1])
-	data = data[2:]
-	if extLen != len(data) {
-		return false
-	}
-	return m.extensions.unmarshal(data, VersionTLS13)
+	return m.extensions.unmarshal(extensions, VersionTLS13)
 }
 
 type serverExtensions struct {
 	nextProtoNeg            bool
 	nextProtos              []string
 	ocspStapling            bool
-	ocspResponse            []byte
 	ticketSupported         bool
 	secureRenegotiation     []byte
 	alpnProtocol            string
@@ -1045,18 +1116,23 @@ type serverExtensions struct {
 	srtpMasterKeyIdentifier string
 	sctList                 []byte
 	customExtension         string
-	npnLast                 bool
+	npnAfterAlpn            bool
 	hasKeyShare             bool
+	hasEarlyData            bool
 	keyShare                keyShareEntry
+	supportedVersion        uint16
+	supportedPoints         []uint8
+	supportedCurves         []CurveID
+	serverNameAck           bool
 }
 
-func (m *serverExtensions) marshal(extensions *byteBuilder, version uint16) {
+func (m *serverExtensions) marshal(extensions *byteBuilder) {
 	if m.duplicateExtension {
 		// Add a duplicate bogus extension at the beginning and end.
 		extensions.addU16(0xffff)
 		extensions.addU16(0) // length = 0 for empty extension
 	}
-	if m.nextProtoNeg && !m.npnLast {
+	if m.nextProtoNeg && !m.npnAfterAlpn {
 		extensions.addU16(extensionNextProtoNeg)
 		extension := extensions.addU16LengthPrefixed()
 
@@ -1068,19 +1144,9 @@ func (m *serverExtensions) marshal(extensions *byteBuilder, version uint16) {
 			npn.addBytes([]byte(v))
 		}
 	}
-	if version >= VersionTLS13 {
-		if m.ocspResponse != nil {
-			extensions.addU16(extensionStatusRequest)
-			body := extensions.addU16LengthPrefixed()
-			body.addU8(statusTypeOCSP)
-			response := body.addU24LengthPrefixed()
-			response.addBytes(m.ocspResponse)
-		}
-	} else {
-		if m.ocspStapling {
-			extensions.addU16(extensionStatusRequest)
-			extensions.addU16(0)
-		}
+	if m.ocspStapling {
+		extensions.addU16(extensionStatusRequest)
+		extensions.addU16(0)
 	}
 	if m.ticketSupported {
 		extensions.addU16(extensionSessionTicket)
@@ -1118,8 +1184,7 @@ func (m *serverExtensions) marshal(extensions *byteBuilder, version uint16) {
 		extension := extensions.addU16LengthPrefixed()
 
 		srtpProtectionProfiles := extension.addU16LengthPrefixed()
-		srtpProtectionProfiles.addU8(byte(m.srtpProtectionProfile >> 8))
-		srtpProtectionProfiles.addU8(byte(m.srtpProtectionProfile))
+		srtpProtectionProfiles.addU16(m.srtpProtectionProfile)
 		srtpMki := extension.addU8LengthPrefixed()
 		srtpMki.addBytes([]byte(m.srtpMasterKeyIdentifier))
 	}
@@ -1133,7 +1198,7 @@ func (m *serverExtensions) marshal(extensions *byteBuilder, version uint16) {
 		customExt := extensions.addU16LengthPrefixed()
 		customExt.addBytes([]byte(m.customExtension))
 	}
-	if m.nextProtoNeg && m.npnLast {
+	if m.nextProtoNeg && m.npnAfterAlpn {
 		extensions.addU16(extensionNextProtoNeg)
 		extension := extensions.addU16LengthPrefixed()
 
@@ -1152,132 +1217,134 @@ func (m *serverExtensions) marshal(extensions *byteBuilder, version uint16) {
 		keyExchange := keyShare.addU16LengthPrefixed()
 		keyExchange.addBytes(m.keyShare.keyExchange)
 	}
+	if m.supportedVersion != 0 {
+		extensions.addU16(extensionSupportedVersions)
+		extensions.addU16(2) // Length
+		extensions.addU16(m.supportedVersion)
+	}
+	if len(m.supportedPoints) > 0 {
+		// http://tools.ietf.org/html/rfc4492#section-5.1.2
+		extensions.addU16(extensionSupportedPoints)
+		supportedPointsList := extensions.addU16LengthPrefixed()
+		supportedPoints := supportedPointsList.addU8LengthPrefixed()
+		supportedPoints.addBytes(m.supportedPoints)
+	}
+	if len(m.supportedCurves) > 0 {
+		// https://tools.ietf.org/html/draft-ietf-tls-tls13-18#section-4.2.4
+		extensions.addU16(extensionSupportedCurves)
+		supportedCurvesList := extensions.addU16LengthPrefixed()
+		supportedCurves := supportedCurvesList.addU16LengthPrefixed()
+		for _, curve := range m.supportedCurves {
+			supportedCurves.addU16(uint16(curve))
+		}
+	}
+	if m.hasEarlyData {
+		extensions.addU16(extensionEarlyData)
+		extensions.addBytes([]byte{0, 0})
+	}
+	if m.serverNameAck {
+		extensions.addU16(extensionServerName)
+		extensions.addU16(0) // zero length
+	}
 }
 
-func (m *serverExtensions) unmarshal(data []byte, version uint16) bool {
+func (m *serverExtensions) unmarshal(data byteReader, version uint16) bool {
 	// Reset all fields.
 	*m = serverExtensions{}
 
-	for len(data) != 0 {
-		if len(data) < 4 {
+	for len(data) > 0 {
+		var extension uint16
+		var body byteReader
+		if !data.readU16(&extension) ||
+			!data.readU16LengthPrefixed(&body) {
 			return false
 		}
-		extension := uint16(data[0])<<8 | uint16(data[1])
-		length := int(data[2])<<8 | int(data[3])
-		data = data[4:]
-		if len(data) < length {
-			return false
-		}
-
 		switch extension {
 		case extensionNextProtoNeg:
 			m.nextProtoNeg = true
-			d := data[:length]
-			for len(d) > 0 {
-				l := int(d[0])
-				d = d[1:]
-				if l == 0 || l > len(d) {
+			for len(body) > 0 {
+				var protocol []byte
+				if !body.readU8LengthPrefixedBytes(&protocol) {
 					return false
 				}
-				m.nextProtos = append(m.nextProtos, string(d[:l]))
-				d = d[l:]
+				m.nextProtos = append(m.nextProtos, string(protocol))
 			}
 		case extensionStatusRequest:
-			if version >= VersionTLS13 {
-				if length < 4 {
-					return false
-				}
-				d := data[:length]
-				if d[0] != statusTypeOCSP {
-					return false
-				}
-				respLen := int(d[1])<<16 | int(d[2])<<8 | int(d[3])
-				if respLen+4 != len(d) || respLen == 0 {
-					return false
-				}
-				m.ocspResponse = d[4:]
-			} else {
-				if length > 0 {
-					return false
-				}
-				m.ocspStapling = true
+			if len(body) != 0 {
+				return false
 			}
+			m.ocspStapling = true
 		case extensionSessionTicket:
-			if length > 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.ticketSupported = true
 		case extensionRenegotiationInfo:
-			if length < 1 || length != int(data[0])+1 {
+			if !body.readU8LengthPrefixedBytes(&m.secureRenegotiation) || len(body) != 0 {
 				return false
 			}
-			m.secureRenegotiation = data[1:length]
 		case extensionALPN:
-			d := data[:length]
-			if len(d) < 3 {
+			var protocols, protocol byteReader
+			if !body.readU16LengthPrefixed(&protocols) ||
+				len(body) != 0 ||
+				!protocols.readU8LengthPrefixed(&protocol) ||
+				len(protocols) != 0 {
 				return false
 			}
-			l := int(d[0])<<8 | int(d[1])
-			if l != len(d)-2 {
-				return false
-			}
-			d = d[2:]
-			l = int(d[0])
-			if l != len(d)-1 {
-				return false
-			}
-			d = d[1:]
-			m.alpnProtocol = string(d)
-			m.alpnProtocolEmpty = len(d) == 0
+			m.alpnProtocol = string(protocol)
+			m.alpnProtocolEmpty = len(protocol) == 0
 		case extensionChannelID:
-			if length > 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.channelIDRequested = true
 		case extensionExtendedMasterSecret:
-			if length != 0 {
+			if len(body) != 0 {
 				return false
 			}
 			m.extendedMasterSecret = true
 		case extensionUseSRTP:
-			if length < 2+2+1 {
+			var profiles, mki byteReader
+			if !body.readU16LengthPrefixed(&profiles) ||
+				!profiles.readU16(&m.srtpProtectionProfile) ||
+				len(profiles) != 0 ||
+				!body.readU8LengthPrefixed(&mki) ||
+				len(body) != 0 {
 				return false
 			}
-			if data[0] != 0 || data[1] != 2 {
-				return false
-			}
-			m.srtpProtectionProfile = uint16(data[2])<<8 | uint16(data[3])
-			d := data[4:length]
-			l := int(d[0])
-			if l != len(d)-1 {
-				return false
-			}
-			m.srtpMasterKeyIdentifier = string(d[1:])
+			m.srtpMasterKeyIdentifier = string(mki)
 		case extensionSignedCertificateTimestamp:
-			m.sctList = data[:length]
+			m.sctList = []byte(body)
 		case extensionCustom:
-			m.customExtension = string(data[:length])
+			m.customExtension = string(body)
 		case extensionServerName:
-			if length != 0 {
+			if len(body) != 0 {
 				return false
 			}
-			// Ignore this extension from the server.
+			m.serverNameAck = true
 		case extensionSupportedPoints:
 			// supported_points is illegal in TLS 1.3.
 			if version >= VersionTLS13 {
 				return false
 			}
-			// Ignore this extension from the server.
+			// http://tools.ietf.org/html/rfc4492#section-5.5.2
+			if !body.readU8LengthPrefixedBytes(&m.supportedPoints) || len(body) != 0 {
+				return false
+			}
 		case extensionSupportedCurves:
 			// The server can only send supported_curves in TLS 1.3.
 			if version < VersionTLS13 {
 				return false
 			}
+		case extensionEarlyData:
+			if version < VersionTLS13 || len(body) != 0 {
+				return false
+			}
+			m.hasEarlyData = true
 		default:
 			// Unknown extensions are illegal from the server.
 			return false
 		}
-		data = data[length:]
 	}
 
 	return true
@@ -1286,6 +1353,9 @@ func (m *serverExtensions) unmarshal(data []byte, version uint16) bool {
 type helloRetryRequestMsg struct {
 	raw                 []byte
 	vers                uint16
+	isServerHello       bool
+	sessionId           []byte
+	cipherSuite         uint16
 	hasSelectedGroup    bool
 	selectedGroup       CurveID
 	cookie              []byte
@@ -1299,9 +1369,26 @@ func (m *helloRetryRequestMsg) marshal() []byte {
 	}
 
 	retryRequestMsg := newByteBuilder()
-	retryRequestMsg.addU8(typeHelloRetryRequest)
+	if isDraft22(m.vers) {
+		retryRequestMsg.addU8(typeServerHello)
+	} else {
+		retryRequestMsg.addU8(typeHelloRetryRequest)
+	}
 	retryRequest := retryRequestMsg.addU24LengthPrefixed()
-	retryRequest.addU16(m.vers)
+
+	if isDraft22(m.vers) {
+		retryRequest.addU16(VersionTLS12)
+		retryRequest.addBytes(tls13HelloRetryRequest)
+		sessionId := retryRequest.addU8LengthPrefixed()
+		sessionId.addBytes(m.sessionId)
+		retryRequest.addU16(m.cipherSuite)
+		retryRequest.addU8(0)
+	} else {
+		retryRequest.addU16(m.vers)
+		if isDraft21(m.vers) {
+			retryRequest.addU16(m.cipherSuite)
+		}
+	}
 	extensions := retryRequest.addU16LengthPrefixed()
 
 	count := 1
@@ -1310,12 +1397,18 @@ func (m *helloRetryRequestMsg) marshal() []byte {
 	}
 
 	for i := 0; i < count; i++ {
+		if isDraft22(m.vers) {
+			extensions.addU16(extensionSupportedVersions)
+			extensions.addU16(2) // Length
+			extensions.addU16(m.vers)
+		}
 		if m.hasSelectedGroup {
 			extensions.addU16(extensionKeyShare)
 			extensions.addU16(2) // length
 			extensions.addU16(uint16(m.selectedGroup))
 		}
-		if len(m.cookie) > 0 {
+		// m.cookie may be a non-nil empty slice for empty cookie tests.
+		if m.cookie != nil {
 			extensions.addU16(extensionCookie)
 			body := extensions.addU16LengthPrefixed()
 			body.addU16LengthPrefixed().addBytes(m.cookie)
@@ -1332,56 +1425,73 @@ func (m *helloRetryRequestMsg) marshal() []byte {
 
 func (m *helloRetryRequestMsg) unmarshal(data []byte) bool {
 	m.raw = data
-	if len(data) < 8 {
+	reader := byteReader(data[4:])
+	if !reader.readU16(&m.vers) {
 		return false
 	}
-	m.vers = uint16(data[4])<<8 | uint16(data[5])
-	extLen := int(data[6])<<8 | int(data[7])
-	data = data[8:]
-	if len(data) != extLen || len(data) == 0 {
+	if m.isServerHello {
+		var random []byte
+		var compressionMethod byte
+		if !reader.readBytes(&random, 32) ||
+			!reader.readU8LengthPrefixedBytes(&m.sessionId) ||
+			!reader.readU16(&m.cipherSuite) ||
+			!reader.readU8(&compressionMethod) ||
+			compressionMethod != 0 {
+			return false
+		}
+	} else if isDraft21(m.vers) && !reader.readU16(&m.cipherSuite) {
 		return false
 	}
-	for len(data) > 0 {
-		if len(data) < 4 {
+	var extensions byteReader
+	if !reader.readU16LengthPrefixed(&extensions) || len(reader) != 0 {
+		return false
+	}
+	for len(extensions) > 0 {
+		var extension uint16
+		var body byteReader
+		if !extensions.readU16(&extension) ||
+			!extensions.readU16LengthPrefixed(&body) {
 			return false
 		}
-		extension := uint16(data[0])<<8 | uint16(data[1])
-		length := int(data[2])<<8 | int(data[3])
-		data = data[4:]
-		if len(data) < length {
-			return false
-		}
-
 		switch extension {
+		case extensionSupportedVersions:
+			if !m.isServerHello ||
+				!body.readU16(&m.vers) ||
+				len(body) != 0 {
+				return false
+			}
 		case extensionKeyShare:
-			if length != 2 {
+			var v uint16
+			if !body.readU16(&v) || len(body) != 0 {
 				return false
 			}
 			m.hasSelectedGroup = true
-			m.selectedGroup = CurveID(data[0])<<8 | CurveID(data[1])
+			m.selectedGroup = CurveID(v)
 		case extensionCookie:
-			if length < 2 {
+			if !body.readU16LengthPrefixedBytes(&m.cookie) || len(body) != 0 {
 				return false
 			}
-			cookieLen := int(data[0])<<8 | int(data[1])
-			if 2+cookieLen != length {
-				return false
-			}
-			m.cookie = data[2 : 2+cookieLen]
 		default:
 			// Unknown extensions are illegal from the server.
 			return false
 		}
-		data = data[length:]
 	}
 	return true
+}
+
+type certificateEntry struct {
+	data                []byte
+	ocspResponse        []byte
+	sctList             []byte
+	duplicateExtensions bool
+	extraExtension      []byte
 }
 
 type certificateMsg struct {
 	raw               []byte
 	hasRequestContext bool
 	requestContext    []byte
-	certificates      [][]byte
+	certificates      []certificateEntry
 }
 
 func (m *certificateMsg) marshal() (x []byte) {
@@ -1399,7 +1509,33 @@ func (m *certificateMsg) marshal() (x []byte) {
 	certificateList := certificate.addU24LengthPrefixed()
 	for _, cert := range m.certificates {
 		certEntry := certificateList.addU24LengthPrefixed()
-		certEntry.addBytes(cert)
+		certEntry.addBytes(cert.data)
+		if m.hasRequestContext {
+			extensions := certificateList.addU16LengthPrefixed()
+			count := 1
+			if cert.duplicateExtensions {
+				count = 2
+			}
+
+			for i := 0; i < count; i++ {
+				if cert.ocspResponse != nil {
+					extensions.addU16(extensionStatusRequest)
+					body := extensions.addU16LengthPrefixed()
+					body.addU8(statusTypeOCSP)
+					response := body.addU24LengthPrefixed()
+					response.addBytes(cert.ocspResponse)
+				}
+
+				if cert.sctList != nil {
+					extensions.addU16(extensionSignedCertificateTimestamp)
+					extension := extensions.addU16LengthPrefixed()
+					extension.addBytes(cert.sctList)
+				}
+			}
+			if cert.extraExtension != nil {
+				extensions.addBytes(cert.extraExtension)
+			}
+		}
 	}
 
 	m.raw = certMsg.finish()
@@ -1407,56 +1543,52 @@ func (m *certificateMsg) marshal() (x []byte) {
 }
 
 func (m *certificateMsg) unmarshal(data []byte) bool {
-	if len(data) < 4 {
-		return false
-	}
-
 	m.raw = data
-	data = data[4:]
+	reader := byteReader(data[4:])
 
-	if m.hasRequestContext {
-		if len(data) == 0 {
-			return false
-		}
-		contextLen := int(data[0])
-		if len(data) < 1+contextLen {
-			return false
-		}
-		m.requestContext = make([]byte, contextLen)
-		copy(m.requestContext, data[1:])
-		data = data[1+contextLen:]
-	}
-
-	if len(data) < 3 {
-		return false
-	}
-	certsLen := int(data[0])<<16 | int(data[1])<<8 | int(data[2])
-	data = data[3:]
-	if len(data) != certsLen {
+	if m.hasRequestContext && !reader.readU8LengthPrefixedBytes(&m.requestContext) {
 		return false
 	}
 
-	numCerts := 0
-	d := data
-	for certsLen > 0 {
-		if len(d) < 4 {
-			return false
-		}
-		certLen := int(d[0])<<16 | int(d[1])<<8 | int(d[2])
-		if len(d) < 3+certLen {
-			return false
-		}
-		d = d[3+certLen:]
-		certsLen -= 3 + certLen
-		numCerts++
+	var certs byteReader
+	if !reader.readU24LengthPrefixed(&certs) || len(reader) != 0 {
+		return false
 	}
-
-	m.certificates = make([][]byte, numCerts)
-	d = data
-	for i := 0; i < numCerts; i++ {
-		certLen := uint32(d[0])<<16 | uint32(d[1])<<8 | uint32(d[2])
-		m.certificates[i] = d[3 : 3+certLen]
-		d = d[3+certLen:]
+	m.certificates = nil
+	for len(certs) > 0 {
+		var cert certificateEntry
+		if !certs.readU24LengthPrefixedBytes(&cert.data) {
+			return false
+		}
+		if m.hasRequestContext {
+			var extensions byteReader
+			if !certs.readU16LengthPrefixed(&extensions) {
+				return false
+			}
+			for len(extensions) > 0 {
+				var extension uint16
+				var body byteReader
+				if !extensions.readU16(&extension) ||
+					!extensions.readU16LengthPrefixed(&body) {
+					return false
+				}
+				switch extension {
+				case extensionStatusRequest:
+					var statusType byte
+					if !body.readU8(&statusType) ||
+						statusType != statusTypeOCSP ||
+						!body.readU24LengthPrefixedBytes(&cert.ocspResponse) ||
+						len(body) != 0 {
+						return false
+					}
+				case extensionSignedCertificateTimestamp:
+					cert.sctList = []byte(body)
+				default:
+					return false
+				}
+			}
+		}
+		m.certificates = append(m.certificates, cert)
 	}
 
 	return true
@@ -1681,7 +1813,8 @@ func (m *nextProtoMsg) unmarshal(data []byte) bool {
 }
 
 type certificateRequestMsg struct {
-	raw []byte
+	raw  []byte
+	vers uint16
 	// hasSignatureAlgorithm indicates whether this message includes a list
 	// of signature and hash functions. This change was introduced with TLS
 	// 1.2.
@@ -1695,6 +1828,8 @@ type certificateRequestMsg struct {
 	requestContext         []byte
 	signatureAlgorithms    []signatureAlgorithm
 	certificateAuthorities [][]byte
+	hasCAExtension         bool
+	customExtension        uint16
 }
 
 func (m *certificateRequestMsg) marshal() []byte {
@@ -1710,121 +1845,132 @@ func (m *certificateRequestMsg) marshal() []byte {
 	if m.hasRequestContext {
 		requestContext := body.addU8LengthPrefixed()
 		requestContext.addBytes(m.requestContext)
+		extensions := newByteBuilder()
+		if isDraft21(m.vers) {
+			extensions = body.addU16LengthPrefixed()
+			if m.hasSignatureAlgorithm {
+				extensions.addU16(extensionSignatureAlgorithms)
+				signatureAlgorithms := extensions.addU16LengthPrefixed().addU16LengthPrefixed()
+				for _, sigAlg := range m.signatureAlgorithms {
+					signatureAlgorithms.addU16(uint16(sigAlg))
+				}
+			}
+			if len(m.certificateAuthorities) > 0 {
+				extensions.addU16(extensionCertificateAuthorities)
+				certificateAuthorities := extensions.addU16LengthPrefixed().addU16LengthPrefixed()
+				for _, ca := range m.certificateAuthorities {
+					caEntry := certificateAuthorities.addU16LengthPrefixed()
+					caEntry.addBytes(ca)
+				}
+			}
+		} else {
+			if m.hasSignatureAlgorithm {
+				signatureAlgorithms := body.addU16LengthPrefixed()
+				for _, sigAlg := range m.signatureAlgorithms {
+					signatureAlgorithms.addU16(uint16(sigAlg))
+				}
+			}
+
+			certificateAuthorities := body.addU16LengthPrefixed()
+			for _, ca := range m.certificateAuthorities {
+				caEntry := certificateAuthorities.addU16LengthPrefixed()
+				caEntry.addBytes(ca)
+			}
+			extensions = body.addU16LengthPrefixed()
+		}
+
+		if m.customExtension > 0 {
+			extensions.addU16(m.customExtension)
+			extensions.addU16LengthPrefixed()
+		}
 	} else {
 		certificateTypes := body.addU8LengthPrefixed()
 		certificateTypes.addBytes(m.certificateTypes)
-	}
 
-	if m.hasSignatureAlgorithm {
-		signatureAlgorithms := body.addU16LengthPrefixed()
-		for _, sigAlg := range m.signatureAlgorithms {
-			signatureAlgorithms.addU16(uint16(sigAlg))
+		if m.hasSignatureAlgorithm {
+			signatureAlgorithms := body.addU16LengthPrefixed()
+			for _, sigAlg := range m.signatureAlgorithms {
+				signatureAlgorithms.addU16(uint16(sigAlg))
+			}
 		}
-	}
 
-	certificateAuthorities := body.addU16LengthPrefixed()
-	for _, ca := range m.certificateAuthorities {
-		caEntry := certificateAuthorities.addU16LengthPrefixed()
-		caEntry.addBytes(ca)
-	}
-
-	if m.hasRequestContext {
-		// Emit no certificate extensions.
-		body.addU16(0)
+		certificateAuthorities := body.addU16LengthPrefixed()
+		for _, ca := range m.certificateAuthorities {
+			caEntry := certificateAuthorities.addU16LengthPrefixed()
+			caEntry.addBytes(ca)
+		}
 	}
 
 	m.raw = builder.finish()
 	return m.raw
 }
 
+func parseCAs(reader *byteReader, out *[][]byte) bool {
+	var cas byteReader
+	if !reader.readU16LengthPrefixed(&cas) {
+		return false
+	}
+	for len(cas) > 0 {
+		var ca []byte
+		if !cas.readU16LengthPrefixedBytes(&ca) {
+			return false
+		}
+		*out = append(*out, ca)
+	}
+	return true
+}
+
 func (m *certificateRequestMsg) unmarshal(data []byte) bool {
 	m.raw = data
+	reader := byteReader(data[4:])
 
-	if len(data) < 5 {
-		return false
-	}
-	data = data[4:]
-
-	if m.hasRequestContext {
-		contextLen := int(data[0])
-		if len(data) < 1+contextLen {
+	if isDraft21(m.vers) {
+		var extensions byteReader
+		if !reader.readU8LengthPrefixedBytes(&m.requestContext) ||
+			!reader.readU16LengthPrefixed(&extensions) ||
+			len(reader) != 0 {
 			return false
 		}
-		m.requestContext = make([]byte, contextLen)
-		copy(m.requestContext, data[1:])
-		data = data[1+contextLen:]
-	} else {
-		numCertTypes := int(data[0])
-		if len(data) < 1+numCertTypes {
+		for len(extensions) > 0 {
+			var extension uint16
+			var body byteReader
+			if !extensions.readU16(&extension) ||
+				!extensions.readU16LengthPrefixed(&body) {
+				return false
+			}
+			switch extension {
+			case extensionSignatureAlgorithms:
+				if !parseSignatureAlgorithms(&body, &m.signatureAlgorithms) || len(body) != 0 {
+					return false
+				}
+			case extensionCertificateAuthorities:
+				if !parseCAs(&body, &m.certificateAuthorities) || len(body) != 0 {
+					return false
+				}
+				m.hasCAExtension = true
+			}
+		}
+	} else if m.hasRequestContext {
+		var extensions byteReader
+		if !reader.readU8LengthPrefixedBytes(&m.requestContext) ||
+			!parseSignatureAlgorithms(&reader, &m.signatureAlgorithms) ||
+			!parseCAs(&reader, &m.certificateAuthorities) ||
+			!reader.readU16LengthPrefixed(&extensions) ||
+			len(reader) != 0 {
 			return false
 		}
-		m.certificateTypes = make([]byte, numCertTypes)
-		copy(m.certificateTypes, data[1:])
-		data = data[1+numCertTypes:]
-	}
-
-	if m.hasSignatureAlgorithm {
-		if len(data) < 2 {
-			return false
-		}
-		sigAlgsLen := uint16(data[0])<<8 | uint16(data[1])
-		data = data[2:]
-		if sigAlgsLen&1 != 0 {
-			return false
-		}
-		if len(data) < int(sigAlgsLen) {
-			return false
-		}
-		numSigAlgs := sigAlgsLen / 2
-		m.signatureAlgorithms = make([]signatureAlgorithm, numSigAlgs)
-		for i := range m.signatureAlgorithms {
-			m.signatureAlgorithms[i] = signatureAlgorithm(data[0])<<8 | signatureAlgorithm(data[1])
-			data = data[2:]
-		}
-	}
-
-	if len(data) < 2 {
-		return false
-	}
-	casLength := uint16(data[0])<<8 | uint16(data[1])
-	data = data[2:]
-	if len(data) < int(casLength) {
-		return false
-	}
-	cas := make([]byte, casLength)
-	copy(cas, data)
-	data = data[casLength:]
-
-	m.certificateAuthorities = nil
-	for len(cas) > 0 {
-		if len(cas) < 2 {
-			return false
-		}
-		caLen := uint16(cas[0])<<8 | uint16(cas[1])
-		cas = cas[2:]
-
-		if len(cas) < int(caLen) {
-			return false
-		}
-
-		m.certificateAuthorities = append(m.certificateAuthorities, cas[:caLen])
-		cas = cas[caLen:]
-	}
-
-	if m.hasRequestContext {
 		// Ignore certificate extensions.
-		if len(data) < 2 {
+	} else {
+		if !reader.readU8LengthPrefixedBytes(&m.certificateTypes) {
 			return false
 		}
-		extsLength := int(data[0])<<8 | int(data[1])
-		if len(data) < 2+extsLength {
+		if m.hasSignatureAlgorithm && !parseSignatureAlgorithms(&reader, &m.signatureAlgorithms) {
 			return false
 		}
-		data = data[2+extsLength:]
-	}
-
-	if len(data) > 0 {
-		return false
+		if !parseCAs(&reader, &m.certificateAuthorities) ||
+			len(reader) != 0 {
+			return false
+		}
 	}
 
 	return true
@@ -1901,14 +2047,17 @@ func (m *certificateVerifyMsg) unmarshal(data []byte) bool {
 }
 
 type newSessionTicketMsg struct {
-	raw                []byte
-	version            uint16
-	ticketLifetime     uint32
-	keModes            []byte
-	authModes          []byte
-	ticket             []byte
-	customExtension    string
-	hasGREASEExtension bool
+	raw                         []byte
+	vers                        uint16
+	isDTLS                      bool
+	ticketLifetime              uint32
+	ticketAgeAdd                uint32
+	ticketNonce                 []byte
+	ticket                      []byte
+	maxEarlyDataSize            uint32
+	customExtension             string
+	duplicateEarlyDataExtension bool
+	hasGREASEExtension          bool
 }
 
 func (m *newSessionTicketMsg) marshal() []byte {
@@ -1916,23 +2065,42 @@ func (m *newSessionTicketMsg) marshal() []byte {
 		return m.raw
 	}
 
+	version, ok := wireToVersion(m.vers, m.isDTLS)
+	if !ok {
+		panic("unknown version")
+	}
+
 	// See http://tools.ietf.org/html/rfc5077#section-3.3
 	ticketMsg := newByteBuilder()
 	ticketMsg.addU8(typeNewSessionTicket)
 	body := ticketMsg.addU24LengthPrefixed()
 	body.addU32(m.ticketLifetime)
-	if m.version >= VersionTLS13 {
-		body.addU8LengthPrefixed().addBytes(m.keModes)
-		body.addU8LengthPrefixed().addBytes(m.authModes)
+	if version >= VersionTLS13 {
+		body.addU32(m.ticketAgeAdd)
+		if isDraft21(m.vers) {
+			body.addU8LengthPrefixed().addBytes(m.ticketNonce)
+		}
 	}
 
 	ticket := body.addU16LengthPrefixed()
 	ticket.addBytes(m.ticket)
 
-	if m.version >= VersionTLS13 {
+	if version >= VersionTLS13 {
 		extensions := body.addU16LengthPrefixed()
+		if m.maxEarlyDataSize > 0 {
+			extID := extensionTicketEarlyDataInfo
+			if isDraft21(m.vers) {
+				extID = extensionEarlyData
+			}
+			extensions.addU16(extID)
+			extensions.addU16LengthPrefixed().addU32(m.maxEarlyDataSize)
+			if m.duplicateEarlyDataExtension {
+				extensions.addU16(extID)
+				extensions.addU16LengthPrefixed().addU32(m.maxEarlyDataSize)
+			}
+		}
 		if len(m.customExtension) > 0 {
-			extensions.addU16(ticketExtensionCustom)
+			extensions.addU16(extensionCustom)
 			extensions.addU16LengthPrefixed().addBytes([]byte(m.customExtension))
 		}
 	}
@@ -1944,32 +2112,32 @@ func (m *newSessionTicketMsg) marshal() []byte {
 func (m *newSessionTicketMsg) unmarshal(data []byte) bool {
 	m.raw = data
 
+	version, ok := wireToVersion(m.vers, m.isDTLS)
+	if !ok {
+		panic("unknown version")
+	}
+
 	if len(data) < 8 {
 		return false
 	}
 	m.ticketLifetime = uint32(data[4])<<24 | uint32(data[5])<<16 | uint32(data[6])<<8 | uint32(data[7])
 	data = data[8:]
 
-	if m.version >= VersionTLS13 {
-		if len(data) < 1 {
+	if version >= VersionTLS13 {
+		if len(data) < 4 {
 			return false
 		}
-		keModesLength := int(data[0])
-		if len(data)-1 < keModesLength {
-			return false
+		m.ticketAgeAdd = uint32(data[0])<<24 | uint32(data[1])<<16 | uint32(data[2])<<8 | uint32(data[3])
+		data = data[4:]
+		if isDraft21(m.vers) {
+			nonceLen := int(data[0])
+			data = data[1:]
+			if len(data) < nonceLen {
+				return false
+			}
+			m.ticketNonce = data[:nonceLen]
+			data = data[nonceLen:]
 		}
-		m.keModes = data[1 : 1+keModesLength]
-		data = data[1+keModesLength:]
-
-		if len(data) < 1 {
-			return false
-		}
-		authModesLength := int(data[0])
-		if len(data)-1 < authModesLength {
-			return false
-		}
-		m.authModes = data[1 : 1+authModesLength]
-		data = data[1+authModesLength:]
 	}
 
 	if len(data) < 2 {
@@ -1981,39 +2149,53 @@ func (m *newSessionTicketMsg) unmarshal(data []byte) bool {
 		return false
 	}
 
-	if m.version >= VersionTLS13 && ticketLen == 0 {
+	if version >= VersionTLS13 && ticketLen == 0 {
 		return false
 	}
 
 	m.ticket = data[:ticketLen]
 	data = data[ticketLen:]
 
-	if m.version >= VersionTLS13 {
+	if version >= VersionTLS13 {
 		if len(data) < 2 {
 			return false
 		}
-		extsLength := int(data[0])<<8 + int(data[1])
+
+		extensionsLength := int(data[0])<<8 | int(data[1])
 		data = data[2:]
-		if len(data) < extsLength {
+		if extensionsLength != len(data) {
 			return false
 		}
-		extensions := data[:extsLength]
-		data = data[extsLength:]
 
-		for len(extensions) > 0 {
-			if len(extensions) < 4 {
+		extID := extensionTicketEarlyDataInfo
+		if isDraft21(m.vers) {
+			extID = extensionEarlyData
+		}
+
+		for len(data) != 0 {
+			if len(data) < 4 {
 				return false
 			}
-			extValue := uint16(extensions[0])<<8 | uint16(extensions[1])
-			extLength := int(extensions[2])<<8 | int(extensions[3])
-			if len(extensions) < 4+extLength {
+			extension := uint16(data[0])<<8 | uint16(data[1])
+			length := int(data[2])<<8 | int(data[3])
+			data = data[4:]
+			if len(data) < length {
 				return false
 			}
-			extensions = extensions[4+extLength:]
 
-			if isGREASEValue(extValue) {
-				m.hasGREASEExtension = true
+			switch extension {
+			case extID:
+				if length != 4 {
+					return false
+				}
+				m.maxEarlyDataSize = uint32(data[0])<<24 | uint32(data[1])<<16 | uint32(data[2])<<8 | uint32(data[3])
+			default:
+				if isGREASEValue(extension) {
+					m.hasGREASEExtension = true
+				}
 			}
+
+			data = data[length:]
 		}
 	}
 
@@ -2189,6 +2371,25 @@ func (m *keyUpdateMsg) unmarshal(data []byte) bool {
 	return m.keyUpdateRequest == keyUpdateNotRequested || m.keyUpdateRequest == keyUpdateRequested
 }
 
+type endOfEarlyDataMsg struct {
+	nonEmpty bool
+}
+
+func (m *endOfEarlyDataMsg) marshal() []byte {
+	if m.nonEmpty {
+		return []byte{typeEndOfEarlyData, 0, 0, 1, 42}
+	}
+	return []byte{typeEndOfEarlyData, 0, 0, 0}
+}
+
+func (*endOfEarlyDataMsg) unmarshal(data []byte) bool {
+	return len(data) == 4
+}
+
+// ssl3NoCertificateMsg is a dummy message to handle SSL 3.0 using a warning
+// alert in the handshake.
+type ssl3NoCertificateMsg struct{}
+
 func eqUint16s(x, y []uint16) bool {
 	if len(x) != len(y) {
 		return false
@@ -2268,7 +2469,7 @@ func eqPSKIdentityLists(x, y []pskIdentity) bool {
 		return false
 	}
 	for i, v := range x {
-		if !bytes.Equal(y[i].keModes, v.keModes) || !bytes.Equal(y[i].authModes, v.authModes) || !bytes.Equal(y[i].ticket, v.ticket) {
+		if !bytes.Equal(y[i].ticket, v.ticket) || y[i].obfuscatedTicketAge != v.obfuscatedTicketAge {
 			return false
 		}
 	}

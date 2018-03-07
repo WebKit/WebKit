@@ -8,21 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/TestAllCodecs.h"
+#include "modules/audio_coding/test/TestAllCodecs.h"
 
 #include <cstdio>
 #include <limits>
 #include <string>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/system_wrappers/include/trace.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/test/utility.h"
+#include "rtc_base/logging.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Description of the test:
 // In this test we set up a one-way communication channel from a participant
@@ -104,8 +104,8 @@ void TestPack::reset_payload_size() {
 }
 
 TestAllCodecs::TestAllCodecs(int test_mode)
-    : acm_a_(AudioCodingModule::Create(0)),
-      acm_b_(AudioCodingModule::Create(1)),
+    : acm_a_(AudioCodingModule::Create()),
+      acm_b_(AudioCodingModule::Create()),
       channel_a_to_b_(NULL),
       test_count_(0),
       packet_size_samples_(0),
@@ -127,8 +127,7 @@ void TestAllCodecs::Perform() {
   infile_a_.Open(file_name, 32000, "rb");
 
   if (test_mode_ == 0) {
-    WEBRTC_TRACE(kTraceStateInfo, kTraceAudioCoding, -1,
-                 "---------- TestAllCodecs ----------");
+    RTC_LOG(LS_INFO) << "---------- TestAllCodecs ----------";
   }
 
   acm_a_->InitializeReceiver();
@@ -152,7 +151,6 @@ void TestAllCodecs::Perform() {
 
   // All codecs are tested for all allowed sampling frequencies, rates and
   // packet sizes.
-#ifdef WEBRTC_CODEC_G722
   if (test_mode_ != 0) {
     printf("===============================================================\n");
   }
@@ -172,7 +170,6 @@ void TestAllCodecs::Perform() {
   RegisterSendCodec('A', codec_g722, 16000, 64000, 960, 0);
   Run(channel_a_to_b_);
   outfile_b_.Close();
-#endif
 #ifdef WEBRTC_CODEC_ILBC
   if (test_mode_ != 0) {
     printf("===============================================================\n");
@@ -325,9 +322,6 @@ void TestAllCodecs::Perform() {
 
     /* Print out all codecs that were not tested in the run */
     printf("The following codecs was not included in the test:\n");
-#ifndef WEBRTC_CODEC_G722
-    printf("   G.722\n");
-#endif
 #ifndef WEBRTC_CODEC_ILBC
     printf("   iLBC\n");
 #endif

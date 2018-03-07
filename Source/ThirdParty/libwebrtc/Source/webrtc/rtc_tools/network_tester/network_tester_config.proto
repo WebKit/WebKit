@@ -1,0 +1,14 @@
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+package webrtc.network_tester.config;
+
+message NetworkTesterConfig {
+  optional int32 packet_send_interval_ms = 1;
+  optional float packet_size = 2;
+  optional int32 execution_time_ms = 3;
+}
+
+message NetworkTesterAllConfigs {
+  repeated NetworkTesterConfig configs = 1;
+}
+

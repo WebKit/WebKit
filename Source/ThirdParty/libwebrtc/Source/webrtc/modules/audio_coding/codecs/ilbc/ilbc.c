@@ -22,7 +22,7 @@
 #include "encode.h"
 #include "init_decode.h"
 #include "decode.h"
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 #include <stdlib.h>
 
 int16_t WebRtcIlbcfix_EncoderAssign(IlbcEncoderInstance** iLBC_encinst,

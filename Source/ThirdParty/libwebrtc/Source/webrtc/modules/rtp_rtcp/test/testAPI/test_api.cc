@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/test/testAPI/test_api.h"
+#include "modules/rtp_rtcp/test/testAPI/test_api.h"
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/rate_limiter.h"
-#include "webrtc/test/null_transport.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/rate_limiter.h"
+#include "test/null_transport.h"
 
 namespace webrtc {
 
@@ -48,9 +48,9 @@ bool LoopBackTransport::SendRtp(const uint8_t* data,
   if (!parser->Parse(data, len, &header)) {
     return false;
   }
-  PayloadUnion payload_specific;
-  if (!rtp_payload_registry_->GetPayloadSpecifics(header.payloadType,
-                                                  &payload_specific)) {
+  const auto pl =
+      rtp_payload_registry_->PayloadTypeToPayload(header.payloadType);
+  if (!pl) {
     return false;
   }
   const uint8_t* payload = data + header.headerLength;
@@ -58,13 +58,11 @@ bool LoopBackTransport::SendRtp(const uint8_t* data,
   const size_t payload_length = len - header.headerLength;
   receive_statistics_->IncomingPacket(header, len, false);
   return rtp_receiver_->IncomingRtpPacket(header, payload, payload_length,
-                                          payload_specific, true);
+                                          pl->typeSpecific);
 }
 
 bool LoopBackTransport::SendRtcp(const uint8_t* data, size_t len) {
-  if (rtp_rtcp_module_->IncomingRtcpPacket((const uint8_t*)data, len) < 0) {
-    return false;
-  }
+  rtp_rtcp_module_->IncomingRtcpPacket((const uint8_t*)data, len);
   return true;
 }
 
@@ -160,25 +158,6 @@ TEST_F(RtpRtcpAPITest, RtxSender) {
 
   module_->SetRtxSendStatus(kRtxRetransmitted);
   EXPECT_EQ(kRtxRetransmitted, module_->RtxSendStatus());
-}
-
-TEST_F(RtpRtcpAPITest, RtxReceiver) {
-  const uint32_t kRtxSsrc = 1;
-  const int kRtxPayloadType = 119;
-  const int kPayloadType = 100;
-  EXPECT_FALSE(rtp_payload_registry_->RtxEnabled());
-  rtp_payload_registry_->SetRtxSsrc(kRtxSsrc);
-  rtp_payload_registry_->SetRtxPayloadType(kRtxPayloadType, kPayloadType);
-  EXPECT_TRUE(rtp_payload_registry_->RtxEnabled());
-  RTPHeader rtx_header;
-  rtx_header.ssrc = kRtxSsrc;
-  rtx_header.payloadType = kRtxPayloadType;
-  EXPECT_TRUE(rtp_payload_registry_->IsRtx(rtx_header));
-  rtx_header.ssrc = 0;
-  EXPECT_FALSE(rtp_payload_registry_->IsRtx(rtx_header));
-  rtx_header.ssrc = kRtxSsrc;
-  rtx_header.payloadType = 0;
-  EXPECT_TRUE(rtp_payload_registry_->IsRtx(rtx_header));
 }
 
 }  // namespace webrtc

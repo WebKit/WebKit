@@ -13,12 +13,12 @@
  * This header file includes the VAD API calls. Specific function calls are given below.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_  // NOLINT
-#define WEBRTC_COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_
+#ifndef COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_  // NOLINT
+#define COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_
 
 #include <stddef.h>
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 typedef struct WebRtcVadInst VadInst;
 
@@ -83,4 +83,4 @@ int WebRtcVad_ValidRateAndFrameLength(int rate, size_t frame_length);
 }
 #endif
 
-#endif  // WEBRTC_COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_  // NOLINT
+#endif  // COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_  // NOLINT

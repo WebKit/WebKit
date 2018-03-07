@@ -62,9 +62,9 @@
 #include "../../crypto/internal.h"
 
 
-/* The input and output encrypted as though 64bit cfb mode is being used. The
- * extra state information to record how much of the 64bit block we have used
- * is contained in *num; */
+// The input and output encrypted as though 64bit cfb mode is being used. The
+// extra state information to record how much of the 64bit block we have used
+// is contained in *num;
 void DES_ede3_cfb64_encrypt(const uint8_t *in, uint8_t *out,
                             long length, DES_key_schedule *ks1,
                             DES_key_schedule *ks2, DES_key_schedule *ks3,
@@ -126,8 +126,8 @@ void DES_ede3_cfb64_encrypt(const uint8_t *in, uint8_t *out,
   *num = n;
 }
 
-/* This is compatible with the single key CFB-r for DES, even thought that's
- * not what EVP needs. */
+// This is compatible with the single key CFB-r for DES, even thought that's
+// not what EVP needs.
 
 void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
                           long length, DES_key_schedule *ks1,
@@ -160,8 +160,8 @@ void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
       d1 ^= ti[1];
       l2cn(d0, d1, out, n);
       out += n;
-      /* 30-08-94 - eay - changed because l>>32 and l<<32 are bad under
-       * gcc :-( */
+      // 30-08-94 - eay - changed because l>>32 and l<<32 are bad under
+      // gcc :-(
       if (num == 32) {
         v0 = v1;
         v1 = d0;
@@ -174,9 +174,9 @@ void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
         l2c(v1, iv);
         l2c(d0, iv);
         l2c(d1, iv);
-        /* shift ovec left most of the bits... */
+        // shift ovec left most of the bits...
         OPENSSL_memmove(ovec, ovec + num / 8, 8 + (num % 8 ? 1 : 0));
-        /* now the remaining bits */
+        // now the remaining bits
         if (num % 8 != 0) {
           for (i = 0; i < 8; ++i) {
             ovec[i] <<= num % 8;
@@ -196,8 +196,8 @@ void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
       DES_encrypt3(ti, ks1, ks2, ks3);
       c2ln(in, d0, d1, n);
       in += n;
-      /* 30-08-94 - eay - changed because l>>32 and l<<32 are bad under
-       * gcc :-( */
+      // 30-08-94 - eay - changed because l>>32 and l<<32 are bad under
+      // gcc :-(
       if (num == 32) {
         v0 = v1;
         v1 = d0;
@@ -210,9 +210,9 @@ void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
         l2c(v1, iv);
         l2c(d0, iv);
         l2c(d1, iv);
-        /* shift ovec left most of the bits... */
+        // shift ovec left most of the bits...
         OPENSSL_memmove(ovec, ovec + num / 8, 8 + (num % 8 ? 1 : 0));
-        /* now the remaining bits */
+        // now the remaining bits
         if (num % 8 != 0) {
           for (i = 0; i < 8; ++i) {
             ovec[i] <<= num % 8;

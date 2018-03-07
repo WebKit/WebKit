@@ -15,7 +15,7 @@
  *
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 void WebRtcSpl_AutoCorrToReflCoef(const int32_t *R, int use_order, int16_t *K)
 {

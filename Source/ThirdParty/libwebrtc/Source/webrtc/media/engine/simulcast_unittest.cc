@@ -10,8 +10,8 @@
 
 #include <string>
 
-#include "webrtc/media/engine/simulcast.h"
-#include "webrtc/test/gtest.h"
+#include "media/engine/simulcast.h"
+#include "test/gtest.h"
 
 namespace cricket {
 

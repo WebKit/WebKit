@@ -10,13 +10,13 @@
 
 #include <gtk/gtk.h>
 
-#include "webrtc/examples/peerconnection/client/conductor.h"
-#include "webrtc/examples/peerconnection/client/flagdefs.h"
-#include "webrtc/examples/peerconnection/client/linux/main_wnd.h"
-#include "webrtc/examples/peerconnection/client/peer_connection_client.h"
+#include "examples/peerconnection/client/conductor.h"
+#include "examples/peerconnection/client/flagdefs.h"
+#include "examples/peerconnection/client/linux/main_wnd.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
 
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/thread.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/thread.h"
 
 class CustomSocketServer : public rtc::PhysicalSocketServer {
  public:

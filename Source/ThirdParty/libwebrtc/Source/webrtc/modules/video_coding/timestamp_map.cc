@@ -11,8 +11,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/timestamp_map.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/timestamp_map.h"
 
 namespace webrtc {
 

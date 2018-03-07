@@ -1770,6 +1770,63 @@ void MergeUVRow_C(const uint8* src_u,
   }
 }
 
+void SplitRGBRow_C(const uint8* src_rgb,
+                   uint8* dst_r,
+                   uint8* dst_g,
+                   uint8* dst_b,
+                   int width) {
+  int x;
+  for (x = 0; x < width; ++x) {
+    dst_r[x] = src_rgb[0];
+    dst_g[x] = src_rgb[1];
+    dst_b[x] = src_rgb[2];
+    src_rgb += 3;
+  }
+}
+
+void MergeRGBRow_C(const uint8* src_r,
+                   const uint8* src_g,
+                   const uint8* src_b,
+                   uint8* dst_rgb,
+                   int width) {
+  int x;
+  for (x = 0; x < width; ++x) {
+    dst_rgb[0] = src_r[x];
+    dst_rgb[1] = src_g[x];
+    dst_rgb[2] = src_b[x];
+    dst_rgb += 3;
+  }
+}
+
+void MergeUVRow_16_C(const uint16* src_u,
+                     const uint16* src_v,
+                     uint16* dst_uv,
+                     int scale,
+                     int width) {
+  int x;
+  for (x = 0; x < width - 1; x += 2) {
+    dst_uv[0] = src_u[x] * scale;
+    dst_uv[1] = src_v[x] * scale;
+    dst_uv[2] = src_u[x + 1] * scale;
+    dst_uv[3] = src_v[x + 1] * scale;
+    dst_uv += 4;
+  }
+  if (width & 1) {
+    dst_uv[0] = src_u[width - 1] * scale;
+    dst_uv[1] = src_v[width - 1] * scale;
+  }
+}
+
+void MultiplyRow_16_C(const uint16* src_y,
+                      uint16* dst_y,
+                      int scale,
+                      int width) {
+  int x;
+  for (x = 0; x < width; ++x) {
+    dst_y[x] = src_y[x] * scale;
+  }
+}
+
 void CopyRow_C(const uint8* src, uint8* dst, int count) {
   memcpy(dst, src, count);
 }
@@ -2638,6 +2695,62 @@ void NV12ToRGB565Row_AVX2(const uint8* src_y,
   }
 }
 #endif
+
+float ScaleSumSamples_C(const float* src, float* dst, float scale, int width) {
+  float fsum = 0.f;
+  int i;
+#if defined(__clang__)
+#pragma clang loop vectorize_width(4)
+#endif
+  for (i = 0; i < width; ++i) {
+    float v = *src++;
+    fsum += v * v;
+    *dst++ = v * scale;
+  }
+  return fsum;
+}
+
+float ScaleMaxSamples_C(const float* src, float* dst, float scale, int width) {
+  float fmax = 0.f;
+  int i;
+  for (i = 0; i < width; ++i) {
+    float v = *src++;
+    float vs = v * scale;
+    fmax = (v > fmax) ? v : fmax;
+    *dst++ = vs;
+  }
+  return fmax;
+}
+
+void ScaleSamples_C(const float* src, float* dst, float scale, int width) {
+  int i;
+  for (i = 0; i < width; ++i) {
+    *dst++ = *src++ * scale;
+  }
+}
+
+void GaussRow_C(const uint32* src, uint16* dst, int width) {
+  int i;
+  for (i = 0; i < width; ++i) {
+    *dst++ =
+        (src[0] + src[1] * 4 + src[2] * 6 + src[3] * 4 + src[4] + 128) >> 8;
+    ++src;
+  }
+}
+
+// filter 5 rows with 1, 4, 6, 4, 1 coefficients to produce 1 row.
+void GaussCol_C(const uint16* src0,
+                const uint16* src1,
+                const uint16* src2,
+                const uint16* src3,
+                const uint16* src4,
+                uint32* dst,
+                int width) {
+  int i;
+  for (i = 0; i < width; ++i) {
+    *dst++ = *src0++ + *src1++ * 4 + *src2++ * 6 + *src3++ * 4 + *src4++;
+  }
+}
 
 #ifdef __cplusplus
 }  // extern "C"

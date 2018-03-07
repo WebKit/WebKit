@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_NETEQ_DECODER_ENUM_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_NETEQ_DECODER_ENUM_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_NETEQ_DECODER_ENUM_H_
+#define MODULES_AUDIO_CODING_NETEQ_NETEQ_DECODER_ENUM_H_
 
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/base/optional.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -53,4 +53,4 @@ rtc::Optional<SdpAudioFormat> NetEqDecoderToSdpAudioFormat(NetEqDecoder nd);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_NETEQ_DECODER_ENUM_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_NETEQ_DECODER_ENUM_H_

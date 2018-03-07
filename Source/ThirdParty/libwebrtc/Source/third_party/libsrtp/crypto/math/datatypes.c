@@ -9,7 +9,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2006 Cisco Systems, Inc.
+ * Copyright (c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,10 @@
 
 #ifdef HAVE_CONFIG_H
     #include <config.h>
+#endif
+
+#ifdef OPENSSL
+#include <openssl/crypto.h>
 #endif
 
 #include "datatypes.h"
@@ -458,13 +462,20 @@ octet_string_is_eq(uint8_t *a, uint8_t *b, int len) {
 }
 
 void
-octet_string_set_to_zero(uint8_t *s, int len) {
-  uint8_t *end = s + len;
+srtp_cleanse(void *s, size_t len)
+{
+  volatile unsigned char *p = (volatile unsigned char *)s;
+  while(len--) *p++ = 0;
+}
 
-  do {
-    *s = 0;
-  } while (++s < end);
-  
+void
+octet_string_set_to_zero(void *s, size_t len)
+{
+#ifdef OPENSSL
+  OPENSSL_cleanse(s, len);
+#else
+  srtp_cleanse(s, len);
+#endif
 }
 
 #ifdef TESTAPP_SOURCE

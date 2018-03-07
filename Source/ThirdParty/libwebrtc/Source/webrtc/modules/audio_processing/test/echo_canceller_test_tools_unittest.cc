@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "modules/audio_processing/test/echo_canceller_test_tools.h"
 
 #include <vector>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/random.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/random.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

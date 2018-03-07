@@ -208,7 +208,7 @@ static void ripemd160_block_data_order(uint32_t h[5], const uint8_t *data,
     c = C;
     d = D;
     e = E;
-    /* Do other half */
+    // Do other half
     A = h[0];
     B = h[1];
     C = h[2];

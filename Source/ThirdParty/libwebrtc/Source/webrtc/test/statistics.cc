@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/test/statistics.h"
+#include "test/statistics.h"
 
 #include <math.h>
 

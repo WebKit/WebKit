@@ -8,16 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include <utility>
+
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {
 constexpr uint8_t SenderReport::kPacketType;
+constexpr size_t SenderReport::kMaxNumberOfReportBlocks;
 //    Sender report (SR) (RFC 3550).
 //     0                   1                   2                   3
 //     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -51,7 +54,7 @@ bool SenderReport::Parse(const CommonHeader& packet) {
   const uint8_t report_block_count = packet.count();
   if (packet.payload_size_bytes() <
       kSenderBaseLength + report_block_count * ReportBlock::kLength) {
-    LOG(LS_WARNING) << "Packet is too small to contain all the data.";
+    RTC_LOG(LS_WARNING) << "Packet is too small to contain all the data.";
     return false;
   }
   // Read SenderReport header.
@@ -115,10 +118,20 @@ bool SenderReport::Create(uint8_t* packet,
 
 bool SenderReport::AddReportBlock(const ReportBlock& block) {
   if (report_blocks_.size() >= kMaxNumberOfReportBlocks) {
-    LOG(LS_WARNING) << "Max report blocks reached.";
+    RTC_LOG(LS_WARNING) << "Max report blocks reached.";
     return false;
   }
   report_blocks_.push_back(block);
+  return true;
+}
+
+bool SenderReport::SetReportBlocks(std::vector<ReportBlock> blocks) {
+  if (blocks.size() > kMaxNumberOfReportBlocks) {
+    RTC_LOG(LS_WARNING) << "Too many report blocks (" << blocks.size()
+                        << ") for sender report.";
+    return false;
+  }
+  report_blocks_ = std::move(blocks);
   return true;
 }
 

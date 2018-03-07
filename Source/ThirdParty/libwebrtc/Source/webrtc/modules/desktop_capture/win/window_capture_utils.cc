@@ -8,38 +8,125 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/window_capture_utils.h"
+#include "modules/desktop_capture/win/window_capture_utils.h"
+
+#include "modules/desktop_capture/win/scoped_gdi_object.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/win32.h"
 
 namespace webrtc {
 
-bool
-GetCroppedWindowRect(HWND window,
-                     DesktopRect* cropped_rect,
-                     DesktopRect* original_rect) {
+bool GetWindowRect(HWND window, DesktopRect* result) {
   RECT rect;
-  if (!GetWindowRect(window, &rect)) {
+  if (!::GetWindowRect(window, &rect)) {
     return false;
   }
-  WINDOWPLACEMENT window_placement;
-  window_placement.length = sizeof(window_placement);
-  if (!GetWindowPlacement(window, &window_placement)) {
-    return false;
-  }
-
-  *original_rect = DesktopRect::MakeLTRB(
+  *result = DesktopRect::MakeLTRB(
       rect.left, rect.top, rect.right, rect.bottom);
+  return true;
+}
 
-  if (window_placement.showCmd == SW_SHOWMAXIMIZED) {
-    DesktopSize border = DesktopSize(GetSystemMetrics(SM_CXSIZEFRAME),
-                                     GetSystemMetrics(SM_CYSIZEFRAME));
-    *cropped_rect = DesktopRect::MakeLTRB(
-        rect.left + border.width(),
-        rect.top,
-        rect.right - border.width(),
-        rect.bottom - border.height());
-  } else {
-    *cropped_rect = *original_rect;
+bool GetCroppedWindowRect(HWND window,
+                          DesktopRect* cropped_rect,
+                          DesktopRect* original_rect) {
+  DesktopRect window_rect;
+  if (!GetWindowRect(window, &window_rect)) {
+    return false;
   }
+
+  if (original_rect) {
+    *original_rect = window_rect;
+  }
+  *cropped_rect = window_rect;
+
+  bool is_maximized = false;
+  if (!IsWindowMaximized(window, &is_maximized)) {
+    return false;
+  }
+
+  // After Windows8, transparent borders will be added by OS at
+  // left/bottom/right sides of a window. If the cropped window
+  // doesn't remove these borders, the background will be exposed a bit.
+  if (rtc::IsWindows8OrLater() || is_maximized) {
+    const int width = GetSystemMetrics(SM_CXSIZEFRAME);
+    const int height = GetSystemMetrics(SM_CYSIZEFRAME);
+    cropped_rect->Extend(-width, 0, -width, -height);
+  }
+
+  return true;
+}
+
+bool GetWindowContentRect(HWND window, DesktopRect* result) {
+  if (!GetWindowRect(window, result)) {
+    return false;
+  }
+
+  RECT rect;
+  if (!::GetClientRect(window, &rect)) {
+    return false;
+  }
+
+  const int width = rect.right - rect.left;
+  // The GetClientRect() is not expected to return a larger area than
+  // GetWindowRect().
+  if (width > 0 && width < result->width()) {
+    // - GetClientRect() always set the left / top of RECT to 0. So we need to
+    //   estimate the border width from GetClientRect() and GetWindowRect().
+    // - Border width of a window varies according to the window type.
+    // - GetClientRect() excludes the title bar, which should be considered as
+    //   part of the content and included in the captured frame. So we always
+    //   estimate the border width according to the window width.
+    // - We assume a window has same border width in each side.
+    // So we shrink half of the width difference from all four sides.
+    const int shrink = ((width - result->width()) / 2);
+    // When |shrink| is negative, DesktopRect::Extend() shrinks itself.
+    result->Extend(shrink, 0, shrink, 0);
+    // Usually this should not happen, just in case we have received a strange
+    // window, which has only left and right borders.
+    if (result->height() > shrink * 2) {
+      result->Extend(0, shrink, 0, shrink);
+    }
+    RTC_DCHECK(!result->is_empty());
+  }
+
+  return true;
+}
+
+int GetWindowRegionTypeWithBoundary(HWND window, DesktopRect* result) {
+  win::ScopedGDIObject<HRGN, win::DeleteObjectTraits<HRGN>>
+      scoped_hrgn(CreateRectRgn(0, 0, 0, 0));
+  const int region_type = GetWindowRgn(window, scoped_hrgn.Get());
+
+  if (region_type == SIMPLEREGION) {
+    RECT rect;
+    GetRgnBox(scoped_hrgn.Get(), &rect);
+    *result = DesktopRect::MakeLTRB(
+        rect.left, rect.top, rect.right, rect.bottom);
+  }
+  return region_type;
+}
+
+bool GetDcSize(HDC hdc, DesktopSize* size) {
+  win::ScopedGDIObject<HGDIOBJ, win::DeleteObjectTraits<HGDIOBJ>>
+      scoped_hgdi(GetCurrentObject(hdc, OBJ_BITMAP));
+  BITMAP bitmap;
+  memset(&bitmap, 0, sizeof(BITMAP));
+  if (GetObject(scoped_hgdi.Get(), sizeof(BITMAP), &bitmap) == 0) {
+    return false;
+  }
+  size->set(bitmap.bmWidth, bitmap.bmHeight);
+  return true;
+}
+
+bool IsWindowMaximized(HWND window, bool* result) {
+  WINDOWPLACEMENT placement;
+  memset(&placement, 0, sizeof(WINDOWPLACEMENT));
+  placement.length = sizeof(WINDOWPLACEMENT);
+  if (!::GetWindowPlacement(window, &placement)) {
+    return false;
+  }
+
+  *result = (placement.showCmd == SW_SHOWMAXIMIZED);
   return true;
 }
 

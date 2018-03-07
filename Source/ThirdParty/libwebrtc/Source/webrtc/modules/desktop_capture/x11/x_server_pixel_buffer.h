@@ -10,11 +10,11 @@
 
 // Don't include this file in any .h files because it pulls in some X headers.
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_X11_X_SERVER_PIXEL_BUFFER_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_X11_X_SERVER_PIXEL_BUFFER_H_
+#ifndef MODULES_DESKTOP_CAPTURE_X11_X_SERVER_PIXEL_BUFFER_H_
+#define MODULES_DESKTOP_CAPTURE_X11_X_SERVER_PIXEL_BUFFER_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "rtc_base/constructormagic.h"
 
 #include <X11/Xutil.h>
 #include <X11/extensions/XShm.h>
@@ -39,7 +39,10 @@ class XServerPixelBuffer {
   bool is_initialized() { return window_ != 0; }
 
   // Returns the size of the window the buffer was initialized for.
-  const DesktopSize& window_size() { return window_size_; }
+  DesktopSize window_size() { return window_rect_.size(); }
+
+  // Returns the rectangle of the window the buffer was initialized for.
+  const DesktopRect& window_rect() { return window_rect_; }
 
   // Returns true if the window can be found.
   bool IsWindowValid() const;
@@ -65,7 +68,7 @@ class XServerPixelBuffer {
 
   Display* display_ = nullptr;
   Window window_ = 0;
-  DesktopSize window_size_;
+  DesktopRect window_rect_;
   XImage* x_image_ = nullptr;
   XShmSegmentInfo* shm_segment_info_ = nullptr;
   XImage* x_shm_image_ = nullptr;
@@ -78,4 +81,4 @@ class XServerPixelBuffer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_X11_X_SERVER_PIXEL_BUFFER_H_
+#endif  // MODULES_DESKTOP_CAPTURE_X11_X_SERVER_PIXEL_BUFFER_H_

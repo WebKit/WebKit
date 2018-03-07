@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_processing/util/noise_estimation.h"
+#include "modules/video_processing/util/noise_estimation.h"
 #if DISPLAYNEON
 #include <android/log.h>
 #endif

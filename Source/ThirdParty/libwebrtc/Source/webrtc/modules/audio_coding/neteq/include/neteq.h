@@ -8,20 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_INCLUDE_NETEQ_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_INCLUDE_NETEQ_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_INCLUDE_NETEQ_H_
+#define MODULES_AUDIO_CODING_NETEQ_INCLUDE_NETEQ_H_
 
 #include <string.h>  // Provide access to size_t.
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/neteq/audio_decoder_impl.h"
-#include "webrtc/typedefs.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/optional.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/neteq/neteq_decoder_enum.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -35,7 +36,6 @@ struct NetEqNetworkStatistics {
   uint16_t jitter_peaks_found;  // 1 if adding extra delay due to peaky
                                 // jitter; 0 otherwise.
   uint16_t packet_loss_rate;  // Loss rate (network + late) in Q14.
-  uint16_t packet_discard_rate;  // Late loss rate in Q14.
   uint16_t expand_rate;  // Fraction (of original stream) of synthesized
                          // audio inserted through expansion (in Q14).
   uint16_t speech_expand_rate;  // Fraction (of original stream) of synthesized
@@ -44,8 +44,10 @@ struct NetEqNetworkStatistics {
                              // expansion (in Q14).
   uint16_t accelerate_rate;  // Fraction of data removed through acceleration
                              // (in Q14).
-  uint16_t secondary_decoded_rate;  // Fraction of data coming from secondary
+  uint16_t secondary_decoded_rate;  // Fraction of data coming from FEC/RED
                                     // decoding (in Q14).
+  uint16_t secondary_discarded_rate;  // Fraction of discarded FEC/RED data (in
+                                      // Q14).
   int32_t clockdrift_ppm;  // Average clock-drift in parts-per-million
                            // (positive or negative).
   size_t added_zero_samples;  // Number of zero samples added in "off" mode.
@@ -55,6 +57,17 @@ struct NetEqNetworkStatistics {
   int median_waiting_time_ms;
   int min_waiting_time_ms;
   int max_waiting_time_ms;
+};
+
+// NetEq statistics that persist over the lifetime of the class.
+// These metrics are never reset.
+struct NetEqLifetimeStatistics {
+  // Stats below correspond to similarly-named fields in the WebRTC stats spec.
+  // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats
+  uint64_t total_samples_received = 0;
+  uint64_t concealed_samples = 0;
+  uint64_t concealment_events = 0;
+  uint64_t jitter_buffer_delay_ms = 0;
 };
 
 enum NetEqPlayoutMode {
@@ -219,6 +232,10 @@ class NetEq {
   // after the call.
   virtual int NetworkStatistics(NetEqNetworkStatistics* stats) = 0;
 
+  // Returns a copy of this class's lifetime statistics. These statistics are
+  // never reset.
+  virtual NetEqLifetimeStatistics GetLifetimeStatistics() const = 0;
+
   // Writes the current RTCP statistics to |stats|. The statistics are reset
   // and a new report period is started with the call.
   virtual void GetRtcpStatistics(RtcpStatistics* stats) = 0;
@@ -294,4 +311,4 @@ class NetEq {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_INCLUDE_NETEQ_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_INCLUDE_NETEQ_H_

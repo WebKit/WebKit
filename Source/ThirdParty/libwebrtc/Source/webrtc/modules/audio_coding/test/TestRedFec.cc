@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/TestRedFec.h"
+#include "modules/audio_coding/test/TestRedFec.h"
 
 #include <assert.h>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
+#include "modules/audio_coding/test/utility.h"
+#include "test/testsupport/fileutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #ifdef SUPPORT_RED_WB
 #undef SUPPORT_RED_WB
@@ -38,18 +38,14 @@ namespace {
   const char kNamePCMU[] = "PCMU";
   const char kNameCN[] = "CN";
   const char kNameRED[] = "RED";
-
-  // These three are only used by code #ifdeffed on WEBRTC_CODEC_G722.
-#ifdef WEBRTC_CODEC_G722
   const char kNameISAC[] = "ISAC";
   const char kNameG722[] = "G722";
   const char kNameOPUS[] = "opus";
-#endif
 }
 
 TestRedFec::TestRedFec()
-    : _acmA(AudioCodingModule::Create(0)),
-      _acmB(AudioCodingModule::Create(1)),
+    : _acmA(AudioCodingModule::Create()),
+      _acmB(AudioCodingModule::Create()),
       _channelA2B(NULL),
       _testCntr(0) {
 }
@@ -104,11 +100,6 @@ void TestRedFec::Perform() {
   Run();
   _outFileB.Close();
 
-#ifndef WEBRTC_CODEC_G722
-  EXPECT_TRUE(false);
-  printf("G722 needs to be activated to run this test\n");
-  return;
-#else
   EXPECT_EQ(0, RegisterSendCodec('A', kNameG722, 16000));
   EXPECT_EQ(0, RegisterSendCodec('A', kNameCN, 16000));
 
@@ -412,8 +403,6 @@ void TestRedFec::Perform() {
   EXPECT_FALSE(_acmA->REDStatus());
   EXPECT_EQ(0, _acmA->SetCodecFEC(false));
   EXPECT_FALSE(_acmA->CodecFEC());
-
-#endif  // defined(WEBRTC_CODEC_G722)
 }
 
 int32_t TestRedFec::SetVAD(bool enableDTX, bool enableVAD, ACMVADMode vadMode) {

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_ICESERVERPARSING_H_
-#define WEBRTC_PC_ICESERVERPARSING_H_
+#ifndef PC_ICESERVERPARSING_H_
+#define PC_ICESERVERPARSING_H_
 
 #include <vector>
 
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/api/rtcerror.h"
+#include "api/peerconnectioninterface.h"
+#include "api/rtcerror.h"
 
 namespace webrtc {
 
@@ -31,4 +31,4 @@ RTCErrorType ParseIceServers(
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_ICESERVERPARSING_H_
+#endif  // PC_ICESERVERPARSING_H_

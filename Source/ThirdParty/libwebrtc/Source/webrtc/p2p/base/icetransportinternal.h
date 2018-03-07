@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_ICETRANSPORTINTERNAL_H_
-#define WEBRTC_P2P_BASE_ICETRANSPORTINTERNAL_H_
+#ifndef P2P_BASE_ICETRANSPORTINTERNAL_H_
+#define P2P_BASE_ICETRANSPORTINTERNAL_H_
 
 #include <string>
 
-#include "webrtc/base/stringencode.h"
-#include "webrtc/p2p/base/candidate.h"
-#include "webrtc/p2p/base/candidatepairinterface.h"
-#include "webrtc/p2p/base/jseptransport.h"
-#include "webrtc/p2p/base/packettransportinternal.h"
-#include "webrtc/p2p/base/transportdescription.h"
+#include "api/candidate.h"
+#include "p2p/base/candidatepairinterface.h"
+#include "p2p/base/jseptransport.h"
+#include "p2p/base/packettransportinternal.h"
+#include "p2p/base/transportdescription.h"
+#include "rtc_base/stringencode.h"
 
 namespace webrtc {
 class MetricsObserverInterface;
@@ -47,11 +47,10 @@ enum IceProtocolType {
 // the IceTransportInterface will be split from this class.
 class IceTransportInternal : public rtc::PacketTransportInternal {
  public:
-  virtual ~IceTransportInternal(){};
+  IceTransportInternal();
+  ~IceTransportInternal() override;
 
   virtual IceTransportState GetState() const = 0;
-
-  virtual const std::string& transport_name() const = 0;
 
   virtual int component() const = 0;
 
@@ -66,14 +65,10 @@ class IceTransportInternal : public rtc::PacketTransportInternal {
   virtual void SetIceProtocolType(IceProtocolType) {}
 
   virtual void SetIceCredentials(const std::string& ice_ufrag,
-                                 const std::string& ice_pwd) {
-    SetIceParameters(IceParameters(ice_ufrag, ice_pwd, false));
-  }
+                                 const std::string& ice_pwd);
 
   virtual void SetRemoteIceCredentials(const std::string& ice_ufrag,
-                                       const std::string& ice_pwd) {
-    SetRemoteIceParameters(IceParameters(ice_ufrag, ice_pwd, false));
-  }
+                                       const std::string& ice_pwd);
 
   // The ufrag and pwd in |ice_params| must be set
   // before candidate gathering can start.
@@ -114,20 +109,13 @@ class IceTransportInternal : public rtc::PacketTransportInternal {
   sigslot::signal2<IceTransportInternal*, const Candidates&>
       SignalCandidatesRemoved;
 
-  // Deprecated by SignalSelectedCandidatePairChanged
+  // Deprecated by PacketTransportInternal::SignalNetworkRouteChanged.
   // This signal occurs when there is a change in the way that packets are
   // being routed, i.e. to a different remote location. The candidate
   // indicates where and how we are currently sending media.
+  // TODO(zhihuang): Update the Chrome remoting to use the new
+  // SignalNetworkRouteChanged.
   sigslot::signal2<IceTransportInternal*, const Candidate&> SignalRouteChange;
-
-  // Signalled when the current selected candidate pair has changed.
-  // The first parameter is the transport that signals the event.
-  // The second parameter is the new selected candidate pair. The third
-  // parameter is the last packet id sent on the previous candidate pair.
-  // The fourth parameter is a boolean which is true if the Transport
-  // is ready to send with this candidate pair.
-  sigslot::signal4<IceTransportInternal*, CandidatePairInterface*, int, bool>
-      SignalSelectedCandidatePairChanged;
 
   // Invoked when there is conflict in the ICE role between local and remote
   // agents.
@@ -138,13 +126,8 @@ class IceTransportInternal : public rtc::PacketTransportInternal {
 
   // Invoked when the transport is being destroyed.
   sigslot::signal1<IceTransportInternal*> SignalDestroyed;
-
-  // Debugging description of this transport.
-  std::string debug_name() const override {
-    return transport_name() + " " + rtc::ToString(component());
-  }
 };
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_ICETRANSPORTINTERNAL_H_
+#endif  // P2P_BASE_ICETRANSPORTINTERNAL_H_

@@ -9,6 +9,7 @@
  */
 
 #import "RTCI420TextureCache.h"
+#import "WebRTC/RTCVideoFrameBuffer.h"
 
 #if TARGET_OS_IPHONE
 #import <OpenGLES/ES3/gl.h>
@@ -123,31 +124,32 @@ static const GLsizei kNumTextures = kNumTexturesPerSet * kNumTextureSets;
 - (void)uploadFrameToTextures:(RTCVideoFrame *)frame {
   _currentTextureSet = (_currentTextureSet + 1) % kNumTextureSets;
 
-  const int chromaWidth = (frame.width + 1) / 2;
-  const int chromaHeight = (frame.height + 1) / 2;
-  if (frame.strideY != frame.width ||
-      frame.strideU != chromaWidth ||
-      frame.strideV != chromaWidth) {
-    _planeBuffer.resize(frame.width * frame.height);
+  id<RTCI420Buffer> buffer = [frame.buffer toI420];
+
+  const int chromaWidth = buffer.chromaWidth;
+  const int chromaHeight = buffer.chromaHeight;
+  if (buffer.strideY != frame.width || buffer.strideU != chromaWidth ||
+      buffer.strideV != chromaWidth) {
+    _planeBuffer.resize(buffer.width * buffer.height);
   }
 
-  [self uploadPlane:frame.dataY
+  [self uploadPlane:buffer.dataY
             texture:self.yTexture
-              width:frame.width
-             height:frame.height
-             stride:frame.strideY];
+              width:buffer.width
+             height:buffer.height
+             stride:buffer.strideY];
 
-  [self uploadPlane:frame.dataU
+  [self uploadPlane:buffer.dataU
             texture:self.uTexture
               width:chromaWidth
              height:chromaHeight
-             stride:frame.strideU];
+             stride:buffer.strideU];
 
-  [self uploadPlane:frame.dataV
+  [self uploadPlane:buffer.dataV
             texture:self.vTexture
               width:chromaWidth
              height:chromaHeight
-             stride:frame.strideV];
+             stride:buffer.strideV];
 }
 
 @end

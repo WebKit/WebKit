@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/videocommon.h"
+#include "media/base/videocommon.h"
 
 #include <limits.h>  // For INT_MAX
 #include <math.h>
 #include <sstream>
 
-#include "webrtc/base/arraysize.h"
+#include "rtc_base/arraysize.h"
 
 namespace cricket {
 

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/encode_neteq_input.h"
+#include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
 
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_conversions.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace test {
@@ -29,11 +29,11 @@ EncodeNetEqInput::EncodeNetEqInput(std::unique_ptr<Generator> generator,
 
 rtc::Optional<int64_t> EncodeNetEqInput::NextPacketTime() const {
   RTC_DCHECK(packet_data_);
-  return rtc::Optional<int64_t>(static_cast<int64_t>(packet_data_->time_ms));
+  return static_cast<int64_t>(packet_data_->time_ms);
 }
 
 rtc::Optional<int64_t> EncodeNetEqInput::NextOutputEventTime() const {
-  return rtc::Optional<int64_t>(next_output_event_ms_);
+  return next_output_event_ms_;
 }
 
 std::unique_ptr<NetEqInput::PacketData> EncodeNetEqInput::PopPacket() {
@@ -52,7 +52,7 @@ void EncodeNetEqInput::AdvanceOutputEvent() {
 
 rtc::Optional<RTPHeader> EncodeNetEqInput::NextHeader() const {
   RTC_DCHECK(packet_data_);
-  return rtc::Optional<RTPHeader>(packet_data_->header);
+  return packet_data_->header;
 }
 
 void EncodeNetEqInput::CreatePacket() {

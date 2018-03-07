@@ -343,10 +343,7 @@ int PEM_ASN1_write_bio(i2d_of_void *i2d, const char *name, BIO *bp,
     OPENSSL_cleanse(iv, sizeof(iv));
     OPENSSL_cleanse((char *)&ctx, sizeof(ctx));
     OPENSSL_cleanse(buf, PEM_BUFSIZE);
-    if (data != NULL) {
-        OPENSSL_cleanse(data, (unsigned int)dsize);
-        OPENSSL_free(data);
-    }
+    OPENSSL_free(data);
     return (ret);
 }
 
@@ -562,7 +559,6 @@ int PEM_write_bio(BIO *bp, const char *name, const char *header,
     EVP_EncodeFinal(&ctx, buf, &outl);
     if ((outl > 0) && (BIO_write(bp, (char *)buf, outl) != outl))
         goto err;
-    OPENSSL_cleanse(buf, PEM_BUFSIZE * 8);
     OPENSSL_free(buf);
     buf = NULL;
     if ((BIO_write(bp, "-----END ", 9) != 9) ||
@@ -572,7 +568,6 @@ int PEM_write_bio(BIO *bp, const char *name, const char *header,
     return (i + outl);
  err:
     if (buf) {
-        OPENSSL_cleanse(buf, PEM_BUFSIZE * 8);
         OPENSSL_free(buf);
     }
     OPENSSL_PUT_ERROR(PEM, reason);
@@ -769,13 +764,13 @@ int PEM_read_bio(BIO *bp, char **name, char **header, unsigned char **data,
 
 int PEM_def_callback(char *buf, int size, int rwflag, void *userdata)
 {
-    if (!buf || !userdata) {
+    if (!buf || !userdata || size < 0) {
         return 0;
     }
     size_t len = strlen((char *)userdata);
     if (len >= (size_t)size) {
         return 0;
     }
-    strcpy(buf, (char *)userdata);
+    BUF_strlcpy(buf, userdata, (size_t)size);
     return len;
 }

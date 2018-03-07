@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/echo_remover_metrics.h"
+#include "modules/audio_processing/aec3/echo_remover_metrics.h"
 
 #include <math.h>
 #include <algorithm>
 #include <numeric>
 
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "rtc_base/numerics/safe_minmax.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 

@@ -15,6 +15,7 @@
 #include <openssl/bytestring.h>
 
 #include <assert.h>
+#include <limits.h>
 #include <string.h>
 
 #include <openssl/mem.h>
@@ -27,7 +28,7 @@ void CBB_zero(CBB *cbb) {
 }
 
 static int cbb_init(CBB *cbb, uint8_t *buf, size_t cap) {
-  /* This assumes that |cbb| has already been zeroed. */
+  // This assumes that |cbb| has already been zeroed.
   struct cbb_buffer_st *base;
 
   base = OPENSSL_malloc(sizeof(struct cbb_buffer_st));
@@ -75,8 +76,8 @@ int CBB_init_fixed(CBB *cbb, uint8_t *buf, size_t len) {
 
 void CBB_cleanup(CBB *cbb) {
   if (cbb->base) {
-    /* Only top-level |CBB|s are cleaned up. Child |CBB|s are non-owning. They
-     * are implicitly discarded when the parent is flushed or cleaned up. */
+    // Only top-level |CBB|s are cleaned up. Child |CBB|s are non-owning. They
+    // are implicitly discarded when the parent is flushed or cleaned up.
     assert(cbb->is_top_level);
 
     if (cbb->base->can_resize) {
@@ -97,7 +98,7 @@ static int cbb_buffer_reserve(struct cbb_buffer_st *base, uint8_t **out,
 
   newlen = base->len + len;
   if (newlen < base->len) {
-    /* Overflow */
+    // Overflow
     goto err;
   }
 
@@ -137,7 +138,7 @@ static int cbb_buffer_add(struct cbb_buffer_st *base, uint8_t **out,
   if (!cbb_buffer_reserve(base, out, len)) {
     return 0;
   }
-  /* This will not overflow or |cbb_buffer_reserve| would have failed. */
+  // This will not overflow or |cbb_buffer_reserve| would have failed.
   base->len += len;
   return 1;
 }
@@ -176,7 +177,7 @@ int CBB_finish(CBB *cbb, uint8_t **out_data, size_t *out_len) {
   }
 
   if (cbb->base->can_resize && (out_data == NULL || out_len == NULL)) {
-    /* |out_data| and |out_len| can only be NULL if the CBB is fixed. */
+    // |out_data| and |out_len| can only be NULL if the CBB is fixed.
     return 0;
   }
 
@@ -191,15 +192,15 @@ int CBB_finish(CBB *cbb, uint8_t **out_data, size_t *out_len) {
   return 1;
 }
 
-/* CBB_flush recurses and then writes out any pending length prefix. The
- * current length of the underlying base is taken to be the length of the
- * length-prefixed data. */
+// CBB_flush recurses and then writes out any pending length prefix. The
+// current length of the underlying base is taken to be the length of the
+// length-prefixed data.
 int CBB_flush(CBB *cbb) {
   size_t child_start, i, len;
 
-  /* If |cbb->base| has hit an error, the buffer is in an undefined state, so
-   * fail all following calls. In particular, |cbb->child| may point to invalid
-   * memory. */
+  // If |cbb->base| has hit an error, the buffer is in an undefined state, so
+  // fail all following calls. In particular, |cbb->child| may point to invalid
+  // memory.
   if (cbb->base == NULL || cbb->base->error) {
     return 0;
   }
@@ -219,16 +220,16 @@ int CBB_flush(CBB *cbb) {
   len = cbb->base->len - child_start;
 
   if (cbb->child->pending_is_asn1) {
-    /* For ASN.1 we assume that we'll only need a single byte for the length.
-     * If that turned out to be incorrect, we have to move the contents along
-     * in order to make space. */
+    // For ASN.1 we assume that we'll only need a single byte for the length.
+    // If that turned out to be incorrect, we have to move the contents along
+    // in order to make space.
     uint8_t len_len;
     uint8_t initial_length_byte;
 
     assert (cbb->child->pending_len_len == 1);
 
     if (len > 0xfffffffe) {
-      /* Too large. */
+      // Too large.
       goto err;
     } else if (len > 0xffffff) {
       len_len = 5;
@@ -249,7 +250,7 @@ int CBB_flush(CBB *cbb) {
     }
 
     if (len_len != 1) {
-      /* We need to move the contents along in order to make space. */
+      // We need to move the contents along in order to make space.
       size_t extra_bytes = len_len - 1;
       if (!cbb_buffer_add(cbb->base, NULL, extra_bytes)) {
         goto err;
@@ -328,18 +329,47 @@ int CBB_add_u24_length_prefixed(CBB *cbb, CBB *out_contents) {
   return cbb_add_length_prefixed(cbb, out_contents, 3);
 }
 
+// add_base128_integer encodes |v| as a big-endian base-128 integer where the
+// high bit of each byte indicates where there is more data. This is the
+// encoding used in DER for both high tag number form and OID components.
+static int add_base128_integer(CBB *cbb, uint32_t v) {
+  unsigned len_len = 0;
+  unsigned copy = v;
+  while (copy > 0) {
+    len_len++;
+    copy >>= 7;
+  }
+  if (len_len == 0) {
+    len_len = 1;  // Zero is encoded with one byte.
+  }
+  for (unsigned i = len_len - 1; i < len_len; i--) {
+    uint8_t byte = (v >> (7 * i)) & 0x7f;
+    if (i != 0) {
+      // The high bit denotes whether there is more data.
+      byte |= 0x80;
+    }
+    if (!CBB_add_u8(cbb, byte)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 int CBB_add_asn1(CBB *cbb, CBB *out_contents, unsigned tag) {
-  if (tag > 0xff ||
-      (tag & 0x1f) == 0x1f) {
-    /* Long form identifier octets are not supported. Further, all current valid
-     * tag serializations are 8 bits. */
-    cbb->base->error = 1;
+  if (!CBB_flush(cbb)) {
     return 0;
   }
 
-  if (!CBB_flush(cbb) ||
-      /* |tag|'s representation matches the DER encoding. */
-      !CBB_add_u8(cbb, (uint8_t)tag)) {
+  // Split the tag into leading bits and tag number.
+  uint8_t tag_bits = (tag >> CBS_ASN1_TAG_SHIFT) & 0xe0;
+  unsigned tag_number = tag & CBS_ASN1_TAG_NUMBER_MASK;
+  if (tag_number >= 0x1f) {
+    // Set all the bits in the tag number to signal high tag number form.
+    if (!CBB_add_u8(cbb, tag_bits | 0x1f) ||
+        !add_base128_integer(cbb, tag_number)) {
+      return 0;
+    }
+  } else if (!CBB_add_u8(cbb, tag_bits | tag_number)) {
     return 0;
   }
 
@@ -451,11 +481,11 @@ int CBB_add_asn1_uint64(CBB *cbb, uint64_t value) {
     uint8_t byte = (value >> 8*(7-i)) & 0xff;
     if (!started) {
       if (byte == 0) {
-        /* Don't encode leading zeros. */
+        // Don't encode leading zeros.
         continue;
       }
-      /* If the high bit is set, add a padding byte to make it
-       * unsigned. */
+      // If the high bit is set, add a padding byte to make it
+      // unsigned.
       if ((byte & 0x80) && !CBB_add_u8(&child, 0)) {
         return 0;
       }
@@ -466,10 +496,76 @@ int CBB_add_asn1_uint64(CBB *cbb, uint64_t value) {
     }
   }
 
-  /* 0 is encoded as a single 0, not the empty string. */
+  // 0 is encoded as a single 0, not the empty string.
   if (!started && !CBB_add_u8(&child, 0)) {
     return 0;
   }
 
   return CBB_flush(cbb);
+}
+
+// parse_dotted_decimal parses one decimal component from |cbs|, where |cbs| is
+// an OID literal, e.g., "1.2.840.113554.4.1.72585". It consumes both the
+// component and the dot, so |cbs| may be passed into the function again for the
+// next value.
+static int parse_dotted_decimal(CBS *cbs, uint32_t *out) {
+  *out = 0;
+  int seen_digit = 0;
+  for (;;) {
+    // Valid terminators for a component are the end of the string or a
+    // non-terminal dot. If the string ends with a dot, this is not a valid OID
+    // string.
+    uint8_t u;
+    if (!CBS_get_u8(cbs, &u) ||
+        (u == '.' && CBS_len(cbs) > 0)) {
+      break;
+    }
+    if (u < '0' || u > '9' ||
+        // Forbid stray leading zeros.
+        (seen_digit && *out == 0) ||
+        // Check for overflow.
+        *out > UINT32_MAX / 10 ||
+        *out * 10 > UINT32_MAX - (u - '0')) {
+      return 0;
+    }
+    *out = *out * 10 + (u - '0');
+    seen_digit = 1;
+  }
+  // The empty string is not a legal OID component.
+  return seen_digit;
+}
+
+int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text, size_t len) {
+  if (!CBB_flush(cbb)) {
+    return 0;
+  }
+
+  CBS cbs;
+  CBS_init(&cbs, (const uint8_t *)text, len);
+
+  // OIDs must have at least two components.
+  uint32_t a, b;
+  if (!parse_dotted_decimal(&cbs, &a) ||
+      !parse_dotted_decimal(&cbs, &b)) {
+    return 0;
+  }
+
+  // The first component is encoded as 40 * |a| + |b|. This assumes that |a| is
+  // 0, 1, or 2 and that, when it is 0 or 1, |b| is at most 39.
+  if (a > 2 ||
+      (a < 2 && b > 39) ||
+      b > UINT32_MAX - 80 ||
+      !add_base128_integer(cbb, 40 * a + b)) {
+    return 0;
+  }
+
+  // The remaining components are encoded unmodified.
+  while (CBS_len(&cbs) > 0) {
+    if (!parse_dotted_decimal(&cbs, &a) ||
+        !add_base128_integer(cbb, a)) {
+      return 0;
+    }
+  }
+
+  return 1;
 }

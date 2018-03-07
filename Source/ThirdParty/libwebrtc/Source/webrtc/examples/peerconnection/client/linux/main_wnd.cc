@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/examples/peerconnection/client/linux/main_wnd.h"
+#include "examples/peerconnection/client/linux/main_wnd.h"
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <stddef.h>
 
 #include "libyuv/convert_from.h"
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/examples/peerconnection/client/defaults.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/stringutils.h"
+#include "api/video/i420_buffer.h"
+#include "examples/peerconnection/client/defaults.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 
 using rtc::sprintfn;
 
@@ -227,7 +227,7 @@ bool GtkMainWnd::Destroy() {
 }
 
 void GtkMainWnd::SwitchToConnectUI() {
-  LOG(INFO) << __FUNCTION__;
+  RTC_LOG(INFO) << __FUNCTION__;
 
   RTC_DCHECK(IsWindow());
   RTC_DCHECK(vbox_ == NULL);
@@ -283,7 +283,7 @@ void GtkMainWnd::SwitchToConnectUI() {
 }
 
 void GtkMainWnd::SwitchToPeerList(const Peers& peers) {
-  LOG(INFO) << __FUNCTION__;
+  RTC_LOG(INFO) << __FUNCTION__;
 
   if (!peer_list_) {
     gtk_container_set_border_width(GTK_CONTAINER(window_), 0);
@@ -320,7 +320,7 @@ void GtkMainWnd::SwitchToPeerList(const Peers& peers) {
 }
 
 void GtkMainWnd::SwitchToStreamingUI() {
-  LOG(INFO) << __FUNCTION__;
+  RTC_LOG(INFO) << __FUNCTION__;
 
   RTC_DCHECK(draw_area_ == NULL);
 

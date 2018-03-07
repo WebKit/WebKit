@@ -25,8 +25,7 @@ import tempfile
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir,
-                                        os.pardir))
+SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir))
 GENERATE_GRADLE_SCRIPT = os.path.join(SRC_DIR,
                                       'build/android/gradle/generate_gradle.py')
 GRADLEW_BIN = os.path.join(SCRIPT_DIR, 'third_party/gradle/gradlew')
@@ -61,10 +60,15 @@ def main():
   project_dir = os.path.abspath(project_dir)
 
   try:
+    env = os.environ.copy()
+    env['PATH'] = os.pathsep.join([
+        os.path.join(SRC_DIR, 'third_party', 'depot_tools'), env.get('PATH', '')
+    ])
     _RunCommand([GENERATE_GRADLE_SCRIPT, '--output-directory', output_dir,
-        '--target', '//webrtc/examples:AppRTCMobile',
+        '--target', '//examples:AppRTCMobile',
         '--project-dir', project_dir,
-        '--use-gradle-process-resources', '--split-projects'])
+        '--use-gradle-process-resources', '--split-projects'],
+        env=env)
     _RunCommand([GRADLEW_BIN, 'assembleDebug'], project_dir)
   finally:
     # Do not delete temporary directory if user specified it manually.

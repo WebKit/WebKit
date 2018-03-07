@@ -62,30 +62,15 @@ To get just the source (not buildable):
 
 ### Windows
 
-    call gn gen out/Release "--args=is_debug=false target_cpu=\"x86\""
-    call gn gen out/Debug "--args=is_debug=true target_cpu=\"x86\""
-    ninja -v -C out/Release
-    ninja -v -C out/Debug
+    call gn gen out\Release "--args=is_debug=false target_cpu=\"x64\""
+    call gn gen out\Debug "--args=is_debug=true target_cpu=\"x64\""
+    ninja -v -C out\Release
+    ninja -v -C out\Debug
 
-    call gn gen out/Release "--args=is_debug=false target_cpu=\"x64\""
-    call gn gen out/Debug "--args=is_debug=true target_cpu=\"x64\""
-    ninja -v -C out/Release
-    ninja -v -C out/Debug
-
-#### Building with clang-cl
-
-    set GYP_DEFINES=clang=1 target_arch=ia32
-    call python tools\clang\scripts\update.py
-
-    call gn gen out/Release "--args=is_debug=false is_official_build=false is_clang=true target_cpu=\"x86\""
-    call gn gen out/Debug "--args=is_debug=true is_official_build=false is_clang=true target_cpu=\"x86\""
-    ninja -v -C out/Release
-    ninja -v -C out/Debug
-
-    call gn gen out/Release "--args=is_debug=false is_official_build=false is_clang=true target_cpu=\"x64\""
-    call gn gen out/Debug "--args=is_debug=true is_official_build=false is_clang=true target_cpu=\"x64\""
-    ninja -v -C out/Release
-    ninja -v -C out/Debug
+    call gn gen out\Release "--args=is_debug=false target_cpu=\"x86\""
+    call gn gen out\Debug "--args=is_debug=true target_cpu=\"x86\""
+    ninja -v -C out\Release
+    ninja -v -C out\Debug
 
 ### macOS and Linux
 
@@ -123,17 +108,17 @@ https://code.google.com/p/chromium/wiki/AndroidBuildInstructions
 
 Add to .gclient last line: `target_os=['android'];`
 
-armv7
-
-    gn gen out/Release "--args=is_debug=false target_os=\"android\" target_cpu=\"arm\""
-    gn gen out/Debug "--args=is_debug=true target_os=\"android\" target_cpu=\"arm\""
-    ninja -v -C out/Debug libyuv_unittest
-    ninja -v -C out/Release libyuv_unittest
-
 arm64
 
     gn gen out/Release "--args=is_debug=false target_os=\"android\" target_cpu=\"arm64\""
     gn gen out/Debug "--args=is_debug=true target_os=\"android\" target_cpu=\"arm64\""
+    ninja -v -C out/Debug libyuv_unittest
+    ninja -v -C out/Release libyuv_unittest
+
+armv7
+
+    gn gen out/Release "--args=is_debug=false target_os=\"android\" target_cpu=\"arm\""
+    gn gen out/Debug "--args=is_debug=true target_os=\"android\" target_cpu=\"arm\""
     ninja -v -C out/Debug libyuv_unittest
     ninja -v -C out/Release libyuv_unittest
 
@@ -181,7 +166,7 @@ Running test with C code:
     ninja -C out/Debug libyuv
     ninja -C out/Debug libyuv_unittest
     ninja -C out/Debug compare
-    ninja -C out/Debug convert
+    ninja -C out/Debug yuvconvert
     ninja -C out/Debug psnr
     ninja -C out/Debug cpuid
 
@@ -251,16 +236,11 @@ See also https://www.ccoderun.ca/programming/2015-12-20_CrossCompiling/index.htm
 
     out\Release\libyuv_unittest.exe --gtest_catch_exceptions=0 --gtest_filter="*"
 
-### OSX
+### macOS and Linux
 
     out/Release/libyuv_unittest --gtest_filter="*"
 
-### Linux
-
-    out/Release/libyuv_unittest --gtest_filter="*"
-
-Replace --gtest_filter="*" with specific unittest to run.  May include wildcards. e.g.
-
+Replace --gtest_filter="*" with specific unittest to run.  May include wildcards.
     out/Release/libyuv_unittest --gtest_filter=*I420ToARGB_Opt
 
 ## CPU Emulator tools
@@ -275,12 +255,20 @@ Then run:
 
     ~/intelsde/sde -skx -- out/Release/libyuv_unittest --gtest_filter=**I420ToARGB_Opt
 
+### Intel Architecture Code Analyzer
+
+Inset these 2 macros into assembly code to be analyzed:
+    IACA_ASM_START
+    IACA_ASM_END
+Build the code as usual, then run iaca on the object file.
+    ~/iaca-lin64/bin/iaca.sh -reduceout -arch HSW out/Release/obj/libyuv_internal/compare_gcc.o
+
 ## Sanitizers
 
-    gn gen out/Debug "--args=is_debug=true is_asan=true"
-    ninja -v -C out/Debug
+    gn gen out/Release "--args=is_debug=false is_msan=true"
+    ninja -v -C out/Release
 
-    Sanitizers available: tsan, msan, asan, ubsan, lsan
+Sanitizers available: asan, msan, tsan, ubsan, lsan, ubsan_vptr
 
 ### Running Dr Memory memcheck for Windows
 

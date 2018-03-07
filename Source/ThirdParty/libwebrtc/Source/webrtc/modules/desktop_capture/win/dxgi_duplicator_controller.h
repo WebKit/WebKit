@@ -8,22 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
+#ifndef MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
+#define MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
 
 #include <D3DCommon.h>
 
-#include <memory>
+#include <atomic>
+#include <string>
 #include <vector>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
-#include "webrtc/modules/desktop_capture/resolution_change_detector.h"
-#include "webrtc/modules/desktop_capture/shared_desktop_frame.h"
-#include "webrtc/modules/desktop_capture/win/d3d_device.h"
-#include "webrtc/modules/desktop_capture/win/dxgi_adapter_duplicator.h"
-#include "webrtc/modules/desktop_capture/win/dxgi_context.h"
-#include "webrtc/modules/desktop_capture/win/dxgi_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/win/d3d_device.h"
+#include "modules/desktop_capture/win/display_configuration_monitor.h"
+#include "modules/desktop_capture/win/dxgi_adapter_duplicator.h"
+#include "modules/desktop_capture/win/dxgi_context.h"
+#include "modules/desktop_capture/win/dxgi_frame.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -59,26 +61,31 @@ class DxgiDuplicatorController {
 
   enum class Result {
     SUCCEEDED,
+    UNSUPPORTED_SESSION,
     FRAME_PREPARE_FAILED,
     INITIALIZATION_FAILED,
     DUPLICATION_FAILED,
     INVALID_MONITOR_ID,
   };
 
-  // Returns the singleton instance of DxgiDuplicatorController.
-  static DxgiDuplicatorController* Instance();
+  // Converts |result| into user-friendly string representation. The return
+  // value should not be used to identify error types.
+  static std::string ResultName(Result result);
 
-  // Destructs current instance. We need to make sure COM components and their
-  // containers are destructed in correct order. This function calls
-  // Deinitialize() to do the real work.
-  ~DxgiDuplicatorController();
+  // Returns the singleton instance of DxgiDuplicatorController.
+  static rtc::scoped_refptr<DxgiDuplicatorController> Instance();
+
+  // See ScreenCapturerWinDirectx::IsCurrentSessionSupported().
+  static bool IsCurrentSessionSupported();
 
   // All the following public functions implicitly call Initialize() function.
 
   // Detects whether the system supports DXGI based capturer.
   bool IsSupported();
 
-  // Returns a copy of D3dInfo composed by last Initialize() function call.
+  // Returns a copy of D3dInfo composed by last Initialize() function call. This
+  // function always copies the latest information into |info|. But once the
+  // function returns false, the information in |info| may not accurate.
   bool RetrieveD3dInfo(D3dInfo* info);
 
   // Captures current screen and writes into |frame|.
@@ -102,20 +109,41 @@ class DxgiDuplicatorController {
   // support DXGI based capturer, this function returns 0.
   int ScreenCount();
 
+  // Returns the device names of all screens on the system in utf8 encoding.
+  // These screens can be retrieved by an integer in the range of
+  // [0, output->size()). If system does not support DXGI based capturer, this
+  // function returns false.
+  bool GetDeviceNames(std::vector<std::string>* output);
+
  private:
-  // DxgiFrameContext calls private Unregister(Context*) function during
-  // destructing.
-  friend DxgiFrameContext::~DxgiFrameContext();
+  // DxgiFrameContext calls private Unregister(Context*) function in Reset().
+  friend void DxgiFrameContext::Reset();
+
+  // scoped_refptr<DxgiDuplicatorController> accesses private AddRef() and
+  // Release() functions.
+  friend class rtc::scoped_refptr<DxgiDuplicatorController>;
 
   // A private constructor to ensure consumers to use
   // DxgiDuplicatorController::Instance().
   DxgiDuplicatorController();
+
+  // Not implemented: The singleton DxgiDuplicatorController instance should not
+  // be deleted.
+  ~DxgiDuplicatorController();
+
+  // RefCountedInterface implementations.
+  void AddRef();
+  void Release();
 
   // Does the real duplication work. Setting |monitor_id| < 0 to capture entire
   // screen. This function calls Initialize(). And if the duplication failed,
   // this function calls Deinitialize() to ensure the Dxgi components can be
   // reinitialized next time.
   Result DoDuplicate(DxgiFrame* frame, int monitor_id);
+
+  // Unload all the DXGI components and releases the resources. This function
+  // wraps Deinitialize() with |lock_|.
+  void Unload();
 
   // Unregisters Context from this instance and all DxgiAdapterDuplicator(s)
   // it owns.
@@ -168,6 +196,8 @@ class DxgiDuplicatorController {
 
   int ScreenCountUnlocked() const;
 
+  void GetDeviceNamesUnlocked(std::vector<std::string>* output) const;
+
   // Returns the desktop size of the selected screen |monitor_id|. Setting
   // |monitor_id| < 0 to return the entire screen size.
   DesktopSize SelectedDesktopSize(int monitor_id) const;
@@ -185,6 +215,9 @@ class DxgiDuplicatorController {
   // DxgiAdapterDuplicator and DxgiOutputDuplicator instances are initialized.
   void TranslateRect();
 
+  // The count of references which are now "living".
+  std::atomic_int refcount_;
+
   // This lock must be locked whenever accessing any of the following objects.
   rtc::CriticalSection lock_;
 
@@ -195,9 +228,11 @@ class DxgiDuplicatorController {
   DesktopVector dpi_;
   std::vector<DxgiAdapterDuplicator> duplicators_;
   D3dInfo d3d_info_;
-  ResolutionChangeDetector resolution_change_detector_;
+  DisplayConfigurationMonitor display_configuration_monitor_;
+  // A number to indicate how many succeeded duplications have been performed.
+  uint32_t succeeded_duplications_ = 0;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_
+#endif  // MODULES_DESKTOP_CAPTURE_WIN_DXGI_DUPLICATOR_CONTROLLER_H_

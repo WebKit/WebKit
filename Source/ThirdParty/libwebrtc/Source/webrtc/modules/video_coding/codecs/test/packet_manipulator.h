@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_TEST_PACKET_MANIPULATOR_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_TEST_PACKET_MANIPULATOR_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_TEST_PACKET_MANIPULATOR_H_
+#define MODULES_VIDEO_CODING_CODECS_TEST_PACKET_MANIPULATOR_H_
 
 #include <stdlib.h>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/test/testsupport/packet_reader.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "rtc_base/criticalsection.h"
+#include "test/testsupport/packet_reader.h"
 
 namespace webrtc {
 namespace test {
@@ -24,13 +24,10 @@ namespace test {
 enum PacketLossMode {
   // Drops packets with a configured probability independently for each packet
   kUniform,
-  // Drops packets similar to uniform but when a packet is being dropped,
-  // the number of lost packets in a row is equal to the configured burst
-  // length.
+  // Drops packets similar to uniform but when a packet is being dropped, the
+  // number of lost packets in a row is equal to the configured burst length.
   kBurst
 };
-// Returns a string representation of the enum value.
-const char* PacketLossModeToStr(PacketLossMode e);
 
 // Contains configurations related to networking and simulation of
 // scenarios caused by network interference.
@@ -100,16 +97,16 @@ class PacketManipulatorImpl : public PacketManipulator {
   virtual double RandomUniform();
 
  private:
-  PacketReader* packet_reader_;
+  PacketReader* const packet_reader_;
   const NetworkingConfig& config_;
+  const bool verbose_;
   // Used to simulate a burst over several frames.
   int active_burst_packets_;
   rtc::CriticalSection critsect_;
   unsigned int random_seed_;
-  bool verbose_;
 };
 
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_TEST_PACKET_MANIPULATOR_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_TEST_PACKET_MANIPULATOR_H_

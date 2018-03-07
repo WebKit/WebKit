@@ -75,7 +75,7 @@ extern const uint32_t CAST_S_table7[256];
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_CAST_INTERNAL_H */
+#endif  // OPENSSL_HEADER_CAST_INTERNAL_H

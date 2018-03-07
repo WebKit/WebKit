@@ -8,11 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_TEST_MOCK_DATACHANNEL_H_
-#define WEBRTC_PC_TEST_MOCK_DATACHANNEL_H_
+#ifndef PC_TEST_MOCK_DATACHANNEL_H_
+#define PC_TEST_MOCK_DATACHANNEL_H_
 
-#include "webrtc/pc/datachannel.h"
-#include "webrtc/test/gmock.h"
+#include <string>
+
+#include "pc/datachannel.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -55,4 +57,4 @@ class MockDataChannel : public rtc::RefCountedObject<DataChannel> {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_TEST_MOCK_DATACHANNEL_H_
+#endif  // PC_TEST_MOCK_DATACHANNEL_H_

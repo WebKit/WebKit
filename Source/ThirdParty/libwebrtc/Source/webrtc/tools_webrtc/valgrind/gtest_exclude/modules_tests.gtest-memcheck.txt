@@ -1,0 +1,9 @@
+# Tests that are too slow.
+AudioCodingModuleTest.TestAllCodecs*
+AudioCodingModuleTest.TestEncodeDecode*
+AudioCodingModuleTest.TestFEC*
+AudioCodingModuleTest.TestIsac*
+AudioCodingModuleTest.TwoWayCommunication*
+AudioCodingModuleTest.TestStereo*
+AudioCodingModuleTest.TestVADDTX*
+FecTest.FecTest

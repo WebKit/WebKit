@@ -16,8 +16,8 @@
 #import "WebRTC/RTCLogging.h"
 #import "WebRTC/RTCVideoFrame.h"
 
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/base/checks.h"
+#include "api/video/video_rotation.h"
+#include "rtc_base/checks.h"
 
 // As defined in shaderSource.
 static NSString *const vertexFunctionName = @"vertexPassthrough";

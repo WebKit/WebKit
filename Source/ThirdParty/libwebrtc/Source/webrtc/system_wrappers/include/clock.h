@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
+#define SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
 
 #include <memory>
 
-#include "webrtc/system_wrappers/include/ntp_time.h"
-#include "webrtc/system_wrappers/include/rw_lock_wrapper.h"
-#include "webrtc/typedefs.h"
+#include "system_wrappers/include/ntp_time.h"
+#include "system_wrappers/include/rw_lock_wrapper.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -85,4 +85,4 @@ class SimulatedClock : public Clock {
 
 };  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_

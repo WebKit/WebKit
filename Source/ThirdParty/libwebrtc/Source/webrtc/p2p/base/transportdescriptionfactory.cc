@@ -8,21 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/transportdescriptionfactory.h"
+#include "p2p/base/transportdescriptionfactory.h"
 
 #include <memory>
 
-#include "webrtc/p2p/base/transportdescription.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/messagedigest.h"
-#include "webrtc/base/sslfingerprint.h"
+#include "p2p/base/transportdescription.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/messagedigest.h"
+#include "rtc_base/sslfingerprint.h"
 
 namespace cricket {
 
 TransportDescriptionFactory::TransportDescriptionFactory()
     : secure_(SEC_DISABLED) {
 }
+
+TransportDescriptionFactory::~TransportDescriptionFactory() = default;
 
 TransportDescription* TransportDescriptionFactory::CreateOffer(
     const TransportOptions& options,
@@ -61,8 +63,8 @@ TransportDescription* TransportDescriptionFactory::CreateAnswer(
     const TransportDescription* current_description) const {
   // TODO(juberti): Figure out why we get NULL offers, and fix this upstream.
   if (!offer) {
-    LOG(LS_WARNING) << "Failed to create TransportDescription answer " <<
-        "because offer is NULL";
+    RTC_LOG(LS_WARNING) << "Failed to create TransportDescription answer "
+                        << "because offer is NULL";
     return NULL;
   }
 
@@ -96,8 +98,8 @@ TransportDescription* TransportDescriptionFactory::CreateAnswer(
     }
   } else if (require_transport_attributes && secure_ == SEC_REQUIRED) {
     // We require DTLS, but the other side didn't offer it. Fail.
-    LOG(LS_WARNING) << "Failed to create TransportDescription answer "
-                       "because of incompatible security settings";
+    RTC_LOG(LS_WARNING) << "Failed to create TransportDescription answer "
+                           "because of incompatible security settings";
     return NULL;
   }
 
@@ -107,7 +109,7 @@ TransportDescription* TransportDescriptionFactory::CreateAnswer(
 bool TransportDescriptionFactory::SetSecurityInfo(
     TransportDescription* desc, ConnectionRole role) const {
   if (!certificate_) {
-    LOG(LS_ERROR) << "Cannot create identity digest with no certificate";
+    RTC_LOG(LS_ERROR) << "Cannot create identity digest with no certificate";
     return false;
   }
 
@@ -117,20 +119,6 @@ bool TransportDescriptionFactory::SetSecurityInfo(
   desc->identity_fingerprint.reset(
       rtc::SSLFingerprint::CreateFromCertificate(certificate_));
   if (!desc->identity_fingerprint) {
-    return false;
-  }
-  std::string digest_alg;
-  if (!certificate_->ssl_certificate().GetSignatureDigestAlgorithm(
-          &digest_alg)) {
-    LOG(LS_ERROR) << "Failed to retrieve the certificate's digest algorithm";
-    return false;
-  }
-
-  desc->identity_fingerprint.reset(
-      rtc::SSLFingerprint::Create(digest_alg, certificate_->identity()));
-  if (!desc->identity_fingerprint.get()) {
-    LOG(LS_ERROR) << "Failed to create identity fingerprint, alg="
-                  << digest_alg;
     return false;
   }
 

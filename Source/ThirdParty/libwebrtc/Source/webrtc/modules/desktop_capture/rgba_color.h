@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_RGBA_COLOR_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_RGBA_COLOR_H_
+#ifndef MODULES_DESKTOP_CAPTURE_RGBA_COLOR_H_
+#define MODULES_DESKTOP_CAPTURE_RGBA_COLOR_H_
 
 #include <stdint.h>
 
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_frame.h"
 
 namespace webrtc {
 
@@ -56,4 +56,4 @@ static_assert(
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_RGBA_COLOR_H_
+#endif  // MODULES_DESKTOP_CAPTURE_RGBA_COLOR_H_

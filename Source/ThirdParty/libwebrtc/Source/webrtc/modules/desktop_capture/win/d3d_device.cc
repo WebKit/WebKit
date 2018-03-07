@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/d3d_device.h"
+#include "modules/desktop_capture/win/d3d_device.h"
 
 #include <utility>
 
-#include "webrtc/base/logging.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -26,7 +26,7 @@ D3dDevice::~D3dDevice() = default;
 bool D3dDevice::Initialize(const ComPtr<IDXGIAdapter>& adapter) {
   dxgi_adapter_ = adapter;
   if (!dxgi_adapter_) {
-    LOG(LS_WARNING) << "An empty IDXGIAdapter instance has been received.";
+    RTC_LOG(LS_WARNING) << "An empty IDXGIAdapter instance has been received.";
     return false;
   }
 
@@ -38,25 +38,28 @@ bool D3dDevice::Initialize(const ComPtr<IDXGIAdapter>& adapter) {
       nullptr, 0, D3D11_SDK_VERSION, d3d_device_.GetAddressOf(), &feature_level,
       context_.GetAddressOf());
   if (error.Error() != S_OK || !d3d_device_ || !context_) {
-    LOG(LS_WARNING) << "D3D11CreateDeivce returns error "
-                    << error.ErrorMessage() << " with code " << error.Error();
+    RTC_LOG(LS_WARNING) << "D3D11CreateDeivce returns error "
+                        << error.ErrorMessage() << " with code "
+                        << error.Error();
     return false;
   }
 
   if (feature_level < D3D_FEATURE_LEVEL_11_0) {
-    LOG(LS_WARNING) << "D3D11CreateDevice returns an instance without DirectX "
-                       "11 support, level " << feature_level
-                    << ". Following initialization may fail.";
+    RTC_LOG(LS_WARNING)
+        << "D3D11CreateDevice returns an instance without DirectX "
+           "11 support, level "
+        << feature_level << ". Following initialization may fail.";
     // D3D_FEATURE_LEVEL_11_0 is not officially documented on MSDN to be a
     // requirement of Dxgi duplicator APIs.
   }
 
   error = d3d_device_.As(&dxgi_device_);
   if (error.Error() != S_OK || !dxgi_device_) {
-    LOG(LS_WARNING) << "ID3D11Device is not an implementation of IDXGIDevice, "
-                       "this usually means the system does not support DirectX "
-                       "11. Error "
-                    << error.ErrorMessage() << " with code " << error.Error();
+    RTC_LOG(LS_WARNING)
+        << "ID3D11Device is not an implementation of IDXGIDevice, "
+           "this usually means the system does not support DirectX "
+           "11. Error "
+        << error.ErrorMessage() << " with code " << error.Error();
     return false;
   }
 
@@ -69,6 +72,7 @@ std::vector<D3dDevice> D3dDevice::EnumDevices() {
   _com_error error = CreateDXGIFactory1(__uuidof(IDXGIFactory1),
       reinterpret_cast<void**>(factory.GetAddressOf()));
   if (error.Error() != S_OK || !factory) {
+    RTC_LOG(LS_WARNING) << "Cannot create IDXGIFactory1.";
     return std::vector<D3dDevice>();
   }
 
@@ -78,17 +82,16 @@ std::vector<D3dDevice> D3dDevice::EnumDevices() {
     error = factory->EnumAdapters(i, adapter.GetAddressOf());
     if (error.Error() == S_OK) {
       D3dDevice device;
-      if (!device.Initialize(adapter)) {
-        return std::vector<D3dDevice>();
+      if (device.Initialize(adapter)) {
+        result.push_back(std::move(device));
       }
-      result.push_back(std::move(device));
     } else if (error.Error() == DXGI_ERROR_NOT_FOUND) {
       break;
     } else {
-      LOG(LS_WARNING) << "IDXGIFactory1::EnumAdapters returns an unexpected "
-                         "error "
-                      << error.ErrorMessage() << " with code " << error.Error();
-      return std::vector<D3dDevice>();
+      RTC_LOG(LS_WARNING)
+          << "IDXGIFactory1::EnumAdapters returns an unexpected "
+             "error "
+          << error.ErrorMessage() << " with code " << error.Error();
     }
   }
   return result;

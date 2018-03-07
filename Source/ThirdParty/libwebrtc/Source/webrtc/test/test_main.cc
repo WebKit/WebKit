@@ -8,17 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "gflags/gflags.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/system_wrappers/include/metrics_default.h"
-#include "webrtc/test/field_trial.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/test/testsupport/trace_to_stderr.h"
+#include "rtc_base/flags.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/metrics_default.h"
+#include "test/field_trial.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 #if defined(WEBRTC_IOS)
-#include "webrtc/test/ios/test_support.h"
+#include "test/ios/test_support.h"
+
+DEFINE_string(NSTreatUnknownArgumentsAsOpen, "",
+    "Intentionally ignored flag intended for iOS simulator.");
+DEFINE_string(ApplePersistenceIgnoreState, "",
+    "Intentionally ignored flag intended for iOS simulator.");
 #endif
 
 DEFINE_bool(logs, false, "print logs to stderr");
@@ -28,6 +32,8 @@ DEFINE_string(force_fieldtrials, "",
     "E.g. running with --force_fieldtrials=WebRTC-FooFeature/Enable/"
     " will assign the group Enable to field trial WebRTC-FooFeature.");
 
+DEFINE_bool(help, false, "Print this message.");
+
 int main(int argc, char* argv[]) {
   ::testing::InitGoogleMock(&argc, argv);
 
@@ -36,19 +42,20 @@ int main(int argc, char* argv[]) {
   if (rtc::LogMessage::GetLogToDebug() > rtc::LS_INFO)
     rtc::LogMessage::LogToDebug(rtc::LS_INFO);
 
-  // AllowCommandLineParsing allows us to ignore flags passed on to us by
-  // Chromium build bots without having to explicitly disable them.
-  google::AllowCommandLineReparsing();
-  google::ParseCommandLineFlags(&argc, &argv, false);
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, false)) {
+    return 1;
+  }
+  if (FLAG_help) {
+    rtc::FlagList::Print(nullptr, false);
+    return 0;
+  }
 
   webrtc::test::SetExecutablePath(argv[0]);
-  webrtc::test::InitFieldTrialsFromString(FLAGS_force_fieldtrials);
+  std::string fieldtrials = FLAG_force_fieldtrials;
+  webrtc::test::InitFieldTrialsFromString(fieldtrials);
   webrtc::metrics::Enable();
 
-  rtc::LogMessage::SetLogToStderr(FLAGS_logs);
-  std::unique_ptr<webrtc::test::TraceToStderr> trace_to_stderr;
-  if (FLAGS_logs)
-      trace_to_stderr.reset(new webrtc::test::TraceToStderr);
+  rtc::LogMessage::SetLogToStderr(FLAG_logs);
 #if defined(WEBRTC_IOS)
   rtc::test::InitTestSuite(RUN_ALL_TESTS, argc, argv);
   rtc::test::RunTestsFromIOSApp();

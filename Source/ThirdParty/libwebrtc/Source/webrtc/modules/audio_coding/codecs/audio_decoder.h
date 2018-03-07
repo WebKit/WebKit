@@ -12,9 +12,9 @@
 // webrtc/api/audio_codecs/audio_decoder.h instead!
 // TODO(kwiberg): Remove it.
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_AUDIO_DECODER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_AUDIO_DECODER_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_AUDIO_DECODER_H_
+#define MODULES_AUDIO_CODING_CODECS_AUDIO_DECODER_H_
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder.h"
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_AUDIO_DECODER_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_AUDIO_DECODER_H_

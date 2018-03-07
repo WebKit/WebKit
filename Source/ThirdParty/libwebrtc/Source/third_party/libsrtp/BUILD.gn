@@ -13,8 +13,8 @@ declare_args() {
 config("libsrtp_config") {
   defines = [
     # Package identity
-    "PACKAGE_STRING=\"libsrtp2 2.0.0-pre\"",
-    "PACKAGE_VERSION=\"2.0.0-pre\"",
+    "PACKAGE_STRING=\"libsrtp2 2.1.0-pre\"",
+    "PACKAGE_VERSION=\"2.1.0-pre\"",
 
     # Config
     "HAVE_CONFIG_H",
@@ -70,7 +70,6 @@ static_library("libsrtp") {
   sources = [
     # includes
     "include/ekt.h",
-    "include/rtp.h",
     "include/srtp.h",
 
     # headers
@@ -92,7 +91,6 @@ static_library("libsrtp") {
     "crypto/include/rdb.h",
     "crypto/include/rdbx.h",
     "crypto/include/stat.h",
-    "include/rtp_priv.h",
     "include/srtp_priv.h",
     "include/ut_sim.h",
 
@@ -143,35 +141,40 @@ if (build_libsrtp_tests) {
         "test/getopt_s.c",
         "test/util.c",
         "test/util.h",
-        invoker.source,
-      ]
+      ] + invoker.sources
       testonly = true
     }
   }
 
   srtp_test("dtls_srtp_driver") {
-    source = "test/dtls_srtp_driver.c"
+    sources = [ "test/dtls_srtp_driver.c" ]
   }
   srtp_test("rdbx_driver") {
-    source = "test/rdbx_driver.c"
+    sources = [ "test/rdbx_driver.c" ]
   }
   srtp_test("replay_driver") {
-    source = "test/replay_driver.c"
+    sources = [ "test/replay_driver.c" ]
   }
   srtp_test("roc_driver") {
-    source = "test/roc_driver.c"
+    sources = [ "test/roc_driver.c" ]
   }
   srtp_test("srtp_driver") {
-    source = "test/srtp_driver.c"
+    sources = [ "test/srtp_driver.c" ]
+  }
+  srtp_test("test_srtp") {
+    sources = [
+      "test/cutest.h",
+      "test/test_srtp.c",
+    ]
   }
   srtp_test("cipher_driver") {
-    source = "crypto/test/cipher_driver.c"
+    sources = [ "crypto/test/cipher_driver.c" ]
   }
   srtp_test("datatypes_driver") {
-    source = "crypto/test/datatypes_driver.c"
+    sources = [ "crypto/test/datatypes_driver.c" ]
   }
   srtp_test("kernel_driver") {
-    source = "crypto/test/kernel_driver.c"
+    sources = [ "crypto/test/kernel_driver.c" ]
   }
 
   executable("rtpw") {
@@ -186,6 +189,7 @@ if (build_libsrtp_tests) {
       "include/getopt_s.h",
       "test/getopt_s.c",
       "test/rtp.c",
+      "test/rtp.h",
       "test/rtpw.c",
       "test/util.c",
       "test/util.h",
@@ -210,6 +214,16 @@ if (build_libsrtp_tests) {
     testonly = true
   }
 
+  copy("test_data") {
+    sources = [
+      "test/words.txt",
+    ]
+    outputs = [
+      "${root_out_dir}/srtp_tests/{{source_file_part}}",
+    ]
+    testonly = true
+  }
+
   group("srtp_tests") {
     deps = [
       ":cipher_driver",
@@ -221,7 +235,9 @@ if (build_libsrtp_tests) {
       ":roc_driver",
       ":rtpw",
       ":srtp_driver",
+      ":test_srtp",
       ":test_scripts",
+      ":test_data",
     ]
     testonly = true
   }

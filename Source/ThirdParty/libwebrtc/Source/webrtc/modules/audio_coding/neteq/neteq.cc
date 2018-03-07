@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/include/neteq.h"
+#include "modules/audio_coding/neteq/include/neteq.h"
 
 #include <memory>
 #include <sstream>
 
-#include "webrtc/modules/audio_coding/neteq/neteq_impl.h"
+#include "modules/audio_coding/neteq/neteq_impl.h"
 
 namespace webrtc {
 

@@ -9,15 +9,15 @@
  *
  */
 
-#include "webrtc/modules/bitrate_controller/bitrate_controller_impl.h"
+#include "modules/bitrate_controller/bitrate_controller_impl.h"
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -147,11 +147,13 @@ void BitrateControllerImpl::OnDelayBasedBweResult(
     return;
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.UpdateDelayBasedEstimate(clock_->TimeInMilliseconds(),
-                                                   result.target_bitrate_bps);
     if (result.probe) {
       bandwidth_estimation_.SetSendBitrate(result.target_bitrate_bps);
     }
+    // Since SetSendBitrate now resets the delay-based estimate, we have to call
+    // UpdateDelayBasedEstimate after SetSendBitrate.
+    bandwidth_estimation_.UpdateDelayBasedEstimate(clock_->TimeInMilliseconds(),
+                                                   result.target_bitrate_bps);
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -191,24 +193,25 @@ void BitrateControllerImpl::OnReceivedRtcpReceiverReport(
     for (const RTCPReportBlock& report_block : report_blocks) {
       std::map<uint32_t, uint32_t>::iterator seq_num_it =
           ssrc_to_last_received_extended_high_seq_num_.find(
-              report_block.sourceSSRC);
+              report_block.source_ssrc);
 
       int number_of_packets = 0;
       if (seq_num_it != ssrc_to_last_received_extended_high_seq_num_.end()) {
         number_of_packets =
-            report_block.extendedHighSeqNum - seq_num_it->second;
+            report_block.extended_highest_sequence_number - seq_num_it->second;
       }
 
-      fraction_lost_aggregate += number_of_packets * report_block.fractionLost;
+      fraction_lost_aggregate += number_of_packets * report_block.fraction_lost;
       total_number_of_packets += number_of_packets;
 
       // Update last received for this SSRC.
-      ssrc_to_last_received_extended_high_seq_num_[report_block.sourceSSRC] =
-          report_block.extendedHighSeqNum;
+      ssrc_to_last_received_extended_high_seq_num_[report_block.source_ssrc] =
+          report_block.extended_highest_sequence_number;
     }
     if (total_number_of_packets < 0) {
-      LOG(LS_WARNING) << "Received report block where extended high sequence "
-                         "number goes backwards, ignoring.";
+      RTC_LOG(LS_WARNING)
+          << "Received report block where extended high sequence "
+             "number goes backwards, ignoring.";
       return;
     }
     if (total_number_of_packets == 0)

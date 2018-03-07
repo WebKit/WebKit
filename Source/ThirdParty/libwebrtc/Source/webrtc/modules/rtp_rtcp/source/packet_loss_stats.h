@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_
+#define MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_
 
 #include <stdint.h>
 #include <set>
@@ -54,4 +54,4 @@ class PacketLossStats {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_PACKET_LOSS_STATS_H_

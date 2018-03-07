@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_H_
-#define WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_H_
+#ifndef MODULES_MEDIA_FILE_MEDIA_FILE_H_
+#define MODULES_MEDIA_FILE_MEDIA_FILE_H_
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/media_file/media_file_defines.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module.h"
+#include "modules/include/module_common_types.h"
+#include "modules/media_file/media_file_defines.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 class MediaFile : public Module
@@ -177,4 +177,4 @@ protected:
     virtual ~MediaFile() {}
 };
 }  // namespace webrtc
-#endif // WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_H_
+#endif // MODULES_MEDIA_FILE_MEDIA_FILE_H_

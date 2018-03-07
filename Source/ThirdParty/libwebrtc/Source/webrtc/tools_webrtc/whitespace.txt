@@ -1,0 +1,12 @@
+You can modify this file to create no-op changelists.
+
+Try to write something funny. And please don't add trailing whitespace.
+Whitespaces are cool, except when they're trailing. Then they're kind of
+80s.
+Here's a funny story: What do you call a root beer in a square glass? Beer!
+Holidays are coming, beware! Bought any gifts yet?
+
+Lemur was here :)
+Kjellander as well :-o
+
+Foo Bar Baz

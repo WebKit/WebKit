@@ -11,10 +11,8 @@
 package org.webrtc;
 
 import android.graphics.Point;
-import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.view.View;
-import java.nio.ByteBuffer;
 
 /**
  * Static helper functions for renderer implementations.
@@ -51,77 +49,6 @@ public class RendererCommon {
      * Release all GL resources. This needs to be done manually, otherwise resources may leak.
      */
     void release();
-  }
-
-  /**
-   * Helper class for uploading YUV bytebuffer frames to textures that handles stride > width. This
-   * class keeps an internal ByteBuffer to avoid unnecessary allocations for intermediate copies.
-   */
-  public static class YuvUploader {
-    // Intermediate copy buffer for uploading yuv frames that are not packed, i.e. stride > width.
-    // TODO(magjed): Investigate when GL_UNPACK_ROW_LENGTH is available, or make a custom shader
-    // that handles stride and compare performance with intermediate copy.
-    private ByteBuffer copyBuffer;
-    private int[] yuvTextures;
-
-    /**
-     * Upload |planes| into OpenGL textures, taking stride into consideration.
-     *
-     * @return Array of three texture indices corresponding to Y-, U-, and V-plane respectively.
-     */
-    public int[] uploadYuvData(int width, int height, int[] strides, ByteBuffer[] planes) {
-      final int[] planeWidths = new int[] {width, width / 2, width / 2};
-      final int[] planeHeights = new int[] {height, height / 2, height / 2};
-      // Make a first pass to see if we need a temporary copy buffer.
-      int copyCapacityNeeded = 0;
-      for (int i = 0; i < 3; ++i) {
-        if (strides[i] > planeWidths[i]) {
-          copyCapacityNeeded = Math.max(copyCapacityNeeded, planeWidths[i] * planeHeights[i]);
-        }
-      }
-      // Allocate copy buffer if necessary.
-      if (copyCapacityNeeded > 0
-          && (copyBuffer == null || copyBuffer.capacity() < copyCapacityNeeded)) {
-        copyBuffer = ByteBuffer.allocateDirect(copyCapacityNeeded);
-      }
-      // Make sure YUV textures are allocated.
-      if (yuvTextures == null) {
-        yuvTextures = new int[3];
-        for (int i = 0; i < 3; i++) {
-          yuvTextures[i] = GlUtil.generateTexture(GLES20.GL_TEXTURE_2D);
-        }
-      }
-      // Upload each plane.
-      for (int i = 0; i < 3; ++i) {
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, yuvTextures[i]);
-        // GLES only accepts packed data, i.e. stride == planeWidth.
-        final ByteBuffer packedByteBuffer;
-        if (strides[i] == planeWidths[i]) {
-          // Input is packed already.
-          packedByteBuffer = planes[i];
-        } else {
-          VideoRenderer.nativeCopyPlane(
-              planes[i], planeWidths[i], planeHeights[i], strides[i], copyBuffer, planeWidths[i]);
-          packedByteBuffer = copyBuffer;
-        }
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, planeWidths[i],
-            planeHeights[i], 0, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE, packedByteBuffer);
-      }
-      return yuvTextures;
-    }
-
-    /**
-     * Releases cached resources. Uploader can still be used and the resources will be reallocated
-     * on first use.
-     */
-    public void release() {
-      copyBuffer = null;
-      if (yuvTextures != null) {
-        GLES20.glDeleteTextures(3, yuvTextures, 0);
-        yuvTextures = null;
-      }
-    }
   }
 
   /**
@@ -256,6 +183,51 @@ public class RendererCommon {
     Matrix.scaleM(matrix, 0, scaleX, scaleY, 1);
     adjustOrigin(matrix);
     return matrix;
+  }
+
+  /** Converts a float[16] matrix array to android.graphics.Matrix. */
+  public static android.graphics.Matrix convertMatrixToAndroidGraphicsMatrix(float[] matrix4x4) {
+    // clang-format off
+    float[] values = {
+        matrix4x4[0 * 4 + 0], matrix4x4[1 * 4 + 0], matrix4x4[3 * 4 + 0],
+        matrix4x4[0 * 4 + 1], matrix4x4[1 * 4 + 1], matrix4x4[3 * 4 + 1],
+        matrix4x4[0 * 4 + 3], matrix4x4[1 * 4 + 3], matrix4x4[3 * 4 + 3],
+    };
+    // clang-format on
+
+    android.graphics.Matrix matrix = new android.graphics.Matrix();
+    matrix.setValues(values);
+    return matrix;
+  }
+
+  /** Converts android.graphics.Matrix to a float[16] matrix array. */
+  public static float[] convertMatrixFromAndroidGraphicsMatrix(android.graphics.Matrix matrix) {
+    float[] values = new float[9];
+    matrix.getValues(values);
+
+    // The android.graphics.Matrix looks like this:
+    // [x1 y1 w1]
+    // [x2 y2 w2]
+    // [x3 y3 w3]
+    // We want to contruct a matrix that looks like this:
+    // [x1 y1  0 w1]
+    // [x2 y2  0 w2]
+    // [ 0  0  1  0]
+    // [x3 y3  0 w3]
+    // Since it is stored in column-major order, it looks like this:
+    // [x1 x2 0 x3
+    //  y1 y2 0 y3
+    //   0  0 1  0
+    //  w1 w2 0 w3]
+    // clang-format off
+    float[] matrix4x4 = {
+        values[0 * 3 + 0],  values[1 * 3 + 0], 0,  values[2 * 3 + 0],
+        values[0 * 3 + 1],  values[1 * 3 + 1], 0,  values[2 * 3 + 1],
+        0,                  0,                 1,  0,
+        values[0 * 3 + 2],  values[1 * 3 + 2], 0,  values[2 * 3 + 2],
+    };
+    // clang-format on
+    return matrix4x4;
   }
 
   /**

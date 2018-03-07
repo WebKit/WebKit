@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ARITH_ROUTINES_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ARITH_ROUTINES_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ARITH_ROUTINES_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ARITH_ROUTINES_H_
 
 #include "structs.h"
 
@@ -43,21 +43,21 @@ int WebRtcIsac_DecLogisticMulti2(
 void WebRtcIsac_EncHistMulti(
     Bitstr *streamdata,         /* in-/output struct containing bitstream */
     const int *data,            /* input: data vector */
-    const uint16_t **cdf, /* input: array of cdf arrays */
+    const uint16_t *const *cdf, /* input: array of cdf arrays */
     const int N);               /* input: data vector length */
 
 int WebRtcIsac_DecHistBisectMulti(
     int *data,                      /* output: data vector */
     Bitstr *streamdata,             /* in-/output struct containing bitstream */
-    const uint16_t **cdf,     /* input: array of cdf arrays */
+    const uint16_t *const *cdf,     /* input: array of cdf arrays */
     const uint16_t *cdf_size, /* input: array of cdf table sizes+1 (power of two: 2^k) */
     const int N);                   /* input: data vector length */
 
 int WebRtcIsac_DecHistOneStepMulti(
     int *data,                       /* output: data vector */
     Bitstr *streamdata,              /* in-/output struct containing bitstream */
-    const uint16_t **cdf,      /* input: array of cdf arrays */
+    const uint16_t *const *cdf,      /* input: array of cdf arrays */
     const uint16_t *init_index,/* input: vector of initial cdf table search entries */
     const int N);                    /* input: data vector length */
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ARITH_ROUTINES_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ARITH_ROUTINES_H_ */

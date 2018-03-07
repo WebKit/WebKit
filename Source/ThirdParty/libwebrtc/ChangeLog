@@ -1,3 +1,247 @@
+2017-12-18  Youenn Fablet  <youenn@apple.com>
+
+        Update to libwebrtc revision 4e70a72571dd26b85c2385e9c618e343428df5d3
+        https://bugs.webkit.org/show_bug.cgi?id=180843
+
+        Reviewed by Eric Carlson.
+
+        Updated libwebrtc as follows:
+        - Boringssl
+            - https://boringssl.googlesource.com/boringssl/
+            - fc9c67599d9bdeb2e0467085133b81a8e28f77a4
+        - Libwebrtc
+            - https://webrtc.googlesource.com/src
+            - 4e70a72571dd26b85c2385e9c618e343428df5d3
+            - Libsrtp
+                - 1d45b8e599dc2db6ea3ae22dbc94a8c504652423
+                - https://chromium.googlesource.com/chromium/deps/libsrtp.git
+            - Libyuv
+                - 12c904a97c81c3ef4cab0fc8fb1f0485b4ec4e8c
+                - https://chromium.googlesource.com/libyuv/libyuv.git
+            - Usrsctp
+                - f4819e1b177f7bfdd761c147f5a649b9f1a78c06
+                - https://github.com/sctplab/usrsctp.git
+
+        Below files have been modified to adapt for WebKit.
+        Patches for various parts are kept in WebKit folder.
+        In addition to these changes, VTB codecs and factories used by WebKit
+        are now added inside libwebrtc in webrtc/sdk/WebKit.
+        Future refactoring should consolidate these files.
+
+        Not updated the following folders that are not used right now:
+        - Source/third_party/boringssl/linux-x86_64
+        - Source/third_party/boringssl/mac-x86
+        - Source/webrtc/data
+        - Source/third_party/boringssl/src/fuzz
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c:
+        * Source/third_party/usrsctp/usrsctplib/netinet/sctp_input.c:
+        (sctp_process_cookie_existing):
+        * Source/third_party/usrsctp/usrsctplib/netinet/sctp_output.c:
+        * Source/third_party/usrsctp/usrsctplib/netinet/sctp_pcb.c:
+        * Source/third_party/usrsctp/usrsctplib/user_atomic.h:
+        * Source/webrtc/api/array_view.h:
+        (rtc::impl::ArrayViewBase::ArrayViewBase):
+        * Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc:
+        * Source/webrtc/api/datachannelinterface.h:
+        (webrtc::DataChannelObserver::OnBufferedAmountChange):
+        * Source/webrtc/api/jsep.h:
+        (webrtc::SessionDescriptionInterface::RemoveCandidates):
+        * Source/webrtc/api/mediastreaminterface.h:
+        (webrtc::VideoTrackInterface::set_content_hint):
+        (webrtc::AudioSourceInterface::SetVolume):
+        (webrtc::AudioSourceInterface::RegisterAudioObserver):
+        (webrtc::AudioSourceInterface::UnregisterAudioObserver):
+        (webrtc::AudioSourceInterface::AddSink):
+        (webrtc::AudioSourceInterface::RemoveSink):
+        (webrtc::AudioTrackInterface::GetSignalLevel):
+        * Source/webrtc/api/mediatypes.cc:
+        * Source/webrtc/api/peerconnectioninterface.h:
+        (webrtc::PeerConnectionInterface::AddTransceiver):
+        (webrtc::PeerConnectionInterface::CreateSender):
+        (webrtc::PeerConnectionInterface::GetStats):
+        (webrtc::PeerConnectionInterface::CreateOffer):
+        (webrtc::PeerConnectionInterface::CreateAnswer):
+        (webrtc::PeerConnectionInterface::SetRemoteDescription):
+        (webrtc::PeerConnectionInterface::UpdateIce):
+        (webrtc::PeerConnectionInterface::SetConfiguration):
+        (webrtc::PeerConnectionInterface::RemoveIceCandidates):
+        (webrtc::PeerConnectionInterface::SetBitrateAllocationStrategy):
+        (webrtc::PeerConnectionInterface::SetAudioPlayout):
+        (webrtc::PeerConnectionInterface::SetAudioRecording):
+        (webrtc::PeerConnectionInterface::StartRtcEventLog):
+        (webrtc::PeerConnectionObserver::OnIceCandidatesRemoved):
+        (webrtc::PeerConnectionObserver::OnIceConnectionReceivingChange):
+        (webrtc::PeerConnectionObserver::OnAddTrack):
+        (webrtc::PeerConnectionObserver::OnRemoveTrack):
+        (webrtc::PeerConnectionFactoryInterface::CreateVideoSource):
+        * Source/webrtc/api/umametrics.h:
+        (webrtc::MetricsObserverInterface::IncrementEnumCounter):
+        * Source/webrtc/api/video_codecs/video_decoder.h:
+        (webrtc::DecodedImageCallback::Decoded):
+        (webrtc::DecodedImageCallback::ReceivedDecodedReferenceFrame):
+        (webrtc::DecodedImageCallback::ReceivedDecodedFrame):
+        * Source/webrtc/api/video_codecs/video_encoder.h:
+        (webrtc::EncodedImageCallback::OnDroppedFrame):
+        * Source/webrtc/common_video/include/frame_callback.h:
+        (webrtc::EncodedFrameObserver::OnEncodeTiming):
+        * Source/webrtc/common_video/video_frame_buffer.cc:
+        * Source/webrtc/logging/rtc_event_log/rtc_event_log.h:
+        (webrtc::RtcEventLog::Create):
+        * Source/webrtc/media/base/mediachannel.h:
+        (cricket::DataMediaChannel::GetStats):
+        (cricket::DataMediaChannel::OnNetworkRouteChanged):
+        * Source/webrtc/media/engine/internaldecoderfactory.cc:
+        * Source/webrtc/media/engine/internalencoderfactory.cc:
+        * Source/webrtc/modules/audio_coding/acm2/audio_coding_module.cc:
+        * Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc:
+        * Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc:
+        * Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc:
+        * Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc:
+        * Source/webrtc/modules/audio_coding/neteq/tools/neteq_test.cc:
+        * Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc:
+        * Source/webrtc/modules/audio_device/android/audio_device_template.h:
+        * Source/webrtc/modules/audio_device/android/audio_record_jni.cc:
+        * Source/webrtc/modules/audio_device/include/audio_device.h:
+        (webrtc::AudioDeviceModule::SetRecordingChannel):
+        (webrtc::AudioDeviceModule::RecordingChannel const):
+        (webrtc::AudioDeviceModule::SetRecordingSampleRate):
+        (webrtc::AudioDeviceModule::RecordingSampleRate const):
+        (webrtc::AudioDeviceModule::SetPlayoutSampleRate):
+        (webrtc::AudioDeviceModule::PlayoutSampleRate const):
+        (webrtc::AudioDeviceModule::SetLoudspeakerStatus):
+        (webrtc::AudioDeviceModule::GetLoudspeakerStatus const):
+        * Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/fake_polqa.cc:
+        * Source/webrtc/modules/audio_processing/test/wav_based_simulator.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h:
+        (webrtc::DefaultTemporalLayersChecker::BufferState::BufferState):
+        * Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h:
+        * Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h:
+        * Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h:
+        * Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h:
+        * Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h:
+        * Source/webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers.h:
+        (webrtc::TemporalLayers::FrameConfig::operator== const):
+        (webrtc::TemporalLayers::FrameConfig::operator!= const):
+        (webrtc::TemporalLayersChecker::~TemporalLayersChecker):
+        (webrtc::TemporalLayersChecker::BufferState::BufferState):
+        * Source/webrtc/modules/video_coding/codecs/vp8/test/vp8_impl_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.h:
+        * Source/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc:
+        * Source/webrtc/modules/video_coding/qp_parser.cc:
+        * Source/webrtc/modules/video_coding/video_codec_initializer.cc:
+        * Source/webrtc/ortc/ortcfactory.cc:
+        * Source/webrtc/ortc/rtpparametersconversion.cc:
+        * Source/webrtc/p2p/base/icetransportinternal.h:
+        (cricket::IceTransportInternal::SetIceProtocolType):
+        * Source/webrtc/p2p/base/port.h:
+        (cricket::Port::HandleConnectionDestroyed):
+        * Source/webrtc/p2p/base/stun.h:
+        (cricket::StunAttribute::SetOwner):
+        * Source/webrtc/p2p/base/stunrequest.h:
+        (cricket::StunRequest::Prepare):
+        (cricket::StunRequest::OnResponse):
+        (cricket::StunRequest::OnErrorResponse):
+        * Source/webrtc/rtc_base/checks.h:
+        * Source/webrtc/rtc_base/flags.cc:
+        * Source/webrtc/rtc_base/location.h:
+        * Source/webrtc/rtc_base/messagehandler.h:
+        (rtc::FunctorMessageHandler::OnMessage):
+        * Source/webrtc/rtc_base/network.h:
+        (rtc::NetworkManager::GetAnyAddressNetworks):
+        * Source/webrtc/rtc_base/numerics/safe_conversions.h:
+        (rtc::saturated_cast):
+        * Source/webrtc/rtc_base/numerics/safe_conversions_impl.h:
+        * Source/webrtc/rtc_base/opensslidentity.cc:
+        * Source/webrtc/rtc_base/sanitizer.h:
+        (rtc_AsanPoison):
+        (rtc_AsanUnpoison):
+        (rtc_MsanMarkUninitialized):
+        (rtc_MsanCheckInitialized):
+        * Source/webrtc/rtc_base/socketserver.h:
+        (rtc::SocketServer::SetMessageQueue):
+        * Source/webrtc/rtc_base/stream.h:
+        (rtc::StreamInterface::ConsumeReadData):
+        (rtc::StreamInterface::ConsumeWriteBuffer):
+        * Source/webrtc/rtc_base/stringize_macros.h:
+        * Source/webrtc/sdk/WebKit/VideoToolBoxDecoderFactory.cpp: Added.
+        (webrtc::VideoToolboxVideoDecoderFactory::~VideoToolboxVideoDecoderFactory):
+        (webrtc::VideoToolboxVideoDecoderFactory::Add):
+        (webrtc::VideoToolboxVideoDecoderFactory::Remove):
+        (webrtc::VideoToolboxVideoDecoderFactory::SetActive):
+        (webrtc::VideoToolboxVideoDecoderFactory::CreateVideoDecoder):
+        (webrtc::CreateH264Format):
+        (webrtc::VideoToolboxVideoDecoderFactory::GetSupportedFormats const):
+        * Source/webrtc/sdk/WebKit/VideoToolBoxDecoderFactory.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/VideoToolBoxDecoderFactory.h.
+        * Source/webrtc/sdk/WebKit/VideoToolBoxEncoderFactory.cpp: Added.
+        (webrtc::VideoToolboxVideoEncoderFactory::~VideoToolboxVideoEncoderFactory):
+        (webrtc::VideoToolboxVideoEncoderFactory::Add):
+        (webrtc::VideoToolboxVideoEncoderFactory::Remove):
+        (webrtc::VideoToolboxVideoEncoderFactory::SetActive):
+        (webrtc::CreateH264Format):
+        (webrtc::VideoToolboxVideoEncoderFactory::GetSupportedFormats const):
+        (webrtc::VideoToolboxVideoEncoderFactory::QueryVideoEncoder const):
+        (webrtc::VideoToolboxVideoEncoderFactory::CreateVideoEncoder):
+        * Source/webrtc/sdk/WebKit/VideoToolBoxEncoderFactory.h: Renamed from Source/WebCore/platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.h.
+        * Source/webrtc/sdk/WebKit/decoder.h: Added.
+        (webrtc::H264VideoToolboxDecoder::SetActive):
+        * Source/webrtc/sdk/WebKit/decoder.mm: Added.
+        (webrtc::H264VideoToolboxDecoder::H264VideoToolboxDecoder):
+        (webrtc::H264VideoToolboxDecoder::~H264VideoToolboxDecoder):
+        (webrtc::H264VideoToolboxDecoder::ClearFactory):
+        (webrtc::H264VideoToolboxDecoder::InitDecode):
+        (webrtc::H264VideoToolboxDecoder::Decode):
+        * Source/webrtc/sdk/WebKit/encoder.h: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.h.
+        (webrtc::H264VideoToolboxEncoder::ClearFactory):
+        (webrtc::H264VideoToolboxEncoder::SetActive):
+        * Source/webrtc/sdk/WebKit/encoder.mm: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.mm.
+        (internal::CreateCFDictionary):
+        (internal::CFStringToString):
+        (internal::SetVTSessionProperty):
+        (internal::FrameEncodeParams::FrameEncodeParams):
+        (internal::CopyVideoFrameToPixelBuffer):
+        (internal::CreatePixelBuffer):
+        (internal::VTCompressionOutputCallback):
+        (internal::ExtractProfile):
+        (webrtc::H264VideoToolboxEncoder::H264VideoToolboxEncoder):
+        (webrtc::H264VideoToolboxEncoder::~H264VideoToolboxEncoder):
+        (webrtc::H264VideoToolboxEncoder::InitEncode):
+        (webrtc::H264VideoToolboxEncoder::Encode):
+        * Source/webrtc/sdk/WebKit/encoder_vcp.h: Renamed from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.h.
+        (webrtc::H264VideoToolboxEncoderVCP::ClearFactory):
+        * Source/webrtc/sdk/WebKit/encoder_vcp.mm: Renamed from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.mm.
+        (internal::SetVTSessionProperty):
+        (internal::CopyVideoFrameToPixelBuffer):
+        (internal::CreatePixelBuffer):
+        (internal::ExtractProfile):
+        (webrtc::H264VideoToolboxEncoderVCP::H264VideoToolboxEncoderVCP):
+        (webrtc::H264VideoToolboxEncoderVCP::Encode):
+        * Source/webrtc/test/rtp_file_reader.cc:
+        * Source/webrtc/voice_engine/utility.cc:
+        * WebKit/0001-Tweaking-boringssl-include-of-internal.h.patch: Renamed from Source/ThirdParty/libwebrtc/WebKit/patch-boringssl.
+        * WebKit/0002-Fixing-usrctp-library-compilation-errors.patch: Added.
+        * WebKit/0003-Fixing-VP8-files.patch: Added.
+        * WebKit/0004-Removing-parameter-names-from-files-included-from-We.patch: Added.
+        * WebKit/0005-Fix-RTC_FATAL.patch: Added.
+        * WebKit/0006-Disabling-VP8.patch: Added.
+        * WebKit/0007-Fix-RTC_STRINGIZE.patch: Added.
+        * WebKit/0008-Fix-sanitizer.patch: Added.
+        * WebKit/patch-libwebrtc: Removed.
+        * WebKit/patch-usrsctp: Removed.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-01-27  Dan Bernstein  <mitz@apple.com>
 
         HaveInternalSDK includes should be "#include?"

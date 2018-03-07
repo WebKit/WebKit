@@ -7,13 +7,13 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_TEST_ENCODER_SETTINGS_H_
-#define WEBRTC_TEST_ENCODER_SETTINGS_H_
+#ifndef TEST_ENCODER_SETTINGS_H_
+#define TEST_ENCODER_SETTINGS_H_
 
 #include <vector>
 
-#include "webrtc/video_receive_stream.h"
-#include "webrtc/video_send_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
 
 namespace webrtc {
 namespace test {
@@ -53,4 +53,4 @@ VideoReceiveStream::Decoder CreateMatchingDecoder(
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_ENCODER_SETTINGS_H_
+#endif  // TEST_ENCODER_SETTINGS_H_

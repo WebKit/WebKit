@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/vad/vad_sp.h"
+#include "common_audio/vad/vad_sp.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/common_audio/vad/vad_core.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/checks.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/vad/vad_core.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Allpass filter coefficients, upper and lower, in Q13.
 // Upper: 0.64, Lower: 0.17.

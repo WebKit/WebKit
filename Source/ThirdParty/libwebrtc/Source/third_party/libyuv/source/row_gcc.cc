@@ -38,9 +38,8 @@ static vec8 kARGBToU = {112, -74, -38, 0, 112, -74, -38, 0,
 static vec8 kARGBToUJ = {127, -84, -43, 0, 127, -84, -43, 0,
                          127, -84, -43, 0, 127, -84, -43, 0};
 
-static vec8 kARGBToV = {
-    -18, -94, 112, 0, -18, -94, 112, 0, -18, -94, 112, 0, -18, -94, 112, 0,
-};
+static vec8 kARGBToV = {-18, -94, 112, 0, -18, -94, 112, 0,
+                        -18, -94, 112, 0, -18, -94, 112, 0};
 
 static vec8 kARGBToVJ = {-20, -107, 127, 0, -20, -107, 127, 0,
                          -20, -107, 127, 0, -20, -107, 127, 0};
@@ -2754,6 +2753,280 @@ void MergeUVRow_SSE2(const uint8* src_u,
 }
 #endif  // HAS_MERGEUVROW_SSE2
 
+// Use scale to convert lsb formats to msb, depending how many bits there are:
+// 128 = 9 bits
+// 64 = 10 bits
+// 16 = 12 bits
+// 1 = 16 bits
+#ifdef HAS_MERGEUVROW_16_AVX2
+void MergeUVRow_16_AVX2(const uint16* src_u,
+                        const uint16* src_v,
+                        uint16* dst_uv,
+                        int scale,
+                        int width) {
+  // clang-format off
+  asm volatile (
+    "vmovd      %4,%%xmm3                      \n"
+    "vpunpcklwd %%xmm3,%%xmm3,%%xmm3           \n"
+    "vbroadcastss %%xmm3,%%ymm3                \n"
+    "sub       %0,%1                           \n"
+
+    // 16 pixels per loop.
+    LABELALIGN
+    "1:                                        \n"
+    "vmovdqu   (%0),%%ymm0                     \n"
+    "vmovdqu   (%0,%1,1),%%ymm1                \n"
+    "add        $0x20,%0                       \n"
+
+    "vpmullw   %%ymm3,%%ymm0,%%ymm0            \n"
+    "vpmullw   %%ymm3,%%ymm1,%%ymm1            \n"
+    "vpunpcklwd %%ymm1,%%ymm0,%%ymm2           \n"  // mutates
+    "vpunpckhwd %%ymm1,%%ymm0,%%ymm0           \n"
+    "vextractf128 $0x0,%%ymm2,(%2)             \n"
+    "vextractf128 $0x0,%%ymm0,0x10(%2)         \n"
+    "vextractf128 $0x1,%%ymm2,0x20(%2)         \n"
+    "vextractf128 $0x1,%%ymm0,0x30(%2)         \n"
+    "add       $0x40,%2                        \n"
+    "sub       $0x10,%3                        \n"
+    "jg        1b                              \n"
+    "vzeroupper                                \n"
+  : "+r"(src_u),   // %0
+    "+r"(src_v),   // %1
+    "+r"(dst_uv),  // %2
+    "+r"(width)    // %3
+  : "r"(scale)     // %4
+  : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3");
+  // clang-format on
+}
+#endif  // HAS_MERGEUVROW_AVX2
+
+#ifdef HAS_MULTIPLYROW_16_AVX2
+void MultiplyRow_16_AVX2(const uint16* src_y,
+                         uint16* dst_y,
+                         int scale,
+                         int width) {
+  // clang-format off
+  asm volatile (
+    "vmovd      %3,%%xmm3                      \n"
+    "vpunpcklwd %%xmm3,%%xmm3,%%xmm3           \n"
+    "vbroadcastss %%xmm3,%%ymm3                \n"
+    "sub       %0,%1                           \n"
+
+    // 16 pixels per loop.
+    LABELALIGN
+    "1:                                        \n"
+    "vmovdqu   (%0),%%ymm0                     \n"
+    "vmovdqu   0x20(%0),%%ymm1                 \n"
+    "vpmullw   %%ymm3,%%ymm0,%%ymm0            \n"
+    "vpmullw   %%ymm3,%%ymm1,%%ymm1            \n"
+    "vmovdqu   %%ymm0,(%0,%1)                  \n"
+    "vmovdqu   %%ymm1,0x20(%0,%1)              \n"
+    "add        $0x40,%0                       \n"
+    "sub       $0x20,%2                        \n"
+    "jg        1b                              \n"
+    "vzeroupper                                \n"
+  : "+r"(src_y),   // %0
+    "+r"(dst_y),   // %1
+    "+r"(width)    // %2
+  : "r"(scale)     // %3
+  : "memory", "cc", "xmm0", "xmm1", "xmm3");
+  // clang-format on
+}
+#endif  // HAS_MULTIPLYROW_16_AVX2
+
+#ifdef HAS_SPLITRGBROW_SSSE3
+
+// Shuffle table for converting RGB to Planar.
+static uvec8 kShuffleMaskRGBToR0 = {0u,   3u,   6u,   9u,   12u,  15u,
+                                    128u, 128u, 128u, 128u, 128u, 128u,
+                                    128u, 128u, 128u, 128u};
+static uvec8 kShuffleMaskRGBToR1 = {128u, 128u, 128u, 128u, 128u, 128u,
+                                    2u,   5u,   8u,   11u,  14u,  128u,
+                                    128u, 128u, 128u, 128u};
+static uvec8 kShuffleMaskRGBToR2 = {128u, 128u, 128u, 128u, 128u, 128u,
+                                    128u, 128u, 128u, 128u, 128u, 1u,
+                                    4u,   7u,   10u,  13u};
+
+static uvec8 kShuffleMaskRGBToG0 = {1u,   4u,   7u,   10u,  13u,  128u,
+                                    128u, 128u, 128u, 128u, 128u, 128u,
+                                    128u, 128u, 128u, 128u};
+static uvec8 kShuffleMaskRGBToG1 = {128u, 128u, 128u, 128u, 128u, 0u,
+                                    3u,   6u,   9u,   12u,  15u,  128u,
+                                    128u, 128u, 128u, 128u};
+static uvec8 kShuffleMaskRGBToG2 = {128u, 128u, 128u, 128u, 128u, 128u,
+                                    128u, 128u, 128u, 128u, 128u, 2u,
+                                    5u,   8u,   11u,  14u};
+
+static uvec8 kShuffleMaskRGBToB0 = {2u,   5u,   8u,   11u,  14u,  128u,
+                                    128u, 128u, 128u, 128u, 128u, 128u,
+                                    128u, 128u, 128u, 128u};
+static uvec8 kShuffleMaskRGBToB1 = {128u, 128u, 128u, 128u, 128u, 1u,
+                                    4u,   7u,   10u,  13u,  128u, 128u,
+                                    128u, 128u, 128u, 128u};
+static uvec8 kShuffleMaskRGBToB2 = {128u, 128u, 128u, 128u, 128u, 128u,
+                                    128u, 128u, 128u, 128u, 0u,   3u,
+                                    6u,   9u,   12u,  15u};
+
+void SplitRGBRow_SSSE3(const uint8* src_rgb,
+                       uint8* dst_r,
+                       uint8* dst_g,
+                       uint8* dst_b,
+                       int width) {
+  asm volatile (
+    LABELALIGN
+    "1:                                        \n"
+    "movdqu     " MEMACCESS(0) ",%%xmm0        \n"
+    "movdqu     " MEMACCESS2(0x10,0) ",%%xmm1  \n"
+    "movdqu     " MEMACCESS2(0x20,0) ",%%xmm2  \n"
+    "pshufb     %5, %%xmm0                     \n"
+    "pshufb     %6, %%xmm1                     \n"
+    "pshufb     %7, %%xmm2                     \n"
+    "por        %%xmm1,%%xmm0                  \n"
+    "por        %%xmm2,%%xmm0                  \n"
+    "movdqu     %%xmm0," MEMACCESS(1) "        \n"
+    "lea        " MEMLEA(0x10,1) ",%1          \n"
+
+    "movdqu     " MEMACCESS(0) ",%%xmm0        \n"
+    "movdqu     " MEMACCESS2(0x10,0) ",%%xmm1  \n"
+    "movdqu     " MEMACCESS2(0x20,0) ",%%xmm2  \n"
+    "pshufb     %8, %%xmm0                     \n"
+    "pshufb     %9, %%xmm1                     \n"
+    "pshufb     %10, %%xmm2                    \n"
+    "por        %%xmm1,%%xmm0                  \n"
+    "por        %%xmm2,%%xmm0                  \n"
+    "movdqu     %%xmm0," MEMACCESS(2) "        \n"
+    "lea        " MEMLEA(0x10,2) ",%2          \n"
+
+    "movdqu     " MEMACCESS(0) ",%%xmm0        \n"
+    "movdqu     " MEMACCESS2(0x10,0) ",%%xmm1  \n"
+    "movdqu     " MEMACCESS2(0x20,0) ",%%xmm2  \n"
+    "pshufb     %11, %%xmm0                    \n"
+    "pshufb     %12, %%xmm1                    \n"
+    "pshufb     %13, %%xmm2                    \n"
+    "por        %%xmm1,%%xmm0                  \n"
+    "por        %%xmm2,%%xmm0                  \n"
+    "movdqu     %%xmm0," MEMACCESS(3) "        \n"
+    "lea        " MEMLEA(0x10,3) ",%3          \n"
+    "lea        " MEMLEA(0x30,0) ",%0          \n"
+    "sub        $0x10,%4                       \n"
+    "jg         1b                             \n"
+  : "+r"(src_rgb),              // %0
+    "+r"(dst_r),                // %1
+    "+r"(dst_g),                // %2
+    "+r"(dst_b),                // %3
+    "+r"(width)                 // %4
+  : "m"(kShuffleMaskRGBToR0),   // %5
+    "m"(kShuffleMaskRGBToR1),   // %6
+    "m"(kShuffleMaskRGBToR2),   // %7
+    "m"(kShuffleMaskRGBToG0),   // %8
+    "m"(kShuffleMaskRGBToG1),   // %9
+    "m"(kShuffleMaskRGBToG2),   // %10
+    "m"(kShuffleMaskRGBToB0),   // %11
+    "m"(kShuffleMaskRGBToB1),   // %12
+    "m"(kShuffleMaskRGBToB2)    // %13
+  : "memory", "cc", NACL_R14
+    "xmm0", "xmm1", "xmm2"
+  );
+}
+#endif  // HAS_SPLITRGBROW_SSSE3
+
+#ifdef HAS_MERGERGBROW_SSSE3
+
+// Shuffle table for converting RGB to Planar.
+static uvec8 kShuffleMaskRToRGB0 = {0u, 128u, 128u, 1u, 128u, 128u,
+                                    2u, 128u, 128u, 3u, 128u, 128u,
+                                    4u, 128u, 128u, 5u};
+static uvec8 kShuffleMaskGToRGB0 = {128u, 0u, 128u, 128u, 1u, 128u,
+                                    128u, 2u, 128u, 128u, 3u, 128u,
+                                    128u, 4u, 128u, 128u};
+static uvec8 kShuffleMaskBToRGB0 = {128u, 128u, 0u, 128u, 128u, 1u,
+                                    128u, 128u, 2u, 128u, 128u, 3u,
+                                    128u, 128u, 4u, 128u};
+
+static uvec8 kShuffleMaskGToRGB1 = {5u, 128u, 128u, 6u, 128u, 128u,
+                                    7u, 128u, 128u, 8u, 128u, 128u,
+                                    9u, 128u, 128u, 10u};
+static uvec8 kShuffleMaskBToRGB1 = {128u, 5u, 128u, 128u, 6u, 128u,
+                                    128u, 7u, 128u, 128u, 8u, 128u,
+                                    128u, 9u, 128u, 128u};
+static uvec8 kShuffleMaskRToRGB1 = {128u, 128u, 6u,  128u, 128u, 7u,
+                                    128u, 128u, 8u,  128u, 128u, 9u,
+                                    128u, 128u, 10u, 128u};
+
+static uvec8 kShuffleMaskBToRGB2 = {10u, 128u, 128u, 11u, 128u, 128u,
+                                    12u, 128u, 128u, 13u, 128u, 128u,
+                                    14u, 128u, 128u, 15u};
+static uvec8 kShuffleMaskRToRGB2 = {128u, 11u, 128u, 128u, 12u, 128u,
+                                    128u, 13u, 128u, 128u, 14u, 128u,
+                                    128u, 15u, 128u, 128u};
+static uvec8 kShuffleMaskGToRGB2 = {128u, 128u, 11u, 128u, 128u, 12u,
+                                    128u, 128u, 13u, 128u, 128u, 14u,
+                                    128u, 128u, 15u, 128u};
+
+void MergeRGBRow_SSSE3(const uint8* src_r,
+                       const uint8* src_g,
+                       const uint8* src_b,
+                       uint8* dst_rgb,
+                       int width) {
+  asm volatile (
+    LABELALIGN
+    "1:                                        \n"
+    "movdqu     " MEMACCESS(0) ",%%xmm0        \n"
+    "movdqu     " MEMACCESS(1) ",%%xmm1        \n"
+    "movdqu     " MEMACCESS(2) ",%%xmm2        \n"
+    "pshufb     %5, %%xmm0                     \n"
+    "pshufb     %6, %%xmm1                     \n"
+    "pshufb     %7, %%xmm2                     \n"
+    "por        %%xmm1,%%xmm0                  \n"
+    "por        %%xmm2,%%xmm0                  \n"
+    "movdqu     %%xmm0," MEMACCESS(3) "        \n"
+
+    "movdqu     " MEMACCESS(0) ",%%xmm0        \n"
+    "movdqu     " MEMACCESS(1) ",%%xmm1        \n"
+    "movdqu     " MEMACCESS(2) ",%%xmm2        \n"
+    "pshufb     %8, %%xmm0                     \n"
+    "pshufb     %9, %%xmm1                     \n"
+    "pshufb     %10, %%xmm2                    \n"
+    "por        %%xmm1,%%xmm0                  \n"
+    "por        %%xmm2,%%xmm0                  \n"
+    "movdqu     %%xmm0," MEMACCESS2(16, 3) "   \n"
+
+    "movdqu     " MEMACCESS(0) ",%%xmm0        \n"
+    "movdqu     " MEMACCESS(1) ",%%xmm1        \n"
+    "movdqu     " MEMACCESS(2) ",%%xmm2        \n"
+    "pshufb     %11, %%xmm0                    \n"
+    "pshufb     %12, %%xmm1                    \n"
+    "pshufb     %13, %%xmm2                    \n"
+    "por        %%xmm1,%%xmm0                  \n"
+    "por        %%xmm2,%%xmm0                  \n"
+    "movdqu     %%xmm0," MEMACCESS2(32, 3) "   \n"
+
+    "lea        " MEMLEA(0x10,0) ",%0          \n"
+    "lea        " MEMLEA(0x10,1) ",%1          \n"
+    "lea        " MEMLEA(0x10,2) ",%2          \n"
+    "lea        " MEMLEA(0x30,3) ",%3          \n"
+    "sub        $0x10,%4                       \n"
+    "jg         1b                             \n"
+  : "+r"(src_r),                // %0
+    "+r"(src_g),                // %1
+    "+r"(src_b),                // %2
+    "+r"(dst_rgb),              // %3
+    "+r"(width)                 // %4
+  : "m"(kShuffleMaskRToRGB0),   // %5
+    "m"(kShuffleMaskGToRGB0),   // %6
+    "m"(kShuffleMaskBToRGB0),   // %7
+    "m"(kShuffleMaskRToRGB1),   // %8
+    "m"(kShuffleMaskGToRGB1),   // %9
+    "m"(kShuffleMaskBToRGB1),   // %10
+    "m"(kShuffleMaskRToRGB2),   // %11
+    "m"(kShuffleMaskGToRGB2),   // %12
+    "m"(kShuffleMaskBToRGB2)    // %13
+  : "memory", "cc", NACL_R14
+    "xmm0", "xmm1", "xmm2"
+  );
+}
+#endif  // HAS_MERGERGBROW_SSSE3
+
 #ifdef HAS_COPYROW_SSE2
 void CopyRow_SSE2(const uint8* src, uint8* dst, int count) {
   asm volatile (
@@ -5453,6 +5726,7 @@ void ARGBPolynomialRow_AVX2(const uint8* src_argb,
 #ifdef HAS_HALFFLOATROW_SSE2
 static float kScaleBias = 1.9259299444e-34f;
 void HalfFloatRow_SSE2(const uint16* src, uint16* dst, float scale, int width) {
+  scale *= kScaleBias;
   asm volatile (
     "pshufd      $0x0,%3,%%xmm4                \n"
     "pxor        %%xmm5,%%xmm5                 \n"
@@ -5479,7 +5753,11 @@ void HalfFloatRow_SSE2(const uint16* src, uint16* dst, float scale, int width) {
   : "+r"(src),    // %0
     "+r"(dst),    // %1
     "+r"(width)   // %2
-  : "x"(scale * kScaleBias)   // %3
+#if defined(__x86_64__)
+  : "x"(scale)   // %3
+#else
+  : "m"(scale)   // %3
+#endif
   : "memory", "cc",
     "xmm2", "xmm3", "xmm4", "xmm5"
   );
@@ -5488,6 +5766,7 @@ void HalfFloatRow_SSE2(const uint16* src, uint16* dst, float scale, int width) {
 
 #ifdef HAS_HALFFLOATROW_AVX2
 void HalfFloatRow_AVX2(const uint16* src, uint16* dst, float scale, int width) {
+  scale *= kScaleBias;
   asm volatile (
     "vbroadcastss  %3, %%ymm4                  \n"
     "vpxor      %%ymm5,%%ymm5,%%ymm5           \n"
@@ -5515,7 +5794,11 @@ void HalfFloatRow_AVX2(const uint16* src, uint16* dst, float scale, int width) {
   : "+r"(src),    // %0
     "+r"(dst),    // %1
     "+r"(width)   // %2
-  : "x"(scale * kScaleBias)   // %3
+#if defined(__x86_64__)
+  : "x"(scale)   // %3
+#else
+  : "m"(scale)   // %3
+#endif
   : "memory", "cc",
     "xmm2", "xmm3", "xmm4", "xmm5"
   );
@@ -5548,7 +5831,11 @@ void HalfFloatRow_F16C(const uint16* src, uint16* dst, float scale, int width) {
   : "+r"(src),   // %0
     "+r"(dst),   // %1
     "+r"(width)  // %2
+#if defined(__x86_64__)
   : "x"(scale)   // %3
+#else
+  : "m"(scale)   // %3
+#endif
   : "memory", "cc",
     "xmm2", "xmm3", "xmm4"
   );

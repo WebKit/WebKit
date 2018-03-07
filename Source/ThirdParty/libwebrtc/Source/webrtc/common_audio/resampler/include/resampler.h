@@ -13,12 +13,12 @@
  * A wrapper for resampling a numerous amount of sampling combinations.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_
-#define WEBRTC_COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_
+#ifndef COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_
+#define COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_
 
 #include <stddef.h>
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -64,6 +64,12 @@ class Resampler {
     kResamplerMode11To8
   };
 
+  // Computes the resampler mode for a given sampling frequency pair.
+  // Returns -1 for unsupported frequency pairs.
+  static int ComputeResamplerMode(int in_freq_hz,
+                                  int out_freq_hz,
+                                  ResamplerMode* mode);
+
   // Generic pointers since we don't know what states we'll need
   void* state1_;
   void* state2_;
@@ -89,4 +95,4 @@ class Resampler {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_
+#endif  // COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_

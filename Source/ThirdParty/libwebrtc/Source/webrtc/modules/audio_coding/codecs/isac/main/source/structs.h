@@ -15,13 +15,13 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_
 
-#include "webrtc/modules/audio_coding/codecs/isac/bandwidth_info.h"
-#include "webrtc/modules/audio_coding/codecs/isac/main/include/isac.h"
-#include "webrtc/modules/audio_coding/codecs/isac/main/source/settings.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/codecs/isac/bandwidth_info.h"
+#include "modules/audio_coding/codecs/isac/main/include/isac.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 typedef struct Bitstreamstruct {
 
@@ -492,4 +492,4 @@ typedef struct {
   TransformTables transform_tables;
 } ISACMainStruct;
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_STRUCTS_H_ */

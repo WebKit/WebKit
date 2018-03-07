@@ -8,26 +8,32 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/rtpreceiver.h"
+#include "pc/rtpreceiver.h"
 
-#include "webrtc/api/mediastreamtrackproxy.h"
-#include "webrtc/api/videosourceproxy.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/pc/audiotrack.h"
-#include "webrtc/pc/videotrack.h"
+#include <utility>
+#include <vector>
+
+#include "api/mediastreamtrackproxy.h"
+#include "api/videosourceproxy.h"
+#include "pc/audiotrack.h"
+#include "pc/videotrack.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
-AudioRtpReceiver::AudioRtpReceiver(const std::string& track_id,
-                                   uint32_t ssrc,
-                                   cricket::VoiceChannel* channel)
-    : id_(track_id),
+AudioRtpReceiver::AudioRtpReceiver(
+    const std::string& receiver_id,
+    std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams,
+    uint32_t ssrc,
+    cricket::VoiceChannel* channel)
+    : id_(receiver_id),
       ssrc_(ssrc),
       channel_(channel),
       track_(AudioTrackProxy::Create(
           rtc::Thread::Current(),
-          AudioTrack::Create(track_id,
+          AudioTrack::Create(receiver_id,
                              RemoteAudioSource::Create(ssrc, channel)))),
+      streams_(std::move(streams)),
       cached_track_enabled_(track_->enabled()) {
   RTC_DCHECK(track_->GetSource()->remote());
   track_->RegisterObserver(this);
@@ -53,10 +59,12 @@ void AudioRtpReceiver::OnChanged() {
 }
 
 void AudioRtpReceiver::OnSetVolume(double volume) {
-  RTC_DCHECK(volume >= 0 && volume <= 10);
+  RTC_DCHECK_GE(volume, 0);
+  RTC_DCHECK_LE(volume, 10);
   cached_volume_ = volume;
   if (!channel_) {
-    LOG(LS_ERROR) << "AudioRtpReceiver::OnSetVolume: No audio channel exists.";
+    RTC_LOG(LS_ERROR)
+        << "AudioRtpReceiver::OnSetVolume: No audio channel exists.";
     return;
   }
   // When the track is disabled, the volume of the source, which is the
@@ -104,7 +112,8 @@ std::vector<RtpSource> AudioRtpReceiver::GetSources() const {
 void AudioRtpReceiver::Reconfigure() {
   RTC_DCHECK(!stopped_);
   if (!channel_) {
-    LOG(LS_ERROR) << "AudioRtpReceiver::Reconfigure: No audio channel exists.";
+    RTC_LOG(LS_ERROR)
+        << "AudioRtpReceiver::Reconfigure: No audio channel exists.";
     return;
   }
   if (!channel_->SetOutputVolume(ssrc_,
@@ -139,10 +148,12 @@ void AudioRtpReceiver::OnFirstPacketReceived(cricket::BaseChannel* channel) {
   received_first_packet_ = true;
 }
 
-VideoRtpReceiver::VideoRtpReceiver(const std::string& track_id,
-                                   rtc::Thread* worker_thread,
-                                   uint32_t ssrc,
-                                   cricket::VideoChannel* channel)
+VideoRtpReceiver::VideoRtpReceiver(
+    const std::string& track_id,
+    std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams,
+    rtc::Thread* worker_thread,
+    uint32_t ssrc,
+    cricket::VideoChannel* channel)
     : id_(track_id),
       ssrc_(ssrc),
       channel_(channel),
@@ -155,10 +166,12 @@ VideoRtpReceiver::VideoRtpReceiver(const std::string& track_id,
               track_id,
               VideoTrackSourceProxy::Create(rtc::Thread::Current(),
                                             worker_thread,
-                                            source_)))) {
+                                            source_),
+              worker_thread))),
+      streams_(std::move(streams)) {
   source_->SetState(MediaSourceInterface::kLive);
   if (!channel_) {
-    LOG(LS_ERROR)
+    RTC_LOG(LS_ERROR)
         << "VideoRtpReceiver::VideoRtpReceiver: No video channel exists.";
   } else {
     if (!channel_->SetSink(ssrc_, &broadcaster_)) {
@@ -200,7 +213,7 @@ void VideoRtpReceiver::Stop() {
   source_->SetState(MediaSourceInterface::kEnded);
   source_->OnSourceDestroyed();
   if (!channel_) {
-    LOG(LS_WARNING) << "VideoRtpReceiver::Stop: No video channel exists.";
+    RTC_LOG(LS_WARNING) << "VideoRtpReceiver::Stop: No video channel exists.";
   } else {
     // Allow that SetSink fail. This is the normal case when the underlying
     // media channel has already been deleted.

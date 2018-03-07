@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/sessiondescription.h"
+#include "p2p/base/sessiondescription.h"
 
 namespace cricket {
 
@@ -45,6 +45,15 @@ const ContentInfo* FindContentInfoByType(
   return NULL;
 }
 
+ContentGroup::ContentGroup(const std::string& semantics)
+    : semantics_(semantics) {}
+
+ContentGroup::ContentGroup(const ContentGroup&) = default;
+ContentGroup::ContentGroup(ContentGroup&&) = default;
+ContentGroup& ContentGroup::operator=(const ContentGroup&) = default;
+ContentGroup& ContentGroup::operator=(ContentGroup&&) = default;
+ContentGroup::~ContentGroup() = default;
+
 const std::string* ContentGroup::FirstContentName() const {
   return (!content_names_.empty()) ? &(*content_names_.begin()) : NULL;
 }
@@ -68,6 +77,31 @@ bool ContentGroup::RemoveContentName(const std::string& content_name) {
   }
   content_names_.erase(iter);
   return true;
+}
+
+SessionDescription::SessionDescription() = default;
+
+SessionDescription::SessionDescription(const ContentInfos& contents)
+    : contents_(contents) {}
+
+SessionDescription::SessionDescription(const ContentInfos& contents,
+                                       const ContentGroups& groups)
+    : contents_(contents), content_groups_(groups) {}
+
+SessionDescription::SessionDescription(const ContentInfos& contents,
+                                       const TransportInfos& transports,
+                                       const ContentGroups& groups)
+    : contents_(contents),
+      transport_infos_(transports),
+      content_groups_(groups) {}
+
+SessionDescription::SessionDescription(const SessionDescription&) = default;
+
+SessionDescription::~SessionDescription() {
+  for (ContentInfos::iterator content = contents_.begin();
+       content != contents_.end(); ++content) {
+    delete content->description;
+  }
 }
 
 SessionDescription* SessionDescription::Copy() const {

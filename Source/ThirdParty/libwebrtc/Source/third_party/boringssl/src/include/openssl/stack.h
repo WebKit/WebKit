@@ -66,45 +66,45 @@ extern "C" {
 #endif
 
 
-/* A stack, in OpenSSL, is an array of pointers. They are the most commonly
- * used collection object.
- *
- * This file defines macros for type safe use of the stack functions. A stack
- * of a specific type of object has type |STACK_OF(type)|. This can be defined
- * (once) with |DEFINE_STACK_OF(type)| and declared where needed with
- * |DECLARE_STACK_OF(type)|. For example:
- *
- *   typedef struct foo_st {
- *     int bar;
- *   } FOO;
- *
- *   DEFINE_STACK_OF(FOO);
- *
- * Although note that the stack will contain /pointers/ to |FOO|.
- *
- * A macro will be defined for each of the sk_* functions below. For
- * STACK_OF(FOO), the macros would be sk_FOO_new, sk_FOO_pop etc. */
+// A stack, in OpenSSL, is an array of pointers. They are the most commonly
+// used collection object.
+//
+// This file defines macros for type safe use of the stack functions. A stack
+// of a specific type of object has type |STACK_OF(type)|. This can be defined
+// (once) with |DEFINE_STACK_OF(type)| and declared where needed with
+// |DECLARE_STACK_OF(type)|. For example:
+//
+//   typedef struct foo_st {
+//     int bar;
+//   } FOO;
+//
+//   DEFINE_STACK_OF(FOO);
+//
+// Although note that the stack will contain /pointers/ to |FOO|.
+//
+// A macro will be defined for each of the sk_* functions below. For
+// STACK_OF(FOO), the macros would be sk_FOO_new, sk_FOO_pop etc.
 
 
-/* stack_cmp_func is a comparison function that returns a value < 0, 0 or > 0
- * if |*a| is less than, equal to or greater than |*b|, respectively.  Note the
- * extra indirection - the function is given a pointer to a pointer to the
- * element. This differs from the usual qsort/bsearch comparison function. */
+// stack_cmp_func is a comparison function that returns a value < 0, 0 or > 0
+// if |*a| is less than, equal to or greater than |*b|, respectively.  Note the
+// extra indirection - the function is given a pointer to a pointer to the
+// element. This differs from the usual qsort/bsearch comparison function.
 typedef int (*stack_cmp_func)(const void **a, const void **b);
 
-/* stack_st contains an array of pointers. It is not designed to be used
- * directly, rather the wrapper macros should be used. */
+// stack_st contains an array of pointers. It is not designed to be used
+// directly, rather the wrapper macros should be used.
 typedef struct stack_st {
-  /* num contains the number of valid pointers in |data|. */
+  // num contains the number of valid pointers in |data|.
   size_t num;
   void **data;
-  /* sorted is non-zero if the values pointed to by |data| are in ascending
-   * order, based on |comp|. */
+  // sorted is non-zero if the values pointed to by |data| are in ascending
+  // order, based on |comp|.
   int sorted;
-  /* num_alloc contains the number of pointers allocated in the buffer pointed
-   * to by |data|, which may be larger than |num|. */
+  // num_alloc contains the number of pointers allocated in the buffer pointed
+  // to by |data|, which may be larger than |num|.
   size_t num_alloc;
-  /* comp is an optional comparison function. */
+  // comp is an optional comparison function.
   stack_cmp_func comp;
 } _STACK;
 
@@ -113,111 +113,139 @@ typedef struct stack_st {
 
 #define DECLARE_STACK_OF(type) STACK_OF(type);
 
-/* These are the raw stack functions, you shouldn't be using them. Rather you
- * should be using the type stack macros implemented above. */
+// These are the raw stack functions, you shouldn't be using them. Rather you
+// should be using the type stack macros implemented above.
 
-/* sk_new creates a new, empty stack with the given comparison function, which
- * may be zero. It returns the new stack or NULL on allocation failure. */
+// sk_new creates a new, empty stack with the given comparison function, which
+// may be zero. It returns the new stack or NULL on allocation failure.
 OPENSSL_EXPORT _STACK *sk_new(stack_cmp_func comp);
 
-/* sk_new_null creates a new, empty stack. It returns the new stack or NULL on
- * allocation failure. */
+// sk_new_null creates a new, empty stack. It returns the new stack or NULL on
+// allocation failure.
 OPENSSL_EXPORT _STACK *sk_new_null(void);
 
-/* sk_num returns the number of elements in |s|. */
+// sk_num returns the number of elements in |s|.
 OPENSSL_EXPORT size_t sk_num(const _STACK *sk);
 
-/* sk_zero resets |sk| to the empty state but does nothing to free the
- * individual elements themselves. */
+// sk_zero resets |sk| to the empty state but does nothing to free the
+// individual elements themselves.
 OPENSSL_EXPORT void sk_zero(_STACK *sk);
 
-/* sk_value returns the |i|th pointer in |sk|, or NULL if |i| is out of
- * range. */
+// sk_value returns the |i|th pointer in |sk|, or NULL if |i| is out of
+// range.
 OPENSSL_EXPORT void *sk_value(const _STACK *sk, size_t i);
 
-/* sk_set sets the |i|th pointer in |sk| to |p| and returns |p|. If |i| is out
- * of range, it returns NULL. */
+// sk_set sets the |i|th pointer in |sk| to |p| and returns |p|. If |i| is out
+// of range, it returns NULL.
 OPENSSL_EXPORT void *sk_set(_STACK *sk, size_t i, void *p);
 
-/* sk_free frees the given stack and array of pointers, but does nothing to
- * free the individual elements. Also see |sk_pop_free|. */
+// sk_free frees the given stack and array of pointers, but does nothing to
+// free the individual elements. Also see |sk_pop_free|.
 OPENSSL_EXPORT void sk_free(_STACK *sk);
 
-/* sk_pop_free calls |free_func| on each element in the stack and then frees
- * the stack itself. */
+// sk_pop_free calls |free_func| on each element in the stack and then frees
+// the stack itself.
 OPENSSL_EXPORT void sk_pop_free(_STACK *sk, void (*free_func)(void *));
 
-/* sk_insert inserts |p| into the stack at index |where|, moving existing
- * elements if needed. It returns the length of the new stack, or zero on
- * error. */
+// sk_insert inserts |p| into the stack at index |where|, moving existing
+// elements if needed. It returns the length of the new stack, or zero on
+// error.
 OPENSSL_EXPORT size_t sk_insert(_STACK *sk, void *p, size_t where);
 
-/* sk_delete removes the pointer at index |where|, moving other elements down
- * if needed. It returns the removed pointer, or NULL if |where| is out of
- * range. */
+// sk_delete removes the pointer at index |where|, moving other elements down
+// if needed. It returns the removed pointer, or NULL if |where| is out of
+// range.
 OPENSSL_EXPORT void *sk_delete(_STACK *sk, size_t where);
 
-/* sk_delete_ptr removes, at most, one instance of |p| from the stack based on
- * pointer equality. If an instance of |p| is found then |p| is returned,
- * otherwise it returns NULL. */
+// sk_delete_ptr removes, at most, one instance of |p| from the stack based on
+// pointer equality. If an instance of |p| is found then |p| is returned,
+// otherwise it returns NULL.
 OPENSSL_EXPORT void *sk_delete_ptr(_STACK *sk, void *p);
 
-/* sk_find returns the first value in the stack equal to |p|. If a comparison
- * function has been set on the stack, then equality is defined by it and the
- * stack will be sorted if need be so that a binary search can be used.
- * Otherwise pointer equality is used. If a matching element is found, its
- * index is written to |*out_index| (if |out_index| is not NULL) and one is
- * returned. Otherwise zero is returned. */
+// sk_find returns the first value in the stack equal to |p|. If a comparison
+// function has been set on the stack, then equality is defined by it and the
+// stack will be sorted if need be so that a binary search can be used.
+// Otherwise pointer equality is used. If a matching element is found, its
+// index is written to |*out_index| (if |out_index| is not NULL) and one is
+// returned. Otherwise zero is returned.
 OPENSSL_EXPORT int sk_find(_STACK *sk, size_t *out_index, void *p);
 
-/* sk_shift removes and returns the first element in the stack, or returns NULL
- * if the stack is empty. */
+// sk_shift removes and returns the first element in the stack, or returns NULL
+// if the stack is empty.
 OPENSSL_EXPORT void *sk_shift(_STACK *sk);
 
-/* sk_push appends |p| to the stack and returns the length of the new stack, or
- * 0 on allocation failure. */
+// sk_push appends |p| to the stack and returns the length of the new stack, or
+// 0 on allocation failure.
 OPENSSL_EXPORT size_t sk_push(_STACK *sk, void *p);
 
-/* sk_pop returns and removes the last element on the stack, or NULL if the
- * stack is empty. */
+// sk_pop returns and removes the last element on the stack, or NULL if the
+// stack is empty.
 OPENSSL_EXPORT void *sk_pop(_STACK *sk);
 
-/* sk_dup performs a shallow copy of a stack and returns the new stack, or NULL
- * on error. */
+// sk_dup performs a shallow copy of a stack and returns the new stack, or NULL
+// on error.
 OPENSSL_EXPORT _STACK *sk_dup(const _STACK *sk);
 
-/* sk_sort sorts the elements of |sk| into ascending order based on the
- * comparison function. The stack maintains a |sorted| flag and sorting an
- * already sorted stack is a no-op. */
+// sk_sort sorts the elements of |sk| into ascending order based on the
+// comparison function. The stack maintains a |sorted| flag and sorting an
+// already sorted stack is a no-op.
 OPENSSL_EXPORT void sk_sort(_STACK *sk);
 
-/* sk_is_sorted returns one if |sk| is known to be sorted and zero
- * otherwise. */
+// sk_is_sorted returns one if |sk| is known to be sorted and zero
+// otherwise.
 OPENSSL_EXPORT int sk_is_sorted(const _STACK *sk);
 
-/* sk_set_cmp_func sets the comparison function to be used by |sk| and returns
- * the previous one. */
+// sk_set_cmp_func sets the comparison function to be used by |sk| and returns
+// the previous one.
 OPENSSL_EXPORT stack_cmp_func sk_set_cmp_func(_STACK *sk, stack_cmp_func comp);
 
-/* sk_deep_copy performs a copy of |sk| and of each of the non-NULL elements in
- * |sk| by using |copy_func|. If an error occurs, |free_func| is used to free
- * any copies already made and NULL is returned. */
+// sk_deep_copy performs a copy of |sk| and of each of the non-NULL elements in
+// |sk| by using |copy_func|. If an error occurs, |free_func| is used to free
+// any copies already made and NULL is returned.
 OPENSSL_EXPORT _STACK *sk_deep_copy(const _STACK *sk,
                                     void *(*copy_func)(void *),
                                     void (*free_func)(void *));
 
 
-/* Defining stack types.
- *
- * This set of macros is used to emit the typed functions that act on a
- * |STACK_OF(T)|. */
+// Defining stack types.
+//
+// This set of macros is used to emit the typed functions that act on a
+// |STACK_OF(T)|.
 
-/* Stack functions must be tagged unused to support file-local stack types.
- * Clang's -Wunused-function only allows unused static inline functions if they
- * are defined in a header. */
+#if !defined(BORINGSSL_NO_CXX)
+extern "C++" {
+namespace bssl {
+namespace internal {
+template <typename T>
+struct StackTraits {};
+}
+}
+}
 
-#define DEFINE_STACK_OF_IMPL(name, ptrtype, constptrtype)                      \
-  DECLARE_STACK_OF(name);                                                      \
+#define BORINGSSL_DEFINE_STACK_TRAITS(name, type, is_const) \
+  extern "C++" {                                            \
+  namespace bssl {                                          \
+  namespace internal {                                      \
+  template <>                                               \
+  struct StackTraits<STACK_OF(name)> {                      \
+    static constexpr bool kIsStack = true;                  \
+    using Type = type;                                      \
+    static constexpr bool kIsConst = is_const;              \
+  };                                                        \
+  }                                                         \
+  }                                                         \
+  }
+
+#else
+#define BORINGSSL_DEFINE_STACK_TRAITS(name, type, is_const)
+#endif
+
+// Stack functions must be tagged unused to support file-local stack types.
+// Clang's -Wunused-function only allows unused static inline functions if they
+// are defined in a header.
+
+#define BORINGSSL_DEFINE_STACK_OF_IMPL(name, ptrtype, constptrtype)            \
+  DECLARE_STACK_OF(name)                                                       \
                                                                                \
   typedef int (*stack_##name##_cmp_func)(constptrtype *a, constptrtype *b);    \
                                                                                \
@@ -321,21 +349,24 @@ OPENSSL_EXPORT _STACK *sk_deep_copy(const _STACK *sk,
                                           (void (*)(void *))free_func);        \
   }
 
-/* DEFINE_STACK_OF defines |STACK_OF(type)| to be a stack whose elements are
- * |type| *. */
-#define DEFINE_STACK_OF(type) DEFINE_STACK_OF_IMPL(type, type *, const type *)
+// DEFINE_STACK_OF defines |STACK_OF(type)| to be a stack whose elements are
+// |type| *.
+#define DEFINE_STACK_OF(type)                                \
+  BORINGSSL_DEFINE_STACK_OF_IMPL(type, type *, const type *) \
+  BORINGSSL_DEFINE_STACK_TRAITS(type, type, false)
 
-/* DEFINE_CONST_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
- * are const |type| *. */
-#define DEFINE_CONST_STACK_OF(type) \
-  DEFINE_STACK_OF_IMPL(type, const type *, const type *)
+// DEFINE_CONST_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
+// are const |type| *.
+#define DEFINE_CONST_STACK_OF(type)                                \
+  BORINGSSL_DEFINE_STACK_OF_IMPL(type, const type *, const type *) \
+  BORINGSSL_DEFINE_STACK_TRAITS(type, const type, true)
 
-/* DEFINE_SPECIAL_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
- * are |type|, where |type| must be a typedef for a pointer. */
+// DEFINE_SPECIAL_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
+// are |type|, where |type| must be a typedef for a pointer.
 #define DEFINE_SPECIAL_STACK_OF(type)                          \
   OPENSSL_COMPILE_ASSERT(sizeof(type) == sizeof(void *),       \
                          special_stack_of_non_pointer_##type); \
-  DEFINE_STACK_OF_IMPL(type, type, const type)
+  BORINGSSL_DEFINE_STACK_OF_IMPL(type, type, const type)
 
 
 typedef char *OPENSSL_STRING;
@@ -345,7 +376,110 @@ DEFINE_SPECIAL_STACK_OF(OPENSSL_STRING)
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_STACK_H */
+#if !defined(BORINGSSL_NO_CXX)
+extern "C++" {
+
+#include <type_traits>
+
+namespace bssl {
+
+namespace internal {
+
+// Stacks defined with |DEFINE_CONST_STACK_OF| are freed with |sk_free|.
+template <typename Stack>
+struct DeleterImpl<
+    Stack, typename std::enable_if<StackTraits<Stack>::kIsConst>::type> {
+  static void Free(Stack *sk) { sk_free(reinterpret_cast<_STACK *>(sk)); }
+};
+
+// Stacks defined with |DEFINE_STACK_OF| are freed with |sk_pop_free| and the
+// corresponding type's deleter.
+template <typename Stack>
+struct DeleterImpl<
+    Stack, typename std::enable_if<!StackTraits<Stack>::kIsConst>::type> {
+  static void Free(Stack *sk) {
+    sk_pop_free(
+        reinterpret_cast<_STACK *>(sk),
+        reinterpret_cast<void (*)(void *)>(
+            DeleterImpl<typename StackTraits<Stack>::Type>::Free));
+  }
+};
+
+template <typename Stack>
+class StackIteratorImpl {
+ public:
+  using Type = typename StackTraits<Stack>::Type;
+  // Iterators must be default-constructable.
+  StackIteratorImpl() : sk_(nullptr), idx_(0) {}
+  StackIteratorImpl(const Stack *sk, size_t idx) : sk_(sk), idx_(idx) {}
+
+  bool operator==(StackIteratorImpl other) const {
+    return sk_ == other.sk_ && idx_ == other.idx_;
+  }
+  bool operator!=(StackIteratorImpl other) const {
+    return !(*this == other);
+  }
+
+  Type *operator*() const {
+    return reinterpret_cast<Type *>(
+        sk_value(reinterpret_cast<const _STACK *>(sk_), idx_));
+  }
+
+  StackIteratorImpl &operator++(/* prefix */) {
+    idx_++;
+    return *this;
+  }
+
+  StackIteratorImpl operator++(int /* postfix */) {
+    StackIteratorImpl copy(*this);
+    ++(*this);
+    return copy;
+  }
+
+ private:
+  const Stack *sk_;
+  size_t idx_;
+};
+
+template <typename Stack>
+using StackIterator = typename std::enable_if<StackTraits<Stack>::kIsStack,
+                                              StackIteratorImpl<Stack>>::type;
+
+}  // namespace internal
+
+// PushToStack pushes |elem| to |sk|. It returns true on success and false on
+// allocation failure.
+template <typename Stack>
+static inline
+    typename std::enable_if<!internal::StackTraits<Stack>::kIsConst, bool>::type
+    PushToStack(Stack *sk,
+                UniquePtr<typename internal::StackTraits<Stack>::Type> elem) {
+  if (!sk_push(reinterpret_cast<_STACK *>(sk), elem.get())) {
+    return false;
+  }
+  // sk_push takes ownership on success.
+  elem.release();
+  return true;
+}
+
+}  // namespace bssl
+
+// Define begin() and end() for stack types so C++ range for loops work.
+template <typename Stack>
+static inline bssl::internal::StackIterator<Stack> begin(const Stack *sk) {
+  return bssl::internal::StackIterator<Stack>(sk, 0);
+}
+
+template <typename Stack>
+static inline bssl::internal::StackIterator<Stack> end(const Stack *sk) {
+  return bssl::internal::StackIterator<Stack>(
+      sk, sk_num(reinterpret_cast<const _STACK *>(sk)));
+}
+
+}  // extern C++
+#endif
+
+#endif  // OPENSSL_HEADER_STACK_H

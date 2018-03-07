@@ -9,12 +9,12 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_DLRR_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_DLRR_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_DLRR_H_
+#define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_DLRR_H_
 
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
+#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -66,4 +66,4 @@ class Dlrr {
 };
 }  // namespace rtcp
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_DLRR_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_DLRR_H_

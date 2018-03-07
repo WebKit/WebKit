@@ -124,6 +124,20 @@ void DH_get0_key(const DH *dh, const BIGNUM **out_pub_key,
   }
 }
 
+int DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key) {
+  if (pub_key != NULL) {
+    BN_free(dh->pub_key);
+    dh->pub_key = pub_key;
+  }
+
+  if (priv_key != NULL) {
+    BN_free(dh->priv_key);
+    dh->priv_key = priv_key;
+  }
+
+  return 1;
+}
+
 void DH_get0_pqg(const DH *dh, const BIGNUM **out_p, const BIGNUM **out_q,
                  const BIGNUM **out_g) {
   if (out_p != NULL) {
@@ -137,33 +151,55 @@ void DH_get0_pqg(const DH *dh, const BIGNUM **out_p, const BIGNUM **out_q,
   }
 }
 
-int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator, BN_GENCB *cb) {
-  /* We generate DH parameters as follows
-   * find a prime q which is prime_bits/2 bits long.
-   * p=(2*q)+1 or (p-1)/2 = q
-   * For this case, g is a generator if
-   * g^((p-1)/q) mod p != 1 for values of q which are the factors of p-1.
-   * Since the factors of p-1 are q and 2, we just need to check
-   * g^2 mod p != 1 and g^q mod p != 1.
-   *
-   * Having said all that,
-   * there is another special case method for the generators 2, 3 and 5.
-   * for 2, p mod 24 == 11
-   * for 3, p mod 12 == 5  <<<<< does not work for safe primes.
-   * for 5, p mod 10 == 3 or 7
-   *
-   * Thanks to Phil Karn <karn@qualcomm.com> for the pointers about the
-   * special generators and for answering some of my questions.
-   *
-   * I've implemented the second simple method :-).
-   * Since DH should be using a safe prime (both p and q are prime),
-   * this generator function can take a very very long time to run.
-   */
+int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
+  if ((dh->p == NULL && p == NULL) ||
+      (dh->g == NULL && g == NULL)) {
+    return 0;
+  }
 
-  /* Actually there is no reason to insist that 'generator' be a generator.
-   * It's just as OK (and in some sense better) to use a generator of the
-   * order-q subgroup.
-   */
+  if (p != NULL) {
+    BN_free(dh->p);
+    dh->p = p;
+  }
+
+  if (q != NULL) {
+    BN_free(dh->q);
+    dh->q = q;
+  }
+
+  if (g != NULL) {
+    BN_free(dh->g);
+    dh->g = g;
+  }
+
+  return 1;
+}
+
+int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator, BN_GENCB *cb) {
+  // We generate DH parameters as follows
+  // find a prime q which is prime_bits/2 bits long.
+  // p=(2*q)+1 or (p-1)/2 = q
+  // For this case, g is a generator if
+  // g^((p-1)/q) mod p != 1 for values of q which are the factors of p-1.
+  // Since the factors of p-1 are q and 2, we just need to check
+  // g^2 mod p != 1 and g^q mod p != 1.
+  //
+  // Having said all that,
+  // there is another special case method for the generators 2, 3 and 5.
+  // for 2, p mod 24 == 11
+  // for 3, p mod 12 == 5  <<<<< does not work for safe primes.
+  // for 5, p mod 10 == 3 or 7
+  //
+  // Thanks to Phil Karn <karn@qualcomm.com> for the pointers about the
+  // special generators and for answering some of my questions.
+  //
+  // I've implemented the second simple method :-).
+  // Since DH should be using a safe prime (both p and q are prime),
+  // this generator function can take a very very long time to run.
+
+  // Actually there is no reason to insist that 'generator' be a generator.
+  // It's just as OK (and in some sense better) to use a generator of the
+  // order-q subgroup.
 
   BIGNUM *t1, *t2;
   int g, ok = 0;
@@ -180,7 +216,7 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator, BN_GENCB *c
     goto err;
   }
 
-  /* Make sure |dh| has the necessary elements */
+  // Make sure |dh| has the necessary elements
   if (dh->p == NULL) {
     dh->p = BN_new();
     if (dh->p == NULL) {
@@ -213,14 +249,14 @@ int DH_generate_parameters_ex(DH *dh, int prime_bits, int generator, BN_GENCB *c
     if (!BN_set_word(t2, 3)) {
       goto err;
     }
-    /* BN_set_word(t3,7); just have to miss
-     * out on these ones :-( */
+    // BN_set_word(t3,7); just have to miss
+    // out on these ones :-(
     g = 5;
   } else {
-    /* in the general case, don't worry if 'generator' is a
-     * generator or not: since we are using safe primes,
-     * it will generate either an order-q or an order-2q group,
-     * which both is OK */
+    // in the general case, don't worry if 'generator' is a
+    // generator or not: since we are using safe primes,
+    // it will generate either an order-q or an order-2q group,
+    // which both is OK
     if (!BN_set_word(t1, 2)) {
       goto err;
     }
@@ -299,7 +335,7 @@ int DH_generate_key(DH *dh) {
         goto err;
       }
     } else {
-      /* secret exponent length */
+      // secret exponent length
       unsigned priv_bits = dh->priv_length;
       if (priv_bits == 0) {
         const unsigned p_bits = BN_num_bits(dh->p);

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_INCLUDE_FRAME_CALLBACK_H_
-#define WEBRTC_COMMON_VIDEO_INCLUDE_FRAME_CALLBACK_H_
+#ifndef COMMON_VIDEO_INCLUDE_FRAME_CALLBACK_H_
+#define COMMON_VIDEO_INCLUDE_FRAME_CALLBACK_H_
 
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/common_types.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -49,7 +49,7 @@ struct EncodedFrame {
 class EncodedFrameObserver {
  public:
   virtual void EncodedFrameCallback(const EncodedFrame& encoded_frame) = 0;
-  virtual void OnEncodeTiming(int64_t /* capture_ntp_ms */, int /* encode_duration_ms */) {}
+  virtual void OnEncodeTiming(int64_t, int) {}
 
  protected:
   virtual ~EncodedFrameObserver() {}
@@ -57,4 +57,4 @@ class EncodedFrameObserver {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_INCLUDE_FRAME_CALLBACK_H_
+#endif  // COMMON_VIDEO_INCLUDE_FRAME_CALLBACK_H_

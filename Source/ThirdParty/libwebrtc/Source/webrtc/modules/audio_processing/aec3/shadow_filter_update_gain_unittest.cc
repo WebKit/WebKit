@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/shadow_filter_update_gain.h"
+#include "modules/audio_processing/aec3/shadow_filter_update_gain.h"
 
 #include <algorithm>
 #include <numeric>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/random.h"
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/modules/audio_processing/aec3/adaptive_fir_filter.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/aec_state.h"
-#include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec3/adaptive_fir_filter.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/random.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -47,7 +47,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
   Random random_generator(42U);
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<float> y(kBlockSize, 0.f);
-  AecState aec_state;
+  AecState aec_state(EchoCanceller3Config{});
   RenderSignalAnalyzer render_signal_analyzer;
   std::array<float, kFftLength> s;
   FftData S;
@@ -68,8 +68,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
     RandomizeSampleVector(&random_generator, x[0]);
     delay_buffer.Delay(x[0], y);
     render_buffer.Insert(x);
-    render_signal_analyzer.Update(
-        render_buffer, rtc::Optional<size_t>(delay_samples / kBlockSize));
+    render_signal_analyzer.Update(render_buffer, delay_samples / kBlockSize);
 
     shadow_filter.Filter(render_buffer, &S);
     fft.Ifft(S, &s);

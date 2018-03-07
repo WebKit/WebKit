@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/level_controller/saturating_gain_estimator.h"
+#include "modules/audio_processing/level_controller/saturating_gain_estimator.h"
 
 #include <math.h>
 #include <algorithm>
 
-#include "webrtc/modules/audio_processing/level_controller/level_controller_constants.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/level_controller/level_controller_constants.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
 
 namespace webrtc {
 

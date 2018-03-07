@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TIME_STRETCH_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TIME_STRETCH_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TIME_STRETCH_H_
+#define MODULES_AUDIO_CODING_NETEQ_TIME_STRETCH_H_
 
 #include <assert.h>
 #include <string.h>  // memset, size_t
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -113,4 +113,4 @@ class TimeStretch {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TIME_STRETCH_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TIME_STRETCH_H_

@@ -10,8 +10,8 @@
 
 package org.webrtc;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,10 +21,6 @@ import java.util.List;
  * http://www.w3.org/TR/mediacapture-streams/
  */
 public class PeerConnection {
-  static {
-    System.loadLibrary("jingle_peerconnection_so");
-  }
-
   /** Tracks PeerConnectionInterface::IceGatheringState */
   public enum IceGatheringState { NEW, GATHERING, COMPLETE }
 
@@ -99,7 +95,8 @@ public class PeerConnection {
     // List of URIs associated with this server. Valid formats are described
     // in RFC7064 and RFC7065, and more may be added in the future. The "host"
     // part of the URI may contain either an IP address or a hostname.
-    public final String uri;
+    @Deprecated public final String uri;
+    public final List<String> urls;
     public final String username;
     public final String password;
     public final TlsCertPolicy tlsCertPolicy;
@@ -110,31 +107,130 @@ public class PeerConnection {
     // necessary.
     public final String hostname;
 
+    // List of protocols to be used in the TLS ALPN extension.
+    public final List<String> tlsAlpnProtocols;
+
+    // List of elliptic curves to be used in the TLS elliptic curves extension.
+    // Only curve names supported by OpenSSL should be used (eg. "P-256","X25519").
+    public final List<String> tlsEllipticCurves;
+
     /** Convenience constructor for STUN servers. */
+    @Deprecated
     public IceServer(String uri) {
       this(uri, "", "");
     }
 
+    @Deprecated
     public IceServer(String uri, String username, String password) {
       this(uri, username, password, TlsCertPolicy.TLS_CERT_POLICY_SECURE);
     }
 
+    @Deprecated
     public IceServer(String uri, String username, String password, TlsCertPolicy tlsCertPolicy) {
       this(uri, username, password, tlsCertPolicy, "");
     }
 
+    @Deprecated
     public IceServer(String uri, String username, String password, TlsCertPolicy tlsCertPolicy,
         String hostname) {
+      this(uri, Collections.singletonList(uri), username, password, tlsCertPolicy, hostname, null,
+          null);
+    }
+
+    private IceServer(String uri, List<String> urls, String username, String password,
+        TlsCertPolicy tlsCertPolicy, String hostname, List<String> tlsAlpnProtocols,
+        List<String> tlsEllipticCurves) {
+      if (uri == null || urls == null || urls.isEmpty()) {
+        throw new IllegalArgumentException("uri == null || urls == null || urls.isEmpty()");
+      }
+      for (String it : urls) {
+        if (it == null) {
+          throw new IllegalArgumentException("urls element is null: " + urls);
+        }
+      }
+      if (username == null) {
+        throw new IllegalArgumentException("username == null");
+      }
+      if (password == null) {
+        throw new IllegalArgumentException("password == null");
+      }
+      if (hostname == null) {
+        throw new IllegalArgumentException("hostname == null");
+      }
       this.uri = uri;
+      this.urls = urls;
       this.username = username;
       this.password = password;
       this.tlsCertPolicy = tlsCertPolicy;
       this.hostname = hostname;
+      this.tlsAlpnProtocols = tlsAlpnProtocols;
+      this.tlsEllipticCurves = tlsEllipticCurves;
     }
 
+    @Override
     public String toString() {
-      return uri + " [" + username + ":" + password + "] [" + tlsCertPolicy + "] [" + hostname
-          + "]";
+      return urls + " [" + username + ":" + password + "] [" + tlsCertPolicy + "] [" + hostname
+          + "] [" + tlsAlpnProtocols + "] [" + tlsEllipticCurves + "]";
+    }
+
+    public static Builder builder(String uri) {
+      return new Builder(Collections.singletonList(uri));
+    }
+
+    public static Builder builder(List<String> urls) {
+      return new Builder(urls);
+    }
+
+    public static class Builder {
+      private final List<String> urls;
+      private String username = "";
+      private String password = "";
+      private TlsCertPolicy tlsCertPolicy = TlsCertPolicy.TLS_CERT_POLICY_SECURE;
+      private String hostname = "";
+      private List<String> tlsAlpnProtocols;
+      private List<String> tlsEllipticCurves;
+
+      private Builder(List<String> urls) {
+        if (urls == null || urls.isEmpty()) {
+          throw new IllegalArgumentException("urls == null || urls.isEmpty(): " + urls);
+        }
+        this.urls = urls;
+      }
+
+      public Builder setUsername(String username) {
+        this.username = username;
+        return this;
+      }
+
+      public Builder setPassword(String password) {
+        this.password = password;
+        return this;
+      }
+
+      public Builder setTlsCertPolicy(TlsCertPolicy tlsCertPolicy) {
+        this.tlsCertPolicy = tlsCertPolicy;
+        return this;
+      }
+
+      public Builder setHostname(String hostname) {
+        this.hostname = hostname;
+        return this;
+      }
+
+      public Builder setTlsAlpnProtocols(List<String> tlsAlpnProtocols) {
+        this.tlsAlpnProtocols = tlsAlpnProtocols;
+        return this;
+      }
+
+      public Builder setTlsEllipticCurves(List<String> tlsEllipticCurves) {
+        this.tlsEllipticCurves = tlsEllipticCurves;
+        return this;
+      }
+
+      public IceServer createIceServer() {
+        return new IceServer(urls.get(0), urls, username, password, tlsCertPolicy, hostname,
+            tlsAlpnProtocols, tlsEllipticCurves);
+      }
     }
   }
 
@@ -159,6 +255,25 @@ public class PeerConnection {
   /** Java version of PeerConnectionInterface.ContinualGatheringPolicy */
   public enum ContinualGatheringPolicy { GATHER_ONCE, GATHER_CONTINUALLY }
 
+  /** Java version of rtc::IntervalRange */
+  public static class IntervalRange {
+    private final int min;
+    private final int max;
+
+    public IntervalRange(int min, int max) {
+      this.min = min;
+      this.max = max;
+    }
+
+    public int getMin() {
+      return min;
+    }
+
+    public int getMax() {
+      return max;
+    }
+  }
+
   /** Java version of PeerConnectionInterface.RTCConfiguration */
   public static class RTCConfiguration {
     public IceTransportsType iceTransportsType;
@@ -178,13 +293,26 @@ public class PeerConnection {
     public boolean presumeWritableWhenFullyRelayed;
     public Integer iceCheckMinInterval;
     public boolean disableIPv6OnWifi;
+    // By default, PeerConnection will use a limited number of IPv6 network
+    // interfaces, in order to avoid too many ICE candidate pairs being created
+    // and delaying ICE completion.
+    //
+    // Can be set to Integer.MAX_VALUE to effectively disable the limit.
+    public int maxIPv6Networks;
+    public IntervalRange iceRegatherIntervalRange;
 
+    // This is an optional wrapper for the C++ webrtc::TurnCustomizer.
+    public TurnCustomizer turnCustomizer;
+
+    // TODO(deadbeef): Instead of duplicating the defaults here, we should do
+    // something to pick up the defaults from C++. The Objective-C equivalent
+    // of RTCConfiguration does that.
     public RTCConfiguration(List<IceServer> iceServers) {
       iceTransportsType = IceTransportsType.ALL;
       bundlePolicy = BundlePolicy.BALANCED;
       rtcpMuxPolicy = RtcpMuxPolicy.REQUIRE;
       tcpCandidatePolicy = TcpCandidatePolicy.ENABLED;
-      candidateNetworkPolicy = candidateNetworkPolicy.ALL;
+      candidateNetworkPolicy = CandidateNetworkPolicy.ALL;
       this.iceServers = iceServers;
       audioJitterBufferMaxPackets = 50;
       audioJitterBufferFastAccelerate = false;
@@ -197,21 +325,20 @@ public class PeerConnection {
       presumeWritableWhenFullyRelayed = false;
       iceCheckMinInterval = null;
       disableIPv6OnWifi = false;
+      maxIPv6Networks = 5;
+      iceRegatherIntervalRange = null;
     }
   };
 
-  private final List<MediaStream> localStreams;
+  private final List<MediaStream> localStreams = new ArrayList<>();
   private final long nativePeerConnection;
   private final long nativeObserver;
-  private List<RtpSender> senders;
-  private List<RtpReceiver> receivers;
+  private List<RtpSender> senders = new ArrayList<>();
+  private List<RtpReceiver> receivers = new ArrayList<>();
 
   PeerConnection(long nativePeerConnection, long nativeObserver) {
     this.nativePeerConnection = nativePeerConnection;
     this.nativeObserver = nativeObserver;
-    localStreams = new LinkedList<MediaStream>();
-    senders = new LinkedList<RtpSender>();
-    receivers = new LinkedList<RtpReceiver>();
   }
 
   // JsepInterface.
@@ -228,6 +355,18 @@ public class PeerConnection {
   public native void setLocalDescription(SdpObserver observer, SessionDescription sdp);
 
   public native void setRemoteDescription(SdpObserver observer, SessionDescription sdp);
+
+  // True if remote audio should be played out. Defaults to true.
+  // Note that even if playout is enabled, streams will only be played out if
+  // the appropriate SDP is also applied. The main purpose of this API is to
+  // be able to control the exact time when audio playout starts.
+  public native void setAudioPlayout(boolean playout);
+
+  // True if local audio shall be recorded. Defaults to true.
+  // Note that even if recording is enabled, streams will only be recorded if
+  // the appropriate SDP is also applied. The main purpose of this API is to
+  // be able to control the exact time when audio recording starts.
+  public native void setAudioRecording(boolean recording);
 
   public boolean setConfiguration(RTCConfiguration config) {
     return nativeSetConfiguration(config, nativeObserver);
@@ -255,6 +394,43 @@ public class PeerConnection {
     localStreams.remove(stream);
   }
 
+  /**
+   * Creates an RtpSender without a track.
+   * <p>
+   * This method allows an application to cause the PeerConnection to negotiate
+   * sending/receiving a specific media type, but without having a track to
+   * send yet.
+   * <p>
+   * When the application does want to begin sending a track, it can call
+   * RtpSender.setTrack, which doesn't require any additional SDP negotiation.
+   * <p>
+   * Example use:
+   * <pre>
+   * {@code
+   * audioSender = pc.createSender("audio", "stream1");
+   * videoSender = pc.createSender("video", "stream1");
+   * // Do normal SDP offer/answer, which will kick off ICE/DTLS and negotiate
+   * // media parameters....
+   * // Later, when the endpoint is ready to actually begin sending:
+   * audioSender.setTrack(audioTrack, false);
+   * videoSender.setTrack(videoTrack, false);
+   * }
+   * </pre>
+   * Note: This corresponds most closely to "addTransceiver" in the official
+   * WebRTC API, in that it creates a sender without a track. It was
+   * implemented before addTransceiver because it provides useful
+   * functionality, and properly implementing transceivers would have required
+   * a great deal more work.
+   *
+   * @param kind      Corresponds to MediaStreamTrack kinds (must be "audio" or
+   *                  "video").
+   * @param stream_id The ID of the MediaStream that this sender's track will
+   *                  be associated with when SDP is applied to the remote
+   *                  PeerConnection. If createSender is used to create an
+   *                  audio and video sender that should be synchronized, they
+   *                  should use the same stream ID.
+   * @return          A new RtpSender object if successful, or null otherwise.
+   */
   public RtpSender createSender(String kind, String stream_id) {
     RtpSender new_sender = nativeCreateSender(kind, stream_id);
     if (new_sender != null) {
@@ -293,6 +469,10 @@ public class PeerConnection {
     nativeNewGetStats(callback);
   }
 
+  // Limits the bandwidth allocated for all RTP streams sent by this
+  // PeerConnection. Pass null to leave a value unchanged.
+  public native boolean setBitrate(Integer min, Integer current, Integer max);
+
   // Starts recording an RTC event log. Ownership of the file is transfered to
   // the native code. If an RTC event log is already being recorded, it will be
   // stopped and a new one will start using the provided file. Logging will
@@ -318,6 +498,22 @@ public class PeerConnection {
 
   public native void close();
 
+  /**
+   * Free native resources associated with this PeerConnection instance.
+   * <p>
+   * This method removes a reference count from the C++ PeerConnection object,
+   * which should result in it being destroyed. It also calls equivalent
+   * "dispose" methods on the Java objects attached to this PeerConnection
+   * (streams, senders, receivers), such that their associated C++ objects
+   * will also be destroyed.
+   * <p>
+   * Note that this method cannot be safely called from an observer callback
+   * (PeerConnection.Observer, DataChannel.Observer, etc.). If you want to, for
+   * example, destroy the PeerConnection after an "ICE failed" callback, you
+   * must do this asynchronously (in other words, unwind the stack first). See
+   * <a href="https://bugs.chromium.org/p/webrtc/issues/detail?id=3721">bug
+   * 3721</a> for more details.
+   */
   public void dispose() {
     close();
     for (MediaStream stream : localStreams) {
@@ -333,11 +529,9 @@ public class PeerConnection {
       receiver.dispose();
     }
     receivers.clear();
-    freePeerConnection(nativePeerConnection);
+    JniCommon.nativeReleaseRef(nativePeerConnection);
     freeObserver(nativeObserver);
   }
-
-  private static native void freePeerConnection(long nativePeerConnection);
 
   private static native void freeObserver(long nativeObserver);
 

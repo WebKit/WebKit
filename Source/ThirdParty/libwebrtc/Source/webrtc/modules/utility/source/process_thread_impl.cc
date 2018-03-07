@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/utility/source/process_thread_impl.h"
+#include "modules/utility/source/process_thread_impl.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/modules/include/module.h"
+#include "modules/include/module.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 namespace {
@@ -118,14 +118,17 @@ void ProcessThreadImpl::PostTask(std::unique_ptr<rtc::QueuedTask> task) {
 void ProcessThreadImpl::RegisterModule(Module* module,
                                        const rtc::Location& from) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
-  RTC_DCHECK(module);
+  RTC_DCHECK(module) << from.ToString();
 
 #if RTC_DCHECK_IS_ON
   {
     // Catch programmer error.
     rtc::CritScope lock(&lock_);
-    for (const ModuleCallback& mc : modules_)
-      RTC_DCHECK(mc.module != module);
+    for (const ModuleCallback& mc : modules_) {
+      RTC_DCHECK(mc.module != module)
+          << "Already registered here: " << mc.location.ToString() << "\n"
+          << "Now attempting from here: " << from.ToString();
+    }
   }
 #endif
 

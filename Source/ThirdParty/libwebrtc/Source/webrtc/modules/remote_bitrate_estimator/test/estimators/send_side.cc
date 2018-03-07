@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/test/estimators/send_side.h"
+#include "modules/remote_bitrate_estimator/test/estimators/send_side.h"
 
 #include <algorithm>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/modules/congestion_controller/delay_based_bwe.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/congestion_controller/delay_based_bwe.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 namespace testing {
@@ -33,7 +33,7 @@ SendSideBweSender::SendSideBweSender(int kbps,
       acknowledged_bitrate_estimator_(
           rtc::MakeUnique<AcknowledgedBitrateEstimator>()),
       bwe_(new DelayBasedBwe(nullptr, clock)),
-      feedback_observer_(bitrate_controller_->CreateRtcpBandwidthObserver()),
+      feedback_observer_(bitrate_controller_.get()),
       clock_(clock),
       send_time_history_(clock_, 10000),
       has_received_ack_(false),
@@ -64,7 +64,7 @@ void SendSideBweSender::GiveFeedback(const FeedbackPacket& feedback) {
     if (!send_time_history_.GetFeedback(&packet_feedback, true)) {
       int64_t now_ms = clock_->TimeInMilliseconds();
       if (now_ms - last_log_time_ms_ > 5000) {
-        LOG(LS_WARNING) << "Ack arrived too late.";
+        RTC_LOG(LS_WARNING) << "Ack arrived too late.";
         last_log_time_ms_ = now_ms;
       }
     }
@@ -91,12 +91,12 @@ void SendSideBweSender::GiveFeedback(const FeedbackPacket& feedback) {
     if (expected_packets > 0) {
       int lost_packets = expected_packets -
                          static_cast<int>(fb.packet_feedback_vector().size());
-      report_block_.fractionLost = (lost_packets << 8) / expected_packets;
-      report_block_.cumulativeLost += lost_packets;
+      report_block_.fraction_lost = (lost_packets << 8) / expected_packets;
+      report_block_.packets_lost += lost_packets;
       uint32_t unwrapped = seq_num_unwrapper_.Unwrap(
           packet_feedback_vector.back().sequence_number);
-      report_block_.extendedHighSeqNum =
-          std::max(unwrapped, report_block_.extendedHighSeqNum);
+      report_block_.extended_highest_sequence_number =
+          std::max(unwrapped, report_block_.extended_highest_sequence_number);
       ReportBlockList report_blocks;
       report_blocks.push_back(report_block_);
       feedback_observer_->OnReceivedRtcpReceiverReport(

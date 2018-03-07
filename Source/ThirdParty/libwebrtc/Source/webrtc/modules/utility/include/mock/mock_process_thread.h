@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_UTILITY_INCLUDE_MOCK_MOCK_PROCESS_THREAD_H_
-#define WEBRTC_MODULES_UTILITY_INCLUDE_MOCK_MOCK_PROCESS_THREAD_H_
+#ifndef MODULES_UTILITY_INCLUDE_MOCK_MOCK_PROCESS_THREAD_H_
+#define MODULES_UTILITY_INCLUDE_MOCK_MOCK_PROCESS_THREAD_H_
 
 #include <memory>
 
-#include "webrtc/base/location.h"
-#include "webrtc/modules/utility/include/process_thread.h"
-#include "webrtc/test/gmock.h"
+#include "modules/utility/include/process_thread.h"
+#include "rtc_base/location.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -41,4 +41,4 @@ class MockProcessThread : public ProcessThread {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_UTILITY_INCLUDE_MOCK_MOCK_PROCESS_THREAD_H_
+#endif  // MODULES_UTILITY_INCLUDE_MOCK_MOCK_PROCESS_THREAD_H_

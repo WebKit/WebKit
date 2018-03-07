@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
+#define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
 
-#include "webrtc/modules/audio_coding/neteq/packet_buffer.h"
+#include "modules/audio_coding/neteq/packet_buffer.h"
 
-#include "webrtc/test/gmock.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -27,19 +27,20 @@ class MockPacketBuffer : public PacketBuffer {
       void());
   MOCK_CONST_METHOD0(Empty,
       bool());
-  int InsertPacket(Packet&& packet) {
-    return InsertPacketWrapped(&packet);
+  int InsertPacket(Packet&& packet, StatisticsCalculator* stats) {
+    return InsertPacketWrapped(&packet, stats);
   }
   // Since gtest does not properly support move-only types, InsertPacket is
   // implemented as a wrapper. You'll have to implement InsertPacketWrapped
   // instead and move from |*packet|.
-  MOCK_METHOD1(InsertPacketWrapped,
-      int(Packet* packet));
-  MOCK_METHOD4(InsertPacketList,
-      int(PacketList* packet_list,
-          const DecoderDatabase& decoder_database,
-          rtc::Optional<uint8_t>* current_rtp_payload_type,
-          rtc::Optional<uint8_t>* current_cng_rtp_payload_type));
+  MOCK_METHOD2(InsertPacketWrapped,
+               int(Packet* packet, StatisticsCalculator* stats));
+  MOCK_METHOD5(InsertPacketList,
+               int(PacketList* packet_list,
+                   const DecoderDatabase& decoder_database,
+                   rtc::Optional<uint8_t>* current_rtp_payload_type,
+                   rtc::Optional<uint8_t>* current_cng_rtp_payload_type,
+                   StatisticsCalculator* stats));
   MOCK_CONST_METHOD1(NextTimestamp,
       int(uint32_t* next_timestamp));
   MOCK_CONST_METHOD2(NextHigherTimestamp,
@@ -48,12 +49,13 @@ class MockPacketBuffer : public PacketBuffer {
       const Packet*());
   MOCK_METHOD0(GetNextPacket,
       rtc::Optional<Packet>());
-  MOCK_METHOD0(DiscardNextPacket,
-      int());
-  MOCK_METHOD2(DiscardOldPackets,
-      int(uint32_t timestamp_limit, uint32_t horizon_samples));
-  MOCK_METHOD1(DiscardAllOldPackets,
-      int(uint32_t timestamp_limit));
+  MOCK_METHOD1(DiscardNextPacket, int(StatisticsCalculator* stats));
+  MOCK_METHOD3(DiscardOldPackets,
+               void(uint32_t timestamp_limit,
+                    uint32_t horizon_samples,
+                    StatisticsCalculator* stats));
+  MOCK_METHOD2(DiscardAllOldPackets,
+               void(uint32_t timestamp_limit, StatisticsCalculator* stats));
   MOCK_CONST_METHOD0(NumPacketsInBuffer,
       size_t());
   MOCK_METHOD1(IncrementWaitingTimes,
@@ -63,4 +65,4 @@ class MockPacketBuffer : public PacketBuffer {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_PACKET_BUFFER_H_

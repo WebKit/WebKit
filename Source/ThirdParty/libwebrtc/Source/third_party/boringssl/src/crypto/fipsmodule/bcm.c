@@ -13,7 +13,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
 #if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE  /* needed for syscall() on Linux. */
+#define _GNU_SOURCE  // needed for syscall() on Linux.
 #endif
 
 #include <openssl/aead.h>
@@ -145,7 +145,7 @@ static RSA *self_test_rsa_key(void) {
       0xa7, 0x10, 0x93, 0x43, 0x53, 0x4e, 0xe3, 0x16, 0x73, 0x55, 0xce, 0xf2,
       0x94, 0xc0, 0xbe, 0xb3,
   };
-  static const uint8_t kE[] = {0x01, 0x00, 0x01}; /* 65537 */
+  static const uint8_t kE[] = {0x01, 0x00, 0x01};  // 65537
   static const uint8_t kD[] = {
       0x2f, 0x2c, 0x1e, 0xd2, 0x3d, 0x2c, 0xb1, 0x9b, 0x21, 0x02, 0xce, 0xb8,
       0x95, 0x5f, 0x4f, 0xd9, 0x21, 0x38, 0x11, 0x36, 0xb0, 0x9a, 0x36, 0xab,
@@ -288,8 +288,8 @@ static EC_KEY *self_test_ecdsa_key(void) {
 }
 
 #if !defined(OPENSSL_ASAN)
-/* These symbols are filled in by delocate.go. They point to the start and end
- * of the module, and the location of the integrity hash, respectively. */
+// These symbols are filled in by delocate.go. They point to the start and end
+// of the module, and the location of the integrity hash, respectively.
 extern const uint8_t BORINGSSL_bcm_text_start[];
 extern const uint8_t BORINGSSL_bcm_text_end[];
 extern const uint8_t BORINGSSL_bcm_text_hash[];
@@ -300,8 +300,8 @@ BORINGSSL_bcm_power_on_self_test(void) {
   CRYPTO_library_init();
 
 #if !defined(OPENSSL_ASAN)
-  /* Integrity tests cannot run under ASAN because it involves reading the full
-   * .text section, which triggers the global-buffer overflow detection. */
+  // Integrity tests cannot run under ASAN because it involves reading the full
+  // .text section, which triggers the global-buffer overflow detection.
   const uint8_t *const start = BORINGSSL_bcm_text_start;
   const uint8_t *const end = BORINGSSL_bcm_text_end;
 
@@ -478,7 +478,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
   uint8_t aes_iv[16];
   uint8_t output[256];
 
-  /* AES-CBC Encryption KAT */
+  // AES-CBC Encryption KAT
   memcpy(aes_iv, kAESIV, sizeof(kAESIV));
   if (AES_set_encrypt_key(kAESKey, 8 * sizeof(kAESKey), &aes_key) != 0) {
     goto err;
@@ -490,7 +490,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* AES-CBC Decryption KAT */
+  // AES-CBC Decryption KAT
   memcpy(aes_iv, kAESIV, sizeof(kAESIV));
   if (AES_set_decrypt_key(kAESKey, 8 * sizeof(kAESKey), &aes_key) != 0) {
     goto err;
@@ -511,7 +511,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* AES-GCM Encryption KAT */
+  // AES-GCM Encryption KAT
   if (!EVP_AEAD_CTX_seal(&aead_ctx, output, &out_len, sizeof(output), nonce,
                          EVP_AEAD_nonce_length(EVP_aead_aes_128_gcm()),
                          kPlaintext, sizeof(kPlaintext), NULL, 0) ||
@@ -520,7 +520,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* AES-GCM Decryption KAT */
+  // AES-GCM Decryption KAT
   if (!EVP_AEAD_CTX_open(&aead_ctx, output, &out_len, sizeof(output), nonce,
                          EVP_AEAD_nonce_length(EVP_aead_aes_128_gcm()),
                          kAESGCMCiphertext, sizeof(kAESGCMCiphertext), NULL,
@@ -538,7 +538,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
   DES_set_key(&kDESKey2, &des2);
   DES_set_key(&kDESKey3, &des3);
 
-  /* 3DES Encryption KAT */
+  // 3DES Encryption KAT
   memcpy(&des_iv, &kDESIV, sizeof(des_iv));
   DES_ede3_cbc_encrypt(kPlaintext, output, sizeof(kPlaintext), &des1, &des2,
                        &des3, &des_iv, DES_ENCRYPT);
@@ -547,7 +547,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* 3DES Decryption KAT */
+  // 3DES Decryption KAT
   memcpy(&des_iv, &kDESIV, sizeof(des_iv));
   DES_ede3_cbc_encrypt(kDESCiphertext, output, sizeof(kDESCiphertext), &des1,
                        &des2, &des3, &des_iv, DES_DECRYPT);
@@ -556,21 +556,21 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* SHA-1 KAT */
+  // SHA-1 KAT
   SHA1(kPlaintext, sizeof(kPlaintext), output);
   if (!check_test(kPlaintextSHA1, output, sizeof(kPlaintextSHA1),
                   "SHA-1 KAT")) {
     goto err;
   }
 
-  /* SHA-256 KAT */
+  // SHA-256 KAT
   SHA256(kPlaintext, sizeof(kPlaintext), output);
   if (!check_test(kPlaintextSHA256, output, sizeof(kPlaintextSHA256),
                   "SHA-256 KAT")) {
     goto err;
   }
 
-  /* SHA-512 KAT */
+  // SHA-512 KAT
   SHA512(kPlaintext, sizeof(kPlaintext), output);
   if (!check_test(kPlaintextSHA512, output, sizeof(kPlaintextSHA512),
                   "SHA-512 KAT")) {
@@ -583,11 +583,11 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* RSA Sign KAT */
+  // RSA Sign KAT
   unsigned sig_len;
 
-  /* Disable blinding for the power-on tests because it's not needed and
-   * triggers an entropy draw. */
+  // Disable blinding for the power-on tests because it's not needed and
+  // triggers an entropy draw.
   rsa_key->flags |= RSA_FLAG_NO_BLINDING;
 
   if (!RSA_sign(NID_sha256, kPlaintextSHA256, sizeof(kPlaintextSHA256), output,
@@ -597,7 +597,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* RSA Verify KAT */
+  // RSA Verify KAT
   if (!RSA_verify(NID_sha256, kPlaintextSHA256, sizeof(kPlaintextSHA256),
                   kRSASignature, sizeof(kRSASignature), rsa_key)) {
     printf("RSA Verify KAT failed.\n");
@@ -612,9 +612,9 @@ BORINGSSL_bcm_power_on_self_test(void) {
     goto err;
   }
 
-  /* ECDSA Sign/Verify PWCT */
+  // ECDSA Sign/Verify PWCT
 
-  /* The 'k' value for ECDSA is fixed to avoid an entropy draw. */
+  // The 'k' value for ECDSA is fixed to avoid an entropy draw.
   ec_key->fixed_k = BN_new();
   if (ec_key->fixed_k == NULL ||
       !BN_set_word(ec_key->fixed_k, 42)) {
@@ -641,7 +641,7 @@ BORINGSSL_bcm_power_on_self_test(void) {
   ECDSA_SIG_free(sig);
   EC_KEY_free(ec_key);
 
-  /* DBRG KAT */
+  // DBRG KAT
   CTR_DRBG_STATE drbg;
   if (!CTR_DRBG_init(&drbg, kDRBGEntropy, kDRBGPersonalization,
                      sizeof(kDRBGPersonalization)) ||
@@ -676,4 +676,4 @@ void BORINGSSL_FIPS_abort(void) {
     exit(1);
   }
 }
-#endif  /* BORINGSSL_FIPS */
+#endif  // BORINGSSL_FIPS

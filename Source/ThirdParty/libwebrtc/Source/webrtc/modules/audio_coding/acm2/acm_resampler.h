@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_ACM2_ACM_RESAMPLER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_ACM2_ACM_RESAMPLER_H_
+#ifndef MODULES_AUDIO_CODING_ACM2_ACM_RESAMPLER_H_
+#define MODULES_AUDIO_CODING_ACM2_ACM_RESAMPLER_H_
 
-#include "webrtc/common_audio/resampler/include/push_resampler.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/resampler/include/push_resampler.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace acm2 {
@@ -36,4 +36,4 @@ class ACMResampler {
 }  // namespace acm2
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_ACM2_ACM_RESAMPLER_H_
+#endif  // MODULES_AUDIO_CODING_ACM2_ACM_RESAMPLER_H_

@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/modules/audio_processing/transient/transient_detector.h"
-#include "webrtc/modules/audio_processing/transient/file_utils.h"
-#include "webrtc/system_wrappers/include/file_wrapper.h"
+#include "modules/audio_processing/transient/transient_detector.h"
+#include "modules/audio_processing/transient/file_utils.h"
+#include "system_wrappers/include/file_wrapper.h"
 
 using webrtc::FileWrapper;
 using webrtc::TransientDetector;

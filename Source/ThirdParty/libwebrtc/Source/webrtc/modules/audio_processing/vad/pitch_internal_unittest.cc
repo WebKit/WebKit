@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/vad/pitch_internal.h"
+#include "modules/audio_processing/vad/pitch_internal.h"
 
 #include <math.h>
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 TEST(PitchInternalTest, test) {
   const int kSamplingRateHz = 8000;

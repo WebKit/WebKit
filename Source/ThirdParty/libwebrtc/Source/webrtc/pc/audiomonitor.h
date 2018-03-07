@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_AUDIOMONITOR_H_
-#define WEBRTC_PC_AUDIOMONITOR_H_
+#ifndef PC_AUDIOMONITOR_H_
+#define PC_AUDIOMONITOR_H_
 
 #include <vector>
 #include <utility>
 
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/p2p/base/port.h"
+#include "p2p/base/port.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/thread.h"
 
 namespace cricket {
 
@@ -57,4 +57,4 @@ class AudioMonitor : public rtc::MessageHandler,
 
 }  // namespace cricket
 
-#endif  // WEBRTC_PC_AUDIOMONITOR_H_
+#endif  // PC_AUDIOMONITOR_H_

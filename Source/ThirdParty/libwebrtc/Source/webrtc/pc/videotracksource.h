@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_VIDEOTRACKSOURCE_H_
-#define WEBRTC_PC_VIDEOTRACKSOURCE_H_
+#ifndef PC_VIDEOTRACKSOURCE_H_
+#define PC_VIDEOTRACKSOURCE_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/notifier.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/media/base/videosinkinterface.h"
+#include "api/mediastreaminterface.h"
+#include "api/notifier.h"
+#include "media/base/mediachannel.h"
+#include "media/base/videosinkinterface.h"
+#include "rtc_base/thread_checker.h"
 
 // VideoTrackSource implements VideoTrackSourceInterface.
 namespace webrtc {
@@ -33,8 +33,7 @@ class VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
   bool remote() const override { return remote_; }
 
   bool is_screencast() const override { return false; }
-  rtc::Optional<bool> needs_denoising() const override {
-    return rtc::Optional<bool>(); }
+  rtc::Optional<bool> needs_denoising() const override { return rtc::nullopt; }
 
   bool GetStats(Stats* stats) override { return false; }
 
@@ -52,4 +51,4 @@ class VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
 
 }  // namespace webrtc
 
-#endif  //  WEBRTC_PC_VIDEOTRACKSOURCE_H_
+#endif  //  PC_VIDEOTRACKSOURCE_H_

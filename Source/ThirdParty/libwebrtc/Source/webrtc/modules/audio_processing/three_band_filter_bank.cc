@@ -33,11 +33,11 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
-#include "webrtc/modules/audio_processing/three_band_filter_bank.h"
+#include "modules/audio_processing/three_band_filter_bank.h"
 
 #include <cmath>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

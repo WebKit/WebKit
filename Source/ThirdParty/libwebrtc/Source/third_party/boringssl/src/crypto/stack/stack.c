@@ -63,8 +63,8 @@
 #include "../internal.h"
 
 
-/* kMinSize is the number of pointers that will be initially allocated in a new
- * stack. */
+// kMinSize is the number of pointers that will be initially allocated in a new
+// stack.
 static const size_t kMinSize = 4;
 
 _STACK *sk_new(stack_cmp_func comp) {
@@ -152,18 +152,18 @@ size_t sk_insert(_STACK *sk, void *p, size_t where) {
   }
 
   if (sk->num_alloc <= sk->num + 1) {
-    /* Attempt to double the size of the array. */
+    // Attempt to double the size of the array.
     size_t new_alloc = sk->num_alloc << 1;
     size_t alloc_size = new_alloc * sizeof(void *);
     void **data;
 
-    /* If the doubling overflowed, try to increment. */
+    // If the doubling overflowed, try to increment.
     if (new_alloc < sk->num_alloc || alloc_size / sizeof(void *) != new_alloc) {
       new_alloc = sk->num_alloc + 1;
       alloc_size = new_alloc * sizeof(void *);
     }
 
-    /* If the increment also overflowed, fail. */
+    // If the increment also overflowed, fail.
     if (new_alloc < sk->num_alloc || alloc_size / sizeof(void *) != new_alloc) {
       return 0;
     }
@@ -229,7 +229,7 @@ int sk_find(_STACK *sk, size_t *out_index, void *p) {
   }
 
   if (sk->comp == NULL) {
-    /* Use pointer equality when no comparison function has been set. */
+    // Use pointer equality when no comparison function has been set.
     for (size_t i = 0; i < sk->num; i++) {
       if (sk->data[i] == p) {
         if (out_index) {
@@ -247,18 +247,18 @@ int sk_find(_STACK *sk, size_t *out_index, void *p) {
 
   sk_sort(sk);
 
-  /* sk->comp is a function that takes pointers to pointers to elements, but
-   * qsort and bsearch take a comparison function that just takes pointers to
-   * elements. However, since we're passing an array of pointers to
-   * qsort/bsearch, we can just cast the comparison function and everything
-   * works. */
+  // sk->comp is a function that takes pointers to pointers to elements, but
+  // qsort and bsearch take a comparison function that just takes pointers to
+  // elements. However, since we're passing an array of pointers to
+  // qsort/bsearch, we can just cast the comparison function and everything
+  // works.
   const void *const *r = bsearch(&p, sk->data, sk->num, sizeof(void *),
                                  (int (*)(const void *, const void *))sk->comp);
   if (r == NULL) {
     return 0;
   }
   size_t idx = ((void **)r) - sk->data;
-  /* This function always returns the first result. */
+  // This function always returns the first result.
   while (idx > 0 &&
          sk->comp((const void **)&p, (const void **)&sk->data[idx - 1]) == 0) {
     idx--;
@@ -329,7 +329,7 @@ void sk_sort(_STACK *sk) {
     return;
   }
 
-  /* See the comment in sk_find about this cast. */
+  // See the comment in sk_find about this cast.
   comp_func = (int (*)(const void *, const void *))(sk->comp);
   qsort(sk->data, sk->num, sizeof(void *), comp_func);
   sk->sorted = 1;

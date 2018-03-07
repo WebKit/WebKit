@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_H_
-#define WEBRTC_API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_H_
+#ifndef API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_H_
+#define API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/api/audio_codecs/g722/audio_encoder_g722_config.h"
-#include "webrtc/base/optional.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/audio_codecs/g722/audio_encoder_g722_config.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -37,4 +37,4 @@ struct AudioEncoderG722 {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_H_
+#endif  // API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_H_

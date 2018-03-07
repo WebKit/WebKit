@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/cursor_unittest_resources.h"
+#include "modules/desktop_capture/win/cursor_unittest_resources.h"
 
 // These cursors are matched with their less than  32bpp counterparts below.
 IDD_CURSOR1_32BPP CURSOR "cursor_test_data/1_32bpp.cur"

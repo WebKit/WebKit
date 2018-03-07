@@ -8,11 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/utility/frame_dropper.h"
+#include "modules/video_coding/utility/frame_dropper.h"
 
 #include <algorithm>
-
-#include "webrtc/base/logging.h"
 
 namespace webrtc {
 
@@ -52,15 +50,6 @@ FrameDropper::FrameDropper()
   Reset();
 }
 
-FrameDropper::FrameDropper(float max_drop_duration_secs)
-    : key_frame_ratio_(kDefaultKeyFrameRatioAlpha),
-      delta_frame_size_avg_kbits_(kDefaultFrameSizeAlpha),
-      drop_ratio_(kDefaultDropRatioAlpha, kDefaultDropRatioValue),
-      enabled_(true),
-      max_drop_duration_secs_(max_drop_duration_secs) {
-  Reset();
-}
-
 void FrameDropper::Reset() {
   key_frame_ratio_.Reset(kDefaultKeyFrameRatioAlpha);
   key_frame_ratio_.Apply(1.0f, kDefaultKeyFrameRatioValue);
@@ -94,8 +83,8 @@ void FrameDropper::Fill(size_t framesize_bytes, bool delta_frame) {
   if (!delta_frame) {
     key_frame_ratio_.Apply(1.0, 1.0);
     // Do not spread if we are already doing it (or we risk dropping bits that
-    // need accumulation). Given we compute the key
-    // frame ratio and spread based on that, this should not normally happen.
+    // need accumulation). Given we compute the key frame ratio and spread
+    // based on that, this should not normally happen.
     if (large_frame_accumulation_count_ == 0) {
       if (key_frame_ratio_.filtered() > 1e-5 &&
           1 / key_frame_ratio_.filtered() < large_frame_accumulation_spread_) {
@@ -158,16 +147,15 @@ void FrameDropper::Leak(uint32_t input_framerate) {
 
 void FrameDropper::UpdateRatio() {
   if (accumulator_ > 1.3f * accumulator_max_) {
-    // Too far above accumulator max, react faster
+    // Too far above accumulator max, react faster.
     drop_ratio_.UpdateBase(0.8f);
   } else {
-    // Go back to normal reaction
+    // Go back to normal reaction.
     drop_ratio_.UpdateBase(0.9f);
   }
   if (accumulator_ > accumulator_max_) {
-    // We are above accumulator max, and should ideally
-    // drop a frame. Increase the dropRatio and drop
-    // the frame later.
+    // We are above accumulator max, and should ideally drop a frame. Increase
+    // the drop_ratio_ and drop the frame later.
     if (was_below_max_) {
       drop_next_ = true;
     }
@@ -180,8 +168,7 @@ void FrameDropper::UpdateRatio() {
 }
 
 // This function signals when to drop frames to the caller. It makes use of the
-// dropRatio
-// to smooth out the drops over time.
+// drop_ratio_ to smooth out the drops over time.
 bool FrameDropper::DropFrame() {
   if (!enabled_) {
     return false;
@@ -192,7 +179,7 @@ bool FrameDropper::DropFrame() {
   }
 
   if (drop_ratio_.filtered() >= 0.5f) {  // Drops per keep
-    // limit is the number of frames we should drop between each kept frame
+    // Limit is the number of frames we should drop between each kept frame
     // to keep our drop ratio. limit is positive in this case.
     float denom = 1.0f - drop_ratio_.filtered();
     if (denom < 1e-5) {
@@ -221,7 +208,7 @@ bool FrameDropper::DropFrame() {
     }
   } else if (drop_ratio_.filtered() > 0.0f &&
              drop_ratio_.filtered() < 0.5f) {  // Keeps per drop
-    // limit is the number of frames we should keep between each drop
+    // Limit is the number of frames we should keep between each drop
     // in order to keep the drop ratio. limit is negative in this case,
     // and the drop_count_ is also negative.
     float denom = drop_ratio_.filtered();

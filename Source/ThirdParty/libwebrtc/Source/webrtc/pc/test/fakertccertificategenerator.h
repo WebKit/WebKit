@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_TEST_FAKERTCCERTIFICATEGENERATOR_H_
-#define WEBRTC_PC_TEST_FAKERTCCERTIFICATEGENERATOR_H_
+#ifndef PC_TEST_FAKERTCCERTIFICATEGENERATOR_H_
+#define PC_TEST_FAKERTCCERTIFICATEGENERATOR_H_
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/base/rtccertificate.h"
-#include "webrtc/base/rtccertificategenerator.h"
+#include "api/peerconnectioninterface.h"
+#include "rtc_base/rtccertificate.h"
+#include "rtc_base/rtccertificategenerator.h"
 
 // RSA with mod size 1024, pub exp 0x10001.
 static const rtc::RTCCertificatePEM kRsaPems[] = {
@@ -125,16 +125,21 @@ class FakeRTCCertificateGenerator
   typedef rtc::TypedMessageData<rtc::scoped_refptr<
       rtc::RTCCertificateGeneratorCallback> > MessageData;
 
-  FakeRTCCertificateGenerator() : should_fail_(false) {}
+  FakeRTCCertificateGenerator() : should_fail_(false), should_wait_(false) {}
 
   void set_should_fail(bool should_fail) {
     should_fail_ = should_fail;
   }
 
+  // If set to true, stalls the generation of the fake certificate until it is
+  // set to false.
+  void set_should_wait(bool should_wait) { should_wait_ = should_wait; }
+
   void use_original_key() { key_index_ = 0; }
   void use_alternate_key() { key_index_ = 1; }
 
   int generated_certificates() { return generated_certificates_; }
+  int generated_failures() { return generated_failures_; }
 
   void GenerateCertificateAsync(
       const rtc::KeyParams& key_params,
@@ -151,12 +156,12 @@ class FakeRTCCertificateGenerator
     if (should_fail_) {
       msg_id = MSG_FAILURE;
     } else if (key_params.type() == rtc::KT_RSA) {
-      RTC_DCHECK(key_params.rsa_params().mod_size == 1024 &&
-                 key_params.rsa_params().pub_exp == 0x10001);
+      RTC_DCHECK_EQ(key_params.rsa_params().mod_size, 1024);
+      RTC_DCHECK_EQ(key_params.rsa_params().pub_exp, 0x10001);
       msg_id = MSG_SUCCESS_RSA;
     } else {
-      RTC_DCHECK(key_params.type() == rtc::KT_ECDSA &&
-                 key_params.ec_curve() == rtc::EC_NIST_P256);
+      RTC_DCHECK_EQ(key_params.type(), rtc::KT_ECDSA);
+      RTC_DCHECK_EQ(key_params.ec_curve(), rtc::EC_NIST_P256);
       msg_id = MSG_SUCCESS_ECDSA;
     }
     rtc::Thread::Current()->Post(RTC_FROM_HERE, this, msg_id, msg);
@@ -201,6 +206,14 @@ class FakeRTCCertificateGenerator
 
   // rtc::MessageHandler implementation.
   void OnMessage(rtc::Message* msg) override {
+    // If the certificate generation should be stalled, re-post this same
+    // message to the queue with a small delay so as to wait in a loop until
+    // set_should_wait(false) is called.
+    if (should_wait_) {
+      rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, 1, this,
+                                          msg->message_id, msg->pdata);
+      return;
+    }
     MessageData* message_data = static_cast<MessageData*>(msg->pdata);
     rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback> callback =
         message_data->data();
@@ -217,6 +230,7 @@ class FakeRTCCertificateGenerator
         break;
       }
       case MSG_FAILURE:
+        ++generated_failures_;
         callback->OnFailure();
         break;
     }
@@ -224,8 +238,10 @@ class FakeRTCCertificateGenerator
   }
 
   bool should_fail_;
+  bool should_wait_;
   int key_index_ = 0;
   int generated_certificates_ = 0;
+  int generated_failures_ = 0;
 };
 
-#endif  // WEBRTC_PC_TEST_FAKERTCCERTIFICATEGENERATOR_H_
+#endif  // PC_TEST_FAKERTCCERTIFICATEGENERATOR_H_

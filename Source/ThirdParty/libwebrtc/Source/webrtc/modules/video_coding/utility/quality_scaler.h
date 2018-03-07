@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
+#ifndef MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
+#define MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
 
 #include <utility>
 
-#include "webrtc/common_types.h"
-#include "webrtc/api/video_codecs/video_encoder.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/sequenced_task_checker.h"
-#include "webrtc/modules/video_coding/utility/moving_average.h"
+#include "api/optional.h"
+#include "api/video_codecs/video_encoder.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/video_coding/utility/moving_average.h"
+#include "rtc_base/sequenced_task_checker.h"
 
 namespace webrtc {
 
@@ -39,8 +39,8 @@ class AdaptationObserverInterface {
 };
 
 // QualityScaler runs asynchronously and monitors QP values of encoded frames.
-// It holds a reference to a ScalingObserverInterface implementation to signal
-// an intent to scale up or down.
+// It holds a reference to an AdaptationObserverInterface implementation to
+// signal an intent to scale up or down.
 class QualityScaler {
  public:
   // Construct a QualityScaler with a given |observer|.
@@ -71,17 +71,17 @@ class QualityScaler {
   void ReportQPHigh();
   int64_t GetSamplingPeriodMs() const;
 
-  CheckQPTask* check_qp_task_ GUARDED_BY(&task_checker_);
-  AdaptationObserverInterface* const observer_ GUARDED_BY(&task_checker_);
+  CheckQPTask* check_qp_task_ RTC_GUARDED_BY(&task_checker_);
+  AdaptationObserverInterface* const observer_ RTC_GUARDED_BY(&task_checker_);
   rtc::SequencedTaskChecker task_checker_;
 
   const int64_t sampling_period_ms_;
-  bool fast_rampup_ GUARDED_BY(&task_checker_);
-  MovingAverage average_qp_ GUARDED_BY(&task_checker_);
-  MovingAverage framedrop_percent_ GUARDED_BY(&task_checker_);
+  bool fast_rampup_ RTC_GUARDED_BY(&task_checker_);
+  MovingAverage average_qp_ RTC_GUARDED_BY(&task_checker_);
+  MovingAverage framedrop_percent_ RTC_GUARDED_BY(&task_checker_);
 
-  VideoEncoder::QpThresholds thresholds_ GUARDED_BY(&task_checker_);
+  VideoEncoder::QpThresholds thresholds_ RTC_GUARDED_BY(&task_checker_);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_
+#endif  // MODULES_VIDEO_CODING_UTILITY_QUALITY_SCALER_H_

@@ -79,7 +79,7 @@ void EVP_MD_CTX_init(EVP_MD_CTX *ctx) {
   OPENSSL_memset(ctx, 0, sizeof(EVP_MD_CTX));
 }
 
-EVP_MD_CTX *EVP_MD_CTX_create(void) {
+EVP_MD_CTX *EVP_MD_CTX_new(void) {
   EVP_MD_CTX *ctx = OPENSSL_malloc(sizeof(EVP_MD_CTX));
 
   if (ctx) {
@@ -89,11 +89,10 @@ EVP_MD_CTX *EVP_MD_CTX_create(void) {
   return ctx;
 }
 
+EVP_MD_CTX *EVP_MD_CTX_create(void) { return EVP_MD_CTX_new(); }
+
 int EVP_MD_CTX_cleanup(EVP_MD_CTX *ctx) {
-  if (ctx->digest && ctx->digest->ctx_size && ctx->md_data) {
-    OPENSSL_cleanse(ctx->md_data, ctx->digest->ctx_size);
-    OPENSSL_free(ctx->md_data);
-  }
+  OPENSSL_free(ctx->md_data);
 
   assert(ctx->pctx == NULL || ctx->pctx_ops != NULL);
   if (ctx->pctx_ops) {
@@ -105,7 +104,7 @@ int EVP_MD_CTX_cleanup(EVP_MD_CTX *ctx) {
   return 1;
 }
 
-void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx) {
+void EVP_MD_CTX_free(EVP_MD_CTX *ctx) {
   if (!ctx) {
     return;
   }
@@ -114,18 +113,38 @@ void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx) {
   OPENSSL_free(ctx);
 }
 
-int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
-  uint8_t *tmp_buf = NULL;
+void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx) { EVP_MD_CTX_free(ctx); }
 
+int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
   if (in == NULL || in->digest == NULL) {
     OPENSSL_PUT_ERROR(DIGEST, DIGEST_R_INPUT_NOT_INITIALIZED);
     return 0;
   }
 
-  if (out->digest == in->digest) {
-    /* |md_data| will be the correct size in this case so it's removed from
-     * |out| at this point so that |EVP_MD_CTX_cleanup| doesn't free it and
-     * then it's reused. */
+  EVP_PKEY_CTX *pctx = NULL;
+  assert(in->pctx == NULL || in->pctx_ops != NULL);
+  if (in->pctx) {
+    pctx = in->pctx_ops->dup(in->pctx);
+    if (!pctx) {
+      OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
+      return 0;
+    }
+  }
+
+  uint8_t *tmp_buf;
+  if (out->digest != in->digest) {
+    assert(in->digest->ctx_size != 0);
+    tmp_buf = OPENSSL_malloc(in->digest->ctx_size);
+    if (tmp_buf == NULL) {
+      if (pctx) {
+        in->pctx_ops->free(pctx);
+      }
+      OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
+      return 0;
+    }
+  } else {
+    // |md_data| will be the correct size in this case. It's removed from |out|
+    // so that |EVP_MD_CTX_cleanup| doesn't free it, and then it's reused.
     tmp_buf = out->md_data;
     out->md_data = NULL;
   }
@@ -133,28 +152,11 @@ int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
   EVP_MD_CTX_cleanup(out);
 
   out->digest = in->digest;
-  if (in->md_data && in->digest->ctx_size) {
-    if (tmp_buf) {
-      out->md_data = tmp_buf;
-    } else {
-      out->md_data = OPENSSL_malloc(in->digest->ctx_size);
-      if (!out->md_data) {
-        OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
-        return 0;
-      }
-    }
-    OPENSSL_memcpy(out->md_data, in->md_data, in->digest->ctx_size);
-  }
-
-  assert(in->pctx == NULL || in->pctx_ops != NULL);
+  out->md_data = tmp_buf;
+  OPENSSL_memcpy(out->md_data, in->md_data, in->digest->ctx_size);
+  out->pctx = pctx;
   out->pctx_ops = in->pctx_ops;
-  if (in->pctx && in->pctx_ops) {
-    out->pctx = in->pctx_ops->dup(in->pctx);
-    if (!out->pctx) {
-      EVP_MD_CTX_cleanup(out);
-      return 0;
-    }
-  }
+  assert(out->pctx == NULL || out->pctx_ops != NULL);
 
   return 1;
 }
@@ -164,20 +166,23 @@ int EVP_MD_CTX_copy(EVP_MD_CTX *out, const EVP_MD_CTX *in) {
   return EVP_MD_CTX_copy_ex(out, in);
 }
 
+void EVP_MD_CTX_reset(EVP_MD_CTX *ctx) {
+  EVP_MD_CTX_cleanup(ctx);
+  EVP_MD_CTX_init(ctx);
+}
+
 int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *engine) {
   if (ctx->digest != type) {
-    if (ctx->digest && ctx->digest->ctx_size > 0) {
-      OPENSSL_free(ctx->md_data);
-      ctx->md_data = NULL;
+    assert(type->ctx_size != 0);
+    uint8_t *md_data = OPENSSL_malloc(type->ctx_size);
+    if (md_data == NULL) {
+      OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
+      return 0;
     }
+
+    OPENSSL_free(ctx->md_data);
+    ctx->md_data = md_data;
     ctx->digest = type;
-    if (type->ctx_size > 0) {
-      ctx->md_data = OPENSSL_malloc(type->ctx_size);
-      if (ctx->md_data == NULL) {
-        OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
-        return 0;
-      }
-    }
   }
 
   assert(ctx->pctx == NULL || ctx->pctx_ops != NULL);

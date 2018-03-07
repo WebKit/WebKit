@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/source/event_timer_posix.h"
+#include "system_wrappers/source/event_timer_posix.h"
 
 #include <errno.h>
 #include <pthread.h>
@@ -18,7 +18,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -160,7 +160,7 @@ bool EventTimerPosix::StartTimer(bool periodic, unsigned long time_ms) {
       // Timer already started.
       pthread_mutex_unlock(&mutex_);
       return false;
-    } else  {
+    } else {
       // New one shot timer.
       time_ms_ = time_ms;
       created_at_.tv_sec = 0;

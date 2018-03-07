@@ -7,15 +7,15 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/congestion_controller/delay_based_bwe_unittest_helper.h"
+#include "modules/congestion_controller/delay_based_bwe_unittest_helper.h"
 
 #include <algorithm>
 #include <limits>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/modules/congestion_controller/delay_based_bwe.h"
+#include "modules/congestion_controller/delay_based_bwe.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 

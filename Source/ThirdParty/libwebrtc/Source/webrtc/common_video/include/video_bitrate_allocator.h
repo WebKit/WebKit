@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_INCLUDE_VIDEO_BITRATE_ALLOCATOR_H_
-#define WEBRTC_COMMON_VIDEO_INCLUDE_VIDEO_BITRATE_ALLOCATOR_H_
+#ifndef COMMON_VIDEO_INCLUDE_VIDEO_BITRATE_ALLOCATOR_H_
+#define COMMON_VIDEO_INCLUDE_VIDEO_BITRATE_ALLOCATOR_H_
 
-#include "webrtc/common_types.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -36,4 +36,4 @@ class VideoBitrateAllocationObserver {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_INCLUDE_VIDEO_BITRATE_ALLOCATOR_H_
+#endif  // COMMON_VIDEO_INCLUDE_VIDEO_BITRATE_ALLOCATOR_H_

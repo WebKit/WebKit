@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/rtputils.h"
+#include "media/base/rtputils.h"
 
 // PacketTimeUpdateParams is defined in asyncpacketsocket.h.
 // TODO(sergeyu): Find more appropriate place for PacketTimeUpdateParams.
-#include "webrtc/base/asyncpacketsocket.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/messagedigest.h"
-#include "webrtc/media/base/turnutils.h"
+#include "media/base/turnutils.h"
+#include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/messagedigest.h"
 
 namespace cricket {
 
@@ -114,7 +114,7 @@ void UpdateRtpAuthTag(uint8_t* rtp,
   memcpy(auth_tag, output, tag_length);
 }
 
-}
+}  // namespace
 
 bool GetUint8(const void* data, size_t offset, int* value) {
   if (!data || !value) {

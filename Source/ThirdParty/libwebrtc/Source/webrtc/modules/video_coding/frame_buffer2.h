@@ -8,22 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_FRAME_BUFFER2_H_
-#define WEBRTC_MODULES_VIDEO_CODING_FRAME_BUFFER2_H_
+#ifndef MODULES_VIDEO_CODING_FRAME_BUFFER2_H_
+#define MODULES_VIDEO_CODING_FRAME_BUFFER2_H_
 
 #include <array>
 #include <map>
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/video_coding/frame_object.h"
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
-#include "webrtc/modules/video_coding/inter_frame_delay.h"
-#include "webrtc/modules/video_coding/sequence_number_util.h"
+#include "modules/video_coding/frame_object.h"
+#include "modules/video_coding/include/video_coding_defines.h"
+#include "modules/video_coding/inter_frame_delay.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
+#include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -57,7 +57,8 @@ class FrameBuffer {
   //    kTimeout.
   //  - If the FrameBuffer is stopped then it will return kStopped.
   ReturnReason NextFrame(int64_t max_wait_time_ms,
-                         std::unique_ptr<FrameObject>* frame_out);
+                         std::unique_ptr<FrameObject>* frame_out,
+                         bool keyframe_required = false);
 
   // Tells the FrameBuffer which protection mode that is in use. Affects
   // the frame timing.
@@ -73,21 +74,24 @@ class FrameBuffer {
   // return immediately.
   void Stop();
 
+  // Updates the RTT for jitter buffer estimation.
+  void UpdateRtt(int64_t rtt_ms);
+
  private:
   struct FrameKey {
-    FrameKey() : picture_id(0), spatial_layer(0) {}
-    FrameKey(uint16_t picture_id, uint8_t spatial_layer)
+    FrameKey() : picture_id(-1), spatial_layer(0) {}
+    FrameKey(int64_t picture_id, uint8_t spatial_layer)
         : picture_id(picture_id), spatial_layer(spatial_layer) {}
 
     bool operator<(const FrameKey& rhs) const {
       if (picture_id == rhs.picture_id)
         return spatial_layer < rhs.spatial_layer;
-      return AheadOf(rhs.picture_id, picture_id);
+      return picture_id < rhs.picture_id;
     }
 
     bool operator<=(const FrameKey& rhs) const { return !(rhs < *this); }
 
-    uint16_t picture_id;
+    int64_t picture_id;
     uint8_t spatial_layer;
   };
 
@@ -128,53 +132,56 @@ class FrameBuffer {
   // Updates the minimal and maximal playout delays
   // depending on the frame.
   void UpdatePlayoutDelays(const FrameObject& frame)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Update all directly dependent and indirectly dependent frames and mark
   // them as continuous if all their references has been fulfilled.
   void PropagateContinuity(FrameMap::iterator start)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Marks the frame as decoded and updates all directly dependent frames.
   void PropagateDecodability(const FrameInfo& info)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Advances |last_decoded_frame_it_| to |decoded| and removes old
   // frame info.
   void AdvanceLastDecodedFrame(FrameMap::iterator decoded)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Update the corresponding FrameInfo of |frame| and all FrameInfos that
   // |frame| references.
   // Return false if |frame| will never be decodable, true otherwise.
   bool UpdateFrameInfoWithIncomingFrame(const FrameObject& frame,
                                         FrameMap::iterator info)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  void UpdateJitterDelay() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void UpdateJitterDelay() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  void ClearFramesAndHistory() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void UpdateTimingFrameInfo() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  void ClearFramesAndHistory() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   bool HasBadRenderTiming(const FrameObject& frame, int64_t now_ms)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  FrameMap frames_ GUARDED_BY(crit_);
+  FrameMap frames_ RTC_GUARDED_BY(crit_);
 
   rtc::CriticalSection crit_;
   Clock* const clock_;
   rtc::Event new_continuous_frame_event_;
-  VCMJitterEstimator* const jitter_estimator_ GUARDED_BY(crit_);
-  VCMTiming* const timing_ GUARDED_BY(crit_);
-  VCMInterFrameDelay inter_frame_delay_ GUARDED_BY(crit_);
-  uint32_t last_decoded_frame_timestamp_ GUARDED_BY(crit_);
-  FrameMap::iterator last_decoded_frame_it_ GUARDED_BY(crit_);
-  FrameMap::iterator last_continuous_frame_it_ GUARDED_BY(crit_);
-  FrameMap::iterator next_frame_it_ GUARDED_BY(crit_);
-  int num_frames_history_ GUARDED_BY(crit_);
-  int num_frames_buffered_ GUARDED_BY(crit_);
-  bool stopped_ GUARDED_BY(crit_);
-  VCMVideoProtection protection_mode_ GUARDED_BY(crit_);
+  VCMJitterEstimator* const jitter_estimator_ RTC_GUARDED_BY(crit_);
+  VCMTiming* const timing_ RTC_GUARDED_BY(crit_);
+  VCMInterFrameDelay inter_frame_delay_ RTC_GUARDED_BY(crit_);
+  uint32_t last_decoded_frame_timestamp_ RTC_GUARDED_BY(crit_);
+  FrameMap::iterator last_decoded_frame_it_ RTC_GUARDED_BY(crit_);
+  FrameMap::iterator last_continuous_frame_it_ RTC_GUARDED_BY(crit_);
+  FrameMap::iterator next_frame_it_ RTC_GUARDED_BY(crit_);
+  int num_frames_history_ RTC_GUARDED_BY(crit_);
+  int num_frames_buffered_ RTC_GUARDED_BY(crit_);
+  bool stopped_ RTC_GUARDED_BY(crit_);
+  VCMVideoProtection protection_mode_ RTC_GUARDED_BY(crit_);
   VCMReceiveStatisticsCallback* const stats_callback_;
+  int64_t last_log_non_decoded_ms_ RTC_GUARDED_BY(crit_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(FrameBuffer);
 };
@@ -182,4 +189,4 @@ class FrameBuffer {
 }  // namespace video_coding
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_FRAME_BUFFER2_H_
+#endif  // MODULES_VIDEO_CODING_FRAME_BUFFER2_H_

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/dsp_helper.h"
+#include "modules/audio_coding/neteq/dsp_helper.h"
 
-#include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "test/gtest.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

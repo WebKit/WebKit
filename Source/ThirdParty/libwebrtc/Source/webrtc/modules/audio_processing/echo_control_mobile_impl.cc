@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/echo_control_mobile_impl.h"
+#include "modules/audio_processing/echo_control_mobile_impl.h"
 
 #include <string.h>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_processing/aecm/echo_control_mobile.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/aecm/echo_control_mobile.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -354,7 +354,7 @@ void EchoControlMobileImpl::Initialize(int sample_rate_hz,
   }
 
   if (stream_properties_->sample_rate_hz > AudioProcessing::kSampleRate16kHz) {
-    LOG(LS_ERROR) << "AECM only supports 16 kHz or lower sample rates";
+    RTC_LOG(LS_ERROR) << "AECM only supports 16 kHz or lower sample rates";
   }
 
   cancellers_.resize(

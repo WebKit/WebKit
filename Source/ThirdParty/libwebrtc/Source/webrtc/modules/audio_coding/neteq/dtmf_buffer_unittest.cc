@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/dtmf_buffer.h"
+#include "modules/audio_coding/neteq/dtmf_buffer.h"
 
 #ifdef WIN32
 #include <winsock2.h>  // ntohl()
@@ -18,7 +18,7 @@
 
 #include <iostream>
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 // Modify the tests so that they pass with the modifications done to DtmfBuffer
 // for backwards bit-exactness. Once bit-exactness is no longer required, this

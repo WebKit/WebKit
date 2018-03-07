@@ -8,8 +8,8 @@
 // be found in the AUTHORS file in the root of the source tree.
 //
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_DEFAULT_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_DEFAULT_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_DEFAULT_H_
+#define SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_DEFAULT_H_
 
 namespace webrtc {
 namespace field_trial {
@@ -25,4 +25,4 @@ const char* GetFieldTrialString();
 }  // namespace field_trial
 }  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_DEFAULT_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_DEFAULT_H_

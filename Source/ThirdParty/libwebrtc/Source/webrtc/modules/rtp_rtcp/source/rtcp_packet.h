@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  *
  */
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
+#define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/buffer.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -86,7 +86,7 @@ class RtcpPacket {
   static constexpr size_t kHeaderLength = 4;
   RtcpPacket() {}
 
-  static void CreateHeader(uint8_t count_or_format,
+  static void CreateHeader(size_t count_or_format,
                            uint8_t packet_type,
                            size_t block_length,  // Payload size in 32bit words.
                            uint8_t* buffer,
@@ -100,4 +100,4 @@ class RtcpPacket {
 };
 }  // namespace rtcp
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_

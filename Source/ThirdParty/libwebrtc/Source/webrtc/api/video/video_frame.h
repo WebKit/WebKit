@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_VIDEO_VIDEO_FRAME_H_
-#define WEBRTC_API_VIDEO_VIDEO_FRAME_H_
+#ifndef API_VIDEO_VIDEO_FRAME_H_
+#define API_VIDEO_VIDEO_FRAME_H_
 
 #include <stdint.h>
 
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/api/video/video_frame_buffer.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_frame_buffer.h"
 
 namespace webrtc {
 
@@ -112,4 +112,4 @@ class VideoFrame {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_VIDEO_VIDEO_FRAME_H_
+#endif  // API_VIDEO_VIDEO_FRAME_H_

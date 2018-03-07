@@ -49,7 +49,7 @@ specification by other means.
 extern "C" {
 #endif
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #if defined(__i386__)
 /*! \brief Find the bit position of the highest set bit in a word

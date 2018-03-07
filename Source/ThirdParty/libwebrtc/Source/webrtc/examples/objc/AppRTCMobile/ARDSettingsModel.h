@@ -10,6 +10,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "WebRTC/RTCVideoCodec.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -51,12 +53,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns array of available video codecs.
  */
-- (NSArray<NSString *> *)availableVideoCodecs;
+- (NSArray<RTCVideoCodecInfo *> *)availableVideoCodecs;
 
 /**
  * Returns current video codec setting from store if present or default (H264) otherwise.
  */
-- (NSString *)currentVideoCodecSettingFromStore;
+- (RTCVideoCodecInfo *)currentVideoCodecSettingFromStore;
 
 /**
  * Stores the provided video codec setting into the store.
@@ -66,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param video codec settings the string to be stored.
  * @return YES/NO depending on success.
  */
-- (BOOL)storeVideoCodecSetting:(NSString *)videoCodec;
+- (BOOL)storeVideoCodecSetting:(RTCVideoCodecInfo *)videoCodec;
 
 /**
  * Returns current max bitrate setting from store if present.

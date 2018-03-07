@@ -54,7 +54,7 @@ CHROME_VALGRIND_SCRIPTS=$THISDIR/../../tools/valgrind
 
 if [ "$NEEDS_VALGRIND" == "1" ]
 then
-  CHROME_VALGRIND=`sh $CHROME_VALGRIND_SCRIPTS/locate_valgrind.sh`
+  CHROME_VALGRIND=`sh $THISDIR/locate_valgrind.sh`
   if [ "$CHROME_VALGRIND" = "" ]
   then
     CHROME_VALGRIND=../../src/third_party/valgrind/linux_x64

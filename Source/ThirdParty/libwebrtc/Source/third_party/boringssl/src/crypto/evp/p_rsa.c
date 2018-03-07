@@ -73,24 +73,29 @@
 
 
 typedef struct {
-  /* Key gen parameters */
+  // Key gen parameters
   int nbits;
   BIGNUM *pub_exp;
-  /* RSA padding mode */
+  // RSA padding mode
   int pad_mode;
-  /* message digest */
+  // message digest
   const EVP_MD *md;
-  /* message digest for MGF1 */
+  // message digest for MGF1
   const EVP_MD *mgf1md;
-  /* PSS salt length */
+  // PSS salt length
   int saltlen;
-  /* tbuf is a buffer which is either NULL, or is the size of the RSA modulus.
-   * It's used to store the output of RSA operations. */
+  // tbuf is a buffer which is either NULL, or is the size of the RSA modulus.
+  // It's used to store the output of RSA operations.
   uint8_t *tbuf;
-  /* OAEP label */
+  // OAEP label
   uint8_t *oaep_label;
   size_t oaep_labellen;
 } RSA_PKEY_CTX;
+
+typedef struct {
+  uint8_t *data;
+  size_t len;
+} RSA_OAEP_LABEL_PARAMS;
 
 static int pkey_rsa_init(EVP_PKEY_CTX *ctx) {
   RSA_PKEY_CTX *rctx;
@@ -260,7 +265,7 @@ static int pkey_rsa_verify_recover(EVP_PKEY_CTX *ctx, uint8_t *out,
     return 0;
   }
 
-  /* Assemble the encoded hash, using a placeholder hash value. */
+  // Assemble the encoded hash, using a placeholder hash value.
   static const uint8_t kDummyHash[EVP_MAX_MD_SIZE] = {0};
   const size_t hash_len = EVP_MD_size(rctx->md);
   uint8_t *asn1_prefix;
@@ -278,7 +283,7 @@ static int pkey_rsa_verify_recover(EVP_PKEY_CTX *ctx, uint8_t *out,
   if (!RSA_verify_raw(rsa, &rslen, rctx->tbuf, key_len, sig, sig_len,
                       RSA_PKCS1_PADDING) ||
       rslen != asn1_prefix_len ||
-      /* Compare all but the hash suffix. */
+      // Compare all but the hash suffix.
       CRYPTO_memcmp(rctx->tbuf, asn1_prefix, asn1_prefix_len - hash_len) != 0) {
     ok = 0;
   }
@@ -485,20 +490,17 @@ static int pkey_rsa_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2) {
       }
       return 1;
 
-    case EVP_PKEY_CTRL_RSA_OAEP_LABEL:
+    case EVP_PKEY_CTRL_RSA_OAEP_LABEL: {
       if (rctx->pad_mode != RSA_PKCS1_OAEP_PADDING) {
         OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_PADDING_MODE);
         return 0;
       }
       OPENSSL_free(rctx->oaep_label);
-      if (p2 && p1 > 0) {
-        rctx->oaep_label = p2;
-        rctx->oaep_labellen = p1;
-      } else {
-        rctx->oaep_label = NULL;
-        rctx->oaep_labellen = 0;
-      }
+      RSA_OAEP_LABEL_PARAMS *params = p2;
+      rctx->oaep_label = params->data;
+      rctx->oaep_labellen = params->len;
       return 1;
+    }
 
     case EVP_PKEY_CTRL_GET_RSA_OAEP_LABEL:
       if (rctx->pad_mode != RSA_PKCS1_OAEP_PADDING) {
@@ -611,13 +613,9 @@ int EVP_PKEY_CTX_get_rsa_mgf1_md(EVP_PKEY_CTX *ctx, const EVP_MD **out_md) {
 
 int EVP_PKEY_CTX_set0_rsa_oaep_label(EVP_PKEY_CTX *ctx, uint8_t *label,
                                      size_t label_len) {
-  if (label_len > INT_MAX) {
-    return 0;
-  }
-
+  RSA_OAEP_LABEL_PARAMS params = {label, label_len};
   return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
-                           EVP_PKEY_CTRL_RSA_OAEP_LABEL, (int)label_len,
-                           (void *)label);
+                           EVP_PKEY_CTRL_RSA_OAEP_LABEL, 0, &params);
 }
 
 int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx,

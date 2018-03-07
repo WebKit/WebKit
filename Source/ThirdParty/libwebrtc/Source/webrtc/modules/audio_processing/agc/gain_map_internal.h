@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
+#define MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
 
 static const int kGainMapSize = 256;
 // Uses parameters: si = 2, sf = 0.25, D = 8/256
@@ -272,4 +272,4 @@ static const int kGainMap[kGainMapSize] = {
   64
 };
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC_GAIN_MAP_INTERNAL_H_

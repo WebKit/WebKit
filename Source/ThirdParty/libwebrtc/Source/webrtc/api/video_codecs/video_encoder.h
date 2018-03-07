@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_VIDEO_CODECS_VIDEO_ENCODER_H_
-#define WEBRTC_API_VIDEO_CODECS_VIDEO_ENCODER_H_
+#ifndef API_VIDEO_CODECS_VIDEO_ENCODER_H_
+#define API_VIDEO_CODECS_VIDEO_ENCODER_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/include/video_frame.h"
-#include "webrtc/typedefs.h"
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
+#include "api/video/video_frame.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "common_video/include/video_frame.h"
+#include "rtc_base/checks.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -41,7 +41,7 @@ class EncodedImageCallback {
       ERROR_SEND_FAILED,
     };
 
-    Result(Error error) : error(error) {}
+    explicit Result(Error error) : error(error) {}
     Result(Error error, uint32_t frame_id) : error(error), frame_id(frame_id) {}
 
     Error error;
@@ -56,23 +56,29 @@ class EncodedImageCallback {
     bool drop_next_frame = false;
   };
 
+  // Used to signal the encoder about reason a frame is dropped.
+  // kDroppedByMediaOptimizations - dropped by MediaOptimizations (for rate
+  // limiting purposes).
+  // kDroppedByEncoder - dropped by encoder's internal rate limiter.
+  enum class DropReason : uint8_t {
+    kDroppedByMediaOptimizations,
+    kDroppedByEncoder
+  };
+
   // Callback function which is called when an image has been encoded.
   virtual Result OnEncodedImage(
       const EncodedImage& encoded_image,
       const CodecSpecificInfo* codec_specific_info,
       const RTPFragmentationHeader* fragmentation) = 0;
 
+  // Deprecated. TODO(ilnik): Remove this in few weeks.
   virtual void OnDroppedFrame() {}
+
+  virtual void OnDroppedFrame(DropReason) {}
 };
 
 class VideoEncoder {
  public:
-  enum EncoderType {
-    kH264,
-    kVp8,
-    kVp9,
-    kUnsupportedCodec,
-  };
   struct QpThresholds {
     QpThresholds(int l, int h) : low(l), high(h) {}
     QpThresholds() : low(-1), high(-1) {}
@@ -80,18 +86,22 @@ class VideoEncoder {
     int high;
   };
   struct ScalingSettings {
-    ScalingSettings(bool on, int low, int high)
-        : enabled(on),
-          thresholds(rtc::Optional<QpThresholds>(QpThresholds(low, high))) {}
-    explicit ScalingSettings(bool on) : enabled(on) {}
+    ScalingSettings(bool on, int low, int high);
+    ScalingSettings(bool on, int low, int high, int min_pixels);
+    ScalingSettings(bool on, int min_pixels);
+    explicit ScalingSettings(bool on);
+    ScalingSettings(const ScalingSettings&);
+    ~ScalingSettings();
+
     const bool enabled;
     const rtc::Optional<QpThresholds> thresholds;
+
+    // We will never ask for a resolution lower than this.
+    // TODO(kthelgason): Lower this limit when better testing
+    // on MediaCodec and fallback implementations are in place.
+    // See https://bugs.chromium.org/p/webrtc/issues/detail?id=7206
+    const int min_pixels_per_frame = 320 * 180;
   };
-  static VideoEncoder* Create(EncoderType codec_type);
-  // Returns true if this type of encoder can be created using
-  // VideoEncoder::Create.
-  static bool IsSupportedSoftware(EncoderType codec_type);
-  static EncoderType CodecToEncoderType(VideoCodecType codec_type);
 
   static VideoCodecVP8 GetDefaultVp8Settings();
   static VideoCodecVP9 GetDefaultVp9Settings();
@@ -166,28 +176,20 @@ class VideoEncoder {
   //          - framerate       : The target frame rate
   //
   // Return value                : WEBRTC_VIDEO_CODEC_OK if OK, < 0 otherwise.
-  virtual int32_t SetRates(uint32_t /* bitrate */, uint32_t /* framerate */) {
-    RTC_NOTREACHED() << "SetRate(uint32_t, uint32_t) is deprecated.";
-    return -1;
-  }
+  virtual int32_t SetRates(uint32_t bitrate, uint32_t framerate);
 
   // Default fallback: Just use the sum of bitrates as the single target rate.
   // TODO(sprang): Remove this default implementation when we remove SetRates().
   virtual int32_t SetRateAllocation(const BitrateAllocation& allocation,
-                                    uint32_t framerate) {
-    return SetRates(allocation.get_sum_kbps(), framerate);
-  }
+                                    uint32_t framerate);
 
   // Any encoder implementation wishing to use the WebRTC provided
   // quality scaler must implement this method.
-  virtual ScalingSettings GetScalingSettings() const {
-    return ScalingSettings(false);
-  }
+  virtual ScalingSettings GetScalingSettings() const;
 
-  virtual int32_t SetPeriodicKeyFrames(bool /* enable */) { return -1; }
-  virtual bool SupportsNativeHandle() const { return false; }
-  virtual const char* ImplementationName() const { return "unknown"; }
+  virtual int32_t SetPeriodicKeyFrames(bool enable);
+  virtual bool SupportsNativeHandle() const;
+  virtual const char* ImplementationName() const;
 };
-
 }  // namespace webrtc
-#endif  // WEBRTC_API_VIDEO_CODECS_VIDEO_ENCODER_H_
+#endif  // API_VIDEO_CODECS_VIDEO_ENCODER_H_

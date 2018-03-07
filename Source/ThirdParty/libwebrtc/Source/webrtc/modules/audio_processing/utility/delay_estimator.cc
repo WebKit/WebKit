@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/utility/delay_estimator.h"
+#include "modules/audio_processing/utility/delay_estimator.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 // Number of right shifts for scaling is linearly depending on number of bits in
 // the far-end binary spectrum.

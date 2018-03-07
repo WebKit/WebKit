@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/examples/peerconnection/client/defaults.h"
+#include "examples/peerconnection/client/defaults.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -19,7 +19,7 @@
 #include <unistd.h>
 #endif
 
-#include "webrtc/base/arraysize.h"
+#include "rtc_base/arraysize.h"
 
 const char kAudioLabel[] = "audio_label";
 const char kVideoLabel[] = "video_label";

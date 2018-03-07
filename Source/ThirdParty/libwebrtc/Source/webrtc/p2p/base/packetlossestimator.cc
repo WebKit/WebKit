@@ -10,9 +10,9 @@
 
 #include <sstream>
 
-#include "webrtc/p2p/base/packetlossestimator.h"
+#include "p2p/base/packetlossestimator.h"
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace cricket {
 
@@ -22,6 +22,8 @@ PacketLossEstimator::PacketLossEstimator(int64_t consider_lost_after_ms,
       forget_after_ms_(forget_after_ms) {
   RTC_DCHECK_LT(consider_lost_after_ms, forget_after_ms);
 }
+
+PacketLossEstimator::~PacketLossEstimator() = default;
 
 void PacketLossEstimator::ExpectResponse(std::string id, int64_t sent_time) {
   tracked_packets_[id] = PacketInfo{sent_time, false};

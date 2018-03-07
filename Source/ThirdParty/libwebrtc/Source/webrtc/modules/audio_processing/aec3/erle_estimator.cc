@@ -8,25 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/erle_estimator.h"
+#include "modules/audio_processing/aec3/erle_estimator.h"
 
 #include <algorithm>
+#include <numeric>
 
-#include "webrtc/base/safe_minmax.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
-namespace {
-
-constexpr float kMinErle = 1.f;
-constexpr float kMaxLfErle = 8.f;
-constexpr float kMaxHfErle = 1.5f;
-
-}  // namespace
-
-ErleEstimator::ErleEstimator() {
-  erle_.fill(kMinErle);
+ErleEstimator::ErleEstimator(float min_erle,
+                             float max_erle_lf,
+                             float max_erle_hf)
+    : min_erle_(min_erle),
+      max_erle_lf_(max_erle_lf),
+      max_erle_hf_(max_erle_hf) {
+  erle_.fill(min_erle_);
   hold_counters_.fill(0);
+  erle_time_domain_ = min_erle_;
+  hold_counter_time_domain_ = 0;
 }
 
 ErleEstimator::~ErleEstimator() = default;
@@ -50,23 +50,41 @@ void ErleEstimator::Update(
         if (new_erle > erle_[k]) {
           hold_counters_[k - 1] = 100;
           erle_[k] += 0.1f * (new_erle - erle_[k]);
-          erle_[k] = rtc::SafeClamp(erle_[k], kMinErle, max_erle);
+          erle_[k] = rtc::SafeClamp(erle_[k], min_erle_, max_erle);
         }
       }
     }
   };
-  erle_update(1, kFftLengthBy2 / 2, kMaxLfErle);
-  erle_update(kFftLengthBy2 / 2, kFftLengthBy2, kMaxHfErle);
+  erle_update(1, kFftLengthBy2 / 2, max_erle_lf_);
+  erle_update(kFftLengthBy2 / 2, kFftLengthBy2, max_erle_hf_);
 
   std::for_each(hold_counters_.begin(), hold_counters_.end(),
                 [](int& a) { --a; });
   std::transform(hold_counters_.begin(), hold_counters_.end(),
-                 erle_.begin() + 1, erle_.begin() + 1, [](int a, float b) {
-                   return a > 0 ? b : std::max(kMinErle, 0.97f * b);
+                 erle_.begin() + 1, erle_.begin() + 1, [&](int a, float b) {
+                   return a > 0 ? b : std::max(min_erle_, 0.97f * b);
                  });
 
   erle_[0] = erle_[1];
   erle_[kFftLengthBy2] = erle_[kFftLengthBy2 - 1];
+
+  // Compute ERLE over all frequency bins.
+  const float X2_sum = std::accumulate(X2.begin(), X2.end(), 0.0f);
+  const float E2_sum = std::accumulate(E2.begin(), E2.end(), 0.0f);
+  if (X2_sum > kX2Min * X2.size() && E2_sum > 0.f) {
+    const float Y2_sum = std::accumulate(Y2.begin(), Y2.end(), 0.0f);
+    const float new_erle = Y2_sum / E2_sum;
+    if (new_erle > erle_time_domain_) {
+      hold_counter_time_domain_ = 100;
+      erle_time_domain_ += 0.1f * (new_erle - erle_time_domain_);
+      erle_time_domain_ =
+          rtc::SafeClamp(erle_time_domain_, min_erle_, max_erle_lf_);
+    }
+  }
+  --hold_counter_time_domain_;
+  erle_time_domain_ = (hold_counter_time_domain_ > 0)
+                        ? erle_time_domain_
+                        : std::max(min_erle_, 0.97f * erle_time_domain_);
 }
 
 }  // namespace webrtc

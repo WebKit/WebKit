@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_ORTC_ORTCRTPSENDERADAPTER_H_
-#define WEBRTC_ORTC_ORTCRTPSENDERADAPTER_H_
+#ifndef ORTC_ORTCRTPSENDERADAPTER_H_
+#define ORTC_ORTCRTPSENDERADAPTER_H_
 
 #include <memory>
 
-#include "webrtc/api/ortc/ortcrtpsenderinterface.h"
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/api/rtpparameters.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/ortc/rtptransportcontrolleradapter.h"
-#include "webrtc/pc/rtpsender.h"
+#include "api/ortc/ortcrtpsenderinterface.h"
+#include "api/rtcerror.h"
+#include "api/rtpparameters.h"
+#include "ortc/rtptransportcontrolleradapter.h"
+#include "pc/rtpsender.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/sigslot.h"
 
 namespace webrtc {
 
@@ -76,4 +76,4 @@ class OrtcRtpSenderAdapter : public OrtcRtpSenderInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_ORTC_ORTCRTPSENDERADAPTER_H_
+#endif  // ORTC_ORTCRTPSENDERADAPTER_H_

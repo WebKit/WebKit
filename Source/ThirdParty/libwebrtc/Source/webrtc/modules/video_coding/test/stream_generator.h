@@ -7,14 +7,14 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_MODULES_VIDEO_CODING_TEST_STREAM_GENERATOR_H_
-#define WEBRTC_MODULES_VIDEO_CODING_TEST_STREAM_GENERATOR_H_
+#ifndef MODULES_VIDEO_CODING_TEST_STREAM_GENERATOR_H_
+#define MODULES_VIDEO_CODING_TEST_STREAM_GENERATOR_H_
 
 #include <list>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/typedefs.h"
+#include "modules/video_coding/packet.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -69,4 +69,4 @@ class StreamGenerator {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_TEST_STREAM_GENERATOR_H_
+#endif  // MODULES_VIDEO_CODING_TEST_STREAM_GENERATOR_H_

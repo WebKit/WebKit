@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <sstream>
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "test/gtest.h"
 
 static const size_t kVector16Size = 9;
 static const int16_t vector16[kVector16Size] = {1, -15511, 4323, 1963,
@@ -41,7 +41,6 @@ TEST_F(SplTest, MacroTest) {
     EXPECT_EQ(3, WEBRTC_SPL_ABS_W32(a));
 
     EXPECT_EQ(-63, WEBRTC_SPL_MUL(a, B));
-    EXPECT_EQ(-2147483645, WEBRTC_SPL_MUL(a, b));
     EXPECT_EQ(2147483651u, WEBRTC_SPL_UMUL(a, b));
     b = WEBRTC_SPL_WORD16_MAX >> 1;
     EXPECT_EQ(4294918147u, WEBRTC_SPL_UMUL_32_16(a, b));

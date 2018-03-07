@@ -11,7 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/p2p/base/stun.h"
+#include "p2p/base/stun.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {

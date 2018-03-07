@@ -10,7 +10,7 @@
 
 #define _USE_MATH_DEFINES
 
-#include "webrtc/modules/audio_processing/beamformer/covariance_matrix_generator.h"
+#include "modules/audio_processing/beamformer/covariance_matrix_generator.h"
 
 #include <cmath>
 

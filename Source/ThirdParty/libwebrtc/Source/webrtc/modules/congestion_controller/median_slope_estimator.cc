@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/median_slope_estimator.h"
+#include "modules/congestion_controller/median_slope_estimator.h"
 
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 

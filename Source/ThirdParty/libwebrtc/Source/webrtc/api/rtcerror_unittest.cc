@@ -10,8 +10,8 @@
 
 #include <utility>
 
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/test/gtest.h"
+#include "api/rtcerror.h"
+#include "test/gtest.h"
 
 namespace {
 

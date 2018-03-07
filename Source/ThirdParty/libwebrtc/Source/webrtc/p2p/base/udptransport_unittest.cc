@@ -14,16 +14,16 @@
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/asyncpacketsocket.h"
-#include "webrtc/base/ipaddress.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/socketserver.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/packettransportinternal.h"
-#include "webrtc/p2p/base/udptransport.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/packettransportinternal.h"
+#include "p2p/base/udptransport.h"
+#include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/ipaddress.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/socketserver.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/virtualsocketserver.h"
 
 namespace cricket {
 
@@ -91,7 +91,7 @@ class UdpTransportTest : public testing::Test, public sigslot::has_slots<> {
                       const rtc::PacketTime& packet_time,
                       int flags) {
       num_received_packets_++;
-      LOG(LS_VERBOSE) << "OnReadPacket (unittest)";
+      RTC_LOG(LS_VERBOSE) << "OnReadPacket (unittest)";
       ch_packets_.push_front(std::string(data, len));
     }
 

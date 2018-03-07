@@ -1,0 +1,60 @@
+From 826df71603f4e35466cb5330bd18920d503e80b2 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 14 Dec 2017 13:57:39 -0800
+Subject: [PATCH 8/8] Fix sanitizer
+
+---
+ .../libwebrtc/Source/webrtc/rtc_base/sanitizer.h         | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/sanitizer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/sanitizer.h
+index 1b94e1edf47..96d024883fa 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/sanitizer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/sanitizer.h
+@@ -52,6 +52,10 @@ static inline void rtc_AsanPoison(const volatile void* ptr,
+                                   size_t num_elements) {
+ #if RTC_HAS_ASAN
+   ASAN_POISON_MEMORY_REGION(ptr, element_size * num_elements);
++#else
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
+ #endif
+ }
+ 
+@@ -63,6 +67,10 @@ static inline void rtc_AsanUnpoison(const volatile void* ptr,
+                                     size_t num_elements) {
+ #if RTC_HAS_ASAN
+   ASAN_UNPOISON_MEMORY_REGION(ptr, element_size * num_elements);
++#else
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
+ #endif
+ }
+ 
+@@ -73,6 +81,10 @@ static inline void rtc_MsanMarkUninitialized(const volatile void* ptr,
+                                              size_t num_elements) {
+ #if RTC_HAS_MSAN
+   __msan_poison(ptr, element_size * num_elements);
++#else
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
+ #endif
+ }
+ 
+@@ -84,6 +96,10 @@ static inline void rtc_MsanCheckInitialized(const volatile void* ptr,
+                                             size_t num_elements) {
+ #if RTC_HAS_MSAN
+   __msan_check_mem_is_initialized(ptr, element_size * num_elements);
++#else
++  (void)ptr;
++  (void)element_size;
++  (void)num_elements;
+ #endif
+ }
+ 
+-- 
+2.13.5 (Apple Git-94)
+

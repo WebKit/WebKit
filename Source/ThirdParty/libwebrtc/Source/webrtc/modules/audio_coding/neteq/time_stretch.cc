@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/time_stretch.h"
+#include "modules/audio_coding/neteq/time_stretch.h"
 
 #include <algorithm>  // min, max
 #include <memory>
 
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/neteq/background_noise.h"
-#include "webrtc/modules/audio_coding/neteq/cross_correlation.h"
-#include "webrtc/modules/audio_coding/neteq/dsp_helper.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/background_noise.h"
+#include "modules/audio_coding/neteq/cross_correlation.h"
+#include "modules/audio_coding/neteq/dsp_helper.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

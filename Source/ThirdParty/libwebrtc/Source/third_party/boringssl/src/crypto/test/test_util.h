@@ -62,4 +62,4 @@ inline bool operator!=(const Bytes &a, const Bytes &b) { return !(a == b); }
 std::ostream &operator<<(std::ostream &os, const Bytes &in);
 
 
-#endif /* OPENSSL_HEADER_CRYPTO_TEST_TEST_UTIL_H */
+#endif  // OPENSSL_HEADER_CRYPTO_TEST_TEST_UTIL_H

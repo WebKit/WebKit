@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/examples/unityplugin/unity_plugin_apis.h"
+#include "examples/unityplugin/unity_plugin_apis.h"
 
 #include <map>
 #include <string>
 
-#include "webrtc/examples/unityplugin/simple_peer_connection.h"
+#include "examples/unityplugin/simple_peer_connection.h"
 
 namespace {
 static int g_peer_connection_id = 1;
@@ -21,12 +21,15 @@ static std::map<int, rtc::scoped_refptr<SimplePeerConnection>>
     g_peer_connection_map;
 }  // namespace
 
-int CreatePeerConnection() {
+int CreatePeerConnection(const char** turn_urls,
+                         const int no_of_urls,
+                         const char* username,
+                         const char* credential) {
   g_peer_connection_map[g_peer_connection_id] =
       new rtc::RefCountedObject<SimplePeerConnection>();
 
   if (!g_peer_connection_map[g_peer_connection_id]->InitializePeerConnection(
-          false))
+          turn_urls, no_of_urls, username, credential, false))
     return -1;
 
   return g_peer_connection_id++;
@@ -89,13 +92,45 @@ bool SetAudioControl(int peer_connection_id, bool is_mute, bool is_record) {
   return true;
 }
 
-// Register callback functions.
-bool RegisterOnVideoFramReady(int peer_connection_id,
-                              VIDEOFRAMEREADY_CALLBACK callback) {
+bool SetRemoteDescription(int peer_connection_id,
+                          const char* type,
+                          const char* sdp) {
   if (!g_peer_connection_map.count(peer_connection_id))
     return false;
 
-  g_peer_connection_map[peer_connection_id]->RegisterOnVideoFramReady(callback);
+  return g_peer_connection_map[peer_connection_id]->SetRemoteDescription(type,
+                                                                         sdp);
+}
+
+bool AddIceCandidate(const int peer_connection_id,
+                     const char* candidate,
+                     const int sdp_mlineindex,
+                     const char* sdp_mid) {
+  if (!g_peer_connection_map.count(peer_connection_id))
+    return false;
+
+  return g_peer_connection_map[peer_connection_id]->AddIceCandidate(
+      candidate, sdp_mlineindex, sdp_mid);
+}
+
+// Register callback functions.
+bool RegisterOnLocalI420FrameReady(int peer_connection_id,
+                                   I420FRAMEREADY_CALLBACK callback) {
+  if (!g_peer_connection_map.count(peer_connection_id))
+    return false;
+
+  g_peer_connection_map[peer_connection_id]->RegisterOnLocalI420FrameReady(
+      callback);
+  return true;
+}
+
+bool RegisterOnRemoteI420FrameReady(int peer_connection_id,
+                                    I420FRAMEREADY_CALLBACK callback) {
+  if (!g_peer_connection_map.count(peer_connection_id))
+    return false;
+
+  g_peer_connection_map[peer_connection_id]->RegisterOnRemoteI420FrameReady(
+      callback);
   return true;
 }
 
@@ -157,29 +192,4 @@ bool RegisterOnIceCandiateReadytoSend(
   g_peer_connection_map[peer_connection_id]->RegisterOnIceCandiateReadytoSend(
       callback);
   return true;
-}
-
-int ReceivedSdp(int peer_connection_id, const char* sdp) {
-  // Create a peer_connection if no one exists.
-  int id = -1;
-  if (g_peer_connection_map.count(peer_connection_id)) {
-    id = peer_connection_id;
-  } else {
-    id = g_peer_connection_id++;
-    g_peer_connection_map[id] =
-        new rtc::RefCountedObject<SimplePeerConnection>();
-    if (!g_peer_connection_map[id]->InitializePeerConnection(true))
-      return -1;
-  }
-
-  g_peer_connection_map[id]->ReceivedSdp(sdp);
-  return id;
-}
-
-bool ReceivedIceCandidate(int peer_connection_id, const char* ice_candidate) {
-  if (!g_peer_connection_map.count(peer_connection_id))
-    return false;
-
-  return g_peer_connection_map[peer_connection_id]->ReceivedIceCandidate(
-      ice_candidate);
 }

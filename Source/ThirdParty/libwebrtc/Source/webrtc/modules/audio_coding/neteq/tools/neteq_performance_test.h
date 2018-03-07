@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
+#define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -29,4 +29,4 @@ class NetEqPerformanceTest {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_

@@ -10,8 +10,8 @@
 
 #import "WebRTC/RTCSSLAdapter.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/ssladapter.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/ssladapter.h"
 
 BOOL RTCInitializeSSL() {
   BOOL initialized = rtc::InitializeSSL();

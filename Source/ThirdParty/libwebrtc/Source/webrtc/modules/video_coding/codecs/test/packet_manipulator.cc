@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/codecs/test/packet_manipulator.h"
+#include "modules/video_coding/codecs/test/packet_manipulator.h"
 
-#include <assert.h>
 #include <stdio.h>
 
-#include "webrtc/base/format_macros.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/format_macros.h"
 
 namespace webrtc {
 namespace test {
@@ -23,10 +23,10 @@ PacketManipulatorImpl::PacketManipulatorImpl(PacketReader* packet_reader,
                                              bool verbose)
     : packet_reader_(packet_reader),
       config_(config),
+      verbose_(verbose),
       active_burst_packets_(0),
-      random_seed_(1),
-      verbose_(verbose) {
-  assert(packet_reader);
+      random_seed_(1) {
+  RTC_DCHECK(packet_reader);
 }
 
 int PacketManipulatorImpl::ManipulatePackets(
@@ -41,7 +41,7 @@ int PacketManipulatorImpl::ManipulatePackets(
   packet_reader_->InitializeReading(encoded_image->_buffer,
                                     encoded_image->_length,
                                     config_.packet_size_in_bytes);
-  uint8_t* packet = NULL;
+  uint8_t* packet = nullptr;
   int nbr_bytes_to_read;
   // keep track of if we've lost any packets, since then we shall loose
   // the remains of the current frame:
@@ -89,18 +89,6 @@ inline double PacketManipulatorImpl::RandomUniform() {
   random_seed_ = rand();  // NOLINT (rand_r instead of rand)
   critsect_.Leave();
   return (random_seed_ + 1.0) / (RAND_MAX + 1.0);
-}
-
-const char* PacketLossModeToStr(PacketLossMode e) {
-  switch (e) {
-    case kUniform:
-      return "Uniform";
-    case kBurst:
-      return "Burst";
-    default:
-      assert(false);
-      return "Unknown";
-  }
 }
 
 }  // namespace test

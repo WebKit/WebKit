@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -57,7 +58,7 @@ TEST(SyncBuffer, PushBackAndFlush) {
   // Populate |new_data|.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
-      new_data[channel][i] = i;
+      new_data[channel][i] = rtc::checked_cast<int16_t>(i);
     }
   }
   // Push back |new_data| into |sync_buffer|. This operation should pop out
@@ -97,7 +98,7 @@ TEST(SyncBuffer, PushFrontZeros) {
   // Populate |new_data|.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
-      new_data[channel][i] = 1000 + i;
+      new_data[channel][i] = rtc::checked_cast<int16_t>(1000 + i);
     }
   }
   sync_buffer.PushBack(new_data);
@@ -130,7 +131,7 @@ TEST(SyncBuffer, GetNextAudioInterleaved) {
   // Populate |new_data|.
   for (size_t channel = 0; channel < kChannels; ++channel) {
     for (size_t i = 0; i < kNewLen; ++i) {
-      new_data[channel][i] = i;
+      new_data[channel][i] = rtc::checked_cast<int16_t>(i);
     }
   }
   // Push back |new_data| into |sync_buffer|. This operation should pop out

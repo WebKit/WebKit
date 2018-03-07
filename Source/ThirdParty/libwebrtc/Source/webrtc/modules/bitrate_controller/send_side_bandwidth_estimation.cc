@@ -8,19 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/bitrate_controller/send_side_bandwidth_estimation.h"
+#include "modules/bitrate_controller/send_side_bandwidth_estimation.h"
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <string>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
+#include "logging/rtc_event_log/rtc_event_log.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
+#include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {
@@ -92,8 +94,8 @@ bool ReadBweLossExperimentParameters(float* low_loss_threshold,
         << "Bitrate must be smaller enough to avoid overflows.";
     return true;
   }
-  LOG(LS_WARNING) << "Failed to parse parameters for BweLossExperiment "
-                     "experiment from field trial string. Using default.";
+  RTC_LOG(LS_WARNING) << "Failed to parse parameters for BweLossExperiment "
+                         "experiment from field trial string. Using default.";
   *low_loss_threshold = kDefaultLowLossThreshold;
   *high_loss_threshold = kDefaultHighLossThreshold;
   *bitrate_threshold_kbps = kDefaultBitrateThresholdKbps;
@@ -136,9 +138,9 @@ SendSideBandwidthEstimation::SendSideBandwidthEstimation(RtcEventLog* event_log)
     if (ReadBweLossExperimentParameters(&low_loss_threshold_,
                                         &high_loss_threshold_,
                                         &bitrate_threshold_kbps)) {
-      LOG(LS_INFO) << "Enabled BweLossExperiment with parameters "
-                   << low_loss_threshold_ << ", " << high_loss_threshold_
-                   << ", " << bitrate_threshold_kbps;
+      RTC_LOG(LS_INFO) << "Enabled BweLossExperiment with parameters "
+                       << low_loss_threshold_ << ", " << high_loss_threshold_
+                       << ", " << bitrate_threshold_kbps;
       bitrate_threshold_bps_ = bitrate_threshold_kbps * 1000;
     }
   }
@@ -156,6 +158,7 @@ void SendSideBandwidthEstimation::SetBitrates(int send_bitrate,
 
 void SendSideBandwidthEstimation::SetSendBitrate(int bitrate) {
   RTC_DCHECK_GT(bitrate, 0);
+  delay_based_bitrate_bps_ = 0;  // Reset to avoid being capped by the estimate.
   CapBitrateToThresholds(Clock::GetRealTimeClock()->TimeInMilliseconds(),
                          bitrate);
   // Clear last sent bitrate history so the new value can be used directly
@@ -209,8 +212,10 @@ void SendSideBandwidthEstimation::UpdateReceiverBlock(uint8_t fraction_loss,
   if (first_report_time_ms_ == -1)
     first_report_time_ms_ = now_ms;
 
-  // Update RTT.
-  last_round_trip_time_ms_ = rtt;
+  // Update RTT if we were able to compute an RTT based on this RTCP.
+  // FlexFEC doesn't send RTCP SR, which means we won't be able to compute RTT.
+  if (rtt > 0)
+    last_round_trip_time_ms_ = rtt;
 
   // Check sequence number diff and weight loss report
   if (number_of_packets > 0) {
@@ -346,8 +351,8 @@ void SendSideBandwidthEstimation::UpdateEstimate(int64_t now_ms) {
              (last_timeout_ms_ == -1 ||
               now_ms - last_timeout_ms_ > kTimeoutIntervalMs)) {
     if (in_timeout_experiment_) {
-      LOG(LS_WARNING) << "Feedback timed out (" << time_since_feedback_ms
-                      << " ms), reducing bitrate.";
+      RTC_LOG(LS_WARNING) << "Feedback timed out (" << time_since_feedback_ms
+                          << " ms), reducing bitrate.";
       new_bitrate *= 0.8;
       // Reset accumulators since we've already acted on missing feedback and
       // shouldn't to act again on these old lost packets.
@@ -399,9 +404,10 @@ void SendSideBandwidthEstimation::CapBitrateToThresholds(int64_t now_ms,
   if (bitrate_bps < min_bitrate_configured_) {
     if (last_low_bitrate_log_ms_ == -1 ||
         now_ms - last_low_bitrate_log_ms_ > kLowBitrateLogPeriodMs) {
-      LOG(LS_WARNING) << "Estimated available bandwidth " << bitrate_bps / 1000
-                      << " kbps is below configured min bitrate "
-                      << min_bitrate_configured_ / 1000 << " kbps.";
+      RTC_LOG(LS_WARNING) << "Estimated available bandwidth "
+                          << bitrate_bps / 1000
+                          << " kbps is below configured min bitrate "
+                          << min_bitrate_configured_ / 1000 << " kbps.";
       last_low_bitrate_log_ms_ = now_ms;
     }
     bitrate_bps = min_bitrate_configured_;
@@ -410,8 +416,9 @@ void SendSideBandwidthEstimation::CapBitrateToThresholds(int64_t now_ms,
   if (bitrate_bps != current_bitrate_bps_ ||
       last_fraction_loss_ != last_logged_fraction_loss_ ||
       now_ms - last_rtc_event_log_ms_ > kRtcEventLogPeriodMs) {
-    event_log_->LogLossBasedBweUpdate(bitrate_bps, last_fraction_loss_,
-                                      expected_packets_since_last_loss_update_);
+    event_log_->Log(rtc::MakeUnique<RtcEventBweUpdateLossBased>(
+        bitrate_bps, last_fraction_loss_,
+        expected_packets_since_last_loss_update_));
     last_logged_fraction_loss_ = last_fraction_loss_;
     last_rtc_event_log_ms_ = now_ms;
   }

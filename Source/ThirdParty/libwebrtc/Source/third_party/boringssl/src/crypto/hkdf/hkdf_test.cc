@@ -35,7 +35,7 @@ struct HKDFTestVector {
   const uint8_t out[82];
 };
 
-/* These test vectors are from RFC 5869. */
+// These test vectors are from RFC 5869.
 static const HKDFTestVector kTests[] = {
   {
     EVP_sha256,

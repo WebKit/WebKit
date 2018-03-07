@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_AVFOUNDATIONVIDEOCAPTURER_H_
-#define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_AVFOUNDATIONVIDEOCAPTURER_H_
+#ifndef SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_AVFOUNDATIONVIDEOCAPTURER_H_
+#define SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_AVFOUNDATIONVIDEOCAPTURER_H_
 
 #import <AVFoundation/AVFoundation.h>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/common_video/include/i420_buffer_pool.h"
-#include "webrtc/media/base/videocapturer.h"
+#include "api/video/video_frame.h"
+#include "common_video/include/i420_buffer_pool.h"
+#include "media/base/videocapturer.h"
 
 @class RTCAVFoundationVideoCapturerInternal;
 
@@ -69,4 +69,4 @@ class AVFoundationVideoCapturer : public cricket::VideoCapturer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_AVFOUNDATIONVIDEOCAPTURER_H_
+#endif  // SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_AVFOUNDATIONVIDEOCAPTURER_H_

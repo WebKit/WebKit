@@ -12,11 +12,11 @@
  *  Contains functions often used by different parts of VoiceEngine.
  */
 
-#ifndef WEBRTC_VOICE_ENGINE_UTILITY_H_
-#define WEBRTC_VOICE_ENGINE_UTILITY_H_
+#ifndef VOICE_ENGINE_UTILITY_H_
+#define VOICE_ENGINE_UTILITY_H_
 
-#include "webrtc/common_audio/resampler/include/push_resampler.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/resampler/include/push_resampler.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -45,13 +45,7 @@ void RemixAndResample(const int16_t* src_data,
                       PushResampler<int16_t>* resampler,
                       AudioFrame* dst_frame);
 
-void MixWithSat(int16_t target[],
-                size_t target_channel,
-                const int16_t source[],
-                size_t source_channel,
-                size_t source_len);
-
 }  // namespace voe
 }  // namespace webrtc
 
-#endif  // WEBRTC_VOICE_ENGINE_UTILITY_H_
+#endif  // VOICE_ENGINE_UTILITY_H_

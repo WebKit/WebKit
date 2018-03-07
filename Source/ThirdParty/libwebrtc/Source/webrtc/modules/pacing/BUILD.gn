@@ -14,8 +14,15 @@ rtc_static_library("pacing") {
     "alr_detector.h",
     "bitrate_prober.cc",
     "bitrate_prober.h",
+    "interval_budget.cc",
+    "interval_budget.h",
     "paced_sender.cc",
     "paced_sender.h",
+    "pacer.h",
+    "packet_queue.cc",
+    "packet_queue.h",
+    "packet_queue2.cc",
+    "packet_queue2.h",
     "packet_router.cc",
     "packet_router.h",
   ]
@@ -28,8 +35,9 @@ rtc_static_library("pacing") {
   deps = [
     "..:module_api",
     "../../:webrtc_common",
-    "../../base:rtc_base_approved",
+    "../../api:optional",
     "../../logging:rtc_event_log_api",
+    "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
     "../remote_bitrate_estimator",
     "../rtp_rtcp",
@@ -41,23 +49,19 @@ if (rtc_include_tests) {
   rtc_source_set("pacing_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "alr_detector_unittest.cc",
       "bitrate_prober_unittest.cc",
+      "interval_budget_unittest.cc",
       "paced_sender_unittest.cc",
       "packet_router_unittest.cc",
     ]
     deps = [
       ":pacing",
-      "../../base:rtc_base_approved",
-      "../../base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
       "../../system_wrappers:system_wrappers",
+      "../../test:field_trial",
       "../../test:test_support",
       "../rtp_rtcp",
       "../rtp_rtcp:mock_rtp_rtcp",
@@ -70,5 +74,17 @@ if (rtc_include_tests) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
+  }
+
+  rtc_source_set("mock_paced_sender") {
+    testonly = true
+    sources = [
+      "mock/mock_paced_sender.h",
+    ]
+    deps = [
+      ":pacing",
+      "../../system_wrappers",
+      "../../test:test_support",
+    ]
   }
 }

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -41,8 +41,8 @@ bool TmmbItem::Parse(const uint8_t* buffer) {
 
   bool shift_overflow = (bitrate_bps_ >> exponent) != mantissa;
   if (shift_overflow) {
-    LOG(LS_ERROR) << "Invalid tmmb bitrate value : " << mantissa
-                  << "*2^" << static_cast<int>(exponent);
+    RTC_LOG(LS_ERROR) << "Invalid tmmb bitrate value : " << mantissa << "*2^"
+                      << static_cast<int>(exponent);
     return false;
   }
   packet_overhead_ = overhead;

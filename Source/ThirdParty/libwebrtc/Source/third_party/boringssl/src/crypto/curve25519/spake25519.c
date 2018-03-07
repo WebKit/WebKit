@@ -14,6 +14,7 @@
 
 #include <openssl/curve25519.h>
 
+#include <assert.h>
 #include <string.h>
 
 #include <openssl/bytestring.h>
@@ -21,84 +22,86 @@
 #include <openssl/rand.h>
 #include <openssl/sha.h>
 
-#include "internal.h"
 #include "../internal.h"
+#include "../../third_party/fiat/internal.h"
 
 
-/* The following precomputation tables are for the following
- * points used in the SPAKE2 protocol.
- *
- * N:
- *   x: 49918732221787544735331783592030787422991506689877079631459872391322455579424
- *   y: 54629554431565467720832445949441049581317094546788069926228343916274969994000
- *   encoded: 10e3df0ae37d8e7a99b5fe74b44672103dbddcbd06af680d71329a11693bc778
- *
- * M:
- *   x: 31406539342727633121250288103050113562375374900226415211311216773867585644232
- *   y: 21177308356423958466833845032658859666296341766942662650232962324899758529114
- *   encoded: 5ada7e4bf6ddd9adb6626d32131c6b5c51a1e347a3478f53cfcf441b88eed12e
- *
- * These points and their precomputation tables are generated with the
- * following Python code. For a description of the precomputation table,
- * see curve25519.c in this directory.
- *
- * Exact copies of the source code are kept in bug 27296743.
- *
- * import hashlib
- * import ed25519 as E  # http://ed25519.cr.yp.to/python/ed25519.py
- *
- * SEED_N = 'edwards25519 point generation seed (N)'
- * SEED_M = 'edwards25519 point generation seed (M)'
- *
- * def genpoint(seed):
- *     v = hashlib.sha256(seed).digest()
- *     it = 1
- *     while True:
- *         try:
- *             x,y = E.decodepoint(v)
- *         except Exception, e:
- *             print e
- *             it += 1
- *             v = hashlib.sha256(v).digest()
- *             continue
- *         print "Found in %d iterations:" % it
- *         print "  x = %d" % x
- *         print "  y = %d" % y
- *         print " Encoded (hex)"
- *         print E.encodepoint((x,y)).encode('hex')
- *         return (x,y)
- *
- * def gentable(P):
- *     t = []
- *     for i in range(1,16):
- *         k = (i >> 3 & 1) * (1 << 192) + \
- *             (i >> 2 & 1) * (1 << 128) + \
- *             (i >> 1 & 1) * (1 <<  64) + \
- *             (i      & 1)
- *         t.append(E.scalarmult(P, k))
- *     return ''.join(E.encodeint(x) + E.encodeint(y) for (x,y) in t)
- *
- * def printtable(table, name):
- *     print "static const uint8_t %s[15 * 2 * 32] = {" % name,
- *     for i in range(15 * 2 * 32):
- *         if i % 12 == 0:
- *             print "\n   ",
- *         print " 0x%02x," % ord(table[i]),
- *     print "\n};"
- *
- * if __name__ == "__main__":
- *     print "Searching for N"
- *     N = genpoint(SEED_N)
- *     print "Generating precomputation table for N"
- *     Ntable = gentable(N)
- *     printtable(Ntable, "kSpakeNSmallPrecomp")
- *
- *     print "Searching for M"
- *     M = genpoint(SEED_M)
- *     print "Generating precomputation table for M"
- *     Mtable = gentable(M)
- *     printtable(Mtable, "kSpakeMSmallPrecomp")
- */
+// The following precomputation tables are for the following
+// points used in the SPAKE2 protocol.
+//
+// N:
+//   x: 49918732221787544735331783592030787422991506689877079631459872391322455579424
+//   y: 54629554431565467720832445949441049581317094546788069926228343916274969994000
+//   encoded: 10e3df0ae37d8e7a99b5fe74b44672103dbddcbd06af680d71329a11693bc778
+//
+// M:
+//   x: 31406539342727633121250288103050113562375374900226415211311216773867585644232
+//   y: 21177308356423958466833845032658859666296341766942662650232962324899758529114
+//   encoded: 5ada7e4bf6ddd9adb6626d32131c6b5c51a1e347a3478f53cfcf441b88eed12e
+//
+// These points and their precomputation tables are generated with the
+// following Python code. For a description of the precomputation table,
+// see curve25519.c in this directory.
+//
+// Exact copies of the source code are kept in bug 27296743.
+
+/*
+import hashlib
+import ed25519 as E  # http://ed25519.cr.yp.to/python/ed25519.py
+
+SEED_N = 'edwards25519 point generation seed (N)'
+SEED_M = 'edwards25519 point generation seed (M)'
+
+def genpoint(seed):
+    v = hashlib.sha256(seed).digest()
+    it = 1
+    while True:
+        try:
+            x,y = E.decodepoint(v)
+        except Exception, e:
+            print e
+            it += 1
+            v = hashlib.sha256(v).digest()
+            continue
+        print "Found in %d iterations:" % it
+        print "  x = %d" % x
+        print "  y = %d" % y
+        print " Encoded (hex)"
+        print E.encodepoint((x,y)).encode('hex')
+        return (x,y)
+
+def gentable(P):
+    t = []
+    for i in range(1,16):
+        k = ((i >> 3 & 1) * (1 << 192) +
+             (i >> 2 & 1) * (1 << 128) +
+             (i >> 1 & 1) * (1 <<  64) +
+             (i      & 1))
+        t.append(E.scalarmult(P, k))
+    return ''.join(E.encodeint(x) + E.encodeint(y) for (x,y) in t)
+
+def printtable(table, name):
+    print "static const uint8_t %s[15 * 2 * 32] = {" % name,
+    for i in range(15 * 2 * 32):
+        if i % 12 == 0:
+            print "\n   ",
+        print " 0x%02x," % ord(table[i]),
+    print "\n};"
+
+if __name__ == "__main__":
+    print "Searching for N"
+    N = genpoint(SEED_N)
+    print "Generating precomputation table for N"
+    Ntable = gentable(N)
+    printtable(Ntable, "kSpakeNSmallPrecomp")
+
+    print "Searching for M"
+    M = genpoint(SEED_M)
+    print "Generating precomputation table for M"
+    Mtable = gentable(M)
+    printtable(Mtable, "kSpakeMSmallPrecomp")
+*/
+
 static const uint8_t kSpakeNSmallPrecomp[15 * 2 * 32] = {
     0x20, 0x1b, 0xc5, 0xb3, 0x43, 0x17, 0x71, 0x10, 0x44, 0x1e, 0x73, 0xb3,
     0xae, 0x3f, 0xbf, 0x9f, 0xf5, 0x44, 0xc8, 0x13, 0x8f, 0xd1, 0x01, 0xc2,
@@ -265,25 +268,6 @@ static const uint8_t kSpakeMSmallPrecomp[15 * 2 * 32] = {
     0xa6, 0x76, 0x81, 0x28, 0xb2, 0x65, 0xe8, 0x47, 0x14, 0xc6, 0x39, 0x06,
 };
 
-enum spake2_state_t {
-  spake2_state_init = 0,
-  spake2_state_msg_generated,
-  spake2_state_key_generated,
-};
-
-struct spake2_ctx_st {
-  uint8_t private_key[32];
-  uint8_t my_msg[32];
-  uint8_t password_scalar[32];
-  uint8_t password_hash[SHA512_DIGEST_LENGTH];
-  uint8_t *my_name;
-  size_t my_name_len;
-  uint8_t *their_name;
-  size_t their_name_len;
-  enum spake2_role_t my_role;
-  enum spake2_state_t state;
-};
-
 SPAKE2_CTX *SPAKE2_CTX_new(enum spake2_role_t my_role,
                            const uint8_t *my_name, size_t my_name_len,
                            const uint8_t *their_name, size_t their_name_len) {
@@ -317,8 +301,8 @@ void SPAKE2_CTX_free(SPAKE2_CTX *ctx) {
   OPENSSL_free(ctx);
 }
 
-/* left_shift_3 sets |n| to |n|*8, where |n| is represented in little-endian
- * order. */
+// left_shift_3 sets |n| to |n|*8, where |n| is represented in little-endian
+// order.
 static void left_shift_3(uint8_t n[32]) {
   uint8_t carry = 0;
   unsigned i;
@@ -327,6 +311,48 @@ static void left_shift_3(uint8_t n[32]) {
     const uint8_t next_carry = n[i] >> 5;
     n[i] = (n[i] << 3) | carry;
     carry = next_carry;
+  }
+}
+
+typedef union {
+  uint8_t bytes[32];
+  uint32_t words[8];
+} scalar;
+
+// kOrder is the order of the prime-order subgroup of curve25519 in
+// little-endian order.
+static const scalar kOrder = {{0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
+                               0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
+                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10}};
+
+// scalar_cmov copies |src| to |dest| if |mask| is all ones.
+static void scalar_cmov(scalar *dest, const scalar *src, crypto_word_t mask) {
+  for (size_t i = 0; i < 8; i++) {
+    dest->words[i] =
+        constant_time_select_w(mask, src->words[i], dest->words[i]);
+  }
+}
+
+// scalar_double sets |s| to |2×s|.
+static void scalar_double(scalar *s) {
+  uint32_t carry = 0;
+
+  for (size_t i = 0; i < 8; i++) {
+    const uint32_t carry_out = s->words[i] >> 31;
+    s->words[i] = (s->words[i] << 1) | carry;
+    carry = carry_out;
+  }
+}
+
+// scalar_add sets |dest| to |dest| plus |src|.
+static void scalar_add(scalar *dest, const scalar *src) {
+  uint32_t carry = 0;
+
+  for (size_t i = 0; i < 8; i++) {
+    uint64_t tmp = ((uint64_t)dest->words[i] + src->words[i]) + carry;
+    dest->words[i] = (uint32_t)tmp;
+    carry = (uint32_t)(tmp >> 32);
   }
 }
 
@@ -344,34 +370,82 @@ int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out, size_t *out_len,
   uint8_t private_tmp[64];
   RAND_bytes(private_tmp, sizeof(private_tmp));
   x25519_sc_reduce(private_tmp);
-  /* Multiply by the cofactor (eight) so that we'll clear it when operating on
-   * the peer's point later in the protocol. */
+  // Multiply by the cofactor (eight) so that we'll clear it when operating on
+  // the peer's point later in the protocol.
   left_shift_3(private_tmp);
   OPENSSL_memcpy(ctx->private_key, private_tmp, sizeof(ctx->private_key));
 
   ge_p3 P;
   x25519_ge_scalarmult_base(&P, ctx->private_key);
 
-  /* mask = h(password) * <N or M>. */
+  // mask = h(password) * <N or M>.
   uint8_t password_tmp[SHA512_DIGEST_LENGTH];
   SHA512(password, password_len, password_tmp);
   OPENSSL_memcpy(ctx->password_hash, password_tmp, sizeof(ctx->password_hash));
   x25519_sc_reduce(password_tmp);
-  OPENSSL_memcpy(ctx->password_scalar, password_tmp, sizeof(ctx->password_scalar));
+
+  // Due to a copy-paste error, the call to |left_shift_3| was omitted after
+  // the |x25519_sc_reduce|, just above. This meant that |ctx->password_scalar|
+  // was not a multiple of eight to clear the cofactor and thus three bits of
+  // the password hash would leak. In order to fix this in a unilateral way,
+  // points of small order are added to the mask point such that it is in the
+  // prime-order subgroup. Since the ephemeral scalar is a multiple of eight,
+  // these points will cancel out when calculating the shared secret.
+  //
+  // Adding points of small order is the same as adding multiples of the prime
+  // order to the password scalar. Since that's faster, that is what is done
+  // below. The prime order (kOrder) is a large prime, thus odd, thus the LSB
+  // is one. So adding it will flip the LSB. Adding twice it will flip the next
+  // bit and so one for all the bottom three bits.
+
+  scalar password_scalar;
+  OPENSSL_memcpy(&password_scalar, password_tmp, sizeof(password_scalar));
+
+  // |password_scalar| is the result of |x25519_sc_reduce| and thus is, at
+  // most, $l-1$ (where $l$ is |kOrder|, the order of the prime-order subgroup
+  // of Ed25519). In the following, we may add $l + 2×l + 4×l$ for a max value
+  // of $8×l-1$. That is < 2**256, as required.
+
+  if (!ctx->disable_password_scalar_hack) {
+    scalar order = kOrder;
+    scalar tmp;
+
+    OPENSSL_memset(&tmp, 0, sizeof(tmp));
+    scalar_cmov(&tmp, &order,
+                constant_time_eq_w(password_scalar.bytes[0] & 1, 1));
+    scalar_add(&password_scalar, &tmp);
+
+    scalar_double(&order);
+    OPENSSL_memset(&tmp, 0, sizeof(tmp));
+    scalar_cmov(&tmp, &order,
+                constant_time_eq_w(password_scalar.bytes[0] & 2, 2));
+    scalar_add(&password_scalar, &tmp);
+
+    scalar_double(&order);
+    OPENSSL_memset(&tmp, 0, sizeof(tmp));
+    scalar_cmov(&tmp, &order,
+                constant_time_eq_w(password_scalar.bytes[0] & 4, 4));
+    scalar_add(&password_scalar, &tmp);
+
+    assert((password_scalar.bytes[0] & 7) == 0);
+  }
+
+  OPENSSL_memcpy(ctx->password_scalar, password_scalar.bytes,
+                 sizeof(ctx->password_scalar));
 
   ge_p3 mask;
   x25519_ge_scalarmult_small_precomp(&mask, ctx->password_scalar,
-                              ctx->my_role == spake2_role_alice
-                                  ? kSpakeMSmallPrecomp
-                                  : kSpakeNSmallPrecomp);
+                                     ctx->my_role == spake2_role_alice
+                                         ? kSpakeMSmallPrecomp
+                                         : kSpakeNSmallPrecomp);
 
-  /* P* = P + mask. */
+  // P* = P + mask.
   ge_cached mask_cached;
   x25519_ge_p3_to_cached(&mask_cached, &mask);
   ge_p1p1 Pstar;
   x25519_ge_add(&Pstar, &P, &mask_cached);
 
-  /* Encode P* */
+  // Encode P*
   ge_p2 Pstar_proj;
   x25519_ge_p1p1_to_p2(&Pstar_proj, &Pstar);
   x25519_ge_tobytes(ctx->my_msg, &Pstar_proj);
@@ -408,11 +482,11 @@ int SPAKE2_process_msg(SPAKE2_CTX *ctx, uint8_t *out_key, size_t *out_key_len,
 
   ge_p3 Qstar;
   if (0 != x25519_ge_frombytes_vartime(&Qstar, their_msg)) {
-    /* Point received from peer was not on the curve. */
+    // Point received from peer was not on the curve.
     return 0;
   }
 
-  /* Unmask peer's value. */
+  // Unmask peer's value.
   ge_p3 peers_mask;
   x25519_ge_scalarmult_small_precomp(&peers_mask, ctx->password_scalar,
                                     ctx->my_role == spake2_role_alice

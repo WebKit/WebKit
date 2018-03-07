@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_PEERCONNECTIONFACTORYPROXY_H_
-#define WEBRTC_API_PEERCONNECTIONFACTORYPROXY_H_
+#ifndef API_PEERCONNECTIONFACTORYPROXY_H_
+#define API_PEERCONNECTIONFACTORYPROXY_H_
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/api/proxy.h"
-#include "webrtc/base/bind.h"
+#include "api/peerconnectioninterface.h"
+#include "api/proxy.h"
+#include "rtc_base/bind.h"
 
 namespace webrtc {
 
@@ -66,13 +66,8 @@ BEGIN_SIGNALING_PROXY_MAP(PeerConnectionFactory)
                 CreateAudioTrack, const std::string&,  AudioSourceInterface*)
   PROXY_METHOD2(bool, StartAecDump, rtc::PlatformFile, int64_t)
   PROXY_METHOD0(void, StopAecDump)
-  // TODO(ivoc): Remove the StartRtcEventLog and StopRtcEventLog functions as
-  // soon as they are removed from PeerConnectionFactoryInterface.
-  PROXY_METHOD1(bool, StartRtcEventLog, rtc::PlatformFile)
-  PROXY_METHOD2(bool, StartRtcEventLog, rtc::PlatformFile, int64_t)
-  PROXY_METHOD0(void, StopRtcEventLog)
 END_PROXY_MAP()
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_PEERCONNECTIONFACTORYPROXY_H_
+#endif  // API_PEERCONNECTIONFACTORYPROXY_H_

@@ -87,11 +87,28 @@ void HMAC_CTX_init(HMAC_CTX *ctx) {
   EVP_MD_CTX_init(&ctx->md_ctx);
 }
 
+HMAC_CTX *HMAC_CTX_new(void) {
+  HMAC_CTX *ctx = OPENSSL_malloc(sizeof(HMAC_CTX));
+  if (ctx != NULL) {
+    HMAC_CTX_init(ctx);
+  }
+  return ctx;
+}
+
 void HMAC_CTX_cleanup(HMAC_CTX *ctx) {
   EVP_MD_CTX_cleanup(&ctx->i_ctx);
   EVP_MD_CTX_cleanup(&ctx->o_ctx);
   EVP_MD_CTX_cleanup(&ctx->md_ctx);
   OPENSSL_cleanse(ctx, sizeof(HMAC_CTX));
+}
+
+void HMAC_CTX_free(HMAC_CTX *ctx) {
+  if (ctx == NULL) {
+    return;
+  }
+
+  HMAC_CTX_cleanup(ctx);
+  OPENSSL_free(ctx);
 }
 
 int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
@@ -100,13 +117,13 @@ int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
     md = ctx->md;
   }
 
-  /* If either |key| is non-NULL or |md| has changed, initialize with a new key
-   * rather than rewinding the previous one.
-   *
-   * TODO(davidben,eroman): Passing the previous |md| with a NULL |key| is
-   * ambiguous between using the empty key and reusing the previous key. There
-   * exist callers which intend the latter, but the former is an awkward edge
-   * case. Fix to API to avoid this. */
+  // If either |key| is non-NULL or |md| has changed, initialize with a new key
+  // rather than rewinding the previous one.
+  //
+  // TODO(davidben,eroman): Passing the previous |md| with a NULL |key| is
+  // ambiguous between using the empty key and reusing the previous key. There
+  // exist callers which intend the latter, but the former is an awkward edge
+  // case. Fix to API to avoid this.
   if (md != ctx->md || key != NULL) {
     uint8_t pad[EVP_MAX_MD_BLOCK_SIZE];
     uint8_t key_block[EVP_MAX_MD_BLOCK_SIZE];
@@ -115,7 +132,7 @@ int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
     size_t block_size = EVP_MD_block_size(md);
     assert(block_size <= sizeof(key_block));
     if (block_size < key_len) {
-      /* Long keys are hashed. */
+      // Long keys are hashed.
       if (!EVP_DigestInit_ex(&ctx->md_ctx, md, impl) ||
           !EVP_DigestUpdate(&ctx->md_ctx, key, key_len) ||
           !EVP_DigestFinal_ex(&ctx->md_ctx, key_block, &key_block_len)) {
@@ -126,7 +143,7 @@ int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
       OPENSSL_memcpy(key_block, key, key_len);
       key_block_len = (unsigned)key_len;
     }
-    /* Keys are then padded with zeros. */
+    // Keys are then padded with zeros.
     if (key_block_len != EVP_MAX_MD_BLOCK_SIZE) {
       OPENSSL_memset(&key_block[key_block_len], 0, sizeof(key_block) - key_block_len);
     }
@@ -165,8 +182,8 @@ int HMAC_Final(HMAC_CTX *ctx, uint8_t *out, unsigned int *out_len) {
   unsigned int i;
   uint8_t buf[EVP_MAX_MD_SIZE];
 
-  /* TODO(davidben): The only thing that can officially fail here is
-   * |EVP_MD_CTX_copy_ex|, but even that should be impossible in this case. */
+  // TODO(davidben): The only thing that can officially fail here is
+  // |EVP_MD_CTX_copy_ex|, but even that should be impossible in this case.
   if (!EVP_DigestFinal_ex(&ctx->md_ctx, buf, &i) ||
       !EVP_MD_CTX_copy_ex(&ctx->md_ctx, &ctx->o_ctx) ||
       !EVP_DigestUpdate(&ctx->md_ctx, buf, i) ||
@@ -191,6 +208,11 @@ int HMAC_CTX_copy_ex(HMAC_CTX *dest, const HMAC_CTX *src) {
 
   dest->md = src->md;
   return 1;
+}
+
+void HMAC_CTX_reset(HMAC_CTX *ctx) {
+  HMAC_CTX_cleanup(ctx);
+  HMAC_CTX_init(ctx);
 }
 
 int HMAC_Init(HMAC_CTX *ctx, const void *key, int key_len, const EVP_MD *md) {

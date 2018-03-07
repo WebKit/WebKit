@@ -10,7 +10,8 @@
 
 package org.webrtc;
 
-import java.util.LinkedList;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * The parameters for an {@code RtpSender}, as defined in
@@ -48,14 +49,9 @@ public class RtpParameters {
     public Integer numChannels;
   }
 
-  public final LinkedList<Encoding> encodings;
+  public final List<Encoding> encodings = new ArrayList<>();
   // Codec parameters can't currently be changed between getParameters and
   // setParameters. Though in the future it will be possible to reorder them or
   // remove them.
-  public final LinkedList<Codec> codecs;
-
-  public RtpParameters() {
-    encodings = new LinkedList<Encoding>();
-    codecs = new LinkedList<Codec>();
-  }
+  public final List<Codec> codecs = new ArrayList<>();
 }

@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/video_stream_decoder.h"
+#include "video/video_stream_decoder.h"
 
 #include <algorithm>
 #include <map>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/common_video/include/frame_callback.h"
-#include "webrtc/modules/video_coding/video_coding_impl.h"
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/video/call_stats.h"
-#include "webrtc/video/payload_router.h"
-#include "webrtc/video/receive_statistics_proxy.h"
+#include "common_video/include/frame_callback.h"
+#include "modules/video_coding/video_coding_impl.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/metrics.h"
+#include "video/call_stats.h"
+#include "video/payload_router.h"
+#include "video/receive_statistics_proxy.h"
 
 namespace webrtc {
 
@@ -119,7 +119,12 @@ void VideoStreamDecoder::OnFrameBufferTimingsUpdated(int decode_ms,
                                                      int min_playout_delay_ms,
                                                      int render_delay_ms) {}
 
-void VideoStreamDecoder::OnCompleteFrame(bool is_keyframe, size_t size_bytes) {}
+void VideoStreamDecoder::OnTimingFrameInfoUpdated(const TimingFrameInfo& info) {
+}
+
+void VideoStreamDecoder::OnCompleteFrame(bool is_keyframe,
+                                         size_t size_bytes,
+                                         VideoContentType content_type) {}
 
 void VideoStreamDecoder::OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) {
   video_receiver_->SetReceiveChannelParameters(max_rtt_ms);

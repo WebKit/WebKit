@@ -10,24 +10,22 @@
 
 package org.appspot.apprtc;
 
-import org.appspot.apprtc.util.AppRTCUtils;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import org.webrtc.ThreadUtils;
-
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import org.appspot.apprtc.util.AppRTCUtils;
+import org.webrtc.ThreadUtils;
 
 /**
  * AppRTCAudioManager manages all audio related parts of the AppRTC demo.
@@ -52,7 +50,7 @@ public class AppRTCAudioManager {
   }
 
   /** Selected audio device change event. */
-  public static interface AudioManagerEvents {
+  public interface AudioManagerEvents {
     // Callback fired once audio device is changed or list of available audio devices changed.
     void onAudioDeviceChanged(
         AudioDevice selectedAudioDevice, Set<AudioDevice> availableAudioDevices);
@@ -99,7 +97,7 @@ public class AppRTCAudioManager {
 
   // Contains a list of available audio devices. A Set collection is used to
   // avoid duplicate elements.
-  private Set<AudioDevice> audioDevices = new HashSet<AudioDevice>();
+  private Set<AudioDevice> audioDevices = new HashSet<>();
 
   // Broadcast receiver for wired headset intent broadcasts.
   private BroadcastReceiver wiredHeadsetReceiver;
@@ -152,7 +150,7 @@ public class AppRTCAudioManager {
       hasWiredHeadset = (state == STATE_PLUGGED);
       updateAudioDeviceState();
     }
-  };
+  }
 
   /** Construction. */
   static AppRTCAudioManager create(Context context) {
@@ -181,19 +179,17 @@ public class AppRTCAudioManager {
     // Create and initialize the proximity sensor.
     // Tablet devices (e.g. Nexus 7) does not support proximity sensors.
     // Note that, the sensor will not be active until start() has been called.
-    proximitySensor = AppRTCProximitySensor.create(context, new Runnable() {
-      // This method will be called each time a state change is detected.
-      // Example: user holds his hand over the device (closer than ~5 cm),
-      // or removes his hand from the device.
-      public void run() {
-        onProximitySensorChangedState();
-      }
-    });
+    proximitySensor = AppRTCProximitySensor.create(context,
+        // This method will be called each time a state change is detected.
+        // Example: user holds his hand over the device (closer than ~5 cm),
+        // or removes his hand from the device.
+        this ::onProximitySensorChangedState);
 
     Log.d(TAG, "defaultAudioDevice: " + defaultAudioDevice);
     AppRTCUtils.logDeviceInfo(TAG);
   }
 
+  @SuppressWarnings("deprecation") // TODO(henrika): audioManager.requestAudioFocus() is deprecated.
   public void start(AudioManagerEvents audioManagerEvents) {
     Log.d(TAG, "start");
     ThreadUtils.checkIsOnMainThread();
@@ -223,7 +219,7 @@ public class AppRTCAudioManager {
       // logging for now.
       @Override
       public void onAudioFocusChange(int focusChange) {
-        String typeOfChange = "AUDIOFOCUS_NOT_DEFINED";
+        final String typeOfChange;
         switch (focusChange) {
           case AudioManager.AUDIOFOCUS_GAIN:
             typeOfChange = "AUDIOFOCUS_GAIN";
@@ -291,6 +287,7 @@ public class AppRTCAudioManager {
     Log.d(TAG, "AudioManager started");
   }
 
+  @SuppressWarnings("deprecation") // TODO(henrika): audioManager.abandonAudioFocus() is deprecated.
   public void stop() {
     Log.d(TAG, "stop");
     ThreadUtils.checkIsOnMainThread();
@@ -386,7 +383,7 @@ public class AppRTCAudioManager {
   /** Returns current set of available/selectable audio devices. */
   public Set<AudioDevice> getAudioDevices() {
     ThreadUtils.checkIsOnMainThread();
-    return Collections.unmodifiableSet(new HashSet<AudioDevice>(audioDevices));
+    return Collections.unmodifiableSet(new HashSet<>(audioDevices));
   }
 
   /** Returns the currently selected audio device. */
@@ -437,7 +434,22 @@ public class AppRTCAudioManager {
    */
   @Deprecated
   private boolean hasWiredHeadset() {
-    return audioManager.isWiredHeadsetOn();
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      return audioManager.isWiredHeadsetOn();
+    } else {
+      final AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_ALL);
+      for (AudioDeviceInfo device : devices) {
+        final int type = device.getType();
+        if (type == AudioDeviceInfo.TYPE_WIRED_HEADSET) {
+          Log.d(TAG, "hasWiredHeadset: found wired headset");
+          return true;
+        } else if (type == AudioDeviceInfo.TYPE_USB_DEVICE) {
+          Log.d(TAG, "hasWiredHeadset: found USB audio device");
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   /**
@@ -543,7 +555,7 @@ public class AppRTCAudioManager {
     }
 
     // Update selected audio device.
-    AudioDevice newAudioDevice = selectedAudioDevice;
+    final AudioDevice newAudioDevice;
 
     if (bluetoothManager.getState() == AppRTCBluetoothManager.State.SCO_CONNECTED) {
       // If a Bluetooth is connected, then it should be used as output audio

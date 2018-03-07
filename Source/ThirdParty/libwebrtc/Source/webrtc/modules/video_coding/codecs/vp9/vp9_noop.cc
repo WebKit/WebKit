@@ -13,8 +13,8 @@
 #error
 #endif  // !defined(RTC_DISABLE_VP9)
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/video_coding/codecs/vp9/include/vp9.h"
+#include "modules/video_coding/codecs/vp9/include/vp9.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -22,7 +22,7 @@ bool VP9Encoder::IsSupported() {
   return false;
 }
 
-VP9Encoder* VP9Encoder::Create() {
+std::unique_ptr<VP9Encoder> VP9Encoder::Create() {
   RTC_NOTREACHED();
   return nullptr;
 }
@@ -31,7 +31,7 @@ bool VP9Decoder::IsSupported() {
   return false;
 }
 
-VP9Decoder* VP9Decoder::Create() {
+std::unique_ptr<VP9Decoder> VP9Decoder::Create() {
   RTC_NOTREACHED();
   return nullptr;
 }

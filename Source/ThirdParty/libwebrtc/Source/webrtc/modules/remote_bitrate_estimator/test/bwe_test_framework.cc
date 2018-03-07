@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_framework.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_framework.h"
 
 #include <stdio.h>
 
 #include <sstream>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/safe_minmax.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 namespace testing {
@@ -157,7 +157,7 @@ BbrBweFeedback::BbrBweFeedback(
     int flow_id,
     int64_t send_time_us,
     int64_t latest_send_time_ms,
-    const std::vector<std::pair<uint64_t, int64_t>>& packet_feedback_vector)
+    const std::vector<uint16_t>& packet_feedback_vector)
     : FeedbackPacket(flow_id, send_time_us, latest_send_time_ms),
       packet_feedback_vector_(packet_feedback_vector) {}
 
@@ -518,12 +518,12 @@ void ChokeFilter::RunFor(int64_t /*time_ms*/, Packets* in_out) {
   for (PacketsIt it = in_out->begin(); it != in_out->end(); ) {
     int64_t earliest_send_time_us =
         std::max(last_send_time_us_, (*it)->send_time_us());
-
     int64_t new_send_time_us =
         earliest_send_time_us +
         ((*it)->payload_size() * 8 * 1000 + capacity_kbps_ / 2) /
             capacity_kbps_;
-
+    BWE_TEST_LOGGING_PLOT(0, "MaxThroughput_", new_send_time_us / 1000,
+                          capacity_kbps_);
     if (delay_cap_helper_->ShouldSendPacket(new_send_time_us,
                                             (*it)->send_time_us())) {
       (*it)->set_send_time_us(new_send_time_us);

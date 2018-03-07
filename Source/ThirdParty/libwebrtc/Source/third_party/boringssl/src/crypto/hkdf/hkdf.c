@@ -26,7 +26,7 @@
 int HKDF(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
          const uint8_t *secret, size_t secret_len, const uint8_t *salt,
          size_t salt_len, const uint8_t *info, size_t info_len) {
-  /* https://tools.ietf.org/html/rfc5869#section-2 */
+  // https://tools.ietf.org/html/rfc5869#section-2
   uint8_t prk[EVP_MAX_MD_SIZE];
   size_t prk_len;
 
@@ -42,10 +42,10 @@ int HKDF(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
 int HKDF_extract(uint8_t *out_key, size_t *out_len, const EVP_MD *digest,
                  const uint8_t *secret, size_t secret_len, const uint8_t *salt,
                  size_t salt_len) {
-  /* https://tools.ietf.org/html/rfc5869#section-2.2 */
+  // https://tools.ietf.org/html/rfc5869#section-2.2
 
-  /* If salt is not given, HashLength zeros are used. However, HMAC does that
-   * internally already so we can ignore it.*/
+  // If salt is not given, HashLength zeros are used. However, HMAC does that
+  // internally already so we can ignore it.
   unsigned len;
   if (HMAC(digest, salt, salt_len, secret, secret_len, out_key, &len) == NULL) {
     OPENSSL_PUT_ERROR(HKDF, ERR_R_HMAC_LIB);
@@ -59,7 +59,7 @@ int HKDF_extract(uint8_t *out_key, size_t *out_len, const EVP_MD *digest,
 int HKDF_expand(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
                 const uint8_t *prk, size_t prk_len, const uint8_t *info,
                 size_t info_len) {
-  /* https://tools.ietf.org/html/rfc5869#section-2.3 */
+  // https://tools.ietf.org/html/rfc5869#section-2.3
   const size_t digest_len = EVP_MD_size(digest);
   uint8_t previous[EVP_MAX_MD_SIZE];
   size_t n, done = 0;
@@ -67,7 +67,7 @@ int HKDF_expand(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
   int ret = 0;
   HMAC_CTX hmac;
 
-  /* Expand key material to desired length. */
+  // Expand key material to desired length.
   n = (out_len + digest_len - 1) / digest_len;
   if (out_len + digest_len < out_len || n > 255) {
     OPENSSL_PUT_ERROR(HKDF, HKDF_R_OUTPUT_TOO_LARGE);

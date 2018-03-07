@@ -12,9 +12,10 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -58,8 +59,8 @@ TEST_P(AudioEncoderFactoryTest, CanRunAllSupportedEncoders) {
     auto encoder = factory->MakeAudioEncoder(kTestPayloadType, spec.format);
     EXPECT_TRUE(encoder);
     encoder->Reset();
-    const int num_samples =
-        encoder->SampleRateHz() * encoder->NumChannels() / 100;
+    const int num_samples = rtc::checked_cast<int>(
+        encoder->SampleRateHz() * encoder->NumChannels() / 100);
     rtc::Buffer out;
     rtc::BufferT<int16_t> audio;
     audio.SetData(num_samples, [](rtc::ArrayView<int16_t> audio) {
@@ -130,9 +131,7 @@ TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
 #ifdef WEBRTC_CODEC_ISAC
     {"isac", 32000, 1},
 #endif
-#ifdef WEBRTC_CODEC_G722
     {"G722", 8000, 1},
-#endif
 #ifdef WEBRTC_CODEC_ILBC
     {"ilbc", 8000, 1},
 #endif

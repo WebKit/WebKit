@@ -80,11 +80,8 @@ EVP_CIPHER_CTX *EVP_CIPHER_CTX_new(void) {
 }
 
 int EVP_CIPHER_CTX_cleanup(EVP_CIPHER_CTX *c) {
-  if (c->cipher != NULL) {
-    if (c->cipher->cleanup) {
-      c->cipher->cleanup(c);
-    }
-    OPENSSL_cleanse(c->cipher_data, c->cipher->ctx_size);
+  if (c->cipher != NULL && c->cipher->cleanup) {
+    c->cipher->cleanup(c);
   }
   OPENSSL_free(c->cipher_data);
 
@@ -128,6 +125,11 @@ int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out, const EVP_CIPHER_CTX *in) {
   return 1;
 }
 
+void EVP_CIPHER_CTX_reset(EVP_CIPHER_CTX *ctx) {
+  EVP_CIPHER_CTX_cleanup(ctx);
+  EVP_CIPHER_CTX_init(ctx);
+}
+
 int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                       ENGINE *engine, const uint8_t *key, const uint8_t *iv,
                       int enc) {
@@ -141,12 +143,12 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
   }
 
   if (cipher) {
-    /* Ensure a context left from last time is cleared (the previous check
-     * attempted to avoid this if the same ENGINE and EVP_CIPHER could be
-     * used). */
+    // Ensure a context left from last time is cleared (the previous check
+    // attempted to avoid this if the same ENGINE and EVP_CIPHER could be
+    // used).
     if (ctx->cipher) {
       EVP_CIPHER_CTX_cleanup(ctx);
-      /* Restore encrypt and flags */
+      // Restore encrypt and flags
       ctx->encrypt = enc;
     }
 
@@ -177,7 +179,7 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
     return 0;
   }
 
-  /* we assume block size is a power of 2 in *cryptUpdate */
+  // we assume block size is a power of 2 in *cryptUpdate
   assert(ctx->cipher->block_size == 1 || ctx->cipher->block_size == 8 ||
          ctx->cipher->block_size == 16);
 
@@ -189,7 +191,7 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 
       case EVP_CIPH_CFB_MODE:
         ctx->num = 0;
-        /* fall-through */
+        // fall-through
 
       case EVP_CIPH_CBC_MODE:
         assert(EVP_CIPHER_CTX_iv_length(ctx) <= sizeof(ctx->iv));
@@ -202,7 +204,7 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
       case EVP_CIPH_CTR_MODE:
       case EVP_CIPH_OFB_MODE:
         ctx->num = 0;
-        /* Don't reuse IV for CTR mode */
+        // Don't reuse IV for CTR mode
         if (iv) {
           OPENSSL_memcpy(ctx->iv, iv, EVP_CIPHER_CTX_iv_length(ctx));
         }
@@ -388,8 +390,8 @@ int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
     return 0;
   }
 
-  /* if we have 'decrypted' a multiple of block size, make sure
-   * we have a copy of this last block */
+  // if we have 'decrypted' a multiple of block size, make sure
+  // we have a copy of this last block
   if (b > 1 && !ctx->buf_len) {
     *out_len -= b;
     ctx->final_used = 1;
@@ -437,8 +439,8 @@ int EVP_DecryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out, int *out_len) {
     }
     assert(b <= sizeof(ctx->final));
 
-    /* The following assumes that the ciphertext has been authenticated.
-     * Otherwise it provides a padding oracle. */
+    // The following assumes that the ciphertext has been authenticated.
+    // Otherwise it provides a padding oracle.
     n = ctx->final[b - 1];
     if (n == 0 || n > (int)b) {
       OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
@@ -609,3 +611,5 @@ int EVP_DecryptInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 int EVP_add_cipher_alias(const char *a, const char *b) {
   return 1;
 }
+
+void EVP_CIPHER_CTX_set_flags(const EVP_CIPHER_CTX *ctx, uint32_t flags) {}

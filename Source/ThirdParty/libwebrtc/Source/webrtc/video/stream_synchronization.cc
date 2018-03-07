@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/stream_synchronization.h"
+#include "video/stream_synchronization.h"
 
 #include <assert.h>
 #include <math.h>
@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-#include "webrtc/base/logging.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -70,9 +70,9 @@ bool StreamSynchronization::ComputeDelays(int relative_delay_ms,
   assert(total_audio_delay_target_ms && total_video_delay_target_ms);
 
   int current_video_delay_ms = *total_video_delay_target_ms;
-  LOG(LS_VERBOSE) << "Audio delay: " << current_audio_delay_ms
-                  << " current diff: " << relative_delay_ms
-                  << " for stream " << audio_stream_id_;
+  RTC_LOG(LS_VERBOSE) << "Audio delay: " << current_audio_delay_ms
+                      << " current diff: " << relative_delay_ms
+                      << " for stream " << audio_stream_id_;
   // Calculate the difference between the lowest possible video delay and
   // the current audio delay.
   int current_diff_ms = current_video_delay_ms - current_audio_delay_ms +
@@ -165,10 +165,11 @@ bool StreamSynchronization::ComputeDelays(int relative_delay_ms,
   channel_delay_.last_video_delay_ms = new_video_delay_ms;
   channel_delay_.last_audio_delay_ms = new_audio_delay_ms;
 
-  LOG(LS_VERBOSE) << "Sync video delay " << new_video_delay_ms
-                  << " for video stream " << video_stream_id_
-                  << " and audio delay " << channel_delay_.extra_audio_delay_ms
-                  << " for audio stream " << audio_stream_id_;
+  RTC_LOG(LS_VERBOSE) << "Sync video delay " << new_video_delay_ms
+                      << " for video stream " << video_stream_id_
+                      << " and audio delay "
+                      << channel_delay_.extra_audio_delay_ms
+                      << " for audio stream " << audio_stream_id_;
 
   // Return values.
   *total_video_delay_target_ms = new_video_delay_ms;

@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
+#define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
 
 #include <vector>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/voip_metric.h"
+#include "api/optional.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/voip_metric.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -82,4 +82,4 @@ class ExtendedReports : public RtcpPacket {
 };
 }  // namespace rtcp
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_EXTENDED_REPORTS_H_

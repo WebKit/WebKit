@@ -84,6 +84,14 @@ ANY41C(I422AlphaToARGBRow_Any_MSA, I422AlphaToARGBRow_MSA, 1, 0, 4, 7)
     memcpy(dst_ptr + (n >> DUVSHIFT) * BPP, temp + 192,                    \
            SS(r, DUVSHIFT) * BPP);                                         \
   }
+
+// Merge functions.
+#ifdef HAS_MERGERGBROW_SSSE3
+ANY31(MergeRGBRow_Any_SSSE3, MergeRGBRow_SSSE3, 0, 0, 3, 15)
+#endif
+#ifdef HAS_MERGERGBROW_NEON
+ANY31(MergeRGBRow_Any_NEON, MergeRGBRow_NEON, 0, 0, 3, 15)
+#endif
 #ifdef HAS_I422TOYUY2ROW_SSE2
 ANY31(I422ToYUY2Row_Any_SSE2, I422ToYUY2Row_SSE2, 1, 1, 4, 15)
 ANY31(I422ToUYVYRow_Any_SSE2, I422ToUYVYRow_SSE2, 1, 1, 4, 15)
@@ -621,6 +629,9 @@ ANY11(ARGBExtractAlphaRow_Any_AVX2, ARGBExtractAlphaRow_AVX2, 0, 4, 1, 32)
 #ifdef HAS_ARGBEXTRACTALPHAROW_NEON
 ANY11(ARGBExtractAlphaRow_Any_NEON, ARGBExtractAlphaRow_NEON, 0, 4, 1, 15)
 #endif
+#ifdef HAS_ARGBEXTRACTALPHAROW_MSA
+ANY11(ARGBExtractAlphaRow_Any_MSA, ARGBExtractAlphaRow_MSA, 0, 4, 1, 15)
+#endif
 #undef ANY11
 
 // Any 1 to 1 blended.  Destination is read, modify, write.
@@ -745,6 +756,9 @@ ANY11P16(HalfFloat1Row_Any_F16C, HalfFloat1Row_F16C, float, 2, 2, 15)
 #ifdef HAS_HALFFLOATROW_NEON
 ANY11P16(HalfFloatRow_Any_NEON, HalfFloatRow_NEON, float, 2, 2, 7)
 ANY11P16(HalfFloat1Row_Any_NEON, HalfFloat1Row_NEON, float, 2, 2, 7)
+#endif
+#ifdef HAS_HALFFLOATROW_MSA
+ANY11P16(HalfFloatRow_Any_MSA, HalfFloatRow_MSA, float, 2, 2, 31)
 #endif
 #undef ANY11P16
 
@@ -911,6 +925,9 @@ ANY12(SplitUVRow_Any_NEON, SplitUVRow_NEON, 0, 2, 0, 15)
 #ifdef HAS_SPLITUVROW_DSPR2
 ANY12(SplitUVRow_Any_DSPR2, SplitUVRow_DSPR2, 0, 2, 0, 15)
 #endif
+#ifdef HAS_SPLITUVROW_MSA
+ANY12(SplitUVRow_Any_MSA, SplitUVRow_MSA, 0, 2, 0, 31)
+#endif
 #ifdef HAS_ARGBTOUV444ROW_SSSE3
 ANY12(ARGBToUV444Row_Any_SSSE3, ARGBToUV444Row_SSSE3, 0, 4, 0, 15)
 #endif
@@ -933,6 +950,31 @@ ANY12(YUY2ToUV422Row_Any_MSA, YUY2ToUV422Row_MSA, 1, 4, 1, 31)
 ANY12(UYVYToUV422Row_Any_MSA, UYVYToUV422Row_MSA, 1, 4, 1, 31)
 #endif
 #undef ANY12
+
+// Any 1 to 3.  Outputs RGB planes.
+#define ANY13(NAMEANY, ANY_SIMD, BPP, MASK)                                    \
+  void NAMEANY(const uint8* src_ptr, uint8* dst_r, uint8* dst_g, uint8* dst_b, \
+               int width) {                                                    \
+    SIMD_ALIGNED(uint8 temp[16 * 6]);                                          \
+    memset(temp, 0, 16 * 3); /* for msan */                                    \
+    int r = width & MASK;                                                      \
+    int n = width & ~MASK;                                                     \
+    if (n > 0) {                                                               \
+      ANY_SIMD(src_ptr, dst_r, dst_g, dst_b, n);                               \
+    }                                                                          \
+    memcpy(temp, src_ptr + n * BPP, r * BPP);                                  \
+    ANY_SIMD(temp, temp + 16 * 3, temp + 16 * 4, temp + 16 * 5, MASK + 1);     \
+    memcpy(dst_r + n, temp + 16 * 3, r);                                       \
+    memcpy(dst_g + n, temp + 16 * 4, r);                                       \
+    memcpy(dst_b + n, temp + 16 * 5, r);                                       \
+  }
+
+#ifdef HAS_SPLITRGBROW_SSSE3
+ANY13(SplitRGBRow_Any_SSSE3, SplitRGBRow_SSSE3, 3, 15)
+#endif
+#ifdef HAS_SPLITRGBROW_NEON
+ANY13(SplitRGBRow_Any_NEON, SplitRGBRow_NEON, 3, 15)
+#endif
 
 // Any 1 to 2 with source stride (2 rows of source).  Outputs UV planes.
 // 128 byte row allows for 32 avx ARGB pixels.

@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/stats_counter.h"
+#include "video/stats_counter.h"
 
 #include <algorithm>
 #include <limits>
 #include <map>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

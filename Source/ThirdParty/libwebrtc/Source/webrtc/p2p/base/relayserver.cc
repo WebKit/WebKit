@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/relayserver.h"
+#include "p2p/base/relayserver.h"
 
 #ifdef WEBRTC_POSIX
 #include <errno.h>
@@ -16,11 +16,11 @@
 
 #include <algorithm>
 
-#include "webrtc/base/asynctcpsocket.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/socketadapters.h"
+#include "rtc_base/asynctcpsocket.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/socketadapters.h"
 
 namespace cricket {
 
@@ -36,10 +36,10 @@ void Send(rtc::AsyncPacketSocket* socket, const char* bytes, size_t size,
   rtc::PacketOptions options;
   int result = socket->SendTo(bytes, size, addr, options);
   if (result < static_cast<int>(size)) {
-    LOG(LS_ERROR) << "SendTo wrote only " << result << " of " << size
-                  << " bytes";
+    RTC_LOG(LS_ERROR) << "SendTo wrote only " << result << " of " << size
+                      << " bytes";
   } else if (result < 0) {
-    LOG_ERR(LS_ERROR) << "SendTo";
+    RTC_LOG_ERR(LS_ERROR) << "SendTo";
   }
 }
 
@@ -209,7 +209,7 @@ void RelayServer::OnInternalPacket(
   // that this connection has been locked.  (Otherwise, we would not know what
   // address to forward to.)
   if (!int_conn->locked()) {
-    LOG(LS_WARNING) << "Dropping packet: connection not locked";
+    RTC_LOG(LS_WARNING) << "Dropping packet: connection not locked";
     return;
   }
 
@@ -221,7 +221,7 @@ void RelayServer::OnInternalPacket(
     ext_conn->Send(bytes, size);
   } else {
     // This happens very often and is not an error.
-    LOG(LS_INFO) << "Dropping packet: no external connection";
+    RTC_LOG(LS_INFO) << "Dropping packet: no external connection";
   }
 }
 
@@ -253,7 +253,7 @@ void RelayServer::OnExternalPacket(
   RelayMessage msg;
   rtc::ByteBufferReader buf(bytes, size);
   if (!msg.Read(&buf)) {
-    LOG(LS_WARNING) << "Dropping packet: first packet not STUN";
+    RTC_LOG(LS_WARNING) << "Dropping packet: first packet not STUN";
     return;
   }
 
@@ -261,7 +261,7 @@ void RelayServer::OnExternalPacket(
   const StunByteStringAttribute* username_attr =
       msg.GetByteString(STUN_ATTR_USERNAME);
   if (!username_attr) {
-    LOG(LS_WARNING) << "Dropping packet: no username";
+    RTC_LOG(LS_WARNING) << "Dropping packet: no username";
     return;
   }
 
@@ -273,7 +273,7 @@ void RelayServer::OnExternalPacket(
   // The binding should already be present.
   BindingMap::iterator biter = bindings_.find(username);
   if (biter == bindings_.end()) {
-    LOG(LS_WARNING) << "Dropping packet: no binding with username";
+    RTC_LOG(LS_WARNING) << "Dropping packet: no binding with username";
     return;
   }
 
@@ -369,8 +369,8 @@ void RelayServer::HandleStunAllocate(
     bindings_[username] = binding;
 
     if (log_bindings_) {
-      LOG(LS_INFO) << "Added new binding " << username << ", "
-                   << bindings_.size() << " total";
+      RTC_LOG(LS_INFO) << "Added new binding " << username << ", "
+                       << bindings_.size() << " total";
     }
   }
 
@@ -524,8 +524,8 @@ void RelayServer::RemoveBinding(RelayServerBinding* binding) {
   bindings_.erase(iter);
 
   if (log_bindings_) {
-    LOG(LS_INFO) << "Removed binding " << binding->username() << ", "
-                 << bindings_.size() << " remaining";
+    RTC_LOG(LS_INFO) << "Removed binding " << binding->username() << ", "
+                     << bindings_.size() << " remaining";
   }
 }
 
@@ -734,7 +734,7 @@ void RelayServerBinding::OnMessage(rtc::Message *pmsg) {
     // If the lifetime timeout has been exceeded, then send a signal.
     // Otherwise, just keep waiting.
     if (rtc::TimeMillis() >= last_used_ + lifetime_) {
-      LOG(LS_INFO) << "Expiring binding " << username_;
+      RTC_LOG(LS_INFO) << "Expiring binding " << username_;
       SignalTimeout(this);
     } else {
       server_->thread()->PostDelayed(RTC_FROM_HERE, lifetime_, this,

@@ -8,13 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
 
 #include <string.h>
 
-#include "webrtc/base/checks.h"
-// TODO(nisse): Only needed for the deprecated ConvertToI420.
-#include "webrtc/api/video/i420_buffer.h"
+#include "rtc_base/checks.h"
+#include "api/video/i420_buffer.h"
 
 // NOTE(ajm): Path provided by gn.
 #include "libyuv.h"  // NOLINT
@@ -155,21 +154,6 @@ int ConvertRGB24ToARGB(const uint8_t* src_frame, uint8_t* dst_frame,
                              width, height);
 }
 
-libyuv::RotationMode ConvertRotationMode(VideoRotation rotation) {
-  switch (rotation) {
-    case kVideoRotation_0:
-      return libyuv::kRotate0;
-    case kVideoRotation_90:
-      return libyuv::kRotate90;
-    case kVideoRotation_180:
-      return libyuv::kRotate180;
-    case kVideoRotation_270:
-      return libyuv::kRotate270;
-  }
-  RTC_NOTREACHED();
-  return libyuv::kRotate0;
-}
-
 int ConvertVideoType(VideoType video_type) {
   switch (video_type) {
     case VideoType::kUnknown:
@@ -206,35 +190,6 @@ int ConvertVideoType(VideoType video_type) {
   }
   RTC_NOTREACHED();
   return libyuv::FOURCC_ANY;
-}
-
-// TODO(nisse): Delete this wrapper, let callers use libyuv directly.
-int ConvertToI420(VideoType src_video_type,
-                  const uint8_t* src_frame,
-                  int crop_x,
-                  int crop_y,
-                  int src_width,
-                  int src_height,
-                  size_t sample_size,
-                  VideoRotation rotation,
-                  I420Buffer* dst_buffer) {
-  int dst_width = dst_buffer->width();
-  int dst_height = dst_buffer->height();
-  // LibYuv expects pre-rotation values for dst.
-  // Stride values should correspond to the destination values.
-  if (rotation == kVideoRotation_90 || rotation == kVideoRotation_270) {
-    std::swap(dst_width, dst_height);
-  }
-  return libyuv::ConvertToI420(
-      src_frame, sample_size,
-      dst_buffer->MutableDataY(), dst_buffer->StrideY(),
-      dst_buffer->MutableDataU(), dst_buffer->StrideU(),
-      dst_buffer->MutableDataV(), dst_buffer->StrideV(),
-      crop_x, crop_y,
-      src_width, src_height,
-      dst_width, dst_height,
-      ConvertRotationMode(rotation),
-      ConvertVideoType(src_video_type));
 }
 
 int ConvertFromI420(const VideoFrame& src_frame,

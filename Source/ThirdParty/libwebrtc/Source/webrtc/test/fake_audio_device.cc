@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/fake_audio_device.h"
+#include "test/fake_audio_device.h"
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/random.h"
-#include "webrtc/common_audio/wav_file.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
+#include "common_audio/wav_file.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/random.h"
+#include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
 

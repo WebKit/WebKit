@@ -74,7 +74,7 @@
 
 int RSA_padding_add_PKCS1_type_1(uint8_t *to, size_t to_len,
                                  const uint8_t *from, size_t from_len) {
-  /* See RFC 8017, section 9.2. */
+  // See RFC 8017, section 9.2.
   if (to_len < RSA_PKCS1_PADDING_SIZE) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
     return 0;
@@ -96,20 +96,20 @@ int RSA_padding_add_PKCS1_type_1(uint8_t *to, size_t to_len,
 int RSA_padding_check_PKCS1_type_1(uint8_t *out, size_t *out_len,
                                    size_t max_out, const uint8_t *from,
                                    size_t from_len) {
-  /* See RFC 8017, section 9.2. This is part of signature verification and thus
-   * does not need to run in constant-time. */
+  // See RFC 8017, section 9.2. This is part of signature verification and thus
+  // does not need to run in constant-time.
   if (from_len < 2) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_SMALL);
     return 0;
   }
 
-  /* Check the header. */
+  // Check the header.
   if (from[0] != 0 || from[1] != 1) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_BLOCK_TYPE_IS_NOT_01);
     return 0;
   }
 
-  /* Scan over padded data, looking for the 00. */
+  // Scan over padded data, looking for the 00.
   size_t pad;
   for (pad = 2 /* header */; pad < from_len; pad++) {
     if (from[pad] == 0x00) {
@@ -132,7 +132,7 @@ int RSA_padding_check_PKCS1_type_1(uint8_t *out, size_t *out_len,
     return 0;
   }
 
-  /* Skip over the 00. */
+  // Skip over the 00.
   pad++;
 
   if (from_len - pad > max_out) {
@@ -163,14 +163,14 @@ static int rand_nonzero(uint8_t *out, size_t len) {
 
 int RSA_padding_add_PKCS1_type_2(uint8_t *to, size_t to_len,
                                  const uint8_t *from, size_t from_len) {
-  /* See RFC 8017, section 7.2.1. */
+  // See RFC 8017, section 7.2.1.
   if (to_len < RSA_PKCS1_PADDING_SIZE) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
     return 0;
   }
 
   if (from_len > to_len - RSA_PKCS1_PADDING_SIZE) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_KEY_SIZE);
+    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     return 0;
   }
 
@@ -195,11 +195,11 @@ int RSA_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
     return 0;
   }
 
-  /* PKCS#1 v1.5 decryption. See "PKCS #1 v2.2: RSA Cryptography
-   * Standard", section 7.2.2. */
+  // PKCS#1 v1.5 decryption. See "PKCS #1 v2.2: RSA Cryptography
+  // Standard", section 7.2.2.
   if (from_len < RSA_PKCS1_PADDING_SIZE) {
-    /* |from| is zero-padded to the size of the RSA modulus, a public value, so
-     * this can be rejected in non-constant time. */
+    // |from| is zero-padded to the size of the RSA modulus, a public value, so
+    // this can be rejected in non-constant time.
     OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
     return 0;
   }
@@ -215,24 +215,24 @@ int RSA_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
     looking_for_index = constant_time_select_w(equals0, 0, looking_for_index);
   }
 
-  /* The input must begin with 00 02. */
+  // The input must begin with 00 02.
   crypto_word_t valid_index = first_byte_is_zero;
   valid_index &= second_byte_is_two;
 
-  /* We must have found the end of PS. */
+  // We must have found the end of PS.
   valid_index &= ~looking_for_index;
 
-  /* PS must be at least 8 bytes long, and it starts two bytes into |from|. */
+  // PS must be at least 8 bytes long, and it starts two bytes into |from|.
   valid_index &= constant_time_ge_w(zero_index, 2 + 8);
 
-  /* Skip the zero byte. */
+  // Skip the zero byte.
   zero_index++;
 
-  /* NOTE: Although this logic attempts to be constant time, the API contracts
-   * of this function and |RSA_decrypt| with |RSA_PKCS1_PADDING| make it
-   * impossible to completely avoid Bleichenbacher's attack. Consumers should
-   * use |RSA_PADDING_NONE| and perform the padding check in constant-time
-   * combined with a swap to a random session key or other mitigation. */
+  // NOTE: Although this logic attempts to be constant time, the API contracts
+  // of this function and |RSA_decrypt| with |RSA_PKCS1_PADDING| make it
+  // impossible to completely avoid Bleichenbacher's attack. Consumers should
+  // use |RSA_PADDING_NONE| and perform the padding check in constant-time
+  // combined with a swap to a random session key or other mitigation.
   if (!valid_index) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_PKCS_DECODING_ERROR);
     return 0;
@@ -240,8 +240,8 @@ int RSA_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
 
   const size_t msg_len = from_len - zero_index;
   if (msg_len > max_out) {
-    /* This shouldn't happen because this function is always called with
-     * |max_out| as the key size and |from_len| is bounded by the key size. */
+    // This shouldn't happen because this function is always called with
+    // |max_out| as the key size and |from_len| is bounded by the key size.
     OPENSSL_PUT_ERROR(RSA, RSA_R_PKCS_DECODING_ERROR);
     return 0;
   }
@@ -254,12 +254,12 @@ int RSA_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
 int RSA_padding_add_none(uint8_t *to, size_t to_len, const uint8_t *from,
                          size_t from_len) {
   if (from_len > to_len) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_KEY_SIZE);
+    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     return 0;
   }
 
   if (from_len < to_len) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_SMALL_FOR_KEY_SIZE);
+    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_SMALL);
     return 0;
   }
 
@@ -330,7 +330,7 @@ int RSA_padding_add_PKCS1_OAEP_mgf1(uint8_t *to, size_t to_len,
 
   size_t emlen = to_len - 1;
   if (from_len > emlen - 2 * mdlen - 1) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_KEY_SIZE);
+    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     return 0;
   }
 
@@ -397,12 +397,12 @@ int RSA_padding_check_PKCS1_OAEP_mgf1(uint8_t *out, size_t *out_len,
 
   size_t mdlen = EVP_MD_size(md);
 
-  /* The encoded message is one byte smaller than the modulus to ensure that it
-   * doesn't end up greater than the modulus. Thus there's an extra "+1" here
-   * compared to https://tools.ietf.org/html/rfc2437#section-9.1.1.2. */
+  // The encoded message is one byte smaller than the modulus to ensure that it
+  // doesn't end up greater than the modulus. Thus there's an extra "+1" here
+  // compared to https://tools.ietf.org/html/rfc2437#section-9.1.1.2.
   if (from_len < 1 + 2*mdlen + 1) {
-    /* 'from_len' is the length of the modulus, i.e. does not depend on the
-     * particular ciphertext. */
+    // 'from_len' is the length of the modulus, i.e. does not depend on the
+    // particular ciphertext.
     goto decoding_err;
   }
 
@@ -470,8 +470,8 @@ int RSA_padding_check_PKCS1_OAEP_mgf1(uint8_t *out, size_t *out_len,
   return 1;
 
 decoding_err:
-  /* to avoid chosen ciphertext attacks, the error message should not reveal
-   * which kind of decoding error happened */
+  // to avoid chosen ciphertext attacks, the error message should not reveal
+  // which kind of decoding error happened
   OPENSSL_PUT_ERROR(RSA, RSA_R_OAEP_DECODING_ERROR);
  err:
   OPENSSL_free(db);
@@ -499,10 +499,10 @@ int RSA_verify_PKCS1_PSS_mgf1(RSA *rsa, const uint8_t *mHash,
 
   hLen = EVP_MD_size(Hash);
 
-  /* Negative sLen has special meanings:
-   *	-1	sLen == hLen
-   *	-2	salt length is autorecovered from signature
-   *	-N	reserved */
+  // Negative sLen has special meanings:
+  //	-1	sLen == hLen
+  //	-2	salt length is autorecovered from signature
+  //	-N	reserved
   if (sLen == -1) {
     sLen = hLen;
   } else if (sLen == -2) {
@@ -523,7 +523,7 @@ int RSA_verify_PKCS1_PSS_mgf1(RSA *rsa, const uint8_t *mHash,
     emLen--;
   }
   if (emLen < (int)hLen + 2 || emLen < ((int)hLen + sLen + 2)) {
-    /* sLen can be small negative */
+    // sLen can be small negative
     OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     goto err;
   }
@@ -608,14 +608,14 @@ int RSA_padding_add_PKCS1_PSS_mgf1(RSA *rsa, unsigned char *EM,
   }
 
   if (emLen < hLen + 2) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_KEY_SIZE);
+    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     goto err;
   }
 
-  /* Negative sLenRequested has special meanings:
-   *   -1  sLen == hLen
-   *   -2  salt length is maximized
-   *   -N  reserved */
+  // Negative sLenRequested has special meanings:
+  //   -1  sLen == hLen
+  //   -2  salt length is maximized
+  //   -N  reserved
   size_t sLen;
   if (sLenRequested == -1) {
     sLen = hLen;
@@ -629,7 +629,7 @@ int RSA_padding_add_PKCS1_PSS_mgf1(RSA *rsa, unsigned char *EM,
   }
 
   if (emLen - hLen - 2 < sLen) {
-    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE_FOR_KEY_SIZE);
+    OPENSSL_PUT_ERROR(RSA, RSA_R_DATA_TOO_LARGE);
     goto err;
   }
 
@@ -658,16 +658,16 @@ int RSA_padding_add_PKCS1_PSS_mgf1(RSA *rsa, unsigned char *EM,
     goto err;
   }
 
-  /* Generate dbMask in place then perform XOR on it */
+  // Generate dbMask in place then perform XOR on it
   if (!PKCS1_MGF1(EM, maskedDBLen, H, hLen, mgf1Hash)) {
     goto err;
   }
 
   p = EM;
 
-  /* Initial PS XORs with all zeroes which is a NOP so just update
-   * pointer. Note from a test above this value is guaranteed to
-   * be non-negative. */
+  // Initial PS XORs with all zeroes which is a NOP so just update
+  // pointer. Note from a test above this value is guaranteed to
+  // be non-negative.
   p += emLen - sLen - hLen - 2;
   *p++ ^= 0x1;
   if (sLen > 0) {
@@ -679,7 +679,7 @@ int RSA_padding_add_PKCS1_PSS_mgf1(RSA *rsa, unsigned char *EM,
     EM[0] &= 0xFF >> (8 - MSBits);
   }
 
-  /* H is already in place so just set final 0xbc */
+  // H is already in place so just set final 0xbc
 
   EM[emLen - 1] = 0xbc;
 

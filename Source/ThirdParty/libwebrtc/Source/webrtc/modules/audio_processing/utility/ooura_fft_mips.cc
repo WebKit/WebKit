@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/utility/ooura_fft.h"
+#include "modules/audio_processing/utility/ooura_fft.h"
 
-#include "webrtc/modules/audio_processing/utility/ooura_fft_tables_common.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_processing/utility/ooura_fft_tables_common.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

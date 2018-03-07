@@ -173,4 +173,4 @@ int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
   return 1;
 }
 
-#endif  /* OPENSSL_PTHREADS */
+#endif  // OPENSSL_PTHREADS

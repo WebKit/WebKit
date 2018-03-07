@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCRtpParameters.h"
 
-#include "webrtc/api/rtpparameters.h"
+#include "api/rtpparameters.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

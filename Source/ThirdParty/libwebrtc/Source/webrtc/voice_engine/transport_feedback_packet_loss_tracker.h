@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VOICE_ENGINE_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
-#define WEBRTC_VOICE_ENGINE_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
+#ifndef VOICE_ENGINE_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
+#define VOICE_ENGINE_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
 
 #include <map>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "api/optional.h"
+#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 
@@ -138,4 +138,4 @@ class TransportFeedbackPacketLossTracker final {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VOICE_ENGINE_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_
+#endif  // VOICE_ENGINE_TRANSPORT_FEEDBACK_PACKET_LOSS_TRACKER_H_

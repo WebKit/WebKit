@@ -9,10 +9,18 @@
 """Evaluation score abstract class and implementations.
 """
 
+from __future__ import division
 import logging
 import os
 import re
 import subprocess
+import sys
+
+try:
+  import numpy as np
+except ImportError:
+  logging.critical('Cannot import the third-party Python package numpy')
+  sys.exit(1)
 
 from . import data_access
 from . import exceptions
@@ -24,7 +32,9 @@ class EvaluationScore(object):
   NAME = None
   REGISTERED_CLASSES = {}
 
-  def __init__(self):
+  def __init__(self, score_filename_prefix):
+    self._score_filename_prefix = score_filename_prefix
+    self._input_signal_metadata = None
     self._reference_signal = None
     self._reference_signal_filepath = None
     self._tested_signal = None
@@ -54,8 +64,16 @@ class EvaluationScore(object):
   def score(self):
     return self._score
 
+  def SetInputSignalMetadata(self, metadata):
+    """Sets input signal metadata.
+
+    Args:
+      metadata: dict instance.
+    """
+    self._input_signal_metadata = metadata
+
   def SetReferenceSignalFilepath(self, filepath):
-    """ Sets the path to the audio track used as reference signal.
+    """Sets the path to the audio track used as reference signal.
 
     Args:
       filepath: path to the reference audio track.
@@ -63,7 +81,7 @@ class EvaluationScore(object):
     self._reference_signal_filepath = filepath
 
   def SetTestedSignalFilepath(self, filepath):
-    """ Sets the path to the audio track used as test signal.
+    """Sets the path to the audio track used as test signal.
 
     Args:
       filepath: path to the test audio track.
@@ -76,8 +94,8 @@ class EvaluationScore(object):
     Args:
       output_path: path to the directory where the output is written.
     """
-    self._output_filepath = os.path.join(output_path, 'score-{}.txt'.format(
-        self.NAME))
+    self._output_filepath = os.path.join(
+        output_path, self._score_filename_prefix + self.NAME + '.txt')
     try:
       # If the score has already been computed, load.
       self._LoadScore()
@@ -110,10 +128,10 @@ class EvaluationScore(object):
 
 
 @EvaluationScore.RegisterClass
-class AudioLevelScore(EvaluationScore):
-  """Audio level score.
+class AudioLevelPeakScore(EvaluationScore):
+  """Peak audio level score.
 
-  Defined as the difference between the average audio level of the tested and
+  Defined as the difference between the peak audio level of the tested and
   the reference signals.
 
   Unit: dB
@@ -121,15 +139,47 @@ class AudioLevelScore(EvaluationScore):
   Worst case: +/-inf dB
   """
 
-  NAME = 'audio_level'
+  NAME = 'audio_level_peak'
 
-  def __init__(self):
-    EvaluationScore.__init__(self)
+  def __init__(self, score_filename_prefix):
+    EvaluationScore.__init__(self, score_filename_prefix)
 
   def _Run(self, output_path):
     self._LoadReferenceSignal()
     self._LoadTestedSignal()
     self._score = self._tested_signal.dBFS - self._reference_signal.dBFS
+    self._SaveScore()
+
+
+@EvaluationScore.RegisterClass
+class MeanAudioLevelScore(EvaluationScore):
+  """Mean audio level score.
+
+  Defined as the difference between the mean audio level of the tested and
+  the reference signals.
+
+  Unit: dB
+  Ideal: 0 dB
+  Worst case: +/-inf dB
+  """
+
+  NAME = 'audio_level_mean'
+
+  def __init__(self, score_filename_prefix):
+    EvaluationScore.__init__(self, score_filename_prefix)
+
+  def _Run(self, output_path):
+    self._LoadReferenceSignal()
+    self._LoadTestedSignal()
+
+    dbfs_diffs_sum = 0.0
+    seconds = min(len(self._tested_signal), len(self._reference_signal)) // 1000
+    for t in range(seconds):
+      t0 = t * seconds
+      t1 = t0 + seconds
+      dbfs_diffs_sum += (
+        self._tested_signal[t0:t1].dBFS - self._reference_signal[t0:t1].dBFS)
+    self._score = dbfs_diffs_sum / float(seconds)
     self._SaveScore()
 
 
@@ -146,8 +196,8 @@ class PolqaScore(EvaluationScore):
 
   NAME = 'polqa'
 
-  def __init__(self, polqa_bin_filepath):
-    EvaluationScore.__init__(self)
+  def __init__(self, score_filename_prefix, polqa_bin_filepath):
+    EvaluationScore.__init__(self, score_filename_prefix)
 
     # POLQA binary file path.
     self._polqa_bin_filepath = polqa_bin_filepath
@@ -208,3 +258,84 @@ class PolqaScore(EvaluationScore):
     # Build and return a dictionary with field names (header) as keys and the
     # corresponding field values as values.
     return {data[0][index]: data[1][index] for index in range(number_of_fields)}
+
+
+@EvaluationScore.RegisterClass
+class TotalHarmonicDistorsionScore(EvaluationScore):
+  """Total harmonic distorsion plus noise score.
+
+  Total harmonic distorsion plus noise score.
+  See "https://en.wikipedia.org/wiki/Total_harmonic_distortion#THD.2BN".
+
+  Unit: -.
+  Ideal: 0.
+  Worst case: +inf
+  """
+
+  NAME = 'thd'
+
+  def __init__(self, score_filename_prefix):
+    EvaluationScore.__init__(self, score_filename_prefix)
+    self._input_frequency = None
+
+  def _Run(self, output_path):
+    # TODO(aleloi): Integrate changes made locally.
+    self._CheckInputSignal()
+
+    self._LoadTestedSignal()
+    if self._tested_signal.channels != 1:
+      raise exceptions.EvaluationScoreException(
+          'unsupported number of channels')
+    samples = signal_processing.SignalProcessingUtils.AudioSegmentToRawData(
+        self._tested_signal)
+
+    # Init.
+    num_samples = len(samples)
+    duration = len(self._tested_signal) / 1000.0
+    scaling = 2.0 / num_samples
+    max_freq = self._tested_signal.frame_rate / 2
+    f0_freq = float(self._input_frequency)
+    t = np.linspace(0, duration, num_samples)
+
+    # Analyze harmonics.
+    b_terms = []
+    n = 1
+    while f0_freq * n < max_freq:
+      x_n = np.sum(samples * np.sin(2.0 * np.pi * n * f0_freq * t)) * scaling
+      y_n = np.sum(samples * np.cos(2.0 * np.pi * n * f0_freq * t)) * scaling
+      b_terms.append(np.sqrt(x_n**2 + y_n**2))
+      n += 1
+
+    output_without_fundamental = samples - b_terms[0] * np.sin(
+        2.0 * np.pi * f0_freq * t)
+    distortion_and_noise = np.sqrt(np.sum(
+        output_without_fundamental**2) * np.pi * scaling)
+
+    # TODO(alessiob): Fix or remove if not needed.
+    # thd = np.sqrt(np.sum(b_terms[1:]**2)) / b_terms[0]
+
+    # TODO(alessiob): Check the range of |thd_plus_noise| and update the class
+    # docstring above if accordingly.
+    thd_plus_noise = distortion_and_noise / b_terms[0]
+
+    self._score = thd_plus_noise
+    self._SaveScore()
+
+  def _CheckInputSignal(self):
+    # Check input signal and get properties.
+    try:
+      if self._input_signal_metadata['signal'] != 'pure_tone':
+        raise exceptions.EvaluationScoreException(
+            'The THD score requires a pure tone as input signal')
+      self._input_frequency = self._input_signal_metadata['frequency']
+      if self._input_signal_metadata['test_data_gen_name'] != 'identity' or (
+          self._input_signal_metadata['test_data_gen_config'] != 'default'):
+        raise exceptions.EvaluationScoreException(
+            'The THD score cannot be used with any test data generator other '
+            'than "identity"')
+    except TypeError:
+      raise exceptions.EvaluationScoreException(
+          'The THD score requires an input signal with associated metadata')
+    except KeyError:
+      raise exceptions.EvaluationScoreException(
+          'Invalid input signal metadata to compute the THD score')

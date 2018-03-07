@@ -10,6 +10,7 @@
 
 #import "ARDSettingsViewController.h"
 #import "ARDSettingsModel.h"
+#import "RTCVideoCodecInfo+HumanReadable.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -62,7 +63,7 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
   return [_settingsModel availableVideoResolutions];
 }
 
-- (NSArray<NSString *> *)videoCodecArray {
+- (NSArray<RTCVideoCodecInfo *> *)videoCodecArray {
   return [_settingsModel availableVideoCodecs];
 }
 
@@ -214,9 +215,9 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];
   }
-  NSString *codec = self.videoCodecArray[indexPath.row];
-  cell.textLabel.text = codec;
-  if ([codec isEqualToString:[_settingsModel currentVideoCodecSettingFromStore]]) {
+  RTCVideoCodecInfo *codec = self.videoCodecArray[indexPath.row];
+  cell.textLabel.text = [codec humanReadableDescription];
+  if ([codec isEqualToCodecInfo:[_settingsModel currentVideoCodecSettingFromStore]]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
   } else {
     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -231,7 +232,7 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
     updateListSelectionAtIndexPath:indexPath
         inSection:ARDSettingsSectionVideoCodec];
 
-  NSString *videoCodec = self.videoCodecArray[indexPath.row];
+  RTCVideoCodecInfo *videoCodec = self.videoCodecArray[indexPath.row];
   [_settingsModel storeVideoCodecSetting:videoCodec];
 }
 

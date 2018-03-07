@@ -11,8 +11,8 @@
 // This file contains codec dependent definitions that are needed in
 // order to compile the WebRTC codebase, even if this codec is not used.
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_H264_INCLUDE_H264_GLOBALS_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_H264_INCLUDE_H264_GLOBALS_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_H264_INCLUDE_H264_GLOBALS_H_
+#define MODULES_VIDEO_CODING_CODECS_H264_INCLUDE_H264_GLOBALS_H_
 
 namespace webrtc {
 
@@ -57,10 +57,6 @@ struct NaluInfo {
   uint8_t type;
   int sps_id;
   int pps_id;
-
-  // Offset and size are only valid for non-FuA packets.
-  size_t offset;
-  size_t size;
 };
 
 const size_t kMaxNalusPerPacket = 10;
@@ -83,4 +79,4 @@ struct RTPVideoHeaderH264 {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_H264_INCLUDE_H264_GLOBALS_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_H264_INCLUDE_H264_GLOBALS_H_

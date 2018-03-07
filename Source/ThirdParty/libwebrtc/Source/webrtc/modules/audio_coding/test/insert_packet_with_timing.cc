@@ -9,31 +9,32 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <memory>
 
-#include "gflags/gflags.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/modules/audio_coding/test/Channel.h"
-#include "webrtc/modules/audio_coding/test/PCMFile.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/test/Channel.h"
+#include "modules/audio_coding/test/PCMFile.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/flags.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 // Codec.
 DEFINE_string(codec, "opus", "Codec Name");
-DEFINE_int32(codec_sample_rate_hz, 48000, "Sampling rate in Hertz.");
-DEFINE_int32(codec_channels, 1, "Number of channels of the codec.");
+DEFINE_int(codec_sample_rate_hz, 48000, "Sampling rate in Hertz.");
+DEFINE_int(codec_channels, 1, "Number of channels of the codec.");
 
 // PCM input/output.
 DEFINE_string(input, "", "Input PCM file at 16 kHz.");
 DEFINE_bool(input_stereo, false, "Input is stereo.");
-DEFINE_int32(input_fs_hz, 32000, "Input sample rate Hz.");
+DEFINE_int(input_fs_hz, 32000, "Input sample rate Hz.");
 DEFINE_string(output, "insert_rtp_with_timing_out.pcm", "OutputFile");
-DEFINE_int32(output_fs_hz, 32000, "Output sample rate Hz");
+DEFINE_int(output_fs_hz, 32000, "Output sample rate Hz");
 
 // Timing files
 DEFINE_string(seq_num, "seq_num", "Sequence number file.");
@@ -45,7 +46,9 @@ DEFINE_string(delay, "", "Log for delay.");
 
 // Other setups
 DEFINE_bool(verbose, false, "Verbosity.");
-DEFINE_double(loss_rate, 0, "Rate of packet loss < 1");
+DEFINE_float(loss_rate, 0, "Rate of packet loss < 1");
+
+DEFINE_bool(help, false, "Prints this message.");
 
 const int32_t kAudioPlayedOut = 0x00000001;
 const int32_t kPacketPushedIn = 0x00000001 << 1;
@@ -58,13 +61,13 @@ class InsertPacketWithTiming {
   InsertPacketWithTiming()
       : sender_clock_(new SimulatedClock(0)),
         receiver_clock_(new SimulatedClock(0)),
-        send_acm_(AudioCodingModule::Create(0, sender_clock_)),
-        receive_acm_(AudioCodingModule::Create(0, receiver_clock_)),
+        send_acm_(AudioCodingModule::Create(sender_clock_)),
+        receive_acm_(AudioCodingModule::Create(receiver_clock_)),
         channel_(new Channel),
-        seq_num_fid_(fopen(FLAGS_seq_num.c_str(), "rt")),
-        send_ts_fid_(fopen(FLAGS_send_ts.c_str(), "rt")),
-        receive_ts_fid_(fopen(FLAGS_receive_ts.c_str(), "rt")),
-        pcm_out_fid_(fopen(FLAGS_output.c_str(), "wb")),
+        seq_num_fid_(fopen(FLAG_seq_num, "rt")),
+        send_ts_fid_(fopen(FLAG_send_ts, "rt")),
+        receive_ts_fid_(fopen(FLAG_receive_ts, "rt")),
+        pcm_out_fid_(fopen(FLAG_output, "wb")),
         samples_in_1ms_(48),
         num_10ms_in_codec_frame_(2),  // Typical 20 ms frames.
         time_to_insert_packet_ms_(3),  // An arbitrary offset on pushing packet.
@@ -90,9 +93,9 @@ class InsertPacketWithTiming {
     next_receive_ts_ = ReceiveTimestamp();
 
     CodecInst codec;
-    ASSERT_EQ(0, AudioCodingModule::Codec(FLAGS_codec.c_str(), &codec,
-                             FLAGS_codec_sample_rate_hz,
-                             FLAGS_codec_channels));
+    ASSERT_EQ(0, AudioCodingModule::Codec(FLAG_codec, &codec,
+                             FLAG_codec_sample_rate_hz,
+                             FLAG_codec_channels));
     ASSERT_EQ(0, receive_acm_->InitializeReceiver());
     ASSERT_EQ(0, send_acm_->RegisterSendCodec(codec));
     ASSERT_EQ(true, receive_acm_->RegisterReceiveCodec(codec.pltype,
@@ -105,27 +108,27 @@ class InsertPacketWithTiming {
     channel_->RegisterReceiverACM(receive_acm_.get());
     send_acm_->RegisterTransportCallback(channel_);
 
-    if (FLAGS_input.size() == 0) {
+    if (strlen(FLAG_input) == 0) {
       std::string file_name = test::ResourcePath("audio_coding/testfile32kHz",
                                                  "pcm");
       pcm_in_fid_.Open(file_name, 32000, "r", true);  // auto-rewind
       std::cout << "Input file " << file_name << " 32 kHz mono." << std::endl;
     } else {
-      pcm_in_fid_.Open(FLAGS_input, static_cast<uint16_t>(FLAGS_input_fs_hz),
+      pcm_in_fid_.Open(FLAG_input, static_cast<uint16_t>(FLAG_input_fs_hz),
                     "r", true);  // auto-rewind
-      std::cout << "Input file " << FLAGS_input << "at " << FLAGS_input_fs_hz
-          << " Hz in " << ((FLAGS_input_stereo) ? "stereo." : "mono.")
+      std::cout << "Input file " << FLAG_input << "at " << FLAG_input_fs_hz
+          << " Hz in " << ((FLAG_input_stereo) ? "stereo." : "mono.")
           << std::endl;
-      pcm_in_fid_.ReadStereo(FLAGS_input_stereo);
+      pcm_in_fid_.ReadStereo(FLAG_input_stereo);
     }
 
     ASSERT_TRUE(pcm_out_fid_ != NULL);
-    std::cout << "Output file " << FLAGS_output << " at " << FLAGS_output_fs_hz
+    std::cout << "Output file " << FLAG_output << " at " << FLAG_output_fs_hz
         << " Hz." << std::endl;
 
     // Other setups
-    if (FLAGS_loss_rate > 0)
-      loss_threshold_ = RAND_MAX * FLAGS_loss_rate;
+    if (FLAG_loss_rate > 0)
+      loss_threshold_ = RAND_MAX * FLAG_loss_rate;
     else
       loss_threshold_ = 0;
   }
@@ -144,7 +147,7 @@ class InsertPacketWithTiming {
     if (time_to_playout_audio_ms_ == 0) {
       time_to_playout_audio_ms_ = kPlayoutPeriodMs;
       bool muted;
-      receive_acm_->PlayoutData10Ms(static_cast<int>(FLAGS_output_fs_hz),
+      receive_acm_->PlayoutData10Ms(static_cast<int>(FLAG_output_fs_hz),
                                     &frame_, &muted);
       ASSERT_FALSE(muted);
       fwrite(frame_.data(), sizeof(*frame_.data()),
@@ -180,7 +183,7 @@ class InsertPacketWithTiming {
         lost = true;
       }
 
-      if (FLAGS_verbose) {
+      if (FLAG_verbose) {
         if (!lost) {
           std::cout << "\nInserting packet number " << seq_num
               << " timestamp " << ts << std::endl;
@@ -279,13 +282,20 @@ class InsertPacketWithTiming {
 }  // webrtc
 
 int main(int argc, char* argv[]) {
-  google::ParseCommandLineFlags(&argc, &argv, true);
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true)) {
+    return 1;
+  }
+  if (FLAG_help) {
+    rtc::FlagList::Print(nullptr, false);
+    return 0;
+  }
+
   webrtc::InsertPacketWithTiming test;
   test.SetUp();
 
   FILE* delay_log = NULL;
-  if (FLAGS_delay.size() > 0) {
-    delay_log = fopen(FLAGS_delay.c_str(), "wt");
+  if (strlen(FLAG_delay) > 0) {
+    delay_log = fopen(FLAG_delay, "wt");
     if (delay_log == NULL) {
       std::cout << "Cannot open the file to log delay values." << std::endl;
       exit(1);

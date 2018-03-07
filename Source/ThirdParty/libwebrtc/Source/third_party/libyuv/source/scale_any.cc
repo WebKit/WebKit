@@ -22,18 +22,25 @@ extern "C" {
 #define CANY(NAMEANY, TERP_SIMD, TERP_C, BPP, MASK)                        \
   void NAMEANY(uint8* dst_ptr, const uint8* src_ptr, int dst_width, int x, \
                int dx) {                                                   \
+    int r = dst_width & MASK;                                              \
     int n = dst_width & ~MASK;                                             \
     if (n > 0) {                                                           \
       TERP_SIMD(dst_ptr, src_ptr, n, x, dx);                               \
     }                                                                      \
-    TERP_C(dst_ptr + n * BPP, src_ptr, dst_width & MASK, x + n * dx, dx);  \
+    TERP_C(dst_ptr + n * BPP, src_ptr, r, x + n * dx, dx);                 \
   }
 
 #ifdef HAS_SCALEFILTERCOLS_NEON
 CANY(ScaleFilterCols_Any_NEON, ScaleFilterCols_NEON, ScaleFilterCols_C, 1, 7)
 #endif
+#ifdef HAS_SCALEFILTERCOLS_MSA
+CANY(ScaleFilterCols_Any_MSA, ScaleFilterCols_MSA, ScaleFilterCols_C, 1, 15)
+#endif
 #ifdef HAS_SCALEARGBCOLS_NEON
 CANY(ScaleARGBCols_Any_NEON, ScaleARGBCols_NEON, ScaleARGBCols_C, 4, 7)
+#endif
+#ifdef HAS_SCALEARGBCOLS_MSA
+CANY(ScaleARGBCols_Any_MSA, ScaleARGBCols_MSA, ScaleARGBCols_C, 4, 3)
 #endif
 #ifdef HAS_SCALEARGBFILTERCOLS_NEON
 CANY(ScaleARGBFilterCols_Any_NEON,
@@ -42,13 +49,21 @@ CANY(ScaleARGBFilterCols_Any_NEON,
      4,
      3)
 #endif
+#ifdef HAS_SCALEARGBFILTERCOLS_MSA
+CANY(ScaleARGBFilterCols_Any_MSA,
+     ScaleARGBFilterCols_MSA,
+     ScaleARGBFilterCols_C,
+     4,
+     7)
+#endif
 #undef CANY
 
 // Fixed scale down.
+// Mask may be non-power of 2, so use MOD
 #define SDANY(NAMEANY, SCALEROWDOWN_SIMD, SCALEROWDOWN_C, FACTOR, BPP, MASK) \
   void NAMEANY(const uint8* src_ptr, ptrdiff_t src_stride, uint8* dst_ptr,   \
                int dst_width) {                                              \
-    int r = (int)((unsigned int)dst_width % (MASK + 1));                     \
+    int r = (int)((unsigned int)dst_width % (MASK + 1)); /* NOLINT */        \
     int n = dst_width - r;                                                   \
     if (n > 0) {                                                             \
       SCALEROWDOWN_SIMD(src_ptr, src_stride, dst_ptr, n);                    \
@@ -63,13 +78,13 @@ CANY(ScaleARGBFilterCols_Any_NEON,
 #define SDODD(NAMEANY, SCALEROWDOWN_SIMD, SCALEROWDOWN_C, FACTOR, BPP, MASK) \
   void NAMEANY(const uint8* src_ptr, ptrdiff_t src_stride, uint8* dst_ptr,   \
                int dst_width) {                                              \
-    int r = (int)((unsigned int)(dst_width - 1) % (MASK + 1));               \
-    int n = dst_width - r;                                                   \
+    int r = (int)((unsigned int)(dst_width - 1) % (MASK + 1)); /* NOLINT */  \
+    int n = (dst_width - 1) - r;                                             \
     if (n > 0) {                                                             \
       SCALEROWDOWN_SIMD(src_ptr, src_stride, dst_ptr, n);                    \
     }                                                                        \
     SCALEROWDOWN_C(src_ptr + (n * FACTOR) * BPP, src_stride,                 \
-                   dst_ptr + n * BPP, r);                                    \
+                   dst_ptr + n * BPP, r + 1);                                \
   }
 
 #ifdef HAS_SCALEROWDOWN2_SSSE3
@@ -226,6 +241,26 @@ SDANY(ScaleRowDown34_1_Box_Any_NEON,
       1,
       23)
 #endif
+#ifdef HAS_SCALEROWDOWN34_MSA
+SDANY(ScaleRowDown34_Any_MSA,
+      ScaleRowDown34_MSA,
+      ScaleRowDown34_C,
+      4 / 3,
+      1,
+      47)
+SDANY(ScaleRowDown34_0_Box_Any_MSA,
+      ScaleRowDown34_0_Box_MSA,
+      ScaleRowDown34_0_Box_C,
+      4 / 3,
+      1,
+      47)
+SDANY(ScaleRowDown34_1_Box_Any_MSA,
+      ScaleRowDown34_1_Box_MSA,
+      ScaleRowDown34_1_Box_C,
+      4 / 3,
+      1,
+      47)
+#endif
 #ifdef HAS_SCALEROWDOWN38_SSSE3
 SDANY(ScaleRowDown38_Any_SSSE3,
       ScaleRowDown38_SSSE3,
@@ -353,8 +388,8 @@ SDANY(ScaleARGBRowDown2Box_Any_MSA,
 #define SDAANY(NAMEANY, SCALEROWDOWN_SIMD, SCALEROWDOWN_C, BPP, MASK)      \
   void NAMEANY(const uint8* src_ptr, ptrdiff_t src_stride, int src_stepx,  \
                uint8* dst_ptr, int dst_width) {                            \
-    int r = (int)((unsigned int)dst_width % (MASK + 1));                   \
-    int n = dst_width - r;                                                 \
+    int r = dst_width & MASK;                                              \
+    int n = dst_width & ~MASK;                                             \
     if (n > 0) {                                                           \
       SCALEROWDOWN_SIMD(src_ptr, src_stride, src_stepx, dst_ptr, n);       \
     }                                                                      \

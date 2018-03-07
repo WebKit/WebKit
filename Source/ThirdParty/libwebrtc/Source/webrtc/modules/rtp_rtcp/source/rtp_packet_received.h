@@ -7,25 +7,27 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_PACKET_RECEIVED_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_PACKET_RECEIVED_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTP_PACKET_RECEIVED_H_
+#define MODULES_RTP_RTCP_SOURCE_RTP_PACKET_RECEIVED_H_
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet.h"
-#include "webrtc/system_wrappers/include/ntp_time.h"
+#include <vector>
+
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 // Class to hold rtp packet with metadata for receiver side.
-class RtpPacketReceived : public rtp::Packet {
+class RtpPacketReceived : public RtpPacket {
  public:
-  RtpPacketReceived() = default;
-  explicit RtpPacketReceived(const ExtensionManager* extensions)
-      : Packet(extensions) {}
+  RtpPacketReceived();
+  explicit RtpPacketReceived(const ExtensionManager* extensions);
 
-  void GetHeader(RTPHeader* header) const {
-    Packet::GetHeader(header);
-    header->payload_type_frequency = payload_type_frequency();
-  }
+  ~RtpPacketReceived();
+
+  // TODO(danilchap): Remove this function when all code update to use RtpPacket
+  // directly. Function is there just for easier backward compatibilty.
+  void GetHeader(RTPHeader* header) const;
 
   // Time in local time base as close as it can to packet arrived on the
   // network.
@@ -45,12 +47,22 @@ class RtpPacketReceived : public rtp::Packet {
     payload_type_frequency_ = value;
   }
 
+  // Additional data bound to the RTP packet for use in application code,
+  // outside of WebRTC.
+  rtc::ArrayView<const uint8_t> application_data() const {
+    return application_data_;
+  }
+  void set_application_data(rtc::ArrayView<const uint8_t> data) {
+    application_data_.assign(data.begin(), data.end());
+  }
+
  private:
   NtpTime capture_time_;
   int64_t arrival_time_ms_ = 0;
   int payload_type_frequency_ = 0;
   bool recovered_ = false;
+  std::vector<uint8_t> application_data_;
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_PACKET_RECEIVED_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTP_PACKET_RECEIVED_H_

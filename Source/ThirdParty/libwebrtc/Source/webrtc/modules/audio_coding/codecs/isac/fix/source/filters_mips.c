@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
 
 // MIPS optimized implementation of the Autocorrelation function in fixed point.
 // NOTE! Different from SPLIB-version in how it scales the signal.

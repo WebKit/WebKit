@@ -11,6 +11,7 @@
 package org.webrtc;
 
 import android.annotation.TargetApi;
+import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
@@ -598,6 +599,59 @@ public class MediaCodecVideoEncoder {
     }
   }
 
+  /**
+   * Encodes a new style VideoFrame. Called by JNI. |bufferIndex| is -1 if we are not encoding in
+   * surface mode.
+   */
+  boolean encodeFrame(long nativeEncoder, boolean isKeyframe, VideoFrame frame, int bufferIndex) {
+    checkOnMediaCodecThread();
+    try {
+      long presentationTimestampUs = TimeUnit.NANOSECONDS.toMicros(frame.getTimestampNs());
+      checkKeyFrameRequired(isKeyframe, presentationTimestampUs);
+
+      VideoFrame.Buffer buffer = frame.getBuffer();
+      if (buffer instanceof VideoFrame.TextureBuffer) {
+        VideoFrame.TextureBuffer textureBuffer = (VideoFrame.TextureBuffer) buffer;
+        eglBase.makeCurrent();
+        // TODO(perkj): glClear() shouldn't be necessary since every pixel is covered anyway,
+        // but it's a workaround for bug webrtc:5147.
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        VideoFrameDrawer.drawTexture(drawer, textureBuffer, new Matrix() /* renderMatrix */, width,
+            height, 0 /* viewportX */, 0 /* viewportY */, width, height);
+        eglBase.swapBuffers(frame.getTimestampNs());
+      } else {
+        VideoFrame.I420Buffer i420Buffer = buffer.toI420();
+        final int chromaHeight = (height + 1) / 2;
+        final ByteBuffer dataY = i420Buffer.getDataY();
+        final ByteBuffer dataU = i420Buffer.getDataU();
+        final ByteBuffer dataV = i420Buffer.getDataV();
+        final int strideY = i420Buffer.getStrideY();
+        final int strideU = i420Buffer.getStrideU();
+        final int strideV = i420Buffer.getStrideV();
+        if (dataY.capacity() < strideY * height) {
+          throw new RuntimeException("Y-plane buffer size too small.");
+        }
+        if (dataU.capacity() < strideU * chromaHeight) {
+          throw new RuntimeException("U-plane buffer size too small.");
+        }
+        if (dataV.capacity() < strideV * chromaHeight) {
+          throw new RuntimeException("V-plane buffer size too small.");
+        }
+        nativeFillBuffer(
+            nativeEncoder, bufferIndex, dataY, strideY, dataU, strideU, dataV, strideV);
+        i420Buffer.release();
+        // I420 consists of one full-resolution and two half-resolution planes.
+        // 1 + 1 / 4 + 1 / 4 = 3 / 2
+        int yuvSize = width * height * 3 / 2;
+        mediaCodec.queueInputBuffer(bufferIndex, 0, yuvSize, presentationTimestampUs, 0);
+      }
+      return true;
+    } catch (RuntimeException e) {
+      Logging.e(TAG, "encodeFrame failed", e);
+      return false;
+    }
+  }
+
   void release() {
     Logging.d(TAG, "Java releaseEncoder");
     checkOnMediaCodecThread();
@@ -881,4 +935,8 @@ public class MediaCodecVideoEncoder {
       return false;
     }
   }
+
+  /** Fills an inputBuffer with the given index with data from the byte buffers. */
+  private static native void nativeFillBuffer(long nativeEncoder, int inputBuffer, ByteBuffer dataY,
+      int strideY, ByteBuffer dataU, int strideU, ByteBuffer dataV, int strideV);
 }

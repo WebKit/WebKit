@@ -11,10 +11,10 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/test/testsupport/frame_reader.h"
+#include "api/video/i420_buffer.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "test/testsupport/frame_reader.h"
 
 namespace webrtc {
 namespace test {

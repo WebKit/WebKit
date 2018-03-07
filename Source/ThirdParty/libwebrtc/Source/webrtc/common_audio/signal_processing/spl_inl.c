@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "webrtc/common_audio/signal_processing/include/spl_inl.h"
+#include "common_audio/signal_processing/include/spl_inl.h"
 
 // Table used by WebRtcSpl_CountLeadingZeros32_NotBuiltin. For each uint32_t n
 // that's a sequence of 0 bits followed by a sequence of 1 bits, the entry at

@@ -21,7 +21,7 @@ iLBC_test.c
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "webrtc/modules/audio_coding/codecs/ilbc/ilbc.h"
+#include "modules/audio_coding/codecs/ilbc/ilbc.h"
 
 //#define JUNK_DATA
 #ifdef JUNK_DATA

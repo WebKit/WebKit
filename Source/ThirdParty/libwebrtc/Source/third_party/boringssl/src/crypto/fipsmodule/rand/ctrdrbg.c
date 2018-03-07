@@ -21,16 +21,16 @@
 #include "../cipher/internal.h"
 
 
-/* Section references in this file refer to SP 800-90Ar1:
- * http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf */
+// Section references in this file refer to SP 800-90Ar1:
+// http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf
 
-/* See table 3. */
+// See table 3.
 static const uint64_t kMaxReseedCount = UINT64_C(1) << 48;
 
 int CTR_DRBG_init(CTR_DRBG_STATE *drbg,
                   const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
                   const uint8_t *personalization, size_t personalization_len) {
-  /* Section 10.2.1.3.1 */
+  // Section 10.2.1.3.1
   if (personalization_len > CTR_DRBG_ENTROPY_LEN) {
     return 0;
   }
@@ -42,10 +42,10 @@ int CTR_DRBG_init(CTR_DRBG_STATE *drbg,
     seed_material[i] ^= personalization[i];
   }
 
-  /* Section 10.2.1.2 */
+  // Section 10.2.1.2
 
-  /* kInitMask is the result of encrypting blocks with big-endian value 1, 2
-   * and 3 with the all-zero AES-256 key. */
+  // kInitMask is the result of encrypting blocks with big-endian value 1, 2
+  // and 3 with the all-zero AES-256 key.
   static const uint8_t kInitMask[CTR_DRBG_ENTROPY_LEN] = {
       0x53, 0x0f, 0x8a, 0xfb, 0xc7, 0x45, 0x36, 0xb9, 0xa9, 0x63, 0xb4, 0xf1,
       0xc4, 0xcb, 0x73, 0x8b, 0xce, 0xa7, 0x40, 0x3d, 0x4d, 0x60, 0x6b, 0x6e,
@@ -67,8 +67,8 @@ int CTR_DRBG_init(CTR_DRBG_STATE *drbg,
 OPENSSL_COMPILE_ASSERT(CTR_DRBG_ENTROPY_LEN % AES_BLOCK_SIZE == 0,
                        not_a_multiple_of_block_size);
 
-/* ctr_inc adds |n| to the last four bytes of |drbg->counter|, treated as a
- * big-endian number. */
+// ctr_inc adds |n| to the last four bytes of |drbg->counter|, treated as a
+// big-endian number.
 static void ctr32_add(CTR_DRBG_STATE *drbg, uint32_t n) {
   drbg->counter.words[3] =
       CRYPTO_bswap4(CRYPTO_bswap4(drbg->counter.words[3]) + n);
@@ -76,9 +76,9 @@ static void ctr32_add(CTR_DRBG_STATE *drbg, uint32_t n) {
 
 static int CTR_DRBG_update(CTR_DRBG_STATE *drbg, const uint8_t *data,
                            size_t data_len) {
-  /* Section 10.2.1.2. A value of |data_len| which less than
-   * |CTR_DRBG_ENTROPY_LEN| is permitted and acts the same as right-padding
-   * with zeros. This can save a copy. */
+  // Section 10.2.1.2. A value of |data_len| which less than
+  // |CTR_DRBG_ENTROPY_LEN| is permitted and acts the same as right-padding
+  // with zeros. This can save a copy.
   if (data_len > CTR_DRBG_ENTROPY_LEN) {
     return 0;
   }
@@ -103,7 +103,7 @@ int CTR_DRBG_reseed(CTR_DRBG_STATE *drbg,
                     const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
                     const uint8_t *additional_data,
                     size_t additional_data_len) {
-  /* Section 10.2.1.4 */
+  // Section 10.2.1.4
   uint8_t entropy_copy[CTR_DRBG_ENTROPY_LEN];
 
   if (additional_data_len > 0) {
@@ -131,12 +131,12 @@ int CTR_DRBG_reseed(CTR_DRBG_STATE *drbg,
 int CTR_DRBG_generate(CTR_DRBG_STATE *drbg, uint8_t *out, size_t out_len,
                       const uint8_t *additional_data,
                       size_t additional_data_len) {
-  /* See 9.3.1 */
+  // See 9.3.1
   if (out_len > CTR_DRBG_MAX_GENERATE_LENGTH) {
     return 0;
   }
 
-  /* See 10.2.1.5.1 */
+  // See 10.2.1.5.1
   if (drbg->reseed_counter > kMaxReseedCount) {
     return 0;
   }
@@ -146,12 +146,12 @@ int CTR_DRBG_generate(CTR_DRBG_STATE *drbg, uint8_t *out, size_t out_len,
     return 0;
   }
 
-  /* kChunkSize is used to interact better with the cache. Since the AES-CTR
-   * code assumes that it's encrypting rather than just writing keystream, the
-   * buffer has to be zeroed first. Without chunking, large reads would zero
-   * the whole buffer, flushing the L1 cache, and then do another pass (missing
-   * the cache every time) to “encrypt” it. The code can avoid this by
-   * chunking. */
+  // kChunkSize is used to interact better with the cache. Since the AES-CTR
+  // code assumes that it's encrypting rather than just writing keystream, the
+  // buffer has to be zeroed first. Without chunking, large reads would zero
+  // the whole buffer, flushing the L1 cache, and then do another pass (missing
+  // the cache every time) to “encrypt” it. The code can avoid this by
+  // chunking.
   static const size_t kChunkSize = 8 * 1024;
 
   while (out_len >= AES_BLOCK_SIZE) {

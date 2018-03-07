@@ -43,10 +43,18 @@ class AndroidVideoTrackSourceObserver implements VideoCapturer.CapturerObserver 
         nativeSource, width, height, oesTextureId, transformMatrix, rotation, timestamp);
   }
 
+  @Override
+  public void onFrameCaptured(VideoFrame frame) {
+    nativeOnFrameCaptured(nativeSource, frame.getBuffer().getWidth(), frame.getBuffer().getHeight(),
+        frame.getRotation(), frame.getTimestampNs(), frame.getBuffer());
+  }
+
   private native void nativeCapturerStarted(long nativeSource, boolean success);
   private native void nativeCapturerStopped(long nativeSource);
   private native void nativeOnByteBufferFrameCaptured(long nativeSource, byte[] data, int length,
       int width, int height, int rotation, long timeStamp);
   private native void nativeOnTextureFrameCaptured(long nativeSource, int width, int height,
       int oesTextureId, float[] transformMatrix, int rotation, long timestamp);
+  private native void nativeOnFrameCaptured(long nativeSource, int width, int height, int rotation,
+      long timestampNs, VideoFrame.Buffer frame);
 }

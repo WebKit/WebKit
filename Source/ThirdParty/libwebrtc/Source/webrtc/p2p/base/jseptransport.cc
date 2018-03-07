@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/jseptransport.h"
+#include "p2p/base/jseptransport.h"
 
 #include <memory>
 #include <utility>  // for std::pair
 
-#include "webrtc/base/bind.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/p2p/base/candidate.h"
-#include "webrtc/p2p/base/dtlstransportchannel.h"
-#include "webrtc/p2p/base/p2pconstants.h"
-#include "webrtc/p2p/base/p2ptransportchannel.h"
-#include "webrtc/p2p/base/port.h"
+#include "api/candidate.h"
+#include "p2p/base/dtlstransport.h"
+#include "p2p/base/p2pconstants.h"
+#include "p2p/base/p2ptransportchannel.h"
+#include "p2p/base/port.h"
+#include "rtc_base/bind.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 
@@ -64,11 +64,50 @@ ConnectionInfo::ConnectionInfo()
       nominated(false),
       total_round_trip_time_ms(0) {}
 
+ConnectionInfo::ConnectionInfo(const ConnectionInfo&) = default;
+
+ConnectionInfo::~ConnectionInfo() = default;
+
+TransportChannelStats::TransportChannelStats() = default;
+
+TransportChannelStats::TransportChannelStats(const TransportChannelStats&) =
+    default;
+
+TransportChannelStats::~TransportChannelStats() = default;
+
+TransportStats::TransportStats() = default;
+
+TransportStats::~TransportStats() = default;
+
+IceConfig::IceConfig() = default;
+
+IceConfig::IceConfig(int receiving_timeout_ms,
+                     int backup_connection_ping_interval,
+                     ContinualGatheringPolicy gathering_policy,
+                     bool prioritize_most_likely_candidate_pairs,
+                     int stable_writable_connection_ping_interval_ms,
+                     bool presume_writable_when_fully_relayed,
+                     int regather_on_failed_networks_interval_ms,
+                     int receiving_switching_delay_ms)
+    : receiving_timeout(receiving_timeout_ms),
+      backup_connection_ping_interval(backup_connection_ping_interval),
+      continual_gathering_policy(gathering_policy),
+      prioritize_most_likely_candidate_pairs(
+          prioritize_most_likely_candidate_pairs),
+      stable_writable_connection_ping_interval(
+          stable_writable_connection_ping_interval_ms),
+      presume_writable_when_fully_relayed(presume_writable_when_fully_relayed),
+      regather_on_failed_networks_interval(
+          regather_on_failed_networks_interval_ms),
+      receiving_switching_delay(receiving_switching_delay_ms) {}
+
+IceConfig::~IceConfig() = default;
+
 bool BadTransportDescription(const std::string& desc, std::string* err_desc) {
   if (err_desc) {
     *err_desc = desc;
   }
-  LOG(LS_ERROR) << desc;
+  RTC_LOG(LS_ERROR) << desc;
   return false;
 }
 
@@ -128,9 +167,12 @@ JsepTransport::JsepTransport(
     const rtc::scoped_refptr<rtc::RTCCertificate>& certificate)
     : mid_(mid), certificate_(certificate) {}
 
+JsepTransport::~JsepTransport() = default;
+
 bool JsepTransport::AddChannel(DtlsTransportInternal* dtls, int component) {
   if (channels_.find(component) != channels_.end()) {
-    LOG(LS_ERROR) << "Adding channel for component " << component << " twice.";
+    RTC_LOG(LS_ERROR) << "Adding channel for component " << component
+                      << " twice.";
     return false;
   }
   channels_[component] = dtls;
@@ -141,8 +183,8 @@ bool JsepTransport::AddChannel(DtlsTransportInternal* dtls, int component) {
   // TODO(deadbeef): Once this is fixed, make the warning an error, and remove
   // the calls to "ApplyXTransportDescription" below.
   if (local_description_set_ || remote_description_set_) {
-    LOG(LS_WARNING) << "Adding new transport channel after "
-                       "transport description already applied.";
+    RTC_LOG(LS_WARNING) << "Adding new transport channel after "
+                           "transport description already applied.";
   }
   bool ret = true;
   std::string err;
@@ -161,8 +203,8 @@ bool JsepTransport::AddChannel(DtlsTransportInternal* dtls, int component) {
 bool JsepTransport::RemoveChannel(int component) {
   auto it = channels_.find(component);
   if (it == channels_.end()) {
-    LOG(LS_ERROR) << "Trying to remove channel for component " << component
-                  << ", which doesn't exist.";
+    RTC_LOG(LS_ERROR) << "Trying to remove channel for component " << component
+                      << ", which doesn't exist.";
     return false;
   }
   channels_.erase(component);
@@ -233,7 +275,8 @@ bool JsepTransport::SetLocalTransportDescription(
 
   if (needs_ice_restart_ && ice_restarting) {
     needs_ice_restart_ = false;
-    LOG(LS_VERBOSE) << "needs-ice-restart flag cleared for transport " << mid();
+    RTC_LOG(LS_VERBOSE) << "needs-ice-restart flag cleared for transport "
+                        << mid();
   }
 
   local_description_set_ = true;
@@ -270,7 +313,7 @@ bool JsepTransport::SetRemoteTransportDescription(
 void JsepTransport::SetNeedsIceRestartFlag() {
   if (!needs_ice_restart_) {
     needs_ice_restart_ = true;
-    LOG(LS_VERBOSE) << "needs-ice-restart flag set for transport " << mid();
+    RTC_LOG(LS_VERBOSE) << "needs-ice-restart flag set for transport " << mid();
   }
 }
 
@@ -330,12 +373,7 @@ bool JsepTransport::ApplyLocalTransportDescription(
     std::string* error_desc) {
   dtls_transport->ice_transport()->SetIceParameters(
       local_description_->GetIceParameters());
-  bool ret = true;
-  if (certificate_) {
-    ret = dtls_transport->SetLocalCertificate(certificate_);
-    RTC_DCHECK(ret);
-  }
-  return ret;
+  return true;
 }
 
 bool JsepTransport::ApplyRemoteTransportDescription(

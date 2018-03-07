@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/PCMFile.h"
+#include "modules/audio_coding/test/PCMFile.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/test/gtest.h"
+#include "modules/include/module_common_types.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -225,7 +225,7 @@ void PCMFile::ReadStereo(bool is_stereo) {
 }
 
 void PCMFile::SetNum10MsBlocksToRead(int value) {
-  num_10ms_blocks_to_read_ = rtc::Optional<int>(value);
+  num_10ms_blocks_to_read_ = value;
 }
 
 }  // namespace webrtc

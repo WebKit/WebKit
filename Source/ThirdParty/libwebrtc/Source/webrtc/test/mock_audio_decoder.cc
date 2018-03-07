@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/mock_audio_decoder.h"
+#include "test/mock_audio_decoder.h"
 
 namespace webrtc {
 

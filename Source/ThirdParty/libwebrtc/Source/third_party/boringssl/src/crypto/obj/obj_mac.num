@@ -938,3 +938,12 @@ dh_std_kdf		946
 dh_cofactor_kdf		947
 X25519		948
 ED25519		949
+chacha20_poly1305		950
+kx_rsa		951
+kx_ecdhe		952
+kx_psk		953
+auth_rsa		954
+auth_ecdsa		955
+auth_psk		956
+kx_any		957
+auth_any		958

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/asyncstuntcpsocket.h"
+#include "p2p/base/asyncstuntcpsocket.h"
 
 #include <string.h>
 
-#include "webrtc/p2p/base/stun.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "p2p/base/stun.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 

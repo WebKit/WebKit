@@ -1,0 +1,100 @@
+From 201c211d31aa1e9e3b3cef70feff291512efde6d Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 14 Dec 2017 13:56:52 -0800
+Subject: [PATCH 6/8] Disabling VP8
+
+---
+ .../libwebrtc/Source/webrtc/media/engine/internaldecoderfactory.cc  | 3 ++-
+ .../libwebrtc/Source/webrtc/media/engine/internalencoderfactory.cc  | 3 ++-
+ .../libwebrtc/Source/webrtc/modules/video_coding/qp_parser.cc       | 6 +++++-
+ .../Source/webrtc/modules/video_coding/video_codec_initializer.cc   | 6 ++++--
+ 4 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internaldecoderfactory.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internaldecoderfactory.cc
+index e8cecb79a43..57daca256c4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internaldecoderfactory.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internaldecoderfactory.cc
+@@ -22,7 +22,8 @@ namespace webrtc {
+ std::vector<SdpVideoFormat> InternalDecoderFactory::GetSupportedFormats()
+     const {
+   std::vector<SdpVideoFormat> formats;
+-  formats.push_back(SdpVideoFormat(cricket::kVp8CodecName));
++  if (VP8Decoder::IsSupported())
++    formats.push_back(SdpVideoFormat(cricket::kVp8CodecName));
+   if (VP9Decoder::IsSupported())
+     formats.push_back(SdpVideoFormat(cricket::kVp9CodecName));
+   for (const SdpVideoFormat& h264_format : SupportedH264Codecs())
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internalencoderfactory.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internalencoderfactory.cc
+index 5f8479cfb82..0390646add4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internalencoderfactory.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/engine/internalencoderfactory.cc
+@@ -22,7 +22,8 @@ namespace webrtc {
+ std::vector<SdpVideoFormat> InternalEncoderFactory::GetSupportedFormats()
+     const {
+   std::vector<SdpVideoFormat> supported_codecs;
+-  supported_codecs.push_back(SdpVideoFormat(cricket::kVp8CodecName));
++  if (VP8Encoder::IsSupported())
++    supported_codecs.push_back(SdpVideoFormat(cricket::kVp8CodecName));
+   if (webrtc::VP9Encoder::IsSupported())
+     supported_codecs.push_back(SdpVideoFormat(cricket::kVp9CodecName));
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/qp_parser.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/qp_parser.cc
+index 2adbca9b712..418b8b7e5ff 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/qp_parser.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/qp_parser.cc
+@@ -17,13 +17,17 @@
+ namespace webrtc {
+ 
+ bool QpParser::GetQp(const VCMEncodedFrame& frame, int* qp) {
+-  switch (frame.CodecSpecific()->codecType) {
++    switch (frame.CodecSpecific()->codecType) {
++#if !RTC_DISABLE_VP8
+     case kVideoCodecVP8:
+       // QP range: [0, 127].
+       return vp8::GetQp(frame.Buffer(), frame.Length(), qp);
++#endif
++#if !RTC_DISABLE_VP9
+     case kVideoCodecVP9:
+       // QP range: [0, 255].
+       return vp9::GetQp(frame.Buffer(), frame.Length(), qp);
++#endif
+     default:
+       return false;
+   }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/video_codec_initializer.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/video_codec_initializer.cc
+index 3e1b0e1163b..89f6f0bad9d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/video_codec_initializer.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/video_codec_initializer.cc
+@@ -42,7 +42,7 @@ bool VideoCodecInitializer::SetupCodec(
+   *codec =
+       VideoEncoderConfigToVideoCodec(config, streams, settings.payload_name,
+                                      settings.payload_type, nack_enabled);
+-
++#if !defined(RTC_DISABLE_VP8)
+   std::unique_ptr<TemporalLayersFactory> tl_factory;
+   switch (codec->codecType) {
+     case kVideoCodecVP8: {
+@@ -68,7 +68,7 @@ bool VideoCodecInitializer::SetupCodec(
+     }
+   }
+   *bitrate_allocator = CreateBitrateAllocator(*codec, std::move(tl_factory));
+-
++#endif
+   return true;
+ }
+ 
+@@ -80,9 +80,11 @@ VideoCodecInitializer::CreateBitrateAllocator(
+ 
+   switch (codec.codecType) {
+     case kVideoCodecVP8: {
++#if !defined(RTC_DISABLE_VP8)
+       // Set up default VP8 temporal layer factory, if not provided.
+       rate_allocator.reset(
+           new SimulcastRateAllocator(codec, std::move(tl_factory)));
++#endif
+     } break;
+     default:
+       rate_allocator.reset(new DefaultVideoBitrateAllocator(codec));
+-- 
+2.13.5 (Apple Git-94)
+

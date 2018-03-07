@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_FAKEMETRICSOBSERVER_H_
-#define WEBRTC_API_FAKEMETRICSOBSERVER_H_
+#ifndef API_FAKEMETRICSOBSERVER_H_
+#define API_FAKEMETRICSOBSERVER_H_
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/base/thread_checker.h"
+#include "api/peerconnectioninterface.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -49,4 +49,4 @@ class FakeMetricsObserver : public MetricsObserverInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_FAKEMETRICSOBSERVER_H_
+#endif  // API_FAKEMETRICSOBSERVER_H_

@@ -8,24 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_JSEPTRANSPORT_H_
-#define WEBRTC_P2P_BASE_JSEPTRANSPORT_H_
+#ifndef P2P_BASE_JSEPTRANSPORT_H_
+#define P2P_BASE_JSEPTRANSPORT_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/messagequeue.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/rtccertificate.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/sslstreamadapter.h"
-#include "webrtc/p2p/base/candidate.h"
-#include "webrtc/p2p/base/p2pconstants.h"
-#include "webrtc/p2p/base/sessiondescription.h"
-#include "webrtc/p2p/base/transportinfo.h"
+#include "api/candidate.h"
+#include "api/optional.h"
+#include "p2p/base/p2pconstants.h"
+#include "p2p/base/sessiondescription.h"
+#include "p2p/base/transportinfo.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/messagequeue.h"
+#include "rtc_base/rtccertificate.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/sslstreamadapter.h"
 
 namespace cricket {
 
@@ -84,6 +84,8 @@ enum ContinualGatheringPolicy {
 // TODO(hta): Rename to ConnectionStats
 struct ConnectionInfo {
   ConnectionInfo();
+  ConnectionInfo(const ConnectionInfo&);
+  ~ConnectionInfo();
 
   bool best_connection;      // Is this the best connection we have?
   bool writable;             // Has this connection received a STUN response?
@@ -126,6 +128,10 @@ typedef std::vector<ConnectionInfo> ConnectionInfos;
 
 // Information about a specific channel
 struct TransportChannelStats {
+  TransportChannelStats();
+  TransportChannelStats(const TransportChannelStats&);
+  ~TransportChannelStats();
+
   int component = 0;
   ConnectionInfos connection_infos;
   int srtp_crypto_suite = rtc::SRTP_INVALID_CRYPTO_SUITE;
@@ -139,6 +145,9 @@ typedef std::vector<TransportChannelStats> TransportChannelStatsList;
 
 // Information about the stats of a transport.
 struct TransportStats {
+  TransportStats();
+  ~TransportStats();
+
   std::string transport_name;
   TransportChannelStatsList channel_stats;
 };
@@ -184,6 +193,10 @@ struct IceConfig {
   // active network having no connection on it.
   rtc::Optional<int> regather_on_failed_networks_interval;
 
+  // Interval to perform ICE regathering on all networks
+  // The delay in milliseconds is sampled from the uniform distribution [a, b]
+  rtc::Optional<rtc::IntervalRange> regather_all_networks_interval_range;
+
   // The time period in which we will not switch the selected connection
   // when a new connection becomes receiving but the selected connection is not
   // in case that the selected connection may become receiving soon.
@@ -198,7 +211,7 @@ struct IceConfig {
   // Measure in milliseconds.
   rtc::Optional<int> ice_check_min_interval;
 
-  IceConfig() {}
+  IceConfig();
   IceConfig(int receiving_timeout_ms,
             int backup_connection_ping_interval,
             ContinualGatheringPolicy gathering_policy,
@@ -206,19 +219,8 @@ struct IceConfig {
             int stable_writable_connection_ping_interval_ms,
             bool presume_writable_when_fully_relayed,
             int regather_on_failed_networks_interval_ms,
-            int receiving_switching_delay_ms)
-      : receiving_timeout(receiving_timeout_ms),
-        backup_connection_ping_interval(backup_connection_ping_interval),
-        continual_gathering_policy(gathering_policy),
-        prioritize_most_likely_candidate_pairs(
-            prioritize_most_likely_candidate_pairs),
-        stable_writable_connection_ping_interval(
-            stable_writable_connection_ping_interval_ms),
-        presume_writable_when_fully_relayed(
-            presume_writable_when_fully_relayed),
-        regather_on_failed_networks_interval(
-            regather_on_failed_networks_interval_ms),
-        receiving_switching_delay(receiving_switching_delay_ms) {}
+            int receiving_switching_delay_ms);
+  ~IceConfig();
 };
 
 bool BadTransportDescription(const std::string& desc, std::string* err_desc);
@@ -250,6 +252,7 @@ class JsepTransport : public sigslot::has_slots<> {
   // may be set before a local certificate is generated.
   JsepTransport(const std::string& mid,
                 const rtc::scoped_refptr<rtc::RTCCertificate>& certificate);
+  ~JsepTransport() override;
 
   // Returns the MID of this transport.
   const std::string& mid() const { return mid_; }
@@ -376,4 +379,4 @@ class JsepTransport : public sigslot::has_slots<> {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_JSEPTRANSPORT_H_
+#endif  // P2P_BASE_JSEPTRANSPORT_H_

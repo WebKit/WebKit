@@ -8,27 +8,31 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/fake_encoder.h"
+#include "test/fake_encoder.h"
 
 #include <string.h>
 
 #include <algorithm>
 #include <memory>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/system_wrappers/include/sleep.h"
-#include "webrtc/test/gtest.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/sleep.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
 
+const int kKeyframeSizeFactor = 10;
+
 FakeEncoder::FakeEncoder(Clock* clock)
     : clock_(clock),
       callback_(nullptr),
+      configured_input_framerate_(-1),
       max_target_bitrate_kbps_(-1),
-      last_encode_time_ms_(0) {
+      pending_keyframe_(true),
+      debt_bytes_(0) {
   // Generate some arbitrary not-all-zero data
   for (size_t i = 0; i < sizeof(encoded_buffer_); ++i) {
     encoded_buffer_[i] = static_cast<uint8_t>(i);
@@ -47,6 +51,8 @@ int32_t FakeEncoder::InitEncode(const VideoCodec* config,
   rtc::CritScope cs(&crit_sect_);
   config_ = *config;
   target_bitrate_.SetBitrate(0, 0, config_.startBitrate * 1000);
+  configured_input_framerate_ = config_.maxFramerate;
+  pending_keyframe_ = true;
   return 0;
 }
 
@@ -59,9 +65,10 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
   EncodedImageCallback* callback;
   uint32_t target_bitrate_sum_kbps;
   int max_target_bitrate_kbps;
-  int64_t last_encode_time_ms;
   size_t num_encoded_bytes;
+  int framerate;
   VideoCodecMode mode;
+  bool keyframe;
   {
     rtc::CritScope cs(&crit_sect_);
     max_framerate = config_.maxFramerate;
@@ -72,42 +79,32 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     callback = callback_;
     target_bitrate_sum_kbps = target_bitrate_.get_sum_kbps();
     max_target_bitrate_kbps = max_target_bitrate_kbps_;
-    last_encode_time_ms = last_encode_time_ms_;
     num_encoded_bytes = sizeof(encoded_buffer_);
     mode = config_.mode;
+    if (configured_input_framerate_ > 0) {
+      framerate = configured_input_framerate_;
+    } else {
+      framerate = max_framerate;
+    }
+    keyframe = pending_keyframe_;
+    pending_keyframe_ = false;
   }
 
-  int64_t time_now_ms = clock_->TimeInMilliseconds();
-  const bool first_encode = (last_encode_time_ms == 0);
+  for (FrameType frame_type : *frame_types) {
+    if (frame_type == kVideoFrameKey) {
+      keyframe = true;
+      break;
+    }
+  }
+
   RTC_DCHECK_GT(max_framerate, 0);
-  int64_t time_since_last_encode_ms = 1000 / max_framerate;
-  if (!first_encode) {
-    // For all frames but the first we can estimate the display time by looking
-    // at the display time of the previous frame.
-    time_since_last_encode_ms = time_now_ms - last_encode_time_ms;
-  }
-  if (time_since_last_encode_ms > 3 * 1000 / max_framerate) {
-    // Rudimentary check to make sure we don't widely overshoot bitrate target
-    // when resuming encoding after a suspension.
-    time_since_last_encode_ms = 3 * 1000 / max_framerate;
-  }
 
-  size_t bits_available =
-      static_cast<size_t>(target_bitrate_sum_kbps * time_since_last_encode_ms);
-  size_t min_bits = static_cast<size_t>(simulcast_streams[0].minBitrate *
-                                        time_since_last_encode_ms);
+  size_t bitrate =
+      std::max(target_bitrate_sum_kbps, simulcast_streams[0].minBitrate);
+  if (max_target_bitrate_kbps > 0)
+    bitrate = std::min(bitrate, static_cast<size_t>(max_target_bitrate_kbps));
 
-  if (bits_available < min_bits)
-    bits_available = min_bits;
-  size_t max_bits =
-      static_cast<size_t>(max_target_bitrate_kbps * time_since_last_encode_ms);
-  if (max_bits > 0 && max_bits < bits_available)
-    bits_available = max_bits;
-
-  {
-    rtc::CritScope cs(&crit_sect_);
-    last_encode_time_ms_ = time_now_ms;
-  }
+  size_t bits_available = bitrate * 1000 / framerate;
 
   RTC_DCHECK_GT(num_simulcast_streams, 0);
   for (unsigned char i = 0; i < num_simulcast_streams; ++i) {
@@ -116,18 +113,27 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     specifics.codecType = kVideoCodecGeneric;
     specifics.codecSpecific.generic.simulcast_idx = i;
     size_t min_stream_bits = static_cast<size_t>(
-        simulcast_streams[i].minBitrate * time_since_last_encode_ms);
+        (simulcast_streams[i].minBitrate * 1000) / framerate);
     size_t max_stream_bits = static_cast<size_t>(
-        simulcast_streams[i].maxBitrate * time_since_last_encode_ms);
+        (simulcast_streams[i].maxBitrate * 1000) / framerate);
     size_t stream_bits = (bits_available > max_stream_bits) ? max_stream_bits :
         bits_available;
     size_t stream_bytes = (stream_bits + 7) / 8;
-    if (first_encode) {
+    if (keyframe) {
       // The first frame is a key frame and should be larger.
-      // TODO(holmer): The FakeEncoder should store the bits_available between
-      // encodes so that it can compensate for oversized frames.
-      stream_bytes *= 10;
+      // Store the overshoot bytes and distribute them over the coming frames,
+      // so that we on average meet the bitrate target.
+      debt_bytes_ += (kKeyframeSizeFactor - 1) * stream_bytes;
+      stream_bytes *= kKeyframeSizeFactor;
+    } else {
+      if (debt_bytes_ > 0) {
+        // Pay at most half of the frame size for old debts.
+        size_t payment_size = std::min(stream_bytes / 2, debt_bytes_);
+        debt_bytes_ -= payment_size;
+        stream_bytes -= payment_size;
+      }
     }
+
     if (stream_bytes > num_encoded_bytes)
       stream_bytes = num_encoded_bytes;
 
@@ -176,12 +182,18 @@ int32_t FakeEncoder::SetRateAllocation(const BitrateAllocation& rate_allocation,
                                        uint32_t framerate) {
   rtc::CritScope cs(&crit_sect_);
   target_bitrate_ = rate_allocation;
+  configured_input_framerate_ = framerate;
   return 0;
 }
 
 const char* FakeEncoder::kImplementationName = "fake_encoder";
 const char* FakeEncoder::ImplementationName() const {
   return kImplementationName;
+}
+
+int FakeEncoder::GetConfiguredInputFramerate() const {
+  rtc::CritScope cs(&crit_sect_);
+  return configured_input_framerate_;
 }
 
 FakeH264Encoder::FakeH264Encoder(Clock* clock)

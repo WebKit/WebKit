@@ -8,14 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/wav_based_simulator.h"
+#include "modules/audio_processing/test/wav_based_simulator.h"
 
 #include <stdio.h>
 #include <iostream>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/test/test_utils.h"
-#include "webrtc/test/testsupport/trace_to_stderr.h"
+#include "modules/audio_processing/test/test_utils.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -41,7 +40,7 @@ WavBasedSimulator::GetCustomEventChain(const std::string& filename) {
       case '\n':
         break;
       default:
-        FATAL() << "Incorrect custom call order file, reverting to using the "
+        RTC_FATAL() << "Incorrect custom call order file, reverting to using the "
                    "default call order";
         fclose(stream);
         return WavBasedSimulator::GetDefaultEventChain();
@@ -79,10 +78,6 @@ void WavBasedSimulator::PrepareProcessStreamCall() {
 
   ap_->echo_cancellation()->set_stream_drift_samples(
       settings_.stream_drift_samples ? *settings_.stream_drift_samples : 0);
-
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               ap_->gain_control()->set_stream_analog_level(
-                   last_specified_microphone_level_));
 }
 
 void WavBasedSimulator::PrepareReverseProcessStreamCall() {
@@ -92,11 +87,6 @@ void WavBasedSimulator::PrepareReverseProcessStreamCall() {
 }
 
 void WavBasedSimulator::Process() {
-  std::unique_ptr<test::TraceToStderr> trace_to_stderr;
-  if (settings_.use_verbose_logging) {
-    trace_to_stderr.reset(new test::TraceToStderr(true));
-  }
-
   if (settings_.custom_call_order_filename) {
     call_chain_ = WavBasedSimulator::GetCustomEventChain(
         *settings_.custom_call_order_filename);
@@ -110,8 +100,6 @@ void WavBasedSimulator::Process() {
   bool samples_left_to_process = true;
   int call_chain_index = 0;
   int num_forward_chunks_processed = 0;
-  const int kOneBykChunksPerSecond =
-      1.f / AudioProcessingSimulator::kChunksPerSecond;
   while (samples_left_to_process) {
     switch (call_chain_[call_chain_index]) {
       case SimulationEventType::kProcessStream:
@@ -128,11 +116,6 @@ void WavBasedSimulator::Process() {
     }
 
     call_chain_index = (call_chain_index + 1) % call_chain_.size();
-
-    if (trace_to_stderr) {
-      trace_to_stderr->SetTimeSeconds(num_forward_chunks_processed *
-                                      kOneBykChunksPerSecond);
-    }
   }
 
   DestroyAudioProcessor();
@@ -143,10 +126,6 @@ bool WavBasedSimulator::HandleProcessStreamCall() {
   if (samples_left_to_process) {
     PrepareProcessStreamCall();
     ProcessStream(settings_.fixed_interface);
-    // Call stream analog level to ensure that any side-effects are triggered.
-    (void)ap_->gain_control()->stream_analog_level();
-    last_specified_microphone_level_ =
-        ap_->gain_control()->stream_analog_level();
   }
   return samples_left_to_process;
 }

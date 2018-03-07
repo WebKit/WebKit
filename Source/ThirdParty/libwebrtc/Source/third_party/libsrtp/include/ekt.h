@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2005 Cisco Systems, Inc.
+ * Copyright (c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -59,10 +59,11 @@
  *
  */
 
-#ifndef EKT_H
-#define EKT_H
+#ifndef SRTP_EKT_H
+#define SRTP_EKT_H
 
-#include "srtp_priv.h"
+// left in commented out as reminder to not include private headers
+//#include "srtp_priv.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -170,4 +171,4 @@ srtp_err_status_t srtcp_auth_tag_generation_postprocess(void);
 }
 #endif
 
-#endif /* EKT_H */
+#endif /* SRTP_EKT_H */

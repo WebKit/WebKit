@@ -8,26 +8,27 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/format_macros.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/audio_coding/codecs/opus/audio_encoder_opus.h"
-#include "webrtc/modules/audio_coding/neteq/tools/audio_loop.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/test/testsupport/perf_test.h"
+#include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "modules/audio_coding/neteq/tools/audio_loop.h"
+#include "rtc_base/format_macros.h"
+#include "rtc_base/timeutils.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 
 namespace {
-int64_t RunComplexityTest(const AudioEncoderOpus::Config& config) {
+int64_t RunComplexityTest(const AudioEncoderOpusConfig& config) {
   // Create encoder.
-  AudioEncoderOpus encoder(config);
+  constexpr int payload_type = 17;
+  const auto encoder = AudioEncoderOpus::MakeAudioEncoder(config, payload_type);
   // Open speech file.
   const std::string kInputFileName =
       webrtc::test::ResourcePath("audio_coding/speech_mono_32_48kHz", "pcm");
   test::AudioLoop audio_loop;
   constexpr int kSampleRateHz = 48000;
-  EXPECT_EQ(kSampleRateHz, encoder.SampleRateHz());
+  EXPECT_EQ(kSampleRateHz, encoder->SampleRateHz());
   constexpr size_t kMaxLoopLengthSamples =
       kSampleRateHz * 10;  // 10 second loop.
   constexpr size_t kInputBlockSizeSamples =
@@ -41,7 +42,7 @@ int64_t RunComplexityTest(const AudioEncoderOpus::Config& config) {
   uint32_t rtp_timestamp = 0u;
   for (size_t i = 0; i < 10000; ++i) {
     encoded.Clear();
-    info = encoder.Encode(rtp_timestamp, audio_loop.GetNextBlock(), &encoded);
+    info = encoder->Encode(rtp_timestamp, audio_loop.GetNextBlock(), &encoded);
     rtp_timestamp += kInputBlockSizeSamples;
   }
   return rtc::TimeMillis() - start_time_ms;
@@ -60,14 +61,14 @@ int64_t RunComplexityTest(const AudioEncoderOpus::Config& config) {
 // the lower rate.
 TEST(AudioEncoderOpusComplexityAdaptationTest, AdaptationOn) {
   // Create config.
-  AudioEncoderOpus::Config config;
+  AudioEncoderOpusConfig config;
   // The limit -- including the hysteresis window -- at which the complexity
   // shuold be increased.
-  config.bitrate_bps = rtc::Optional<int>(11000 - 1);
+  config.bitrate_bps = 11000 - 1;
   config.low_rate_complexity = 9;
   int64_t runtime_10999bps = RunComplexityTest(config);
 
-  config.bitrate_bps = rtc::Optional<int>(15500);
+  config.bitrate_bps = 15500;
   int64_t runtime_15500bps = RunComplexityTest(config);
 
   test::PrintResult("opus_encoding_complexity_ratio", "", "adaptation_on",
@@ -80,14 +81,14 @@ TEST(AudioEncoderOpusComplexityAdaptationTest, AdaptationOn) {
 // that the resulting ratio is less than 100% at all times.
 TEST(AudioEncoderOpusComplexityAdaptationTest, AdaptationOff) {
   // Create config.
-  AudioEncoderOpus::Config config;
+  AudioEncoderOpusConfig config;
   // The limit -- including the hysteresis window -- at which the complexity
   // shuold be increased (but not in this test since complexity adaptation is
   // disabled).
-  config.bitrate_bps = rtc::Optional<int>(11000 - 1);
+  config.bitrate_bps = 11000 - 1;
   int64_t runtime_10999bps = RunComplexityTest(config);
 
-  config.bitrate_bps = rtc::Optional<int>(15500);
+  config.bitrate_bps = 15500;
   int64_t runtime_15500bps = RunComplexityTest(config);
 
   test::PrintResult("opus_encoding_complexity_ratio", "", "adaptation_off",

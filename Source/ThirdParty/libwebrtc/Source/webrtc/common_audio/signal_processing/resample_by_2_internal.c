@@ -14,7 +14,8 @@
  *
  */
 
-#include "webrtc/common_audio/signal_processing/resample_by_2_internal.h"
+#include "common_audio/signal_processing/resample_by_2_internal.h"
+#include "rtc_base/sanitizer.h"
 
 // allpass filter coefficients.
 static const int16_t kResampleAllpass[2][3] = {
@@ -28,8 +29,9 @@ static const int16_t kResampleAllpass[2][3] = {
 // output: int16_t (saturated) (of length len/2)
 // state:  filter state array; length = 8
 
-void WebRtcSpl_DownBy2IntToShort(int32_t *in, int32_t len, int16_t *out,
-                                 int32_t *state)
+void RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/5486
+WebRtcSpl_DownBy2IntToShort(int32_t *in, int32_t len, int16_t *out,
+                            int32_t *state)
 {
     int32_t tmp0, tmp1, diff;
     int32_t i;
@@ -41,6 +43,8 @@ void WebRtcSpl_DownBy2IntToShort(int32_t *in, int32_t len, int16_t *out,
     {
         tmp0 = in[i << 1];
         diff = tmp0 - state[1];
+        // UBSan: -1771017321 - 999586185 cannot be represented in type 'int'
+
         // scale down and round
         diff = (diff + (1 << 13)) >> 14;
         tmp1 = state[0] + diff * kResampleAllpass[1][0];
@@ -121,10 +125,11 @@ void WebRtcSpl_DownBy2IntToShort(int32_t *in, int32_t len, int16_t *out,
 // output: int32_t (shifted 15 positions to the left, + offset 16384) (of length len/2)
 // state:  filter state array; length = 8
 
-void WebRtcSpl_DownBy2ShortToInt(const int16_t *in,
-                                  int32_t len,
-                                  int32_t *out,
-                                  int32_t *state)
+void RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/5486
+WebRtcSpl_DownBy2ShortToInt(const int16_t *in,
+                            int32_t len,
+                            int32_t *out,
+                            int32_t *state)
 {
     int32_t tmp0, tmp1, diff;
     int32_t i;
@@ -141,6 +146,8 @@ void WebRtcSpl_DownBy2ShortToInt(const int16_t *in,
         tmp1 = state[0] + diff * kResampleAllpass[1][0];
         state[0] = tmp0;
         diff = tmp1 - state[2];
+        // UBSan: -1379909682 - 834099714 cannot be represented in type 'int'
+
         // scale down and truncate
         diff = diff >> 14;
         if (diff < 0)
@@ -549,8 +556,9 @@ void WebRtcSpl_LPBy2ShortToInt(const int16_t* in, int32_t len, int32_t* out,
 // input:  int32_t (shifted 15 positions to the left, + offset 16384)
 // output: int32_t (normalized, not saturated)
 // state:  filter state array; length = 8
-void WebRtcSpl_LPBy2IntToInt(const int32_t* in, int32_t len, int32_t* out,
-                             int32_t* state)
+void RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/5486
+WebRtcSpl_LPBy2IntToInt(const int32_t* in, int32_t len, int32_t* out,
+                        int32_t* state)
 {
     int32_t tmp0, tmp1, diff;
     int32_t i;
@@ -594,6 +602,8 @@ void WebRtcSpl_LPBy2IntToInt(const int32_t* in, int32_t len, int32_t* out,
     {
         tmp0 = in[i << 1];
         diff = tmp0 - state[5];
+        // UBSan: -794814117 - 1566149201 cannot be represented in type 'int'
+
         // scale down and round
         diff = (diff + (1 << 13)) >> 14;
         tmp1 = state[4] + diff * kResampleAllpass[0][0];

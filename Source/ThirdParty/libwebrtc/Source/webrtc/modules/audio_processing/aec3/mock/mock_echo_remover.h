@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_MOCK_MOCK_ECHO_REMOVER_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_MOCK_MOCK_ECHO_REMOVER_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC3_MOCK_MOCK_ECHO_REMOVER_H_
+#define MODULES_AUDIO_PROCESSING_AEC3_MOCK_MOCK_ECHO_REMOVER_H_
 
 #include <vector>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/audio_processing/aec3/echo_path_variability.h"
-#include "webrtc/modules/audio_processing/aec3/echo_remover.h"
-#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
-#include "webrtc/test/gmock.h"
+#include "api/optional.h"
+#include "modules/audio_processing/aec3/echo_path_variability.h"
+#include "modules/audio_processing/aec3/echo_remover.h"
+#include "modules/audio_processing/aec3/render_buffer.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 namespace test {
@@ -34,9 +34,10 @@ class MockEchoRemover : public EchoRemover {
                     std::vector<std::vector<float>>* capture));
 
   MOCK_METHOD1(UpdateEchoLeakageStatus, void(bool leakage_detected));
+  MOCK_CONST_METHOD1(GetMetrics, void(EchoControl::Metrics* metrics));
 };
 
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_MOCK_MOCK_ECHO_REMOVER_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC3_MOCK_MOCK_ECHO_REMOVER_H_

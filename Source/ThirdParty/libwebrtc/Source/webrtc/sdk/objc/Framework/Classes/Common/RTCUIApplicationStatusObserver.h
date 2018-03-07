@@ -15,6 +15,7 @@
 @interface RTCUIApplicationStatusObserver : NSObject
 
 + (instancetype)sharedInstance;
++ (void)prepareForUse;
 
 - (BOOL)isApplicationActive;
 

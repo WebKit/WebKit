@@ -8,21 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_PACKETTRANSPORTINTERNAL_H_
-#define WEBRTC_P2P_BASE_PACKETTRANSPORTINTERNAL_H_
+#ifndef P2P_BASE_PACKETTRANSPORTINTERNAL_H_
+#define P2P_BASE_PACKETTRANSPORTINTERNAL_H_
 
 #include <string>
 #include <vector>
 
+#include "api/optional.h"
 // This is included for PacketOptions.
-#include "webrtc/api/ortc/packettransportinterface.h"
-#include "webrtc/base/asyncpacketsocket.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/socket.h"
-
-namespace cricket {
-class TransportChannel;
-}
+#include "api/ortc/packettransportinterface.h"
+#include "p2p/base/port.h"
+#include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/networkroute.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/socket.h"
 
 namespace rtc {
 struct PacketOptions;
@@ -32,8 +31,7 @@ struct SentPacket;
 class PacketTransportInternal : public virtual webrtc::PacketTransportInterface,
                                 public sigslot::has_slots<> {
  public:
-  // Identify the object for logging and debug purpose.
-  virtual std::string debug_name() const = 0;
+  virtual const std::string& transport_name() const = 0;
 
   // The transport has been established.
   virtual bool writable() const = 0;
@@ -61,10 +59,14 @@ class PacketTransportInternal : public virtual webrtc::PacketTransportInterface,
 
   // TODO(pthatcher): Once Chrome's MockPacketTransportInterface implements
   // this, remove the default implementation.
-  virtual bool GetOption(rtc::Socket::Option, int*) { return false; }
+  virtual bool GetOption(rtc::Socket::Option opt, int* value);
 
   // Returns the most recent error that occurred on this channel.
   virtual int GetError() = 0;
+
+  // Returns the current network route with transport overhead.
+  // TODO(zhihuang): Make it pure virtual once the Chrome/remoting is updated.
+  virtual rtc::Optional<NetworkRoute> network_route() const;
 
   // Emitted when the writable state, represented by |writable()|, changes.
   sigslot::signal1<PacketTransportInternal*> SignalWritableState;
@@ -91,10 +93,16 @@ class PacketTransportInternal : public virtual webrtc::PacketTransportInterface,
   sigslot::signal2<PacketTransportInternal*, const rtc::SentPacket&>
       SignalSentPacket;
 
+  // Signalled when the current network route has changed.
+  sigslot::signal1<rtc::Optional<rtc::NetworkRoute>> SignalNetworkRouteChanged;
+
  protected:
-  PacketTransportInternal* GetInternal() override { return this; }
+  PacketTransportInternal();
+  ~PacketTransportInternal() override;
+
+  PacketTransportInternal* GetInternal() override;
 };
 
 }  // namespace rtc
 
-#endif  // WEBRTC_P2P_BASE_PACKETTRANSPORTINTERNAL_H_
+#endif  // P2P_BASE_PACKETTRANSPORTINTERNAL_H_

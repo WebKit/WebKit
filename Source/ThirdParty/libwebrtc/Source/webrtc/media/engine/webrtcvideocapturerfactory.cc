@@ -9,9 +9,10 @@
  */
 
 #include <memory>
+#include <utility>
 
-#include "webrtc/media/engine/webrtcvideocapturer.h"
-#include "webrtc/media/engine/webrtcvideocapturerfactory.h"
+#include "media/engine/webrtcvideocapturer.h"
+#include "media/engine/webrtcvideocapturerfactory.h"
 
 namespace cricket {
 

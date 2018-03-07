@@ -8,31 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
-#define WEBRTC_MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
+#ifndef MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
+#define MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
 
 #include <string>
 
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/test/gmock.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 namespace test {
 
 class MockAudioDeviceModule : public AudioDeviceModule {
  public:
-  // Module.
-  MOCK_METHOD0(TimeUntilNextProcess, int64_t());
-  MOCK_METHOD0(Process, void());
-  MOCK_METHOD1(ProcessThreadAttached, void(ProcessThread*));
-  // RefCountedModule.
-  MOCK_CONST_METHOD0(AddRef, int32_t());
-  MOCK_CONST_METHOD0(Release, int32_t());
+  // RefCounted
+  MOCK_CONST_METHOD0(AddRef, void());
+  MOCK_CONST_METHOD0(Release, rtc::RefCountReleaseStatus());
   // AudioDeviceModule.
   MOCK_CONST_METHOD1(ActiveAudioLayer, int32_t(AudioLayer* audioLayer));
   MOCK_CONST_METHOD0(LastError, ErrorCode());
-  MOCK_METHOD1(RegisterEventObserver,
-               int32_t(AudioDeviceObserver* eventCallback));
   MOCK_METHOD1(RegisterAudioCallback, int32_t(AudioTransport* audioCallback));
   MOCK_METHOD0(Init, int32_t());
   MOCK_METHOD0(Terminate, int32_t());
@@ -63,10 +57,6 @@ class MockAudioDeviceModule : public AudioDeviceModule {
   MOCK_CONST_METHOD0(Recording, bool());
   MOCK_METHOD1(SetAGC, int32_t(bool enable));
   MOCK_CONST_METHOD0(AGC, bool());
-  MOCK_METHOD2(SetWaveOutVolume, int32_t(uint16_t volumeLeft,
-                                         uint16_t volumeRight));
-  MOCK_CONST_METHOD2(WaveOutVolume, int32_t(uint16_t* volumeLeft,
-                                            uint16_t* volumeRight));
   MOCK_METHOD0(InitSpeaker, int32_t());
   MOCK_CONST_METHOD0(SpeakerIsInitialized, bool());
   MOCK_METHOD0(InitMicrophone, int32_t());
@@ -76,50 +66,24 @@ class MockAudioDeviceModule : public AudioDeviceModule {
   MOCK_CONST_METHOD1(SpeakerVolume, int32_t(uint32_t* volume));
   MOCK_CONST_METHOD1(MaxSpeakerVolume, int32_t(uint32_t* maxVolume));
   MOCK_CONST_METHOD1(MinSpeakerVolume, int32_t(uint32_t* minVolume));
-  MOCK_CONST_METHOD1(SpeakerVolumeStepSize, int32_t(uint16_t* stepSize));
   MOCK_METHOD1(MicrophoneVolumeIsAvailable, int32_t(bool* available));
   MOCK_METHOD1(SetMicrophoneVolume, int32_t(uint32_t volume));
   MOCK_CONST_METHOD1(MicrophoneVolume, int32_t(uint32_t* volume));
   MOCK_CONST_METHOD1(MaxMicrophoneVolume, int32_t(uint32_t* maxVolume));
   MOCK_CONST_METHOD1(MinMicrophoneVolume, int32_t(uint32_t* minVolume));
-  MOCK_CONST_METHOD1(MicrophoneVolumeStepSize, int32_t(uint16_t* stepSize));
   MOCK_METHOD1(SpeakerMuteIsAvailable, int32_t(bool* available));
   MOCK_METHOD1(SetSpeakerMute, int32_t(bool enable));
   MOCK_CONST_METHOD1(SpeakerMute, int32_t(bool* enabled));
   MOCK_METHOD1(MicrophoneMuteIsAvailable, int32_t(bool* available));
   MOCK_METHOD1(SetMicrophoneMute, int32_t(bool enable));
   MOCK_CONST_METHOD1(MicrophoneMute, int32_t(bool* enabled));
-  MOCK_METHOD1(MicrophoneBoostIsAvailable, int32_t(bool* available));
-  MOCK_METHOD1(SetMicrophoneBoost, int32_t(bool enable));
-  MOCK_CONST_METHOD1(MicrophoneBoost, int32_t(bool* enabled));
   MOCK_CONST_METHOD1(StereoPlayoutIsAvailable, int32_t(bool* available));
   MOCK_METHOD1(SetStereoPlayout, int32_t(bool enable));
   MOCK_CONST_METHOD1(StereoPlayout, int32_t(bool* enabled));
   MOCK_CONST_METHOD1(StereoRecordingIsAvailable, int32_t(bool* available));
   MOCK_METHOD1(SetStereoRecording, int32_t(bool enable));
   MOCK_CONST_METHOD1(StereoRecording, int32_t(bool* enabled));
-  MOCK_METHOD1(SetRecordingChannel, int32_t(const ChannelType channel));
-  MOCK_CONST_METHOD1(RecordingChannel, int32_t(ChannelType* channel));
-  MOCK_METHOD2(SetPlayoutBuffer, int32_t(const BufferType type,
-                                         uint16_t sizeMS));
-  MOCK_CONST_METHOD2(PlayoutBuffer, int32_t(BufferType* type,
-                                            uint16_t* sizeMS));
   MOCK_CONST_METHOD1(PlayoutDelay, int32_t(uint16_t* delayMS));
-  MOCK_CONST_METHOD1(RecordingDelay, int32_t(uint16_t* delayMS));
-  MOCK_CONST_METHOD1(CPULoad, int32_t(uint16_t* load));
-  MOCK_METHOD1(StartRawOutputFileRecording,
-               int32_t(const char pcmFileNameUTF8[kAdmMaxFileNameSize]));
-  MOCK_METHOD0(StopRawOutputFileRecording, int32_t());
-  MOCK_METHOD1(StartRawInputFileRecording,
-               int32_t(const char pcmFileNameUTF8[kAdmMaxFileNameSize]));
-  MOCK_METHOD0(StopRawInputFileRecording, int32_t());
-  MOCK_METHOD1(SetRecordingSampleRate, int32_t(const uint32_t samplesPerSec));
-  MOCK_CONST_METHOD1(RecordingSampleRate, int32_t(uint32_t* samplesPerSec));
-  MOCK_METHOD1(SetPlayoutSampleRate, int32_t(const uint32_t samplesPerSec));
-  MOCK_CONST_METHOD1(PlayoutSampleRate, int32_t(uint32_t* samplesPerSec));
-  MOCK_METHOD0(ResetAudioDevice, int32_t());
-  MOCK_METHOD1(SetLoudspeakerStatus, int32_t(bool enable));
-  MOCK_CONST_METHOD1(GetLoudspeakerStatus, int32_t(bool* enabled));
   MOCK_CONST_METHOD0(BuiltInAECIsAvailable, bool());
   MOCK_CONST_METHOD0(BuiltInAGCIsAvailable, bool());
   MOCK_CONST_METHOD0(BuiltInNSIsAvailable, bool());
@@ -134,4 +98,4 @@ class MockAudioDeviceModule : public AudioDeviceModule {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_
+#endif  // MODULES_AUDIO_DEVICE_INCLUDE_MOCK_AUDIO_DEVICE_H_

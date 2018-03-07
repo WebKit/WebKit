@@ -8,14 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
+#define MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
 
 #include <stdint.h>
 
-#include "webrtc/system_wrappers/include/ntp_time.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
+
+// Converts time obtained using rtc::TimeMicros to ntp format.
+// TimeMicrosToNtp guarantees difference of the returned values matches
+// difference of the passed values.
+// As a result TimeMicrosToNtp(rtc::TimeMicros()) doesn't guarantte to match
+// system time after first call.
+NtpTime TimeMicrosToNtp(int64_t time_us);
 
 // Converts NTP timestamp to RTP timestamp.
 inline uint32_t NtpToRtp(NtpTime ntp, uint32_t freq) {
@@ -34,10 +41,15 @@ inline uint32_t NtpToRtp(NtpTime ntp, uint32_t freq) {
 inline uint32_t CompactNtp(NtpTime ntp) {
   return (ntp.seconds() << 16) | (ntp.fractions() >> 16);
 }
+
+// Converts interval in microseconds to compact ntp (1/2^16 seconds) resolution.
+// Negative values converted to 0, Overlarge values converted to max uint32_t.
+uint32_t SaturatedUsToCompactNtp(int64_t us);
+
 // Converts interval between compact ntp timestamps to milliseconds.
 // This interval can be up to ~9.1 hours (2^15 seconds).
 // Values close to 2^16 seconds consider negative and result in minimum rtt = 1.
 int64_t CompactNtpRttToMs(uint32_t compact_ntp_interval);
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_TIME_UTIL_H_

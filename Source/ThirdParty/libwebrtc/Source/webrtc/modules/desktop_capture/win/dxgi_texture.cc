@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/win/dxgi_texture.h"
+#include "modules/desktop_capture/win/dxgi_texture.h"
 
 #include <comdef.h>
 #include <wrl/client.h>
 #include <D3D11.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -42,25 +42,22 @@ DxgiTexture::~DxgiTexture() = default;
 
 bool DxgiTexture::CopyFrom(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
                            IDXGIResource* resource) {
-  RTC_DCHECK(resource && frame_info.AccumulatedFrames > 0);
+  RTC_DCHECK_GT(frame_info.AccumulatedFrames, 0);
+  RTC_DCHECK(resource);
   ComPtr<ID3D11Texture2D> texture;
   _com_error error = resource->QueryInterface(
       __uuidof(ID3D11Texture2D),
       reinterpret_cast<void**>(texture.GetAddressOf()));
   if (error.Error() != S_OK || !texture) {
-    LOG(LS_ERROR) << "Failed to convert IDXGIResource to ID3D11Texture2D, "
-                     "error "
-                  << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to convert IDXGIResource to ID3D11Texture2D, "
+                         "error "
+                      << error.ErrorMessage() << ", code " << error.Error();
     return false;
   }
 
   D3D11_TEXTURE2D_DESC desc = {0};
   texture->GetDesc(&desc);
   desktop_size_.set(desc.Width, desc.Height);
-  if (resolution_change_detector_.IsChanged(desktop_size_)) {
-    LOG(LS_ERROR) << "Texture size is not consistent with current DxgiTexture.";
-    return false;
-  }
 
   return CopyFromTexture(frame_info, texture.Get());
 }

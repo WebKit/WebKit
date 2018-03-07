@@ -19,22 +19,24 @@
 #include <utility>
 #include <vector>
 
-#include "gflags/gflags.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/ignore_wundef.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
+#include "logging/rtc_event_log/rtc_event_log.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/flags.h"
+#include "rtc_base/ignore_wundef.h"
+#include "rtc_base/logging.h"
 
 // Files generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
 #else
-#include "webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
+#include "logging/rtc_event_log/rtc_event_log.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 
 namespace {
+
+DEFINE_bool(help, false, "Prints this message.");
 
 struct Stats {
   int count = 0;
@@ -54,7 +56,8 @@ std::pair<uint64_t, bool> ParseVarInt(std::istream& stream) {
     if (stream.eof()) {
       return std::make_pair(varint, false);
     }
-    RTC_DCHECK(0 <= byte && byte <= 255);
+    RTC_DCHECK_GE(byte, 0);
+    RTC_DCHECK_LE(byte, 255);
     varint |= static_cast<uint64_t>(byte & 0x7F) << (7 * bytes_read);
     if ((byte & 0x80) == 0) {
       return std::make_pair(varint, true);
@@ -67,7 +70,7 @@ bool ParseEvents(const std::string& filename,
                  std::vector<webrtc::rtclog::Event>* events) {
   std::ifstream stream(filename, std::ios_base::in | std::ios_base::binary);
   if (!stream.good() || !stream.is_open()) {
-    LOG(LS_WARNING) << "Could not open file for reading.";
+    RTC_LOG(LS_WARNING) << "Could not open file for reading.";
     return false;
   }
 
@@ -92,34 +95,36 @@ bool ParseEvents(const std::string& filename,
     const uint64_t kExpectedTag = (1 << 3) | 2;
     std::tie(tag, success) = ParseVarInt(stream);
     if (!success) {
-      LOG(LS_WARNING) << "Missing field tag from beginning of protobuf event.";
+      RTC_LOG(LS_WARNING)
+          << "Missing field tag from beginning of protobuf event.";
       return false;
     } else if (tag != kExpectedTag) {
-      LOG(LS_WARNING) << "Unexpected field tag at beginning of protobuf event.";
+      RTC_LOG(LS_WARNING)
+          << "Unexpected field tag at beginning of protobuf event.";
       return false;
     }
 
     // Read the length field.
     std::tie(message_length, success) = ParseVarInt(stream);
     if (!success) {
-      LOG(LS_WARNING) << "Missing message length after protobuf field tag.";
+      RTC_LOG(LS_WARNING) << "Missing message length after protobuf field tag.";
       return false;
     } else if (message_length > kMaxEventSize) {
-      LOG(LS_WARNING) << "Protobuf message length is too large.";
+      RTC_LOG(LS_WARNING) << "Protobuf message length is too large.";
       return false;
     }
 
     // Read the next protobuf event to a temporary char buffer.
     stream.read(tmp_buffer.data(), message_length);
     if (stream.gcount() != static_cast<int>(message_length)) {
-      LOG(LS_WARNING) << "Failed to read protobuf message from file.";
+      RTC_LOG(LS_WARNING) << "Failed to read protobuf message from file.";
       return false;
     }
 
     // Parse the protobuf event from the buffer.
     webrtc::rtclog::Event event;
     if (!event.ParseFromArray(tmp_buffer.data(), message_length)) {
-      LOG(LS_WARNING) << "Failed to parse protobuf message.";
+      RTC_LOG(LS_WARNING) << "Failed to parse protobuf message.";
       return false;
     }
     events->push_back(event);
@@ -175,21 +180,23 @@ int main(int argc, char* argv[]) {
       "Tool for file usage statistics from an RtcEventLog.\n"
       "Run " +
       program_name +
-      " --helpshort for usage.\n"
+      " --help for usage.\n"
       "Example usage:\n" +
       program_name + " input.rel\n";
-  google::SetUsageMessage(usage);
-  google::ParseCommandLineFlags(&argc, &argv, true);
-
-  if (argc != 2) {
-    std::cout << google::ProgramUsage();
-    return 0;
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
+      FLAG_help || argc != 2) {
+    std::cout << usage;
+    if (FLAG_help) {
+      rtc::FlagList::Print(nullptr, false);
+      return 0;
+    }
+    return 1;
   }
   std::string file_name = argv[1];
 
   std::vector<webrtc::rtclog::Event> events;
   if (!ParseEvents(file_name, &events)) {
-    LOG(LS_ERROR) << "Failed to parse event log.";
+    RTC_LOG(LS_ERROR) << "Failed to parse event log.";
     return -1;
   }
 

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
-#define WEBRTC_MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
+#ifndef MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
+#define MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
 
 #include <assert.h>
 #include <string.h>  // memcpy
@@ -17,16 +17,19 @@
 #include <algorithm>
 #include <limits>
 
-#include "webrtc/api/video/video_rotation.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/deprecation.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/video_coding/codecs/h264/include/h264_globals.h"
-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h"
-#include "webrtc/modules/video_coding/codecs/vp9/include/vp9_globals.h"
-#include "webrtc/typedefs.h"
+#include "api/optional.h"
+#include "api/video/video_rotation.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module_common_types_public.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "modules/video_coding/codecs/stereo/include/stereo_globals.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/deprecation.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/timeutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -37,19 +40,27 @@ struct RTPAudioHeader {
   size_t channel;                     // number of channels 2 = stereo
 };
 
+enum RtpVideoCodecTypes {
+  kRtpVideoNone = 0,
+  kRtpVideoGeneric = 1,
+  kRtpVideoVp8 = 2,
+  kRtpVideoVp9 = 3,
+  kRtpVideoH264 = 4,
+  kRtpVideoStereo = 5
+};
+
+struct RTPVideoHeaderStereo {
+  RtpVideoCodecTypes associated_codec_type;
+  StereoIndices indices;
+};
+
 union RTPVideoTypeHeader {
   RTPVideoHeaderVP8 VP8;
   RTPVideoHeaderVP9 VP9;
   RTPVideoHeaderH264 H264;
+  RTPVideoHeaderStereo stereo;
 };
 
-enum RtpVideoCodecTypes {
-  kRtpVideoNone,
-  kRtpVideoGeneric,
-  kRtpVideoVp8,
-  kRtpVideoVp9,
-  kRtpVideoH264
-};
 // Since RTPVideoHeader is used as a member of a union, it can't have a
 // non-trivial default constructor.
 struct RTPVideoHeader {
@@ -61,7 +72,7 @@ struct RTPVideoHeader {
 
   VideoContentType content_type;
 
-  VideoTiming video_timing;
+  VideoSendTiming video_timing;
 
   bool is_first_packet_in_frame;
   uint8_t simulcastIdx;  // Index if the simulcast encoder creating
@@ -91,11 +102,27 @@ class RTPFragmentationHeader {
         fragmentationTimeDiff(NULL),
         fragmentationPlType(NULL) {}
 
+  RTPFragmentationHeader(RTPFragmentationHeader&& other)
+      : RTPFragmentationHeader() {
+    std::swap(*this, other);
+  }
+
   ~RTPFragmentationHeader() {
     delete[] fragmentationOffset;
     delete[] fragmentationLength;
     delete[] fragmentationTimeDiff;
     delete[] fragmentationPlType;
+  }
+
+  void operator=(RTPFragmentationHeader&& other) { std::swap(*this, other); }
+
+  friend void swap(RTPFragmentationHeader& a, RTPFragmentationHeader& b) {
+    using std::swap;
+    swap(a.fragmentationVectorSize, b.fragmentationVectorSize);
+    swap(a.fragmentationOffset, b.fragmentationOffset);
+    swap(a.fragmentationLength, b.fragmentationLength);
+    swap(a.fragmentationTimeDiff, b.fragmentationTimeDiff);
+    swap(a.fragmentationPlType, b.fragmentationPlType);
   }
 
   void CopyFrom(const RTPFragmentationHeader& src) {
@@ -307,13 +334,40 @@ class AudioFrame {
 
   // Resets all members to their default state.
   void Reset();
+  // Same as Reset(), but leaves mute state unchanged. Muting a frame requires
+  // the buffer to be zeroed on the next call to mutable_data(). Callers
+  // intending to write to the buffer immediately after Reset() can instead use
+  // ResetWithoutMuting() to skip this wasteful zeroing.
+  void ResetWithoutMuting();
 
-  void UpdateFrame(int id, uint32_t timestamp, const int16_t* data,
+  // TODO(solenberg): Remove once downstream users of AudioFrame have updated.
+  RTC_DEPRECATED
+      void UpdateFrame(int id, uint32_t timestamp, const int16_t* data,
+                       size_t samples_per_channel, int sample_rate_hz,
+                       SpeechType speech_type, VADActivity vad_activity,
+                       size_t num_channels = 1) {
+    RTC_UNUSED(id);
+    UpdateFrame(timestamp, data, samples_per_channel, sample_rate_hz,
+                speech_type, vad_activity, num_channels);
+  }
+
+  void UpdateFrame(uint32_t timestamp, const int16_t* data,
                    size_t samples_per_channel, int sample_rate_hz,
                    SpeechType speech_type, VADActivity vad_activity,
                    size_t num_channels = 1);
 
   void CopyFrom(const AudioFrame& src);
+
+  // Sets a wall-time clock timestamp in milliseconds to be used for profiling
+  // of time between two points in the audio chain.
+  // Example:
+  //   t0: UpdateProfileTimeStamp()
+  //   t1: ElapsedProfileTimeMs() => t1 - t0 [msec]
+  void UpdateProfileTimeStamp();
+  // Returns the time difference between now and when UpdateProfileTimeStamp()
+  // was last called. Returns -1 if UpdateProfileTimeStamp() has not yet been
+  // called.
+  int64_t ElapsedProfileTimeMs() const;
 
   // data() returns a zeroed static buffer if the frame is muted.
   // mutable_frame() always returns a non-static buffer; the first call to
@@ -333,7 +387,6 @@ class AudioFrame {
   RTC_DEPRECATED AudioFrame& operator>>=(const int rhs);
   RTC_DEPRECATED AudioFrame& operator+=(const AudioFrame& rhs);
 
-  int id_;
   // RTP timestamp of the first sample in the AudioFrame.
   uint32_t timestamp_ = 0;
   // Time since the first frame in milliseconds.
@@ -347,6 +400,12 @@ class AudioFrame {
   size_t num_channels_ = 0;
   SpeechType speech_type_ = kUndefined;
   VADActivity vad_activity_ = kVadUnknown;
+  // Monotonically increasing timestamp intended for profiling of audio frames.
+  // Typically used for measuring elapsed time between two different points in
+  // the audio path. No lock is used to save resources and we are thread safe
+  // by design. Also, rtc::Optional is not used since it will cause a "complex
+  // class/struct needs an explicit out-of-line destructor" build error.
+  int64_t profile_timestamp_ms_ = 0;
 
  private:
   // A permamently zeroed out buffer to represent muted frames. This is a
@@ -370,29 +429,31 @@ inline AudioFrame::AudioFrame() {
 }
 
 inline void AudioFrame::Reset() {
-  id_ = -1;
+  ResetWithoutMuting();
+  muted_ = true;
+}
+
+inline void AudioFrame::ResetWithoutMuting() {
   // TODO(wu): Zero is a valid value for |timestamp_|. We should initialize
   // to an invalid value, or add a new member to indicate invalidity.
   timestamp_ = 0;
   elapsed_time_ms_ = -1;
   ntp_time_ms_ = -1;
-  muted_ = true;
   samples_per_channel_ = 0;
   sample_rate_hz_ = 0;
   num_channels_ = 0;
   speech_type_ = kUndefined;
   vad_activity_ = kVadUnknown;
+  profile_timestamp_ms_ = 0;
 }
 
-inline void AudioFrame::UpdateFrame(int id,
-                                    uint32_t timestamp,
+inline void AudioFrame::UpdateFrame(uint32_t timestamp,
                                     const int16_t* data,
                                     size_t samples_per_channel,
                                     int sample_rate_hz,
                                     SpeechType speech_type,
                                     VADActivity vad_activity,
                                     size_t num_channels) {
-  id_ = id;
   timestamp_ = timestamp;
   samples_per_channel_ = samples_per_channel;
   sample_rate_hz_ = sample_rate_hz;
@@ -413,7 +474,6 @@ inline void AudioFrame::UpdateFrame(int id,
 inline void AudioFrame::CopyFrom(const AudioFrame& src) {
   if (this == &src) return;
 
-  id_ = src.id_;
   timestamp_ = src.timestamp_;
   elapsed_time_ms_ = src.elapsed_time_ms_;
   ntp_time_ms_ = src.ntp_time_ms_;
@@ -430,6 +490,18 @@ inline void AudioFrame::CopyFrom(const AudioFrame& src) {
     memcpy(data_, src.data(), sizeof(int16_t) * length);
     muted_ = false;
   }
+}
+
+inline void AudioFrame::UpdateProfileTimeStamp() {
+  profile_timestamp_ms_ = rtc::TimeMillis();
+}
+
+inline int64_t AudioFrame::ElapsedProfileTimeMs() const {
+  if (profile_timestamp_ms_ == 0) {
+    // Profiling has not been activated.
+    return -1;
+  }
+  return rtc::TimeSince(profile_timestamp_ms_);
 }
 
 inline const int16_t* AudioFrame::data() const {
@@ -506,94 +578,6 @@ inline AudioFrame& AudioFrame::operator+=(const AudioFrame& rhs) {
   return *this;
 }
 
-template <typename U>
-inline bool IsNewer(U value, U prev_value) {
-  static_assert(!std::numeric_limits<U>::is_signed, "U must be unsigned");
-  // kBreakpoint is the half-way mark for the type U. For instance, for a
-  // uint16_t it will be 0x8000, and for a uint32_t, it will be 0x8000000.
-  constexpr U kBreakpoint = (std::numeric_limits<U>::max() >> 1) + 1;
-  // Distinguish between elements that are exactly kBreakpoint apart.
-  // If t1>t2 and |t1-t2| = kBreakpoint: IsNewer(t1,t2)=true,
-  // IsNewer(t2,t1)=false
-  // rather than having IsNewer(t1,t2) = IsNewer(t2,t1) = false.
-  if (value - prev_value == kBreakpoint) {
-    return value > prev_value;
-  }
-  return value != prev_value &&
-         static_cast<U>(value - prev_value) < kBreakpoint;
-}
-
-inline bool IsNewerSequenceNumber(uint16_t sequence_number,
-                                  uint16_t prev_sequence_number) {
-  return IsNewer(sequence_number, prev_sequence_number);
-}
-
-inline bool IsNewerTimestamp(uint32_t timestamp, uint32_t prev_timestamp) {
-  return IsNewer(timestamp, prev_timestamp);
-}
-
-inline uint16_t LatestSequenceNumber(uint16_t sequence_number1,
-                                     uint16_t sequence_number2) {
-  return IsNewerSequenceNumber(sequence_number1, sequence_number2)
-             ? sequence_number1
-             : sequence_number2;
-}
-
-inline uint32_t LatestTimestamp(uint32_t timestamp1, uint32_t timestamp2) {
-  return IsNewerTimestamp(timestamp1, timestamp2) ? timestamp1 : timestamp2;
-}
-
-// Utility class to unwrap a number to a larger type. The numbers will never be
-// unwrapped to a negative value.
-template <typename U>
-class Unwrapper {
-  static_assert(!std::numeric_limits<U>::is_signed, "U must be unsigned");
-  static_assert(std::numeric_limits<U>::max() <=
-                    std::numeric_limits<uint32_t>::max(),
-                "U must not be wider than 32 bits");
-
- public:
-  // Get the unwrapped value, but don't update the internal state.
-  int64_t UnwrapWithoutUpdate(U value) {
-    if (!last_value_)
-      return value;
-
-    constexpr int64_t kMaxPlusOne =
-        static_cast<int64_t>(std::numeric_limits<U>::max()) + 1;
-
-    U cropped_last = static_cast<U>(*last_value_);
-    int64_t delta = value - cropped_last;
-    if (IsNewer(value, cropped_last)) {
-      if (delta < 0)
-        delta += kMaxPlusOne;  // Wrap forwards.
-    } else if (delta > 0 && (*last_value_ + delta - kMaxPlusOne) >= 0) {
-      // If value is older but delta is positive, this is a backwards
-      // wrap-around. However, don't wrap backwards past 0 (unwrapped).
-      delta -= kMaxPlusOne;
-    }
-
-    return *last_value_ + delta;
-  }
-
-  // Only update the internal state to the specified last (unwrapped) value.
-  void UpdateLast(int64_t last_value) {
-    last_value_ = rtc::Optional<int64_t>(last_value);
-  }
-
-  // Unwrap the value and update the internal state.
-  int64_t Unwrap(U value) {
-    int64_t unwrapped = UnwrapWithoutUpdate(value);
-    UpdateLast(unwrapped);
-    return unwrapped;
-  }
-
- private:
-  rtc::Optional<int64_t> last_value_;
-};
-
-using SequenceNumberUnwrapper = Unwrapper<uint16_t>;
-using TimestampUnwrapper = Unwrapper<uint32_t>;
-
 struct PacedPacketInfo {
   PacedPacketInfo() {}
   PacedPacketInfo(int probe_cluster_id,
@@ -619,4 +603,4 @@ struct PacedPacketInfo {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_INCLUDE_MODULE_COMMON_TYPES_H_
+#endif  // MODULES_INCLUDE_MODULE_COMMON_TYPES_H_

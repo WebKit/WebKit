@@ -9,7 +9,7 @@
 
 /*
  *	
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,8 @@
  */
 
 
-#ifndef _DATATYPES_H
-#define _DATATYPES_H
+#ifndef DATATYPES_H
+#define DATATYPES_H
 
 #include "integers.h"           /* definitions of uint32_t, et cetera   */
 #include "alloc.h"
@@ -245,51 +245,6 @@ v128_right_shift(v128_t *x, int shift_index);
              _v128_clear_bit(x, bit)      \
 )
 
-
-#if 0
-/* nothing uses this */
-#ifdef WORDS_BIGENDIAN
-
-#define _v128_add(z, x, y) {                    \
-  uint64_t tmp;					\
-    						\
-  tmp = x->v32[3] + y->v32[3];                  \
-  z->v32[3] = (uint32_t) tmp;			\
-  						\
-  tmp =  x->v32[2] + y->v32[2] + (tmp >> 32);	\
-  z->v32[2] = (uint32_t) tmp;                   \
-						\
-  tmp =  x->v32[1] + y->v32[1] + (tmp >> 32);	\
-  z->v32[1] = (uint32_t) tmp;			\
-                                                \
-  tmp =  x->v32[0] + y->v32[0] + (tmp >> 32);	\
-  z->v32[0] = (uint32_t) tmp;			\
-}
-
-#else /* assume little endian architecture */
-
-#define _v128_add(z, x, y) {                    \
-  uint64_t tmp;					\
-						\
-  tmp = htonl(x->v32[3]) + htonl(y->v32[3]);	\
-  z->v32[3] = ntohl((uint32_t) tmp);		\
-  						\
-  tmp =  htonl(x->v32[2]) + htonl(y->v32[2])	\
-       + htonl(tmp >> 32);			\
-  z->v32[2] = ntohl((uint32_t) tmp);		\
-                                                \
-  tmp =  htonl(x->v32[1]) + htonl(y->v32[1])	\
-       + htonl(tmp >> 32);			\
-  z->v32[1] = ntohl((uint32_t) tmp);		\
-  						\
-  tmp =  htonl(x->v32[0]) + htonl(y->v32[0])	\
-       + htonl(tmp >> 32);			\
-  z->v32[0] = ntohl((uint32_t) tmp);		\
-}
-#endif /* WORDS_BIGENDIAN */                      
-#endif /* 0 */
-
-
 #ifdef DATATYPES_USE_MACROS  /* little functions are really macros */
    
 #define v128_set_to_zero(z)       _v128_set_to_zero(z)
@@ -352,9 +307,20 @@ v128_set_bit_to(v128_t *x, int i, int y);
 int
 octet_string_is_eq(uint8_t *a, uint8_t *b, int len);
 
+/*
+ * A portable way to zero out memory as recommended by
+ * https://cryptocoding.net/index.php/Coding_rules#Clean_memory_of_secret_data
+ * This is used to zero memory when OPENSSL_cleanse() is not available.
+ */
 void
-octet_string_set_to_zero(uint8_t *s, int len);
+srtp_cleanse(void *s, size_t len);
 
+/*
+ * Functions as a wrapper that delegates to either srtp_cleanse() or
+ * OPENSSL_cleanse() if available to zero memory.
+ */
+void
+octet_string_set_to_zero(void *s, size_t len);
 
 #if defined(HAVE_CONFIG_H) 
 
@@ -486,4 +452,4 @@ bitvector_bit_string(bitvector_t *x, char* buf, int len);
 }
 #endif
 
-#endif /* _DATATYPES_H */
+#endif /* DATATYPES_H */

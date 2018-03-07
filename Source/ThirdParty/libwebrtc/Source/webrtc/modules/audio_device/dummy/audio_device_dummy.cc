@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_device/dummy/audio_device_dummy.h"
+#include "modules/audio_device/dummy/audio_device_dummy.h"
 
 namespace webrtc {
 
@@ -83,16 +83,6 @@ int32_t AudioDeviceDummy::SetAGC(bool enable) { return -1; }
 
 bool AudioDeviceDummy::AGC() const { return false; }
 
-int32_t AudioDeviceDummy::SetWaveOutVolume(uint16_t volumeLeft,
-                                           uint16_t volumeRight) {
-  return -1;
-}
-
-int32_t AudioDeviceDummy::WaveOutVolume(uint16_t& volumeLeft,
-                                        uint16_t& volumeRight) const {
-  return -1;
-}
-
 int32_t AudioDeviceDummy::InitSpeaker() { return -1; }
 
 bool AudioDeviceDummy::SpeakerIsInitialized() const { return false; }
@@ -117,10 +107,6 @@ int32_t AudioDeviceDummy::MinSpeakerVolume(uint32_t& minVolume) const {
   return -1;
 }
 
-int32_t AudioDeviceDummy::SpeakerVolumeStepSize(uint16_t& stepSize) const {
-  return -1;
-}
-
 int32_t AudioDeviceDummy::MicrophoneVolumeIsAvailable(bool& available) {
   return -1;
 }
@@ -139,10 +125,6 @@ int32_t AudioDeviceDummy::MinMicrophoneVolume(uint32_t& minVolume) const {
   return -1;
 }
 
-int32_t AudioDeviceDummy::MicrophoneVolumeStepSize(uint16_t& stepSize) const {
-  return -1;
-}
-
 int32_t AudioDeviceDummy::SpeakerMuteIsAvailable(bool& available) { return -1; }
 
 int32_t AudioDeviceDummy::SetSpeakerMute(bool enable) { return -1; }
@@ -156,14 +138,6 @@ int32_t AudioDeviceDummy::MicrophoneMuteIsAvailable(bool& available) {
 int32_t AudioDeviceDummy::SetMicrophoneMute(bool enable) { return -1; }
 
 int32_t AudioDeviceDummy::MicrophoneMute(bool& enabled) const { return -1; }
-
-int32_t AudioDeviceDummy::MicrophoneBoostIsAvailable(bool& available) {
-  return -1;
-}
-
-int32_t AudioDeviceDummy::SetMicrophoneBoost(bool enable) { return -1; }
-
-int32_t AudioDeviceDummy::MicrophoneBoost(bool& enabled) const { return -1; }
 
 int32_t AudioDeviceDummy::StereoPlayoutIsAvailable(bool& available) {
   return -1;
@@ -180,38 +154,7 @@ int32_t AudioDeviceDummy::SetStereoRecording(bool enable) { return -1; }
 
 int32_t AudioDeviceDummy::StereoRecording(bool& enabled) const { return -1; }
 
-int32_t AudioDeviceDummy::SetPlayoutBuffer(
-    const AudioDeviceModule::BufferType type,
-    uint16_t sizeMS) {
-  return -1;
-}
-
-int32_t AudioDeviceDummy::PlayoutBuffer(AudioDeviceModule::BufferType& type,
-                                        uint16_t& sizeMS) const {
-  return -1;
-}
-
 int32_t AudioDeviceDummy::PlayoutDelay(uint16_t& delayMS) const { return -1; }
-
-int32_t AudioDeviceDummy::RecordingDelay(uint16_t& delayMS) const { return -1; }
-
-int32_t AudioDeviceDummy::CPULoad(uint16_t& load) const { return -1; }
-
-bool AudioDeviceDummy::PlayoutWarning() const { return false; }
-
-bool AudioDeviceDummy::PlayoutError() const { return false; }
-
-bool AudioDeviceDummy::RecordingWarning() const { return false; }
-
-bool AudioDeviceDummy::RecordingError() const { return false; }
-
-void AudioDeviceDummy::ClearPlayoutWarning() {}
-
-void AudioDeviceDummy::ClearPlayoutError() {}
-
-void AudioDeviceDummy::ClearRecordingWarning() {}
-
-void AudioDeviceDummy::ClearRecordingError() {}
 
 void AudioDeviceDummy::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {}
 }  // namespace webrtc

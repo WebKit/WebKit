@@ -22,18 +22,210 @@ extern "C" {
 #if !defined(LIBYUV_DISABLE_X86) && \
     (defined(__x86_64__) || (defined(__i386__) && !defined(_MSC_VER)))
 
-uint32 HammingDistance_X86(const uint8* src_a, const uint8* src_b, int count) {
+#if defined(__x86_64__)
+uint32 HammingDistance_SSE42(const uint8* src_a,
+                             const uint8* src_b,
+                             int count) {
+  uint64 diff = 0u;
+
+  asm volatile(
+      "xor        %3,%3                          \n"
+      "xor        %%r8,%%r8                      \n"
+      "xor        %%r9,%%r9                      \n"
+      "xor        %%r10,%%r10                    \n"
+
+      // Process 32 bytes per loop.
+      LABELALIGN
+      "1:                                        \n"
+      "mov        (%0),%%rcx                     \n"
+      "mov        0x8(%0),%%rdx                  \n"
+      "xor        (%1),%%rcx                     \n"
+      "xor        0x8(%1),%%rdx                  \n"
+      "popcnt     %%rcx,%%rcx                    \n"
+      "popcnt     %%rdx,%%rdx                    \n"
+      "mov        0x10(%0),%%rsi                 \n"
+      "mov        0x18(%0),%%rdi                 \n"
+      "xor        0x10(%1),%%rsi                 \n"
+      "xor        0x18(%1),%%rdi                 \n"
+      "popcnt     %%rsi,%%rsi                    \n"
+      "popcnt     %%rdi,%%rdi                    \n"
+      "add        $0x20,%0                       \n"
+      "add        $0x20,%1                       \n"
+      "add        %%rcx,%3                       \n"
+      "add        %%rdx,%%r8                     \n"
+      "add        %%rsi,%%r9                     \n"
+      "add        %%rdi,%%r10                    \n"
+      "sub        $0x20,%2                       \n"
+      "jg         1b                             \n"
+
+      "add        %%r8, %3                       \n"
+      "add        %%r9, %3                       \n"
+      "add        %%r10, %3                      \n"
+      : "+r"(src_a),  // %0
+        "+r"(src_b),  // %1
+        "+r"(count),  // %2
+        "=r"(diff)    // %3
+      :
+      : "memory", "cc", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10");
+
+  return static_cast<uint32>(diff);
+}
+#else
+uint32 HammingDistance_SSE42(const uint8* src_a,
+                             const uint8* src_b,
+                             int count) {
   uint32 diff = 0u;
 
-  int i;
-  for (i = 0; i < count - 7; i += 8) {
-    uint64 x = *((uint64*)src_a) ^ *((uint64*)src_b);
-    src_a += 8;
-    src_b += 8;
-    diff += __builtin_popcountll(x);
-  }
+  asm volatile(
+      // Process 16 bytes per loop.
+      LABELALIGN
+      "1:                                        \n"
+      "mov        (%0),%%ecx                     \n"
+      "mov        0x4(%0),%%edx                  \n"
+      "xor        (%1),%%ecx                     \n"
+      "xor        0x4(%1),%%edx                  \n"
+      "popcnt     %%ecx,%%ecx                    \n"
+      "add        %%ecx,%3                       \n"
+      "popcnt     %%edx,%%edx                    \n"
+      "add        %%edx,%3                       \n"
+      "mov        0x8(%0),%%ecx                  \n"
+      "mov        0xc(%0),%%edx                  \n"
+      "xor        0x8(%1),%%ecx                  \n"
+      "xor        0xc(%1),%%edx                  \n"
+      "popcnt     %%ecx,%%ecx                    \n"
+      "add        %%ecx,%3                       \n"
+      "popcnt     %%edx,%%edx                    \n"
+      "add        %%edx,%3                       \n"
+      "add        $0x10,%0                       \n"
+      "add        $0x10,%1                       \n"
+      "sub        $0x10,%2                       \n"
+      "jg         1b                             \n"
+      : "+r"(src_a),  // %0
+        "+r"(src_b),  // %1
+        "+r"(count),  // %2
+        "+r"(diff)    // %3
+      :
+      : "memory", "cc", "ecx", "edx");
+
   return diff;
 }
+#endif
+
+static vec8 kNibbleMask = {15, 15, 15, 15, 15, 15, 15, 15,
+                           15, 15, 15, 15, 15, 15, 15, 15};
+static vec8 kBitCount = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
+
+uint32 HammingDistance_SSSE3(const uint8* src_a,
+                             const uint8* src_b,
+                             int count) {
+  uint32 diff = 0u;
+
+  asm volatile(
+      "movdqa     %4,%%xmm2                      \n"
+      "movdqa     %5,%%xmm3                      \n"
+      "pxor       %%xmm0,%%xmm0                  \n"
+      "pxor       %%xmm1,%%xmm1                  \n"
+      "sub        %0,%1                          \n"
+
+      LABELALIGN
+      "1:                                        \n"
+      "movdqa     (%0),%%xmm4                    \n"
+      "movdqa     0x10(%0), %%xmm5               \n"
+      "pxor       (%0,%1), %%xmm4                \n"
+      "movdqa     %%xmm4,%%xmm6                  \n"
+      "pand       %%xmm2,%%xmm6                  \n"
+      "psrlw      $0x4,%%xmm4                    \n"
+      "movdqa     %%xmm3,%%xmm7                  \n"
+      "pshufb     %%xmm6,%%xmm7                  \n"
+      "pand       %%xmm2,%%xmm4                  \n"
+      "movdqa     %%xmm3,%%xmm6                  \n"
+      "pshufb     %%xmm4,%%xmm6                  \n"
+      "paddb      %%xmm7,%%xmm6                  \n"
+      "pxor       0x10(%0,%1),%%xmm5             \n"
+      "add        $0x20,%0                       \n"
+      "movdqa     %%xmm5,%%xmm4                  \n"
+      "pand       %%xmm2,%%xmm5                  \n"
+      "psrlw      $0x4,%%xmm4                    \n"
+      "movdqa     %%xmm3,%%xmm7                  \n"
+      "pshufb     %%xmm5,%%xmm7                  \n"
+      "pand       %%xmm2,%%xmm4                  \n"
+      "movdqa     %%xmm3,%%xmm5                  \n"
+      "pshufb     %%xmm4,%%xmm5                  \n"
+      "paddb      %%xmm7,%%xmm5                  \n"
+      "paddb      %%xmm5,%%xmm6                  \n"
+      "psadbw     %%xmm1,%%xmm6                  \n"
+      "paddd      %%xmm6,%%xmm0                  \n"
+      "sub        $0x20,%2                       \n"
+      "jg         1b                             \n"
+
+      "pshufd     $0xaa,%%xmm0,%%xmm1            \n"
+      "paddd      %%xmm1,%%xmm0                  \n"
+      "movd       %%xmm0, %3                     \n"
+      : "+r"(src_a),       // %0
+        "+r"(src_b),       // %1
+        "+r"(count),       // %2
+        "=r"(diff)         // %3
+      : "m"(kNibbleMask),  // %4
+        "m"(kBitCount)     // %5
+      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
+        "xmm7");
+
+  return diff;
+}
+
+#ifdef HAS_HAMMINGDISTANCE_AVX2
+uint32 HammingDistance_AVX2(const uint8* src_a, const uint8* src_b, int count) {
+  uint32 diff = 0u;
+
+  asm volatile(
+      "vbroadcastf128 %4,%%ymm2                  \n"
+      "vbroadcastf128 %5,%%ymm3                  \n"
+      "vpxor      %%ymm0,%%ymm0,%%ymm0           \n"
+      "vpxor      %%ymm1,%%ymm1,%%ymm1           \n"
+      "sub        %0,%1                          \n"
+
+      LABELALIGN
+      "1:                                        \n"
+      "vmovdqa    (%0),%%ymm4                    \n"
+      "vmovdqa    0x20(%0), %%ymm5               \n"
+      "vpxor      (%0,%1), %%ymm4, %%ymm4        \n"
+      "vpand      %%ymm2,%%ymm4,%%ymm6           \n"
+      "vpsrlw     $0x4,%%ymm4,%%ymm4             \n"
+      "vpshufb    %%ymm6,%%ymm3,%%ymm6           \n"
+      "vpand      %%ymm2,%%ymm4,%%ymm4           \n"
+      "vpshufb    %%ymm4,%%ymm3,%%ymm4           \n"
+      "vpaddb     %%ymm4,%%ymm6,%%ymm6           \n"
+      "vpxor      0x20(%0,%1),%%ymm5,%%ymm4      \n"
+      "add        $0x40,%0                       \n"
+      "vpand      %%ymm2,%%ymm4,%%ymm5           \n"
+      "vpsrlw     $0x4,%%ymm4,%%ymm4             \n"
+      "vpshufb    %%ymm5,%%ymm3,%%ymm5           \n"
+      "vpand      %%ymm2,%%ymm4,%%ymm4           \n"
+      "vpshufb    %%ymm4,%%ymm3,%%ymm4           \n"
+      "vpaddb     %%ymm5,%%ymm4,%%ymm4           \n"
+      "vpaddb     %%ymm6,%%ymm4,%%ymm4           \n"
+      "vpsadbw    %%ymm1,%%ymm4,%%ymm4           \n"
+      "vpaddd     %%ymm0,%%ymm4,%%ymm0           \n"
+      "sub        $0x40,%2                       \n"
+      "jg         1b                             \n"
+
+      "vpermq     $0xb1,%%ymm0,%%ymm1            \n"
+      "vpaddd     %%ymm1,%%ymm0,%%ymm0           \n"
+      "vpermq     $0xaa,%%ymm0,%%ymm1            \n"
+      "vpaddd     %%ymm1,%%ymm0,%%ymm0           \n"
+      "vmovd      %%xmm0, %3                     \n"
+      "vzeroupper                                \n"
+      : "+r"(src_a),       // %0
+        "+r"(src_b),       // %1
+        "+r"(count),       // %2
+        "=r"(diff)         // %3
+      : "m"(kNibbleMask),  // %4
+        "m"(kBitCount)     // %5
+      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
+
+  return diff;
+}
+#endif  // HAS_HAMMINGDISTANCE_AVX2
 
 uint32 SumSquareError_SSE2(const uint8* src_a, const uint8* src_b, int count) {
   uint32 sse;

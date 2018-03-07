@@ -11,16 +11,16 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/testclient.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/relayserver.h"
+#include "p2p/base/relayserver.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/testclient.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/virtualsocketserver.h"
 
 using rtc::SocketAddress;
 using namespace cricket;

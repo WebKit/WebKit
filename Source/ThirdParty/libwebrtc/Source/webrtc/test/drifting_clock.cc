@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/drifting_clock.h"
-#include "webrtc/base/checks.h"
+#include "test/drifting_clock.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {

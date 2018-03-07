@@ -9,7 +9,7 @@
 
 /*
  *
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef AUTH_H
-#define AUTH_H
+#ifndef SRTP_AUTH_H
+#define SRTP_AUTH_H
 
 #include "srtp.h"
 #include "crypto_types.h"       /* for values of auth_type_id_t */
@@ -163,4 +163,4 @@ srtp_err_status_t srtp_replace_auth_type(const srtp_auth_type_t *ct, srtp_auth_t
 }
 #endif
 
-#endif /* AUTH_H */
+#endif /* SRTP_AUTH_H */

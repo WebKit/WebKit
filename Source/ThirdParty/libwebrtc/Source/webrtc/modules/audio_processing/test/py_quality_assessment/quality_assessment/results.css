@@ -7,84 +7,26 @@
  * be found in the AUTHORS file in the root of the source tree.
  */
 
-body{
-  font-family: Arial;
-  font-size: 75%;
+td.selected-score {
+  background-color: #DDD;
 }
 
-table{
-  border-top: 1px solid #000;
-  border-right: 1px solid #000;
-  margin: 1em 0 0.2em 0;
-}
-
-table thead tr th{
-  font-size: 0.9em;
+td.single-score-cell{
   text-align: center;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #000;
-  min-width: 8em;
 }
 
-table thead tr th:first-child{
-  text-transform: uppercase;
-}
-
-table tbody tr td{
-  font-size: 0.8em;
+.audio-inspector {
   text-align: center;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #000;
 }
 
-table tbody tr td:first-child{
-  font-weight: bold;
+.audio-inspector div{
+  margin-bottom: 0;
+  padding-bottom: 0;
+  padding-top: 0;
 }
 
-table tbody tr td .selected{
-  background-color: #EE9;
-}
-
-table tbody tr td .value{
-  display: inline-block;
-}
-
-.test-data-gen-desc{
-  display: inline-block;
-  margin-right: 0.3em;
-  border: 1px solid #555;
-  color: #555;
-  background-color: #EEE;
-  padding: 1px;
-  font-size: 0.8em;
-}
-
-.inspector{
-  background-color: #FFF;
-  border: 3px solid #000;
-  display: block;
-  padding: 0.5em;
-  position: fixed;
-  right: 1em;
-  top: 1em;
-}
-
-.inspector .property{
-  margin-bottom: 1em;
-}
-
-.inspector .property .name{
-  font-weight: bold;
-}
-
-.inspector .property .value{
-  padding-left: 0.5em;
-}
-
-.inspector .buttons{
-  margin-top: 1em;
-}
-
-.inspector .buttons button{
-  margin: 0 0.25em;
+.audio-inspector div div{
+  margin-bottom: 0;
+  padding-bottom: 0;
+  padding-top: 0;
 }

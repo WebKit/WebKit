@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright (c) 2014, Cisco Systems, Inc.
+ * Copyright (c) 2014-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,8 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#ifndef _UTIL_H
-#define _UTIL_H
+#ifndef SRTP_TEST_UTIL_H
+#define SRTP_TEST_UTIL_H
 
 #define MAX_PRINT_STRING_LEN 1024
 

@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/test/frame_utils.h"
+#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "test/frame_utils.h"
 
 namespace webrtc {
 namespace test {

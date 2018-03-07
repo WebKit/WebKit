@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_replacement_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_replacement_input.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/neteq/tools/fake_decode_from_file.h"
+#include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -34,7 +34,7 @@ NetEqReplacementInput::NetEqReplacementInput(
 rtc::Optional<int64_t> NetEqReplacementInput::NextPacketTime() const {
   return packet_
              ? rtc::Optional<int64_t>(static_cast<int64_t>(packet_->time_ms))
-             : rtc::Optional<int64_t>();
+             : rtc::nullopt;
 }
 
 rtc::Optional<int64_t> NetEqReplacementInput::NextOutputEventTime() const {

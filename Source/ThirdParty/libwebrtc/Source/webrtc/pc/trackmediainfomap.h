@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_TRACKMEDIAINFOMAP_H_
-#define WEBRTC_PC_TRACKMEDIAINFOMAP_H_
+#ifndef PC_TRACKMEDIAINFOMAP_H_
+#define PC_TRACKMEDIAINFOMAP_H_
 
 #include <map>
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/rtpreceiverinterface.h"
-#include "webrtc/api/rtpsenderinterface.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/media/base/mediachannel.h"
+#include "api/mediastreaminterface.h"
+#include "api/rtpreceiverinterface.h"
+#include "api/rtpsenderinterface.h"
+#include "media/base/mediachannel.h"
+#include "rtc_base/refcount.h"
 
 namespace webrtc {
 
@@ -99,4 +99,4 @@ class TrackMediaInfoMap {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_TRACKMEDIAINFOMAP_H_
+#endif  // PC_TRACKMEDIAINFOMAP_H_

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_GMOCK_H_
-#define WEBRTC_TEST_GMOCK_H_
+#ifndef TEST_GMOCK_H_
+#define TEST_GMOCK_H_
 
-#include "webrtc/base/ignore_wundef.h"
+#include "rtc_base/ignore_wundef.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
 #include "testing/gmock/include/gmock/gmock.h"
 RTC_POP_IGNORING_WUNDEF()
 
-#endif  // WEBRTC_TEST_GMOCK_H_
+#endif  // TEST_GMOCK_H_

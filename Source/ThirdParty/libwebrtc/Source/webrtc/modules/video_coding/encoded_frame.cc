@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
-#include "webrtc/modules/video_coding/encoded_frame.h"
-#include "webrtc/modules/video_coding/generic_encoder.h"
-#include "webrtc/modules/video_coding/jitter_buffer_common.h"
+#include "modules/video_coding/include/video_coding_defines.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/generic_encoder.h"
+#include "modules/video_coding/jitter_buffer_common.h"
 
 namespace webrtc {
 
@@ -88,7 +88,7 @@ void VCMEncodedFrame::Reset() {
   _codec = kVideoCodecUnknown;
   rotation_ = kVideoRotation_0;
   content_type_ = VideoContentType::UNSPECIFIED;
-  timing_.is_timing_frame = false;
+  timing_.flags = TimingFrameFlags::kInvalid;
   _rotation_set = false;
 }
 
@@ -191,6 +191,28 @@ void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
       }
       case kRtpVideoH264: {
         _codecSpecificInfo.codecType = kVideoCodecH264;
+        break;
+      }
+      case kRtpVideoStereo: {
+        _codecSpecificInfo.codecType = kVideoCodecStereo;
+        VideoCodecType associated_codec_type = kVideoCodecUnknown;
+        switch (header->codecHeader.stereo.associated_codec_type) {
+          case kRtpVideoVp8:
+            associated_codec_type = kVideoCodecVP8;
+            break;
+          case kRtpVideoVp9:
+            associated_codec_type = kVideoCodecVP9;
+            break;
+          case kRtpVideoH264:
+            associated_codec_type = kVideoCodecH264;
+            break;
+          default:
+            RTC_NOTREACHED();
+        }
+        _codecSpecificInfo.codecSpecific.stereo.associated_codec_type =
+            associated_codec_type;
+        _codecSpecificInfo.codecSpecific.stereo.indices =
+            header->codecHeader.stereo.indices;
         break;
       }
       default: {

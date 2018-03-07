@@ -10,9 +10,9 @@
 
 #include <utility>
 
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/modules/audio_processing/aec_dump/mock_aec_dump.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/aec_dump/mock_aec_dump.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/ptr_util.h"
 
 using testing::_;
 using testing::AtLeast;

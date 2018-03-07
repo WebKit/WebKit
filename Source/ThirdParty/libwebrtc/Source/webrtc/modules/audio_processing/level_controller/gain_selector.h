@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_GAIN_SELECTOR_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_GAIN_SELECTOR_H_
+#ifndef MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_GAIN_SELECTOR_H_
+#define MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_GAIN_SELECTOR_H_
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
-#include "webrtc/modules/audio_processing/level_controller/signal_classifier.h"
+#include "modules/audio_processing/level_controller/signal_classifier.h"
 
 namespace webrtc {
 
@@ -37,4 +37,4 @@ class GainSelector {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_GAIN_SELECTOR_H_
+#endif  // MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_GAIN_SELECTOR_H_

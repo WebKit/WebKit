@@ -15,20 +15,20 @@
  *
  */
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "rtc_base/checks.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
 
 #include <stdio.h>
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/arith_routins.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/bandwidth_estimator.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/entropy_coding.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/lpc_masking_model.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/lpc_tables.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_gain_tables.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_lag_tables.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/structs.h"
+#include "modules/audio_coding/codecs/isac/fix/source/arith_routins.h"
+#include "modules/audio_coding/codecs/isac/fix/source/bandwidth_estimator.h"
+#include "modules/audio_coding/codecs/isac/fix/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/fix/source/lpc_masking_model.h"
+#include "modules/audio_coding/codecs/isac/fix/source/lpc_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_gain_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_lag_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/structs.h"
 
 
 int WebRtcIsacfix_EncodeImpl(int16_t      *in,

@@ -8,20 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SDK_ANDROID_SRC_JNI_WRAPPED_NATIVE_I420_BUFFER_H_
-#define WEBRTC_SDK_ANDROID_SRC_JNI_WRAPPED_NATIVE_I420_BUFFER_H_
+#ifndef SDK_ANDROID_SRC_JNI_WRAPPED_NATIVE_I420_BUFFER_H_
+#define SDK_ANDROID_SRC_JNI_WRAPPED_NATIVE_I420_BUFFER_H_
 
 #include <jni.h>
 
-#include "webrtc/api/video/video_frame_buffer.h"
+#include "api/video/video_frame_buffer.h"
 
-namespace webrtc_jni {
+namespace webrtc {
+namespace jni {
 
 // This function wraps the C++ I420 buffer and returns a Java
 // VideoFrame.I420Buffer as a jobject.
 jobject WrapI420Buffer(
-    const rtc::scoped_refptr<webrtc::I420BufferInterface>& i420_buffer);
+    JNIEnv* jni,
+    const rtc::scoped_refptr<I420BufferInterface>& i420_buffer);
 
-}  // namespace webrtc_jni
+}  // namespace jni
+}  // namespace webrtc
 
-#endif  // WEBRTC_SDK_ANDROID_SRC_JNI_WRAPPED_NATIVE_I420_BUFFER_H_
+#endif  // SDK_ANDROID_SRC_JNI_WRAPPED_NATIVE_I420_BUFFER_H_

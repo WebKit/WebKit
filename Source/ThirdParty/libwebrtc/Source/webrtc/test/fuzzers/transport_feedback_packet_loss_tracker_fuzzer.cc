@@ -10,11 +10,11 @@
 
 #include <algorithm>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "webrtc/voice_engine/transport_feedback_packet_loss_tracker.h"
+#include "api/array_view.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "voice_engine/transport_feedback_packet_loss_tracker.h"
 
 namespace webrtc {
 

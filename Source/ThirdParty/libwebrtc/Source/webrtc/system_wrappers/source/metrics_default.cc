@@ -7,13 +7,13 @@
 // be found in the AUTHORS file in the root of the source tree.
 //
 
-#include "webrtc/system_wrappers/include/metrics_default.h"
+#include "system_wrappers/include/metrics_default.h"
 
 #include <algorithm>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/metrics.h"
 
 // Default implementation of histogram methods for WebRTC clients that do not
 // want to provide their own implementation.
@@ -93,7 +93,7 @@ class RtcHistogram {
   rtc::CriticalSection crit_;
   const int min_;
   const int max_;
-  SampleInfo info_ GUARDED_BY(crit_);
+  SampleInfo info_ RTC_GUARDED_BY(crit_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtcHistogram);
 };
@@ -165,7 +165,8 @@ class RtcHistogramMap {
 
  private:
   rtc::CriticalSection crit_;
-  std::map<std::string, std::unique_ptr<RtcHistogram>> map_ GUARDED_BY(crit_);
+  std::map<std::string, std::unique_ptr<RtcHistogram>> map_
+      RTC_GUARDED_BY(crit_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RtcHistogramMap);
 };
@@ -244,11 +245,6 @@ Histogram* HistogramFactoryGetEnumeration(const std::string& name,
     return nullptr;
 
   return map->GetEnumerationHistogram(name, boundary);
-}
-
-const std::string& GetHistogramName(Histogram* histogram_pointer) {
-  RtcHistogram* ptr = reinterpret_cast<RtcHistogram*>(histogram_pointer);
-  return ptr->name();
 }
 
 // Fast path. Adds |sample| to cached |histogram_pointer|.

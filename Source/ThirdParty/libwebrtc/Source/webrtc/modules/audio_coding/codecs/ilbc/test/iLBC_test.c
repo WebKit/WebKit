@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "webrtc/modules/audio_coding/codecs/ilbc/ilbc.h"
+#include "modules/audio_coding/codecs/ilbc/ilbc.h"
 
 /*---------------------------------------------------------------*
  *  Main program to test iLBC encoding and decoding

@@ -13,7 +13,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
 
-#include "webrtc/media/base/videocapturer.h"
+#include "media/base/videocapturer.h"
 
 namespace webrtc {
 // Mapping from AVCaptureDeviceFormat to cricket::VideoFormat for given input

@@ -176,13 +176,13 @@ public class GlRectDrawer implements RendererCommon.GlDrawer {
       shaders.put(fragmentShader, shader);
       shader.glShader.useProgram();
       // Initialize fragment shader uniform values.
-      if (fragmentShader == YUV_FRAGMENT_SHADER_STRING) {
+      if (YUV_FRAGMENT_SHADER_STRING.equals(fragmentShader)) {
         GLES20.glUniform1i(shader.glShader.getUniformLocation("y_tex"), 0);
         GLES20.glUniform1i(shader.glShader.getUniformLocation("u_tex"), 1);
         GLES20.glUniform1i(shader.glShader.getUniformLocation("v_tex"), 2);
-      } else if (fragmentShader == RGB_FRAGMENT_SHADER_STRING) {
+      } else if (RGB_FRAGMENT_SHADER_STRING.equals(fragmentShader)) {
         GLES20.glUniform1i(shader.glShader.getUniformLocation("rgb_tex"), 0);
-      } else if (fragmentShader == OES_FRAGMENT_SHADER_STRING) {
+      } else if (OES_FRAGMENT_SHADER_STRING.equals(fragmentShader)) {
         GLES20.glUniform1i(shader.glShader.getUniformLocation("oes_tex"), 0);
       } else {
         throw new IllegalStateException("Unknown fragment shader: " + fragmentShader);

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
+#include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
 
 #include <algorithm>
 #include <memory>
@@ -35,9 +35,9 @@ LegacyEncodedAudioFrame::Decode(rtc::ArrayView<int16_t> decoded) const {
       decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
 
   if (ret < 0)
-    return rtc::Optional<DecodeResult>();
+    return rtc::nullopt;
 
-  return rtc::Optional<DecodeResult>({static_cast<size_t>(ret), speech_type});
+  return DecodeResult{static_cast<size_t>(ret), speech_type};
 }
 
 std::vector<AudioDecoder::ParseResult> LegacyEncodedAudioFrame::SplitBySamples(

@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_device/android/build_info.h"
+#include "modules/audio_device/android/build_info.h"
 
-#include "webrtc/modules/utility/include/helpers_android.h"
+#include "modules/utility/include/helpers_android.h"
 
 namespace webrtc {
 

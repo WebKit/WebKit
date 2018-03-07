@@ -9,17 +9,17 @@
  *
  */
 
-#ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_NALU_REWRITER_H_
-#define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_NALU_REWRITER_H_
+#ifndef SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_NALU_REWRITER_H_
+#define SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_NALU_REWRITER_H_
 
-#include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
+#include "modules/video_coding/codecs/h264/include/h264.h"
 
 #include <CoreMedia/CoreMedia.h>
 #include <vector>
 
-#include "webrtc/base/buffer.h"
-#include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "common_video/h264/h264_common.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/buffer.h"
 
 using webrtc::H264::NaluIndex;
 
@@ -33,7 +33,7 @@ bool H264CMSampleBufferToAnnexBBuffer(
     CMSampleBufferRef avcc_sample_buffer,
     bool is_keyframe,
     rtc::Buffer* annexb_buffer,
-    webrtc::RTPFragmentationHeader** out_header);
+    std::unique_ptr<RTPFragmentationHeader> *out_header);
 
 // Converts a buffer received from RTP into a sample buffer suitable for the
 // VideoToolbox decoder. The RTP buffer is in annex b format whereas the sample
@@ -109,4 +109,4 @@ class AvccBufferWriter final {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_NALU_REWRITER_H_
+#endif  // SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOX_NALU_REWRITER_H_

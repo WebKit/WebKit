@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aecm/aecm_core.h"
+#include "modules/audio_processing/aecm/aecm_core.h"
 
 #include <arm_neon.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/signal_processing/include/real_fft.h"
+#include "common_audio/signal_processing/include/real_fft.h"
+#include "rtc_base/checks.h"
 
 // TODO(kma): Re-write the corresponding assembly file, the offset
 // generating script and makefile, to replace these C functions.

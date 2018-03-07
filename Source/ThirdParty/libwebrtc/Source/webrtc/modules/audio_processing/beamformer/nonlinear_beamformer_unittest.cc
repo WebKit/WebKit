@@ -11,15 +11,15 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
-#include "webrtc/modules/audio_processing/beamformer/nonlinear_beamformer.h"
+#include "modules/audio_processing/beamformer/nonlinear_beamformer.h"
 
 #include <math.h>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/test/audio_buffer_tools.h"
-#include "webrtc/modules/audio_processing/test/bitexactness_tools.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/test/audio_buffer_tools.h"
+#include "modules/audio_processing/test/bitexactness_tools.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

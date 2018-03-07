@@ -19,20 +19,20 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include <magenta/syscalls.h>
+#include <zircon/syscalls.h>
 
 #include "../fipsmodule/rand/internal.h"
 
 void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   while (requested > 0) {
-    size_t output_bytes_this_pass = MX_CPRNG_DRAW_MAX_LEN;
+    size_t output_bytes_this_pass = ZX_CPRNG_DRAW_MAX_LEN;
     if (requested < output_bytes_this_pass) {
       output_bytes_this_pass = requested;
     }
     size_t bytes_drawn;
-    mx_status_t status =
-        mx_cprng_draw(out, output_bytes_this_pass, &bytes_drawn);
-    if (status != NO_ERROR) {
+    zx_status_t status =
+        zx_cprng_draw(out, output_bytes_this_pass, &bytes_drawn);
+    if (status != ZX_OK) {
       abort();
     }
     requested -= bytes_drawn;
@@ -40,4 +40,4 @@ void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   }
 }
 
-#endif /* OPENSSL_FUCHSIA && !BORINGSSL_UNSAFE_DETERMINISTIC_MODE */
+#endif  // OPENSSL_FUCHSIA && !BORINGSSL_UNSAFE_DETERMINISTIC_MODE

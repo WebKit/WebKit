@@ -54,9 +54,9 @@ die "can't locate x86_64-xlate.pl";
 open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
 
-# TODO: enable these after testing. $avx goes to two and $addx to one.
-$avx=0;
-$addx=0;
+# TODO(davidben): Set $addx to one once build problems are resolved.
+$avx = 2;
+$addx = 0;
 
 $code.=<<___;
 .text
@@ -150,8 +150,9 @@ $code.=<<___;
 ecp_nistz256_mul_mont:
 ___
 $code.=<<___	if ($addx);
-	mov	\$0x80100, %ecx
-	and	OPENSSL_ia32cap_P+8(%rip), %ecx
+	leaq	OPENSSL_ia32cap_P(%rip), %rcx
+	mov	8(%rcx), %rcx
+	and	\$0x80100, %ecx
 ___
 $code.=<<___;
 .Lmul_mont:
@@ -431,8 +432,9 @@ __ecp_nistz256_mul_montq:
 ecp_nistz256_sqr_mont:
 ___
 $code.=<<___	if ($addx);
-	mov	\$0x80100, %ecx
-	and	OPENSSL_ia32cap_P+8(%rip), %ecx
+	leaq	OPENSSL_ia32cap_P(%rip), %rcx
+	mov	8(%rcx), %rcx
+	and	\$0x80100, %ecx
 ___
 $code.=<<___;
 	push	%rbp
@@ -955,7 +957,8 @@ $code.=<<___;
 ecp_nistz256_select_w5:
 ___
 $code.=<<___	if ($avx>1);
-	mov	OPENSSL_ia32cap_P+8(%rip), %eax
+	leaq	OPENSSL_ia32cap_P(%rip), %rax
+	mov	8(%rax), %rax
 	test	\$`1<<5`, %eax
 	jnz	.Lavx2_select_w5
 ___
@@ -1052,7 +1055,8 @@ $code.=<<___;
 ecp_nistz256_select_w7:
 ___
 $code.=<<___	if ($avx>1);
-	mov	OPENSSL_ia32cap_P+8(%rip), %eax
+	leaq	OPENSSL_ia32cap_P(%rip), %rax
+	mov	8(%rax), %rax
 	test	\$`1<<5`, %eax
 	jnz	.Lavx2_select_w7
 ___
@@ -1555,8 +1559,9 @@ $code.=<<___;
 ecp_nistz256_point_double:
 ___
 $code.=<<___	if ($addx);
-	mov	\$0x80100, %ecx
-	and	OPENSSL_ia32cap_P+8(%rip), %ecx
+	leaq	OPENSSL_ia32cap_P(%rip), %rcx
+	mov	8(%rcx), %rcx
+	and	\$0x80100, %ecx
 	cmp	\$0x80100, %ecx
 	je	.Lpoint_doublex
 ___
@@ -1785,8 +1790,9 @@ $code.=<<___;
 ecp_nistz256_point_add:
 ___
 $code.=<<___	if ($addx);
-	mov	\$0x80100, %ecx
-	and	OPENSSL_ia32cap_P+8(%rip), %ecx
+	leaq	OPENSSL_ia32cap_P(%rip), %rcx
+	mov	8(%rcx), %rcx
+	and	\$0x80100, %ecx
 	cmp	\$0x80100, %ecx
 	je	.Lpoint_addx
 ___
@@ -2152,8 +2158,9 @@ $code.=<<___;
 ecp_nistz256_point_add_affine:
 ___
 $code.=<<___	if ($addx);
-	mov	\$0x80100, %ecx
-	and	OPENSSL_ia32cap_P+8(%rip), %ecx
+	leaq	OPENSSL_ia32cap_P(%rip), %rcx
+	mov	8(%rcx), %rcx
+	and	\$0x80100, %ecx
 	cmp	\$0x80100, %ecx
 	je	.Lpoint_add_affinex
 ___

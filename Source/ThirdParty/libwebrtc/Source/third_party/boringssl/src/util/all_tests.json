@@ -1,8 +1,5 @@
 [
 	["crypto/crypto_test"],
-	["crypto/fipsmodule/example_mul"],
-	["crypto/x509v3/tab_test"],
-	["crypto/x509v3/v3name_test"],
 	["decrepit/decrepit_test"],
 	["ssl/ssl_test"]
 ]

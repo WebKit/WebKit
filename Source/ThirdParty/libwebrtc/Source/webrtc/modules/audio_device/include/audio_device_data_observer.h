@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
-#define WEBRTC_MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
+#ifndef MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
+#define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
 
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -38,10 +38,15 @@ class AudioDeviceDataObserver {
 
 // Creates an ADM instance with AudioDeviceDataObserver registered.
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
+    const AudioDeviceModule::AudioLayer audio_layer,
+    AudioDeviceDataObserver* observer);
+
+// TODO(bugs.webrtc.org/7306): deprecated.
+rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     const int32_t id,
     const AudioDeviceModule::AudioLayer audio_layer,
     AudioDeviceDataObserver* observer);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
+#endif  // MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_

@@ -20,14 +20,15 @@ class ApmModuleEvaluator(object):
     pass
 
   @classmethod
-  def Run(cls, evaluation_score_workers, apm_output_filepath,
-          reference_input_filepath, output_path):
+  def Run(cls, evaluation_score_workers, apm_input_metadata,
+          apm_output_filepath, reference_input_filepath, output_path):
     """Runs the evaluation.
 
     Iterates over the given evaluation score workers.
 
     Args:
       evaluation_score_workers: list of EvaluationScore instances.
+      apm_input_metadata: dictionary with metadata of the APM input.
       apm_output_filepath: path to the audio track file with the APM output.
       reference_input_filepath: path to the reference audio track file.
       output_path: output path.
@@ -40,6 +41,7 @@ class ApmModuleEvaluator(object):
 
     for evaluation_score_worker in evaluation_score_workers:
       logging.info('   computing <%s> score', evaluation_score_worker.NAME)
+      evaluation_score_worker.SetInputSignalMetadata(apm_input_metadata)
       evaluation_score_worker.SetReferenceSignalFilepath(
           reference_input_filepath)
       evaluation_score_worker.SetTestedSignalFilepath(

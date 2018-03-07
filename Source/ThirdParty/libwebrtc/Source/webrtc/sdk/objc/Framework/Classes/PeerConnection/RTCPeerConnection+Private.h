@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCPeerConnection.h"
 
-#include "webrtc/api/peerconnectioninterface.h"
+#include "api/peerconnectioninterface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

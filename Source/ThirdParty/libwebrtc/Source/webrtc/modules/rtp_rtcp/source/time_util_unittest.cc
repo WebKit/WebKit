@@ -7,11 +7,50 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/rtp_rtcp/source/time_util.h"
+#include "modules/rtp_rtcp/source/time_util.h"
 
-#include "webrtc/test/gtest.h"
+#include "rtc_base/fakeclock.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
+
+TEST(TimeUtilTest, TimeMicrosToNtpMatchRealTimeClockInitially) {
+  Clock* legacy_clock = Clock::GetRealTimeClock();
+  NtpTime before_legacy_time = TimeMicrosToNtp(rtc::TimeMicros());
+  NtpTime legacy_time = legacy_clock->CurrentNtpTime();
+  NtpTime after_legacy_time = TimeMicrosToNtp(rtc::TimeMicros());
+
+  // This test will fail once every 136 years, when NtpTime wraparound.
+  // More often than that, it will fail if system adjust ntp time while test
+  // is running.
+  // To mitigate ntp time adjustment and potentional different precisions of
+  // Clock and TimeMicrosToNtp, relax expectation by a millisecond.
+  EXPECT_GE(legacy_time.ToMs(), before_legacy_time.ToMs() - 1);
+  EXPECT_LE(legacy_time.ToMs(), after_legacy_time.ToMs() + 1);
+}
+
+TEST(TimeUtilTest, TimeMicrosToNtpDoesntChangeBetweenRuns) {
+  rtc::ScopedFakeClock clock;
+  // TimeMicrosToNtp is not pure: it behave differently between different
+  // execution of the program, but should behave same during same execution.
+  const int64_t time_us = 12345;
+  clock.SetTimeMicros(2);
+  NtpTime time_ntp = TimeMicrosToNtp(time_us);
+  clock.SetTimeMicros(time_us);
+  EXPECT_EQ(TimeMicrosToNtp(time_us), time_ntp);
+  clock.SetTimeMicros(1000000);
+  EXPECT_EQ(TimeMicrosToNtp(time_us), time_ntp);
+}
+
+TEST(TimeUtilTest, TimeMicrosToNtpKeepsIntervals) {
+  rtc::ScopedFakeClock clock;
+  NtpTime time_ntp1 = TimeMicrosToNtp(rtc::TimeMicros());
+  clock.AdvanceTimeMicros(20000);
+  NtpTime time_ntp2 = TimeMicrosToNtp(rtc::TimeMicros());
+  EXPECT_EQ(time_ntp2.ToMs() - time_ntp1.ToMs(), 20);
+}
 
 TEST(TimeUtilTest, CompactNtp) {
   const uint32_t kNtpSec = 0x12345678;
@@ -70,4 +109,24 @@ TEST(TimeUtilTest, CompactNtpRttToMsNegative) {
   int64_t ntp_to_ms_diff = CompactNtpRttToMs(ntp_diff);
   EXPECT_EQ(1, ntp_to_ms_diff);
 }
+
+TEST(TimeUtilTest, SaturatedUsToCompactNtp) {
+  // Converts negative to zero.
+  EXPECT_EQ(SaturatedUsToCompactNtp(-1), 0u);
+  EXPECT_EQ(SaturatedUsToCompactNtp(0), 0u);
+  // Converts values just above and just below max uint32_t.
+  EXPECT_EQ(SaturatedUsToCompactNtp(65536000000), 0xffffffff);
+  EXPECT_EQ(SaturatedUsToCompactNtp(65535999985), 0xffffffff);
+  EXPECT_EQ(SaturatedUsToCompactNtp(65535999970), 0xfffffffe);
+  // Converts half-seconds.
+  EXPECT_EQ(SaturatedUsToCompactNtp(500000), 0x8000u);
+  EXPECT_EQ(SaturatedUsToCompactNtp(1000000), 0x10000u);
+  EXPECT_EQ(SaturatedUsToCompactNtp(1500000), 0x18000u);
+  // Convert us -> compact_ntp -> ms. Compact ntp precision is ~15us.
+  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(1516)), 2);
+  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(15000)), 15);
+  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(5485)), 5);
+  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(5515)), 6);
+}
+
 }  // namespace webrtc

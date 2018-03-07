@@ -9,14 +9,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TEST_BITEXACTNESS_TOOLS_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TEST_BITEXACTNESS_TOOLS_H_
+#ifndef MODULES_AUDIO_PROCESSING_TEST_BITEXACTNESS_TOOLS_H_
+#define MODULES_AUDIO_PROCESSING_TEST_BITEXACTNESS_TOOLS_H_
 
 #include <string>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/modules/audio_coding/neteq/tools/input_audio_file.h"
-#include "webrtc/test/gtest.h"
+#include "api/array_view.h"
+#include "modules/audio_coding/neteq/tools/input_audio_file.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
@@ -53,4 +53,4 @@ void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TEST_BITEXACTNESS_TOOLS_H_
+#endif  // MODULES_AUDIO_PROCESSING_TEST_BITEXACTNESS_TOOLS_H_

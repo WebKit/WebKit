@@ -8,11 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/fakevideorenderer.h"
-#include "webrtc/media/base/videobroadcaster.h"
+#include <limits>
+
+#include "media/base/videobroadcaster.h"
+#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "media/base/fakevideorenderer.h"
+#include "rtc_base/gunit.h"
 
 using rtc::VideoBroadcaster;
 using rtc::VideoSinkWants;
@@ -113,14 +115,14 @@ TEST(VideoBroadcasterTest, AppliesMinOfSinkWantsMaxAndTargetPixelCount) {
 
   FakeVideoRenderer sink1;
   VideoSinkWants wants1;
-  wants1.target_pixel_count = rtc::Optional<int>(1280 * 720);
+  wants1.target_pixel_count = 1280 * 720;
 
   broadcaster.AddOrUpdateSink(&sink1, wants1);
   EXPECT_EQ(1280 * 720, *broadcaster.wants().target_pixel_count);
 
   FakeVideoRenderer sink2;
   VideoSinkWants wants2;
-  wants2.target_pixel_count = rtc::Optional<int>(640 * 360);
+  wants2.target_pixel_count = 640 * 360;
   broadcaster.AddOrUpdateSink(&sink2, wants2);
   EXPECT_EQ(640 * 360, *broadcaster.wants().target_pixel_count);
 

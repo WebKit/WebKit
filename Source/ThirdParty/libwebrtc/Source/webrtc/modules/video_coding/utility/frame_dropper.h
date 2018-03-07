@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
+#ifndef MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
+#define MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
 
 #include <cstddef>
 
-#include "webrtc/base/numerics/exp_filter.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/numerics/exp_filter.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -24,41 +24,36 @@ namespace webrtc {
 class FrameDropper {
  public:
   FrameDropper();
-  explicit FrameDropper(float max_time_drops);
   virtual ~FrameDropper() {}
 
   // Resets the FrameDropper to its initial state.
-  // This means that the frameRateWeight is set to its
-  // default value as well.
   virtual void Reset();
 
   virtual void Enable(bool enable);
-  // Answers the question if it's time to drop a frame
-  // if we want to reach a given frame rate. Must be
-  // called for every frame.
+
+  // Answers the question if it's time to drop a frame if we want to reach a
+  // given frame rate. Must be called for every frame.
   //
-  // Return value     : True if we should drop the current frame
+  // Return value     : True if we should drop the current frame.
   virtual bool DropFrame();
-  // Updates the FrameDropper with the size of the latest encoded
-  // frame. The FrameDropper calculates a new drop ratio (can be
-  // seen as the probability to drop a frame) and updates its
-  // internal statistics.
+
+  // Updates the FrameDropper with the size of the latest encoded frame.
+  // The FrameDropper calculates a new drop ratio (can be seen as the
+  // probability to drop a frame) and updates its internal statistics.
   //
   // Input:
-  //          - frameSizeBytes    : The size of the latest frame
-  //                                returned from the encoder.
-  //          - deltaFrame        : True if the encoder returned
-  //                                a key frame.
-  virtual void Fill(size_t frameSizeBytes, bool deltaFrame);
+  //          - framesize_bytes    : The size of the latest frame returned
+  //                                 from the encoder.
+  //          - delta_frame        : True if the encoder returned a key frame.
+  virtual void Fill(size_t framesize_bytes, bool delta_frame);
 
-  virtual void Leak(uint32_t inputFrameRate);
+  virtual void Leak(uint32_t input_framerate);
 
-  // Sets the target bit rate and the frame rate produced by
-  // the camera.
+  // Sets the target bit rate and the frame rate produced by the camera.
   //
   // Input:
-  //          - bitRate       : The target bit rate
-  virtual void SetRates(float bitRate, float incoming_frame_rate);
+  //          - bitrate       : The target bit rate.
+  virtual void SetRates(float bitrate, float incoming_frame_rate);
 
  private:
   void UpdateRatio();
@@ -96,4 +91,4 @@ class FrameDropper {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
+#endif  // MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_

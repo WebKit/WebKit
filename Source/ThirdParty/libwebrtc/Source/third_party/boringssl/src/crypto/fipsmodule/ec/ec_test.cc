@@ -276,6 +276,33 @@ TEST(ECTest, ArbitraryCurve) {
 
   // The key must be valid according to the new group too.
   EXPECT_TRUE(EC_KEY_check_key(key2.get()));
+
+  // Make a second instance of |group|.
+  bssl::UniquePtr<EC_GROUP> group2(
+      EC_GROUP_new_curve_GFp(p.get(), a.get(), b.get(), ctx.get()));
+  ASSERT_TRUE(group2);
+  bssl::UniquePtr<EC_POINT> generator2(EC_POINT_new(group2.get()));
+  ASSERT_TRUE(generator2);
+  ASSERT_TRUE(EC_POINT_set_affine_coordinates_GFp(
+      group2.get(), generator2.get(), gx.get(), gy.get(), ctx.get()));
+  ASSERT_TRUE(EC_GROUP_set_generator(group2.get(), generator2.get(),
+                                     order.get(), BN_value_one()));
+
+  EXPECT_EQ(0, EC_GROUP_cmp(group.get(), group.get(), NULL));
+  EXPECT_EQ(0, EC_GROUP_cmp(group2.get(), group.get(), NULL));
+
+  // group3 uses the wrong generator.
+  bssl::UniquePtr<EC_GROUP> group3(
+      EC_GROUP_new_curve_GFp(p.get(), a.get(), b.get(), ctx.get()));
+  ASSERT_TRUE(group3);
+  bssl::UniquePtr<EC_POINT> generator3(EC_POINT_new(group3.get()));
+  ASSERT_TRUE(generator3);
+  ASSERT_TRUE(EC_POINT_set_affine_coordinates_GFp(
+      group3.get(), generator3.get(), x.get(), y.get(), ctx.get()));
+  ASSERT_TRUE(EC_GROUP_set_generator(group3.get(), generator3.get(),
+                                     order.get(), BN_value_one()));
+
+  EXPECT_NE(0, EC_GROUP_cmp(group.get(), group3.get(), NULL));
 }
 
 class ECCurveTest : public testing::TestWithParam<EC_builtin_curve> {};
@@ -378,6 +405,63 @@ TEST_P(ECCurveTest, MulZero) {
 
   EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), point.get()))
       << "p * 0 did not return point at infinity.";
+}
+
+// Test that multiplying by the order produces ∞ and, moreover, that callers may
+// do so. |EC_POINT_mul| is almost exclusively used with reduced scalars, with
+// this exception. This comes from consumers following NIST SP 800-56A section
+// 5.6.2.3.2. (Though all our curves have cofactor one, so this check isn't
+// useful.)
+TEST_P(ECCurveTest, MulOrder) {
+  bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(GetParam().nid));
+  ASSERT_TRUE(group);
+
+  // Test that g × order = ∞.
+  bssl::UniquePtr<EC_POINT> point(EC_POINT_new(group.get()));
+  ASSERT_TRUE(point);
+  ASSERT_TRUE(EC_POINT_mul(group.get(), point.get(),
+                           EC_GROUP_get0_order(group.get()), nullptr, nullptr,
+                           nullptr));
+
+  EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), point.get()))
+      << "g * order did not return point at infinity.";
+
+  // Test that p × order = ∞, for some arbitrary p.
+  bssl::UniquePtr<BIGNUM> forty_two(BN_new());
+  ASSERT_TRUE(forty_two);
+  ASSERT_TRUE(BN_set_word(forty_two.get(), 42));
+  ASSERT_TRUE(EC_POINT_mul(group.get(), point.get(), forty_two.get(), nullptr,
+                           nullptr, nullptr));
+  ASSERT_TRUE(EC_POINT_mul(group.get(), point.get(), nullptr, point.get(),
+                           EC_GROUP_get0_order(group.get()), nullptr));
+
+  EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), point.get()))
+      << "p * order did not return point at infinity.";
+}
+
+// Test that 10×∞ + G = G.
+TEST_P(ECCurveTest, Mul) {
+  bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(GetParam().nid));
+  ASSERT_TRUE(group);
+  bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group.get()));
+  ASSERT_TRUE(p);
+  bssl::UniquePtr<EC_POINT> result(EC_POINT_new(group.get()));
+  ASSERT_TRUE(result);
+  bssl::UniquePtr<BIGNUM> n(BN_new());
+  ASSERT_TRUE(n);
+  ASSERT_TRUE(EC_POINT_set_to_infinity(group.get(), p.get()));
+  ASSERT_TRUE(BN_set_word(n.get(), 10));
+
+  // First check that 10×∞ = ∞.
+  ASSERT_TRUE(EC_POINT_mul(group.get(), result.get(), nullptr, p.get(), n.get(),
+                           nullptr));
+  EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), result.get()));
+
+  // Now check that 10×∞ + G = G.
+  const EC_POINT *generator = EC_GROUP_get0_generator(group.get());
+  ASSERT_TRUE(EC_POINT_mul(group.get(), result.get(), BN_value_one(), p.get(),
+                           n.get(), nullptr));
+  EXPECT_EQ(0, EC_POINT_cmp(group.get(), result.get(), generator, nullptr));
 }
 
 static std::vector<EC_builtin_curve> AllCurves() {

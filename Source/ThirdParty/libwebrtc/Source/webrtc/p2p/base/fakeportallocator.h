@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_FAKEPORTALLOCATOR_H_
-#define WEBRTC_P2P_BASE_FAKEPORTALLOCATOR_H_
+#ifndef P2P_BASE_FAKEPORTALLOCATOR_H_
+#define P2P_BASE_FAKEPORTALLOCATOR_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/nethelpers.h"
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/portallocator.h"
-#include "webrtc/p2p/base/udpport.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/portallocator.h"
+#include "p2p/base/udpport.h"
+#include "rtc_base/nethelpers.h"
 
 namespace rtc {
 class SocketFactory;
@@ -32,16 +32,15 @@ class TestUDPPort : public UDPPort {
   static TestUDPPort* Create(rtc::Thread* thread,
                              rtc::PacketSocketFactory* factory,
                              rtc::Network* network,
-                             const rtc::IPAddress& ip,
                              uint16_t min_port,
                              uint16_t max_port,
                              const std::string& username,
                              const std::string& password,
                              const std::string& origin,
                              bool emit_localhost_for_anyaddress) {
-    TestUDPPort* port = new TestUDPPort(thread, factory, network, ip, min_port,
-                                        max_port, username, password, origin,
-                                        emit_localhost_for_anyaddress);
+    TestUDPPort* port =
+        new TestUDPPort(thread, factory, network, min_port, max_port, username,
+                        password, origin, emit_localhost_for_anyaddress);
     if (!port->Init()) {
       delete port;
       port = nullptr;
@@ -62,7 +61,6 @@ class TestUDPPort : public UDPPort {
   TestUDPPort(rtc::Thread* thread,
               rtc::PacketSocketFactory* factory,
               rtc::Network* network,
-              const rtc::IPAddress& ip,
               uint16_t min_port,
               uint16_t max_port,
               const std::string& username,
@@ -72,7 +70,6 @@ class TestUDPPort : public UDPPort {
       : UDPPort(thread,
                 factory,
                 network,
-                ip,
                 min_port,
                 max_port,
                 username,
@@ -128,9 +125,9 @@ class FakePortAllocatorSession : public PortAllocatorSession {
           (rtc::HasIPv6Enabled() && (flags() & PORTALLOCATOR_ENABLE_IPV6))
               ? ipv6_network_
               : ipv4_network_;
-      port_.reset(TestUDPPort::Create(network_thread_, factory_, &network,
-                                      network.GetBestIP(), 0, 0, username(),
-                                      password(), std::string(), false));
+      port_.reset(TestUDPPort::Create(network_thread_, factory_, &network, 0, 0,
+                                      username(), password(), std::string(),
+                                      false));
       port_->SignalDestroyed.connect(
           this, &FakePortAllocatorSession::OnPortDestroyed);
       AddPort(port_.get());
@@ -253,4 +250,4 @@ class FakePortAllocator : public cricket::PortAllocator {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_FAKEPORTALLOCATOR_H_
+#endif  // P2P_BASE_FAKEPORTALLOCATOR_H_

@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_AUDIOTRACK_H_
-#define WEBRTC_PC_AUDIOTRACK_H_
+#ifndef PC_AUDIOTRACK_H_
+#define PC_AUDIOTRACK_H_
 
 #include <string>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/notifier.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/pc/mediastreamtrack.h"
+#include "api/mediastreaminterface.h"
+#include "api/notifier.h"
+#include "pc/mediastreamtrack.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -56,4 +56,4 @@ class AudioTrack : public MediaStreamTrack<AudioTrackInterface>,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_AUDIOTRACK_H_
+#endif  // PC_AUDIOTRACK_H_

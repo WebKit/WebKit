@@ -112,6 +112,10 @@ func (r *recordingConn) Transcript() []byte {
 		if flow.flowType != writeFlow {
 			continue
 		}
+		if r.isDatagram {
+			// Prepend a length prefix to preserve packet boundaries.
+			ret = append(ret, byte(len(flow.data)>>16), byte(len(flow.data)>>8), byte(len(flow.data)))
+		}
 		ret = append(ret, flow.data...)
 	}
 	return ret

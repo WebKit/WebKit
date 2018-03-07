@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/opus/audio_decoder_opus.h"
-#include "webrtc/test/fuzzers/audio_decoder_fuzzer.h"
+#include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
+#include "test/fuzzers/audio_decoder_fuzzer.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
   const size_t channels = (size % 2) + 1;  // 1 or 2 channels.
-  AudioDecoderOpus dec(channels);
+  AudioDecoderOpusImpl dec(channels);
   const int kSampleRateHz = 48000;
   const size_t kAllocatedOuputSizeSamples = kSampleRateHz / 10;  // 100 ms.
   int16_t output[kAllocatedOuputSizeSamples];

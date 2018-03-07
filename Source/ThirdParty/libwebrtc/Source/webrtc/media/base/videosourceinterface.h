@@ -8,17 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_VIDEOSOURCEINTERFACE_H_
-#define WEBRTC_MEDIA_BASE_VIDEOSOURCEINTERFACE_H_
+#ifndef MEDIA_BASE_VIDEOSOURCEINTERFACE_H_
+#define MEDIA_BASE_VIDEOSOURCEINTERFACE_H_
 
-#include "webrtc/media/base/videosinkinterface.h"
-#include "webrtc/base/optional.h"
+#include <limits>
+
+#include "api/optional.h"
+#include "media/base/videosinkinterface.h"
 
 namespace rtc {
 
 // VideoSinkWants is used for notifying the source of properties a video frame
 // should have when it is delivered to a certain sink.
 struct VideoSinkWants {
+  VideoSinkWants();
+  ~VideoSinkWants();
   // Tells the source whether the sink wants frames with rotation applied.
   // By default, any rotation must be applied by the sink.
   bool rotation_applied = false;
@@ -52,4 +56,4 @@ class VideoSourceInterface {
 };
 
 }  // namespace rtc
-#endif  // WEBRTC_MEDIA_BASE_VIDEOSOURCEINTERFACE_H_
+#endif  // MEDIA_BASE_VIDEOSOURCEINTERFACE_H_

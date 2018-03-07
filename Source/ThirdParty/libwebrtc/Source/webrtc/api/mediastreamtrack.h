@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_MEDIASTREAMTRACK_H_
-#define WEBRTC_API_MEDIASTREAMTRACK_H_
+#ifndef API_MEDIASTREAMTRACK_H_
+#define API_MEDIASTREAMTRACK_H_
 
 // Including this file is deprecated. It is no longer part of the public API.
 // This only includes the file in its new location for backwards compatibility.
-#include "webrtc/pc/mediastreamtrack.h"
+#include "pc/mediastreamtrack.h"
 
-#endif  // WEBRTC_API_MEDIASTREAMTRACK_H_
+#endif  // API_MEDIASTREAMTRACK_H_

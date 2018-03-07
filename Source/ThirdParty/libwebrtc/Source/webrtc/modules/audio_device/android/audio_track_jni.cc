@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_device/android/audio_manager.h"
-#include "webrtc/modules/audio_device/android/audio_track_jni.h"
+#include "modules/audio_device/android/audio_track_jni.h"
+#include "modules/audio_device/android/audio_manager.h"
 
 #include <utility>
 
 #include <android/log.h>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/format_macros.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/format_macros.h"
 
 #define TAG "AudioTrackJni"
 #define ALOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
@@ -82,10 +82,10 @@ AudioTrackJni::AudioTrackJni(AudioManager* audio_manager)
   RTC_CHECK(j_environment_);
   JNINativeMethod native_methods[] = {
       {"nativeCacheDirectBufferAddress", "(Ljava/nio/ByteBuffer;J)V",
-      reinterpret_cast<void*>(
-          &webrtc::AudioTrackJni::CacheDirectBufferAddress)},
+       reinterpret_cast<void*>(
+           &webrtc::AudioTrackJni::CacheDirectBufferAddress)},
       {"nativeGetPlayoutData", "(IJ)V",
-      reinterpret_cast<void*>(&webrtc::AudioTrackJni::GetPlayoutData)}};
+       reinterpret_cast<void*>(&webrtc::AudioTrackJni::GetPlayoutData)}};
   j_native_registration_ = j_environment_->RegisterNatives(
       "org/webrtc/voiceengine/WebRtcAudioTrack", native_methods,
       arraysize(native_methods));
@@ -122,8 +122,8 @@ int32_t AudioTrackJni::InitPlayout() {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!initialized_);
   RTC_DCHECK(!playing_);
-  if (!j_audio_track_->InitPlayout(
-      audio_parameters_.sample_rate(), audio_parameters_.channels())) {
+  if (!j_audio_track_->InitPlayout(audio_parameters_.sample_rate(),
+                                   audio_parameters_.channels())) {
     ALOGE("InitPlayout failed!");
     return -1;
   }
@@ -209,20 +209,21 @@ void AudioTrackJni::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
   audio_device_buffer_->SetPlayoutChannels(channels);
 }
 
-void JNICALL AudioTrackJni::CacheDirectBufferAddress(
-    JNIEnv* env, jobject obj, jobject byte_buffer, jlong nativeAudioTrack) {
+void JNICALL AudioTrackJni::CacheDirectBufferAddress(JNIEnv* env,
+                                                     jobject obj,
+                                                     jobject byte_buffer,
+                                                     jlong nativeAudioTrack) {
   webrtc::AudioTrackJni* this_object =
-      reinterpret_cast<webrtc::AudioTrackJni*> (nativeAudioTrack);
+      reinterpret_cast<webrtc::AudioTrackJni*>(nativeAudioTrack);
   this_object->OnCacheDirectBufferAddress(env, byte_buffer);
 }
 
-void AudioTrackJni::OnCacheDirectBufferAddress(
-    JNIEnv* env, jobject byte_buffer) {
+void AudioTrackJni::OnCacheDirectBufferAddress(JNIEnv* env,
+                                               jobject byte_buffer) {
   ALOGD("OnCacheDirectBufferAddress");
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!direct_buffer_address_);
-  direct_buffer_address_ =
-      env->GetDirectBufferAddress(byte_buffer);
+  direct_buffer_address_ = env->GetDirectBufferAddress(byte_buffer);
   jlong capacity = env->GetDirectBufferCapacity(byte_buffer);
   ALOGD("direct buffer capacity: %lld", capacity);
   direct_buffer_capacity_in_bytes_ = static_cast<size_t>(capacity);
@@ -231,10 +232,12 @@ void AudioTrackJni::OnCacheDirectBufferAddress(
   ALOGD("frames_per_buffer: %" PRIuS, frames_per_buffer_);
 }
 
-void JNICALL AudioTrackJni::GetPlayoutData(
-  JNIEnv* env, jobject obj, jint length, jlong nativeAudioTrack) {
+void JNICALL AudioTrackJni::GetPlayoutData(JNIEnv* env,
+                                           jobject obj,
+                                           jint length,
+                                           jlong nativeAudioTrack) {
   webrtc::AudioTrackJni* this_object =
-      reinterpret_cast<webrtc::AudioTrackJni*> (nativeAudioTrack);
+      reinterpret_cast<webrtc::AudioTrackJni*>(nativeAudioTrack);
   this_object->OnGetPlayoutData(static_cast<size_t>(length));
 }
 

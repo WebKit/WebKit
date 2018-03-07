@@ -7,10 +7,10 @@
 *  be found in the AUTHORS file in the root of the source tree.
 */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP9_SCREENSHARE_LAYERS_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP9_SCREENSHARE_LAYERS_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_VP9_SCREENSHARE_LAYERS_H_
+#define MODULES_VIDEO_CODING_CODECS_VP9_SCREENSHARE_LAYERS_H_
 
-#include "webrtc/modules/video_coding/codecs/vp9/vp9_impl.h"
+#include "modules/video_coding/codecs/vp9/vp9_impl.h"
 
 namespace webrtc {
 
@@ -63,4 +63,4 @@ class ScreenshareLayersVP9 {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP9_SCREENSHARE_LAYERS_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_VP9_SCREENSHARE_LAYERS_H_

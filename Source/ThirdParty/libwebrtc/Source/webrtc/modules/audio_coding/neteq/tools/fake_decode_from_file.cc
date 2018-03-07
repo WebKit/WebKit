@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/fake_decode_from_file.h"
+#include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace test {
@@ -59,8 +59,7 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
     RTC_CHECK(input_->Seek(jump));
   }
 
-  next_timestamp_from_input_ =
-      rtc::Optional<uint32_t>(timestamp_to_decode + samples_to_decode);
+  next_timestamp_from_input_ = timestamp_to_decode + samples_to_decode;
 
   uint32_t original_payload_size_bytes =
       ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);

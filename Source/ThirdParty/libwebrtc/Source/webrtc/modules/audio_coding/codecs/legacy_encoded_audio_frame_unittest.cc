@@ -8,9 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
-#include "webrtc/modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
+
+#include "modules/audio_coding/acm2/rent_a_codec.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -140,8 +142,9 @@ TEST_P(SplitBySamplesTest, PayloadSizes) {
         ASSERT_EQ(value, payload[i]);
       }
 
-      expected_timestamp += expected_split.frame_sizes[i] * samples_per_ms_;
-      expected_byte_offset += length_bytes;
+      expected_timestamp += rtc::checked_cast<uint32_t>(
+          expected_split.frame_sizes[i] * samples_per_ms_);
+      expected_byte_offset += rtc::checked_cast<uint32_t>(length_bytes);
     }
   }
 }

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_DEVICE_ANDROID_AUDIO_COMMON_H_
-#define WEBRTC_MODULES_AUDIO_DEVICE_ANDROID_AUDIO_COMMON_H_
+#ifndef MODULES_AUDIO_DEVICE_ANDROID_AUDIO_COMMON_H_
+#define MODULES_AUDIO_DEVICE_ANDROID_AUDIO_COMMON_H_
 
 namespace webrtc {
 
@@ -25,4 +25,4 @@ const int kHighLatencyModeDelayEstimateInMilliseconds = 150;
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_DEVICE_ANDROID_AUDIO_COMMON_H_
+#endif  // MODULES_AUDIO_DEVICE_ANDROID_AUDIO_COMMON_H_

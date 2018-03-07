@@ -11,7 +11,7 @@
 #include <limits.h>
 #include <math.h>
 
-#include "webrtc/modules/video_processing/util/skin_detection.h"
+#include "modules/video_processing/util/skin_detection.h"
 
 namespace webrtc {
 

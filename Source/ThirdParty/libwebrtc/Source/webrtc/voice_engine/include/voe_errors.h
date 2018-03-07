@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VOICE_ENGINE_VOE_ERRORS_H
-#define WEBRTC_VOICE_ENGINE_VOE_ERRORS_H
+#ifndef VOICE_ENGINE_VOE_ERRORS_H_
+#define VOICE_ENGINE_VOE_ERRORS_H_
 
 // Warnings
 #define VE_PORT_NOT_DEFINED 8001
@@ -79,7 +79,7 @@
 #define VE_DESTINATION_NOT_INITED 8104
 #define VE_RECEIVE_SOCKETS_CONFLICT 8105
 #define VE_SEND_SOCKETS_CONFLICT 8106
-#define VE_TYPING_NOISE_WARNING 8107
+// 8107 is not used
 #define VE_NOISE_WARNING 8109
 #define VE_CANNOT_GET_SEND_CODEC 8110
 #define VE_CANNOT_GET_REC_CODEC 8111
@@ -87,7 +87,7 @@
 #define VE_CANNOT_SET_SECONDARY_SEND_CODEC 8113
 #define VE_CANNOT_GET_SECONDARY_SEND_CODEC 8114
 #define VE_CANNOT_REMOVE_SECONDARY_SEND_CODEC 8115
-#define VE_TYPING_NOISE_OFF_WARNING 8116
+// 8116 is not used
 
 // Errors causing limited functionality
 #define VE_RTCP_SOCKET_ERROR 9001
@@ -162,4 +162,4 @@
 // Warnings for other platforms (reserved range 8061-8080)
 #define VE_IGNORED_FUNCTION 8061
 
-#endif  //  WEBRTC_VOICE_ENGINE_VOE_ERRORS_H
+#endif  //  VOICE_ENGINE_VOE_ERRORS_H_

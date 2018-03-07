@@ -10,13 +10,13 @@
 
 #include <stdio.h>
 
-#ifndef WEBRTC_TEST_TESTSUPPORT_FILEUTILS_H_
-#define WEBRTC_TEST_TESTSUPPORT_FILEUTILS_H_
+#ifndef TEST_TESTSUPPORT_FILEUTILS_H_
+#define TEST_TESTSUPPORT_FILEUTILS_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
 
 namespace webrtc {
 namespace test {
@@ -107,4 +107,4 @@ void SetExecutablePath(const std::string& path_to_executable);
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_TESTSUPPORT_FILEUTILS_H_
+#endif  // TEST_TESTSUPPORT_FILEUTILS_H_

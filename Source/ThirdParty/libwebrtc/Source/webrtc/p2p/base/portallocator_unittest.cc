@@ -10,11 +10,11 @@
 
 #include <memory>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/fakeportallocator.h"
-#include "webrtc/p2p/base/portallocator.h"
+#include "p2p/base/fakeportallocator.h"
+#include "p2p/base/portallocator.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/virtualsocketserver.h"
 
 static const char kContentName[] = "test content";
 // Based on ICE_UFRAG_LENGTH

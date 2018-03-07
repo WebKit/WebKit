@@ -33,10 +33,23 @@ rtc_static_library("utility") {
     "..:module_api",
     "../..:webrtc_common",
     "../../audio/utility:audio_frame_operations",
-    "../../base:rtc_task_queue",
     "../../common_audio",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_task_queue",
     "../../system_wrappers",
     "../media_file",
+  ]
+}
+
+rtc_source_set("mock_process_thread") {
+  testonly = true
+  sources = [
+    "include/mock/mock_process_thread.h",
+  ]
+  deps = [
+    ":utility",
+    "../../rtc_base:rtc_base_approved",
+    "../../test:test_support",
   ]
 }
 
@@ -44,19 +57,14 @@ if (rtc_include_tests) {
   rtc_source_set("utility_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "source/process_thread_impl_unittest.cc",
     ]
     deps = [
       ":utility",
       "..:module_api",
-      "../../base:rtc_task_queue",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_task_queue",
       "../../test:test_support",
       "//testing/gmock",
     ]

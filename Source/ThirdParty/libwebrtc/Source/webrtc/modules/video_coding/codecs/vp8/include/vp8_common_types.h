@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
+#define MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
 
-#include "webrtc/common_types.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 // Ratio allocation between temporal streams:
 // Values as required for the VP8 codec (accumulating).
 static const float
-    kVp8LayerRateAlloction[kMaxTemporalStreams][kMaxTemporalStreams] = {
+    kVp8LayerRateAlloction[kMaxSimulcastStreams][kMaxTemporalStreams] = {
         {1.0f, 1.0f, 1.0f, 1.0f},  // 1 layer
         {0.6f, 1.0f, 1.0f, 1.0f},  // 2 layers {60%, 40%}
         {0.4f, 0.6f, 1.0f, 1.0f},  // 3 layers {40%, 20%, 40%}
@@ -26,4 +26,4 @@ static const float
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_

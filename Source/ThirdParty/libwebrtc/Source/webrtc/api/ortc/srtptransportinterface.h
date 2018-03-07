@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_ORTC_SRTPTRANSPORTINTERFACE_H_
-#define WEBRTC_API_ORTC_SRTPTRANSPORTINTERFACE_H_
+#ifndef API_ORTC_SRTPTRANSPORTINTERFACE_H_
+#define API_ORTC_SRTPTRANSPORTINTERFACE_H_
 
-#include "webrtc/api/ortc/rtptransportinterface.h"
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/media/base/cryptoparams.h"
+#include "api/ortc/rtptransportinterface.h"
+#include "api/rtcerror.h"
+#include "api/cryptoparams.h"
 
 namespace webrtc {
 
@@ -45,4 +45,4 @@ class SrtpTransportInterface : public RtpTransportInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_ORTC_SRTPTRANSPORTINTERFACE_H_
+#endif  // API_ORTC_SRTPTRANSPORTINTERFACE_H_

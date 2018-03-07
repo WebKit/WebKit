@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/report_block_stats.h"
+#include "video/report_block_stats.h"
 
 namespace webrtc {
 
@@ -34,12 +34,13 @@ void ReportBlockStats::Store(const RtcpStatistics& rtcp_stats,
                              uint32_t remote_ssrc,
                              uint32_t source_ssrc) {
   RTCPReportBlock block;
-  block.cumulativeLost = rtcp_stats.cumulative_lost;
-  block.fractionLost = rtcp_stats.fraction_lost;
-  block.extendedHighSeqNum = rtcp_stats.extended_max_sequence_number;
+  block.packets_lost = rtcp_stats.packets_lost;
+  block.fraction_lost = rtcp_stats.fraction_lost;
+  block.extended_highest_sequence_number =
+      rtcp_stats.extended_highest_sequence_number;
   block.jitter = rtcp_stats.jitter;
-  block.remoteSSRC = remote_ssrc;
-  block.sourceSSRC = source_ssrc;
+  block.sender_ssrc = remote_ssrc;
+  block.source_ssrc = source_ssrc;
   uint32_t num_sequence_numbers = 0;
   uint32_t num_lost_sequence_numbers = 0;
   StoreAndAddPacketIncrement(
@@ -56,7 +57,7 @@ RTCPReportBlock ReportBlockStats::AggregateAndStore(
   uint32_t num_lost_sequence_numbers = 0;
   ReportBlockVector::const_iterator report_block = report_blocks.begin();
   for (; report_block != report_blocks.end(); ++report_block) {
-    aggregate.cumulativeLost += report_block->cumulativeLost;
+    aggregate.packets_lost += report_block->packets_lost;
     aggregate.jitter += report_block->jitter;
     StoreAndAddPacketIncrement(*report_block,
                                &num_sequence_numbers,
@@ -68,7 +69,7 @@ RTCPReportBlock ReportBlockStats::AggregateAndStore(
     return report_blocks[0];
   }
   // Fraction lost since previous report block.
-  aggregate.fractionLost =
+  aggregate.fraction_lost =
       FractionLost(num_lost_sequence_numbers, num_sequence_numbers);
   aggregate.jitter = static_cast<uint32_t>(
       (aggregate.jitter + report_blocks.size() / 2) / report_blocks.size());
@@ -80,13 +81,14 @@ void ReportBlockStats::StoreAndAddPacketIncrement(
     uint32_t* num_sequence_numbers,
     uint32_t* num_lost_sequence_numbers) {
   // Get diff with previous report block.
-  ReportBlockMap::iterator prev_report_block = prev_report_blocks_.find(
-        report_block.sourceSSRC);
+  ReportBlockMap::iterator prev_report_block =
+      prev_report_blocks_.find(report_block.source_ssrc);
   if (prev_report_block != prev_report_blocks_.end()) {
-    int seq_num_diff = report_block.extendedHighSeqNum -
-                       prev_report_block->second.extendedHighSeqNum;
-    int cum_loss_diff = report_block.cumulativeLost -
-                        prev_report_block->second.cumulativeLost;
+    int seq_num_diff =
+        report_block.extended_highest_sequence_number -
+        prev_report_block->second.extended_highest_sequence_number;
+    int cum_loss_diff =
+        report_block.packets_lost - prev_report_block->second.packets_lost;
     if (seq_num_diff >= 0 && cum_loss_diff >= 0) {
       *num_sequence_numbers += seq_num_diff;
       *num_lost_sequence_numbers += cum_loss_diff;
@@ -96,7 +98,7 @@ void ReportBlockStats::StoreAndAddPacketIncrement(
     }
   }
   // Store current report block.
-  prev_report_blocks_[report_block.sourceSSRC] = report_block;
+  prev_report_blocks_[report_block.source_ssrc] = report_block;
 }
 
 int ReportBlockStats::FractionLostInPercent() const {

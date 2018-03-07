@@ -7,9 +7,9 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_receiver.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/rtp_rtcp/source/rtcp_receiver.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace {

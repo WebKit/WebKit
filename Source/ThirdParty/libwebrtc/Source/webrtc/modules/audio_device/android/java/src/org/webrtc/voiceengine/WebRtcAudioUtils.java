@@ -60,30 +60,46 @@ public final class WebRtcAudioUtils {
 
   // Call these methods if any hardware based effect shall be replaced by a
   // software based version provided by the WebRTC stack instead.
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized void setWebRtcBasedAcousticEchoCanceler(boolean enable) {
     useWebRtcBasedAcousticEchoCanceler = enable;
   }
+
+    // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized void setWebRtcBasedNoiseSuppressor(boolean enable) {
     useWebRtcBasedNoiseSuppressor = enable;
   }
+
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized void setWebRtcBasedAutomaticGainControl(boolean enable) {
     // TODO(henrika): deprecated; remove when no longer used by any client.
     Logging.w(TAG, "setWebRtcBasedAutomaticGainControl() is deprecated");
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized boolean useWebRtcBasedAcousticEchoCanceler() {
     if (useWebRtcBasedAcousticEchoCanceler) {
       Logging.w(TAG, "Overriding default behavior; now using WebRTC AEC!");
     }
     return useWebRtcBasedAcousticEchoCanceler;
   }
+
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized boolean useWebRtcBasedNoiseSuppressor() {
     if (useWebRtcBasedNoiseSuppressor) {
       Logging.w(TAG, "Overriding default behavior; now using WebRTC NS!");
     }
     return useWebRtcBasedNoiseSuppressor;
   }
+
   // TODO(henrika): deprecated; remove when no longer used by any client.
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized boolean useWebRtcBasedAutomaticGainControl() {
     // Always return true here to avoid trying to use any built-in AGC.
     return true;
@@ -110,15 +126,21 @@ public final class WebRtcAudioUtils {
   // Call this method if the default handling of querying the native sample
   // rate shall be overridden. Can be useful on some devices where the
   // available Android APIs are known to return invalid results.
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized void setDefaultSampleRateHz(int sampleRateHz) {
     isDefaultSampleRateOverridden = true;
     defaultSampleRateHz = sampleRateHz;
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized boolean isDefaultSampleRateOverridden() {
     return isDefaultSampleRateOverridden;
   }
 
+  // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+  @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized int getDefaultSampleRateHz() {
     return defaultSampleRateHz;
   }
@@ -184,11 +206,5 @@ public final class WebRtcAudioUtils {
             + "Manufacturer: " + Build.MANUFACTURER + ", "
             + "Model: " + Build.MODEL + ", "
             + "Product: " + Build.PRODUCT);
-  }
-
-  // Checks if the process has as specified permission or not.
-  public static boolean hasPermission(Context context, String permission) {
-    return context.checkPermission(permission, Process.myPid(), Process.myUid())
-        == PackageManager.PERMISSION_GRANTED;
   }
 }

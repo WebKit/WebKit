@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.h"
+#include "modules/video_coding/codecs/vp8/simulcast_test_utility.h"
 
 namespace webrtc {
 namespace testing {
 
 class TestVp8Impl : public TestVp8Simulcast {
- public:
-  TestVp8Impl()
-      : TestVp8Simulcast(VP8Encoder::Create(), VP8Decoder::Create()) {}
-
  protected:
-  virtual void SetUp() { TestVp8Simulcast::SetUp(); }
-  virtual void TearDown() { TestVp8Simulcast::TearDown(); }
+  std::unique_ptr<VP8Encoder> CreateEncoder() override {
+    return VP8Encoder::Create();
+  }
+  std::unique_ptr<VP8Decoder> CreateDecoder() override {
+    return VP8Decoder::Create();
+  }
 };
 
 TEST_F(TestVp8Impl, TestKeyFrameRequestsOnAllStreams) {
@@ -69,10 +69,6 @@ TEST_F(TestVp8Impl, TestSwitchingToOneSmallStream) {
 
 TEST_F(TestVp8Impl, TestSaptioTemporalLayers333PatternEncoder) {
   TestVp8Simulcast::TestSaptioTemporalLayers333PatternEncoder();
-}
-
-TEST_F(TestVp8Impl, TestSpatioTemporalLayers321PatternEncoder) {
-  TestVp8Simulcast::TestSpatioTemporalLayers321PatternEncoder();
 }
 
 TEST_F(TestVp8Impl, TestStrideEncodeDecode) {

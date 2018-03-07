@@ -10,8 +10,8 @@
 
 // This header file defines the coefficients of the FIR based approximation of
 // the Meyer Wavelet
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_DAUBECHIES_8_WAVELET_COEFFS_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_DAUBECHIES_8_WAVELET_COEFFS_H_
+#ifndef MODULES_AUDIO_PROCESSING_TRANSIENT_DAUBECHIES_8_WAVELET_COEFFS_H_
+#define MODULES_AUDIO_PROCESSING_TRANSIENT_DAUBECHIES_8_WAVELET_COEFFS_H_
 
 // Decomposition coefficients Daubechies 8.
 
@@ -60,4 +60,4 @@ const float kDaubechies8LowPassCoefficients[kDaubechies8CoefficientsLength] = {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_DAUBECHIES_8_WAVELET_COEFFS_H_
+#endif  // MODULES_AUDIO_PROCESSING_TRANSIENT_DAUBECHIES_8_WAVELET_COEFFS_H_

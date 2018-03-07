@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/gl/gl_renderer.h"
+#include "test/gl/gl_renderer.h"
 
 #include <string.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {

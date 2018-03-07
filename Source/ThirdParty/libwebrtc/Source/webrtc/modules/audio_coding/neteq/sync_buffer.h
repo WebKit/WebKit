@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
+#define MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -98,4 +98,4 @@ class SyncBuffer : public AudioMultiVector {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_

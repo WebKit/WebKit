@@ -15,8 +15,8 @@
  *
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/common_audio/signal_processing/resample_by_2_internal.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/resample_by_2_internal.h"
 
 // Declaration of internally used functions
 static void WebRtcSpl_32khzTo22khzIntToShort(const int32_t *In, int16_t *Out,

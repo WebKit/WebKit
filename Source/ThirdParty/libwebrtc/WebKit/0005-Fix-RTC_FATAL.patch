@@ -1,0 +1,537 @@
+From 62e7f44af723f2f7f28038a9f08355a29cb0dc24 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 14 Dec 2017 13:56:05 -0800
+Subject: [PATCH 5/8] Fix RTC_FATAL
+
+---
+ .../api/audio_codecs/ilbc/audio_encoder_ilbc.cc    |  2 +-
+ .../libwebrtc/Source/webrtc/api/mediatypes.cc      |  4 +--
+ .../webrtc/common_video/video_frame_buffer.cc      |  2 +-
+ .../audio_coding/acm2/audio_coding_module.cc       |  2 +-
+ .../modules/audio_coding/acm2/rent_a_codec.cc      |  4 +--
+ .../audio_coding/codecs/cng/audio_encoder_cng.cc   |  2 +-
+ .../audio_coding/codecs/ilbc/audio_encoder_ilbc.cc |  4 +--
+ .../audio_coding/neteq/tools/neteq_rtpplay.cc      |  2 +-
+ .../modules/audio_coding/neteq/tools/neteq_test.cc |  4 +--
+ .../audio_coding/neteq/tools/rtp_file_source.cc    |  2 +-
+ .../audio_device/android/audio_device_template.h   | 30 +++++++++++-----------
+ .../audio_device/android/audio_record_jni.cc       |  2 +-
+ .../quality_assessment/fake_polqa.cc               |  2 +-
+ .../audio_processing/test/wav_based_simulator.cc   |  2 +-
+ .../libwebrtc/Source/webrtc/ortc/ortcfactory.cc    |  4 +--
+ .../Source/webrtc/ortc/rtpparametersconversion.cc  |  2 +-
+ .../libwebrtc/Source/webrtc/rtc_base/checks.h      |  6 ++---
+ .../libwebrtc/Source/webrtc/rtc_base/flags.cc      |  6 ++---
+ .../webrtc/rtc_base/numerics/safe_conversions.h    |  4 +--
+ .../Source/webrtc/rtc_base/opensslidentity.cc      |  8 +++---
+ .../Source/webrtc/test/rtp_file_reader.cc          |  4 +--
+ .../Source/webrtc/voice_engine/utility.cc          |  4 +--
+ 22 files changed, 51 insertions(+), 51 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc
+index a7c68ffcf02..6db88402e39 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc
+@@ -33,7 +33,7 @@ int GetIlbcBitrate(int ptime) {
+       // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
+       return 13333;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+ }
+ }  // namespace
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc
+index 599542db08f..140d0ae9625 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc
+@@ -28,7 +28,7 @@ std::string MediaTypeToString(MediaType type) {
+     case MEDIA_TYPE_DATA:
+       return kMediaTypeData;
+   }
+-  FATAL();
++  RTC_FATAL();
+   // Not reachable; avoids compile warning.
+   return "";
+ }
+@@ -41,7 +41,7 @@ MediaType MediaTypeFromString(const std::string& type_str) {
+   } else if (type_str == kMediaTypeData) {
+     return MEDIA_TYPE_DATA;
+   }
+-  FATAL();
++  RTC_FATAL();
+   // Not reachable; avoids compile warning.
+   return static_cast<MediaType>(-1);
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc
+index 88c8ca4a5d4..c05f72e6d17 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc
+@@ -253,7 +253,7 @@ rtc::scoped_refptr<PlanarYuvBuffer> WrapYuvBuffer(
+       return WrapI444Buffer(width, height, y_plane, y_stride, u_plane, u_stride,
+                             v_plane, v_stride, no_longer_used);
+     default:
+-      FATAL() << "Unexpected frame buffer type.";
++      RTC_FATAL() << "Unexpected frame buffer type.";
+       return nullptr;
+   }
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/audio_coding_module.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/audio_coding_module.cc
+index 18325f41590..f9c9690e98e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/audio_coding_module.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/audio_coding_module.cc
+@@ -1145,7 +1145,7 @@ int AudioCodingModuleImpl::SetOpusApplication(OpusApplicationMode application) {
+       app = AudioEncoder::Application::kAudio;
+       break;
+     default:
+-      FATAL();
++      RTC_FATAL();
+       return 0;
+   }
+   return encoder_stack_->SetApplication(app) ? 0 : -1;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
+index 78db38dad60..4a1746e3da9 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/acm2/rent_a_codec.cc
+@@ -215,7 +215,7 @@ std::unique_ptr<AudioEncoder> CreateCngEncoder(
+       config.vad_mode = Vad::kVadVeryAggressive;
+       break;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+   return std::unique_ptr<AudioEncoder>(new AudioEncoderCng(std::move(config)));
+ }
+@@ -230,7 +230,7 @@ std::unique_ptr<AudioDecoder> CreateIsacDecoder(
+   return std::unique_ptr<AudioDecoder>(
+       new AudioDecoderIsacFloatImpl(sample_rate_hz, bwinfo));
+ #else
+-  FATAL() << "iSAC is not supported.";
++  RTC_FATAL() << "iSAC is not supported.";
+   return std::unique_ptr<AudioDecoder>();
+ #endif
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
+index 78148ab3504..5a043ecbccb 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
+@@ -139,7 +139,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeImpl(
+       break;
+     }
+     case Vad::kError: {
+-      FATAL();  // Fails only if fed invalid data.
++      RTC_FATAL();  // Fails only if fed invalid data.
+       break;
+     }
+   }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+index 6ddc078f095..e108c412ceb 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+@@ -40,7 +40,7 @@ int GetIlbcBitrate(int ptime) {
+       // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
+       return 13333;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+ }
+ 
+@@ -148,7 +148,7 @@ size_t AudioEncoderIlbcImpl::RequiredOutputSizeBytes() const {
+     case 3:   return 50;
+     case 4:   return 2 * 38;
+     case 6:   return 2 * 50;
+-    default:  FATAL();
++    default:  RTC_FATAL();
+   }
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc
+index 2657bfaeb5b..4137f8e0c4f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc
+@@ -171,7 +171,7 @@ std::string CodecName(NetEqDecoder codec) {
+     case NetEqDecoder::kDecoderCNGswb48kHz:
+       return "comfort noise (48 kHz)";
+     default:
+-      FATAL();
++      RTC_FATAL();
+       return "undefined";
+   }
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_test.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_test.cc
+index 39d95495779..295111a97d9 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_test.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/neteq_test.cc
+@@ -21,12 +21,12 @@ void DefaultNetEqTestErrorCallback::OnInsertPacketError(
+     const NetEqInput::PacketData& packet) {
+   std::cerr << "InsertPacket returned an error." << std::endl;
+   std::cerr << "Packet data: " << packet.ToString() << std::endl;
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ void DefaultNetEqTestErrorCallback::OnGetAudioError() {
+   std::cerr << "GetAudio returned an error." << std::endl;
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ NetEqTest::NetEqTest(const NetEq::Config& config,
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
+index c9ae5f2e714..d1b1008d704 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
+@@ -93,7 +93,7 @@ bool RtpFileSource::OpenFile(const std::string& file_name) {
+     return true;
+   rtp_reader_.reset(RtpFileReader::Create(RtpFileReader::kPcap, file_name));
+   if (!rtp_reader_) {
+-    FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
++    RTC_FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
+                "that .pcapng is not supported.";
+   }
+   return true;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_device_template.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_device_template.h
+index 75dbaf315f5..a4ef5dfa310 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_device_template.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_device_template.h
+@@ -103,14 +103,14 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
+   int32_t PlayoutDeviceName(uint16_t index,
+                             char name[kAdmMaxDeviceNameSize],
+                             char guid[kAdmMaxGuidSize]) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t RecordingDeviceName(uint16_t index,
+                               char name[kAdmMaxDeviceNameSize],
+                               char guid[kAdmMaxGuidSize]) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+@@ -123,7 +123,7 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
+ 
+   int32_t SetPlayoutDevice(
+       AudioDeviceModule::WindowsDeviceType device) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+@@ -136,7 +136,7 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
+ 
+   int32_t SetRecordingDevice(
+       AudioDeviceModule::WindowsDeviceType device) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+@@ -217,7 +217,7 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
+ 
+   int32_t SetAGC(bool enable) override {
+     if (enable) {
+-      FATAL() << "Should never be called";
++      RTC_FATAL() << "Should never be called";
+     }
+     return -1;
+   }
+@@ -278,52 +278,52 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
+   }
+ 
+   int32_t SetMicrophoneVolume(uint32_t volume) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t MicrophoneVolume(uint32_t& volume) const override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t MinMicrophoneVolume(uint32_t& minVolume) const override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t SpeakerMuteIsAvailable(bool& available) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t SetSpeakerMute(bool enable) override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t SpeakerMute(bool& enabled) const override {
+-    FATAL() << "Should never be called";
++    RTC_FATAL() << "Should never be called";
+     return -1;
+   }
+ 
+   int32_t MicrophoneMuteIsAvailable(bool& available) override {
+-    FATAL() << "Not implemented";
++    RTC_FATAL() << "Not implemented";
+     return -1;
+   }
+ 
+   int32_t SetMicrophoneMute(bool enable) override {
+-    FATAL() << "Not implemented";
++    RTC_FATAL() << "Not implemented";
+     return -1;
+   }
+ 
+   int32_t MicrophoneMute(bool& enabled) const override {
+-    FATAL() << "Not implemented";
++    RTC_FATAL() << "Not implemented";
+     return -1;
+   }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_record_jni.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_record_jni.cc
+index 79f8c8b0f9b..b8a564f06f2 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_record_jni.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/android/audio_record_jni.cc
+@@ -196,7 +196,7 @@ int32_t AudioRecordJni::EnableBuiltInAEC(bool enable) {
+ 
+ int32_t AudioRecordJni::EnableBuiltInAGC(bool enable) {
+   // TODO(henrika): possibly remove when no longer used by any client.
+-  FATAL() << "Should never be called";
++  RTC_FATAL() << "Should never be called";
+   return -1;
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/fake_polqa.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/fake_polqa.cc
+index 62d8ebb84d9..bae652e2835 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/fake_polqa.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/fake_polqa.cc
+@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
+       return 0;
+     }
+   }
+-  FATAL() << kErrorMessage;
++  RTC_FATAL() << kErrorMessage;
+ }
+ 
+ }  // namespace test
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/wav_based_simulator.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/wav_based_simulator.cc
+index f53d1e5d8d9..6ed8e529416 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/wav_based_simulator.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_processing/test/wav_based_simulator.cc
+@@ -40,7 +40,7 @@ WavBasedSimulator::GetCustomEventChain(const std::string& filename) {
+       case '\n':
+         break;
+       default:
+-        FATAL() << "Incorrect custom call order file, reverting to using the "
++        RTC_FATAL() << "Incorrect custom call order file, reverting to using the "
+                    "default call order";
+         fclose(stream);
+         return WavBasedSimulator::GetDefaultEventChain();
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/ortcfactory.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/ortcfactory.cc
+index 7492dd47aae..b9f0f61e5d8 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/ortcfactory.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/ortcfactory.cc
+@@ -332,7 +332,7 @@ RtpCapabilities OrtcFactory::GetRtpSenderCapabilities(
+       return RtpCapabilities();
+   }
+   // Not reached; avoids compile warning.
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ RTCErrorOr<std::unique_ptr<OrtcRtpSenderInterface>>
+@@ -397,7 +397,7 @@ RtpCapabilities OrtcFactory::GetRtpReceiverCapabilities(
+       return RtpCapabilities();
+   }
+   // Not reached; avoids compile warning.
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ RTCErrorOr<std::unique_ptr<OrtcRtpReceiverInterface>>
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/rtpparametersconversion.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/rtpparametersconversion.cc
+index 0a657eca8f3..bc702909e34 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/rtpparametersconversion.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/ortc/rtpparametersconversion.cc
+@@ -62,7 +62,7 @@ RTCErrorOr<cricket::FeedbackParam> ToCricketFeedbackParam(
+       return cricket::FeedbackParam(cricket::kRtcpFbParamTransportCc);
+   }
+   // Not reached; avoids compile warning.
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ template <typename C>
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h
+index e9a19e6051f..cf2965fd77e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h
+@@ -73,7 +73,7 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
+ //   messages if the condition doesn't hold. Prefer them to raw RTC_CHECK and
+ //   RTC_DCHECK.
+ //
+-// - FATAL() aborts unconditionally.
++// - RTC_FATAL() aborts unconditionally.
+ //
+ // TODO(ajm): Ideally, checks.h would be combined with logging.h, but
+ // consolidation with system_wrappers/logging.h should happen first.
+@@ -135,7 +135,7 @@ std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
+ }
+ 
+ // MSVC doesn't like complex extern templates and DLLs.
+-#if !defined(COMPILER_MSVC)
++#if 0
+ // Commonly used instantiations of MakeCheckOpString<>. Explicitly instantiated
+ // in logging.cc.
+ extern template std::string* MakeCheckOpString<int, int>(
+@@ -222,7 +222,7 @@ class FatalMessageVoidify {
+ #define RTC_NOTREACHED() RTC_DCHECK(RTC_UNREACHABLE_CODE_HIT)
+ 
+ // TODO(bugs.webrtc.org/8454): Add an RTC_ prefix or rename differently.
+-#define FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
++#define RTC_FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
+ // TODO(ajm): Consider adding RTC_NOTIMPLEMENTED macro when
+ // base/logging.h and system_wrappers/logging.h are consolidated such that we
+ // can match the Chromium behavior.
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc
+index 4f2b11a9624..1c24a76ace4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc
+@@ -57,7 +57,7 @@ void Flag::SetToDefault() {
+       variable_->s = default_.s;
+       return;
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ 
+@@ -68,7 +68,7 @@ static const char* Type2String(Flag::Type type) {
+     case Flag::FLOAT: return "float";
+     case Flag::STRING: return "string";
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ 
+@@ -87,7 +87,7 @@ static void PrintFlagValue(Flag::Type type, FlagValue* p) {
+       printf("%s", p->s);
+       return;
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h
+index 58efcaa746a..48c212e4d49 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h
+@@ -63,11 +63,11 @@ inline Dst saturated_cast(Src value) {
+ 
+     // Should fail only on attempting to assign NaN to a saturated integer.
+     case internal::TYPE_INVALID:
+-      FATAL();
++      RTC_FATAL();
+       return std::numeric_limits<Dst>::max();
+   }
+ 
+-  FATAL();
++  RTC_FATAL();
+   return static_cast<Dst>(value);
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslidentity.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslidentity.cc
+index 85ef176de09..bfb167aacef 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslidentity.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslidentity.cc
+@@ -411,11 +411,11 @@ OpenSSLCertificate* OpenSSLCertificate::GetReference() const {
+ std::string OpenSSLCertificate::ToPEMString() const {
+   BIO* bio = BIO_new(BIO_s_mem());
+   if (!bio) {
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   if (!PEM_write_bio_X509(bio, x509_)) {
+     BIO_free(bio);
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   BIO_write(bio, "\0", 1);
+   char* buffer;
+@@ -432,11 +432,11 @@ void OpenSSLCertificate::ToDER(Buffer* der_buffer) const {
+   // Calculates the DER representation of the certificate, from scratch.
+   BIO* bio = BIO_new(BIO_s_mem());
+   if (!bio) {
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   if (!i2d_X509_bio(bio, x509_)) {
+     BIO_free(bio);
+-    FATAL() << "unreachable code";
++    RTC_FATAL() << "unreachable code";
+   }
+   char* data;
+   size_t length = BIO_get_mem_data(bio, &data);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/rtp_file_reader.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/test/rtp_file_reader.cc
+index 03674875432..8d7207d4e8a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/rtp_file_reader.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/rtp_file_reader.cc
+@@ -90,7 +90,7 @@ class InterleavedRtpFileReader : public RtpFileReaderImpl {
+     uint32_t len = 0;
+     TRY(ReadUint32(&len, file_));
+     if (packet->length < len) {
+-      FATAL() << "Packet is too large to fit: " << len << " bytes vs "
++      RTC_FATAL() << "Packet is too large to fit: " << len << " bytes vs "
+               << packet->length
+               << " bytes allocated. Consider increasing the buffer "
+                  "size";
+@@ -178,7 +178,7 @@ class RtpDumpReader : public RtpFileReaderImpl {
+     // Use 'len' here because a 'plen' of 0 specifies rtcp.
+     len -= kPacketHeaderSize;
+     if (packet->length < len) {
+-      FATAL() << "Packet is too large to fit: " << len << " bytes vs "
++      RTC_FATAL() << "Packet is too large to fit: " << len << " bytes vs "
+               << packet->length
+               << " bytes allocated. Consider increasing the buffer "
+                  "size";
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/voice_engine/utility.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/voice_engine/utility.cc
+index 939870245f1..5caa73ae451 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/voice_engine/utility.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/voice_engine/utility.cc
+@@ -58,7 +58,7 @@ void RemixAndResample(const int16_t* src_data,
+ 
+   if (resampler->InitializeIfNeeded(sample_rate_hz, dst_frame->sample_rate_hz_,
+                                     audio_ptr_num_channels) == -1) {
+-    FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
++    RTC_FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
+             << ", dst_frame->sample_rate_hz_ = " << dst_frame->sample_rate_hz_
+             << ", audio_ptr_num_channels = " << audio_ptr_num_channels;
+   }
+@@ -72,7 +72,7 @@ void RemixAndResample(const int16_t* src_data,
+                                        dst_frame->mutable_data(),
+                                        AudioFrame::kMaxDataSizeSamples);
+   if (out_length == -1) {
+-    FATAL() << "Resample failed: audio_ptr = " << audio_ptr
++    RTC_FATAL() << "Resample failed: audio_ptr = " << audio_ptr
+             << ", src_length = " << src_length
+             << ", dst_frame->mutable_data() = " << dst_frame->mutable_data();
+   }
+-- 
+2.13.5 (Apple Git-94)
+

@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #if defined(__pnacl__) || defined(__CLR_VER) || \
-    (defined(__i386__) && !defined(__SSE2__))
+    (defined(__i386__) && !defined(__SSE__) && !defined(__clang__))
 #define LIBYUV_DISABLE_X86
 #endif
 // MemorySanitizer does not support assembly code yet. http://crbug.com/344505
@@ -29,7 +29,7 @@ extern "C" {
 #endif
 #endif
 // The following are available for Visual C and clangcl 32 bit:
-#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86)
+#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER)
 #define HAS_TRANSPOSEWX8_SSSE3
 #define HAS_TRANSPOSEUVWX8_SSE2
 #endif

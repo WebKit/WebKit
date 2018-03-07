@@ -10,8 +10,8 @@
 
 #include <algorithm>  // Access to min.
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -74,7 +74,7 @@ void SyncBuffer::GetNextAudioInterleaved(size_t requested_len,
                                          AudioFrame* output) {
   RTC_DCHECK(output);
   const size_t samples_to_read = std::min(FutureLength(), requested_len);
-  output->Reset();
+  output->ResetWithoutMuting();
   const size_t tot_samples_read =
       ReadInterleavedFromIndex(next_index_, samples_to_read,
                                output->mutable_data());

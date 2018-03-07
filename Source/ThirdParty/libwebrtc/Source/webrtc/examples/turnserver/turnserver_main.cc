@@ -10,12 +10,12 @@
 
 #include <iostream>  // NOLINT
 
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/turnserver.h"
-#include "webrtc/base/asyncudpsocket.h"
-#include "webrtc/base/optionsfile.h"
-#include "webrtc/base/stringencode.h"
-#include "webrtc/base/thread.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/turnserver.h"
+#include "rtc_base/asyncudpsocket.h"
+#include "rtc_base/optionsfile.h"
+#include "rtc_base/stringencode.h"
+#include "rtc_base/thread.h"
 
 static const char kSoftware[] = "libjingle TurnServer";
 

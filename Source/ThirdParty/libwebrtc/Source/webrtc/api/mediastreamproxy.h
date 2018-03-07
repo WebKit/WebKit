@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_MEDIASTREAMPROXY_H_
-#define WEBRTC_API_MEDIASTREAMPROXY_H_
+#ifndef API_MEDIASTREAMPROXY_H_
+#define API_MEDIASTREAMPROXY_H_
 
 #include <string>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/proxy.h"
+#include "api/mediastreaminterface.h"
+#include "api/proxy.h"
 
 namespace webrtc {
 
@@ -41,4 +41,4 @@ END_PROXY_MAP()
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_MEDIASTREAMPROXY_H_
+#endif  // API_MEDIASTREAMPROXY_H_

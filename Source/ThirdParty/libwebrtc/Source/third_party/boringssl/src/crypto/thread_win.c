@@ -63,7 +63,7 @@ void CRYPTO_MUTEX_unlock_write(CRYPTO_MUTEX *lock) {
 }
 
 void CRYPTO_MUTEX_cleanup(CRYPTO_MUTEX *lock) {
-  /* SRWLOCKs require no cleanup. */
+  // SRWLOCKs require no cleanup.
 }
 
 void CRYPTO_STATIC_MUTEX_lock_read(struct CRYPTO_STATIC_MUTEX *lock) {
@@ -100,11 +100,11 @@ static void thread_local_init(void) {
 
 static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
                                           PVOID reserved) {
-  /* Only free memory on |DLL_THREAD_DETACH|, not |DLL_PROCESS_DETACH|. In
-   * VS2015's debug runtime, the C runtime has been unloaded by the time
-   * |DLL_PROCESS_DETACH| runs. See https://crbug.com/575795. This is consistent
-   * with |pthread_key_create| which does not call destructors on process exit,
-   * only thread exit. */
+  // Only free memory on |DLL_THREAD_DETACH|, not |DLL_PROCESS_DETACH|. In
+  // VS2015's debug runtime, the C runtime has been unloaded by the time
+  // |DLL_PROCESS_DETACH| runs. See https://crbug.com/575795. This is consistent
+  // with |pthread_key_create| which does not call destructors on process exit,
+  // only thread exit.
   if (reason != DLL_THREAD_DETACH) {
     return;
   }
@@ -135,17 +135,17 @@ static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
   OPENSSL_free(pointers);
 }
 
-/* Thread Termination Callbacks.
- *
- * Windows doesn't support a per-thread destructor with its TLS primitives.
- * So, we build it manually by inserting a function to be called on each
- * thread's exit. This magic is from http://www.codeproject.com/threads/tls.asp
- * and it works for VC++ 7.0 and later.
- *
- * Force a reference to _tls_used to make the linker create the TLS directory
- * if it's not already there. (E.g. if __declspec(thread) is not used). Force
- * a reference to p_thread_callback_boringssl to prevent whole program
- * optimization from discarding the variable. */
+// Thread Termination Callbacks.
+//
+// Windows doesn't support a per-thread destructor with its TLS primitives.
+// So, we build it manually by inserting a function to be called on each
+// thread's exit. This magic is from http://www.codeproject.com/threads/tls.asp
+// and it works for VC++ 7.0 and later.
+//
+// Force a reference to _tls_used to make the linker create the TLS directory
+// if it's not already there. (E.g. if __declspec(thread) is not used). Force
+// a reference to p_thread_callback_boringssl to prevent whole program
+// optimization from discarding the variable.
 #ifdef _WIN64
 #pragma comment(linker, "/INCLUDE:_tls_used")
 #pragma comment(linker, "/INCLUDE:p_thread_callback_boringssl")
@@ -154,41 +154,41 @@ static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
 #pragma comment(linker, "/INCLUDE:_p_thread_callback_boringssl")
 #endif
 
-/* .CRT$XLA to .CRT$XLZ is an array of PIMAGE_TLS_CALLBACK pointers that are
- * called automatically by the OS loader code (not the CRT) when the module is
- * loaded and on thread creation. They are NOT called if the module has been
- * loaded by a LoadLibrary() call. It must have implicitly been loaded at
- * process startup.
- *
- * By implicitly loaded, I mean that it is directly referenced by the main EXE
- * or by one of its dependent DLLs. Delay-loaded DLL doesn't count as being
- * implicitly loaded.
- *
- * See VC\crt\src\tlssup.c for reference. */
+// .CRT$XLA to .CRT$XLZ is an array of PIMAGE_TLS_CALLBACK pointers that are
+// called automatically by the OS loader code (not the CRT) when the module is
+// loaded and on thread creation. They are NOT called if the module has been
+// loaded by a LoadLibrary() call. It must have implicitly been loaded at
+// process startup.
+//
+// By implicitly loaded, I mean that it is directly referenced by the main EXE
+// or by one of its dependent DLLs. Delay-loaded DLL doesn't count as being
+// implicitly loaded.
+//
+// See VC\crt\src\tlssup.c for reference.
 
-/* The linker must not discard p_thread_callback_boringssl. (We force a reference
- * to this variable with a linker /INCLUDE:symbol pragma to ensure that.) If
- * this variable is discarded, the OnThreadExit function will never be
- * called. */
+// The linker must not discard p_thread_callback_boringssl. (We force a
+// reference to this variable with a linker /INCLUDE:symbol pragma to ensure
+// that.) If this variable is discarded, the OnThreadExit function will never
+// be called.
 #ifdef _WIN64
 
-/* .CRT section is merged with .rdata on x64 so it must be constant data. */
+// .CRT section is merged with .rdata on x64 so it must be constant data.
 #pragma const_seg(".CRT$XLC")
-/* When defining a const variable, it must have external linkage to be sure the
- * linker doesn't discard it. */
+// When defining a const variable, it must have external linkage to be sure the
+// linker doesn't discard it.
 extern const PIMAGE_TLS_CALLBACK p_thread_callback_boringssl;
 const PIMAGE_TLS_CALLBACK p_thread_callback_boringssl = thread_local_destructor;
-/* Reset the default section. */
+// Reset the default section.
 #pragma const_seg()
 
 #else
 
 #pragma data_seg(".CRT$XLC")
 PIMAGE_TLS_CALLBACK p_thread_callback_boringssl = thread_local_destructor;
-/* Reset the default section. */
+// Reset the default section.
 #pragma data_seg()
 
-#endif  /* _WIN64 */
+#endif  // _WIN64
 
 void *CRYPTO_get_thread_local(thread_local_data_t index) {
   CRYPTO_once(&g_thread_local_init_once, thread_local_init);
@@ -234,4 +234,4 @@ int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
   return 1;
 }
 
-#endif  /* OPENSSL_WINDOWS_THREADS */
+#endif  // OPENSSL_WINDOWS_THREADS

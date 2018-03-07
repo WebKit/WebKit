@@ -26,7 +26,7 @@
 #include "lpc_tables.h"
 #include "settings.h"
 #include "signal_processing_library.h"
-#include "webrtc/base/sanitizer.h"
+#include "rtc_base/sanitizer.h"
 
 /*
  * Eenumerations for arguments to functions WebRtcIsacfix_MatrixProduct1()
@@ -193,16 +193,16 @@ static void CalcCorrelation(int32_t *PSpecQ12, int32_t *CorrQ7)
 // undefined behavior, so not a good idea; this just makes UBSan ignore the
 // violations, so that our old code can continue to do what it's always been
 // doing.)
-static inline int32_t OverflowingMulS16S32ToS32(int16_t a, int32_t b)
-    RTC_NO_SANITIZE("signed-integer-overflow") {
+static inline int32_t RTC_NO_SANITIZE("signed-integer-overflow")
+    OverflowingMulS16S32ToS32(int16_t a, int32_t b) {
   return a * b;
 }
-static inline int32_t OverflowingAddS32S32ToS32(int32_t a, int32_t b)
-    RTC_NO_SANITIZE("signed-integer-overflow") {
+static inline int32_t RTC_NO_SANITIZE("signed-integer-overflow")
+    OverflowingAddS32S32ToS32(int32_t a, int32_t b) {
   return a + b;
 }
-static inline int32_t OverflowingSubS32S32ToS32(int32_t a, int32_t b)
-    RTC_NO_SANITIZE("signed-integer-overflow") {
+static inline int32_t RTC_NO_SANITIZE("signed-integer-overflow")
+    OverflowingSubS32S32ToS32(int32_t a, int32_t b) {
   return a - b;
 }
 
@@ -1885,7 +1885,7 @@ const uint16_t kFrameLenCdf[4] = {
   0, 21845, 43690, 65535};
 
 /* pointer to cdf array for frame length indicator */
-const uint16_t *kFrameLenCdfPtr[1] = {kFrameLenCdf};
+const uint16_t * const kFrameLenCdfPtr[1] = {kFrameLenCdf};
 
 /* initial cdf index for decoder of frame length indicator */
 const uint16_t kFrameLenInitIndex[1] = {1};
@@ -1953,7 +1953,7 @@ const uint16_t kBwCdf[25] = {
   62804, 65535};
 
 /* pointer to cdf array for estimated bandwidth */
-const uint16_t *kBwCdfPtr[1] = {kBwCdf};
+const uint16_t * const kBwCdfPtr[1] = {kBwCdf};
 
 /* initial cdf index for decoder of estimated bandwidth*/
 const uint16_t kBwInitIndex[1] = {7};

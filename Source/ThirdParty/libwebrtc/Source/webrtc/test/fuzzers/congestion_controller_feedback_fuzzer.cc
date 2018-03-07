@@ -8,47 +8,28 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
-#include "webrtc/modules/congestion_controller/include/congestion_controller.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "modules/congestion_controller/include/receive_side_congestion_controller.h"
+#include "modules/pacing/packet_router.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
 
 namespace webrtc {
-
-class NullBitrateObserver : public CongestionController::Observer,
-                            public RemoteBitrateObserver {
- public:
-  ~NullBitrateObserver() override {}
-
-  // TODO(minyue): remove this when old OnNetworkChanged is deprecated. See
-  // https://bugs.chromium.org/p/webrtc/issues/detail?id=6796
-  using CongestionController::Observer::OnNetworkChanged;
-
-  void OnNetworkChanged(uint32_t bitrate_bps,
-                        uint8_t fraction_loss,
-                        int64_t rtt_ms,
-                        int64_t bwe_period_ms) override {}
-  void OnReceiveBitrateChanged(const std::vector<uint32_t>& ssrcs,
-                               uint32_t bitrate) override {}
-};
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   size_t i = 0;
   if (size < sizeof(int64_t) + sizeof(uint8_t) + sizeof(uint32_t))
     return;
   SimulatedClock clock(data[i++]);
-  NullBitrateObserver observer;
-  RtcEventLogNullImpl event_log;
   PacketRouter packet_router;
-  CongestionController cc(&clock, &observer, &observer, &event_log,
-                          &packet_router);
+  ReceiveSideCongestionController cc(&clock, &packet_router);
   RemoteBitrateEstimator* rbe = cc.GetRemoteBitrateEstimator(true);
   RTPHeader header;
   header.ssrc = ByteReader<uint32_t>::ReadBigEndian(&data[i]);
   i += sizeof(uint32_t);
   header.extension.hasTransportSequenceNumber = true;
-  int64_t arrival_time_ms =
-      std::max<int64_t>(ByteReader<int64_t>::ReadBigEndian(&data[i]), 0);
+  int64_t arrival_time_ms = std::min<int64_t>(
+      std::max<int64_t>(ByteReader<int64_t>::ReadBigEndian(&data[i]), 0),
+      std::numeric_limits<int64_t>::max() / 2);
   i += sizeof(int64_t);
   const size_t kMinPacketSize =
       sizeof(size_t) + sizeof(uint16_t) + sizeof(uint8_t);
@@ -61,7 +42,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     rbe->IncomingPacket(arrival_time_ms, payload_size, header);
     clock.AdvanceTimeMilliseconds(5);
     arrival_time_ms += ByteReader<uint8_t>::ReadBigEndian(&data[i]);
-    arrival_time_ms += sizeof(uint8_t);
+    i += sizeof(uint8_t);
   }
   rbe->Process();
 }

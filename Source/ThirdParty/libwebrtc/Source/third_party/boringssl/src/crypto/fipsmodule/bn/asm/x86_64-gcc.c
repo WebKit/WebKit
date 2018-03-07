@@ -52,7 +52,7 @@
 
 #include <openssl/bn.h>
 
-/* TODO(davidben): Get this file working on Windows x64. */
+// TODO(davidben): Get this file working on Windows x64.
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__GNUC__)
 
 #include "../internal.h"
@@ -61,47 +61,43 @@
 #undef mul
 #undef mul_add
 
-#define asm __asm__
-
-/*
- * "m"(a), "+m"(r)	is the way to favor DirectPath µ-code;
- * "g"(0)		let the compiler to decide where does it
- *			want to keep the value of zero;
- */
-#define mul_add(r, a, word, carry)                                     \
-  do {                                                                 \
-    register BN_ULONG high, low;                                       \
-    asm("mulq %3" : "=a"(low), "=d"(high) : "a"(word), "m"(a) : "cc"); \
-    asm("addq %2,%0; adcq %3,%1"                                       \
-        : "+r"(carry), "+d"(high)                                      \
-        : "a"(low), "g"(0)                                             \
-        : "cc");                                                       \
-    asm("addq %2,%0; adcq %3,%1"                                       \
-        : "+m"(r), "+d"(high)                                          \
-        : "r"(carry), "g"(0)                                           \
-        : "cc");                                                       \
-    (carry) = high;                                                    \
+// "m"(a), "+m"(r)	is the way to favor DirectPath µ-code;
+// "g"(0)		let the compiler to decide where does it
+//			want to keep the value of zero;
+#define mul_add(r, a, word, carry)                                         \
+  do {                                                                     \
+    register BN_ULONG high, low;                                           \
+    __asm__("mulq %3" : "=a"(low), "=d"(high) : "a"(word), "m"(a) : "cc"); \
+    __asm__("addq %2,%0; adcq %3,%1"                                       \
+            : "+r"(carry), "+d"(high)                                      \
+            : "a"(low), "g"(0)                                             \
+            : "cc");                                                       \
+    __asm__("addq %2,%0; adcq %3,%1"                                       \
+            : "+m"(r), "+d"(high)                                          \
+            : "r"(carry), "g"(0)                                           \
+            : "cc");                                                       \
+    (carry) = high;                                                        \
   } while (0)
 
-#define mul(r, a, word, carry)                                         \
-  do {                                                                 \
-    register BN_ULONG high, low;                                       \
-    asm("mulq %3" : "=a"(low), "=d"(high) : "a"(word), "g"(a) : "cc"); \
-    asm("addq %2,%0; adcq %3,%1"                                       \
-        : "+r"(carry), "+d"(high)                                      \
-        : "a"(low), "g"(0)                                             \
-        : "cc");                                                       \
-    (r) = (carry);                                                     \
-    (carry) = high;                                                    \
+#define mul(r, a, word, carry)                                             \
+  do {                                                                     \
+    register BN_ULONG high, low;                                           \
+    __asm__("mulq %3" : "=a"(low), "=d"(high) : "a"(word), "g"(a) : "cc"); \
+    __asm__("addq %2,%0; adcq %3,%1"                                       \
+            : "+r"(carry), "+d"(high)                                      \
+            : "a"(low), "g"(0)                                             \
+            : "cc");                                                       \
+    (r) = (carry);                                                         \
+    (carry) = high;                                                        \
   } while (0)
 #undef sqr
-#define sqr(r0, r1, a) asm("mulq %2" : "=a"(r0), "=d"(r1) : "a"(a) : "cc");
+#define sqr(r0, r1, a) __asm__("mulq %2" : "=a"(r0), "=d"(r1) : "a"(a) : "cc");
 
-BN_ULONG bn_mul_add_words(BN_ULONG *rp, const BN_ULONG *ap, int num,
+BN_ULONG bn_mul_add_words(BN_ULONG *rp, const BN_ULONG *ap, size_t num,
                           BN_ULONG w) {
   BN_ULONG c1 = 0;
 
-  if (num <= 0) {
+  if (num == 0) {
     return (c1);
   }
 
@@ -130,10 +126,11 @@ BN_ULONG bn_mul_add_words(BN_ULONG *rp, const BN_ULONG *ap, int num,
   return c1;
 }
 
-BN_ULONG bn_mul_words(BN_ULONG *rp, const BN_ULONG *ap, int num, BN_ULONG w) {
+BN_ULONG bn_mul_words(BN_ULONG *rp, const BN_ULONG *ap, size_t num,
+                      BN_ULONG w) {
   BN_ULONG c1 = 0;
 
-  if (num <= 0) {
+  if (num == 0) {
     return c1;
   }
 
@@ -160,8 +157,8 @@ BN_ULONG bn_mul_words(BN_ULONG *rp, const BN_ULONG *ap, int num, BN_ULONG w) {
   return c1;
 }
 
-void bn_sqr_words(BN_ULONG *r, const BN_ULONG *a, int n) {
-  if (n <= 0) {
+void bn_sqr_words(BN_ULONG *r, const BN_ULONG *a, size_t n) {
+  if (n == 0) {
     return;
   }
 
@@ -188,16 +185,16 @@ void bn_sqr_words(BN_ULONG *r, const BN_ULONG *a, int n) {
 }
 
 BN_ULONG bn_add_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
-                      int n) {
+                      size_t n) {
   BN_ULONG ret;
   size_t i = 0;
 
-  if (n <= 0) {
+  if (n == 0) {
     return 0;
   }
 
-  asm volatile (
-      "	subq	%0,%0		\n" /* clear carry */
+  __asm__ volatile (
+      "	subq	%0,%0		\n"  // clear carry
       "	jmp	1f		\n"
       ".p2align 4			\n"
       "1:"
@@ -205,7 +202,8 @@ BN_ULONG bn_add_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
       "	adcq	(%5,%2,8),%0	\n"
       "	movq	%0,(%3,%2,8)	\n"
       "	lea	1(%2),%2	\n"
-      "	loop	1b		\n"
+      "	dec	%1		\n"
+      "	jnz	1b		\n"
       "	sbbq	%0,%0		\n"
       : "=&r"(ret), "+c"(n), "+r"(i)
       : "r"(rp), "r"(ap), "r"(bp)
@@ -215,16 +213,16 @@ BN_ULONG bn_add_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
 }
 
 BN_ULONG bn_sub_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
-                      int n) {
+                      size_t n) {
   BN_ULONG ret;
   size_t i = 0;
 
-  if (n <= 0) {
+  if (n == 0) {
     return 0;
   }
 
-  asm volatile (
-      "	subq	%0,%0		\n" /* clear borrow */
+  __asm__ volatile (
+      "	subq	%0,%0		\n"  // clear borrow
       "	jmp	1f		\n"
       ".p2align 4			\n"
       "1:"
@@ -232,7 +230,8 @@ BN_ULONG bn_sub_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
       "	sbbq	(%5,%2,8),%0	\n"
       "	movq	%0,(%3,%2,8)	\n"
       "	lea	1(%2),%2	\n"
-      "	loop	1b		\n"
+      "	dec	%1		\n"
+      "	jnz	1b		\n"
       "	sbbq	%0,%0		\n"
       : "=&r"(ret), "+c"(n), "+r"(i)
       : "r"(rp), "r"(ap), "r"(bp)
@@ -241,51 +240,50 @@ BN_ULONG bn_sub_words(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
   return ret & 1;
 }
 
-/* mul_add_c(a,b,c0,c1,c2)  -- c+=a*b for three word number c=(c2,c1,c0) */
-/* mul_add_c2(a,b,c0,c1,c2) -- c+=2*a*b for three word number c=(c2,c1,c0) */
-/* sqr_add_c(a,i,c0,c1,c2)  -- c+=a[i]^2 for three word number c=(c2,c1,c0) */
-/* sqr_add_c2(a,i,c0,c1,c2) -- c+=2*a[i]*a[j] for three word number c=(c2,c1,c0)
- */
+// mul_add_c(a,b,c0,c1,c2)  -- c+=a*b for three word number c=(c2,c1,c0)
+// mul_add_c2(a,b,c0,c1,c2) -- c+=2*a*b for three word number c=(c2,c1,c0)
+// sqr_add_c(a,i,c0,c1,c2)  -- c+=a[i]^2 for three word number c=(c2,c1,c0)
+// sqr_add_c2(a,i,c0,c1,c2) -- c+=2*a[i]*a[j] for three word number c=(c2,c1,c0)
 
-/* Keep in mind that carrying into high part of multiplication result can not
- * overflow, because it cannot be all-ones. */
-#define mul_add_c(a, b, c0, c1, c2)          \
-  do {                                       \
-    BN_ULONG t1, t2;                \
-    asm("mulq %3" : "=a"(t1), "=d"(t2) : "a"(a), "m"(b) : "cc"); \
-    asm("addq %3,%0; adcq %4,%1; adcq %5,%2" \
-        : "+r"(c0), "+r"(c1), "+r"(c2)       \
-        : "r"(t1), "r"(t2), "g"(0)           \
-        : "cc");                             \
+// Keep in mind that carrying into high part of multiplication result can not
+// overflow, because it cannot be all-ones.
+#define mul_add_c(a, b, c0, c1, c2)                                  \
+  do {                                                               \
+    BN_ULONG t1, t2;                                                 \
+    __asm__("mulq %3" : "=a"(t1), "=d"(t2) : "a"(a), "m"(b) : "cc"); \
+    __asm__("addq %3,%0; adcq %4,%1; adcq %5,%2"                     \
+            : "+r"(c0), "+r"(c1), "+r"(c2)                           \
+            : "r"(t1), "r"(t2), "g"(0)                               \
+            : "cc");                                                 \
   } while (0)
 
-#define sqr_add_c(a, i, c0, c1, c2)                           \
-  do {                                                        \
-    BN_ULONG t1, t2;                                          \
-    asm("mulq %2" : "=a"(t1), "=d"(t2) : "a"((a)[i]) : "cc"); \
-    asm("addq %3,%0; adcq %4,%1; adcq %5,%2"                  \
-        : "+r"(c0), "+r"(c1), "+r"(c2)                        \
-        : "r"(t1), "r"(t2), "g"(0)                            \
-        : "cc");                                              \
+#define sqr_add_c(a, i, c0, c1, c2)                               \
+  do {                                                            \
+    BN_ULONG t1, t2;                                              \
+    __asm__("mulq %2" : "=a"(t1), "=d"(t2) : "a"((a)[i]) : "cc"); \
+    __asm__("addq %3,%0; adcq %4,%1; adcq %5,%2"                  \
+            : "+r"(c0), "+r"(c1), "+r"(c2)                        \
+            : "r"(t1), "r"(t2), "g"(0)                            \
+            : "cc");                                              \
   } while (0)
 
-#define mul_add_c2(a, b, c0, c1, c2)         \
-  do {                                       \
-    BN_ULONG t1, t2;                                                    \
-    asm("mulq %3" : "=a"(t1), "=d"(t2) : "a"(a), "m"(b) : "cc");        \
-    asm("addq %3,%0; adcq %4,%1; adcq %5,%2" \
-        : "+r"(c0), "+r"(c1), "+r"(c2)       \
-        : "r"(t1), "r"(t2), "g"(0)           \
-        : "cc");                             \
-    asm("addq %3,%0; adcq %4,%1; adcq %5,%2" \
-        : "+r"(c0), "+r"(c1), "+r"(c2)       \
-        : "r"(t1), "r"(t2), "g"(0)           \
-        : "cc");                             \
+#define mul_add_c2(a, b, c0, c1, c2)                                 \
+  do {                                                               \
+    BN_ULONG t1, t2;                                                 \
+    __asm__("mulq %3" : "=a"(t1), "=d"(t2) : "a"(a), "m"(b) : "cc"); \
+    __asm__("addq %3,%0; adcq %4,%1; adcq %5,%2"                     \
+            : "+r"(c0), "+r"(c1), "+r"(c2)                           \
+            : "r"(t1), "r"(t2), "g"(0)                               \
+            : "cc");                                                 \
+    __asm__("addq %3,%0; adcq %4,%1; adcq %5,%2"                     \
+            : "+r"(c0), "+r"(c1), "+r"(c2)                           \
+            : "r"(t1), "r"(t2), "g"(0)                               \
+            : "cc");                                                 \
   } while (0)
 
 #define sqr_add_c2(a, i, j, c0, c1, c2) mul_add_c2((a)[i], (a)[j], c0, c1, c2)
 
-void bn_mul_comba8(BN_ULONG *r, BN_ULONG *a, BN_ULONG *b) {
+void bn_mul_comba8(BN_ULONG r[16], const BN_ULONG a[8], const BN_ULONG b[8]) {
   BN_ULONG c1, c2, c3;
 
   c1 = 0;
@@ -387,7 +385,7 @@ void bn_mul_comba8(BN_ULONG *r, BN_ULONG *a, BN_ULONG *b) {
   r[15] = c1;
 }
 
-void bn_mul_comba4(BN_ULONG *r, BN_ULONG *a, BN_ULONG *b) {
+void bn_mul_comba4(BN_ULONG r[8], const BN_ULONG a[4], const BN_ULONG b[4]) {
   BN_ULONG c1, c2, c3;
 
   c1 = 0;
@@ -425,7 +423,7 @@ void bn_mul_comba4(BN_ULONG *r, BN_ULONG *a, BN_ULONG *b) {
   r[7] = c2;
 }
 
-void bn_sqr_comba8(BN_ULONG *r, const BN_ULONG *a) {
+void bn_sqr_comba8(BN_ULONG r[16], const BN_ULONG a[8]) {
   BN_ULONG c1, c2, c3;
 
   c1 = 0;
@@ -499,7 +497,7 @@ void bn_sqr_comba8(BN_ULONG *r, const BN_ULONG *a) {
   r[15] = c1;
 }
 
-void bn_sqr_comba4(BN_ULONG *r, const BN_ULONG *a) {
+void bn_sqr_comba4(BN_ULONG r[8], const BN_ULONG a[4]) {
   BN_ULONG c1, c2, c3;
 
   c1 = 0;
@@ -539,4 +537,4 @@ void bn_sqr_comba4(BN_ULONG *r, const BN_ULONG *a) {
 #undef mul_add_c2
 #undef sqr_add_c2
 
-#endif  /* !NO_ASM && X86_64 && __GNUC__ */
+#endif  // !NO_ASM && X86_64 && __GNUC__

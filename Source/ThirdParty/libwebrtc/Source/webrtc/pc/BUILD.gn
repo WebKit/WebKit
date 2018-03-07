@@ -38,6 +38,8 @@ rtc_static_library("rtc_pc_base") {
     "channelmanager.h",
     "currentspeakermonitor.cc",
     "currentspeakermonitor.h",
+    "dtlssrtptransport.cc",
+    "dtlssrtptransport.h",
     "externalhmac.cc",
     "externalhmac.h",
     "mediamonitor.cc",
@@ -46,10 +48,20 @@ rtc_static_library("rtc_pc_base") {
     "mediasession.h",
     "rtcpmuxfilter.cc",
     "rtcpmuxfilter.h",
+    "rtpmediautils.cc",
+    "rtpmediautils.h",
     "rtptransport.cc",
     "rtptransport.h",
+    "rtptransportinternal.h",
+    "rtptransportinternaladapter.h",
     "srtpfilter.cc",
     "srtpfilter.h",
+    "srtpsession.cc",
+    "srtpsession.h",
+    "srtptransport.cc",
+    "srtptransport.h",
+    "transportcontroller.cc",
+    "transportcontroller.h",
     "voicechannel.h",
   ]
 
@@ -57,12 +69,14 @@ rtc_static_library("rtc_pc_base") {
     "..:webrtc_common",
     "../api:call_api",
     "../api:libjingle_peerconnection_api",
+    "../api:optional",
     "../api:ortc_api",
-    "../base:rtc_base",
-    "../base:rtc_task_queue",
     "../media:rtc_data",
+    "../media:rtc_h264_profile_id",
     "../media:rtc_media_base",
     "../p2p:rtc_p2p",
+    "../rtc_base:rtc_base",
+    "../rtc_base:rtc_task_queue",
   ]
 
   if (rtc_build_libsrtp) {
@@ -128,8 +142,12 @@ rtc_static_library("peerconnection") {
     "rtpreceiver.h",
     "rtpsender.cc",
     "rtpsender.h",
+    "rtptransceiver.cc",
+    "rtptransceiver.h",
     "sctputils.cc",
     "sctputils.h",
+    "sdputils.cc",
+    "sdputils.h",
     "statscollector.cc",
     "statscollector.h",
     "streamcollection.h",
@@ -143,8 +161,6 @@ rtc_static_library("peerconnection") {
     "videotracksource.h",
     "webrtcsdp.cc",
     "webrtcsdp.h",
-    "webrtcsession.cc",
-    "webrtcsession.h",
     "webrtcsessiondescriptionfactory.cc",
     "webrtcsessiondescriptionfactory.h",
   ]
@@ -160,15 +176,16 @@ rtc_static_library("peerconnection") {
     ":rtc_pc_base",
     "..:webrtc_common",
     "../api:call_api",
+    "../api:optional",
     "../api:rtc_stats_api",
     "../api/video_codecs:video_codecs_api",
-    "../base:rtc_base",
-    "../base:rtc_base_approved",
     "../call:call_interfaces",
     "../logging:rtc_event_log_api",
     "../media:rtc_data",
     "../media:rtc_media_base",
     "../p2p:rtc_p2p",
+    "../rtc_base:rtc_base",
+    "../rtc_base:rtc_base_approved",
     "../stats",
     "../system_wrappers:system_wrappers",
   ]
@@ -184,7 +201,7 @@ rtc_static_library("peerconnection") {
 # need should use CreateModularCreatePeerConnectionFactory instead, using the
 # "peerconnection" build target and other targets specific to their
 # requrements. See comment in peerconnectionfactoryinterface.h.
-rtc_source_set("create_pc_factory") {
+rtc_static_library("create_pc_factory") {
   sources = [
     "createpeerconnectionfactory.cc",
   ]
@@ -192,16 +209,18 @@ rtc_source_set("create_pc_factory") {
   deps = [
     "../api:audio_mixer_api",
     "../api:libjingle_peerconnection_api",
+    "../api:peerconnection_and_implicit_call_api",
     "../api/audio_codecs:audio_codecs_api",
-    "../api/audio_codecs:builtin_audio_decoder_factory",
-    "../api/audio_codecs:builtin_audio_encoder_factory",
-    "../base:rtc_base",
-    "../base:rtc_base_approved",
+    "../api/video_codecs:video_codecs_api",
     "../call",
     "../call:call_interfaces",
     "../logging:rtc_event_log_api",
     "../media:rtc_audio_video",
+    "../media:rtc_media_base",
     "../modules/audio_device:audio_device",
+    "../modules/audio_processing:audio_processing",
+    "../rtc_base:rtc_base",
+    "../rtc_base:rtc_base_approved",
   ]
 
   configs += [ ":libjingle_peerconnection_warnings_config" ]
@@ -218,19 +237,6 @@ rtc_source_set("libjingle_peerconnection") {
     ":peerconnection",
     "../api:libjingle_peerconnection_api",
   ]
-
-  if (rtc_use_quic) {
-    sources += [
-      "quicdatachannel.cc",
-      "quicdatachannel.h",
-      "quicdatatransport.cc",
-      "quicdatatransport.h",
-    ]
-    deps += [ "//third_party/libquic" ]
-    public_deps = [
-      "//third_party/libquic",
-    ]
-  }
 }
 
 if (rtc_include_tests) {
@@ -251,10 +257,16 @@ if (rtc_include_tests) {
       "channel_unittest.cc",
       "channelmanager_unittest.cc",
       "currentspeakermonitor_unittest.cc",
+      "dtlssrtptransport_unittest.cc",
       "mediasession_unittest.cc",
       "rtcpmuxfilter_unittest.cc",
       "rtptransport_unittest.cc",
+      "rtptransporttestutil.h",
       "srtpfilter_unittest.cc",
+      "srtpsession_unittest.cc",
+      "srtptestutil.h",
+      "srtptransport_unittest.cc",
+      "transportcontroller_unittest.cc",
     ]
 
     include_dirs = [ "//third_party/libsrtp/srtp" ]
@@ -272,17 +284,20 @@ if (rtc_include_tests) {
 
     deps = [
       ":libjingle_peerconnection",
+      ":pc_test_utils",
       ":rtc_pc",
-      "../base:rtc_base",
-      "../base:rtc_base_approved",
-      "../base:rtc_base_tests_main",
-      "../base:rtc_base_tests_utils",
+      "../api:array_view",
       "../logging:rtc_event_log_api",
       "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
       "../p2p:p2p_test_utils",
       "../p2p:rtc_p2p",
+      "../rtc_base:rtc_base",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_main",
+      "../rtc_base:rtc_base_tests_utils",
       "../system_wrappers:metrics_default",
+      "../test:test_support",
     ]
 
     if (rtc_build_libsrtp) {
@@ -302,11 +317,12 @@ if (rtc_include_tests) {
       "test/fakedatachannelprovider.h",
       "test/fakeperiodicvideocapturer.h",
       "test/fakertccertificategenerator.h",
+      "test/fakesctptransport.h",
+      "test/faketransportcontroller.h",
       "test/fakevideotrackrenderer.h",
       "test/fakevideotracksource.h",
       "test/mock_datachannel.h",
       "test/mock_peerconnection.h",
-      "test/mock_webrtcsession.h",
       "test/mockpeerconnectionobservers.h",
       "test/peerconnectiontestwrapper.cc",
       "test/peerconnectiontestwrapper.h",
@@ -316,18 +332,21 @@ if (rtc_include_tests) {
 
     deps = [
       ":libjingle_peerconnection",
+      ":rtc_pc_base",
       "..:webrtc_common",
       "../api:libjingle_peerconnection_test_api",
+      "../api:peerconnection_and_implicit_call_api",
       "../api:rtc_stats_api",
-      "../base:rtc_base",
-      "../base:rtc_base_approved",
-      "../base:rtc_base_tests_utils",
       "../call:call_interfaces",
       "../logging:rtc_event_log_api",
       "../media:rtc_media",
+      "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
       "../modules/audio_device:audio_device",
       "../p2p:p2p_test_utils",
+      "../rtc_base:rtc_base",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
       "../test:test_support",
       "//testing/gmock",
     ]
@@ -349,7 +368,6 @@ if (rtc_include_tests) {
         # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6267
         # for -Wno-sign-compare
         "-Wno-sign-compare",
-        "-Wno-unused-function",
       ]
     }
 
@@ -359,7 +377,6 @@ if (rtc_include_tests) {
   }
 
   rtc_test("peerconnection_unittests") {
-    check_includes = false  # TODO(kjellander): Remove (bugs.webrtc.org/6828)
     testonly = true
     sources = [
       "datachannel_unittest.cc",
@@ -369,13 +386,23 @@ if (rtc_include_tests) {
       "localaudiosource_unittest.cc",
       "mediaconstraintsinterface_unittest.cc",
       "mediastream_unittest.cc",
+      "peerconnection_bundle_unittest.cc",
+      "peerconnection_crypto_unittest.cc",
+      "peerconnection_datachannel_unittest.cc",
+      "peerconnection_ice_unittest.cc",
       "peerconnection_integrationtest.cc",
+      "peerconnection_media_unittest.cc",
+      "peerconnection_rtp_unittest.cc",
+      "peerconnection_signaling_unittest.cc",
       "peerconnectionendtoend_unittest.cc",
       "peerconnectionfactory_unittest.cc",
       "peerconnectioninterface_unittest.cc",
+      "peerconnectionwrapper.cc",
+      "peerconnectionwrapper.h",
       "proxy_unittest.cc",
       "rtcstats_integrationtest.cc",
       "rtcstatscollector_unittest.cc",
+      "rtpmediautils_unittest.cc",
       "rtpsenderreceiver_unittest.cc",
       "sctputils_unittest.cc",
       "statscollector_unittest.cc",
@@ -385,7 +412,6 @@ if (rtc_include_tests) {
       "videocapturertracksource_unittest.cc",
       "videotrack_unittest.cc",
       "webrtcsdp_unittest.cc",
-      "webrtcsession_unittest.cc",
     ]
 
     if (rtc_enable_sctp) {
@@ -409,27 +435,9 @@ if (rtc_include_tests) {
       ]
     }
 
-    if (rtc_use_quic) {
-      public_deps = [
-        "//third_party/libquic",
-      ]
-      sources += [
-        "quicdatachannel_unittest.cc",
-        "quicdatatransport_unittest.cc",
-      ]
-    }
-
     deps = []
     if (is_android) {
-      sources += [
-        "test/androidtestinitializer.cc",
-        "test/androidtestinitializer.h",
-      ]
-      deps += [
-        "//testing/android/native_test:native_test_support",
-        "//webrtc/sdk/android:libjingle_peerconnection_java",
-        "//webrtc/sdk/android:libjingle_peerconnection_jni",
-      ]
+      deps += [ ":android_black_magic" ]
     }
 
     deps += [
@@ -437,19 +445,63 @@ if (rtc_include_tests) {
       ":pc_test_utils",
       "..:webrtc_common",
       "../api:fakemetricsobserver",
-      "../base:rtc_base_tests_main",
-      "../base:rtc_base_tests_utils",
+      "../api:libjingle_peerconnection_test_api",
+      "../api:optional",
+      "../api:rtc_stats_api",
+      "../api/audio_codecs:audio_codecs_api",
+      "../api/audio_codecs:builtin_audio_decoder_factory",
+      "../api/audio_codecs:builtin_audio_encoder_factory",
+      "../api/audio_codecs/L16:audio_decoder_L16",
+      "../api/audio_codecs/L16:audio_encoder_L16",
+      "../call:call_interfaces",
+      "../logging:rtc_event_log_api",
+      "../logging:rtc_event_log_impl",
+      "../media:rtc_audio_video",
+      "../media:rtc_data",  # TODO(phoglund): AFAIK only used for one sctp constant.
+      "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
+      "../modules/audio_processing:audio_processing",
+      "../modules/utility:utility",
+      "../p2p:p2p_test_utils",
+      "../p2p:rtc_p2p",
       "../pc:rtc_pc",
+      "../rtc_base:rtc_base",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_main",
+      "../rtc_base:rtc_base_tests_utils",
       "../system_wrappers:metrics_default",
       "../test:audio_codec_mocks",
-      "//testing/gmock",
+      "../test:test_support",
     ]
 
     if (is_android) {
-      deps += [ "//testing/android/native_test:native_test_support" ]
+      deps += [
+        "//testing/android/native_test:native_test_support",
+
+        # We need to depend on this one directly, or classloads will fail for
+        # the voice engine BuildInfo, for instance.
+        "../sdk/android:libjingle_peerconnection_java",
+      ]
 
       shard_timeout = 900
+    }
+  }
+
+  if (is_android) {
+    rtc_source_set("android_black_magic") {
+      # The android code uses hacky includes to chromium-base and the ssl code;
+      # having this in a separate target enables us to keep the peerconnection
+      # unit tests clean.
+      check_includes = false
+      testonly = true
+      sources = [
+        "test/androidtestinitializer.cc",
+        "test/androidtestinitializer.h",
+      ]
+      deps = [
+        "../sdk/android:libjingle_peerconnection_jni",
+        "//testing/android/native_test:native_test_support",
+      ]
     }
   }
 }

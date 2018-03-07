@@ -10,11 +10,11 @@
 
 #include <memory>
 
-#include "webrtc/modules/rtp_rtcp/include/flexfec_sender.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/rtp_rtcp/include/flexfec_sender.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 

@@ -7,19 +7,19 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_TEST_VIDEO_CAPTURER_H_
-#define WEBRTC_TEST_VIDEO_CAPTURER_H_
+#ifndef TEST_VIDEO_CAPTURER_H_
+#define TEST_VIDEO_CAPTURER_H_
 
 #include <stddef.h>
 
 #include <memory>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/media/base/videoadapter.h"
-#include "webrtc/media/base/videosourceinterface.h"
+#include "api/optional.h"
+#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "media/base/videoadapter.h"
+#include "media/base/videosourceinterface.h"
+#include "rtc_base/criticalsection.h"
 
 namespace cricket {
 class VideoAdapter;
@@ -50,4 +50,4 @@ class VideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_VIDEO_CAPTURER_H_
+#endif  // TEST_VIDEO_CAPTURER_H_

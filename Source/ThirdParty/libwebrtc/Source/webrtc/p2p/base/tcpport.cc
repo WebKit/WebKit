@@ -64,18 +64,17 @@
  *
  */
 
-#include "webrtc/p2p/base/tcpport.h"
+#include "p2p/base/tcpport.h"
 
-#include "webrtc/p2p/base/common.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "p2p/base/common.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 
 TCPPort::TCPPort(rtc::Thread* thread,
                  rtc::PacketSocketFactory* factory,
                  rtc::Network* network,
-                 const rtc::IPAddress& ip,
                  uint16_t min_port,
                  uint16_t max_port,
                  const std::string& username,
@@ -85,7 +84,6 @@ TCPPort::TCPPort(rtc::Thread* thread,
            LOCAL_PORT_TYPE,
            factory,
            network,
-           ip,
            min_port,
            max_port,
            username,
@@ -166,8 +164,8 @@ void TCPPort::PrepareAddress() {
     // If socket isn't bound yet the address will be added in
     // OnAddressReady(). Socket may be in the CLOSED state if Listen()
     // failed, we still want to add the socket address.
-    LOG(LS_VERBOSE) << "Preparing TCP address, current state: "
-                    << socket_->GetState();
+    RTC_LOG(LS_VERBOSE) << "Preparing TCP address, current state: "
+                        << socket_->GetState();
     if (socket_->GetState() == rtc::AsyncPacketSocket::STATE_BOUND ||
         socket_->GetState() == rtc::AsyncPacketSocket::STATE_CLOSED)
       AddAddress(socket_->GetLocalAddress(), socket_->GetLocalAddress(),
@@ -179,11 +177,15 @@ void TCPPort::PrepareAddress() {
     // Note: We still add the address, since otherwise the remote side won't
     // recognize our incoming TCP connections. According to
     // https://tools.ietf.org/html/rfc6544#section-4.5, for active candidate,
-    // the port must be set to the discard port, i.e. 9.
-    AddAddress(rtc::SocketAddress(ip(), DISCARD_PORT),
-               rtc::SocketAddress(ip(), 0), rtc::SocketAddress(),
-               TCP_PROTOCOL_NAME, "", TCPTYPE_ACTIVE_STR, LOCAL_PORT_TYPE,
-               ICE_TYPE_PREFERENCE_HOST_TCP, 0, "", true);
+    // the port must be set to the discard port, i.e. 9. We can't be 100% sure
+    // which IP address will actually be used, so GetBestIP is as good as we
+    // can do.
+    // TODO(deadbeef): We could do something like create a dummy socket just to
+    // see what IP we get. But that may be overkill.
+    AddAddress(rtc::SocketAddress(Network()->GetBestIP(), DISCARD_PORT),
+               rtc::SocketAddress(Network()->GetBestIP(), 0),
+               rtc::SocketAddress(), TCP_PROTOCOL_NAME, "", TCPTYPE_ACTIVE_STR,
+               LOCAL_PORT_TYPE, ICE_TYPE_PREFERENCE_HOST_TCP, 0, "", true);
   }
 }
 
@@ -244,6 +246,14 @@ int TCPPort::GetError() {
   return error_;
 }
 
+bool TCPPort::SupportsProtocol(const std::string& protocol) const {
+  return protocol == TCP_PROTOCOL_NAME || protocol == SSLTCP_PROTOCOL_NAME;
+}
+
+ProtocolType TCPPort::GetProtocol() const {
+  return PROTO_TCP;
+}
+
 void TCPPort::OnNewConnection(rtc::AsyncPacketSocket* socket,
                               rtc::AsyncPacketSocket* new_socket) {
   RTC_DCHECK(socket == socket_);
@@ -262,7 +272,8 @@ void TCPPort::OnNewConnection(rtc::AsyncPacketSocket* socket,
 
 void TCPPort::TryCreateServerSocket() {
   socket_ = socket_factory()->CreateServerTcpSocket(
-      rtc::SocketAddress(ip(), 0), min_port(), max_port(), false /* ssl */);
+      rtc::SocketAddress(Network()->GetBestIP(), 0), min_port(), max_port(),
+      false /* ssl */);
   if (!socket_) {
     LOG_J(LS_WARNING, this)
         << "TCP server socket creation failed; continuing anyway.";
@@ -323,11 +334,16 @@ TCPConnection::TCPConnection(TCPPort* port,
   if (outgoing_) {
     CreateOutgoingTcpSocket();
   } else {
-    // Incoming connections should match the network address.
+    // Incoming connections should match one of the network addresses. Same as
+    // what's being checked in OnConnect, but just DCHECKing here.
     LOG_J(LS_VERBOSE, this)
         << "socket ipaddr: " << socket_->GetLocalAddress().ToString()
-        << ",port() ip:" << port->ip().ToString();
-    RTC_DCHECK(socket_->GetLocalAddress().ipaddr() == port->ip());
+        << ", port() Network:" << port->Network()->ToString();
+    const std::vector<rtc::InterfaceAddress>& desired_addresses =
+        port_->Network()->GetIPs();
+    RTC_DCHECK(std::find(desired_addresses.begin(), desired_addresses.end(),
+                         socket_->GetLocalAddress().ipaddr()) !=
+               desired_addresses.end());
     ConnectSocketSignals(socket);
   }
 }
@@ -390,34 +406,50 @@ void TCPConnection::OnConnectionRequestResponse(ConnectionRequest* req,
 
 void TCPConnection::OnConnect(rtc::AsyncPacketSocket* socket) {
   RTC_DCHECK(socket == socket_.get());
-  // Do not use this connection if the socket bound to a different address than
-  // the one we asked for. This is seen in Chrome, where TCP sockets cannot be
-  // given a binding address, and the platform is expected to pick the
-  // correct local address.
-  const rtc::SocketAddress& socket_addr = socket->GetLocalAddress();
-  if (socket_addr.ipaddr() == port()->ip()) {
+  // Do not use this port if the socket bound to an address not associated with
+  // the desired network interface. This is seen in Chrome, where TCP sockets
+  // cannot be given a binding address, and the platform is expected to pick
+  // the correct local address.
+  //
+  // However, there are two situations in which we allow the bound address to
+  // not be one of the addresses of the requested interface:
+  // 1. The bound address is the loopback address. This happens when a proxy
+  // forces TCP to bind to only the localhost address (see issue 3927).
+  // 2. The bound address is the "any address". This happens when
+  // multiple_routes is disabled (see issue 4780).
+  //
+  // Note that, aside from minor differences in log statements, this logic is
+  // identical to that in TurnPort.
+  const rtc::SocketAddress& socket_address = socket->GetLocalAddress();
+  const std::vector<rtc::InterfaceAddress>& desired_addresses =
+      port_->Network()->GetIPs();
+  if (std::find(desired_addresses.begin(), desired_addresses.end(),
+                socket_address.ipaddr()) != desired_addresses.end()) {
     LOG_J(LS_VERBOSE, this) << "Connection established to "
                             << socket->GetRemoteAddress().ToSensitiveString();
-  } else if (IPIsAny(port()->ip())) {
-    LOG(LS_WARNING) << "Socket is bound to a different address:"
-                    << socket_addr.ipaddr().ToString()
-                    << ", rather then the local port:"
-                    << port()->ip().ToString()
-                    << ". Still allowing it since it's any address"
-                    << ", possibly caused by multi-routes being disabled.";
-  } else if (socket_addr.IsLoopbackIP()) {
-    LOG(LS_WARNING) << "Socket is bound to a different address:"
-                    << socket_addr.ipaddr().ToString()
-                    << ", rather then the local port:"
-                    << port()->ip().ToString()
-                    << ". Still allowing it since it's localhost.";
   } else {
-    LOG_J(LS_WARNING, this) << "Dropping connection as TCP socket bound to IP "
-                            << socket_addr.ipaddr().ToSensitiveString()
-                            << ", different from the local candidate IP "
-                            << port()->ip().ToSensitiveString();
-    OnClose(socket, 0);
-    return;
+    if (socket->GetLocalAddress().IsLoopbackIP()) {
+      RTC_LOG(LS_WARNING) << "Socket is bound to the address:"
+                          << socket_address.ipaddr().ToString()
+                          << ", rather then an address associated with network:"
+                          << port_->Network()->ToString()
+                          << ". Still allowing it since it's localhost.";
+    } else if (IPIsAny(port_->Network()->GetBestIP())) {
+      RTC_LOG(LS_WARNING)
+          << "Socket is bound to the address:"
+          << socket_address.ipaddr().ToString()
+          << ", rather then an address associated with network:"
+          << port_->Network()->ToString()
+          << ". Still allowing it since it's the 'any' address"
+          << ", possibly caused by multiple_routes being disabled.";
+    } else {
+      RTC_LOG(LS_WARNING) << "Dropping connection as TCP socket bound to IP "
+                          << socket_address.ipaddr().ToString()
+                          << ", rather then an address associated with network:"
+                          << port_->Network()->ToString();
+      OnClose(socket, 0);
+      return;
+    }
   }
 
   // Connection is established successfully.
@@ -501,8 +533,9 @@ void TCPConnection::CreateOutgoingTcpSocket() {
                  ? rtc::PacketSocketFactory::OPT_TLS_FAKE
                  : 0;
   socket_.reset(port()->socket_factory()->CreateClientTcpSocket(
-      rtc::SocketAddress(port()->ip(), 0), remote_candidate().address(),
-      port()->proxy(), port()->user_agent(), opts));
+      rtc::SocketAddress(port()->Network()->GetBestIP(), 0),
+      remote_candidate().address(), port()->proxy(), port()->user_agent(),
+      opts));
   if (socket_) {
     LOG_J(LS_VERBOSE, this)
         << "Connecting from " << socket_->GetLocalAddress().ToSensitiveString()

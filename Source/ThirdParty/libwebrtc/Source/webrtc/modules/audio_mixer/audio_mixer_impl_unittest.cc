@@ -16,13 +16,14 @@
 #include <string>
 #include <utility>
 
-#include "webrtc/api/audio/audio_mixer.h"
-#include "webrtc/base/bind.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/modules/audio_mixer/audio_mixer_impl.h"
-#include "webrtc/modules/audio_mixer/default_output_rate_calculator.h"
-#include "webrtc/test/gmock.h"
+#include "api/audio/audio_mixer.h"
+#include "modules/audio_mixer/audio_mixer_impl.h"
+#include "modules/audio_mixer/default_output_rate_calculator.h"
+#include "rtc_base/bind.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/task_queue.h"
+#include "test/gmock.h"
 
 using testing::_;
 using testing::Exactly;
@@ -34,12 +35,10 @@ namespace webrtc {
 namespace {
 
 constexpr int kDefaultSampleRateHz = 48000;
-constexpr int kId = 1;
 
 // Utility function that resets the frame member variables with
 // sensible defaults.
 void ResetFrame(AudioFrame* frame) {
-  frame->id_ = kId;
   frame->sample_rate_hz_ = kDefaultSampleRateHz;
   frame->num_channels_ = 1;
 
@@ -373,23 +372,27 @@ TEST(AudioMixer, RampedOutSourcesShouldNotBeMarkedMixed) {
 // This test checks that the initialization and participant addition
 // can be done on a different thread.
 TEST(AudioMixer, ConstructFromOtherThread) {
-  std::unique_ptr<rtc::Thread> init_thread = rtc::Thread::Create();
-  std::unique_ptr<rtc::Thread> participant_thread = rtc::Thread::Create();
-  init_thread->Start();
-  const auto mixer = init_thread->Invoke<rtc::scoped_refptr<AudioMixer>>(
-      RTC_FROM_HERE,
-      // Since AudioMixerImpl::Create is overloaded, we have to
-      // specify the type of which version we want.
-      static_cast<rtc::scoped_refptr<AudioMixerImpl>(*)()>(
-          &AudioMixerImpl::Create));
+  rtc::TaskQueue init_queue("init");
+  rtc::scoped_refptr<AudioMixer> mixer;
+  rtc::Event event(false, false);
+  init_queue.PostTask([&mixer, &event]() {
+    mixer = AudioMixerImpl::Create();
+    event.Set();
+  });
+  event.Wait(rtc::Event::kForever);
+
   MockMixerAudioSource participant;
+  EXPECT_CALL(participant, PreferredSampleRate())
+      .WillRepeatedly(Return(kDefaultSampleRateHz));
 
   ResetFrame(participant.fake_frame());
 
-  participant_thread->Start();
-  EXPECT_TRUE(participant_thread->Invoke<int>(
-      RTC_FROM_HERE,
-      rtc::Bind(&AudioMixer::AddSource, mixer.get(), &participant)));
+  rtc::TaskQueue participant_queue("participant");
+  participant_queue.PostTask([&mixer, &event, &participant]() {
+    mixer->AddSource(&participant);
+    event.Set();
+  });
+  event.Wait(rtc::Event::kForever);
 
   EXPECT_CALL(participant, GetAudioFrameWithInfo(kDefaultSampleRateHz, _))
       .Times(Exactly(1));

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/opus/opus_interface.h"
-#include "webrtc/modules/audio_coding/codecs/tools/audio_codec_speed_test.h"
+#include "modules/audio_coding/codecs/opus/opus_interface.h"
+#include "modules/audio_coding/codecs/tools/audio_codec_speed_test.h"
 
 using ::std::string;
 
@@ -81,10 +81,11 @@ float OpusSpeedTest::DecodeABlock(const uint8_t* bit_stream,
   return 1000.0 * clocks / CLOCKS_PER_SEC;
 }
 
+/* Test audio length in second. */
+constexpr size_t kDurationSec = 400;
+
 #define ADD_TEST(complexity) \
 TEST_P(OpusSpeedTest, OpusSetComplexityTest##complexity) { \
-  /* Test audio length in second. */ \
-  size_t kDurationSec = 400; \
   /* Set complexity. */ \
   printf("Setting complexity to %d ...\n", complexity); \
   EXPECT_EQ(0, WebRtcOpus_SetComplexity(opus_encoder_, complexity)); \
@@ -103,17 +104,37 @@ ADD_TEST(2);
 ADD_TEST(1);
 ADD_TEST(0);
 
+#define ADD_BANDWIDTH_TEST(bandwidth)                                \
+  TEST_P(OpusSpeedTest, OpusSetBandwidthTest##bandwidth) {           \
+    /* Set bandwidth. */                                             \
+    printf("Setting bandwidth to %d ...\n", bandwidth);              \
+    EXPECT_EQ(0, WebRtcOpus_SetBandwidth(opus_encoder_, bandwidth)); \
+    EncodeDecode(kDurationSec);                                      \
+  }
+
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_NARROWBAND);
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_MEDIUMBAND);
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_WIDEBAND);
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_SUPERWIDEBAND);
+ADD_BANDWIDTH_TEST(OPUS_BANDWIDTH_FULLBAND);
+
 // List all test cases: (channel, bit rat, filename, extension).
-const coding_param param_set[] =
-    {::std::tr1::make_tuple(1, 64000,
-                            string("audio_coding/speech_mono_32_48kHz"),
-                            string("pcm"), true),
-     ::std::tr1::make_tuple(1, 32000,
-                            string("audio_coding/speech_mono_32_48kHz"),
-                            string("pcm"), true),
-     ::std::tr1::make_tuple(2, 64000,
-                            string("audio_coding/music_stereo_48kHz"),
-                            string("pcm"), true)};
+const coding_param param_set[] = {
+    std::make_tuple(1,
+                    64000,
+                    string("audio_coding/speech_mono_32_48kHz"),
+                    string("pcm"),
+                    true),
+    std::make_tuple(1,
+                    32000,
+                    string("audio_coding/speech_mono_32_48kHz"),
+                    string("pcm"),
+                    true),
+    std::make_tuple(2,
+                    64000,
+                    string("audio_coding/music_stereo_48kHz"),
+                    string("pcm"),
+                    true)};
 
 INSTANTIATE_TEST_CASE_P(AllTest, OpusSpeedTest,
                         ::testing::ValuesIn(param_set));

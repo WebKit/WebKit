@@ -71,7 +71,7 @@ public class DtmfSender {
   }
 
   public void dispose() {
-    free(nativeDtmfSender);
+    JniCommon.nativeReleaseRef(nativeDtmfSender);
   }
 
   private static native boolean nativeCanInsertDtmf(long nativeDtmfSender);
@@ -80,5 +80,4 @@ public class DtmfSender {
   private static native String nativeTones(long nativeDtmfSender);
   private static native int nativeDuration(long nativeDtmfSender);
   private static native int nativeInterToneGap(long nativeDtmfSender);
-  private static native void free(long nativeDtmfSender);
 };

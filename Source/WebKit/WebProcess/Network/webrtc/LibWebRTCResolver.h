@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/base/nethelpers.h>
+#include <webrtc/rtc_base/nethelpers.h>
 #include <webrtc/p2p/base/packetsocketfactory.h>
 #include <wtf/Vector.h>
 

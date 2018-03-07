@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 
 #include <limits>
 
-#include "webrtc/base/random.h"
-#include "webrtc/test/gtest.h"
+#include "rtc_base/random.h"
+#include "test/gtest.h"
 
 using webrtc::rtcp::ReportBlock;
 

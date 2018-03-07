@@ -27,15 +27,26 @@ public class IceCandidate {
     this.serverUrl = "";
   }
 
-  // Only be called internally from JNI.
-  private IceCandidate(String sdpMid, int sdpMLineIndex, String sdp, String serverUrl) {
+  @CalledByNative
+  IceCandidate(String sdpMid, int sdpMLineIndex, String sdp, String serverUrl) {
     this.sdpMid = sdpMid;
     this.sdpMLineIndex = sdpMLineIndex;
     this.sdp = sdp;
     this.serverUrl = serverUrl;
   }
 
+  @Override
   public String toString() {
     return sdpMid + ":" + sdpMLineIndex + ":" + sdp + ":" + serverUrl;
+  }
+
+  @CalledByNative
+  String getSdpMid() {
+    return sdpMid;
+  }
+
+  @CalledByNative
+  String getSdp() {
+    return sdp;
   }
 }

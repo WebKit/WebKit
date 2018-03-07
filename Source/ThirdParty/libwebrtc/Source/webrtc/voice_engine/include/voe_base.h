@@ -31,13 +31,13 @@
 //  base->Release();
 //  VoiceEngine::Delete(voe);
 //
-#ifndef WEBRTC_VOICE_ENGINE_VOE_BASE_H
-#define WEBRTC_VOICE_ENGINE_VOE_BASE_H
+#ifndef VOICE_ENGINE_VOE_BASE_H_
+#define VOICE_ENGINE_VOE_BASE_H_
 
-#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -47,18 +47,6 @@ class AudioTransport;
 namespace voe {
 class TransmitMixer;
 }  // namespace voe
-
-// VoiceEngineObserver
-class WEBRTC_DLLEXPORT VoiceEngineObserver {
- public:
-  // This method will be called after the occurrence of any runtime error
-  // code, or warning notification, when the observer interface has been
-  // installed using VoEBase::RegisterVoiceEngineObserver().
-  virtual void CallbackOnError(int channel, int errCode) = 0;
-
- protected:
-  virtual ~VoiceEngineObserver() {}
-};
 
 // VoiceEngine
 class WEBRTC_DLLEXPORT VoiceEngine {
@@ -72,20 +60,6 @@ class WEBRTC_DLLEXPORT VoiceEngine {
   // the voice engine instance will not actually be deleted until those
   // references have been released.
   static bool Delete(VoiceEngine*& voiceEngine);
-
-  // Specifies the amount and type of trace information which will be
-  // created by the VoiceEngine.
-  static int SetTraceFilter(unsigned int filter);
-
-  // Sets the name of the trace file and enables non-encrypted trace messages.
-  static int SetTraceFile(const char* fileNameUTF8,
-                          bool addFileCounter = false);
-
-  // Installs the TraceCallback implementation to ensure that the user
-  // receives callbacks for generated trace messages.
-  static int SetTraceCallback(TraceCallback* callback);
-
-  static std::string GetVersionString();
 
  protected:
   VoiceEngine() {}
@@ -110,45 +84,25 @@ class WEBRTC_DLLEXPORT VoEBase {
   // for all sub-APIs before the VoiceEngine object can be safely deleted.
   virtual int Release() = 0;
 
-  // Installs the observer class to enable runtime error control and
-  // warning notifications. Returns -1 in case of an error, 0 otherwise.
-  virtual int RegisterVoiceEngineObserver(VoiceEngineObserver& observer) = 0;
-
-  // Removes and disables the observer class for runtime error control
-  // and warning notifications. Returns 0.
-  virtual int DeRegisterVoiceEngineObserver() = 0;
-
   // Initializes all common parts of the VoiceEngine; e.g. all
   // encoders/decoders, the sound card and core receiving components.
   // This method also makes it possible to install some user-defined external
   // modules:
   // - The Audio Device Module (ADM) which implements all the audio layer
   // functionality in a separate (reference counted) module.
-  // - The AudioProcessing module handles capture-side processing. VoiceEngine
-  // takes ownership of this object.
+  // - The AudioProcessing module handles capture-side processing.
   // - An AudioDecoderFactory - used to create audio decoders.
-  // If NULL is passed for any of these, VoiceEngine will create its own.
-  // Returns -1 in case of an error, 0 otherwise.
-  // TODO(ajm): Remove default NULLs.
-  virtual int Init(AudioDeviceModule* external_adm = NULL,
-                   AudioProcessing* audioproc = NULL,
-                   const rtc::scoped_refptr<AudioDecoderFactory>&
-                       decoder_factory = nullptr) = 0;
-
-  // Returns NULL before Init() is called.
-  virtual AudioProcessing* audio_processing() = 0;
-
-  // This method is WIP - DO NOT USE!
-  // Returns NULL before Init() is called.
-  virtual AudioDeviceModule* audio_device_module() = 0;
+  virtual int Init(
+      AudioDeviceModule* audio_device,
+      AudioProcessing* audio_processing,
+      const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory) = 0;
 
   // This method is WIP - DO NOT USE!
   // Returns NULL before Init() is called.
   virtual voe::TransmitMixer* transmit_mixer() = 0;
 
   // Terminates all VoiceEngine functions and releases allocated resources.
-  // Returns 0.
-  virtual int Terminate() = 0;
+  virtual void Terminate() = 0;
 
   // Creates a new channel and allocates the required resources for it.
   // The second version accepts a |config| struct which includes an Audio Coding
@@ -162,13 +116,6 @@ class WEBRTC_DLLEXPORT VoEBase {
   // Deletes an existing channel and releases the utilized resources.
   // Returns -1 in case of an error, 0 otherwise.
   virtual int DeleteChannel(int channel) = 0;
-
-  // Prepares and initiates the VoiceEngine for reception of
-  // incoming RTP/RTCP packets on the specified |channel|.
-  virtual int StartReceive(int channel) = 0;
-
-  // Stops receiving incoming RTP/RTCP packets on the specified |channel|.
-  virtual int StopReceive(int channel)  { return 0; }
 
   // Starts forwarding the packets to the mixer/soundcard for a
   // specified |channel|.
@@ -185,21 +132,24 @@ class WEBRTC_DLLEXPORT VoEBase {
   // Stops sending packets from a specified |channel|.
   virtual int StopSend(int channel) = 0;
 
-  // Gets the version information for VoiceEngine and its components.
-  virtual int GetVersion(char version[1024]) = 0;
+  // Enable or disable playout to the underlying device. Takes precedence over
+  // StartPlayout. Though calls to StartPlayout are remembered; if
+  // SetPlayout(true) is called after StartPlayout, playout will be started.
+  //
+  // By default, playout is enabled.
+  virtual int SetPlayout(bool enabled) = 0;
 
-  // Gets the last VoiceEngine error code.
-  virtual int LastError() = 0;
+  // Enable or disable recording (which drives sending of encoded audio packtes)
+  // from the underlying device. Takes precedence over StartSend. Though calls
+  // to StartSend are remembered; if SetRecording(true) is called after
+  // StartSend, recording will be started.
+  //
+  // By default, recording is enabled.
+  virtual int SetRecording(bool enabled) = 0;
 
   // TODO(xians): Make the interface pure virtual after libjingle
   // implements the interface in its FakeWebRtcVoiceEngine.
   virtual AudioTransport* audio_transport() { return NULL; }
-
-  // Associate a send channel to a receive channel.
-  // Used for obtaining RTT for a receive-only channel.
-  // One should be careful not to crate a circular association, e.g.,
-  // 1 <- 2 <- 1.
-  virtual int AssociateSendChannel(int channel, int accociate_send_channel) = 0;
 
  protected:
   VoEBase() {}
@@ -208,4 +158,4 @@ class WEBRTC_DLLEXPORT VoEBase {
 
 }  // namespace webrtc
 
-#endif  //  WEBRTC_VOICE_ENGINE_VOE_BASE_H
+#endif  //  VOICE_ENGINE_VOE_BASE_H_

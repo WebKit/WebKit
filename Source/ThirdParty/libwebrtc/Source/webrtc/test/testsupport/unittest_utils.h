@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_TESTSUPPORT_UNITTEST_UTILS_H_
-#define WEBRTC_TEST_TESTSUPPORT_UNITTEST_UTILS_H_
+#ifndef TEST_TESTSUPPORT_UNITTEST_UTILS_H_
+#define TEST_TESTSUPPORT_UNITTEST_UTILS_H_
 
 namespace webrtc {
 namespace test {
@@ -53,4 +53,4 @@ class PacketRelatedTest: public testing::Test {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_TESTSUPPORT_UNITTEST_UTILS_H_
+#endif  // TEST_TESTSUPPORT_UNITTEST_UTILS_H_

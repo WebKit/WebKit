@@ -42,7 +42,7 @@ bool Rand(const std::vector<std::string> &args) {
     std::vector<std::string> args_copy(args);
     const std::string &last_arg = args.back();
 
-    if (last_arg.size() > 0 && last_arg[0] != '-') {
+    if (!last_arg.empty() && last_arg[0] != '-') {
       char *endptr;
       unsigned long long num = strtoull(last_arg.c_str(), &endptr, 10);
       if (*endptr == 0) {

@@ -8,22 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
+#include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 
 #include <limits>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
 namespace {
 class NullSmoothingFilter final : public SmoothingFilter {
  public:
-  void AddSample(float sample) override {
-    last_sample_ = rtc::Optional<float>(sample);
-  }
+  void AddSample(float sample) override { last_sample_ = sample; }
 
   rtc::Optional<float> GetAverage() override { return last_sample_; }
 
@@ -85,10 +83,9 @@ void FecControllerPlrBased::MakeDecision(AudioEncoderRuntimeConfig* config) {
   fec_enabled_ = fec_enabled_ ? !FecDisablingDecision(packet_loss)
                               : FecEnablingDecision(packet_loss);
 
-  config->enable_fec = rtc::Optional<bool>(fec_enabled_);
+  config->enable_fec = fec_enabled_;
 
-  config->uplink_packet_loss_fraction =
-      rtc::Optional<float>(packet_loss ? *packet_loss : 0.0);
+  config->uplink_packet_loss_fraction = packet_loss ? *packet_loss : 0.0;
 }
 
 bool FecControllerPlrBased::FecEnablingDecision(

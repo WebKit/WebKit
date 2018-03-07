@@ -10,8 +10,8 @@
 
 #import "WebRTC/RTCPeerConnectionFactory.h"
 
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/base/scoped_ref_ptr.h"
+#include "api/peerconnectioninterface.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

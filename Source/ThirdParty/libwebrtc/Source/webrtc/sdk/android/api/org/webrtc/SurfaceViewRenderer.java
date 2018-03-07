@@ -13,41 +13,31 @@ package org.webrtc;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Point;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.util.concurrent.CountDownLatch;
 
 /**
- * Implements org.webrtc.VideoRenderer.Callbacks by displaying the video stream on a SurfaceView.
- * renderFrame() is asynchronous to avoid blocking the calling thread.
- * This class is thread safe and handles access from potentially four different threads:
- * Interaction from the main app in init, release, setMirror, and setScalingtype.
- * Interaction from C++ rtc::VideoSinkInterface in renderFrame.
- * Interaction from the Activity lifecycle in surfaceCreated, surfaceChanged, and surfaceDestroyed.
- * Interaction with the layout framework in onMeasure and onSizeChanged.
+ * Display the video stream on a SurfaceView.
  */
-public class SurfaceViewRenderer
-    extends SurfaceView implements SurfaceHolder.Callback, VideoRenderer.Callbacks {
+public class SurfaceViewRenderer extends SurfaceView implements SurfaceHolder.Callback,
+                                                                VideoRenderer.Callbacks, VideoSink,
+                                                                RendererCommon.RendererEvents {
   private static final String TAG = "SurfaceViewRenderer";
 
   // Cached resource name.
   private final String resourceName;
   private final RendererCommon.VideoLayoutMeasure videoLayoutMeasure =
       new RendererCommon.VideoLayoutMeasure();
-  private final EglRenderer eglRenderer;
+  private final SurfaceEglRenderer eglRenderer;
 
   // Callback for reporting renderer events. Read-only after initilization so no lock required.
   private RendererCommon.RendererEvents rendererEvents;
 
-  private final Object layoutLock = new Object();
-  private boolean isRenderingPaused = false;
-  private boolean isFirstFrameRendered;
+  // Accessed only on the main thread.
   private int rotatedFrameWidth;
   private int rotatedFrameHeight;
-  private int frameRotation;
-
-  // Accessed only on the main thread.
   private boolean enableFixedSize;
   private int surfaceWidth;
   private int surfaceHeight;
@@ -58,8 +48,9 @@ public class SurfaceViewRenderer
   public SurfaceViewRenderer(Context context) {
     super(context);
     this.resourceName = getResourceName();
-    eglRenderer = new EglRenderer(resourceName);
+    eglRenderer = new SurfaceEglRenderer(resourceName);
     getHolder().addCallback(this);
+    getHolder().addCallback(eglRenderer);
   }
 
   /**
@@ -68,8 +59,9 @@ public class SurfaceViewRenderer
   public SurfaceViewRenderer(Context context, AttributeSet attrs) {
     super(context, attrs);
     this.resourceName = getResourceName();
-    eglRenderer = new EglRenderer(resourceName);
+    eglRenderer = new SurfaceEglRenderer(resourceName);
     getHolder().addCallback(this);
+    getHolder().addCallback(eglRenderer);
   }
 
   /**
@@ -91,12 +83,9 @@ public class SurfaceViewRenderer
       RendererCommon.GlDrawer drawer) {
     ThreadUtils.checkIsOnMainThread();
     this.rendererEvents = rendererEvents;
-    synchronized (layoutLock) {
-      rotatedFrameWidth = 0;
-      rotatedFrameHeight = 0;
-      frameRotation = 0;
-    }
-    eglRenderer.init(sharedContext, configAttributes, drawer);
+    rotatedFrameWidth = 0;
+    rotatedFrameHeight = 0;
+    eglRenderer.init(sharedContext, this /* rendererEvents */, configAttributes, drawer);
   }
 
   /**
@@ -163,12 +152,14 @@ public class SurfaceViewRenderer
   public void setScalingType(RendererCommon.ScalingType scalingType) {
     ThreadUtils.checkIsOnMainThread();
     videoLayoutMeasure.setScalingType(scalingType);
+    requestLayout();
   }
 
   public void setScalingType(RendererCommon.ScalingType scalingTypeMatchOrientation,
       RendererCommon.ScalingType scalingTypeMismatchOrientation) {
     ThreadUtils.checkIsOnMainThread();
     videoLayoutMeasure.setScalingType(scalingTypeMatchOrientation, scalingTypeMismatchOrientation);
+    requestLayout();
   }
 
   /**
@@ -178,42 +169,35 @@ public class SurfaceViewRenderer
    *            reduction.
    */
   public void setFpsReduction(float fps) {
-    synchronized (layoutLock) {
-      isRenderingPaused = fps == 0f;
-    }
     eglRenderer.setFpsReduction(fps);
   }
 
   public void disableFpsReduction() {
-    synchronized (layoutLock) {
-      isRenderingPaused = false;
-    }
     eglRenderer.disableFpsReduction();
   }
 
   public void pauseVideo() {
-    synchronized (layoutLock) {
-      isRenderingPaused = true;
-    }
     eglRenderer.pauseVideo();
   }
 
   // VideoRenderer.Callbacks interface.
   @Override
   public void renderFrame(VideoRenderer.I420Frame frame) {
-    updateFrameDimensionsAndReportEvents(frame);
     eglRenderer.renderFrame(frame);
+  }
+
+  // VideoSink interface.
+  @Override
+  public void onFrame(VideoFrame frame) {
+    eglRenderer.onFrame(frame);
   }
 
   // View layout interface.
   @Override
   protected void onMeasure(int widthSpec, int heightSpec) {
     ThreadUtils.checkIsOnMainThread();
-    final Point size;
-    synchronized (layoutLock) {
-      size =
-          videoLayoutMeasure.measure(widthSpec, heightSpec, rotatedFrameWidth, rotatedFrameHeight);
-    }
+    Point size =
+        videoLayoutMeasure.measure(widthSpec, heightSpec, rotatedFrameWidth, rotatedFrameHeight);
     setMeasuredDimension(size.x, size.y);
     logD("onMeasure(). New size: " + size.x + "x" + size.y);
   }
@@ -227,35 +211,33 @@ public class SurfaceViewRenderer
 
   private void updateSurfaceSize() {
     ThreadUtils.checkIsOnMainThread();
-    synchronized (layoutLock) {
-      if (enableFixedSize && rotatedFrameWidth != 0 && rotatedFrameHeight != 0 && getWidth() != 0
-          && getHeight() != 0) {
-        final float layoutAspectRatio = getWidth() / (float) getHeight();
-        final float frameAspectRatio = rotatedFrameWidth / (float) rotatedFrameHeight;
-        final int drawnFrameWidth;
-        final int drawnFrameHeight;
-        if (frameAspectRatio > layoutAspectRatio) {
-          drawnFrameWidth = (int) (rotatedFrameHeight * layoutAspectRatio);
-          drawnFrameHeight = rotatedFrameHeight;
-        } else {
-          drawnFrameWidth = rotatedFrameWidth;
-          drawnFrameHeight = (int) (rotatedFrameWidth / layoutAspectRatio);
-        }
-        // Aspect ratio of the drawn frame and the view is the same.
-        final int width = Math.min(getWidth(), drawnFrameWidth);
-        final int height = Math.min(getHeight(), drawnFrameHeight);
-        logD("updateSurfaceSize. Layout size: " + getWidth() + "x" + getHeight() + ", frame size: "
-            + rotatedFrameWidth + "x" + rotatedFrameHeight + ", requested surface size: " + width
-            + "x" + height + ", old surface size: " + surfaceWidth + "x" + surfaceHeight);
-        if (width != surfaceWidth || height != surfaceHeight) {
-          surfaceWidth = width;
-          surfaceHeight = height;
-          getHolder().setFixedSize(width, height);
-        }
+    if (enableFixedSize && rotatedFrameWidth != 0 && rotatedFrameHeight != 0 && getWidth() != 0
+        && getHeight() != 0) {
+      final float layoutAspectRatio = getWidth() / (float) getHeight();
+      final float frameAspectRatio = rotatedFrameWidth / (float) rotatedFrameHeight;
+      final int drawnFrameWidth;
+      final int drawnFrameHeight;
+      if (frameAspectRatio > layoutAspectRatio) {
+        drawnFrameWidth = (int) (rotatedFrameHeight * layoutAspectRatio);
+        drawnFrameHeight = rotatedFrameHeight;
       } else {
-        surfaceWidth = surfaceHeight = 0;
-        getHolder().setSizeFromLayout();
+        drawnFrameWidth = rotatedFrameWidth;
+        drawnFrameHeight = (int) (rotatedFrameWidth / layoutAspectRatio);
       }
+      // Aspect ratio of the drawn frame and the view is the same.
+      final int width = Math.min(getWidth(), drawnFrameWidth);
+      final int height = Math.min(getHeight(), drawnFrameHeight);
+      logD("updateSurfaceSize. Layout size: " + getWidth() + "x" + getHeight() + ", frame size: "
+          + rotatedFrameWidth + "x" + rotatedFrameHeight + ", requested surface size: " + width
+          + "x" + height + ", old surface size: " + surfaceWidth + "x" + surfaceHeight);
+      if (width != surfaceWidth || height != surfaceHeight) {
+        surfaceWidth = width;
+        surfaceHeight = height;
+        getHolder().setFixedSize(width, height);
+      }
+    } else {
+      surfaceWidth = surfaceHeight = 0;
+      getHolder().setSizeFromLayout();
     }
   }
 
@@ -263,33 +245,19 @@ public class SurfaceViewRenderer
   @Override
   public void surfaceCreated(final SurfaceHolder holder) {
     ThreadUtils.checkIsOnMainThread();
-    eglRenderer.createEglSurface(holder.getSurface());
     surfaceWidth = surfaceHeight = 0;
     updateSurfaceSize();
   }
 
   @Override
-  public void surfaceDestroyed(SurfaceHolder holder) {
-    ThreadUtils.checkIsOnMainThread();
-    final CountDownLatch completionLatch = new CountDownLatch(1);
-    eglRenderer.releaseEglSurface(new Runnable() {
-      @Override
-      public void run() {
-        completionLatch.countDown();
-      }
-    });
-    ThreadUtils.awaitUninterruptibly(completionLatch);
-  }
+  public void surfaceDestroyed(SurfaceHolder holder) {}
 
   @Override
-  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    ThreadUtils.checkIsOnMainThread();
-    logD("surfaceChanged: format: " + format + " size: " + width + "x" + height);
-  }
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
 
   private String getResourceName() {
     try {
-      return getResources().getResourceEntryName(getId()) + ": ";
+      return getResources().getResourceEntryName(getId());
     } catch (NotFoundException e) {
       return "";
     }
@@ -302,41 +270,38 @@ public class SurfaceViewRenderer
     eglRenderer.clearImage();
   }
 
-  // Update frame dimensions and report any changes to |rendererEvents|.
-  private void updateFrameDimensionsAndReportEvents(VideoRenderer.I420Frame frame) {
-    synchronized (layoutLock) {
-      if (isRenderingPaused) {
-        return;
-      }
-      if (!isFirstFrameRendered) {
-        isFirstFrameRendered = true;
-        logD("Reporting first rendered frame.");
-        if (rendererEvents != null) {
-          rendererEvents.onFirstFrameRendered();
-        }
-      }
-      if (rotatedFrameWidth != frame.rotatedWidth() || rotatedFrameHeight != frame.rotatedHeight()
-          || frameRotation != frame.rotationDegree) {
-        logD("Reporting frame resolution changed to " + frame.width + "x" + frame.height
-            + " with rotation " + frame.rotationDegree);
-        if (rendererEvents != null) {
-          rendererEvents.onFrameResolutionChanged(frame.width, frame.height, frame.rotationDegree);
-        }
-        rotatedFrameWidth = frame.rotatedWidth();
-        rotatedFrameHeight = frame.rotatedHeight();
-        frameRotation = frame.rotationDegree;
-        post(new Runnable() {
-          @Override
-          public void run() {
-            updateSurfaceSize();
-            requestLayout();
-          }
-        });
-      }
+  @Override
+  public void onFirstFrameRendered() {
+    if (rendererEvents != null) {
+      rendererEvents.onFirstFrameRendered();
+    }
+  }
+
+  @Override
+  public void onFrameResolutionChanged(int videoWidth, int videoHeight, int rotation) {
+    if (rendererEvents != null) {
+      rendererEvents.onFrameResolutionChanged(videoWidth, videoHeight, rotation);
+    }
+    int rotatedWidth = rotation == 0 || rotation == 180 ? videoWidth : videoHeight;
+    int rotatedHeight = rotation == 0 || rotation == 180 ? videoHeight : videoWidth;
+    // run immediately if possible for ui thread tests
+    postOrRun(() -> {
+      rotatedFrameWidth = rotatedWidth;
+      rotatedFrameHeight = rotatedHeight;
+      updateSurfaceSize();
+      requestLayout();
+    });
+  }
+
+  private void postOrRun(Runnable r) {
+    if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
+      r.run();
+    } else {
+      post(r);
     }
   }
 
   private void logD(String string) {
-    Logging.d(TAG, resourceName + string);
+    Logging.d(TAG, resourceName + ": " + string);
   }
 }

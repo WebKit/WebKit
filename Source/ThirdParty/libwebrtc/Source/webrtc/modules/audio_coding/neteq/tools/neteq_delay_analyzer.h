@@ -8,16 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
+#define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
 
 #include <map>
+#include <set>
+#include <string>
 #include <vector>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_input.h"
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_test.h"
-#include "webrtc/typedefs.h"
+#include "api/optional.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_test.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -41,6 +43,11 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
                     std::vector<rtc::Optional<float>>* playout_delay_ms,
                     std::vector<rtc::Optional<float>>* target_delay_ms) const;
 
+  // Creates a matlab script with file name script_name. When executed in
+  // Matlab, the script will generate graphs with the same timing information
+  // as provided by CreateGraphs.
+  void CreateMatlabScript(const std::string& script_name) const;
+
  private:
   struct TimingData {
     explicit TimingData(double at) : arrival_time_ms(at) {}
@@ -55,8 +62,10 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
   size_t get_audio_count_ = 0;
   size_t last_sync_buffer_ms_ = 0;
   int last_sample_rate_hz_ = 0;
+  std::set<uint32_t> ssrcs_;
+  std::set<int> payload_types_;
 };
 
 }  // namespace test
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_DELAY_ANALYZER_H_

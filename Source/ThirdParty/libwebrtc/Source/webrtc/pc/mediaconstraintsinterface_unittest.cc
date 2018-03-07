@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/mediaconstraintsinterface.h"
+#include "api/mediaconstraintsinterface.h"
 
-#include "webrtc/api/test/fakeconstraints.h"
-#include "webrtc/base/gunit.h"
+#include "api/test/fakeconstraints.h"
+#include "rtc_base/gunit.h"
 
 namespace webrtc {
 
@@ -62,7 +62,7 @@ TEST(MediaConstraintsInterface, CopyConstraintsIntoRtcConfiguration) {
   // values that are already present.
   constraints = FakeConstraints();
   configuration = old_configuration;
-  configuration.enable_dtls_srtp = rtc::Optional<bool>(true);
+  configuration.enable_dtls_srtp = true;
   configuration.audio_jitter_buffer_max_packets = 34;
   CopyConstraintsIntoRtcConfiguration(&constraints, &configuration);
   EXPECT_EQ(34, configuration.audio_jitter_buffer_max_packets);

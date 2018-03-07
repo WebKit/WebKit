@@ -8,24 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_H_
-#define WEBRTC_MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_H_
+#ifndef MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_H_
+#define MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_H_
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/race_checker.h"
-#include "webrtc/modules/congestion_controller/median_slope_estimator.h"
-#include "webrtc/modules/congestion_controller/probe_bitrate_estimator.h"
-#include "webrtc/modules/congestion_controller/trendline_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/inter_arrival.h"
-#include "webrtc/modules/remote_bitrate_estimator/overuse_detector.h"
-#include "webrtc/modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "modules/congestion_controller/median_slope_estimator.h"
+#include "modules/congestion_controller/probe_bitrate_estimator.h"
+#include "modules/congestion_controller/trendline_estimator.h"
+#include "modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/remote_bitrate_estimator/inter_arrival.h"
+#include "modules/remote_bitrate_estimator/overuse_detector.h"
+#include "modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/race_checker.h"
 
 namespace webrtc {
 
@@ -36,12 +36,13 @@ class DelayBasedBwe {
   static const int64_t kStreamTimeOutMs = 2000;
 
   struct Result {
-    Result() : updated(false), probe(false), target_bitrate_bps(0) {}
-    Result(bool probe, uint32_t target_bitrate_bps)
-        : updated(true), probe(probe), target_bitrate_bps(target_bitrate_bps) {}
+    Result();
+    Result(bool probe, uint32_t target_bitrate_bps);
+    ~Result();
     bool updated;
     bool probe;
     uint32_t target_bitrate_bps;
+    bool recovered_from_overuse;
   };
 
   DelayBasedBwe(RtcEventLog* event_log, const Clock* clock);
@@ -60,9 +61,9 @@ class DelayBasedBwe {
  private:
   void IncomingPacketFeedback(const PacketFeedback& packet_feedback);
   Result OnLongFeedbackDelay(int64_t arrival_time_ms);
-
   Result MaybeUpdateEstimate(bool overusing,
-                             rtc::Optional<uint32_t> acked_bitrate_bps);
+                             rtc::Optional<uint32_t> acked_bitrate_bps,
+                             bool request_probe);
   // Updates the current remote rate estimate and returns true if a valid
   // estimate exists.
   bool UpdateEstimate(int64_t now_ms,
@@ -84,8 +85,8 @@ class DelayBasedBwe {
   double trendline_smoothing_coeff_;
   double trendline_threshold_gain_;
   int consecutive_delayed_feedbacks_;
-  uint32_t last_logged_bitrate_;
-  BandwidthUsage last_logged_state_;
+  uint32_t prev_bitrate_;
+  BandwidthUsage prev_state_;
   bool in_sparse_update_experiment_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(DelayBasedBwe);
@@ -93,4 +94,4 @@ class DelayBasedBwe {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_H_
+#endif  // MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_H_

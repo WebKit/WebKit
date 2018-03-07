@@ -60,9 +60,9 @@
 
 
 BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
-  /* Compute a square root of |a| mod |p| using the Tonelli/Shanks algorithm
-   * (cf. Henri Cohen, "A Course in Algebraic Computational Number Theory",
-   * algorithm 1.5.1). |p| is assumed to be a prime. */
+  // Compute a square root of |a| mod |p| using the Tonelli/Shanks algorithm
+  // (cf. Henri Cohen, "A Course in Algebraic Computational Number Theory",
+  // algorithm 1.5.1). |p| is assumed to be a prime.
 
   BIGNUM *ret = in;
   int err = 1;
@@ -125,26 +125,25 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
     goto end;
   }
 
-  /* A = a mod p */
+  // A = a mod p
   if (!BN_nnmod(A, a, p, ctx)) {
     goto end;
   }
 
-  /* now write  |p| - 1  as  2^e*q  where  q  is odd */
+  // now write  |p| - 1  as  2^e*q  where  q  is odd
   e = 1;
   while (!BN_is_bit_set(p, e)) {
     e++;
   }
-  /* we'll set  q  later (if needed) */
+  // we'll set  q  later (if needed)
 
   if (e == 1) {
-    /* The easy case:  (|p|-1)/2  is odd, so 2 has an inverse
-     * modulo  (|p|-1)/2,  and square roots can be computed
-     * directly by modular exponentiation.
-     * We have
-     *     2 * (|p|+1)/4 == 1   (mod (|p|-1)/2),
-     * so we can use exponent  (|p|+1)/4,  i.e.  (|p|-3)/4 + 1.
-     */
+    // The easy case:  (|p|-1)/2  is odd, so 2 has an inverse
+    // modulo  (|p|-1)/2,  and square roots can be computed
+    // directly by modular exponentiation.
+    // We have
+    //     2 * (|p|+1)/4 == 1   (mod (|p|-1)/2),
+    // so we can use exponent  (|p|+1)/4,  i.e.  (|p|-3)/4 + 1.
     if (!BN_rshift(q, p, 2)) {
       goto end;
     }
@@ -158,39 +157,38 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
   }
 
   if (e == 2) {
-    /* |p| == 5  (mod 8)
-     *
-     * In this case  2  is always a non-square since
-     * Legendre(2,p) = (-1)^((p^2-1)/8)  for any odd prime.
-     * So if  a  really is a square, then  2*a  is a non-square.
-     * Thus for
-     *      b := (2*a)^((|p|-5)/8),
-     *      i := (2*a)*b^2
-     * we have
-     *     i^2 = (2*a)^((1 + (|p|-5)/4)*2)
-     *         = (2*a)^((p-1)/2)
-     *         = -1;
-     * so if we set
-     *      x := a*b*(i-1),
-     * then
-     *     x^2 = a^2 * b^2 * (i^2 - 2*i + 1)
-     *         = a^2 * b^2 * (-2*i)
-     *         = a*(-i)*(2*a*b^2)
-     *         = a*(-i)*i
-     *         = a.
-     *
-     * (This is due to A.O.L. Atkin,
-     * <URL:
-     *http://listserv.nodak.edu/scripts/wa.exe?A2=ind9211&L=nmbrthry&O=T&P=562>,
-     * November 1992.)
-     */
+    // |p| == 5  (mod 8)
+    //
+    // In this case  2  is always a non-square since
+    // Legendre(2,p) = (-1)^((p^2-1)/8)  for any odd prime.
+    // So if  a  really is a square, then  2*a  is a non-square.
+    // Thus for
+    //      b := (2*a)^((|p|-5)/8),
+    //      i := (2*a)*b^2
+    // we have
+    //     i^2 = (2*a)^((1 + (|p|-5)/4)*2)
+    //         = (2*a)^((p-1)/2)
+    //         = -1;
+    // so if we set
+    //      x := a*b*(i-1),
+    // then
+    //     x^2 = a^2 * b^2 * (i^2 - 2*i + 1)
+    //         = a^2 * b^2 * (-2*i)
+    //         = a*(-i)*(2*a*b^2)
+    //         = a*(-i)*i
+    //         = a.
+    //
+    // (This is due to A.O.L. Atkin,
+    // <URL:
+    //http://listserv.nodak.edu/scripts/wa.exe?A2=ind9211&L=nmbrthry&O=T&P=562>,
+    // November 1992.)
 
-    /* t := 2*a */
+    // t := 2*a
     if (!BN_mod_lshift1_quick(t, A, p)) {
       goto end;
     }
 
-    /* b := (2*a)^((|p|-5)/8) */
+    // b := (2*a)^((|p|-5)/8)
     if (!BN_rshift(q, p, 3)) {
       goto end;
     }
@@ -199,18 +197,18 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
       goto end;
     }
 
-    /* y := b^2 */
+    // y := b^2
     if (!BN_mod_sqr(y, b, p, ctx)) {
       goto end;
     }
 
-    /* t := (2*a)*b^2 - 1*/
+    // t := (2*a)*b^2 - 1
     if (!BN_mod_mul(t, t, y, p, ctx) ||
         !BN_sub_word(t, 1)) {
       goto end;
     }
 
-    /* x = a*b*t */
+    // x = a*b*t
     if (!BN_mod_mul(x, A, b, p, ctx) ||
         !BN_mod_mul(x, x, t, p, ctx)) {
       goto end;
@@ -223,17 +221,16 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
     goto vrfy;
   }
 
-  /* e > 2, so we really have to use the Tonelli/Shanks algorithm.
-   * First, find some  y  that is not a square. */
+  // e > 2, so we really have to use the Tonelli/Shanks algorithm.
+  // First, find some  y  that is not a square.
   if (!BN_copy(q, p)) {
-    goto end; /* use 'q' as temp */
+    goto end;  // use 'q' as temp
   }
   q->neg = 0;
   i = 2;
   do {
-    /* For efficiency, try small numbers first;
-     * if this fails, try random numbers.
-     */
+    // For efficiency, try small numbers first;
+    // if this fails, try random numbers.
     if (i < 22) {
       if (!BN_set_word(y, i)) {
         goto end;
@@ -247,7 +244,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
           goto end;
         }
       }
-      /* now 0 <= y < |p| */
+      // now 0 <= y < |p|
       if (BN_is_zero(y)) {
         if (!BN_set_word(y, i)) {
           goto end;
@@ -255,34 +252,33 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
       }
     }
 
-    r = bn_jacobi(y, q, ctx); /* here 'q' is |p| */
+    r = bn_jacobi(y, q, ctx);  // here 'q' is |p|
     if (r < -1) {
       goto end;
     }
     if (r == 0) {
-      /* m divides p */
+      // m divides p
       OPENSSL_PUT_ERROR(BN, BN_R_P_IS_NOT_PRIME);
       goto end;
     }
   } while (r == 1 && ++i < 82);
 
   if (r != -1) {
-    /* Many rounds and still no non-square -- this is more likely
-     * a bug than just bad luck.
-     * Even if  p  is not prime, we should have found some  y
-     * such that r == -1.
-     */
+    // Many rounds and still no non-square -- this is more likely
+    // a bug than just bad luck.
+    // Even if  p  is not prime, we should have found some  y
+    // such that r == -1.
     OPENSSL_PUT_ERROR(BN, BN_R_TOO_MANY_ITERATIONS);
     goto end;
   }
 
-  /* Here's our actual 'q': */
+  // Here's our actual 'q':
   if (!BN_rshift(q, q, e)) {
     goto end;
   }
 
-  /* Now that we have some non-square, we can find an element
-   * of order  2^e  by computing its q'th power. */
+  // Now that we have some non-square, we can find an element
+  // of order  2^e  by computing its q'th power.
   if (!BN_mod_exp_mont(y, y, q, p, ctx, NULL)) {
     goto end;
   }
@@ -291,37 +287,36 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
     goto end;
   }
 
-  /* Now we know that (if  p  is indeed prime) there is an integer
-   * k,  0 <= k < 2^e,  such that
-   *
-   *      a^q * y^k == 1   (mod p).
-   *
-   * As  a^q  is a square and  y  is not,  k  must be even.
-   * q+1  is even, too, so there is an element
-   *
-   *     X := a^((q+1)/2) * y^(k/2),
-   *
-   * and it satisfies
-   *
-   *     X^2 = a^q * a     * y^k
-   *         = a,
-   *
-   * so it is the square root that we are looking for.
-   */
+  // Now we know that (if  p  is indeed prime) there is an integer
+  // k,  0 <= k < 2^e,  such that
+  //
+  //      a^q * y^k == 1   (mod p).
+  //
+  // As  a^q  is a square and  y  is not,  k  must be even.
+  // q+1  is even, too, so there is an element
+  //
+  //     X := a^((q+1)/2) * y^(k/2),
+  //
+  // and it satisfies
+  //
+  //     X^2 = a^q * a     * y^k
+  //         = a,
+  //
+  // so it is the square root that we are looking for.
 
-  /* t := (q-1)/2  (note that  q  is odd) */
+  // t := (q-1)/2  (note that  q  is odd)
   if (!BN_rshift1(t, q)) {
     goto end;
   }
 
-  /* x := a^((q-1)/2) */
-  if (BN_is_zero(t)) /* special case: p = 2^e + 1 */
+  // x := a^((q-1)/2)
+  if (BN_is_zero(t))  // special case: p = 2^e + 1
   {
     if (!BN_nnmod(t, A, p, ctx)) {
       goto end;
     }
     if (BN_is_zero(t)) {
-      /* special case: a == 0  (mod p) */
+      // special case: a == 0  (mod p)
       BN_zero(ret);
       err = 0;
       goto end;
@@ -333,33 +328,32 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
       goto end;
     }
     if (BN_is_zero(x)) {
-      /* special case: a == 0  (mod p) */
+      // special case: a == 0  (mod p)
       BN_zero(ret);
       err = 0;
       goto end;
     }
   }
 
-  /* b := a*x^2  (= a^q) */
+  // b := a*x^2  (= a^q)
   if (!BN_mod_sqr(b, x, p, ctx) ||
       !BN_mod_mul(b, b, A, p, ctx)) {
     goto end;
   }
 
-  /* x := a*x    (= a^((q+1)/2)) */
+  // x := a*x    (= a^((q+1)/2))
   if (!BN_mod_mul(x, x, A, p, ctx)) {
     goto end;
   }
 
   while (1) {
-    /* Now  b  is  a^q * y^k  for some even  k  (0 <= k < 2^E
-     * where  E  refers to the original value of  e,  which we
-     * don't keep in a variable),  and  x  is  a^((q+1)/2) * y^(k/2).
-     *
-     * We have  a*b = x^2,
-     *    y^2^(e-1) = -1,
-     *    b^2^(e-1) = 1.
-     */
+    // Now  b  is  a^q * y^k  for some even  k  (0 <= k < 2^E
+    // where  E  refers to the original value of  e,  which we
+    // don't keep in a variable),  and  x  is  a^((q+1)/2) * y^(k/2).
+    //
+    // We have  a*b = x^2,
+    //    y^2^(e-1) = -1,
+    //    b^2^(e-1) = 1.
 
     if (BN_is_one(b)) {
       if (!BN_copy(ret, x)) {
@@ -370,7 +364,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
     }
 
 
-    /* find smallest  i  such that  b^(2^i) = 1 */
+    // find smallest  i  such that  b^(2^i) = 1
     i = 1;
     if (!BN_mod_sqr(t, b, p, ctx)) {
       goto end;
@@ -387,7 +381,7 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
     }
 
 
-    /* t := y^2^(e - i - 1) */
+    // t := y^2^(e - i - 1)
     if (!BN_copy(t, y)) {
       goto end;
     }
@@ -406,8 +400,8 @@ BIGNUM *BN_mod_sqrt(BIGNUM *in, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx) {
 
 vrfy:
   if (!err) {
-    /* verify the result -- the input might have been not a square
-     * (test added in 0.9.8) */
+    // verify the result -- the input might have been not a square
+    // (test added in 0.9.8)
 
     if (!BN_mod_sqr(x, ret, p, ctx)) {
       err = 1;
@@ -457,30 +451,30 @@ int BN_sqrt(BIGNUM *out_sqrt, const BIGNUM *in, BN_CTX *ctx) {
     goto err;
   }
 
-  /* We estimate that the square root of an n-bit number is 2^{n/2}. */
+  // We estimate that the square root of an n-bit number is 2^{n/2}.
   if (!BN_lshift(estimate, BN_value_one(), BN_num_bits(in)/2)) {
     goto err;
   }
 
-  /* This is Newton's method for finding a root of the equation |estimate|^2 -
-   * |in| = 0. */
+  // This is Newton's method for finding a root of the equation |estimate|^2 -
+  // |in| = 0.
   for (;;) {
-    /* |estimate| = 1/2 * (|estimate| + |in|/|estimate|) */
+    // |estimate| = 1/2 * (|estimate| + |in|/|estimate|)
     if (!BN_div(tmp, NULL, in, estimate, ctx) ||
         !BN_add(tmp, tmp, estimate) ||
         !BN_rshift1(estimate, tmp) ||
-        /* |tmp| = |estimate|^2 */
+        // |tmp| = |estimate|^2
         !BN_sqr(tmp, estimate, ctx) ||
-        /* |delta| = |in| - |tmp| */
+        // |delta| = |in| - |tmp|
         !BN_sub(delta, in, tmp)) {
       OPENSSL_PUT_ERROR(BN, ERR_R_BN_LIB);
       goto err;
     }
 
     delta->neg = 0;
-    /* The difference between |in| and |estimate| squared is required to always
-     * decrease. This ensures that the loop always terminates, but I don't have
-     * a proof that it always finds the square root for a given square. */
+    // The difference between |in| and |estimate| squared is required to always
+    // decrease. This ensures that the loop always terminates, but I don't have
+    // a proof that it always finds the square root for a given square.
     if (last_delta_valid && BN_cmp(delta, last_delta) >= 0) {
       break;
     }

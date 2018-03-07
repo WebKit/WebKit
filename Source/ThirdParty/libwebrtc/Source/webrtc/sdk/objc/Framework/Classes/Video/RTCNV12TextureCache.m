@@ -11,6 +11,7 @@
 #import "RTCNV12TextureCache.h"
 
 #import "WebRTC/RTCVideoFrame.h"
+#import "WebRTC/RTCVideoFrameBuffer.h"
 
 @implementation RTCNV12TextureCache {
   CVOpenGLESTextureCacheRef _textureCache;
@@ -73,8 +74,10 @@
 }
 
 - (BOOL)uploadFrameToTextures:(RTCVideoFrame *)frame {
-  CVPixelBufferRef pixelBuffer = frame.nativeHandle;
-  NSParameterAssert(pixelBuffer);
+  NSAssert([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]],
+           @"frame must be CVPixelBuffer backed");
+  RTCCVPixelBuffer *rtcPixelBuffer = (RTCCVPixelBuffer *)frame.buffer;
+  CVPixelBufferRef pixelBuffer = rtcPixelBuffer.pixelBuffer;
   return [self loadTexture:&_yTextureRef
                pixelBuffer:pixelBuffer
                 planeIndex:0

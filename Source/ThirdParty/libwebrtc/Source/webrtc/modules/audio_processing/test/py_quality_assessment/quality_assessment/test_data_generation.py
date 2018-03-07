@@ -23,6 +23,7 @@ obtained by convolving the input signal with an impulse response.
 
 import logging
 import os
+import shutil
 import sys
 
 try:
@@ -43,7 +44,7 @@ class TestDataGenerator(object):
   reference. The former is the clean signal deteriorated by the noise source,
   the latter goes through the same deterioration process, but more "gently".
   Noisy signal and reference are produced so that the reference is the signal
-  expected at the output of the APM module when the latter is fed with the nosiy
+  expected at the output of the APM module when the latter is fed with the noisy
   signal.
 
   An test data generator generates one or more pairs.
@@ -52,7 +53,8 @@ class TestDataGenerator(object):
   NAME = None
   REGISTERED_CLASSES = {}
 
-  def __init__(self):
+  def __init__(self, output_directory_prefix):
+    self._output_directory_prefix = output_directory_prefix
     # Init dictionaries with one entry for each test data generator
     # configuration (e.g., different SNRs).
     # Noisy audio track files (stored separately in a cache folder).
@@ -65,7 +67,7 @@ class TestDataGenerator(object):
 
   @classmethod
   def RegisterClass(cls, class_to_register):
-    """Registers an TestDataGenerator implementation.
+    """Registers a TestDataGenerator implementation.
 
     Decorator to automatically register the classes that extend
     TestDataGenerator.
@@ -95,7 +97,7 @@ class TestDataGenerator(object):
     return self._reference_signal_filepaths
 
   def Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     """Generates a set of noisy input and reference audiotrack file pairs.
 
     This method initializes an empty set of pairs and calls the _Generate()
@@ -103,12 +105,13 @@ class TestDataGenerator(object):
 
     Args:
       input_signal_filepath: path to the clean input audio track file.
-      input_noise_cache_path: path to the cache of noisy audio track files.
+      test_data_cache_path: path to the cache of the generated audio track
+                            files.
       base_output_path: base path where output is written.
     """
     self.Clear()
     self._Generate(
-        input_signal_filepath, input_noise_cache_path, base_output_path)
+        input_signal_filepath, test_data_cache_path, base_output_path)
 
   def Clear(self):
     """Clears the generated output path dictionaries.
@@ -118,7 +121,7 @@ class TestDataGenerator(object):
     self._reference_signal_filepaths = {}
 
   def _Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     """Abstract method to be implemented in each concrete class.
     """
     raise NotImplementedError()
@@ -163,16 +166,10 @@ class TestDataGenerator(object):
     self._reference_signal_filepaths[config_name] = os.path.abspath(
         reference_signal_filepath)
 
-    # Save noisy and reference file paths.
-    data_access.Metadata.SaveAudioTestDataPaths(
-        output_path=output_path,
-        audio_in_filepath=self._noisy_signal_filepaths[config_name],
-        audio_ref_filepath=self._reference_signal_filepaths[config_name])
-
-  @classmethod
-  def _MakeDir(cls, base_output_path, test_data_generator_config_name):
+  def _MakeDir(self, base_output_path, test_data_generator_config_name):
     output_path = os.path.join(
-        base_output_path, test_data_generator_config_name)
+        base_output_path,
+        self._output_directory_prefix + test_data_generator_config_name)
     data_access.MakeDirectory(output_path)
     return output_path
 
@@ -186,13 +183,27 @@ class IdentityTestDataGenerator(TestDataGenerator):
 
   NAME = 'identity'
 
-  def __init__(self):
-    TestDataGenerator.__init__(self)
+  def __init__(self, output_directory_prefix, copy_with_identity):
+    TestDataGenerator.__init__(self, output_directory_prefix)
+    self._copy_with_identity = copy_with_identity
+
+  @property
+  def copy_with_identity(self):
+    return self._copy_with_identity
 
   def _Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     config_name = 'default'
     output_path = self._MakeDir(base_output_path, config_name)
+
+    if self._copy_with_identity:
+      input_signal_filepath_new = os.path.join(
+          test_data_cache_path, os.path.split(input_signal_filepath)[1])
+      logging.info('copying ' + input_signal_filepath + ' to ' + (
+          input_signal_filepath_new))
+      shutil.copy(input_signal_filepath, input_signal_filepath_new)
+      input_signal_filepath = input_signal_filepath_new
+
     self._AddNoiseReferenceFilesPair(
         config_name=config_name,
         noisy_signal_filepath=input_signal_filepath,
@@ -219,29 +230,25 @@ class WhiteNoiseTestDataGenerator(TestDataGenerator):
 
   _NOISY_SIGNAL_FILENAME_TEMPLATE = 'noise_{0:d}_SNR.wav'
 
-  def __init__(self):
-    TestDataGenerator.__init__(self)
+  def __init__(self, output_directory_prefix):
+    TestDataGenerator.__init__(self, output_directory_prefix)
 
   def _Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     # Load the input signal.
     input_signal = signal_processing.SignalProcessingUtils.LoadWav(
         input_signal_filepath)
-    input_signal = signal_processing.SignalProcessingUtils.Normalize(
-      input_signal)
 
     # Create the noise track.
     noise_signal = signal_processing.SignalProcessingUtils.GenerateWhiteNoise(
         input_signal)
-    noise_signal = signal_processing.SignalProcessingUtils.Normalize(
-        noise_signal)
 
     # Create the noisy mixes (once for each unique SNR value).
     noisy_mix_filepaths = {}
     snr_values = set([snr for pair in self._SNR_VALUE_PAIRS for snr in pair])
     for snr in snr_values:
       noisy_signal_filepath = os.path.join(
-          input_noise_cache_path,
+          test_data_cache_path,
           self._NOISY_SIGNAL_FILENAME_TEMPLATE.format(snr))
 
       # Create and save if not done.
@@ -276,36 +283,30 @@ class NarrowBandNoiseTestDataGenerator(TestDataGenerator):
 
   NAME = 'narrow_band_noise'
 
-  def __init__(self):
-    TestDataGenerator.__init__(self)
+  def __init__(self, output_directory_prefix):
+    TestDataGenerator.__init__(self, output_directory_prefix)
 
   def _Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     # TODO(alessiob): implement.
     pass
 
 
 @TestDataGenerator.RegisterClass
-class EnvironmentalNoiseTestDataGenerator(TestDataGenerator):
-  """Generator that adds environmental noise.
+class AdditiveNoiseTestDataGenerator(TestDataGenerator):
+  """Generator that adds noise loops.
 
-  TODO(alessiob): Make the class more generic e.g.,
-  MixNoiseTrackTestDataGenerator.
+  This generator uses all the wav files in a given path (default: noise_tracks/)
+  and mixes them to the clean speech with different target SNRs (hard-coded).
   """
 
-  NAME = 'environmental_noise'
+  NAME = 'additive_noise'
   _NOISY_SIGNAL_FILENAME_TEMPLATE = '{0}_{1:d}_SNR.wav'
 
-  # TODO(alessiob): allow the user to store the noise tracks in a custom path.
-  _NOISE_TRACKS_PATH = os.path.join(
+  DEFAULT_NOISE_TRACKS_PATH = os.path.join(
       os.path.dirname(__file__), os.pardir, 'noise_tracks')
 
-  # TODO(alessiob): Allow the user to have custom noise tracks.
-  # TODO(alessiob): Exploit TestDataGeneratorFactory.GetInstance().
-  _NOISE_TRACKS = [
-      'city.wav'
-  ]
-
+  # TODO(alessiob): Make the list of SNR pairs customizable.
   # Each pair indicates the clean vs. noisy and reference vs. noisy SNRs.
   # The reference (second value of each pair) always has a lower amount of noise
   # - i.e., the SNR is 10 dB higher.
@@ -316,11 +317,18 @@ class EnvironmentalNoiseTestDataGenerator(TestDataGenerator):
       [0, 10],  # Largest noise.
   ]
 
-  def __init__(self):
-    TestDataGenerator.__init__(self)
+  def __init__(self, output_directory_prefix, noise_tracks_path):
+    TestDataGenerator.__init__(self, output_directory_prefix)
+    self._noise_tracks_path = noise_tracks_path
+    self._noise_tracks_file_names = [n for n in os.listdir(
+        self._noise_tracks_path) if n.lower().endswith('.wav')]
+    if len(self._noise_tracks_file_names) == 0:
+      raise exceptions.InitializationException(
+          'No wav files found in the noise tracks path %s' % (
+              self._noise_tracks_path))
 
   def _Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     """Generates test data pairs using environmental noise.
 
     For each noise track and pair of SNR values, the following two audio tracks
@@ -334,36 +342,33 @@ class EnvironmentalNoiseTestDataGenerator(TestDataGenerator):
     # Load the input signal.
     input_signal = signal_processing.SignalProcessingUtils.LoadWav(
         input_signal_filepath)
-    input_signal = signal_processing.SignalProcessingUtils.Normalize(
-        input_signal)
 
     noisy_mix_filepaths = {}
-    for noise_track_filename in self._NOISE_TRACKS:
+    for noise_track_filename in self._noise_tracks_file_names:
       # Load the noise track.
       noise_track_name, _ = os.path.splitext(noise_track_filename)
       noise_track_filepath = os.path.join(
-          self._NOISE_TRACKS_PATH, noise_track_filename)
+          self._noise_tracks_path, noise_track_filename)
       if not os.path.exists(noise_track_filepath):
         logging.error('cannot find the <%s> noise track', noise_track_filename)
         raise exceptions.FileNotFoundError()
 
       noise_signal = signal_processing.SignalProcessingUtils.LoadWav(
           noise_track_filepath)
-      noise_signal = signal_processing.SignalProcessingUtils.Normalize(
-          noise_signal)
 
       # Create the noisy mixes (once for each unique SNR value).
       noisy_mix_filepaths[noise_track_name] = {}
       for snr in snr_values:
         noisy_signal_filepath = os.path.join(
-            input_noise_cache_path,
+            test_data_cache_path,
             self._NOISY_SIGNAL_FILENAME_TEMPLATE.format(noise_track_name, snr))
 
         # Create and save if not done.
         if not os.path.exists(noisy_signal_filepath):
           # Create noisy signal.
           noisy_signal = signal_processing.SignalProcessingUtils.MixSignals(
-              input_signal, noise_signal, snr)
+              input_signal, noise_signal, snr,
+              pad_noise=signal_processing.SignalProcessingUtils.MixPadding.LOOP)
 
           # Save.
           signal_processing.SignalProcessingUtils.SaveWav(
@@ -405,12 +410,12 @@ class ReverberationTestDataGenerator(TestDataGenerator):
   _NOISE_TRACK_FILENAME_TEMPLATE = '{0}.wav'
   _NOISY_SIGNAL_FILENAME_TEMPLATE = '{0}_{1:d}_SNR.wav'
 
-  def __init__(self, aechen_ir_database_path):
-    TestDataGenerator.__init__(self)
+  def __init__(self, output_directory_prefix, aechen_ir_database_path):
+    TestDataGenerator.__init__(self, output_directory_prefix)
     self._aechen_ir_database_path = aechen_ir_database_path
 
   def _Generate(
-      self, input_signal_filepath, input_noise_cache_path, base_output_path):
+      self, input_signal_filepath, test_data_cache_path, base_output_path):
     """Generates test data pairs using reverberation noise.
 
     For each impulse response, one noise track is created. For each impulse
@@ -431,7 +436,7 @@ class ReverberationTestDataGenerator(TestDataGenerator):
       noise_track_filename = self._NOISE_TRACK_FILENAME_TEMPLATE.format(
           impulse_response_name)
       noise_track_filepath = os.path.join(
-          input_noise_cache_path, noise_track_filename)
+          test_data_cache_path, noise_track_filename)
       noise_signal = None
       try:
         # Load noise track.
@@ -450,7 +455,7 @@ class ReverberationTestDataGenerator(TestDataGenerator):
       noisy_mix_filepaths[impulse_response_name] = {}
       for snr in snr_values:
         noisy_signal_filepath = os.path.join(
-            input_noise_cache_path,
+            test_data_cache_path,
             self._NOISY_SIGNAL_FILENAME_TEMPLATE.format(
                 impulse_response_name, snr))
 
@@ -458,7 +463,7 @@ class ReverberationTestDataGenerator(TestDataGenerator):
         if not os.path.exists(noisy_signal_filepath):
           # Create noisy signal.
           noisy_signal = signal_processing.SignalProcessingUtils.MixSignals(
-              input_signal, noise_signal, snr, bln_pad_shortest=True)
+              input_signal, noise_signal, snr)
 
           # Save.
           signal_processing.SignalProcessingUtils.SaveWav(

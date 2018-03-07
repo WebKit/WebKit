@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
-#define WEBRTC_MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
+#ifndef MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
+#define MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/modules/audio_coding/test/ACMTest.h"
-#include "webrtc/modules/audio_coding/test/Channel.h"
-#include "webrtc/modules/audio_coding/test/PCMFile.h"
+#include "modules/audio_coding/test/ACMTest.h"
+#include "modules/audio_coding/test/Channel.h"
+#include "modules/audio_coding/test/PCMFile.h"
 
 namespace webrtc {
 
@@ -47,4 +47,4 @@ class TestRedFec : public ACMTest {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_
+#endif  // MODULES_AUDIO_CODING_TEST_TESTREDFEC_H_

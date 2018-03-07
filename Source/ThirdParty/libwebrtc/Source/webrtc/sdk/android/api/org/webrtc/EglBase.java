@@ -21,7 +21,7 @@ import javax.microedition.khronos.egl.EGL10;
  */
 public abstract class EglBase {
   // EGL wrapper for an actual EGLContext.
-  public static class Context {}
+  public interface Context { long getNativeEglContext(); }
 
   // According to the documentation, EGL can be used from multiple threads at the same time if each
   // thread has its own EGLContext, but in practice it deadlocks on some devices when doing this.
@@ -33,9 +33,9 @@ public abstract class EglBase {
   // https://android.googlesource.com/platform/frameworks/base/+/master/opengl/java/android/opengl/EGL14.java
   // This is similar to how GlSurfaceView does:
   // http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/5.1.1_r1/android/opengl/GLSurfaceView.java#760
-  private static final int EGL_OPENGL_ES2_BIT = 4;
+  public static final int EGL_OPENGL_ES2_BIT = 4;
   // Android-specific extension.
-  private static final int EGL_RECORDABLE_ANDROID = 0x3142;
+  public static final int EGL_RECORDABLE_ANDROID = 0x3142;
 
   // clang-format off
   public static final int[] CONFIG_PLAIN = {
@@ -168,4 +168,6 @@ public abstract class EglBase {
   public abstract void detachCurrent();
 
   public abstract void swapBuffers();
+
+  public abstract void swapBuffers(long presentationTimeStampNs);
 }

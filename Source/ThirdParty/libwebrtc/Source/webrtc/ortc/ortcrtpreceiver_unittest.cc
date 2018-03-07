@@ -10,12 +10,14 @@
 
 #include <memory>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/fakemediaengine.h"
-#include "webrtc/ortc/ortcfactory.h"
-#include "webrtc/ortc/testrtpparameters.h"
-#include "webrtc/p2p/base/fakepackettransport.h"
-#include "webrtc/pc/test/fakevideotracksource.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "media/base/fakemediaengine.h"
+#include "ortc/ortcfactory.h"
+#include "ortc/testrtpparameters.h"
+#include "p2p/base/fakepackettransport.h"
+#include "pc/test/fakevideotracksource.h"
+#include "rtc_base/gunit.h"
 
 namespace webrtc {
 
@@ -34,12 +36,13 @@ class OrtcRtpReceiverTest : public testing::Test {
     // use FakePacketTransport.
     auto ortc_factory_result = OrtcFactory::Create(
         nullptr, nullptr, nullptr, nullptr, nullptr,
-        std::unique_ptr<cricket::MediaEngineInterface>(fake_media_engine_));
+        std::unique_ptr<cricket::MediaEngineInterface>(fake_media_engine_),
+        CreateBuiltinAudioEncoderFactory(), CreateBuiltinAudioDecoderFactory());
     ortc_factory_ = ortc_factory_result.MoveValue();
-    RtcpParameters rtcp_parameters;
-    rtcp_parameters.mux = true;
+    RtpTransportParameters parameters;
+    parameters.rtcp.mux = true;
     auto rtp_transport_result = ortc_factory_->CreateRtpTransport(
-        rtcp_parameters, &fake_packet_transport_, nullptr, nullptr);
+        parameters, &fake_packet_transport_, nullptr, nullptr);
     rtp_transport_ = rtp_transport_result.MoveValue();
   }
 
@@ -97,10 +100,10 @@ TEST_F(OrtcRtpReceiverTest, GetTrack) {
 // test/tests for it.
 TEST_F(OrtcRtpReceiverTest, SetTransportFails) {
   rtc::FakePacketTransport fake_packet_transport("another_transport");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = true;
   auto rtp_transport_result = ortc_factory_->CreateRtpTransport(
-      rtcp_parameters, &fake_packet_transport, nullptr, nullptr);
+      parameters, &fake_packet_transport, nullptr, nullptr);
   auto rtp_transport = rtp_transport_result.MoveValue();
 
   auto receiver_result = ortc_factory_->CreateRtpReceiver(

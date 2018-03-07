@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_INCLUDE_FLEXFEC_RECEIVER_H_
-#define WEBRTC_MODULES_RTP_RTCP_INCLUDE_FLEXFEC_RECEIVER_H_
+#ifndef MODULES_RTP_RTCP_INCLUDE_FLEXFEC_RECEIVER_H_
+#define MODULES_RTP_RTCP_INCLUDE_FLEXFEC_RECEIVER_H_
 
 #include <memory>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/sequenced_task_checker.h"
-#include "webrtc/modules/rtp_rtcp/include/ulpfec_receiver.h"
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
+#include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/sequenced_task_checker.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -39,8 +39,10 @@ class FlexfecReceiver {
 
   // Protected to aid testing.
  protected:
-  bool AddReceivedPacket(const RtpPacketReceived& packet);
-  bool ProcessReceivedPackets();
+  std::unique_ptr<ForwardErrorCorrection::ReceivedPacket> AddReceivedPacket(
+      const RtpPacketReceived& packet);
+  void ProcessReceivedPacket(
+      const ForwardErrorCorrection::ReceivedPacket& received_packet);
 
  private:
   // Config.
@@ -49,21 +51,19 @@ class FlexfecReceiver {
 
   // Erasure code interfacing and callback.
   std::unique_ptr<ForwardErrorCorrection> erasure_code_
-      GUARDED_BY(sequence_checker_);
-  ForwardErrorCorrection::ReceivedPacketList received_packets_
-      GUARDED_BY(sequence_checker_);
+      RTC_GUARDED_BY(sequence_checker_);
   ForwardErrorCorrection::RecoveredPacketList recovered_packets_
-      GUARDED_BY(sequence_checker_);
+      RTC_GUARDED_BY(sequence_checker_);
   RecoveredPacketReceiver* const recovered_packet_receiver_;
 
   // Logging and stats.
   Clock* const clock_;
-  int64_t last_recovered_packet_ms_ GUARDED_BY(sequence_checker_);
-  FecPacketCounter packet_counter_ GUARDED_BY(sequence_checker_);
+  int64_t last_recovered_packet_ms_ RTC_GUARDED_BY(sequence_checker_);
+  FecPacketCounter packet_counter_ RTC_GUARDED_BY(sequence_checker_);
 
   rtc::SequencedTaskChecker sequence_checker_;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_INCLUDE_FLEXFEC_RECEIVER_H_
+#endif  // MODULES_RTP_RTCP_INCLUDE_FLEXFEC_RECEIVER_H_

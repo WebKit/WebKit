@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_MOCK_VOE_CHANNEL_PROXY_H_
-#define WEBRTC_TEST_MOCK_VOE_CHANNEL_PROXY_H_
+#ifndef TEST_MOCK_VOE_CHANNEL_PROXY_H_
+#define TEST_MOCK_VOE_CHANNEL_PROXY_H_
 
 #include <string>
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/voice_engine/channel_proxy.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "test/gmock.h"
+#include "voice_engine/channel_proxy.h"
 
 namespace webrtc {
 namespace test {
@@ -52,8 +52,11 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
   MOCK_CONST_METHOD0(GetRemoteRTCPReportBlocks, std::vector<ReportBlock>());
   MOCK_CONST_METHOD0(GetNetworkStatistics, NetworkStatistics());
   MOCK_CONST_METHOD0(GetDecodingCallStatistics, AudioDecodingCallStats());
+  MOCK_CONST_METHOD0(GetANAStatistics, ANAStats());
   MOCK_CONST_METHOD0(GetSpeechOutputLevel, int());
   MOCK_CONST_METHOD0(GetSpeechOutputLevelFullRange, int());
+  MOCK_CONST_METHOD0(GetTotalOutputEnergy, double());
+  MOCK_CONST_METHOD0(GetTotalOutputDuration, double());
   MOCK_CONST_METHOD0(GetDelayEstimate, uint32_t());
   MOCK_METHOD2(SetSendTelephoneEventPayloadType, bool(int payload_type,
                                                       int payload_frequency));
@@ -62,8 +65,7 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
   // TODO(solenberg): Talk the compiler into accepting this mock method:
   // MOCK_METHOD1(SetSink, void(std::unique_ptr<AudioSinkInterface> sink));
   MOCK_METHOD1(SetInputMute, void(bool muted));
-  MOCK_METHOD1(RegisterExternalTransport, void(Transport* transport));
-  MOCK_METHOD0(DeRegisterExternalTransport, void());
+  MOCK_METHOD1(RegisterTransport, void(Transport* transport));
   MOCK_METHOD1(OnRtpPacket, void(const RtpPacketReceived& packet));
   MOCK_METHOD2(ReceivedRTCPPacket, bool(const uint8_t* packet, size_t length));
   MOCK_CONST_METHOD0(GetAudioDecoderFactory,
@@ -74,7 +76,7 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
   MOCK_METHOD2(GetAudioFrameWithInfo,
       AudioMixer::Source::AudioFrameInfo(int sample_rate_hz,
                                          AudioFrame* audio_frame));
-  MOCK_CONST_METHOD0(NeededFrequency, int());
+  MOCK_CONST_METHOD0(PreferredSampleRate, int());
   MOCK_METHOD1(SetTransportOverhead, void(int transport_overhead_per_packet));
   MOCK_METHOD1(AssociateSendChannel,
                void(const ChannelProxy& send_channel_proxy));
@@ -94,4 +96,4 @@ class MockVoEChannelProxy : public voe::ChannelProxy {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_MOCK_VOE_CHANNEL_PROXY_H_
+#endif  // TEST_MOCK_VOE_CHANNEL_PROXY_H_

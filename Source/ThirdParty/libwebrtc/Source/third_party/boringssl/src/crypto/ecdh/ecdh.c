@@ -138,7 +138,7 @@ int ECDH_compute_key(void *out, size_t outlen, const EC_POINT *pub_key,
       goto err;
     }
   } else {
-    /* no KDF, just copy as much as we can */
+    // no KDF, just copy as much as we can
     if (buflen < outlen) {
       outlen = buflen;
     }

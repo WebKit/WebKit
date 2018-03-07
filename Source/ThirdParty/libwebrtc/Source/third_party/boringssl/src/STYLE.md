@@ -31,10 +31,10 @@ Variable declarations in the middle of a function or inside a `for` loop are
 allowed and preferred where possible. Note that the common `goto err` cleanup
 pattern requires lifting some variable declarations.
 
-Comments should be `/* C-style */` for consistency.
+Comments should be `// C99-style` for consistency with C++.
 
-When declaration pointer types, `*` should be placed next to the variable
-name, not the type. So
+When declaring pointer types, `*` should be placed next to the variable name,
+not the type. So
 
     uint8_t *ptr;
 
@@ -58,6 +58,19 @@ confusing undefined behavior.
 For new constants, prefer enums when the values are sequential and typed
 constants for flags. If adding values to an existing set of `#define`s,
 continue with `#define`.
+
+
+## libssl
+
+libssl was originally written in C but is being incrementally rewritten in
+C++11. As of writing, much of the style matches our C conventions rather than
+Google C++. Additionally, libssl on Linux currently may not depend on the C++
+runtime. See the C++ utilities in `ssl/internal.h` for replacements for
+problematic C++ constructs. The `util/check_imported_libraries.go` script may be
+used with a shared library build to check if a new construct is okay.
+
+If unsure, match surrounding code. Discrepancies between it and Google C++ style
+will be fixed over time.
 
 
 ## Formatting
@@ -185,25 +198,36 @@ behavior of the function. Pay special note to success/failure behaviors
 and caller obligations on object lifetimes. If this sacrifices
 conciseness, consider simplifying the function's behavior.
 
-    /* EVP_DigestVerifyUpdate appends |len| bytes from |data| to the data which
-     * will be verified by |EVP_DigestVerifyFinal|. It returns one on success and
-     * zero otherwise. */
+    // EVP_DigestVerifyUpdate appends |len| bytes from |data| to the data which
+    // will be verified by |EVP_DigestVerifyFinal|. It returns one on success and
+    // zero otherwise.
     OPENSSL_EXPORT int EVP_DigestVerifyUpdate(EVP_MD_CTX *ctx, const void *data,
                                               size_t len);
 
 Explicitly mention any surprising edge cases or deviations from common
 return value patterns in legacy functions.
 
-    /* RSA_private_encrypt encrypts |flen| bytes from |from| with the private key in
-     * |rsa| and writes the encrypted data to |to|. The |to| buffer must have at
-     * least |RSA_size| bytes of space. It returns the number of bytes written, or
-     * -1 on error. The |padding| argument must be one of the |RSA_*_PADDING|
-     * values. If in doubt, |RSA_PKCS1_PADDING| is the most common.
-     *
-     * WARNING: this function is dangerous because it breaks the usual return value
-     * convention. Use |RSA_sign_raw| instead. */
+    // RSA_private_encrypt encrypts |flen| bytes from |from| with the private key in
+    // |rsa| and writes the encrypted data to |to|. The |to| buffer must have at
+    // least |RSA_size| bytes of space. It returns the number of bytes written, or
+    // -1 on error. The |padding| argument must be one of the |RSA_*_PADDING|
+    // values. If in doubt, |RSA_PKCS1_PADDING| is the most common.
+    //
+    // WARNING: this function is dangerous because it breaks the usual return value
+    // convention. Use |RSA_sign_raw| instead.
     OPENSSL_EXPORT int RSA_private_encrypt(int flen, const uint8_t *from,
                                            uint8_t *to, RSA *rsa, int padding);
 
 Document private functions in their `internal.h` header or, if static,
 where defined.
+
+
+## Build logic
+
+BoringSSL is used by many projects with many different build tools.
+Reimplementing and maintaining build logic in each downstream build is
+cumbersome, so build logic should be avoided where possible. Platform-specific
+files should be excluded by wrapping the contents in `#ifdef`s, rather than
+computing platform-specific file lists. Generated source files such as perlasm
+and `err_data.c` may be used in the standalone CMake build but, for downstream
+builds, they should be pre-generated in `generate_build_files.py`.

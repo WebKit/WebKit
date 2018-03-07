@@ -8,21 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_TOOLS_AUDIO_CODEC_SPEED_TEST_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_TOOLS_AUDIO_CODEC_SPEED_TEST_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_TOOLS_AUDIO_CODEC_SPEED_TEST_H_
+#define MODULES_AUDIO_CODING_CODECS_TOOLS_AUDIO_CODEC_SPEED_TEST_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/test/gtest.h"
-#include "webrtc/typedefs.h"
+#include "test/gtest.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 // Define coding parameter as
 // <channels, bit_rate, file_name, extension, if_save_output>.
-typedef std::tr1::tuple<size_t, int, std::string, std::string, bool>
-    coding_param;
+typedef std::tuple<size_t, int, std::string, std::string, bool> coding_param;
 
 class AudioCodecSpeedTest : public testing::TestWithParam<coding_param> {
  protected:
@@ -89,4 +88,4 @@ class AudioCodecSpeedTest : public testing::TestWithParam<coding_param> {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_TOOLS_AUDIO_CODEC_SPEED_TEST_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_TOOLS_AUDIO_CODEC_SPEED_TEST_H_

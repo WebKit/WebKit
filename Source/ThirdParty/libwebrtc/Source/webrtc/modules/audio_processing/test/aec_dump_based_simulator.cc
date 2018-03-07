@@ -10,11 +10,10 @@
 
 #include <iostream>
 
-#include "webrtc/modules/audio_processing/test/aec_dump_based_simulator.h"
+#include "modules/audio_processing/test/aec_dump_based_simulator.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/test/protobuf_utils.h"
-#include "webrtc/test/testsupport/trace_to_stderr.h"
+#include "modules/audio_processing/test/protobuf_utils.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -69,8 +68,7 @@ AecDumpBasedSimulator::AecDumpBasedSimulator(const SimulationSettings& settings)
 AecDumpBasedSimulator::~AecDumpBasedSimulator() = default;
 
 void AecDumpBasedSimulator::PrepareProcessStreamCall(
-    const webrtc::audioproc::Stream& msg,
-    bool* set_stream_analog_level_called) {
+    const webrtc::audioproc::Stream& msg) {
   if (msg.has_input_data()) {
     // Fixed interface processing.
     // Verify interface invariance.
@@ -159,15 +157,9 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
     ap_->set_stream_key_pressed(*settings_.use_ts);
   }
 
-  // TODO(peah): Add support for controlling the analog level via the
-  // command-line.
-  if (msg.has_level()) {
-    RTC_CHECK_EQ(AudioProcessing::kNoError,
-                 ap_->gain_control()->set_stream_analog_level(msg.level()));
-    *set_stream_analog_level_called = true;
-  } else {
-    *set_stream_analog_level_called = false;
-  }
+  // Level is always logged in AEC dumps.
+  RTC_CHECK(msg.has_level());
+  aec_dump_mic_level_ = msg.level();
 }
 
 void AecDumpBasedSimulator::VerifyProcessStreamBitExactness(
@@ -217,11 +209,6 @@ void AecDumpBasedSimulator::PrepareReverseProcessStreamCall(
 }
 
 void AecDumpBasedSimulator::Process() {
-  std::unique_ptr<test::TraceToStderr> trace_to_stderr;
-  if (settings_.use_verbose_logging) {
-    trace_to_stderr.reset(new test::TraceToStderr(true));
-  }
-
   CreateAudioProcessor();
   dump_input_file_ = OpenFile(settings_.aec_dump_input_filename->c_str(), "rb");
 
@@ -242,8 +229,6 @@ void AecDumpBasedSimulator::Process() {
 
   webrtc::audioproc::Event event_msg;
   int num_forward_chunks_processed = 0;
-  const float kOneBykChunksPerSecond =
-      1.f / AudioProcessingSimulator::kChunksPerSecond;
   while (ReadMessageFromFile(dump_input_file_, &event_msg)) {
     switch (event_msg.type()) {
       case webrtc::audioproc::Event::INIT:
@@ -265,10 +250,6 @@ void AecDumpBasedSimulator::Process() {
         break;
       default:
         RTC_CHECK(false);
-    }
-    if (trace_to_stderr) {
-      trace_to_stderr->SetTimeSeconds(num_forward_chunks_processed *
-                                      kOneBykChunksPerSecond);
     }
   }
 
@@ -482,7 +463,7 @@ void AecDumpBasedSimulator::HandleMessage(
     }
 
     if (settings_.use_verbose_logging && msg.has_experiments_description() &&
-        msg.experiments_description().size() > 0) {
+        !msg.experiments_description().empty()) {
       std::cout << " experiments not included by default in the simulation: "
                 << msg.experiments_description() << std::endl;
     }
@@ -490,10 +471,6 @@ void AecDumpBasedSimulator::HandleMessage(
     if (settings_.use_refined_adaptive_filter) {
       config.Set<RefinedAdaptiveFilter>(
           new RefinedAdaptiveFilter(*settings_.use_refined_adaptive_filter));
-    }
-
-    if (settings_.use_aec3) {
-      apm_config.echo_canceller3.enabled = *settings_.use_aec3;
     }
 
     if (settings_.use_lc) {
@@ -565,14 +542,8 @@ void AecDumpBasedSimulator::HandleMessage(const webrtc::audioproc::Init& msg) {
 
 void AecDumpBasedSimulator::HandleMessage(
     const webrtc::audioproc::Stream& msg) {
-  bool set_stream_analog_level_called = false;
-  PrepareProcessStreamCall(msg, &set_stream_analog_level_called);
+  PrepareProcessStreamCall(msg);
   ProcessStream(interface_used_ == InterfaceType::kFixedInterface);
-  if (set_stream_analog_level_called) {
-    // Call stream analog level to ensure that any side-effects are triggered.
-    (void)ap_->gain_control()->stream_analog_level();
-  }
-
   VerifyProcessStreamBitExactness(msg);
 }
 

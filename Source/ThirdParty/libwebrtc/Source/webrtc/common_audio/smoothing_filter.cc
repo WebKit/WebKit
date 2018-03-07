@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/smoothing_filter.h"
+#include "common_audio/smoothing_filter.h"
 
 #include <cmath>
 
-#include "webrtc/base/timeutils.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 
@@ -43,7 +43,7 @@ void SmoothingFilterImpl::AddSample(float sample) {
     // This is equivalent to assuming the filter has been receiving the same
     // value as the first sample since time -infinity.
     state_ = last_sample_ = sample;
-    init_end_time_ms_ = rtc::Optional<int64_t>(now_ms + init_time_ms_);
+    init_end_time_ms_ = now_ms + init_time_ms_;
     last_state_time_ms_ = now_ms;
     return;
   }
@@ -55,10 +55,10 @@ void SmoothingFilterImpl::AddSample(float sample) {
 rtc::Optional<float> SmoothingFilterImpl::GetAverage() {
   if (!init_end_time_ms_) {
     // |init_end_time_ms_| undefined since we have not received any sample.
-    return rtc::Optional<float>();
+    return rtc::nullopt;
   }
   ExtrapolateLastSample(rtc::TimeMillis());
-  return rtc::Optional<float>(state_);
+  return state_;
 }
 
 bool SmoothingFilterImpl::SetTimeConstantMs(int time_constant_ms) {

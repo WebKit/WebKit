@@ -9,6 +9,7 @@ LOCAL_SRC_FILES := \
     source/compare.cc           \
     source/compare_common.cc    \
     source/compare_gcc.cc       \
+    source/compare_msa.cc       \
     source/compare_neon.cc      \
     source/compare_neon64.cc    \
     source/convert.cc           \

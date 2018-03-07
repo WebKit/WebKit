@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/bytebuffer.h"
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/pc/sctputils.h"
+#include "pc/sctputils.h"
+#include "rtc_base/bytebuffer.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/gunit.h"
 
 class SctpUtilsTest : public testing::Test {
  public:

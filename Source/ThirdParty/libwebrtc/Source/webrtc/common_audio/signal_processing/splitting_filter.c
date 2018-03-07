@@ -13,8 +13,8 @@
  *
  */
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/checks.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 // Maximum number of samples in a low/high-band frame.
 enum
@@ -141,8 +141,8 @@ void WebRtcSpl_AnalysisQMF(const int16_t* in_data, size_t in_data_length,
     // Split even and odd samples. Also shift them to Q10.
     for (i = 0, k = 0; i < band_length; i++, k += 2)
     {
-        half_in2[i] = WEBRTC_SPL_LSHIFT_W32((int32_t)in_data[k], 10);
-        half_in1[i] = WEBRTC_SPL_LSHIFT_W32((int32_t)in_data[k + 1], 10);
+        half_in2[i] = ((int32_t)in_data[k]) * (1 << 10);
+        half_in1[i] = ((int32_t)in_data[k + 1]) * (1 << 10);
     }
 
     // All pass filter even and odd samples, independently.

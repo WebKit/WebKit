@@ -7,7 +7,7 @@
  * Cisco Systems, Inc.
  *
  * This app is a simple RTP application intended only for testing
- * libsrtp.  It reads one word at a time from /usr/dict/words (or
+ * libsrtp.  It reads one word at a time from words.txt (or
  * whatever file is specified as DICT_FILE), and sends one word out
  * each USEC_RATE microseconds.  Secure RTP protections can be
  * applied.  See the usage() function for more details.
@@ -16,7 +16,7 @@
 
 /*
  *	
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -89,11 +89,7 @@
 #include "rtp.h"
 #include "util.h"
 
-#ifdef RTPW_USE_WINSOCK2
-# define DICT_FILE        "words.txt"
-#else
-# define DICT_FILE        "/usr/share/dict/words"
-#endif
+#define DICT_FILE        "words.txt"
 #define USEC_RATE        (5e5)
 #define MAX_WORD_LEN     128  
 #define ADDR_IS_MULTICAST(a) IN_MULTICAST(htonl(a))
@@ -439,7 +435,7 @@ main (int argc, char *argv[]) {
     } 
     policy.ssrc.type  = ssrc_specific;
     policy.ssrc.value = ssrc;
-    policy.key  = (uint8_t *) key;
+    policy.key = (uint8_t *)key;
     policy.ekt  = NULL;
     policy.next = NULL;
     policy.window_size = 128;
@@ -497,7 +493,7 @@ main (int argc, char *argv[]) {
      */
     srtp_crypto_policy_set_null_cipher_hmac_null(&policy.rtp);
     srtp_crypto_policy_set_null_cipher_hmac_null(&policy.rtcp);
-    policy.key                 = (uint8_t *)key;
+    policy.key = (uint8_t *)key;
     policy.ssrc.type           = ssrc_specific;
     policy.ssrc.value          = ssrc;
     policy.window_size         = 0;

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_SIMULATOR_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_SIMULATOR_H_
+#ifndef MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_SIMULATOR_H_
+#define MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_SIMULATOR_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/multiend_call.h"
+#include "modules/audio_processing/test/conversational_speech/multiend_call.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 namespace test {
@@ -41,4 +41,4 @@ std::unique_ptr<std::map<std::string, SpeakerOutputFilePaths>>
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_SIMULATOR_H_
+#endif  // MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_SIMULATOR_H_

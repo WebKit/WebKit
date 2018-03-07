@@ -7,11 +7,13 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/sdk/android/src/jni/classreferenceholder.h"
+#include "sdk/android/src/jni/classreferenceholder.h"
 
-#include "webrtc/sdk/android/src/jni/jni_helpers.h"
+#include "sdk/android/src/jni/class_loader.h"
+#include "sdk/android/src/jni/jni_helpers.h"
 
-namespace webrtc_jni {
+namespace webrtc {
+namespace jni {
 
 // ClassReferenceHolder holds global reference to Java classes in app/webrtc.
 class ClassReferenceHolder {
@@ -33,8 +35,12 @@ class ClassReferenceHolder {
 static ClassReferenceHolder* g_class_reference_holder = nullptr;
 
 void LoadGlobalClassReferenceHolder() {
+  JNIEnv* env = GetEnv();
   RTC_CHECK(g_class_reference_holder == nullptr);
-  g_class_reference_holder = new ClassReferenceHolder(GetEnv());
+  g_class_reference_holder = new ClassReferenceHolder(env);
+  // TODO(magjed): This is a weird place to call the other class loader from,
+  // but the only place that will keep backwards compatibility.
+  InitClassLoader(env);
 }
 
 void FreeGlobalClassReferenceHolder() {
@@ -45,27 +51,18 @@ void FreeGlobalClassReferenceHolder() {
 
 ClassReferenceHolder::ClassReferenceHolder(JNIEnv* jni) {
   LoadClass(jni, "android/graphics/SurfaceTexture");
-  LoadClass(jni, "java/lang/Boolean");
-  LoadClass(jni, "java/lang/Double");
-  LoadClass(jni, "java/lang/Integer");
-  LoadClass(jni, "java/lang/Long");
   LoadClass(jni, "java/lang/String");
-  LoadClass(jni, "java/math/BigInteger");
   LoadClass(jni, "java/nio/ByteBuffer");
   LoadClass(jni, "java/util/ArrayList");
   LoadClass(jni, "java/util/LinkedHashMap");
-  LoadClass(jni, "org/webrtc/AudioTrack");
   LoadClass(jni, "org/webrtc/Camera1Enumerator");
   LoadClass(jni, "org/webrtc/Camera2Enumerator");
   LoadClass(jni, "org/webrtc/CameraEnumerationAndroid");
-  LoadClass(jni, "org/webrtc/DataChannel");
-  LoadClass(jni, "org/webrtc/DataChannel$Buffer");
-  LoadClass(jni, "org/webrtc/DataChannel$Init");
-  LoadClass(jni, "org/webrtc/DataChannel$State");
   LoadClass(jni, "org/webrtc/EglBase");
   LoadClass(jni, "org/webrtc/EglBase$Context");
   LoadClass(jni, "org/webrtc/EglBase14$Context");
-  LoadClass(jni, "org/webrtc/IceCandidate");
+  LoadClass(jni, "org/webrtc/EncodedImage");
+  LoadClass(jni, "org/webrtc/EncodedImage$FrameType");
   LoadClass(jni, "org/webrtc/MediaCodecVideoDecoder");
   LoadClass(jni, "org/webrtc/MediaCodecVideoDecoder$DecodedOutputBuffer");
   LoadClass(jni, "org/webrtc/MediaCodecVideoDecoder$DecodedTextureBuffer");
@@ -74,9 +71,6 @@ ClassReferenceHolder::ClassReferenceHolder(JNIEnv* jni) {
   LoadClass(jni, "org/webrtc/MediaCodecVideoEncoder$OutputBufferInfo");
   LoadClass(jni, "org/webrtc/MediaCodecVideoEncoder$VideoCodecType");
   LoadClass(jni, "org/webrtc/MediaSource$State");
-  LoadClass(jni, "org/webrtc/MediaStream");
-  LoadClass(jni, "org/webrtc/MediaStreamTrack$MediaType");
-  LoadClass(jni, "org/webrtc/MediaStreamTrack$State");
   LoadClass(jni, "org/webrtc/NetworkMonitor");
   LoadClass(jni, "org/webrtc/NetworkMonitorAutoDetect$ConnectionType");
   LoadClass(jni, "org/webrtc/NetworkMonitorAutoDetect$IPAddress");
@@ -103,11 +97,14 @@ ClassReferenceHolder::ClassReferenceHolder(JNIEnv* jni) {
   LoadClass(jni, "org/webrtc/StatsReport$Value");
   LoadClass(jni, "org/webrtc/SurfaceTextureHelper");
   LoadClass(jni, "org/webrtc/VideoCapturer");
+  LoadClass(jni, "org/webrtc/VideoCodecInfo");
+  LoadClass(jni, "org/webrtc/VideoCodecStatus");
   LoadClass(jni, "org/webrtc/VideoFrame");
   LoadClass(jni, "org/webrtc/VideoFrame$Buffer");
   LoadClass(jni, "org/webrtc/VideoFrame$I420Buffer");
+  LoadClass(jni, "org/webrtc/VideoFrame$TextureBuffer");
   LoadClass(jni, "org/webrtc/VideoRenderer$I420Frame");
-  LoadClass(jni, "org/webrtc/VideoTrack");
+  LoadClass(jni, "org/webrtc/VideoSink");
   LoadClass(jni, "org/webrtc/WrappedNativeI420Buffer");
 }
 
@@ -146,4 +143,5 @@ jclass FindClass(JNIEnv* jni, const char* name) {
   return g_class_reference_holder->GetClass(name);
 }
 
-}  // namespace webrtc_jni
+}  // namespace jni
+}  // namespace webrtc

@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/frame_blocker.h"
+#include "modules/audio_processing/aec3/frame_blocker.h"
 
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/block_framer.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block_framer.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

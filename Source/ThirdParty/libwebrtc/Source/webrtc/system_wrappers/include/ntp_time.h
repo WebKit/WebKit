@@ -1,14 +1,14 @@
 /*
-*  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
-*
-*  Use of this source code is governed by a BSD-style license
-*  that can be found in the LICENSE file in the root of the source
-*  tree. An additional intellectual property rights grant can be found
-*  in the file PATENTS.  All contributing project authors may
-*  be found in the AUTHORS file in the root of the source tree.
-*/
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_NTP_TIME_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_NTP_TIME_H_
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+#ifndef SYSTEM_WRAPPERS_INCLUDE_NTP_TIME_H_
+#define SYSTEM_WRAPPERS_INCLUDE_NTP_TIME_H_
 
 #include <stdint.h>
 
@@ -55,4 +55,4 @@ inline bool operator!=(const NtpTime& n1, const NtpTime& n2) {
 }
 
 }  // namespace webrtc
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_NTP_TIME_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_NTP_TIME_H_

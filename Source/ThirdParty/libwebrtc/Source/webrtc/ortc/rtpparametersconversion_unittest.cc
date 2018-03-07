@@ -10,9 +10,9 @@
 
 #include <algorithm>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/ortc/rtpparametersconversion.h"
-#include "webrtc/ortc/testrtpparameters.h"
+#include "ortc/rtpparametersconversion.h"
+#include "ortc/testrtpparameters.h"
+#include "rtc_base/gunit.h"
 
 namespace webrtc {
 
@@ -421,9 +421,9 @@ TEST(RtpParametersConversionTest, ToAudioRtpCodecCapability) {
 
   EXPECT_EQ("foo", codec.name);
   EXPECT_EQ(cricket::MEDIA_TYPE_AUDIO, codec.kind);
-  EXPECT_EQ(rtc::Optional<int>(50), codec.preferred_payload_type);
-  EXPECT_EQ(rtc::Optional<int>(22222), codec.clock_rate);
-  EXPECT_EQ(rtc::Optional<int>(4), codec.num_channels);
+  EXPECT_EQ(50, codec.preferred_payload_type);
+  EXPECT_EQ(22222, codec.clock_rate);
+  EXPECT_EQ(4, codec.num_channels);
   ASSERT_EQ(1u, codec.parameters.size());
   EXPECT_EQ("bar", codec.parameters["foo"]);
   EXPECT_EQ(1u, codec.rtcp_feedback.size());
@@ -444,8 +444,8 @@ TEST(RtpParametersConversionTest, ToVideoRtpCodecCapability) {
 
   EXPECT_EQ("VID", codec.name);
   EXPECT_EQ(cricket::MEDIA_TYPE_VIDEO, codec.kind);
-  EXPECT_EQ(rtc::Optional<int>(101), codec.preferred_payload_type);
-  EXPECT_EQ(rtc::Optional<int>(80000), codec.clock_rate);
+  EXPECT_EQ(101, codec.preferred_payload_type);
+  EXPECT_EQ(80000, codec.clock_rate);
   ASSERT_EQ(2u, codec.parameters.size());
   EXPECT_EQ("bar", codec.parameters["foo"]);
   EXPECT_EQ("param", codec.parameters["ANOTHER"]);
@@ -496,8 +496,8 @@ TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {
   EXPECT_EQ("foo", codec.name);
   EXPECT_EQ(cricket::MEDIA_TYPE_AUDIO, codec.kind);
   EXPECT_EQ(50, codec.payload_type);
-  EXPECT_EQ(rtc::Optional<int>(22222), codec.clock_rate);
-  EXPECT_EQ(rtc::Optional<int>(4), codec.num_channels);
+  EXPECT_EQ(22222, codec.clock_rate);
+  EXPECT_EQ(4, codec.num_channels);
   ASSERT_EQ(1u, codec.parameters.size());
   EXPECT_EQ("bar", codec.parameters["foo"]);
   EXPECT_EQ(1u, codec.rtcp_feedback.size());
@@ -519,7 +519,7 @@ TEST(RtpParametersConversionTest, ToVideoRtpCodecParameters) {
   EXPECT_EQ("VID", codec.name);
   EXPECT_EQ(cricket::MEDIA_TYPE_VIDEO, codec.kind);
   EXPECT_EQ(101, codec.payload_type);
-  EXPECT_EQ(rtc::Optional<int>(80000), codec.clock_rate);
+  EXPECT_EQ(80000, codec.clock_rate);
   ASSERT_EQ(2u, codec.parameters.size());
   EXPECT_EQ("bar", codec.parameters["foo"]);
   EXPECT_EQ("param", codec.parameters["ANOTHER"]);

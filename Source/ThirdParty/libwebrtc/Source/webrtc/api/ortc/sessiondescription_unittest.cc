@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/ortc/sessiondescription.h"
-#include "webrtc/test/gtest.h"
+#include "api/ortc/sessiondescription.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

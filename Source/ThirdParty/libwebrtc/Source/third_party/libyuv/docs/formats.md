@@ -138,3 +138,10 @@ Some are channel order agnostic (e.g. ARGBScale).
 Some functions are symmetric (e.g. ARGBToBGRA is the same as BGRAToARGB, so its a macro).
 
 ARGBBlend expects preattenuated ARGB. The R,G,B are premultiplied by alpha.  Other functions don't care.
+
+# RGB24 and RAW
+
+There are 2 RGB layouts - RGB24 (aka 24BG) and RAW
+
+RGB24 is B,G,R in memory
+RAW is R,G,B in memory

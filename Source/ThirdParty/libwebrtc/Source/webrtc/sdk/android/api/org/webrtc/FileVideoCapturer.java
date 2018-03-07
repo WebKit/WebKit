@@ -12,22 +12,17 @@ package org.webrtc;
 
 import android.content.Context;
 import android.os.SystemClock;
-
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.io.RandomAccessFile;
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class FileVideoCapturer implements VideoCapturer {
-  static {
-    System.loadLibrary("jingle_peerconnection_so");
-  }
-
   private interface VideoReader {
-    int getFrameWidth();
-    int getFrameHeight();
-    byte[] getNextFrame();
+    VideoFrame getNextFrame();
     void close();
   }
 
@@ -35,25 +30,14 @@ public class FileVideoCapturer implements VideoCapturer {
    * Read video data from file for the .y4m container.
    */
   private static class VideoReaderY4M implements VideoReader {
-    private final static String TAG = "VideoReaderY4M";
-    private final int frameWidth;
-    private final int frameHeight;
-    private final int frameSize;
-
-    // First char after header
-    private final long videoStart;
-
+    private static final String TAG = "VideoReaderY4M";
     private static final String Y4M_FRAME_DELIMETER = "FRAME";
 
+    private final int frameWidth;
+    private final int frameHeight;
+    // First char after header
+    private final long videoStart;
     private final RandomAccessFile mediaFileStream;
-
-    public int getFrameWidth() {
-      return frameWidth;
-    }
-
-    public int getFrameHeight() {
-      return frameHeight;
-    }
 
     public VideoReaderY4M(String file) throws IOException {
       mediaFileStream = new RandomAccessFile(file, "r");
@@ -100,12 +84,21 @@ public class FileVideoCapturer implements VideoCapturer {
       }
       frameWidth = w;
       frameHeight = h;
-      frameSize = w * h * 3 / 2;
-      Logging.d(TAG, "frame dim: (" + w + ", " + h + ") frameSize: " + frameSize);
+      Logging.d(TAG, "frame dim: (" + w + ", " + h + ")");
     }
 
-    public byte[] getNextFrame() {
-      byte[] frame = new byte[frameSize];
+    @Override
+    public VideoFrame getNextFrame() {
+      final long captureTimeNs = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
+      final JavaI420Buffer buffer = JavaI420Buffer.allocate(frameWidth, frameHeight);
+      final ByteBuffer dataY = buffer.getDataY();
+      final ByteBuffer dataU = buffer.getDataU();
+      final ByteBuffer dataV = buffer.getDataV();
+      final int chromaHeight = (frameHeight + 1) / 2;
+      final int sizeY = frameHeight * buffer.getStrideY();
+      final int sizeU = chromaHeight * buffer.getStrideU();
+      final int sizeV = chromaHeight * buffer.getStrideV();
+
       try {
         byte[] frameDelim = new byte[Y4M_FRAME_DELIMETER.length() + 1];
         if (mediaFileStream.read(frameDelim) < frameDelim.length) {
@@ -115,21 +108,24 @@ public class FileVideoCapturer implements VideoCapturer {
             throw new RuntimeException("Error looping video");
           }
         }
-        String frameDelimStr = new String(frameDelim);
+        String frameDelimStr = new String(frameDelim, Charset.forName("US-ASCII"));
         if (!frameDelimStr.equals(Y4M_FRAME_DELIMETER + "\n")) {
           throw new RuntimeException(
               "Frames should be delimited by FRAME plus newline, found delimter was: '"
               + frameDelimStr + "'");
         }
-        mediaFileStream.readFully(frame);
-        byte[] nv21Frame = new byte[frameSize];
-        nativeI420ToNV21(frame, frameWidth, frameHeight, nv21Frame);
-        return nv21Frame;
+
+        mediaFileStream.readFully(dataY.array(), dataY.arrayOffset(), sizeY);
+        mediaFileStream.readFully(dataU.array(), dataU.arrayOffset(), sizeU);
+        mediaFileStream.readFully(dataV.array(), dataV.arrayOffset(), sizeV);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
+
+      return new VideoFrame(buffer, 0 /* rotation */, captureTimeNs);
     }
 
+    @Override
     public void close() {
       try {
         mediaFileStream.close();
@@ -151,14 +147,6 @@ public class FileVideoCapturer implements VideoCapturer {
     }
   };
 
-  private int getFrameWidth() {
-    return videoReader.getFrameWidth();
-  }
-
-  private int getFrameHeight() {
-    return videoReader.getFrameHeight();
-  }
-
   public FileVideoCapturer(String inputFile) throws IOException {
     try {
       videoReader = new VideoReaderY4M(inputFile);
@@ -168,16 +156,8 @@ public class FileVideoCapturer implements VideoCapturer {
     }
   }
 
-  private byte[] getNextFrame() {
-    return videoReader.getNextFrame();
-  }
-
   public void tick() {
-    final long captureTimeNs = TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
-
-    byte[] frameData = getNextFrame();
-    capturerObserver.onByteBufferFrameCaptured(
-        frameData, getFrameWidth(), getFrameHeight(), 0, captureTimeNs);
+    capturerObserver.onFrameCaptured(videoReader.getNextFrame());
   }
 
   @Override
@@ -210,6 +190,4 @@ public class FileVideoCapturer implements VideoCapturer {
   public boolean isScreencast() {
     return false;
   }
-
-  public static native void nativeI420ToNV21(byte[] src, int width, int height, byte[] dst);
 }

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_DEFINES_H_
-#define WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_DEFINES_H_
+#ifndef MODULES_MEDIA_FILE_MEDIA_FILE_DEFINES_H_
+#define MODULES_MEDIA_FILE_MEDIA_FILE_DEFINES_H_
 
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "modules/include/module_common_types.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 // Callback class for the MediaFile class.
@@ -47,4 +47,4 @@ protected:
     FileCallback() {}
 };
 }  // namespace webrtc
-#endif // WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_DEFINES_H_
+#endif // MODULES_MEDIA_FILE_MEDIA_FILE_DEFINES_H_

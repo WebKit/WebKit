@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
-#define WEBRTC_P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
+#ifndef P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
+#define P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
 
-#include "webrtc/base/rtccertificate.h"
-#include "webrtc/p2p/base/transportdescription.h"
+#include "p2p/base/transportdescription.h"
+#include "rtc_base/rtccertificate.h"
 
 namespace rtc {
 class SSLIdentity;
@@ -35,6 +35,8 @@ class TransportDescriptionFactory {
  public:
   // Default ctor; use methods below to set configuration.
   TransportDescriptionFactory();
+  ~TransportDescriptionFactory();
+
   SecurePolicy secure() const { return secure_; }
   // The certificate to use when setting up DTLS.
   const rtc::scoped_refptr<rtc::RTCCertificate>& certificate() const {
@@ -75,4 +77,4 @@ class TransportDescriptionFactory {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
+#endif  // P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_

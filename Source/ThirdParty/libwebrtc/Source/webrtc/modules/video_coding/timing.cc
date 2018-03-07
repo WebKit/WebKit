@@ -8,34 +8,35 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/timing.h"
+#include "modules/video_coding/timing.h"
 
 #include <algorithm>
 
-#include "webrtc/modules/video_coding/internal_defines.h"
-#include "webrtc/modules/video_coding/jitter_buffer_common.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/system_wrappers/include/timestamp_extrapolator.h"
+#include "modules/video_coding/internal_defines.h"
+#include "modules/video_coding/jitter_buffer_common.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/metrics.h"
+#include "system_wrappers/include/timestamp_extrapolator.h"
 
 namespace webrtc {
 
 VCMTiming::VCMTiming(Clock* clock, VCMTiming* master_timing)
-  : clock_(clock),
-    master_(false),
-    ts_extrapolator_(),
-    codec_timer_(new VCMCodecTimer()),
-    render_delay_ms_(kDefaultRenderDelayMs),
-    min_playout_delay_ms_(0),
-    max_playout_delay_ms_(10000),
-    jitter_delay_ms_(0),
-    current_delay_ms_(0),
-    last_decode_ms_(0),
-    prev_frame_timestamp_(0),
-    num_decoded_frames_(0),
-    num_delayed_decoded_frames_(0),
-    first_decoded_frame_ms_(-1),
-    sum_missed_render_deadline_ms_(0) {
+    : clock_(clock),
+      master_(false),
+      ts_extrapolator_(),
+      codec_timer_(new VCMCodecTimer()),
+      render_delay_ms_(kDefaultRenderDelayMs),
+      min_playout_delay_ms_(0),
+      max_playout_delay_ms_(10000),
+      jitter_delay_ms_(0),
+      current_delay_ms_(0),
+      last_decode_ms_(0),
+      prev_frame_timestamp_(0),
+      timing_frame_info_(),
+      num_decoded_frames_(0),
+      num_delayed_decoded_frames_(0),
+      first_decoded_frame_ms_(-1),
+      sum_missed_render_deadline_ms_(0) {
   if (master_timing == NULL) {
     master_ = true;
     ts_extrapolator_ = new TimestampExtrapolator(clock_->TimeInMilliseconds());
@@ -302,6 +303,16 @@ bool VCMTiming::GetTimings(int* decode_ms,
   *min_playout_delay_ms = min_playout_delay_ms_;
   *render_delay_ms = render_delay_ms_;
   return (num_decoded_frames_ > 0);
+}
+
+void VCMTiming::SetTimingFrameInfo(const TimingFrameInfo& info) {
+  rtc::CritScope cs(&crit_sect_);
+  timing_frame_info_.emplace(info);
+}
+
+rtc::Optional<TimingFrameInfo> VCMTiming::GetTimingFrameInfo() {
+  rtc::CritScope cs(&crit_sect_);
+  return timing_frame_info_;
 }
 
 }  // namespace webrtc

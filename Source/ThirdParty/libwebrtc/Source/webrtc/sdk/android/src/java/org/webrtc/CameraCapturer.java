@@ -177,6 +177,23 @@ abstract class CameraCapturer implements CameraVideoCapturer {
     }
 
     @Override
+    public void onFrameCaptured(CameraSession session, VideoFrame frame) {
+      checkIsOnCameraThread();
+      synchronized (stateLock) {
+        if (session != currentSession) {
+          Logging.w(TAG, "onTextureFrameCaptured from another session.");
+          return;
+        }
+        if (!firstFrameObserved) {
+          eventsHandler.onFirstFrameAvailable();
+          firstFrameObserved = true;
+        }
+        cameraStatistics.addFrame();
+        capturerObserver.onFrameCaptured(frame);
+      }
+    }
+
+    @Override
     public void onByteBufferFrameCaptured(
         CameraSession session, byte[] data, int width, int height, int rotation, long timestamp) {
       checkIsOnCameraThread();

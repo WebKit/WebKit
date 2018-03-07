@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
+#ifndef MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
+#define MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/splitting_filter.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/channel_buffer.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/splitting_filter.h"
+#include "modules/include/module_common_types.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -163,4 +163,4 @@ class AudioBuffer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
+#endif  // MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_

@@ -90,8 +90,8 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     return NULL;
   }
 
-  /* |bn_wexpand| must check bounds on |num_words| to write it into
-   * |ret->dmax|. */
+  // |bn_wexpand| must check bounds on |num_words| to write it into
+  // |ret->dmax|.
   assert(num_words <= INT_MAX);
   ret->top = (int)num_words;
   ret->neg = 0;
@@ -105,8 +105,8 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     }
   }
 
-  /* need to call this due to clear byte at top if avoiding having the top bit
-   * set (-ve number) */
+  // need to call this due to clear byte at top if avoiding having the top bit
+  // set (-ve number)
   bn_correct_top(ret);
   return ret;
 }
@@ -128,7 +128,7 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     return ret;
   }
 
-  /* Reserve enough space in |ret|. */
+  // Reserve enough space in |ret|.
   size_t num_words = ((len - 1) / BN_BYTES) + 1;
   if (!bn_wexpand(ret, num_words)) {
     BN_free(bn);
@@ -136,11 +136,11 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   }
   ret->top = num_words;
 
-  /* Make sure the top bytes will be zeroed. */
+  // Make sure the top bytes will be zeroed.
   ret->d[num_words - 1] = 0;
 
-  /* We only support little-endian platforms, so we can simply memcpy the
-   * internal representation. */
+  // We only support little-endian platforms, so we can simply memcpy the
+  // internal representation.
   OPENSSL_memcpy(ret->d, in, len);
 
   bn_correct_top(ret);
@@ -160,24 +160,24 @@ size_t BN_bn2bin(const BIGNUM *in, uint8_t *out) {
 }
 
 int BN_bn2le_padded(uint8_t *out, size_t len, const BIGNUM *in) {
-  /* If we don't have enough space, fail out. */
+  // If we don't have enough space, fail out.
   size_t num_bytes = BN_num_bytes(in);
   if (len < num_bytes) {
     return 0;
   }
 
-  /* We only support little-endian platforms, so we can simply memcpy into the
-   * internal representation. */
+  // We only support little-endian platforms, so we can simply memcpy into the
+  // internal representation.
   OPENSSL_memcpy(out, in->d, num_bytes);
 
-  /* Pad out the rest of the buffer with zeroes. */
+  // Pad out the rest of the buffer with zeroes.
   OPENSSL_memset(out + num_bytes, 0, len - num_bytes);
 
   return 1;
 }
 
-/* constant_time_select_ulong returns |x| if |v| is 1 and |y| if |v| is 0. Its
- * behavior is undefined if |v| takes any other value. */
+// constant_time_select_ulong returns |x| if |v| is 1 and |y| if |v| is 0. Its
+// behavior is undefined if |v| takes any other value.
 static BN_ULONG constant_time_select_ulong(int v, BN_ULONG x, BN_ULONG y) {
   BN_ULONG mask = v;
   mask--;
@@ -185,35 +185,35 @@ static BN_ULONG constant_time_select_ulong(int v, BN_ULONG x, BN_ULONG y) {
   return (~mask & x) | (mask & y);
 }
 
-/* constant_time_le_size_t returns 1 if |x| <= |y| and 0 otherwise. |x| and |y|
- * must not have their MSBs set. */
+// constant_time_le_size_t returns 1 if |x| <= |y| and 0 otherwise. |x| and |y|
+// must not have their MSBs set.
 static int constant_time_le_size_t(size_t x, size_t y) {
   return ((x - y - 1) >> (sizeof(size_t) * 8 - 1)) & 1;
 }
 
-/* read_word_padded returns the |i|'th word of |in|, if it is not out of
- * bounds. Otherwise, it returns 0. It does so without branches on the size of
- * |in|, however it necessarily does not have the same memory access pattern. If
- * the access would be out of bounds, it reads the last word of |in|. |in| must
- * not be zero. */
+// read_word_padded returns the |i|'th word of |in|, if it is not out of
+// bounds. Otherwise, it returns 0. It does so without branches on the size of
+// |in|, however it necessarily does not have the same memory access pattern. If
+// the access would be out of bounds, it reads the last word of |in|. |in| must
+// not be zero.
 static BN_ULONG read_word_padded(const BIGNUM *in, size_t i) {
-  /* Read |in->d[i]| if valid. Otherwise, read the last word. */
+  // Read |in->d[i]| if valid. Otherwise, read the last word.
   BN_ULONG l = in->d[constant_time_select_ulong(
       constant_time_le_size_t(in->dmax, i), in->dmax - 1, i)];
 
-  /* Clamp to zero if above |d->top|. */
+  // Clamp to zero if above |d->top|.
   return constant_time_select_ulong(constant_time_le_size_t(in->top, i), 0, l);
 }
 
 int BN_bn2bin_padded(uint8_t *out, size_t len, const BIGNUM *in) {
-  /* Special case for |in| = 0. Just branch as the probability is negligible. */
+  // Special case for |in| = 0. Just branch as the probability is negligible.
   if (BN_is_zero(in)) {
     OPENSSL_memset(out, 0, len);
     return 1;
   }
 
-  /* Check if the integer is too big. This case can exit early in non-constant
-   * time. */
+  // Check if the integer is too big. This case can exit early in non-constant
+  // time.
   if ((size_t)in->top > (len + (BN_BYTES - 1)) / BN_BYTES) {
     return 0;
   }
@@ -224,13 +224,13 @@ int BN_bn2bin_padded(uint8_t *out, size_t len, const BIGNUM *in) {
     }
   }
 
-  /* Write the bytes out one by one. Serialization is done without branching on
-   * the bits of |in| or on |in->top|, but if the routine would otherwise read
-   * out of bounds, the memory access pattern can't be fixed. However, for an
-   * RSA key of size a multiple of the word size, the probability of BN_BYTES
-   * leading zero octets is low.
-   *
-   * See Falko Stenzke, "Manger's Attack revisited", ICICS 2010. */
+  // Write the bytes out one by one. Serialization is done without branching on
+  // the bits of |in| or on |in->top|, but if the routine would otherwise read
+  // out of bounds, the memory access pattern can't be fixed. However, for an
+  // RSA key of size a multiple of the word size, the probability of BN_BYTES
+  // leading zero octets is low.
+  //
+  // See Falko Stenzke, "Manger's Attack revisited", ICICS 2010.
   size_t i = len;
   while (i--) {
     BN_ULONG l = read_word_padded(in, i / BN_BYTES);

@@ -371,6 +371,26 @@ static void ScalePlaneDown34(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEROWDOWN34_MSA)
+  if (TestCpuFlag(kCpuHasMSA)) {
+    if (!filtering) {
+      ScaleRowDown34_0 = ScaleRowDown34_Any_MSA;
+      ScaleRowDown34_1 = ScaleRowDown34_Any_MSA;
+    } else {
+      ScaleRowDown34_0 = ScaleRowDown34_0_Box_Any_MSA;
+      ScaleRowDown34_1 = ScaleRowDown34_1_Box_Any_MSA;
+    }
+    if (dst_width % 48 == 0) {
+      if (!filtering) {
+        ScaleRowDown34_0 = ScaleRowDown34_MSA;
+        ScaleRowDown34_1 = ScaleRowDown34_MSA;
+      } else {
+        ScaleRowDown34_0 = ScaleRowDown34_0_Box_MSA;
+        ScaleRowDown34_1 = ScaleRowDown34_1_Box_MSA;
+      }
+    }
+  }
+#endif
 #if defined(HAS_SCALEROWDOWN34_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
     if (!filtering) {
@@ -802,11 +822,12 @@ static void ScaleAddCols2_16_C(int dst_width,
 static void ScaleAddCols0_C(int dst_width,
                             int boxheight,
                             int x,
-                            int,
+                            int dx,
                             const uint16* src_ptr,
                             uint8* dst_ptr) {
   int scaleval = 65536 / boxheight;
   int i;
+  (void)dx;
   src_ptr += (x >> 16);
   for (i = 0; i < dst_width; ++i) {
     *dst_ptr++ = src_ptr[i] * scaleval >> 16;
@@ -1079,6 +1100,14 @@ void ScalePlaneBilinearDown(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEFILTERCOLS_MSA)
+  if (TestCpuFlag(kCpuHasMSA) && src_width < 32768) {
+    ScaleFilterCols = ScaleFilterCols_Any_MSA;
+    if (IS_ALIGNED(dst_width, 16)) {
+      ScaleFilterCols = ScaleFilterCols_MSA;
+    }
+  }
+#endif
   if (y > max_y) {
     y = max_y;
   }
@@ -1274,6 +1303,14 @@ void ScalePlaneBilinearUp(int src_width,
     ScaleFilterCols = ScaleFilterCols_Any_NEON;
     if (IS_ALIGNED(dst_width, 8)) {
       ScaleFilterCols = ScaleFilterCols_NEON;
+    }
+  }
+#endif
+#if defined(HAS_SCALEFILTERCOLS_MSA)
+  if (filtering && TestCpuFlag(kCpuHasMSA) && src_width < 32768) {
+    ScaleFilterCols = ScaleFilterCols_Any_MSA;
+    if (IS_ALIGNED(dst_width, 16)) {
+      ScaleFilterCols = ScaleFilterCols_MSA;
     }
   }
 #endif
@@ -1663,7 +1700,7 @@ void ScalePlane_16(const uint16* src,
     CopyPlane_16(src, src_stride, dst, dst_stride, dst_width, dst_height);
     return;
   }
-  if (dst_width == src_width) {
+  if (dst_width == src_width && filtering != kFilterBox) {
     int dy = FixedDiv(src_height, dst_height);
     // Arbitrary scale vertically, but unscaled vertically.
     ScalePlaneVertical_16(src_height, dst_width, dst_height, src_stride,
@@ -1692,7 +1729,7 @@ void ScalePlane_16(const uint16* src,
       return;
     }
     if (4 * dst_width == src_width && 4 * dst_height == src_height &&
-        filtering != kFilterBilinear) {
+        (filtering == kFilterBox || filtering == kFilterNone)) {
       // optimized, 1/4
       ScalePlaneDown4_16(src_width, src_height, dst_width, dst_height,
                          src_stride, dst_stride, src, dst, filtering);

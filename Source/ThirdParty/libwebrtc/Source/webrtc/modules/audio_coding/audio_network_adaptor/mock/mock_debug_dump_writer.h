@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_MOCK_MOCK_DEBUG_DUMP_WRITER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_MOCK_MOCK_DEBUG_DUMP_WRITER_H_
+#ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_MOCK_MOCK_DEBUG_DUMP_WRITER_H_
+#define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_MOCK_MOCK_DEBUG_DUMP_WRITER_H_
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
-#include "webrtc/test/gmock.h"
+#include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -27,8 +27,14 @@ class MockDebugDumpWriter : public DebugDumpWriter {
   MOCK_METHOD2(DumpNetworkMetrics,
                void(const Controller::NetworkMetrics& metrics,
                     int64_t timestamp));
+#if WEBRTC_ENABLE_PROTOBUF
+  MOCK_METHOD2(DumpControllerManagerConfig,
+               void(const audio_network_adaptor::config::ControllerManager&
+                        controller_manager_config,
+                    int64_t timestamp));
+#endif
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_MOCK_MOCK_DEBUG_DUMP_WRITER_H_
+#endif  // MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_MOCK_MOCK_DEBUG_DUMP_WRITER_H_

@@ -82,6 +82,11 @@ class TestRollChromiumRevision(unittest.TestCase):
     self.assertEqual(self.fake.expectations, [])
     setattr(roll_deps, '_RunCommand', self.old_RunCommand)
 
+  def testVarLookup(self):
+    local_scope = {'foo': 'wrong', 'vars': {'foo': 'bar'}}
+    lookup = roll_deps.VarLookup(local_scope)
+    self.assertEquals(lookup('foo'), 'bar')
+
   def testUpdateDepsFile(self):
     new_rev = 'aaaaabbbbbcccccdddddeeeeefffff0000011111'
 

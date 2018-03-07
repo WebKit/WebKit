@@ -70,8 +70,13 @@ private:
     virtual void AddSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.append(sink); }
     virtual void RemoveSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.removeFirst(sink); }
 
-    int AddRef() const final { ref(); return refCount(); }
-    int Release() const final { deref(); return refCount(); }
+    void AddRef() const final { ref(); }
+    rtc::RefCountReleaseStatus Release() const final
+    {
+        deref();
+        return refCount() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+    }
+
     SourceState state() const final { return kLive; }
     bool remote() const final { return false; }
     void RegisterObserver(webrtc::ObserverInterface*) final { }

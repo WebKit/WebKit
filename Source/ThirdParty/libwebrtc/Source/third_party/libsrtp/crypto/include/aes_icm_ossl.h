@@ -9,7 +9,7 @@
  */
 /*
  *
- * Copyright (c) 2001-2005,2012, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,14 +50,6 @@
 #include "datatypes.h"
 #include <openssl/evp.h>
 #include <openssl/aes.h>
-
-#define     SRTP_SALT_SIZE               14
-#define     SRTP_AES_128_KEYSIZE         AES_BLOCK_SIZE
-#define     SRTP_AES_256_KEYSIZE         AES_BLOCK_SIZE * 2
-#define     SRTP_AES_128_KEYSIZE_WSALT   SRTP_AES_128_KEYSIZE + SRTP_SALT_SIZE
-#define     SRTP_AES_256_KEYSIZE_WSALT   SRTP_AES_256_KEYSIZE + SRTP_SALT_SIZE
-#define     SRTP_AES_192_KEYSIZE         AES_BLOCK_SIZE + AES_BLOCK_SIZE / 2
-#define     SRTP_AES_192_KEYSIZE_WSALT   SRTP_AES_192_KEYSIZE + SRTP_SALT_SIZE
 
 typedef struct {
     v128_t counter;                /* holds the counter value          */

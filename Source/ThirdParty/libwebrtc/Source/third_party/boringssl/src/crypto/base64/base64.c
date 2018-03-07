@@ -65,29 +65,29 @@
 #include "../internal.h"
 
 
-/* constant_time_lt_args_8 behaves like |constant_time_lt_8| but takes |uint8_t|
- * arguments for a slightly simpler implementation. */
+// constant_time_lt_args_8 behaves like |constant_time_lt_8| but takes |uint8_t|
+// arguments for a slightly simpler implementation.
 static inline uint8_t constant_time_lt_args_8(uint8_t a, uint8_t b) {
   crypto_word_t aw = a;
   crypto_word_t bw = b;
-  /* |crypto_word_t| is larger than |uint8_t|, so |aw| and |bw| have the same
-   * MSB. |aw| < |bw| iff MSB(|aw| - |bw|) is 1. */
+  // |crypto_word_t| is larger than |uint8_t|, so |aw| and |bw| have the same
+  // MSB. |aw| < |bw| iff MSB(|aw| - |bw|) is 1.
   return constant_time_msb_w(aw - bw);
 }
 
-/* constant_time_in_range_8 returns |CONSTTIME_TRUE_8| if |min| <= |a| <= |max|
- * and |CONSTTIME_FALSE_8| otherwise. */
+// constant_time_in_range_8 returns |CONSTTIME_TRUE_8| if |min| <= |a| <= |max|
+// and |CONSTTIME_FALSE_8| otherwise.
 static inline uint8_t constant_time_in_range_8(uint8_t a, uint8_t min,
                                                uint8_t max) {
   a -= min;
   return constant_time_lt_args_8(a, max - min + 1);
 }
 
-/* Encoding. */
+// Encoding.
 
 static uint8_t conv_bin2ascii(uint8_t a) {
-  /* Since PEM is sometimes used to carry private keys, we encode base64 data
-   * itself in constant-time. */
+  // Since PEM is sometimes used to carry private keys, we encode base64 data
+  // itself in constant-time.
   a &= 0x3f;
   uint8_t ret = constant_time_select_8(constant_time_eq_8(a, 62), '+', '/');
   ret =
@@ -183,8 +183,8 @@ void EVP_EncodeUpdate(EVP_ENCODE_CTX *ctx, uint8_t *out, int *out_len,
   ctx->data_used = (unsigned)in_len;
 
   if (total > INT_MAX) {
-    /* We cannot signal an error, but we can at least avoid making *out_len
-     * negative. */
+    // We cannot signal an error, but we can at least avoid making *out_len
+    // negative.
     total = 0;
   }
   *out_len = (int)total;
@@ -201,8 +201,8 @@ void EVP_EncodeFinal(EVP_ENCODE_CTX *ctx, uint8_t *out, int *out_len) {
   out[encoded] = '\0';
   ctx->data_used = 0;
 
-  /* ctx->data_used is bounded by sizeof(ctx->data), so this does not
-   * overflow. */
+  // ctx->data_used is bounded by sizeof(ctx->data), so this does not
+  // overflow.
   assert(encoded <= INT_MAX);
   *out_len = (int)encoded;
 }
@@ -240,7 +240,7 @@ size_t EVP_EncodeBlock(uint8_t *dst, const uint8_t *src, size_t src_len) {
 }
 
 
-/* Decoding. */
+// Decoding.
 
 int EVP_DecodedLength(size_t *out_len, size_t len) {
   if (len % 4 != 0) {
@@ -256,8 +256,8 @@ void EVP_DecodeInit(EVP_ENCODE_CTX *ctx) {
 }
 
 static uint8_t base64_ascii_to_bin(uint8_t a) {
-  /* Since PEM is sometimes used to carry private keys, we decode base64 data
-   * itself in constant-time. */
+  // Since PEM is sometimes used to carry private keys, we decode base64 data
+  // itself in constant-time.
   const uint8_t is_upper = constant_time_in_range_8(a, 'A', 'Z');
   const uint8_t is_lower = constant_time_in_range_8(a, 'a', 'z');
   const uint8_t is_digit = constant_time_in_range_8(a, '0', '9');
@@ -265,21 +265,21 @@ static uint8_t base64_ascii_to_bin(uint8_t a) {
   const uint8_t is_slash = constant_time_eq_8(a, '/');
   const uint8_t is_equals = constant_time_eq_8(a, '=');
 
-  uint8_t ret = 0xff; /* 0xff signals invalid. */
-  ret = constant_time_select_8(is_upper, a - 'A', ret);      /* [0,26) */
-  ret = constant_time_select_8(is_lower, a - 'a' + 26, ret); /* [26,52) */
-  ret = constant_time_select_8(is_digit, a - '0' + 52, ret); /* [52,62) */
+  uint8_t ret = 0xff;  // 0xff signals invalid.
+  ret = constant_time_select_8(is_upper, a - 'A', ret);       // [0,26)
+  ret = constant_time_select_8(is_lower, a - 'a' + 26, ret);  // [26,52)
+  ret = constant_time_select_8(is_digit, a - '0' + 52, ret);  // [52,62)
   ret = constant_time_select_8(is_plus, 62, ret);
   ret = constant_time_select_8(is_slash, 63, ret);
-  /* Padding maps to zero, to be further handled by the caller. */
+  // Padding maps to zero, to be further handled by the caller.
   ret = constant_time_select_8(is_equals, 0, ret);
   return ret;
 }
 
-/* base64_decode_quad decodes a single “quad” (i.e. four characters) of base64
- * data and writes up to three bytes to |out|. It sets |*out_num_bytes| to the
- * number of bytes written, which will be less than three if the quad ended
- * with padding.  It returns one on success or zero on error. */
+// base64_decode_quad decodes a single “quad” (i.e. four characters) of base64
+// data and writes up to three bytes to |out|. It sets |*out_num_bytes| to the
+// number of bytes written, which will be less than three if the quad ended
+// with padding.  It returns one on success or zero on error.
 static int base64_decode_quad(uint8_t *out, size_t *out_num_bytes,
                               const uint8_t *in) {
   const uint8_t a = base64_ascii_to_bin(in[0]);
@@ -300,20 +300,20 @@ static int base64_decode_quad(uint8_t *out, size_t *out_num_bytes,
 
   switch (padding_pattern) {
     case 0:
-      /* The common case of no padding. */
+      // The common case of no padding.
       *out_num_bytes = 3;
       out[0] = v >> 16;
       out[1] = v >> 8;
       out[2] = v;
       break;
 
-    case 1: /* xxx= */
+    case 1:  // xxx=
       *out_num_bytes = 2;
       out[0] = v >> 16;
       out[1] = v >> 8;
       break;
 
-    case 3: /* xx== */
+    case 3:  // xx==
       *out_num_bytes = 1;
       out[0] = v >> 16;
       break;
@@ -424,7 +424,7 @@ int EVP_DecodeBase64(uint8_t *out, size_t *out_len, size_t max_out,
 }
 
 int EVP_DecodeBlock(uint8_t *dst, const uint8_t *src, size_t src_len) {
-  /* Trim spaces and tabs from the beginning of the input. */
+  // Trim spaces and tabs from the beginning of the input.
   while (src_len > 0) {
     if (src[0] != ' ' && src[0] != '\t') {
       break;
@@ -434,7 +434,7 @@ int EVP_DecodeBlock(uint8_t *dst, const uint8_t *src, size_t src_len) {
     src_len--;
   }
 
-  /* Trim newlines, spaces and tabs from the end of the line. */
+  // Trim newlines, spaces and tabs from the end of the line.
   while (src_len > 0) {
     switch (src[src_len-1]) {
       case ' ':
@@ -455,8 +455,8 @@ int EVP_DecodeBlock(uint8_t *dst, const uint8_t *src, size_t src_len) {
     return -1;
   }
 
-  /* EVP_DecodeBlock does not take padding into account, so put the
-   * NULs back in... so the caller can strip them back out. */
+  // EVP_DecodeBlock does not take padding into account, so put the
+  // NULs back in... so the caller can strip them back out.
   while (dst_len % 3 != 0) {
     dst[dst_len++] = '\0';
   }

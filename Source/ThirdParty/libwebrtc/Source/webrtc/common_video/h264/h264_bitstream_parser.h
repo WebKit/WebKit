@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_H264_H264_BITSTREAM_PARSER_H_
-#define WEBRTC_COMMON_VIDEO_H264_H264_BITSTREAM_PARSER_H_
+#ifndef COMMON_VIDEO_H264_H264_BITSTREAM_PARSER_H_
+#define COMMON_VIDEO_H264_H264_BITSTREAM_PARSER_H_
 #include <stddef.h>
 #include <stdint.h>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/common_video/h264/pps_parser.h"
-#include "webrtc/common_video/h264/sps_parser.h"
+#include "api/optional.h"
+#include "common_video/h264/pps_parser.h"
+#include "common_video/h264/sps_parser.h"
 
 namespace rtc {
 class BitBufferWriter;
@@ -62,4 +62,4 @@ class H264BitstreamParser {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_H264_H264_BITSTREAM_PARSER_H_
+#endif  // COMMON_VIDEO_H264_H264_BITSTREAM_PARSER_H_

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/pacing/packet_router.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_estimator_proxy.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/pacing/packet_router.h"
+#include "modules/remote_bitrate_estimator/remote_estimator_proxy.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::ElementsAre;
@@ -50,7 +50,7 @@ std::vector<int64_t> TimestampsMs(
   return timestamps;
 }
 
-class MockPacketRouter : public PacketRouter {
+class MockTransportFeedbackSender : public TransportFeedbackSenderInterface {
  public:
   MOCK_METHOD1(SendTransportFeedback,
                bool(rtcp::TransportFeedback* feedback_packet));
@@ -76,7 +76,7 @@ class RemoteEstimatorProxyTest : public ::testing::Test {
   }
 
   SimulatedClock clock_;
-  testing::StrictMock<MockPacketRouter> router_;
+  testing::StrictMock<MockTransportFeedbackSender> router_;
   RemoteEstimatorProxy proxy_;
 };
 

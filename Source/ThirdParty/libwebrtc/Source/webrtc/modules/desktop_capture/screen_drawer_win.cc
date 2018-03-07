@@ -12,8 +12,8 @@
 
 #include <memory>
 
-#include "webrtc/modules/desktop_capture/screen_drawer.h"
-#include "webrtc/system_wrappers/include/sleep.h"
+#include "modules/desktop_capture/screen_drawer.h"
+#include "system_wrappers/include/sleep.h"
 
 namespace webrtc {
 
@@ -82,6 +82,7 @@ class ScreenDrawerWin : public ScreenDrawer {
   void Clear() override;
   void WaitForPendingDraws() override;
   bool MayDrawIncompleteShapes() override;
+  WindowId window_id() const override;
 
  private:
   // Bring the window to the front, this can help to avoid the impact from other
@@ -156,6 +157,10 @@ void ScreenDrawerWin::WaitForPendingDraws() {
 
 bool ScreenDrawerWin::MayDrawIncompleteShapes() {
   return true;
+}
+
+WindowId ScreenDrawerWin::window_id() const {
+  return reinterpret_cast<WindowId>(window_);
 }
 
 void ScreenDrawerWin::DrawLine(DesktopVector start,

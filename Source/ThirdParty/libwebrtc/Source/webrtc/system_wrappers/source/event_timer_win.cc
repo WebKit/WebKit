@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/source/event_timer_win.h"
+#include "system_wrappers/source/event_timer_win.h"
 
 #include "Mmsystem.h"
 
@@ -24,8 +24,7 @@ EventTimerWin::EventTimerWin()
                            FALSE,   // manual reset
                            FALSE,   // initial state
                            NULL)),  // name of event
-    timerID_(NULL) {
-}
+      timerID_(NULL) {}
 
 EventTimerWin::~EventTimerWin() {
   StopTimer();

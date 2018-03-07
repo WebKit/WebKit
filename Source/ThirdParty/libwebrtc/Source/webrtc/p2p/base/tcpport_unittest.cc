@@ -8,13 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <list>
 #include <memory>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/tcpport.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/tcpport.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/virtualsocketserver.h"
 
 using rtc::SocketAddress;
 using cricket::Connection;
@@ -24,61 +25,134 @@ using cricket::ICE_UFRAG_LENGTH;
 using cricket::ICE_PWD_LENGTH;
 
 static int kTimeout = 1000;
-static const SocketAddress kLocalAddr("11.11.11.11", 1);
-static const SocketAddress kRemoteAddr("22.22.22.22", 2);
+static const SocketAddress kLocalAddr("11.11.11.11", 0);
+static const SocketAddress kAlternateLocalAddr("1.2.3.4", 0);
+static const SocketAddress kRemoteAddr("22.22.22.22", 0);
+
+class ConnectionObserver : public sigslot::has_slots<> {
+ public:
+  ConnectionObserver(Connection* conn) {
+    conn->SignalDestroyed.connect(this, &ConnectionObserver::OnDestroyed);
+  }
+
+  bool connection_destroyed() { return connection_destroyed_; }
+
+ private:
+  void OnDestroyed(Connection*) { connection_destroyed_ = true; }
+
+  bool connection_destroyed_ = false;
+};
 
 class TCPPortTest : public testing::Test, public sigslot::has_slots<> {
  public:
   TCPPortTest()
       : ss_(new rtc::VirtualSocketServer()),
         main_(ss_.get()),
-        network_("unittest", "unittest", rtc::IPAddress(INADDR_ANY), 32),
         socket_factory_(rtc::Thread::Current()),
         username_(rtc::CreateRandomString(ICE_UFRAG_LENGTH)),
         password_(rtc::CreateRandomString(ICE_PWD_LENGTH)) {
-    network_.AddIP(rtc::IPAddress(INADDR_ANY));
   }
 
-  void ConnectSignalSocketCreated() {
-    ss_->SignalSocketCreated.connect(this, &TCPPortTest::OnSocketCreated);
+  rtc::Network* MakeNetwork(const SocketAddress& addr) {
+    networks_.emplace_back("unittest", "unittest", addr.ipaddr(), 32);
+    networks_.back().AddIP(addr.ipaddr());
+    return &networks_.back();
   }
 
-  void OnSocketCreated(rtc::VirtualSocket* socket) {
-    LOG(LS_INFO) << "socket created ";
-    socket->SignalAddressReady.connect(
-        this, &TCPPortTest::SetLocalhostAsAlternativeLocalAddress);
+  std::unique_ptr<TCPPort> CreateTCPPort(const SocketAddress& addr) {
+    return std::unique_ptr<TCPPort>(
+        TCPPort::Create(&main_, &socket_factory_, MakeNetwork(addr), 0, 0,
+                        username_, password_, true));
   }
 
-  void SetLocalhostAsAlternativeLocalAddress(rtc::VirtualSocket* socket,
-                                             const SocketAddress& address) {
-    SocketAddress local_address("127.0.0.1", 2000);
-    socket->SetAlternativeLocalAddress(local_address);
-  }
-
-  TCPPort* CreateTCPPort(const SocketAddress& addr) {
-    return TCPPort::Create(&main_, &socket_factory_, &network_, addr.ipaddr(),
-                           0, 0, username_, password_, true);
+  std::unique_ptr<TCPPort> CreateTCPPort(rtc::Network* network) {
+    return std::unique_ptr<TCPPort>(TCPPort::Create(
+        &main_, &socket_factory_, network, 0, 0, username_, password_, true));
   }
 
  protected:
+  // When a "create port" helper method is called with an IP, we create a
+  // Network with that IP and add it to this list. Using a list instead of a
+  // vector so that when it grows, pointers aren't invalidated.
+  std::list<rtc::Network> networks_;
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
   rtc::AutoSocketServerThread main_;
-  rtc::Network network_;
   rtc::BasicPacketSocketFactory socket_factory_;
   std::string username_;
   std::string password_;
 };
 
 TEST_F(TCPPortTest, TestTCPPortWithLocalhostAddress) {
-  std::unique_ptr<TCPPort> lport(CreateTCPPort(kLocalAddr));
-  std::unique_ptr<TCPPort> rport(CreateTCPPort(kRemoteAddr));
-  lport->PrepareAddress();
-  rport->PrepareAddress();
-  // Start to listen to new socket creation event.
-  ConnectSignalSocketCreated();
-  Connection* conn =
-      lport->CreateConnection(rport->Candidates()[0], Port::ORIGIN_MESSAGE);
+  SocketAddress local_address("127.0.0.1", 0);
+  // After calling this, when TCPPort attempts to get a socket bound to
+  // kLocalAddr, it will end up using localhost instead.
+  ss_->SetAlternativeLocalAddress(kLocalAddr.ipaddr(), local_address.ipaddr());
+  auto local_port = CreateTCPPort(kLocalAddr);
+  auto remote_port = CreateTCPPort(kRemoteAddr);
+  local_port->PrepareAddress();
+  remote_port->PrepareAddress();
+  Connection* conn = local_port->CreateConnection(remote_port->Candidates()[0],
+                                                  Port::ORIGIN_MESSAGE);
   EXPECT_TRUE_WAIT(conn->connected(), kTimeout);
+  // Verify that the socket actually used localhost, otherwise this test isn't
+  // doing what it meant to.
+  ASSERT_EQ(local_address.ipaddr(),
+            local_port->Candidates()[0].address().ipaddr());
+}
+
+// If the address the socket ends up bound to does not match any address of the
+// TCPPort's Network, then the socket should be discarded and no candidates
+// should be signaled. In the context of ICE, where one TCPPort is created for
+// each Network, when this happens it's likely that the unexpected address is
+// associated with some other Network, which another TCPPort is already
+// covering.
+TEST_F(TCPPortTest, TCPPortDiscardedIfBoundAddressDoesNotMatchNetwork) {
+  // Sockets bound to kLocalAddr will actually end up with kAlternateLocalAddr.
+  ss_->SetAlternativeLocalAddress(kLocalAddr.ipaddr(),
+                                  kAlternateLocalAddr.ipaddr());
+
+  // Create ports (local_port is the one whose IP will end up reassigned).
+  auto local_port = CreateTCPPort(kLocalAddr);
+  auto remote_port = CreateTCPPort(kRemoteAddr);
+  local_port->PrepareAddress();
+  remote_port->PrepareAddress();
+
+  // Tell port to create a connection; it should be destroyed when it's
+  // realized that it's using an unexpected address.
+  Connection* conn = local_port->CreateConnection(remote_port->Candidates()[0],
+                                                  Port::ORIGIN_MESSAGE);
+  ConnectionObserver observer(conn);
+  EXPECT_TRUE_WAIT(observer.connection_destroyed(), kTimeout);
+}
+
+// A caveat for the above logic: if the socket ends up bound to one of the IPs
+// associated with the Network, just not the "best" one, this is ok.
+TEST_F(TCPPortTest, TCPPortNotDiscardedIfNotBoundToBestIP) {
+  // Sockets bound to kLocalAddr will actually end up with kAlternateLocalAddr.
+  ss_->SetAlternativeLocalAddress(kLocalAddr.ipaddr(),
+                                  kAlternateLocalAddr.ipaddr());
+
+  // Set up a network with kLocalAddr1 as the "best" IP, and kAlternateLocalAddr
+  // as an alternate.
+  rtc::Network* network = MakeNetwork(kLocalAddr);
+  network->AddIP(kAlternateLocalAddr.ipaddr());
+  ASSERT_EQ(kLocalAddr.ipaddr(), network->GetBestIP());
+
+  // Create ports (using our special 2-IP Network for local_port).
+  auto local_port = CreateTCPPort(network);
+  auto remote_port = CreateTCPPort(kRemoteAddr);
+  local_port->PrepareAddress();
+  remote_port->PrepareAddress();
+
+  // Expect connection to succeed.
+  Connection* conn = local_port->CreateConnection(remote_port->Candidates()[0],
+                                                  Port::ORIGIN_MESSAGE);
+  EXPECT_TRUE_WAIT(conn->connected(), kTimeout);
+
+  // Verify that the socket actually used the alternate address, otherwise this
+  // test isn't doing what it meant to.
+  ASSERT_EQ(kAlternateLocalAddr.ipaddr(),
+            local_port->Candidates()[0].address().ipaddr());
 }
 
 class SentPacketCounter : public sigslot::has_slots<> {

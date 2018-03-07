@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/fuzzers/audio_decoder_fuzzer.h"
+#include "test/fuzzers/audio_decoder_fuzzer.h"
 
 #include <limits>
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/optional.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

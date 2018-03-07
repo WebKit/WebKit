@@ -71,7 +71,7 @@ uint8_t *MD4(const uint8_t *data, size_t len, uint8_t *out) {
   return out;
 }
 
-/* Implemented from RFC1186 The MD4 Message-Digest Algorithm. */
+// Implemented from RFC1186 The MD4 Message-Digest Algorithm.
 
 int MD4_Init(MD4_CTX *md4) {
   OPENSSL_memset(md4, 0, sizeof(MD4_CTX));
@@ -107,9 +107,9 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num);
 
 #include "../digest/md32_common.h"
 
-/* As pointed out by Wei Dai <weidai@eskimo.com>, the above can be
- * simplified to the code below.  Wei attributes these optimizations
- * to Peter Gutmann's SHS code, and he attributes it to Rich Schroeppel. */
+// As pointed out by Wei Dai <weidai@eskimo.com>, the above can be
+// simplified to the code below.  Wei attributes these optimizations
+// to Peter Gutmann's SHS code, and he attributes it to Rich Schroeppel.
 #define F(b, c, d) ((((c) ^ (d)) & (b)) ^ (d))
 #define G(b, c, d) (((b) & (c)) | ((b) & (d)) | ((c) & (d)))
 #define H(b, c, d) ((b) ^ (c) ^ (d))
@@ -148,7 +148,7 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
     X0 = l;
     HOST_c2l(data, l);
     X1 = l;
-    /* Round 0 */
+    // Round 0
     R0(A, B, C, D, X0, 3, 0);
     HOST_c2l(data, l);
     X2 = l;
@@ -193,7 +193,7 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
     X15 = l;
     R0(C, D, A, B, X14, 11, 0);
     R0(B, C, D, A, X15, 19, 0);
-    /* Round 1 */
+    // Round 1
     R1(A, B, C, D, X0, 3, 0x5A827999L);
     R1(D, A, B, C, X4, 5, 0x5A827999L);
     R1(C, D, A, B, X8, 9, 0x5A827999L);
@@ -210,7 +210,7 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
     R1(D, A, B, C, X7, 5, 0x5A827999L);
     R1(C, D, A, B, X11, 9, 0x5A827999L);
     R1(B, C, D, A, X15, 13, 0x5A827999L);
-    /* Round 2 */
+    // Round 2
     R2(A, B, C, D, X0, 3, 0x6ED9EBA1L);
     R2(D, A, B, C, X8, 9, 0x6ED9EBA1L);
     R2(C, D, A, B, X4, 11, 0x6ED9EBA1L);

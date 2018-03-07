@@ -9,14 +9,14 @@
  */
 
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
+#define MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
 
 #include <cstddef>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/typedefs.h"
+#include "api/array_view.h"
+#include "rtc_base/buffer.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #define WEBRTC_CNG_MAX_LPC_ORDER 12
 
@@ -96,4 +96,4 @@ class ComfortNoiseEncoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_

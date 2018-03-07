@@ -361,6 +361,11 @@ void RotateUV180(const uint8* src,
     MirrorUVRow = MirrorUVRow_DSPR2;
   }
 #endif
+#if defined(HAS_MIRRORUVROW_MSA)
+  if (TestCpuFlag(kCpuHasMSA) && IS_ALIGNED(width, 32)) {
+    MirrorUVRow = MirrorUVRow_MSA;
+  }
+#endif
 
   dst_a += dst_stride_a * (height - 1);
   dst_b += dst_stride_b * (height - 1);

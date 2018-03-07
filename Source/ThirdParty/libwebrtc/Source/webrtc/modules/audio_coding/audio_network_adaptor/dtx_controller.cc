@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/dtx_controller.h"
-#include "webrtc/base/checks.h"
+#include "modules/audio_coding/audio_network_adaptor/dtx_controller.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -44,7 +44,7 @@ void DtxController::MakeDecision(AudioEncoderRuntimeConfig* config) {
       dtx_enabled_ = true;
     }
   }
-  config->enable_dtx = rtc::Optional<bool>(dtx_enabled_);
+  config->enable_dtx = dtx_enabled_;
 }
 
 }  // namespace webrtc

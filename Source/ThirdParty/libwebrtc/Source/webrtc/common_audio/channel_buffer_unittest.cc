@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/channel_buffer.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

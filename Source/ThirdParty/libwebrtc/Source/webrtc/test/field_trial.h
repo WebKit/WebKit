@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_FIELD_TRIAL_H_
-#define WEBRTC_TEST_FIELD_TRIAL_H_
+#ifndef TEST_FIELD_TRIAL_H_
+#define TEST_FIELD_TRIAL_H_
 
 #include <string>
 #include <map>
@@ -46,4 +46,4 @@ class ScopedFieldTrials {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_FIELD_TRIAL_H_
+#endif  // TEST_FIELD_TRIAL_H_

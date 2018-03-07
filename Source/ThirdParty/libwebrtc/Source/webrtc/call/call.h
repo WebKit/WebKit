@@ -7,26 +7,27 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_CALL_CALL_H_
-#define WEBRTC_CALL_CALL_H_
+#ifndef CALL_CALL_H_
+#define CALL_CALL_H_
 
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/base/networkroute.h"
-#include "webrtc/base/platform_file.h"
-#include "webrtc/base/socket.h"
-#include "webrtc/call/audio_receive_stream.h"
-#include "webrtc/call/audio_send_stream.h"
-#include "webrtc/call/audio_state.h"
-#include "webrtc/call/flexfec_receive_stream.h"
-#include "webrtc/call/rtp_transport_controller_send_interface.h"
-#include "webrtc/common_types.h"
-#include "webrtc/video_receive_stream.h"
-#include "webrtc/video_send_stream.h"
+#include "api/rtcerror.h"
+#include "call/audio_receive_stream.h"
+#include "call/audio_send_stream.h"
+#include "call/audio_state.h"
+#include "call/flexfec_receive_stream.h"
+#include "call/rtp_transport_controller_send_interface.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/bitrateallocationstrategy.h"
+#include "rtc_base/networkroute.h"
+#include "rtc_base/platform_file.h"
+#include "rtc_base/socket.h"
 
 namespace webrtc {
 
@@ -183,6 +184,10 @@ class Call {
   virtual void SetBitrateConfigMask(
       const Config::BitrateConfigMask& bitrate_mask) = 0;
 
+  virtual void SetBitrateAllocationStrategy(
+      std::unique_ptr<rtc::BitrateAllocationStrategy>
+          bitrate_allocation_strategy) = 0;
+
   // TODO(skvlad): When the unbundled case with multiple streams for the same
   // media type going over different networks is supported, track the state
   // for each stream separately. Right now it's global per media type.
@@ -204,4 +209,4 @@ class Call {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_CALL_CALL_H_
+#endif  // CALL_CALL_H_

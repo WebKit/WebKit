@@ -11,7 +11,7 @@ import("../webrtc.gni")
 config("common_video_config") {
   include_dirs = [
     "include",
-    "libyuv/include",
+    "$rtc_libyuv_dir/include",
   ]
 }
 
@@ -57,10 +57,12 @@ rtc_static_library("common_video") {
 
   deps = [
     "..:webrtc_common",
-    "../base:rtc_base",
-    "../base:rtc_task_queue",
-    "../media:rtc_media_base",
+    "../api:optional",
+    "../api:video_frame_api_i420",
+    "../media:rtc_h264_profile_id",
     "../modules:module_api",
+    "../rtc_base:rtc_base",
+    "../rtc_base:rtc_task_queue",
     "../system_wrappers",
   ]
   public_deps = [
@@ -77,7 +79,7 @@ rtc_static_library("common_video") {
 }
 
 if (rtc_include_tests) {
-  common_video_resources = [ "//resources/foreman_cif.yuv" ]
+  common_video_resources = [ "../resources/foreman_cif.yuv" ]
 
   if (is_ios) {
     bundle_data("common_video_unittests_bundle_data") {
@@ -114,9 +116,10 @@ if (rtc_include_tests) {
 
     deps = [
       ":common_video",
-      "../base:rtc_base",
-      "../base:rtc_base_approved",
+      "../api:video_frame_api_i420",
       "../modules/video_capture:video_capture",
+      "../rtc_base:rtc_base",
+      "../rtc_base:rtc_base_approved",
       "../system_wrappers:system_wrappers",
       "../test:test_main",
       "../test:video_test_common",

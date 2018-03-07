@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_TRANSIENT_DETECTOR_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_TRANSIENT_DETECTOR_H_
+#ifndef MODULES_AUDIO_PROCESSING_TRANSIENT_TRANSIENT_DETECTOR_H_
+#define MODULES_AUDIO_PROCESSING_TRANSIENT_TRANSIENT_DETECTOR_H_
 
 #include <deque>
 #include <memory>
 
-#include "webrtc/modules/audio_processing/transient/moving_moments.h"
-#include "webrtc/modules/audio_processing/transient/wpd_tree.h"
+#include "modules/audio_processing/transient/moving_moments.h"
+#include "modules/audio_processing/transient/wpd_tree.h"
 
 namespace webrtc {
 
@@ -84,4 +84,4 @@ class TransientDetector {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_TRANSIENT_DETECTOR_H_
+#endif  // MODULES_AUDIO_PROCESSING_TRANSIENT_TRANSIENT_DETECTOR_H_

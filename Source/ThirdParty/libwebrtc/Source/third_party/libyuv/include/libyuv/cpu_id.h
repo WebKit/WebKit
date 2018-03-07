@@ -36,15 +36,19 @@ static const int kCpuHasAVX = 0x200;
 static const int kCpuHasAVX2 = 0x400;
 static const int kCpuHasERMS = 0x800;
 static const int kCpuHasFMA3 = 0x1000;
-static const int kCpuHasAVX3 = 0x2000;
-static const int kCpuHasF16C = 0x4000;
-
-// 0x8000 reserved for future X86 flags.
+static const int kCpuHasF16C = 0x2000;
+static const int kCpuHasGFNI = 0x4000;
+static const int kCpuHasAVX512BW = 0x8000;
+static const int kCpuHasAVX512VL = 0x10000;
+static const int kCpuHasAVX512VBMI = 0x20000;
+static const int kCpuHasAVX512VBMI2 = 0x40000;
+static const int kCpuHasAVX512VBITALG = 0x80000;
+static const int kCpuHasAVX512VPOPCNTDQ = 0x100000;
 
 // These flags are only valid on MIPS processors.
-static const int kCpuHasMIPS = 0x10000;
-static const int kCpuHasDSPR2 = 0x20000;
-static const int kCpuHasMSA = 0x40000;
+static const int kCpuHasMIPS = 0x200000;
+static const int kCpuHasDSPR2 = 0x400000;
+static const int kCpuHasMSA = 0x800000;
 
 // Optional init function. TestCpuFlag does an auto-init.
 // Returns cpu_info flags.

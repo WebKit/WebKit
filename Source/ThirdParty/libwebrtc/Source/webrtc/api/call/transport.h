@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_CALL_TRANSPORT_H_
-#define WEBRTC_API_CALL_TRANSPORT_H_
+#ifndef API_CALL_TRANSPORT_H_
+#define API_CALL_TRANSPORT_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -37,4 +37,4 @@ class Transport {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_CALL_TRANSPORT_H_
+#endif  // API_CALL_TRANSPORT_H_

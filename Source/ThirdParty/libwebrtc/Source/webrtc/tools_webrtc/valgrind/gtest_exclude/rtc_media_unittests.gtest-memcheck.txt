@@ -1,0 +1,11 @@
+#TODO(wu): https://code.google.com/p/webrtc/issues/detail?id=2380
+WebRtcVideoMediaChannelTest.TwoStreamsSendAndUnsignalledRecv
+
+#TODO(jiayl): https://code.google.com/p/webrtc/issues/detail?id=3492
+SctpDataMediaChannelTest.*
+
+# TODO(pbos): https://code.google.com/p/webrtc/issues/detail?id=4963
+WebRtcVideoChannel2BaseTest.*
+
+#TODO(honghaiz): https://bugs.chromium.org/p/webrtc/issues/detail?id=7421
+P2PTransportChannelMultihomedTest.TestContinualGatheringOnNewInterface

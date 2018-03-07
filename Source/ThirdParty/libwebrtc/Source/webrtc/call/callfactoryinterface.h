@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_CALL_CALLFACTORYINTERFACE_H_
-#define WEBRTC_CALL_CALLFACTORYINTERFACE_H_
+#ifndef CALL_CALLFACTORYINTERFACE_H_
+#define CALL_CALLFACTORYINTERFACE_H_
 
 #include <memory>
 
-#include "webrtc/call/call.h"
+#include "call/call.h"
 
 namespace webrtc {
 
@@ -31,4 +31,4 @@ std::unique_ptr<CallFactoryInterface> CreateCallFactory();
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_CALL_CALLFACTORYINTERFACE_H_
+#endif  // CALL_CALLFACTORYINTERFACE_H_

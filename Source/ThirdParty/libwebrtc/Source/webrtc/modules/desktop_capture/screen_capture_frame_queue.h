@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURE_FRAME_QUEUE_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURE_FRAME_QUEUE_H_
+#ifndef MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURE_FRAME_QUEUE_H_
+#define MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURE_FRAME_QUEUE_H_
 
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 // TODO(zijiehe): These headers are not used in this file, but to avoid build
 // break in remoting/host. We should add headers in each individual files.
-#include "webrtc/modules/desktop_capture/desktop_frame.h"  // Remove
-#include "webrtc/modules/desktop_capture/shared_desktop_frame.h"  // Remove
+#include "modules/desktop_capture/desktop_frame.h"  // Remove
+#include "modules/desktop_capture/shared_desktop_frame.h"  // Remove
 
 
 namespace webrtc {
@@ -82,4 +82,4 @@ class ScreenCaptureFrameQueue {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURE_FRAME_QUEUE_H_
+#endif  // MODULES_DESKTOP_CAPTURE_SCREEN_CAPTURE_FRAME_QUEUE_H_

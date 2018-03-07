@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CAPTURE_MAIN_SOURCE_VIDEO_CAPTURE_IMPL_H_
-#define WEBRTC_MODULES_VIDEO_CAPTURE_MAIN_SOURCE_VIDEO_CAPTURE_IMPL_H_
+#ifndef MODULES_VIDEO_CAPTURE_MAIN_SOURCE_VIDEO_CAPTURE_IMPL_H_
+#define MODULES_VIDEO_CAPTURE_MAIN_SOURCE_VIDEO_CAPTURE_IMPL_H_
 
 /*
  * video_capture_impl.h
  */
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/modules/video_capture/video_capture.h"
-#include "webrtc/modules/video_capture/video_capture_config.h"
+#include "api/video/video_frame.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_capture/video_capture.h"
+#include "modules/video_capture/video_capture_config.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc
 {
@@ -117,4 +117,4 @@ private:
 };
 }  // namespace videocapturemodule
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_VIDEO_CAPTURE_MAIN_SOURCE_VIDEO_CAPTURE_IMPL_H_
+#endif  // MODULES_VIDEO_CAPTURE_MAIN_SOURCE_VIDEO_CAPTURE_IMPL_H_

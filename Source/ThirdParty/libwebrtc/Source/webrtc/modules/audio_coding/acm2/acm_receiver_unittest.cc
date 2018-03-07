@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/acm2/acm_receiver.h"
+#include "modules/audio_coding/acm2/acm_receiver.h"
 
 #include <algorithm>  // std::min
 #include <memory>
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/modules/audio_coding/neteq/tools/rtp_generator.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "modules/audio_coding/acm2/rent_a_codec.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/neteq/tools/rtp_generator.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
@@ -108,7 +108,7 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
     last_packet_send_timestamp_ = timestamp_;
     while (!packet_sent_) {
       frame.timestamp_ = timestamp_;
-      timestamp_ += frame.samples_per_channel_;
+      timestamp_ += rtc::checked_cast<uint32_t>(frame.samples_per_channel_);
       ASSERT_GE(acm_->Add10MsData(frame), 0);
     }
   }
@@ -175,8 +175,9 @@ TEST_F(AcmReceiverTestOldApi, MAYBE_AddCodecGetCodec) {
   for (size_t n = 0; n < codecs_.size(); ++n) {
     if (n & 0x1) {  // Just add codecs with odd index.
       EXPECT_EQ(
-          0, receiver_->AddCodec(n, codecs_[n].pltype, codecs_[n].channels,
-                                 codecs_[n].plfreq, NULL, codecs_[n].plname));
+          0, receiver_->AddCodec(rtc::checked_cast<int>(n), codecs_[n].pltype,
+                                 codecs_[n].channels, codecs_[n].plfreq, NULL,
+                                 codecs_[n].plname));
     }
   }
   // Get codec and compare.
@@ -338,7 +339,7 @@ class AcmReceiverTestFaxModeOldApi : public AcmReceiverTestOldApi {
         EXPECT_EQ(0,
                   receiver_->GetAudio(output_sample_rate_hz, &frame, &muted));
         EXPECT_EQ(expected_output_ts, frame.timestamp_);
-        expected_output_ts += 10 * samples_per_ms;
+        expected_output_ts += rtc::checked_cast<uint32_t>(10 * samples_per_ms);
         EXPECT_EQ(10 * samples_per_ms, frame.samples_per_channel_);
         EXPECT_EQ(output_sample_rate_hz, frame.sample_rate_hz_);
         EXPECT_EQ(output_channels, frame.num_channels_);
@@ -482,8 +483,7 @@ TEST_F(AcmReceiverTestOldApi, MAYBE_LastAudioCodec) {
     // of type "speech."
     ASSERT_TRUE(packet_sent_);
     ASSERT_EQ(kAudioFrameSpeech, last_frame_type_);
-    EXPECT_EQ(rtc::Optional<int>(c.inst.plfreq),
-              receiver_->last_packet_sample_rate_hz());
+    EXPECT_EQ(c.inst.plfreq, receiver_->last_packet_sample_rate_hz());
 
     // Set VAD on to send DTX. Then check if the "Last Audio codec" returns
     // the expected codec.
@@ -495,8 +495,7 @@ TEST_F(AcmReceiverTestOldApi, MAYBE_LastAudioCodec) {
       InsertOnePacketOfSilence(c.id);
       ASSERT_TRUE(packet_sent_);
     }
-    EXPECT_EQ(rtc::Optional<int>(c.inst.plfreq),
-              receiver_->last_packet_sample_rate_hz());
+    EXPECT_EQ(c.inst.plfreq, receiver_->last_packet_sample_rate_hz());
     EXPECT_EQ(0, receiver_->LastAudioCodec(&codec));
     EXPECT_TRUE(CodecsEqual(c.inst, codec));
   }

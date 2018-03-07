@@ -10,21 +10,21 @@
 
 // Unit tests for Normal class.
 
-#include "webrtc/modules/audio_coding/neteq/normal.h"
+#include "modules/audio_coding/neteq/normal.h"
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/neteq/audio_multi_vector.h"
-#include "webrtc/modules/audio_coding/neteq/background_noise.h"
-#include "webrtc/modules/audio_coding/neteq/expand.h"
-#include "webrtc/modules/audio_coding/neteq/mock/mock_decoder_database.h"
-#include "webrtc/modules/audio_coding/neteq/mock/mock_expand.h"
-#include "webrtc/modules/audio_coding/neteq/random_vector.h"
-#include "webrtc/modules/audio_coding/neteq/statistics_calculator.h"
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/audio_coding/neteq/background_noise.h"
+#include "modules/audio_coding/neteq/expand.h"
+#include "modules/audio_coding/neteq/mock/mock_decoder_database.h"
+#include "modules/audio_coding/neteq/mock/mock_expand.h"
+#include "modules/audio_coding/neteq/random_vector.h"
+#include "modules/audio_coding/neteq/statistics_calculator.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::Invoke;

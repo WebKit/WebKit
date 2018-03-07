@@ -25,6 +25,7 @@ type sessionState struct {
 	handshakeHash        []byte
 	certificates         [][]byte
 	extendedMasterSecret bool
+	earlyALPN            []byte
 	ticketCreationTime   time.Time
 	ticketExpiration     time.Time
 	ticketFlags          uint32
@@ -57,6 +58,9 @@ func (s *sessionState) marshal() []byte {
 		msg.addU32(s.ticketFlags)
 		msg.addU32(s.ticketAgeAdd)
 	}
+
+	earlyALPN := msg.addU16LengthPrefixed()
+	earlyALPN.addBytes(s.earlyALPN)
 
 	return msg.finish()
 }
@@ -137,6 +141,14 @@ func (s *sessionState) unmarshal(data []byte) bool {
 		s.ticketAgeAdd = binary.BigEndian.Uint32(data)
 		data = data[4:]
 	}
+
+	earlyALPNLen := int(data[0])<<8 | int(data[1])
+	data = data[2:]
+	if len(data) < earlyALPNLen {
+		return false
+	}
+	s.earlyALPN = data[:earlyALPNLen]
+	data = data[earlyALPNLen:]
 
 	if len(data) > 0 {
 		return false

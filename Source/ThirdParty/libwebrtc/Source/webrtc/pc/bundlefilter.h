@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_BUNDLEFILTER_H_
-#define WEBRTC_PC_BUNDLEFILTER_H_
+#ifndef PC_BUNDLEFILTER_H_
+#define PC_BUNDLEFILTER_H_
 
 #include <stdint.h>
 
 #include <set>
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/media/base/streamparams.h"
+#include "media/base/streamparams.h"
+#include "rtc_base/basictypes.h"
 
 namespace cricket {
 
@@ -51,4 +51,4 @@ class BundleFilter {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_PC_BUNDLEFILTER_H_
+#endif  // PC_BUNDLEFILTER_H_

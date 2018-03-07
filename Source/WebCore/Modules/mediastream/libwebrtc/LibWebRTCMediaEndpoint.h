@@ -126,8 +126,12 @@ private:
 
     MediaStream& mediaStreamFromRTCStream(webrtc::MediaStreamInterface&);
 
-    int AddRef() const { ref(); return static_cast<int>(refCount()); }
-    int Release() const { deref(); return static_cast<int>(refCount()); }
+    void AddRef() const { ref(); }
+    rtc::RefCountReleaseStatus Release() const
+    {
+        deref();
+        return refCount() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+    }
 
     bool shouldOfferAllowToReceiveAudio() const;
     bool shouldOfferAllowToReceiveVideo() const;
@@ -148,8 +152,8 @@ private:
         void OnSuccess(webrtc::SessionDescriptionInterface* sessionDescription) final { m_endpoint.createSessionDescriptionSucceeded(std::unique_ptr<webrtc::SessionDescriptionInterface>(sessionDescription)); }
         void OnFailure(const std::string& error) final { m_endpoint.createSessionDescriptionFailed(error); }
 
-        int AddRef() const { return m_endpoint.AddRef(); }
-        int Release() const { return m_endpoint.Release(); }
+        void AddRef() const { m_endpoint.AddRef(); }
+        rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
 
     private:
         LibWebRTCMediaEndpoint& m_endpoint;
@@ -162,8 +166,8 @@ private:
         void OnSuccess() final { m_endpoint.setLocalSessionDescriptionSucceeded(); }
         void OnFailure(const std::string& error) final { m_endpoint.setLocalSessionDescriptionFailed(error); }
 
-        int AddRef() const { return m_endpoint.AddRef(); }
-        int Release() const { return m_endpoint.Release(); }
+        void AddRef() const { m_endpoint.AddRef(); }
+        rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
 
     private:
         LibWebRTCMediaEndpoint& m_endpoint;
@@ -176,8 +180,8 @@ private:
         void OnSuccess() final { m_endpoint.setRemoteSessionDescriptionSucceeded(); }
         void OnFailure(const std::string& error) final { m_endpoint.setRemoteSessionDescriptionFailed(error); }
 
-        int AddRef() const { return m_endpoint.AddRef(); }
-        int Release() const { return m_endpoint.Release(); }
+        void AddRef() const { m_endpoint.AddRef(); }
+        rtc::RefCountReleaseStatus Release() const { return m_endpoint.Release(); }
 
     private:
         LibWebRTCMediaEndpoint& m_endpoint;
@@ -226,9 +230,9 @@ struct LogArgument;
 
 template <>
 struct LogArgument<webrtc::RTCStats> {
-    static String toString(const webrtc::RTCStats& iterator)
+    static String toString(const webrtc::RTCStats& stats)
     {
-        return WTF::String(iterator.ToString().c_str());
+        return WTF::String(stats.ToJson().c_str());
     }
 };
 

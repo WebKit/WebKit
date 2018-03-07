@@ -32,7 +32,8 @@
 
 FileTest::FileTest(std::unique_ptr<FileTest::LineReader> reader,
                    std::function<void(const std::string &)> comment_callback)
-    : reader_(std::move(reader)), comment_callback_(comment_callback) {}
+    : reader_(std::move(reader)),
+      comment_callback_(std::move(comment_callback)) {}
 
 FileTest::~FileTest() {}
 
@@ -464,4 +465,8 @@ int FileTestMain(const FileTest::Options &opts) {
   }
 
   return failed ? 1 : 0;
+}
+
+void FileTest::SkipCurrent() {
+  ClearTest();
 }

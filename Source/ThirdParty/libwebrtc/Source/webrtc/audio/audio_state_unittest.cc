@@ -10,10 +10,11 @@
 
 #include <memory>
 
-#include "webrtc/audio/audio_state.h"
-#include "webrtc/modules/audio_mixer/audio_mixer_impl.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/mock_voice_engine.h"
+#include "audio/audio_state.h"
+#include "modules/audio_mixer/audio_mixer_impl.h"
+#include "modules/audio_processing/include/mock_audio_processing.h"
+#include "test/gtest.h"
+#include "test/mock_voice_engine.h"
 
 namespace webrtc {
 namespace test {
@@ -25,43 +26,24 @@ const int kBytesPerSample = 2;
 
 struct ConfigHelper {
   ConfigHelper() : audio_mixer(AudioMixerImpl::Create()) {
-    EXPECT_CALL(mock_voice_engine, RegisterVoiceEngineObserver(testing::_))
-        .WillOnce(testing::Return(0));
-    EXPECT_CALL(mock_voice_engine, DeRegisterVoiceEngineObserver())
-        .WillOnce(testing::Return(0));
-    EXPECT_CALL(mock_voice_engine, audio_device_module())
-        .Times(testing::AtLeast(1));
-    EXPECT_CALL(mock_voice_engine, audio_processing())
-        .Times(testing::AtLeast(1));
     EXPECT_CALL(mock_voice_engine, audio_transport())
         .WillRepeatedly(testing::Return(&audio_transport));
 
-    auto device = static_cast<MockAudioDeviceModule*>(
-        voice_engine().audio_device_module());
-
-    // Populate the audio transport proxy pointer to the most recent
-    // transport connected to the Audio Device.
-    ON_CALL(*device, RegisterAudioCallback(testing::_))
-        .WillByDefault(testing::Invoke([this](AudioTransport* transport) {
-          registered_audio_transport = transport;
-          return 0;
-        }));
-
     audio_state_config.voice_engine = &mock_voice_engine;
     audio_state_config.audio_mixer = audio_mixer;
+    audio_state_config.audio_processing =
+        new rtc::RefCountedObject<MockAudioProcessing>();
   }
   AudioState::Config& config() { return audio_state_config; }
   MockVoiceEngine& voice_engine() { return mock_voice_engine; }
   rtc::scoped_refptr<AudioMixer> mixer() { return audio_mixer; }
   MockAudioTransport& original_audio_transport() { return audio_transport; }
-  AudioTransport* audio_transport_proxy() { return registered_audio_transport; }
 
  private:
   testing::StrictMock<MockVoiceEngine> mock_voice_engine;
   AudioState::Config audio_state_config;
   rtc::scoped_refptr<AudioMixer> audio_mixer;
   MockAudioTransport audio_transport;
-  AudioTransport* registered_audio_transport = nullptr;
 };
 
 class FakeAudioSource : public AudioMixer::Source {
@@ -100,28 +82,6 @@ TEST(AudioStateTest, GetVoiceEngine) {
   EXPECT_EQ(audio_state->voice_engine(), &helper.voice_engine());
 }
 
-TEST(AudioStateTest, TypingNoiseDetected) {
-  ConfigHelper helper;
-  std::unique_ptr<internal::AudioState> audio_state(
-      new internal::AudioState(helper.config()));
-  VoiceEngineObserver* voe_observer =
-      static_cast<VoiceEngineObserver*>(audio_state.get());
-  EXPECT_FALSE(audio_state->typing_noise_detected());
-
-  voe_observer->CallbackOnError(-1, VE_NOT_INITED);
-  EXPECT_FALSE(audio_state->typing_noise_detected());
-
-  voe_observer->CallbackOnError(-1, VE_TYPING_NOISE_WARNING);
-  EXPECT_TRUE(audio_state->typing_noise_detected());
-  voe_observer->CallbackOnError(-1, VE_NOT_INITED);
-  EXPECT_TRUE(audio_state->typing_noise_detected());
-
-  voe_observer->CallbackOnError(-1, VE_TYPING_NOISE_OFF_WARNING);
-  EXPECT_FALSE(audio_state->typing_noise_detected());
-  voe_observer->CallbackOnError(-1, VE_NOT_INITED);
-  EXPECT_FALSE(audio_state->typing_noise_detected());
-}
-
 // Test that RecordedDataIsAvailable calls get to the original transport.
 TEST(AudioStateAudioPathTest, RecordedAudioArrivesAtOriginalTransport) {
   ConfigHelper helper;
@@ -137,7 +97,7 @@ TEST(AudioStateAudioPathTest, RecordedAudioArrivesAtOriginalTransport) {
                               kNumberOfChannels, kSampleRate, 0, 0, 0, false,
                               testing::Ref(new_mic_level)));
 
-  helper.audio_transport_proxy()->RecordedDataIsAvailable(
+  audio_state->audio_transport()->RecordedDataIsAvailable(
       nullptr, kSampleRate / 100, kBytesPerSample, kNumberOfChannels,
       kSampleRate, 0, 0, 0, false, new_mic_level);
 }
@@ -166,7 +126,7 @@ TEST(AudioStateAudioPathTest,
   size_t n_samples_out;
   int64_t elapsed_time_ms;
   int64_t ntp_time_ms;
-  helper.audio_transport_proxy()->NeedMorePlayData(
+  audio_state->audio_transport()->NeedMorePlayData(
       kSampleRate / 100, kBytesPerSample, kNumberOfChannels, kSampleRate,
       audio_buffer, n_samples_out, &elapsed_time_ms, &ntp_time_ms);
 }

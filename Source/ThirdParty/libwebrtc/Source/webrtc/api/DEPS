@@ -1,24 +1,30 @@
 include_rules = [
   "+third_party/libyuv",
-  "+webrtc/base",
-  "+webrtc/common_video",
-  "+webrtc/media",
-  "+webrtc/p2p",
-  "+webrtc/pc",
+  "+common_video",
+  "+media",
+  "+p2p",
+  "+pc",
 ]
 
 specific_include_rules = {
   "peerconnection_jni\.cc": [
-    "+webrtc/voice_engine",
+    "+voice_engine",
   ],
 
   # TODO(ossu): Remove this exception when {builtin_,}audio_encoder_factory.h
   # has moved to api/.
   "peerconnectioninterface\.h": [
-    "+webrtc/call/callfactoryinterface.h",
-    "+webrtc/logging/rtc_event_log/rtc_event_log_factory_interface.h",
-    "+webrtc/modules/audio_coding/codecs/audio_encoder_factory.h",
-    "+webrtc/modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
+    "+call/callfactoryinterface.h",
+    "+logging/rtc_event_log/rtc_event_log_factory_interface.h",
+    "+modules/audio_coding/codecs/audio_encoder_factory.h",
+    "+modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
+  ],
+
+  # Needed because AudioEncoderOpus is in the wrong place for
+  # backwards compatibilty reasons. See
+  # https://bugs.chromium.org/p/webrtc/issues/detail?id=7847
+  "audio_encoder_opus\.h": [
+    "+modules/audio_coding/codecs/opus/audio_encoder_opus.h",
   ],
 
   # We allow .cc files in webrtc/api/ to #include a bunch of stuff
@@ -26,6 +32,15 @@ specific_include_rules = {
   # their #includes to whoever's #including them, but .cc files do not
   # since no one #includes them.
   ".*\.cc": [
-    "+webrtc/modules/audio_coding",
+    "+modules/audio_coding",
+  ],
+
+  ".*i420_buffer\.h": [
+    "+system_wrappers/include/aligned_malloc.h",
+  ],
+
+  # Needed to use the APM statistics.
+  "mediastreaminterface.h": [
+    "+modules/audio_processing/include/audio_processing_statistics.h",
   ],
 }

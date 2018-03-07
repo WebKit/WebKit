@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/base/network.h>
+#include <webrtc/rtc_base/network.h>
 #include <wtf/Forward.h>
 
 namespace IPC {

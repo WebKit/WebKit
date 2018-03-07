@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "WebRTC/RTCAudioSession.h"
+#import "sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h"
 
 #include <vector>
 
@@ -90,6 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDidChangeCanPlayOrRecord:(BOOL)canPlayOrRecord;
 - (void)notifyDidStartPlayOrRecord;
 - (void)notifyDidStopPlayOrRecord;
+- (void)notifyDidDetectPlayoutGlitch:(int64_t)totalNumberOfGlitches;
 
 @end
 

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_CONDUCTOR_H_
-#define WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_CONDUCTOR_H_
+#ifndef EXAMPLES_PEERCONNECTION_CLIENT_CONDUCTOR_H_
+#define EXAMPLES_PEERCONNECTION_CLIENT_CONDUCTOR_H_
 
 #include <deque>
 #include <map>
@@ -17,10 +17,10 @@
 #include <set>
 #include <string>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/examples/peerconnection/client/main_wnd.h"
-#include "webrtc/examples/peerconnection/client/peer_connection_client.h"
+#include "api/mediastreaminterface.h"
+#include "api/peerconnectioninterface.h"
+#include "examples/peerconnection/client/main_wnd.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
 
 namespace webrtc {
 class VideoCaptureModule;
@@ -133,4 +133,4 @@ class Conductor
   std::string server_;
 };
 
-#endif  // WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_CONDUCTOR_H_
+#endif  // EXAMPLES_PEERCONNECTION_CLIENT_CONDUCTOR_H_

@@ -8,16 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_H_
 
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/modules/audio_coding/codecs/isac/locked_bandwidth_info.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "modules/audio_coding/codecs/isac/locked_bandwidth_info.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -56,12 +55,7 @@ class AudioEncoderIsacT final : public AudioEncoder {
   explicit AudioEncoderIsacT(
       const CodecInst& codec_inst,
       const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo);
-  AudioEncoderIsacT(int payload_type, const SdpAudioFormat& format);
   ~AudioEncoderIsacT() override;
-
-  static constexpr const char* GetPayloadName() { return "ISAC"; }
-  static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
-      const SdpAudioFormat& format);
 
   int SampleRateHz() const override;
   size_t NumChannels() const override;
@@ -101,4 +95,4 @@ class AudioEncoderIsacT final : public AudioEncoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_H_

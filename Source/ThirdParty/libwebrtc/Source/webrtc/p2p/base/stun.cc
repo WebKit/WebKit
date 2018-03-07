@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/stun.h"
+#include "p2p/base/stun.h"
 
 #include <string.h>
 
 #include <memory>
 
-#include "webrtc/base/byteorder.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/crc32.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/messagedigest.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/base/stringencode.h"
+#include "rtc_base/byteorder.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/crc32.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/messagedigest.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/stringencode.h"
 
 using rtc::ByteBufferReader;
 using rtc::ByteBufferWriter;
@@ -52,6 +52,8 @@ StunMessage::StunMessage()
   RTC_DCHECK(IsValidTransactionId(transaction_id_));
 }
 
+StunMessage::~StunMessage() = default;
+
 bool StunMessage::IsLegacy() const {
   if (transaction_id_.size() == kStunLegacyTransactionIdLength)
     return true;
@@ -67,9 +69,18 @@ bool StunMessage::SetTransactionID(const std::string& str) {
   return true;
 }
 
+static bool ImplementationDefinedRange(int attr_type)
+{
+  return attr_type >= 0xC000 && attr_type <= 0xFFFF;
+}
+
 void StunMessage::AddAttribute(std::unique_ptr<StunAttribute> attr) {
-  // Fail any attributes that aren't valid for this type of message.
-  RTC_DCHECK_EQ(attr->value_type(), GetAttributeValueType(attr->type()));
+  // Fail any attributes that aren't valid for this type of message,
+  // but allow any type for the range that is "implementation defined"
+  // in the RFC.
+  if (!ImplementationDefinedRange(attr->type())) {
+    RTC_DCHECK_EQ(attr->value_type(), GetAttributeValueType(attr->type()));
+  }
 
   attr->SetOwner(this);
   size_t attr_length = attr->length();
@@ -233,8 +244,8 @@ bool StunMessage::AddMessageIntegrity(const char* key,
                                       hmac, sizeof(hmac));
   RTC_DCHECK(ret == sizeof(hmac));
   if (ret != sizeof(hmac)) {
-    LOG(LS_ERROR) << "HMAC computation failed. Message-Integrity "
-                  << "has dummy value.";
+    RTC_LOG(LS_ERROR) << "HMAC computation failed. Message-Integrity "
+                      << "has dummy value.";
     return false;
   }
 
@@ -278,7 +289,7 @@ bool StunMessage::AddFingerprint() {
   // it can't fail.
   auto fingerprint_attr_ptr =
       rtc::MakeUnique<StunUInt32Attribute>(STUN_ATTR_FINGERPRINT, 0);
-  auto fingerprint_attr = fingerprint_attr_ptr.get();
+  auto* fingerprint_attr = fingerprint_attr_ptr.get();
   AddAttribute(std::move(fingerprint_attr_ptr));
 
   // Calculate the CRC-32 for the message and insert it.
@@ -377,6 +388,10 @@ bool StunMessage::Write(ByteBufferWriter* buf) const {
   return true;
 }
 
+StunMessage* StunMessage::CreateNew() const {
+  return new StunMessage();
+}
+
 StunAttributeValueType StunMessage::GetAttributeValueType(int type) const {
   switch (type) {
     case STUN_ATTR_MAPPED_ADDRESS:      return STUN_VALUE_ADDRESS;
@@ -398,8 +413,16 @@ StunAttributeValueType StunMessage::GetAttributeValueType(int type) const {
 
 StunAttribute* StunMessage::CreateAttribute(int type, size_t length) /*const*/ {
   StunAttributeValueType value_type = GetAttributeValueType(type);
-  return StunAttribute::Create(value_type, type, static_cast<uint16_t>(length),
-                               this);
+  if (value_type != STUN_VALUE_UNKNOWN) {
+    return StunAttribute::Create(value_type, type,
+                                 static_cast<uint16_t>(length), this);
+  } else if (ImplementationDefinedRange(type)) {
+    // Read unknown attributes as STUN_VALUE_BYTE_STRING
+    return StunAttribute::Create(STUN_VALUE_BYTE_STRING, type,
+                                 static_cast<uint16_t>(length), this);
+  } else {
+    return NULL;
+  }
 }
 
 const StunAttribute* StunMessage::GetAttribute(int type) const {
@@ -507,6 +530,10 @@ StunAddressAttribute::StunAddressAttribute(uint16_t type, uint16_t length)
     : StunAttribute(type, length) {
 }
 
+StunAttributeValueType StunAddressAttribute::value_type() const {
+  return STUN_VALUE_ADDRESS;
+}
+
 bool StunAddressAttribute::Read(ByteBufferReader* buf) {
   uint8_t dummy;
   if (!buf->ReadUInt8(&dummy))
@@ -548,7 +575,7 @@ bool StunAddressAttribute::Read(ByteBufferReader* buf) {
 bool StunAddressAttribute::Write(ByteBufferWriter* buf) const {
   StunAddressFamily address_family = family();
   if (address_family == STUN_ADDRESS_UNDEF) {
-    LOG(LS_ERROR) << "Error writing address attribute: unknown family.";
+    RTC_LOG(LS_ERROR) << "Error writing address attribute: unknown family.";
     return false;
   }
   buf->WriteUInt8(0);
@@ -578,6 +605,14 @@ StunXorAddressAttribute::StunXorAddressAttribute(uint16_t type,
                                                  uint16_t length,
                                                  StunMessage* owner)
     : StunAddressAttribute(type, length), owner_(owner) {
+}
+
+StunAttributeValueType StunXorAddressAttribute::value_type() const {
+  return STUN_VALUE_XOR_ADDRESS;
+}
+
+void StunXorAddressAttribute::SetOwner(StunMessage* owner) {
+  owner_ = owner;
 }
 
 rtc::IPAddress StunXorAddressAttribute::GetXoredIP() const {
@@ -628,7 +663,7 @@ bool StunXorAddressAttribute::Read(ByteBufferReader* buf) {
 bool StunXorAddressAttribute::Write(ByteBufferWriter* buf) const {
   StunAddressFamily address_family = family();
   if (address_family == STUN_ADDRESS_UNDEF) {
-    LOG(LS_ERROR) << "Error writing xor-address attribute: unknown family.";
+    RTC_LOG(LS_ERROR) << "Error writing xor-address attribute: unknown family.";
     return false;
   }
   rtc::IPAddress xored_ip = GetXoredIP();
@@ -661,6 +696,10 @@ StunUInt32Attribute::StunUInt32Attribute(uint16_t type)
     : StunAttribute(type, SIZE), bits_(0) {
 }
 
+StunAttributeValueType StunUInt32Attribute::value_type() const {
+  return STUN_VALUE_UINT32;
+}
+
 bool StunUInt32Attribute::GetBit(size_t index) const {
   RTC_DCHECK(index < 32);
   return static_cast<bool>((bits_ >> index) & 0x1);
@@ -689,6 +728,10 @@ StunUInt64Attribute::StunUInt64Attribute(uint16_t type, uint64_t value)
 
 StunUInt64Attribute::StunUInt64Attribute(uint16_t type)
     : StunAttribute(type, SIZE), bits_(0) {
+}
+
+StunAttributeValueType StunUInt64Attribute::value_type() const {
+  return STUN_VALUE_UINT64;
 }
 
 bool StunUInt64Attribute::Read(ByteBufferReader* buf) {
@@ -725,6 +768,10 @@ StunByteStringAttribute::StunByteStringAttribute(uint16_t type, uint16_t length)
 
 StunByteStringAttribute::~StunByteStringAttribute() {
   delete [] bytes_;
+}
+
+StunAttributeValueType StunByteStringAttribute::value_type() const {
+  return STUN_VALUE_BYTE_STRING;
 }
 
 void StunByteStringAttribute::CopyBytes(const char* bytes) {
@@ -788,6 +835,10 @@ StunErrorCodeAttribute::StunErrorCodeAttribute(uint16_t type, uint16_t length)
 StunErrorCodeAttribute::~StunErrorCodeAttribute() {
 }
 
+StunAttributeValueType StunErrorCodeAttribute::value_type() const {
+  return STUN_VALUE_ERROR_CODE;
+}
+
 int StunErrorCodeAttribute::code() const {
   return class_ * 100 + number_;
 }
@@ -808,7 +859,7 @@ bool StunErrorCodeAttribute::Read(ByteBufferReader* buf) {
     return false;
 
   if ((val >> 11) != 0)
-    LOG(LS_ERROR) << "error-code bits not zero";
+    RTC_LOG(LS_ERROR) << "error-code bits not zero";
 
   class_ = ((val >> 8) & 0x7);
   number_ = (val & 0xff);
@@ -834,6 +885,10 @@ StunUInt16ListAttribute::StunUInt16ListAttribute(uint16_t type, uint16_t length)
 
 StunUInt16ListAttribute::~StunUInt16ListAttribute() {
   delete attr_types_;
+}
+
+StunAttributeValueType StunUInt16ListAttribute::value_type() const {
+  return STUN_VALUE_UINT16_LIST;
 }
 
 size_t StunUInt16ListAttribute::Size() const {
@@ -927,6 +982,81 @@ bool ComputeStunCredentialHash(const std::string& username,
 
   *hash = std::string(digest, size);
   return true;
+}
+
+StunAttributeValueType RelayMessage::GetAttributeValueType(int type) const {
+  switch (type) {
+    case STUN_ATTR_LIFETIME:
+      return STUN_VALUE_UINT32;
+    case STUN_ATTR_MAGIC_COOKIE:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_BANDWIDTH:
+      return STUN_VALUE_UINT32;
+    case STUN_ATTR_DESTINATION_ADDRESS:
+      return STUN_VALUE_ADDRESS;
+    case STUN_ATTR_SOURCE_ADDRESS2:
+      return STUN_VALUE_ADDRESS;
+    case STUN_ATTR_DATA:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_OPTIONS:
+      return STUN_VALUE_UINT32;
+    default:
+      return StunMessage::GetAttributeValueType(type);
+  }
+}
+
+StunMessage* RelayMessage::CreateNew() const {
+  return new RelayMessage();
+}
+
+StunAttributeValueType TurnMessage::GetAttributeValueType(int type) const {
+  switch (type) {
+    case STUN_ATTR_CHANNEL_NUMBER:
+      return STUN_VALUE_UINT32;
+    case STUN_ATTR_TURN_LIFETIME:
+      return STUN_VALUE_UINT32;
+    case STUN_ATTR_XOR_PEER_ADDRESS:
+      return STUN_VALUE_XOR_ADDRESS;
+    case STUN_ATTR_DATA:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_XOR_RELAYED_ADDRESS:
+      return STUN_VALUE_XOR_ADDRESS;
+    case STUN_ATTR_EVEN_PORT:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_REQUESTED_TRANSPORT:
+      return STUN_VALUE_UINT32;
+    case STUN_ATTR_DONT_FRAGMENT:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_RESERVATION_TOKEN:
+      return STUN_VALUE_BYTE_STRING;
+    default:
+      return StunMessage::GetAttributeValueType(type);
+  }
+}
+
+StunMessage* TurnMessage::CreateNew() const {
+  return new TurnMessage();
+}
+
+StunAttributeValueType IceMessage::GetAttributeValueType(int type) const {
+  switch (type) {
+    case STUN_ATTR_PRIORITY:
+    case STUN_ATTR_NETWORK_INFO:
+    case STUN_ATTR_NOMINATION:
+      return STUN_VALUE_UINT32;
+    case STUN_ATTR_USE_CANDIDATE:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_ICE_CONTROLLED:
+      return STUN_VALUE_UINT64;
+    case STUN_ATTR_ICE_CONTROLLING:
+      return STUN_VALUE_UINT64;
+    default:
+      return StunMessage::GetAttributeValueType(type);
+  }
+}
+
+StunMessage* IceMessage::CreateNew() const {
+  return new IceMessage();
 }
 
 }  // namespace cricket

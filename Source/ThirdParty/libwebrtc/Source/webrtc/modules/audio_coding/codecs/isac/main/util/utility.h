@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_UTIL_UTILITY_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_UTIL_UTILITY_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_UTIL_UTILITY_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_UTIL_UTILITY_H_
 
 #include <stdlib.h>
 #include <stdio.h>

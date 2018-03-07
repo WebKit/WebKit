@@ -71,14 +71,13 @@
 
 #include "internal.h"
 #include "../bytestring/internal.h"
-#include "../digest_extra/internal.h"
 #include "../internal.h"
 
 
-/* Minor tweak to operation: zero private key data */
+// Minor tweak to operation: zero private key data
 static int pkey_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
                    void *exarg) {
-  /* Since the structure must still be valid use ASN1_OP_FREE_PRE */
+  // Since the structure must still be valid use ASN1_OP_FREE_PRE
   if (operation == ASN1_OP_FREE_PRE) {
     PKCS8_PRIV_KEY_INFO *key = (PKCS8_PRIV_KEY_INFO *)*pval;
     if (key->pkey && key->pkey->type == V_ASN1_OCTET_STRING &&
@@ -162,7 +161,7 @@ PKCS8_PRIV_KEY_INFO *PKCS8_decrypt(X509_SIG *pkcs8, const char *pass,
   EVP_PKEY *pkey = NULL;
   uint8_t *in = NULL;
 
-  /* Convert the legacy ASN.1 object to a byte string. */
+  // Convert the legacy ASN.1 object to a byte string.
   int in_len = i2d_X509_SIG(pkcs8, &in);
   if (in_len < 0) {
     goto err;
@@ -193,7 +192,7 @@ X509_SIG *PKCS8_encrypt(int pbe_nid, const EVP_CIPHER *cipher, const char *pass,
     pass_len = (size_t)pass_len_in;
   }
 
-  /* Parse out the private key. */
+  // Parse out the private key.
   EVP_PKEY *pkey = EVP_PKCS82PKEY(p8inf);
   if (pkey == NULL) {
     return NULL;
@@ -212,7 +211,7 @@ X509_SIG *PKCS8_encrypt(int pbe_nid, const EVP_CIPHER *cipher, const char *pass,
     goto err;
   }
 
-  /* Convert back to legacy ASN.1 objects. */
+  // Convert back to legacy ASN.1 objects.
   const uint8_t *ptr = der;
   ret = d2i_X509_SIG(NULL, &ptr, der_len);
   if (ret == NULL || ptr != der + der_len) {
@@ -234,8 +233,8 @@ struct pkcs12_context {
   size_t password_len;
 };
 
-/* PKCS12_handle_sequence parses a BER-encoded SEQUENCE of elements in a PKCS#12
- * structure. */
+// PKCS12_handle_sequence parses a BER-encoded SEQUENCE of elements in a PKCS#12
+// structure.
 static int PKCS12_handle_sequence(
     CBS *sequence, struct pkcs12_context *ctx,
     int (*handle_element)(CBS *cbs, struct pkcs12_context *ctx)) {
@@ -244,10 +243,10 @@ static int PKCS12_handle_sequence(
   CBS in;
   int ret = 0;
 
-  /* Although a BER->DER conversion is done at the beginning of |PKCS12_parse|,
-   * the ASN.1 data gets wrapped in OCTETSTRINGs and/or encrypted and the
-   * conversion cannot see through those wrappings. So each time we step
-   * through one we need to convert to DER again. */
+  // Although a BER->DER conversion is done at the beginning of |PKCS12_parse|,
+  // the ASN.1 data gets wrapped in OCTETSTRINGs and/or encrypted and the
+  // conversion cannot see through those wrappings. So each time we step
+  // through one we need to convert to DER again.
   if (!CBS_asn1_ber_to_der(sequence, &der_bytes, &der_len)) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_BAD_PKCS12_DATA);
     return 0;
@@ -285,20 +284,20 @@ err:
   return ret;
 }
 
-/* 1.2.840.113549.1.12.10.1.2 */
+// 1.2.840.113549.1.12.10.1.2
 static const uint8_t kPKCS8ShroudedKeyBag[] = {
     0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x0a, 0x01, 0x02};
 
-/* 1.2.840.113549.1.12.10.1.3 */
+// 1.2.840.113549.1.12.10.1.3
 static const uint8_t kCertBag[] = {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d,
                                    0x01, 0x0c, 0x0a, 0x01, 0x03};
 
-/* 1.2.840.113549.1.9.22.1 */
+// 1.2.840.113549.1.9.22.1
 static const uint8_t kX509Certificate[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                            0x0d, 0x01, 0x09, 0x16, 0x01};
 
-/* PKCS12_handle_safe_bag parses a single SafeBag element in a PKCS#12
- * structure. */
+// PKCS12_handle_safe_bag parses a single SafeBag element in a PKCS#12
+// structure.
 static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
   CBS bag_id, wrapped_value;
   if (!CBS_get_asn1(safe_bag, &bag_id, CBS_ASN1_OBJECT) ||
@@ -311,7 +310,7 @@ static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
 
   if (CBS_mem_equal(&bag_id, kPKCS8ShroudedKeyBag,
                     sizeof(kPKCS8ShroudedKeyBag))) {
-    /* See RFC 7292, section 4.2.2. */
+    // See RFC 7292, section 4.2.2.
     if (*ctx->out_key) {
       OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_MULTIPLE_PRIVATE_KEYS_IN_PKCS12);
       return 0;
@@ -334,7 +333,7 @@ static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
   }
 
   if (CBS_mem_equal(&bag_id, kCertBag, sizeof(kCertBag))) {
-    /* See RFC 7292, section 4.2.3. */
+    // See RFC 7292, section 4.2.3.
     CBS cert_bag, cert_type, wrapped_cert, cert;
     if (!CBS_get_asn1(&wrapped_value, &cert_bag, CBS_ASN1_SEQUENCE) ||
         !CBS_get_asn1(&cert_bag, &cert_type, CBS_ASN1_OBJECT) ||
@@ -345,7 +344,7 @@ static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
       return 0;
     }
 
-    /* Skip unknown certificate types. */
+    // Skip unknown certificate types.
     if (!CBS_mem_equal(&cert_type, kX509Certificate,
                        sizeof(kX509Certificate))) {
       return 1;
@@ -377,20 +376,20 @@ static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
     return 1;
   }
 
-  /* Unknown element type - ignore it. */
+  // Unknown element type - ignore it.
   return 1;
 }
 
-/* 1.2.840.113549.1.7.1 */
+// 1.2.840.113549.1.7.1
 static const uint8_t kPKCS7Data[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                      0x0d, 0x01, 0x07, 0x01};
 
-/* 1.2.840.113549.1.7.6 */
+// 1.2.840.113549.1.7.6
 static const uint8_t kPKCS7EncryptedData[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                               0x0d, 0x01, 0x07, 0x06};
 
-/* PKCS12_handle_content_info parses a single PKCS#7 ContentInfo element in a
- * PKCS#12 structure. */
+// PKCS12_handle_content_info parses a single PKCS#7 ContentInfo element in a
+// PKCS#12 structure.
 static int PKCS12_handle_content_info(CBS *content_info,
                                       struct pkcs12_context *ctx) {
   CBS content_type, wrapped_contents, contents;
@@ -407,23 +406,23 @@ static int PKCS12_handle_content_info(CBS *content_info,
 
   if (CBS_mem_equal(&content_type, kPKCS7EncryptedData,
                     sizeof(kPKCS7EncryptedData))) {
-    /* See https://tools.ietf.org/html/rfc2315#section-13.
-     *
-     * PKCS#7 encrypted data inside a PKCS#12 structure is generally an
-     * encrypted certificate bag and it's generally encrypted with 40-bit
-     * RC2-CBC. */
+    // See https://tools.ietf.org/html/rfc2315#section-13.
+    //
+    // PKCS#7 encrypted data inside a PKCS#12 structure is generally an
+    // encrypted certificate bag and it's generally encrypted with 40-bit
+    // RC2-CBC.
     CBS version_bytes, eci, contents_type, ai, encrypted_contents;
     uint8_t *out;
     size_t out_len;
 
     if (!CBS_get_asn1(&wrapped_contents, &contents, CBS_ASN1_SEQUENCE) ||
         !CBS_get_asn1(&contents, &version_bytes, CBS_ASN1_INTEGER) ||
-        /* EncryptedContentInfo, see
-         * https://tools.ietf.org/html/rfc2315#section-10.1 */
+        // EncryptedContentInfo, see
+        // https://tools.ietf.org/html/rfc2315#section-10.1
         !CBS_get_asn1(&contents, &eci, CBS_ASN1_SEQUENCE) ||
         !CBS_get_asn1(&eci, &contents_type, CBS_ASN1_OBJECT) ||
-        /* AlgorithmIdentifier, see
-         * https://tools.ietf.org/html/rfc5280#section-4.1.1.2 */
+        // AlgorithmIdentifier, see
+        // https://tools.ietf.org/html/rfc5280#section-4.1.1.2
         !CBS_get_asn1(&eci, &ai, CBS_ASN1_SEQUENCE) ||
         !CBS_get_asn1_implicit_string(
             &eci, &encrypted_contents, &storage,
@@ -459,7 +458,7 @@ static int PKCS12_handle_content_info(CBS *content_info,
     ret = PKCS12_handle_sequence(&octet_string_contents, ctx,
                                  PKCS12_handle_safe_bag);
   } else {
-    /* Unknown element type - ignore it. */
+    // Unknown element type - ignore it.
     ret = 1;
   }
 
@@ -478,7 +477,7 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
   struct pkcs12_context ctx;
   const size_t original_out_certs_len = sk_X509_num(out_certs);
 
-  /* The input may be in BER format. */
+  // The input may be in BER format.
   if (!CBS_asn1_ber_to_der(ber_in, &der_bytes, &der_len)) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_BAD_PKCS12_DATA);
     return 0;
@@ -492,8 +491,8 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
   *out_key = NULL;
   OPENSSL_memset(&ctx, 0, sizeof(ctx));
 
-  /* See ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-12/pkcs-12v1.pdf, section
-   * four. */
+  // See ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-12/pkcs-12v1.pdf, section
+  // four.
   if (!CBS_get_asn1(&in, &pfx, CBS_ASN1_SEQUENCE) ||
       CBS_len(&in) != 0 ||
       !CBS_get_asn1_uint64(&pfx, &version)) {
@@ -521,8 +520,8 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
     goto err;
   }
 
-  /* authsafe is a PKCS#7 ContentInfo. See
-   * https://tools.ietf.org/html/rfc2315#section-7. */
+  // authsafe is a PKCS#7 ContentInfo. See
+  // https://tools.ietf.org/html/rfc2315#section-7.
   if (!CBS_get_asn1(&authsafe, &content_type, CBS_ASN1_OBJECT) ||
       !CBS_get_asn1(&authsafe, &wrapped_authsafes,
                         CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)) {
@@ -530,8 +529,8 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
     goto err;
   }
 
-  /* The content type can either be data or signedData. The latter indicates
-   * that it's signed by a public key, which isn't supported. */
+  // The content type can either be data or signedData. The latter indicates
+  // that it's signed by a public key, which isn't supported.
   if (!CBS_mem_equal(&content_type, kPKCS7Data, sizeof(kPKCS7Data))) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_PKCS12_PUBLIC_KEY_INTEGRITY_NOT_SUPPORTED);
     goto err;
@@ -547,7 +546,7 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
   ctx.password = password;
   ctx.password_len = password != NULL ? strlen(password) : 0;
 
-  /* Verify the MAC. */
+  // Verify the MAC.
   {
     CBS mac, salt, expected_mac;
     if (!CBS_get_asn1(&mac_data, &mac, CBS_ASN1_SEQUENCE)) {
@@ -566,7 +565,7 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
       goto err;
     }
 
-    /* The iteration count is optional and the default is one. */
+    // The iteration count is optional and the default is one.
     uint64_t iterations = 1;
     if (CBS_len(&mac_data) > 0) {
       if (!CBS_get_asn1_uint64(&mac_data, &iterations) ||
@@ -596,7 +595,7 @@ int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
     }
   }
 
-  /* authsafes contains a series of PKCS#7 ContentInfos. */
+  // authsafes contains a series of PKCS#7 ContentInfos.
   if (!PKCS12_handle_sequence(&authsafes, &ctx, PKCS12_handle_content_info)) {
     goto err;
   }
@@ -673,8 +672,8 @@ PKCS12* d2i_PKCS12_bio(BIO *bio, PKCS12 **out_p12) {
       if (used == 0) {
         goto out;
       }
-      /* Workaround a bug in node.js. It uses a memory BIO for this in the wrong
-       * mode. */
+      // Workaround a bug in node.js. It uses a memory BIO for this in the wrong
+      // mode.
       n = 0;
     }
 

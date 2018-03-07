@@ -13,12 +13,12 @@
 #include <numeric>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/voice_engine/transport_feedback_packet_loss_tracker.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "rtc_base/checks.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "voice_engine/transport_feedback_packet_loss_tracker.h"
 
 namespace webrtc {
 
@@ -112,16 +112,6 @@ class TransportFeedbackPacketLossTrackerTest
     }
   }
 
-  // Convenience function for when both are valid, and explicitly stating
-  // the rtc::Optional<float> constructor is just cumbersome.
-  void ValidatePacketLossStatistics(
-      const TransportFeedbackPacketLossTracker& tracker,
-      float expected_plr,
-      float expected_rplr) {
-    ValidatePacketLossStatistics(tracker, rtc::Optional<float>(expected_plr),
-                                 rtc::Optional<float>(expected_rplr));
-  }
-
   uint16_t base_{GetParam()};
 
  private:
@@ -137,9 +127,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, EmptyWindow) {
   TransportFeedbackPacketLossTracker tracker(kDefaultMaxWindowSizeMs, 5, 5);
 
   // PLR and RPLR reported as unknown before reception of first feedback.
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, rtc::nullopt, rtc::nullopt);
 }
 
 // A feedback received for an empty window has no effect.
@@ -148,9 +136,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, EmptyWindowFeedback) {
 
   // Feedback doesn't correspond to any packets - ignored.
   AddTransportFeedbackAndValidate(&tracker, base_, {true, false, true});
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, rtc::nullopt, rtc::nullopt);
 
   // After the packets are transmitted, acking them would have an effect.
   SendPackets(&tracker, base_, 3, kDefaultSendIntervalMs);
@@ -167,9 +153,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, PartiallyFilledWindow) {
   // Expected window contents: [] -> [1001].
   SendPackets(&tracker, base_, 3, kDefaultSendIntervalMs);
   AddTransportFeedbackAndValidate(&tracker, base_, {true, false, false, true});
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, rtc::nullopt, rtc::nullopt);
 }
 
 // Sanity check on minimum filled window - PLR known, RPLR unknown.
@@ -182,9 +166,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, PlrMinimumFilledWindow) {
   SendPackets(&tracker, base_, 5, kDefaultSendIntervalMs);
   AddTransportFeedbackAndValidate(&tracker, base_,
                                   {true, false, false, true, true});
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(2.0f / 5.0f),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, 2.0f / 5.0f, rtc::nullopt);
 }
 
 // Sanity check on minimum filled window - PLR unknown, RPLR known.
@@ -197,9 +179,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, RplrMinimumFilledWindow) {
   SendPackets(&tracker, base_, 5, kDefaultSendIntervalMs);
   AddTransportFeedbackAndValidate(&tracker, base_,
                                   {true, false, false, true, true});
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(),
-                               rtc::Optional<float>(1.0f / 4.0f));
+  ValidatePacketLossStatistics(tracker, rtc::nullopt, 1.0f / 4.0f);
 }
 
 // If packets are sent close enough together that the clock reading for both
@@ -223,9 +203,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, ExtendWindow) {
   // Expected window contents: [] -> [10011].
   AddTransportFeedbackAndValidate(&tracker, base_,
                                   {true, false, false, true, true});
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(2.0f / 5.0f),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, 2.0f / 5.0f, rtc::nullopt);
 
   // Expected window contents: [10011] -> [1001110101].
   AddTransportFeedbackAndValidate(&tracker, base_ + 5,
@@ -542,9 +520,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest, RepeatedSeqNumResetsWindow) {
   // A reset occurs.
   SendPackets(&tracker, {static_cast<uint16_t>(base_ + 2)},
               kDefaultSendIntervalMs);
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, rtc::nullopt, rtc::nullopt);
 }
 
 // The window is reset by the sending of a packet which is 0x8000 or more
@@ -563,9 +539,7 @@ TEST_P(TransportFeedbackPacketLossTrackerTest,
   // A reset occurs.
   SendPackets(&tracker, {static_cast<uint16_t>(base_ + 5 + 0x8000)},
               kDefaultSendIntervalMs);
-  ValidatePacketLossStatistics(tracker,
-                               rtc::Optional<float>(),
-                               rtc::Optional<float>());
+  ValidatePacketLossStatistics(tracker, rtc::nullopt, rtc::nullopt);
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_BUFFER_LEVEL_FILTER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_BUFFER_LEVEL_FILTER_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_BUFFER_LEVEL_FILTER_H_
+#define MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_BUFFER_LEVEL_FILTER_H_
 
-#include "webrtc/modules/audio_coding/neteq/buffer_level_filter.h"
+#include "modules/audio_coding/neteq/buffer_level_filter.h"
 
-#include "webrtc/test/gmock.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -34,4 +34,4 @@ class MockBufferLevelFilter : public BufferLevelFilter {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_BUFFER_LEVEL_FILTER_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_MOCK_MOCK_BUFFER_LEVEL_FILTER_H_

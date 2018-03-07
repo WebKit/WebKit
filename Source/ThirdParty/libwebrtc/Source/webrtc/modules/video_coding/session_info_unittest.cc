@@ -10,10 +10,10 @@
 
 #include <string.h>
 
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/modules/video_coding/session_info.h"
-#include "webrtc/test/gtest.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/packet.h"
+#include "modules/video_coding/session_info.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

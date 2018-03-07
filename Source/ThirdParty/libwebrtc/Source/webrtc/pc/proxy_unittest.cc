@@ -8,15 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/proxy.h"
+#include "api/proxy.h"
 
 #include <memory>
 #include <string>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/test/gmock.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/refcount.h"
+#include "test/gmock.h"
 
 using ::testing::_;
 using ::testing::DoAll;
@@ -95,7 +94,7 @@ class SignalingProxyTest : public testing::Test {
 
  protected:
   void SetUp() override {
-    signaling_thread_.reset(new rtc::Thread());
+    signaling_thread_ = rtc::Thread::Create();
     ASSERT_TRUE(signaling_thread_->Start());
     fake_ = Fake::Create();
     fake_signaling_proxy_ =
@@ -182,8 +181,8 @@ class ProxyTest : public testing::Test {
 
  protected:
   void SetUp() override {
-    signaling_thread_.reset(new rtc::Thread());
-    worker_thread_.reset(new rtc::Thread());
+    signaling_thread_ = rtc::Thread::Create();
+    worker_thread_ = rtc::Thread::Create();
     ASSERT_TRUE(signaling_thread_->Start());
     ASSERT_TRUE(worker_thread_->Start());
     fake_ = Fake::Create();
@@ -283,20 +282,22 @@ END_PROXY_MAP()
 class OwnedProxyTest : public testing::Test {
  public:
   OwnedProxyTest()
-      : foo_(new Foo()),
-        foo_proxy_(FooProxy::Create(&signaling_thread_,
-                                    &worker_thread_,
+      : signaling_thread_(rtc::Thread::Create()),
+        worker_thread_(rtc::Thread::Create()),
+        foo_(new Foo()),
+        foo_proxy_(FooProxy::Create(signaling_thread_.get(),
+                                    worker_thread_.get(),
                                     std::unique_ptr<FooInterface>(foo_))) {
-    signaling_thread_.Start();
-    worker_thread_.Start();
+    signaling_thread_->Start();
+    worker_thread_->Start();
   }
 
-  void CheckSignalingThread() { EXPECT_TRUE(signaling_thread_.IsCurrent()); }
-  void CheckWorkerThread() { EXPECT_TRUE(worker_thread_.IsCurrent()); }
+  void CheckSignalingThread() { EXPECT_TRUE(signaling_thread_->IsCurrent()); }
+  void CheckWorkerThread() { EXPECT_TRUE(worker_thread_->IsCurrent()); }
 
  protected:
-  rtc::Thread signaling_thread_;
-  rtc::Thread worker_thread_;
+  std::unique_ptr<rtc::Thread> signaling_thread_;
+  std::unique_ptr<rtc::Thread> worker_thread_;
   Foo* foo_;  // Owned by foo_proxy_, not this class.
   std::unique_ptr<FooInterface> foo_proxy_;
 };

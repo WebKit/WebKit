@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/include/receive_side_congestion_controller.h"
+#include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/pacing/packet_router.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
+#include "modules/pacing/packet_router.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -83,7 +83,7 @@ void ReceiveSideCongestionController::WrappingBitrateEstimator::
   if (header.extension.hasAbsoluteSendTime) {
     // If we see AST in header, switch RBE strategy immediately.
     if (!using_absolute_send_time_) {
-      LOG(LS_INFO)
+      RTC_LOG(LS_INFO)
           << "WrappingBitrateEstimator: Switching to absolute send time RBE.";
       using_absolute_send_time_ = true;
       PickEstimator();
@@ -94,8 +94,9 @@ void ReceiveSideCongestionController::WrappingBitrateEstimator::
     if (using_absolute_send_time_) {
       ++packets_since_absolute_send_time_;
       if (packets_since_absolute_send_time_ >= kTimeOffsetSwitchThreshold) {
-        LOG(LS_INFO) << "WrappingBitrateEstimator: Switching to transmission "
-                     << "time offset RBE.";
+        RTC_LOG(LS_INFO)
+            << "WrappingBitrateEstimator: Switching to transmission "
+            << "time offset RBE.";
         using_absolute_send_time_ = false;
         PickEstimator();
       }

@@ -9,7 +9,7 @@
 
 /*
  *
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,7 +124,7 @@ void srtp_index_advance (srtp_xtd_seq_num_t *pi, srtp_sequence_number_t s)
  * unsigned integer!
  */
 
-int srtp_index_guess (const srtp_xtd_seq_num_t *local, srtp_xtd_seq_num_t *guess, srtp_sequence_number_t s)
+int32_t srtp_index_guess (const srtp_xtd_seq_num_t *local, srtp_xtd_seq_num_t *guess, srtp_sequence_number_t s)
 {
 #ifdef NO_64BIT_MATH
     uint32_t local_roc = ((high32(*local) << 16) |
@@ -142,7 +142,7 @@ int srtp_index_guess (const srtp_xtd_seq_num_t *local, srtp_xtd_seq_num_t *guess
     uint32_t guess_roc = (uint32_t)(*guess >> 16);
     uint16_t guess_seq = (uint16_t)*guess;
 #endif
-    int difference;
+    int32_t difference;
 
     if (local_seq < seq_num_median) {
         if (s - local_seq > seq_num_median) {
@@ -313,7 +313,7 @@ srtp_err_status_t srtp_rdbx_add_index (srtp_rdbx_t *rdbx, int delta)
  * index to which s corresponds, and returns the difference between
  * *guess and the locally stored synch info
  */
-int srtp_rdbx_estimate_index (const srtp_rdbx_t *rdbx, srtp_xtd_seq_num_t *guess, srtp_sequence_number_t s)
+int32_t srtp_rdbx_estimate_index (const srtp_rdbx_t *rdbx, srtp_xtd_seq_num_t *guess, srtp_sequence_number_t s)
 {
 
     /*
@@ -345,3 +345,52 @@ int srtp_rdbx_estimate_index (const srtp_rdbx_t *rdbx, srtp_xtd_seq_num_t *guess
     return s - (uint16_t)rdbx->index;
 #endif
 }
+
+/*
+ * srtp_rdbx_get_roc(rdbx)
+ *
+ * Get the current rollover counter
+ *
+ */
+uint32_t srtp_rdbx_get_roc(const srtp_rdbx_t *rdbx)
+{
+    uint32_t roc;
+
+#ifdef NO_64BIT_MATH
+    roc = ((high32(rdbx->index) << 16) | (low32(rdbx->index) >> 16));
+#else
+    roc = (uint32_t)(rdbx->index >> 16);
+#endif
+
+    return roc;
+}
+
+/*
+ * srtp_rdbx_set_roc_seq(rdbx, roc, seq) initalizes the srtp_rdbx_t at the
+ * location rdbx to have the rollover counter value roc and packet sequence
+ * number seq.  If the new rollover counter value is less than the current
+ * rollover counter value, then the function returns
+ * srtp_err_status_replay_old, otherwise, srtp_err_status_ok is returned.
+ */
+srtp_err_status_t srtp_rdbx_set_roc_seq (srtp_rdbx_t *rdbx,
+                                         uint32_t roc,
+                                         uint16_t seq)
+{
+#ifdef NO_64BIT_MATH
+  #error not yet implemented
+#else
+
+    /* make sure that we're not moving backwards */
+    if (roc < (rdbx->index >> 16)) {
+        return srtp_err_status_replay_old;
+    }
+
+    rdbx->index = seq;
+    rdbx->index |= ((uint64_t)roc) << 16; /* set ROC */
+#endif
+
+    bitvector_set_to_zero(&rdbx->bitmask);
+
+    return srtp_err_status_ok;
+}
+

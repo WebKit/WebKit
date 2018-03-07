@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_RTCP_CONFIG_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_RTCP_CONFIG_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTP_RTCP_CONFIG_H_
+#define MODULES_RTP_RTCP_SOURCE_RTP_RTCP_CONFIG_H_
 
 // Configuration file for RTP utilities (RTPSender, RTPReceiver ...)
 namespace webrtc {
@@ -42,4 +42,4 @@ enum { RTP_AUDIO_LEVEL_UNIQUE_ID = 0xbede };
 enum { RTP_MAX_PACKETS_PER_FRAME = 512 };  // must be multiple of 32
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_RTCP_CONFIG_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTP_RTCP_CONFIG_H_

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/include/cpu_info.h"
+#include "system_wrappers/include/cpu_info.h"
 
 #if defined(WEBRTC_WIN)
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 #ifndef EXCLUDE_D3D9
 #include <d3d9.h>
 #endif
@@ -23,7 +23,7 @@
 #include <sys/sysctl.h>
 #endif
 
-#include "webrtc/base/logging.h"
+#include "rtc_base/logging.h"
 
 namespace internal {
 static int DetectNumberOfCores() {
@@ -32,7 +32,7 @@ static int DetectNumberOfCores() {
 
 #if defined(WEBRTC_WIN)
   SYSTEM_INFO si;
-  GetSystemInfo(&si);
+  GetNativeSystemInfo(&si);
   number_of_cores = static_cast<int>(si.dwNumberOfProcessors);
 #elif defined(WEBRTC_LINUX) || defined(WEBRTC_ANDROID)
   number_of_cores = static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
@@ -40,18 +40,18 @@ static int DetectNumberOfCores() {
   int name[] = {CTL_HW, HW_AVAILCPU};
   size_t size = sizeof(number_of_cores);
   if (0 != sysctl(name, 2, &number_of_cores, &size, NULL, 0)) {
-    LOG(LS_ERROR) << "Failed to get number of cores";
+    RTC_LOG(LS_ERROR) << "Failed to get number of cores";
     number_of_cores = 1;
   }
 #else
-  LOG(LS_ERROR) << "No function to get number of cores";
+  RTC_LOG(LS_ERROR) << "No function to get number of cores";
 #endif
 
-  LOG(LS_INFO) << "Available number of cores: " << number_of_cores;
+  RTC_LOG(LS_INFO) << "Available number of cores: " << number_of_cores;
 
   return number_of_cores;
 }
-}
+}  // namespace internal
 
 namespace webrtc {
 

@@ -11,7 +11,7 @@
 #import "ARDSettingsStore.h"
 
 static NSString *const kVideoResolutionKey = @"rtc_video_resolution_key";
-static NSString *const kVideoCodecKey = @"rtc_video_codec_key";
+static NSString *const kVideoCodecKey = @"rtc_video_codec_info_key";
 static NSString *const kBitrateKey = @"rtc_max_bitrate_key";
 static NSString *const kAudioOnlyKey = @"rtc_audio_only_key";
 static NSString *const kCreateAecDumpKey = @"rtc_create_aec_dump_key";
@@ -28,22 +28,27 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation ARDSettingsStore
 
 + (void)setDefaultsForVideoResolution:(NSString *)videoResolution
-                           videoCodec:(NSString *)videoCodec
+                           videoCodec:(NSData *)videoCodec
                               bitrate:(nullable NSNumber *)bitrate
                             audioOnly:(BOOL)audioOnly
                         createAecDump:(BOOL)createAecDump
                    useLevelController:(BOOL)useLevelController
                  useManualAudioConfig:(BOOL)useManualAudioConfig {
   NSMutableDictionary<NSString *, id> *defaultsDictionary = [@{
-    kVideoResolutionKey : videoResolution,
-    kVideoCodecKey : videoCodec,
     kAudioOnlyKey : @(audioOnly),
     kCreateAecDumpKey : @(createAecDump),
     kUseLevelControllerKey : @(useLevelController),
     kUseManualAudioConfigKey : @(useManualAudioConfig)
   } mutableCopy];
+
+  if (videoResolution) {
+    defaultsDictionary[kVideoResolutionKey] = videoResolution;
+  }
+  if (videoCodec) {
+    defaultsDictionary[kVideoCodecKey] = videoCodec;
+  }
   if (bitrate) {
-    [defaultsDictionary setObject:bitrate forKey:kBitrateKey];
+    defaultsDictionary[kBitrateKey] = bitrate;
   }
   [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
@@ -64,11 +69,11 @@ NS_ASSUME_NONNULL_BEGIN
   [self.storage synchronize];
 }
 
-- (NSString *)videoCodec {
+- (NSData *)videoCodec {
   return [self.storage objectForKey:kVideoCodecKey];
 }
 
-- (void)setVideoCodec:(NSString *)videoCodec {
+- (void)setVideoCodec:(NSData *)videoCodec {
   [self.storage setObject:videoCodec forKey:kVideoCodecKey];
   [self.storage synchronize];
 }

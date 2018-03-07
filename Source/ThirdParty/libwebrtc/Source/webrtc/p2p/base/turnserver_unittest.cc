@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/turnserver.h"
+#include "p2p/base/turnserver.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/virtualsocketserver.h"
 
 // NOTE: This is a work in progress. Currently this file only has tests for
 // TurnServerConnection, a primitive class used by TurnServer.

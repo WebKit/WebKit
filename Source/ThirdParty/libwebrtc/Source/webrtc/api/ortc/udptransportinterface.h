@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_ORTC_UDPTRANSPORTINTERFACE_H_
-#define WEBRTC_API_ORTC_UDPTRANSPORTINTERFACE_H_
+#ifndef API_ORTC_UDPTRANSPORTINTERFACE_H_
+#define API_ORTC_UDPTRANSPORTINTERFACE_H_
 
-#include "webrtc/api/ortc/packettransportinterface.h"
-#include "webrtc/api/proxy.h"
-#include "webrtc/base/socketaddress.h"
+#include "api/ortc/packettransportinterface.h"
+#include "api/proxy.h"
+#include "rtc_base/socketaddress.h"
 
 namespace webrtc {
 
@@ -46,4 +46,4 @@ class UdpTransportInterface : public virtual PacketTransportInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_ORTC_UDPTRANSPORTINTERFACE_H_
+#endif  // API_ORTC_UDPTRANSPORTINTERFACE_H_

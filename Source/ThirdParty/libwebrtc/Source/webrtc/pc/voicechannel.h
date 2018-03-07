@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_VOICECHANNEL_H_
-#define WEBRTC_PC_VOICECHANNEL_H_
+#ifndef PC_VOICECHANNEL_H_
+#define PC_VOICECHANNEL_H_
 
-#include "webrtc/pc/channel.h"
+#include "pc/channel.h"
 
-#endif  // WEBRTC_PC_VOICECHANNEL_H_
+#endif  // PC_VOICECHANNEL_H_

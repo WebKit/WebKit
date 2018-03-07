@@ -71,10 +71,10 @@ int PKCS7_get_CRLs(STACK_OF(X509_CRL) *out_crls, CBS *cbs) {
     return 0;
   }
 
-  /* See https://tools.ietf.org/html/rfc2315#section-9.1 */
+  // See https://tools.ietf.org/html/rfc2315#section-9.1
 
-  /* Even if only CRLs are included, there may be an empty certificates block.
-   * OpenSSL does this, for example. */
+  // Even if only CRLs are included, there may be an empty certificates block.
+  // OpenSSL does this, for example.
   if (CBS_peek_asn1_tag(&signed_data,
                         CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0) &&
       !CBS_get_asn1(&signed_data, NULL /* certificates */,
@@ -133,9 +133,9 @@ int PKCS7_get_PEM_certificates(STACK_OF(X509) *out_certs, BIO *pem_bio) {
   long len;
   int ret;
 
-  /* Even though we pass PEM_STRING_PKCS7 as the expected PEM type here, PEM
-   * internally will actually allow several other values too, including
-   * "CERTIFICATE". */
+  // Even though we pass PEM_STRING_PKCS7 as the expected PEM type here, PEM
+  // internally will actually allow several other values too, including
+  // "CERTIFICATE".
   if (!PEM_bytes_read_bio(&data, &len, NULL /* PEM type output */,
                           PEM_STRING_PKCS7, pem_bio,
                           NULL /* password callback */,
@@ -155,9 +155,9 @@ int PKCS7_get_PEM_CRLs(STACK_OF(X509_CRL) *out_crls, BIO *pem_bio) {
   long len;
   int ret;
 
-  /* Even though we pass PEM_STRING_PKCS7 as the expected PEM type here, PEM
-   * internally will actually allow several other values too, including
-   * "CERTIFICATE". */
+  // Even though we pass PEM_STRING_PKCS7 as the expected PEM type here, PEM
+  // internally will actually allow several other values too, including
+  // "CERTIFICATE".
   if (!PEM_bytes_read_bio(&data, &len, NULL /* PEM type output */,
                           PEM_STRING_PKCS7, pem_bio,
                           NULL /* password callback */,
@@ -177,7 +177,7 @@ static int pkcs7_bundle_certificates_cb(CBB *out, const void *arg) {
   size_t i;
   CBB certificates;
 
-  /* See https://tools.ietf.org/html/rfc2315#section-9.1 */
+  // See https://tools.ietf.org/html/rfc2315#section-9.1
   if (!CBB_add_asn1(out, &certificates,
                     CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)) {
     return 0;
@@ -207,7 +207,7 @@ static int pkcs7_bundle_crls_cb(CBB *out, const void *arg) {
   size_t i;
   CBB crl_data;
 
-  /* See https://tools.ietf.org/html/rfc2315#section-9.1 */
+  // See https://tools.ietf.org/html/rfc2315#section-9.1
   if (!CBB_add_asn1(out, &crl_data,
                     CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 1)) {
     return 0;

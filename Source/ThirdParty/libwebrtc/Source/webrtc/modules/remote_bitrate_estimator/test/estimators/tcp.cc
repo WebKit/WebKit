@@ -10,12 +10,12 @@
 
 #include <algorithm>
 
-#include "webrtc/modules/remote_bitrate_estimator/test/estimators/tcp.h"
+#include "modules/remote_bitrate_estimator/test/estimators/tcp.h"
 
-#include "webrtc/modules/bitrate_controller/include/bitrate_controller.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
-#include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
-#include "webrtc/test/gtest.h"
+#include "modules/bitrate_controller/include/bitrate_controller.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace testing {

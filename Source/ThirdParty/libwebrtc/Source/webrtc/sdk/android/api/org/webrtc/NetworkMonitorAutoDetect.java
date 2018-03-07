@@ -10,7 +10,6 @@
 
 package org.webrtc;
 
-import android.Manifest.permission;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,9 +25,15 @@ import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pGroup;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,6 +62,11 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
     public IPAddress(byte[] address) {
       this.address = address;
     }
+
+    @CalledByNative("IPAddress")
+    private byte[] getAddress() {
+      return address;
+    }
   }
 
   /** Java version of NetworkMonitor.NetworkInformation */
@@ -71,6 +81,26 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
       this.type = type;
       this.handle = handle;
       this.ipAddresses = addresses;
+    }
+
+    @CalledByNative("NetworkInformation")
+    private IPAddress[] getIpAddresses() {
+      return ipAddresses;
+    }
+
+    @CalledByNative("NetworkInformation")
+    private ConnectionType getConnectionType() {
+      return type;
+    }
+
+    @CalledByNative("NetworkInformation")
+    private long getHandle() {
+      return handle;
+    }
+
+    @CalledByNative("NetworkInformation")
+    private String getName() {
+      return name;
     }
   };
 
@@ -402,6 +432,90 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
     }
   }
 
+  /** Maintains the information about wifi direct (aka WifiP2p) networks. */
+  static class WifiDirectManagerDelegate extends BroadcastReceiver {
+    // Network "handle" for the Wifi P2p network. We have to bind to the default network id
+    // (NETWORK_UNSPECIFIED) for these addresses.
+    private static final int WIFI_P2P_NETWORK_HANDLE = 0;
+    private final Context context;
+    private final Observer observer;
+    // Network information about a WifiP2p (aka WiFi-Direct) network, or null if no such network is
+    // connected.
+    private NetworkInformation wifiP2pNetworkInfo = null;
+
+    WifiDirectManagerDelegate(Observer observer, Context context) {
+      this.context = context;
+      this.observer = observer;
+      IntentFilter intentFilter = new IntentFilter();
+      intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+      intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+      context.registerReceiver(this, intentFilter);
+    }
+
+    // BroadcastReceiver
+    @Override
+    @SuppressLint("InlinedApi")
+    public void onReceive(Context context, Intent intent) {
+      if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(intent.getAction())) {
+        WifiP2pGroup wifiP2pGroup = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_GROUP);
+        onWifiP2pGroupChange(wifiP2pGroup);
+      } else if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(intent.getAction())) {
+        int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, 0 /* default to unknown */);
+        onWifiP2pStateChange(state);
+      }
+    }
+
+    /** Releases the broadcast receiver. */
+    public void release() {
+      context.unregisterReceiver(this);
+    }
+
+    public List<NetworkInformation> getActiveNetworkList() {
+      if (wifiP2pNetworkInfo != null) {
+        return Collections.singletonList(wifiP2pNetworkInfo);
+      }
+
+      return Collections.emptyList();
+    }
+
+    /** Handle a change notification about the wifi p2p group. */
+    private void onWifiP2pGroupChange(WifiP2pGroup wifiP2pGroup) {
+      if (wifiP2pGroup == null || wifiP2pGroup.getInterface() == null) {
+        return;
+      }
+
+      NetworkInterface wifiP2pInterface;
+      try {
+        wifiP2pInterface = NetworkInterface.getByName(wifiP2pGroup.getInterface());
+      } catch (SocketException e) {
+        Logging.e(TAG, "Unable to get WifiP2p network interface", e);
+        return;
+      }
+
+      List<InetAddress> interfaceAddresses = Collections.list(wifiP2pInterface.getInetAddresses());
+      IPAddress[] ipAddresses = new IPAddress[interfaceAddresses.size()];
+      for (int i = 0; i < interfaceAddresses.size(); ++i) {
+        ipAddresses[i] = new IPAddress(interfaceAddresses.get(i).getAddress());
+      }
+
+      wifiP2pNetworkInfo =
+          new NetworkInformation(
+              wifiP2pGroup.getInterface(),
+              ConnectionType.CONNECTION_WIFI,
+              WIFI_P2P_NETWORK_HANDLE,
+              ipAddresses);
+      observer.onNetworkConnect(wifiP2pNetworkInfo);
+    }
+
+    /** Handle a state change notification about wifi p2p. */
+    private void onWifiP2pStateChange(int state) {
+      if (state == WifiP2pManager.WIFI_P2P_STATE_DISABLED) {
+        wifiP2pNetworkInfo = null;
+        observer.onNetworkDisconnect(WIFI_P2P_NETWORK_HANDLE);
+      }
+    }
+  }
+
   static final long INVALID_NET_ID = -1;
   private static final String TAG = "NetworkMonitorAutoDetect";
 
@@ -417,6 +531,7 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
   // connectivityManagerDelegate and wifiManagerDelegate are only non-final for testing.
   private ConnectivityManagerDelegate connectivityManagerDelegate;
   private WifiManagerDelegate wifiManagerDelegate;
+  private WifiDirectManagerDelegate wifiDirectManagerDelegate;
 
   private boolean isRegistered;
   private ConnectionType connectionType;
@@ -448,6 +563,10 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
     connectionType = getConnectionType(networkState);
     wifiSSID = getWifiSSID(networkState);
     intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+
+    if (PeerConnectionFactory.fieldTrialsFindFullName("IncludeWifiDirect").equals("Enabled")) {
+      wifiDirectManagerDelegate = new WifiDirectManagerDelegate(observer, context);
+    }
 
     registerReceiver();
     if (connectivityManagerDelegate.supportNetworkCallback()) {
@@ -496,7 +615,17 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
   }
 
   List<NetworkInformation> getActiveNetworkList() {
-    return connectivityManagerDelegate.getActiveNetworkList();
+    List<NetworkInformation> connectivityManagerList =
+        connectivityManagerDelegate.getActiveNetworkList();
+    if (connectivityManagerList == null) {
+      return null;
+    }
+    ArrayList<NetworkInformation> result =
+        new ArrayList<NetworkInformation>(connectivityManagerList);
+    if (wifiDirectManagerDelegate != null) {
+      result.addAll(wifiDirectManagerDelegate.getActiveNetworkList());
+    }
+    return result;
   }
 
   public void destroy() {
@@ -505,6 +634,9 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
     }
     if (mobileNetworkCallback != null) {
       connectivityManagerDelegate.releaseCallback(mobileNetworkCallback);
+    }
+    if (wifiDirectManagerDelegate != null) {
+      wifiDirectManagerDelegate.release();
     }
     unregisterReceiver();
   }

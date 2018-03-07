@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
-const char* kBweTypeHistogram = "WebRTC.BWE.Types";
+const char kBweTypeHistogram[] = "WebRTC.BWE.Types";
 
 namespace congestion_controller {
 int GetMinBitrateBps() {

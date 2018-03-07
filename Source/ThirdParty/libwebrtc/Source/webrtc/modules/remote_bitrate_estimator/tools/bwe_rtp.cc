@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/tools/bwe_rtp.h"
+#include "modules/remote_bitrate_estimator/tools/bwe_rtp.h"
 
 #include <stdio.h>
 
@@ -16,12 +16,12 @@
 #include <sstream>
 #include <string>
 
-#include "gflags/gflags.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
-#include "webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_payload_registry.h"
-#include "webrtc/test/rtp_file_reader.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
+#include "modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.h"
+#include "modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
+#include "rtc_base/flags.h"
+#include "test/rtp_file_reader.h"
 
 namespace flags {
 
@@ -30,17 +30,17 @@ DEFINE_string(extension_type,
               "Extension type, either abs for absolute send time or tsoffset "
               "for timestamp offset.");
 std::string ExtensionType() {
-  return static_cast<std::string>(FLAGS_extension_type);
+  return static_cast<std::string>(FLAG_extension_type);
 }
 
-DEFINE_int32(extension_id, 3, "Extension id.");
+DEFINE_int(extension_id, 3, "Extension id.");
 int ExtensionId() {
-  return static_cast<int>(FLAGS_extension_id);
+  return static_cast<int>(FLAG_extension_id);
 }
 
 DEFINE_string(input_file, "", "Input file.");
 std::string InputFile() {
-  return static_cast<std::string>(FLAGS_input_file);
+  return static_cast<std::string>(FLAG_input_file);
 }
 
 DEFINE_string(ssrc_filter,
@@ -48,7 +48,7 @@ DEFINE_string(ssrc_filter,
               "Comma-separated list of SSRCs in hexadecimal which are to be "
               "used as input to the BWE (only applicable to pcap files).");
 std::set<uint32_t> SsrcFilter() {
-  std::string ssrc_filter_string = static_cast<std::string>(FLAGS_ssrc_filter);
+  std::string ssrc_filter_string = static_cast<std::string>(FLAG_ssrc_filter);
   if (ssrc_filter_string.empty())
     return std::set<uint32_t>();
   std::stringstream ss;
@@ -64,6 +64,8 @@ std::set<uint32_t> SsrcFilter() {
   }
   return ssrcs;
 }
+
+DEFINE_bool(help, false, "Print this message.");
 }  // namespace flags
 
 bool ParseArgsAndSetupEstimator(int argc,
@@ -74,7 +76,13 @@ bool ParseArgsAndSetupEstimator(int argc,
                                 webrtc::RtpHeaderParser** parser,
                                 webrtc::RemoteBitrateEstimator** estimator,
                                 std::string* estimator_used) {
-  google::ParseCommandLineFlags(&argc, &argv, true);
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true)) {
+    return 1;
+  }
+  if (flags::FLAG_help) {
+    rtc::FlagList::Print(nullptr, false);
+    return 0;
+  }
   std::string filename = flags::InputFile();
 
   std::set<uint32_t> ssrc_filter = flags::SsrcFilter();

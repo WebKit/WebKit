@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_MATRIX_TEST_HELPERS_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_MATRIX_TEST_HELPERS_H_
+#ifndef MODULES_AUDIO_PROCESSING_BEAMFORMER_MATRIX_TEST_HELPERS_H_
+#define MODULES_AUDIO_PROCESSING_BEAMFORMER_MATRIX_TEST_HELPERS_H_
 
-#include "webrtc/modules/audio_processing/beamformer/complex_matrix.h"
-#include "webrtc/modules/audio_processing/beamformer/matrix.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/beamformer/complex_matrix.h"
+#include "modules/audio_processing/beamformer/matrix.h"
+#include "test/gtest.h"
 
 namespace {
 const float kTolerance = 0.001f;
@@ -99,4 +99,4 @@ class MatrixTestHelpers {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_MATRIX_TEST_HELPERS_H_
+#endif  // MODULES_AUDIO_PROCESSING_BEAMFORMER_MATRIX_TEST_HELPERS_H_

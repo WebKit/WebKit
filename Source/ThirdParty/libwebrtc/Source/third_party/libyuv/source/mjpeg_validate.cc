@@ -24,7 +24,7 @@ static LIBYUV_BOOL ScanEOI(const uint8* sample, size_t sample_size) {
     const uint8* it = sample;
     while (it < end) {
       // TODO(fbarchard): scan for 0xd9 instead.
-      it = static_cast<const uint8*>(memchr(it, 0xff, end - it));
+      it = (const uint8*)(memchr(it, 0xff, end - it));
       if (it == NULL) {
         break;
       }

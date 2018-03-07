@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VIDEO_QUALITY_THRESHOLD_H_
-#define WEBRTC_VIDEO_QUALITY_THRESHOLD_H_
+#ifndef VIDEO_QUALITY_THRESHOLD_H_
+#define VIDEO_QUALITY_THRESHOLD_H_
 
 #include <memory>
 
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -49,4 +49,4 @@ class QualityThreshold {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_QUALITY_THRESHOLD_H_
+#endif  // VIDEO_QUALITY_THRESHOLD_H_

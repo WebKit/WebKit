@@ -92,6 +92,12 @@ message FrameLengthController {
 
   // Uplink bandwidth above which frame length should switch from 120ms to 60ms.
   optional int32 fl_120ms_to_60ms_bandwidth_bps = 6;
+
+  // Offset to apply to the per-packet overhead when increasing frame length.
+  optional int32 fl_increase_overhead_offset = 7;
+
+  // Offset to apply to the per-packet overhead when decreasing frame length.
+  optional int32 fl_decrease_overhead_offset = 8;
 }
 
 message ChannelController {
@@ -112,7 +118,12 @@ message DtxController {
   optional int32 dtx_disabling_bandwidth_bps = 2;
 }
 
-message BitrateController {}
+message BitrateController {
+  // Offset to apply to per-packet overhead when the frame length is increased.
+  optional int32 fl_increase_overhead_offset = 1;
+  // Offset to apply to per-packet overhead when the frame length is decreased.
+  optional int32 fl_decrease_overhead_offset = 2;
+}
 
 message Controller {
   message ScoringPoint {
@@ -150,3 +161,4 @@ message ControllerManager {
   // made.
   optional float min_reordering_squared_distance = 3;
 }
+

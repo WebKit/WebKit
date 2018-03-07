@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_CHECKSUM_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_CHECKSUM_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_CHECKSUM_H_
+#define MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_CHECKSUM_H_
 
 #include <string>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/md5digest.h"
-#include "webrtc/base/stringencode.h"
-#include "webrtc/modules/audio_coding/neteq/tools/audio_sink.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/neteq/tools/audio_sink.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/md5digest.h"
+#include "rtc_base/stringencode.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -56,4 +56,4 @@ class AudioChecksum : public AudioSink {
 
 }  // namespace test
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_CHECKSUM_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_CHECKSUM_H_

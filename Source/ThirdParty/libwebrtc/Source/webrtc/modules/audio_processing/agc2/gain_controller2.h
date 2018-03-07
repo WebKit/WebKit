@@ -8,15 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC2_GAIN_CONTROLLER2_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC2_GAIN_CONTROLLER2_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC2_GAIN_CONTROLLER2_H_
+#define MODULES_AUDIO_PROCESSING_AGC2_GAIN_CONTROLLER2_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/agc2/digital_gain_applier.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -26,31 +25,29 @@ class AudioBuffer;
 // Gain Controller 2 aims to automatically adjust levels by acting on the
 // microphone gain and/or applying digital gain.
 //
-// It temporarily implements a hard-coded gain mode only.
+// Temporarily implements a fixed gain mode with hard-clipping.
 class GainController2 {
  public:
-  explicit GainController2(int sample_rate_hz);
+  GainController2();
   ~GainController2();
 
-  int sample_rate_hz() { return sample_rate_hz_; }
-
+  void Initialize(int sample_rate_hz);
   void Process(AudioBuffer* audio);
 
+  void ApplyConfig(const AudioProcessing::Config::GainController2& config);
   static bool Validate(const AudioProcessing::Config::GainController2& config);
   static std::string ToString(
       const AudioProcessing::Config::GainController2& config);
 
  private:
-  int sample_rate_hz_;
-  std::unique_ptr<ApmDataDumper> data_dumper_;
-  DigitalGainApplier digital_gain_applier_;
   static int instance_count_;
-  // TODO(alessiob): Remove once a meaningful gain controller mode is
-  // implemented.
-  const float gain_;
+  std::unique_ptr<ApmDataDumper> data_dumper_;
+  int sample_rate_hz_;
+  float fixed_gain_;
+
   RTC_DISALLOW_COPY_AND_ASSIGN(GainController2);
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC2_GAIN_CONTROLLER2_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC2_GAIN_CONTROLLER2_H_

@@ -75,33 +75,33 @@ struct RIPEMD160state_st {
   unsigned num;
 };
 
-/* RIPEMD160_Init initialises |ctx| and returns one. */
+// RIPEMD160_Init initialises |ctx| and returns one.
 OPENSSL_EXPORT int RIPEMD160_Init(RIPEMD160_CTX *ctx);
 
-/* RIPEMD160_Update adds |len| bytes from |data| to |ctx| and returns one. */
+// RIPEMD160_Update adds |len| bytes from |data| to |ctx| and returns one.
 OPENSSL_EXPORT int RIPEMD160_Update(RIPEMD160_CTX *ctx, const void *data,
                                    size_t len);
 
-/* RIPEMD160_Final adds the final padding to |ctx| and writes the resulting
- * digest to |md|, which must have at least |RIPEMD160_DIGEST_LENGTH| bytes of
- * space. It returns one. */
+// RIPEMD160_Final adds the final padding to |ctx| and writes the resulting
+// digest to |md|, which must have at least |RIPEMD160_DIGEST_LENGTH| bytes of
+// space. It returns one.
 OPENSSL_EXPORT int RIPEMD160_Final(uint8_t *md, RIPEMD160_CTX *ctx);
 
-/* RIPEMD160 writes the digest of |len| bytes from |data| to |out| and returns
- * |out|. There must be at least |RIPEMD160_DIGEST_LENGTH| bytes of space in
- * |out|. */
+// RIPEMD160 writes the digest of |len| bytes from |data| to |out| and returns
+// |out|. There must be at least |RIPEMD160_DIGEST_LENGTH| bytes of space in
+// |out|.
 OPENSSL_EXPORT uint8_t *RIPEMD160(const uint8_t *data, size_t len,
                                   uint8_t *out);
 
-/* RIPEMD160_Transform is a low-level function that performs a single,
- * RIPEMD160 block transformation using the state from |ctx| and 64 bytes from
- * |block|. */
+// RIPEMD160_Transform is a low-level function that performs a single,
+// RIPEMD160 block transformation using the state from |ctx| and 64 bytes from
+// |block|.
 OPENSSL_EXPORT void RIPEMD160_Transform(RIPEMD160_CTX *ctx,
                                         const uint8_t *block);
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_RIPEMD_H */
+#endif  // OPENSSL_HEADER_RIPEMD_H

@@ -22,37 +22,57 @@ rtc_source_set("call_interfaces") {
   ]
   deps = [
     ":rtp_interfaces",
-    "..:video_stream_api",
+    ":video_stream_api",
     "..:webrtc_common",
     "../api:audio_mixer_api",
     "../api:libjingle_peerconnection_api",
+    "../api:optional",
     "../api:transport_api",
     "../api/audio_codecs:audio_codecs_api",
-    "../base:rtc_base",
-    "../base:rtc_base_approved",
+    "../modules/audio_processing:audio_processing_statistics",
+    "../rtc_base:rtc_base",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
 # TODO(nisse): These RTP targets should be moved elsewhere
-# when interfaces have stabilized.
+# when interfaces have stabilized. See also TODO for |mock_rtp_interfaces|.
 rtc_source_set("rtp_interfaces") {
   sources = [
+    "rtcp_packet_sink_interface.h",
+    "rtp_config.cc",
+    "rtp_config.h",
     "rtp_packet_sink_interface.h",
+    "rtp_stream_receiver_controller_interface.h",
     "rtp_transport_controller_send_interface.h",
+  ]
+  deps = [
+    "../api:array_view",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
 rtc_source_set("rtp_receiver") {
   sources = [
+    "rtcp_demuxer.cc",
+    "rtcp_demuxer.h",
     "rtp_demuxer.cc",
     "rtp_demuxer.h",
+    "rtp_rtcp_demuxer_helper.cc",
+    "rtp_rtcp_demuxer_helper.h",
+    "rtp_stream_receiver_controller.cc",
+    "rtp_stream_receiver_controller.h",
     "rtx_receive_stream.cc",
     "rtx_receive_stream.h",
+    "ssrc_binding_observer.h",
   ]
   deps = [
     ":rtp_interfaces",
-    "../base:rtc_base_approved",
+    "..:webrtc_common",
+    "../api:array_view",
+    "../api:optional",
     "../modules/rtp_rtcp",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -63,14 +83,32 @@ rtc_source_set("rtp_sender") {
   ]
   deps = [
     ":rtp_interfaces",
-    "../base:rtc_base_approved",
+    "..:webrtc_common",
     "../modules/congestion_controller",
+    "../modules/pacing",
+    "../rtc_base:rtc_base_approved",
   ]
+}
+
+rtc_source_set("bitrate_allocator") {
+  sources = [
+    "bitrate_allocator.cc",
+    "bitrate_allocator.h",
+  ]
+  deps = [
+    "../modules/bitrate_controller",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:sequenced_task_checker",
+    "../system_wrappers",
+  ]
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
 }
 
 rtc_static_library("call") {
   sources = [
-    "bitrate_allocator.cc",
     "call.cc",
     "callfactory.cc",
     "callfactory.h",
@@ -86,17 +124,20 @@ rtc_static_library("call") {
   public_deps = [
     ":call_interfaces",
     "../api:call_api",
+    "../api:libjingle_peerconnection_api",
   ]
 
   deps = [
+    ":bitrate_allocator",
     ":call_interfaces",
     ":rtp_interfaces",
     ":rtp_receiver",
     ":rtp_sender",
+    ":video_stream_api",
     "..:webrtc_common",
+    "../api:optional",
     "../api:transport_api",
     "../audio",
-    "../base:rtc_task_queue",
     "../logging:rtc_event_log_api",
     "../logging:rtc_event_log_impl",
     "../modules/bitrate_controller",
@@ -104,8 +145,31 @@ rtc_static_library("call") {
     "../modules/pacing",
     "../modules/rtp_rtcp",
     "../modules/utility",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:sequenced_task_checker",
     "../system_wrappers",
     "../video",
+  ]
+}
+
+rtc_source_set("video_stream_api") {
+  sources = [
+    "video_config.cc",
+    "video_config.h",
+    "video_receive_stream.cc",
+    "video_receive_stream.h",
+    "video_send_stream.cc",
+    "video_send_stream.h",
+  ]
+  deps = [
+    ":rtp_interfaces",
+    "../:webrtc_common",
+    "../api:libjingle_peerconnection_api",
+    "../api:optional",
+    "../api:transport_api",
+    "../common_video:common_video",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -113,35 +177,39 @@ if (rtc_include_tests) {
   rtc_source_set("call_tests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc:video_engine_tests" ]
-    }
     sources = [
       "bitrate_allocator_unittest.cc",
       "bitrate_estimator_tests.cc",
       "call_unittest.cc",
       "flexfec_receive_stream_unittest.cc",
+      "rtcp_demuxer_unittest.cc",
       "rtp_demuxer_unittest.cc",
+      "rtp_rtcp_demuxer_helper_unittest.cc",
       "rtx_receive_stream_unittest.cc",
     ]
     deps = [
+      ":bitrate_allocator",
       ":call",
+      ":mock_rtp_interfaces",
       ":rtp_interfaces",
       ":rtp_receiver",
       ":rtp_sender",
+      "..:webrtc_common",
+      "../api:array_view",
       "../api:mock_audio_mixer",
-      "../base:rtc_base_approved",
+      "../api/audio_codecs:builtin_audio_decoder_factory",
       "../logging:rtc_event_log_api",
       "../modules/audio_device:mock_audio_device",
       "../modules/audio_mixer",
       "../modules/bitrate_controller",
+      "../modules/congestion_controller",
       "../modules/congestion_controller:mock_congestion_controller",
       "../modules/pacing",
+      "../modules/pacing:mock_paced_sender",
       "../modules/rtp_rtcp",
       "../modules/rtp_rtcp:mock_rtp_rtcp",
+      "../modules/utility:mock_process_thread",
+      "../rtc_base:rtc_base_approved",
       "../system_wrappers",
       "../test:audio_codec_mocks",
       "../test:direct_transport",
@@ -160,12 +228,6 @@ if (rtc_include_tests) {
   rtc_source_set("call_perf_tests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc:webrtc_perf_tests" ]
-    }
     sources = [
       "call_perf_tests.cc",
       "rampup_tests.cc",
@@ -173,28 +235,47 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":call_interfaces",
+      ":video_stream_api",
       "..:webrtc_common",
       "../api/audio_codecs:builtin_audio_encoder_factory",
-      "../base:rtc_base_approved",
       "../logging:rtc_event_log_api",
       "../modules/audio_coding",
       "../modules/audio_mixer:audio_mixer_impl",
       "../modules/rtp_rtcp",
+      "../rtc_base:rtc_base_approved",
       "../system_wrappers",
       "../system_wrappers:metrics_default",
       "../test:direct_transport",
       "../test:fake_audio_device",
+      "../test:field_trial",
+      "../test:test_common",
       "../test:test_support",
       "../test:video_test_common",
       "../video",
       "../voice_engine",
       "//testing/gtest",
-      "//webrtc/test:field_trial",
-      "//webrtc/test:test_common",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
+  }
+
+  # TODO(eladalon): This should be moved, as with the TODO for |rtp_interfaces|.
+  rtc_source_set("mock_rtp_interfaces") {
+    testonly = true
+
+    sources = [
+      "fake_rtp_transport_controller_send.h",
+      "test/mock_rtp_packet_sink_interface.h",
+    ]
+    deps = [
+      ":rtp_interfaces",
+      "..:webrtc_common",
+      "../modules/congestion_controller:congestion_controller",
+      "../modules/pacing:pacing",
+      "../test:test_support",
+      "//testing/gmock",
+    ]
   }
 }

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/examples/peerconnection/client/main_wnd.h"
+#include "examples/peerconnection/client/main_wnd.h"
 
 #include <math.h>
 
 #include "libyuv/convert_argb.h"
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/examples/peerconnection/client/defaults.h"
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "api/video/i420_buffer.h"
+#include "examples/peerconnection/client/defaults.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 ATOM MainWnd::wnd_class_ = 0;
 const wchar_t MainWnd::kClassName[] = L"WebRTC_MainWnd";

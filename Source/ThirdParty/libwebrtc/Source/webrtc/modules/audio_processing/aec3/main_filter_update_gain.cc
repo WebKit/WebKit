@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/main_filter_update_gain.h"
+#include "modules/audio_processing/aec3/main_filter_update_gain.h"
 
 #include <algorithm>
 #include <functional>
 
-#include "webrtc/base/atomicops.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/atomicops.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {
@@ -100,8 +100,8 @@ void MainFilterUpdateGain::Compute(
 
   // H_error = H_error + factor * erl.
   std::array<float, kFftLengthBy2Plus1> H_error_increase;
-  constexpr float kErlScaleAccurate = 1.f / 30.0f;
-  constexpr float kErlScaleInaccurate = 1.f / 10.0f;
+  constexpr float kErlScaleAccurate = 1.f / 100.0f;
+  constexpr float kErlScaleInaccurate = 1.f / 60.0f;
   std::transform(E2_shadow.begin(), E2_shadow.end(), E2_main.begin(),
                  H_error_increase.begin(), [&](float a, float b) {
                    return a >= b ? kErlScaleAccurate : kErlScaleInaccurate;

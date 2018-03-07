@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_QP_PARSER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_QP_PARSER_H_
+#ifndef MODULES_VIDEO_CODING_QP_PARSER_H_
+#define MODULES_VIDEO_CODING_QP_PARSER_H_
 
-#include "webrtc/modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/encoded_frame.h"
 
 namespace webrtc {
 
@@ -27,4 +27,4 @@ class QpParser {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_QP_PARSER_H_
+#endif  // MODULES_VIDEO_CODING_QP_PARSER_H_

@@ -8,21 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/testutils.h"
+#include "media/base/testutils.h"
 
 #include <math.h>
 #include <algorithm>
 #include <memory>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/bytebuffer.h"
-#include "webrtc/base/fileutils.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/pathutils.h"
-#include "webrtc/base/stream.h"
-#include "webrtc/base/stringutils.h"
-#include "webrtc/base/testutils.h"
-#include "webrtc/media/base/videocapturer.h"
+#include "api/video/video_frame.h"
+#include "media/base/videocapturer.h"
+#include "rtc_base/bytebuffer.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/stream.h"
+#include "rtc_base/stringutils.h"
+#include "rtc_base/testutils.h"
 
 namespace cricket {
 

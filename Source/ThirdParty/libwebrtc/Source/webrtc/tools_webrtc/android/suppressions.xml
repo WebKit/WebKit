@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+  <!-- These lint settings is for the Android linter that gets run by
+       lint_action.gypi on compile of WebRTC java code. All WebRTC java code
+       should lint cleanly for the issues below. -->
+  <!-- TODO(phoglund): make work with suppress.py or remove printout referring
+       to suppress.py. -->
+
+  <issue id="UseSparseArrays" severity="ignore"/>
+
+  <issue id="Registered" severity="ignore"/>
+  <issue id="MissingPermission" severity="ignore"/>
+  <issue id="ApplySharedPref" severity="ignore"/>
+  <issue id="UnusedResources" severity="ignore"/>
+  <issue id="IconColors" severity="ignore"/>
+  <issue id="IconDipSize" severity="ignore"/>
+  <issue id="IconDuplicatesConfig" severity="ignore"/>
+  <issue id="RelativeOverlap" severity="ignore"/>
+  <issue id="RtlCompat" severity="ignore"/>
+  <issue id="IconMissingDensityFolder" severity="ignore"/>
+  <issue id="OldTargetApi" severity="ignore"/>
+
+  <issue id="GoogleAppIndexingWarning" severity="ignore"/>
+  <issue id="MissingRegistered" severity="ignore"/>
+
+  <!-- These are just from the dummy AndroidManifest.xml we use for linting.
+       It's in the same directory as this file. -->
+  <issue id="MissingApplicationIcon" severity="ignore"/>
+  <issue id="AllowBackup" severity="ignore"/>
+  <issue id="MissingVersion" severity="ignore"/>
+
+  <!-- Ignore all lint errors in Chromium code. -->
+  <issue id="all">
+    <ignore path="**/org/chromium/**/*.java" />
+  </issue>
+</lint>

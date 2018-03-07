@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
+#define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
 
-#include "webrtc/base/buffer.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -57,4 +57,4 @@ class App : public RtcpPacket {
 
 }  // namespace rtcp
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_

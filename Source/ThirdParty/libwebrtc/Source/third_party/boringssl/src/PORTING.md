@@ -6,17 +6,27 @@ BoringSSL support, provided they do not use removed APIs. In general, see if the
 library compiles and, on failure, consult the documentation in the header files
 and see if problematic features can be removed.
 
-In some cases, BoringSSL-specific code may be necessary. In that case, the
-`OPENSSL_IS_BORINGSSL` preprocessor macro may be used in `#ifdef`s. This macro
-should also be used in lieu of the presence of any particular function to detect
-OpenSSL vs BoringSSL in configure scripts, etc., where those are necessary.
-Before using the preprocessor, however, contact the BoringSSL maintainers about
-the missing APIs. If not an intentionally removed feature, BoringSSL will
-typically add compatibility functions for convenience.
+BoringSSL's `OPENSSL_VERSION_NUMBER` matches the OpenSSL version it targets.
+Version checks for OpenSSL should ideally work as-is in BoringSSL. BoringSSL
+also defines upstream's `OPENSSL_NO_*` feature macros corresponding to removed
+features. If the preprocessor is needed, use these version checks or feature
+macros where possible, especially when patching third-party projects. Such
+patches are more generally useful to OpenSSL consumers and thus more
+appropriate to send upstream.
 
-For convenience, BoringSSL defines upstream's `OPENSSL_NO_*` feature macros
-corresponding to removed features. These may also be used to disable code which
-uses a removed feature.
+In some cases, BoringSSL-specific code may be necessary. Use the
+`OPENSSL_IS_BORINGSSL` preprocessor macro in `#ifdef`s. However, first contact
+the BoringSSL maintainers about the missing APIs. We will typically add
+compatibility functions for convenience. In particular, *contact BoringSSL
+maintainers before working around missing OpenSSL 1.1.0 accessors*. BoringSSL
+was originally derived from OpenSSL 1.0.2 but now targets OpenSSL 1.1.0. Some
+newer APIs may be missing but can be added on request. (Not all projects have
+been ported to OpenSSL 1.1.0, so BoringSSL also remains largely compatible with
+OpenSSL 1.0.2.)
+
+The `OPENSSL_IS_BORINGSSL` macro may also be used to distinguish OpenSSL from
+BoringSSL in configure scripts. Do not use the presence or absence of particular
+symbols to detect BoringSSL.
 
 Note: BoringSSL does *not* have a stable API or ABI. It must be updated with its
 consumers. It is not suitable for, say, a system library in a traditional Linux
@@ -39,15 +49,19 @@ code, particularly to avoid compiler warnings.
 Most notably, the `STACK_OF(T)` types have all been converted to use `size_t`
 instead of `int` for indices and lengths.
 
-### Reference counts
+### Reference counts and opaque types
 
 Some external consumers increment reference counts directly by calling
-`CRYPTO_add` with the corresponding `CRYPTO_LOCK_*` value.
+`CRYPTO_add` with the corresponding `CRYPTO_LOCK_*` value. These APIs no longer
+exist in BoringSSL. Instead, code which increments reference counts should call
+the corresponding `FOO_up_ref` function, such as `EVP_PKEY_up_ref`.
 
-These APIs no longer exist in BoringSSL. Instead, code which increments
-reference counts should call the corresponding `FOO_up_ref` function, such as
-`EVP_PKEY_up_ref`. Note that not all of these APIs are present in OpenSSL and
-may require `#ifdef`s.
+BoringSSL also hides some structs which were previously exposed in OpenSSL
+1.0.2, particularly in libssl. Use the relevant accessors instead.
+
+Note that some of these APIs were added in OpenSSL 1.1.0, so projects which do
+not yet support 1.1.0 may need additional `#ifdef`s. Projects supporting OpenSSL
+1.1.0 should not require modification.
 
 ### Error codes
 
@@ -116,7 +130,9 @@ response in (unpipelined) HTTP/1.1.
 
 Things which do not work:
 
-* There is no support for renegotiation as a server.
+* There is no support for renegotiation as a server. (Attempts by clients will
+  result in a fatal alert so that ClientHello messages cannot be used to flood
+  a server and escape higher-level limits.)
 
 * There is no support for renegotiation in DTLS.
 
@@ -127,6 +143,17 @@ Things which do not work:
 
 * If a HelloRequest is received while `SSL_write` has unsent application data,
   the renegotiation is rejected.
+
+* Renegotiation does not participate in session resumption. The client will
+  not offer a session on renegotiation or resume any session established by a
+  renegotiation handshake.
+
+* The server may not change its certificate in the renegotiation. This mitigates
+  the [triple handshake attack](https://mitls.org/pages/attacks/3SHAKE). Any new
+  stapled OCSP response and SCT list will be ignored. As no authentication state
+  may change, BoringSSL will not re-verify the certificate on a renegotiation.
+  Callbacks such as `SSL_CTX_set_custom_verify` will only run on the initial
+  handshake.
 
 ### Lowercase hexadecimal
 
@@ -151,6 +178,17 @@ Ensure that callers do not rely on this object reuse behavior. It is
 recommended to avoid the `out` parameter completely and always pass in `NULL`.
 Note that less error-prone APIs are available for BoringSSL-specific code (see
 below).
+
+### Memory allocation
+
+OpenSSL provides wrappers `OPENSSL_malloc` and `OPENSSL_free` over the standard
+`malloc` and `free`. Memory allocated by OpenSSL should be released with
+`OPENSSL_free`, not the standard `free`. However, by default, they are
+implemented directly using `malloc` and `free`, so code which mixes them up
+usually works.
+
+In BoringSSL, these functions maintain additional book-keeping to zero memory
+on `OPENSSL_free`, so any mixups must be fixed.
 
 ## Optional BoringSSL-specific simplifications
 
@@ -247,3 +285,27 @@ parameter.
 `SSL_CTRL_SET_TMP_ECDH_CB` | `SSL_CTX_set_tmp_ecdh_callback`
 `SSL_CTRL_SET_TMP_RSA` | `SSL_CTX_set_tmp_rsa` is equivalent, but [*do not use this function*](https://freakattack.com/). (It is a no-op in BoringSSL.)
 `SSL_CTRL_SET_TMP_RSA_CB` | `SSL_CTX_set_tmp_rsa_callback` is equivalent, but [*do not use this function*](https://freakattack.com/). (It is a no-op in BoringSSL.)
+
+## Significant API additions
+
+In some places, BoringSSL has added significant APIs. Use of these APIs goes beyound “porting” and means giving up on OpenSSL compatibility.
+
+One example of this has already been mentioned: the [CBS and CBB](https://commondatastorage.googleapis.com/chromium-boringssl-docs/bytestring.h.html) functions should be used whenever parsing or serialising data.
+
+### CRYPTO\_BUFFER
+
+With the standard OpenSSL APIs, when making many TLS connections, the certificate data for each connection is retained in memory in an expensive `X509` structure. Additionally, common certificates often appear in the chains for multiple connections and are needlessly duplicated in memory.
+
+A [`CRYPTO_BUFFER`](https://commondatastorage.googleapis.com/chromium-boringssl-docs/pool.h.html) is just an opaque byte string. A `CRYPTO_BUFFER_POOL` is an intern table for these buffers, i.e. it ensures that only a single copy of any given byte string is kept for each pool.
+
+The function `TLS_with_buffers_method` returns an `SSL_METHOD` that avoids creating `X509` objects for certificates. Additionally, `SSL_CTX_set0_buffer_pool` can be used to install a pool on an `SSL_CTX` so that certificates can be deduplicated across connections and across `SSL_CTX`s.
+
+When using these functions, the application also needs to ensure that it doesn't call other functions that deal with `X509` or `X509_NAME` objects. For example, `SSL_get_peer_certificate` or `SSL_get_peer_cert_chain`. Doing so will trigger an assert in debug mode and will result in NULLs in release mode. Instead, call the buffer-based alternatives such as `SSL_get0_peer_certificates`. (See [ssl.h](https://commondatastorage.googleapis.com/chromium-boringssl-docs/ssl.h.html) for functions taking or returning `CRYPTO_BUFFER`.) The buffer-based alternative functions will work even when not using `TLS_with_buffers_method`, thus application code can transition gradually.
+
+In order to use buffers, the application code also needs to implement its own certificate verification using `SSL_[CTX_]set_custom_verify`. Otherwise all connections will fail with a verification error. Auto-chaining is also disabled when using buffers.
+
+Once those changes have been completed, the whole of the OpenSSL X.509 and ASN.1 code should be eliminated by the linker if BoringSSL is linked statically.
+
+### Asynchronous and opaque private keys
+
+OpenSSL offers the ENGINE API for implementing opaque private keys (i.e. private keys where software only has oracle access because the secrets are held in special hardware or on another machine). While the ENGINE API has been mostly removed from BoringSSL, it is still possible to support opaque keys in this way. However, when using such keys with TLS and BoringSSL, you should strongly prefer using `SSL_PRIVATE_KEY_METHOD` via `SSL[_CTX]_set_private_key_method`. This allows a handshake to be suspended while the private operation is in progress. It also supports more forms of opaque key as it exposes higher-level information about the operation to be performed.

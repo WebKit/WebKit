@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/stunserver.h"
+#include "p2p/base/stunserver.h"
 
-#include "webrtc/base/bytebuffer.h"
-#include "webrtc/base/logging.h"
+#include "rtc_base/bytebuffer.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 
@@ -76,7 +76,7 @@ void StunServer::SendResponse(
   msg.Write(&buf);
   rtc::PacketOptions options;
   if (socket_->SendTo(buf.Data(), buf.Length(), addr, options) < 0)
-    LOG_ERR(LS_ERROR) << "sendto";
+    RTC_LOG_ERR(LS_ERROR) << "sendto";
 }
 
 void StunServer::GetStunBindReqponse(StunMessage* request,

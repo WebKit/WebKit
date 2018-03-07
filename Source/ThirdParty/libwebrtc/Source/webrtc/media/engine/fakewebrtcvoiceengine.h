@@ -8,15 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
-#define WEBRTC_MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
+#ifndef MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
+#define MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
 
 #include <map>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/media/engine/webrtcvoe.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
+#include "media/engine/webrtcvoe.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace voe {
@@ -42,10 +41,8 @@ class FakeWebRtcVoiceEngine : public webrtc::VoEBase {
     bool neteq_fast_accelerate = false;
   };
 
-  explicit FakeWebRtcVoiceEngine(webrtc::AudioProcessing* apm,
-                                 webrtc::voe::TransmitMixer* transmit_mixer)
-      : apm_(apm), transmit_mixer_(transmit_mixer) {
-  }
+  explicit FakeWebRtcVoiceEngine(webrtc::voe::TransmitMixer* transmit_mixer)
+      : transmit_mixer_(transmit_mixer) {}
   ~FakeWebRtcVoiceEngine() override {
     RTC_CHECK(channels_.empty());
   }
@@ -60,9 +57,6 @@ class FakeWebRtcVoiceEngine : public webrtc::VoEBase {
   WEBRTC_STUB(Release, ());
 
   // webrtc::VoEBase
-  WEBRTC_STUB(RegisterVoiceEngineObserver, (
-      webrtc::VoiceEngineObserver& observer));
-  WEBRTC_STUB(DeRegisterVoiceEngineObserver, ());
   WEBRTC_FUNC(Init,
               (webrtc::AudioDeviceModule* adm,
                webrtc::AudioProcessing* audioproc,
@@ -71,15 +65,8 @@ class FakeWebRtcVoiceEngine : public webrtc::VoEBase {
     inited_ = true;
     return 0;
   }
-  WEBRTC_FUNC(Terminate, ()) {
+  void Terminate() override {
     inited_ = false;
-    return 0;
-  }
-  webrtc::AudioProcessing* audio_processing() override {
-    return apm_;
-  }
-  webrtc::AudioDeviceModule* audio_device_module() override {
-    return nullptr;
   }
   webrtc::voe::TransmitMixer* transmit_mixer() override {
     return transmit_mixer_;
@@ -104,16 +91,12 @@ class FakeWebRtcVoiceEngine : public webrtc::VoEBase {
     channels_.erase(channel);
     return 0;
   }
-  WEBRTC_STUB(StartReceive, (int channel));
   WEBRTC_STUB(StartPlayout, (int channel));
   WEBRTC_STUB(StartSend, (int channel));
-  WEBRTC_STUB(StopReceive, (int channel));
   WEBRTC_STUB(StopPlayout, (int channel));
   WEBRTC_STUB(StopSend, (int channel));
-  WEBRTC_STUB(GetVersion, (char version[1024]));
-  WEBRTC_STUB(LastError, ());
-  WEBRTC_STUB(AssociateSendChannel, (int channel,
-                                     int accociate_send_channel));
+  WEBRTC_STUB(SetPlayout, (bool enable));
+  WEBRTC_STUB(SetRecording, (bool enable));
 
   size_t GetNetEqCapacity() const {
     auto ch = channels_.find(last_channel_);
@@ -131,7 +114,6 @@ class FakeWebRtcVoiceEngine : public webrtc::VoEBase {
   int last_channel_ = -1;
   std::map<int, Channel*> channels_;
   bool fail_create_channel_ = false;
-  webrtc::AudioProcessing* apm_ = nullptr;
   webrtc::voe::TransmitMixer* transmit_mixer_ = nullptr;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(FakeWebRtcVoiceEngine);
@@ -139,4 +121,4 @@ class FakeWebRtcVoiceEngine : public webrtc::VoEBase {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_
+#endif  // MEDIA_ENGINE_FAKEWEBRTCVOICEENGINE_H_

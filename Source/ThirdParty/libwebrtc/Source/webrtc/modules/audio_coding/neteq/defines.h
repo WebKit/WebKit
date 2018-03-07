@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_DEFINES_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_DEFINES_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_DEFINES_H_
+#define MODULES_AUDIO_CODING_NETEQ_DEFINES_H_
 
 namespace webrtc {
 
@@ -49,4 +49,4 @@ enum Modes {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_DEFINES_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_DEFINES_H_

@@ -10,25 +10,23 @@
 
 package org.appspot.apprtc;
 
+import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.List;
 import org.appspot.apprtc.AppRTCClient.SignalingParameters;
 import org.appspot.apprtc.util.AsyncHttpURLConnection;
 import org.appspot.apprtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
-
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.webrtc.IceCandidate;
 import org.webrtc.PeerConnection;
 import org.webrtc.SessionDescription;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.Scanner;
 
 /**
  * AsyncTask that converts an AppRTC room URL into the set of signaling
@@ -40,7 +38,6 @@ public class RoomParametersFetcher {
   private final RoomParametersFetcherEvents events;
   private final String roomUrl;
   private final String roomMessage;
-  private AsyncHttpURLConnection httpConnection;
 
   /**
    * Room parameters fetcher callbacks.
@@ -67,7 +64,7 @@ public class RoomParametersFetcher {
 
   public void makeRequest() {
     Log.d(TAG, "Connecting to room: " + roomUrl);
-    httpConnection =
+    AsyncHttpURLConnection httpConnection =
         new AsyncHttpURLConnection("POST", roomUrl, roomMessage, new AsyncHttpEvents() {
           @Override
           public void onHttpError(String errorMessage) {
@@ -86,7 +83,7 @@ public class RoomParametersFetcher {
   private void roomHttpResponseParse(String response) {
     Log.d(TAG, "Room response: " + response);
     try {
-      LinkedList<IceCandidate> iceCandidates = null;
+      List<IceCandidate> iceCandidates = null;
       SessionDescription offerSdp = null;
       JSONObject roomJson = new JSONObject(response);
 
@@ -103,7 +100,7 @@ public class RoomParametersFetcher {
       String wssPostUrl = roomJson.getString("wss_post_url");
       boolean initiator = (roomJson.getBoolean("is_initiator"));
       if (!initiator) {
-        iceCandidates = new LinkedList<IceCandidate>();
+        iceCandidates = new ArrayList<>();
         String messagesString = roomJson.getString("messages");
         JSONArray messages = new JSONArray(messagesString);
         for (int i = 0; i < messages.length(); ++i) {
@@ -128,19 +125,21 @@ public class RoomParametersFetcher {
       Log.d(TAG, "WSS url: " + wssUrl);
       Log.d(TAG, "WSS POST url: " + wssPostUrl);
 
-      LinkedList<PeerConnection.IceServer> iceServers =
+      List<PeerConnection.IceServer> iceServers =
           iceServersFromPCConfigJSON(roomJson.getString("pc_config"));
       boolean isTurnPresent = false;
       for (PeerConnection.IceServer server : iceServers) {
         Log.d(TAG, "IceServer: " + server);
-        if (server.uri.startsWith("turn:")) {
-          isTurnPresent = true;
-          break;
+        for (String uri : server.urls) {
+          if (uri.startsWith("turn:")) {
+            isTurnPresent = true;
+            break;
+          }
         }
       }
       // Request TURN servers.
       if (!isTurnPresent && !roomJson.optString("ice_server_url").isEmpty()) {
-        LinkedList<PeerConnection.IceServer> turnServers =
+        List<PeerConnection.IceServer> turnServers =
             requestTurnServers(roomJson.getString("ice_server_url"));
         for (PeerConnection.IceServer turnServer : turnServers) {
           Log.d(TAG, "TurnServer: " + turnServer);
@@ -160,9 +159,9 @@ public class RoomParametersFetcher {
 
   // Requests & returns a TURN ICE Server based on a request URL.  Must be run
   // off the main thread!
-  private LinkedList<PeerConnection.IceServer> requestTurnServers(String url)
+  private List<PeerConnection.IceServer> requestTurnServers(String url)
       throws IOException, JSONException {
-    LinkedList<PeerConnection.IceServer> turnServers = new LinkedList<PeerConnection.IceServer>();
+    List<PeerConnection.IceServer> turnServers = new ArrayList<>();
     Log.d(TAG, "Request TURN from: " + url);
     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
     connection.setDoOutput(true);
@@ -187,7 +186,12 @@ public class RoomParametersFetcher {
       String credential = server.has("credential") ? server.getString("credential") : "";
       for (int j = 0; j < turnUrls.length(); j++) {
         String turnUrl = turnUrls.getString(j);
-        turnServers.add(new PeerConnection.IceServer(turnUrl, username, credential));
+        PeerConnection.IceServer turnServer =
+            PeerConnection.IceServer.builder(turnUrl)
+              .setUsername(username)
+              .setPassword(credential)
+              .createIceServer();
+        turnServers.add(turnServer);
       }
     }
     return turnServers;
@@ -195,23 +199,27 @@ public class RoomParametersFetcher {
 
   // Return the list of ICE servers described by a WebRTCPeerConnection
   // configuration string.
-  private LinkedList<PeerConnection.IceServer> iceServersFromPCConfigJSON(String pcConfig)
+  private List<PeerConnection.IceServer> iceServersFromPCConfigJSON(String pcConfig)
       throws JSONException {
     JSONObject json = new JSONObject(pcConfig);
     JSONArray servers = json.getJSONArray("iceServers");
-    LinkedList<PeerConnection.IceServer> ret = new LinkedList<PeerConnection.IceServer>();
+    List<PeerConnection.IceServer> ret = new ArrayList<>();
     for (int i = 0; i < servers.length(); ++i) {
       JSONObject server = servers.getJSONObject(i);
       String url = server.getString("urls");
       String credential = server.has("credential") ? server.getString("credential") : "";
-      ret.add(new PeerConnection.IceServer(url, "", credential));
+        PeerConnection.IceServer turnServer =
+            PeerConnection.IceServer.builder(url)
+              .setPassword(credential)
+              .createIceServer();
+      ret.add(turnServer);
     }
     return ret;
   }
 
   // Return the contents of an InputStream as a String.
   private static String drainStream(InputStream in) {
-    Scanner s = new Scanner(in).useDelimiter("\\A");
+    Scanner s = new Scanner(in, "UTF-8").useDelimiter("\\A");
     return s.hasNext() ? s.next() : "";
   }
 }

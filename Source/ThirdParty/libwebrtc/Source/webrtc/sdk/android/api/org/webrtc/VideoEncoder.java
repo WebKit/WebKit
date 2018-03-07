@@ -10,9 +10,12 @@
 
 package org.webrtc;
 
+import org.webrtc.EncodedImage;
+
 /**
  * Interface for a video encoder that can be used with WebRTC. All calls will be made on the
- * encoding thread.
+ * encoding thread. The encoder may be constructed on a different thread and changing thread after
+ * calling release is allowed.
  */
 public interface VideoEncoder {
   /** Settings passed to the encoder by WebRTC. */
@@ -22,13 +25,17 @@ public interface VideoEncoder {
     public final int height;
     public final int startBitrate; // Kilobits per second.
     public final int maxFramerate;
+    public final boolean automaticResizeOn;
 
-    public Settings(int numberOfCores, int width, int height, int startBitrate, int maxFramerate) {
+    @CalledByNative("Settings")
+    public Settings(int numberOfCores, int width, int height, int startBitrate, int maxFramerate,
+        boolean automaticResizeOn) {
       this.numberOfCores = numberOfCores;
       this.width = width;
       this.height = height;
       this.startBitrate = startBitrate;
       this.maxFramerate = maxFramerate;
+      this.automaticResizeOn = automaticResizeOn;
     }
   }
 
@@ -36,6 +43,7 @@ public interface VideoEncoder {
   public class EncodeInfo {
     public final EncodedImage.FrameType[] frameTypes;
 
+    @CalledByNative("EncodeInfo")
     public EncodeInfo(EncodedImage.FrameType[] frameTypes) {
       this.frameTypes = frameTypes;
     }
@@ -63,6 +71,7 @@ public interface VideoEncoder {
      * Initializes the allocation with a two dimensional array of bitrates. The first index of the
      * array is the spatial layer and the second index in the temporal layer.
      */
+    @CalledByNative("BitrateAllocation")
     public BitrateAllocation(int[][] bitratesBbs) {
       this.bitratesBbs = bitratesBbs;
     }
@@ -84,11 +93,22 @@ public interface VideoEncoder {
   /** Settings for WebRTC quality based scaling. */
   public class ScalingSettings {
     public final boolean on;
-    public final int low;
-    public final int high;
+    public final Integer low;
+    public final Integer high;
 
     /**
-     * Creates quality based scaling settings.
+     * Creates quality based scaling setting.
+     *
+     * @param on True if quality scaling is turned on.
+     */
+    public ScalingSettings(boolean on) {
+      this.on = on;
+      this.low = null;
+      this.high = null;
+    }
+
+    /**
+     * Creates quality based scaling settings with custom thresholds.
      *
      * @param on True if quality scaling is turned on.
      * @param low Average QP at which to scale up the resolution.
@@ -109,26 +129,35 @@ public interface VideoEncoder {
   /**
    * Initializes the encoding process. Call before any calls to encode.
    */
-  VideoCodecStatus initEncode(Settings settings, Callback encodeCallback);
+  @CalledByNative VideoCodecStatus initEncode(Settings settings, Callback encodeCallback);
+
   /**
    * Releases the encoder. No more calls to encode will be made after this call.
    */
-  VideoCodecStatus release();
+  @CalledByNative VideoCodecStatus release();
+
   /**
    * Requests the encoder to encode a frame.
    */
-  VideoCodecStatus encode(VideoFrame frame, EncodeInfo info);
+  @CalledByNative VideoCodecStatus encode(VideoFrame frame, EncodeInfo info);
+
   /**
    * Informs the encoder of the packet loss and the round-trip time of the network.
    *
    * @param packetLoss How many packets are lost on average per 255 packets.
    * @param roundTripTimeMs Round-trip time of the network in milliseconds.
    */
-  VideoCodecStatus setChannelParameters(short packetLoss, long roundTripTimeMs);
+  @CalledByNative VideoCodecStatus setChannelParameters(short packetLoss, long roundTripTimeMs);
+
   /** Sets the bitrate allocation and the target framerate for the encoder. */
-  VideoCodecStatus setRateAllocation(BitrateAllocation allocation, int framerate);
+  @CalledByNative VideoCodecStatus setRateAllocation(BitrateAllocation allocation, int framerate);
+
   /** Any encoder that wants to use WebRTC provided quality scaler must implement this method. */
-  ScalingSettings getScalingSettings();
-  /** Should return a descriptive name for the implementation. */
-  String getImplementationName();
+  @CalledByNative ScalingSettings getScalingSettings();
+
+  /**
+   * Should return a descriptive name for the implementation. Gets called once and cached. May be
+   * called from arbitrary thread.
+   */
+  @CalledByNative String getImplementationName();
 }

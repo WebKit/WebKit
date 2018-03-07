@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
 
 /* Filter coefficicients in Q15. */
 static const int16_t kDampFilter[PITCH_DAMPORDER] = {

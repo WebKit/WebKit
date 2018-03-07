@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_DATACHANNEL_H_
-#define WEBRTC_PC_DATACHANNEL_H_
+#ifndef PC_DATACHANNEL_H_
+#define PC_DATACHANNEL_H_
 
 #include <deque>
 #include <set>
 #include <string>
 
-#include "webrtc/api/datachannelinterface.h"
-#include "webrtc/api/proxy.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/pc/channel.h"
+#include "api/datachannelinterface.h"
+#include "api/proxy.h"
+#include "media/base/mediachannel.h"
+#include "pc/channel.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/sigslot.h"
 
 namespace webrtc {
 
@@ -295,4 +295,4 @@ END_PROXY_MAP()
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_DATACHANNEL_H_
+#endif  // PC_DATACHANNEL_H_

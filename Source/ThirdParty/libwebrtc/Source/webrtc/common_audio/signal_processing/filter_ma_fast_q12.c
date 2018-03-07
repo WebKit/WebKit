@@ -15,9 +15,9 @@
  *
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
-#include "webrtc/base/sanitizer.h"
+#include "rtc_base/sanitizer.h"
 
 void WebRtcSpl_FilterMAFastQ12(const int16_t* in_ptr,
                                int16_t* out_ptr,

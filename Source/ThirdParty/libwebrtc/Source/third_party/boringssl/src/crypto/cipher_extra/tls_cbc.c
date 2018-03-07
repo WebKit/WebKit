@@ -62,13 +62,13 @@
 #include "../fipsmodule/cipher/internal.h"
 
 
-/* MAX_HASH_BIT_COUNT_BYTES is the maximum number of bytes in the hash's length
- * field. (SHA-384/512 have 128-bit length.) */
+// MAX_HASH_BIT_COUNT_BYTES is the maximum number of bytes in the hash's length
+// field. (SHA-384/512 have 128-bit length.)
 #define MAX_HASH_BIT_COUNT_BYTES 16
 
-/* MAX_HASH_BLOCK_SIZE is the maximum hash block size that we'll support.
- * Currently SHA-384/512 has a 128-byte block size and that's the largest
- * supported by TLS.) */
+// MAX_HASH_BLOCK_SIZE is the maximum hash block size that we'll support.
+// Currently SHA-384/512 has a 128-byte block size and that's the largest
+// supported by TLS.)
 #define MAX_HASH_BLOCK_SIZE 128
 
 int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
@@ -76,7 +76,7 @@ int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
                                size_t block_size, size_t mac_size) {
   const size_t overhead = 1 /* padding length byte */ + mac_size;
 
-  /* These lengths are all public so we can test them in non-constant time. */
+  // These lengths are all public so we can test them in non-constant time.
   if (overhead > in_len) {
     return 0;
   }
@@ -84,16 +84,16 @@ int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
   size_t padding_length = in[in_len - 1];
 
   crypto_word_t good = constant_time_ge_w(in_len, overhead + padding_length);
-  /* The padding consists of a length byte at the end of the record and
-   * then that many bytes of padding, all with the same value as the
-   * length byte. Thus, with the length byte included, there are i+1
-   * bytes of padding.
-   *
-   * We can't check just |padding_length+1| bytes because that leaks
-   * decrypted information. Therefore we always have to check the maximum
-   * amount of padding possible. (Again, the length of the record is
-   * public information so we can use it.) */
-  size_t to_check = 256; /* maximum amount of padding, inc length byte. */
+  // The padding consists of a length byte at the end of the record and
+  // then that many bytes of padding, all with the same value as the
+  // length byte. Thus, with the length byte included, there are i+1
+  // bytes of padding.
+  //
+  // We can't check just |padding_length+1| bytes because that leaks
+  // decrypted information. Therefore we always have to check the maximum
+  // amount of padding possible. (Again, the length of the record is
+  // public information so we can use it.)
+  size_t to_check = 256;  // maximum amount of padding, inc length byte.
   if (to_check > in_len) {
     to_check = in_len;
   }
@@ -101,19 +101,19 @@ int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
   for (size_t i = 0; i < to_check; i++) {
     uint8_t mask = constant_time_ge_8(padding_length, i);
     uint8_t b = in[in_len - 1 - i];
-    /* The final |padding_length+1| bytes should all have the value
-     * |padding_length|. Therefore the XOR should be zero. */
+    // The final |padding_length+1| bytes should all have the value
+    // |padding_length|. Therefore the XOR should be zero.
     good &= ~(mask & (padding_length ^ b));
   }
 
-  /* If any of the final |padding_length+1| bytes had the wrong value,
-   * one or more of the lower eight bits of |good| will be cleared. */
+  // If any of the final |padding_length+1| bytes had the wrong value,
+  // one or more of the lower eight bits of |good| will be cleared.
   good = constant_time_eq_w(0xff, good & 0xff);
 
-  /* Always treat |padding_length| as zero on error. If, assuming block size of
-   * 16, a padding of [<15 arbitrary bytes> 15] treated |padding_length| as 16
-   * and returned -1, distinguishing good MAC and bad padding from bad MAC and
-   * bad padding would give POODLE's padding oracle. */
+  // Always treat |padding_length| as zero on error. If, assuming block size of
+  // 16, a padding of [<15 arbitrary bytes> 15] treated |padding_length| as 16
+  // and returned -1, distinguishing good MAC and bad padding from bad MAC and
+  // bad padding would give POODLE's padding oracle.
   padding_length = good & (padding_length + 1);
   *out_len = in_len - padding_length;
   *out_padding_ok = good;
@@ -126,7 +126,7 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   uint8_t *rotated_mac = rotated_mac1;
   uint8_t *rotated_mac_tmp = rotated_mac2;
 
-  /* mac_end is the index of |in| just after the end of the MAC. */
+  // mac_end is the index of |in| just after the end of the MAC.
   size_t mac_end = in_len;
   size_t mac_start = mac_end - md_size;
 
@@ -134,10 +134,10 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   assert(in_len >= md_size);
   assert(md_size <= EVP_MAX_MD_SIZE);
 
-  /* scan_start contains the number of bytes that we can ignore because
-   * the MAC's position can only vary by 255 bytes. */
+  // scan_start contains the number of bytes that we can ignore because
+  // the MAC's position can only vary by 255 bytes.
   size_t scan_start = 0;
-  /* This information is public so it's safe to branch based on it. */
+  // This information is public so it's safe to branch based on it.
   if (orig_len > md_size + 255 + 1) {
     scan_start = orig_len - (md_size + 255 + 1);
   }
@@ -153,15 +153,15 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
     mac_started |= is_mac_start;
     uint8_t mac_ended = constant_time_ge_8(i, mac_end);
     rotated_mac[j] |= in[i] & mac_started & ~mac_ended;
-    /* Save the offset that |mac_start| is mapped to. */
+    // Save the offset that |mac_start| is mapped to.
     rotate_offset |= j & is_mac_start;
   }
 
-  /* Now rotate the MAC. We rotate in log(md_size) steps, one for each bit
-   * position. */
+  // Now rotate the MAC. We rotate in log(md_size) steps, one for each bit
+  // position.
   for (size_t offset = 1; offset < md_size; offset <<= 1, rotate_offset >>= 1) {
-    /* Rotate by |offset| iff the corresponding bit is set in
-     * |rotate_offset|, placing the result in |rotated_mac_tmp|. */
+    // Rotate by |offset| iff the corresponding bit is set in
+    // |rotate_offset|, placing the result in |rotated_mac_tmp|.
     const uint8_t skip_rotate = (rotate_offset & 1) - 1;
     for (size_t i = 0, j = offset; i < md_size; i++, j++) {
       if (j >= md_size) {
@@ -171,9 +171,9 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
           constant_time_select_8(skip_rotate, rotated_mac[i], rotated_mac[j]);
     }
 
-    /* Swap pointers so |rotated_mac| contains the (possibly) rotated value.
-     * Note the number of iterations and thus the identity of these pointers is
-     * public information. */
+    // Swap pointers so |rotated_mac| contains the (possibly) rotated value.
+    // Note the number of iterations and thus the identity of these pointers is
+    // public information.
     uint8_t *tmp = rotated_mac;
     rotated_mac = rotated_mac_tmp;
     rotated_mac_tmp = tmp;
@@ -182,8 +182,8 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   OPENSSL_memcpy(out, rotated_mac, md_size);
 }
 
-/* u32toBE serialises an unsigned, 32-bit number (n) as four bytes at (p) in
- * big-endian order. The value of p is advanced by four. */
+// u32toBE serialises an unsigned, 32-bit number (n) as four bytes at (p) in
+// big-endian order. The value of p is advanced by four.
 #define u32toBE(n, p)                \
   do {                               \
     *((p)++) = (uint8_t)((n) >> 24); \
@@ -192,8 +192,8 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
     *((p)++) = (uint8_t)((n));       \
   } while (0)
 
-/* u64toBE serialises an unsigned, 64-bit number (n) as eight bytes at (p) in
- * big-endian order. The value of p is advanced by eight. */
+// u64toBE serialises an unsigned, 64-bit number (n) as eight bytes at (p) in
+// big-endian order. The value of p is advanced by eight.
 #define u64toBE(n, p)                \
   do {                               \
     *((p)++) = (uint8_t)((n) >> 56); \
@@ -224,9 +224,9 @@ static void tls1_sha512_transform(HASH_CTX *ctx, const uint8_t *block) {
   SHA512_Transform(&ctx->sha512, block);
 }
 
-/* These functions serialize the state of a hash and thus perform the standard
- * "final" operation without adding the padding and length that such a function
- * typically does. */
+// These functions serialize the state of a hash and thus perform the standard
+// "final" operation without adding the padding and length that such a function
+// typically does.
 static void tls1_sha1_final_raw(HASH_CTX *ctx, uint8_t *md_out) {
   SHA_CTX *sha1 = &ctx->sha1;
   u32toBE(sha1->h[0], md_out);
@@ -272,13 +272,13 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
   void (*md_final_raw)(HASH_CTX *ctx, uint8_t *md_out);
   void (*md_transform)(HASH_CTX *ctx, const uint8_t *block);
   unsigned md_size, md_block_size = 64;
-  /* md_length_size is the number of bytes in the length field that terminates
-   * the hash. */
+  // md_length_size is the number of bytes in the length field that terminates
+  // the hash.
   unsigned md_length_size = 8;
 
-  /* Bound the acceptable input so we can forget about many possible overflows
-   * later in this function. This is redundant with the record size limits in
-   * TLS. */
+  // Bound the acceptable input so we can forget about many possible overflows
+  // later in this function. This is redundant with the record size limits in
+  // TLS.
   if (data_plus_mac_plus_padding_size >= 1024 * 1024) {
     assert(0);
     return 0;
@@ -309,8 +309,8 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
       break;
 
     default:
-      /* EVP_tls_cbc_record_digest_supported should have been called first to
-       * check that the hash function is supported. */
+      // EVP_tls_cbc_record_digest_supported should have been called first to
+      // check that the hash function is supported.
       assert(0);
       *md_out_size = 0;
       return 0;
@@ -322,45 +322,45 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
 
   static const size_t kHeaderLength = 13;
 
-  /* kVarianceBlocks is the number of blocks of the hash that we have to
-   * calculate in constant time because they could be altered by the
-   * padding value.
-   *
-   * TLSv1 has MACs up to 48 bytes long (SHA-384) and the padding is not
-   * required to be minimal. Therefore we say that the final six blocks
-   * can vary based on the padding. */
+  // kVarianceBlocks is the number of blocks of the hash that we have to
+  // calculate in constant time because they could be altered by the
+  // padding value.
+  //
+  // TLSv1 has MACs up to 48 bytes long (SHA-384) and the padding is not
+  // required to be minimal. Therefore we say that the final six blocks
+  // can vary based on the padding.
   static const size_t kVarianceBlocks = 6;
 
-  /* From now on we're dealing with the MAC, which conceptually has 13
-   * bytes of `header' before the start of the data. */
+  // From now on we're dealing with the MAC, which conceptually has 13
+  // bytes of `header' before the start of the data.
   size_t len = data_plus_mac_plus_padding_size + kHeaderLength;
-  /* max_mac_bytes contains the maximum bytes of bytes in the MAC, including
-   * |header|, assuming that there's no padding. */
+  // max_mac_bytes contains the maximum bytes of bytes in the MAC, including
+  // |header|, assuming that there's no padding.
   size_t max_mac_bytes = len - md_size - 1;
-  /* num_blocks is the maximum number of hash blocks. */
+  // num_blocks is the maximum number of hash blocks.
   size_t num_blocks =
       (max_mac_bytes + 1 + md_length_size + md_block_size - 1) / md_block_size;
-  /* In order to calculate the MAC in constant time we have to handle
-   * the final blocks specially because the padding value could cause the
-   * end to appear somewhere in the final |kVarianceBlocks| blocks and we
-   * can't leak where. However, |num_starting_blocks| worth of data can
-   * be hashed right away because no padding value can affect whether
-   * they are plaintext. */
+  // In order to calculate the MAC in constant time we have to handle
+  // the final blocks specially because the padding value could cause the
+  // end to appear somewhere in the final |kVarianceBlocks| blocks and we
+  // can't leak where. However, |num_starting_blocks| worth of data can
+  // be hashed right away because no padding value can affect whether
+  // they are plaintext.
   size_t num_starting_blocks = 0;
-  /* k is the starting byte offset into the conceptual header||data where
-   * we start processing. */
+  // k is the starting byte offset into the conceptual header||data where
+  // we start processing.
   size_t k = 0;
-  /* mac_end_offset is the index just past the end of the data to be
-   * MACed. */
+  // mac_end_offset is the index just past the end of the data to be
+  // MACed.
   size_t mac_end_offset = data_plus_mac_size + kHeaderLength - md_size;
-  /* c is the index of the 0x80 byte in the final hash block that
-   * contains application data. */
+  // c is the index of the 0x80 byte in the final hash block that
+  // contains application data.
   size_t c = mac_end_offset % md_block_size;
-  /* index_a is the hash block number that contains the 0x80 terminating
-   * value. */
+  // index_a is the hash block number that contains the 0x80 terminating
+  // value.
   size_t index_a = mac_end_offset / md_block_size;
-  /* index_b is the hash block number that contains the 64-bit hash
-   * length, in bits. */
+  // index_b is the hash block number that contains the 64-bit hash
+  // length, in bits.
   size_t index_b = (mac_end_offset + md_length_size) / md_block_size;
 
   if (num_blocks > kVarianceBlocks) {
@@ -368,13 +368,13 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
     k = md_block_size * num_starting_blocks;
   }
 
-  /* bits is the hash-length in bits. It includes the additional hash
-   * block for the masked HMAC key. */
-  size_t bits = 8 * mac_end_offset; /* at most 18 bits to represent */
+  // bits is the hash-length in bits. It includes the additional hash
+  // block for the masked HMAC key.
+  size_t bits = 8 * mac_end_offset;  // at most 18 bits to represent
 
-  /* Compute the initial HMAC block. */
+  // Compute the initial HMAC block.
   bits += 8 * md_block_size;
-  /* hmac_pad is the masked HMAC key. */
+  // hmac_pad is the masked HMAC key.
   uint8_t hmac_pad[MAX_HASH_BLOCK_SIZE];
   OPENSSL_memset(hmac_pad, 0, md_block_size);
   assert(mac_secret_length <= sizeof(hmac_pad));
@@ -385,7 +385,7 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
 
   md_transform(&md_state, hmac_pad);
 
-  /* The length check means |bits| fits in four bytes. */
+  // The length check means |bits| fits in four bytes.
   uint8_t length_bytes[MAX_HASH_BIT_COUNT_BYTES];
   OPENSSL_memset(length_bytes, 0, md_length_size - 4);
   length_bytes[md_length_size - 4] = (uint8_t)(bits >> 24);
@@ -394,7 +394,7 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
   length_bytes[md_length_size - 1] = (uint8_t)bits;
 
   if (k > 0) {
-    /* k is a multiple of md_block_size. */
+    // k is a multiple of md_block_size.
     uint8_t first_block[MAX_HASH_BLOCK_SIZE];
     OPENSSL_memcpy(first_block, header, 13);
     OPENSSL_memcpy(first_block + 13, data, md_block_size - 13);
@@ -407,10 +407,10 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
   uint8_t mac_out[EVP_MAX_MD_SIZE];
   OPENSSL_memset(mac_out, 0, sizeof(mac_out));
 
-  /* We now process the final hash blocks. For each block, we construct
-   * it in constant time. If the |i==index_a| then we'll include the 0x80
-   * bytes and zero pad etc. For each block we selectively copy it, in
-   * constant time, to |mac_out|. */
+  // We now process the final hash blocks. For each block, we construct
+  // it in constant time. If the |i==index_a| then we'll include the 0x80
+  // bytes and zero pad etc. For each block we selectively copy it, in
+  // constant time, to |mac_out|.
   for (size_t i = num_starting_blocks;
        i <= num_starting_blocks + kVarianceBlocks; i++) {
     uint8_t block[MAX_HASH_BLOCK_SIZE];
@@ -427,24 +427,24 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
 
       uint8_t is_past_c = is_block_a & constant_time_ge_8(j, c);
       uint8_t is_past_cp1 = is_block_a & constant_time_ge_8(j, c + 1);
-      /* If this is the block containing the end of the
-       * application data, and we are at the offset for the
-       * 0x80 value, then overwrite b with 0x80. */
+      // If this is the block containing the end of the
+      // application data, and we are at the offset for the
+      // 0x80 value, then overwrite b with 0x80.
       b = constant_time_select_8(is_past_c, 0x80, b);
-      /* If this the the block containing the end of the
-       * application data and we're past the 0x80 value then
-       * just write zero. */
+      // If this the the block containing the end of the
+      // application data and we're past the 0x80 value then
+      // just write zero.
       b = b & ~is_past_cp1;
-      /* If this is index_b (the final block), but not
-       * index_a (the end of the data), then the 64-bit
-       * length didn't fit into index_a and we're having to
-       * add an extra block of zeros. */
+      // If this is index_b (the final block), but not
+      // index_a (the end of the data), then the 64-bit
+      // length didn't fit into index_a and we're having to
+      // add an extra block of zeros.
       b &= ~is_block_b | is_block_a;
 
-      /* The final bytes of one of the blocks contains the
-       * length. */
+      // The final bytes of one of the blocks contains the
+      // length.
       if (j >= md_block_size - md_length_size) {
-        /* If this is index_b, write a length byte. */
+        // If this is index_b, write a length byte.
         b = constant_time_select_8(
             is_block_b, length_bytes[j - (md_block_size - md_length_size)], b);
       }
@@ -453,7 +453,7 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
 
     md_transform(&md_state, block);
     md_final_raw(&md_state, block);
-    /* If this is index_b, copy the hash value to |mac_out|. */
+    // If this is index_b, copy the hash value to |mac_out|.
     for (size_t j = 0; j < md_size; j++) {
       mac_out[j] |= block[j] & is_block_b;
     }
@@ -466,7 +466,7 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
     return 0;
   }
 
-  /* Complete the HMAC in the standard manner. */
+  // Complete the HMAC in the standard manner.
   for (size_t i = 0; i < md_block_size; i++) {
     hmac_pad[i] ^= 0x6a;
   }

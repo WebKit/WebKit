@@ -66,7 +66,7 @@ typedef struct {
 } nid_triple;
 
 static const nid_triple kTriples[] = {
-    /* RSA PKCS#1. */
+    // RSA PKCS#1.
     {NID_md4WithRSAEncryption, NID_md4, NID_rsaEncryption},
     {NID_md5WithRSAEncryption, NID_md5, NID_rsaEncryption},
     {NID_sha1WithRSAEncryption, NID_sha1, NID_rsaEncryption},
@@ -74,19 +74,19 @@ static const nid_triple kTriples[] = {
     {NID_sha256WithRSAEncryption, NID_sha256, NID_rsaEncryption},
     {NID_sha384WithRSAEncryption, NID_sha384, NID_rsaEncryption},
     {NID_sha512WithRSAEncryption, NID_sha512, NID_rsaEncryption},
-    /* DSA. */
+    // DSA.
     {NID_dsaWithSHA1, NID_sha1, NID_dsa},
     {NID_dsaWithSHA1_2, NID_sha1, NID_dsa_2},
     {NID_dsa_with_SHA224, NID_sha224, NID_dsa},
     {NID_dsa_with_SHA256, NID_sha256, NID_dsa},
-    /* ECDSA. */
+    // ECDSA.
     {NID_ecdsa_with_SHA1, NID_sha1, NID_X9_62_id_ecPublicKey},
     {NID_ecdsa_with_SHA224, NID_sha224, NID_X9_62_id_ecPublicKey},
     {NID_ecdsa_with_SHA256, NID_sha256, NID_X9_62_id_ecPublicKey},
     {NID_ecdsa_with_SHA384, NID_sha384, NID_X9_62_id_ecPublicKey},
     {NID_ecdsa_with_SHA512, NID_sha512, NID_X9_62_id_ecPublicKey},
-    /* The following algorithms use more complex (or simpler) parameters. The
-     * digest "undef" indicates the caller should handle this explicitly. */
+    // The following algorithms use more complex (or simpler) parameters. The
+    // digest "undef" indicates the caller should handle this explicitly.
     {NID_rsassaPss, NID_undef, NID_rsaEncryption},
     {NID_ED25519, NID_undef, NID_ED25519},
 };

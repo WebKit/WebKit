@@ -8,18 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/rtc_event_log_source.h"
+#include "modules/audio_coding/neteq/tools/rtc_event_log_source.h"
 
 #include <assert.h>
 #include <string.h>
 #include <iostream>
 #include <limits>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/call/call.h"
-#include "webrtc/modules/audio_coding/neteq/tools/packet.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-
+#include "call/call.h"
+#include "modules/audio_coding/neteq/tools/packet.h"
+#include "modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -48,7 +47,7 @@ std::unique_ptr<Packet> RtcEventLogSource::NextPacket() {
       size_t packet_length;
       uint64_t timestamp_us = parsed_stream_.GetTimestamp(rtp_packet_index_);
       parsed_stream_.GetRtpHeader(rtp_packet_index_, &direction, nullptr,
-                                  &header_length, &packet_length);
+                                  &header_length, &packet_length, nullptr);
 
       if (direction != kIncomingPacket) {
         continue;
@@ -56,7 +55,7 @@ std::unique_ptr<Packet> RtcEventLogSource::NextPacket() {
 
       uint8_t* packet_header = new uint8_t[header_length];
       parsed_stream_.GetRtpHeader(rtp_packet_index_, nullptr, packet_header,
-                                  nullptr, nullptr);
+                                  nullptr, nullptr, nullptr);
       std::unique_ptr<Packet> packet(
           new Packet(packet_header, header_length, packet_length,
                      static_cast<double>(timestamp_us) / 1000, *parser_.get()));

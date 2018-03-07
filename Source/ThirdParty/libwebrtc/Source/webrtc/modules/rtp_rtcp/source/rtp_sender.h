@@ -8,31 +8,31 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTP_SENDER_H_
+#define MODULES_RTP_RTCP_SOURCE_RTP_SENDER_H_
 
 #include <map>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "webrtc/api/call/transport.h"
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/deprecation.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/random.h"
-#include "webrtc/base/rate_statistics.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/flexfec_sender.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/playout_delay_oracle.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_history.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
+#include "api/array_view.h"
+#include "api/call/transport.h"
+#include "api/optional.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/flexfec_sender.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/playout_delay_oracle.h"
+#include "modules/rtp_rtcp/source/rtp_packet_history.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/deprecation.h"
+#include "rtc_base/random.h"
+#include "rtc_base/rate_statistics.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -108,7 +108,8 @@ class RTPSender {
                         size_t payload_size,
                         const RTPFragmentationHeader* fragmentation,
                         const RTPVideoHeader* rtp_header,
-                        uint32_t* transport_frame_id_out);
+                        uint32_t* transport_frame_id_out,
+                        int64_t expected_retransmission_time_ms);
 
   // RTP header extension
   int32_t RegisterRtpHeaderExtension(RTPExtensionType type, uint8_t id);
@@ -176,10 +177,6 @@ class RTPSender {
   // Send a DTMF tone using RFC 2833 (4733).
   int32_t SendTelephoneEvent(uint8_t key, uint16_t time_ms, uint8_t level);
 
-  // This function is deprecated. It was previously used to determine when it
-  // was time to send a DTMF packet in silence (CNG).
-  RTC_DEPRECATED int32_t SetAudioPacketSize(uint16_t packet_size_samples);
-
   // Store the audio level in d_bov for
   // header-extension-for-audio-level-indication.
   int32_t SetAudioLevel(uint8_t level_d_bov);
@@ -204,6 +201,9 @@ class RTPSender {
   RtpState GetRtpState() const;
   void SetRtxRtpState(const RtpState& rtp_state);
   RtpState GetRtxRtpState() const;
+
+  int64_t LastTimestampTimeMs() const;
+  void SendKeepAlive(uint8_t payload_type);
 
  protected:
   int32_t CheckPayloadType(int8_t payload_type, RtpVideoCodecTypes* video_type);
@@ -254,7 +254,7 @@ class RTPSender {
 
   Clock* const clock_;
   const int64_t clock_delta_ms_;
-  Random random_ GUARDED_BY(send_critsect_);
+  Random random_ RTC_GUARDED_BY(send_critsect_);
 
   const bool audio_configured_;
   const std::unique_ptr<RTPSenderAudio> audio_;
@@ -267,14 +267,15 @@ class RTPSender {
   rtc::CriticalSection send_critsect_;
 
   Transport* transport_;
-  bool sending_media_ GUARDED_BY(send_critsect_);
+  bool sending_media_ RTC_GUARDED_BY(send_critsect_);
 
   size_t max_packet_size_;
 
-  int8_t payload_type_ GUARDED_BY(send_critsect_);
+  int8_t payload_type_ RTC_GUARDED_BY(send_critsect_);
   std::map<int8_t, RtpUtility::Payload*> payload_type_map_;
 
-  RtpHeaderExtensionMap rtp_header_extension_map_ GUARDED_BY(send_critsect_);
+  RtpHeaderExtensionMap rtp_header_extension_map_
+      RTC_GUARDED_BY(send_critsect_);
 
   // Tracks the current request for playout delay limits from application
   // and decides whether the current RTP frame should include the playout
@@ -288,13 +289,14 @@ class RTPSender {
 
   // Statistics
   rtc::CriticalSection statistics_crit_;
-  SendDelayMap send_delays_ GUARDED_BY(statistics_crit_);
-  FrameCounts frame_counts_ GUARDED_BY(statistics_crit_);
-  StreamDataCounters rtp_stats_ GUARDED_BY(statistics_crit_);
-  StreamDataCounters rtx_rtp_stats_ GUARDED_BY(statistics_crit_);
-  StreamDataCountersCallback* rtp_stats_callback_ GUARDED_BY(statistics_crit_);
-  RateStatistics total_bitrate_sent_ GUARDED_BY(statistics_crit_);
-  RateStatistics nack_bitrate_sent_ GUARDED_BY(statistics_crit_);
+  SendDelayMap send_delays_ RTC_GUARDED_BY(statistics_crit_);
+  FrameCounts frame_counts_ RTC_GUARDED_BY(statistics_crit_);
+  StreamDataCounters rtp_stats_ RTC_GUARDED_BY(statistics_crit_);
+  StreamDataCounters rtx_rtp_stats_ RTC_GUARDED_BY(statistics_crit_);
+  StreamDataCountersCallback* rtp_stats_callback_
+      RTC_GUARDED_BY(statistics_crit_);
+  RateStatistics total_bitrate_sent_ RTC_GUARDED_BY(statistics_crit_);
+  RateStatistics nack_bitrate_sent_ RTC_GUARDED_BY(statistics_crit_);
   FrameCountObserver* const frame_count_observer_;
   SendSideDelayObserver* const send_side_delay_observer_;
   RtcEventLog* const event_log_;
@@ -302,25 +304,25 @@ class RTPSender {
   BitrateStatisticsObserver* const bitrate_callback_;
 
   // RTP variables
-  uint32_t timestamp_offset_ GUARDED_BY(send_critsect_);
-  uint32_t remote_ssrc_ GUARDED_BY(send_critsect_);
-  bool sequence_number_forced_ GUARDED_BY(send_critsect_);
-  uint16_t sequence_number_ GUARDED_BY(send_critsect_);
-  uint16_t sequence_number_rtx_ GUARDED_BY(send_critsect_);
+  uint32_t timestamp_offset_ RTC_GUARDED_BY(send_critsect_);
+  uint32_t remote_ssrc_ RTC_GUARDED_BY(send_critsect_);
+  bool sequence_number_forced_ RTC_GUARDED_BY(send_critsect_);
+  uint16_t sequence_number_ RTC_GUARDED_BY(send_critsect_);
+  uint16_t sequence_number_rtx_ RTC_GUARDED_BY(send_critsect_);
   // Must be explicitly set by the application, use of rtc::Optional
   // only to keep track of correct use.
-  rtc::Optional<uint32_t> ssrc_ GUARDED_BY(send_critsect_);
-  uint32_t last_rtp_timestamp_ GUARDED_BY(send_critsect_);
-  int64_t capture_time_ms_ GUARDED_BY(send_critsect_);
-  int64_t last_timestamp_time_ms_ GUARDED_BY(send_critsect_);
-  bool media_has_been_sent_ GUARDED_BY(send_critsect_);
-  bool last_packet_marker_bit_ GUARDED_BY(send_critsect_);
-  std::vector<uint32_t> csrcs_ GUARDED_BY(send_critsect_);
-  int rtx_ GUARDED_BY(send_critsect_);
-  rtc::Optional<uint32_t> ssrc_rtx_ GUARDED_BY(send_critsect_);
+  rtc::Optional<uint32_t> ssrc_ RTC_GUARDED_BY(send_critsect_);
+  uint32_t last_rtp_timestamp_ RTC_GUARDED_BY(send_critsect_);
+  int64_t capture_time_ms_ RTC_GUARDED_BY(send_critsect_);
+  int64_t last_timestamp_time_ms_ RTC_GUARDED_BY(send_critsect_);
+  bool media_has_been_sent_ RTC_GUARDED_BY(send_critsect_);
+  bool last_packet_marker_bit_ RTC_GUARDED_BY(send_critsect_);
+  std::vector<uint32_t> csrcs_ RTC_GUARDED_BY(send_critsect_);
+  int rtx_ RTC_GUARDED_BY(send_critsect_);
+  rtc::Optional<uint32_t> ssrc_rtx_ RTC_GUARDED_BY(send_critsect_);
   // Mapping rtx_payload_type_map_[associated] = rtx.
-  std::map<int8_t, int8_t> rtx_payload_type_map_ GUARDED_BY(send_critsect_);
-  size_t rtp_overhead_bytes_per_packet_ GUARDED_BY(send_critsect_);
+  std::map<int8_t, int8_t> rtx_payload_type_map_ RTC_GUARDED_BY(send_critsect_);
+  size_t rtp_overhead_bytes_per_packet_ RTC_GUARDED_BY(send_critsect_);
 
   RateLimiter* const retransmission_rate_limiter_;
   OverheadObserver* overhead_observer_;
@@ -332,4 +334,4 @@ class RTPSender {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTP_SENDER_H_

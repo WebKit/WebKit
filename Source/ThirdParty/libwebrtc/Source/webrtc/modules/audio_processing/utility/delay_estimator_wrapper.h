@@ -11,10 +11,10 @@
 // Performs delay estimation on block by block basis.
 // The return value is  0 - OK and -1 - Error, unless otherwise stated.
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_WRAPPER_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_WRAPPER_H_
+#ifndef MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_WRAPPER_H_
+#define MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_WRAPPER_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Releases the memory allocated by WebRtc_CreateDelayEstimatorFarend(...)
 void WebRtc_FreeDelayEstimatorFarend(void* handle);
@@ -241,4 +241,4 @@ int WebRtc_last_delay(void* handle);
 //      - delay_quality : >= 0  - Estimation quality of last calculated delay.
 float WebRtc_last_delay_quality(void* handle);
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_WRAPPER_H_
+#endif  // MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_WRAPPER_H_

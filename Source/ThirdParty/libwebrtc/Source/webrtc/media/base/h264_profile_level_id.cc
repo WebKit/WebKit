@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/h264_profile_level_id.h"
+#include "media/base/h264_profile_level_id.h"
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-#include "webrtc/base/arraysize.h"
+#include "rtc_base/arraysize.h"
 
 namespace webrtc {
 namespace H264 {
@@ -121,10 +121,10 @@ static constexpr LevelConstraint kLevelConstraints[] = {
 rtc::Optional<ProfileLevelId> ParseProfileLevelId(const char* str) {
   // The string should consist of 3 bytes in hexadecimal format.
   if (strlen(str) != 6u)
-    return rtc::Optional<ProfileLevelId>();
+    return rtc::nullopt;
   const uint32_t profile_level_id_numeric = strtol(str, nullptr, 16);
   if (profile_level_id_numeric == 0)
-    return rtc::Optional<ProfileLevelId>();
+    return rtc::nullopt;
 
   // Separate into three bytes.
   const uint8_t level_idc =
@@ -159,19 +159,19 @@ rtc::Optional<ProfileLevelId> ParseProfileLevelId(const char* str) {
       break;
     default:
       // Unrecognized level_idc.
-      return rtc::Optional<ProfileLevelId>();
+      return rtc::nullopt;
   }
 
   // Parse profile_idc/profile_iop into a Profile enum.
   for (const ProfilePattern& pattern : kProfilePatterns) {
     if (profile_idc == pattern.profile_idc &&
         pattern.profile_iop.IsMatch(profile_iop)) {
-      return rtc::Optional<ProfileLevelId>({pattern.profile, level});
+      return ProfileLevelId(pattern.profile, level);
     }
   }
 
   // Unrecognized profile_idc/profile_iop combination.
-  return rtc::Optional<ProfileLevelId>();
+  return rtc::nullopt;
 }
 
 rtc::Optional<Level> SupportedLevel(int max_frame_pixel_count, float max_fps) {
@@ -183,12 +183,12 @@ rtc::Optional<Level> SupportedLevel(int max_frame_pixel_count, float max_fps) {
             max_frame_pixel_count &&
         level_constraint.max_macroblocks_per_second <=
             max_fps * level_constraint.max_macroblock_frame_size) {
-      return rtc::Optional<Level>(level_constraint.level);
+      return level_constraint.level;
     }
   }
 
   // No level supported.
-  return rtc::Optional<Level>();
+  return rtc::nullopt;
 }
 
 rtc::Optional<ProfileLevelId> ParseSdpProfileLevelId(
@@ -205,7 +205,7 @@ rtc::Optional<ProfileLevelId> ParseSdpProfileLevelId(
 
   const auto profile_level_id_it = params.find(kProfileLevelId);
   return (profile_level_id_it == params.end())
-             ? rtc::Optional<ProfileLevelId>(kDefaultProfileLevelId)
+             ? kDefaultProfileLevelId
              : ParseProfileLevelId(profile_level_id_it->second.c_str());
 }
 
@@ -215,14 +215,14 @@ rtc::Optional<std::string> ProfileLevelIdToString(
   if (profile_level_id.level == kLevel1_b) {
     switch (profile_level_id.profile) {
       case kProfileConstrainedBaseline:
-        return rtc::Optional<std::string>("42f00b");
+        return {"42f00b"};
       case kProfileBaseline:
-        return rtc::Optional<std::string>("42100b");
+        return {"42100b"};
       case kProfileMain:
-        return rtc::Optional<std::string>("4d100b");
+        return {"4d100b"};
       // Level 1b is not allowed for other profiles.
       default:
-        return rtc::Optional<std::string>();
+        return rtc::nullopt;
     }
   }
 
@@ -245,12 +245,12 @@ rtc::Optional<std::string> ProfileLevelIdToString(
       break;
     // Unrecognized profile.
     default:
-      return rtc::Optional<std::string>();
+      return rtc::nullopt;
   }
 
   char str[7];
   snprintf(str, 7u, "%s%02x", profile_idc_iop_string, profile_level_id.level);
-  return rtc::Optional<std::string>(str);
+  return {str};
 }
 
 // Set level according to https://tools.ietf.org/html/rfc6184#section-8.2.2.
@@ -293,6 +293,17 @@ void GenerateProfileLevelIdForAnswer(
   // Set the resulting profile-level-id in the answer parameters.
   (*answer_params)[kProfileLevelId] = *ProfileLevelIdToString(
       ProfileLevelId(local_profile_level_id->profile, answer_level));
+}
+
+bool IsSameH264Profile(const CodecParameterMap& params1,
+                       const CodecParameterMap& params2) {
+  const rtc::Optional<webrtc::H264::ProfileLevelId> profile_level_id =
+      webrtc::H264::ParseSdpProfileLevelId(params1);
+  const rtc::Optional<webrtc::H264::ProfileLevelId> other_profile_level_id =
+      webrtc::H264::ParseSdpProfileLevelId(params2);
+  // Compare H264 profiles, but not levels.
+  return profile_level_id && other_profile_level_id &&
+         profile_level_id->profile == other_profile_level_id->profile;
 }
 
 }  // namespace H264

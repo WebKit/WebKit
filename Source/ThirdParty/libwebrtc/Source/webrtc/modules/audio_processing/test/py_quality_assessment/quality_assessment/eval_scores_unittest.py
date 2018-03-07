@@ -52,6 +52,9 @@ class TestEvalScores(unittest.TestCase):
     shutil.rmtree(self._output_path)
 
   def testRegisteredClasses(self):
+    # Evaluation score names to exclude (tested separately).
+    exceptions = ['thd']
+
     # Preliminary check.
     self.assertTrue(os.path.exists(self._output_path))
 
@@ -65,14 +68,18 @@ class TestEvalScores(unittest.TestCase):
         eval_scores_factory.EvaluationScoreWorkerFactory(
             polqa_tool_bin_path=os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), 'fake_polqa')))
+    eval_score_workers_factory.SetScoreFilenamePrefix('scores-')
 
     # Try each registered evaluation score worker.
     for eval_score_name in registered_classes:
+      if eval_score_name in exceptions:
+        continue
+
       # Instance evaluation score worker.
       eval_score_worker = eval_score_workers_factory.GetInstance(
           registered_classes[eval_score_name])
 
-      # Set reference and test, then run.
+      # Set fake input metadata and reference and test file paths, then run.
       eval_score_worker.SetReferenceSignalFilepath(
           self._fake_reference_signal_filepath)
       eval_score_worker.SetTestedSignalFilepath(
@@ -82,3 +89,43 @@ class TestEvalScores(unittest.TestCase):
       # Check output.
       score = data_access.ScoreFile.Load(eval_score_worker.output_filepath)
       self.assertTrue(isinstance(score, float))
+
+  def testTotalHarmonicDistorsionScore(self):
+    # Init.
+    pure_tone_freq = 5000.0
+    eval_score_worker = eval_scores.TotalHarmonicDistorsionScore('scores-')
+    eval_score_worker.SetInputSignalMetadata({
+        'signal': 'pure_tone',
+        'frequency': pure_tone_freq,
+        'test_data_gen_name': 'identity',
+        'test_data_gen_config': 'default',
+    })
+    template = pydub.AudioSegment.silent(duration=1000, frame_rate=48000)
+
+    # Create 3 test signals: pure tone, pure tone + white noise, white noise
+    # only.
+    pure_tone = signal_processing.SignalProcessingUtils.GeneratePureTone(
+        template, pure_tone_freq)
+    white_noise = signal_processing.SignalProcessingUtils.GenerateWhiteNoise(
+        template)
+    noisy_tone = signal_processing.SignalProcessingUtils.MixSignals(
+        pure_tone, white_noise)
+
+    # Compute scores for increasingly distorted pure tone signals.
+    scores = [None, None, None]
+    for index, tested_signal in enumerate([pure_tone, noisy_tone, white_noise]):
+      # Save signal.
+      tmp_filepath = os.path.join(self._output_path, 'tmp_thd.wav')
+      signal_processing.SignalProcessingUtils.SaveWav(
+          tmp_filepath, tested_signal)
+
+      # Compute score.
+      eval_score_worker.SetTestedSignalFilepath(tmp_filepath)
+      eval_score_worker.Run(self._output_path)
+      scores[index] = eval_score_worker.score
+
+      # Remove output file to avoid caching.
+      os.remove(eval_score_worker.output_filepath)
+
+    # Validate scores (lowest score with a pure tone).
+    self.assertTrue(all([scores[i + 1] > scores[i] for i in range(2)]))

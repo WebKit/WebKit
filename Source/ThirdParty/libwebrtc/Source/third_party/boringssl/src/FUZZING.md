@@ -68,13 +68,15 @@ Additionally, if `BORINGSSL_UNSAFE_FUZZER_MODE` is set, BoringSSL will:
 
 * Tickets are unencrypted and the MAC check is performed but ignored.
 
+* renegotiation\_info checks are ignored.
+
 This is to prevent the fuzzer from getting stuck at a cryptographic invariant in the protocol.
 
 ## TLS transcripts
 
 The `client` and `server` corpora are seeded from the test suite. The test suite has a `-fuzzer` flag which mirrors the fuzzer mode changes above and a `-deterministic` flag which removes all non-determinism on the Go side. Not all tests pass, so `ssl/test/runner/fuzzer_mode.json` contains the necessary suppressions. The `run_tests` target will pass appropriate command-line flags.
 
-There are separate corpora, `client_corpus_no_fuzzer_mode` and `server_corpus_no_fuzzer_mode`. These are transcripts for fuzzers with only `BORINGSSL_UNSAFE_DETERMINISTIC_MODE` defined. To build in this mode, pass `-DNO_FUZZER_MODE=1` into CMake. This configuration is run in the same way but without `-fuzzer` and `-shim-path` flags.
+There are separate corpora, `client_corpus_no_fuzzer_mode` and `server_corpus_no_fuzzer_mode`. These are transcripts for fuzzers with only `BORINGSSL_UNSAFE_DETERMINISTIC_MODE` defined. To build in this mode, pass `-DNO_FUZZER_MODE=1` into CMake. This configuration is run in the same way but without `-fuzzer` and `-shim-config` flags.
 
 If both sets of tests pass, refresh the fuzzer corpora with `refresh_ssl_corpora.sh`:
 

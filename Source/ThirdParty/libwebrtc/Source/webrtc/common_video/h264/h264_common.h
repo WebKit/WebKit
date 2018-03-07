@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_H264_H264_COMMON_H_
-#define WEBRTC_COMMON_VIDEO_H264_H264_COMMON_H_
+#ifndef COMMON_VIDEO_H264_H264_COMMON_H_
+#define COMMON_VIDEO_H264_H264_COMMON_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/buffer.h"
+#include "rtc_base/buffer.h"
 
 namespace webrtc {
 
@@ -85,4 +85,4 @@ void WriteRbsp(const uint8_t* bytes, size_t length, rtc::Buffer* destination);
 }  // namespace H264
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_H264_H264_COMMON_H_
+#endif  // COMMON_VIDEO_H264_H264_COMMON_H_

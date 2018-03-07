@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
+#include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 
-#include "webrtc/modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
-#include "webrtc/modules/audio_coding/codecs/g711/g711_interface.h"
+#include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"
+#include "modules/audio_coding/codecs/g711/g711_interface.h"
 
 namespace webrtc {
 

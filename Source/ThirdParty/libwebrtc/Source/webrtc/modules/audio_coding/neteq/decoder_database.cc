@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/decoder_database.h"
+#include "modules/audio_coding/neteq/decoder_database.h"
 
 #include <utility>  // pair
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -58,6 +58,17 @@ DecoderDatabase::DecoderInfo::DecoderInfo(const SdpAudioFormat& audio_format,
 DecoderDatabase::DecoderInfo::DecoderInfo(DecoderInfo&&) = default;
 DecoderDatabase::DecoderInfo::~DecoderInfo() = default;
 
+bool DecoderDatabase::DecoderInfo::CanGetDecoder() const {
+  if (subtype_ == Subtype::kNormal && !external_decoder_ && !decoder_) {
+    // TODO(ossu): Keep a check here for now, since a number of tests create
+    // DecoderInfos without factories.
+    RTC_DCHECK(factory_);
+    return factory_->IsSupportedDecoder(audio_format_);
+  } else {
+    return true;
+  }
+}
+
 AudioDecoder* DecoderDatabase::DecoderInfo::GetDecoder() const {
   if (subtype_ != Subtype::kNormal) {
     // These are handled internally, so they have no AudioDecoder objects.
@@ -93,10 +104,9 @@ DecoderDatabase::DecoderInfo::CngDecoder::Create(const SdpAudioFormat& format) {
     const int sample_rate_hz = format.clockrate_hz;
     RTC_DCHECK(sample_rate_hz == 8000 || sample_rate_hz == 16000 ||
                sample_rate_hz == 32000 || sample_rate_hz == 48000);
-    return rtc::Optional<DecoderDatabase::DecoderInfo::CngDecoder>(
-        {sample_rate_hz});
+    return DecoderDatabase::DecoderInfo::CngDecoder{sample_rate_hz};
   } else {
-    return rtc::Optional<CngDecoder>();
+    return rtc::nullopt;
   }
 }
 
@@ -161,16 +171,17 @@ int DecoderDatabase::RegisterPayload(uint8_t rtp_payload_type,
   if (rtp_payload_type > 0x7F) {
     return kInvalidRtpPayloadType;
   }
-  // kCodecArbitrary is only supported through InsertExternal.
-  if (codec_type == NetEqDecoder::kDecoderArbitrary ||
-      !CodecSupported(codec_type)) {
-    return kCodecNotSupported;
+  if (codec_type == NetEqDecoder::kDecoderArbitrary) {
+    return kCodecNotSupported;  // Only supported through InsertExternal.
   }
   const auto opt_format = NetEqDecoderToSdpAudioFormat(codec_type);
   if (!opt_format) {
     return kCodecNotSupported;
   }
   DecoderInfo info(*opt_format, decoder_factory_, name);
+  if (!info.CanGetDecoder()) {
+    return kCodecNotSupported;
+  }
   auto ret =
       decoders_.insert(std::make_pair(rtp_payload_type, std::move(info)));
   if (ret.second == false) {
@@ -344,8 +355,8 @@ int DecoderDatabase::CheckPayloadTypes(const PacketList& packet_list) const {
   for (it = packet_list.begin(); it != packet_list.end(); ++it) {
     if (!GetDecoderInfo(it->payload_type)) {
       // Payload type is not found.
-      LOG(LS_WARNING) << "CheckPayloadTypes: unknown RTP payload type "
-                      << static_cast<int>(it->payload_type);
+      RTC_LOG(LS_WARNING) << "CheckPayloadTypes: unknown RTP payload type "
+                          << static_cast<int>(it->payload_type);
       return kDecoderNotFound;
     }
   }

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/mac/run_threaded_main_mac.h"
+#include "test/gtest.h"
+#include "test/testsupport/mac/run_threaded_main_mac.h"
 
 int ImplementThisToRunYourTest(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);

@@ -69,6 +69,8 @@ protected:
     rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(const std::string&, const webrtc::DataChannelInit*) final;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> AddTrack(webrtc::MediaStreamTrackInterface*, std::vector<webrtc::MediaStreamInterface*> streams) final;
     bool RemoveTrack(webrtc::RtpSenderInterface*) final;
+    webrtc::RTCError SetBitrate(const BitrateParameters&) final { return { }; }
+
 
     void SetLocalDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) override;
     bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) override { return false; }
@@ -250,10 +252,6 @@ private:
 
     bool StartAecDump(rtc::PlatformFile, int64_t) final { return false; }
     void StopAecDump() final { }
-
-    bool StartRtcEventLog(rtc::PlatformFile, int64_t) final { return false; }
-    bool StartRtcEventLog(rtc::PlatformFile) final { return false; }
-    void StopRtcEventLog() final { }
 
 private:
     String m_testCase;

@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_NOISE_SUPPRESSION_IMPL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_NOISE_SUPPRESSION_IMPL_H_
+#ifndef MODULES_AUDIO_PROCESSING_NOISE_SUPPRESSION_IMPL_H_
+#define MODULES_AUDIO_PROCESSING_NOISE_SUPPRESSION_IMPL_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 
@@ -44,13 +44,13 @@ class NoiseSuppressionImpl : public NoiseSuppression {
  private:
   class Suppressor;
   rtc::CriticalSection* const crit_;
-  bool enabled_ GUARDED_BY(crit_) = false;
-  Level level_ GUARDED_BY(crit_) = kModerate;
-  size_t channels_ GUARDED_BY(crit_) = 0;
-  int sample_rate_hz_ GUARDED_BY(crit_) = 0;
-  std::vector<std::unique_ptr<Suppressor>> suppressors_ GUARDED_BY(crit_);
+  bool enabled_ RTC_GUARDED_BY(crit_) = false;
+  Level level_ RTC_GUARDED_BY(crit_) = kModerate;
+  size_t channels_ RTC_GUARDED_BY(crit_) = 0;
+  int sample_rate_hz_ RTC_GUARDED_BY(crit_) = 0;
+  std::vector<std::unique_ptr<Suppressor>> suppressors_ RTC_GUARDED_BY(crit_);
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(NoiseSuppressionImpl);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_NOISE_SUPPRESSION_IMPL_H_
+#endif  // MODULES_AUDIO_PROCESSING_NOISE_SUPPRESSION_IMPL_H_

@@ -8,19 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
-#include "webrtc/modules/video_coding/codecs/test/video_codec_test.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/codecs/h264/include/h264.h"
+#include "modules/video_coding/codecs/test/video_codec_test.h"
 
 namespace webrtc {
 
 class TestH264Impl : public VideoCodecTest {
  protected:
-  VideoEncoder* CreateEncoder() override {
+  std::unique_ptr<VideoEncoder> CreateEncoder() override {
     return H264Encoder::Create(cricket::VideoCodec(cricket::kH264CodecName));
   }
 
-  VideoDecoder* CreateDecoder() override { return H264Decoder::Create(); }
+  std::unique_ptr<VideoDecoder> CreateDecoder() override {
+    return H264Decoder::Create();
+  }
 
   VideoCodec codec_settings() override {
     VideoCodec codec_inst;
@@ -32,7 +34,7 @@ class TestH264Impl : public VideoCodecTest {
   }
 };
 
-#ifdef WEBRTC_VIDEOPROCESSOR_H264_TESTS
+#ifdef WEBRTC_USE_H264
 #define MAYBE_EncodeDecode EncodeDecode
 #define MAYBE_DecodedQpEqualsEncodedQp DecodedQpEqualsEncodedQp
 #else

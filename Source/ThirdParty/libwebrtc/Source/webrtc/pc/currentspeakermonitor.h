@@ -11,14 +11,14 @@
 // CurrentSpeakerMonitor monitors the audio levels for a session and determines
 // which participant is currently speaking.
 
-#ifndef WEBRTC_PC_CURRENTSPEAKERMONITOR_H_
-#define WEBRTC_PC_CURRENTSPEAKERMONITOR_H_
+#ifndef PC_CURRENTSPEAKERMONITOR_H_
+#define PC_CURRENTSPEAKERMONITOR_H_
 
 #include <stdint.h>
 
 #include <map>
 
-#include "webrtc/base/sigslot.h"
+#include "rtc_base/sigslot.h"
 
 namespace cricket {
 
@@ -93,4 +93,4 @@ class CurrentSpeakerMonitor : public sigslot::has_slots<> {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_PC_CURRENTSPEAKERMONITOR_H_
+#endif  // PC_CURRENTSPEAKERMONITOR_H_

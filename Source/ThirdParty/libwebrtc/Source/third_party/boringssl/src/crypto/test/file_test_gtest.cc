@@ -81,10 +81,27 @@ void FileTestGTest(const char *path, std::function<void(FileTest *)> run_test) {
         break;
     }
 
+    const testing::TestResult *test_result =
+        testing::UnitTest::GetInstance()->current_test_info()->result();
+    int before_part_count = test_result->total_part_count();
+
     SCOPED_TRACE(testing::Message() << path << ", line " << t.start_line());
     run_test(&t);
 
-    // Clean up the error queue for the next test.
-    ERR_clear_error();
+    // Check for failures from the most recent test.
+    bool failed = false;
+    for (int i = before_part_count; i < test_result->total_part_count(); i++) {
+      if (test_result->GetTestPartResult(i).failed()) {
+        failed = true;
+        break;
+      }
+    }
+
+    // Clean up the error queue for the next test, reporting it on failure.
+    if (failed) {
+      ERR_print_errors_fp(stdout);
+    } else {
+      ERR_clear_error();
+    }
   }
 }

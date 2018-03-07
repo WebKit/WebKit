@@ -8,21 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_FAKENETWORKINTERFACE_H_
-#define WEBRTC_MEDIA_BASE_FAKENETWORKINTERFACE_H_
+#ifndef MEDIA_BASE_FAKENETWORKINTERFACE_H_
+#define MEDIA_BASE_FAKENETWORKINTERFACE_H_
 
 #include <map>
+#include <set>
 #include <vector>
 
-#include "webrtc/base/byteorder.h"
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/dscp.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/messagequeue.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/media/base/rtputils.h"
+#include "media/base/mediachannel.h"
+#include "media/base/rtputils.h"
+#include "rtc_base/byteorder.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/dscp.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/messagequeue.h"
+#include "rtc_base/thread.h"
 
 namespace cricket {
 
@@ -224,4 +225,4 @@ class FakeNetworkInterface : public MediaChannel::NetworkInterface,
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_FAKENETWORKINTERFACE_H_
+#endif  // MEDIA_BASE_FAKENETWORKINTERFACE_H_

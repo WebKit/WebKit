@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TEST_AUDIO_PROCESSING_SIMULATOR_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TEST_AUDIO_PROCESSING_SIMULATOR_H_
+#ifndef MODULES_AUDIO_PROCESSING_TEST_AUDIO_PROCESSING_SIMULATOR_H_
+#define MODULES_AUDIO_PROCESSING_TEST_AUDIO_PROCESSING_SIMULATOR_H_
 
 #include <algorithm>
 #include <fstream>
@@ -17,13 +17,14 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/test/test_utils.h"
+#include "api/optional.h"
+#include "common_audio/channel_buffer.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/test/fake_recording_device.h"
+#include "modules/audio_processing/test/test_utils.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 namespace test {
@@ -73,9 +74,13 @@ struct SimulationSettings {
   rtc::Optional<int> agc_target_level;
   rtc::Optional<bool> use_agc_limiter;
   rtc::Optional<int> agc_compression_gain;
+  float agc2_fixed_gain_db;
   rtc::Optional<int> vad_likelihood;
   rtc::Optional<int> ns_level;
   rtc::Optional<bool> use_refined_adaptive_filter;
+  int initial_mic_level;
+  bool simulate_mic_gain = false;
+  rtc::Optional<int> simulated_mic_kind;
   bool report_performance = false;
   bool report_bitexactness = false;
   bool use_verbose_logging = false;
@@ -166,6 +171,7 @@ class AudioProcessingSimulator {
   AudioFrame rev_frame_;
   AudioFrame fwd_frame_;
   bool bitexact_output_ = true;
+  int aec_dump_mic_level_ = 0;
 
  private:
   void SetupOutput();
@@ -177,6 +183,8 @@ class AudioProcessingSimulator {
   std::unique_ptr<ChannelBufferWavWriter> reverse_buffer_writer_;
   TickIntervalStats proc_time_;
   std::ofstream residual_echo_likelihood_graph_writer_;
+  int analog_mic_level_;
+  FakeRecordingDevice fake_recording_device_;
 
   rtc::TaskQueue worker_queue_;
 
@@ -186,4 +194,4 @@ class AudioProcessingSimulator {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TEST_AUDIO_PROCESSING_SIMULATOR_H_
+#endif  // MODULES_AUDIO_PROCESSING_TEST_AUDIO_PROCESSING_SIMULATOR_H_

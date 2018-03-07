@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_H264_PROFILE_LEVEL_ID_H_
-#define WEBRTC_MEDIA_BASE_H264_PROFILE_LEVEL_ID_H_
+#ifndef MEDIA_BASE_H264_PROFILE_LEVEL_ID_H_
+#define MEDIA_BASE_H264_PROFILE_LEVEL_ID_H_
 
 #include <map>
 #include <string>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/common_types.h"
+#include "api/optional.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace H264 {
@@ -96,7 +96,12 @@ void GenerateProfileLevelIdForAnswer(
     const CodecParameterMap& remote_offered_params,
     CodecParameterMap* answer_params);
 
+// Returns true if the parameters have the same H264 profile, i.e. the same
+// H264::Profile (Baseline, High, etc).
+bool IsSameH264Profile(const CodecParameterMap& params1,
+                       const CodecParameterMap& params2);
+
 }  // namespace H264
 }  // namespace webrtc
 
-#endif  // WEBRTC_MEDIA_BASE_H264_PROFILE_LEVEL_ID_H_
+#endif  // MEDIA_BASE_H264_PROFILE_LEVEL_ID_H_

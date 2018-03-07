@@ -11,76 +11,59 @@
 #include <set>
 #include <string>
 
-#include "webrtc/media/engine/payload_type_mapper.h"
-#include "webrtc/test/gtest.h"
+#include "media/engine/payload_type_mapper.h"
+#include "test/gtest.h"
 
 namespace cricket {
 
 class PayloadTypeMapperTest : public testing::Test {
- public:
-  // TODO(ossu): These are to work around missing comparison operators in
-  // rtc::Optional. They should be removed once Optional has been updated.
-  int FindMapping(const webrtc::SdpAudioFormat& format) {
-    auto opt_mapping = mapper_.FindMappingFor(format);
-    if (opt_mapping)
-      return *opt_mapping;
-    return -1;
-  }
-
-  int GetMapping(const webrtc::SdpAudioFormat& format) {
-    auto opt_mapping = mapper_.GetMappingFor(format);
-    if (opt_mapping)
-      return *opt_mapping;
-    return -1;
-  }
-
  protected:
   PayloadTypeMapper mapper_;
 };
 
 TEST_F(PayloadTypeMapperTest, StaticPayloadTypes) {
-  EXPECT_EQ(0,  FindMapping({"pcmu",   8000, 1}));
-  EXPECT_EQ(3,  FindMapping({"gsm",    8000, 1}));
-  EXPECT_EQ(4,  FindMapping({"g723",   8000, 1}));
-  EXPECT_EQ(5,  FindMapping({"dvi4",   8000, 1}));
-  EXPECT_EQ(6,  FindMapping({"dvi4",  16000, 1}));
-  EXPECT_EQ(7,  FindMapping({"lpc",    8000, 1}));
-  EXPECT_EQ(8,  FindMapping({"pcma",   8000, 1}));
-  EXPECT_EQ(9,  FindMapping({"g722",   8000, 1}));
-  EXPECT_EQ(10, FindMapping({"l16",   44100, 2}));
-  EXPECT_EQ(11, FindMapping({"l16",   44100, 1}));
-  EXPECT_EQ(12, FindMapping({"qcelp",  8000, 1}));
-  EXPECT_EQ(13, FindMapping({"cn",     8000, 1}));
-  EXPECT_EQ(14, FindMapping({"mpa",   90000, 0}));
-  EXPECT_EQ(14, FindMapping({"mpa",   90000, 1}));
-  EXPECT_EQ(15, FindMapping({"g728",   8000, 1}));
-  EXPECT_EQ(16, FindMapping({"dvi4",  11025, 1}));
-  EXPECT_EQ(17, FindMapping({"dvi4",  22050, 1}));
-  EXPECT_EQ(18, FindMapping({"g729",   8000, 1}));
+  EXPECT_EQ(0,  mapper_.FindMappingFor({"pcmu",   8000, 1}));
+  EXPECT_EQ(3,  mapper_.FindMappingFor({"gsm",    8000, 1}));
+  EXPECT_EQ(4,  mapper_.FindMappingFor({"g723",   8000, 1}));
+  EXPECT_EQ(5,  mapper_.FindMappingFor({"dvi4",   8000, 1}));
+  EXPECT_EQ(6,  mapper_.FindMappingFor({"dvi4",  16000, 1}));
+  EXPECT_EQ(7,  mapper_.FindMappingFor({"lpc",    8000, 1}));
+  EXPECT_EQ(8,  mapper_.FindMappingFor({"pcma",   8000, 1}));
+  EXPECT_EQ(9,  mapper_.FindMappingFor({"g722",   8000, 1}));
+  EXPECT_EQ(10, mapper_.FindMappingFor({"l16",   44100, 2}));
+  EXPECT_EQ(11, mapper_.FindMappingFor({"l16",   44100, 1}));
+  EXPECT_EQ(12, mapper_.FindMappingFor({"qcelp",  8000, 1}));
+  EXPECT_EQ(13, mapper_.FindMappingFor({"cn",     8000, 1}));
+  EXPECT_EQ(14, mapper_.FindMappingFor({"mpa",   90000, 0}));
+  EXPECT_EQ(14, mapper_.FindMappingFor({"mpa",   90000, 1}));
+  EXPECT_EQ(15, mapper_.FindMappingFor({"g728",   8000, 1}));
+  EXPECT_EQ(16, mapper_.FindMappingFor({"dvi4",  11025, 1}));
+  EXPECT_EQ(17, mapper_.FindMappingFor({"dvi4",  22050, 1}));
+  EXPECT_EQ(18, mapper_.FindMappingFor({"g729",   8000, 1}));
 }
 
 TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
   // Tests that the payload mapper knows about the audio and data formats we've
   // been using in WebRTC, with their hard coded values.
   auto data_mapping = [this] (const char *name) {
-    return FindMapping({name, 0, 0});
+    return mapper_.FindMappingFor({name, 0, 0});
   };
   EXPECT_EQ(kGoogleRtpDataCodecPlType, data_mapping(kGoogleRtpDataCodecName));
   EXPECT_EQ(kGoogleSctpDataCodecPlType, data_mapping(kGoogleSctpDataCodecName));
 
-  EXPECT_EQ(102, FindMapping({kIlbcCodecName,  8000, 1}));
-  EXPECT_EQ(103, FindMapping({kIsacCodecName, 16000, 1}));
-  EXPECT_EQ(104, FindMapping({kIsacCodecName, 32000, 1}));
-  EXPECT_EQ(105, FindMapping({kCnCodecName,   16000, 1}));
-  EXPECT_EQ(106, FindMapping({kCnCodecName,   32000, 1}));
-  EXPECT_EQ(111, FindMapping({kOpusCodecName, 48000, 2,
+  EXPECT_EQ(102, mapper_.FindMappingFor({kIlbcCodecName,  8000, 1}));
+  EXPECT_EQ(103, mapper_.FindMappingFor({kIsacCodecName, 16000, 1}));
+  EXPECT_EQ(104, mapper_.FindMappingFor({kIsacCodecName, 32000, 1}));
+  EXPECT_EQ(105, mapper_.FindMappingFor({kCnCodecName,   16000, 1}));
+  EXPECT_EQ(106, mapper_.FindMappingFor({kCnCodecName,   32000, 1}));
+  EXPECT_EQ(111, mapper_.FindMappingFor({kOpusCodecName, 48000, 2,
         {{"minptime", "10"}, {"useinbandfec", "1"}}}));
   // TODO(solenberg): Remove 16k, 32k, 48k DTMF checks once these payload types
   // are dynamically assigned.
-  EXPECT_EQ(110, FindMapping({kDtmfCodecName, 48000, 1}));
-  EXPECT_EQ(112, FindMapping({kDtmfCodecName, 32000, 1}));
-  EXPECT_EQ(113, FindMapping({kDtmfCodecName, 16000, 1}));
-  EXPECT_EQ(126, FindMapping({kDtmfCodecName, 8000, 1}));
+  EXPECT_EQ(110, mapper_.FindMappingFor({kDtmfCodecName, 48000, 1}));
+  EXPECT_EQ(112, mapper_.FindMappingFor({kDtmfCodecName, 32000, 1}));
+  EXPECT_EQ(113, mapper_.FindMappingFor({kDtmfCodecName, 16000, 1}));
+  EXPECT_EQ(126, mapper_.FindMappingFor({kDtmfCodecName, 8000, 1}));
 }
 
 TEST_F(PayloadTypeMapperTest, ValidDynamicPayloadTypes) {
@@ -118,10 +101,10 @@ TEST_F(PayloadTypeMapperTest, ValidDynamicPayloadTypes) {
       if (payload_type < 96)
         has_been_below_96 = true;
 
-      EXPECT_EQ(payload_type, FindMapping(format))
+      EXPECT_EQ(payload_type, mapper_.FindMappingFor(format))
           << "Mapping must be permanent after successful call to "
              "GetMappingFor";
-      EXPECT_EQ(payload_type, GetMapping(format))
+      EXPECT_EQ(payload_type, mapper_.GetMappingFor(format))
           << "Subsequent calls to GetMappingFor must return the same value";
     } else {
       mapper_is_full = true;

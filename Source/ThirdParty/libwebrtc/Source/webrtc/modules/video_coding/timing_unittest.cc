@@ -12,12 +12,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "webrtc/modules/video_coding/include/video_coding.h"
-#include "webrtc/modules/video_coding/internal_defines.h"
-#include "webrtc/modules/video_coding/timing.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/internal_defines.h"
+#include "modules/video_coding/timing.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
-#define WEBRTC_MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
+#ifndef MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
+#define MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/test/gmock.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -22,4 +22,4 @@ class MockRtcpRttStats : public RtcpRttStats {
   MOCK_CONST_METHOD0(LastProcessedRtt, int64_t());
 };
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_
+#endif  // MODULES_RTP_RTCP_MOCKS_MOCK_RTCP_RTT_STATS_H_

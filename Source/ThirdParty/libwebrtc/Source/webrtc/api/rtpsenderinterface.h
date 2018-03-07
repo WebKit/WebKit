@@ -11,19 +11,19 @@
 // This file contains interfaces for RtpSenders
 // http://w3c.github.io/webrtc-pc/#rtcrtpsender-interface
 
-#ifndef WEBRTC_API_RTPSENDERINTERFACE_H_
-#define WEBRTC_API_RTPSENDERINTERFACE_H_
+#ifndef API_RTPSENDERINTERFACE_H_
+#define API_RTPSENDERINTERFACE_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/dtmfsenderinterface.h"
-#include "webrtc/api/mediatypes.h"
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/proxy.h"
-#include "webrtc/api/rtpparameters.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/scoped_ref_ptr.h"
+#include "api/dtmfsenderinterface.h"
+#include "api/mediastreaminterface.h"
+#include "api/mediatypes.h"
+#include "api/proxy.h"
+#include "api/rtpparameters.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -81,4 +81,4 @@ END_PROXY_MAP()
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_RTPSENDERINTERFACE_H_
+#endif  // API_RTPSENDERINTERFACE_H_

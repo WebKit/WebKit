@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/frame_buffer.h"
+#include "modules/video_coding/frame_buffer.h"
 
 #include <assert.h>
 #include <string.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/modules/video_coding/packet.h"
+#include "modules/video_coding/packet.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -122,8 +122,8 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
         (requiredSizeBytes % kBufferIncStepSizeBytes > 0);
     const uint32_t newSize = _size + increments * kBufferIncStepSizeBytes;
     if (newSize > kMaxJBFrameSizeBytes) {
-      LOG(LS_ERROR) << "Failed to insert packet due to frame being too "
-                       "big.";
+      RTC_LOG(LS_ERROR) << "Failed to insert packet due to frame being too "
+                           "big.";
       return kSizeError;
     }
     VerifyAndAllocate(newSize);
@@ -164,8 +164,7 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
     rotation_ = packet.video_header.rotation;
     _rotation_set = true;
     content_type_ = packet.video_header.content_type;
-    if (packet.video_header.video_timing.is_timing_frame) {
-      timing_.is_timing_frame = true;
+    if (packet.video_header.video_timing.flags != TimingFrameFlags::kInvalid) {
       timing_.encode_start_ms =
           ntp_time_ms_ + packet.video_header.video_timing.encode_start_delta_ms;
       timing_.encode_finish_ms =
@@ -178,13 +177,12 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
           ntp_time_ms_ + packet.video_header.video_timing.pacer_exit_delta_ms;
       timing_.network_timestamp_ms =
           ntp_time_ms_ +
-          packet.video_header.video_timing.network_timstamp_delta_ms;
+          packet.video_header.video_timing.network_timestamp_delta_ms;
       timing_.network2_timestamp_ms =
           ntp_time_ms_ +
-          packet.video_header.video_timing.network2_timstamp_delta_ms;
-    } else {
-      timing_.is_timing_frame = false;
+          packet.video_header.video_timing.network2_timestamp_delta_ms;
     }
+    timing_.flags = packet.video_header.video_timing.flags;
   }
 
   if (packet.is_first_packet_in_frame) {

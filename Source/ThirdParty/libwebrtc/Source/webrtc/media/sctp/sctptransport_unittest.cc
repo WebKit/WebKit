@@ -16,15 +16,15 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/bind.h"
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/media/sctp/sctptransport.h"
-#include "webrtc/p2p/base/fakedtlstransport.h"
+#include "media/sctp/sctptransport.h"
+#include "p2p/base/fakedtlstransport.h"
+#include "rtc_base/bind.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/thread.h"
 
 namespace {
 static const int kDefaultTimeout = 10000;  // 10 seconds.
@@ -150,11 +150,12 @@ class SctpTransportTest : public testing::Test, public sigslot::has_slots<> {
     bool asymmetric = false;
     fake_dtls1_->SetDestination(fake_dtls2_.get(), asymmetric);
 
-    LOG(LS_VERBOSE) << "Transport setup ----------------------------- ";
+    RTC_LOG(LS_VERBOSE) << "Transport setup ----------------------------- ";
     AddStream(1);
     AddStream(2);
 
-    LOG(LS_VERBOSE) << "Connect the transports -----------------------------";
+    RTC_LOG(LS_VERBOSE)
+        << "Connect the transports -----------------------------";
     // Both transports need to have started (with matching ports) for an
     // association to be formed.
     transport1_->Start(port1, port2);
@@ -397,34 +398,34 @@ TEST_F(SctpTransportTest, SendData) {
   SetupConnectedTransportsWithTwoStreams();
 
   SendDataResult result;
-  LOG(LS_VERBOSE)
+  RTC_LOG(LS_VERBOSE)
       << "transport1 sending: 'hello?' -----------------------------";
   ASSERT_TRUE(SendData(transport1(), 1, "hello?", &result));
   EXPECT_EQ(SDR_SUCCESS, result);
   EXPECT_TRUE_WAIT(ReceivedData(receiver2(), 1, "hello?"), kDefaultTimeout);
-  LOG(LS_VERBOSE) << "recv2.received=" << receiver2()->received()
-                  << ", recv2.last_params.sid="
-                  << receiver2()->last_params().sid
-                  << ", recv2.last_params.timestamp="
-                  << receiver2()->last_params().timestamp
-                  << ", recv2.last_params.seq_num="
-                  << receiver2()->last_params().seq_num
-                  << ", recv2.last_data=" << receiver2()->last_data();
+  RTC_LOG(LS_VERBOSE) << "recv2.received=" << receiver2()->received()
+                      << ", recv2.last_params.sid="
+                      << receiver2()->last_params().sid
+                      << ", recv2.last_params.timestamp="
+                      << receiver2()->last_params().timestamp
+                      << ", recv2.last_params.seq_num="
+                      << receiver2()->last_params().seq_num
+                      << ", recv2.last_data=" << receiver2()->last_data();
 
-  LOG(LS_VERBOSE)
+  RTC_LOG(LS_VERBOSE)
       << "transport2 sending: 'hi transport1' -----------------------------";
   ASSERT_TRUE(SendData(transport2(), 2, "hi transport1", &result));
   EXPECT_EQ(SDR_SUCCESS, result);
   EXPECT_TRUE_WAIT(ReceivedData(receiver1(), 2, "hi transport1"),
                    kDefaultTimeout);
-  LOG(LS_VERBOSE) << "recv1.received=" << receiver1()->received()
-                  << ", recv1.last_params.sid="
-                  << receiver1()->last_params().sid
-                  << ", recv1.last_params.timestamp="
-                  << receiver1()->last_params().timestamp
-                  << ", recv1.last_params.seq_num="
-                  << receiver1()->last_params().seq_num
-                  << ", recv1.last_data=" << receiver1()->last_data();
+  RTC_LOG(LS_VERBOSE) << "recv1.received=" << receiver1()->received()
+                      << ", recv1.last_params.sid="
+                      << receiver1()->last_params().sid
+                      << ", recv1.last_params.timestamp="
+                      << receiver1()->last_params().timestamp
+                      << ", recv1.last_params.seq_num="
+                      << receiver1()->last_params().seq_num
+                      << ", recv1.last_data=" << receiver1()->last_data();
 }
 
 // Sends a lot of large messages at once and verifies SDR_BLOCK is returned.

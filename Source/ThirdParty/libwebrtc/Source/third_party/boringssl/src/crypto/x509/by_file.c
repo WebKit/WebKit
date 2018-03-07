@@ -59,7 +59,6 @@
 
 #include <openssl/buf.h>
 #include <openssl/err.h>
-#include <openssl/lhash.h>
 #include <openssl/pem.h>
 #include <openssl/thread.h>
 

@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/source/rw_lock_win.h"
+#include "system_wrappers/source/rw_lock_win.h"
 
-#include "webrtc/system_wrappers/include/trace.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -18,18 +18,18 @@ static bool native_rw_locks_supported = false;
 static bool module_load_attempted = false;
 static HMODULE library = NULL;
 
-typedef void (WINAPI* InitializeSRWLock)(PSRWLOCK);
+typedef void(WINAPI* InitializeSRWLock)(PSRWLOCK);
 
-typedef void (WINAPI* AcquireSRWLockExclusive)(PSRWLOCK);
-typedef void (WINAPI* ReleaseSRWLockExclusive)(PSRWLOCK);
+typedef void(WINAPI* AcquireSRWLockExclusive)(PSRWLOCK);
+typedef void(WINAPI* ReleaseSRWLockExclusive)(PSRWLOCK);
 
-typedef void (WINAPI* AcquireSRWLockShared)(PSRWLOCK);
-typedef void (WINAPI* ReleaseSRWLockShared)(PSRWLOCK);
+typedef void(WINAPI* AcquireSRWLockShared)(PSRWLOCK);
+typedef void(WINAPI* ReleaseSRWLockShared)(PSRWLOCK);
 
-InitializeSRWLock       initialize_srw_lock;
+InitializeSRWLock initialize_srw_lock;
 AcquireSRWLockExclusive acquire_srw_lock_exclusive;
-AcquireSRWLockShared    acquire_srw_lock_shared;
-ReleaseSRWLockShared    release_srw_lock_shared;
+AcquireSRWLockShared acquire_srw_lock_shared;
+ReleaseSRWLockShared release_srw_lock_shared;
 ReleaseSRWLockExclusive release_srw_lock_exclusive;
 
 RWLockWin::RWLockWin() {
@@ -69,26 +69,24 @@ bool RWLockWin::LoadModule() {
   if (!library) {
     return false;
   }
-  WEBRTC_TRACE(kTraceStateInfo, kTraceUtility, -1, "Loaded Kernel.dll");
+  RTC_LOG(LS_VERBOSE) << "Loaded Kernel.dll";
 
   initialize_srw_lock =
-    (InitializeSRWLock)GetProcAddress(library, "InitializeSRWLock");
+      (InitializeSRWLock)GetProcAddress(library, "InitializeSRWLock");
 
-  acquire_srw_lock_exclusive =
-    (AcquireSRWLockExclusive)GetProcAddress(library,
-                                            "AcquireSRWLockExclusive");
-  release_srw_lock_exclusive =
-    (ReleaseSRWLockExclusive)GetProcAddress(library,
-                                            "ReleaseSRWLockExclusive");
+  acquire_srw_lock_exclusive = (AcquireSRWLockExclusive)GetProcAddress(
+      library, "AcquireSRWLockExclusive");
+  release_srw_lock_exclusive = (ReleaseSRWLockExclusive)GetProcAddress(
+      library, "ReleaseSRWLockExclusive");
   acquire_srw_lock_shared =
-    (AcquireSRWLockShared)GetProcAddress(library, "AcquireSRWLockShared");
+      (AcquireSRWLockShared)GetProcAddress(library, "AcquireSRWLockShared");
   release_srw_lock_shared =
-    (ReleaseSRWLockShared)GetProcAddress(library, "ReleaseSRWLockShared");
+      (ReleaseSRWLockShared)GetProcAddress(library, "ReleaseSRWLockShared");
 
   if (initialize_srw_lock && acquire_srw_lock_exclusive &&
       release_srw_lock_exclusive && acquire_srw_lock_shared &&
       release_srw_lock_shared) {
-    WEBRTC_TRACE(kTraceStateInfo, kTraceUtility, -1, "Loaded Native RW Lock");
+    RTC_LOG(LS_VERBOSE) << "Loaded Native RW Lock";
     native_rw_locks_supported = true;
   }
   return native_rw_locks_supported;

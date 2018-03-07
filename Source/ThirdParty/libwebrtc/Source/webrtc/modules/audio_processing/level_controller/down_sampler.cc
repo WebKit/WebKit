@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/level_controller/down_sampler.h"
+#include "modules/audio_processing/level_controller/down_sampler.h"
 
 #include <string.h>
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/audio_processing/level_controller/biquad_filter.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/level_controller/biquad_filter.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

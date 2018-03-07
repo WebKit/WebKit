@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ASM_DEFINES_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ASM_DEFINES_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_ASM_DEFINES_H_
+#define SYSTEM_WRAPPERS_INCLUDE_ASM_DEFINES_H_
 
 #if defined(__linux__) && defined(__ELF__)
 .section .note.GNU-stack,"",%progbits
@@ -63,4 +63,4 @@ strheq \reg1, \reg2, \num
 
 .text
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_ASM_DEFINES_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_ASM_DEFINES_H_

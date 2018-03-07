@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_CROSS_CORRELATION_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_CROSS_CORRELATION_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_CROSS_CORRELATION_H_
+#define MODULES_AUDIO_CODING_NETEQ_CROSS_CORRELATION_H_
 
-#include "webrtc/common_types.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -47,4 +47,4 @@ int CrossCorrelationWithAutoShift(const int16_t* sequence_1,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_CROSS_CORRELATION_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_CROSS_CORRELATION_H_

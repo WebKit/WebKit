@@ -8,18 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_EXAMPLES_UNITYPLUGIN_SIMPLE_PEER_CONNECTION_H_
-#define WEBRTC_EXAMPLES_UNITYPLUGIN_SIMPLE_PEER_CONNECTION_H_
+#ifndef EXAMPLES_UNITYPLUGIN_SIMPLE_PEER_CONNECTION_H_
+#define EXAMPLES_UNITYPLUGIN_SIMPLE_PEER_CONNECTION_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/datachannelinterface.h"
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/peerconnectioninterface.h"
-#include "webrtc/examples/unityplugin/unity_plugin_apis.h"
+#include "api/datachannelinterface.h"
+#include "api/mediastreaminterface.h"
+#include "api/peerconnectioninterface.h"
+#include "examples/unityplugin/unity_plugin_apis.h"
+#include "examples/unityplugin/video_observer.h"
 
 class SimplePeerConnection : public webrtc::PeerConnectionObserver,
                              public webrtc::CreateSessionDescriptionObserver,
@@ -29,7 +30,11 @@ class SimplePeerConnection : public webrtc::PeerConnectionObserver,
   SimplePeerConnection() {}
   ~SimplePeerConnection() {}
 
-  bool InitializePeerConnection(bool is_receiver);
+  bool InitializePeerConnection(const char** turn_urls,
+                                const int no_of_urls,
+                                const char* username,
+                                const char* credential,
+                                bool is_receiver);
   void DeletePeerConnection();
   void AddStreams(bool audio_only);
   bool CreateDataChannel();
@@ -39,7 +44,8 @@ class SimplePeerConnection : public webrtc::PeerConnectionObserver,
   void SetAudioControl(bool is_mute, bool is_record);
 
   // Register callback functions.
-  void RegisterOnVideoFramReady(VIDEOFRAMEREADY_CALLBACK callback);
+  void RegisterOnLocalI420FrameReady(I420FRAMEREADY_CALLBACK callback);
+  void RegisterOnRemoteI420FrameReady(I420FRAMEREADY_CALLBACK callback);
   void RegisterOnLocalDataChannelReady(LOCALDATACHANNELREADY_CALLBACK callback);
   void RegisterOnDataFromDataChannelReady(
       DATAFROMEDATECHANNELREADY_CALLBACK callback);
@@ -48,16 +54,18 @@ class SimplePeerConnection : public webrtc::PeerConnectionObserver,
   void RegisterOnLocalSdpReadytoSend(LOCALSDPREADYTOSEND_CALLBACK callback);
   void RegisterOnIceCandiateReadytoSend(
       ICECANDIDATEREADYTOSEND_CALLBACK callback);
-  bool ReceivedSdp(const char* sdp);
-  bool ReceivedIceCandidate(const char* ice_candidate);
-
-  bool SetHeadPosition(float x, float y, float z);
-  bool SetHeadRotation(float rx, float ry, float rz, float rw);
-  bool SetRemoteAudioPosition(float x, float y, float z);
-  bool SetRemoteAudioRotation(float rx, float ry, float rz, float rw);
+  bool SetRemoteDescription(const char* type, const char* sdp);
+  bool AddIceCandidate(const char* sdp,
+                       const int sdp_mlineindex,
+                       const char* sdp_mid);
 
  protected:
-  bool CreatePeerConnection(bool receiver);
+  // create a peerconneciton and add the turn servers info to the configuration.
+  bool CreatePeerConnection(const char** turn_urls,
+                            const int no_of_urls,
+                            const char* username,
+                            const char* credential,
+                            bool is_receiver);
   void CloseDataChannel();
   std::unique_ptr<cricket::VideoCapturer> OpenVideoCaptureDevice();
   void SetAudioControl();
@@ -103,9 +111,12 @@ class SimplePeerConnection : public webrtc::PeerConnectionObserver,
   std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface> >
       active_streams_;
 
-  webrtc::MediaStreamInterface* remote_stream_ = nullptr;
+  std::unique_ptr<VideoObserver> local_video_observer_;
+  std::unique_ptr<VideoObserver> remote_video_observer_;
 
-  VIDEOFRAMEREADY_CALLBACK OnVideoFrameReady = nullptr;
+  webrtc::MediaStreamInterface* remote_stream_ = nullptr;
+  webrtc::PeerConnectionInterface::RTCConfiguration config_;
+
   LOCALDATACHANNELREADY_CALLBACK OnLocalDataChannelReady = nullptr;
   DATAFROMEDATECHANNELREADY_CALLBACK OnDataFromDataChannelReady = nullptr;
   FAILURE_CALLBACK OnFailureMessage = nullptr;
@@ -122,4 +133,4 @@ class SimplePeerConnection : public webrtc::PeerConnectionObserver,
   SimplePeerConnection& operator=(const SimplePeerConnection&) = delete;
 };
 
-#endif  // WEBRTC_EXAMPLES_UNITYPLUGIN_SIMPLE_PEER_CONNECTION_H_
+#endif  // EXAMPLES_UNITYPLUGIN_SIMPLE_PEER_CONNECTION_H_

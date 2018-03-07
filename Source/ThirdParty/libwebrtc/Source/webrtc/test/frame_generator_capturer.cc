@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/frame_generator_capturer.h"
+#include "test/frame_generator_capturer.h"
 
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/platform_thread.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/frame_generator.h"
-#include "webrtc/video_send_stream.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/clock.h"
+#include "test/frame_generator.h"
+#include "call/video_send_stream.h"
 
 namespace webrtc {
 namespace test {
@@ -68,7 +68,7 @@ class FrameGeneratorCapturer::InsertFrameTask : public rtc::QueuedTask {
         } else {
           rtc::TaskQueue::Current()->PostDelayedTask(
               std::unique_ptr<rtc::QueuedTask>(this), 0);
-          LOG(LS_ERROR)
+          RTC_LOG(LS_ERROR)
               << "Frame Generator Capturer can't keep up with requested fps";
         }
         // Repost of this instance, make sure it is not deleted.
@@ -97,6 +97,20 @@ FrameGeneratorCapturer* FrameGeneratorCapturer::Create(int width,
   return capturer.release();
 }
 
+FrameGeneratorCapturer* FrameGeneratorCapturer::Create(int width,
+                                                       int height,
+                                                       int num_squares,
+                                                       int target_fps,
+                                                       Clock* clock) {
+  std::unique_ptr<FrameGeneratorCapturer> capturer(new FrameGeneratorCapturer(
+      clock, FrameGenerator::CreateSquareGenerator(width, height, num_squares),
+      target_fps));
+  if (!capturer->Init())
+    return nullptr;
+
+  return capturer.release();
+}
+
 FrameGeneratorCapturer* FrameGeneratorCapturer::CreateFromYuvFile(
     const std::string& file_name,
     size_t width,
@@ -107,6 +121,22 @@ FrameGeneratorCapturer* FrameGeneratorCapturer::CreateFromYuvFile(
       clock,
       FrameGenerator::CreateFromYuvFile(std::vector<std::string>(1, file_name),
                                         width, height, 1),
+      target_fps));
+  if (!capturer->Init())
+    return nullptr;
+
+  return capturer.release();
+}
+
+FrameGeneratorCapturer* FrameGeneratorCapturer::CreateSlideGenerator(
+    int width,
+    int height,
+    int frame_repeat_count,
+    int target_fps,
+    Clock* clock) {
+  std::unique_ptr<FrameGeneratorCapturer> capturer(new FrameGeneratorCapturer(
+      clock, FrameGenerator::CreateSlideGenerator(width, height,
+                                                  frame_repeat_count),
       target_fps));
   if (!capturer->Init())
     return nullptr;

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_
+#ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_
+#define MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_
 
 #include <memory>
 
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/shared_desktop_frame.h"
 
 namespace webrtc {
 
@@ -45,6 +45,7 @@ class DesktopCapturerDifferWrapper : public DesktopCapturer,
   bool GetSourceList(SourceList* screens) override;
   bool SelectSource(SourceId id) override;
   bool FocusOnSelectedSource() override;
+  bool IsOccluded(const DesktopVector& pos) override;
 
  private:
   // DesktopCapturer::Callback interface.
@@ -58,4 +59,4 @@ class DesktopCapturerDifferWrapper : public DesktopCapturer,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_
+#endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_DIFFER_WRAPPER_H_

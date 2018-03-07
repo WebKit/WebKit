@@ -10,7 +10,9 @@
 
 #import <UIKit/UIKit.h>
 
-#include "webrtc/test/ios/test_support.h"
+#include "test/ios/test_support.h"
+
+#import "sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h"
 
 // Springboard will kill any iOS app that fails to check in after launch within
 // a given time. Starting a UIApplication before invoking TestSuite::Run
@@ -59,6 +61,11 @@ static char **g_argv;
   // An NSInternalInconsistencyException is thrown if the app doesn't have a
   // root view controller. Set an empty one here.
   [_window setRootViewController:[[UIViewController alloc] init]];
+
+  // We want to call `RTCUIApplicationStatusObserver sharedInstance` as early as
+  // possible in the application lifecycle to set observation properly.
+  __unused RTCUIApplicationStatusObserver *observer =
+      [RTCUIApplicationStatusObserver sharedInstance];
 
   // Queue up the test run.
   [self performSelector:@selector(runTests) withObject:nil afterDelay:0.1];

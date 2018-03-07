@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright (c) 2014, Cisco Systems, Inc.
+ * Copyright (c) 2014-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,9 +42,10 @@
  *
  */
 
+#include "util.h"
+
 #include <string.h>
 #include <stdint.h>
-#include "util.h"
 
 char bit_string[MAX_PRINT_STRING_LEN];
 
@@ -143,7 +144,7 @@ static const char b64chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 static int base64_block_to_octet_triple (char *out, char *in)
 {
-    unsigned char sextets[4] = {};
+    unsigned char sextets[4] = {0};
     int j = 0;
     int i;
 
@@ -182,4 +183,3 @@ int base64_string_to_octet_string (char *out, int *pad, char *in, int len)
     *pad = j;
     return i;
 }
-

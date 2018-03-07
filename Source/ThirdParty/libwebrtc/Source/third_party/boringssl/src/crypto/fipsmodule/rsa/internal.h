@@ -67,7 +67,7 @@ extern "C" {
 #endif
 
 
-/* Default implementations of RSA operations. */
+// Default implementations of RSA operations.
 
 const RSA_METHOD *RSA_default_method(void);
 
@@ -107,29 +107,25 @@ int RSA_padding_check_PKCS1_OAEP_mgf1(uint8_t *out, size_t *out_len,
 int RSA_padding_add_none(uint8_t *to, size_t to_len, const uint8_t *from,
                          size_t from_len);
 
-/* RSA_private_transform calls either the method-specific |private_transform|
- * function (if given) or the generic one. See the comment for
- * |private_transform| in |rsa_meth_st|. */
+// RSA_private_transform calls either the method-specific |private_transform|
+// function (if given) or the generic one. See the comment for
+// |private_transform| in |rsa_meth_st|.
 int RSA_private_transform(RSA *rsa, uint8_t *out, const uint8_t *in,
                           size_t len);
 
 
-/* The following utility functions are exported for test purposes. */
+// The following utility functions are exported for test purposes.
 
 extern const BN_ULONG kBoringSSLRSASqrtTwo[];
 extern const size_t kBoringSSLRSASqrtTwoLen;
 
-/* rsa_less_than_words returns one if |a| < |b| and zero otherwise, where |a|
- * and |b| both are |len| words long. It runs in constant time. */
-int rsa_less_than_words(const BN_ULONG *a, const BN_ULONG *b, size_t len);
-
-/* rsa_greater_than_pow2 returns one if |b| is greater than 2^|n| and zero
- * otherwise. */
+// rsa_greater_than_pow2 returns one if |b| is greater than 2^|n| and zero
+// otherwise.
 int rsa_greater_than_pow2(const BIGNUM *b, int n);
 
 
 #if defined(__cplusplus)
-} /* extern C */
+}  // extern C
 #endif
 
-#endif /* OPENSSL_HEADER_RSA_INTERNAL_H */
+#endif  // OPENSSL_HEADER_RSA_INTERNAL_H

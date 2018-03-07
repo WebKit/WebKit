@@ -129,14 +129,8 @@ func prfForVersion(version uint16, suite *cipherSuite) func(result, secret, labe
 		return prf30
 	case VersionTLS10, VersionTLS11:
 		return prf10
-	// TODO(nharper): VersionTLS13 is in the case statement below only to
-	// support Fake TLS 1.3. Real TLS 1.3 should never call this function.
-	// Once we no longer support Fake TLS 1.3, the VersionTLS13 should be
-	// removed from this case statement.
-	case VersionTLS12, VersionTLS13:
-		if version == VersionTLS12 {
-			return prf12(suite.hash().New)
-		}
+	case VersionTLS12:
+		return prf12(suite.hash().New)
 	}
 	panic("unknown version")
 }
@@ -186,8 +180,13 @@ func keysFromMasterSecret(version uint16, suite *cipherSuite, masterSecret, clie
 	return
 }
 
-func newFinishedHash(version uint16, cipherSuite *cipherSuite) finishedHash {
+func newFinishedHash(wireVersion uint16, isDTLS bool, cipherSuite *cipherSuite) finishedHash {
 	var ret finishedHash
+
+	version, ok := wireToVersion(wireVersion, isDTLS)
+	if !ok {
+		panic("unknown version")
+	}
 
 	if version >= VersionTLS12 {
 		ret.hash = cipherSuite.hash()
@@ -197,6 +196,8 @@ func newFinishedHash(version uint16, cipherSuite *cipherSuite) finishedHash {
 
 		if version == VersionTLS12 {
 			ret.prf = prf12(ret.hash.New)
+		} else {
+			ret.secret = make([]byte, ret.hash.Size())
 		}
 	} else {
 		ret.hash = crypto.MD5SHA1
@@ -211,6 +212,7 @@ func newFinishedHash(version uint16, cipherSuite *cipherSuite) finishedHash {
 
 	ret.buffer = []byte{}
 	ret.version = version
+	ret.wireVersion = wireVersion
 	return ret
 }
 
@@ -230,12 +232,26 @@ type finishedHash struct {
 	// full buffer is required.
 	buffer []byte
 
-	// TLS 1.3 has a resumption context which is carried over on PSK
-	// resumption.
-	resumptionContextHash []byte
+	version     uint16
+	wireVersion uint16
+	prf         func(result, secret, label, seed []byte)
 
-	version uint16
-	prf     func(result, secret, label, seed []byte)
+	// secret, in TLS 1.3, is the running input secret.
+	secret []byte
+}
+
+func (h *finishedHash) UpdateForHelloRetryRequest() (err error) {
+	data := newByteBuilder()
+	data.addU8(typeMessageHash)
+	data.addU24(h.hash.Size())
+	data.addBytes(h.Sum())
+	h.client = h.hash.New()
+	h.server = h.hash.New()
+	if h.buffer != nil {
+		h.buffer = []byte{}
+	}
+	h.Write(data.finish())
+	return nil
 }
 
 func (h *finishedHash) Write(msg []byte) (n int, err error) {
@@ -312,7 +328,7 @@ func (h finishedHash) clientSum(baseKey []byte) []byte {
 		return out
 	}
 
-	clientFinishedKey := hkdfExpandLabel(h.hash, baseKey, finishedLabel, nil, h.hash.Size())
+	clientFinishedKey := hkdfExpandLabel(h.hash, h.wireVersion, baseKey, finishedLabel, nil, h.hash.Size())
 	finishedHMAC := hmac.New(h.hash.New, clientFinishedKey)
 	finishedHMAC.Write(h.appendContextHashes(nil))
 	return finishedHMAC.Sum(nil)
@@ -331,7 +347,7 @@ func (h finishedHash) serverSum(baseKey []byte) []byte {
 		return out
 	}
 
-	serverFinishedKey := hkdfExpandLabel(h.hash, baseKey, finishedLabel, nil, h.hash.Size())
+	serverFinishedKey := hkdfExpandLabel(h.hash, h.wireVersion, baseKey, finishedLabel, nil, h.hash.Size())
 	finishedHMAC := hmac.New(h.hash.New, serverFinishedKey)
 	finishedHMAC.Write(h.appendContextHashes(nil))
 	return finishedHMAC.Sum(nil)
@@ -374,33 +390,38 @@ func (h *finishedHash) zeroSecret() []byte {
 	return make([]byte, h.hash.Size())
 }
 
-// setResumptionContext sets the TLS 1.3 resumption context.
-func (h *finishedHash) setResumptionContext(resumptionContext []byte) {
-	hash := h.hash.New()
-	hash.Write(resumptionContext)
-	h.resumptionContextHash = hash.Sum(nil)
+// addEntropy incorporates ikm into the running TLS 1.3 secret with HKDF-Expand.
+func (h *finishedHash) addEntropy(ikm []byte) {
+	h.secret = hkdfExtract(h.hash.New, h.secret, ikm)
 }
 
-// extractKey combines two secrets together with HKDF-Expand in the TLS 1.3 key
-// derivation schedule.
-func (h *finishedHash) extractKey(salt, ikm []byte) []byte {
-	return hkdfExtract(h.hash.New, salt, ikm)
+func (h *finishedHash) nextSecret() {
+	if isDraft21(h.wireVersion) {
+		derivedLabel := []byte("derived")
+		h.secret = hkdfExpandLabel(h.hash, h.wireVersion, h.secret, derivedLabel, h.hash.New().Sum(nil), h.hash.Size())
+	}
 }
 
 // hkdfExpandLabel implements TLS 1.3's HKDF-Expand-Label function, as defined
 // in section 7.1 of draft-ietf-tls-tls13-16.
-func hkdfExpandLabel(hash crypto.Hash, secret, label, hashValue []byte, length int) []byte {
+func hkdfExpandLabel(hash crypto.Hash, version uint16, secret, label, hashValue []byte, length int) []byte {
 	if len(label) > 255 || len(hashValue) > 255 {
 		panic("hkdfExpandLabel: label or hashValue too long")
 	}
-	hkdfLabel := make([]byte, 3+9+len(label)+1+len(hashValue))
+
+	versionLabel := []byte("TLS 1.3, ")
+	if isDraft21(version) {
+		versionLabel = []byte("tls13 ")
+	}
+
+	hkdfLabel := make([]byte, 3+len(versionLabel)+len(label)+1+len(hashValue))
 	x := hkdfLabel
 	x[0] = byte(length >> 8)
 	x[1] = byte(length)
-	x[2] = byte(9 + len(label))
+	x[2] = byte(len(versionLabel) + len(label))
 	x = x[3:]
-	copy(x, []byte("TLS 1.3, "))
-	x = x[9:]
+	copy(x, versionLabel)
+	x = x[len(versionLabel):]
 	copy(x, label)
 	x = x[len(label):]
 	x[0] = byte(len(hashValue))
@@ -412,12 +433,13 @@ func hkdfExpandLabel(hash crypto.Hash, secret, label, hashValue []byte, length i
 // resumption context hash, as used in TLS 1.3.
 func (h *finishedHash) appendContextHashes(b []byte) []byte {
 	b = h.client.Sum(b)
-	b = append(b, h.resumptionContextHash...)
 	return b
 }
 
 // The following are labels for traffic secret derivation in TLS 1.3.
 var (
+	externalPSKBinderLabel        = []byte("external psk binder key")
+	resumptionPSKBinderLabel      = []byte("resumption psk binder key")
 	earlyTrafficLabel             = []byte("client early traffic secret")
 	clientHandshakeTrafficLabel   = []byte("client handshake traffic secret")
 	serverHandshakeTrafficLabel   = []byte("server handshake traffic secret")
@@ -426,16 +448,25 @@ var (
 	applicationTrafficLabel       = []byte("application traffic secret")
 	exporterLabel                 = []byte("exporter master secret")
 	resumptionLabel               = []byte("resumption master secret")
+
+	externalPSKBinderLabelDraft21        = []byte("ext binder")
+	resumptionPSKBinderLabelDraft21      = []byte("res binder")
+	earlyTrafficLabelDraft21             = []byte("c e traffic")
+	clientHandshakeTrafficLabelDraft21   = []byte("c hs traffic")
+	serverHandshakeTrafficLabelDraft21   = []byte("s hs traffic")
+	clientApplicationTrafficLabelDraft21 = []byte("c ap traffic")
+	serverApplicationTrafficLabelDraft21 = []byte("s ap traffic")
+	applicationTrafficLabelDraft21       = []byte("traffic upd")
+	exporterLabelDraft21                 = []byte("exp master")
+	resumptionLabelDraft21               = []byte("res master")
+
+	resumptionPSKLabel = []byte("resumption")
 )
 
 // deriveSecret implements TLS 1.3's Derive-Secret function, as defined in
 // section 7.1 of draft ietf-tls-tls13-16.
-func (h *finishedHash) deriveSecret(secret, label []byte) []byte {
-	if h.resumptionContextHash == nil {
-		panic("Resumption context not set.")
-	}
-
-	return hkdfExpandLabel(h.hash, secret, label, h.appendContextHashes(nil), h.hash.Size())
+func (h *finishedHash) deriveSecret(label []byte) []byte {
+	return hkdfExpandLabel(h.hash, h.wireVersion, h.secret, label, h.appendContextHashes(nil), h.hash.Size())
 }
 
 // The following are context strings for CertificateVerify in TLS 1.3.
@@ -459,14 +490,6 @@ func (h *finishedHash) certificateVerifyInput(context []byte) []byte {
 	return b
 }
 
-// The following are phase values for traffic key derivation in TLS 1.3.
-var (
-	earlyHandshakePhase   = []byte("early handshake key expansion")
-	earlyApplicationPhase = []byte("early application data key expansion")
-	handshakePhase        = []byte("handshake key expansion")
-	applicationPhase      = []byte("application data key expansion")
-)
-
 type trafficDirection int
 
 const (
@@ -474,29 +497,42 @@ const (
 	serverWrite
 )
 
+var (
+	keyTLS13 = []byte("key")
+	ivTLS13  = []byte("iv")
+)
+
 // deriveTrafficAEAD derives traffic keys and constructs an AEAD given a traffic
 // secret.
-func deriveTrafficAEAD(version uint16, suite *cipherSuite, secret, phase []byte, side trafficDirection) interface{} {
-	label := make([]byte, 0, len(phase)+2+16)
-	label = append(label, phase...)
-	label = append(label, []byte(", key")...)
-	key := hkdfExpandLabel(suite.hash(), secret, label, nil, suite.keyLen)
-
-	label = label[:len(label)-3] // Remove "key" from the end.
-	label = append(label, []byte("iv")...)
-	iv := hkdfExpandLabel(suite.hash(), secret, label, nil, suite.ivLen(version))
+func deriveTrafficAEAD(version uint16, suite *cipherSuite, secret []byte, side trafficDirection) interface{} {
+	key := hkdfExpandLabel(suite.hash(), version, secret, keyTLS13, nil, suite.keyLen)
+	iv := hkdfExpandLabel(suite.hash(), version, secret, ivTLS13, nil, suite.ivLen(version))
 
 	return suite.aead(version, key, iv)
 }
 
-func updateTrafficSecret(hash crypto.Hash, secret []byte) []byte {
-	return hkdfExpandLabel(hash, secret, applicationTrafficLabel, nil, hash.Size())
+func updateTrafficSecret(hash crypto.Hash, version uint16, secret []byte) []byte {
+	trafficLabel := applicationTrafficLabel
+	if isDraft21(version) {
+		trafficLabel = applicationTrafficLabelDraft21
+	}
+	return hkdfExpandLabel(hash, version, secret, trafficLabel, nil, hash.Size())
 }
 
-func deriveResumptionPSK(suite *cipherSuite, resumptionSecret []byte) []byte {
-	return hkdfExpandLabel(suite.hash(), resumptionSecret, []byte("resumption psk"), nil, suite.hash().Size())
+func computePSKBinder(psk []byte, version uint16, label []byte, cipherSuite *cipherSuite, clientHello, helloRetryRequest, truncatedHello []byte) []byte {
+	finishedHash := newFinishedHash(version, false, cipherSuite)
+	finishedHash.addEntropy(psk)
+	binderKey := finishedHash.deriveSecret(label)
+	finishedHash.Write(clientHello)
+	if isDraft21(version) && len(helloRetryRequest) != 0 {
+		finishedHash.UpdateForHelloRetryRequest()
+	}
+	finishedHash.Write(helloRetryRequest)
+	finishedHash.Write(truncatedHello)
+	return finishedHash.clientSum(binderKey)
 }
 
-func deriveResumptionContext(suite *cipherSuite, resumptionSecret []byte) []byte {
-	return hkdfExpandLabel(suite.hash(), resumptionSecret, []byte("resumption context"), nil, suite.hash().Size())
+func deriveSessionPSK(suite *cipherSuite, version uint16, masterSecret []byte, nonce []byte) []byte {
+	hash := suite.hash()
+	return hkdfExpandLabel(hash, version, masterSecret, resumptionPSKLabel, nonce, hash.Size())
 }

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/vad/gmm.h"
+#include "modules/audio_processing/vad/gmm.h"
 
 #include <math.h>
 
-#include "webrtc/modules/audio_processing/vad/noise_gmm_tables.h"
-#include "webrtc/modules/audio_processing/vad/voice_gmm_tables.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/vad/noise_gmm_tables.h"
+#include "modules/audio_processing/vad/voice_gmm_tables.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

@@ -10,11 +10,11 @@
 
 #include <memory>
 
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/desktop_region.h"
-#include "webrtc/test/gtest.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -24,6 +24,7 @@ class WindowCapturerTest : public testing::Test,
   void SetUp() override {
     capturer_ = DesktopCapturer::CreateWindowCapturer(
         DesktopCaptureOptions::CreateDefault());
+    RTC_DCHECK(capturer_);
   }
 
   void TearDown() override {}
@@ -50,6 +51,12 @@ TEST_F(WindowCapturerTest, Enumerate) {
   }
 }
 
+// Flaky on Linux. See: crbug.com/webrtc/7830
+#if defined(WEBRTC_LINUX)
+#define MAYBE_Capture DISABLED_Capture
+#else
+#define MAYBE_Capture Capture
+#endif
 // Verify we can capture a window.
 //
 // TODO(sergeyu): Currently this test just looks at the windows that already
@@ -57,7 +64,7 @@ TEST_F(WindowCapturerTest, Enumerate) {
 // is no easy cross-platform way to create new windows (potentially we could
 // have a python script showing Tk dialog, but launching code will differ
 // between platforms).
-TEST_F(WindowCapturerTest, Capture) {
+TEST_F(WindowCapturerTest, MAYBE_Capture) {
   DesktopCapturer::SourceList sources;
   capturer_->Start(this);
   EXPECT_TRUE(capturer_->GetSourceList(&sources));

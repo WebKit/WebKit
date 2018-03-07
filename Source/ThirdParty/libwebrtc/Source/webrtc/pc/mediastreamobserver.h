@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_MEDIASTREAMOBSERVER_H_
-#define WEBRTC_PC_MEDIASTREAMOBSERVER_H_
+#ifndef PC_MEDIASTREAMOBSERVER_H_
+#define PC_MEDIASTREAMOBSERVER_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/sigslot.h"
+#include "api/mediastreaminterface.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/sigslot.h"
 
 namespace webrtc {
 
@@ -45,4 +45,4 @@ class MediaStreamObserver : public ObserverInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_MEDIASTREAMOBSERVER_H_
+#endif  // PC_MEDIASTREAMOBSERVER_H_

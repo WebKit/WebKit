@@ -10,7 +10,7 @@
 
 #import "RTCAudioSource+Private.h"
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 @implementation RTCAudioSource {
 }

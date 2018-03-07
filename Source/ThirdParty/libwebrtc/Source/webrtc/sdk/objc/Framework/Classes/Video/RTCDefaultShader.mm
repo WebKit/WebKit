@@ -20,7 +20,7 @@
 #import "RTCShader.h"
 #import "WebRTC/RTCLogging.h"
 
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
 
 static const int kYTextureUnit = 0;
 static const int kUTextureUnit = 1;

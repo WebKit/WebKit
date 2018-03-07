@@ -15,11 +15,11 @@
 
 // TODO(tlegrand): Change constant input pointers in all functions to constant
 // references, where appropriate.
-#include "webrtc/modules/audio_coding/acm2/acm_codec_database.h"
+#include "modules/audio_coding/acm2/acm_codec_database.h"
 
 #include <assert.h>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 #if ((defined WEBRTC_CODEC_ISAC) && (defined WEBRTC_CODEC_ISACFX))
 #error iSAC and iSACFX codecs cannot be enabled at the same time
@@ -85,12 +85,10 @@ const CodecInst ACMCodecDB::database_[] = {
 #ifdef WEBRTC_CODEC_ILBC
   {102, "ILBC", 8000, 240, 1, 13300},
 #endif
-#ifdef WEBRTC_CODEC_G722
   // Mono
   {9, "G722", 16000, 320, 1, 64000},
   // Stereo
   {119, "G722", 16000, 320, 2, 64000},
-#endif
 #ifdef WEBRTC_CODEC_OPUS
   // Opus internally supports 48, 24, 16, 12, 8 kHz.
   // Mono and stereo.
@@ -143,12 +141,10 @@ const ACMCodecDB::CodecSettings ACMCodecDB::codec_settings_[] = {
 #ifdef WEBRTC_CODEC_ILBC
     {4, {160, 240, 320, 480}, 0, 1},
 #endif
-#ifdef WEBRTC_CODEC_G722
     // Mono
     {6, {160, 320, 480, 640, 800, 960}, 0, 2},
     // Stereo
     {6, {160, 320, 480, 640, 800, 960}, 0, 2},
-#endif
 #ifdef WEBRTC_CODEC_OPUS
     // Opus supports frames shorter than 10ms,
     // but it doesn't help us to use them.
@@ -200,12 +196,10 @@ const NetEqDecoder ACMCodecDB::neteq_decoders_[] = {
 #ifdef WEBRTC_CODEC_ILBC
     NetEqDecoder::kDecoderILBC,
 #endif
-#ifdef WEBRTC_CODEC_G722
     // Mono
     NetEqDecoder::kDecoderG722,
     // Stereo
     NetEqDecoder::kDecoderG722_2ch,
-#endif
 #ifdef WEBRTC_CODEC_OPUS
     // Mono and stereo.
     NetEqDecoder::kDecoderOpus,

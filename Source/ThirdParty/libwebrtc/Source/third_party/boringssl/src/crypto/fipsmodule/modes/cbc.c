@@ -62,7 +62,8 @@ void CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
   assert(len == 0 || (in != NULL && out != NULL));
 
   if (STRICT_ALIGNMENT &&
-      ((size_t)in | (size_t)out | (size_t)ivec) % sizeof(size_t) != 0) {
+      ((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
+          0) {
     while (len >= 16) {
       for (n = 0; n < 16; ++n) {
         out[n] = in[n] ^ iv[n];
@@ -76,7 +77,7 @@ void CRYPTO_cbc128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
   } else {
     while (len >= 16) {
       for (n = 0; n < 16; n += sizeof(size_t)) {
-        *(size_t *)(out + n) = *(size_t *)(in + n) ^ *(size_t *)(iv + n);
+        store_word_le(out + n, load_word_le(in + n) ^ load_word_le(iv + n));
       }
       (*block)(out, out, key);
       iv = out;
@@ -120,16 +121,17 @@ void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
 
   const uintptr_t inptr = (uintptr_t) in;
   const uintptr_t outptr = (uintptr_t) out;
-  /* If |in| and |out| alias, |in| must be ahead. */
+  // If |in| and |out| alias, |in| must be ahead.
   assert(inptr >= outptr || inptr + len <= outptr);
 
   if ((inptr >= 32 && outptr <= inptr - 32) || inptr < outptr) {
-    /* If |out| is at least two blocks behind |in| or completely disjoint, there
-     * is no need to decrypt to a temporary block. */
+    // If |out| is at least two blocks behind |in| or completely disjoint, there
+    // is no need to decrypt to a temporary block.
     const uint8_t *iv = ivec;
 
     if (STRICT_ALIGNMENT &&
-        ((size_t)in | (size_t)out | (size_t)ivec) % sizeof(size_t) != 0) {
+        ((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
+            0) {
       while (len >= 16) {
         (*block)(in, out, key);
         for (n = 0; n < 16; ++n) {
@@ -140,13 +142,11 @@ void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
         in += 16;
         out += 16;
       }
-    } else if (16 % sizeof(size_t) == 0) { /* always true */
+    } else if (16 % sizeof(size_t) == 0) {  // always true
       while (len >= 16) {
-        size_t *out_t = (size_t *)out, *iv_t = (size_t *)iv;
-
         (*block)(in, out, key);
-        for (n = 0; n < 16 / sizeof(size_t); n++) {
-          out_t[n] ^= iv_t[n];
+        for (n = 0; n < 16; n += sizeof(size_t)) {
+          store_word_le(out + n, load_word_le(out + n) ^ load_word_le(iv + n));
         }
         iv = in;
         len -= 16;
@@ -156,11 +156,12 @@ void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
     }
     OPENSSL_memcpy(ivec, iv, 16);
   } else {
-    /* |out| is less than two blocks behind |in|. Decrypting an input block
-     * directly to |out| would overwrite a ciphertext block before it is used as
-     * the next block's IV. Decrypt to a temporary block instead. */
+    // |out| is less than two blocks behind |in|. Decrypting an input block
+    // directly to |out| would overwrite a ciphertext block before it is used as
+    // the next block's IV. Decrypt to a temporary block instead.
     if (STRICT_ALIGNMENT &&
-        ((size_t)in | (size_t)out | (size_t)ivec) % sizeof(size_t) != 0) {
+        ((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
+            0) {
       uint8_t c;
       while (len >= 16) {
         (*block)(in, tmp.c, key);
@@ -173,16 +174,14 @@ void CRYPTO_cbc128_decrypt(const uint8_t *in, uint8_t *out, size_t len,
         in += 16;
         out += 16;
       }
-    } else if (16 % sizeof(size_t) == 0) { /* always true */
+    } else if (16 % sizeof(size_t) == 0) {  // always true
       while (len >= 16) {
-        size_t c, *out_t = (size_t *)out, *ivec_t = (size_t *)ivec;
-        const size_t *in_t = (const size_t *)in;
-
         (*block)(in, tmp.c, key);
-        for (n = 0; n < 16 / sizeof(size_t); n++) {
-          c = in_t[n];
-          out_t[n] = tmp.t[n] ^ ivec_t[n];
-          ivec_t[n] = c;
+        for (n = 0; n < 16; n += sizeof(size_t)) {
+          size_t c = load_word_le(in + n);
+          store_word_le(out + n,
+                        tmp.t[n / sizeof(size_t)] ^ load_word_le(ivec + n));
+          store_word_le(ivec + n, c);
         }
         len -= 16;
         in += 16;

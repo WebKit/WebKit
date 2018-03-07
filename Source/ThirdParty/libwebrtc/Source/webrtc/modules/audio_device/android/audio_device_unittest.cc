@@ -16,22 +16,22 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/format_macros.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/audio_device/android/audio_common.h"
-#include "webrtc/modules/audio_device/android/audio_manager.h"
-#include "webrtc/modules/audio_device/android/build_info.h"
-#include "webrtc/modules/audio_device/android/ensure_initialized.h"
-#include "webrtc/modules/audio_device/audio_device_impl.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/modules/audio_device/include/mock_audio_transport.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_device/android/audio_common.h"
+#include "modules/audio_device/android/audio_manager.h"
+#include "modules/audio_device/android/build_info.h"
+#include "modules/audio_device/android/ensure_initialized.h"
+#include "modules/audio_device/audio_device_impl.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/mock_audio_transport.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/format_macros.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/event_wrapper.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 using std::cout;
 using std::endl;
@@ -960,7 +960,13 @@ TEST_F(AudioDeviceTest, RunPlayoutWithFileAsSource) {
 // recording side and decreased by the playout side.
 // TODO(henrika): tune the final test parameters after running tests on several
 // different devices.
-TEST_F(AudioDeviceTest, RunPlayoutAndRecordingInFullDuplex) {
+// Disabling this test on bots since it is difficult to come up with a robust
+// test condition that all worked as intended. The main issue is that, when
+// swarming is used, an initial latency can be built up when the both sides
+// starts at different times. Hence, the test can fail even if audio works
+// as intended. Keeping the test so it can be enabled manually.
+// http://bugs.webrtc.org/7744
+TEST_F(AudioDeviceTest, DISABLED_RunPlayoutAndRecordingInFullDuplex) {
   EXPECT_EQ(record_channels(), playout_channels());
   EXPECT_EQ(record_sample_rate(), playout_sample_rate());
   NiceMock<MockAudioTransportAndroid> mock(kPlayout | kRecording);

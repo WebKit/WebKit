@@ -63,17 +63,17 @@
 #include "../../internal.h"
 
 
-/* IMPLEMENTATION NOTES.
- *
- * The 32-bit hash algorithms share a common byte-order neutral collector and
- * padding function implementations that operate on unaligned data,
- * ../md32_common.h. This SHA-512 implementation does not. Reasons
- * [in reverse order] are:
- *
- * - It's the only 64-bit hash algorithm for the moment of this writing,
- *   there is no need for common collector/padding implementation [yet];
- * - By supporting only a transform function that operates on *aligned* data
- *   the collector/padding function is simpler and easier to optimize. */
+// IMPLEMENTATION NOTES.
+//
+// The 32-bit hash algorithms share a common byte-order neutral collector and
+// padding function implementations that operate on unaligned data,
+// ../md32_common.h. This SHA-512 implementation does not. Reasons
+// [in reverse order] are:
+//
+// - It's the only 64-bit hash algorithm for the moment of this writing,
+//   there is no need for common collector/padding implementation [yet];
+// - By supporting only a transform function that operates on *aligned* data
+//   the collector/padding function is simpler and easier to optimize.
 
 #if !defined(OPENSSL_NO_ASM) &&                         \
     (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
@@ -227,7 +227,7 @@ int SHA512_Final(uint8_t *md, SHA512_CTX *sha) {
   uint8_t *p = (uint8_t *)sha->u.p;
   size_t n = sha->num;
 
-  p[n] = 0x80; /* There always is a room for one */
+  p[n] = 0x80;  // There always is a room for one
   n++;
   if (n > (sizeof(sha->u) - 16)) {
     OPENSSL_memset(p + n, 0, sizeof(sha->u) - n);
@@ -256,13 +256,13 @@ int SHA512_Final(uint8_t *md, SHA512_CTX *sha) {
   sha512_block_data_order(sha->h, (uint64_t *)p, 1);
 
   if (md == NULL) {
-    /* TODO(davidben): This NULL check is absent in other low-level hash 'final'
-     * functions and is one of the few places one can fail. */
+    // TODO(davidben): This NULL check is absent in other low-level hash 'final'
+    // functions and is one of the few places one can fail.
     return 0;
   }
 
   switch (sha->md_len) {
-    /* Let compiler decide if it's appropriate to unroll... */
+    // Let compiler decide if it's appropriate to unroll...
     case SHA384_DIGEST_LENGTH:
       for (n = 0; n < SHA384_DIGEST_LENGTH / 8; n++) {
         uint64_t t = sha->h[n];
@@ -291,10 +291,10 @@ int SHA512_Final(uint8_t *md, SHA512_CTX *sha) {
         *(md++) = (uint8_t)(t);
       }
       break;
-    /* ... as well as make sure md_len is not abused. */
+    // ... as well as make sure md_len is not abused.
     default:
-      /* TODO(davidben): This bad |md_len| case is one of the few places a
-       * low-level hash 'final' function can fail. This should never happen. */
+      // TODO(davidben): This bad |md_len| case is one of the few places a
+      // low-level hash 'final' function can fail. This should never happen.
       return 0;
   }
 
@@ -392,7 +392,7 @@ static const uint64_t K512[80] = {
 #endif
 #endif
 #elif defined(_MSC_VER)
-#if defined(_WIN64) /* applies to both IA-64 and AMD64 */
+#if defined(_WIN64)  // applies to both IA-64 and AMD64
 #pragma intrinsic(_rotr64)
 #define ROTR(a, n) _rotr64((a), n)
 #endif
@@ -432,10 +432,8 @@ static uint64_t __fastcall __pull64be(const void *x) {
 
 
 #if defined(__i386) || defined(__i386__) || defined(_M_IX86)
-/*
- * This code should give better results on 32-bit CPU with less than
- * ~24 registers, both size and performance wise...
- */
+// This code should give better results on 32-bit CPU with less than
+// ~24 registers, both size and performance wise...
 static void sha512_block_data_order(uint64_t *state, const uint64_t *W,
                                     size_t num) {
   uint64_t A, E, T;
@@ -593,7 +591,7 @@ static void sha512_block_data_order(uint64_t *state, const uint64_t *W,
 
 #endif
 
-#endif /* !SHA512_ASM */
+#endif  // !SHA512_ASM
 
 #undef ROTR
 #undef PULL64

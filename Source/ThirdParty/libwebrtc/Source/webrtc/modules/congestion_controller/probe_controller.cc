@@ -8,14 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/probe_controller.h"
+#include "modules/congestion_controller/probe_controller.h"
 
 #include <algorithm>
 #include <initializer_list>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -32,10 +33,6 @@ constexpr int kExponentialProbingDisabled = 0;
 // specify max bitrate.
 constexpr int64_t kDefaultMaxProbingBitrateBps = 5000000;
 
-// This is a limit on how often probing can be done when there is a BW
-// drop detected in ALR.
-constexpr int64_t kAlrProbingIntervalMinMs = 5000;
-
 // Interval between probes when ALR periodic probing is enabled.
 constexpr int64_t kAlrPeriodicProbingIntervalMs = 5000;
 
@@ -45,11 +42,38 @@ constexpr int64_t kAlrPeriodicProbingIntervalMs = 5000;
 // sent if we get 600kbps from the first one.
 constexpr int kRepeatedProbeMinPercentage = 70;
 
+// If the bitrate drops to a factor |kBitrateDropThreshold| or lower
+// and we recover within |kBitrateDropTimeoutMs|, then we'll send
+// a probe at a fraction |kProbeFractionAfterDrop| of the original bitrate.
+constexpr double kBitrateDropThreshold = 0.66;
+constexpr int kBitrateDropTimeoutMs = 5000;
+constexpr double kProbeFractionAfterDrop = 0.85;
+
+// Timeout for probing after leaving ALR. If the bitrate drops significantly,
+// (as determined by the delay based estimator) and we leave ALR, then we will
+// send a probe if we recover within |kLeftAlrTimeoutMs| ms.
+constexpr int kAlrEndedTimeoutMs = 3000;
+
+// The expected uncertainty of probe result (as a fraction of the target probe
+// This is a limit on how often probing can be done when there is a BW
+// drop detected in ALR.
+constexpr int64_t kMinTimeBetweenAlrProbesMs = 5000;
+
+// bitrate). Used to avoid probing if the probe bitrate is close to our current
+// estimate.
+constexpr double kProbeUncertainty = 0.05;
+
+// Use probing to recover faster after large bitrate estimate drops.
+constexpr char kBweRapidRecoveryExperiment[] =
+    "WebRTC-BweRapidRecoveryExperiment";
+
 }  // namespace
 
 ProbeController::ProbeController(PacedSender* pacer, const Clock* clock)
     : pacer_(pacer), clock_(clock), enable_periodic_alr_probing_(false) {
   Reset();
+  in_rapid_recovery_experiment_ = webrtc::field_trial::FindFullName(
+                                      kBweRapidRecoveryExperiment) == "Enabled";
 }
 
 void ProbeController::SetBitrates(int64_t min_bitrate_bps,
@@ -135,9 +159,9 @@ void ProbeController::SetEstimatedBitrate(int64_t bitrate_bps) {
   if (state_ == State::kWaitingForProbingResult) {
     // Continue probing if probing results indicate channel has greater
     // capacity.
-    LOG(LS_INFO) << "Measured bitrate: " << bitrate_bps
-                 << " Minimum to probe further: "
-                 << min_bitrate_to_probe_further_bps_;
+    RTC_LOG(LS_INFO) << "Measured bitrate: " << bitrate_bps
+                     << " Minimum to probe further: "
+                     << min_bitrate_to_probe_further_bps_;
 
     if (min_bitrate_to_probe_further_bps_ != kExponentialProbingDisabled &&
         bitrate_bps > min_bitrate_to_probe_further_bps_) {
@@ -146,28 +170,9 @@ void ProbeController::SetEstimatedBitrate(int64_t bitrate_bps) {
     }
   }
 
-  // Detect a drop in estimated BW when operating in ALR and not already
-  // probing. The current response is to initiate a single probe session at the
-  // previous bitrate and immediately use the reported bitrate as the new
-  // bitrate.
-  //
-  // If the probe session fails, the assumption is that this drop was a
-  // real one from a competing flow or something else on the network and
-  // it ramps up from bitrate_bps.
-  if (state_ == State::kProbingComplete &&
-      pacer_->GetApplicationLimitedRegionStartTime() &&
-      bitrate_bps < 2 * estimated_bitrate_bps_ / 3 &&
-      (now_ms - last_alr_probing_time_) > kAlrProbingIntervalMinMs) {
-    LOG(LS_INFO) << "Detected big BW drop in ALR, start probe.";
-    // Track how often we probe in response to BW drop in ALR.
-    RTC_HISTOGRAM_COUNTS_10000("WebRTC.BWE.AlrProbingIntervalInS",
-                               (now_ms - last_alr_probing_time_) / 1000);
-    InitiateProbing(now_ms, {estimated_bitrate_bps_}, false);
-    last_alr_probing_time_ = now_ms;
-
-    // TODO(isheriff): May want to track when we did ALR probing in order
-    // to reset |last_alr_probing_time_| if we validate that it was a
-    // drop due to exogenous event.
+  if (bitrate_bps < kBitrateDropThreshold * estimated_bitrate_bps_) {
+    time_of_last_large_drop_ms_ = now_ms;
+    bitrate_before_last_large_drop_bps_ = estimated_bitrate_bps_;
   }
 
   estimated_bitrate_bps_ = bitrate_bps;
@@ -176,6 +181,47 @@ void ProbeController::SetEstimatedBitrate(int64_t bitrate_bps) {
 void ProbeController::EnablePeriodicAlrProbing(bool enable) {
   rtc::CritScope cs(&critsect_);
   enable_periodic_alr_probing_ = enable;
+}
+
+void ProbeController::SetAlrEndedTimeMs(int64_t alr_end_time_ms) {
+  rtc::CritScope cs(&critsect_);
+  alr_end_time_ms_.emplace(alr_end_time_ms);
+}
+
+void ProbeController::RequestProbe() {
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  rtc::CritScope cs(&critsect_);
+  // Called once we have returned to normal state after a large drop in
+  // estimated bandwidth. The current response is to initiate a single probe
+  // session (if not already probing) at the previous bitrate.
+  //
+  // If the probe session fails, the assumption is that this drop was a
+  // real one from a competing flow or a network change.
+  bool in_alr = pacer_->GetApplicationLimitedRegionStartTime().has_value();
+  bool alr_ended_recently =
+      (alr_end_time_ms_.has_value() &&
+       now_ms - alr_end_time_ms_.value() < kAlrEndedTimeoutMs);
+  if (in_alr || alr_ended_recently || in_rapid_recovery_experiment_) {
+    if (state_ == State::kProbingComplete) {
+      uint32_t suggested_probe_bps =
+          kProbeFractionAfterDrop * bitrate_before_last_large_drop_bps_;
+      uint32_t min_expected_probe_result_bps =
+          (1 - kProbeUncertainty) * suggested_probe_bps;
+      int64_t time_since_drop_ms = now_ms - time_of_last_large_drop_ms_;
+      int64_t time_since_probe_ms = now_ms - last_bwe_drop_probing_time_ms_;
+      if (min_expected_probe_result_bps > estimated_bitrate_bps_ &&
+          time_since_drop_ms < kBitrateDropTimeoutMs &&
+          time_since_probe_ms > kMinTimeBetweenAlrProbesMs) {
+        RTC_LOG(LS_INFO) << "Detected big bandwidth drop, start probing.";
+        // Track how often we probe in response to bandwidth drop in ALR.
+        RTC_HISTOGRAM_COUNTS_10000(
+            "WebRTC.BWE.BweDropProbingIntervalInS",
+            (now_ms - last_bwe_drop_probing_time_ms_) / 1000);
+        InitiateProbing(now_ms, {suggested_probe_bps}, false);
+        last_bwe_drop_probing_time_ms_ = now_ms;
+      }
+    }
+  }
 }
 
 void ProbeController::Reset() {
@@ -187,8 +233,12 @@ void ProbeController::Reset() {
   estimated_bitrate_bps_ = 0;
   start_bitrate_bps_ = 0;
   max_bitrate_bps_ = 0;
-  last_alr_probing_time_ = clock_->TimeInMilliseconds();
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  last_bwe_drop_probing_time_ms_ = now_ms;
+  alr_end_time_ms_.reset();
   mid_call_probing_waiting_for_result_ = false;
+  time_of_last_large_drop_ms_ = now_ms;
+  bitrate_before_last_large_drop_bps_ = 0;
 }
 
 void ProbeController::Process() {
@@ -201,7 +251,7 @@ void ProbeController::Process() {
     mid_call_probing_waiting_for_result_ = false;
 
     if (state_ == State::kWaitingForProbingResult) {
-      LOG(LS_INFO) << "kWaitingForProbingResult: timeout";
+      RTC_LOG(LS_INFO) << "kWaitingForProbingResult: timeout";
       state_ = State::kProbingComplete;
       min_bitrate_to_probe_further_bps_ = kExponentialProbingDisabled;
     }

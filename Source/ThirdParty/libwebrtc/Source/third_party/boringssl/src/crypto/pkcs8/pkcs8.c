@@ -88,7 +88,7 @@ static int ascii_to_ucs2(const char *ascii, size_t ascii_len,
     unitmp[i + 1] = ascii[i >> 1];
   }
 
-  /* Terminate the result with a UCS-2 NUL. */
+  // Terminate the result with a UCS-2 NUL.
   unitmp[ulen - 2] = 0;
   unitmp[ulen - 1] = 0;
   *out_len = ulen;
@@ -99,8 +99,8 @@ static int ascii_to_ucs2(const char *ascii, size_t ascii_len,
 int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
                    size_t salt_len, uint8_t id, unsigned iterations,
                    size_t out_len, uint8_t *out, const EVP_MD *md) {
-  /* See https://tools.ietf.org/html/rfc7292#appendix-B. Quoted parts of the
-   * specification have errata applied and other typos fixed. */
+  // See https://tools.ietf.org/html/rfc7292#appendix-B. Quoted parts of the
+  // specification have errata applied and other typos fixed.
 
   if (iterations < 1) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_BAD_ITERATION_COUNT);
@@ -112,31 +112,31 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
   EVP_MD_CTX_init(&ctx);
   uint8_t *pass_raw = NULL, *I = NULL;
   size_t pass_raw_len = 0, I_len = 0;
-  /* If |pass| is NULL, we use the empty string rather than {0, 0} as the raw
-   * password. */
+  // If |pass| is NULL, we use the empty string rather than {0, 0} as the raw
+  // password.
   if (pass != NULL &&
       !ascii_to_ucs2(pass, pass_len, &pass_raw, &pass_raw_len)) {
     goto err;
   }
 
-  /* In the spec, |block_size| is called "v", but measured in bits. */
+  // In the spec, |block_size| is called "v", but measured in bits.
   size_t block_size = EVP_MD_block_size(md);
 
-  /* 1. Construct a string, D (the "diversifier"), by concatenating v/8 copies
-   * of ID. */
+  // 1. Construct a string, D (the "diversifier"), by concatenating v/8 copies
+  // of ID.
   uint8_t D[EVP_MAX_MD_BLOCK_SIZE];
   OPENSSL_memset(D, id, block_size);
 
-  /* 2. Concatenate copies of the salt together to create a string S of length
-   * v(ceiling(s/v)) bits (the final copy of the salt may be truncated to
-   * create S). Note that if the salt is the empty string, then so is S.
-   *
-   * 3. Concatenate copies of the password together to create a string P of
-   * length v(ceiling(p/v)) bits (the final copy of the password may be
-   * truncated to create P).  Note that if the password is the empty string,
-   * then so is P.
-   *
-   * 4. Set I=S||P to be the concatenation of S and P. */
+  // 2. Concatenate copies of the salt together to create a string S of length
+  // v(ceiling(s/v)) bits (the final copy of the salt may be truncated to
+  // create S). Note that if the salt is the empty string, then so is S.
+  //
+  // 3. Concatenate copies of the password together to create a string P of
+  // length v(ceiling(p/v)) bits (the final copy of the password may be
+  // truncated to create P).  Note that if the password is the empty string,
+  // then so is P.
+  //
+  // 4. Set I=S||P to be the concatenation of S and P.
   if (salt_len + block_size - 1 < salt_len ||
       pass_raw_len + block_size - 1 < pass_raw_len) {
     OPENSSL_PUT_ERROR(PKCS8, ERR_R_OVERFLOW);
@@ -164,8 +164,8 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
   }
 
   while (out_len != 0) {
-    /* A. Set A_i=H^r(D||I). (i.e., the r-th hash of D||I,
-     * H(H(H(... H(D||I)))) */
+    // A. Set A_i=H^r(D||I). (i.e., the r-th hash of D||I,
+    // H(H(H(... H(D||I))))
     uint8_t A[EVP_MAX_MD_SIZE];
     unsigned A_len;
     if (!EVP_DigestInit_ex(&ctx, md, NULL) ||
@@ -190,16 +190,16 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
       break;
     }
 
-    /* B. Concatenate copies of A_i to create a string B of length v bits (the
-     * final copy of A_i may be truncated to create B). */
+    // B. Concatenate copies of A_i to create a string B of length v bits (the
+    // final copy of A_i may be truncated to create B).
     uint8_t B[EVP_MAX_MD_BLOCK_SIZE];
     for (size_t i = 0; i < block_size; i++) {
       B[i] = A[i % A_len];
     }
 
-    /* C. Treating I as a concatenation I_0, I_1, ..., I_(k-1) of v-bit blocks,
-     * where k=ceiling(s/v)+ceiling(p/v), modify I by setting I_j=(I_j+B+1) mod
-     * 2^v for each j. */
+    // C. Treating I as a concatenation I_0, I_1, ..., I_(k-1) of v-bit blocks,
+    // where k=ceiling(s/v)+ceiling(p/v), modify I by setting I_j=(I_j+B+1) mod
+    // 2^v for each j.
     assert(I_len % block_size == 0);
     for (size_t i = 0; i < I_len; i += block_size) {
       unsigned carry = 1;
@@ -214,14 +214,8 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
   ret = 1;
 
 err:
-  if (I != NULL) {
-    OPENSSL_cleanse(I, I_len);
-    OPENSSL_free(I);
-  }
-  if (pass_raw != NULL) {
-    OPENSSL_cleanse(pass_raw, pass_raw_len);
-    OPENSSL_free(pass_raw);
-  }
+  OPENSSL_free(I);
+  OPENSSL_free(pass_raw);
   EVP_MD_CTX_cleanup(&ctx);
   return ret;
 }
@@ -277,7 +271,7 @@ static int pkcs12_pbe_decrypt_init(const struct pbe_suite *suite,
 static const struct pbe_suite kBuiltinPBE[] = {
     {
         NID_pbe_WithSHA1And40BitRC2_CBC,
-        /* 1.2.840.113549.1.12.1.6 */
+        // 1.2.840.113549.1.12.1.6
         {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x06},
         10,
         EVP_rc2_40_cbc,
@@ -286,7 +280,7 @@ static const struct pbe_suite kBuiltinPBE[] = {
     },
     {
         NID_pbe_WithSHA1And128BitRC4,
-        /* 1.2.840.113549.1.12.1.1 */
+        // 1.2.840.113549.1.12.1.1
         {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x01},
         10,
         EVP_rc4,
@@ -295,7 +289,7 @@ static const struct pbe_suite kBuiltinPBE[] = {
     },
     {
         NID_pbe_WithSHA1And3_Key_TripleDES_CBC,
-        /* 1.2.840.113549.1.12.1.3 */
+        // 1.2.840.113549.1.12.1.3
         {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x03},
         10,
         EVP_des_ede3_cbc,
@@ -304,7 +298,7 @@ static const struct pbe_suite kBuiltinPBE[] = {
     },
     {
         NID_pbes2,
-        /* 1.2.840.113549.1.5.13 */
+        // 1.2.840.113549.1.5.13
         {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x05, 0x0d},
         9,
         NULL,
@@ -333,7 +327,7 @@ static int pkcs12_pbe_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx, int alg,
     return 0;
   }
 
-  /* See RFC 2898, appendix A.3. */
+  // See RFC 2898, appendix A.3.
   CBB algorithm, oid, param, salt_cbb;
   if (!CBB_add_asn1(out, &algorithm, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&algorithm, &oid, CBS_ASN1_OBJECT) ||
@@ -411,7 +405,7 @@ err:
 
 EVP_PKEY *PKCS8_parse_encrypted_private_key(CBS *cbs, const char *pass,
                                             size_t pass_len) {
-  /* See RFC 5208, section 6. */
+  // See RFC 5208, section 6.
   CBS epki, algorithm, ciphertext;
   if (!CBS_get_asn1(cbs, &epki, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&epki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -431,7 +425,6 @@ EVP_PKEY *PKCS8_parse_encrypted_private_key(CBS *cbs, const char *pass,
   CBS pki;
   CBS_init(&pki, out, out_len);
   EVP_PKEY *ret = EVP_parse_private_key(&pki);
-  OPENSSL_cleanse(out, out_len);
   OPENSSL_free(out);
   return ret;
 }
@@ -447,7 +440,7 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
   EVP_CIPHER_CTX ctx;
   EVP_CIPHER_CTX_init(&ctx);
 
-  /* Generate a random salt if necessary. */
+  // Generate a random salt if necessary.
   if (salt == NULL) {
     if (salt_len == 0) {
       salt_len = PKCS5_SALT_LEN;
@@ -466,7 +459,7 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
     iterations = PKCS5_DEFAULT_ITERATIONS;
   }
 
-  /* Serialize the input key. */
+  // Serialize the input key.
   CBB plaintext_cbb;
   if (!CBB_init(&plaintext_cbb, 128) ||
       !EVP_marshal_private_key(&plaintext_cbb, pkey) ||
@@ -513,10 +506,7 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
   ret = 1;
 
 err:
-  if (plaintext != NULL) {
-    OPENSSL_cleanse(plaintext, plaintext_len);
-    OPENSSL_free(plaintext);
-  }
+  OPENSSL_free(plaintext);
   OPENSSL_free(salt_buf);
   EVP_CIPHER_CTX_cleanup(&ctx);
   return ret;

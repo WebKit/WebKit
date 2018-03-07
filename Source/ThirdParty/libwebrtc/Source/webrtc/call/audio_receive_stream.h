@@ -8,22 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_CALL_AUDIO_RECEIVE_STREAM_H_
-#define WEBRTC_CALL_AUDIO_RECEIVE_STREAM_H_
+#ifndef CALL_AUDIO_RECEIVE_STREAM_H_
+#define CALL_AUDIO_RECEIVE_STREAM_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
-#include "webrtc/api/call/transport.h"
-#include "webrtc/api/rtpreceiverinterface.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_types.h"
-#include "webrtc/config.h"
-#include "webrtc/typedefs.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/call/transport.h"
+#include "api/optional.h"
+#include "api/rtpparameters.h"
+#include "api/rtpreceiverinterface.h"
+#include "call/rtp_config.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/scoped_ref_ptr.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 class AudioSinkInterface;
@@ -49,9 +50,19 @@ class AudioReceiveStream {
     uint32_t jitter_buffer_preferred_ms = 0;
     uint32_t delay_estimate_ms = 0;
     int32_t audio_level = -1;
+    // Stats below correspond to similarly-named fields in the WebRTC stats
+    // spec. https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats
+    double total_output_energy = 0.0;
+    uint64_t total_samples_received = 0;
+    double total_output_duration = 0.0;
+    uint64_t concealed_samples = 0;
+    uint64_t concealment_events = 0;
+    double jitter_buffer_delay_seconds = 0.0;
+    // Stats below DO NOT correspond directly to anything in the WebRTC stats
     float expand_rate = 0.0f;
     float speech_expand_rate = 0.0f;
     float secondary_decoded_rate = 0.0f;
+    float secondary_discarded_rate = 0.0f;
     float accelerate_rate = 0.0f;
     float preemptive_expand_rate = 0.0f;
     int32_t decoding_calls_to_silence_generator = 0;
@@ -141,4 +152,4 @@ class AudioReceiveStream {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_CALL_AUDIO_RECEIVE_STREAM_H_
+#endif  // CALL_AUDIO_RECEIVE_STREAM_H_

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
+#include "modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/pathutils.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/mock_wavreader.h"
-#include "webrtc/test/gmock.h"
+#include "modules/audio_processing/test/conversational_speech/mock_wavreader.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/pathutils.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 namespace test {
@@ -46,7 +46,7 @@ std::unique_ptr<WavReaderInterface> MockWavReaderFactory::CreateMock(
 
   // If not found, use default parameters.
   if (it == audiotrack_names_params_.end()) {
-    LOG(LS_VERBOSE) << "using default parameters for " << filepath;
+    RTC_LOG(LS_VERBOSE) << "using default parameters for " << filepath;
     return std::unique_ptr<WavReaderInterface>(
         new MockWavReader(default_params_.sample_rate,
                           default_params_.num_channels,
@@ -54,10 +54,10 @@ std::unique_ptr<WavReaderInterface> MockWavReaderFactory::CreateMock(
   }
 
   // Found, use the audiotrack-specific parameters.
-  LOG(LS_VERBOSE) << "using ad-hoc parameters for " << filepath;
-  LOG(LS_VERBOSE) << "sample_rate " << it->second.sample_rate;
-  LOG(LS_VERBOSE) << "num_channels " << it->second.num_channels;
-  LOG(LS_VERBOSE) << "num_samples " << it->second.num_samples;
+  RTC_LOG(LS_VERBOSE) << "using ad-hoc parameters for " << filepath;
+  RTC_LOG(LS_VERBOSE) << "sample_rate " << it->second.sample_rate;
+  RTC_LOG(LS_VERBOSE) << "num_channels " << it->second.num_channels;
+  RTC_LOG(LS_VERBOSE) << "num_samples " << it->second.num_samples;
   return std::unique_ptr<WavReaderInterface>(
       new MockWavReader(it->second.sample_rate,
                         it->second.num_channels,

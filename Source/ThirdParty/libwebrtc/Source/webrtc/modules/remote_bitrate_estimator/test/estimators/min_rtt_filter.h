@@ -9,36 +9,65 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_MIN_RTT_FILTER_H_
-#define WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_MIN_RTT_FILTER_H_
+#ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_MIN_RTT_FILTER_H_
+#define MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_MIN_RTT_FILTER_H_
 
-#include <climits>
-#include <map>
-#include <memory>
-#include <utility>
-#include <vector>
+#include <cstdint>
+#include <limits>
+#include <list>
 
-#include "webrtc/logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/send_time_history.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe.h"
+#include "api/optional.h"
 
 namespace webrtc {
 namespace testing {
 namespace bwe {
+
+// Average rtt for past |kRttFilterSize| packets should grow by
+// |kRttIncreaseThresholdForExpiry| in order to enter PROBE_RTT mode and expire.
+// old min_rtt estimate.
+const float kRttIncreaseThresholdForExpiry = 2.3f;
+const size_t kRttFilterSize = 25;
+
 class MinRttFilter {
  public:
-  MinRttFilter();
-  ~MinRttFilter();
-  int64_t min_rtt();
-  void UpdateMinRtt(int64_t min_rtt);
+  // This class implements a simple filter to ensure that PROBE_RTT is only
+  // entered when RTTs start to increase, instead of fixed 10 second window as
+  // in orginal BBR design doc, to avoid unnecessary freezes in stream.
+  MinRttFilter() {}
+  ~MinRttFilter() {}
 
-  // Checks whether or last discovered min_rtt value
-  // is older than x seconds.
-  bool MinRttExpired(int64_t now);
-  void set_min_rtt_discovery_time(int64_t discovery_time);
+  rtc::Optional<int64_t> min_rtt_ms() { return min_rtt_ms_; }
+  void AddRttSample(int64_t rtt_ms, int64_t now_ms) {
+    if (!min_rtt_ms_ || rtt_ms <= *min_rtt_ms_ || MinRttExpired(now_ms)) {
+      min_rtt_ms_.emplace(rtt_ms);
+    }
+    rtt_samples_.push_back(rtt_ms);
+    if (rtt_samples_.size() > kRttFilterSize)
+      rtt_samples_.pop_front();
+  }
+
+  // Checks whether or not last RTT values for past |kRttFilterSize| packets
+  // started to increase, meaning we have to update min_rtt estimate.
+  bool MinRttExpired(int64_t now_ms) {
+    if (rtt_samples_.size() < kRttFilterSize || !min_rtt_ms_)
+      return false;
+    int64_t sum_of_rtts_ms = 0;
+    for (int64_t i : rtt_samples_)
+      sum_of_rtts_ms += i;
+    if (sum_of_rtts_ms >=
+        *min_rtt_ms_ * kRttIncreaseThresholdForExpiry * kRttFilterSize) {
+      rtt_samples_.clear();
+      return true;
+    }
+    return false;
+  }
+
+ private:
+  rtc::Optional<int64_t> min_rtt_ms_;
+  std::list<int64_t> rtt_samples_;
 };
 }  // namespace bwe
 }  // namespace testing
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_MIN_RTT_FILTER_H_
+#endif  // MODULES_REMOTE_BITRATE_ESTIMATOR_TEST_ESTIMATORS_MIN_RTT_FILTER_H_

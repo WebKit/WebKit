@@ -26,7 +26,6 @@ import android.support.test.InstrumentationRegistry;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.appspot.apprtc.CallActivity;
-import org.appspot.apprtc.ConnectActivity;
 import org.appspot.apprtc.R;
 import org.junit.Rule;
 import org.junit.Test;

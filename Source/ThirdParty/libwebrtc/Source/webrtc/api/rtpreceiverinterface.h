@@ -11,18 +11,18 @@
 // This file contains interfaces for RtpReceivers
 // http://w3c.github.io/webrtc-pc/#rtcrtpreceiver-interface
 
-#ifndef WEBRTC_API_RTPRECEIVERINTERFACE_H_
-#define WEBRTC_API_RTPRECEIVERINTERFACE_H_
+#ifndef API_RTPRECEIVERINTERFACE_H_
+#define API_RTPRECEIVERINTERFACE_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/mediatypes.h"
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/proxy.h"
-#include "webrtc/api/rtpparameters.h"
-#include "webrtc/base/refcount.h"
-#include "webrtc/base/scoped_ref_ptr.h"
+#include "api/mediastreaminterface.h"
+#include "api/mediatypes.h"
+#include "api/proxy.h"
+#include "api/rtpparameters.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -39,6 +39,15 @@ class RtpSource {
         source_id_(source_id),
         source_type_(source_type) {}
 
+  RtpSource(int64_t timestamp_ms,
+            uint32_t source_id,
+            RtpSourceType source_type,
+            uint8_t audio_level)
+      : timestamp_ms_(timestamp_ms),
+        source_id_(source_id),
+        source_type_(source_type),
+        audio_level_(audio_level) {}
+
   int64_t timestamp_ms() const { return timestamp_ms_; }
   void update_timestamp_ms(int64_t timestamp_ms) {
     RTC_DCHECK_LE(timestamp_ms_, timestamp_ms);
@@ -51,19 +60,21 @@ class RtpSource {
   // The source can be either a contributing source or a synchronization source.
   RtpSourceType source_type() const { return source_type_; }
 
-  // This isn't implemented yet and will always return an empty Optional.
-  // TODO(zhihuang): Implement this to return real audio level.
-  rtc::Optional<int8_t> audio_level() const { return rtc::Optional<int8_t>(); }
+  rtc::Optional<uint8_t> audio_level() const { return audio_level_; }
+  void set_audio_level(const rtc::Optional<uint8_t>& level) {
+    audio_level_ = level;
+  }
 
   bool operator==(const RtpSource& o) const {
     return timestamp_ms_ == o.timestamp_ms() && source_id_ == o.source_id() &&
-           source_type_ == o.source_type();
+           source_type_ == o.source_type() && audio_level_ == o.audio_level_;
   }
 
  private:
   int64_t timestamp_ms_;
   uint32_t source_id_;
   RtpSourceType source_type_;
+  rtc::Optional<uint8_t> audio_level_;
 };
 
 class RtpReceiverObserverInterface {
@@ -83,6 +94,14 @@ class RtpReceiverObserverInterface {
 class RtpReceiverInterface : public rtc::RefCountInterface {
  public:
   virtual rtc::scoped_refptr<MediaStreamTrackInterface> track() const = 0;
+  // The list of streams that |track| is associated with. This is the same as
+  // the [[AssociatedRemoteMediaStreams]] internal slot in the spec.
+  // https://w3c.github.io/webrtc-pc/#dfn-x%5B%5Bassociatedremotemediastreams%5D%5D
+  // TODO(hbos): Make pure virtual as soon as Chromium's mock implements this.
+  virtual std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams()
+      const {
+    return std::vector<rtc::scoped_refptr<MediaStreamInterface>>();
+  }
 
   // Audio or video receiver?
   virtual cricket::MediaType media_type() const = 0;
@@ -119,6 +138,8 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
 BEGIN_SIGNALING_PROXY_MAP(RtpReceiver)
   PROXY_SIGNALING_THREAD_DESTRUCTOR()
   PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
+  PROXY_CONSTMETHOD0(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
+                     streams)
   PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
   PROXY_CONSTMETHOD0(std::string, id)
   PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
@@ -129,4 +150,4 @@ BEGIN_SIGNALING_PROXY_MAP(RtpReceiver)
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_RTPRECEIVERINTERFACE_H_
+#endif  // API_RTPRECEIVERINTERFACE_H_

@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_DEFINES_H_
-#define WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_DEFINES_H_
+#ifndef MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_DEFINES_H_
+#define MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_DEFINES_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/video/video_frame.h"
+#include "api/video/video_frame.h"
 // For EncodedImage
-#include "webrtc/common_video/include/video_frame.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "common_video/include/video_frame.h"
+#include "modules/include/module_common_types.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -40,12 +40,13 @@ namespace webrtc {
 #define VCM_NOT_IMPLEMENTED -20
 
 enum {
-  kDefaultStartBitrateKbps = 300,
   // Timing frames settings. Timing frames are sent every
   // |kDefaultTimingFramesDelayMs|, or if the frame is at least
   // |kDefaultOutliserFrameSizePercent| in size of average frame.
   kDefaultTimingFramesDelayMs = 200,
   kDefaultOutlierFrameSizePercent = 250,
+  // Maximum number of frames for what we store encode start timing information.
+  kMaxEncodeStartTimeListSize = 50,
 };
 
 enum VCMVideoProtection {
@@ -70,7 +71,7 @@ class VCMReceiveCallback {
  public:
   virtual int32_t FrameToRender(VideoFrame& videoFrame,  // NOLINT
                                 rtc::Optional<uint8_t> qp,
-                                VideoContentType /*content_type*/) = 0;
+                                VideoContentType content_type) = 0;
 
   virtual int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) {
     return -1;
@@ -83,22 +84,14 @@ class VCMReceiveCallback {
   virtual ~VCMReceiveCallback() {}
 };
 
-// Callback class used for informing the user of the bit rate and frame rate,
-// and the name of the encoder.
-class VCMSendStatisticsCallback {
- public:
-  virtual void SendStatistics(uint32_t bitRate, uint32_t frameRate) = 0;
-
- protected:
-  virtual ~VCMSendStatisticsCallback() {}
-};
-
 // Callback class used for informing the user of the incoming bit rate and frame
 // rate.
 class VCMReceiveStatisticsCallback {
  public:
   virtual void OnReceiveRatesUpdated(uint32_t bitRate, uint32_t frameRate) = 0;
-  virtual void OnCompleteFrame(bool is_keyframe, size_t size_bytes) = 0;
+  virtual void OnCompleteFrame(bool is_keyframe,
+                               size_t size_bytes,
+                               VideoContentType content_type) = 0;
   virtual void OnDiscardedPacketsUpdated(int discarded_packets) = 0;
   virtual void OnFrameCountsUpdated(const FrameCounts& frame_counts) = 0;
   virtual void OnFrameBufferTimingsUpdated(int decode_ms,
@@ -108,6 +101,8 @@ class VCMReceiveStatisticsCallback {
                                            int jitter_buffer_ms,
                                            int min_playout_delay_ms,
                                            int render_delay_ms) = 0;
+
+  virtual void OnTimingFrameInfoUpdated(const TimingFrameInfo& info) = 0;
 
  protected:
   virtual ~VCMReceiveStatisticsCallback() {}
@@ -170,4 +165,4 @@ class KeyFrameRequestSender {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_DEFINES_H_
+#endif  // MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_DEFINES_H_

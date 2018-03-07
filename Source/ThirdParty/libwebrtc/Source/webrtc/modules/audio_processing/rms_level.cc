@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/rms_level.h"
+#include "modules/audio_processing/rms_level.h"
 
 #include <math.h>
 #include <algorithm>
 #include <numeric>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {
@@ -54,7 +54,7 @@ void RmsLevel::Reset() {
   sum_square_ = 0.f;
   sample_count_ = 0;
   max_sum_square_ = 0.f;
-  block_size_ = rtc::Optional<size_t>();
+  block_size_ = rtc::nullopt;
 }
 
 void RmsLevel::Analyze(rtc::ArrayView<const int16_t> data) {
@@ -99,9 +99,9 @@ RmsLevel::Levels RmsLevel::AverageAndPeak() {
 }
 
 void RmsLevel::CheckBlockSize(size_t block_size) {
-  if (block_size_ != rtc::Optional<size_t>(block_size)) {
+  if (block_size_ != block_size) {
     Reset();
-    block_size_ = rtc::Optional<size_t>(block_size);
+    block_size_ = block_size;
   }
 }
 }  // namespace webrtc

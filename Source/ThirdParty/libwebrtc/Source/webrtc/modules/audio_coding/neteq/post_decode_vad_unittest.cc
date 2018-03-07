@@ -10,9 +10,9 @@
 
 // Unit tests for PostDecodeVad class.
 
-#include "webrtc/modules/audio_coding/neteq/post_decode_vad.h"
+#include "modules/audio_coding/neteq/post_decode_vad.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

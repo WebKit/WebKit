@@ -11,13 +11,13 @@
 // FakePeriodicVideoCapturer implements a fake cricket::VideoCapturer that
 // creates video frames periodically after it has been started.
 
-#ifndef WEBRTC_PC_TEST_FAKEPERIODICVIDEOCAPTURER_H_
-#define WEBRTC_PC_TEST_FAKEPERIODICVIDEOCAPTURER_H_
+#ifndef PC_TEST_FAKEPERIODICVIDEOCAPTURER_H_
+#define PC_TEST_FAKEPERIODICVIDEOCAPTURER_H_
 
 #include <vector>
 
-#include "webrtc/base/thread.h"
-#include "webrtc/media/base/fakevideocapturer.h"
+#include "media/base/fakevideocapturer.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -71,4 +71,4 @@ class FakePeriodicVideoCapturer : public cricket::FakeVideoCapturer,
 
 }  // namespace webrtc
 
-#endif  //  WEBRTC_PC_TEST_FAKEPERIODICVIDEOCAPTURER_H_
+#endif  //  PC_TEST_FAKEPERIODICVIDEOCAPTURER_H_

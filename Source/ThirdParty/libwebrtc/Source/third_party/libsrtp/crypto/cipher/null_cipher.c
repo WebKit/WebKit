@@ -10,7 +10,7 @@
 
 /*
  *
- * Copyright (c) 2001-2006,2013 Cisco Systems, Inc.
+ * Copyright (c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,7 @@ static srtp_err_status_t srtp_null_cipher_dealloc (srtp_cipher_t *c)
     extern const srtp_cipher_type_t srtp_null_cipher;
 
     /* zeroize entire state*/
-    octet_string_set_to_zero((uint8_t*)c, sizeof(srtp_cipher_t));
+    octet_string_set_to_zero(c, sizeof(srtp_cipher_t));
 
     /* free memory of type null_cipher */
     srtp_crypto_free(c);

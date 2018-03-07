@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/audio/audio_transport_proxy.h"
+#include "audio/audio_transport_proxy.h"
 
 namespace webrtc {
 
@@ -34,11 +34,13 @@ int Resample(const AudioFrame& frame,
 }  // namespace
 
 AudioTransportProxy::AudioTransportProxy(AudioTransport* voe_audio_transport,
-                                         AudioProcessing* apm,
+                                         AudioProcessing* audio_processing,
                                          AudioMixer* mixer)
-    : voe_audio_transport_(voe_audio_transport), apm_(apm), mixer_(mixer) {
+    : voe_audio_transport_(voe_audio_transport),
+      audio_processing_(audio_processing),
+      mixer_(mixer) {
   RTC_DCHECK(voe_audio_transport);
-  RTC_DCHECK(apm);
+  RTC_DCHECK(audio_processing);
   RTC_DCHECK(mixer);
 }
 
@@ -85,7 +87,7 @@ int32_t AudioTransportProxy::NeedMorePlayData(const size_t nSamples,
   *elapsed_time_ms = mixed_frame_.elapsed_time_ms_;
   *ntp_time_ms = mixed_frame_.ntp_time_ms_;
 
-  const auto error = apm_->ProcessReverseStream(&mixed_frame_);
+  const auto error = audio_processing_->ProcessReverseStream(&mixed_frame_);
   RTC_DCHECK_EQ(error, AudioProcessing::kNoError);
 
   nSamplesOut = Resample(mixed_frame_, samplesPerSec, &resampler_,

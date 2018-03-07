@@ -10,13 +10,14 @@
 
 // Implementation file of class VideoCapturer.
 
-#include "webrtc/media/base/videocapturer.h"
+#include "media/base/videocapturer.h"
 
 #include <algorithm>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/logging.h"
+#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace cricket {
 
@@ -26,6 +27,8 @@ static const int64_t kMaxDistance = ~(static_cast<int64_t>(1) << 63);
 #ifdef WEBRTC_LINUX
 static const int kYU12Penalty = 16;  // Needs to be higher than MJPG index.
 #endif
+static const char* kSimulcastScreenshareFieldTrialName =
+    "WebRTC-SimulcastScreenshare";
 
 }  // namespace
 
@@ -81,7 +84,7 @@ bool VideoCapturer::GetBestCaptureFormat(const VideoFormat& format,
   if (supported_formats->empty()) {
     return false;
   }
-  LOG(LS_INFO) << " Capture Requested " << format.ToString();
+  RTC_LOG(LS_INFO) << " Capture Requested " << format.ToString();
   int64_t best_distance = kMaxDistance;
   std::vector<VideoFormat>::const_iterator best = supported_formats->end();
   std::vector<VideoFormat>::const_iterator i;
@@ -89,14 +92,15 @@ bool VideoCapturer::GetBestCaptureFormat(const VideoFormat& format,
     int64_t distance = GetFormatDistance(format, *i);
     // TODO(fbarchard): Reduce to LS_VERBOSE if/when camera capture is
     // relatively bug free.
-    LOG(LS_INFO) << " Supported " << i->ToString() << " distance " << distance;
+    RTC_LOG(LS_INFO) << " Supported " << i->ToString() << " distance "
+                     << distance;
     if (distance < best_distance) {
       best_distance = distance;
       best = i;
     }
   }
   if (supported_formats->end() == best) {
-    LOG(LS_ERROR) << " No acceptable camera format found";
+    RTC_LOG(LS_ERROR) << " No acceptable camera format found";
     return false;
   }
 
@@ -105,8 +109,8 @@ bool VideoCapturer::GetBestCaptureFormat(const VideoFormat& format,
     best_format->height = best->height;
     best_format->fourcc = best->fourcc;
     best_format->interval = best->interval;
-    LOG(LS_INFO) << " Best " << best_format->ToString() << " Interval "
-                 << best_format->interval << " distance " << best_distance;
+    RTC_LOG(LS_INFO) << " Best " << best_format->ToString() << " Interval "
+                     << best_format->interval << " distance " << best_distance;
   }
   return true;
 }
@@ -114,7 +118,7 @@ bool VideoCapturer::GetBestCaptureFormat(const VideoFormat& format,
 void VideoCapturer::ConstrainSupportedFormats(const VideoFormat& max_format) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   max_format_.reset(new VideoFormat(max_format));
-  LOG(LS_VERBOSE) << " ConstrainSupportedFormats " << max_format.ToString();
+  RTC_LOG(LS_VERBOSE) << " ConstrainSupportedFormats " << max_format.ToString();
   UpdateFilteredSupportedFormats();
 }
 
@@ -174,11 +178,15 @@ bool VideoCapturer::AdaptFrame(int width,
     return false;
   }
 
-  if (enable_video_adapter_ && !IsScreencast()) {
+  bool simulcast_screenshare_enabled =
+      webrtc::field_trial::IsEnabled(kSimulcastScreenshareFieldTrialName);
+  if (enable_video_adapter_ &&
+      (!IsScreencast() || simulcast_screenshare_enabled)) {
     if (!video_adapter_.AdaptFrameResolution(
             width, height, camera_time_us * rtc::kNumNanosecsPerMicrosec,
             crop_width, crop_height, out_width, out_height)) {
       // VideoAdapter dropped the frame.
+      broadcaster_.OnDiscardedFrame();
       return false;
     }
     *crop_x = (width - *crop_width) / 2;
@@ -211,7 +219,7 @@ void VideoCapturer::OnFrame(const webrtc::VideoFrame& frame,
       // in this case, for frames in flight at the time
       // applied_rotation is set to true. In that case, we just drop
       // the frame.
-      LOG(LS_WARNING) << "Non-I420 frame requiring rotation. Discarding.";
+      RTC_LOG(LS_WARNING) << "Non-I420 frame requiring rotation. Discarding.";
       return;
     }
     broadcaster_.OnFrame(webrtc::VideoFrame(

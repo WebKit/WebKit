@@ -34,7 +34,7 @@ typedef HANDLE thread_t;
 
 static DWORD WINAPI thread_run(LPVOID arg) {
   void (*thread_func)(void);
-  /* VC really doesn't like casting between data and function pointers. */
+  // VC really doesn't like casting between data and function pointers.
   OPENSSL_memcpy(&thread_func, &arg, sizeof(thread_func));
   thread_func();
   return 0;
@@ -42,7 +42,7 @@ static DWORD WINAPI thread_run(LPVOID arg) {
 
 static int run_thread(thread_t *out_thread, void (*thread_func)(void)) {
   void *arg;
-  /* VC really doesn't like casting between data and function pointers. */
+  // VC really doesn't like casting between data and function pointers.
   OPENSSL_memcpy(&arg, &thread_func, sizeof(arg));
 
   *out_thread = CreateThread(NULL /* security attributes */,
@@ -78,15 +78,15 @@ static int wait_for_thread(thread_t thread) {
   return pthread_join(thread, NULL) == 0;
 }
 
-#endif  /* OPENSSL_WINDOWS */
+#endif  // OPENSSL_WINDOWS
 
 static unsigned g_once_init_called = 0;
 
 static void once_init(void) {
   g_once_init_called++;
 
-  /* Sleep briefly so one |call_once_thread| instance will call |CRYPTO_once|
-   * while the other is running this function. */
+  // Sleep briefly so one |call_once_thread| instance will call |CRYPTO_once|
+  // while the other is running this function.
 #if defined(OPENSSL_WINDOWS)
   Sleep(1 /* milliseconds */);
 #else
@@ -129,9 +129,9 @@ TEST(ThreadTest, Once) {
 
 TEST(ThreadTest, InitZeros) {
   if (FIPS_mode()) {
-    /* Our FIPS tooling currently requires that |CRYPTO_ONCE_INIT|,
-     * |CRYPTO_STATIC_MUTEX_INIT| and |CRYPTO_EX_DATA_CLASS| are all zeros and
-     * so can be placed in the BSS section. */
+    // Our FIPS tooling currently requires that |CRYPTO_ONCE_INIT|,
+    // |CRYPTO_STATIC_MUTEX_INIT| and |CRYPTO_EX_DATA_CLASS| are all zeros and
+    // so can be placed in the BSS section.
     EXPECT_EQ(Bytes((uint8_t *)&once_bss, sizeof(once_bss)),
               Bytes((uint8_t *)&once_init_value, sizeof(once_init_value)));
     EXPECT_EQ(Bytes((uint8_t *)&mutex_bss, sizeof(mutex_bss)),
@@ -183,9 +183,9 @@ TEST(ThreadTest, ThreadLocal) {
 }
 
 TEST(ThreadTest, RandState) {
-  /* In FIPS mode, rand.c maintains a linked-list of thread-local data because
-   * we're required to clear it on process exit. This test exercises removing a
-   * value from that list. */
+  // In FIPS mode, rand.c maintains a linked-list of thread-local data because
+  // we're required to clear it on process exit. This test exercises removing a
+  // value from that list.
   uint8_t buf[1];
   RAND_bytes(buf, sizeof(buf));
 
@@ -197,4 +197,4 @@ TEST(ThreadTest, RandState) {
   ASSERT_TRUE(wait_for_thread(thread));
 }
 
-#endif /* !OPENSSL_NO_THREADS */
+#endif  // !OPENSSL_NO_THREADS

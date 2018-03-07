@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/ortc/testrtpparameters.h"
+#include "ortc/testrtpparameters.h"
 
 #include <algorithm>
 #include <utility>
@@ -163,11 +163,13 @@ RtpParameters MakeFullAudioParameters(int preferred_payload_type) {
   // "codec_payload_type" isn't implemented, so we need to reorder codecs to
   // cause one to be used.
   // TODO(deadbeef): Remove this when it becomes unnecessary.
-  std::sort(parameters.codecs.begin(), parameters.codecs.end(),
-            [preferred_payload_type](const RtpCodecParameters& a,
-                                     const RtpCodecParameters& b) {
-              return a.payload_type == preferred_payload_type;
-            });
+  auto it = std::find_if(parameters.codecs.begin(), parameters.codecs.end(),
+                         [preferred_payload_type](const RtpCodecParameters& p) {
+                           return p.payload_type == preferred_payload_type;
+                         });
+  RtpCodecParameters preferred = *it;
+  parameters.codecs.erase(it);
+  parameters.codecs.insert(parameters.codecs.begin(), preferred);
 
   // Intentionally leave out SSRC so one's chosen automatically.
   RtpEncodingParameters encoding;
@@ -270,11 +272,13 @@ RtpParameters MakeFullVideoParameters(int preferred_payload_type) {
   // "codec_payload_type" isn't implemented, so we need to reorder codecs to
   // cause one to be used.
   // TODO(deadbeef): Remove this when it becomes unnecessary.
-  std::sort(parameters.codecs.begin(), parameters.codecs.end(),
-            [preferred_payload_type](const RtpCodecParameters& a,
-                                     const RtpCodecParameters& b) {
-              return a.payload_type == preferred_payload_type;
-            });
+  auto it = std::find_if(parameters.codecs.begin(), parameters.codecs.end(),
+                         [preferred_payload_type](const RtpCodecParameters& p) {
+                           return p.payload_type == preferred_payload_type;
+                         });
+  RtpCodecParameters preferred = *it;
+  parameters.codecs.erase(it);
+  parameters.codecs.insert(parameters.codecs.begin(), preferred);
 
   // Intentionally leave out SSRC so one's chosen automatically.
   RtpEncodingParameters encoding;

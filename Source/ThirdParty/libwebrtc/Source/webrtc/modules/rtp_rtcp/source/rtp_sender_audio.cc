@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender_audio.h"
+#include "modules/rtp_rtcp/source/rtp_sender_audio.h"
 
 #include <string.h>
 
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -65,13 +65,10 @@ int32_t RTPSenderAudio::RegisterAudioPayload(
     dtmf_payload_freq_ = frequency;
     return 0;
   }
-  *payload = new RtpUtility::Payload;
-  (*payload)->typeSpecific.Audio.frequency = frequency;
-  (*payload)->typeSpecific.Audio.channels = channels;
-  (*payload)->typeSpecific.Audio.rate = rate;
-  (*payload)->audio = true;
-  (*payload)->name[RTP_PAYLOAD_NAME_SIZE - 1] = '\0';
-  strncpy((*payload)->name, payloadName, RTP_PAYLOAD_NAME_SIZE - 1);
+  *payload = new RtpUtility::Payload(
+      payloadName,
+      PayloadUnion(AudioPayload{
+          SdpAudioFormat(payloadName, frequency, channels), rate}));
   return 0;
 }
 
@@ -122,8 +119,7 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
                                int8_t payload_type,
                                uint32_t rtp_timestamp,
                                const uint8_t* payload_data,
-                               size_t payload_size,
-                               const RTPFragmentationHeader* fragmentation) {
+                               size_t payload_size) {
   // From RFC 4733:
   // A source has wide latitude as to how often it sends event updates. A
   // natural interval is the spacing between non-event audio packets. [...]
@@ -226,21 +222,10 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
   packet->SetExtension<AudioLevel>(frame_type == kAudioFrameSpeech,
                                    audio_level_dbov);
 
-  if (fragmentation && fragmentation->fragmentationVectorSize > 0) {
-    // Use the fragment info if we have one.
-    uint8_t* payload =
-        packet->AllocatePayload(1 + fragmentation->fragmentationLength[0]);
-    if (!payload)  // Too large payload buffer.
-      return false;
-    payload[0] = fragmentation->fragmentationPlType[0];
-    memcpy(payload + 1, payload_data + fragmentation->fragmentationOffset[0],
-           fragmentation->fragmentationLength[0]);
-  } else {
-    uint8_t* payload = packet->AllocatePayload(payload_size);
-    if (!payload)  // Too large payload buffer.
-      return false;
-    memcpy(payload, payload_data, payload_size);
-  }
+  uint8_t* payload = packet->AllocatePayload(payload_size);
+  if (!payload)  // Too large payload buffer.
+    return false;
+  memcpy(payload, payload_data, payload_size);
 
   if (!rtp_sender_->AssignSequenceNumber(packet.get()))
     return false;
@@ -255,7 +240,7 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
   bool send_result = rtp_sender_->SendToNetwork(
       std::move(packet), kAllowRetransmission, RtpPacketSender::kHighPriority);
   if (first_packet_sent_()) {
-    LOG(LS_INFO) << "First audio RTP packet sent to pacer";
+    RTC_LOG(LS_INFO) << "First audio RTP packet sent to pacer";
   }
   return send_result;
 }

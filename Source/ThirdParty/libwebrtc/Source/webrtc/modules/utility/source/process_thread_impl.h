@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
-#define WEBRTC_MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
+#ifndef MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
+#define MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
 
 #include <list>
 #include <memory>
 #include <queue>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/location.h"
-#include "webrtc/base/platform_thread.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/modules/utility/include/process_thread.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/typedefs.h"
+#include "modules/utility/include/process_thread.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/location.h"
+#include "rtc_base/platform_thread.h"
+#include "rtc_base/thread_checker.h"
+#include "system_wrappers/include/event_wrapper.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -85,4 +85,4 @@ class ProcessThreadImpl : public ProcessThread {
 
 }  // namespace webrtc
 
-#endif // WEBRTC_MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
+#endif // MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_

@@ -8,38 +8,48 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_AUDIO_STATE_H_
-#define WEBRTC_AUDIO_AUDIO_STATE_H_
+#ifndef AUDIO_AUDIO_STATE_H_
+#define AUDIO_AUDIO_STATE_H_
 
-#include "webrtc/audio/audio_transport_proxy.h"
-#include "webrtc/audio/scoped_voe_interface.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/call/audio_state.h"
-#include "webrtc/voice_engine/include/voe_base.h"
+#include <memory>
+
+#include "audio/audio_transport_proxy.h"
+#include "audio/null_audio_poller.h"
+#include "audio/scoped_voe_interface.h"
+#include "call/audio_state.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/refcount.h"
+#include "rtc_base/thread_checker.h"
+#include "voice_engine/include/voe_base.h"
 
 namespace webrtc {
 namespace internal {
 
-class AudioState final : public webrtc::AudioState,
-                         public webrtc::VoiceEngineObserver {
+class AudioState final : public webrtc::AudioState {
  public:
   explicit AudioState(const AudioState::Config& config);
   ~AudioState() override;
 
-  VoiceEngine* voice_engine();
+  AudioProcessing* audio_processing() override {
+    RTC_DCHECK(config_.audio_processing);
+    return config_.audio_processing.get();
+  }
+  AudioTransport* audio_transport() override {
+    return &audio_transport_proxy_;
+  }
 
+  void SetPlayout(bool enabled) override;
+  void SetRecording(bool enabled) override;
+
+  VoiceEngine* voice_engine();
   rtc::scoped_refptr<AudioMixer> mixer();
   bool typing_noise_detected() const;
 
  private:
   // rtc::RefCountInterface implementation.
-  int AddRef() const override;
-  int Release() const override;
-
-  // webrtc::VoiceEngineObserver implementation.
-  void CallbackOnError(int channel_id, int err_code) override;
+  void AddRef() const override;
+  rtc::RefCountReleaseStatus Release() const override;
 
   rtc::ThreadChecker thread_checker_;
   rtc::ThreadChecker process_thread_checker_;
@@ -48,21 +58,22 @@ class AudioState final : public webrtc::AudioState,
   // We hold one interface pointer to the VoE to make sure it is kept alive.
   ScopedVoEInterface<VoEBase> voe_base_;
 
-  // The critical section isn't strictly needed in this case, but xSAN bots may
-  // trigger on unprotected cross-thread access.
-  rtc::CriticalSection crit_sect_;
-  bool typing_noise_detected_ GUARDED_BY(crit_sect_) = false;
-
   // Reference count; implementation copied from rtc::RefCountedObject.
+  // TODO(nisse): Use RefCountedObject or RefCountedBase instead.
   mutable volatile int ref_count_ = 0;
 
   // Transports mixed audio from the mixer to the audio device and
   // recorded audio to the VoE AudioTransport.
   AudioTransportProxy audio_transport_proxy_;
 
+  // Null audio poller is used to continue polling the audio streams if audio
+  // playout is disabled so that audio processing still happens and the audio
+  // stats are still updated.
+  std::unique_ptr<NullAudioPoller> null_audio_poller_;
+
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AudioState);
 };
 }  // namespace internal
 }  // namespace webrtc
 
-#endif  // WEBRTC_AUDIO_AUDIO_STATE_H_
+#endif  // AUDIO_AUDIO_STATE_H_

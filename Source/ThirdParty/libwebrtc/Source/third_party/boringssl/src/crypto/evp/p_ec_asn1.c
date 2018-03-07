@@ -70,7 +70,7 @@ static int eckey_pub_encode(CBB *out, const EVP_PKEY *key) {
   const EC_GROUP *group = EC_KEY_get0_group(ec_key);
   const EC_POINT *public_key = EC_KEY_get0_public_key(ec_key);
 
-  /* See RFC 5480, section 2. */
+  // See RFC 5480, section 2.
   CBB spki, algorithm, oid, key_bitstring;
   if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -90,9 +90,9 @@ static int eckey_pub_encode(CBB *out, const EVP_PKEY *key) {
 }
 
 static int eckey_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  /* See RFC 5480, section 2. */
+  // See RFC 5480, section 2.
 
-  /* The parameters are a named curve. */
+  // The parameters are a named curve.
   EC_POINT *point = NULL;
   EC_KEY *eckey = NULL;
   EC_GROUP *group = EC_KEY_parse_curve_name(params);
@@ -141,7 +141,7 @@ static int eckey_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
 }
 
 static int eckey_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
-  /* See RFC 5915. */
+  // See RFC 5915.
   EC_GROUP *group = EC_KEY_parse_parameters(params);
   if (group == NULL || CBS_len(params) != 0) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
@@ -164,13 +164,13 @@ static int eckey_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 static int eckey_priv_encode(CBB *out, const EVP_PKEY *key) {
   const EC_KEY *ec_key = key->pkey.ec;
 
-  /* Omit the redundant copy of the curve name. This contradicts RFC 5915 but
-   * aligns with PKCS #11. SEC 1 only says they may be omitted if known by other
-   * means. Both OpenSSL and NSS omit the redundant parameters, so we omit them
-   * as well. */
+  // Omit the redundant copy of the curve name. This contradicts RFC 5915 but
+  // aligns with PKCS #11. SEC 1 only says they may be omitted if known by other
+  // means. Both OpenSSL and NSS omit the redundant parameters, so we omit them
+  // as well.
   unsigned enc_flags = EC_KEY_get_enc_flags(ec_key) | EC_PKEY_NO_PARAMETERS;
 
-  /* See RFC 5915. */
+  // See RFC 5915.
   CBB pkcs8, algorithm, oid, private_key;
   if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||
@@ -219,7 +219,7 @@ static int ec_cmp_parameters(const EVP_PKEY *a, const EVP_PKEY *b) {
   const EC_GROUP *group_a = EC_KEY_get0_group(a->pkey.ec),
                  *group_b = EC_KEY_get0_group(b->pkey.ec);
   if (EC_GROUP_cmp(group_a, group_b, NULL) != 0) {
-    /* mismatch */
+    // mismatch
     return 0;
   }
   return 1;
@@ -233,7 +233,7 @@ static int eckey_opaque(const EVP_PKEY *pkey) {
 
 const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
   EVP_PKEY_EC,
-  /* 1.2.840.10045.2.1 */
+  // 1.2.840.10045.2.1
   {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01}, 7,
 
   eckey_pub_decode,

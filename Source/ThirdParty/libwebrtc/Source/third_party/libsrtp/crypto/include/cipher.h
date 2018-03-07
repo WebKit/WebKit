@@ -8,7 +8,7 @@
  */
 /*
  *
- * Copyright (c) 2001-2006,2013 Cisco Systems, Inc.
+ * Copyright (c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,8 @@
  */
 
 
-#ifndef CIPHER_H
-#define CIPHER_H
+#ifndef SRTP_CIPHER_H
+#define SRTP_CIPHER_H
 
 #include "srtp.h"
 #include "crypto_types.h"       /* for values of cipher_type_id_t */
@@ -219,4 +219,4 @@ srtp_err_status_t srtp_replace_cipher_type(const srtp_cipher_type_t *ct, srtp_ci
 }
 #endif
 
-#endif /* CIPHER_H */
+#endif /* SRTP_CIPHER_H */

@@ -35,7 +35,7 @@
 @ r11: Scratch
 @ r12: &coefficients[j]
 
-#include "webrtc/system_wrappers/include/asm_defines.h"
+#include "system_wrappers/include/asm_defines.h"
 
 GLOBAL_FUNCTION WebRtcSpl_FilterARFastQ12
 .align  2

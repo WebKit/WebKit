@@ -12,8 +12,8 @@
 // This header file includes the inline functions in
 // the fix point signal processing library.
 
-#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
-#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
+#ifndef COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
+#define COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
 
 static __inline int32_t WEBRTC_SPL_MUL_16_16(int32_t a,
                                              int32_t b) {
@@ -210,4 +210,4 @@ static __inline int32_t WebRtc_MulAccumW16(int16_t a,
   return (c1);
 }
 
-#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
+#endif  // COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_

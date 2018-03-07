@@ -15,7 +15,6 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -37,8 +36,17 @@ class EglBase10 extends EglBase {
   private EGLSurface eglSurface = EGL10.EGL_NO_SURFACE;
 
   // EGL wrapper for an actual EGLContext.
-  public static class Context extends EglBase.Context {
+  public static class Context implements EglBase.Context {
     private final EGLContext eglContext;
+
+    @Override
+    public long getNativeEglContext() {
+      // TODO(magjed): Implement. There is no easy way of getting the native context for EGL 1.0. We
+      // need to make sure to have an EglSurface, then make the context current using that surface,
+      // and then call into JNI and call the native version of eglGetCurrentContext. Then we need to
+      // restore the state and return the native context.
+      return 0 /* EGL_NO_CONTEXT */;
+    }
 
     public Context(EGLContext eglContext) {
       this.eglContext = eglContext;
@@ -250,6 +258,12 @@ class EglBase10 extends EglBase {
     synchronized (EglBase.lock) {
       egl.eglSwapBuffers(eglDisplay, eglSurface);
     }
+  }
+
+  @Override
+  public void swapBuffers(long timeStampNs) {
+    // Setting presentation time is not supported for EGL 1.0.
+    swapBuffers();
   }
 
   // Return an EGLDisplay, or die trying.

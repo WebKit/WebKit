@@ -47,48 +47,21 @@ public class ConnectActivity extends Activity {
   private static final int REMOVE_FAVORITE_INDEX = 0;
   private static boolean commandLineRun = false;
 
-  private ImageButton connectButton;
   private ImageButton addFavoriteButton;
   private EditText roomEditText;
   private ListView roomListView;
   private SharedPreferences sharedPref;
-  private String keyprefVideoCallEnabled;
-  private String keyprefScreencapture;
-  private String keyprefCamera2;
   private String keyprefResolution;
   private String keyprefFps;
-  private String keyprefCaptureQualitySlider;
   private String keyprefVideoBitrateType;
   private String keyprefVideoBitrateValue;
-  private String keyprefVideoCodec;
   private String keyprefAudioBitrateType;
   private String keyprefAudioBitrateValue;
-  private String keyprefAudioCodec;
-  private String keyprefHwCodecAcceleration;
-  private String keyprefCaptureToTexture;
-  private String keyprefFlexfec;
-  private String keyprefNoAudioProcessingPipeline;
-  private String keyprefAecDump;
-  private String keyprefOpenSLES;
-  private String keyprefDisableBuiltInAec;
-  private String keyprefDisableBuiltInAgc;
-  private String keyprefDisableBuiltInNs;
-  private String keyprefEnableLevelControl;
-  private String keyprefDisableWebRtcAGCAndHPF;
-  private String keyprefDisplayHud;
-  private String keyprefTracing;
   private String keyprefRoomServerUrl;
   private String keyprefRoom;
   private String keyprefRoomList;
   private ArrayList<String> roomList;
   private ArrayAdapter<String> adapter;
-  private String keyprefEnableDataChannel;
-  private String keyprefOrdered;
-  private String keyprefMaxRetransmitTimeMs;
-  private String keyprefMaxRetransmits;
-  private String keyprefDataProtocol;
-  private String keyprefNegotiated;
-  private String keyprefDataId;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -97,45 +70,19 @@ public class ConnectActivity extends Activity {
     // Get setting keys.
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-    keyprefVideoCallEnabled = getString(R.string.pref_videocall_key);
-    keyprefScreencapture = getString(R.string.pref_screencapture_key);
-    keyprefCamera2 = getString(R.string.pref_camera2_key);
     keyprefResolution = getString(R.string.pref_resolution_key);
     keyprefFps = getString(R.string.pref_fps_key);
-    keyprefCaptureQualitySlider = getString(R.string.pref_capturequalityslider_key);
     keyprefVideoBitrateType = getString(R.string.pref_maxvideobitrate_key);
     keyprefVideoBitrateValue = getString(R.string.pref_maxvideobitratevalue_key);
-    keyprefVideoCodec = getString(R.string.pref_videocodec_key);
-    keyprefHwCodecAcceleration = getString(R.string.pref_hwcodec_key);
-    keyprefCaptureToTexture = getString(R.string.pref_capturetotexture_key);
-    keyprefFlexfec = getString(R.string.pref_flexfec_key);
     keyprefAudioBitrateType = getString(R.string.pref_startaudiobitrate_key);
     keyprefAudioBitrateValue = getString(R.string.pref_startaudiobitratevalue_key);
-    keyprefAudioCodec = getString(R.string.pref_audiocodec_key);
-    keyprefNoAudioProcessingPipeline = getString(R.string.pref_noaudioprocessing_key);
-    keyprefAecDump = getString(R.string.pref_aecdump_key);
-    keyprefOpenSLES = getString(R.string.pref_opensles_key);
-    keyprefDisableBuiltInAec = getString(R.string.pref_disable_built_in_aec_key);
-    keyprefDisableBuiltInAgc = getString(R.string.pref_disable_built_in_agc_key);
-    keyprefDisableBuiltInNs = getString(R.string.pref_disable_built_in_ns_key);
-    keyprefEnableLevelControl = getString(R.string.pref_enable_level_control_key);
-    keyprefDisableWebRtcAGCAndHPF = getString(R.string.pref_disable_webrtc_agc_and_hpf_key);
-    keyprefDisplayHud = getString(R.string.pref_displayhud_key);
-    keyprefTracing = getString(R.string.pref_tracing_key);
     keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
     keyprefRoom = getString(R.string.pref_room_key);
     keyprefRoomList = getString(R.string.pref_room_list_key);
-    keyprefEnableDataChannel = getString(R.string.pref_enable_datachannel_key);
-    keyprefOrdered = getString(R.string.pref_ordered_key);
-    keyprefMaxRetransmitTimeMs = getString(R.string.pref_max_retransmit_time_ms_key);
-    keyprefMaxRetransmits = getString(R.string.pref_max_retransmits_key);
-    keyprefDataProtocol = getString(R.string.pref_data_protocol_key);
-    keyprefNegotiated = getString(R.string.pref_negotiated_key);
-    keyprefDataId = getString(R.string.pref_data_id_key);
 
     setContentView(R.layout.activity_connect);
 
-    roomEditText = (EditText) findViewById(R.id.room_edittext);
+    roomEditText = findViewById(R.id.room_edittext);
     roomEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
       @Override
       public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -148,13 +95,13 @@ public class ConnectActivity extends Activity {
     });
     roomEditText.requestFocus();
 
-    roomListView = (ListView) findViewById(R.id.room_listview);
+    roomListView = findViewById(R.id.room_listview);
     roomListView.setEmptyView(findViewById(android.R.id.empty));
     roomListView.setOnItemClickListener(roomListClickListener);
     registerForContextMenu(roomListView);
-    connectButton = (ImageButton) findViewById(R.id.connect_button);
+    ImageButton connectButton = findViewById(R.id.connect_button);
     connectButton.setOnClickListener(connectListener);
-    addFavoriteButton = (ImageButton) findViewById(R.id.add_favorite_button);
+    addFavoriteButton = findViewById(R.id.add_favorite_button);
     addFavoriteButton.setOnClickListener(addFavoriteListener);
 
     // If an implicit VIEW intent is launching the app, go directly to that URL.
@@ -233,7 +180,7 @@ public class ConnectActivity extends Activity {
     super.onResume();
     String room = sharedPref.getString(keyprefRoom, "");
     roomEditText.setText(room);
-    roomList = new ArrayList<String>();
+    roomList = new ArrayList<>();
     String roomListJson = sharedPref.getString(keyprefRoomList, null);
     if (roomListJson != null) {
       try {
@@ -245,7 +192,7 @@ public class ConnectActivity extends Activity {
         Log.e(TAG, "Failed to load room list: " + e.toString());
       }
     }
-    adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, roomList);
+    adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, roomList);
     roomListView.setAdapter(adapter);
     if (adapter.getCount() > 0) {
       roomListView.requestFocus();
@@ -321,7 +268,7 @@ public class ConnectActivity extends Activity {
 
   private void connectToRoom(String roomId, boolean commandLineRun, boolean loopback,
       boolean useValuesFromIntent, int runTimeMs) {
-    this.commandLineRun = commandLineRun;
+    ConnectActivity.commandLineRun = commandLineRun;
 
     // roomId is random for loopback.
     if (loopback) {
@@ -588,6 +535,7 @@ public class ConnectActivity extends Activity {
         .setCancelable(false)
         .setNeutralButton(R.string.ok,
             new DialogInterface.OnClickListener() {
+              @Override
               public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
               }

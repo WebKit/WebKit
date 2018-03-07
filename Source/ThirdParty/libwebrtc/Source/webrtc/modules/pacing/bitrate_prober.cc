@@ -8,14 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/pacing/bitrate_prober.h"
+#include "modules/pacing/bitrate_prober.h"
 
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
-#include "webrtc/modules/pacing/paced_sender.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
+#include "logging/rtc_event_log/rtc_event_log.h"
+#include "modules/pacing/paced_sender.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
@@ -60,11 +62,11 @@ void BitrateProber::SetEnabled(bool enable) {
   if (enable) {
     if (probing_state_ == ProbingState::kDisabled) {
       probing_state_ = ProbingState::kInactive;
-      LOG(LS_INFO) << "Bandwidth probing enabled, set to inactive";
+      RTC_LOG(LS_INFO) << "Bandwidth probing enabled, set to inactive";
     }
   } else {
     probing_state_ = ProbingState::kDisabled;
-    LOG(LS_INFO) << "Bandwidth probing disabled";
+    RTC_LOG(LS_INFO) << "Bandwidth probing disabled";
   }
 }
 
@@ -101,15 +103,15 @@ void BitrateProber::CreateProbeCluster(int bitrate_bps, int64_t now_ms) {
   cluster.pace_info.probe_cluster_id = next_cluster_id_++;
   clusters_.push(cluster);
   if (event_log_)
-    event_log_->LogProbeClusterCreated(
+    event_log_->Log(rtc::MakeUnique<RtcEventProbeClusterCreated>(
         cluster.pace_info.probe_cluster_id, cluster.pace_info.send_bitrate_bps,
         cluster.pace_info.probe_cluster_min_probes,
-        cluster.pace_info.probe_cluster_min_bytes);
+        cluster.pace_info.probe_cluster_min_bytes));
 
-  LOG(LS_INFO) << "Probe cluster (bitrate:min bytes:min packets): ("
-               << cluster.pace_info.send_bitrate_bps << ":"
-               << cluster.pace_info.probe_cluster_min_bytes << ":"
-               << cluster.pace_info.probe_cluster_min_probes << ")";
+  RTC_LOG(LS_INFO) << "Probe cluster (bitrate:min bytes:min packets): ("
+                   << cluster.pace_info.send_bitrate_bps << ":"
+                   << cluster.pace_info.probe_cluster_min_bytes << ":"
+                   << cluster.pace_info.probe_cluster_min_probes << ")";
   // If we are already probing, continue to do so. Otherwise set it to
   // kInactive and wait for OnIncomingPacket to start the probing.
   if (probing_state_ != ProbingState::kActive)

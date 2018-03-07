@@ -8,17 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
+#include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 
 #include <assert.h>
 #include <libproc.h>
 #include <string>
 
-#include "webrtc/base/macutils.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/desktop_capture/mac/window_list_utils.h"
-
+#include "modules/desktop_capture/mac/window_list_utils.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/macutils.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 
@@ -142,13 +141,13 @@ bool IsChromeWindow(CGWindowID id) {
 }  // namespace
 
 FullScreenChromeWindowDetector::FullScreenChromeWindowDetector()
-    : ref_count_(0), last_update_time_ns_(0) {}
+    : last_update_time_ns_(0) {}
 
 FullScreenChromeWindowDetector::~FullScreenChromeWindowDetector() {}
 
 CGWindowID FullScreenChromeWindowDetector::FindFullScreenWindow(
     CGWindowID original_window) {
-  if (!IsChromeWindow(original_window) || !IsWindowMinimized(original_window))
+  if (!IsChromeWindow(original_window) || IsWindowOnScreen(original_window))
     return kCGNullWindowID;
 
   CGWindowID full_screen_window_id =
@@ -161,7 +160,7 @@ CGWindowID FullScreenChromeWindowDetector::FindFullScreenWindow(
     if (static_cast<CGWindowID>(window.id) != full_screen_window_id)
       continue;
 
-    LOG(LS_WARNING) << "The full-screen window exists in the list.";
+    RTC_LOG(LS_WARNING) << "The full-screen window exists in the list.";
     return kCGNullWindowID;
   }
 
@@ -177,7 +176,7 @@ void FullScreenChromeWindowDetector::UpdateWindowListIfNeeded(
     previous_window_list_.swap(current_window_list_);
 
     // No need to update the window list when the window is minimized.
-    if (IsWindowMinimized(original_window)) {
+    if (!IsWindowOnScreen(original_window)) {
       previous_window_list_.clear();
       return;
     }

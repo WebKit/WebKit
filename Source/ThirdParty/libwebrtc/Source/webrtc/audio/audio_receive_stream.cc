@@ -8,24 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/audio/audio_receive_stream.h"
+#include "audio/audio_receive_stream.h"
 
 #include <string>
 #include <utility>
 
-#include "webrtc/api/call/audio_sink.h"
-#include "webrtc/audio/audio_send_stream.h"
-#include "webrtc/audio/audio_state.h"
-#include "webrtc/audio/conversion.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_receiver.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
-#include "webrtc/voice_engine/channel_proxy.h"
-#include "webrtc/voice_engine/include/voe_base.h"
-#include "webrtc/voice_engine/voice_engine_impl.h"
+#include "api/call/audio_sink.h"
+#include "audio/audio_send_stream.h"
+#include "audio/audio_state.h"
+#include "audio/conversion.h"
+#include "call/rtp_stream_receiver_controller_interface.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/rtp_rtcp/include/rtp_receiver.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"
+#include "voice_engine/channel_proxy.h"
+#include "voice_engine/include/voe_base.h"
+#include "voice_engine/voice_engine_impl.h"
 
 namespace webrtc {
 
@@ -62,13 +63,13 @@ std::string AudioReceiveStream::Config::ToString() const {
 
 namespace internal {
 AudioReceiveStream::AudioReceiveStream(
+    RtpStreamReceiverControllerInterface* receiver_controller,
     PacketRouter* packet_router,
     const webrtc::AudioReceiveStream::Config& config,
     const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
     webrtc::RtcEventLog* event_log)
-    : config_(config),
-      audio_state_(audio_state) {
-  LOG(LS_INFO) << "AudioReceiveStream: " << config_.ToString();
+    : config_(config), audio_state_(audio_state) {
+  RTC_LOG(LS_INFO) << "AudioReceiveStream: " << config_.ToString();
   RTC_DCHECK_NE(config_.voe_channel_id, -1);
   RTC_DCHECK(audio_state_.get());
   RTC_DCHECK(packet_router);
@@ -93,7 +94,7 @@ AudioReceiveStream::AudioReceiveStream(
   RTC_CHECK_EQ(config.decoder_factory,
                channel_proxy_->GetAudioDecoderFactory());
 
-  channel_proxy_->RegisterExternalTransport(config.rtcp_send_transport);
+  channel_proxy_->RegisterTransport(config.rtcp_send_transport);
   channel_proxy_->SetReceiveCodecs(config.decoder_map);
 
   for (const auto& extension : config.rtp.extensions) {
@@ -107,16 +108,21 @@ AudioReceiveStream::AudioReceiveStream(
   }
   // Configure bandwidth estimation.
   channel_proxy_->RegisterReceiverCongestionControlObjects(packet_router);
+
+  // Register with transport.
+  rtp_stream_receiver_ =
+      receiver_controller->CreateReceiver(config_.rtp.remote_ssrc,
+                                          channel_proxy_.get());
 }
 
 AudioReceiveStream::~AudioReceiveStream() {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  LOG(LS_INFO) << "~AudioReceiveStream: " << config_.ToString();
+  RTC_LOG(LS_INFO) << "~AudioReceiveStream: " << config_.ToString();
   if (playing_) {
     Stop();
   }
   channel_proxy_->DisassociateSendChannel();
-  channel_proxy_->DeRegisterExternalTransport();
+  channel_proxy_->RegisterTransport(nullptr);
   channel_proxy_->ResetReceiverCongestionControlObjects();
   channel_proxy_->SetRtcEventLog(nullptr);
 }
@@ -129,12 +135,13 @@ void AudioReceiveStream::Start() {
 
   int error = SetVoiceEnginePlayout(true);
   if (error != 0) {
-    LOG(LS_ERROR) << "AudioReceiveStream::Start failed with error: " << error;
+    RTC_LOG(LS_ERROR) << "AudioReceiveStream::Start failed with error: "
+                      << error;
     return;
   }
 
   if (!audio_state()->mixer()->AddSource(this)) {
-    LOG(LS_ERROR) << "Failed to add source to mixer.";
+    RTC_LOG(LS_ERROR) << "Failed to add source to mixer.";
     SetVoiceEnginePlayout(false);
     return;
   }
@@ -173,7 +180,7 @@ webrtc::AudioReceiveStream::Stats AudioReceiveStream::GetStats() const {
   stats.capture_start_ntp_time_ms = call_stats.capture_start_ntp_time_ms_;
   if (codec_inst.pltype != -1) {
     stats.codec_name = codec_inst.plname;
-    stats.codec_payload_type = rtc::Optional<int>(codec_inst.pltype);
+    stats.codec_payload_type = codec_inst.pltype;
   }
   stats.ext_seqnum = call_stats.extendedMax;
   if (codec_inst.plfreq / 1000 > 0) {
@@ -181,14 +188,23 @@ webrtc::AudioReceiveStream::Stats AudioReceiveStream::GetStats() const {
   }
   stats.delay_estimate_ms = channel_proxy_->GetDelayEstimate();
   stats.audio_level = channel_proxy_->GetSpeechOutputLevelFullRange();
+  stats.total_output_energy = channel_proxy_->GetTotalOutputEnergy();
+  stats.total_output_duration = channel_proxy_->GetTotalOutputDuration();
 
   // Get jitter buffer and total delay (alg + jitter + playout) stats.
   auto ns = channel_proxy_->GetNetworkStatistics();
   stats.jitter_buffer_ms = ns.currentBufferSize;
   stats.jitter_buffer_preferred_ms = ns.preferredBufferSize;
+  stats.total_samples_received = ns.totalSamplesReceived;
+  stats.concealed_samples = ns.concealedSamples;
+  stats.concealment_events = ns.concealmentEvents;
+  stats.jitter_buffer_delay_seconds =
+      static_cast<double>(ns.jitterBufferDelayMs) /
+      static_cast<double>(rtc::kNumMillisecsPerSec);
   stats.expand_rate = Q14ToFloat(ns.currentExpandRate);
   stats.speech_expand_rate = Q14ToFloat(ns.currentSpeechExpandRate);
   stats.secondary_decoded_rate = Q14ToFloat(ns.currentSecondaryDecodedRate);
+  stats.secondary_discarded_rate = Q14ToFloat(ns.currentSecondaryDiscardedRate);
   stats.accelerate_rate = Q14ToFloat(ns.currentAccelerateRate);
   stats.preemptive_expand_rate = Q14ToFloat(ns.currentPreemptiveRate);
 
@@ -235,7 +251,7 @@ int AudioReceiveStream::Ssrc() const {
 }
 
 int AudioReceiveStream::PreferredSampleRate() const {
-  return channel_proxy_->NeededFrequency();
+  return channel_proxy_->PreferredSampleRate();
 }
 
 int AudioReceiveStream::id() const {
@@ -253,22 +269,21 @@ rtc::Optional<Syncable::Info> AudioReceiveStream::GetInfo() const {
   RTC_DCHECK(rtp_rtcp);
   RTC_DCHECK(rtp_receiver);
 
-  if (!rtp_receiver->Timestamp(&info.latest_received_capture_timestamp)) {
-    return rtc::Optional<Syncable::Info>();
-  }
-  if (!rtp_receiver->LastReceivedTimeMs(&info.latest_receive_time_ms)) {
-    return rtc::Optional<Syncable::Info>();
+  if (!rtp_receiver->GetLatestTimestamps(
+          &info.latest_received_capture_timestamp,
+          &info.latest_receive_time_ms)) {
+    return rtc::nullopt;
   }
   if (rtp_rtcp->RemoteNTP(&info.capture_time_ntp_secs,
                           &info.capture_time_ntp_frac,
                           nullptr,
                           nullptr,
                           &info.capture_time_source_clock) != 0) {
-    return rtc::Optional<Syncable::Info>();
+    return rtc::nullopt;
   }
 
   info.current_delay_ms = channel_proxy_->GetDelayEstimate();
-  return rtc::Optional<Syncable::Info>(info);
+  return info;
 }
 
 uint32_t AudioReceiveStream::GetPlayoutTimestamp() const {
@@ -286,7 +301,7 @@ void AudioReceiveStream::AssociateSendStream(AudioSendStream* send_stream) {
   if (send_stream) {
     VoiceEngineImpl* voe_impl = static_cast<VoiceEngineImpl*>(voice_engine());
     std::unique_ptr<voe::ChannelProxy> send_channel_proxy =
-        voe_impl->GetChannelProxy(send_stream->config().voe_channel_id);
+        voe_impl->GetChannelProxy(send_stream->GetConfig().voe_channel_id);
     channel_proxy_->AssociateSendChannel(*send_channel_proxy.get());
   } else {
     channel_proxy_->DisassociateSendChannel();

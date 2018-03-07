@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/dtmf_buffer.h"
+#include "modules/audio_coding/neteq/dtmf_buffer.h"
 
 #include <assert.h>
 #include <algorithm>  // max
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 // Modify the code to obtain backwards bit-exactness. Once bit-exactness is no
 // longer required, this #define should be removed (and the code that it
@@ -73,7 +73,7 @@ int DtmfBuffer::ParseEvent(uint32_t rtp_timestamp,
   RTC_CHECK(payload);
   RTC_CHECK(event);
   if (payload_length_bytes < 4) {
-    LOG(LS_WARNING) << "ParseEvent payload too short";
+    RTC_LOG(LS_WARNING) << "ParseEvent payload too short";
     return kPayloadTooShort;
   }
 
@@ -101,7 +101,7 @@ int DtmfBuffer::InsertEvent(const DtmfEvent& event) {
   if (event.event_no < 0 || event.event_no > 15 ||
       event.volume < 0 || event.volume > 63 ||
       event.duration <= 0 || event.duration > 65535) {
-    LOG(LS_WARNING) << "InsertEvent invalid parameters";
+    RTC_LOG(LS_WARNING) << "InsertEvent invalid parameters";
     return kInvalidEventParameters;
   }
   DtmfList::iterator it = buffer_.begin();

@@ -10,26 +10,18 @@
 
 #include <iostream>
 
-#include "gflags/gflags.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/config.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/timing.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/wavreader_factory.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/multiend_call.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/simulator.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_processing/test/conversational_speech/config.h"
+#include "modules/audio_processing/test/conversational_speech/multiend_call.h"
+#include "modules/audio_processing/test/conversational_speech/simulator.h"
+#include "modules/audio_processing/test/conversational_speech/timing.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_factory.h"
+#include "rtc_base/flags.h"
+#include "rtc_base/ptr_util.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace test {
 namespace {
-
-// Adapting DirExists/FileExists interfaces to DEFINE_validator.
-auto dir_exists = [](const char* c, const std::string& dirpath) {
-  return DirExists(dirpath);
-};
-auto file_exists = [](const char* c, const std::string& filepath) {
-  return FileExists(filepath);
-};
 
 const char kUsageDescription[] =
     "Usage: conversational_speech_generator\n"
@@ -38,21 +30,30 @@ const char kUsageDescription[] =
     "          -o <output/path>\n"
     "\n\n"
     "Command-line tool to generate multiple-end audio tracks to simulate "
-    "conversational speech with two or more participants.";
+    "conversational speech with two or more participants.\n";
 
 DEFINE_string(i, "", "Directory containing the speech turn wav files");
-DEFINE_validator(i, dir_exists);
 DEFINE_string(t, "", "Path to the timing text file");
-DEFINE_validator(t, file_exists);
 DEFINE_string(o, "", "Output wav files destination path");
-DEFINE_validator(o, dir_exists);
+DEFINE_bool(help, false, "Prints this message");
 
 }  // namespace
 
 int main(int argc, char* argv[]) {
-  google::SetUsageMessage(kUsageDescription);
-  google::ParseCommandLineFlags(&argc, &argv, true);
-  conversational_speech::Config config(FLAGS_i, FLAGS_t, FLAGS_o);
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
+      FLAG_help || argc != 1) {
+    printf("%s", kUsageDescription);
+    if (FLAG_help) {
+      rtc::FlagList::Print(nullptr, false);
+      return 0;
+    }
+    return 1;
+  }
+  RTC_CHECK(DirExists(FLAG_i));
+  RTC_CHECK(FileExists(FLAG_t));
+  RTC_CHECK(DirExists(FLAG_o));
+
+  conversational_speech::Config config(FLAG_i, FLAG_t, FLAG_o);
 
   // Load timing.
   std::vector<conversational_speech::Turn> timing =

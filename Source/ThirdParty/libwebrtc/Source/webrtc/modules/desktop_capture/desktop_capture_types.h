@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_TYPES_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_TYPES_H_
+#ifndef MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_TYPES_H_
+#define MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_TYPES_H_
 
 #include <stdint.h>
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -29,6 +29,8 @@ const WindowId kNullWindowId = 0;
 //   - On Windows: integer display device index.
 //   - On OSX: CGDirectDisplayID cast to intptr_t.
 //   - On Linux (with X11): TBD.
+// On Windows, ScreenId is implementation dependent: sending a ScreenId from one
+// implementation to another usually won't work correctly.
 typedef intptr_t ScreenId;
 
 // The screen id corresponds to all screen combined together.
@@ -54,4 +56,4 @@ namespace DesktopCapturerId {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_TYPES_H_
+#endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_TYPES_H_

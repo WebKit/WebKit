@@ -11,7 +11,7 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
-#include "webrtc/common_audio/resampler/sinusoidal_linear_chirp_source.h"
+#include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
 
 #include <math.h>
 

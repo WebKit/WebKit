@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/voice_detection_impl.h"
+#include "modules/audio_processing/voice_detection_impl.h"
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_audio/vad/include/webrtc_vad.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
+#include "common_audio/vad/include/webrtc_vad.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 class VoiceDetectionImpl::Vad {

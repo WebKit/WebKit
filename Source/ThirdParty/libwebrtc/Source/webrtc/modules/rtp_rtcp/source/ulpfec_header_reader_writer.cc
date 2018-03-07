@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
+#include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
 
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

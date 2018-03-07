@@ -11,6 +11,7 @@
 
 import logging
 
+from . import exceptions
 from . import eval_scores
 
 
@@ -22,18 +23,29 @@ class EvaluationScoreWorkerFactory(object):
   """
 
   def __init__(self, polqa_tool_bin_path):
+    self._score_filename_prefix = None
     self._polqa_tool_bin_path = polqa_tool_bin_path
+
+  def SetScoreFilenamePrefix(self, prefix):
+    self._score_filename_prefix = prefix
 
   def GetInstance(self, evaluation_score_class):
     """Creates an EvaluationScore instance given a class object.
 
     Args:
       evaluation_score_class: EvaluationScore class object (not an instance).
+
+    Returns:
+      An EvaluationScore instance.
     """
+    if self._score_filename_prefix is None:
+      raise exceptions.InitializationException(
+          'The score file name prefix for evaluation score workers is not set')
     logging.debug(
         'factory producing a %s evaluation score', evaluation_score_class)
+
     if evaluation_score_class == eval_scores.PolqaScore:
-      return eval_scores.PolqaScore(self._polqa_tool_bin_path)
+      return eval_scores.PolqaScore(
+          self._score_filename_prefix, self._polqa_tool_bin_path)
     else:
-      # By default, no arguments in the constructor.
-      return evaluation_score_class()
+      return evaluation_score_class(self._score_filename_prefix)

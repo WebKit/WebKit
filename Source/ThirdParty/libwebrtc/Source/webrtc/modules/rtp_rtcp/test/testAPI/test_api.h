@@ -7,18 +7,18 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
-#define WEBRTC_MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
+#ifndef MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
+#define MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
 
-#include "webrtc/api/call/transport.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_payload_registry.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_receiver.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/test/gtest.h"
+#include "api/call/transport.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
+#include "modules/rtp_rtcp/include/rtp_receiver.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -69,4 +69,4 @@ class TestRtpReceiver : public RtpData {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_
+#endif  // MODULES_RTP_RTCP_TEST_TESTAPI_TEST_API_H_

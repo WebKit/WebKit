@@ -10,9 +10,9 @@
 
 #include <algorithm>
 
-#include "webrtc/modules/audio_mixer/audio_frame_manipulator.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_mixer/audio_frame_manipulator.h"
+#include "modules/include/module_common_types.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/voice_engine/channel_proxy.h"
+#include "voice_engine/channel_proxy.h"
 
 #include <utility>
 
-#include "webrtc/api/call/audio_sink.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/call/rtp_transport_controller_send_interface.h"
-#include "webrtc/voice_engine/channel.h"
+#include "api/call/audio_sink.h"
+#include "call/rtp_transport_controller_send_interface.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
+#include "voice_engine/channel.h"
 
 namespace webrtc {
 namespace voe {
@@ -144,6 +144,11 @@ AudioDecodingCallStats ChannelProxy::GetDecodingCallStatistics() const {
   return stats;
 }
 
+ANAStats ChannelProxy::GetANAStatistics() const {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  return channel()->GetANAStatistics();
+}
+
 int ChannelProxy::GetSpeechOutputLevel() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   return channel()->GetSpeechOutputLevel();
@@ -152,6 +157,16 @@ int ChannelProxy::GetSpeechOutputLevel() const {
 int ChannelProxy::GetSpeechOutputLevelFullRange() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   return channel()->GetSpeechOutputLevelFullRange();
+}
+
+double ChannelProxy::GetTotalOutputEnergy() const {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  return channel()->GetTotalOutputEnergy();
+}
+
+double ChannelProxy::GetTotalOutputDuration() const {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  return channel()->GetTotalOutputDuration();
 }
 
 uint32_t ChannelProxy::GetDelayEstimate() const {
@@ -182,13 +197,6 @@ void ChannelProxy::SetBitrate(int bitrate_bps, int64_t probing_interval_ms) {
   channel()->SetBitRate(bitrate_bps, probing_interval_ms);
 }
 
-void ChannelProxy::SetRecPayloadType(int payload_type,
-                                     const SdpAudioFormat& format) {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  const int result = channel()->SetRecPayloadType(payload_type, format);
-  RTC_DCHECK_EQ(0, result);
-}
-
 void ChannelProxy::SetReceiveCodecs(
     const std::map<int, SdpAudioFormat>& codecs) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
@@ -205,15 +213,9 @@ void ChannelProxy::SetInputMute(bool muted) {
   channel()->SetInputMute(muted);
 }
 
-void ChannelProxy::RegisterExternalTransport(Transport* transport) {
+void ChannelProxy::RegisterTransport(Transport* transport) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  int error = channel()->RegisterExternalTransport(transport);
-  RTC_DCHECK_EQ(0, error);
-}
-
-void ChannelProxy::DeRegisterExternalTransport() {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->DeRegisterExternalTransport();
+  channel()->RegisterTransport(transport);
 }
 
 void ChannelProxy::OnRtpPacket(const RtpPacketReceived& packet) {
@@ -249,9 +251,9 @@ AudioMixer::Source::AudioFrameInfo ChannelProxy::GetAudioFrameWithInfo(
   return channel()->GetAudioFrameWithInfo(sample_rate_hz, audio_frame);
 }
 
-int ChannelProxy::NeededFrequency() const {
+int ChannelProxy::PreferredSampleRate() const {
   RTC_DCHECK_RUNS_SERIALIZED(&audio_thread_race_checker_);
-  return static_cast<int>(channel()->NeededFrequency(-1));
+  return channel()->PreferredSampleRate();
 }
 
 void ChannelProxy::SetTransportOverhead(int transport_overhead_per_packet) {
@@ -294,7 +296,7 @@ void ChannelProxy::SetMinimumPlayoutDelay(int delay_ms) {
   delay_ms = rtc::SafeClamp(delay_ms, 0, 10000);
   int error = channel()->SetMinimumPlayoutDelay(delay_ms);
   if (0 != error) {
-    LOG(LS_WARNING) << "Error setting minimum playout delay.";
+    RTC_LOG(LS_WARNING) << "Error setting minimum playout delay.";
   }
 }
 
@@ -309,23 +311,14 @@ bool ChannelProxy::GetRecCodec(CodecInst* codec_inst) const {
 }
 
 void ChannelProxy::OnTwccBasedUplinkPacketLossRate(float packet_loss_rate) {
-  // TODO(eladalon): This fails in UT; fix and uncomment.
-  // See: https://bugs.chromium.org/p/webrtc/issues/detail?id=7405
-  // RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   channel()->OnTwccBasedUplinkPacketLossRate(packet_loss_rate);
 }
 
 void ChannelProxy::OnRecoverableUplinkPacketLossRate(
     float recoverable_packet_loss_rate) {
-  // TODO(eladalon): This fails in UT; fix and uncomment.
-  // See: https://bugs.chromium.org/p/webrtc/issues/detail?id=7405
-  // RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->OnRecoverableUplinkPacketLossRate(recoverable_packet_loss_rate);
-}
-
-void ChannelProxy::RegisterLegacyReceiveCodecs() {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->RegisterLegacyReceiveCodecs();
+  channel()->OnRecoverableUplinkPacketLossRate(recoverable_packet_loss_rate);
 }
 
 std::vector<RtpSource> ChannelProxy::GetSources() const {

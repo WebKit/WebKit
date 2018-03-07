@@ -8,16 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/voice_engine/utility.h"
+#include "voice_engine/utility.h"
 
-#include "webrtc/audio/utility/audio_frame_operations.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/common_audio/resampler/include/push_resampler.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/voice_engine/voice_engine_defines.h"
+#include "audio/utility/audio_frame_operations.h"
+#include "common_audio/resampler/include/push_resampler.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module_common_types.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace voe {
@@ -41,7 +40,7 @@ void RemixAndResample(const int16_t* src_data,
                       AudioFrame* dst_frame) {
   const int16_t* audio_ptr = src_data;
   size_t audio_ptr_num_channels = num_channels;
-  int16_t downsmixed_audio[AudioFrame::kMaxDataSizeSamples];
+  int16_t downmixed_audio[AudioFrame::kMaxDataSizeSamples];
 
   // Downmix before resampling.
   if (num_channels > dst_frame->num_channels_) {
@@ -52,8 +51,8 @@ void RemixAndResample(const int16_t* src_data,
 
     AudioFrameOperations::DownmixChannels(
         src_data, num_channels, samples_per_channel, dst_frame->num_channels_,
-        downsmixed_audio);
-    audio_ptr = downsmixed_audio;
+        downmixed_audio);
+    audio_ptr = downmixed_audio;
     audio_ptr_num_channels = dst_frame->num_channels_;
   }
 
@@ -85,42 +84,6 @@ void RemixAndResample(const int16_t* src_data,
     // set this back to stereo.
     dst_frame->num_channels_ = 1;
     AudioFrameOperations::MonoToStereo(dst_frame);
-  }
-}
-
-void MixWithSat(int16_t target[],
-                size_t target_channel,
-                const int16_t source[],
-                size_t source_channel,
-                size_t source_len) {
-  RTC_DCHECK_GE(target_channel, 1);
-  RTC_DCHECK_LE(target_channel, 2);
-  RTC_DCHECK_GE(source_channel, 1);
-  RTC_DCHECK_LE(source_channel, 2);
-
-  if (target_channel == 2 && source_channel == 1) {
-    // Convert source from mono to stereo.
-    int32_t left = 0;
-    int32_t right = 0;
-    for (size_t i = 0; i < source_len; ++i) {
-      left = source[i] + target[i * 2];
-      right = source[i] + target[i * 2 + 1];
-      target[i * 2] = WebRtcSpl_SatW32ToW16(left);
-      target[i * 2 + 1] = WebRtcSpl_SatW32ToW16(right);
-    }
-  } else if (target_channel == 1 && source_channel == 2) {
-    // Convert source from stereo to mono.
-    int32_t temp = 0;
-    for (size_t i = 0; i < source_len / 2; ++i) {
-      temp = ((source[i * 2] + source[i * 2 + 1]) >> 1) + target[i];
-      target[i] = WebRtcSpl_SatW32ToW16(temp);
-    }
-  } else {
-    int32_t temp = 0;
-    for (size_t i = 0; i < source_len; ++i) {
-      temp = source[i] + target[i];
-      target[i] = WebRtcSpl_SatW32ToW16(temp);
-    }
   }
 }
 

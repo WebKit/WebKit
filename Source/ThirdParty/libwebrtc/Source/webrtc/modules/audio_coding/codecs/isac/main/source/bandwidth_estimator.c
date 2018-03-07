@@ -19,7 +19,7 @@
 #include "bandwidth_estimator.h"
 #include "settings.h"
 #include "isac.h"
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 #include <math.h>
 #include <string.h>

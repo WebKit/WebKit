@@ -8,33 +8,38 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_MEDIACHANNEL_H_
-#define WEBRTC_MEDIA_BASE_MEDIACHANNEL_H_
+#ifndef MEDIA_BASE_MEDIACHANNEL_H_
+#define MEDIA_BASE_MEDIACHANNEL_H_
 
+#include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include "webrtc/api/rtpparameters.h"
-#include "webrtc/api/rtpreceiverinterface.h"
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/copyonwritebuffer.h"
-#include "webrtc/base/dscp.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/networkroute.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/socket.h"
-#include "webrtc/base/window.h"
-#include "webrtc/config.h"
-#include "webrtc/media/base/codec.h"
-#include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/media/base/streamparams.h"
-#include "webrtc/media/base/videosinkinterface.h"
-#include "webrtc/media/base/videosourceinterface.h"
-// TODO(juberti): re-evaluate this include
-#include "webrtc/pc/audiomonitor.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/optional.h"
+#include "api/rtpparameters.h"
+#include "api/rtpreceiverinterface.h"
+#include "api/video/video_timing.h"
+#include "call/video_config.h"
+#include "media/base/codec.h"
+#include "media/base/mediaconstants.h"
+#include "media/base/streamparams.h"
+#include "media/base/videosinkinterface.h"
+#include "media/base/videosourceinterface.h"
+#include "modules/audio_processing/include/audio_processing_statistics.h"
+#include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/dscp.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/networkroute.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/window.h"
+
 
 namespace rtc {
 class RateLimiter;
@@ -166,8 +171,6 @@ struct AudioOptions {
     SetFrom(&tx_agc_digital_compression_gain,
             change.tx_agc_digital_compression_gain);
     SetFrom(&tx_agc_limiter, change.tx_agc_limiter);
-    SetFrom(&recording_sample_rate, change.recording_sample_rate);
-    SetFrom(&playout_sample_rate, change.playout_sample_rate);
     SetFrom(&combined_audio_video_bwe, change.combined_audio_video_bwe);
     SetFrom(&audio_network_adaptor, change.audio_network_adaptor);
     SetFrom(&audio_network_adaptor_config, change.audio_network_adaptor_config);
@@ -199,8 +202,6 @@ struct AudioOptions {
            tx_agc_digital_compression_gain ==
                o.tx_agc_digital_compression_gain &&
            tx_agc_limiter == o.tx_agc_limiter &&
-           recording_sample_rate == o.recording_sample_rate &&
-           playout_sample_rate == o.playout_sample_rate &&
            combined_audio_video_bwe == o.combined_audio_video_bwe &&
            audio_network_adaptor == o.audio_network_adaptor &&
            audio_network_adaptor_config == o.audio_network_adaptor_config &&
@@ -237,8 +238,6 @@ struct AudioOptions {
     ost << ToStringIfSet("tx_agc_digital_compression_gain",
         tx_agc_digital_compression_gain);
     ost << ToStringIfSet("tx_agc_limiter", tx_agc_limiter);
-    ost << ToStringIfSet("recording_sample_rate", recording_sample_rate);
-    ost << ToStringIfSet("playout_sample_rate", playout_sample_rate);
     ost << ToStringIfSet("combined_audio_video_bwe", combined_audio_video_bwe);
     ost << ToStringIfSet("audio_network_adaptor", audio_network_adaptor);
     // The adaptor config is a serialized proto buffer and therefore not human
@@ -281,8 +280,6 @@ struct AudioOptions {
   rtc::Optional<uint16_t> tx_agc_target_dbov;
   rtc::Optional<uint16_t> tx_agc_digital_compression_gain;
   rtc::Optional<bool> tx_agc_limiter;
-  rtc::Optional<uint32_t> recording_sample_rate;
-  rtc::Optional<uint32_t> playout_sample_rate;
   // Enable combined audio+bandwidth BWE.
   // TODO(pthatcher): This flag is set from the
   // "googCombinedAudioVideoBwe", but not used anywhere. So delete it,
@@ -412,9 +409,6 @@ class MediaChannel : public sigslot::has_slots<> {
   virtual void OnNetworkRouteChanged(
       const std::string& transport_name,
       const rtc::NetworkRoute& network_route) = 0;
-  // Called when the rtp transport overhead changed.
-  virtual void OnTransportOverheadChanged(
-      int transport_overhead_per_packet) = 0;
   // Creates a new outgoing media stream with SSRCs and CNAME as described
   // by sp.
   virtual bool AddSendStream(const StreamParams& sp) = 0;
@@ -614,6 +608,8 @@ struct VoiceSenderInfo : public MediaSenderInfo {
       : ext_seqnum(0),
         jitter_ms(0),
         audio_level(0),
+        total_input_energy(0.0),
+        total_input_duration(0.0),
         aec_quality_min(0.0),
         echo_delay_median_ms(0),
         echo_delay_std_ms(0),
@@ -626,6 +622,12 @@ struct VoiceSenderInfo : public MediaSenderInfo {
   int ext_seqnum;
   int jitter_ms;
   int audio_level;
+  // See description of "totalAudioEnergy" in the WebRTC stats spec:
+  // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats-totalaudioenergy
+  double total_input_energy;
+  double total_input_duration;
+  // TODO(bugs.webrtc.org/8572): Remove APM stats from this struct, since they
+  // are no longer needed now that we have apm_statistics.
   float aec_quality_min;
   int echo_delay_median_ms;
   int echo_delay_std_ms;
@@ -634,6 +636,8 @@ struct VoiceSenderInfo : public MediaSenderInfo {
   float residual_echo_likelihood;
   float residual_echo_likelihood_recent_max;
   bool typing_noise_detected;
+  webrtc::ANAStats ana_statistics;
+  webrtc::AudioProcessingStats apm_statistics;
 };
 
 struct VoiceReceiverInfo : public MediaReceiverInfo {
@@ -644,9 +648,16 @@ struct VoiceReceiverInfo : public MediaReceiverInfo {
         jitter_buffer_preferred_ms(0),
         delay_estimate_ms(0),
         audio_level(0),
+        total_output_energy(0.0),
+        total_samples_received(0),
+        total_output_duration(0.0),
+        concealed_samples(0),
+        concealment_events(0),
+        jitter_buffer_delay_seconds(0),
         expand_rate(0),
         speech_expand_rate(0),
         secondary_decoded_rate(0),
+        secondary_discarded_rate(0),
         accelerate_rate(0),
         preemptive_expand_rate(0),
         decoding_calls_to_silence_generator(0),
@@ -664,12 +675,27 @@ struct VoiceReceiverInfo : public MediaReceiverInfo {
   int jitter_buffer_preferred_ms;
   int delay_estimate_ms;
   int audio_level;
+  // Stats below correspond to similarly-named fields in the WebRTC stats spec.
+  // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats
+  double total_output_energy;
+  uint64_t total_samples_received;
+  double total_output_duration;
+  uint64_t concealed_samples;
+  uint64_t concealment_events;
+  double jitter_buffer_delay_seconds;
+  // Stats below DO NOT correspond directly to anything in the WebRTC stats
   // fraction of synthesized audio inserted through expansion.
   float expand_rate;
   // fraction of synthesized speech inserted through expansion.
   float speech_expand_rate;
   // fraction of data out of secondary decoding, including FEC and RED.
   float secondary_decoded_rate;
+  // Fraction of secondary data, including FEC and RED, that is discarded.
+  // Discarding of secondary data can be caused by the reception of the primary
+  // data, obsoleting the secondary data. It can also be caused by early
+  // or late arrival of secondary data. This metric is the percentage of
+  // discarded secondary data since last query of receiver info.
+  float secondary_discarded_rate;
   // Fraction of data removed through time compression.
   float accelerate_rate;
   // Fraction of data inserted through time stretching.
@@ -701,7 +727,9 @@ struct VideoSenderInfo : public MediaSenderInfo {
         adapt_changes(0),
         avg_encode_ms(0),
         encode_usage_percent(0),
-        frames_encoded(0) {}
+        frames_encoded(0),
+        has_entered_low_resolution(false),
+        content_type(webrtc::VideoContentType::UNSPECIFIED) {}
 
   std::vector<SsrcGroup> ssrc_groups;
   // TODO(hbos): Move this to |VideoMediaInfo::send_codecs|?
@@ -721,7 +749,9 @@ struct VideoSenderInfo : public MediaSenderInfo {
   int avg_encode_ms;
   int encode_usage_percent;
   uint32_t frames_encoded;
+  bool has_entered_low_resolution;
   rtc::Optional<uint64_t> qp_sum;
+  webrtc::VideoContentType content_type;
 };
 
 struct VideoReceiverInfo : public MediaReceiverInfo {
@@ -740,6 +770,8 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
         frames_received(0),
         frames_decoded(0),
         frames_rendered(0),
+        interframe_delay_max_ms(-1),
+        content_type(webrtc::VideoContentType::UNSPECIFIED),
         decode_ms(0),
         max_decode_ms(0),
         jitter_buffer_ms(0),
@@ -747,8 +779,7 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
         render_delay_ms(0),
         target_delay_ms(0),
         current_delay_ms(0),
-        capture_start_ntp_time_ms(-1) {
-  }
+        capture_start_ntp_time_ms(-1) {}
 
   std::vector<SsrcGroup> ssrc_groups;
   // TODO(hbos): Move this to |VideoMediaInfo::receive_codecs|?
@@ -770,6 +801,9 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
   uint32_t frames_decoded;
   uint32_t frames_rendered;
   rtc::Optional<uint64_t> qp_sum;
+  int64_t interframe_delay_max_ms;
+
+  webrtc::VideoContentType content_type;
 
   // All stats below are gathered per-VideoReceiver, but some will be correlated
   // across MediaStreamTracks.  NOTE(hta): when sinking stats into per-SSRC
@@ -793,6 +827,10 @@ struct VideoReceiverInfo : public MediaReceiverInfo {
 
   // Estimated capture start time in NTP time in ms.
   int64_t capture_start_ntp_time_ms;
+
+  // Timing frame info: all important timestamps for a full lifetime of a
+  // single 'timing frame'.
+  rtc::Optional<webrtc::TimingFrameInfo> timing_frame_info;
 };
 
 struct DataSenderInfo : public MediaSenderInfo {
@@ -983,7 +1021,8 @@ class VoiceMediaChannel : public MediaChannel {
                             const AudioOptions* options,
                             AudioSource* source) = 0;
   // Gets current energy levels for all incoming streams.
-  virtual bool GetActiveStreams(AudioInfo::StreamList* actives) = 0;
+  typedef std::vector<std::pair<uint32_t, int>> StreamList;
+  virtual bool GetActiveStreams(StreamList* actives) = 0;
   // Get the current energy level of the stream sent to the speaker.
   virtual int GetOutputLevel() = 0;
   // Set speaker output volume of the specified ssrc.
@@ -1182,7 +1221,7 @@ class DataMediaChannel : public MediaChannel {
   };
 
   DataMediaChannel() {}
-  DataMediaChannel(const MediaConfig& config) : MediaChannel(config) {}
+  explicit DataMediaChannel(const MediaConfig& config) : MediaChannel(config) {}
   virtual ~DataMediaChannel() {}
 
   virtual bool SetSendParameters(const DataSendParameters& params) = 0;
@@ -1212,4 +1251,4 @@ class DataMediaChannel : public MediaChannel {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_MEDIACHANNEL_H_
+#endif  // MEDIA_BASE_MEDIACHANNEL_H_

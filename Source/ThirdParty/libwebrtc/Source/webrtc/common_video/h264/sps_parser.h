@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_H264_SPS_PARSER_H_
-#define WEBRTC_COMMON_VIDEO_H264_SPS_PARSER_H_
+#ifndef COMMON_VIDEO_H264_SPS_PARSER_H_
+#define COMMON_VIDEO_H264_SPS_PARSER_H_
 
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
 
 namespace rtc {
 class BitBuffer;
@@ -50,4 +50,4 @@ class SpsParser {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_COMMON_VIDEO_H264_SPS_PARSER_H_
+#endif  // COMMON_VIDEO_H264_SPS_PARSER_H_

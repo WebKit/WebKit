@@ -70,10 +70,8 @@ bool InitSocketLibrary() {
   return true;
 }
 
-// Connect sets |*out_sock| to be a socket connected to the destination given
-// in |hostname_and_port|, which should be of the form "www.example.com:123".
-// It returns true on success and false otherwise.
-bool Connect(int *out_sock, const std::string &hostname_and_port) {
+static void SplitHostPort(std::string *out_hostname, std::string *out_port,
+                          const std::string &hostname_and_port) {
   size_t colon_offset = hostname_and_port.find_last_of(':');
   const size_t bracket_offset = hostname_and_port.find_last_of(']');
   std::string hostname, port;
@@ -85,12 +83,20 @@ bool Connect(int *out_sock, const std::string &hostname_and_port) {
   }
 
   if (colon_offset == std::string::npos) {
-    hostname = hostname_and_port;
-    port = "443";
+    *out_hostname = hostname_and_port;
+    *out_port = "443";
   } else {
-    hostname = hostname_and_port.substr(0, colon_offset);
-    port = hostname_and_port.substr(colon_offset + 1);
+    *out_hostname = hostname_and_port.substr(0, colon_offset);
+    *out_port = hostname_and_port.substr(colon_offset + 1);
   }
+}
+
+// Connect sets |*out_sock| to be a socket connected to the destination given
+// in |hostname_and_port|, which should be of the form "www.example.com:123".
+// It returns true on success and false otherwise.
+bool Connect(int *out_sock, const std::string &hostname_and_port) {
+  std::string hostname, port;
+  SplitHostPort(&hostname, &port, hostname_and_port);
 
   // Handle IPv6 literals.
   if (hostname.size() >= 2 && hostname[0] == '[' &&
@@ -149,48 +155,63 @@ out:
   return ok;
 }
 
-bool Accept(int *out_sock, const std::string &port) {
-  struct sockaddr_in6 addr, cli_addr;
-  socklen_t cli_addr_len = sizeof(cli_addr);
+Listener::~Listener() {
+  if (server_sock_ >= 0) {
+    closesocket(server_sock_);
+  }
+}
+
+bool Listener::Init(const std::string &port) {
+  if (server_sock_ >= 0) {
+    return false;
+  }
+
+  struct sockaddr_in6 addr;
   OPENSSL_memset(&addr, 0, sizeof(addr));
 
   addr.sin6_family = AF_INET6;
+  // Windows' IN6ADDR_ANY_INIT does not have enough curly braces for clang-cl
+  // (https://crbug.com/772108), while other platforms like NaCl are missing
+  // in6addr_any, so use a mix of both.
+#if defined(OPENSSL_WINDOWS)
+  addr.sin6_addr = in6addr_any;
+#else
   addr.sin6_addr = IN6ADDR_ANY_INIT;
+#endif
   addr.sin6_port = htons(atoi(port.c_str()));
 
-  bool ok = false;
 #if defined(OPENSSL_WINDOWS)
   const BOOL enable = TRUE;
 #else
   const int enable = 1;
 #endif
-  int server_sock = -1;
 
-  server_sock =
-      socket(addr.sin6_family, SOCK_STREAM, 0);
-  if (server_sock < 0) {
+  server_sock_ = socket(addr.sin6_family, SOCK_STREAM, 0);
+  if (server_sock_ < 0) {
     perror("socket");
-    goto out;
+    return false;
   }
 
-  if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&enable,
+  if (setsockopt(server_sock_, SOL_SOCKET, SO_REUSEADDR, (const char *)&enable,
                  sizeof(enable)) < 0) {
     perror("setsockopt");
-    goto out;
+    return false;
   }
 
-  if (bind(server_sock, (struct sockaddr*)&addr, sizeof(addr)) != 0) {
+  if (bind(server_sock_, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
     perror("connect");
-    goto out;
+    return false;
   }
-  listen(server_sock, 1);
-  *out_sock = accept(server_sock, (struct sockaddr*)&cli_addr, &cli_addr_len);
 
-  ok = true;
+  listen(server_sock_, SOMAXCONN);
+  return true;
+}
 
-out:
-  closesocket(server_sock);
-  return ok;
+bool Listener::Accept(int *out_sock) {
+  struct sockaddr_in6 addr;
+  socklen_t addr_len = sizeof(addr);
+  *out_sock = accept(server_sock_, (struct sockaddr *)&addr, &addr_len);
+  return *out_sock >= 0;
 }
 
 bool VersionFromString(uint16_t *out_version, const std::string &version) {
@@ -213,100 +234,70 @@ bool VersionFromString(uint16_t *out_version, const std::string &version) {
   return false;
 }
 
-static const char *SignatureAlgorithmToString(uint16_t version, uint16_t sigalg) {
-  const bool is_tls12 = version == TLS1_2_VERSION || version == DTLS1_2_VERSION;
-  switch (sigalg) {
-    case SSL_SIGN_RSA_PKCS1_SHA1:
-      return "rsa_pkcs1_sha1";
-    case SSL_SIGN_RSA_PKCS1_SHA256:
-      return "rsa_pkcs1_sha256";
-    case SSL_SIGN_RSA_PKCS1_SHA384:
-      return "rsa_pkcs1_sha384";
-    case SSL_SIGN_RSA_PKCS1_SHA512:
-      return "rsa_pkcs1_sha512";
-    case SSL_SIGN_ECDSA_SHA1:
-      return "ecdsa_sha1";
-    case SSL_SIGN_ECDSA_SECP256R1_SHA256:
-      return is_tls12 ? "ecdsa_sha256" : "ecdsa_secp256r1_sha256";
-    case SSL_SIGN_ECDSA_SECP384R1_SHA384:
-      return is_tls12 ? "ecdsa_sha384" : "ecdsa_secp384r1_sha384";
-    case SSL_SIGN_ECDSA_SECP521R1_SHA512:
-      return is_tls12 ? "ecdsa_sha512" : "ecdsa_secp521r1_sha512";
-    case SSL_SIGN_RSA_PSS_SHA256:
-      return "rsa_pss_sha256";
-    case SSL_SIGN_RSA_PSS_SHA384:
-      return "rsa_pss_sha384";
-    case SSL_SIGN_RSA_PSS_SHA512:
-      return "rsa_pss_sha512";
-    case SSL_SIGN_ED25519:
-      return "ed25519";
-    default:
-      return "(unknown)";
-  }
-}
-
-void PrintConnectionInfo(const SSL *ssl) {
+void PrintConnectionInfo(BIO *bio, const SSL *ssl) {
   const SSL_CIPHER *cipher = SSL_get_current_cipher(ssl);
 
-  fprintf(stderr, "  Version: %s\n", SSL_get_version(ssl));
-  fprintf(stderr, "  Resumed session: %s\n",
-          SSL_session_reused(ssl) ? "yes" : "no");
-  fprintf(stderr, "  Cipher: %s\n", SSL_CIPHER_get_name(cipher));
+  BIO_printf(bio, "  Version: %s\n", SSL_get_version(ssl));
+  BIO_printf(bio, "  Resumed session: %s\n",
+             SSL_session_reused(ssl) ? "yes" : "no");
+  BIO_printf(bio, "  Cipher: %s\n", SSL_CIPHER_standard_name(cipher));
   uint16_t curve = SSL_get_curve_id(ssl);
   if (curve != 0) {
-    fprintf(stderr, "  ECDHE curve: %s\n", SSL_get_curve_name(curve));
+    BIO_printf(bio, "  ECDHE curve: %s\n", SSL_get_curve_name(curve));
   }
   uint16_t sigalg = SSL_get_peer_signature_algorithm(ssl);
   if (sigalg != 0) {
-    fprintf(stderr, "  Signature algorithm: %s\n",
-            SignatureAlgorithmToString(SSL_version(ssl), sigalg));
+    BIO_printf(bio, "  Signature algorithm: %s\n",
+               SSL_get_signature_algorithm_name(
+                   sigalg, SSL_version(ssl) != TLS1_2_VERSION));
   }
-  fprintf(stderr, "  Secure renegotiation: %s\n",
-          SSL_get_secure_renegotiation_support(ssl) ? "yes" : "no");
-  fprintf(stderr, "  Extended master secret: %s\n",
-          SSL_get_extms_support(ssl) ? "yes" : "no");
+  BIO_printf(bio, "  Secure renegotiation: %s\n",
+             SSL_get_secure_renegotiation_support(ssl) ? "yes" : "no");
+  BIO_printf(bio, "  Extended master secret: %s\n",
+             SSL_get_extms_support(ssl) ? "yes" : "no");
 
   const uint8_t *next_proto;
   unsigned next_proto_len;
   SSL_get0_next_proto_negotiated(ssl, &next_proto, &next_proto_len);
-  fprintf(stderr, "  Next protocol negotiated: %.*s\n", next_proto_len,
-          next_proto);
+  BIO_printf(bio, "  Next protocol negotiated: %.*s\n", next_proto_len,
+             next_proto);
 
   const uint8_t *alpn;
   unsigned alpn_len;
   SSL_get0_alpn_selected(ssl, &alpn, &alpn_len);
-  fprintf(stderr, "  ALPN protocol: %.*s\n", alpn_len, alpn);
+  BIO_printf(bio, "  ALPN protocol: %.*s\n", alpn_len, alpn);
 
   const char *host_name = SSL_get_servername(ssl, TLSEXT_NAMETYPE_host_name);
   if (host_name != nullptr && SSL_is_server(ssl)) {
-    fprintf(stderr, "  Client sent SNI: %s\n", host_name);
+    BIO_printf(bio, "  Client sent SNI: %s\n", host_name);
   }
 
   if (!SSL_is_server(ssl)) {
     const uint8_t *ocsp_staple;
     size_t ocsp_staple_len;
     SSL_get0_ocsp_response(ssl, &ocsp_staple, &ocsp_staple_len);
-    fprintf(stderr, "  OCSP staple: %s\n", ocsp_staple_len > 0 ? "yes" : "no");
+    BIO_printf(bio, "  OCSP staple: %s\n", ocsp_staple_len > 0 ? "yes" : "no");
 
     const uint8_t *sct_list;
     size_t sct_list_len;
     SSL_get0_signed_cert_timestamp_list(ssl, &sct_list, &sct_list_len);
-    fprintf(stderr, "  SCT list: %s\n", sct_list_len > 0 ? "yes" : "no");
+    BIO_printf(bio, "  SCT list: %s\n", sct_list_len > 0 ? "yes" : "no");
   }
 
-  fprintf(stderr, "  Early data: %s\n",
-          SSL_early_data_accepted(ssl) ? "yes" : "no");
+  BIO_printf(
+      bio, "  Early data: %s\n",
+      (SSL_early_data_accepted(ssl) || SSL_in_early_data(ssl)) ? "yes" : "no");
 
   // Print the server cert subject and issuer names.
   bssl::UniquePtr<X509> peer(SSL_get_peer_certificate(ssl));
   if (peer != nullptr) {
-    fprintf(stderr, "  Cert subject: ");
-    X509_NAME_print_ex_fp(stderr, X509_get_subject_name(peer.get()), 0,
-                          XN_FLAG_ONELINE);
-    fprintf(stderr, "\n  Cert issuer: ");
-    X509_NAME_print_ex_fp(stderr, X509_get_issuer_name(peer.get()), 0,
-                          XN_FLAG_ONELINE);
-    fprintf(stderr, "\n");
+    BIO_printf(bio, "  Cert subject: ");
+    X509_NAME_print_ex(bio, X509_get_subject_name(peer.get()), 0,
+                       XN_FLAG_ONELINE);
+    BIO_printf(bio, "\n  Cert issuer: ");
+    X509_NAME_print_ex(bio, X509_get_issuer_name(peer.get()), 0,
+                       XN_FLAG_ONELINE);
+    BIO_printf(bio, "\n");
   }
 }
 
@@ -334,6 +325,60 @@ bool SocketSetNonBlocking(int sock, bool is_non_blocking) {
   return ok;
 }
 
+static bool SocketSelect(int sock, bool stdin_open, bool *socket_ready,
+                         bool *stdin_ready) {
+#if !defined(OPENSSL_WINDOWS)
+  fd_set read_fds;
+  FD_ZERO(&read_fds);
+  if (stdin_open) {
+    FD_SET(0, &read_fds);
+  }
+  FD_SET(sock, &read_fds);
+  if (select(sock + 1, &read_fds, NULL, NULL, NULL) <= 0) {
+    perror("select");
+    return false;
+  }
+
+  if (FD_ISSET(0, &read_fds)) {
+    *stdin_ready = true;
+  }
+  if (FD_ISSET(sock, &read_fds)) {
+    *socket_ready = true;
+  }
+
+  return true;
+#else
+  WSAEVENT socket_handle = WSACreateEvent();
+  if (socket_handle == WSA_INVALID_EVENT ||
+      WSAEventSelect(sock, socket_handle, FD_READ) != 0) {
+    WSACloseEvent(socket_handle);
+    return false;
+  }
+
+  HANDLE read_fds[2];
+  read_fds[0] = socket_handle;
+  read_fds[1] = GetStdHandle(STD_INPUT_HANDLE);
+
+  switch (
+      WaitForMultipleObjects(stdin_open ? 2 : 1, read_fds, FALSE, INFINITE)) {
+    case WAIT_OBJECT_0 + 0:
+      *socket_ready = true;
+      break;
+    case WAIT_OBJECT_0 + 1:
+      *stdin_ready = true;
+      break;
+    case WAIT_TIMEOUT:
+      break;
+    default:
+      WSACloseEvent(socket_handle);
+      return false;
+  }
+
+  WSACloseEvent(socket_handle);
+  return true;
+#endif
+}
+
 // PrintErrorCallback is a callback function from OpenSSL's
 // |ERR_print_errors_cb| that writes errors to a given |FILE*|.
 int PrintErrorCallback(const char *str, size_t len, void *ctx) {
@@ -342,28 +387,19 @@ int PrintErrorCallback(const char *str, size_t len, void *ctx) {
 }
 
 bool TransferData(SSL *ssl, int sock) {
-  bool stdin_open = true;
-
-  fd_set read_fds;
-  FD_ZERO(&read_fds);
-
   if (!SocketSetNonBlocking(sock, true)) {
     return false;
   }
 
+  bool stdin_open = true;
   for (;;) {
-    if (stdin_open) {
-      FD_SET(0, &read_fds);
-    }
-    FD_SET(sock, &read_fds);
-
-    int ret = select(sock + 1, &read_fds, NULL, NULL, NULL);
-    if (ret <= 0) {
-      perror("select");
+    bool socket_ready = false;
+    bool stdin_ready = false;
+    if (!SocketSelect(sock, stdin_open, &socket_ready, &stdin_ready)) {
       return false;
     }
 
-    if (FD_ISSET(0, &read_fds)) {
+    if (stdin_ready) {
       uint8_t buffer[512];
       ssize_t n;
 
@@ -372,7 +408,6 @@ bool TransferData(SSL *ssl, int sock) {
       } while (n == -1 && errno == EINTR);
 
       if (n == 0) {
-        FD_CLR(0, &read_fds);
         stdin_open = false;
 #if !defined(OPENSSL_WINDOWS)
         shutdown(sock, SHUT_WR);
@@ -385,9 +420,12 @@ bool TransferData(SSL *ssl, int sock) {
         return false;
       }
 
+      // On Windows, SocketSelect ends up setting sock to non-blocking.
+#if !defined(OPENSSL_WINDOWS)
       if (!SocketSetNonBlocking(sock, false)) {
         return false;
       }
+#endif
       int ssl_ret = SSL_write(ssl, buffer, n);
       if (!SocketSetNonBlocking(sock, true)) {
         return false;
@@ -404,7 +442,7 @@ bool TransferData(SSL *ssl, int sock) {
       }
     }
 
-    if (FD_ISSET(sock, &read_fds)) {
+    if (socket_ready) {
       uint8_t buffer[512];
       int ssl_ret = SSL_read(ssl, buffer, sizeof(buffer));
 
@@ -622,4 +660,32 @@ bool DoSMTPStartTLS(int sock) {
   }
 
   return true;
+}
+
+bool DoHTTPTunnel(int sock, const std::string &hostname_and_port) {
+  std::string hostname, port;
+  SplitHostPort(&hostname, &port, hostname_and_port);
+
+  fprintf(stderr, "Establishing HTTP tunnel to %s:%s.\n", hostname.c_str(),
+          port.c_str());
+  char buf[1024];
+  snprintf(buf, sizeof(buf), "CONNECT %s:%s HTTP/1.0\r\n\r\n", hostname.c_str(),
+           port.c_str());
+  if (!SendAll(sock, buf, strlen(buf))) {
+    return false;
+  }
+
+  SocketLineReader line_reader(sock);
+
+  // Read until an empty line, signaling the end of the HTTP response.
+  std::string line;
+  for (;;) {
+    if (!line_reader.Next(&line)) {
+      return false;
+    }
+    if (line.empty()) {
+      return true;
+    }
+    fprintf(stderr, "%s\n", line.c_str());
+  }
 }

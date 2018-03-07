@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_NOISE_SPECTRUM_ESTIMATOR_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_NOISE_SPECTRUM_ESTIMATOR_H_
+#ifndef MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_NOISE_SPECTRUM_ESTIMATOR_H_
+#define MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_NOISE_SPECTRUM_ESTIMATOR_H_
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/constructormagic.h"
+#include "api/array_view.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -37,4 +37,4 @@ class NoiseSpectrumEstimator {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_NOISE_SPECTRUM_ESTIMATOR_H_
+#endif  // MODULES_AUDIO_PROCESSING_LEVEL_CONTROLLER_NOISE_SPECTRUM_ESTIMATOR_H_

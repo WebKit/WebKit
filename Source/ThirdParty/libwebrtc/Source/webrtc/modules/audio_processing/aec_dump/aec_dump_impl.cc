@@ -10,12 +10,12 @@
 
 #include <utility>
 
-#include "webrtc/modules/audio_processing/aec_dump/aec_dump_impl.h"
+#include "modules/audio_processing/aec_dump/aec_dump_impl.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/modules/audio_processing/aec_dump/aec_dump_factory.h"
+#include "modules/audio_processing/aec_dump/aec_dump_factory.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
@@ -117,7 +117,6 @@ void AecDumpImpl::AddAudioProcessingState(const AudioProcessingState& state) {
 void AecDumpImpl::WriteCaptureStreamMessage() {
   auto task = capture_stream_info_.GetTask();
   RTC_DCHECK(task);
-  std::move(task);
   worker_queue_->PostTask(std::unique_ptr<rtc::QueuedTask>(std::move(task)));
   capture_stream_info_.SetTask(CreateWriteToFileTask());
 }

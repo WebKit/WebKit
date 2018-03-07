@@ -8,15 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/x11/x_server_pixel_buffer.h"
+#include "modules/desktop_capture/x11/x_server_pixel_buffer.h"
 
-#include <assert.h>
 #include <string.h>
 #include <sys/shm.h>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/x11/x_error_trap.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/x11/window_list_utils.h"
+#include "modules/desktop_capture/x11/x_error_trap.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -175,15 +176,10 @@ bool XServerPixelBuffer::Init(Display* display, Window window) {
   display_ = display;
 
   XWindowAttributes attributes;
-  {
-    XErrorTrap error_trap(display_);
-    if (!XGetWindowAttributes(display_, window, &attributes) ||
-        error_trap.GetLastErrorAndDisable() != 0) {
-      return false;
-    }
+  if (!GetWindowRect(display_, window, &window_rect_, &attributes)) {
+    return false;
   }
 
-  window_size_ = DesktopSize(attributes.width, attributes.height);
   window_ = window;
   InitShm(attributes);
 
@@ -208,7 +204,7 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
   shm_segment_info_->readOnly = False;
   x_shm_image_ = XShmCreateImage(display_, default_visual, default_depth,
                                  ZPixmap, 0, shm_segment_info_,
-                                 window_size_.width(), window_size_.height());
+                                 window_rect_.width(), window_rect_.height());
   if (x_shm_image_) {
     shm_segment_info_->shmid =
         shmget(IPC_PRIVATE, x_shm_image_->bytes_per_line * x_shm_image_->height,
@@ -225,18 +221,19 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
         if (error_trap.GetLastErrorAndDisable() != 0)
           using_shm = false;
         if (using_shm) {
-          LOG(LS_VERBOSE) << "Using X shared memory segment "
-                          << shm_segment_info_->shmid;
+          RTC_LOG(LS_VERBOSE)
+              << "Using X shared memory segment " << shm_segment_info_->shmid;
         }
       }
     } else {
-      LOG(LS_WARNING) << "Failed to get shared memory segment. "
-                      "Performance may be degraded.";
+      RTC_LOG(LS_WARNING) << "Failed to get shared memory segment. "
+                             "Performance may be degraded.";
     }
   }
 
   if (!using_shm) {
-    LOG(LS_WARNING) << "Not using shared memory. Performance may be degraded.";
+    RTC_LOG(LS_WARNING)
+        << "Not using shared memory. Performance may be degraded.";
     ReleaseSharedMemorySegment();
     return;
   }
@@ -247,9 +244,9 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
   shmctl(shm_segment_info_->shmid, IPC_RMID, 0);
   shm_segment_info_->shmid = -1;
 
-  LOG(LS_VERBOSE) << "Using X shared memory extension v"
-                  << major << "." << minor
-                  << " with" << (have_pixmaps ? "" : "out") << " pixmaps.";
+  RTC_LOG(LS_VERBOSE) << "Using X shared memory extension v" << major << "."
+                      << minor << " with" << (have_pixmaps ? "" : "out")
+                      << " pixmaps.";
 }
 
 bool XServerPixelBuffer::InitPixmaps(int depth) {
@@ -261,8 +258,8 @@ bool XServerPixelBuffer::InitPixmaps(int depth) {
     shm_pixmap_ = XShmCreatePixmap(display_, window_,
                                    shm_segment_info_->shmaddr,
                                    shm_segment_info_,
-                                   window_size_.width(),
-                                   window_size_.height(), depth);
+                                   window_rect_.width(),
+                                   window_rect_.height(), depth);
     XSync(display_, False);
     if (error_trap.GetLastErrorAndDisable() != 0) {
       // |shm_pixmap_| is not not valid because the request was not processed
@@ -316,8 +313,8 @@ void XServerPixelBuffer::Synchronize() {
 
 bool XServerPixelBuffer::CaptureRect(const DesktopRect& rect,
                                      DesktopFrame* frame) {
-  assert(rect.right() <= window_size_.width());
-  assert(rect.bottom() <= window_size_.height());
+  RTC_DCHECK_LE(rect.right(), window_rect_.width());
+  RTC_DCHECK_LE(rect.bottom(), window_rect_.height());
 
   XImage* image;
   uint8_t* data;

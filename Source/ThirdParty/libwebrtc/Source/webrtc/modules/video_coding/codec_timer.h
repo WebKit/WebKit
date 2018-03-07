@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODEC_TIMER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODEC_TIMER_H_
+#ifndef MODULES_VIDEO_CODING_CODEC_TIMER_H_
+#define MODULES_VIDEO_CODING_CODEC_TIMER_H_
 
 #include <queue>
 
-#include "webrtc/base/numerics/percentile_filter.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/numerics/percentile_filter.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -48,4 +48,4 @@ class VCMCodecTimer {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODEC_TIMER_H_
+#endif  // MODULES_VIDEO_CODING_CODEC_TIMER_H_

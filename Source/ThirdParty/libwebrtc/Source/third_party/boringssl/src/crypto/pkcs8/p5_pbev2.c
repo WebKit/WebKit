@@ -69,15 +69,15 @@
 #include "../internal.h"
 
 
-/* 1.2.840.113549.1.5.12 */
+// 1.2.840.113549.1.5.12
 static const uint8_t kPBKDF2[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                   0x0d, 0x01, 0x05, 0x0c};
 
-/* 1.2.840.113549.1.5.13 */
+// 1.2.840.113549.1.5.13
 static const uint8_t kPBES2[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                  0x0d, 0x01, 0x05, 0x0d};
 
-/* 1.2.840.113549.2.7 */
+// 1.2.840.113549.2.7
 static const uint8_t kHMACWithSHA1[] = {0x2a, 0x86, 0x48, 0x86,
                                         0xf7, 0x0d, 0x02, 0x07};
 
@@ -87,27 +87,27 @@ static const struct {
   int nid;
   const EVP_CIPHER *(*cipher_func)(void);
 } kCipherOIDs[] = {
-    /* 1.2.840.113549.3.2 */
+    // 1.2.840.113549.3.2
     {{0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x03, 0x02},
      8,
      NID_rc2_cbc,
      &EVP_rc2_cbc},
-    /* 1.2.840.113549.3.7 */
+    // 1.2.840.113549.3.7
     {{0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x03, 0x07},
      8,
      NID_des_ede3_cbc,
      &EVP_des_ede3_cbc},
-    /* 2.16.840.1.101.3.4.1.2 */
+    // 2.16.840.1.101.3.4.1.2
     {{0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x02},
      9,
      NID_aes_128_cbc,
      &EVP_aes_128_cbc},
-    /* 2.16.840.1.101.3.4.1.22 */
+    // 2.16.840.1.101.3.4.1.22
     {{0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x16},
      9,
      NID_aes_192_cbc,
      &EVP_aes_192_cbc},
-    /* 2.16.840.1.101.3.4.1.42 */
+    // 2.16.840.1.101.3.4.1.42
     {{0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x2a},
      9,
      NID_aes_256_cbc,
@@ -167,13 +167,13 @@ int PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
     return 0;
   }
 
-  /* Generate a random IV. */
+  // Generate a random IV.
   uint8_t iv[EVP_MAX_IV_LENGTH];
   if (!RAND_bytes(iv, EVP_CIPHER_iv_length(cipher))) {
     return 0;
   }
 
-  /* See RFC 2898, appendix A. */
+  // See RFC 2898, appendix A.
   CBB algorithm, oid, param, kdf, kdf_oid, kdf_param, salt_cbb, cipher_cbb,
       iv_cbb;
   if (!CBB_add_asn1(out, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -187,14 +187,14 @@ int PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
       !CBB_add_asn1(&kdf_param, &salt_cbb, CBS_ASN1_OCTETSTRING) ||
       !CBB_add_bytes(&salt_cbb, salt, salt_len) ||
       !CBB_add_asn1_uint64(&kdf_param, iterations) ||
-      /* Specify a key length for RC2. */
+      // Specify a key length for RC2.
       (cipher_nid == NID_rc2_cbc &&
        !CBB_add_asn1_uint64(&kdf_param, EVP_CIPHER_key_length(cipher))) ||
-      /* Omit the PRF. We use the default hmacWithSHA1. */
+      // Omit the PRF. We use the default hmacWithSHA1.
       !CBB_add_asn1(&param, &cipher_cbb, CBS_ASN1_SEQUENCE) ||
       !add_cipher_oid(&cipher_cbb, cipher_nid) ||
-      /* RFC 2898 says RC2-CBC and RC5-CBC-Pad use a SEQUENCE with version and
-       * IV, but OpenSSL always uses an OCTET STRING IV, so we do the same. */
+      // RFC 2898 says RC2-CBC and RC5-CBC-Pad use a SEQUENCE with version and
+      // IV, but OpenSSL always uses an OCTET STRING IV, so we do the same.
       !CBB_add_asn1(&cipher_cbb, &iv_cbb, CBS_ASN1_OCTETSTRING) ||
       !CBB_add_bytes(&iv_cbb, iv, EVP_CIPHER_iv_length(cipher)) ||
       !CBB_flush(out)) {
@@ -220,20 +220,20 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
     return 0;
   }
 
-  /* Only PBKDF2 is supported. */
+  // Only PBKDF2 is supported.
   if (!CBS_mem_equal(&kdf_obj, kPBKDF2, sizeof(kPBKDF2))) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_UNSUPPORTED_KEY_DERIVATION_FUNCTION);
     return 0;
   }
 
-  /* See if we recognise the encryption algorithm. */
+  // See if we recognise the encryption algorithm.
   const EVP_CIPHER *cipher = cbs_to_cipher(&enc_obj);
   if (cipher == NULL) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_UNSUPPORTED_CIPHER);
     return 0;
   }
 
-  /* Parse the KDF parameters. See RFC 8018, appendix A.2. */
+  // Parse the KDF parameters. See RFC 8018, appendix A.2.
   CBS pbkdf2_params, salt;
   uint64_t iterations;
   if (!CBS_get_asn1(&kdf, &pbkdf2_params, CBS_ASN1_SEQUENCE) ||
@@ -249,8 +249,8 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
     return 0;
   }
 
-  /* The optional keyLength parameter, if present, must match the key length of
-   * the cipher. */
+  // The optional keyLength parameter, if present, must match the key length of
+  // the cipher.
   if (CBS_peek_asn1_tag(&pbkdf2_params, CBS_ASN1_INTEGER)) {
     uint64_t key_len;
     if (!CBS_get_asn1_uint64(&pbkdf2_params, &key_len)) {
@@ -273,14 +273,14 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
       return 0;
     }
 
-    /* We only support hmacWithSHA1. It is the DEFAULT, so DER requires it be
-     * omitted, but we match OpenSSL in tolerating it being present. */
+    // We only support hmacWithSHA1. It is the DEFAULT, so DER requires it be
+    // omitted, but we match OpenSSL in tolerating it being present.
     if (!CBS_mem_equal(&prf, kHMACWithSHA1, sizeof(kHMACWithSHA1))) {
       OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_UNSUPPORTED_PRF);
       return 0;
     }
 
-    /* hmacWithSHA1 has a NULL parameter. */
+    // hmacWithSHA1 has a NULL parameter.
     CBS null;
     if (!CBS_get_asn1(&alg_id, &null, CBS_ASN1_NULL) ||
         CBS_len(&null) != 0 ||
@@ -290,10 +290,10 @@ int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,
     }
   }
 
-  /* Parse the encryption scheme parameters. Note OpenSSL does not match the
-   * specification. Per RFC 2898, this should depend on the encryption scheme.
-   * In particular, RC2-CBC uses a SEQUENCE with version and IV. We align with
-   * OpenSSL. */
+  // Parse the encryption scheme parameters. Note OpenSSL does not match the
+  // specification. Per RFC 2898, this should depend on the encryption scheme.
+  // In particular, RC2-CBC uses a SEQUENCE with version and IV. We align with
+  // OpenSSL.
   CBS iv;
   if (!CBS_get_asn1(&enc_scheme, &iv, CBS_ASN1_OCTETSTRING) ||
       CBS_len(&enc_scheme) != 0) {

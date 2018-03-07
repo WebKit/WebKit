@@ -1,0 +1,460 @@
+# This file is used in addition to the one already maintained in Chrome.
+# It acts as a place holder for future additions for WebRTC.
+# It must exist for the Python wrapper script to work properly.
+
+# There are three kinds of suppressions in this file.
+# 1. third_party libraries
+# 2. webrtc stuff
+# 3. libjingle stuff (talk folder)
+#-----------------------------------------------------------------------
+
+# third_party libraries
+
+{
+   libc_free_hitting_gce_vms
+   Memcheck:Free
+   fun:free
+   fun:__libc_freeres
+   fun:_vgnU_freeres
+   ...
+}
+{
+   Ubuntu_Precise_Itoa_Optimized_Code
+   Memcheck:Uninitialized
+   fun:_itoa_word
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   ...
+}
+# See: https://bugs.chromium.org/p/webrtc/issues/detail?id=7973
+{
+   libc_getaddrinfo_uninitialized
+   Memcheck:Param
+   sendmsg(mmsg[0].msg_hdr)
+   fun:sendmmsg
+   fun:__libc_res_nsend
+   fun:__libc_res_nquery
+   fun:__libc_res_nsearch
+   fun:_nss_dns_gethostbyname4_r
+   fun:gaih_inet
+   fun:getaddrinfo
+   ...
+}
+
+#-----------------------------------------------------------------------
+# webrtc stuff
+
+{
+   bug_6784
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN3rtc10HttpServer16HandleConnectionEPNS_15StreamInterfaceE
+   fun:_ZN3rtc12_GLOBAL__N_122CreateClientConnectionERNS_10HttpServerERNS0_17HttpServerMonitorEb
+   fun:_ZN3rtc47HttpServer_SignalsCloseAfterForcedCloseAll_Test8TestBodyEv
+}
+{
+   bug_6773
+   Memcheck:Uninitialized
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   ...
+}
+{
+   bug_3446
+   Memcheck:Uninitialized
+   fun:vp8cx_pick_filter_level_fast
+   fun:vp8_loopfilter_frame
+   fun:encode_frame_to_data_rate
+   fun:vp8_get_compressed_data
+   fun:vp8e_encode
+   fun:vpx_codec_encode
+   ...
+   fun:_ZN6webrtc4test18VideoProcessorImpl12ProcessFrameEi
+   fun:_ZN6webrtc29VideoProcessorIntegrationTest22ProcessFramesAndVerifyENS_14QualityMetricsENS_11RateProfileENS_15CodecConfigParsEPNS_18RateControlMetricsE
+   fun:_ZN6webrtc70VideoProcessorIntegrationTest_ProcessNoLossSpatialResizeFrameDrop_Test8TestBodyEv
+}
+{
+   bug_1976_1
+   Memcheck:Unaddressable
+   fun:pthread_mutex_unlock
+   fun:_ZN9rtc15CriticalSection5LeaveEv
+   fun:_ZN9rtc9CritScopeD1Ev
+   ...
+   fun:_ZN9rtc6Thread15ProcessMessagesEi
+   fun:_ZN9rtc6Thread3RunEv
+   fun:_ZN9rtc6Thread6PreRunEPv
+}
+{
+   bug_2100_3
+   Memcheck:Uninitialized
+   fun:tls1_enc
+   fun:ssl3_get_record
+   fun:ssl3_read_bytes
+   fun:ssl3_read_internal
+   fun:ssl3_read
+   fun:SSL_read
+   fun:_ZN9rtc20OpenSSLStreamAdapter4ReadEPvmPmPi
+   ...
+}
+{
+   bug_2100_4
+   Memcheck:Uninitialized
+   fun:_ZN7testing8internal11CmpHelperEQIjhEENS_15AssertionResultEPKcS4_RKT_RKT0_
+   fun:_ZN7testing8internal8EqHelperILb0EE7CompareIjhEENS_15AssertionResultEPKcS6_RKT_RKT0_
+   fun:_ZN24SSLStreamAdapterTestDTLS8ReadDataEPN9rtc15StreamInterfaceE
+   ...
+}
+{
+   bug_2100_5
+   Memcheck:Uninitialized
+   fun:dtls1_process_record
+   fun:dtls1_get_record
+   fun:dtls1_read_bytes
+   fun:ssl3_read_internal
+   fun:ssl3_read
+   fun:SSL_read
+   fun:_ZN9rtc20OpenSSLStreamAdapter4ReadEPvmPmPi
+   ...
+}
+{
+   BIO_new_mem_buf_1
+   Memcheck:Leak
+   fun:malloc
+   fun:default_malloc_ex
+   fun:CRYPTO_malloc
+   fun:BUF_MEM_new
+   fun:mem_new
+   fun:BIO_set
+   fun:BIO_new
+   fun:BIO_new_mem_buf
+   fun:_ZN9rtc18OpenSSLCertificate13FromPEMStringERKSs
+   ...
+}
+{
+   BIO_new_mem_buf_2
+   Memcheck:Leak
+   fun:malloc
+   fun:default_malloc_ex
+   fun:CRYPTO_malloc
+   fun:BUF_MEM_new
+   fun:mem_new
+   fun:BIO_set
+   fun:BIO_new
+   fun:BIO_new_mem_buf
+   fun:_ZN9rtc15OpenSSLIdentity14FromPEMStringsERKSsS2_
+}
+{
+   SignalsCloseAfterForcedCloseAll
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN3rtc10HttpServer10Connection12BeginProcessEPNS_15StreamInterfaceE
+   ...
+}
+{
+   SignalsCloseAfterForcedCloseAll2
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKSsSsEEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_EN3rtc5ilessESaIS2_EE11_M_get_nodeEv
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_EN3rtc5ilessESaIS2_EE14_M_create_nodeIJS2_EEEPSt13_Rb_tree_nodeIS2_EDpOT_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_EN3rtc5ilessESaIS2_EE10_M_insert_IS2_EESt17_Rb_tree_iteratorIS2_EPKSt18_Rb_tree_node_baseSE_OT_
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_EN3rtc5ilessESaIS2_EE15_M_insert_equalIS2_EESt17_Rb_tree_iteratorIS2_EOT_
+   fun:_ZNSt8multimapISsSsN3rtc5ilessESaISt4pairIKSsSsEEE6insertIS4_vEESt17_Rb_tree_iteratorIS4_EOT_
+   fun:_ZN3rtc8HttpData12changeHeaderERKSsS2_NS0_13HeaderCombineE
+   fun:_ZN3rtc8HttpData9setHeaderERKSsS2_b
+   fun:_ZN3rtc8HttpData9setHeaderENS_10HttpHeaderERKSsb
+   ...
+}
+{
+   DoNotDeleteTask2
+   Memcheck:Leak
+   fun:_Znw*
+   ...
+   fun:_ZN3rtc41unstarted_task_test_DoNotDeleteTask2_Test8TestBodyEv
+}
+{
+   bug_329_1
+   Memcheck:Unaddressable
+   fun:I422ToARGBRow_SSSE3
+   fun:I420ToARGB
+   fun:ConvertFromI420
+   fun:_ZN6webrtc15ConvertFromI420EPKhiNS_9VideoTypeEiiiPh
+   fun:_ZN6webrtc15VideoX11Channel12DeliverFrameEPhij
+   fun:_ZN6webrtc15VideoX11Channel11RenderFrameEjRNS_10VideoFrameE
+   fun:_ZN6webrtc19IncomingVideoStream26IncomingVideoStreamProcessEv
+   fun:_ZN6webrtc19IncomingVideoStream28IncomingVideoStreamThreadFunEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   bug_329_3
+   Memcheck:Unaddressable
+   fun:I422ToARGBRow_SSSE3
+   fun:I420ToARGB
+   fun:ConvertFromI420
+   fun:_ZN6webrtc15ConvertFromI420EPKhiNS_9VideoTypeEiiiPh
+   fun:_ZN6webrtc15VideoX11Channel12DeliverFrameEPhij
+   fun:_ZN6webrtc15VideoX11Channel11RenderFrameEjRNS_10VideoFrameE
+   fun:_ZN6webrtc19IncomingVideoStream26IncomingVideoStreamProcessEv
+   fun:_ZN6webrtc19IncomingVideoStream28IncomingVideoStreamThreadFunEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   bug_329_7
+   Memcheck:Unaddressable
+   fun:I422ToARGBRow_SSSE3
+   fun:I420ToARGB
+   fun:ConvertFromI420
+   fun:_ZN6webrtc15ConvertFromI420ERKNS_10VideoFrameEiNS_9VideoTypeEiPh
+   fun:_ZN6webrtc15VideoX11Channel12DeliverFrameERKNS_10VideoFrameE
+   fun:_ZN6webrtc15VideoX11Channel11RenderFrameEjRNS_10VideoFrameE
+   fun:_ZN6webrtc19IncomingVideoStream26IncomingVideoStreamProcessEv
+   fun:_ZN6webrtc19IncomingVideoStream28IncomingVideoStreamThreadFunEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   bug_329_8
+   Memcheck:Unaddressable
+   fun:I422ToARGBRow_SSSE3
+   fun:I420ToARGB
+   fun:ConvertFromI420
+   fun:_ZN6webrtc15ConvertFromI420ERKNS_10VideoFrameEiNS_9VideoTypeEiPh
+   fun:_ZN6webrtc15VideoX11Channel12DeliverFrameERKNS_10VideoFrameE
+   fun:_ZN6webrtc15VideoX11Channel11RenderFrameEjRNS_10VideoFrameE
+   fun:_ZN6webrtc19IncomingVideoStream26IncomingVideoStreamProcessEv
+   fun:_ZN6webrtc19IncomingVideoStream28IncomingVideoStreamThreadFunEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   bug_898_1
+   Memcheck:Uninitialized
+   ...
+   fun:_ZN16FakeMediaProcess7ProcessEiN6webrtc15ProcessingTypesEPsiib
+   ...
+   fun:_ZN6webrtc21AudioDeviceLinuxPulse17PlayThreadProcessEv
+   fun:_ZN6webrtc21AudioDeviceLinuxPulse14PlayThreadFuncEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   bug_898_2
+   Memcheck:Uninitialized
+   ...
+   fun:_ZN16FakeMediaProcess7ProcessEiN6webrtc15ProcessingTypesEPsiib
+   ...
+   fun:_ZN6webrtc21AudioDeviceLinuxPulse16RecThreadProcessEv
+   fun:_ZN6webrtc21AudioDeviceLinuxPulse13RecThreadFuncEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   bug_891
+   Memcheck:Unaddressable
+   fun:XShmPutImage
+   fun:_ZN6webrtc15VideoX11Channel12DeliverFrameEPhij
+   fun:_ZN6webrtc15VideoX11Channel11RenderFrameEjRNS_10VideoFrameE
+   fun:_ZN6webrtc19IncomingVideoStream26IncomingVideoStreamProcessEv
+   fun:_ZN6webrtc19IncomingVideoStream28IncomingVideoStreamThreadFunEPv
+   fun:_ZN6webrtc11ThreadPosix3RunEv
+   fun:StartThread
+}
+
+{
+   ignore_common_benevolent_trace_library_errors
+   Memcheck:Uninitialized
+   ...
+   fun:vsnprintf
+   fun:_ZN6webrtc5Trace3AddENS_10TraceLevelENS_11TraceModuleEiPKcz
+   ...
+}
+
+{
+   bug_270_1
+   Memcheck:Uninitialized
+   ...
+   fun:WebRtcNetEQ_RecOutInternal
+   fun:WebRtcNetEQ_RecOut
+   ...
+}
+
+{
+   bug_270_2
+   Memcheck:Uninitialized
+   fun:WebRtcNetEQ_GetSpeechOutputType
+   ...
+}
+
+
+#-----------------------------------------------------------------------
+# libjingle stuff (talk folder)
+{
+   bug_2056_1
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_close_worker
+   fun:_dl_close
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlclose
+   ...
+   fun:snd_device_name_hint
+   fun:_ZNK6webrtc20AudioDeviceLinuxALSA14GetDevicesInfoEibiPci
+   ...
+}
+{
+   bug_2100_1
+   Memcheck:Uninitialized
+   fun:_ZN7testing8internal11CmpHelperEQIiiEENS_15AssertionResultEPKcS4_RKT_RKT0_
+   fun:_ZN7testing8internal8EqHelperILb1EE7CompareIiiEENS_15AssertionResultEPKcS6_RKT_RKT0_PNS0_8EnableIfIXntsrNS0_10is_pointerISA_EE5valueEE4typeE
+   ...
+}
+{
+   bug_2100_2
+   Memcheck:Uninitialized
+   fun:bcmp
+   fun:_ZN23SSLStreamAdapterTestTLS12TestTransferEi
+   ...
+}
+# For tests that create XMPPClient which can only be deleted by task runner.
+{
+   HangoutPubSubClientTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN*HangoutPubSubClientTest*Ev
+}
+{
+   MucRoomConfigTaskTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN21MucRoomConfigTaskTest5SetUpEv
+}
+{
+   MucRoomDiscoveryTaskTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN24MucRoomDiscoveryTaskTest5SetUpEv
+}
+{
+   MucRoomLookupTaskTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN21MucRoomLookupTaskTest5SetUpEv
+}
+{
+   MucRoomUniqueHangoutIdTaskTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN30MucRoomUniqueHangoutIdTaskTest5SetUpEv
+}
+{
+   PingTaskTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN12PingTaskTest5SetUpEv
+}
+{
+   PubSubClientTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN*PubSubClientTest*Ev
+}
+{
+   PubSubTasksTest
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN*PubSubTasksTest*Ev
+}
+# failures which can't be reproduced locally
+{
+   bug_2153_1
+   Memcheck:Leak
+   fun:calloc
+   ...
+   fun:_ZN6webrtc26AudioMixerManagerLinuxALSA11OpenSpeakerEPc
+   fun:_ZN6webrtc20AudioDeviceLinuxALSA11InitSpeakerEv
+   ...
+}
+{
+   bug_2153_3
+   Memcheck:Leak
+   fun:calloc
+   obj:*
+   fun:_ZN6webrtc26AudioMixerManagerLinuxALSA14OpenMicrophoneEPc
+   fun:_ZN6webrtc20AudioDeviceLinuxALSA14InitMicrophoneEv
+   ...
+}
+{
+   bug_2263_1
+   Memcheck:Uninitialized
+   fun:_ZN14DtlsTestClient12VerifyPacketEPKcmPj
+   ...
+}
+{
+   bug_3478
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZNK3rtc18FakeSSLCertificate12GetReferenceEv
+   fun:_ZN3rtc18FakeSSLCertificate7DupCertES0_
+   fun:_ZSt9transformIN9__gnu_cxx17__normal_iteratorIPKN3rtc18FakeSSLCertificateESt6vectorIS3_SaIS3_EEEENS1_IPPNS2_14SSLCertificateES6_ISB_SaISB_EEEEPFPS3_S3_EET0_T_SK_SJ_T1_
+   fun:_ZNK3rtc18FakeSSLCertificate8GetChainEPPNS_12SSLCertChainE
+   fun:_ZN6webrtc14StatsCollector21AddCertificateReportsEPKN3rtc14SSLCertificateE
+   fun:_ZN6webrtc14StatsCollector18ExtractSessionInfoEv
+   fun:_ZN6webrtc14StatsCollector11UpdateStatsENS_23PeerConnectionInterface16StatsOutputLevelE
+   fun:_ZN12_GLOBAL__N_118StatsCollectorTest22TestCertificateReportsERKN3rtc18FakeSSLCertificateERKSt6vectorISsSaISsEES4_S9_
+   fun:_ZN12_GLOBAL__N_156StatsCollectorTest_ChainedCertificateReportsCreated_Test8TestBodyEv
+}
+{
+   bug_5983
+   Memcheck:Uninitialized
+   fun:_ZN6webrtc11DataChannel4InitERKNS_23InternalDataChannelInitE
+   ...
+}
+{
+   bug_5984
+   Memcheck:Uninitialized
+   fun:_ZN6webrtc15GainControlImpl19ProcessCaptureAudioEPNS_11AudioBufferEb
+   ...
+}
+{
+   bug_5987
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN6webrtc51AudioEncoderCopyRedDeathTest_NullSpeechEncoder_Test8TestBodyEv
+}
+{
+   bug_5988
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZNSt8_Rb_treeISsSt4pairIKSsSsESt10_Select1stIS2_EN3rtc5ilessESaIS2_EE15_M_insert_equalIS2_EESt17_Rb_tree_iteratorIS2_EOT_
+   fun:_ZN3rtc8HttpData12changeHeaderERKSsS2_NS0_13HeaderCombineE
+   ...
+   fun:_ZN3rtc47HttpServer_SignalsCloseAfterForcedCloseAll_Test8TestBodyEv
+}
+{
+   bug_5989
+   Memcheck:Unaddressable
+   ...
+   fun:_ZNK3rtc15CriticalSection5EnterEv
+   ...
+}
+{
+   bug_687087
+   Memcheck:Uninitialized
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   ...
+   fun:_ZNK6webrtc11MockRtpRtcp11FlexfecSsrcEv
+   ...
+}

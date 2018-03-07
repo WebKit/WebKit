@@ -13,14 +13,14 @@
 #include <memory>
 #include <ostream>
 
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
-#include "webrtc/modules/desktop_capture/desktop_region.h"
-#include "webrtc/modules/desktop_capture/mac/desktop_configuration.h"
-#include "webrtc/modules/desktop_capture/mock_desktop_capturer_callback.h"
-#include "webrtc/test/gtest.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/mac/desktop_configuration.h"
+#include "modules/desktop_capture/mock_desktop_capturer_callback.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;

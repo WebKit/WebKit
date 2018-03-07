@@ -8,18 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
+#ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
+#define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
 
 #include <map>
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/protobuf_utils.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/controller.h"
+#include "modules/audio_coding/audio_network_adaptor/controller.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/protobuf_utils.h"
 
 namespace webrtc {
+
+class DebugDumpWriter;
 
 class ControllerManager {
  public:
@@ -55,12 +57,24 @@ class ControllerManagerImpl final : public ControllerManager {
       bool initial_fec_enabled,
       bool initial_dtx_enabled);
 
+  static std::unique_ptr<ControllerManager> Create(
+      const ProtoString& config_string,
+      size_t num_encoder_channels,
+      rtc::ArrayView<const int> encoder_frame_lengths_ms,
+      int min_encoder_bitrate_bps,
+      size_t intial_channels_to_encode,
+      int initial_frame_length_ms,
+      int initial_bitrate_bps,
+      bool initial_fec_enabled,
+      bool initial_dtx_enabled,
+      DebugDumpWriter* debug_dump_writer);
+
   explicit ControllerManagerImpl(const Config& config);
 
   // Dependency injection for testing.
   ControllerManagerImpl(
       const Config& config,
-      std::vector<std::unique_ptr<Controller>>&& controllers,
+      std::vector<std::unique_ptr<Controller>> controllers,
       const std::map<const Controller*, std::pair<int, float>>&
           chracteristic_points);
 
@@ -106,4 +120,4 @@ class ControllerManagerImpl final : public ControllerManager {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_
+#endif  // MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_CONTROLLER_MANAGER_H_

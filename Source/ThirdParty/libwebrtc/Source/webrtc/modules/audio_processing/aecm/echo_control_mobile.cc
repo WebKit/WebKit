@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aecm/echo_control_mobile.h"
+#include "modules/audio_processing/aecm/echo_control_mobile.h"
 
 #ifdef AEC_DEBUG
 #include <stdio.h>
@@ -16,10 +16,10 @@
 #include <stdlib.h>
 
 extern "C" {
-#include "webrtc/common_audio/ring_buffer.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/ring_buffer.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 }
-#include "webrtc/modules/audio_processing/aecm/aecm_core.h"
+#include "modules/audio_processing/aecm/aecm_core.h"
 
 #define BUF_SIZE_FRAMES 50 // buffer size (frames)
 // Maximum length of resampled signal. Must be an integer multiple of frames
@@ -75,10 +75,10 @@ typedef struct
 
 // Estimates delay to set the position of the farend buffer read pointer
 // (controlled by knownDelay)
-static int WebRtcAecm_EstBufDelay(AecMobile* aecmInst, short msInSndCardBuf);
+static int WebRtcAecm_EstBufDelay(AecMobile* aecm, short msInSndCardBuf);
 
 // Stuffs the farend buffer if the estimated delay is too large
-static int WebRtcAecm_DelayComp(AecMobile* aecmInst);
+static int WebRtcAecm_DelayComp(AecMobile* aecm);
 
 void* WebRtcAecm_Create() {
     AecMobile* aecm = static_cast<AecMobile*>(malloc(sizeof(AecMobile)));

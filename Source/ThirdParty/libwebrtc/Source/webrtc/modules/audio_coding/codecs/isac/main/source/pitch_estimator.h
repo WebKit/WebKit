@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_ESTIMATOR_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_ESTIMATOR_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_ESTIMATOR_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_ESTIMATOR_H_
 
 #include "structs.h"
 
@@ -72,4 +72,4 @@ void WebRtcIsac_DecimateAllpass(const double *in,
                                 size_t N,          /* number of input samples */
                                 double *out);      /* array of size N/2 */
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_ESTIMATOR_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_ESTIMATOR_H_ */

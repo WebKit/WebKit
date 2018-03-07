@@ -1,0 +1,38 @@
+From efa6c8d735872ad827a9ec5c3c7e09ab5cfac1c1 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 14 Dec 2017 13:57:16 -0800
+Subject: [PATCH 7/8] Fix RTC_STRINGIZE
+
+---
+ Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h         | 2 +-
+ Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h
+index 513bc263651..718d9589348 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h
+@@ -50,7 +50,7 @@ class Location {
+ #define RTC_FROM_HERE RTC_FROM_HERE_WITH_FUNCTION(__FUNCTION__)
+ 
+ #define RTC_FROM_HERE_WITH_FUNCTION(function_name) \
+-  ::rtc::Location(function_name, __FILE__ ":" STRINGIZE(__LINE__))
++  ::rtc::Location(function_name, __FILE__ ":" RTC_STRINGIZE(__LINE__))
+ 
+ }  // namespace rtc
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h
+index aee8d14551d..acf0ba404ca 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h
+@@ -33,6 +33,6 @@
+ // Then:
+ //   STRINGIZE(A) produces "FOO"
+ //   STRINGIZE(B(y)) produces "myobj->FunctionCall(y)"
+-#define STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
++#define RTC_STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
+ 
+ #endif  // RTC_BASE_STRINGIZE_MACROS_H_
+-- 
+2.13.5 (Apple Git-94)
+

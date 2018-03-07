@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/test/Channel.h"
+#include "modules/audio_coding/test/Channel.h"
 
 #include <assert.h>
 #include <iostream>
 
-#include "webrtc/base/format_macros.h"
-#include "webrtc/base/timeutils.h"
+#include "rtc_base/format_macros.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 

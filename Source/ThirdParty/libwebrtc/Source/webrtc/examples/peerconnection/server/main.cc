@@ -14,10 +14,10 @@
 
 #include <vector>
 
-#include "webrtc/examples/peerconnection/server/data_socket.h"
-#include "webrtc/examples/peerconnection/server/peer_channel.h"
-#include "webrtc/examples/peerconnection/server/utils.h"
-#include "webrtc/tools/simple_command_line_parser.h"
+#include "examples/peerconnection/server/data_socket.h"
+#include "examples/peerconnection/server/peer_channel.h"
+#include "examples/peerconnection/server/utils.h"
+#include "rtc_tools/simple_command_line_parser.h"
 
 static const size_t kMaxConnections = (FD_SETSIZE - 2);
 

@@ -11,6 +11,7 @@
 namespace webrtc {
 namespace test {
 
+extern const int kAudioLevelExtensionId;
 extern const int kTOffsetExtensionId;
 extern const int kAbsSendTimeExtensionId;
 extern const int kTransportSequenceNumberExtensionId;

@@ -8,11 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/rtcp_packet_parser.h"
+#include <utility>
+
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/rtcp_packet_parser.h"
 
 using testing::ElementsAreArray;
 using testing::make_tuple;
@@ -101,14 +103,43 @@ TEST(RtcpPacketSenderReportTest, CreateAndParseWithTwoReportBlocks) {
 TEST(RtcpPacketSenderReportTest, CreateWithTooManyReportBlocks) {
   SenderReport sr;
   sr.SetSenderSsrc(kSenderSsrc);
-  const size_t kMaxReportBlocks = (1 << 5) - 1;
   ReportBlock rb;
-  for (size_t i = 0; i < kMaxReportBlocks; ++i) {
+  for (size_t i = 0; i < SenderReport::kMaxNumberOfReportBlocks; ++i) {
     rb.SetMediaSsrc(kRemoteSsrc + i);
     EXPECT_TRUE(sr.AddReportBlock(rb));
   }
-  rb.SetMediaSsrc(kRemoteSsrc + kMaxReportBlocks);
+  rb.SetMediaSsrc(kRemoteSsrc + SenderReport::kMaxNumberOfReportBlocks);
   EXPECT_FALSE(sr.AddReportBlock(rb));
+}
+
+TEST(RtcpPacketSenderReportTest, SetReportBlocksOverwritesOldBlocks) {
+  SenderReport sr;
+  ReportBlock report_block;
+  // Use jitter field of the report blocks to distinguish them.
+  report_block.SetJitter(1001u);
+  sr.AddReportBlock(report_block);
+  ASSERT_EQ(sr.report_blocks().size(), 1u);
+  ASSERT_EQ(sr.report_blocks()[0].jitter(), 1001u);
+
+  std::vector<ReportBlock> blocks(3u);
+  blocks[0].SetJitter(2001u);
+  blocks[1].SetJitter(3001u);
+  blocks[2].SetJitter(4001u);
+  EXPECT_TRUE(sr.SetReportBlocks(blocks));
+  ASSERT_EQ(sr.report_blocks().size(), 3u);
+  EXPECT_EQ(sr.report_blocks()[0].jitter(), 2001u);
+  EXPECT_EQ(sr.report_blocks()[1].jitter(), 3001u);
+  EXPECT_EQ(sr.report_blocks()[2].jitter(), 4001u);
+}
+
+TEST(RtcpPacketSenderReportTest, SetReportBlocksMaxLimit) {
+  SenderReport sr;
+  std::vector<ReportBlock> max_blocks(SenderReport::kMaxNumberOfReportBlocks);
+  EXPECT_TRUE(sr.SetReportBlocks(std::move(max_blocks)));
+
+  std::vector<ReportBlock> one_too_many_blocks(
+      SenderReport::kMaxNumberOfReportBlocks + 1);
+  EXPECT_FALSE(sr.SetReportBlocks(std::move(one_too_many_blocks)));
 }
 
 }  // namespace webrtc

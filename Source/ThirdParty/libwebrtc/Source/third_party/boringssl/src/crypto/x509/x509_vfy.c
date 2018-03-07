@@ -61,7 +61,6 @@
 #include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
-#include <openssl/lhash.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 #include <openssl/thread.h>
@@ -472,13 +471,6 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
     if (!ok)
         goto end;
 
-    /* Check name constraints */
-
-    ok = check_name_constraints(ctx);
-
-    if (!ok)
-        goto end;
-
     ok = check_id(ctx);
 
     if (!ok)
@@ -508,6 +500,12 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
         ok = ctx->verify(ctx);
     else
         ok = internal_verify(ctx);
+    if (!ok)
+        goto end;
+
+    /* Check name constraints */
+
+    ok = check_name_constraints(ctx);
     if (!ok)
         goto end;
 
@@ -2177,6 +2175,11 @@ void X509_STORE_CTX_set_chain(X509_STORE_CTX *ctx, STACK_OF(X509) *sk)
     ctx->untrusted = sk;
 }
 
+STACK_OF(X509) *X509_STORE_CTX_get0_untrusted(X509_STORE_CTX *ctx)
+{
+    return ctx->untrusted;
+}
+
 void X509_STORE_CTX_set0_crls(X509_STORE_CTX *ctx, STACK_OF(X509_CRL) *sk)
 {
     ctx->crls = sk;
@@ -2254,8 +2257,13 @@ X509_STORE_CTX *X509_STORE_CTX_new(void)
         OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
         return NULL;
     }
-    OPENSSL_memset(ctx, 0, sizeof(X509_STORE_CTX));
+    X509_STORE_CTX_zero(ctx);
     return ctx;
+}
+
+void X509_STORE_CTX_zero(X509_STORE_CTX *ctx)
+{
+    OPENSSL_memset(ctx, 0, sizeof(X509_STORE_CTX));
 }
 
 void X509_STORE_CTX_free(X509_STORE_CTX *ctx)
@@ -2272,7 +2280,7 @@ int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
 {
     int ret = 1;
 
-    OPENSSL_memset(ctx, 0, sizeof(X509_STORE_CTX));
+    X509_STORE_CTX_zero(ctx);
     ctx->ctx = store;
     ctx->cert = x509;
     ctx->untrusted = chain;

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_PROCESSING_UTIL_SKIN_DETECTION_H_
-#define WEBRTC_MODULES_VIDEO_PROCESSING_UTIL_SKIN_DETECTION_H_
+#ifndef MODULES_VIDEO_PROCESSING_UTIL_SKIN_DETECTION_H_
+#define MODULES_VIDEO_PROCESSING_UTIL_SKIN_DETECTION_H_
 
 namespace webrtc {
 
@@ -27,4 +27,4 @@ bool MbHasSkinColor(const uint8_t* y_src,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_PROCESSING_UTIL_SKIN_DETECTION_H_
+#endif  // MODULES_VIDEO_PROCESSING_UTIL_SKIN_DETECTION_H_

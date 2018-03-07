@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC_AGC_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC_AGC_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC_AGC_H_
+#define MODULES_AUDIO_PROCESSING_AGC_AGC_H_
 
 #include <memory>
 
-#include "webrtc/modules/audio_processing/vad/voice_activity_detector.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_processing/vad/voice_activity_detector.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -53,4 +53,4 @@ class Agc {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC_AGC_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC_AGC_H_

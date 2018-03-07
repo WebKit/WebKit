@@ -24,12 +24,12 @@
 #define DEFINE_BSS_GET(type, name)        \
   static type name __attribute__((used)); \
   type *name##_bss_get(void);
-/* For FIPS builds we require that CRYPTO_ONCE_INIT be zero. */
+// For FIPS builds we require that CRYPTO_ONCE_INIT be zero.
 #define DEFINE_STATIC_ONCE(name) DEFINE_BSS_GET(CRYPTO_once_t, name)
-/* For FIPS builds we require that CRYPTO_STATIC_MUTEX_INIT be zero. */
+// For FIPS builds we require that CRYPTO_STATIC_MUTEX_INIT be zero.
 #define DEFINE_STATIC_MUTEX(name) \
   DEFINE_BSS_GET(struct CRYPTO_STATIC_MUTEX, name)
-/* For FIPS builds we require that CRYPTO_EX_DATA_CLASS_INIT be zero. */
+// For FIPS builds we require that CRYPTO_EX_DATA_CLASS_INIT be zero.
 #define DEFINE_STATIC_EX_DATA_CLASS(name) \
   DEFINE_BSS_GET(CRYPTO_EX_DATA_CLASS, name)
 #else
@@ -60,29 +60,29 @@
   }                                                                           \
   static void name##_do_init(type *out)
 
-/* DEFINE_METHOD_FUNCTION defines a function named |name| which returns a
- * method table of type const |type|*. In FIPS mode, to avoid rel.ro data, it
- * is split into a CRYPTO_once_t-guarded initializer in the module and
- * unhashed, non-module accessor functions to space reserved in the BSS. The
- * method table is initialized by a caller-supplied function which takes a
- * parameter named |out| of type |type|*. The caller should follow the macro
- * invocation with the body of this function:
- *
- *     DEFINE_METHOD_FUNCTION(EVP_MD, EVP_md4) {
- *       out->type = NID_md4;
- *       out->md_size = MD4_DIGEST_LENGTH;
- *       out->flags = 0;
- *       out->init = md4_init;
- *       out->update = md4_update;
- *       out->final = md4_final;
- *       out->block_size = 64;
- *       out->ctx_size = sizeof(MD4_CTX);
- *     }
- *
- * This mechanism does not use a static initializer because their execution
- * order is undefined. See FIPS.md for more details. */
+// DEFINE_METHOD_FUNCTION defines a function named |name| which returns a
+// method table of type const |type|*. In FIPS mode, to avoid rel.ro data, it
+// is split into a CRYPTO_once_t-guarded initializer in the module and
+// unhashed, non-module accessor functions to space reserved in the BSS. The
+// method table is initialized by a caller-supplied function which takes a
+// parameter named |out| of type |type|*. The caller should follow the macro
+// invocation with the body of this function:
+//
+//     DEFINE_METHOD_FUNCTION(EVP_MD, EVP_md4) {
+//       out->type = NID_md4;
+//       out->md_size = MD4_DIGEST_LENGTH;
+//       out->flags = 0;
+//       out->init = md4_init;
+//       out->update = md4_update;
+//       out->final = md4_final;
+//       out->block_size = 64;
+//       out->ctx_size = sizeof(MD4_CTX);
+//     }
+//
+// This mechanism does not use a static initializer because their execution
+// order is undefined. See FIPS.md for more details.
 #define DEFINE_METHOD_FUNCTION(type, name) DEFINE_DATA(type, name, const)
 
 #define DEFINE_LOCAL_DATA(type, name) DEFINE_DATA(type, name, static const)
 
-#endif /* OPENSSL_HEADER_FIPSMODULE_DELOCATE_H */
+#endif  // OPENSSL_HEADER_FIPSMODULE_DELOCATE_H

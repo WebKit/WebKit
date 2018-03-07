@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/real_fourier.h"
+#include "common_audio/real_fourier.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/real_fourier_ooura.h"
-#include "webrtc/common_audio/real_fourier_openmax.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/real_fourier_ooura.h"
+#include "common_audio/real_fourier_openmax.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

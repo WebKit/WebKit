@@ -15,7 +15,7 @@
  *
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 #define SPL_LPC_TO_REFL_COEF_MAX_AR_MODEL_ORDER 50
 

@@ -8,14 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/subtractor.h"
+#include "modules/audio_processing/aec3/subtractor.h"
 
 #include <algorithm>
+#include <numeric>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
@@ -25,15 +26,22 @@ void PredictionError(const Aec3Fft& fft,
                      const FftData& S,
                      rtc::ArrayView<const float> y,
                      std::array<float, kBlockSize>* e,
-                     FftData* E) {
-  std::array<float, kFftLength> s;
-  fft.Ifft(S, &s);
+                     FftData* E,
+                     std::array<float, kBlockSize>* s) {
+  std::array<float, kFftLength> s_scratch;
+  fft.Ifft(S, &s_scratch);
   constexpr float kScale = 1.0f / kFftLengthBy2;
-  std::transform(y.begin(), y.end(), s.begin() + kFftLengthBy2, e->begin(),
-                 [&](float a, float b) { return a - b * kScale; });
+  std::transform(y.begin(), y.end(), s_scratch.begin() + kFftLengthBy2,
+                 e->begin(), [&](float a, float b) { return a - b * kScale; });
   std::for_each(e->begin(), e->end(),
                 [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
   fft.ZeroPaddedFft(*e, E);
+
+  if (s) {
+    for (size_t k = 0; k < s->size(); ++k) {
+      (*s)[k] = kScale * s_scratch[k + kFftLengthBy2];
+    }
+  }
 }
 }  // namespace
 
@@ -47,15 +55,18 @@ Subtractor::Subtractor(ApmDataDumper* data_dumper,
   RTC_DCHECK(data_dumper_);
 }
 
-Subtractor::~Subtractor() {}
+Subtractor::~Subtractor() = default;
 
 void Subtractor::HandleEchoPathChange(
     const EchoPathVariability& echo_path_variability) {
+  use_shadow_filter_frequency_response_ = false;
   if (echo_path_variability.delay_change) {
     main_filter_.HandleEchoPathChange();
     shadow_filter_.HandleEchoPathChange();
     G_main_.HandleEchoPathChange();
     G_shadow_.HandleEchoPathChange();
+    converged_filter_ = false;
+    converged_filter_counter_ = 0;
   }
 }
 
@@ -76,11 +87,37 @@ void Subtractor::Process(const RenderBuffer& render_buffer,
 
   // Form the output of the main filter.
   main_filter_.Filter(render_buffer, &S);
-  PredictionError(fft_, S, y, &e_main, &E_main);
+  PredictionError(fft_, S, y, &e_main, &E_main, &output->s_main);
 
   // Form the output of the shadow filter.
   shadow_filter_.Filter(render_buffer, &S);
-  PredictionError(fft_, S, y, &e_shadow, &E_shadow);
+  PredictionError(fft_, S, y, &e_shadow, &E_shadow, nullptr);
+
+  // Determine which frequency response should be used.
+  const auto sum_of_squares = [](float a, float b) { return a + b * b; };
+  const float e2_main =
+      std::accumulate(e_main.begin(), e_main.end(), 0.f, sum_of_squares);
+  const float e2_shadow =
+      std::accumulate(e_shadow.begin(), e_shadow.end(), 0.f, sum_of_squares);
+  const float y2 = std::accumulate(y.begin(), y.end(), 0.f, sum_of_squares);
+
+  if (e2_main < e2_shadow && e2_main < 0.1 * y2) {
+    use_shadow_filter_frequency_response_ = false;
+  } else if (e2_shadow < e2_main && e2_shadow < 0.01 * y2) {
+    use_shadow_filter_frequency_response_ = true;
+  }
+
+  // Flag whether the filter has at some point converged.
+  // TODO(peah): Consider using a timeout for this.
+  if (!converged_filter_) {
+    if (y2 > kBlockSize * 100.f * 100.f) {
+      if (e2_main < 0.3 * y2) {
+        converged_filter_ = (++converged_filter_counter_) > 10;
+      } else {
+        converged_filter_counter_ = 0;
+      }
+    }
+  }
 
   // Compute spectra for future use.
   E_main.Spectrum(optimization_, &output->E2_main);

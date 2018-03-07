@@ -124,7 +124,7 @@ void CpuId(int eax, int ecx, int* cpu_info) {
 int GetXCR0() {
   int xcr0 = 0;
 #if defined(_MSC_FULL_VER) && (_MSC_FULL_VER >= 160040219)
-  xcr0 = _xgetbv(0);  // VS2010 SP1 required.
+  xcr0 = (int)_xgetbv(0);  // VS2010 SP1 required.  NOLINT
 #elif defined(__i386__) || defined(__x86_64__)
   asm(".byte 0x0f, 0x01, 0xd0" : "=a"(xcr0) : "c"(0) : "%edx");
 #endif  // defined(__i386__) || defined(__x86_64__)
@@ -242,10 +242,17 @@ static SAFEBUFFERS int GetCpuFlags(void) {
 
     // Detect AVX512bw
     if ((GetXCR0() & 0xe0) == 0xe0) {
-      cpu_info |= (cpu_info7[1] & 0x40000000) ? kCpuHasAVX3 : 0;
+      cpu_info |= (cpu_info7[1] & 0x40000000) ? kCpuHasAVX512BW : 0;
+      cpu_info |= (cpu_info7[1] & 0x80000000) ? kCpuHasAVX512VL : 0;
+      cpu_info |= (cpu_info7[2] & 0x00000002) ? kCpuHasAVX512VBMI : 0;
+      cpu_info |= (cpu_info7[2] & 0x00000040) ? kCpuHasAVX512VBMI2 : 0;
+      cpu_info |= (cpu_info7[2] & 0x00001000) ? kCpuHasAVX512VBITALG : 0;
+      cpu_info |= (cpu_info7[2] & 0x00004000) ? kCpuHasAVX512VPOPCNTDQ : 0;
+      cpu_info |= (cpu_info7[2] & 0x00000100) ? kCpuHasGFNI : 0;
     }
   }
 
+  // TODO(fbarchard): Consider moving these to gtest
   // Environment variable overrides for testing.
   if (TestEnv("LIBYUV_DISABLE_X86")) {
     cpu_info &= ~kCpuHasX86;
@@ -274,11 +281,11 @@ static SAFEBUFFERS int GetCpuFlags(void) {
   if (TestEnv("LIBYUV_DISABLE_FMA3")) {
     cpu_info &= ~kCpuHasFMA3;
   }
-  if (TestEnv("LIBYUV_DISABLE_AVX3")) {
-    cpu_info &= ~kCpuHasAVX3;
-  }
   if (TestEnv("LIBYUV_DISABLE_F16C")) {
     cpu_info &= ~kCpuHasF16C;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512BW")) {
+    cpu_info &= ~kCpuHasAVX512BW;
   }
 
 #endif

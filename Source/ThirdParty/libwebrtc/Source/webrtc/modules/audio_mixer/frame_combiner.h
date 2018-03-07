@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_MIXER_FRAME_COMBINER_H_
-#define WEBRTC_MODULES_AUDIO_MIXER_FRAME_COMBINER_H_
+#ifndef MODULES_AUDIO_MIXER_FRAME_COMBINER_H_
+#define MODULES_AUDIO_MIXER_FRAME_COMBINER_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 
@@ -42,4 +42,4 @@ class FrameCombiner {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_MIXER_FRAME_COMBINER_H_
+#endif  // MODULES_AUDIO_MIXER_FRAME_COMBINER_H_

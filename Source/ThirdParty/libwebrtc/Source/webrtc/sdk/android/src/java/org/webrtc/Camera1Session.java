@@ -36,6 +36,8 @@ class Camera1Session implements CameraSession {
 
   private static enum SessionState { RUNNING, STOPPED }
 
+  private final boolean videoFrameEmitTrialEnabled;
+
   private final Handler cameraThreadHandler;
   private final Events events;
   private final boolean captureToTexture;
@@ -85,7 +87,6 @@ class Camera1Session implements CameraSession {
 
     updateCameraParameters(camera, parameters, captureFormat, pictureSize, captureToTexture);
 
-    // Initialize the capture buffers.
     if (!captureToTexture) {
       final int frameSize = captureFormat.frameSize();
       for (int i = 0; i < NUMBER_OF_CAPTURE_BUFFERS; ++i) {
@@ -151,6 +152,9 @@ class Camera1Session implements CameraSession {
       android.hardware.Camera camera, android.hardware.Camera.CameraInfo info,
       CaptureFormat captureFormat, long constructionTimeNs) {
     Logging.d(TAG, "Create new camera1 session on camera " + cameraId);
+    videoFrameEmitTrialEnabled =
+        PeerConnectionFactory.fieldTrialsFindFullName(PeerConnectionFactory.VIDEO_FRAME_EMIT_TRIAL)
+            .equals(PeerConnectionFactory.TRIAL_ENABLED);
 
     this.cameraThreadHandler = new Handler();
     this.events = events;
@@ -267,8 +271,17 @@ class Camera1Session implements CameraSession {
           transformMatrix = RendererCommon.multiplyMatrices(
               transformMatrix, RendererCommon.horizontalFlipMatrix());
         }
-        events.onTextureFrameCaptured(Camera1Session.this, captureFormat.width,
-            captureFormat.height, oesTextureId, transformMatrix, rotation, timestampNs);
+        if (videoFrameEmitTrialEnabled) {
+          final VideoFrame.Buffer buffer =
+              surfaceTextureHelper.createTextureBuffer(captureFormat.width, captureFormat.height,
+                  RendererCommon.convertMatrixToAndroidGraphicsMatrix(transformMatrix));
+          final VideoFrame frame = new VideoFrame(buffer, rotation, timestampNs);
+          events.onFrameCaptured(Camera1Session.this, frame);
+          frame.release();
+        } else {
+          events.onTextureFrameCaptured(Camera1Session.this, captureFormat.width,
+              captureFormat.height, oesTextureId, transformMatrix, rotation, timestampNs);
+        }
       }
     });
   }
@@ -276,7 +289,7 @@ class Camera1Session implements CameraSession {
   private void listenForBytebufferFrames() {
     camera.setPreviewCallbackWithBuffer(new android.hardware.Camera.PreviewCallback() {
       @Override
-      public void onPreviewFrame(byte[] data, android.hardware.Camera callbackCamera) {
+      public void onPreviewFrame(final byte[] data, android.hardware.Camera callbackCamera) {
         checkIsOnCameraThread();
 
         if (callbackCamera != camera) {
@@ -298,9 +311,22 @@ class Camera1Session implements CameraSession {
           firstFrameReported = true;
         }
 
-        events.onByteBufferFrameCaptured(Camera1Session.this, data, captureFormat.width,
-            captureFormat.height, getFrameOrientation(), captureTimeNs);
-        camera.addCallbackBuffer(data);
+        if (videoFrameEmitTrialEnabled) {
+          VideoFrame.Buffer frameBuffer = new NV21Buffer(data, captureFormat.width,
+              captureFormat.height, () -> cameraThreadHandler.post(() -> {
+                if (state == SessionState.RUNNING) {
+                  camera.addCallbackBuffer(data);
+                }
+              }));
+          final VideoFrame frame =
+              new VideoFrame(frameBuffer, getFrameOrientation(), captureTimeNs);
+          events.onFrameCaptured(Camera1Session.this, frame);
+          frame.release();
+        } else {
+          events.onByteBufferFrameCaptured(Camera1Session.this, data, captureFormat.width,
+              captureFormat.height, getFrameOrientation(), captureTimeNs);
+          camera.addCallbackBuffer(data);
+        }
       }
     });
   }

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_ENCODED_FRAME_H_
-#define WEBRTC_MODULES_VIDEO_CODING_ENCODED_FRAME_H_
+#ifndef MODULES_VIDEO_CODING_ENCODED_FRAME_H_
+#define MODULES_VIDEO_CODING_ENCODED_FRAME_H_
 
 #include <vector>
 
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/include/video_frame.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/modules/video_coding/include/video_coding_defines.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "common_video/include/video_frame.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 
 namespace webrtc {
 
@@ -138,4 +138,4 @@ class VCMEncodedFrame : protected EncodedImage {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_ENCODED_FRAME_H_
+#endif  // MODULES_VIDEO_CODING_ENCODED_FRAME_H_

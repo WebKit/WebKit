@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/utility/moving_average.h"
+#include "modules/video_coding/utility/moving_average.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 TEST(MovingAverageTest, EmptyAverage) {
   webrtc::MovingAverage moving_average(1);

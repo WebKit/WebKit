@@ -36,6 +36,9 @@ static __inline int Abs(int v) {
   return v >= 0 ? v : -v;
 }
 
+static __inline float FAbs(float v) {
+  return v >= 0 ? v : -v;
+}
 #define OFFBY 0
 
 // Scaling uses 16.16 fixed point to step thru the source image, so a
@@ -66,17 +69,15 @@ static inline bool SizeValid(int src_width,
   return true;
 }
 
-#define align_buffer_page_end(var, size)                                      \
-  uint8* var;                                                                 \
-  uint8* var##_mem;                                                           \
-  var##_mem = reinterpret_cast<uint8*>(malloc(((size) + 4095 + 63) & ~4095)); \
-  var = (uint8*)((intptr_t)(var##_mem + (((size) + 4095 + 63) & ~4095) -      \
-                            (size)) &                                         \
-                 ~63);
+#define align_buffer_page_end(var, size)                              \
+  uint8* var##_mem =                                                  \
+      reinterpret_cast<uint8*>(malloc(((size) + 4095 + 63) & ~4095)); \
+  uint8* var = reinterpret_cast<uint8*>(                              \
+      (intptr_t)(var##_mem + (((size) + 4095 + 63) & ~4095) - (size)) & ~63)
 
 #define free_aligned_buffer_page_end(var) \
   free(var##_mem);                        \
-  var = 0;
+  var = 0
 
 #ifdef WIN32
 static inline double get_time() {
@@ -189,6 +190,19 @@ class LibYUVPlanarTest : public ::testing::Test {
 class LibYUVBaseTest : public ::testing::Test {
  protected:
   LibYUVBaseTest();
+
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
+  int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
+};
+
+class LibYUVCompareTest : public ::testing::Test {
+ protected:
+  LibYUVCompareTest();
 
   int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
   int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.

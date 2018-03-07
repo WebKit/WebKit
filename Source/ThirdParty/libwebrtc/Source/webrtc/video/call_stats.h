@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VIDEO_CALL_STATS_H_
-#define WEBRTC_VIDEO_CALL_STATS_H_
+#ifndef VIDEO_CALL_STATS_H_
+#define VIDEO_CALL_STATS_H_
 
 #include <list>
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/include/module.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/criticalsection.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -70,9 +70,9 @@ class CallStats : public Module {
   // The last RTT in the statistics update (zero if there is no valid estimate).
   int64_t max_rtt_ms_;
   int64_t avg_rtt_ms_;
-  int64_t sum_avg_rtt_ms_ GUARDED_BY(crit_);
-  int64_t num_avg_rtt_ GUARDED_BY(crit_);
-  int64_t time_of_first_rtt_ms_ GUARDED_BY(crit_);
+  int64_t sum_avg_rtt_ms_ RTC_GUARDED_BY(crit_);
+  int64_t num_avg_rtt_ RTC_GUARDED_BY(crit_);
+  int64_t time_of_first_rtt_ms_ RTC_GUARDED_BY(crit_);
 
   // All Rtt reports within valid time interval, oldest first.
   std::list<RttTime> reports_;
@@ -85,4 +85,4 @@ class CallStats : public Module {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_CALL_STATS_H_
+#endif  // VIDEO_CALL_STATS_H_

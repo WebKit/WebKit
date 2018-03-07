@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_SCOPED_VOE_INTERFACE_H_
-#define WEBRTC_AUDIO_SCOPED_VOE_INTERFACE_H_
+#ifndef AUDIO_SCOPED_VOE_INTERFACE_H_
+#define AUDIO_SCOPED_VOE_INTERFACE_H_
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -42,4 +42,4 @@ template<class T> class ScopedVoEInterface {
 }  // namespace internal
 }  // namespace webrtc
 
-#endif  // WEBRTC_AUDIO_SCOPED_VOE_INTERFACE_H_
+#endif  // AUDIO_SCOPED_VOE_INTERFACE_H_

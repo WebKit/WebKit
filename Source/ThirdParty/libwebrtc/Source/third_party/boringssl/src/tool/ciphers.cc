@@ -24,26 +24,29 @@
 
 
 bool Ciphers(const std::vector<std::string> &args) {
-  if (args.size() != 1) {
-    fprintf(stderr, "Usage: bssl ciphers <cipher suite string>\n");
+  bool openssl_name = false;
+  if (args.size() == 2 && args[0] == "-openssl-name") {
+    openssl_name = true;
+  } else if (args.size() != 1) {
+    fprintf(stderr,
+            "Usage: bssl ciphers [-openssl-name] <cipher suite string>\n");
     return false;
   }
 
   const std::string &ciphers_string = args.back();
 
-  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(SSLv23_client_method()));
+  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
   if (!SSL_CTX_set_strict_cipher_list(ctx.get(), ciphers_string.c_str())) {
     fprintf(stderr, "Failed to parse cipher suite config.\n");
     ERR_print_errors_fp(stderr);
     return false;
   }
 
-  const struct ssl_cipher_preference_list_st *pref_list = ctx->cipher_list;
-  STACK_OF(SSL_CIPHER) *ciphers = pref_list->ciphers;
+  STACK_OF(SSL_CIPHER) *ciphers = SSL_CTX_get_ciphers(ctx.get());
 
   bool last_in_group = false;
   for (size_t i = 0; i < sk_SSL_CIPHER_num(ciphers); i++) {
-    bool in_group = pref_list->in_group_flags[i];
+    bool in_group = SSL_CTX_cipher_in_group(ctx.get(), i);
     const SSL_CIPHER *cipher = sk_SSL_CIPHER_value(ciphers, i);
 
     if (in_group && !last_in_group) {
@@ -52,7 +55,8 @@ bool Ciphers(const std::vector<std::string> &args) {
       printf("  ");
     }
 
-    printf("%s\n", SSL_CIPHER_get_name(cipher));
+    printf("%s\n", openssl_name ? SSL_CIPHER_get_name(cipher)
+                                : SSL_CIPHER_standard_name(cipher));
 
     if (!in_group && last_in_group) {
       printf("]\n");

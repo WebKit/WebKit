@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_G711_AUDIO_DECODER_PCM_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_G711_AUDIO_DECODER_PCM_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_G711_AUDIO_DECODER_PCM_H_
+#define MODULES_AUDIO_CODING_CODECS_G711_AUDIO_DECODER_PCM_H_
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/constructormagic.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -67,4 +67,4 @@ class AudioDecoderPcmA final : public AudioDecoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_G711_AUDIO_DECODER_PCM_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_G711_AUDIO_DECODER_PCM_H_

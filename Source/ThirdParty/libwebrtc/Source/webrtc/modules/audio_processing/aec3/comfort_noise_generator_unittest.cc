@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/comfort_noise_generator.h"
+#include "modules/audio_processing/aec3/comfort_noise_generator.h"
 
 #include <algorithm>
 #include <numeric>
 
-#include "webrtc/typedefs.h"
-#include "webrtc/base/random.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
-#include "webrtc/test/gtest.h"
+#include "rtc_base/random.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "test/gtest.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace aec3 {
@@ -35,17 +35,19 @@ float Power(const FftData& N) {
 TEST(ComfortNoiseGenerator, NullLowerBandNoise) {
   std::array<float, kFftLengthBy2Plus1> N2;
   FftData noise;
-  EXPECT_DEATH(ComfortNoiseGenerator(DetectOptimization())
-                   .Compute(AecState(), N2, nullptr, &noise),
-               "");
+  EXPECT_DEATH(
+      ComfortNoiseGenerator(DetectOptimization())
+          .Compute(AecState(EchoCanceller3Config{}), N2, nullptr, &noise),
+      "");
 }
 
 TEST(ComfortNoiseGenerator, NullUpperBandNoise) {
   std::array<float, kFftLengthBy2Plus1> N2;
   FftData noise;
-  EXPECT_DEATH(ComfortNoiseGenerator(DetectOptimization())
-                   .Compute(AecState(), N2, &noise, nullptr),
-               "");
+  EXPECT_DEATH(
+      ComfortNoiseGenerator(DetectOptimization())
+          .Compute(AecState(EchoCanceller3Config{}), N2, &noise, nullptr),
+      "");
 }
 
 #endif
@@ -91,7 +93,7 @@ TEST(ComfortNoiseGenerator, TestOptimizations) {
 
 TEST(ComfortNoiseGenerator, CorrectLevel) {
   ComfortNoiseGenerator cng(DetectOptimization());
-  AecState aec_state;
+  AecState aec_state(EchoCanceller3Config{});
 
   std::array<float, kFftLengthBy2Plus1> N2;
   N2.fill(1000.f * 1000.f);

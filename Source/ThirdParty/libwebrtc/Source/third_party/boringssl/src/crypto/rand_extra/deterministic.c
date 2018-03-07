@@ -24,11 +24,11 @@
 #include "../fipsmodule/rand/internal.h"
 
 
-/* g_num_calls is the number of calls to |CRYPTO_sysrand| that have occurred.
- *
- * This is intentionally not thread-safe. If the fuzzer mode is ever used in a
- * multi-threaded program, replace this with a thread-local. (A mutex would not
- * be deterministic.) */
+// g_num_calls is the number of calls to |CRYPTO_sysrand| that have occurred.
+//
+// This is intentionally not thread-safe. If the fuzzer mode is ever used in a
+// multi-threaded program, replace this with a thread-local. (A mutex would not
+// be deterministic.)
 static uint64_t g_num_calls = 0;
 
 void RAND_reset_for_fuzzing(void) { g_num_calls = 0; }
@@ -45,4 +45,4 @@ void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   g_num_calls++;
 }
 
-#endif  /* BORINGSSL_UNSAFE_DETERMINISTIC_MODE */
+#endif  // BORINGSSL_UNSAFE_DETERMINISTIC_MODE

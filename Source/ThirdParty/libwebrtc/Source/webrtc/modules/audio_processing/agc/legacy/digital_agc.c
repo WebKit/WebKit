@@ -12,15 +12,15 @@
  *
  */
 
-#include "webrtc/modules/audio_processing/agc/legacy/digital_agc.h"
+#include "modules/audio_processing/agc/legacy/digital_agc.h"
 
 #include <string.h>
 #ifdef WEBRTC_AGC_DEBUG_DUMP
 #include <stdio.h>
 #endif
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/agc/legacy/gain_control.h"
+#include "rtc_base/checks.h"
+#include "modules/audio_processing/agc/legacy/gain_control.h"
 
 // To generate the gaintable, copy&paste the following lines to a Matlab window:
 // MaxGain = 6; MinGain = 0; CompRatio = 3; Knee = 1;
@@ -410,7 +410,7 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
     if (cur_level == 0) {
       zeros = 31;
     }
-    tmp32 = (cur_level << zeros) & 0x7FFFFFFF;
+    tmp32 = ((uint32_t)cur_level << zeros) & 0x7FFFFFFF;
     frac = (int16_t)(tmp32 >> 19);  // Q12.
     tmp32 = (stt->gainTable[zeros - 1] - stt->gainTable[zeros]) * frac;
     gains[k + 1] = stt->gainTable[zeros] + (tmp32 >> 12);
@@ -429,7 +429,7 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
   if (stt->capacitorFast == 0) {
     zeros_fast = 31;
   }
-  tmp32 = (stt->capacitorFast << zeros_fast) & 0x7FFFFFFF;
+  tmp32 = ((uint32_t)stt->capacitorFast << zeros_fast) & 0x7FFFFFFF;
   zeros_fast <<= 9;
   zeros_fast -= (int16_t)(tmp32 >> 22);
 
@@ -524,8 +524,17 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
     // iterate over samples
     for (n = 0; n < L; n++) {
       for (i = 0; i < num_bands; ++i) {
-        tmp32 = out[i][k * L + n] * (gain32 >> 4);
-        out[i][k * L + n] = (int16_t)(tmp32 >> 16);
+        int64_t tmp64 = ((int64_t)(out[i][k * L + n])) * (gain32 >> 4);
+        tmp64 = tmp64 >> 16;
+        if (tmp64 > 32767) {
+          out[i][k * L + n] = 32767;
+        }
+        else if (tmp64 < -32768) {
+          out[i][k * L + n] = -32768;
+        }
+        else {
+          out[i][k * L + n] = (int16_t)(tmp64);
+        }
       }
       gain32 += delta;
     }
@@ -565,7 +574,8 @@ int16_t WebRtcAgc_ProcessVad(AgcVad* state,      // (i) VAD state
                              const int16_t* in,  // (i) Speech signal
                              size_t nrSamples)   // (i) number of samples
 {
-  int32_t out, nrg, tmp32, tmp32b;
+  uint32_t nrg;
+  int32_t out, tmp32, tmp32b;
   uint16_t tmpU16;
   int16_t k, subfr, tmp16;
   int16_t buf1[8];
@@ -597,7 +607,12 @@ int16_t WebRtcAgc_ProcessVad(AgcVad* state,      // (i) VAD state
       out = buf2[k] + HPstate;
       tmp32 = 600 * out;
       HPstate = (int16_t)((tmp32 >> 10) - buf2[k]);
-      nrg += (out * out) >> 6;
+
+      // Add 'out * out / 2**6' to 'nrg' in a non-overflowing
+      // way. Guaranteed to work as long as 'out * out / 2**6' fits in
+      // an int32_t.
+      nrg += out * (out / (1 << 6));
+      nrg += out * (out % (1 << 6)) / (1 << 6);
     }
   }
   state->HPstate = HPstate;
@@ -622,7 +637,7 @@ int16_t WebRtcAgc_ProcessVad(AgcVad* state,      // (i) VAD state
   }
 
   // energy level (range {-32..30}) (Q10)
-  dB = (15 - zeros) << 11;
+  dB = (15 - zeros) * (1 << 11);
 
   // Update statistics
 

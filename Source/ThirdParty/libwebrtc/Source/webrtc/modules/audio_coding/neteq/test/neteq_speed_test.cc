@@ -12,43 +12,18 @@
 
 #include <iostream>
 
-#include "gflags/gflags.h"
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_performance_test.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/typedefs.h"
-
-// Flag validators.
-static bool ValidateRuntime(const char* flagname, int value) {
-  if (value > 0)  // Value is ok.
-    return true;
-  printf("Invalid value for --%s: %d\n", flagname, static_cast<int>(value));
-  return false;
-}
-static bool ValidateLossrate(const char* flagname, int value) {
-  if (value >= 0)  // Value is ok.
-    return true;
-  printf("Invalid value for --%s: %d\n", flagname, static_cast<int>(value));
-  return false;
-}
-static bool ValidateDriftfactor(const char* flagname, double value) {
-  if (value >= 0.0 && value < 1.0)  // Value is ok.
-    return true;
-  printf("Invalid value for --%s: %f\n", flagname, value);
-  return false;
-}
+#include "modules/audio_coding/neteq/tools/neteq_performance_test.h"
+#include "rtc_base/flags.h"
+#include "test/testsupport/fileutils.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Define command line flags.
-DEFINE_int32(runtime_ms, 10000, "Simulated runtime in ms.");
-static const bool runtime_ms_dummy =
-    google::RegisterFlagValidator(&FLAGS_runtime_ms, &ValidateRuntime);
-DEFINE_int32(lossrate, 10,
-             "Packet lossrate; drop every N packets.");
-static const bool lossrate_dummy =
-    google::RegisterFlagValidator(&FLAGS_lossrate, &ValidateLossrate);
-DEFINE_double(drift, 0.1,
+DEFINE_int(runtime_ms, 10000, "Simulated runtime in ms.");
+DEFINE_int(lossrate, 10,
+           "Packet lossrate; drop every N packets.");
+DEFINE_float(drift, 0.1f,
              "Clockdrift factor.");
-static const bool drift_dummy =
-    google::RegisterFlagValidator(&FLAGS_drift, &ValidateDriftfactor);
+DEFINE_bool(help, false, "Print this message.");
 
 int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
@@ -58,19 +33,23 @@ int main(int argc, char* argv[]) {
       "  --lossrate=N           drop every N packets; default is 10\n"
       "  --drift=F              clockdrift factor between 0.0 and 1.0; "
       "default is 0.1\n";
-  google::SetUsageMessage(usage);
-  google::ParseCommandLineFlags(&argc, &argv, true);
   webrtc::test::SetExecutablePath(argv[0]);
-
-  if (argc != 1) {
-    // Print usage information.
-    std::cout << google::ProgramUsage();
-    return 0;
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
+      FLAG_help || argc != 1) {
+    printf("%s", usage.c_str());
+    if (FLAG_help) {
+      rtc::FlagList::Print(nullptr, false);
+      return 0;
+    }
+    return 1;
   }
+  RTC_CHECK_GT(FLAG_runtime_ms, 0);
+  RTC_CHECK_GE(FLAG_lossrate, 0);
+  RTC_CHECK(FLAG_drift >= 0.0 && FLAG_drift < 1.0);
 
   int64_t result =
-      webrtc::test::NetEqPerformanceTest::Run(FLAGS_runtime_ms, FLAGS_lossrate,
-                                              FLAGS_drift);
+      webrtc::test::NetEqPerformanceTest::Run(FLAG_runtime_ms, FLAG_lossrate,
+                                              FLAG_drift);
   if (result <= 0) {
     std::cout << "There was an error" << std::endl;
     return -1;

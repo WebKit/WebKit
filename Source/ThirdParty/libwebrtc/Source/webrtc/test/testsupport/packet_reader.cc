@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/testsupport/packet_reader.h"
+#include "test/testsupport/packet_reader.h"
 
 #include <assert.h>
 #include <stdio.h>

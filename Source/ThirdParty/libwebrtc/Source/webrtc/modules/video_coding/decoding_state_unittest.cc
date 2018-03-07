@@ -10,12 +10,12 @@
 
 #include <string.h>
 
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/decoding_state.h"
-#include "webrtc/modules/video_coding/frame_buffer.h"
-#include "webrtc/modules/video_coding/jitter_buffer_common.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/test/gtest.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/decoding_state.h"
+#include "modules/video_coding/frame_buffer.h"
+#include "modules/video_coding/jitter_buffer_common.h"
+#include "modules/video_coding/packet.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CAPTURE_OBJC_DEVICE_INFO_OBJC_H_
-#define WEBRTC_MODULES_VIDEO_CAPTURE_OBJC_DEVICE_INFO_OBJC_H_
+#ifndef MODULES_VIDEO_CAPTURE_OBJC_DEVICE_INFO_OBJC_H_
+#define MODULES_VIDEO_CAPTURE_OBJC_DEVICE_INFO_OBJC_H_
 
 #import <AVFoundation/AVFoundation.h>
 
-#include "webrtc/modules/video_capture/video_capture_defines.h"
+#include "modules/video_capture/video_capture_defines.h"
 
 @interface DeviceInfoIosObjC : NSObject
 + (int)captureDeviceCount;
@@ -26,4 +26,4 @@
 
 @end
 
-#endif  // WEBRTC_MODULES_VIDEO_CAPTURE_OBJC_DEVICE_INFO_OBJC_H_
+#endif  // MODULES_VIDEO_CAPTURE_OBJC_DEVICE_INFO_OBJC_H_

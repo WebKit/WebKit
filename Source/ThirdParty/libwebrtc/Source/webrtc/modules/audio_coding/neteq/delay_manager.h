@@ -8,18 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_DELAY_MANAGER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_DELAY_MANAGER_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_DELAY_MANAGER_H_
+#define MODULES_AUDIO_CODING_NETEQ_DELAY_MANAGER_H_
 
 #include <string.h>  // Provide access to size_t.
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_coding/neteq/audio_decoder_impl.h"
-#include "webrtc/modules/audio_coding/neteq/tick_timer.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/neteq/tick_timer.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -100,6 +99,13 @@ class DelayManager {
   // packet will shift the sequence numbers for the following packets.
   virtual void RegisterEmptyPacket();
 
+  // Apply compression or stretching to the IAT histogram, for a change in frame
+  // size. This returns an updated histogram. This function is public for
+  // testability.
+  static IATVector ScaleHistogram(const IATVector& histogram,
+                                  int old_packet_length,
+                                  int new_packet_length);
+
   // Accessors and mutators.
   // Assuming |delay| is in valid range.
   virtual bool SetMinimumDelay(int delay_ms);
@@ -166,9 +172,10 @@ class DelayManager {
   std::unique_ptr<TickTimer::Stopwatch> max_iat_stopwatch_;
   DelayPeakDetector& peak_detector_;
   int last_pack_cng_or_dtmf_;
+  const bool frame_length_change_experiment_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DelayManager);
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_DELAY_MANAGER_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_DELAY_MANAGER_H_

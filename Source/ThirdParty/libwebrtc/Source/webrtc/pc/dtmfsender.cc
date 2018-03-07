@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/dtmfsender.h"
+#include "pc/dtmfsender.h"
 
 #include <ctype.h>
 
 #include <string>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/thread.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -118,7 +118,8 @@ bool DtmfSender::InsertDtmf(const std::string& tones, int duration,
   if (duration > kDtmfMaxDurationMs ||
       duration < kDtmfMinDurationMs ||
       inter_tone_gap < kDtmfMinGapMs) {
-    LOG(LS_ERROR) << "InsertDtmf is called with invalid duration or tones gap. "
+    RTC_LOG(LS_ERROR)
+        << "InsertDtmf is called with invalid duration or tones gap. "
         << "The duration cannot be more than " << kDtmfMaxDurationMs
         << "ms or less than " << kDtmfMinDurationMs << "ms. "
         << "The gap between tones must be at least " << kDtmfMinGapMs << "ms.";
@@ -126,7 +127,7 @@ bool DtmfSender::InsertDtmf(const std::string& tones, int duration,
   }
 
   if (!CanInsertDtmf()) {
-    LOG(LS_ERROR)
+    RTC_LOG(LS_ERROR)
         << "InsertDtmf is called on DtmfSender that can't send DTMF.";
     return false;
   }
@@ -200,13 +201,13 @@ void DtmfSender::DoInsertDtmf() {
     tone_gap = kDtmfTwoSecondInMs;
   } else {
     if (!provider_) {
-      LOG(LS_ERROR) << "The DtmfProvider has been destroyed.";
+      RTC_LOG(LS_ERROR) << "The DtmfProvider has been destroyed.";
       return;
     }
     // The provider starts playout of the given tone on the
     // associated RTP media stream, using the appropriate codec.
     if (!provider_->InsertDtmf(code, duration_)) {
-      LOG(LS_ERROR) << "The DtmfProvider can no longer send DTMF.";
+      RTC_LOG(LS_ERROR) << "The DtmfProvider can no longer send DTMF.";
       return;
     }
     // Wait for the number of milliseconds specified by |duration_|.
@@ -227,7 +228,7 @@ void DtmfSender::DoInsertDtmf() {
 }
 
 void DtmfSender::OnProviderDestroyed() {
-  LOG(LS_INFO) << "The Dtmf provider is deleted. Clear the sending queue.";
+  RTC_LOG(LS_INFO) << "The Dtmf provider is deleted. Clear the sending queue.";
   StopSending();
   provider_ = NULL;
 }

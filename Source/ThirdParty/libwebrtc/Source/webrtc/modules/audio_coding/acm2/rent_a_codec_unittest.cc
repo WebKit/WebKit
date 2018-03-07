@@ -10,10 +10,10 @@
 
 #include <memory>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/modules/audio_coding/acm2/rent_a_codec.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/mock_audio_encoder.h"
+#include "modules/audio_coding/acm2/rent_a_codec.h"
+#include "rtc_base/arraysize.h"
+#include "test/gtest.h"
+#include "test/mock_audio_encoder.h"
 
 namespace webrtc {
 namespace acm2 {

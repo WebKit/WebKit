@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/rtcpmuxfilter.h"
+#include "pc/rtcpmuxfilter.h"
 
-#include "webrtc/base/logging.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 
@@ -40,7 +40,7 @@ bool RtcpMuxFilter::SetOffer(bool offer_enable, ContentSource src) {
   }
 
   if (!ExpectOffer(offer_enable, src)) {
-    LOG(LS_ERROR) << "Invalid state for change of RTCP mux offer";
+    RTC_LOG(LS_ERROR) << "Invalid state for change of RTCP mux offer";
     return false;
   }
 
@@ -57,7 +57,7 @@ bool RtcpMuxFilter::SetProvisionalAnswer(bool answer_enable,
   }
 
   if (!ExpectAnswer(src)) {
-    LOG(LS_ERROR) << "Invalid state for RTCP mux provisional answer";
+    RTC_LOG(LS_ERROR) << "Invalid state for RTCP mux provisional answer";
     return false;
   }
 
@@ -78,7 +78,7 @@ bool RtcpMuxFilter::SetProvisionalAnswer(bool answer_enable,
     }
   } else if (answer_enable) {
     // If the offer didn't specify RTCP mux, the answer shouldn't either.
-    LOG(LS_WARNING) << "Invalid parameters in RTCP mux provisional answer";
+    RTC_LOG(LS_WARNING) << "Invalid parameters in RTCP mux provisional answer";
     return false;
   }
 
@@ -92,7 +92,7 @@ bool RtcpMuxFilter::SetAnswer(bool answer_enable, ContentSource src) {
   }
 
   if (!ExpectAnswer(src)) {
-    LOG(LS_ERROR) << "Invalid state for RTCP mux answer";
+    RTC_LOG(LS_ERROR) << "Invalid state for RTCP mux answer";
     return false;
   }
 
@@ -100,7 +100,7 @@ bool RtcpMuxFilter::SetAnswer(bool answer_enable, ContentSource src) {
     state_ = ST_ACTIVE;
   } else if (answer_enable) {
     // If the offer didn't specify RTCP mux, the answer shouldn't either.
-    LOG(LS_WARNING) << "Invalid parameters in RTCP mux answer";
+    RTC_LOG(LS_WARNING) << "Invalid parameters in RTCP mux answer";
     return false;
   } else {
     state_ = ST_INIT;

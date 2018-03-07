@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_video/include/incoming_video_stream.h"
+#include "common_video/include/incoming_video_stream.h"
 
 #include <memory>
 
-#include "webrtc/base/timeutils.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/common_video/video_render_frames.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
+#include "common_video/video_render_frames.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
+#include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
 namespace {
@@ -37,7 +37,7 @@ class IncomingVideoStream::NewFrameTask : public rtc::QueuedTask {
 
  private:
   bool Run() override {
-    RTC_DCHECK(rtc::TaskQueue::IsCurrent(kIncomingQueueName));
+    RTC_DCHECK(stream_->incoming_render_queue_.IsCurrent());
     if (stream_->render_buffers_.AddFrame(std::move(frame_)) == 1)
       stream_->Dequeue();
     return true;

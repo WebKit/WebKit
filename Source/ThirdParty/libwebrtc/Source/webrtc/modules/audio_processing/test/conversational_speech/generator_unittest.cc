@@ -42,19 +42,19 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/pathutils.h"
-#include "webrtc/common_audio/wav_file.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/config.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/multiend_call.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/simulator.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/timing.h"
-#include "webrtc/modules/audio_processing/test/conversational_speech/wavreader_factory.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "api/optional.h"
+#include "common_audio/wav_file.h"
+#include "modules/audio_processing/test/conversational_speech/config.h"
+#include "modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
+#include "modules/audio_processing/test/conversational_speech/multiend_call.h"
+#include "modules/audio_processing/test/conversational_speech/simulator.h"
+#include "modules/audio_processing/test/conversational_speech/timing.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_factory.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/pathutils.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace test {
@@ -663,7 +663,7 @@ TEST(ConversationalSpeechTest, DISABLED_MultiEndCallSimulator) {
   rtc::Pathname output_path(audiotracks_path);
   output_path.AppendFolder("output");
   CreateDir(output_path.pathname());
-  LOG(LS_VERBOSE) << "simulator output path: " << output_path.pathname();
+  RTC_LOG(LS_VERBOSE) << "simulator output path: " << output_path.pathname();
   auto generated_audiotrak_pairs = conversational_speech::Simulate(
       multiend_call, output_path.pathname());
   EXPECT_EQ(2u, generated_audiotrak_pairs->size());
@@ -673,7 +673,7 @@ TEST(ConversationalSpeechTest, DISABLED_MultiEndCallSimulator) {
   const MockWavReaderFactory::Params expeted_params = {
       sample_rate, 1u, sample_rate * expected_duration_seconds};
   for (const auto& it : *generated_audiotrak_pairs) {
-    LOG(LS_VERBOSE) << "checking far/near-end for <" << it.first << ">";
+    RTC_LOG(LS_VERBOSE) << "checking far/near-end for <" << it.first << ">";
     CheckAudioTrackParams(
         wav_reader_factory, it.second.near_end, expeted_params);
     CheckAudioTrackParams(

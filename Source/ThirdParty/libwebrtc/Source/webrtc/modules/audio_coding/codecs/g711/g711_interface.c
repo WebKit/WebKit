@@ -10,7 +10,7 @@
 #include <string.h>
 #include "g711.h"
 #include "g711_interface.h"
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 size_t WebRtcG711_EncodeA(const int16_t* speechIn,
                           size_t len,

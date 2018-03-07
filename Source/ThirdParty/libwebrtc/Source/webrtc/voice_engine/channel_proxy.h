@@ -8,17 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VOICE_ENGINE_CHANNEL_PROXY_H_
-#define WEBRTC_VOICE_ENGINE_CHANNEL_PROXY_H_
+#ifndef VOICE_ENGINE_CHANNEL_PROXY_H_
+#define VOICE_ENGINE_CHANNEL_PROXY_H_
 
-#include "webrtc/api/audio/audio_mixer.h"
-#include "webrtc/api/audio_codecs/audio_encoder.h"
-#include "webrtc/api/rtpreceiverinterface.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/race_checker.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/voice_engine/channel_manager.h"
-#include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
+#include "api/audio/audio_mixer.h"
+#include "api/audio_codecs/audio_encoder.h"
+#include "api/rtpreceiverinterface.h"
+#include "call/rtp_packet_sink_interface.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/thread_checker.h"
+#include "voice_engine/channel.h"
+#include "voice_engine/channel_manager.h"
 
 #include <memory>
 #include <string>
@@ -41,8 +42,6 @@ class TransportFeedbackObserver;
 
 namespace voe {
 
-class Channel;
-
 // This class provides the "view" of a voe::Channel that we need to implement
 // webrtc::AudioSendStream and webrtc::AudioReceiveStream. It serves two
 // purposes:
@@ -50,7 +49,7 @@ class Channel;
 //     voe::Channel class.
 //  2. Provide a refined interface for the stream classes, including assumptions
 //     on return values and input adaptation.
-class ChannelProxy {
+class ChannelProxy : public RtpPacketSinkInterface {
  public:
   ChannelProxy();
   explicit ChannelProxy(const ChannelOwner& channel_owner);
@@ -80,21 +79,25 @@ class ChannelProxy {
   virtual std::vector<ReportBlock> GetRemoteRTCPReportBlocks() const;
   virtual NetworkStatistics GetNetworkStatistics() const;
   virtual AudioDecodingCallStats GetDecodingCallStatistics() const;
+  virtual ANAStats GetANAStatistics() const;
   virtual int GetSpeechOutputLevel() const;
   virtual int GetSpeechOutputLevelFullRange() const;
+  // See description of "totalAudioEnergy" in the WebRTC stats spec:
+  // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats-totalaudioenergy
+  virtual double GetTotalOutputEnergy() const;
+  virtual double GetTotalOutputDuration() const;
   virtual uint32_t GetDelayEstimate() const;
   virtual bool SetSendTelephoneEventPayloadType(int payload_type,
                                                 int payload_frequency);
   virtual bool SendTelephoneEventOutband(int event, int duration_ms);
   virtual void SetBitrate(int bitrate_bps, int64_t probing_interval_ms);
-  virtual void SetRecPayloadType(int payload_type,
-                                 const SdpAudioFormat& format);
   virtual void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs);
   virtual void SetSink(std::unique_ptr<AudioSinkInterface> sink);
   virtual void SetInputMute(bool muted);
-  virtual void RegisterExternalTransport(Transport* transport);
-  virtual void DeRegisterExternalTransport();
-  virtual void OnRtpPacket(const RtpPacketReceived& packet);
+  virtual void RegisterTransport(Transport* transport);
+
+  // Implements RtpPacketSinkInterface
+  void OnRtpPacket(const RtpPacketReceived& packet) override;
   virtual bool ReceivedRTCPPacket(const uint8_t* packet, size_t length);
   virtual const rtc::scoped_refptr<AudioDecoderFactory>&
       GetAudioDecoderFactory() const;
@@ -103,7 +106,7 @@ class ChannelProxy {
   virtual AudioMixer::Source::AudioFrameInfo GetAudioFrameWithInfo(
       int sample_rate_hz,
       AudioFrame* audio_frame);
-  virtual int NeededFrequency() const;
+  virtual int PreferredSampleRate() const;
   virtual void SetTransportOverhead(int transport_overhead_per_packet);
   virtual void AssociateSendChannel(const ChannelProxy& send_channel_proxy);
   virtual void DisassociateSendChannel();
@@ -116,7 +119,6 @@ class ChannelProxy {
   virtual void OnTwccBasedUplinkPacketLossRate(float packet_loss_rate);
   virtual void OnRecoverableUplinkPacketLossRate(
       float recoverable_packet_loss_rate);
-  virtual void RegisterLegacyReceiveCodecs();
   virtual std::vector<webrtc::RtpSource> GetSources() const;
 
  private:
@@ -141,4 +143,4 @@ class ChannelProxy {
 }  // namespace voe
 }  // namespace webrtc
 
-#endif  // WEBRTC_VOICE_ENGINE_CHANNEL_PROXY_H_
+#endif  // VOICE_ENGINE_CHANNEL_PROXY_H_

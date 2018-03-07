@@ -8,8 +8,8 @@
 // be found in the AUTHORS file in the root of the source tree.
 //
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_H_
+#define SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_H_
 
 #include <string>
 
@@ -72,4 +72,4 @@ inline bool IsEnabled(const char* name) {
 }  // namespace field_trial
 }  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_FIELD_TRIAL_H_

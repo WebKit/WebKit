@@ -42,25 +42,3 @@ add_library(
   v3_sxnet.c
   v3_utl.c
 )
-
-add_executable(
-  v3name_test
-
-  v3name_test.c
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(v3name_test crypto)
-add_dependencies(all_tests v3name_test)
-
-add_executable(
-  tab_test
-
-  tab_test.c
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(tab_test crypto)
-add_dependencies(all_tests tab_test)

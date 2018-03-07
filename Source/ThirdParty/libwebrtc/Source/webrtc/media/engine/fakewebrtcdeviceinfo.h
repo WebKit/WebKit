@@ -8,13 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_FAKEWEBRTCDEVICEINFO_H_
-#define WEBRTC_MEDIA_ENGINE_FAKEWEBRTCDEVICEINFO_H_
+#ifndef MEDIA_ENGINE_FAKEWEBRTCDEVICEINFO_H_
+#define MEDIA_ENGINE_FAKEWEBRTCDEVICEINFO_H_
 
+#include <string>
 #include <vector>
 
-#include "webrtc/base/stringutils.h"
-#include "webrtc/media/engine/webrtcvideocapturer.h"
+#include "media/engine/webrtcvideocapturer.h"
+#include "rtc_base/stringutils.h"
 
 // Fake class for mocking out webrtc::VideoCaptureModule::DeviceInfo.
 class FakeWebRtcDeviceInfo : public webrtc::VideoCaptureModule::DeviceInfo {
@@ -105,4 +106,4 @@ class FakeWebRtcDeviceInfo : public webrtc::VideoCaptureModule::DeviceInfo {
   std::vector<Device> devices_;
 };
 
-#endif  // WEBRTC_MEDIA_ENGINE_FAKEWEBRTCDEVICEINFO_H_
+#endif  // MEDIA_ENGINE_FAKEWEBRTCDEVICEINFO_H_

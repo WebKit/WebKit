@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/congestion_controller/probe_bitrate_estimator.h"
+#include "modules/congestion_controller/probe_bitrate_estimator.h"
 
 #include <vector>
 #include <utility>
 
-#include "webrtc/modules/remote_bitrate_estimator/aimd_rate_control.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/remote_bitrate_estimator/aimd_rate_control.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -23,6 +23,7 @@ namespace {
 constexpr int kInvalidBitrate = -1;
 constexpr int kDefaultMinProbes = 5;
 constexpr int kDefaultMinBytes = 5000;
+constexpr float kTargetUtilizationFraction = 0.95f;
 }  // anonymous namespace
 
 class TestProbeBitrateEstimator : public ::testing::Test {
@@ -125,8 +126,9 @@ TEST_F(TestProbeBitrateEstimator, SlowReceive) {
   AddPacketFeedback(0, 1000, 10, 40);
   AddPacketFeedback(0, 1000, 20, 70);
   AddPacketFeedback(0, 1000, 30, 85);
+  // Expected send rate = 800 kbps, expected receive rate = 320 kbps.
 
-  EXPECT_NEAR(measured_bps_, 320000, 10);
+  EXPECT_NEAR(measured_bps_, kTargetUtilizationFraction * 320000, 10);
 }
 
 TEST_F(TestProbeBitrateEstimator, BurstReceive) {
@@ -143,17 +145,20 @@ TEST_F(TestProbeBitrateEstimator, MultipleClusters) {
   AddPacketFeedback(0, 1000, 10, 20);
   AddPacketFeedback(0, 1000, 20, 30);
   AddPacketFeedback(0, 1000, 40, 60);
-  EXPECT_NEAR(measured_bps_, 480000, 10);
+  // Expected send rate = 600 kbps, expected receive rate = 480 kbps.
+  EXPECT_NEAR(measured_bps_, kTargetUtilizationFraction * 480000, 10);
 
   AddPacketFeedback(0, 1000, 50, 60);
+  // Expected send rate = 640 kbps, expected receive rate = 640 kbps.
   EXPECT_NEAR(measured_bps_, 640000, 10);
 
   AddPacketFeedback(1, 1000, 60, 70);
   AddPacketFeedback(1, 1000, 65, 77);
   AddPacketFeedback(1, 1000, 70, 84);
   AddPacketFeedback(1, 1000, 75, 90);
+  // Expected send rate = 1600 kbps, expected receive rate = 1200 kbps.
 
-  EXPECT_NEAR(measured_bps_, 1200000, 10);
+  EXPECT_NEAR(measured_bps_, kTargetUtilizationFraction * 1200000, 10);
 }
 
 TEST_F(TestProbeBitrateEstimator, IgnoreOldClusters) {
@@ -165,8 +170,9 @@ TEST_F(TestProbeBitrateEstimator, IgnoreOldClusters) {
   AddPacketFeedback(1, 1000, 65, 77);
   AddPacketFeedback(1, 1000, 70, 84);
   AddPacketFeedback(1, 1000, 75, 90);
+  // Expected send rate = 1600 kbps, expected receive rate = 1200 kbps.
 
-  EXPECT_NEAR(measured_bps_, 1200000, 10);
+  EXPECT_NEAR(measured_bps_, kTargetUtilizationFraction * 1200000, 10);
 
   // Coming in 6s later
   AddPacketFeedback(0, 1000, 40 + 6000, 60 + 6000);
@@ -180,6 +186,7 @@ TEST_F(TestProbeBitrateEstimator, IgnoreSizeLastSendPacket) {
   AddPacketFeedback(0, 1000, 20, 30);
   AddPacketFeedback(0, 1000, 30, 40);
   AddPacketFeedback(0, 1500, 40, 50);
+  // Expected send rate = 800 kbps, expected receive rate = 900 kbps.
 
   EXPECT_NEAR(measured_bps_, 800000, 10);
 }
@@ -189,8 +196,9 @@ TEST_F(TestProbeBitrateEstimator, IgnoreSizeFirstReceivePacket) {
   AddPacketFeedback(0, 1000, 10, 20);
   AddPacketFeedback(0, 1000, 20, 30);
   AddPacketFeedback(0, 1000, 30, 40);
+  // Expected send rate = 933 kbps, expected receive rate = 800 kbps.
 
-  EXPECT_NEAR(measured_bps_, 800000, 10);
+  EXPECT_NEAR(measured_bps_, kTargetUtilizationFraction * 800000, 10);
 }
 
 TEST_F(TestProbeBitrateEstimator, NoLastEstimatedBitrateBps) {

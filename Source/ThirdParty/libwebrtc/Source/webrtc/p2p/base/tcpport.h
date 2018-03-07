@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_TCPPORT_H_
-#define WEBRTC_P2P_BASE_TCPPORT_H_
+#ifndef P2P_BASE_TCPPORT_H_
+#define P2P_BASE_TCPPORT_H_
 
 #include <list>
 #include <memory>
 #include <string>
 
-#include "webrtc/p2p/base/port.h"
-#include "webrtc/base/asyncpacketsocket.h"
+#include "p2p/base/port.h"
+#include "rtc_base/asyncpacketsocket.h"
 
 namespace cricket {
 
@@ -33,14 +33,13 @@ class TCPPort : public Port {
   static TCPPort* Create(rtc::Thread* thread,
                          rtc::PacketSocketFactory* factory,
                          rtc::Network* network,
-                         const rtc::IPAddress& ip,
                          uint16_t min_port,
                          uint16_t max_port,
                          const std::string& username,
                          const std::string& password,
                          bool allow_listen) {
-    return new TCPPort(thread, factory, network, ip, min_port, max_port,
-                       username, password, allow_listen);
+    return new TCPPort(thread, factory, network, min_port, max_port, username,
+                       password, allow_listen);
   }
   ~TCPPort() override;
 
@@ -52,17 +51,13 @@ class TCPPort : public Port {
   int GetOption(rtc::Socket::Option opt, int* value) override;
   int SetOption(rtc::Socket::Option opt, int value) override;
   int GetError() override;
-  bool SupportsProtocol(const std::string& protocol) const override {
-    return protocol == TCP_PROTOCOL_NAME || protocol == SSLTCP_PROTOCOL_NAME;
-  }
-
-  ProtocolType GetProtocol() const override { return PROTO_TCP; }
+  bool SupportsProtocol(const std::string& protocol) const override;
+  ProtocolType GetProtocol() const override;
 
  protected:
   TCPPort(rtc::Thread* thread,
           rtc::PacketSocketFactory* factory,
           rtc::Network* network,
-          const rtc::IPAddress& ip,
           uint16_t min_port,
           uint16_t max_port,
           const std::string& username,
@@ -187,4 +182,4 @@ class TCPConnection : public Connection {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_TCPPORT_H_
+#endif  // P2P_BASE_TCPPORT_H_

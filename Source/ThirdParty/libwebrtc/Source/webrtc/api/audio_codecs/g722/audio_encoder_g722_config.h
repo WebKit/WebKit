@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_CONFIG_H_
-#define WEBRTC_API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_CONFIG_H_
+#ifndef API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_CONFIG_H_
+#define API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_CONFIG_H_
 
 namespace webrtc {
 
@@ -24,4 +24,4 @@ struct AudioEncoderG722Config {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_CONFIG_H_
+#endif  // API_AUDIO_CODECS_G722_AUDIO_ENCODER_G722_CONFIG_H_

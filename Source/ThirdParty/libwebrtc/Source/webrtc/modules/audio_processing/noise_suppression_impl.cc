@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/noise_suppression_impl.h"
+#include "modules/audio_processing/noise_suppression_impl.h"
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "rtc_base/constructormagic.h"
 #if defined(WEBRTC_NS_FLOAT)
-#include "webrtc/modules/audio_processing/ns/noise_suppression.h"
+#include "modules/audio_processing/ns/noise_suppression.h"
 #define NS_CREATE WebRtcNs_Create
 #define NS_FREE WebRtcNs_Free
 #define NS_INIT WebRtcNs_Init
 #define NS_SET_POLICY WebRtcNs_set_policy
 typedef NsHandle NsState;
 #elif defined(WEBRTC_NS_FIXED)
-#include "webrtc/modules/audio_processing/ns/noise_suppression_x.h"
+#include "modules/audio_processing/ns/noise_suppression_x.h"
 #define NS_CREATE WebRtcNsx_Create
 #define NS_FREE WebRtcNsx_Free
 #define NS_INIT WebRtcNsx_Init

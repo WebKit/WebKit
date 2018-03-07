@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AGC_STANDALONE_VAD_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AGC_STANDALONE_VAD_H_
+#ifndef MODULES_AUDIO_PROCESSING_AGC_STANDALONE_VAD_H_
+#define MODULES_AUDIO_PROCESSING_AGC_STANDALONE_VAD_H_
 
-#include "webrtc/modules/audio_processing/vad/common.h"
-#include "webrtc/common_audio/vad/include/webrtc_vad.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_processing/vad/common.h"
+#include "common_audio/vad/include/webrtc_vad.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -66,4 +66,4 @@ class StandaloneVad {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AGC_STANDALONE_VAD_H_
+#endif  // MODULES_AUDIO_PROCESSING_AGC_STANDALONE_VAD_H_

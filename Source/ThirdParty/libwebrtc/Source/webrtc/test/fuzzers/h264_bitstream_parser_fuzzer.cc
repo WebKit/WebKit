@@ -9,7 +9,7 @@
  */
 #include <stdint.h>
 
-#include "webrtc/common_video/h264/h264_bitstream_parser.h"
+#include "common_video/h264/h264_bitstream_parser.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {

@@ -8,56 +8,67 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_STATS_RTCSTATS_OBJECTS_H_
-#define WEBRTC_API_STATS_RTCSTATS_OBJECTS_H_
+#ifndef API_STATS_RTCSTATS_OBJECTS_H_
+#define API_STATS_RTCSTATS_OBJECTS_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/stats/rtcstats.h"
+#include "api/stats/rtcstats.h"
 
 namespace webrtc {
 
 // https://w3c.github.io/webrtc-pc/#idl-def-rtcdatachannelstate
 struct RTCDataChannelState {
-  static const char* kConnecting;
-  static const char* kOpen;
-  static const char* kClosing;
-  static const char* kClosed;
+  static const char* const kConnecting;
+  static const char* const kOpen;
+  static const char* const kClosing;
+  static const char* const kClosed;
 };
 
 // https://w3c.github.io/webrtc-stats/#dom-rtcstatsicecandidatepairstate
 struct RTCStatsIceCandidatePairState {
-  static const char* kFrozen;
-  static const char* kWaiting;
-  static const char* kInProgress;
-  static const char* kFailed;
-  static const char* kSucceeded;
+  static const char* const kFrozen;
+  static const char* const kWaiting;
+  static const char* const kInProgress;
+  static const char* const kFailed;
+  static const char* const kSucceeded;
 };
 
 // https://w3c.github.io/webrtc-pc/#rtcicecandidatetype-enum
 struct RTCIceCandidateType {
-  static const char* kHost;
-  static const char* kSrflx;
-  static const char* kPrflx;
-  static const char* kRelay;
+  static const char* const kHost;
+  static const char* const kSrflx;
+  static const char* const kPrflx;
+  static const char* const kRelay;
 };
 
 // https://w3c.github.io/webrtc-pc/#idl-def-rtcdtlstransportstate
 struct RTCDtlsTransportState {
-  static const char* kNew;
-  static const char* kConnecting;
-  static const char* kConnected;
-  static const char* kClosed;
-  static const char* kFailed;
+  static const char* const kNew;
+  static const char* const kConnecting;
+  static const char* const kConnected;
+  static const char* const kClosed;
+  static const char* const kFailed;
 };
 
 // |RTCMediaStreamTrackStats::kind| is not an enum in the spec but the only
 // valid values are "audio" and "video".
 // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats-kind
 struct RTCMediaStreamTrackKind {
-  static const char* kAudio;
-  static const char* kVideo;
+  static const char* const kAudio;
+  static const char* const kVideo;
+};
+
+// https://w3c.github.io/webrtc-stats/#dom-rtcnetworktype
+struct RTCNetworkType {
+  static const char* const kBluetooth;
+  static const char* const kCellular;
+  static const char* const kEthernet;
+  static const char* const kWifi;
+  static const char* const kWimax;
+  static const char* const kVpn;
+  static const char* const kUnknown;
 };
 
 // https://w3c.github.io/webrtc-stats/#certificatestats-dict*
@@ -181,6 +192,7 @@ class RTCIceCandidateStats : public RTCStats {
 
   RTCStatsMember<std::string> transport_id;
   RTCStatsMember<bool> is_remote;
+  RTCStatsMember<std::string> network_type;
   RTCStatsMember<std::string> ip;
   RTCStatsMember<int32_t> port;
   RTCStatsMember<std::string> protocol;
@@ -255,6 +267,10 @@ class RTCMediaStreamTrackStats final : public RTCStats {
   RTCStatsMember<bool> detached;
   // See |RTCMediaStreamTrackKind| for valid values.
   RTCStatsMember<std::string> kind;
+  // TODO(gustaf): Implement jitter_buffer_delay for video (currently
+  // implemented for audio only).
+  // https://crbug.com/webrtc/8318
+  RTCStatsMember<double> jitter_buffer_delay;
   // Video-only members
   RTCStatsMember<uint32_t> frame_width;
   RTCStatsMember<uint32_t> frame_height;
@@ -272,8 +288,13 @@ class RTCMediaStreamTrackStats final : public RTCStats {
   RTCStatsMember<uint32_t> full_frames_lost;
   // Audio-only members
   RTCStatsMember<double> audio_level;
+  RTCStatsMember<double> total_audio_energy;
   RTCStatsMember<double> echo_return_loss;
   RTCStatsMember<double> echo_return_loss_enhancement;
+  RTCStatsMember<uint64_t> total_samples_received;
+  RTCStatsMember<double> total_samples_duration;
+  RTCStatsMember<uint64_t> concealed_samples;
+  RTCStatsMember<uint64_t> concealment_events;
 };
 
 // https://w3c.github.io/webrtc-stats/#pcstats-dict*
@@ -411,4 +432,4 @@ class RTCTransportStats final : public RTCStats {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_STATS_RTCSTATS_OBJECTS_H_
+#endif  // API_STATS_RTCSTATS_OBJECTS_H_

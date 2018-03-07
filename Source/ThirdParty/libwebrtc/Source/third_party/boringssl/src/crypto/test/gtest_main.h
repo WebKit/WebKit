@@ -38,13 +38,14 @@ class ErrorTestEventListener : public testing::EmptyTestEventListener {
   ~ErrorTestEventListener() override {}
 
   void OnTestEnd(const testing::TestInfo &test_info) override {
-    // If the test failed, print any errors left in the error queue.
     if (test_info.result()->Failed()) {
+      // The test failed. Print any errors left in the error queue.
       ERR_print_errors_fp(stdout);
+    } else {
+      // The test succeeded, so any failed operations are expected. Clear the
+      // error queue without printing.
+      ERR_clear_error();
     }
-
-    // Clean up the error queue for the next run.
-    ERR_clear_error();
   }
 };
 
@@ -75,4 +76,4 @@ inline void SetupGoogleTest() {
 }  // namespace bssl
 
 
-#endif /* OPENSSL_HEADER_CRYPTO_TEST_GTEST_MAIN_H */
+#endif  // OPENSSL_HEADER_CRYPTO_TEST_GTEST_MAIN_H

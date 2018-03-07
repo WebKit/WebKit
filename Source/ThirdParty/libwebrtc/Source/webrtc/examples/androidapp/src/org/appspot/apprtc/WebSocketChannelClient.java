@@ -10,22 +10,19 @@
 
 package org.appspot.apprtc;
 
-import org.appspot.apprtc.util.AsyncHttpURLConnection;
-import org.appspot.apprtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
-
 import android.os.Handler;
 import android.util.Log;
-
 import de.tavendo.autobahn.WebSocket.WebSocketConnectionObserver;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
+import org.appspot.apprtc.util.AsyncHttpURLConnection;
+import org.appspot.apprtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * WebSocket client implementation.
@@ -34,24 +31,25 @@ import java.util.LinkedList;
  * passed in a constructor, otherwise exception will be thrown.
  * All events are dispatched on the same thread.
  */
-
 public class WebSocketChannelClient {
   private static final String TAG = "WSChannelRTCClient";
   private static final int CLOSE_TIMEOUT = 1000;
   private final WebSocketChannelEvents events;
   private final Handler handler;
   private WebSocketConnection ws;
-  private WebSocketObserver wsObserver;
   private String wsServerUrl;
   private String postServerUrl;
   private String roomID;
   private String clientID;
   private WebSocketConnectionState state;
+  // Do not remove this member variable. If this is removed, the observer gets garbage collected and
+  // this causes test breakages.
+  private WebSocketObserver wsObserver;
   private final Object closeEventLock = new Object();
   private boolean closeEvent;
   // WebSocket send queue. Messages are added to the queue when WebSocket
   // client is not registered and are consumed in register() call.
-  private final LinkedList<String> wsSendQueue;
+  private final List<String> wsSendQueue = new ArrayList<>();
 
   /**
    * Possible WebSocket connection states.
@@ -73,7 +71,6 @@ public class WebSocketChannelClient {
     this.events = events;
     roomID = null;
     clientID = null;
-    wsSendQueue = new LinkedList<String>();
     state = WebSocketConnectionState.NEW;
   }
 

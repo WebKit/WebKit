@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_FIR_FILTER_SSE_H_
-#define WEBRTC_COMMON_AUDIO_FIR_FILTER_SSE_H_
+#ifndef COMMON_AUDIO_FIR_FILTER_SSE_H_
+#define COMMON_AUDIO_FIR_FILTER_SSE_H_
 
 #include <memory>
 
-#include "webrtc/common_audio/fir_filter.h"
-#include "webrtc/system_wrappers/include/aligned_malloc.h"
+#include "common_audio/fir_filter.h"
+#include "system_wrappers/include/aligned_malloc.h"
 
 namespace webrtc {
 
@@ -23,6 +23,7 @@ class FIRFilterSSE2 : public FIRFilter {
   FIRFilterSSE2(const float* coefficients,
                 size_t coefficients_length,
                 size_t max_input_length);
+  ~FIRFilterSSE2() override;
 
   void Filter(const float* in, size_t length, float* out) override;
 
@@ -35,4 +36,4 @@ class FIRFilterSSE2 : public FIRFilter {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_AUDIO_FIR_FILTER_SSE_H_
+#endif  // COMMON_AUDIO_FIR_FILTER_SSE_H_

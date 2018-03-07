@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_INCLUDE_ISAC_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_INCLUDE_ISAC_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_INCLUDE_ISAC_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_INCLUDE_ISAC_H_
 
 #include <stddef.h>
 
-#include "webrtc/modules/audio_coding/codecs/isac/bandwidth_info.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_coding/codecs/isac/bandwidth_info.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 typedef struct WebRtcISACStruct    ISACStruct;
 
@@ -721,4 +721,4 @@ extern "C" {
 
 
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_INCLUDE_ISAC_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_INCLUDE_ISAC_H_ */

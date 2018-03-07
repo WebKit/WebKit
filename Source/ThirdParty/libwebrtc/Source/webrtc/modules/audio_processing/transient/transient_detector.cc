@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/transient/transient_detector.h"
+#include "modules/audio_processing/transient/transient_detector.h"
 
 #include <float.h>
 #include <math.h>
@@ -16,11 +16,11 @@
 
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/transient/common.h"
-#include "webrtc/modules/audio_processing/transient/daubechies_8_wavelet_coeffs.h"
-#include "webrtc/modules/audio_processing/transient/moving_moments.h"
-#include "webrtc/modules/audio_processing/transient/wpd_tree.h"
+#include "modules/audio_processing/transient/common.h"
+#include "modules/audio_processing/transient/daubechies_8_wavelet_coeffs.h"
+#include "modules/audio_processing/transient/moving_moments.h"
+#include "modules/audio_processing/transient/wpd_tree.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

@@ -7,8 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_MODULES_CONGESTION_CONTROLLER_TRENDLINE_ESTIMATOR_H_
-#define WEBRTC_MODULES_CONGESTION_CONTROLLER_TRENDLINE_ESTIMATOR_H_
+#ifndef MODULES_CONGESTION_CONTROLLER_TRENDLINE_ESTIMATOR_H_
+#define MODULES_CONGESTION_CONTROLLER_TRENDLINE_ESTIMATOR_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -16,7 +16,7 @@
 #include <deque>
 #include <utility>
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -68,4 +68,4 @@ class TrendlineEstimator {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_CONGESTION_CONTROLLER_TRENDLINE_ESTIMATOR_H_
+#endif  // MODULES_CONGESTION_CONTROLLER_TRENDLINE_ESTIMATOR_H_

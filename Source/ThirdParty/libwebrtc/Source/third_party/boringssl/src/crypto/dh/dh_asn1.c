@@ -76,7 +76,7 @@ static int parse_integer(CBS *cbs, BIGNUM **out) {
 
 static int marshal_integer(CBB *cbb, BIGNUM *bn) {
   if (bn == NULL) {
-    /* A DH object may be missing some components. */
+    // A DH object may be missing some components.
     OPENSSL_PUT_ERROR(DH, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }

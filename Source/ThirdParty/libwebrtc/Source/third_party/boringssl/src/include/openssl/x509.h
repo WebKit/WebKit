@@ -575,7 +575,8 @@ OPENSSL_EXPORT int NETSCAPE_SPKI_set_pubkey(NETSCAPE_SPKI *x, EVP_PKEY *pkey);
 OPENSSL_EXPORT int NETSCAPE_SPKI_print(BIO *out, NETSCAPE_SPKI *spki);
 
 OPENSSL_EXPORT int X509_signature_dump(BIO *bp,const ASN1_STRING *sig, int indent);
-OPENSSL_EXPORT int X509_signature_print(BIO *bp,X509_ALGOR *alg, ASN1_STRING *sig);
+OPENSSL_EXPORT int X509_signature_print(BIO *bp, const X509_ALGOR *alg,
+                                        const ASN1_STRING *sig);
 
 OPENSSL_EXPORT int X509_sign(X509 *x, EVP_PKEY *pkey, const EVP_MD *md);
 OPENSSL_EXPORT int X509_sign_ctx(X509 *x, EVP_MD_CTX *ctx);
@@ -679,13 +680,15 @@ OPENSSL_EXPORT X509_REVOKED *X509_REVOKED_dup(X509_REVOKED *rev);
 OPENSSL_EXPORT X509_REQ *X509_REQ_dup(X509_REQ *req);
 OPENSSL_EXPORT X509_ALGOR *X509_ALGOR_dup(X509_ALGOR *xn);
 OPENSSL_EXPORT int X509_ALGOR_set0(X509_ALGOR *alg, const ASN1_OBJECT *aobj, int ptype, void *pval);
-OPENSSL_EXPORT void X509_ALGOR_get0(ASN1_OBJECT **paobj, int *pptype, void **ppval,
-						X509_ALGOR *algor);
+OPENSSL_EXPORT void X509_ALGOR_get0(const ASN1_OBJECT **paobj, int *pptype,
+                                    const void **ppval,
+                                    const X509_ALGOR *algor);
 OPENSSL_EXPORT void X509_ALGOR_set_md(X509_ALGOR *alg, const EVP_MD *md);
 OPENSSL_EXPORT int X509_ALGOR_cmp(const X509_ALGOR *a, const X509_ALGOR *b);
 
 OPENSSL_EXPORT X509_NAME *X509_NAME_dup(X509_NAME *xn);
 OPENSSL_EXPORT X509_NAME_ENTRY *X509_NAME_ENTRY_dup(X509_NAME_ENTRY *ne);
+OPENSSL_EXPORT int X509_NAME_ENTRY_set(const X509_NAME_ENTRY *ne);
 
 OPENSSL_EXPORT int		X509_cmp_time(const ASN1_TIME *s, time_t *t);
 OPENSSL_EXPORT int		X509_cmp_current_time(const ASN1_TIME *s);
@@ -756,8 +759,8 @@ OPENSSL_EXPORT void *X509_get_ex_data(X509 *r, int idx);
 OPENSSL_EXPORT int		i2d_X509_AUX(X509 *a,unsigned char **pp);
 OPENSSL_EXPORT X509 *		d2i_X509_AUX(X509 **a,const unsigned char **pp,long length);
 
-OPENSSL_EXPORT void X509_get0_signature(ASN1_BIT_STRING **psig, X509_ALGOR **palg,
-								const X509 *x);
+OPENSSL_EXPORT void X509_get0_signature(const ASN1_BIT_STRING **psig,
+                                        const X509_ALGOR **palg, const X509 *x);
 OPENSSL_EXPORT int X509_get_signature_nid(const X509 *x);
 
 OPENSSL_EXPORT int X509_alias_set1(X509 *x, unsigned char *name, int len);
@@ -816,7 +819,9 @@ OPENSSL_EXPORT X509_NAME *	X509_get_issuer_name(X509 *a);
 OPENSSL_EXPORT int 		X509_set_subject_name(X509 *x, X509_NAME *name);
 OPENSSL_EXPORT X509_NAME *	X509_get_subject_name(X509 *a);
 OPENSSL_EXPORT int 		X509_set_notBefore(X509 *x, const ASN1_TIME *tm);
+OPENSSL_EXPORT const ASN1_TIME *X509_get0_notBefore(const X509 *x);
 OPENSSL_EXPORT int 		X509_set_notAfter(X509 *x, const ASN1_TIME *tm);
+OPENSSL_EXPORT const ASN1_TIME *X509_get0_notAfter(const X509 *x);
 OPENSSL_EXPORT int 		X509_set_pubkey(X509 *x, EVP_PKEY *pkey);
 OPENSSL_EXPORT EVP_PKEY *	X509_get_pubkey(X509 *x);
 OPENSSL_EXPORT ASN1_BIT_STRING * X509_get0_pubkey_bitstr(const X509 *x);
@@ -1094,15 +1099,12 @@ DECLARE_ASN1_FUNCTIONS(RSA_PSS_PARAMS)
 
 #ifdef  __cplusplus
 }
+#endif
 
+#if !defined(BORINGSSL_NO_CXX)
 extern "C++" {
 
 namespace bssl {
-
-BORINGSSL_MAKE_STACK_DELETER(X509, X509_free)
-BORINGSSL_MAKE_STACK_DELETER(X509_CRL, X509_CRL_free)
-BORINGSSL_MAKE_STACK_DELETER(X509_EXTENSION, X509_EXTENSION_free)
-BORINGSSL_MAKE_STACK_DELETER(X509_NAME, X509_NAME_free)
 
 BORINGSSL_MAKE_DELETER(NETSCAPE_SPKI, NETSCAPE_SPKI_free)
 BORINGSSL_MAKE_DELETER(X509, X509_free)
@@ -1116,6 +1118,7 @@ BORINGSSL_MAKE_DELETER(X509_NAME, X509_NAME_free)
 BORINGSSL_MAKE_DELETER(X509_NAME_ENTRY, X509_NAME_ENTRY_free)
 BORINGSSL_MAKE_DELETER(X509_PKEY, X509_PKEY_free)
 BORINGSSL_MAKE_DELETER(X509_POLICY_TREE, X509_policy_tree_free)
+BORINGSSL_MAKE_DELETER(X509_PUBKEY, X509_PUBKEY_free)
 BORINGSSL_MAKE_DELETER(X509_REQ, X509_REQ_free)
 BORINGSSL_MAKE_DELETER(X509_REVOKED, X509_REVOKED_free)
 BORINGSSL_MAKE_DELETER(X509_SIG, X509_SIG_free)
@@ -1123,11 +1126,14 @@ BORINGSSL_MAKE_DELETER(X509_STORE, X509_STORE_free)
 BORINGSSL_MAKE_DELETER(X509_STORE_CTX, X509_STORE_CTX_free)
 BORINGSSL_MAKE_DELETER(X509_VERIFY_PARAM, X509_VERIFY_PARAM_free)
 
+using ScopedX509_STORE_CTX =
+    internal::StackAllocated<X509_STORE_CTX, void, X509_STORE_CTX_zero,
+                             X509_STORE_CTX_cleanup>;
+
 }  // namespace bssl
 
 }  /* extern C++ */
-
-#endif
+#endif  /* !BORINGSSL_NO_CXX */
 
 #define X509_R_AKID_MISMATCH 100
 #define X509_R_BAD_PKCS7_VERSION 101

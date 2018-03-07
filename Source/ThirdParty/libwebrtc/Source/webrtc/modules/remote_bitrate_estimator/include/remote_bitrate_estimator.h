@@ -10,19 +10,22 @@
 
 // This class estimates the incoming available bandwidth.
 
-#ifndef WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_REMOTE_BITRATE_ESTIMATOR_H_
-#define WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_REMOTE_BITRATE_ESTIMATOR_H_
+#ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_REMOTE_BITRATE_ESTIMATOR_H_
+#define MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_REMOTE_BITRATE_ESTIMATOR_H_
 
 #include <map>
 #include <vector>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/include/module.h"
+#include "modules/include/module_common_types.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
+namespace rtcp {
+class TransportFeedback;
+}  // namespace rtcp
 
 class Clock;
 
@@ -36,6 +39,12 @@ class RemoteBitrateObserver {
                                        uint32_t bitrate) = 0;
 
   virtual ~RemoteBitrateObserver() {}
+};
+
+class TransportFeedbackSenderInterface {
+ public:
+  virtual ~TransportFeedbackSenderInterface() = default;
+  virtual bool SendTransportFeedback(rtcp::TransportFeedback* packet) = 0;
 };
 
 // TODO(holmer): Remove when all implementations have been updated.
@@ -80,4 +89,4 @@ inline bool RemoteBitrateEstimator::GetStats(
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_REMOTE_BITRATE_ESTIMATOR_H_
+#endif  // MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_REMOTE_BITRATE_ESTIMATOR_H_

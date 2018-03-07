@@ -14,8 +14,8 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import "webrtc/modules/video_capture/objc/device_info_objc.h"
-#include "webrtc/modules/video_capture/video_capture_config.h"
+#import "modules/video_capture/objc/device_info_objc.h"
+#include "modules/video_capture/video_capture_config.h"
 
 @implementation DeviceInfoIosObjC
 

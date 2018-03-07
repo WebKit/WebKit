@@ -10,8 +10,8 @@
 
 // This file contain SDP strings used for testing.
 
-#ifndef WEBRTC_PC_TEST_TESTSDPSTRINGS_H_
-#define WEBRTC_PC_TEST_TESTSDPSTRINGS_H_
+#ifndef PC_TEST_TESTSDPSTRINGS_H_
+#define PC_TEST_TESTSDPSTRINGS_H_
 
 namespace webrtc {
 
@@ -76,7 +76,7 @@ static const char kFireFoxSdpOffer[] =
     "a=candidate:5 2 UDP 1694302206 74.95.2.170 45468 typ srflx raddr"
     " 10.0.254.2 rport 61232\r\n"
 #endif
-    ;
+    ;  // NOLINT(whitespace/semicolon)
 
 // Audio SDP with a limited set of audio codecs.
 static const char kAudioSdp[] =
@@ -129,4 +129,4 @@ static const char kAudioSdpWithUnsupportedCodecs[] =
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_TEST_TESTSDPSTRINGS_H_
+#endif  // PC_TEST_TESTSDPSTRINGS_H_

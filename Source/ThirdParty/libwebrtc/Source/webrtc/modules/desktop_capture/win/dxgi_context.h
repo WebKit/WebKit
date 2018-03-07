@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_
+#ifndef MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_
+#define MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_
 
 #include <vector>
-#include "webrtc/modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/desktop_region.h"
 
 namespace webrtc {
 
@@ -58,4 +58,4 @@ struct DxgiFrameContext final {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_
+#endif  // MODULES_DESKTOP_CAPTURE_WIN_DXGI_CONTEXT_H_

@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_RTPUTILS_H_
-#define WEBRTC_MEDIA_BASE_RTPUTILS_H_
+#ifndef MEDIA_BASE_RTPUTILS_H_
+#define MEDIA_BASE_RTPUTILS_H_
 
-#include "webrtc/base/byteorder.h"
+#include "rtc_base/byteorder.h"
 
 namespace rtc {
 struct PacketTimeUpdateParams;
@@ -87,4 +87,4 @@ bool ApplyPacketOptions(uint8_t* data,
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_RTPUTILS_H_
+#endif  // MEDIA_BASE_RTPUTILS_H_

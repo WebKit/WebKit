@@ -8,31 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_WEBRTCVOICEENGINE_H_
-#define WEBRTC_MEDIA_ENGINE_WEBRTCVOICEENGINE_H_
+#ifndef MEDIA_ENGINE_WEBRTCVOICEENGINE_H_
+#define MEDIA_ENGINE_WEBRTCVOICEENGINE_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_encoder_factory.h"
-#include "webrtc/api/rtpreceiverinterface.h"
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/networkroute.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/call/audio_state.h"
-#include "webrtc/call/call.h"
-#include "webrtc/config.h"
-#include "webrtc/media/base/rtputils.h"
-#include "webrtc/media/engine/apm_helpers.h"
-#include "webrtc/media/engine/webrtccommon.h"
-#include "webrtc/media/engine/webrtcvoe.h"
-#include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/pc/channel.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "api/rtpreceiverinterface.h"
+#include "call/audio_state.h"
+#include "call/call.h"
+#include "media/base/rtputils.h"
+#include "media/engine/apm_helpers.h"
+#include "media/engine/webrtcvoe.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "pc/channel.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/networkroute.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 namespace voe {
@@ -50,22 +48,24 @@ class WebRtcVoiceMediaChannel;
 
 // WebRtcVoiceEngine is a class to be used with CompositeMediaEngine.
 // It uses the WebRtc VoiceEngine library for audio handling.
-class WebRtcVoiceEngine final : public webrtc::TraceCallback  {
+class WebRtcVoiceEngine final {
   friend class WebRtcVoiceMediaChannel;
  public:
   WebRtcVoiceEngine(
       webrtc::AudioDeviceModule* adm,
       const rtc::scoped_refptr<webrtc::AudioEncoderFactory>& encoder_factory,
       const rtc::scoped_refptr<webrtc::AudioDecoderFactory>& decoder_factory,
-      rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer);
+      rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer,
+      rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing);
   // Dependency injection for testing.
   WebRtcVoiceEngine(
       webrtc::AudioDeviceModule* adm,
       const rtc::scoped_refptr<webrtc::AudioEncoderFactory>& encoder_factory,
       const rtc::scoped_refptr<webrtc::AudioDecoderFactory>& decoder_factory,
       rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer,
+      rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing,
       VoEWrapper* voe_wrapper);
-  ~WebRtcVoiceEngine() override;
+  ~WebRtcVoiceEngine();
 
   // Does initialization that needs to occur on the worker thread.
   void Init();
@@ -88,7 +88,6 @@ class WebRtcVoiceEngine final : public webrtc::TraceCallback  {
   void UnregisterChannel(WebRtcVoiceMediaChannel* channel);
 
   VoEWrapper* voe() { return voe_wrapper_.get(); }
-  int GetLastEngineError();
 
   // Starts AEC dump using an existing file. A maximum file size in bytes can be
   // specified. When the maximum file size is reached, logging is stopped and
@@ -99,8 +98,8 @@ class WebRtcVoiceEngine final : public webrtc::TraceCallback  {
   // Stops AEC dump.
   void StopAecDump();
 
-  const webrtc::AudioProcessing::Config& GetApmConfigForTest() const {
-    return apm_config_;
+  const webrtc::AudioProcessing::Config GetApmConfigForTest() const {
+    return apm()->GetConfig();
   }
 
  private:
@@ -109,16 +108,13 @@ class WebRtcVoiceEngine final : public webrtc::TraceCallback  {
   // easily at any time.
   bool ApplyOptions(const AudioOptions& options);
 
-  // webrtc::TraceCallback:
-  void Print(webrtc::TraceLevel level, const char* trace, int length) override;
-
   void StartAecDump(const std::string& filename);
   int CreateVoEChannel();
 
   std::unique_ptr<rtc::TaskQueue> low_priority_worker_queue_;
 
   webrtc::AudioDeviceModule* adm();
-  webrtc::AudioProcessing* apm();
+  webrtc::AudioProcessing* apm() const;
   webrtc::voe::TransmitMixer* transmit_mixer();
 
   AudioCodecs CollectCodecs(
@@ -133,7 +129,7 @@ class WebRtcVoiceEngine final : public webrtc::TraceCallback  {
   rtc::scoped_refptr<webrtc::AudioDecoderFactory> decoder_factory_;
   rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer_;
   // Reference to the APM, owned by VoE.
-  webrtc::AudioProcessing* apm_ = nullptr;
+  rtc::scoped_refptr<webrtc::AudioProcessing> apm_;
   // Reference to the TransmitMixer, owned by VoE.
   webrtc::voe::TransmitMixer* transmit_mixer_ = nullptr;
   // The primary instance of WebRtc VoiceEngine.
@@ -157,8 +153,6 @@ class WebRtcVoiceEngine final : public webrtc::TraceCallback  {
   rtc::Optional<bool> experimental_ns_;
   rtc::Optional<bool> intelligibility_enhancer_;
   rtc::Optional<bool> level_control_;
-
-  webrtc::AudioProcessing::Config apm_config_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(WebRtcVoiceEngine);
 };
@@ -198,7 +192,7 @@ class WebRtcVoiceMediaChannel final : public VoiceMediaChannel,
   bool RemoveSendStream(uint32_t ssrc) override;
   bool AddRecvStream(const StreamParams& sp) override;
   bool RemoveRecvStream(uint32_t ssrc) override;
-  bool GetActiveStreams(AudioInfo::StreamList* actives) override;
+  bool GetActiveStreams(StreamList* actives) override;
   int GetOutputLevel() override;
   // SSRC=0 will apply the new volume to current and future unsignaled streams.
   bool SetOutputVolume(uint32_t ssrc, double volume) override;
@@ -213,7 +207,6 @@ class WebRtcVoiceMediaChannel final : public VoiceMediaChannel,
   void OnNetworkRouteChanged(const std::string& transport_name,
                              const rtc::NetworkRoute& network_route) override;
   void OnReadyToSend(bool ready) override;
-  void OnTransportOverheadChanged(int transport_overhead_per_packet) override;
   bool GetStats(VoiceMediaInfo* info) override;
 
   // SSRC=0 will set the audio sink on the latest unsignaled stream, future or
@@ -250,7 +243,6 @@ class WebRtcVoiceMediaChannel final : public VoiceMediaChannel,
   bool MuteStream(uint32_t ssrc, bool mute);
 
   WebRtcVoiceEngine* engine() { return engine_; }
-  int GetLastEngineError() { return engine()->GetLastEngineError(); }
   void ChangePlayout(bool playout);
   int CreateVoEChannel();
   bool DeleteVoEChannel(int channel);
@@ -309,4 +301,4 @@ class WebRtcVoiceMediaChannel final : public VoiceMediaChannel,
 };
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_ENGINE_WEBRTCVOICEENGINE_H_
+#endif  // MEDIA_ENGINE_WEBRTCVOICEENGINE_H_

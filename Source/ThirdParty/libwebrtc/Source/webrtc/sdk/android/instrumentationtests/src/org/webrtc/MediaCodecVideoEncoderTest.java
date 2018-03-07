@@ -29,7 +29,7 @@ import org.webrtc.MediaCodecVideoEncoder.OutputBufferInfo;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 @RunWith(BaseJUnit4ClassRunner.class)
 public class MediaCodecVideoEncoderTest {
-  final static String TAG = "MediaCodecVideoEncoderTest";
+  final static String TAG = "MCVideoEncoderTest";
   final static int profile = MediaCodecVideoEncoder.H264Profile.CONSTRAINED_BASELINE.getValue();
 
   @Test

@@ -40,8 +40,8 @@ static int ssl3_mac(AEAD_SSL3_CTX *ssl3_ctx, uint8_t *out, unsigned *out_len,
   size_t md_size = EVP_MD_CTX_size(&ssl3_ctx->md_ctx);
   size_t pad_len = (md_size == 20) ? 40 : 48;
 
-  /* To allow for CBC mode which changes cipher length, |ad| doesn't include the
-   * length for legacy ciphers. */
+  // To allow for CBC mode which changes cipher length, |ad| doesn't include the
+  // length for legacy ciphers.
   uint8_t ad_extra[2];
   ad_extra[0] = (uint8_t)(in_len >> 8);
   ad_extra[1] = (uint8_t)(in_len & 0xff);
@@ -123,28 +123,48 @@ static int aead_ssl3_init(EVP_AEAD_CTX *ctx, const uint8_t *key, size_t key_len,
   return 1;
 }
 
+static size_t aead_ssl3_tag_len(const EVP_AEAD_CTX *ctx, const size_t in_len,
+                                const size_t extra_in_len) {
+  assert(extra_in_len == 0);
+  const AEAD_SSL3_CTX *ssl3_ctx = (AEAD_SSL3_CTX*)ctx->aead_state;
+
+  const size_t digest_len = EVP_MD_CTX_size(&ssl3_ctx->md_ctx);
+  if (EVP_CIPHER_CTX_mode(&ssl3_ctx->cipher_ctx) != EVP_CIPH_CBC_MODE) {
+    // The NULL cipher.
+    return digest_len;
+  }
+
+  const size_t block_size = EVP_CIPHER_CTX_block_size(&ssl3_ctx->cipher_ctx);
+  // An overflow of |in_len + digest_len| doesn't affect the result mod
+  // |block_size|, provided that |block_size| is a smaller power of two.
+  assert(block_size != 0 && (block_size & (block_size - 1)) == 0);
+  const size_t pad_len = block_size - ((in_len + digest_len) % block_size);
+  return digest_len + pad_len;
+}
+
 static int aead_ssl3_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
                                   uint8_t *out_tag, size_t *out_tag_len,
-                                  size_t max_out_tag_len, const uint8_t *nonce,
-                                  size_t nonce_len, const uint8_t *in,
-                                  size_t in_len, const uint8_t *ad,
-                                  size_t ad_len) {
+                                  const size_t max_out_tag_len,
+                                  const uint8_t *nonce, const size_t nonce_len,
+                                  const uint8_t *in, const size_t in_len,
+                                  const uint8_t *extra_in,
+                                  const size_t extra_in_len, const uint8_t *ad,
+                                  const size_t ad_len) {
   AEAD_SSL3_CTX *ssl3_ctx = (AEAD_SSL3_CTX *)ctx->aead_state;
 
   if (!ssl3_ctx->cipher_ctx.encrypt) {
-    /* Unlike a normal AEAD, an SSL3 AEAD may only be used in one direction. */
+    // Unlike a normal AEAD, an SSL3 AEAD may only be used in one direction.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_INVALID_OPERATION);
     return 0;
   }
 
   if (in_len > INT_MAX) {
-    /* EVP_CIPHER takes int as input. */
+    // EVP_CIPHER takes int as input.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
 
-  const size_t max_overhead = EVP_AEAD_max_overhead(ctx->aead);
-  if (max_out_tag_len < max_overhead) {
+  if (max_out_tag_len < aead_ssl3_tag_len(ctx, in_len, extra_in_len)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BUFFER_TOO_SMALL);
     return 0;
   }
@@ -159,15 +179,15 @@ static int aead_ssl3_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
     return 0;
   }
 
-  /* Compute the MAC. This must be first in case the operation is being done
-   * in-place. */
+  // Compute the MAC. This must be first in case the operation is being done
+  // in-place.
   uint8_t mac[EVP_MAX_MD_SIZE];
   unsigned mac_len;
   if (!ssl3_mac(ssl3_ctx, mac, &mac_len, ad, ad_len, in, in_len)) {
     return 0;
   }
 
-  /* Encrypt the input. */
+  // Encrypt the input.
   int len;
   if (!EVP_EncryptUpdate(&ssl3_ctx->cipher_ctx, out, &len, in,
                          (int)in_len)) {
@@ -176,9 +196,9 @@ static int aead_ssl3_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
 
   const size_t block_size = EVP_CIPHER_CTX_block_size(&ssl3_ctx->cipher_ctx);
 
-  /* Feed the MAC into the cipher in two steps. First complete the final partial
-   * block from encrypting the input and split the result between |out| and
-   * |out_tag|. Then encrypt the remainder. */
+  // Feed the MAC into the cipher in two steps. First complete the final partial
+  // block from encrypting the input and split the result between |out| and
+  // |out_tag|. Then encrypt the remainder.
 
   size_t early_mac_len = (block_size - (in_len % block_size)) % block_size;
   if (early_mac_len != 0) {
@@ -205,7 +225,7 @@ static int aead_ssl3_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
     assert(block_size <= 256);
     assert(EVP_CIPHER_CTX_mode(&ssl3_ctx->cipher_ctx) == EVP_CIPH_CBC_MODE);
 
-    /* Compute padding and feed that into the cipher. */
+    // Compute padding and feed that into the cipher.
     uint8_t padding[256];
     size_t padding_len = block_size - ((in_len + mac_len) % block_size);
     OPENSSL_memset(padding, 0, padding_len - 1);
@@ -221,7 +241,7 @@ static int aead_ssl3_seal_scatter(const EVP_AEAD_CTX *ctx, uint8_t *out,
     return 0;
   }
   tag_len += len;
-  assert(tag_len <= max_overhead);
+  assert(tag_len == aead_ssl3_tag_len(ctx, in_len, extra_in_len));
 
   *out_tag_len = tag_len;
   return 1;
@@ -235,7 +255,7 @@ static int aead_ssl3_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   AEAD_SSL3_CTX *ssl3_ctx = (AEAD_SSL3_CTX *)ctx->aead_state;
 
   if (ssl3_ctx->cipher_ctx.encrypt) {
-    /* Unlike a normal AEAD, an SSL3 AEAD may only be used in one direction. */
+    // Unlike a normal AEAD, an SSL3 AEAD may only be used in one direction.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_INVALID_OPERATION);
     return 0;
   }
@@ -247,8 +267,8 @@ static int aead_ssl3_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   }
 
   if (max_out_len < in_len) {
-    /* This requires that the caller provide space for the MAC, even though it
-     * will always be removed on return. */
+    // This requires that the caller provide space for the MAC, even though it
+    // will always be removed on return.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BUFFER_TOO_SMALL);
     return 0;
   }
@@ -264,12 +284,12 @@ static int aead_ssl3_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   }
 
   if (in_len > INT_MAX) {
-    /* EVP_CIPHER takes int as input. */
+    // EVP_CIPHER takes int as input.
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
   }
 
-  /* Decrypt to get the plaintext + MAC + padding. */
+  // Decrypt to get the plaintext + MAC + padding.
   size_t total = 0;
   int len;
   if (!EVP_DecryptUpdate(&ssl3_ctx->cipher_ctx, out, &len, in, (int)in_len)) {
@@ -282,9 +302,9 @@ static int aead_ssl3_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
   total += len;
   assert(total == in_len);
 
-  /* Remove CBC padding and MAC. This would normally be timing-sensitive, but
-   * SSLv3 CBC ciphers are already broken. Support will be removed eventually.
-   * https://www.openssl.org/~bodo/ssl-poodle.pdf */
+  // Remove CBC padding and MAC. This would normally be timing-sensitive, but
+  // SSLv3 CBC ciphers are already broken. Support will be removed eventually.
+  // https://www.openssl.org/~bodo/ssl-poodle.pdf
   size_t data_len;
   if (EVP_CIPHER_CTX_mode(&ssl3_ctx->cipher_ctx) == EVP_CIPH_CBC_MODE) {
     unsigned padding_length = out[total - 1];
@@ -292,7 +312,7 @@ static int aead_ssl3_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
       OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
       return 0;
     }
-    /* The padding must be minimal. */
+    // The padding must be minimal.
     if (padding_length + 1 > EVP_CIPHER_CTX_block_size(&ssl3_ctx->cipher_ctx)) {
       OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
       return 0;
@@ -302,7 +322,7 @@ static int aead_ssl3_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
     data_len = total - mac_len;
   }
 
-  /* Compute the MAC and compare against the one in the record. */
+  // Compute the MAC and compare against the one in the record.
   uint8_t mac[EVP_MAX_MD_SIZE];
   if (!ssl3_mac(ssl3_ctx, mac, NULL, ad, ad_len, out, data_len)) {
     return 0;
@@ -358,59 +378,71 @@ static int aead_null_sha1_ssl3_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
 }
 
 static const EVP_AEAD aead_aes_128_cbc_sha1_ssl3 = {
-    SHA_DIGEST_LENGTH + 16 + 16, /* key len (SHA1 + AES128 + IV) */
-    0,                           /* nonce len */
-    16 + SHA_DIGEST_LENGTH,      /* overhead (padding + SHA1) */
-    SHA_DIGEST_LENGTH,           /* max tag length */
-    NULL, /* init */
+    SHA_DIGEST_LENGTH + 16 + 16,  // key len (SHA1 + AES128 + IV)
+    0,                            // nonce len
+    16 + SHA_DIGEST_LENGTH,       // overhead (padding + SHA1)
+    SHA_DIGEST_LENGTH,            // max tag length
+    0,                            // seal_scatter_supports_extra_in
+
+    NULL,  // init
     aead_aes_128_cbc_sha1_ssl3_init,
     aead_ssl3_cleanup,
     aead_ssl3_open,
     aead_ssl3_seal_scatter,
-    NULL, /* open_gather */
+    NULL,  // open_gather
     aead_ssl3_get_iv,
+    aead_ssl3_tag_len,
 };
 
 static const EVP_AEAD aead_aes_256_cbc_sha1_ssl3 = {
-    SHA_DIGEST_LENGTH + 32 + 16, /* key len (SHA1 + AES256 + IV) */
-    0,                           /* nonce len */
-    16 + SHA_DIGEST_LENGTH,      /* overhead (padding + SHA1) */
-    SHA_DIGEST_LENGTH,           /* max tag length */
-    NULL, /* init */
+    SHA_DIGEST_LENGTH + 32 + 16,  // key len (SHA1 + AES256 + IV)
+    0,                            // nonce len
+    16 + SHA_DIGEST_LENGTH,       // overhead (padding + SHA1)
+    SHA_DIGEST_LENGTH,            // max tag length
+    0,                            // seal_scatter_supports_extra_in
+
+    NULL,  // init
     aead_aes_256_cbc_sha1_ssl3_init,
     aead_ssl3_cleanup,
     aead_ssl3_open,
     aead_ssl3_seal_scatter,
-    NULL, /* open_gather */
+    NULL,  // open_gather
     aead_ssl3_get_iv,
+    aead_ssl3_tag_len,
 };
 
 static const EVP_AEAD aead_des_ede3_cbc_sha1_ssl3 = {
-    SHA_DIGEST_LENGTH + 24 + 8, /* key len (SHA1 + 3DES + IV) */
-    0,                          /* nonce len */
-    8 + SHA_DIGEST_LENGTH,      /* overhead (padding + SHA1) */
-    SHA_DIGEST_LENGTH,          /* max tag length */
-    NULL, /* init */
+    SHA_DIGEST_LENGTH + 24 + 8,  // key len (SHA1 + 3DES + IV)
+    0,                           // nonce len
+    8 + SHA_DIGEST_LENGTH,       // overhead (padding + SHA1)
+    SHA_DIGEST_LENGTH,           // max tag length
+    0,                           // seal_scatter_supports_extra_in
+
+    NULL,  // init
     aead_des_ede3_cbc_sha1_ssl3_init,
     aead_ssl3_cleanup,
     aead_ssl3_open,
     aead_ssl3_seal_scatter,
-    NULL, /* open_gather */
+    NULL,  // open_gather
     aead_ssl3_get_iv,
+    aead_ssl3_tag_len,
 };
 
 static const EVP_AEAD aead_null_sha1_ssl3 = {
-    SHA_DIGEST_LENGTH,          /* key len */
-    0,                          /* nonce len */
-    SHA_DIGEST_LENGTH,          /* overhead (SHA1) */
-    SHA_DIGEST_LENGTH,          /* max tag length */
-    NULL,                       /* init */
+    SHA_DIGEST_LENGTH,  // key len
+    0,                  // nonce len
+    SHA_DIGEST_LENGTH,  // overhead (SHA1)
+    SHA_DIGEST_LENGTH,  // max tag length
+    0,                  // seal_scatter_supports_extra_in
+
+    NULL,  // init
     aead_null_sha1_ssl3_init,
     aead_ssl3_cleanup,
     aead_ssl3_open,
     aead_ssl3_seal_scatter,
-    NULL, /* open_gather */
-    NULL, /* get_iv */
+    NULL,  // open_gather
+    NULL,  // get_iv
+    aead_ssl3_tag_len,
 };
 
 const EVP_AEAD *EVP_aead_aes_128_cbc_sha1_ssl3(void) {

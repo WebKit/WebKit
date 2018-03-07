@@ -59,8 +59,8 @@ struct wrapped_callback {
   void *arg;
 };
 
-/* callback_wrapper converts an “old” style generation callback to the newer
- * |BN_GENCB| form. */
+// callback_wrapper converts an “old” style generation callback to the newer
+// |BN_GENCB| form.
 static int callback_wrapper(int event, int n, BN_GENCB *gencb) {
   struct wrapped_callback *wrapped = (struct wrapped_callback *) gencb->arg;
   wrapped->callback(event, n, wrapped->arg);

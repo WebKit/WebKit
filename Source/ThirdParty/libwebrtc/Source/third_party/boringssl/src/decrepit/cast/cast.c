@@ -348,9 +348,9 @@ void CAST_set_key(CAST_KEY *key, size_t len, const uint8_t *data) {
   }
 }
 
-/* The input and output encrypted as though 64bit cfb mode is being used. The
- * extra state information to record how much of the 64bit block we have used
- * is contained in *num. */
+// The input and output encrypted as though 64bit cfb mode is being used. The
+// extra state information to record how much of the 64bit block we have used
+// is contained in *num.
 void CAST_cfb64_encrypt(const uint8_t *in, uint8_t *out, long length,
                         const CAST_KEY *schedule, uint8_t *ivec, int *num,
                         int enc) {

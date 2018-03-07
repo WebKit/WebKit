@@ -71,33 +71,33 @@ struct evp_pkey_asn1_method_st {
   uint8_t oid[9];
   uint8_t oid_len;
 
-  /* pub_decode decodes |params| and |key| as a SubjectPublicKeyInfo
-   * and writes the result into |out|. It returns one on success and zero on
-   * error. |params| is the AlgorithmIdentifier after the OBJECT IDENTIFIER
-   * type field, and |key| is the contents of the subjectPublicKey with the
-   * leading padding byte checked and removed. Although X.509 uses BIT STRINGs
-   * to represent SubjectPublicKeyInfo, every key type defined encodes the key
-   * as a byte string with the same conversion to BIT STRING. */
+  // pub_decode decodes |params| and |key| as a SubjectPublicKeyInfo
+  // and writes the result into |out|. It returns one on success and zero on
+  // error. |params| is the AlgorithmIdentifier after the OBJECT IDENTIFIER
+  // type field, and |key| is the contents of the subjectPublicKey with the
+  // leading padding byte checked and removed. Although X.509 uses BIT STRINGs
+  // to represent SubjectPublicKeyInfo, every key type defined encodes the key
+  // as a byte string with the same conversion to BIT STRING.
   int (*pub_decode)(EVP_PKEY *out, CBS *params, CBS *key);
 
-  /* pub_encode encodes |key| as a SubjectPublicKeyInfo and appends the result
-   * to |out|. It returns one on success and zero on error. */
+  // pub_encode encodes |key| as a SubjectPublicKeyInfo and appends the result
+  // to |out|. It returns one on success and zero on error.
   int (*pub_encode)(CBB *out, const EVP_PKEY *key);
 
   int (*pub_cmp)(const EVP_PKEY *a, const EVP_PKEY *b);
 
-  /* priv_decode decodes |params| and |key| as a PrivateKeyInfo and writes the
-   * result into |out|. It returns one on success and zero on error. |params| is
-   * the AlgorithmIdentifier after the OBJECT IDENTIFIER type field, and |key|
-   * is the contents of the OCTET STRING privateKey field. */
+  // priv_decode decodes |params| and |key| as a PrivateKeyInfo and writes the
+  // result into |out|. It returns one on success and zero on error. |params| is
+  // the AlgorithmIdentifier after the OBJECT IDENTIFIER type field, and |key|
+  // is the contents of the OCTET STRING privateKey field.
   int (*priv_decode)(EVP_PKEY *out, CBS *params, CBS *key);
 
-  /* priv_encode encodes |key| as a PrivateKeyInfo and appends the result to
-   * |out|. It returns one on success and zero on error. */
+  // priv_encode encodes |key| as a PrivateKeyInfo and appends the result to
+  // |out|. It returns one on success and zero on error.
   int (*priv_encode)(CBB *out, const EVP_PKEY *key);
 
-  /* pkey_opaque returns 1 if the |pk| is opaque. Opaque keys are backed by
-   * custom implementations which do not expose key material and parameters.*/
+  // pkey_opaque returns 1 if the |pk| is opaque. Opaque keys are backed by
+  // custom implementations which do not expose key material and parameters.
   int (*pkey_opaque)(const EVP_PKEY *pk);
 
   int (*pkey_size)(const EVP_PKEY *pk);
@@ -130,33 +130,33 @@ struct evp_pkey_asn1_method_st {
 
 #define EVP_PKEY_OP_TYPE_GEN EVP_PKEY_OP_KEYGEN
 
-/* EVP_PKEY_CTX_ctrl performs |cmd| on |ctx|. The |keytype| and |optype|
- * arguments can be -1 to specify that any type and operation are acceptable,
- * otherwise |keytype| must match the type of |ctx| and the bits of |optype|
- * must intersect the operation flags set on |ctx|.
- *
- * The |p1| and |p2| arguments depend on the value of |cmd|.
- *
- * It returns one on success and zero on error. */
+// EVP_PKEY_CTX_ctrl performs |cmd| on |ctx|. The |keytype| and |optype|
+// arguments can be -1 to specify that any type and operation are acceptable,
+// otherwise |keytype| must match the type of |ctx| and the bits of |optype|
+// must intersect the operation flags set on |ctx|.
+//
+// The |p1| and |p2| arguments depend on the value of |cmd|.
+//
+// It returns one on success and zero on error.
 OPENSSL_EXPORT int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype,
                                      int cmd, int p1, void *p2);
 
 #define EVP_PKEY_CTRL_MD 1
 #define EVP_PKEY_CTRL_GET_MD 2
 
-/* EVP_PKEY_CTRL_PEER_KEY is called with different values of |p1|:
- *   0: Is called from |EVP_PKEY_derive_set_peer| and |p2| contains a peer key.
- *      If the return value is <= 0, the key is rejected.
- *   1: Is called at the end of |EVP_PKEY_derive_set_peer| and |p2| contains a
- *      peer key. If the return value is <= 0, the key is rejected.
- *   2: Is called with |p2| == NULL to test whether the peer's key was used.
- *      (EC)DH always return one in this case.
- *   3: Is called with |p2| == NULL to set whether the peer's key was used.
- *      (EC)DH always return one in this case. This was only used for GOST. */
+// EVP_PKEY_CTRL_PEER_KEY is called with different values of |p1|:
+//   0: Is called from |EVP_PKEY_derive_set_peer| and |p2| contains a peer key.
+//      If the return value is <= 0, the key is rejected.
+//   1: Is called at the end of |EVP_PKEY_derive_set_peer| and |p2| contains a
+//      peer key. If the return value is <= 0, the key is rejected.
+//   2: Is called with |p2| == NULL to test whether the peer's key was used.
+//      (EC)DH always return one in this case.
+//   3: Is called with |p2| == NULL to set whether the peer's key was used.
+//      (EC)DH always return one in this case. This was only used for GOST.
 #define EVP_PKEY_CTRL_PEER_KEY 3
 
-/* EVP_PKEY_ALG_CTRL is the base value from which key-type specific ctrl
- * commands are numbered. */
+// EVP_PKEY_ALG_CTRL is the base value from which key-type specific ctrl
+// commands are numbered.
 #define EVP_PKEY_ALG_CTRL 0x1000
 
 #define EVP_PKEY_CTRL_RSA_PADDING (EVP_PKEY_ALG_CTRL + 1)
@@ -173,17 +173,17 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype,
 #define EVP_PKEY_CTRL_GET_RSA_OAEP_LABEL (EVP_PKEY_ALG_CTRL + 12)
 
 struct evp_pkey_ctx_st {
-  /* Method associated with this operation */
+  // Method associated with this operation
   const EVP_PKEY_METHOD *pmeth;
-  /* Engine that implements this method or NULL if builtin */
+  // Engine that implements this method or NULL if builtin
   ENGINE *engine;
-  /* Key: may be NULL */
+  // Key: may be NULL
   EVP_PKEY *pkey;
-  /* Peer key for key agreement, may be NULL */
+  // Peer key for key agreement, may be NULL
   EVP_PKEY *peerkey;
-  /* operation contains one of the |EVP_PKEY_OP_*| values. */
+  // operation contains one of the |EVP_PKEY_OP_*| values.
   int operation;
-  /* Algorithm specific data */
+  // Algorithm specific data
   void *data;
 } /* EVP_PKEY_CTX */;
 
@@ -226,8 +226,8 @@ typedef struct {
   union {
     uint8_t priv[64];
     struct {
-      /* Shift the location of the public key to align with where it is in the
-       * private key representation. */
+      // Shift the location of the public key to align with where it is in the
+      // private key representation.
       uint8_t pad[32];
       uint8_t value[32];
     } pub;
@@ -246,7 +246,7 @@ extern const EVP_PKEY_METHOD ed25519_pkey_meth;
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_EVP_INTERNAL_H */
+#endif  // OPENSSL_HEADER_EVP_INTERNAL_H

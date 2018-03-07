@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/remb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
 
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -48,20 +48,20 @@ bool Remb::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.fmt(), kFeedbackMessageType);
 
   if (packet.payload_size_bytes() < 16) {
-    LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
-                    << " is too small for Remb packet.";
+    RTC_LOG(LS_WARNING) << "Payload length " << packet.payload_size_bytes()
+                        << " is too small for Remb packet.";
     return false;
   }
   const uint8_t* const payload = packet.payload();
   if (kUniqueIdentifier != ByteReader<uint32_t>::ReadBigEndian(&payload[8])) {
-    LOG(LS_WARNING) << "REMB identifier not found, not a REMB packet.";
+    RTC_LOG(LS_WARNING) << "REMB identifier not found, not a REMB packet.";
     return false;
   }
   uint8_t number_of_ssrcs = payload[12];
   if (packet.payload_size_bytes() !=
       kCommonFeedbackLength + (2 + number_of_ssrcs) * 4) {
-    LOG(LS_WARNING) << "Payload size " << packet.payload_size_bytes()
-                    << " does not match " << number_of_ssrcs << " ssrcs.";
+    RTC_LOG(LS_WARNING) << "Payload size " << packet.payload_size_bytes()
+                        << " does not match " << number_of_ssrcs << " ssrcs.";
     return false;
   }
 
@@ -72,8 +72,8 @@ bool Remb::Parse(const CommonHeader& packet) {
   bitrate_bps_ = (mantissa << exponenta);
   bool shift_overflow = (bitrate_bps_ >> exponenta) != mantissa;
   if (shift_overflow) {
-    LOG(LS_ERROR) << "Invalid remb bitrate value : " << mantissa
-                  << "*2^" << static_cast<int>(exponenta);
+    RTC_LOG(LS_ERROR) << "Invalid remb bitrate value : " << mantissa << "*2^"
+                      << static_cast<int>(exponenta);
     return false;
   }
 
@@ -90,7 +90,7 @@ bool Remb::Parse(const CommonHeader& packet) {
 
 bool Remb::SetSsrcs(std::vector<uint32_t> ssrcs) {
   if (ssrcs.size() > kMaxNumberOfSsrcs) {
-    LOG(LS_WARNING) << "Not enough space for all given SSRCs.";
+    RTC_LOG(LS_WARNING) << "Not enough space for all given SSRCs.";
     return false;
   }
   ssrcs_ = std::move(ssrcs);
@@ -125,7 +125,7 @@ bool Remb::Create(uint8_t* packet,
     mantissa >>= 1;
     ++exponenta;
   }
-  packet[(*index)++] = ssrcs_.size();
+  packet[(*index)++] = static_cast<uint8_t>(ssrcs_.size());
   packet[(*index)++] = (exponenta << 2) | (mantissa >> 16);
   ByteWriter<uint16_t>::WriteBigEndian(packet + *index, mantissa & 0xffff);
   *index += sizeof(uint16_t);

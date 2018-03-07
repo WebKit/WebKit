@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/pacing/alr_detector.h"
+#include "modules/pacing/alr_detector.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/field_trial.h"
+#include "test/gtest.h"
 
 namespace {
 
@@ -20,33 +21,58 @@ constexpr int kEstimatedBitrateBps = 300000;
 
 namespace webrtc {
 
+namespace {
+class SimulateOutgoingTrafficIn {
+ public:
+  explicit SimulateOutgoingTrafficIn(AlrDetector* alr_detector)
+      : alr_detector_(alr_detector) {
+    RTC_CHECK(alr_detector_);
+  }
+
+  SimulateOutgoingTrafficIn& ForTimeMs(int time_ms) {
+    interval_ms_ = rtc::Optional<int>(time_ms);
+    interval_ms_.emplace(time_ms);
+    ProduceTraffic();
+    return *this;
+  }
+
+  SimulateOutgoingTrafficIn& AtPercentOfEstimatedBitrate(int usage_percentage) {
+    usage_percentage_.emplace(usage_percentage);
+    ProduceTraffic();
+    return *this;
+  }
+
+ private:
+  void ProduceTraffic() {
+    if (!interval_ms_ || !usage_percentage_)
+      return;
+    const int kTimeStepMs = 10;
+    for (int t = 0; t < *interval_ms_; t += kTimeStepMs) {
+      alr_detector_->OnBytesSent(kEstimatedBitrateBps * *usage_percentage_ *
+                                     kTimeStepMs / (8 * 100 * 1000),
+                                 kTimeStepMs);
+    }
+    int remainder_ms = *interval_ms_ % kTimeStepMs;
+    if (remainder_ms > 0) {
+      alr_detector_->OnBytesSent(kEstimatedBitrateBps * *usage_percentage_ *
+                                     remainder_ms / (8 * 100 * 1000),
+                                 kTimeStepMs);
+    }
+  }
+  AlrDetector* const alr_detector_;
+  rtc::Optional<int> interval_ms_;
+  rtc::Optional<int> usage_percentage_;
+};
+}  // namespace
+
 class AlrDetectorTest : public testing::Test {
  public:
   void SetUp() override {
     alr_detector_.SetEstimatedBitrate(kEstimatedBitrateBps);
   }
 
-  void SimulateOutgoingTraffic(int interval_ms, int usage_percentage) {
-    const int kTimeStepMs = 10;
-    for (int t = 0; t < interval_ms; t += kTimeStepMs) {
-      now_ms += kTimeStepMs;
-      alr_detector_.OnBytesSent(kEstimatedBitrateBps * usage_percentage *
-                                    kTimeStepMs / (8 * 100 * 1000),
-                                now_ms);
-    }
-
-    int remainder_ms = interval_ms % kTimeStepMs;
-    now_ms += remainder_ms;
-    if (remainder_ms > 0) {
-      alr_detector_.OnBytesSent(kEstimatedBitrateBps * usage_percentage *
-                                    remainder_ms / (8 * 100 * 1000),
-                                remainder_ms);
-    }
-  }
-
  protected:
   AlrDetector alr_detector_;
-  int64_t now_ms = 1;
 };
 
 TEST_F(AlrDetectorTest, AlrDetection) {
@@ -54,19 +80,21 @@ TEST_F(AlrDetectorTest, AlrDetection) {
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
   // Stay in non-ALR state when usage is close to 100%.
-  SimulateOutgoingTraffic(500, 90);
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(1000)
+      .AtPercentOfEstimatedBitrate(90);
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
   // Verify that we ALR starts when bitrate drops below 20%.
-  SimulateOutgoingTraffic(500, 20);
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(1500)
+      .AtPercentOfEstimatedBitrate(20);
   EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
-  // Verify that we remain in ALR state while usage is still below 70%.
-  SimulateOutgoingTraffic(500, 69);
-  EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
-
-  // Verify that ALR ends when usage is above 70%.
-  SimulateOutgoingTraffic(500, 75);
+  // Verify that ALR ends when usage is above 65%.
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(4000)
+      .AtPercentOfEstimatedBitrate(100);
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
 }
 
@@ -75,18 +103,21 @@ TEST_F(AlrDetectorTest, ShortSpike) {
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
   // Verify that we ALR starts when bitrate drops below 20%.
-  SimulateOutgoingTraffic(500, 20);
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(1000)
+      .AtPercentOfEstimatedBitrate(20);
   EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
   // Verify that we stay in ALR region even after a short bitrate spike.
-  SimulateOutgoingTraffic(100, 150);
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(100)
+      .AtPercentOfEstimatedBitrate(150);
   EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
-  SimulateOutgoingTraffic(200, 20);
-  EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
-
-  // ALR ends when usage is above 70%.
-  SimulateOutgoingTraffic(500, 75);
+  // ALR ends when usage is above 65%.
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(3000)
+      .AtPercentOfEstimatedBitrate(100);
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
 }
 
@@ -95,7 +126,9 @@ TEST_F(AlrDetectorTest, BandwidthEstimateChanges) {
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
   // ALR starts when bitrate drops below 20%.
-  SimulateOutgoingTraffic(500, 20);
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(1000)
+      .AtPercentOfEstimatedBitrate(20);
   EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
 
   // When bandwidth estimate drops the detector should stay in ALR mode and quit
@@ -104,8 +137,34 @@ TEST_F(AlrDetectorTest, BandwidthEstimateChanges) {
   // to the BWE drop by initiating a new probe.
   alr_detector_.SetEstimatedBitrate(kEstimatedBitrateBps / 5);
   EXPECT_TRUE(alr_detector_.GetApplicationLimitedRegionStartTime());
-  SimulateOutgoingTraffic(10, 20);
+  SimulateOutgoingTrafficIn(&alr_detector_)
+      .ForTimeMs(1000)
+      .AtPercentOfEstimatedBitrate(50);
   EXPECT_FALSE(alr_detector_.GetApplicationLimitedRegionStartTime());
+}
+
+TEST_F(AlrDetectorTest, ParseControlFieldTrial) {
+  webrtc::test::ScopedFieldTrials field_trial(
+      "WebRTC-ProbingScreenshareBwe/Control/");
+  rtc::Optional<AlrDetector::AlrExperimentSettings> parsed_params =
+      AlrDetector::ParseAlrSettingsFromFieldTrial(
+          "WebRTC-ProbingScreenshareBwe");
+  EXPECT_FALSE(static_cast<bool>(parsed_params));
+}
+
+TEST_F(AlrDetectorTest, ParseActiveFieldTrial) {
+  webrtc::test::ScopedFieldTrials field_trial(
+      "WebRTC-ProbingScreenshareBwe/1.1,2875,85,20,-20,1/");
+  rtc::Optional<AlrDetector::AlrExperimentSettings> parsed_params =
+      AlrDetector::ParseAlrSettingsFromFieldTrial(
+          "WebRTC-ProbingScreenshareBwe");
+  ASSERT_TRUE(static_cast<bool>(parsed_params));
+  EXPECT_EQ(1.1f, parsed_params->pacing_factor);
+  EXPECT_EQ(2875, parsed_params->max_paced_queue_time);
+  EXPECT_EQ(85, parsed_params->alr_bandwidth_usage_percent);
+  EXPECT_EQ(20, parsed_params->alr_start_budget_level_percent);
+  EXPECT_EQ(-20, parsed_params->alr_stop_budget_level_percent);
+  EXPECT_EQ(1, parsed_params->group_id);
 }
 
 }  // namespace webrtc

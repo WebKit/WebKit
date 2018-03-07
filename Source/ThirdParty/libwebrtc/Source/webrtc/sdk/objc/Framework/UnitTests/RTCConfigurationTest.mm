@@ -12,12 +12,13 @@
 
 #include <vector>
 
-#include "webrtc/base/gunit.h"
+#include "rtc_base/gunit.h"
 
 #import "NSString+StdString.h"
 #import "RTCConfiguration+Private.h"
 #import "WebRTC/RTCConfiguration.h"
 #import "WebRTC/RTCIceServer.h"
+#import "WebRTC/RTCIntervalRange.h"
 
 @interface RTCConfigurationTest : NSObject
 - (void)testConversionToNativeConfiguration;
@@ -29,6 +30,7 @@
 - (void)testConversionToNativeConfiguration {
   NSArray *urlStrings = @[ @"stun:stun1.example.net" ];
   RTCIceServer *server = [[RTCIceServer alloc] initWithURLStrings:urlStrings];
+  RTCIntervalRange *range = [[RTCIntervalRange alloc] initWithMin:0 max:100];
 
   RTCConfiguration *config = [[RTCConfiguration alloc] init];
   config.iceServers = @[ server ];
@@ -47,6 +49,7 @@
   config.continualGatheringPolicy =
       RTCContinualGatheringPolicyGatherContinually;
   config.shouldPruneTurnPorts = YES;
+  config.iceRegatherIntervalRange = range;
 
   std::unique_ptr<webrtc::PeerConnectionInterface::RTCConfiguration>
       nativeConfig([config createNativeConfiguration]);
@@ -73,11 +76,14 @@
   EXPECT_EQ(webrtc::PeerConnectionInterface::GATHER_CONTINUALLY,
             nativeConfig->continual_gathering_policy);
   EXPECT_EQ(true, nativeConfig->prune_turn_ports);
+  EXPECT_EQ(range.min, nativeConfig->ice_regather_interval_range->min());
+  EXPECT_EQ(range.max, nativeConfig->ice_regather_interval_range->max());
 }
 
 - (void)testNativeConversionToConfiguration {
   NSArray *urlStrings = @[ @"stun:stun1.example.net" ];
   RTCIceServer *server = [[RTCIceServer alloc] initWithURLStrings:urlStrings];
+  RTCIntervalRange *range = [[RTCIntervalRange alloc] initWithMin:0 max:100];
 
   RTCConfiguration *config = [[RTCConfiguration alloc] init];
   config.iceServers = @[ server ];
@@ -96,6 +102,7 @@
   config.continualGatheringPolicy =
       RTCContinualGatheringPolicyGatherContinually;
   config.shouldPruneTurnPorts = YES;
+  config.iceRegatherIntervalRange = range;
 
   webrtc::PeerConnectionInterface::RTCConfiguration *nativeConfig =
       [config createNativeConfiguration];
@@ -121,6 +128,8 @@
             newConfig.iceBackupCandidatePairPingInterval);
   EXPECT_EQ(config.continualGatheringPolicy, newConfig.continualGatheringPolicy);
   EXPECT_EQ(config.shouldPruneTurnPorts, newConfig.shouldPruneTurnPorts);
+  EXPECT_EQ(config.iceRegatherIntervalRange.min, newConfig.iceRegatherIntervalRange.min);
+  EXPECT_EQ(config.iceRegatherIntervalRange.max, newConfig.iceRegatherIntervalRange.max);
 }
 
 @end

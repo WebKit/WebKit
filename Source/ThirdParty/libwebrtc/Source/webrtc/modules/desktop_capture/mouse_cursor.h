@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_MOUSE_CURSOR_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_MOUSE_CURSOR_H_
+#ifndef MODULES_DESKTOP_CAPTURE_MOUSE_CURSOR_H_
+#define MODULES_DESKTOP_CAPTURE_MOUSE_CURSOR_H_
 
 #include <memory>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -46,4 +46,4 @@ class MouseCursor {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_MOUSE_CURSOR_H_
+#endif  // MODULES_DESKTOP_CAPTURE_MOUSE_CURSOR_H_

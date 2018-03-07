@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_INCLUDE_RW_LOCK_WRAPPER_H_
-#define WEBRTC_SYSTEM_WRAPPERS_INCLUDE_RW_LOCK_WRAPPER_H_
+#ifndef SYSTEM_WRAPPERS_INCLUDE_RW_LOCK_WRAPPER_H_
+#define SYSTEM_WRAPPERS_INCLUDE_RW_LOCK_WRAPPER_H_
 
-#include "webrtc/base/thread_annotations.h"
+#include "rtc_base/thread_annotations.h"
 
 // Note, Windows pre-Vista version of RW locks are not supported natively. For
 // these OSs regular critical sections have been used to approximate RW lock
@@ -19,45 +19,41 @@
 
 namespace webrtc {
 
-class LOCKABLE RWLockWrapper {
+class RTC_LOCKABLE RWLockWrapper {
  public:
   static RWLockWrapper* CreateRWLock();
   virtual ~RWLockWrapper() {}
 
-  virtual void AcquireLockExclusive() EXCLUSIVE_LOCK_FUNCTION() = 0;
-  virtual void ReleaseLockExclusive() UNLOCK_FUNCTION() = 0;
+  virtual void AcquireLockExclusive() RTC_EXCLUSIVE_LOCK_FUNCTION() = 0;
+  virtual void ReleaseLockExclusive() RTC_UNLOCK_FUNCTION() = 0;
 
-  virtual void AcquireLockShared() SHARED_LOCK_FUNCTION() = 0;
-  virtual void ReleaseLockShared() UNLOCK_FUNCTION() = 0;
+  virtual void AcquireLockShared() RTC_SHARED_LOCK_FUNCTION() = 0;
+  virtual void ReleaseLockShared() RTC_UNLOCK_FUNCTION() = 0;
 };
 
 // RAII extensions of the RW lock. Prevents Acquire/Release missmatches and
 // provides more compact locking syntax.
-class SCOPED_LOCKABLE ReadLockScoped {
+class RTC_SCOPED_LOCKABLE ReadLockScoped {
  public:
-  ReadLockScoped(RWLockWrapper& rw_lock) SHARED_LOCK_FUNCTION(rw_lock)
+  ReadLockScoped(RWLockWrapper& rw_lock) RTC_SHARED_LOCK_FUNCTION(rw_lock)
       : rw_lock_(rw_lock) {
     rw_lock_.AcquireLockShared();
   }
 
-  ~ReadLockScoped() UNLOCK_FUNCTION() {
-    rw_lock_.ReleaseLockShared();
-  }
+  ~ReadLockScoped() RTC_UNLOCK_FUNCTION() { rw_lock_.ReleaseLockShared(); }
 
  private:
   RWLockWrapper& rw_lock_;
 };
 
-class SCOPED_LOCKABLE WriteLockScoped {
+class RTC_SCOPED_LOCKABLE WriteLockScoped {
  public:
-  WriteLockScoped(RWLockWrapper& rw_lock) EXCLUSIVE_LOCK_FUNCTION(rw_lock)
+  WriteLockScoped(RWLockWrapper& rw_lock) RTC_EXCLUSIVE_LOCK_FUNCTION(rw_lock)
       : rw_lock_(rw_lock) {
     rw_lock_.AcquireLockExclusive();
   }
 
-  ~WriteLockScoped() UNLOCK_FUNCTION() {
-    rw_lock_.ReleaseLockExclusive();
-  }
+  ~WriteLockScoped() RTC_UNLOCK_FUNCTION() { rw_lock_.ReleaseLockExclusive(); }
 
  private:
   RWLockWrapper& rw_lock_;
@@ -65,4 +61,4 @@ class SCOPED_LOCKABLE WriteLockScoped {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_INCLUDE_RW_LOCK_WRAPPER_H_
+#endif  // SYSTEM_WRAPPERS_INCLUDE_RW_LOCK_WRAPPER_H_

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/common_audio/lapped_transform.h"
+#include "common_audio/lapped_transform.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 using std::complex;
 

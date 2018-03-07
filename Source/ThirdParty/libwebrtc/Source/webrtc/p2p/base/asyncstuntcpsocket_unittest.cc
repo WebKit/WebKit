@@ -10,10 +10,10 @@
 
 #include <memory>
 
-#include "webrtc/p2p/base/asyncstuntcpsocket.h"
-#include "webrtc/base/asyncsocket.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/virtualsocketserver.h"
+#include "p2p/base/asyncstuntcpsocket.h"
+#include "rtc_base/asyncsocket.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/virtualsocketserver.h"
 
 namespace cricket {
 

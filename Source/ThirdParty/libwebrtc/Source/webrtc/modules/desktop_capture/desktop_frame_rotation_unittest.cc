@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/desktop_frame_rotation.h"
+#include "modules/desktop_capture/desktop_frame_rotation.h"
 
-#include "webrtc/modules/desktop_capture/desktop_frame.h"
-#include "webrtc/modules/desktop_capture/desktop_region.h"
-#include "webrtc/modules/desktop_capture/test_utils.h"
-#include "webrtc/test/gtest.h"
+#include "modules/desktop_capture/desktop_frame.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/test_utils.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

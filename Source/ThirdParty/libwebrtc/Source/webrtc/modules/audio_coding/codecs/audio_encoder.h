@@ -12,9 +12,9 @@
 // webrtc/api/audio_codecs/audio_encoder.h instead!
 // TODO(ossu): Remove it.
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_AUDIO_ENCODER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_AUDIO_ENCODER_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_AUDIO_ENCODER_H_
+#define MODULES_AUDIO_CODING_CODECS_AUDIO_ENCODER_H_
 
-#include "webrtc/api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/audio_encoder.h"
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_CODECS_AUDIO_ENCODER_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_AUDIO_ENCODER_H_

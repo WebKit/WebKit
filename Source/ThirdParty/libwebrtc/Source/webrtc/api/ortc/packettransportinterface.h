@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_ORTC_PACKETTRANSPORTINTERFACE_H_
-#define WEBRTC_API_ORTC_PACKETTRANSPORTINTERFACE_H_
+#ifndef API_ORTC_PACKETTRANSPORTINTERFACE_H_
+#define API_ORTC_PACKETTRANSPORTINTERFACE_H_
 
 namespace rtc {
 
@@ -35,4 +35,4 @@ class PacketTransportInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_ORTC_PACKETTRANSPORTINTERFACE_H_
+#endif  // API_ORTC_PACKETTRANSPORTINTERFACE_H_

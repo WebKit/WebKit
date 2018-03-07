@@ -67,9 +67,9 @@
  * Sheueling Chang Shantz and Douglas Stebila of Sun Microsystems
  * Laboratories. */
 
-/* Per C99, various stdint.h and inttypes.h macros (the latter used by bn.h) are
- * unavailable in C++ unless some macros are defined. C++11 overruled this
- * decision, but older Android NDKs still require it. */
+// Per C99, various stdint.h and inttypes.h macros (the latter used by bn.h) are
+// unavailable in C++ unless some macros are defined. C++11 overruled this
+// decision, but older Android NDKs still require it.
 #if !defined(__STDC_CONSTANT_MACROS)
 #define __STDC_CONSTANT_MACROS
 #endif
@@ -93,6 +93,7 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
+#include "./internal.h"
 #include "../../internal.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
@@ -356,9 +357,11 @@ static void TestSquare(FileTest *t, BN_CTX *ctx) {
   ASSERT_TRUE(BN_mul(ret.get(), a.get(), a.get(), ctx));
   EXPECT_BIGNUMS_EQUAL("A * A", square.get(), ret.get());
 
-  ASSERT_TRUE(BN_div(ret.get(), remainder.get(), square.get(), a.get(), ctx));
-  EXPECT_BIGNUMS_EQUAL("Square / A", a.get(), ret.get());
-  EXPECT_BIGNUMS_EQUAL("Square % A", zero.get(), remainder.get());
+  if (!BN_is_zero(a.get())) {
+    ASSERT_TRUE(BN_div(ret.get(), remainder.get(), square.get(), a.get(), ctx));
+    EXPECT_BIGNUMS_EQUAL("Square / A", a.get(), ret.get());
+    EXPECT_BIGNUMS_EQUAL("Square % A", zero.get(), remainder.get());
+  }
 
   BN_set_negative(a.get(), 0);
   ASSERT_TRUE(BN_sqrt(ret.get(), square.get(), ctx));
@@ -381,6 +384,31 @@ static void TestSquare(FileTest *t, BN_CTX *ctx) {
         << "BN_sqrt succeeded on a non-square";
     ERR_clear_error();
   }
+
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+  if (static_cast<size_t>(a->top) <= BN_SMALL_MAX_WORDS) {
+    for (size_t num_a = a->top; num_a <= BN_SMALL_MAX_WORDS; num_a++) {
+      SCOPED_TRACE(num_a);
+      size_t num_r = 2 * num_a;
+      // Use newly-allocated buffers so ASan will catch out-of-bounds writes.
+      std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[num_a]),
+          r_words(new BN_ULONG[num_r]);
+      OPENSSL_memset(a_words.get(), 0, num_a * sizeof(BN_ULONG));
+      OPENSSL_memcpy(a_words.get(), a->d, a->top * sizeof(BN_ULONG));
+
+      ASSERT_TRUE(bn_mul_small(r_words.get(), num_r, a_words.get(), num_a,
+                               a_words.get(), num_a));
+      ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), num_r));
+      EXPECT_BIGNUMS_EQUAL("A * A (words)", square.get(), ret.get());
+
+      OPENSSL_memset(r_words.get(), 'A', num_r * sizeof(BN_ULONG));
+      ASSERT_TRUE(bn_sqr_small(r_words.get(), num_r, a_words.get(), num_a));
+
+      ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), num_r));
+      EXPECT_BIGNUMS_EQUAL("A^2 (words)", square.get(), ret.get());
+    }
+  }
+#endif
 }
 
 static void TestProduct(FileTest *t, BN_CTX *ctx) {
@@ -401,13 +429,46 @@ static void TestProduct(FileTest *t, BN_CTX *ctx) {
   ASSERT_TRUE(BN_mul(ret.get(), a.get(), b.get(), ctx));
   EXPECT_BIGNUMS_EQUAL("A * B", product.get(), ret.get());
 
-  ASSERT_TRUE(BN_div(ret.get(), remainder.get(), product.get(), a.get(), ctx));
-  EXPECT_BIGNUMS_EQUAL("Product / A", b.get(), ret.get());
-  EXPECT_BIGNUMS_EQUAL("Product % A", zero.get(), remainder.get());
+  if (!BN_is_zero(a.get())) {
+    ASSERT_TRUE(
+        BN_div(ret.get(), remainder.get(), product.get(), a.get(), ctx));
+    EXPECT_BIGNUMS_EQUAL("Product / A", b.get(), ret.get());
+    EXPECT_BIGNUMS_EQUAL("Product % A", zero.get(), remainder.get());
+  }
 
-  ASSERT_TRUE(BN_div(ret.get(), remainder.get(), product.get(), b.get(), ctx));
-  EXPECT_BIGNUMS_EQUAL("Product / B", a.get(), ret.get());
-  EXPECT_BIGNUMS_EQUAL("Product % B", zero.get(), remainder.get());
+  if (!BN_is_zero(b.get())) {
+    ASSERT_TRUE(
+        BN_div(ret.get(), remainder.get(), product.get(), b.get(), ctx));
+    EXPECT_BIGNUMS_EQUAL("Product / B", a.get(), ret.get());
+    EXPECT_BIGNUMS_EQUAL("Product % B", zero.get(), remainder.get());
+  }
+
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+  if (!BN_is_negative(product.get()) &&
+      static_cast<size_t>(a->top) <= BN_SMALL_MAX_WORDS &&
+      static_cast<size_t>(b->top) <= BN_SMALL_MAX_WORDS) {
+    for (size_t num_a = a->top; num_a <= BN_SMALL_MAX_WORDS; num_a++) {
+      SCOPED_TRACE(num_a);
+      for (size_t num_b = b->top; num_b <= BN_SMALL_MAX_WORDS; num_b++) {
+        SCOPED_TRACE(num_b);
+        size_t num_r = num_a + num_b;
+        // Use newly-allocated buffers so ASan will catch out-of-bounds writes.
+        std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[num_a]),
+            b_words(new BN_ULONG[num_b]), r_words(new BN_ULONG[num_r]);
+        OPENSSL_memset(a_words.get(), 0, num_a * sizeof(BN_ULONG));
+        OPENSSL_memcpy(a_words.get(), a->d, a->top * sizeof(BN_ULONG));
+
+        OPENSSL_memset(b_words.get(), 0, num_b * sizeof(BN_ULONG));
+        OPENSSL_memcpy(b_words.get(), b->d, b->top * sizeof(BN_ULONG));
+
+        ASSERT_TRUE(bn_mul_small(r_words.get(), num_r, a_words.get(), num_a,
+                                 b_words.get(), num_b));
+        ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), num_r));
+        EXPECT_BIGNUMS_EQUAL("A * B (words)", product.get(), ret.get());
+      }
+    }
+  }
+#endif
 }
 
 static void TestQuotient(FileTest *t, BN_CTX *ctx) {
@@ -481,15 +542,39 @@ static void TestModMul(FileTest *t, BN_CTX *ctx) {
     ASSERT_TRUE(a_tmp);
     ASSERT_TRUE(b_tmp);
     ASSERT_TRUE(BN_MONT_CTX_set(mont.get(), m.get(), ctx));
-    ASSERT_TRUE(BN_nnmod(a_tmp.get(), a.get(), m.get(), ctx));
-    ASSERT_TRUE(BN_nnmod(b_tmp.get(), b.get(), m.get(), ctx));
-    ASSERT_TRUE(BN_to_montgomery(a_tmp.get(), a_tmp.get(), mont.get(), ctx));
-    ASSERT_TRUE(BN_to_montgomery(b_tmp.get(), b_tmp.get(), mont.get(), ctx));
+    ASSERT_TRUE(BN_nnmod(a.get(), a.get(), m.get(), ctx));
+    ASSERT_TRUE(BN_nnmod(b.get(), b.get(), m.get(), ctx));
+    ASSERT_TRUE(BN_to_montgomery(a_tmp.get(), a.get(), mont.get(), ctx));
+    ASSERT_TRUE(BN_to_montgomery(b_tmp.get(), b.get(), mont.get(), ctx));
     ASSERT_TRUE(BN_mod_mul_montgomery(ret.get(), a_tmp.get(), b_tmp.get(),
                                       mont.get(), ctx));
     ASSERT_TRUE(BN_from_montgomery(ret.get(), ret.get(), mont.get(), ctx));
     EXPECT_BIGNUMS_EQUAL("A * B (mod M) (Montgomery)", mod_mul.get(),
                          ret.get());
+
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+    if (m->top <= BN_SMALL_MAX_WORDS) {
+      std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[m->top]),
+          b_words(new BN_ULONG[m->top]), r_words(new BN_ULONG[m->top]);
+      OPENSSL_memset(a_words.get(), 0, m->top * sizeof(BN_ULONG));
+      OPENSSL_memcpy(a_words.get(), a->d, a->top * sizeof(BN_ULONG));
+      OPENSSL_memset(b_words.get(), 0, m->top * sizeof(BN_ULONG));
+      OPENSSL_memcpy(b_words.get(), b->d, b->top * sizeof(BN_ULONG));
+      ASSERT_TRUE(bn_to_montgomery_small(a_words.get(), m->top, a_words.get(),
+                                         m->top, mont.get()));
+      ASSERT_TRUE(bn_to_montgomery_small(b_words.get(), m->top, b_words.get(),
+                                         m->top, mont.get()));
+      ASSERT_TRUE(bn_mod_mul_montgomery_small(
+          r_words.get(), m->top, a_words.get(), m->top, b_words.get(), m->top,
+          mont.get()));
+      // Use the second half of |tmp| so ASan will catch out-of-bounds writes.
+      ASSERT_TRUE(bn_from_montgomery_small(r_words.get(), m->top, r_words.get(),
+                                           m->top, mont.get()));
+      ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), m->top));
+      EXPECT_BIGNUMS_EQUAL("A * B (mod M) (Montgomery, words)", mod_mul.get(),
+                           ret.get());
+    }
+#endif
   }
 }
 
@@ -520,8 +605,8 @@ static void TestModSquare(FileTest *t, BN_CTX *ctx) {
     ASSERT_TRUE(mont);
     ASSERT_TRUE(a_tmp);
     ASSERT_TRUE(BN_MONT_CTX_set(mont.get(), m.get(), ctx));
-    ASSERT_TRUE(BN_nnmod(a_tmp.get(), a.get(), m.get(), ctx));
-    ASSERT_TRUE(BN_to_montgomery(a_tmp.get(), a_tmp.get(), mont.get(), ctx));
+    ASSERT_TRUE(BN_nnmod(a.get(), a.get(), m.get(), ctx));
+    ASSERT_TRUE(BN_to_montgomery(a_tmp.get(), a.get(), mont.get(), ctx));
     ASSERT_TRUE(BN_mod_mul_montgomery(ret.get(), a_tmp.get(), a_tmp.get(),
                                       mont.get(), ctx));
     ASSERT_TRUE(BN_from_montgomery(ret.get(), ret.get(), mont.get(), ctx));
@@ -535,6 +620,38 @@ static void TestModSquare(FileTest *t, BN_CTX *ctx) {
     ASSERT_TRUE(BN_from_montgomery(ret.get(), ret.get(), mont.get(), ctx));
     EXPECT_BIGNUMS_EQUAL("A * A_copy (mod M) (Montgomery)", mod_square.get(),
                          ret.get());
+
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+    if (m->top <= BN_SMALL_MAX_WORDS) {
+      std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[m->top]),
+          a_copy_words(new BN_ULONG[m->top]), r_words(new BN_ULONG[m->top]);
+      OPENSSL_memset(a_words.get(), 0, m->top * sizeof(BN_ULONG));
+      OPENSSL_memcpy(a_words.get(), a->d, a->top * sizeof(BN_ULONG));
+      ASSERT_TRUE(bn_to_montgomery_small(a_words.get(), m->top, a_words.get(),
+                                         m->top, mont.get()));
+      ASSERT_TRUE(bn_mod_mul_montgomery_small(
+          r_words.get(), m->top, a_words.get(), m->top, a_words.get(), m->top,
+          mont.get()));
+      ASSERT_TRUE(bn_from_montgomery_small(r_words.get(), m->top, r_words.get(),
+                                           m->top, mont.get()));
+      ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), m->top));
+      EXPECT_BIGNUMS_EQUAL("A * A (mod M) (Montgomery, words)",
+                           mod_square.get(), ret.get());
+
+      // Repeat the operation with |a_copy_words|.
+      OPENSSL_memcpy(a_copy_words.get(), a_words.get(),
+                     m->top * sizeof(BN_ULONG));
+      ASSERT_TRUE(bn_mod_mul_montgomery_small(
+          r_words.get(), m->top, a_words.get(), m->top, a_copy_words.get(),
+          m->top, mont.get()));
+      // Use the second half of |tmp| so ASan will catch out-of-bounds writes.
+      ASSERT_TRUE(bn_from_montgomery_small(r_words.get(), m->top, r_words.get(),
+                                           m->top, mont.get()));
+      ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), m->top));
+      EXPECT_BIGNUMS_EQUAL("A * A_copy (mod M) (Montgomery, words)",
+                           mod_square.get(), ret.get());
+    }
+#endif
   }
 }
 
@@ -563,6 +680,28 @@ static void TestModExp(FileTest *t, BN_CTX *ctx) {
                                           ctx, NULL));
     EXPECT_BIGNUMS_EQUAL("A ^ E (mod M) (constant-time)", mod_exp.get(),
                          ret.get());
+
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+    if (m->top <= BN_SMALL_MAX_WORDS) {
+      bssl::UniquePtr<BN_MONT_CTX> mont(BN_MONT_CTX_new());
+      ASSERT_TRUE(mont.get());
+      ASSERT_TRUE(BN_MONT_CTX_set(mont.get(), m.get(), ctx));
+      ASSERT_TRUE(BN_nnmod(a.get(), a.get(), m.get(), ctx));
+      std::unique_ptr<BN_ULONG[]> r_words(new BN_ULONG[m->top]),
+          a_words(new BN_ULONG[m->top]);
+      OPENSSL_memset(a_words.get(), 0, m->top * sizeof(BN_ULONG));
+      OPENSSL_memcpy(a_words.get(), a->d, a->top * sizeof(BN_ULONG));
+      ASSERT_TRUE(bn_to_montgomery_small(a_words.get(), m->top, a_words.get(),
+                                         m->top, mont.get()));
+      ASSERT_TRUE(bn_mod_exp_mont_small(r_words.get(), m->top, a_words.get(),
+                                        m->top, e->d, e->top, mont.get()));
+      ASSERT_TRUE(bn_from_montgomery_small(r_words.get(), m->top, r_words.get(),
+                                           m->top, mont.get()));
+      ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), m->top));
+      EXPECT_BIGNUMS_EQUAL("A ^ E (mod M) (Montgomery, words)", mod_exp.get(),
+                           ret.get());
+    }
+#endif
   }
 }
 
@@ -778,27 +917,27 @@ static int DecimalToBIGNUM(bssl::UniquePtr<BIGNUM> *out, const char *in) {
 TEST_F(BNTest, Dec2BN) {
   bssl::UniquePtr<BIGNUM> bn;
   int ret = DecimalToBIGNUM(&bn, "0");
-  EXPECT_EQ(1, ret);
+  ASSERT_EQ(1, ret);
   EXPECT_TRUE(BN_is_zero(bn.get()));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 
   ret = DecimalToBIGNUM(&bn, "256");
-  EXPECT_EQ(3, ret);
+  ASSERT_EQ(3, ret);
   EXPECT_TRUE(BN_is_word(bn.get(), 256));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 
   ret = DecimalToBIGNUM(&bn, "-42");
-  EXPECT_EQ(3, ret);
+  ASSERT_EQ(3, ret);
   EXPECT_TRUE(BN_abs_is_word(bn.get(), 42));
   EXPECT_TRUE(BN_is_negative(bn.get()));
 
   ret = DecimalToBIGNUM(&bn, "-0");
-  EXPECT_EQ(2, ret);
+  ASSERT_EQ(2, ret);
   EXPECT_TRUE(BN_is_zero(bn.get()));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 
   ret = DecimalToBIGNUM(&bn, "42trailing garbage is ignored");
-  EXPECT_EQ(2, ret);
+  ASSERT_EQ(2, ret);
   EXPECT_TRUE(BN_abs_is_word(bn.get(), 42));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 }
@@ -806,27 +945,27 @@ TEST_F(BNTest, Dec2BN) {
 TEST_F(BNTest, Hex2BN) {
   bssl::UniquePtr<BIGNUM> bn;
   int ret = HexToBIGNUM(&bn, "0");
-  EXPECT_EQ(1, ret);
+  ASSERT_EQ(1, ret);
   EXPECT_TRUE(BN_is_zero(bn.get()));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 
   ret = HexToBIGNUM(&bn, "256");
-  EXPECT_EQ(3, ret);
+  ASSERT_EQ(3, ret);
   EXPECT_TRUE(BN_is_word(bn.get(), 0x256));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 
   ret = HexToBIGNUM(&bn, "-42");
-  EXPECT_EQ(3, ret);
+  ASSERT_EQ(3, ret);
   EXPECT_TRUE(BN_abs_is_word(bn.get(), 0x42));
   EXPECT_TRUE(BN_is_negative(bn.get()));
 
   ret = HexToBIGNUM(&bn, "-0");
-  EXPECT_EQ(2, ret);
+  ASSERT_EQ(2, ret);
   EXPECT_TRUE(BN_is_zero(bn.get()));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 
   ret = HexToBIGNUM(&bn, "abctrailing garbage is ignored");
-  EXPECT_EQ(3, ret);
+  ASSERT_EQ(3, ret);
   EXPECT_TRUE(BN_is_word(bn.get(), 0xabc));
   EXPECT_FALSE(BN_is_negative(bn.get()));
 }
@@ -1000,16 +1139,11 @@ static const ASN1InvalidTest kASN1InvalidTests[] = {
     {"\x03\x01\x00", 3},
     // Empty contents.
     {"\x02\x00", 2},
-};
-
-// kASN1BuggyTests contains incorrect encodings and the corresponding, expected
-// results of |BN_parse_asn1_unsigned_buggy| given that input.
-static const ASN1Test kASN1BuggyTests[] = {
     // Negative numbers.
-    {"128", "\x02\x01\x80", 3},
-    {"255", "\x02\x01\xff", 3},
+    {"\x02\x01\x80", 3},
+    {"\x02\x01\xff", 3},
     // Unnecessary leading zeros.
-    {"1", "\x02\x02\x00\x01", 4},
+    {"\x02\x02\x00\x01", 4},
 };
 
 TEST_F(BNTest, ASN1) {
@@ -1036,12 +1170,6 @@ TEST_F(BNTest, ASN1) {
     ASSERT_TRUE(CBB_finish(cbb.get(), &der, &der_len));
     bssl::UniquePtr<uint8_t> delete_der(der);
     EXPECT_EQ(Bytes(test.der, test.der_len), Bytes(der, der_len));
-
-    // |BN_parse_asn1_unsigned_buggy| parses all valid input.
-    CBS_init(&cbs, reinterpret_cast<const uint8_t*>(test.der), test.der_len);
-    ASSERT_TRUE(BN_parse_asn1_unsigned_buggy(&cbs, bn2.get()));
-    EXPECT_EQ(0u, CBS_len(&cbs));
-    EXPECT_BIGNUMS_EQUAL("decode ASN.1 buggy", bn.get(), bn2.get());
   }
 
   for (const ASN1InvalidTest &test : kASN1InvalidTests) {
@@ -1053,35 +1181,6 @@ TEST_F(BNTest, ASN1) {
     EXPECT_FALSE(BN_parse_asn1_unsigned(&cbs, bn.get()))
         << "Parsed invalid input.";
     ERR_clear_error();
-
-    // All tests in kASN1InvalidTests are also rejected by
-    // |BN_parse_asn1_unsigned_buggy|.
-    CBS_init(&cbs, reinterpret_cast<const uint8_t*>(test.der), test.der_len);
-    EXPECT_FALSE(BN_parse_asn1_unsigned_buggy(&cbs, bn.get()))
-        << "Parsed invalid input.";
-    ERR_clear_error();
-  }
-
-  for (const ASN1Test &test : kASN1BuggyTests) {
-    SCOPED_TRACE(Bytes(test.der, test.der_len));
-
-    // These broken encodings are rejected by |BN_parse_asn1_unsigned|.
-    bssl::UniquePtr<BIGNUM> bn(BN_new());
-    ASSERT_TRUE(bn);
-    CBS cbs;
-    CBS_init(&cbs, reinterpret_cast<const uint8_t*>(test.der), test.der_len);
-    EXPECT_FALSE(BN_parse_asn1_unsigned(&cbs, bn.get()))
-        << "Parsed invalid input.";
-    ERR_clear_error();
-
-    // However |BN_parse_asn1_unsigned_buggy| accepts them.
-    bssl::UniquePtr<BIGNUM> bn2 = ASCIIToBIGNUM(test.value_ascii);
-    ASSERT_TRUE(bn2);
-
-    CBS_init(&cbs, reinterpret_cast<const uint8_t*>(test.der), test.der_len);
-    ASSERT_TRUE(BN_parse_asn1_unsigned_buggy(&cbs, bn.get()));
-    EXPECT_EQ(0u, CBS_len(&cbs));
-    EXPECT_BIGNUMS_EQUAL("decode ASN.1 buggy", bn2.get(), bn.get());
   }
 
   // Serializing negative numbers is not supported.
@@ -1658,3 +1757,94 @@ TEST_F(BNTest, PrimeChecking) {
                                 nullptr /* callback */));
   EXPECT_EQ(0, is_probably_prime_2);
 }
+
+#if !defined(BORINGSSL_SHARED_LIBRARY)
+TEST_F(BNTest, LessThanWords) {
+  // kTestVectors is an array of 256-bit values in sorted order.
+  static const BN_ULONG kTestVectors[][256 / BN_BITS2] = {
+      {TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0x00000001), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0x00000002), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0x0000ffff), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0x83339914), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0xfffffffe), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0xffffffff), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0xed17ac85, 0x83339914), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0xffffffff, 0xffffffff), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0x83339914), TOBN(0x00000000, 0x00000001),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff),
+       TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff),
+       TOBN(0xffffffff, 0xffffffff), TOBN(0x00000000, 0x00000000)},
+      {TOBN(0x00000000, 0x00000000), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0x00000000, 0x83339915), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0xed17ac85, 0x00000000), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0xed17ac85, 0x83339915), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0xed17ac85, 0xffffffff), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0xffffffff, 0x83339915), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0xffffffff, 0xffffffff), TOBN(0x1d6f60ba, 0x893ba84c),
+       TOBN(0x597d89b3, 0x754abe9f), TOBN(0xb504f333, 0xf9de6484)},
+      {TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000),
+       TOBN(0x00000000, 0x00000000), TOBN(0xffffffff, 0xffffffff)},
+      {TOBN(0x00000000, 0x00000000), TOBN(0x00000000, 0x00000000),
+       TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff)},
+      {TOBN(0x00000000, 0x00000001), TOBN(0x00000000, 0x00000000),
+       TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff)},
+      {TOBN(0x00000000, 0x00000000), TOBN(0xffffffff, 0xffffffff),
+       TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff)},
+      {TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff),
+       TOBN(0xffffffff, 0xffffffff), TOBN(0xffffffff, 0xffffffff)},
+  };
+
+  // Determine where the single-word values stop.
+  size_t one_word;
+  for (one_word = 0; one_word < OPENSSL_ARRAY_SIZE(kTestVectors); one_word++) {
+    int is_word = 1;
+    for (size_t i = 1; i < OPENSSL_ARRAY_SIZE(kTestVectors[one_word]); i++) {
+      if (kTestVectors[one_word][i] != 0) {
+        is_word = 0;
+        break;
+      }
+    }
+    if (!is_word) {
+      break;
+    }
+  }
+
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kTestVectors); i++) {
+    SCOPED_TRACE(i);
+    for (size_t j = 0; j < OPENSSL_ARRAY_SIZE(kTestVectors); j++) {
+      SCOPED_TRACE(j);
+      EXPECT_EQ(i < j ? 1 : 0,
+                bn_less_than_words(kTestVectors[i], kTestVectors[j],
+                                   OPENSSL_ARRAY_SIZE(kTestVectors[i])));
+      for (size_t k = 0; k < one_word; k++) {
+        SCOPED_TRACE(k);
+        EXPECT_EQ(k <= i && i < j ? 1 : 0,
+                  bn_in_range_words(kTestVectors[i], kTestVectors[k][0],
+                                    kTestVectors[j],
+                                    OPENSSL_ARRAY_SIZE(kTestVectors[i])));
+      }
+    }
+  }
+
+  EXPECT_EQ(0, bn_less_than_words(NULL, NULL, 0));
+  EXPECT_EQ(0, bn_in_range_words(NULL, 0, NULL, 0));
+}
+#endif  // !BORINGSSL_SHARED_LIBRARY

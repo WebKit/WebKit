@@ -8,18 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/videotrack.h"
-
 #include <string>
+
+#include "pc/videotrack.h"
+#include "rtc_base/refcountedobject.h"
 
 namespace webrtc {
 
 VideoTrack::VideoTrack(const std::string& label,
-                       VideoTrackSourceInterface* video_source)
+                       VideoTrackSourceInterface* video_source,
+                       rtc::Thread* worker_thread)
     : MediaStreamTrack<VideoTrackInterface>(label),
+      worker_thread_(worker_thread),
       video_source_(video_source),
       content_hint_(ContentHint::kNone) {
-  worker_thread_checker_.DetachFromThread();
   video_source_->RegisterObserver(this);
 }
 
@@ -35,7 +37,7 @@ std::string VideoTrack::kind() const {
 // thread.
 void VideoTrack::AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
                                  const rtc::VideoSinkWants& wants) {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(worker_thread_->IsCurrent());
   VideoSourceBase::AddOrUpdateSink(sink, wants);
   rtc::VideoSinkWants modified_wants = wants;
   modified_wants.black_frames = !enabled();
@@ -43,7 +45,7 @@ void VideoTrack::AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
 }
 
 void VideoTrack::RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  RTC_DCHECK(worker_thread_->IsCurrent());
   VideoSourceBase::RemoveSink(sink);
   video_source_->RemoveSink(sink);
 }
@@ -63,13 +65,14 @@ void VideoTrack::set_content_hint(ContentHint hint) {
 
 bool VideoTrack::set_enabled(bool enable) {
   RTC_DCHECK(signaling_thread_checker_.CalledOnValidThread());
-  for (auto& sink_pair : sink_pairs()) {
-    rtc::VideoSinkWants modified_wants = sink_pair.wants;
-    modified_wants.black_frames = !enable;
-    // video_source_ is a proxy object, marshalling the call to the
-    // worker thread.
-    video_source_->AddOrUpdateSink(sink_pair.sink, modified_wants);
-  }
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [enable, this] {
+    RTC_DCHECK(worker_thread_->IsCurrent());
+    for (auto& sink_pair : sink_pairs()) {
+      rtc::VideoSinkWants modified_wants = sink_pair.wants;
+      modified_wants.black_frames = !enable;
+      video_source_->AddOrUpdateSink(sink_pair.sink, modified_wants);
+    }
+  });
   return MediaStreamTrack<VideoTrackInterface>::set_enabled(enable);
 }
 
@@ -84,9 +87,10 @@ void VideoTrack::OnChanged() {
 
 rtc::scoped_refptr<VideoTrack> VideoTrack::Create(
     const std::string& id,
-    VideoTrackSourceInterface* source) {
+    VideoTrackSourceInterface* source,
+    rtc::Thread* worker_thread) {
   rtc::RefCountedObject<VideoTrack>* track =
-      new rtc::RefCountedObject<VideoTrack>(id, source);
+      new rtc::RefCountedObject<VideoTrack>(id, source, worker_thread);
   return track;
 }
 

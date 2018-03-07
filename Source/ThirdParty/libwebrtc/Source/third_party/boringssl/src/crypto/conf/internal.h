@@ -20,12 +20,12 @@ extern "C" {
 #endif
 
 
-/* CONF_VALUE_new returns a freshly allocated and zeroed |CONF_VALUE|. */
+// CONF_VALUE_new returns a freshly allocated and zeroed |CONF_VALUE|.
 CONF_VALUE *CONF_VALUE_new(void);
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_CRYPTO_CONF_INTERNAL_H */
+#endif  // OPENSSL_HEADER_CRYPTO_CONF_INTERNAL_H

@@ -46,9 +46,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
 
-/* Per C99, various stdint.h and inttypes.h macros (the latter used by
- * internal.h) are unavailable in C++ unless some macros are defined. C++11
- * overruled this decision, but older Android NDKs still require it. */
+// Per C99, various stdint.h and inttypes.h macros (the latter used by
+// internal.h) are unavailable in C++ unless some macros are defined. C++11
+// overruled this decision, but older Android NDKs still require it.
 #if !defined(__STDC_CONSTANT_MACROS)
 #define __STDC_CONSTANT_MACROS
 #endif

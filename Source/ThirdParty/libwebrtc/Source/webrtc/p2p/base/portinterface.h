@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_PORTINTERFACE_H_
-#define WEBRTC_P2P_BASE_PORTINTERFACE_H_
+#ifndef P2P_BASE_PORTINTERFACE_H_
+#define P2P_BASE_PORTINTERFACE_H_
 
 #include <string>
 
-#include "webrtc/base/asyncpacketsocket.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/p2p/base/jseptransport.h"
+#include "p2p/base/jseptransport.h"
+#include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/socketaddress.h"
 
 namespace rtc {
 class Network;
@@ -40,7 +40,7 @@ enum ProtocolType {
 // the other client. Various types of ports will implement this interface.
 class PortInterface {
  public:
-  virtual ~PortInterface() {}
+  virtual ~PortInterface();
 
   virtual const std::string& Type() const = 0;
   virtual rtc::Network* Network() const = 0;
@@ -124,9 +124,9 @@ class PortInterface {
   virtual std::string ToString() const = 0;
 
  protected:
-  PortInterface() {}
+  PortInterface();
 };
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_PORTINTERFACE_H_
+#endif  // P2P_BASE_PORTINTERFACE_H_

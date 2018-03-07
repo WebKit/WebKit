@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/fakemetricsobserver.h"
-#include "webrtc/base/checks.h"
+#include "api/fakemetricsobserver.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

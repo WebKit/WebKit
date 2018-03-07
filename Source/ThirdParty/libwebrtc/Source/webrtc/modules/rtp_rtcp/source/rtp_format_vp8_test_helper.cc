@@ -9,9 +9,9 @@
  */
 
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_format_vp8_test_helper.h"
+#include "modules/rtp_rtcp/source/rtp_format_vp8_test_helper.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -158,17 +158,11 @@ void RtpFormatVp8TestHelper::CheckPictureID() {
   auto buffer = packet_.payload();
   if (hdr_info_->pictureId != kNoPictureId) {
     EXPECT_BIT_I_EQ(buffer[1], 1);
-    if (hdr_info_->pictureId > 0x7F) {
-      EXPECT_BIT_EQ(buffer[payload_start_], 7, 1);
-      EXPECT_EQ(buffer[payload_start_] & 0x7F,
-                (hdr_info_->pictureId >> 8) & 0x7F);
-      EXPECT_EQ(buffer[payload_start_ + 1], hdr_info_->pictureId & 0xFF);
-      payload_start_ += 2;
-    } else {
-      EXPECT_BIT_EQ(buffer[payload_start_], 7, 0);
-      EXPECT_EQ(buffer[payload_start_] & 0x7F, (hdr_info_->pictureId) & 0x7F);
-      payload_start_ += 1;
-    }
+    EXPECT_BIT_EQ(buffer[payload_start_], 7, 1);
+    EXPECT_EQ(buffer[payload_start_] & 0x7F,
+              (hdr_info_->pictureId >> 8) & 0x7F);
+    EXPECT_EQ(buffer[payload_start_ + 1], hdr_info_->pictureId & 0xFF);
+    payload_start_ += 2;
   } else {
     EXPECT_BIT_I_EQ(buffer[1], 0);
   }

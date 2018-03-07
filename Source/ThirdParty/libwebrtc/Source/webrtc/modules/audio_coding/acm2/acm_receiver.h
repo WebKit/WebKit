@@ -8,25 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_
-#define WEBRTC_MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_
+#ifndef MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_
+#define MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/common_audio/vad/include/webrtc_vad.h"
-#include "webrtc/modules/audio_coding/acm2/acm_resampler.h"
-#include "webrtc/modules/audio_coding/acm2/call_statistics.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/modules/audio_coding/neteq/include/neteq.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "api/array_view.h"
+#include "api/optional.h"
+#include "common_audio/vad/include/webrtc_vad.h"
+#include "modules/audio_coding/acm2/acm_resampler.h"
+#include "modules/audio_coding/acm2/call_statistics.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/neteq/include/neteq.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_annotations.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -269,26 +269,26 @@ class AcmReceiver {
     int sample_rate_hz;
   };
 
-  const rtc::Optional<CodecInst> RtpHeaderToDecoder(
-      const RTPHeader& rtp_header,
-      uint8_t first_payload_byte) const EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  const rtc::Optional<CodecInst> RtpHeaderToDecoder(const RTPHeader& rtp_header,
+                                                    uint8_t first_payload_byte)
+      const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   uint32_t NowInTimestamp(int decoder_sampling_rate) const;
 
   rtc::CriticalSection crit_sect_;
-  rtc::Optional<CodecInst> last_audio_decoder_ GUARDED_BY(crit_sect_);
-  rtc::Optional<SdpAudioFormat> last_audio_format_ GUARDED_BY(crit_sect_);
-  ACMResampler resampler_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<int16_t[]> last_audio_buffer_ GUARDED_BY(crit_sect_);
-  CallStatistics call_stats_ GUARDED_BY(crit_sect_);
+  rtc::Optional<CodecInst> last_audio_decoder_ RTC_GUARDED_BY(crit_sect_);
+  rtc::Optional<SdpAudioFormat> last_audio_format_ RTC_GUARDED_BY(crit_sect_);
+  ACMResampler resampler_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<int16_t[]> last_audio_buffer_ RTC_GUARDED_BY(crit_sect_);
+  CallStatistics call_stats_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<NetEq> neteq_;  // NetEq is thread-safe; no lock needed.
   const Clock* const clock_;
-  bool resampled_last_output_frame_ GUARDED_BY(crit_sect_);
-  rtc::Optional<int> last_packet_sample_rate_hz_ GUARDED_BY(crit_sect_);
+  bool resampled_last_output_frame_ RTC_GUARDED_BY(crit_sect_);
+  rtc::Optional<int> last_packet_sample_rate_hz_ RTC_GUARDED_BY(crit_sect_);
 };
 
 }  // namespace acm2
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_
+#endif  // MODULES_AUDIO_CODING_ACM2_ACM_RECEIVER_H_

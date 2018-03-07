@@ -20,7 +20,7 @@
 #include "internal.h"
 
 
-/* Ed25519 has no parameters to copy. */
+// Ed25519 has no parameters to copy.
 static int pkey_ed25519_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) { return 1; }
 
 static int pkey_ed25519_sign_message(EVP_PKEY_CTX *ctx, uint8_t *sig,

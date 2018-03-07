@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/jsepicecandidate.h"
+#include "api/jsepicecandidate.h"
 
 #include <vector>
 
-#include "webrtc/base/stringencode.h"
-#include "webrtc/pc/webrtcsdp.h"
+#include "pc/webrtcsdp.h"
+#include "rtc_base/stringencode.h"
 
 namespace webrtc {
 

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_CONGESTION_CONTROLLER_CONGESTION_CONTROLLER_UNITTESTS_HELPER_H_
-#define WEBRTC_MODULES_CONGESTION_CONTROLLER_CONGESTION_CONTROLLER_UNITTESTS_HELPER_H_
+#ifndef MODULES_CONGESTION_CONTROLLER_CONGESTION_CONTROLLER_UNITTESTS_HELPER_H_
+#define MODULES_CONGESTION_CONTROLLER_CONGESTION_CONTROLLER_UNITTESTS_HELPER_H_
 
 #include <vector>
 
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 void ComparePacketFeedbackVectors(const std::vector<PacketFeedback>& truth,
                                   const std::vector<PacketFeedback>& input);
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_CONGESTION_CONTROLLER_CONGESTION_CONTROLLER_UNITTESTS_HELPER_H_
+#endif  // MODULES_CONGESTION_CONTROLLER_CONGESTION_CONTROLLER_UNITTESTS_HELPER_H_

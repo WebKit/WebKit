@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 
 #if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
 
@@ -18,9 +18,9 @@
 #include <algorithm>
 #include <sstream>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/format_macros.h"
-#include "webrtc/base/platform_thread.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/format_macros.h"
+#include "rtc_base/platform_thread.h"
 
 namespace webrtc {
 namespace testing {

@@ -299,7 +299,8 @@ int X509_ocspid_print(BIO *bp, X509 *x)
     return (0);
 }
 
-int X509_signature_print(BIO *bp, X509_ALGOR *sigalg, ASN1_STRING *sig)
+int X509_signature_print(BIO *bp, const X509_ALGOR *sigalg,
+                         const ASN1_STRING *sig)
 {
     if (BIO_puts(bp, "    Signature Algorithm: ") <= 0)
         return 0;

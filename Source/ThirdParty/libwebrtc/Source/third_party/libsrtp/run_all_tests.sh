@@ -16,6 +16,7 @@ run_all_tests() {
     ./replay_driver -v &&
     ./roc_driver -v &&
     ./srtp_driver -v &&
+    ./test_srtp -v &&
     ./rtpw_test.sh &&
     ./rtpw_test_gcm.sh
 }

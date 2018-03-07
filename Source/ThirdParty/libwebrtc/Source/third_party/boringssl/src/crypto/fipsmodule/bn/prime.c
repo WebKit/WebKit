@@ -113,13 +113,13 @@
 
 #include "internal.h"
 
-/* The quick sieve algorithm approach to weeding out primes is Philip
- * Zimmermann's, as implemented in PGP.  I have had a read of his comments and
- * implemented my own version. */
+// The quick sieve algorithm approach to weeding out primes is Philip
+// Zimmermann's, as implemented in PGP.  I have had a read of his comments and
+// implemented my own version.
 
 #define NUMPRIMES 2048
 
-/* primes contains all the primes that fit into a uint16_t. */
+// primes contains all the primes that fit into a uint16_t.
 static const uint16_t primes[NUMPRIMES] = {
     2,     3,     5,     7,     11,    13,    17,    19,    23,    29,    31,
     37,    41,    43,    47,    53,    59,    61,    67,    71,    73,    79,
@@ -310,12 +310,12 @@ static const uint16_t primes[NUMPRIMES] = {
     17851, 17863,
 };
 
-/* BN_prime_checks_for_size returns the number of Miller-Rabin iterations
- * necessary for a 'bits'-bit prime, in order to maintain an error rate greater
- * than the security level for an RSA prime of that many bits (calculated using
- * the FIPS SP 800-57 security level and 186-4 Section F.1; original paper:
- * Damgaard, Landrock, Pomerance: Average case error estimates for the strong
- * probable prime test. -- Math. Comp. 61 (1993) 177-194) */
+// BN_prime_checks_for_size returns the number of Miller-Rabin iterations
+// necessary for a 'bits'-bit prime, in order to maintain an error rate greater
+// than the security level for an RSA prime of that many bits (calculated using
+// the FIPS SP 800-57 security level and 186-4 Section F.1; original paper:
+// Damgaard, Landrock, Pomerance: Average case error estimates for the strong
+// probable prime test. -- Math. Comp. 61 (1993) 177-194)
 static int BN_prime_checks_for_size(int bits) {
   if (bits >= 3747) {
     return 3;
@@ -371,11 +371,11 @@ int BN_generate_prime_ex(BIGNUM *ret, int bits, int safe, const BIGNUM *add,
   int checks = BN_prime_checks_for_size(bits);
 
   if (bits < 2) {
-    /* There are no prime numbers this small. */
+    // There are no prime numbers this small.
     OPENSSL_PUT_ERROR(BN, BN_R_BITS_TOO_SMALL);
     return 0;
   } else if (bits == 2 && safe) {
-    /* The smallest safe prime (7) is three bits. */
+    // The smallest safe prime (7) is three bits.
     OPENSSL_PUT_ERROR(BN, BN_R_BITS_TOO_SMALL);
     return 0;
   }
@@ -391,7 +391,7 @@ int BN_generate_prime_ex(BIGNUM *ret, int bits, int safe, const BIGNUM *add,
   }
 
 loop:
-  /* make a random number and set the top and bottom bits */
+  // make a random number and set the top and bottom bits
   if (add == NULL) {
     if (!probable_prime(ret, bits)) {
       goto err;
@@ -409,7 +409,7 @@ loop:
   }
 
   if (!BN_GENCB_call(cb, BN_GENCB_GENERATED, c1++)) {
-    /* aborted */
+    // aborted
     goto err;
   }
 
@@ -421,8 +421,8 @@ loop:
       goto loop;
     }
   } else {
-    /* for "safe prime" generation, check that (p-1)/2 is prime. Since a prime
-     * is odd, We just need to divide by 2 */
+    // for "safe prime" generation, check that (p-1)/2 is prime. Since a prime
+    // is odd, We just need to divide by 2
     if (!BN_rshift1(t, ret)) {
       goto err;
     }
@@ -445,11 +445,11 @@ loop:
       if (!BN_GENCB_call(cb, i, c1 - 1)) {
         goto err;
       }
-      /* We have a safe prime test pass */
+      // We have a safe prime test pass
     }
   }
 
-  /* we have a prime :-) */
+  // we have a prime :-)
   found = 1;
 
 err:
@@ -487,13 +487,13 @@ int BN_is_prime_fasttest_ex(const BIGNUM *a, int checks, BN_CTX *ctx,
     return 0;
   }
 
-  /* first look for small factors */
+  // first look for small factors
   if (!BN_is_odd(a)) {
-    /* a is even => a is prime if and only if a == 2 */
+    // a is even => a is prime if and only if a == 2
     return BN_is_word(a, 2);
   }
 
-  /* Enhanced Miller-Rabin does not work for three. */
+  // Enhanced Miller-Rabin does not work for three.
   if (BN_is_word(a, 3)) {
     return 1;
   }
@@ -539,7 +539,7 @@ err:
 int BN_enhanced_miller_rabin_primality_test(
     enum bn_primality_result_t *out_result, const BIGNUM *w, int iterations,
     BN_CTX *ctx, BN_GENCB *cb) {
-  /* Enhanced Miller-Rabin is only valid on odd integers greater than 3. */
+  // Enhanced Miller-Rabin is only valid on odd integers greater than 3.
   if (!BN_is_odd(w) || BN_cmp_word(w, 3) <= 0) {
     OPENSSL_PUT_ERROR(BN, BN_R_INVALID_INPUT);
     return 0;
@@ -561,7 +561,7 @@ int BN_enhanced_miller_rabin_primality_test(
     goto err;
   }
 
-  /* Write w1 as m*2^a (Steps 1 and 2). */
+  // Write w1 as m*2^a (Steps 1 and 2).
   int a = 0;
   while (!BN_is_bit_set(w1, a)) {
     a++;
@@ -585,22 +585,22 @@ int BN_enhanced_miller_rabin_primality_test(
     goto err;
   }
 
-  /* Montgomery setup for computations mod A */
+  // Montgomery setup for computations mod A
   mont = BN_MONT_CTX_new();
   if (mont == NULL ||
       !BN_MONT_CTX_set(mont, w, ctx)) {
     goto err;
   }
 
-  /* The following loop performs in inner iteration of the Enhanced Miller-Rabin
-   * Primality test (Step 4). */
+  // The following loop performs in inner iteration of the Enhanced Miller-Rabin
+  // Primality test (Step 4).
   for (int i = 1; i <= iterations; i++) {
-    /* Step 4.1-4.2 */
+    // Step 4.1-4.2
     if (!BN_rand_range_ex(b, 2, w1)) {
       goto err;
     }
 
-    /* Step 4.3-4.4 */
+    // Step 4.3-4.4
     if (!BN_gcd(g, b, w, ctx)) {
       goto err;
     }
@@ -610,17 +610,17 @@ int BN_enhanced_miller_rabin_primality_test(
       goto err;
     }
 
-    /* Step 4.5 */
+    // Step 4.5
     if (!BN_mod_exp_mont(z, b, m, w, ctx, mont)) {
       goto err;
     }
 
-    /* Step 4.6 */
+    // Step 4.6
     if (BN_is_one(z) || BN_cmp(z, w1) == 0) {
       goto loop;
     }
 
-    /* Step 4.7 */
+    // Step 4.7
     for (int j = 1; j < a; j++) {
       if (!BN_copy(x, z) || !BN_mod_mul(z, x, x, w, ctx)) {
         goto err;
@@ -633,18 +633,18 @@ int BN_enhanced_miller_rabin_primality_test(
       }
     }
 
-    /* Step 4.8-4.9 */
+    // Step 4.8-4.9
     if (!BN_copy(x, z) || !BN_mod_mul(z, x, x, w, ctx)) {
       goto err;
     }
 
-    /* Step 4.10-4.11 */
+    // Step 4.10-4.11
     if (!BN_is_one(z) && !BN_copy(x, z)) {
       goto err;
     }
 
  composite:
-    /* Step 4.12-4.14 */
+    // Step 4.12-4.14
     if (!BN_copy(x1, x) ||
         !BN_sub_word(x1, 1) ||
         !BN_gcd(g, x1, w, ctx)) {
@@ -660,7 +660,7 @@ int BN_enhanced_miller_rabin_primality_test(
     goto err;
 
  loop:
-    /* Step 4.15 */
+    // Step 4.15
     if (!BN_GENCB_call(cb, 1, i)) {
       goto err;
     }
@@ -688,7 +688,7 @@ again:
     return 0;
   }
 
-  /* we now have a random number 'rnd' to test. */
+  // we now have a random number 'rnd' to test.
   for (i = 1; i < NUMPRIMES; i++) {
     BN_ULONG mod = BN_mod_word(rnd, (BN_ULONG)primes[i]);
     if (mod == (BN_ULONG)-1) {
@@ -696,12 +696,12 @@ again:
     }
     mods[i] = (uint16_t)mod;
   }
-  /* If bits is so small that it fits into a single word then we
-   * additionally don't want to exceed that many bits. */
+  // If bits is so small that it fits into a single word then we
+  // additionally don't want to exceed that many bits.
   if (is_single_word) {
     BN_ULONG size_limit;
     if (bits == BN_BITS2) {
-      /* Avoid undefined behavior. */
+      // Avoid undefined behavior.
       size_limit = ~((BN_ULONG)0) - BN_get_word(rnd);
     } else {
       size_limit = (((BN_ULONG)1) << bits) - BN_get_word(rnd) - 1;
@@ -716,15 +716,15 @@ loop:
   if (is_single_word) {
     BN_ULONG rnd_word = BN_get_word(rnd);
 
-    /* In the case that the candidate prime is a single word then
-     * we check that:
-     *   1) It's greater than primes[i] because we shouldn't reject
-     *      3 as being a prime number because it's a multiple of
-     *      three.
-     *   2) That it's not a multiple of a known prime. We don't
-     *      check that rnd-1 is also coprime to all the known
-     *      primes because there aren't many small primes where
-     *      that's true. */
+    // In the case that the candidate prime is a single word then
+    // we check that:
+    //   1) It's greater than primes[i] because we shouldn't reject
+    //      3 as being a prime number because it's a multiple of
+    //      three.
+    //   2) That it's not a multiple of a known prime. We don't
+    //      check that rnd-1 is also coprime to all the known
+    //      primes because there aren't many small primes where
+    //      that's true.
     for (i = 1; i < NUMPRIMES && primes[i] < rnd_word; i++) {
       if ((mods[i] + delta) % primes[i] == 0) {
         delta += 2;
@@ -736,8 +736,8 @@ loop:
     }
   } else {
     for (i = 1; i < NUMPRIMES; i++) {
-      /* check that rnd is not a prime and also
-       * that gcd(rnd-1,primes) == 1 (except for 2) */
+      // check that rnd is not a prime and also
+      // that gcd(rnd-1,primes) == 1 (except for 2)
       if (((mods[i] + delta) % primes[i]) <= 1) {
         delta += 2;
         if (delta > maxdelta) {
@@ -772,7 +772,7 @@ static int probable_prime_dh(BIGNUM *rnd, int bits, const BIGNUM *add,
     goto err;
   }
 
-  /* we need ((rnd-rem) % add) == 0 */
+  // we need ((rnd-rem) % add) == 0
 
   if (!BN_mod(t1, rnd, add, ctx)) {
     goto err;
@@ -789,11 +789,11 @@ static int probable_prime_dh(BIGNUM *rnd, int bits, const BIGNUM *add,
       goto err;
     }
   }
-  /* we now have a random number 'rand' to test. */
+  // we now have a random number 'rand' to test.
 
 loop:
   for (i = 1; i < NUMPRIMES; i++) {
-    /* check that rnd is a prime */
+    // check that rnd is a prime
     BN_ULONG mod = BN_mod_word(rnd, (BN_ULONG)primes[i]);
     if (mod == (BN_ULONG)-1) {
       goto err;
@@ -835,7 +835,7 @@ static int probable_prime_dh_safe(BIGNUM *p, int bits, const BIGNUM *padd,
     goto err;
   }
 
-  /* we need ((rnd-rem) % add) == 0 */
+  // we need ((rnd-rem) % add) == 0
   if (!BN_mod(t1, q, qadd, ctx)) {
     goto err;
   }
@@ -857,7 +857,7 @@ static int probable_prime_dh_safe(BIGNUM *p, int bits, const BIGNUM *padd,
     }
   }
 
-  /* we now have a random number 'rand' to test. */
+  // we now have a random number 'rand' to test.
   if (!BN_lshift1(p, q)) {
     goto err;
   }
@@ -867,9 +867,9 @@ static int probable_prime_dh_safe(BIGNUM *p, int bits, const BIGNUM *padd,
 
 loop:
   for (i = 1; i < NUMPRIMES; i++) {
-    /* check that p and q are prime */
-    /* check that for p and q
-     * gcd(p-1,primes) == 1 (except for 2) */
+    // check that p and q are prime
+    // check that for p and q
+    // gcd(p-1,primes) == 1 (except for 2)
     BN_ULONG pmod = BN_mod_word(p, (BN_ULONG)primes[i]);
     BN_ULONG qmod = BN_mod_word(q, (BN_ULONG)primes[i]);
     if (pmod == (BN_ULONG)-1 || qmod == (BN_ULONG)-1) {

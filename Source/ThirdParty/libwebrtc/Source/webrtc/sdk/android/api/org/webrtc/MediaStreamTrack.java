@@ -15,9 +15,31 @@ public class MediaStreamTrack {
   /** Tracks MediaStreamTrackInterface.TrackState */
   public enum State { LIVE, ENDED }
 
+  // Must be kept in sync with cricket::MediaType.
   public enum MediaType {
-    MEDIA_TYPE_AUDIO,
-    MEDIA_TYPE_VIDEO,
+    MEDIA_TYPE_AUDIO(0),
+    MEDIA_TYPE_VIDEO(1);
+
+    private final int nativeIndex;
+
+    private MediaType(int nativeIndex) {
+      this.nativeIndex = nativeIndex;
+    }
+
+    @CalledByNative("MediaType")
+    int getNative() {
+      return nativeIndex;
+    }
+
+    @CalledByNative("MediaType")
+    static MediaType fromNativeIndex(int nativeIndex) {
+      for (MediaType type : MediaType.values()) {
+        if (type.getNative() == nativeIndex) {
+          return type;
+        }
+      }
+      throw new IllegalArgumentException("Unknown native media type: " + nativeIndex);
+    }
   }
 
   final long nativeTrack;
@@ -27,38 +49,36 @@ public class MediaStreamTrack {
   }
 
   public String id() {
-    return nativeId(nativeTrack);
+    return getNativeId(nativeTrack);
   }
 
   public String kind() {
-    return nativeKind(nativeTrack);
+    return getNativeKind(nativeTrack);
   }
 
   public boolean enabled() {
-    return nativeEnabled(nativeTrack);
+    return getNativeEnabled(nativeTrack);
   }
 
   public boolean setEnabled(boolean enable) {
-    return nativeSetEnabled(nativeTrack, enable);
+    return setNativeEnabled(nativeTrack, enable);
   }
 
   public State state() {
-    return nativeState(nativeTrack);
+    return getNativeState(nativeTrack);
   }
 
   public void dispose() {
-    free(nativeTrack);
+    JniCommon.nativeReleaseRef(nativeTrack);
   }
 
-  private static native String nativeId(long nativeTrack);
+  private static native String getNativeId(long nativeTrack);
 
-  private static native String nativeKind(long nativeTrack);
+  private static native String getNativeKind(long nativeTrack);
 
-  private static native boolean nativeEnabled(long nativeTrack);
+  private static native boolean getNativeEnabled(long nativeTrack);
 
-  private static native boolean nativeSetEnabled(long nativeTrack, boolean enabled);
+  private static native boolean setNativeEnabled(long nativeTrack, boolean enabled);
 
-  private static native State nativeState(long nativeTrack);
-
-  private static native void free(long nativeTrack);
+  private static native State getNativeState(long nativeTrack);
 }

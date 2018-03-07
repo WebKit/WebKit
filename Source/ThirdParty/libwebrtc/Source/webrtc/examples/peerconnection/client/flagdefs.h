@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
-#define WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
+#ifndef EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
+#define EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
 
-#include "webrtc/base/flags.h"
+#include "rtc_base/flags.h"
 
 extern const uint16_t kDefaultServerPort;  // From defaults.[h|cc]
 
@@ -29,4 +29,4 @@ DEFINE_bool(autocall, false, "Call the first available other client on "
   "the server without user intervention.  Note: this flag should only be set "
   "to true on one of the two clients.");
 
-#endif  // WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_
+#endif  // EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_

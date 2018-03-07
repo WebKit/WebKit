@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/overuse_estimator.h"
+#include "modules/remote_bitrate_estimator/overuse_estimator.h"
 
 #include <assert.h>
 #include <math.h>
@@ -17,9 +17,9 @@
 
 #include <algorithm>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -113,8 +113,9 @@ void OveruseEstimator::Update(int64_t t_delta,
       E_[0][0] * E_[1][1] - E_[0][1] * E_[1][0] >= 0 && E_[0][0] >= 0;
   assert(positive_semi_definite);
   if (!positive_semi_definite) {
-    LOG(LS_ERROR) << "The over-use estimator's covariance matrix is no longer "
-                     "semi-definite.";
+    RTC_LOG(LS_ERROR)
+        << "The over-use estimator's covariance matrix is no longer "
+           "semi-definite.";
   }
 
   slope_ = slope_ + K[0] * residual;

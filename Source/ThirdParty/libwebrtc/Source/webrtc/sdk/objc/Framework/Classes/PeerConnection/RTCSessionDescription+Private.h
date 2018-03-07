@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCSessionDescription.h"
 
-#include "webrtc/api/jsep.h"
+#include "api/jsep.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_VIDEO_CAPTURE_LINUX_H_
-#define WEBRTC_MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_VIDEO_CAPTURE_LINUX_H_
+#ifndef MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_VIDEO_CAPTURE_LINUX_H_
+#define MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_VIDEO_CAPTURE_LINUX_H_
 
 #include <memory>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/platform_thread.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/video_capture/video_capture_impl.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/video_capture/video_capture_impl.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/platform_thread.h"
 
 namespace webrtc
 {
@@ -64,4 +64,4 @@ private:
 }  // namespace videocapturemodule
 }  // namespace webrtc
 
-#endif // WEBRTC_MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_VIDEO_CAPTURE_LINUX_H_
+#endif // MODULES_VIDEO_CAPTURE_MAIN_SOURCE_LINUX_VIDEO_CAPTURE_LINUX_H_

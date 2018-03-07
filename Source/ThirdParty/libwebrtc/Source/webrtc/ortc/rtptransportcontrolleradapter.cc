@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/ortc/rtptransportcontrolleradapter.h"
+#include "ortc/rtptransportcontrolleradapter.h"
 
 #include <algorithm>  // For "remove", "find".
 #include <set>
@@ -16,13 +16,14 @@
 #include <unordered_map>
 #include <utility>  // For std::move.
 
-#include "webrtc/api/proxy.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/ortc/ortcrtpreceiveradapter.h"
-#include "webrtc/ortc/ortcrtpsenderadapter.h"
-#include "webrtc/ortc/rtpparametersconversion.h"
-#include "webrtc/ortc/rtptransportadapter.h"
+#include "api/proxy.h"
+#include "media/base/mediaconstants.h"
+#include "ortc/ortcrtpreceiveradapter.h"
+#include "ortc/ortcrtpsenderadapter.h"
+#include "ortc/rtpparametersconversion.h"
+#include "ortc/rtptransportadapter.h"
+#include "pc/rtpmediautils.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -107,7 +108,7 @@ RtpTransportControllerAdapter::CreateProxied(
 RtpTransportControllerAdapter::~RtpTransportControllerAdapter() {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   if (!transport_proxies_.empty()) {
-    LOG(LS_ERROR)
+    RTC_LOG(LS_ERROR)
         << "Destroying RtpTransportControllerAdapter while RtpTransports "
            "are still using it; this is unsafe.";
   }
@@ -129,11 +130,16 @@ RtpTransportControllerAdapter::~RtpTransportControllerAdapter() {
 
 RTCErrorOr<std::unique_ptr<RtpTransportInterface>>
 RtpTransportControllerAdapter::CreateProxiedRtpTransport(
-    const RtcpParameters& rtcp_parameters,
+    const RtpTransportParameters& parameters,
     PacketTransportInterface* rtp,
     PacketTransportInterface* rtcp) {
-  auto result =
-      RtpTransportAdapter::CreateProxied(rtcp_parameters, rtp, rtcp, this);
+  if (!transport_proxies_.empty() && (parameters.keepalive != keepalive_)) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_MODIFICATION,
+                         "Cannot create RtpTransport with different keep-alive "
+                         "from the RtpTransports already associated with this "
+                         "transport controller.");
+  }
+  auto result = RtpTransportAdapter::CreateProxied(parameters, rtp, rtcp, this);
   if (result.ok()) {
     transport_proxies_.push_back(result.value().get());
     transport_proxies_.back()->GetInternal()->SignalDestroyed.connect(
@@ -144,11 +150,11 @@ RtpTransportControllerAdapter::CreateProxiedRtpTransport(
 
 RTCErrorOr<std::unique_ptr<SrtpTransportInterface>>
 RtpTransportControllerAdapter::CreateProxiedSrtpTransport(
-    const RtcpParameters& rtcp_parameters,
+    const RtpTransportParameters& parameters,
     PacketTransportInterface* rtp,
     PacketTransportInterface* rtcp) {
   auto result =
-      RtpTransportAdapter::CreateSrtpProxied(rtcp_parameters, rtp, rtcp, this);
+      RtpTransportAdapter::CreateSrtpProxied(parameters, rtp, rtcp, this);
   if (result.ok()) {
     transport_proxies_.push_back(result.value().get());
     transport_proxies_.back()->GetInternal()->SignalDestroyed.connect(
@@ -219,12 +225,26 @@ RtpTransportControllerAdapter::GetTransports() const {
   return transport_proxies_;
 }
 
-RTCError RtpTransportControllerAdapter::SetRtcpParameters(
-    const RtcpParameters& parameters,
+RTCError RtpTransportControllerAdapter::SetRtpTransportParameters(
+    const RtpTransportParameters& parameters,
     RtpTransportInterface* inner_transport) {
+  if ((video_channel_ != nullptr || voice_channel_ != nullptr) &&
+      (parameters.keepalive != keepalive_)) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_MODIFICATION,
+                         "Cannot change keep-alive settings after creating "
+                         "media streams or additional transports for the same "
+                         "transport controller.");
+  }
+  // Call must be configured on the worker thread.
+  worker_thread_->Invoke<void>(
+      RTC_FROM_HERE,
+      rtc::Bind(&RtpTransportControllerAdapter::SetRtpTransportParameters_w,
+                this, parameters));
+
   do {
     if (inner_transport == inner_audio_transport_) {
-      CopyRtcpParametersToDescriptions(parameters, &local_audio_description_,
+      CopyRtcpParametersToDescriptions(parameters.rtcp,
+                                       &local_audio_description_,
                                        &remote_audio_description_);
       if (!voice_channel_->SetLocalContent(&local_audio_description_,
                                            cricket::CA_OFFER, nullptr)) {
@@ -235,7 +255,8 @@ RTCError RtpTransportControllerAdapter::SetRtcpParameters(
         break;
       }
     } else if (inner_transport == inner_video_transport_) {
-      CopyRtcpParametersToDescriptions(parameters, &local_video_description_,
+      CopyRtcpParametersToDescriptions(parameters.rtcp,
+                                       &local_video_description_,
                                        &remote_video_description_);
       if (!video_channel_->SetLocalContent(&local_video_description_,
                                            cricket::CA_OFFER, nullptr)) {
@@ -250,6 +271,11 @@ RTCError RtpTransportControllerAdapter::SetRtcpParameters(
   } while (false);
   LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                        "Failed to apply new RTCP parameters.");
+}
+
+void RtpTransportControllerAdapter::SetRtpTransportParameters_w(
+    const RtpTransportParameters& parameters) {
+  call_send_rtp_transport_controller_->SetKeepAliveConfig(parameters.keepalive);
 }
 
 RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioSenderParameters(
@@ -270,7 +296,7 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioSenderParameters(
   }
 
   auto stream_params_result = MakeSendStreamParamsVec(
-      parameters.encodings, inner_audio_transport_->GetRtcpParameters().cname,
+      parameters.encodings, inner_audio_transport_->GetParameters().rtcp.cname,
       local_audio_description_);
   if (!stream_params_result.ok()) {
     return stream_params_result.MoveError();
@@ -289,18 +315,18 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioSenderParameters(
     }
   }
 
-  cricket::RtpTransceiverDirection local_direction =
-      cricket::RtpTransceiverDirection::FromMediaContentDirection(
-          local_audio_description_.direction());
+  bool local_send = false;
   int bandwidth = cricket::kAutoBandwidth;
   if (parameters.encodings.size() == 1u) {
     if (parameters.encodings[0].max_bitrate_bps) {
       bandwidth = *parameters.encodings[0].max_bitrate_bps;
     }
-    local_direction.send = parameters.encodings[0].active;
-  } else {
-    local_direction.send = false;
+    local_send = parameters.encodings[0].active;
   }
+  const bool local_recv =
+      RtpTransceiverDirectionHasRecv(local_audio_description_.direction());
+  const auto local_direction =
+      RtpTransceiverDirectionFromSendRecv(local_send, local_recv);
   if (primary_ssrc && !stream_params_result.value().empty()) {
     *primary_ssrc = stream_params_result.value()[0].first_ssrc();
   }
@@ -321,10 +347,9 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioSenderParameters(
   remote_audio_description_.set_bandwidth(bandwidth);
   local_audio_description_.mutable_streams() = stream_params_result.MoveValue();
   // Direction set based on encoding "active" flag.
-  local_audio_description_.set_direction(
-      local_direction.ToMediaContentDirection());
+  local_audio_description_.set_direction(local_direction);
   remote_audio_description_.set_direction(
-      local_direction.Reversed().ToMediaContentDirection());
+      RtpTransceiverDirectionReversed(local_direction));
 
   // Set remote content first, to ensure the stream is created with the correct
   // codec.
@@ -359,7 +384,7 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoSenderParameters(
   }
 
   auto stream_params_result = MakeSendStreamParamsVec(
-      parameters.encodings, inner_video_transport_->GetRtcpParameters().cname,
+      parameters.encodings, inner_video_transport_->GetParameters().rtcp.cname,
       local_video_description_);
   if (!stream_params_result.ok()) {
     return stream_params_result.MoveError();
@@ -378,18 +403,18 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoSenderParameters(
     }
   }
 
-  cricket::RtpTransceiverDirection local_direction =
-      cricket::RtpTransceiverDirection::FromMediaContentDirection(
-          local_video_description_.direction());
+  bool local_send = false;
   int bandwidth = cricket::kAutoBandwidth;
   if (parameters.encodings.size() == 1u) {
     if (parameters.encodings[0].max_bitrate_bps) {
       bandwidth = *parameters.encodings[0].max_bitrate_bps;
     }
-    local_direction.send = parameters.encodings[0].active;
-  } else {
-    local_direction.send = false;
+    local_send = parameters.encodings[0].active;
   }
+  const bool local_recv =
+      RtpTransceiverDirectionHasRecv(local_audio_description_.direction());
+  const auto local_direction =
+      RtpTransceiverDirectionFromSendRecv(local_send, local_recv);
   if (primary_ssrc && !stream_params_result.value().empty()) {
     *primary_ssrc = stream_params_result.value()[0].first_ssrc();
   }
@@ -410,10 +435,9 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoSenderParameters(
   remote_video_description_.set_bandwidth(bandwidth);
   local_video_description_.mutable_streams() = stream_params_result.MoveValue();
   // Direction set based on encoding "active" flag.
-  local_video_description_.set_direction(
-      local_direction.ToMediaContentDirection());
+  local_video_description_.set_direction(local_direction);
   remote_video_description_.set_direction(
-      local_direction.Reversed().ToMediaContentDirection());
+      RtpTransceiverDirectionReversed(local_direction));
 
   // Set remote content first, to ensure the stream is created with the correct
   // codec.
@@ -446,9 +470,6 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioReceiverParameters(
     return extensions_result.MoveError();
   }
 
-  cricket::RtpTransceiverDirection local_direction =
-      cricket::RtpTransceiverDirection::FromMediaContentDirection(
-          local_audio_description_.direction());
   auto stream_params_result = ToCricketStreamParamsVec(parameters.encodings);
   if (!stream_params_result.ok()) {
     return stream_params_result.MoveError();
@@ -467,8 +488,12 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioReceiverParameters(
     }
   }
 
-  local_direction.recv =
+  const bool local_send =
+      RtpTransceiverDirectionHasSend(local_audio_description_.direction());
+  const bool local_recv =
       !parameters.encodings.empty() && parameters.encodings[0].active;
+  const auto local_direction =
+      RtpTransceiverDirectionFromSendRecv(local_send, local_recv);
 
   // Validation is done, so we can attempt applying the descriptions. Received
   // codecs and header extensions go in local description, streams go in
@@ -486,10 +511,9 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioReceiverParameters(
   remote_audio_description_.mutable_streams() =
       stream_params_result.MoveValue();
   // Direction set based on encoding "active" flag.
-  local_audio_description_.set_direction(
-      local_direction.ToMediaContentDirection());
+  local_audio_description_.set_direction(local_direction);
   remote_audio_description_.set_direction(
-      local_direction.Reversed().ToMediaContentDirection());
+      RtpTransceiverDirectionReversed(local_direction));
 
   if (!voice_channel_->SetLocalContent(&local_audio_description_,
                                        cricket::CA_OFFER, nullptr)) {
@@ -520,9 +544,6 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoReceiverParameters(
     return extensions_result.MoveError();
   }
 
-  cricket::RtpTransceiverDirection local_direction =
-      cricket::RtpTransceiverDirection::FromMediaContentDirection(
-          local_video_description_.direction());
   int bandwidth = cricket::kAutoBandwidth;
   auto stream_params_result = ToCricketStreamParamsVec(parameters.encodings);
   if (!stream_params_result.ok()) {
@@ -542,8 +563,12 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoReceiverParameters(
     }
   }
 
-  local_direction.recv =
+  const bool local_send =
+      RtpTransceiverDirectionHasSend(local_video_description_.direction());
+  const bool local_recv =
       !parameters.encodings.empty() && parameters.encodings[0].active;
+  const auto local_direction =
+      RtpTransceiverDirectionFromSendRecv(local_send, local_recv);
 
   // Validation is done, so we can attempt applying the descriptions. Received
   // codecs and header extensions go in local description, streams go in
@@ -562,10 +587,9 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoReceiverParameters(
   remote_video_description_.mutable_streams() =
       stream_params_result.MoveValue();
   // Direction set based on encoding "active" flag.
-  local_video_description_.set_direction(
-      local_direction.ToMediaContentDirection());
+  local_video_description_.set_direction(local_direction);
   remote_video_description_.set_direction(
-      local_direction.Reversed().ToMediaContentDirection());
+      RtpTransceiverDirectionReversed(local_direction));
 
   if (!video_channel_->SetLocalContent(&local_video_description_,
                                        cricket::CA_OFFER, nullptr)) {
@@ -590,7 +614,8 @@ RtpTransportControllerAdapter::RtpTransportControllerAdapter(
       worker_thread_(worker_thread),
       media_config_(config),
       channel_manager_(channel_manager),
-      event_log_(event_log) {
+      event_log_(event_log),
+      call_send_rtp_transport_controller_(nullptr) {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   RTC_DCHECK(channel_manager_);
   // Add "dummy" codecs to the descriptions, because the media engines
@@ -626,11 +651,16 @@ void RtpTransportControllerAdapter::Init_w() {
   call_config.bitrate_config.start_bitrate_bps = kStartBandwidthBps;
   call_config.bitrate_config.max_bitrate_bps = kMaxBandwidthBps;
 
-  call_.reset(webrtc::Call::Create(call_config));
+  call_send_rtp_transport_controller_ =
+      new RtpTransportControllerSend(Clock::GetRealTimeClock(), event_log_);
+  call_.reset(webrtc::Call::Create(
+      call_config, std::unique_ptr<RtpTransportControllerSendInterface>(
+                       call_send_rtp_transport_controller_)));
 }
 
 void RtpTransportControllerAdapter::Close_w() {
   call_.reset();
+  call_send_rtp_transport_controller_ = nullptr;
 }
 
 RTCError RtpTransportControllerAdapter::AttachAudioSender(
@@ -656,7 +686,7 @@ RTCError RtpTransportControllerAdapter::AttachAudioSender(
   // If setting new transport, extract its RTCP parameters and create voice
   // channel.
   if (!inner_audio_transport_) {
-    CopyRtcpParametersToDescriptions(inner_transport->GetRtcpParameters(),
+    CopyRtcpParametersToDescriptions(inner_transport->GetParameters().rtcp,
                                      &local_audio_description_,
                                      &remote_audio_description_);
     inner_audio_transport_ = inner_transport;
@@ -691,7 +721,7 @@ RTCError RtpTransportControllerAdapter::AttachVideoSender(
   // If setting new transport, extract its RTCP parameters and create video
   // channel.
   if (!inner_video_transport_) {
-    CopyRtcpParametersToDescriptions(inner_transport->GetRtcpParameters(),
+    CopyRtcpParametersToDescriptions(inner_transport->GetParameters().rtcp,
                                      &local_video_description_,
                                      &remote_video_description_);
     inner_video_transport_ = inner_transport;
@@ -726,7 +756,7 @@ RTCError RtpTransportControllerAdapter::AttachAudioReceiver(
   // If setting new transport, extract its RTCP parameters and create voice
   // channel.
   if (!inner_audio_transport_) {
-    CopyRtcpParametersToDescriptions(inner_transport->GetRtcpParameters(),
+    CopyRtcpParametersToDescriptions(inner_transport->GetParameters().rtcp,
                                      &local_audio_description_,
                                      &remote_audio_description_);
     inner_audio_transport_ = inner_transport;
@@ -761,7 +791,7 @@ RTCError RtpTransportControllerAdapter::AttachVideoReceiver(
   // If setting new transport, extract its RTCP parameters and create video
   // channel.
   if (!inner_video_transport_) {
-    CopyRtcpParametersToDescriptions(inner_transport->GetRtcpParameters(),
+    CopyRtcpParametersToDescriptions(inner_transport->GetParameters().rtcp,
                                      &local_video_description_,
                                      &remote_video_description_);
     inner_video_transport_ = inner_transport;

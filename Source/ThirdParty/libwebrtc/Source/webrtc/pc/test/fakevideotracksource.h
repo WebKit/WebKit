@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_TEST_FAKEVIDEOTRACKSOURCE_H_
-#define WEBRTC_PC_TEST_FAKEVIDEOTRACKSOURCE_H_
+#ifndef PC_TEST_FAKEVIDEOTRACKSOURCE_H_
+#define PC_TEST_FAKEVIDEOTRACKSOURCE_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/media/base/fakevideocapturer.h"
-#include "webrtc/pc/videotracksource.h"
+#include "api/mediastreaminterface.h"
+#include "media/base/fakevideocapturer.h"
+#include "pc/videotracksource.h"
 
 namespace webrtc {
 
@@ -46,4 +46,4 @@ class FakeVideoTrackSource : public VideoTrackSource {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_TEST_FAKEVIDEOTRACKSOURCE_H_
+#endif  // PC_TEST_FAKEVIDEOTRACKSOURCE_H_

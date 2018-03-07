@@ -12,17 +12,17 @@
 // routines. However, interpolation of pitch-gain and lags is in a separate
 // class and has its own unit-test.
 
-#include "webrtc/modules/audio_processing/vad/vad_audio_proc.h"
+#include "modules/audio_processing/vad/vad_audio_proc.h"
 
 #include <math.h>
 #include <stdio.h>
 
 #include <string>
 
-#include "webrtc/modules/audio_processing/vad/common.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_processing/vad/common.h"
+#include "modules/include/module_common_types.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 

@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_CLIENT_SOCKETMONITOR_H_
-#define WEBRTC_P2P_CLIENT_SOCKETMONITOR_H_
+#ifndef P2P_CLIENT_SOCKETMONITOR_H_
+#define P2P_CLIENT_SOCKETMONITOR_H_
 
 #include <vector>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/p2p/base/jseptransport.h"  // for ConnectionInfos
+#include "p2p/base/jseptransport.h"  // for ConnectionInfos
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/thread.h"
 
 // TODO(pthatcher): Move these to connectionmonitor.h and
 // connectionmonitor.cc, or just move them into channel.cc
@@ -35,7 +35,7 @@ public:
   ConnectionMonitor(ConnectionStatsGetter* stats_getter,
                     rtc::Thread* network_thread,
                     rtc::Thread* monitoring_thread);
-  ~ConnectionMonitor();
+  ~ConnectionMonitor() override;
 
   void Start(int cms);
   void Stop();
@@ -44,7 +44,8 @@ public:
                    const std::vector<ConnectionInfo>&> SignalUpdate;
 
  protected:
-  void OnMessage(rtc::Message* message);
+  void OnMessage(rtc::Message* message) override;
+
  private:
   void PollConnectionStats_w();
 
@@ -59,4 +60,4 @@ public:
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_CLIENT_SOCKETMONITOR_H_
+#endif  // P2P_CLIENT_SOCKETMONITOR_H_

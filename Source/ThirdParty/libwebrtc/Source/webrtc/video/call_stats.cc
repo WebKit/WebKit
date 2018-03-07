@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/call_stats.h"
+#include "video/call_stats.h"
 
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/constructormagic.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {

@@ -28,7 +28,7 @@
 /* include API */
 #include "isac.h"
 #include "utility.h"
-#include "webrtc/base/format_macros.h"
+#include "rtc_base/format_macros.h"
 
 /* max number of samples per frame (= 60 ms frame) */
 #define MAX_FRAMESAMPLES_SWB 1920

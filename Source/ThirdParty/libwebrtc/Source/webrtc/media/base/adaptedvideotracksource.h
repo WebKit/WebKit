@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_ADAPTEDVIDEOTRACKSOURCE_H_
-#define WEBRTC_MEDIA_BASE_ADAPTEDVIDEOTRACKSOURCE_H_
+#ifndef MEDIA_BASE_ADAPTEDVIDEOTRACKSOURCE_H_
+#define MEDIA_BASE_ADAPTEDVIDEOTRACKSOURCE_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/notifier.h"
-#include "webrtc/media/base/videoadapter.h"
-#include "webrtc/media/base/videobroadcaster.h"
+#include "api/mediastreaminterface.h"
+#include "api/notifier.h"
+#include "media/base/videoadapter.h"
+#include "media/base/videobroadcaster.h"
 
 namespace rtc {
 
@@ -30,7 +30,7 @@ class AdaptedVideoTrackSource
  protected:
   // Allows derived classes to initialize |video_adapter_| with a custom
   // alignment.
-  AdaptedVideoTrackSource(int required_alignment);
+  explicit AdaptedVideoTrackSource(int required_alignment);
   // Checks the apply_rotation() flag. If the frame needs rotation, and it is a
   // plain memory frame, it is rotated. Subclasses producing native frames must
   // handle apply_rotation() themselves.
@@ -74,11 +74,11 @@ class AdaptedVideoTrackSource
   cricket::VideoAdapter video_adapter_;
 
   rtc::CriticalSection stats_crit_;
-  rtc::Optional<Stats> stats_ GUARDED_BY(stats_crit_);
+  rtc::Optional<Stats> stats_ RTC_GUARDED_BY(stats_crit_);
 
   VideoBroadcaster broadcaster_;
 };
 
 }  // namespace rtc
 
-#endif  // WEBRTC_MEDIA_BASE_ADAPTEDVIDEOTRACKSOURCE_H_
+#endif  // MEDIA_BASE_ADAPTEDVIDEOTRACKSOURCE_H_

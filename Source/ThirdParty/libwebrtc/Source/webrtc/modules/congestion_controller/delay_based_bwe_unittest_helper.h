@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_UNITTEST_HELPER_H_
-#define WEBRTC_MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_UNITTEST_HELPER_H_
+#ifndef MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_UNITTEST_HELPER_H_
+#define MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_UNITTEST_HELPER_H_
 
 #include <list>
 #include <map>
@@ -17,12 +17,12 @@
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/congestion_controller/acknowledge_bitrate_estimator.h"
-#include "webrtc/modules/congestion_controller/delay_based_bwe.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/congestion_controller/acknowledged_bitrate_estimator.h"
+#include "modules/congestion_controller/delay_based_bwe.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "rtc_base/constructormagic.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
@@ -175,4 +175,4 @@ class DelayBasedBweTest : public ::testing::Test {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_UNITTEST_HELPER_H_
+#endif  // MODULES_CONGESTION_CONTROLLER_DELAY_BASED_BWE_UNITTEST_HELPER_H_

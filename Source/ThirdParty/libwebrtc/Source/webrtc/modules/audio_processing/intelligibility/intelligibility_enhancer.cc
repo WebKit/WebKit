@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/intelligibility/intelligibility_enhancer.h"
+#include "modules/audio_processing/intelligibility/intelligibility_enhancer.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -16,11 +16,11 @@
 #include <limits>
 #include <numeric>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/common_audio/include/audio_util.h"
-#include "webrtc/common_audio/window_generator.h"
+#include "common_audio/include/audio_util.h"
+#include "common_audio/window_generator.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
@@ -124,11 +124,12 @@ IntelligibilityEnhancer::~IntelligibilityEnhancer() {
   // Don't rely on this log, since the destructor isn't called when the
   // app/tab is killed.
   if (num_chunks_ > 0) {
-    LOG(LS_INFO) << "Intelligibility Enhancer was active for "
-                 << 100.f * static_cast<float>(num_active_chunks_) / num_chunks_
-                 << "% of the call.";
+    RTC_LOG(LS_INFO) << "Intelligibility Enhancer was active for "
+                     << 100.f * static_cast<float>(num_active_chunks_) /
+                            num_chunks_
+                     << "% of the call.";
   } else {
-    LOG(LS_INFO) << "Intelligibility Enhancer processed no chunk.";
+    RTC_LOG(LS_INFO) << "Intelligibility Enhancer processed no chunk.";
   }
 }
 
@@ -206,8 +207,8 @@ void IntelligibilityEnhancer::SnrBasedEffectActivation() {
       (noise_power + std::numeric_limits<float>::epsilon());
   if (is_active_) {
     if (snr_ > kMaxActiveSNR) {
-      LOG(LS_INFO) << "Intelligibility Enhancer was deactivated at chunk "
-                   << num_chunks_;
+      RTC_LOG(LS_INFO) << "Intelligibility Enhancer was deactivated at chunk "
+                       << num_chunks_;
       is_active_ = false;
       // Set the target gains to unity.
       float* gains = gain_applier_.target();
@@ -217,8 +218,8 @@ void IntelligibilityEnhancer::SnrBasedEffectActivation() {
     }
   } else {
     if (snr_ < kMinInactiveSNR) {
-      LOG(LS_INFO) << "Intelligibility Enhancer was activated at chunk "
-                   << num_chunks_;
+      RTC_LOG(LS_INFO) << "Intelligibility Enhancer was activated at chunk "
+                       << num_chunks_;
       is_active_ = true;
     }
   }

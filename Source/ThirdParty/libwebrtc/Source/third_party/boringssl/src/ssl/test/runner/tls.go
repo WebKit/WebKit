@@ -6,6 +6,7 @@
 package runner
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/rsa"
@@ -16,6 +17,8 @@ import (
 	"net"
 	"strings"
 	"time"
+
+	"./ed25519"
 )
 
 // Server returns a new TLS server side connection
@@ -226,7 +229,7 @@ func X509KeyPair(certPEMBlock, keyPEMBlock []byte) (cert Certificate, err error)
 		return
 	}
 
-	switch pub := x509Cert.PublicKey.(type) {
+	switch pub := getCertificatePublicKey(x509Cert).(type) {
 	case *rsa.PublicKey:
 		priv, ok := cert.PrivateKey.(*rsa.PrivateKey)
 		if !ok {
@@ -248,6 +251,16 @@ func X509KeyPair(certPEMBlock, keyPEMBlock []byte) (cert Certificate, err error)
 			err = errors.New("crypto/tls: private key does not match public key")
 			return
 		}
+	case ed25519.PublicKey:
+		priv, ok := cert.PrivateKey.(ed25519.PrivateKey)
+		if !ok {
+			err = errors.New("crypto/tls: private key type does not match public key type")
+			return
+		}
+		if !bytes.Equal(priv[32:], pub) {
+			err = errors.New("crypto/tls: private key does not match public key")
+			return
+		}
 	default:
 		err = errors.New("crypto/tls: unknown public key algorithm")
 		return
@@ -255,6 +268,27 @@ func X509KeyPair(certPEMBlock, keyPEMBlock []byte) (cert Certificate, err error)
 
 	return
 }
+
+var ed25519SPKIPrefix = []byte{0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00}
+
+func isEd25519Certificate(cert *x509.Certificate) bool {
+	return bytes.HasPrefix(cert.RawSubjectPublicKeyInfo, ed25519SPKIPrefix) && len(cert.RawSubjectPublicKeyInfo) == len(ed25519SPKIPrefix)+32
+}
+
+func getCertificatePublicKey(cert *x509.Certificate) crypto.PublicKey {
+	if cert.PublicKey != nil {
+		return cert.PublicKey
+	}
+
+	if isEd25519Certificate(cert) {
+		return ed25519.PublicKey(cert.RawSubjectPublicKeyInfo[len(ed25519SPKIPrefix):])
+	}
+
+	return nil
+}
+
+var ed25519PKCS8Prefix = []byte{0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70,
+	0x04, 0x22, 0x04, 0x20}
 
 // Attempt to parse the given private key DER block. OpenSSL 0.9.8 generates
 // PKCS#1 private keys by default, while OpenSSL 1.0.0 generates PKCS#8 keys.
@@ -272,6 +306,12 @@ func parsePrivateKey(der []byte) (crypto.PrivateKey, error) {
 		}
 	}
 	if key, err := x509.ParseECPrivateKey(der); err == nil {
+		return key, nil
+	}
+
+	if bytes.HasPrefix(der, ed25519PKCS8Prefix) && len(der) == len(ed25519PKCS8Prefix)+32 {
+		seed := der[len(ed25519PKCS8Prefix):]
+		_, key := ed25519.NewKeyPairFromSeed(seed)
 		return key, nil
 	}
 

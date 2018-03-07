@@ -8,13 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/media/base/mediaengine.h"
+#include "media/base/mediaengine.h"
 
 #if !defined(DISABLE_MEDIA_ENGINE_FACTORY)
-
-#if defined(HAVE_WEBRTC_VOICE) && defined(HAVE_WEBRTC_VIDEO)
-#include "webrtc/media/engine/webrtcmediaengine.h"
-#endif  // HAVE_WEBRTC_VOICE && HAVE_WEBRTC_VIDEO
 
 namespace cricket {
 

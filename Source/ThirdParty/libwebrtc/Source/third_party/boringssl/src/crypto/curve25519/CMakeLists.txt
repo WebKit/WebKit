@@ -21,7 +21,6 @@ add_library(
 
   OBJECT
 
-  curve25519.c
   spake25519.c
   x25519-x86_64.c
 

@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/include/module_common_types.h"
+#include "modules/include/module_common_types.h"
 
 #include <string.h>  // memcmp
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -28,7 +28,6 @@ bool AllSamplesAre(int16_t sample, const AudioFrame& frame) {
   return true;
 }
 
-constexpr int kId = 16;
 constexpr uint32_t kTimestamp = 27;
 constexpr int kSampleRateHz = 16000;
 constexpr size_t kNumChannels = 1;
@@ -64,10 +63,9 @@ TEST(AudioFrameTest, MutedFrameBufferIsZeroed) {
 TEST(AudioFrameTest, UpdateFrame) {
   AudioFrame frame;
   int16_t samples[kNumChannels * kSamplesPerChannel] = {17};
-  frame.UpdateFrame(kId, kTimestamp, samples, kSamplesPerChannel, kSampleRateHz,
+  frame.UpdateFrame(kTimestamp, samples, kSamplesPerChannel, kSampleRateHz,
                     AudioFrame::kPLC, AudioFrame::kVadActive, kNumChannels);
 
-  EXPECT_EQ(kId, frame.id_);
   EXPECT_EQ(kTimestamp, frame.timestamp_);
   EXPECT_EQ(kSamplesPerChannel, frame.samples_per_channel_);
   EXPECT_EQ(kSampleRateHz, frame.sample_rate_hz_);
@@ -78,7 +76,7 @@ TEST(AudioFrameTest, UpdateFrame) {
   EXPECT_FALSE(frame.muted());
   EXPECT_EQ(0, memcmp(samples, frame.data(), sizeof(samples)));
 
-  frame.UpdateFrame(kId, kTimestamp, nullptr /* data*/, kSamplesPerChannel,
+  frame.UpdateFrame(kTimestamp, nullptr /* data*/, kSamplesPerChannel,
                     kSampleRateHz, AudioFrame::kPLC, AudioFrame::kVadActive,
                     kNumChannels);
   EXPECT_TRUE(frame.muted());
@@ -90,12 +88,11 @@ TEST(AudioFrameTest, CopyFrom) {
   AudioFrame frame2;
 
   int16_t samples[kNumChannels * kSamplesPerChannel] = {17};
-  frame2.UpdateFrame(kId, kTimestamp, samples, kSamplesPerChannel,
+  frame2.UpdateFrame(kTimestamp, samples, kSamplesPerChannel,
                      kSampleRateHz, AudioFrame::kPLC, AudioFrame::kVadActive,
                      kNumChannels);
   frame1.CopyFrom(frame2);
 
-  EXPECT_EQ(frame2.id_, frame1.id_);
   EXPECT_EQ(frame2.timestamp_, frame1.timestamp_);
   EXPECT_EQ(frame2.samples_per_channel_, frame1.samples_per_channel_);
   EXPECT_EQ(frame2.sample_rate_hz_, frame1.sample_rate_hz_);
@@ -106,7 +103,7 @@ TEST(AudioFrameTest, CopyFrom) {
   EXPECT_EQ(frame2.muted(), frame1.muted());
   EXPECT_EQ(0, memcmp(frame2.data(), frame1.data(), sizeof(samples)));
 
-  frame2.UpdateFrame(kId, kTimestamp, nullptr /* data */, kSamplesPerChannel,
+  frame2.UpdateFrame(kTimestamp, nullptr /* data */, kSamplesPerChannel,
                      kSampleRateHz, AudioFrame::kPLC, AudioFrame::kVadActive,
                      kNumChannels);
   frame1.CopyFrom(frame2);

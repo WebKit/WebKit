@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/fake_decoder.h"
+#include "test/fake_decoder.h"
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/test/gtest.h"
+#include "api/video/i420_buffer.h"
+#include "rtc_base/timeutils.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {

@@ -12,13 +12,15 @@
  *  and push the result to the encoders via BitrateObserver(s).
  */
 
-#ifndef WEBRTC_MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
-#define WEBRTC_MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
+#ifndef MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
+#define MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
 
-#include "webrtc/modules/congestion_controller/delay_based_bwe.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/pacing/paced_sender.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include <map>
+
+#include "modules/congestion_controller/delay_based_bwe.h"
+#include "modules/include/module.h"
+#include "modules/pacing/paced_sender.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 
@@ -36,12 +38,18 @@ class BitrateObserver {
   virtual void OnNetworkChanged(uint32_t bitrate_bps,
                                 uint8_t fraction_loss,  // 0 - 255.
                                 int64_t rtt_ms) = 0;
-
+  // TODO(gnish): Merge these two into one function.
+  virtual void OnNetworkChanged(uint32_t bitrate_for_encoder_bps,
+                                uint32_t bitrate_for_pacer_bps,
+                                bool in_probe_rtt,
+                                int64_t target_set_time,
+                                uint64_t congestion_window) {}
+  virtual void OnBytesAcked(size_t bytes) {}
+  virtual size_t pacer_queue_size_in_bytes() { return 0; }
   virtual ~BitrateObserver() {}
 };
 
-class BitrateController : public Module,
-                          public RtcpBandwidthObserver {
+class BitrateController : public Module, public RtcpBandwidthObserver {
   // This class collects feedback from all streams sent to a peer (via
   // RTCPBandwidthObservers). It does one  aggregated send side bandwidth
   // estimation and divide the available bitrate between all its registered
@@ -61,8 +69,10 @@ class BitrateController : public Module,
 
   virtual ~BitrateController() {}
 
+  // Deprecated, use raw pointer to BitrateController instance instead.
   // Creates RtcpBandwidthObserver caller responsible to delete.
-  virtual RtcpBandwidthObserver* CreateRtcpBandwidthObserver() = 0;
+  RTC_DEPRECATED virtual RtcpBandwidthObserver*
+  CreateRtcpBandwidthObserver() = 0;
 
   // Deprecated
   virtual void SetStartBitrate(int start_bitrate_bps) = 0;
@@ -89,4 +99,4 @@ class BitrateController : public Module,
                                     int64_t* rtt) = 0;
 };
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
+#endif  // MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_

@@ -8,21 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/basicpacketsocketfactory.h"
 
 #include <string>
 
-#include "webrtc/p2p/base/asyncstuntcpsocket.h"
-#include "webrtc/p2p/base/stun.h"
-#include "webrtc/base/asynctcpsocket.h"
-#include "webrtc/base/asyncudpsocket.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/nethelpers.h"
-#include "webrtc/base/physicalsocketserver.h"
-#include "webrtc/base/socketadapters.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/thread.h"
+#include "p2p/base/asyncstuntcpsocket.h"
+#include "p2p/base/stun.h"
+#include "rtc_base/asynctcpsocket.h"
+#include "rtc_base/asyncudpsocket.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/nethelpers.h"
+#include "rtc_base/physicalsocketserver.h"
+#include "rtc_base/socketadapters.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/thread.h"
 
 namespace rtc {
 
@@ -56,8 +56,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateUdpSocket(
     return NULL;
   }
   if (BindSocket(socket, address, min_port, max_port) < 0) {
-    LOG(LS_ERROR) << "UDP bind failed with error "
-                    << socket->GetError();
+    RTC_LOG(LS_ERROR) << "UDP bind failed with error " << socket->GetError();
     delete socket;
     return NULL;
   }
@@ -71,7 +70,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     int opts) {
   // Fail if TLS is required.
   if (opts & PacketSocketFactory::OPT_TLS) {
-    LOG(LS_ERROR) << "TLS support currently is not available.";
+    RTC_LOG(LS_ERROR) << "TLS support currently is not available.";
     return NULL;
   }
 
@@ -82,8 +81,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
   }
 
   if (BindSocket(socket, local_address, min_port, max_port) < 0) {
-    LOG(LS_ERROR) << "TCP bind failed with error "
-                  << socket->GetError();
+    RTC_LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
     delete socket;
     return NULL;
   }
@@ -105,8 +103,23 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
 }
 
 AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
-    const SocketAddress& local_address, const SocketAddress& remote_address,
-    const ProxyInfo& proxy_info, const std::string& user_agent, int opts) {
+    const SocketAddress& local_address,
+    const SocketAddress& remote_address,
+    const ProxyInfo& proxy_info,
+    const std::string& user_agent,
+    int opts) {
+  PacketSocketTcpOptions tcp_options;
+  tcp_options.opts = opts;
+  return CreateClientTcpSocket(local_address, remote_address, proxy_info,
+                               user_agent, tcp_options);
+}
+
+AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
+    const SocketAddress& local_address,
+    const SocketAddress& remote_address,
+    const ProxyInfo& proxy_info,
+    const std::string& user_agent,
+    const PacketSocketTcpOptions& tcp_options) {
   AsyncSocket* socket =
       socket_factory()->CreateAsyncSocket(local_address.family(), SOCK_STREAM);
   if (!socket) {
@@ -118,10 +131,10 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     // is mostly redundant in the first place. The socket will be bound when we
     // call Connect() instead.
     if (local_address.IsAnyIP()) {
-      LOG(LS_WARNING) << "TCP bind failed with error " << socket->GetError()
-                      << "; ignoring since socket is using 'any' address.";
+      RTC_LOG(LS_WARNING) << "TCP bind failed with error " << socket->GetError()
+                          << "; ignoring since socket is using 'any' address.";
     } else {
-      LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
+      RTC_LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
       delete socket;
       return NULL;
     }
@@ -138,9 +151,9 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   }
 
   // Assert that at most one TLS option is used.
-  int tlsOpts =
-      opts & (PacketSocketFactory::OPT_TLS | PacketSocketFactory::OPT_TLS_FAKE |
-              PacketSocketFactory::OPT_TLS_INSECURE);
+  int tlsOpts = tcp_options.opts & (PacketSocketFactory::OPT_TLS |
+                                    PacketSocketFactory::OPT_TLS_FAKE |
+                                    PacketSocketFactory::OPT_TLS_INSECURE);
   RTC_DCHECK((tlsOpts & (tlsOpts - 1)) == 0);
 
   if ((tlsOpts & PacketSocketFactory::OPT_TLS) ||
@@ -152,8 +165,11 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     }
 
     if (tlsOpts & PacketSocketFactory::OPT_TLS_INSECURE) {
-      ssl_adapter->set_ignore_bad_cert(true);
+      ssl_adapter->SetIgnoreBadCert(true);
     }
+
+    ssl_adapter->SetAlpnProtocols(tcp_options.tls_alpn_protocols);
+    ssl_adapter->SetEllipticCurves(tcp_options.tls_elliptic_curves);
 
     socket = ssl_adapter;
 
@@ -168,15 +184,14 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   }
 
   if (socket->Connect(remote_address) < 0) {
-    LOG(LS_ERROR) << "TCP connect failed with error "
-                  << socket->GetError();
+    RTC_LOG(LS_ERROR) << "TCP connect failed with error " << socket->GetError();
     delete socket;
     return NULL;
   }
 
   // Finally, wrap that socket in a TCP or STUN TCP packet socket.
   AsyncPacketSocket* tcp_socket;
-  if (opts & PacketSocketFactory::OPT_STUN) {
+  if (tcp_options.opts & PacketSocketFactory::OPT_STUN) {
     tcp_socket = new cricket::AsyncStunTCPSocket(socket, false);
   } else {
     tcp_socket = new AsyncTCPSocket(socket, false);

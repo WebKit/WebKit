@@ -11,15 +11,15 @@
 // RtpStreamsSynchronizer is responsible for synchronization audio and video for
 // a given voice engine channel and video receive stream.
 
-#ifndef WEBRTC_VIDEO_RTP_STREAMS_SYNCHRONIZER_H_
-#define WEBRTC_VIDEO_RTP_STREAMS_SYNCHRONIZER_H_
+#ifndef VIDEO_RTP_STREAMS_SYNCHRONIZER_H_
+#define VIDEO_RTP_STREAMS_SYNCHRONIZER_H_
 
 #include <memory>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/modules/include/module.h"
-#include "webrtc/video/stream_synchronization.h"
+#include "modules/include/module.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_checker.h"
+#include "video/stream_synchronization.h"
 
 namespace webrtc {
 
@@ -52,15 +52,15 @@ class RtpStreamsSynchronizer : public Module {
   Syncable* syncable_video_;
 
   rtc::CriticalSection crit_;
-  Syncable* syncable_audio_ GUARDED_BY(crit_);
-  std::unique_ptr<StreamSynchronization> sync_ GUARDED_BY(crit_);
-  StreamSynchronization::Measurements audio_measurement_ GUARDED_BY(crit_);
-  StreamSynchronization::Measurements video_measurement_ GUARDED_BY(crit_);
+  Syncable* syncable_audio_ RTC_GUARDED_BY(crit_);
+  std::unique_ptr<StreamSynchronization> sync_ RTC_GUARDED_BY(crit_);
+  StreamSynchronization::Measurements audio_measurement_ RTC_GUARDED_BY(crit_);
+  StreamSynchronization::Measurements video_measurement_ RTC_GUARDED_BY(crit_);
 
   rtc::ThreadChecker process_thread_checker_;
-  int64_t last_sync_time_ ACCESS_ON(&process_thread_checker_);
+  int64_t last_sync_time_ RTC_ACCESS_ON(&process_thread_checker_);
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_RTP_STREAMS_SYNCHRONIZER_H_
+#endif  // VIDEO_RTP_STREAMS_SYNCHRONIZER_H_

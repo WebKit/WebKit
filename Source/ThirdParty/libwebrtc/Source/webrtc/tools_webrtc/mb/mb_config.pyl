@@ -1,0 +1,513 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# FOR DETAILS ON THIS FILE SEE THE MAIN COPY IN //tools/mb/mb_config.pyl.
+# This is configuration for standalone WebRTC bots. It is used to keep the bot
+# configurations source-side instead of in the buildbot scripts. That makes it
+# easy to try different configurations of GN args in tryjob patches.
+
+{
+  # This is a map of buildbot master names -> buildbot builder names ->
+  # config names (where each config name is a key in the 'configs' dict,
+  # above). mb uses this dict to look up which config to use for a given bot.
+  # The builders should be sorted by the order they appear in the /builders
+  # page on the buildbots, *not* alphabetically.
+  'masters': {
+    'client.webrtc': {
+      # iOS
+      'iOS32 Debug': 'ios',
+      'iOS32 Release': 'ios',
+      'iOS64 Debug': 'ios',
+      'iOS64 Release': 'ios',
+      'iOS32 Sim Debug (iOS 9.0)': 'ios',
+      'iOS64 Sim Debug (iOS 9.0)': 'ios',
+      'iOS64 Sim Debug (iOS 10.0)': 'ios',
+
+      # Mac
+      'Mac64 Debug': 'debug_bot_x64',
+      'Mac64 Release': 'release_bot_x64',
+      'Mac Asan': 'mac_asan_clang_release_bot_x64',
+      'Mac64 Release [large tests]': 'release_bot_x64',
+
+      # Linux
+      'Linux32 Debug': 'debug_bot_x86',
+      'Linux32 Release': 'release_bot_x86',
+      'Linux32 Debug (ARM)': 'debug_bot_arm',
+      'Linux32 Release (ARM)': 'release_bot_arm',
+      'Linux64 Debug': 'debug_bot_x64',
+      'Linux64 Release': 'release_bot_x64',
+      'Linux64 Debug (ARM)': 'debug_bot_arm64',
+      'Linux64 Release (ARM)': 'release_bot_arm64',
+      'Linux64 Release (GCC)': 'gcc_release_bot_x64',
+      'Linux Asan': 'asan_lsan_clang_release_bot_x64',
+      'Linux Memcheck': 'memcheck_release_bot_x64',
+      'Linux MSan': 'msan_clang_release_bot_x64',
+      'Linux Tsan v2': 'tsan_clang_release_bot_x64',
+      'Linux UBSan': 'ubsan_clang_release_bot_x64',
+      'Linux UBSan vptr': 'ubsan_vptr_clang_release_bot_x64',
+      'Linux64 Release [large tests]': 'release_bot_x64',
+      'Linux64 Release (Libfuzzer)': 'libfuzzer_asan_release_bot_x64',
+
+      # Android
+      'Android32 (M Nexus5X)': 'android_release_bot_arm',
+      'Android32 (M Nexus5X)(dbg)': 'android_debug_static_bot_arm',
+      'Android64 (M Nexus5X)': 'android_release_bot_arm64',
+      'Android64 (M Nexus5X)(dbg)': 'android_debug_static_bot_arm64',
+      'Android32 Builder x86': 'android_release_bot_x86',
+      'Android32 Builder x86 (dbg)': 'android_debug_static_bot_x86',
+      'Android64 Builder x64 (dbg)': 'android_debug_static_bot_x64',
+      'Android32 Builder MIPS (dbg)': 'android_debug_static_bot_mipsel',
+
+      # Windows
+      'Win32 Debug': 'debug_bot_x86',
+      'Win32 Release': 'release_bot_x86',
+      'Win64 Debug': 'debug_bot_x64',
+      'Win64 Release': 'release_bot_x64',
+      'Win32 Debug (Clang)': 'win_clang_debug_bot_x86',
+      'Win32 Release (Clang)': 'win_clang_release_bot_x86',
+      'Win64 Debug (Clang)': 'win_clang_debug_bot_x64',
+      'Win64 Release (Clang)': 'win_clang_release_bot_x64',
+      'Win32 ASan': 'win_asan_clang_release_bot_x86',
+      'Win32 Release (MSVC)': 'win_msvc_release_bot_x86',
+      'Win32 Release [large tests]': 'release_bot_x86',
+    },
+    'client.webrtc.branches': {
+      # iOS
+      'iOS (stable)': 'ios',
+      'iOS (beta)': 'ios',
+
+      # Mac
+      'Mac (stable)': 'release_bot_x64',
+      'Mac (beta)': 'release_bot_x64',
+
+      # Linux
+      'Linux (stable)': 'release_bot_x64',
+      'Linux (beta)': 'release_bot_x64',
+
+      # Android
+      'Android (stable)': 'android_release_bot_arm',
+      'Android (beta)': 'android_release_bot_arm',
+
+      # Windows
+      'Win (stable)': 'release_bot_x86',
+      'Win (beta)': 'release_bot_x86',
+    },
+    'client.webrtc.perf': {
+      # Android
+      'Android32 Builder': 'perf_android_release_bot_arm',
+      'Android64 Builder': 'perf_android_release_bot_arm64',
+      'Android32 Tests (J Nexus4)': 'none',
+      'Android32 Tests (K Nexus5)': 'none',
+      'Android32 Tests (L Nexus5)': 'none',
+      'Android32 Tests (L Nexus6)': 'none',
+      'Android32 Tests (L Nexus7.2)': 'none',
+      'Android64 Tests (L Nexus9)': 'none',
+      'Linux Trusty': 'perf_release_bot_x64',
+      'Mac 10.11': 'perf_release_bot_x64',
+      'Win7': 'perf_release_bot_x86',
+    },
+    'client.webrtc.fyi': {
+      # Mac
+      'Mac (swarming)': 'release_bot_x64',
+
+      # Android
+      'Android Perf (swarming)': 'perf_android_release_bot_arm',
+      'Android ASan (swarming)': 'android_asan_shared_release_bot_arm',
+      # Windows
+      'Win (swarming)': 'release_bot_x86',
+      'Win64 Debug (Win8)': 'debug_bot_x64',
+      'Win64 Debug (Win10)': 'debug_bot_x64',
+    },
+    'chromium.infra.codesearch': {
+      'codesearch-gen-webrtc-android': {
+        'android': 'android_debug_static_bot_arm',
+      },
+      'codesearch-gen-webrtc-linux': {
+        'linux': 'codesearch_gen_linux_bot',
+      }
+    },
+    'internal.client.webrtc': {
+      'iOS64 Debug': 'ios',
+      'iOS64 Perf': 'ios',
+      'iOS64 Release': 'ios',
+    },
+    'internal.tryserver.webrtc': {
+      'ios_arm64_dbg': 'ios',
+      'ios_arm64_rel': 'ios',
+    },
+    'tryserver.webrtc': {
+      # iOS
+      'ios_dbg': 'ios',
+      'ios_rel': 'ios',
+      'ios_arm64_dbg': 'ios',
+      'ios_arm64_rel': 'ios',
+      'ios32_sim_ios9_dbg': 'ios',
+      'ios64_sim_ios9_dbg': 'ios',
+      'ios64_sim_ios10_dbg': 'ios',
+
+      # Mac
+      'mac_compile_dbg': 'debug_bot_x64',
+      'mac_compile_rel': 'release_bot_x64',
+      'mac_dbg': 'debug_bot_x64',
+      'mac_rel': 'release_bot_x64',
+      'mac_asan': 'mac_asan_clang_release_bot_x64',
+      'mac_baremetal': 'release_bot_x64',
+      'mac_experimental': 'release_bot_x64',
+
+      # Linux
+      'linux_compile_dbg': 'debug_bot_x64',
+      'linux_compile_rel': 'release_bot_x64',
+      'linux_dbg': 'debug_bot_x64',
+      'linux_rel': 'release_bot_x64',
+      'linux_arm64_dbg': 'debug_bot_arm64',
+      'linux_arm64_rel': 'release_bot_arm64',
+      'linux32_dbg': 'debug_bot_x86',
+      'linux32_rel': 'release_bot_x86',
+      'linux32_arm_dbg': 'debug_bot_arm',
+      'linux32_arm_rel': 'release_bot_arm',
+      'linux_asan': 'asan_lsan_clang_release_bot_x64',
+      'linux_gcc_rel': 'gcc_release_bot_x64',
+      'linux_memcheck': 'memcheck_release_bot_x64',
+      'linux_msan': 'msan_clang_release_bot_x64',
+      'linux_tsan2': 'tsan_clang_release_bot_x64',
+      'linux_ubsan': 'ubsan_clang_release_bot_x64',
+      'linux_ubsan_vptr': 'ubsan_vptr_clang_release_bot_x64',
+      'linux_baremetal': 'release_bot_x64',
+      'linux_experimental': 'release_bot_x64',
+      'linux_libfuzzer_rel': 'libfuzzer_asan_release_bot_x64',
+
+      # Android
+      'android_compile_dbg': 'android_debug_static_bot_arm',
+      'android_compile_rel': 'android_release_bot_arm',
+      'android_compile_arm64_dbg': 'android_debug_static_bot_arm64',
+      'android_compile_arm64_rel': 'android_release_bot_arm64',
+      'android_compile_x86_dbg': 'android_debug_static_bot_x86',
+      'android_compile_x86_rel': 'android_release_bot_x86',
+      'android_compile_x64_dbg': 'android_debug_static_bot_x64',
+      'android_compile_mips_dbg': 'android_debug_static_bot_mipsel',
+      'android_dbg': 'android_debug_static_bot_arm',
+      'android_rel': 'android_release_bot_arm',
+      'android_arm64_rel': 'android_release_bot_arm64',
+      'android_experimental': 'android_release_bot_arm',
+
+      # Windows
+      'win_compile_dbg': 'debug_bot_x86',
+      'win_compile_rel': 'release_bot_x86',
+      'win_compile_x64_dbg': 'debug_bot_x64',
+      'win_compile_x64_rel': 'release_bot_x64',
+      'win_dbg': 'debug_bot_x86',
+      'win_rel': 'release_bot_x86',
+      'win_x64_dbg': 'debug_bot_x64',
+      'win_x64_rel': 'release_bot_x64',
+      'win_clang_dbg': 'win_clang_debug_bot_x86',
+      'win_clang_rel': 'win_clang_release_bot_x86',
+      'win_x64_clang_dbg': 'win_clang_debug_bot_x64',
+      'win_x64_clang_rel': 'win_clang_release_bot_x64',
+      'win_asan': 'win_asan_clang_release_bot_x86',
+      'win_msvc_rel': 'win_msvc_release_bot_x86',
+      'win_baremetal': 'release_bot_x86',
+      'win_experimental': 'release_bot_x86',
+      'win_x64_win8': 'debug_bot_x64',
+      'win_x64_win10': 'debug_bot_x64',
+    }
+  },
+
+  # This is the list of configs that you can pass to mb; each config
+  # represents a particular combination of gn args that we must support.
+  # A given config *may* be platform-specific but is not necessarily so (i.e.,
+  # we might have mac, win, and linux bots all using the 'release_bot' config).
+  'configs': {
+    # Linux, Mac and Windows
+    'gcc_release_bot_x64': [
+      'gn', 'gcc', 'release_bot', 'x64', 'no_rtc_tests'
+    ],
+    # TOOD(kjellander): Restore Goma for this when crbug.com/726706 is fixed.
+    'debug_bot_arm': [
+      'gn', 'openh264', 'debug', 'arm'
+    ],
+    'release_bot_arm': [
+      'gn', 'openh264_release_bot', 'arm'
+    ],
+    'debug_bot_arm64': [
+      'gn', 'openh264_debug_bot', 'arm64'
+    ],
+    'release_bot_arm64': [
+      'gn', 'openh264_release_bot', 'arm64'
+    ],
+    'asan_lsan_clang_release_bot_x64': [
+      'gn', 'asan', 'lsan', 'clang', 'openh264_release_bot', 'x64'
+    ],
+    'msan_clang_release_bot_x64': [
+      'gn', 'msan', 'clang', 'openh264_release_bot', 'x64'
+    ],
+    'tsan_clang_release_bot_x64': [
+      'gn', 'tsan', 'clang', 'openh264_release_bot', 'x64'
+    ],
+    'ubsan_clang_release_bot_x64': [
+      'gn', 'ubsan', 'clang', 'openh264_release_bot', 'x64'
+    ],
+    'ubsan_vptr_clang_release_bot_x64': [
+      'gn', 'ubsan_vptr', 'clang', 'openh264_release_bot', 'x64'
+    ],
+    'debug_bot_x86': [
+      'gn', 'openh264_debug_bot', 'x86'
+    ],
+    'release_bot_x86': [
+      'gn', 'openh264_release_bot', 'x86'
+    ],
+    'debug_bot_x64': [
+      'gn', 'openh264_debug_bot', 'x64'
+    ],
+    'codesearch_gen_linux_bot': [
+      'gn', 'openh264_debug_bot', 'minimal_symbols'
+    ],
+    'release_bot_x64': [
+      'gn', 'openh264_release_bot', 'x64'
+    ],
+    'perf_release_bot_x86': [
+      'gn', 'openh264', 'release', 'goma', 'x86'
+    ],
+    'perf_release_bot_x64': [
+      'gn', 'openh264', 'release', 'goma', 'x64'
+    ],
+    'libfuzzer_asan_release_bot_x64': [
+      'libfuzzer', 'asan', 'optimize_for_fuzzing', 'openh264_release_bot',
+      'x64', 'no_rtc_tests'
+    ],
+    'memcheck_release_bot_x64': [
+      'memcheck', 'gn', 'openh264_release_bot', 'x64', 'use_default_libcxx',
+      'no_lld'
+    ],
+
+    # iOS
+    # The 'ios' config is just used for auditing. iOS bots
+    # use the ios recipes and look up their GN arguments via files checked in
+    # under //tools_webrtc/ios/bots. It is an error to actually use one of these
+    # configs to generate the build files.
+    'ios': [ 'error'],
+
+    # Windows
+    'win_clang_debug_bot_x86': [
+      'gn', 'clang', 'openh264_debug_bot', 'x86',
+    ],
+    'win_clang_release_bot_x86': [
+      'gn', 'clang', 'openh264_release_bot', 'x86',
+    ],
+    'win_clang_debug_bot_x64': [
+      'gn', 'clang', 'openh264_debug_bot', 'x64',
+    ],
+    'win_clang_release_bot_x64': [
+      'gn', 'clang', 'openh264_release_bot', 'x64',
+    ],
+    'win_msvc_release_bot_x86': [
+      'gn', 'no_clang', 'openh264_release_bot', 'x86',
+    ],
+    'win_asan_clang_release_bot_x86': [
+      'gn', 'asan', 'clang',  'full_symbols', 'openh264_release_bot', 'x86',
+      'win_fastlink',
+    ],
+
+    # Mac
+    'mac_asan_clang_release_bot_x64': [
+      'gn', 'asan', 'clang', 'openh264_release_bot', 'x64',
+    ],
+
+    # Android
+    'android_debug_static_bot_arm': [
+      'android', 'gn', 'debug_static_bot', 'arm'
+    ],
+    'android_release_bot_arm': [
+      'android', 'gn', 'release_bot', 'arm'
+    ],
+    'android_debug_static_bot_x86': [
+      'android', 'gn', 'debug_static_bot', 'x86'
+    ],
+    'android_release_bot_x86': [
+      'android', 'gn', 'release_bot', 'x86'
+    ],
+    'android_debug_static_bot_mipsel': [
+      'android', 'gn', 'debug_static_bot', 'mipsel'
+    ],
+    'android_debug_static_bot_arm64': [
+      'android', 'gn', 'debug_static_bot', 'arm64'
+    ],
+    'android_release_bot_arm64': [
+      'android', 'gn', 'release_bot', 'arm64'
+    ],
+    'android_debug_static_bot_x64': [
+      'android', 'gn', 'debug_static_bot', 'x64'
+    ],
+    'android_asan_shared_release_bot_arm': [
+      'android', 'gn', 'asan', 'clang', 'release_bot', 'arm'
+    ],
+    'perf_android_release_bot_arm': [
+      'android', 'gn', 'release', 'goma', 'arm'
+    ],
+    'perf_android_release_bot_arm64': [
+      'android', 'gn', 'release', 'goma', 'arm64'
+    ],
+
+    # This is used for tracking purposes; any bot that uses this config
+    # should never actually run MB.
+    'none': [
+      'error',
+    ],
+  },
+
+  # This is a dict mapping a given 'mixin' name to a dict of settings that
+  # mb should use. See //tools/mb/docs/user_guide.md for more information.
+  'mixins': {
+    'android': {
+      'gn_args': 'target_os="android"',
+    },
+
+    'arm': {
+      'gn_args': 'target_cpu="arm"',
+    },
+
+    'arm64': {
+      'gn_args': 'target_cpu="arm64"',
+    },
+
+    'asan': {
+      'gn_args': 'is_asan=true',
+    },
+
+    'clang': {
+      'gn_args': 'is_clang=true',
+    },
+
+    'dcheck_always_on': {
+      'gn_args': 'dcheck_always_on=true',
+    },
+
+    'debug': {
+      'gn_args': 'is_debug=true',
+    },
+
+    'debug_bot': {
+      'mixins': ['debug', 'goma'],
+    },
+
+    'debug_static_bot': {
+      'mixins': ['debug', 'minimal_symbols', 'goma'],
+    },
+
+    # This mixin is used to force configs that use it to fail. It
+    # is used in two cases: when we have bots that we haven't looked
+    # at yet and don't know whether they need MB or not, and for bots
+    # that are test-only and should never run MB.
+    'error': {
+      'gn_args': 'error',
+    },
+
+    'full_symbols': {
+      'gn_args': 'symbol_level=2',
+    },
+
+    'gcc': {
+      'gn_args': ('is_clang=false use_sysroot=false '
+                  'treat_warnings_as_errors=false'),
+    },
+
+    'gn': {'type': 'gn'},
+
+    'goma': {
+      'gn_args': 'use_goma=true',
+    },
+
+    'libfuzzer': {
+      'gn_args': 'use_libfuzzer=true',
+    },
+
+    'lsan': {
+      'gn_args': 'is_lsan=true',
+    },
+
+    'memcheck': {
+      'gn_args': 'rtc_use_memcheck=true',
+    },
+
+    'minimal_symbols': {
+      'gn_args': 'symbol_level=1 strip_absolute_paths_from_debug_symbols=true',
+    },
+
+    'mipsel': {
+      'gn_args': 'target_cpu="mipsel"',
+    },
+
+    'msan': {
+      'gn_args': ('is_msan=true msan_track_origins=2 '
+                  'use_prebuilt_instrumented_libraries=true'),
+    },
+
+    'no_clang': {
+      'gn_args': 'is_clang=false',
+    },
+
+    'no_lld': {
+      'gn_args': 'use_lld=false',
+    },
+
+    'no_rtc_tests': {
+      'gn_args': 'rtc_include_tests=false',
+    },
+
+    'openh264': {
+      'gn_args': 'ffmpeg_branding="Chrome" rtc_use_h264=true',
+    },
+
+    'openh264_debug_bot': {
+      'mixins': ['openh264', 'debug_bot'],
+    },
+
+    'openh264_release_bot': {
+      'mixins': ['openh264', 'release_bot'],
+    },
+
+    'optimize_for_fuzzing': {
+      'gn_args': 'optimize_for_fuzzing=true',
+    },
+
+    'release': {
+      'gn_args': 'is_debug=false',
+    },
+
+    'release_bot': {
+      'mixins': ['release', 'dcheck_always_on', 'goma'],
+    },
+
+    'tsan': {
+      'gn_args': 'is_tsan=true',
+    },
+
+    'ubsan': {
+      'gn_args': 'is_ubsan=true is_ubsan_no_recover=true',
+    },
+
+    'ubsan_vptr': {
+      'gn_args': 'is_ubsan_vptr=true is_ubsan_no_recover=true',
+    },
+
+    'win_fastlink': {
+      'gn_args': 'is_win_fastlink=true',
+    },
+
+    'x64': {
+      'gn_args': 'target_cpu="x64"',
+    },
+
+    'x86': {
+      'gn_args': 'target_cpu="x86"',
+    },
+
+    'use_default_libcxx': {
+      'gn_args': 'use_custom_libcxx=false',
+    }
+  },
+}

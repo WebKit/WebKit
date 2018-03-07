@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/erl_estimator.h"
+#include "modules/audio_processing/aec3/erl_estimator.h"
 
 #include <algorithm>
+#include <numeric>
 
 namespace webrtc {
 
@@ -24,6 +25,8 @@ constexpr float kMaxErl = 1000.f;
 ErlEstimator::ErlEstimator() {
   erl_.fill(kMaxErl);
   hold_counters_.fill(0);
+  erl_time_domain_ = kMaxErl;
+  hold_counter_time_domain_ = 0;
 }
 
 ErlEstimator::~ErlEstimator() = default;
@@ -43,7 +46,7 @@ void ErlEstimator::Update(
       const float new_erl = Y2[k] / X2[k];
       if (new_erl < erl_[k]) {
         hold_counters_[k - 1] = 1000;
-        erl_[k] += 0.1 * (new_erl - erl_[k]);
+        erl_[k] += 0.1f * (new_erl - erl_[k]);
         erl_[k] = std::max(erl_[k], kMinErl);
       }
     }
@@ -58,6 +61,24 @@ void ErlEstimator::Update(
 
   erl_[0] = erl_[1];
   erl_[kFftLengthBy2] = erl_[kFftLengthBy2 - 1];
+
+  // Compute ERL over all frequency bins.
+  const float X2_sum = std::accumulate(X2.begin(), X2.end(), 0.0f);
+
+  if (X2_sum > kX2Min * X2.size()) {
+    const float Y2_sum = std::accumulate(Y2.begin(), Y2.end(), 0.0f);
+    const float new_erl = Y2_sum / X2_sum;
+    if (new_erl < erl_time_domain_) {
+      hold_counter_time_domain_ = 1000;
+      erl_time_domain_ += 0.1f * (new_erl - erl_time_domain_);
+      erl_time_domain_ = std::max(erl_time_domain_, kMinErl);
+    }
+  }
+
+  --hold_counter_time_domain_;
+  erl_time_domain_ = (hold_counter_time_domain_ > 0)
+                         ? erl_time_domain_
+                         : std::min(kMaxErl, 2.f * erl_time_domain_);
 }
 
 }  // namespace webrtc

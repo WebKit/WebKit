@@ -97,10 +97,7 @@ public class TCPChannelClientTest {
     verify(clientEvents, timeout(CONNECT_TIMEOUT)).onTCPConnected(false);
   }
 
-  // @Test
-  // Disabled because it fails when IPv6 is not supported on the bot.
-  // TODO(ehmaldonado): Enable when bugs.webrtc.org/6437 is fixed.
-  @DisabledTest
+  @Test
   public void testConnectIPv6() {
     setUpIPv6Server();
     try {

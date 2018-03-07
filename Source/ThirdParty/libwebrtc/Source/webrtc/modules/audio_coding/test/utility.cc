@@ -15,9 +15,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/test/gtest.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "test/gtest.h"
 
 #define NUM_CODECS_WITH_FIXED_PAYLOAD_TYPE 13
 

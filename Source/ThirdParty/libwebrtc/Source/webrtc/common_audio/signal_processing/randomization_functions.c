@@ -19,7 +19,7 @@
  *
  */
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 static const uint32_t kMaxSeedUsed = 0x80000000;
 

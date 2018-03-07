@@ -11,11 +11,11 @@
 // Modified from the Chromium original here:
 // src/media/base/sinc_resampler_unittest.cc
 
-#ifndef WEBRTC_COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
-#define WEBRTC_COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
+#ifndef COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
+#define COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_audio/resampler/sinc_resampler.h"
+#include "common_audio/resampler/sinc_resampler.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -52,4 +52,4 @@ class SinusoidalLinearChirpSource : public SincResamplerCallback {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
+#endif  // COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_

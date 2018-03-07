@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/pc/localaudiosource.h"
+#include "pc/localaudiosource.h"
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/test/fakeconstraints.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/fakemediaengine.h"
-#include "webrtc/media/base/fakevideorenderer.h"
+#include "api/test/fakeconstraints.h"
+#include "media/base/fakemediaengine.h"
+#include "media/base/fakevideorenderer.h"
+#include "rtc_base/gunit.h"
 
 using webrtc::LocalAudioSource;
 using webrtc::MediaConstraintsInterface;
@@ -38,20 +38,20 @@ TEST(LocalAudioSourceTest, SetValidOptions) {
   rtc::scoped_refptr<LocalAudioSource> source =
       LocalAudioSource::Create(&constraints);
 
-  EXPECT_EQ(rtc::Optional<bool>(false), source->options().echo_cancellation);
-  EXPECT_EQ(rtc::Optional<bool>(true), source->options().extended_filter_aec);
-  EXPECT_EQ(rtc::Optional<bool>(true), source->options().delay_agnostic_aec);
-  EXPECT_EQ(rtc::Optional<bool>(true), source->options().auto_gain_control);
-  EXPECT_EQ(rtc::Optional<bool>(true), source->options().experimental_agc);
-  EXPECT_EQ(rtc::Optional<bool>(false), source->options().noise_suppression);
-  EXPECT_EQ(rtc::Optional<bool>(true), source->options().highpass_filter);
+  EXPECT_EQ(false, source->options().echo_cancellation);
+  EXPECT_EQ(true, source->options().extended_filter_aec);
+  EXPECT_EQ(true, source->options().delay_agnostic_aec);
+  EXPECT_EQ(true, source->options().auto_gain_control);
+  EXPECT_EQ(true, source->options().experimental_agc);
+  EXPECT_EQ(false, source->options().noise_suppression);
+  EXPECT_EQ(true, source->options().highpass_filter);
 }
 
 TEST(LocalAudioSourceTest, OptionNotSet) {
   webrtc::FakeConstraints constraints;
   rtc::scoped_refptr<LocalAudioSource> source =
       LocalAudioSource::Create(&constraints);
-  EXPECT_EQ(rtc::Optional<bool>(), source->options().highpass_filter);
+  EXPECT_EQ(rtc::nullopt, source->options().highpass_filter);
 }
 
 TEST(LocalAudioSourceTest, MandatoryOverridesOptional) {
@@ -64,7 +64,7 @@ TEST(LocalAudioSourceTest, MandatoryOverridesOptional) {
   rtc::scoped_refptr<LocalAudioSource> source =
       LocalAudioSource::Create(&constraints);
 
-  EXPECT_EQ(rtc::Optional<bool>(false), source->options().echo_cancellation);
+  EXPECT_EQ(false, source->options().echo_cancellation);
 }
 
 TEST(LocalAudioSourceTest, InvalidOptional) {
@@ -76,7 +76,7 @@ TEST(LocalAudioSourceTest, InvalidOptional) {
       LocalAudioSource::Create(&constraints);
 
   EXPECT_EQ(MediaSourceInterface::kLive, source->state());
-  EXPECT_EQ(rtc::Optional<bool>(false), source->options().highpass_filter);
+  EXPECT_EQ(false, source->options().highpass_filter);
 }
 
 TEST(LocalAudioSourceTest, InvalidMandatory) {
@@ -88,19 +88,19 @@ TEST(LocalAudioSourceTest, InvalidMandatory) {
       LocalAudioSource::Create(&constraints);
 
   EXPECT_EQ(MediaSourceInterface::kLive, source->state());
-  EXPECT_EQ(rtc::Optional<bool>(false), source->options().highpass_filter);
+  EXPECT_EQ(false, source->options().highpass_filter);
 }
 
 TEST(LocalAudioSourceTest, InitWithAudioOptions) {
   cricket::AudioOptions audio_options;
-  audio_options.highpass_filter = rtc::Optional<bool>(true);
+  audio_options.highpass_filter = true;
   rtc::scoped_refptr<LocalAudioSource> source =
       LocalAudioSource::Create(&audio_options);
-  EXPECT_EQ(rtc::Optional<bool>(true), source->options().highpass_filter);
+  EXPECT_EQ(true, source->options().highpass_filter);
 }
 
 TEST(LocalAudioSourceTest, InitWithNoOptions) {
   rtc::scoped_refptr<LocalAudioSource> source =
       LocalAudioSource::Create((cricket::AudioOptions*)nullptr);
-  EXPECT_EQ(rtc::Optional<bool>(), source->options().highpass_filter);
+  EXPECT_EQ(rtc::nullopt, source->options().highpass_filter);
 }

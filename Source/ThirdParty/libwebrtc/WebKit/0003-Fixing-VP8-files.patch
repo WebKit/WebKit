@@ -1,0 +1,3072 @@
+From be6c0b3edb476e45bf282046e8d1e41c6d4e17cf Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 14 Dec 2017 13:47:41 -0800
+Subject: [PATCH 3/8] Fixing VP8 files
+
+---
+ .../codecs/vp8/default_temporal_layers.cc          | 354 +++++++++---
+ .../codecs/vp8/default_temporal_layers.h           |  59 +-
+ .../codecs/vp8/default_temporal_layers_unittest.cc | 276 +++++++--
+ .../modules/video_coding/codecs/vp8/include/vp8.h  |  16 +-
+ .../codecs/vp8/include/vp8_common_types.h          |  10 +-
+ .../video_coding/codecs/vp8/include/vp8_globals.h  |   8 +-
+ .../video_coding/codecs/vp8/screenshare_layers.cc  | 103 ++--
+ .../video_coding/codecs/vp8/screenshare_layers.h   |  33 +-
+ .../codecs/vp8/screenshare_layers_unittest.cc      |  74 ++-
+ .../codecs/vp8/simulcast_rate_allocator.cc         |   4 +-
+ .../codecs/vp8/simulcast_rate_allocator.h          |  14 +-
+ .../video_coding/codecs/vp8/simulcast_unittest.cc  |  18 +-
+ .../video_coding/codecs/vp8/temporal_layers.h      | 119 +++-
+ .../codecs/vp8/test/vp8_impl_unittest.cc           | 628 +++++++++++----------
+ .../modules/video_coding/codecs/vp8/vp8_impl.cc    | 246 +++++---
+ .../modules/video_coding/codecs/vp8/vp8_impl.h     |  34 +-
+ .../modules/video_coding/codecs/vp8/vp8_noop.cc    |   8 +-
+ 17 files changed, 1364 insertions(+), 640 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc
+index 3573aa8f1cb..f070750e7bc 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc
+@@ -1,31 +1,36 @@
+ /* Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
+-*
+-*  Use of this source code is governed by a BSD-style license
+-*  that can be found in the LICENSE file in the root of the source
+-*  tree. An additional intellectual property rights grant can be found
+-*  in the file PATENTS.  All contributing project authors may
+-*  be found in the AUTHORS file in the root of the source tree.
+-*/
++ *
++ *  Use of this source code is governed by a BSD-style license
++ *  that can be found in the LICENSE file in the root of the source
++ *  tree. An additional intellectual property rights grant can be found
++ *  in the file PATENTS.  All contributing project authors may
++ *  be found in the AUTHORS file in the root of the source tree.
++ */
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h"
++#include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
+ 
+ #include <stdlib.h>
+ #include <string.h>
+ 
+ #include <algorithm>
++#include <memory>
++#include <set>
+ #include <vector>
+ 
+-#include "webrtc/base/checks.h"
+-#include "webrtc/modules/include/module_common_types.h"
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h"
++#include "modules/include/module_common_types.h"
++#include "modules/video_coding/codecs/vp8/include/vp8_common_types.h"
++#include "modules/video_coding/include/video_codec_interface.h"
++#include "rtc_base/checks.h"
++#include "rtc_base/logging.h"
++#include "system_wrappers/include/field_trial.h"
+ 
+-#include "vpx/vpx_encoder.h"
+ #include "vpx/vp8cx.h"
++#include "vpx/vpx_encoder.h"
+ 
+ namespace webrtc {
+ 
+-TemporalLayers::FrameConfig::FrameConfig() {}
++TemporalLayers::FrameConfig::FrameConfig()
++    : FrameConfig(kNone, kNone, kNone, false) {}
+ 
+ TemporalLayers::FrameConfig::FrameConfig(TemporalLayers::BufferFlags last,
+                                          TemporalLayers::BufferFlags golden,
+@@ -48,6 +53,9 @@ TemporalLayers::FrameConfig::FrameConfig(TemporalLayers::BufferFlags last,
+       last_buffer_flags(last),
+       golden_buffer_flags(golden),
+       arf_buffer_flags(arf),
++      encoder_layer_id(0),
++      packetizer_temporal_idx(kNoTemporalIdx),
++      layer_sync(false),
+       freeze_entropy(freeze_entropy) {}
+ 
+ namespace {
+@@ -91,16 +99,19 @@ std::vector<bool> GetTemporalLayerSync(size_t num_layers) {
+     case 2:
+       return {false, true, false, false, false, false, false, false};
+     case 3:
+-      return {false, true, true, false, false, false, false, false};
++      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
++        return {false, true, true, false};
++      } else {
++        return {false, true, true, false, false, false, false, false};
++      }
+     case 4:
+-      return {false, true, true,  true, true,  true, false, true,
+-              false, true, false, true, false, true, false, true};
++      return {false, true,  true,  false, true,  false, false, false,
++              false, false, false, false, false, false, false, false};
+     default:
+-      RTC_NOTREACHED();
+       break;
+   }
+-  RTC_NOTREACHED();
+-  return {false};
++  RTC_NOTREACHED() << num_layers;
++  return {};
+ }
+ 
+ std::vector<TemporalLayers::FrameConfig> GetTemporalPattern(size_t num_layers) {
+@@ -129,7 +140,7 @@ std::vector<TemporalLayers::FrameConfig> GetTemporalPattern(size_t num_layers) {
+       // TL0 also references and updates the 'last' buffer.
+       // TL1 also references 'last' and references and updates 'golden'.
+       return {TemporalLayers::FrameConfig(TemporalLayers::kReferenceAndUpdate,
+-                                          TemporalLayers::kUpdate,
++                                          TemporalLayers::kNone,
+                                           TemporalLayers::kReference),
+               TemporalLayers::FrameConfig(TemporalLayers::kReference,
+                                           TemporalLayers::kUpdate,
+@@ -153,35 +164,68 @@ std::vector<TemporalLayers::FrameConfig> GetTemporalPattern(size_t num_layers) {
+                   TemporalLayers::kReference, TemporalLayers::kReference,
+                   TemporalLayers::kReference, TemporalLayers::kFreezeEntropy)};
+     case 3:
+-      // All layers can reference but not update the 'alt' buffer, this means
+-      // that the 'alt' buffer reference is effectively the last keyframe.
+-      // TL0 also references and updates the 'last' buffer.
+-      // TL1 also references 'last' and references and updates 'golden'.
+-      // TL2 references both 'last' and 'golden' but updates no buffer.
+-      return {TemporalLayers::FrameConfig(TemporalLayers::kReferenceAndUpdate,
+-                                          TemporalLayers::kUpdate,
+-                                          TemporalLayers::kReference),
+-              TemporalLayers::FrameConfig(
+-                  TemporalLayers::kReference, TemporalLayers::kNone,
+-                  TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
+-              TemporalLayers::FrameConfig(TemporalLayers::kReference,
+-                                          TemporalLayers::kUpdate,
+-                                          TemporalLayers::kReference),
+-              TemporalLayers::FrameConfig(
+-                  TemporalLayers::kReference, TemporalLayers::kReference,
+-                  TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
+-              TemporalLayers::FrameConfig(TemporalLayers::kReferenceAndUpdate,
+-                                          TemporalLayers::kNone,
+-                                          TemporalLayers::kReference),
+-              TemporalLayers::FrameConfig(
+-                  TemporalLayers::kReference, TemporalLayers::kReference,
+-                  TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
+-              TemporalLayers::FrameConfig(TemporalLayers::kReference,
+-                                          TemporalLayers::kReferenceAndUpdate,
+-                                          TemporalLayers::kReference),
+-              TemporalLayers::FrameConfig(
+-                  TemporalLayers::kReference, TemporalLayers::kReference,
+-                  TemporalLayers::kReference, TemporalLayers::kFreezeEntropy)};
++      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
++        // This field trial is intended to check if it is worth using a shorter
++        // temporal pattern, trading some coding efficiency for less risk of
++        // dropped frames.
++        // The coding efficiency will decrease somewhat since the higher layer
++        // state is more volatile, but it will be offset slightly by updating
++        // the altref buffer with TL2 frames, instead of just referencing lower
++        // layers.
++        // If a frame is dropped in a higher layer, the jitter
++        // buffer on the receive side won't be able to decode any higher layer
++        // frame until the next sync frame. So we expect a noticeable decrease
++        // in frame drops on links with high packet loss.
++
++        // TL0 references and updates the 'last' buffer.
++        // TL1  references 'last' and references and updates 'golden'.
++        // TL2 references both 'last' & 'golden' and references and updates
++        // 'arf'.
++        return {TemporalLayers::FrameConfig(TemporalLayers::kReferenceAndUpdate,
++                                            TemporalLayers::kNone,
++                                            TemporalLayers::kNone),
++                TemporalLayers::FrameConfig(TemporalLayers::kReference,
++                                            TemporalLayers::kNone,
++                                            TemporalLayers::kUpdate),
++                TemporalLayers::FrameConfig(TemporalLayers::kReference,
++                                            TemporalLayers::kUpdate,
++                                            TemporalLayers::kNone),
++                TemporalLayers::FrameConfig(TemporalLayers::kReference,
++                                            TemporalLayers::kReference,
++                                            TemporalLayers::kReference,
++                                            TemporalLayers::kFreezeEntropy)};
++      } else {
++        // All layers can reference but not update the 'alt' buffer, this means
++        // that the 'alt' buffer reference is effectively the last keyframe.
++        // TL0 also references and updates the 'last' buffer.
++        // TL1 also references 'last' and references and updates 'golden'.
++        // TL2 references both 'last' and 'golden' but updates no buffer.
++        return {TemporalLayers::FrameConfig(TemporalLayers::kReferenceAndUpdate,
++                                            TemporalLayers::kNone,
++                                            TemporalLayers::kReference),
++                TemporalLayers::FrameConfig(
++                    TemporalLayers::kReference, TemporalLayers::kNone,
++                    TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
++                TemporalLayers::FrameConfig(TemporalLayers::kReference,
++                                            TemporalLayers::kUpdate,
++                                            TemporalLayers::kReference),
++                TemporalLayers::FrameConfig(
++                    TemporalLayers::kReference, TemporalLayers::kReference,
++                    TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
++                TemporalLayers::FrameConfig(TemporalLayers::kReferenceAndUpdate,
++                                            TemporalLayers::kNone,
++                                            TemporalLayers::kReference),
++                TemporalLayers::FrameConfig(
++                    TemporalLayers::kReference, TemporalLayers::kReference,
++                    TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
++                TemporalLayers::FrameConfig(TemporalLayers::kReference,
++                                            TemporalLayers::kReferenceAndUpdate,
++                                            TemporalLayers::kReference),
++                TemporalLayers::FrameConfig(TemporalLayers::kReference,
++                                            TemporalLayers::kReference,
++                                            TemporalLayers::kReference,
++                                            TemporalLayers::kFreezeEntropy)};
++      }
+     case 4:
+       // TL0 references and updates only the 'last' buffer.
+       // TL1 references 'last' and updates and references 'golden'.
+@@ -191,13 +235,13 @@ std::vector<TemporalLayers::FrameConfig> GetTemporalPattern(size_t num_layers) {
+                                           TemporalLayers::kNone,
+                                           TemporalLayers::kNone),
+               TemporalLayers::FrameConfig(
+-                  TemporalLayers::kReference, TemporalLayers::kReference,
+-                  TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
++                  TemporalLayers::kReference, TemporalLayers::kNone,
++                  TemporalLayers::kNone, TemporalLayers::kFreezeEntropy),
+               TemporalLayers::FrameConfig(TemporalLayers::kReference,
+                                           TemporalLayers::kNone,
+                                           TemporalLayers::kUpdate),
+               TemporalLayers::FrameConfig(
+-                  TemporalLayers::kReference, TemporalLayers::kReference,
++                  TemporalLayers::kReference, TemporalLayers::kNone,
+                   TemporalLayers::kReference, TemporalLayers::kFreezeEntropy),
+               TemporalLayers::FrameConfig(TemporalLayers::kReference,
+                                           TemporalLayers::kUpdate,
+@@ -244,6 +288,17 @@ std::vector<TemporalLayers::FrameConfig> GetTemporalPattern(size_t num_layers) {
+       TemporalLayers::kNone, TemporalLayers::kNone, TemporalLayers::kNone)};
+ }
+ 
++// Temporary fix for forced SW fallback.
++// For VP8 SW codec, |TemporalLayers| is created and reported to
++// SimulcastRateAllocator::OnTemporalLayersCreated but not for VP8 HW.
++// Causes an issue when going from forced SW -> HW as |TemporalLayers| is not
++// deregistred when deleted by SW codec (tl factory might not exist, owned by
++// SimulcastRateAllocator).
++bool ExcludeOnTemporalLayersCreated(int num_temporal_layers) {
++  return webrtc::field_trial::IsEnabled(
++             "WebRTC-VP8-Forced-Fallback-Encoder-v2") &&
++         num_temporal_layers == 1;
++}
+ }  // namespace
+ 
+ DefaultTemporalLayers::DefaultTemporalLayers(int number_of_temporal_layers,
+@@ -254,7 +309,6 @@ DefaultTemporalLayers::DefaultTemporalLayers(int number_of_temporal_layers,
+       temporal_pattern_(GetTemporalPattern(num_layers_)),
+       tl0_pic_idx_(initial_tl0_pic_idx),
+       pattern_idx_(255),
+-      timestamp_(0),
+       last_base_layer_sync_(false) {
+   RTC_DCHECK_EQ(temporal_pattern_.size(), temporal_layer_sync_.size());
+   RTC_CHECK_GE(kMaxTemporalStreams, number_of_temporal_layers);
+@@ -266,12 +320,6 @@ DefaultTemporalLayers::DefaultTemporalLayers(int number_of_temporal_layers,
+   RTC_DCHECK_LE(temporal_ids_.size(), temporal_pattern_.size());
+ }
+ 
+-int DefaultTemporalLayers::GetTemporalLayerId(
+-    const TemporalLayers::FrameConfig& tl_config) const {
+-  RTC_DCHECK(!tl_config.drop_frame);
+-  return temporal_ids_[tl_config.pattern_idx % temporal_ids_.size()];
+-}
+-
+ uint8_t DefaultTemporalLayers::Tl0PicIdx() const {
+   return tl0_pic_idx_;
+ }
+@@ -332,7 +380,10 @@ TemporalLayers::FrameConfig DefaultTemporalLayers::UpdateLayerConfig(
+   RTC_DCHECK_LT(0, temporal_pattern_.size());
+   pattern_idx_ = (pattern_idx_ + 1) % temporal_pattern_.size();
+   TemporalLayers::FrameConfig tl_config = temporal_pattern_[pattern_idx_];
+-  tl_config.pattern_idx = pattern_idx_;
++  tl_config.layer_sync =
++      temporal_layer_sync_[pattern_idx_ % temporal_layer_sync_.size()];
++  tl_config.encoder_layer_id = tl_config.packetizer_temporal_idx =
++      temporal_ids_[pattern_idx_ % temporal_ids_.size()];
+   return tl_config;
+ }
+ 
+@@ -348,24 +399,19 @@ void DefaultTemporalLayers::PopulateCodecSpecific(
+     vp8_info->layerSync = false;
+     vp8_info->tl0PicIdx = kNoTl0PicIdx;
+   } else {
++    vp8_info->temporalIdx = tl_config.packetizer_temporal_idx;
++    vp8_info->layerSync = tl_config.layer_sync;
+     if (frame_is_keyframe) {
+       vp8_info->temporalIdx = 0;
+       vp8_info->layerSync = true;
+-    } else {
+-      vp8_info->temporalIdx = GetTemporalLayerId(tl_config);
+-
+-      vp8_info->layerSync = temporal_layer_sync_[tl_config.pattern_idx %
+-                                                 temporal_layer_sync_.size()];
+     }
+     if (last_base_layer_sync_ && vp8_info->temporalIdx != 0) {
+       // Regardless of pattern the frame after a base layer sync will always
+       // be a layer sync.
+       vp8_info->layerSync = true;
+     }
+-    if (vp8_info->temporalIdx == 0 && timestamp != timestamp_) {
+-      timestamp_ = timestamp;
++    if (vp8_info->temporalIdx == 0)
+       tl0_pic_idx_++;
+-    }
+     last_base_layer_sync_ = frame_is_keyframe;
+     vp8_info->tl0PicIdx = tl0_pic_idx_;
+   }
+@@ -377,13 +423,181 @@ TemporalLayers* TemporalLayersFactory::Create(
+     uint8_t initial_tl0_pic_idx) const {
+   TemporalLayers* tl =
+       new DefaultTemporalLayers(temporal_layers, initial_tl0_pic_idx);
+-  if (listener_)
++  if (listener_ && !ExcludeOnTemporalLayersCreated(temporal_layers))
+     listener_->OnTemporalLayersCreated(simulcast_id, tl);
+   return tl;
+ }
+ 
++std::unique_ptr<TemporalLayersChecker> TemporalLayersFactory::CreateChecker(
++    int /*simulcast_id*/,
++    int temporal_layers,
++    uint8_t initial_tl0_pic_idx) const {
++  TemporalLayersChecker* tlc =
++      new DefaultTemporalLayersChecker(temporal_layers, initial_tl0_pic_idx);
++  return std::unique_ptr<TemporalLayersChecker>(tlc);
++}
++
+ void TemporalLayersFactory::SetListener(TemporalLayersListener* listener) {
+   listener_ = listener;
+ }
+ 
++// Returns list of temporal dependencies for each frame in the temporal pattern.
++// Values are lists of indecies in the pattern.
++std::vector<std::set<uint8_t>> GetTemporalDependencies(
++    int num_temporal_layers) {
++  switch (num_temporal_layers) {
++    case 1:
++      return {{0}};
++    case 2:
++      return {{6}, {0}, {0}, {1, 2}, {2}, {3, 4}, {4}, {5, 6}};
++    case 3:
++      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
++        return {{0}, {0}, {0}, {0, 1, 2}};
++      } else {
++        return {{4}, {0}, {0}, {0, 2}, {0}, {2, 4}, {2, 4}, {4, 6}};
++      }
++    case 4:
++      return {{8},    {0},         {0},         {0, 2},
++              {0},    {0, 2, 4},   {0, 2, 4},   {0, 4, 6},
++              {0},    {4, 6, 8},   {4, 6, 8},   {4, 8, 10},
++              {4, 8}, {8, 10, 12}, {8, 10, 12}, {8, 12, 14}};
++    default:
++      RTC_NOTREACHED();
++      return {};
++  }
++}
++
++DefaultTemporalLayersChecker::DefaultTemporalLayersChecker(
++    int num_temporal_layers,
++    uint8_t initial_tl0_pic_idx)
++    : TemporalLayersChecker(num_temporal_layers, initial_tl0_pic_idx),
++      num_layers_(std::max(1, num_temporal_layers)),
++      temporal_ids_(GetTemporalIds(num_layers_)),
++      temporal_dependencies_(GetTemporalDependencies(num_layers_)),
++      pattern_idx_(255) {
++  int i = 0;
++  while (temporal_ids_.size() < temporal_dependencies_.size()) {
++    temporal_ids_.push_back(temporal_ids_[i++]);
++  }
++}
++
++bool DefaultTemporalLayersChecker::CheckTemporalConfig(
++    bool frame_is_keyframe,
++    const TemporalLayers::FrameConfig& frame_config) {
++  if (!TemporalLayersChecker::CheckTemporalConfig(frame_is_keyframe,
++                                                  frame_config)) {
++    return false;
++  }
++  if (frame_config.drop_frame) {
++    return true;
++  }
++  ++pattern_idx_;
++  if (pattern_idx_ == temporal_ids_.size()) {
++    // All non key-frame buffers should be updated each pattern cycle.
++    if (!last_.is_keyframe && !last_.is_updated_this_cycle) {
++      RTC_LOG(LS_ERROR) << "Last buffer was not updated during pattern cycle.";
++      return false;
++    }
++    if (!arf_.is_keyframe && !arf_.is_updated_this_cycle) {
++      RTC_LOG(LS_ERROR) << "Arf buffer was not updated during pattern cycle.";
++      return false;
++    }
++    if (!golden_.is_keyframe && !golden_.is_updated_this_cycle) {
++      RTC_LOG(LS_ERROR)
++          << "Golden buffer was not updated during pattern cycle.";
++      return false;
++    }
++    last_.is_updated_this_cycle = false;
++    arf_.is_updated_this_cycle = false;
++    golden_.is_updated_this_cycle = false;
++    pattern_idx_ = 0;
++  }
++  uint8_t expected_tl_idx = temporal_ids_[pattern_idx_];
++  if (frame_config.packetizer_temporal_idx != expected_tl_idx) {
++    RTC_LOG(LS_ERROR) << "Frame has an incorrect temporal index. Expected: "
++                      << static_cast<int>(expected_tl_idx) << " Actual: "
++                      << static_cast<int>(frame_config.packetizer_temporal_idx);
++    return false;
++  }
++
++  bool need_sync = temporal_ids_[pattern_idx_] > 0 &&
++                   temporal_ids_[pattern_idx_] != kNoTemporalIdx;
++  std::vector<int> dependencies;
++
++  if (frame_config.last_buffer_flags &
++      TemporalLayers::BufferFlags::kReference) {
++    uint8_t referenced_layer = temporal_ids_[last_.pattern_idx];
++    if (referenced_layer > 0) {
++      need_sync = false;
++    }
++    if (!last_.is_keyframe) {
++      dependencies.push_back(last_.pattern_idx);
++    }
++  }
++
++  if (frame_config.arf_buffer_flags & TemporalLayers::BufferFlags::kReference) {
++    uint8_t referenced_layer = temporal_ids_[arf_.pattern_idx];
++    if (referenced_layer > 0) {
++      need_sync = false;
++    }
++    if (!arf_.is_keyframe) {
++      dependencies.push_back(arf_.pattern_idx);
++    }
++  }
++
++  if (frame_config.golden_buffer_flags &
++      TemporalLayers::BufferFlags::kReference) {
++    uint8_t referenced_layer = temporal_ids_[golden_.pattern_idx];
++    if (referenced_layer > 0) {
++      need_sync = false;
++    }
++    if (!golden_.is_keyframe) {
++      dependencies.push_back(golden_.pattern_idx);
++    }
++  }
++
++  if (need_sync != frame_config.layer_sync) {
++    RTC_LOG(LS_ERROR) << "Sync bit is set incorrectly on a frame. Expected: "
++                      << need_sync << " Actual: " << frame_config.layer_sync;
++    return false;
++  }
++
++  if (!frame_is_keyframe) {
++    size_t i;
++    for (i = 0; i < dependencies.size(); ++i) {
++      if (temporal_dependencies_[pattern_idx_].find(dependencies[i]) ==
++          temporal_dependencies_[pattern_idx_].end()) {
++        RTC_LOG(LS_ERROR)
++            << "Illegal temporal dependency out of defined pattern "
++               "from position "
++            << static_cast<int>(pattern_idx_) << " to position "
++            << static_cast<int>(dependencies[i]);
++        return false;
++      }
++    }
++  }
++
++  if (frame_config.last_buffer_flags & TemporalLayers::BufferFlags::kUpdate) {
++    last_.is_updated_this_cycle = true;
++    last_.pattern_idx = pattern_idx_;
++    last_.is_keyframe = false;
++  }
++  if (frame_config.arf_buffer_flags & TemporalLayers::BufferFlags::kUpdate) {
++    arf_.is_updated_this_cycle = true;
++    arf_.pattern_idx = pattern_idx_;
++    arf_.is_keyframe = false;
++  }
++  if (frame_config.golden_buffer_flags & TemporalLayers::BufferFlags::kUpdate) {
++    golden_.is_updated_this_cycle = true;
++    golden_.pattern_idx = pattern_idx_;
++    golden_.is_keyframe = false;
++  }
++  if (frame_is_keyframe) {
++    last_.is_keyframe = true;
++    arf_.is_keyframe = true;
++    golden_.is_keyframe = true;
++  }
++  return true;
++}
++
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h
+index 4681fe9dc84..f1925569209 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h
+@@ -1,22 +1,23 @@
+ /* Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
+-*
+-*  Use of this source code is governed by a BSD-style license
+-*  that can be found in the LICENSE file in the root of the source
+-*  tree. An additional intellectual property rights grant can be found
+-*  in the file PATENTS.  All contributing project authors may
+-*  be found in the AUTHORS file in the root of the source tree.
+-*/
++ *
++ *  Use of this source code is governed by a BSD-style license
++ *  that can be found in the LICENSE file in the root of the source
++ *  tree. An additional intellectual property rights grant can be found
++ *  in the file PATENTS.  All contributing project authors may
++ *  be found in the AUTHORS file in the root of the source tree.
++ */
+ /*
+-* This file defines classes for doing temporal layers with VP8.
+-*/
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_DEFAULT_TEMPORAL_LAYERS_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_DEFAULT_TEMPORAL_LAYERS_H_
++ * This file defines classes for doing temporal layers with VP8.
++ */
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_DEFAULT_TEMPORAL_LAYERS_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_DEFAULT_TEMPORAL_LAYERS_H_
+ 
++#include <set>
+ #include <vector>
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "modules/video_coding/codecs/vp8/temporal_layers.h"
+ 
+-#include "webrtc/base/optional.h"
++#include "api/optional.h"
+ 
+ namespace webrtc {
+ 
+@@ -45,9 +46,6 @@ class DefaultTemporalLayers : public TemporalLayers {
+ 
+   void FrameEncoded(unsigned int size, int qp) override {}
+ 
+-  int GetTemporalLayerId(
+-      const TemporalLayers::FrameConfig& references) const override;
+-
+   uint8_t Tl0PicIdx() const override;
+ 
+  private:
+@@ -58,10 +56,35 @@ class DefaultTemporalLayers : public TemporalLayers {
+ 
+   uint8_t tl0_pic_idx_;
+   uint8_t pattern_idx_;
+-  uint32_t timestamp_;
+   bool last_base_layer_sync_;
+   rtc::Optional<std::vector<uint32_t>> new_bitrates_kbps_;
+ };
+ 
++class DefaultTemporalLayersChecker : public TemporalLayersChecker {
++ public:
++  DefaultTemporalLayersChecker(int number_of_temporal_layers,
++                               uint8_t initial_tl0_pic_idx);
++  bool CheckTemporalConfig(
++      bool frame_is_keyframe,
++      const TemporalLayers::FrameConfig& frame_config) override;
++
++ private:
++  struct BufferState {
++    BufferState()
++        : is_updated_this_cycle(false), is_keyframe(true), pattern_idx(0) {}
++
++    bool is_updated_this_cycle;
++    bool is_keyframe;
++    uint8_t pattern_idx;
++  };
++  const size_t num_layers_;
++  std::vector<unsigned int> temporal_ids_;
++  const std::vector<std::set<uint8_t>> temporal_dependencies_;
++  BufferState last_;
++  BufferState arf_;
++  BufferState golden_;
++  uint8_t pattern_idx_;
++};
++
+ }  // namespace webrtc
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_DEFAULT_TEMPORAL_LAYERS_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_DEFAULT_TEMPORAL_LAYERS_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers_unittest.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers_unittest.cc
+index edab34c16dd..1c1d63f1f8d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers_unittest.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers_unittest.cc
+@@ -8,19 +8,20 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.h"
++#include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
++#include "modules/video_coding/codecs/vp8/vp8_impl.h"
++#include "modules/video_coding/include/video_codec_interface.h"
++#include "test/field_trial.h"
++#include "test/gtest.h"
+ #include "vpx/vp8cx.h"
+ #include "vpx/vpx_encoder.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/vp8_impl.h"
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+-#include "webrtc/test/gtest.h"
+ 
+ namespace webrtc {
++namespace test {
+ 
+ enum {
+   kTemporalUpdateLast = VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
+-                        VP8_EFLAG_NO_REF_GF |
+-                        VP8_EFLAG_NO_REF_ARF,
++                        VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF,
+   kTemporalUpdateGoldenWithoutDependency =
+       VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_ARF |
+       VP8_EFLAG_NO_UPD_LAST,
+@@ -31,16 +32,16 @@ enum {
+       VP8_EFLAG_NO_UPD_LAST,
+   kTemporalUpdateAltref = VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_LAST,
+   kTemporalUpdateNone = VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
+-                        VP8_EFLAG_NO_UPD_LAST |
+-                        VP8_EFLAG_NO_UPD_ENTROPY,
+-  kTemporalUpdateNoneNoRefAltRef = VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_GF |
+-                                   VP8_EFLAG_NO_UPD_ARF |
+-                                   VP8_EFLAG_NO_UPD_LAST |
+-                                   VP8_EFLAG_NO_UPD_ENTROPY,
+-  kTemporalUpdateNoneNoRefGolden = VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_UPD_GF |
+-                                   VP8_EFLAG_NO_UPD_ARF |
+-                                   VP8_EFLAG_NO_UPD_LAST |
+-                                   VP8_EFLAG_NO_UPD_ENTROPY,
++                        VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ENTROPY,
++  kTemporalUpdateNoneNoRefAltRef =
++      VP8_EFLAG_NO_REF_ARF | VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
++      VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ENTROPY,
++  kTemporalUpdateNoneNoRefGolden =
++      VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
++      VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ENTROPY,
++  kTemporalUpdateNoneNoRefGoldenAltRef =
++      VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_REF_ARF |
++      VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_ENTROPY,
+   kTemporalUpdateGoldenWithoutDependencyRefAltRef =
+       VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_LAST,
+   kTemporalUpdateGoldenRefAltRef = VP8_EFLAG_NO_UPD_ARF | VP8_EFLAG_NO_UPD_LAST,
+@@ -52,13 +53,14 @@ enum {
+ 
+ TEST(TemporalLayersTest, 2Layers) {
+   DefaultTemporalLayers tl(2, 0);
++  DefaultTemporalLayersChecker checker(2, 0);
+   vpx_codec_enc_cfg_t cfg;
+   CodecSpecificInfoVP8 vp8_info;
+   tl.OnRatesUpdated(500, 500, 30);
+   tl.UpdateConfiguration(&cfg);
+ 
+   int expected_flags[16] = {
+-      kTemporalUpdateLastAndGoldenRefAltRef,
++      kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateGoldenWithoutDependencyRefAltRef,
+       kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateGoldenRefAltRef,
+@@ -66,7 +68,7 @@ TEST(TemporalLayersTest, 2Layers) {
+       kTemporalUpdateGoldenRefAltRef,
+       kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateNone,
+-      kTemporalUpdateLastAndGoldenRefAltRef,
++      kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateGoldenWithoutDependencyRefAltRef,
+       kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateGoldenRefAltRef,
+@@ -85,23 +87,28 @@ TEST(TemporalLayersTest, 2Layers) {
+   uint32_t timestamp = 0;
+   for (int i = 0; i < 16; ++i) {
+     TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp);
+-    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config));
+-    tl.PopulateCodecSpecific(false, tl_config, &vp8_info, 0);
++    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config)) << i;
++    tl.PopulateCodecSpecific(i == 0, tl_config, &vp8_info, 0);
++    EXPECT_TRUE(checker.CheckTemporalConfig(i == 0, tl_config));
+     EXPECT_EQ(expected_temporal_idx[i], vp8_info.temporalIdx);
+-    EXPECT_EQ(expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.packetizer_temporal_idx);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.encoder_layer_id);
++    EXPECT_EQ(i == 0 || expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_layer_sync[i], tl_config.layer_sync);
+     timestamp += 3000;
+   }
+ }
+ 
+ TEST(TemporalLayersTest, 3Layers) {
+   DefaultTemporalLayers tl(3, 0);
++  DefaultTemporalLayersChecker checker(3, 0);
+   vpx_codec_enc_cfg_t cfg;
+   CodecSpecificInfoVP8 vp8_info;
+   tl.OnRatesUpdated(500, 500, 30);
+   tl.UpdateConfiguration(&cfg);
+ 
+   int expected_flags[16] = {
+-      kTemporalUpdateLastAndGoldenRefAltRef,
++      kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateNoneNoRefGolden,
+       kTemporalUpdateGoldenWithoutDependencyRefAltRef,
+       kTemporalUpdateNone,
+@@ -109,7 +116,7 @@ TEST(TemporalLayersTest, 3Layers) {
+       kTemporalUpdateNone,
+       kTemporalUpdateGoldenRefAltRef,
+       kTemporalUpdateNone,
+-      kTemporalUpdateLastAndGoldenRefAltRef,
++      kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateNoneNoRefGolden,
+       kTemporalUpdateGoldenWithoutDependencyRefAltRef,
+       kTemporalUpdateNone,
+@@ -128,25 +135,67 @@ TEST(TemporalLayersTest, 3Layers) {
+   unsigned int timestamp = 0;
+   for (int i = 0; i < 16; ++i) {
+     TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp);
+-    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config));
+-    tl.PopulateCodecSpecific(false, tl_config, &vp8_info, 0);
++    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config)) << i;
++    tl.PopulateCodecSpecific(i == 0, tl_config, &vp8_info, 0);
++    EXPECT_TRUE(checker.CheckTemporalConfig(i == 0, tl_config));
++    EXPECT_EQ(expected_temporal_idx[i], vp8_info.temporalIdx);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.packetizer_temporal_idx);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.encoder_layer_id);
++    EXPECT_EQ(i == 0 || expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_layer_sync[i], tl_config.layer_sync);
++    timestamp += 3000;
++  }
++}
++
++TEST(TemporalLayersTest, Alternative3Layers) {
++  ScopedFieldTrials field_trial("WebRTC-UseShortVP8TL3Pattern/Enabled/");
++  DefaultTemporalLayers tl(3, 0);
++  DefaultTemporalLayersChecker checker(3, 0);
++  vpx_codec_enc_cfg_t cfg;
++  CodecSpecificInfoVP8 vp8_info;
++  tl.OnRatesUpdated(500, 500, 30);
++  tl.UpdateConfiguration(&cfg);
++
++  int expected_flags[8] = {kTemporalUpdateLast,
++                           kTemporalUpdateAltrefWithoutDependency,
++                           kTemporalUpdateGoldenWithoutDependency,
++                           kTemporalUpdateNone,
++                           kTemporalUpdateLast,
++                           kTemporalUpdateAltrefWithoutDependency,
++                           kTemporalUpdateGoldenWithoutDependency,
++                           kTemporalUpdateNone};
++  int expected_temporal_idx[8] = {0, 2, 1, 2, 0, 2, 1, 2};
++
++  bool expected_layer_sync[8] = {false, true, true, false,
++                                 false, true, true, false};
++
++  unsigned int timestamp = 0;
++  for (int i = 0; i < 8; ++i) {
++    TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp);
++    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config)) << i;
++    tl.PopulateCodecSpecific(i == 0, tl_config, &vp8_info, 0);
++    EXPECT_TRUE(checker.CheckTemporalConfig(i == 0, tl_config));
+     EXPECT_EQ(expected_temporal_idx[i], vp8_info.temporalIdx);
+-    EXPECT_EQ(expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.packetizer_temporal_idx);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.encoder_layer_id);
++    EXPECT_EQ(i == 0 || expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_layer_sync[i], tl_config.layer_sync);
+     timestamp += 3000;
+   }
+ }
+ 
+ TEST(TemporalLayersTest, 4Layers) {
+   DefaultTemporalLayers tl(4, 0);
++  DefaultTemporalLayersChecker checker(4, 0);
+   vpx_codec_enc_cfg_t cfg;
+   CodecSpecificInfoVP8 vp8_info;
+   tl.OnRatesUpdated(500, 500, 30);
+   tl.UpdateConfiguration(&cfg);
+   int expected_flags[16] = {
+       kTemporalUpdateLast,
+-      kTemporalUpdateNone,
++      kTemporalUpdateNoneNoRefGoldenAltRef,
+       kTemporalUpdateAltrefWithoutDependency,
+-      kTemporalUpdateNone,
++      kTemporalUpdateNoneNoRefGolden,
+       kTemporalUpdateGoldenWithoutDependency,
+       kTemporalUpdateNone,
+       kTemporalUpdateAltref,
+@@ -163,30 +212,35 @@ TEST(TemporalLayersTest, 4Layers) {
+   int expected_temporal_idx[16] = {0, 3, 2, 3, 1, 3, 2, 3,
+                                    0, 3, 2, 3, 1, 3, 2, 3};
+ 
+-  bool expected_layer_sync[16] = {false, true, true,  true, true,  true,
+-                                  false, true, false, true, false, true,
+-                                  false, true, false, true};
++  bool expected_layer_sync[16] = {false, true,  true,  false, true,  false,
++                                  false, false, false, false, false, false,
++                                  false, false, false, false};
+ 
+   uint32_t timestamp = 0;
+   for (int i = 0; i < 16; ++i) {
+     TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp);
+-    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config));
+-    tl.PopulateCodecSpecific(false, tl_config, &vp8_info, 0);
++    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config)) << i;
++    tl.PopulateCodecSpecific(i == 0, tl_config, &vp8_info, 0);
++    EXPECT_TRUE(checker.CheckTemporalConfig(i == 0, tl_config));
+     EXPECT_EQ(expected_temporal_idx[i], vp8_info.temporalIdx);
+-    EXPECT_EQ(expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.packetizer_temporal_idx);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.encoder_layer_id);
++    EXPECT_EQ(i == 0 || expected_layer_sync[i], vp8_info.layerSync);
++    EXPECT_EQ(expected_layer_sync[i], tl_config.layer_sync);
+     timestamp += 3000;
+   }
+ }
+ 
+ TEST(TemporalLayersTest, KeyFrame) {
+   DefaultTemporalLayers tl(3, 0);
++  DefaultTemporalLayersChecker checker(3, 0);
+   vpx_codec_enc_cfg_t cfg;
+   CodecSpecificInfoVP8 vp8_info;
+   tl.OnRatesUpdated(500, 500, 30);
+   tl.UpdateConfiguration(&cfg);
+ 
+   int expected_flags[8] = {
+-      kTemporalUpdateLastAndGoldenRefAltRef,
++      kTemporalUpdateLastRefAltRef,
+       kTemporalUpdateNoneNoRefGolden,
+       kTemporalUpdateGoldenWithoutDependencyRefAltRef,
+       kTemporalUpdateNone,
+@@ -195,21 +249,161 @@ TEST(TemporalLayersTest, KeyFrame) {
+       kTemporalUpdateGoldenRefAltRef,
+       kTemporalUpdateNone,
+   };
+-  int expected_temporal_idx[8] = {0, 0, 0, 0, 0, 0, 0, 2};
++  int expected_temporal_idx[8] = {0, 2, 1, 2, 0, 2, 1, 2};
++  bool expected_layer_sync[8] = {false, true,  true,  false,
++                                 false, false, false, false};
+ 
+   uint32_t timestamp = 0;
+   for (int i = 0; i < 7; ++i) {
+     TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp);
+-    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config));
++    EXPECT_EQ(expected_flags[i], VP8EncoderImpl::EncodeFlags(tl_config)) << i;
+     tl.PopulateCodecSpecific(true, tl_config, &vp8_info, 0);
+-    EXPECT_EQ(expected_temporal_idx[i], vp8_info.temporalIdx);
+-    EXPECT_EQ(true, vp8_info.layerSync);
++    EXPECT_TRUE(checker.CheckTemporalConfig(true, tl_config));
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.packetizer_temporal_idx);
++    EXPECT_EQ(expected_temporal_idx[i], tl_config.encoder_layer_id);
++    EXPECT_EQ(0, vp8_info.temporalIdx)
++        << "Key frame should always be packetized as layer 0";
++    EXPECT_EQ(expected_layer_sync[i], tl_config.layer_sync);
++    EXPECT_TRUE(vp8_info.layerSync) << "Key frame should be marked layer sync.";
+     timestamp += 3000;
+   }
+   TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp);
+   EXPECT_EQ(expected_flags[7], VP8EncoderImpl::EncodeFlags(tl_config));
+   tl.PopulateCodecSpecific(false, tl_config, &vp8_info, 0);
+-  EXPECT_EQ(expected_temporal_idx[7], vp8_info.temporalIdx);
+-  EXPECT_EQ(true, vp8_info.layerSync);
++  EXPECT_TRUE(checker.CheckTemporalConfig(false, tl_config));
++  EXPECT_NE(0, vp8_info.temporalIdx)
++      << "To test something useful, this frame should not use layer 0.";
++  EXPECT_EQ(expected_temporal_idx[7], vp8_info.temporalIdx)
++      << "Non-keyframe, should use frame temporal index.";
++  EXPECT_EQ(expected_temporal_idx[7], tl_config.packetizer_temporal_idx);
++  EXPECT_EQ(expected_temporal_idx[7], tl_config.encoder_layer_id);
++  EXPECT_FALSE(tl_config.layer_sync);
++  EXPECT_TRUE(vp8_info.layerSync) << "Frame after keyframe should always be "
++                                     "marked layer sync since it only depends "
++                                     "on the base layer.";
++}
++
++class TemporalLayersReferenceTest : public ::testing::TestWithParam<int> {
++ public:
++  TemporalLayersReferenceTest()
++      : timestamp_(1),
++        last_sync_timestamp_(timestamp_),
++        tl0_reference_(nullptr) {}
++  virtual ~TemporalLayersReferenceTest() {}
++
++ protected:
++  static const int kMaxPatternLength = 32;
++
++  struct BufferState {
++    BufferState() : BufferState(-1, 0, false) {}
++    BufferState(int temporal_idx, uint32_t timestamp, bool sync)
++        : temporal_idx(temporal_idx), timestamp(timestamp), sync(sync) {}
++    int temporal_idx;
++    uint32_t timestamp;
++    bool sync;
++  };
++
++  bool UpdateSyncRefState(const TemporalLayers::BufferFlags& flags,
++                          BufferState* buffer_state) {
++    if (flags & TemporalLayers::kReference) {
++      if (buffer_state->temporal_idx == -1)
++        return true;  // References key-frame.
++      if (buffer_state->temporal_idx == 0) {
++        // No more than one reference to TL0 frame.
++        EXPECT_EQ(nullptr, tl0_reference_);
++        tl0_reference_ = buffer_state;
++        return true;
++      }
++      return false;  // References higher layer.
++    }
++    return true;  // No reference, does not affect sync frame status.
++  }
++
++  void ValidateReference(const TemporalLayers::BufferFlags& flags,
++                         const BufferState& buffer_state,
++                         int temporal_layer) {
++    if (flags & TemporalLayers::kReference) {
++      if (temporal_layer > 0 && buffer_state.timestamp > 0) {
++        // Check that high layer reference does not go past last sync frame.
++        EXPECT_GE(buffer_state.timestamp, last_sync_timestamp_);
++      }
++      // No reference to buffer in higher layer.
++      EXPECT_LE(buffer_state.temporal_idx, temporal_layer);
++    }
++  }
++
++  uint32_t timestamp_ = 1;
++  uint32_t last_sync_timestamp_ = timestamp_;
++  BufferState* tl0_reference_;
++
++  BufferState last_state;
++  BufferState golden_state;
++  BufferState altref_state;
++};
++
++INSTANTIATE_TEST_CASE_P(DefaultTemporalLayersTest,
++                        TemporalLayersReferenceTest,
++                        ::testing::Range(1, kMaxTemporalStreams + 1));
++
++TEST_P(TemporalLayersReferenceTest, ValidFrameConfigs) {
++  const int num_layers = GetParam();
++  DefaultTemporalLayers tl(num_layers, 0);
++  vpx_codec_enc_cfg_t cfg;
++  tl.OnRatesUpdated(500, 500, 30);
++  tl.UpdateConfiguration(&cfg);
++
++  // Run through the pattern and store the frame dependencies, plus keep track
++  // of the buffer state; which buffers references which temporal layers (if
++  // (any). If a given buffer is never updated, it is legal to reference it
++  // even for sync frames. In order to be general, don't assume TL0 always
++  // updates |last|.
++  std::vector<TemporalLayers::FrameConfig> tl_configs(kMaxPatternLength);
++  for (int i = 0; i < kMaxPatternLength; ++i) {
++    TemporalLayers::FrameConfig tl_config = tl.UpdateLayerConfig(timestamp_++);
++    EXPECT_FALSE(tl_config.drop_frame);
++    tl_configs.push_back(tl_config);
++    int temporal_idx = tl_config.encoder_layer_id;
++    // For the default layers, always keep encoder and rtp layers in sync.
++    EXPECT_EQ(tl_config.packetizer_temporal_idx, temporal_idx);
++
++    // Determine if this frame is in a higher layer but references only TL0
++    // or untouched buffers, if so verify it is marked as a layer sync.
++    bool is_sync_frame = true;
++    tl0_reference_ = nullptr;
++    if (temporal_idx <= 0) {
++      is_sync_frame = false;  // TL0 by definition not a sync frame.
++    } else if (!UpdateSyncRefState(tl_config.last_buffer_flags, &last_state)) {
++      is_sync_frame = false;
++    } else if (!UpdateSyncRefState(tl_config.golden_buffer_flags,
++                                   &golden_state)) {
++      is_sync_frame = false;
++    } else if (!UpdateSyncRefState(tl_config.arf_buffer_flags, &altref_state)) {
++      is_sync_frame = false;
++    }
++    if (is_sync_frame) {
++      // Cache timestamp for last found sync frame, so that we can verify no
++      // references back past this frame.
++      ASSERT_TRUE(tl0_reference_);
++      last_sync_timestamp_ = tl0_reference_->timestamp;
++    }
++    EXPECT_EQ(tl_config.layer_sync, is_sync_frame);
++
++    // Validate no reference from lower to high temporal layer, or backwards
++    // past last reference frame.
++    ValidateReference(tl_config.last_buffer_flags, last_state, temporal_idx);
++    ValidateReference(tl_config.golden_buffer_flags, golden_state,
++                      temporal_idx);
++    ValidateReference(tl_config.arf_buffer_flags, altref_state, temporal_idx);
++
++    // Update the current layer state.
++    BufferState state = {temporal_idx, timestamp_, is_sync_frame};
++    if (tl_config.last_buffer_flags & TemporalLayers::kUpdate)
++      last_state = state;
++    if (tl_config.golden_buffer_flags & TemporalLayers::kUpdate)
++      golden_state = state;
++    if (tl_config.arf_buffer_flags & TemporalLayers::kUpdate)
++      altref_state = state;
++  }
+ }
++}  // namespace test
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
+index c9e45ee5b65..06003613adf 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8.h
+@@ -10,28 +10,30 @@
+  *  WEBRTC VP8 wrapper interface
+  */
+ 
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_H_
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_H_
+ 
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
++#include <memory>
++
++#include "modules/video_coding/include/video_codec_interface.h"
+ 
+ namespace webrtc {
+ 
+ class VP8Encoder : public VideoEncoder {
+  public:
+   static bool IsSupported();
+-  static VP8Encoder* Create();
++  static std::unique_ptr<VP8Encoder> Create();
+ 
+   virtual ~VP8Encoder() {}
+ };  // end of VP8Encoder class
+ 
+ class VP8Decoder : public VideoDecoder {
+  public:
+-  static bool IsSupported();
+-  static VP8Decoder* Create();
++    static bool IsSupported();
++    static std::unique_ptr<VP8Decoder> Create();
+ 
+   virtual ~VP8Decoder() {}
+ };  // end of VP8Decoder class
+ }  // namespace webrtc
+ 
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h
+index 7a27e4429a9..dff70ac3328 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h
+@@ -8,17 +8,17 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
+ 
+-#include "webrtc/common_types.h"
++#include "common_types.h"  // NOLINT(build/include)
+ 
+ namespace webrtc {
+ 
+ // Ratio allocation between temporal streams:
+ // Values as required for the VP8 codec (accumulating).
+ static const float
+-    kVp8LayerRateAlloction[kMaxTemporalStreams][kMaxTemporalStreams] = {
++    kVp8LayerRateAlloction[kMaxSimulcastStreams][kMaxTemporalStreams] = {
+         {1.0f, 1.0f, 1.0f, 1.0f},  // 1 layer
+         {0.6f, 1.0f, 1.0f, 1.0f},  // 2 layers {60%, 40%}
+         {0.4f, 0.6f, 1.0f, 1.0f},  // 3 layers {40%, 20%, 40%}
+@@ -26,4 +26,4 @@ static const float
+ };
+ 
+ }  // namespace webrtc
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_COMMON_TYPES_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h
+index 938e1991269..1fab5f45a6f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/include/vp8_globals.h
+@@ -11,10 +11,10 @@
+ // This file contains codec dependent definitions that are needed in
+ // order to compile the WebRTC codebase, even if this codec is not used.
+ 
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_GLOBALS_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_GLOBALS_H_
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_GLOBALS_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_GLOBALS_H_
+ 
+-#include "webrtc/modules/video_coding/codecs/interface/common_constants.h"
++#include "modules/video_coding/codecs/interface/common_constants.h"
+ 
+ namespace webrtc {
+ 
+@@ -46,4 +46,4 @@ struct RTPVideoHeaderVP8 {
+ 
+ }  // namespace webrtc
+ 
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_GLOBALS_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_INCLUDE_VP8_GLOBALS_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc
+index a30679a36cf..782dc772fca 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc
+@@ -1,30 +1,32 @@
+ /* Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
+-*
+-*  Use of this source code is governed by a BSD-style license
+-*  that can be found in the LICENSE file in the root of the source
+-*  tree. An additional intellectual property rights grant can be found
+-*  in the file PATENTS.  All contributing project authors may
+-*  be found in the AUTHORS file in the root of the source tree.
+-*/
++ *
++ *  Use of this source code is governed by a BSD-style license
++ *  that can be found in the LICENSE file in the root of the source
++ *  tree. An additional intellectual property rights grant can be found
++ *  in the file PATENTS.  All contributing project authors may
++ *  be found in the AUTHORS file in the root of the source tree.
++ */
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h"
++#include "modules/video_coding/codecs/vp8/screenshare_layers.h"
+ 
+ #include <stdlib.h>
+ 
+ #include <algorithm>
++#include <memory>
+ 
+-#include "webrtc/base/checks.h"
+-#include "vpx/vpx_encoder.h"
++#include "modules/video_coding/include/video_codec_interface.h"
++#include "rtc_base/checks.h"
++#include "rtc_base/logging.h"
++#include "system_wrappers/include/clock.h"
++#include "system_wrappers/include/metrics.h"
+ #include "vpx/vp8cx.h"
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+-#include "webrtc/system_wrappers/include/clock.h"
+-#include "webrtc/system_wrappers/include/metrics.h"
++#include "vpx/vpx_encoder.h"
+ 
+ namespace webrtc {
+ 
+ static const int kOneSecond90Khz = 90000;
+-static const int kMinTimeBetweenSyncs = kOneSecond90Khz * 5;
+-static const int kMaxTimeBetweenSyncs = kOneSecond90Khz * 10;
++static const int kMinTimeBetweenSyncs = kOneSecond90Khz * 2;
++static const int kMaxTimeBetweenSyncs = kOneSecond90Khz * 4;
+ static const int kQpDeltaThresholdForSync = 8;
+ static const int kMinBitrateKbpsForQpBoost = 500;
+ 
+@@ -54,6 +56,23 @@ webrtc::TemporalLayers* ScreenshareTemporalLayersFactory::Create(
+   return tl;
+ }
+ 
++std::unique_ptr<webrtc::TemporalLayersChecker>
++ScreenshareTemporalLayersFactory::CreateChecker(
++    int simulcast_id,
++    int temporal_layers,
++    uint8_t initial_tl0_pic_idx) const {
++  webrtc::TemporalLayersChecker* tlc;
++  if (simulcast_id == 0) {
++    tlc =
++        new webrtc::TemporalLayersChecker(temporal_layers, initial_tl0_pic_idx);
++  } else {
++    TemporalLayersFactory rt_tl_factory;
++    return rt_tl_factory.CreateChecker(simulcast_id, temporal_layers,
++                                       initial_tl0_pic_idx);
++  }
++  return std::unique_ptr<webrtc::TemporalLayersChecker>(tlc);
++}
++
+ ScreenshareLayers::ScreenshareLayers(int num_temporal_layers,
+                                      uint8_t initial_tl0_pic_idx,
+                                      Clock* clock)
+@@ -79,12 +98,6 @@ ScreenshareLayers::~ScreenshareLayers() {
+   UpdateHistograms();
+ }
+ 
+-int ScreenshareLayers::GetTemporalLayerId(
+-    const TemporalLayers::FrameConfig& tl_config) const {
+-  // Codec does not use temporal layers for screenshare.
+-  return 0;
+-}
+-
+ uint8_t ScreenshareLayers::Tl0PicIdx() const {
+   return tl0_pic_idx_;
+ }
+@@ -96,7 +109,6 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
+     // TODO(pbos): Consider updating only last, and not all buffers.
+     TemporalLayers::FrameConfig tl_config(
+         kReferenceAndUpdate, kReferenceAndUpdate, kReferenceAndUpdate);
+-    tl_config.pattern_idx = static_cast<int>(TemporalLayerState::kTl1);
+     return tl_config;
+   }
+ 
+@@ -152,11 +164,17 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
+       last_emitted_tl0_timestamp_ = unwrapped_timestamp;
+       break;
+     case 1:
+-      if (TimeToSync(unwrapped_timestamp)) {
+-        last_sync_timestamp_ = unwrapped_timestamp;
+-        layer_state = TemporalLayerState::kTl1Sync;
++      if (layers_[1].state != TemporalLayer::State::kDropped) {
++        if (TimeToSync(unwrapped_timestamp)) {
++          last_sync_timestamp_ = unwrapped_timestamp;
++          layer_state = TemporalLayerState::kTl1Sync;
++        } else {
++          layer_state = TemporalLayerState::kTl1;
++        }
+       } else {
+-        layer_state = TemporalLayerState::kTl1;
++        layer_state = last_sync_timestamp_ == unwrapped_timestamp
++                          ? TemporalLayerState::kTl1Sync
++                          : TemporalLayerState::kTl1;
+       }
+       break;
+     case -1:
+@@ -178,21 +196,24 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
+       // TL0 only references and updates 'last'.
+       tl_config =
+           TemporalLayers::FrameConfig(kReferenceAndUpdate, kNone, kNone);
++      tl_config.packetizer_temporal_idx = 0;
+       break;
+     case TemporalLayerState::kTl1:
+       // TL1 references both 'last' and 'golden' but only updates 'golden'.
+       tl_config =
+           TemporalLayers::FrameConfig(kReference, kReferenceAndUpdate, kNone);
++      tl_config.packetizer_temporal_idx = 1;
+       break;
+     case TemporalLayerState::kTl1Sync:
+       // Predict from only TL0 to allow participants to switch to the high
+       // bitrate stream. Updates 'golden' so that TL1 can continue to refer to
+       // and update 'golden' from this point on.
+       tl_config = TemporalLayers::FrameConfig(kReference, kUpdate, kNone);
++      tl_config.packetizer_temporal_idx = 1;
+       break;
+   }
+ 
+-  tl_config.pattern_idx = static_cast<int>(layer_state);
++  tl_config.layer_sync = layer_state == TemporalLayerState::kTl1Sync;
+   return tl_config;
+ }
+ 
+@@ -269,36 +290,24 @@ void ScreenshareLayers::PopulateCodecSpecific(
+     const TemporalLayers::FrameConfig& tl_config,
+     CodecSpecificInfoVP8* vp8_info,
+     uint32_t timestamp) {
+-  int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
+   if (number_of_temporal_layers_ == 1) {
+     vp8_info->temporalIdx = kNoTemporalIdx;
+     vp8_info->layerSync = false;
+     vp8_info->tl0PicIdx = kNoTl0PicIdx;
+   } else {
+-    TemporalLayerState layer_state =
+-        static_cast<TemporalLayerState>(tl_config.pattern_idx);
+-    switch (layer_state) {
+-      case TemporalLayerState::kDrop:
+-        RTC_NOTREACHED();
+-        break;
+-      case TemporalLayerState::kTl0:
+-        vp8_info->temporalIdx = 0;
+-        break;
+-      case TemporalLayerState::kTl1:
+-      case TemporalLayerState::kTl1Sync:
+-        vp8_info->temporalIdx = 1;
+-        break;
+-    }
++    int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
++    vp8_info->temporalIdx = tl_config.packetizer_temporal_idx;
++    vp8_info->layerSync = tl_config.layer_sync;
+     if (frame_is_keyframe) {
+       vp8_info->temporalIdx = 0;
+       last_sync_timestamp_ = unwrapped_timestamp;
++      vp8_info->layerSync = true;
+     } else if (last_base_layer_sync_ && vp8_info->temporalIdx != 0) {
+       // Regardless of pattern the frame after a base layer sync will always
+       // be a layer sync.
+       last_sync_timestamp_ = unwrapped_timestamp;
++      vp8_info->layerSync = true;
+     }
+-    vp8_info->layerSync = last_sync_timestamp_ != -1 &&
+-                          last_sync_timestamp_ == unwrapped_timestamp;
+     if (vp8_info->temporalIdx == 0) {
+       tl0_pic_idx_++;
+     }
+@@ -443,8 +452,9 @@ void ScreenshareLayers::UpdateHistograms() {
+     int total_frames = stats_.num_tl0_frames_ + stats_.num_tl1_frames_;
+     RTC_HISTOGRAM_COUNTS_10000(
+         "WebRTC.Video.Screenshare.FramesPerDrop",
+-        (stats_.num_dropped_frames_ == 0 ? 0 : total_frames /
+-                                                   stats_.num_dropped_frames_));
++        (stats_.num_dropped_frames_ == 0
++             ? 0
++             : total_frames / stats_.num_dropped_frames_));
+     RTC_HISTOGRAM_COUNTS_10000(
+         "WebRTC.Video.Screenshare.FramesPerOvershoot",
+         (stats_.num_overshoots_ == 0 ? 0
+@@ -465,5 +475,4 @@ void ScreenshareLayers::UpdateHistograms() {
+     }
+   }
+ }
+-
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h
+index 873846e8b22..81db90abe6b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h
+@@ -1,21 +1,21 @@
+ /* Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
+-*
+-*  Use of this source code is governed by a BSD-style license
+-*  that can be found in the LICENSE file in the root of the source
+-*  tree. An additional intellectual property rights grant can be found
+-*  in the file PATENTS.  All contributing project authors may
+-*  be found in the AUTHORS file in the root of the source tree.
+-*/
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
++ *
++ *  Use of this source code is governed by a BSD-style license
++ *  that can be found in the LICENSE file in the root of the source
++ *  tree. An additional intellectual property rights grant can be found
++ *  in the file PATENTS.  All contributing project authors may
++ *  be found in the AUTHORS file in the root of the source tree.
++ */
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
+ 
+ #include <vector>
+ 
+-#include "webrtc/base/rate_statistics.h"
+-#include "webrtc/base/timeutils.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
+-#include "webrtc/modules/video_coding/utility/frame_dropper.h"
+-#include "webrtc/typedefs.h"
++#include "modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "modules/video_coding/utility/frame_dropper.h"
++#include "rtc_base/rate_statistics.h"
++#include "rtc_base/timeutils.h"
++#include "typedefs.h"  // NOLINT(build/include)
+ 
+ namespace webrtc {
+ 
+@@ -54,9 +54,6 @@ class ScreenshareLayers : public TemporalLayers {
+ 
+   void FrameEncoded(unsigned int size, int qp) override;
+ 
+-  int GetTemporalLayerId(
+-      const TemporalLayers::FrameConfig& tl_config) const override;
+-
+   uint8_t Tl0PicIdx() const override;
+ 
+  private:
+@@ -127,4 +124,4 @@ class ScreenshareLayers : public TemporalLayers {
+ };
+ }  // namespace webrtc
+ 
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_SCREENSHARE_LAYERS_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers_unittest.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers_unittest.cc
+index 9cac0b0a420..754235ab0b3 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers_unittest.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers_unittest.cc
+@@ -13,14 +13,14 @@
+ 
+ #include "vpx/vp8cx.h"
+ #include "vpx/vpx_encoder.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/vp8_impl.h"
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+-#include "webrtc/modules/video_coding/utility/mock/mock_frame_dropper.h"
+-#include "webrtc/system_wrappers/include/clock.h"
+-#include "webrtc/system_wrappers/include/metrics.h"
+-#include "webrtc/system_wrappers/include/metrics_default.h"
+-#include "webrtc/test/gtest.h"
++#include "modules/video_coding/codecs/vp8/screenshare_layers.h"
++#include "modules/video_coding/codecs/vp8/vp8_impl.h"
++#include "modules/video_coding/include/video_codec_interface.h"
++#include "modules/video_coding/utility/mock/mock_frame_dropper.h"
++#include "system_wrappers/include/clock.h"
++#include "system_wrappers/include/metrics.h"
++#include "system_wrappers/include/metrics_default.h"
++#include "test/gtest.h"
+ 
+ using ::testing::_;
+ using ::testing::ElementsAre;
+@@ -35,8 +35,8 @@ const int kDefaultQp = 54;
+ const int kDefaultTl0BitrateKbps = 200;
+ const int kDefaultTl1BitrateKbps = 2000;
+ const int kFrameRate = 5;
+-const int kSyncPeriodSeconds = 5;
+-const int kMaxSyncPeriodSeconds = 10;
++const int kSyncPeriodSeconds = 2;
++const int kMaxSyncPeriodSeconds = 4;
+ 
+ // Expected flags for corresponding temporal layers.
+ const int kTl0Flags = VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
+@@ -71,6 +71,10 @@ class ScreenshareLayerTest : public ::testing::Test {
+ 
+   int ConfigureFrame(bool key_frame) {
+     tl_config_ = layers_->UpdateLayerConfig(timestamp_);
++    EXPECT_EQ(0, tl_config_.encoder_layer_id)
++        << "ScreenshareLayers always encodes using the bitrate allocator for "
++           "layer 0, but may reference different buffers and packetize "
++           "differently.";
+     if (tl_config_.drop_frame) {
+       return -1;
+     }
+@@ -126,18 +130,29 @@ class ScreenshareLayerTest : public ::testing::Test {
+ 
+   // Adds frames until we get one in the specified temporal layer. The last
+   // FrameEncoded() call will be omitted and needs to be done by the caller.
+-  void SkipUntilTl(int layer) {
+-    for (int i = 0; i < 5; ++i) {
+-      ConfigureFrame(false);
++  // Returns the flags for the last frame.
++  int SkipUntilTl(int layer) {
++    return SkipUntilTlAndSync(layer, rtc::nullopt);
++  }
++
++  // Same as SkipUntilTl, but also waits until the sync bit condition is met.
++  int SkipUntilTlAndSync(int layer, rtc::Optional<bool> sync) {
++    int flags = 0;
++    const int kMaxFramesToSkip =
++        1 + (sync.value_or(false) ? kMaxSyncPeriodSeconds : 1) * kFrameRate;
++    for (int i = 0; i < kMaxFramesToSkip; ++i) {
++      flags = ConfigureFrame(false);
+       timestamp_ += kTimestampDelta5Fps;
+-      if (vp8_info_.temporalIdx != layer) {
++      if (vp8_info_.temporalIdx != layer ||
++          (sync && *sync != vp8_info_.layerSync)) {
+         layers_->FrameEncoded(frame_size_, kDefaultQp);
+       } else {
+-        // Found frame form sought layer.
+-        return;
++        // Found frame from sought after layer.
++        return flags;
+       }
+     }
+     ADD_FAILURE() << "Did not get a frame of TL" << layer << " in time.";
++    return -1;
+   }
+ 
+   int min_qp_;
+@@ -562,4 +577,31 @@ TEST_F(ScreenshareLayerTest, RespectsConfiguredFramerate) {
+   // Allow for some rounding errors in the measurements.
+   EXPECT_NEAR(num_discarded_frames, num_input_frames / 2, 2);
+ }
++
++TEST_F(ScreenshareLayerTest, 2LayersSyncAtOvershootDrop) {
++  // Run grace period so we have existing frames in both TL0 and Tl1.
++  EXPECT_TRUE(RunGracePeriod());
++
++  // Move ahead until we have a sync frame in TL1.
++  EXPECT_EQ(kTl1SyncFlags, SkipUntilTlAndSync(1, true));
++  ASSERT_TRUE(vp8_info_.layerSync);
++
++  // Simulate overshoot of this frame.
++  layers_->FrameEncoded(0, -1);
++
++  // Reencode, frame config, flags and codec specific info should remain the
++  // same as for the dropped frame.
++  timestamp_ -= kTimestampDelta5Fps;  // Undo last timestamp increment.
++  TemporalLayers::FrameConfig new_tl_config =
++      layers_->UpdateLayerConfig(timestamp_);
++  EXPECT_EQ(tl_config_, new_tl_config);
++
++  config_updated_ = layers_->UpdateConfiguration(&cfg_);
++  EXPECT_EQ(kTl1SyncFlags, VP8EncoderImpl::EncodeFlags(tl_config_));
++
++  CodecSpecificInfoVP8 new_vp8_info;
++  layers_->PopulateCodecSpecific(false, tl_config_, &new_vp8_info, timestamp_);
++  EXPECT_TRUE(new_vp8_info.layerSync);
++}
++
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.cc
+index 39c43c9b6d0..b2b3334815f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.cc
+@@ -8,14 +8,14 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
++#include "modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
+ 
+ #include <algorithm>
+ #include <memory>
+ #include <vector>
+ #include <utility>
+ 
+-#include "webrtc/base/checks.h"
++#include "rtc_base/checks.h"
+ 
+ namespace webrtc {
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h
+index e558290e6b4..929abba4132 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h
+@@ -8,18 +8,18 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_RATE_ALLOCATOR_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_RATE_ALLOCATOR_H_
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_RATE_ALLOCATOR_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_RATE_ALLOCATOR_H_
+ 
+ #include <stdint.h>
+ 
+ #include <map>
+ #include <memory>
+ 
+-#include "webrtc/api/video_codecs/video_encoder.h"
+-#include "webrtc/base/constructormagic.h"
+-#include "webrtc/common_video/include/video_bitrate_allocator.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "api/video_codecs/video_encoder.h"
++#include "common_video/include/video_bitrate_allocator.h"
++#include "modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "rtc_base/constructormagic.h"
+ 
+ namespace webrtc {
+ 
+@@ -48,4 +48,4 @@ class SimulcastRateAllocator : public VideoBitrateAllocator,
+ 
+ }  // namespace webrtc
+ 
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_RATE_ALLOCATOR_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_RATE_ALLOCATOR_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.cc
+index 9d919cdd5bd..b1dd794f291 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.cc
+@@ -8,19 +8,19 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/simulcast_unittest.h"
++#include "modules/video_coding/codecs/vp8/simulcast_test_utility.h"
+ 
+ namespace webrtc {
+ namespace testing {
+ 
+ class TestVp8Impl : public TestVp8Simulcast {
+- public:
+-  TestVp8Impl()
+-      : TestVp8Simulcast(VP8Encoder::Create(), VP8Decoder::Create()) {}
+-
+  protected:
+-  virtual void SetUp() { TestVp8Simulcast::SetUp(); }
+-  virtual void TearDown() { TestVp8Simulcast::TearDown(); }
++  std::unique_ptr<VP8Encoder> CreateEncoder() override {
++    return VP8Encoder::Create();
++  }
++  std::unique_ptr<VP8Decoder> CreateDecoder() override {
++    return VP8Decoder::Create();
++  }
+ };
+ 
+ TEST_F(TestVp8Impl, TestKeyFrameRequestsOnAllStreams) {
+@@ -71,10 +71,6 @@ TEST_F(TestVp8Impl, TestSaptioTemporalLayers333PatternEncoder) {
+   TestVp8Simulcast::TestSaptioTemporalLayers333PatternEncoder();
+ }
+ 
+-TEST_F(TestVp8Impl, TestSpatioTemporalLayers321PatternEncoder) {
+-  TestVp8Simulcast::TestSpatioTemporalLayers321PatternEncoder();
+-}
+-
+ TEST_F(TestVp8Impl, TestStrideEncodeDecode) {
+   TestVp8Simulcast::TestStrideEncodeDecode();
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers.h
+index f0561076a0e..dad718cd0f3 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers.h
+@@ -1,21 +1,21 @@
+ /* Copyright (c) 2011 The WebRTC project authors. All Rights Reserved.
+-*
+-*  Use of this source code is governed by a BSD-style license
+-*  that can be found in the LICENSE file in the root of the source
+-*  tree. An additional intellectual property rights grant can be found
+-*  in the file PATENTS.  All contributing project authors may
+-*  be found in the AUTHORS file in the root of the source tree.
+-*/
++ *
++ *  Use of this source code is governed by a BSD-style license
++ *  that can be found in the LICENSE file in the root of the source
++ *  tree. An additional intellectual property rights grant can be found
++ *  in the file PATENTS.  All contributing project authors may
++ *  be found in the AUTHORS file in the root of the source tree.
++ */
+ /*
+-* This file defines the interface for doing temporal layers with VP8.
+-*/
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_TEMPORAL_LAYERS_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_TEMPORAL_LAYERS_H_
++ * This file defines the interface for doing temporal layers with VP8.
++ */
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_TEMPORAL_LAYERS_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_TEMPORAL_LAYERS_H_
+ 
+ #include <vector>
++#include <memory>
+ 
+-#include "webrtc/typedefs.h"
+-
++#include "typedefs.h"  // NOLINT(build/include)
+ struct vpx_codec_enc_cfg;
+ typedef struct vpx_codec_enc_cfg vpx_codec_enc_cfg_t;
+ 
+@@ -47,13 +47,34 @@ class TemporalLayers {
+     BufferFlags golden_buffer_flags;
+     BufferFlags arf_buffer_flags;
+ 
+-    // TODO(pbos): Consider breaking these out of here and returning only a
+-    // pattern index that needs to be returned to fill CodecSpecificInfoVP8 or
+-    // EncodeFlags.
++    // The encoder layer ID is used to utilize the correct bitrate allocator
++    // inside the encoder. It does not control references nor determine which
++    // "actual" temporal layer this is. The packetizer temporal index determines
++    // which layer the encoded frame should be packetized into.
++    // Normally these are the same, but current temporal-layer strategies for
++    // screenshare use one bitrate allocator for all layers, but attempt to
++    // packetize / utilize references to split a stream into multiple layers,
++    // with different quantizer settings, to hit target bitrate.
++    // TODO(pbos): Screenshare layers are being reconsidered at the time of
++    // writing, we might be able to remove this distinction, and have a temporal
++    // layer imply both (the normal case).
++    int encoder_layer_id;
++    int packetizer_temporal_idx;
++
+     bool layer_sync;
++
+     bool freeze_entropy;
+ 
+-    int pattern_idx;
++    bool operator==(const FrameConfig& o) const {
++      return drop_frame == o.drop_frame &&
++             last_buffer_flags == o.last_buffer_flags &&
++             golden_buffer_flags == o.golden_buffer_flags &&
++             arf_buffer_flags == o.arf_buffer_flags &&
++             layer_sync == o.layer_sync && freeze_entropy == o.freeze_entropy &&
++             encoder_layer_id == o.encoder_layer_id &&
++             packetizer_temporal_idx == o.packetizer_temporal_idx;
++    }
++    bool operator!=(const FrameConfig& o) const { return !(*this == o); }
+ 
+    private:
+     FrameConfig(BufferFlags last,
+@@ -91,18 +112,27 @@ class TemporalLayers {
+   // Returns the current tl0_pic_idx, so it can be reused in future
+   // instantiations.
+   virtual uint8_t Tl0PicIdx() const = 0;
+-  virtual int GetTemporalLayerId(
+-      const TemporalLayers::FrameConfig& tl_config) const = 0;
+ };
+ 
+ class TemporalLayersListener;
++class TemporalLayersChecker;
++
+ class TemporalLayersFactory {
+  public:
+   TemporalLayersFactory() : listener_(nullptr) {}
+   virtual ~TemporalLayersFactory() {}
+-  virtual TemporalLayers* Create(int /* simulcast_id */,
+-                                 int /* temporal_layers */,
+-                                 uint8_t /* initial_tl0_pic_idx */) const { return nullptr; }
++  virtual TemporalLayers* Create(int simulcast_id,
++                                 int temporal_layers,
++                                 uint8_t initial_tl0_pic_idx) const;
++
++  // Creates helper class which performs online checks of a correctness of
++  // temporal layers dependencies returned by TemporalLayers class created in
++  // the same factory.
++  virtual std::unique_ptr<TemporalLayersChecker> CreateChecker(
++      int simulcast_id,
++      int temporal_layers,
++      uint8_t initial_tl0_pic_idx) const;
++
+   void SetListener(TemporalLayersListener* listener);
+ 
+  protected:
+@@ -117,6 +147,14 @@ class ScreenshareTemporalLayersFactory : public webrtc::TemporalLayersFactory {
+   webrtc::TemporalLayers* Create(int simulcast_id,
+                                  int num_temporal_layers,
+                                  uint8_t initial_tl0_pic_idx) const override;
++
++  // Creates helper class which performs online checks of a correctness of
++  // temporal layers dependencies returned by TemporalLayers class created in
++  // the same factory.
++  std::unique_ptr<webrtc::TemporalLayersChecker> CreateChecker(
++      int simulcast_id,
++      int temporal_layers,
++      uint8_t initial_tl0_pic_idx) const override;
+ };
+ 
+ class TemporalLayersListener {
+@@ -128,5 +166,40 @@ class TemporalLayersListener {
+                                        TemporalLayers* layers) = 0;
+ };
+ 
++// Used only inside RTC_DCHECK(). It checks correctness of temporal layers
++// dependencies and sync bits. The only method of this class is called after
++// each UpdateLayersConfig() of a corresponding TemporalLayers class.
++class TemporalLayersChecker {
++ public:
++  TemporalLayersChecker(int num_temporal_layers, uint8_t initial_tl0_pic_idx);
++  virtual ~TemporalLayersChecker() {}
++
++  virtual bool CheckTemporalConfig(
++      bool frame_is_keyframe,
++      const TemporalLayers::FrameConfig& frame_config);
++
++ private:
++  struct BufferState {
++    BufferState() : is_keyframe(true), temporal_layer(0), sequence_number(0) {}
++    bool is_keyframe;
++    uint8_t temporal_layer;
++    uint32_t sequence_number;
++  };
++  bool CheckAndUpdateBufferState(BufferState* state,
++                                 bool* need_sync,
++                                 bool frame_is_keyframe,
++                                 uint8_t temporal_layer,
++                                 webrtc::TemporalLayers::BufferFlags flags,
++                                 uint32_t sequence_number,
++                                 uint32_t* lowest_sequence_referenced);
++  BufferState last_;
++  BufferState arf_;
++  BufferState golden_;
++  int num_temporal_layers_;
++  uint32_t sequence_number_;
++  uint32_t last_sync_sequence_number_;
++  uint32_t last_tl0_sequence_number_;
++};
++
+ }  // namespace webrtc
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_TEMPORAL_LAYERS_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_TEMPORAL_LAYERS_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/test/vp8_impl_unittest.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/test/vp8_impl_unittest.cc
+index a3db4fdad69..5d6abec76d8 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/test/vp8_impl_unittest.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/test/vp8_impl_unittest.cc
+@@ -12,99 +12,88 @@
+ 
+ #include <memory>
+ 
+-#include "webrtc/api/video/i420_buffer.h"
+-#include "webrtc/base/checks.h"
+-#include "webrtc/base/optional.h"
+-#include "webrtc/base/timeutils.h"
+-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
+-#include "webrtc/modules/video_coding/codecs/test/video_codec_test.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
+-#include "webrtc/test/frame_utils.h"
+-#include "webrtc/test/gtest.h"
+-#include "webrtc/test/testsupport/fileutils.h"
++#include "api/optional.h"
++#include "api/video/i420_buffer.h"
++#include "common_video/libyuv/include/webrtc_libyuv.h"
++#include "modules/video_coding/codecs/test/video_codec_test.h"
++#include "modules/video_coding/codecs/vp8/include/vp8.h"
++#include "modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "rtc_base/checks.h"
++#include "rtc_base/timeutils.h"
++#include "test/field_trial.h"
++#include "test/frame_utils.h"
++#include "test/gtest.h"
++#include "test/testsupport/fileutils.h"
++#include "test/video_codec_settings.h"
+ 
+ namespace webrtc {
+ 
+ namespace {
++constexpr uint32_t kInitialTimestampRtp = 123;
++constexpr int64_t kTestNtpTimeMs = 456;
++constexpr int64_t kInitialTimestampMs = 789;
++constexpr uint32_t kTimestampIncrement = 3000;
++constexpr int kNumCores = 1;
++constexpr size_t kMaxPayloadSize = 1440;
++constexpr int kDefaultMinPixelsPerFrame = 320 * 180;
++constexpr int kWidth = 172;
++constexpr int kHeight = 144;
+ 
+ void Calc16ByteAlignedStride(int width, int* stride_y, int* stride_uv) {
+   *stride_y = 16 * ((width + 15) / 16);
+   *stride_uv = 16 * ((width + 31) / 32);
+ }
+-
+-enum { kMaxWaitEncTimeMs = 100 };
+-enum { kMaxWaitDecTimeMs = 25 };
+-
+-constexpr uint32_t kTestTimestamp = 123;
+-constexpr int64_t kTestNtpTimeMs = 456;
+-constexpr uint32_t kTimestampIncrementPerFrame = 3000;
+-
+ }  // namespace
+ 
+-// TODO(mikhal): Replace these with mocks.
+-class Vp8UnitTestEncodeCompleteCallback : public webrtc::EncodedImageCallback {
++class EncodedImageCallbackTestImpl : public webrtc::EncodedImageCallback {
+  public:
+-  Vp8UnitTestEncodeCompleteCallback(EncodedImage* frame,
+-                                    CodecSpecificInfo* codec_specific_info,
+-                                    unsigned int decoderSpecificSize,
+-                                    void* decoderSpecificInfo)
+-      : encoded_frame_(frame),
+-        codec_specific_info_(codec_specific_info),
+-        encode_complete_(false) {}
+-
+-  Result OnEncodedImage(const EncodedImage& encoded_frame_,
++  Result OnEncodedImage(const EncodedImage& encoded_frame,
+                         const CodecSpecificInfo* codec_specific_info,
+-                        const RTPFragmentationHeader* fragmentation) override;
+-  bool EncodeComplete();
++                        const RTPFragmentationHeader* fragmentation) override {
++    EXPECT_GT(encoded_frame._length, 0u);
++    VerifyQpParser(encoded_frame);
+ 
+- private:
+-  EncodedImage* const encoded_frame_;
+-  CodecSpecificInfo* const codec_specific_info_;
+-  std::unique_ptr<uint8_t[]> frame_buffer_;
+-  bool encode_complete_;
+-};
++    if (encoded_frame_._size != encoded_frame._size) {
++      delete[] encoded_frame_._buffer;
++      frame_buffer_.reset(new uint8_t[encoded_frame._size]);
++    }
++    RTC_DCHECK(frame_buffer_);
++    memcpy(frame_buffer_.get(), encoded_frame._buffer, encoded_frame._length);
++    encoded_frame_ = encoded_frame;
++    encoded_frame_._buffer = frame_buffer_.get();
++
++    // Skip |codec_name|, to avoid allocating.
++    EXPECT_STREQ("libvpx", codec_specific_info->codec_name);
++    EXPECT_EQ(kVideoCodecVP8, codec_specific_info->codecType);
++    EXPECT_EQ(0u, codec_specific_info->codecSpecific.VP8.simulcastIdx);
++    codec_specific_info_.codecType = codec_specific_info->codecType;
++    codec_specific_info_.codecSpecific = codec_specific_info->codecSpecific;
++    complete_ = true;
++    return Result(Result::OK, 0);
++  }
+ 
+-webrtc::EncodedImageCallback::Result
+-Vp8UnitTestEncodeCompleteCallback::OnEncodedImage(
+-    const EncodedImage& encoded_frame,
+-    const CodecSpecificInfo* codec_specific_info,
+-    const RTPFragmentationHeader* fragmentation) {
+-  if (encoded_frame_->_size < encoded_frame._length) {
+-    delete[] encoded_frame_->_buffer;
+-    frame_buffer_.reset(new uint8_t[encoded_frame._length]);
+-    encoded_frame_->_buffer = frame_buffer_.get();
+-    encoded_frame_->_size = encoded_frame._length;
++  void VerifyQpParser(const EncodedImage& encoded_frame) const {
++    int qp;
++    ASSERT_TRUE(vp8::GetQp(encoded_frame._buffer, encoded_frame._length, &qp));
++    EXPECT_EQ(encoded_frame.qp_, qp) << "Encoder QP != parsed bitstream QP.";
+   }
+-  memcpy(encoded_frame_->_buffer, encoded_frame._buffer, encoded_frame._length);
+-  encoded_frame_->_length = encoded_frame._length;
+-  encoded_frame_->_encodedWidth = encoded_frame._encodedWidth;
+-  encoded_frame_->_encodedHeight = encoded_frame._encodedHeight;
+-  encoded_frame_->_timeStamp = encoded_frame._timeStamp;
+-  encoded_frame_->_frameType = encoded_frame._frameType;
+-  encoded_frame_->_completeFrame = encoded_frame._completeFrame;
+-  encoded_frame_->rotation_ = encoded_frame.rotation_;
+-  encoded_frame_->qp_ = encoded_frame.qp_;
+-  codec_specific_info_->codecType = codec_specific_info->codecType;
+-  // Skip |codec_name|, to avoid allocating.
+-  codec_specific_info_->codecSpecific = codec_specific_info->codecSpecific;
+-  encode_complete_ = true;
+-  return Result(Result::OK, 0);
+-}
+ 
+-bool Vp8UnitTestEncodeCompleteCallback::EncodeComplete() {
+-  if (encode_complete_) {
+-    encode_complete_ = false;
+-    return true;
++  bool EncodeComplete() {
++    if (complete_) {
++      complete_ = false;
++      return true;
++    }
++    return false;
+   }
+-  return false;
+-}
+ 
+-class Vp8UnitTestDecodeCompleteCallback : public webrtc::DecodedImageCallback {
++  EncodedImage encoded_frame_;
++  CodecSpecificInfo codec_specific_info_;
++  std::unique_ptr<uint8_t[]> frame_buffer_;
++  bool complete_ = false;
++};
++
++class DecodedImageCallbackTestImpl : public webrtc::DecodedImageCallback {
+  public:
+-  explicit Vp8UnitTestDecodeCompleteCallback(rtc::Optional<VideoFrame>* frame,
+-                                             rtc::Optional<uint8_t>* qp)
+-      : decoded_frame_(frame), decoded_qp_(qp), decode_complete(false) {}
+   int32_t Decoded(VideoFrame& frame) override {
+     RTC_NOTREACHED();
+     return -1;
+@@ -115,163 +104,158 @@ class Vp8UnitTestDecodeCompleteCallback : public webrtc::DecodedImageCallback {
+   }
+   void Decoded(VideoFrame& frame,
+                rtc::Optional<int32_t> decode_time_ms,
+-               rtc::Optional<uint8_t> qp) override;
+-  bool DecodeComplete();
+-
+- private:
+-  rtc::Optional<VideoFrame>* decoded_frame_;
+-  rtc::Optional<uint8_t>* decoded_qp_;
+-  bool decode_complete;
+-};
++               rtc::Optional<uint8_t> qp) override {
++    EXPECT_GT(frame.width(), 0);
++    EXPECT_GT(frame.height(), 0);
++    EXPECT_TRUE(qp);
++    frame_ = frame;
++    qp_ = qp;
++    complete_ = true;
++  }
+ 
+-bool Vp8UnitTestDecodeCompleteCallback::DecodeComplete() {
+-  if (decode_complete) {
+-    decode_complete = false;
+-    return true;
++  bool DecodeComplete() {
++    if (complete_) {
++      complete_ = false;
++      return true;
++    }
++    return false;
+   }
+-  return false;
+-}
+ 
+-void Vp8UnitTestDecodeCompleteCallback::Decoded(
+-    VideoFrame& frame,
+-    rtc::Optional<int32_t> decode_time_ms,
+-    rtc::Optional<uint8_t> qp) {
+-  *decoded_frame_ = rtc::Optional<VideoFrame>(frame);
+-  *decoded_qp_ = qp;
+-  decode_complete = true;
+-}
++  rtc::Optional<VideoFrame> frame_;
++  rtc::Optional<uint8_t> qp_;
++  bool complete_ = false;
++};
+ 
+ class TestVp8Impl : public ::testing::Test {
++ public:
++  TestVp8Impl() : TestVp8Impl("") {}
++  explicit TestVp8Impl(const std::string& field_trials)
++      : override_field_trials_(field_trials),
++        encoder_(VP8Encoder::Create()),
++        decoder_(VP8Decoder::Create()) {}
++  virtual ~TestVp8Impl() {}
++
+  protected:
+   virtual void SetUp() {
+-    encoder_.reset(VP8Encoder::Create());
+-    decoder_.reset(VP8Decoder::Create());
+-    memset(&codec_settings_, 0, sizeof(codec_settings_));
+-    encode_complete_callback_.reset(new Vp8UnitTestEncodeCompleteCallback(
+-        &encoded_frame_, &codec_specific_info_, 0, nullptr));
+-    decode_complete_callback_.reset(
+-        new Vp8UnitTestDecodeCompleteCallback(&decoded_frame_, &decoded_qp_));
+-    encoder_->RegisterEncodeCompleteCallback(encode_complete_callback_.get());
+-    decoder_->RegisterDecodeCompleteCallback(decode_complete_callback_.get());
++    encoder_->RegisterEncodeCompleteCallback(&encoded_cb_);
++    decoder_->RegisterDecodeCompleteCallback(&decoded_cb_);
++    SetupCodecSettings();
++    SetupInputFrame();
++  }
++
++  void SetupInputFrame() {
+     // Using a QCIF image (aligned stride (u,v planes) > width).
+     // Processing only one frame.
+-    source_file_ = fopen(test::ResourcePath("paris_qcif", "yuv").c_str(), "rb");
+-    ASSERT_TRUE(source_file_ != nullptr);
++    FILE* file = fopen(test::ResourcePath("paris_qcif", "yuv").c_str(), "rb");
++    ASSERT_TRUE(file != nullptr);
+     rtc::scoped_refptr<I420BufferInterface> compact_buffer(
+-        test::ReadI420Buffer(kWidth, kHeight, source_file_));
++        test::ReadI420Buffer(kWidth, kHeight, file));
+     ASSERT_TRUE(compact_buffer);
+-    codec_settings_.width = kWidth;
+-    codec_settings_.height = kHeight;
+-    const int kFramerate = 30;
+-    codec_settings_.maxFramerate = kFramerate;
++
+     // Setting aligned stride values.
+     int stride_uv;
+     int stride_y;
+-    Calc16ByteAlignedStride(codec_settings_.width, &stride_y, &stride_uv);
++    Calc16ByteAlignedStride(kWidth, &stride_y, &stride_uv);
+     EXPECT_EQ(stride_y, 176);
+     EXPECT_EQ(stride_uv, 96);
+-
+     rtc::scoped_refptr<I420Buffer> stride_buffer(
+         I420Buffer::Create(kWidth, kHeight, stride_y, stride_uv, stride_uv));
+ 
+     // No scaling in our case, just a copy, to add stride to the image.
+     stride_buffer->ScaleFrom(*compact_buffer);
+ 
+-    input_frame_.reset(
+-        new VideoFrame(stride_buffer, kVideoRotation_0, 0));
+-    input_frame_->set_timestamp(kTestTimestamp);
++    input_frame_.reset(new VideoFrame(stride_buffer, kInitialTimestampRtp,
++                                      kInitialTimestampMs, kVideoRotation_0));
++    fclose(file);
+   }
+ 
+-  void SetUpEncodeDecode() {
+-    codec_settings_.startBitrate = 300;
++  void SetupCodecSettings() {
++    webrtc::test::CodecSettings(kVideoCodecVP8, &codec_settings_);
+     codec_settings_.maxBitrate = 4000;
+-    codec_settings_.qpMax = 56;
++    codec_settings_.width = kWidth;
++    codec_settings_.height = kHeight;
+     codec_settings_.VP8()->denoisingOn = true;
++    codec_settings_.VP8()->frameDroppingOn = false;
++    codec_settings_.VP8()->automaticResizeOn = false;
++    codec_settings_.VP8()->complexity = kComplexityNormal;
+     codec_settings_.VP8()->tl_factory = &tl_factory_;
+-    codec_settings_.VP8()->numberOfTemporalLayers = 1;
+-
+-    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-              encoder_->InitEncode(&codec_settings_, 1, 1440));
+-    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->InitDecode(&codec_settings_, 1));
+   }
+ 
+-  size_t WaitForEncodedFrame() const {
+-    int64_t startTime = rtc::TimeMillis();
+-    while (rtc::TimeMillis() - startTime < kMaxWaitEncTimeMs) {
+-      if (encode_complete_callback_->EncodeComplete()) {
+-        return encoded_frame_._length;
+-      }
+-    }
+-    return 0;
++  void InitEncodeDecode() {
++    EXPECT_EQ(
++        WEBRTC_VIDEO_CODEC_OK,
++        encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
++              decoder_->InitDecode(&codec_settings_, kNumCores));
+   }
+ 
+-  size_t WaitForDecodedFrame() const {
+-    int64_t startTime = rtc::TimeMillis();
+-    while (rtc::TimeMillis() - startTime < kMaxWaitDecTimeMs) {
+-      if (decode_complete_callback_->DecodeComplete()) {
+-        return CalcBufferSize(VideoType::kI420, decoded_frame_->width(),
+-                              decoded_frame_->height());
+-      }
+-    }
+-    return 0;
++  void EncodeFrame() {
++    EXPECT_FALSE(encoded_cb_.EncodeComplete());
++    EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
++              encoder_->Encode(*input_frame_, nullptr, nullptr));
++    EXPECT_TRUE(encoded_cb_.EncodeComplete());
+   }
+ 
+   void ExpectFrameWith(int16_t picture_id,
+                        int tl0_pic_idx,
+                        uint8_t temporal_idx) {
+-    ASSERT_TRUE(WaitForEncodedFrame());
+-    EXPECT_EQ(picture_id, codec_specific_info_.codecSpecific.VP8.pictureId);
+-    EXPECT_EQ(tl0_pic_idx, codec_specific_info_.codecSpecific.VP8.tl0PicIdx);
+-    EXPECT_EQ(temporal_idx, codec_specific_info_.codecSpecific.VP8.temporalIdx);
++    EXPECT_EQ(picture_id % (1 << 15),
++              encoded_cb_.codec_specific_info_.codecSpecific.VP8.pictureId);
++    EXPECT_EQ(tl0_pic_idx % (1 << 8),
++              encoded_cb_.codec_specific_info_.codecSpecific.VP8.tl0PicIdx);
++    EXPECT_EQ(temporal_idx,
++              encoded_cb_.codec_specific_info_.codecSpecific.VP8.temporalIdx);
+   }
+ 
+-  const int kWidth = 172;
+-  const int kHeight = 144;
+-
+-  std::unique_ptr<Vp8UnitTestEncodeCompleteCallback> encode_complete_callback_;
+-  std::unique_ptr<Vp8UnitTestDecodeCompleteCallback> decode_complete_callback_;
+-  std::unique_ptr<uint8_t[]> source_buffer_;
+-  FILE* source_file_;
++  test::ScopedFieldTrials override_field_trials_;
++  EncodedImageCallbackTestImpl encoded_cb_;
++  DecodedImageCallbackTestImpl decoded_cb_;
+   std::unique_ptr<VideoFrame> input_frame_;
+-  std::unique_ptr<VideoEncoder> encoder_;
+-  std::unique_ptr<VideoDecoder> decoder_;
+-  EncodedImage encoded_frame_;
+-  CodecSpecificInfo codec_specific_info_;
+-  rtc::Optional<VideoFrame> decoded_frame_;
+-  rtc::Optional<uint8_t> decoded_qp_;
++  const std::unique_ptr<VideoEncoder> encoder_;
++  const std::unique_ptr<VideoDecoder> decoder_;
+   VideoCodec codec_settings_;
+   TemporalLayersFactory tl_factory_;
+ };
+ 
+-TEST_F(TestVp8Impl, EncoderParameterTest) {
+-  strncpy(codec_settings_.plName, "VP8", 31);
+-  codec_settings_.plType = 126;
+-  codec_settings_.maxBitrate = 0;
+-  codec_settings_.minBitrate = 0;
+-  codec_settings_.width = 1440;
+-  codec_settings_.height = 1080;
+-  codec_settings_.maxFramerate = 30;
+-  codec_settings_.startBitrate = 300;
+-  codec_settings_.qpMax = 56;
+-  codec_settings_.VP8()->complexity = kComplexityNormal;
+-  codec_settings_.VP8()->numberOfTemporalLayers = 1;
+-  codec_settings_.VP8()->tl_factory = &tl_factory_;
+-  // Calls before InitEncode().
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+-  int bit_rate = 300;
++TEST_F(TestVp8Impl, SetRateAllocation) {
++  const int kBitrateBps = 300000;
+   BitrateAllocation bitrate_allocation;
+-  bitrate_allocation.SetBitrate(0, 0, bit_rate * 1000);
++  bitrate_allocation.SetBitrate(0, 0, kBitrateBps);
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_UNINITIALIZED,
+             encoder_->SetRateAllocation(bitrate_allocation,
+                                         codec_settings_.maxFramerate));
++  InitEncodeDecode();
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
++            encoder_->SetRateAllocation(bitrate_allocation,
++                                        codec_settings_.maxFramerate));
++}
+ 
++TEST_F(TestVp8Impl, EncodeFrameAndRelease) {
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->InitEncode(&codec_settings_, 1, 1440));
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++  EncodeFrame();
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_UNINITIALIZED,
++            encoder_->Encode(*input_frame_, nullptr, nullptr));
++}
+ 
+-  // Decoder parameter tests.
+-  // Calls before InitDecode().
++TEST_F(TestVp8Impl, InitDecode) {
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Release());
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->InitDecode(&codec_settings_, 1));
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
++            decoder_->InitDecode(&codec_settings_, kNumCores));
++}
++
++TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
++  InitEncodeDecode();
++  EncodeFrame();
++  EXPECT_EQ(kInitialTimestampRtp, encoded_cb_.encoded_frame_._timeStamp);
++  EXPECT_EQ(kInitialTimestampMs, encoded_cb_.encoded_frame_.capture_time_ms_);
++  EXPECT_EQ(kWidth, static_cast<int>(encoded_cb_.encoded_frame_._encodedWidth));
++  EXPECT_EQ(kHeight,
++            static_cast<int>(encoded_cb_.encoded_frame_._encodedHeight));
++  EXPECT_EQ(-1,  // Disabled for single stream.
++            encoded_cb_.encoded_frame_.adapt_reason_.bw_resolutions_disabled);
+ }
+ 
+ // We only test the encoder here, since the decoded frame rotation is set based
+@@ -279,46 +263,84 @@ TEST_F(TestVp8Impl, EncoderParameterTest) {
+ // TODO(brandtr): Consider passing through the rotation flag through the decoder
+ // in the same way as done in the encoder.
+ TEST_F(TestVp8Impl, EncodedRotationEqualsInputRotation) {
+-  SetUpEncodeDecode();
+-
++  InitEncodeDecode();
+   input_frame_->set_rotation(kVideoRotation_0);
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  WaitForEncodedFrame();
+-  EXPECT_EQ(kVideoRotation_0, encoded_frame_.rotation_);
++  EncodeFrame();
++  EXPECT_EQ(kVideoRotation_0, encoded_cb_.encoded_frame_.rotation_);
+ 
+   input_frame_->set_rotation(kVideoRotation_90);
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  WaitForEncodedFrame();
+-  EXPECT_EQ(kVideoRotation_90, encoded_frame_.rotation_);
++  EncodeFrame();
++  EXPECT_EQ(kVideoRotation_90, encoded_cb_.encoded_frame_.rotation_);
+ }
+ 
+ TEST_F(TestVp8Impl, DecodedQpEqualsEncodedQp) {
+-  SetUpEncodeDecode();
+-  encoder_->Encode(*input_frame_, nullptr, nullptr);
+-  EXPECT_GT(WaitForEncodedFrame(), 0u);
++  InitEncodeDecode();
++  EncodeFrame();
+   // First frame should be a key frame.
+-  encoded_frame_._frameType = kVideoFrameKey;
++  encoded_cb_.encoded_frame_._frameType = kVideoFrameKey;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            decoder_->Decode(encoded_frame_, false, nullptr));
+-  EXPECT_GT(WaitForDecodedFrame(), 0u);
+-  ASSERT_TRUE(decoded_frame_);
+-  EXPECT_GT(I420PSNR(input_frame_.get(), &*decoded_frame_), 36);
+-  ASSERT_TRUE(decoded_qp_);
+-  EXPECT_EQ(encoded_frame_.qp_, *decoded_qp_);
++            decoder_->Decode(encoded_cb_.encoded_frame_, false, nullptr));
++  EXPECT_TRUE(decoded_cb_.DecodeComplete());
++  EXPECT_GT(I420PSNR(input_frame_.get(), &*decoded_cb_.frame_), 36);
++  EXPECT_EQ(encoded_cb_.encoded_frame_.qp_, *decoded_cb_.qp_);
+ }
+ 
+-TEST_F(TestVp8Impl, ParserQpEqualsEncodedQp) {
+-  SetUpEncodeDecode();
++TEST_F(TestVp8Impl, ChecksSimulcastSettings) {
++  codec_settings_.numberOfSimulcastStreams = 2;
++  // Reslutions are not scaled by 2, temporal layers do not match.
++  codec_settings_.simulcastStream[0] = {kWidth, kHeight, 2, 4000,
++                                        3000,   2000,    80};
++  codec_settings_.simulcastStream[1] = {kWidth, kHeight, 3, 4000,
++                                        3000,   2000,    80};
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++  codec_settings_.numberOfSimulcastStreams = 3;
++  // Reslutions are not scaled by 2.
++  codec_settings_.simulcastStream[0] = {kWidth / 2, kHeight / 2, 1, 4000,
++                                        3000,       2000,        80};
++  codec_settings_.simulcastStream[1] = {kWidth / 2, kHeight / 2, 1, 4000,
++                                        3000,       2000,        80};
++  codec_settings_.simulcastStream[2] = {kWidth, kHeight, 1, 4000,
++                                        3000,   2000,    80};
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++  // Reslutions are not scaled by 2.
++  codec_settings_.simulcastStream[0] = {kWidth, kHeight, 1, 4000,
++                                        3000,   2000,    80};
++  codec_settings_.simulcastStream[1] = {kWidth, kHeight, 1, 4000,
++                                        3000,   2000,    80};
++  codec_settings_.simulcastStream[2] = {kWidth, kHeight, 1, 4000,
++                                        3000,   2000,    80};
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++  // Temporal layers do not match.
++  codec_settings_.simulcastStream[0] = {kWidth / 4, kHeight / 4, 1, 4000,
++                                        3000,       2000,        80};
++  codec_settings_.simulcastStream[1] = {kWidth / 2, kHeight / 2, 2, 4000,
++                                        3000,       2000,        80};
++  codec_settings_.simulcastStream[2] = {kWidth, kHeight, 3, 4000,
++                                        3000,   2000,    80};
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++  // Resolutions do not match codec config.
++  codec_settings_.simulcastStream[0] = {
++      kWidth / 4 + 1, kHeight / 4 + 1, 1, 4000, 3000, 2000, 80};
++  codec_settings_.simulcastStream[1] = {
++      kWidth / 2 + 2, kHeight / 2 + 2, 1, 4000, 3000, 2000, 80};
++  codec_settings_.simulcastStream[2] = {kWidth + 4, kHeight + 4, 1, 4000,
++                                        3000,       2000,        80};
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++  // Everything fine: scaling by 2, top resolution matches video, temporal
++  // settings are the same for all layers.
++  codec_settings_.simulcastStream[0] = {kWidth / 4, kHeight / 4, 1, 4000,
++                                        3000,       2000,        80};
++  codec_settings_.simulcastStream[1] = {kWidth / 2, kHeight / 2, 1, 4000,
++                                        3000,       2000,        80};
++  codec_settings_.simulcastStream[2] = {kWidth, kHeight, 1, 4000,
++                                        3000,   2000,    80};
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  EXPECT_GT(WaitForEncodedFrame(), 0u);
+-
+-  int qp = 0;
+-  ASSERT_TRUE(vp8::GetQp(encoded_frame_._buffer, encoded_frame_._length, &qp));
+-
+-  EXPECT_EQ(encoded_frame_.qp_, qp);
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
+ }
+ 
+ #if defined(WEBRTC_ANDROID)
+@@ -327,20 +349,18 @@ TEST_F(TestVp8Impl, ParserQpEqualsEncodedQp) {
+ #define MAYBE_AlignedStrideEncodeDecode AlignedStrideEncodeDecode
+ #endif
+ TEST_F(TestVp8Impl, MAYBE_AlignedStrideEncodeDecode) {
+-  SetUpEncodeDecode();
+-  encoder_->Encode(*input_frame_, nullptr, nullptr);
+-  EXPECT_GT(WaitForEncodedFrame(), 0u);
++  InitEncodeDecode();
++  EncodeFrame();
+   // First frame should be a key frame.
+-  encoded_frame_._frameType = kVideoFrameKey;
+-  encoded_frame_.ntp_time_ms_ = kTestNtpTimeMs;
++  encoded_cb_.encoded_frame_._frameType = kVideoFrameKey;
++  encoded_cb_.encoded_frame_.ntp_time_ms_ = kTestNtpTimeMs;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            decoder_->Decode(encoded_frame_, false, nullptr));
+-  EXPECT_GT(WaitForDecodedFrame(), 0u);
+-  ASSERT_TRUE(decoded_frame_);
++            decoder_->Decode(encoded_cb_.encoded_frame_, false, nullptr));
++  EXPECT_TRUE(decoded_cb_.DecodeComplete());
+   // Compute PSNR on all planes (faster than SSIM).
+-  EXPECT_GT(I420PSNR(input_frame_.get(), &*decoded_frame_), 36);
+-  EXPECT_EQ(kTestTimestamp, decoded_frame_->timestamp());
+-  EXPECT_EQ(kTestNtpTimeMs, decoded_frame_->ntp_time_ms());
++  EXPECT_GT(I420PSNR(input_frame_.get(), &*decoded_cb_.frame_), 36);
++  EXPECT_EQ(kInitialTimestampRtp, decoded_cb_.frame_->timestamp());
++  EXPECT_EQ(kTestNtpTimeMs, decoded_cb_.frame_->ntp_time_ms());
+ }
+ 
+ #if defined(WEBRTC_ANDROID)
+@@ -349,100 +369,138 @@ TEST_F(TestVp8Impl, MAYBE_AlignedStrideEncodeDecode) {
+ #define MAYBE_DecodeWithACompleteKeyFrame DecodeWithACompleteKeyFrame
+ #endif
+ TEST_F(TestVp8Impl, MAYBE_DecodeWithACompleteKeyFrame) {
+-  SetUpEncodeDecode();
+-  encoder_->Encode(*input_frame_, nullptr, nullptr);
+-  EXPECT_GT(WaitForEncodedFrame(), 0u);
++  InitEncodeDecode();
++  EncodeFrame();
+   // Setting complete to false -> should return an error.
+-  encoded_frame_._completeFrame = false;
++  encoded_cb_.encoded_frame_._completeFrame = false;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERROR,
+-            decoder_->Decode(encoded_frame_, false, nullptr));
++            decoder_->Decode(encoded_cb_.encoded_frame_, false, nullptr));
+   // Setting complete back to true. Forcing a delta frame.
+-  encoded_frame_._frameType = kVideoFrameDelta;
+-  encoded_frame_._completeFrame = true;
++  encoded_cb_.encoded_frame_._frameType = kVideoFrameDelta;
++  encoded_cb_.encoded_frame_._completeFrame = true;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERROR,
+-            decoder_->Decode(encoded_frame_, false, nullptr));
++            decoder_->Decode(encoded_cb_.encoded_frame_, false, nullptr));
+   // Now setting a key frame.
+-  encoded_frame_._frameType = kVideoFrameKey;
++  encoded_cb_.encoded_frame_._frameType = kVideoFrameKey;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            decoder_->Decode(encoded_frame_, false, nullptr));
+-  ASSERT_TRUE(decoded_frame_);
+-  EXPECT_GT(I420PSNR(input_frame_.get(), &*decoded_frame_), 36);
++            decoder_->Decode(encoded_cb_.encoded_frame_, false, nullptr));
++  ASSERT_TRUE(decoded_cb_.frame_);
++  EXPECT_GT(I420PSNR(input_frame_.get(), &*decoded_cb_.frame_), 36);
+ }
+ 
+-TEST_F(TestVp8Impl, EncoderRetainsRtpStateAfterRelease) {
+-  SetUpEncodeDecode();
+-  // Override default settings.
++TEST_F(TestVp8Impl, EncoderWith2TemporalLayersRetainsRtpStateAfterRelease) {
+   codec_settings_.VP8()->numberOfTemporalLayers = 2;
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->InitEncode(&codec_settings_, 1, 1440));
++  InitEncodeDecode();
+ 
+   // Temporal layer 0.
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ASSERT_TRUE(WaitForEncodedFrame());
+-  EXPECT_EQ(0, codec_specific_info_.codecSpecific.VP8.temporalIdx);
+-  int16_t picture_id = codec_specific_info_.codecSpecific.VP8.pictureId;
+-  int tl0_pic_idx = codec_specific_info_.codecSpecific.VP8.tl0PicIdx;
+-
++  EncodeFrame();
++  EXPECT_EQ(0, encoded_cb_.codec_specific_info_.codecSpecific.VP8.temporalIdx);
++  int16_t picture_id =
++      encoded_cb_.codec_specific_info_.codecSpecific.VP8.pictureId;
++  int tl0_pic_idx =
++      encoded_cb_.codec_specific_info_.codecSpecific.VP8.tl0PicIdx;
+   // Temporal layer 1.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 1) % (1 << 15), tl0_pic_idx, 1);
+-
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 1, tl0_pic_idx + 0, 1);
+   // Temporal layer 0.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 2) % (1 << 15), (tl0_pic_idx + 1) % (1 << 8),
+-                  0);
+-
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 2, tl0_pic_idx + 1, 0);
+   // Temporal layer 1.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 3) % (1 << 15), (tl0_pic_idx + 1) % (1 << 8),
+-                  1);
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 3, tl0_pic_idx + 1, 1);
+ 
+   // Reinit.
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->InitEncode(&codec_settings_, 1, 1440));
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
+ 
+   // Temporal layer 0.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
+-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 4) % (1 << 15), (tl0_pic_idx + 2) % (1 << 8),
+-                  0);
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 4, tl0_pic_idx + 2, 0);
++  // Temporal layer 1.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 5, tl0_pic_idx + 2, 1);
++  // Temporal layer 0.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 6, tl0_pic_idx + 3, 0);
++  // Temporal layer 1.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 7, tl0_pic_idx + 3, 1);
++}
+ 
++TEST_F(TestVp8Impl, EncoderWith3TemporalLayersRetainsRtpStateAfterRelease) {
++  codec_settings_.VP8()->numberOfTemporalLayers = 3;
++  InitEncodeDecode();
++
++  // Temporal layer 0.
++  EncodeFrame();
++  EXPECT_EQ(0, encoded_cb_.codec_specific_info_.codecSpecific.VP8.temporalIdx);
++  int16_t picture_id =
++      encoded_cb_.codec_specific_info_.codecSpecific.VP8.pictureId;
++  int tl0_pic_idx =
++      encoded_cb_.codec_specific_info_.codecSpecific.VP8.tl0PicIdx;
++  // Temporal layer 2.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 1, tl0_pic_idx + 0, 2);
+   // Temporal layer 1.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 2, tl0_pic_idx + 0, 1);
++  // Temporal layer 2.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 3, tl0_pic_idx + 0, 2);
++
++  // Reinit.
++  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 5) % (1 << 15), (tl0_pic_idx + 2) % (1 << 8),
+-                  1);
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
+ 
+   // Temporal layer 0.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 4, tl0_pic_idx + 1, 0);
++  // Temporal layer 2.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 5, tl0_pic_idx + 1, 2);
++  // Temporal layer 1.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 6, tl0_pic_idx + 1, 1);
++  // Temporal layer 2.
++  input_frame_->set_timestamp(input_frame_->timestamp() + kTimestampIncrement);
++  EncodeFrame();
++  ExpectFrameWith(picture_id + 7, tl0_pic_idx + 1, 2);
++}
++
++TEST_F(TestVp8Impl, ScalingDisabledIfAutomaticResizeOff) {
++  codec_settings_.VP8()->frameDroppingOn = true;
++  codec_settings_.VP8()->automaticResizeOn = false;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 6) % (1 << 15), (tl0_pic_idx + 3) % (1 << 8),
+-                  0);
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
+ 
+-  // Temporal layer 1.
+-  input_frame_->set_timestamp(input_frame_->timestamp() +
+-                              kTimestampIncrementPerFrame);
++  VideoEncoder::ScalingSettings settings = encoder_->GetScalingSettings();
++  EXPECT_FALSE(settings.enabled);
++}
++
++TEST_F(TestVp8Impl, ScalingEnabledIfAutomaticResizeOn) {
++  codec_settings_.VP8()->frameDroppingOn = true;
++  codec_settings_.VP8()->automaticResizeOn = true;
+   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+-            encoder_->Encode(*input_frame_, nullptr, nullptr));
+-  ExpectFrameWith((picture_id + 7) % (1 << 15), (tl0_pic_idx + 3) % (1 << 8),
+-                  1);
++            encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
++
++  VideoEncoder::ScalingSettings settings = encoder_->GetScalingSettings();
++  EXPECT_TRUE(settings.enabled);
++  EXPECT_EQ(kDefaultMinPixelsPerFrame, settings.min_pixels_per_frame);
+ }
+ 
+ }  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
+index 5038e8edf49..9e89696d465 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
+@@ -8,7 +8,7 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-#include "webrtc/modules/video_coding/codecs/vp8/vp8_impl.h"
++#include "modules/video_coding/codecs/vp8/vp8_impl.h"
+ 
+ #include <stdlib.h>
+ #include <string.h>
+@@ -17,29 +17,31 @@
+ #include <string>
+ 
+ // NOTE(ajm): Path provided by gyp.
+-#include "libyuv/scale.h"    // NOLINT
+ #include "libyuv/convert.h"  // NOLINT
++#include "libyuv/scale.h"    // NOLINT
+ 
+-#include "webrtc/base/checks.h"
+-#include "webrtc/base/random.h"
+-#include "webrtc/base/timeutils.h"
+-#include "webrtc/base/trace_event.h"
+-#include "webrtc/common_types.h"
+-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
+-#include "webrtc/modules/include/module_common_types.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8_common_types.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+-#include "webrtc/system_wrappers/include/clock.h"
+-#include "webrtc/system_wrappers/include/field_trial.h"
+-#include "webrtc/system_wrappers/include/metrics.h"
++#include "common_types.h"  // NOLINT(build/include)
++#include "common_video/libyuv/include/webrtc_libyuv.h"
++#include "modules/include/module_common_types.h"
++#include "modules/video_coding/codecs/vp8/include/vp8_common_types.h"
++#include "modules/video_coding/codecs/vp8/screenshare_layers.h"
++#include "modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
++#include "modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "modules/video_coding/include/video_codec_interface.h"
++#include "rtc_base/checks.h"
++#include "rtc_base/numerics/exp_filter.h"
++#include "rtc_base/ptr_util.h"
++#include "rtc_base/random.h"
++#include "rtc_base/timeutils.h"
++#include "rtc_base/trace_event.h"
++#include "system_wrappers/include/clock.h"
++#include "system_wrappers/include/field_trial.h"
++#include "system_wrappers/include/metrics.h"
+ 
+ namespace webrtc {
+ namespace {
+ 
+-const char kVp8PostProcArmFieldTrial[] = "WebRTC-VP8-Postproc-Arm";
++const char kVp8PostProcArmFieldTrial[] = "WebRTC-VP8-Postproc-Config-Arm";
+ const char kVp8GfBoostFieldTrial[] = "WebRTC-VP8-GfBoost";
+ 
+ const int kTokenPartitions = VP8_ONE_TOKENPARTITION;
+@@ -97,6 +99,21 @@ bool ValidSimulcastResolutions(const VideoCodec& codec, int num_streams) {
+       return false;
+     }
+   }
++  for (int i = 1; i < num_streams; ++i) {
++    if (codec.simulcastStream[i].width !=
++        codec.simulcastStream[i - 1].width * 2) {
++      return false;
++    }
++  }
++  return true;
++}
++
++bool ValidSimulcastTemporalLayers(const VideoCodec& codec, int num_streams) {
++  for (int i = 0; i < num_streams - 1; ++i) {
++    if (codec.simulcastStream[i].numberOfTemporalLayers !=
++        codec.simulcastStream[i + 1].numberOfTemporalLayers)
++      return false;
++  }
+   return true;
+ }
+ 
+@@ -122,14 +139,36 @@ bool GetGfBoostPercentageFromFieldTrialGroup(int* boost_percentage) {
+ 
+   return true;
+ }
++
++void GetPostProcParamsFromFieldTrialGroup(
++    VP8DecoderImpl::DeblockParams* deblock_params) {
++  std::string group =
++      webrtc::field_trial::FindFullName(kVp8PostProcArmFieldTrial);
++  if (group.empty())
++    return;
++
++  VP8DecoderImpl::DeblockParams params;
++  if (sscanf(group.c_str(), "Enabled-%d,%d,%d", &params.max_level,
++             &params.min_qp, &params.degrade_qp) != 3)
++    return;
++
++  if (params.max_level < 0 || params.max_level > 16)
++    return;
++
++  if (params.min_qp < 0 || params.degrade_qp <= params.min_qp)
++    return;
++
++  *deblock_params = params;
++}
++
+ }  // namespace
+ 
+-VP8Encoder* VP8Encoder::Create() {
+-  return new VP8EncoderImpl();
++std::unique_ptr<VP8Encoder> VP8Encoder::Create() {
++  return rtc::MakeUnique<VP8EncoderImpl>();
+ }
+ 
+-VP8Decoder* VP8Decoder::Create() {
+-  return new VP8DecoderImpl();
++std::unique_ptr<VP8Decoder> VP8Decoder::Create() {
++  return rtc::MakeUnique<VP8DecoderImpl>();
+ }
+ 
+ vpx_enc_frame_flags_t VP8EncoderImpl::EncodeFlags(
+@@ -173,6 +212,7 @@ VP8EncoderImpl::VP8EncoderImpl()
+     tl0_pic_idx_.push_back(random.Rand<uint8_t>());
+   }
+   temporal_layers_.reserve(kMaxSimulcastStreams);
++  temporal_layers_checkers_.reserve(kMaxSimulcastStreams);
+   raw_images_.reserve(kMaxSimulcastStreams);
+   encoded_images_.reserve(kMaxSimulcastStreams);
+   send_stream_.reserve(kMaxSimulcastStreams);
+@@ -212,6 +252,7 @@ int VP8EncoderImpl::Release() {
+     tl0_pic_idx_[i] = temporal_layers_[i]->Tl0PicIdx();
+   }
+   temporal_layers_.clear();
++  temporal_layers_checkers_.clear();
+   inited_ = false;
+   return ret_val;
+ }
+@@ -281,8 +322,7 @@ const char* VP8EncoderImpl::ImplementationName() const {
+   return "libvpx";
+ }
+ 
+-void VP8EncoderImpl::SetStreamState(bool send_stream,
+-                                            int stream_idx) {
++void VP8EncoderImpl::SetStreamState(bool send_stream, int stream_idx) {
+   if (send_stream && !send_stream_[stream_idx]) {
+     // Need a key frame if we have not sent this stream before.
+     key_frame_request_[stream_idx] = true;
+@@ -298,6 +338,8 @@ void VP8EncoderImpl::SetupTemporalLayers(int num_streams,
+   if (num_streams == 1) {
+     temporal_layers_.emplace_back(
+         tl_factory->Create(0, num_temporal_layers, tl0_pic_idx_[0]));
++    temporal_layers_checkers_.emplace_back(
++        tl_factory->CreateChecker(0, num_temporal_layers, tl0_pic_idx_[0]));
+   } else {
+     for (int i = 0; i < num_streams; ++i) {
+       RTC_CHECK_GT(num_temporal_layers, 0);
+@@ -305,6 +347,8 @@ void VP8EncoderImpl::SetupTemporalLayers(int num_streams,
+                             codec.simulcastStream[i].numberOfTemporalLayers);
+       temporal_layers_.emplace_back(
+           tl_factory->Create(i, layers, tl0_pic_idx_[i]));
++      temporal_layers_checkers_.emplace_back(
++          tl_factory->CreateChecker(i, layers, tl0_pic_idx_[i]));
+     }
+   }
+ }
+@@ -339,8 +383,10 @@ int VP8EncoderImpl::InitEncode(const VideoCodec* inst,
+   int number_of_streams = NumberOfStreams(*inst);
+   bool doing_simulcast = (number_of_streams > 1);
+ 
+-  if (doing_simulcast && !ValidSimulcastResolutions(*inst, number_of_streams)) {
+-    return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
++  if (doing_simulcast &&
++      (!ValidSimulcastResolutions(*inst, number_of_streams) ||
++       !ValidSimulcastTemporalLayers(*inst, number_of_streams))) {
++    return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
+   }
+ 
+   int num_temporal_layers =
+@@ -524,7 +570,8 @@ int VP8EncoderImpl::InitEncode(const VideoCodec* inst,
+ }
+ 
+ int VP8EncoderImpl::SetCpuSpeed(int width, int height) {
+-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || defined(ANDROID)
++#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) \
++  || defined(WEBRTC_ANDROID)
+   // On mobile platform, use a lower speed setting for lower resolutions for
+   // CPUs with 4 or more cores.
+   RTC_DCHECK_GT(number_of_cores_, 0);
+@@ -549,7 +596,7 @@ int VP8EncoderImpl::SetCpuSpeed(int width, int height) {
+ }
+ 
+ int VP8EncoderImpl::NumberOfThreads(int width, int height, int cpus) {
+-#if defined(ANDROID)
++#if defined(WEBRTC_ANDROID)
+   if (width * height >= 320 * 180) {
+     if (cpus >= 4) {
+       // 3 threads for CPUs with 4 and more cores since most of times only 4
+@@ -603,7 +650,8 @@ int VP8EncoderImpl::InitAndSetControlSettings() {
+   // when encoding lower resolution streams. Would it work with the
+   // multi-res encoding feature?
+   denoiserState denoiser_state = kDenoiserOnYOnly;
+-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || defined(ANDROID)
++#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) \
++  || defined(WEBRTC_ANDROID)
+   denoiser_state = kDenoiserOnYOnly;
+ #else
+   denoiser_state = kDenoiserOnAdaptive;
+@@ -703,17 +751,6 @@ int VP8EncoderImpl::Encode(const VideoFrame& frame,
+         raw_images_[i].stride[VPX_PLANE_V], raw_images_[i].d_w,
+         raw_images_[i].d_h, libyuv::kFilterBilinear);
+   }
+-  vpx_enc_frame_flags_t flags[kMaxSimulcastStreams];
+-  TemporalLayers::FrameConfig tl_configs[kMaxSimulcastStreams];
+-  for (size_t i = 0; i < encoders_.size(); ++i) {
+-    tl_configs[i] = temporal_layers_[i]->UpdateLayerConfig(frame.timestamp());
+-
+-    if (tl_configs[i].drop_frame) {
+-      // Drop this frame.
+-      return WEBRTC_VIDEO_CODEC_OK;
+-    }
+-    flags[i] = EncodeFlags(tl_configs[i]);
+-  }
+   bool send_key_frame = false;
+   for (size_t i = 0; i < key_frame_request_.size() && i < send_stream_.size();
+        ++i) {
+@@ -731,6 +768,18 @@ int VP8EncoderImpl::Encode(const VideoFrame& frame,
+       }
+     }
+   }
++  vpx_enc_frame_flags_t flags[kMaxSimulcastStreams];
++  TemporalLayers::FrameConfig tl_configs[kMaxSimulcastStreams];
++  for (size_t i = 0; i < encoders_.size(); ++i) {
++    tl_configs[i] = temporal_layers_[i]->UpdateLayerConfig(frame.timestamp());
++    RTC_DCHECK(temporal_layers_checkers_[i]->CheckTemporalConfig(
++        send_key_frame, tl_configs[i]));
++    if (tl_configs[i].drop_frame) {
++      // Drop this frame.
++      return WEBRTC_VIDEO_CODEC_OK;
++    }
++    flags[i] = EncodeFlags(tl_configs[i]);
++  }
+   if (send_key_frame) {
+     // Adapt the size of the key frame when in screenshare with 1 temporal
+     // layer.
+@@ -765,9 +814,8 @@ int VP8EncoderImpl::Encode(const VideoFrame& frame,
+     }
+ 
+     vpx_codec_control(&encoders_[i], VP8E_SET_FRAME_FLAGS, flags[stream_idx]);
+-    vpx_codec_control(
+-        &encoders_[i], VP8E_SET_TEMPORAL_LAYER_ID,
+-        temporal_layers_[stream_idx]->GetTemporalLayerId(tl_configs[i]));
++    vpx_codec_control(&encoders_[i], VP8E_SET_TEMPORAL_LAYER_ID,
++                      tl_configs[i].encoder_layer_id);
+   }
+   // TODO(holmer): Ideally the duration should be the timestamp diff of this
+   // frame and the next frame to be encoded, which we don't have. Instead we
+@@ -777,20 +825,31 @@ int VP8EncoderImpl::Encode(const VideoFrame& frame,
+   assert(codec_.maxFramerate > 0);
+   uint32_t duration = 90000 / codec_.maxFramerate;
+ 
+-  // Note we must pass 0 for |flags| field in encode call below since they are
+-  // set above in |vpx_codec_control| function for each encoder/spatial layer.
+-  int error = vpx_codec_encode(&encoders_[0], &raw_images_[0], timestamp_,
+-                               duration, 0, VPX_DL_REALTIME);
+-  // Reset specific intra frame thresholds, following the key frame.
+-  if (send_key_frame) {
+-    vpx_codec_control(&(encoders_[0]), VP8E_SET_MAX_INTRA_BITRATE_PCT,
+-                      rc_max_intra_target_);
++  int error = WEBRTC_VIDEO_CODEC_OK;
++  int num_tries = 0;
++  // If the first try returns WEBRTC_VIDEO_CODEC_TARGET_BITRATE_OVERSHOOT
++  // the frame must be reencoded with the same parameters again because
++  // target bitrate is exceeded and encoder state has been reset.
++  while (num_tries == 0 ||
++         (num_tries == 1 &&
++          error == WEBRTC_VIDEO_CODEC_TARGET_BITRATE_OVERSHOOT)) {
++    ++num_tries;
++    // Note we must pass 0 for |flags| field in encode call below since they are
++    // set above in |vpx_codec_control| function for each encoder/spatial layer.
++    error = vpx_codec_encode(&encoders_[0], &raw_images_[0], timestamp_,
++                             duration, 0, VPX_DL_REALTIME);
++    // Reset specific intra frame thresholds, following the key frame.
++    if (send_key_frame) {
++      vpx_codec_control(&(encoders_[0]), VP8E_SET_MAX_INTRA_BITRATE_PCT,
++                        rc_max_intra_target_);
++    }
++    if (error)
++      return WEBRTC_VIDEO_CODEC_ERROR;
++    timestamp_ += duration;
++    // Examines frame timestamps only.
++    error = GetEncodedPartitions(tl_configs, frame);
+   }
+-  if (error)
+-    return WEBRTC_VIDEO_CODEC_ERROR;
+-  timestamp_ += duration;
+-  // Examines frame timestamps only.
+-  return GetEncodedPartitions(tl_configs, frame);
++  return error;
+ }
+ 
+ void VP8EncoderImpl::PopulateCodecSpecific(
+@@ -878,7 +937,7 @@ int VP8EncoderImpl::GetEncodedPartitions(
+     encoded_images_[encoder_idx].content_type_ =
+         (codec_.mode == kScreensharing) ? VideoContentType::SCREENSHARE
+                                         : VideoContentType::UNSPECIFIED;
+-    encoded_images_[encoder_idx].timing_.is_timing_frame = false;
++    encoded_images_[encoder_idx].timing_.flags = TimingFrameFlags::kInvalid;
+ 
+     int qp = -1;
+     vpx_codec_control(&encoders_[encoder_idx], VP8E_GET_LAST_QUANTIZER_64, &qp);
+@@ -926,9 +985,33 @@ int VP8EncoderImpl::RegisterEncodeCompleteCallback(
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+ 
++class VP8DecoderImpl::QpSmoother {
++ public:
++  QpSmoother() : last_sample_ms_(rtc::TimeMillis()), smoother_(kAlpha) {}
++
++  int GetAvg() const {
++    float value = smoother_.filtered();
++    return (value == rtc::ExpFilter::kValueUndefined) ? 0
++                                                      : static_cast<int>(value);
++  }
++
++  void Add(float sample) {
++    int64_t now_ms = rtc::TimeMillis();
++    smoother_.Apply(static_cast<float>(now_ms - last_sample_ms_), sample);
++    last_sample_ms_ = now_ms;
++  }
++
++  void Reset() { smoother_.Reset(kAlpha); }
++
++ private:
++  const float kAlpha = 0.95f;
++  int64_t last_sample_ms_;
++  rtc::ExpFilter smoother_;
++};
++
+ VP8DecoderImpl::VP8DecoderImpl()
+-    : use_postproc_arm_(webrtc::field_trial::FindFullName(
+-                            kVp8PostProcArmFieldTrial) == "Enabled"),
++    : use_postproc_arm_(
++          webrtc::field_trial::IsEnabled(kVp8PostProcArmFieldTrial)),
+       buffer_pool_(false, 300 /* max_number_of_buffers*/),
+       decode_complete_callback_(NULL),
+       inited_(false),
+@@ -936,7 +1019,11 @@ VP8DecoderImpl::VP8DecoderImpl()
+       propagation_cnt_(-1),
+       last_frame_width_(0),
+       last_frame_height_(0),
+-      key_frame_required_(true) {}
++      key_frame_required_(true),
++      qp_smoother_(use_postproc_arm_ ? new QpSmoother() : nullptr) {
++  if (use_postproc_arm_)
++    GetPostProcParamsFromFieldTrialGroup(&deblock_);
++}
+ 
+ VP8DecoderImpl::~VP8DecoderImpl() {
+   inited_ = true;  // in order to do the actual release
+@@ -957,7 +1044,8 @@ int VP8DecoderImpl::InitDecode(const VideoCodec* inst, int number_of_cores) {
+   cfg.threads = 1;
+   cfg.h = cfg.w = 0;  // set after decode
+ 
+-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || defined(ANDROID)
++#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) \
++  || defined(WEBRTC_ANDROID)
+   vpx_codec_flags_t flags = use_postproc_arm_ ? VPX_CODEC_USE_POSTPROC : 0;
+ #else
+   vpx_codec_flags_t flags = VPX_CODEC_USE_POSTPROC;
+@@ -996,16 +1084,28 @@ int VP8DecoderImpl::Decode(const EncodedImage& input_image,
+   }
+ 
+ // Post process configurations.
+-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || defined(ANDROID)
++#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) \
++  || defined(WEBRTC_ANDROID)
+   if (use_postproc_arm_) {
+     vp8_postproc_cfg_t ppcfg;
+     ppcfg.post_proc_flag = VP8_MFQE;
+-    // For low resolutions, use stronger deblocking filter and enable the
+-    // deblock and demacroblocker.
++    // For low resolutions, use stronger deblocking filter.
+     int last_width_x_height = last_frame_width_ * last_frame_height_;
+     if (last_width_x_height > 0 && last_width_x_height <= 320 * 240) {
+-      ppcfg.deblocking_level = 6;  // Only affects VP8_DEMACROBLOCK.
+-      ppcfg.post_proc_flag |= VP8_DEBLOCK | VP8_DEMACROBLOCK;
++      // Enable the deblock and demacroblocker based on qp thresholds.
++      RTC_DCHECK(qp_smoother_);
++      int qp = qp_smoother_->GetAvg();
++      if (qp > deblock_.min_qp) {
++        int level = deblock_.max_level;
++        if (qp < deblock_.degrade_qp) {
++          // Use lower level.
++          level = deblock_.max_level * (qp - deblock_.min_qp) /
++                  (deblock_.degrade_qp - deblock_.min_qp);
++        }
++        // Deblocking level only affects VP8_DEMACROBLOCK.
++        ppcfg.deblocking_level = std::max(level, 1);
++        ppcfg.post_proc_flag |= VP8_DEBLOCK | VP8_DEMACROBLOCK;
++      }
+     }
+     vpx_codec_control(decoder_, VP8_SET_POSTPROC, &ppcfg);
+   }
+@@ -1105,6 +1205,13 @@ int VP8DecoderImpl::ReturnFrame(const vpx_image_t* img,
+     // Decoder OK and NULL image => No show frame
+     return WEBRTC_VIDEO_CODEC_NO_OUTPUT;
+   }
++  if (qp_smoother_) {
++    if (last_frame_width_ != static_cast<int>(img->d_w) ||
++        last_frame_height_ != static_cast<int>(img->d_h)) {
++      qp_smoother_->Reset();
++    }
++    qp_smoother_->Add(qp);
++  }
+   last_frame_width_ = img->d_w;
+   last_frame_height_ = img->d_h;
+   // Allocate memory for decoded image.
+@@ -1122,13 +1229,12 @@ int VP8DecoderImpl::ReturnFrame(const vpx_image_t* img,
+                    img->planes[VPX_PLANE_V], img->stride[VPX_PLANE_V],
+                    buffer->MutableDataY(), buffer->StrideY(),
+                    buffer->MutableDataU(), buffer->StrideU(),
+-                   buffer->MutableDataV(), buffer->StrideV(),
+-                   img->d_w, img->d_h);
++                   buffer->MutableDataV(), buffer->StrideV(), img->d_w,
++                   img->d_h);
+ 
+   VideoFrame decoded_image(buffer, timestamp, 0, kVideoRotation_0);
+   decoded_image.set_ntp_time_ms(ntp_time_ms);
+-  decode_complete_callback_->Decoded(decoded_image, rtc::Optional<int32_t>(),
+-                                     rtc::Optional<uint8_t>(qp));
++  decode_complete_callback_->Decoded(decoded_image, rtc::nullopt, qp);
+ 
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.h
+index 376dde12808..e5d5d81e35c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.h
+@@ -10,26 +10,26 @@
+  * WEBRTC VP8 wrapper interface
+  */
+ 
+-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_VP8_IMPL_H_
+-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_VP8_IMPL_H_
++#ifndef MODULES_VIDEO_CODING_CODECS_VP8_VP8_IMPL_H_
++#define MODULES_VIDEO_CODING_CODECS_VP8_VP8_IMPL_H_
+ 
+ #include <memory>
+ #include <vector>
+ 
+ // NOTE: This include order must remain to avoid compile errors, even though
+ //       it breaks the style guide.
+-#include "vpx/vpx_encoder.h"
+-#include "vpx/vpx_decoder.h"
+ #include "vpx/vp8cx.h"
+ #include "vpx/vp8dx.h"
++#include "vpx/vpx_decoder.h"
++#include "vpx/vpx_encoder.h"
+ 
+-#include "webrtc/api/video/video_frame.h"
+-#include "webrtc/common_video/include/i420_buffer_pool.h"
+-#include "webrtc/common_video/include/video_frame.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
+-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+-#include "webrtc/modules/video_coding/utility/quality_scaler.h"
++#include "api/video/video_frame.h"
++#include "common_video/include/i420_buffer_pool.h"
++#include "common_video/include/video_frame.h"
++#include "modules/video_coding/codecs/vp8/include/vp8.h"
++#include "modules/video_coding/codecs/vp8/temporal_layers.h"
++#include "modules/video_coding/include/video_codec_interface.h"
++#include "modules/video_coding/utility/quality_scaler.h"
+ 
+ namespace webrtc {
+ 
+@@ -104,6 +104,7 @@ class VP8EncoderImpl : public VP8Encoder {
+   int number_of_cores_;
+   uint32_t rc_max_intra_target_;
+   std::vector<std::unique_ptr<TemporalLayers>> temporal_layers_;
++  std::vector<std::unique_ptr<TemporalLayersChecker>> temporal_layers_checkers_;
+   std::vector<uint16_t> picture_id_;
+   std::vector<uint8_t> tl0_pic_idx_;
+   std::vector<bool> key_frame_request_;
+@@ -135,7 +136,14 @@ class VP8DecoderImpl : public VP8Decoder {
+ 
+   const char* ImplementationName() const override;
+ 
++  struct DeblockParams {
++    int max_level = 6;   // Deblocking strength: [0, 16].
++    int degrade_qp = 1;  // If QP value is below, start lowering |max_level|.
++    int min_qp = 0;      // If QP value is below, turn off deblocking.
++  };
++
+  private:
++  class QpSmoother;
+   int ReturnFrame(const vpx_image_t* img,
+                   uint32_t timeStamp,
+                   int64_t ntp_time_ms,
+@@ -151,7 +159,9 @@ class VP8DecoderImpl : public VP8Decoder {
+   int last_frame_width_;
+   int last_frame_height_;
+   bool key_frame_required_;
++  DeblockParams deblock_;
++  const std::unique_ptr<QpSmoother> qp_smoother_;
+ };
+ }  // namespace webrtc
+ 
+-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_VP8_IMPL_H_
++#endif  // MODULES_VIDEO_CODING_CODECS_VP8_VP8_IMPL_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc
+index a61c3655190..3267344204c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc
+@@ -13,8 +13,8 @@
+ #error
+ #endif  // !defined(RTC_DISABLE_VP8)
+ 
+-#include "webrtc/base/checks.h"
+-#include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
++#include "rtc_base/checks.h"
++#include "modules/video_coding/codecs/vp8/include/vp8.h"
+ 
+ namespace webrtc {
+ 
+@@ -22,7 +22,7 @@ bool VP8Encoder::IsSupported() {
+   return false;
+ }
+ 
+-VP8Encoder* VP8Encoder::Create() {
++std::unique_ptr<VP8Encoder> VP8Encoder::Create() {
+   RTC_NOTREACHED();
+   return nullptr;
+ }
+@@ -31,7 +31,7 @@ bool VP8Decoder::IsSupported() {
+   return false;
+ }
+ 
+-VP8Decoder* VP8Decoder::Create() {
++std::unique_ptr<VP8Decoder> VP8Decoder::Create() {
+   RTC_NOTREACHED();
+   return nullptr;
+ }
+-- 
+2.13.5 (Apple Git-94)
+

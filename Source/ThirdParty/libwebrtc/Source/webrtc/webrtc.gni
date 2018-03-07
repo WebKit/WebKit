@@ -33,18 +33,18 @@ if (is_ios) {
 }
 
 declare_args() {
+  # Include the iLBC audio codec?
+  rtc_include_ilbc = true
+
   # Disable this to avoid building the Opus audio codec.
   rtc_include_opus = true
 
   # Enable this if the Opus version upon which WebRTC is built supports direct
   # encoding of 120 ms packets.
-  rtc_opus_support_120ms_ptime = false
+  rtc_opus_support_120ms_ptime = true
 
   # Enable this to let the Opus audio codec change complexity on the fly.
   rtc_opus_variable_complexity = false
-
-  # Disable to use absolute header paths for some libraries.
-  rtc_relative_path = true
 
   # Used to specify an external Jsoncpp include path when not compiling the
   # library that comes with WebRTC (i.e. rtc_build_json == 0).
@@ -79,7 +79,6 @@ declare_args() {
 
   # Disable these to not build components which can be externally provided.
   rtc_build_json = true
-  rtc_build_libjpeg = true
   rtc_build_libsrtp = true
   rtc_build_libvpx = true
   rtc_libvpx_build_vp9 = true
@@ -106,7 +105,14 @@ declare_args() {
   # See http://clang.llvm.org/docs/SanitizerCoverage.html .
   rtc_sanitize_coverage = ""
 
+  # Links a default implementation of task queues to targets
+  # that depend on the target rtc_task_queue. Set to false to
+  # use an external implementation.
+  rtc_link_task_queue_impl = true
+
   # Enable libevent task queues on platforms that support it.
+  # rtc_link_task_queue_impl must be set to true for this to
+  # have an effect.
   if (is_win || is_mac || is_ios || is_nacl) {
     rtc_enable_libevent = false
     rtc_build_libevent = false
@@ -140,9 +146,6 @@ declare_args() {
   # http://www.openh264.org, https://www.ffmpeg.org/
   rtc_use_h264 = proprietary_codecs && !is_android && !is_ios
 
-  # Determines whether QUIC code will be built.
-  rtc_use_quic = false
-
   # By default, use normal platform audio support or dummy audio, but don't
   # use file-based audio playout and record.
   rtc_use_dummy_audio_file_devices = false
@@ -173,9 +176,6 @@ declare_args() {
 # depend on the possibly overridden variables in the first
 # declare_args block.
 declare_args() {
-  # Include the iLBC audio codec?
-  rtc_include_ilbc = !(build_with_chromium || build_with_mozilla)
-
   rtc_restrict_logging = build_with_chromium
 
   # Excluded in Chromium since its prerequisites don't require Pulse Audio.
@@ -202,7 +202,7 @@ rtc_desktop_capture_supported = is_win || is_mac || (is_linux && use_x11)
 # Templates
 #
 
-# Points to //webrtc/ in webrtc stand-alone or to //third_party/webrtc/ in
+# Points to // in webrtc stand-alone or to //third_party/webrtc/ in
 # chromium.
 # We need absolute paths for all configs in templates as they are shared in
 # different subdirectories.
@@ -264,7 +264,13 @@ template("rtc_test") {
                              "configs",
                              "public_configs",
                              "suppressed_configs",
+                             "visibility",
                            ])
+
+    # Always override to public because when target_os is Android the `test`
+    # template can override it to [ "*" ] and we want to avoid conditional
+    # visibility.
+    visibility = [ "*" ]
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -273,8 +279,8 @@ template("rtc_test") {
       public_configs += invoker.public_configs
     }
     if (!build_with_chromium && is_android) {
-      android_manifest = "//webrtc/test/android/AndroidManifest.xml"
-      deps += [ "//webrtc/test:native_test_java" ]
+      android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
+      deps += [ webrtc_root + "test:native_test_java" ]
     }
   }
 }
@@ -287,7 +293,9 @@ template("rtc_source_set") {
                              "configs",
                              "public_configs",
                              "suppressed_configs",
+                             "visibility",
                            ])
+    forward_variables_from(invoker, [ "visibility" ])
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -307,7 +315,9 @@ template("rtc_executable") {
                              "configs",
                              "public_configs",
                              "suppressed_configs",
+                             "visibility",
                            ])
+    forward_variables_from(invoker, [ "visibility" ])
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -315,6 +325,7 @@ template("rtc_executable") {
       "//build/config:exe_and_shlib_deps",
     ]
     deps += invoker.deps
+
     public_configs = [ rtc_common_inherited_config ]
     if (defined(invoker.public_configs)) {
       public_configs += invoker.public_configs
@@ -330,7 +341,9 @@ template("rtc_static_library") {
                              "configs",
                              "public_configs",
                              "suppressed_configs",
+                             "visibility",
                            ])
+    forward_variables_from(invoker, [ "visibility" ])
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -349,7 +362,9 @@ template("rtc_shared_library") {
                              "configs",
                              "public_configs",
                              "suppressed_configs",
+                             "visibility",
                            ])
+    forward_variables_from(invoker, [ "visibility" ])
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -374,7 +389,9 @@ if (is_ios) {
                                "configs",
                                "public_configs",
                                "suppressed_configs",
+                               "visibility",
                              ])
+      forward_variables_from(invoker, [ "visibility" ])
       configs += invoker.configs
       configs -= rtc_remove_configs
       configs -= invoker.suppressed_configs
@@ -382,6 +399,65 @@ if (is_ios) {
       if (defined(invoker.public_configs)) {
         public_configs += invoker.public_configs
       }
+    }
+  }
+}
+
+if (is_android) {
+  template("rtc_android_library") {
+    android_library(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+
+      # Treat warnings as errors.
+      javac_args = [ "-Werror" ]
+
+      # TODO(sakal): Fix build hooks crbug.com/webrtc/8168
+      no_build_hooks = true
+    }
+  }
+
+  template("rtc_android_apk") {
+    android_apk(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+
+      # Treat warnings as errors.
+      javac_args = [ "-Werror" ]
+
+      # TODO(sakal): Fix build hooks crbug.com/webrtc/8168
+      no_build_hooks = true
+    }
+  }
+
+  template("rtc_instrumentation_test_apk") {
+    instrumentation_test_apk(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+
+      # Treat warnings as errors.
+      javac_args = [ "-Werror" ]
+
+      # TODO(sakal): Fix build hooks crbug.com/webrtc/8168
+      no_build_hooks = true
     }
   }
 }

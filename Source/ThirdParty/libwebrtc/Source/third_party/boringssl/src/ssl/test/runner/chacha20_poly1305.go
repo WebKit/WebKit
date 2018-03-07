@@ -119,9 +119,6 @@ func chaCha20(out, in, key, nonce []byte, counter uint64) {
 // RFC 7539 and draft-agl-tls-chacha20poly1305-04.
 type chaCha20Poly1305 struct {
 	key [32]byte
-	// oldMode, if true, indicates that the draft spec should be
-	// implemented rather than the final, RFC version.
-	oldMode bool
 }
 
 func newChaCha20Poly1305(key []byte) (cipher.AEAD, error) {
@@ -133,23 +130,8 @@ func newChaCha20Poly1305(key []byte) (cipher.AEAD, error) {
 	return aead, nil
 }
 
-func newChaCha20Poly1305Old(key []byte) (cipher.AEAD, error) {
-	if len(key) != 32 {
-		return nil, errors.New("bad key length")
-	}
-	aead := &chaCha20Poly1305{
-		oldMode: true,
-	}
-	copy(aead.key[:], key)
-	return aead, nil
-}
-
 func (c *chaCha20Poly1305) NonceSize() int {
-	if c.oldMode {
-		return 8
-	} else {
-		return 12
-	}
+	return 12
 }
 
 func (c *chaCha20Poly1305) Overhead() int { return 16 }
@@ -176,21 +158,6 @@ func (c *chaCha20Poly1305) poly1305(tag *[16]byte, nonce, ciphertext, additional
 	poly1305.Sum(tag, input, &poly1305Key)
 }
 
-func (c *chaCha20Poly1305) poly1305Old(tag *[16]byte, nonce, ciphertext, additionalData []byte) {
-	input := make([]byte, 0, len(additionalData)+8+len(ciphertext)+8)
-	input = append(input, additionalData...)
-	input, out := sliceForAppend(input, 8)
-	binary.LittleEndian.PutUint64(out, uint64(len(additionalData)))
-	input = append(input, ciphertext...)
-	input, out = sliceForAppend(input, 8)
-	binary.LittleEndian.PutUint64(out, uint64(len(ciphertext)))
-
-	var poly1305Key [32]byte
-	chaCha20(poly1305Key[:], poly1305Key[:], c.key[:], nonce, 0)
-
-	poly1305.Sum(tag, input, &poly1305Key)
-}
-
 func (c *chaCha20Poly1305) Seal(dst, nonce, plaintext, additionalData []byte) []byte {
 	if len(nonce) != c.NonceSize() {
 		panic("Bad nonce length")
@@ -200,11 +167,7 @@ func (c *chaCha20Poly1305) Seal(dst, nonce, plaintext, additionalData []byte) []
 	chaCha20(out[:len(plaintext)], plaintext, c.key[:], nonce, 1)
 
 	var tag [16]byte
-	if c.oldMode {
-		c.poly1305Old(&tag, nonce, out[:len(plaintext)], additionalData)
-	} else {
-		c.poly1305(&tag, nonce, out[:len(plaintext)], additionalData)
-	}
+	c.poly1305(&tag, nonce, out[:len(plaintext)], additionalData)
 	copy(out[len(plaintext):], tag[:])
 
 	return ret
@@ -220,11 +183,7 @@ func (c *chaCha20Poly1305) Open(dst, nonce, ciphertext, additionalData []byte) (
 	plaintextLen := len(ciphertext) - 16
 
 	var tag [16]byte
-	if c.oldMode {
-		c.poly1305Old(&tag, nonce, ciphertext[:plaintextLen], additionalData)
-	} else {
-		c.poly1305(&tag, nonce, ciphertext[:plaintextLen], additionalData)
-	}
+	c.poly1305(&tag, nonce, ciphertext[:plaintextLen], additionalData)
 	if subtle.ConstantTimeCompare(tag[:], ciphertext[plaintextLen:]) != 1 {
 		return nil, errors.New("chacha20: message authentication failed")
 	}

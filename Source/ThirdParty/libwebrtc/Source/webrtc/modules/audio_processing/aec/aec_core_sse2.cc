@@ -17,11 +17,11 @@
 #include <string.h>  // memset
 
 extern "C" {
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 }
-#include "webrtc/modules/audio_processing/aec/aec_common.h"
-#include "webrtc/modules/audio_processing/aec/aec_core_optimized_methods.h"
-#include "webrtc/modules/audio_processing/utility/ooura_fft.h"
+#include "modules/audio_processing/aec/aec_common.h"
+#include "modules/audio_processing/aec/aec_core_optimized_methods.h"
+#include "modules/audio_processing/utility/ooura_fft.h"
 
 namespace webrtc {
 

@@ -23,9 +23,9 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 
 #include <windows.h>
 
-/* #define needed to link in RtlGenRandom(), a.k.a. SystemFunction036.  See the
- * "Community Additions" comment on MSDN here:
- * http://msdn.microsoft.com/en-us/library/windows/desktop/aa387694.aspx */
+// #define needed to link in RtlGenRandom(), a.k.a. SystemFunction036.  See the
+// "Community Additions" comment on MSDN here:
+// http://msdn.microsoft.com/en-us/library/windows/desktop/aa387694.aspx
 #define SystemFunction036 NTAPI SystemFunction036
 #include <ntsecapi.h>
 #undef SystemFunction036
@@ -50,4 +50,4 @@ void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   return;
 }
 
-#endif  /* OPENSSL_WINDOWS && !BORINGSSL_UNSAFE_DETERMINISTIC_MODE */
+#endif  // OPENSSL_WINDOWS && !BORINGSSL_UNSAFE_DETERMINISTIC_MODE

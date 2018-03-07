@@ -1,13 +1,12 @@
 include_rules = [
-  "+webrtc/audio/utility/audio_frame_operations.h",
-  "+webrtc/base",
-  "+webrtc/common_audio",
-  "+webrtc/system_wrappers",
+  "+audio/utility/audio_frame_operations.h",
+  "+common_audio",
+  "+system_wrappers",
 ]
 
 specific_include_rules = {
   ".*test\.cc": [
-    "+webrtc/tools",
+    "+rtc_tools",
     # Android platform build has different paths.
     "+gtest",
     "+external/webrtc",

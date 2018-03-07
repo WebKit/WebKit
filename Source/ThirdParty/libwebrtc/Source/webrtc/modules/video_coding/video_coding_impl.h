@@ -8,30 +8,30 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
-#define WEBRTC_MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
+#ifndef MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
+#define MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 
-#include "webrtc/modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/include/video_coding.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/onetimeevent.h"
-#include "webrtc/base/sequenced_task_checker.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/common_video/include/frame_callback.h"
-#include "webrtc/modules/video_coding/codec_database.h"
-#include "webrtc/modules/video_coding/frame_buffer.h"
-#include "webrtc/modules/video_coding/generic_decoder.h"
-#include "webrtc/modules/video_coding/generic_encoder.h"
-#include "webrtc/modules/video_coding/jitter_buffer.h"
-#include "webrtc/modules/video_coding/media_optimization.h"
-#include "webrtc/modules/video_coding/qp_parser.h"
-#include "webrtc/modules/video_coding/receiver.h"
-#include "webrtc/modules/video_coding/timing.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "common_video/include/frame_callback.h"
+#include "modules/video_coding/codec_database.h"
+#include "modules/video_coding/frame_buffer.h"
+#include "modules/video_coding/generic_decoder.h"
+#include "modules/video_coding/generic_encoder.h"
+#include "modules/video_coding/jitter_buffer.h"
+#include "modules/video_coding/media_optimization.h"
+#include "modules/video_coding/qp_parser.h"
+#include "modules/video_coding/receiver.h"
+#include "modules/video_coding/timing.h"
+#include "rtc_base/onetimeevent.h"
+#include "rtc_base/sequenced_task_checker.h"
+#include "rtc_base/thread_annotations.h"
+#include "rtc_base/thread_checker.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -58,13 +58,12 @@ class VCMProcessTimer {
   int64_t _latestMs;
 };
 
-class VideoSender : public Module {
+class VideoSender {
  public:
   typedef VideoCodingModule::SenderNackMode SenderNackMode;
 
   VideoSender(Clock* clock,
-              EncodedImageCallback* post_encode_callback,
-              VCMSendStatisticsCallback* send_stats_callback);
+              EncodedImageCallback* post_encode_callback);
 
   ~VideoSender();
 
@@ -109,37 +108,30 @@ class VideoSender : public Module {
   int32_t IntraFrameRequest(size_t stream_index);
   int32_t EnableFrameDropper(bool enable);
 
-  int64_t TimeUntilNextProcess() override;
-  void Process() override;
-
  private:
   EncoderParameters UpdateEncoderParameters(
       const EncoderParameters& params,
       VideoBitrateAllocator* bitrate_allocator,
       uint32_t target_bitrate_bps);
   void SetEncoderParameters(EncoderParameters params, bool has_internal_source)
-      EXCLUSIVE_LOCKS_REQUIRED(encoder_crit_);
-
-  Clock* const clock_;
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(encoder_crit_);
 
   rtc::CriticalSection encoder_crit_;
   VCMGenericEncoder* _encoder;
   media_optimization::MediaOptimization _mediaOpt;
-  VCMEncodedFrameCallback _encodedFrameCallback GUARDED_BY(encoder_crit_);
+  VCMEncodedFrameCallback _encodedFrameCallback RTC_GUARDED_BY(encoder_crit_);
   EncodedImageCallback* const post_encode_callback_;
-  VCMSendStatisticsCallback* const send_stats_callback_;
-  VCMCodecDataBase _codecDataBase GUARDED_BY(encoder_crit_);
-  bool frame_dropper_enabled_ GUARDED_BY(encoder_crit_);
-  VCMProcessTimer _sendStatsTimer;
+  VCMCodecDataBase _codecDataBase RTC_GUARDED_BY(encoder_crit_);
+  bool frame_dropper_enabled_ RTC_GUARDED_BY(encoder_crit_);
 
   // Must be accessed on the construction thread of VideoSender.
   VideoCodec current_codec_;
   rtc::SequencedTaskChecker sequenced_checker_;
 
   rtc::CriticalSection params_crit_;
-  EncoderParameters encoder_params_ GUARDED_BY(params_crit_);
-  bool encoder_has_internal_source_ GUARDED_BY(params_crit_);
-  std::vector<FrameType> next_frame_types_ GUARDED_BY(params_crit_);
+  EncoderParameters encoder_params_ RTC_GUARDED_BY(params_crit_);
+  bool encoder_has_internal_source_ RTC_GUARDED_BY(params_crit_);
+  std::vector<FrameType> next_frame_types_ RTC_GUARDED_BY(params_crit_);
 };
 
 class VideoReceiver : public Module {
@@ -200,7 +192,7 @@ class VideoReceiver : public Module {
 
  protected:
   int32_t Decode(const webrtc::VCMEncodedFrame& frame)
-      EXCLUSIVE_LOCKS_REQUIRED(receive_crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(receive_crit_);
   int32_t RequestKeyFrame();
 
  private:
@@ -211,16 +203,18 @@ class VideoReceiver : public Module {
   VCMTiming* _timing;
   VCMReceiver _receiver;
   VCMDecodedFrameCallback _decodedFrameCallback;
-  VCMFrameTypeCallback* _frameTypeCallback GUARDED_BY(process_crit_);
-  VCMReceiveStatisticsCallback* _receiveStatsCallback GUARDED_BY(process_crit_);
-  VCMPacketRequestCallback* _packetRequestCallback GUARDED_BY(process_crit_);
+  VCMFrameTypeCallback* _frameTypeCallback RTC_GUARDED_BY(process_crit_);
+  VCMReceiveStatisticsCallback* _receiveStatsCallback
+      RTC_GUARDED_BY(process_crit_);
+  VCMPacketRequestCallback* _packetRequestCallback
+      RTC_GUARDED_BY(process_crit_);
 
   VCMFrameBuffer _frameFromFile;
-  bool _scheduleKeyRequest GUARDED_BY(process_crit_);
-  bool drop_frames_until_keyframe_ GUARDED_BY(process_crit_);
-  size_t max_nack_list_size_ GUARDED_BY(process_crit_);
+  bool _scheduleKeyRequest RTC_GUARDED_BY(process_crit_);
+  bool drop_frames_until_keyframe_ RTC_GUARDED_BY(process_crit_);
+  size_t max_nack_list_size_ RTC_GUARDED_BY(process_crit_);
 
-  VCMCodecDataBase _codecDataBase GUARDED_BY(receive_crit_);
+  VCMCodecDataBase _codecDataBase RTC_GUARDED_BY(receive_crit_);
   EncodedImageCallback* pre_decode_image_callback_;
 
   VCMProcessTimer _receiveStatsTimer;
@@ -232,4 +226,4 @@ class VideoReceiver : public Module {
 
 }  // namespace vcm
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
+#endif  // MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_

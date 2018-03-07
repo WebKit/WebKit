@@ -8,24 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/video_coding_impl.h"
+#include "modules/video_coding/video_coding_impl.h"
 
 #include <algorithm>
 #include <utility>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/common_types.h"
-#include "webrtc/common_video/include/video_bitrate_allocator.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
-#include "webrtc/modules/video_coding/encoded_frame.h"
-#include "webrtc/modules/video_coding/include/video_codec_initializer.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/modules/video_coding/jitter_buffer.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/modules/video_coding/timing.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "common_video/include/video_bitrate_allocator.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/codecs/vp8/temporal_layers.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/include/video_codec_initializer.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/jitter_buffer.h"
+#include "modules/video_coding/packet.h"
+#include "modules/video_coding/timing.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_checker.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace vcm {
@@ -72,7 +72,7 @@ class EncodedImageCallbackWrapper : public EncodedImageCallback {
 
  private:
   rtc::CriticalSection cs_;
-  EncodedImageCallback* callback_ GUARDED_BY(cs_);
+  EncodedImageCallback* callback_ RTC_GUARDED_BY(cs_);
 };
 
 class VideoCodingModuleImpl : public VideoCodingModule {
@@ -83,7 +83,7 @@ class VideoCodingModuleImpl : public VideoCodingModule {
                         KeyFrameRequestSender* keyframe_request_sender,
                         EncodedImageCallback* pre_decode_image_callback)
       : VideoCodingModule(),
-        sender_(clock, &post_encode_callback_, nullptr),
+        sender_(clock, &post_encode_callback_),
         timing_(new VCMTiming(clock)),
         receiver_(clock,
                   event_factory,
@@ -95,15 +95,12 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   virtual ~VideoCodingModuleImpl() {}
 
   int64_t TimeUntilNextProcess() override {
-    int64_t sender_time = sender_.TimeUntilNextProcess();
     int64_t receiver_time = receiver_.TimeUntilNextProcess();
-    RTC_DCHECK_GE(sender_time, 0);
     RTC_DCHECK_GE(receiver_time, 0);
-    return VCM_MIN(sender_time, receiver_time);
+    return receiver_time;
   }
 
   void Process() override {
-    sender_.Process();
     receiver_.Process();
   }
 
@@ -269,10 +266,6 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   vcm::VideoReceiver receiver_;
 };
 }  // namespace
-
-void VideoCodingModule::Codec(VideoCodecType codecType, VideoCodec* codec) {
-  VCMCodecDataBase::Codec(codecType, codec);
-}
 
 // DEPRECATED.  Create method for current interface, will be removed when the
 // new jitter buffer is in place.

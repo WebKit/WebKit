@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_FEC_RATE_TABLE_H_
-#define WEBRTC_MODULES_VIDEO_CODING_FEC_RATE_TABLE_H_
+#ifndef MODULES_VIDEO_CODING_FEC_RATE_TABLE_H_
+#define MODULES_VIDEO_CODING_FEC_RATE_TABLE_H_
 
 // This is a private header for media_opt_util.cc.
 // It should not be included by other files.
@@ -458,4 +458,4 @@ static const unsigned char kFecRateTable[kFecRateTableSize] = {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_FEC_RATE_TABLE_H_
+#endif  // MODULES_VIDEO_CODING_FEC_RATE_TABLE_H_

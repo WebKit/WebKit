@@ -90,32 +90,6 @@ void ec_GFp_mont_group_finish(EC_GROUP *group) {
   ec_GFp_simple_group_finish(group);
 }
 
-int ec_GFp_mont_group_copy(EC_GROUP *dest, const EC_GROUP *src) {
-  BN_MONT_CTX_free(dest->mont);
-  dest->mont = NULL;
-
-  if (!ec_GFp_simple_group_copy(dest, src)) {
-    return 0;
-  }
-
-  if (src->mont != NULL) {
-    dest->mont = BN_MONT_CTX_new();
-    if (dest->mont == NULL) {
-      return 0;
-    }
-    if (!BN_MONT_CTX_copy(dest->mont, src->mont)) {
-      goto err;
-    }
-  }
-
-  return 1;
-
-err:
-  BN_MONT_CTX_free(dest->mont);
-  dest->mont = NULL;
-  return 0;
-}
-
 int ec_GFp_mont_group_set_curve(EC_GROUP *group, const BIGNUM *p,
                                 const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx) {
   BN_CTX *new_ctx = NULL;
@@ -219,7 +193,7 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
   BN_CTX_start(ctx);
 
   if (BN_cmp(&point->Z, &group->one) == 0) {
-    /* |point| is already affine. */
+    // |point| is already affine.
     if (x != NULL && !BN_from_montgomery(x, &point->X, group->mont, ctx)) {
       goto err;
     }
@@ -227,7 +201,7 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
       goto err;
     }
   } else {
-    /* transform  (X, Y, Z)  into  (x, y) := (X/Z^2, Y/Z^3) */
+    // transform  (X, Y, Z)  into  (x, y) := (X/Z^2, Y/Z^3)
 
     BIGNUM *Z_1 = BN_CTX_get(ctx);
     BIGNUM *Z_2 = BN_CTX_get(ctx);
@@ -238,18 +212,18 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
       goto err;
     }
 
-    /* The straightforward way to calculate the inverse of a Montgomery-encoded
-     * value where the result is Montgomery-encoded is:
-     *
-     *    |BN_from_montgomery| + invert + |BN_to_montgomery|.
-     *
-     * This is equivalent, but more efficient, because |BN_from_montgomery|
-     * is more efficient (at least in theory) than |BN_to_montgomery|, since it
-     * doesn't have to do the multiplication before the reduction.
-     *
-     * Use Fermat's Little Theorem instead of |BN_mod_inverse_odd| since this
-     * inversion may be done as the final step of private key operations.
-     * Unfortunately, this is suboptimal for ECDSA verification. */
+    // The straightforward way to calculate the inverse of a Montgomery-encoded
+    // value where the result is Montgomery-encoded is:
+    //
+    //    |BN_from_montgomery| + invert + |BN_to_montgomery|.
+    //
+    // This is equivalent, but more efficient, because |BN_from_montgomery|
+    // is more efficient (at least in theory) than |BN_to_montgomery|, since it
+    // doesn't have to do the multiplication before the reduction.
+    //
+    // Use Fermat's Little Theorem instead of |BN_mod_inverse_odd| since this
+    // inversion may be done as the final step of private key operations.
+    // Unfortunately, this is suboptimal for ECDSA verification.
     if (!BN_from_montgomery(Z_1, &point->Z, group->mont, ctx) ||
         !BN_from_montgomery(Z_1, Z_1, group->mont, ctx) ||
         !bn_mod_inverse_prime(Z_1, Z_1, &group->field, ctx, group->mont)) {
@@ -260,10 +234,10 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
       goto err;
     }
 
-    /* Instead of using |BN_from_montgomery| to convert the |x| coordinate
-     * and then calling |BN_from_montgomery| again to convert the |y|
-     * coordinate below, convert the common factor |Z_2| once now, saving one
-     * reduction. */
+    // Instead of using |BN_from_montgomery| to convert the |x| coordinate
+    // and then calling |BN_from_montgomery| again to convert the |y|
+    // coordinate below, convert the common factor |Z_2| once now, saving one
+    // reduction.
     if (!BN_from_montgomery(Z_2, Z_2, group->mont, ctx)) {
       goto err;
     }
@@ -293,7 +267,6 @@ err:
 DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_mont_method) {
   out->group_init = ec_GFp_mont_group_init;
   out->group_finish = ec_GFp_mont_group_finish;
-  out->group_copy = ec_GFp_mont_group_copy;
   out->group_set_curve = ec_GFp_mont_group_set_curve;
   out->point_get_affine_coordinates = ec_GFp_mont_point_get_affine_coordinates;
   out->mul = ec_wNAF_mul /* XXX: Not constant time. */;

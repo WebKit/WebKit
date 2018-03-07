@@ -10,7 +10,7 @@
 
 #include <arm_neon.h>
 
-#include "webrtc/modules/video_processing/util/denoiser_filter_neon.h"
+#include "modules/video_processing/util/denoiser_filter_neon.h"
 
 namespace webrtc {
 

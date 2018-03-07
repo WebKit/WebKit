@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/rtp_streams_synchronizer.h"
+#include "video/rtp_streams_synchronizer.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/call/syncable.h"
-#include "webrtc/modules/video_coding/video_coding_impl.h"
+#include "call/syncable.h"
+#include "modules/video_coding/video_coding_impl.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 namespace {
@@ -147,7 +147,7 @@ bool RtpStreamsSynchronizer::GetStreamSyncOffsetInMs(
     latest_video_ntp += time_to_render_ms;
 
   *stream_offset_ms = latest_audio_ntp - latest_video_ntp;
-  *estimated_freq_khz = video_measurement_.rtp_to_ntp.params().frequency_khz;
+  *estimated_freq_khz = video_measurement_.rtp_to_ntp.params()->frequency_khz;
   return true;
 }
 

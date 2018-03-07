@@ -12,6 +12,7 @@ package org.webrtc;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -43,6 +44,8 @@ class Camera2Session implements CameraSession {
       "WebRTC.Android.Camera2.Resolution", CameraEnumerationAndroid.COMMON_RESOLUTIONS.size());
 
   private static enum SessionState { RUNNING, STOPPED }
+
+  private final boolean videoFrameEmitTrialEnabled;
 
   private final Handler cameraThreadHandler;
   private final CreateSessionCallback callback;
@@ -225,8 +228,17 @@ class Camera2Session implements CameraSession {
               transformMatrix =
                   RendererCommon.rotateTextureMatrix(transformMatrix, -cameraOrientation);
 
-              events.onTextureFrameCaptured(Camera2Session.this, captureFormat.width,
-                  captureFormat.height, oesTextureId, transformMatrix, rotation, timestampNs);
+              if (videoFrameEmitTrialEnabled) {
+                VideoFrame.Buffer buffer = surfaceTextureHelper.createTextureBuffer(
+                    captureFormat.width, captureFormat.height,
+                    RendererCommon.convertMatrixToAndroidGraphicsMatrix(transformMatrix));
+                final VideoFrame frame = new VideoFrame(buffer, rotation, timestampNs);
+                events.onFrameCaptured(Camera2Session.this, frame);
+                frame.release();
+              } else {
+                events.onTextureFrameCaptured(Camera2Session.this, captureFormat.width,
+                    captureFormat.height, oesTextureId, transformMatrix, rotation, timestampNs);
+              }
             }
           });
       Logging.d(TAG, "Camera device successfully started.");
@@ -281,7 +293,7 @@ class Camera2Session implements CameraSession {
     }
   }
 
-  private class CameraCaptureCallback extends CameraCaptureSession.CaptureCallback {
+  private static class CameraCaptureCallback extends CameraCaptureSession.CaptureCallback {
     @Override
     public void onCaptureFailed(
         CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
@@ -301,6 +313,9 @@ class Camera2Session implements CameraSession {
       CameraManager cameraManager, SurfaceTextureHelper surfaceTextureHelper,
       MediaRecorder mediaRecorder, String cameraId, int width, int height, int framerate) {
     Logging.d(TAG, "Create new camera2 session on camera " + cameraId);
+    videoFrameEmitTrialEnabled =
+        PeerConnectionFactory.fieldTrialsFindFullName(PeerConnectionFactory.VIDEO_FRAME_EMIT_TRIAL)
+            .equals(PeerConnectionFactory.TRIAL_ENABLED);
 
     constructionTimeNs = System.nanoTime();
 

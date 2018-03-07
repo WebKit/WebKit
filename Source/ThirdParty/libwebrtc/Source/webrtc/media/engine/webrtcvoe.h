@@ -8,18 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_WEBRTCVOE_H_
-#define WEBRTC_MEDIA_ENGINE_WEBRTCVOE_H_
+#ifndef MEDIA_ENGINE_WEBRTCVOE_H_
+#define MEDIA_ENGINE_WEBRTCVOE_H_
 
 #include <memory>
 
-#include "webrtc/media/engine/webrtccommon.h"
-
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/voice_engine/include/voe_base.h"
-#include "webrtc/voice_engine/include/voe_codec.h"
-#include "webrtc/voice_engine/include/voe_errors.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_device/include/audio_device.h"
+#include "voice_engine/include/voe_base.h"
+#include "voice_engine/include/voe_errors.h"
 
 namespace cricket {
 // automatically handles lifetime of WebRtc VoiceEngine
@@ -77,13 +74,10 @@ class VoEWrapper {
   VoEWrapper()
       : engine_(webrtc::VoiceEngine::Create()), base_(engine_) {
   }
-  VoEWrapper(webrtc::VoEBase* base)
-      : engine_(NULL), base_(base) {
-  }
+  explicit VoEWrapper(webrtc::VoEBase* base) : engine_(NULL), base_(base) {}
   ~VoEWrapper() {}
   webrtc::VoiceEngine* engine() const { return engine_.get(); }
   webrtc::VoEBase* base() const { return base_.get(); }
-  int error() { return base_->LastError(); }
 
  private:
   scoped_voe_engine engine_;
@@ -91,4 +85,4 @@ class VoEWrapper {
 };
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_ENGINE_WEBRTCVOE_H_
+#endif  // MEDIA_ENGINE_WEBRTCVOE_H_

@@ -10,9 +10,9 @@
 
 #include <memory>
 
-#include "webrtc/common_types.h"
-#include "webrtc/modules/remote_bitrate_estimator/inter_arrival.h"
-#include "webrtc/test/gtest.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/remote_bitrate_estimator/inter_arrival.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace testing {

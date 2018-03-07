@@ -9,11 +9,6 @@
 import("../../webrtc.gni")
 
 rtc_static_library("remote_bitrate_estimator") {
-  # TODO(mbonadei): Remove (bugs.webrtc.org/6828)
-  # Errors on cyclic dependency with:
-  # rtp_rtcp:rtp_rtcp if enabled.
-  check_includes = false
-
   sources = [
     "aimd_rate_control.cc",
     "aimd_rate_control.h",
@@ -51,16 +46,40 @@ rtc_static_library("remote_bitrate_estimator") {
 
   deps = [
     "../..:webrtc_common",
-    "../../base:rtc_base",
-    "../../base:rtc_base_approved",
+    "../../api:optional",
+    "../../modules:module_api",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
   ]
+}
+
+if (!build_with_chromium) {
+  rtc_source_set("bwe_rtp") {
+    testonly = true
+    sources = [
+      "tools/bwe_rtp.cc",
+      "tools/bwe_rtp.h",
+    ]
+    deps = [
+      ":remote_bitrate_estimator",
+      "../../rtc_base:rtc_base_approved",
+      "../../test:rtp_test_utils",
+      "../rtp_rtcp:rtp_rtcp",
+    ]
+    if (is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
 }
 
 if (rtc_include_tests) {
   rtc_static_library("bwe_simulator_lib") {
     testonly = true
     sources = [
+      "test/bbr_paced_sender.cc",
+      "test/bbr_paced_sender.h",
       "test/bwe.cc",
       "test/bwe.h",
       "test/bwe_test.cc",
@@ -74,7 +93,9 @@ if (rtc_include_tests) {
       "test/bwe_test_logging.h",
       "test/estimators/bbr.cc",
       "test/estimators/bbr.h",
+      "test/estimators/congestion_window.cc",
       "test/estimators/congestion_window.h",
+      "test/estimators/max_bandwidth_filter.cc",
       "test/estimators/max_bandwidth_filter.h",
       "test/estimators/min_rtt_filter.h",
       "test/estimators/nada.cc",
@@ -116,9 +137,11 @@ if (rtc_include_tests) {
       ":remote_bitrate_estimator",
       "..:module_api",
       "../..:webrtc_common",
-      "../../base:gtest_prod",
-      "../../base:rtc_base",
-      "../../base:rtc_base_approved",
+      "../../api:optional",
+      "../../rtc_base:gtest_prod",
+      "../../rtc_base:rtc_base",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_numerics",
       "../../system_wrappers",
       "../../test:test_support",
       "../../voice_engine",
@@ -126,6 +149,7 @@ if (rtc_include_tests) {
       "../congestion_controller",
       "../pacing",
       "../rtp_rtcp",
+      "../video_coding:video_coding_utility",
       "//testing/gmock",
       "//testing/gtest",
     ]
@@ -134,19 +158,14 @@ if (rtc_include_tests) {
   rtc_source_set("remote_bitrate_estimator_perf_tests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc:webrtc_perf_tests" ]
-    }
     sources = [
       "remote_bitrate_estimators_test.cc",
     ]
     deps = [
       ":bwe_simulator_lib",
       ":remote_bitrate_estimator",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
+      "../../test:field_trial",
       "../../test:test_support",
     ]
     if (!build_with_chromium && is_clang) {
@@ -158,12 +177,6 @@ if (rtc_include_tests) {
   rtc_source_set("remote_bitrate_estimator_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "aimd_rate_control_unittest.cc",
       "inter_arrival_unittest.cc",
@@ -176,16 +189,18 @@ if (rtc_include_tests) {
       "send_time_history_unittest.cc",
       "test/bwe_test_framework_unittest.cc",
       "test/bwe_unittest.cc",
+      "test/estimators/congestion_window_unittest.cc",
+      "test/estimators/max_bandwidth_filter_unittest.cc",
+      "test/estimators/min_rtt_filter_unittest.cc",
       "test/estimators/nada_unittest.cc",
       "test/metric_recorder_unittest.cc",
     ]
     deps = [
       ":bwe_simulator_lib",
-      ":mock_remote_bitrate_observer",
       ":remote_bitrate_estimator",
       "../..:webrtc_common",
-      "../../base:rtc_base",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base",
+      "../../rtc_base:rtc_base_approved",
       "../../system_wrappers:system_wrappers",
       "../../test:field_trial",
       "../../test:test_support",
@@ -205,17 +220,6 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_source_set("mock_remote_bitrate_observer") {
-    testonly = true
-    sources = [
-      "include/mock/mock_remote_bitrate_observer.h",
-    ]
-    deps = [
-      ":remote_bitrate_estimator",
-      "../../test:test_support",
-    ]
-  }
-
   rtc_test("bwe_simulations_tests") {
     testonly = true
 
@@ -226,11 +230,15 @@ if (rtc_include_tests) {
       ":bwe_simulator_lib",
       ":remote_bitrate_estimator",
       "../..:webrtc_common",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
       "../../test:test_main",
       "//testing/gmock",
       "//testing/gtest",
-      "//third_party/gflags",
+    ]
+    data = [
+      "//resources/sprint-uplink.rx",
+      "//resources/verizon4g-downlink.rx",
+      "//resources/google-wifi-3mbps.rx",
     ]
 
     if (!build_with_chromium && is_clang) {

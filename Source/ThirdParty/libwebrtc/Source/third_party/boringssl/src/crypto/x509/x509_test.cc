@@ -26,9 +26,12 @@
 #include <openssl/pem.h>
 #include <openssl/pool.h>
 #include <openssl/x509.h>
+#include <openssl/x509v3.h>
 
 #include "../internal.h"
 
+
+std::string GetTestData(const char *path);
 
 static const char kCrossSigningRootPEM[] =
     "-----BEGIN CERTIFICATE-----\n"
@@ -657,6 +660,47 @@ TEST(X509Test, TestCRL) {
                    {unknown_critical_crl2.get()}, X509_V_FLAG_CRL_CHECK));
 }
 
+TEST(X509Test, ManyNamesAndConstraints) {
+  bssl::UniquePtr<X509> many_constraints(
+      CertFromPEM(GetTestData("crypto/x509/many_constraints.pem").c_str()));
+  ASSERT_TRUE(many_constraints);
+  bssl::UniquePtr<X509> many_names1(
+      CertFromPEM(GetTestData("crypto/x509/many_names1.pem").c_str()));
+  ASSERT_TRUE(many_names1);
+  bssl::UniquePtr<X509> many_names2(
+      CertFromPEM(GetTestData("crypto/x509/many_names2.pem").c_str()));
+  ASSERT_TRUE(many_names2);
+  bssl::UniquePtr<X509> many_names3(
+      CertFromPEM(GetTestData("crypto/x509/many_names3.pem").c_str()));
+  ASSERT_TRUE(many_names3);
+  bssl::UniquePtr<X509> some_names1(
+      CertFromPEM(GetTestData("crypto/x509/some_names1.pem").c_str()));
+  ASSERT_TRUE(some_names1);
+  bssl::UniquePtr<X509> some_names2(
+      CertFromPEM(GetTestData("crypto/x509/some_names2.pem").c_str()));
+  ASSERT_TRUE(some_names2);
+  bssl::UniquePtr<X509> some_names3(
+      CertFromPEM(GetTestData("crypto/x509/some_names3.pem").c_str()));
+  ASSERT_TRUE(some_names3);
+
+  EXPECT_EQ(X509_V_ERR_UNSPECIFIED,
+            Verify(many_names1.get(), {many_constraints.get()},
+                   {many_constraints.get()}, {}));
+  EXPECT_EQ(X509_V_ERR_UNSPECIFIED,
+            Verify(many_names2.get(), {many_constraints.get()},
+                   {many_constraints.get()}, {}));
+  EXPECT_EQ(X509_V_ERR_UNSPECIFIED,
+            Verify(many_names3.get(), {many_constraints.get()},
+                   {many_constraints.get()}, {}));
+
+  EXPECT_EQ(X509_V_OK, Verify(some_names1.get(), {many_constraints.get()},
+                              {many_constraints.get()}, {}));
+  EXPECT_EQ(X509_V_OK, Verify(some_names2.get(), {many_constraints.get()},
+                              {many_constraints.get()}, {}));
+  EXPECT_EQ(X509_V_OK, Verify(some_names3.get(), {many_constraints.get()},
+                              {many_constraints.get()}, {}));
+}
+
 TEST(X509Test, TestPSS) {
   bssl::UniquePtr<X509> cert(CertFromPEM(kExamplePSSCert));
   ASSERT_TRUE(cert);
@@ -791,7 +835,7 @@ TEST(X509Test, TestFromBuffer) {
 
   /* This ensures the X509 took a reference to |buf|, otherwise this will be a
    * reference to free memory and ASAN should notice. */
-  ASSERT_EQ(CBS_ASN1_SEQUENCE, enc_pointer[0]);
+  ASSERT_EQ(0x30, enc_pointer[0]);
 }
 
 TEST(X509Test, TestFromBufferWithTrailingData) {
@@ -951,5 +995,43 @@ TEST(X509Test, TestPrintUTCTIME) {
     EXPECT_EQ(ok, (strcmp(t.want, "Bad time value") != 0) ? 1 : 0);
     EXPECT_EQ(t.want,
               std::string(reinterpret_cast<const char *>(contents), len));
+  }
+}
+
+TEST(X509Test, PrettyPrintIntegers) {
+  static const char *kTests[] = {
+      // Small numbers are pretty-printed in decimal.
+      "0",
+      "-1",
+      "1",
+      "42",
+      "-42",
+      "256",
+      "-256",
+      // Large numbers are pretty-printed in hex to avoid taking quadratic time.
+      "0x0123456789",
+      "-0x0123456789",
+  };
+  for (const char *in : kTests) {
+    SCOPED_TRACE(in);
+    BIGNUM *bn = nullptr;
+    ASSERT_TRUE(BN_asc2bn(&bn, in));
+    bssl::UniquePtr<BIGNUM> free_bn(bn);
+
+    {
+      bssl::UniquePtr<ASN1_INTEGER> asn1(BN_to_ASN1_INTEGER(bn, nullptr));
+      ASSERT_TRUE(asn1);
+      bssl::UniquePtr<char> out(i2s_ASN1_INTEGER(nullptr, asn1.get()));
+      ASSERT_TRUE(out.get());
+      EXPECT_STREQ(in, out.get());
+    }
+
+    {
+      bssl::UniquePtr<ASN1_ENUMERATED> asn1(BN_to_ASN1_ENUMERATED(bn, nullptr));
+      ASSERT_TRUE(asn1);
+      bssl::UniquePtr<char> out(i2s_ASN1_ENUMERATED(nullptr, asn1.get()));
+      ASSERT_TRUE(out.get());
+      EXPECT_STREQ(in, out.get());
+    }
   }
 }

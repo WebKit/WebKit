@@ -10,10 +10,10 @@
 
 #include <memory>
 
-#include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -71,21 +71,13 @@ TEST_F(ReceiveStatisticsTest, TwoIncomingSsrcs) {
   EXPECT_EQ(600u, bytes_received);
   EXPECT_EQ(2u, packets_received);
 
-  StatisticianMap statisticians = receive_statistics_->GetActiveStatisticians();
-  EXPECT_EQ(2u, statisticians.size());
+  EXPECT_EQ(2u, receive_statistics_->RtcpReportBlocks(3).size());
   // Add more incoming packets and verify that they are registered in both
   // access methods.
   receive_statistics_->IncomingPacket(header1_, kPacketSize1, false);
   ++header1_.sequenceNumber;
   receive_statistics_->IncomingPacket(header2_, kPacketSize2, false);
   ++header2_.sequenceNumber;
-
-  statisticians[kSsrc1]->GetDataCounters(&bytes_received, &packets_received);
-  EXPECT_EQ(300u, bytes_received);
-  EXPECT_EQ(3u, packets_received);
-  statisticians[kSsrc2]->GetDataCounters(&bytes_received, &packets_received);
-  EXPECT_EQ(900u, bytes_received);
-  EXPECT_EQ(3u, packets_received);
 
   receive_statistics_->GetStatistician(kSsrc1)->GetDataCounters(
       &bytes_received, &packets_received);
@@ -103,26 +95,22 @@ TEST_F(ReceiveStatisticsTest, ActiveStatisticians) {
   clock_.AdvanceTimeMilliseconds(1000);
   receive_statistics_->IncomingPacket(header2_, kPacketSize2, false);
   ++header2_.sequenceNumber;
-  StatisticianMap statisticians = receive_statistics_->GetActiveStatisticians();
   // Nothing should time out since only 1000 ms has passed since the first
   // packet came in.
-  EXPECT_EQ(2u, statisticians.size());
+  EXPECT_EQ(2u, receive_statistics_->RtcpReportBlocks(3).size());
 
   clock_.AdvanceTimeMilliseconds(7000);
   // kSsrc1 should have timed out.
-  statisticians = receive_statistics_->GetActiveStatisticians();
-  EXPECT_EQ(1u, statisticians.size());
+  EXPECT_EQ(1u, receive_statistics_->RtcpReportBlocks(3).size());
 
   clock_.AdvanceTimeMilliseconds(1000);
   // kSsrc2 should have timed out.
-  statisticians = receive_statistics_->GetActiveStatisticians();
-  EXPECT_EQ(0u, statisticians.size());
+  EXPECT_EQ(0u, receive_statistics_->RtcpReportBlocks(3).size());
 
   receive_statistics_->IncomingPacket(header1_, kPacketSize1, false);
   ++header1_.sequenceNumber;
   // kSsrc1 should be active again and the data counters should have survived.
-  statisticians = receive_statistics_->GetActiveStatisticians();
-  EXPECT_EQ(1u, statisticians.size());
+  EXPECT_EQ(1u, receive_statistics_->RtcpReportBlocks(3).size());
   StreamStatistician* statistician =
       receive_statistics_->GetStatistician(kSsrc1);
   ASSERT_TRUE(statistician != NULL);
@@ -201,14 +189,14 @@ TEST_F(ReceiveStatisticsTest, RtcpCallbacks) {
 
   EXPECT_EQ(1u, callback.num_calls_);
   EXPECT_EQ(callback.ssrc_, kSsrc1);
-  EXPECT_EQ(statistics.cumulative_lost, callback.stats_.cumulative_lost);
-  EXPECT_EQ(statistics.extended_max_sequence_number,
-            callback.stats_.extended_max_sequence_number);
+  EXPECT_EQ(statistics.packets_lost, callback.stats_.packets_lost);
+  EXPECT_EQ(statistics.extended_highest_sequence_number,
+            callback.stats_.extended_highest_sequence_number);
   EXPECT_EQ(statistics.fraction_lost, callback.stats_.fraction_lost);
   EXPECT_EQ(statistics.jitter, callback.stats_.jitter);
   EXPECT_EQ(51, statistics.fraction_lost);
-  EXPECT_EQ(1u, statistics.cumulative_lost);
-  EXPECT_EQ(5u, statistics.extended_max_sequence_number);
+  EXPECT_EQ(1u, statistics.packets_lost);
+  EXPECT_EQ(5u, statistics.extended_highest_sequence_number);
   EXPECT_EQ(4u, statistics.jitter);
 
   receive_statistics_->RegisterRtcpStatisticsCallback(NULL);

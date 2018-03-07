@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_
-#define WEBRTC_MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_
+#ifndef MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_
+#define MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_
 
 #include <memory>
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #if defined(WEBRTC_WIN)
 // Due to a bug in the std::unique_ptr implementation that ships with MSVS,
 // we need the full definition of QueuedTask, on Windows.
-#include "webrtc/base/task_queue.h"
+#include "rtc_base/task_queue.h"
 #else
 namespace rtc {
 class QueuedTask;
@@ -74,4 +74,4 @@ class ProcessThread {
 
 }  // namespace webrtc
 
-#endif // WEBRTC_MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_
+#endif // MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_

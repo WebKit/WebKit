@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_FFT4G_H_
-#define WEBRTC_COMMON_AUDIO_FFT4G_H_
+#ifndef COMMON_AUDIO_FFT4G_H_
+#define COMMON_AUDIO_FFT4G_H_
 
 #if defined(__cplusplus)
 extern "C" {
@@ -22,4 +22,4 @@ void WebRtc_rdft(size_t n, int isgn, float *a, size_t *ip, float *w);
 }
 #endif
 
-#endif  // WEBRTC_COMMON_AUDIO_FFT4G_H_
+#endif  // COMMON_AUDIO_FFT4G_H_

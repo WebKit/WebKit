@@ -16,13 +16,14 @@
 #include <algorithm>
 #include <sstream>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/random.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_receiver.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test.h"
+#include "modules/remote_bitrate_estimator/test/packet_receiver.h"
+#include "modules/remote_bitrate_estimator/test/packet_sender.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/random.h"
+#include "test/field_trial.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace testing {
@@ -128,6 +129,24 @@ TEST_P(BweFeedbackTest, Verizon4gDownlinkTest) {
 
 // webrtc:3277
 TEST_P(BweFeedbackTest, GoogleWifiTrace3Mbps) {
+  AdaptiveVideoSource source(0, 30, 300, 0, 0);
+  VideoSender sender(&uplink_, &source, GetParam());
+  RateCounterFilter counter1(&uplink_, 0, "sender_output",
+                             bwe_names[GetParam()]);
+  TraceBasedDeliveryFilter filter(&uplink_, 0, "link_capacity");
+  filter.set_max_delay_ms(500);
+  RateCounterFilter counter2(&uplink_, 0, "Receiver", bwe_names[GetParam()]);
+  PacketReceiver receiver(&uplink_, 0, GetParam(), false, false);
+  ASSERT_TRUE(filter.Init(test::ResourcePath("google-wifi-3mbps", "rx")));
+  RunFor(300 * 1000);
+  PrintResults(filter.GetBitrateStats().GetMean(), counter2.GetBitrateStats(),
+               0, receiver.GetDelayStats(), counter2.GetBitrateStats());
+}
+
+TEST_P(BweFeedbackTest, GoogleWifiTrace3MbpsStreaming) {
+  test::ScopedFieldTrials override_field_trials(
+      "WebRTC-BweWindowSizeInPackets/Enabled-100/"
+      "WebRTC-BweBackOffFactor/Enabled-0.95/");
   AdaptiveVideoSource source(0, 30, 300, 0, 0);
   VideoSender sender(&uplink_, &source, GetParam());
   RateCounterFilter counter1(&uplink_, 0, "sender_output",

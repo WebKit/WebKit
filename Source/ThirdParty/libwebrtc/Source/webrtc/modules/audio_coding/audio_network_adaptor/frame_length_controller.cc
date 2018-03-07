@@ -8,12 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/frame_length_controller.h"
+#include "modules/audio_coding/audio_network_adaptor/frame_length_controller.h"
 
+#include <algorithm>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -32,12 +33,16 @@ FrameLengthController::Config::Config(
     int min_encoder_bitrate_bps,
     float fl_increasing_packet_loss_fraction,
     float fl_decreasing_packet_loss_fraction,
+    int fl_increase_overhead_offset,
+    int fl_decrease_overhead_offset,
     std::map<FrameLengthChange, int> fl_changing_bandwidths_bps)
     : encoder_frame_lengths_ms(encoder_frame_lengths_ms),
       initial_frame_length_ms(initial_frame_length_ms),
       min_encoder_bitrate_bps(min_encoder_bitrate_bps),
       fl_increasing_packet_loss_fraction(fl_increasing_packet_loss_fraction),
       fl_decreasing_packet_loss_fraction(fl_decreasing_packet_loss_fraction),
+      fl_increase_overhead_offset(fl_increase_overhead_offset),
+      fl_decrease_overhead_offset(fl_decrease_overhead_offset),
       fl_changing_bandwidths_bps(std::move(fl_changing_bandwidths_bps)) {}
 
 FrameLengthController::Config::Config(const Config& other) = default;
@@ -71,10 +76,13 @@ void FrameLengthController::MakeDecision(AudioEncoderRuntimeConfig* config) {
 
   if (FrameLengthIncreasingDecision(*config)) {
     ++frame_length_ms_;
+    prev_decision_increase_ = true;
   } else if (FrameLengthDecreasingDecision(*config)) {
     --frame_length_ms_;
+    prev_decision_increase_ = false;
   }
-  config->frame_length_ms = rtc::Optional<int>(*frame_length_ms_);
+  config->last_fl_change_increase = prev_decision_increase_;
+  config->frame_length_ms = *frame_length_ms_;
 }
 
 FrameLengthController::Config::FrameLengthChange::FrameLengthChange(
@@ -98,9 +106,7 @@ bool FrameLengthController::FrameLengthIncreasingDecision(
   //    current overhead rate OR all the following:
   // 2. longer frame length is available AND
   // 3. |uplink_bandwidth_bps| is known to be smaller than a threshold AND
-  // 4. |uplink_packet_loss_fraction| is known to be smaller than a threshold
-  //    AND
-  // 5. FEC is not decided or is OFF.
+  // 4. |uplink_packet_loss_fraction| is known to be smaller than a threshold.
 
   auto longer_frame_length_ms = std::next(frame_length_ms_);
   if (longer_frame_length_ms == config_.encoder_frame_lengths_ms.end())
@@ -112,10 +118,22 @@ bool FrameLengthController::FrameLengthIncreasingDecision(
   if (increase_threshold == config_.fl_changing_bandwidths_bps.end())
     return false;
 
+  // Check that
+  // -(*overhead_bytes_per_packet_) <= offset <= (*overhead_bytes_per_packet_)
+  RTC_DCHECK(
+      !overhead_bytes_per_packet_ ||
+      (overhead_bytes_per_packet_ &&
+       static_cast<size_t>(std::max(0, -config_.fl_increase_overhead_offset)) <=
+           *overhead_bytes_per_packet_ &&
+       static_cast<size_t>(std::max(0, config_.fl_increase_overhead_offset)) <=
+           *overhead_bytes_per_packet_));
+
   if (uplink_bandwidth_bps_ && overhead_bytes_per_packet_ &&
       *uplink_bandwidth_bps_ <=
           config_.min_encoder_bitrate_bps + kPreventOveruseMarginBps +
-              OverheadRateBps(*overhead_bytes_per_packet_, *frame_length_ms_)) {
+              OverheadRateBps(*overhead_bytes_per_packet_ +
+                                  config_.fl_increase_overhead_offset,
+                              *frame_length_ms_)) {
     return true;
   }
 
@@ -123,8 +141,7 @@ bool FrameLengthController::FrameLengthIncreasingDecision(
           *uplink_bandwidth_bps_ <= increase_threshold->second) &&
          (uplink_packet_loss_fraction_ &&
           *uplink_packet_loss_fraction_ <=
-              config_.fl_increasing_packet_loss_fraction) &&
-         !config.enable_fec.value_or(false);
+              config_.fl_increasing_packet_loss_fraction);
 }
 
 bool FrameLengthController::FrameLengthDecreasingDecision(
@@ -137,7 +154,6 @@ bool FrameLengthController::FrameLengthDecreasingDecision(
   // one or more of the followings:
   // 3. |uplink_bandwidth_bps| is known to be larger than a threshold,
   // 4. |uplink_packet_loss_fraction| is known to be larger than a threshold,
-  // 5. FEC is decided ON.
   if (frame_length_ms_ == config_.encoder_frame_lengths_ms.begin())
     return false;
 
@@ -149,10 +165,11 @@ bool FrameLengthController::FrameLengthDecreasingDecision(
     return false;
 
   if (uplink_bandwidth_bps_ && overhead_bytes_per_packet_ &&
-      *uplink_bandwidth_bps_ <= config_.min_encoder_bitrate_bps +
-                                    kPreventOveruseMarginBps +
-                                    OverheadRateBps(*overhead_bytes_per_packet_,
-                                                    *shorter_frame_length_ms)) {
+      *uplink_bandwidth_bps_ <=
+          config_.min_encoder_bitrate_bps + kPreventOveruseMarginBps +
+              OverheadRateBps(*overhead_bytes_per_packet_ +
+                                  config_.fl_decrease_overhead_offset,
+                              *shorter_frame_length_ms)) {
     return false;
   }
 
@@ -160,8 +177,7 @@ bool FrameLengthController::FrameLengthDecreasingDecision(
           *uplink_bandwidth_bps_ >= decrease_threshold->second) ||
          (uplink_packet_loss_fraction_ &&
           *uplink_packet_loss_fraction_ >=
-              config_.fl_decreasing_packet_loss_fraction) ||
-         config.enable_fec.value_or(false);
+              config_.fl_decreasing_packet_loss_fraction);
 }
 
 }  // namespace webrtc

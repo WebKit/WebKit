@@ -12,11 +12,11 @@
 #include <memory>
 
 #include "vpx/vp8cx.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/video_coding/codecs/vp9/screenshare_layers.h"
-#include "webrtc/modules/video_coding/codecs/vp9/vp9_impl.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/video_coding/codecs/vp9/screenshare_layers.h"
+#include "modules/video_coding/codecs/vp9/vp9_impl.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

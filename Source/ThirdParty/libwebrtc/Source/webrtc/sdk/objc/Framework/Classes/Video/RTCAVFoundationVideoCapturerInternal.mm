@@ -16,6 +16,7 @@
 #import "WebRTC/UIDevice+RTCDevice.h"
 #endif
 
+#import "AVCaptureSession+DevicePosition.h"
 #import "RTCDispatcher+Private.h"
 #import "WebRTC/RTCLogging.h"
 
@@ -28,11 +29,13 @@
   AVCaptureVideoDataOutput *_videoDataOutput;
   // The cricket::VideoCapturer that owns this class. Should never be NULL.
   webrtc::AVFoundationVideoCapturer *_capturer;
-  webrtc::VideoRotation _rotation;
   BOOL _hasRetriedOnFatalError;
   BOOL _isRunning;
   BOOL _hasStarted;
   rtc::CriticalSection _crit;
+#if TARGET_OS_IPHONE
+  UIDeviceOrientation _orientation;
+#endif
 }
 
 @synthesize captureSession = _captureSession;
@@ -57,6 +60,7 @@
     }
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 #if TARGET_OS_IPHONE
+    _orientation = UIDeviceOrientationPortrait;
     [center addObserver:self
                selector:@selector(deviceOrientationDidChange:)
                    name:UIDeviceOrientationDidChangeNotification
@@ -161,14 +165,6 @@
   [RTCDispatcher
       dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
                     block:^{
-#if TARGET_OS_IPHONE
-                        // Default to portrait orientation on iPhone. This will be reset in
-                        // updateOrientation unless orientation is unknown/faceup/facedown.
-                        _rotation = webrtc::kVideoRotation_90;
-#else
-                        // No rotation on Mac.
-                        _rotation = webrtc::kVideoRotation_0;
-#endif
                         [self updateOrientation];
 #if TARGET_OS_IPHONE
                         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -218,7 +214,47 @@
   if (!self.hasStarted) {
     return;
   }
-  _capturer->CaptureSampleBuffer(sampleBuffer, _rotation);
+
+#if TARGET_OS_IPHONE
+  // Default to portrait orientation on iPhone.
+  webrtc::VideoRotation rotation = webrtc::kVideoRotation_90;
+  BOOL usingFrontCamera = NO;
+  // Check the image's EXIF for the camera the image came from as the image could have been
+  // delayed as we set alwaysDiscardsLateVideoFrames to NO.
+  AVCaptureDevicePosition cameraPosition =
+      [AVCaptureSession devicePositionForSampleBuffer:sampleBuffer];
+  if (cameraPosition != AVCaptureDevicePositionUnspecified) {
+    usingFrontCamera = AVCaptureDevicePositionFront == cameraPosition;
+  } else {
+    AVCaptureDeviceInput *deviceInput =
+        (AVCaptureDeviceInput *)((AVCaptureInputPort *)connection.inputPorts.firstObject).input;
+    usingFrontCamera = AVCaptureDevicePositionFront == deviceInput.device.position;
+  }
+  switch (_orientation) {
+    case UIDeviceOrientationPortrait:
+      rotation = webrtc::kVideoRotation_90;
+      break;
+    case UIDeviceOrientationPortraitUpsideDown:
+      rotation = webrtc::kVideoRotation_270;
+      break;
+    case UIDeviceOrientationLandscapeLeft:
+      rotation = usingFrontCamera ? webrtc::kVideoRotation_180 : webrtc::kVideoRotation_0;
+      break;
+    case UIDeviceOrientationLandscapeRight:
+      rotation = usingFrontCamera ? webrtc::kVideoRotation_0 : webrtc::kVideoRotation_180;
+      break;
+    case UIDeviceOrientationFaceUp:
+    case UIDeviceOrientationFaceDown:
+    case UIDeviceOrientationUnknown:
+      // Ignore.
+      break;
+  }
+#else
+  // No rotation on Mac.
+  webrtc::VideoRotation rotation = webrtc::kVideoRotation_0;
+#endif
+
+  _capturer->CaptureSampleBuffer(sampleBuffer, rotation);
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
@@ -448,56 +484,35 @@
 // Called from capture session queue.
 - (void)updateOrientation {
 #if TARGET_OS_IPHONE
-  switch ([UIDevice currentDevice].orientation) {
-    case UIDeviceOrientationPortrait:
-      _rotation = webrtc::kVideoRotation_90;
-      break;
-    case UIDeviceOrientationPortraitUpsideDown:
-      _rotation = webrtc::kVideoRotation_270;
-      break;
-    case UIDeviceOrientationLandscapeLeft:
-      _rotation =
-          _capturer->GetUseBackCamera() ? webrtc::kVideoRotation_0 : webrtc::kVideoRotation_180;
-      break;
-    case UIDeviceOrientationLandscapeRight:
-      _rotation =
-          _capturer->GetUseBackCamera() ? webrtc::kVideoRotation_180 : webrtc::kVideoRotation_0;
-      break;
-    case UIDeviceOrientationFaceUp:
-    case UIDeviceOrientationFaceDown:
-    case UIDeviceOrientationUnknown:
-      // Ignore.
-      break;
-  }
+  _orientation = [UIDevice currentDevice].orientation;
 #endif
 }
 
 // Update the current session input to match what's stored in _useBackCamera.
 - (void)updateSessionInputForUseBackCamera:(BOOL)useBackCamera {
-  [RTCDispatcher dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
-                               block:^{
-                                   [_captureSession beginConfiguration];
-                                   AVCaptureDeviceInput *oldInput = _backCameraInput;
-                                   AVCaptureDeviceInput *newInput = _frontCameraInput;
-                                   if (useBackCamera) {
-                                     oldInput = _frontCameraInput;
-                                     newInput = _backCameraInput;
-                                   }
-                                   if (oldInput) {
-                                     // Ok to remove this even if it's not attached. Will be no-op.
-                                     [_captureSession removeInput:oldInput];
-                                   }
-                                   if (newInput) {
-                                     [_captureSession addInput:newInput];
-                                   }
-                                   [self updateOrientation];
-                                   AVCaptureDevice *newDevice = newInput.device;
-                                   const cricket::VideoFormat *format =
-                                     _capturer->GetCaptureFormat();
-                                   webrtc::SetFormatForCaptureDevice(
-                                       newDevice, _captureSession, *format);
-                                   [_captureSession commitConfiguration];
-                               }];
+  [RTCDispatcher
+      dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
+                    block:^{
+                      [_captureSession beginConfiguration];
+                      AVCaptureDeviceInput *oldInput = _backCameraInput;
+                      AVCaptureDeviceInput *newInput = _frontCameraInput;
+                      if (useBackCamera) {
+                        oldInput = _frontCameraInput;
+                        newInput = _backCameraInput;
+                      }
+                      if (oldInput) {
+                        // Ok to remove this even if it's not attached. Will be no-op.
+                        [_captureSession removeInput:oldInput];
+                      }
+                      if (newInput) {
+                        [_captureSession addInput:newInput];
+                      }
+                      [self updateOrientation];
+                      AVCaptureDevice *newDevice = newInput.device;
+                      const cricket::VideoFormat *format = _capturer->GetCaptureFormat();
+                      webrtc::SetFormatForCaptureDevice(newDevice, _captureSession, *format);
+                      [_captureSession commitConfiguration];
+                    }];
 }
 
 @end

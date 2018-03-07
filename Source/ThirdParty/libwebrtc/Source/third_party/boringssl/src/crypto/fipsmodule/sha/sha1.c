@@ -63,10 +63,10 @@
 #include "../../internal.h"
 
 
-#if !defined(OPENSSL_NO_ASM) &&                         \
-    (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
-     defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64) || \
-     defined(OPENSSL_PPC64LE))
+#if (!defined(OPENSSL_NO_ASM) &&                            \
+     (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) ||    \
+      defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))) || \
+    defined(OPENSSL_PPC64LE)
 #define SHA1_ASM
 #endif
 
@@ -131,11 +131,11 @@ void sha1_block_data_order(uint32_t *state, const uint8_t *data, size_t num);
 #define K_40_59 0x8f1bbcdcUL
 #define K_60_79 0xca62c1d6UL
 
-/* As  pointed out by Wei Dai <weidai@eskimo.com>, F() below can be simplified
- * to the code in F_00_19.  Wei attributes these optimisations to Peter
- * Gutmann's SHS code, and he attributes it to Rich Schroeppel. #define
- * F(x,y,z) (((x) & (y))  |  ((~(x)) & (z))) I've just become aware of another
- * tweak to be made, again from Wei Dai, in F_40_59, (x&a)|(y&a) -> (x|y)&a */
+// As  pointed out by Wei Dai <weidai@eskimo.com>, F() below can be simplified
+// to the code in F_00_19.  Wei attributes these optimisations to Peter
+// Gutmann's SHS code, and he attributes it to Rich Schroeppel. #define
+// F(x,y,z) (((x) & (y))  |  ((~(x)) & (z))) I've just become aware of another
+// tweak to be made, again from Wei Dai, in F_40_59, (x&a)|(y&a) -> (x|y)&a
 #define F_00_19(b, c, d) ((((c) ^ (d)) & (b)) ^ (d))
 #define F_20_39(b, c, d) ((b) ^ (c) ^ (d))
 #define F_40_59(b, c, d) (((b) & (c)) | (((b) | (c)) & (d)))

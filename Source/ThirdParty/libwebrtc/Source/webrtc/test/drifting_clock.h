@@ -7,10 +7,10 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_TEST_DRIFTING_CLOCK_H_
-#define WEBRTC_TEST_DRIFTING_CLOCK_H_
+#ifndef TEST_DRIFTING_CLOCK_H_
+#define TEST_DRIFTING_CLOCK_H_
 
-#include "webrtc/system_wrappers/include/clock.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace test {
@@ -42,4 +42,4 @@ class DriftingClock : public Clock {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_DRIFTING_CLOCK_H_
+#endif  // TEST_DRIFTING_CLOCK_H_

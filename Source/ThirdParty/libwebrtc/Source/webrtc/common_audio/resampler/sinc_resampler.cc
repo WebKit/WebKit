@@ -85,16 +85,16 @@
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
 
-#include "webrtc/common_audio/resampler/sinc_resampler.h"
+#include "common_audio/resampler/sinc_resampler.h"
 
 #include <math.h>
 #include <string.h>
 
 #include <limits>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

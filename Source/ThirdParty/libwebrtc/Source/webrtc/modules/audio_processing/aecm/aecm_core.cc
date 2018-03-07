@@ -8,23 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aecm/aecm_core.h"
+#include "modules/audio_processing/aecm/aecm_core.h"
 
 #include <stddef.h>
 #include <stdlib.h>
 
 extern "C" {
-#include "webrtc/common_audio/ring_buffer.h"
-#include "webrtc/common_audio/signal_processing/include/real_fft.h"
+#include "common_audio/ring_buffer.h"
+#include "common_audio/signal_processing/include/real_fft.h"
 }
-#include "webrtc/modules/audio_processing/aecm/echo_control_mobile.h"
-#include "webrtc/modules/audio_processing/utility/delay_estimator_wrapper.h"
+#include "modules/audio_processing/aecm/echo_control_mobile.h"
+#include "modules/audio_processing/utility/delay_estimator_wrapper.h"
 extern "C" {
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
 }
 
-#include "webrtc/base/checks.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 #ifdef AEC_DEBUG
 FILE *dfile;
@@ -927,8 +928,8 @@ void WebRtcAecm_UpdateChannel(AecmCore* aecm,
             {
                 // We need to shift down before multiplication
                 shiftChFar = 32 - zerosCh - zerosFar;
-                tmpU32no1 = (aecm->channelAdapt32[i] >> shiftChFar) *
-                    far_spectrum[i];
+                tmpU32no1 = rtc::dchecked_cast<uint32_t>(
+                    aecm->channelAdapt32[i] >> shiftChFar) * far_spectrum[i];
             }
             // Determine Q-domain of numerator
             zerosNum = WebRtcSpl_NormU32(tmpU32no1);

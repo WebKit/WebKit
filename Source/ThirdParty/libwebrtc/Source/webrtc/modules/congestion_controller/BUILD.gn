@@ -10,12 +10,12 @@ import("../../webrtc.gni")
 
 rtc_static_library("congestion_controller") {
   sources = [
-    "acknowledge_bitrate_estimator.cc",
-    "acknowledge_bitrate_estimator.h",
-    "congestion_controller.cc",
+    "acknowledged_bitrate_estimator.cc",
+    "acknowledged_bitrate_estimator.h",
+    "bitrate_estimator.cc",
+    "bitrate_estimator.h",
     "delay_based_bwe.cc",
     "delay_based_bwe.h",
-    "include/congestion_controller.h",
     "include/receive_side_congestion_controller.h",
     "include/send_side_congestion_controller.h",
     "median_slope_estimator.cc",
@@ -49,10 +49,11 @@ rtc_static_library("congestion_controller") {
   deps = [
     "..:module_api",
     "../..:webrtc_common",
-    "../../base:rtc_base",
-    "../../base:rtc_base_approved",
-    "../../base:rtc_numerics",
+    "../../api:optional",
     "../../logging:rtc_event_log_api",
+    "../../rtc_base:rtc_base",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_numerics",
     "../../system_wrappers",
     "../bitrate_controller",
     "../pacing",
@@ -66,14 +67,8 @@ if (rtc_include_tests) {
   rtc_source_set("congestion_controller_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
-      "congestion_controller_unittest.cc",
+      "acknowledged_bitrate_estimator_unittest.cc",
       "congestion_controller_unittests_helper.cc",
       "congestion_controller_unittests_helper.h",
       "delay_based_bwe_unittest.cc",
@@ -82,20 +77,23 @@ if (rtc_include_tests) {
       "median_slope_estimator_unittest.cc",
       "probe_bitrate_estimator_unittest.cc",
       "probe_controller_unittest.cc",
+      "receive_side_congestion_controller_unittest.cc",
+      "send_side_congestion_controller_unittest.cc",
       "transport_feedback_adapter_unittest.cc",
       "trendline_estimator_unittest.cc",
     ]
     deps = [
       ":congestion_controller",
       ":mock_congestion_controller",
-      "../../base:rtc_base",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
       "../../system_wrappers:system_wrappers",
       "../../test:field_trial",
       "../../test:test_support",
       "../bitrate_controller:bitrate_controller",
+      "../pacing:mock_paced_sender",
       "../pacing:pacing",
-      "../remote_bitrate_estimator:mock_remote_bitrate_observer",
       "../remote_bitrate_estimator:remote_bitrate_estimator",
       "../rtp_rtcp:rtp_rtcp",
       "//testing/gmock",

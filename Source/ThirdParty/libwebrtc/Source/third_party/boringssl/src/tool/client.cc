@@ -121,10 +121,27 @@ static const struct argument kArguments[] = {
         "verification is required.",
     },
     {
-        "-early-data", kBooleanArgument, "Allow early data",
+        "-early-data", kOptionalArgument, "Enable early data. The argument to "
+        "this flag is the early data to send.",
+    },
+    {
+        "-tls13-variant", kOptionalArgument,
+        "Enable the specified experimental TLS 1.3 variant",
     },
     {
         "-ed25519", kBooleanArgument, "Advertise Ed25519 support",
+    },
+    {
+        "-http-tunnel", kOptionalArgument,
+        "An HTTP proxy server to tunnel the TCP connection through",
+    },
+    {
+        "-renegotiate-freely", kBooleanArgument,
+        "Allow renegotiations from the peer.",
+    },
+    {
+        "-debug", kBooleanArgument,
+        "Print debug information about the handshake",
     },
     {
         "", kOptionalArgument, "",
@@ -180,7 +197,15 @@ static bool WaitForSession(SSL *ssl, int sock) {
   }
 
   while (!resume_session) {
+#if defined(OPENSSL_WINDOWS)
+    // Windows sockets are really of type SOCKET, not int, but everything here
+    // casts them to ints. Clang gets unhappy about signed values as a result.
+    //
+    // TODO(davidben): Keep everything as the appropriate platform type.
+    FD_SET(static_cast<SOCKET>(sock), &read_fds);
+#else
     FD_SET(sock, &read_fds);
+#endif
     int ret = select(sock + 1, &read_fds, NULL, NULL, NULL);
     if (ret <= 0) {
       perror("select");
@@ -208,7 +233,12 @@ static bool DoConnection(SSL_CTX *ctx,
                          std::map<std::string, std::string> args_map,
                          bool (*cb)(SSL *ssl, int sock)) {
   int sock = -1;
-  if (!Connect(&sock, args_map["-connect"])) {
+  if (args_map.count("-http-tunnel") != 0) {
+    if (!Connect(&sock, args_map["-http-tunnel"]) ||
+        !DoHTTPTunnel(sock, args_map["-connect"])) {
+      return false;
+    }
+  } else if (!Connect(&sock, args_map["-connect"])) {
     return false;
   }
 
@@ -249,6 +279,10 @@ static bool DoConnection(SSL_CTX *ctx,
     SSL_set_session(ssl.get(), session.get());
   }
 
+  if (args_map.count("-renegotiate-freely") != 0) {
+    SSL_set_renegotiate_mode(ssl.get(), ssl_renegotiate_freely);
+  }
+
   if (resume_session) {
     SSL_set_session(ssl.get(), resume_session.get());
   }
@@ -264,10 +298,67 @@ static bool DoConnection(SSL_CTX *ctx,
     return false;
   }
 
+  if (args_map.count("-early-data") != 0 && SSL_in_early_data(ssl.get())) {
+    int ed_size = args_map["-early-data"].size();
+    int ssl_ret = SSL_write(ssl.get(), args_map["-early-data"].data(), ed_size);
+    if (ssl_ret <= 0) {
+      int ssl_err = SSL_get_error(ssl.get(), ssl_ret);
+      fprintf(stderr, "Error while writing: %d\n", ssl_err);
+      ERR_print_errors_cb(PrintErrorCallback, stderr);
+      return false;
+    } else if (ssl_ret != ed_size) {
+      fprintf(stderr, "Short write from SSL_write.\n");
+      return false;
+    }
+  }
+
   fprintf(stderr, "Connected.\n");
-  PrintConnectionInfo(ssl.get());
+  bssl::UniquePtr<BIO> bio_stderr(BIO_new_fp(stderr, BIO_NOCLOSE));
+  PrintConnectionInfo(bio_stderr.get(), ssl.get());
 
   return cb(ssl.get(), sock);
+}
+
+static bool GetTLS13Variant(tls13_variant_t *out, const std::string &in) {
+  if (in == "draft") {
+    *out = tls13_default;
+    return true;
+  }
+  if (in == "draft21") {
+    *out = tls13_draft21;
+    return true;
+  }
+  if (in == "experiment") {
+    *out = tls13_experiment;
+    return true;
+  }
+  if (in == "experiment2") {
+    *out = tls13_experiment2;
+    return true;
+  }
+  if (in == "experiment3") {
+    *out = tls13_experiment3;
+    return true;
+  }
+  if (in == "draft22") {
+    *out = tls13_draft22;
+    return true;
+  }
+  return false;
+}
+
+static void InfoCallback(const SSL *ssl, int type, int value) {
+  switch (type) {
+    case SSL_CB_HANDSHAKE_START:
+      fprintf(stderr, "Handshake started.\n");
+      break;
+    case SSL_CB_HANDSHAKE_DONE:
+      fprintf(stderr, "Handshake done.\n");
+      break;
+    case SSL_CB_CONNECT_LOOP:
+      fprintf(stderr, "Handshake progress: %s\n", SSL_state_string_long(ssl));
+      break;
+  }
 }
 
 bool Client(const std::vector<std::string> &args) {
@@ -282,7 +373,7 @@ bool Client(const std::vector<std::string> &args) {
     return false;
   }
 
-  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(SSLv23_client_method()));
+  bssl::UniquePtr<SSL_CTX> ctx(SSL_CTX_new(TLS_method()));
 
   const char *keylog_file = getenv("SSLKEYLOGFILE");
   if (keylog_file) {
@@ -436,8 +527,22 @@ bool Client(const std::vector<std::string> &args) {
     SSL_CTX_set_early_data_enabled(ctx.get(), 1);
   }
 
+  if (args_map.count("-tls13-variant") != 0) {
+    tls13_variant_t variant;
+    if (!GetTLS13Variant(&variant, args_map["-tls13-variant"])) {
+      fprintf(stderr, "Unknown TLS 1.3 variant: %s\n",
+              args_map["-tls13-variant"].c_str());
+      return false;
+    }
+    SSL_CTX_set_tls13_variant(ctx.get(), variant);
+  }
+
   if (args_map.count("-ed25519") != 0) {
     SSL_CTX_set_ed25519_enabled(ctx.get(), 1);
+  }
+
+  if (args_map.count("-debug") != 0) {
+    SSL_CTX_set_info_callback(ctx.get(), InfoCallback);
   }
 
   if (args_map.count("-test-resumption") != 0) {

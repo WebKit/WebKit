@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_
-#define WEBRTC_MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_
+#ifndef MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_
+#define MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_
 
 #include <jni.h>
 #include <string>
@@ -84,4 +84,4 @@ class ScopedGlobalRef {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_
+#endif  // MODULES_UTILITY_INCLUDE_HELPERS_ANDROID_H_

@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_FAKECANDIDATEPAIR_H_
-#define WEBRTC_P2P_BASE_FAKECANDIDATEPAIR_H_
+#ifndef P2P_BASE_FAKECANDIDATEPAIR_H_
+#define P2P_BASE_FAKECANDIDATEPAIR_H_
 
 #include <memory>
 
-#include "webrtc/p2p/base/candidate.h"
-#include "webrtc/p2p/base/candidatepairinterface.h"
+#include "api/candidate.h"
+#include "p2p/base/candidatepairinterface.h"
 
 namespace cricket {
 
@@ -51,4 +51,4 @@ class FakeCandidatePair : public CandidatePairInterface {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_FAKECANDIDATEPAIR_H_
+#endif  // P2P_BASE_FAKECANDIDATEPAIR_H_

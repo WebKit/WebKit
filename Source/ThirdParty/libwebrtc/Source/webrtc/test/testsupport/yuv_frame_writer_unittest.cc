@@ -10,9 +10,9 @@
 
 #include <memory>
 
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
-#include "webrtc/test/testsupport/frame_writer.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
+#include "test/testsupport/frame_writer.h"
 
 namespace webrtc {
 namespace test {

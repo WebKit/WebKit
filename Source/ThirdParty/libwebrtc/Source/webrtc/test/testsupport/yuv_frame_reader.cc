@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/testsupport/frame_reader.h"
+#include "test/testsupport/frame_reader.h"
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/test/frame_utils.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "api/video/i420_buffer.h"
+#include "test/frame_utils.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace test {

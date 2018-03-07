@@ -8,23 +8,23 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/desktop_capturer_differ_wrapper.h"
+#include "modules/desktop_capture/desktop_capturer_differ_wrapper.h"
 
 #include <initializer_list>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/random.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/desktop_capture/desktop_geometry.h"
-#include "webrtc/modules/desktop_capture/desktop_region.h"
-#include "webrtc/modules/desktop_capture/differ_block.h"
-#include "webrtc/modules/desktop_capture/fake_desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/mock_desktop_capturer_callback.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/typedefs.h"
+#include "modules/desktop_capture/desktop_geometry.h"
+#include "modules/desktop_capture/desktop_region.h"
+#include "modules/desktop_capture/differ_block.h"
+#include "modules/desktop_capture/fake_desktop_capturer.h"
+#include "modules/desktop_capture/mock_desktop_capturer_callback.h"
+#include "rtc_base/random.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "test/gtest.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

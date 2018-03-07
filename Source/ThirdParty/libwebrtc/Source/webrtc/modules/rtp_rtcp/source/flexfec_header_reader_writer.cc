@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/flexfec_header_reader_writer.h"
+#include "modules/rtp_rtcp/source/flexfec_header_reader_writer.h"
 
 #include <string.h>
 
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -82,26 +82,29 @@ FlexfecHeaderReader::~FlexfecHeaderReader() = default;
 bool FlexfecHeaderReader::ReadFecHeader(
     ForwardErrorCorrection::ReceivedFecPacket* fec_packet) const {
   if (fec_packet->pkt->length <= kBaseHeaderSize + kStreamSpecificHeaderSize) {
-    LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
+    RTC_LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
     return false;
   }
   bool r_bit = (fec_packet->pkt->data[0] & 0x80) != 0;
   if (r_bit) {
-    LOG(LS_INFO) << "FlexFEC packet with retransmission bit set. We do not yet "
-                    "support this, thus discarding the packet.";
+    RTC_LOG(LS_INFO)
+        << "FlexFEC packet with retransmission bit set. We do not yet "
+           "support this, thus discarding the packet.";
     return false;
   }
   bool f_bit = (fec_packet->pkt->data[0] & 0x40) != 0;
   if (f_bit) {
-    LOG(LS_INFO) << "FlexFEC packet with inflexible generator matrix. We do "
-                    "not yet support this, thus discarding packet.";
+    RTC_LOG(LS_INFO)
+        << "FlexFEC packet with inflexible generator matrix. We do "
+           "not yet support this, thus discarding packet.";
     return false;
   }
   uint8_t ssrc_count =
       ByteReader<uint8_t>::ReadBigEndian(&fec_packet->pkt->data[8]);
   if (ssrc_count != 1) {
-    LOG(LS_INFO) << "FlexFEC packet protecting multiple media SSRCs. We do not "
-                    "yet support this, thus discarding packet.";
+    RTC_LOG(LS_INFO)
+        << "FlexFEC packet protecting multiple media SSRCs. We do not "
+           "yet support this, thus discarding packet.";
     return false;
   }
   uint32_t protected_ssrc =
@@ -120,7 +123,7 @@ bool FlexfecHeaderReader::ReadFecHeader(
   // We treat the mask parts as unsigned integers with host order endianness
   // in order to simplify the bit shifting between bytes.
   if (fec_packet->pkt->length < kHeaderSizes[0]) {
-    LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
+    RTC_LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
     return false;
   }
   uint8_t* const packet_mask = fec_packet->pkt->data + kPacketMaskOffset;
@@ -157,7 +160,7 @@ bool FlexfecHeaderReader::ReadFecHeader(
       packet_mask_size = kFlexfecPacketMaskSizes[1];
     } else {
       if (fec_packet->pkt->length < kHeaderSizes[2]) {
-        LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
+        RTC_LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
         return false;
       }
       bool k_bit2 = (packet_mask[6] & 0x80) != 0;
@@ -167,7 +170,8 @@ bool FlexfecHeaderReader::ReadFecHeader(
         // FEC header, and the rest of the packet is payload.
         packet_mask_size = kFlexfecPacketMaskSizes[2];
       } else {
-        LOG(LS_WARNING) << "Discarding FlexFEC packet with malformed header.";
+        RTC_LOG(LS_WARNING)
+            << "Discarding FlexFEC packet with malformed header.";
         return false;
       }
       // At this point, K-bits 0 and 1 have been removed, and the front-most

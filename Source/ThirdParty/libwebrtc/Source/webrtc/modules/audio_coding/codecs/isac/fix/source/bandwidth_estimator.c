@@ -21,7 +21,7 @@
 #include "bandwidth_estimator.h"
 
 #include "settings.h"
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 /* array of quantization levels for bottle neck info; Matlab code: */
 /* sprintf('%4.1ff, ', logspace(log10(5000), log10(40000), 12)) */

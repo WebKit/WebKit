@@ -11,11 +11,11 @@
 #include <algorithm>
 #include <limits>
 
-#include "webrtc/modules/video_coding/nack_module.h"
+#include "modules/video_coding/nack_module.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/utility/include/process_thread.h"
+#include "modules/utility/include/process_thread.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -196,8 +196,8 @@ void NackModule::AddPacketsToNack(uint16_t seq_num_start,
 
     if (nack_list_.size() + num_new_nacks > kMaxNackPackets) {
       nack_list_.clear();
-      LOG(LS_WARNING) << "NACK list full, clearing NACK"
-                         " list and requesting keyframe.";
+      RTC_LOG(LS_WARNING) << "NACK list full, clearing NACK"
+                             " list and requesting keyframe.";
       keyframe_request_sender_->RequestKeyFrame();
       return;
     }
@@ -223,8 +223,8 @@ std::vector<uint16_t> NackModule::GetNackBatch(NackFilterOptions options) {
       ++it->second.retries;
       it->second.sent_at_time = now_ms;
       if (it->second.retries >= kMaxNackRetries) {
-        LOG(LS_WARNING) << "Sequence number " << it->second.seq_num
-                        << " removed from NACK list due to max retries.";
+        RTC_LOG(LS_WARNING) << "Sequence number " << it->second.seq_num
+                            << " removed from NACK list due to max retries.";
         it = nack_list_.erase(it);
       } else {
         ++it;
@@ -237,8 +237,8 @@ std::vector<uint16_t> NackModule::GetNackBatch(NackFilterOptions options) {
       ++it->second.retries;
       it->second.sent_at_time = now_ms;
       if (it->second.retries >= kMaxNackRetries) {
-        LOG(LS_WARNING) << "Sequence number " << it->second.seq_num
-                        << " removed from NACK list due to max retries.";
+        RTC_LOG(LS_WARNING) << "Sequence number " << it->second.seq_num
+                            << " removed from NACK list due to max retries.";
         it = nack_list_.erase(it);
       } else {
         ++it;

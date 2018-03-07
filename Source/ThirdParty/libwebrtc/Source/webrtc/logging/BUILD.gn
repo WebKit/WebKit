@@ -24,23 +24,77 @@ group("logging") {
 
 rtc_source_set("rtc_event_log_api") {
   sources = [
+    "rtc_event_log/events/rtc_event.h",
+    "rtc_event_log/events/rtc_event_audio_network_adaptation.cc",
+    "rtc_event_log/events/rtc_event_audio_network_adaptation.h",
+    "rtc_event_log/events/rtc_event_audio_playout.cc",
+    "rtc_event_log/events/rtc_event_audio_playout.h",
+    "rtc_event_log/events/rtc_event_audio_receive_stream_config.cc",
+    "rtc_event_log/events/rtc_event_audio_receive_stream_config.h",
+    "rtc_event_log/events/rtc_event_audio_send_stream_config.cc",
+    "rtc_event_log/events/rtc_event_audio_send_stream_config.h",
+    "rtc_event_log/events/rtc_event_bwe_update_delay_based.cc",
+    "rtc_event_log/events/rtc_event_bwe_update_delay_based.h",
+    "rtc_event_log/events/rtc_event_bwe_update_loss_based.cc",
+    "rtc_event_log/events/rtc_event_bwe_update_loss_based.h",
+    "rtc_event_log/events/rtc_event_logging_started.cc",
+    "rtc_event_log/events/rtc_event_logging_started.h",
+    "rtc_event_log/events/rtc_event_logging_stopped.cc",
+    "rtc_event_log/events/rtc_event_logging_stopped.h",
+    "rtc_event_log/events/rtc_event_probe_cluster_created.cc",
+    "rtc_event_log/events/rtc_event_probe_cluster_created.h",
+    "rtc_event_log/events/rtc_event_probe_result_failure.cc",
+    "rtc_event_log/events/rtc_event_probe_result_failure.h",
+    "rtc_event_log/events/rtc_event_probe_result_success.cc",
+    "rtc_event_log/events/rtc_event_probe_result_success.h",
+    "rtc_event_log/events/rtc_event_rtcp_packet_incoming.cc",
+    "rtc_event_log/events/rtc_event_rtcp_packet_incoming.h",
+    "rtc_event_log/events/rtc_event_rtcp_packet_outgoing.cc",
+    "rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h",
+    "rtc_event_log/events/rtc_event_rtp_packet_incoming.cc",
+    "rtc_event_log/events/rtc_event_rtp_packet_incoming.h",
+    "rtc_event_log/events/rtc_event_rtp_packet_outgoing.cc",
+    "rtc_event_log/events/rtc_event_rtp_packet_outgoing.h",
+    "rtc_event_log/events/rtc_event_video_receive_stream_config.cc",
+    "rtc_event_log/events/rtc_event_video_receive_stream_config.h",
+    "rtc_event_log/events/rtc_event_video_send_stream_config.cc",
+    "rtc_event_log/events/rtc_event_video_send_stream_config.h",
+    "rtc_event_log/output/rtc_event_log_output_file.cc",
+    "rtc_event_log/output/rtc_event_log_output_file.h",
     "rtc_event_log/rtc_event_log.h",
     "rtc_event_log/rtc_event_log_factory_interface.h",
+    "rtc_event_log/rtc_stream_config.cc",
+    "rtc_event_log/rtc_stream_config.h",
   ]
+
   deps = [
-    "..:video_stream_api",
     "..:webrtc_common",
-    "../base:rtc_base_approved",
+    "../api:array_view",
+    "../api:libjingle_logging_api",
+    "../api:libjingle_peerconnection_api",
+    "../call:video_stream_api",
+    "../modules/audio_coding:audio_network_adaptor_config",
+    "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../rtc_base:rtc_base_approved",
+    "../system_wrappers",
   ]
+
+  # TODO(eladalon): Remove this.
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
 }
 
 rtc_static_library("rtc_event_log_impl") {
   sources = [
+    "rtc_event_log/encoder/rtc_event_log_encoder.h",
+    "rtc_event_log/encoder/rtc_event_log_encoder_legacy.cc",
+    "rtc_event_log/encoder/rtc_event_log_encoder_legacy.h",
     "rtc_event_log/rtc_event_log.cc",
     "rtc_event_log/rtc_event_log_factory.cc",
     "rtc_event_log/rtc_event_log_factory.h",
-    "rtc_event_log/rtc_event_log_helper_thread.cc",
-    "rtc_event_log/rtc_event_log_helper_thread.h",
   ]
 
   defines = []
@@ -48,11 +102,13 @@ rtc_static_library("rtc_event_log_impl") {
   deps = [
     ":rtc_event_log_api",
     "..:webrtc_common",
-    "../base:protobuf_utils",
-    "../base:rtc_base_approved",
     "../modules/audio_coding:audio_network_adaptor",
     "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
     "../modules/rtp_rtcp",
+    "../rtc_base:protobuf_utils",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:sequenced_task_checker",
     "../system_wrappers",
   ]
 
@@ -60,6 +116,8 @@ rtc_static_library("rtc_event_log_impl") {
     defines += [ "ENABLE_RTC_EVENT_LOG" ]
     deps += [ ":rtc_event_log_proto" ]
   }
+
+  # TODO(eladalon): Remove this.
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -71,7 +129,7 @@ if (rtc_enable_protobuf) {
     sources = [
       "rtc_event_log/rtc_event_log.proto",
     ]
-    proto_out_dir = "webrtc/logging/rtc_event_log"
+    proto_out_dir = "logging/rtc_event_log"
   }
 
   rtc_static_library("rtc_event_log_parser") {
@@ -95,28 +153,36 @@ if (rtc_enable_protobuf) {
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
     deps = [
-      "..:video_stream_api",
-      "../base:protobuf_utils",
-      "../base:rtc_base_approved",
+      "../call:video_stream_api",
+      "../rtc_base:protobuf_utils",
+      "../rtc_base:rtc_base_approved",
     ]
   }
 
   if (rtc_include_tests) {
     rtc_source_set("rtc_event_log_tests") {
       testonly = true
+      assert(rtc_enable_protobuf)
+      defines = [ "ENABLE_RTC_EVENT_LOG" ]
+      if (rtc_use_memcheck) {
+        defines += [ "WEBRTC_USE_MEMCHECK" ]
+      }
       sources = [
+        "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc",
+        "rtc_event_log/output/rtc_event_log_output_file_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.cc",
+        "rtc_event_log/rtc_event_log_unittest_helper.h",
       ]
       deps = [
         ":rtc_event_log_impl",
         ":rtc_event_log_parser",
-        "../base:rtc_base_approved",
-        "../base:rtc_base_tests_utils",
         "../call",
         "../modules/audio_coding:audio_network_adaptor",
         "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
         "../modules/rtp_rtcp",
+        "../rtc_base:rtc_base_approved",
+        "../rtc_base:rtc_base_tests_utils",
         "../system_wrappers:metrics_default",
         "../test:test_support",
         "//testing/gmock",
@@ -136,12 +202,11 @@ if (rtc_enable_protobuf) {
         ":rtc_event_log_api",
         ":rtc_event_log_impl",
         ":rtc_event_log_parser",
-        "../base:rtc_base_approved",
         "../modules/rtp_rtcp:rtp_rtcp",
+        "../rtc_base:rtc_base_approved",
         "../system_wrappers:field_trial_default",
         "../system_wrappers:metrics_default",
         "../test:rtp_test_utils",
-        "//third_party/gflags",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -159,12 +224,13 @@ if (rtc_enable_protobuf) {
         ":rtc_event_log_api",
         ":rtc_event_log_impl",
         ":rtc_event_log_parser",
-        "../base:rtc_base_approved",
+        "../call:video_stream_api",
+        "../rtc_base:rtc_base_approved",
 
         # TODO(kwiberg): Remove this dependency.
         "../api/audio_codecs:audio_codecs_api",
+        "../modules/audio_coding:audio_network_adaptor_config",
         "../modules/rtp_rtcp:rtp_rtcp",
-        "//third_party/gflags",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -182,8 +248,7 @@ if (rtc_enable_protobuf) {
         ":rtc_event_log_api",
         ":rtc_event_log_impl",
         ":rtc_event_log_proto",
-        "../base:rtc_base_approved",
-        "//third_party/gflags",
+        "../rtc_base:rtc_base_approved",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).

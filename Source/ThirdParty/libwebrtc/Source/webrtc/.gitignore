@@ -1,5 +1,3 @@
-# This file is for projects that checkout webrtc/ directly (e.g. Chromium). It
-# is a truncated copy of the .gitignore file in the parent directory.
 *.DS_Store
 *.Makefile
 *.host.mk
@@ -23,7 +21,20 @@
 *.vpwhistu
 *.vtg
 *.xcodeproj
+*.xcworkspace
 *_proto.xml
 *_proto_cpp.xml
 *~
 .*.sw?
+.cipd
+.classpath
+.cproject
+.gdb_history
+.gdbinit
+.landmines
+.metadata
+.project
+.pydevproject
+.settings
+.sw?
+!webrtc/*

@@ -235,9 +235,9 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
 }
 
 - (void)restartAudioPlayerIfNeeded {
+  [self configureAudioSession];
   if (_mainView.isAudioLoopPlaying && !self.presentedViewController) {
     RTCLog(@"Starting audio loop due to WebRTC end.");
-    [self configureAudioSession];
     [_audioPlayer play];
   }
 }

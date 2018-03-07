@@ -8,69 +8,6 @@
 
 import("../webrtc.gni")
 
-rtc_static_library("audio_coder") {
-  sources = [
-    "coder.cc",
-    "coder.h",
-  ]
-  deps = [
-    "..:webrtc_common",
-    "../api/audio_codecs:builtin_audio_decoder_factory",
-    "../api/audio_codecs:builtin_audio_encoder_factory",
-    "../modules:module_api",
-    "../modules/audio_coding",
-    "../modules/audio_coding:audio_format_conversion",
-    "../modules/audio_coding:rent_a_codec",
-  ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-}
-
-rtc_static_library("file_player") {
-  sources = [
-    "file_player.cc",
-    "file_player.h",
-  ]
-  deps = [
-    ":audio_coder",
-    "..:webrtc_common",
-    "../base:rtc_base_approved",
-    "../common_audio",
-    "../modules:module_api",
-    "../modules/media_file",
-  ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-}
-
-rtc_static_library("file_recorder") {
-  sources = [
-    "file_recorder.cc",
-    "file_recorder.h",
-  ]
-  deps = [
-    ":audio_coder",
-    "..:webrtc_common",
-    "../audio/utility:audio_frame_operations",
-    "../base:rtc_base_approved",
-    "../common_audio",
-    "../modules:module_api",
-    "../modules/media_file:media_file",
-    "../system_wrappers",
-  ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-}
-
 rtc_static_library("voice_engine") {
   sources = [
     "channel.cc",
@@ -80,18 +17,9 @@ rtc_static_library("voice_engine") {
     "channel_proxy.cc",
     "channel_proxy.h",
     "include/voe_base.h",
-    "include/voe_codec.h",
     "include/voe_errors.h",
-    "include/voe_file.h",
-    "include/voe_network.h",
-    "include/voe_rtp_rtcp.h",
-    "monitor_module.h",
-    "output_mixer.cc",
-    "output_mixer.h",
     "shared_data.cc",
     "shared_data.h",
-    "statistics.cc",
-    "statistics.h",
     "transmit_mixer.cc",
     "transmit_mixer.h",
     "transport_feedback_packet_loss_tracker.cc",
@@ -100,15 +28,6 @@ rtc_static_library("voice_engine") {
     "utility.h",
     "voe_base_impl.cc",
     "voe_base_impl.h",
-    "voe_codec_impl.cc",
-    "voe_codec_impl.h",
-    "voe_file_impl.cc",
-    "voe_file_impl.h",
-    "voe_network_impl.cc",
-    "voe_network_impl.h",
-    "voe_rtp_rtcp_impl.cc",
-    "voe_rtp_rtcp_impl.h",
-    "voice_engine_defines.h",
     "voice_engine_impl.cc",
     "voice_engine_impl.h",
   ]
@@ -132,26 +51,22 @@ rtc_static_library("voice_engine") {
   ]
   deps = [
     ":audio_level",
-    ":file_player",
-    ":file_recorder",
     "..:webrtc_common",
+    "../api:array_view",
     "../api:audio_mixer_api",
     "../api:call_api",
     "../api:libjingle_peerconnection_api",
+    "../api:optional",
+    "../api:refcountedbase",
     "../api:transport_api",
     "../api/audio_codecs:audio_codecs_api",
-    "../api/audio_codecs:builtin_audio_decoder_factory",
-    "../api/audio_codecs:builtin_audio_encoder_factory",
     "../audio/utility:audio_frame_operations",
-    "../base:rtc_base_approved",
-    "../base:rtc_task_queue",
     "../call:rtp_interfaces",
     "../common_audio",
     "../logging:rtc_event_log_api",
     "../modules:module_api",
     "../modules/audio_coding:audio_format_conversion",
-    "../modules/audio_coding:rent_a_codec",
-    "../modules/audio_conference_mixer",
+    "../modules/audio_coding:audio_network_adaptor_config",
     "../modules/audio_device",
     "../modules/audio_processing",
     "../modules/bitrate_controller",
@@ -159,6 +74,8 @@ rtc_static_library("voice_engine") {
     "../modules/pacing",
     "../modules/rtp_rtcp",
     "../modules/utility",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
     "../system_wrappers",
   ]
 }
@@ -171,36 +88,34 @@ rtc_static_library("audio_level") {
 
   deps = [
     "..:webrtc_common",
-    "../base:rtc_base_approved",
     "../common_audio",
     "../modules:module_api",
+    "../rtc_base:rtc_base_approved",
   ]
 }
 
 if (rtc_include_tests) {
   rtc_test("voice_engine_unittests") {
     deps = [
-      ":file_player",
       ":voice_engine",
-      "../base:rtc_base_approved",
-      "../base:rtc_base_tests_utils",
+      "../api/audio_codecs:builtin_audio_decoder_factory",
+      "../common_audio",
       "../modules:module_api",
+      "../modules/audio_coding",
+      "../modules/audio_device",
+      "../modules/audio_processing",
+      "../modules/media_file",
+      "../modules/rtp_rtcp",
+      "../modules/utility",
+      "../modules/video_capture:video_capture",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../system_wrappers",
       "../test:test_common",
+      "../test:test_main",
+      "../test:video_test_common",
       "//testing/gmock",
       "//testing/gtest",
-      "//third_party/gflags",
-      "//webrtc/common_audio",
-      "//webrtc/modules/audio_coding",
-      "//webrtc/modules/audio_conference_mixer",
-      "//webrtc/modules/audio_device",
-      "//webrtc/modules/audio_processing",
-      "//webrtc/modules/media_file",
-      "//webrtc/modules/rtp_rtcp",
-      "//webrtc/modules/utility",
-      "//webrtc/modules/video_capture:video_capture",
-      "//webrtc/system_wrappers",
-      "//webrtc/test:test_main",
-      "//webrtc/test:video_test_common",
     ]
 
     if (is_android) {
@@ -210,19 +125,14 @@ if (rtc_include_tests) {
 
     sources = [
       "channel_unittest.cc",
-      "file_player_unittests.cc",
       "transport_feedback_packet_loss_tracker_unittest.cc",
       "utility_unittest.cc",
       "voe_base_unittest.cc",
-      "voe_codec_unittest.cc",
-      "voe_network_unittest.cc",
-      "voice_engine_fixture.cc",
-      "voice_engine_fixture.h",
     ]
 
     data = [
-      "//resources/utility/encapsulated_pcm16b_8khz.wav",
-      "//resources/utility/encapsulated_pcmu_8khz.wav",
+      "../resources/utility/encapsulated_pcm16b_8khz.wav",
+      "../resources/utility/encapsulated_pcmu_8khz.wav",
     ]
 
     if (is_win) {
@@ -237,79 +147,6 @@ if (rtc_include_tests) {
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-  }
-
-  if (!is_ios) {
-    rtc_executable("voe_auto_test") {
-      testonly = true
-
-      deps = [
-        ":voice_engine",
-        "..:webrtc_common",
-        "../base:rtc_base_approved",
-        "../modules:module_api",
-        "../modules/audio_device:audio_device",
-        "../modules/audio_processing:audio_processing",
-        "../modules/rtp_rtcp:rtp_rtcp",
-        "//testing/gmock",
-        "//testing/gtest",
-        "//third_party/gflags",
-        "//webrtc/logging:rtc_event_log_api",
-        "//webrtc/modules/video_capture",
-        "//webrtc/system_wrappers",
-        "//webrtc/system_wrappers/:system_wrappers_default",
-        "//webrtc/test/:test_common",
-        "//webrtc/test/:test_support",
-        "//webrtc/test/:video_test_common",
-      ]
-
-      sources = [
-        "test/auto_test/automated_mode.cc",
-        "test/auto_test/fakes/conference_transport.cc",
-        "test/auto_test/fakes/conference_transport.h",
-        "test/auto_test/fakes/loudest_filter.cc",
-        "test/auto_test/fakes/loudest_filter.h",
-        "test/auto_test/fixtures/after_initialization_fixture.cc",
-        "test/auto_test/fixtures/after_initialization_fixture.h",
-        "test/auto_test/fixtures/after_streaming_fixture.cc",
-        "test/auto_test/fixtures/after_streaming_fixture.h",
-        "test/auto_test/fixtures/before_initialization_fixture.cc",
-        "test/auto_test/fixtures/before_initialization_fixture.h",
-        "test/auto_test/fixtures/before_streaming_fixture.cc",
-        "test/auto_test/fixtures/before_streaming_fixture.h",
-        "test/auto_test/standard/codec_before_streaming_test.cc",
-        "test/auto_test/standard/codec_test.cc",
-        "test/auto_test/standard/dtmf_test.cc",
-        "test/auto_test/standard/rtp_rtcp_before_streaming_test.cc",
-        "test/auto_test/standard/rtp_rtcp_extensions.cc",
-        "test/auto_test/standard/rtp_rtcp_test.cc",
-        "test/auto_test/voe_conference_test.cc",
-        "test/auto_test/voe_standard_test.cc",
-        "test/auto_test/voe_standard_test.h",
-        "test/auto_test/voe_test_defines.h",
-      ]
-
-      defines = []
-
-      if (rtc_enable_protobuf) {
-        defines = [ "ENABLE_RTC_EVENT_LOG" ]
-      }
-
-      if (is_win) {
-        defines += [ "WEBRTC_DRIFT_COMPENSATION_SUPPORTED" ]
-
-        cflags = [
-          "/wd4267",  # size_t to int truncation.
-          "/wd4373",  # Virtual function override.
-                      # TODO(kjellander): Bug 261: fix this warning.
-        ]
-      }
-
-      if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-      }
     }
   }
 }

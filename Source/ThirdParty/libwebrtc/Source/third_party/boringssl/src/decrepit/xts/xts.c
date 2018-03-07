@@ -171,7 +171,7 @@ typedef struct {
   union {
     double align;
     AES_KEY ks;
-  } ks1, ks2;  /* AES key schedules to use */
+  } ks1, ks2;  // AES key schedules to use
   XTS128_CONTEXT xts;
 } EVP_AES_XTS_CTX;
 
@@ -183,7 +183,7 @@ static int aes_xts_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
   }
 
   if (key) {
-    /* key_len is two AES keys */
+    // key_len is two AES keys
     if (enc) {
       AES_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
       xctx->xts.block1 = (block128_f) AES_encrypt;
@@ -241,7 +241,7 @@ static int aes_xts_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
   } else if (type != EVP_CTRL_INIT) {
     return -1;
   }
-  /* key1 and key2 are used as an indicator both key and IV are set */
+  // key1 and key2 are used as an indicator both key and IV are set
   xctx->xts.key1 = NULL;
   xctx->xts.key2 = NULL;
   return 1;

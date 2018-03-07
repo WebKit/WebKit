@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_G722_G722_INTERFACE_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_G722_G722_INTERFACE_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_G722_G722_INTERFACE_H_
+#define MODULES_AUDIO_CODING_CODECS_G722_G722_INTERFACE_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 /*
  * Solution to support multiple instances
@@ -179,4 +179,4 @@ int16_t WebRtcG722_Version(char *versionStr, short len);
 #endif
 
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_G722_G722_INTERFACE_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_G722_G722_INTERFACE_H_ */

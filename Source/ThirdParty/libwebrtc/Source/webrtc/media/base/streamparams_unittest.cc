@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/streamparams.h"
-#include "webrtc/media/base/testutils.h"
+#include "media/base/streamparams.h"
+#include "media/base/testutils.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/gunit.h"
 
 static const uint32_t kSsrcs1[] = {1};
 static const uint32_t kSsrcs2[] = {1, 2};

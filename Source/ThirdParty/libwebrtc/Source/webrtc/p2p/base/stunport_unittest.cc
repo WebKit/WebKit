@@ -10,14 +10,14 @@
 
 #include <memory>
 
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/stunport.h"
-#include "webrtc/p2p/base/teststunserver.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/ssladapter.h"
-#include "webrtc/base/virtualsocketserver.h"
+#include "p2p/base/basicpacketsocketfactory.h"
+#include "p2p/base/stunport.h"
+#include "p2p/base/teststunserver.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/ssladapter.h"
+#include "rtc_base/virtualsocketserver.h"
 
 using cricket::ServerAddresses;
 using rtc::SocketAddress;
@@ -43,7 +43,7 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
   StunPortTestBase()
       : ss_(new rtc::VirtualSocketServer()),
         thread_(ss_.get()),
-        network_("unittest", "unittest", rtc::IPAddress(INADDR_ANY), 32),
+        network_("unittest", "unittest", kLocalAddr.ipaddr(), 32),
         socket_factory_(rtc::Thread::Current()),
         stun_server_1_(cricket::TestStunServer::Create(rtc::Thread::Current(),
                                                        kStunAddr1)),
@@ -52,7 +52,9 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
         done_(false),
         error_(false),
         stun_keepalive_delay_(1),
-        stun_keepalive_lifetime_(-1) {}
+        stun_keepalive_lifetime_(-1) {
+    network_.AddIP(kLocalAddr.ipaddr());
+  }
 
   cricket::UDPPort* port() const { return stun_port_.get(); }
   bool done() const { return done_; }
@@ -70,9 +72,9 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
 
   void CreateStunPort(const ServerAddresses& stun_servers) {
     stun_port_.reset(cricket::StunPort::Create(
-        rtc::Thread::Current(), &socket_factory_, &network_,
-        kLocalAddr.ipaddr(), 0, 0, rtc::CreateRandomString(16),
-        rtc::CreateRandomString(22), stun_servers, std::string()));
+        rtc::Thread::Current(), &socket_factory_, &network_, 0, 0,
+        rtc::CreateRandomString(16), rtc::CreateRandomString(22), stun_servers,
+        std::string()));
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
     // If |stun_keepalive_lifetime_| is negative, let the stun port
     // choose its lifetime from the network type.

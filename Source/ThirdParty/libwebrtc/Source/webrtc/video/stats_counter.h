@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VIDEO_STATS_COUNTER_H_
-#define WEBRTC_VIDEO_STATS_COUNTER_H_
+#ifndef VIDEO_STATS_COUNTER_H_
+#define VIDEO_STATS_COUNTER_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -290,4 +290,4 @@ class RateAccCounter : public StatsCounter {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_STATS_COUNTER_H_
+#endif  // VIDEO_STATS_COUNTER_H_

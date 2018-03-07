@@ -8,31 +8,33 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender_video.h"
+#include "modules/rtp_rtcp/source/rtp_sender_video.h"
 
 #include <stdlib.h>
 #include <string.h>
 
+#include <limits>
 #include <memory>
-#include <vector>
 #include <utility>
+#include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/ptr_util.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_format_video_generic.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_format_vp8.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_format_vp9.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
+#include "modules/rtp_rtcp/source/rtp_format_vp8.h"
+#include "modules/rtp_rtcp/source/rtp_format_vp9.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
 namespace {
 constexpr size_t kRedForFecHeaderLength = 1;
+constexpr int64_t kMaxUnretransmittableFrameIntervalMs = 33 * 4;
 
 void BuildRedPayload(const RtpPacketToSend& media_packet,
                      RtpPacketToSend* red_packet) {
@@ -53,7 +55,8 @@ RTPSenderVideo::RTPSenderVideo(Clock* clock,
     : rtp_sender_(rtp_sender),
       clock_(clock),
       video_type_(kRtpVideoGeneric),
-      retransmission_settings_(kRetransmitBaseLayer),
+      retransmission_settings_(kRetransmitBaseLayer |
+                               kConditionallyRetransmitHigherLayers),
       last_rotation_(kVideoRotation_0),
       red_payload_type_(-1),
       ulpfec_payload_type_(-1),
@@ -86,15 +89,14 @@ RtpUtility::Payload* RTPSenderVideo::CreateVideoPayload(
     video_type = kRtpVideoH264;
   } else if (RtpUtility::StringCompare(payload_name, "I420", 4)) {
     video_type = kRtpVideoGeneric;
+  } else if (RtpUtility::StringCompare(payload_name, "stereo", 6)) {
+    video_type = kRtpVideoStereo;
   } else {
     video_type = kRtpVideoGeneric;
   }
-  RtpUtility::Payload* payload = new RtpUtility::Payload();
-  payload->name[RTP_PAYLOAD_NAME_SIZE - 1] = 0;
-  strncpy(payload->name, payload_name, RTP_PAYLOAD_NAME_SIZE - 1);
-  payload->typeSpecific.Video.videoCodecType = video_type;
-  payload->audio = false;
-  return payload;
+  VideoPayload vp;
+  vp.videoCodecType = video_type;
+  return new RtpUtility::Payload(payload_name, PayloadUnion(vp));
 }
 
 void RTPSenderVideo::SendVideoPacket(std::unique_ptr<RtpPacketToSend> packet,
@@ -105,7 +107,7 @@ void RTPSenderVideo::SendVideoPacket(std::unique_ptr<RtpPacketToSend> packet,
   uint32_t rtp_timestamp = packet->Timestamp();
   if (!rtp_sender_->SendToNetwork(std::move(packet), storage,
                                   RtpPacketSender::kLowPriority)) {
-    LOG(LS_WARNING) << "Failed to send video packet " << seq_num;
+    RTC_LOG(LS_WARNING) << "Failed to send video packet " << seq_num;
     return;
   }
   rtc::CritScope cs(&stats_crit_);
@@ -161,7 +163,7 @@ void RTPSenderVideo::SendVideoPacketAsRedMaybeWithUlpfec(
                          "Video::PacketRed", "timestamp", rtp_timestamp,
                          "seqnum", media_seq_num);
   } else {
-    LOG(LS_WARNING) << "Failed to send RED packet " << media_seq_num;
+    RTC_LOG(LS_WARNING) << "Failed to send RED packet " << media_seq_num;
   }
   for (const auto& fec_packet : fec_packets) {
     // TODO(danilchap): Make ulpfec_generator_ generate RtpPacketToSend to avoid
@@ -179,7 +181,8 @@ void RTPSenderVideo::SendVideoPacketAsRedMaybeWithUlpfec(
                            "Video::PacketUlpfec", "timestamp", rtp_timestamp,
                            "seqnum", fec_sequence_number);
     } else {
-      LOG(LS_WARNING) << "Failed to send ULPFEC packet " << fec_sequence_number;
+      RTC_LOG(LS_WARNING) << "Failed to send ULPFEC packet "
+                          << fec_sequence_number;
     }
   }
 }
@@ -210,7 +213,7 @@ void RTPSenderVideo::SendVideoPacketWithFlexfec(
                              "Video::PacketFlexfec", "timestamp", timestamp,
                              "seqnum", seq_num);
       } else {
-        LOG(LS_WARNING) << "Failed to send FlexFEC packet " << seq_num;
+        RTC_LOG(LS_WARNING) << "Failed to send FlexFEC packet " << seq_num;
       }
     }
   }
@@ -279,9 +282,9 @@ void RTPSenderVideo::SetFecParameters(const FecProtectionParams& delta_params,
 
 rtc::Optional<uint32_t> RTPSenderVideo::FlexfecSsrc() const {
   if (flexfec_sender_) {
-    return rtc::Optional<uint32_t>(flexfec_sender_->ssrc());
+    return flexfec_sender_->ssrc();
   }
-  return rtc::Optional<uint32_t>();
+  return rtc::nullopt;
 }
 
 bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
@@ -292,7 +295,8 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
                                const uint8_t* payload_data,
                                size_t payload_size,
                                const RTPFragmentationHeader* fragmentation,
-                               const RTPVideoHeader* video_header) {
+                               const RTPVideoHeader* video_header,
+                               int64_t expected_retransmission_time_ms) {
   if (payload_size == 0)
     return false;
 
@@ -304,7 +308,6 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
   auto last_packet = rtc::MakeUnique<RtpPacketToSend>(*rtp_header);
 
   size_t fec_packet_overhead;
-  bool is_timing_frame = false;
   bool red_enabled;
   int32_t retransmission_settings;
   {
@@ -333,10 +336,9 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
         last_packet->SetExtension<VideoContentTypeExtension>(
             video_header->content_type);
       }
-      if (video_header->video_timing.is_timing_frame) {
+      if (video_header->video_timing.flags != TimingFrameFlags::kInvalid) {
         last_packet->SetExtension<VideoTimingExtension>(
             video_header->video_timing);
-        is_timing_frame = true;
       }
     }
 
@@ -367,16 +369,14 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
   std::unique_ptr<RtpPacketizer> packetizer(RtpPacketizer::Create(
       video_type, max_data_payload_length, last_packet_reduction_len,
       video_header ? &(video_header->codecHeader) : nullptr, frame_type));
-  // Media packet storage.
-  StorageType storage = packetizer->GetStorageType(retransmission_settings);
 
-  // TODO(changbin): we currently don't support to configure the codec to
-  // output multiple partitions for VP8. Should remove below check after the
-  // issue is fixed.
-  const RTPFragmentationHeader* frag =
-      (video_type == kRtpVideoVp8) ? nullptr : fragmentation;
+  const uint8_t temporal_id =
+      video_header ? GetTemporalId(*video_header) : kNoTemporalIdx;
+  StorageType storage = GetStorageType(temporal_id, retransmission_settings,
+                                       expected_retransmission_time_ms);
+
   size_t num_packets =
-      packetizer->SetPayloadData(payload_data, payload_size, frag);
+      packetizer->SetPayloadData(payload_data, payload_size, fragmentation);
 
   if (num_packets == 0)
     return false;
@@ -394,13 +394,21 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
     if (!rtp_sender_->AssignSequenceNumber(packet.get()))
       return false;
 
+    // No FEC protection for upper temporal layers, if used.
+    bool protect_packet = temporal_id == 0 || temporal_id == kNoTemporalIdx;
+
     // Put packetization finish timestamp into extension.
-    if (last && is_timing_frame) {
+    if (packet->HasExtension<VideoTimingExtension>()) {
       packet->set_packetization_finish_time_ms(clock_->TimeInMilliseconds());
+      // TODO(ilnik): Due to webrtc:7859, packets with timing extensions are not
+      // protected by FEC. It reduces FEC efficiency a bit. When FEC is moved
+      // below the pacer, it can be re-enabled for these packets.
+      // NOTE: Any RTP stream processor in the network, modifying 'network'
+      // timestamps in the timing frames extension have to be an end-point for
+      // FEC, otherwise recovered by FEC packets will be corrupted.
+      protect_packet = false;
     }
 
-    const bool protect_packet =
-        (packetizer->GetProtectionType() == kProtectedPacket);
     if (flexfec_enabled()) {
       // TODO(brandtr): Remove the FlexFEC code path when FlexfecSender
       // is wired up to PacedSender instead.
@@ -414,11 +422,11 @@ bool RTPSenderVideo::SendVideo(RtpVideoCodecTypes video_type,
 
     if (first_frame) {
       if (i == 0) {
-        LOG(LS_INFO)
+        RTC_LOG(LS_INFO)
             << "Sent first RTP packet of the first video frame (pre-pacer)";
       }
       if (last) {
-        LOG(LS_INFO)
+        RTC_LOG(LS_INFO)
             << "Sent last RTP packet of the first video frame (pre-pacer)";
       }
     }
@@ -447,6 +455,92 @@ int RTPSenderVideo::SelectiveRetransmissions() const {
 void RTPSenderVideo::SetSelectiveRetransmissions(uint8_t settings) {
   rtc::CritScope cs(&crit_);
   retransmission_settings_ = settings;
+}
+
+StorageType RTPSenderVideo::GetStorageType(
+    uint8_t temporal_id,
+    int32_t retransmission_settings,
+    int64_t expected_retransmission_time_ms) {
+  if (retransmission_settings == kRetransmitOff)
+    return StorageType::kDontRetransmit;
+  if (retransmission_settings == kRetransmitAllPackets)
+    return StorageType::kAllowRetransmission;
+
+  rtc::CritScope cs(&stats_crit_);
+  // Media packet storage.
+  if ((retransmission_settings & kConditionallyRetransmitHigherLayers) &&
+      UpdateConditionalRetransmit(temporal_id,
+                                  expected_retransmission_time_ms)) {
+    retransmission_settings |= kRetransmitHigherLayers;
+  }
+
+  if (temporal_id == kNoTemporalIdx)
+    return kAllowRetransmission;
+
+  if ((retransmission_settings & kRetransmitBaseLayer) && temporal_id == 0)
+    return kAllowRetransmission;
+
+  if ((retransmission_settings & kRetransmitHigherLayers) && temporal_id > 0)
+    return kAllowRetransmission;
+
+  return kDontRetransmit;
+}
+
+uint8_t RTPSenderVideo::GetTemporalId(const RTPVideoHeader& header) {
+  switch (header.codec) {
+    case kRtpVideoVp8:
+      return header.codecHeader.VP8.temporalIdx;
+    case kRtpVideoVp9:
+      return header.codecHeader.VP9.temporal_idx;
+    default:
+      return kNoTemporalIdx;
+  }
+}
+
+bool RTPSenderVideo::UpdateConditionalRetransmit(
+    uint8_t temporal_id,
+    int64_t expected_retransmission_time_ms) {
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  // Update stats for any temporal layer.
+  TemporalLayerStats* current_layer_stats =
+      &frame_stats_by_temporal_layer_[temporal_id];
+  current_layer_stats->frame_rate_fp1000s.Update(1, now_ms);
+  int64_t tl_frame_interval = now_ms - current_layer_stats->last_frame_time_ms;
+  current_layer_stats->last_frame_time_ms = now_ms;
+
+  // Conditional retransmit only applies to upper layers.
+  if (temporal_id != kNoTemporalIdx && temporal_id > 0) {
+    if (tl_frame_interval >= kMaxUnretransmittableFrameIntervalMs) {
+      // Too long since a retransmittable frame in this layer, enable NACK
+      // protection.
+      return true;
+    } else {
+      // Estimate when the next frame of any lower layer will be sent.
+      const int64_t kUndefined = std::numeric_limits<int64_t>::max();
+      int64_t expected_next_frame_time = kUndefined;
+      for (int i = temporal_id - 1; i >= 0; --i) {
+        TemporalLayerStats* stats = &frame_stats_by_temporal_layer_[i];
+        rtc::Optional<uint32_t> rate = stats->frame_rate_fp1000s.Rate(now_ms);
+        if (rate) {
+          int64_t tl_next = stats->last_frame_time_ms + 1000000 / *rate;
+          if (tl_next - now_ms > -expected_retransmission_time_ms &&
+              tl_next < expected_next_frame_time) {
+            expected_next_frame_time = tl_next;
+          }
+        }
+      }
+
+      if (expected_next_frame_time == kUndefined ||
+          expected_next_frame_time - now_ms > expected_retransmission_time_ms) {
+        // The next frame in a lower layer is expected at a later time (or
+        // unable to tell due to lack of data) than a retransmission is
+        // estimated to be able to arrive, so allow this packet to be nacked.
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 }  // namespace webrtc

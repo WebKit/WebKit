@@ -11,8 +11,8 @@
 // This header file is used only differ_block.h. It defines the SSE2 rountines
 // for finding vector difference.
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_DIFFER_VECTOR_SSE2_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_DIFFER_VECTOR_SSE2_H_
+#ifndef MODULES_DESKTOP_CAPTURE_DIFFER_VECTOR_SSE2_H_
+#define MODULES_DESKTOP_CAPTURE_DIFFER_VECTOR_SSE2_H_
 
 #include <stdint.h>
 
@@ -28,4 +28,4 @@ extern bool VectorDifference_SSE2_W32(const uint8_t* image1,
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_DIFFER_VECTOR_SSE2_H_
+#endif  // MODULES_DESKTOP_CAPTURE_DIFFER_VECTOR_SSE2_H_

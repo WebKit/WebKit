@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/codec.h"
+#include "media/base/codec.h"
+#include "rtc_base/gunit.h"
 
 using cricket::AudioCodec;
 using cricket::Codec;
@@ -22,7 +22,7 @@ using cricket::kCodecParamMinBitrate;
 
 class TestCodec : public Codec {
  public:
-  TestCodec(int id, const std::string name, int clockrate)
+  TestCodec(int id, const std::string& name, int clockrate)
       : Codec(id, name, clockrate) {}
   TestCodec() : Codec() {}
   TestCodec(const TestCodec& c) : Codec(c) {}
@@ -229,9 +229,9 @@ TEST(CodecTest, TestIntersectFeedbackParams) {
   const FeedbackParam b3("b", "3");
   const FeedbackParam c3("c", "3");
   TestCodec c1;
-  c1.AddFeedbackParam(a1); // Only match with c2.
-  c1.AddFeedbackParam(b2); // Same param different values.
-  c1.AddFeedbackParam(c3); // Not in c2.
+  c1.AddFeedbackParam(a1);  // Only match with c2.
+  c1.AddFeedbackParam(b2);  // Same param different values.
+  c1.AddFeedbackParam(c3);  // Not in c2.
   TestCodec c2;
   c2.AddFeedbackParam(a1);
   c2.AddFeedbackParam(b3);
@@ -313,15 +313,14 @@ TEST(CodecTest, TestToCodecParameters) {
   EXPECT_EQ(96, codec_params_1.payload_type);
   EXPECT_EQ(cricket::MEDIA_TYPE_VIDEO, codec_params_1.kind);
   EXPECT_EQ("V", codec_params_1.name);
-  EXPECT_EQ(rtc::Optional<int>(cricket::kVideoCodecClockrate),
-            codec_params_1.clock_rate);
-  EXPECT_EQ(rtc::Optional<int>(), codec_params_1.num_channels);
+  EXPECT_EQ(cricket::kVideoCodecClockrate, codec_params_1.clock_rate);
+  EXPECT_EQ(rtc::nullopt, codec_params_1.num_channels);
 
   const AudioCodec a(97, "A", 44100, 20000, 2);
   webrtc::RtpCodecParameters codec_params_2 = a.ToCodecParameters();
   EXPECT_EQ(97, codec_params_2.payload_type);
   EXPECT_EQ(cricket::MEDIA_TYPE_AUDIO, codec_params_2.kind);
   EXPECT_EQ("A", codec_params_2.name);
-  EXPECT_EQ(rtc::Optional<int>(44100), codec_params_2.clock_rate);
-  EXPECT_EQ(rtc::Optional<int>(2), codec_params_2.num_channels);
+  EXPECT_EQ(44100, codec_params_2.clock_rate);
+  EXPECT_EQ(2, codec_params_2.num_channels);
 }

@@ -7,33 +7,38 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
-#define WEBRTC_LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
+#ifndef LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
+#define LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
 
 #include <map>
 #include <string>
 #include <utility>  // pair
 #include <vector>
 
-#include "webrtc/base/ignore_wundef.h"
-#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/video_receive_stream.h"
-#include "webrtc/video_send_stream.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
+#include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
+#include "logging/rtc_event_log/rtc_event_log.h"
+#include "logging/rtc_event_log/rtc_stream_config.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "rtc_base/ignore_wundef.h"
 
 // Files generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
 #else
-#include "webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
+#include "logging/rtc_event_log/rtc_event_log.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 
+enum class BandwidthUsage;
 enum class MediaType;
+
+struct AudioEncoderRuntimeConfig;
 
 class ParsedRtcEventLog {
   friend class RtcEventLogTestHelper;
@@ -111,7 +116,8 @@ class ParsedRtcEventLog {
                                               PacketDirection* incoming,
                                               uint8_t* header,
                                               size_t* header_length,
-                                              size_t* total_length) const;
+                                              size_t* total_length,
+                                              int* probe_cluster_id) const;
 
   // Reads packet, direction and packet length from the RTCP event at |index|,
   // and stores the values in the corresponding output parameters.
@@ -209,4 +215,4 @@ class ParsedRtcEventLog {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_
+#endif  // LOGGING_RTC_EVENT_LOG_RTC_EVENT_LOG_PARSER_H_

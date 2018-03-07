@@ -17,17 +17,17 @@
 // Note P postfix of a function indicates that it should only be called by the
 // processing thread.
 
-#ifndef WEBRTC_PC_TEST_FAKEAUDIOCAPTUREMODULE_H_
-#define WEBRTC_PC_TEST_FAKEAUDIOCAPTUREMODULE_H_
+#ifndef PC_TEST_FAKEAUDIOCAPTUREMODULE_H_
+#define PC_TEST_FAKEAUDIOCAPTUREMODULE_H_
 
 #include <memory>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/audio_device/include/audio_device.h"
+#include "rtc_base/basictypes.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace rtc {
 class Thread;
@@ -52,18 +52,7 @@ class FakeAudioCaptureModule
   // pulled frame was generated/pushed from a FakeAudioCaptureModule.
   int frames_received() const;
 
-  // Following functions are inherited from webrtc::AudioDeviceModule.
-  // Only functions called by PeerConnection are implemented, the rest do
-  // nothing and return success. If a function is not expected to be called by
-  // PeerConnection an assertion is triggered if it is in fact called.
-  int64_t TimeUntilNextProcess() override;
-  void Process() override;
-
   int32_t ActiveAudioLayer(AudioLayer* audio_layer) const override;
-
-  ErrorCode LastError() const override;
-  int32_t RegisterEventObserver(
-      webrtc::AudioDeviceObserver* event_callback) override;
 
   // Note: Calling this method from a callback may result in deadlock.
   int32_t RegisterAudioCallback(
@@ -104,11 +93,6 @@ class FakeAudioCaptureModule
   int32_t SetAGC(bool enable) override;
   bool AGC() const override;
 
-  int32_t SetWaveOutVolume(uint16_t volume_left,
-                           uint16_t volume_right) override;
-  int32_t WaveOutVolume(uint16_t* volume_left,
-                        uint16_t* volume_right) const override;
-
   int32_t InitSpeaker() override;
   bool SpeakerIsInitialized() const override;
   int32_t InitMicrophone() override;
@@ -119,7 +103,6 @@ class FakeAudioCaptureModule
   int32_t SpeakerVolume(uint32_t* volume) const override;
   int32_t MaxSpeakerVolume(uint32_t* max_volume) const override;
   int32_t MinSpeakerVolume(uint32_t* min_volume) const override;
-  int32_t SpeakerVolumeStepSize(uint16_t* step_size) const override;
 
   int32_t MicrophoneVolumeIsAvailable(bool* available) override;
   int32_t SetMicrophoneVolume(uint32_t volume) override;
@@ -127,7 +110,6 @@ class FakeAudioCaptureModule
   int32_t MaxMicrophoneVolume(uint32_t* max_volume) const override;
 
   int32_t MinMicrophoneVolume(uint32_t* min_volume) const override;
-  int32_t MicrophoneVolumeStepSize(uint16_t* step_size) const override;
 
   int32_t SpeakerMuteIsAvailable(bool* available) override;
   int32_t SetSpeakerMute(bool enable) override;
@@ -137,42 +119,15 @@ class FakeAudioCaptureModule
   int32_t SetMicrophoneMute(bool enable) override;
   int32_t MicrophoneMute(bool* enabled) const override;
 
-  int32_t MicrophoneBoostIsAvailable(bool* available) override;
-  int32_t SetMicrophoneBoost(bool enable) override;
-  int32_t MicrophoneBoost(bool* enabled) const override;
-
   int32_t StereoPlayoutIsAvailable(bool* available) const override;
   int32_t SetStereoPlayout(bool enable) override;
   int32_t StereoPlayout(bool* enabled) const override;
   int32_t StereoRecordingIsAvailable(bool* available) const override;
   int32_t SetStereoRecording(bool enable) override;
   int32_t StereoRecording(bool* enabled) const override;
-  int32_t SetRecordingChannel(const ChannelType channel) override;
-  int32_t RecordingChannel(ChannelType* channel) const override;
 
-  int32_t SetPlayoutBuffer(const BufferType type,
-                           uint16_t size_ms = 0) override;
-  int32_t PlayoutBuffer(BufferType* type, uint16_t* size_ms) const override;
   int32_t PlayoutDelay(uint16_t* delay_ms) const override;
-  int32_t RecordingDelay(uint16_t* delay_ms) const override;
 
-  int32_t CPULoad(uint16_t* load) const override;
-
-  int32_t StartRawOutputFileRecording(
-      const char pcm_file_name_utf8[webrtc::kAdmMaxFileNameSize]) override;
-  int32_t StopRawOutputFileRecording() override;
-  int32_t StartRawInputFileRecording(
-      const char pcm_file_name_utf8[webrtc::kAdmMaxFileNameSize]) override;
-  int32_t StopRawInputFileRecording() override;
-
-  int32_t SetRecordingSampleRate(const uint32_t samples_per_sec) override;
-  int32_t RecordingSampleRate(uint32_t* samples_per_sec) const override;
-  int32_t SetPlayoutSampleRate(const uint32_t samples_per_sec) override;
-  int32_t PlayoutSampleRate(uint32_t* samples_per_sec) const override;
-
-  int32_t ResetAudioDevice() override;
-  int32_t SetLoudspeakerStatus(bool enable) override;
-  int32_t GetLoudspeakerStatus(bool* enabled) const override;
   bool BuiltInAECIsAvailable() const override { return false; }
   int32_t EnableBuiltInAEC(bool enable) override { return -1; }
   bool BuiltInAGCIsAvailable() const override { return false; }
@@ -200,7 +155,7 @@ class FakeAudioCaptureModule
   // exposed in which case the burden of proper instantiation would be put on
   // the creator of a FakeAudioCaptureModule instance. To create an instance of
   // this class use the Create(..) API.
-  explicit FakeAudioCaptureModule();
+  FakeAudioCaptureModule();
   // The destructor is protected because it is reference counted and should not
   // be deleted directly.
   virtual ~FakeAudioCaptureModule();
@@ -234,18 +189,14 @@ class FakeAudioCaptureModule
   // Pushes frames to the registered webrtc::AudioTransport.
   void SendFrameP();
 
-  // The time in milliseconds when Process() was last called or 0 if no call
-  // has been made.
-  int64_t last_process_time_ms_;
-
   // Callback for playout and recording.
   webrtc::AudioTransport* audio_callback_;
 
-  bool recording_; // True when audio is being pushed from the instance.
-  bool playing_; // True when audio is being pulled by the instance.
+  bool recording_;  // True when audio is being pushed from the instance.
+  bool playing_;    // True when audio is being pulled by the instance.
 
-  bool play_is_initialized_; // True when the instance is ready to pull audio.
-  bool rec_is_initialized_; // True when the instance is ready to push audio.
+  bool play_is_initialized_;  // True when the instance is ready to pull audio.
+  bool rec_is_initialized_;   // True when the instance is ready to push audio.
 
   // Input to and output from RecordedDataIsAvailable(..) makes it possible to
   // modify the current mic level. The implementation does not care about the
@@ -278,4 +229,4 @@ class FakeAudioCaptureModule
   rtc::CriticalSection crit_callback_;
 };
 
-#endif  // WEBRTC_PC_TEST_FAKEAUDIOCAPTUREMODULE_H_
+#endif  // PC_TEST_FAKEAUDIOCAPTUREMODULE_H_

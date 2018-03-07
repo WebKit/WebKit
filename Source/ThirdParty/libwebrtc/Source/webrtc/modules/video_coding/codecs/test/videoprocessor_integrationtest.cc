@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
+ *  Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -8,427 +8,708 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/codecs/test/videoprocessor_integrationtest.h"
+#include "modules/video_coding/codecs/test/videoprocessor_integrationtest.h"
+
+#include <algorithm>
+#include <utility>
+
+#if defined(WEBRTC_ANDROID)
+#include "modules/video_coding/codecs/test/android_test_initializer.h"
+#include "sdk/android/src/jni/androidmediadecoder_jni.h"
+#include "sdk/android/src/jni/androidmediaencoder_jni.h"
+#elif defined(WEBRTC_IOS)
+#include "modules/video_coding/codecs/test/objc_codec_h264_test.h"
+#endif
+
+#include "common_types.h"  // NOLINT(build/include)
+#include "media/base/h264_profile_level_id.h"
+#include "media/engine/internaldecoderfactory.h"
+#include "media/engine/internalencoderfactory.h"
+#include "media/engine/videodecodersoftwarefallbackwrapper.h"
+#include "media/engine/videoencodersoftwarefallbackwrapper.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_common_types.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "modules/video_coding/include/video_coding.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/cpu_time.h"
+#include "rtc_base/event.h"
+#include "rtc_base/file.h"
+#include "rtc_base/ptr_util.h"
+#include "system_wrappers/include/sleep.h"
+#include "test/testsupport/fileutils.h"
+#include "test/testsupport/metrics/video_metrics.h"
 
 namespace webrtc {
 namespace test {
 
 namespace {
 
-// In these correctness tests, we only consider SW codecs.
-const bool kHwCodec = false;
+const int kMaxBitrateMismatchPercent = 20;
 
-// Only allow encoder/decoder to use single core, for predictability.
-const bool kUseSingleCore = true;
+// Parameters from VP8 wrapper, which control target size of key frames.
+const float kInitialBufferSize = 0.5f;
+const float kOptimalBufferSize = 0.6f;
+const float kScaleKeyFrameSize = 0.5f;
 
-// Default codec setting is on.
-const bool kResilienceOn = true;
+bool RunEncodeInRealTime(const TestConfig& config) {
+  if (config.measure_cpu) {
+    return true;
+  }
+#if defined(WEBRTC_ANDROID)
+  // In order to not overwhelm the OpenMAX buffers in the Android MediaCodec.
+  return (config.hw_encoder || config.hw_decoder);
+#else
+  return false;
+#endif
+}
+
+// An internal encoder factory in the old WebRtcVideoEncoderFactory format.
+// TODO(magjed): Update these tests to use new webrtc::VideoEncoderFactory
+// instead.
+class LegacyInternalEncoderFactory : public cricket::WebRtcVideoEncoderFactory {
+ public:
+  LegacyInternalEncoderFactory() {
+    for (const SdpVideoFormat& format :
+         InternalEncoderFactory().GetSupportedFormats()) {
+      supported_codecs_.push_back(cricket::VideoCodec(format));
+    }
+  }
+
+  // WebRtcVideoEncoderFactory implementation.
+  VideoEncoder* CreateVideoEncoder(const cricket::VideoCodec& codec) override {
+    return InternalEncoderFactory()
+        .CreateVideoEncoder(SdpVideoFormat(codec.name, codec.params))
+        .release();
+  }
+
+  const std::vector<cricket::VideoCodec>& supported_codecs() const override {
+    return supported_codecs_;
+  }
+
+  bool EncoderTypeHasInternalSource(
+      webrtc::VideoCodecType type) const override {
+    return false;
+  }
+
+  void DestroyVideoEncoder(VideoEncoder* encoder) override { delete encoder; }
+
+ private:
+  std::vector<cricket::VideoCodec> supported_codecs_;
+};
+
+// An internal decoder factory in the old WebRtcVideoDecoderFactory format.
+// TODO(magjed): Update these tests to use new webrtc::VideoDecoderFactory
+// instead.
+class LegacyInternalDecoderFactory : public cricket::WebRtcVideoDecoderFactory {
+ public:
+  // WebRtcVideoDecoderFactory implementation.
+  VideoDecoder* CreateVideoDecoderWithParams(
+      const cricket::VideoCodec& codec,
+      cricket::VideoDecoderParams params) override {
+    return InternalDecoderFactory()
+        .CreateVideoDecoder(SdpVideoFormat(codec.name, codec.params))
+        .release();
+  }
+
+  void DestroyVideoDecoder(VideoDecoder* decoder) override { delete decoder; }
+};
 
 }  // namespace
 
-#if defined(WEBRTC_VIDEOPROCESSOR_H264_TESTS)
-
-// H264: Run with no packet loss and fixed bitrate. Quality should be very high.
-// Note(hbos): The PacketManipulatorImpl code used to simulate packet loss in
-// these unittests appears to drop "packets" in a way that is not compatible
-// with H264. Therefore ProcessXPercentPacketLossH264, X != 0, unittests have
-// not been added.
-TEST_F(VideoProcessorIntegrationTest, Process0PercentPacketLossH264) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecH264, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, false, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 35.0, 25.0, 0.93, 0.70);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 2, 60, 20, 10, 20, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
+void VideoProcessorIntegrationTest::H264KeyframeChecker::CheckEncodedFrame(
+    webrtc::VideoCodecType codec,
+    const EncodedImage& encoded_frame) const {
+  EXPECT_EQ(kVideoCodecH264, codec);
+  bool contains_sps = false;
+  bool contains_pps = false;
+  bool contains_idr = false;
+  const std::vector<webrtc::H264::NaluIndex> nalu_indices =
+      webrtc::H264::FindNaluIndices(encoded_frame._buffer,
+                                    encoded_frame._length);
+  for (const webrtc::H264::NaluIndex& index : nalu_indices) {
+    webrtc::H264::NaluType nalu_type = webrtc::H264::ParseNaluType(
+        encoded_frame._buffer[index.payload_start_offset]);
+    if (nalu_type == webrtc::H264::NaluType::kSps) {
+      contains_sps = true;
+    } else if (nalu_type == webrtc::H264::NaluType::kPps) {
+      contains_pps = true;
+    } else if (nalu_type == webrtc::H264::NaluType::kIdr) {
+      contains_idr = true;
+    }
+  }
+  if (encoded_frame._frameType == kVideoFrameKey) {
+    EXPECT_TRUE(contains_sps) << "Keyframe should contain SPS.";
+    EXPECT_TRUE(contains_pps) << "Keyframe should contain PPS.";
+    EXPECT_TRUE(contains_idr) << "Keyframe should contain IDR.";
+  } else if (encoded_frame._frameType == kVideoFrameDelta) {
+    EXPECT_FALSE(contains_sps) << "Delta frame should not contain SPS.";
+    EXPECT_FALSE(contains_pps) << "Delta frame should not contain PPS.";
+    EXPECT_FALSE(contains_idr) << "Delta frame should not contain IDR.";
+  } else {
+    RTC_NOTREACHED();
+  }
 }
 
-#endif  // defined(WEBRTC_VIDEOPROCESSOR_H264_TESTS)
+class VideoProcessorIntegrationTest::CpuProcessTime final {
+ public:
+  explicit CpuProcessTime(const TestConfig& config) : config_(config) {}
+  ~CpuProcessTime() {}
 
-// Fails on iOS. See webrtc:4755.
-#if !defined(WEBRTC_IOS)
+  void Start() {
+    if (config_.measure_cpu) {
+      cpu_time_ -= rtc::GetProcessCpuTimeNanos();
+      wallclock_time_ -= rtc::SystemTimeNanos();
+    }
+  }
+  void Stop() {
+    if (config_.measure_cpu) {
+      cpu_time_ += rtc::GetProcessCpuTimeNanos();
+      wallclock_time_ += rtc::SystemTimeNanos();
+    }
+  }
+  void Print() const {
+    if (config_.measure_cpu) {
+      printf("CPU usage %%: %f\n", GetUsagePercent() / config_.NumberOfCores());
+      printf("\n");
+    }
+  }
 
-#if !defined(RTC_DISABLE_VP9)
-// VP9: Run with no packet loss and fixed bitrate. Quality should be very high.
-// One key frame (first frame only) in sequence. Setting |key_frame_interval|
-// to -1 below means no periodic key frames in test.
-TEST_F(VideoProcessorIntegrationTest, Process0PercentPacketLossVP9) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP9, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, false, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 37.0, 36.0, 0.93, 0.92);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 20, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
+ private:
+  double GetUsagePercent() const {
+    return static_cast<double>(cpu_time_) / wallclock_time_ * 100.0;
+  }
 
-// VP9: Run with 5% packet loss and fixed bitrate. Quality should be a bit
-// lower. One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTest, Process5PercentPacketLossVP9) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP9, kHwCodec, kUseSingleCore,
-                 0.05f, -1, 1, false, false, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 17.0, 14.0, 0.45, 0.36);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 20, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
+  const TestConfig config_;
+  int64_t cpu_time_ = 0;
+  int64_t wallclock_time_ = 0;
+};
 
-// VP9: Run with no packet loss, with varying bitrate (3 rate updates):
-// low to high to medium. Check that quality and encoder response to the new
-// target rate/per-frame bandwidth (for each rate update) is within limits.
-// One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTest, ProcessNoLossChangeBitRateVP9) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 200, 30, 0);
-  SetRateProfile(&rate_profile, 1, 700, 30, 100);
-  SetRateProfile(&rate_profile, 2, 500, 30, 200);
-  rate_profile.frame_index_rate_update[3] = kNumFramesLong + 1;
-  rate_profile.num_frames = kNumFramesLong;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP9, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, false, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 35.5, 30.0, 0.90, 0.85);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[3];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 30, 20, 20, 35, 0, 1);
-  SetRateControlThresholds(rc_thresholds, 1, 2, 0, 20, 20, 60, 0, 0);
-  SetRateControlThresholds(rc_thresholds, 2, 0, 0, 25, 20, 40, 0, 0);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// VP9: Run with no packet loss, with an update (decrease) in frame rate.
-// Lower frame rate means higher per-frame-bandwidth, so easier to encode.
-// At the low bitrate in this test, this means better rate control after the
-// update(s) to lower frame rate. So expect less frame drops, and max values
-// for the rate control metrics can be lower. One key frame (first frame only).
-// Note: quality after update should be higher but we currently compute quality
-// metrics averaged over whole sequence run.
-TEST_F(VideoProcessorIntegrationTest,
-       ProcessNoLossChangeFrameRateFrameDropVP9) {
-  config_.networking_config.packet_loss_probability = 0;
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 100, 24, 0);
-  SetRateProfile(&rate_profile, 1, 100, 15, 100);
-  SetRateProfile(&rate_profile, 2, 100, 10, 200);
-  rate_profile.frame_index_rate_update[3] = kNumFramesLong + 1;
-  rate_profile.num_frames = kNumFramesLong;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP9, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, false, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 31.5, 18.0, 0.80, 0.43);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[3];
-  SetRateControlThresholds(rc_thresholds, 0, 45, 50, 95, 15, 45, 0, 1);
-  SetRateControlThresholds(rc_thresholds, 1, 20, 0, 50, 10, 30, 0, 0);
-  SetRateControlThresholds(rc_thresholds, 2, 5, 0, 30, 5, 25, 0, 0);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// VP9: Run with no packet loss and denoiser on. One key frame (first frame).
-TEST_F(VideoProcessorIntegrationTest, ProcessNoLossDenoiserOnVP9) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP9, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 36.8, 35.8, 0.92, 0.91);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 20, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// Run with no packet loss, at low bitrate.
-// spatial_resize is on, for this low bitrate expect one resize in sequence.
-// Resize happens on delta frame. Expect only one key frame (first frame).
-TEST_F(VideoProcessorIntegrationTest,
-       DISABLED_ProcessNoLossSpatialResizeFrameDropVP9) {
-  config_.networking_config.packet_loss_probability = 0;
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 50, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesLong + 1;
-  rate_profile.num_frames = kNumFramesLong;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP9, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, false, true, true, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 24.0, 13.0, 0.65, 0.37);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 228, 70, 160, 15, 80, 1, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// TODO(marpan): Add temporal layer test for VP9, once changes are in
-// vp9 wrapper for this.
-
-#endif  // !defined(RTC_DISABLE_VP9)
-
-// VP8: Run with no packet loss and fixed bitrate. Quality should be very high.
-// One key frame (first frame only) in sequence. Setting |key_frame_interval|
-// to -1 below means no periodic key frames in test.
-TEST_F(VideoProcessorIntegrationTest, ProcessZeroPacketLoss) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 34.95, 33.0, 0.90, 0.89);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 15, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// VP8: Run with 5% packet loss and fixed bitrate. Quality should be a bit
-// lower. One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTest, Process5PercentPacketLoss) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.05f, -1, 1, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 20.0, 16.0, 0.60, 0.40);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 15, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// VP8: Run with 10% packet loss and fixed bitrate. Quality should be lower.
-// One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTest, Process10PercentPacketLoss) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.1f, -1, 1, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 19.0, 16.0, 0.50, 0.35);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 15, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-// This test is identical to VideoProcessorIntegrationTest.ProcessZeroPacketLoss
-// except that |batch_mode| is turned on. The main point of this test is to see
-// that the reported stats are not wildly varying between batch mode and the
-// regular online mode.
-TEST_F(VideoProcessorIntegrationTest, ProcessInBatchMode) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 500, 30, 0);
-  rate_profile.frame_index_rate_update[1] = kNumFramesShort + 1;
-  rate_profile.num_frames = kNumFramesShort;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, true, true, false, kResilienceOn, 352, 288,
-                 "foreman_cif", false /* verbose_logging */,
-                 true /* batch_mode */);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 34.95, 33.0, 0.90, 0.89);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[1];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 40, 20, 10, 15, 0, 1);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
-}
-
-#endif  // !defined(WEBRTC_IOS)
-
-// The tests below are currently disabled for Android. For ARM, the encoder
-// uses |cpu_speed| = 12, as opposed to default |cpu_speed| <= 6 for x86,
-// which leads to significantly different quality. The quality and rate control
-// settings in the tests below are defined for encoder speed setting
-// |cpu_speed| <= ~6. A number of settings would need to be significantly
-// modified for the |cpu_speed| = 12 case. For now, keep the tests below
-// disabled on Android. Some quality parameter in the above test has been
-// adjusted to also pass for |cpu_speed| <= 12.
-
-// VP8: Run with no packet loss, with varying bitrate (3 rate updates):
-// low to high to medium. Check that quality and encoder response to the new
-// target rate/per-frame bandwidth (for each rate update) is within limits.
-// One key frame (first frame only) in sequence.
-// Too slow to finish before timeout on iOS. See webrtc:4755.
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-#define MAYBE_ProcessNoLossChangeBitRateVP8 \
-  DISABLED_ProcessNoLossChangeBitRateVP8
-#else
-#define MAYBE_ProcessNoLossChangeBitRateVP8 ProcessNoLossChangeBitRateVP8
+VideoProcessorIntegrationTest::VideoProcessorIntegrationTest() {
+#if defined(WEBRTC_ANDROID)
+  InitializeAndroidObjects();
 #endif
-TEST_F(VideoProcessorIntegrationTest, MAYBE_ProcessNoLossChangeBitRateVP8) {
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 200, 30, 0);
-  SetRateProfile(&rate_profile, 1, 800, 30, 100);
-  SetRateProfile(&rate_profile, 2, 500, 30, 200);
-  rate_profile.frame_index_rate_update[3] = kNumFramesLong + 1;
-  rate_profile.num_frames = kNumFramesLong;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 34.0, 32.0, 0.85, 0.80);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[3];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 45, 20, 10, 15, 0, 1);
-  SetRateControlThresholds(rc_thresholds, 1, 0, 0, 25, 20, 10, 0, 0);
-  SetRateControlThresholds(rc_thresholds, 2, 0, 0, 25, 15, 10, 0, 0);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
 }
 
-// VP8: Run with no packet loss, with an update (decrease) in frame rate.
-// Lower frame rate means higher per-frame-bandwidth, so easier to encode.
-// At the bitrate in this test, this means better rate control after the
-// update(s) to lower frame rate. So expect less frame drops, and max values
-// for the rate control metrics can be lower. One key frame (first frame only).
-// Note: quality after update should be higher but we currently compute quality
-// metrics averaged over whole sequence run.
-// Too slow to finish before timeout on iOS. See webrtc:4755.
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-#define MAYBE_ProcessNoLossChangeFrameRateFrameDropVP8 \
-  DISABLED_ProcessNoLossChangeFrameRateFrameDropVP8
-#else
-#define MAYBE_ProcessNoLossChangeFrameRateFrameDropVP8 \
-  ProcessNoLossChangeFrameRateFrameDropVP8
-#endif
-TEST_F(VideoProcessorIntegrationTest,
-       MAYBE_ProcessNoLossChangeFrameRateFrameDropVP8) {
-  config_.networking_config.packet_loss_probability = 0;
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 80, 24, 0);
-  SetRateProfile(&rate_profile, 1, 80, 15, 100);
-  SetRateProfile(&rate_profile, 2, 80, 10, 200);
-  rate_profile.frame_index_rate_update[3] = kNumFramesLong + 1;
-  rate_profile.num_frames = kNumFramesLong;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 1, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 31.0, 22.0, 0.80, 0.65);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[3];
-  SetRateControlThresholds(rc_thresholds, 0, 40, 20, 75, 15, 60, 0, 1);
-  SetRateControlThresholds(rc_thresholds, 1, 10, 0, 25, 10, 35, 0, 0);
-  SetRateControlThresholds(rc_thresholds, 2, 0, 0, 20, 10, 15, 0, 0);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
+VideoProcessorIntegrationTest::~VideoProcessorIntegrationTest() = default;
+
+// Processes all frames in the clip and verifies the result.
+void VideoProcessorIntegrationTest::ProcessFramesAndMaybeVerify(
+    const std::vector<RateProfile>& rate_profiles,
+    const std::vector<RateControlThresholds>* rc_thresholds,
+    const QualityThresholds* quality_thresholds,
+    const BitstreamThresholds* bs_thresholds,
+    const VisualizationParams* visualization_params) {
+  RTC_DCHECK(!rate_profiles.empty());
+  // The Android HW codec needs to be run on a task queue, so we simply always
+  // run the test on a task queue.
+  rtc::TaskQueue task_queue("VidProc TQ");
+  rtc::Event sync_event(false, false);
+
+  SetUpAndInitObjects(&task_queue, rate_profiles[0].target_kbps,
+                      rate_profiles[0].input_fps, visualization_params);
+  PrintSettings();
+
+  // Set initial rates.
+  int rate_update_index = 0;
+  task_queue.PostTask([this, &rate_profiles, rate_update_index] {
+    processor_->SetRates(rate_profiles[rate_update_index].target_kbps,
+                         rate_profiles[rate_update_index].input_fps);
+  });
+
+  cpu_process_time_->Start();
+
+  // Process all frames.
+  int frame_number = 0;
+  const int num_frames = config_.num_frames;
+  RTC_DCHECK_GE(num_frames, 1);
+  while (frame_number < num_frames) {
+    if (RunEncodeInRealTime(config_)) {
+      // Roughly pace the frames.
+      SleepMs(rtc::kNumMillisecsPerSec /
+              rate_profiles[rate_update_index].input_fps);
+    }
+
+    task_queue.PostTask([this] { processor_->ProcessFrame(); });
+    ++frame_number;
+
+    if (frame_number ==
+        rate_profiles[rate_update_index].frame_index_rate_update) {
+      ++rate_update_index;
+      RTC_DCHECK_GT(rate_profiles.size(), rate_update_index);
+
+      task_queue.PostTask([this, &rate_profiles, rate_update_index] {
+        processor_->SetRates(rate_profiles[rate_update_index].target_kbps,
+                             rate_profiles[rate_update_index].input_fps);
+      });
+    }
+  }
+
+  // Give the VideoProcessor pipeline some time to process the last frame,
+  // and then release the codecs.
+  if (config_.hw_encoder || config_.hw_decoder) {
+    SleepMs(1 * rtc::kNumMillisecsPerSec);
+  }
+  cpu_process_time_->Stop();
+
+  std::vector<int> num_dropped_frames;
+  std::vector<int> num_spatial_resizes;
+  sync_event.Reset();
+  task_queue.PostTask(
+      [this, &num_dropped_frames, &num_spatial_resizes, &sync_event]() {
+        num_dropped_frames = processor_->NumberDroppedFramesPerRateUpdate();
+        num_spatial_resizes = processor_->NumberSpatialResizesPerRateUpdate();
+        sync_event.Set();
+      });
+  sync_event.Wait(rtc::Event::kForever);
+
+  ReleaseAndCloseObjects(&task_queue);
+
+  // Calculate and print rate control statistics.
+  rate_update_index = 0;
+  frame_number = 0;
+  quality_ = QualityMetrics();
+  ResetRateControlMetrics(rate_update_index, rate_profiles);
+  while (frame_number < num_frames) {
+    UpdateRateControlMetrics(frame_number);
+
+    if (quality_thresholds) {
+      UpdateQualityMetrics(frame_number);
+    }
+
+    if (bs_thresholds) {
+      VerifyBitstream(frame_number, *bs_thresholds);
+    }
+
+    ++frame_number;
+
+    if (frame_number ==
+        rate_profiles[rate_update_index].frame_index_rate_update) {
+      PrintRateControlMetrics(rate_update_index, num_dropped_frames,
+                              num_spatial_resizes);
+      VerifyRateControlMetrics(rate_update_index, rc_thresholds,
+                               num_dropped_frames, num_spatial_resizes);
+      ++rate_update_index;
+      ResetRateControlMetrics(rate_update_index, rate_profiles);
+    }
+  }
+
+  PrintRateControlMetrics(rate_update_index, num_dropped_frames,
+                          num_spatial_resizes);
+  VerifyRateControlMetrics(rate_update_index, rc_thresholds, num_dropped_frames,
+                           num_spatial_resizes);
+
+  if (quality_thresholds) {
+    VerifyQualityMetrics(*quality_thresholds);
+  }
+
+  // Calculate and print other statistics.
+  EXPECT_EQ(num_frames, static_cast<int>(stats_.size()));
+  stats_.PrintSummary();
+  cpu_process_time_->Print();
 }
 
-// VP8: Run with no packet loss, with 3 temporal layers, with a rate update in
-// the middle of the sequence. The max values for the frame size mismatch and
-// encoding rate mismatch are applied to each layer.
-// No dropped frames in this test, and internal spatial resizer is off.
-// One key frame (first frame only) in sequence, so no spatial resizing.
-// Too slow to finish before timeout on iOS. See webrtc:4755.
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS)
-#define MAYBE_ProcessNoLossTemporalLayersVP8 \
-  DISABLED_ProcessNoLossTemporalLayersVP8
+void VideoProcessorIntegrationTest::CreateEncoderAndDecoder() {
+  std::unique_ptr<cricket::WebRtcVideoEncoderFactory> encoder_factory;
+  if (config_.hw_encoder) {
+#if defined(WEBRTC_ANDROID)
+    encoder_factory.reset(new jni::MediaCodecVideoEncoderFactory());
+#elif defined(WEBRTC_IOS)
+    EXPECT_EQ(kVideoCodecH264, config_.codec_settings.codecType)
+        << "iOS HW codecs only support H264.";
+    encoder_factory = CreateObjCEncoderFactory();
 #else
-#define MAYBE_ProcessNoLossTemporalLayersVP8 ProcessNoLossTemporalLayersVP8
+    RTC_NOTREACHED() << "Only support HW encoder on Android and iOS.";
 #endif
-TEST_F(VideoProcessorIntegrationTest, MAYBE_ProcessNoLossTemporalLayersVP8) {
-  config_.networking_config.packet_loss_probability = 0;
-  // Bit rate and frame rate profile.
-  RateProfile rate_profile;
-  SetRateProfile(&rate_profile, 0, 200, 30, 0);
-  SetRateProfile(&rate_profile, 1, 400, 30, 150);
-  rate_profile.frame_index_rate_update[2] = kNumFramesLong + 1;
-  rate_profile.num_frames = kNumFramesLong;
-  // Codec/network settings.
-  CodecParams process_settings;
-  SetCodecParams(&process_settings, kVideoCodecVP8, kHwCodec, kUseSingleCore,
-                 0.0f, -1, 3, false, true, true, false, kResilienceOn);
-  // Thresholds for expected quality.
-  QualityThresholds quality_thresholds;
-  SetQualityThresholds(&quality_thresholds, 32.5, 30.0, 0.85, 0.80);
-  // Thresholds for rate control.
-  RateControlThresholds rc_thresholds[2];
-  SetRateControlThresholds(rc_thresholds, 0, 0, 20, 30, 10, 10, 0, 1);
-  SetRateControlThresholds(rc_thresholds, 1, 0, 0, 30, 15, 10, 0, 0);
-  ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
-                         rc_thresholds, nullptr /* visualization_params */);
+  } else {
+    encoder_factory.reset(new LegacyInternalEncoderFactory());
+  }
+
+  std::unique_ptr<cricket::WebRtcVideoDecoderFactory> decoder_factory;
+  if (config_.hw_decoder) {
+#if defined(WEBRTC_ANDROID)
+    decoder_factory.reset(new jni::MediaCodecVideoDecoderFactory());
+#elif defined(WEBRTC_IOS)
+    EXPECT_EQ(kVideoCodecH264, config_.codec_settings.codecType)
+        << "iOS HW codecs only support H264.";
+    decoder_factory = CreateObjCDecoderFactory();
+#else
+    RTC_NOTREACHED() << "Only support HW decoder on Android and iOS.";
+#endif
+  } else {
+    decoder_factory.reset(new LegacyInternalDecoderFactory());
+  }
+
+  cricket::VideoCodec codec;
+  cricket::VideoDecoderParams decoder_params;  // Empty.
+  switch (config_.codec_settings.codecType) {
+    case kVideoCodecVP8:
+      codec = cricket::VideoCodec(cricket::kVp8CodecName);
+      encoder_.reset(encoder_factory->CreateVideoEncoder(codec));
+      decoder_.reset(
+          decoder_factory->CreateVideoDecoderWithParams(codec, decoder_params));
+      break;
+    case kVideoCodecVP9:
+      codec = cricket::VideoCodec(cricket::kVp9CodecName);
+      encoder_.reset(encoder_factory->CreateVideoEncoder(codec));
+      decoder_.reset(
+          decoder_factory->CreateVideoDecoderWithParams(codec, decoder_params));
+      break;
+    case kVideoCodecH264:
+      codec = cricket::VideoCodec(cricket::kH264CodecName);
+      if (config_.h264_codec_settings.profile ==
+          H264::kProfileConstrainedHigh) {
+        const H264::ProfileLevelId constrained_high_profile(
+            H264::kProfileConstrainedHigh, H264::kLevel3_1);
+        codec.SetParam(cricket::kH264FmtpProfileLevelId,
+                       *H264::ProfileLevelIdToString(constrained_high_profile));
+      } else {
+        RTC_CHECK_EQ(config_.h264_codec_settings.profile,
+                     H264::kProfileConstrainedBaseline);
+        const H264::ProfileLevelId constrained_baseline_profile(
+            H264::kProfileConstrainedBaseline, H264::kLevel3_1);
+        codec.SetParam(
+            cricket::kH264FmtpProfileLevelId,
+            *H264::ProfileLevelIdToString(constrained_baseline_profile));
+      }
+      if (config_.h264_codec_settings.packetization_mode ==
+          H264PacketizationMode::NonInterleaved) {
+        codec.SetParam(cricket::kH264FmtpPacketizationMode, "1");
+      } else {
+        RTC_CHECK_EQ(config_.h264_codec_settings.packetization_mode,
+                     H264PacketizationMode::SingleNalUnit);
+        codec.SetParam(cricket::kH264FmtpPacketizationMode, "0");
+      }
+      encoder_.reset(encoder_factory->CreateVideoEncoder(codec));
+      decoder_.reset(
+          decoder_factory->CreateVideoDecoderWithParams(codec, decoder_params));
+      break;
+    default:
+      RTC_NOTREACHED();
+      break;
+  }
+
+  if (config_.sw_fallback_encoder) {
+    encoder_ = rtc::MakeUnique<VideoEncoderSoftwareFallbackWrapper>(
+        InternalEncoderFactory().CreateVideoEncoder(
+            SdpVideoFormat(codec.name, codec.params)),
+        std::move(encoder_));
+  }
+  if (config_.sw_fallback_decoder) {
+    decoder_ = rtc::MakeUnique<VideoDecoderSoftwareFallbackWrapper>(
+        InternalDecoderFactory().CreateVideoDecoder(
+            SdpVideoFormat(codec.name, codec.params)),
+        std::move(decoder_));
+  }
+
+  EXPECT_TRUE(encoder_) << "Encoder not successfully created.";
+  EXPECT_TRUE(decoder_) << "Decoder not successfully created.";
 }
+
+void VideoProcessorIntegrationTest::DestroyEncoderAndDecoder() {
+  encoder_.reset();
+  decoder_.reset();
+}
+
+void VideoProcessorIntegrationTest::SetUpAndInitObjects(
+    rtc::TaskQueue* task_queue,
+    const int initial_bitrate_kbps,
+    const int initial_framerate_fps,
+    const VisualizationParams* visualization_params) {
+  CreateEncoderAndDecoder();
+
+  config_.codec_settings.minBitrate = 0;
+  config_.codec_settings.startBitrate = initial_bitrate_kbps;
+  config_.codec_settings.maxFramerate = initial_framerate_fps;
+
+  // Create file objects for quality analysis.
+  analysis_frame_reader_.reset(new YuvFrameReaderImpl(
+      config_.input_filename, config_.codec_settings.width,
+      config_.codec_settings.height));
+  analysis_frame_writer_.reset(new YuvFrameWriterImpl(
+      config_.output_filename, config_.codec_settings.width,
+      config_.codec_settings.height));
+  EXPECT_TRUE(analysis_frame_reader_->Init());
+  EXPECT_TRUE(analysis_frame_writer_->Init());
+
+  if (visualization_params) {
+    const std::string output_filename_base =
+        OutputPath() + config_.FilenameWithParams();
+    if (visualization_params->save_encoded_ivf) {
+      rtc::File post_encode_file =
+          rtc::File::Create(output_filename_base + ".ivf");
+      encoded_frame_writer_ =
+          IvfFileWriter::Wrap(std::move(post_encode_file), 0);
+    }
+    if (visualization_params->save_decoded_y4m) {
+      decoded_frame_writer_.reset(new Y4mFrameWriterImpl(
+          output_filename_base + ".y4m", config_.codec_settings.width,
+          config_.codec_settings.height, initial_framerate_fps));
+      EXPECT_TRUE(decoded_frame_writer_->Init());
+    }
+  }
+
+  cpu_process_time_.reset(new CpuProcessTime(config_));
+  packet_manipulator_.reset(new PacketManipulatorImpl(
+      &packet_reader_, config_.networking_config, false));
+
+  rtc::Event sync_event(false, false);
+  task_queue->PostTask([this, &sync_event]() {
+    processor_ = rtc::MakeUnique<VideoProcessor>(
+        encoder_.get(), decoder_.get(), analysis_frame_reader_.get(),
+        packet_manipulator_.get(), config_, &stats_,
+        encoded_frame_writer_.get(), decoded_frame_writer_.get());
+    sync_event.Set();
+  });
+  sync_event.Wait(rtc::Event::kForever);
+}
+
+void VideoProcessorIntegrationTest::ReleaseAndCloseObjects(
+    rtc::TaskQueue* task_queue) {
+  rtc::Event sync_event(false, false);
+  task_queue->PostTask([this, &sync_event]() {
+    processor_.reset();
+    sync_event.Set();
+  });
+  sync_event.Wait(rtc::Event::kForever);
+
+  // The VideoProcessor must be destroyed before the codecs.
+  DestroyEncoderAndDecoder();
+
+  analysis_frame_reader_->Close();
+
+  // Close visualization files.
+  if (encoded_frame_writer_) {
+    EXPECT_TRUE(encoded_frame_writer_->Close());
+  }
+  if (decoded_frame_writer_) {
+    decoded_frame_writer_->Close();
+  }
+}
+
+// For every encoded frame, update the rate control metrics.
+void VideoProcessorIntegrationTest::UpdateRateControlMetrics(int frame_number) {
+  RTC_CHECK_GE(frame_number, 0);
+
+  const int tl_idx = config_.TemporalLayerForFrame(frame_number);
+  ++actual_.num_frames_layer[tl_idx];
+  ++actual_.num_frames;
+
+  const FrameStatistic* frame_stat = stats_.GetFrame(frame_number);
+  FrameType frame_type = frame_stat->frame_type;
+  float framesize_kbits = frame_stat->encoded_frame_size_bytes * 8.0f / 1000.0f;
+
+  // Update rate mismatch relative to per-frame bandwidth.
+  if (frame_type == kVideoFrameDelta) {
+    // TODO(marpan): Should we count dropped (zero size) frames in mismatch?
+    actual_.sum_delta_framesize_mismatch_layer[tl_idx] +=
+        fabs(framesize_kbits - target_.framesize_kbits_layer[tl_idx]) /
+        target_.framesize_kbits_layer[tl_idx];
+  } else {
+    float key_framesize_kbits = (frame_number == 0)
+                                    ? target_.key_framesize_kbits_initial
+                                    : target_.key_framesize_kbits;
+    actual_.sum_key_framesize_mismatch +=
+        fabs(framesize_kbits - key_framesize_kbits) / key_framesize_kbits;
+    ++actual_.num_key_frames;
+  }
+  actual_.sum_framesize_kbits += framesize_kbits;
+  actual_.sum_framesize_kbits_layer[tl_idx] += framesize_kbits;
+
+  // Encoded bitrate: from the start of the update/run to current frame.
+  actual_.kbps = actual_.sum_framesize_kbits * target_.fps / actual_.num_frames;
+  actual_.kbps_layer[tl_idx] = actual_.sum_framesize_kbits_layer[tl_idx] *
+                               target_.fps_layer[tl_idx] /
+                               actual_.num_frames_layer[tl_idx];
+
+  // Number of frames to hit target bitrate.
+  if (actual_.BitrateMismatchPercent(target_.kbps) <
+      kMaxBitrateMismatchPercent) {
+    actual_.num_frames_to_hit_target =
+        std::min(actual_.num_frames, actual_.num_frames_to_hit_target);
+  }
+}
+
+// Verify expected behavior of rate control.
+void VideoProcessorIntegrationTest::VerifyRateControlMetrics(
+    int rate_update_index,
+    const std::vector<RateControlThresholds>* rc_thresholds,
+    const std::vector<int>& num_dropped_frames,
+    const std::vector<int>& num_spatial_resizes) const {
+  if (!rc_thresholds)
+    return;
+
+  const RateControlThresholds& rc_threshold =
+      (*rc_thresholds)[rate_update_index];
+
+  EXPECT_LE(num_dropped_frames[rate_update_index],
+            rc_threshold.max_num_dropped_frames);
+  EXPECT_EQ(rc_threshold.num_spatial_resizes,
+            num_spatial_resizes[rate_update_index]);
+
+  EXPECT_LE(actual_.num_frames_to_hit_target,
+            rc_threshold.max_num_frames_to_hit_target);
+  EXPECT_EQ(rc_threshold.num_key_frames, actual_.num_key_frames);
+  EXPECT_LE(actual_.KeyFrameSizeMismatchPercent(),
+            rc_threshold.max_key_framesize_mismatch_percent);
+  EXPECT_LE(actual_.BitrateMismatchPercent(target_.kbps),
+            rc_threshold.max_bitrate_mismatch_percent);
+
+  const int num_temporal_layers = config_.NumberOfTemporalLayers();
+  for (int i = 0; i < num_temporal_layers; ++i) {
+    EXPECT_LE(actual_.DeltaFrameSizeMismatchPercent(i),
+              rc_threshold.max_delta_framesize_mismatch_percent);
+    EXPECT_LE(actual_.BitrateMismatchPercent(i, target_.kbps_layer[i]),
+              rc_threshold.max_bitrate_mismatch_percent);
+  }
+}
+
+void VideoProcessorIntegrationTest::UpdateQualityMetrics(int frame_number) {
+  FrameStatistic* frame_stat = stats_.GetFrame(frame_number);
+  if (frame_stat->decoding_successful) {
+    ++quality_.num_decoded_frames;
+    quality_.total_psnr += frame_stat->psnr;
+    quality_.total_ssim += frame_stat->ssim;
+    if (frame_stat->psnr < quality_.min_psnr)
+      quality_.min_psnr = frame_stat->psnr;
+    if (frame_stat->ssim < quality_.min_ssim)
+      quality_.min_ssim = frame_stat->ssim;
+  }
+}
+
+void VideoProcessorIntegrationTest::PrintRateControlMetrics(
+    int rate_update_index,
+    const std::vector<int>& num_dropped_frames,
+    const std::vector<int>& num_spatial_resizes) const {
+  if (rate_update_index == 0) {
+    printf("Rate control statistics\n==\n");
+  }
+
+  printf("Rate update #%d:\n", rate_update_index);
+  printf(" Target bitrate          : %d\n", target_.kbps);
+  printf(" Encoded bitrate         : %f\n", actual_.kbps);
+  printf(" Frame rate              : %d\n", target_.fps);
+  printf(" # processed frames      : %d\n", actual_.num_frames);
+  printf(" # frames to convergence : %d\n", actual_.num_frames_to_hit_target);
+  printf(" # dropped frames        : %d\n",
+         num_dropped_frames[rate_update_index]);
+  printf(" # spatial resizes       : %d\n",
+         num_spatial_resizes[rate_update_index]);
+  printf(" # key frames            : %d\n", actual_.num_key_frames);
+  printf(" Key frame rate mismatch : %d\n",
+         actual_.KeyFrameSizeMismatchPercent());
+
+  const int num_temporal_layers = config_.NumberOfTemporalLayers();
+  for (int i = 0; i < num_temporal_layers; ++i) {
+    printf(" Temporal layer #%d:\n", i);
+    printf("  TL%d target bitrate        : %f\n", i, target_.kbps_layer[i]);
+    printf("  TL%d encoded bitrate       : %f\n", i, actual_.kbps_layer[i]);
+    printf("  TL%d frame rate            : %f\n", i, target_.fps_layer[i]);
+    printf("  TL%d # processed frames    : %d\n", i,
+           actual_.num_frames_layer[i]);
+    printf("  TL%d frame size %% mismatch : %d\n", i,
+           actual_.DeltaFrameSizeMismatchPercent(i));
+    printf("  TL%d bitrate %% mismatch    : %d\n", i,
+           actual_.BitrateMismatchPercent(i, target_.kbps_layer[i]));
+    printf("  TL%d per-frame bitrate     : %f\n", i,
+           target_.framesize_kbits_layer[i]);
+  }
+  printf("\n");
+}
+
+void VideoProcessorIntegrationTest::PrintSettings() const {
+  printf("VideoProcessor settings\n==\n");
+  printf(" Total # of frames: %d", analysis_frame_reader_->NumberOfFrames());
+  printf("%s\n", config_.ToString().c_str());
+
+  printf("VideoProcessorIntegrationTest settings\n==\n");
+  const char* encoder_name = encoder_->ImplementationName();
+  printf(" Encoder implementation name: %s\n", encoder_name);
+  const char* decoder_name = decoder_->ImplementationName();
+  printf(" Decoder implementation name: %s\n", decoder_name);
+  if (strcmp(encoder_name, decoder_name) == 0) {
+    printf(" Codec implementation name : %s_%s\n", config_.CodecName().c_str(),
+           encoder_name);
+  }
+  printf("\n");
+}
+
+void VideoProcessorIntegrationTest::VerifyBitstream(
+    int frame_number,
+    const BitstreamThresholds& bs_thresholds) {
+  RTC_CHECK_GE(frame_number, 0);
+  const FrameStatistic* frame_stat = stats_.GetFrame(frame_number);
+  EXPECT_LE(*(frame_stat->max_nalu_length), bs_thresholds.max_nalu_length);
+}
+
+void VideoProcessorIntegrationTest::VerifyQualityMetrics(
+    const QualityThresholds& quality_thresholds) {
+  EXPECT_GT(quality_.num_decoded_frames, 0);
+  EXPECT_GT(quality_.total_psnr / quality_.num_decoded_frames,
+            quality_thresholds.min_avg_psnr);
+  EXPECT_GT(quality_.min_psnr, quality_thresholds.min_min_psnr);
+  EXPECT_GT(quality_.total_ssim / quality_.num_decoded_frames,
+            quality_thresholds.min_avg_ssim);
+  EXPECT_GT(quality_.min_ssim, quality_thresholds.min_min_ssim);
+}
+
+// Reset quantities before each encoder rate update.
+void VideoProcessorIntegrationTest::ResetRateControlMetrics(
+    int rate_update_index,
+    const std::vector<RateProfile>& rate_profiles) {
+  RTC_DCHECK_GT(rate_profiles.size(), rate_update_index);
+  // Set new rates.
+  target_.kbps = rate_profiles[rate_update_index].target_kbps;
+  target_.fps = rate_profiles[rate_update_index].input_fps;
+  SetRatesPerTemporalLayer();
+
+  // Set key frame target sizes.
+  if (rate_update_index == 0) {
+    target_.key_framesize_kbits_initial =
+        0.5 * kInitialBufferSize * target_.kbps_layer[0];
+  }
+
+  // Set maximum size of key frames, following setting in the VP8 wrapper.
+  float max_key_size = kScaleKeyFrameSize * kOptimalBufferSize * target_.fps;
+  // We don't know exact target size of the key frames (except for first one),
+  // but the minimum in libvpx is ~|3 * per_frame_bandwidth| and maximum is
+  // set by |max_key_size_ * per_frame_bandwidth|. Take middle point/average
+  // as reference for mismatch. Note key frames always correspond to base
+  // layer frame in this test.
+  target_.key_framesize_kbits =
+      0.5 * (3 + max_key_size) * target_.framesize_kbits_layer[0];
+
+  // Reset rate control metrics.
+  actual_ = TestResults();
+  actual_.num_frames_to_hit_target =  // Set to max number of frames.
+      rate_profiles[rate_update_index].frame_index_rate_update;
+}
+
+void VideoProcessorIntegrationTest::SetRatesPerTemporalLayer() {
+  const int num_temporal_layers = config_.NumberOfTemporalLayers();
+  RTC_DCHECK_LE(num_temporal_layers, kMaxNumTemporalLayers);
+
+  for (int i = 0; i < num_temporal_layers; ++i) {
+    float bitrate_ratio;
+    if (i > 0) {
+      bitrate_ratio = kVp8LayerRateAlloction[num_temporal_layers - 1][i] -
+                      kVp8LayerRateAlloction[num_temporal_layers - 1][i - 1];
+    } else {
+      bitrate_ratio = kVp8LayerRateAlloction[num_temporal_layers - 1][i];
+    }
+    target_.kbps_layer[i] = target_.kbps * bitrate_ratio;
+    target_.fps_layer[i] =
+        target_.fps / static_cast<float>(1 << (num_temporal_layers - 1));
+  }
+  if (num_temporal_layers == 3) {
+    target_.fps_layer[2] = target_.fps / 2.0f;
+  }
+
+  // Update layer per-frame-bandwidth.
+  for (int i = 0; i < num_temporal_layers; ++i) {
+    target_.framesize_kbits_layer[i] =
+        target_.kbps_layer[i] / target_.fps_layer[i];
+  }
+}
+
 }  // namespace test
 }  // namespace webrtc

@@ -11,12 +11,13 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/codecs/opus/opus_inst.h"
-#include "webrtc/modules/audio_coding/codecs/opus/opus_interface.h"
-#include "webrtc/modules/audio_coding/neteq/tools/audio_loop.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "modules/audio_coding/codecs/opus/opus_inst.h"
+#include "modules/audio_coding/codecs/opus/opus_interface.h"
+#include "modules/audio_coding/neteq/tools/audio_loop.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
@@ -334,7 +335,7 @@ void OpusTest::TestCbrEffect(bool cbr, int block_length_ms) {
       int32_t diff = std::abs((int32_t)encoded_bytes_ - prev_pkt_size);
       max_pkt_size_diff = std::max(max_pkt_size_diff, diff);
     }
-    prev_pkt_size = encoded_bytes_;
+    prev_pkt_size = rtc::checked_cast<int32_t>(encoded_bytes_);
   }
 
   if (cbr) {
@@ -455,6 +456,45 @@ TEST_P(OpusTest, OpusSetComplexity) {
 
   // Free memory.
   EXPECT_EQ(0, WebRtcOpus_EncoderFree(opus_encoder_));
+}
+
+TEST_P(OpusTest, OpusSetBandwidth) {
+  PrepareSpeechData(channels_, 20, 20);
+
+  int16_t audio_type;
+  std::unique_ptr<int16_t[]> output_data_decode(
+      new int16_t[kOpus20msFrameSamples * channels_]());
+
+  // Test without creating encoder memory.
+  EXPECT_EQ(-1,
+            WebRtcOpus_SetBandwidth(opus_encoder_, OPUS_BANDWIDTH_NARROWBAND));
+  EXPECT_EQ(-1, WebRtcOpus_GetBandwidth(opus_encoder_));
+
+  // Create encoder memory, try with different bandwidths.
+  EXPECT_EQ(0,
+            WebRtcOpus_EncoderCreate(&opus_encoder_, channels_, application_));
+  EXPECT_EQ(0, WebRtcOpus_DecoderCreate(&opus_decoder_, channels_));
+
+  EXPECT_EQ(-1, WebRtcOpus_SetBandwidth(opus_encoder_,
+                                        OPUS_BANDWIDTH_NARROWBAND - 1));
+  EXPECT_EQ(0,
+            WebRtcOpus_SetBandwidth(opus_encoder_, OPUS_BANDWIDTH_NARROWBAND));
+  EncodeDecode(opus_encoder_, speech_data_.GetNextBlock(), opus_decoder_,
+               output_data_decode.get(), &audio_type);
+  EXPECT_EQ(OPUS_BANDWIDTH_NARROWBAND, WebRtcOpus_GetBandwidth(opus_encoder_));
+  EXPECT_EQ(0, WebRtcOpus_SetBandwidth(opus_encoder_, OPUS_BANDWIDTH_FULLBAND));
+  EncodeDecode(opus_encoder_, speech_data_.GetNextBlock(), opus_decoder_,
+               output_data_decode.get(), &audio_type);
+  EXPECT_EQ(OPUS_BANDWIDTH_FULLBAND, WebRtcOpus_GetBandwidth(opus_encoder_));
+  EXPECT_EQ(
+      -1, WebRtcOpus_SetBandwidth(opus_encoder_, OPUS_BANDWIDTH_FULLBAND + 1));
+  EncodeDecode(opus_encoder_, speech_data_.GetNextBlock(), opus_decoder_,
+               output_data_decode.get(), &audio_type);
+  EXPECT_EQ(OPUS_BANDWIDTH_FULLBAND, WebRtcOpus_GetBandwidth(opus_encoder_));
+
+  // Free memory.
+  EXPECT_EQ(0, WebRtcOpus_EncoderFree(opus_encoder_));
+  EXPECT_EQ(0, WebRtcOpus_DecoderFree(opus_decoder_));
 }
 
 TEST_P(OpusTest, OpusForceChannels) {
@@ -736,7 +776,9 @@ TEST_P(OpusTest, OpusDecodeRepacketized) {
         WebRtcOpus_Encode(opus_encoder_, speech_block.data(),
                           rtc::CheckedDivExact(speech_block.size(), channels_),
                           kMaxBytes, bitstream_);
-    if (opus_repacketizer_cat(rp, bitstream_, encoded_bytes_) == OPUS_OK) {
+    if (opus_repacketizer_cat(
+            rp, bitstream_,
+            rtc::checked_cast<opus_int32>(encoded_bytes_)) == OPUS_OK) {
       ++num_packets;
       if (num_packets == kPackets) {
         break;

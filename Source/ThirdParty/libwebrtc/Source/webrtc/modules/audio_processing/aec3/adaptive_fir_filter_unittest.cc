@@ -8,28 +8,28 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/adaptive_fir_filter.h"
+#include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 
 #include <math.h>
 #include <algorithm>
 #include <numeric>
 #include <string>
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/random.h"
-#include "webrtc/base/safe_minmax.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_fft.h"
-#include "webrtc/modules/audio_processing/aec3/aec_state.h"
-#include "webrtc/modules/audio_processing/aec3/cascaded_biquad_filter.h"
-#include "webrtc/modules/audio_processing/aec3/render_signal_analyzer.h"
-#include "webrtc/modules/audio_processing/aec3/shadow_filter_update_gain.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
-#include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
+#include "modules/audio_processing/aec3/render_signal_analyzer.h"
+#include "modules/audio_processing/aec3/shadow_filter_update_gain.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "modules/audio_processing/test/echo_canceller_test_tools.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/numerics/safe_minmax.h"
+#include "rtc_base/random.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace aec3 {
@@ -305,10 +305,11 @@ TEST(AdaptiveFirFilter, FilterAndAdapt) {
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<float> n(kBlockSize, 0.f);
   std::vector<float> y(kBlockSize, 0.f);
-  AecState aec_state;
+  AecState aec_state(EchoCanceller3Config{});
   RenderSignalAnalyzer render_signal_analyzer;
   std::vector<float> e(kBlockSize, 0.f);
-  std::array<float, kFftLength> s;
+  std::array<float, kFftLength> s_scratch;
+  std::array<float, kBlockSize> s;
   FftData S;
   FftData G;
   FftData E;
@@ -336,10 +337,10 @@ TEST(AdaptiveFirFilter, FilterAndAdapt) {
       delay_buffer.Delay(x[0], y);
 
       RandomizeSampleVector(&random_generator, n);
-      constexpr float kNoiseScaling = 1.f / 100.f;
+      static constexpr float kNoiseScaling = 1.f / 100.f;
       std::transform(
           y.begin(), y.end(), n.begin(), y.begin(),
-          [kNoiseScaling](float a, float b) { return a + b * kNoiseScaling; });
+          [](float a, float b) { return a + b * kNoiseScaling; });
 
       x_hp_filter.Process(x[0]);
       y_hp_filter.Process(y);
@@ -348,20 +349,24 @@ TEST(AdaptiveFirFilter, FilterAndAdapt) {
       render_signal_analyzer.Update(render_buffer, aec_state.FilterDelay());
 
       filter.Filter(render_buffer, &S);
-      fft.Ifft(S, &s);
-      std::transform(y.begin(), y.end(), s.begin() + kFftLengthBy2, e.begin(),
+      fft.Ifft(S, &s_scratch);
+      std::transform(y.begin(), y.end(), s_scratch.begin() + kFftLengthBy2,
+                     e.begin(),
                      [&](float a, float b) { return a - b * kScale; });
       std::for_each(e.begin(), e.end(),
                     [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
       fft.ZeroPaddedFft(e, &E);
+      for (size_t k = 0; k < kBlockSize; ++k) {
+        s[k] = kScale * s_scratch[k + kFftLengthBy2];
+      }
 
       gain.Compute(render_buffer, render_signal_analyzer, E,
                    filter.SizePartitions(), false, &G);
       filter.Adapt(render_buffer, G);
       aec_state.HandleEchoPathChange(EchoPathVariability(false, false));
       aec_state.Update(filter.FilterFrequencyResponse(),
-                       rtc::Optional<size_t>(), render_buffer, E2_main, Y2,
-                       x[0], false);
+                       filter.FilterImpulseResponse(), true, rtc::nullopt,
+                       render_buffer, E2_main, Y2, x[0], s, false);
     }
     // Verify that the filter is able to perform well.
     EXPECT_LT(1000 * std::inner_product(e.begin(), e.end(), e.begin(), 0.f),

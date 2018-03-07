@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/stunport.h"
+#include "p2p/base/stunport.h"
 
-#include "webrtc/p2p/base/common.h"
-#include "webrtc/p2p/base/portallocator.h"
-#include "webrtc/p2p/base/stun.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/ipaddress.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/nethelpers.h"
+#include "p2p/base/common.h"
+#include "p2p/base/portallocator.h"
+#include "p2p/base/stun.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/ipaddress.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/nethelpers.h"
 
 namespace cricket {
 
@@ -33,23 +33,20 @@ class StunBindingRequest : public StunRequest {
                      int64_t start_time)
       : port_(port), server_addr_(addr), start_time_(start_time) {}
 
-  virtual ~StunBindingRequest() {
-  }
-
   const rtc::SocketAddress& server_addr() const { return server_addr_; }
 
-  virtual void Prepare(StunMessage* request) override {
+  void Prepare(StunMessage* request) override {
     request->SetType(STUN_BINDING_REQUEST);
   }
 
-  virtual void OnResponse(StunMessage* response) override {
+  void OnResponse(StunMessage* response) override {
     const StunAddressAttribute* addr_attr =
         response->GetAddress(STUN_ATTR_MAPPED_ADDRESS);
     if (!addr_attr) {
-      LOG(LS_ERROR) << "Binding response missing mapped address.";
+      RTC_LOG(LS_ERROR) << "Binding response missing mapped address.";
     } else if (addr_attr->family() != STUN_ADDRESS_IPV4 &&
                addr_attr->family() != STUN_ADDRESS_IPV6) {
-      LOG(LS_ERROR) << "Binding address has bad family";
+      RTC_LOG(LS_ERROR) << "Binding address has bad family";
     } else {
       rtc::SocketAddress addr(addr_attr->ipaddr(), addr_attr->port());
       port_->OnStunBindingRequestSucceeded(server_addr_, addr);
@@ -63,15 +60,15 @@ class StunBindingRequest : public StunRequest {
     }
   }
 
-  virtual void OnErrorResponse(StunMessage* response) override {
+  void OnErrorResponse(StunMessage* response) override {
     const StunErrorCodeAttribute* attr = response->GetErrorCode();
     if (!attr) {
-      LOG(LS_ERROR) << "Missing binding response error code.";
+      RTC_LOG(LS_ERROR) << "Missing binding response error code.";
     } else {
-      LOG(LS_ERROR) << "Binding error response:"
-                    << " class=" << attr->eclass()
-                    << " number=" << attr->number() << " reason='"
-                    << attr->reason() << "'";
+      RTC_LOG(LS_ERROR) << "Binding error response:"
+                        << " class=" << attr->eclass()
+                        << " number=" << attr->number() << " reason='"
+                        << attr->reason() << "'";
     }
 
     port_->OnStunBindingOrResolveRequestFailed(server_addr_);
@@ -84,10 +81,10 @@ class StunBindingRequest : public StunRequest {
           port_->stun_keepalive_delay());
     }
   }
-  virtual void OnTimeout() override {
-    LOG(LS_ERROR) << "Binding request timed out from "
-                  << port_->GetLocalAddress().ToSensitiveString() << " ("
-                  << port_->Network()->name() << ")";
+  void OnTimeout() override {
+    RTC_LOG(LS_ERROR) << "Binding request timed out from "
+                      << port_->GetLocalAddress().ToSensitiveString() << " ("
+                      << port_->Network()->name() << ")";
 
     port_->OnStunBindingOrResolveRequestFailed(server_addr_);
   }
@@ -170,7 +167,6 @@ UDPPort::UDPPort(rtc::Thread* thread,
            LOCAL_PORT_TYPE,
            factory,
            network,
-           socket->GetLocalAddress().ipaddr(),
            username,
            password),
       requests_(thread),
@@ -185,7 +181,6 @@ UDPPort::UDPPort(rtc::Thread* thread,
 UDPPort::UDPPort(rtc::Thread* thread,
                  rtc::PacketSocketFactory* factory,
                  rtc::Network* network,
-                 const rtc::IPAddress& ip,
                  uint16_t min_port,
                  uint16_t max_port,
                  const std::string& username,
@@ -196,7 +191,6 @@ UDPPort::UDPPort(rtc::Thread* thread,
            LOCAL_PORT_TYPE,
            factory,
            network,
-           ip,
            min_port,
            max_port,
            username,
@@ -215,7 +209,7 @@ bool UDPPort::Init() {
   if (!SharedSocket()) {
     RTC_DCHECK(socket_ == NULL);
     socket_ = socket_factory()->CreateUdpSocket(
-        rtc::SocketAddress(ip(), 0), min_port(), max_port());
+        rtc::SocketAddress(Network()->GetBestIP(), 0), min_port(), max_port());
     if (!socket_) {
       LOG_J(LS_WARNING, this) << "UDP socket creation failed";
       return false;
@@ -302,6 +296,24 @@ int UDPPort::GetError() {
   return error_;
 }
 
+bool UDPPort::HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
+                                   const char* data,
+                                   size_t size,
+                                   const rtc::SocketAddress& remote_addr,
+                                   const rtc::PacketTime& packet_time) {
+  // All packets given to UDP port will be consumed.
+  OnReadPacket(socket, data, size, remote_addr, packet_time);
+  return true;
+}
+
+bool UDPPort::SupportsProtocol(const std::string& protocol) const {
+  return protocol == UDP_PROTOCOL_NAME;
+}
+
+ProtocolType UDPPort::GetProtocol() const {
+  return PROTO_UDP;
+}
+
 void UDPPort::OnLocalAddressReady(rtc::AsyncPacketSocket* socket,
                                   const rtc::SocketAddress& address) {
   // When adapter enumeration is disabled and binding to the any address, the
@@ -379,8 +391,8 @@ void UDPPort::OnResolveResult(const rtc::SocketAddress& input,
   RTC_DCHECK(resolver_.get() != NULL);
 
   rtc::SocketAddress resolved;
-  if (error != 0 ||
-      !resolver_->GetResolvedAddress(input, ip().family(), &resolved))  {
+  if (error != 0 || !resolver_->GetResolvedAddress(
+                        input, Network()->GetBestIP().family(), &resolved)) {
     LOG_J(LS_WARNING, this) << "StunPort: stun host lookup received error "
                             << error;
     OnStunBindingOrResolveRequestFailed(input);
@@ -407,7 +419,7 @@ void UDPPort::SendStunBindingRequest(const rtc::SocketAddress& stun_addr) {
     } else {
       // Since we can't send stun messages to the server, we should mark this
       // port ready.
-      LOG(LS_WARNING) << "STUN server address is incompatible.";
+      RTC_LOG(LS_WARNING) << "STUN server address is incompatible.";
       OnStunBindingOrResolveRequestFailed(stun_addr);
     }
   }
@@ -503,7 +515,7 @@ void UDPPort::OnSendPacket(const void* data, size_t size, StunRequest* req) {
   StunBindingRequest* sreq = static_cast<StunBindingRequest*>(req);
   rtc::PacketOptions options(DefaultDscpValue());
   if (socket_->SendTo(data, size, sreq->server_addr(), options) < 0)
-    PLOG(LERROR, socket_->GetError()) << "sendto";
+    RTC_PLOG(LERROR, socket_->GetError()) << "sendto";
 }
 
 bool UDPPort::HasCandidateWithAddress(const rtc::SocketAddress& addr) const {
@@ -514,6 +526,51 @@ bool UDPPort::HasCandidateWithAddress(const rtc::SocketAddress& addr) const {
       return true;
   }
   return false;
+}
+
+StunPort* StunPort::Create(rtc::Thread* thread,
+                           rtc::PacketSocketFactory* factory,
+                           rtc::Network* network,
+                           uint16_t min_port,
+                           uint16_t max_port,
+                           const std::string& username,
+                           const std::string& password,
+                           const ServerAddresses& servers,
+                           const std::string& origin) {
+  StunPort* port = new StunPort(thread, factory, network, min_port, max_port,
+                                username, password, servers, origin);
+  if (!port->Init()) {
+    delete port;
+    port = NULL;
+  }
+  return port;
+}
+
+StunPort::StunPort(rtc::Thread* thread,
+                   rtc::PacketSocketFactory* factory,
+                   rtc::Network* network,
+                   uint16_t min_port,
+                   uint16_t max_port,
+                   const std::string& username,
+                   const std::string& password,
+                   const ServerAddresses& servers,
+                   const std::string& origin)
+    : UDPPort(thread,
+              factory,
+              network,
+              min_port,
+              max_port,
+              username,
+              password,
+              origin,
+              false) {
+  // UDPPort will set these to local udp, updating these to STUN.
+  set_type(STUN_PORT_TYPE);
+  set_server_addresses(servers);
+}
+
+void StunPort::PrepareAddress() {
+  SendStunBindingRequests();
 }
 
 }  // namespace cricket

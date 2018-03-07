@@ -10,12 +10,12 @@
 
 #define _USE_MATH_DEFINES
 
-#include "webrtc/common_audio/window_generator.h"
+#include "common_audio/window_generator.h"
 
 #include <cmath>
 #include <complex>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 using std::complex;
 

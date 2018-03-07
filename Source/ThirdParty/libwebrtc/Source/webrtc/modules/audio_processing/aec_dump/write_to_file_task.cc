@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec_dump/write_to_file_task.h"
+#include "modules/audio_processing/aec_dump/write_to_file_task.h"
 
-#include "webrtc/base/protobuf_utils.h"
+#include "rtc_base/protobuf_utils.h"
 
 namespace webrtc {
 

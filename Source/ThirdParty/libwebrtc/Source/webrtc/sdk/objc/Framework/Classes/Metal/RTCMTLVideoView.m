@@ -15,6 +15,7 @@
 
 #import "WebRTC/RTCLogging.h"
 #import "WebRTC/RTCVideoFrame.h"
+#import "WebRTC/RTCVideoFrameBuffer.h"
 
 #import "RTCMTLI420Renderer.h"
 #import "RTCMTLNV12Renderer.h"
@@ -90,13 +91,14 @@
     _metalView.delegate = self;
     [self addSubview:_metalView];
     _metalView.contentMode = UIViewContentModeScaleAspectFit;
-    _metalView.translatesAutoresizingMaskIntoConstraints = NO;
-    UILayoutGuide *margins = self.layoutMarginsGuide;
-    [_metalView.topAnchor constraintEqualToAnchor:margins.topAnchor].active = YES;
-    [_metalView.bottomAnchor constraintEqualToAnchor:margins.bottomAnchor].active = YES;
-    [_metalView.leftAnchor constraintEqualToAnchor:margins.leftAnchor].active = YES;
-    [_metalView.rightAnchor constraintEqualToAnchor:margins.rightAnchor].active = YES;
   }
+}
+
+#pragma mark - Private
+
+- (void)layoutSubviews {
+  [super layoutSubviews];
+  _metalView.frame = self.bounds;
 }
 
 #pragma mark - MTKViewDelegate methods
@@ -108,7 +110,7 @@
   }
 
   id<RTCMTLRenderer> renderer = nil;
-  if (self.videoFrame.nativeHandle) {
+  if ([self.videoFrame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
     if (!self.rendererNV12) {
       self.rendererNV12 = [RTCMTLVideoView createNV12Renderer];
       if (![self.rendererNV12 addRenderingDestination:self.metalView]) {

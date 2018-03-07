@@ -8,14 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_AUDIO_CODECS_AUDIO_ENCODER_FACTORY_TEMPLATE_H_
-#define WEBRTC_API_AUDIO_CODECS_AUDIO_ENCODER_FACTORY_TEMPLATE_H_
+#ifndef API_AUDIO_CODECS_AUDIO_ENCODER_FACTORY_TEMPLATE_H_
+#define API_AUDIO_CODECS_AUDIO_ENCODER_FACTORY_TEMPLATE_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_encoder_factory.h"
-#include "webrtc/base/scoped_ref_ptr.h"
+#include "api/audio_codecs/audio_encoder_factory.h"
+#include "rtc_base/refcountedobject.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -30,7 +31,7 @@ struct Helper<> {
   static void AppendSupportedEncoders(std::vector<AudioCodecSpec>* specs) {}
   static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
       const SdpAudioFormat& format) {
-    return rtc::Optional<AudioCodecInfo>();
+    return rtc::nullopt;
   }
   static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       int payload_type,
@@ -139,4 +140,4 @@ rtc::scoped_refptr<AudioEncoderFactory> CreateAudioEncoderFactory() {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_AUDIO_CODECS_AUDIO_ENCODER_FACTORY_TEMPLATE_H_
+#endif  // API_AUDIO_CODECS_AUDIO_ENCODER_FACTORY_TEMPLATE_H_

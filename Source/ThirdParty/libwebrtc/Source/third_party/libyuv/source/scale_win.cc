@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 // This module is for 32 bit Visual C x86 and clangcl
-#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86)
+#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER)
 
 // Offsets for source bytes 0 to 9
 static uvec8 kShuf0 = {0,   1,   3,   4,   5,   7,   8,   9,
@@ -816,7 +816,7 @@ __declspec(naked) void ScaleAddRow_SSE2(const uint8* src_ptr,
     mov        ecx, [esp + 12]  // src_width
     pxor       xmm5, xmm5
 
-    // sum rows
+        // sum rows
   xloop:
     movdqu     xmm3, [eax]  // read 16 bytes
     lea        eax, [eax + 16]
@@ -847,7 +847,7 @@ __declspec(naked) void ScaleAddRow_AVX2(const uint8* src_ptr,
     mov         ecx, [esp + 12]  // src_width
     vpxor       ymm5, ymm5, ymm5
 
-    // sum rows
+        // sum rows
   xloop:
     vmovdqu     ymm3, [eax]  // read 32 bytes
     lea         eax, [eax + 32]
@@ -939,7 +939,7 @@ __declspec(naked) void ScaleFilterCols_SSSE3(uint8* dst_ptr,
     add        ecx, 2 - 1
     jl         xloop99
 
-        // 1 pixel remainder
+            // 1 pixel remainder
     movzx      ebx, word ptr [esi + eax]  // 2 source x0 pixels
     movd       xmm0, ebx
     psrlw      xmm2, 9  // 7 bit fractions.
@@ -1194,7 +1194,7 @@ __declspec(naked) void ScaleARGBCols_SSE2(uint8* dst_argb,
     sub        ecx, 4
     jl         xloop49
 
-    // 4 Pixel loop.
+        // 4 Pixel loop.
  xloop4:
     movd       xmm0, [esi + eax * 4]  // 1 source x0 pixels
     movd       xmm1, [esi + edx * 4]  // 1 source x1 pixels
@@ -1218,7 +1218,7 @@ __declspec(naked) void ScaleARGBCols_SSE2(uint8* dst_argb,
     test       ecx, 2
     je         xloop29
 
-    // 2 Pixels.
+        // 2 Pixels.
     movd       xmm0, [esi + eax * 4]  // 1 source x0 pixels
     movd       xmm1, [esi + edx * 4]  // 1 source x1 pixels
     pextrw     eax, xmm2, 5  // get x2 integer.
@@ -1231,7 +1231,7 @@ __declspec(naked) void ScaleARGBCols_SSE2(uint8* dst_argb,
     test       ecx, 1
     je         xloop99
 
-    // 1 Pixels.
+        // 1 Pixels.
     movd       xmm0, [esi + eax * 4]  // 1 source x2 pixels
     movd       dword ptr [edi], xmm0
  xloop99:
@@ -1309,7 +1309,7 @@ __declspec(naked) void ScaleARGBFilterCols_SSSE3(uint8* dst_argb,
     add        ecx, 2 - 1
     jl         xloop99
 
-        // 1 pixel remainder
+            // 1 pixel remainder
     psrlw      xmm2, 9  // 7 bit fractions.
     movq       xmm0, qword ptr [esi + eax * 4]  // 2 source x0 pixels
     pshufb     xmm2, xmm5  // 00000000

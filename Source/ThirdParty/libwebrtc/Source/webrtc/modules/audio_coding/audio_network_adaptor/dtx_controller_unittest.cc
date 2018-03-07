@@ -10,8 +10,8 @@
 
 #include <memory>
 
-#include "webrtc/modules/audio_coding/audio_network_adaptor/dtx_controller.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_coding/audio_network_adaptor/dtx_controller.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -39,7 +39,7 @@ void CheckDecision(DtxController* controller,
   }
   AudioEncoderRuntimeConfig config;
   controller->MakeDecision(&config);
-  EXPECT_EQ(rtc::Optional<bool>(expected_dtx_enabled), config.enable_dtx);
+  EXPECT_EQ(expected_dtx_enabled, config.enable_dtx);
 }
 
 }  // namespace
@@ -47,43 +47,35 @@ void CheckDecision(DtxController* controller,
 TEST(DtxControllerTest, OutputInitValueWhenUplinkBandwidthUnknown) {
   constexpr bool kInitialDtxEnabled = true;
   auto controller = CreateController(kInitialDtxEnabled);
-  CheckDecision(controller.get(), rtc::Optional<int>(), kInitialDtxEnabled);
+  CheckDecision(controller.get(), rtc::nullopt, kInitialDtxEnabled);
 }
 
 TEST(DtxControllerTest, TurnOnDtxForLowUplinkBandwidth) {
   auto controller = CreateController(false);
-  CheckDecision(controller.get(), rtc::Optional<int>(kDtxEnablingBandwidthBps),
-                true);
+  CheckDecision(controller.get(), kDtxEnablingBandwidthBps, true);
 }
 
 TEST(DtxControllerTest, TurnOffDtxForHighUplinkBandwidth) {
   auto controller = CreateController(true);
-  CheckDecision(controller.get(), rtc::Optional<int>(kDtxDisablingBandwidthBps),
-                false);
+  CheckDecision(controller.get(), kDtxDisablingBandwidthBps, false);
 }
 
 TEST(DtxControllerTest, MaintainDtxOffForMediumUplinkBandwidth) {
   auto controller = CreateController(false);
-  CheckDecision(controller.get(), rtc::Optional<int>(kMediumBandwidthBps),
-                false);
+  CheckDecision(controller.get(), kMediumBandwidthBps, false);
 }
 
 TEST(DtxControllerTest, MaintainDtxOnForMediumUplinkBandwidth) {
   auto controller = CreateController(true);
-  CheckDecision(controller.get(), rtc::Optional<int>(kMediumBandwidthBps),
-                true);
+  CheckDecision(controller.get(), kMediumBandwidthBps, true);
 }
 
 TEST(DtxControllerTest, CheckBehaviorOnChangingUplinkBandwidth) {
   auto controller = CreateController(false);
-  CheckDecision(controller.get(), rtc::Optional<int>(kMediumBandwidthBps),
-                false);
-  CheckDecision(controller.get(), rtc::Optional<int>(kDtxEnablingBandwidthBps),
-                true);
-  CheckDecision(controller.get(), rtc::Optional<int>(kMediumBandwidthBps),
-                true);
-  CheckDecision(controller.get(), rtc::Optional<int>(kDtxDisablingBandwidthBps),
-                false);
+  CheckDecision(controller.get(), kMediumBandwidthBps, false);
+  CheckDecision(controller.get(), kDtxEnablingBandwidthBps, true);
+  CheckDecision(controller.get(), kMediumBandwidthBps, true);
+  CheckDecision(controller.get(), kDtxDisablingBandwidthBps, false);
 }
 
 }  // namespace webrtc

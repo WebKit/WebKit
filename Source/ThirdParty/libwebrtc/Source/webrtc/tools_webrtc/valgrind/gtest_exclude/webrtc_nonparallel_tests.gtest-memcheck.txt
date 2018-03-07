@@ -1,0 +1,8 @@
+# Fails when run under memcheck
+# https://code.google.com/p/webrtc/issues/detail?id=4958
+PhysicalSocketTest.TestUdpReadyToSendIPv4
+PhysicalSocketTest.TestUdpIPv4
+PhysicalSocketTest.TestSocketRecvTimestampIPv4
+# Relies on actual CPU timing, so can be flaky on memcheck.
+CpuTimeTest.TwoThreads
+CpuTimeTest.Sleeping

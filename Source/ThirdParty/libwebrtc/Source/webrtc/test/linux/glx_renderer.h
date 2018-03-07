@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_LINUX_GLX_RENDERER_H_
-#define WEBRTC_TEST_LINUX_GLX_RENDERER_H_
+#ifndef TEST_LINUX_GLX_RENDERER_H_
+#define TEST_LINUX_GLX_RENDERER_H_
 
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
-#include "webrtc/test/gl/gl_renderer.h"
-#include "webrtc/typedefs.h"
+#include "test/gl/gl_renderer.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -44,4 +44,4 @@ class GlxRenderer : public GlRenderer {
 }  // test
 }  // webrtc
 
-#endif  // WEBRTC_TEST_LINUX_GLX_RENDERER_H_
+#endif  // TEST_LINUX_GLX_RENDERER_H_

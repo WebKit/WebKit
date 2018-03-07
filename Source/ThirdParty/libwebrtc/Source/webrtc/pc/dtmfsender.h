@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_PC_DTMFSENDER_H_
-#define WEBRTC_PC_DTMFSENDER_H_
+#ifndef PC_DTMFSENDER_H_
+#define PC_DTMFSENDER_H_
 
 #include <string>
 
-#include "webrtc/api/dtmfsenderinterface.h"
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/proxy.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/refcount.h"
+#include "api/dtmfsenderinterface.h"
+#include "api/mediastreaminterface.h"
+#include "api/proxy.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/refcount.h"
 
 // DtmfSender is the native implementation of the RTCDTMFSender defined by
 // the WebRTC W3C Editor's Draft.
@@ -121,4 +121,4 @@ bool GetDtmfCode(char tone, int* code);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_PC_DTMFSENDER_H_
+#endif  // PC_DTMFSENDER_H_

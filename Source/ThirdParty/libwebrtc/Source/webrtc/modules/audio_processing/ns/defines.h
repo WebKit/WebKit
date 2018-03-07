@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_NS_MAIN_SOURCE_DEFINES_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_NS_MAIN_SOURCE_DEFINES_H_
+#ifndef MODULES_AUDIO_PROCESSING_NS_MAIN_SOURCE_DEFINES_H_
+#define MODULES_AUDIO_PROCESSING_NS_MAIN_SOURCE_DEFINES_H_
 
 #define BLOCKL_MAX          160 // max processing block length: 160
 #define ANAL_BLOCKL_MAX     256 // max analysis block length: 256
@@ -46,4 +46,4 @@
 #define GAMMA_PAUSE         (float)0.05 // update for conservative noise estimate
 //
 #define B_LIM               (float)0.5  // threshold in final energy gain factor calculation
-#endif // WEBRTC_MODULES_AUDIO_PROCESSING_NS_MAIN_SOURCE_DEFINES_H_
+#endif // MODULES_AUDIO_PROCESSING_NS_MAIN_SOURCE_DEFINES_H_

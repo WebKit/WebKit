@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_X11_X_ERROR_TRAP_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_X11_X_ERROR_TRAP_H_
+#ifndef MODULES_DESKTOP_CAPTURE_X11_X_ERROR_TRAP_H_
+#define MODULES_DESKTOP_CAPTURE_X11_X_ERROR_TRAP_H_
 
 #include <X11/Xlib.h>
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -36,4 +36,4 @@ class XErrorTrap {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_X11_X_ERROR_TRAP_H_
+#endif  // MODULES_DESKTOP_CAPTURE_X11_X_ERROR_TRAP_H_

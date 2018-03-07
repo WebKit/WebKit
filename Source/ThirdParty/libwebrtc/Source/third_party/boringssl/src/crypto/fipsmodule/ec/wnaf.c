@@ -78,19 +78,18 @@
 #include "../../internal.h"
 
 
-/* This file implements the wNAF-based interleaving multi-exponentiation method
- * at:
- *   http://link.springer.com/chapter/10.1007%2F3-540-45537-X_13
- *   http://www.bmoeller.de/pdf/TI-01-08.multiexp.pdf */
+// This file implements the wNAF-based interleaving multi-exponentiation method
+// at:
+//   http://link.springer.com/chapter/10.1007%2F3-540-45537-X_13
+//   http://www.bmoeller.de/pdf/TI-01-08.multiexp.pdf
 
-/* Determine the modified width-(w+1) Non-Adjacent Form (wNAF) of 'scalar'.
- * This is an array  r[]  of values that are either zero or odd with an
- * absolute value less than  2^w  satisfying
- *     scalar = \sum_j r[j]*2^j
- * where at most one of any  w+1  consecutive digits is non-zero
- * with the exception that the most significant digit may be only
- * w-1 zeros away from that next non-zero digit.
- */
+// Determine the modified width-(w+1) Non-Adjacent Form (wNAF) of 'scalar'.
+// This is an array  r[]  of values that are either zero or odd with an
+// absolute value less than  2^w  satisfying
+//     scalar = \sum_j r[j]*2^j
+// where at most one of any  w+1  consecutive digits is non-zero
+// with the exception that the most significant digit may be only
+// w-1 zeros away from that next non-zero digit.
 static int8_t *compute_wNAF(const BIGNUM *scalar, int w, size_t *ret_len) {
   int window_val;
   int ok = 0;
@@ -110,28 +109,23 @@ static int8_t *compute_wNAF(const BIGNUM *scalar, int w, size_t *ret_len) {
     return r;
   }
 
-  /* 'int8_t' can represent integers with absolute values less than 2^7. */
+  // 'int8_t' can represent integers with absolute values less than 2^7.
   if (w <= 0 || w > 7) {
     OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
     goto err;
   }
-  bit = 1 << w;        /* at most 128 */
-  next_bit = bit << 1; /* at most 256 */
-  mask = next_bit - 1; /* at most 255 */
+  bit = 1 << w;         // at most 128
+  next_bit = bit << 1;  // at most 256
+  mask = next_bit - 1;  // at most 255
 
   if (BN_is_negative(scalar)) {
     sign = -1;
   }
 
-  if (scalar->d == NULL || scalar->top == 0) {
-    OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
-    goto err;
-  }
-
   len = BN_num_bits(scalar);
-  /* The modified wNAF may be one digit longer than binary representation
-   * (*ret_len will be set to the actual length, i.e. at most
-   * BN_num_bits(scalar) + 1). */
+  // The modified wNAF may be one digit longer than binary representation
+  // (*ret_len will be set to the actual length, i.e. at most
+  // BN_num_bits(scalar) + 1).
   r = OPENSSL_malloc(len + 1);
   if (r == NULL) {
     OPENSSL_PUT_ERROR(EC, ERR_R_MALLOC_FAILURE);
@@ -139,30 +133,30 @@ static int8_t *compute_wNAF(const BIGNUM *scalar, int w, size_t *ret_len) {
   }
   window_val = scalar->d[0] & mask;
   j = 0;
-  /* If j+w+1 >= len, window_val will not increase. */
+  // If j+w+1 >= len, window_val will not increase.
   while (window_val != 0 || j + w + 1 < len) {
     int digit = 0;
 
-    /* 0 <= window_val <= 2^(w+1) */
+    // 0 <= window_val <= 2^(w+1)
 
     if (window_val & 1) {
-      /* 0 < window_val < 2^(w+1) */
+      // 0 < window_val < 2^(w+1)
 
       if (window_val & bit) {
-        digit = window_val - next_bit; /* -2^w < digit < 0 */
+        digit = window_val - next_bit;  // -2^w < digit < 0
 
-#if 1 /* modified wNAF */
+#if 1  // modified wNAF
         if (j + w + 1 >= len) {
-          /* special case for generating modified wNAFs:
-           * no new bits will be added into window_val,
-           * so using a positive digit here will decrease
-           * the total length of the representation */
+          // special case for generating modified wNAFs:
+          // no new bits will be added into window_val,
+          // so using a positive digit here will decrease
+          // the total length of the representation
 
-          digit = window_val & (mask >> 1); /* 0 < digit < 2^w */
+          digit = window_val & (mask >> 1);  // 0 < digit < 2^w
         }
 #endif
       } else {
-        digit = window_val; /* 0 < digit < 2^w */
+        digit = window_val;  // 0 < digit < 2^w
       }
 
       if (digit <= -bit || digit >= bit || !(digit & 1)) {
@@ -172,8 +166,8 @@ static int8_t *compute_wNAF(const BIGNUM *scalar, int w, size_t *ret_len) {
 
       window_val -= digit;
 
-      /* Now window_val is 0 or 2^(w+1) in standard wNAF generation;
-       * for modified window NAFs, it may also be 2^w. */
+      // Now window_val is 0 or 2^(w+1) in standard wNAF generation;
+      // for modified window NAFs, it may also be 2^w.
       if (window_val != 0 && window_val != next_bit && window_val != bit) {
         OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
         goto err;
@@ -210,10 +204,9 @@ err:
 }
 
 
-/* TODO: table should be optimised for the wNAF-based implementation,
- *       sometimes smaller windows will give better performance
- *       (thus the boundaries should be increased)
- */
+// TODO: table should be optimised for the wNAF-based implementation,
+//       sometimes smaller windows will give better performance
+//       (thus the boundaries should be increased)
 static size_t window_bits_for_scalar_size(size_t b) {
   if (b >= 2000) {
     return 6;
@@ -238,8 +231,9 @@ static size_t window_bits_for_scalar_size(size_t b) {
   return 1;
 }
 
-int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
-                const EC_POINT *p, const BIGNUM *p_scalar, BN_CTX *ctx) {
+int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r,
+                const EC_SCALAR *g_scalar_raw, const EC_POINT *p,
+                const EC_SCALAR *p_scalar_raw, BN_CTX *ctx) {
   BN_CTX *new_ctx = NULL;
   const EC_POINT *generator = NULL;
   EC_POINT *tmp = NULL;
@@ -248,14 +242,14 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
   int k;
   int r_is_inverted = 0;
   int r_is_at_infinity = 1;
-  size_t *wsize = NULL;      /* individual window sizes */
-  int8_t **wNAF = NULL; /* individual wNAFs */
+  size_t *wsize = NULL;      // individual window sizes
+  int8_t **wNAF = NULL;  // individual wNAFs
   size_t *wNAF_len = NULL;
   size_t max_len = 0;
   size_t num_val = 0;
-  EC_POINT **val = NULL; /* precomputation */
+  EC_POINT **val = NULL;  // precomputation
   EC_POINT **v;
-  EC_POINT ***val_sub = NULL; /* pointers to sub-arrays of 'val' */
+  EC_POINT ***val_sub = NULL;  // pointers to sub-arrays of 'val'
   int ret = 0;
 
   if (ctx == NULL) {
@@ -264,13 +258,32 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
       goto err;
     }
   }
+  BN_CTX_start(ctx);
 
-  /* TODO: This function used to take |points| and |scalars| as arrays of
-   * |num| elements. The code below should be simplified to work in terms of |p|
-   * and |p_scalar|. */
+  // Convert from |EC_SCALAR| to |BIGNUM|. |BIGNUM| is not constant-time, but
+  // neither is the rest of this function.
+  BIGNUM *g_scalar = NULL, *p_scalar = NULL;
+  if (g_scalar_raw != NULL) {
+    g_scalar = BN_CTX_get(ctx);
+    if (g_scalar == NULL ||
+        !bn_set_words(g_scalar, g_scalar_raw->words, group->order.top)) {
+      goto err;
+    }
+  }
+  if (p_scalar_raw != NULL) {
+    p_scalar = BN_CTX_get(ctx);
+    if (p_scalar == NULL ||
+        !bn_set_words(p_scalar, p_scalar_raw->words, group->order.top)) {
+      goto err;
+    }
+  }
+
+  // TODO: This function used to take |points| and |scalars| as arrays of
+  // |num| elements. The code below should be simplified to work in terms of |p|
+  // and |p_scalar|.
   size_t num = p != NULL ? 1 : 0;
   const EC_POINT **points = p != NULL ? &p : NULL;
-  const BIGNUM **scalars = p != NULL ? &p_scalar : NULL;
+  BIGNUM **scalars = p != NULL ? &p_scalar : NULL;
 
   total_num = num;
 
@@ -281,7 +294,7 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
       goto err;
     }
 
-    ++total_num; /* treat 'g_scalar' like 'num'-th element of 'scalars' */
+    ++total_num;  // treat 'g_scalar' like 'num'-th element of 'scalars'
   }
 
 
@@ -290,7 +303,7 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
   wNAF = OPENSSL_malloc(total_num * sizeof(wNAF[0]));
   val_sub = OPENSSL_malloc(total_num * sizeof(val_sub[0]));
 
-  /* Ensure wNAF is initialised in case we end up going to err. */
+  // Ensure wNAF is initialised in case we end up going to err.
   if (wNAF != NULL) {
     OPENSSL_memset(wNAF, 0, total_num * sizeof(wNAF[0]));
   }
@@ -300,7 +313,7 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
     goto err;
   }
 
-  /* num_val will be the total number of temporarily precomputed points */
+  // num_val will be the total number of temporarily precomputed points
   num_val = 0;
 
   for (i = 0; i < total_num; i++) {
@@ -319,8 +332,8 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
     }
   }
 
-  /* All points we precompute now go into a single array 'val'. 'val_sub[i]' is
-   * a pointer to the subarray for the i-th point. */
+  // All points we precompute now go into a single array 'val'. 'val_sub[i]' is
+  // a pointer to the subarray for the i-th point.
   val = OPENSSL_malloc(num_val * sizeof(val[0]));
   if (val == NULL) {
     OPENSSL_PUT_ERROR(EC, ERR_R_MALLOC_FAILURE);
@@ -328,7 +341,7 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
   }
   OPENSSL_memset(val, 0, num_val * sizeof(val[0]));
 
-  /* allocate points for precomputation */
+  // allocate points for precomputation
   v = val;
   for (i = 0; i < total_num; i++) {
     val_sub[i] = v;
@@ -349,12 +362,11 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
     goto err;
   }
 
-  /* prepare precomputed values:
-   *    val_sub[i][0] :=     points[i]
-   *    val_sub[i][1] := 3 * points[i]
-   *    val_sub[i][2] := 5 * points[i]
-   *    ...
-   */
+  // prepare precomputed values:
+  //    val_sub[i][0] :=     points[i]
+  //    val_sub[i][1] := 3 * points[i]
+  //    val_sub[i][2] := 5 * points[i]
+  //    ...
   for (i = 0; i < total_num; i++) {
     if (i < num) {
       if (!EC_POINT_copy(val_sub[i][0], points[i])) {
@@ -376,7 +388,7 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
     }
   }
 
-#if 1 /* optional; window_bits_for_scalar_size assumes we do this step */
+#if 1  // optional; window_bits_for_scalar_size assumes we do this step
   if (!EC_POINTs_make_affine(group, num_val, val, ctx)) {
     goto err;
   }
@@ -408,7 +420,7 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
             r_is_inverted = !r_is_inverted;
           }
 
-          /* digit > 0 */
+          // digit > 0
 
           if (r_is_at_infinity) {
             if (!EC_POINT_copy(r, val_sub[i][digit >> 1])) {
@@ -436,6 +448,9 @@ int ec_wNAF_mul(const EC_GROUP *group, EC_POINT *r, const BIGNUM *g_scalar,
   ret = 1;
 
 err:
+  if (ctx != NULL) {
+    BN_CTX_end(ctx);
+  }
   BN_CTX_free(new_ctx);
   EC_POINT_free(tmp);
   OPENSSL_free(wsize);
@@ -449,7 +464,7 @@ err:
   }
   if (val != NULL) {
     for (i = 0; i < num_val; i++) {
-      EC_POINT_clear_free(val[i]);
+      EC_POINT_free(val[i]);
     }
 
     OPENSSL_free(val);

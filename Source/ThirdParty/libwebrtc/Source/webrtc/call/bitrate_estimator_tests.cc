@@ -12,18 +12,18 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/call/call.h"
-#include "webrtc/test/call_test.h"
-#include "webrtc/test/direct_transport.h"
-#include "webrtc/test/encoder_settings.h"
-#include "webrtc/test/fake_decoder.h"
-#include "webrtc/test/fake_encoder.h"
-#include "webrtc/test/frame_generator_capturer.h"
-#include "webrtc/test/gtest.h"
+#include "call/call.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/thread_annotations.h"
+#include "test/call_test.h"
+#include "test/direct_transport.h"
+#include "test/encoder_settings.h"
+#include "test/fake_decoder.h"
+#include "test/fake_encoder.h"
+#include "test/frame_generator_capturer.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace {
@@ -83,8 +83,8 @@ class LogObserver {
    private:
     typedef std::list<std::string> Strings;
     rtc::CriticalSection crit_sect_;
-    Strings received_log_lines_ GUARDED_BY(crit_sect_);
-    Strings expected_log_lines_ GUARDED_BY(crit_sect_);
+    Strings received_log_lines_ RTC_GUARDED_BY(crit_sect_);
+    Strings expected_log_lines_ RTC_GUARDED_BY(crit_sect_);
     rtc::Event done_;
   };
 
@@ -102,51 +102,55 @@ class BitrateEstimatorTest : public test::CallTest {
   virtual ~BitrateEstimatorTest() { EXPECT_TRUE(streams_.empty()); }
 
   virtual void SetUp() {
-    Call::Config config(event_log_.get());
-    receiver_call_.reset(Call::Create(config));
-    sender_call_.reset(Call::Create(config));
+    task_queue_.SendTask([this]() {
+      Call::Config config(event_log_.get());
+      receiver_call_.reset(Call::Create(config));
+      sender_call_.reset(Call::Create(config));
 
-    send_transport_.reset(
-        new test::DirectTransport(sender_call_.get(), payload_type_map_));
-    send_transport_->SetReceiver(receiver_call_->Receiver());
-    receive_transport_.reset(
-        new test::DirectTransport(receiver_call_.get(), payload_type_map_));
-    receive_transport_->SetReceiver(sender_call_->Receiver());
+      send_transport_.reset(new test::DirectTransport(
+          &task_queue_, sender_call_.get(), payload_type_map_));
+      send_transport_->SetReceiver(receiver_call_->Receiver());
+      receive_transport_.reset(new test::DirectTransport(
+          &task_queue_, receiver_call_.get(), payload_type_map_));
+      receive_transport_->SetReceiver(sender_call_->Receiver());
 
-    video_send_config_ = VideoSendStream::Config(send_transport_.get());
-    video_send_config_.rtp.ssrcs.push_back(kVideoSendSsrcs[0]);
-    // Encoders will be set separately per stream.
-    video_send_config_.encoder_settings.encoder = nullptr;
-    video_send_config_.encoder_settings.payload_name = "FAKE";
-    video_send_config_.encoder_settings.payload_type =
-        kFakeVideoSendPayloadType;
-    test::FillEncoderConfiguration(1, &video_encoder_config_);
+      video_send_config_ = VideoSendStream::Config(send_transport_.get());
+      video_send_config_.rtp.ssrcs.push_back(kVideoSendSsrcs[0]);
+      // Encoders will be set separately per stream.
+      video_send_config_.encoder_settings.encoder = nullptr;
+      video_send_config_.encoder_settings.payload_name = "FAKE";
+      video_send_config_.encoder_settings.payload_type =
+          kFakeVideoSendPayloadType;
+      test::FillEncoderConfiguration(1, &video_encoder_config_);
 
-    receive_config_ = VideoReceiveStream::Config(receive_transport_.get());
-    // receive_config_.decoders will be set by every stream separately.
-    receive_config_.rtp.remote_ssrc = video_send_config_.rtp.ssrcs[0];
-    receive_config_.rtp.local_ssrc = kReceiverLocalVideoSsrc;
-    receive_config_.rtp.remb = true;
-    receive_config_.rtp.extensions.push_back(
-        RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
-    receive_config_.rtp.extensions.push_back(
-        RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId));
+      receive_config_ = VideoReceiveStream::Config(receive_transport_.get());
+      // receive_config_.decoders will be set by every stream separately.
+      receive_config_.rtp.remote_ssrc = video_send_config_.rtp.ssrcs[0];
+      receive_config_.rtp.local_ssrc = kReceiverLocalVideoSsrc;
+      receive_config_.rtp.remb = true;
+      receive_config_.rtp.extensions.push_back(
+          RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
+      receive_config_.rtp.extensions.push_back(
+          RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId));
+    });
   }
 
   virtual void TearDown() {
-    std::for_each(streams_.begin(), streams_.end(),
-                  std::mem_fun(&Stream::StopSending));
+    task_queue_.SendTask([this]() {
+      std::for_each(streams_.begin(), streams_.end(),
+                    std::mem_fun(&Stream::StopSending));
 
-    send_transport_->StopSending();
-    receive_transport_->StopSending();
+      while (!streams_.empty()) {
+        delete streams_.back();
+        streams_.pop_back();
+      }
 
-    while (!streams_.empty()) {
-      delete streams_.back();
-      streams_.pop_back();
-    }
+      send_transport_.reset();
+      receive_transport_.reset();
 
-    receiver_call_.reset();
-    sender_call_.reset();
+      receiver_call_.reset();
+      sender_call_.reset();
+    });
   }
 
  protected:
@@ -241,66 +245,80 @@ static const char* kSingleStreamLog =
     "RemoteBitrateEstimatorSingleStream: Instantiating.";
 
 TEST_F(BitrateEstimatorTest, InstantiatesTOFPerDefaultForVideo) {
-  video_send_config_.rtp.extensions.push_back(
-      RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  streams_.push_back(new Stream(this));
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions.push_back(
+        RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    streams_.push_back(new Stream(this));
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 }
 
 TEST_F(BitrateEstimatorTest, ImmediatelySwitchToASTForVideo) {
-  video_send_config_.rtp.extensions.push_back(
-      RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId));
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  receiver_log_.PushExpectedLogLine("Switching to absolute send time RBE.");
-  receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
-  streams_.push_back(new Stream(this));
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions.push_back(
+        RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId));
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    receiver_log_.PushExpectedLogLine("Switching to absolute send time RBE.");
+    receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
+    streams_.push_back(new Stream(this));
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 }
 
 TEST_F(BitrateEstimatorTest, SwitchesToASTForVideo) {
-  video_send_config_.rtp.extensions.push_back(
-      RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  streams_.push_back(new Stream(this));
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions.push_back(
+        RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    streams_.push_back(new Stream(this));
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 
-  video_send_config_.rtp.extensions[0] =
-      RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId);
-  receiver_log_.PushExpectedLogLine("Switching to absolute send time RBE.");
-  receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
-  streams_.push_back(new Stream(this));
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions[0] =
+        RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId);
+    receiver_log_.PushExpectedLogLine("Switching to absolute send time RBE.");
+    receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
+    streams_.push_back(new Stream(this));
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 }
 
 // This test is flaky. See webrtc:5790.
 TEST_F(BitrateEstimatorTest, DISABLED_SwitchesToASTThenBackToTOFForVideo) {
-  video_send_config_.rtp.extensions.push_back(
-      RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
-  receiver_log_.PushExpectedLogLine(kSingleStreamLog);
-  streams_.push_back(new Stream(this));
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions.push_back(
+        RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId));
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
+    receiver_log_.PushExpectedLogLine(kSingleStreamLog);
+    streams_.push_back(new Stream(this));
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 
-  video_send_config_.rtp.extensions[0] =
-      RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId);
-  receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
-  receiver_log_.PushExpectedLogLine("Switching to absolute send time RBE.");
-  streams_.push_back(new Stream(this));
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions[0] =
+        RtpExtension(RtpExtension::kAbsSendTimeUri, kASTExtensionId);
+    receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
+    receiver_log_.PushExpectedLogLine("Switching to absolute send time RBE.");
+    streams_.push_back(new Stream(this));
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 
-  video_send_config_.rtp.extensions[0] =
-      RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId);
-  receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
-  receiver_log_.PushExpectedLogLine(
-      "WrappingBitrateEstimator: Switching to transmission time offset RBE.");
-  streams_.push_back(new Stream(this));
-  streams_[0]->StopSending();
-  streams_[1]->StopSending();
+  task_queue_.SendTask([this]() {
+    video_send_config_.rtp.extensions[0] =
+        RtpExtension(RtpExtension::kTimestampOffsetUri, kTOFExtensionId);
+    receiver_log_.PushExpectedLogLine(kAbsSendTimeLog);
+    receiver_log_.PushExpectedLogLine(
+        "WrappingBitrateEstimator: Switching to transmission time offset RBE.");
+    streams_.push_back(new Stream(this));
+    streams_[0]->StopSending();
+    streams_[1]->StopSending();
+  });
   EXPECT_TRUE(receiver_log_.Wait());
 }
 }  // namespace webrtc

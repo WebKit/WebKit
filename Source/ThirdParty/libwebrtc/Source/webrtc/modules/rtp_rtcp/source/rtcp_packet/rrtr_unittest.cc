@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/rrtr.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 using webrtc::rtcp::Rrtr;
 

@@ -13,9 +13,9 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/test/frame_generator.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "test/frame_generator.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace test {
@@ -81,6 +81,26 @@ class FrameGeneratorTest : public ::testing::Test {
     frame->set_timestamp(13);
   }
 
+  uint64_t Hash(VideoFrame* frame) {
+    // Generate a 64-bit hash from the frame's buffer.
+    uint64_t hash = 19;
+    rtc::scoped_refptr<I420BufferInterface> i420_buffer =
+        frame->video_frame_buffer()->ToI420();
+    const uint8_t* buffer = i420_buffer->DataY();
+    for (int i = 0; i < y_size; ++i) {
+      hash = (37 * hash) + buffer[i];
+    }
+    buffer = i420_buffer->DataU();
+    for (int i = 0; i < uv_size; ++i) {
+      hash = (37 * hash) + buffer[i];
+    }
+    buffer = i420_buffer->DataV();
+    for (int i = 0; i < uv_size; ++i) {
+      hash = (37 * hash) + buffer[i];
+    }
+    return hash;
+  }
+
   std::string two_frame_filename_;
   std::string one_frame_filename_;
   const int y_size = kFrameWidth * kFrameHeight;
@@ -143,6 +163,26 @@ TEST_F(FrameGeneratorTest, MultipleFrameFilesWithRepeat) {
   for (int i = 0; i < kRepeatCount; ++i)
     CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+}
+
+TEST_F(FrameGeneratorTest, SlideGenerator) {
+  const int kGenCount = 9;
+  const int kRepeatCount = 3;
+  std::unique_ptr<FrameGenerator> generator(
+      FrameGenerator::CreateSlideGenerator(
+          kFrameWidth, kFrameHeight, kRepeatCount));
+  uint64_t hashes[kGenCount];
+  for (int i = 0; i < kGenCount; ++i) {
+    hashes[i] = Hash(generator->NextFrame());
+  }
+  // Check that the buffer changes only every |kRepeatCount| frames.
+  for (int i = 1; i < kGenCount; ++i) {
+    if (i % kRepeatCount == 0) {
+      EXPECT_NE(hashes[i-1], hashes[i]);
+    } else {
+      EXPECT_EQ(hashes[i-1], hashes[i]);
+    }
+  }
 }
 
 }  // namespace test

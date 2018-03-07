@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/simulator_buffers.h"
+#include "modules/audio_processing/test/simulator_buffers.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/test/audio_buffer_tools.h"
+#include "modules/audio_processing/test/audio_buffer_tools.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {

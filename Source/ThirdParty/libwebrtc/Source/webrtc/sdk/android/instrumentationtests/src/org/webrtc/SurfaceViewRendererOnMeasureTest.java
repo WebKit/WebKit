@@ -134,6 +134,8 @@ public class SurfaceViewRendererOnMeasureTest {
       private int frameHeight;
       private int rotation;
 
+      // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+      @SuppressWarnings("NoSynchronizedMethodCheck")
       public synchronized void waitForFrameSize(int frameWidth, int frameHeight, int rotation)
           throws InterruptedException {
         while (this.frameWidth != frameWidth || this.frameHeight != frameHeight
@@ -142,8 +144,12 @@ public class SurfaceViewRendererOnMeasureTest {
         }
       }
 
+      @Override
       public void onFirstFrameRendered() {}
 
+      @Override
+      // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
+      @SuppressWarnings("NoSynchronizedMethodCheck")
       public synchronized void onFrameResolutionChanged(
           int frameWidth, int frameHeight, int rotation) {
         this.frameWidth = frameWidth;

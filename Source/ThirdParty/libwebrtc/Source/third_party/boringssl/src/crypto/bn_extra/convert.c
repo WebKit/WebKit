@@ -96,7 +96,7 @@ char *BN_bn2hex(const BIGNUM *bn) {
   int z = 0;
   for (int i = bn->top - 1; i >= 0; i--) {
     for (int j = BN_BITS2 - 8; j >= 0; j -= 8) {
-      /* strip leading zeros */
+      // strip leading zeros
       int v = ((int)(bn->d[i] >> (long)j)) & 0xff;
       if (z || v != 0) {
         *(p++) = hextable[v >> 4];
@@ -110,20 +110,20 @@ char *BN_bn2hex(const BIGNUM *bn) {
   return buf;
 }
 
-/* decode_hex decodes |in_len| bytes of hex data from |in| and updates |bn|. */
+// decode_hex decodes |in_len| bytes of hex data from |in| and updates |bn|.
 static int decode_hex(BIGNUM *bn, const char *in, int in_len) {
   if (in_len > INT_MAX/4) {
     OPENSSL_PUT_ERROR(BN, BN_R_BIGNUM_TOO_LONG);
     return 0;
   }
-  /* |in_len| is the number of hex digits. */
+  // |in_len| is the number of hex digits.
   if (!bn_expand(bn, in_len * 4)) {
     return 0;
   }
 
   int i = 0;
   while (in_len > 0) {
-    /* Decode one |BN_ULONG| at a time. */
+    // Decode one |BN_ULONG| at a time.
     int todo = BN_BYTES * 2;
     if (todo > in_len) {
       todo = in_len;
@@ -143,7 +143,7 @@ static int decode_hex(BIGNUM *bn, const char *in, int in_len) {
         hex = c - 'A' + 10;
       } else {
         hex = 0;
-        /* This shouldn't happen. The caller checks |isxdigit|. */
+        // This shouldn't happen. The caller checks |isxdigit|.
         assert(0);
       }
       word = (word << 4) | hex;
@@ -157,12 +157,12 @@ static int decode_hex(BIGNUM *bn, const char *in, int in_len) {
   return 1;
 }
 
-/* decode_dec decodes |in_len| bytes of decimal data from |in| and updates |bn|. */
+// decode_dec decodes |in_len| bytes of decimal data from |in| and updates |bn|.
 static int decode_dec(BIGNUM *bn, const char *in, int in_len) {
   int i, j;
   BN_ULONG l = 0;
 
-  /* Decode |BN_DEC_NUM| digits at a time. */
+  // Decode |BN_DEC_NUM| digits at a time.
   j = BN_DEC_NUM - (in_len % BN_DEC_NUM);
   if (j == BN_DEC_NUM) {
     j = 0;
@@ -207,7 +207,7 @@ static int bn_x2bn(BIGNUM **outp, const char *in, decode_func decode, char_test_
     return num;
   }
 
-  /* in is the start of the hex digits, and it is 'i' long */
+  // in is the start of the hex digits, and it is 'i' long
   if (*outp == NULL) {
     ret = BN_new();
     if (ret == NULL) {
@@ -243,8 +243,8 @@ int BN_hex2bn(BIGNUM **outp, const char *in) {
 }
 
 char *BN_bn2dec(const BIGNUM *a) {
-  /* It is easier to print strings little-endian, so we assemble it in reverse
-   * and fix at the end. */
+  // It is easier to print strings little-endian, so we assemble it in reverse
+  // and fix at the end.
   BIGNUM *copy = NULL;
   CBB cbb;
   if (!CBB_init(&cbb, 16) ||
@@ -290,7 +290,7 @@ char *BN_bn2dec(const BIGNUM *a) {
     goto cbb_err;
   }
 
-  /* Reverse the buffer. */
+  // Reverse the buffer.
   for (size_t i = 0; i < len/2; i++) {
     uint8_t tmp = data[i];
     data[i] = data[len - 1 - i];
@@ -349,7 +349,7 @@ int BN_print(BIO *bp, const BIGNUM *a) {
 
   for (i = a->top - 1; i >= 0; i--) {
     for (j = BN_BITS2 - 4; j >= 0; j -= 4) {
-      /* strip leading zeros */
+      // strip leading zeros
       v = ((int)(a->d[i] >> (long)j)) & 0x0f;
       if (z || v != 0) {
         if (BIO_write(bp, &hextable[v], 1) != 1) {
@@ -384,8 +384,8 @@ int BN_print_fp(FILE *fp, const BIGNUM *a) {
 size_t BN_bn2mpi(const BIGNUM *in, uint8_t *out) {
   const size_t bits = BN_num_bits(in);
   const size_t bytes = (bits + 7) / 8;
-  /* If the number of bits is a multiple of 8, i.e. if the MSB is set,
-   * prefix with a zero byte. */
+  // If the number of bits is a multiple of 8, i.e. if the MSB is set,
+  // prefix with a zero byte.
   int extend = 0;
   if (bytes != 0 && (bits & 0x07) == 0) {
     extend = 1;
@@ -395,8 +395,8 @@ size_t BN_bn2mpi(const BIGNUM *in, uint8_t *out) {
   if (len < bytes ||
       4 + len < len ||
       (len & 0xffffffff) != len) {
-    /* If we cannot represent the number then we emit zero as the interface
-     * doesn't allow an error to be signalled. */
+    // If we cannot represent the number then we emit zero as the interface
+    // doesn't allow an error to be signalled.
     if (out) {
       OPENSSL_memset(out, 0, 4);
     }

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_NODE_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_NODE_H_
+#ifndef MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_NODE_H_
+#define MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_NODE_H_
 
 #include <memory>
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -44,4 +44,4 @@ class WPDNode {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_NODE_H_
+#endif  // MODULES_AUDIO_PROCESSING_TRANSIENT_WPD_NODE_H_

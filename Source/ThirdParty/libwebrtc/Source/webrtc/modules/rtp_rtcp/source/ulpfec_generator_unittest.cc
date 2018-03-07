@@ -13,12 +13,12 @@
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/basictypes.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/fec_test_helper.h"
-#include "webrtc/modules/rtp_rtcp/source/forward_error_correction.h"
-#include "webrtc/modules/rtp_rtcp/source/ulpfec_generator.h"
-#include "webrtc/test/gtest.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/fec_test_helper.h"
+#include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/ulpfec_generator.h"
+#include "rtc_base/basictypes.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -165,40 +165,6 @@ TEST_F(UlpfecGeneratorTest, TwoFrameFec) {
   ASSERT_EQ(1u, red_packets.size());
   VerifyHeader(seq_num, last_timestamp, kRedPayloadType, kFecPayloadType,
                red_packets.front().get(), false);
-}
-
-TEST_F(UlpfecGeneratorTest, BuildRedPacket) {
-  packet_generator_.NewFrame(1);
-  std::unique_ptr<AugmentedPacket> packet = packet_generator_.NextPacket(0, 10);
-  std::unique_ptr<RedPacket> red_packet = UlpfecGenerator::BuildRedPacket(
-      packet->data, packet->length - kRtpHeaderSize, kRtpHeaderSize,
-      kRedPayloadType);
-  EXPECT_EQ(packet->length + 1, red_packet->length());
-  VerifyHeader(packet->header.header.sequenceNumber,
-               packet->header.header.timestamp, kRedPayloadType,
-               packet->header.header.payloadType, red_packet.get(),
-               true);  // Marker bit set.
-  for (int i = 0; i < 10; ++i) {
-    EXPECT_EQ(i, red_packet->data()[kRtpHeaderSize + 1 + i]);
-  }
-}
-
-TEST_F(UlpfecGeneratorTest, BuildRedPacketWithEmptyPayload) {
-  constexpr size_t kNumFrames = 1;
-  constexpr size_t kPayloadLength = 0;
-  constexpr size_t kRedForFecHeaderLength = 1;
-
-  packet_generator_.NewFrame(kNumFrames);
-  std::unique_ptr<AugmentedPacket> packet(
-      packet_generator_.NextPacket(0, kPayloadLength));
-  std::unique_ptr<RedPacket> red_packet = UlpfecGenerator::BuildRedPacket(
-      packet->data, packet->length - kRtpHeaderSize, kRtpHeaderSize,
-      kRedPayloadType);
-  EXPECT_EQ(packet->length + kRedForFecHeaderLength, red_packet->length());
-  VerifyHeader(packet->header.header.sequenceNumber,
-               packet->header.header.timestamp, kRedPayloadType,
-               packet->header.header.payloadType, red_packet.get(),
-               true);  // Marker bit set.
 }
 
 }  // namespace webrtc

@@ -5,7 +5,7 @@
 # This script can be used to verify the bit exactness of iLBC fixed-point version 1.0.6
 #
 
-INP=../../../../../../../resources/audio_coding
+INP=../../../../../../resources/audio_coding
 EXEP=../../../../../../../out/Release
 OUTP=./GeneratedFiles
 mkdir ./GeneratedFiles

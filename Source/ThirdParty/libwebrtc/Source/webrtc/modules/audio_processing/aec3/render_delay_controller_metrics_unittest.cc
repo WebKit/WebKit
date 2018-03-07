@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/render_delay_controller_metrics.h"
+#include "modules/audio_processing/aec3/render_delay_controller_metrics.h"
+#include "api/optional.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 
-#include "webrtc/test/gtest.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -22,10 +22,10 @@ TEST(RenderDelayControllerMetrics, NormalUsage) {
 
   for (int j = 0; j < 3; ++j) {
     for (int k = 0; k < kMetricsReportingIntervalBlocks - 1; ++k) {
-      metrics.Update(rtc::Optional<size_t>(), 0);
+      metrics.Update(rtc::nullopt, 0);
       EXPECT_FALSE(metrics.MetricsReported());
     }
-    metrics.Update(rtc::Optional<size_t>(), 0);
+    metrics.Update(rtc::nullopt, 0);
     EXPECT_TRUE(metrics.MetricsReported());
   }
 }

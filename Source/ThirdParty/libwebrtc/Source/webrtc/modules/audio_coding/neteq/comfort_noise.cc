@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/comfort_noise.h"
+#include "modules/audio_coding/neteq/comfort_noise.h"
 
 #include <assert.h>
 
-#include "webrtc/api/audio_codecs/audio_decoder.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_coding/neteq/decoder_database.h"
-#include "webrtc/modules/audio_coding/neteq/dsp_helper.h"
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "modules/audio_coding/neteq/decoder_database.h"
+#include "modules/audio_coding/neteq/dsp_helper.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
@@ -42,7 +42,7 @@ int ComfortNoise::Generate(size_t requested_length,
          fs_hz_ == 48000);
   // Not adapted for multi-channel yet.
   if (output->Channels() != 1) {
-    LOG(LS_ERROR) << "No multi-channel support";
+    RTC_LOG(LS_ERROR) << "No multi-channel support";
     return kMultiChannelNotSupported;
   }
 
@@ -57,7 +57,7 @@ int ComfortNoise::Generate(size_t requested_length,
   // Get the decoder from the database.
   ComfortNoiseDecoder* cng_decoder = decoder_database_->GetActiveCngDecoder();
   if (!cng_decoder) {
-    LOG(LS_ERROR) << "Unknwown payload type";
+    RTC_LOG(LS_ERROR) << "Unknwown payload type";
     return kUnknownPayloadType;
   }
 
@@ -67,8 +67,8 @@ int ComfortNoise::Generate(size_t requested_length,
           new_period)) {
     // Error returned.
     output->Zeros(requested_length);
-    LOG(LS_ERROR) <<
-        "ComfortNoiseDecoder::Genererate failed to generate comfort noise";
+    RTC_LOG(LS_ERROR)
+        << "ComfortNoiseDecoder::Genererate failed to generate comfort noise";
     return kInternalError;
   }
   (*output)[0].OverwriteAt(temp.get(), number_of_samples, 0);

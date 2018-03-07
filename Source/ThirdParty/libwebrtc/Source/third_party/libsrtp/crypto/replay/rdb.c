@@ -9,7 +9,7 @@
 
 /*
  *
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -130,9 +130,10 @@ srtp_err_status_t srtp_rdb_add_index (srtp_rdb_t *rdb, uint32_t p_index)
 srtp_err_status_t srtp_rdb_increment (srtp_rdb_t *rdb)
 {
 
-    if (rdb->window_start++ > 0x7fffffff) {
+    if (rdb->window_start >= 0x7fffffff) {
         return srtp_err_status_key_expired;
     }
+    ++rdb->window_start;
     return srtp_err_status_ok;
 }
 

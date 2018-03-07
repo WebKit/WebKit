@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_
-#define WEBRTC_MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_
+#ifndef MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_
+#define MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_
 
 #include <array>
 #include <map>
@@ -18,10 +18,10 @@
 #include <set>
 #include <utility>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/sequence_number_util.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 namespace video_coding {
@@ -79,73 +79,73 @@ class RtpFrameReferenceFinder {
   // Find the relevant group of pictures and update its "last-picture-id-with
   // padding" sequence number.
   void UpdateLastPictureIdWithPadding(uint16_t seq_num)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Retry stashed frames until no more complete frames are found.
-  void RetryStashedFrames() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void RetryStashedFrames() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   FrameDecision ManageFrameInternal(RtpFrameObject* frame)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for generic frames. If |picture_id| is unspecified
   // then packet sequence numbers will be used to determine the references
   // of the frames.
   FrameDecision ManageFrameGeneric(RtpFrameObject* frame, int picture_id)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for Vp8 frames
   FrameDecision ManageFrameVp8(RtpFrameObject* frame)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Updates necessary layer info state used to determine frame references for
   // Vp8.
   void UpdateLayerInfoVp8(RtpFrameObject* frame)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for Vp9 frames
   FrameDecision ManageFrameVp9(RtpFrameObject* frame)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Check if we are missing a frame necessary to determine the references
   // for this frame.
   bool MissingRequiredFrameVp9(uint16_t picture_id, const GofInfo& info)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Updates which frames that have been received. If there is a gap,
   // missing frames will be added to |missing_frames_for_layer_| or
   // if this is an already missing frame then it will be removed.
   void FrameReceivedVp9(uint16_t picture_id, GofInfo* info)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Check if there is a frame with the up-switch flag set in the interval
   // (|pid_ref|, |picture_id|) with temporal layer smaller than |temporal_idx|.
   bool UpSwitchInIntervalVp9(uint16_t picture_id,
                              uint8_t temporal_idx,
-                             uint16_t pid_ref) EXCLUSIVE_LOCKS_REQUIRED(crit_);
+                             uint16_t pid_ref)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Unwrap |frame|s picture id and its references to 16 bits.
-  void UnwrapPictureIds(RtpFrameObject* frame) EXCLUSIVE_LOCKS_REQUIRED(crit_);
-  // All picture ids are unwrapped to 16 bits.
-  uint16_t UnwrapPictureId(uint16_t picture_id) EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void UnwrapPictureIds(RtpFrameObject* frame)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Returns true if the frame is old and should be dropped.
   // TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
   //                 around M59).
   bool Vp9PidTl0Fix(const RtpFrameObject& frame,
                     int16_t* picture_id,
-                    int16_t* tl0_pic_idx) EXCLUSIVE_LOCKS_REQUIRED(crit_);
+                    int16_t* tl0_pic_idx) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
   //                 around M59).
   bool DetectVp9PicIdJump(int fixed_pid,
                           int fixed_tl0,
                           uint32_t timestamp) const
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
   //                 around M59).
   bool DetectVp9Tl0PicIdxJump(int fixed_tl0, uint32_t timestamp) const
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // For every group of pictures, hold two sequence numbers. The first being
   // the sequence number of the last packet of the last completed frame, and
@@ -154,36 +154,37 @@ class RtpFrameReferenceFinder {
   std::map<uint16_t,
            std::pair<uint16_t, uint16_t>,
            DescendingSeqNumComp<uint16_t>>
-      last_seq_num_gop_ GUARDED_BY(crit_);
+      last_seq_num_gop_ RTC_GUARDED_BY(crit_);
 
   // Save the last picture id in order to detect when there is a gap in frames
   // that have not yet been fully received.
-  int last_picture_id_ GUARDED_BY(crit_);
+  int last_picture_id_ RTC_GUARDED_BY(crit_);
 
   // Padding packets that have been received but that are not yet continuous
   // with any group of pictures.
   std::set<uint16_t, DescendingSeqNumComp<uint16_t>> stashed_padding_
-      GUARDED_BY(crit_);
+      RTC_GUARDED_BY(crit_);
 
   // The last unwrapped picture id. Used to unwrap the picture id from a length
   // of |kPicIdLength| to 16 bits.
-  int last_unwrap_ GUARDED_BY(crit_);
+  int last_unwrap_ RTC_GUARDED_BY(crit_);
 
   // Frames earlier than the last received frame that have not yet been
   // fully received.
   std::set<uint16_t, DescendingSeqNumComp<uint16_t, kPicIdLength>>
-      not_yet_received_frames_ GUARDED_BY(crit_);
+      not_yet_received_frames_ RTC_GUARDED_BY(crit_);
 
   // Frames that have been fully received but didn't have all the information
   // needed to determine their references.
-  std::deque<std::unique_ptr<RtpFrameObject>> stashed_frames_ GUARDED_BY(crit_);
+  std::deque<std::unique_ptr<RtpFrameObject>> stashed_frames_
+      RTC_GUARDED_BY(crit_);
 
   // Holds the information about the last completed frame for a given temporal
   // layer given a Tl0 picture index.
   std::map<uint8_t,
            std::array<int16_t, kMaxTemporalLayers>,
            DescendingSeqNumComp<uint8_t>>
-      layer_info_ GUARDED_BY(crit_);
+      layer_info_ RTC_GUARDED_BY(crit_);
 
   // Where the current scalability structure is in the
   // |scalability_structures_| array.
@@ -191,40 +192,39 @@ class RtpFrameReferenceFinder {
 
   // Holds received scalability structures.
   std::array<GofInfoVP9, kMaxGofSaved> scalability_structures_
-      GUARDED_BY(crit_);
+      RTC_GUARDED_BY(crit_);
 
   // Holds the the Gof information for a given TL0 picture index.
   std::map<uint8_t, GofInfo, DescendingSeqNumComp<uint8_t>> gof_info_
-      GUARDED_BY(crit_);
+      RTC_GUARDED_BY(crit_);
 
   // Keep track of which picture id and which temporal layer that had the
   // up switch flag set.
   std::map<uint16_t, uint8_t, DescendingSeqNumComp<uint16_t, kPicIdLength>>
-      up_switch_ GUARDED_BY(crit_);
+      up_switch_ RTC_GUARDED_BY(crit_);
 
   // For every temporal layer, keep a set of which frames that are missing.
   std::array<std::set<uint16_t, DescendingSeqNumComp<uint16_t, kPicIdLength>>,
              kMaxTemporalLayers>
-      missing_frames_for_layer_ GUARDED_BY(crit_);
+      missing_frames_for_layer_ RTC_GUARDED_BY(crit_);
 
   // How far frames have been cleared by sequence number. A frame will be
   // cleared if it contains a packet with a sequence number older than
   // |cleared_to_seq_num_|.
-  int cleared_to_seq_num_ GUARDED_BY(crit_);
+  int cleared_to_seq_num_ RTC_GUARDED_BY(crit_);
 
   OnCompleteFrameCallback* frame_callback_;
 
-  // Vp9PidFix variables
-  // TODO(philipel): Remove when VP9 PID does not jump mid-stream.
-  int vp9_fix_last_timestamp_ = -1;
-  int vp9_fix_jump_timestamp_ = -1;
-  int vp9_fix_last_picture_id_ = -1;
-  int vp9_fix_pid_offset_ = 0;
-  int vp9_fix_last_tl0_pic_idx_ = -1;
-  int vp9_fix_tl0_pic_idx_offset_ = 0;
+  // Unwrapper used to unwrap generic RTP streams. In a generic stream we derive
+  // a picture id from the packet sequence number.
+  SeqNumUnwrapper<uint16_t> generic_unwrapper_ RTC_GUARDED_BY(crit_);
+
+  // Unwrapper used to unwrap VP8/VP9 streams which have their picture id
+  // specified.
+  SeqNumUnwrapper<uint16_t, kPicIdLength> unwrapper_ RTC_GUARDED_BY(crit_);
 };
 
 }  // namespace video_coding
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_
+#endif  // MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_

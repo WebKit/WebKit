@@ -8,34 +8,36 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
+#define MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
 
-#include <list>
+#include <map>
 #include <memory>
-#include <vector>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/onetimeevent.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/base/rate_statistics.h"
-#include "webrtc/base/sequenced_task_checker.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/flexfec_sender.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_sender.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
-#include "webrtc/modules/rtp_rtcp/source/ulpfec_generator.h"
-#include "webrtc/modules/rtp_rtcp/source/video_codec_information.h"
-#include "webrtc/typedefs.h"
+#include "api/optional.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/flexfec_sender.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
+#include "modules/rtp_rtcp/source/rtp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/source/ulpfec_generator.h"
+#include "modules/rtp_rtcp/source/video_codec_information.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/onetimeevent.h"
+#include "rtc_base/rate_statistics.h"
+#include "rtc_base/sequenced_task_checker.h"
+#include "rtc_base/thread_annotations.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
+class RtpPacketizer;
 class RtpPacketToSend;
 
 class RTPSenderVideo {
  public:
+  static constexpr int64_t kTLRateWindowSizeMs = 2500;
+
   RTPSenderVideo(Clock* clock,
                  RTPSender* rtpSender,
                  FlexfecSender* flexfec_sender);
@@ -55,7 +57,8 @@ class RTPSenderVideo {
                  const uint8_t* payload_data,
                  size_t payload_size,
                  const RTPFragmentationHeader* fragmentation,
-                 const RTPVideoHeader* video_header);
+                 const RTPVideoHeader* video_header,
+                 int64_t expected_retransmission_time_ms);
 
   void SetVideoCodecType(RtpVideoCodecTypes type);
 
@@ -76,8 +79,25 @@ class RTPSenderVideo {
   int SelectiveRetransmissions() const;
   void SetSelectiveRetransmissions(uint8_t settings);
 
+ protected:
+  static uint8_t GetTemporalId(const RTPVideoHeader& header);
+  StorageType GetStorageType(uint8_t temporal_id,
+                             int32_t retransmission_settings,
+                             int64_t expected_retransmission_time_ms);
+
  private:
-  size_t CalculateFecPacketOverhead() const EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  struct TemporalLayerStats {
+    TemporalLayerStats()
+        : frame_rate_fp1000s(kTLRateWindowSizeMs, 1000 * 1000),
+          last_frame_time_ms(0) {}
+    // Frame rate, in frames per 1000 seconds. This essentially turns the fps
+    // value into a fixed point value with three decimals. Improves precision at
+    // low frame rates.
+    RateStatistics frame_rate_fp1000s;
+    int64_t last_frame_time_ms;
+  };
+
+  size_t CalculateFecPacketOverhead() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   void SendVideoPacket(std::unique_ptr<RtpPacketToSend> packet,
                        StorageType storage);
@@ -93,15 +113,19 @@ class RTPSenderVideo {
                                   StorageType media_packet_storage,
                                   bool protect_media_packet);
 
-  bool red_enabled() const EXCLUSIVE_LOCKS_REQUIRED(crit_) {
+  bool red_enabled() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_) {
     return red_payload_type_ >= 0;
   }
 
-  bool ulpfec_enabled() const EXCLUSIVE_LOCKS_REQUIRED(crit_) {
+  bool ulpfec_enabled() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_) {
     return ulpfec_payload_type_ >= 0;
   }
 
   bool flexfec_enabled() const { return flexfec_sender_ != nullptr; }
+
+  bool UpdateConditionalRetransmit(uint8_t temporal_id,
+                                   int64_t expected_retransmission_time_ms)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(stats_crit_);
 
   RTPSender* const rtp_sender_;
   Clock* const clock_;
@@ -110,30 +134,34 @@ class RTPSenderVideo {
   rtc::CriticalSection crit_;
 
   RtpVideoCodecTypes video_type_;
-  int32_t retransmission_settings_ GUARDED_BY(crit_);
-  VideoRotation last_rotation_ GUARDED_BY(crit_);
+  int32_t retransmission_settings_ RTC_GUARDED_BY(crit_);
+  VideoRotation last_rotation_ RTC_GUARDED_BY(crit_);
 
   // RED/ULPFEC.
-  int red_payload_type_ GUARDED_BY(crit_);
-  int ulpfec_payload_type_ GUARDED_BY(crit_);
-  UlpfecGenerator ulpfec_generator_ GUARDED_BY(crit_);
+  int red_payload_type_ RTC_GUARDED_BY(crit_);
+  int ulpfec_payload_type_ RTC_GUARDED_BY(crit_);
+  UlpfecGenerator ulpfec_generator_ RTC_GUARDED_BY(crit_);
 
   // FlexFEC.
   FlexfecSender* const flexfec_sender_;
 
   // FEC parameters, applicable to either ULPFEC or FlexFEC.
-  FecProtectionParams delta_fec_params_ GUARDED_BY(crit_);
-  FecProtectionParams key_fec_params_ GUARDED_BY(crit_);
+  FecProtectionParams delta_fec_params_ RTC_GUARDED_BY(crit_);
+  FecProtectionParams key_fec_params_ RTC_GUARDED_BY(crit_);
 
   rtc::CriticalSection stats_crit_;
   // Bitrate used for FEC payload, RED headers, RTP headers for FEC packets
   // and any padding overhead.
-  RateStatistics fec_bitrate_ GUARDED_BY(stats_crit_);
+  RateStatistics fec_bitrate_ RTC_GUARDED_BY(stats_crit_);
   // Bitrate used for video payload and RTP headers.
-  RateStatistics video_bitrate_ GUARDED_BY(stats_crit_);
+  RateStatistics video_bitrate_ RTC_GUARDED_BY(stats_crit_);
+
+  std::map<int, TemporalLayerStats> frame_stats_by_temporal_layer_
+      RTC_GUARDED_BY(stats_crit_);
+
   OneTimeEvent first_frame_sent_;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTP_SENDER_VIDEO_H_

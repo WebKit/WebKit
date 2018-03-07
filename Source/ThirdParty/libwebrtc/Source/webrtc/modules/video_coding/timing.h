@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_TIMING_H_
-#define WEBRTC_MODULES_VIDEO_CODING_TIMING_H_
+#ifndef MODULES_VIDEO_CODING_TIMING_H_
+#define MODULES_VIDEO_CODING_TIMING_H_
 
 #include <memory>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/video_coding/codec_timer.h"
-#include "webrtc/typedefs.h"
+#include "modules/video_coding/codec_timer.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_annotations.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -102,42 +102,46 @@ class VCMTiming {
                           int* min_playout_delay_ms,
                           int* render_delay_ms) const;
 
+  void SetTimingFrameInfo(const TimingFrameInfo& info);
+  rtc::Optional<TimingFrameInfo> GetTimingFrameInfo();
+
   enum { kDefaultRenderDelayMs = 10 };
   enum { kDelayMaxChangeMsPerS = 100 };
 
  protected:
-  int RequiredDecodeTimeMs() const EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  int RequiredDecodeTimeMs() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
   int64_t RenderTimeMsInternal(uint32_t frame_timestamp, int64_t now_ms) const
-      EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
-  int TargetDelayInternal() const EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  int TargetDelayInternal() const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
  private:
   void UpdateHistograms() const;
 
   rtc::CriticalSection crit_sect_;
   Clock* const clock_;
-  bool master_ GUARDED_BY(crit_sect_);
-  TimestampExtrapolator* ts_extrapolator_ GUARDED_BY(crit_sect_);
-  std::unique_ptr<VCMCodecTimer> codec_timer_ GUARDED_BY(crit_sect_);
-  int render_delay_ms_ GUARDED_BY(crit_sect_);
+  bool master_ RTC_GUARDED_BY(crit_sect_);
+  TimestampExtrapolator* ts_extrapolator_ RTC_GUARDED_BY(crit_sect_);
+  std::unique_ptr<VCMCodecTimer> codec_timer_ RTC_GUARDED_BY(crit_sect_);
+  int render_delay_ms_ RTC_GUARDED_BY(crit_sect_);
   // Best-effort playout delay range for frames from capture to render.
   // The receiver tries to keep the delay between |min_playout_delay_ms_|
   // and |max_playout_delay_ms_| taking the network jitter into account.
   // A special case is where min_playout_delay_ms_ = max_playout_delay_ms_ = 0,
   // in which case the receiver tries to play the frames as they arrive.
-  int min_playout_delay_ms_ GUARDED_BY(crit_sect_);
-  int max_playout_delay_ms_ GUARDED_BY(crit_sect_);
-  int jitter_delay_ms_ GUARDED_BY(crit_sect_);
-  int current_delay_ms_ GUARDED_BY(crit_sect_);
-  int last_decode_ms_ GUARDED_BY(crit_sect_);
-  uint32_t prev_frame_timestamp_ GUARDED_BY(crit_sect_);
+  int min_playout_delay_ms_ RTC_GUARDED_BY(crit_sect_);
+  int max_playout_delay_ms_ RTC_GUARDED_BY(crit_sect_);
+  int jitter_delay_ms_ RTC_GUARDED_BY(crit_sect_);
+  int current_delay_ms_ RTC_GUARDED_BY(crit_sect_);
+  int last_decode_ms_ RTC_GUARDED_BY(crit_sect_);
+  uint32_t prev_frame_timestamp_ RTC_GUARDED_BY(crit_sect_);
+  rtc::Optional<TimingFrameInfo> timing_frame_info_ RTC_GUARDED_BY(crit_sect_);
 
   // Statistics.
-  size_t num_decoded_frames_ GUARDED_BY(crit_sect_);
-  size_t num_delayed_decoded_frames_ GUARDED_BY(crit_sect_);
-  int64_t first_decoded_frame_ms_ GUARDED_BY(crit_sect_);
-  uint64_t sum_missed_render_deadline_ms_ GUARDED_BY(crit_sect_);
+  size_t num_decoded_frames_ RTC_GUARDED_BY(crit_sect_);
+  size_t num_delayed_decoded_frames_ RTC_GUARDED_BY(crit_sect_);
+  int64_t first_decoded_frame_ms_ RTC_GUARDED_BY(crit_sect_);
+  uint64_t sum_missed_render_deadline_ms_ RTC_GUARDED_BY(crit_sect_);
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_TIMING_H_
+#endif  // MODULES_VIDEO_CODING_TIMING_H_

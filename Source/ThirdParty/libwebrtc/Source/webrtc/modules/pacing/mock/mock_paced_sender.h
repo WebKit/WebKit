@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
-#define WEBRTC_MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
+#ifndef MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
+#define MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
 
 #include <vector>
 
-#include "webrtc/modules/pacing/paced_sender.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gmock.h"
+#include "modules/pacing/paced_sender.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -36,8 +36,9 @@ class MockPacedSender : public PacedSender {
   MOCK_CONST_METHOD0(ExpectedQueueTimeMs, int64_t());
   MOCK_CONST_METHOD0(GetApplicationLimitedRegionStartTime,
                      rtc::Optional<int64_t>());
+  MOCK_METHOD0(Process, void());
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_
+#endif  // MODULES_PACING_MOCK_MOCK_PACED_SENDER_H_

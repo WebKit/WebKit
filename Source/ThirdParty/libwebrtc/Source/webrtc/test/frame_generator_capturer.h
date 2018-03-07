@@ -7,17 +7,17 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_TEST_FRAME_GENERATOR_CAPTURER_H_
-#define WEBRTC_TEST_FRAME_GENERATOR_CAPTURER_H_
+#ifndef TEST_FRAME_GENERATOR_CAPTURER_H_
+#define TEST_FRAME_GENERATOR_CAPTURER_H_
 
 #include <memory>
 #include <string>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/test/video_capturer.h"
-#include "webrtc/typedefs.h"
+#include "api/video/video_frame.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/task_queue.h"
+#include "test/video_capturer.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -45,11 +45,23 @@ class FrameGeneratorCapturer : public VideoCapturer {
                                         int target_fps,
                                         Clock* clock);
 
+  static FrameGeneratorCapturer* Create(int width,
+                                        int height,
+                                        int num_squares,
+                                        int target_fps,
+                                        Clock* clock);
+
   static FrameGeneratorCapturer* CreateFromYuvFile(const std::string& file_name,
                                                    size_t width,
                                                    size_t height,
                                                    int target_fps,
                                                    Clock* clock);
+
+  static FrameGeneratorCapturer* CreateSlideGenerator(int width,
+                                                      int height,
+                                                      int frame_repeat_count,
+                                                      int target_fps,
+                                                      Clock* clock);
   virtual ~FrameGeneratorCapturer();
 
   void Start() override;
@@ -81,14 +93,14 @@ class FrameGeneratorCapturer : public VideoCapturer {
 
   Clock* const clock_;
   bool sending_;
-  rtc::VideoSinkInterface<VideoFrame>* sink_ GUARDED_BY(&lock_);
-  SinkWantsObserver* sink_wants_observer_ GUARDED_BY(&lock_);
+  rtc::VideoSinkInterface<VideoFrame>* sink_ RTC_GUARDED_BY(&lock_);
+  SinkWantsObserver* sink_wants_observer_ RTC_GUARDED_BY(&lock_);
 
   rtc::CriticalSection lock_;
   std::unique_ptr<FrameGenerator> frame_generator_;
 
-  int target_fps_ GUARDED_BY(&lock_);
-  rtc::Optional<int> wanted_fps_ GUARDED_BY(&lock_);
+  int target_fps_ RTC_GUARDED_BY(&lock_);
+  rtc::Optional<int> wanted_fps_ RTC_GUARDED_BY(&lock_);
   VideoRotation fake_rotation_ = kVideoRotation_0;
 
   int64_t first_frame_capture_time_;
@@ -99,4 +111,4 @@ class FrameGeneratorCapturer : public VideoCapturer {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_FRAME_GENERATOR_CAPTURER_H_
+#endif  // TEST_FRAME_GENERATOR_CAPTURER_H_

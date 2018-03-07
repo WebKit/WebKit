@@ -11,13 +11,13 @@
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/p2p/base/pseudotcp.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/helpers.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/stream.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/timeutils.h"
+#include "p2p/base/pseudotcp.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/stream.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/timeutils.h"
 
 using cricket::PseudoTcp;
 
@@ -116,7 +116,7 @@ class PseudoTcpTestBase : public testing::Test,
   virtual void OnTcpOpen(PseudoTcp* tcp) {
     // Consider ourselves connected when the local side gets OnTcpOpen.
     // OnTcpWriteable isn't fired at open, so we trigger it now.
-    LOG(LS_VERBOSE) << "Opened";
+    RTC_LOG(LS_VERBOSE) << "Opened";
     if (tcp == &local_) {
       have_connected_ = true;
       OnTcpWriteable(tcp);
@@ -130,7 +130,7 @@ class PseudoTcpTestBase : public testing::Test,
     // Consider ourselves closed when the remote side gets OnTcpClosed.
     // TODO: OnTcpClosed is only ever notified in case of error in
     // the current implementation.  Solicited close is not (yet) supported.
-    LOG(LS_VERBOSE) << "Closed";
+    RTC_LOG(LS_VERBOSE) << "Closed";
     EXPECT_EQ(0U, error);
     if (tcp == &remote_) {
       have_disconnected_ = true;
@@ -141,9 +141,10 @@ class PseudoTcpTestBase : public testing::Test,
     // Randomly drop the desired percentage of packets.
     // Also drop packets that are larger than the configured MTU.
     if (rtc::CreateRandomId() % 100 < static_cast<uint32_t>(loss_)) {
-      LOG(LS_VERBOSE) << "Randomly dropping packet, size=" << len;
+      RTC_LOG(LS_VERBOSE) << "Randomly dropping packet, size=" << len;
     } else if (len > static_cast<size_t>(std::min(local_mtu_, remote_mtu_))) {
-      LOG(LS_VERBOSE) << "Dropping packet that exceeds path MTU, size=" << len;
+      RTC_LOG(LS_VERBOSE) << "Dropping packet that exceeds path MTU, size="
+                          << len;
     } else {
       int id = (tcp == &local_) ? MSG_RPACKET : MSG_LPACKET;
       std::string packet(buffer, len);
@@ -236,8 +237,8 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     EXPECT_EQ(static_cast<size_t>(size), received);
     EXPECT_EQ(0, memcmp(send_stream_.GetBuffer(),
                         recv_stream_.GetBuffer(), size));
-    LOG(LS_INFO) << "Transferred " << received << " bytes in " << elapsed
-                 << " ms (" << size * 8 / elapsed << " Kbps)";
+    RTC_LOG(LS_INFO) << "Transferred " << received << " bytes in " << elapsed
+                     << " ms (" << size * 8 / elapsed << " Kbps)";
   }
 
  private:
@@ -262,7 +263,7 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     // Write bytes from the send stream when we can.
     // Shut down when we've sent everything.
     if (tcp == &local_) {
-      LOG(LS_VERBOSE) << "Flow Control Lifted";
+      RTC_LOG(LS_VERBOSE) << "Flow Control Lifted";
       bool done;
       WriteData(&done);
       if (done) {
@@ -280,7 +281,7 @@ class PseudoTcpTest : public PseudoTcpTestBase {
       if (rcvd != -1) {
         recv_stream_.Write(block, rcvd, NULL, NULL);
         recv_stream_.GetPosition(&position);
-        LOG(LS_VERBOSE) << "Received: " << position;
+        RTC_LOG(LS_VERBOSE) << "Received: " << position;
       }
     } while (rcvd > 0);
   }
@@ -296,10 +297,10 @@ class PseudoTcpTest : public PseudoTcpTestBase {
         UpdateLocalClock();
         if (sent != -1) {
           send_stream_.SetPosition(position + sent);
-          LOG(LS_VERBOSE) << "Sent: " << position + sent;
+          RTC_LOG(LS_VERBOSE) << "Sent: " << position + sent;
         } else {
           send_stream_.SetPosition(position);
-          LOG(LS_VERBOSE) << "Flow Controlled";
+          RTC_LOG(LS_VERBOSE) << "Flow Controlled";
         }
       } else {
         sent = static_cast<int>(tosend = 0);
@@ -347,8 +348,8 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
     // number of iterations have completed.
     EXPECT_TRUE_WAIT(have_disconnected_, kTransferTimeoutMs);
     elapsed = rtc::TimeSince(start);
-    LOG(LS_INFO) << "Performed " << iterations << " pings in "
-                 << elapsed << " ms";
+    RTC_LOG(LS_INFO) << "Performed " << iterations << " pings in " << elapsed
+                     << " ms";
   }
 
  private:
@@ -356,7 +357,7 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
 
   virtual void OnTcpReadable(PseudoTcp* tcp) {
     if (tcp != receiver_) {
-      LOG_F(LS_ERROR) << "unexpected OnTcpReadable";
+      RTC_LOG_F(LS_ERROR) << "unexpected OnTcpReadable";
       return;
     }
     // Stream bytes to the recv stream as they arrive.
@@ -386,7 +387,7 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
       return;
     // Write bytes from the send stream when we can.
     // Shut down when we've sent everything.
-    LOG(LS_VERBOSE) << "Flow Control Lifted";
+    RTC_LOG(LS_VERBOSE) << "Flow Control Lifted";
     WriteData();
   }
 
@@ -399,7 +400,7 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
       if (rcvd != -1) {
         recv_stream_.Write(block, rcvd, NULL, NULL);
         recv_stream_.GetPosition(&position);
-        LOG(LS_VERBOSE) << "Received: " << position;
+        RTC_LOG(LS_VERBOSE) << "Received: " << position;
       }
     } while (rcvd > 0);
   }
@@ -416,10 +417,10 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
         UpdateLocalClock();
         if (sent != -1) {
           send_stream_.SetPosition(position + sent);
-          LOG(LS_VERBOSE) << "Sent: " << position + sent;
+          RTC_LOG(LS_VERBOSE) << "Sent: " << position + sent;
         } else {
           send_stream_.SetPosition(position);
-          LOG(LS_VERBOSE) << "Flow Controlled";
+          RTC_LOG(LS_VERBOSE) << "Flow Controlled";
         }
       } else {
         sent = static_cast<int>(tosend = 0);
@@ -515,7 +516,7 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
       if (rcvd != -1) {
         recv_stream_.Write(block, rcvd, NULL, NULL);
         recv_stream_.GetPosition(&position);
-        LOG(LS_VERBOSE) << "Received: " << position;
+        RTC_LOG(LS_VERBOSE) << "Received: " << position;
       }
     } while (rcvd > 0);
 
@@ -543,10 +544,10 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
         UpdateLocalClock();
         if (sent != -1) {
           send_stream_.SetPosition(position + sent);
-          LOG(LS_VERBOSE) << "Sent: " << position + sent;
+          RTC_LOG(LS_VERBOSE) << "Sent: " << position + sent;
         } else {
           send_stream_.SetPosition(position);
-          LOG(LS_VERBOSE) << "Flow Controlled";
+          RTC_LOG(LS_VERBOSE) << "Flow Controlled";
         }
       } else {
         sent = static_cast<int>(tosend = 0);
@@ -566,9 +567,9 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
       rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, 10, this, MSG_WRITE);
     } else {
       if (!remote_.isReceiveBufferFull()) {
-        LOG(LS_ERROR) << "This shouldn't happen - the send buffer is full, "
-                      << "the receive buffer is not, and there are no "
-                      << "remaining messages to process.";
+        RTC_LOG(LS_ERROR) << "This shouldn't happen - the send buffer is full, "
+                          << "the receive buffer is not, and there are no "
+                          << "remaining messages to process.";
       }
       send_stream_.GetPosition(&position);
       send_position_.push_back(position);

@@ -10,11 +10,13 @@
 
 #include <memory>
 
-#include "webrtc/base/gunit.h"
-#include "webrtc/media/base/fakemediaengine.h"
-#include "webrtc/ortc/ortcfactory.h"
-#include "webrtc/ortc/testrtpparameters.h"
-#include "webrtc/p2p/base/fakepackettransport.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "media/base/fakemediaengine.h"
+#include "ortc/ortcfactory.h"
+#include "ortc/testrtpparameters.h"
+#include "p2p/base/fakepackettransport.h"
+#include "rtc_base/gunit.h"
 
 namespace webrtc {
 
@@ -29,7 +31,8 @@ class RtpTransportTest : public testing::Test {
     // FakePacketTransports.
     auto result = OrtcFactory::Create(
         nullptr, nullptr, nullptr, nullptr, nullptr,
-        std::unique_ptr<cricket::MediaEngineInterface>(fake_media_engine_));
+        std::unique_ptr<cricket::MediaEngineInterface>(fake_media_engine_),
+        CreateBuiltinAudioEncoderFactory(), CreateBuiltinAudioDecoderFactory());
     ortc_factory_ = result.MoveValue();
   }
 
@@ -45,18 +48,17 @@ TEST_F(RtpTransportTest, GetPacketTransports) {
   rtc::FakePacketTransport rtp("rtp");
   rtc::FakePacketTransport rtcp("rtcp");
   // With muxed RTCP.
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  auto result = ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp,
-                                                  nullptr, nullptr);
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = true;
+  auto result =
+      ortc_factory_->CreateRtpTransport(parameters, &rtp, nullptr, nullptr);
   ASSERT_TRUE(result.ok());
   EXPECT_EQ(&rtp, result.value()->GetRtpPacketTransport());
   EXPECT_EQ(nullptr, result.value()->GetRtcpPacketTransport());
   result.MoveValue().reset();
   // With non-muxed RTCP.
-  rtcp_parameters.mux = false;
-  result =
-      ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp, &rtcp, nullptr);
+  parameters.rtcp.mux = false;
+  result = ortc_factory_->CreateRtpTransport(parameters, &rtp, &rtcp, nullptr);
   ASSERT_TRUE(result.ok());
   EXPECT_EQ(&rtp, result.value()->GetRtpPacketTransport());
   EXPECT_EQ(&rtcp, result.value()->GetRtcpPacketTransport());
@@ -70,16 +72,16 @@ TEST_F(RtpTransportTest, EnablingRtcpMuxingUnsetsRtcpTransport) {
   rtc::FakePacketTransport rtcp("rtcp");
 
   // Create non-muxed.
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = false;
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = false;
   auto result =
-      ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp, &rtcp, nullptr);
+      ortc_factory_->CreateRtpTransport(parameters, &rtp, &rtcp, nullptr);
   ASSERT_TRUE(result.ok());
   auto rtp_transport = result.MoveValue();
 
   // Enable muxing.
-  rtcp_parameters.mux = true;
-  EXPECT_TRUE(rtp_transport->SetRtcpParameters(rtcp_parameters).ok());
+  parameters.rtcp.mux = true;
+  EXPECT_TRUE(rtp_transport->SetParameters(parameters).ok());
   EXPECT_EQ(nullptr, rtp_transport->GetRtcpPacketTransport());
 }
 
@@ -87,39 +89,39 @@ TEST_F(RtpTransportTest, GetAndSetRtcpParameters) {
   rtc::FakePacketTransport rtp("rtp");
   rtc::FakePacketTransport rtcp("rtcp");
   // Start with non-muxed RTCP.
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = false;
-  rtcp_parameters.cname = "teST";
-  rtcp_parameters.reduced_size = false;
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = false;
+  parameters.rtcp.cname = "teST";
+  parameters.rtcp.reduced_size = false;
   auto result =
-      ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp, &rtcp, nullptr);
+      ortc_factory_->CreateRtpTransport(parameters, &rtp, &rtcp, nullptr);
   ASSERT_TRUE(result.ok());
   auto transport = result.MoveValue();
-  EXPECT_EQ(rtcp_parameters, transport->GetRtcpParameters());
+  EXPECT_EQ(parameters, transport->GetParameters());
 
   // Changing the CNAME is currently unsupported.
-  rtcp_parameters.cname = "different";
+  parameters.rtcp.cname = "different";
   EXPECT_EQ(RTCErrorType::UNSUPPORTED_OPERATION,
-            transport->SetRtcpParameters(rtcp_parameters).type());
-  rtcp_parameters.cname = "teST";
+            transport->SetParameters(parameters).type());
+  parameters.rtcp.cname = "teST";
 
   // Enable RTCP muxing and reduced-size RTCP.
-  rtcp_parameters.mux = true;
-  rtcp_parameters.reduced_size = true;
-  EXPECT_TRUE(transport->SetRtcpParameters(rtcp_parameters).ok());
-  EXPECT_EQ(rtcp_parameters, transport->GetRtcpParameters());
+  parameters.rtcp.mux = true;
+  parameters.rtcp.reduced_size = true;
+  EXPECT_TRUE(transport->SetParameters(parameters).ok());
+  EXPECT_EQ(parameters, transport->GetParameters());
 
   // Empty CNAME should result in the existing CNAME being used.
-  rtcp_parameters.cname.clear();
-  EXPECT_TRUE(transport->SetRtcpParameters(rtcp_parameters).ok());
-  EXPECT_EQ("teST", transport->GetRtcpParameters().cname);
+  parameters.rtcp.cname.clear();
+  EXPECT_TRUE(transport->SetParameters(parameters).ok());
+  EXPECT_EQ("teST", transport->GetParameters().rtcp.cname);
 
   // Disabling RTCP muxing after enabling shouldn't be allowed, since enabling
   // muxing should have made the RTP transport forget about the RTCP packet
   // transport initially passed into it.
-  rtcp_parameters.mux = false;
+  parameters.rtcp.mux = false;
   EXPECT_EQ(RTCErrorType::INVALID_STATE,
-            transport->SetRtcpParameters(rtcp_parameters).type());
+            transport->SetParameters(parameters).type());
 }
 
 // When Send or Receive is called on a sender or receiver, the RTCP parameters
@@ -129,12 +131,12 @@ TEST_F(RtpTransportTest, GetAndSetRtcpParameters) {
 TEST_F(RtpTransportTest, SendAndReceiveApplyRtcpParametersToMediaEngine) {
   // First, create video transport with reduced-size RTCP.
   rtc::FakePacketTransport fake_packet_transport1("1");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  rtcp_parameters.reduced_size = true;
-  rtcp_parameters.cname = "foo";
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = true;
+  parameters.rtcp.reduced_size = true;
+  parameters.rtcp.cname = "foo";
   auto rtp_transport_result = ortc_factory_->CreateRtpTransport(
-      rtcp_parameters, &fake_packet_transport1, nullptr, nullptr);
+      parameters, &fake_packet_transport1, nullptr, nullptr);
   auto video_transport = rtp_transport_result.MoveValue();
 
   // Create video sender and call Send, expecting parameters to be applied.
@@ -163,10 +165,10 @@ TEST_F(RtpTransportTest, SendAndReceiveApplyRtcpParametersToMediaEngine) {
 
   // Create audio transport with non-reduced size RTCP.
   rtc::FakePacketTransport fake_packet_transport2("2");
-  rtcp_parameters.reduced_size = false;
-  rtcp_parameters.cname = "bar";
+  parameters.rtcp.reduced_size = false;
+  parameters.rtcp.cname = "bar";
   rtp_transport_result = ortc_factory_->CreateRtpTransport(
-      rtcp_parameters, &fake_packet_transport2, nullptr, nullptr);
+      parameters, &fake_packet_transport2, nullptr, nullptr);
   auto audio_transport = rtp_transport_result.MoveValue();
 
   // Create audio sender and call Send, expecting parameters to be applied.
@@ -195,17 +197,17 @@ TEST_F(RtpTransportTest, SendAndReceiveApplyRtcpParametersToMediaEngine) {
   EXPECT_FALSE(fake_voice_channel->recv_rtcp_parameters().reduced_size);
 }
 
-// When SetRtcpParameters is called, the modified parameters should be applied
+// When SetParameters is called, the modified parameters should be applied
 // to the media engine.
 // TODO(deadbeef): Once the implementation supports changing the CNAME,
 // test that here.
 TEST_F(RtpTransportTest, SetRtcpParametersAppliesParametersToMediaEngine) {
   rtc::FakePacketTransport fake_packet_transport("fake");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  rtcp_parameters.reduced_size = false;
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = true;
+  parameters.rtcp.reduced_size = false;
   auto rtp_transport_result = ortc_factory_->CreateRtpTransport(
-      rtcp_parameters, &fake_packet_transport, nullptr, nullptr);
+      parameters, &fake_packet_transport, nullptr, nullptr);
   auto rtp_transport = rtp_transport_result.MoveValue();
 
   // Create video sender and call Send, applying an initial set of parameters.
@@ -215,13 +217,70 @@ TEST_F(RtpTransportTest, SetRtcpParametersAppliesParametersToMediaEngine) {
   EXPECT_TRUE(sender->Send(MakeMinimalVp8Parameters()).ok());
 
   // Modify parameters and expect them to be changed at the media engine level.
-  rtcp_parameters.reduced_size = true;
-  EXPECT_TRUE(rtp_transport->SetRtcpParameters(rtcp_parameters).ok());
+  parameters.rtcp.reduced_size = true;
+  EXPECT_TRUE(rtp_transport->SetParameters(parameters).ok());
 
   cricket::FakeVideoMediaChannel* fake_video_channel =
       fake_media_engine_->GetVideoChannel(0);
   ASSERT_NE(nullptr, fake_video_channel);
   EXPECT_TRUE(fake_video_channel->send_rtcp_parameters().reduced_size);
+}
+
+// SetParameters should set keepalive for all RTP transports.
+// It is impossible to modify keepalive parameters if any streams are created.
+// Note: This is an implementation detail for current way of configuring the
+// keep-alive. It may change in the future.
+TEST_F(RtpTransportTest, CantChangeKeepAliveAfterCreatedSendStreams) {
+  rtc::FakePacketTransport fake_packet_transport("fake");
+  RtpTransportParameters parameters;
+  parameters.keepalive.timeout_interval_ms = 100;
+  auto rtp_transport_result = ortc_factory_->CreateRtpTransport(
+      parameters, &fake_packet_transport, nullptr, nullptr);
+  ASSERT_TRUE(rtp_transport_result.ok());
+  std::unique_ptr<RtpTransportInterface> rtp_transport =
+      rtp_transport_result.MoveValue();
+
+  // Updating keepalive parameters is ok, since no rtp sender created.
+  parameters.keepalive.timeout_interval_ms = 200;
+  EXPECT_TRUE(rtp_transport->SetParameters(parameters).ok());
+
+  // Create video sender. Note: |sender_result| scope must extend past the
+  // SetParameters() call below.
+  auto sender_result = ortc_factory_->CreateRtpSender(cricket::MEDIA_TYPE_VIDEO,
+                                                      rtp_transport.get());
+  EXPECT_TRUE(sender_result.ok());
+
+  // Modify parameters second time after video send stream created.
+  parameters.keepalive.timeout_interval_ms = 10;
+  EXPECT_EQ(RTCErrorType::INVALID_MODIFICATION,
+            rtp_transport->SetParameters(parameters).type());
+}
+
+// Note: This is an implementation detail for current way of configuring the
+// keep-alive. It may change in the future.
+TEST_F(RtpTransportTest, KeepAliveMustBeSameAcrossTransportController) {
+  rtc::FakePacketTransport fake_packet_transport("fake");
+  RtpTransportParameters parameters;
+  parameters.keepalive.timeout_interval_ms = 100;
+
+  // Manually create a controller, that can be shared by multiple transports.
+  auto controller_result = ortc_factory_->CreateRtpTransportController();
+  ASSERT_TRUE(controller_result.ok());
+  std::unique_ptr<RtpTransportControllerInterface> controller =
+      controller_result.MoveValue();
+
+  // Create a first transport.
+  auto first_transport_result = ortc_factory_->CreateRtpTransport(
+      parameters, &fake_packet_transport, nullptr, controller.get());
+  ASSERT_TRUE(first_transport_result.ok());
+
+  // Update the parameters, and create another transport for the same
+  // controller.
+  parameters.keepalive.timeout_interval_ms = 10;
+  auto seconds_transport_result = ortc_factory_->CreateRtpTransport(
+      parameters, &fake_packet_transport, nullptr, controller.get());
+  EXPECT_EQ(RTCErrorType::INVALID_MODIFICATION,
+            seconds_transport_result.error().type());
 }
 
 }  // namespace webrtc

@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
-#define WEBRTC_COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
+#ifndef COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
+#define COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
 
 #include <stdint.h>
 
 #include <list>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
+#include "api/video/video_frame.h"
 
 namespace webrtc {
 
@@ -49,4 +49,4 @@ class VideoRenderFrames {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
+#endif  // COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_

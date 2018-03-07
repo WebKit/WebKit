@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/filterbank_internal.h"
+#include "modules/audio_coding/codecs/isac/fix/source/filterbank_internal.h"
 
 // WebRtcIsacfix_AllpassFilter2FixDec16 function optimized for MIPSDSP platform.
 // Bit-exact with WebRtcIsacfix_AllpassFilter2FixDec16C from filterbanks.c.

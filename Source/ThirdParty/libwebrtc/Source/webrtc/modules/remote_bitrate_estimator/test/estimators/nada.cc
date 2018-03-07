@@ -18,10 +18,10 @@
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/estimators/nada.h"
-#include "webrtc/modules/remote_bitrate_estimator/test/bwe_test_logging.h"
-#include "webrtc/modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
+#include "modules/remote_bitrate_estimator/test/estimators/nada.h"
+#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "rtc_base/arraysize.h"
 
 namespace webrtc {
 namespace testing {

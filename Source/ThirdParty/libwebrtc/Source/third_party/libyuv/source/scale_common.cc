@@ -1306,6 +1306,35 @@ void ScaleSlope(int src_width,
 }
 #undef CENTERSTART
 
+// Read 8x2 upsample with filtering and write 16x1.
+// actually reads an extra pixel, so 9x2.
+void ScaleRowUp2_16_C(const uint16* src_ptr,
+                      ptrdiff_t src_stride,
+                      uint16* dst,
+                      int dst_width) {
+  const uint16* src2 = src_ptr + src_stride;
+
+  int x;
+  for (x = 0; x < dst_width - 1; x += 2) {
+    uint16 p0 = src_ptr[0];
+    uint16 p1 = src_ptr[1];
+    uint16 p2 = src2[0];
+    uint16 p3 = src2[1];
+    dst[0] = (p0 * 9 + p1 * 3 + p2 * 3 + p3 + 8) >> 4;
+    dst[1] = (p0 * 3 + p1 * 9 + p2 + p3 * 3 + 8) >> 4;
+    ++src_ptr;
+    ++src2;
+    dst += 2;
+  }
+  if (dst_width & 1) {
+    uint16 p0 = src_ptr[0];
+    uint16 p1 = src_ptr[1];
+    uint16 p2 = src2[0];
+    uint16 p3 = src2[1];
+    dst[0] = (p0 * 9 + p1 * 3 + p2 * 3 + p3 + 8) >> 4;
+  }
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 }  // namespace libyuv

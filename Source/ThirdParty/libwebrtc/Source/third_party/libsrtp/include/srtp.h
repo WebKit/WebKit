@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,8 @@
  */
 
 
-#ifndef SRTP_H
-#define SRTP_H
+#ifndef SRTP_SRTP_H
+#define SRTP_SRTP_H
 
 #include <stdint.h>
 
@@ -79,132 +79,48 @@ extern "C" {
 #define SRTP_MAX_TAG_LEN 16 
 
 /**
+ * SRTP_MAX_MKI_LEN is the maximum size the MKI could be which is
+ * 128 bytes
+ */
+#define SRTP_MAX_MKI_LEN 128
+
+
+/**
  * SRTP_MAX_TRAILER_LEN is the maximum length of the SRTP trailer
  * (authentication tag and MKI) supported by libSRTP.  This value is
- * the maximum number of octets that will be added to an RTP packet by
+ * the maixmum number of octets that will be added to an RTP packet by
  * srtp_protect().
  *
  * @brief the maximum number of octets added by srtp_protect().
  */
-#define SRTP_MAX_TRAILER_LEN SRTP_MAX_TAG_LEN 
+#define SRTP_MAX_TRAILER_LEN (SRTP_MAX_TAG_LEN + SRTP_MAX_MKI_LEN)
 
+/**
+ * SRTP_MAX_NUM_MASTER_KEYS is the maximum number of Master keys for
+ * MKI supported by libSRTP.  
+ *  
+ */
+#define SRTP_MAX_NUM_MASTER_KEYS 16
+
+#define SRTP_SALT_LEN                14
 /*
- * SRTP_AEAD_SALT_LEN is the length of the SALT values used with 
+ * SRTP_AEAD_SALT_LEN is the length of the SALT values used with
  * GCM mode.  GCM mode requires an IV.  The SALT value is used
  * as part of the IV formation logic applied to each RTP packet.
  */
-#define SRTP_AEAD_SALT_LEN	12
-#define SRTP_AES_128_GCM_KEYSIZE_WSALT   SRTP_AEAD_SALT_LEN + 16
-#define SRTP_AES_192_GCM_KEYSIZE_WSALT   SRTP_AEAD_SALT_LEN + 24
-#define SRTP_AES_256_GCM_KEYSIZE_WSALT   SRTP_AEAD_SALT_LEN + 32
+#define SRTP_AEAD_SALT_LEN               12
 
-/*
- * an srtp_hdr_t represents the srtp header
- *
- * in this implementation, an srtp_hdr_t is assumed to be 32-bit aligned
- * 
- * (note that this definition follows that of RFC 1889 Appendix A, but
- * is not identical)
- */
- 
-#ifndef WORDS_BIGENDIAN
+#define SRTP_AES_128_KEY_LEN         16
+#define SRTP_AES_192_KEY_LEN         24
+#define SRTP_AES_256_KEY_LEN         32
 
-/*
- * srtp_hdr_t represents an RTP or SRTP header.  The bit-fields in
- * this structure should be declared "unsigned int" instead of 
- * "unsigned char", but doing so causes the MS compiler to not
- * fully pack the bit fields.
- */
+#define SRTP_AES_ICM_128_KEY_LEN_WSALT   (SRTP_SALT_LEN + SRTP_AES_128_KEY_LEN)
+#define SRTP_AES_ICM_192_KEY_LEN_WSALT   (SRTP_SALT_LEN + SRTP_AES_192_KEY_LEN)
+#define SRTP_AES_ICM_256_KEY_LEN_WSALT   (SRTP_SALT_LEN + SRTP_AES_256_KEY_LEN)
 
-typedef struct {
-  unsigned char cc:4;	/* CSRC count             */
-  unsigned char x:1;	/* header extension flag  */
-  unsigned char p:1;	/* padding flag           */
-  unsigned char version:2; /* protocol version    */
-  unsigned char pt:7;	/* payload type           */
-  unsigned char m:1;	/* marker bit             */
-  uint16_t seq;		/* sequence number        */
-  uint32_t ts;		/* timestamp              */
-  uint32_t ssrc;	/* synchronization source */
-} srtp_hdr_t;
-
-#else /*  BIG_ENDIAN */
-
-typedef struct {
-  unsigned char version:2; /* protocol version    */
-  unsigned char p:1;	/* padding flag           */
-  unsigned char x:1;	/* header extension flag  */
-  unsigned char cc:4;	/* CSRC count             */
-  unsigned char m:1;	/* marker bit             */
-  unsigned char pt:7;	/* payload type           */
-  uint16_t seq;		/* sequence number        */
-  uint32_t ts;		/* timestamp              */
-  uint32_t ssrc;	/* synchronization source */
-} srtp_hdr_t;
-
-#endif
-
-typedef struct {
-  uint16_t profile_specific;    /* profile-specific info               */
-  uint16_t length;              /* number of 32-bit words in extension */
-} srtp_hdr_xtnd_t;
-
-
-/*
- * srtcp_hdr_t represents a secure rtcp header 
- *
- * in this implementation, an srtcp header is assumed to be 32-bit
- * alinged
- */
-
-#ifndef WORDS_BIGENDIAN
-
-typedef struct {
-  unsigned char rc:5;		/* reception report count */
-  unsigned char p:1;		/* padding flag           */
-  unsigned char version:2;	/* protocol version       */
-  unsigned char pt:8;		/* payload type           */
-  uint16_t len;			/* length                 */
-  uint32_t ssrc;	       	/* synchronization source */
-} srtcp_hdr_t;
-
-typedef struct {
-  unsigned int index:31;    /* srtcp packet index in network order! */
-  unsigned int e:1;         /* encrypted? 1=yes */
-  /* optional mikey/etc go here */
-  /* and then the variable-length auth tag */
-} srtcp_trailer_t;
-
-
-#else /*  BIG_ENDIAN */
-
-typedef struct {
-  unsigned char version:2;	/* protocol version       */
-  unsigned char p:1;		/* padding flag           */
-  unsigned char rc:5;		/* reception report count */
-  unsigned char pt:8;		/* payload type           */
-  uint16_t len;			/* length                 */
-  uint32_t ssrc;	       	/* synchronization source */
-} srtcp_hdr_t;
-
-typedef struct {
-  unsigned int version:2;  /* protocol version                     */
-  unsigned int p:1;        /* padding flag                         */
-  unsigned int count:5;    /* varies by packet type                */
-  unsigned int pt:8;       /* payload type                         */
-  uint16_t length;         /* len of uint32s of packet less header */
-} rtcp_common_t;
-
-typedef struct {
-  unsigned int e:1;         /* encrypted? 1=yes */
-  unsigned int index:31;    /* srtcp packet index */
-  /* optional mikey/etc go here */
-  /* and then the variable-length auth tag */
-} srtcp_trailer_t;
-
-#endif
-
-
+#define SRTP_AES_GCM_128_KEY_LEN_WSALT   (SRTP_AEAD_SALT_LEN + SRTP_AES_128_KEY_LEN)
+#define SRTP_AES_GCM_192_KEY_LEN_WSALT   (SRTP_AEAD_SALT_LEN + SRTP_AES_192_KEY_LEN)
+#define SRTP_AES_GCM_256_KEY_LEN_WSALT   (SRTP_AEAD_SALT_LEN + SRTP_AES_256_KEY_LEN)
 
 /** 
  *  @brief A srtp_cipher_type_id_t is an identifier for a particular cipher
@@ -234,7 +150,7 @@ typedef uint32_t srtp_cipher_type_id_t;
  */
 typedef uint32_t srtp_auth_type_id_t;
 
-/*
+/**
  * @brief srtp_err_status_t defines error codes.
  *
  * The enumeration srtp_err_status_t defines error codes.  Note that the
@@ -267,16 +183,14 @@ typedef enum {
   srtp_err_status_parse_err    = 21, /**< error parsing data                      */
   srtp_err_status_encode_err   = 22, /**< error encoding data                     */
   srtp_err_status_semaphore_err = 23,/**< error while using semaphores            */
-  srtp_err_status_pfkey_err    = 24  /**< error while using pfkey                 */
+  srtp_err_status_pfkey_err    = 24, /**< error while using pfkey                 */
+  srtp_err_status_bad_mki      = 25, /**< error MKI present in packet is invalid  */
+  srtp_err_status_pkt_idx_old  = 26, /**< packet index is too old to consider     */
+  srtp_err_status_pkt_idx_adv  = 27 /**< packet index advanced, reset needed      */
 } srtp_err_status_t;
 
-typedef struct srtp_stream_ctx_t_ srtp_stream_ctx_t;
-typedef struct srtp_ctx_t_ srtp_ctx_t;
 
-/* 
- * nota bene: since libSRTP doesn't support the use of the MKI, the
- * SRTP_MAX_TRAILER_LEN value is just the maximum tag length
- */
+typedef struct srtp_ctx_t_ srtp_ctx_t;
 
 /**
  * @brief srtp_sec_serv_t describes a set of security services. 
@@ -364,6 +278,17 @@ typedef struct srtp_ekt_policy_ctx_t *srtp_ekt_policy_t;
  */
 typedef struct srtp_ekt_stream_ctx_t *srtp_ekt_stream_t;
 
+/**
+ * @brief srtp_master_key_t represents a master key.  There will
+ * be a Master Key Index and the Master Key associated with the
+ * Master Key Index.  Need to also keep track of the Master Key
+ * Index Size to correctly read it from a packet.
+ */
+typedef struct srtp_master_key_t {
+  unsigned char *key;
+  unsigned char *mki_id;
+  unsigned int mki_size;
+} srtp_master_key_t;
 
 /** 
  * @brief represents the policy for an SRTP session.  
@@ -401,7 +326,9 @@ typedef struct srtp_policy_t {
   srtp_crypto_policy_t rtp;    /**< SRTP crypto policy.                  */
   srtp_crypto_policy_t rtcp;   /**< SRTCP crypto policy.                 */
   unsigned char *key;          /**< Pointer to the SRTP master key for
-				*    this stream.                        */
+                                *    this stream.                        */
+  srtp_master_key_t **keys;    /** Array of Master Key structures */
+  unsigned long num_master_keys;  /** Number of master keys            */
   srtp_ekt_policy_t ekt;       /**< Pointer to the EKT policy structure
                                 *   for this stream (if any)             */ 
   unsigned long window_size;   /**< The window size to use for replay
@@ -434,22 +361,6 @@ typedef struct srtp_policy_t {
  */
 
 typedef srtp_ctx_t *srtp_t;
-
-
-/**
- * @brief An srtp_stream_t points to an SRTP stream structure.
- *
- * The typedef srtp_stream_t is a pointer to a structure that
- * represents an SRTP stream.  This datatype is intentionally
- * opaque in order to separate the interface from the implementation. 
- * 
- * An SRTP stream consists of all of the traffic sent to an SRTP
- * session by a single participant.  A session can be viewed as
- * a set of streams.  
- *
- */
-typedef srtp_stream_ctx_t *srtp_stream_t;
-
 
 
 /**
@@ -511,7 +422,59 @@ srtp_err_status_t srtp_shutdown(void);
  */
 
 srtp_err_status_t srtp_protect(srtp_t ctx, void *rtp_hdr, int *len_ptr);
-	     
+
+/**
+ * @brief srtp_protect_mki() is the Secure RTP sender-side packet processing
+ * function that can utilize MKI.
+ * 
+ * The function call srtp_protect(ctx, rtp_hdr, len_ptr) applies SRTP
+ * protection to the RTP packet rtp_hdr (which has length *len_ptr) using
+ * the SRTP context ctx.  If srtp_err_status_ok is returned, then rtp_hdr
+ * points to the resulting SRTP packet and *len_ptr is the number of
+ * octets in that packet; otherwise, no assumptions should be made
+ * about the value of either data elements.
+ * 
+ * The sequence numbers of the RTP packets presented to this function
+ * need not be consecutive, but they @b must be out of order by less
+ * than 2^15 = 32,768 packets.
+ *
+ * @warning This function assumes that it can write the authentication
+ * tag into the location in memory immediately following the RTP
+ * packet, and assumes that the RTP packet is aligned on a 32-bit
+ * boundary.
+ *
+ * @warning This function assumes that it can write SRTP_MAX_TRAILER_LEN 
+ * into the location in memory immediately following the RTP packet.   
+ * Callers MUST ensure that this much writable memory is available in 
+ * the buffer that holds the RTP packet.
+ * 
+ * @param ctx is the SRTP context to use in processing the packet.
+ *
+ * @param rtp_hdr is a pointer to the RTP packet (before the call); after
+ * the function returns, it points to the srtp packet.
+ *
+ * @param pkt_octet_len is a pointer to the length in octets of the complete
+ * RTP packet (header and body) before the function call, and of the
+ * complete SRTP packet after the call, if srtp_err_status_ok was returned.
+ * Otherwise, the value of the data to which it points is undefined.
+ *
+ * @param use_mki is a boolean to tell the system if mki is being used.  If 
+ * set to false then will use the first set of session keys.  If set to true will
+ * use the session keys identified by the mki_index
+ *
+ * @param mki_index integer value specifying which set of session keys should be
+ * used if use_mki is set to true.
+ *
+ * @return 
+ *    - srtp_err_status_ok            no problems
+ *    - srtp_err_status_replay_fail   rtp sequence number was non-increasing
+ *    - @e other                 failure in cryptographic mechanisms
+ */
+
+srtp_err_status_t srtp_protect_mki(srtp_ctx_t *ctx, void *rtp_hdr,
+                                   int *pkt_octet_len, unsigned int use_mki,
+                                   unsigned int mki_index);
+
 /**
  * @brief srtp_unprotect() is the Secure RTP receiver-side packet
  * processing function.
@@ -555,6 +518,54 @@ srtp_err_status_t srtp_protect(srtp_t ctx, void *rtp_hdr, int *len_ptr);
 
 srtp_err_status_t srtp_unprotect(srtp_t ctx, void *srtp_hdr, int *len_ptr);
 
+/**
+ * @brief srtp_unprotect_mki() is the Secure RTP receiver-side packet
+ * processing function that checks for MKI.
+ *
+ * The function call srtp_unprotect(ctx, srtp_hdr, len_ptr) verifies
+ * the Secure RTP protection of the SRTP packet pointed to by srtp_hdr
+ * (which has length *len_ptr), using the SRTP context ctx.  If
+ * srtp_err_status_ok is returned, then srtp_hdr points to the resulting
+ * RTP packet and *len_ptr is the number of octets in that packet;
+ * otherwise, no assumptions should be made about the value of either
+ * data elements.  
+ * 
+ * The sequence numbers of the RTP packets presented to this function
+ * need not be consecutive, but they @b must be out of order by less
+ * than 2^15 = 32,768 packets.
+ * 
+ * @warning This function assumes that the SRTP packet is aligned on a
+ * 32-bit boundary.
+ *
+ * @param ctx is the SRTP session which applies to the particular packet.
+ *
+ * @param srtp_hdr is a pointer to the header of the SRTP packet
+ * (before the call).  after the function returns, it points to the
+ * rtp packet if srtp_err_status_ok was returned; otherwise, the value of
+ * the data to which it points is undefined.
+ *
+ * @param len_ptr is a pointer to the length in octets of the complete
+ * srtp packet (header and body) before the function call, and of the
+ * complete rtp packet after the call, if srtp_err_status_ok was returned.
+ * Otherwise, the value of the data to which it points is undefined.
+ *
+ * @param use_mki is a boolean to tell the system if mki is being used.  If
+ * set to false then will use the first set of session keys.  If set to true will
+ * use the session keys identified by the mki_index
+ *
+ * @return 
+ *    - srtp_err_status_ok          if the RTP packet is valid.
+ *    - srtp_err_status_auth_fail   if the SRTP packet failed the message 
+ *                             authentication check.
+ *    - srtp_err_status_replay_fail if the SRTP packet is a replay (e.g. packet has
+ *                             already been processed and accepted).
+ *    - srtp_err_status_bad_mki if the MKI in the packet is not a known MKI id
+ *    - [other]  if there has been an error in the cryptographic mechanisms.
+ *
+ */
+
+srtp_err_status_t srtp_unprotect_mki(srtp_t ctx, void *srtp_hdr, int *len_ptr,
+                                     unsigned int use_mki);
 
 /**
  * @brief srtp_create() allocates and initializes an SRTP session.
@@ -859,8 +870,7 @@ void srtp_crypto_policy_set_null_cipher_hmac_null(srtp_crypto_policy_t *p);
  * 
  * The function call srtp_crypto_policy_set_aes_cm_256_hmac_sha1_80(&p)
  * sets the srtp_crypto_policy_t at location p to use policy
- * AES_CM_256_HMAC_SHA1_80 as defined in
- * draft-ietf-avt-srtp-big-aes-03.txt.  This policy uses AES-256
+ * AES_CM_256_HMAC_SHA1_80 as defined in RFC 6188.  This policy uses AES-256
  * Counter Mode encryption and HMAC-SHA1 authentication, with an 80 bit
  * authentication tag.
  * 
@@ -886,8 +896,7 @@ void srtp_crypto_policy_set_aes_cm_256_hmac_sha1_80(srtp_crypto_policy_t *p);
  * 
  * The function call srtp_crypto_policy_set_aes_cm_256_hmac_sha1_32(&p)
  * sets the srtp_crypto_policy_t at location p to use policy
- * AES_CM_256_HMAC_SHA1_32 as defined in
- * draft-ietf-avt-srtp-big-aes-03.txt.  This policy uses AES-256
+ * AES_CM_256_HMAC_SHA1_32 as defined in RFC 6188.  This policy uses AES-256
  * Counter Mode encryption and HMAC-SHA1 authentication, with an
  * authentication tag that is only 32 bits long.  This length is
  * considered adequate only for protecting audio and video media that
@@ -937,6 +946,93 @@ void srtp_crypto_policy_set_aes_cm_256_hmac_sha1_32(srtp_crypto_policy_t *p);
  *
  */
 void srtp_crypto_policy_set_aes_cm_256_null_auth(srtp_crypto_policy_t *p);
+
+
+/**
+ * @brief srtp_crypto_policy_set_aes_cm_192_hmac_sha1_80() sets a crypto
+ * policy structure to a encryption and authentication policy using AES-192
+ * for RTP protection.
+ *
+ * @param p is a pointer to the policy structure to be set
+ *
+ * The function call srtp_crypto_policy_set_aes_cm_192_hmac_sha1_80(&p)
+ * sets the crypto_policy_t at location p to use policy
+ * AES_CM_192_HMAC_SHA1_80 as defined in RFC 6188.  This policy uses AES-192
+ * Counter Mode encryption and HMAC-SHA1 authentication, with an 80 bit
+ * authentication tag.
+ *
+ * This function is a convenience that helps to avoid dealing directly
+ * with the policy data structure.  You are encouraged to initialize
+ * policy elements with this function call.  Doing so may allow your
+ * code to be forward compatible with later versions of libSRTP that
+ * include more elements in the crypto_policy_t datatype.
+ *
+ * @return void.
+ *
+ */
+void srtp_crypto_policy_set_aes_cm_192_hmac_sha1_80(srtp_crypto_policy_t *p);
+
+
+/**
+ * @brief srtp_crypto_policy_set_aes_cm_192_hmac_sha1_32() sets a crypto
+ * policy structure to a short-authentication tag policy using AES-192
+ * encryption.
+ *
+ * @param p is a pointer to the policy structure to be set
+ *
+ * The function call srtp_crypto_policy_set_aes_cm_192_hmac_sha1_32(&p)
+ * sets the crypto_policy_t at location p to use policy
+ * AES_CM_192_HMAC_SHA1_32 as defined in RFC 6188.  This policy uses AES-192
+ * Counter Mode encryption and HMAC-SHA1 authentication, with an
+ * authentication tag that is only 32 bits long.  This length is
+ * considered adequate only for protecting audio and video media that
+ * use a stateless playback function.  See Section 7.5 of RFC 3711
+ * (http://www.ietf.org/rfc/rfc3711.txt).
+ *
+ * This function is a convenience that helps to avoid dealing directly
+ * with the policy data structure.  You are encouraged to initialize
+ * policy elements with this function call.  Doing so may allow your
+ * code to be forward compatible with later versions of libSRTP that
+ * include more elements in the crypto_policy_t datatype.
+ *
+ * @warning This crypto policy is intended for use in SRTP, but not in
+ * SRTCP.  It is recommended that a policy that uses longer
+ * authentication tags be used for SRTCP.  See Section 7.5 of RFC 3711
+ * (http://www.ietf.org/rfc/rfc3711.txt).
+ *
+ * @return void.
+ *
+ */
+void srtp_crypto_policy_set_aes_cm_192_hmac_sha1_32(srtp_crypto_policy_t *p);
+
+
+/**
+ * @brief srtp_crypto_policy_set_aes_cm_192_null_auth() sets a crypto
+ * policy structure to an encryption-only policy
+ *
+ * @param p is a pointer to the policy structure to be set
+ *
+ * The function call srtp_crypto_policy_set_aes_cm_192_null_auth(&p) sets
+ * the crypto_policy_t at location p to use the SRTP default cipher
+ * (AES-192 Counter Mode), but to use no authentication method.  This
+ * policy is NOT RECOMMENDED unless it is unavoidable; see Section 7.5
+ * of RFC 3711 (http://www.ietf.org/rfc/rfc3711.txt).
+ *
+ * This function is a convenience that helps to avoid dealing directly
+ * with the policy data structure.  You are encouraged to initialize
+ * policy elements with this function call.  Doing so may allow your
+ * code to be forward compatible with later versions of libSRTP that
+ * include more elements in the crypto_policy_t datatype.
+ *
+ * @warning This policy is NOT RECOMMENDED for SRTP unless it is
+ * unavoidable, and it is NOT RECOMMENDED at all for SRTCP; see
+ * Section 7.5 of RFC 3711 (http://www.ietf.org/rfc/rfc3711.txt).
+ *
+ * @return void.
+ *
+ */
+void srtp_crypto_policy_set_aes_cm_192_null_auth(srtp_crypto_policy_t *p);
+
 
 /**
  * @brief srtp_crypto_policy_set_aes_gcm_128_8_auth() sets a crypto
@@ -1100,18 +1196,19 @@ srtp_err_status_t srtp_dealloc(srtp_t s);
  * @brief identifies a particular SRTP profile 
  *
  * An srtp_profile_t enumeration is used to identify a particular SRTP
- * profile (that is, a set of algorithms and parameters).  These
- * profiles are defined in the DTLS-SRTP draft.
+ * profile (that is, a set of algorithms and parameters). These profiles
+ * are defined for DTLS-SRTP:
+ * https://www.iana.org/assignments/srtp-protection/srtp-protection.xhtml
  */
 
 typedef enum {
   srtp_profile_reserved           = 0,
   srtp_profile_aes128_cm_sha1_80  = 1,
   srtp_profile_aes128_cm_sha1_32  = 2,
-  srtp_profile_aes256_cm_sha1_80  = 3,
-  srtp_profile_aes256_cm_sha1_32  = 4,
   srtp_profile_null_sha1_80       = 5,
   srtp_profile_null_sha1_32       = 6,
+  srtp_profile_aead_aes_128_gcm   = 7,
+  srtp_profile_aead_aes_256_gcm   = 8,
 } srtp_profile_t;
 
 
@@ -1119,22 +1216,24 @@ typedef enum {
  * @brief srtp_crypto_policy_set_from_profile_for_rtp() sets a crypto policy
  * structure to the appropriate value for RTP based on an srtp_profile_t
  *
- * @param p is a pointer to the policy structure to be set 
- * 
+ * @param policy is a pointer to the policy structure to be set
+ *
+ * @param profile is an enumeration for the policy to be set
+ *
  * The function call srtp_crypto_policy_set_rtp_default(&policy, profile)
  * sets the srtp_crypto_policy_t at location policy to the policy for RTP
  * protection, as defined by the srtp_profile_t profile.
- * 
+ *
  * This function is a convenience that helps to avoid dealing directly
  * with the policy data structure.  You are encouraged to initialize
  * policy elements with this function call.  Doing so may allow your
  * code to be forward compatible with later versions of libSRTP that
  * include more elements in the srtp_crypto_policy_t datatype.
- * 
+ *
  * @return values
  *     - srtp_err_status_ok         no problems were encountered
  *     - srtp_err_status_bad_param  the profile is not supported 
- * 
+ *
  */
 srtp_err_status_t srtp_crypto_policy_set_from_profile_for_rtp(srtp_crypto_policy_t *policy, srtp_profile_t profile);
 
@@ -1145,22 +1244,24 @@ srtp_err_status_t srtp_crypto_policy_set_from_profile_for_rtp(srtp_crypto_policy
  * @brief srtp_crypto_policy_set_from_profile_for_rtcp() sets a crypto policy
  * structure to the appropriate value for RTCP based on an srtp_profile_t
  *
- * @param p is a pointer to the policy structure to be set 
- * 
+ * @param policy is a pointer to the policy structure to be set
+ *
+ * @param profile is an enumeration for the policy to be set
+ *
  * The function call srtp_crypto_policy_set_rtcp_default(&policy, profile)
  * sets the srtp_crypto_policy_t at location policy to the policy for RTCP
  * protection, as defined by the srtp_profile_t profile.
- * 
+ *
  * This function is a convenience that helps to avoid dealing directly
  * with the policy data structure.  You are encouraged to initialize
  * policy elements with this function call.  Doing so may allow your
  * code to be forward compatible with later versions of libSRTP that
  * include more elements in the srtp_crypto_policy_t datatype.
- * 
+ *
  * @return values
  *     - srtp_err_status_ok         no problems were encountered
- *     - srtp_err_status_bad_param  the profile is not supported 
- * 
+ *     - srtp_err_status_bad_param  the profile is not supported
+ *
  */
 srtp_err_status_t srtp_crypto_policy_set_from_profile_for_rtcp(srtp_crypto_policy_t *policy, srtp_profile_t profile);
 
@@ -1261,6 +1362,55 @@ srtp_append_salt_to_key(unsigned char *key, unsigned int bytes_in_key,
 
 srtp_err_status_t srtp_protect_rtcp(srtp_t ctx, void *rtcp_hdr, int *pkt_octet_len);
 
+
+/**
+ * @brief srtp_protect_rtcp_mki() is the Secure RTCP sender-side packet
+ * processing function that can utilize mki.
+ * 
+ * The function call srtp_protect_rtcp(ctx, rtp_hdr, len_ptr) applies
+ * SRTCP protection to the RTCP packet rtcp_hdr (which has length
+ * *len_ptr) using the SRTP session context ctx.  If srtp_err_status_ok is
+ * returned, then rtp_hdr points to the resulting SRTCP packet and
+ * *len_ptr is the number of octets in that packet; otherwise, no
+ * assumptions should be made about the value of either data elements.
+ * 
+ * @warning This function assumes that it can write the authentication
+ * tag into the location in memory immediately following the RTCP
+ * packet, and assumes that the RTCP packet is aligned on a 32-bit
+ * boundary.
+ *
+ * @warning This function assumes that it can write SRTP_MAX_TRAILER_LEN+4 
+ * into the location in memory immediately following the RTCP packet.   
+ * Callers MUST ensure that this much writable memory is available in 
+ * the buffer that holds the RTCP packet.
+ * 
+ * @param ctx is the SRTP context to use in processing the packet.
+ *
+ * @param rtcp_hdr is a pointer to the RTCP packet (before the call); after
+ * the function returns, it points to the srtp packet.
+ *
+ * @param pkt_octet_len is a pointer to the length in octets of the
+ * complete RTCP packet (header and body) before the function call,
+ * and of the complete SRTCP packet after the call, if srtp_err_status_ok
+ * was returned.  Otherwise, the value of the data to which it points
+ * is undefined.
+ *
+ * @param use_mki is a boolean to tell the system if mki is being used.  If 
+ * set to false then will use the first set of session keys.  If set to true will
+ * use the session keys identified by the mki_index
+ *
+ * @param mki_index integer value specifying which set of session kesy should be
+ * used if use_mki is set to true.
+ *
+ * @return 
+ *    - srtp_err_status_ok            if there were no problems.
+ *    - [other]                  if there was a failure in 
+ *                               the cryptographic mechanisms.
+ */
+
+srtp_err_status_t srtp_protect_rtcp_mki(srtp_t ctx, void *rtcp_hdr, int *pkt_octet_len,
+                                        unsigned int use_mki, unsigned int mki_index);
+
 /**
  * @brief srtp_unprotect_rtcp() is the Secure RTCP receiver-side packet
  * processing function.
@@ -1301,6 +1451,54 @@ srtp_err_status_t srtp_protect_rtcp(srtp_t ctx, void *rtcp_hdr, int *pkt_octet_l
  */
 
 srtp_err_status_t srtp_unprotect_rtcp(srtp_t ctx, void *srtcp_hdr, int *pkt_octet_len);
+
+/**
+ * @brief srtp_unprotect_rtcp() is the Secure RTCP receiver-side packet
+ * processing function.
+ *
+ * The function call srtp_unprotect_rtcp(ctx, srtp_hdr, len_ptr)
+ * verifies the Secure RTCP protection of the SRTCP packet pointed to
+ * by srtcp_hdr (which has length *len_ptr), using the SRTP session
+ * context ctx.  If srtp_err_status_ok is returned, then srtcp_hdr points
+ * to the resulting RTCP packet and *len_ptr is the number of octets
+ * in that packet; otherwise, no assumptions should be made about the
+ * value of either data elements.
+ * 
+ * @warning This function assumes that the SRTCP packet is aligned on a
+ * 32-bit boundary.
+ *
+ * @param ctx is a pointer to the srtp_t which applies to the
+ * particular packet.
+ *
+ * @param srtcp_hdr is a pointer to the header of the SRTCP packet
+ * (before the call).  After the function returns, it points to the
+ * rtp packet if srtp_err_status_ok was returned; otherwise, the value of
+ * the data to which it points is undefined.
+ *
+ * @param pkt_octet_len is a pointer to the length in octets of the
+ * complete SRTCP packet (header and body) before the function call,
+ * and of the complete rtp packet after the call, if srtp_err_status_ok was
+ * returned.  Otherwise, the value of the data to which it points is
+ * undefined.
+ *
+ * @param use_mki is a boolean to tell the system if mki is being used.  If
+ * set to false then will use the first set of session keys.  If set to true will
+ * use the session keys identified by the mki_index
+ *
+ * @return 
+ *    - srtp_err_status_ok          if the RTCP packet is valid.
+ *    - srtp_err_status_auth_fail   if the SRTCP packet failed the message 
+ *                             authentication check.
+ *    - srtp_err_status_replay_fail if the SRTCP packet is a replay (e.g. has
+ *                             already been processed and accepted).
+ *    - srtp_err_status_bad_mki if the MKI in the packet is not a known MKI id
+ *    - [other]  if there has been an error in the cryptographic mechanisms.
+ *
+ */
+
+srtp_err_status_t srtp_unprotect_rtcp_mki(srtp_t ctx, void *srtcp_hdr,
+                                          int *pkt_octet_len,
+                                          unsigned int use_mki);
 
 /**
  * @}
@@ -1424,7 +1622,7 @@ typedef enum {
 
 typedef struct srtp_event_data_t {
   srtp_t        session;  /**< The session in which the event happend. */
-  srtp_stream_t stream;   /**< The stream in which the event happend.  */
+  uint32_t      ssrc;     /**< The ssrc in host order of the stream in which the event happend */
   srtp_event_t  event;    /**< An enum indicating the type of event.   */
 } srtp_event_data_t;
 
@@ -1476,13 +1674,101 @@ unsigned int srtp_get_version(void);
  *
  * returns err_status_ok on success, err_status_fail otherwise
  */
-srtp_err_status_t srtp_set_debug_module(char *mod_name, int v);
+srtp_err_status_t srtp_set_debug_module(const char *mod_name, int v);
 
 /**
  * @brief srtp_list_debug_modules() outputs a list of debugging modules
  *
  */
 srtp_err_status_t srtp_list_debug_modules(void);
+
+/**
+ * @brief srtp_log_level_t defines log levels.
+ *
+ * The enumeration srtp_log_level_t defines log levels reported
+ * in the srtp_log_handler_func_t.
+ *
+ */
+typedef enum {
+    srtp_log_level_error,   /**< log level is reporting an error message  */
+    srtp_log_level_warning, /**< log level is reporting a warning message */
+    srtp_log_level_info,    /**< log level is reporting an info message   */
+    srtp_log_level_debug    /**< log level is reporting a debug message   */
+} srtp_log_level_t;
+
+/**
+ * @brief srtp_log_handler_func_t is the function prototype for
+ * the log handler.
+ *
+ * The typedef srtp_event_handler_func_t is the prototype for the
+ * event handler function.  It has as srtp_log_level_t, log
+ * message and data as arguments.
+ * There can only be a single, global handler for all log messages in
+ * libSRTP.
+ */
+typedef void (srtp_log_handler_func_t)(srtp_log_level_t level, const char * msg, void *data);
+
+/**
+ * @brief sets the log handler to the function supplied by the caller.
+ *
+ * The function call srtp_install_log_handler(func) sets the log
+ * handler function to the value func.  The value NULL is acceptable
+ * as an argument; in this case, log messages will be ignored.
+ * This function can be called before srtp_init() inorder to capture
+ * any logging during start up.
+ *
+ * @param func is a pointer to a fuction of type srtp_log_handler_func_t.
+ *             This function will be used by libSRTP to output log messages.
+ * @param data is a user pointer that will be returned as the data argument in func.
+ */
+srtp_err_status_t srtp_install_log_handler(srtp_log_handler_func_t func, void *data);
+
+/**
+ * @brief srtp_get_protect_trailer_length(session, use_mki, mki_index, length)
+ *
+ * Determines the length of the amount of data Lib SRTP will add to the 
+ * packet during the protect process. The length is returned in the length parameter
+ *
+ * returns err_status_ok on success, err_status_bad_mki if the MKI index is invalid
+ *
+ */
+srtp_err_status_t srtp_get_protect_trailer_length(srtp_t session, uint32_t use_mki,
+                                                  uint32_t mki_index, uint32_t *length);
+
+/**
+ * @brief srtp_get_protect_rtcp_trailer_length(session, use_mki, mki_index, length)
+ *
+ * Determines the length of the amount of data Lib SRTP will add to the 
+ * packet during the protect process. The length is returned in the length parameter
+ *
+ * returns err_status_ok on success, err_status_bad_mki if the MKI index is invalid
+ *
+ */
+srtp_err_status_t srtp_get_protect_rtcp_trailer_length(srtp_t session, uint32_t use_mki,
+                                                       uint32_t mki_index, uint32_t *length);
+
+
+/**
+ * @brief srtp_set_stream_roc(session, ssrc, roc)
+ *
+ * Set the roll-over-counter on a session for a given SSRC
+ *
+ * returns err_status_ok on success, srtp_err_status_bad_param if there is no
+ * stream found
+ *
+ */
+srtp_err_status_t srtp_set_stream_roc(srtp_t session, uint32_t ssrc, uint32_t roc);
+
+/**
+ * @brief srtp_get_stream_roc(session, ssrc, roc)
+ *
+ * Get the roll-over-counter on a session for a given SSRC
+ *
+ * returns err_status_ok on success, srtp_err_status_bad_param if there is no
+ * stream found
+ *
+ */
+srtp_err_status_t srtp_get_stream_roc(srtp_t session, uint32_t ssrc, uint32_t *roc);
 
 
 /**
@@ -1498,4 +1784,4 @@ srtp_err_status_t srtp_list_debug_modules(void);
 }
 #endif
 
-#endif /* SRTP_H */
+#endif /* SRTP_SRTP_H */

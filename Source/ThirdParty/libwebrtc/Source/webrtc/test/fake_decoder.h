@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_FAKE_DECODER_H_
-#define WEBRTC_TEST_FAKE_DECODER_H_
+#ifndef TEST_FAKE_DECODER_H_
+#define TEST_FAKE_DECODER_H_
 
 #include <vector>
 
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace test {
@@ -73,4 +73,4 @@ class FakeNullDecoder : public FakeDecoder {
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_FAKE_DECODER_H_
+#endif  // TEST_FAKE_DECODER_H_

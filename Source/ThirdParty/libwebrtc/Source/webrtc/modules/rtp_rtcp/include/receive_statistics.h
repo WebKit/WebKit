@@ -8,18 +8,29 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
-#define WEBRTC_MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
+#ifndef MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
+#define MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
 
 #include <map>
+#include <vector>
 
-#include "webrtc/modules/include/module.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "modules/include/module.h"
+#include "modules/include/module_common_types.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 class Clock;
+
+class ReceiveStatisticsProvider {
+ public:
+  virtual ~ReceiveStatisticsProvider() = default;
+  // Collects receive statistic in a form of rtcp report blocks.
+  // Returns at most |max_blocks| report blocks.
+  virtual std::vector<rtcp::ReportBlock> RtcpReportBlocks(
+      size_t max_blocks) = 0;
+};
 
 class StreamStatistician {
  public:
@@ -44,11 +55,9 @@ class StreamStatistician {
   virtual bool IsPacketInOrder(uint16_t sequence_number) const = 0;
 };
 
-typedef std::map<uint32_t, StreamStatistician*> StatisticianMap;
-
-class ReceiveStatistics {
+class ReceiveStatistics : public ReceiveStatisticsProvider {
  public:
-  virtual ~ReceiveStatistics() {}
+  ~ReceiveStatistics() override = default;
 
   static ReceiveStatistics* Create(Clock* clock);
 
@@ -60,10 +69,6 @@ class ReceiveStatistics {
   // Increment counter for number of FEC packets received.
   virtual void FecPacketReceived(const RTPHeader& header,
                                  size_t packet_length) = 0;
-
-  // Returns a map of all statisticians which have seen an incoming packet
-  // during the last two seconds.
-  virtual StatisticianMap GetActiveStatisticians() const = 0;
 
   // Returns a pointer to the statistician of an ssrc.
   virtual StreamStatistician* GetStatistician(uint32_t ssrc) const = 0;
@@ -80,21 +85,5 @@ class ReceiveStatistics {
       StreamDataCountersCallback* callback) = 0;
 };
 
-class NullReceiveStatistics : public ReceiveStatistics {
- public:
-  void IncomingPacket(const RTPHeader& rtp_header,
-                      size_t packet_length,
-                      bool retransmitted) override;
-  void FecPacketReceived(const RTPHeader& header,
-                         size_t packet_length) override;
-  StatisticianMap GetActiveStatisticians() const override;
-  StreamStatistician* GetStatistician(uint32_t ssrc) const override;
-  void SetMaxReorderingThreshold(int max_reordering_threshold) override;
-  void RegisterRtcpStatisticsCallback(
-      RtcpStatisticsCallback* callback) override;
-  void RegisterRtpStatisticsCallback(
-      StreamDataCountersCallback* callback) override;
-};
-
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
+#endif  // MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_

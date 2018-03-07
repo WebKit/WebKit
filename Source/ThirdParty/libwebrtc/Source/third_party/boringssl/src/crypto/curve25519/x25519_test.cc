@@ -105,3 +105,22 @@ TEST(X25519Test, Iterated) {
 
   EXPECT_EQ(Bytes(kExpected), Bytes(scalar));
 }
+
+TEST(X25519Test, DISABLED_IteratedLarge) {
+  // Taken from https://tools.ietf.org/html/rfc7748#section-5.2.
+  uint8_t scalar[32] = {9}, point[32] = {9}, out[32];
+
+  for (unsigned i = 0; i < 1000000; i++) {
+    EXPECT_TRUE(X25519(out, scalar, point));
+    OPENSSL_memcpy(point, scalar, sizeof(point));
+    OPENSSL_memcpy(scalar, out, sizeof(scalar));
+  }
+
+  static const uint8_t kExpected[32] = {
+      0x7c, 0x39, 0x11, 0xe0, 0xab, 0x25, 0x86, 0xfd, 0x86, 0x44, 0x97,
+      0x29, 0x7e, 0x57, 0x5e, 0x6f, 0x3b, 0xc6, 0x01, 0xc0, 0x88, 0x3c,
+      0x30, 0xdf, 0x5f, 0x4d, 0xd2, 0xd2, 0x4f, 0x66, 0x54, 0x24,
+  };
+
+  EXPECT_EQ(Bytes(kExpected), Bytes(scalar));
+}

@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SYSTEM_WRAPPERS_SOURCE_EVENT_WIN_H_
-#define WEBRTC_SYSTEM_WRAPPERS_SOURCE_EVENT_WIN_H_
+#ifndef SYSTEM_WRAPPERS_SOURCE_EVENT_WIN_H_
+#define SYSTEM_WRAPPERS_SOURCE_EVENT_WIN_H_
 
 #include <windows.h>
 
-#include "webrtc/system_wrappers/include/event_wrapper.h"
+#include "system_wrappers/include/event_wrapper.h"
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -31,10 +31,10 @@ class EventTimerWin : public EventTimerWrapper {
   virtual bool StopTimer();
 
  private:
-  HANDLE  event_;
+  HANDLE event_;
   uint32_t timerID_;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SYSTEM_WRAPPERS_SOURCE_EVENT_WIN_H_
+#endif  // SYSTEM_WRAPPERS_SOURCE_EVENT_WIN_H_

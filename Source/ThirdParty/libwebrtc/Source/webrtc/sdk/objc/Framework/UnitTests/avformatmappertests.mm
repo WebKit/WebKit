@@ -11,7 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <OCMock/OCMock.h>
 
-#include "webrtc/base/gunit.h"
+#include "rtc_base/gunit.h"
 
 #include "Video/avfoundationformatmapper.h"
 

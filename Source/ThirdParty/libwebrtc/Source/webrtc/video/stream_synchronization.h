@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_VIDEO_STREAM_SYNCHRONIZATION_H_
-#define WEBRTC_VIDEO_STREAM_SYNCHRONIZATION_H_
+#ifndef VIDEO_STREAM_SYNCHRONIZATION_H_
+#define VIDEO_STREAM_SYNCHRONIZATION_H_
 
 #include <list>
 
-#include "webrtc/system_wrappers/include/rtp_to_ntp_estimator.h"
-#include "webrtc/typedefs.h"
+#include "system_wrappers/include/rtp_to_ntp_estimator.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -60,4 +60,4 @@ class StreamSynchronization {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_VIDEO_STREAM_SYNCHRONIZATION_H_
+#endif  // VIDEO_STREAM_SYNCHRONIZATION_H_

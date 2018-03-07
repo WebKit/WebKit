@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_FAKEVIDEORENDERER_H_
-#define WEBRTC_MEDIA_BASE_FAKEVIDEORENDERER_H_
+#ifndef MEDIA_BASE_FAKEVIDEORENDERER_H_
+#define MEDIA_BASE_FAKEVIDEORENDERER_H_
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/media/base/videosinkinterface.h"
+#include "api/video/video_frame.h"
+#include "media/base/videosinkinterface.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/logging.h"
 
 namespace cricket {
 
@@ -139,4 +139,4 @@ class FakeVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_BASE_FAKEVIDEORENDERER_H_
+#endif  // MEDIA_BASE_FAKEVIDEORENDERER_H_

@@ -57,56 +57,55 @@ extern "C" {
 #endif
 
 
-/* This is a generic 32-bit "collector" for message digest algorithms. It
- * collects input character stream into chunks of 32-bit values and invokes the
- * block function that performs the actual hash calculations. To make use of
- * this mechanism, the following macros must be defined before including
- * md32_common.h.
- *
- * One of |DATA_ORDER_IS_BIG_ENDIAN| or |DATA_ORDER_IS_LITTLE_ENDIAN| must be
- * defined to specify the byte order of the input stream.
- *
- * |HASH_CBLOCK| must be defined as the integer block size, in bytes.
- *
- * |HASH_CTX| must be defined as the name of the context structure, which must
- * have at least the following members:
- *
- *     typedef struct <name>_state_st {
- *       uint32_t h[<chaining length> / sizeof(uint32_t)];
- *       uint32_t Nl, Nh;
- *       uint8_t data[HASH_CBLOCK];
- *       unsigned num;
- *       ...
- *     } <NAME>_CTX;
- *
- * <chaining length> is the output length of the hash in bytes, before
- * any truncation (e.g. 64 for SHA-224 and SHA-256, 128 for SHA-384 and
- * SHA-512).
- *
- * |HASH_UPDATE| must be defined as the name of the "Update" function to
- * generate.
- *
- * |HASH_TRANSFORM| must be defined as the  the name of the "Transform"
- * function to generate.
- *
- * |HASH_FINAL| must be defined as the name of "Final" function to generate.
- *
- * |HASH_BLOCK_DATA_ORDER| must be defined as the name of the "Block" function.
- * That function must be implemented manually. It must be capable of operating
- * on *unaligned* input data in its original (data) byte order. It must have
- * this signature:
- *
- *     void HASH_BLOCK_DATA_ORDER(uint32_t *state, const uint8_t *data,
- *                                size_t num);
- *
- * It must update the hash state |state| with |num| blocks of data from |data|,
- * where each block is |HASH_CBLOCK| bytes; i.e. |data| points to a array of
- * |HASH_CBLOCK * num| bytes. |state| points to the |h| member of a |HASH_CTX|,
- * and so will have |<chaining length> / sizeof(uint32_t)| elements.
- *
- * |HASH_MAKE_STRING(c, s)| must be defined as a block statement that converts
- * the hash state |c->h| into the output byte order, storing the result in |s|.
- */
+// This is a generic 32-bit "collector" for message digest algorithms. It
+// collects input character stream into chunks of 32-bit values and invokes the
+// block function that performs the actual hash calculations. To make use of
+// this mechanism, the following macros must be defined before including
+// md32_common.h.
+//
+// One of |DATA_ORDER_IS_BIG_ENDIAN| or |DATA_ORDER_IS_LITTLE_ENDIAN| must be
+// defined to specify the byte order of the input stream.
+//
+// |HASH_CBLOCK| must be defined as the integer block size, in bytes.
+//
+// |HASH_CTX| must be defined as the name of the context structure, which must
+// have at least the following members:
+//
+//     typedef struct <name>_state_st {
+//       uint32_t h[<chaining length> / sizeof(uint32_t)];
+//       uint32_t Nl, Nh;
+//       uint8_t data[HASH_CBLOCK];
+//       unsigned num;
+//       ...
+//     } <NAME>_CTX;
+//
+// <chaining length> is the output length of the hash in bytes, before
+// any truncation (e.g. 64 for SHA-224 and SHA-256, 128 for SHA-384 and
+// SHA-512).
+//
+// |HASH_UPDATE| must be defined as the name of the "Update" function to
+// generate.
+//
+// |HASH_TRANSFORM| must be defined as the  the name of the "Transform"
+// function to generate.
+//
+// |HASH_FINAL| must be defined as the name of "Final" function to generate.
+//
+// |HASH_BLOCK_DATA_ORDER| must be defined as the name of the "Block" function.
+// That function must be implemented manually. It must be capable of operating
+// on *unaligned* input data in its original (data) byte order. It must have
+// this signature:
+//
+//     void HASH_BLOCK_DATA_ORDER(uint32_t *state, const uint8_t *data,
+//                                size_t num);
+//
+// It must update the hash state |state| with |num| blocks of data from |data|,
+// where each block is |HASH_CBLOCK| bytes; i.e. |data| points to a array of
+// |HASH_CBLOCK * num| bytes. |state| points to the |h| member of a |HASH_CTX|,
+// and so will have |<chaining length> / sizeof(uint32_t)| elements.
+//
+// |HASH_MAKE_STRING(c, s)| must be defined as a block statement that converts
+// the hash state |c->h| into the output byte order, storing the result in |s|.
 
 #if !defined(DATA_ORDER_IS_BIG_ENDIAN) && !defined(DATA_ORDER_IS_LITTLE_ENDIAN)
 #error "DATA_ORDER must be defined!"
@@ -173,7 +172,7 @@ extern "C" {
     *((c)++) = (uint8_t)(((l) >> 24) & 0xff); \
   } while (0)
 
-#endif /* DATA_ORDER */
+#endif  // DATA_ORDER
 
 int HASH_UPDATE(HASH_CTX *c, const void *data_, size_t len) {
   const uint8_t *data = data_;
@@ -184,7 +183,7 @@ int HASH_UPDATE(HASH_CTX *c, const void *data_, size_t len) {
 
   uint32_t l = c->Nl + (((uint32_t)len) << 3);
   if (l < c->Nl) {
-    /* Handle carries. */
+    // Handle carries.
     c->Nh++;
   }
   c->Nh += (uint32_t)(len >> 29);
@@ -199,7 +198,7 @@ int HASH_UPDATE(HASH_CTX *c, const void *data_, size_t len) {
       data += n;
       len -= n;
       c->num = 0;
-      /* Keep |c->data| zeroed when unused. */
+      // Keep |c->data| zeroed when unused.
       OPENSSL_memset(c->data, 0, HASH_CBLOCK);
     } else {
       OPENSSL_memcpy(c->data + n, data, len);
@@ -230,14 +229,14 @@ void HASH_TRANSFORM(HASH_CTX *c, const uint8_t *data) {
 
 
 int HASH_FINAL(uint8_t *md, HASH_CTX *c) {
-  /* |c->data| always has room for at least one byte. A full block would have
-   * been consumed. */
+  // |c->data| always has room for at least one byte. A full block would have
+  // been consumed.
   size_t n = c->num;
   assert(n < HASH_CBLOCK);
   c->data[n] = 0x80;
   n++;
 
-  /* Fill the block with zeros if there isn't room for a 64-bit length. */
+  // Fill the block with zeros if there isn't room for a 64-bit length.
   if (n > (HASH_CBLOCK - 8)) {
     OPENSSL_memset(c->data + n, 0, HASH_CBLOCK - n);
     n = 0;
@@ -245,7 +244,7 @@ int HASH_FINAL(uint8_t *md, HASH_CTX *c) {
   }
   OPENSSL_memset(c->data + n, 0, HASH_CBLOCK - 8 - n);
 
-  /* Append a 64-bit length to the block and process it. */
+  // Append a 64-bit length to the block and process it.
   uint8_t *p = c->data + HASH_CBLOCK - 8;
 #if defined(DATA_ORDER_IS_BIG_ENDIAN)
   HOST_l2c(c->Nh, p);
@@ -265,5 +264,5 @@ int HASH_FINAL(uint8_t *md, HASH_CTX *c) {
 
 
 #if defined(__cplusplus)
-} /* extern C */
+}  // extern C
 #endif

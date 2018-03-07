@@ -9,12 +9,12 @@
  *
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
-#define WEBRTC_COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
+#ifndef COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
+#define COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
 
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/common_video/h264/sps_parser.h"
+#include "api/optional.h"
+#include "common_video/h264/sps_parser.h"
+#include "rtc_base/buffer.h"
 
 namespace rtc {
 class BitBuffer;
@@ -51,4 +51,4 @@ class SpsVuiRewriter : private SpsParser {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
+#endif  // COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_

@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/video_coding/jitter_buffer.h"
+#include "modules/video_coding/jitter_buffer.h"
 
 #include <assert.h>
 
@@ -15,21 +15,21 @@
 #include <limits>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/trace_event.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/video_coding/include/video_coding.h"
-#include "webrtc/modules/video_coding/frame_buffer.h"
-#include "webrtc/modules/video_coding/inter_frame_delay.h"
-#include "webrtc/modules/video_coding/internal_defines.h"
-#include "webrtc/modules/video_coding/jitter_buffer_common.h"
-#include "webrtc/modules/video_coding/jitter_estimator.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/video_coding/frame_buffer.h"
+#include "modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/inter_frame_delay.h"
+#include "modules/video_coding/internal_defines.h"
+#include "modules/video_coding/jitter_buffer_common.h"
+#include "modules/video_coding/jitter_estimator.h"
+#include "modules/video_coding/packet.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/event_wrapper.h"
+#include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 // Interval for updating SS data.
@@ -605,7 +605,7 @@ VCMFrameBufferEnum VCMJitterBuffer::GetFrame(const VCMPacket& packet,
   *frame = GetEmptyFrame();
   if (*frame == NULL) {
     // No free frame! Try to reclaim some...
-    LOG(LS_WARNING) << "Unable to get empty frame; Recycling.";
+    RTC_LOG(LS_WARNING) << "Unable to get empty frame; Recycling.";
     bool found_key_frame = RecycleFramesUntilKeyFrame();
     *frame = GetEmptyFrame();
     RTC_CHECK(*frame);
@@ -655,7 +655,7 @@ VCMFrameBufferEnum VCMJitterBuffer::InsertPacket(const VCMPacket& packet,
     FindAndInsertContinuousFramesWithState(last_decoded_state_);
 
     if (num_consecutive_old_packets_ > kMaxConsecutiveOldPackets) {
-      LOG(LS_WARNING)
+      RTC_LOG(LS_WARNING)
           << num_consecutive_old_packets_
           << " consecutive old packets received. Flushing the jitter buffer.";
       Flush();
@@ -996,9 +996,9 @@ std::vector<uint16_t> VCMJitterBuffer::GetNackList(bool* request_key_frame) {
     int non_continuous_incomplete_duration =
         NonContinuousOrIncompleteDuration();
     if (non_continuous_incomplete_duration > 90 * max_incomplete_time_ms_) {
-      LOG_F(LS_WARNING) << "Too long non-decodable duration: "
-                        << non_continuous_incomplete_duration << " > "
-                        << 90 * max_incomplete_time_ms_;
+      RTC_LOG_F(LS_WARNING) << "Too long non-decodable duration: "
+                            << non_continuous_incomplete_duration << " > "
+                            << 90 * max_incomplete_time_ms_;
       FrameList::reverse_iterator rit = find_if(
           incomplete_frames_.rbegin(), incomplete_frames_.rend(), IsKeyFrame);
       if (rit == incomplete_frames_.rend()) {
@@ -1052,12 +1052,13 @@ bool VCMJitterBuffer::UpdateNackList(uint16_t sequence_number) {
                            "seqnum", i);
     }
     if (TooLargeNackList() && !HandleTooLargeNackList()) {
-      LOG(LS_WARNING) << "Requesting key frame due to too large NACK list.";
+      RTC_LOG(LS_WARNING) << "Requesting key frame due to too large NACK list.";
       return false;
     }
     if (MissingTooOldPacket(sequence_number) &&
         !HandleTooOldPackets(sequence_number)) {
-      LOG(LS_WARNING) << "Requesting key frame due to missing too old packets";
+      RTC_LOG(LS_WARNING)
+          << "Requesting key frame due to missing too old packets";
       return false;
     }
   } else {
@@ -1075,9 +1076,9 @@ bool VCMJitterBuffer::TooLargeNackList() const {
 bool VCMJitterBuffer::HandleTooLargeNackList() {
   // Recycle frames until the NACK list is small enough. It is likely cheaper to
   // request a key frame than to retransmit this many missing packets.
-  LOG_F(LS_WARNING) << "NACK list has grown too large: "
-                    << missing_sequence_numbers_.size() << " > "
-                    << max_nack_list_size_;
+  RTC_LOG_F(LS_WARNING) << "NACK list has grown too large: "
+                        << missing_sequence_numbers_.size() << " > "
+                        << max_nack_list_size_;
   bool key_frame_found = false;
   while (TooLargeNackList()) {
     key_frame_found = RecycleFramesUntilKeyFrame();
@@ -1101,9 +1102,9 @@ bool VCMJitterBuffer::HandleTooOldPackets(uint16_t latest_sequence_number) {
   bool key_frame_found = false;
   const uint16_t age_of_oldest_missing_packet =
       latest_sequence_number - *missing_sequence_numbers_.begin();
-  LOG_F(LS_WARNING) << "NACK list contains too old sequence numbers: "
-                    << age_of_oldest_missing_packet << " > "
-                    << max_packet_age_to_nack_;
+  RTC_LOG_F(LS_WARNING) << "NACK list contains too old sequence numbers: "
+                        << age_of_oldest_missing_packet << " > "
+                        << max_packet_age_to_nack_;
   while (MissingTooOldPacket(latest_sequence_number)) {
     key_frame_found = RecycleFramesUntilKeyFrame();
   }
@@ -1163,7 +1164,7 @@ bool VCMJitterBuffer::RecycleFramesUntilKeyFrame() {
   }
   TRACE_EVENT_INSTANT0("webrtc", "JB::RecycleFramesUntilKeyFrame");
   if (key_frame_found) {
-    LOG(LS_INFO) << "Found key frame while dropping frames.";
+    RTC_LOG(LS_INFO) << "Found key frame while dropping frames.";
     // Reset last decoded state to make sure the next frame decoded is a key
     // frame, and start NACKing from here.
     last_decoded_state_.Reset();
@@ -1195,7 +1196,7 @@ void VCMJitterBuffer::CountFrame(const VCMFrameBuffer& frame) {
     if (frame.FrameType() == kVideoFrameKey) {
       ++receive_statistics_.key_frames;
       if (receive_statistics_.key_frames == 1) {
-        LOG(LS_INFO) << "Received first complete key frame";
+        RTC_LOG(LS_INFO) << "Received first complete key frame";
       }
     } else {
       ++receive_statistics_.delta_frames;

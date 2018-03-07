@@ -12,11 +12,13 @@
 
 #include <memory>
 
+#import "RTCConfiguration+Native.h"
 #import "RTCIceServer+Private.h"
+#import "RTCIntervalRange+Private.h"
 #import "WebRTC/RTCLogging.h"
 
-#include "webrtc/base/rtccertificategenerator.h"
-#include "webrtc/base/sslidentity.h"
+#include "rtc_base/rtccertificategenerator.h"
+#include "rtc_base/sslidentity.h"
 
 @implementation RTCConfiguration
 
@@ -27,6 +29,7 @@
 @synthesize tcpCandidatePolicy = _tcpCandidatePolicy;
 @synthesize candidateNetworkPolicy = _candidateNetworkPolicy;
 @synthesize continualGatheringPolicy = _continualGatheringPolicy;
+@synthesize maxIPv6Networks = _maxIPv6Networks;
 @synthesize audioJitterBufferMaxPackets = _audioJitterBufferMaxPackets;
 @synthesize audioJitterBufferFastAccelerate = _audioJitterBufferFastAccelerate;
 @synthesize iceConnectionReceivingTimeout = _iceConnectionReceivingTimeout;
@@ -38,6 +41,8 @@
 @synthesize shouldPresumeWritableWhenFullyRelayed =
     _shouldPresumeWritableWhenFullyRelayed;
 @synthesize iceCheckMinInterval = _iceCheckMinInterval;
+@synthesize iceRegatherIntervalRange = _iceRegatherIntervalRange;
+@synthesize turnCustomizer = _turnCustomizer;
 
 - (instancetype)init {
   // Copy defaults.
@@ -69,6 +74,7 @@
     config.continual_gathering_policy;
     _continualGatheringPolicy =
         [[self class] continualGatheringPolicyForNativePolicy:nativePolicy];
+    _maxIPv6Networks = config.max_ipv6_networks;
     _audioJitterBufferMaxPackets = config.audio_jitter_buffer_max_packets;
     _audioJitterBufferFastAccelerate = config.audio_jitter_buffer_fast_accelerate;
     _iceConnectionReceivingTimeout = config.ice_connection_receiving_timeout;
@@ -83,29 +89,38 @@
       _iceCheckMinInterval =
           [NSNumber numberWithInt:*config.ice_check_min_interval];
     }
+    if (config.ice_regather_interval_range) {
+      const rtc::IntervalRange &nativeIntervalRange = config.ice_regather_interval_range.value();
+      _iceRegatherIntervalRange =
+          [[RTCIntervalRange alloc] initWithNativeIntervalRange:nativeIntervalRange];
+    }
+    _turnCustomizer = config.turn_customizer;
   }
   return self;
 }
 
 - (NSString *)description {
-  return [NSString stringWithFormat:
-      @"RTCConfiguration: {\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%@\n}\n",
-      _iceServers,
-      [[self class] stringForTransportPolicy:_iceTransportPolicy],
-      [[self class] stringForBundlePolicy:_bundlePolicy],
-      [[self class] stringForRtcpMuxPolicy:_rtcpMuxPolicy],
-      [[self class] stringForTcpCandidatePolicy:_tcpCandidatePolicy],
-      [[self class] stringForCandidateNetworkPolicy:_candidateNetworkPolicy],
-      [[self class]
-          stringForContinualGatheringPolicy:_continualGatheringPolicy],
-      _audioJitterBufferMaxPackets,
-      _audioJitterBufferFastAccelerate,
-      _iceConnectionReceivingTimeout,
-      _iceBackupCandidatePairPingInterval,
-      _iceCandidatePoolSize,
-      _shouldPruneTurnPorts,
-      _shouldPresumeWritableWhenFullyRelayed,
-      _iceCheckMinInterval];
+  return
+      [NSString stringWithFormat:
+                    @"RTCConfiguration: "
+                    @"{\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%@\n%@\n%d\n}\n",
+                    _iceServers,
+                    [[self class] stringForTransportPolicy:_iceTransportPolicy],
+                    [[self class] stringForBundlePolicy:_bundlePolicy],
+                    [[self class] stringForRtcpMuxPolicy:_rtcpMuxPolicy],
+                    [[self class] stringForTcpCandidatePolicy:_tcpCandidatePolicy],
+                    [[self class] stringForCandidateNetworkPolicy:_candidateNetworkPolicy],
+                    [[self class] stringForContinualGatheringPolicy:_continualGatheringPolicy],
+                    _audioJitterBufferMaxPackets,
+                    _audioJitterBufferFastAccelerate,
+                    _iceConnectionReceivingTimeout,
+                    _iceBackupCandidatePairPingInterval,
+                    _iceCandidatePoolSize,
+                    _shouldPruneTurnPorts,
+                    _shouldPresumeWritableWhenFullyRelayed,
+                    _iceCheckMinInterval,
+                    _iceRegatherIntervalRange,
+                    _maxIPv6Networks];
 }
 
 #pragma mark - Private
@@ -131,6 +146,7 @@
       nativeCandidateNetworkPolicyForPolicy:_candidateNetworkPolicy];
   nativeConfig->continual_gathering_policy = [[self class]
       nativeContinualGatheringPolicyForPolicy:_continualGatheringPolicy];
+  nativeConfig->max_ipv6_networks = _maxIPv6Networks;
   nativeConfig->audio_jitter_buffer_max_packets = _audioJitterBufferMaxPackets;
   nativeConfig->audio_jitter_buffer_fast_accelerate =
       _audioJitterBufferFastAccelerate  ? true : false;
@@ -159,7 +175,15 @@
     nativeConfig->ice_check_min_interval =
         rtc::Optional<int>(_iceCheckMinInterval.intValue);
   }
-
+  if (_iceRegatherIntervalRange != nil) {
+    std::unique_ptr<rtc::IntervalRange> nativeIntervalRange(
+        _iceRegatherIntervalRange.nativeIntervalRange);
+    nativeConfig->ice_regather_interval_range =
+        rtc::Optional<rtc::IntervalRange>(*nativeIntervalRange);
+  }
+  if (_turnCustomizer) {
+    nativeConfig->turn_customizer = _turnCustomizer;
+  }
   return nativeConfig.release();
 }
 

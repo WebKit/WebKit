@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_device/android/opensles_recorder.h"
+#include "modules/audio_device/android/opensles_recorder.h"
 
 #include <android/log.h>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/format_macros.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/modules/audio_device/android/audio_common.h"
-#include "webrtc/modules/audio_device/android/audio_manager.h"
-#include "webrtc/modules/audio_device/fine_audio_buffer.h"
+#include "api/array_view.h"
+#include "modules/audio_device/android/audio_common.h"
+#include "modules/audio_device/android/audio_manager.h"
+#include "modules/audio_device/fine_audio_buffer.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/format_macros.h"
+#include "rtc_base/timeutils.h"
 
 #define TAG "OpenSLESRecorder"
 #define ALOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
@@ -76,6 +76,11 @@ OpenSLESRecorder::~OpenSLESRecorder() {
 int OpenSLESRecorder::Init() {
   ALOGD("Init%s", GetThreadInfo().c_str());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
+  if (audio_parameters_.channels() == 2) {
+    // TODO(henrika): FineAudioBuffer needs more work to support stereo.
+    ALOGE("OpenSLESRecorder does not support stereo");
+    return -1;
+  }
   return 0;
 }
 

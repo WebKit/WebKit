@@ -9,15 +9,15 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_H264_H264_ENCODER_IMPL_H_
-#define WEBRTC_MODULES_VIDEO_CODING_CODECS_H264_H264_ENCODER_IMPL_H_
+#ifndef MODULES_VIDEO_CODING_CODECS_H264_H264_ENCODER_IMPL_H_
+#define MODULES_VIDEO_CODING_CODECS_H264_H264_ENCODER_IMPL_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/common_video/h264/h264_bitstream_parser.h"
-#include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
-#include "webrtc/modules/video_coding/utility/quality_scaler.h"
+#include "common_video/h264/h264_bitstream_parser.h"
+#include "modules/video_coding/codecs/h264/include/h264.h"
+#include "modules/video_coding/utility/quality_scaler.h"
 
 #include "third_party/openh264/src/codec/api/svc/codec_app_def.h"
 
@@ -101,4 +101,4 @@ class H264EncoderImpl : public H264Encoder {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_CODECS_H264_H264_ENCODER_IMPL_H_
+#endif  // MODULES_VIDEO_CODING_CODECS_H264_H264_ENCODER_IMPL_H_

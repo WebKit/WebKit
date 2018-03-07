@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/testsupport/fileutils.h"
+#include "test/testsupport/fileutils.h"
 
 #include <assert.h>
 
@@ -21,7 +21,7 @@
 #include "Shlwapi.h"
 #include "WinDef.h"
 
-#include "webrtc/base/win32.h"
+#include "rtc_base/win32.h"
 #define GET_CURRENT_DIR _getcwd
 #else
 #include <dirent.h>
@@ -42,8 +42,8 @@
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/typedefs.h"  // For architecture defines
+#include "rtc_base/checks.h"
+#include "typedefs.h"  // NOLINT(build/include)  // For architecture defines
 
 namespace webrtc {
 namespace test {

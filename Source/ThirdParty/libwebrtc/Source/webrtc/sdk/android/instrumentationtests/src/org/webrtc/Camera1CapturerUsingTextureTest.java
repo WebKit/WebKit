@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 public class Camera1CapturerUsingTextureTest {
   static final String TAG = "Camera1CapturerUsingTextureTest";
 
-  private class TestObjectFactory extends CameraVideoCapturerTestFixtures.TestObjectFactory {
+  private static class TestObjectFactory extends CameraVideoCapturerTestFixtures.TestObjectFactory {
     @Override
     public CameraEnumerator getCameraEnumerator() {
       return new Camera1Enumerator();

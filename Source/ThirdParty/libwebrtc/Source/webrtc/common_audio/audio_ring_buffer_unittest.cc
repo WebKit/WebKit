@@ -10,10 +10,10 @@
 
 #include <memory>
 
-#include "webrtc/common_audio/audio_ring_buffer.h"
+#include "common_audio/audio_ring_buffer.h"
 
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/channel_buffer.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

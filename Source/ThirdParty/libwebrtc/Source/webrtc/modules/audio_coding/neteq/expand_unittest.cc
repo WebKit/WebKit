@@ -10,17 +10,17 @@
 
 // Unit tests for Expand class.
 
-#include "webrtc/modules/audio_coding/neteq/expand.h"
+#include "modules/audio_coding/neteq/expand.h"
 
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/neteq/background_noise.h"
-#include "webrtc/modules/audio_coding/neteq/random_vector.h"
-#include "webrtc/modules/audio_coding/neteq/statistics_calculator.h"
-#include "webrtc/modules/audio_coding/neteq/sync_buffer.h"
-#include "webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/background_noise.h"
+#include "modules/audio_coding/neteq/random_vector.h"
+#include "modules/audio_coding/neteq/statistics_calculator.h"
+#include "modules/audio_coding/neteq/sync_buffer.h"
+#include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "test/gtest.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 
@@ -88,8 +88,8 @@ class ExpandTest : public ::testing::Test {
   void SetUp() override {
     // Fast-forward the input file until there is speech (about 1.1 second into
     // the file).
-    const size_t speech_start_samples =
-        static_cast<size_t>(test_sample_rate_hz_ * 1.1f);
+    const int speech_start_samples =
+        static_cast<int>(test_sample_rate_hz_ * 1.1f);
     ASSERT_TRUE(input_file_.Seek(speech_start_samples));
 
     // Pre-load the sync buffer with speech data.

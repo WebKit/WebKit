@@ -9,19 +9,19 @@
  *
  */
 
-#include "webrtc/common_video/h264/sps_vui_rewriter.h"
+#include "common_video/h264/sps_vui_rewriter.h"
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/bitbuffer.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/safe_minmax.h"
+#include "rtc_base/bitbuffer.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_minmax.h"
 
-#include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/common_video/h264/sps_parser.h"
+#include "common_video/h264/h264_common.h"
+#include "common_video/h264/sps_parser.h"
 
 namespace webrtc {
 
@@ -29,10 +29,10 @@ namespace webrtc {
 // closer to 24 or so, but better safe than sorry.
 const size_t kMaxVuiSpsIncrease = 64;
 
-#define RETURN_FALSE_ON_FAIL(x)                                  \
-  if (!(x)) {                                                    \
-    LOG_F(LS_ERROR) << " (line:" << __LINE__ << ") FAILED: " #x; \
-    return false;                                                \
+#define RETURN_FALSE_ON_FAIL(x)                                      \
+  if (!(x)) {                                                        \
+    RTC_LOG_F(LS_ERROR) << " (line:" << __LINE__ << ") FAILED: " #x; \
+    return false;                                                    \
   }
 
 #define COPY_UINT8(src, dest, tmp)                   \
@@ -115,7 +115,7 @@ SpsVuiRewriter::ParseResult SpsVuiRewriter::ParseAndRewriteSps(
   ParseResult vui_updated;
   if (!CopyAndRewriteVui(*sps_state, &source_buffer, &sps_writer,
                          &vui_updated)) {
-    LOG(LS_ERROR) << "Failed to parse/copy SPS VUI.";
+    RTC_LOG(LS_ERROR) << "Failed to parse/copy SPS VUI.";
     return ParseResult::kFailure;
   }
 
@@ -125,7 +125,7 @@ SpsVuiRewriter::ParseResult SpsVuiRewriter::ParseAndRewriteSps(
   }
 
   if (!CopyRemainingBits(&source_buffer, &sps_writer)) {
-    LOG(LS_ERROR) << "Failed to parse/copy SPS VUI.";
+    RTC_LOG(LS_ERROR) << "Failed to parse/copy SPS VUI.";
     return ParseResult::kFailure;
   }
 
@@ -271,7 +271,7 @@ bool CopyAndRewriteVui(Sps sps,
           source->ReadExponentialGolomb(&max_dec_frame_buffering));
       if (max_num_reorder_frames == 0 &&
           max_dec_frame_buffering <= sps.max_num_ref_frames) {
-        LOG(LS_INFO) << "VUI bitstream already contains an optimal VUI.";
+        RTC_LOG(LS_INFO) << "VUI bitstream already contains an optimal VUI.";
         *out_vui_rewritten = SpsVuiRewriter::ParseResult::kVuiOk;
         return true;
       }

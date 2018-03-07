@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/neteq/tools/constant_pcm_packet_source.h"
+#include "modules/audio_coding/neteq/tools/constant_pcm_packet_source.h"
 
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/codecs/pcm16b/pcm16b.h"
-#include "webrtc/modules/audio_coding/neteq/tools/packet.h"
+#include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
+#include "modules/audio_coding/neteq/tools/packet.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {

@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_FAKEDTLSTRANSPORT_H_
-#define WEBRTC_P2P_BASE_FAKEDTLSTRANSPORT_H_
+#ifndef P2P_BASE_FAKEDTLSTRANSPORT_H_
+#define P2P_BASE_FAKEDTLSTRANSPORT_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/fakesslidentity.h"
-#include "webrtc/p2p/base/dtlstransportinternal.h"
-#include "webrtc/p2p/base/fakeicetransport.h"
+#include "p2p/base/dtlstransportinternal.h"
+#include "p2p/base/fakeicetransport.h"
+#include "rtc_base/fakesslidentity.h"
 
 namespace cricket {
 
@@ -31,8 +31,11 @@ class FakeDtlsTransport : public DtlsTransportInternal {
         transport_name_(ice_transport->transport_name()),
         component_(ice_transport->component()),
         dtls_fingerprint_("", nullptr, 0) {
+    RTC_DCHECK(ice_transport_);
     ice_transport_->SignalReadPacket.connect(
         this, &FakeDtlsTransport::OnIceTransportReadPacket);
+    ice_transport_->SignalNetworkRouteChanged.connect(
+        this, &FakeDtlsTransport::OnNetworkRouteChanged);
   }
 
   // If this constructor is called, a new fake ICE transport will be created,
@@ -45,6 +48,8 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     ice_transport_ = owned_ice_transport_.get();
     ice_transport_->SignalReadPacket.connect(
         this, &FakeDtlsTransport::OnIceTransportReadPacket);
+    ice_transport_->SignalNetworkRouteChanged.connect(
+        this, &FakeDtlsTransport::OnNetworkRouteChanged);
   }
 
   ~FakeDtlsTransport() override {
@@ -91,6 +96,8 @@ class FakeDtlsTransport : public DtlsTransportInternal {
       if (!asymmetric) {
         dest->SetDestination(this, true);
       }
+      dtls_state_ = DTLS_TRANSPORT_CONNECTED;
+      SignalDtlsState(this, dtls_state_);
       ice_transport_->SetDestination(
           static_cast<FakeIceTransport*>(dest->ice_transport()), asymmetric);
     } else {
@@ -122,6 +129,12 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     *role = ssl_role_;
     return true;
   }
+  const rtc::CryptoOptions& crypto_options() const override {
+    return crypto_options_;
+  }
+  void SetCryptoOptions(const rtc::CryptoOptions& crypto_options) {
+    crypto_options_ = crypto_options;
+  }
   bool SetLocalCertificate(
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) override {
     local_cert_ = certificate;
@@ -135,8 +148,11 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     if (!do_dtls_) {
       return false;
     }
-    *crypto_suite = rtc::SRTP_AES128_CM_SHA1_80;
+    *crypto_suite = crypto_suite_;
     return true;
+  }
+  void SetSrtpCryptoSuite(int crypto_suite) {
+    crypto_suite_ = crypto_suite;
   }
   bool GetSslCipherSuite(int* cipher_suite) override { return false; }
   rtc::scoped_refptr<rtc::RTCCertificate> GetLocalCertificate() const override {
@@ -191,6 +207,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   }
   int GetError() override { return ice_transport_->GetError(); }
 
+  rtc::Optional<rtc::NetworkRoute> network_route() const override {
+    return ice_transport_->network_route();
+  }
+
  private:
   void OnIceTransportReadPacket(PacketTransportInternal* ice_,
                                 const char* data,
@@ -219,6 +239,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     SignalWritableState(this);
   }
 
+  void OnNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute> network_route) {
+    SignalNetworkRouteChanged(network_route);
+  }
+
   FakeIceTransport* ice_transport_;
   std::unique_ptr<FakeIceTransport> owned_ice_transport_;
   std::string transport_name_;
@@ -230,6 +254,8 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   rtc::SSLProtocolVersion ssl_max_version_ = rtc::SSL_PROTOCOL_DTLS_12;
   rtc::SSLFingerprint dtls_fingerprint_;
   rtc::SSLRole ssl_role_ = rtc::SSL_CLIENT;
+  int crypto_suite_ = rtc::SRTP_AES128_CM_SHA1_80;
+  rtc::CryptoOptions crypto_options_;
 
   DtlsTransportState dtls_state_ = DTLS_TRANSPORT_NEW;
 
@@ -239,4 +265,4 @@ class FakeDtlsTransport : public DtlsTransportInternal {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_FAKEDTLSTRANSPORT_H_
+#endif  // P2P_BASE_FAKEDTLSTRANSPORT_H_

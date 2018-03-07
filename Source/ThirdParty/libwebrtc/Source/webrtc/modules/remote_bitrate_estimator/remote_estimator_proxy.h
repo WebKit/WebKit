@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_REMOTE_ESTIMATOR_PROXY_H_
-#define WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_REMOTE_ESTIMATOR_PROXY_H_
+#ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_REMOTE_ESTIMATOR_PROXY_H_
+#define MODULES_REMOTE_BITRATE_ESTIMATOR_REMOTE_ESTIMATOR_PROXY_H_
 
 #include <map>
 #include <vector>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/include/module_common_types.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "rtc_base/criticalsection.h"
 
 namespace webrtc {
 
@@ -32,7 +32,8 @@ class TransportFeedback;
 
 class RemoteEstimatorProxy : public RemoteBitrateEstimator {
  public:
-  RemoteEstimatorProxy(const Clock* clock, PacketRouter* packet_router);
+  RemoteEstimatorProxy(const Clock* clock,
+                       TransportFeedbackSenderInterface* feedback_sender);
   virtual ~RemoteEstimatorProxy();
 
   void IncomingPacket(int64_t arrival_time_ms,
@@ -54,24 +55,24 @@ class RemoteEstimatorProxy : public RemoteBitrateEstimator {
 
  private:
   void OnPacketArrival(uint16_t sequence_number, int64_t arrival_time)
-      EXCLUSIVE_LOCKS_REQUIRED(&lock_);
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(&lock_);
   bool BuildFeedbackPacket(rtcp::TransportFeedback* feedback_packet);
 
   const Clock* const clock_;
-  PacketRouter* const packet_router_;
+  TransportFeedbackSenderInterface* const feedback_sender_;
   int64_t last_process_time_ms_;
 
   rtc::CriticalSection lock_;
 
-  uint32_t media_ssrc_ GUARDED_BY(&lock_);
-  uint8_t feedback_sequence_ GUARDED_BY(&lock_);
-  SequenceNumberUnwrapper unwrapper_ GUARDED_BY(&lock_);
-  int64_t window_start_seq_ GUARDED_BY(&lock_);
+  uint32_t media_ssrc_ RTC_GUARDED_BY(&lock_);
+  uint8_t feedback_sequence_ RTC_GUARDED_BY(&lock_);
+  SequenceNumberUnwrapper unwrapper_ RTC_GUARDED_BY(&lock_);
+  int64_t window_start_seq_ RTC_GUARDED_BY(&lock_);
   // Map unwrapped seq -> time.
-  std::map<int64_t, int64_t> packet_arrival_times_ GUARDED_BY(&lock_);
-  int64_t send_interval_ms_ GUARDED_BY(&lock_);
+  std::map<int64_t, int64_t> packet_arrival_times_ RTC_GUARDED_BY(&lock_);
+  int64_t send_interval_ms_ RTC_GUARDED_BY(&lock_);
 };
 
 }  // namespace webrtc
 
-#endif  //  WEBRTC_MODULES_REMOTE_BITRATE_ESTIMATOR_REMOTE_ESTIMATOR_PROXY_H_
+#endif  //  MODULES_REMOTE_BITRATE_ESTIMATOR_REMOTE_ESTIMATOR_PROXY_H_

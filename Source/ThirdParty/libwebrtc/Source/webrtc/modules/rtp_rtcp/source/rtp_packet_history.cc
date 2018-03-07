@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_history.h"
+#include "modules/rtp_rtcp/source/rtp_packet_history.h"
 
 #include <algorithm>
 #include <limits>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 namespace {
@@ -35,7 +35,8 @@ void RtpPacketHistory::SetStorePacketsStatus(bool enable,
   rtc::CritScope cs(&critsect_);
   if (enable) {
     if (store_) {
-      LOG(LS_WARNING) << "Purging packet history in order to re-set status.";
+      RTC_LOG(LS_WARNING)
+          << "Purging packet history in order to re-set status.";
       Free();
     }
     RTC_DCHECK(!store_);
@@ -130,7 +131,7 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndSetSendTime(
 
   int index = 0;
   if (!FindSeqNum(sequence_number, &index)) {
-    LOG(LS_WARNING) << "No match for getting seqNum " << sequence_number;
+    RTC_LOG(LS_WARNING) << "No match for getting seqNum " << sequence_number;
     return nullptr;
   }
   RTC_DCHECK_EQ(sequence_number,

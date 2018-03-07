@@ -35,7 +35,7 @@ void CRYPTO_poly1305_finish_neon(poly1305_state *state, uint8_t mac[16]);
 
 
 #if defined(__cplusplus)
-}  /* extern C */
+}  // extern C
 #endif
 
-#endif  /* OPENSSL_HEADER_POLY1305_INTERNAL_H */
+#endif  // OPENSSL_HEADER_POLY1305_INTERNAL_H

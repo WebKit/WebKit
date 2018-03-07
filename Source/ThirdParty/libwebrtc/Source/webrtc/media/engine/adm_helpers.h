@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_ADM_HELPERS_H_
-#define WEBRTC_MEDIA_ENGINE_ADM_HELPERS_H_
+#ifndef MEDIA_ENGINE_ADM_HELPERS_H_
+#define MEDIA_ENGINE_ADM_HELPERS_H_
 
-#include "webrtc/common_types.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -19,10 +19,9 @@ class AudioDeviceModule;
 
 namespace adm_helpers {
 
-void SetRecordingDevice(AudioDeviceModule* adm);
-void SetPlayoutDevice(AudioDeviceModule* adm);
+void Init(AudioDeviceModule* adm);
 
 }  // namespace adm_helpers
 }  // namespace webrtc
 
-#endif  // WEBRTC_MEDIA_ENGINE_ADM_HELPERS_H_
+#endif  // MEDIA_ENGINE_ADM_HELPERS_H_

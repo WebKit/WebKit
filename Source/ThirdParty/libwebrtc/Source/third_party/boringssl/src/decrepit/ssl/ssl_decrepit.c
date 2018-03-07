@@ -131,7 +131,7 @@ int SSL_add_dir_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
 
   int ret = 0;
   for (;;) {
-    /* |readdir| may fail with or without setting |errno|. */
+    // |readdir| may fail with or without setting |errno|.
     errno = 0;
     struct dirent *dirent = readdir(dir);
     if (dirent == NULL) {
@@ -162,4 +162,4 @@ int SSL_add_dir_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
   return ret;
 }
 
-#endif /* !WINDOWS && !PNACL */
+#endif  // !WINDOWS && !PNACL

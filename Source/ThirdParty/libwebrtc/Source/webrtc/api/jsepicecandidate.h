@@ -11,16 +11,16 @@
 // TODO(deadbeef): Move this out of api/; it's an implementation detail and
 // shouldn't be used externally.
 
-#ifndef WEBRTC_API_JSEPICECANDIDATE_H_
-#define WEBRTC_API_JSEPICECANDIDATE_H_
+#ifndef API_JSEPICECANDIDATE_H_
+#define API_JSEPICECANDIDATE_H_
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "webrtc/api/jsep.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/p2p/base/candidate.h"
+#include "api/candidate.h"
+#include "api/jsep.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -90,4 +90,4 @@ class JsepCandidateCollection : public IceCandidateCollection {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_JSEPICECANDIDATE_H_
+#endif  // API_JSEPICECANDIDATE_H_

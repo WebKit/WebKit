@@ -15,10 +15,10 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 /* header file for coding tables for the pitch filter side-info in the entropy coder */
 /********************* Pitch Filter Lag Coefficient Tables ************************/
 
@@ -111,4 +111,4 @@ extern const double WebRtcIsac_kTransform[4][4];
 /* transpose transform matrix */
 extern const double WebRtcIsac_kTransformTranspose[4][4];
 
-#endif /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_ */
+#endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_ */

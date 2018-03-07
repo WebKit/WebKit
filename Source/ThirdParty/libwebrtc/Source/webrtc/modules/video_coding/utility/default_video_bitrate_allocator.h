@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
-#define WEBRTC_MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
+#ifndef MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
+#define MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
 
-#include "webrtc/common_video/include/video_bitrate_allocator.h"
+#include "common_video/include/video_bitrate_allocator.h"
 
 namespace webrtc {
 
@@ -30,4 +30,4 @@ class DefaultVideoBitrateAllocator : public VideoBitrateAllocator {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_
+#endif  // MODULES_VIDEO_CODING_UTILITY_DEFAULT_VIDEO_BITRATE_ALLOCATOR_H_

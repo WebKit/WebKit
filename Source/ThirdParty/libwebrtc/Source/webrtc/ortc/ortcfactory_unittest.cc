@@ -10,13 +10,15 @@
 
 #include <memory>
 
-#include "webrtc/base/fakenetwork.h"
-#include "webrtc/base/gunit.h"
-#include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/media/base/fakemediaengine.h"
-#include "webrtc/ortc/ortcfactory.h"
-#include "webrtc/ortc/testrtpparameters.h"
-#include "webrtc/p2p/base/fakepackettransport.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "media/base/fakemediaengine.h"
+#include "ortc/ortcfactory.h"
+#include "ortc/testrtpparameters.h"
+#include "p2p/base/fakepackettransport.h"
+#include "rtc_base/fakenetwork.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/virtualsocketserver.h"
 
 namespace webrtc {
 
@@ -29,10 +31,12 @@ class OrtcFactoryTest : public testing::Test {
       : thread_(&virtual_socket_server_),
         fake_packet_transport_("fake transport") {
     ortc_factory_ =
-        OrtcFactory::Create(nullptr, nullptr, &fake_network_manager_, nullptr,
+        OrtcFactory::Create(&thread_, nullptr, &fake_network_manager_, nullptr,
                             nullptr,
                             std::unique_ptr<cricket::MediaEngineInterface>(
-                                new cricket::FakeMediaEngine()))
+                                new cricket::FakeMediaEngine()),
+                            CreateBuiltinAudioEncoderFactory(),
+                            CreateBuiltinAudioDecoderFactory())
             .MoveValue();
   }
 
@@ -66,16 +70,14 @@ TEST_F(OrtcFactoryTest, CreateRtpTransportWithAndWithoutMux) {
   rtc::FakePacketTransport rtp("rtp");
   rtc::FakePacketTransport rtcp("rtcp");
   // With muxed RTCP.
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  auto result = ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp,
-                                                  nullptr, nullptr);
+  RtpTransportParameters parameters = MakeRtcpMuxParameters();
+  auto result =
+      ortc_factory_->CreateRtpTransport(parameters, &rtp, nullptr, nullptr);
   EXPECT_TRUE(result.ok());
   result.MoveValue().reset();
   // With non-muxed RTCP.
-  rtcp_parameters.mux = false;
-  result =
-      ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp, &rtcp, nullptr);
+  parameters.rtcp.mux = false;
+  result = ortc_factory_->CreateRtpTransport(parameters, &rtp, &rtcp, nullptr);
   EXPECT_TRUE(result.ok());
 }
 
@@ -84,16 +86,14 @@ TEST_F(OrtcFactoryTest, CreateSrtpTransport) {
   rtc::FakePacketTransport rtp("rtp");
   rtc::FakePacketTransport rtcp("rtcp");
   // With muxed RTCP.
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  auto result = ortc_factory_->CreateSrtpTransport(rtcp_parameters, &rtp,
-                                                   nullptr, nullptr);
+  RtpTransportParameters parameters = MakeRtcpMuxParameters();
+  auto result =
+      ortc_factory_->CreateSrtpTransport(parameters, &rtp, nullptr, nullptr);
   EXPECT_TRUE(result.ok());
   result.MoveValue().reset();
   // With non-muxed RTCP.
-  rtcp_parameters.mux = false;
-  result =
-      ortc_factory_->CreateSrtpTransport(rtcp_parameters, &rtp, &rtcp, nullptr);
+  parameters.rtcp.mux = false;
+  result = ortc_factory_->CreateSrtpTransport(parameters, &rtp, &rtcp, nullptr);
   EXPECT_TRUE(result.ok());
 }
 
@@ -101,12 +101,10 @@ TEST_F(OrtcFactoryTest, CreateSrtpTransport) {
 // GetRtpParameters.
 TEST_F(OrtcFactoryTest, CreateRtpTransportGeneratesCname) {
   rtc::FakePacketTransport rtp("rtp");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  auto result = ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp,
+  auto result = ortc_factory_->CreateRtpTransport(MakeRtcpMuxParameters(), &rtp,
                                                   nullptr, nullptr);
   ASSERT_TRUE(result.ok());
-  EXPECT_FALSE(result.value()->GetRtcpParameters().cname.empty());
+  EXPECT_FALSE(result.value()->GetParameters().rtcp.cname.empty());
 }
 
 // Extension of the above test; multiple transports created by the same factory
@@ -114,20 +112,19 @@ TEST_F(OrtcFactoryTest, CreateRtpTransportGeneratesCname) {
 TEST_F(OrtcFactoryTest, MultipleRtpTransportsUseSameGeneratedCname) {
   rtc::FakePacketTransport packet_transport1("1");
   rtc::FakePacketTransport packet_transport2("2");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
+  RtpTransportParameters parameters = MakeRtcpMuxParameters();
   // Sanity check.
-  ASSERT_TRUE(rtcp_parameters.cname.empty());
+  ASSERT_TRUE(parameters.rtcp.cname.empty());
   auto result = ortc_factory_->CreateRtpTransport(
-      rtcp_parameters, &packet_transport1, nullptr, nullptr);
+      parameters, &packet_transport1, nullptr, nullptr);
   ASSERT_TRUE(result.ok());
   auto rtp_transport1 = result.MoveValue();
-  result = ortc_factory_->CreateRtpTransport(
-      rtcp_parameters, &packet_transport2, nullptr, nullptr);
+  result = ortc_factory_->CreateRtpTransport(parameters, &packet_transport2,
+                                             nullptr, nullptr);
   ASSERT_TRUE(result.ok());
   auto rtp_transport2 = result.MoveValue();
-  RtcpParameters params1 = rtp_transport1->GetRtcpParameters();
-  RtcpParameters params2 = rtp_transport2->GetRtcpParameters();
+  RtcpParameters params1 = rtp_transport1->GetParameters().rtcp;
+  RtcpParameters params2 = rtp_transport2->GetParameters().rtcp;
   EXPECT_FALSE(params1.cname.empty());
   EXPECT_EQ(params1.cname, params2.cname);
 }
@@ -142,10 +139,10 @@ TEST_F(OrtcFactoryTest, CreateRtpTransportWithNoPacketTransport) {
 // packet transport are needed.
 TEST_F(OrtcFactoryTest, CreateRtpTransportWithMissingRtcpTransport) {
   rtc::FakePacketTransport rtp("rtp");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = false;
-  auto result = ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp,
-                                                  nullptr, nullptr);
+  RtpTransportParameters parameters;
+  parameters.rtcp.mux = false;
+  auto result =
+      ortc_factory_->CreateRtpTransport(parameters, &rtp, nullptr, nullptr);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 }
 
@@ -155,10 +152,8 @@ TEST_F(OrtcFactoryTest, CreateRtpTransportWithMissingRtcpTransport) {
 TEST_F(OrtcFactoryTest, CreateRtpTransportWithExtraneousRtcpTransport) {
   rtc::FakePacketTransport rtp("rtp");
   rtc::FakePacketTransport rtcp("rtcp");
-  RtcpParameters rtcp_parameters;
-  rtcp_parameters.mux = true;
-  auto result =
-      ortc_factory_->CreateRtpTransport(rtcp_parameters, &rtp, &rtcp, nullptr);
+  auto result = ortc_factory_->CreateRtpTransport(MakeRtcpMuxParameters(), &rtp,
+                                                  &rtcp, nullptr);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 }
 

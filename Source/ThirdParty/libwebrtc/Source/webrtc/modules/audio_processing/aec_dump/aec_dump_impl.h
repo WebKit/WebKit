@@ -8,30 +8,30 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC_DUMP_AEC_DUMP_IMPL_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC_DUMP_AEC_DUMP_IMPL_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC_DUMP_AEC_DUMP_IMPL_H_
+#define MODULES_AUDIO_PROCESSING_AEC_DUMP_AEC_DUMP_IMPL_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/ignore_wundef.h"
-#include "webrtc/base/platform_file.h"
-#include "webrtc/base/race_checker.h"
-#include "webrtc/base/task_queue.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/modules/audio_processing/aec_dump/capture_stream_info.h"
-#include "webrtc/modules/audio_processing/aec_dump/write_to_file_task.h"
-#include "webrtc/modules/audio_processing/include/aec_dump.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/file_wrapper.h"
+#include "modules/audio_processing/aec_dump/capture_stream_info.h"
+#include "modules/audio_processing/aec_dump/write_to_file_task.h"
+#include "modules/audio_processing/include/aec_dump.h"
+#include "modules/include/module_common_types.h"
+#include "rtc_base/ignore_wundef.h"
+#include "rtc_base/platform_file.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/task_queue.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/file_wrapper.h"
 
 // Files generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_processing/debug.pb.h"
 #else
-#include "webrtc/modules/audio_processing/debug.pb.h"
+#include "modules/audio_processing/debug.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 
@@ -77,4 +77,4 @@ class AecDumpImpl : public AecDump {
 };
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC_DUMP_AEC_DUMP_IMPL_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC_DUMP_AEC_DUMP_IMPL_H_

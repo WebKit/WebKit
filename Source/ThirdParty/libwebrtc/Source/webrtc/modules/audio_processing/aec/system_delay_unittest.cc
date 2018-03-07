@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
-#include "webrtc/modules/audio_processing/aec/echo_cancellation.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/typedefs.h"
+#include "modules/audio_processing/aec/aec_core.h"
+#include "modules/audio_processing/aec/echo_cancellation.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "test/gtest.h"
+#include "typedefs.h"  // NOLINT(build/include)
 namespace webrtc {
 namespace {
 
@@ -240,8 +241,9 @@ TEST_F(SystemDelayTest, CorrectDelayAfterStableStartup) {
             static_cast<int>(kDeviceBufMs * samples_per_frame_ / 10);
         EXPECT_GE(average_reported_delay, WebRtcAec_system_delay(self_->aec));
         int lower_bound = WebRtcAec_extended_filter_enabled(self_->aec)
-                              ? average_reported_delay / 2 - samples_per_frame_
-                              : average_reported_delay * 3 / 4;
+            ? (average_reported_delay / 2 -
+               rtc::checked_cast<int>(samples_per_frame_))
+            : average_reported_delay * 3 / 4;
         EXPECT_LE(lower_bound, WebRtcAec_system_delay(self_->aec));
       }
     }

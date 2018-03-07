@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_MONITOR_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_MONITOR_H_
+#ifndef MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_MONITOR_H_
+#define MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_MONITOR_H_
 
 #include <ApplicationServices/ApplicationServices.h>
 
 #include <memory>
 #include <set>
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/desktop_capture/mac/desktop_configuration.h"
-#include "webrtc/system_wrappers/include/atomic32.h"
+#include "api/refcountedbase.h"
+#include "modules/desktop_capture/mac/desktop_configuration.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -26,7 +26,7 @@ class EventWrapper;
 
 // The class provides functions to synchronize capturing and display
 // reconfiguring across threads, and the up-to-date MacDesktopConfiguration.
-class DesktopConfigurationMonitor {
+class DesktopConfigurationMonitor : public rtc::RefCountedBase {
  public:
   DesktopConfigurationMonitor();
   // Acquires a lock on the current configuration.
@@ -39,22 +39,16 @@ class DesktopConfigurationMonitor {
     return desktop_configuration_;
   }
 
-  void AddRef() { ++ref_count_; }
-  void Release() {
-    if (--ref_count_ == 0)
-      delete this;
-  }
+ protected:
+  ~DesktopConfigurationMonitor() override;
 
  private:
   static void DisplaysReconfiguredCallback(CGDirectDisplayID display,
                                            CGDisplayChangeSummaryFlags flags,
                                            void *user_parameter);
-  ~DesktopConfigurationMonitor();
-
   void DisplaysReconfigured(CGDirectDisplayID display,
                             CGDisplayChangeSummaryFlags flags);
 
-  Atomic32 ref_count_;
   std::set<CGDirectDisplayID> reconfiguring_displays_;
   MacDesktopConfiguration desktop_configuration_;
   std::unique_ptr<EventWrapper> display_configuration_capture_event_;
@@ -64,4 +58,4 @@ class DesktopConfigurationMonitor {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_MONITOR_H_
+#endif  // MODULES_DESKTOP_CAPTURE_MAC_DESKTOP_CONFIGURATION_MONITOR_H_

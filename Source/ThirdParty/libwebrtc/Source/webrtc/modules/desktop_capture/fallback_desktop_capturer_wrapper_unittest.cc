@@ -8,16 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
+#include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "webrtc/modules/desktop_capture/desktop_capturer.h"
-#include "webrtc/modules/desktop_capture/desktop_frame_generator.h"
-#include "webrtc/modules/desktop_capture/fake_desktop_capturer.h"
-#include "webrtc/test/gtest.h"
+#include "modules/desktop_capture/desktop_capturer.h"
+#include "modules/desktop_capture/desktop_frame_generator.h"
+#include "modules/desktop_capture/fake_desktop_capturer.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

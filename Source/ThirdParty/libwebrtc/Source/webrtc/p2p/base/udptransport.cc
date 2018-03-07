@@ -8,17 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/p2p/base/udptransport.h"
+#include "p2p/base/udptransport.h"
 
 #include <string>
 #include <utility>  // For std::move.
 
-#include "webrtc/base/asyncudpsocket.h"
-#include "webrtc/base/asyncpacketsocket.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/socketaddress.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/thread_checker.h"
+#include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/asyncudpsocket.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/nethelper.h"
+#include "rtc_base/socketaddress.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/thread_checker.h"
 
 namespace cricket {
 
@@ -42,7 +43,7 @@ rtc::SocketAddress UdpTransport::GetLocalAddress() const {
 bool UdpTransport::SetRemoteAddress(const rtc::SocketAddress& addr) {
   RTC_DCHECK_RUN_ON(&network_thread_checker_);
   if (!addr.IsComplete()) {
-    LOG(LS_WARNING) << "Remote address not complete.";
+    RTC_LOG(LS_WARNING) << "Remote address not complete.";
     return false;
   }
   // TODO(johan): check for ipv4, other settings.
@@ -63,6 +64,15 @@ rtc::SocketAddress UdpTransport::GetRemoteAddress() const {
   return remote_address_;
 }
 
+const std::string& UdpTransport::transport_name() const {
+  return transport_name_;
+}
+
+bool UdpTransport::receiving() const {
+  // TODO(johan): Implement method and signal.
+  return true;
+}
+
 bool UdpTransport::writable() const {
   RTC_DCHECK_RUN_ON(&network_thread_checker_);
   return !remote_address_.IsNil();
@@ -74,16 +84,35 @@ int UdpTransport::SendPacket(const char* data,
                              int flags) {
   // No thread_checker in high frequency network function.
   if (remote_address_.IsNil()) {
-    LOG(LS_WARNING) << "Remote address not set.";
+    RTC_LOG(LS_WARNING) << "Remote address not set.";
     send_error_ = ENOTCONN;
     return -1;
   }
   int result =
       socket_->SendTo((const void*)data, len, remote_address_, options);
   if (result <= 0) {
-    LOG(LS_VERBOSE) << "SendPacket() " << result;
+    RTC_LOG(LS_VERBOSE) << "SendPacket() " << result;
   }
   return result;
+}
+
+rtc::Optional<rtc::NetworkRoute> UdpTransport::network_route() const {
+  rtc::NetworkRoute network_route;
+  network_route.packet_overhead =
+      /*kUdpOverhead=*/8 + GetIpOverhead(GetLocalAddress().family());
+  return rtc::Optional<rtc::NetworkRoute>(network_route);
+}
+
+int UdpTransport::SetOption(rtc::Socket::Option opt, int value) {
+  return 0;
+}
+
+int UdpTransport::GetError() {
+  return send_error_;
+}
+
+rtc::PacketTransportInternal* UdpTransport::GetInternal() {
+  return this;
 }
 
 void UdpTransport::OnSocketReadPacket(rtc::AsyncPacketSocket* socket,

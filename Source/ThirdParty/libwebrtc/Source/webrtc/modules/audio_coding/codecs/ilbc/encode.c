@@ -29,7 +29,7 @@
 #include "index_conv_enc.h"
 #include "pack_bits.h"
 #include "hp_input.h"
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 #ifdef SPLIT_10MS
 #include "unpack_bits.h"

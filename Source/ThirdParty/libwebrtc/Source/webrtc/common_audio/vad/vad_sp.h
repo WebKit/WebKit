@@ -11,11 +11,11 @@
 
 // This file includes specific signal processing tools used in vad_core.c.
 
-#ifndef WEBRTC_COMMON_AUDIO_VAD_VAD_SP_H_
-#define WEBRTC_COMMON_AUDIO_VAD_VAD_SP_H_
+#ifndef COMMON_AUDIO_VAD_VAD_SP_H_
+#define COMMON_AUDIO_VAD_VAD_SP_H_
 
-#include "webrtc/common_audio/vad/vad_core.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/vad/vad_core.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Downsamples the signal by a factor 2, eg. 32->16 or 16->8.
 //
@@ -53,4 +53,4 @@ int16_t WebRtcVad_FindMinimum(VadInstT* handle,
                               int16_t feature_value,
                               int channel);
 
-#endif  // WEBRTC_COMMON_AUDIO_VAD_VAD_SP_H_
+#endif  // COMMON_AUDIO_VAD_VAD_SP_H_

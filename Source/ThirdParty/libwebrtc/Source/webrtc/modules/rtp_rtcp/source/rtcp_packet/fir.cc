@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/fir.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -54,12 +54,12 @@ bool Fir::Parse(const CommonHeader& packet) {
 
   // The FCI field MUST contain one or more FIR entries.
   if (packet.payload_size_bytes() < kCommonFeedbackLength + kFciLength) {
-    LOG(LS_WARNING) << "Packet is too small to be a valid FIR packet.";
+    RTC_LOG(LS_WARNING) << "Packet is too small to be a valid FIR packet.";
     return false;
   }
 
   if ((packet.payload_size_bytes() - kCommonFeedbackLength) % kFciLength != 0) {
-    LOG(LS_WARNING) << "Invalid size for a valid FIR packet.";
+    RTC_LOG(LS_WARNING) << "Invalid size for a valid FIR packet.";
     return false;
   }
 

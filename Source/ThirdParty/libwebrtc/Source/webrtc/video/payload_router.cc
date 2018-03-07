@@ -8,12 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/payload_router.h"
+#include "video/payload_router.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/video_coding/include/video_codec_interface.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/random.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -78,6 +81,26 @@ void CopyCodecSpecific(const CodecSpecificInfo* info, RTPVideoHeader* rtp) {
       rtp->codecHeader.H264.packetization_mode =
           info->codecSpecific.H264.packetization_mode;
       return;
+    case kVideoCodecStereo: {
+      rtp->codec = kRtpVideoStereo;
+      RtpVideoCodecTypes associated_codec_type = kRtpVideoNone;
+      switch (info->codecSpecific.stereo.associated_codec_type) {
+        case kVideoCodecVP8:
+          associated_codec_type = kRtpVideoVp8;
+          break;
+        case kVideoCodecVP9:
+          associated_codec_type = kRtpVideoVp9;
+          break;
+        case kVideoCodecH264:
+          associated_codec_type = kRtpVideoH264;
+          break;
+        default:
+          RTC_NOTREACHED();
+      }
+      rtp->codecHeader.stereo.associated_codec_type = associated_codec_type;
+      rtp->codecHeader.stereo.indices = info->codecSpecific.stereo.indices;
+      return;
+    }
     case kVideoCodecGeneric:
       rtp->codec = kRtpVideoGeneric;
       rtp->simulcastIdx = info->codecSpecific.generic.simulcast_idx;
@@ -89,11 +112,56 @@ void CopyCodecSpecific(const CodecSpecificInfo* info, RTPVideoHeader* rtp) {
 
 }  // namespace
 
+// Currently only used if forced fallback for VP8 is enabled.
+// Consider adding tl0idx and set for VP8 and VP9.
+// Make picture id not codec specific.
+class PayloadRouter::RtpPayloadParams final {
+ public:
+  RtpPayloadParams(const uint32_t ssrc, const RtpPayloadState* state)
+      : ssrc_(ssrc) {
+    Random random(rtc::TimeMicros());
+    state_.picture_id =
+        state ? state->picture_id : (random.Rand<int16_t>() & 0x7FFF);
+  }
+  ~RtpPayloadParams() {}
+
+  void Set(RTPVideoHeader* rtp_video_header) {
+    if (rtp_video_header->codec == kRtpVideoVp8 &&
+        rtp_video_header->codecHeader.VP8.pictureId != kNoPictureId) {
+      rtp_video_header->codecHeader.VP8.pictureId = state_.picture_id;
+      state_.picture_id = (state_.picture_id + 1) & 0x7FFF;
+    }
+  }
+
+  uint32_t ssrc() const { return ssrc_; }
+
+  RtpPayloadState state() const { return state_; }
+
+ private:
+  const uint32_t ssrc_;
+  RtpPayloadState state_;
+};
+
 PayloadRouter::PayloadRouter(const std::vector<RtpRtcp*>& rtp_modules,
-                             int payload_type)
+                             const std::vector<uint32_t>& ssrcs,
+                             int payload_type,
+                             const std::map<uint32_t, RtpPayloadState>& states)
     : active_(false),
       rtp_modules_(rtp_modules),
-      payload_type_(payload_type) {
+      payload_type_(payload_type),
+      forced_fallback_enabled_((webrtc::field_trial::IsEnabled(
+          "WebRTC-VP8-Forced-Fallback-Encoder-v2"))) {
+  RTC_DCHECK_EQ(ssrcs.size(), rtp_modules.size());
+  // SSRCs are assumed to be sorted in the same order as |rtp_modules|.
+  for (uint32_t ssrc : ssrcs) {
+    // Restore state if it previously existed.
+    const RtpPayloadState* state = nullptr;
+    auto it = states.find(ssrc);
+    if (it != states.end()) {
+      state = &it->second;
+    }
+    params_.push_back(RtpPayloadParams(ssrc, state));
+  }
 }
 
 PayloadRouter::~PayloadRouter() {}
@@ -115,6 +183,15 @@ bool PayloadRouter::IsActive() {
   return active_ && !rtp_modules_.empty();
 }
 
+std::map<uint32_t, RtpPayloadState> PayloadRouter::GetRtpPayloadStates() const {
+  rtc::CritScope lock(&crit_);
+  std::map<uint32_t, RtpPayloadState> payload_states;
+  for (const auto& param : params_) {
+    payload_states[param.ssrc()] = param.state();
+  }
+  return payload_states;
+}
+
 EncodedImageCallback::Result PayloadRouter::OnEncodedImage(
     const EncodedImage& encoded_image,
     const CodecSpecificInfo* codec_specific_info,
@@ -130,25 +207,34 @@ EncodedImageCallback::Result PayloadRouter::OnEncodedImage(
     CopyCodecSpecific(codec_specific_info, &rtp_video_header);
   rtp_video_header.rotation = encoded_image.rotation_;
   rtp_video_header.content_type = encoded_image.content_type_;
-  if (encoded_image.timing_.is_timing_frame) {
+  if (encoded_image.timing_.flags != TimingFrameFlags::kInvalid &&
+      encoded_image.timing_.flags != TimingFrameFlags::kNotTriggered) {
     rtp_video_header.video_timing.encode_start_delta_ms =
-        VideoTiming::GetDeltaCappedMs(encoded_image.capture_time_ms_,
-                                      encoded_image.timing_.encode_start_ms);
+        VideoSendTiming::GetDeltaCappedMs(
+            encoded_image.capture_time_ms_,
+            encoded_image.timing_.encode_start_ms);
     rtp_video_header.video_timing.encode_finish_delta_ms =
-        VideoTiming::GetDeltaCappedMs(encoded_image.capture_time_ms_,
-                                      encoded_image.timing_.encode_finish_ms);
+        VideoSendTiming::GetDeltaCappedMs(
+            encoded_image.capture_time_ms_,
+            encoded_image.timing_.encode_finish_ms);
     rtp_video_header.video_timing.packetization_finish_delta_ms = 0;
     rtp_video_header.video_timing.pacer_exit_delta_ms = 0;
-    rtp_video_header.video_timing.network_timstamp_delta_ms = 0;
-    rtp_video_header.video_timing.network2_timstamp_delta_ms = 0;
-    rtp_video_header.video_timing.is_timing_frame = true;
+    rtp_video_header.video_timing.network_timestamp_delta_ms = 0;
+    rtp_video_header.video_timing.network2_timestamp_delta_ms = 0;
+    rtp_video_header.video_timing.flags = encoded_image.timing_.flags;
   } else {
-    rtp_video_header.video_timing.is_timing_frame = false;
+    rtp_video_header.video_timing.flags = TimingFrameFlags::kInvalid;
   }
   rtp_video_header.playout_delay = encoded_image.playout_delay_;
 
   int stream_index = rtp_video_header.simulcastIdx;
   RTC_DCHECK_LT(stream_index, rtp_modules_.size());
+  if (forced_fallback_enabled_) {
+    // Sets picture id. The SW and HW encoder have separate picture id
+    // sequences, set picture id to not cause sequence discontinuties at encoder
+    // changes.
+    params_[stream_index].Set(&rtp_video_header);
+  }
   uint32_t frame_id;
   bool send_result = rtp_modules_[stream_index]->SendOutgoingData(
       encoded_image._frameType, payload_type_, encoded_image._timeStamp,
@@ -171,9 +257,15 @@ void PayloadRouter::OnBitrateAllocationUpdated(
       // Simulcast is in use, split the BitrateAllocation into one struct per
       // rtp stream, moving over the temporal layer allocation.
       for (size_t si = 0; si < rtp_modules_.size(); ++si) {
+        // Don't send empty TargetBitrate messages on streams not being relayed.
+        if (!bitrate.IsSpatialLayerUsed(si))
+          break;
+
         BitrateAllocation layer_bitrate;
-        for (int tl = 0; tl < kMaxTemporalStreams; ++tl)
-          layer_bitrate.SetBitrate(0, tl, bitrate.GetBitrate(si, tl));
+        for (int tl = 0; tl < kMaxTemporalStreams; ++tl) {
+          if (bitrate.HasBitrate(si, tl))
+            layer_bitrate.SetBitrate(0, tl, bitrate.GetBitrate(si, tl));
+        }
         rtp_modules_[si]->SetVideoBitrateAllocation(layer_bitrate);
       }
     }

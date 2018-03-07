@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/ortc/ortcrtpsenderadapter.h"
+#include "ortc/ortcrtpsenderadapter.h"
 
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/ortc/rtptransportadapter.h"
+#include "media/base/mediaconstants.h"
+#include "ortc/rtptransportadapter.h"
+#include "rtc_base/checks.h"
 
 namespace {
 
 void FillAudioSenderParameters(webrtc::RtpParameters* parameters) {
   for (webrtc::RtpCodecParameters& codec : parameters->codecs) {
     if (!codec.num_channels) {
-      codec.num_channels = rtc::Optional<int>(1);
+      codec.num_channels = 1;
     }
   }
 }
@@ -29,7 +29,7 @@ void FillAudioSenderParameters(webrtc::RtpParameters* parameters) {
 void FillVideoSenderParameters(webrtc::RtpParameters* parameters) {
   for (webrtc::RtpCodecParameters& codec : parameters->codecs) {
     if (!codec.clock_rate) {
-      codec.clock_rate = rtc::Optional<int>(cricket::kVideoCodecClockrate);
+      codec.clock_rate = cricket::kVideoCodecClockrate;
     }
   }
 }

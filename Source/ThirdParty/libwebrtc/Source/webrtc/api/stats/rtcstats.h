@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_STATS_RTCSTATS_H_
-#define WEBRTC_API_STATS_RTCSTATS_H_
+#ifndef API_STATS_RTCSTATS_H_
+#define API_STATS_RTCSTATS_H_
 
 #include <map>
 #include <memory>
@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/checks.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -72,9 +72,9 @@ class RTCStats {
   bool operator==(const RTCStats& other) const;
   bool operator!=(const RTCStats& other) const;
 
-  // Creates a human readable string representation of the stats object, listing
-  // all of its members (names and values).
-  std::string ToString() const;
+  // Creates a JSON readable string representation of the stats
+  // object, listing all of its members (names and values).
+  std::string ToJson() const;
 
   // Downcasts the stats object to an |RTCStats| subclass |T|. DCHECKs that the
   // object is of type |T|.
@@ -222,6 +222,12 @@ class RTCStatsMemberInterface {
     return !(*this == other);
   }
   virtual std::string ValueToString() const = 0;
+  // This is the same as ValueToString except for kInt64 and kUint64 types,
+  // where the value is represented as a double instead of as an integer.
+  // Since JSON stores numbers as floating point numbers, very large integers
+  // cannot be accurately represented, so we prefer to display them as doubles
+  // instead.
+  virtual std::string ValueToJson() const = 0;
 
   template<typename T>
   const T& cast_to() const {
@@ -277,6 +283,7 @@ class RTCStatsMember : public RTCStatsMemberInterface {
     return value_ == other_t.value_;
   }
   std::string ValueToString() const override;
+  std::string ValueToJson() const override;
 
   // Assignment operators.
   T& operator=(const T& value) {
@@ -322,4 +329,4 @@ class RTCStatsMember : public RTCStatsMemberInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_STATS_RTCSTATS_H_
+#endif  // API_STATS_RTCSTATS_H_

@@ -10,14 +10,14 @@
 
 #include <memory>
 
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/base/event.h"
-#include "webrtc/base/fakeclock.h"
-#include "webrtc/common_video/include/video_frame.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/video/overuse_frame_detector.h"
-#include "webrtc/modules/video_coding/utility/quality_scaler.h"
+#include "api/video/i420_buffer.h"
+#include "common_video/include/video_frame.h"
+#include "modules/video_coding/utility/quality_scaler.h"
+#include "rtc_base/event.h"
+#include "rtc_base/fakeclock.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "video/overuse_frame_detector.h"
 
 namespace webrtc {
 
@@ -357,7 +357,7 @@ TEST_F(OveruseFrameDetectorTest, RunOnTqNormalUsage) {
         event.Set();
       }));
 
-  queue.PostTask([this, &event] {
+  queue.PostTask([this] {
     const int kDelayUs1 = 5 * rtc::kNumMicrosecsPerMillisec;
     const int kDelayUs2 = 6 * rtc::kNumMicrosecsPerMillisec;
     InsertAndSendFramesWithInterval(1300, kFrameIntervalUs, kWidth, kHeight,

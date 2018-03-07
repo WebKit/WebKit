@@ -614,13 +614,13 @@ TEST(EVPExtraTest, Ed25519) {
   EXPECT_EQ(Bytes(kPrivateKeyPKCS8), Bytes(der, der_len));
 
   // Test EVP_PKEY_cmp.
-  EXPECT_TRUE(EVP_PKEY_cmp(pubkey.get(), privkey.get()));
+  EXPECT_EQ(1, EVP_PKEY_cmp(pubkey.get(), privkey.get()));
 
   static const uint8_t kZeros[32] = {0};
   bssl::UniquePtr<EVP_PKEY> pubkey2(EVP_PKEY_new_ed25519_public(kZeros));
   ASSERT_TRUE(pubkey2);
-  EXPECT_FALSE(EVP_PKEY_cmp(pubkey.get(), pubkey2.get()));
-  EXPECT_FALSE(EVP_PKEY_cmp(privkey.get(), pubkey2.get()));
+  EXPECT_EQ(0, EVP_PKEY_cmp(pubkey.get(), pubkey2.get()));
+  EXPECT_EQ(0, EVP_PKEY_cmp(privkey.get(), pubkey2.get()));
 
   // Ed25519 may not be used streaming.
   bssl::ScopedEVP_MD_CTX ctx;

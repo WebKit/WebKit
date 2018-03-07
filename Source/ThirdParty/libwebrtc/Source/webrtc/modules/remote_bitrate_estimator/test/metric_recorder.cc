@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/remote_bitrate_estimator/test/metric_recorder.h"
+#include "modules/remote_bitrate_estimator/test/metric_recorder.h"
 
 #include <algorithm>
 
-#include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
-#include "webrtc/typedefs.h"
+#include "modules/remote_bitrate_estimator/test/packet_sender.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace testing {

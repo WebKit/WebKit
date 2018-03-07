@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/conversational_speech/wavreader_factory.h"
+#include "modules/audio_processing/test/conversational_speech/wavreader_factory.h"
 
 #include <cstddef>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/wav_file.h"
-#include "webrtc/typedefs.h"
+#include "api/array_view.h"
+#include "common_audio/wav_file.h"
+#include "rtc_base/checks.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {

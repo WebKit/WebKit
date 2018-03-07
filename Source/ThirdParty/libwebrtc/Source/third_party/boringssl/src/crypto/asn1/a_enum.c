@@ -56,6 +56,7 @@
 
 #include <openssl/asn1.h>
 
+#include <limits.h>
 #include <string.h>
 
 #include <openssl/err.h>
@@ -110,7 +111,6 @@ int ASN1_ENUMERATED_set(ASN1_ENUMERATED *a, long v)
 long ASN1_ENUMERATED_get(ASN1_ENUMERATED *a)
 {
     int neg = 0, i;
-    long r = 0;
 
     if (a == NULL)
         return (0L);
@@ -120,20 +120,31 @@ long ASN1_ENUMERATED_get(ASN1_ENUMERATED *a)
     else if (i != V_ASN1_ENUMERATED)
         return -1;
 
-    if (a->length > (int)sizeof(long)) {
-        /* hmm... a bit ugly */
-        return (0xffffffffL);
-    }
-    if (a->data == NULL)
-        return 0;
+    OPENSSL_COMPILE_ASSERT(sizeof(uint64_t) >= sizeof(long),
+                           long_larger_than_uint64_t);
 
-    for (i = 0; i < a->length; i++) {
-        r <<= 8;
-        r |= (unsigned char)a->data[i];
+    if (a->length > (int)sizeof(uint64_t)) {
+        /* hmm... a bit ugly */
+        return -1;
     }
+
+    uint64_t r64 = 0;
+    if (a->data != NULL) {
+      for (i = 0; i < a->length; i++) {
+          r64 <<= 8;
+          r64 |= (unsigned char)a->data[i];
+      }
+
+      if (r64 > LONG_MAX) {
+          return -1;
+      }
+    }
+
+    long r = (long) r64;
     if (neg)
         r = -r;
-    return (r);
+
+    return r;
 }
 
 ASN1_ENUMERATED *BN_to_ASN1_ENUMERATED(BIGNUM *bn, ASN1_ENUMERATED *ai)

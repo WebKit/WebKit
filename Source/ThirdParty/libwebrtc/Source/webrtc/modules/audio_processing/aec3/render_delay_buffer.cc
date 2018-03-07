@@ -8,18 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aec3/render_delay_buffer.h"
+#include "modules/audio_processing/aec3/render_delay_buffer.h"
 
 #include <string.h>
 #include <algorithm>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/block_processor.h"
-#include "webrtc/modules/audio_processing/aec3/decimator_by_4.h"
-#include "webrtc/modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/block_processor.h"
+#include "modules/audio_processing/aec3/decimator.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "rtc_base/atomicops.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace {
@@ -73,7 +74,10 @@ class ApiCallJitterBuffer {
 
 class RenderDelayBufferImpl final : public RenderDelayBuffer {
  public:
-  explicit RenderDelayBufferImpl(size_t num_bands);
+  RenderDelayBufferImpl(size_t num_bands,
+                        size_t down_sampling_factor,
+                        size_t downsampled_render_buffer_size,
+                        size_t render_delay_buffer_size);
   ~RenderDelayBufferImpl() override;
 
   void Reset() override;
@@ -89,30 +93,49 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   }
 
  private:
+  static int instance_count_;
+  std::unique_ptr<ApmDataDumper> data_dumper_;
   const Aec3Optimization optimization_;
-  std::array<std::vector<std::vector<float>>, kRenderDelayBufferSize> buffer_;
+  const size_t down_sampling_factor_;
+  const size_t sub_block_size_;
+  std::vector<std::vector<std::vector<float>>> buffer_;
   size_t delay_ = 0;
   size_t last_insert_index_ = 0;
   RenderBuffer fft_buffer_;
   DownsampledRenderBuffer downsampled_render_buffer_;
-  DecimatorBy4 render_decimator_;
+  Decimator render_decimator_;
   ApiCallJitterBuffer api_call_jitter_buffer_;
   const std::vector<std::vector<float>> zero_block_;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RenderDelayBufferImpl);
 };
 
-RenderDelayBufferImpl::RenderDelayBufferImpl(size_t num_bands)
-    : optimization_(DetectOptimization()),
+int RenderDelayBufferImpl::instance_count_ = 0;
+
+RenderDelayBufferImpl::RenderDelayBufferImpl(
+    size_t num_bands,
+    size_t down_sampling_factor,
+    size_t downsampled_render_buffer_size,
+    size_t render_delay_buffer_size)
+    : data_dumper_(
+          new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
+      optimization_(DetectOptimization()),
+      down_sampling_factor_(down_sampling_factor),
+      sub_block_size_(down_sampling_factor_ > 0
+                          ? kBlockSize / down_sampling_factor
+                          : kBlockSize),
+      buffer_(
+          render_delay_buffer_size,
+          std::vector<std::vector<float>>(num_bands,
+                                          std::vector<float>(kBlockSize, 0.f))),
       fft_buffer_(
           optimization_,
           num_bands,
-          std::max(kResidualEchoPowerRenderWindowSize, kAdaptiveFilterLength),
+          std::max(kUnknownDelayRenderWindowSize, kAdaptiveFilterLength),
           std::vector<size_t>(1, kAdaptiveFilterLength)),
+      downsampled_render_buffer_(downsampled_render_buffer_size),
+      render_decimator_(down_sampling_factor_),
       api_call_jitter_buffer_(num_bands),
       zero_block_(num_bands, std::vector<float>(kBlockSize, 0.f)) {
-  buffer_.fill(std::vector<std::vector<float>>(
-      num_bands, std::vector<float>(kBlockSize, 0.f)));
-
   RTC_DCHECK_LT(buffer_.size(), downsampled_render_buffer_.buffer.size());
 }
 
@@ -123,7 +146,8 @@ void RenderDelayBufferImpl::Reset() {
   delay_ = 0;
   last_insert_index_ = 0;
   downsampled_render_buffer_.position = 0;
-  downsampled_render_buffer_.buffer.fill(0.f);
+  std::fill(downsampled_render_buffer_.buffer.begin(),
+            downsampled_render_buffer_.buffer.end(), 0.f);
   fft_buffer_.Clear();
   api_call_jitter_buffer_.Reset();
   for (auto& c : buffer_) {
@@ -158,20 +182,26 @@ bool RenderDelayBufferImpl::UpdateBuffers() {
   }
 
   downsampled_render_buffer_.position =
-      (downsampled_render_buffer_.position - kSubBlockSize +
+      (downsampled_render_buffer_.position - sub_block_size_ +
        downsampled_render_buffer_.buffer.size()) %
       downsampled_render_buffer_.buffer.size();
 
-  std::array<float, kSubBlockSize> render_downsampled;
-  if (underrun) {
-    render_decimator_.Decimate(zero_block_[0], render_downsampled);
-  } else {
-    render_decimator_.Decimate(buffer_[last_insert_index_][0],
-                               render_downsampled);
+  rtc::ArrayView<const float> input(
+      underrun ? zero_block_[0].data() : buffer_[last_insert_index_][0].data(),
+      kBlockSize);
+  rtc::ArrayView<float> output(downsampled_render_buffer_.buffer.data() +
+                                   downsampled_render_buffer_.position,
+                               sub_block_size_);
+  data_dumper_->DumpWav("aec3_render_decimator_input", input.size(),
+                        input.data(), 16000, 1);
+  render_decimator_.Decimate(input, output);
+  data_dumper_->DumpWav("aec3_render_decimator_output", output.size(),
+                        output.data(), 16000 / down_sampling_factor_, 1);
+  for (size_t k = 0; k < output.size() / 2; ++k) {
+    float tmp = output[k];
+    output[k] = output[output.size() - 1 - k];
+    output[output.size() - 1 - k] = tmp;
   }
-  std::copy(render_downsampled.rbegin(), render_downsampled.rend(),
-            downsampled_render_buffer_.buffer.begin() +
-                downsampled_render_buffer_.position);
 
   if (underrun) {
     fft_buffer_.Insert(zero_block_);
@@ -196,7 +226,7 @@ void RenderDelayBufferImpl::SetDelay(size_t delay) {
     // size.
     downsampled_render_buffer_.position =
         (downsampled_render_buffer_.position +
-         kSubBlockSize * (delay - (buffer_.size() - 1))) %
+         sub_block_size_ * (delay - (buffer_.size() - 1))) %
         downsampled_render_buffer_.buffer.size();
 
     last_insert_index_ =
@@ -210,8 +240,14 @@ void RenderDelayBufferImpl::SetDelay(size_t delay) {
 
 }  // namespace
 
-RenderDelayBuffer* RenderDelayBuffer::Create(size_t num_bands) {
-  return new RenderDelayBufferImpl(num_bands);
+RenderDelayBuffer* RenderDelayBuffer::Create(
+    size_t num_bands,
+    size_t down_sampling_factor,
+    size_t downsampled_render_buffer_size,
+    size_t render_delay_buffer_size) {
+  return new RenderDelayBufferImpl(num_bands, down_sampling_factor,
+                                   downsampled_render_buffer_size,
+                                   render_delay_buffer_size);
 }
 
 }  // namespace webrtc

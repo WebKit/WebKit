@@ -18,14 +18,15 @@
 
 #include <algorithm>
 #include <memory>
+#include <tuple>
 
-#include "webrtc/base/stringize_macros.h"
-#include "webrtc/base/timeutils.h"
-#include "webrtc/common_audio/resampler/sinc_resampler.h"
-#include "webrtc/common_audio/resampler/sinusoidal_linear_chirp_source.h"
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/resampler/sinc_resampler.h"
+#include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
+#include "rtc_base/stringize_macros.h"
+#include "rtc_base/timeutils.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using testing::_;
 
@@ -230,16 +231,15 @@ TEST(SincResamplerTest, ConvolveBenchmark) {
 
 #undef CONVOLVE_FUNC
 
-typedef std::tr1::tuple<int, int, double, double> SincResamplerTestData;
+typedef std::tuple<int, int, double, double> SincResamplerTestData;
 class SincResamplerTest
     : public testing::TestWithParam<SincResamplerTestData> {
  public:
   SincResamplerTest()
-      : input_rate_(std::tr1::get<0>(GetParam())),
-        output_rate_(std::tr1::get<1>(GetParam())),
-        rms_error_(std::tr1::get<2>(GetParam())),
-        low_freq_error_(std::tr1::get<3>(GetParam())) {
-  }
+      : input_rate_(std::get<0>(GetParam())),
+        output_rate_(std::get<1>(GetParam())),
+        rms_error_(std::get<2>(GetParam())),
+        low_freq_error_(std::get<3>(GetParam())) {}
 
   virtual ~SincResamplerTest() {}
 
@@ -344,49 +344,51 @@ static const double kResamplingRMSError = -14.58;
 // Thresholds chosen arbitrarily based on what each resampling reported during
 // testing.  All thresholds are in dbFS, http://en.wikipedia.org/wiki/DBFS.
 INSTANTIATE_TEST_CASE_P(
-    SincResamplerTest, SincResamplerTest, testing::Values(
+    SincResamplerTest,
+    SincResamplerTest,
+    testing::Values(
         // To 44.1kHz
-        std::tr1::make_tuple(8000, 44100, kResamplingRMSError, -62.73),
-        std::tr1::make_tuple(11025, 44100, kResamplingRMSError, -72.19),
-        std::tr1::make_tuple(16000, 44100, kResamplingRMSError, -62.54),
-        std::tr1::make_tuple(22050, 44100, kResamplingRMSError, -73.53),
-        std::tr1::make_tuple(32000, 44100, kResamplingRMSError, -63.32),
-        std::tr1::make_tuple(44100, 44100, kResamplingRMSError, -73.53),
-        std::tr1::make_tuple(48000, 44100, -15.01, -64.04),
-        std::tr1::make_tuple(96000, 44100, -18.49, -25.51),
-        std::tr1::make_tuple(192000, 44100, -20.50, -13.31),
+        std::make_tuple(8000, 44100, kResamplingRMSError, -62.73),
+        std::make_tuple(11025, 44100, kResamplingRMSError, -72.19),
+        std::make_tuple(16000, 44100, kResamplingRMSError, -62.54),
+        std::make_tuple(22050, 44100, kResamplingRMSError, -73.53),
+        std::make_tuple(32000, 44100, kResamplingRMSError, -63.32),
+        std::make_tuple(44100, 44100, kResamplingRMSError, -73.53),
+        std::make_tuple(48000, 44100, -15.01, -64.04),
+        std::make_tuple(96000, 44100, -18.49, -25.51),
+        std::make_tuple(192000, 44100, -20.50, -13.31),
 
         // To 48kHz
-        std::tr1::make_tuple(8000, 48000, kResamplingRMSError, -63.43),
-        std::tr1::make_tuple(11025, 48000, kResamplingRMSError, -62.61),
-        std::tr1::make_tuple(16000, 48000, kResamplingRMSError, -63.96),
-        std::tr1::make_tuple(22050, 48000, kResamplingRMSError, -62.42),
-        std::tr1::make_tuple(32000, 48000, kResamplingRMSError, -64.04),
-        std::tr1::make_tuple(44100, 48000, kResamplingRMSError, -62.63),
-        std::tr1::make_tuple(48000, 48000, kResamplingRMSError, -73.52),
-        std::tr1::make_tuple(96000, 48000, -18.40, -28.44),
-        std::tr1::make_tuple(192000, 48000, -20.43, -14.11),
+        std::make_tuple(8000, 48000, kResamplingRMSError, -63.43),
+        std::make_tuple(11025, 48000, kResamplingRMSError, -62.61),
+        std::make_tuple(16000, 48000, kResamplingRMSError, -63.96),
+        std::make_tuple(22050, 48000, kResamplingRMSError, -62.42),
+        std::make_tuple(32000, 48000, kResamplingRMSError, -64.04),
+        std::make_tuple(44100, 48000, kResamplingRMSError, -62.63),
+        std::make_tuple(48000, 48000, kResamplingRMSError, -73.52),
+        std::make_tuple(96000, 48000, -18.40, -28.44),
+        std::make_tuple(192000, 48000, -20.43, -14.11),
 
         // To 96kHz
-        std::tr1::make_tuple(8000, 96000, kResamplingRMSError, -63.19),
-        std::tr1::make_tuple(11025, 96000, kResamplingRMSError, -62.61),
-        std::tr1::make_tuple(16000, 96000, kResamplingRMSError, -63.39),
-        std::tr1::make_tuple(22050, 96000, kResamplingRMSError, -62.42),
-        std::tr1::make_tuple(32000, 96000, kResamplingRMSError, -63.95),
-        std::tr1::make_tuple(44100, 96000, kResamplingRMSError, -62.63),
-        std::tr1::make_tuple(48000, 96000, kResamplingRMSError, -73.52),
-        std::tr1::make_tuple(96000, 96000, kResamplingRMSError, -73.52),
-        std::tr1::make_tuple(192000, 96000, kResamplingRMSError, -28.41),
+        std::make_tuple(8000, 96000, kResamplingRMSError, -63.19),
+        std::make_tuple(11025, 96000, kResamplingRMSError, -62.61),
+        std::make_tuple(16000, 96000, kResamplingRMSError, -63.39),
+        std::make_tuple(22050, 96000, kResamplingRMSError, -62.42),
+        std::make_tuple(32000, 96000, kResamplingRMSError, -63.95),
+        std::make_tuple(44100, 96000, kResamplingRMSError, -62.63),
+        std::make_tuple(48000, 96000, kResamplingRMSError, -73.52),
+        std::make_tuple(96000, 96000, kResamplingRMSError, -73.52),
+        std::make_tuple(192000, 96000, kResamplingRMSError, -28.41),
 
         // To 192kHz
-        std::tr1::make_tuple(8000, 192000, kResamplingRMSError, -63.10),
-        std::tr1::make_tuple(11025, 192000, kResamplingRMSError, -62.61),
-        std::tr1::make_tuple(16000, 192000, kResamplingRMSError, -63.14),
-        std::tr1::make_tuple(22050, 192000, kResamplingRMSError, -62.42),
-        std::tr1::make_tuple(32000, 192000, kResamplingRMSError, -63.38),
-        std::tr1::make_tuple(44100, 192000, kResamplingRMSError, -62.63),
-        std::tr1::make_tuple(48000, 192000, kResamplingRMSError, -73.44),
-        std::tr1::make_tuple(96000, 192000, kResamplingRMSError, -73.52),
-        std::tr1::make_tuple(192000, 192000, kResamplingRMSError, -73.52)));
+        std::make_tuple(8000, 192000, kResamplingRMSError, -63.10),
+        std::make_tuple(11025, 192000, kResamplingRMSError, -62.61),
+        std::make_tuple(16000, 192000, kResamplingRMSError, -63.14),
+        std::make_tuple(22050, 192000, kResamplingRMSError, -62.42),
+        std::make_tuple(32000, 192000, kResamplingRMSError, -63.38),
+        std::make_tuple(44100, 192000, kResamplingRMSError, -62.63),
+        std::make_tuple(48000, 192000, kResamplingRMSError, -73.44),
+        std::make_tuple(96000, 192000, kResamplingRMSError, -73.52),
+        std::make_tuple(192000, 192000, kResamplingRMSError, -73.52)));
 
 }  // namespace webrtc

@@ -23,9 +23,11 @@ extern "C" {
 #endif
 
 // This module is for 32 bit Visual C x86 and clangcl
-#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86)
+#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER)
 
-uint32 HammingDistance_X86(const uint8* src_a, const uint8* src_b, int count) {
+uint32 HammingDistance_SSE42(const uint8* src_a,
+                             const uint8* src_b,
+                             int count) {
   uint32 diff = 0u;
 
   int i;

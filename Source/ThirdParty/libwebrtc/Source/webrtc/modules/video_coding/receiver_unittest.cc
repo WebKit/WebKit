@@ -14,15 +14,15 @@
 #include <queue>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/video_coding/encoded_frame.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/modules/video_coding/receiver.h"
-#include "webrtc/modules/video_coding/test/stream_generator.h"
-#include "webrtc/modules/video_coding/test/test_util.h"
-#include "webrtc/modules/video_coding/timing.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/packet.h"
+#include "modules/video_coding/receiver.h"
+#include "modules/video_coding/test/stream_generator.h"
+#include "modules/video_coding/test/test_util.h"
+#include "modules/video_coding/timing.h"
+#include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

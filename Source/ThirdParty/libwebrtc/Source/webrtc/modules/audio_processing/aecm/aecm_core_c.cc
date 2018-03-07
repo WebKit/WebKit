@@ -8,23 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/aecm/aecm_core.h"
+#include "modules/audio_processing/aecm/aecm_core.h"
 
 #include <stddef.h>
 #include <stdlib.h>
 
 extern "C" {
-#include "webrtc/common_audio/ring_buffer.h"
-#include "webrtc/common_audio/signal_processing/include/real_fft.h"
+#include "common_audio/ring_buffer.h"
+#include "common_audio/signal_processing/include/real_fft.h"
 }
-#include "webrtc/modules/audio_processing/aecm/echo_control_mobile.h"
-#include "webrtc/modules/audio_processing/utility/delay_estimator_wrapper.h"
+#include "modules/audio_processing/aecm/echo_control_mobile.h"
+#include "modules/audio_processing/utility/delay_estimator_wrapper.h"
 extern "C" {
-#include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
 }
 
-#include "webrtc/base/checks.h"
-#include "webrtc/typedefs.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/sanitizer.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Square root of Hanning window in Q14.
 static const ALIGN8_BEG int16_t WebRtcAecm_kSqrtHanning[] ALIGN8_END = {
@@ -276,11 +278,12 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
   return time_signal_scaling;
 }
 
-int WebRtcAecm_ProcessBlock(AecmCore* aecm,
-                            const int16_t* farend,
-                            const int16_t* nearendNoisy,
-                            const int16_t* nearendClean,
-                            int16_t* output) {
+int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
+WebRtcAecm_ProcessBlock(AecmCore* aecm,
+                        const int16_t* farend,
+                        const int16_t* nearendNoisy,
+                        const int16_t* nearendClean,
+                        int16_t* output) {
   int i;
 
   uint32_t xfaSum;
@@ -452,7 +455,8 @@ int WebRtcAecm_ProcessBlock(AecmCore* aecm,
     // Far end signal through channel estimate in Q8
     // How much can we shift right to preserve resolution
     tmp32no1 = echoEst32[i] - aecm->echoFilt[i];
-    aecm->echoFilt[i] += (tmp32no1 * 50) >> 8;
+    aecm->echoFilt[i] +=
+        rtc::dchecked_cast<int32_t>((int64_t{tmp32no1} * 50) >> 8);
 
     zeros32 = WebRtcSpl_NormW32(aecm->echoFilt[i]) + 1;
     zeros16 = WebRtcSpl_NormW16(supGain) + 1;

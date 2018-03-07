@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_PROCESSING_UTIL_DENOISER_FILTER_NEON_H_
-#define WEBRTC_MODULES_VIDEO_PROCESSING_UTIL_DENOISER_FILTER_NEON_H_
+#ifndef MODULES_VIDEO_PROCESSING_UTIL_DENOISER_FILTER_NEON_H_
+#define MODULES_VIDEO_PROCESSING_UTIL_DENOISER_FILTER_NEON_H_
 
-#include "webrtc/modules/video_processing/util/denoiser_filter.h"
+#include "modules/video_processing/util/denoiser_filter.h"
 
 namespace webrtc {
 
@@ -39,4 +39,4 @@ class DenoiserFilterNEON : public DenoiserFilter {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_PROCESSING_UTIL_DENOISER_FILTER_NEON_H_
+#endif  // MODULES_VIDEO_PROCESSING_UTIL_DENOISER_FILTER_NEON_H_

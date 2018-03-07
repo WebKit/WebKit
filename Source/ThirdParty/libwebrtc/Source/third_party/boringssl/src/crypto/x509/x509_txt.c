@@ -54,13 +54,7 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#include <openssl/asn1.h>
-#include <openssl/buf.h>
-#include <openssl/cipher.h>
-#include <openssl/evp.h>
-#include <openssl/lhash.h>
 #include <openssl/mem.h>
-#include <openssl/obj.h>
 #include <openssl/x509.h>
 
 const char *X509_verify_cert_error_string(long n)

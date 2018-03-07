@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_receiver_audio.h"
+#include "modules/rtp_rtcp/source/rtp_receiver_audio.h"
 
 #include <assert.h>  // assert
 #include <math.h>   // pow()
 #include <string.h>  // memcpy()
 
-#include "webrtc/common_types.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/trace_event.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 RTPReceiverStrategy* RTPReceiverStrategy::CreateAudioStrategy(
@@ -35,7 +35,6 @@ RTPReceiverAudio::RTPReceiverAudio(RtpData* data_callback)
       cng_fb_payload_type_(-1),
       num_energy_(0),
       current_remote_energy_() {
-  last_payload_.Audio.channels = 1;
   memset(current_remote_energy_, 0, sizeof(current_remote_energy_));
 }
 
@@ -104,22 +103,24 @@ bool RTPReceiverAudio::ShouldReportCsrcChanges(uint8_t payload_type) const {
 // -
 // -   G7221     frame         N/A
 int32_t RTPReceiverAudio::OnNewPayloadTypeCreated(
-    const CodecInst& audio_codec) {
+    int payload_type,
+    const SdpAudioFormat& audio_format) {
   rtc::CritScope lock(&crit_sect_);
 
-  if (RtpUtility::StringCompare(audio_codec.plname, "telephone-event", 15)) {
-    telephone_event_payload_type_ = audio_codec.pltype;
+  if (RtpUtility::StringCompare(audio_format.name.c_str(), "telephone-event",
+                                15)) {
+    telephone_event_payload_type_ = payload_type;
   }
-  if (RtpUtility::StringCompare(audio_codec.plname, "cn", 2)) {
+  if (RtpUtility::StringCompare(audio_format.name.c_str(), "cn", 2)) {
     // We support comfort noise at four different frequencies.
-    if (audio_codec.plfreq == 8000) {
-      cng_nb_payload_type_ = audio_codec.pltype;
-    } else if (audio_codec.plfreq == 16000) {
-      cng_wb_payload_type_ = audio_codec.pltype;
-    } else if (audio_codec.plfreq == 32000) {
-      cng_swb_payload_type_ = audio_codec.pltype;
-    } else if (audio_codec.plfreq == 48000) {
-      cng_fb_payload_type_ = audio_codec.pltype;
+    if (audio_format.clockrate_hz == 8000) {
+      cng_nb_payload_type_ = payload_type;
+    } else if (audio_format.clockrate_hz == 16000) {
+      cng_wb_payload_type_ = payload_type;
+    } else if (audio_format.clockrate_hz == 32000) {
+      cng_swb_payload_type_ = payload_type;
+    } else if (audio_format.clockrate_hz == 48000) {
+      cng_fb_payload_type_ = payload_type;
     } else {
       assert(false);
       return -1;
@@ -133,8 +134,7 @@ int32_t RTPReceiverAudio::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
                                          bool is_red,
                                          const uint8_t* payload,
                                          size_t payload_length,
-                                         int64_t timestamp_ms,
-                                         bool is_first_packet) {
+                                         int64_t timestamp_ms) {
   TRACE_EVENT2(TRACE_DISABLED_BY_DEFAULT("webrtc_rtp"), "Audio::ParseRtp",
                "seqnum", rtp_header->header.sequenceNumber, "timestamp",
                rtp_header->header.timestamp);
@@ -148,14 +148,11 @@ int32_t RTPReceiverAudio::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
   }
 
   if (first_packet_received_()) {
-    LOG(LS_INFO) << "Received first audio RTP packet";
+    RTC_LOG(LS_INFO) << "Received first audio RTP packet";
   }
 
-  return ParseAudioCodecSpecific(rtp_header,
-                                 payload,
-                                 payload_length,
-                                 specific_payload.Audio,
-                                 is_red);
+  return ParseAudioCodecSpecific(rtp_header, payload, payload_length,
+                                 specific_payload.audio_payload(), is_red);
 }
 
 RTPAliveType RTPReceiverAudio::ProcessDeadOrAlive(
@@ -194,12 +191,10 @@ int32_t RTPReceiverAudio::InvokeOnInitializeDecoder(
     int8_t payload_type,
     const char payload_name[RTP_PAYLOAD_NAME_SIZE],
     const PayloadUnion& specific_payload) const {
-  if (-1 ==
-      callback->OnInitializeDecoder(
-          payload_type, payload_name, specific_payload.Audio.frequency,
-          specific_payload.Audio.channels, specific_payload.Audio.rate)) {
-    LOG(LS_ERROR) << "Failed to create decoder for payload type: "
-                  << payload_name << "/" << static_cast<int>(payload_type);
+  const auto& ap = specific_payload.audio_payload();
+  if (callback->OnInitializeDecoder(payload_type, ap.format, ap.rate) == -1) {
+    RTC_LOG(LS_ERROR) << "Failed to create decoder for payload type: "
+                      << payload_name << "/" << static_cast<int>(payload_type);
     return -1;
   }
   return 0;
@@ -306,7 +301,7 @@ int32_t RTPReceiverAudio::ParseAudioCodecSpecific(
         payload_data + 1, payload_data_length - 1, rtp_header);
   }
 
-  rtp_header->type.Audio.channel = audio_specific.channels;
+  rtp_header->type.Audio.channel = audio_specific.format.num_channels;
   return data_callback_->OnReceivedPayloadData(payload_data,
                                                payload_data_length, rtp_header);
 }

@@ -9,7 +9,7 @@
 
 /*
  *
- * Copyright (c) 2001-2006, Cisco Systems, Inc.
+ * Copyright (c) 2001-2017, Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef _AES_H
-#define _AES_H
+#ifndef AES_H
+#define AES_H
 
 #include "datatypes.h"
 #include "err.h"
@@ -78,4 +78,4 @@ void srtp_aes_decrypt(v128_t *plaintext, const srtp_aes_expanded_key_t *exp_key)
 }
 #endif
 
-#endif /* _AES_H */
+#endif /* AES_H */

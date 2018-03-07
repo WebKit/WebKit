@@ -8,13 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_H264_SPROP_PARAMETER_SETS_H_
-#define WEBRTC_MODULES_VIDEO_CODING_H264_SPROP_PARAMETER_SETS_H_
+#ifndef MODULES_VIDEO_CODING_H264_SPROP_PARAMETER_SETS_H_
+#define MODULES_VIDEO_CODING_H264_SPROP_PARAMETER_SETS_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/base/constructormagic.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -33,4 +33,4 @@ class H264SpropParameterSets {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_H264_SPROP_PARAMETER_SETS_H_
+#endif  // MODULES_VIDEO_CODING_H264_SPROP_PARAMETER_SETS_H_

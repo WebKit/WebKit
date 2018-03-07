@@ -8,25 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/level_controller/level_controller.h"
+#include "modules/audio_processing/level_controller/level_controller.h"
 
 #include <math.h>
 #include <algorithm>
 #include <numeric>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/arraysize.h"
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/audio_processing/audio_buffer.h"
-#include "webrtc/modules/audio_processing/level_controller/gain_applier.h"
-#include "webrtc/modules/audio_processing/level_controller/gain_selector.h"
-#include "webrtc/modules/audio_processing/level_controller/noise_level_estimator.h"
-#include "webrtc/modules/audio_processing/level_controller/peak_level_estimator.h"
-#include "webrtc/modules/audio_processing/level_controller/saturating_gain_estimator.h"
-#include "webrtc/modules/audio_processing/level_controller/signal_classifier.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/level_controller/gain_applier.h"
+#include "modules/audio_processing/level_controller/gain_selector.h"
+#include "modules/audio_processing/level_controller/noise_level_estimator.h"
+#include "modules/audio_processing/level_controller/peak_level_estimator.h"
+#include "modules/audio_processing/level_controller/saturating_gain_estimator.h"
+#include "modules/audio_processing/level_controller/signal_classifier.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/arraysize.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {
@@ -49,7 +49,7 @@ float FrameEnergy(const AudioBuffer& audio) {
   for (size_t k = 0; k < audio.num_channels(); ++k) {
     float channel_energy =
         std::accumulate(audio.channels_const_f()[k],
-                        audio.channels_const_f()[k] + audio.num_frames(), 0,
+                        audio.channels_const_f()[k] + audio.num_frames(), 0.f,
                         [](float a, float b) -> float { return a + b * b; });
     energy = std::max(channel_energy, energy);
   }
@@ -156,21 +156,21 @@ void LevelController::Metrics::Update(float long_term_peak_level,
     const int frame_peak_level_dbfs = static_cast<int>(
         10 * log10(frame_peak_level * frame_peak_level + 1e-10f) - kdBFSOffset);
 
-    LOG(LS_INFO) << "Level Controller metrics: {"
-                 << "Max noise power: " << max_noise_power_dbfs << " dBFS, "
-                 << "Average noise power: " << average_noise_power_dbfs
-                 << " dBFS, "
-                 << "Max long term peak level: " << max_peak_level_dbfs
-                 << " dBFS, "
-                 << "Average long term peak level: " << average_peak_level_dbfs
-                 << " dBFS, "
-                 << "Max gain: " << max_gain_db << " dB, "
-                 << "Average gain: " << average_gain_db << " dB, "
-                 << "Long term peak level: " << long_term_peak_level_dbfs
-                 << " dBFS, "
-                 << "Last frame peak level: " << frame_peak_level_dbfs
-                 << " dBFS"
-                 << "}";
+    RTC_LOG(LS_INFO) << "Level Controller metrics: {"
+                     << "Max noise power: " << max_noise_power_dbfs << " dBFS, "
+                     << "Average noise power: " << average_noise_power_dbfs
+                     << " dBFS, "
+                     << "Max long term peak level: " << max_peak_level_dbfs
+                     << " dBFS, "
+                     << "Average long term peak level: "
+                     << average_peak_level_dbfs << " dBFS, "
+                     << "Max gain: " << max_gain_db << " dB, "
+                     << "Average gain: " << average_gain_db << " dB, "
+                     << "Long term peak level: " << long_term_peak_level_dbfs
+                     << " dBFS, "
+                     << "Last frame peak level: " << frame_peak_level_dbfs
+                     << " dBFS"
+                     << "}";
 
     Reset();
   }
@@ -202,7 +202,7 @@ void LevelController::Initialize(int sample_rate_hz) {
   metrics_.Initialize(sample_rate_hz);
 
   last_gain_ = 1.0f;
-  sample_rate_hz_ = rtc::Optional<int>(sample_rate_hz);
+  sample_rate_hz_ = sample_rate_hz;
   dc_forgetting_factor_ = 0.01f * sample_rate_hz / 48000.f;
   std::fill(dc_level_, dc_level_ + arraysize(dc_level_), 0.f);
 }

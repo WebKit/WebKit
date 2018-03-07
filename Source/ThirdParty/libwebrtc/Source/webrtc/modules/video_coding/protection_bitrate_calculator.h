@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_PROTECTION_BITRATE_CALCULATOR_H_
-#define WEBRTC_MODULES_VIDEO_CODING_PROTECTION_BITRATE_CALCULATOR_H_
+#ifndef MODULES_VIDEO_CODING_PROTECTION_BITRATE_CALCULATOR_H_
+#define MODULES_VIDEO_CODING_PROTECTION_BITRATE_CALCULATOR_H_
 
 #include <list>
 #include <memory>
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/include/video_coding.h"
-#include "webrtc/modules/video_coding/media_opt_util.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "modules/include/module_common_types.h"
+#include "modules/video_coding/include/video_coding.h"
+#include "modules/video_coding/media_opt_util.h"
+#include "rtc_base/criticalsection.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -69,11 +69,11 @@ class ProtectionBitrateCalculator {
 
   rtc::CriticalSection crit_sect_;
   std::unique_ptr<media_optimization::VCMLossProtectionLogic> loss_prot_logic_
-      GUARDED_BY(crit_sect_);
-  size_t max_payload_size_ GUARDED_BY(crit_sect_);
+      RTC_GUARDED_BY(crit_sect_);
+  size_t max_payload_size_ RTC_GUARDED_BY(crit_sect_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ProtectionBitrateCalculator);
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_VIDEO_CODING_PROTECTION_BITRATE_CALCULATOR_H_
+#endif  // MODULES_VIDEO_CODING_PROTECTION_BITRATE_CALCULATOR_H_

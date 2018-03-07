@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_coding/acm2/acm_receive_test.h"
+#include "modules/audio_coding/acm2/acm_receive_test.h"
 
 #include <assert.h>
 #include <stdio.h>
 
 #include <memory>
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
-#include "webrtc/modules/audio_coding/include/audio_coding_module.h"
-#include "webrtc/modules/audio_coding/neteq/tools/audio_sink.h"
-#include "webrtc/modules/audio_coding/neteq/tools/packet.h"
-#include "webrtc/modules/audio_coding/neteq/tools/packet_source.h"
-#include "webrtc/test/gtest.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "modules/audio_coding/codecs/audio_format_conversion.h"
+#include "modules/audio_coding/include/audio_coding_module.h"
+#include "modules/audio_coding/neteq/tools/audio_sink.h"
+#include "modules/audio_coding/neteq/tools/packet.h"
+#include "modules/audio_coding/neteq/tools/packet_source.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
@@ -110,7 +110,6 @@ AudioCodingModule::Config MakeAcmConfig(
     Clock* clock,
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory) {
   AudioCodingModule::Config config;
-  config.id = 0;
   config.clock = clock;
   config.decoder_factory = std::move(decoder_factory);
   return config;

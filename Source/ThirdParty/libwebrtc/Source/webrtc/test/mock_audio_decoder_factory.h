@@ -8,16 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_TEST_MOCK_AUDIO_DECODER_FACTORY_H_
-#define WEBRTC_TEST_MOCK_AUDIO_DECODER_FACTORY_H_
+#ifndef TEST_MOCK_AUDIO_DECODER_FACTORY_H_
+#define TEST_MOCK_AUDIO_DECODER_FACTORY_H_
 
 #include <memory>
 #include <vector>
 
-#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/test/gmock.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "rtc_base/refcountedobject.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "test/gmock.h"
 
 namespace webrtc {
 
@@ -80,4 +81,4 @@ class MockAudioDecoderFactory : public AudioDecoderFactory {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_MOCK_AUDIO_DECODER_FACTORY_H_
+#endif  // TEST_MOCK_AUDIO_DECODER_FACTORY_H_

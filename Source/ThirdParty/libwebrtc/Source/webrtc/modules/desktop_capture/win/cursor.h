@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_CURSOR_H_
-#define WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_CURSOR_H_
+#ifndef MODULES_DESKTOP_CAPTURE_WIN_CURSOR_H_
+#define MODULES_DESKTOP_CAPTURE_WIN_CURSOR_H_
 
 #include <windows.h>
 
@@ -22,4 +22,4 @@ MouseCursor* CreateMouseCursorFromHCursor(HDC dc, HCURSOR cursor);
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_DESKTOP_CAPTURE_WIN_CURSOR_H_
+#endif  // MODULES_DESKTOP_CAPTURE_WIN_CURSOR_H_

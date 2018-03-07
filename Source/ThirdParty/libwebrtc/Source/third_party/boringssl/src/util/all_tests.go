@@ -48,7 +48,8 @@ var (
 )
 
 type test struct {
-	args []string
+	args             []string
+	shard, numShards int
 	// cpu, if not empty, contains an Intel CPU code to simulate. Run
 	// `sde64 -help` to get a list of these codes.
 	cpu string
@@ -96,6 +97,7 @@ var sdeCPUs = []string{
 	"slt", // Saltwell
 	"slm", // Silvermont
 	"glm", // Goldmont
+	"knm", // Knights Mill
 }
 
 func newTestOutput() *testOutput {
@@ -162,7 +164,16 @@ func gdbOf(path string, args ...string) *exec.Cmd {
 }
 
 func sdeOf(cpu, path string, args ...string) *exec.Cmd {
-	sdeArgs := []string{"-" + cpu, "--", path}
+	sdeArgs := []string{"-" + cpu}
+	// The kernel's vdso code for gettimeofday sometimes uses the RDTSCP
+	// instruction. Although SDE has a -chip_check_vsyscall flag that
+	// excludes such code by default, it does not seem to work. Instead,
+	// pass the -chip_check_exe_only flag which retains test coverage when
+	// statically linked and excludes the vdso.
+	if cpu == "p4p" || cpu == "pnr" || cpu == "mrm" || cpu == "slt" {
+		sdeArgs = append(sdeArgs, "-chip_check_exe_only")
+	}
+	sdeArgs = append(sdeArgs, "--", path)
 	sdeArgs = append(sdeArgs, args...)
 	return exec.Command(*sdePath, sdeArgs...)
 }
@@ -249,19 +260,6 @@ func runTest(test test) (bool, error) {
 	}
 }
 
-// shortTestName returns the short name of a test. Except for evp_test and
-// cipher_test, it assumes that any argument which ends in .txt is a path to a
-// data file and not relevant to the test's uniqueness.
-func shortTestName(test test) string {
-	var args []string
-	for _, arg := range test.args {
-		if test.args[0] == "crypto/evp/evp_test" || test.args[0] == "crypto/cipher_extra/cipher_test" || test.args[0] == "crypto/cipher_extra/aead_test" || !strings.HasSuffix(arg, ".txt") || strings.HasPrefix(arg, "--gtest_filter=") {
-			args = append(args, arg)
-		}
-	}
-	return strings.Join(args, " ") + test.cpuMsg()
-}
-
 // setWorkingDirectory walks up directories as needed until the current working
 // directory is the top of a BoringSSL checkout.
 func setWorkingDirectory() {
@@ -301,6 +299,22 @@ func worker(tests <-chan test, results chan<- result, done *sync.WaitGroup) {
 		passed, err := runTest(test)
 		results <- result{test, passed, err}
 	}
+}
+
+func (t test) shortName() string {
+	return t.args[0] + t.shardMsg() + t.cpuMsg()
+}
+
+func (t test) longName() string {
+	return strings.Join(t.args, " ") + t.cpuMsg()
+}
+
+func (t test) shardMsg() string {
+	if t.numShards == 0 {
+		return ""
+	}
+
+	return fmt.Sprintf(" [shard %d/%d]", t.shard+1, t.numShards)
 }
 
 func (t test) cpuMsg() string {
@@ -379,7 +393,12 @@ func (t test) getGTestShards() ([]test, error) {
 		}
 		shard := t
 		shard.args = []string{shard.args[0], "--gtest_filter=" + strings.Join(shuffled[i:i+n], ":")}
+		shard.shard = len(shards)
 		shards = append(shards, shard)
+	}
+
+	for i := range shards {
+		shards[i].numShards = len(shards)
 	}
 
 	return shards, nil
@@ -437,18 +456,19 @@ func main() {
 		test := testResult.Test
 		args := test.args
 
-		fmt.Printf("%s%s\n", strings.Join(args, " "), test.cpuMsg())
-		name := shortTestName(test)
 		if testResult.Error != nil {
+			fmt.Printf("%s\n", test.longName())
 			fmt.Printf("%s failed to complete: %s\n", args[0], testResult.Error)
 			failed = append(failed, test)
-			testOutput.addResult(name, "CRASHED")
+			testOutput.addResult(test.longName(), "CRASHED")
 		} else if !testResult.Passed {
+			fmt.Printf("%s\n", test.longName())
 			fmt.Printf("%s failed to print PASS on the last line.\n", args[0])
 			failed = append(failed, test)
-			testOutput.addResult(name, "FAIL")
+			testOutput.addResult(test.longName(), "FAIL")
 		} else {
-			testOutput.addResult(name, "PASS")
+			fmt.Printf("%s\n", test.shortName())
+			testOutput.addResult(test.longName(), "PASS")
 		}
 	}
 

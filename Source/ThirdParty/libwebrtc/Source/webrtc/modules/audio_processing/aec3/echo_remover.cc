@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "webrtc/modules/audio_processing/aec3/echo_remover.h"
+#include "modules/audio_processing/aec3/echo_remover.h"
 
 #include <math.h>
 #include <algorithm>
@@ -15,23 +15,23 @@
 #include <numeric>
 #include <string>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/base/atomicops.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/aec_state.h"
-#include "webrtc/modules/audio_processing/aec3/comfort_noise_generator.h"
-#include "webrtc/modules/audio_processing/aec3/echo_path_variability.h"
-#include "webrtc/modules/audio_processing/aec3/echo_remover_metrics.h"
-#include "webrtc/modules/audio_processing/aec3/fft_data.h"
-#include "webrtc/modules/audio_processing/aec3/output_selector.h"
-#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
-#include "webrtc/modules/audio_processing/aec3/render_delay_buffer.h"
-#include "webrtc/modules/audio_processing/aec3/residual_echo_estimator.h"
-#include "webrtc/modules/audio_processing/aec3/subtractor.h"
-#include "webrtc/modules/audio_processing/aec3/suppression_filter.h"
-#include "webrtc/modules/audio_processing/aec3/suppression_gain.h"
-#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/aec3/comfort_noise_generator.h"
+#include "modules/audio_processing/aec3/echo_path_variability.h"
+#include "modules/audio_processing/aec3/echo_remover_metrics.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/output_selector.h"
+#include "modules/audio_processing/aec3/render_buffer.h"
+#include "modules/audio_processing/aec3/render_delay_buffer.h"
+#include "modules/audio_processing/aec3/residual_echo_estimator.h"
+#include "modules/audio_processing/aec3/subtractor.h"
+#include "modules/audio_processing/aec3/suppression_filter.h"
+#include "modules/audio_processing/aec3/suppression_gain.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/atomicops.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -49,18 +49,20 @@ void LinearEchoPower(const FftData& E,
 // Class for removing the echo from the capture signal.
 class EchoRemoverImpl final : public EchoRemover {
  public:
-  explicit EchoRemoverImpl(int sample_rate_hz);
+  explicit EchoRemoverImpl(const EchoCanceller3Config& config,
+                           int sample_rate_hz);
   ~EchoRemoverImpl() override;
+
+  void GetMetrics(EchoControl::Metrics* metrics) const override;
 
   // Removes the echo from a block of samples from the capture signal. The
   // supplied render signal is assumed to be pre-aligned with the capture
   // signal.
-  void ProcessCapture(
-      const rtc::Optional<size_t>& external_echo_path_delay_estimate,
-      const EchoPathVariability& echo_path_variability,
-      bool capture_signal_saturation,
-      const RenderBuffer& render_buffer,
-      std::vector<std::vector<float>>* capture) override;
+  void ProcessCapture(const rtc::Optional<size_t>& echo_path_delay_samples,
+                      const EchoPathVariability& echo_path_variability,
+                      bool capture_signal_saturation,
+                      const RenderBuffer& render_buffer,
+                      std::vector<std::vector<float>>* capture) override;
 
   // Updates the status on whether echo leakage is detected in the output of the
   // echo remover.
@@ -70,6 +72,7 @@ class EchoRemoverImpl final : public EchoRemover {
 
  private:
   static int instance_count_;
+  const EchoCanceller3Config config_;
   const Aec3Fft fft_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const Aec3Optimization optimization_;
@@ -90,20 +93,31 @@ class EchoRemoverImpl final : public EchoRemover {
 
 int EchoRemoverImpl::instance_count_ = 0;
 
-EchoRemoverImpl::EchoRemoverImpl(int sample_rate_hz)
-    : fft_(),
+EchoRemoverImpl::EchoRemoverImpl(const EchoCanceller3Config& config,
+                                 int sample_rate_hz)
+    : config_(config),
+      fft_(),
       data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       optimization_(DetectOptimization()),
       sample_rate_hz_(sample_rate_hz),
       subtractor_(data_dumper_.get(), optimization_),
-      suppression_gain_(optimization_),
+      suppression_gain_(config_, optimization_),
       cng_(optimization_),
-      suppression_filter_(sample_rate_hz_) {
+      suppression_filter_(sample_rate_hz_),
+      residual_echo_estimator_(config_),
+      aec_state_(config_) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz));
 }
 
 EchoRemoverImpl::~EchoRemoverImpl() = default;
+
+void EchoRemoverImpl::GetMetrics(EchoControl::Metrics* metrics) const {
+  // Echo return loss (ERL) is inverted to go from gain to attenuation.
+  metrics->echo_return_loss = -10.0 * log10(aec_state_.ErlTimeDomain());
+  metrics->echo_return_loss_enhancement =
+      10.0 * log10(aec_state_.ErleTimeDomain());
+}
 
 void EchoRemoverImpl::ProcessCapture(
     const rtc::Optional<size_t>& echo_path_delay_samples,
@@ -126,6 +140,8 @@ void EchoRemoverImpl::ProcessCapture(
                         LowestBandRate(sample_rate_hz_), 1);
   data_dumper_->DumpWav("aec3_echo_remover_render_input", kBlockSize, &x0[0],
                         LowestBandRate(sample_rate_hz_), 1);
+  data_dumper_->DumpRaw("aec3_echo_remover_capture_input", y0);
+  data_dumper_->DumpRaw("aec3_echo_remover_render_input", x0);
 
   aec_state_.UpdateCaptureSaturation(capture_signal_saturation);
 
@@ -162,18 +178,20 @@ void EchoRemoverImpl::ProcessCapture(
 
   // Update the AEC state information.
   aec_state_.Update(subtractor_.FilterFrequencyResponse(),
-                    echo_path_delay_samples, render_buffer, E2_main, Y2, x0,
+                    subtractor_.FilterImpulseResponse(),
+                    subtractor_.ConvergedFilter(), echo_path_delay_samples,
+                    render_buffer, E2_main, Y2, x0, subtractor_output.s_main,
                     echo_leakage_detected_);
 
   // Choose the linear output.
-  output_selector_.FormLinearOutput(!aec_state_.HeadsetDetected(), e_main, y0);
+  output_selector_.FormLinearOutput(!aec_state_.TransparentMode(), e_main, y0);
   data_dumper_->DumpWav("aec3_output_linear", kBlockSize, &y0[0],
                         LowestBandRate(sample_rate_hz_), 1);
+  data_dumper_->DumpRaw("aec3_output_linear", y0);
   const auto& E2 = output_selector_.UseSubtractorOutput() ? E2_main : Y2;
 
   // Estimate the residual echo power.
-  residual_echo_estimator_.Estimate(output_selector_.UseSubtractorOutput(),
-                                    aec_state_, render_buffer, S2_linear, Y2,
+  residual_echo_estimator_.Estimate(aec_state_, render_buffer, S2_linear, Y2,
                                     &R2);
 
   // Estimate the comfort noise.
@@ -181,15 +199,24 @@ void EchoRemoverImpl::ProcessCapture(
 
   // A choose and apply echo suppression gain.
   suppression_gain_.GetGain(E2, R2, cng_.NoiseSpectrum(),
-                            aec_state_.SaturatedEcho(), x,
-                            aec_state_.ForcedZeroGain(), &high_bands_gain, &G);
+                            render_signal_analyzer_, aec_state_, x,
+                            &high_bands_gain, &G);
   suppression_filter_.ApplyGain(comfort_noise, high_band_comfort_noise, G,
                                 high_bands_gain, y);
 
   // Update the metrics.
   metrics_.Update(aec_state_, cng_.NoiseSpectrum(), G);
 
+  // Update the aec state with the aec output characteristics.
+  aec_state_.UpdateWithOutput(y0);
+
   // Debug outputs for the purpose of development and analysis.
+  data_dumper_->DumpWav("aec3_echo_estimate", kBlockSize,
+                        &subtractor_output.s_main[0],
+                        LowestBandRate(sample_rate_hz_), 1);
+  data_dumper_->DumpRaw("aec3_output", y0);
+  data_dumper_->DumpRaw("aec3_narrow_render",
+                        render_signal_analyzer_.NarrowPeakBand() ? 1 : 0);
   data_dumper_->DumpRaw("aec3_N2", cng_.NoiseSpectrum());
   data_dumper_->DumpRaw("aec3_suppressor_gain", G);
   data_dumper_->DumpWav("aec3_output",
@@ -221,8 +248,9 @@ void EchoRemoverImpl::ProcessCapture(
 
 }  // namespace
 
-EchoRemover* EchoRemover::Create(int sample_rate_hz) {
-  return new EchoRemoverImpl(sample_rate_hz);
+EchoRemover* EchoRemover::Create(const EchoCanceller3Config& config,
+                                 int sample_rate_hz) {
+  return new EchoRemoverImpl(config, sample_rate_hz);
 }
 
 }  // namespace webrtc

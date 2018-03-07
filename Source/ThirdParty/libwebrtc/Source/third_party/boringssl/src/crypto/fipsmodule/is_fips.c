@@ -15,8 +15,8 @@
 #include <openssl/crypto.h>
 
 
-/* This file exists in order to give the fipsmodule target, in non-FIPS mode,
- * something to compile. */
+// This file exists in order to give the fipsmodule target, in non-FIPS mode,
+// something to compile.
 
 int FIPS_mode(void) {
 #if defined(BORINGSSL_FIPS) && !defined(OPENSSL_ASAN)

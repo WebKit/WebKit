@@ -1,0 +1,56 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build_overrides/build.gni")
+
+valgrind_dependencies = [
+  "../tools/valgrind/asan/asan_symbolize.py",
+  "../tools/valgrind/asan/third_party/__init__.py",
+  "../tools/valgrind/asan/third_party/asan_symbolize.py",
+  "../tools/valgrind/fixed_suppressions.sh",
+  "../tools/valgrind/memcheck/suppressions.txt",
+  "../tools/valgrind/memcheck/suppressions_linux.txt",
+  "../tools/valgrind/regrind.sh",
+  "../tools/valgrind/scan-build.py",
+  "../tools/valgrind/suppressions.py",
+  "../tools/valgrind/test_suppressions.py",
+  "../tools/valgrind/unused_suppressions.py",
+  "../tools/valgrind/waterfall.sh",
+]
+
+if (build_with_chromium) {
+  valgrind_dependencies += [
+    "../tools/valgrind/gtest_exclude/ash_unittests.gtest-memcheck.txt",
+    "../tools/valgrind/gtest_exclude/aura_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/base_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/base_unittests.gtest_win-8.txt",
+    "../tools/valgrind/gtest_exclude/base_unittests.gtest_win32.txt",
+    "../tools/valgrind/gtest_exclude/blink_platform_unittests.gtest_win32.txt",
+    "../tools/valgrind/gtest_exclude/browser_tests.gtest-memcheck.txt",
+    "../tools/valgrind/gtest_exclude/chromeos_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/components_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/content_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/extensions_unittests.gtest-memcheck.txt",
+    "../tools/valgrind/gtest_exclude/interactive_ui_tests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/ipc_tests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/media_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/message_center_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/net_unittests.gtest-memcheck.txt",
+    "../tools/valgrind/gtest_exclude/net_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/net_unittests.gtest_linux.txt",
+    "../tools/valgrind/gtest_exclude/remoting_unittests.gtest_win-8.txt",
+    "../tools/valgrind/gtest_exclude/sandbox_linux_unittests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/suppressions.txt",
+    "../tools/valgrind/gtest_exclude/sync_unit_tests.gtest-asan.txt",
+    "../tools/valgrind/gtest_exclude/ui_base_unittests.gtest-memcheck.txt",
+    "../tools/valgrind/gtest_exclude/ui_unittests.gtest-memcheck_linux.txt",
+    "../tools/valgrind/gtest_exclude/unit_tests.gtest-memcheck.txt",
+    "../tools/valgrind/gtest_exclude/unit_tests.gtest.txt",
+    "../tools/valgrind/gtest_exclude/unit_tests.gtest_linux.txt",
+  ]
+}

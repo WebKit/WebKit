@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_OBJCVIDEOTRACKSOURCE_H_
-#define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_OBJCVIDEOTRACKSOURCE_H_
+#ifndef SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_OBJCVIDEOTRACKSOURCE_H_
+#define SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_OBJCVIDEOTRACKSOURCE_H_
 
 #include "WebRTC/RTCMacros.h"
-#include "webrtc/base/timestampaligner.h"
-#include "webrtc/media/base/adaptedvideotracksource.h"
+#include "media/base/adaptedvideotracksource.h"
+#include "rtc_base/timestampaligner.h"
 
 RTC_FWD_DECL_OBJC_CLASS(RTCVideoFrame);
 
@@ -49,4 +49,4 @@ class ObjcVideoTrackSource : public rtc::AdaptedVideoTrackSource {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_OBJCVIDEOTRACKSOURCE_H_
+#endif  // SDK_OBJC_FRAMEWORK_CLASSES_VIDEO_OBJCVIDEOTRACKSOURCE_H_

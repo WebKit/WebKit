@@ -10,10 +10,10 @@
 
 #include <memory>
 
-#include "webrtc/common_audio/blocker.h"
+#include "common_audio/blocker.h"
 
-#include "webrtc/base/arraysize.h"
-#include "webrtc/test/gtest.h"
+#include "rtc_base/arraysize.h"
+#include "test/gtest.h"
 
 namespace {
 

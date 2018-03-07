@@ -8,20 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_ORTC_RTPTRANSPORTINTERFACE_H_
-#define WEBRTC_API_ORTC_RTPTRANSPORTINTERFACE_H_
+#ifndef API_ORTC_RTPTRANSPORTINTERFACE_H_
+#define API_ORTC_RTPTRANSPORTINTERFACE_H_
 
 #include <string>
 
-#include "webrtc/api/ortc/packettransportinterface.h"
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/base/optional.h"
+#include "api/optional.h"
+#include "api/ortc/packettransportinterface.h"
+#include "api/rtcerror.h"
+#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 class RtpTransportAdapter;
 
-struct RtcpParameters {
+struct RtcpParameters final {
   // The SSRC to be used in the "SSRC of packet sender" field. If not set, one
   // will be chosen by the implementation.
   // TODO(deadbeef): Not implemented.
@@ -34,7 +35,7 @@ struct RtcpParameters {
   // RtpTransports created by the same OrtcFactory will use the same generated
   // CNAME.
   //
-  // If empty when passed into SetRtcpParameters, the CNAME simply won't be
+  // If empty when passed into SetParameters, the CNAME simply won't be
   // modified.
   std::string cname;
 
@@ -49,6 +50,21 @@ struct RtcpParameters {
            reduced_size == o.reduced_size && mux == o.mux;
   }
   bool operator!=(const RtcpParameters& o) const { return !(*this == o); }
+};
+
+struct RtpTransportParameters final {
+  RtcpParameters rtcp;
+
+  // Enabled periodic sending of keep-alive packets, that help prevent timeouts
+  // on the network level, such as NAT bindings. See RFC6263 section 4.6.
+  RtpKeepAliveConfig keepalive;
+
+  bool operator==(const RtpTransportParameters& o) const {
+    return rtcp == o.rtcp && keepalive == o.keepalive;
+  }
+  bool operator!=(const RtpTransportParameters& o) const {
+    return !(*this == o);
+  }
 };
 
 // Base class for different types of RTP transports that can be created by an
@@ -74,16 +90,20 @@ class RtpTransportInterface {
   // RTCP multiplexing is being used, returns null.
   virtual PacketTransportInterface* GetRtcpPacketTransport() const = 0;
 
-  // Set/get RTCP params. Can be used to enable RTCP muxing or reduced-size
-  // RTCP if initially not enabled.
+  // Set/get RTP/RTCP transport params. Can be used to enable RTCP muxing or
+  // reduced-size RTCP if initially not enabled.
   //
   // Changing |mux| from "true" to "false" is not allowed, and changing the
   // CNAME is currently unsupported.
-  virtual RTCError SetRtcpParameters(const RtcpParameters& parameters) = 0;
+  // RTP keep-alive settings need to be set before before an RtpSender has
+  // started sending, altering the payload type or timeout interval after this
+  // point is not supported. The parameters must also match across all RTP
+  // transports for a given RTP transport controller.
+  virtual RTCError SetParameters(const RtpTransportParameters& parameters) = 0;
   // Returns last set or constructed-with parameters. If |cname| was empty in
   // construction, the generated CNAME will be present in the returned
   // parameters (see above).
-  virtual RtcpParameters GetRtcpParameters() const = 0;
+  virtual RtpTransportParameters GetParameters() const = 0;
 
  protected:
   // Only for internal use. Returns a pointer to an internal interface, for use
@@ -100,4 +120,4 @@ class RtpTransportInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_ORTC_RTPTRANSPORTINTERFACE_H_
+#endif  // API_ORTC_RTPTRANSPORTINTERFACE_H_

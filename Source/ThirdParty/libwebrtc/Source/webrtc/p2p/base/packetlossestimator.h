@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_P2P_BASE_PACKETLOSSESTIMATOR_H_
-#define WEBRTC_P2P_BASE_PACKETLOSSESTIMATOR_H_
+#ifndef P2P_BASE_PACKETLOSSESTIMATOR_H_
+#define P2P_BASE_PACKETLOSSESTIMATOR_H_
 
 #include <stdint.h>
 #include <string>
@@ -39,6 +39,7 @@ class PacketLossEstimator {
  public:
   explicit PacketLossEstimator(int64_t consider_lost_after_ms,
                                int64_t forget_after_ms);
+  ~PacketLossEstimator();
 
   // Registers that a message with the given |id| was sent at |sent_time|.
   void ExpectResponse(std::string id, int64_t sent_time);
@@ -83,4 +84,4 @@ class PacketLossEstimator {
 
 }  // namespace cricket
 
-#endif  // WEBRTC_P2P_BASE_PACKETLOSSESTIMATOR_H_
+#endif  // P2P_BASE_PACKETLOSSESTIMATOR_H_

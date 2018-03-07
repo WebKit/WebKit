@@ -12,10 +12,10 @@
 
 #include <memory>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/filerotatingstream.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/base/logsinks.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/filerotatingstream.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/logsinks.h"
 
 NSString *const kDefaultLogDirName = @"webrtc_logs";
 NSUInteger const kDefaultMaxFileSize = 10 * 1024 * 1024; // 10MB.
@@ -101,8 +101,7 @@ const char *kRTCFileLoggerRotatingLogPrefix = "rotating_log";
       break;
   }
   if (!_logSink->Init()) {
-    LOG(LS_ERROR) << "Failed to open log files at path: "
-                  << _dirPath.UTF8String;
+    RTC_LOG(LS_ERROR) << "Failed to open log files at path: " << _dirPath.UTF8String;
     _logSink.reset();
     return;
   }

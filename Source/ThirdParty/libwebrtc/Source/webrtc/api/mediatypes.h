@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_MEDIATYPES_H_
-#define WEBRTC_API_MEDIATYPES_H_
+#ifndef API_MEDIATYPES_H_
+#define API_MEDIATYPES_H_
 
 #include <string>
 
@@ -28,4 +28,4 @@ MediaType MediaTypeFromString(const std::string& type_str);
 
 }  // namespace cricket
 
-#endif  // WEBRTC_API_MEDIATYPES_H_
+#endif  // API_MEDIATYPES_H_

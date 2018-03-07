@@ -10,9 +10,9 @@
 
 #include <utility>
 
-#include "webrtc/common_audio/mocks/mock_smoothing_filter.h"
-#include "webrtc/modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
-#include "webrtc/test/gtest.h"
+#include "common_audio/mocks/mock_smoothing_filter.h"
+#include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -95,15 +95,8 @@ void UpdateNetworkMetrics(FecControllerPlrBasedTestStates* states,
     states->controller->UpdateNetworkMetrics(network_metrics);
     // This is called during CheckDecision().
     EXPECT_CALL(*states->packet_loss_smoother, GetAverage())
-        .WillOnce(Return(rtc::Optional<float>(*uplink_packet_loss)));
+        .WillOnce(Return(*uplink_packet_loss));
   }
-}
-
-void UpdateNetworkMetrics(FecControllerPlrBasedTestStates* states,
-                          int uplink_bandwidth_bps,
-                          float uplink_packet_loss) {
-  UpdateNetworkMetrics(states, rtc::Optional<int>(uplink_bandwidth_bps),
-                       rtc::Optional<float>(uplink_packet_loss));
 }
 
 // Checks that the FEC decision and |uplink_packet_loss_fraction| given by
@@ -114,8 +107,8 @@ void CheckDecision(FecControllerPlrBasedTestStates* states,
                    float expected_uplink_packet_loss_fraction) {
   AudioEncoderRuntimeConfig config;
   states->controller->MakeDecision(&config);
-  EXPECT_EQ(rtc::Optional<bool>(expected_enable_fec), config.enable_fec);
-  EXPECT_EQ(rtc::Optional<float>(expected_uplink_packet_loss_fraction),
+  EXPECT_EQ(expected_enable_fec, config.enable_fec);
+  EXPECT_EQ(expected_uplink_packet_loss_fraction,
             config.uplink_packet_loss_fraction);
 }
 
@@ -138,8 +131,7 @@ TEST(FecControllerPlrBasedTest, OutputInitValueWhenUplinkBandwidthUnknown) {
           kEnablingPacketLossAtLowBw - kEpsilon, kEnablingPacketLossAtLowBw,
           kEnablingPacketLossAtLowBw + kEpsilon}) {
       auto states = CreateFecControllerPlrBased(initial_fec_enabled);
-      UpdateNetworkMetrics(&states, rtc::Optional<int>(),
-                           rtc::Optional<float>(packet_loss));
+      UpdateNetworkMetrics(&states, rtc::nullopt, packet_loss);
       CheckDecision(&states, initial_fec_enabled, packet_loss);
     }
   }
@@ -154,8 +146,7 @@ TEST(FecControllerPlrBasedTest,
                           kDisablingBandwidthLow + 1, kEnablingBandwidthLow - 1,
                           kEnablingBandwidthLow, kEnablingBandwidthLow + 1}) {
       auto states = CreateFecControllerPlrBased(initial_fec_enabled);
-      UpdateNetworkMetrics(&states, rtc::Optional<int>(bandwidth),
-                           rtc::Optional<float>());
+      UpdateNetworkMetrics(&states, bandwidth, rtc::nullopt);
       CheckDecision(&states, initial_fec_enabled, 0.0);
     }
   }
@@ -178,12 +169,10 @@ TEST(FecControllerPlrBasedTest, UpdateMultipleNetworkMetricsAtOnce) {
   // audio_network_adaptor_impl.cc.
   auto states = CreateFecControllerPlrBased(false);
   Controller::NetworkMetrics network_metrics;
-  network_metrics.uplink_bandwidth_bps =
-      rtc::Optional<int>(kEnablingBandwidthHigh);
-  network_metrics.uplink_packet_loss_fraction =
-      rtc::Optional<float>(kEnablingPacketLossAtHighBw);
+  network_metrics.uplink_bandwidth_bps = kEnablingBandwidthHigh;
+  network_metrics.uplink_packet_loss_fraction = kEnablingPacketLossAtHighBw;
   EXPECT_CALL(*states.packet_loss_smoother, GetAverage())
-      .WillOnce(Return(rtc::Optional<float>(kEnablingPacketLossAtHighBw)));
+      .WillOnce(Return(kEnablingPacketLossAtHighBw));
   states.controller->UpdateNetworkMetrics(network_metrics);
   CheckDecision(&states, true, kEnablingPacketLossAtHighBw);
 }

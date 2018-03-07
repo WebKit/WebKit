@@ -12,19 +12,16 @@
 
 #import "WebRTC/RTCCameraVideoCapturer.h"
 #import "WebRTC/RTCLogging.h"
+#import "WebRTC/RTCVideoFrameBuffer.h"
 
 #if TARGET_OS_IPHONE
 #import "WebRTC/UIDevice+RTCDevice.h"
 #endif
 
+#import "AVCaptureSession+DevicePosition.h"
 #import "RTCDispatcher+Private.h"
 
 const int64_t kNanosecondsPerSecond = 1000000000;
-
-static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
-  return (mediaSubType == kCVPixelFormatType_420YpCbCr8PlanarFullRange ||
-          mediaSubType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
-}
 
 @interface RTCCameraVideoCapturer ()<AVCaptureVideoDataOutputSampleBufferDelegate>
 @property(nonatomic, readonly) dispatch_queue_t frameQueue;
@@ -34,11 +31,16 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
   AVCaptureVideoDataOutput *_videoDataOutput;
   AVCaptureSession *_captureSession;
   AVCaptureDevice *_currentDevice;
-  RTCVideoRotation _rotation;
+  FourCharCode _preferredOutputPixelFormat;
+  FourCharCode _outputPixelFormat;
   BOOL _hasRetriedOnFatalError;
   BOOL _isRunning;
   // Will the session be running once all asynchronous operations have been completed?
   BOOL _willBeRunning;
+  RTCVideoRotation _rotation;
+#if TARGET_OS_IPHONE
+  UIDeviceOrientation _orientation;
+#endif
 }
 
 @synthesize frameQueue = _frameQueue;
@@ -55,6 +57,8 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
     }
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 #if TARGET_OS_IPHONE
+    _orientation = UIDeviceOrientationPortrait;
+    _rotation = RTCVideoRotation_90;
     [center addObserver:self
                selector:@selector(deviceOrientationDidChange:)
                    name:UIDeviceOrientationDidChangeNotification
@@ -100,27 +104,23 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
 }
 
 + (NSArray<AVCaptureDeviceFormat *> *)supportedFormatsForDevice:(AVCaptureDevice *)device {
-  NSMutableArray<AVCaptureDeviceFormat *> *eligibleDeviceFormats = [NSMutableArray array];
+  // Support opening the device in any format. We make sure it's converted to a format we
+  // can handle, if needed, in the method `-setupVideoDataOutput`.
+  return device.formats;
+}
 
-  for (AVCaptureDeviceFormat *format in device.formats) {
-    // Filter out subTypes that we currently don't support in the stack
-    FourCharCode mediaSubType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
-    if (IsMediaSubTypeSupported(mediaSubType)) {
-      [eligibleDeviceFormats addObject:format];
-    }
-  }
-
-  return eligibleDeviceFormats;
+- (FourCharCode)preferredOutputPixelFormat {
+  return _preferredOutputPixelFormat;
 }
 
 - (void)startCaptureWithDevice:(AVCaptureDevice *)device
                         format:(AVCaptureDeviceFormat *)format
                            fps:(NSInteger)fps {
-  _willBeRunning = true;
+  _willBeRunning = YES;
   [RTCDispatcher
       dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
                     block:^{
-                      RTCLogInfo("startCaptureWithDevice %@ @ %zd fps", format, fps);
+                      RTCLogInfo("startCaptureWithDevice %@ @ %ld fps", format, (long)fps);
 
 #if TARGET_OS_IPHONE
                       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -129,25 +129,23 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
                       _currentDevice = device;
 
                       NSError *error = nil;
-                      if ([_currentDevice lockForConfiguration:&error]) {
-                        [self updateDeviceCaptureFormat:format fps:fps];
-                      } else {
-                        RTCLogError(@"Failed to lock device %@. Error: %@", _currentDevice,
-                                    error.userInfo);
+                      if (![_currentDevice lockForConfiguration:&error]) {
+                        RTCLogError(
+                            @"Failed to lock device %@. Error: %@", _currentDevice, error.userInfo);
                         return;
                       }
-
                       [self reconfigureCaptureSessionInput];
                       [self updateOrientation];
+                      [self updateDeviceCaptureFormat:format fps:fps];
+                      [self updateVideoDataOutputPixelFormat:format];
                       [_captureSession startRunning];
-
                       [_currentDevice unlockForConfiguration];
-                      _isRunning = true;
+                      _isRunning = YES;
                     }];
 }
 
 - (void)stopCapture {
-  _willBeRunning = false;
+  _willBeRunning = NO;
   [RTCDispatcher
       dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
                     block:^{
@@ -161,7 +159,7 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
 #if TARGET_OS_IPHONE
                       [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 #endif
-                      _isRunning = false;
+                      _isRunning = NO;
                     }];
 }
 
@@ -193,11 +191,50 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
     return;
   }
 
+#if TARGET_OS_IPHONE
+  // Default to portrait orientation on iPhone.
+  BOOL usingFrontCamera = NO;
+  // Check the image's EXIF for the camera the image came from as the image could have been
+  // delayed as we set alwaysDiscardsLateVideoFrames to NO.
+  AVCaptureDevicePosition cameraPosition =
+      [AVCaptureSession devicePositionForSampleBuffer:sampleBuffer];
+  if (cameraPosition != AVCaptureDevicePositionUnspecified) {
+    usingFrontCamera = AVCaptureDevicePositionFront == cameraPosition;
+  } else {
+    AVCaptureDeviceInput *deviceInput =
+        (AVCaptureDeviceInput *)((AVCaptureInputPort *)connection.inputPorts.firstObject).input;
+    usingFrontCamera = AVCaptureDevicePositionFront == deviceInput.device.position;
+  }
+  switch (_orientation) {
+    case UIDeviceOrientationPortrait:
+      _rotation = RTCVideoRotation_90;
+      break;
+    case UIDeviceOrientationPortraitUpsideDown:
+      _rotation = RTCVideoRotation_270;
+      break;
+    case UIDeviceOrientationLandscapeLeft:
+      _rotation = usingFrontCamera ? RTCVideoRotation_180 : RTCVideoRotation_0;
+      break;
+    case UIDeviceOrientationLandscapeRight:
+      _rotation = usingFrontCamera ? RTCVideoRotation_0 : RTCVideoRotation_180;
+      break;
+    case UIDeviceOrientationFaceUp:
+    case UIDeviceOrientationFaceDown:
+    case UIDeviceOrientationUnknown:
+      // Ignore.
+      break;
+  }
+#else
+  // No rotation on Mac.
+  _rotation = RTCVideoRotation_0;
+#endif
+
+  RTCCVPixelBuffer *rtcPixelBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
   int64_t timeStampNs = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) *
-                        kNanosecondsPerSecond;
-  RTCVideoFrame *videoFrame = [[RTCVideoFrame alloc] initWithPixelBuffer:pixelBuffer
-                                                                rotation:_rotation
-                                                             timeStampNs:timeStampNs];
+      kNanosecondsPerSecond;
+  RTCVideoFrame *videoFrame = [[RTCVideoFrame alloc] initWithBuffer:rtcPixelBuffer
+                                                           rotation:_rotation
+                                                        timeStampNs:timeStampNs];
   [self.delegate capturer:self didCaptureVideoFrame:videoFrame];
 }
 
@@ -345,17 +382,36 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
 
 - (void)setupVideoDataOutput {
   NSAssert(_videoDataOutput == nil, @"Setup video data output called twice.");
-  // Make the capturer output NV12. Ideally we want I420 but that's not
-  // currently supported on iPhone / iPad.
   AVCaptureVideoDataOutput *videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
-  videoDataOutput.videoSettings = @{
-    (NSString *)
-    // TODO(denicija): Remove this color conversion and use the original capture format directly.
-    kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
-  };
+
+  // `videoDataOutput.availableVideoCVPixelFormatTypes` returns the pixel formats supported by the
+  // device with the most efficient output format first. Find the first format that we support.
+  NSSet<NSNumber *> *supportedPixelFormats = [RTCCVPixelBuffer supportedPixelFormats];
+  NSMutableOrderedSet *availablePixelFormats =
+      [NSMutableOrderedSet orderedSetWithArray:videoDataOutput.availableVideoCVPixelFormatTypes];
+  [availablePixelFormats intersectSet:supportedPixelFormats];
+  NSNumber *pixelFormat = availablePixelFormats.firstObject;
+  NSAssert(pixelFormat, @"Output device has no supported formats.");
+
+  _preferredOutputPixelFormat = [pixelFormat unsignedIntValue];
+  _outputPixelFormat = _preferredOutputPixelFormat;
+  videoDataOutput.videoSettings = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : pixelFormat};
   videoDataOutput.alwaysDiscardsLateVideoFrames = NO;
   [videoDataOutput setSampleBufferDelegate:self queue:self.frameQueue];
   _videoDataOutput = videoDataOutput;
+}
+
+- (void)updateVideoDataOutputPixelFormat:(AVCaptureDeviceFormat *)format {
+  FourCharCode mediaSubType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+  if (![[RTCCVPixelBuffer supportedPixelFormats] containsObject:@(mediaSubType)]) {
+    mediaSubType = _preferredOutputPixelFormat;
+  }
+
+  if (mediaSubType != _outputPixelFormat) {
+    _outputPixelFormat = mediaSubType;
+    _videoDataOutput.videoSettings =
+        @{ (NSString *)kCVPixelBufferPixelFormatTypeKey : @(mediaSubType) };
+  }
 }
 
 #pragma mark - Private, called inside capture queue
@@ -398,26 +454,7 @@ static inline BOOL IsMediaSubTypeSupported(FourCharCode mediaSubType) {
   NSAssert([RTCDispatcher isOnQueueForType:RTCDispatcherTypeCaptureSession],
            @"updateOrientation must be called on the capture queue.");
 #if TARGET_OS_IPHONE
-  BOOL usingFrontCamera = _currentDevice.position == AVCaptureDevicePositionFront;
-  switch ([UIDevice currentDevice].orientation) {
-    case UIDeviceOrientationPortrait:
-      _rotation = RTCVideoRotation_90;
-      break;
-    case UIDeviceOrientationPortraitUpsideDown:
-      _rotation = RTCVideoRotation_270;
-      break;
-    case UIDeviceOrientationLandscapeLeft:
-      _rotation = usingFrontCamera ? RTCVideoRotation_180 : RTCVideoRotation_0;
-      break;
-    case UIDeviceOrientationLandscapeRight:
-      _rotation = usingFrontCamera ? RTCVideoRotation_0 : RTCVideoRotation_180;
-      break;
-    case UIDeviceOrientationFaceUp:
-    case UIDeviceOrientationFaceDown:
-    case UIDeviceOrientationUnknown:
-      // Ignore.
-      break;
-  }
+  _orientation = [UIDevice currentDevice].orientation;
 #endif
 }
 

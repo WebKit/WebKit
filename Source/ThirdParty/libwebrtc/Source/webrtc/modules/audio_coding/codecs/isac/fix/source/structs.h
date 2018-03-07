@@ -15,14 +15,14 @@
  *
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_STRUCTS_H_
-#define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_STRUCTS_H_
+#ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_STRUCTS_H_
+#define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_STRUCTS_H_
 
 
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_coding/codecs/isac/bandwidth_info.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/settings.h"
-#include "webrtc/typedefs.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/codecs/isac/bandwidth_info.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 /* Bitstream struct for decoder */
 typedef struct Bitstreamstruct_dec {
@@ -379,4 +379,4 @@ typedef struct {
 
 //Bitstr_enc myBitStr;
 
-#endif  /* WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_STRUCTS_H_ */
+#endif  /* MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_STRUCTS_H_ */

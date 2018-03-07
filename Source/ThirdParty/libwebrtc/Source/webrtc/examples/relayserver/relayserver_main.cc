@@ -11,8 +11,8 @@
 #include <iostream>  // NOLINT
 #include <memory>
 
-#include "webrtc/p2p/base/relayserver.h"
-#include "webrtc/base/thread.h"
+#include "p2p/base/relayserver.h"
+#include "rtc_base/thread.h"
 
 int main(int argc, char **argv) {
   if (argc != 3) {

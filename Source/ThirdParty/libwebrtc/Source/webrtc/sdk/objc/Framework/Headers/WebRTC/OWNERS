@@ -1,0 +1,27 @@
+# Headers for classes closely related to the PeerConnection interface.
+per-file RTCAudioSource.h=deadbeef@webrtc.org
+per-file RTCAudioTrack.h=deadbeef@webrtc.org
+per-file RTCConfiguration.h=deadbeef@webrtc.org
+per-file RTCDataChannelConfiguration.h=deadbeef@webrtc.org
+per-file RTCDataChannel.h=deadbeef@webrtc.org
+per-file RTCIceCandidate.h=deadbeef@webrtc.org
+per-file RTCIceServer.h=deadbeef@webrtc.org
+per-file RTCIntervalRange.h=deadbeef@webrtc.org
+per-file RTCLegacyStatsReport.h=deadbeef@webrtc.org
+per-file RTCMediaConstraints.h=deadbeef@webrtc.org
+per-file RTCMediaSource.h=deadbeef@webrtc.org
+per-file RTCMediaStream.h=deadbeef@webrtc.org
+per-file RTCMediaStreamTrack.h=deadbeef@webrtc.org
+per-file RTCPeerConnectionFactory.h=deadbeef@webrtc.org
+per-file RTCPeerConnection.h=deadbeef@webrtc.org
+per-file RTCRtpCodecParameters.h=deadbeef@webrtc.org
+per-file RTCRtpEncodingParameters.h=deadbeef@webrtc.org
+per-file RTCRtpParameters.h=deadbeef@webrtc.org
+per-file RTCRtpReceiver.h=deadbeef@webrtc.org
+per-file RTCRtpSender.h=deadbeef@webrtc.org
+per-file RTCSessionDescription.h=deadbeef@webrtc.org
+per-file RTCSSLAdapter.h=deadbeef@webrtc.org
+per-file RTCTracing.h=deadbeef@webrtc.org
+per-file RTCVideoCapturer.h=deadbeef@webrtc.org
+per-file RTCVideoSource.h=deadbeef@webrtc.org
+per-file RTCVideoTrack.h=deadbeef@webrtc.org

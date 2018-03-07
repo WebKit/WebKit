@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_ORTC_ORTCRTPRECEIVERADAPTER_H_
-#define WEBRTC_ORTC_ORTCRTPRECEIVERADAPTER_H_
+#ifndef ORTC_ORTCRTPRECEIVERADAPTER_H_
+#define ORTC_ORTCRTPRECEIVERADAPTER_H_
 
 #include <memory>
 
-#include "webrtc/api/ortc/ortcrtpreceiverinterface.h"
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/api/rtpparameters.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/ortc/rtptransportcontrolleradapter.h"
-#include "webrtc/pc/rtpreceiver.h"
+#include "api/ortc/ortcrtpreceiverinterface.h"
+#include "api/rtcerror.h"
+#include "api/rtpparameters.h"
+#include "ortc/rtptransportcontrolleradapter.h"
+#include "pc/rtpreceiver.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
@@ -76,4 +76,4 @@ class OrtcRtpReceiverAdapter : public OrtcRtpReceiverInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_ORTC_ORTCRTPRECEIVERADAPTER_H_
+#endif  // ORTC_ORTCRTPRECEIVERADAPTER_H_

@@ -10,7 +10,7 @@
 
 #import "WebRTC/RTCRtpReceiver.h"
 
-#include "webrtc/api/rtpreceiverinterface.h"
+#include "api/rtpreceiverinterface.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

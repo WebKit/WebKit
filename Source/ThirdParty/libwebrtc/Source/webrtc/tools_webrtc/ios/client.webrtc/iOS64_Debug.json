@@ -1,0 +1,20 @@
+{
+  "comments": [
+    "Builder for 64-bit devices."
+  ],
+  "xcode version": "8.0",
+  "gn_args": [
+    "goma_dir=\"$(goma_dir)\"",
+    "ios_enable_code_signing=false",
+    "is_component_build=false",
+    "is_debug=true",
+    "target_cpu=\"arm64\"",
+    "target_os=\"ios\"",
+    "use_goma=true"
+  ],
+  "additional_compile_targets": [ "all" ],
+  "configuration": "Debug",
+  "sdk": "iphoneos10.0",
+  "tests": [
+  ]
+}

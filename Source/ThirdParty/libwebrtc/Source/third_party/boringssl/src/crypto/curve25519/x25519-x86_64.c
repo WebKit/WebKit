@@ -12,26 +12,26 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-/* This code is mostly taken from the ref10 version of Ed25519 in SUPERCOP
- * 20141124 (http://bench.cr.yp.to/supercop.html). That code is released as
- * public domain but this file has the ISC license just to keep licencing
- * simple.
- *
- * The field functions are shared by Ed25519 and X25519 where possible. */
+// This code is mostly taken from the ref10 version of Ed25519 in SUPERCOP
+// 20141124 (http://bench.cr.yp.to/supercop.html). That code is released as
+// public domain but this file has the ISC license just to keep licencing
+// simple.
+//
+// The field functions are shared by Ed25519 and X25519 where possible.
 
 #include <openssl/curve25519.h>
 
 #include <string.h>
 
 #include "../internal.h"
-#include "internal.h"
+#include "../../third_party/fiat/internal.h"
 
 
 #if defined(BORINGSSL_X25519_X86_64)
 
 typedef struct { uint64_t v[5]; } fe25519;
 
-/* These functions are defined in asm/x25519-x86_64.S */
+// These functions are defined in asm/x25519-x86_64.S
 void x25519_x86_64_work_cswap(fe25519 *, uint64_t);
 void x25519_x86_64_mul(fe25519 *out, const fe25519 *a, const fe25519 *b);
 void x25519_x86_64_square(fe25519 *out, const fe25519 *a);
@@ -46,7 +46,7 @@ static void fe25519_setint(fe25519 *r, unsigned v) {
   r->v[4] = 0;
 }
 
-/* Assumes input x being reduced below 2^255 */
+// Assumes input x being reduced below 2^255
 static void fe25519_pack(unsigned char r[32], const fe25519 *x) {
   fe25519 t;
   t = *x;
@@ -244,4 +244,4 @@ void x25519_x86_64(uint8_t out[32], const uint8_t scalar[32],
   fe25519_pack(out, &t);
 }
 
-#endif  /* BORINGSSL_X25519_X86_64 */
+#endif  // BORINGSSL_X25519_X86_64

@@ -28,8 +28,8 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
-#include <webrtc/base/messagehandler.h>
-#include <webrtc/base/thread.h>
+#include <webrtc/rtc_base/messagehandler.h>
+#include <webrtc/rtc_base/thread.h>
 #include <webrtc/modules/audio_device/include/audio_device.h>
 
 namespace WebCore {
@@ -46,8 +46,8 @@ private:
         return value;
     }
 
-    int32_t AddRef() const final { return 1; }
-    int32_t Release() const final { return 1; }
+    void AddRef() const final { return; }
+    rtc::RefCountReleaseStatus Release() const final { return rtc::RefCountReleaseStatus::kOtherRefsRemained; }
     void OnMessage(rtc::Message*);
 
     // webrtc::AudioDeviceModule API
@@ -56,12 +56,7 @@ private:
     int32_t RegisterAudioCallback(webrtc::AudioTransport*) final;
     bool Playing() const final { return m_isPlaying; }
 
-    // Set it to a big value so that we are not called often but not close to int64_t max so that it does not create integer overflows.
-    int64_t TimeUntilNextProcess() final { return 100000000; }
-    void Process() final { }
     int32_t ActiveAudioLayer(AudioLayer*) const final { return shouldNotBeCalled(-1); }
-    ErrorCode LastError() const final { return kAdmErrNone; }
-    int32_t RegisterEventObserver(webrtc::AudioDeviceObserver*) final { return 0; }
     int32_t Init() final { return 0; }
     int32_t Terminate() final { return 0; }
     bool Initialized() const final { return true; }
@@ -84,33 +79,26 @@ private:
     bool Recording() const final { return 0;  }
     int32_t SetAGC(bool) final { return 0;  }
     bool AGC() const final { return shouldNotBeCalled(0);  }
-    int32_t SetWaveOutVolume(uint16_t, uint16_t) final { return shouldNotBeCalled(-1); }
-    int32_t WaveOutVolume(uint16_t*, uint16_t*) const final { return shouldNotBeCalled(-1); }
     int32_t InitSpeaker() final { return 0; }
     bool SpeakerIsInitialized() const final { return false; }
     int32_t InitMicrophone() final { return 0; }
     bool MicrophoneIsInitialized() const final { return false; }
+    int32_t MicrophoneVolumeIsAvailable(bool*) final { return shouldNotBeCalled(-1); }
     int32_t SpeakerVolumeIsAvailable(bool*) final { return shouldNotBeCalled(-1); }
     int32_t SetSpeakerVolume(uint32_t) final { return shouldNotBeCalled(-1); }
     int32_t SpeakerVolume(uint32_t*) const final { return shouldNotBeCalled(-1); }
     int32_t MaxSpeakerVolume(uint32_t*) const final { return shouldNotBeCalled(-1); }
     int32_t MinSpeakerVolume(uint32_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t SpeakerVolumeStepSize(uint16_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t MicrophoneVolumeIsAvailable(bool*) final { return shouldNotBeCalled(-1); }
     int32_t SetMicrophoneVolume(uint32_t) final { return shouldNotBeCalled(-1); }
     int32_t MicrophoneVolume(uint32_t*) const final { return shouldNotBeCalled(-1); }
     int32_t MaxMicrophoneVolume(uint32_t*) const final { return shouldNotBeCalled(-1); }
     int32_t MinMicrophoneVolume(uint32_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t MicrophoneVolumeStepSize(uint16_t*) const final { return shouldNotBeCalled(-1); }
     int32_t SpeakerMuteIsAvailable(bool*) final { return shouldNotBeCalled(-1); }
     int32_t SetSpeakerMute(bool) final { return shouldNotBeCalled(-1); }
     int32_t SpeakerMute(bool*) const final { return shouldNotBeCalled(-1); }
     int32_t MicrophoneMuteIsAvailable(bool*) final { return shouldNotBeCalled(-1); }
     int32_t SetMicrophoneMute(bool) final { return shouldNotBeCalled(-1); }
     int32_t MicrophoneMute(bool*) const final { return shouldNotBeCalled(-1); }
-    int32_t MicrophoneBoostIsAvailable(bool*) final { return shouldNotBeCalled(-1); }
-    int32_t SetMicrophoneBoost(bool) final { return shouldNotBeCalled(-1); }
-    int32_t MicrophoneBoost(bool*) const final { return shouldNotBeCalled(-1); }
     int32_t StereoPlayoutIsAvailable(bool* available) const final { *available = false; return 0; }
     int32_t SetStereoPlayout(bool) final { return 0; }
     int32_t StereoPlayout(bool*) const final { return shouldNotBeCalled(-1); }
@@ -119,20 +107,11 @@ private:
     int32_t StereoRecording(bool*) const final { return shouldNotBeCalled(-1); }
     int32_t SetRecordingChannel(const ChannelType) final { return 0; }
     int32_t RecordingChannel(ChannelType*) const final { return shouldNotBeCalled(-1); }
-    int32_t SetPlayoutBuffer(const BufferType, uint16_t) final { return shouldNotBeCalled(-1); }
-    int32_t PlayoutBuffer(BufferType*, uint16_t*) const final { return shouldNotBeCalled(-1); }
     int32_t PlayoutDelay(uint16_t* delay) const final { *delay = 0; return 0; }
-    int32_t RecordingDelay(uint16_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t CPULoad(uint16_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t StartRawOutputFileRecording(const char[webrtc::kAdmMaxFileNameSize]) final { return shouldNotBeCalled(-1); }
-    int32_t StopRawOutputFileRecording() final { return shouldNotBeCalled(-1); }
-    int32_t StartRawInputFileRecording(const char[webrtc::kAdmMaxFileNameSize]) final { return shouldNotBeCalled(-1); }
-    int32_t StopRawInputFileRecording() final { return shouldNotBeCalled(-1); }
     int32_t SetRecordingSampleRate(const uint32_t) final { return shouldNotBeCalled(-1); }
     int32_t RecordingSampleRate(uint32_t*) const final { return shouldNotBeCalled(-1); }
     int32_t SetPlayoutSampleRate(const uint32_t) final { return shouldNotBeCalled(-1); }
     int32_t PlayoutSampleRate(uint32_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t ResetAudioDevice() final { return shouldNotBeCalled(-1); }
     int32_t SetLoudspeakerStatus(bool) final { return shouldNotBeCalled(-1); }
     int32_t GetLoudspeakerStatus(bool*) const final { return shouldNotBeCalled(-1); }
     bool BuiltInAECIsAvailable() const final { return false; }

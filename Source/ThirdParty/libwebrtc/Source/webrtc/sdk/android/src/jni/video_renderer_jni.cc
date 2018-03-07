@@ -10,18 +10,18 @@
 
 #include <jni.h>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/media/base/videosinkinterface.h"
-#include "webrtc/sdk/android/src/jni/classreferenceholder.h"
-#include "webrtc/sdk/android/src/jni/jni_helpers.h"
-#include "webrtc/sdk/android/src/jni/native_handle_impl.h"
+#include "api/video/video_frame.h"
+#include "media/base/videosinkinterface.h"
+#include "sdk/android/src/jni/classreferenceholder.h"
+#include "sdk/android/src/jni/jni_helpers.h"
+#include "sdk/android/src/jni/videoframe.h"
 
-namespace webrtc_jni {
+namespace webrtc {
+namespace jni {
 
 // Wrapper dispatching rtc::VideoSinkInterface to a Java VideoRenderer
 // instance.
-class JavaVideoRendererWrapper
-    : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+class JavaVideoRendererWrapper : public rtc::VideoSinkInterface<VideoFrame> {
  public:
   JavaVideoRendererWrapper(JNIEnv* jni, jobject j_callbacks)
       : j_callbacks_(jni, j_callbacks),
@@ -44,12 +44,12 @@ class JavaVideoRendererWrapper
 
   virtual ~JavaVideoRendererWrapper() {}
 
-  void OnFrame(const webrtc::VideoFrame& video_frame) override {
+  void OnFrame(const VideoFrame& video_frame) override {
     ScopedLocalRefFrame local_ref_frame(jni());
 
     jobject j_frame;
     if (video_frame.video_frame_buffer()->type() ==
-        webrtc::VideoFrameBuffer::Type::kNative) {
+        VideoFrameBuffer::Type::kNative) {
       AndroidVideoFrameBuffer* android_buffer =
           static_cast<AndroidVideoFrameBuffer*>(
               video_frame.video_frame_buffer().get());
@@ -59,9 +59,7 @@ class JavaVideoRendererWrapper
           break;
         case AndroidVideoFrameBuffer::AndroidType::kJavaBuffer:
           j_frame = static_cast<AndroidVideoBuffer*>(android_buffer)
-                        ->ToJavaI420Frame(jni(), video_frame.width(),
-                                          video_frame.height(),
-                                          video_frame.rotation());
+                        ->ToJavaI420Frame(jni(), video_frame.rotation());
           break;
         default:
           RTC_NOTREACHED();
@@ -79,15 +77,15 @@ class JavaVideoRendererWrapper
   // Make a shallow copy of |frame| to be used with Java. The callee has
   // ownership of the frame, and the frame should be released with
   // VideoRenderer.releaseNativeFrame().
-  static jlong javaShallowCopy(const webrtc::VideoFrame* frame) {
-    return jlongFromPointer(new webrtc::VideoFrame(*frame));
+  static jlong javaShallowCopy(const VideoFrame* frame) {
+    return jlongFromPointer(new VideoFrame(*frame));
   }
 
   // Return a VideoRenderer.I420Frame referring to the data in |frame|.
-  jobject ToJavaI420Frame(const webrtc::VideoFrame* frame) {
+  jobject ToJavaI420Frame(const VideoFrame* frame) {
     jintArray strides = jni()->NewIntArray(3);
     jint* strides_array = jni()->GetIntArrayElements(strides, NULL);
-    rtc::scoped_refptr<webrtc::I420BufferInterface> i420_buffer =
+    rtc::scoped_refptr<I420BufferInterface> i420_buffer =
         frame->video_frame_buffer()->ToI420();
     strides_array[0] = i420_buffer->StrideY();
     strides_array[1] = i420_buffer->StrideU();
@@ -115,7 +113,7 @@ class JavaVideoRendererWrapper
   }
 
   // Return a VideoRenderer.I420Frame referring texture object in |frame|.
-  jobject ToJavaTextureFrame(const webrtc::VideoFrame* frame) {
+  jobject ToJavaTextureFrame(const VideoFrame* frame) {
     NativeHandleImpl handle =
         static_cast<AndroidTextureBuffer*>(frame->video_frame_buffer().get())
             ->native_handle_impl();
@@ -137,31 +135,42 @@ class JavaVideoRendererWrapper
   ScopedGlobalRef<jclass> j_byte_buffer_class_;
 };
 
-JOW(void, VideoRenderer_freeWrappedVideoRenderer)(JNIEnv*, jclass, jlong j_p) {
+JNI_FUNCTION_DECLARATION(void,
+                         VideoRenderer_freeWrappedVideoRenderer,
+                         JNIEnv*,
+                         jclass,
+                         jlong j_p) {
   delete reinterpret_cast<JavaVideoRendererWrapper*>(j_p);
 }
 
-JOW(void, VideoRenderer_releaseNativeFrame)
-(JNIEnv* jni, jclass, jlong j_frame_ptr) {
-  delete reinterpret_cast<const webrtc::VideoFrame*>(j_frame_ptr);
+JNI_FUNCTION_DECLARATION(void,
+                         VideoRenderer_releaseNativeFrame,
+                         JNIEnv* jni,
+                         jclass,
+                         jlong j_frame_ptr) {
+  delete reinterpret_cast<const VideoFrame*>(j_frame_ptr);
 }
 
-JOW(jlong, VideoRenderer_nativeWrapVideoRenderer)
-(JNIEnv* jni, jclass, jobject j_callbacks) {
+JNI_FUNCTION_DECLARATION(jlong,
+                         VideoRenderer_nativeWrapVideoRenderer,
+                         JNIEnv* jni,
+                         jclass,
+                         jobject j_callbacks) {
   std::unique_ptr<JavaVideoRendererWrapper> renderer(
       new JavaVideoRendererWrapper(jni, j_callbacks));
   return (jlong)renderer.release();
 }
 
-JOW(void, VideoRenderer_nativeCopyPlane)
-(JNIEnv* jni,
- jclass,
- jobject j_src_buffer,
- jint width,
- jint height,
- jint src_stride,
- jobject j_dst_buffer,
- jint dst_stride) {
+JNI_FUNCTION_DECLARATION(void,
+                         VideoRenderer_nativeCopyPlane,
+                         JNIEnv* jni,
+                         jclass,
+                         jobject j_src_buffer,
+                         jint width,
+                         jint height,
+                         jint src_stride,
+                         jobject j_dst_buffer,
+                         jint dst_stride) {
   size_t src_size = jni->GetDirectBufferCapacity(j_src_buffer);
   size_t dst_size = jni->GetDirectBufferCapacity(j_dst_buffer);
   RTC_CHECK(src_stride >= width) << "Wrong source stride " << src_stride;
@@ -185,4 +194,5 @@ JOW(void, VideoRenderer_nativeCopyPlane)
   }
 }
 
-}  // namespace webrtc_jni
+}  // namespace jni
+}  // namespace webrtc

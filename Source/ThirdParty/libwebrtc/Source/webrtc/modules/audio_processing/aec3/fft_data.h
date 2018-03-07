@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
+#ifndef MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
+#define MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
 #include <algorithm>
 #include <array>
 
-#include "webrtc/base/array_view.h"
-#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 
 namespace webrtc {
 
@@ -95,4 +95,4 @@ struct FftData {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_
+#endif  // MODULES_AUDIO_PROCESSING_AEC3_FFT_DATA_H_

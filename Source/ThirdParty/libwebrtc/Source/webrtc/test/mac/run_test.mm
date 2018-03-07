@@ -10,7 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "webrtc/test/run_test.h"
+#include "test/run_test.h"
 
 // Converting a C++ function pointer to an Objective-C block.
 typedef void(^TestBlock)();

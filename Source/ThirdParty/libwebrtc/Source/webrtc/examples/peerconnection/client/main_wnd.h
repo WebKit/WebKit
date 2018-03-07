@@ -8,19 +8,19 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
-#define WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
+#ifndef EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
+#define EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
 
 #include <map>
 #include <memory>
 #include <string>
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/win32.h"
-#include "webrtc/examples/peerconnection/client/peer_connection_client.h"
-#include "webrtc/media/base/mediachannel.h"
-#include "webrtc/media/base/videocommon.h"
+#include "api/mediastreaminterface.h"
+#include "api/video/video_frame.h"
+#include "examples/peerconnection/client/peer_connection_client.h"
+#include "media/base/mediachannel.h"
+#include "media/base/videocommon.h"
+#include "rtc_base/win32.h"
 
 class MainWndCallback {
  public:
@@ -198,4 +198,4 @@ class MainWnd : public MainWindow {
 };
 #endif  // WIN32
 
-#endif  // WEBRTC_EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_
+#endif  // EXAMPLES_PEERCONNECTION_CLIENT_MAIN_WND_H_

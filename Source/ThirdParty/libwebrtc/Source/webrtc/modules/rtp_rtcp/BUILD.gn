@@ -8,21 +8,101 @@
 
 import("../../webrtc.gni")
 
+rtc_source_set("rtp_rtcp_format") {
+  public = [
+    "include/rtp_cvo.h",
+    "include/rtp_header_extension_map.h",
+    "include/rtp_rtcp_defines.h",
+    "source/byte_io.h",
+    "source/rtcp_packet.h",
+    "source/rtcp_packet/app.h",
+    "source/rtcp_packet/bye.h",
+    "source/rtcp_packet/common_header.h",
+    "source/rtcp_packet/compound_packet.h",
+    "source/rtcp_packet/dlrr.h",
+    "source/rtcp_packet/extended_jitter_report.h",
+    "source/rtcp_packet/extended_reports.h",
+    "source/rtcp_packet/fir.h",
+    "source/rtcp_packet/nack.h",
+    "source/rtcp_packet/pli.h",
+    "source/rtcp_packet/psfb.h",
+    "source/rtcp_packet/rapid_resync_request.h",
+    "source/rtcp_packet/receiver_report.h",
+    "source/rtcp_packet/remb.h",
+    "source/rtcp_packet/report_block.h",
+    "source/rtcp_packet/rrtr.h",
+    "source/rtcp_packet/rtpfb.h",
+    "source/rtcp_packet/sdes.h",
+    "source/rtcp_packet/sender_report.h",
+    "source/rtcp_packet/target_bitrate.h",
+    "source/rtcp_packet/tmmb_item.h",
+    "source/rtcp_packet/tmmbn.h",
+    "source/rtcp_packet/tmmbr.h",
+    "source/rtcp_packet/transport_feedback.h",
+    "source/rtcp_packet/voip_metric.h",
+    "source/rtp_header_extensions.h",
+    "source/rtp_packet.h",
+    "source/rtp_packet_received.h",
+    "source/rtp_packet_to_send.h",
+  ]
+  sources = [
+    "include/rtp_rtcp_defines.cc",
+    "source/rtcp_packet.cc",
+    "source/rtcp_packet/app.cc",
+    "source/rtcp_packet/bye.cc",
+    "source/rtcp_packet/common_header.cc",
+    "source/rtcp_packet/compound_packet.cc",
+    "source/rtcp_packet/dlrr.cc",
+    "source/rtcp_packet/extended_jitter_report.cc",
+    "source/rtcp_packet/extended_reports.cc",
+    "source/rtcp_packet/fir.cc",
+    "source/rtcp_packet/nack.cc",
+    "source/rtcp_packet/pli.cc",
+    "source/rtcp_packet/psfb.cc",
+    "source/rtcp_packet/rapid_resync_request.cc",
+    "source/rtcp_packet/receiver_report.cc",
+    "source/rtcp_packet/remb.cc",
+    "source/rtcp_packet/report_block.cc",
+    "source/rtcp_packet/rrtr.cc",
+    "source/rtcp_packet/rtpfb.cc",
+    "source/rtcp_packet/sdes.cc",
+    "source/rtcp_packet/sender_report.cc",
+    "source/rtcp_packet/target_bitrate.cc",
+    "source/rtcp_packet/tmmb_item.cc",
+    "source/rtcp_packet/tmmbn.cc",
+    "source/rtcp_packet/tmmbr.cc",
+    "source/rtcp_packet/transport_feedback.cc",
+    "source/rtcp_packet/voip_metric.cc",
+    "source/rtp_header_extension_map.cc",
+    "source/rtp_header_extensions.cc",
+    "source/rtp_packet.cc",
+    "source/rtp_packet_received.cc",
+  ]
+
+  deps = [
+    "..:module_api",
+    "../..:webrtc_common",
+    "../../api:array_view",
+    "../../api:libjingle_peerconnection_api",
+    "../../api:optional",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../common_video",
+    "../../rtc_base:rtc_base_approved",
+    "../../system_wrappers",
+  ]
+}
+
 rtc_static_library("rtp_rtcp") {
   sources = [
     "include/flexfec_receiver.h",
     "include/flexfec_sender.h",
     "include/receive_statistics.h",
     "include/remote_ntp_time_estimator.h",
-    "include/rtp_cvo.h",
-    "include/rtp_header_extension_map.h",
     "include/rtp_header_parser.h",
     "include/rtp_payload_registry.h",
     "include/rtp_receiver.h",
     "include/rtp_rtcp.h",
-    "include/rtp_rtcp_defines.h",
     "include/ulpfec_receiver.h",
-    "source/byte_io.h",
     "source/dtmf_queue.cc",
     "source/dtmf_queue.h",
     "source/fec_private_tables_bursty.h",
@@ -44,58 +124,6 @@ rtc_static_library("rtp_rtcp") {
     "source/remote_ntp_time_estimator.cc",
     "source/rtcp_nack_stats.cc",
     "source/rtcp_nack_stats.h",
-    "source/rtcp_packet.cc",
-    "source/rtcp_packet.h",
-    "source/rtcp_packet/app.cc",
-    "source/rtcp_packet/app.h",
-    "source/rtcp_packet/bye.cc",
-    "source/rtcp_packet/bye.h",
-    "source/rtcp_packet/common_header.cc",
-    "source/rtcp_packet/common_header.h",
-    "source/rtcp_packet/compound_packet.cc",
-    "source/rtcp_packet/compound_packet.h",
-    "source/rtcp_packet/dlrr.cc",
-    "source/rtcp_packet/dlrr.h",
-    "source/rtcp_packet/extended_jitter_report.cc",
-    "source/rtcp_packet/extended_jitter_report.h",
-    "source/rtcp_packet/extended_reports.cc",
-    "source/rtcp_packet/extended_reports.h",
-    "source/rtcp_packet/fir.cc",
-    "source/rtcp_packet/fir.h",
-    "source/rtcp_packet/nack.cc",
-    "source/rtcp_packet/nack.h",
-    "source/rtcp_packet/pli.cc",
-    "source/rtcp_packet/pli.h",
-    "source/rtcp_packet/psfb.cc",
-    "source/rtcp_packet/psfb.h",
-    "source/rtcp_packet/rapid_resync_request.cc",
-    "source/rtcp_packet/rapid_resync_request.h",
-    "source/rtcp_packet/receiver_report.cc",
-    "source/rtcp_packet/receiver_report.h",
-    "source/rtcp_packet/remb.cc",
-    "source/rtcp_packet/remb.h",
-    "source/rtcp_packet/report_block.cc",
-    "source/rtcp_packet/report_block.h",
-    "source/rtcp_packet/rrtr.cc",
-    "source/rtcp_packet/rrtr.h",
-    "source/rtcp_packet/rtpfb.cc",
-    "source/rtcp_packet/rtpfb.h",
-    "source/rtcp_packet/sdes.cc",
-    "source/rtcp_packet/sdes.h",
-    "source/rtcp_packet/sender_report.cc",
-    "source/rtcp_packet/sender_report.h",
-    "source/rtcp_packet/target_bitrate.cc",
-    "source/rtcp_packet/target_bitrate.h",
-    "source/rtcp_packet/tmmb_item.cc",
-    "source/rtcp_packet/tmmb_item.h",
-    "source/rtcp_packet/tmmbn.cc",
-    "source/rtcp_packet/tmmbn.h",
-    "source/rtcp_packet/tmmbr.cc",
-    "source/rtcp_packet/tmmbr.h",
-    "source/rtcp_packet/transport_feedback.cc",
-    "source/rtcp_packet/transport_feedback.h",
-    "source/rtcp_packet/voip_metric.cc",
-    "source/rtcp_packet/voip_metric.h",
     "source/rtcp_receiver.cc",
     "source/rtcp_receiver.h",
     "source/rtcp_sender.cc",
@@ -106,20 +134,15 @@ rtc_static_library("rtp_rtcp") {
     "source/rtp_format_h264.h",
     "source/rtp_format_video_generic.cc",
     "source/rtp_format_video_generic.h",
+    "source/rtp_format_video_stereo.cc",
+    "source/rtp_format_video_stereo.h",
     "source/rtp_format_vp8.cc",
     "source/rtp_format_vp8.h",
     "source/rtp_format_vp9.cc",
     "source/rtp_format_vp9.h",
-    "source/rtp_header_extension_map.cc",
-    "source/rtp_header_extensions.cc",
-    "source/rtp_header_extensions.h",
     "source/rtp_header_parser.cc",
-    "source/rtp_packet.cc",
-    "source/rtp_packet.h",
     "source/rtp_packet_history.cc",
     "source/rtp_packet_history.h",
-    "source/rtp_packet_received.h",
-    "source/rtp_packet_to_send.h",
     "source/rtp_payload_registry.cc",
     "source/rtp_receiver_audio.cc",
     "source/rtp_receiver_audio.h",
@@ -167,17 +190,24 @@ rtc_static_library("rtp_rtcp") {
   deps = [
     "..:module_api",
     "../..:webrtc_common",
+    "../../api:array_view",
     "../../api:libjingle_peerconnection_api",
+    "../../api:optional",
     "../../api:transport_api",
     "../../api/audio_codecs:audio_codecs_api",
-    "../../base:gtest_prod",
-    "../../base:rtc_base_approved",
-    "../../base:sequenced_task_checker",
     "../../common_video",
     "../../logging:rtc_event_log_api",
+    "../../rtc_base:gtest_prod",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base:sequenced_task_checker",
     "../../system_wrappers",
     "../audio_coding:audio_format_conversion",
     "../remote_bitrate_estimator",
+  ]
+
+  public_deps = [
+    ":rtp_rtcp_format",
   ]
 
   # TODO(jschuh): Bug 1348: fix this warning.
@@ -191,6 +221,29 @@ rtc_static_library("rtp_rtcp") {
   }
 }
 
+rtc_source_set("rtcp_transceiver") {
+  public = [
+    "source/rtcp_transceiver.h",
+    "source/rtcp_transceiver_config.h",
+    "source/rtcp_transceiver_impl.h",
+  ]
+  sources = [
+    "source/rtcp_transceiver.cc",
+    "source/rtcp_transceiver_config.cc",
+    "source/rtcp_transceiver_impl.cc",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    "../../api:array_view",
+    "../../api:optional",
+    "../../api:transport_api",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_task_queue",
+    "../../rtc_base:weak_ptr",
+    "../../system_wrappers:system_wrappers",
+  ]
+}
+
 rtc_source_set("fec_test_helper") {
   testonly = true
   sources = [
@@ -200,7 +253,7 @@ rtc_source_set("fec_test_helper") {
   deps = [
     ":rtp_rtcp",
     "..:module_api",
-    "../../base:rtc_base_approved",
+    "../../rtc_base:rtc_base_approved",
   ]
 
   # TODO(jschuh): bugs.webrtc.org/1348: fix this warning.
@@ -221,7 +274,8 @@ rtc_source_set("mock_rtp_rtcp") {
   deps = [
     ":rtp_rtcp",
     "..:module_api",
-    "../../base:rtc_base_approved",
+    "../../api:optional",
+    "../../rtc_base:rtc_base_approved",
     "../../test:test_support",
   ]
 }
@@ -237,26 +291,20 @@ if (rtc_include_tests) {
 
     deps = [
       ":rtp_rtcp",
+      "../../test:test_main",
       "//testing/gtest",
-      "//webrtc/test:test_main",
     ]
   }  # test_packet_masks_metrics
 
   rtc_source_set("rtp_rtcp_modules_tests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_tests" ]
-    }
     sources = [
       "test/testFec/test_fec.cc",
     ]
     deps = [
       ":rtp_rtcp",
-      "../../base:rtc_base_approved",
+      "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
     ]
     if (!build_with_chromium && is_clang) {
@@ -268,12 +316,6 @@ if (rtc_include_tests) {
   rtc_source_set("rtp_rtcp_unittests") {
     testonly = true
 
-    # Skip restricting visibility on mobile platforms since the tests on those
-    # gets additional generated targets which would require many lines here to
-    # cover (which would be confusing to read and hard to maintain).
-    if (!is_android && !is_ios) {
-      visibility = [ "//webrtc/modules:modules_unittests" ]
-    }
     sources = [
       "source/byte_io_unittest.cc",
       "source/flexfec_header_reader_writer_unittest.cc",
@@ -310,9 +352,12 @@ if (rtc_include_tests) {
       "source/rtcp_packet_unittest.cc",
       "source/rtcp_receiver_unittest.cc",
       "source/rtcp_sender_unittest.cc",
+      "source/rtcp_transceiver_impl_unittest.cc",
+      "source/rtcp_transceiver_unittest.cc",
       "source/rtp_fec_unittest.cc",
       "source/rtp_format_h264_unittest.cc",
       "source/rtp_format_video_generic_unittest.cc",
+      "source/rtp_format_video_stereo_unittest.cc",
       "source/rtp_format_vp8_test_helper.cc",
       "source/rtp_format_vp8_test_helper.h",
       "source/rtp_format_vp8_unittest.cc",
@@ -338,17 +383,26 @@ if (rtc_include_tests) {
     deps = [
       ":fec_test_helper",
       ":mock_rtp_rtcp",
+      ":rtcp_transceiver",
       ":rtp_rtcp",
       "..:module_api",
       "../..:webrtc_common",
+      "../../api:array_view",
+      "../../api:libjingle_peerconnection_api",
+      "../../api:optional",
       "../../api:transport_api",
-      "../../base:rtc_base_approved",
+      "../../call:rtp_receiver",
       "../../common_video:common_video",
+      "../../logging:rtc_event_log_api",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_task_queue",
       "../../system_wrappers:system_wrappers",
       "../../test:field_trial",
       "../../test:rtp_test_utils",
       "../../test:test_common",
       "../../test:test_support",
+      "../audio_coding:audio_format_conversion",
       "//testing/gmock",
     ]
 

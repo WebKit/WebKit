@@ -10,14 +10,14 @@
 
 // TODO(bjornv): Make this a comprehensive test.
 
-#include "webrtc/modules/audio_processing/aec/echo_cancellation.h"
+#include "modules/audio_processing/aec/echo_cancellation.h"
 
 #include <stdlib.h>
 #include <time.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/aec/aec_core.h"
-#include "webrtc/test/gtest.h"
+#include "modules/audio_processing/aec/aec_core.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "webrtc/modules/audio_coding/neteq/mock/mock_decoder_database.h"
-#include "webrtc/modules/audio_coding/neteq/packet.h"
-#include "webrtc/modules/audio_coding/neteq/timestamp_scaler.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "modules/audio_coding/neteq/mock/mock_decoder_database.h"
+#include "modules/audio_coding/neteq/packet.h"
+#include "modules/audio_coding/neteq/timestamp_scaler.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::Return;
 using ::testing::ReturnNull;

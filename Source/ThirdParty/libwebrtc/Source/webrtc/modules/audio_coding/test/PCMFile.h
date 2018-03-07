@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_TEST_PCMFILE_H_
-#define WEBRTC_MODULES_AUDIO_CODING_TEST_PCMFILE_H_
+#ifndef MODULES_AUDIO_CODING_TEST_PCMFILE_H_
+#define MODULES_AUDIO_CODING_TEST_PCMFILE_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <string>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/typedefs.h"
+#include "api/optional.h"
+#include "modules/include/module_common_types.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -73,4 +73,4 @@ class PCMFile {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_CODING_TEST_PCMFILE_H_
+#endif  // MODULES_AUDIO_CODING_TEST_PCMFILE_H_

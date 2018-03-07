@@ -1410,9 +1410,9 @@ __declspec(naked) void ARGBToUVRow_SSSE3(const uint8* src_argb0,
     shufps     xmm4, xmm3, 0xdd
     pavgb      xmm2, xmm4
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 16 different pixels, its 8 pixels of U and 8 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 16 different pixels, its 8 pixels of U and 8 of V
     movdqa     xmm1, xmm0
     movdqa     xmm3, xmm2
     pmaddubsw  xmm0, xmm7  // U
@@ -1426,7 +1426,7 @@ __declspec(naked) void ARGBToUVRow_SSSE3(const uint8* src_argb0,
     packsswb   xmm0, xmm1
     paddb      xmm0, xmm5  // -> unsigned
 
-    // step 3 - store 8 U and 8 V values
+        // step 3 - store 8 U and 8 V values
     movlps     qword ptr [edx], xmm0  // U
     movhps     qword ptr [edx + edi], xmm0  // V
     lea        edx, [edx + 8]
@@ -1482,9 +1482,9 @@ __declspec(naked) void ARGBToUVJRow_SSSE3(const uint8* src_argb0,
     shufps     xmm4, xmm3, 0xdd
     pavgb      xmm2, xmm4
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 16 different pixels, its 8 pixels of U and 8 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 16 different pixels, its 8 pixels of U and 8 of V
     movdqa     xmm1, xmm0
     movdqa     xmm3, xmm2
     pmaddubsw  xmm0, xmm7  // U
@@ -1499,7 +1499,7 @@ __declspec(naked) void ARGBToUVJRow_SSSE3(const uint8* src_argb0,
     psraw      xmm1, 8
     packsswb   xmm0, xmm1
 
-    // step 3 - store 8 U and 8 V values
+        // step 3 - store 8 U and 8 V values
     movlps     qword ptr [edx], xmm0  // U
     movhps     qword ptr [edx + edi], xmm0  // V
     lea        edx, [edx + 8]
@@ -1549,9 +1549,9 @@ __declspec(naked) void ARGBToUVRow_AVX2(const uint8* src_argb0,
     vshufps    ymm2, ymm2, ymm3, 0xdd
     vpavgb     ymm2, ymm2, ymm4  // mutated by vshufps
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 32 different pixels, its 16 pixels of U and 16 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 32 different pixels, its 16 pixels of U and 16 of V
     vpmaddubsw ymm1, ymm0, ymm7  // U
     vpmaddubsw ymm3, ymm2, ymm7
     vpmaddubsw ymm0, ymm0, ymm6  // V
@@ -1565,7 +1565,7 @@ __declspec(naked) void ARGBToUVRow_AVX2(const uint8* src_argb0,
     vpshufb    ymm0, ymm0, ymmword ptr kShufARGBToUV_AVX  // for vshufps/vphaddw
     vpaddb     ymm0, ymm0, ymm5  // -> unsigned
 
-    // step 3 - store 16 U and 16 V values
+        // step 3 - store 16 U and 16 V values
     vextractf128 [edx], ymm0, 0  // U
     vextractf128 [edx + edi], ymm0, 1  // V
     lea        edx, [edx + 16]
@@ -1617,9 +1617,9 @@ __declspec(naked) void ARGBToUVJRow_AVX2(const uint8* src_argb0,
     vshufps    ymm2, ymm2, ymm3, 0xdd
     vpavgb     ymm2, ymm2, ymm4  // mutated by vshufps
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 32 different pixels, its 16 pixels of U and 16 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 32 different pixels, its 16 pixels of U and 16 of V
     vpmaddubsw ymm1, ymm0, ymm7  // U
     vpmaddubsw ymm3, ymm2, ymm7
     vpmaddubsw ymm0, ymm0, ymm6  // V
@@ -1634,7 +1634,7 @@ __declspec(naked) void ARGBToUVJRow_AVX2(const uint8* src_argb0,
     vpermq     ymm0, ymm0, 0xd8  // For vpacksswb
     vpshufb    ymm0, ymm0, ymmword ptr kShufARGBToUV_AVX  // for vshufps/vphaddw
 
-    // step 3 - store 16 U and 16 V values
+        // step 3 - store 16 U and 16 V values
     vextractf128 [edx], ymm0, 0  // U
     vextractf128 [edx + edi], ymm0, 1  // V
     lea        edx, [edx + 16]
@@ -1750,9 +1750,9 @@ __declspec(naked) void BGRAToUVRow_SSSE3(const uint8* src_argb0,
     shufps     xmm4, xmm3, 0xdd
     pavgb      xmm2, xmm4
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 16 different pixels, its 8 pixels of U and 8 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 16 different pixels, its 8 pixels of U and 8 of V
     movdqa     xmm1, xmm0
     movdqa     xmm3, xmm2
     pmaddubsw  xmm0, xmm7  // U
@@ -1766,7 +1766,7 @@ __declspec(naked) void BGRAToUVRow_SSSE3(const uint8* src_argb0,
     packsswb   xmm0, xmm1
     paddb      xmm0, xmm5  // -> unsigned
 
-    // step 3 - store 8 U and 8 V values
+        // step 3 - store 8 U and 8 V values
     movlps     qword ptr [edx], xmm0  // U
     movhps     qword ptr [edx + edi], xmm0  // V
     lea        edx, [edx + 8]
@@ -1822,9 +1822,9 @@ __declspec(naked) void ABGRToUVRow_SSSE3(const uint8* src_argb0,
     shufps     xmm4, xmm3, 0xdd
     pavgb      xmm2, xmm4
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 16 different pixels, its 8 pixels of U and 8 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 16 different pixels, its 8 pixels of U and 8 of V
     movdqa     xmm1, xmm0
     movdqa     xmm3, xmm2
     pmaddubsw  xmm0, xmm7  // U
@@ -1838,7 +1838,7 @@ __declspec(naked) void ABGRToUVRow_SSSE3(const uint8* src_argb0,
     packsswb   xmm0, xmm1
     paddb      xmm0, xmm5  // -> unsigned
 
-    // step 3 - store 8 U and 8 V values
+        // step 3 - store 8 U and 8 V values
     movlps     qword ptr [edx], xmm0  // U
     movhps     qword ptr [edx + edi], xmm0  // V
     lea        edx, [edx + 8]
@@ -1894,9 +1894,9 @@ __declspec(naked) void RGBAToUVRow_SSSE3(const uint8* src_argb0,
     shufps     xmm4, xmm3, 0xdd
     pavgb      xmm2, xmm4
 
-    // step 2 - convert to U and V
-    // from here down is very similar to Y code except
-    // instead of 16 different pixels, its 8 pixels of U and 8 of V
+        // step 2 - convert to U and V
+        // from here down is very similar to Y code except
+        // instead of 16 different pixels, its 8 pixels of U and 8 of V
     movdqa     xmm1, xmm0
     movdqa     xmm3, xmm2
     pmaddubsw  xmm0, xmm7  // U
@@ -1910,7 +1910,7 @@ __declspec(naked) void RGBAToUVRow_SSSE3(const uint8* src_argb0,
     packsswb   xmm0, xmm1
     paddb      xmm0, xmm5  // -> unsigned
 
-    // step 3 - store 8 U and 8 V values
+        // step 3 - store 8 U and 8 V values
     movlps     qword ptr [edx], xmm0  // U
     movhps     qword ptr [edx + edi], xmm0  // V
     lea        edx, [edx + 8]
@@ -2927,7 +2927,7 @@ __declspec(naked) void I400ToARGBRow_SSE2(const uint8* y_buf,
     psrlw      xmm0, 6
     packuswb   xmm0, xmm0        // G
 
-    // Step 2: Weave into ARGB
+        // Step 2: Weave into ARGB
     punpcklbw  xmm0, xmm0  // GG
     movdqa     xmm1, xmm0
     punpcklwd  xmm0, xmm0  // BGRA first 4 pixels
@@ -2975,8 +2975,8 @@ __declspec(naked) void I400ToARGBRow_AVX2(const uint8* y_buf,
     vpsrlw     ymm0, ymm0, 6
     vpackuswb  ymm0, ymm0, ymm0        // G.  still mutated: 3120
 
-    // TODO(fbarchard): Weave alpha with unpack.
-    // Step 2: Weave into ARGB
+        // TODO(fbarchard): Weave alpha with unpack.
+        // Step 2: Weave into ARGB
     vpunpcklbw ymm1, ymm0, ymm0  // GG - mutates
     vpermq     ymm1, ymm1, 0xd8
     vpunpcklwd ymm0, ymm1, ymm1  // GGGG first 8 pixels
@@ -4067,7 +4067,7 @@ __declspec(naked) void BlendPlaneRow_SSSE3(const uint8* src0,
     sub        edx, esi
     sub        edi, esi
 
-    // 8 pixel loop.
+        // 8 pixel loop.
   convertloop8:
     movq       xmm0, qword ptr [esi]  // alpha
     punpcklbw  xmm0, xmm0
@@ -4123,7 +4123,7 @@ __declspec(naked) void BlendPlaneRow_AVX2(const uint8* src0,
     sub         edx, esi
     sub         edi, esi
 
-    // 32 pixel loop.
+        // 32 pixel loop.
   convertloop32:
     vmovdqu     ymm0, [esi]  // alpha
     vpunpckhbw  ymm3, ymm0, ymm0  // 8..15, 24..31
@@ -4183,7 +4183,7 @@ __declspec(naked) void ARGBBlendRow_SSSE3(const uint8* src_argb0,
     sub        ecx, 4
     jl         convertloop4b  // less than 4 pixels?
 
-    // 4 pixel loop.
+        // 4 pixel loop.
   convertloop4:
     movdqu     xmm3, [eax]  // src argb
     lea        eax, [eax + 16]
@@ -4212,7 +4212,7 @@ __declspec(naked) void ARGBBlendRow_SSSE3(const uint8* src_argb0,
     add        ecx, 4 - 1
     jl         convertloop1b
 
-    // 1 pixel loop.
+        // 1 pixel loop.
   convertloop1:
     movd       xmm3, [eax]  // src argb
     lea        eax, [eax + 4]
@@ -5256,7 +5256,7 @@ void CumulativeSumToAverageRow_SSE2(const int32* topleft,
     cvtps2dq   xmm5, xmm5  // 0.16 fixed point
     packssdw   xmm5, xmm5  // 16 bit shorts
 
-    // 4 pixel loop small blocks.
+        // 4 pixel loop small blocks.
   s4:
         // top left
     movdqu     xmm0, [eax]
@@ -5298,7 +5298,7 @@ void CumulativeSumToAverageRow_SSE2(const int32* topleft,
 
     jmp        l4b
 
-    // 4 pixel loop
+            // 4 pixel loop
   l4:
         // top left
     movdqu     xmm0, [eax]
@@ -5350,7 +5350,7 @@ void CumulativeSumToAverageRow_SSE2(const int32* topleft,
     add        ecx, 4 - 1
     jl         l1b
 
-    // 1 pixel loop
+        // 1 pixel loop
   l1:
     movdqu     xmm0, [eax]
     psubd      xmm0, [eax + edx * 4]
@@ -5392,7 +5392,7 @@ void ComputeCumulativeSumRow_SSE2(const uint8* row,
     test       edx, 15
     jne        l4b
 
-    // 4 pixel loop
+        // 4 pixel loop
   l4:
     movdqu     xmm2, [eax]  // 4 argb pixels 16 bytes.
     lea        eax, [eax + 16]
@@ -5438,7 +5438,7 @@ void ComputeCumulativeSumRow_SSE2(const uint8* row,
     add        ecx, 4 - 1
     jl         l1b
 
-    // 1 pixel loop
+        // 1 pixel loop
   l1:
     movd       xmm2, dword ptr [eax]  // 1 argb pixel 4 bytes.
     lea        eax, [eax + 4]
@@ -5481,7 +5481,7 @@ __declspec(naked) LIBYUV_API void ARGBAffineRow_SSE2(const uint8* src_argb,
     sub        ecx, 4
     jl         l4b
 
-    // setup for 4 pixel loop
+        // setup for 4 pixel loop
     pshufd     xmm7, xmm7, 0x44  // dup dudv
     pshufd     xmm5, xmm5, 0  // dup 4, stride
     movdqa     xmm0, xmm2  // x0, y0, x1, y1
@@ -5493,7 +5493,7 @@ __declspec(naked) LIBYUV_API void ARGBAffineRow_SSE2(const uint8* src_argb,
     addps      xmm3, xmm4
     addps      xmm4, xmm4  // dudv *= 4
 
-    // 4 pixel loop
+        // 4 pixel loop
   l4:
     cvttps2dq  xmm0, xmm2  // x, y float to int first 2
     cvttps2dq  xmm1, xmm3  // x, y float to int next 2
@@ -5524,7 +5524,7 @@ __declspec(naked) LIBYUV_API void ARGBAffineRow_SSE2(const uint8* src_argb,
     add        ecx, 4 - 1
     jl         l1b
 
-    // 1 pixel loop
+        // 1 pixel loop
   l1:
     cvttps2dq  xmm0, xmm2  // x, y float to int
     packssdw   xmm0, xmm0  // x, y as shorts
@@ -5598,7 +5598,7 @@ __declspec(naked) void InterpolateRow_AVX2(uint8* dst_ptr,
     jg         xloop
     jmp        xloop99
 
-    // Blend 50 / 50.
+        // Blend 50 / 50.
  xloop50:
    vmovdqu    ymm0, [esi]
    vpavgb     ymm0, ymm0, [esi + edx]
@@ -5608,7 +5608,7 @@ __declspec(naked) void InterpolateRow_AVX2(uint8* dst_ptr,
    jg         xloop50
    jmp        xloop99
 
-    // Blend 100 / 0 - Copy row unchanged.
+        // Blend 100 / 0 - Copy row unchanged.
  xloop100:
    rep movsb
 
@@ -5638,7 +5638,7 @@ __declspec(naked) void InterpolateRow_SSSE3(uint8* dst_ptr,
     mov        ecx, [esp + 8 + 16]  // dst_width
     mov        eax, [esp + 8 + 20]  // source_y_fraction (0..255)
     sub        edi, esi
-    // Dispatch to specialized filters if applicable.
+        // Dispatch to specialized filters if applicable.
     cmp        eax, 0
     je         xloop100  // 0 /256.  Blend 100 / 0.
     cmp        eax, 128
@@ -5678,7 +5678,7 @@ __declspec(naked) void InterpolateRow_SSSE3(uint8* dst_ptr,
     jg         xloop
     jmp        xloop99
 
-    // Blend 50 / 50.
+        // Blend 50 / 50.
   xloop50:
     movdqu     xmm0, [esi]
     movdqu     xmm1, [esi + edx]
@@ -5689,7 +5689,7 @@ __declspec(naked) void InterpolateRow_SSSE3(uint8* dst_ptr,
     jg         xloop50
     jmp        xloop99
 
-    // Blend 100 / 0 - Copy row unchanged.
+        // Blend 100 / 0 - Copy row unchanged.
   xloop100:
     movdqu     xmm0, [esi]
     movdqu     [esi + edi], xmm0
@@ -5784,7 +5784,7 @@ __declspec(naked) void ARGBShuffleRow_SSE2(const uint8* src_argb,
     cmp        ebx, 0x02010003
     je         shuf_2103
 
-    // TODO(fbarchard): Use one source pointer and 3 offsets.
+        // TODO(fbarchard): Use one source pointer and 3 offsets.
   shuf_any1:
     movzx      ebx, byte ptr [esi]
     movzx      ebx, byte ptr [eax + ebx]
@@ -5971,7 +5971,7 @@ __declspec(naked) void ARGBPolynomialRow_SSE2(const uint8* src_argb,
     mov        ecx, [esp + 4 + 16] /* width */
     pxor       xmm3, xmm3  // 0 constant for zero extending bytes to ints.
 
-    // 2 pixel loop.
+        // 2 pixel loop.
  convertloop:
         //    pmovzxbd  xmm0, dword ptr [eax]  // BGRA pixel
         //    pmovzxbd  xmm4, dword ptr [eax + 4]  // BGRA pixel
@@ -6072,7 +6072,7 @@ __declspec(naked) void HalfFloatRow_SSE2(const uint16* src,
     pxor       xmm5, xmm5
     sub        edx, eax
 
-    // 8 pixel loop.
+        // 8 pixel loop.
  convertloop:
     movdqu      xmm2, xmmword ptr [eax]  // 8 shorts
     add         eax, 16
@@ -6110,7 +6110,7 @@ __declspec(naked) void HalfFloatRow_AVX2(const uint16* src,
     vpxor      ymm5, ymm5, ymm5
     sub        edx, eax
 
-    // 16 pixel loop.
+        // 16 pixel loop.
  convertloop:
     vmovdqu     ymm2, [eax]  // 16 shorts
     add         eax, 32
@@ -6144,7 +6144,7 @@ __declspec(naked) void HalfFloatRow_F16C(const uint16* src,
     mov        ecx, [esp + 16] /* width */
     sub        edx, eax
 
-    // 16 pixel loop.
+        // 16 pixel loop.
  convertloop:
     vpmovzxwd   ymm2, xmmword ptr [eax]  // 8 shorts -> 8 ints
     vpmovzxwd   ymm3, xmmword ptr [eax + 16]  // 8 more shorts
@@ -6252,7 +6252,7 @@ __declspec(naked) void ARGBLumaColorTableRow_SSSE3(const uint8* src_argb,
     psllw      xmm4, 8
     pxor       xmm5, xmm5
 
-    // 4 pixel loop.
+        // 4 pixel loop.
   convertloop:
     movdqu     xmm0, xmmword ptr [eax]  // generate luma ptr
     pmaddubsw  xmm0, xmm3

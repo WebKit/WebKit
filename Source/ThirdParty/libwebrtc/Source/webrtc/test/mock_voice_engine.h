@@ -8,18 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_AUDIO_MOCK_VOICE_ENGINE_H_
-#define WEBRTC_AUDIO_MOCK_VOICE_ENGINE_H_
+#ifndef AUDIO_MOCK_VOICE_ENGINE_H_
+#define AUDIO_MOCK_VOICE_ENGINE_H_
 
 #include <memory>
 
-#include "webrtc/modules/audio_device/include/mock_audio_device.h"
-#include "webrtc/modules/audio_device/include/mock_audio_transport.h"
-#include "webrtc/modules/audio_processing/include/mock_audio_processing.h"
-#include "webrtc/modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/mock_voe_channel_proxy.h"
-#include "webrtc/voice_engine/voice_engine_impl.h"
+#include "modules/audio_device/include/mock_audio_transport.h"
+#include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
+#include "test/gmock.h"
+#include "test/mock_voe_channel_proxy.h"
+#include "voice_engine/voice_engine_impl.h"
 
 namespace webrtc {
 namespace voe {
@@ -64,12 +62,6 @@ class MockVoiceEngine : public VoiceEngineImpl {
           return proxy;
         }));
 
-    ON_CALL(mock_audio_device_, TimeUntilNextProcess())
-        .WillByDefault(testing::Return(1000));
-    ON_CALL(*this, audio_device_module())
-        .WillByDefault(testing::Return(&mock_audio_device_));
-    ON_CALL(*this, audio_processing())
-        .WillByDefault(testing::Return(&mock_audio_processing_));
     ON_CALL(*this, audio_transport())
         .WillByDefault(testing::Return(&mock_audio_transport_));
   }
@@ -97,153 +89,21 @@ class MockVoiceEngine : public VoiceEngineImpl {
   }
 
   // VoEBase
-  MOCK_METHOD1(RegisterVoiceEngineObserver, int(VoiceEngineObserver& observer));
-  MOCK_METHOD0(DeRegisterVoiceEngineObserver, int());
   MOCK_METHOD3(
       Init,
       int(AudioDeviceModule* external_adm,
-          AudioProcessing* audioproc,
+          AudioProcessing* external_apm,
           const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory));
-  MOCK_METHOD0(audio_processing, AudioProcessing*());
-  MOCK_METHOD0(audio_device_module, AudioDeviceModule*());
   MOCK_METHOD0(transmit_mixer, voe::TransmitMixer*());
-  MOCK_METHOD0(Terminate, int());
+  MOCK_METHOD0(Terminate, void());
   MOCK_METHOD0(CreateChannel, int());
   MOCK_METHOD1(CreateChannel, int(const ChannelConfig& config));
   MOCK_METHOD1(DeleteChannel, int(int channel));
-  MOCK_METHOD1(StartReceive, int(int channel));
-  MOCK_METHOD1(StopReceive, int(int channel));
   MOCK_METHOD1(StartPlayout, int(int channel));
   MOCK_METHOD1(StopPlayout, int(int channel));
   MOCK_METHOD1(StartSend, int(int channel));
   MOCK_METHOD1(StopSend, int(int channel));
-  MOCK_METHOD1(GetVersion, int(char version[1024]));
-  MOCK_METHOD0(LastError, int());
   MOCK_METHOD0(audio_transport, AudioTransport*());
-  MOCK_METHOD2(AssociateSendChannel,
-               int(int channel, int accociate_send_channel));
-
-  // VoECodec
-  MOCK_METHOD0(NumOfCodecs, int());
-  MOCK_METHOD2(GetCodec, int(int index, CodecInst& codec));
-  MOCK_METHOD2(SetSendCodec, int(int channel, const CodecInst& codec));
-  MOCK_METHOD2(GetSendCodec, int(int channel, CodecInst& codec));
-  MOCK_METHOD2(SetBitRate, int(int channel, int bitrate_bps));
-  MOCK_METHOD2(GetRecCodec, int(int channel, CodecInst& codec));
-  MOCK_METHOD2(SetRecPayloadType, int(int channel, const CodecInst& codec));
-  MOCK_METHOD2(GetRecPayloadType, int(int channel, CodecInst& codec));
-  MOCK_METHOD3(SetSendCNPayloadType,
-               int(int channel, int type, PayloadFrequencies frequency));
-  MOCK_METHOD2(SetFECStatus, int(int channel, bool enable));
-  MOCK_METHOD2(GetFECStatus, int(int channel, bool& enabled));
-  MOCK_METHOD4(SetVADStatus,
-               int(int channel, bool enable, VadModes mode, bool disableDTX));
-  MOCK_METHOD4(
-      GetVADStatus,
-      int(int channel, bool& enabled, VadModes& mode, bool& disabledDTX));
-  MOCK_METHOD2(SetOpusMaxPlaybackRate, int(int channel, int frequency_hz));
-  MOCK_METHOD2(SetOpusDtx, int(int channel, bool enable_dtx));
-
-  // VoEFile
-  MOCK_METHOD7(StartPlayingFileLocally,
-               int(int channel,
-                   const char fileNameUTF8[1024],
-                   bool loop,
-                   FileFormats format,
-                   float volumeScaling,
-                   int startPointMs,
-                   int stopPointMs));
-  MOCK_METHOD6(StartPlayingFileLocally,
-               int(int channel,
-                   InStream* stream,
-                   FileFormats format,
-                   float volumeScaling,
-                   int startPointMs,
-                   int stopPointMs));
-  MOCK_METHOD1(StopPlayingFileLocally, int(int channel));
-  MOCK_METHOD1(IsPlayingFileLocally, int(int channel));
-  MOCK_METHOD6(StartPlayingFileAsMicrophone,
-               int(int channel,
-                   const char fileNameUTF8[1024],
-                   bool loop,
-                   bool mixWithMicrophone,
-                   FileFormats format,
-                   float volumeScaling));
-  MOCK_METHOD5(StartPlayingFileAsMicrophone,
-               int(int channel,
-                   InStream* stream,
-                   bool mixWithMicrophone,
-                   FileFormats format,
-                   float volumeScaling));
-  MOCK_METHOD1(StopPlayingFileAsMicrophone, int(int channel));
-  MOCK_METHOD1(IsPlayingFileAsMicrophone, int(int channel));
-  MOCK_METHOD4(StartRecordingPlayout,
-               int(int channel,
-                   const char* fileNameUTF8,
-                   CodecInst* compression,
-                   int maxSizeBytes));
-  MOCK_METHOD1(StopRecordingPlayout, int(int channel));
-  MOCK_METHOD3(StartRecordingPlayout,
-               int(int channel, OutStream* stream, CodecInst* compression));
-  MOCK_METHOD3(StartRecordingMicrophone,
-               int(const char* fileNameUTF8,
-                   CodecInst* compression,
-                   int maxSizeBytes));
-  MOCK_METHOD2(StartRecordingMicrophone,
-               int(OutStream* stream, CodecInst* compression));
-  MOCK_METHOD0(StopRecordingMicrophone, int());
-
-  // VoENetwork
-  MOCK_METHOD2(RegisterExternalTransport,
-               int(int channel, Transport& transport));
-  MOCK_METHOD1(DeRegisterExternalTransport, int(int channel));
-  MOCK_METHOD3(ReceivedRTPPacket,
-               int(int channel, const void* data, size_t length));
-  MOCK_METHOD4(ReceivedRTPPacket,
-               int(int channel,
-                   const void* data,
-                   size_t length,
-                   const PacketTime& packet_time));
-  MOCK_METHOD3(ReceivedRTCPPacket,
-               int(int channel, const void* data, size_t length));
-
-  // VoERTP_RTCP
-  MOCK_METHOD2(SetLocalSSRC, int(int channel, unsigned int ssrc));
-  MOCK_METHOD2(GetLocalSSRC, int(int channel, unsigned int& ssrc));
-  MOCK_METHOD2(GetRemoteSSRC, int(int channel, unsigned int& ssrc));
-  MOCK_METHOD3(SetSendAudioLevelIndicationStatus,
-               int(int channel, bool enable, unsigned char id));
-  MOCK_METHOD3(SetReceiveAudioLevelIndicationStatus,
-               int(int channel, bool enable, unsigned char id));
-  MOCK_METHOD3(SetSendAbsoluteSenderTimeStatus,
-               int(int channel, bool enable, unsigned char id));
-  MOCK_METHOD3(SetReceiveAbsoluteSenderTimeStatus,
-               int(int channel, bool enable, unsigned char id));
-  MOCK_METHOD2(SetRTCPStatus, int(int channel, bool enable));
-  MOCK_METHOD2(GetRTCPStatus, int(int channel, bool& enabled));
-  MOCK_METHOD2(SetRTCP_CNAME, int(int channel, const char cName[256]));
-  MOCK_METHOD2(GetRTCP_CNAME, int(int channel, char cName[256]));
-  MOCK_METHOD2(GetRemoteRTCP_CNAME, int(int channel, char cName[256]));
-  MOCK_METHOD7(GetRemoteRTCPData,
-               int(int channel,
-                   unsigned int& NTPHigh,
-                   unsigned int& NTPLow,
-                   unsigned int& timestamp,
-                   unsigned int& playoutTimestamp,
-                   unsigned int* jitter,
-                   unsigned short* fractionLost));
-  MOCK_METHOD4(GetRTPStatistics,
-               int(int channel,
-                   unsigned int& averageJitterMs,
-                   unsigned int& maxJitterMs,
-                   unsigned int& discardedPackets));
-  MOCK_METHOD2(GetRTCPStatistics, int(int channel, CallStatistics& stats));
-  MOCK_METHOD2(GetRemoteRTCPReportBlocks,
-               int(int channel, std::vector<ReportBlock>* receive_blocks));
-  MOCK_METHOD3(SetREDStatus, int(int channel, bool enable, int redPayloadtype));
-  MOCK_METHOD3(GetREDStatus,
-               int(int channel, bool& enable, int& redPayloadtype));
-  MOCK_METHOD3(SetNACKStatus, int(int channel, bool enable, int maxNoPackets));
 
  private:
   // TODO(ossu): I'm not particularly happy about keeping the decoder factory
@@ -256,11 +116,9 @@ class MockVoiceEngine : public VoiceEngineImpl {
 
   std::map<int, std::unique_ptr<MockRtpRtcp>> mock_rtp_rtcps_;
 
-  MockAudioDeviceModule mock_audio_device_;
-  MockAudioProcessing mock_audio_processing_;
   MockAudioTransport mock_audio_transport_;
 };
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_AUDIO_MOCK_VOICE_ENGINE_H_
+#endif  // AUDIO_MOCK_VOICE_ENGINE_H_

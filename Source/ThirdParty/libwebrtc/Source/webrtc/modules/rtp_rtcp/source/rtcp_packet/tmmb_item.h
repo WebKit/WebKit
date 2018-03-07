@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_TMMB_ITEM_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_TMMB_ITEM_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_TMMB_ITEM_H_
+#define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_TMMB_ITEM_H_
 
-#include "webrtc/base/basictypes.h"
+#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -48,4 +48,4 @@ class TmmbItem {
 };
 }  // namespace rtcp
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_TMMB_ITEM_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_TMMB_ITEM_H_

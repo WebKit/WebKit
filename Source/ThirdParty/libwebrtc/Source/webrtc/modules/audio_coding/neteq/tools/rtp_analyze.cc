@@ -14,34 +14,17 @@
 #include <memory>
 #include <vector>
 
-#include "gflags/gflags.h"
-#include "webrtc/modules/audio_coding/neteq/tools/packet.h"
-#include "webrtc/modules/audio_coding/neteq/tools/rtp_file_source.h"
-
-// Flag validator.
-static bool ValidatePayloadType(const char* flagname, int32_t value) {
-  if (value >= 0 && value <= 127)  // Value is ok.
-    return true;
-  printf("Invalid value for --%s: %d\n", flagname, static_cast<int>(value));
-  return false;
-}
-static bool ValidateExtensionId(const char* flagname, int32_t value) {
-  if (value > 0 && value <= 255)  // Value is ok.
-    return true;
-  printf("Invalid value for --%s: %d\n", flagname, static_cast<int>(value));
-  return false;
-}
+#include "modules/audio_coding/neteq/tools/packet.h"
+#include "modules/audio_coding/neteq/tools/rtp_file_source.h"
+#include "rtc_base/flags.h"
 
 // Define command line flags.
-DEFINE_int32(red, 117, "RTP payload type for RED");
-static const bool red_dummy =
-    google::RegisterFlagValidator(&FLAGS_red, &ValidatePayloadType);
-DEFINE_int32(audio_level, 1, "Extension ID for audio level (RFC 6464)");
-static const bool audio_level_dummy =
-    google::RegisterFlagValidator(&FLAGS_audio_level, &ValidateExtensionId);
-DEFINE_int32(abs_send_time, 3, "Extension ID for absolute sender time");
-static const bool abs_send_time_dummy =
-    google::RegisterFlagValidator(&FLAGS_abs_send_time, &ValidateExtensionId);
+DEFINE_int(red, 117, "RTP payload type for RED");
+DEFINE_int(audio_level, -1, "Extension ID for audio level (RFC 6464); "
+                            "-1 not to print audio level");
+DEFINE_int(abs_send_time, -1, "Extension ID for absolute sender time; "
+                             "-1 not to print absolute send time");
+DEFINE_bool(help, false, "Print this message");
 
 int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
@@ -49,19 +32,26 @@ int main(int argc, char* argv[]) {
       "Tool for parsing an RTP dump file to text output.\n"
       "Run " +
       program_name +
-      " --helpshort for usage.\n"
+      " --help for usage.\n"
       "Example usage:\n" +
       program_name + " input.rtp output.txt\n\n" +
-      "Output is sent to stdout if no output file is given." +
-      "Note that this tool can read files with our without payloads.";
-  google::SetUsageMessage(usage);
-  google::ParseCommandLineFlags(&argc, &argv, true);
-
-  if (argc != 2 && argc != 3) {
-    // Print usage information.
-    printf("%s", google::ProgramUsage());
-    return 0;
+      "Output is sent to stdout if no output file is given. " +
+      "Note that this tool can read files with or without payloads.\n";
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
+      FLAG_help || (argc != 2 && argc != 3)) {
+    printf("%s", usage.c_str());
+    if (FLAG_help) {
+      rtc::FlagList::Print(nullptr, false);
+      return 0;
+    }
+    return 1;
   }
+
+  RTC_CHECK(FLAG_red >= 0 && FLAG_red <= 127);  // Payload type
+  RTC_CHECK(FLAG_audio_level == -1 ||  // Default
+      (FLAG_audio_level > 0 && FLAG_audio_level <= 255));  // Extension ID
+  RTC_CHECK(FLAG_abs_send_time == -1 ||  // Default
+      (FLAG_abs_send_time > 0 && FLAG_abs_send_time <= 255));  // Extension ID
 
   printf("Input file: %s\n", argv[1]);
   std::unique_ptr<webrtc::test::RtpFileSource> file_source(
@@ -69,16 +59,16 @@ int main(int argc, char* argv[]) {
   assert(file_source.get());
   // Set RTP extension IDs.
   bool print_audio_level = false;
-  if (!google::GetCommandLineFlagInfoOrDie("audio_level").is_default) {
+  if (FLAG_audio_level != -1) {
     print_audio_level = true;
     file_source->RegisterRtpHeaderExtension(webrtc::kRtpExtensionAudioLevel,
-                                            FLAGS_audio_level);
+                                            FLAG_audio_level);
   }
   bool print_abs_send_time = false;
-  if (!google::GetCommandLineFlagInfoOrDie("abs_send_time").is_default) {
+  if (FLAG_abs_send_time != -1) {
     print_abs_send_time = true;
     file_source->RegisterRtpHeaderExtension(
-        webrtc::kRtpExtensionAbsoluteSendTime, FLAGS_abs_send_time);
+        webrtc::kRtpExtensionAbsoluteSendTime, FLAG_abs_send_time);
   }
 
   FILE* out_file;
@@ -160,7 +150,7 @@ int main(int argc, char* argv[]) {
     }
     fprintf(out_file, "\n");
 
-    if (packet->header().payloadType == FLAGS_red) {
+    if (packet->header().payloadType == FLAG_red) {
       std::list<webrtc::RTPHeader*> red_headers;
       packet->ExtractRedHeaders(&red_headers);
       while (!red_headers.empty()) {

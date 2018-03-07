@@ -25,10 +25,10 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WEBRTC_AUDIO_DEVICE_PULSEAUDIOSYMBOLTABLE_LINUX_H
-#define WEBRTC_AUDIO_DEVICE_PULSEAUDIOSYMBOLTABLE_LINUX_H
+#ifndef AUDIO_DEVICE_PULSEAUDIOSYMBOLTABLE_LINUX_H_
+#define AUDIO_DEVICE_PULSEAUDIOSYMBOLTABLE_LINUX_H_
 
-#include "webrtc/modules/audio_device/linux/latebindingsymboltable_linux.h"
+#include "modules/audio_device/linux/latebindingsymboltable_linux.h"
 
 namespace webrtc {
 namespace adm_linux_pulse {
@@ -103,4 +103,4 @@ LATE_BINDING_SYMBOL_TABLE_DECLARE_END(PulseAudioSymbolTable)
 }  // namespace adm_linux_pulse
 }  // namespace webrtc
 
-#endif  // WEBRTC_AUDIO_DEVICE_PULSEAUDIOSYMBOLTABLE_LINUX_H
+#endif  // AUDIO_DEVICE_PULSEAUDIOSYMBOLTABLE_LINUX_H_

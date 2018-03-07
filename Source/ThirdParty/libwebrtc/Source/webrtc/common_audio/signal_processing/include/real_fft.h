@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_REAL_FFT_H_
-#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_REAL_FFT_H_
+#ifndef COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_REAL_FFT_H_
+#define COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_REAL_FFT_H_
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // For ComplexFFT(), the maximum fft order is 10;
 // for OpenMax FFT in ARM, it is 12;
@@ -94,4 +94,4 @@ int WebRtcSpl_RealInverseFFT(struct RealFFT* self,
 }
 #endif
 
-#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_REAL_FFT_H_
+#endif  // COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_REAL_FFT_H_

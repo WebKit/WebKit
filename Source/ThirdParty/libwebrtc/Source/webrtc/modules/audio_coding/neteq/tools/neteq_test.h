@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
+#define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "webrtc/modules/audio_coding/neteq/include/neteq.h"
-#include "webrtc/modules/audio_coding/neteq/tools/audio_sink.h"
-#include "webrtc/modules/audio_coding/neteq/tools/neteq_input.h"
+#include "modules/audio_coding/neteq/include/neteq.h"
+#include "modules/audio_coding/neteq/tools/audio_sink.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 
 namespace webrtc {
 namespace test {
@@ -103,4 +103,4 @@ class NetEqTest {
 
 }  // namespace test
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_TEST_H_

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_NONLINEAR_BEAMFORMER_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_NONLINEAR_BEAMFORMER_H_
+#ifndef MODULES_AUDIO_PROCESSING_BEAMFORMER_NONLINEAR_BEAMFORMER_H_
+#define MODULES_AUDIO_PROCESSING_BEAMFORMER_NONLINEAR_BEAMFORMER_H_
 
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
@@ -19,10 +19,10 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/common_audio/lapped_transform.h"
-#include "webrtc/common_audio/channel_buffer.h"
-#include "webrtc/modules/audio_processing/beamformer/array_util.h"
-#include "webrtc/modules/audio_processing/beamformer/complex_matrix.h"
+#include "common_audio/lapped_transform.h"
+#include "common_audio/channel_buffer.h"
+#include "modules/audio_processing/beamformer/array_util.h"
+#include "modules/audio_processing/beamformer/complex_matrix.h"
 
 namespace webrtc {
 
@@ -225,4 +225,4 @@ class NonlinearBeamformer : public LappedTransform::Callback {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_PROCESSING_BEAMFORMER_NONLINEAR_BEAMFORMER_H_
+#endif  // MODULES_AUDIO_PROCESSING_BEAMFORMER_NONLINEAR_BEAMFORMER_H_

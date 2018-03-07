@@ -10,14 +10,14 @@
 
 // Class to collect statistics from a media channel
 
-#ifndef WEBRTC_PC_MEDIAMONITOR_H_
-#define WEBRTC_PC_MEDIAMONITOR_H_
+#ifndef PC_MEDIAMONITOR_H_
+#define PC_MEDIAMONITOR_H_
 
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/thread.h"
-#include "webrtc/base/thread_annotations.h"
-#include "webrtc/media/base/mediachannel.h"
+#include "media/base/mediachannel.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/sigslot.h"
+#include "rtc_base/thread.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace cricket {
 
@@ -61,7 +61,7 @@ class MediaMonitorT : public MediaMonitor {
     media_info_.Clear();
     media_channel_->GetStats(&media_info_);
   }
-  virtual void Update() EXCLUSIVE_LOCKS_REQUIRED(crit_) {
+  virtual void Update() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_) {
     MI stats(media_info_);
     crit_.Leave();
     SignalUpdate(media_channel_, stats);
@@ -79,4 +79,4 @@ typedef MediaMonitorT<DataMediaChannel, DataMediaInfo> DataMediaMonitor;
 
 }  // namespace cricket
 
-#endif  // WEBRTC_PC_MEDIAMONITOR_H_
+#endif  // PC_MEDIAMONITOR_H_

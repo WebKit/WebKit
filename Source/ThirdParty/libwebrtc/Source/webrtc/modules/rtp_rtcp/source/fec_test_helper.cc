@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/fec_test_helper.h"
+#include "modules/rtp_rtcp/source/fec_test_helper.h"
 
 #include <memory>
 #include <utility>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -78,7 +78,7 @@ ForwardErrorCorrection::PacketList MediaPacketGenerator::ConstructMediaPackets(
   RTC_DCHECK(media_packet);
   media_packet->data[1] |= 0x80;
 
-  fec_seq_num_ = seq_num;
+  next_seq_num_ = seq_num;
 
   return media_packets;
 }
@@ -88,8 +88,8 @@ ForwardErrorCorrection::PacketList MediaPacketGenerator::ConstructMediaPackets(
   return ConstructMediaPackets(num_media_packets, random_->Rand<uint16_t>());
 }
 
-uint16_t MediaPacketGenerator::GetFecSeqNum() {
-  return fec_seq_num_;
+uint16_t MediaPacketGenerator::GetNextSeqNum() {
+  return next_seq_num_;
 }
 
 AugmentedPacketGenerator::AugmentedPacketGenerator(uint32_t ssrc)

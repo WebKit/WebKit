@@ -62,24 +62,24 @@
 #include "../../internal.h"
 
 
-/* How many bignums are in each "pool item"; */
+// How many bignums are in each "pool item";
 #define BN_CTX_POOL_SIZE 16
-/* The stack frame info is resizing, set a first-time expansion size; */
+// The stack frame info is resizing, set a first-time expansion size;
 #define BN_CTX_START_FRAMES 32
 
-/* A bundle of bignums that can be linked with other bundles */
+// A bundle of bignums that can be linked with other bundles
 typedef struct bignum_pool_item {
-  /* The bignum values */
+  // The bignum values
   BIGNUM vals[BN_CTX_POOL_SIZE];
-  /* Linked-list admin */
+  // Linked-list admin
   struct bignum_pool_item *prev, *next;
 } BN_POOL_ITEM;
 
 
 typedef struct bignum_pool {
-  /* Linked-list admin */
+  // Linked-list admin
   BN_POOL_ITEM *head, *current, *tail;
-  /* Stack depth and allocation size */
+  // Stack depth and allocation size
   unsigned used, size;
 } BN_POOL;
 
@@ -88,15 +88,14 @@ static void BN_POOL_finish(BN_POOL *);
 static BIGNUM *BN_POOL_get(BN_POOL *);
 static void BN_POOL_release(BN_POOL *, unsigned int);
 
-/************/
-/* BN_STACK */
-/************/
 
-/* A wrapper to manage the "stack frames" */
+// BN_STACK
+
+// A wrapper to manage the "stack frames"
 typedef struct bignum_ctx_stack {
-  /* Array of indexes into the bignum stack */
+  // Array of indexes into the bignum stack
   unsigned int *indexes;
-  /* Number of stack frames, and the size of the allocated array */
+  // Number of stack frames, and the size of the allocated array
   unsigned int depth, size;
 } BN_STACK;
 
@@ -105,21 +104,20 @@ static void		BN_STACK_finish(BN_STACK *);
 static int		BN_STACK_push(BN_STACK *, unsigned int);
 static unsigned int	BN_STACK_pop(BN_STACK *);
 
-/**********/
-/* BN_CTX */
-/**********/
 
-/* The opaque BN_CTX type */
+// BN_CTX
+
+// The opaque BN_CTX type
 struct bignum_ctx {
-  /* The bignum bundles */
+  // The bignum bundles
   BN_POOL pool;
-  /* The "stack frames", if you will */
+  // The "stack frames", if you will
   BN_STACK stack;
-  /* The number of bignums currently assigned */
+  // The number of bignums currently assigned
   unsigned int used;
-  /* Depth of stack overflow */
+  // Depth of stack overflow
   int err_stack;
-  /* Block "gets" until an "end" (compatibility behaviour) */
+  // Block "gets" until an "end" (compatibility behaviour)
   int too_many;
 };
 
@@ -130,7 +128,7 @@ BN_CTX *BN_CTX_new(void) {
     return NULL;
   }
 
-  /* Initialise the structure */
+  // Initialise the structure
   BN_POOL_init(&ret->pool);
   BN_STACK_init(&ret->stack);
   ret->used = 0;
@@ -150,11 +148,11 @@ void BN_CTX_free(BN_CTX *ctx) {
 }
 
 void BN_CTX_start(BN_CTX *ctx) {
-  /* If we're already overflowing ... */
+  // If we're already overflowing ...
   if (ctx->err_stack || ctx->too_many) {
     ctx->err_stack++;
   } else if (!BN_STACK_push(&ctx->stack, ctx->used)) {
-    /* (Try to) get a new frame pointer */
+    // (Try to) get a new frame pointer
     OPENSSL_PUT_ERROR(BN, BN_R_TOO_MANY_TEMPORARY_VARIABLES);
     ctx->err_stack++;
   }
@@ -168,14 +166,14 @@ BIGNUM *BN_CTX_get(BN_CTX *ctx) {
 
   ret = BN_POOL_get(&ctx->pool);
   if (ret == NULL) {
-    /* Setting too_many prevents repeated "get" attempts from
-     * cluttering the error stack. */
+    // Setting too_many prevents repeated "get" attempts from
+    // cluttering the error stack.
     ctx->too_many = 1;
     OPENSSL_PUT_ERROR(BN, BN_R_TOO_MANY_TEMPORARY_VARIABLES);
     return NULL;
   }
 
-  /* OK, make sure the returned bignum is "zero" */
+  // OK, make sure the returned bignum is "zero"
   BN_zero(ret);
   ctx->used++;
   return ret;
@@ -186,20 +184,19 @@ void BN_CTX_end(BN_CTX *ctx) {
     ctx->err_stack--;
   } else {
     unsigned int fp = BN_STACK_pop(&ctx->stack);
-    /* Does this stack frame have anything to release? */
+    // Does this stack frame have anything to release?
     if (fp < ctx->used) {
       BN_POOL_release(&ctx->pool, ctx->used - fp);
     }
 
     ctx->used = fp;
-    /* Unjam "too_many" in case "get" had failed */
+    // Unjam "too_many" in case "get" had failed
     ctx->too_many = 0;
   }
 }
 
-/************/
-/* BN_STACK */
-/************/
+
+// BN_STACK
 
 static void BN_STACK_init(BN_STACK *st) {
   st->indexes = NULL;
@@ -212,7 +209,7 @@ static void BN_STACK_finish(BN_STACK *st) {
 
 static int BN_STACK_push(BN_STACK *st, unsigned int idx) {
   if (st->depth == st->size) {
-    /* Need to expand */
+    // Need to expand
     unsigned int newsize =
         (st->size ? (st->size * 3 / 2) : BN_CTX_START_FRAMES);
     unsigned int *newitems = OPENSSL_malloc(newsize * sizeof(unsigned int));
@@ -234,6 +231,7 @@ static int BN_STACK_push(BN_STACK *st, unsigned int idx) {
 static unsigned int BN_STACK_pop(BN_STACK *st) {
   return st->indexes[--(st->depth)];
 }
+
 
 static void BN_POOL_init(BN_POOL *p) {
   p->head = p->current = p->tail = NULL;
@@ -259,14 +257,14 @@ static BIGNUM *BN_POOL_get(BN_POOL *p) {
       return NULL;
     }
 
-    /* Initialise the structure */
+    // Initialise the structure
     for (size_t i = 0; i < BN_CTX_POOL_SIZE; i++) {
       BN_init(&item->vals[i]);
     }
 
     item->prev = p->tail;
     item->next = NULL;
-    /* Link it in */
+    // Link it in
     if (!p->head) {
       p->head = p->current = p->tail = item;
     } else {
@@ -277,7 +275,7 @@ static BIGNUM *BN_POOL_get(BN_POOL *p) {
 
     p->size += BN_CTX_POOL_SIZE;
     p->used++;
-    /* Return the first bignum from the new pool */
+    // Return the first bignum from the new pool
     return item->vals;
   }
 

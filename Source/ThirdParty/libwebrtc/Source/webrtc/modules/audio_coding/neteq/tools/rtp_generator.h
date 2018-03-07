@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
+#define MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
 
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/common_types.h"
-#include "webrtc/typedefs.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/constructormagic.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -80,4 +80,4 @@ class TimestampJumpRtpGenerator : public RtpGenerator {
 
 }  // namespace test
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_

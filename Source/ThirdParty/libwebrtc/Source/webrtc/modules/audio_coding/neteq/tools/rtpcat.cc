@@ -12,9 +12,9 @@
 
 #include <memory>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/test/rtp_file_reader.h"
-#include "webrtc/test/rtp_file_writer.h"
+#include "rtc_base/checks.h"
+#include "test/rtp_file_reader.h"
+#include "test/rtp_file_writer.h"
 
 using webrtc::test::RtpFileReader;
 using webrtc::test::RtpFileWriter;

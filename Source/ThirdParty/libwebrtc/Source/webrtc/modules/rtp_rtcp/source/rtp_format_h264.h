@@ -8,17 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H264_H_
-#define WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H264_H_
+#ifndef MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H264_H_
+#define MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H264_H_
 
 #include <deque>
 #include <memory>
 #include <queue>
 #include <string>
 
-#include "webrtc/base/buffer.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_format.h"
+#include "modules/rtp_rtcp/source/rtp_format.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
@@ -40,10 +40,6 @@ class RtpPacketizerH264 : public RtpPacketizer {
   // Write payload and set marker bit of the |packet|.
   // Returns true on success, false otherwise.
   bool NextPacket(RtpPacketToSend* rtp_packet) override;
-
-  ProtectionType GetProtectionType() override;
-
-  StorageType GetStorageType(uint32_t retransmission_settings) override;
 
   std::string ToString() override;
 
@@ -121,4 +117,4 @@ class RtpDepacketizerH264 : public RtpDepacketizer {
   std::unique_ptr<rtc::Buffer> modified_buffer_;
 };
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H264_H_
+#endif  // MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H264_H_

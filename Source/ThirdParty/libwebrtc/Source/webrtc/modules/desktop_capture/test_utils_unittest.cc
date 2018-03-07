@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/desktop_capture/test_utils.h"
+#include "modules/desktop_capture/test_utils.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/desktop_capture/rgba_color.h"
-#include "webrtc/test/gtest.h"
+#include "modules/desktop_capture/rgba_color.h"
+#include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 

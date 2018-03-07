@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/system_wrappers/include/aligned_malloc.h"
+#include "system_wrappers/include/aligned_malloc.h"
 
 #include <memory.h>
 #include <stdlib.h>
@@ -19,7 +19,7 @@
 #include <stdint.h>
 #endif
 
-#include "webrtc/typedefs.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 // Reference on memory alignment:
 // http://stackoverflow.com/questions/227897/solve-the-memory-alignment-in-c-interview-question-that-stumped-me

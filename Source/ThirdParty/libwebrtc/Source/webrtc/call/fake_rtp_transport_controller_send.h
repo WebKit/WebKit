@@ -8,12 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_CALL_FAKE_RTP_TRANSPORT_CONTROLLER_SEND_H_
-#define WEBRTC_CALL_FAKE_RTP_TRANSPORT_CONTROLLER_SEND_H_
+#ifndef CALL_FAKE_RTP_TRANSPORT_CONTROLLER_SEND_H_
+#define CALL_FAKE_RTP_TRANSPORT_CONTROLLER_SEND_H_
 
-#include "webrtc/call/rtp_transport_controller_send_interface.h"
-#include "webrtc/modules/congestion_controller/include/send_side_congestion_controller.h"
-#include "webrtc/modules/pacing/packet_router.h"
+#include "call/rtp_transport_controller_send_interface.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/congestion_controller/include/send_side_congestion_controller.h"
+#include "modules/pacing/packet_router.h"
 
 namespace webrtc {
 
@@ -22,8 +23,11 @@ class FakeRtpTransportControllerSend
  public:
   explicit FakeRtpTransportControllerSend(
       PacketRouter* packet_router,
+      PacedSender* paced_sender,
       SendSideCongestionController* send_side_cc)
-      : packet_router_(packet_router), send_side_cc_(send_side_cc) {
+      : packet_router_(packet_router),
+        paced_sender_(paced_sender),
+        send_side_cc_(send_side_cc) {
     RTC_DCHECK(send_side_cc);
   }
 
@@ -37,13 +41,28 @@ class FakeRtpTransportControllerSend
     return send_side_cc_;
   }
 
-  RtpPacketSender* packet_sender() override { return send_side_cc_->pacer(); }
+  PacedSender* pacer() override { return paced_sender_; }
+
+  RtpPacketSender* packet_sender() override { return paced_sender_; }
+
+  const RtpKeepAliveConfig& keepalive_config() const override {
+    return keepalive_;
+  }
+
+  void SetAllocatedSendBitrateLimits(int min_send_bitrate_bps,
+                                     int max_padding_bitrate_bps) override {}
+
+  void set_keepalive_config(const RtpKeepAliveConfig& keepalive_config) {
+    keepalive_ = keepalive_config;
+  }
 
  private:
   PacketRouter* packet_router_;
+  PacedSender* paced_sender_;
   SendSideCongestionController* send_side_cc_;
+  RtpKeepAliveConfig keepalive_;
 };
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_CALL_FAKE_RTP_TRANSPORT_CONTROLLER_SEND_H_
+#endif  // CALL_FAKE_RTP_TRANSPORT_CONTROLLER_SEND_H_

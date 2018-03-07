@@ -17,9 +17,9 @@
 
 #include <memory>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/sdk/objc/Framework/Classes/Common/helpers.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "sdk/objc/Framework/Classes/Common/helpers.h"
 
 namespace webrtc {
 namespace ios {
@@ -50,7 +50,7 @@ bool CheckAndLogError(BOOL success, NSError* error) {
         [NSString stringWithFormat:@"Error: %ld, %@, %@", (long)error.code,
                                    error.localizedDescription,
                                    error.localizedFailureReason];
-    LOG(LS_ERROR) << StdStringFromNSString(msg);
+    RTC_LOG(LS_ERROR) << StdStringFromNSString(msg);
     return false;
   }
   return true;
@@ -124,8 +124,8 @@ bool GetLowPowerModeEnabled() {
     // lowPoweredModeEnabled is only available on iOS9+.
     return [NSProcessInfo processInfo].lowPowerModeEnabled;
   }
-  LOG(LS_WARNING) << "webrtc::ios::GetLowPowerModeEnabled() is not "
-                     "supported. Requires at least iOS 9.0";
+  RTC_LOG(LS_WARNING) << "webrtc::ios::GetLowPowerModeEnabled() is not "
+                         "supported. Requires at least iOS 9.0";
   return false;
 }
 #endif

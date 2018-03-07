@@ -15,14 +15,14 @@
 // DtlsTransport. This is to allow different types of RTP transports (besides
 // DTLS-SRTP) to be used.
 
-#ifndef WEBRTC_API_ORTC_ORTCRTPSENDERINTERFACE_H_
-#define WEBRTC_API_ORTC_ORTCRTPSENDERINTERFACE_H_
+#ifndef API_ORTC_ORTCRTPSENDERINTERFACE_H_
+#define API_ORTC_ORTCRTPSENDERINTERFACE_H_
 
-#include "webrtc/api/mediastreaminterface.h"
-#include "webrtc/api/mediatypes.h"
-#include "webrtc/api/ortc/rtptransportinterface.h"
-#include "webrtc/api/rtcerror.h"
-#include "webrtc/api/rtpparameters.h"
+#include "api/mediastreaminterface.h"
+#include "api/mediatypes.h"
+#include "api/ortc/rtptransportinterface.h"
+#include "api/rtcerror.h"
+#include "api/rtpparameters.h"
 
 namespace webrtc {
 
@@ -74,4 +74,4 @@ class OrtcRtpSenderInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_ORTC_ORTCRTPSENDERINTERFACE_H_
+#endif  // API_ORTC_ORTCRTPSENDERINTERFACE_H_

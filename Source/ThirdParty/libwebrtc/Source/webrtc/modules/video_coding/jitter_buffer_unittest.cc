@@ -14,21 +14,21 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/location.h"
-#include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/modules/video_coding/frame_buffer.h"
-#include "webrtc/modules/video_coding/jitter_buffer.h"
-#include "webrtc/modules/video_coding/media_opt_util.h"
-#include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/modules/video_coding/test/stream_generator.h"
-#include "webrtc/modules/video_coding/test/test_util.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/field_trial.h"
-#include "webrtc/system_wrappers/include/metrics.h"
-#include "webrtc/system_wrappers/include/metrics_default.h"
-#include "webrtc/test/field_trial.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "common_video/h264/h264_common.h"
+#include "modules/video_coding/frame_buffer.h"
+#include "modules/video_coding/jitter_buffer.h"
+#include "modules/video_coding/media_opt_util.h"
+#include "modules/video_coding/packet.h"
+#include "modules/video_coding/test/stream_generator.h"
+#include "modules/video_coding/test/test_util.h"
+#include "rtc_base/location.h"
+#include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/metrics.h"
+#include "system_wrappers/include/metrics_default.h"
+#include "test/field_trial.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -195,16 +195,6 @@ TEST_F(Vp9SsMapTest, UpdatePacket) {
   EXPECT_EQ(2, packet_.video_header.codecHeader.VP9.pid_diff[1]);
 }
 
-class ProcessThreadMock : public ProcessThread {
- public:
-  MOCK_METHOD0(Start, void());
-  MOCK_METHOD0(Stop, void());
-  MOCK_METHOD1(WakeUp, void(Module* module));
-  MOCK_METHOD2(RegisterModule, void(Module* module, const rtc::Location&));
-  MOCK_METHOD1(DeRegisterModule, void(Module* module));
-  void PostTask(std::unique_ptr<rtc::QueuedTask> task) /*override*/ {}
-};
-
 class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
                               public NackSender,
                               public KeyFrameRequestSender {
@@ -216,7 +206,6 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
 
   void RequestKeyFrame() override { ++keyframe_requests_; }
 
-  ::testing::NiceMock<ProcessThreadMock> process_thread_mock_;
   std::vector<uint16_t> nack_sent_;
   int keyframe_requests_;
 
@@ -332,7 +321,6 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
 
   void RequestKeyFrame() { ++keyframe_requests_; }
 
-  ::testing::NiceMock<ProcessThreadMock> process_thread_mock_;
   std::vector<uint16_t> nack_sent_;
   int keyframe_requests_;
 

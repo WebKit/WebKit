@@ -12,16 +12,16 @@
 #include <memory>
 #include <set>
 
-#include "webrtc/base/rate_limiter.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/nack.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_impl.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/rtcp_packet_parser.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_impl.h"
+#include "rtc_base/rate_limiter.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/rtcp_packet_parser.h"
 
 using ::testing::_;
 using ::testing::ElementsAre;
@@ -53,11 +53,12 @@ class SendTransport : public Transport,
                       public RtpData {
  public:
   SendTransport()
-      : receiver_(NULL),
-        clock_(NULL),
+      : receiver_(nullptr),
+        clock_(nullptr),
         delay_ms_(0),
-        rtp_packets_sent_(0) {
-  }
+        rtp_packets_sent_(0),
+        keepalive_payload_type_(0),
+        num_keepalive_sent_(0) {}
 
   void SetRtpRtcpModule(ModuleRtpRtcpImpl* receiver) {
     receiver_ = receiver;
@@ -73,6 +74,8 @@ class SendTransport : public Transport,
     std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::Create());
     EXPECT_TRUE(parser->Parse(static_cast<const uint8_t*>(data), len, &header));
     ++rtp_packets_sent_;
+    if (header.payloadType == keepalive_payload_type_)
+      ++num_keepalive_sent_;
     last_rtp_header_ = header;
     return true;
   }
@@ -85,7 +88,7 @@ class SendTransport : public Transport,
       clock_->AdvanceTimeMilliseconds(delay_ms_);
     }
     EXPECT_TRUE(receiver_);
-    EXPECT_EQ(0, receiver_->IncomingRtcpPacket(data, len));
+    receiver_->IncomingRtcpPacket(data, len);
     return true;
   }
   int32_t OnReceivedPayloadData(const uint8_t* payload_data,
@@ -93,12 +96,18 @@ class SendTransport : public Transport,
                                 const WebRtcRTPHeader* rtp_header) override {
     return 0;
   }
+  void SetKeepalivePayloadType(uint8_t payload_type) {
+    keepalive_payload_type_ = payload_type;
+  }
+  size_t NumKeepaliveSent() { return num_keepalive_sent_; }
   ModuleRtpRtcpImpl* receiver_;
   SimulatedClock* clock_;
   int64_t delay_ms_;
   int rtp_packets_sent_;
   RTPHeader last_rtp_header_;
   std::vector<uint16_t> last_nack_list_;
+  uint8_t keepalive_payload_type_;
+  size_t num_keepalive_sent_;
 };
 
 class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
@@ -106,19 +115,9 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
   explicit RtpRtcpModule(SimulatedClock* clock)
       : receive_statistics_(ReceiveStatistics::Create(clock)),
         remote_ssrc_(0),
-        retransmission_rate_limiter_(clock, kMaxRttMs) {
-    RtpRtcp::Configuration config;
-    config.audio = false;
-    config.clock = clock;
-    config.outgoing_transport = &transport_;
-    config.receive_statistics = receive_statistics_.get();
-    config.rtcp_packet_type_counter_observer = this;
-    config.rtt_stats = &rtt_stats_;
-    config.retransmission_rate_limiter = &retransmission_rate_limiter_;
-
-    impl_.reset(new ModuleRtpRtcpImpl(config));
-    impl_->SetRTCPStatus(RtcpMode::kCompound);
-
+        retransmission_rate_limiter_(clock, kMaxRttMs),
+        clock_(clock) {
+    CreateModuleImpl();
     transport_.SimulateNetworkDelay(kOneWayNetworkDelayMs, clock);
   }
 
@@ -130,6 +129,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
   std::unique_ptr<ModuleRtpRtcpImpl> impl_;
   uint32_t remote_ssrc_;
   RateLimiter retransmission_rate_limiter_;
+  RtpKeepAliveConfig keepalive_config_;
 
   void SetRemoteSsrc(uint32_t ssrc) {
     remote_ssrc_ = ssrc;
@@ -160,8 +160,30 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
   std::vector<uint16_t> LastNackListSent() {
     return transport_.last_nack_list_;
   }
+  void SetKeepaliveConfigAndReset(const RtpKeepAliveConfig& config) {
+    keepalive_config_ = config;
+    // Need to create a new module impl, since it's configured at creation.
+    CreateModuleImpl();
+    transport_.SetKeepalivePayloadType(config.payload_type);
+  }
 
  private:
+  void CreateModuleImpl() {
+    RtpRtcp::Configuration config;
+    config.audio = false;
+    config.clock = clock_;
+    config.outgoing_transport = &transport_;
+    config.receive_statistics = receive_statistics_.get();
+    config.rtcp_packet_type_counter_observer = this;
+    config.rtt_stats = &rtt_stats_;
+    config.retransmission_rate_limiter = &retransmission_rate_limiter_;
+    config.keepalive_config = keepalive_config_;
+
+    impl_.reset(new ModuleRtpRtcpImpl(config));
+    impl_->SetRTCPStatus(RtcpMode::kCompound);
+  }
+
+  SimulatedClock* const clock_;
   std::map<uint32_t, RtcpPacketTypeCounter> counter_map_;
 };
 }  // namespace
@@ -169,9 +191,9 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
 class RtpRtcpImplTest : public ::testing::Test {
  protected:
   RtpRtcpImplTest()
-      : clock_(133590000000000),
-        sender_(&clock_),
-        receiver_(&clock_) {
+      : clock_(133590000000000), sender_(&clock_), receiver_(&clock_) {}
+
+  void SetUp() override {
     // Send module.
     sender_.impl_->SetSSRC(kSenderSsrc);
     EXPECT_EQ(0, sender_.impl_->SetSendingStatus(true));
@@ -196,6 +218,7 @@ class RtpRtcpImplTest : public ::testing::Test {
     sender_.transport_.SetRtpRtcpModule(receiver_.impl_.get());
     receiver_.transport_.SetRtpRtcpModule(sender_.impl_.get());
   }
+
   SimulatedClock clock_;
   RtpRtcpModule sender_;
   RtpRtcpModule receiver_;
@@ -232,8 +255,7 @@ class RtpRtcpImplTest : public ::testing::Test {
     nack.SetMediaSsrc(sender ? kSenderSsrc : kReceiverSsrc);
     nack.SetPacketIds(list, kListLength);
     rtc::Buffer packet = nack.Build();
-    EXPECT_EQ(0, module->impl_->IncomingRtcpPacket(packet.data(),
-                                                   packet.size()));
+    module->impl_->IncomingRtcpPacket(packet.data(), packet.size());
   }
 };
 
@@ -566,5 +588,59 @@ TEST_F(RtpRtcpImplTest, UniqueNackRequests) {
   EXPECT_EQ(8U, sender_.RtcpReceived().nack_requests);
   EXPECT_EQ(6U, sender_.RtcpReceived().unique_nack_requests);
   EXPECT_EQ(75, sender_.RtcpReceived().UniqueNackRequestsInPercent());
+}
+
+TEST_F(RtpRtcpImplTest, SendsKeepaliveAfterTimout) {
+  const int kTimeoutMs = 1500;
+
+  RtpKeepAliveConfig config;
+  config.timeout_interval_ms = kTimeoutMs;
+
+  // Recreate sender impl with new configuration, and redo setup.
+  sender_.SetKeepaliveConfigAndReset(config);
+  SetUp();
+
+  // Initial process call.
+  sender_.impl_->Process();
+  EXPECT_EQ(0U, sender_.transport_.NumKeepaliveSent());
+
+  // After one time, a single keep-alive packet should be sent.
+  clock_.AdvanceTimeMilliseconds(kTimeoutMs);
+  sender_.impl_->Process();
+  EXPECT_EQ(1U, sender_.transport_.NumKeepaliveSent());
+
+  // Process for the same timestamp again, no new packet should be sent.
+  sender_.impl_->Process();
+  EXPECT_EQ(1U, sender_.transport_.NumKeepaliveSent());
+
+  // Move ahead to the last ms before a keep-alive is expected, no action.
+  clock_.AdvanceTimeMilliseconds(kTimeoutMs - 1);
+  sender_.impl_->Process();
+  EXPECT_EQ(1U, sender_.transport_.NumKeepaliveSent());
+
+  // Move the final ms, timeout relative last KA. Should create new keep-alive.
+  clock_.AdvanceTimeMilliseconds(1);
+  sender_.impl_->Process();
+  EXPECT_EQ(2U, sender_.transport_.NumKeepaliveSent());
+
+  // Move ahead to the last ms before Christmas.
+  clock_.AdvanceTimeMilliseconds(kTimeoutMs - 1);
+  sender_.impl_->Process();
+  EXPECT_EQ(2U, sender_.transport_.NumKeepaliveSent());
+
+  // Send actual payload data, no keep-alive expected.
+  SendFrame(&sender_, 0);
+  sender_.impl_->Process();
+  EXPECT_EQ(2U, sender_.transport_.NumKeepaliveSent());
+
+  // Move ahead as far as possible again, timeout now relative payload. No KA.
+  clock_.AdvanceTimeMilliseconds(kTimeoutMs - 1);
+  sender_.impl_->Process();
+  EXPECT_EQ(2U, sender_.transport_.NumKeepaliveSent());
+
+  // Timeout relative payload, send new keep-alive.
+  clock_.AdvanceTimeMilliseconds(1);
+  sender_.impl_->Process();
+  EXPECT_EQ(3U, sender_.transport_.NumKeepaliveSent());
 }
 }  // namespace webrtc

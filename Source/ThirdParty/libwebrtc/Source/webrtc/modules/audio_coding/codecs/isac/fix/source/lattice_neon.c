@@ -10,8 +10,8 @@
 
 #include <arm_neon.h>
 
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/codec.h"
-#include "webrtc/modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 
 // Contains a function for the core loop in the normalized lattice MA
 // filter routine for iSAC codec, optimized for ARM Neon platform.

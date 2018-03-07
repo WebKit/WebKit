@@ -21,7 +21,7 @@
 /* include API */
 #include "isac.h"
 #include "utility.h"
-#include "webrtc/base/format_macros.h"
+#include "rtc_base/format_macros.h"
 
 /* Defines */
 #define SEED_FILE "randseed.txt" /* Used when running decoder on garbage data */

@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
-#define WEBRTC_COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
+#ifndef COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
+#define COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
 
-#include "webrtc/media/base/h264_profile_level_id.h"
+#include "media/base/h264_profile_level_id.h"
 
 // TODO(zhihuang): Delete this file once dependent applications switch to
 // including "webrtc/media/base/h264_profile_level_id.h" directly.
 
-#endif  // WEBRTC_COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
+#endif  // COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_

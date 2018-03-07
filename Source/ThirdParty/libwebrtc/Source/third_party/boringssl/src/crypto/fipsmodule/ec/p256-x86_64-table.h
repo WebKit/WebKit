@@ -12,17 +12,17 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-/* This is the precomputed constant time access table for the code in
- * p256-x86_64.c, for the default generator. The table consists of 37
- * subtables, each subtable contains 64 affine points. The affine points are
- * encoded as eight uint64's, four for the x coordinate and four for the y.
- * Both values are in little-endian order. There are 37 tables because a
- * signed, 6-bit wNAF form of the scalar is used and ceil(256/(6 + 1)) = 37.
- * Within each table there are 64 values because the 6-bit wNAF value can take
- * 64 values, ignoring the sign bit, which is implemented by performing a
- * negation of the affine point when required. We would like to align it to 2MB
- * in order to increase the chances of using a large page but that appears to
- * lead to invalid ELF files being produced. */
+// This is the precomputed constant time access table for the code in
+// p256-x86_64.c, for the default generator. The table consists of 37
+// subtables, each subtable contains 64 affine points. The affine points are
+// encoded as eight uint64's, four for the x coordinate and four for the y.
+// Both values are in little-endian order. There are 37 tables because a
+// signed, 6-bit wNAF form of the scalar is used and ceil(256/(6 + 1)) = 37.
+// Within each table there are 64 values because the 6-bit wNAF value can take
+// 64 values, ignoring the sign bit, which is implemented by performing a
+// negation of the affine point when required. We would like to align it to 2MB
+// in order to increase the chances of using a large page but that appears to
+// lead to invalid ELF files being produced.
 
 static const alignas(4096) BN_ULONG
     ecp_nistz256_precomputed[37][64 * sizeof(P256_POINT_AFFINE) /

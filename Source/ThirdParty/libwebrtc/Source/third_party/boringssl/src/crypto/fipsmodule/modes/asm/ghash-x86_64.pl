@@ -1,4 +1,11 @@
-#!/usr/bin/env perl
+#! /usr/bin/env perl
+# Copyright 2010-2016 The OpenSSL Project Authors. All Rights Reserved.
+#
+# Licensed under the OpenSSL license (the "License").  You may not use
+# this file except in compliance with the License.  You can obtain a copy
+# in the file LICENSE in the source distribution or at
+# https://www.openssl.org/source/license.html
+
 #
 # ====================================================================
 # Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
@@ -67,6 +74,7 @@
 # Skylake	0.44(+110%)(if system doesn't support AVX)
 # Bulldozer	1.49(+27%)
 # Silvermont	2.88(+13%)
+# Knights L	2.12(-)    (if system doesn't support AVX)
 # Goldmont	1.08(+24%)
 
 # March 2013
@@ -78,6 +86,8 @@
 # to Ilya Albrekht and Max Locktyukhin of Intel Corp. we knew that
 # it performs in 0.41 cycles per byte on Haswell processor, in
 # 0.29 on Broadwell, and in 0.36 on Skylake.
+#
+# Knights Landing achieves 1.09 cpb.
 #
 # [1] http://rt.openssl.org/Ticket/Display.html?id=2900&user=guest&pass=guest
 

@@ -57,8 +57,10 @@
 #include <openssl/bn.h>
 
 #include <openssl/mem.h>
+#include <openssl/type_check.h>
 
 #include "internal.h"
+#include "../../internal.h"
 
 
 int BN_ucmp(const BIGNUM *a, const BIGNUM *b) {
@@ -159,19 +161,32 @@ int bn_cmp_part_words(const BN_ULONG *a, const BN_ULONG *b, int cl, int dl) {
   if (dl < 0) {
     for (i = dl; i < 0; i++) {
       if (b[n - i] != 0) {
-        return -1; /* a < b */
+        return -1;  // a < b
       }
     }
   }
   if (dl > 0) {
     for (i = dl; i > 0; i--) {
       if (a[n + i] != 0) {
-        return 1; /* a > b */
+        return 1;  // a > b
       }
     }
   }
 
   return bn_cmp_words(a, b, cl);
+}
+
+int bn_less_than_words(const BN_ULONG *a, const BN_ULONG *b, size_t len) {
+  OPENSSL_COMPILE_ASSERT(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
+                         crypto_word_t_too_small);
+  int ret = 0;
+  // Process the words in little-endian order.
+  for (size_t i = 0; i < len; i++) {
+    crypto_word_t eq = constant_time_eq_w(a[i], b[i]);
+    crypto_word_t lt = constant_time_lt_w(a[i], b[i]);
+    ret = constant_time_select_int(eq, ret, constant_time_select_int(lt, 1, 0));
+  }
+  return ret;
 }
 
 int BN_abs_is_word(const BIGNUM *bn, BN_ULONG w) {

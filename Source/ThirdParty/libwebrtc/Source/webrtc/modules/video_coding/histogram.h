@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_HISTOGRAM_H_
-#define WEBRTC_MODULES_VIDEO_CODING_HISTOGRAM_H_
+#ifndef MODULES_VIDEO_CODING_HISTOGRAM_H_
+#define MODULES_VIDEO_CODING_HISTOGRAM_H_
 
 #include <cstddef>
 #include <vector>
@@ -43,4 +43,4 @@ class Histogram {
 }  // namespace video_coding
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_CODING_HISTOGRAM_H_
+#endif  // MODULES_VIDEO_CODING_HISTOGRAM_H_

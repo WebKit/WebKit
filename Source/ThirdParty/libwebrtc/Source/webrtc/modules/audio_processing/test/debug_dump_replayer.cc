@@ -8,11 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/audio_processing/test/debug_dump_replayer.h"
+#include "modules/audio_processing/test/debug_dump_replayer.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_processing/test/protobuf_utils.h"
-
+#include "modules/audio_processing/test/protobuf_utils.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
@@ -52,9 +51,9 @@ bool DebugDumpReplayer::SetDumpFile(const std::string& filename) {
 // Get next event that has not run.
 rtc::Optional<audioproc::Event> DebugDumpReplayer::GetNextEvent() const {
   if (!has_next_event_)
-    return rtc::Optional<audioproc::Event>();
+    return rtc::nullopt;
   else
-    return rtc::Optional<audioproc::Event>(next_event_);
+    return next_event_;
 }
 
 // Run the next event. Returns the event type.

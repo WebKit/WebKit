@@ -8,6 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/api/ortc/mediadescription.h"
+#include "api/ortc/mediadescription.h"
 
 namespace webrtc {}

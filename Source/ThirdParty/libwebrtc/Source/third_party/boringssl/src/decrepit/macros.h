@@ -58,7 +58,7 @@
 #define OPENSSL_HEADER_DECREPIT_MACROS_H
 
 
-/* NOTE - c is not incremented as per n2l */
+// NOTE - c is not incremented as per n2l
 #define n2ln(c, l1, l2, n)                       \
   {                                              \
     c += n;                                      \
@@ -66,42 +66,56 @@
     switch (n) {                                 \
       case 8:                                    \
         l2 = ((unsigned long)(*(--(c))));        \
+	OPENSSL_FALLTHROUGH;                     \
       case 7:                                    \
         l2 |= ((unsigned long)(*(--(c)))) << 8;  \
+	OPENSSL_FALLTHROUGH;                     \
       case 6:                                    \
         l2 |= ((unsigned long)(*(--(c)))) << 16; \
+	OPENSSL_FALLTHROUGH;                     \
       case 5:                                    \
         l2 |= ((unsigned long)(*(--(c)))) << 24; \
+	OPENSSL_FALLTHROUGH;                     \
       case 4:                                    \
         l1 = ((unsigned long)(*(--(c))));        \
+	OPENSSL_FALLTHROUGH;                     \
       case 3:                                    \
         l1 |= ((unsigned long)(*(--(c)))) << 8;  \
+	OPENSSL_FALLTHROUGH;                     \
       case 2:                                    \
         l1 |= ((unsigned long)(*(--(c)))) << 16; \
+	OPENSSL_FALLTHROUGH;                     \
       case 1:                                    \
         l1 |= ((unsigned long)(*(--(c)))) << 24; \
     }                                            \
   }
 
-/* NOTE - c is not incremented as per l2n */
+// NOTE - c is not incremented as per l2n
 #define l2nn(l1, l2, c, n)                               \
   {                                                      \
     c += n;                                              \
     switch (n) {                                         \
       case 8:                                            \
         *(--(c)) = (unsigned char)(((l2)) & 0xff);       \
+	OPENSSL_FALLTHROUGH;                             \
       case 7:                                            \
         *(--(c)) = (unsigned char)(((l2) >> 8) & 0xff);  \
+	OPENSSL_FALLTHROUGH;                             \
       case 6:                                            \
         *(--(c)) = (unsigned char)(((l2) >> 16) & 0xff); \
+	OPENSSL_FALLTHROUGH;                             \
       case 5:                                            \
         *(--(c)) = (unsigned char)(((l2) >> 24) & 0xff); \
+	OPENSSL_FALLTHROUGH;                             \
       case 4:                                            \
         *(--(c)) = (unsigned char)(((l1)) & 0xff);       \
+	OPENSSL_FALLTHROUGH;                             \
       case 3:                                            \
         *(--(c)) = (unsigned char)(((l1) >> 8) & 0xff);  \
+	OPENSSL_FALLTHROUGH;                             \
       case 2:                                            \
         *(--(c)) = (unsigned char)(((l1) >> 16) & 0xff); \
+	OPENSSL_FALLTHROUGH;                             \
       case 1:                                            \
         *(--(c)) = (unsigned char)(((l1) >> 24) & 0xff); \
     }                                                    \
@@ -120,4 +134,4 @@
    l |= ((unsigned long)(*((c)++))))
 
 
-#endif  /* OPENSSL_HEADER_DECREPIT_MACROS_H */
+#endif  // OPENSSL_HEADER_DECREPIT_MACROS_H

@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_DEVICE_ANDROID_AUDIO_TRACK_JNI_H_
-#define WEBRTC_MODULES_AUDIO_DEVICE_ANDROID_AUDIO_TRACK_JNI_H_
+#ifndef MODULES_AUDIO_DEVICE_ANDROID_AUDIO_TRACK_JNI_H_
+#define MODULES_AUDIO_DEVICE_ANDROID_AUDIO_TRACK_JNI_H_
 
 #include <memory>
 
 #include <jni.h>
 
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/modules/audio_device/android/audio_common.h"
-#include "webrtc/modules/audio_device/android/audio_manager.h"
-#include "webrtc/modules/audio_device/include/audio_device_defines.h"
-#include "webrtc/modules/audio_device/audio_device_generic.h"
-#include "webrtc/modules/utility/include/helpers_android.h"
-#include "webrtc/modules/utility/include/jvm_android.h"
+#include "modules/audio_device/android/audio_common.h"
+#include "modules/audio_device/android/audio_manager.h"
+#include "modules/audio_device/audio_device_generic.h"
+#include "modules/audio_device/include/audio_device_defines.h"
+#include "modules/utility/include/helpers_android.h"
+#include "modules/utility/include/jvm_android.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -152,4 +152,4 @@ class AudioTrackJni {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_AUDIO_DEVICE_ANDROID_AUDIO_TRACK_JNI_H_
+#endif  // MODULES_AUDIO_DEVICE_ANDROID_AUDIO_TRACK_JNI_H_

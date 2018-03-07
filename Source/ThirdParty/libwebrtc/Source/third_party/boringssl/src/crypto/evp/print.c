@@ -131,7 +131,7 @@ static void update_buflen(const BIGNUM *b, size_t *pbuflen) {
   }
 }
 
-/* RSA keys. */
+// RSA keys.
 
 static int do_rsa_print(BIO *out, const RSA *rsa, int off,
                         int include_private) {
@@ -212,7 +212,7 @@ static int rsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent,
 }
 
 
-/* DSA keys. */
+// DSA keys.
 
 static int do_dsa_print(BIO *bp, const DSA *x, int off, int ptype) {
   uint8_t *m = NULL;
@@ -288,7 +288,7 @@ static int dsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent,
 }
 
 
-/* EC keys. */
+// EC keys.
 
 static int do_EC_KEY_print(BIO *bp, const EC_KEY *x, int off, int ktype) {
   uint8_t *buffer = NULL;
@@ -379,7 +379,7 @@ static int do_EC_KEY_print(BIO *bp, const EC_KEY *x, int off, int ktype) {
   if (pub_key_bytes != NULL) {
     BIO_hexdump(bp, pub_key_bytes, pub_key_bytes_len, off);
   }
-  /* TODO(fork): implement */
+  // TODO(fork): implement
   /*
   if (!ECPKParameters_print(bp, group, off))
     goto err; */

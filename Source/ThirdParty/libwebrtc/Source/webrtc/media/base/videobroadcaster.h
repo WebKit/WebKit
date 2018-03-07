@@ -8,18 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_BASE_VIDEOBROADCASTER_H_
-#define WEBRTC_MEDIA_BASE_VIDEOBROADCASTER_H_
+#ifndef MEDIA_BASE_VIDEOBROADCASTER_H_
+#define MEDIA_BASE_VIDEOBROADCASTER_H_
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/base/thread_checker.h"
-#include "webrtc/media/base/videosinkinterface.h"
-#include "webrtc/media/base/videosourcebase.h"
+#include "api/video/video_frame.h"
+#include "media/base/videosinkinterface.h"
+#include "media/base/videosourcebase.h"
+#include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_checker.h"
 
 namespace rtc {
 
@@ -50,19 +50,21 @@ class VideoBroadcaster : public VideoSourceBase,
   // to the VideoSinkWants.
   void OnFrame(const webrtc::VideoFrame& frame) override;
 
+  void OnDiscardedFrame() override;
+
  protected:
-  void UpdateWants() EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
+  void UpdateWants() RTC_EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
   const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& GetBlackFrameBuffer(
-      int width, int height)
-      EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
+      int width,
+      int height) RTC_EXCLUSIVE_LOCKS_REQUIRED(sinks_and_wants_lock_);
 
   ThreadChecker thread_checker_;
   rtc::CriticalSection sinks_and_wants_lock_;
 
-  VideoSinkWants current_wants_ GUARDED_BY(sinks_and_wants_lock_);
+  VideoSinkWants current_wants_ RTC_GUARDED_BY(sinks_and_wants_lock_);
   rtc::scoped_refptr<webrtc::VideoFrameBuffer> black_frame_buffer_;
 };
 
 }  // namespace rtc
 
-#endif  // WEBRTC_MEDIA_BASE_VIDEOBROADCASTER_H_
+#endif  // MEDIA_BASE_VIDEOBROADCASTER_H_

@@ -45,7 +45,6 @@ import org.appspot.apprtc.PeerConnectionClient.PeerConnectionParameters;
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
 import org.webrtc.CameraEnumerator;
-import org.webrtc.EglBase;
 import org.webrtc.FileVideoCapturer;
 import org.webrtc.IceCandidate;
 import org.webrtc.Logging;
@@ -57,7 +56,9 @@ import org.webrtc.StatsReport;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoFileRenderer;
+import org.webrtc.VideoFrame;
 import org.webrtc.VideoRenderer;
+import org.webrtc.VideoSink;
 
 /**
  * Activity for peer connection call setup, call waiting
@@ -67,18 +68,6 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
                                                       PeerConnectionClient.PeerConnectionEvents,
                                                       CallFragment.OnCallEvents {
   private static final String TAG = "CallRTCClient";
-
-  // Fix for devices running old Android versions not finding the libraries.
-  // https://bugs.chromium.org/p/webrtc/issues/detail?id=6751
-  static {
-    try {
-      System.loadLibrary("c++_shared");
-      System.loadLibrary("boringssl.cr");
-      System.loadLibrary("protobuf_lite.cr");
-    } catch (UnsatisfiedLinkError e) {
-      Logging.w(TAG, "Failed to load native dependencies: ", e);
-    }
-  }
 
   public static final String EXTRA_ROOMID = "org.appspot.apprtc.ROOMID";
   public static final String EXTRA_URLPARAMETERS = "org.appspot.apprtc.URLPARAMETERS";
@@ -138,9 +127,10 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   // Peer connection statistics callback period in ms.
   private static final int STAT_CALLBACK_PERIOD = 1000;
 
-  private class ProxyRenderer implements VideoRenderer.Callbacks {
+  private static class ProxyRenderer implements VideoRenderer.Callbacks {
     private VideoRenderer.Callbacks target;
 
+    @Override
     synchronized public void renderFrame(VideoRenderer.I420Frame frame) {
       if (target == null) {
         Logging.d(TAG, "Dropping frame in proxy because target is null.");
@@ -156,21 +146,36 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     }
   }
 
+  private static class ProxyVideoSink implements VideoSink {
+    private VideoSink target;
+
+    @Override
+    synchronized public void onFrame(VideoFrame frame) {
+      if (target == null) {
+        Logging.d(TAG, "Dropping frame in proxy because target is null.");
+        return;
+      }
+
+      target.onFrame(frame);
+    }
+
+    synchronized public void setTarget(VideoSink target) {
+      this.target = target;
+    }
+  }
+
   private final ProxyRenderer remoteProxyRenderer = new ProxyRenderer();
-  private final ProxyRenderer localProxyRenderer = new ProxyRenderer();
+  private final ProxyVideoSink localProxyVideoSink = new ProxyVideoSink();
   private PeerConnectionClient peerConnectionClient = null;
   private AppRTCClient appRtcClient;
   private SignalingParameters signalingParameters;
   private AppRTCAudioManager audioManager = null;
-  private EglBase rootEglBase;
   private SurfaceViewRenderer pipRenderer;
   private SurfaceViewRenderer fullscreenRenderer;
   private VideoFileRenderer videoFileRenderer;
-  private final List<VideoRenderer.Callbacks> remoteRenderers =
-      new ArrayList<VideoRenderer.Callbacks>();
+  private final List<VideoRenderer.Callbacks> remoteRenderers = new ArrayList<>();
   private Toast logToast;
   private boolean commandLineRun;
-  private int runTimeMs;
   private boolean activityRunning;
   private RoomConnectionParameters roomConnectionParameters;
   private PeerConnectionParameters peerConnectionParameters;
@@ -199,8 +204,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     // adding content.
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON
-        | LayoutParams.FLAG_DISMISS_KEYGUARD | LayoutParams.FLAG_SHOW_WHEN_LOCKED
-        | LayoutParams.FLAG_TURN_SCREEN_ON);
+        | LayoutParams.FLAG_SHOW_WHEN_LOCKED | LayoutParams.FLAG_TURN_SCREEN_ON);
     getWindow().getDecorView().setSystemUiVisibility(getSystemUiVisibility());
     setContentView(R.layout.activity_call);
 
@@ -208,8 +212,8 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     signalingParameters = null;
 
     // Create UI controls.
-    pipRenderer = (SurfaceViewRenderer) findViewById(R.id.pip_video_view);
-    fullscreenRenderer = (SurfaceViewRenderer) findViewById(R.id.fullscreen_video_view);
+    pipRenderer = findViewById(R.id.pip_video_view);
+    fullscreenRenderer = findViewById(R.id.fullscreen_video_view);
     callFragment = new CallFragment();
     hudFragment = new HudFragment();
 
@@ -234,9 +238,11 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
 
     final Intent intent = getIntent();
 
+    // Create peer connection client.
+    peerConnectionClient = new PeerConnectionClient();
+
     // Create video renderers.
-    rootEglBase = EglBase.create();
-    pipRenderer.init(rootEglBase.getEglBaseContext(), null);
+    pipRenderer.init(peerConnectionClient.getRenderContext(), null);
     pipRenderer.setScalingType(ScalingType.SCALE_ASPECT_FIT);
     String saveRemoteVideoToFile = intent.getStringExtra(EXTRA_SAVE_REMOTE_VIDEO_TO_FILE);
 
@@ -245,15 +251,15 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
       int videoOutWidth = intent.getIntExtra(EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_WIDTH, 0);
       int videoOutHeight = intent.getIntExtra(EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_HEIGHT, 0);
       try {
-        videoFileRenderer = new VideoFileRenderer(
-            saveRemoteVideoToFile, videoOutWidth, videoOutHeight, rootEglBase.getEglBaseContext());
+        videoFileRenderer = new VideoFileRenderer(saveRemoteVideoToFile, videoOutWidth,
+            videoOutHeight, peerConnectionClient.getRenderContext());
         remoteRenderers.add(videoFileRenderer);
       } catch (IOException e) {
         throw new RuntimeException(
             "Failed to open video file for output: " + saveRemoteVideoToFile, e);
       }
     }
-    fullscreenRenderer.init(rootEglBase.getEglBaseContext(), null);
+    fullscreenRenderer.init(peerConnectionClient.getRenderContext(), null);
     fullscreenRenderer.setScalingType(ScalingType.SCALE_ASPECT_FILL);
 
     pipRenderer.setZOrderMediaOverlay(true);
@@ -328,7 +334,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
             intent.getBooleanExtra(EXTRA_ENABLE_LEVEL_CONTROL, false),
             intent.getBooleanExtra(EXTRA_DISABLE_WEBRTC_AGC_AND_HPF, false), dataChannelParameters);
     commandLineRun = intent.getBooleanExtra(EXTRA_CMDLINE, false);
-    runTimeMs = intent.getIntExtra(EXTRA_RUNTIME, 0);
+    int runTimeMs = intent.getIntExtra(EXTRA_RUNTIME, 0);
 
     Log.d(TAG, "VIDEO_FILE: '" + intent.getStringExtra(EXTRA_VIDEO_FILE_AS_CAMERA) + "'");
 
@@ -346,8 +352,10 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
         new RoomConnectionParameters(roomUri.toString(), roomId, loopback, urlParameters);
 
     // Create CPU monitor
-    cpuMonitor = new CpuMonitor(this);
-    hudFragment.setCpuMonitor(cpuMonitor);
+    if (cpuMonitor.isSupported()) {
+      cpuMonitor = new CpuMonitor(this);
+      hudFragment.setCpuMonitor(cpuMonitor);
+    }
 
     // Send intent arguments to fragments.
     callFragment.setArguments(intent.getExtras());
@@ -368,7 +376,6 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
       }, runTimeMs);
     }
 
-    peerConnectionClient = PeerConnectionClient.getInstance();
     if (loopback) {
       PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
       options.networkIgnoreMask = 0;
@@ -485,7 +492,9 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     if (peerConnectionClient != null && !screencaptureEnabled) {
       peerConnectionClient.stopVideoSource();
     }
-    cpuMonitor.pause();
+    if (cpuMonitor != null) {
+      cpuMonitor.pause();
+    }
   }
 
   @Override
@@ -496,7 +505,9 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     if (peerConnectionClient != null && !screencaptureEnabled) {
       peerConnectionClient.startVideoSource();
     }
-    cpuMonitor.resume();
+    if (cpuMonitor != null) {
+      cpuMonitor.resume();
+    }
   }
 
   @Override
@@ -507,7 +518,6 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
       logToast.cancel();
     }
     activityRunning = false;
-    rootEglBase.release();
     super.onDestroy();
   }
 
@@ -618,14 +628,10 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   private void disconnect() {
     activityRunning = false;
     remoteProxyRenderer.setTarget(null);
-    localProxyRenderer.setTarget(null);
+    localProxyVideoSink.setTarget(null);
     if (appRtcClient != null) {
       appRtcClient.disconnectFromRoom();
       appRtcClient = null;
-    }
-    if (peerConnectionClient != null) {
-      peerConnectionClient.close();
-      peerConnectionClient = null;
     }
     if (pipRenderer != null) {
       pipRenderer.release();
@@ -638,6 +644,10 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     if (fullscreenRenderer != null) {
       fullscreenRenderer.release();
       fullscreenRenderer = null;
+    }
+    if (peerConnectionClient != null) {
+      peerConnectionClient.close();
+      peerConnectionClient = null;
     }
     if (audioManager != null) {
       audioManager.stop();
@@ -696,7 +706,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   }
 
   private VideoCapturer createVideoCapturer() {
-    VideoCapturer videoCapturer = null;
+    final VideoCapturer videoCapturer;
     String videoFileAsCamera = getIntent().getStringExtra(EXTRA_VIDEO_FILE_AS_CAMERA);
     if (videoFileAsCamera != null) {
       try {
@@ -729,7 +739,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   private void setSwappedFeeds(boolean isSwappedFeeds) {
     Logging.d(TAG, "setSwappedFeeds: " + isSwappedFeeds);
     this.isSwappedFeeds = isSwappedFeeds;
-    localProxyRenderer.setTarget(isSwappedFeeds ? fullscreenRenderer : pipRenderer);
+    localProxyVideoSink.setTarget(isSwappedFeeds ? fullscreenRenderer : pipRenderer);
     remoteProxyRenderer.setTarget(isSwappedFeeds ? pipRenderer : fullscreenRenderer);
     fullscreenRenderer.setMirror(isSwappedFeeds);
     pipRenderer.setMirror(!isSwappedFeeds);
@@ -747,8 +757,8 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     if (peerConnectionParameters.videoCallEnabled) {
       videoCapturer = createVideoCapturer();
     }
-    peerConnectionClient.createPeerConnection(rootEglBase.getEglBaseContext(), localProxyRenderer,
-        remoteRenderers, videoCapturer, signalingParameters);
+    peerConnectionClient.createPeerConnection(
+        localProxyVideoSink, remoteRenderers, videoCapturer, signalingParameters);
 
     if (signalingParameters.initiator) {
       logAndToast("Creating OFFER...");

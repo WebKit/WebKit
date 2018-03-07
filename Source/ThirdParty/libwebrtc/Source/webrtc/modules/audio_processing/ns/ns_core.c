@@ -12,12 +12,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/common_audio/fft4g.h"
-#include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/modules/audio_processing/ns/noise_suppression.h"
-#include "webrtc/modules/audio_processing/ns/ns_core.h"
-#include "webrtc/modules/audio_processing/ns/windows_private.h"
+#include "rtc_base/checks.h"
+#include "common_audio/fft4g.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_processing/ns/noise_suppression.h"
+#include "modules/audio_processing/ns/ns_core.h"
+#include "modules/audio_processing/ns/windows_private.h"
 
 // Set Feature Extraction Parameters.
 static void set_feature_extraction_parameters(NoiseSuppressionC* self) {
@@ -166,6 +166,8 @@ int WebRtcNs_InitCore(NoiseSuppressionC* self, uint32_t fs) {
   self->featureData[5] = 0.f;  // Normalization for spectral difference.
   // Window time-average of input magnitude spectrum.
   self->featureData[6] = 0.f;
+
+  memset(self->parametricNoise, 0, sizeof(float) * HALF_ANAL_BLOCKL);
 
   // Histogram quantities: used to estimate/update thresholds for features.
   memset(self->histLrt, 0, sizeof(int) * HIST_PAR_EST);

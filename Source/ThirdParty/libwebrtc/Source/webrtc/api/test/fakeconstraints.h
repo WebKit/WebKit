@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_TEST_FAKECONSTRAINTS_H_
-#define WEBRTC_API_TEST_FAKECONSTRAINTS_H_
+#ifndef API_TEST_FAKECONSTRAINTS_H_
+#define API_TEST_FAKECONSTRAINTS_H_
 
 #include <string>
 #include <vector>
 
-#include "webrtc/api/mediaconstraintsinterface.h"
-#include "webrtc/base/stringencode.h"
+#include "api/mediaconstraintsinterface.h"
+#include "rtc_base/stringencode.h"
 
 namespace webrtc {
 
@@ -113,4 +113,4 @@ class FakeConstraints : public webrtc::MediaConstraintsInterface {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_TEST_FAKECONSTRAINTS_H_
+#endif  // API_TEST_FAKECONSTRAINTS_H_

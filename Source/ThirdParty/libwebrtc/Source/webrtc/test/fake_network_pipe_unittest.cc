@@ -10,12 +10,12 @@
 
 #include <memory>
 
-#include "webrtc/call/call.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/fake_network_pipe.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "call/call.h"
+#include "modules/rtp_rtcp/include/rtp_header_parser.h"
+#include "system_wrappers/include/clock.h"
+#include "test/fake_network_pipe.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;

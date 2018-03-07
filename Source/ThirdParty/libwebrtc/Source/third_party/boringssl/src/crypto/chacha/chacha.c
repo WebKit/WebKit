@@ -12,7 +12,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-/* Adapted from the public domain, estream code by D. Bernstein. */
+// Adapted from the public domain, estream code by D. Bernstein.
 
 #include <openssl/chacha.h>
 
@@ -32,7 +32,7 @@
     (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
      defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
 
-/* ChaCha20_ctr32 is defined in asm/chacha-*.pl. */
+// ChaCha20_ctr32 is defined in asm/chacha-*.pl.
 void ChaCha20_ctr32(uint8_t *out, const uint8_t *in, size_t in_len,
                     const uint32_t key[8], const uint32_t counter[4]);
 
@@ -48,7 +48,7 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
 
   const uint32_t *key_ptr = (const uint32_t *)key;
 #if !defined(OPENSSL_X86) && !defined(OPENSSL_X86_64)
-  /* The assembly expects the key to be four-byte aligned. */
+  // The assembly expects the key to be four-byte aligned.
   uint32_t key_u32[8];
   if ((((uintptr_t)key) & 3) != 0) {
     key_u32[0] = U8TO32_LITTLE(key + 0);
@@ -69,7 +69,7 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
 
 #else
 
-/* sigma contains the ChaCha constants, which happen to be an ASCII string. */
+// sigma contains the ChaCha constants, which happen to be an ASCII string.
 static const uint8_t sigma[16] = { 'e', 'x', 'p', 'a', 'n', 'd', ' ', '3',
                                    '2', '-', 'b', 'y', 't', 'e', ' ', 'k' };
 
@@ -83,15 +83,15 @@ static const uint8_t sigma[16] = { 'e', 'x', 'p', 'a', 'n', 'd', ' ', '3',
     (p)[3] = (v >> 24) & 0xff; \
   }
 
-/* QUARTERROUND updates a, b, c, d with a ChaCha "quarter" round. */
+// QUARTERROUND updates a, b, c, d with a ChaCha "quarter" round.
 #define QUARTERROUND(a, b, c, d)                \
   x[a] += x[b]; x[d] = ROTATE(x[d] ^ x[a], 16); \
   x[c] += x[d]; x[b] = ROTATE(x[b] ^ x[c], 12); \
   x[a] += x[b]; x[d] = ROTATE(x[d] ^ x[a],  8); \
   x[c] += x[d]; x[b] = ROTATE(x[b] ^ x[c],  7);
 
-/* chacha_core performs 20 rounds of ChaCha on the input words in
- * |input| and writes the 64 output bytes to |output|. */
+// chacha_core performs 20 rounds of ChaCha on the input words in
+// |input| and writes the 64 output bytes to |output|.
 static void chacha_core(uint8_t output[64], const uint32_t input[16]) {
   uint32_t x[16];
   int i;

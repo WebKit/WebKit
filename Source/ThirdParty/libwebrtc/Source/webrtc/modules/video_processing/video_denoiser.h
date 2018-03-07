@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_PROCESSING_VIDEO_DENOISER_H_
-#define WEBRTC_MODULES_VIDEO_PROCESSING_VIDEO_DENOISER_H_
+#ifndef MODULES_VIDEO_PROCESSING_VIDEO_DENOISER_H_
+#define MODULES_VIDEO_PROCESSING_VIDEO_DENOISER_H_
 
 #include <memory>
 
-#include "webrtc/common_video/include/i420_buffer_pool.h"
-#include "webrtc/modules/video_processing/util/denoiser_filter.h"
-#include "webrtc/modules/video_processing/util/noise_estimation.h"
-#include "webrtc/modules/video_processing/util/skin_detection.h"
+#include "common_video/include/i420_buffer_pool.h"
+#include "modules/video_processing/util/denoiser_filter.h"
+#include "modules/video_processing/util/noise_estimation.h"
+#include "modules/video_processing/util/skin_detection.h"
 
 namespace webrtc {
 
@@ -81,4 +81,4 @@ class VideoDenoiser {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_MODULES_VIDEO_PROCESSING_VIDEO_DENOISER_H_
+#endif  // MODULES_VIDEO_PROCESSING_VIDEO_DENOISER_H_

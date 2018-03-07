@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/test/fake_texture_frame.h"
+#include "test/fake_texture_frame.h"
 
 namespace webrtc {
 namespace test {

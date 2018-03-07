@@ -12,11 +12,11 @@
 
 #include <memory>
 
-#include "webrtc/common_video/include/i420_buffer_pool.h"
-#include "webrtc/modules/video_processing/video_denoiser.h"
-#include "webrtc/test/gtest.h"
-#include "webrtc/test/frame_utils.h"
-#include "webrtc/test/testsupport/fileutils.h"
+#include "common_video/include/i420_buffer_pool.h"
+#include "modules/video_processing/video_denoiser.h"
+#include "test/gtest.h"
+#include "test/frame_utils.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 

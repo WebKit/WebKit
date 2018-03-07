@@ -14,15 +14,15 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/rate_limiter.h"
-#include "webrtc/common_types.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_payload_registry.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_receiver_video.h"
-#include "webrtc/modules/rtp_rtcp/test/testAPI/test_api.h"
-#include "webrtc/test/gtest.h"
+#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/rtp_payload_registry.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_receiver_video.h"
+#include "modules/rtp_rtcp/test/testAPI/test_api.h"
+#include "rtc_base/rate_limiter.h"
+#include "test/gtest.h"
 
 namespace {
 
@@ -165,14 +165,13 @@ TEST_F(RtpRtcpVideoTest, PaddingOnlyFrames) {
       RTPHeader header;
       std::unique_ptr<RtpHeaderParser> parser(RtpHeaderParser::Create());
       EXPECT_TRUE(parser->Parse(padding_packet, packet_size, &header));
-      PayloadUnion payload_specific;
-      EXPECT_TRUE(rtp_payload_registry_.GetPayloadSpecifics(header.payloadType,
-                                                            &payload_specific));
+      const auto pl =
+          rtp_payload_registry_.PayloadTypeToPayload(header.payloadType);
+      EXPECT_TRUE(pl);
       const uint8_t* payload = padding_packet + header.headerLength;
       const size_t payload_length = packet_size - header.headerLength;
-      EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(header, payload,
-                                                   payload_length,
-                                                   payload_specific, true));
+      EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
+          header, payload, payload_length, pl->typeSpecific));
       EXPECT_EQ(0u, receiver_->payload_size());
       EXPECT_EQ(payload_length, receiver_->rtp_header().header.paddingLength);
     }

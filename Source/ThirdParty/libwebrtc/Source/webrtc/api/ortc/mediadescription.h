@@ -8,15 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_API_ORTC_MEDIADESCRIPTION_H_
-#define WEBRTC_API_ORTC_MEDIADESCRIPTION_H_
+#ifndef API_ORTC_MEDIADESCRIPTION_H_
+#define API_ORTC_MEDIADESCRIPTION_H_
 
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "webrtc/base/optional.h"
-#include "webrtc/media/base/cryptoparams.h"
+#include "api/cryptoparams.h"
+#include "api/optional.h"
 
 namespace webrtc {
 
@@ -50,4 +50,4 @@ class MediaDescription {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_API_ORTC_MEDIADESCRIPTION_H_
+#endif  // API_ORTC_MEDIADESCRIPTION_H_

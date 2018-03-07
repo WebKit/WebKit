@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/app.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/byte_io.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace rtcp {
@@ -40,11 +40,11 @@ App::~App() = default;
 bool App::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
   if (packet.payload_size_bytes() < kAppBaseLength) {
-    LOG(LS_WARNING) << "Packet is too small to be a valid APP packet";
+    RTC_LOG(LS_WARNING) << "Packet is too small to be a valid APP packet";
     return false;
   }
   if (packet.payload_size_bytes() % 4 != 0) {
-    LOG(LS_WARNING)
+    RTC_LOG(LS_WARNING)
         << "Packet payload must be 32 bits aligned to make a valid APP packet";
     return false;
   }

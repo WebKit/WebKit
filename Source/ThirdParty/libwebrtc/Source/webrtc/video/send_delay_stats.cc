@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video/send_delay_stats.h"
+#include "video/send_delay_stats.h"
 
 #include <utility>
 
-#include "webrtc/base/logging.h"
-#include "webrtc/system_wrappers/include/metrics.h"
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 namespace {
@@ -32,9 +32,10 @@ SendDelayStats::SendDelayStats(Clock* clock)
 
 SendDelayStats::~SendDelayStats() {
   if (num_old_packets_ > 0 || num_skipped_packets_ > 0) {
-    LOG(LS_WARNING) << "Delay stats: number of old packets " << num_old_packets_
-                    << ", skipped packets " << num_skipped_packets_
-                    << ". Number of streams " << send_delay_counters_.size();
+    RTC_LOG(LS_WARNING) << "Delay stats: number of old packets "
+                        << num_old_packets_ << ", skipped packets "
+                        << num_skipped_packets_ << ". Number of streams "
+                        << send_delay_counters_.size();
   }
   UpdateHistograms();
 }
@@ -45,7 +46,7 @@ void SendDelayStats::UpdateHistograms() {
     AggregatedStats stats = it.second->GetStats();
     if (stats.num_samples >= kMinRequiredPeriodicSamples) {
       RTC_HISTOGRAM_COUNTS_10000("WebRTC.Video.SendDelayInMs", stats.average);
-      LOG(LS_INFO) << "WebRTC.Video.SendDelayInMs, " << stats.ToString();
+      RTC_LOG(LS_INFO) << "WebRTC.Video.SendDelayInMs, " << stats.ToString();
     }
   }
 }

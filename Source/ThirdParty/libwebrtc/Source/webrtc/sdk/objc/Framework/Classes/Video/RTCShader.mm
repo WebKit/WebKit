@@ -22,8 +22,8 @@
 
 #import "RTCOpenGLDefines.h"
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/logging.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 // Vertex shader doesn't do anything except pass coordinates through.
 const char kRTCVertexShaderSource[] =
@@ -55,7 +55,7 @@ GLuint RTCCreateShader(GLenum type, const GLchar *source) {
       std::unique_ptr<char[]> compileLog(new char[logLength]);
       // The returned string is null terminated.
       glGetShaderInfoLog(shader, logLength, NULL, compileLog.get());
-      LOG(LS_ERROR) << "Shader compile error: " << compileLog.get();
+      RTC_LOG(LS_ERROR) << "Shader compile error: " << compileLog.get();
     }
     glDeleteShader(shader);
     shader = 0;

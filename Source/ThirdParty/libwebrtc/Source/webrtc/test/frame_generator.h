@@ -7,17 +7,17 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef WEBRTC_TEST_FRAME_GENERATOR_H_
-#define WEBRTC_TEST_FRAME_GENERATOR_H_
+#ifndef TEST_FRAME_GENERATOR_H_
+#define TEST_FRAME_GENERATOR_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/criticalsection.h"
-#include "webrtc/media/base/videosourceinterface.h"
-#include "webrtc/typedefs.h"
+#include "api/video/video_frame.h"
+#include "media/base/videosourceinterface.h"
+#include "rtc_base/criticalsection.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 class Clock;
@@ -42,8 +42,8 @@ class FrameForwarder : public rtc::VideoSourceInterface<VideoFrame> {
   void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
 
   rtc::CriticalSection crit_;
-  rtc::VideoSinkInterface<VideoFrame>* sink_ GUARDED_BY(crit_);
-  rtc::VideoSinkWants sink_wants_ GUARDED_BY(crit_);
+  rtc::VideoSinkInterface<VideoFrame>* sink_ RTC_GUARDED_BY(crit_);
+  rtc::VideoSinkWants sink_wants_ RTC_GUARDED_BY(crit_);
 };
 
 class FrameGenerator {
@@ -62,6 +62,9 @@ class FrameGenerator {
   // move randomly towards the lower right corner.
   static std::unique_ptr<FrameGenerator> CreateSquareGenerator(int width,
                                                                int height);
+  static std::unique_ptr<FrameGenerator> CreateSquareGenerator(int width,
+                                                               int height,
+                                                               int num_squares);
 
   // Creates a frame generator that repeatedly plays a set of yuv files.
   // The frame_repeat_count determines how many times each frame is shown,
@@ -89,8 +92,13 @@ class FrameGenerator {
       size_t target_height,
       int64_t scroll_time_ms,
       int64_t pause_time_ms);
+
+  // Creates a frame generator that produces randomly generated slides.
+  // frame_repeat_count determines how many times each slide is shown.
+  static std::unique_ptr<FrameGenerator> CreateSlideGenerator(
+      int width, int height, int frame_repeat_count);
 };
 }  // namespace test
 }  // namespace webrtc
 
-#endif  // WEBRTC_TEST_FRAME_GENERATOR_H_
+#endif  // TEST_FRAME_GENERATOR_H_

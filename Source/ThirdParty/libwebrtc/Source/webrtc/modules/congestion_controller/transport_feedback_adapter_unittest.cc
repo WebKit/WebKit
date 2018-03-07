@@ -12,16 +12,16 @@
 #include <memory>
 #include <vector>
 
-#include "webrtc/base/checks.h"
-#include "webrtc/base/safe_conversions.h"
-#include "webrtc/modules/bitrate_controller/include/mock/mock_bitrate_controller.h"
-#include "webrtc/modules/congestion_controller/congestion_controller_unittests_helper.h"
-#include "webrtc/modules/congestion_controller/transport_feedback_adapter.h"
-#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/test/gmock.h"
-#include "webrtc/test/gtest.h"
+#include "modules/bitrate_controller/include/mock/mock_bitrate_controller.h"
+#include "modules/congestion_controller/congestion_controller_unittests_helper.h"
+#include "modules/congestion_controller/transport_feedback_adapter.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "system_wrappers/include/clock.h"
+#include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::Invoke;

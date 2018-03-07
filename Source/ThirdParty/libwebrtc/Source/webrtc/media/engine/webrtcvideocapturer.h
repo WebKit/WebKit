@@ -8,20 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MEDIA_ENGINE_WEBRTCVIDEOCAPTURER_H_
-#define WEBRTC_MEDIA_ENGINE_WEBRTCVIDEOCAPTURER_H_
+#ifndef MEDIA_ENGINE_WEBRTCVIDEOCAPTURER_H_
+#define MEDIA_ENGINE_WEBRTCVIDEOCAPTURER_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "webrtc/base/asyncinvoker.h"
-#include "webrtc/base/messagehandler.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/media/base/device.h"
-#include "webrtc/media/base/videocapturer.h"
-#include "webrtc/modules/video_capture/video_capture.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "media/base/device.h"
+#include "media/base/videocapturer.h"
+#include "modules/video_capture/video_capture.h"
+#include "rtc_base/asyncinvoker.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace cricket {
 
@@ -78,10 +78,8 @@ class WebRtcVideoCapturer : public VideoCapturer,
   int captured_frames_;
   std::vector<uint8_t> capture_buffer_;
   rtc::Thread* start_thread_;  // Set in Start(), unset in Stop();
-
-  std::unique_ptr<rtc::AsyncInvoker> async_invoker_;
 };
 
 }  // namespace cricket
 
-#endif  // WEBRTC_MEDIA_WEBRTC_WEBRTCVIDEOCAPTURER_H_
+#endif  // MEDIA_ENGINE_WEBRTCVIDEOCAPTURER_H_

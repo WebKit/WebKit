@@ -8,22 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
-#define WEBRTC_MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
+#ifndef MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
+#define MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
 
 #include <map>
 #include <memory>
 #include <string>
 
-#include "webrtc/api/audio_codecs/audio_decoder_factory.h"
-#include "webrtc/api/audio_codecs/audio_format.h"
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/common_types.h"  // NULL
-#include "webrtc/modules/audio_coding/codecs/cng/webrtc_cng.h"
-#include "webrtc/modules/audio_coding/neteq/audio_decoder_impl.h"
-#include "webrtc/modules/audio_coding/neteq/packet.h"
-#include "webrtc/typedefs.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
+#include "common_types.h"  // NOLINT(build/include)  // NULL
+#include "modules/audio_coding/codecs/cng/webrtc_cng.h"
+#include "modules/audio_coding/neteq/neteq_decoder_enum.h"
+#include "modules/audio_coding/neteq/packet.h"
+#include "rtc_base/constructormagic.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -54,6 +54,10 @@ class DecoderDatabase {
                 const std::string& codec_name);
     DecoderInfo(DecoderInfo&&);
     ~DecoderInfo();
+
+    // Was this info object created with a specification that allows us to
+    // actually produce a decoder?
+    bool CanGetDecoder() const;
 
     // Get the AudioDecoder object, creating it first if necessary.
     AudioDecoder* GetDecoder() const;
@@ -243,4 +247,4 @@ class DecoderDatabase {
 };
 
 }  // namespace webrtc
-#endif  // WEBRTC_MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
+#endif  // MODULES_AUDIO_CODING_NETEQ_DECODER_DATABASE_H_
