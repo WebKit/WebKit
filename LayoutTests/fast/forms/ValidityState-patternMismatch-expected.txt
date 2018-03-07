@@ -28,6 +28,8 @@ PASS patternMismatchFor("match-17") is false
 PASS patternMismatchFor("match-18") is false
 PASS patternMismatchFor("match-19") is false
 PASS patternMismatchFor("match-20") is false
+PASS patternMismatchFor("match-21") is false
+PASS patternMismatchFor("match-22") is false
 PASS patternMismatchFor("wrong-gray-or-grey") is true
 PASS patternMismatchFor("gray") is false
 PASS patternMismatchFor("grey") is false
@@ -53,6 +55,7 @@ PASS patternMismatchFor("mismatch-18") is true
 PASS patternMismatchFor("mismatch-19") is true
 PASS patternMismatchFor("mismatch-20") is true
 PASS patternMismatchFor("mismatch-21") is true
+PASS patternMismatchFor("mismatch-22") is true
 PASS patternMismatchFor("empty-pattern-match") is false
 PASS patternMismatchFor("empty-pattern-mismatch") is true
 PASS patternMismatchFor("invalid-01") is false
@@ -61,6 +64,8 @@ PASS patternMismatchFor("invalid-03") is false
 PASS patternMismatchFor("invalid-04") is false
 PASS patternMismatchFor("invalid-05") is false
 PASS patternMismatchFor("invalid-06") is false
+PASS patternMismatchFor("invalid-07") is false
+PASS patternMismatchFor("invalid-08") is false
 PASS patternMismatchFor("disabled") is false
 PASS successfullyParsed is true
 

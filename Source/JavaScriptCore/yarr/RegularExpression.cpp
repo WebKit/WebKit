@@ -37,9 +37,9 @@ namespace JSC { namespace Yarr {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
-    static Ref<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
+    static Ref<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
-        return adoptRef(*new Private(pattern, caseSensitivity, multilineMode));
+        return adoptRef(*new Private(pattern, caseSensitivity, multilineMode, unicodeMode));
     }
 
     int lastMatchLength { -1 };
@@ -48,12 +48,12 @@ public:
     std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 
 private:
-    Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
-        : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode))
+    Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+        : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode, unicodeMode))
     {
     }
 
-    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
+    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
         RegExpFlags flags = NoFlags;
 
@@ -62,6 +62,9 @@ private:
 
         if (multilineMode == MultilineEnabled)
             flags = static_cast<RegExpFlags>(flags | FlagMultiline);
+
+        if (unicodeMode == UnicodeAwareMode)
+            flags = static_cast<RegExpFlags>(flags | FlagUnicode);
 
         JSC::Yarr::YarrPattern pattern(patternString, flags, m_constructionErrorCode);
         if (JSC::Yarr::hasError(m_constructionErrorCode)) {
@@ -78,8 +81,8 @@ private:
     JSC::Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
 };
 
-RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
-    : d(Private::create(pattern, caseSensitivity, multilineMode))
+RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    : d(Private::create(pattern, caseSensitivity, multilineMode, unicodeMode))
 {
 }
 

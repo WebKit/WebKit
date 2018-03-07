@@ -1,5 +1,21 @@
 2018-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        HTML `pattern` attribute should set `u` flag for regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=151598
+
+        Reviewed by Chris Dumez.
+
+        Add UnicodeMode for JSC::Yarr::RegularExpression.
+
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::create):
+        (JSC::Yarr::RegularExpression::Private::Private):
+        (JSC::Yarr::RegularExpression::Private::compile):
+        (JSC::Yarr::RegularExpression::RegularExpression):
+        * yarr/RegularExpression.h:
+
+2018-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Add more JSType based fast path for jsDynamicCast
         https://bugs.webkit.org/show_bug.cgi?id=183403
 
