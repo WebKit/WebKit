@@ -1,5 +1,17 @@
 2018-03-07  Mark Lam  <mark.lam@apple.com>
 
+        Rename ProtoCallFrame::arityMissMatch to hasArityMismatch.
+        https://bugs.webkit.org/show_bug.cgi?id=183414
+        <rdar://problem/38231678>
+
+        Reviewed by Michael Saboff.
+
+        * interpreter/ProtoCallFrame.cpp:
+        (JSC::ProtoCallFrame::init):
+        * interpreter/ProtoCallFrame.h:
+
+2018-03-07  Mark Lam  <mark.lam@apple.com>
+
         Simplify the variants of FunctionPtr constructors.
         https://bugs.webkit.org/show_bug.cgi?id=183399
         <rdar://problem/38212980>

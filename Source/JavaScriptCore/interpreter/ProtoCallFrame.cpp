@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,9 @@ void ProtoCallFrame::init(CodeBlock* codeBlock, JSObject* callee, JSValue thisVa
     this->setCallee(callee);
     this->setArgumentCountIncludingThis(argCountIncludingThis);
     if (codeBlock && argCountIncludingThis < codeBlock->numParameters())
-        this->arityMissMatch = true;
+        this->hasArityMismatch = true;
     else
-        this->arityMissMatch = false;
+        this->hasArityMismatch = false;
 
     // Round up argCountIncludingThis to keep the stack frame size aligned.
     size_t paddedArgsCount = roundArgumentCountToAlignFrame(argCountIncludingThis);
