@@ -54,7 +54,7 @@ end
 
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if X86_64 or ARM64
+    if X86_64 or ARM64 or ARM64E
         call function
     elsif X86_64_WIN
         # Note: this implementation is only correct if the return type size is > 8 bytes.
@@ -101,7 +101,7 @@ end
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
-    if X86_64 or ARM64
+    if X86_64 or ARM64 or ARM64E
         call function
     elsif X86_64_WIN
         # On Win64, rcx, rdx, r8, and r9 are used for passing the first four parameters.
@@ -215,7 +215,7 @@ macro doVMEntry(makeCall, callTag, callWithArityCheckTag)
     jmp .copyArgsLoop
 
 .copyArgsDone:
-    if ARM64
+    if ARM64 or ARM64E
         move sp, t4
         storep t4, VM::topCallFrame[vm]
     else
@@ -553,7 +553,7 @@ macro functionArityCheck(doneLabel, slowPath)
 
 .noExtraSlot:
     if POINTER_PROFILING
-        if ARM64
+        if ARM64 or ARM64E
             loadp 8[cfr], lr
         end
 
@@ -588,7 +588,7 @@ macro functionArityCheck(doneLabel, slowPath)
         addp 16, cfr, t1
         tagReturnAddress t1
 
-        if ARM64
+        if ARM64 or ARM64E
             storep lr, 8[cfr]
         end
     end
@@ -2135,7 +2135,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     andp MarkedBlockMask, t0, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     storep cfr, VM::topCallFrame[t1]
-    if ARM64 or C_LOOP
+    if ARM64 or ARM64E or C_LOOP
         storep lr, ReturnPC[cfr]
     end
     move cfr, a0
@@ -2180,7 +2180,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     andp MarkedBlockMask, t0, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     storep cfr, VM::topCallFrame[t1]
-    if ARM64 or C_LOOP
+    if ARM64 or ARM64E or C_LOOP
         storep lr, ReturnPC[cfr]
     end
     move cfr, a0

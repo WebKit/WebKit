@@ -71,7 +71,7 @@
 #  They are callee-save registers, and guaranteed to be distinct from all other
 #  registers on all architectures.
 #
-#  - lr is defined on non-X86 architectures (ARM64, ARMv7, ARM,
+#  - lr is defined on non-X86 architectures (ARM64, ARM64E, ARMv7, ARM,
 #  ARMv7_TRADITIONAL, MIPS and CLOOP) and holds the return PC
 #
 #  - pc holds the (native) program counter on 32-bits ARM architectures (ARM,
@@ -223,7 +223,7 @@ const PutByIdSecondaryTypeTop = constexpr PutByIdSecondaryTypeTop
 
 const CallOpCodeSize = 9
 
-if X86_64 or ARM64 or C_LOOP
+if X86_64 or ARM64 or ARM64E or C_LOOP
     const maxFrameExtentForSlowPathCall = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const maxFrameExtentForSlowPathCall = 24
@@ -235,7 +235,7 @@ elsif X86_64_WIN
     const maxFrameExtentForSlowPathCall = 64
 end
 
-if X86_64 or X86_64_WIN or ARM64
+if X86_64 or X86_64_WIN or ARM64 or ARM64E
     const CalleeSaveSpaceAsVirtualRegisters = 3
 else
     const CalleeSaveSpaceAsVirtualRegisters = 0
@@ -278,7 +278,7 @@ if JSVALUE64
     # - C calls are still given the Instruction* rather than the PC index.
     #   This requires an add before the call, and a sub after.
     const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
-    if ARM64
+    if ARM64 or ARM64E
         const PB = csr7
         const tagTypeNumber = csr8
         const tagMask = csr9
@@ -502,10 +502,10 @@ end
 #         end
 #     )
 #
-if X86_64 or ARM64
+if X86_64 or ARM64 or ARM64E
     macro probe(action)
         # save all the registers that the LLInt may use.
-        if ARM64
+        if ARM64 or ARM64E
             push cfr, lr
         end
         push a0, a1
@@ -513,7 +513,7 @@ if X86_64 or ARM64
         push t0, t1
         push t2, t3
         push t4, t5
-        if ARM64
+        if ARM64 or ARM64E
             push csr0, csr1
             push csr2, csr3
             push csr4, csr5
@@ -524,7 +524,7 @@ if X86_64 or ARM64
         action()
 
         # restore all the registers we saved previously.
-        if ARM64
+        if ARM64 or ARM64E
             pop csr9, csr8
             pop csr7, csr6
             pop csr5, csr4
@@ -536,7 +536,7 @@ if X86_64 or ARM64
         pop t1, t0
         pop a3, a2
         pop a1, a0
-        if ARM64
+        if ARM64 or ARM64E
             pop lr, cfr
         end
     end
@@ -546,8 +546,8 @@ else
 end
 
 macro checkStackPointerAlignment(tempReg, location)
-    if ARM64 or C_LOOP
-        # ARM64 will check for us!
+    if ARM64 or ARM64E or C_LOOP
+        # ARM64 and ARM64E will check for us!
         # C_LOOP does not need the alignment, and can use a little perf
         # improvement from avoiding useless work.
     else
@@ -565,7 +565,7 @@ macro checkStackPointerAlignment(tempReg, location)
     end
 end
 
-if C_LOOP or ARM64 or X86_64 or X86_64_WIN
+if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
     const CalleeSaveRegisterCount = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const CalleeSaveRegisterCount = 7
@@ -582,7 +582,7 @@ const CalleeRegisterSaveSize = CalleeSaveRegisterCount * PtrSize
 const VMEntryTotalFrameSize = (CalleeRegisterSaveSize + sizeof VMEntryRecord + StackAlignment - 1) & ~StackAlignmentMask
 
 macro pushCalleeSaves()
-    if C_LOOP or ARM64 or X86_64 or X86_64_WIN
+    if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
     elsif ARM or ARMv7_TRADITIONAL
         emit "push {r4-r10}"
     elsif ARMv7
@@ -604,7 +604,7 @@ macro pushCalleeSaves()
 end
 
 macro popCalleeSaves()
-    if C_LOOP or ARM64 or X86_64 or X86_64_WIN
+    if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
     elsif ARM or ARMv7_TRADITIONAL
         emit "pop {r4-r10}"
     elsif ARMv7
@@ -629,7 +629,7 @@ macro preserveCallerPCAndCFR()
         push cfr
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
-    elsif ARM64
+    elsif ARM64 or ARM64E
         push cfr, lr
     else
         error
@@ -644,7 +644,7 @@ macro restoreCallerPCAndCFR()
         pop lr
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         pop cfr
-    elsif ARM64
+    elsif ARM64 or ARM64E
         pop lr, cfr
     end
 end
@@ -654,7 +654,7 @@ macro preserveCalleeSavesUsedByLLInt()
     if C_LOOP
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
-    elsif ARM64
+    elsif ARM64 or ARM64E
         emit "stp x27, x28, [x29, #-16]"
         emit "stp xzr, x26, [x29, #-32]"
     elsif MIPS
@@ -675,7 +675,7 @@ macro restoreCalleeSavesUsedByLLInt()
     if C_LOOP
     elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
-    elsif ARM64
+    elsif ARM64 or ARM64E
         emit "ldp xzr, x26, [x29, #-32]"
         emit "ldp x27, x28, [x29, #-16]"
     elsif MIPS
@@ -693,11 +693,11 @@ macro restoreCalleeSavesUsedByLLInt()
 end
 
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or X86_64 or X86_64_WIN
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
-        if ARM64
+        if ARM64 or ARM64E
             storep csr0, [temp]
             storep csr1, 8[temp]
             storep csr2, 16[temp]
@@ -735,11 +735,11 @@ macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
 end
 
 macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or X86_64 or X86_64_WIN
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
-        if ARM64
+        if ARM64 or ARM64E
             loadp [temp], csr0
             loadp 8[temp], csr1
             loadp 16[temp], csr2
@@ -777,7 +777,7 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS
+    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or ARM64E or MIPS
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -798,7 +798,7 @@ macro functionPrologue()
     tagReturnAddress sp
     if X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
-    elsif ARM64
+    elsif ARM64 or ARM64E
         push cfr, lr
     elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         push lr
@@ -810,7 +810,7 @@ end
 macro functionEpilogue()
     if X86 or X86_WIN or X86_64 or X86_64_WIN
         pop cfr
-    elsif ARM64
+    elsif ARM64 or ARM64E
         pop lr, cfr
     elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         pop cfr
@@ -898,7 +898,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, prepareCallPtrTag)
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
     andi ~StackAlignmentMask, temp2
 
-    if ARM or ARMv7_TRADITIONAL or ARMv7 or ARM64 or C_LOOP or MIPS
+    if ARM or ARMv7_TRADITIONAL or ARMv7 or ARM64 or ARM64E or C_LOOP or MIPS
         addp 2 * PtrSize, sp
         subi 2 * PtrSize, temp2
         loadp PtrSize[cfr], lr
@@ -1051,7 +1051,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         btpz r0, .recover
         move cfr, sp # restore the previous sp
         # pop the callerFrame since we will jump to a function that wants to save it
-        if ARM64
+        if ARM64 or ARM64E
             pop lr, cfr
         elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
             pop cfr
@@ -1227,7 +1227,7 @@ else
             call _relativePCBase
         _relativePCBase:
             pop pcBase
-        elsif ARM64
+        elsif ARM64 or ARM64E
         elsif ARMv7
         _relativePCBase:
             move pc, pcBase
@@ -1254,7 +1254,7 @@ macro setEntryAddress(index, label)
         leap (label - _relativePCBase)[t1], t3
         move index, t4
         storep t3, [a0, t4, 4]
-    elsif ARM64
+    elsif ARM64 or ARM64E
         pcrtoaddr label, t1
         move index, t4
         storep t1, [a0, t4, 8]

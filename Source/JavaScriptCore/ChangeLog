@@ -1,3 +1,17 @@
+2018-03-07  Mark Lam  <mark.lam@apple.com>
+
+        Add support for ARM64E.
+        https://bugs.webkit.org/show_bug.cgi?id=183398
+        <rdar://problem/38212621>
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssembler.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/backends.rb:
+
 2018-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         HTML `pattern` attribute should set `u` flag for regular expressions
