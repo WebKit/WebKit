@@ -1313,6 +1313,8 @@ webkit.org/b/183180 imported/blink/fast/forms/time-multiple-fields/time-multiple
 
 webkit.org/b/183215 imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Crash Pass ]
 
+webkit.org/b/183401 fast/animation/request-animation-frame-during-modal.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

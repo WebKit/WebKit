@@ -1,3 +1,10 @@
+2018-03-07  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] fast/animation/request-animation-frame-during-modal.html sometimes crashing
+
+        Unreviewed gardening
+        * platform/gtk/TestExpectations:
+
 2018-03-06  Per Arne Vollan  <pvollan@apple.com>
 
         Skip fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html and related tests on Windows.
