@@ -89,8 +89,9 @@ ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
         return nullptr;
     }
 
-    if (LIKELY(thisValue.asCell()->type() == JSMapType))
-        return jsCast<JSMap*>(thisValue);
+    auto* map = jsDynamicCast<JSMap*>(vm, thisValue.asCell());
+    if (LIKELY(map))
+        return map;
     throwTypeError(callFrame, scope, ASCIILiteral("Map operation called on non-Map object"));
     return nullptr;
 }

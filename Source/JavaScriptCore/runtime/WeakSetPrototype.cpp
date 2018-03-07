@@ -60,8 +60,9 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(CallFrame* callFrame, JSValue value)
         return nullptr;
     }
 
-    if (LIKELY(isJSWeakSet(asObject(value))))
-        return jsCast<JSWeakSet*>(value);
+    auto* set = jsDynamicCast<JSWeakSet*>(vm, asObject(value));
+    if (LIKELY(set))
+        return set;
 
     throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
     return nullptr;

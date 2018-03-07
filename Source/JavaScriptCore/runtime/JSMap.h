@@ -66,16 +66,6 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-inline bool isJSMap(JSCell* from)
-{
-    static_assert(std::is_final<JSMap>::value, "");
-    return from->type() == JSMapType;
-}
-
-inline bool isJSMap(JSValue from)
-{
-    static_assert(std::is_final<JSMap>::value, "");
-    return from.isCell() && from.asCell()->type() == JSMapType;
-}
+static_assert(std::is_final<JSMap>::value, "Required for JSType based casting");
 
 } // namespace JSC

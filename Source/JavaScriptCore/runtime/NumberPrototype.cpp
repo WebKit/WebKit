@@ -89,7 +89,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 // ------------------------------ Functions ---------------------------
 
-static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)
+static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
 {
     if (thisValue.isInt32()) {
         x = thisValue.asInt32();
@@ -100,9 +100,9 @@ static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)
         x = thisValue.asDouble();
         return true;
     }
-    
-    if (thisValue.isCell() && thisValue.asCell()->type() == NumberObjectType) {
-        x = static_cast<const NumberObject*>(thisValue.asCell())->internalValue().asNumber();
+
+    if (auto* numberObject = jsDynamicCast<NumberObject*>(vm, thisValue)) {
+        x = numberObject->internalValue().asNumber();
         return true;
     }
 
@@ -407,7 +407,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(exec->thisValue(), x))
+    if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMTypeError(exec, scope);
 
     // Perform ToInteger on the argument before remaining steps.
@@ -444,7 +444,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(exec->thisValue(), x))
+    if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMTypeError(exec, scope);
 
     // Get the argument. 
@@ -482,7 +482,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(exec->thisValue(), x))
+    if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMTypeError(exec, scope);
 
     // Perform ToInteger on the argument before remaining steps.
@@ -580,7 +580,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double doubleValue;
-    if (!toThisNumber(state->thisValue(), doubleValue))
+    if (!toThisNumber(vm, state->thisValue(), doubleValue))
         return throwVMTypeError(state, scope);
 
     auto radix = extractToStringRadixArgument(state, state->argument(0), scope);
@@ -595,7 +595,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(exec->thisValue(), x))
+    if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMTypeError(exec, scope);
 
     return JSValue::encode(jsNumber(x).toString(exec));
@@ -608,7 +608,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 
     double x;
     JSValue thisValue = exec->thisValue();
-    if (!toThisNumber(thisValue, x))
+    if (!toThisNumber(vm, thisValue, x))
         return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", asString(jsTypeStringForValue(exec, thisValue))->value(exec)));
     return JSValue::encode(jsNumber(x));
 }

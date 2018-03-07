@@ -48,10 +48,27 @@ inline To jsCast(JSValue from)
 // Specific type overloads.
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
     macro(JSObject, JSType::ObjectType, JSType::LastJSCObjectType) \
+    macro(JSFinalObject, JSType::FinalObjectType, JSType::FinalObjectType) \
     macro(JSFunction, JSType::JSFunctionType, JSType::JSFunctionType) \
     macro(InternalFunction, JSType::InternalFunctionType, JSType::InternalFunctionType) \
     macro(JSArray, JSType::ArrayType, JSType::DerivedArrayType) \
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
+    macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
+    macro(JSMap, JSType::JSMapType, JSType::JSMapType) \
+    macro(JSWeakSet, JSType::JSWeakSetType, JSType::JSWeakSetType) \
+    macro(JSWeakMap, JSType::JSWeakMapType, JSType::JSWeakMapType) \
+    macro(NumberObject, JSType::NumberObjectType, JSType::NumberObjectType) \
+    macro(ProxyObject, JSType::ProxyObjectType, JSType::ProxyObjectType) \
+    macro(DirectArguments, JSType::DirectArgumentsType, JSType::DirectArgumentsType) \
+    macro(ScopedArguments, JSType::ScopedArgumentsType, JSType::ScopedArgumentsType) \
+    macro(ClonedArguments, JSType::ClonedArgumentsType, JSType::ClonedArgumentsType) \
+    macro(JSGlobalObject, JSType::GlobalObjectType, JSType::GlobalObjectType) \
+    macro(JSGlobalLexicalEnvironment, JSType::GlobalLexicalEnvironmentType, JSType::GlobalLexicalEnvironmentType) \
+    macro(JSSegmentedVariableObject, JSType::GlobalObjectType, JSType::GlobalLexicalEnvironmentType) \
+    macro(JSModuleEnvironment, JSType::ModuleEnvironmentType, JSType::ModuleEnvironmentType) \
+    macro(JSLexicalEnvironment, JSType::LexicalEnvironmentType, JSType::ModuleEnvironmentType) \
+    macro(JSSymbolTableObject, JSType::GlobalObjectType, JSType::ModuleEnvironmentType) \
+    macro(JSScope, JSType::GlobalObjectType, JSType::WithScopeType) \
 
 
 // Forward declare the classes because they may not already exist.

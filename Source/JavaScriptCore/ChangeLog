@@ -1,3 +1,141 @@
+2018-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add more JSType based fast path for jsDynamicCast
+        https://bugs.webkit.org/show_bug.cgi?id=183403
+
+        Reviewed by Mark Lam.
+
+        We add more JSType based fast path for jsDynamicCast. Basically, we add miscellaneous JSTypes which
+        are used for jsDynamicCast in JSC, arguments types, and scope types.
+
+        We also add ClassInfo to JSScope and JSSegmentedVariableObject since they are used with jsDynamicCast.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/ClonedArguments.h:
+        (JSC::ClonedArguments::specialsMaterialized const): Deleted.
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::subspaceFor): Deleted.
+        (JSC::DirectArguments::internalLength const): Deleted.
+        (JSC::DirectArguments::length const): Deleted.
+        (JSC::DirectArguments::isMappedArgument const): Deleted.
+        (JSC::DirectArguments::isMappedArgumentInDFG const): Deleted.
+        (JSC::DirectArguments::getIndexQuickly const): Deleted.
+        (JSC::DirectArguments::setIndexQuickly): Deleted.
+        (JSC::DirectArguments::callee): Deleted.
+        (JSC::DirectArguments::argument): Deleted.
+        (JSC::DirectArguments::overrodeThings const): Deleted.
+        (JSC::DirectArguments::initModifiedArgumentsDescriptorIfNecessary): Deleted.
+        (JSC::DirectArguments::setModifiedArgumentDescriptor): Deleted.
+        (JSC::DirectArguments::isModifiedArgumentDescriptor): Deleted.
+        (JSC::DirectArguments::offsetOfCallee): Deleted.
+        (JSC::DirectArguments::offsetOfLength): Deleted.
+        (JSC::DirectArguments::offsetOfMinCapacity): Deleted.
+        (JSC::DirectArguments::offsetOfMappedArguments): Deleted.
+        (JSC::DirectArguments::offsetOfModifiedArgumentsDescriptor): Deleted.
+        (JSC::DirectArguments::storageOffset): Deleted.
+        (JSC::DirectArguments::offsetOfSlot): Deleted.
+        (JSC::DirectArguments::allocationSize): Deleted.
+        (JSC::DirectArguments::storage): Deleted.
+        * runtime/JSCast.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        (JSC::JSGlobalLexicalEnvironment::create): Deleted.
+        (JSC::JSGlobalLexicalEnvironment::isEmpty const): Deleted.
+        (JSC::JSGlobalLexicalEnvironment::createStructure): Deleted.
+        (JSC::JSGlobalLexicalEnvironment::JSGlobalLexicalEnvironment): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSMap.h:
+        (JSC::isJSMap): Deleted.
+        * runtime/JSModuleEnvironment.h:
+        (JSC::JSModuleEnvironment::create): Deleted.
+        (JSC::JSModuleEnvironment::createStructure): Deleted.
+        (JSC::JSModuleEnvironment::offsetOfModuleRecord): Deleted.
+        (JSC::JSModuleEnvironment::allocationSize): Deleted.
+        (JSC::JSModuleEnvironment::moduleRecord): Deleted.
+        (JSC::JSModuleEnvironment::moduleRecordSlot): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::canDoFastPutDirectIndex):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::allocationSize): Deleted.
+        (JSC::JSFinalObject::typeInfo): Deleted.
+        (JSC::JSFinalObject::defaultInlineCapacity): Deleted.
+        (JSC::JSFinalObject::maxInlineCapacity): Deleted.
+        (JSC::JSFinalObject::createStructure): Deleted.
+        (JSC::JSFinalObject::finishCreation): Deleted.
+        (JSC::JSFinalObject::JSFinalObject): Deleted.
+        (JSC::isJSFinalObject): Deleted.
+        * runtime/JSScope.cpp:
+        * runtime/JSScope.h:
+        * runtime/JSSegmentedVariableObject.cpp:
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSet.h:
+        (JSC::isJSSet): Deleted.
+        * runtime/JSType.h:
+        * runtime/JSWeakMap.h:
+        (JSC::isJSWeakMap): Deleted.
+        * runtime/JSWeakSet.h:
+        (JSC::isJSWeakSet): Deleted.
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::object): Deleted.
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        (JSC::mapPrivateFuncMapBucketHead):
+        * runtime/MapPrototype.cpp:
+        (JSC::getMap):
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::finishCreation):
+        * runtime/NumberPrototype.cpp:
+        (JSC::toThisNumber):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        * runtime/ScopedArguments.h:
+        (JSC::ScopedArguments::subspaceFor): Deleted.
+        (JSC::ScopedArguments::internalLength const): Deleted.
+        (JSC::ScopedArguments::length const): Deleted.
+        (JSC::ScopedArguments::isMappedArgument const): Deleted.
+        (JSC::ScopedArguments::isMappedArgumentInDFG const): Deleted.
+        (JSC::ScopedArguments::getIndexQuickly const): Deleted.
+        (JSC::ScopedArguments::setIndexQuickly): Deleted.
+        (JSC::ScopedArguments::callee): Deleted.
+        (JSC::ScopedArguments::overrodeThings const): Deleted.
+        (JSC::ScopedArguments::initModifiedArgumentsDescriptorIfNecessary): Deleted.
+        (JSC::ScopedArguments::setModifiedArgumentDescriptor): Deleted.
+        (JSC::ScopedArguments::isModifiedArgumentDescriptor): Deleted.
+        (JSC::ScopedArguments::offsetOfOverrodeThings): Deleted.
+        (JSC::ScopedArguments::offsetOfTotalLength): Deleted.
+        (JSC::ScopedArguments::offsetOfTable): Deleted.
+        (JSC::ScopedArguments::offsetOfScope): Deleted.
+        (JSC::ScopedArguments::overflowStorageOffset): Deleted.
+        (JSC::ScopedArguments::allocationSize): Deleted.
+        (JSC::ScopedArguments::overflowStorage const): Deleted.
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        (JSC::setPrivateFuncSetBucketHead):
+        * runtime/SetPrototype.cpp:
+        (JSC::getSet):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create): Deleted.
+        (JSC::StrictEvalActivation::createStructure): Deleted.
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::getWeakMap):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::getWeakSet):
+
 2018-03-07  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] offlineasm: fix indentation in armOpcodeReversedOperands

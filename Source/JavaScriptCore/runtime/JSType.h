@@ -61,7 +61,6 @@ enum JSType : uint8_t {
     ErrorInstanceType,
     PureForwardingProxyType,
     ImpureProxyType,
-    WithScopeType,
     DirectArgumentsType,
     ScopedArgumentsType,
     ClonedArgumentsType,
@@ -86,13 +85,21 @@ enum JSType : uint8_t {
 
     GetterSetterType,
 
+    // JSScope <- JSWithScope
+    //         <- StrictEvalActivation
+    //         <- JSSymbolTableObject  <- JSLexicalEnvironment      <- JSModuleEnvironment
+    //                                 <- JSSegmentedVariableObject <- JSGlobalLexicalEnvironment
+    //                                                              <- JSGlobalObject
+    // Start JSScope types.
     // Start environment record types.
     GlobalObjectType,
-    LexicalEnvironmentType,
     GlobalLexicalEnvironmentType,
+    LexicalEnvironmentType,
     ModuleEnvironmentType,
     StrictEvalActivationType,
     // End environment record types.
+    WithScopeType,
+    // End JSScope types.
 
     RegExpObjectType,
     ProxyObjectType,

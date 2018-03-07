@@ -77,8 +77,7 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
         return JSValue::encode(JSSet::create(exec, vm, setStructure));
     }
 
-    if (isJSSet(iterable)) {
-        JSSet* iterableSet = jsCast<JSSet*>(iterable);
+    if (auto* iterableSet = jsDynamicCast<JSSet*>(vm, iterable)) {
         if (iterableSet->canCloneFastAndNonObservable(setStructure)) {
             scope.release();
             return JSValue::encode(iterableSet->clone(exec, vm, setStructure));
@@ -109,7 +108,7 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(ExecState* exec)
 {
-    ASSERT(isJSSet(exec->argument(0)));
+    ASSERT(jsDynamicCast<JSSet*>(exec->vm(), exec->argument(0)));
     JSSet* set = jsCast<JSSet*>(exec->uncheckedArgument(0));
     auto* head = set->head();
     ASSERT(head);

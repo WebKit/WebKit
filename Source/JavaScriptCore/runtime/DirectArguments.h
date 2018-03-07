@@ -41,7 +41,7 @@ namespace JSC {
 //
 // To speed allocation, this object will hold all of the arguments in-place. The arguments as well
 // as a table of flags saying which arguments were overridden.
-class DirectArguments : public GenericArguments<DirectArguments> {
+class DirectArguments final : public GenericArguments<DirectArguments> {
 private:
     DirectArguments(VM&, Structure*, unsigned length, unsigned capacity);
     

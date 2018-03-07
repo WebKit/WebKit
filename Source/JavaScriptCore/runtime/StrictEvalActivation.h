@@ -29,10 +29,9 @@
 
 namespace JSC {
 
-class StrictEvalActivation : public JSScope {
+class StrictEvalActivation final : public JSScope {
 public:
-    typedef JSScope Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    using Base = JSScope;
 
     static StrictEvalActivation* create(ExecState* exec, JSScope* currentScope)
     {

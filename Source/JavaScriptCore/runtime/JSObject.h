@@ -1096,9 +1096,9 @@ protected:
 
 class JSFinalObject;
 
-// JSFinalObject is a type of JSObject that contains sufficent internal
-// storage to fully make use of the colloctor cell containing it.
-class JSFinalObject : public JSObject {
+// JSFinalObject is a type of JSObject that contains sufficient internal
+// storage to fully make use of the collector cell containing it.
+class JSFinalObject final : public JSObject {
     friend class JSObject;
 
 public:
@@ -1193,16 +1193,6 @@ inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure)
     JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(vm.heap, allocationSize(structure->inlineCapacity()))) JSFinalObject(vm, structure);
     finalObject->finishCreation(vm);
     return finalObject;
-}
-
-inline bool isJSFinalObject(JSCell* cell)
-{
-    return cell->type() == FinalObjectType;
-}
-
-inline bool isJSFinalObject(JSValue value)
-{
-    return value.isCell() && isJSFinalObject(value.asCell());
 }
 
 inline size_t JSObject::offsetOfInlineStorage()

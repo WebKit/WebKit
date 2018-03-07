@@ -37,8 +37,10 @@ class WatchpointSet;
 
 class JSScope : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesToThis;
+
+    DECLARE_EXPORT_INFO;
 
     friend class LLIntOffsetsExtractor;
     static size_t offsetOfNext();

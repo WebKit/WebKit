@@ -77,8 +77,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
         return JSValue::encode(JSMap::create(exec, vm, mapStructure));
     }
 
-    if (isJSMap(iterable)) {
-        JSMap* iterableMap = jsCast<JSMap*>(iterable);
+    if (auto* iterableMap = jsDynamicCast<JSMap*>(vm, iterable)) {
         if (iterableMap->canCloneFastAndNonObservable(mapStructure)) {
             scope.release();
             return JSValue::encode(iterableMap->clone(exec, vm, mapStructure));
@@ -123,7 +122,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(ExecState* exec)
 {
-    ASSERT(isJSMap(exec->argument(0)));
+    ASSERT(jsDynamicCast<JSMap*>(exec->vm(), exec->argument(0)));
     JSMap* map = jsCast<JSMap*>(exec->uncheckedArgument(0));
     auto* head = map->head();
     ASSERT(head);

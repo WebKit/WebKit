@@ -87,6 +87,7 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     Base::finishCreation(vm);
+    ASSERT(type() == ProxyObjectType);
     if (!target.isObject()) {
         throwTypeError(exec, scope, ASCIILiteral("A Proxy's 'target' should be an Object"));
         return;

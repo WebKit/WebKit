@@ -1599,6 +1599,7 @@ void JSGlobalObject::finishCreation(VM& vm)
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
     setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(vm), PureForwardingProxyType), this));
+    ASSERT(type() == GlobalObjectType);
 }
 
 void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
@@ -1608,6 +1609,7 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
     setGlobalThis(vm, thisValue);
+    ASSERT(type() == GlobalObjectType);
 }
 
 } // namespace JSC

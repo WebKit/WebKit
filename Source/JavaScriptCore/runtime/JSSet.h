@@ -71,16 +71,6 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-inline bool isJSSet(JSCell* from)
-{
-    static_assert(std::is_final<JSSet>::value, "");
-    return from->type() == JSSetType;
-}
-
-inline bool isJSSet(JSValue from)
-{
-    static_assert(std::is_final<JSSet>::value, "");
-    return from.isCell() && from.asCell()->type() == JSSetType;
-}
+static_assert(std::is_final<JSSet>::value, "Required for JSType based casting");
 
 } // namespace JSC

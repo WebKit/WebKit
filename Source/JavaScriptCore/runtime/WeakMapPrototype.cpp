@@ -62,8 +62,9 @@ ALWAYS_INLINE static JSWeakMap* getWeakMap(CallFrame* callFrame, JSValue value)
         return nullptr;
     }
 
-    if (LIKELY(isJSWeakMap(asObject(value))))
-        return jsCast<JSWeakMap*>(value);
+    auto* map = jsDynamicCast<JSWeakMap*>(vm, asObject(value));
+    if (LIKELY(map))
+        return map;
 
     throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
     return nullptr;

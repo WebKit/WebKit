@@ -1373,8 +1373,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
-        if (calleeAsValue.isCell() && calleeAsValue.asCell()->type() == InternalFunctionType) {
-            auto* internalFunction = jsCast<InternalFunction*>(calleeAsValue.asCell());
+        if (auto* internalFunction = jsDynamicCast<InternalFunction*>(vm, calleeAsValue)) {
             MacroAssemblerCodePtr codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
 

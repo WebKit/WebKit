@@ -57,16 +57,6 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-inline bool isJSWeakSet(JSCell* from)
-{
-    static_assert(std::is_final<JSWeakSet>::value, "");
-    return from->type() == JSWeakSetType;
-}
-
-inline bool isJSWeakSet(JSValue from)
-{
-    static_assert(std::is_final<JSWeakSet>::value, "");
-    return from.isCell() && from.asCell()->type() == JSWeakSetType;
-}
+static_assert(std::is_final<JSWeakSet>::value, "Required for JSType based casting");
 
 } // namespace JSC

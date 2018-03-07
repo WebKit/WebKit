@@ -36,7 +36,7 @@ namespace JSC {
 // object will store the overflow arguments, if there are any. This object will use the symbol
 // table's ScopedArgumentsTable and the activation, or its overflow storage, to handle all indexed
 // lookups.
-class ScopedArguments : public GenericArguments<ScopedArguments> {
+class ScopedArguments final : public GenericArguments<ScopedArguments> {
 private:
     ScopedArguments(VM&, Structure*, unsigned totalLength);
     void finishCreation(VM&, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*);

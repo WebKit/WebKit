@@ -2407,10 +2407,10 @@ bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
     return true;
 }
 
-ALWAYS_INLINE static bool canDoFastPutDirectIndex(JSObject* object)
+ALWAYS_INLINE static bool canDoFastPutDirectIndex(VM& vm, JSObject* object)
 {
     return isJSArray(object)
-        || isJSFinalObject(object)
+        || jsDynamicCast<JSFinalObject*>(vm, object)
         || TypeInfo::isArgumentsType(object->type());
 }
 
@@ -2427,7 +2427,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
         // FIXME: this will pessimistically assume that if attributes are missing then they'll default to false
         // however if the property currently exists missing attributes will override from their current 'true'
         // state (i.e. defineOwnProperty could be used to set a value without needing to entering 'SparseMode').
-        if (!descriptor.attributes() && descriptor.value() && canDoFastPutDirectIndex(this)) {
+        if (!descriptor.attributes() && descriptor.value() && canDoFastPutDirectIndex(vm, this)) {
             ASSERT(!descriptor.isAccessorDescriptor());
             scope.release();
             return putDirectIndex(exec, index, descriptor.value(), 0, throwException ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
@@ -2881,7 +2881,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned 
 {
     VM& vm = exec->vm();
     
-    if (!canDoFastPutDirectIndex(this)) {
+    if (!canDoFastPutDirectIndex(vm, this)) {
         PropertyDescriptor descriptor;
         descriptor.setDescriptor(value, attributes);
         return methodTable(vm)->defineOwnProperty(this, exec, Identifier::from(exec, i), descriptor, mode == PutDirectIndexShouldThrow);

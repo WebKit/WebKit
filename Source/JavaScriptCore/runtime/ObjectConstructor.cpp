@@ -715,7 +715,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
         return JSValue::encode(obj);
     JSObject* object = asObject(obj);
 
-    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType())) {
+    if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType())) {
         object->seal(vm);
         return JSValue::encode(obj);
     }
@@ -735,7 +735,7 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType())) {
+    if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType())) {
         object->freeze(vm);
         return object;
     }
@@ -782,7 +782,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
     JSObject* object = asObject(obj);
 
     // Quick check for final objects.
-    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType()))
+    if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType()))
         return JSValue::encode(jsBoolean(object->isSealed(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "sealed").
@@ -800,7 +800,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
     JSObject* object = asObject(obj);
 
     // Quick check for final objects.
-    if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType()))
+    if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType()))
         return JSValue::encode(jsBoolean(object->isFrozen(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "frozen").

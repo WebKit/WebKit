@@ -39,6 +39,8 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSScope);
 
+const ClassInfo JSScope::s_info = { "Scope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSScope) };
+
 void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSScope* thisObject = jsCast<JSScope*>(cell);

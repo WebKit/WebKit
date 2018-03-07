@@ -62,16 +62,6 @@ private:
     static String toStringName(const JSObject*, ExecState*);
 };
 
-inline bool isJSWeakMap(JSCell* from)
-{
-    static_assert(std::is_final<JSWeakMap>::value, "");
-    return from->type() == JSWeakMapType;
-}
-
-inline bool isJSWeakMap(JSValue from)
-{
-    static_assert(std::is_final<JSWeakMap>::value, "");
-    return from.isCell() && from.asCell()->type() == JSWeakMapType;
-}
+static_assert(std::is_final<JSWeakMap>::value, "Required for JSType based casting");
 
 } // namespace JSC

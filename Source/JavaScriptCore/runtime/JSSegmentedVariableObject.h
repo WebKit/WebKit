@@ -54,7 +54,9 @@ class JSSegmentedVariableObject : public JSSymbolTableObject {
     friend class LLIntOffsetsExtractor;
 
 public:
-    typedef JSSymbolTableObject Base;
+    using Base = JSSymbolTableObject;
+
+    DECLARE_INFO;
 
     bool isValidScopeOffset(ScopeOffset offset)
     {

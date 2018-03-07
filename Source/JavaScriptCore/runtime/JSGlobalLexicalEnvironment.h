@@ -29,10 +29,10 @@
 
 namespace JSC {
 
-class JSGlobalLexicalEnvironment : public JSSegmentedVariableObject {
+class JSGlobalLexicalEnvironment final : public JSSegmentedVariableObject {
 
 public:
-    typedef JSSegmentedVariableObject Base;
+    using Base = JSSegmentedVariableObject;
 
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
