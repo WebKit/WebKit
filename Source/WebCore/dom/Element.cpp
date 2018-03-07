@@ -1480,6 +1480,16 @@ ElementStyle Element::resolveStyle(const RenderStyle* parentStyle)
     return styleResolver().styleForElement(*this, parentStyle);
 }
 
+static void invalidateForSiblingCombinators(Element* sibling)
+{
+    for (; sibling; sibling = sibling->nextElementSibling()) {
+        if (sibling->styleIsAffectedByPreviousSibling())
+            sibling->invalidateStyleForSubtreeInternal();
+        if (!sibling->affectsNextSiblingElementStyle())
+            return;
+    }
+}
+
 static void invalidateSiblingsIfNeeded(Element& element)
 {
     if (!element.affectsNextSiblingElementStyle())
@@ -1488,12 +1498,7 @@ static void invalidateSiblingsIfNeeded(Element& element)
     if (parent && parent->styleValidity() >= Style::Validity::SubtreeInvalid)
         return;
 
-    for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-        if (sibling->styleIsAffectedByPreviousSibling())
-            sibling->invalidateStyleForSubtreeInternal();
-        if (!sibling->affectsNextSiblingElementStyle())
-            return;
-    }
+    invalidateForSiblingCombinators(element.nextElementSibling());
 }
 
 void Element::invalidateStyle()
@@ -2027,14 +2032,14 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         if (newFirstElement != elementAfterChange) {
             auto* style = elementAfterChange->renderStyle();
             if (!style || style->firstChildState())
-                elementAfterChange->invalidateStyleForSubtree();
+                elementAfterChange->invalidateStyleForSubtreeInternal();
         }
 
         // We also have to handle node removal.
         if (checkType == SiblingElementRemoved && newFirstElement == elementAfterChange && newFirstElement) {
             auto* style = newFirstElement->renderStyle();
             if (!style || !style->firstChildState())
-                newFirstElement->invalidateStyleForSubtree();
+                newFirstElement->invalidateStyleForSubtreeInternal();
         }
     }
 
@@ -2047,7 +2052,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         if (newLastElement != elementBeforeChange) {
             auto* style = elementBeforeChange->renderStyle();
             if (!style || style->lastChildState())
-                elementBeforeChange->invalidateStyleForSubtree();
+                elementBeforeChange->invalidateStyleForSubtreeInternal();
         }
 
         // We also have to handle node removal.  The parser callback case is similar to node removal as well in that we need to change the last child
@@ -2055,34 +2060,22 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         if ((checkType == SiblingElementRemoved || checkType == FinishedParsingChildren) && newLastElement == elementBeforeChange && newLastElement) {
             auto* style = newLastElement->renderStyle();
             if (!style || !style->lastChildState())
-                newLastElement->invalidateStyleForSubtree();
+                newLastElement->invalidateStyleForSubtreeInternal();
         }
     }
 
-    if (elementAfterChange) {
-        if (elementAfterChange->styleIsAffectedByPreviousSibling())
-            elementAfterChange->invalidateStyleForSubtree();
-        else if (elementAfterChange->affectsNextSiblingElementStyle()) {
-            Element* elementToInvalidate = elementAfterChange;
-            do {
-                elementToInvalidate = elementToInvalidate->nextElementSibling();
-            } while (elementToInvalidate && !elementToInvalidate->styleIsAffectedByPreviousSibling());
-
-            if (elementToInvalidate)
-                elementToInvalidate->invalidateStyleForSubtree();
-        }
-    }
+    invalidateForSiblingCombinators(elementAfterChange);
 
     // We have to invalidate everything following the insertion point in the forward case, and everything before the insertion point in the
     // backward case.
     if (parent.childrenAffectedByForwardPositionalRules()) {
         for (auto* next = elementAfterChange; next; next = next->nextElementSibling())
-            next->invalidateStyleForSubtree();
+            next->invalidateStyleForSubtreeInternal();
     }
     // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
     if (parent.childrenAffectedByBackwardPositionalRules()) {
         for (auto* previous = elementBeforeChange; previous; previous = previous->previousElementSibling())
-            previous->invalidateStyleForSubtree();
+            previous->invalidateStyleForSubtreeInternal();
     }
 }
 

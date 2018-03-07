@@ -1,3 +1,25 @@
+2018-03-07  Antti Koivisto  <antti@apple.com>
+
+        checkForSiblingStyleChanges should use internal versions of the invalidation functions
+        https://bugs.webkit.org/show_bug.cgi?id=183405
+        <rdar://problem/38218310>
+
+        Reviewed by Zalan Bujtas.
+
+        Non-internal invalidateStyleForElement/Subtree() implement sibling combinator invalidation. Checking this
+        is only needed if the element in question changed somehow. In checkForSiblingStyleChanges we know that
+        another element changed and we really just want to invalidate.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::isFirstOfType):
+        (WebCore::SelectorChecker::checkOne const):
+
+        Also make :first-of-type use ChildrenAffectedByForwardPositionalRules for invalidation similar to :last-of-type
+        for more correct invalidation.
+
+        * dom/Element.cpp:
+        (WebCore::checkForSiblingStyleChanges):
+
 2018-03-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         HTML `pattern` attribute should set `u` flag for regular expressions
