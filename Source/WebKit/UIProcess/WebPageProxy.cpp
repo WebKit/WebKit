@@ -412,6 +412,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
 #endif
 
+    m_systemPreviewController = std::make_unique<SystemPreviewController>(*this);
+
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
 #endif
@@ -668,6 +670,8 @@ void WebPageProxy::reattachToWebProcess()
 #if ENABLE(APPLE_PAY)
     m_paymentCoordinator = std::make_unique<WebPaymentCoordinatorProxy>(*this);
 #endif
+
+    m_systemPreviewController = std::make_unique<SystemPreviewController>(*this);
 
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
@@ -5713,6 +5717,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(APPLE_PAY)
     m_paymentCoordinator = nullptr;
 #endif
+
+    m_systemPreviewController = nullptr;
 
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = nullptr;

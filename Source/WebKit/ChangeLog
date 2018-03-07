@@ -1,3 +1,38 @@
+2018-03-07  Dean Jackson  <dino@apple.com>
+
+        Add SystemPreviewController for showing system-level views of special file types
+        https://bugs.webkit.org/show_bug.cgi?id=183413
+        <rdar://problem/37800834>
+
+        Reviewed by Tim Horton.
+
+        Add a new controller class that hangs off WebPageProxy, with the goal
+        of providing system-level viewing of some some file types. Specifically
+        those that can't be shown by WebKit.
+
+        This is the initial implementation which is quite simple. The controller
+        can be queried about whether it supports a MIME type, then it can be
+        asked to show a URL.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm: Added.
+        (-[_WKPreviewControllerDataSource initWithURL:]):
+        (-[_WKPreviewControllerDataSource numberOfPreviewItemsInPreviewController:]):
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (WebKit::SystemPreviewController::canPreview const):
+        (WebKit::SystemPreviewController::showPreview):
+        * UIProcess/SystemPreviewController.cpp: Added.
+        (WebKit::SystemPreviewController::SystemPreviewController):
+        (WebKit::SystemPreviewController::canPreview const):
+        (WebKit::SystemPreviewController::showPreview):
+        * UIProcess/SystemPreviewController.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::systemPreviewController):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-03-07  Alejandro G. Castro  <alex@igalia.com>
 
         Make NetworkRTCResolver port agnostic

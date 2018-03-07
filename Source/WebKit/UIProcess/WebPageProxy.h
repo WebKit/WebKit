@@ -44,6 +44,7 @@
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "SystemPreviewController.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include "VisibleContentRectUpdateInfo.h"
 #include "VisibleWebPageCounter.h"
@@ -377,6 +378,8 @@ public:
     bool allowsMediaDocumentInlinePlayback() const;
     void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
+
+    SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
 
 #if ENABLE(CONTEXT_MENUS)
     API::ContextMenuClient& contextMenuClient() { return *m_contextMenuClient; }
@@ -1790,6 +1793,8 @@ private:
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
+
+    std::unique_ptr<SystemPreviewController> m_systemPreviewController;
 
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<WebCredentialsMessengerProxy> m_credentialsMessenger;
