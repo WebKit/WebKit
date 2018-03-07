@@ -1,0 +1,23 @@
+layer at (0,0) size 785x888
+  RenderView at (0,0) size 785x600
+layer at (465,0) size 320x600
+  RenderBlock {HTML} at (0,0) size 320x600
+    RenderBody {BODY} at (8,8) size 304x584
+layer at (473,8) size 304x584
+  RenderBlock {DIV} at (0,0) size 304x584 [border: (2px solid #0000FF)]
+    RenderMultiColumnSet at (2,2) size 300x580
+layer at (125,10) size 650x282
+  RenderMultiColumnFlowThread at (2,2) size 650x282
+    RenderBlock {P} at (16,0) size 76x282
+      RenderText {#text} at (0,0) size 19x277
+        text run at (0,0) width 277: "This image should not be split across columns."
+      RenderBR {BR} at (0,277) size 19x0
+      RenderText {#text} at (19,0) size 57x279
+        text run at (19,0) width 276: "The reason it should not be split is that the line"
+        text run at (38,0) width 279: "contains no text and so we should be willing to"
+        text run at (57,0) width 230: "allow it to sit at the top of a new page."
+    RenderBlock (anonymous) at (108,0) size 542x282
+      RenderBlock {DIV} at (192,0) size 300x50 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (492,0) size 50x282 [bgcolor=#800080]
+      RenderText {#text} at (0,0) size 0x0

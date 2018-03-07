@@ -1,0 +1,43 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 17 of #text > DIV > BODY > HTML > #document to 17 of #text > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 582x19
+          text run at (0,0) width 383: "This tests pasting a Mail blockquote at the start of a paragraph. "
+          text run at (383,0) width 199: "Blockquoting should be stripped."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 116x19
+          text run at (0,0) width 116: "Blockquoted Textx"
+      RenderBlock {P} at (0,72) size 784x40
+        RenderText {#text} at (0,0) size 782x39
+          text run at (0,0) width 276: "This tests pasting text into a Mail blockquote. "
+          text run at (276,0) width 506: "The last bit of content in the incoming fragment should be merged with the paragraph"
+          text run at (0,20) width 210: "after the position being pasted into."
+      RenderBlock {DIV} at (0,128) size 784x56
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x20
+          RenderBlock {DIV} at (0,0) size 704x20
+            RenderText {#text} at (0,0) size 98x19
+              text run at (0,0) width 98: "Blockquotedfoo"
+        RenderBlock {BLOCKQUOTE} at (40,36) size 704x20
+          RenderBlock {DIV} at (0,0) size 704x20
+            RenderText {#text} at (0,0) size 47x19
+              text run at (0,0) width 47: "barText"
+caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body

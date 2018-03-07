@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x122
+  RenderBlock {HTML} at (0,0) size 800x122
+    RenderBody {BODY} at (8,8) size 784x106
+      RenderBlock {DETAILS} at (0,0) size 784x106 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x20
+          RenderInline (generated) at (0,0) size 39x19
+            RenderText at (0,0) size 39x19
+              text run at (0,0) width 39: "before"
+        RenderBlock {SUMMARY} at (1,21) size 782x64 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 780x20
+            RenderInline (generated) at (0,0) size 39x19
+              RenderText at (0,0) size 39x19
+                text run at (0,0) width 39: "before"
+            RenderDetailsMarker {DIV} at (39,5) size 11x11: down
+            RenderText {#text} at (55,0) size 58x19
+              text run at (55,0) width 58: "Summary"
+          RenderBlock {DIV} at (1,21) size 780x22 [border: (1px solid #000000)]
+            RenderText {#text} at (1,1) size 56x19
+              text run at (1,1) width 56: "Inner Div"
+          RenderBlock (anonymous) at (1,43) size 780x20
+            RenderInline (generated) at (0,0) size 27x19
+              RenderText at (0,0) size 27x19
+                text run at (0,0) width 27: "after"
+        RenderBlock (anonymous) at (1,85) size 782x20
+          RenderText {#text} at (0,0) size 45x19
+            text run at (0,0) width 45: "Details "
+          RenderInline (generated) at (0,0) size 27x19
+            RenderText at (45,0) size 27x19
+              text run at (45,0) width 27: "after"

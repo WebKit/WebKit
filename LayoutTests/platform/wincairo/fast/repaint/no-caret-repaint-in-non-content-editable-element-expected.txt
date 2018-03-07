@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 632x19
+          text run at (0,0) width 632: "This tests that clicking on a non-content editable element does not cause a repaint of it in whole or in part."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 214x19
+          text run at (0,0) width 214: "This element is not content editable."
+caret: position 0 of child 0 {#text} of child 3 {P} of body

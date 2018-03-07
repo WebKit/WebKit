@@ -1,0 +1,74 @@
+               
+               
+This tests whether AXValue is writable for various form controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+text1
+PASS document.activeElement == element1 is true
+text2
+PASS document.activeElement == element2 is true
+FAIL axElement1.isAttributeSettable('AXValue') should be true. Was false.
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+number1
+PASS document.activeElement == element1 is true
+number2
+PASS document.activeElement == element2 is true
+FAIL axElement1.isAttributeSettable('AXValue') should be true. Was false.
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+textarea1
+PASS document.activeElement == element1 is true
+textarea2
+PASS document.activeElement == element2 is true
+FAIL axElement1.isAttributeSettable('AXValue') should be true. Was false.
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+slider1
+PASS document.activeElement == element1 is true
+slider2
+PASS document.activeElement == element2 is true
+FAIL axElement1.isAttributeSettable('AXValue') should be true. Was false.
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+checkbox1
+PASS document.activeElement == element1 is true
+checkbox2
+PASS document.activeElement == element2 is true
+PASS axElement1.isAttributeSettable('AXValue') is false
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+radio1
+PASS document.activeElement == element1 is true
+radio2
+PASS document.activeElement == element2 is true
+PASS axElement1.isAttributeSettable('AXValue') is false
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+submit1
+PASS document.activeElement == element1 is true
+submit2
+PASS document.activeElement == element2 is true
+PASS axElement1.isAttributeSettable('AXValue') is false
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+combobox1
+PASS document.activeElement == element1 is true
+combobox2
+PASS document.activeElement == element2 is true
+PASS axElement1.isAttributeSettable('AXValue') is false
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+listbox1
+PASS document.activeElement == element1 is true
+listbox2
+PASS document.activeElement == element2 is true
+PASS axElement1.isAttributeSettable('AXValue') is false
+FAIL axElement2.isAttributeSettable('AXValue') should be true. Was false.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

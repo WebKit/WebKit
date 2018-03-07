@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {H2} at (0,0) size 784x27 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 58x26
+          text run at (0,0) width 58: "PASS"
+layer at (8,55) size 760x205
+  RenderBlock {DIV} at (0,46) size 760x206 [border: (5px solid #800000)]
+    RenderMultiColumnSet at (5,5) size 750x8
+    RenderBlock {H2} at (5,32) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 58x26
+        text run at (0,0) width 58: "PASS"
+    RenderMultiColumnSet at (5,79) size 750x121
+layer at (13,60) size 367x244
+  RenderMultiColumnFlowThread at (5,5) size 367x244
+    RenderBlock {SPAN} at (0,8) size 367x220
+      RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,0) size 367x220
+        RenderText {#text} at (0,0) size 367x219
+          text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
+          text run at (0,20) width 367: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus."
+          text run at (0,40) width 362: "Quisque adipiscing rhoncus sem. Proin nulla purus, vulputate"
+          text run at (0,60) width 358: "vel, varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis"
+          text run at (0,80) width 365: "aliquam. Cras convallis adipiscing sem. Nam nonummy enim."
+          text run at (0,100) width 329: "Nullam bibendum lobortis neque. Vestibulum velit orci,"
+          text run at (0,120) width 309: "tempus euismod, pretium quis, interdum vitae, nulla."
+          text run at (0,140) width 321: "Phasellus eget ante et tortor condimentum vestibulum."
+          text run at (0,160) width 360: "Suspendisse hendrerit quam nec felis. Sed varius turpis vitae"
+          text run at (0,180) width 350: "pede. Lorem ipsum dolor sit amet, consectetuer adipiscing"
+          text run at (0,200) width 21: "elit."
+      RenderBlock {DL} at (0,236) size 367x0

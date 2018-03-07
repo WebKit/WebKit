@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 59: TypeError: undefined is not an object (evaluating 'trackListItems[index]')
+FAIL: Timed out waiting for notifyDone to be called
+Test that we are able to trigger the list of captions, and select from the list.
+
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+EXPECTED (trackListElement.offsetHeight > '0') OK
+
+*** Add another text track.
+RUN(video.addTextTrack("captions", "Commentary", "ru"))
+
+*** Turning captions on
+

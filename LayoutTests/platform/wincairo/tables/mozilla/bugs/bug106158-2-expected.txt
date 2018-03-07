@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 450x52
+        RenderTableSection {TBODY} at (0,0) size 450x52
+          RenderTableRow {TR} at (0,2) size 450x48
+            RenderTableCell {TD} at (2,2) size 446x48 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 444x20
+                RenderTable {TABLE} at (0,0) size 444x20 [bgcolor=#FFFF00]
+                  RenderTableSection {TBODY} at (0,0) size 444x20
+                    RenderTableRow {TR} at (0,0) size 444x20
+                      RenderTableCell {TD} at (0,0) size 444x20 [r=0 c=0 rs=1 cs=1]
+                        RenderInline {FONT} at (0,0) size 10x16
+                          RenderText {#text} at (2,2) size 10x16
+                            text run at (2,2) width 10: "In"
+                        RenderText {#text} at (0,0) size 0x0
+                RenderBR {BR} at (0,0) size 0x19
+              RenderTable {TABLE} at (1,21) size 440x26 [bgcolor=#FF00FF]
+                RenderTableSection {TBODY} at (0,0) size 440x26
+                  RenderTableRow {TR} at (0,2) size 440x22
+                    RenderTableCell {TD} at (2,2) size 436x22 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 120x19
+                        text run at (1,1) width 120: "Shop Till You Drop"

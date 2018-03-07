@@ -1,0 +1,14 @@
+layer at (0,0) size 785x585
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x179
+  RenderBlock {HTML} at (0,0) size 785x179
+layer at (8,8) size 769x163 clip at (8,8) size 754x148 scrollHeight 244
+  RenderBody {BODY} at (8,8) size 769x163
+    RenderBlock {P} at (0,16) size 754x20
+      RenderText {#text} at (0,0) size 407x19
+        text run at (0,0) width 407: "Test passes if the blue and orange boxes below are the same height."
+layer at (8,60) size 754x96
+  RenderBlock (relative positioned) {DIV} at (0,52) size 754x96
+    RenderBlock {DIV} at (0,0) size 96x96 [bgcolor=#0000FF]
+layer at (104,60) size 96x96
+  RenderBlock (positioned) {DIV} at (96,0) size 96x96 [bgcolor=#FFA500]

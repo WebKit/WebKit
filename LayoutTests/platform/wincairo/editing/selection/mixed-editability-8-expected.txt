@@ -1,0 +1,33 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of SPAN > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 1 of SPAN > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 781x39
+          text run at (0,0) width 781: "This tests moving the caret backward through content of mixed editability. The caret should end up back at the start of the editable"
+          text run at (0,20) width 119: "text inside the table."
+      RenderBlock {DIV} at (0,56) size 784x70
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "editable"
+        RenderTable {TABLE} at (0,20) size 88x30 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 86x28
+            RenderTableRow {TR} at (0,2) size 86x24
+              RenderTableCell {TD} at (2,2) size 82x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 78x20
+                  RenderInline {SPAN} at (0,0) size 31x19
+                    RenderText {#text} at (0,0) size 31x19
+                      text run at (0,0) width 31: "static"
+                  RenderInline {SPAN} at (0,0) size 47x19
+                    RenderText {#text} at (31,0) size 47x19
+                      text run at (31,0) width 47: "editable"
+        RenderBlock (anonymous) at (0,50) size 784x20
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "editable"
+caret: position 0 of child 0 {#text} of child 1 {SPAN} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

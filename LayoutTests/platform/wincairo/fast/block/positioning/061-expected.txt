@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (10,10) size 10x10 scrollHeight 20
+  RenderBlock (positioned) {DIV} at (10,10) size 10x10 [bgcolor=#FF0000]
+    RenderImage {IMG} at (0,5) size 10x10
+layer at (10,30) size 10x10 scrollHeight 20
+  RenderBlock (positioned) {DIV} at (10,30) size 10x10 [bgcolor=#FF0000]
+    RenderImage {IMG} at (0,5) size 10x10
+layer at (10,30) size 10x10
+  RenderImage {IMG} at (0,0) size 10x10 [bgcolor=#0000FF]

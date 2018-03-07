@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 20x584
+        RenderText {#text} at (0,0) size 19x211
+          text run at (0,0) width 211: "These two lines should be identical:"
+      RenderBlock {DIV} at (36,0) size 28x584
+        RenderText {#text} at (0,0) size 27x270
+          text run at (0,0) width 270: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
+        RenderInline {SPAN} at (0,0) size 27x24
+          RenderCombineText {#text} at (0,270) size 27x24
+            text run at (0,270) width 24: "\x{FFFC}"
+        RenderText {#text} at (0,294) size 27x119
+          text run at (0,294) width 119: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"
+      RenderBlock {DIV} at (64,0) size 28x584
+        RenderText {#text} at (0,0) size 27x270
+          text run at (0,0) width 270: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
+        RenderInline {SPAN} at (0,0) size 27x54
+          RenderText {#text} at (0,270) size 27x54
+            text run at (0,270) width 54: "3.667"
+        RenderText {#text} at (0,324) size 27x119
+          text run at (0,324) width 119: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"

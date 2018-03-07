@@ -1,0 +1,86 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 777x39
+          text run at (0,0) width 533: "This tests the ability to start editing in blocks that are visible, but have little or no content. "
+          text run at (533,0) width 244: "Each of the divs below should be able to"
+          text run at (0,20) width 89: "accept a caret."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 166x19
+          text run at (0,0) width 166: "This div contains some text."
+      RenderBlock {DIV} at (0,92) size 708x22 [border: (1px dotted #0000FF)]
+        RenderText {#text} at (1,1) size 35x19
+          text run at (1,1) width 35: "chello"
+      RenderBlock {P} at (0,130) size 784x20
+        RenderText {#text} at (0,0) size 174x19
+          text run at (0,0) width 174: "This div is completely empty."
+      RenderBlock {DIV} at (0,166) size 708x22 [border: (1px dotted #0000FF)]
+        RenderText {#text} at (1,1) size 7x19
+          text run at (1,1) width 7: "c"
+      RenderBlock {P} at (0,204) size 784x20
+        RenderText {#text} at (0,0) size 324x19
+          text run at (0,0) width 324: "This div contains some collapsable whitespace (a '\\n')."
+      RenderBlock {DIV} at (0,240) size 708x22 [border: (1px dotted #0000FF)]
+        RenderText {#text} at (1,1) size 7x19
+          text run at (1,1) width 7: "c"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,278) size 784x20
+        RenderText {#text} at (0,0) size 220x19
+          text run at (0,0) width 220: "This div contains a self-closing p tag."
+      RenderBlock {DIV} at (0,314) size 708x38 [border: (1px dotted #0000FF)]
+        RenderBlock (anonymous) at (1,1) size 706x20
+          RenderText {#text} at (0,0) size 7x19
+            text run at (0,0) width 7: "c"
+        RenderBlock {P} at (1,37) size 706x0
+      RenderBlock {P} at (0,368) size 784x20
+        RenderText {#text} at (0,0) size 686x19
+          text run at (0,0) width 686: "This div contains a self-closing p tag and some collapsable whitespace (two '\\n's before and after the self closing p."
+      RenderBlock {DIV} at (0,404) size 708x38 [border: (1px dotted #0000FF)]
+        RenderBlock (anonymous) at (1,1) size 706x20
+          RenderText {#text} at (0,0) size 7x19
+            text run at (0,0) width 7: "c"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {P} at (1,37) size 706x0
+caret: position 1 of child 0 {#text} of child 21 {DIV} of body

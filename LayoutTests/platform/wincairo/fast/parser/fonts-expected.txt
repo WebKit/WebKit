@@ -1,0 +1,83 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x528
+  RenderBlock {HTML} at (0,0) size 800x528
+    RenderBody {BODY} at (8,8) size 784x504
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderInline {DIV} at (0,0) size 528x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,2) size 528x16
+            text run at (0,2) width 528: "Ahem_font_required_for_this_test."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,36) size 752x20 [color=#008000]
+        RenderText {#text} at (0,0) size 341x19
+          text run at (0,0) width 341: "This line should be green. There should be no red below."
+      RenderBlock {P} at (16,72) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-a"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,104) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-b"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,136) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-c"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,168) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-d"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,200) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-e"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,232) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-f"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,264) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-g"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,296) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-h"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,328) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-i"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,360) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-j"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,392) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-k"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,424) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-l"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,456) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-m"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (16,488) size 96x16 [color=#008000]
+        RenderInline {SPAN} at (0,0) size 96x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 96x16
+            text run at (0,0) width 96: "FAIL-n"
+        RenderText {#text} at (0,0) size 0x0

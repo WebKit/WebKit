@@ -1,0 +1,32 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 1 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 1 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 763x39
+          text run at (0,0) width 433: "This tests moving the caret forward through content of mixed editability. "
+          text run at (433,0) width 330: "The caret should move down one line from the editable"
+          text run at (0,20) width 404: "piece to the editable piece that's embedded in a non-editable piece."
+      RenderBlock {DIV} at (0,56) size 784x70
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "editable"
+        RenderTable {TABLE} at (0,20) size 57x30 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 55x28
+            RenderTableRow {TR} at (0,2) size 55x24
+              RenderTableCell {TD} at (2,2) size 51x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 47x19
+                  text run at (2,2) width 47: "editable"
+        RenderBlock (anonymous) at (0,50) size 784x20
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "editable"
+caret: position 2 of child 0 {#text} of child 2 {DIV} of body

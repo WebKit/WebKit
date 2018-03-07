@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 216x19
+          text run at (0,0) width 216: "The following two lines should look "
+        RenderInline {EM} at (0,0) size 93x19
+          RenderText {#text} at (216,0) size 93x19
+            text run at (216,0) width 93: "approximately"
+        RenderText {#text} at (309,0) size 60x19
+          text run at (309,0) width 60: " the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (0,0) size 6x19
+              text run at (0,0) width 6: "\x{2022}"
+        RenderText {#text} at (6,0) size 4x19
+          text run at (6,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (10,0) size 6x19
+              text run at (10,0) width 6: "\x{2022}"
+        RenderText {#text} at (16,0) size 4x19
+          text run at (16,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (20,0) size 6x19
+              text run at (20,0) width 6: "\x{2022}"
+        RenderText {#text} at (26,0) size 4x19
+          text run at (26,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (30,0) size 6x19
+              text run at (30,0) width 6: "\x{2022}"
+        RenderText {#text} at (36,0) size 4x19
+          text run at (36,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (40,0) size 6x19
+              text run at (40,0) width 6: "\x{2022}"
+        RenderText {#text} at (46,0) size 4x19
+          text run at (46,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (50,0) size 6x19
+              text run at (50,0) width 6: "\x{2022}"
+        RenderText {#text} at (56,0) size 4x19
+          text run at (56,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (60,0) size 6x19
+              text run at (60,0) width 6: "\x{2022}"
+        RenderText {#text} at (66,0) size 4x19
+          text run at (66,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (70,0) size 6x19
+              text run at (70,0) width 6: "\x{2022}"
+        RenderText {#text} at (76,0) size 4x19
+          text run at (76,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (80,0) size 6x19
+              text run at (80,0) width 6: "\x{2022}"
+        RenderText {#text} at (86,0) size 4x19
+          text run at (86,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (90,0) size 6x19
+              text run at (90,0) width 6: "\x{2022}"
+        RenderText {#text} at (96,0) size 4x19
+          text run at (96,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (100,0) size 6x19
+              text run at (100,0) width 6: "\x{2022}"
+        RenderText {#text} at (106,0) size 4x19
+          text run at (106,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x19
+          RenderInline (generated) at (0,0) size 6x19
+            RenderCounter at (110,0) size 6x19
+              text run at (110,0) width 6: "\x{2022}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 116x19
+          text run at (0,0) width 10: "\x{2022} "
+          text run at (10,0) width 10: "\x{2022} "
+          text run at (20,0) width 10: "\x{2022} "
+          text run at (30,0) width 10: "\x{2022} "
+          text run at (40,0) width 10: "\x{2022} "
+          text run at (50,0) width 10: "\x{2022} "
+          text run at (60,0) width 10: "\x{2022} "
+          text run at (70,0) width 10: "\x{2022} "
+          text run at (80,0) width 10: "\x{2022} "
+          text run at (90,0) width 10: "\x{2022} "
+          text run at (100,0) width 10: "\x{2022} "
+          text run at (110,0) width 6: "\x{2022}"

@@ -1,0 +1,30 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 718x55
+          text run at (14,14) width 712: "Should see \"bar\" centered in its own red box, with a left-aligned \"foo\" line"
+          text run at (726,14) width 6: " "
+          text run at (14,42) width 401: "above and a left-aligned \"baz\" line below."
+      RenderBlock {DIV} at (0,108) size 784x112
+        RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x28
+            RenderText {#text} at (0,0) size 32x27
+              text run at (0,0) width 32: "foo"
+            RenderBR {BR} at (32,21) size 0x0
+          RenderBlock {DIV} at (14,42) size 756x28
+            RenderText {#text} at (362,0) size 32x27
+              text run at (362,0) width 32: "bar"
+          RenderBlock (anonymous) at (14,70) size 756x28
+            RenderText {#text} at (0,0) size 33x27
+              text run at (0,0) width 33: "baz"
+caret: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of body

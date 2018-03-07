@@ -1,3 +1,29 @@
+2018-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed. Add platform-specific expectations.
+
+        Individual filenames are omitted for brevity.
+
+        * platform/wincairo/accessibility/: Added.
+        * platform/wincairo/animations/: Added.
+        * platform/wincairo/css1/: Added.
+        * platform/wincairo/css2.1/: Added.
+        * platform/wincairo/css3/: Added.
+        * platform/wincairo/editing/: Added.
+        * platform/wincairo/fast/: Added.
+        * platform/wincairo/fonts/: Added.
+        * platform/wincairo/ietestcenter/: Added.
+        * platform/wincairo/js/: Added.
+        * platform/wincairo/mathml/: Added.
+        * platform/wincairo/media/: Added.
+        * platform/wincairo/plugins/: Added.
+        * platform/wincairo/printing/: Added.
+        * platform/wincairo/scrollbars/: Added.
+        * platform/wincairo/svg/: Added.
+        * platform/wincairo/tables/: Added.
+        * platform/wincairo/transforms/: Added.
+        * platform/wincairo/transitions/: Added.
+
 2018-03-06  Youenn Fablet  <youenn@apple.com>
 
         didReceiveServerRedirectForProvisionalNavigation is not called in case of document redirection with service worker registration change

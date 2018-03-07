@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 656x19
+          text run at (0,0) width 575: "This tests that in a html document with inline audio content, the media element repaints correctly "
+          text run at (575,0) width 81: "while playing."
+      RenderBlock (anonymous) at (0,36) size 784x154
+        RenderMedia {AUDIO} at (0,0) size 200x25
+        RenderBR {BR} at (200,25) size 0x0
+        RenderBR {BR} at (200,75) size 0x0
+        RenderBR {BR} at (200,154) size 0x0
+layer at (8,44) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (8,44) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (8,44) size 200x25
+  RenderBlock (positioned) {DIV} at (0,0) size 200x25 [bgcolor=#292929]
+layer at (16,49) size 12x15
+  RenderButton {BUTTON} at (8,5) size 12x15 [color=#FFFFFF]
+layer at (44,49) size 16x15
+  RenderButton {BUTTON} at (36,4) size 16x16 [color=#FFFFFF]
+layer at (154,44) size 14x25
+  RenderFlexibleBox {DIV} at (146,0) size 14x25
+layer at (154,49) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (184,49) size 16x15
+  RenderButton {BUTTON} at (176,5) size 16x15 [color=#FFFFFF]
+layer at (8,69) size 200x25
+  RenderMedia {AUDIO} at (0,25) size 200x25
+layer at (8,69) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (8,69) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (8,69) size 200x25
+  RenderBlock (positioned) {DIV} at (0,0) size 200x25 [bgcolor=#292929]
+layer at (16,74) size 12x15
+  RenderButton {BUTTON} at (8,5) size 12x15 [color=#FFFFFF]
+layer at (44,74) size 16x15
+  RenderButton {BUTTON} at (36,4) size 16x16 [color=#FFFFFF]
+layer at (154,69) size 14x25
+  RenderFlexibleBox {DIV} at (146,0) size 14x25
+layer at (154,74) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (184,74) size 16x15
+  RenderButton {BUTTON} at (176,5) size 16x15 [color=#FFFFFF]
+layer at (8,146) size 200x25
+  RenderMedia {AUDIO} at (0,102) size 200x25
+layer at (8,146) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (8,146) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (8,146) size 200x25
+  RenderBlock (positioned) {DIV} at (0,0) size 200x25 [bgcolor=#292929]
+layer at (16,151) size 12x15
+  RenderButton {BUTTON} at (8,5) size 12x15 [color=#FFFFFF]
+layer at (44,151) size 16x15
+  RenderButton {BUTTON} at (36,4) size 16x16 [color=#FFFFFF]
+layer at (154,146) size 14x25
+  RenderFlexibleBox {DIV} at (146,0) size 14x25
+layer at (154,151) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (184,151) size 16x15
+  RenderButton {BUTTON} at (176,5) size 16x15 [color=#FFFFFF]

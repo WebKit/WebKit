@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,8) size 784x52
+      RenderBR {BR} at (154,2) size 0x19
+      RenderTextControl {INPUT} at (2,28) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderFlexibleBox {DIV} at (2,1) size 146x20
+          RenderBlock {DIV} at (0,1) size 129x17
+      RenderText {#text} at (0,0) size 0x0
+layer at (12,39) size 129x16
+  RenderBlock {DIV} at (0,0) size 129x16
+    RenderText {#text} at (0,0) size 14x16
+      text run at (0,0) width 14: "10"
+layer at (10,10) size 150x22
+  RenderTextControl {INPUT} at (2,2) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+    RenderFlexibleBox {DIV} at (2,1) size 146x20
+      RenderBlock {DIV} at (0,1) size 129x17
+layer at (12,13) size 129x16
+  RenderBlock {DIV} at (0,0) size 129x16
+    RenderText {#text} at (0,0) size 14x16
+      text run at (0,0) width 14: "10"
+layer at (141,11) size 17x20
+  RenderBlock (relative positioned) {DIV} at (129,0) size 17x20
+layer at (141,37) size 17x20
+  RenderBlock (relative positioned) {DIV} at (129,0) size 17x20

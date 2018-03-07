@@ -1,0 +1,27 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 580x19
+          text run at (0,0) width 580: "This tests inserting a paragraph separator before a special element at the start of an editable root."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 578x19
+          text run at (0,0) width 578: "Visually, it should leave a blank line before the link, and the caret selection at the start of the link."
+      RenderBlock {P} at (0,72) size 784x20
+        RenderText {#text} at (0,0) size 753x19
+          text run at (0,0) width 753: "Structurally, the empty paragraph element should go before the anchor element, rather than inside of it. See Radar #5452675."
+      RenderBlock {DIV} at (0,108) size 784x40
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock (anonymous) at (0,20) size 784x20
+          RenderInline {A} at (0,0) size 53x19 [color=#0000EE]
+            RenderText {#text} at (0,0) size 53x19
+              text run at (0,0) width 53: "applesite"
+caret: position 0 of child 0 {#text} of child 1 {A} of child 6 {DIV} of body

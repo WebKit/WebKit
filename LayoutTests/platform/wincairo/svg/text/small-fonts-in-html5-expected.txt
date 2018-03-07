@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x595
+  RenderBlock {HTML} at (0,0) size 800x595
+    RenderBody {BODY} at (8,21) size 784x566
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 472x36
+          text run at (0,0) width 472: "Small fonts in HTML5/inline SVG"
+      RenderBlock (anonymous) at (0,58) size 784x508
+        RenderSVGRoot {svg} at (8,79) size 502x507
+          RenderSVGContainer {g} at (8,79) size 502x507 [transform={m=((400.00,0.00)(0.00,400.00)) t=(0.00,0.00)}]
+            RenderSVGText {text} at (0,0) size 1x1 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 1x1
+                chunk 1 (middle anchor) text run 1 at (0.38,0.50) startOffset 0 endOffset 12 width 0.25: "Test passed."
+        RenderText {#text} at (0,0) size 0x0

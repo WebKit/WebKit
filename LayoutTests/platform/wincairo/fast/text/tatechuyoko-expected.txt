@@ -1,0 +1,23 @@
+layer at (0,0) size 785x664
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x664
+  RenderBlock {HTML} at (0,0) size 785x664
+    RenderBody {BODY} at (8,16) size 769x640
+      RenderBlock {P} at (0,0) size 769x40
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "\x{300C}\x{5411}\x{898B}\x{8AD6}\x{6CBB}\x{9053}\x{66F8}\x{FF0C}\x{5176}\x{9593}\x{6B32}\x{4EFF}\x{4E95}\x{7530}\x{4E4B}\x{610F}"
+        RenderInline {SPAN} at (0,0) size 16x19
+          RenderCombineText {#text} at (251,0) size 16x19
+            text run at (251,0) width 16: "12"
+        RenderText {#text} at (267,0) size 754x39
+          text run at (267,0) width 487: "\x{FF0C}\x{800C}\x{79D1}\x{689D}\x{5DDE}\x{90E1}\x{8CA1}\x{8CE6}\x{4E4B}\x{985E}\x{FF0C}\x{6B64}\x{56FA}\x{70BA}\x{6CBB}\x{4E4B}\x{5177}\x{3002}\x{7136}\x{65BD}\x{4E4B}\x{7576}\x{6709}\x{6B21}\x{7B2C}\x{3002}\x{4ECA}\x{65E5}\x{5148}\x{52D9}\x{FF0C}\x{6050}"
+          text run at (0,20) width 80: "\x{7576}\x{555F}\x{8FEA}\x{4E3B}\x{5FC3}"
+      RenderBlock {P} at (16,56) size 40x584
+        RenderText {#text} at (0,0) size 19x243
+          text run at (0,0) width 243: "\x{300C}\x{5411}\x{898B}\x{8AD6}\x{6CBB}\x{9053}\x{66F8}\x{FF0C}\x{5176}\x{9593}\x{6B32}\x{4EFF}\x{4E95}\x{7530}\x{4E4B}\x{610F}"
+        RenderInline {SPAN} at (0,0) size 19x16
+          RenderCombineText {#text} at (0,243) size 19x16
+            text run at (0,243) width 16: "\x{FFFC}"
+        RenderText {#text} at (0,259) size 39x580
+          text run at (0,259) width 321: "\x{FF0C}\x{800C}\x{79D1}\x{689D}\x{5DDE}\x{90E1}\x{8CA1}\x{8CE6}\x{4E4B}\x{985E}\x{FF0C}\x{6B64}\x{56FA}\x{70BA}\x{6CBB}\x{4E4B}\x{5177}\x{3002}\x{7136}\x{65BD}\x{4E4B}"
+          text run at (20,0) width 246: "\x{7576}\x{6709}\x{6B21}\x{7B2C}\x{3002}\x{4ECA}\x{65E5}\x{5148}\x{52D9}\x{FF0C}\x{6050}\x{7576}\x{555F}\x{8FEA}\x{4E3B}\x{5FC3}"

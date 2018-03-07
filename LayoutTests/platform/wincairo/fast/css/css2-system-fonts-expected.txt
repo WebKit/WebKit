@@ -1,0 +1,10 @@
+This tests platform specific system font styles. If any of the styles appear in monospace the test fails.
+caption: normal normal normal normal 12px/15px "Segoe UI"
+icon: normal normal normal normal 12px/15px "Segoe UI"
+menu: normal normal normal normal 12px/15px "Segoe UI"
+message-box: normal normal normal normal 12px/15px "Segoe UI"
+small-caption: normal normal normal normal 12px/15px "Segoe UI"
+status-bar: normal normal normal normal 12px/15px "Segoe UI"
+-webkit-mini-control: normal normal normal normal 13px/16px "MS Shell Dlg"
+-webkit-small-control: normal normal normal normal 13px/16px "MS Shell Dlg"
+-webkit-control: normal normal normal normal 13px/16px "MS Shell Dlg"

@@ -1,0 +1,93 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x326
+  RenderBlock {HTML} at (0,0) size 800x326
+    RenderBody {BODY} at (8,8) size 784x310
+      RenderBlock {DIV} at (0,0) size 784x155
+        RenderMedia {AUDIO} at (300,125) size 200x25
+      RenderBlock {DIV} at (0,155) size 784x155
+        RenderMedia {AUDIO} at (300,125) size 200x25
+layer at (8,8) size 300x150
+  RenderVideo {VIDEO} at (0,0) size 300x150
+layer at (8,8) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150
+layer at (8,113) size 300x45
+  RenderFlexibleBox {DIV} at (0,105) size 300x45
+layer at (8,113) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45
+layer at (8,113) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
+layer at (8,113) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
+layer at (16,138) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,138) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (169,137) size 77x17
+  RenderFlexibleBox {DIV} at (161,24) size 77x17
+layer at (171,137) size 73x17
+  RenderFlexibleBox {DIV} at (2,0) size 73x17
+layer at (254,133) size 14x25
+  RenderFlexibleBox {DIV} at (246,20) size 14x25
+layer at (254,138) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (284,138) size 16x15
+  RenderButton {BUTTON} at (276,25) size 16x15 [color=#FFFFFF]
+layer at (8,163) size 300x150
+  RenderVideo {VIDEO} at (0,0) size 300x150
+layer at (8,163) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150
+layer at (8,268) size 300x45
+  RenderFlexibleBox {DIV} at (0,105) size 300x45
+layer at (8,268) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45
+layer at (8,268) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
+layer at (8,268) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
+layer at (16,293) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,293) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (169,292) size 77x17
+  RenderFlexibleBox {DIV} at (161,24) size 77x17
+layer at (171,292) size 73x17
+  RenderFlexibleBox {DIV} at (2,0) size 73x17
+layer at (254,288) size 14x25
+  RenderFlexibleBox {DIV} at (246,20) size 14x25
+layer at (254,293) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (284,293) size 16x15
+  RenderButton {BUTTON} at (276,25) size 16x15 [color=#FFFFFF]
+layer at (308,133) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (308,133) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (308,133) size 200x25
+  RenderBlock (positioned) {DIV} at (0,0) size 200x25 [bgcolor=#292929]
+layer at (316,138) size 12x15
+  RenderButton {BUTTON} at (8,5) size 12x15 [color=#FFFFFF]
+layer at (344,138) size 16x15
+  RenderButton {BUTTON} at (36,4) size 16x16 [color=#FFFFFF]
+layer at (454,133) size 14x25
+  RenderFlexibleBox {DIV} at (146,0) size 14x25
+layer at (454,138) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (484,138) size 16x15
+  RenderButton {BUTTON} at (176,5) size 16x15 [color=#FFFFFF]
+layer at (308,288) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (308,288) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
+layer at (308,288) size 200x25
+  RenderBlock (positioned) {DIV} at (0,0) size 200x25 [bgcolor=#292929]
+layer at (316,293) size 12x15
+  RenderButton {BUTTON} at (8,5) size 12x15 [color=#FFFFFF]
+layer at (344,293) size 16x15
+  RenderButton {BUTTON} at (36,4) size 16x16 [color=#FFFFFF]
+layer at (454,288) size 14x25
+  RenderFlexibleBox {DIV} at (146,0) size 14x25
+layer at (454,293) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (484,293) size 16x15
+  RenderButton {BUTTON} at (176,5) size 16x15 [color=#FFFFFF]

@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x94
+        RenderBlock {DIV} at (0,0) size 106x26 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 31x19
+            text run at (3,3) width 31: "a. b. "
+          RenderInline {SPAN} at (0,0) size 3x19
+            RenderText {#text} at (34,3) size 3x19
+              text run at (34,3) width 3: "i"
+          RenderText {#text} at (37,3) size 65x19
+            text run at (37,3) width 65: "\x{306F}xxxxxxx"
+        RenderBlock {DIV} at (0,34) size 106x26 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 99x19
+            text run at (3,3) width 99: "a. b. i\x{306F}xxxxxxx"
+        RenderBlock {DIV} at (0,68) size 106x26 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 179x19
+            text run at (3,3) width 179: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"
+      RenderBlock {DIV} at (0,102) size 784x134
+        RenderBlock {DIV} at (0,0) size 106x46 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 81x19
+            text run at (3,3) width 81: "a. b. "
+          RenderInline {SPAN} at (0,0) size 3x19
+            RenderText {#text} at (84,3) size 3x19
+              text run at (84,3) width 3: "i"
+          RenderText {#text} at (87,3) size 100x39
+            text run at (87,3) width 16: "\x{306F}"
+            text run at (3,23) width 56: "xxxxxxx"
+        RenderBlock {DIV} at (0,54) size 106x46 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 100x39
+            text run at (3,3) width 100: "a. b. i\x{306F}"
+            text run at (3,23) width 56: "xxxxxxx"
+        RenderBlock {DIV} at (0,108) size 106x26 [border: (3px solid #000000)]
+          RenderText {#text} at (3,3) size 200x19
+            text run at (3,3) width 200: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"

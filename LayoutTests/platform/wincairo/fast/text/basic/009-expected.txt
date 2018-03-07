@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {SPAN} at (0,0) size 327x27
+        RenderText {#text} at (0,0) size 173x27
+          text run at (0,0) width 173: "This is some text. "
+        RenderInline {TT} at (0,0) size 154x27
+          RenderText {#text} at (173,1) size 154x27
+            text run at (173,1) width 154: "As is this."
+      RenderText {#text} at (327,0) size 338x27
+        text run at (327,0) width 338: " All of this text should be 24px tall."

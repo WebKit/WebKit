@@ -1,0 +1,12 @@
+text text
+This verifies that an ARIA role applied to a label element is not ignored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+label without role: AXRole: AXStaticText
+label with role: AXRole: AXStaticText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

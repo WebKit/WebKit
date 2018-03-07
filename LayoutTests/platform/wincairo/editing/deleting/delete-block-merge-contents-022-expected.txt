@@ -1,0 +1,33 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 748x55
+          text run at (14,14) width 742: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box nested"
+          text run at (756,14) width 6: " "
+          text run at (14,42) width 142: "in a green box."
+      RenderBlock {DIV} at (0,108) size 784x140
+        RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x28
+            RenderText {#text} at (0,0) size 34x27
+              text run at (0,0) width 34: "XX"
+          RenderBlock {DIV} at (14,42) size 756x84 [border: (2px solid #008000)]
+            RenderBlock {DIV} at (14,14) size 728x56 [border: (2px solid #FFA500)]
+              RenderText {#text} at (14,14) size 34x27
+                text run at (14,14) width 34: "XX"
+caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

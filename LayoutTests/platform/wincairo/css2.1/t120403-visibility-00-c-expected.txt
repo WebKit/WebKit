@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 199x19
+          text run at (0,0) width 199: "The following should be identical:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 8x19
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 8x19
+          text run at (0,0) width 8: "1"

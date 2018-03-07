@@ -1,0 +1,36 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 47 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 781x59
+          text run at (0,0) width 781: "This is a test for the merge that paste does of the last paragraph of the incoming fragment with content after the end of the selection"
+          text run at (0,20) width 110: "being pasted into. "
+          text run at (110,20) width 627: "A fragment that ends in with paragraph surrounded by a blue border is pasted into a selection ending in a"
+          text run at (0,40) width 240: "paragraph surrounded by a red border. "
+          text run at (240,40) width 164: "The red border should win."
+      RenderBlock {P} at (0,76) size 784x20
+        RenderInline {B} at (0,0) size 569x19
+          RenderText {#text} at (0,0) size 569x19
+            text run at (0,0) width 569: "The second paragraph should be surrounded by a red border before and after the test."
+      RenderBlock {DIV} at (0,112) size 784x42
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 92x19
+            text run at (0,0) width 92: "First paragraph"
+        RenderBlock {DIV} at (0,20) size 784x22 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 288x19
+            text run at (1,1) width 288: "This text should be surrounded by a red border."
+caret: position 4 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -1,0 +1,44 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 10 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 80x19
+          text run at (0,0) width 80: "See this bug: "
+        RenderInline {A} at (0,0) size 164x19 [color=#0000EE]
+          RenderText {#text} at (80,0) size 164x19
+            text run at (80,0) width 164: "<rdar://problem/3918712>"
+        RenderText {#text} at (244,0) size 784x39
+          text run at (244,0) width 537: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost). Should see"
+          text run at (781,0) width 3: " "
+          text run at (0,20) width 481: "two boxes with blockquoted \"foo\" text, followed by a box with an unquoted \"x\"."
+      RenderBlock {DIV} at (0,40) size 784x24
+      RenderBlock {DIV} at (0,64) size 784x104 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x28
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
+            RenderText {#text} at (0,0) size 32x27
+              text run at (0,0) width 32: "foo"
+      RenderBlock {DIV} at (0,168) size 784x104 [border: (2px solid #FF0000)]
+        RenderBlock {BLOCKQUOTE} at (54,38) size 676x28
+          RenderText {#text} at (0,0) size 32x27
+            text run at (0,0) width 32: "foo"
+      RenderBlock {DIV} at (0,272) size 784x56 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 12x27
+          text run at (14,14) width 12: "x"
+caret: position 0 of child 0 {#text} of child 8 {DIV} of body

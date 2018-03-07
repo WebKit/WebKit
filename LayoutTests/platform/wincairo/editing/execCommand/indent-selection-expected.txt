@@ -1,0 +1,57 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 10 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > BLOCKQUOTE > DIV > BODY > HTML > #document to 5 of #text > SPAN > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 346x19
+          text run at (0,0) width 346: "This test uses the execCommand to indent the text below."
+      RenderBlock (anonymous) at (0,20) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,40) size 784x212
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x60
+          RenderBlock (anonymous) at (0,0) size 744x40
+            RenderInline {SPAN} at (0,0) size 40x19
+              RenderText {#text} at (0,0) size 40x19
+                text run at (0,0) width 40: "Lorem"
+              RenderBR {BR} at (40,15) size 0x0
+            RenderText {#text} at (0,20) size 80x19
+              text run at (0,20) width 80: "more Lorem!"
+          RenderBlock {BLOCKQUOTE} at (40,40) size 704x20
+            RenderText {#text} at (0,0) size 35x19
+              text run at (0,0) width 35: "ipsum"
+        RenderBlock {BLOCKQUOTE} at (40,76) size 744x60
+          RenderBlock {UL} at (0,0) size 744x60
+            RenderBlock {UL} at (40,0) size 704x60
+              RenderListItem {LI} at (40,0) size 664x20
+                RenderListMarker at (-18,0) size 7x19: white bullet
+                RenderText {#text} at (0,0) size 25x19
+                  text run at (0,0) width 25: "Foo"
+              RenderListItem {LI} at (40,20) size 664x20
+                RenderListMarker at (-18,0) size 7x19: white bullet
+                RenderText {#text} at (0,0) size 22x19
+                  text run at (0,0) width 22: "Bar"
+              RenderListItem {LI} at (40,40) size 664x20
+                RenderListMarker at (-18,0) size 7x19: white bullet
+                RenderText {#text} at (0,0) size 23x19
+                  text run at (0,0) width 23: "Baz"
+        RenderBlock {BLOCKQUOTE} at (40,152) size 744x60
+          RenderBlock {BLOCKQUOTE} at (40,0) size 704x20
+            RenderText {#text} at (0,0) size 35x19
+              text run at (0,0) width 35: "Dolor"
+          RenderBlock (anonymous) at (0,20) size 744x40
+            RenderText {#text} at (0,0) size 32x19
+              text run at (0,0) width 32: "Sum!"
+            RenderBR {BR} at (32,15) size 0x0
+            RenderInline {SPAN} at (0,0) size 33x19
+              RenderText {#text} at (0,20) size 33x19
+                text run at (0,20) width 33: "Thing"
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {BLOCKQUOTE} of child 4 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 3 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of body

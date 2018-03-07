@@ -1,0 +1,52 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 3 of #text > DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x266 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x83
+          RenderText {#text} at (0,0) size 66x26
+            text run at (0,0) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 111x27
+            text run at (0,27) width 111: "Bug fix for "
+          RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
+            RenderText {#text} at (111,27) size 257x27
+              text run at (111,27) width 257: "<rdar://problem/4038267>"
+          RenderText {#text} at (368,27) size 735x55
+            text run at (368,27) width 367: " REGRESSION (Mail): Crash copying"
+            text run at (0,55) width 284: "and pasting end of paragraph."
+        RenderBlock {DIV} at (14,113) size 756x139
+          RenderBlock (anonymous) at (0,0) size 756x83
+            RenderText {#text} at (0,0) size 189x26
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,21) size 0x0
+            RenderText {#text} at (0,27) size 723x55
+              text run at (0,27) width 723: "Should see this content in the red box below (insertion point must be on the"
+              text run at (0,55) width 303: "second line, right before \"bar\"):"
+          RenderBlock {DIV} at (0,83) size 756x28
+            RenderText {#text} at (0,0) size 32x27
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (0,111) size 756x28
+            RenderText {#text} at (0,0) size 31x27
+              text run at (0,0) width 31: "bar"
+      RenderBlock {DIV} at (0,290) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x28
+            RenderText {#text} at (0,0) size 32x27
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (2,30) size 780x28
+            RenderText {#text} at (0,0) size 31x27
+              text run at (0,0) width 31: "bar"
+caret: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of body
