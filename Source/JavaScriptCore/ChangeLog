@@ -1,3 +1,12 @@
+2018-03-07  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] offlineasm: fix indentation in armOpcodeReversedOperands
+        https://bugs.webkit.org/show_bug.cgi?id=183400
+
+        Reviewed by Mark Lam.
+
+        * offlineasm/arm.rb:
+
 2018-03-06  Mark Lam  <mark.lam@apple.com>
 
         Prepare LLInt code to support pointer profiling.

@@ -223,20 +223,21 @@ end
 def armOpcodeReversedOperands(opcode)
     m = /\Ab[ipb]/.match(opcode)
 
-    operation = case m.post_match
-                when "eq" then "eq"
-                when "neq" then "neq"
-                when "a" then "b"
-                when "aeq" then "beq"
-                when "b" then "a"
-                when "beq" then "aeq"
-                when "gt" then "lt"
-                when "gteq" then "lteq"
-                when "lt" then "gt"
-                when "lteq" then "gteq"
-                else
-                    raise "unknown operation #{m.post_match}"
-                end
+    operation =
+        case m.post_match
+        when "eq" then "eq"
+        when "neq" then "neq"
+        when "a" then "b"
+        when "aeq" then "beq"
+        when "b" then "a"
+        when "beq" then "aeq"
+        when "gt" then "lt"
+        when "gteq" then "lteq"
+        when "lt" then "gt"
+        when "lteq" then "gteq"
+        else
+            raise "unknown operation #{m.post_match}"
+        end
 
     "#{m[0]}#{operation}"
 end
