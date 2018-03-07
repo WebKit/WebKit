@@ -1,3 +1,5 @@
+//@ skip if $memoryLimited
+
 a = 0;
 
 function allocateLotsOfThings(array) {
