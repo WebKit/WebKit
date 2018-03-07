@@ -1,3 +1,25 @@
+2018-03-07  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/misc/location-replace-crossdomain.html is failing with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183408
+
+        Reviewed by Alex Christensen.
+
+        The test was trying to navigate a cross-origin iframe via location.replace() and checking
+        that the load succeeded in a setTimeout(1). There is no guarantee that the frame has loaded
+        by that point. We would normally rely on the 'load' event but it is not feasible here since
+        the iframe is cross-origin. Instead, I opted to have the iframe to a page that posts a
+        message to its parent window to indicate that the load has succeeded.
+
+        * http/tests/misc/location-replace-crossdomain-async-delegates-expected.txt: Added.
+        * http/tests/misc/location-replace-crossdomain-async-delegates.html: Added.
+        * http/tests/misc/location-replace-crossdomain-expected.txt: Added.
+        * http/tests/misc/location-replace-crossdomain.html:
+        * platform/gtk/http/tests/misc/location-replace-crossdomain-expected.txt: Removed.
+        * platform/ios/http/tests/misc/location-replace-crossdomain-expected.txt: Removed.
+        * platform/mac/http/tests/misc/location-replace-crossdomain-expected.txt: Removed.
+        * platform/win/http/tests/misc/location-replace-crossdomain-expected.txt: Removed.
+
 2018-03-07  Per Arne Vollan  <pvollan@apple.com>
 
         Fix incorrect test expectations for http/wpt/resource-timing/rt-initiatorType-media.html.

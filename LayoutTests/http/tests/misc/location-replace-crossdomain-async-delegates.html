@@ -6,6 +6,9 @@
 description("Checks that a cross origin iframe can be navigated using location.replace().");
 jsTestIsAsync = true;
 
+if (window.testRunner && testRunner.setShouldDecideNavigationPolicyAfterDelay) 
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+
 onload = function()
 {
     addEventListener("message", function() {
