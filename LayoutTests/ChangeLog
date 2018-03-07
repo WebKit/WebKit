@@ -1,3 +1,12 @@
+2018-03-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Skip fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html and related tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=183393
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-03-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed. Add platform-specific expectations.
