@@ -1,3 +1,15 @@
+2018-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        MarkedArgumentsBuffer should allocate from the JSValue Gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=183377
+
+        Reviewed by Michael Saboff.
+        
+        That prevents it from being used to pivot UAF on malloc memory into corruption in the JS heap.
+
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+
 2018-03-07  Mark Lam  <mark.lam@apple.com>
 
         Add support for ARM64E.

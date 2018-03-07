@@ -88,14 +88,14 @@ void MarkedArgumentBuffer::expandCapacity(int newCapacity)
     auto checkedSize = Checked<size_t, RecordOverflow>(newCapacity) * sizeof(EncodedJSValue);
     if (UNLIKELY(checkedSize.hasOverflowed()))
         return this->overflowed();
-    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(fastMalloc(checkedSize.unsafeGet()));
+    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(Gigacage::malloc(Gigacage::JSValue, checkedSize.unsafeGet()));
     for (int i = 0; i < m_size; ++i) {
         newBuffer[i] = m_buffer[i];
         addMarkSet(JSValue::decode(m_buffer[i]));
     }
 
     if (EncodedJSValue* base = mallocBase())
-        fastFree(base);
+        Gigacage::free(Gigacage::JSValue, base);
 
     m_buffer = newBuffer;
     m_capacity = newCapacity;
