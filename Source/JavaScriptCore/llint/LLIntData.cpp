@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,9 +63,46 @@ void initialize()
 #else // ENABLE(JIT)
     llint_entry(&Data::s_opcodeMap);
 
+    for (int i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i) {
+        PtrTag tag = (i == op_catch) ? ExceptionHandlerPtrTag : BytecodePtrTag;
+        Data::s_opcodeMap[i] = tagCodePtr(Data::s_opcodeMap[i], tag);
+    }
+
+    if (VM::canUseJIT()) {
+        for (int i = NUMBER_OF_BYTECODE_IDS; i < NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS; ++i)
+            Data::s_opcodeMap[i] = tagCodePtr(Data::s_opcodeMap[i], ptrTag(BytecodeHelperPtrTag, i));
+    } else {
+        static const PtrTag tagsForOpcode[] = {
+            CodeEntryPtrTag, // llint_program_prologue
+            CodeEntryPtrTag, // llint_eval_prologue
+            CodeEntryPtrTag, // llint_module_program_prologue
+            CodeEntryPtrTag, // llint_function_for_call_prologue
+            CodeEntryPtrTag, // llint_function_for_construct_prologue
+            CodeEntryWithArityCheckPtrTag, // llint_function_for_call_arity_check
+            CodeEntryWithArityCheckPtrTag, // llint_function_for_construct_arity_check
+            CodeEntryPtrTag, // llint_generic_return_point
+            BytecodePtrTag, // llint_throw_from_slow_path_trampoline
+            CodeEntryPtrTag, // llint_throw_during_call_trampoline
+            NativeCodePtrTag, // llint_native_call_trampoline
+            NativeCodePtrTag, // llint_native_construct_trampoline
+            InternalFunctionPtrTag, // llint_internal_function_call_trampoline
+            InternalFunctionPtrTag, // llint_internal_function_construct_trampoline
+            ExceptionHandlerPtrTag, // handleUncaughtException
+        };
+
+        static_assert(sizeof(tagsForOpcode) / sizeof(tagsForOpcode[0]) == NUMBER_OF_BYTECODE_HELPER_IDS, "");
+        static_assert(static_cast<uintptr_t>(llint_program_prologue) == NUMBER_OF_BYTECODE_IDS, "");
+
+        for (int i = 0; i < NUMBER_OF_BYTECODE_HELPER_IDS; ++i) {
+            int opcodeID = i + NUMBER_OF_BYTECODE_IDS;
+            Data::s_opcodeMap[opcodeID] = tagCodePtr(Data::s_opcodeMap[opcodeID], tagsForOpcode[i]);
+        }
+    }
+
+    void* handler = LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
-        Data::s_exceptionInstructions[i].u.pointer =
-            LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
+        Data::s_exceptionInstructions[i].u.pointer = handler;
+
 #endif // ENABLE(JIT)
 
 #if ENABLE(LLINT_STATS)

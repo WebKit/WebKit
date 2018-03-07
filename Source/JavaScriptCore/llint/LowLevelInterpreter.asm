@@ -260,6 +260,16 @@ const ArithProfileNumberInt = 0x880000
 const ArithProfileNumberNumber = 0x900000
 const ArithProfileIntNumber = 0x500000
 
+# Pointer Tags
+const BytecodePtrTag = constexpr BytecodePtrTag
+const CodeEntryPtrTag = constexpr CodeEntryPtrTag
+const CodeEntryWithArityCheckPtrTag = constexpr CodeEntryWithArityCheckPtrTag
+const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
+const InternalFunctionPtrTag = constexpr InternalFunctionPtrTag
+const NativeCodePtrTag = constexpr NativeCodePtrTag
+const NoPtrTag = constexpr NoPtrTag
+const SlowPathPtrTag = constexpr SlowPathPtrTag
+
 # Some register conventions.
 if JSVALUE64
     # - Use a pair of registers to represent the PC: one register for the
@@ -785,6 +795,7 @@ macro unpoison(poison, field, scratch)
 end
 
 macro functionPrologue()
+    tagReturnAddress sp
     if X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
     elsif ARM64
@@ -848,22 +859,22 @@ macro callOpcodeSlowPath(slowPath)
     callSlowPath(slowPath)
 end
 
-macro callTargetFunction(callee)
+macro callTargetFunction(callee, callPtrTag)
     if C_LOOP
         cloopCallJSFunction callee
     else
-        call callee
+        call callee, callPtrTag
     end
     restoreStackPointerAfterCall()
     dispatchAfterCall()
 end
 
-macro prepareForRegularCall(callee, temp1, temp2, temp3)
+macro prepareForRegularCall(callee, temp1, temp2, temp3, prepareCallPtrTag)
     addp CallerFrameAndPCSize, sp
 end
 
 # sp points to the new frame
-macro prepareForTailCall(callee, temp1, temp2, temp3)
+macro prepareForTailCall(callee, temp1, temp2, temp3, prepareCallPtrTag)
     restoreCalleeSavesUsedByLLInt()
 
     loadi PayloadOffset + ArgumentCount[cfr], temp2
@@ -898,6 +909,11 @@ macro prepareForTailCall(callee, temp1, temp2, temp3)
         storep temp3, [sp]
     end
 
+    if POINTER_PROFILING
+        addp 16, cfr, temp3
+        untagReturnAddress temp3
+    end
+
     subp temp2, temp1
     loadp [cfr], cfr
 
@@ -907,8 +923,9 @@ macro prepareForTailCall(callee, temp1, temp2, temp3)
     storep temp3, [temp1, temp2, 1]
     btinz temp2, .copyLoop
 
+    prepareCallPtrTag(temp2)
     move temp1, sp
-    jmp callee
+    jmp callee, temp2
 end
 
 macro slowPathForCall(slowPath, prepareCall)
@@ -919,9 +936,13 @@ macro slowPathForCall(slowPath, prepareCall)
         macro (callee, calleeFramePtr)
             btpz calleeFramePtr, .dontUpdateSP
             move calleeFramePtr, sp
-            prepareCall(callee, t2, t3, t4)
+            prepareCall(callee, t2, t3, t4, macro (callPtrTagReg)
+                if POINTER_PROFILING
+                    move SlowPathPtrTag, callPtrTagReg
+                end
+            end)
         .dontUpdateSP:
-            callTargetFunction(callee)
+            callTargetFunction(callee, SlowPathPtrTag)
         end)
 end
 
@@ -1003,6 +1024,7 @@ end
 # in t1. May also trigger prologue entry OSR.
 macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     # Set up the call frame and check if we should OSR.
+    tagReturnAddress sp
     preserveCallerPCAndCFR()
 
     if EXECUTION_TRACING
@@ -1037,7 +1059,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         else
             pop cfr
         end
-        jmp r0
+        jmp r0, CodeEntryPtrTag
     .recover:
         codeBlockGetter(t1, t2)
     .continue:
@@ -1143,7 +1165,7 @@ else
     global _vmEntryToJavaScript
     _vmEntryToJavaScript:
 end
-    doVMEntry(makeJavaScriptCall)
+    doVMEntry(makeJavaScriptCall, CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag)
 
 
 if C_LOOP
@@ -1152,13 +1174,14 @@ else
     global _vmEntryToNative
     _vmEntryToNative:
 end
-    doVMEntry(makeHostFunctionCall)
+    doVMEntry(makeHostFunctionCall, NativeCodePtrTag, NativeCodePtrTag)
 
 
 if not C_LOOP
     # void sanitizeStackForVMImpl(VM* vm)
     global _sanitizeStackForVMImpl
     _sanitizeStackForVMImpl:
+        tagReturnAddress sp
         # We need three non-aliased caller-save registers. We are guaranteed
         # this for a0, a1 and a2 on all architectures.
         if X86 or X86_WIN
@@ -1176,7 +1199,7 @@ if not C_LOOP
         storep zeroValue, [address]
         addp PtrSize, address
         bpa sp, address, .zeroFillLoop
-    
+
     .zeroFillDone:
         move sp, address
         storep address, VM::m_lastStackTop[vm]
@@ -1185,6 +1208,7 @@ if not C_LOOP
     # VMEntryRecord* vmEntryRecord(const EntryFrame* entryFrame)
     global _vmEntryRecord
     _vmEntryRecord:
+        tagReturnAddress sp
         if X86 or X86_WIN
             loadp 4[sp], a0
         end

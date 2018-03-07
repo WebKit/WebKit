@@ -1767,6 +1767,7 @@
 		FE63DD541EA9B61E00103A69 /* Printer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE63DD531EA9B60E00103A69 /* Printer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6491371D78F01D00A694D4 /* ExceptionScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6491361D78F01300A694D4 /* ExceptionScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE6C1E4A20366F0100BDC2B7 /* PtrTag.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9AE1C82032C887002B6934 /* PtrTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6F56DD1E64E92000D17801 /* VMTraps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80C1961D775B27008510C0 /* CatchScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4705,6 +4706,7 @@
 		FE98B5B61BB9AE110073E7A6 /* JITSubGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITSubGenerator.h; sourceTree = "<group>"; };
 		FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITNegGenerator.cpp; sourceTree = "<group>"; };
 		FE99B2481C24B6D300C82159 /* JITNegGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITNegGenerator.h; sourceTree = "<group>"; };
+		FE9AE1C82032C887002B6934 /* PtrTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrTag.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
 		FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPrimitives.h; sourceTree = "<group>"; };
 		FEA0C4001CDD7D0E00481991 /* FunctionWhitelist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionWhitelist.cpp; sourceTree = "<group>"; };
@@ -4725,6 +4727,25 @@
 		FEDA50D51B97F4D9009A3B4F /* PingPongStackOverflowTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingPongStackOverflowTest.h; path = API/tests/PingPongStackOverflowTest.h; sourceTree = "<group>"; };
 		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
 		FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompareAndSwapTest.h; path = API/tests/CompareAndSwapTest.h; sourceTree = "<group>"; };
+		FEF3475220362B1B00B7C0EF /* parser.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = parser.rb; sourceTree = "<group>"; };
+		FEF3475320362B1B00B7C0EF /* risc.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = risc.rb; sourceTree = "<group>"; };
+		FEF3475420362B1B00B7C0EF /* self_hash.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = self_hash.rb; sourceTree = "<group>"; };
+		FEF3475520362B1C00B7C0EF /* arm.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = arm.rb; sourceTree = "<group>"; };
+		FEF3475620362B1C00B7C0EF /* backends.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = backends.rb; sourceTree = "<group>"; };
+		FEF3475720362B1D00B7C0EF /* registers.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = registers.rb; sourceTree = "<group>"; };
+		FEF3475820362B1D00B7C0EF /* ast.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = ast.rb; sourceTree = "<group>"; };
+		FEF3475920362B1D00B7C0EF /* asm.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = asm.rb; sourceTree = "<group>"; };
+		FEF3475A20362B1E00B7C0EF /* cloop.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = cloop.rb; sourceTree = "<group>"; };
+		FEF3475B20362B1E00B7C0EF /* x86.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = x86.rb; sourceTree = "<group>"; };
+		FEF3475C20362B1E00B7C0EF /* mips.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = mips.rb; sourceTree = "<group>"; };
+		FEF3475D20362B1F00B7C0EF /* config.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = config.rb; sourceTree = "<group>"; };
+		FEF3475E20362B1F00B7C0EF /* instructions.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = instructions.rb; sourceTree = "<group>"; };
+		FEF3475F20362B2000B7C0EF /* opt.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = opt.rb; sourceTree = "<group>"; };
+		FEF3476020362B2100B7C0EF /* transform.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = transform.rb; sourceTree = "<group>"; };
+		FEF3476120362B2100B7C0EF /* offsets.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = offsets.rb; sourceTree = "<group>"; };
+		FEF3476220362B2200B7C0EF /* arm64.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = arm64.rb; sourceTree = "<group>"; };
+		FEF3476320362B2300B7C0EF /* settings.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = settings.rb; sourceTree = "<group>"; };
+		FEF3476420362B2300B7C0EF /* generate_offset_extractor.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = generate_offset_extractor.rb; sourceTree = "<group>"; };
 		FEF49AA91EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MultithreadedMultiVMExecutionTest.cpp; path = API/tests/MultithreadedMultiVMExecutionTest.cpp; sourceTree = "<group>"; };
 		FEF49AAA1EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultithreadedMultiVMExecutionTest.h; path = API/tests/MultithreadedMultiVMExecutionTest.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
@@ -4880,6 +4901,7 @@
 				1429D77A0ED20D7300B89619 /* interpreter */,
 				1429D92C0ED22D7000B89619 /* jit */,
 				0F46809C14BA7F4D00BFE272 /* llint */,
+				FEF347512036291300B7C0EF /* offlineasm */,
 				7E39D8370EC3A388003AF11A /* parser */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
@@ -6851,6 +6873,7 @@
 				79B00CBB1C6AB07E0088C65D /* ProxyObject.h */,
 				79160DBB1C8E3EC8008C085A /* ProxyRevoke.cpp */,
 				79160DBC1C8E3EC8008C085A /* ProxyRevoke.h */,
+				FE9AE1C82032C887002B6934 /* PtrTag.h */,
 				0F5780A118FE1E98001E72D9 /* PureNaN.h */,
 				0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */,
 				147B84620E6DE6B1004775A4 /* PutPropertySlot.h */,
@@ -8031,6 +8054,32 @@
 			path = domjit;
 			sourceTree = "<group>";
 		};
+		FEF347512036291300B7C0EF /* offlineasm */ = {
+			isa = PBXGroup;
+			children = (
+				FEF3475520362B1C00B7C0EF /* arm.rb */,
+				FEF3476220362B2200B7C0EF /* arm64.rb */,
+				FEF3475920362B1D00B7C0EF /* asm.rb */,
+				FEF3475820362B1D00B7C0EF /* ast.rb */,
+				FEF3475620362B1C00B7C0EF /* backends.rb */,
+				FEF3475A20362B1E00B7C0EF /* cloop.rb */,
+				FEF3475D20362B1F00B7C0EF /* config.rb */,
+				FEF3476420362B2300B7C0EF /* generate_offset_extractor.rb */,
+				FEF3475E20362B1F00B7C0EF /* instructions.rb */,
+				FEF3475C20362B1E00B7C0EF /* mips.rb */,
+				FEF3476120362B2100B7C0EF /* offsets.rb */,
+				FEF3475F20362B2000B7C0EF /* opt.rb */,
+				FEF3475220362B1B00B7C0EF /* parser.rb */,
+				FEF3475720362B1D00B7C0EF /* registers.rb */,
+				FEF3475320362B1B00B7C0EF /* risc.rb */,
+				FEF3475420362B1B00B7C0EF /* self_hash.rb */,
+				FEF3476320362B2300B7C0EF /* settings.rb */,
+				FEF3476020362B2100B7C0EF /* transform.rb */,
+				FEF3475B20362B1E00B7C0EF /* x86.rb */,
+			);
+			path = offlineasm;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -8067,6 +8116,7 @@
 				0FEC85721BDACDC70080FF74 /* AirBasicBlock.h in Headers */,
 				0F2C63BC1E63440C00C13839 /* AirBlockInsertionSet.h in Headers */,
 				0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */,
+				FE6C1E4A20366F0100BDC2B7 /* PtrTag.h in Headers */,
 				0F79C7CA1E74C93B00EB34D1 /* AirBreakCriticalEdges.h in Headers */,
 				0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */,
 				0FEC85741BDACDC70080FF74 /* AirCCallSpecial.h in Headers */,

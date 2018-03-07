@@ -27,6 +27,7 @@
 
 #include "JSCJSValue.h"
 #include "Opcode.h"
+#include "PtrTag.h"
 #include <array>
 #include <wtf/PointerPreparations.h>
 

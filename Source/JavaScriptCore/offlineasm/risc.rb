@@ -448,9 +448,15 @@ end
 
 def riscLowerMisplacedAddresses(list)
     newList = []
+    hasBackendSpecificLowering = Instruction.respond_to? "lowerMisplacedAddresses#{$activeBackend}"
     list.each {
         | node |
         if node.is_a? Instruction
+            if hasBackendSpecificLowering
+                wasHandled, newList = Instruction.send("lowerMisplacedAddresses#{$activeBackend}", node, newList)
+                next if wasHandled
+            end
+
             postInstructions = []
             annotation = node.annotation
             case node.opcode

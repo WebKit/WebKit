@@ -96,7 +96,7 @@ macro callSlowPath(slowPath)
     move r0, PC
 end
 
-macro doVMEntry(makeCall)
+macro doVMEntry(makeCall, unused1, unused2)
     functionPrologue()
     pushCalleeSaves()
 
@@ -1957,8 +1957,8 @@ macro doCall(slowPath, prepareCall)
     storei t2, ArgumentCount + PayloadOffset[t3]
     storei CellTag, Callee + TagOffset[t3]
     move t3, sp
-    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
-    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
+    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, macro (callPtrTag) end)
+    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], NoPtrTag)
 
 .opCallSlow:
     slowPathForCall(slowPath, prepareCall)
