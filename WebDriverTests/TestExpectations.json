@@ -429,9 +429,6 @@
         "subtests": {
             "test_element_not_found": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180413"}}
-            },
-            "test_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180414"}}
             }
         }
     },
