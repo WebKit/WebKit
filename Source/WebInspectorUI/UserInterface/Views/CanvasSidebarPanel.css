@@ -24,7 +24,10 @@
  */
 
 .sidebar > .panel.navigation.canvas > .content {
+    display: flex;
+    flex-direction: column;
     top: var(--navigation-bar-height);
+    overflow-y: hidden;
 }
 
 .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled {
@@ -40,17 +43,16 @@
     content: url(../Images/Canvas3D.svg);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .recording-content > .navigation-bar {
+.sidebar > .panel.navigation.canvas > .content > .navigation-bar {
     border-top: 1px solid var(--border-color);
 }
 
-.sidebar > .panel.navigation.canvas.has-recordings > .content > .tree-outline.canvas {
-    max-height: 50%;
+.sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content {
     overflow-y: scroll;
 }
 
 .sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,
-.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > .recording-content {
+.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > :matches(.navigation-bar, .recording-content) {
     display: none;
 }
 

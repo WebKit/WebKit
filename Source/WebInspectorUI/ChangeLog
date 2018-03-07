@@ -1,3 +1,24 @@
+2018-03-07  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: ensure that the Recording TreeOutline has a specified height for virtualization
+        https://bugs.webkit.org/show_bug.cgi?id=183015
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content):
+        (.sidebar > .panel.navigation.canvas > .content > .navigation-bar):
+        (.sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content):
+        (.sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,):
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .navigation-bar): Deleted.
+        (.sidebar > .panel.navigation.canvas.has-recordings > .content > .tree-outline.canvas): Deleted.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype._detach):
+
 2018-02-26  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: Scroll into view / Inspect element if Canvas has DOM node

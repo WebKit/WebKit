@@ -48,12 +48,12 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._canvasTreeOutline = this.createContentTreeOutline(suppressFiltering);
         this._canvasTreeOutline.element.classList.add("canvas");
 
-        let recordingContent = this.contentView.element.appendChild(document.createElement("div"));
-        recordingContent.className = "recording-content";
-
         this._recordingNavigationBar = new WI.NavigationBar;
         this._recordingNavigationBar.element.classList.add("hidden");
-        recordingContent.appendChild(this._recordingNavigationBar.element);
+        this.contentView.addSubview(this._recordingNavigationBar);
+
+        let recordingContent = this.contentView.element.appendChild(document.createElement("div"));
+        recordingContent.className = "recording-content";
 
         this._recordingTreeOutline = this.contentTreeOutline;
         recordingContent.appendChild(this._recordingTreeOutline.element);
