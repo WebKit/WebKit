@@ -1,3 +1,14 @@
+2018-03-07  Mark Lam  <mark.lam@apple.com>
+
+        Simplify the variants of FunctionPtr constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=183399
+        <rdar://problem/38212980>
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+
 2018-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         MarkedArgumentsBuffer should allocate from the JSValue Gigacage

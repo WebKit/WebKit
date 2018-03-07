@@ -63,148 +63,39 @@ class FunctionPtr {
 public:
     FunctionPtr() { }
 
-    template<typename returnType>
-    FunctionPtr(returnType(*value)())
-        : m_value((void*)value)
+    template<typename returnType, typename... Arguments>
+    FunctionPtr(returnType(*value)(Arguments...))
+        : m_value(reinterpret_cast<void*>(value))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    template<typename returnType, typename argType1>
-    FunctionPtr(returnType(*value)(argType1))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2>
-    FunctionPtr(returnType(*value)(argType1, argType2))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3>
-    FunctionPtr(returnType(*value)(argType1, argType2, argType3))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4>
-    FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4, typename argType5>
-    FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4, typename argType5, typename argType6>
-    FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5, argType6))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
 // MSVC doesn't seem to treat functions with different calling conventions as
 // different types; these methods already defined for fastcall, below.
 #if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
 
-    template<typename returnType>
-    FunctionPtr(returnType (CDECL *value)())
-        : m_value((void*)value)
+    template<typename returnType, typename... Arguments>
+    FunctionPtr(returnType(CDECL *value)(Arguments...))
+        : m_value(reinterpret_cast<void*>(value))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    template<typename returnType, typename argType1>
-    FunctionPtr(returnType (CDECL *value)(argType1))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2>
-    FunctionPtr(returnType (CDECL *value)(argType1, argType2))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3>
-    FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4>
-    FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3, argType4))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-#endif
+#endif // CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
 
 #if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
-    template<typename returnType>
-    FunctionPtr(returnType (FASTCALL *value)())
-        : m_value((void*)value)
+    template<typename returnType, typename... Arguments>
+    FunctionPtr(returnType(FASTCALL *value)(Arguments...))
+        : m_value(reinterpret_cast<void*>(value))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    template<typename returnType, typename argType1>
-    FunctionPtr(returnType (FASTCALL *value)(argType1))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2>
-    FunctionPtr(returnType (FASTCALL *value)(argType1, argType2))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3>
-    FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-
-    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4>
-    FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3, argType4))
-        : m_value((void*)value)
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        ASSERT_VALID_CODE_POINTER(m_value);
-    }
-#endif
+#endif // COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
     template<typename FunctionType>
     explicit FunctionPtr(FunctionType* value)
