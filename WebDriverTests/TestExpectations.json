@@ -283,7 +283,7 @@
                 "expected": {"all": {"status": ["PASS"]}}
             },
             "test_closed_context": {
-                "expected": {"all": {"status": ["PASS"]}}
+                "expected": {"all": {"status": ["SKIP"]}}
             },
             "test_disabled_element_not_resettable": {
                 "expected": {"all": {"status": ["PASS"]}}
