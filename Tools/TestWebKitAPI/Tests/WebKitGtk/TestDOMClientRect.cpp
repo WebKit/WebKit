@@ -22,27 +22,20 @@
 #include "WebViewTest.h"
 #include <webkit2/webkit2.h>
 
-static void prepareDOMForClientRectPositionTests(WebViewTest* test)
-{
-    static const char* testHTML = "<html><head></head><body>"
-        "<style>"
-        "    #rect { position: fixed; top: -25px; left: -50px; width: 100px; height: 200px; }"
-        "</style>"
-        "<div id=rect></div></body></html>";
-    test->loadHtml(testHTML, nullptr);
-    test->waitUntilLoadFinished();
-}
+static const char* testHTML = "<html><head></head><body>"
+    "<style>"
+    "    #rect { position: fixed; top: -25px; left: -50px; width: 100px; height: 200px; }"
+    "</style>"
+    "<div id=rect></div></body></html>";
 
 static void testWebKitDOMClientRectDivBoundingClientRectPosition(WebViewTest* test, gconstpointer)
 {
-    prepareDOMForClientRectPositionTests(test);
-    g_assert(test->runWebProcessTest("WebKitDOMClientRect", "div-bounding-client-rect-position"));
+    g_assert(test->runWebProcessTest("WebKitDOMClientRect", "div-bounding-client-rect-position", testHTML));
 }
 
 static void testWebKitDOMClientRectDivClientRectsPositionAndLength(WebViewTest* test, gconstpointer)
 {
-    prepareDOMForClientRectPositionTests(test);
-    g_assert(test->runWebProcessTest("WebKitDOMClientRect", "div-client-rects-position-and-length"));
+    g_assert(test->runWebProcessTest("WebKitDOMClientRect", "div-client-rects-position-and-length", testHTML));
 }
 
 void beforeAll()

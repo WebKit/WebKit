@@ -26,22 +26,14 @@
 static const char* testHTML = "<html id='root'><head><title>DOMNodeTreeWalker</title></head>"
     "<body><input type='button' name='push' value='push'><input type='button' name='clear' value='clear'><br></body></html>";
 
-static void runTest(WebViewTest* test, const char* name)
-{
-    test->loadHtml(testHTML, nullptr);
-    test->waitUntilLoadFinished();
-
-    g_assert(test->runWebProcessTest("WebKitDOMNodeFilter", name));
-}
-
 static void testWebKitDOMNodeFilterTreeWalker(WebViewTest* test, gconstpointer)
 {
-    runTest(test, "tree-walker");
+    g_assert(test->runWebProcessTest("WebKitDOMNodeFilter", "tree-walker", testHTML));
 }
 
 static void testWebKitDOMNodeFilterNodeIterator(WebViewTest* test, gconstpointer)
 {
-    runTest(test, "node-iterator");
+    g_assert(test->runWebProcessTest("WebKitDOMNodeFilter", "node-iterator", testHTML));
 }
 
 void beforeAll()

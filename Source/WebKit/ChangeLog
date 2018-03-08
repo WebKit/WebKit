@@ -1,3 +1,18 @@
+2018-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Leak checker is not working in WebKitGLib web process tests
+        https://bugs.webkit.org/show_bug.cgi?id=183404
+
+        Reviewed by Michael Catanzaro.
+
+        Add private helper for testing to do a garbage collection when the page is closing.
+
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:
+        (webkitWebExtensionSetGarbageCollectOnPageDestroy):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtensionPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.h: Fix annotation of
+        webkit_dom_client_rect_list_item(), it should be transfer full.
+
 2018-03-07  Youenn Fablet  <youenn@apple.com>
 
         Match unsupported plugins based on domains and not origin

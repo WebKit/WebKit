@@ -74,13 +74,14 @@ private:
 
         g_assert_cmpuint(webkit_dom_client_rect_list_get_length(clientRectList.get()), ==, 1);
 
-        WebKitDOMClientRect* clientRect = webkit_dom_client_rect_list_item(clientRectList.get(), 0);
-        g_assert(WEBKIT_DOM_IS_CLIENT_RECT(clientRect));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRect));
-        checkClientRectPosition(clientRect);
+        GRefPtr<WebKitDOMClientRect> clientRect = adoptGRef(webkit_dom_client_rect_list_item(clientRectList.get(), 0));
+        g_assert(WEBKIT_DOM_IS_CLIENT_RECT(clientRect.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRect.get()));
+        checkClientRectPosition(clientRect.get());
 
         // Getting the clientRect twice should return the same pointer.
-        g_assert(webkit_dom_client_rect_list_item(clientRectList.get(), 0) == webkit_dom_client_rect_list_item(clientRectList.get(), 0));
+        GRefPtr<WebKitDOMClientRect> clientRect2 = adoptGRef(webkit_dom_client_rect_list_item(clientRectList.get(), 0));
+        g_assert(clientRect.get() == clientRect2.get());
 
         return true;
     }

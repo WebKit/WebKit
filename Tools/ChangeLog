@@ -1,3 +1,67 @@
+2018-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Leak checker is not working in WebKitGLib web process tests
+        https://bugs.webkit.org/show_bug.cgi?id=183404
+
+        Reviewed by Michael Catanzaro.
+
+        This might have regressed when we started to use the JSC garbage collector timers. The thing is that we expect
+        that the WebProcessTester object that we expose to JavaScript is released when the web frame is destroyed, but
+        that's no longer the case. On window object cleared a GC is scheduled, but JSC timers do the actual garbage
+        collection later. In the case of tests that never happens because the web process finishes quickly after the
+        test. We need to force a garbage collection at some point when the web page is destroyed. We can't use the
+        WebKitWebPage destroy signal, since we are also checking that WebKitWebPage isn't leaked. The
+        API::InjectedBundle::Client::willDestroyPage() always happen when the page is closed, even if WebKitWebPage is
+        still alive, so we can force the GC at that point. The only problem is that the frame is detached right after
+        that point, so we can't check WebKitFrame leaks. The only frame in the tests is the main one, so we can assume
+        that if WebKitWebPage is released, the frame is too.
+
+        * TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp:
+        (WebKitFrameTest::testMainFrame): Stop checking we don't leak WebKitFrame.
+        (WebKitFrameTest::testURI): Ditto.
+        (WebKitFrameTest::testJavaScriptContext): Ditto.
+        * TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp:
+        (testWebKitFrameMainFrame): Use new WebViewTest::runWebProcessTest() API.
+        (testWebKitFrameURI): Ditto.
+        (testWebKitFrameJavaScriptContext): Ditto.
+        (webkitFrameTestRun): Deleted.
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp:
+        (runTest): We no longer need the special case for dom-cache test.
+        (windowObjectClearedCallback): Only expose test runner object to JavaScript when loading tests.
+        (webkit_web_extension_initialize): Call webkitWebExtensionSetGarbageCollectOnPageDestroy() to ensure a garbage
+        collection is performed when the page is closing.
+        * TestWebKitAPI/Tests/WebKitGtk/DOMClientRectTest.cpp:
+        (WebKitDOMClientRectTest::testDivClientRectsPositionAndLength): Fix memory leak,
+        webkit_dom_client_rect_list_item() returns a full reference.
+        * TestWebKitAPI/Tests/WebKitGtk/TestAutocleanups.cpp:
+        (testWebProcessAutocleanups):Use new WebViewTest::runWebProcessTest() API.
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMClientRect.cpp:
+        (testWebKitDOMClientRectDivBoundingClientRectPosition): Use new WebViewTest::runWebProcessTest() API.
+        (testWebKitDOMClientRectDivClientRectsPositionAndLength): Use new WebViewTest::runWebProcessTest() API.
+        (prepareDOMForClientRectPositionTests): Deleted.
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMNode.cpp:
+        (testWebKitDOMNodeHierarchyNavigation): Use new WebViewTest::runWebProcessTest() API.
+        (testWebKitDOMNodeInsertion): Ditto.
+        (testWebKitDOMNodeTagNamesNodeList): Ditto.
+        (testWebKitDOMNodeTagNamesHTMLCollection): Ditto.
+        (testWebKitDOMObjectCache): We no longer need to run the test several times, since runWebProcessTest() loads
+        about blank after every test.
+        (prepareDOMForTagNamesTests): Deleted.
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMNodeFilter.cpp:
+        (testWebKitDOMNodeFilterTreeWalker): Use new WebViewTest::runWebProcessTest() API.
+        (testWebKitDOMNodeFilterNodeIterator): Ditto.
+        (runTest): Deleted.
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMXPathNSResolver.cpp:
+        (testWebKitDOMXPathNSResolverNative): Use new WebViewTest::runWebProcessTest() API.
+        (testWebKitDOMXPathNSResolverCustom): Ditto.
+        * TestWebKitAPI/Tests/WebKitGtk/TestEditor.cpp:
+        (testWebKitWebEditorSelectionChanged): Use new WebViewTest::runWebProcessTest() API.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::runWebProcessTest): It now receives the contents, so it automatically loads the view using
+        "webprocess://test" as base URI, used to detect tests in the web process. It also loads about:blank after every
+        test to ensure that window object is cleared.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2018-03-07  Youenn Fablet  <youenn@apple.com>
 
         Match unsupported plugins based on domains and not origin
