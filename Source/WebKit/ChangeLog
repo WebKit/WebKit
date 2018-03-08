@@ -1,3 +1,26 @@
+2018-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Support resigning first responder status when focusing a form control
+        https://bugs.webkit.org/show_bug.cgi?id=183477
+        <rdar://problem/38225994>
+
+        Reviewed by Tim Horton.
+
+        Currently, when presenting an input view controller in extra zoom mode, if the web view loses first responder
+        status, we will blur the focused element, which dismisses all focused form control UI. For certain types of form
+        controls, this prevents the user from using key pieces of functionality.
+
+        To address this, disconnect the notion of first responder status from DOM element focus while the form control
+        overlay is shown. Later, when the active input session ends, if the web content view was first responder before
+        upon focusing the element, restore first responder status on the web view. This extra tweak is needed to ensure
+        that certain UI affordances which require first responder status on the web view continue to work after
+        interacting with a form control that changes the first responder.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentFocusedFormControlViewController:]):
+        (-[WKContentView dismissFocusedFormControlViewController:]):
+
 2018-03-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Revert defaults read of zero values

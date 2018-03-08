@@ -255,6 +255,8 @@ struct WKAutoCorrectionData {
     RetainPtr<WKNumberPadViewController> _numberPadViewController;
     RetainPtr<WKSelectMenuViewController> _selectMenuViewController;
     RetainPtr<WKTimePickerViewController> _timePickerViewController;
+
+    BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
 #endif
 }
 

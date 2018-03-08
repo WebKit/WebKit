@@ -4205,6 +4205,9 @@ static bool isAssistableInputType(InputType type)
     if (_focusedFormControlViewController)
         return;
 
+    ++_webView->_activeFocusedStateRetainCount;
+    _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
+
     _focusedFormControlViewController = adoptNS([[WKFocusedFormControlViewController alloc] init]);
     [_focusedFormControlViewController setDelegate:self];
     [[UIViewController _viewControllerForFullScreenPresentationFromView:self] presentViewController:_focusedFormControlViewController.get() animated:animated completion:nil];
@@ -4224,6 +4227,13 @@ static bool isAssistableInputType(InputType type)
 {
     if (!_focusedFormControlViewController)
         return;
+
+    --_webView->_activeFocusedStateRetainCount;
+
+    if (_shouldRestoreFirstResponderStatusAfterLosingFocus && !self.isFirstResponder) {
+        _shouldRestoreFirstResponderStatusAfterLosingFocus = NO;
+        [self becomeFirstResponder];
+    }
 
     [_focusedFormControlViewController dismissViewControllerAnimated:animated completion:nil];
     _focusedFormControlViewController = nil;
