@@ -1,3 +1,15 @@
+2018-03-07  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: --dedicated-simulators does not boot the correct number of simulators
+        https://bugs.webkit.org/show_bug.cgi?id=183409
+        <rdar://problem/38224631>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.default_child_processes): When not using dedicated simulators,
+        we should use the number of booted simulators as our default child processes.
+
 2018-03-07  Alejandro G. Castro  <alex@igalia.com>
 
         Make NetworkRTCResolver port agnostic

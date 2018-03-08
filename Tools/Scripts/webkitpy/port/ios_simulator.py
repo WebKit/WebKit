@@ -73,7 +73,7 @@ class IOSSimulatorPort(IOSPort):
             return device.platform_device.device_type in DeviceType(software_variant='iOS',
                                                                     software_version=self.ios_version())
 
-        if self.get_option('dedicated_simulators', False):
+        if not self.get_option('dedicated_simulators', False):
             num_booted_sims = len(SimulatedDeviceManager.device_by_filter(booted_ios_devices_filter, host=self.host))
             if num_booted_sims:
                 return num_booted_sims
