@@ -1,3 +1,12 @@
+2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove WebCore::TextureMapperAnimation as a special case in WebKit IPC
+        generation. Values of this type aren't being transferred across IPC.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * Scripts/webkit/messages.py:
+
 2018-03-08  Tim Horton  <timothy_horton@apple.com>
 
         Stop linking ApplicationServices directly

@@ -402,7 +402,6 @@ def headers_for_type(type):
         'WebCore::TextCheckingRequestData': ['<WebCore/TextChecking.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],
-        'WebCore::TextureMapperAnimations': ['<WebCore/TextureMapperAnimation.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebCore::SelectionRect': ['"EditorState.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
