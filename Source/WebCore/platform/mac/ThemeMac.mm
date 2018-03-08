@@ -565,6 +565,8 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
     
     NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
     NSWindow *window = [view window];
+    LocalDefaultSystemAppearance localAppearence;
+    [window setAppearance:[NSAppearance currentAppearance]];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
 
     bool useImageBuffer = pageScaleFactor != 1.0f || zoomFactor != 1.0f;
