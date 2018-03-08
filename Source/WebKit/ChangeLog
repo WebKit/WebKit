@@ -1,3 +1,17 @@
+2018-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Specify password mode as needed when inputting text
+        https://bugs.webkit.org/show_bug.cgi?id=183428
+        <rdar://problem/37609386>
+
+        Reviewed by Tim Horton.
+
+        If the focused element is a password field, or the input delegate has forced secure text entry, set a flag on
+        the text input view controller to opt in to password text input mode.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentTextInputViewController:]):
+
 2018-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Sort and separate FeatureDefines.xcconfig

@@ -4274,6 +4274,7 @@ static bool isAssistableInputType(InputType type)
 
     _textInputViewController = adoptNS([[WKTextInputViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
     [_textInputViewController setDelegate:self];
+    [_textInputViewController setUsesPasswordEntryMode:_assistedNodeInformation.elementType == InputType::Password || [_formInputSession forceSecureTextEntry]];
     [_focusedFormControlViewController presentViewController:_textInputViewController.get() animated:animated completion:nil];
 
     [_textInputViewController setSuggestions:[_focusedFormControlViewController suggestions]];
