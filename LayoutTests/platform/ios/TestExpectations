@@ -1381,12 +1381,6 @@ mathml/presentation/fractions-linethickness.html [ Skip ]
 mathml/opentype/large-operators-italic-correction.html [ Skip ]
 mathml/presentation/bug159513.html [ Skip ]
 
-# These reftests require a font with Mathematical Alphanumeric Symbols.
-mathml/presentation/attributes-mathvariant.html [ Skip ]
-mathml/presentation/tokenElements-mathvariant.html [ Skip ]
-mathml/presentation/mathvariant-inheritance.html [ Skip ]
-mathml/presentation/mathvariant-tokens.html [ Skip ]
-
 # This test fails because the USE_TYPO_METRICS flag is ignored for non-math font
 webkit.org/b/150394 imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html [ ImageOnlyFailure ]
 
