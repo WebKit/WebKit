@@ -8642,7 +8642,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
 #if USE(JSVALUE64)
         m_jit.setupArguments<J_JITOperation_EJI>(baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
 #else
-        m_jit.setupArguments<J_JITOperation_EJI>(baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
+        m_jit.setupArguments<J_JITOperation_EJI>(JSValue::JSCellType, baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
 #endif
         m_jit.storePtr(GPRInfo::callFrameRegister, &m_jit.vm()->topCallFrame);
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);

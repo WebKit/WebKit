@@ -1,5 +1,12 @@
 2018-03-07  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix 32-bit build.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+
+2018-03-07  Keith Miller  <keith_miller@apple.com>
+
         Meta-program setupArguments and callOperation
         https://bugs.webkit.org/show_bug.cgi?id=183263
 
