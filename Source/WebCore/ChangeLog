@@ -1,3 +1,14 @@
+2018-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        Sort and separate FeatureDefines.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=183427
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Sort and split FeatureDefines into paragraphs
+        (to make it easier to sort later).
+
 2018-03-07  Zalan Bujtas  <zalan@apple.com>
 
         Invalid innerTextRenderer in RenderTextControlSingleLine::styleDidChange()
