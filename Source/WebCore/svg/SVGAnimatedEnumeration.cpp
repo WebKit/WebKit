@@ -110,13 +110,12 @@ SVGAnimatedEnumerationAnimator::SVGAnimatedEnumerationAnimator(SVGAnimationEleme
 std::unique_ptr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::constructFromString(const String& string)
 {
     ASSERT(m_animationElement);
-    auto value = enumerationValueForTargetAttribute(m_animationElement->targetElement(), m_animationElement->attributeName(), string);
-    return SVGAnimatedType::createEnumeration(std::make_unique<unsigned>(value));
+    return SVGAnimatedType::create(enumerationValueForTargetAttribute(m_animationElement->targetElement(), m_animationElement->attributeName(), string));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createEnumeration(constructFromBaseValue<SVGAnimatedEnumeration>(animatedTypes));
+    return constructFromBaseValue<SVGAnimatedEnumeration>(animatedTypes);
 }
 
 void SVGAnimatedEnumerationAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -126,7 +125,7 @@ void SVGAnimatedEnumerationAnimator::stopAnimValAnimation(const SVGElementAnimat
 
 void SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValue<SVGAnimatedEnumeration>(animatedTypes, type, &SVGAnimatedType::enumeration);
+    resetFromBaseValue<SVGAnimatedEnumeration>(animatedTypes, type);
 }
 
 void SVGAnimatedEnumerationAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -149,9 +148,9 @@ void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, un
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    unsigned fromEnumeration = m_animationElement->animationMode() == ToAnimation ? animated->enumeration() : from->enumeration();
-    unsigned toEnumeration = to->enumeration();
-    unsigned& animatedEnumeration = animated->enumeration();
+    const auto fromEnumeration = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<unsigned>();
+    const auto toEnumeration = to->as<unsigned>();
+    auto& animatedEnumeration = animated->as<unsigned>();
 
     m_animationElement->animateDiscreteType<unsigned>(percentage, fromEnumeration, toEnumeration, animatedEnumeration);
 }

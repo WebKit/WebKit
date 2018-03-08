@@ -78,15 +78,9 @@ private:
 
 template<> struct SVGPropertyTraits<SVGPreserveAspectRatioValue> {
     static SVGPreserveAspectRatioValue initialValue() { return SVGPreserveAspectRatioValue(); }
-    static SVGPreserveAspectRatioValue fromString(const String& string)
-    {
-        return SVGPreserveAspectRatioValue(string);
-
-    }
-    static String toString(const SVGPreserveAspectRatioValue& type)
-    {
-        return type.valueAsString();
-    }
+    static SVGPreserveAspectRatioValue fromString(const String& string) { return SVGPreserveAspectRatioValue(string); }
+    static std::optional<SVGPreserveAspectRatioValue> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static String toString(const SVGPreserveAspectRatioValue& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore

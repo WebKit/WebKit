@@ -41,14 +41,12 @@ SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationE
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(const String& string)
 {
-    auto values = SVGPropertyTraits<SVGTransformListValues>::fromString(m_transformTypeString + string + ')');
-    ASSERT(values.size() <= 1);
-    return SVGAnimatedType::createTransformList(std::make_unique<SVGTransformListValues>(WTFMove(values)));
+    return SVGAnimatedType::create(SVGPropertyTraits<SVGTransformListValues>::fromString(m_transformTypeString + string + ')'));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createTransformList(constructFromBaseValue<SVGAnimatedTransformList>(animatedTypes));
+    return constructFromBaseValue<SVGAnimatedTransformList>(animatedTypes);
 }
 
 void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -58,7 +56,7 @@ void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const SVGElementAnim
 
 void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValue<SVGAnimatedTransformList>(animatedTypes, type, &SVGAnimatedType::transformList);
+    resetFromBaseValue<SVGAnimatedTransformList>(animatedTypes, type);
 }
 
 void SVGAnimatedTransformListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -76,8 +74,8 @@ void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, S
     ASSERT(from->type() == AnimatedTransformList);
     ASSERT(from->type() == to->type());
 
-    const auto& fromTransformList = from->transformList();
-    auto& toTransformList = to->transformList();
+    const auto& fromTransformList = from->as<SVGTransformListValues>();
+    auto& toTransformList = to->as<SVGTransformListValues>();
     auto fromTransformListSize = fromTransformList.size();
     if (!fromTransformListSize || fromTransformListSize != toTransformList.size())
         return;
@@ -97,10 +95,10 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     // Spec: To animations provide specific functionality to get a smooth change from the underlying value to the
     // ‘to’ attribute value, which conflicts mathematically with the requirement for additive transform animations
     // to be post-multiplied. As a consequence, in SVG 1.1 the behavior of to animations for ‘animateTransform’ is undefined.
-    const auto& fromTransformList = from->transformList();
-    const auto& toTransformList = to->transformList();
-    const auto& toAtEndOfDurationTransformList = toAtEndOfDuration->transformList();
-    auto& animatedTransformList = animated->transformList();
+    const auto& fromTransformList = from->as<SVGTransformListValues>();
+    const auto& toTransformList = to->as<SVGTransformListValues>();
+    const auto& toAtEndOfDurationTransformList = toAtEndOfDuration->as<SVGTransformListValues>();
+    auto& animatedTransformList = animated->as<SVGTransformListValues>();
 
     // Pass false to 'resizeAnimatedListIfNeeded' here, as the special post-multiplication behavior of <animateTransform> needs to be respected below.
     if (!m_animationElement->adjustFromToListValues<SVGTransformListValues>(fromTransformList, toTransformList, animatedTransformList, percentage, false))
@@ -130,8 +128,8 @@ float SVGAnimatedTransformListAnimator::calculateDistance(const String& fromStri
     auto from = constructFromString(fromString);
     auto to = constructFromString(toString);
 
-    auto& fromTransformList = from->transformList();
-    auto& toTransformList = to->transformList();
+    const auto& fromTransformList = from->as<SVGTransformListValues>();
+    const auto& toTransformList = to->as<SVGTransformListValues>();
     unsigned itemsCount = fromTransformList.size();
     if (!itemsCount || itemsCount != toTransformList.size())
         return -1;

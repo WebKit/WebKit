@@ -108,6 +108,8 @@ struct SVGPropertyTraits<SVGPathByteStream> {
         buildSVGPathByteStreamFromString(string, byteStream, UnalteredParsing);
         return byteStream;
     }
+    static std::optional<SVGPathByteStream> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return { }; }
+    static String toString(const SVGPathByteStream&) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
 } // namespace WebCore

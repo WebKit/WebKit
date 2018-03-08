@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,284 +20,128 @@
 
 #pragma once
 
-#include "Color.h"
-#include "FloatRect.h"
-#include "SVGAngleValue.h"
-#include "SVGLengthListValues.h"
-#include "SVGLengthValue.h"
-#include "SVGNumberListValues.h"
-#include "SVGPointListValues.h"
-#include "SVGPreserveAspectRatioValue.h"
-#include "SVGPropertyInfo.h"
-#include "SVGTransformListValues.h"
+#include "SVGValue.h"
 
 namespace WebCore {
-
-class SVGPathByteStream;
 
 class SVGAnimatedType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGAnimatedType(AnimatedPropertyType);
-    virtual ~SVGAnimatedType();
-
-    static std::unique_ptr<SVGAnimatedType> createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngleValue, unsigned>>);
-    static std::unique_ptr<SVGAnimatedType> createBoolean(std::unique_ptr<bool>);
-    static std::unique_ptr<SVGAnimatedType> createColor(std::unique_ptr<Color>);
-    static std::unique_ptr<SVGAnimatedType> createEnumeration(std::unique_ptr<unsigned>);
-    static std::unique_ptr<SVGAnimatedType> createInteger(std::unique_ptr<int>);
-    static std::unique_ptr<SVGAnimatedType> createIntegerOptionalInteger(std::unique_ptr<std::pair<int, int>>);
-    static std::unique_ptr<SVGAnimatedType> createLength(std::unique_ptr<SVGLengthValue>);
-    static std::unique_ptr<SVGAnimatedType> createLengthList(std::unique_ptr<SVGLengthListValues>);
-    static std::unique_ptr<SVGAnimatedType> createNumber(std::unique_ptr<float>);
-    static std::unique_ptr<SVGAnimatedType> createNumberList(std::unique_ptr<SVGNumberListValues>);
-    static std::unique_ptr<SVGAnimatedType> createNumberOptionalNumber(std::unique_ptr<std::pair<float, float>>);
-    static std::unique_ptr<SVGAnimatedType> createPath(std::unique_ptr<SVGPathByteStream>);
-    static std::unique_ptr<SVGAnimatedType> createPointList(std::unique_ptr<SVGPointListValues>);
-    static std::unique_ptr<SVGAnimatedType> createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatioValue>);
-    static std::unique_ptr<SVGAnimatedType> createRect(std::unique_ptr<FloatRect>);
-    static std::unique_ptr<SVGAnimatedType> createString(std::unique_ptr<String>);
-    static std::unique_ptr<SVGAnimatedType> createTransformList(std::unique_ptr<SVGTransformListValues>);
-    static bool supportsAnimVal(AnimatedPropertyType);
-
-    AnimatedPropertyType type() const { return m_type; }
-
-    // Non-mutable accessors.
-    const std::pair<SVGAngleValue, unsigned>& angleAndEnumeration() const
+    template<typename PropertyType>
+    static std::unique_ptr<SVGAnimatedType> create()
     {
-        ASSERT(m_type == AnimatedAngle);
-        return *m_data.angleAndEnumeration;
+        return std::make_unique<SVGAnimatedType>(SVGPropertyTraits<PropertyType>::initialValue());
     }
 
-    const bool& boolean() const
+    template<typename PropertyType>
+    static std::unique_ptr<SVGAnimatedType> create(const PropertyType& property)
     {
-        ASSERT(m_type == AnimatedBoolean);
-        return *m_data.boolean;
+        return std::make_unique<SVGAnimatedType>(property);
     }
 
-    const Color& color() const
+    template<typename PropertyType>
+    static std::unique_ptr<SVGAnimatedType> create(PropertyType&& property)
     {
-        ASSERT(m_type == AnimatedColor);
-        return *m_data.color;
+        return std::make_unique<SVGAnimatedType>(WTFMove(property));
     }
 
-    const unsigned& enumeration() const
+    template<typename PropertyType1, typename PropertyType2>
+    static std::unique_ptr<SVGAnimatedType> create()
     {
-        ASSERT(m_type == AnimatedEnumeration);
-        return *m_data.enumeration;
+        return std::make_unique<SVGAnimatedType>(SVGPropertyTraits<std::pair<PropertyType1, PropertyType2>>::initialValue());
     }
 
-    const int& integer() const
+    template<typename PropertyType1, typename PropertyType2>
+    static std::unique_ptr<SVGAnimatedType> create(const std::pair<PropertyType1, PropertyType2>& properties)
     {
-        ASSERT(m_type == AnimatedInteger);
-        return *m_data.integer;
+        return std::make_unique<SVGAnimatedType>(properties);
     }
 
-    const std::pair<int, int>& integerOptionalInteger() const
+    template<typename PropertyType1, typename PropertyType2>
+    static std::unique_ptr<SVGAnimatedType> create(std::pair<PropertyType1, PropertyType2>&& properties)
     {
-        ASSERT(m_type == AnimatedIntegerOptionalInteger);
-        return *m_data.integerOptionalInteger;
+        return std::make_unique<SVGAnimatedType>(WTFMove(properties));
     }
 
-    const SVGLengthValue& length() const
+    template<typename PropertyType>
+    SVGAnimatedType(const PropertyType& property)
+        : m_value(std::make_unique<PropertyType>(property).release())
     {
-        ASSERT(m_type == AnimatedLength);
-        return *m_data.length;
     }
 
-    const SVGLengthListValues& lengthList() const
+    template<typename PropertyType>
+    SVGAnimatedType(PropertyType&& property)
+        : m_value(std::make_unique<PropertyType>(WTFMove(property)).release())
     {
-        ASSERT(m_type == AnimatedLengthList);
-        return *m_data.lengthList;
     }
 
-    const float& number() const
+    template<typename PropertyType1, typename PropertyType2>
+    SVGAnimatedType(const std::pair<PropertyType1, PropertyType2>& properties)
+        : m_value(std::make_unique<std::pair<PropertyType1, PropertyType2>>(properties).release())
     {
-        ASSERT(m_type == AnimatedNumber);
-        return *m_data.number;
     }
 
-    const SVGNumberListValues& numberList() const
+    template<typename PropertyType1, typename PropertyType2>
+    SVGAnimatedType(std::pair<PropertyType1, PropertyType2>&& properties)
+        : m_value(std::make_unique<std::pair<PropertyType1, PropertyType2>>(WTFMove(properties)).release())
     {
-        ASSERT(m_type == AnimatedNumberList);
-        return *m_data.numberList;
     }
 
-    const std::pair<float, float>& numberOptionalNumber() const
+    ~SVGAnimatedType()
     {
-        ASSERT(m_type == AnimatedNumberOptionalNumber);
-        return *m_data.numberOptionalNumber;
+        WTF::visit([](auto& value) {
+            delete value;
+        }, m_value);
     }
 
-    const SVGPathByteStream* path() const
+    template <class PropertyType>
+    const PropertyType& as() const
     {
-        ASSERT(m_type == AnimatedPath);
-        return m_data.path;
+        ASSERT(WTF::holds_alternative<PropertyType*>(m_value));
+        return *WTF::get<PropertyType*>(m_value);
     }
 
-    const SVGPointListValues& pointList() const
+    template <class PropertyType>
+    PropertyType& as()
     {
-        ASSERT(m_type == AnimatedPoints);
-        return *m_data.pointList;
+        ASSERT(WTF::holds_alternative<PropertyType*>(m_value));
+        return *WTF::get<PropertyType*>(m_value);
     }
 
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const
+    AnimatedPropertyType type() const
     {
-        ASSERT(m_type == AnimatedPreserveAspectRatio);
-        return *m_data.preserveAspectRatio;
+        ASSERT(m_value.index() >= AnimatedPropertyTypeMin && m_value.index() < AnimatedPropertyTypeMax);
+        return static_cast<AnimatedPropertyType>(m_value.index());
     }
 
-    const FloatRect& rect() const
+    String valueAsString() const
     {
-        ASSERT(m_type == AnimatedRect);
-        return *m_data.rect;
+        return WTF::visit([](auto& value) {
+            using PropertyType = std::decay_t<decltype(*value)>;
+            return SVGPropertyTraits<PropertyType>::toString(*value);
+        }, m_value);
     }
 
-    const String& string() const
+    bool setValueAsString(const QualifiedName& attrName, const String& string)
     {
-        ASSERT(m_type == AnimatedString);
-        return *m_data.string;
+        return WTF::visit([&](auto& value) {
+            using PropertyType = std::decay_t<decltype(*value)>;
+            if (auto result = SVGPropertyTraits<PropertyType>::parse(attrName, string)) {
+                *value = *result;
+                return true;
+            }
+            return false;
+        }, m_value);
     }
 
-    const SVGTransformListValues& transformList() const
+    static bool supportsAnimVal(AnimatedPropertyType type)
     {
-        ASSERT(m_type == AnimatedTransformList);
-        return *m_data.transformList;
+        // AnimatedColor is only used for CSS property animations.
+        return type != AnimatedUnknown && type != AnimatedColor;
     }
-
-    // Mutable accessors.
-    std::pair<SVGAngleValue, unsigned>& angleAndEnumeration()
-    {
-        ASSERT(m_type == AnimatedAngle);
-        return *m_data.angleAndEnumeration;
-    }
-
-    bool& boolean()
-    {
-        ASSERT(m_type == AnimatedBoolean);
-        return *m_data.boolean;
-    }
-
-    Color& color()
-    {
-        ASSERT(m_type == AnimatedColor);
-        return *m_data.color;
-    }
-
-    unsigned& enumeration()
-    {
-        ASSERT(m_type == AnimatedEnumeration);
-        return *m_data.enumeration;
-    }
-
-    int& integer()
-    {
-        ASSERT(m_type == AnimatedInteger);
-        return *m_data.integer;
-    }
-
-    std::pair<int, int>& integerOptionalInteger()
-    {
-        ASSERT(m_type == AnimatedIntegerOptionalInteger);
-        return *m_data.integerOptionalInteger;
-    }
-
-    SVGLengthValue& length()
-    {
-        ASSERT(m_type == AnimatedLength);
-        return *m_data.length;
-    }
-
-    SVGLengthListValues& lengthList()
-    {
-        ASSERT(m_type == AnimatedLengthList);
-        return *m_data.lengthList;
-    }
-
-    float& number()
-    {
-        ASSERT(m_type == AnimatedNumber);
-        return *m_data.number;
-    }
-
-    SVGNumberListValues& numberList()
-    {
-        ASSERT(m_type == AnimatedNumberList);
-        return *m_data.numberList;
-    }
-
-    std::pair<float, float>& numberOptionalNumber()
-    {
-        ASSERT(m_type == AnimatedNumberOptionalNumber);
-        return *m_data.numberOptionalNumber;
-    }
-
-    SVGPathByteStream* path()
-    {
-        ASSERT(m_type == AnimatedPath);
-        return m_data.path;
-    }
-
-    SVGPointListValues& pointList()
-    {
-        ASSERT(m_type == AnimatedPoints);
-        return *m_data.pointList;
-    }
-
-    SVGPreserveAspectRatioValue& preserveAspectRatio()
-    {
-        ASSERT(m_type == AnimatedPreserveAspectRatio);
-        return *m_data.preserveAspectRatio;
-    }
-
-    FloatRect& rect()
-    {
-        ASSERT(m_type == AnimatedRect);
-        return *m_data.rect;
-    }
-
-    String& string()
-    {
-        ASSERT(m_type == AnimatedString);
-        return *m_data.string;
-    }
-
-    SVGTransformListValues& transformList()
-    {
-        ASSERT(m_type == AnimatedTransformList);
-        return *m_data.transformList;
-    }
-
-    String valueAsString();
-    bool setValueAsString(const QualifiedName&, const String&);
 
 private:
-    AnimatedPropertyType m_type;
-
-    union DataUnion {
-        DataUnion()
-            : length(nullptr)
-        {
-        }
-
-        std::pair<SVGAngleValue, unsigned>* angleAndEnumeration;
-        bool* boolean;
-        Color* color;
-        unsigned* enumeration;
-        int* integer;
-        std::pair<int, int>* integerOptionalInteger;
-        SVGLengthValue* length;
-        SVGLengthListValues* lengthList;
-        float* number;
-        SVGNumberListValues* numberList;
-        std::pair<float, float>* numberOptionalNumber;
-        SVGPathByteStream* path;
-        SVGPreserveAspectRatioValue* preserveAspectRatio;
-        SVGPointListValues* pointList;
-        FloatRect* rect;
-        String* string;
-        SVGTransformListValues* transformList;
-    } m_data;
+    SVGValueVariant m_value;
 };
 
 } // namespace WebCore

@@ -147,7 +147,13 @@ private:
 
 template<> struct SVGPropertyTraits<SVGLengthValue> {
     static SVGLengthValue initialValue() { return { }; }
-    static String toString(const SVGLengthValue& type) { return type.valueAsString(); }
+    static std::optional<SVGLengthValue> parse(const QualifiedName& attrName, const String& string)
+    {
+        SVGLengthValue length;
+        length.setValueAsString(string, SVGLengthValue::lengthModeForAnimatedLengthAttribute(attrName)).hasException();
+        return length;
+    }
+    static String toString(const SVGLengthValue& length) { return length.valueAsString(); }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SVGLengthValue&);

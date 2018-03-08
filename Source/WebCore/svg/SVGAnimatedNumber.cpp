@@ -33,13 +33,12 @@ SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGAnimationElement* animat
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const String& string)
 {
-    auto value = SVGPropertyTraits<float>::fromString(string);
-    return SVGAnimatedType::createNumber(std::make_unique<float>(value));
+    return SVGAnimatedType::create(SVGPropertyTraits<float>::fromString(string));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createNumber(constructFromBaseValue<SVGAnimatedNumber>(animatedTypes));
+    return constructFromBaseValue<SVGAnimatedNumber>(animatedTypes);
 }
 
 void SVGAnimatedNumberAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -49,7 +48,7 @@ void SVGAnimatedNumberAnimator::stopAnimValAnimation(const SVGElementAnimatedPro
 
 void SVGAnimatedNumberAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValue<SVGAnimatedNumber>(animatedTypes, type, &SVGAnimatedType::number);
+    resetFromBaseValue<SVGAnimatedNumber>(animatedTypes, type);
 }
 
 void SVGAnimatedNumberAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -67,7 +66,7 @@ void SVGAnimatedNumberAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnima
     ASSERT(from->type() == AnimatedNumber);
     ASSERT(from->type() == to->type());
 
-    to->number() += from->number();
+    to->as<float>() += from->as<float>();
 }
 
 static float parseNumberFromString(SVGAnimationElement*, const String& string)
@@ -80,10 +79,10 @@ void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigne
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    float fromNumber = m_animationElement->animationMode() == ToAnimation ? animated->number() : from->number();
-    float toNumber = to->number();
-    float toAtEndOfDurationNumber = toAtEndOfDuration->number();
-    float& animatedNumber = animated->number();
+    auto fromNumber = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<float>();
+    auto toNumber = to->as<float>();
+    const auto toAtEndOfDurationNumber = toAtEndOfDuration->as<float>();
+    auto& animatedNumber = animated->as<float>();
 
     // Apply CSS inheritance rules.
     m_animationElement->adjustForInheritance<float>(parseNumberFromString, m_animationElement->fromPropertyValueType(), fromNumber, m_contextElement);

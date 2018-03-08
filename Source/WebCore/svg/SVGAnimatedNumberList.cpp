@@ -33,13 +33,12 @@ SVGAnimatedNumberListAnimator::SVGAnimatedNumberListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(const String& string)
 {
-    auto values = SVGPropertyTraits<SVGNumberListValues>::fromString(string);
-    return SVGAnimatedType::createNumberList(std::make_unique<SVGNumberListValues>(WTFMove(values)));
+    return SVGAnimatedType::create(SVGPropertyTraits<SVGNumberListValues>::fromString(string));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createNumberList(constructFromBaseValue<SVGAnimatedNumberList>(animatedTypes));
+    return constructFromBaseValue<SVGAnimatedNumberList>(animatedTypes);
 }
 
 void SVGAnimatedNumberListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -49,7 +48,7 @@ void SVGAnimatedNumberListAnimator::stopAnimValAnimation(const SVGElementAnimate
 
 void SVGAnimatedNumberListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValue<SVGAnimatedNumberList>(animatedTypes, type, &SVGAnimatedType::numberList);
+    resetFromBaseValue<SVGAnimatedNumberList>(animatedTypes, type);
 }
 
 void SVGAnimatedNumberListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -67,8 +66,8 @@ void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
     ASSERT(from->type() == AnimatedNumberList);
     ASSERT(from->type() == to->type());
 
-    const auto& fromNumberList = from->numberList();
-    auto& toNumberList = to->numberList();
+    const auto& fromNumberList = from->as<SVGNumberListValues>();
+    auto& toNumberList = to->as<SVGNumberListValues>();
 
     unsigned fromNumberListSize = fromNumberList.size();
     if (!fromNumberListSize || fromNumberListSize != toNumberList.size())
@@ -82,10 +81,10 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
 {
     ASSERT(m_animationElement);
 
-    const auto& fromNumberList = m_animationElement->animationMode() == ToAnimation ? animated->numberList() : from->numberList();
-    const auto& toNumberList = to->numberList();
-    const auto& toAtEndOfDurationNumberList = toAtEndOfDuration->numberList();
-    auto& animatedNumberList = animated->numberList();
+    const auto& fromNumberList = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGNumberListValues>();
+    const auto& toNumberList = to->as<SVGNumberListValues>();
+    const auto& toAtEndOfDurationNumberList = toAtEndOfDuration->as<SVGNumberListValues>();
+    auto& animatedNumberList = animated->as<SVGNumberListValues>();
     if (!m_animationElement->adjustFromToListValues<SVGNumberListValues>(fromNumberList, toNumberList, animatedNumberList, percentage))
         return;
 

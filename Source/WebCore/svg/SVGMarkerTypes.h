@@ -94,6 +94,7 @@ inline unsigned SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue()
 
 template<>
 struct SVGPropertyTraits<std::pair<SVGAngleValue, unsigned>> {
+    static std::pair<SVGAngleValue, unsigned> initialValue() { return { }; }
     static std::pair<SVGAngleValue, unsigned> fromString(const String& string)
     {
         SVGAngleValue angle;
@@ -102,6 +103,8 @@ struct SVGPropertyTraits<std::pair<SVGAngleValue, unsigned>> {
             angle = { };
         return std::pair<SVGAngleValue, unsigned>(angle, orientType);
     }
+    static std::optional<std::pair<SVGAngleValue, unsigned>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
+    static String toString(const std::pair<SVGAngleValue, unsigned>&) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
 } // namespace WebCore

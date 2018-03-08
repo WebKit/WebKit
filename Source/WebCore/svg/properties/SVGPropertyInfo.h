@@ -32,7 +32,8 @@ enum AnimatedPropertyState {
 };
 
 enum AnimatedPropertyType {
-    AnimatedAngle,
+    AnimatedPropertyTypeMin = 0,
+    AnimatedAngle = AnimatedPropertyTypeMin,
     AnimatedBoolean,
     AnimatedColor,
     AnimatedEnumeration,
@@ -49,7 +50,8 @@ enum AnimatedPropertyType {
     AnimatedRect,
     AnimatedString,
     AnimatedTransformList,
-    AnimatedUnknown
+    AnimatedPropertyTypeMax,
+    AnimatedUnknown = AnimatedPropertyTypeMax
 };
 
 struct SVGPropertyInfo {

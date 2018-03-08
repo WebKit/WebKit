@@ -34,13 +34,12 @@ SVGAnimatedIntegerAnimator::SVGAnimatedIntegerAnimator(SVGAnimationElement* anim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::constructFromString(const String& string)
 {
-    auto value = SVGPropertyTraits<int>::fromString(string);
-    return SVGAnimatedType::createInteger(std::make_unique<int>(value));
+    return SVGAnimatedType::create(SVGPropertyTraits<int>::fromString(string));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createInteger(constructFromBaseValue<SVGAnimatedInteger>(animatedTypes));
+    return constructFromBaseValue<SVGAnimatedInteger>(animatedTypes);
 }
 
 void SVGAnimatedIntegerAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -50,7 +49,7 @@ void SVGAnimatedIntegerAnimator::stopAnimValAnimation(const SVGElementAnimatedPr
 
 void SVGAnimatedIntegerAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValue<SVGAnimatedInteger>(animatedTypes, type, &SVGAnimatedType::integer);
+    resetFromBaseValue<SVGAnimatedInteger>(animatedTypes, type);
 }
 
 void SVGAnimatedIntegerAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -68,7 +67,7 @@ void SVGAnimatedIntegerAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnim
     ASSERT(from->type() == AnimatedInteger);
     ASSERT(from->type() == to->type());
 
-    to->integer() += from->integer();
+    to->as<int>() += from->as<int>();
 }
 
 void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int toAtEndOfDurationInteger, int& animatedInteger)
@@ -83,10 +82,10 @@ void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsign
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    int fromInteger = m_animationElement->animationMode() == ToAnimation ? animated->integer() : from->integer();
-    int toInteger = to->integer();
-    int toAtEndOfDurationInteger = toAtEndOfDuration->integer();
-    int& animatedInteger = animated->integer();
+    const auto fromInteger = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<int>();
+    const auto toInteger = to->as<int>();
+    const auto toAtEndOfDurationInteger = toAtEndOfDuration->as<int>();
+    auto& animatedInteger = animated->as<int>();
 
     calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromInteger, toInteger, toAtEndOfDurationInteger, animatedInteger);
 }

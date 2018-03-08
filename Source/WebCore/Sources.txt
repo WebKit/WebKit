@@ -2082,7 +2082,6 @@ svg/SVGAnimatedPreserveAspectRatio.cpp
 svg/SVGAnimatedRect.cpp
 svg/SVGAnimatedString.cpp
 svg/SVGAnimatedTransformList.cpp
-svg/SVGAnimatedType.cpp
 svg/SVGAnimatedTypeAnimator.cpp
 svg/SVGAnimationElement.cpp
 svg/SVGCircleElement.cpp

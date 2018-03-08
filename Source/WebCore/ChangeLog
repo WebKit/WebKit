@@ -1,3 +1,255 @@
+2018-03-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Templatize SVGAnimatedType
+        https://bugs.webkit.org/show_bug.cgi?id=183017
+
+        Reviewed by Dean Jackson.
+
+        This is a work toward https://bugs.webkit.org/show_bug.cgi?id=168586. The
+        goal to have SVGAnimatedType be type independent. The appropriate method
+        of this template will be implicitly instantiated based to the type of the
+        animated attribute(s).
+
+        * Sources.txt: Delete SVGAnimatedType.cpp since its function became template
+        functions or short enough to be inline functions.
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::constructFromString):
+        (WebCore::SVGAnimatedAngleAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedAngleAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedAngleAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedAngleAnimator::calculateAnimatedValue):
+        Use the template functions SVGAnimatedType::create<>() and SVGAnimatedType::as<>().
+
+        * svg/SVGAnimatedBoolean.cpp:
+        (WebCore::SVGAnimatedBooleanAnimator::constructFromString):
+        (WebCore::SVGAnimatedBooleanAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedBooleanAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedBooleanAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedColor.cpp:
+        (WebCore::SVGAnimatedColorAnimator::constructFromString):
+        (WebCore::SVGAnimatedColorAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedColorAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedEnumeration.cpp:
+        (WebCore::SVGAnimatedEnumerationAnimator::constructFromString):
+        (WebCore::SVGAnimatedEnumerationAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedEnumerationAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedInteger.cpp:
+        (WebCore::SVGAnimatedIntegerAnimator::constructFromString):
+        (WebCore::SVGAnimatedIntegerAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedIntegerAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedIntegerAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedIntegerAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedIntegerOptionalInteger.cpp:
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString):
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::SVGAnimatedLengthAnimator::constructFromString):
+        (WebCore::SVGAnimatedLengthAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedLengthAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedLengthAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedLengthAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedLengthList.cpp:
+        (WebCore::SVGAnimatedLengthListAnimator::constructFromString):
+        (WebCore::SVGAnimatedLengthListAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedLengthListAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedLengthListAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedLengthListAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedNumber.cpp:
+        (WebCore::SVGAnimatedNumberAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedNumberAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedNumberAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedNumberAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberListAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedNumberListAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedNumberListAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedNumberListAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedNumberOptionalNumber.cpp:
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::constructFromString):
+        (WebCore::SVGAnimatedPathAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedPathAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedPathAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedPathAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedPointList.cpp:
+        (WebCore::SVGAnimatedPointListAnimator::constructFromString):
+        (WebCore::SVGAnimatedPointListAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedPointListAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedPointListAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedPointListAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedPreserveAspectRatio.cpp:
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::constructFromString):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedRect.cpp:
+        (WebCore::SVGAnimatedRectAnimator::constructFromString):
+        (WebCore::SVGAnimatedRectAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedRectAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedRectAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedRectAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedString.cpp:
+        (WebCore::SVGAnimatedStringAnimator::constructFromString):
+        (WebCore::SVGAnimatedStringAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedStringAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedStringAnimator::calculateAnimatedValue):
+        Ditto.
+
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::constructFromString):
+        (WebCore::SVGAnimatedTransformListAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedTransformListAnimator::resetAnimValToBaseVal):
+        (WebCore::SVGAnimatedTransformListAnimator::addAnimatedTypes):
+        (WebCore::SVGAnimatedTransformListAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedTransformListAnimator::calculateDistance):
+        Ditto.
+
+        * svg/SVGAnimatedType.cpp: Removed.
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::create):
+        (WebCore::SVGAnimatedType::SVGAnimatedType):
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::as const):
+        (WebCore::SVGAnimatedType::as):
+        (WebCore::SVGAnimatedType::type const):
+        (WebCore::SVGAnimatedType::valueAsString const):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        (WebCore::SVGAnimatedType::supportsAnimVal):
+        (WebCore::SVGAnimatedType::angleAndEnumeration const): Deleted.
+        (WebCore::SVGAnimatedType::boolean const): Deleted.
+        (WebCore::SVGAnimatedType::color const): Deleted.
+        (WebCore::SVGAnimatedType::enumeration const): Deleted.
+        (WebCore::SVGAnimatedType::integer const): Deleted.
+        (WebCore::SVGAnimatedType::integerOptionalInteger const): Deleted.
+        (WebCore::SVGAnimatedType::length const): Deleted.
+        (WebCore::SVGAnimatedType::lengthList const): Deleted.
+        (WebCore::SVGAnimatedType::number const): Deleted.
+        (WebCore::SVGAnimatedType::numberList const): Deleted.
+        (WebCore::SVGAnimatedType::numberOptionalNumber const): Deleted.
+        (WebCore::SVGAnimatedType::path const): Deleted.
+        (WebCore::SVGAnimatedType::pointList const): Deleted.
+        (WebCore::SVGAnimatedType::preserveAspectRatio const): Deleted.
+        (WebCore::SVGAnimatedType::rect const): Deleted.
+        (WebCore::SVGAnimatedType::string const): Deleted.
+        (WebCore::SVGAnimatedType::transformList const): Deleted.
+        (WebCore::SVGAnimatedType::angleAndEnumeration): Deleted.
+        (WebCore::SVGAnimatedType::boolean): Deleted.
+        (WebCore::SVGAnimatedType::color): Deleted.
+        (WebCore::SVGAnimatedType::enumeration): Deleted.
+        (WebCore::SVGAnimatedType::integer): Deleted.
+        (WebCore::SVGAnimatedType::integerOptionalInteger): Deleted.
+        (WebCore::SVGAnimatedType::length): Deleted.
+        (WebCore::SVGAnimatedType::lengthList): Deleted.
+        (WebCore::SVGAnimatedType::number): Deleted.
+        (WebCore::SVGAnimatedType::numberList): Deleted.
+        (WebCore::SVGAnimatedType::numberOptionalNumber): Deleted.
+        (WebCore::SVGAnimatedType::path): Deleted.
+        (WebCore::SVGAnimatedType::pointList): Deleted.
+        (WebCore::SVGAnimatedType::preserveAspectRatio): Deleted.
+        (WebCore::SVGAnimatedType::rect): Deleted.
+        (WebCore::SVGAnimatedType::string): Deleted.
+        (WebCore::SVGAnimatedType::transformList): Deleted.
+        Replace the union by a Variant. Replace all the type specific functions
+        by the template functions create() and as(). Use WTF::visit to get the
+        value stored in the variant. Use the SVGPropertyTraits to perform the
+        required operation.
+
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::constructFromBaseValue):
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValue):
+        (WebCore::SVGAnimatedTypeAnimator::stopAnimValAnimationForType):
+        (WebCore::SVGAnimatedTypeAnimator::animValDidChangeForType):
+        (WebCore::SVGAnimatedTypeAnimator::animValWillChangeForType):
+        (WebCore::SVGAnimatedTypeAnimator::constructFromBaseValues):
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValues):
+        (WebCore::SVGAnimatedTypeAnimator::stopAnimValAnimationForTypes):
+        (WebCore::SVGAnimatedTypeAnimator::animValDidChangeForTypes):
+        (WebCore::SVGAnimatedTypeAnimator::animValWillChangeForTypes):
+        (WebCore::SVGAnimatedTypeAnimator::executeAction):
+        Rename the parameters and the local variables to match their types. Use
+        the SVGAnimatedType template functions create() and as().
+
+        * svg/SVGLengthValue.h:
+        (WebCore::SVGPropertyTraits<SVGLengthValue>::parse): This was moved from
+        SVGAnimatedType::setValueAsString()
+        (WebCore::SVGPropertyTraits<SVGLengthValue>::toString): This was moved from
+        SVGAnimatedType::valueAsString().
+
+        * svg/SVGMarkerTypes.h: Add placeholders for parse() and toString() so
+        SVGAnimatedType::valueAsString() and setValueAsString() can compile for 
+        all types.
+
+        * svg/SVGNumberListValues.h:
+        (WebCore::SVGPropertyTraits<SVGNumberListValues>::parse):
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::parse):
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::toString):
+        * svg/SVGPointListValues.h:
+        (WebCore::SVGPropertyTraits<SVGPointListValues>::parse):
+        (WebCore::SVGPropertyTraits<SVGPointListValues>::toString):
+        * svg/SVGPreserveAspectRatioValue.h:
+        (WebCore::SVGPropertyTraits<SVGPreserveAspectRatioValue>::fromString):
+        (WebCore::SVGPropertyTraits<SVGPreserveAspectRatioValue>::parse):
+        (WebCore::SVGPropertyTraits<SVGPreserveAspectRatioValue>::toString):
+        Ditto.
+
+        * svg/SVGTransformListValues.h:
+        (WebCore::SVGPropertyTraits<SVGTransformListValues>::parse):
+        Ditto.
+
+        * svg/SVGValue.h: Added. SVGValueVariant is the replacement of the union
+        SVGAnimatedType::DataUnion.
+
+        * svg/properties/SVGPropertyInfo.h:
+        Add a minimum and maximum AnimatedPropertyType so, SVGAnimatedType::type()
+        can assert that the index of the variant is in the range of this enum.
+
+        * svg/properties/SVGPropertyTraits.h:
+        (WebCore::SVGPropertyTraits<bool>::parse):
+        (WebCore::SVGPropertyTraits<unsigned>::parse):
+        (WebCore::SVGPropertyTraits<int>::parse):
+        Ditto.
+
 2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][WebCore] Extend jsDynamicCast for WebCore types in WebCore and remove jsDynamicDowncast

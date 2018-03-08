@@ -33,13 +33,12 @@ SVGAnimatedNumberOptionalNumberAnimator::SVGAnimatedNumberOptionalNumberAnimator
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFromString(const String& string)
 {
-    auto values = SVGPropertyTraits<std::pair<float, float>>::fromString(string);
-    return SVGAnimatedType::createNumberOptionalNumber(std::make_unique<std::pair<float, float>>(values));
+    return SVGAnimatedType::create(SVGPropertyTraits<std::pair<float, float>>::fromString(string));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createNumberOptionalNumber(constructFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(animatedTypes));
+    return constructFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(animatedTypes);
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -49,7 +48,7 @@ void SVGAnimatedNumberOptionalNumberAnimator::stopAnimValAnimation(const SVGElem
 
 void SVGAnimatedNumberOptionalNumberAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(animatedTypes, type, &SVGAnimatedType::numberOptionalNumber);
+    resetFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(animatedTypes, type);
 }
 
 void SVGAnimatedNumberOptionalNumberAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -67,8 +66,8 @@ void SVGAnimatedNumberOptionalNumberAnimator::addAnimatedTypes(SVGAnimatedType* 
     ASSERT(from->type() == AnimatedNumberOptionalNumber);
     ASSERT(from->type() == to->type());
 
-    const std::pair<float, float>& fromNumberPair = from->numberOptionalNumber();
-    std::pair<float, float>& toNumberPair = to->numberOptionalNumber();
+    const auto& fromNumberPair = from->as<std::pair<float, float>>();
+    auto& toNumberPair = to->as<std::pair<float, float>>();
 
     toNumberPair.first += fromNumberPair.first;
     toNumberPair.second += fromNumberPair.second;
@@ -79,10 +78,10 @@ void SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue(float perce
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const std::pair<float, float>& fromNumberPair = m_animationElement->animationMode() == ToAnimation ? animated->numberOptionalNumber() :  from->numberOptionalNumber();
-    const std::pair<float, float>& toNumberPair = to->numberOptionalNumber();
-    const std::pair<float, float>& toAtEndOfDurationNumberPair = toAtEndOfDuration->numberOptionalNumber();
-    std::pair<float, float>& animatedNumberPair = animated->numberOptionalNumber();
+    const auto& fromNumberPair = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<std::pair<float, float>>();
+    const auto& toNumberPair = to->as<std::pair<float, float>>();
+    const auto& toAtEndOfDurationNumberPair = toAtEndOfDuration->as<std::pair<float, float>>();
+    auto& animatedNumberPair = animated->as<std::pair<float, float>>();
 
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.first, toNumberPair.first, toAtEndOfDurationNumberPair.first, animatedNumberPair.first);
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.second, toNumberPair.second, toAtEndOfDurationNumberPair.second, animatedNumberPair.second);

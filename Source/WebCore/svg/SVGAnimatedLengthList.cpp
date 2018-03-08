@@ -33,13 +33,12 @@ SVGAnimatedLengthListAnimator::SVGAnimatedLengthListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(const String& string)
 {
-    auto value = SVGPropertyTraits<SVGLengthListValues>::fromString(string, m_lengthMode);
-    return SVGAnimatedType::createLengthList(std::make_unique<SVGLengthListValues>(WTFMove(value)));
+    return SVGAnimatedType::create(SVGPropertyTraits<SVGLengthListValues>::fromString(string, m_lengthMode));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createLengthList(constructFromBaseValue<SVGAnimatedLengthList>(animatedTypes));
+    return constructFromBaseValue<SVGAnimatedLengthList>(animatedTypes);
 }
 
 void SVGAnimatedLengthListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -49,7 +48,7 @@ void SVGAnimatedLengthListAnimator::stopAnimValAnimation(const SVGElementAnimate
 
 void SVGAnimatedLengthListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
-    resetFromBaseValue<SVGAnimatedLengthList>(animatedTypes, type, &SVGAnimatedType::lengthList);
+    resetFromBaseValue<SVGAnimatedLengthList>(animatedTypes, type);
 }
 
 void SVGAnimatedLengthListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -67,8 +66,8 @@ void SVGAnimatedLengthListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
     ASSERT(from->type() == AnimatedLengthList);
     ASSERT(from->type() == to->type());
 
-    const auto& fromLengthList = from->lengthList();
-    auto& toLengthList = to->lengthList();
+    const auto& fromLengthList = from->as<SVGLengthListValues>();
+    auto& toLengthList = to->as<SVGLengthListValues>();
 
     unsigned fromLengthListSize = fromLengthList.size();
     if (!fromLengthListSize || fromLengthListSize != toLengthList.size())
@@ -91,10 +90,10 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    auto fromLengthList = m_animationElement->animationMode() == ToAnimation ? animated->lengthList() : from->lengthList();
-    auto toLengthList = to->lengthList();
-    const auto& toAtEndOfDurationLengthList = toAtEndOfDuration->lengthList();
-    auto& animatedLengthList = animated->lengthList();
+    auto fromLengthList = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGLengthListValues>();
+    auto toLengthList = to->as<SVGLengthListValues>();
+    const auto& toAtEndOfDurationLengthList = toAtEndOfDuration->as<SVGLengthListValues>();
+    auto& animatedLengthList = animated->as<SVGLengthListValues>();
 
     // Apply CSS inheritance rules.
     m_animationElement->adjustForInheritance<SVGLengthListValues>(parseLengthListFromString, m_animationElement->fromPropertyValueType(), fromLengthList, m_contextElement);
