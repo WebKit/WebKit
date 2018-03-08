@@ -1,5 +1,14 @@
 2018-03-08  Keith Miller  <keith_miller@apple.com>
 
+        Disable JIT on Cocoa 32-bit ARM.
+        https://bugs.webkit.org/show_bug.cgi?id=183426
+
+        Reviewed by Michael Saboff.
+
+        * wtf/Platform.h:
+
+2018-03-08  Keith Miller  <keith_miller@apple.com>
+
         Use asm instead of __asm__ in WTFBreakpointTrap so MSVC builds
         https://bugs.webkit.org/show_bug.cgi?id=183465
 

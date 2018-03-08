@@ -727,6 +727,12 @@
 #define ENABLE_JIT 1
 #endif
 
+/* Cocoa ports should not use the jit on 32-bit ARM CPUs. */
+#if PLATFORM(COCOA) && (CPU(ARM) || CPU(APPLE_ARMV7K))
+#undef ENABLE_JIT
+#define ENABLE_JIT 0
+#endif
+
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
 #if USE(JSVALUE32_64)
 #undef ENABLE_FTL_JIT
