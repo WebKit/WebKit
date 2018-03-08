@@ -491,9 +491,15 @@ void HTMLInputElement::updateType()
     removeFromRadioButtonGroup();
 
     bool didStoreValue = m_inputType->storesValueSeparateFromAttribute();
+    bool willStoreValue = newType->storesValueSeparateFromAttribute();
     bool neededSuspensionCallback = needsSuspensionCallback();
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
     bool wasSuccessfulSubmitButtonCandidate = m_inputType->canBeSuccessfulSubmitButton();
+
+    if (didStoreValue && !willStoreValue && hasDirtyValue()) {
+        setAttributeWithoutSynchronization(valueAttr, m_valueIfDirty);
+        m_valueIfDirty = String();
+    }
 
     m_inputType->destroyShadowSubtree();
 
@@ -503,12 +509,6 @@ void HTMLInputElement::updateType()
 
     setNeedsWillValidateCheck();
 
-    bool willStoreValue = m_inputType->storesValueSeparateFromAttribute();
-
-    if (didStoreValue && !willStoreValue && hasDirtyValue()) {
-        setAttributeWithoutSynchronization(valueAttr, m_valueIfDirty);
-        m_valueIfDirty = String();
-    }
     if (!didStoreValue && willStoreValue)
         m_valueIfDirty = sanitizeValue(attributeWithoutSynchronization(valueAttr));
     else

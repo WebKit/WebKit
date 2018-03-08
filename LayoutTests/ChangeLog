@@ -1,3 +1,14 @@
+2018-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        Invalid innerTextRenderer in RenderTextControlSingleLine::styleDidChange()
+        https://bugs.webkit.org/show_bug.cgi?id=183385
+        <rdar://problem/38085397>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/DOM/HTMLInputElement/input-value-and-type-change-crash-expected.txt: Added.
+        * fast/DOM/HTMLInputElement/input-value-and-type-change-crash.html: Added.
+
 2018-03-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for media/modern-media-controls/fullscreen-support/fullscreen-support-press.html.

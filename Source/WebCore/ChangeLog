@@ -1,3 +1,23 @@
+2018-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        Invalid innerTextRenderer in RenderTextControlSingleLine::styleDidChange()
+        https://bugs.webkit.org/show_bug.cgi?id=183385
+        <rdar://problem/38085397>
+
+        Reviewed by Antti Koivisto.
+
+        When HTMLInputElement::updateType() is called with a dirty value, we eagerly change the m_inputType first
+        and then we take care of the dirty value by calling setAttributeWithoutSynchronization().
+        With a DOMSubtreeModified event listener attached, setAttributeWithoutSynchronization() can end up running some
+        layout code (offsetHeight) with a renderer - m_inputType mismatch.
+
+        This patch ensures that we don't change the m_inputType until after we finished setting the new value.
+
+        Test: fast/DOM/HTMLInputElement/input-value-and-type-change-crash.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+
 2018-03-07  Chris Dumez  <cdumez@apple.com>
 
         Get rid of custom bindings for History's replaceState() / pushState()
