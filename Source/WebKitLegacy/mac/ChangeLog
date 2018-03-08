@@ -1,3 +1,18 @@
+2018-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Possible null dereference of the page under WebFrameNetworkingContext::storageSession()
+        https://bugs.webkit.org/show_bug.cgi?id=183455
+        <rdar://problem/38191749>
+
+        Reviewed by Youenn Fablet.
+
+        Add a null check for the page as we have evidence from crashes that it can be null.
+        Other functions in WebFrameNetworkingContext already null check the page as well,
+        not just the frame so this is consistent.
+
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::storageSession const):
+
 2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add inherits<T>(VM&) leveraging JSCast fast path
