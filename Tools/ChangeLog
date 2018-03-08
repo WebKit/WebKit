@@ -1,5 +1,18 @@
 2018-03-07  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Remove obsolete function from MockAppleAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=183415
+        <rdar://problem/38236407>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/port_testcase.py:
+        (bind_mock_apple_additions.MockAppleAdditions):
+        (bind_mock_apple_additions.MockAppleAdditions.ios_os_name): Deleted.
+        (bind_mock_apple_additions.MockAppleAdditions.mac_os_name): Deleted.
+
+2018-03-07  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: --dedicated-simulators does not boot the correct number of simulators
         https://bugs.webkit.org/show_bug.cgi?id=183409
         <rdar://problem/38224631>

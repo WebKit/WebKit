@@ -88,14 +88,6 @@ def bind_mock_apple_additions():
             return '/additional_testing_path/'
 
         @staticmethod
-        def ios_os_name(name):
-            return 'add-{}'.format(name)
-
-        @staticmethod
-        def mac_os_name(name):
-            return 'add-{}'.format(name)
-
-        @staticmethod
         def version_name_mapping(platform=None):
             result = VersionNameMap(platform)
             result.mapping[INTERNAL_TABLE] = {}
