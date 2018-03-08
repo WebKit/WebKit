@@ -64,8 +64,8 @@ public:
     static PluginModuleLoadPolicy defaultLoadPolicyForPlugin(const PluginModuleInfo&);
 
     bool isSupportedPlugin(const String& mimeType, const WebCore::URL& pluginURL, const String& frameURLString, const WebCore::URL& pageURL);
-    std::optional<WebCore::SupportedPluginNames> supportedPluginNames();
-    void addSupportedPlugin(const WebCore::SecurityOrigin*, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
+    std::optional<Vector<WebCore::SupportedPluginName>> supportedPluginNames();
+    void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void clearSupportedPlugins() { m_supportedPlugins = std::nullopt; }
 
 private:
@@ -97,17 +97,14 @@ private:
     bool m_pluginListIsUpToDate;
 
     struct SupportedPlugin {
+        String matchingDomain;
         String name;
         HashSet<String> mimeTypes;
         HashSet<String> extensions;
     };
-    struct SupportedPlugins {
-        Vector<SupportedPlugin> allOriginPlugins;
-        HashMap<WebCore::SecurityOriginData, Vector<SupportedPlugin>> originSpecificPlugins;
-    };
     static bool isSupportedPlugin(const SupportedPlugin&, const String& mimeType, const WebCore::URL& pluginURL);
 
-    std::optional<SupportedPlugins> m_supportedPlugins;
+    std::optional<Vector<SupportedPlugin>> m_supportedPlugins;
 };
     
 } // namespace WebKit

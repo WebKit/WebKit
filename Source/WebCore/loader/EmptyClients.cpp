@@ -325,7 +325,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
 
 class EmptyPluginInfoProvider final : public PluginInfoProvider {
     void refreshPlugins() final { };
-    void getPluginInfo(Page&, Vector<PluginInfo>&, std::optional<SupportedPluginNames>&) final { }
+    void getPluginInfo(Page&, Vector<PluginInfo>&, std::optional<Vector<SupportedPluginName>>&) final { }
     void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) final { }
 };
 

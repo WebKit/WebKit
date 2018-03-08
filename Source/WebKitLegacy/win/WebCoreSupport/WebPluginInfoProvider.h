@@ -36,7 +36,7 @@ public:
 
 private:
     void refreshPlugins() final;
-    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&, std::optional<WebCore::SupportedPluginNames>&) final;
+    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&, std::optional<Vector<WebCore::SupportedPluginName>>&) final;
     void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) final;
 #if PLATFORM(MAC)
     void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString) final;

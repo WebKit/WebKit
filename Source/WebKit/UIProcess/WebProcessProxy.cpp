@@ -570,7 +570,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, uint64_t pageID, const
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins, Vector<PluginInfo>& applicationPlugins, std::optional<WebCore::SupportedPluginNames>& supportedPluginNames)
+void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins, Vector<PluginInfo>& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginName>>& supportedPluginNames)
 {
     if (refresh)
         m_processPool->pluginInfoStore().refresh();

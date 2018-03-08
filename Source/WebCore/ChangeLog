@@ -1,3 +1,26 @@
+2018-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Match unsupported plugins based on domains and not origin
+        https://bugs.webkit.org/show_bug.cgi?id=183384
+
+        Reviewed by Chris Dumez.
+
+        Move from an origin-keyed map to a vector of plugins.
+        We iterate through the vector and a match happens if the page host name ends with the provided matching domain.
+        This allows supporting rules for *.mydomain.com by passing 'mydomain.com'.
+        Covered by existing tests.
+        We are not testing subdomains like www.localhost since there is no support in our CI but this is tested through Unit tests.
+
+        * loader/EmptyClients.cpp:
+        * platform/URL.cpp:
+        (WebCore::URL::isMatchingDomain const):
+        * platform/URL.h:
+        * plugins/PluginData.h:
+        (WebCore::isSupportedPlugin):
+        (WebCore::SupportedPluginName::decode):
+        (WebCore::SupportedPluginName::encode const):
+        * plugins/PluginInfoProvider.h:
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         Update to libwebrtc revision 4e70a72571dd26b85c2385e9c618e343428df5d3

@@ -1,3 +1,15 @@
+2018-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Match unsupported plugins based on domains and not origin
+        https://bugs.webkit.org/show_bug.cgi?id=183384
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPluginInfoProvider.h:
+        * WebCoreSupport/WebPluginInfoProvider.mm:
+        (WebPluginInfoProvider::getPluginInfo):
+        (WebPluginInfoProvider::getWebVisiblePluginInfo):
+
 2018-03-05  Andy Estes  <aestes@apple.com>
 
         [Mac] Teach WebCore::Pasteboard about file promise drags

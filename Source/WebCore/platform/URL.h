@@ -141,6 +141,8 @@ public:
     WEBCORE_EXPORT bool isBlankURL() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
+    WEBCORE_EXPORT bool isMatchingDomain(const String&) const;
+
     WEBCORE_EXPORT bool setProtocol(const String&);
     void setHost(const String&);
 

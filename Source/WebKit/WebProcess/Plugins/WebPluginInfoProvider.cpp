@@ -35,7 +35,6 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
-#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>
 
@@ -97,7 +96,7 @@ void WebPluginInfoProvider::refreshPlugins()
 #endif
 }
 
-void WebPluginInfoProvider::getPluginInfo(Page& page, Vector<PluginInfo>& plugins, std::optional<SupportedPluginNames>& supportedPluginNames)
+void WebPluginInfoProvider::getPluginInfo(Page& page, Vector<PluginInfo>& plugins, std::optional<Vector<SupportedPluginName>>& supportedPluginNames)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache(page);
@@ -121,20 +120,19 @@ void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<
 {
     ASSERT_ARG(plugins, plugins.isEmpty());
 
-    std::optional<WebCore::SupportedPluginNames> supportedPluginNames;
+    std::optional<Vector<WebCore::SupportedPluginName>> supportedPluginNames;
     getPluginInfo(page, plugins, supportedPluginNames);
 
     auto* document = page.mainFrame().document();
-    auto* origin = document ? &document->securityOrigin(): nullptr;
 
-    if (origin && supportedPluginNames) {
-        auto originData = SecurityOriginData::fromSecurityOrigin(*origin);
+    if (document && supportedPluginNames) {
         plugins.removeAllMatching([&] (auto& plugin) {
-            return !isSupportedPlugin(*supportedPluginNames, originData, plugin.name);
+            return !isSupportedPlugin(*supportedPluginNames, document->url(), plugin.name);
         });
     }
 
 #if PLATFORM(MAC)
+    auto* origin = document ? &document->securityOrigin(): nullptr;
     if (origin && origin->isLocal())
         return;
 

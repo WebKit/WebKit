@@ -776,6 +776,22 @@ bool hostsAreEqual(const URL& a, const URL& b)
     return true;
 }
 
+bool URL::isMatchingDomain(const String& domain) const
+{
+    // We restrict it to HTTP for simplicity since we do not want to match data, blob or file based URLs.
+    if (isNull() || !protocolIsInHTTPFamily())
+        return false;
+
+    if (domain.isEmpty())
+        return true;
+
+    auto host = this->host();
+    if (!host.endsWith(domain))
+        return false;
+
+    return host.length() == domain.length() || host.characterAt(host.length() - domain.length() - 1) == '.';
+}
+
 String encodeWithURLEscapeSequences(const String& input)
 {
     return percentEncodeCharacters(input, URLParser::isInUserInfoEncodeSet);

@@ -264,4 +264,32 @@ TEST_F(URLTest, HostIsIPAddress)
     EXPECT_TRUE(URL::hostIsIPAddress("::123.45.67.89"));
 }
 
+TEST_F(URLTest, HostIsMatchingDomain)
+{
+    URL url = createURL("http://www.webkit.org");
+
+    EXPECT_TRUE(url.isMatchingDomain(String { }));
+    EXPECT_TRUE(url.isMatchingDomain(emptyString()));
+    EXPECT_TRUE(url.isMatchingDomain(ASCIILiteral("org")));
+    EXPECT_TRUE(url.isMatchingDomain(ASCIILiteral("webkit.org")));
+    EXPECT_TRUE(url.isMatchingDomain(ASCIILiteral("www.webkit.org")));
+
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("rg")));
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral(".org")));
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("ww.webkit.org")));
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("http://www.webkit.org")));
+
+    url = createURL("file:///www.webkit.org");
+
+    EXPECT_FALSE(url.isMatchingDomain(String { }));
+    EXPECT_FALSE(url.isMatchingDomain(emptyString()));
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("org")));
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("webkit.org")));
+    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("www.webkit.org")));
+
+    URL emptyURL;
+    EXPECT_FALSE(emptyURL.isMatchingDomain(String { }));
+    EXPECT_FALSE(emptyURL.isMatchingDomain(emptyString()));
+}
+
 } // namespace TestWebKitAPI

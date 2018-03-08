@@ -45,7 +45,7 @@ public:
 private:
     WebPluginInfoProvider();
 
-    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&, std::optional<WebCore::SupportedPluginNames>&) final;
+    void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&, std::optional<Vector<WebCore::SupportedPluginName>>&) final;
     void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) final;
     void refreshPlugins() override;
 
@@ -68,7 +68,7 @@ private:
     bool m_shouldRefreshPlugins { false };
     Vector<WebCore::PluginInfo> m_cachedPlugins;
     Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
-    std::optional<WebCore::SupportedPluginNames> m_cachedSupportedPluginNames;
+    std::optional<Vector<WebCore::SupportedPluginName>> m_cachedSupportedPluginNames;
 #endif
 };
 

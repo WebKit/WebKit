@@ -1793,12 +1793,12 @@ void WebProcessPool::clearPluginClientPolicies()
 }
 #endif
 
-void WebProcessPool::addSupportedPlugin(SecurityOrigin* origin, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
+void WebProcessPool::addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginInfoStore.addSupportedPlugin(origin, WTFMove(name), WTFMove(mimeTypes), WTFMove(extensions));
+    m_pluginInfoStore.addSupportedPlugin(WTFMove(matchingDomain), WTFMove(name), WTFMove(mimeTypes), WTFMove(extensions));
 #else
-    UNUSED_PARAM(origin);
+    UNUSED_PARAM(matchingDomain);
     UNUSED_PARAM(name);
     UNUSED_PARAM(mimeTypes);
     UNUSED_PARAM(extensions);

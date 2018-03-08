@@ -55,7 +55,7 @@ void WebPluginInfoProvider::refreshPlugins()
     [[WebPluginDatabase sharedDatabaseIfExists] refresh];
 }
 
-void WebPluginInfoProvider::getPluginInfo(WebCore::Page& page, Vector<WebCore::PluginInfo>& plugins, std::optional<SupportedPluginNames>&)
+void WebPluginInfoProvider::getPluginInfo(WebCore::Page& page, Vector<WebCore::PluginInfo>& plugins, std::optional<Vector<SupportedPluginName>>&)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -71,6 +71,6 @@ void WebPluginInfoProvider::getPluginInfo(WebCore::Page& page, Vector<WebCore::P
 
 void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<WebCore::PluginInfo>& plugins)
 {
-    std::optional<SupportedPluginNames> supportedPluginNames;
+    std::optional<Vector<SupportedPluginName>> supportedPluginNames;
     getPluginInfo(page, plugins, supportedPluginNames);
 }

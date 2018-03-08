@@ -1,3 +1,16 @@
+2018-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Match unsupported plugins based on domains and not origin
+        https://bugs.webkit.org/show_bug.cgi?id=183384
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setPluginSupportedMode): Update to whitelist
+        localhost and not http://localhost:8080
+
 2018-03-07  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Allow apple_additions() to define additional ports
