@@ -1,5 +1,18 @@
 2018-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r218089): [GTK] webkit_web_view_get_inspector() needs to be called, otherwise inspector does not close
+        https://bugs.webkit.org/show_bug.cgi?id=181126
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Fix the condition to decide whether to detach the inspector view ourselves.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformDetach): Remove the inspector view from its parent if we don't have a client
+        or the client didn't detach it.
+
+2018-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Leak checker is not working in WebKitGLib web process tests
         https://bugs.webkit.org/show_bug.cgi?id=183404
 
