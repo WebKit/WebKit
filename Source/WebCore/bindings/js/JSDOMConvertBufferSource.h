@@ -29,7 +29,6 @@
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMWrapperCache.h"
-#include "JSDynamicDowncast.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 
 namespace WebCore {
@@ -94,7 +93,7 @@ inline JSC::JSValue toJS(JSC::ExecState* state, JSC::JSGlobalObject* globalObjec
 
 inline RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM& vm, JSC::JSValue value)
 {
-    auto* wrapper = jsDynamicDowncast<JSC::JSArrayBufferView*>(vm, value);
+    auto* wrapper = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(vm, value);
     if (!wrapper)
         return nullptr;
     return wrapper->possiblySharedImpl();

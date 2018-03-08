@@ -401,7 +401,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = globalObject->globalExec();
 
-    JSObject* object = jsDynamicDowncast<JSObject*>(vm, [self _imp]);
+    JSObject* object = JSC::jsDynamicCast<JSObject*>(vm, [self _imp]);
     PutPropertySlot slot(object);
     object->methodTable(vm)->put(object, exec, Identifier::fromString(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 

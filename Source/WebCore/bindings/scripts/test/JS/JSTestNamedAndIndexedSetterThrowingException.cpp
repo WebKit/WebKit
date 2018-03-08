@@ -293,7 +293,7 @@ EncodedJSValue jsTestNamedAndIndexedSetterThrowingExceptionConstructor(ExecState
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedAndIndexedSetterThrowingExceptionPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedAndIndexedSetterThrowingExceptionPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNamedAndIndexedSetterThrowingException::getConstructor(state->vm(), prototype->globalObject()));
@@ -303,7 +303,7 @@ bool setJSTestNamedAndIndexedSetterThrowingExceptionConstructor(ExecState* state
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedAndIndexedSetterThrowingExceptionPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedAndIndexedSetterThrowingExceptionPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -366,7 +366,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNa
 
 TestNamedAndIndexedSetterThrowingException* JSTestNamedAndIndexedSetterThrowingException::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestNamedAndIndexedSetterThrowingException*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedAndIndexedSetterThrowingException*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

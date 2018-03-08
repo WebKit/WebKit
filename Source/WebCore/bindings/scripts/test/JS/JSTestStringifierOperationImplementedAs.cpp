@@ -142,14 +142,14 @@ void JSTestStringifierOperationImplementedAs::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestStringifierOperationImplementedAs* IDLOperation<JSTestStringifierOperationImplementedAs>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestStringifierOperationImplementedAs*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestStringifierOperationImplementedAs*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestStringifierOperationImplementedAsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestStringifierOperationImplementedAsPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestStringifierOperationImplementedAsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestStringifierOperationImplementedAs::getConstructor(state->vm(), prototype->globalObject()));
@@ -159,7 +159,7 @@ bool setJSTestStringifierOperationImplementedAsConstructor(ExecState* state, Enc
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestStringifierOperationImplementedAsPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestStringifierOperationImplementedAsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -248,7 +248,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestSt
 
 TestStringifierOperationImplementedAs* JSTestStringifierOperationImplementedAs::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestStringifierOperationImplementedAs*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestStringifierOperationImplementedAs*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

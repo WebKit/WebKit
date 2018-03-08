@@ -112,7 +112,7 @@ DOMWindow& JSDOMWindowProxy::wrapped() const
 
 DOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
 {
-    auto* wrapper = jsDynamicDowncast<JSDOMWindowProxy*>(vm, value);
+    auto* wrapper = jsDynamicCast<JSDOMWindowProxy*>(vm, value);
     return wrapper ? &wrapper->window()->wrapped() : nullptr;
 }
 

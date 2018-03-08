@@ -26,7 +26,6 @@
 #include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
-#include "JSDynamicDowncast.h"
 #include "ScriptWrappable.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreTypedArrayController.h"

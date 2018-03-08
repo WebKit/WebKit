@@ -216,19 +216,19 @@ JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 
 template<> inline JSTestNode* IDLAttribute<JSTestNode>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestNode*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestNode*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestNode* IDLOperation<JSTestNode>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestNode*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestNode*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNodePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNodePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNode::getConstructor(state->vm(), prototype->globalObject()));
@@ -238,7 +238,7 @@ bool setJSTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, Encode
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNodePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNodePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;

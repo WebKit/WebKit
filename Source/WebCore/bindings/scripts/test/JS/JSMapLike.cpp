@@ -164,19 +164,19 @@ void JSMapLike::destroy(JSC::JSCell* cell)
 
 template<> inline JSMapLike* IDLAttribute<JSMapLike>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSMapLike*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSMapLike*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSMapLike* IDLOperation<JSMapLike>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSMapLike*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSMapLike*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSMapLikePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSMapLikePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSMapLike::getConstructor(state->vm(), prototype->globalObject()));
@@ -186,7 +186,7 @@ bool setJSMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSMapLikePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSMapLikePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -391,7 +391,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, MapLik
 
 MapLike* JSMapLike::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSMapLike*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSMapLike*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

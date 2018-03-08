@@ -277,14 +277,14 @@ bool JSTestNamedSetterWithIndexedGetter::defineOwnProperty(JSObject* object, Exe
 
 template<> inline JSTestNamedSetterWithIndexedGetter* IDLOperation<JSTestNamedSetterWithIndexedGetter>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestNamedSetterWithIndexedGetter*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestNamedSetterWithIndexedGetter*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestNamedSetterWithIndexedGetterConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedSetterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedSetterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNamedSetterWithIndexedGetter::getConstructor(state->vm(), prototype->globalObject()));
@@ -294,7 +294,7 @@ bool setJSTestNamedSetterWithIndexedGetterConstructor(ExecState* state, EncodedJ
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedSetterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedSetterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -394,7 +394,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNa
 
 TestNamedSetterWithIndexedGetter* JSTestNamedSetterWithIndexedGetter::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestNamedSetterWithIndexedGetter*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedSetterWithIndexedGetter*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

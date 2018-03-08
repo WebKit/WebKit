@@ -149,14 +149,14 @@ void JSTestIterable::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestIterable* IDLOperation<JSTestIterable>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestIterable*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestIterable*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestIterableConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestIterablePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestIterablePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestIterable::getConstructor(state->vm(), prototype->globalObject()));
@@ -166,7 +166,7 @@ bool setJSTestIterableConstructor(ExecState* state, EncodedJSValue thisValue, En
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestIterablePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestIterablePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -284,7 +284,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestIt
 
 TestIterable* JSTestIterable::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestIterable*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestIterable*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

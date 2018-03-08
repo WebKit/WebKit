@@ -1,5 +1,393 @@
 2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC][WebCore] Extend jsDynamicCast for WebCore types in WebCore and remove jsDynamicDowncast
+        https://bugs.webkit.org/show_bug.cgi?id=183449
+
+        Reviewed by Mark Lam.
+
+        This patch removes jsDynamicDowncast. Our JSC::jsDynamicCast can have a way to inject a fast
+        path that is similar to jsDynamicDowncast. WebCore can leverage this functionality to add
+        a fast path for WebCore's extended JS object types (JSEvent, JSElement, JSNode, and JSDocument).
+
+        No behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CommonVM.cpp:
+        (WebCore::lexicalFrameFromCommonVM):
+        * bindings/js/JSDOMConvertBufferSource.h:
+        (WebCore::toPossiblySharedArrayBufferView):
+        * bindings/js/JSDOMConvertPromise.h:
+        (WebCore::Converter<IDLPromise<T>>::convert):
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::reportException):
+        (WebCore::retrieveErrorMessage):
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::next):
+        * bindings/js/JSDOMWindowProxy.cpp:
+        (WebCore::JSDOMWindowProxy::toWrapped):
+        * bindings/js/JSDOMWrapperCache.h:
+        * bindings/js/JSDocumentCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSDocument>::inherits):
+        (WebCore::jsDocumentCast): Deleted.
+        * bindings/js/JSDynamicDowncast.h: Removed.
+        * bindings/js/JSElementCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSElement>::inherits):
+        (WebCore::jsElementCast): Deleted.
+        * bindings/js/JSEventCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSEvent>::inherits):
+        (WebCore::jsEventCast): Deleted.
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::jsEventTargetCast):
+        * bindings/js/JSNodeCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSNode>::inherits):
+        (WebCore::jsNodeCast): Deleted.
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementPropertyGetter):
+        * bindings/js/JSReadableStreamSourceCustom.cpp:
+        (WebCore::JSReadableStreamSource::start):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::toJSDedicatedWorkerGlobalScope):
+        (WebCore::toJSWorkerGlobalScope):
+        (WebCore::toJSServiceWorkerGlobalScope):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::create):
+        (WebCore::ReadableStream::isDisturbed):
+        * bindings/js/ReadableStream.h:
+        (WebCore::JSReadableStreamWrapperConverter::toWrapped):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::evaluate):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::serialize):
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::structuredCloneArrayBufferView):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetCastingHelperForThisObject):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::jsInterfaceNameConstructor):
+        (WebCore::setJSInterfaceNameConstructor):
+        (WebCore::JSInterfaceName::toWrapped):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::IDLAttribute<JSMapLike>::cast):
+        (WebCore::IDLOperation<JSMapLike>::cast):
+        (WebCore::jsMapLikeConstructor):
+        (WebCore::setJSMapLikeConstructor):
+        (WebCore::JSMapLike::toWrapped):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::IDLAttribute<JSReadOnlyMapLike>::cast):
+        (WebCore::IDLOperation<JSReadOnlyMapLike>::cast):
+        (WebCore::jsReadOnlyMapLikeConstructor):
+        (WebCore::setJSReadOnlyMapLikeConstructor):
+        (WebCore::JSReadOnlyMapLike::toWrapped):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::IDLAttribute<JSTestActiveDOMObject>::cast):
+        (WebCore::IDLOperation<JSTestActiveDOMObject>::cast):
+        (WebCore::jsTestActiveDOMObjectConstructor):
+        (WebCore::setJSTestActiveDOMObjectConstructor):
+        (WebCore::JSTestActiveDOMObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::IDLAttribute<JSTestCEReactions>::cast):
+        (WebCore::IDLOperation<JSTestCEReactions>::cast):
+        (WebCore::jsTestCEReactionsConstructor):
+        (WebCore::setJSTestCEReactionsConstructor):
+        (WebCore::JSTestCEReactions::toWrapped):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::IDLAttribute<JSTestCEReactionsStringifier>::cast):
+        (WebCore::IDLOperation<JSTestCEReactionsStringifier>::cast):
+        (WebCore::jsTestCEReactionsStringifierConstructor):
+        (WebCore::setJSTestCEReactionsStringifierConstructor):
+        (WebCore::JSTestCEReactionsStringifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::IDLAttribute<JSTestCallTracer>::cast):
+        (WebCore::IDLOperation<JSTestCallTracer>::cast):
+        (WebCore::jsTestCallTracerConstructor):
+        (WebCore::setJSTestCallTracerConstructor):
+        (WebCore::JSTestCallTracer::toWrapped):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::jsTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::JSTestClassWithJSBuiltinConstructor::toWrapped):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::jsTestCustomConstructorWithNoInterfaceObjectConstructor):
+        (WebCore::setJSTestCustomConstructorWithNoInterfaceObjectConstructor):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::IDLAttribute<JSTestDOMJIT>::cast):
+        (WebCore::IDLOperation<JSTestDOMJIT>::cast):
+        (WebCore::jsTestDOMJITConstructor):
+        (WebCore::setJSTestDOMJITConstructor):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::IDLAttribute<JSTestEnabledBySetting>::cast):
+        (WebCore::IDLOperation<JSTestEnabledBySetting>::cast):
+        (WebCore::jsTestEnabledBySettingConstructor):
+        (WebCore::setJSTestEnabledBySettingConstructor):
+        (WebCore::JSTestEnabledBySetting::toWrapped):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::IDLAttribute<JSTestEventConstructor>::cast):
+        (WebCore::jsTestEventConstructorConstructor):
+        (WebCore::setJSTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::IDLOperation<JSTestEventTarget>::cast):
+        (WebCore::jsTestEventTargetConstructor):
+        (WebCore::setJSTestEventTargetConstructor):
+        (WebCore::JSTestEventTarget::toWrapped):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::IDLAttribute<JSTestException>::cast):
+        (WebCore::jsTestExceptionConstructor):
+        (WebCore::setJSTestExceptionConstructor):
+        (WebCore::JSTestException::toWrapped):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::IDLAttribute<JSTestGenerateIsReachable>::cast):
+        (WebCore::jsTestGenerateIsReachableConstructor):
+        (WebCore::setJSTestGenerateIsReachableConstructor):
+        (WebCore::JSTestGenerateIsReachable::toWrapped):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::IDLAttribute<JSTestGlobalObject>::cast):
+        (WebCore::IDLOperation<JSTestGlobalObject>::cast):
+        (WebCore::jsTestGlobalObjectConstructor):
+        (WebCore::setJSTestGlobalObjectConstructor):
+        (WebCore::JSTestGlobalObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::jsTestIndexedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestIndexedSetterNoIdentifierConstructor):
+        (WebCore::JSTestIndexedSetterNoIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::jsTestIndexedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestIndexedSetterThrowingExceptionConstructor):
+        (WebCore::JSTestIndexedSetterThrowingException::toWrapped):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::IDLOperation<JSTestIndexedSetterWithIdentifier>::cast):
+        (WebCore::jsTestIndexedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestIndexedSetterWithIdentifierConstructor):
+        (WebCore::JSTestIndexedSetterWithIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::IDLAttribute<JSTestInterface>::cast):
+        (WebCore::IDLOperation<JSTestInterface>::cast):
+        (WebCore::jsTestInterfaceConstructor):
+        (WebCore::setJSTestInterfaceConstructor):
+        (WebCore::JSTestInterface::toWrapped):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::IDLAttribute<JSTestInterfaceLeadingUnderscore>::cast):
+        (WebCore::jsTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::setJSTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::JSTestInterfaceLeadingUnderscore::toWrapped):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::IDLOperation<JSTestIterable>::cast):
+        (WebCore::jsTestIterableConstructor):
+        (WebCore::setJSTestIterableConstructor):
+        (WebCore::JSTestIterable::toWrapped):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::IDLAttribute<JSTestJSBuiltinConstructor>::cast):
+        (WebCore::IDLOperation<JSTestJSBuiltinConstructor>::cast):
+        (WebCore::jsTestJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::IDLOperation<JSTestMediaQueryListListener>::cast):
+        (WebCore::jsTestMediaQueryListListenerConstructor):
+        (WebCore::setJSTestMediaQueryListListenerConstructor):
+        (WebCore::JSTestMediaQueryListListener::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::jsTestNamedAndIndexedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedAndIndexedSetterNoIdentifierConstructor):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::jsTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::IDLOperation<JSTestNamedAndIndexedSetterWithIdentifier>::cast):
+        (WebCore::jsTestNamedAndIndexedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedAndIndexedSetterWithIdentifierConstructor):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::jsTestNamedConstructorConstructor):
+        (WebCore::setJSTestNamedConstructorConstructor):
+        (WebCore::JSTestNamedConstructor::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::jsTestNamedDeleterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedDeleterNoIdentifierConstructor):
+        (WebCore::JSTestNamedDeleterNoIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::jsTestNamedDeleterThrowingExceptionConstructor):
+        (WebCore::setJSTestNamedDeleterThrowingExceptionConstructor):
+        (WebCore::JSTestNamedDeleterThrowingException::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::IDLOperation<JSTestNamedDeleterWithIdentifier>::cast):
+        (WebCore::jsTestNamedDeleterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedDeleterWithIdentifierConstructor):
+        (WebCore::JSTestNamedDeleterWithIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::jsTestNamedDeleterWithIndexedGetterConstructor):
+        (WebCore::setJSTestNamedDeleterWithIndexedGetterConstructor):
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::jsTestNamedGetterCallWithConstructor):
+        (WebCore::setJSTestNamedGetterCallWithConstructor):
+        (WebCore::JSTestNamedGetterCallWith::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::jsTestNamedGetterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedGetterNoIdentifierConstructor):
+        (WebCore::JSTestNamedGetterNoIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::IDLOperation<JSTestNamedGetterWithIdentifier>::cast):
+        (WebCore::jsTestNamedGetterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedGetterWithIdentifierConstructor):
+        (WebCore::JSTestNamedGetterWithIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::jsTestNamedSetterNoIdentifierConstructor):
+        (WebCore::setJSTestNamedSetterNoIdentifierConstructor):
+        (WebCore::JSTestNamedSetterNoIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::jsTestNamedSetterThrowingExceptionConstructor):
+        (WebCore::setJSTestNamedSetterThrowingExceptionConstructor):
+        (WebCore::JSTestNamedSetterThrowingException::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::IDLOperation<JSTestNamedSetterWithIdentifier>::cast):
+        (WebCore::jsTestNamedSetterWithIdentifierConstructor):
+        (WebCore::setJSTestNamedSetterWithIdentifierConstructor):
+        (WebCore::JSTestNamedSetterWithIdentifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::IDLOperation<JSTestNamedSetterWithIndexedGetter>::cast):
+        (WebCore::jsTestNamedSetterWithIndexedGetterConstructor):
+        (WebCore::setJSTestNamedSetterWithIndexedGetterConstructor):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::cast):
+        (WebCore::jsTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        (WebCore::setJSTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::jsTestNamedSetterWithOverrideBuiltinsConstructor):
+        (WebCore::setJSTestNamedSetterWithOverrideBuiltinsConstructor):
+        (WebCore::JSTestNamedSetterWithOverrideBuiltins::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::IDLAttribute<JSTestNamedSetterWithUnforgableProperties>::cast):
+        (WebCore::IDLOperation<JSTestNamedSetterWithUnforgableProperties>::cast):
+        (WebCore::jsTestNamedSetterWithUnforgablePropertiesConstructor):
+        (WebCore::setJSTestNamedSetterWithUnforgablePropertiesConstructor):
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::IDLAttribute<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::cast):
+        (WebCore::IDLOperation<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::cast):
+        (WebCore::jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor):
+        (WebCore::setJSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor):
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::toWrapped):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::IDLAttribute<JSTestNode>::cast):
+        (WebCore::IDLOperation<JSTestNode>::cast):
+        (WebCore::jsTestNodeConstructor):
+        (WebCore::setJSTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::IDLAttribute<JSTestObj>::cast):
+        (WebCore::IDLOperation<JSTestObj>::cast):
+        (WebCore::jsTestObjConstructor):
+        (WebCore::setJSTestObjConstructor):
+        (WebCore::JSTestObj::toWrapped):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        (WebCore::setJSTestOverloadedConstructorsConstructor):
+        (WebCore::JSTestOverloadedConstructors::toWrapped):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::jsTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::setJSTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::JSTestOverloadedConstructorsWithSequence::toWrapped):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::IDLOperation<JSTestOverrideBuiltins>::cast):
+        (WebCore::jsTestOverrideBuiltinsConstructor):
+        (WebCore::setJSTestOverrideBuiltinsConstructor):
+        (WebCore::JSTestOverrideBuiltins::toWrapped):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::jsTestPluginInterfaceConstructor):
+        (WebCore::setJSTestPluginInterfaceConstructor):
+        (WebCore::JSTestPluginInterface::toWrapped):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::IDLAttribute<JSTestPromiseRejectionEvent>::cast):
+        (WebCore::jsTestPromiseRejectionEventConstructor):
+        (WebCore::setJSTestPromiseRejectionEventConstructor):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::IDLAttribute<JSTestSerialization>::cast):
+        (WebCore::IDLOperation<JSTestSerialization>::cast):
+        (WebCore::jsTestSerializationConstructor):
+        (WebCore::setJSTestSerializationConstructor):
+        (WebCore::JSTestSerialization::toWrapped):
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        (WebCore::jsTestSerializationIndirectInheritanceConstructor):
+        (WebCore::setJSTestSerializationIndirectInheritanceConstructor):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::IDLAttribute<JSTestSerializationInherit>::cast):
+        (WebCore::IDLOperation<JSTestSerializationInherit>::cast):
+        (WebCore::jsTestSerializationInheritConstructor):
+        (WebCore::setJSTestSerializationInheritConstructor):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::IDLAttribute<JSTestSerializationInheritFinal>::cast):
+        (WebCore::IDLOperation<JSTestSerializationInheritFinal>::cast):
+        (WebCore::jsTestSerializationInheritFinalConstructor):
+        (WebCore::setJSTestSerializationInheritFinalConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::IDLAttribute<JSTestSerializedScriptValueInterface>::cast):
+        (WebCore::IDLOperation<JSTestSerializedScriptValueInterface>::cast):
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::setJSTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::JSTestSerializedScriptValueInterface::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::IDLOperation<JSTestStringifier>::cast):
+        (WebCore::jsTestStringifierConstructor):
+        (WebCore::setJSTestStringifierConstructor):
+        (WebCore::JSTestStringifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::IDLOperation<JSTestStringifierAnonymousOperation>::cast):
+        (WebCore::jsTestStringifierAnonymousOperationConstructor):
+        (WebCore::setJSTestStringifierAnonymousOperationConstructor):
+        (WebCore::JSTestStringifierAnonymousOperation::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::IDLOperation<JSTestStringifierNamedOperation>::cast):
+        (WebCore::jsTestStringifierNamedOperationConstructor):
+        (WebCore::setJSTestStringifierNamedOperationConstructor):
+        (WebCore::JSTestStringifierNamedOperation::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::IDLOperation<JSTestStringifierOperationImplementedAs>::cast):
+        (WebCore::jsTestStringifierOperationImplementedAsConstructor):
+        (WebCore::setJSTestStringifierOperationImplementedAsConstructor):
+        (WebCore::JSTestStringifierOperationImplementedAs::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::IDLOperation<JSTestStringifierOperationNamedToString>::cast):
+        (WebCore::jsTestStringifierOperationNamedToStringConstructor):
+        (WebCore::setJSTestStringifierOperationNamedToStringConstructor):
+        (WebCore::JSTestStringifierOperationNamedToString::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::IDLAttribute<JSTestStringifierReadOnlyAttribute>::cast):
+        (WebCore::IDLOperation<JSTestStringifierReadOnlyAttribute>::cast):
+        (WebCore::jsTestStringifierReadOnlyAttributeConstructor):
+        (WebCore::setJSTestStringifierReadOnlyAttributeConstructor):
+        (WebCore::JSTestStringifierReadOnlyAttribute::toWrapped):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::IDLAttribute<JSTestStringifierReadWriteAttribute>::cast):
+        (WebCore::IDLOperation<JSTestStringifierReadWriteAttribute>::cast):
+        (WebCore::jsTestStringifierReadWriteAttributeConstructor):
+        (WebCore::setJSTestStringifierReadWriteAttributeConstructor):
+        (WebCore::JSTestStringifierReadWriteAttribute::toWrapped):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::IDLAttribute<JSTestTypedefs>::cast):
+        (WebCore::IDLOperation<JSTestTypedefs>::cast):
+        (WebCore::jsTestTypedefsConstructor):
+        (WebCore::setJSTestTypedefsConstructor):
+        (WebCore::JSTestTypedefs::toWrapped):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject setValue:forKey:]):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::lengthGetter):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::lengthGetter):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+
+2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Add inherits<T>(VM&) leveraging JSCast fast path
         https://bugs.webkit.org/show_bug.cgi?id=183429
 

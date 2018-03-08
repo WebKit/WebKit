@@ -40,7 +40,7 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
     {
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        auto* globalObject = jsDynamicDowncast<JSDOMGlobalObject*>(vm, state.lexicalGlobalObject());
+        auto* globalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(vm, state.lexicalGlobalObject());
         if (!globalObject)
             return nullptr;
 

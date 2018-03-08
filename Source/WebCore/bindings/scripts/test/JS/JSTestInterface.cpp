@@ -426,19 +426,19 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestInterface* IDLAttribute<JSTestInterface>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestInterface*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestInterface*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestInterface* IDLOperation<JSTestInterface>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestInterface*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestInterface*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestInterfacePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestInterfacePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestInterface::getConstructor(state->vm(), prototype->globalObject()));
@@ -448,7 +448,7 @@ bool setJSTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, E
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestInterfacePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestInterfacePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -1017,7 +1017,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestIn
 
 TestInterface* JSTestInterface::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestInterface*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestInterface*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -140,19 +140,19 @@ JSValue JSTestSerializationInheritFinal::getConstructor(VM& vm, const JSGlobalOb
 
 template<> inline JSTestSerializationInheritFinal* IDLAttribute<JSTestSerializationInheritFinal>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestSerializationInheritFinal*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestSerializationInheritFinal*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestSerializationInheritFinal* IDLOperation<JSTestSerializationInheritFinal>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestSerializationInheritFinal*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestSerializationInheritFinal*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestSerializationInheritFinalConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestSerializationInheritFinalPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSerializationInheritFinalPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestSerializationInheritFinal::getConstructor(state->vm(), prototype->globalObject()));
@@ -162,7 +162,7 @@ bool setJSTestSerializationInheritFinalConstructor(ExecState* state, EncodedJSVa
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestSerializationInheritFinalPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSerializationInheritFinalPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;

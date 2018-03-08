@@ -247,19 +247,19 @@ void JSTestTypedefs::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestTypedefs* IDLAttribute<JSTestTypedefs>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestTypedefs*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestTypedefs*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestTypedefs* IDLOperation<JSTestTypedefs>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestTypedefs*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestTypedefs*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestTypedefsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestTypedefsPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestTypedefsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestTypedefs::getConstructor(state->vm(), prototype->globalObject()));
@@ -269,7 +269,7 @@ bool setJSTestTypedefsConstructor(ExecState* state, EncodedJSValue thisValue, En
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestTypedefsPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestTypedefsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -795,7 +795,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestTy
 
 TestTypedefs* JSTestTypedefs::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestTypedefs*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestTypedefs*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

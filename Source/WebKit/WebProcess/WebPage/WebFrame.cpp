@@ -694,7 +694,7 @@ WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
 
     JSC::JSGlobalObject* globalObjectObj = toJS(context)->lexicalGlobalObject();
-    JSDOMWindow* window = jsDynamicDowncast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj);
+    JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj);
     if (!window)
         return nullptr;
     return WebFrame::fromCoreFrame(*(window->wrapped().frame()));

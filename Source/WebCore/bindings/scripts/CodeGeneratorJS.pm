@@ -3719,7 +3719,7 @@ sub GetCastingHelperForThisObject
 {
     my $interface = shift;
     my $interfaceName = $interface->type->name;
-    return "jsDynamicDowncast<JS$interfaceName*>";
+    return "jsDynamicCast<JS$interfaceName*>";
 }
 
 # http://heycam.github.io/webidl/#Unscopable
@@ -4422,7 +4422,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = state->vm();\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-        push(@implContent, "    auto* prototype = jsDynamicDowncast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
+        push(@implContent, "    auto* prototype = jsDynamicCast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!prototype))\n");
         push(@implContent, "        return throwVMTypeError(state, throwScope);\n");
 
@@ -4442,7 +4442,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = state->vm();\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-        push(@implContent, "    auto* prototype = jsDynamicDowncast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
+        push(@implContent, "    auto* prototype = jsDynamicCast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!prototype)) {\n");
         push(@implContent, "        throwVMTypeError(state, throwScope);\n");
         push(@implContent, "        return false;\n");

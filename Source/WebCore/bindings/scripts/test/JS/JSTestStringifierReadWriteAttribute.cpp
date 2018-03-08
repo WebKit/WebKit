@@ -144,19 +144,19 @@ void JSTestStringifierReadWriteAttribute::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestStringifierReadWriteAttribute* IDLAttribute<JSTestStringifierReadWriteAttribute>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestStringifierReadWriteAttribute*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestStringifierReadWriteAttribute*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestStringifierReadWriteAttribute* IDLOperation<JSTestStringifierReadWriteAttribute>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestStringifierReadWriteAttribute*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestStringifierReadWriteAttribute*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestStringifierReadWriteAttributeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestStringifierReadWriteAttributePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestStringifierReadWriteAttributePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestStringifierReadWriteAttribute::getConstructor(state->vm(), prototype->globalObject()));
@@ -166,7 +166,7 @@ bool setJSTestStringifierReadWriteAttributeConstructor(ExecState* state, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestStringifierReadWriteAttributePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestStringifierReadWriteAttributePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -273,7 +273,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestSt
 
 TestStringifierReadWriteAttribute* JSTestStringifierReadWriteAttribute::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestStringifierReadWriteAttribute*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestStringifierReadWriteAttribute*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

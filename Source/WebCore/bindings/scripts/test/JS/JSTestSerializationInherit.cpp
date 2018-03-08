@@ -137,19 +137,19 @@ JSValue JSTestSerializationInherit::getConstructor(VM& vm, const JSGlobalObject*
 
 template<> inline JSTestSerializationInherit* IDLAttribute<JSTestSerializationInherit>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestSerializationInherit*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestSerializationInherit*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestSerializationInherit* IDLOperation<JSTestSerializationInherit>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestSerializationInherit*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestSerializationInherit*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestSerializationInheritConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestSerializationInherit::getConstructor(state->vm(), prototype->globalObject()));
@@ -159,7 +159,7 @@ bool setJSTestSerializationInheritConstructor(ExecState* state, EncodedJSValue t
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSerializationInheritPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;

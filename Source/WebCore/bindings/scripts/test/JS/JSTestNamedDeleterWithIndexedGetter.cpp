@@ -224,7 +224,7 @@ EncodedJSValue jsTestNamedDeleterWithIndexedGetterConstructor(ExecState* state, 
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedDeleterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedDeleterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNamedDeleterWithIndexedGetter::getConstructor(state->vm(), prototype->globalObject()));
@@ -234,7 +234,7 @@ bool setJSTestNamedDeleterWithIndexedGetterConstructor(ExecState* state, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedDeleterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedDeleterWithIndexedGetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -297,7 +297,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNa
 
 TestNamedDeleterWithIndexedGetter* JSTestNamedDeleterWithIndexedGetter::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestNamedDeleterWithIndexedGetter*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedDeleterWithIndexedGetter*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

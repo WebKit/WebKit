@@ -158,19 +158,19 @@ void JSReadOnlyMapLike::destroy(JSC::JSCell* cell)
 
 template<> inline JSReadOnlyMapLike* IDLAttribute<JSReadOnlyMapLike>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSReadOnlyMapLike*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSReadOnlyMapLike*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSReadOnlyMapLike* IDLOperation<JSReadOnlyMapLike>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSReadOnlyMapLike*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSReadOnlyMapLike*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSReadOnlyMapLike::getConstructor(state->vm(), prototype->globalObject()));
@@ -180,7 +180,7 @@ bool setJSReadOnlyMapLikeConstructor(ExecState* state, EncodedJSValue thisValue,
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSReadOnlyMapLikePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -340,7 +340,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ReadOn
 
 ReadOnlyMapLike* JSReadOnlyMapLike::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSReadOnlyMapLike*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSReadOnlyMapLike*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

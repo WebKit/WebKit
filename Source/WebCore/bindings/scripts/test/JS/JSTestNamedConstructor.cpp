@@ -178,7 +178,7 @@ EncodedJSValue jsTestNamedConstructorConstructor(ExecState* state, EncodedJSValu
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedConstructorPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNamedConstructor::getConstructor(state->vm(), prototype->globalObject()));
@@ -188,7 +188,7 @@ bool setJSTestNamedConstructorConstructor(ExecState* state, EncodedJSValue thisV
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedConstructorPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -253,7 +253,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNa
 
 TestNamedConstructor* JSTestNamedConstructor::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestNamedConstructor*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedConstructor*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -1037,7 +1037,7 @@ private:
 #endif
 
 #if ENABLE(WEBASSEMBLY)
-            if (JSWebAssemblyModule* module = jsDynamicDowncast<JSWebAssemblyModule*>(vm, obj)) {
+            if (JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, obj)) {
                 if (m_context != SerializationContext::WorkerPostMessage && m_context != SerializationContext::WindowPostMessage)
                     return false;
 
@@ -1574,7 +1574,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!iterator->nextKeyValue(m_exec, key, value)) {
                     mapIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicDowncast<JSMap*>(vm, object));
+                    ASSERT(jsDynamicCast<JSMap*>(vm, object));
                     propertyStack.append(PropertyNameArray(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable(vm)->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                     write(NonMapPropertiesTag);
@@ -1618,7 +1618,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!iterator->next(m_exec, key)) {
                     setIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicDowncast<JSSet*>(vm, object));
+                    ASSERT(jsDynamicCast<JSSet*>(vm, object));
                     propertyStack.append(PropertyNameArray(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable(vm)->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                     write(NonSetPropertiesTag);

@@ -73,7 +73,7 @@ EventTarget* JSEventTarget::toWrapped(VM& vm, JSValue value)
 
 std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(VM& vm, JSValue thisValue)
 {
-    if (auto* target = jsDynamicDowncast<JSEventTarget*>(vm, thisValue))
+    if (auto* target = jsDynamicCast<JSEventTarget*>(vm, thisValue))
         return std::make_unique<JSEventTargetWrapper>(target->wrapped(), *target);
     if (auto* window = toJSDOMWindow(vm, thisValue))
         return std::make_unique<JSEventTargetWrapper>(window->wrapped(), *window);

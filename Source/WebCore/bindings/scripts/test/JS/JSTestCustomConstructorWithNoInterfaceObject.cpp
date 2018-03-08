@@ -136,7 +136,7 @@ EncodedJSValue jsTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     JSValue constructor = JSTestCustomConstructorWithNoInterfaceObjectConstructor::create(state->vm(), JSTestCustomConstructorWithNoInterfaceObjectConstructor::createStructure(state->vm(), *prototype->globalObject(), prototype->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(prototype->globalObject()));
@@ -149,7 +149,7 @@ bool setJSTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState* state
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -212,7 +212,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCu
 
 TestCustomConstructorWithNoInterfaceObject* JSTestCustomConstructorWithNoInterfaceObject::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObject*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObject*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

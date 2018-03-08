@@ -212,14 +212,14 @@ bool JSTestNamedDeleterWithIdentifier::deletePropertyByIndex(JSCell* cell, ExecS
 
 template<> inline JSTestNamedDeleterWithIdentifier* IDLOperation<JSTestNamedDeleterWithIdentifier>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestNamedDeleterWithIdentifier*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestNamedDeleterWithIdentifier*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestNamedDeleterWithIdentifierConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedDeleterWithIdentifierPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedDeleterWithIdentifierPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNamedDeleterWithIdentifier::getConstructor(state->vm(), prototype->globalObject()));
@@ -229,7 +229,7 @@ bool setJSTestNamedDeleterWithIdentifierConstructor(ExecState* state, EncodedJSV
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedDeleterWithIdentifierPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedDeleterWithIdentifierPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -310,7 +310,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNa
 
 TestNamedDeleterWithIdentifier* JSTestNamedDeleterWithIdentifier::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestNamedDeleterWithIdentifier*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedDeleterWithIdentifier*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

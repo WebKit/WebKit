@@ -127,7 +127,7 @@ EncodedJSValue jsTestSerializationIndirectInheritanceConstructor(ExecState* stat
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestSerializationIndirectInheritancePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSerializationIndirectInheritancePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestSerializationIndirectInheritance::getConstructor(state->vm(), prototype->globalObject()));
@@ -137,7 +137,7 @@ bool setJSTestSerializationIndirectInheritanceConstructor(ExecState* state, Enco
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestSerializationIndirectInheritancePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSerializationIndirectInheritancePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;

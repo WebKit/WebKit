@@ -162,19 +162,19 @@ void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestActiveDOMObject* IDLAttribute<JSTestActiveDOMObject>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestActiveDOMObject*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestActiveDOMObject*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestActiveDOMObject* IDLOperation<JSTestActiveDOMObject>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestActiveDOMObject*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestActiveDOMObject*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestActiveDOMObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(state->vm(), prototype->globalObject()));
@@ -184,7 +184,7 @@ bool setJSTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisVa
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestActiveDOMObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -301,7 +301,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestAc
 
 TestActiveDOMObject* JSTestActiveDOMObject::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestActiveDOMObject*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestActiveDOMObject*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

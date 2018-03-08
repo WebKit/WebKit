@@ -53,7 +53,7 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
     args.append(source ? toJSNewlyCreated(&execState, &globalObject, source.releaseNonNull()) : JSC::jsUndefined());
     ASSERT(!args.hasOverflowed());
 
-    auto newReadableStream = jsDynamicDowncast<JSReadableStream*>(vm, JSC::construct(&execState, constructor, constructType, constructData, args));
+    auto newReadableStream = jsDynamicCast<JSReadableStream*>(vm, JSC::construct(&execState, constructor, constructType, constructData, args));
     scope.assertNoException();
 
     return create(globalObject, *newReadableStream);
@@ -155,8 +155,8 @@ bool ReadableStream::isDisturbed() const
 bool ReadableStream::isDisturbed(ExecState& state, JSValue value)
 {
     auto& vm = state.vm();
-    auto& globalObject = *jsDynamicDowncast<JSDOMGlobalObject*>(vm, state.lexicalGlobalObject());
-    auto* readableStream = jsDynamicDowncast<JSReadableStream*>(vm, value);
+    auto& globalObject = *jsDynamicCast<JSDOMGlobalObject*>(vm, state.lexicalGlobalObject());
+    auto* readableStream = jsDynamicCast<JSReadableStream*>(vm, value);
 
     return checkReadableStream(globalObject, readableStream, globalObject.builtinInternalFunctions().readableStreamInternals().m_isReadableStreamDisturbedFunction.get());
 }

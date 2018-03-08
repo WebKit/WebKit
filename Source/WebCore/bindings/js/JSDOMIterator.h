@@ -251,7 +251,7 @@ JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper, IteratorTrai
     JSC::VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto iterator = jsDynamicDowncast<JSDOMIterator<JSWrapper, IteratorTraits>*>(vm, state->thisValue());
+    auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper, IteratorTraits>*>(vm, state->thisValue());
     if (!iterator)
         return JSC::JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Cannot call next() on a non-Iterator object")));
 

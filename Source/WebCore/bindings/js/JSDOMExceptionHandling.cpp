@@ -28,7 +28,6 @@
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
-#include "JSDynamicDowncast.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ErrorHandlingScope.h>
 #include <JavaScriptCore/Exception.h>
@@ -44,7 +43,7 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = jsDynamicDowncast<JSC::Exception*>(vm, exceptionValue);
+    auto* exception = jsDynamicCast<JSC::Exception*>(vm, exceptionValue);
     if (!exception) {
         exception = vm.lastException();
         if (!exception)
@@ -59,7 +58,7 @@ String retrieveErrorMessage(ExecState& state, VM& vm, JSValue exception, CatchSc
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
     String errorMessage;
-    if (auto* error = jsDynamicDowncast<ErrorInstance*>(vm, exception))
+    if (auto* error = jsDynamicCast<ErrorInstance*>(vm, exception))
         errorMessage = error->sanitizedToString(&state);
     else
         errorMessage = exception.toWTFString(&state);
@@ -87,7 +86,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
     vm.clearLastException();
 
     auto* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    if (auto* window = jsDynamicDowncast<JSDOMWindow*>(vm, globalObject)) {
+    if (auto* window = jsDynamicCast<JSDOMWindow*>(vm, globalObject)) {
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
     }

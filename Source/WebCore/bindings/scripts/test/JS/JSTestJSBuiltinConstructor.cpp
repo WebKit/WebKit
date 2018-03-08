@@ -151,19 +151,19 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestJSBuiltinConstructor* IDLAttribute<JSTestJSBuiltinConstructor>::cast(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestJSBuiltinConstructor*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestJSBuiltinConstructor*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestJSBuiltinConstructor* IDLOperation<JSTestJSBuiltinConstructor>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestJSBuiltinConstructor*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestJSBuiltinConstructor*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(state->vm(), prototype->globalObject()));
@@ -173,7 +173,7 @@ bool setJSTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue t
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;

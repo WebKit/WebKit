@@ -140,14 +140,14 @@ void JSTestStringifier::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestStringifier* IDLOperation<JSTestStringifier>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestStringifier*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestStringifier*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestStringifierConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestStringifierPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestStringifierPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestStringifier::getConstructor(state->vm(), prototype->globalObject()));
@@ -157,7 +157,7 @@ bool setJSTestStringifierConstructor(ExecState* state, EncodedJSValue thisValue,
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestStringifierPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestStringifierPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -233,7 +233,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestSt
 
 TestStringifier* JSTestStringifier::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestStringifier*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestStringifier*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

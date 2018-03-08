@@ -300,14 +300,14 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::defineOwnProperty(JSObject* ob
 
 template<> inline JSTestNamedSetterWithIndexedGetterAndSetter* IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::cast(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestNamedSetterWithIndexedGetterAndSetter*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestNamedSetterWithIndexedGetterAndSetter*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedSetterWithIndexedGetterAndSetterPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedSetterWithIndexedGetterAndSetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNamedSetterWithIndexedGetterAndSetter::getConstructor(state->vm(), prototype->globalObject()));
@@ -317,7 +317,7 @@ bool setJSTestNamedSetterWithIndexedGetterAndSetterConstructor(ExecState* state,
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicDowncast<JSTestNamedSetterWithIndexedGetterAndSetterPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedSetterWithIndexedGetterAndSetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -444,7 +444,7 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestNa
 
 TestNamedSetterWithIndexedGetterAndSetter* JSTestNamedSetterWithIndexedGetterAndSetter::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestNamedSetterWithIndexedGetterAndSetter*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedSetterWithIndexedGetterAndSetter*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }
