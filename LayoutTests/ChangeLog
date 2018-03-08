@@ -1,5 +1,14 @@
 2018-03-08  Frederic Wang  <fwang@igalia.com>
 
+        Add references to bug 160161 for some MathML failures on iOS and macOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2018-03-08  Frederic Wang  <fwang@igalia.com>
+
         [iOS] Unskip MathML tests requiring a font with Mathematical Alphanumeric Symbols
         https://bugs.webkit.org/show_bug.cgi?id=183445
 

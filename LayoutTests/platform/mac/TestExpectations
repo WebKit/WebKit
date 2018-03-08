@@ -673,16 +673,16 @@ webkit.org/b/128379 animations/suspend-resume-animation.html [ Pass Failure ]
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
 # These tests require an OpenType MATH font on the Apple bots.
-mathml/opentype/vertical.html [ Skip ]
-mathml/opentype/large-operators.html [ Skip ]
-mathml/opentype/horizontal.html [ Skip ]
-mathml/opentype/horizontal-munderover.html [ Skip ]
+webkit.org/b/160161 mathml/opentype/vertical.html [ Skip ]
+webkit.org/b/160161 mathml/opentype/large-operators.html [ Skip ]
+webkit.org/b/160161 mathml/opentype/horizontal.html [ Skip ]
+webkit.org/b/160161 mathml/opentype/horizontal-munderover.html [ Skip ]
 
 # These tests require the Latin Modern Math font.
-mathml/opentype/fraction-line.html [ Skip ]
-mathml/presentation/fractions-linethickness.html [ Skip ]
-mathml/opentype/large-operators-italic-correction.html [ Skip ]
-mathml/presentation/bug159513.html [ Skip ]
+webkit.org/b/160161 mathml/opentype/fraction-line.html [ Skip ]
+webkit.org/b/160161 mathml/presentation/fractions-linethickness.html [ Skip ]
+webkit.org/b/160161 mathml/opentype/large-operators-italic-correction.html [ Skip ]
+webkit.org/b/160161 mathml/presentation/bug159513.html [ Skip ]
 
 # These tests use key navigation to test MathML links but do not seem to work on Mac.
 webkit.org/b/159662 mathml/presentation/href-enter.html [ Skip ]
