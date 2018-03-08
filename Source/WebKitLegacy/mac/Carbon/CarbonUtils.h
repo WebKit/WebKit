@@ -36,7 +36,6 @@
 #include <WebKitLegacy/WebKitAvailability.h>
 
 #ifdef __OBJC__
-#import <ApplicationServices/ApplicationServices.h>
 @class NSImage;
 #endif
 

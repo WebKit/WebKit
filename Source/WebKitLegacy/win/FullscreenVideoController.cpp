@@ -30,7 +30,6 @@
 
 #include "WebKitDLL.h"
 #include "WebView.h"
-#include <ApplicationServices/ApplicationServices.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/FloatRoundedRect.h>

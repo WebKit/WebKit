@@ -66,10 +66,6 @@
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <ApplicationServices/ApplicationServicesPriv.h>
-#endif
-
 extern "C" {
     bool CGContextGetAllowsFontSmoothing(CGContextRef context);
     bool CGContextGetAllowsFontSubpixelQuantization(CGContextRef context);

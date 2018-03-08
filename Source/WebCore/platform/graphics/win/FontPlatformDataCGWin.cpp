@@ -27,7 +27,6 @@
 #if USE(CG)
 
 #include "SharedGDIObject.h"
-#include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>

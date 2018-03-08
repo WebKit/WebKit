@@ -36,19 +36,12 @@
 #if USE(CG)
 #include "ImageSourceCG.h"
 #include "UTIRegistry.h"
+#include <ImageIO/ImageIO.h>
 #include <wtf/RetainPtr.h>
 #endif
 
 #if USE(CG) && PLATFORM(COCOA)
 #include "UTIUtilities.h"
-#endif
-
-#if USE(CG) && !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
-#if PLATFORM(IOS)
-#include <ImageIO/CGImageDestination.h>
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)

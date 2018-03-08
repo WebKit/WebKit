@@ -36,7 +36,6 @@
 #include "IntRect.h"
 #include "UniscribeController.h"
 #include "WebCoreTextRenderer.h"
-#include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/MathExtras.h>
 

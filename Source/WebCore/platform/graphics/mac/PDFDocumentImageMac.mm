@@ -35,10 +35,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <ApplicationServices/ApplicationServicesPriv.h>
-#endif
-
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, PDFKit)
 SOFT_LINK_CLASS(PDFKit, PDFDocument)
 

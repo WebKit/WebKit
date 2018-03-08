@@ -41,10 +41,6 @@
 #include <CoreText/CoreText.h>
 #endif
 
-#if PLATFORM(MAC)
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
 namespace WebCore {
 
 class TextLayout {

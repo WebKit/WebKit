@@ -61,7 +61,6 @@
 #endif
 
 #if !TARGET_OS_IPHONE
-#import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
 
 #ifndef CGFLOAT_DEFINED

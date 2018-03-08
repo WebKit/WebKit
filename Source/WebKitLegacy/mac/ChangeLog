@@ -1,3 +1,19 @@
+2018-03-08  Tim Horton  <timothy_horton@apple.com>
+
+        Stop linking ApplicationServices directly
+        https://bugs.webkit.org/show_bug.cgi?id=182867
+        <rdar://problem/38252142>
+
+        Reviewed by Alex Christensen.
+
+        The frameworks that we use that live inside ApplicationServices
+        have mostly moved out, so import them directly.
+
+        * Carbon/CarbonUtils.h:
+        * WebKitPrefix.h:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPDFView.mm:
+
 2018-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Sort and separate FeatureDefines.xcconfig

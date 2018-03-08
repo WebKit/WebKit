@@ -30,12 +30,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
-
-#if !PLATFORM(IOS)
-#include <ApplicationServices/ApplicationServices.h>
-#else
 #include <ImageIO/ImageIO.h>
-#endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 #include "ArchiveFactory.h"

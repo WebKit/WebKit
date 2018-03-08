@@ -1,3 +1,34 @@
+2018-03-08  Tim Horton  <timothy_horton@apple.com>
+
+        Stop linking ApplicationServices directly
+        https://bugs.webkit.org/show_bug.cgi?id=182867
+        <rdar://problem/38252142>
+
+        Reviewed by Alex Christensen.
+
+        The frameworks that we use that live inside ApplicationServices
+        have mostly moved out, so import them directly.
+
+        * Configurations/WebCore.xcconfig:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        * platform/MIMETypeRegistry.cpp:
+        * platform/graphics/ComplexTextController.cpp:
+        * platform/graphics/cg/ColorCG.cpp:
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        * platform/graphics/cg/UTIRegistry.cpp:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/graphics/mac/GlyphPageMac.cpp:
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        * platform/graphics/win/FontCGWin.cpp:
+        * platform/graphics/win/FontCacheWin.cpp:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        * platform/graphics/win/ImageCGWin.cpp:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+
 2018-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Sort and separate FeatureDefines.xcconfig

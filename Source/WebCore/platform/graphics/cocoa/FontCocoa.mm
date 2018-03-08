@@ -34,6 +34,7 @@
 #import "FontDescription.h"
 #import "OpenTypeCG.h"
 #import "SharedBuffer.h"
+#import <CoreText/CoreText.h>
 #import <float.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
@@ -44,10 +45,8 @@
 
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
-#import <ApplicationServices/ApplicationServices.h>
-#else
-#import <CoreText/CoreText.h>
 #endif
+
 
 #if USE(APPKIT)
 @interface NSFont (WebAppKitSecretAPI)

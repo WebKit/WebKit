@@ -37,7 +37,6 @@
 #include "GlyphPage.h"
 #include "HWndDC.h"
 #include "OpenTypeCG.h"
-#include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <mlang.h>
 #include <pal/spi/win/CoreTextSPIWin.h>

@@ -149,7 +149,6 @@
 #import "WebNSEventExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import <AppKit/NSAccessibility.h>
-#import <ApplicationServices/ApplicationServices.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #endif

@@ -30,7 +30,6 @@
 #include <wtf/win/GDIObject.h>
 
 #if USE(CG)
-#include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

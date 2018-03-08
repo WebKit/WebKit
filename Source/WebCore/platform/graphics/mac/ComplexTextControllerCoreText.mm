@@ -30,12 +30,7 @@
 #include <pal/spi/cocoa/CoreTextSPI.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/WeakPtr.h>
-
-#if PLATFORM(IOS)
 #include <CoreText/CoreText.h>
-#else
-#include <ApplicationServices/ApplicationServices.h>
-#endif
 
 // Note: CTFontDescriptorRefs can live forever in caches inside CoreText, so this object can too.
 @interface WebCascadeList : NSArray {
