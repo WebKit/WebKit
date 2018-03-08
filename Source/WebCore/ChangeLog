@@ -1,3 +1,26 @@
+2018-03-08  Per Arne Vollan  <pvollan@apple.com>
+
+        NSAnimation is not working in the WebContent process when WindowServer access is blocked.
+        https://bugs.webkit.org/show_bug.cgi?id=183291
+
+        Reviewed by Dean Jackson.
+
+        The animation can be implemented by using an NSTimer instead. Use the existing Bezier timing
+        function to create a smooth animation.
+
+        No new tests. This code is used to fade scrollbars in and out by animating the alpha value.
+        This scrollbar setting is not the default in macOS, which makes it non trivial to create
+        layout tests for this.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        (-[WebScrollbarPartAnimation startAnimation]):
+        (-[WebScrollbarPartAnimation setCurrentProgress:setCurrentProgress:]):
+        (-[WebScrollbarPartAnimation invalidate]):
+        (-[WebScrollbarPartAnimation setDuration:]):
+        (-[WebScrollbarPartAnimation stopAnimation]):
+        (-[WebScrollbarPartAnimation setCurrentProgress:]): Deleted.
+
 2018-03-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Templatize SVGAnimatedType
