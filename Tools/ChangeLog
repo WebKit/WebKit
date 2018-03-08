@@ -1,5 +1,17 @@
 2018-03-07  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Allow apple_additions() to define additional ports
+        https://bugs.webkit.org/show_bug.cgi?id=183412
+        <rdar://problem/38232353>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory.get): Allow apple_additions to define port classes to be used
+        in run-webkit-tests.
+
+2018-03-07  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Remove obsolete function from MockAppleAdditions
         https://bugs.webkit.org/show_bug.cgi?id=183415
         <rdar://problem/38236407>

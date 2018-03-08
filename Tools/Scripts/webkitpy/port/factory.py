@@ -118,10 +118,16 @@ class PortFactory(object):
         appropriate port on this platform."""
         port_name = port_name or self._default_port(options)
 
+        classes = []
         for port_class in self.PORT_CLASSES:
             module_name, class_name = port_class.rsplit('.', 1)
             module = __import__(module_name, globals(), locals(), [], -1)
             cls = module.__dict__[class_name]
+            classes.append(cls)
+        if config.apple_additions() and hasattr(config.apple_additions(), 'ports'):
+            classes += config.apple_additions().ports()
+
+        for cls in classes:
             if port_name.startswith(cls.port_name):
                 port_name = cls.determine_full_port_name(self._host, options, port_name)
                 return cls(self._host, port_name, options=options, **kwargs)
