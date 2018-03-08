@@ -68,6 +68,9 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\WebCore\**\*.*">
       <Output TaskParameter="Include" ItemName="IncFiles" />
     </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\pal\**\*.*">
+      <Output TaskParameter="Include" ItemName="IncFilesPal" />
+    </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\*">
       <Output TaskParameter="Include" ItemName="Bin32Files" />
     </CreateItem>
@@ -94,6 +97,7 @@
     </CreateItem>
 
     <Copy SourceFiles="@(IncFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\private\WebCore\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(IncFilesPal)" DestinationFiles="@(IncFilesPal->'$(DSTROOT)\AppleInternal\include\private\pal\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Lib32Files)" DestinationFolder="$(AppleInternalLib32)" />
     <Copy SourceFiles="@(Lib64Files)" DestinationFolder="$(AppleInternalLib64)" />
     <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(AppleInternalBin32)" />

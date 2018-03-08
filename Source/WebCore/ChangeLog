@@ -1,3 +1,18 @@
+2018-03-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error: pal/ExportMacros.h not found.
+        https://bugs.webkit.org/show_bug.cgi?id=183467
+
+        Reviewed by Brent Fulgham.
+
+        PAL header files are no longer located under the WebCore folder in forwarding headers. An additional
+        build step is required to copy the PAL header files to the internal include folder.
+
+        No new tests, no change in functionality. 
+
+        * PlatformWin.cmake:
+        * WebCore.vcxproj/WebCore.proj:
+
 2018-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Ensure system appearance is default for legacy webkit
