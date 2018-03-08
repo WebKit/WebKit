@@ -1,3 +1,13 @@
+2018-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Update to libwebrtc revision 4e70a72571dd26b85c2385e9c618e343428df5d3
+        https://bugs.webkit.org/show_bug.cgi?id=180843
+
+        Unreviewed.
+        Removed folder as it is now unused.
+
+        * Source/webrtc/base: Removed.
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         Update to libwebrtc revision 4e70a72571dd26b85c2385e9c618e343428df5d3
