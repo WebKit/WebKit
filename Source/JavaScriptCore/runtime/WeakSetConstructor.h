@@ -32,7 +32,7 @@ namespace JSC {
 class WeakSetPrototype;
 class GetterSetter;
 
-class WeakSetConstructor : public InternalFunction {
+class WeakSetConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

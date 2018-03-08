@@ -33,7 +33,7 @@ namespace JSC {
 class SymbolPrototype;
 class GetterSetter;
 
-class SymbolConstructor : public InternalFunction {
+class SymbolConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = HasStaticPropertyTable | Base::StructureFlags;

@@ -24,7 +24,7 @@
 
 namespace JSC {
 
-class NumberPrototype : public NumberObject {
+class NumberPrototype final : public NumberObject {
 public:
     typedef NumberObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

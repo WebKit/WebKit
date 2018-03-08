@@ -39,7 +39,7 @@ namespace JSC {
 class ArrayBuffer;
 class JSArrayBuffer;
 
-class JSWebAssemblyMemory : public JSDestructibleObject {
+class JSWebAssemblyMemory final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

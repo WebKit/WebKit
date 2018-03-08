@@ -36,7 +36,7 @@ class JSWebAssemblyInstance;
 class JSWebAssemblyModule;
 class WebAssemblyInstancePrototype;
 
-class WebAssemblyInstanceConstructor : public InternalFunction {
+class WebAssemblyInstanceConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

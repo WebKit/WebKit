@@ -31,7 +31,7 @@ namespace JSC {
 
 class AsyncFunctionPrototype;
 
-class AsyncFunctionConstructor : public InternalFunction {
+class AsyncFunctionConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

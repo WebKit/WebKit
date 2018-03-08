@@ -31,7 +31,7 @@ namespace JSC {
 
 // %AsyncGeneratorPrototype% intrinsic.
 // https://tc39.github.io/ecma262/#sec-properties-of-generator-prototype
-class AsyncGeneratorPrototype : public JSNonFinalObject {
+class AsyncGeneratorPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

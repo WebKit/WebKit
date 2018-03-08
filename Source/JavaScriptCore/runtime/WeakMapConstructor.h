@@ -32,7 +32,7 @@ namespace JSC {
 class WeakMapPrototype;
 class GetterSetter;
 
-class WeakMapConstructor : public InternalFunction {
+class WeakMapConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

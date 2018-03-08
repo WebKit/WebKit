@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSAPIValueWrapper : public JSCell {
+class JSAPIValueWrapper final : public JSCell {
     friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
 public:
     typedef JSCell Base;

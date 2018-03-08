@@ -24,7 +24,7 @@
 
 namespace JSC {
 
-class MathObject : public JSNonFinalObject {
+class MathObject final : public JSNonFinalObject {
 private:
     MathObject(VM&, Structure*);
 

@@ -33,7 +33,7 @@ namespace JSC {
 class BigIntPrototype;
 class GetterSetter;
 
-class BigIntConstructor : public InternalFunction {
+class BigIntConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

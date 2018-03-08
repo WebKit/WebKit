@@ -27,7 +27,7 @@ namespace JSC {
 class StringPrototype;
 class GetterSetter;
 
-class StringConstructor : public InternalFunction {
+class StringConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

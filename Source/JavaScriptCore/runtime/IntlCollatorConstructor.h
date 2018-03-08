@@ -34,7 +34,7 @@ namespace JSC {
 class IntlCollator;
 class IntlCollatorPrototype;
 
-class IntlCollatorConstructor : public InternalFunction {
+class IntlCollatorConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

@@ -1379,7 +1379,7 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
 
 ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(VM& vm, PropertySlot& slot, CustomGetterSetter* customGetterSetter, unsigned attributes, Structure* structure)
 {
-    if (isDOMAttributeGetterSetter(vm, customGetterSetter)) {
+    if (customGetterSetter->inherits<DOMAttributeGetterSetter>(vm)) {
         auto* domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter);
         if (structure->isUncacheableDictionary())
             slot.setCustom(this, attributes, domAttribute->getter(), domAttribute->domAttribute());

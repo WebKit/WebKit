@@ -1,3 +1,553 @@
+2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize inherits<T> if T is final type
+        https://bugs.webkit.org/show_bug.cgi?id=183435
+
+        Reviewed by Mark Lam.
+
+        If the type T is a final type (`std::is_final<T>::value == true`), there is no
+        classes which is derived from T. It means that `jsDynamicCast<T>` only needs
+        to check the given cell's `classInfo(vm)` is `T::info()`.
+
+        This patch adds a new specialization for jsDynamicCast<T> / inherits<T> for a
+        final type. And we also add `final` annotations to JS cell types in JSC. This
+        offers,
+
+        1. Readability. If the given class is annotated with `final`, we do not need to
+        consider about the derived classes of T.
+
+        2. Static Checking. If your class is not intended to be used as a base class, attaching
+        `final` can ensure this invariant.
+
+        3. Performance. jsDynamicCast<T> and inherits<T> can be optimized and the code size should
+        be smaller.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::create): Deleted.
+        (JSC::JSCallbackConstructor::classRef const): Deleted.
+        (JSC::JSCallbackConstructor::callback const): Deleted.
+        (JSC::JSCallbackConstructor::createStructure): Deleted.
+        (JSC::JSCallbackConstructor::constructCallback): Deleted.
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure): Deleted.
+        (JSC::JSCallbackFunction::functionCallback): Deleted.
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::create): Deleted.
+        (JSC::JSCallbackObject::destroy): Deleted.
+        (JSC::JSCallbackObject::classRef const): Deleted.
+        (JSC::JSCallbackObject::getPrivateProperty const): Deleted.
+        (JSC::JSCallbackObject::setPrivateProperty): Deleted.
+        (JSC::JSCallbackObject::deletePrivateProperty): Deleted.
+        (JSC::JSCallbackObject::visitChildren): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        (JSC::ExecutableToCodeBlockEdge::subspaceFor): Deleted.
+        (JSC::ExecutableToCodeBlockEdge::codeBlock const): Deleted.
+        (JSC::ExecutableToCodeBlockEdge::unwrap): Deleted.
+        * bytecode/FunctionCodeBlock.h:
+        (JSC::FunctionCodeBlock::subspaceFor): Deleted.
+        (JSC::FunctionCodeBlock::create): Deleted.
+        (JSC::FunctionCodeBlock::createStructure): Deleted.
+        (JSC::FunctionCodeBlock::FunctionCodeBlock): Deleted.
+        * debugger/DebuggerScope.h:
+        (JSC::DebuggerScope::createStructure): Deleted.
+        (JSC::DebuggerScope::iterator::iterator): Deleted.
+        (JSC::DebuggerScope::iterator::get): Deleted.
+        (JSC::DebuggerScope::iterator::operator++): Deleted.
+        (JSC::DebuggerScope::iterator::operator== const): Deleted.
+        (JSC::DebuggerScope::iterator::operator!= const): Deleted.
+        (JSC::DebuggerScope::isValid const): Deleted.
+        (JSC::DebuggerScope::jsScope const): Deleted.
+        * inspector/JSInjectedScriptHost.h:
+        (Inspector::JSInjectedScriptHost::createStructure): Deleted.
+        (Inspector::JSInjectedScriptHost::create): Deleted.
+        (Inspector::JSInjectedScriptHost::impl const): Deleted.
+        * inspector/JSInjectedScriptHostPrototype.h:
+        (Inspector::JSInjectedScriptHostPrototype::create): Deleted.
+        (Inspector::JSInjectedScriptHostPrototype::createStructure): Deleted.
+        (Inspector::JSInjectedScriptHostPrototype::JSInjectedScriptHostPrototype): Deleted.
+        * inspector/JSJavaScriptCallFrame.h:
+        (Inspector::JSJavaScriptCallFrame::createStructure): Deleted.
+        (Inspector::JSJavaScriptCallFrame::create): Deleted.
+        (Inspector::JSJavaScriptCallFrame::impl const): Deleted.
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        (Inspector::JSJavaScriptCallFramePrototype::create): Deleted.
+        (Inspector::JSJavaScriptCallFramePrototype::createStructure): Deleted.
+        (Inspector::JSJavaScriptCallFramePrototype::JSJavaScriptCallFramePrototype): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::create): Deleted.
+        (JSC::ArrayConstructor::createStructure): Deleted.
+        * runtime/ArrayIteratorPrototype.h:
+        (JSC::ArrayIteratorPrototype::create): Deleted.
+        (JSC::ArrayIteratorPrototype::createStructure): Deleted.
+        (JSC::ArrayIteratorPrototype::ArrayIteratorPrototype): Deleted.
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure): Deleted.
+        * runtime/AsyncFromSyncIteratorPrototype.h:
+        (JSC::AsyncFromSyncIteratorPrototype::createStructure): Deleted.
+        * runtime/AsyncFunctionConstructor.h:
+        (JSC::AsyncFunctionConstructor::create): Deleted.
+        (JSC::AsyncFunctionConstructor::createStructure): Deleted.
+        * runtime/AsyncFunctionPrototype.h:
+        (JSC::AsyncFunctionPrototype::create): Deleted.
+        (JSC::AsyncFunctionPrototype::createStructure): Deleted.
+        * runtime/AsyncGeneratorFunctionConstructor.h:
+        (JSC::AsyncGeneratorFunctionConstructor::create): Deleted.
+        (JSC::AsyncGeneratorFunctionConstructor::createStructure): Deleted.
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        (JSC::AsyncGeneratorFunctionPrototype::create): Deleted.
+        (JSC::AsyncGeneratorFunctionPrototype::createStructure): Deleted.
+        * runtime/AsyncGeneratorPrototype.h:
+        (JSC::AsyncGeneratorPrototype::create): Deleted.
+        (JSC::AsyncGeneratorPrototype::createStructure): Deleted.
+        (JSC::AsyncGeneratorPrototype::AsyncGeneratorPrototype): Deleted.
+        * runtime/AsyncIteratorPrototype.h:
+        (JSC::AsyncIteratorPrototype::create): Deleted.
+        (JSC::AsyncIteratorPrototype::createStructure): Deleted.
+        (JSC::AsyncIteratorPrototype::AsyncIteratorPrototype): Deleted.
+        * runtime/AtomicsObject.h:
+        * runtime/BigIntConstructor.h:
+        (JSC::BigIntConstructor::create): Deleted.
+        (JSC::BigIntConstructor::createStructure): Deleted.
+        * runtime/BigIntObject.h:
+        (JSC::BigIntObject::create): Deleted.
+        (JSC::BigIntObject::internalValue const): Deleted.
+        (JSC::BigIntObject::createStructure): Deleted.
+        * runtime/BigIntPrototype.h:
+        (JSC::BigIntPrototype::create): Deleted.
+        (JSC::BigIntPrototype::createStructure): Deleted.
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::create): Deleted.
+        (JSC::BooleanConstructor::createStructure): Deleted.
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::create): Deleted.
+        (JSC::BooleanPrototype::createStructure): Deleted.
+        * runtime/ConsoleObject.h:
+        (JSC::ConsoleObject::create): Deleted.
+        (JSC::ConsoleObject::createStructure): Deleted.
+        * runtime/DOMAttributeGetterSetter.h:
+        (JSC::isDOMAttributeGetterSetter): Deleted.
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::create): Deleted.
+        (JSC::DateConstructor::createStructure): Deleted.
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::create): Deleted.
+        (JSC::DateInstance::internalNumber const): Deleted.
+        (JSC::DateInstance::gregorianDateTime const): Deleted.
+        (JSC::DateInstance::gregorianDateTimeUTC const): Deleted.
+        (JSC::DateInstance::createStructure): Deleted.
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::create): Deleted.
+        (JSC::DatePrototype::createStructure): Deleted.
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction): Deleted.
+        (JSC::StrictModeTypeErrorFunction::create): Deleted.
+        (JSC::StrictModeTypeErrorFunction::constructThrowTypeError): Deleted.
+        (JSC::StrictModeTypeErrorFunction::callThrowTypeError): Deleted.
+        (JSC::StrictModeTypeErrorFunction::createStructure): Deleted.
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::create): Deleted.
+        (JSC::ErrorConstructor::createStructure): Deleted.
+        (JSC::ErrorConstructor::stackTraceLimit const): Deleted.
+        * runtime/Exception.h:
+        (JSC::Exception::valueOffset): Deleted.
+        (JSC::Exception::value const): Deleted.
+        (JSC::Exception::stack const): Deleted.
+        (JSC::Exception::didNotifyInspectorOfThrow const): Deleted.
+        (JSC::Exception::setDidNotifyInspectorOfThrow): Deleted.
+        * runtime/FunctionConstructor.h:
+        (JSC::FunctionConstructor::create): Deleted.
+        (JSC::FunctionConstructor::createStructure): Deleted.
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::create): Deleted.
+        (JSC::FunctionPrototype::createStructure): Deleted.
+        * runtime/FunctionRareData.h:
+        (JSC::FunctionRareData::offsetOfObjectAllocationProfile): Deleted.
+        (JSC::FunctionRareData::objectAllocationProfile): Deleted.
+        (JSC::FunctionRareData::objectAllocationStructure): Deleted.
+        (JSC::FunctionRareData::allocationProfileWatchpointSet): Deleted.
+        (JSC::FunctionRareData::isObjectAllocationProfileInitialized): Deleted.
+        (JSC::FunctionRareData::internalFunctionAllocationStructure): Deleted.
+        (JSC::FunctionRareData::createInternalFunctionAllocationStructureFromBase): Deleted.
+        (JSC::FunctionRareData::clearInternalFunctionAllocationProfile): Deleted.
+        (JSC::FunctionRareData::getBoundFunctionStructure): Deleted.
+        (JSC::FunctionRareData::setBoundFunctionStructure): Deleted.
+        (JSC::FunctionRareData::hasReifiedLength const): Deleted.
+        (JSC::FunctionRareData::setHasReifiedLength): Deleted.
+        (JSC::FunctionRareData::hasReifiedName const): Deleted.
+        (JSC::FunctionRareData::setHasReifiedName): Deleted.
+        (JSC::FunctionRareData::hasAllocationProfileClearingWatchpoint const): Deleted.
+        (JSC::FunctionRareData::createAllocationProfileClearingWatchpoint): Deleted.
+        (JSC::FunctionRareData::AllocationProfileClearingWatchpoint::AllocationProfileClearingWatchpoint): Deleted.
+        * runtime/GeneratorFunctionConstructor.h:
+        (JSC::GeneratorFunctionConstructor::create): Deleted.
+        (JSC::GeneratorFunctionConstructor::createStructure): Deleted.
+        * runtime/GeneratorFunctionPrototype.h:
+        (JSC::GeneratorFunctionPrototype::create): Deleted.
+        (JSC::GeneratorFunctionPrototype::createStructure): Deleted.
+        * runtime/GeneratorPrototype.h:
+        (JSC::GeneratorPrototype::create): Deleted.
+        (JSC::GeneratorPrototype::createStructure): Deleted.
+        (JSC::GeneratorPrototype::GeneratorPrototype): Deleted.
+        * runtime/InferredValue.h:
+        (JSC::InferredValue::subspaceFor): Deleted.
+        (JSC::InferredValue::inferredValue): Deleted.
+        (JSC::InferredValue::state const): Deleted.
+        (JSC::InferredValue::isStillValid const): Deleted.
+        (JSC::InferredValue::hasBeenInvalidated const): Deleted.
+        (JSC::InferredValue::add): Deleted.
+        (JSC::InferredValue::notifyWrite): Deleted.
+        (JSC::InferredValue::invalidate): Deleted.
+        * runtime/InspectorInstrumentationObject.h:
+        (JSC::InspectorInstrumentationObject::create): Deleted.
+        (JSC::InspectorInstrumentationObject::createStructure): Deleted.
+        * runtime/IntlCollator.h:
+        (JSC::IntlCollator::boundCompare const): Deleted.
+        * runtime/IntlCollatorConstructor.h:
+        (JSC::IntlCollatorConstructor::collatorStructure const): Deleted.
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormat.h:
+        (JSC::IntlDateTimeFormat::boundFormat const): Deleted.
+        * runtime/IntlDateTimeFormatConstructor.h:
+        (JSC::IntlDateTimeFormatConstructor::dateTimeFormatStructure const): Deleted.
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormat.h:
+        (JSC::IntlNumberFormat::boundFormat const): Deleted.
+        * runtime/IntlNumberFormatConstructor.h:
+        (JSC::IntlNumberFormatConstructor::numberFormatStructure const): Deleted.
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.h:
+        * runtime/IteratorPrototype.h:
+        (JSC::IteratorPrototype::create): Deleted.
+        (JSC::IteratorPrototype::createStructure): Deleted.
+        (JSC::IteratorPrototype::IteratorPrototype): Deleted.
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::value const): Deleted.
+        (JSC::JSAPIValueWrapper::createStructure): Deleted.
+        (JSC::JSAPIValueWrapper::create): Deleted.
+        (JSC::JSAPIValueWrapper::finishCreation): Deleted.
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper): Deleted.
+        * runtime/JSArrayBufferConstructor.h:
+        (JSC::JSArrayBufferConstructor::sharingMode const): Deleted.
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSAsyncFunction.h:
+        (JSC::JSAsyncFunction::subspaceFor): Deleted.
+        (JSC::JSAsyncFunction::allocationSize): Deleted.
+        (JSC::JSAsyncFunction::createStructure): Deleted.
+        * runtime/JSAsyncGeneratorFunction.h:
+        (JSC::JSAsyncGeneratorFunction::subspaceFor): Deleted.
+        (JSC::JSAsyncGeneratorFunction::allocationSize): Deleted.
+        (JSC::JSAsyncGeneratorFunction::createStructure): Deleted.
+        * runtime/JSBigInt.h:
+        (JSC::JSBigInt::setSign): Deleted.
+        (JSC::JSBigInt::sign const): Deleted.
+        (JSC::JSBigInt::setLength): Deleted.
+        (JSC::JSBigInt::length const): Deleted.
+        * runtime/JSBoundFunction.h:
+        (JSC::JSBoundFunction::subspaceFor): Deleted.
+        (JSC::JSBoundFunction::targetFunction): Deleted.
+        (JSC::JSBoundFunction::boundThis): Deleted.
+        (JSC::JSBoundFunction::boundArgs): Deleted.
+        (JSC::JSBoundFunction::createStructure): Deleted.
+        (JSC::JSBoundFunction::offsetOfTargetFunction): Deleted.
+        (JSC::JSBoundFunction::offsetOfBoundThis): Deleted.
+        * runtime/JSCast.h:
+        (JSC::JSCastingHelpers::FinalTypeDispatcher::inheritsGeneric):
+        (JSC::JSCastingHelpers::inheritsJSTypeImpl):
+        (JSC::JSCastingHelpers::InheritsTraits::inherits):
+        (JSC::JSCastingHelpers::inheritsGenericImpl): Deleted.
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall):
+        * runtime/JSCustomGetterSetterFunction.h:
+        (JSC::JSCustomGetterSetterFunction::subspaceFor): Deleted.
+        (JSC::JSCustomGetterSetterFunction::createStructure): Deleted.
+        (JSC::JSCustomGetterSetterFunction::customGetterSetter const): Deleted.
+        (JSC::JSCustomGetterSetterFunction::isSetter const): Deleted.
+        (JSC::JSCustomGetterSetterFunction::propertyName const): Deleted.
+        * runtime/JSDataView.h:
+        (JSC::JSDataView::possiblySharedBuffer const): Deleted.
+        (JSC::JSDataView::unsharedBuffer const): Deleted.
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::createStructure): Deleted.
+        (JSC::JSFixedArray::tryCreate): Deleted.
+        (JSC::JSFixedArray::create): Deleted.
+        (JSC::JSFixedArray::createFromArray): Deleted.
+        (JSC::JSFixedArray::get const): Deleted.
+        (JSC::JSFixedArray::set): Deleted.
+        (JSC::JSFixedArray::buffer): Deleted.
+        (JSC::JSFixedArray::buffer const): Deleted.
+        (JSC::JSFixedArray::values const): Deleted.
+        (JSC::JSFixedArray::size const): Deleted.
+        (JSC::JSFixedArray::length const): Deleted.
+        (JSC::JSFixedArray::offsetOfSize): Deleted.
+        (JSC::JSFixedArray::offsetOfData): Deleted.
+        (JSC::JSFixedArray::JSFixedArray): Deleted.
+        (JSC::JSFixedArray::allocationSize): Deleted.
+        * runtime/JSGeneratorFunction.h:
+        (JSC::JSGeneratorFunction::subspaceFor): Deleted.
+        (JSC::JSGeneratorFunction::allocationSize): Deleted.
+        (JSC::JSGeneratorFunction::createStructure): Deleted.
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::byteLength const): Deleted.
+        (JSC::JSGenericTypedArrayView::byteSize const): Deleted.
+        (JSC::JSGenericTypedArrayView::typedVector const): Deleted.
+        (JSC::JSGenericTypedArrayView::typedVector): Deleted.
+        (JSC::JSGenericTypedArrayView::canGetIndexQuickly): Deleted.
+        (JSC::JSGenericTypedArrayView::canSetIndexQuickly): Deleted.
+        (JSC::JSGenericTypedArrayView::getIndexQuicklyAsNativeValue): Deleted.
+        (JSC::JSGenericTypedArrayView::getIndexQuicklyAsDouble): Deleted.
+        (JSC::JSGenericTypedArrayView::getIndexQuickly): Deleted.
+        (JSC::JSGenericTypedArrayView::setIndexQuicklyToNativeValue): Deleted.
+        (JSC::JSGenericTypedArrayView::setIndexQuicklyToDouble): Deleted.
+        (JSC::JSGenericTypedArrayView::setIndexQuickly): Deleted.
+        (JSC::JSGenericTypedArrayView::setIndex): Deleted.
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValue): Deleted.
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValueWithoutCoercion): Deleted.
+        (JSC::JSGenericTypedArrayView::sort): Deleted.
+        (JSC::JSGenericTypedArrayView::canAccessRangeQuickly): Deleted.
+        (JSC::JSGenericTypedArrayView::createStructure): Deleted.
+        (JSC::JSGenericTypedArrayView::info): Deleted.
+        (JSC::JSGenericTypedArrayView::purifyArray): Deleted.
+        (JSC::JSGenericTypedArrayView::sortComparison): Deleted.
+        (JSC::JSGenericTypedArrayView::sortFloat): Deleted.
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/JSInternalPromise.h:
+        * runtime/JSInternalPromiseConstructor.h:
+        * runtime/JSInternalPromisePrototype.h:
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::createStructure): Deleted.
+        (JSC::JSMapIterator::create): Deleted.
+        (JSC::JSMapIterator::advanceIter): Deleted.
+        (JSC::JSMapIterator::next): Deleted.
+        (JSC::JSMapIterator::nextKeyValue): Deleted.
+        (JSC::JSMapIterator::kind const): Deleted.
+        (JSC::JSMapIterator::iteratedValue const): Deleted.
+        (JSC::JSMapIterator::JSMapIterator): Deleted.
+        (JSC::JSMapIterator::setIterator): Deleted.
+        * runtime/JSModuleLoader.h:
+        (JSC::JSModuleLoader::create): Deleted.
+        (JSC::JSModuleLoader::createStructure): Deleted.
+        * runtime/JSModuleNamespaceObject.h:
+        (JSC::isJSModuleNamespaceObject): Deleted.
+        * runtime/JSModuleRecord.h:
+        (JSC::JSModuleRecord::sourceCode const): Deleted.
+        (JSC::JSModuleRecord::declaredVariables const): Deleted.
+        (JSC::JSModuleRecord::lexicalVariables const): Deleted.
+        * runtime/JSNativeStdFunction.h:
+        (JSC::JSNativeStdFunction::subspaceFor): Deleted.
+        (JSC::JSNativeStdFunction::createStructure): Deleted.
+        (JSC::JSNativeStdFunction::nativeStdFunctionCell): Deleted.
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::create): Deleted.
+        (JSC::JSONObject::createStructure): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::fillCustomGetterPropertySlot):
+        * runtime/JSScriptFetchParameters.h:
+        (JSC::JSScriptFetchParameters::createStructure): Deleted.
+        (JSC::JSScriptFetchParameters::create): Deleted.
+        (JSC::JSScriptFetchParameters::parameters const): Deleted.
+        (JSC::JSScriptFetchParameters::JSScriptFetchParameters): Deleted.
+        * runtime/JSScriptFetcher.h:
+        (JSC::JSScriptFetcher::createStructure): Deleted.
+        (JSC::JSScriptFetcher::create): Deleted.
+        (JSC::JSScriptFetcher::fetcher const): Deleted.
+        (JSC::JSScriptFetcher::JSScriptFetcher): Deleted.
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::createStructure): Deleted.
+        (JSC::JSSetIterator::create): Deleted.
+        (JSC::JSSetIterator::advanceIter): Deleted.
+        (JSC::JSSetIterator::next): Deleted.
+        (JSC::JSSetIterator::kind const): Deleted.
+        (JSC::JSSetIterator::iteratedValue const): Deleted.
+        (JSC::JSSetIterator::JSSetIterator): Deleted.
+        (JSC::JSSetIterator::setIterator): Deleted.
+        * runtime/JSSourceCode.h:
+        (JSC::JSSourceCode::createStructure): Deleted.
+        (JSC::JSSourceCode::create): Deleted.
+        (JSC::JSSourceCode::sourceCode const): Deleted.
+        (JSC::JSSourceCode::JSSourceCode): Deleted.
+        * runtime/JSStringIterator.h:
+        (JSC::JSStringIterator::createStructure): Deleted.
+        (JSC::JSStringIterator::create): Deleted.
+        (JSC::JSStringIterator::JSStringIterator): Deleted.
+        * runtime/JSTemplateObjectDescriptor.h:
+        (JSC::isTemplateObjectDescriptor): Deleted.
+        * runtime/JSTypedArrayViewConstructor.h:
+        (JSC::JSTypedArrayViewConstructor::create): Deleted.
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/MapConstructor.h:
+        (JSC::MapConstructor::create): Deleted.
+        (JSC::MapConstructor::createStructure): Deleted.
+        * runtime/MapIteratorPrototype.h:
+        (JSC::MapIteratorPrototype::create): Deleted.
+        (JSC::MapIteratorPrototype::createStructure): Deleted.
+        (JSC::MapIteratorPrototype::MapIteratorPrototype): Deleted.
+        * runtime/MapPrototype.h:
+        (JSC::MapPrototype::create): Deleted.
+        (JSC::MapPrototype::createStructure): Deleted.
+        (JSC::MapPrototype::MapPrototype): Deleted.
+        * runtime/MathObject.h:
+        (JSC::MathObject::create): Deleted.
+        (JSC::MathObject::createStructure): Deleted.
+        * runtime/ModuleLoaderPrototype.h:
+        (JSC::ModuleLoaderPrototype::create): Deleted.
+        (JSC::ModuleLoaderPrototype::createStructure): Deleted.
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::create): Deleted.
+        (JSC::NativeErrorConstructor::createStructure): Deleted.
+        (JSC::NativeErrorConstructor::errorStructure): Deleted.
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::create): Deleted.
+        * runtime/NativeStdFunctionCell.h:
+        (JSC::NativeStdFunctionCell::createStructure): Deleted.
+        (JSC::NativeStdFunctionCell::function const): Deleted.
+        * runtime/NullGetterFunction.h:
+        (JSC::NullGetterFunction::create): Deleted.
+        (JSC::NullGetterFunction::createStructure): Deleted.
+        * runtime/NullSetterFunction.h:
+        (JSC::NullSetterFunction::create): Deleted.
+        (JSC::NullSetterFunction::createStructure): Deleted.
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::create): Deleted.
+        (JSC::NumberConstructor::createStructure): Deleted.
+        (JSC::NumberConstructor::isIntegerImpl): Deleted.
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::create): Deleted.
+        (JSC::NumberPrototype::createStructure): Deleted.
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::create): Deleted.
+        (JSC::ObjectConstructor::createStructure): Deleted.
+        * runtime/ObjectPrototype.h:
+        (JSC::ObjectPrototype::createStructure): Deleted.
+        * runtime/ProxyConstructor.h:
+        (JSC::ProxyConstructor::createStructure): Deleted.
+        * runtime/ProxyRevoke.h:
+        (JSC::ProxyRevoke::createStructure): Deleted.
+        (JSC::ProxyRevoke::proxy): Deleted.
+        (JSC::ProxyRevoke::setProxyToNull): Deleted.
+        * runtime/ReflectObject.h:
+        (JSC::ReflectObject::create): Deleted.
+        (JSC::ReflectObject::createStructure): Deleted.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollar):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create): Deleted.
+        (JSC::RegExpConstructor::createStructure): Deleted.
+        (JSC::RegExpConstructor::setMultiline): Deleted.
+        (JSC::RegExpConstructor::multiline const): Deleted.
+        (JSC::RegExpConstructor::setInput): Deleted.
+        (JSC::RegExpConstructor::input): Deleted.
+        (JSC::RegExpConstructor::offsetOfCachedResult): Deleted.
+        (JSC::asRegExpConstructor): Deleted.
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::create): Deleted.
+        (JSC::RegExpPrototype::createStructure): Deleted.
+        (JSC::RegExpPrototype::emptyRegExp const): Deleted.
+        * runtime/SetConstructor.h:
+        (JSC::SetConstructor::create): Deleted.
+        (JSC::SetConstructor::createStructure): Deleted.
+        * runtime/SetIteratorPrototype.h:
+        (JSC::SetIteratorPrototype::create): Deleted.
+        (JSC::SetIteratorPrototype::createStructure): Deleted.
+        (JSC::SetIteratorPrototype::SetIteratorPrototype): Deleted.
+        * runtime/SetPrototype.h:
+        (JSC::SetPrototype::create): Deleted.
+        (JSC::SetPrototype::createStructure): Deleted.
+        (JSC::SetPrototype::SetPrototype): Deleted.
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::create): Deleted.
+        (JSC::StringConstructor::createStructure): Deleted.
+        * runtime/StringIteratorPrototype.h:
+        (JSC::StringIteratorPrototype::create): Deleted.
+        (JSC::StringIteratorPrototype::createStructure): Deleted.
+        (JSC::StringIteratorPrototype::StringIteratorPrototype): Deleted.
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::createStructure): Deleted.
+        * runtime/SymbolConstructor.h:
+        (JSC::SymbolConstructor::create): Deleted.
+        (JSC::SymbolConstructor::createStructure): Deleted.
+        * runtime/SymbolObject.h:
+        (JSC::SymbolObject::create): Deleted.
+        (JSC::SymbolObject::internalValue const): Deleted.
+        (JSC::SymbolObject::createStructure): Deleted.
+        * runtime/SymbolPrototype.h:
+        (JSC::SymbolPrototype::create): Deleted.
+        (JSC::SymbolPrototype::createStructure): Deleted.
+        * runtime/WeakMapConstructor.h:
+        (JSC::WeakMapConstructor::create): Deleted.
+        (JSC::WeakMapConstructor::createStructure): Deleted.
+        * runtime/WeakMapPrototype.h:
+        (JSC::WeakMapPrototype::create): Deleted.
+        (JSC::WeakMapPrototype::createStructure): Deleted.
+        (JSC::WeakMapPrototype::WeakMapPrototype): Deleted.
+        * runtime/WeakSetConstructor.h:
+        (JSC::WeakSetConstructor::create): Deleted.
+        (JSC::WeakSetConstructor::createStructure): Deleted.
+        * runtime/WeakSetPrototype.h:
+        (JSC::WeakSetPrototype::create): Deleted.
+        (JSC::WeakSetPrototype::createStructure): Deleted.
+        (JSC::WeakSetPrototype::WeakSetPrototype): Deleted.
+        * tools/JSDollarVM.h:
+        (JSC::JSDollarVM::createStructure): Deleted.
+        (JSC::JSDollarVM::create): Deleted.
+        (JSC::JSDollarVM::JSDollarVM): Deleted.
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/JSWebAssemblyCompileError.h:
+        (JSC::JSWebAssemblyCompileError::create): Deleted.
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::instance): Deleted.
+        (JSC::JSWebAssemblyInstance::moduleNamespaceObject): Deleted.
+        (JSC::JSWebAssemblyInstance::webAssemblyToJSCallee): Deleted.
+        (JSC::JSWebAssemblyInstance::memory): Deleted.
+        (JSC::JSWebAssemblyInstance::setMemory): Deleted.
+        (JSC::JSWebAssemblyInstance::memoryMode): Deleted.
+        (JSC::JSWebAssemblyInstance::table): Deleted.
+        (JSC::JSWebAssemblyInstance::setTable): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfPoisonedInstance): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfPoisonedCallee): Deleted.
+        (JSC::JSWebAssemblyInstance::module const): Deleted.
+        * wasm/js/JSWebAssemblyLinkError.h:
+        (JSC::JSWebAssemblyLinkError::create): Deleted.
+        * wasm/js/JSWebAssemblyMemory.h:
+        (JSC::JSWebAssemblyMemory::subspaceFor): Deleted.
+        (JSC::JSWebAssemblyMemory::memory): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        (JSC::JSWebAssemblyRuntimeError::create): Deleted.
+        * wasm/js/JSWebAssemblyTable.h:
+        (JSC::JSWebAssemblyTable::isValidLength): Deleted.
+        (JSC::JSWebAssemblyTable::maximum const): Deleted.
+        (JSC::JSWebAssemblyTable::length const): Deleted.
+        (JSC::JSWebAssemblyTable::allocatedLength const): Deleted.
+        (JSC::JSWebAssemblyTable::table): Deleted.
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyLinkErrorConstructor.h:
+        * wasm/js/WebAssemblyLinkErrorPrototype.h:
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyPrototype.h:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTableConstructor.h:
+        * wasm/js/WebAssemblyTablePrototype.h:
+
 2018-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         Make it possible to randomize register allocation

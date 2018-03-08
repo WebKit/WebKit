@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class IntlNumberFormatPrototype : public JSNonFinalObject {
+class IntlNumberFormatPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

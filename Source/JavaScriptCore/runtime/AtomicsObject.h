@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class AtomicsObject : public JSNonFinalObject {
+class AtomicsObject final : public JSNonFinalObject {
 private:
     AtomicsObject(VM&, Structure*);
 

@@ -34,7 +34,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
 
 class ObjectPrototype;
 
-class ObjectConstructor : public InternalFunction {
+class ObjectConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

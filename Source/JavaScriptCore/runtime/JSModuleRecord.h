@@ -35,7 +35,7 @@ class ModuleProgramExecutable;
 
 // Based on the Source Text Module Record
 // http://www.ecma-international.org/ecma-262/6.0/#sec-source-text-module-records
-class JSModuleRecord : public AbstractModuleRecord {
+class JSModuleRecord final : public AbstractModuleRecord {
     friend class LLIntOffsetsExtractor;
 public:
     typedef AbstractModuleRecord Base;

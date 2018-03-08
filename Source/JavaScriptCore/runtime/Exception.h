@@ -31,7 +31,7 @@
 
 namespace JSC {
     
-class Exception : public JSDestructibleObject {
+class Exception final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;

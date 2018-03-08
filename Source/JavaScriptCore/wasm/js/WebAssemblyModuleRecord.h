@@ -38,7 +38,7 @@ class WebAssemblyFunction;
 
 // Based on the WebAssembly.Instance specification
 // https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-constructor
-class WebAssemblyModuleRecord : public AbstractModuleRecord {
+class WebAssemblyModuleRecord final : public AbstractModuleRecord {
     friend class LLIntOffsetsExtractor;
 public:
     typedef AbstractModuleRecord Base;

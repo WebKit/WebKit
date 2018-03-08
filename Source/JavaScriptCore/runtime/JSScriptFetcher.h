@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-class JSScriptFetcher : public JSCell {
+class JSScriptFetcher final : public JSCell {
 public:
     using Base = JSCell;
 

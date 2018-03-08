@@ -32,7 +32,7 @@ namespace JSC {
 class JSTypedArrayViewPrototype;
 class GetterSetter;
 
-class JSTypedArrayViewConstructor : public InternalFunction {
+class JSTypedArrayViewConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

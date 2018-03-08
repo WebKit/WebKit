@@ -931,22 +931,24 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
         JSValue constant = constants[i].get();
 
         if (!constant.isEmpty()) {
-            if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(vm, constant)) {
-                if (hasTypeProfiler) {
-                    ConcurrentJSLocker locker(symbolTable->m_lock);
-                    symbolTable->prepareForTypeProfiling(locker);
+            if (constant.isCell()) {
+                JSCell* cell = constant.asCell();
+                if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(vm, cell)) {
+                    if (hasTypeProfiler) {
+                        ConcurrentJSLocker locker(symbolTable->m_lock);
+                        symbolTable->prepareForTypeProfiling(locker);
+                    }
+
+                    SymbolTable* clone = symbolTable->cloneScopePart(vm);
+                    if (wasCompiledWithDebuggingOpcodes())
+                        clone->setRareDataCodeBlock(this);
+
+                    constant = clone;
+                } else if (auto* descriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
+                    auto* templateObject = descriptor->createTemplateObject(exec);
+                    RETURN_IF_EXCEPTION(scope, void());
+                    constant = templateObject;
                 }
-
-                SymbolTable* clone = symbolTable->cloneScopePart(vm);
-                if (wasCompiledWithDebuggingOpcodes())
-                    clone->setRareDataCodeBlock(this);
-
-                constant = clone;
-            } else if (isTemplateObjectDescriptor(vm, constant)) {
-                auto descriptor = jsCast<JSTemplateObjectDescriptor*>(constant);
-                auto* templateObject = descriptor->createTemplateObject(exec);
-                RETURN_IF_EXCEPTION(scope, void());
-                constant = templateObject;
             }
         }
 

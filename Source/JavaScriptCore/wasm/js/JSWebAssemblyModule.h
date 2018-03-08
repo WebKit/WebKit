@@ -52,7 +52,7 @@ class JSWebAssemblyCodeBlock;
 class JSWebAssemblyMemory;
 class WebAssemblyToJSCallee;
 
-class JSWebAssemblyModule : public JSDestructibleObject {
+class JSWebAssemblyModule final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

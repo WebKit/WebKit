@@ -36,7 +36,7 @@ namespace JSC {
 class IntlCollatorConstructor;
 class JSBoundFunction;
 
-class IntlCollator : public JSDestructibleObject {
+class IntlCollator final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

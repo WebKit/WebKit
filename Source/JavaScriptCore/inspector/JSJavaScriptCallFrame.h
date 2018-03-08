@@ -30,7 +30,7 @@
 
 namespace Inspector {
 
-class JSJavaScriptCallFrame : public JSC::JSDestructibleObject {
+class JSJavaScriptCallFrame final : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags;

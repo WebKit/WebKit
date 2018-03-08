@@ -24,7 +24,7 @@
 
 namespace JSC {
 
-class FunctionPrototype : public InternalFunction {
+class FunctionPrototype final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

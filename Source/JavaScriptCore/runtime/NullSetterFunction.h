@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class NullSetterFunction : public InternalFunction {
+class NullSetterFunction final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

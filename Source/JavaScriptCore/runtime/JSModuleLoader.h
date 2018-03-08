@@ -34,7 +34,7 @@ class JSInternalPromise;
 class JSModuleNamespaceObject;
 class SourceCode;
 
-class JSModuleLoader : public JSNonFinalObject {
+class JSModuleLoader final : public JSNonFinalObject {
 private:
     JSModuleLoader(VM&, Structure*);
 public:

@@ -56,7 +56,7 @@
 
 namespace JSC {
 
-class JSWebAssembly : public JSNonFinalObject {
+class JSWebAssembly final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

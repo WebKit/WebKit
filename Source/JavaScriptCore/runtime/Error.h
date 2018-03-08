@@ -103,7 +103,7 @@ inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope, const
 inline EncodedJSValue throwVMRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwRangeError(state, scope, errorMessage)); }
 inline EncodedJSValue throwVMDOMAttributeGetterTypeError(ExecState* state, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName) { return JSValue::encode(throwDOMAttributeGetterTypeError(state, scope, classInfo, propertyName)); }
 
-class StrictModeTypeErrorFunction : public InternalFunction {
+class StrictModeTypeErrorFunction final : public InternalFunction {
 private:
     StrictModeTypeErrorFunction(VM& vm, Structure* structure, const String& message)
         : InternalFunction(vm, structure, callThrowTypeError, constructThrowTypeError)

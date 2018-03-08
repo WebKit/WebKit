@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class NullGetterFunction : public InternalFunction {
+class NullGetterFunction final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

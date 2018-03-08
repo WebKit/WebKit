@@ -24,7 +24,7 @@
 
 namespace JSC {
 
-class BooleanPrototype : public BooleanObject {
+class BooleanPrototype final : public BooleanObject {
 public:
     typedef BooleanObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

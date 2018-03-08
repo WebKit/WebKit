@@ -35,7 +35,7 @@ namespace JSC {
 class CodeBlock;
 class LLIntOffsetsExtractor;
 
-class ExecutableToCodeBlockEdge : public JSCell {
+class ExecutableToCodeBlockEdge final : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;

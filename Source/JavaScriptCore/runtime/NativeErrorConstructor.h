@@ -29,7 +29,7 @@ class ErrorInstance;
 class FunctionPrototype;
 class NativeErrorPrototype;
 
-class NativeErrorConstructor : public InternalFunction {
+class NativeErrorConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

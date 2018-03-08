@@ -38,7 +38,7 @@ namespace JSC {
 class IntlDateTimeFormatConstructor;
 class JSBoundFunction;
 
-class IntlDateTimeFormat : public JSDestructibleObject {
+class IntlDateTimeFormat final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

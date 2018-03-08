@@ -32,7 +32,7 @@ namespace JSC {
 class MapPrototype;
 class GetterSetter;
 
-class MapConstructor : public InternalFunction {
+class MapConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-class AsyncFromSyncIteratorPrototype : public JSNonFinalObject {
+class AsyncFromSyncIteratorPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
 

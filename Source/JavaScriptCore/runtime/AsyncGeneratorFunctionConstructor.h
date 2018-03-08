@@ -31,7 +31,7 @@ namespace JSC {
 
 class AsyncGeneratorFunctionPrototype;
 
-class AsyncGeneratorFunctionConstructor : public InternalFunction {
+class AsyncGeneratorFunctionConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
 

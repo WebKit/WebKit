@@ -31,7 +31,7 @@ namespace JSC {
 
 class CustomGetterSetter;
 
-class JSCustomGetterSetterFunction : public JSFunction {
+class JSCustomGetterSetterFunction final : public JSFunction {
 public:
     typedef JSFunction Base;
 

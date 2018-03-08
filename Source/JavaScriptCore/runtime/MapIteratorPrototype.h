@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class MapIteratorPrototype : public JSNonFinalObject {
+class MapIteratorPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

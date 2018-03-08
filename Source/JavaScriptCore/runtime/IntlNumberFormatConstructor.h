@@ -34,7 +34,7 @@ namespace JSC {
 class IntlNumberFormat;
 class IntlNumberFormatPrototype;
 
-class IntlNumberFormatConstructor : public InternalFunction {
+class IntlNumberFormatConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

@@ -29,7 +29,7 @@
 
 namespace Inspector {
 
-class JSInjectedScriptHostPrototype : public JSC::JSNonFinalObject {
+class JSInjectedScriptHostPrototype final : public JSC::JSNonFinalObject {
 public:
     typedef JSC::JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;

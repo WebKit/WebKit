@@ -46,7 +46,7 @@ namespace Wasm {
 class CodeBlock;
 }
 
-class JSWebAssemblyInstance : public JSDestructibleObject {
+class JSWebAssemblyInstance final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

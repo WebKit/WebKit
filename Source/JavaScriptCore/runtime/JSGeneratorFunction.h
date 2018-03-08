@@ -34,7 +34,7 @@ class JSGlobalObject;
 class LLIntOffsetsExtractor;
 class LLIntDesiredOffsets;
 
-class JSGeneratorFunction : public JSFunction {
+class JSGeneratorFunction final : public JSFunction {
     friend class JIT;
 #if ENABLE(DFG_JIT)
     friend class DFG::SpeculativeJIT;

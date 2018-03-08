@@ -30,7 +30,7 @@ class ArrayPrototype;
 class JSArray;
 class GetterSetter;
 
-class ArrayConstructor : public InternalFunction {
+class ArrayConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = HasStaticPropertyTable | InternalFunction::StructureFlags;

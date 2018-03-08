@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSInternalPromisePrototype : public JSPromisePrototype {
+class JSInternalPromisePrototype final : public JSPromisePrototype {
 public:
     typedef JSPromisePrototype Base;
     static const unsigned StructureFlags = Base::StructureFlags;

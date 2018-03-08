@@ -27,7 +27,7 @@ namespace JSC {
 class DatePrototype;
 class GetterSetter;
 
-class DateConstructor : public InternalFunction {
+class DateConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

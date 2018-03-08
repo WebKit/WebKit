@@ -26,7 +26,7 @@ namespace JSC {
 
 class NativeErrorConstructor;
 
-class NativeErrorPrototype : public ErrorPrototype {
+class NativeErrorPrototype final : public ErrorPrototype {
 private:
     NativeErrorPrototype(VM&, Structure*);
 

@@ -32,7 +32,7 @@ namespace JSC {
 
 class JSInternalPromise;
 
-class ModuleLoaderPrototype : public JSNonFinalObject {
+class ModuleLoaderPrototype final : public JSNonFinalObject {
 private:
     ModuleLoaderPrototype(VM&, Structure*);
 public:

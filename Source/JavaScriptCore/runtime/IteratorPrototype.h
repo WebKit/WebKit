@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class IteratorPrototype : public JSNonFinalObject {
+class IteratorPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags;

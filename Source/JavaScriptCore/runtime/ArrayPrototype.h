@@ -28,7 +28,7 @@ namespace JSC {
 
 class ArrayPrototypeAdaptiveInferredPropertyWatchpoint;
 
-class ArrayPrototype : public JSArray {
+class ArrayPrototype final : public JSArray {
 private:
     ArrayPrototype(VM&, Structure*);
 

@@ -27,7 +27,7 @@ namespace JSC {
 class NumberPrototype;
 class GetterSetter;
 
-class NumberConstructor : public InternalFunction {
+class NumberConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | HasStaticPropertyTable;

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class JSFixedArray : public JSCell {
+class JSFixedArray final : public JSCell {
     typedef JSCell Base;
 
 public:

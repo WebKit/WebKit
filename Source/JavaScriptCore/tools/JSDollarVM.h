@@ -29,7 +29,7 @@
 
 namespace JSC {
     
-class JSDollarVM : public JSNonFinalObject {
+class JSDollarVM final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     

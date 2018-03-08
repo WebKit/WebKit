@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class JSCallbackConstructor : public JSDestructibleObject {
+class JSCallbackConstructor final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance;

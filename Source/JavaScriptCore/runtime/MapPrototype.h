@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class MapPrototype : public JSNonFinalObject {
+class MapPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

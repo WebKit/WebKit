@@ -34,7 +34,7 @@ namespace JSC {
 
 class WebAssemblyMemoryPrototype;
 
-class WebAssemblyMemoryConstructor : public InternalFunction {
+class WebAssemblyMemoryConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

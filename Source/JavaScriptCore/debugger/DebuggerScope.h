@@ -33,7 +33,7 @@ namespace JSC {
 class DebuggerCallFrame;
 class JSScope;
 
-class DebuggerScope : public JSNonFinalObject {
+class DebuggerScope final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;

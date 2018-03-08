@@ -34,7 +34,7 @@ namespace JSC {
 class IntlDateTimeFormat;
 class IntlDateTimeFormatPrototype;
 
-class IntlDateTimeFormatConstructor : public InternalFunction {
+class IntlDateTimeFormatConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

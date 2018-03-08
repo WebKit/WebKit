@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class JSDataView : public JSArrayBufferView {
+class JSDataView final : public JSArrayBufferView {
 public:
     typedef JSArrayBufferView Base;
     static const unsigned elementSize = 1;

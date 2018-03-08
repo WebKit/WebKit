@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class WeakSetPrototype : public JSNonFinalObject {
+class WeakSetPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

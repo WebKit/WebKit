@@ -32,7 +32,7 @@ namespace JSC {
 class JSInternalPromise;
 class JSInternalPromisePrototype;
 
-class JSInternalPromiseConstructor : public JSPromiseConstructor {
+class JSInternalPromiseConstructor final : public JSPromiseConstructor {
 public:
     typedef JSPromiseConstructor Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

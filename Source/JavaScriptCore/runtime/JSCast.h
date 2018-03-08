@@ -47,6 +47,7 @@ inline To jsCast(JSValue from)
 
 // Specific type overloads.
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
+    macro(JSFixedArray, JSType::JSFixedArrayType, JSType::JSFixedArrayType) \
     macro(JSObject, FirstObjectType, LastObjectType) \
     macro(JSFinalObject, JSType::FinalObjectType, JSType::FinalObjectType) \
     macro(JSFunction, JSType::JSFunctionType, JSType::JSFunctionType) \
@@ -60,6 +61,7 @@ inline To jsCast(JSValue from)
     macro(NumberObject, JSType::NumberObjectType, JSType::NumberObjectType) \
     macro(ProxyObject, JSType::ProxyObjectType, JSType::ProxyObjectType) \
     macro(RegExpObject, JSType::RegExpObjectType, JSType::RegExpObjectType) \
+    macro(WebAssemblyToJSCallee, JSType::WebAssemblyToJSCalleeType, JSType::WebAssemblyToJSCalleeType) \
     macro(DirectArguments, JSType::DirectArgumentsType, JSType::DirectArgumentsType) \
     macro(ScopedArguments, JSType::ScopedArgumentsType, JSType::ScopedArgumentsType) \
     macro(ClonedArguments, JSType::ClonedArgumentsType, JSType::ClonedArgumentsType) \
@@ -79,20 +81,39 @@ FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(FORWARD_DECLARE_OVERLOAD_CLASS)
 
 namespace JSCastingHelpers {
 
-template<typename Target, typename From>
-inline bool inheritsGenericImpl(VM& vm, From* from)
-{
-    static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
-    static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
-    // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
-    return from->JSCell::inherits(vm, Target::info());
-}
+template<bool isFinal>
+struct FinalTypeDispatcher {
+    template<typename Target, typename From>
+    static inline bool inheritsGeneric(VM& vm, From* from)
+    {
+        static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
+        static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
+        // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
+        return from->JSCell::inherits(vm, Target::info());
+    }
+};
+
+template<>
+struct FinalTypeDispatcher</* isFinal */ true> {
+    template<typename Target, typename From>
+    static inline bool inheritsGeneric(VM& vm, From* from)
+    {
+        static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
+        static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
+        static_assert(std::is_final<Target>::value, "Target is a final type");
+        bool canCast = from->JSCell::classInfo(vm) == Target::info();
+        // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
+        ASSERT_UNUSED(vm, canCast == from->JSCell::inherits(vm, Target::info()));
+        return canCast;
+    }
+};
 
 template<typename Target, typename From>
 inline bool inheritsJSTypeImpl(VM& vm, From* from, JSType firstType, JSType lastType)
 {
     static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
     bool canCast = firstType <= from->type() && from->type() <= lastType;
+    // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
     ASSERT_UNUSED(vm, canCast == from->JSCell::inherits(vm, Target::info()));
     return canCast;
 }
@@ -102,7 +123,7 @@ inline bool inheritsJSTypeImpl(VM& vm, From* from, JSType firstType, JSType last
 template<typename Target>
 struct InheritsTraits {
     template<typename From>
-    static inline bool inherits(VM& vm, From* from) { return inheritsGenericImpl<Target>(vm, from); }
+    static inline bool inherits(VM& vm, From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(vm, from); }
 };
 
 #define DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD(className, firstJSType, lastJSType) \

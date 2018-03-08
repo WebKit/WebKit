@@ -33,7 +33,7 @@ namespace JSC {
 class JSArrayBufferPrototype;
 class GetterSetter;
 
-class JSArrayBufferConstructor : public InternalFunction {
+class JSArrayBufferConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

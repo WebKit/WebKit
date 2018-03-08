@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class AsyncIteratorPrototype : public JSNonFinalObject {
+class AsyncIteratorPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static const unsigned StructureFlags = Base::StructureFlags;

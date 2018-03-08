@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-class JSBigInt : public JSCell {
+class JSBigInt final : public JSCell {
     using Base = JSCell;
 
 public:

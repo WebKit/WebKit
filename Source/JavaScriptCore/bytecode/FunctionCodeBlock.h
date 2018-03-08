@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-class FunctionCodeBlock : public CodeBlock {
+class FunctionCodeBlock final : public CodeBlock {
 public:
     typedef CodeBlock Base;
     DECLARE_INFO;

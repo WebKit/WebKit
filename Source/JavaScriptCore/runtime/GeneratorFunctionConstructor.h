@@ -37,7 +37,7 @@ class GeneratorFunctionPrototype;
 
 // %GeneratorFunction% intrinsic.
 // https://tc39.github.io/ecma262/#sec-generatorfunction-constructor
-class GeneratorFunctionConstructor : public InternalFunction {
+class GeneratorFunctionConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

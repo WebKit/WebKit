@@ -58,14 +58,4 @@ private:
     Ref<TemplateObjectDescriptor> m_descriptor;
 };
 
-inline bool isTemplateObjectDescriptor(VM& vm, JSCell* cell)
-{
-    return cell->classInfo(vm) == JSTemplateObjectDescriptor::info();
-}
-
-inline bool isTemplateObjectDescriptor(VM& vm, JSValue v)
-{
-    return v.isCell() && isTemplateObjectDescriptor(vm, v.asCell());
-}
-
 } // namespace JSC

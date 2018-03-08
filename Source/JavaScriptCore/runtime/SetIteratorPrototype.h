@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class SetIteratorPrototype : public JSNonFinalObject {
+class SetIteratorPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

@@ -39,7 +39,7 @@ class IntlDateTimeFormatPrototype;
 class IntlNumberFormatConstructor;
 class IntlNumberFormatPrototype;
 
-class IntlObject : public JSNonFinalObject {
+class IntlObject final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;

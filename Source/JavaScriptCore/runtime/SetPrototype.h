@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class SetPrototype : public JSNonFinalObject {
+class SetPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

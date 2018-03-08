@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class BigIntPrototype : public JSNonFinalObject {
+class BigIntPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

@@ -31,7 +31,7 @@ namespace Inspector {
 
 class InjectedScriptHost;
 
-class JSInjectedScriptHost : public JSC::JSDestructibleObject {
+class JSInjectedScriptHost final : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags;

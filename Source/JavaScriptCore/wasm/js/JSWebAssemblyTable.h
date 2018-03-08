@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-class JSWebAssemblyTable : public JSDestructibleObject {
+class JSWebAssemblyTable final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

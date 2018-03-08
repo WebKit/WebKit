@@ -31,7 +31,7 @@ namespace JSC {
 
 // %Generator% intrinsic.
 // https://tc39.github.io/ecma262/#sec-generatorfunction.prototype
-class GeneratorFunctionPrototype : public JSNonFinalObject {
+class GeneratorFunctionPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

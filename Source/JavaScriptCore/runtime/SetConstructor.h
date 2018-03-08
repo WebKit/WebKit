@@ -32,7 +32,7 @@ namespace JSC {
 class SetPrototype;
 class GetterSetter;
 
-class SetConstructor : public InternalFunction {
+class SetConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

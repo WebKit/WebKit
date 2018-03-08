@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSDataViewPrototype : public JSNonFinalObject {
+class JSDataViewPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

@@ -30,7 +30,7 @@ namespace JSC {
 class RegExpPrototype;
 class GetterSetter;
 
-class RegExpConstructor : public InternalFunction {
+class RegExpConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -80,15 +80,7 @@ private:
     Vector<int> m_ovector;
 };
 
-RegExpConstructor* asRegExpConstructor(JSValue);
-
 JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = jsUndefined());
-
-inline RegExpConstructor* asRegExpConstructor(JSValue value)
-{
-    ASSERT(asObject(value)->inherits<RegExpConstructor>(*value.getObject()->vm()));
-    return static_cast<RegExpConstructor*>(asObject(value));
-}
 
 /* 
    To facilitate result caching, exec(), test(), match(), search(), and replace() dipatch regular

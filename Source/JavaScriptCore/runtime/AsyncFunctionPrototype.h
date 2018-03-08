@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class AsyncFunctionPrototype : public JSNonFinalObject {
+class AsyncFunctionPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

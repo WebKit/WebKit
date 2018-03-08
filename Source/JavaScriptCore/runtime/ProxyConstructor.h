@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class ProxyConstructor : public InternalFunction {
+class ProxyConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags;

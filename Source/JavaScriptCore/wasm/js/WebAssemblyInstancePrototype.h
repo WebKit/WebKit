@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-class WebAssemblyInstancePrototype : public JSNonFinalObject {
+class WebAssemblyInstancePrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

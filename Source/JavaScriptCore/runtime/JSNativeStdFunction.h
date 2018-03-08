@@ -34,7 +34,7 @@ class NativeStdFunctionCell;
 
 typedef std::function<EncodedJSValue (ExecState*)> NativeStdFunction;
 
-class JSNativeStdFunction : public JSFunction {
+class JSNativeStdFunction final : public JSFunction {
 public:
     typedef JSFunction Base;
 

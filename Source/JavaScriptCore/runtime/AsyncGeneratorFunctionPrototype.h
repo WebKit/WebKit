@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-class AsyncGeneratorFunctionPrototype : public JSNonFinalObject {
+class AsyncGeneratorFunctionPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

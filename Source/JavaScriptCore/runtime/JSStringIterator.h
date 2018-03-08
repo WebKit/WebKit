@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSStringIterator : public JSNonFinalObject {
+class JSStringIterator final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

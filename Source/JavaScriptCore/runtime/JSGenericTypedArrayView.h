@@ -91,7 +91,7 @@ enum class CopyType {
 static const char* const typedArrayBufferHasBeenDetachedErrorMessage = "Underlying ArrayBuffer has been detached from the view";
 
 template<typename Adaptor>
-class JSGenericTypedArrayView : public JSArrayBufferView {
+class JSGenericTypedArrayView final : public JSArrayBufferView {
 public:
     typedef JSArrayBufferView Base;
     typedef typename Adaptor::Type ElementType;

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class IntlDateTimeFormatPrototype : public JSNonFinalObject {
+class IntlDateTimeFormatPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

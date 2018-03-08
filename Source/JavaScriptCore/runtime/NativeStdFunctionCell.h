@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class NativeStdFunctionCell : public JSCell {
+class NativeStdFunctionCell final : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;

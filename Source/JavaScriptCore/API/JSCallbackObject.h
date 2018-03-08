@@ -124,7 +124,7 @@ public:
 
     
 template <class Parent>
-class JSCallbackObject : public Parent {
+class JSCallbackObject final : public Parent {
 protected:
     JSCallbackObject(ExecState*, Structure*, JSClassRef, void* data);
     JSCallbackObject(VM&, JSClassRef, Structure*);

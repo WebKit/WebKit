@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class JSAsyncFunction : public JSFunction {
+class JSAsyncFunction final : public JSFunction {
     friend class JIT;
     friend class VM;
 public:

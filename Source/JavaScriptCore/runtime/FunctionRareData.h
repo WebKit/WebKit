@@ -39,7 +39,7 @@ class SpeculativeJIT;
 class JITCompiler;
 }
 
-class FunctionRareData : public JSCell {
+class FunctionRareData final : public JSCell {
     friend class JIT;
     friend class DFG::SpeculativeJIT;
     friend class DFG::JITCompiler;

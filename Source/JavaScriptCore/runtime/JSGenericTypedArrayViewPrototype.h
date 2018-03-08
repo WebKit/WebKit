@@ -30,7 +30,7 @@
 namespace JSC {
 
 template<typename ViewClass>
-class JSGenericTypedArrayViewPrototype : public JSNonFinalObject {
+class JSGenericTypedArrayViewPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

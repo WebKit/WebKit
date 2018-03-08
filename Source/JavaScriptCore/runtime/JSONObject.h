@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSONObject : public JSNonFinalObject {
+class JSONObject final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

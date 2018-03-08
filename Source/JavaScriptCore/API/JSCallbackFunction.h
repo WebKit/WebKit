@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-class JSCallbackFunction : public InternalFunction {
+class JSCallbackFunction final : public InternalFunction {
     friend struct APICallbackFunction;
 public:
     typedef InternalFunction Base;

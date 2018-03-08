@@ -27,7 +27,7 @@ namespace JSC {
 class BooleanPrototype;
 class GetterSetter;
 
-class BooleanConstructor : public InternalFunction {
+class BooleanConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

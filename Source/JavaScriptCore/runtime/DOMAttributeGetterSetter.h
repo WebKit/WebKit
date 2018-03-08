@@ -65,9 +65,4 @@ private:
     DOMAttributeAnnotation m_domAttribute;
 };
 
-inline bool isDOMAttributeGetterSetter(VM& vm, JSCell* cell)
-{
-    return cell->classInfo(vm) == DOMAttributeGetterSetter::info();
-}
-
 } // namespace JSC

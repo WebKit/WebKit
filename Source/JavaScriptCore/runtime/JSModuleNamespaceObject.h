@@ -105,11 +105,4 @@ private:
     WriteBarrier<AbstractModuleRecord> m_moduleRecord;
 };
 
-inline bool isJSModuleNamespaceObject(JSCell* cell)
-{
-    return cell->classInfo(*cell->vm()) == JSModuleNamespaceObject::info();
-}
-
-inline bool isJSModuleNamespaceObject(JSValue v) { return v.isCell() && isJSModuleNamespaceObject(v.asCell()); }
-
 } // namespace JSC

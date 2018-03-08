@@ -35,7 +35,7 @@ namespace JSC {
 class IntlNumberFormatConstructor;
 class JSBoundFunction;
 
-class IntlNumberFormat : public JSDestructibleObject {
+class IntlNumberFormat final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 

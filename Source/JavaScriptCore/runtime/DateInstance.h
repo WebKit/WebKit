@@ -25,7 +25,7 @@
 
 namespace JSC {
 
-class DateInstance : public JSWrapperObject {
+class DateInstance final : public JSWrapperObject {
 protected:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
     void finishCreation(VM&);

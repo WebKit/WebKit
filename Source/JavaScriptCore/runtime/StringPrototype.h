@@ -29,7 +29,7 @@ class ObjectPrototype;
 class RegExp;
 class RegExpObject;
 
-class StringPrototype : public StringObject {
+class StringPrototype final : public StringObject {
 private:
     StringPrototype(VM&, Structure*);
 

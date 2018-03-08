@@ -27,7 +27,7 @@ namespace JSC {
 class ErrorPrototype;
 class GetterSetter;
 
-class ErrorConstructor : public InternalFunction {
+class ErrorConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

@@ -150,37 +150,37 @@ JSValue RegExpConstructor::getRightContext(ExecState* exec)
 template<int N>
 EncodedJSValue regExpConstructorDollar(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->getBackref(exec, N));
+    return JSValue::encode(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->getBackref(exec, N));
 }
 
 EncodedJSValue regExpConstructorInput(ExecState*, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->input());
+    return JSValue::encode(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->input());
 }
 
 EncodedJSValue regExpConstructorMultiline(ExecState*, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(jsBoolean(asRegExpConstructor(JSValue::decode(thisValue))->multiline()));
+    return JSValue::encode(jsBoolean(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->multiline()));
 }
 
 EncodedJSValue regExpConstructorLastMatch(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->getBackref(exec, 0));
+    return JSValue::encode(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->getBackref(exec, 0));
 }
 
 EncodedJSValue regExpConstructorLastParen(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->getLastParen(exec));
+    return JSValue::encode(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->getLastParen(exec));
 }
 
 EncodedJSValue regExpConstructorLeftContext(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->getLeftContext(exec));
+    return JSValue::encode(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->getLeftContext(exec));
 }
 
 EncodedJSValue regExpConstructorRightContext(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    return JSValue::encode(asRegExpConstructor(JSValue::decode(thisValue))->getRightContext(exec));
+    return JSValue::encode(jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->getRightContext(exec));
 }
 
 bool setRegExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)

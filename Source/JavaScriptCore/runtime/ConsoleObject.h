@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class ConsoleObject : public JSNonFinalObject {
+class ConsoleObject final : public JSNonFinalObject {
 private:
     ConsoleObject(VM&, Structure*);
 

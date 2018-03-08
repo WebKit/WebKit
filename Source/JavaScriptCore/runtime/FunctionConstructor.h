@@ -30,7 +30,7 @@ namespace JSC {
 
 class FunctionPrototype;
 
-class FunctionConstructor : public InternalFunction {
+class FunctionConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

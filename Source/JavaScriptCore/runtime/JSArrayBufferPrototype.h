@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSArrayBufferPrototype : public JSNonFinalObject {
+class JSArrayBufferPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

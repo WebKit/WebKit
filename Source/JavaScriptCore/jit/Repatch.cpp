@@ -179,18 +179,19 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         // FIXME: Cache property access for immediates.
         if (!baseValue.isCell())
             return GiveUpOnCache;
+        JSCell* baseCell = baseValue.asCell();
 
         CodeBlock* codeBlock = exec->codeBlock();
 
         std::unique_ptr<AccessCase> newCase;
 
         if (propertyName == vm.propertyNames->length) {
-            if (isJSArray(baseValue)) {
+            if (isJSArray(baseCell)) {
                 if (stubInfo.cacheType == CacheType::Unset
-                    && slot.slotBase() == baseValue
-                    && InlineAccess::isCacheableArrayLength(stubInfo, jsCast<JSArray*>(baseValue))) {
+                    && slot.slotBase() == baseCell
+                    && InlineAccess::isCacheableArrayLength(stubInfo, jsCast<JSArray*>(baseCell))) {
 
-                    bool generatedCodeInline = InlineAccess::generateArrayLength(stubInfo, jsCast<JSArray*>(baseValue));
+                    bool generatedCodeInline = InlineAccess::generateArrayLength(stubInfo, jsCast<JSArray*>(baseCell));
                     if (generatedCodeInline) {
                         ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
                         stubInfo.initArrayLength();
@@ -199,23 +200,23 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 }
 
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::ArrayLength);
-            } else if (isJSString(baseValue))
+            } else if (isJSString(baseCell))
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::StringLength);
-            else if (DirectArguments* arguments = jsDynamicCast<DirectArguments*>(vm, baseValue)) {
+            else if (DirectArguments* arguments = jsDynamicCast<DirectArguments*>(vm, baseCell)) {
                 // If there were overrides, then we can handle this as a normal property load! Guarding
                 // this with such a check enables us to add an IC case for that load if needed.
                 if (!arguments->overrodeThings())
                     newCase = AccessCase::create(vm, codeBlock, AccessCase::DirectArgumentsLength);
-            } else if (ScopedArguments* arguments = jsDynamicCast<ScopedArguments*>(vm, baseValue)) {
+            } else if (ScopedArguments* arguments = jsDynamicCast<ScopedArguments*>(vm, baseCell)) {
                 // Ditto.
                 if (!arguments->overrodeThings())
                     newCase = AccessCase::create(vm, codeBlock, AccessCase::ScopedArgumentsLength);
             }
         }
 
-        if (!propertyName.isSymbol() && isJSModuleNamespaceObject(baseValue) && !slot.isUnset()) {
+        if (!propertyName.isSymbol() && baseCell->inherits<JSModuleNamespaceObject>(vm) && !slot.isUnset()) {
             if (auto moduleNamespaceSlot = slot.moduleNamespaceSlot())
-                newCase = ModuleNamespaceAccessCase::create(vm, codeBlock, jsCast<JSModuleNamespaceObject*>(baseValue), moduleNamespaceSlot->environment, ScopeOffset(moduleNamespaceSlot->scopeOffset));
+                newCase = ModuleNamespaceAccessCase::create(vm, codeBlock, jsCast<JSModuleNamespaceObject*>(baseCell), moduleNamespaceSlot->environment, ScopeOffset(moduleNamespaceSlot->scopeOffset));
         }
         
         if (!newCase) {
@@ -223,7 +224,6 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 return GiveUpOnCache;
 
             ObjectPropertyConditionSet conditionSet;
-            JSCell* baseCell = baseValue.asCell();
             Structure* structure = baseCell->structure(vm);
 
             bool loadTargetFromProxy = false;

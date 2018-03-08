@@ -51,7 +51,7 @@ EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFun
         return JSValue::encode(jsUndefined());
     }
 
-    if (isDOMAttributeGetterSetter(vm, customGetterSetter)) {
+    if (customGetterSetter->inherits<DOMAttributeGetterSetter>(vm)) {
         auto domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter)->domAttribute();
         if (!thisValue.inherits(vm, domAttribute.classInfo))
             return throwVMDOMAttributeGetterTypeError(exec, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());

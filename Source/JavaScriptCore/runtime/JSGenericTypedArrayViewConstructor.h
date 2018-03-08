@@ -30,7 +30,7 @@
 namespace JSC {
 
 template<typename ViewClass>
-class JSGenericTypedArrayViewConstructor : public InternalFunction {
+class JSGenericTypedArrayViewConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 

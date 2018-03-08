@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class BigIntObject : public JSWrapperObject {
+class BigIntObject final : public JSWrapperObject {
 public:
     using Base = JSWrapperObject;
 

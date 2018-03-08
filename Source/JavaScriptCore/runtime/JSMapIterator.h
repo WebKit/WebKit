@@ -32,7 +32,7 @@
 namespace JSC {
 
 // Now, it is only used for serialization.
-class JSMapIterator : public JSCell {
+class JSMapIterator final : public JSCell {
     typedef HashMapBucket<HashMapBucketDataKeyValue> HashMapBucketType;
 public:
     using Base = JSCell;

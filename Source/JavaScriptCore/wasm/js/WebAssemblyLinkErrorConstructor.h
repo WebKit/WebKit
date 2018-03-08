@@ -34,7 +34,7 @@ namespace JSC {
 
 class WebAssemblyLinkErrorPrototype;
 
-class WebAssemblyLinkErrorConstructor : public InternalFunction {
+class WebAssemblyLinkErrorConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;

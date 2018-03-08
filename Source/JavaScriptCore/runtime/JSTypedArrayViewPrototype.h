@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSTypedArrayViewPrototype : public JSNonFinalObject {
+class JSTypedArrayViewPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
