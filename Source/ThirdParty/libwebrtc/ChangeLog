@@ -4,6 +4,117 @@
         https://bugs.webkit.org/show_bug.cgi?id=180843
 
         Unreviewed.
+        Removed empty unused files.
+
+        * Source/webrtc/audio/test/low_bandwidth_audio_test.h: Removed.
+        * Source/webrtc/config.h: Removed.
+        * Source/webrtc/logging/rtc_event_log/rtc_event_log_helper_thread.h: Removed.
+        * Source/webrtc/media/engine/webrtccommon.h: Removed.
+        * Source/webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory_internal.h: Removed.
+        * Source/webrtc/modules/audio_coding/codecs/builtin_audio_encoder_factory_internal.h: Removed.
+        * Source/webrtc/modules/audio_coding/neteq/audio_decoder_impl.h: Removed.
+        * Source/webrtc/modules/audio_coding/neteq/test/NETEQTEST_DummyRTPpacket.h: Removed.
+        * Source/webrtc/modules/audio_coding/neteq/test/NETEQTEST_RTPpacket.h: Removed.
+        * Source/webrtc/modules/audio_coding/neteq/test/PayloadTypes.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/include/audio_conference_mixer.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/include/audio_conference_mixer_defines.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/source/audio_conference_mixer_impl.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/source/audio_frame_manipulator.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/source/memory_pool.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/source/memory_pool_posix.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/source/memory_pool_win.h: Removed.
+        * Source/webrtc/modules/audio_conference_mixer/source/time_scheduler.h: Removed.
+        * Source/webrtc/modules/audio_device/test/audio_device_test_defines.h: Removed.
+        * Source/webrtc/modules/audio_processing/aec3/decimator_by_4.h: Removed.
+        * Source/webrtc/modules/audio_processing/agc2/digital_gain_applier.h: Removed.
+        * Source/webrtc/modules/congestion_controller/acknowledge_bitrate_estimator.h: Removed.
+        * Source/webrtc/modules/congestion_controller/include/congestion_controller.h: Removed.
+        * Source/webrtc/modules/desktop_capture/resolution_change_detector.h: Removed.
+        * Source/webrtc/modules/remote_bitrate_estimator/include/mock/mock_remote_bitrate_observer.h: Removed.
+        * Source/webrtc/modules/video_coding/codecs/test/predictive_packet_manipulator.h: Removed.
+        * Source/webrtc/modules/video_coding/sequence_number_util.h: Removed.
+        * Source/webrtc/p2p/base/candidate.h: Removed.
+        * Source/webrtc/p2p/base/dtlstransportchannel.h: Removed.
+        * Source/webrtc/p2p/base/faketransportcontroller.h: Removed.
+        * Source/webrtc/p2p/base/transportcontroller.h: Removed.
+        * Source/webrtc/p2p/quic/quicconnectionhelper.h: Removed.
+        * Source/webrtc/p2p/quic/quicsession.h: Removed.
+        * Source/webrtc/p2p/quic/quictransport.h: Removed.
+        * Source/webrtc/p2p/quic/quictransportchannel.h: Removed.
+        * Source/webrtc/p2p/quic/reliablequicstream.h: Removed.
+        * Source/webrtc/pc/quicdatachannel.h: Removed.
+        * Source/webrtc/pc/quicdatatransport.h: Removed.
+        * Source/webrtc/pc/test/mock_webrtcsession.h: Removed.
+        * Source/webrtc/pc/webrtcsession.h: Removed.
+        * Source/webrtc/sdk/android/src/jni/audio_jni.h: Removed.
+        * Source/webrtc/sdk/android/src/jni/media_jni.h: Removed.
+        * Source/webrtc/sdk/android/src/jni/native_handle_impl.h: Removed.
+        * Source/webrtc/sdk/android/src/jni/ownedfactoryandthreads.h: Removed.
+        * Source/webrtc/sdk/android/src/jni/rtcstatscollectorcallbackwrapper.h: Removed.
+        * Source/webrtc/sdk/android/src/jni/video_jni.h: Removed.
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCFileVideoCapturer.h: Removed.
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/decoder.h: Removed.
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.h: Removed.
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h: Removed.
+        * Source/webrtc/system_wrappers/include/fix_interlocked_exchange_pointer_win.h: Removed.
+        * Source/webrtc/system_wrappers/include/logcat_trace_context.h: Removed.
+        * Source/webrtc/system_wrappers/include/static_instance.h: Removed.
+        * Source/webrtc/system_wrappers/include/trace.h: Removed.
+        * Source/webrtc/system_wrappers/source/trace_impl.h: Removed.
+        * Source/webrtc/system_wrappers/source/trace_posix.h: Removed.
+        * Source/webrtc/system_wrappers/source/trace_win.h: Removed.
+        * Source/webrtc/test/testsupport/isolated_output.h: Removed.
+        * Source/webrtc/test/testsupport/mock/mock_frame_writer.h: Removed.
+        * Source/webrtc/test/testsupport/trace_to_stderr.h: Removed.
+        * Source/webrtc/tools/converter/converter.h: Removed.
+        * Source/webrtc/tools/event_log_visualizer/analyzer.h: Removed.
+        * Source/webrtc/tools/event_log_visualizer/plot_base.h: Removed.
+        * Source/webrtc/tools/event_log_visualizer/plot_protobuf.h: Removed.
+        * Source/webrtc/tools/event_log_visualizer/plot_python.h: Removed.
+        * Source/webrtc/tools/frame_analyzer/reference_less_video_analysis_lib.h: Removed.
+        * Source/webrtc/tools/frame_analyzer/video_quality_analysis.h: Removed.
+        * Source/webrtc/tools/frame_editing/frame_editing_lib.h: Removed.
+        * Source/webrtc/tools/network_tester/config_reader.h: Removed.
+        * Source/webrtc/tools/network_tester/packet_logger.h: Removed.
+        * Source/webrtc/tools/network_tester/packet_sender.h: Removed.
+        * Source/webrtc/tools/network_tester/test_controller.h: Removed.
+        * Source/webrtc/tools/simple_command_line_parser.h: Removed.
+        * Source/webrtc/video/vie_encoder.h: Removed.
+        * Source/webrtc/video_receive_stream.h: Removed.
+        * Source/webrtc/video_send_stream.h: Removed.
+        * Source/webrtc/voice_engine/coder.h: Removed.
+        * Source/webrtc/voice_engine/file_player.h: Removed.
+        * Source/webrtc/voice_engine/file_recorder.h: Removed.
+        * Source/webrtc/voice_engine/include/voe_codec.h: Removed.
+        * Source/webrtc/voice_engine/include/voe_file.h: Removed.
+        * Source/webrtc/voice_engine/include/voe_network.h: Removed.
+        * Source/webrtc/voice_engine/include/voe_rtp_rtcp.h: Removed.
+        * Source/webrtc/voice_engine/mock/mock_voe_observer.h: Removed.
+        * Source/webrtc/voice_engine/monitor_module.h: Removed.
+        * Source/webrtc/voice_engine/output_mixer.h: Removed.
+        * Source/webrtc/voice_engine/statistics.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/automated_mode.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/fakes/conference_transport.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/fakes/loudest_filter.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/fixtures/after_initialization_fixture.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/fixtures/after_streaming_fixture.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/fixtures/before_initialization_fixture.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/fixtures/before_streaming_fixture.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/voe_standard_test.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/voe_test_common.h: Removed.
+        * Source/webrtc/voice_engine/test/auto_test/voe_test_defines.h: Removed.
+        * Source/webrtc/voice_engine/voe_codec_impl.h: Removed.
+        * Source/webrtc/voice_engine/voe_file_impl.h: Removed.
+        * Source/webrtc/voice_engine/voe_network_impl.h: Removed.
+        * Source/webrtc/voice_engine/voe_rtp_rtcp_impl.h: Removed.
+        * Source/webrtc/voice_engine/voice_engine_fixture.h: Removed.
+
+2018-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Update to libwebrtc revision 4e70a72571dd26b85c2385e9c618e343428df5d3
+        https://bugs.webkit.org/show_bug.cgi?id=180843
+
+        Unreviewed.
         Removed folder as it is now unused.
 
         * Source/webrtc/base: Removed.
