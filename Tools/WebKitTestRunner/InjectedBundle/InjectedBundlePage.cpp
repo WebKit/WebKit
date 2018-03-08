@@ -995,7 +995,9 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     injectedBundle.gcController()->makeWindowObject(context, window, &exception);
     injectedBundle.eventSendingController()->makeWindowObject(context, window, &exception);
     injectedBundle.textInputController()->makeWindowObject(context, window, &exception);
+#if HAVE(ACCESSIBILITY)
     injectedBundle.accessibilityController()->makeWindowObject(context, window, &exception);
+#endif
 
     WebCoreTestSupport::injectInternalsObject(context);
 }

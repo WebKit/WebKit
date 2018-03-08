@@ -1,3 +1,15 @@
+2018-03-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        WebKitTestRunner: Don't use accessibility controller when !HAVE(ACCESSIBILITY)
+        https://bugs.webkit.org/show_bug.cgi?id=183475
+
+        Reviewed by Youenn Fablet.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+
 2018-03-08  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Update expectations for API tests
