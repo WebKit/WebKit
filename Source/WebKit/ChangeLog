@@ -1,3 +1,31 @@
+2018-03-08  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make debug mode always partition prevalent resources
+        https://bugs.webkit.org/show_bug.cgi?id=183468
+        <rdar://problem/38269437>
+
+        Reviewed by Brent Fulgham.
+
+        After some testing we decided that a 30 second timeout in ITP debug mode just makes
+        it confusing. We should instead always partition prevalent resources in debug mode
+        to make it easy to understand. The partitioned state is what developers want to test
+        anyway.
+
+        * UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm:
+        (WebKit::WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded):
+            Minor change to include 0 as valid setting.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+            Now just stores the setting of debug mode instead of changing the timeout.
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+            Now does not disable partitioning under debug mode.
+        (WebKit::WebResourceLoadStatisticsStore::shouldPartitionCookies const):
+            Now returns true for prevalent resources with user interaction under debug mode.            
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning):
+            Removed duplicate debug logging statement.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+            Added member m_debugModeEnabled.
+
 2018-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         Remove WebCookieManager and messaging from WebContent process.

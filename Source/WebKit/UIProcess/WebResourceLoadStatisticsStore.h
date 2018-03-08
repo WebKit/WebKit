@@ -224,6 +224,7 @@ private:
 #endif
     bool m_dataRecordsBeingRemoved { false };
 
+    bool m_debugModeEnabled { false };
     bool m_debugLoggingEnabled { false };
 
     Function<void (const String&)> m_statisticsTestingCallback;

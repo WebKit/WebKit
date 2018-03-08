@@ -443,10 +443,10 @@ void WebResourceLoadStatisticsStore::submitTelemetry()
 
 void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool enable)
 {
-    if (enable)
-        setTimeToLiveCookiePartitionFree(30_s);
-    else
-        resetParametersToDefaultValues();
+    m_debugModeEnabled = enable;
+#if !RELEASE_LOG_DISABLED
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "ITP Debug Mode %{public}s.", (m_debugModeEnabled ? "enabled" : "disabled"));
+#endif
 }
 
 void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
@@ -459,8 +459,12 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
         statistics.hadUserInteraction = true;
         statistics.mostRecentUserInteractionTime = WallTime::now();
 
-        if (statistics.isMarkedForCookiePartitioning || statistics.isMarkedForCookieBlocking)
-            updateCookiePartitioningForDomains({ }, { }, { primaryDomain }, ShouldClearFirst::No, []() { });
+        if (m_debugModeEnabled) {
+            if (statistics.isMarkedForCookieBlocking)
+                updateCookiePartitioningForDomains({ primaryDomain }, { }, { }, ShouldClearFirst::No, []() { });
+        } else
+            if (statistics.isMarkedForCookiePartitioning || statistics.isMarkedForCookieBlocking)
+                updateCookiePartitioningForDomains({ }, { }, { primaryDomain }, ShouldClearFirst::No, []() { });
     });
 }
 
@@ -955,6 +959,9 @@ void WebResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatisti
 
 bool WebResourceLoadStatisticsStore::shouldPartitionCookies(const ResourceLoadStatistics& statistic) const
 {
+    if (m_debugModeEnabled)
+        return statistic.isPrevalentResource && statistic.hadUserInteraction;
+
     return statistic.isPrevalentResource && statistic.hadUserInteraction && WallTime::now() > statistic.mostRecentUserInteractionTime + m_parameters.timeToLiveCookiePartitionFree;
 }
 
@@ -1003,7 +1010,6 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioning(CompletionHandler<
                 isFirstDomain = false;
             }
             RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to partition cookies in third-party contexts for %{public}s.", domainsToPartitionBuilder.toString().utf8().data());
-            RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to partition cookies in third-party contexts for %s.", domainsToPartitionBuilder.toString().utf8().data());
         }
 
         if (!domainsToBlock.isEmpty()) {
