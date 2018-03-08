@@ -769,8 +769,6 @@ webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-
 
 webkit.org/b/172148 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
 
-webkit.org/b/173946 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Pass Failure ]
-
 webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
 
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
