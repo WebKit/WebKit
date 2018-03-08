@@ -337,6 +337,7 @@ Color RenderThemeMac::platformFocusRingColor() const
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
 {
+    LocalDefaultSystemAppearance localAppearance;
     return platformInactiveSelectionBackgroundColor();
 }
 
