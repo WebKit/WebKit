@@ -1,3 +1,27 @@
+2018-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of custom bindings for History's replaceState() / pushState()
+        https://bugs.webkit.org/show_bug.cgi?id=183372
+
+        Reviewed by Youenn Fablet.
+
+        Get rid of custom bindings for History's replaceState() / pushState() by
+        moving the cached state from the wrapper to the History implementation
+        object.
+
+        No new tests, no web-facing behavior change.
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::state const):
+        (WebCore::JSHistory::visitAdditionalChildren):
+        * page/History.cpp:
+        (WebCore::History::cachedState):
+        (WebCore::History::stateObjectAdded):
+        * page/History.h:
+        (WebCore::History::pushState):
+        (WebCore::History::replaceState):
+        * page/History.idl:
+
 2018-03-07  Youenn Fablet  <youenn@apple.com>
 
         Match unsupported plugins based on domains and not origin

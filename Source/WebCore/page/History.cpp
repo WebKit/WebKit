@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,6 +104,13 @@ bool History::stateChanged() const
     return m_lastStateObjectRequested != stateInternal();
 }
 
+JSValueInWrappedObject& History::cachedState()
+{
+    if (m_cachedState && stateChanged())
+        m_cachedState = { };
+    return m_cachedState;
+}
+
 bool History::isSameAsCurrentState(SerializedScriptValue* state) const
 {
     return state == stateInternal();
@@ -163,6 +170,8 @@ URL History::urlForState(const String& urlString)
 
 ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString, StateObjectType stateObjectType)
 {
+    m_cachedState = { };
+
     // Each unique main-frame document is only allowed to send 64MB of state object payload to the UI client/process.
     static uint32_t totalStateObjectPayloadLimit = 0x4000000;
     static Seconds stateObjectTimeSpan { 30_s };

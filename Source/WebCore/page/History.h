@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
+#include "JSValueInWrappedObject.h"
 #include "ScriptWrappable.h"
 #include "SerializedScriptValue.h"
 #include <wtf/WallTime.h>
@@ -52,6 +53,8 @@ public:
     ExceptionOr<void> setScrollRestoration(ScrollRestoration);
 
     SerializedScriptValue* state();
+    JSValueInWrappedObject& cachedState();
+
     void back();
     void forward();
     void go(int);
@@ -60,20 +63,24 @@ public:
     void forward(Document&);
     void go(Document&, int);
 
-    bool stateChanged() const;
     bool isSameAsCurrentState(SerializedScriptValue*) const;
 
-    enum class StateObjectType { Push, Replace };
-    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& title, const String& url, StateObjectType);
+    ExceptionOr<void> pushState(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString);
+    ExceptionOr<void> replaceState(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString);
 
 private:
     explicit History(Frame&);
+
+    enum class StateObjectType { Push, Replace };
+    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& title, const String& url, StateObjectType);
+    bool stateChanged() const;
 
     URL urlForState(const String& url);
 
     SerializedScriptValue* stateInternal() const;
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
+    JSValueInWrappedObject m_cachedState;
 
     unsigned m_currentStateObjectTimeSpanObjectsAdded { 0 };
     WallTime m_currentStateObjectTimeSpanStart;
@@ -84,5 +91,15 @@ private:
     // For each individual History object to keep track of the most recent state object added.
     uint64_t m_mostRecentStateObjectUsage { 0 };
 };
+
+inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString)
+{
+    return stateObjectAdded(WTFMove(data), title, urlString, StateObjectType::Push);
+}
+
+inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString)
+{
+    return stateObjectAdded(WTFMove(data), title, urlString, StateObjectType::Replace);
+}
 
 } // namespace WebCore
