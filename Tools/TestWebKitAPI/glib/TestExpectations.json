@@ -9,6 +9,9 @@
             },
             "/webkit/WebKitWebView/audio-usermedia-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
+            },
+            "/webkit/WebKitWebView/disallow-modal-dialogs": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }
     },
@@ -43,14 +46,32 @@
     "TestWebsiteData": {
         "subtests": {
             "/webkit/WebKitWebsiteData/databases": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/181251"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181251"}}
+            },
+            "/webkit/WebKitWebsiteData/cache": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebsiteData/appcache": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebsiteData/configuration": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebsiteData/storage": {
+                "expected": {"wpe": {"status": ["PASS", "FAIL"]}}
+            },
+            "/webkit/WebKitWebsiteData/resource-load-statistics": {
+                "expected": {"wpe": {"status": ["PASS", "FAIL"]}}
             }
         }
     },
     "TestWebKitWebContext": {
         "subtests": {
             "/webkit/WebKitWebContext/uri-scheme": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/183183"}}
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/183183"}}
+            },
+            "/webkit/WebKitWebView/languages": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }
     },
@@ -58,6 +79,9 @@
         "subtests": {
             "/webkit/WebKitWebView/backend": {
                 "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/179884"}}
+            },
+            "/webkit/WebKitWebView/run-javascript": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }
     },
@@ -67,7 +91,10 @@
     "TestWebKit": {
         "subtests": {
             "WebKit.MouseMoveAfterCrash": {
-                "expected": {"gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/85066"}}
+                "expected": {
+                    "gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/85066"},
+                    "wpe": {"status": ["FAIL"]}
+                }
             },
             "WebKit.NewFirstVisuallyNonEmptyLayoutForImages": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/85066"}}
@@ -86,11 +113,38 @@
             },
             "WebKit.TerminateTwice": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
+            },
+            "WebKit.WKPreferencesDefaults": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "WebKit.GeolocationBasic": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.GeolocationTransitionToLowAccuracy": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.HitTestResultNodeHandle": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.NewFirstVisuallyNonEmptyLayoutFails": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.NewFirstVisuallyNonEmptyLayoutFrames": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.GeolocationTransitionToHighAccuracy": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
+            },
+            "WebKit.GeolocationBasicWithHighAccuracy": {
+                "expected": {"wpe": {"status": ["TIMEOUT"]}}
             }
         }
     },
     "TestWTF": {
         "subtests": {
+            "WTF_DateMath.calculateLocalTimeOffset": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
             "WTF_Lock.ContendedShortSection": {
                 "expected": {"all": {"slow": true}}
             },
@@ -108,6 +162,73 @@
             },
             "WTF_WordLock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true}}
+            }
+        }
+    },
+    "TestLoaderClient": {
+        "subtests": {
+            "/webkit/WebKitWebPage/get-uri": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitURIRequest/http-method": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebView/is-loading": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebView/active-uri": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            }
+        }
+    },
+    "TestSSL": {
+        "subtests": {
+            "/webkit/WebKitWebView/tls-errors-policy": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebView/load-failed-with-tls-errors": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebView/insecure-content": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            }
+        }
+    },
+    "TestResources": {
+        "subtests": {
+            "/webkit/WebKitWebResource/get-data-error": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            }
+        }
+    },
+    "TestAuthentication": {
+        "subtests": {
+            "/webkit/Authentication/authentication-no-credential": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            }
+        }
+    },
+    "TestDownloads": {
+        "subtests": {
+            "/webkit/Downloads/policy-decision-download": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            }
+        }
+    },
+    "TestConsoleMessage": {
+        "subtests": {
+            "/webkit/WebKitConsoleMessage/js-exception": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            }
+        }
+    },
+    "TestWebKitUserContentManager": {
+        "subtests": {
+            "/webkit/WebKitUserContentManager/injected-script": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitUserContentManager/script-message-received": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }
     }

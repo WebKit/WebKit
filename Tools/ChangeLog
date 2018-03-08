@@ -1,3 +1,12 @@
+2018-03-08  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Update expectations for API tests
+        https://bugs.webkit.org/show_bug.cgi?id=183434
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2018-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Leak checker is not working in WebKitGLib web process tests
