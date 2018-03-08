@@ -1,3 +1,16 @@
+2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] Use __debugbreak for WTFBreakpointTrap
+        https://bugs.webkit.org/show_bug.cgi?id=183450
+
+        Reviewed by Mark Lam.
+
+        This patch adds WTFBreakpointTrap() implementation for MSVC by using
+        __debugbreak. It fixes build failure in Windows due to the use of
+        WTFBreakpointTrap().
+
+        * wtf/Assertions.h:
+
 2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] RunLoop::wakeUp(): use a zero value instead of the monotonic time

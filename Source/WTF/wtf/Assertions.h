@@ -206,7 +206,9 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook(void);
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
-#if ASAN_ENABLED
+#if COMPILER(MSVC)
+#define WTFBreakpointTrap()  __debugbreak()
+#elif ASAN_ENABLED
 #define WTFBreakpointTrap()  __builtin_trap()
 #elif CPU(X86_64) || CPU(X86)
 #define WTFBreakpointTrap()  __asm__ volatile ("int3")
