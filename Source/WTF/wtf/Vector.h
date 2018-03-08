@@ -68,40 +68,40 @@ struct VectorInitializer;
 template<bool canInitializeWithMemset, typename T>
 struct VectorInitializer<false, canInitializeWithMemset, T>
 {
-    static void initialize(T*, T*) {}
+    static void initializeIfNonPOD(T*, T*) { }
 
-    static void forceInitialize(T* begin, T* end)
+    static void initialize(T* begin, T* end)
     {
-        VectorInitializer<true, canInitializeWithMemset, T>::forceInitialize(begin, end);
+        VectorInitializer<true, canInitializeWithMemset, T>::initialize(begin, end);
     }
 };
 
 template<typename T>
 struct VectorInitializer<true, false, T>
 {
-    static void initialize(T* begin, T* end) 
+    static void initializeIfNonPOD(T* begin, T* end)
     {
         for (T* cur = begin; cur != end; ++cur)
             new (NotNull, cur) T();
     }
 
-    static void forceInitialize(T* begin, T* end)
+    static void initialize(T* begin, T* end)
     {
-        initialize(begin, end);
+        initializeIfNonPOD(begin, end);
     }
 };
 
 template<typename T>
 struct VectorInitializer<true, true, T>
 {
-    static void initialize(T* begin, T* end) 
+    static void initializeIfNonPOD(T* begin, T* end)
     {
         memset(begin, 0, reinterpret_cast<char*>(end) - reinterpret_cast<char*>(begin));
     }
 
-    static void forceInitialize(T* begin, T* end)
+    static void initialize(T* begin, T* end)
     {
-        initialize(begin, end);
+        initializeIfNonPOD(begin, end);
     }
 };
 
@@ -240,14 +240,14 @@ struct VectorTypeOperations
         VectorDestructor<!std::is_trivially_destructible<T>::value, T>::destruct(begin, end);
     }
 
+    static void initializeIfNonPOD(T* begin, T* end)
+    {
+        VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initializeIfNonPOD(begin, end);
+    }
+
     static void initialize(T* begin, T* end)
     {
         VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initialize(begin, end);
-    }
-
-    static void forceInitialize(T* begin, T* end)
-    {
-        VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::forceInitialize(begin, end);
     }
 
     static void move(T* src, T* srcEnd, T* dst)
@@ -649,7 +649,7 @@ public:
         asanSetInitialBufferSizeTo(size);
 
         if (begin())
-            TypeOperations::initialize(begin(), end());
+            TypeOperations::initializeIfNonPOD(begin(), end());
     }
 
     Vector(size_t size, const T& val)
@@ -1107,7 +1107,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::res
             expandCapacity(size);
         asanBufferSizeWillChangeTo(size);
         if (begin())
-            TypeOperations::initialize(end(), begin() + size);
+            TypeOperations::initializeIfNonPOD(end(), begin() + size);
     }
     
     m_size = size;
@@ -1137,7 +1137,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::grow(size_
         expandCapacity(size);
     asanBufferSizeWillChangeTo(size);
     if (begin())
-        TypeOperations::initialize(end(), begin() + size);
+        TypeOperations::initializeIfNonPOD(end(), begin() + size);
     m_size = size;
 }
 

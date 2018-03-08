@@ -72,7 +72,7 @@ public:
         Header::fromPayload(data)->refCount = 1;
         Header::fromPayload(data)->length = size;
         ASSERT(Header::fromPayload(data)->length == size);
-        VectorTypeOperations<T>::initialize(begin(), end());
+        VectorTypeOperations<T>::initializeIfNonPOD(begin(), end());
     }
 
     template<typename OtherTraits = PtrTraits>

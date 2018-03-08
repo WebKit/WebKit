@@ -1,3 +1,28 @@
+2018-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Set canInitializeWithMemset = true if T is an integral type
+        https://bugs.webkit.org/show_bug.cgi?id=183357
+
+        Reviewed by Darin Adler.
+
+        This patch set `canInitializeWithMemset = true` if T is an integral type.
+        This can offer a chance to use memset if we use UniqueArray<T> where T is
+        an integral type. We also rename VectorTypeOperations::initialize to
+        VectorTypeOperations::initializeIfNonPOD, VectorTypeOperations::forceInitialize
+        to VectorTypeOperations::initialize respectively.
+
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        * wtf/UniqueArray.h:
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::initializeIfNonPOD):
+        (WTF::VectorTypeOperations::initialize):
+        (WTF::Vector::Vector):
+        (WTF::Malloc>::resize):
+        (WTF::Malloc>::grow):
+        (WTF::VectorTypeOperations::forceInitialize): Deleted.
+        * wtf/VectorTraits.h:
+
 2018-03-07  Keith Miller  <keith_miller@apple.com>
 
         Meta-program setupArguments and callOperation
