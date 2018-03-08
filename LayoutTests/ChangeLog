@@ -1,5 +1,20 @@
 2018-03-08  Chris Dumez  <cdumez@apple.com>
 
+        fast/html/marquee-reparent-check.html is flaky with async delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183425
+
+        Reviewed by Youenn Fablet.
+
+        The test was missing the "TEST COMPLETE" line at the end of its output.
+        When enabling async delegates, the "TEST COMPLETE" line would sometimes
+        show. Move the test away from js-test.js and to js-test-pre.js / js-test-post.js
+        so that the "TEST COMPLETE" line gets printed out consistently.
+
+        * fast/html/marquee-reparent-check-expected.txt:
+        * fast/html/marquee-reparent-check.html:
+
+2018-03-08  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip imported/w3c/web-platform-tests/cors/remote-origin.htm
 
         This test is timing out via testharness.js, there is no point in running it and

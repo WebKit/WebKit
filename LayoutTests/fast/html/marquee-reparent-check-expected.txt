@@ -3,5 +3,8 @@ The test passes if it does not ASSERT in debug builds.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
  
 TEST   
