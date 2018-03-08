@@ -1,3 +1,11 @@
+2018-03-08  Antti Koivisto  <antti@apple.com>
+
+        Update StyleBench version number in page title to 0.3
+
+        * StyleBench/index.html:
+
+        There has been a bunch of changes, most notably the addition of attribute selector test step.
+
 2018-02-16  Dean Jackson  <dino@apple.com>
 
         Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa
