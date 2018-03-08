@@ -426,6 +426,7 @@ constexpr bool enableAsyncIteration = false;
     v(bool, airLinearScanSpillsEverything, false, Normal, nullptr) \
     v(bool, airForceBriggsAllocator, false, Normal, nullptr) \
     v(bool, airForceIRCAllocator, false, Normal, nullptr) \
+    v(bool, airRandomizeRegs, false, Normal, nullptr) \
     v(bool, coalesceSpillSlots, true, Normal, nullptr) \
     v(bool, logAirRegisterPressure, false, Normal, nullptr) \
     v(unsigned, maxB3TailDupBlockSize, 3, Normal, nullptr) \

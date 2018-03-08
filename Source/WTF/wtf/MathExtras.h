@@ -526,6 +526,19 @@ inline T* dynamicPoison(U actual, U expected, T* pointer)
 #endif
 }
 
+template<typename VectorType, typename RandomFunc>
+void shuffleVector(VectorType& vector, size_t size, const RandomFunc& randomFunc)
+{
+    for (size_t i = 0; i + 1 < size; ++i)
+        std::swap(vector[i], vector[i + randomFunc(size - i)]);
+}
+
+template<typename VectorType, typename RandomFunc>
+void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
+{
+    shuffleVector(vector, vector.size(), randomFunc);
+}
+
 } // namespace WTF
 
 using WTF::dynamicPoison;
@@ -533,5 +546,6 @@ using WTF::opaque;
 using WTF::preciseIndexMaskPtr;
 using WTF::preciseIndexMaskShift;
 using WTF::preciseIndexMaskShiftForSize;
+using WTF::shuffleVector;
 
 #endif // #ifndef WTF_MathExtras_h

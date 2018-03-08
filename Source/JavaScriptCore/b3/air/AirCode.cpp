@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "B3Procedure.h"
 #include "B3StackSlot.h"
 #include <wtf/ListDump.h>
+#include <wtf/MathExtras.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -58,7 +59,8 @@ Code::Code(Procedure& proc)
     // Come up with initial orderings of registers. The user may replace this with something else.
     forEachBank(
         [&] (Bank bank) {
-            Vector<Reg> result;
+            Vector<Reg> volatileRegs;
+            Vector<Reg> calleeSaveRegs;
             RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
             all.exclude(RegisterSet::stackRegisters());
             all.exclude(RegisterSet::reservedHardwareRegisters());
@@ -66,13 +68,20 @@ Code::Code(Procedure& proc)
             all.forEach(
                 [&] (Reg reg) {
                     if (!calleeSave.get(reg))
-                        result.append(reg);
+                        volatileRegs.append(reg);
                 });
             all.forEach(
                 [&] (Reg reg) {
                     if (calleeSave.get(reg))
-                        result.append(reg);
+                        calleeSaveRegs.append(reg);
                 });
+            if (Options::airRandomizeRegs()) {
+                shuffleVector(volatileRegs, [&] (unsigned limit) { return m_weakRandom.getUint32(limit); });
+                shuffleVector(calleeSaveRegs, [&] (unsigned limit) { return m_weakRandom.getUint32(limit); });
+            }
+            Vector<Reg> result;
+            result.appendVector(volatileRegs);
+            result.appendVector(calleeSaveRegs);
             setRegsInPriorityOrder(bank, result);
         });
 

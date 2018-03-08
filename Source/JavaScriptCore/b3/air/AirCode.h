@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "RegisterAtOffsetList.h"
 #include "StackAlignment.h"
 #include <wtf/IndexMap.h>
+#include <wtf/WeakRandom.h>
 
 namespace JSC { namespace B3 {
 
@@ -333,7 +334,9 @@ public:
     RegisterSet mutableGPRs();
     RegisterSet mutableFPRs();
     RegisterSet pinnedRegisters() const { return m_pinnedRegs; }
-
+    
+    WeakRandom& weakRandom() { return m_weakRandom; }
+    
 private:
     friend class ::JSC::B3::Procedure;
     friend class BlockInsertionSet;
@@ -353,6 +356,7 @@ private:
         ASSERT_NOT_REACHED();
     }
 
+    WeakRandom m_weakRandom;
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
     Vector<Reg> m_gpRegsInPriorityOrder;
     Vector<Reg> m_fpRegsInPriorityOrder;
