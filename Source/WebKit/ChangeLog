@@ -1,3 +1,14 @@
+2018-03-08  Youenn Fablet  <youenn@apple.com>
+
+        PluginInfoStore::isSupportedPlugin should check for empty mime type
+        https://bugs.webkit.org/show_bug.cgi?id=183457
+        <rdar://problem/38159575>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::isSupportedPlugin):
+
 2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][WebCore] Extend jsDynamicCast for WebCore types in WebCore and remove jsDynamicDowncast

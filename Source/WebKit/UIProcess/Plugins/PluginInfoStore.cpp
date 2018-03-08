@@ -207,7 +207,7 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, P
 
 bool PluginInfoStore::isSupportedPlugin(const PluginInfoStore::SupportedPlugin& plugin, const String& mimeType, const URL& pluginURL)
 {
-    if (plugin.mimeTypes.contains(mimeType))
+    if (!mimeType.isEmpty() && plugin.mimeTypes.contains(mimeType))
         return true;
     auto extension = pathExtension(pluginURL);
     return extension.isEmpty() ? false : plugin.extensions.contains(extension);
