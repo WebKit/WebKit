@@ -1,3 +1,12 @@
+2018-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip imported/w3c/web-platform-tests/cors/remote-origin.htm
+
+        This test is timing out via testharness.js, there is no point in running it and
+        it slows down running layout tests.
+
+        * TestExpectations:
+
 2018-03-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move a test from fast/DOM to fast/dom and delete the fast/DOM directory.
