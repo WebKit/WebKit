@@ -1,3 +1,17 @@
+2018-03-08  Frederic Wang  <fwang@igalia.com>
+
+        [iOS] Update PNG expectations for some MathML pixel tests.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Remove ImageOnlyFailure for pixel tests, add reference to
+        bug 183441 for the reftest.
+        * platform/ios/mathml/opentype/opentype-stretchy-expected.png: Update expectation.
+        * platform/ios/mathml/presentation/menclose-notation-values-expected.png: Ditto.
+        * platform/ios/mathml/presentation/mo-stretch-expected.png: Ditto.
+        * platform/ios/mathml/presentation/roots-expected.png: Ditto.
+        * platform/ios/mathml/radical-fallback-expected.png: Ditto.
+
 2018-03-07  Zalan Bujtas  <zalan@apple.com>
 
         Invalid innerTextRenderer in RenderTextControlSingleLine::styleDidChange()

@@ -3065,11 +3065,7 @@ fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Timeout ]
 # <rdar://problem/32542300> REGRESSION (iOS 11): LayoutTest fast/events/ios/contenteditable-autocapitalize.html is failing
 fast/events/ios/contenteditable-autocapitalize.html [ Failure ]
 
-# <rdar://problem/32627945> PROGRESSION? (iOS 11): 4 mathml tests are failing
-mathml/presentation/mo-stretch.html [ ImageOnlyFailure ]
-mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
-mathml/presentation/roots.xhtml [ ImageOnlyFailure ]
-mathml/radical-fallback.html [ Failure ]
+webkit.org/b/183441 mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
 
 # <rdar://problem/32632415> REGRESSION (ImageIO-1666): LayoutTests fast/images are failing together.
 canvas/philip/tests/2d.drawImage.animated.gif.html [ Failure ]
