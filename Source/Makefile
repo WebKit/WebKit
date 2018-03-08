@@ -14,6 +14,10 @@ else
 	WEBINSPECTORUI_MODULE = WebInspectorUI
 endif
 
+ifneq (,$(DISABLE_LIBWEBRTC))
+	LIBWEBRTC_MODULE =
+endif
+
 MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE $(LIBWEBRTC_MODULE) WebCore $(WEBINSPECTORUI_MODULE) WebKitLegacy WebKit
 
 all:

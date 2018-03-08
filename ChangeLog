@@ -1,3 +1,13 @@
+2018-03-08  Tim Horton  <timothy_horton@apple.com>
+
+        Add a way to not build libwebrtc when building WebKit via Makefiles
+        https://bugs.webkit.org/show_bug.cgi?id=183437
+        <rdar://problem/38254840>
+
+        Reviewed by Dan Bernstein.
+
+        * Source/Makefile:
+
 2018-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Split JSC header copying into public and private targets
