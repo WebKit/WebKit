@@ -1,3 +1,10 @@
+2018-03-08  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, one last try at fixing the windows build before rollout.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::clampArrayToSize):
+
 2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize inherits<T> if T is final type

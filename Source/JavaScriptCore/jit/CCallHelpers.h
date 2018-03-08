@@ -253,6 +253,10 @@ private:
     {
         static_assert(TargetSize <= sourceArray.size(), "TargetSize is bigger than source.size()");
         RELEASE_ASSERT(TargetSize <= InfoTypeForReg<RegType>::numberOfRegisters);
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4701)
+#endif
         std::array<RegType, TargetSize> result;
 
         for (unsigned i = 0; i < TargetSize; i++) {
@@ -261,6 +265,9 @@ private:
         }
 
         return result;
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
     }
 
     template<typename ArgType>
