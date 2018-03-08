@@ -1,3 +1,24 @@
+2018-03-07  Keith Miller  <keith_miller@apple.com>
+
+        Meta-program setupArguments and callOperation
+        https://bugs.webkit.org/show_bug.cgi?id=183263
+
+        Rubber-stamped by Filip Pizlo.
+
+        Add a new function traits struct that provides interesting
+        information about the provided function pointer. Right now it only
+        provides information for function pointers, in theory we could
+        also get it to work for other types.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bitmap.h:
+        (WTF::WordType>::Bitmap):
+        * wtf/CMakeLists.txt:
+        * wtf/FunctionTraits.h: Added.
+        (WTF::slotsForCCallArgument):
+        (WTF::computeCCallSlots):
+        (WTF::FunctionTraits<Result):
+
 2018-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Shuffle around some feature flags for minimal simulator mode

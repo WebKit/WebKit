@@ -4313,6 +4313,7 @@ void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, double (*doubleFuncti
 
         FPRResult result(this);
         callOperation(doubleFunction, result.fpr(), op1FPR);
+
         doubleResult(result.fpr(), node);
         return;
     }
@@ -5328,8 +5329,9 @@ void SpeculativeJIT::compileArithMod(Node* node)
         flushRegisters();
         
         FPRResult result(this);
-        
-        callOperation(jsMod, result.fpr(), op1FPR, op2FPR);
+
+        using OperationType = D_JITOperation_DD;
+        callOperation<OperationType>(jsMod, result.fpr(), op1FPR, op2FPR);
         
         doubleResult(result.fpr(), node);
         return;
@@ -5424,15 +5426,16 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             flushRegisters();
             FPRResult roundedResultAsDouble(this);
             FPRReg resultFPR = roundedResultAsDouble.fpr();
+            using OperationType = D_JITOperation_D;
             if (node->op() == ArithRound)
-                callOperation(jsRound, resultFPR, valueFPR);
+                callOperation<OperationType>(jsRound, resultFPR, valueFPR);
             else if (node->op() == ArithFloor)
-                callOperation(floor, resultFPR, valueFPR);
+                callOperation<OperationType>(floor, resultFPR, valueFPR);
             else if (node->op() == ArithCeil)
-                callOperation(ceil, resultFPR, valueFPR);
+                callOperation<OperationType>(ceil, resultFPR, valueFPR);
             else {
                 ASSERT(node->op() == ArithTrunc);
-                callOperation(trunc, resultFPR, valueFPR);
+                callOperation<OperationType>(trunc, resultFPR, valueFPR);
             }
             setResult(resultFPR);
         }
@@ -5477,7 +5480,7 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
         if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::useArchitectureSpecificOptimizations()) {
             flushRegisters();
             FPRResult result(this);
-            callOperation(sqrt, result.fpr(), op1FPR);
+            callOperation<D_JITOperation_D>(sqrt, result.fpr(), op1FPR);
             doubleResult(result.fpr(), node);
         } else {
             FPRTemporary result(this, op1);
@@ -6889,15 +6892,21 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
     if (table->singletonScope()->isStillValid()) {
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
-        
+
+#if USE(JSVALUE32_64)
+        JSValueRegsTemporary initialization(this);
+        JSValueRegs initializationRegs = initialization.regs();
+        m_jit.moveTrustedValue(initializationValue, initializationRegs);
+#endif
+
         flushRegisters();
-        
+
 #if USE(JSVALUE64)
         callOperation(operationCreateActivationDirect,
             resultGPR, structure, scopeGPR, table, TrustedImm64(JSValue::encode(initializationValue)));
 #else
         callOperation(operationCreateActivationDirect,
-            resultGPR, structure, scopeGPR, table, TrustedImm32(initializationValue.tag()), TrustedImm32(initializationValue.payload()));
+            resultGPR, structure, scopeGPR, table, initializationRegs);
 #endif
         m_jit.exceptionCheck();
         cellResult(resultGPR, node);
@@ -6910,7 +6919,13 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
     GPRReg resultGPR = result.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
-        
+
+#if USE(JSVALUE32_64)
+    JSValueRegsTemporary initialization(this);
+    JSValueRegs initializationRegs = initialization.regs();
+    m_jit.moveTrustedValue(initializationValue, initializationRegs);
+#endif
+
     JITCompiler::JumpList slowPath;
     auto butterfly = TrustedImmPtr(nullptr);
     auto mask = TrustedImm32(0);
@@ -6942,7 +6957,7 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
 #else
     addSlowPathGenerator(
         slowPathCall(
-            slowPath, this, operationCreateActivationDirect, resultGPR, structure, scopeGPR, table, TrustedImm32(initializationValue.tag()), TrustedImm32(initializationValue.payload())));
+            slowPath, this, operationCreateActivationDirect, resultGPR, structure, scopeGPR, table, initializationRegs));
 #endif
 
     cellResult(resultGPR, node);
@@ -8625,10 +8640,15 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
 
         flushRegisters();
 #if USE(JSVALUE64)
-        callCustomGetter(bitwise_cast<J_JITOperation_EJI>(getter), resultRegs, baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
+        m_jit.setupArguments<J_JITOperation_EJI>(baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
 #else
-        callCustomGetter(bitwise_cast<J_JITOperation_EJI>(getter), resultRegs, TrustedImm32(JSValue::CellTag), baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
+        m_jit.setupArguments<J_JITOperation_EJI>(baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
 #endif
+        m_jit.storePtr(GPRInfo::callFrameRegister, &m_jit.vm()->topCallFrame);
+        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        m_jit.appendCall(getter);
+        m_jit.setupResults(resultRegs);
+
         m_jit.exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
@@ -10122,7 +10142,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     if (!canDoBinarySwitch || totalLength > Options::maximumBinaryStringSwitchTotalLength()) {
         flushRegisters();
         callOperation(
-            operationSwitchString, string, data->switchTableIndex, string);
+            operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
         m_jit.exceptionCheck();
         m_jit.jump(string);
         return;
@@ -10159,7 +10179,7 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     
     slowCases.link(&m_jit);
     silentSpillAllRegisters(string);
-    callOperation(operationSwitchString, string, data->switchTableIndex, string);
+    callOperation(operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
     silentFillAllRegisters();
     m_jit.exceptionCheck();
     m_jit.jump(string);

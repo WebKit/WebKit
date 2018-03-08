@@ -756,7 +756,7 @@ void SpeculativeJIT::emitCall(Node* node)
         RELEASE_ASSERT(!isDirect);
         CallVarargsData* data = node->callVarargsData();
 
-        unsigned numUsedStackSlots = m_jit.graph().m_nextMachineLocal;
+        int numUsedStackSlots = m_jit.graph().m_nextMachineLocal;
         
         if (isForwardVarargs) {
             flushRegisters();
@@ -955,7 +955,7 @@ void SpeculativeJIT::emitCall(Node* node)
         unsigned requiredBytes = sizeof(CallerFrameAndPC) + sizeof(ExecState*) * 2;
         requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
         m_jit.subPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
-        m_jit.setupArgumentsWithExecState(GPRInfo::regT0);
+        m_jit.setupArguments<decltype(operationCallEval)>(GPRInfo::regT0);
         prepareForExternalCall();
         m_jit.appendCall(operationCallEval);
         m_jit.exceptionCheck();
@@ -3872,7 +3872,7 @@ void SpeculativeJIT::compile(Node* node)
         
         callOperation(
             operationNewArray, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
-            static_cast<void*>(buffer), node->numChildren());
+            static_cast<void*>(buffer), size_t(node->numChildren()));
         m_jit.exceptionCheck();
 
         if (scratchSize) {
@@ -3936,7 +3936,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         
-        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()), numElements);
+        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()), size_t(numElements));
         m_jit.exceptionCheck();
         
         cellResult(result.gpr(), node);
@@ -5613,8 +5613,7 @@ void SpeculativeJIT::compile(Node* node)
             callTierUp.link(&m_jit);
 
             silentSpill(savePlans);
-            m_jit.setupArgumentsWithExecState(TrustedImm32(bytecodeIndex));
-            appendCall(triggerTierUpNowInLoop);
+            callOperation(triggerTierUpNowInLoop, TrustedImm32(bytecodeIndex));
             silentFill(savePlans);
 
             m_jit.jump().linkTo(toNextOperation, &m_jit);
@@ -5629,8 +5628,7 @@ void SpeculativeJIT::compile(Node* node)
             MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
         
         silentSpillAllRegisters(InvalidGPRReg);
-        m_jit.setupArgumentsExecState();
-        appendCall(triggerTierUpNow);
+        callOperation(triggerTierUpNow);
         silentFillAllRegisters();
         
         done.link(&m_jit);
@@ -5668,8 +5666,7 @@ void SpeculativeJIT::compile(Node* node)
             overflowedCounter.link(&m_jit);
 
             silentSpill(savePlans);
-            m_jit.setupArgumentsWithExecState(TrustedImm32(bytecodeIndex));
-            appendCallSetResult(triggerOSREntryNow, tempGPR);
+            callOperation(triggerOSREntryNow, tempGPR, TrustedImm32(bytecodeIndex));
 
             if (savePlans.isEmpty())
                 m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR).linkTo(toNextOperation, &m_jit);

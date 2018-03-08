@@ -242,7 +242,7 @@ EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState* exec, EncodedJSVal
     return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, StrictMode));
 }
 
-JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, int32_t inlineCapacity)
+JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, uint32_t inlineCapacity)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -441,7 +441,7 @@ double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp
     return fabs(a);
 }
 
-int32_t JIT_OPERATION operationArithClz32(ExecState* exec, EncodedJSValue encodedOp1)
+uint32_t JIT_OPERATION operationArithClz32(ExecState* exec, EncodedJSValue encodedOp1)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -1613,7 +1613,7 @@ JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState* exec, Structure
     return JSLexicalEnvironment::create(vm, structure, scope, table, initialValue);
 }
 
-JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState* exec, Structure* structure, int32_t length, int32_t minCapacity)
+JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState* exec, Structure* structure, uint32_t length, uint32_t minCapacity)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer target(&vm, exec);
@@ -1626,7 +1626,7 @@ JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState* exec, Structure*
     return result;
 }
 
-JSCell* JIT_OPERATION operationCreateScopedArguments(ExecState* exec, Structure* structure, Register* argumentStart, int32_t length, JSFunction* callee, JSLexicalEnvironment* scope)
+JSCell* JIT_OPERATION operationCreateScopedArguments(ExecState* exec, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment* scope)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer target(&vm, exec);
@@ -1639,7 +1639,7 @@ JSCell* JIT_OPERATION operationCreateScopedArguments(ExecState* exec, Structure*
         vm, structure, argumentStart, length, callee, table, scope);
 }
 
-JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState* exec, Structure* structure, Register* argumentStart, int32_t length, JSFunction* callee)
+JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState* exec, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer target(&vm, exec);
@@ -1647,7 +1647,7 @@ JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState* exec, Structure*
         exec, structure, argumentStart, length, callee);
 }
 
-JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, int32_t argumentCount)
+JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer target(&vm, exec);
@@ -1676,7 +1676,7 @@ JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, 
     return result;
 }
 
-JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, int32_t argumentCount)
+JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer target(&vm, exec);
@@ -2258,7 +2258,7 @@ void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState* exec)
     throwStackOverflowError(exec, scope);
 }
 
-int32_t JIT_OPERATION operationSizeOfVarargs(ExecState* exec, EncodedJSValue encodedArguments, int32_t firstVarArgOffset)
+int32_t JIT_OPERATION operationSizeOfVarargs(ExecState* exec, EncodedJSValue encodedArguments, uint32_t firstVarArgOffset)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2358,7 +2358,7 @@ int32_t JIT_OPERATION operationArrayIndexOfValueDouble(ExecState* exec, Butterfl
     return -1;
 }
 
-void JIT_OPERATION operationLoadVarargs(ExecState* exec, int32_t firstElementDest, EncodedJSValue encodedArguments, int32_t offset, int32_t length, int32_t mandatoryMinimum)
+void JIT_OPERATION operationLoadVarargs(ExecState* exec, int32_t firstElementDest, EncodedJSValue encodedArguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -2366,7 +2366,7 @@ void JIT_OPERATION operationLoadVarargs(ExecState* exec, int32_t firstElementDes
     
     loadVarargs(exec, VirtualRegister(firstElementDest), arguments, offset, length);
     
-    for (int32_t i = length; i < mandatoryMinimum; ++i)
+    for (uint32_t i = length; i < mandatoryMinimum; ++i)
         exec->r(firstElementDest + i) = jsUndefined();
 }
 

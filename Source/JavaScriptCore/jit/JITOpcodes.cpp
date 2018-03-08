@@ -1039,7 +1039,7 @@ void JIT::emit_op_new_array_with_size(Instruction* currentInstruction)
 #else
     emitLoad(sizeIndex, regT1, regT0);
     callOperation(operationNewArrayWithSizeAndProfile, dst,
-        currentInstruction[3].u.arrayAllocationProfile, regT1, regT0);
+        currentInstruction[3].u.arrayAllocationProfile, JSValueRegs(regT1, regT0));
 #endif
 }
 

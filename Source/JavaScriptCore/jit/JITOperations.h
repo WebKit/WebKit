@@ -242,6 +242,7 @@ typedef int32_t (JIT_OPERATION *Z_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EJOJ)(ExecState*, EncodedJSValue, JSObject*, EncodedJSValue);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EJZZ)(ExecState*, EncodedJSValue, int32_t, int32_t);
+typedef int32_t (JIT_OPERATION *Z_JITOperation_EJUiZ)(ExecState*, EncodedJSValue, uint32_t, int32_t);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EOI)(ExecState*, JSObject*, UniquedStringImpl*);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EOJ)(ExecState*, JSObject*, EncodedJSValue);
 typedef int32_t (JIT_OPERATION *Z_JITOperation_EBJssZ)(ExecState*, Butterfly*, JSString*, int32_t);
@@ -417,7 +418,7 @@ UnusedPtr JIT_OPERATION operationHandleTraps(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDebug(ExecState*, int32_t) WTF_INTERNAL;
 #if ENABLE(DFG_JIT)
-SlowPathReturnType JIT_OPERATION operationOptimize(ExecState*, int32_t) WTF_INTERNAL;
+SlowPathReturnType JIT_OPERATION operationOptimize(ExecState*, uint32_t) WTF_INTERNAL;
 char* JIT_OPERATION operationTryOSREnterAtCatch(ExecState*, uint32_t) WTF_INTERNAL;
 char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState*, uint32_t) WTF_INTERNAL;
 #endif

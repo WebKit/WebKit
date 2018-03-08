@@ -83,7 +83,7 @@ SlowPathCall callOperation(
     SlowPathCall call;
     {
         SlowPathCallContext context(usedRegisters, jit, sizeof...(ArgumentTypes) + 1, resultGPR);
-        jit.setupArgumentsWithExecState(arguments...);
+        jit.setupArguments<void(ExecState*, ArgumentTypes...)>(arguments...);
         call = context.makeCall(vm, function.value());
     }
     if (exceptionTarget)

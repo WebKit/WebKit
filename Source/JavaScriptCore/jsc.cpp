@@ -256,6 +256,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL functionPrintStdOut(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPrintStdErr(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionBreakpoint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState*);
@@ -472,7 +473,8 @@ protected:
     void finishCreation(VM& vm, const Vector<String>& arguments)
     {
         Base::finishCreation(vm);
-        
+
+        addFunction(vm, "breakpoint", functionBreakpoint, 0);
         addFunction(vm, "debug", functionDebug, 1);
         addFunction(vm, "describe", functionDescribe, 1);
         addFunction(vm, "describeArray", functionDescribeArray, 1);
@@ -1042,6 +1044,18 @@ EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 #endif
+
+EncodedJSValue JSC_HOST_CALL functionBreakpoint(ExecState* exec)
+{
+    // Nothing should throw here but we might as well double check...
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    UNUSED_PARAM(scope);
+    if (!exec->argumentCount() || exec->argument(0).toBoolean(exec))
+        WTFBreakpointTrap();
+
+    return encodedJSUndefined();
+}
 
 EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {

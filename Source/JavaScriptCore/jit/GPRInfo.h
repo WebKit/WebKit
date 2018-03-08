@@ -46,12 +46,12 @@ typedef MacroAssembler::RegisterID GPRReg;
 #if USE(JSVALUE64)
 class JSValueRegs {
 public:
-    JSValueRegs()
+    constexpr JSValueRegs()
         : m_gpr(InvalidGPRReg)
     {
     }
     
-    explicit JSValueRegs(GPRReg gpr)
+    constexpr explicit JSValueRegs(GPRReg gpr)
         : m_gpr(gpr)
     {
     }
@@ -807,6 +807,9 @@ inline GPRReg extractResult(JSValueRegs result) { return result.gpr(); }
 inline JSValueRegs extractResult(JSValueRegs result) { return result; }
 #endif
 inline NoResultTag extractResult(NoResultTag) { return NoResult; }
+
+// We use this hack to get the GPRInfo from the GPRReg type in templates because our code is bad and we should feel bad..
+constexpr GPRInfo toInfoFromReg(GPRReg) { return GPRInfo(); }
 
 #endif // ENABLE(JIT)
 

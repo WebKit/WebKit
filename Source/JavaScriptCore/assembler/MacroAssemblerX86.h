@@ -142,7 +142,7 @@ public:
     {
         ASSERT(isSSE2Present());
         ASSERT(address.m_value);
-        m_assembler.movsd_rm(src, address.m_value);
+        m_assembler.movsd_rm(src, address.asPtr());
     }
 
     void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)

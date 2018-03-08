@@ -34,7 +34,7 @@ class Bitmap {
     
     static_assert(sizeof(WordType) <= sizeof(unsigned), "WordType must not be bigger than unsigned");
 public:
-    Bitmap();
+    constexpr Bitmap();
 
     static constexpr size_t size()
     {
@@ -133,7 +133,7 @@ private:
 };
 
 template<size_t bitmapSize, typename WordType>
-inline Bitmap<bitmapSize, WordType>::Bitmap()
+constexpr inline Bitmap<bitmapSize, WordType>::Bitmap()
 {
     clearAll();
 }

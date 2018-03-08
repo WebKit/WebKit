@@ -841,22 +841,20 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             GPRReg baseForCustom = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForCustomGetGPR; 
 #if USE(JSVALUE64)
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
-                jit.setupArgumentsWithExecState(
+                jit.setupArguments<PropertySlot::GetValueFunc>(
                     baseForCustom,
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else
-                jit.setupArgumentsWithExecState(baseForCustom, valueRegs.gpr());
+                jit.setupArguments<PutPropertySlot::PutValueFunc>(baseForCustom, valueRegs.gpr());
 #else
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
-                jit.setupArgumentsWithExecState(
-                    EABI_32BIT_DUMMY_ARG baseForCustom,
-                    CCallHelpers::TrustedImm32(JSValue::CellTag),
+                jit.setupArguments<PropertySlot::GetValueFunc>(
+                    JSValue::JSCellType, baseForCustom,
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else {
-                jit.setupArgumentsWithExecState(
-                    EABI_32BIT_DUMMY_ARG baseForCustom,
-                    CCallHelpers::TrustedImm32(JSValue::CellTag),
-                    valueRegs.payloadGPR(), valueRegs.tagGPR());
+                jit.setupArguments<PutPropertySlot::PutValueFunc>(
+                    JSValue::JSCellType, baseForCustom,
+                    valueRegs);
             }
 #endif
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
@@ -1003,7 +1001,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.makeSpaceOnStackForCCall();
                 
                 if (!reallocating) {
-                    jit.setupArgumentsWithExecState(baseGPR);
+                    jit.setupArguments<decltype(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity)>(baseGPR);
                     
                     CCallHelpers::Call operationCall = jit.call();
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -1014,7 +1012,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 } else {
                     // Handle the case where we are reallocating (i.e. the old structure/butterfly
                     // already had out-of-line property storage).
-                    jit.setupArgumentsWithExecState(
+                    jit.setupArguments<decltype(operationReallocateButterflyToGrowPropertyStorage)>(
                         baseGPR, CCallHelpers::TrustedImm32(newSize / sizeof(JSValue)));
                     
                     CCallHelpers::Call operationCall = jit.call();

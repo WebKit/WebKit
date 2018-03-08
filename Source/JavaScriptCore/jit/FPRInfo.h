@@ -41,7 +41,7 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static const unsigned numberOfRegisters = 6;
-    static const unsigned numberOfArgumentRegisters = 8;
+    static const unsigned numberOfArgumentRegisters = is64Bit() ? 8 : 0;
 
     // Temporary registers.
     static const FPRReg fpRegT0 = X86Registers::xmm0;
@@ -107,6 +107,7 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static const unsigned numberOfRegisters = 6;
+    static const unsigned numberOfArgumentRegisters = 0;
 
     // Temporary registers.
     // d7 is use by the MacroAssembler as fpTempRegister.
@@ -304,6 +305,9 @@ public:
 };
 
 #endif // CPU(MIPS)
+
+// We use this hack to get the FPRInfo from the FPRReg type in templates because our code is bad and we should feel bad..
+constexpr FPRInfo toInfoFromReg(FPRReg) { return FPRInfo(); }
 
 #endif // ENABLE(JIT)
 

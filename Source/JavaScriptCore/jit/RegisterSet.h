@@ -40,10 +40,10 @@ class RegisterAtOffsetList;
 
 class RegisterSet {
 public:
-    RegisterSet() { }
+    constexpr RegisterSet() { }
 
     template<typename... Regs>
-    explicit RegisterSet(Regs... regs)
+    constexpr explicit RegisterSet(Regs... regs)
     {
         setMany(regs...);
     }

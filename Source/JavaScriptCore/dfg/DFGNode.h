@@ -205,7 +205,7 @@ struct SwitchData {
     Vector<SwitchCase> cases;
     BranchTarget fallThrough;
     SwitchKind kind;
-    unsigned switchTableIndex;
+    size_t switchTableIndex;
     bool didUseJumpTable;
 };
 

@@ -1416,7 +1416,7 @@ public:
     {
 #if CPU(X86)
         ASSERT(isSSE2Present());
-        m_assembler.movsd_mr(address.m_value, dest);
+        m_assembler.movsd_mr(address.asPtr(), dest);
 #else
         move(address, scratchRegister());
         loadDouble(scratchRegister(), dest);
@@ -2240,6 +2240,19 @@ public:
             m_assembler.xchgq_rr(reg1, reg2);
     }
 
+    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    {
+        if (reg1 == reg2)
+            return;
+
+        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
+        ASSERT(reg1 != FPRegisterID::xmm7);
+        ASSERT(reg2 != FPRegisterID::xmm7);
+        moveDouble(reg1, FPRegisterID::xmm7);
+        moveDouble(reg2, reg1);
+        moveDouble(FPRegisterID::xmm7, reg2);
+    }
+
     void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value)
@@ -2275,6 +2288,12 @@ public:
             m_assembler.xorl_rr(dest, dest);
         else
             m_assembler.movl_i32r(imm.asIntptr(), dest);
+    }
+
+    // Only here for templates!
+    void move(TrustedImm64, RegisterID)
+    {
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
@@ -2317,6 +2336,19 @@ public:
     {
         if (reg1 != reg2)
             m_assembler.xchgl_rr(reg1, reg2);
+    }
+
+    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    {
+        if (reg1 == reg2)
+            return;
+
+        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
+        ASSERT(reg1 != FPRegisterID::xmm7);
+        ASSERT(reg2 != FPRegisterID::xmm7);
+        moveDouble(reg1, FPRegisterID::xmm7);
+        moveDouble(reg2, reg1);
+        moveDouble(FPRegisterID::xmm7, reg2);
     }
 
     void signExtend32ToPtr(RegisterID src, RegisterID dest)

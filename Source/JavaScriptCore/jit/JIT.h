@@ -712,131 +712,53 @@ namespace JSC {
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr&, int);
         
-        enum WithProfileTag { WithProfile };
-        
-        MacroAssembler::Call callOperation(C_JITOperation_E);
-        MacroAssembler::Call callOperation(C_JITOperation_EO, GPRReg);
-        MacroAssembler::Call callOperation(C_JITOperation_EL, GPRReg);
-        MacroAssembler::Call callOperation(C_JITOperation_EL, TrustedImmPtr);
-        MacroAssembler::Call callOperation(C_JITOperation_ESt, Structure*);
-        MacroAssembler::Call callOperation(C_JITOperation_EC, JSCell*);
-        MacroAssembler::Call callOperation(C_JITOperation_EZ, int32_t);
-        MacroAssembler::Call callOperation(Z_JITOperation_EJZZ, GPRReg, int32_t, int32_t);
-        MacroAssembler::Call callOperation(J_JITOperation_E, int);
-        MacroAssembler::Call callOperation(J_JITOperation_EAapJ, int, ArrayAllocationProfile*, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EAapJcpZ, int, ArrayAllocationProfile*, GPRReg, int32_t);
-        MacroAssembler::Call callOperation(J_JITOperation_EAapJcpZ, int, ArrayAllocationProfile*, const JSValue*, int32_t);
-        MacroAssembler::Call callOperation(J_JITOperation_EC, int, JSCell*);
-        MacroAssembler::Call callOperation(V_JITOperation_EC, JSCell*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJ, int, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJ, JSValueRegs, JSValueRegs);
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJJI, int, StructureStubInfo*, GPRReg, GPRReg, UniquedStringImpl*);
-#else
-        MacroAssembler::Call callOperation(J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJJI, int, StructureStubInfo*, GPRReg, GPRReg, GPRReg, GPRReg, UniquedStringImpl*);
-#endif
-        MacroAssembler::Call callOperation(J_JITOperation_EJI, int, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJArp, JSValueRegs, JSValueRegs, ArithProfile*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJArp, JSValueRegs, JSValueRegs, JSValueRegs, ArithProfile*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJ, JSValueRegs, JSValueRegs, JSValueRegs);
-        MacroAssembler::Call callOperation(J_JITOperation_EJMic, JSValueRegs, JSValueRegs, TrustedImmPtr);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJMic, JSValueRegs, JSValueRegs, JSValueRegs, TrustedImmPtr);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJAp, int, GPRReg, GPRReg, ArrayProfile*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJBy, int, GPRReg, GPRReg, ByValInfo*);
-        MacroAssembler::Call callOperation(Z_JITOperation_EJOJ, GPRReg, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(C_JITOperation_EJsc, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJscC, int, GPRReg, JSCell*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJscCJ, int, GPRReg, JSCell*, GPRReg);
-        MacroAssembler::Call callOperation(C_JITOperation_EJscZ, GPRReg, int32_t);
-        MacroAssembler::Call callOperation(C_JITOperation_EJscZ, int, GPRReg, int32_t);
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EJJ, int, GPRReg, GPRReg);
-#else
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EJJ, int, GPRReg, GPRReg, GPRReg, GPRReg);
-#endif
-        MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EPc, int, Instruction*);
-        MacroAssembler::Call callOperation(J_JITOperation_EPc, int, Instruction*);
-        MacroAssembler::Call callOperation(J_JITOperation_EZ, int, int32_t);
-        MacroAssembler::Call callOperation(J_JITOperation_EZZ, int, int32_t, int32_t);
-        MacroAssembler::Call callOperation(P_JITOperation_E);
-        MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, size_t);
-        MacroAssembler::Call callOperation(P_JITOperation_EUi, uint32_t);
-        MacroAssembler::Call callOperation(S_JITOperation_ECC, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID);
-        MacroAssembler::Call callOperation(S_JITOperation_EJI, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(S_JITOperation_EOJss, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(Sprt_JITOperation_EZ, int32_t);
-        MacroAssembler::Call callOperation(V_JITOperation_E);
-        MacroAssembler::Call callOperation(V_JITOperation_EC, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_ECC, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_ECIZC, RegisterID, UniquedStringImpl*, int32_t, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_ECIZCC, RegisterID, UniquedStringImpl*, int32_t, RegisterID, RegisterID);
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(V_JITOperation_ECJZC, RegisterID, RegisterID, int32_t, RegisterID);
-#else
-        MacroAssembler::Call callOperation(V_JITOperation_ECJZC, RegisterID, RegisterID, RegisterID, int32_t, RegisterID);
-#endif
-        MacroAssembler::Call callOperation(J_JITOperation_EE, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
-        MacroAssembler::Call callOperation(J_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID);
-        MacroAssembler::Call callOperationNoExceptionCheck(Z_JITOperation_E);
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID);
-#else
-        MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID, RegisterID);
-#endif
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(F_JITOperation_EFJZZ, RegisterID, RegisterID, int32_t, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(V_JITOperation_ECIZJJ, RegisterID, UniquedStringImpl*, int32_t, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_ECJ, RegisterID, RegisterID);
-#else
-        MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, RegisterID, RegisterID, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(V_JITOperation_ECJ, RegisterID, RegisterID, RegisterID);
-#endif
-        MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EJJJAp, RegisterID, RegisterID, RegisterID, ArrayProfile*);
-        MacroAssembler::Call callOperation(V_JITOperation_EJJJBy, RegisterID, RegisterID, RegisterID, ByValInfo*);
-        MacroAssembler::Call callOperation(V_JITOperation_EJZJ, RegisterID, int32_t, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EJZ, RegisterID, int32_t);
-        MacroAssembler::Call callOperation(V_JITOperation_EPc, Instruction*);
-        MacroAssembler::Call callOperation(V_JITOperation_EZ, int32_t);
-        MacroAssembler::Call callOperation(V_JITOperation_EZJ, int, GPRReg);
-        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(J_JITOperation_E);
-        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
-        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
-#if USE(JSVALUE32_64)
-        MacroAssembler::Call callOperation(F_JITOperation_EFJZZ, RegisterID, RegisterID, RegisterID, int32_t, RegisterID);
-        MacroAssembler::Call callOperation(Z_JITOperation_EJZZ, GPRReg, GPRReg, int32_t, int32_t);
-        MacroAssembler::Call callOperation(J_JITOperation_EAapJ, int, ArrayAllocationProfile*, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJ, int, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJI, int, GPRReg, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(Z_JITOperation_EJOJ, GPRReg, GPRReg, GPRReg, GPRReg, GPRReg);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJAp, int, GPRReg, GPRReg, GPRReg, GPRReg, ArrayProfile*);
-        MacroAssembler::Call callOperation(J_JITOperation_EJJBy, int, GPRReg, GPRReg, GPRReg, GPRReg, ByValInfo*);
-        MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, GPRReg, size_t);
-        MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(S_JITOperation_EJI, GPRReg, GPRReg, UniquedStringImpl*);
-        MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EJJJAp, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, ArrayProfile*);
-        MacroAssembler::Call callOperation(V_JITOperation_EJJJBy, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, ByValInfo*);
-        MacroAssembler::Call callOperation(V_JITOperation_EJZ, RegisterID, RegisterID, int32_t);
-        MacroAssembler::Call callOperation(V_JITOperation_EJZJ, RegisterID, RegisterID, int32_t, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(V_JITOperation_EZJ, int32_t, RegisterID, RegisterID);
-        MacroAssembler::Call callOperation(J_JITOperation_EJscCJ, int, GPRReg, JSCell*, GPRReg, GPRReg);
-#endif
+        template<typename OperationType, typename... Args>
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
+        callOperation(OperationType operation, int result, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            return appendCallWithExceptionCheckSetJSValueResult(operation, result);
+        }
+
+        template<typename OperationType, typename... Args>
+        MacroAssembler::Call callOperation(OperationType operation, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            return appendCallWithExceptionCheck(operation);
+        }
+
+
+        template<typename OperationType, typename... Args>
+        std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
+        callOperationWithProfile(OperationType operation, int result, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            return appendCallWithExceptionCheckSetJSValueResultWithProfile(operation, result);
+        }
+
+        template<typename OperationType, typename... Args>
+        MacroAssembler::Call callOperationWithResult(OperationType operation, JSValueRegs resultRegs, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            auto result = appendCallWithExceptionCheck(operation);
+            setupResults(resultRegs);
+            return result;
+        }
+
+        template<typename OperationType, typename... Args>
+        MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            updateTopCallFrame();
+            return appendCall(operation);
+        }
+
+        template<typename OperationType, typename... Args>
+        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(OperationType operation, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            return appendCallWithCallFrameRollbackOnException(operation);
+        }
 
         template<typename SnippetGenerator>
         void emitBitBinaryOpFastPath(Instruction* currentInstruction);

@@ -1,3 +1,193 @@
+2018-03-07  Keith Miller  <keith_miller@apple.com>
+
+        Meta-program setupArguments and callOperation
+        https://bugs.webkit.org/show_bug.cgi?id=183263
+
+        Rubber-stamped by Filip Pizlo.
+
+        This patch removes all the custom overrides of callOperation and setupArguments
+        throughout the JITs. In their place there is a new setupArguments that marshalls
+        the arguments into place based on the type of the operation's function pointer.
+        There were a couple of design choices in the implementation of setupArguments:
+
+        1) We assume that no TrustedImm floating point values are passed.
+        2) If ExecState* is the first argument the callFrameRegister should be marshalled implicitly.
+        3) Types should not be implicitly converted (with the exception of DFG::RegisteredStructure -> Structure*)
+
+        The new callOperation/setupArguments do their best to make sure
+        it's hard to call a function with the wrong parameters. They will
+        only try to pattern match if the types match up with the next
+        passed argument. Additionally, the base case should static_assert
+        of the number of inferred arguments does not match the arity of
+        the operation's function pointer.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::TrustedImmPtr):
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::asPtr):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::move):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::swap):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::storeDouble):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        (JSC::MacroAssemblerX86Common::swap):
+        (JSC::MacroAssemblerX86Common::move):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCaseSnippetParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSlowPathGenerator.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDoubleUnaryOp):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::SpeculativeJIT::compileArithSqrt):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::TrustedImmPtr):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::operator MacroAssembler::TrustedImm const):
+        (JSC::DFG::SpeculativeJIT::initConstantInfo):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::callOperationWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::callCustomGetter): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgument):
+        (JSC::CCallHelpers::setupStubArgs):
+        (JSC::CCallHelpers::ArgCollection::ArgCollection):
+        (JSC::CCallHelpers::ArgCollection::pushRegArg):
+        (JSC::CCallHelpers::ArgCollection::addGPRArg):
+        (JSC::CCallHelpers::ArgCollection::addStackArg):
+        (JSC::CCallHelpers::ArgCollection::addPoke):
+        (JSC::CCallHelpers::ArgCollection::argCount):
+        (JSC::CCallHelpers::clampArrayToSize):
+        (JSC::CCallHelpers::pokeForArgument):
+        (JSC::CCallHelpers::marshallArgumentRegister):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        (JSC::CCallHelpers::std::is_integral<CURRENT_ARGUMENT_TYPE>::value):
+        (JSC::CCallHelpers::std::is_pointer<CURRENT_ARGUMENT_TYPE>::value):
+        (JSC::CCallHelpers::setupArguments):
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Deleted.
+        (JSC::CCallHelpers::resetCallArguments): Deleted.
+        (JSC::CCallHelpers::addCallArgument): Deleted.
+        (JSC::CCallHelpers::setupArgumentsExecState): Deleted.
+        (JSC::CCallHelpers::setupTwoStubArgsGPR): Deleted.
+        (JSC::CCallHelpers::setupThreeStubArgsGPR): Deleted.
+        (JSC::CCallHelpers::setupFourStubArgsGPR): Deleted.
+        (JSC::CCallHelpers::setupFiveStubArgsGPR): Deleted.
+        (JSC::CCallHelpers::setupTwoStubArgsFPR): Deleted.
+        (JSC::CCallHelpers::setupStubArguments): Deleted.
+        (JSC::CCallHelpers::setupArgumentsWithExecStateForCallWithSlowPathReturnType): Deleted.
+        (JSC::CCallHelpers::setupStubArguments134): Deleted.
+        (JSC::CCallHelpers::setupStubArgsGPR): Deleted.
+        * jit/FPRInfo.h:
+        (JSC::toInfoFromReg):
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::JSValueRegs):
+        (JSC::toInfoFromReg):
+        * jit/JIT.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::callOperationWithProfile):
+        (JSC::JIT::callOperationWithResult):
+        (JSC::JIT::callOperationNoExceptionCheck):
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation): Deleted.
+        (JSC::JIT::callOperationNoExceptionCheck): Deleted.
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array_with_size):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emit_op_set_function_name):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_index):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_by_val):
+        (JSC::JIT::emit_op_put_setter_by_val):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::RegisterSet):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionBreakpoint):
+        * runtime/JSCJSValue.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2018-03-07  Mark Lam  <mark.lam@apple.com>
 
         Rename ProtoCallFrame::arityMissMatch to hasArityMismatch.

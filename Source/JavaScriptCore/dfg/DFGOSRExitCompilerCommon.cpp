@@ -261,7 +261,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
     jit.subPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 4), MacroAssembler::stackPointerRegister);
 #endif
 
-    jit.setupArgumentsWithExecState(owner);
+    jit.setupArguments<decltype(operationOSRWriteBarrier)>(owner);
     jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch);
     jit.call(scratch);
 

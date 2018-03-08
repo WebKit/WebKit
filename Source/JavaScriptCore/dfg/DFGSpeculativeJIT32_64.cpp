@@ -220,7 +220,7 @@ void SpeculativeJIT::cachedGetById(
         slowPath = slowPathCall(
             slowCases, this, getByIdFunction,
             JSValueRegs(resultTagGPR, resultPayloadGPR), gen.stubInfo(),
-            static_cast<int32_t>(JSValue::CellTag), basePayloadGPR,
+            JSValue::JSCellType, basePayloadGPR,
             identifierUID(identifierNumber));
     } else {
         slowPath = slowPathCall(
@@ -255,8 +255,8 @@ void SpeculativeJIT::cachedGetByIdWithThis(
         slowPath = slowPathCall(
             slowCases, this, operationGetByIdWithThisOptimize,
             JSValueRegs(resultTagGPR, resultPayloadGPR), gen.stubInfo(),
-            static_cast<int32_t>(JSValue::CellTag), basePayloadGPR,
-            static_cast<int32_t>(JSValue::CellTag), thisPayloadGPR,
+            JSValue::JSCellType, basePayloadGPR,
+            JSValue::JSCellType, thisPayloadGPR,
             identifierUID(identifierNumber));
     } else {
         ASSERT(baseTagGPROrNone != InvalidGPRReg);
@@ -294,7 +294,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
 
     auto slowPath = slowPathCall(
         slowCases, this, gen.slowPathFunction(), NoResult, gen.stubInfo(), JSValueRegs(valueTagGPR, valuePayloadGPR),
-        basePayloadGPR, identifierUID(identifierNumber));
+            JSValue::JSCellType,  basePayloadGPR, identifierUID(identifierNumber));
 
     m_jit.addPutById(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));
@@ -808,7 +808,7 @@ void SpeculativeJIT::emitCall(Node* node)
         RELEASE_ASSERT(!isDirect);
         CallVarargsData* data = node->callVarargsData();
 
-        unsigned numUsedStackSlots = m_jit.graph().m_nextMachineLocal;
+        int numUsedStackSlots = m_jit.graph().m_nextMachineLocal;
         
         if (isForwardVarargs) {
             flushRegisters();
@@ -1015,7 +1015,7 @@ void SpeculativeJIT::emitCall(Node* node)
         unsigned requiredBytes = sizeof(CallerFrameAndPC) + sizeof(ExecState*) * 2;
         requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
         m_jit.subPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
-        m_jit.setupArgumentsWithExecState(GPRInfo::regT0);
+        m_jit.setupArguments<decltype(operationCallEval)>(GPRInfo::regT0);
         prepareForExternalCall();
         m_jit.appendCall(operationCallEval);
         m_jit.exceptionCheck();
@@ -2063,12 +2063,12 @@ void SpeculativeJIT::compileContiguousPutByVal(Node* node, BaseOperandType& base
             addSlowPathGenerator(slowPathCall(
                 slowCase, this,
                 m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
-                NoResult, baseReg, propertyReg, valueTag, valuePayloadReg));
+                NoResult, baseReg, propertyReg, JSValueRegs(valueTag, valuePayloadReg)));
         } else {
             addSlowPathGenerator(slowPathCall(
                 slowCase, this,
                 m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
-                NoResult, baseReg, propertyReg, valueTag, valuePayloadReg));
+                NoResult, baseReg, propertyReg, JSValueRegs(valueTag, valuePayloadReg)));
         }
     }
 
@@ -2930,18 +2930,11 @@ void SpeculativeJIT::compile(Node* node)
 
         switch (arrayMode.type()) {
         case Array::Int32: {
-            SpeculateInt32Operand value(this, child3);
-
-            GPRReg valuePayloadReg = value.gpr();
-        
-            if (!m_compileOkay)
-                return;
-            
-            compileContiguousPutByVal(node, base, property, value, valuePayloadReg, TrustedImm32(JSValue::Int32Tag));
-            break;
+            speculateInt32(child3);
+            FALLTHROUGH;
         }
         case Array::Contiguous: {
-            JSValueOperand value(this, child3);
+            JSValueOperand value(this, child3, ManualOperandSpeculation);
 
             GPRReg valueTagReg = value.tagGPR();
             GPRReg valuePayloadReg = value.payloadGPR();
@@ -3668,7 +3661,7 @@ void SpeculativeJIT::compile(Node* node)
         
         callOperation(
             operationNewArray, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
-            static_cast<void*>(buffer), node->numChildren());
+            static_cast<void*>(buffer), size_t(node->numChildren()));
         m_jit.exceptionCheck();
 
         if (scratchSize) {
@@ -3733,7 +3726,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         
-        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()), numElements);
+        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()), size_t(numElements));
         m_jit.exceptionCheck();
         
         cellResult(result.gpr(), node);

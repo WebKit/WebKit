@@ -986,7 +986,8 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
                 GPRInfo::regT1);
         }
 
-        jit.setupArgumentsWithExecState(
+        static_assert(std::is_same<decltype(operationCreateDirectArgumentsDuringExit), decltype(operationCreateClonedArgumentsDuringExit)>::value, "We assume these functions have the same signature below.");
+        jit.setupArguments<decltype(operationCreateDirectArgumentsDuringExit)>(
             AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
         switch (recovery.technique()) {
         case DirectArgumentsThatWereNotCreated:

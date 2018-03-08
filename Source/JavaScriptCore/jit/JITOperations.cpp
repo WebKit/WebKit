@@ -1297,7 +1297,7 @@ static void updateAllPredictionsAndOptimizeAfterWarmUp(CodeBlock* codeBlock)
     codeBlock->optimizeAfterWarmUp();
 }
 
-SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t bytecodeIndex)
+SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, uint32_t bytecodeIndex)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);

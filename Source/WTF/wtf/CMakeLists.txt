@@ -67,6 +67,7 @@ set(WTF_HEADERS
     Forward.h
     Function.h
     FunctionDispatcher.h
+    FunctionTraits.h
     GetPtr.h
     Gigacage.h
     GlobalVersion.h

@@ -68,7 +68,7 @@ private:
     GPRReg m_resultGPR;
     GPRReg m_storageGPR;
     RegisteredStructure m_structure;
-    size_t m_size;
+    int m_size;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
 

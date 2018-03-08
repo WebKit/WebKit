@@ -334,8 +334,8 @@ static void compileStub(
                 jit.storePtr(GPRInfo::regT0, materializationArguments + propertyIndex);
             }
             
-            // This call assumes that we don't pass arguments on the stack.
-            jit.setupArgumentsWithExecState(
+            static_assert(FunctionTraits<decltype(operationMaterializeObjectInOSR)>::arity < GPRInfo::numberOfArgumentRegisters, "This call assumes that we don't pass arguments on the stack.");
+            jit.setupArguments<decltype(operationMaterializeObjectInOSR)>(
                 CCallHelpers::TrustedImmPtr(materialization),
                 CCallHelpers::TrustedImmPtr(materializationArguments));
             jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(operationMaterializeObjectInOSR)), GPRInfo::nonArgGPR0);
@@ -361,8 +361,8 @@ static void compileStub(
             jit.storePtr(GPRInfo::regT0, materializationArguments + propertyIndex);
         }
 
-        // This call assumes that we don't pass arguments on the stack
-        jit.setupArgumentsWithExecState(
+        static_assert(FunctionTraits<decltype(operationPopulateObjectInOSR)>::arity < GPRInfo::numberOfArgumentRegisters, "This call assumes that we don't pass arguments on the stack.");
+        jit.setupArguments<decltype(operationPopulateObjectInOSR)>(
             CCallHelpers::TrustedImmPtr(materialization),
             CCallHelpers::TrustedImmPtr(materializationToPointer.get(materialization)),
             CCallHelpers::TrustedImmPtr(materializationArguments));

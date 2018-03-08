@@ -200,7 +200,7 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 
     emitLoad(value, regT1, regT0);
     emitLoad(proto, regT3, regT2);
-    callOperation(operationInstanceOf, dst, regT1, regT0, regT3, regT2);
+    callOperation(operationInstanceOf, dst, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 }
 
 void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -216,7 +216,7 @@ void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<
     emitLoad(value, regT1, regT0);
     emitLoadPayload(constructor, regT2);
     emitLoad(hasInstanceValue, regT4, regT3);
-    callOperation(operationInstanceOfCustom, regT1, regT0, regT2, regT4, regT3);
+    callOperation(operationInstanceOfCustom, JSValueRegs(regT1, regT0), regT2, JSValueRegs(regT4, regT3));
     emitStoreBool(dst, returnValueGPR);
 }
     
@@ -337,7 +337,7 @@ void JIT::emit_op_set_function_name(Instruction* currentInstruction)
     int name = currentInstruction[2].u.operand;
     emitLoadPayload(func, regT1);
     emitLoad(name, regT3, regT2);
-    callOperation(operationSetFunctionName, regT1, regT3, regT2);
+    callOperation(operationSetFunctionName, regT1, JSValueRegs(regT3, regT2));
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -490,7 +490,7 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     genericCase.link(this);
     emitLoad(op1, regT1, regT0);
     emitLoad(op2, regT3, regT2);
-    callOperation(operationCompareEq, regT1, regT0, regT3, regT2);
+    callOperation(operationCompareEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 
     storeResult.link(this);
     emitStoreBool(dst, returnValueGPR);
@@ -532,7 +532,7 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     // Generic case.
     genericCase.append(getSlowCase(iter)); // doubles
     genericCase.link(this);
-    callOperation(operationCompareEq, regT1, regT0, regT3, regT2);
+    callOperation(operationCompareEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 
     storeResult.link(this);
     xor32(TrustedImm32(0x1), returnValueGPR);
@@ -644,7 +644,7 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
     ASSERT(regT0 == returnValueGPR);
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
-    callOperationNoExceptionCheck(operationThrow, regT1, regT0);
+    callOperationNoExceptionCheck(operationThrow, JSValueRegs(regT1, regT0));
     jumpToExceptionHandler(*vm());
 }
 
@@ -775,7 +775,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
     jumpTable->ensureCTITable();
 
     emitLoad(scrutinee, regT1, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, regT1, regT0, tableIndex);
+    callOperation(operationSwitchImmWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
     jump(returnValueGPR);
 }
 
@@ -791,7 +791,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
     jumpTable->ensureCTITable();
 
     emitLoad(scrutinee, regT1, regT0);
-    callOperation(operationSwitchCharWithUnknownKeyType, regT1, regT0, tableIndex);
+    callOperation(operationSwitchCharWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
     jump(returnValueGPR);
 }
 
@@ -806,7 +806,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
     m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset));
 
     emitLoad(scrutinee, regT1, regT0);
-    callOperation(operationSwitchStringWithUnknownKeyType, regT1, regT0, tableIndex);
+    callOperation(operationSwitchStringWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
     jump(returnValueGPR);
 }
 
@@ -996,7 +996,7 @@ void JIT::emitSlow_op_has_indexed_property(Instruction* currentInstruction, Vect
     
     emitLoad(base, regT1, regT0);
     emitLoad(property, regT3, regT2);
-    Call call = callOperation(operationHasIndexedPropertyDefault, dst, regT1, regT0, regT3, regT2, byValInfo);
+    Call call = callOperation(operationHasIndexedPropertyDefault, dst, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2), byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;

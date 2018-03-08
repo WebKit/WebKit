@@ -307,6 +307,11 @@ public:
         storePtr(imm, addressForPoke(index));
     }
 
+    void poke(FPRegisterID src, int index = 0)
+    {
+        storeDouble(src, addressForPoke(index));
+    }
+
 #if !CPU(ARM64)
     void pushToSave(RegisterID src)
     {
@@ -530,7 +535,13 @@ public:
         loadFloat(src, scratch);
         storeFloat(scratch, dest);
     }
-    
+
+    // Overload mostly for use in templates.
+    void move(FPRegisterID src, FPRegisterID dest)
+    {
+        moveDouble(src, dest);
+    }
+
     void moveDouble(Address src, Address dest, FPRegisterID scratch)
     {
         loadDouble(src, scratch);

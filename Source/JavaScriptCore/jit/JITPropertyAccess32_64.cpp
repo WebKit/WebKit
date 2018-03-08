@@ -54,7 +54,7 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 
     emitLoad(base, regT1, regT0);
     emitLoad(value, regT3, regT2);
-    callOperation(operationPutByIndex, regT1, regT0, property, regT3, regT2);
+    callOperation(operationPutByIndex, JSValueRegs(regT1, regT0), property, JSValueRegs(regT3, regT2));
 }
 
 void JIT::emit_op_put_getter_by_id(Instruction* currentInstruction)
@@ -73,7 +73,7 @@ void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
 {
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
-    unsigned options = currentInstruction[3].u.operand;
+    int options = currentInstruction[3].u.operand;
     int setter = currentInstruction[4].u.operand;
 
     emitLoadPayload(base, regT1);
@@ -85,7 +85,7 @@ void JIT::emit_op_put_getter_setter_by_id(Instruction* currentInstruction)
 {
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
-    unsigned attribute = currentInstruction[3].u.operand;
+    int attribute = currentInstruction[3].u.operand;
     int getter = currentInstruction[4].u.operand;
     int setter = currentInstruction[5].u.operand;
 
@@ -105,7 +105,7 @@ void JIT::emit_op_put_getter_by_val(Instruction* currentInstruction)
     emitLoadPayload(base, regT2);
     emitLoad(property, regT1, regT0);
     emitLoadPayload(getter, regT3);
-    callOperation(operationPutGetterByVal, regT2, regT1, regT0, attributes, regT3);
+    callOperation(operationPutGetterByVal, regT2, JSValueRegs(regT1, regT0), attributes, regT3);
 }
 
 void JIT::emit_op_put_setter_by_val(Instruction* currentInstruction)
@@ -118,7 +118,7 @@ void JIT::emit_op_put_setter_by_val(Instruction* currentInstruction)
     emitLoadPayload(base, regT2);
     emitLoad(property, regT1, regT0);
     emitLoadPayload(getter, regT3);
-    callOperation(operationPutSetterByVal, regT2, regT1, regT0, attributes, regT3);
+    callOperation(operationPutSetterByVal, regT2, JSValueRegs(regT1, regT0), attributes, regT3);
 }
 
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
@@ -127,7 +127,7 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
     emitLoad(base, regT1, regT0);
-    callOperation(operationDeleteByIdJSResult, dst, regT1, regT0, m_codeBlock->identifier(property).impl());
+    callOperation(operationDeleteByIdJSResult, dst, JSValueRegs(regT1, regT0), m_codeBlock->identifier(property).impl());
 }
 
 void JIT::emit_op_del_by_val(Instruction* currentInstruction)
@@ -136,7 +136,7 @@ void JIT::emit_op_del_by_val(Instruction* currentInstruction)
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
-    callOperation(operationDeleteByValJSResult, dst, regT1, regT0, regT3, regT2);
+    callOperation(operationDeleteByValJSResult, dst, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 }
 
 JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
@@ -300,7 +300,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, Instruct
     Label coldPathBegin = label();
     gen.slowPathJump().link(this);
 
-    Call call = callOperation(WithProfile, operationGetByIdOptimize, dst, gen.stubInfo(), regT1, regT0, propertyName.impl());
+    Call call = callOperationWithProfile(operationGetByIdOptimize, dst, gen.stubInfo(), JSValueRegs(regT1, regT0), propertyName.impl());
     gen.reportSlowPathCall(coldPathBegin, call);
     slowDoneCase = jump();
 
@@ -335,7 +335,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     emitLoad(base, regT1, regT0);
     emitLoad(property, regT3, regT2);
-    Call call = callOperation(operationGetByValOptimize, dst, regT1, regT0, regT3, regT2, byValInfo);
+    Call call = callOperation(operationGetByValOptimize, dst, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2), byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -514,7 +514,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Instruct
     // JITPutByIdGenerator only preserve the value and the base's payload, we have to reload the tag.
     emitLoadTag(base, regT1);
 
-    Call call = callOperation(gen.slowPathFunction(), gen.stubInfo(), regT3, regT2, regT1, regT0, propertyName.impl());
+    Call call = callOperation(gen.slowPathFunction(), gen.stubInfo(), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), propertyName.impl());
     gen.reportSlowPathCall(coldPathBegin, call);
     doneCases.append(jump());
 
@@ -556,18 +556,18 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     // FIXME: We only have 5 temp registers, but need 6 to make this call, therefore we materialize
     // our own call. When we finish moving JSC to the C call stack, we'll get another register so
     // we can use the normal case.
-    resetCallArguments();
-    addCallArgument(GPRInfo::callFrameRegister);
+    unsigned pokeOffset = 0;
+    poke(GPRInfo::callFrameRegister, pokeOffset++);
     emitLoad(base, regT0, regT1);
-    addCallArgument(regT1);
-    addCallArgument(regT0);
+    poke(regT1, pokeOffset++);
+    poke(regT0, pokeOffset++);
     emitLoad(property, regT0, regT1);
-    addCallArgument(regT1);
-    addCallArgument(regT0);
+    poke(regT1, pokeOffset++);
+    poke(regT0, pokeOffset++);
     emitLoad(value, regT0, regT1);
-    addCallArgument(regT1);
-    addCallArgument(regT0);
-    addCallArgument(TrustedImmPtr(byValInfo));
+    poke(regT1, pokeOffset++);
+    poke(regT0, pokeOffset++);
+    poke(TrustedImmPtr(byValInfo), pokeOffset++);
     Call call = appendCallWithExceptionCheck(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize);
 #else
     // The register selection below is chosen to reduce register swapping on ARM.
@@ -575,7 +575,7 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     emitLoad(base, regT2, regT1);
     emitLoad(property, regT3, regT0);
     emitLoad(value, regT5, regT4);
-    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, regT2, regT1, regT3, regT0, regT5, regT4, byValInfo);
+    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, JSValueRegs(regT2, regT1), JSValueRegs(regT3, regT0), JSValueRegs(regT5, regT4), byValInfo);
 #endif
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
@@ -614,7 +614,7 @@ void JIT::emitSlow_op_try_get_by_id(Instruction* currentInstruction, Vector<Slow
 
     Label coldPathBegin = label();
 
-    Call call = callOperation(operationTryGetByIdOptimize, resultVReg, gen.stubInfo(), regT1, regT0, ident->impl());
+    Call call = callOperation(operationTryGetByIdOptimize, resultVReg, gen.stubInfo(), JSValueRegs(regT1, regT0), ident->impl());
     
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -654,7 +654,7 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
     
     Label coldPathBegin = label();
     
-    Call call = callOperation(WithProfile, operationGetByIdOptimize, resultVReg, gen.stubInfo(), regT1, regT0, ident->impl());
+    Call call = callOperationWithProfile(operationGetByIdOptimize, resultVReg, gen.stubInfo(), JSValueRegs(regT1, regT0), ident->impl());
     
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -693,7 +693,7 @@ void JIT::emitSlow_op_get_by_id_with_this(Instruction* currentInstruction, Vecto
     
     Label coldPathBegin = label();
     
-    Call call = callOperation(WithProfile, operationGetByIdWithThisOptimize, resultVReg, gen.stubInfo(), regT1, regT0, regT4, regT3, ident->impl());
+    Call call = callOperationWithProfile(operationGetByIdWithThisOptimize, resultVReg, gen.stubInfo(), JSValueRegs(regT1, regT0), JSValueRegs(regT4, regT3), ident->impl());
     
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -740,7 +740,7 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     JITPutByIdGenerator& gen = m_putByIds[m_putByIdIndex++];
     
     Call call = callOperation(
-        gen.slowPathFunction(), gen.stubInfo(), regT3, regT2, regT1, regT0, ident->impl());
+        gen.slowPathFunction(), gen.stubInfo(), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), ident->impl());
     
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -968,7 +968,7 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
     linkAllSlowCases(iter);
 
     int dst = currentInstruction[1].u.operand;
-    callOperation(WithProfile, operationGetFromScope, dst, currentInstruction);
+    callOperationWithProfile(operationGetFromScope, dst, currentInstruction);
 }
 
 void JIT::emitPutGlobalVariable(JSValue* operand, int value, WatchpointSet* set)
