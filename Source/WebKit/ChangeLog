@@ -1,3 +1,17 @@
+2018-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r229093): Media playback on Facebook and Hulu require mDNSResponder access
+        https://bugs.webkit.org/show_bug.cgi?id=183421
+        <rdar://problem/38191574>
+
+        Reviewed by Dean Jackson.
+
+        CoreMedia fails to properly play back media on Facebook and Hulu if access to the
+        mDNSResponder is blocked by the sandbox. This Bug unblocks that access while we
+        investigate the underlying issue.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-03-07  Dean Jackson  <dino@apple.com>
 
         Try to fix build for watchOS and tvOS.

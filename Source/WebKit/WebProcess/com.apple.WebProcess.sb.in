@@ -628,11 +628,13 @@
 ;; Networking
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (system-network)
+#endif
 (allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
+       ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
+       ;; Remove this permission when <rdar://problem/38240572> is fixed.
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 ;; CFNetwork
