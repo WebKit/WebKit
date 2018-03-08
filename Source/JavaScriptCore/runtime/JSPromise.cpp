@@ -109,7 +109,7 @@ JSPromise* JSPromise::resolve(JSGlobalObject& globalObject, JSValue value)
     ASSERT(!arguments.hasOverflowed());
     auto result = call(exec, promiseResolveFunction, callType, callData, globalObject.promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    ASSERT(result.inherits(vm, JSPromise::info()));
+    ASSERT(result.inherits<JSPromise>(vm));
     return jsCast<JSPromise*>(result);
 }
 

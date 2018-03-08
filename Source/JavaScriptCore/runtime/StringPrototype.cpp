@@ -533,7 +533,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     const String& source = string->value(exec);
     unsigned sourceLen = source.length();
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RegExpObject* regExpObject = asRegExpObject(searchValue);
+    RegExpObject* regExpObject = jsCast<RegExpObject*>(searchValue);
     RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
     bool hasNamedCaptures = regExp->hasNamedCaptures();
@@ -954,7 +954,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
 ALWAYS_INLINE JSString* replace(
     VM& vm, ExecState* exec, JSString* string, JSValue searchValue, JSValue replaceValue)
 {
-    if (searchValue.inherits(vm, RegExpObject::info()))
+    if (searchValue.inherits<RegExpObject>(vm))
         return replaceUsingRegExpSearch(vm, exec, string, searchValue, replaceValue);
     return replaceUsingStringSearch(vm, exec, string, searchValue, replaceValue);
 }
@@ -983,7 +983,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue searchValue = exec->argument(0);
-    if (!searchValue.inherits(vm, RegExpObject::info()))
+    if (!searchValue.inherits<RegExpObject>(vm))
         return JSValue::encode(jsUndefined());
 
     scope.release();
@@ -1025,8 +1025,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
     if (thisValue.isString())
         return JSValue::encode(thisValue);
 
-    if (thisValue.inherits(vm, StringObject::info()))
-        return JSValue::encode(asStringObject(thisValue)->internalValue());
+    auto* stringObject = jsDynamicCast<StringObject*>(vm, thisValue);
+    if (stringObject)
+        return JSValue::encode(stringObject->internalValue());
 
     return throwVMTypeError(exec, scope);
 }

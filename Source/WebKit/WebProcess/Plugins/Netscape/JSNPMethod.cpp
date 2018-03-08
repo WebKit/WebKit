@@ -69,7 +69,7 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
     JSValue thisValue = exec->thisValue();
 
     // Check if we're calling a method on the plug-in script object.
-    if (thisValue.inherits(vm, JSHTMLElement::info())) {
+    if (thisValue.inherits<JSHTMLElement>(vm)) {
         JSHTMLElement* element = jsCast<JSHTMLElement*>(asObject(thisValue));
 
         // Try to get the script object from the element
@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
             thisValue = scriptObject;
     }
 
-    if (thisValue.inherits(vm, JSNPObject::info())) {
+    if (thisValue.inherits<JSNPObject>(vm)) {
         JSNPObject* jsNPObject = jsCast<JSNPObject*>(asObject(thisValue));
 
         return JSValue::encode(jsNPObject->callMethod(exec, jsNPMethod->npIdentifier()));

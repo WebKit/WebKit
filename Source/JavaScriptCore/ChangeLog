@@ -1,3 +1,208 @@
+2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add inherits<T>(VM&) leveraging JSCast fast path
+        https://bugs.webkit.org/show_bug.cgi?id=183429
+
+        Reviewed by Mark Lam.
+
+        Add new member function, JSCell::inherits<T>(VM&) and JSValue::inherits<T>(VM&).
+        They depends on jsDynamicCast<T> implementation and leverage JSType-based fast
+        paths defined in JSCast.h. We extract checking part as `JSCastingHelpers::inherit`
+        and construct jsDynamicCast and JSCell::inherits based on this.
+
+        And we remove several unnecessary casting functions (asRegExpObject, asDateInstance etc.).
+        In addition, we add jsDynamicCast fast path for RegExpObject by using existing RegExpObjectType.
+
+        We also fix the implementation of jsDynamicCast for JSObject since it uses LastJSCObjectType.
+        The embedder can add their extended object types after that.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValue.mm:
+        (isDate):
+        (isArray):
+        * API/JSValueRef.cpp:
+        (JSValueIsArray):
+        (JSValueIsDate):
+        (JSValueIsObjectOfClass):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * API/JSWrapperMap.mm:
+        (tryUnwrapObjcObject):
+        * API/ObjCCallbackFunction.mm:
+        (tryUnwrapConstructor):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOperations.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileOverridesHasInstance):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::getPreview):
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITOperations.cpp:
+        (JSC::operationNewFunctionCommon):
+        * jsc.cpp:
+        (checkException):
+        * runtime/BooleanObject.h:
+        (JSC::asBooleanObject): Deleted.
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DateInstance.h:
+        (JSC::asDateInstance): Deleted.
+        * runtime/DatePrototype.cpp:
+        (JSC::formateDateInstance):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::isTerminatedExecutionException):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/InternalFunction.h:
+        (JSC::asInternalFunction):
+        * runtime/JSArray.h:
+        (JSC::asArray):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpForBacktrace const):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::inherits const):
+        * runtime/JSCast.h:
+        (JSC::JSCastingHelpers::inheritsGenericImpl):
+        (JSC::JSCastingHelpers::inheritsJSTypeImpl):
+        (JSC::JSCastingHelpers::InheritsTraits::inherits):
+        (JSC::JSCastingHelpers::inherits):
+        (JSC::jsDynamicCast):
+        (JSC::JSCastingHelpers::jsDynamicCastGenericImpl): Deleted.
+        (JSC::JSCastingHelpers::jsDynamicCastJSTypeImpl): Deleted.
+        (JSC::JSCastingHelpers::JSDynamicCastTraits::cast): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::inherits const):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveCallerFunctionFunctor::operator() const):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::enqueueJob):
+        * runtime/JSGlobalObject.h:
+        (JSC::asGlobalObject): Deleted.
+        * runtime/JSInternalPromiseDeferred.cpp:
+        (JSC::JSInternalPromiseDeferred::create):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::asActivation):
+        * runtime/JSONObject.cpp:
+        (JSC::unwrapBoxedPrimitive):
+        (JSC::Stringifier::Stringifier):
+        (JSC::Walker::walk):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::resolve):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::create):
+        * runtime/JSType.h:
+        * runtime/ProxyObject.h:
+        (JSC::ProxyObject::create): Deleted.
+        (JSC::ProxyObject::createStructure): Deleted.
+        (JSC::ProxyObject::target const): Deleted.
+        (JSC::ProxyObject::handler const): Deleted.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpConstructor.h:
+        (JSC::asRegExpConstructor):
+        (JSC::isRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::finishCreation):
+        (JSC::RegExpObject::getOwnPropertySlot):
+        (JSC::RegExpObject::defineOwnProperty):
+        (JSC::regExpObjectSetLastIndexStrict):
+        (JSC::regExpObjectSetLastIndexNonStrict):
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::create): Deleted.
+        (JSC::RegExpObject::setRegExp): Deleted.
+        (JSC::RegExpObject::regExp const): Deleted.
+        (JSC::RegExpObject::setLastIndex): Deleted.
+        (JSC::RegExpObject::getLastIndex const): Deleted.
+        (JSC::RegExpObject::test): Deleted.
+        (JSC::RegExpObject::testInline): Deleted.
+        (JSC::RegExpObject::createStructure): Deleted.
+        (JSC::RegExpObject::offsetOfRegExp): Deleted.
+        (JSC::RegExpObject::offsetOfLastIndex): Deleted.
+        (JSC::RegExpObject::offsetOfLastIndexIsWritable): Deleted.
+        (JSC::RegExpObject::allocationSize): Deleted.
+        (JSC::asRegExpObject): Deleted.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTestFast):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncMatchFast):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoGetterGlobal):
+        (JSC::regExpProtoGetterIgnoreCase):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterDotAll):
+        (JSC::regExpProtoGetterSticky):
+        (JSC::regExpProtoGetterUnicode):
+        (JSC::regExpProtoGetterSource):
+        (JSC::regExpProtoFuncSearchFast):
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/StringObject.h:
+        (JSC::asStringObject): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replace):
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+        (JSC::stringProtoFuncToString):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::symbolProtoFuncToString):
+        (JSC::symbolProtoFuncValueOf):
+        * tools/JSDollarVM.cpp:
+        (WTF::customGetValue):
+        (WTF::customSetValue):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::isWebAssemblyHostFunction):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2018-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Sort and separate FeatureDefines.xcconfig

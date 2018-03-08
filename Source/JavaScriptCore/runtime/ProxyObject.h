@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class ProxyObject : public JSNonFinalObject {
+class ProxyObject final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 

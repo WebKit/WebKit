@@ -86,7 +86,7 @@ JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, JSObject*
 
 inline RegExpConstructor* asRegExpConstructor(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), RegExpConstructor::info()));
+    ASSERT(asObject(value)->inherits<RegExpConstructor>(*value.getObject()->vm()));
     return static_cast<RegExpConstructor*>(asObject(value));
 }
 
@@ -140,7 +140,7 @@ ALWAYS_INLINE bool isRegExp(VM& vm, ExecState* exec, JSValue value)
     if (!matchValue.isUndefined())
         return matchValue.toBoolean(exec);
 
-    return object->inherits(vm, RegExpObject::info());
+    return object->inherits<RegExpObject>(vm);
 }
 
 EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState*);

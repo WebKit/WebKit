@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = exec->thisValue();
-    if (thisValue.inherits(vm, JSFunction::info())) {
+    if (thisValue.inherits<JSFunction>(vm)) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         if (function->isHostOrBuiltinFunction()) {
             scope.release();
@@ -98,7 +98,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             return JSValue::encode(jsString(exec, classSource.toStringWithoutCopying()));
         }
 
-        if (thisValue.inherits(vm, JSAsyncFunction::info())) {
+        if (thisValue.inherits<JSAsyncFunction>(vm)) {
             String functionHeader = executable->isArrowFunction() ? "async " : "async function ";
 
             StringView source = executable->source().provider()->getRange(
@@ -116,7 +116,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
     }
 
-    if (thisValue.inherits(vm, InternalFunction::info())) {
+    if (thisValue.inherits<InternalFunction>(vm)) {
         InternalFunction* function = asInternalFunction(thisValue);
         scope.release();
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));

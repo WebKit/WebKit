@@ -312,7 +312,7 @@ public:
 
         JSCell* callee = visitor->callee().asCell();
 
-        if (callee && callee->inherits(*callee->vm(), JSBoundFunction::info()))
+        if (callee && callee->inherits<JSBoundFunction>(*callee->vm()))
             return StackVisitor::Continue;
 
         if (!m_hasFoundFrame && (callee != m_targetCallee))
@@ -353,7 +353,7 @@ EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValu
     JSValue caller = retrieveCallerFunction(exec, thisObj);
 
     // See ES5.1 15.3.5.4 - Function.caller may not be used to retrieve a strict caller.
-    if (!caller.isObject() || !asObject(caller)->inherits(vm, JSFunction::info())) {
+    if (!caller.isObject() || !asObject(caller)->inherits<JSFunction>(vm)) {
         // It isn't a JSFunction, but if it is a JSCallee from a program or eval call or an internal constructor, return null.
         if (jsDynamicCast<JSCallee*>(vm, caller) || jsDynamicCast<InternalFunction*>(vm, caller))
             return JSValue::encode(jsNull());
@@ -451,7 +451,7 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
         } else {
             if (thisObject->isBuiltinFunction() && !thisObject->hasReifiedLength())
                 propertyNames.add(vm.propertyNames->length);
-            if ((thisObject->isBuiltinFunction() || thisObject->inherits(vm, JSBoundFunction::info())) && !thisObject->hasReifiedName())
+            if ((thisObject->isBuiltinFunction() || thisObject->inherits<JSBoundFunction>(vm)) && !thisObject->hasReifiedName())
                 propertyNames.add(vm.propertyNames->name);
         }
     }
@@ -752,7 +752,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, ExecSt
 
     if (isBuiltinFunction())
         reifyName(vm, exec);
-    else if (this->inherits(vm, JSBoundFunction::info())) {
+    else if (this->inherits<JSBoundFunction>(vm)) {
         FunctionRareData* rareData = this->rareData(vm);
         String name = makeString("bound ", static_cast<NativeExecutable*>(m_executable.get())->name());
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;

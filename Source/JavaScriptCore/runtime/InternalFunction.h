@@ -91,7 +91,7 @@ InternalFunction* asInternalFunction(JSValue);
 
 inline InternalFunction* asInternalFunction(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), InternalFunction::info()));
+    ASSERT(asObject(value)->inherits<InternalFunction>(*value.getObject()->vm()));
     return static_cast<InternalFunction*>(asObject(value));
 }
 

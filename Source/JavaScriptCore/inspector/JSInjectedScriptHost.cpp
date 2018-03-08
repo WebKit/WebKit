@@ -150,8 +150,7 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
     if (value.isSymbol())
         return vm.smallStrings.symbolString();
 
-    JSObject* object = asObject(value);
-    if (object) {
+    if (auto* object = jsDynamicCast<JSObject*>(vm, value)) {
         if (object->isErrorInstance())
             return jsNontrivialString(exec, ASCIILiteral("error"));
 
@@ -159,49 +158,47 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         JSFunction* function = jsDynamicCast<JSFunction*>(vm, value);
         if (function && function->isClassConstructorFunction())
             return jsNontrivialString(exec, ASCIILiteral("class"));
-    }
 
-    if (value.inherits(vm, JSArray::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
-    if (value.inherits(vm, DirectArguments::info()) || value.inherits(vm, ScopedArguments::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
+        if (object->inherits<JSArray>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("array"));
+        if (object->inherits<DirectArguments>(vm) || object->inherits<ScopedArguments>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("array"));
 
-    if (value.inherits(vm, DateInstance::info()))
-        return jsNontrivialString(exec, ASCIILiteral("date"));
-    if (value.inherits(vm, RegExpObject::info()))
-        return jsNontrivialString(exec, ASCIILiteral("regexp"));
-    if (value.inherits(vm, ProxyObject::info()))
-        return jsNontrivialString(exec, ASCIILiteral("proxy"));
+        if (object->inherits<DateInstance>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("date"));
+        if (object->inherits<RegExpObject>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("regexp"));
+        if (object->inherits<ProxyObject>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("proxy"));
 
-    if (value.inherits(vm, JSMap::info()))
-        return jsNontrivialString(exec, ASCIILiteral("map"));
-    if (value.inherits(vm, JSSet::info()))
-        return jsNontrivialString(exec, ASCIILiteral("set"));
-    if (value.inherits(vm, JSWeakMap::info()))
-        return jsNontrivialString(exec, ASCIILiteral("weakmap"));
-    if (value.inherits(vm, JSWeakSet::info()))
-        return jsNontrivialString(exec, ASCIILiteral("weakset"));
+        if (object->inherits<JSMap>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("map"));
+        if (object->inherits<JSSet>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("set"));
+        if (object->inherits<JSWeakMap>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("weakmap"));
+        if (object->inherits<JSWeakSet>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("weakset"));
 
-    if (value.inherits(vm, JSStringIterator::info()))
-        return jsNontrivialString(exec, ASCIILiteral("iterator"));
+        if (object->inherits<JSStringIterator>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("iterator"));
 
-    if (object) {
         if (object->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())
             || object->getDirect(vm, vm.propertyNames->builtinNames().mapBucketPrivateName())
             || object->getDirect(vm, vm.propertyNames->builtinNames().setBucketPrivateName()))
             return jsNontrivialString(exec, ASCIILiteral("iterator"));
-    }
 
-    if (value.inherits(vm, JSInt8Array::info())
-        || value.inherits(vm, JSInt16Array::info())
-        || value.inherits(vm, JSInt32Array::info())
-        || value.inherits(vm, JSUint8Array::info())
-        || value.inherits(vm, JSUint8ClampedArray::info())
-        || value.inherits(vm, JSUint16Array::info())
-        || value.inherits(vm, JSUint32Array::info())
-        || value.inherits(vm, JSFloat32Array::info())
-        || value.inherits(vm, JSFloat64Array::info()))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
+        if (object->inherits<JSInt8Array>(vm)
+            || object->inherits<JSInt16Array>(vm)
+            || object->inherits<JSInt32Array>(vm)
+            || object->inherits<JSUint8Array>(vm)
+            || object->inherits<JSUint8ClampedArray>(vm)
+            || object->inherits<JSUint16Array>(vm)
+            || object->inherits<JSUint32Array>(vm)
+            || object->inherits<JSFloat32Array>(vm)
+            || object->inherits<JSFloat64Array>(vm))
+            return jsNontrivialString(exec, ASCIILiteral("array"));
+    }
 
     return impl().subtype(exec, value);
 }
@@ -213,14 +210,14 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 
     VM& vm = exec->vm();
     JSValue value = exec->uncheckedArgument(0);
-    if (!value.asCell()->inherits(vm, JSFunction::info()))
+    auto* function = jsDynamicCast<JSFunction*>(vm, value);
+    if (!function)
         return jsUndefined();
 
     // FIXME: <https://webkit.org/b/87192> Web Inspector: Expose function scope / closure data
 
     // FIXME: This should provide better details for JSBoundFunctions.
 
-    JSFunction* function = jsCast<JSFunction*>(value);
     const SourceCode* sourceCode = function->sourceCode();
     if (!sourceCode)
         return jsUndefined();

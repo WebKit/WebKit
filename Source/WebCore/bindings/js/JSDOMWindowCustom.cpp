@@ -459,9 +459,9 @@ DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
     if (!value.isObject())
         return nullptr;
     JSObject* object = asObject(value);
-    if (object->inherits(vm, JSDOMWindow::info()))
+    if (object->inherits<JSDOMWindow>(vm))
         return &jsCast<JSDOMWindow*>(object)->wrapped();
-    if (object->inherits(vm, JSDOMWindowProxy::info()))
+    if (object->inherits<JSDOMWindowProxy>(vm))
         return &jsCast<JSDOMWindowProxy*>(object)->wrapped();
     return nullptr;
 }

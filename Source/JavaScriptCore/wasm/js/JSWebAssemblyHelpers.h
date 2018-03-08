@@ -94,12 +94,12 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, ExecState* exe
 
 ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSObject* object, WebAssemblyFunction*& wasmFunction, WebAssemblyWrapperFunction*& wasmWrapperFunction)
 {
-    if (object->inherits(vm, WebAssemblyFunction::info())) {
+    if (object->inherits<WebAssemblyFunction>(vm)) {
         wasmFunction = jsCast<WebAssemblyFunction*>(object);
         wasmWrapperFunction = nullptr;
         return true;
     }
-    if (object->inherits(vm, WebAssemblyWrapperFunction::info())) {
+    if (object->inherits<WebAssemblyWrapperFunction>(vm)) {
         wasmWrapperFunction = jsCast<WebAssemblyWrapperFunction*>(object);
         wasmFunction = nullptr;
         return true;

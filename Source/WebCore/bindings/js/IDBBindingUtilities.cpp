@@ -151,7 +151,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vect
     if (value.isString())
         return IDBKey::createString(asString(value)->value(&exec));
 
-    if (value.inherits(vm, DateInstance::info())) {
+    if (value.inherits<DateInstance>(vm)) {
         auto dateValue = valueToDate(exec, value);
         if (!std::isnan(dateValue))
             return IDBKey::createDate(dateValue);
@@ -159,8 +159,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vect
 
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (isJSArray(object) || object->inherits(vm, JSArray::info())) {
-            JSArray* array = asArray(object);
+        if (auto* array = jsDynamicCast<JSArray*>(vm, object)) {
             size_t length = array->length();
 
             if (stack.contains(array))

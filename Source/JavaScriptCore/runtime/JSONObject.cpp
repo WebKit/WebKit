@@ -143,11 +143,11 @@ static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
     if (!value.isObject())
         return value;
     JSObject* object = asObject(value);
-    if (object->inherits(vm, NumberObject::info()))
+    if (object->inherits<NumberObject>(vm))
         return jsNumber(object->toNumber(exec));
-    if (object->inherits(vm, StringObject::info()))
+    if (object->inherits<StringObject>(vm))
         return object->toString(exec);
-    if (object->inherits(vm, BooleanObject::info()))
+    if (object->inherits<BooleanObject>(vm))
         return object->toPrimitive(exec);
 
     // Do not unwrap SymbolObject to Symbol. It is not performed in the spec.
@@ -235,7 +235,7 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
         return;
 
     JSObject* replacerObject = asObject(m_replacer);
-    if (replacerObject->inherits(vm, JSArray::info())) {
+    if (replacerObject->inherits<JSArray>(vm)) {
         m_usingArrayReplacer = true;
         JSArray* array = jsCast<JSArray*>(replacerObject);
         unsigned length = array->get(exec, vm.propertyNames->length).toUInt32(exec);
@@ -246,8 +246,8 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
             if (UNLIKELY(scope.exception()))
                 break;
 
-            if (name.isObject()) {
-                if (!asObject(name)->inherits(vm, NumberObject::info()) && !asObject(name)->inherits(vm, StringObject::info()))
+            if (auto* nameObject = jsDynamicCast<JSObject*>(vm, name)) {
+                if (!nameObject->inherits<NumberObject>(vm) && !nameObject->inherits<StringObject>(vm))
                     continue;
             } else if (!name.isNumber() && !name.isString())
                 continue;
@@ -649,7 +649,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(vm, JSArray::info()));
+                ASSERT(asObject(inValue)->inherits<JSArray>(vm));
                 if (markedStack.size() > maximumFilterRecursion)
                     return throwStackOverflowError(m_exec, scope);
 
@@ -704,7 +704,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(vm, JSArray::info()));
+                ASSERT(!asObject(inValue)->inherits<JSArray>(vm));
                 if (markedStack.size() > maximumFilterRecursion)
                     return throwStackOverflowError(m_exec, scope);
 
@@ -765,7 +765,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 JSObject* object = asObject(inValue);
-                if (isJSArray(object) || object->inherits(vm, JSArray::info()))
+                if (object->inherits<JSArray>(vm))
                     goto arrayStartState;
                 goto objectStartState;
         }

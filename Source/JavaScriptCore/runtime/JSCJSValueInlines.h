@@ -785,6 +785,12 @@ inline bool JSValue::inherits(VM& vm, const ClassInfo* classInfo) const
     return isCell() && asCell()->inherits(vm, classInfo);
 }
 
+template<typename Target>
+inline bool JSValue::inherits(VM& vm) const
+{
+    return isCell() && asCell()->inherits<Target>(vm);
+}
+
 inline const ClassInfo* JSValue::classInfoOrNull(VM& vm) const
 {
     return isCell() ? asCell()->classInfo(vm) : nullptr;

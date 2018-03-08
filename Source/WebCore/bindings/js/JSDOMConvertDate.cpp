@@ -40,7 +40,7 @@ double valueToDate(ExecState& state, JSValue value)
 {
     if (value.isNumber())
         return value.asNumber();
-    if (!value.inherits(state.vm(), DateInstance::info()))
+    if (!value.inherits<DateInstance>(state.vm()))
         return std::numeric_limits<double>::quiet_NaN();
     return static_cast<DateInstance*>(value.toObject(&state))->internalNumber();
 }

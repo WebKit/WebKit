@@ -1191,7 +1191,7 @@ template<typename FunctionType>
 static EncodedJSValue operationNewFunctionCommon(ExecState* exec, JSScope* scope, JSCell* functionExecutable, bool isInvalidated)
 {
     VM& vm = exec->vm();
-    ASSERT(functionExecutable->inherits(vm, FunctionExecutable::info()));
+    ASSERT(functionExecutable->inherits<FunctionExecutable>(vm));
     NativeCallFrameTracer tracer(&vm, exec);
     if (isInvalidated)
         return JSValue::encode(FunctionType::createWithInvalidatedReallocationWatchpoint(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));

@@ -604,7 +604,7 @@ private:
         if (!value.isObject())
             return false;
         JSObject* object = asObject(value);
-        return isJSArray(object) || object->inherits(vm, JSArray::info());
+        return object->inherits<JSArray>(vm);
     }
 
     bool isMap(VM& vm, JSValue value)
@@ -612,14 +612,14 @@ private:
         if (!value.isObject())
             return false;
         JSObject* object = asObject(value);
-        return object->inherits(vm, JSMap::info());
+        return object->inherits<JSMap>(vm);
     }
     bool isSet(VM& vm, JSValue value)
     {
         if (!value.isObject())
             return false;
         JSObject* object = asObject(value);
-        return object->inherits(vm, JSSet::info());
+        return object->inherits<JSSet>(vm);
     }
 
     bool checkForDuplicate(JSObject* object)
@@ -754,25 +754,25 @@ private:
     {
         VM& vm = m_exec->vm();
         write(ArrayBufferViewTag);
-        if (obj->inherits(vm, JSDataView::info()))
+        if (obj->inherits<JSDataView>(vm))
             write(DataViewTag);
-        else if (obj->inherits(vm, JSUint8ClampedArray::info()))
+        else if (obj->inherits<JSUint8ClampedArray>(vm))
             write(Uint8ClampedArrayTag);
-        else if (obj->inherits(vm, JSInt8Array::info()))
+        else if (obj->inherits<JSInt8Array>(vm))
             write(Int8ArrayTag);
-        else if (obj->inherits(vm, JSUint8Array::info()))
+        else if (obj->inherits<JSUint8Array>(vm))
             write(Uint8ArrayTag);
-        else if (obj->inherits(vm, JSInt16Array::info()))
+        else if (obj->inherits<JSInt16Array>(vm))
             write(Int16ArrayTag);
-        else if (obj->inherits(vm, JSUint16Array::info()))
+        else if (obj->inherits<JSUint16Array>(vm))
             write(Uint16ArrayTag);
-        else if (obj->inherits(vm, JSInt32Array::info()))
+        else if (obj->inherits<JSInt32Array>(vm))
             write(Int32ArrayTag);
-        else if (obj->inherits(vm, JSUint32Array::info()))
+        else if (obj->inherits<JSUint32Array>(vm))
             write(Uint32ArrayTag);
-        else if (obj->inherits(vm, JSFloat32Array::info()))
+        else if (obj->inherits<JSFloat32Array>(vm))
             write(Float32ArrayTag);
-        else if (obj->inherits(vm, JSFloat64Array::info()))
+        else if (obj->inherits<JSFloat64Array>(vm))
             write(Float64ArrayTag);
         else
             return false;
@@ -800,7 +800,7 @@ private:
     void dumpDOMPoint(JSObject* obj)
     {
         VM& vm = m_exec->vm();
-        if (obj->inherits(vm, JSDOMPoint::info()))
+        if (obj->inherits<JSDOMPoint>(vm))
             write(DOMPointTag);
         else
             write(DOMPointReadOnlyTag);
@@ -811,7 +811,7 @@ private:
     void dumpDOMRect(JSObject* obj)
     {
         VM& vm = m_exec->vm();
-        if (obj->inherits(vm, JSDOMRect::info()))
+        if (obj->inherits<JSDOMRect>(vm))
             write(DOMRectTag);
         else
             write(DOMRectReadOnlyTag);
@@ -826,7 +826,7 @@ private:
     void dumpDOMMatrix(JSObject* obj)
     {
         VM& vm = m_exec->vm();
-        if (obj->inherits(vm, JSDOMMatrix::info()))
+        if (obj->inherits<JSDOMMatrix>(vm))
             write(DOMMatrixTag);
         else
             write(DOMMatrixReadOnlyTag);
@@ -891,36 +891,34 @@ private:
         }
 
         VM& vm = m_exec->vm();
-        if (value.isObject() && asObject(value)->inherits(vm, DateInstance::info())) {
-            write(DateTag);
-            write(asDateInstance(value)->internalNumber());
-            return true;
-        }
-
         if (isArray(vm, value))
             return false;
 
         if (value.isObject()) {
             auto* obj = asObject(value);
-            if (obj->inherits(vm, BooleanObject::info())) {
-                if (!startObjectInternal(obj)) // handle duplicates
-                    return true;
-                write(asBooleanObject(value)->internalValue().toBoolean(m_exec) ? TrueObjectTag : FalseObjectTag);
+            if (auto* dateObject = jsDynamicCast<DateInstance*>(vm, obj)) {
+                write(DateTag);
+                write(dateObject->internalNumber());
                 return true;
             }
-            if (obj->inherits(vm, StringObject::info())) {
-                if (!startObjectInternal(obj)) // handle duplicates
+            if (auto* booleanObject = jsDynamicCast<BooleanObject*>(vm, obj)) {
+                if (!startObjectInternal(booleanObject)) // handle duplicates
                     return true;
-                String str = asString(asStringObject(value)->internalValue())->value(m_exec);
+                write(booleanObject->internalValue().toBoolean(m_exec) ? TrueObjectTag : FalseObjectTag);
+                return true;
+            }
+            if (auto* stringObject = jsDynamicCast<StringObject*>(vm, obj)) {
+                if (!startObjectInternal(stringObject)) // handle duplicates
+                    return true;
+                String str = asString(stringObject->internalValue())->value(m_exec);
                 dumpStringObject(str);
                 return true;
             }
-            if (obj->inherits(vm, NumberObject::info())) {
-                if (!startObjectInternal(obj)) // handle duplicates
+            if (auto* numberObject = jsDynamicCast<NumberObject*>(vm, obj)) {
+                if (!startObjectInternal(numberObject)) // handle duplicates
                     return true;
                 write(NumberObjectTag);
-                NumberObject* obj = static_cast<NumberObject*>(asObject(value));
-                write(obj->internalValue().asNumber());
+                write(numberObject->internalValue().asNumber());
                 return true;
             }
             if (auto* file = JSFile::toWrapped(vm, obj)) {
@@ -951,8 +949,7 @@ private:
                 write(data->data()->data(), data->data()->length());
                 return true;
             }
-            if (obj->inherits(vm, RegExpObject::info())) {
-                auto* regExp = asRegExpObject(obj);
+            if (auto* regExp = jsDynamicCast<RegExpObject*>(vm, obj)) {
                 char flags[3];
                 int flagCount = 0;
                 if (regExp->regExp()->global())
@@ -966,7 +963,7 @@ private:
                 write(String(flags, flagCount));
                 return true;
             }
-            if (obj->inherits(vm, JSMessagePort::info())) {
+            if (obj->inherits<JSMessagePort>(vm)) {
                 auto index = m_transferredMessagePorts.find(obj);
                 if (index != m_transferredMessagePorts.end()) {
                     write(MessagePortReferenceTag);
@@ -1007,7 +1004,7 @@ private:
                 write(static_cast<const uint8_t*>(arrayBuffer->data()), arrayBuffer->byteLength());
                 return true;
             }
-            if (obj->inherits(vm, JSArrayBufferView::info())) {
+            if (obj->inherits<JSArrayBufferView>(vm)) {
                 if (checkForDuplicate(obj))
                     return true;
                 bool success = dumpArrayBufferView(obj, code);
@@ -1051,19 +1048,19 @@ private:
                 return true;
             }
 #endif
-            if (obj->inherits(vm, JSDOMPointReadOnly::info())) {
+            if (obj->inherits<JSDOMPointReadOnly>(vm)) {
                 dumpDOMPoint(obj);
                 return true;
             }
-            if (obj->inherits(vm, JSDOMRectReadOnly::info())) {
+            if (obj->inherits<JSDOMRectReadOnly>(vm)) {
                 dumpDOMRect(obj);
                 return true;
             }
-            if (obj->inherits(vm, JSDOMMatrixReadOnly::info())) {
+            if (obj->inherits<JSDOMMatrixReadOnly>(vm)) {
                 dumpDOMMatrix(obj);
                 return true;
             }
-            if (obj->inherits(vm, JSDOMQuad::info())) {
+            if (obj->inherits<JSDOMQuad>(vm)) {
                 dumpDOMQuad(obj);
                 return true;
             }
@@ -1755,7 +1752,7 @@ private:
         const Vector<uint8_t>& buffer)
         : CloneBase(exec)
         , m_globalObject(globalObject)
-        , m_isDOMGlobalObject(globalObject->inherits(globalObject->vm(), JSDOMGlobalObject::info()))
+        , m_isDOMGlobalObject(globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
         , m_version(0xFFFFFFFF)
@@ -1777,7 +1774,7 @@ private:
         )
         : CloneBase(exec)
         , m_globalObject(globalObject)
-        , m_isDOMGlobalObject(globalObject->inherits(globalObject->vm(), JSDOMGlobalObject::info()))
+        , m_isDOMGlobalObject(globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
         , m_version(0xFFFFFFFF)
@@ -2048,7 +2045,7 @@ private:
         if (!read(byteLength))
             return false;
         JSObject* arrayBufferObj = asObject(readTerminal());
-        if (!arrayBufferObj || !arrayBufferObj->inherits(vm, JSArrayBuffer::info()))
+        if (!arrayBufferObj || !arrayBufferObj->inherits<JSArrayBuffer>(vm))
             return false;
 
         unsigned elementSize = typedArrayElementSize(arrayBufferViewSubtag);

@@ -9808,7 +9808,7 @@ private:
     void compileOverridesHasInstance()
     {
         FrozenValue* defaultHasInstanceFunction = m_node->cellOperand();
-        ASSERT(defaultHasInstanceFunction->cell()->inherits(vm(), JSFunction::info()));
+        ASSERT(defaultHasInstanceFunction->cell()->inherits<JSFunction>(vm()));
 
         LValue constructor = lowCell(m_node->child1());
         LValue hasInstance = lowJSValue(m_node->child2());
@@ -10728,7 +10728,7 @@ private:
     {
         FrozenValue* regexp = m_node->cellOperand();
         LValue lastIndex = lowJSValue(m_node->child1());
-        ASSERT(regexp->cell()->inherits(vm(), RegExp::info()));
+        ASSERT(regexp->cell()->inherits<RegExp>(vm()));
         ASSERT(m_node->castOperand<RegExp*>()->isValid());
 
         LBasicBlock slowCase = m_out.newBlock();

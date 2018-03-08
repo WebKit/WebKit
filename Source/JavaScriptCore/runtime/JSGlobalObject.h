@@ -925,14 +925,6 @@ private:
     RefPtr<ThreadLocalCache> m_threadLocalCache;
 };
 
-JSGlobalObject* asGlobalObject(JSValue);
-
-inline JSGlobalObject* asGlobalObject(JSValue value)
-{
-    ASSERT(asObject(value)->isGlobalObject());
-    return jsCast<JSGlobalObject*>(asObject(value));
-}
-
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0, JSValue newTarget = JSValue())
 {
     VM& vm = globalObject->vm();

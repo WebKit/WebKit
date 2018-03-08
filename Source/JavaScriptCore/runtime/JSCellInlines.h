@@ -265,6 +265,12 @@ inline bool JSCell::inherits(VM& vm, const ClassInfo* info) const
     return classInfo(vm)->isSubClassOf(info);
 }
 
+template<typename Target>
+inline bool JSCell::inherits(VM& vm) const
+{
+    return JSCastingHelpers::inherits<Target>(vm, this);
+}
+
 ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, Structure& structure, PropertyName name)
 {
     ASSERT(canUseFastGetOwnProperty(structure));

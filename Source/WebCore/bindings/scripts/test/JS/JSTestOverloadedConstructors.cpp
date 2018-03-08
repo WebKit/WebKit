@@ -148,11 +148,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor:
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSArrayBuffer::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBuffer>(vm))
             return constructJSTestOverloadedConstructors1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSArrayBufferView::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBufferView>(vm))
             return constructJSTestOverloadedConstructors2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
             return constructJSTestOverloadedConstructors3(state);
         if (distinguishingArg.isNumber())
             return constructJSTestOverloadedConstructors5(state);

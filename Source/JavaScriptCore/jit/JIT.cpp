@@ -196,7 +196,7 @@ void JIT::privateCompileMainPass()
 
     VM& vm = *m_codeBlock->vm();
     unsigned startBytecodeOffset = 0;
-    if (m_loopOSREntryBytecodeOffset && (m_codeBlock->inherits(vm, ProgramCodeBlock::info()) || m_codeBlock->inherits(vm, ModuleProgramCodeBlock::info()))) {
+    if (m_loopOSREntryBytecodeOffset && (m_codeBlock->inherits<ProgramCodeBlock>(vm) || m_codeBlock->inherits<ModuleProgramCodeBlock>(vm))) {
         // We can only do this optimization because we execute ProgramCodeBlock's exactly once.
         // This optimization would be invalid otherwise. When the LLInt determines it wants to
         // do OSR entry into the baseline JIT in a loop, it will pass in the bytecode offset it

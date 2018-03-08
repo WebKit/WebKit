@@ -257,7 +257,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
     JSValue patternArg = args.at(0);
     JSValue flagsArg = args.at(1);
 
-    bool isPatternRegExp = patternArg.inherits(vm, RegExpObject::info());
+    bool isPatternRegExp = patternArg.inherits<RegExpObject>(vm);
     bool constructAsRegexp = isRegExp(vm, exec, patternArg);
     RETURN_IF_EXCEPTION(scope, nullptr);
 

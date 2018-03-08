@@ -111,12 +111,17 @@ enum JSType : uint8_t {
     WebAssemblyFunctionType,
     WebAssemblyToJSCalleeType,
 
-    LastJSCObjectType = WebAssemblyToJSCalleeType,
+    LastJSCObjectType = WebAssemblyToJSCalleeType, // This is the last "JSC" Object type. After this, we have embedder's (e.g., WebCore) extended object types.
     MaxJSType = 0b11111111,
 };
 
 static const uint32_t FirstTypedArrayType = Int8ArrayType;
 static const uint32_t LastTypedArrayType = DataViewType;
+
+// LastObjectType should be MaxJSType (not LastJSCObjectType) since embedders can add their extended object types after the enums listed in JSType.
+static const uint32_t FirstObjectType = ObjectType;
+static const uint32_t LastObjectType = MaxJSType;
+
 static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTypedArrayType + 1;
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;
 

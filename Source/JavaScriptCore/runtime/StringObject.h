@@ -71,14 +71,6 @@ protected:
     JS_EXPORT_PRIVATE StringObject(VM&, Structure*);
 };
 
-StringObject* asStringObject(JSValue);
-
-inline StringObject* asStringObject(JSValue value)
-{
-    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), StringObject::info()));
-    return static_cast<StringObject*>(asObject(value));
-}
-
 JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 
 // Helper for producing a JSString for 'string', where 'string' was been produced by

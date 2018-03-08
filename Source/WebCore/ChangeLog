@@ -1,3 +1,67 @@
+2018-03-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add inherits<T>(VM&) leveraging JSCast fast path
+        https://bugs.webkit.org/show_bug.cgi?id=183429
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/js/JSDOMConvertDate.cpp:
+        (WebCore::valueToDate):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext const):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::toWrapped):
+        * bindings/js/JSEventTargetCustom.cpp:
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::pushEventHandlerScope const):
+        * bindings/js/JSXPathNSResolverCustom.cpp:
+        (WebCore::JSXPathNSResolver::toWrapped):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::domWindowFromExecState):
+        (WebCore::scriptExecutionContextFromExecState):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::isArray):
+        (WebCore::CloneSerializer::isMap):
+        (WebCore::CloneSerializer::isSet):
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (WebCore::CloneSerializer::dumpDOMPoint):
+        (WebCore::CloneSerializer::dumpDOMRect):
+        (WebCore::CloneSerializer::dumpDOMMatrix):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOverloadDispatcher):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameterOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnionOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnionsOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnionOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnionOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameterOverloadDispatcher):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunctionOverloadDispatcher):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::construct):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod):
+        * bridge/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::callRuntimeObject):
+        (JSC::Bindings::callRuntimeConstructor):
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::WebInjectedScriptHost::subtype):
+        (WebCore::WebInjectedScriptHost::isHTMLAllCollection):
+
 2018-03-08  Tim Horton  <timothy_horton@apple.com>
 
         Stop linking ApplicationServices directly

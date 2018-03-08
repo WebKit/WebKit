@@ -1049,7 +1049,8 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
     
-    if (!base.inherits(vm, RegExpObject::info()))
+    auto* regexp = jsDynamicCast<RegExpObject*>(vm, base);
+    if (UNLIKELY(!regexp))
         return throwVMTypeError(exec, scope);
 
     JSString* input = argument.toStringOrNull(exec);
@@ -1057,7 +1058,7 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
     if (!input)
         return JSValue::encode(jsUndefined());
     scope.release();
-    return JSValue::encode(asRegExpObject(base)->exec(exec, globalObject, input));
+    return JSValue::encode(regexp->exec(exec, globalObject, input));
 }
 
 EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(ExecState* exec, JSGlobalObject* globalObject, RegExp* regExp, JSString* string)
@@ -1180,7 +1181,8 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
 
-    if (!base.inherits(vm, RegExpObject::info())) {
+    auto* regexp = jsDynamicCast<RegExpObject*>(vm, base);
+    if (UNLIKELY(!regexp)) {
         throwTypeError(exec, scope);
         return false;
     }
@@ -1190,7 +1192,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     if (!input)
         return false;
     scope.release();
-    return asRegExpObject(base)->test(exec, globalObject, input);
+    return regexp->test(exec, globalObject, input);
 }
 
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

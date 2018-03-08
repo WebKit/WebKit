@@ -35,7 +35,7 @@ using namespace JSC;
 
 RefPtr<XPathNSResolver> JSXPathNSResolver::toWrapped(VM& vm, ExecState& state, JSValue value)
 {
-    if (value.inherits(vm, JSXPathNSResolver::info()))
+    if (value.inherits<JSXPathNSResolver>(vm))
         return &jsCast<JSXPathNSResolver*>(asObject(value))->wrapped();
 
     auto result = JSCustomXPathNSResolver::create(state, value);

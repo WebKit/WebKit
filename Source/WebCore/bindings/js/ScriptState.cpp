@@ -50,7 +50,7 @@ DOMWindow* domWindowFromExecState(JSC::ExecState* scriptState)
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     JSC::VM& vm = globalObject->vm();
-    if (!globalObject->inherits(vm, JSDOMWindowBase::info()))
+    if (!globalObject->inherits<JSDOMWindowBase>(vm))
         return nullptr;
     return &JSC::jsCast<JSDOMWindowBase*>(globalObject)->wrapped();
 }
@@ -66,7 +66,7 @@ ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState* scri
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     JSC::VM& vm = globalObject->vm();
-    if (!globalObject->inherits(vm, JSDOMGlobalObject::info()))
+    if (!globalObject->inherits<JSDOMGlobalObject>(vm))
         return nullptr;
     return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
 }

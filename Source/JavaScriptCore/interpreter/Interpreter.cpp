@@ -631,7 +631,7 @@ ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame
     if (Debugger* debugger = callFrame->vmEntryGlobalObject(vm)->debugger()) {
         SuspendExceptionScope scope(&vm);
         if (callFrame->isAnyWasmCallee()
-            || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits(vm, JSFunction::info())))
+            || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
             debugger->unwindEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);

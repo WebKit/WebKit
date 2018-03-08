@@ -206,7 +206,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     }
 
     // Function preview.
-    if (cell->inherits(vm, JSFunction::info())) {
+    if (cell->inherits<JSFunction>(vm)) {
         injectedScript.functionDetails(errorString, cell, functionDetails);
         return;
     }

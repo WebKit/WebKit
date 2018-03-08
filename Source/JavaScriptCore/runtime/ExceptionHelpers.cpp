@@ -65,7 +65,7 @@ bool isTerminatedExecutionException(VM& vm, Exception* exception)
     if (!exception->value().isObject())
         return false;
 
-    return exception->value().inherits(vm, TerminatedExecutionError::info());
+    return exception->value().inherits<TerminatedExecutionError>(vm);
 }
 
 JSObject* createStackOverflowError(ExecState* exec)

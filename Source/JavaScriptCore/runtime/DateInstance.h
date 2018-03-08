@@ -80,12 +80,4 @@ private:
     mutable PoisonedRefPtr<DateInstancePoison, DateInstanceData> m_data;
 };
 
-DateInstance* asDateInstance(JSValue);
-
-inline DateInstance* asDateInstance(JSValue value)
-{
-    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), DateInstance::info()));
-    return static_cast<DateInstance*>(asObject(value));
-}
-
 } // namespace JSC

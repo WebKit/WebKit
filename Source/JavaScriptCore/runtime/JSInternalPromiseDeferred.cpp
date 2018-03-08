@@ -47,7 +47,7 @@ JSInternalPromiseDeferred* JSInternalPromiseDeferred::create(ExecState* exec, JS
 
     JSValue promise = deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName());
     RETURN_IF_EXCEPTION(scope, nullptr);
-    ASSERT(promise.inherits(vm, JSInternalPromise::info()));
+    ASSERT(promise.inherits<JSInternalPromise>(vm));
     JSValue resolve = deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName());
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSValue reject = deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName());

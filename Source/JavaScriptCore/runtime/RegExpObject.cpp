@@ -49,6 +49,7 @@ void RegExpObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    ASSERT(type() == RegExpObjectType);
 }
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -64,7 +65,7 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
 {
     VM& vm = exec->vm();
     if (propertyName == vm.propertyNames->lastIndex) {
-        RegExpObject* regExp = asRegExpObject(object);
+        RegExpObject* regExp = jsCast<RegExpObject*>(object);
         unsigned attributes = regExp->m_lastIndexIsWritable ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
@@ -110,7 +111,7 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (propertyName == vm.propertyNames->lastIndex) {
-        RegExpObject* regExp = asRegExpObject(object);
+        RegExpObject* regExp = jsCast<RegExpObject*>(object);
         if (descriptor.configurablePresent() && descriptor.configurable())
             return typeError(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
         if (descriptor.enumerablePresent() && descriptor.enumerable())
@@ -139,12 +140,12 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
 
 static bool regExpObjectSetLastIndexStrict(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
 {
-    return asRegExpObject(JSValue::decode(thisValue))->setLastIndex(exec, JSValue::decode(value), true);
+    return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(exec, JSValue::decode(value), true);
 }
 
 static bool regExpObjectSetLastIndexNonStrict(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
 {
-    return asRegExpObject(JSValue::decode(thisValue))->setLastIndex(exec, JSValue::decode(value), false);
+    return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(exec, JSValue::decode(value), false);
 }
 
 bool RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -156,8 +157,8 @@ bool RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
 
     if (propertyName == vm.propertyNames->lastIndex) {
-        bool result = asRegExpObject(cell)->setLastIndex(exec, value, slot.isStrictMode());
-        slot.setCustomValue(asRegExpObject(cell), slot.isStrictMode()
+        bool result = thisObject->setLastIndex(exec, value, slot.isStrictMode());
+        slot.setCustomValue(thisObject, slot.isStrictMode()
             ? regExpObjectSetLastIndexStrict
             : regExpObjectSetLastIndexNonStrict);
         return result;

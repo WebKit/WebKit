@@ -949,7 +949,7 @@ static EncodedJSValue customGetAccessor(ExecState*, EncodedJSValue thisValue, Pr
 
 static EncodedJSValue customGetValue(ExecState* exec, EncodedJSValue slotValue, PropertyName)
 {
-    RELEASE_ASSERT(JSValue::decode(slotValue).inherits(exec->vm(), JSTestCustomGetterSetter::info()));
+    RELEASE_ASSERT(JSValue::decode(slotValue).inherits<JSTestCustomGetterSetter>(exec->vm()));
     // Passed property holder.
     return slotValue;
 }
@@ -971,7 +971,7 @@ static bool customSetValue(ExecState* exec, EncodedJSValue slotValue, EncodedJSV
 {
     VM& vm = exec->vm();
 
-    RELEASE_ASSERT(JSValue::decode(slotValue).inherits(exec->vm(), JSTestCustomGetterSetter::info()));
+    RELEASE_ASSERT(JSValue::decode(slotValue).inherits<JSTestCustomGetterSetter>(exec->vm()));
 
     JSValue value = JSValue::decode(encodedValue);
     RELEASE_ASSERT(value.isObject());

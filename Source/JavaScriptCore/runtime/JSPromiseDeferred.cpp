@@ -63,7 +63,7 @@ JSPromiseDeferred* JSPromiseDeferred::create(ExecState* exec, JSGlobalObject* gl
 
     JSValue promise = deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName());
     RETURN_IF_EXCEPTION(scope, nullptr);
-    ASSERT(promise.inherits(vm, JSPromise::info()));
+    ASSERT(promise.inherits<JSPromise>(vm));
     JSValue resolve = deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName());
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSValue reject = deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName());

@@ -289,7 +289,7 @@ JSArray* asArray(JSValue);
 
 inline JSArray* asArray(JSCell* cell)
 {
-    ASSERT(cell->inherits(*cell->vm(), JSArray::info()));
+    ASSERT(cell->inherits<JSArray>(*cell->vm()));
     return jsCast<JSArray*>(cell);
 }
 

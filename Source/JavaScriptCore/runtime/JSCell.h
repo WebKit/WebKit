@@ -116,6 +116,7 @@ public:
     bool isCustomGetterSetter() const;
     bool isProxy() const;
     bool inherits(VM&, const ClassInfo*) const;
+    template<typename Target> bool inherits(VM&) const;
     bool isAPIValueWrapper() const;
     
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's

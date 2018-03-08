@@ -236,6 +236,7 @@ public:
     bool isCustomGetterSetter() const;
     bool isObject() const;
     bool inherits(VM&, const ClassInfo*) const;
+    template<typename Target> bool inherits(VM&) const;
     const ClassInfo* classInfoOrNull(VM&) const;
         
     // Extracting the value.

@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)
         if (!thisValue.isObject())
             return throwVMTypeError(exec, scope, SymbolToStringTypeError);
         JSObject* thisObject = asObject(thisValue);
-        if (!thisObject->inherits(vm, SymbolObject::info()))
+        if (!thisObject->inherits<SymbolObject>(vm))
             return throwVMTypeError(exec, scope, SymbolToStringTypeError);
         symbol = asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
     }
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(ExecState* exec)
         return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
 
     JSObject* thisObject = asObject(thisValue);
-    if (!thisObject->inherits(vm, SymbolObject::info()))
+    if (!thisObject->inherits<SymbolObject>(vm))
         return throwVMTypeError(exec, scope, SymbolValueOfTypeError);
 
     return JSValue::encode(jsCast<SymbolObject*>(thisObject)->internalValue());

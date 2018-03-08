@@ -249,7 +249,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(vm, ObjCRuntimeObject::info()))
+    if (!thisValue.inherits<ObjCRuntimeObject>(vm))
         return throwVMTypeError(exec, scope);
 
     JSValue result = jsUndefined();

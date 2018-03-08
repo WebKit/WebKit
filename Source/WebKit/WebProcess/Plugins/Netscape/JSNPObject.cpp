@@ -241,7 +241,7 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
 {
     JSObject* object = exec->jsCallee();
-    ASSERT(object->inherits(exec->vm(), JSNPObject::info()));
+    ASSERT(object->inherits<JSNPObject>(exec->vm()));
 
     return JSValue::encode(jsCast<JSNPObject*>(object)->callObject(exec));
 }
@@ -260,7 +260,7 @@ JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData
 static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
 {
     JSObject* constructor = exec->jsCallee();
-    ASSERT(constructor->inherits(exec->vm(), JSNPObject::info()));
+    ASSERT(constructor->inherits<JSNPObject>(exec->vm()));
 
     return JSValue::encode(jsCast<JSNPObject*>(constructor)->callConstructor(exec));
 }
