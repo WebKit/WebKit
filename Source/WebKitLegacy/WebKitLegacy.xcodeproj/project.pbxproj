@@ -3727,14 +3727,6 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
-				HEADER_SEARCH_PATHS = (
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc",
-				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Debug;
@@ -3744,14 +3736,6 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_$(CURRENT_VARIANT)) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
-				HEADER_SEARCH_PATHS = (
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc",
-				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Release;
@@ -3761,14 +3745,6 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
-				HEADER_SEARCH_PATHS = (
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc",
-				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Production;

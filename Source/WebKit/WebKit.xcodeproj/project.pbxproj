@@ -11471,13 +11471,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-				);
 				PRODUCT_NAME = All;
 			};
 			name = Debug;
@@ -11486,13 +11479,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-				);
 				PRODUCT_NAME = All;
 			};
 			name = Release;
@@ -11528,14 +11514,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc",
-				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Debug;
@@ -11544,14 +11522,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc",
-				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Release;
@@ -11649,13 +11619,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2D91884ACE000BBFE98 /* All.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-				);
 				PRODUCT_NAME = All;
 			};
 			name = Production;
@@ -11664,14 +11627,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc",
-				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Production;
@@ -11725,13 +11680,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-				);
 			};
 			name = Debug;
 		};
@@ -11739,13 +11687,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-				);
 			};
 			name = Release;
 		};
@@ -11753,13 +11694,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders\"",
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-				);
 			};
 			name = Production;
 		};

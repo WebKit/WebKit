@@ -1,3 +1,12 @@
+2018-03-08  Youenn Fablet  <youenn@apple.com>
+
+        libwebrtc update broke internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=183454
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2018-03-08  Chris Dumez  <cdumez@apple.com>
 
         Possible null dereference of the page under WebFrameNetworkingContext::storageSession()

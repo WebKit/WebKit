@@ -1,5 +1,14 @@
 2018-03-08  Youenn Fablet  <youenn@apple.com>
 
+        libwebrtc update broke internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=183454
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/BaseTarget.xcconfig:
+
+2018-03-08  Youenn Fablet  <youenn@apple.com>
+
         PluginInfoStore::isSupportedPlugin should check for empty mime type
         https://bugs.webkit.org/show_bug.cgi?id=183457
         <rdar://problem/38159575>

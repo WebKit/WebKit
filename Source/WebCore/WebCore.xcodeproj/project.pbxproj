@@ -1098,7 +1098,6 @@
 		41B28B3D1F860EF300FB52AC /* LibWebRTCProviderCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B2A6261EF1BF6D002B9D7A /* WebAudioSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41C760B10EDE03D300C1655F /* ScriptState.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C760B00EDE03D300C1655F /* ScriptState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		41CAD71E1EA090A100178164 /* VideoToolBoxEncoderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */; };
 		41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB279B1F34CEF000795487 /* CacheQueryOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2256,8 +2255,8 @@
 		7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */; };
 		7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845712D26E3800E79415 /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846D12D26E3800E79415 /* ResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845A12D26E3800E79415 /* ResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7EE6846F12D26E3800E79415 /* ResourceRequestCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846F12D26E3800E73215 /* DNSResolveQueueCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845C12D26E3800FF9415 /* DNSResolveQueueCFNet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7EE6846F12D26E3800E79415 /* ResourceRequestCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6847012D26E3800E79415 /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845D12D26E3800E79415 /* ResourceResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7F4C96DD1AD4483500365A50 /* JSFetchBody.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F4C96D91AD4483500365A50 /* JSFetchBody.h */; };
 		7F4C96DD1AD4483500365A51 /* JSReadableStreamSink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F4C96D91AD4483500365A51 /* JSReadableStreamSink.h */; };
@@ -6157,6 +6156,7 @@
 		1AF89A411518FDEA00E547B5 /* TiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledBacking.h; sourceTree = "<group>"; };
 		1AF8E1191256592600230FF7 /* ProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyServer.h; sourceTree = "<group>"; };
 		1AF8E13212565A4400230FF7 /* ProxyServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServer.cpp; sourceTree = "<group>"; };
+		1AF8E13212565A4445230FF7 /* DNS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNS.cpp; sourceTree = "<group>"; };
 		1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServerCFNet.cpp; sourceTree = "<group>"; };
 		1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSetRowList.cpp; sourceTree = "<group>"; };
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
@@ -7102,8 +7102,6 @@
 		4147E2B61C89912600A7E715 /* FetchLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchLoaderClient.h; sourceTree = "<group>"; };
 		414B82021D6DF0D90077EBE3 /* StructuredClone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructuredClone.cpp; sourceTree = "<group>"; };
 		414B82031D6DF0D90077EBE3 /* StructuredClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructuredClone.h; sourceTree = "<group>"; };
-		414C25D51E9EF7C000BEE141 /* H264VideoToolBoxEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = H264VideoToolBoxEncoder.h; path = libwebrtc/H264VideoToolBoxEncoder.h; sourceTree = "<group>"; };
-		414C25D61E9EF7C000BEE141 /* H264VideoToolBoxEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = H264VideoToolBoxEncoder.mm; path = libwebrtc/H264VideoToolBoxEncoder.mm; sourceTree = "<group>"; };
 		414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyFrameLoaderClient.h; sourceTree = "<group>"; };
 		415071551685067300C3C7B3 /* SelectorFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorFilter.cpp; sourceTree = "<group>"; };
 		415071561685067300C3C7B3 /* SelectorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorFilter.h; sourceTree = "<group>"; };
@@ -12136,7 +12134,6 @@
 		B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGZoomEvent.h; sourceTree = "<group>"; };
 		B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomEvent.idl; sourceTree = "<group>"; };
 		B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
-		1AF8E13212565A4445230FF7 /* DNS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNS.cpp; sourceTree = "<group>"; };
 		B2F34FE50E82F81400F627CD /* DNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNS.h; sourceTree = "<group>"; };
 		B2F34FE80E82F82700F648CD /* DNSResolveQueueCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSResolveQueueCFNet.cpp; sourceTree = "<group>"; };
 		B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimateColorElement.cpp; sourceTree = "<group>"; };
@@ -16581,8 +16578,6 @@
 		415747421E38698000E914D8 /* libwebrtc */ = {
 			isa = PBXGroup;
 			children = (
-				414C25D51E9EF7C000BEE141 /* H264VideoToolBoxEncoder.h */,
-				414C25D61E9EF7C000BEE141 /* H264VideoToolBoxEncoder.mm */,
 				41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */,
 				415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */,
 				415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */,
@@ -31886,18 +31881,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					PAL,
-					ForwardingHeaders,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(SRCROOT)",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
-				);
 			};
 			name = Debug;
 		};
@@ -31905,18 +31888,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					PAL,
-					ForwardingHeaders,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(SRCROOT)",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
-				);
 			};
 			name = Release;
 		};
@@ -31925,18 +31896,6 @@
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
-				HEADER_SEARCH_PATHS = (
-					PAL,
-					ForwardingHeaders,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(SRCROOT)",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
-				);
 			};
 			name = Production;
 		};
@@ -31970,18 +31929,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					PAL,
-					ForwardingHeaders,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(SRCROOT)",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
-				);
 			};
 			name = Debug;
 		};
@@ -31989,18 +31936,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					PAL,
-					ForwardingHeaders,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(SRCROOT)",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
-				);
 			};
 			name = Release;
 		};
@@ -32008,18 +31943,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					PAL,
-					ForwardingHeaders,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-					"\"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore\"",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
-					"$(WEBKITADDITIONS_HEADER_SEARCH_PATHS)",
-					"$(HEADER_SEARCH_PATHS)",
-					"$(SRCROOT)",
-					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc\"",
-				);
 			};
 			name = Production;
 		};
