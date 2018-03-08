@@ -1,3 +1,12 @@
+2018-03-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move a test from fast/DOM to fast/dom and delete the fast/DOM directory.
+
+        Unreviewed test gardening.
+
+        * fast/dom/HTMLInputElement/input-value-and-type-change-crash-expected.txt: Renamed from LayoutTests/fast/DOM/HTMLInputElement/input-value-and-type-change-crash-expected.txt.
+        * fast/dom/HTMLInputElement/input-value-and-type-change-crash.html: Renamed from LayoutTests/fast/DOM/HTMLInputElement/input-value-and-type-change-crash.html.
+
 2018-03-08  Frederic Wang  <fwang@igalia.com>
 
         Add references to bug 160161 for some MathML failures on iOS and macOS.
