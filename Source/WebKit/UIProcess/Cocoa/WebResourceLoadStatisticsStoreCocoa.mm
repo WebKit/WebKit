@@ -38,15 +38,15 @@ void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
             setTimeToLiveUserInteraction(timeToLiveUserInteraction);
 
         Seconds timeToLiveCookiePartitionFree([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveCookiePartitionFree"]);
-        if (timeToLiveCookiePartitionFree >= 0_s && timeToLiveCookiePartitionFree <= 24_h)
+        if (timeToLiveCookiePartitionFree > 0_s && timeToLiveCookiePartitionFree <= 24_h)
             setTimeToLiveCookiePartitionFree(timeToLiveCookiePartitionFree);
 
         Seconds minimumTimeBetweenDataRecordsRemoval([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsMinimumTimeBetweenDataRecordsRemoval"]);
-        if (minimumTimeBetweenDataRecordsRemoval >= 0_s && minimumTimeBetweenDataRecordsRemoval < 1_h)
+        if (minimumTimeBetweenDataRecordsRemoval > 0_s && minimumTimeBetweenDataRecordsRemoval < 1_h)
             setMinimumTimeBetweenDataRecordsRemoval(minimumTimeBetweenDataRecordsRemoval);
 
         Seconds grandfatheringTime([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsGrandfatheringTime"]);
-        if (grandfatheringTime >= 0_s && grandfatheringTime <= 24_h * 7)
+        if (grandfatheringTime > 0_s && grandfatheringTime <= 24_h * 7)
             setGrandfatheringTime(grandfatheringTime);
 
         setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
