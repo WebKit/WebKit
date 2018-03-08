@@ -1,3 +1,44 @@
+2018-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove WebCookieManager and messaging from WebContent process.
+        https://bugs.webkit.org/show_bug.cgi?id=183382
+        <rdar://problem/38191450>
+
+        Reviewed by Alex Christensen.
+
+        Networking access was fully removed from the WebContent process in Bug 183192 (and related bugs). The
+        UIProcess no longer needs to ask the WebContent process about networking-related things, and shouldn't
+        waste everyone's time doing so.
+
+        This bug removes some left-over WebCookieManager API stuff, and is a first step in purging the
+        WebContent Process from accessing cookie data.
+
+        * NetworkProcess/Cookies: Copied from WebProcess/Cookies.
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Cookies: Removed.
+        * WebProcess/Cookies/WebCookieManager.cpp: Removed.
+        * WebProcess/Cookies/WebCookieManager.h: Removed.
+        * WebProcess/Cookies/WebCookieManager.messages.in: Removed.
+        * WebProcess/Cookies/curl: Removed.
+        * WebProcess/Cookies/curl/WebCookieManagerCurl.cpp: Removed.
+        * WebProcess/Cookies/mac: Removed.
+        * WebProcess/Cookies/mac/WebCookieManagerMac.mm: Removed.
+        * WebProcess/Cookies/soup: Removed.
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: Remove 'WebCookieManager.h" header.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Ditto.
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm: Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Remove call to add WebCookieManager as a
+        WebProcessSupplement.
+        * CMakeLists.txt: Revised paths.
+        * DerivedSources.make: Ditto.
+        * PlatformMac.cmake: Ditto.
+        * PlatformWin.cmake: Ditto.
+        * SourcesGTK.txt: Ditto.
+        * SourcesWPE.txt: Ditto.
+
 2018-03-08  Youenn Fablet  <youenn@apple.com>
 
         libwebrtc update broke internal builds

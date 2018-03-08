@@ -23,6 +23,7 @@
 VPATH = \
     $(WebKit2) \
     $(WebKit2)/NetworkProcess \
+    $(WebKit2)/NetworkProcess/Cookies \
     $(WebKit2)/NetworkProcess/cache \
     $(WebKit2)/NetworkProcess/CustomProtocols \
     $(WebKit2)/NetworkProcess/mac \
@@ -42,7 +43,6 @@ VPATH = \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Automation \
     $(WebKit2)/WebProcess/Cache \
-    $(WebKit2)/WebProcess/Cookies \
     $(WebKit2)/WebProcess/CredentialManagement \
     $(WebKit2)/WebProcess/Databases/IndexedDB \
     $(WebKit2)/WebProcess/FullScreen \

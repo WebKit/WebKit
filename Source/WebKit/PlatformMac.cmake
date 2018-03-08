@@ -19,6 +19,8 @@ if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
 endif ()
 
 list(APPEND WebKit_SOURCES
+    NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
+
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
     NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm
@@ -318,8 +320,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/WebPreferencesMac.mm
     UIProcess/mac/WebProcessProxyMac.mm
     UIProcess/mac/WindowServerConnection.mm
-
-    WebProcess/Cookies/mac/WebCookieManagerMac.mm
 
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm

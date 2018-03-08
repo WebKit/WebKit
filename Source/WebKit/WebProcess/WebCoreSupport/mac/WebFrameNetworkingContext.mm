@@ -29,7 +29,6 @@
 #include "CookieStorageUtilsCF.h"
 #include "NetworkSession.h"
 #include "SessionTracker.h"
-#include "WebCookieManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebsiteDataStoreParameters.h"

@@ -25,6 +25,8 @@
 // linking PluginProcessGTK2. I don't know why this is necessary. These
 // annotations should be revisited after removing PluginProcessGTK2.
 
+NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
+
 NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
 NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp
@@ -236,8 +238,6 @@ UIProcess/gtk/WebProcessPoolGtk.cpp @no-unify
 
 UIProcess/soup/WebCookieManagerProxySoup.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp
-
-WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
 
 WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 

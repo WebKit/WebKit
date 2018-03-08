@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include "OptionalCallbackID.h"
-#include "WebProcessSupplement.h"
 #include <pal/SessionID.h>
 #include <stdint.h>
 #include <wtf/Forward.h>
@@ -49,10 +48,11 @@ namespace WebKit {
 
 class ChildProcess;
 
-class WebCookieManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
+class WebCookieManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebCookieManager);
 public:
     WebCookieManager(ChildProcess&);
+    ~WebCookieManager();
 
     static const char* supplementName();
 

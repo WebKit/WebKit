@@ -54,6 +54,8 @@ WebCookieManager::WebCookieManager(ChildProcess& process)
     m_process.addMessageReceiver(Messages::WebCookieManager::messageReceiverName(), *this);
 }
 
+WebCookieManager::~WebCookieManager() = default;
+
 void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, CallbackID callbackID)
 {
     HashSet<String> hostnames;

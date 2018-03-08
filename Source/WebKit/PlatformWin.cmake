@@ -107,6 +107,8 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1)
 
     list(APPEND WebKit_SOURCES
+        NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
+
         NetworkProcess/cache/NetworkCacheCodersCurl.cpp
         NetworkProcess/cache/NetworkCacheDataCurl.cpp
         NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
@@ -117,8 +119,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         Shared/Authentication/curl/AuthenticationManagerCurl.cpp
 
         Shared/curl/WebCoreArgumentCodersCurl.cpp
-
-        WebProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
         WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
     )

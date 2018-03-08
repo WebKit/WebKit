@@ -5879,6 +5879,7 @@
 				3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */,
 			);
 			name = Cookies;
+			path = NetworkProcess;
 			sourceTree = "<group>";
 		};
 		33D3A3BD1339609800709BE4 /* MediaCache */ = {
@@ -6338,6 +6339,7 @@
 				E489D2821A0A2BE80078C06A /* cache */,
 				539BD5B21DADB0BA00F2E4E1 /* capture */,
 				7EC4F0F818E4A922008056AF /* cocoa */,
+				3309344B1315B93A0097A7BC /* Cookies */,
 				5C1426F21C23F82D00D41183 /* CustomProtocols */,
 				5C1426F11C23F81700D41183 /* Downloads */,
 				BC82837C16B45DA500A278FE /* EntryPoint */,
@@ -7013,7 +7015,6 @@
 				1C0A19431C8FF1A800FE0EBB /* Automation */,
 				41D129D81F3D101400D15E47 /* Cache */,
 				7C6E70F818B2D47E00F24E2E /* cocoa */,
-				3309344B1315B93A0097A7BC /* Cookies */,
 				5760828A202984C900116678 /* CredentialManagement */,
 				512A9754180DF9270039A149 /* Databases */,
 				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
