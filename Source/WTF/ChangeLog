@@ -1,3 +1,13 @@
+2018-03-08  Tim Horton  <timothy_horton@apple.com>
+
+        Don't have Celestial in minimal simulator configuration
+        https://bugs.webkit.org/show_bug.cgi?id=183432
+        <rdar://problem/38252985>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Platform.h:
+
 2018-03-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Set canInitializeWithMemset = true if T is an integral type
