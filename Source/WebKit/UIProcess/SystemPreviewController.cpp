@@ -34,7 +34,7 @@ SystemPreviewController::SystemPreviewController(WebPageProxy& webPageProxy)
     (void)m_webPageProxy; // This will be used eventually. Using it here to keep the compiler from complaining.
 }
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 bool SystemPreviewController::canPreview(const String&) const
 {
     return false;

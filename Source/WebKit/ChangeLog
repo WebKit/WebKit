@@ -1,5 +1,12 @@
 2018-03-07  Dean Jackson  <dino@apple.com>
 
+        Try to fix build for watchOS and tvOS.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/SystemPreviewController.cpp:
+
+2018-03-07  Dean Jackson  <dino@apple.com>
+
         Add SystemPreviewController for showing system-level views of special file types
         https://bugs.webkit.org/show_bug.cgi?id=183413
         <rdar://problem/37800834>

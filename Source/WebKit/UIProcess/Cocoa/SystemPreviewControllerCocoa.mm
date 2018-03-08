@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SystemPreviewController.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #import "APIUIClient.h"
 #import "WebPageProxy.h"
