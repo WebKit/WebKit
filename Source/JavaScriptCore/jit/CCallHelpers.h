@@ -248,15 +248,17 @@ private:
         std::array<FPRReg, FPRInfo::numberOfRegisters> fprDestinations;
     };
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4701)
+#endif
+
     template<unsigned TargetSize, typename RegType>
     std::array<RegType, TargetSize> clampArrayToSize(std::array<RegType, InfoTypeForReg<RegType>::numberOfRegisters> sourceArray)
     {
         static_assert(TargetSize <= sourceArray.size(), "TargetSize is bigger than source.size()");
         RELEASE_ASSERT(TargetSize <= InfoTypeForReg<RegType>::numberOfRegisters);
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4701)
-#endif
+
         std::array<RegType, TargetSize> result;
 
         for (unsigned i = 0; i < TargetSize; i++) {
@@ -265,10 +267,11 @@ private:
         }
 
         return result;
+    }
+
 #if COMPILER(MSVC)
 #pragma warning(pop)
 #endif
-    }
 
     template<typename ArgType>
     ALWAYS_INLINE void pokeForArgument(ArgType arg, unsigned currentGPRArgument, unsigned currentFPRArgument, unsigned extraPoke)

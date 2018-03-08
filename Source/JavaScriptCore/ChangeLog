@@ -1,5 +1,13 @@
 2018-03-08  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, another attempt at fixing the Windows build.
+        I guess the pragma must be outside the function...
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::clampArrayToSize):
+
+2018-03-08  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, one last try at fixing the windows build before rollout.
 
         * jit/CCallHelpers.h:
