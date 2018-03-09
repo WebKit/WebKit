@@ -41,8 +41,8 @@ shouldBe(eval('Node == undefined'), "eval('Node == undefined')", false);
 shouldBe(Element == undefined, "Element == undefined", false);
 shouldBe(eval('Element == undefined'), "eval('Element == undefined')", false);
 
-shouldBe(toString == undefined, "toString == undefined", false);
-shouldBe(eval('toString == undefined'), "eval('toString == undefined')", false);
+shouldBe(toString != undefined, "toString != undefined", false);
+shouldBe(eval('toString != undefined'), "eval('toString != undefined')", false);
 
 shouldBe(valueOf == undefined, "valueOf == undefined", false);
 shouldBe(eval('valueOf == undefined'), "eval('valueOf == undefined')", false);

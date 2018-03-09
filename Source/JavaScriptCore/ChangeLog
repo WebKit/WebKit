@@ -1,3 +1,23 @@
+2018-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Safari not handling undefined global variables with same name as element Id correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=183087
+        <rdar://problem/37927596>
+
+        Reviewed by Ryosuke Niwa.
+
+        global variables (var foo;) should not be hidden by:
+        - Named properties
+        - Properties on the prototype chain
+
+        Therefore, we now have JSGlobalObject::addVar() call JSGlobalObject::addGlobalVar()
+        if !hasOwnProperty() instead of !hasProperty.
+
+        This aligns our behavior with Chrome and Firefox.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addVar):
+
 2018-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229354 and r229364.

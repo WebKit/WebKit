@@ -8,9 +8,9 @@ PASS window.__proto__.__proto__.hasOwnProperty("div") is true
 PASS window.hasOwnProperty("a") is false
 PASS Element is not undefined
 PASS x is 1
-FAIL y should be undefined. Was 2
-FAIL f should be undefined. Was [object Window]
-FAIL div should be undefined. Was [object HTMLDivElement]
+PASS y is undefined.
+PASS f is undefined.
+PASS div is undefined.
 PASS a is undefined.
 PASS successfullyParsed is true
 

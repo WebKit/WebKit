@@ -511,7 +511,7 @@ public:
 
     void addVar(ExecState* exec, const Identifier& propertyName)
     {
-        if (!hasProperty(exec, propertyName))
+        if (!hasOwnProperty(exec, propertyName))
             addGlobalVar(propertyName);
     }
     void addFunction(ExecState*, const Identifier&);
