@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
+#import "CookieStorageUtilsCF.h"
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
@@ -203,6 +204,13 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& 
     }
     clearNSURLCache(m_clearCacheDispatchGroup, modifiedSince, WTFMove(completionHandler));
 }
+
+#if PLATFORM(MAC)
+void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
+{
+    [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorageFromIdentifyingData(identifier).get()]).get()];
+}
+#endif
 
 void NetworkProcess::setCookieStoragePartitioningEnabled(bool enabled)
 {

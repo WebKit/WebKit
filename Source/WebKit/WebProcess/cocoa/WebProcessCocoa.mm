@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,6 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
-#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/pthreadSPI.h>
@@ -148,10 +147,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
         JSC::processConfigFile(javaScriptConfigFile.latin1().data(), "com.apple.WebKit.WebContent", parameters.uiProcessBundleIdentifier.latin1().data());
     }
 
-#if PLATFORM(MAC)
-    setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
-#endif
-
     auto urlCache = adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]);
     [NSURLCache setSharedURLCache:urlCache.get()];
 
@@ -182,8 +177,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     [NSApplication sharedApplication];
     [NSApplication _accessibilityInitialize];
 #endif
-
-    _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).

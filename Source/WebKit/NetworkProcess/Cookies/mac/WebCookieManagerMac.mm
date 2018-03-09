@@ -26,7 +26,10 @@
 #import "config.h"
 #import "WebCookieManager.h"
 
+#import "NetworkSession.h"
 #import "WebFrameNetworkingContext.h"
+#import <WebCore/NetworkStorageSession.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 using namespace WebCore;
 
@@ -34,7 +37,12 @@ namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(policy);
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
+
+    NetworkStorageSession::forEach([&] (const NetworkStorageSession& networkStorageSession) {
+        if (auto cookieStorage = networkStorageSession.cookieStorage())
+            CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
+    });
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()

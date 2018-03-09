@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "HTTPCookieAcceptPolicy.h"
 #include "WebFrame.h"
 #include <WebCore/FrameNetworkingContext.h>
 #include <pal/SessionID.h>
@@ -43,8 +42,6 @@ public:
 
     // FIXME: remove platform-specific code and use SessionTracker
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
-
-    static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;
 

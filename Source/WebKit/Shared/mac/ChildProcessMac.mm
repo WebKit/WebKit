@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,12 @@
 #import "ChildProcess.h"
 
 #import "CodeSigning.h"
-#import "CookieStorageUtilsCF.h"
 #import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
-#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
@@ -201,11 +199,6 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
         exit(EX_NOPERM);
     }
-}
-
-void ChildProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
-{
-    [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorageFromIdentifyingData(identifier).get()]).get()];
 }
 
 #if USE(APPKIT)

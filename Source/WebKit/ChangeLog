@@ -1,3 +1,36 @@
+2018-03-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove cookie API access from WebContent Process
+        https://bugs.webkit.org/show_bug.cgi?id=183519
+        <rdar://problem/35368802>
+
+        Reviewed by Alex Christensen.
+
+        All cookie access is now handled in the Network Process. However, there are vestiges of the original logic that used CFNetwork APIs in the WebContent process.
+
+        This patch removes CFNetwork calls from the WebProcess code paths, since they serve no purpose in modern WebKit.
+
+        No tests because this is a code cleanup with no expected change in behavior.
+
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy): Moved from WebFrameNetworkingContext.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::setSharedHTTPCookieStorage): Moved from ChildProcess, since this should only be
+        called in the NetworkProcess.
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setSharedHTTPCookieStorage): Deleted.
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession): Remove CFNetwork code. This version of
+        'ensureWebsiteDataStoreSession' is needed to maintain a dictionary on the WebProcess side so we can refer to
+        the same network session in both the WebContent and Network processes.
+        (WebKit::WebFrameNetworkingContext::webFrameLoaderClient const):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts): Deleted.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Remove calls to CFNetwork.
+
 2018-03-09  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClientFetch should send data to its resource loader once the didReceiveResponse completion handler is called
