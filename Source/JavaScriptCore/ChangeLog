@@ -1,5 +1,14 @@
 2018-03-09  Mark Lam  <mark.lam@apple.com>
 
+        Build fix after r229476.
+        https://bugs.webkit.org/show_bug.cgi?id=183488
+
+        Not reviewed.
+
+        * runtime/StackAlignment.h:
+
+2018-03-09  Mark Lam  <mark.lam@apple.com>
+
         [Re-landing] Add support for ARM64E.
         https://bugs.webkit.org/show_bug.cgi?id=183398
         <rdar://problem/38212621>

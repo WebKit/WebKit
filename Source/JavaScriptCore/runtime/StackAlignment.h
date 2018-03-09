@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallFrame.h"
 #include "JSCJSValue.h"
 #include <wtf/MathExtras.h>
 
