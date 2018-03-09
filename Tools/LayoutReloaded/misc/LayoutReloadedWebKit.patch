@@ -1,0 +1,481 @@
+diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
+index c315ee25fc0..6898b4d55a1 100644
+--- a/Source/WTF/wtf/Platform.h
++++ b/Source/WTF/wtf/Platform.h
+@@ -1103,7 +1103,7 @@
+ #if !defined(NDEBUG)
+ #define ENABLE_TREE_DEBUGGING 1
+ #else
+-#define ENABLE_TREE_DEBUGGING 0
++#define ENABLE_TREE_DEBUGGING 1
+ #endif
+ #endif
+ 
+diff --git a/Source/WebCore/css/CSSComputedStyleDeclaration.cpp b/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
+index ab2a17854c5..05d1bced1f3 100644
+--- a/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
++++ b/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
+@@ -4101,6 +4101,36 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
+     return value->cssText();
+ }
+ 
++bool CSSComputedStyleDeclaration::isPropertyValueInitial(const String& propertyName)
++{
++    m_element->document().updateLayoutIgnorePendingStylesheets();
++    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
++    if (!style)
++        return true;
++
++    CSSPropertyID propertyID = cssPropertyID(propertyName);
++    if (!propertyID)
++        return true;
++
++    switch (propertyID) {
++    case CSSPropertyLeft:
++        return style->left().isAuto();
++    case CSSPropertyRight:
++        return style->right().isAuto();
++    case CSSPropertyTop:
++        return style->top().isAuto();
++    case CSSPropertyBottom:
++        return style->bottom().isAuto();
++    case CSSPropertyWidth:
++        return style->width().isAuto();
++    case CSSPropertyHeight:
++        return style->height().isAuto();
++    default:
++        ASSERT_NOT_REACHED();
++    }
++    return false;
++}
++
+ unsigned CSSComputedStyleDeclaration::length() const
+ {
+     updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
+diff --git a/Source/WebCore/css/CSSComputedStyleDeclaration.h b/Source/WebCore/css/CSSComputedStyleDeclaration.h
+index 39ae6c30d7e..a3b6f4697bd 100644
+--- a/Source/WebCore/css/CSSComputedStyleDeclaration.h
++++ b/Source/WebCore/css/CSSComputedStyleDeclaration.h
+@@ -123,6 +123,7 @@ private:
+     String item(unsigned index) const final;
+     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
+     String getPropertyValue(const String& propertyName) final;
++    bool isPropertyValueInitial(const String& propertyName) final;
+     String getPropertyPriority(const String& propertyName) final;
+     String getPropertyShorthand(const String& propertyName) final;
+     bool isPropertyImplicit(const String& propertyName) final;
+diff --git a/Source/WebCore/css/CSSStyleDeclaration.h b/Source/WebCore/css/CSSStyleDeclaration.h
+index b18c9ce3274..4dfb6b936f8 100644
+--- a/Source/WebCore/css/CSSStyleDeclaration.h
++++ b/Source/WebCore/css/CSSStyleDeclaration.h
+@@ -54,6 +54,7 @@ public:
+     virtual String item(unsigned index) const = 0;
+     virtual RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) = 0;
+     virtual String getPropertyValue(const String& propertyName) = 0;
++    virtual bool isPropertyValueInitial(const String& propertyName) = 0;
+     virtual String getPropertyPriority(const String& propertyName) = 0;
+     virtual String getPropertyShorthand(const String& propertyName) = 0;
+     virtual bool isPropertyImplicit(const String& propertyName) = 0;
+diff --git a/Source/WebCore/css/CSSStyleDeclaration.idl b/Source/WebCore/css/CSSStyleDeclaration.idl
+index 035cb6245d9..c622313db3b 100644
+--- a/Source/WebCore/css/CSSStyleDeclaration.idl
++++ b/Source/WebCore/css/CSSStyleDeclaration.idl
+@@ -30,6 +30,8 @@
+ 
+     DOMString getPropertyValue(DOMString propertyName);
+ 
++    boolean isPropertyValueInitial(DOMString propertyName);
++
+     [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
+     DOMString? getPropertyPriority(DOMString propertyName);
+ 
+diff --git a/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp b/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp
+index 084cbca04ec..4fc589226cf 100644
+--- a/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp
++++ b/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp
+@@ -196,6 +196,11 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyNa
+     return getPropertyValueInternal(propertyID);
+ }
+ 
++bool PropertySetCSSStyleDeclaration::isPropertyValueInitial(const String&)
++{
++    return false;
++}
++
+ String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propertyName)
+ {
+     if (isCustomPropertyName(propertyName))
+diff --git a/Source/WebCore/css/PropertySetCSSStyleDeclaration.h b/Source/WebCore/css/PropertySetCSSStyleDeclaration.h
+index 04196405ddf..59981205cae 100644
+--- a/Source/WebCore/css/PropertySetCSSStyleDeclaration.h
++++ b/Source/WebCore/css/PropertySetCSSStyleDeclaration.h
+@@ -68,6 +68,7 @@ private:
+     String item(unsigned index) const final;
+     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
+     String getPropertyValue(const String& propertyName) final;
++    bool isPropertyValueInitial(const String& propertyName) final;
+     String getPropertyPriority(const String& propertyName) final;
+     String getPropertyShorthand(const String& propertyName) final;
+     bool isPropertyImplicit(const String& propertyName) final;
+diff --git a/Source/WebCore/dom/Node.cpp b/Source/WebCore/dom/Node.cpp
+index 48f3161a9ac..0e01d2a73f0 100644
+--- a/Source/WebCore/dom/Node.cpp
++++ b/Source/WebCore/dom/Node.cpp
+@@ -514,6 +514,20 @@ ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
+     return parent->insertBefore(*node, viablePreviousSibling.get());
+ }
+ 
++int Node::rendererId()
++{
++    if (!renderer())
++        return 0;
++    return renderer()->renderId();
++}
++
++double Node::textWidth(int start, int end)
++{
++    if (!renderer())
++        return 0;
++    return renderer()->measureText(start, end);
++}
++
+ ExceptionOr<void> Node::after(Vector<NodeOrString>&& nodeOrStringVector)
+ {
+     RefPtr<ContainerNode> parent = parentNode();
+diff --git a/Source/WebCore/dom/Node.h b/Source/WebCore/dom/Node.h
+index eb857feb9ac..6f0b75d518d 100644
+--- a/Source/WebCore/dom/Node.h
++++ b/Source/WebCore/dom/Node.h
+@@ -178,7 +178,10 @@ public:
+ 
+     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
+     WEBCORE_EXPORT ExceptionOr<void> setTextContent(const String&);
+-    
++
++    int rendererId();
++    double textWidth(int start, int end);
++
+     Node* lastDescendant() const;
+     Node* firstDescendant() const;
+ 
+diff --git a/Source/WebCore/dom/Node.idl b/Source/WebCore/dom/Node.idl
+index 25177a8cd43..6235bb654b5 100644
+--- a/Source/WebCore/dom/Node.idl
++++ b/Source/WebCore/dom/Node.idl
+@@ -73,6 +73,9 @@
+     unsigned short compareDocumentPosition(Node other);
+     boolean contains(Node? other);
+ 
++    readonly attribute long rendererId;
++    double textWidth(long start, long end);
++
+     DOMString? lookupPrefix(DOMString? namespaceURI);
+     DOMString? lookupNamespaceURI(DOMString? prefix);
+     boolean isDefaultNamespace(DOMString? namespaceURI);
+diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
+index f1d1985d104..f5a01075bea 100644
+--- a/Source/WebCore/page/DOMWindow.cpp
++++ b/Source/WebCore/page/DOMWindow.cpp
+@@ -77,6 +77,7 @@
+ #include "PageConsoleClient.h"
+ #include "PageTransitionEvent.h"
+ #include "Performance.h"
++#include "RenderView.h"
+ #include "RequestAnimationFrameCallback.h"
+ #include "ResourceLoadInfo.h"
+ #include "RuntimeApplicationChecks.h"
+@@ -1367,6 +1368,23 @@ String DOMWindow::name() const
+     return m_frame->tree().name();
+ }
+ 
++String DOMWindow::simplifiedRenderTree() const
++{
++    return m_frame->view()->renderView()->simplifiedRenderTree();
++}
++
++String DOMWindow::renderTreeStructure() const
++{
++    return m_frame->view()->renderView()->renderTreeStructure();
++}
++
++int DOMWindow::nextBreakingOpportunity(const String& text, unsigned startPosition)
++{
++    if (startPosition >= text.length() - 1)
++        return startPosition;
++    return startPosition + 1;
++}
++
+ void DOMWindow::setName(const String& string)
+ {
+     if (!m_frame)
+diff --git a/Source/WebCore/page/DOMWindow.h b/Source/WebCore/page/DOMWindow.h
+index 7748efaf84b..a6863a3274a 100644
+--- a/Source/WebCore/page/DOMWindow.h
++++ b/Source/WebCore/page/DOMWindow.h
+@@ -191,6 +191,10 @@ public:
+     String defaultStatus() const;
+     void setDefaultStatus(const String&);
+ 
++    String simplifiedRenderTree() const;
++    String renderTreeStructure() const;
++    int nextBreakingOpportunity(const String& text, unsigned startPosition);
++
+     // Self-referential attributes
+ 
+     DOMWindow* self() const;
+diff --git a/Source/WebCore/page/DOMWindow.idl b/Source/WebCore/page/DOMWindow.idl
+index 801a0fb3bb3..d01e1bf4a6d 100644
+--- a/Source/WebCore/page/DOMWindow.idl
++++ b/Source/WebCore/page/DOMWindow.idl
+@@ -82,6 +82,10 @@ typedef USVString CSSOMString;
+     readonly attribute Navigator navigator;
+     readonly attribute DOMApplicationCache applicationCache;
+ 
++    readonly attribute DOMString simplifiedRenderTree;
++    readonly attribute DOMString renderTreeStructure;
++    long nextBreakingOpportunity(DOMString text, unsigned long startPosition);
++
+     // User prompts.
+     void alert();
+     void alert(DOMString message);
+diff --git a/Source/WebCore/page/mac/PageMac.mm b/Source/WebCore/page/mac/PageMac.mm
+index 4807e7b61d1..f5916c11502 100644
+--- a/Source/WebCore/page/mac/PageMac.mm
++++ b/Source/WebCore/page/mac/PageMac.mm
+@@ -52,11 +52,6 @@ void Page::platformInitialize()
+ #endif
+ 
+ #if ENABLE(TREE_DEBUGGING)
+-    static std::once_flag onceFlag;
+-    std::call_once(onceFlag, [] {
+-        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+-        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+-    });
+ #endif
+ }
+ 
+diff --git a/Source/WebCore/rendering/RenderObject.cpp b/Source/WebCore/rendering/RenderObject.cpp
+index cac0551646b..68f5c317260 100644
+--- a/Source/WebCore/rendering/RenderObject.cpp
++++ b/Source/WebCore/rendering/RenderObject.cpp
+@@ -107,7 +107,7 @@ struct SameSizeAsRenderObject {
+     unsigned m_bitfields;
+ };
+ 
+-COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
++COMPILE_ASSERT(true || sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
+ 
+ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
+ 
+@@ -128,6 +128,8 @@ RenderObject::RenderObject(Node& node)
+ #endif
+     , m_bitfields(node)
+ {
++    static int renderID = 0;
++    m_renderId = ++renderID;
+     if (RenderView* renderView = node.document().renderView())
+         renderView->didCreateRenderer();
+ #ifndef NDEBUG
+@@ -1197,14 +1199,78 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth)
+     stream.nextLine();
+ }
+ 
+-void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderObject* markedObject, int depth) const
++
++void RenderObject::renderSubtreeStructure(TextStream& stream) const
++{
++    outputRenderObjectStructure(stream);
++    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
++        child->renderSubtreeStructure(stream);
++}
++
++// 1()RenderView|2(1)RenderBlock|3(2)RenderBody|4(3)RenderBlock|5(3)AnonymousRenderBlock|
++void RenderObject::outputRenderObjectStructure(WTF::TextStream& stream) const
+ {
+-    outputRenderObject(stream, markedObject == this, depth);
+-    if (is<RenderBlockFlow>(*this))
+-        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
++    stream << renderId();
++    if (parent())
++        stream << "(" << parent()->renderId() << ")";
++    else
++        stream << "()";
++
++    String name = renderName();
++    // FIXME: Renderer's name should not include property value listing.
++    int pos = name.find('(');
++    if (isAnonymous())
++        stream << "Anonymous";
++    if (pos > 0)
++        stream << name.left(pos - 1).utf8().data();
++    else
++        stream << name.utf8().data();
++    stream << "|";
++}
+ 
++void RenderObject::simplifiedRenderSubtree(TextStream& stream, int depth) const
++{
++    outputSimplifiedRenderObject(stream, depth);
+     for (auto* child = firstChildSlow(); child; child = child->nextSibling())
+-        child->outputRenderSubTreeAndMark(stream, markedObject, depth + 1);
++        child->simplifiedRenderSubtree(stream, depth + 1);
++}
++
++void RenderObject::outputSimplifiedRenderObject(WTF::TextStream& stream, int depth) const
++{
++     int printedCharacters = 0;
++
++    while (++printedCharacters <= depth)
++         stream << " ";
++
++     if (node())
++        stream << node()->nodeName().utf8().data() << " ";
++
++    String name = renderName();
++    // FIXME: Renderer's name should not include property value listing.
++    int pos = name.find('(');
++    if (pos > 0)
++        stream << name.left(pos - 1).utf8().data();
++    else
++        stream << name.utf8().data();
++
++    if (is<RenderBox>(*this)) {
++        auto& renderBox = downcast<RenderBox>(*this);
++        FloatRect boxRect = renderBox.frameRect();
++        if (renderBox.isInFlowPositioned())
++            boxRect.move(renderBox.offsetForInFlowPosition());
++        stream << " " << boxRect;
++    } else if (is<RenderInline>(*this) && isInFlowPositioned()) {
++        FloatSize inlineOffset = downcast<RenderInline>(*this).offsetForInFlowPosition();
++        stream << "  (" << inlineOffset.width() << ", " << inlineOffset.height() << ")";
++    }
++
++     if (is<RenderBoxModelObject>(*this)) {
++         auto& renderer = downcast<RenderBoxModelObject>(*this);
++         if (renderer.continuation())
++             stream << " continuation->(" << renderer.continuation() << ")";
++     }
++     outputRegionsInformation(stream);
++     stream.nextLine();
+ }
+ 
+ #endif // NDEBUG
+diff --git a/Source/WebCore/rendering/RenderObject.h b/Source/WebCore/rendering/RenderObject.h
+index fc047c5c14d..854dccf7778 100644
+--- a/Source/WebCore/rendering/RenderObject.h
++++ b/Source/WebCore/rendering/RenderObject.h
+@@ -112,6 +112,9 @@ public:
+ 
+     auto& weakPtrFactory() const { return m_weakFactory; }
+ 
++    int renderId() const { return m_renderId; }
++    virtual float measureText(int, int) const { return -1; }
++
+     RenderTheme& theme() const;
+ 
+     virtual const char* renderName() const = 0;
+@@ -202,10 +205,16 @@ public:
+     void showNodeTreeForThis() const;
+     void showRenderTreeForThis() const;
+     void showLineTreeForThis() const;
++    void simplifiedRenderSubtree(TextStream& stream, int depth) const;
++    void renderSubtreeStructure(TextStream& stream) const;
+ 
+     void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
+     void outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
++    void outputRenderSubTreeAndMarkStructure(WTF::TextStream&) const;
+     void outputRegionsInformation(WTF::TextStream&) const;
++
++    void outputSimplifiedRenderObject(WTF::TextStream&, int depth) const;
++    void outputRenderObjectStructure(WTF::TextStream&) const;
+ #endif
+ 
+     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
+@@ -828,6 +837,7 @@ private:
+ #endif
+ 
+     Node& m_node;
++    int m_renderId { 0 };
+ 
+     RenderElement* m_parent;
+     RenderObject* m_previous;
+diff --git a/Source/WebCore/rendering/RenderText.cpp b/Source/WebCore/rendering/RenderText.cpp
+index 6ae047c469f..3a9f4839352 100644
+--- a/Source/WebCore/rendering/RenderText.cpp
++++ b/Source/WebCore/rendering/RenderText.cpp
+@@ -228,6 +228,11 @@ Text* RenderText::textNode() const
+     return downcast<Text>(RenderObject::node());
+ }
+ 
++float RenderText::measureText(int start, int end) const
++{
++    return width(start, end, 0);
++}
++
+ bool RenderText::isTextFragment() const
+ {
+     return false;
+diff --git a/Source/WebCore/rendering/RenderText.h b/Source/WebCore/rendering/RenderText.h
+index f46290f5dea..71b72747699 100644
+--- a/Source/WebCore/rendering/RenderText.h
++++ b/Source/WebCore/rendering/RenderText.h
+@@ -45,6 +45,8 @@ public:
+ 
+     WEBCORE_EXPORT Text* textNode() const;
+ 
++    float measureText(int start, int end) const final;
++
+     virtual bool isTextFragment() const;
+ 
+     const RenderStyle& style() const;
+diff --git a/Source/WebCore/rendering/RenderView.cpp b/Source/WebCore/rendering/RenderView.cpp
+index 67959ae711f..347a51f8703 100644
+--- a/Source/WebCore/rendering/RenderView.cpp
++++ b/Source/WebCore/rendering/RenderView.cpp
+@@ -956,4 +956,19 @@ void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
+ }
+ #endif
+ 
++String RenderView::simplifiedRenderTree() const
++{
++    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
++    simplifiedRenderSubtree(stream, 1);
++    return stream.release();
++}
++
++String RenderView::renderTreeStructure() const
++{
++    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
++    renderSubtreeStructure(stream);
++    return stream.release();
++}
++
++
+ } // namespace WebCore
+diff --git a/Source/WebCore/rendering/RenderView.h b/Source/WebCore/rendering/RenderView.h
+index 9c5bb9895c5..4bea5e3630b 100644
+--- a/Source/WebCore/rendering/RenderView.h
++++ b/Source/WebCore/rendering/RenderView.h
+@@ -198,6 +198,9 @@ public:
+     bool inHitTesting() const { return m_inHitTesting; }
+ #endif
+ 
++    String simplifiedRenderTree() const;
++    String renderTreeStructure() const;
++
+ protected:
+     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
+     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+diff --git a/Source/WebCore/rendering/SimpleLineLayout.cpp b/Source/WebCore/rendering/SimpleLineLayout.cpp
+index 8777dc099b8..702fcc634f4 100644
+--- a/Source/WebCore/rendering/SimpleLineLayout.cpp
++++ b/Source/WebCore/rendering/SimpleLineLayout.cpp
+@@ -351,7 +351,7 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
+ 
+ bool canUseFor(const RenderBlockFlow& flow)
+ {
+-    return canUseForWithReason(flow, IncludeReasons::First) == NoReason;
++    return false && canUseForWithReason(flow, IncludeReasons::First) == NoReason;
+ }
+ 
+ static float computeLineLeft(ETextAlign textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)

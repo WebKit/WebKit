@@ -1,0 +1,317 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+class BlockFormattingContext extends FormattingContext {
+    constructor(root) {
+        super(root);
+        // New block formatting context always establishes a new floating context.
+        this.m_floatingContext = new FloatingContext(this);
+    }
+
+    layout(layoutContext) {
+        // 9.4.1 Block formatting contexts
+        // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
+        // The vertical distance between two sibling boxes is determined by the 'margin' properties.
+        // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
+        if (!this.rootContainer().firstChild())
+            return;
+        // This is a post-order tree traversal layout.
+        let layoutStack = new Array();
+        // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
+        layoutStack.push(this.rootContainer().firstChild());
+        // 1. Go all the way down to the leaf node
+        // 2. Compute static position and width as we travers down
+        // 3. As we climb back on the tree, compute height and finialize position
+        // (Any subtrees with new formatting contexts need to layout synchronously)
+        while (layoutStack.length) {
+            // Travers down on the descendants until we find a leaf node.
+            while (true) {
+                let box = layoutStack[layoutStack.length - 1];
+                box.setWidth(this.computeWidth(box));
+                box.setTopLeft(this._computeStaticPosition(box));
+                if (box.establishesFormattingContext()) {
+                    layoutContext.layoutFormattingContext(box.establishedFormattingContext());
+                    break;
+                }
+                if (!box.isContainer() || !box.hasChild())
+                    break;
+                layoutStack.push(box.firstChild());
+            }
+
+            // Climb back on the ancestors and compute height/final position.
+            while (layoutStack.length) {
+                // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
+                let box = layoutStack.pop();
+                box.setHeight(this.computeHeight(box));
+                // Adjust position now that we have all the previous floats placed in this context -if needed.
+                box.setTopLeft(this.floatingContext().computePosition(box));
+                // Move positioned children to their final position.
+                if (box.isContainer()) {
+                    this._placeInFlowPositionedChildren(box);
+                    // Place the out of flow content.
+                    this._placeOutOfFlowDescendants(box);
+                }
+                if (box.nextSibling()) {
+                    layoutStack.push(box.nextSibling());
+                    break;
+                }
+            }
+        }
+        // And finally place the out of flow descendants for the root.
+        this._placeOutOfFlowDescendants(this.rootContainer());
+   }
+
+    computeWidth(box) {
+        if (box.isOutOfFlowPositioned())
+            return this._computeOutOfFlowWidth(box);
+        if (box.isFloatingPositioned())
+            return this._computeFloatingWidth(box);
+        return this._computeInFlowWidth(box);
+    }
+
+    computeHeight(box) {
+        if (box.isOutOfFlowPositioned())
+            return this._computeOutOfFlowHeight(box);
+        if (box.isFloatingPositioned())
+            return this._computeFloatingHeight(box);
+        return this._computeInFlowHeight(box);
+    }
+
+    marginTop(box) {
+        return BlockMarginCollapse.marginTop(box);
+    }
+
+    marginBottom(box) {
+        return BlockMarginCollapse.marginBottom(box);
+    }
+
+    _computeStaticPosition(box) {
+        // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
+        // The vertical distance between two sibling boxes is determined by the 'margin' properties.
+        // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
+        let parent = box.parent();
+        // Start from the top of the container's content box.
+        let previousInFlowSibling = box.previousInFlowSibling();
+        let contentBottom = previousInFlowSibling ? previousInFlowSibling.bottomRight().top() + this.marginBottom(previousInFlowSibling) : parent.contentBox().top();
+        let position = new LayoutPoint(contentBottom, parent.contentBox().left());
+        position.moveBy(new LayoutSize(this.marginLeft(box), this.marginTop(box)));
+        return position;
+    }
+
+    _placeInFlowPositionedChildren(container) {
+        for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling())
+            inFlowChild.setTopLeft(this._computeInFlowPositionedPosition(inFlowChild));
+    }
+
+    _placeOutOfFlowDescendants(container) {
+        let outOfFlowDescendants = Utils.collectOutOfFlowDescendants(container);
+        for (let outOfFlowBox of outOfFlowDescendants)
+            outOfFlowBox.setTopLeft(this._computeOutOfFlowPosition(outOfFlowBox));
+    }
+
+    _computeOutOfFlowWidth(box) {
+        // 10.3.7 Absolutely positioned, non-replaced elements
+
+        // 1. 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
+        // 2. 'left' and 'right' are 'auto' and 'width' is not 'auto', then if the 'direction' property of the element establishing
+        //     the static-position containing block is 'ltr' set 'left' to the static position, otherwise set 'right' to the static position.
+        //     Then solve for 'left' (if 'direction is 'rtl') or 'right' (if 'direction' is 'ltr').
+        // 3. 'width' and 'right' are 'auto' and 'left' is not 'auto', then the width is shrink-to-fit . Then solve for 'right'
+        // 4. 'left' is 'auto', 'width' and 'right' are not 'auto', then solve for 'left'
+        // 5. 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
+        // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
+        let width = Number.NaN;
+        if (Utils.isWidthAuto(box) && Utils.isLeftAuto(box) && Utils.isRightAuto(box))
+            width = this._shrinkToFitWidth(box);
+        else if (Utils.isLeftAuto(box) && Utils.isWidthAuto(box) && !Utils.isRightAuto(box))
+            width = this._shrinkToFitWidth(box); // 1
+        else if (Utils.isLeftAuto(box) && Utils.isRightAuto(box) && !Utils.isWidthAuto(box))
+            width = Utils.width(box); // 2
+        else if (Utils.isWidthAuto(box) && Utils.isRightAuto(box) && !Utils.isLeftAuto(box))
+            width = this._shrinkToFitWidth(box); // 3
+        else if (Utils.isLeftAuto(box) && !Utils.isWidthAuto(box) && !Utils.isRightAuto(box))
+            width = Utils.width(box); // 4
+        else if (Utils.isWidthAuto(box) && !Utils.isLeftAuto(box) && !Utils.isRightAuto(box))
+            width = Math.max(0, box.containingBlock().contentBox().width() - Utils.right(box) - Utils.left(box)); // 5
+        else if (Utils.isRightAuto(box) && !Utils.isLeftAuto(box) && !Utils.isWidthAuto(box))
+            width = Utils.width(box); // 6
+        else
+            ASSERT_NOT_REACHED();
+        return width + Utils.computedHorizontalBorderAndPadding(box);
+    }
+
+    _computeFloatingWidth(box) {
+        // FIXME: missing cases
+        return Utils.width(box) + Utils.computedHorizontalBorderAndPadding(box);
+    }
+
+    _computeInFlowWidth(box) {
+        if (Utils.isWidthAuto(box))
+            return this._computeHorizontalConstraint(box);
+        return Utils.width(box) + Utils.computedHorizontalBorderAndPadding(box);
+    }
+
+    _computeOutOfFlowHeight(box) {
+        // 1. If all three of 'top', 'height', and 'bottom' are auto, set 'top' to the static position and apply rule number three below.
+        // 2. If none of the three are 'auto': If both 'margin-top' and 'margin-bottom' are 'auto', solve the equation under
+        //    the extra constraint that the two margins get equal values. If one of 'margin-top' or 'margin-bottom' is 'auto',
+        //    solve the equation for that value. If the values are over-constrained, ignore the value for 'bottom' and solve for that value.
+        // Otherwise, pick the one of the following six rules that applies.
+
+        // 3. 'top' and 'height' are 'auto' and 'bottom' is not 'auto', then the height is based on the content per 10.6.7,
+        //    set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+        // 4. 'top' and 'bottom' are 'auto' and 'height' is not 'auto', then set 'top' to the static position, set 'auto' values
+        //    for 'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+        // 5. 'height' and 'bottom' are 'auto' and 'top' is not 'auto', then the height is based on the content per 10.6.7,
+        //    set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+        // 6. 'top' is 'auto', 'height' and 'bottom' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+        // 7. 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
+        // 8. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
+        let height = Number.NaN;
+        if (Utils.isHeightAuto(box) && Utils.isBottomAuto(box) && Utils.isTopAuto(box))
+            height = this._computeContentHeight(box); // 1
+        else if (Utils.isTopAuto((box)) && Utils.isHeightAuto((box)) && !Utils.isBottomAuto((box)))
+            height = this._computeContentHeight(box); // 3
+        else if (Utils.isTopAuto((box)) && Utils.isBottomAuto((box)) && !Utils.isHeightAuto((box)))
+            height = Utils.height(box); // 4
+        else if (Utils.isHeightAuto((box)) && Utils.isBottomAuto((box)) && !Utils.isTopAuto((box)))
+            height = this._computeContentHeight(box); // 5
+        else if (Utils.isTopAuto((box)) && !Utils.isHeightAuto((box)) && !Utils.isBottomAuto((box)))
+            height = Utils.height(box); // 6
+        else if (Utils.isHeightAuto((box)) && !Utils.isTopAuto((box)) && !Utils.isBottomAuto((box)))
+            height = Math.max(0, box.containingBlock().contentBox().height() - Utils.bottom(box) - Utils.top(box)); // 7
+        else if (Utils.isBottomAuto((box)) && !Utils.isTopAuto((box)) && !Utils.isHeightAuto((box)))
+            height = Utils.height(box); // 8
+        else
+            ASSERT_NOT_REACHED();
+        return height + Utils.computedVerticalBorderAndPadding(box);
+    }
+
+    _computeFloatingHeight(box) {
+        // FIXME: missing cases
+        return Utils.height(box) + Utils.computedVerticalBorderAndPadding(box);
+    }
+
+    _computeInFlowHeight(box) {
+        if (Utils.isHeightAuto(box)) {
+            // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
+            // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
+
+            // The element's height is the distance from its top content edge to the first applicable of the following:
+            // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+            return this._computeContentHeight(box) + Utils.computedVerticalBorderAndPadding(box);
+        }
+        return Utils.height(box) + Utils.computedVerticalBorderAndPadding(box);
+    }
+
+    _computeHorizontalConstraint(box) {
+        let horizontalConstraint = box.containingBlock().contentBox().width();
+        horizontalConstraint -= this.marginLeft(box) + this.marginRight(box);
+        return horizontalConstraint;
+    }
+
+    _computeContentHeight(box) {
+        // 10.6.3 Block-level non-replaced elements in normal flow when 'overflow' computes to 'visible'
+        // The element's height is the distance from its top content edge to the first applicable of the following:
+        // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
+        // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin does not collapse
+        //    with the element's bottom margin
+        // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
+        // 4. zero, otherwise
+        // Only children in the normal flow are taken into account.
+        if (!box.isContainer() || !box.hasInFlowChild())
+            return 0;
+        let top = box.contentBox().top();
+        let lastInFlowChild = box.lastInFlowChild();
+
+        let bottom = lastInFlowChild.rect().bottom() + this.marginBottom(lastInFlowChild);
+        // FIXME: margin for body
+        if (lastInFlowChild.name() == "RenderBody" && Utils.isHeightAuto(lastInFlowChild) && !lastInFlowChild.contentBox().height())
+            bottom -= this.marginBottom(lastInFlowChild);
+        // FIXME: figure out why floatings part of the initial block formatting context get propagated to HTML
+        if (box.node().tagName == "HTML") {
+            let floatingBottom = this.floatingContext().bottom();
+            if (!Number.isNaN(floatingBottom))
+                bottom = Math.max(floatingBottom, bottom);
+        }
+        return bottom - top;
+    }
+
+    _computeInFlowPositionedPosition(box) {
+        // Start with the original, static position.
+        let relativePosition = box.topLeft();
+        // Top/bottom
+        if (!Utils.isTopAuto(box))
+            relativePosition.shiftTop(Utils.top(box));
+        else if (!Utils.isBottomAuto(box))
+            relativePosition.shiftTop(-Utils.bottom(box));
+        // Left/right
+        if (!Utils.isLeftAuto(box))
+            relativePosition.shiftLeft(Utils.left(box));
+        else if (!Utils.isRightAuto(box))
+            relativePosition.shiftLeft(-Utils.right(box));
+        return relativePosition;
+    }
+
+    _computeOutOfFlowPosition(box) {
+        let containerSize = box.containingBlock().contentBox().size();
+        // Top/bottom
+        let top = Number.NaN;
+        if (Utils.isTopAuto(box) && Utils.isBottomAuto(box)) {
+            // Convert static position to absolute.
+            top = Utils.mapStaticToAbsolute(box).top();
+        } else if (!Utils.isTopAuto(box))
+            top = Utils.top(box) + this.marginTop(box);
+        else if (!Utils.isBottomAuto(box))
+            top = containerSize.height() - Utils.bottom(box) - box.rect().height() - this.marginBottom(box);
+        else
+            ASSERT_NOT_REACHED();
+        // Left/right
+        let left = Number.NaN;
+        if (Utils.isLeftAuto(box) && Utils.isRightAuto(box)) {
+            // Convert static position to absolute.
+            left = Utils.mapStaticToAbsolute(box).left();
+        } else if (!Utils.isLeftAuto(box))
+            left = Utils.left(box) + this.marginLeft(box);
+        else if (!Utils.isRightAuto(box))
+            left = containerSize.width() - Utils.right(box) - box.rect().width() - this.marginRight(box);
+        else
+            ASSERT_NOT_REACHED();
+        return new LayoutPoint(top, left);
+    }
+
+    _shrinkToFitWidth(box) {
+        // FIXME: this is naive.
+        ASSERT(Utils.isWidthAuto(box));
+        if (!box.isContainer() || !box.hasChild())
+            return 0;
+        let width = 0;
+        for (let inFlowChild = box.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
+            let widthCandidate = Utils.isWidthAuto(inFlowChild) ? this._shrinkToFitWidth(inFlowChild) : Utils.width(inFlowChild);
+            width = Math.max(width, widthCandidate + Utils.computedHorizontalBorderAndPadding(inFlowChild));
+        }
+        return width;
+    }
+}
+

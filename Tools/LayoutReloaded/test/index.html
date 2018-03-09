@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+iframe {
+    border: 0px;
+}
+</style>
+<script>
+let testFiles = [
+    "relative-simple.html",
+    "relative-bottom.html",
+    "relative-right.html",
+    "relative-auto.html",
+    "relative-auto-with-parent-offset.html",
+    "relative-siblings.html",
+    "padding-simple.html",
+    "padding-nested.html",
+    "border-simple.html",
+    "margin-simple.html",
+    "margin-sibling-collapse-propagated.html",
+    "margin-propagation-simple-content-height.html",
+    "margin-left-right-sizing.html",
+    "margin-left-right-sizing-out-of-flow.html",
+    "margin-collapse-with-block-formatting-context2.html",
+    "margin-collapse-with-block-formatting-context.html",
+    "margin-collapse-when-child-has-padding-border.html",
+    "margin-collapse-top-nested.html",
+    "margin-collapse-simple.html",
+    "margin-collapse-first-last-are-floating.html",
+    "margin-collapse-bottom-nested.html",
+    "margin-collapse-bottom-bottom.html",
+    "absolute-auto-with-sibling-margin-bottom.html",
+    "absolute-bottom.html",
+    "absolute-height-stretch.html",
+    "absolute-left-auto.html",
+    "absolute-left-right-top-bottom-auto.html",
+    "absolute-nested.html",
+    "absolute-nested2.html",
+    "absolute-simple.html",
+    "absolute-width-shrink-to-fit.html",
+    "absolute-width-stretch.html",
+    "absolute-with-static-block-position-nested.html",
+    "fixed-nested.html",
+    "floating-box-left-and-right-multiple.html",
+    "floating-box-right-simple.html",
+    "floating-left-right-simple.html",
+    "floating-left-right-with-all-margins.html",
+    "floating-multiple-lefts-in-body.html",
+    "floating-multiple-lefts-multiple-lines.html",
+    "floating-multiple-lefts.html",
+    "floating-box-with-relative-positioned-sibling.html",
+    "floating-lefts-and-rights-simple.html",
+    "floating-with-new-block-formatting-context.html",
+    "floating-box-clear-right-simple.html",
+    "floating-box-with-clear-simple.html",
+    "floating-box-with-clear-siblings.html",
+    "floating-box-clear-both-simple.html",
+    "almost-intruding-left-float-simple.html",
+    "negative-margin-simple.html",
+    "intruding-left-float-simple.html"
+];
+
+let debugThis = [
+];
+
+function addJS(fileName) {
+    let script = document.currentScript.src;
+    let imported = document.createElement('script');
+    imported.src = fileName;
+    document.head.appendChild(imported);
+}
+
+addJS("./TestHarness.js");
+addJS("../Utils.js");
+addJS("../Layout.js");
+addJS("../TreeBuilder.js");
+addJS("../LayoutContext.js");
+addJS("../Box.js");
+addJS("../Container.js");
+addJS("../BlockContainer.js");
+addJS("../InitialBlockContainer.js");
+addJS("../InlineBox.js");
+addJS("../Text.js");
+addJS("../FormattingContext.js");
+addJS("../BlockFormattingContext.js");
+addJS("../InlineFormattingContext.js");
+addJS("../FloatingContext.js");
+addJS("../BlockMarginCollapse.js")
+
+let failedTests = [];
+
+function printResult(files, currentTestIndex) {
+    let resultContent = currentTestIndex != null ? ("Testing..." + currentTestIndex + " out of " + files.length) : ("Number of tests: " + files.length) ;
+    resultContent += "<br><br>Passed: " + ((currentTestIndex != null ? currentTestIndex : files.length) - failedTests.length) + "<br>Failed: " + failedTests.length;
+    if (failedTests.length > 0) {
+        resultContent += "<br><br>Failed cases:"
+        failedTests.forEach(function(item) {
+            resultContent += "<br><a href=\"" + files[item] + "\">" + files[item] + "</a>";
+        });
+    }
+    result.innerHTML = resultContent;
+}
+
+function runTest(files, currentTestIndex) {
+    printResult(files, currentTestIndex);
+    let iframe = document.createElement("iframe");
+    iframe.src = files[currentTestIndex];
+    iframe.id = "testFrame";
+    iframe.width = window.innerWidth;
+    iframe.height = window.innerHeight;
+    iframe.onload = function() {
+        let testFrame = document.getElementById("testFrame");
+        let passed = runLayout(testFrame.contentWindow);
+        testFrame.remove();
+        if (!passed)
+            failedTests.push(currentTestIndex);
+        setTimeout(function() {
+            if (currentTestIndex < files.length - 1)
+                runTest(files, ++currentTestIndex);
+            else
+                printResult(files);
+        }, 0);
+    };
+    document.body.appendChild(iframe);
+}
+
+function runTests() {
+    runTest(debugThis.length ? debugThis : testFiles, 0);
+}
+</script>
+</head>
+<body onload="runTests()">
+<pre id=result></pre>
+</body>
+</html>

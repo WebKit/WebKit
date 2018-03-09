@@ -1,0 +1,539 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+class LayoutPoint {
+    constructor(top, left) {
+        this.m_top = top;
+        this.m_left = left;
+    }
+
+    setLeft(left) {
+        this.m_left = left;
+    }
+
+    setTop(top) {
+        this.m_top = top;
+    }
+
+    left() {
+        return this.m_left;
+    }
+
+    top() {
+        return this.m_top;
+    }
+
+    shiftLeft(distance) {
+        this.m_left += distance;
+    }
+
+    shiftTop(distance) {
+        this.m_top += distance;
+    }
+
+    moveBy(distance) {
+        if (distance.top && distance.left) {
+            this.m_top += distance.top();
+            this.m_left += distance.left();
+        }
+        else if (distance.width && distance.height) {
+            this.m_top += distance.height();
+            this.m_left += distance.width();
+        }
+    }
+
+    equal(other) {
+        return this.top() == other.top() && this.left() == other.left();
+    }
+
+    clone() {
+        return new LayoutPoint(this.top(), this.left());
+    }
+}
+
+class LayoutSize {
+    constructor(width, height) {
+        this.m_width = width;
+        this.m_height = height;
+    }
+
+    setWidth(width) {
+        this.m_width = width;
+    }
+
+    setHeight(height) {
+        this.m_height = height;
+    }
+
+    width() {
+        return this.m_width;
+    }
+
+    height() {
+        return this.m_height;
+    }
+
+    growBy(distance) {
+        this.m_width += distance.width();
+        this.m_height += distance.height();
+    }
+
+    shrinkBy(distance) {
+        this.m_width -= distance.width();
+        this.m_height -= distance.height();
+    }
+
+    isEmpty() {
+        return this.m_width <= 0 || this.m_height <= 0;
+    }
+
+    equal(other) {
+        return this.width() == other.width() && this.height() == other.height();
+    }
+
+    clone() {
+        return new LayoutSize(this.width(), this.height());
+    }
+}
+
+class LayoutRect {
+    constructor(topLeft, size) {
+        this.m_topLeft = topLeft.clone();
+        this.m_size = size.clone();
+    }
+
+    setTop(top) {
+        this.m_topLeft.setTop(top);
+    }
+
+    setLeft(left) {
+        this.m_topLeft.setLeft(left);
+    }
+
+    setBottom(bottom) {
+        this.m_size.setHeight(bottom - this.m_topLeft.top());
+    }
+
+    setRight(right) {
+        this.m_size.setWidth(right - this.m_topLeft.left());
+    }
+
+    left() {
+        return this.m_topLeft.left();
+    }
+
+    top() {
+        return this.m_topLeft.top();
+    }
+
+    bottom() {
+        return this.m_topLeft.top() + this.m_size.height();
+    }
+
+    right() {
+        return this.m_topLeft.left() + this.m_size.width();
+    }
+
+    setTopLeft(topLeft) {
+        this.m_topLeft = topLeft.clone();
+    }
+
+    topLeft() {
+        return this.m_topLeft.clone();
+    }
+
+    topRight() {
+        return new LayoutPoint(this.top(), this.right());
+    }
+
+    bottomRight() {
+        return new LayoutPoint(this.bottom(), this.right());
+    }
+
+    setWidth(width) {
+        this.m_size.setWidth(width);
+    }
+
+    setHeight(height) {
+        this.m_size.setHeight(height);
+    }
+
+    setSize(newSize) {
+        this.m_size = newSize.clone();
+    }
+
+    size() {
+        return this.m_size.clone();
+    }
+
+    width() {
+        return this.m_size.width();
+    }
+
+    height() {
+        return this.m_size.height();
+    }
+
+    growBy(distance) {
+        this.m_size.growBy(distance);
+    }
+
+    shrinkBy(distance) {
+        this.m_size.shrinkBy(distance);
+    }
+
+    moveBy(distance) {
+        this.m_topLeft.moveBy(distance);
+    }
+    
+    isEmpty() {
+        return this.m_size.isEmpty();
+    }
+
+    equal(other) {
+        return this.m_topLeft.equal(other.topLeft()) && this.m_size.equal(other.size());
+    }
+
+    intersects(other) {
+        return !this.isEmpty() && !other.isEmpty()
+        && this.left() < other.right() && other.left() < this.right()
+        && this.top() < other.bottom() && other.top() < this.bottom();
+    }
+
+    contains(other) {
+        return this.left() <= other.left() && this.right() >= other.right()
+        && this.top() <= other.top() && this.bottom() >= other.bottom();
+    }
+
+    clone() {
+        return new LayoutRect(this.topLeft().clone(), this.size().clone());
+    }
+}
+
+function ASSERT_NOT_REACHED() {
+    throw Error("Should not reach!");
+}
+
+function ASSERT(statement) {
+    if (statement)
+        return;
+    throw Error("Assertion failure");
+}
+
+class Utils {
+    static computedValue(strValue, baseValue) {
+        if (strValue.indexOf("px") > -1)
+            return parseFloat(strValue);
+        if (strValue.indexOf("%") > -1)
+            return parseFloat(strValue) * baseValue / 100;
+        return Number.NaN;
+    }
+
+    static propertyIsAuto(propertyName, box) {
+        if (box.isAnonymous())
+            return true;
+        return window.getComputedStyle(box.node()).isPropertyValueInitial(propertyName);
+    }
+
+    static isWidthAuto(box) {
+        return Utils.propertyIsAuto("width", box);
+    }
+
+    static isHeightAuto(box) {
+        return Utils.propertyIsAuto("height", box);
+    }
+
+    static isTopAuto(box) {
+        return Utils.propertyIsAuto("top", box);
+    }
+
+    static isLeftAuto(box) {
+        return Utils.propertyIsAuto("left", box);
+    }
+
+    static isBottomAuto(box) {
+        return Utils.propertyIsAuto("bottom", box);
+    }
+
+    static isRightAuto(box) {
+        return Utils.propertyIsAuto("right", box);
+    }
+
+    static width(box) {
+        ASSERT(!Utils.isWidthAuto(box));
+        return parseFloat(window.getComputedStyle(box.node()).width);
+    }
+
+    static height(box) {
+        ASSERT(!Utils.isHeightAuto(box));
+        return parseFloat(window.getComputedStyle(box.node()).height);
+    }
+
+    static top(box) {
+        return parseFloat(box.node().style.top);
+    }
+
+    static bottom(box) {
+        return parseFloat(box.node().style.bottom);
+    }
+
+    static left(box) {
+        return parseFloat(box.node().style.left);
+    }
+
+    static right(box) {
+        return parseFloat(box.node().style.right);
+    }
+
+    static hasBorderTop(box) {
+        return window.getComputedStyle(box.node()).borderTopWidth != "0px";
+    }
+
+    static hasBorderBottom(box) {
+        return window.getComputedStyle(box.node()).borderBottomWidth != "0px";
+    }
+
+    static hasPaddingTop(box) {
+        return window.getComputedStyle(box.node()).paddingTop != "0px";
+    }
+
+    static hasPaddingBottom(box) {
+        return window.getComputedStyle(box.node()).paddingBottom != "0px";
+    }
+
+    static computedMarginTop(box) {
+        return Utils.computedValue(window.getComputedStyle(box.node()).marginTop);
+    }
+
+    static computedMarginLeft(box) {
+        return Utils.computedValue(window.getComputedStyle(box.node()).marginLeft);
+    }
+
+    static computedMarginBottom(box) {
+        return Utils.computedValue(window.getComputedStyle(box.node()).marginBottom);
+    }
+
+    static computedMarginRight(box) {
+        return Utils.computedValue(window.getComputedStyle(box.node()).marginRight);
+    }
+
+    static computedBorderTopLeft(box) {
+        let node = box.node();
+        return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).borderLeftWidth), Utils.computedValue(window.getComputedStyle(node).borderTopWidth));
+    }
+
+    static computedBorderBottomRight(box) {
+        let node = box.node();
+        return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).borderRightWidth), Utils.computedValue(window.getComputedStyle(node).borderBottomWidth));
+    }
+
+    static computedPaddingTopLeft(box) {
+        let node = box.node();
+        return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).paddingLeft), Utils.computedValue(window.getComputedStyle(node).paddingTop));
+    }
+
+    static computedPaddingBottomRight(box) {
+        let node = box.node();
+        return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).paddingRight), Utils.computedValue(window.getComputedStyle(node).paddingBottom));
+    }
+
+    static computedBorderAndPaddingTop(box) {
+        return Utils.computedBorderTopLeft(box).height() + Utils.computedPaddingTopLeft(box).height();
+    }
+
+    static computedBorderAndPaddingLeft(box) {
+        return Utils.computedBorderTopLeft(box).width() + Utils.computedPaddingTopLeft(box).width();
+    }
+
+    static computedBorderAndPaddingTop(box) {
+        return Utils.computedBorderTopLeft(box).height() + Utils.computedPaddingTopLeft(box).height();
+    }
+
+    static computedBorderAndPaddingLeft(box) {
+        return Utils.computedBorderTopLeft(box).width() + Utils.computedPaddingTopLeft(box).width();
+    }
+
+    static computedBorderAndPaddingBottom(box) {
+        return Utils.computedBorderBottomRight(box).height() + Utils.computedPaddingBottomRight(box).height();
+    }
+
+    static computedBorderAndPaddingRight(box) {
+        return Utils.computedBorderBottomRight(box).width() + Utils.computedPaddingBottomRight(box).width();
+    }
+
+    static computedHorizontalBorderAndPadding(box) {
+        return this.computedBorderAndPaddingLeft(box) + this.computedBorderAndPaddingRight(box);
+    }
+
+    static computedVerticalBorderAndPadding(box) {
+        return this.computedBorderAndPaddingTop(box) + this.computedBorderAndPaddingBottom(box);
+    }
+
+    static hasClear(box) {
+        return Utils.hasClearLeft(box) || Utils.hasClearRight(box) || Utils.hasClearBoth(box);
+    }
+
+    static hasClearLeft(box) {
+        let node = box.node();
+        return window.getComputedStyle(box.node()).clear == "left";
+    }
+
+    static hasClearRight(box) {
+        let node = box.node();
+        return window.getComputedStyle(box.node()).clear == "right";
+    }
+
+    static hasClearBoth(box) {
+        let node = box.node();
+        return window.getComputedStyle(box.node()).clear == "both";
+    }
+
+    static isBlockLevelElement(node) {
+        if (!node)
+            return false;
+        let display = window.getComputedStyle(node).display;
+        return  display == "block" || display == "list-item" || display == "table";
+    }
+
+    static isBlockContainerElement(node) {
+        let display = window.getComputedStyle(node).display;
+        return  display == "block" || display == "list-item" || display == "inline-block" || display == "table-cell" || display == "table-caption"; //TODO && !replaced element
+    }
+
+    static isInlineLevelElement(node) {
+        let display = window.getComputedStyle(node).display;
+        return  display == "inline" || display == "inline-block" || display == "inline-table";
+    }
+
+    static isTableElement(node) {
+        let display = window.getComputedStyle(node).display;
+        return  display == "table" || display == "inline-table";
+    }
+
+    static isRelativePositioned(box) {
+        if (box.isAnonymous())
+            return false;
+        let node = box.node();
+        return window.getComputedStyle(node).position == "relative";
+    }
+
+    static isAbsolutePositioned(box) {
+        if (box.isAnonymous())
+            return false;
+        let node = box.node();
+        return window.getComputedStyle(node).position == "absolute";
+    }
+
+    static isFixedPositioned(box) {
+        if (box.isAnonymous())
+            return false;
+        let node = box.node();
+        return window.getComputedStyle(node).position == "fixed";
+    }
+
+    static isOverflowVisible(box) {
+        return window.getComputedStyle(box.node()).overflow == "visible";
+    }
+
+    static isFloatingPositioned(box) {
+        if (box.isAnonymous())
+            return false;
+        let node = box.node();
+        return window.getComputedStyle(node).float != "none";
+    }
+
+    static isFloatingLeft(box) {
+        let node = box.node();
+        return window.getComputedStyle(node).float == "left";
+    }
+
+    static mapToContainer(box, container) {
+        let topLeft = box.rect().topLeft();
+        let ascendant = box.parent();
+        while (ascendant && ascendant != container) {
+            topLeft.moveBy(ascendant.rect().topLeft());
+            ascendant = ascendant.parent();
+        }
+        ASSERT(ascendant);
+        return new LayoutRect(topLeft, box.rect().size());
+    }
+
+    static mapStaticToAbsolute(box) {
+        return Utils.mapToContainer(box, box.containingBlock());
+    }
+
+    static collectOutOfFlowDescendants(containtBlock) {
+        let outOfFlowBoxes = new Array();
+        let descendants = new Array();
+        for (let child = containtBlock.firstChild(); child; child = child.nextSibling())
+            descendants.push(child);
+        while (descendants.length) {
+            let descendant = descendants.pop();
+            if (descendant.isOutOfFlowPositioned() && descendant.containingBlock() == containtBlock)
+                outOfFlowBoxes.push(descendant);
+            if (!descendant.isContainer())
+                continue;
+            for (let child = descendant.lastChild(); child; child = child.previousSibling())
+                descendants.push(child);
+        }
+        return outOfFlowBoxes;
+    }
+
+    static nextBreakingOpportunity(inlineBox, currentPosition)
+    {
+        return window.nextBreakingOpportunity(inlineBox.text(), currentPosition);
+    }
+
+    static measureText(inlineBox, start, end)
+    {
+        return inlineBox.node().measureText(start, end);
+    }
+
+    // "RenderView at (0,0) size 1317x366\n HTML RenderBlock at (0,0) size 1317x116\n  BODY RenderBody at (8,8) size 1301x100\n   DIV RenderBlock at (0,0) size 100x100\n";
+    static layoutTreeDump(initialContainingBlock) {
+        return this._dumpBox(initialContainingBlock, 1) + this._dumpTree(initialContainingBlock, 2);
+    }
+
+    static _dumpBox(box, level) {
+        // Skip anonymous boxes for now -This is the case where WebKit does not generate an anon inline container for text content where the text is a direct child
+        // of a block container.
+        if (box.isAnonymous())
+            return;
+        let indentation = " ".repeat(level);
+        let boxRect = box.rect();
+        return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
+    }
+
+    static _dumpTree(root, level) {
+        let content = "";
+        for (let child = root.firstChild(); child; child = child.nextSibling()) {
+            content += this._dumpBox(child, level);
+            if (child.isContainer())
+                content += this._dumpTree(child, level + 1, content);
+        }
+        return content;
+    }
+}
+
