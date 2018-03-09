@@ -1,3 +1,11 @@
+2018-03-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, speculative attempt to fix CMake build after r229426
+        https://bugs.webkit.org/show_bug.cgi?id=183382
+        <rdar://problem/38191450>
+
+        * CMakeLists.txt:
+
 2018-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Support resigning first responder status when focusing a form control

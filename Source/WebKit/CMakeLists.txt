@@ -98,7 +98,6 @@ set(WebKit_SYSTEM_INCLUDE_DIRECTORIES
 
 set(WebKit_SOURCES
     NetworkProcess/Cookies/WebCookieManager.cpp
-    NetworkProcess/Cookies/WebCookieManager.messages.in
 
     NetworkProcess/Downloads/Download.cpp
     NetworkProcess/Downloads/DownloadManager.cpp
@@ -606,6 +605,8 @@ set(WebKit_SOURCES
 )
 
 set(WebKit_MESSAGES_IN_FILES
+    NetworkProcess/Cookies/WebCookieManager.messages.in
+
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkProcess.messages.in
     NetworkProcess/NetworkResourceLoader.messages.in
