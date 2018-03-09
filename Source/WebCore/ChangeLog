@@ -1,5 +1,29 @@
 2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        Add basic synchronization capability to Nicosia::Buffer
+        https://bugs.webkit.org/show_bug.cgi?id=183500
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have Nicosia::Buffer track a painting state, and allow that state to be
+        modified and accessed from different threads. The PaintingState enum
+        value is protected by a Lock object, and can be modified via the
+        beginPainting() and completePainting() methods. Additionally, the
+        waitUntilPaintingComplete() method allows the caller to wait until the
+        painting is complete for the given Nicosia::Buffer object.
+
+        This added state doesn't affect a Nicosia::Buffer object internally, and
+        doesn't have any effect on  existing usages of Nicosia::Buffer (which
+        are not multi-threaded).
+
+        * platform/graphics/nicosia/NicosiaBuffer.cpp:
+        (Nicosia::Buffer::beginPainting):
+        (Nicosia::Buffer::completePainting):
+        (Nicosia::Buffer::waitUntilPaintingComplete):
+        * platform/graphics/nicosia/NicosiaBuffer.h:
+
+2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
+
         Move NicosiaPaintingContextCairo files under Cairo-specific directory
         https://bugs.webkit.org/show_bug.cgi?id=183497
 

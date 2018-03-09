@@ -29,6 +29,8 @@
 #pragma once
 
 #include "IntSize.h"
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -51,12 +53,27 @@ public:
     int stride() const { return m_size.width() * 4; }
     unsigned char* data() const { return m_data.get(); }
 
+    void beginPainting();
+    void completePainting();
+    void waitUntilPaintingComplete();
+
 private:
     Buffer(const WebCore::IntSize&, Flags);
 
     MallocPtr<unsigned char> m_data;
     WebCore::IntSize m_size;
     Flags m_flags;
+
+    enum class PaintingState {
+        InProgress,
+        Complete
+    };
+
+    struct {
+        Lock lock;
+        Condition condition;
+        PaintingState state { PaintingState::Complete };
+    } m_painting;
 };
 
 } // namespace Nicosia
