@@ -15,12 +15,13 @@ class BuildbotBuildEntry {
         assert.equal(syncer.builderID(), rawData['builderid']);
 
         this._syncer = syncer;
-        this._buildRequestId = rawData['buildrequestid'];
         this._hasFinished = rawData['complete'];
         this._isPending = 'claimed' in rawData && !rawData['claimed'];
         this._isInProgress = !this._isPending && !this._hasFinished;
         this._buildNumber = rawData['number'];
-        this._workerName = rawData['properties'] && rawData['properties']['workername'] ? rawData['properties']['workername'][0] : null
+        this._workerName = rawData['properties'] && rawData['properties']['workername'] ? rawData['properties']['workername'][0] : null;
+        this._buildRequestId = rawData['properties'] && rawData['properties'][syncer._buildRequestPropertyName]
+            ? rawData['properties'][syncer._buildRequestPropertyName][0] : null;
     }
 
     syncer() { return this._syncer; }
@@ -265,7 +266,7 @@ class BuildbotSyncer {
     }
 
     pathForPendingBuildsJSONDeprecated() { return `/json/builders/${escape(this._builderName)}/pendingBuilds`; }
-    pathForPendingBuilds() { return `/api/v2/builders/${this._builderID}/buildrequests?complete=false&claimed=false`; }
+    pathForPendingBuilds() { return `/api/v2/builders/${this._builderID}/buildrequests?complete=false&claimed=false&property=*`; }
     pathForBuildJSONDeprecated(selectedBuilds)
     {
         return `/json/builders/${escape(this._builderName)}/builds/?` + selectedBuilds.map((number) => 'select=' + number).join('&');

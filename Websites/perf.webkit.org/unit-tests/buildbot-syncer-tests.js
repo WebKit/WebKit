@@ -297,11 +297,11 @@ function createSampleBuildRequestWithOwnedCommitAndPatch(platform, test, order)
         'commitSet': commitSet, 'status': 'pending', 'platform': platform, 'test': test, 'order': order});
 }
 
-function samplePendingBuildRequestData(buildRequestId, buildTime, builderId)
+function samplePendingBuildRequestData(buildRequestId, buildTime, workerName, builderId)
 {
     return {
         "builderid": builderId || 102,
-        "buildrequestid": buildRequestId || 16733,
+        "buildrequestid": 17,
         "buildsetid": 894720,
         "claimed": false,
         "claimed_at": null,
@@ -311,14 +311,20 @@ function samplePendingBuildRequestData(buildRequestId, buildTime, builderId)
         "priority": 0,
         "results": -1,
         "submitted_at": buildTime || 1458704983,
-        "waited_for": false
+        "waited_for": false,
+        "properties": {
+            "build_request_id": [buildRequestId || 16733, "Force Build Form"],
+            "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
+            "slavename": [workerName, "Worker (deprecated)"],
+            "workername": [workerName, "Worker"]
+        }
     };
 }
 
-function samplePendingBuildRequests(buildRequestId, buildTime, builderName)
+function samplePendingBuildRequests(buildRequestId, buildTime, workerName, builderName)
 {
     return {
-        "buildrequests" : [samplePendingBuildRequestData(buildRequestId, buildTime, builderNameToIDMap()[builderName])]
+        "buildrequests" : [samplePendingBuildRequestData(buildRequestId, buildTime, workerName, builderNameToIDMap()[builderName])]
     };
 }
 
@@ -327,7 +333,7 @@ function sampleBuildData(workerName, isComplete, buildRequestId, buildNumber, bu
     return {
         "builderid": builderId || 102,
         "number": buildNumber || 614,
-        "buildrequestid": buildRequestId || 16733,
+        "buildrequestid": 17,
         "complete": isComplete,
         "complete_at": null,
         "buildid": 418744,
@@ -337,11 +343,11 @@ function sampleBuildData(workerName, isComplete, buildRequestId, buildNumber, bu
         "state_string": "building",
         "workerid": 41,
         "properties": {
+            "build_request_id": [buildRequestId || 16733, "Force Build Form"],
             "platform": ["mac", "Unknown"],
             "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
             "slavename": [workerName || "ABTest-iPad-0", "Worker (deprecated)"],
-            "workername": [workerName || "ABTest-iPad-0", "Worker"
-            ]
+            "workername": [workerName || "ABTest-iPad-0", "Worker"]
         }
     };
 }
