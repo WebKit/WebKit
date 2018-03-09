@@ -1,3 +1,19 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Add isPictureInPictureActive messaging across WebKit process boundary
+        https://bugs.webkit.org/show_bug.cgi?id=183499
+
+        Reviewed by Eric Carlson.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModelClient::pictureInPictureActiveChanged):
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::PlaybackSessionModelMediaElement::isPictureInPictureActive const):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::isPictureInPictureActive const):
+
 2018-03-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Implement connection limit.

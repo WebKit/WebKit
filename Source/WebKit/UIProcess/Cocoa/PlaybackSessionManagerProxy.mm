@@ -258,6 +258,13 @@ void PlaybackSessionModelContext::mutedChanged(bool muted)
         client->mutedChanged(muted);
 }
 
+void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
+{
+    m_pictureInPictureActive = active;
+    for (auto* client : m_clients)
+        client->pictureInPictureActiveChanged(active);
+}
+
 #pragma mark - PlaybackSessionManagerProxy
 
 RefPtr<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProxy& page)
@@ -454,6 +461,10 @@ void PlaybackSessionManagerProxy::rateChanged(uint64_t contextId, bool isPlaying
     ensureModel(contextId).rateChanged(isPlaying, rate);
 }
 
+void PlaybackSessionManagerProxy::pictureInPictureActiveChanged(uint64_t contextId, bool active)
+{
+    ensureModel(contextId).pictureInPictureActiveChanged(active);
+}
 
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t contextId, String identifier) const
 {

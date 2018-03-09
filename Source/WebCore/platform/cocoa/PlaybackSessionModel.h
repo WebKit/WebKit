@@ -81,6 +81,7 @@ public:
     virtual String externalPlaybackLocalizedDeviceName() const = 0;
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
     virtual bool isMuted() const = 0;
+    virtual bool isPictureInPictureActive() const = 0;
 };
 
 class PlaybackSessionModelClient {
@@ -100,6 +101,7 @@ public:
     virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
+    virtual void pictureInPictureActiveChanged(bool) { }
 };
 
 }

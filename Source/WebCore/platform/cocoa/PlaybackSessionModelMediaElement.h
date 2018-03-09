@@ -92,6 +92,7 @@ public:
     String externalPlaybackLocalizedDeviceName() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     bool isMuted() const final;
+    bool isPictureInPictureActive() const final;
 
 protected:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();

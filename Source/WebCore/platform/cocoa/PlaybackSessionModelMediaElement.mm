@@ -165,6 +165,15 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicStrin
         }
     }
 
+    if (all
+        || eventName == eventNames().webkitpresentationmodechangedEvent) {
+        bool isPictureInPictureActive = this->isPictureInPictureActive();
+
+        for (auto client : m_clients)
+            client->pictureInPictureActiveChanged(isPictureInPictureActive);
+    }
+
+
     // We don't call updateMediaSelectionIndices() in the all case, since
     // updateMediaSelectionOptions() will also update the selection indices.
     if (eventName == eventNames().changeEvent)
@@ -527,6 +536,14 @@ bool PlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 bool PlaybackSessionModelMediaElement::isMuted() const
 {
     return m_mediaElement ? m_mediaElement->muted() : false;
+}
+
+bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const
+{
+    if (!m_mediaElement)
+        return false;
+
+    return (m_mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
 }
 
 }

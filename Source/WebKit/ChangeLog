@@ -1,3 +1,16 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Add isPictureInPictureActive messaging across WebKit process boundary
+        https://bugs.webkit.org/show_bug.cgi?id=183499
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::pictureInPictureActiveChanged):
+        (WebKit::PlaybackSessionManagerProxy::pictureInPictureActiveChanged):
+
 2018-03-09  Stephan Szabo  <stephan.szabo@sony.com>
 
         Add guard for wtf/glib include

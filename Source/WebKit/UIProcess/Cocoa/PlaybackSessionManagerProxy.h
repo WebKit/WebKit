@@ -84,6 +84,7 @@ public:
     void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&);
     void wirelessVideoPlaybackDisabledChanged(bool);
     void mutedChanged(bool);
+    void pictureInPictureActiveChanged(bool);
 
 private:
     friend class VideoFullscreenModelContext;
@@ -131,6 +132,7 @@ private:
     String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     bool isMuted() const final { return m_muted; }
+    bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
 
     PlaybackSessionManagerProxy* m_manager;
     uint64_t m_contextId;
@@ -156,6 +158,7 @@ private:
     String m_externalPlaybackLocalizedDeviceName;
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
+    bool m_pictureInPictureActive { false };
 };
 
 class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {
@@ -202,6 +205,7 @@ private:
     void rateChanged(uint64_t contextId, bool isPlaying, double rate);
     void handleControlledElementIDResponse(uint64_t, String) const;
     void mutedChanged(uint64_t contextId, bool muted);
+    void pictureInPictureActiveChanged(uint64_t contextId, bool pictureInPictureActive);
 
     // Messages to PlaybackSessionManager
     void play(uint64_t contextId);
