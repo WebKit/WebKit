@@ -41,8 +41,7 @@ class CurlRequestScheduler {
     WTF_MAKE_NONCOPYABLE(CurlRequestScheduler);
     friend NeverDestroyed<CurlRequestScheduler>;
 public:
-    static CurlRequestScheduler& singleton();
-
+    CurlRequestScheduler(long maxConnects, long maxTotalConnections, long maxHostConnections);
     ~CurlRequestScheduler() { stopThread(); }
 
     bool add(CurlRequestSchedulerClient*);
@@ -51,8 +50,6 @@ public:
     void callOnWorkerThread(WTF::Function<void()>&&);
 
 private:
-    CurlRequestScheduler() = default;
-
     void startThreadIfNeeded();
     void stopThreadIfNoMoreJobRunning();
     void stopThread();
@@ -74,6 +71,10 @@ private:
     HashMap<CURL*, CurlRequestSchedulerClient*> m_activeJobs;
 
     std::unique_ptr<CurlMultiHandle> m_curlMultiHandle;
+
+    long m_maxConnects;
+    long m_maxTotalConnections;
+    long m_maxHostConnections;
 };
 
 } // namespace WebCore

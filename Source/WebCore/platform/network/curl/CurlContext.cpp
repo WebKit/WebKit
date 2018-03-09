@@ -28,8 +28,10 @@
 #include "CurlContext.h"
 
 #if USE(CURL)
+#include "CurlRequestScheduler.h"
 #include "HTTPHeaderMap.h"
 #include <NetworkLoadMetrics.h>
+#include <mutex>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -66,6 +68,7 @@ private:
     }
 
     // define specialized member function for specific type.
+    template<> constexpr const char* sscanTemplate<signed>() { return "%d"; }
     template<> constexpr const char* sscanTemplate<unsigned>() { return "%u"; }
 };
 
@@ -88,6 +91,21 @@ CurlContext::CurlContext()
 
     if (auto value = envVar.readAs<unsigned>("WEBKIT_CURL_CONNECT_TIMEOUT"))
         m_connectTimeout = Seconds(*value);
+
+    long maxConnects { CurlDefaultMaxConnects };
+    long maxTotalConnections { CurlDefaultMaxTotalConnections };
+    long maxHostConnections { CurlDefaultMaxHostConnections };
+
+    if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAXCONNECTS"))
+        maxConnects = *value;
+
+    if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAX_TOTAL_CONNECTIONS"))
+        maxTotalConnections = *value;
+
+    if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAX_HOST_CONNECTIONS"))
+        maxHostConnections = *value;
+
+    m_scheduler = std::make_unique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
 #ifndef NDEBUG
     m_verbose = envVar.defined("DEBUG_CURL");
@@ -211,6 +229,24 @@ CurlMultiHandle::~CurlMultiHandle()
 {
     if (m_multiHandle)
         curl_multi_cleanup(m_multiHandle);
+}
+
+void CurlMultiHandle::setMaxConnects(long maxConnects)
+{
+    if (maxConnects < 0)
+        return;
+
+    curl_multi_setopt(m_multiHandle, CURLMOPT_MAXCONNECTS, maxConnects);
+}
+
+void CurlMultiHandle::setMaxTotalConnections(long maxTotalConnections)
+{
+    curl_multi_setopt(m_multiHandle, CURLMOPT_MAX_TOTAL_CONNECTIONS, maxTotalConnections);
+}
+
+void CurlMultiHandle::setMaxHostConnections(long maxHostConnections)
+{
+    curl_multi_setopt(m_multiHandle, CURLMOPT_MAX_HOST_CONNECTIONS, maxHostConnections);
 }
 
 CURLMcode CurlMultiHandle::addHandle(CURL* handle)

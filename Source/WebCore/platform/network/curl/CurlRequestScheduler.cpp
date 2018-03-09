@@ -31,14 +31,14 @@
 #if USE(CURL)
 
 #include "CurlRequestSchedulerClient.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-CurlRequestScheduler& CurlRequestScheduler::singleton()
+CurlRequestScheduler::CurlRequestScheduler(long maxConnects, long maxTotalConnections, long maxHostConnections)
+    : m_maxConnects(maxConnects)
+    , m_maxTotalConnections(maxTotalConnections)
+    , m_maxHostConnections(maxHostConnections)
 {
-    static NeverDestroyed<CurlRequestScheduler> sharedInstance;
-    return sharedInstance;
 }
 
 bool CurlRequestScheduler::add(CurlRequestSchedulerClient* client)
@@ -135,6 +135,9 @@ void CurlRequestScheduler::workerThread()
     ASSERT(!isMainThread());
 
     m_curlMultiHandle = std::make_unique<CurlMultiHandle>();
+    m_curlMultiHandle->setMaxConnects(m_maxConnects);
+    m_curlMultiHandle->setMaxTotalConnections(m_maxTotalConnections);
+    m_curlMultiHandle->setMaxHostConnections(m_maxHostConnections);
 
     while (m_runThread) {
         executeTasks();

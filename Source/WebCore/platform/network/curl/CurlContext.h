@@ -53,6 +53,12 @@ enum class CurlProxyType {
     Socks5Hostname = CURLPROXY_SOCKS5_HOSTNAME
 };
 
+// Values taken from http://www.browserscope.org/ following
+// the rule "Do What Every Other Modern Browser Is Doing".
+const long CurlDefaultMaxConnects { -1 }; // -1 : Does not set CURLMOPT_MAXCONNECTS
+const long CurlDefaultMaxTotalConnections { 17 };
+const long CurlDefaultMaxHostConnections { 6 };
+
 // CurlGlobal --------------------------------------------
 // to make the initialization of libcurl happen before other initialization of CurlContext
 
@@ -90,6 +96,8 @@ private:
 
 // CurlContext --------------------------------------------
 
+class CurlRequestScheduler;
+
 class CurlContext : public CurlGlobal {
     WTF_MAKE_NONCOPYABLE(CurlContext);
     friend NeverDestroyed<CurlContext>;
@@ -109,6 +117,8 @@ public:
     virtual ~CurlContext();
 
     const CurlShareHandle& shareHandle() { return m_shareHandle; }
+
+    CurlRequestScheduler& scheduler() { return *m_scheduler; }
 
     // Proxy
     const ProxyInfo& proxyInfo() const { return m_proxy; }
@@ -137,6 +147,7 @@ private:
     ProxyInfo m_proxy;
     CurlShareHandle m_shareHandle;
     CurlSSLHandle m_sslHandle;
+    std::unique_ptr<CurlRequestScheduler> m_scheduler;
 
     Seconds m_dnsCacheTimeout { Seconds::fromMinutes(5) };
     Seconds m_connectTimeout { 30.0 };
@@ -155,6 +166,10 @@ class CurlMultiHandle {
 public:
     CurlMultiHandle();
     ~CurlMultiHandle();
+
+    void setMaxConnects(long);
+    void setMaxTotalConnections(long);
+    void setMaxHostConnections(long);
 
     CURLMcode addHandle(CURL*);
     CURLMcode removeHandle(CURL*);

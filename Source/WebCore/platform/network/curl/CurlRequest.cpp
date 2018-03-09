@@ -96,7 +96,7 @@ void CurlRequest::startWithJobManager()
 {
     ASSERT(isMainThread());
 
-    CurlRequestScheduler::singleton().add(this);
+    CurlContext::singleton().scheduler().add(this);
 }
 
 void CurlRequest::cancel()
@@ -109,7 +109,7 @@ void CurlRequest::cancel()
     m_cancelled = true;
 
     if (!m_isSyncRequest) {
-        auto& scheduler = CurlRequestScheduler::singleton();
+        auto& scheduler = CurlContext::singleton().scheduler();
 
         if (needToInvokeDidCancelTransfer()) {
             scheduler.callOnWorkerThread([protectedThis = makeRef(*this)]() {
@@ -517,7 +517,7 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
 
     if (!m_isSyncRequest) {
         // DidReceiveResponse must not be called immediately
-        CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this)]() {
+        CurlContext::singleton().scheduler().callOnWorkerThread([protectedThis = makeRef(*this)]() {
             protectedThis->invokeDidReceiveResponse(protectedThis->m_response, Action::StartTransfer);
         });
     } else {
@@ -560,7 +560,7 @@ void CurlRequest::completeDidReceiveResponse()
         startWithJobManager();
     } else if (m_actionAfterInvoke == Action::FinishTransfer) {
         if (!m_isSyncRequest) {
-            CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
+            CurlContext::singleton().scheduler().callOnWorkerThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
                 protectedThis->didCompleteTransfer(finishedResultCode);
             });
         } else
@@ -602,7 +602,7 @@ void CurlRequest::pausedStatusChanged()
         return;
 
     if (!m_isSyncRequest && isMainThread()) {
-        CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this), paused = isPaused()]() {
+        CurlContext::singleton().scheduler().callOnWorkerThread([protectedThis = makeRef(*this), paused = isPaused()]() {
             if (protectedThis->isCompletedOrCancelled())
                 return;
 
