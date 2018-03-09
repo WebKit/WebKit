@@ -688,6 +688,8 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
 
     move(regT1, stackPointerRegister);
     checkStackPointerAlignment();
+    if (Options::zeroStackFrame())
+        clearStackFrame(callFrameRegister, stackPointerRegister, regT0, maxFrameSize);
 
     emitSaveCalleeSaves();
     emitMaterializeTagCheckRegisters();

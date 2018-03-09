@@ -609,25 +609,49 @@ class YarrGenerator : private MacroAssembler {
 
     unsigned alignCallFrameSizeInBytes(unsigned callFrameSize)
     {
+        if (!callFrameSize)
+            return 0;
+
         callFrameSize *= sizeof(void*);
         if (callFrameSize / sizeof(void*) != m_pattern.m_body->m_callFrameSize)
             CRASH();
         callFrameSize = (callFrameSize + 0x3f) & ~0x3f;
-        if (!callFrameSize)
-            CRASH();
         return callFrameSize;
     }
     void initCallFrame()
     {
-        unsigned callFrameSize = m_pattern.m_body->m_callFrameSize;
-        if (callFrameSize)
-            subPtr(Imm32(alignCallFrameSizeInBytes(callFrameSize)), stackPointerRegister);
+        unsigned callFrameSizeInBytes = alignCallFrameSizeInBytes(m_pattern.m_body->m_callFrameSize);
+        if (callFrameSizeInBytes) {
+#if CPU(X86_64) || CPU(ARM64)
+            if (Options::zeroStackFrame()) {
+                // We need to start from the stack pointer, because we could have spilled callee saves
+                move(stackPointerRegister, regT0);
+                subPtr(Imm32(callFrameSizeInBytes), stackPointerRegister);
+                if (callFrameSizeInBytes <= 128) {
+                    for (unsigned offset = 0; offset < callFrameSizeInBytes; offset += sizeof(intptr_t))
+                        storePtr(TrustedImm32(0), Address(regT0, -8 - offset));
+                } else {
+                    Label zeroLoop = label();
+                    subPtr(TrustedImm32(sizeof(intptr_t) * 2), regT0);
+#if CPU(ARM64)
+                    storePair64(ARM64Registers::zr, ARM64Registers::zr, regT0);
+#else
+                    storePtr(TrustedImm32(0), Address(regT0));
+                    storePtr(TrustedImm32(0), Address(regT0, sizeof(intptr_t)));
+#endif
+                    branchPtr(NotEqual, regT0, stackPointerRegister).linkTo(zeroLoop, this);
+                }
+            } else
+#endif
+                subPtr(Imm32(callFrameSizeInBytes), stackPointerRegister);
+
+        }
     }
     void removeCallFrame()
     {
-        unsigned callFrameSize = m_pattern.m_body->m_callFrameSize;
-        if (callFrameSize)
-            addPtr(Imm32(alignCallFrameSizeInBytes(callFrameSize)), stackPointerRegister);
+        unsigned callFrameSizeInBytes = alignCallFrameSizeInBytes(m_pattern.m_body->m_callFrameSize);
+        if (callFrameSizeInBytes)
+            addPtr(Imm32(callFrameSizeInBytes), stackPointerRegister);
     }
 
     void generateFailReturn()

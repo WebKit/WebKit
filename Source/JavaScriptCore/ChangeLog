@@ -1,3 +1,37 @@
+2018-03-08  Michael Saboff  <msaboff@apple.com>
+
+        Emit code to zero the stack frame on function entry
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=183391
+
+        Reviewed by Mark Lam.
+
+        Added code to zero incoming stack frame behind a new JSC option, zeroStackFrame.
+        The default setting of the option is off.
+
+        Did some minor refactoring of the YarrJIT stack alignment code.
+
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::defaultPrologueGenerator):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::clearStackFrame):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Options.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::ialignCallFrameSizeInBytesnitCallFrame):
+        (JSC::Yarr::YarrGenerator::initCallFrame):
+        (JSC::Yarr::YarrGenerator::removeCallFrame):
+
 2018-03-08  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, another attempt at fixing the Windows build.

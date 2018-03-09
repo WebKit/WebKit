@@ -1107,7 +1107,19 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     subp cfr, t0, t0
 
 .stackHeightOK:
-    move t0, sp
+    if X86_64 or ARM64
+        # We need to start zeroing from sp as it has been adjusted after saving callee saves.
+        move sp, t2
+        move t0, sp
+.zeroStackLoop:
+        bpeq sp, t2, .zeroStackDone
+        subp PtrSize, t2
+        storep 0, [t2]
+        jmp .zeroStackLoop
+.zeroStackDone:
+    else
+        move t0, sp
+    end
 
     if JSVALUE64
         move TagTypeNumber, tagTypeNumber
