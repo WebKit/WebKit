@@ -193,7 +193,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
                 return;
             }
 
-            beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
+            beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, *beforeChild);
 
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(beforeChild->parent() == &parent);
         }

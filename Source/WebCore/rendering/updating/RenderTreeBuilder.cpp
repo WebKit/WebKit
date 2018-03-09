@@ -37,6 +37,7 @@
 #include "RenderLineBreak.h"
 #include "RenderMathMLFenced.h"
 #include "RenderMenuList.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
@@ -599,8 +600,10 @@ void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject*
     parent.repaint();
 }
 
-RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild)
+RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject& originalBeforeChild)
 {
+    // Adjust beforeChild if it is a column spanner and has been moved out of its original position.
+    auto* beforeChild = RenderTreeBuilder::MultiColumn::adjustBeforeChildForMultiColumnSpannerIfNeeded(originalBeforeChild);
     bool didSplitParentAnonymousBoxes = false;
 
     while (beforeChild->parent() != &parent) {

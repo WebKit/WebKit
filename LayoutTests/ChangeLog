@@ -1,3 +1,14 @@
+2018-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeBuilder::splitAnonymousBoxesAroundChild should take multicolumn spanners into account.
+        https://bugs.webkit.org/show_bug.cgi?id=183493
+        <rdar://problem/38030461>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/adjust-beforeChild-for-spanner-crash-expected.txt: Added.
+        * fast/multicol/adjust-beforeChild-for-spanner-crash.html: Added.
+
 2018-03-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [webkitpy, WinCairo] Launch Apache HTTPD for HTTP Tests.

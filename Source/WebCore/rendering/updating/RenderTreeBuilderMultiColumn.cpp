@@ -407,4 +407,23 @@ void RenderTreeBuilder::MultiColumn::multiColumnRelativeWillBeRemoved(RenderMult
     // content is added again later.
 }
 
+RenderObject* RenderTreeBuilder::MultiColumn::adjustBeforeChildForMultiColumnSpannerIfNeeded(RenderObject& beforeChild)
+{
+    if (!is<RenderBox>(beforeChild))
+        return &beforeChild;
+
+    auto* nextSibling = beforeChild.nextSibling();
+    if (!nextSibling)
+        return &beforeChild;
+
+    if (!is<RenderMultiColumnSet>(*nextSibling))
+        return &beforeChild;
+
+    auto* multiColumnFlow = downcast<RenderMultiColumnSet>(*nextSibling).multiColumnFlow();
+    if (!multiColumnFlow)
+        return &beforeChild;
+
+    return multiColumnFlow->findColumnSpannerPlaceholder(downcast<RenderBox>(&beforeChild));
+}
+
 }

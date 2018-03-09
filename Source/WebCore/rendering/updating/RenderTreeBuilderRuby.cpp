@@ -183,7 +183,7 @@ void RenderTreeBuilder::Ruby::moveChildrenInternal(RenderRubyBase& from, RenderR
     // This function removes all children that are before (!) beforeChild
     // and appends them to toBase.
     if (beforeChild && beforeChild->parent() != &from)
-        beforeChild = m_builder.splitAnonymousBoxesAroundChild(from, beforeChild);
+        beforeChild = m_builder.splitAnonymousBoxesAroundChild(from, *beforeChild);
 
     if (from.childrenInline())
         moveInlineChildren(from, to, beforeChild);

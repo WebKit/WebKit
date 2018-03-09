@@ -1,3 +1,29 @@
+2018-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeBuilder::splitAnonymousBoxesAroundChild should take multicolumn spanners into account.
+        https://bugs.webkit.org/show_bug.cgi?id=183493
+        <rdar://problem/38030461>
+
+        Reviewed by Antti Koivisto.
+
+        Multicolumn spanners are taken out of their original position and placed next
+        to a RenderMultiColumnSet. splitAnonymousBoxesAroundChild needs to know the original parent (in the render tree context).
+
+        Test: fast/multicol/adjust-beforeChild-for-spanner-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::splitAnonymousBoxesAroundChild):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::adjustBeforeChildForMultiColumnSpannerIfNeeded):
+        * rendering/updating/RenderTreeBuilderMultiColumn.h:
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::moveChildrenInternal):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::attach):
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Add isPictureInPictureActive messaging across WebKit process boundary

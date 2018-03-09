@@ -43,6 +43,7 @@ public:
     RenderObject* resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
     void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative);
+    static RenderObject* adjustBeforeChildForMultiColumnSpannerIfNeeded(RenderObject& beforeChild);
 
 private:
     void createFragmentedFlow(RenderBlockFlow&);
