@@ -1,3 +1,30 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Add new CSS env constants for use with fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=183498
+
+        Reviewed by Dean Jackson.
+
+        Tests: fullscreen/fullscreen-auto-hide-delay.html
+               fullscreen/fullscreen-inset-top.html
+
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::nameForProperty const):
+        (WebCore::variableDataForPositiveDuration):
+        (WebCore::ConstantPropertyMap::setFullscreenInsetTop):
+        (WebCore::ConstantPropertyMap::setFullscreenAutoHideDelay):
+        * dom/ConstantPropertyMap.h:
+        * page/Page.cpp:
+        (WebCore::Page::setFullscreenInsetTop):
+        (WebCore::Page::setFullscreenAutoHideDelay):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setFullscreenInsetTop):
+        (WebCore::Internals::setFullscreenAutoHideDelay):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-03-09  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeBuilder::splitAnonymousBoxesAroundChild should take multicolumn spanners into account.

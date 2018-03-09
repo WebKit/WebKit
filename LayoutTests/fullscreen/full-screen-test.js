@@ -93,6 +93,16 @@ function reportExpected(success, testFuncString, comparison, expected, observed)
     logResult(success, msg);
 }
 
+function run(testFuncString)
+{
+    consoleWrite("RUN(" + testFuncString + ")");
+    try {
+        eval(testFuncString);
+    } catch (ex) {
+        consoleWrite(ex);
+    }
+}
+
 function waitForEventAndEnd(element, eventName, funcString)
 {
     waitForEvent(element, eventName, funcString, true)

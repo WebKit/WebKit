@@ -54,6 +54,8 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
     static NeverDestroyed<AtomicString> safeAreaInsetRightName("safe-area-inset-right", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> safeAreaInsetBottomName("safe-area-inset-bottom", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> safeAreaInsetLeftName("safe-area-inset-left", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> fullscreenInsetTopName("fullscreen-inset-top", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> fullscreenAutoHideDelayName("fullscreen-auto-hide-delay", AtomicString::ConstructFromLiteral);
 
     switch (property) {
     case ConstantProperty::SafeAreaInsetTop:
@@ -64,6 +66,10 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
         return safeAreaInsetBottomName;
     case ConstantProperty::SafeAreaInsetLeft:
         return safeAreaInsetLeftName;
+    case ConstantProperty::FullscreenInsetTop:
+        return fullscreenInsetTopName;
+    case ConstantProperty::FullscreenAutoHideDelay:
+        return fullscreenAutoHideDelayName;
     }
 
     return nullAtom();
@@ -97,6 +103,18 @@ static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
     return CSSVariableData::create(tokenRange, false);
 }
 
+static Ref<CSSVariableData> variableDataForPositiveDuration(float durationInSeconds)
+{
+    ASSERT(durationInSeconds >= 0);
+
+    CSSParserToken token(NumberToken, durationInSeconds, NumberValueType, NoSign);
+    token.convertToDimensionWithUnit("s");
+
+    Vector<CSSParserToken> tokens { token };
+    CSSParserTokenRange tokenRange(tokens);
+    return CSSVariableData::create(tokenRange, false);
+}
+
 void ConstantPropertyMap::updateConstantsForSafeAreaInsets()
 {
     FloatBoxExtent unobscuredSafeAreaInsets = m_document.page() ? m_document.page()->unobscuredSafeAreaInsets() : FloatBoxExtent();
@@ -109,6 +127,18 @@ void ConstantPropertyMap::updateConstantsForSafeAreaInsets()
 void ConstantPropertyMap::didChangeSafeAreaInsets()
 {
     updateConstantsForSafeAreaInsets();
+    m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+}
+
+void ConstantPropertyMap::setFullscreenInsetTop(double inset)
+{
+    setValueForProperty(ConstantProperty::FullscreenInsetTop, variableDataForPositivePixelLength(inset));
+    m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+}
+
+void ConstantPropertyMap::setFullscreenAutoHideDelay(double delay)
+{
+    setValueForProperty(ConstantProperty::FullscreenAutoHideDelay, variableDataForPositiveDuration(delay));
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 

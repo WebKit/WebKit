@@ -491,6 +491,8 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     page.settings().setStorageAccessAPIEnabled(false);
+    page.setFullscreenAutoHideDelay(0);
+    page.setFullscreenInsetTop(0);
 }
 
 Internals::Internals(Document& document)
@@ -2781,6 +2783,22 @@ void Internals::webkitDidExitFullScreenForElement(Element& element)
 }
 
 #endif
+
+void Internals::setFullscreenInsetTop(double inset)
+{
+    Page* page = contextDocument()->frame()->page();
+    ASSERT(page);
+
+    page->setFullscreenInsetTop(inset);
+}
+
+void Internals::setFullscreenAutoHideDelay(double delay)
+{
+    Page* page = contextDocument()->frame()->page();
+    ASSERT(page);
+
+    page->setFullscreenAutoHideDelay(delay);
+}
 
 void Internals::setApplicationCacheOriginQuota(unsigned long long quota)
 {

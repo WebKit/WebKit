@@ -104,6 +104,16 @@ void WebFullScreenManagerProxy::restoreScrollPosition()
     m_page->process().send(Messages::WebFullScreenManager::RestoreScrollPosition(), m_page->pageID());
 }
 
+void WebFullScreenManagerProxy::setFullscreenInsetTop(double inset)
+{
+    m_page->process().send(Messages::WebFullScreenManager::SetFullscreenInsetTop(inset), m_page->pageID());
+}
+
+void WebFullScreenManagerProxy::setFullscreenAutoHideDelay(double delay)
+{
+    m_page->process().send(Messages::WebFullScreenManager::SetFullscreenAutoHideDelay(delay), m_page->pageID());
+}
+
 void WebFullScreenManagerProxy::invalidate()
 {
     m_page->process().removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page->pageID());

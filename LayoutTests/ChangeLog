@@ -1,3 +1,17 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Add new CSS env constants for use with fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=183498
+
+        Reviewed by Dean Jackson.
+
+        * fullscreen/full-screen-test.js:
+        (run):
+        * fullscreen/fullscreen-auto-hide-delay-expected.txt: Added.
+        * fullscreen/fullscreen-auto-hide-delay.html: Added.
+        * fullscreen/fullscreen-inset-top-expected.txt: Added.
+        * fullscreen/fullscreen-inset-top.html: Added.
+
 2018-03-09  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeBuilder::splitAnonymousBoxesAroundChild should take multicolumn spanners into account.

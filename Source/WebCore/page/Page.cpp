@@ -2304,6 +2304,24 @@ void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
     }
 }
 
+void Page::setFullscreenInsetTop(double inset)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->constantProperties().setFullscreenInsetTop(inset);
+    }
+}
+
+void Page::setFullscreenAutoHideDelay(double delay)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->constantProperties().setFullscreenAutoHideDelay(delay);
+    }
+}
+
 #if ENABLE(DATA_INTERACTION)
 
 bool Page::hasSelectionAtPosition(const FloatPoint& position) const

@@ -30,5 +30,7 @@ messages -> WebFullScreenManager LegacyReceiver {
     SetAnimatingFullScreen(bool animating)
     SaveScrollPosition()
     RestoreScrollPosition()
+    SetFullscreenInsetTop(double inset)
+    SetFullscreenAutoHideDelay(double delay)
 }
 #endif

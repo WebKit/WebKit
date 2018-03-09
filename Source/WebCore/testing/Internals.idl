@@ -348,6 +348,9 @@ enum EventThrottlingBehavior {
     [Conditional=FULLSCREEN_API] void webkitWillExitFullScreenForElement(Element element);
     [Conditional=FULLSCREEN_API] void webkitDidExitFullScreenForElement(Element element);
 
+    void setFullscreenInsetTop(double inset);
+    void setFullscreenAutoHideDelay(double delay);
+
     void setApplicationCacheOriginQuota(unsigned long long quota);
 
     void registerURLSchemeAsBypassingContentSecurityPolicy(DOMString scheme);

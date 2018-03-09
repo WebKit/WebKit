@@ -383,6 +383,9 @@ public:
     void webkitDidExitFullScreenForElement(Element&);
 #endif
 
+    void setFullscreenInsetTop(double);
+    void setFullscreenAutoHideDelay(double);
+
     WEBCORE_TESTSUPPORT_EXPORT void setApplicationCacheOriginQuota(unsigned long long);
 
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);

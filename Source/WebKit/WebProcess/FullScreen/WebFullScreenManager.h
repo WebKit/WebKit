@@ -74,6 +74,8 @@ protected:
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();
+    void setFullscreenInsetTop(double);
+    void setFullscreenAutoHideDelay(double);
 
     void didReceiveWebFullScreenManagerMessage(IPC::Connection&, IPC::Decoder&);
 

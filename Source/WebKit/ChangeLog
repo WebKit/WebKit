@@ -1,5 +1,26 @@
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
+        Add new CSS env constants for use with fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=183498
+
+        Reviewed by Dean Jackson.
+
+        Pass the values given to WebFullScreenManagerProxy through the process boundary and
+        into WebCore.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::setFullscreenInsetTop):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideDelay):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didExitFullScreen):
+        (WebKit::WebFullScreenManager::setFullscreenInsetTop):
+        (WebKit::WebFullScreenManager::setFullscreenAutoHideDelay):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
         Add isPictureInPictureActive messaging across WebKit process boundary
         https://bugs.webkit.org/show_bug.cgi?id=183499
 

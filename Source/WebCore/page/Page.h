@@ -332,6 +332,9 @@ public:
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
 #endif
+
+    WEBCORE_EXPORT void setFullscreenInsetTop(double);
+    WEBCORE_EXPORT void setFullscreenAutoHideDelay(double);
     
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);

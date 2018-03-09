@@ -69,6 +69,8 @@ public:
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();
+    void setFullscreenInsetTop(double);
+    void setFullscreenAutoHideDelay(double);
 
 private:
     explicit WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);

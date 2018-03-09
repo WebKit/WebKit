@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="full-screen-test.js"></script>
+    <script>
+        window.addEventListener('load', event => {
+            window.target = document.querySelector('#target');
+            run('internals.setFullscreenInsetTop(1)');
+            testExpected('window.getComputedStyle(target).top', '1px');
+            run('internals.setFullscreenInsetTop(20)');
+            testExpected('window.getComputedStyle(target).top', '20px');
+            run('internals.setFullscreenInsetTop(0)');
+            testExpected('window.getComputedStyle(target).top', '0px');
+            endTest();
+        });
+    </script>
+    <style>
+        #target {
+            position: relative;
+            top: env(fullscreen-inset-top);
+        }
+    </style>
+</head>
+<body>
+    <div id="target">&nbsp;</div>
+</body>
+</html>

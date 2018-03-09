@@ -42,6 +42,8 @@ enum class ConstantProperty {
     SafeAreaInsetRight,
     SafeAreaInsetBottom,
     SafeAreaInsetLeft,
+    FullscreenInsetTop,
+    FullscreenAutoHideDelay,
 };
 
 class ConstantPropertyMap {
@@ -52,6 +54,8 @@ public:
     const Values& values() const;
 
     void didChangeSafeAreaInsets();
+    void setFullscreenInsetTop(double);
+    void setFullscreenAutoHideDelay(double);
 
 private:
     void buildValues();

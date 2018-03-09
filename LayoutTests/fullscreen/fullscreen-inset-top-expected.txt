@@ -1,0 +1,9 @@
+ 
+RUN(internals.setFullscreenInsetTop(1))
+EXPECTED (window.getComputedStyle(target).top == '1px') OK
+RUN(internals.setFullscreenInsetTop(20))
+EXPECTED (window.getComputedStyle(target).top == '20px') OK
+RUN(internals.setFullscreenInsetTop(0))
+EXPECTED (window.getComputedStyle(target).top == '0px') OK
+END OF TEST
+

@@ -153,6 +153,8 @@ void WebFullScreenManager::willExitFullScreen()
 void WebFullScreenManager::didExitFullScreen()
 {
     ASSERT(m_element);
+    setFullscreenInsetTop(0);
+    setFullscreenAutoHideDelay(0);
     m_element->document().webkitDidExitFullScreenForElement(m_element.get());
 }
 
@@ -181,6 +183,16 @@ void WebFullScreenManager::saveScrollPosition()
 void WebFullScreenManager::restoreScrollPosition()
 {
     m_page->corePage()->mainFrame().view()->setScrollPosition(m_scrollPosition);
+}
+
+void WebFullScreenManager::setFullscreenInsetTop(double inset)
+{
+    m_page->corePage()->setFullscreenInsetTop(inset);
+}
+
+void WebFullScreenManager::setFullscreenAutoHideDelay(double delay)
+{
+    m_page->corePage()->setFullscreenAutoHideDelay(delay);
 }
 
 } // namespace WebKit
