@@ -118,8 +118,6 @@
 
 #if CPU(ARM64E)
 #define OFFLINE_ASM_ARM64E 1
-#undef OFFLINE_ASM_ARM64
-#define OFFLINE_ASM_ARM64 0 // Pretend that ARM64 and ARM64E are mutually exclusive to please the offlineasm.
 #else
 #define OFFLINE_ASM_ARM64E 0
 #endif
@@ -173,12 +171,6 @@
 #define OFFLINE_ASM_EXECUTION_TRACING 1
 #else
 #define OFFLINE_ASM_EXECUTION_TRACING 0
-#endif
-
-#if USE(POINTER_PROFILING)
-#define OFFLINE_ASM_POINTER_PROFILING 1
-#else
-#define OFFLINE_ASM_POINTER_PROFILING 0
 #endif
 
 #define OFFLINE_ASM_GIGACAGE_ENABLED GIGACAGE_ENABLED

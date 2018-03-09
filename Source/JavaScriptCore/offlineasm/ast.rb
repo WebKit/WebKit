@@ -929,7 +929,6 @@ class Instruction < Node
             $asm.putGlobalAnnotation
         when "emit"
             $asm.puts "#{operands[0].dump}"
-        when "tagReturnAddress", "untagReturnAddress"
         else
             raise "Unhandled opcode #{opcode} at #{codeOriginString}"
         end

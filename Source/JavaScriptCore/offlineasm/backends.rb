@@ -29,11 +29,6 @@ require "x86"
 require "mips"
 require "cloop"
 
-begin
-    require "arm64e"
-rescue LoadError
-end
-
 BACKENDS =
     [
      "X86",
@@ -44,7 +39,6 @@ BACKENDS =
      "ARMv7",
      "ARMv7_TRADITIONAL",
      "ARM64",
-     "ARM64E",
      "MIPS",
      "C_LOOP"
     ]
@@ -64,7 +58,6 @@ WORKING_BACKENDS =
      "ARMv7",
      "ARMv7_TRADITIONAL",
      "ARM64",
-     "ARM64E",
      "MIPS",
      "C_LOOP"
     ]

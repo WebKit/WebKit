@@ -838,7 +838,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Operations.h
     runtime/Options.h
     runtime/ParseInt.h
-    runtime/PtrTag.h
     runtime/PrivateName.h
     runtime/ProgramExecutable.h
     runtime/PromiseDeferredTimer.h

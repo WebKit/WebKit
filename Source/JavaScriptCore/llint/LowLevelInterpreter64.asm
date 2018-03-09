@@ -24,7 +24,7 @@
 
 # Utilities.
 macro jumpToInstruction()
-    jmp [PB, PC, 8], BytecodePtrTag
+    jmp [PB, PC, 8]
 end
 
 macro dispatch(advance)
@@ -54,7 +54,7 @@ end
 
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if X86_64 or ARM64 or ARM64E
+    if X86_64 or ARM64
         call function
     elsif X86_64_WIN
         # Note: this implementation is only correct if the return type size is > 8 bytes.
@@ -92,7 +92,7 @@ macro cCall2Void(function)
         # See http://msdn.microsoft.com/en-us/library/ms235286.aspx
         subp 32, sp 
         call function
-        addp 32, sp
+        addp 32, sp 
     else
         cCall2(function)
     end
@@ -101,7 +101,7 @@ end
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
-    if X86_64 or ARM64 or ARM64E
+    if X86_64 or ARM64
         call function
     elsif X86_64_WIN
         # On Win64, rcx, rdx, r8, and r9 are used for passing the first four parameters.
@@ -115,7 +115,7 @@ macro cCall4(function)
     end
 end
 
-macro doVMEntry(makeCall, callTag, callWithArityCheckTag)
+macro doVMEntry(makeCall)
     functionPrologue()
     pushCalleeSaves()
 
@@ -215,7 +215,7 @@ macro doVMEntry(makeCall, callTag, callWithArityCheckTag)
     jmp .copyArgsLoop
 
 .copyArgsDone:
-    if ARM64 or ARM64E
+    if ARM64
         move sp, t4
         storep t4, VM::topCallFrame[vm]
     else
@@ -225,16 +225,7 @@ macro doVMEntry(makeCall, callTag, callWithArityCheckTag)
 
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
-    if POINTER_PROFILING
-        btbnz ProtoCallFrame::hasArityMismatch[protoCallFrame], .doCallWithArityCheck
-        move callTag, t2
-        jmp .readyToCall
-    .doCallWithArityCheck:
-        move callWithArityCheckTag, t2
-    .readyToCall:
-    end
-
-    makeCall(entry, t3, t2)
+    makeCall(entry, t3)
 
     # We may have just made a call into a JS function, so we can't rely on sp
     # for anything but the fact that our own locals (ie the VMEntryRecord) are
@@ -258,18 +249,18 @@ macro doVMEntry(makeCall, callTag, callWithArityCheckTag)
 end
 
 
-macro makeJavaScriptCall(entry, temp, callTag)
+macro makeJavaScriptCall(entry, temp)
     addp 16, sp
     if C_LOOP
         cloopCallJSFunction entry
     else
-        call entry, callTag
+        call entry
     end
     subp 16, sp
 end
 
 
-macro makeHostFunctionCall(entry, temp, callTag)
+macro makeHostFunctionCall(entry, temp)
     move entry, temp
     storep cfr, [sp]
     move sp, a0
@@ -279,10 +270,10 @@ macro makeHostFunctionCall(entry, temp, callTag)
     elsif X86_64_WIN
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
-        call temp, callTag
+        call temp
         addp 32, sp
     else
-        call temp, callTag
+        call temp
     end
 end
 
@@ -379,7 +370,7 @@ macro checkSwitchToJITForLoop()
             cCall2(_llint_loop_osr)
             btpz r0, .recover
             move r1, sp
-            jmp r0, CodeEntryPtrTag
+            jmp r0
         .recover:
             loadi ArgumentCount + TagOffset[cfr], PC
         end)
@@ -552,15 +543,6 @@ macro functionArityCheck(doneLabel, slowPath)
     btiz t1, .continue
 
 .noExtraSlot:
-    if POINTER_PROFILING
-        if ARM64 or ARM64E
-            loadp 8[cfr], lr
-        end
-
-        addp 16, cfr, t3
-        untagReturnAddress t3
-    end
-
     // Move frame up t1 slots
     negq t1
     move cfr, t3
@@ -583,15 +565,6 @@ macro functionArityCheck(doneLabel, slowPath)
     storeq t0, [t3, t1, 8]
     addp 8, t3
     baddinz 1, t2, .fillLoop
-
-    if POINTER_PROFILING
-        addp 16, cfr, t1
-        tagReturnAddress t1
-
-        if ARM64 or ARM64E
-            storep lr, 8[cfr]
-        end
-    end
 
 .continue:
     # Reload CodeBlock and reset PC, since the slow_path clobbered them.
@@ -1983,9 +1956,6 @@ end
 macro doCall(slowPath, prepareCall)
     loadisFromInstruction(2, t0)
     loadpFromInstruction(5, t1)
-    if POINTER_PROFILING
-        move t1, t5
-    end
     loadp LLIntCallLinkInfo::callee[t1], t2
     loadConstantOrVariable(t0, t3)
     bqneq t3, t2, .opCallSlow
@@ -2001,25 +1971,11 @@ macro doCall(slowPath, prepareCall)
     if POISON
         loadp _g_JITCodePoison, t2
         xorp LLIntCallLinkInfo::machineCodeTarget[t1], t2
-        prepareCall(t2, t1, t3, t4, macro (callPtrTag)
-            if POINTER_PROFILING
-                loadp LLIntCallLinkInfo::callPtrTag[t5], callPtrTag
-            end
-        end)
-		if POINTER_PROFILING
-			loadp LLIntCallLinkInfo::callPtrTag[t5], t3
-		end
-        callTargetFunction(t2, t3)
+        prepareCall(t2, t1, t3, t4)
+        callTargetFunction(t2)
     else
-        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, macro (callPtrTag)
-            if POINTER_PROFILING
-                loadp LLIntCallLinkInfo::callPtrTag[t5], callPtrTag
-            end
-        end)
-		if POINTER_PROFILING
-			loadp LLIntCallLinkInfo::callPtrTag[t5], t3
-		end
-        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], t3)
+        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
+        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
     end
 
 .opCallSlow:
@@ -2119,7 +2075,7 @@ _llint_throw_from_slow_path_trampoline:
     loadp Callee[cfr], t1
     andp MarkedBlockMask, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
-    jmp VM::targetMachinePCForThrow[t1], ExceptionHandlerPtrTag
+    jmp VM::targetMachinePCForThrow[t1]
 
 
 _llint_throw_during_call_trampoline:
@@ -2135,7 +2091,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     andp MarkedBlockMask, t0, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     storep cfr, VM::topCallFrame[t1]
-    if ARM64 or ARM64E or C_LOOP
+    if ARM64 or C_LOOP
         storep lr, ReturnPC[cfr]
     end
     move cfr, a0
@@ -2150,12 +2106,12 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call executableOffsetToFunction[t1], NativeCodePtrTag
+            call executableOffsetToFunction[t1]
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp executableOffsetToFunction[t1], t2
-            call t2, NativeCodePtrTag
+            call t2
         end
     end
 
@@ -2180,7 +2136,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     andp MarkedBlockMask, t0, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     storep cfr, VM::topCallFrame[t1]
-    if ARM64 or ARM64E or C_LOOP
+    if ARM64 or C_LOOP
         storep lr, ReturnPC[cfr]
     end
     move cfr, a0
@@ -2193,12 +2149,12 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[t1], InternalFunctionPtrTag
+            call offsetOfFunction[t1]
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp offsetOfFunction[t1], t2
-            call t2, InternalFunctionPtrTag
+            call t2
         end
     end
 
