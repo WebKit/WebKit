@@ -1,5 +1,25 @@
 2018-03-08  Chris Dumez  <cdumez@apple.com>
 
+        fast/events/before-unload-returnValue.html times out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183472
+
+        Reviewed by Ryosuke Niwa.
+
+        Delay setting the beforeunload handler on the iframe until after the initial load
+        (of resources/onclick.html). With asynchronous policy delegates, the beforeunload
+        handler was set too early, during the async policy decision for navigating to
+        "resources/onclick.html". As a result, the beforeunload handler would get called
+        for the load to "resources/onclick.html", after receiving the navigation policy
+        decision, which the test does not expect. The test only expects the beforeunload
+        handler to be called for later navigations to "resources/does-not-exist.html".
+
+        * fast/events/before-unload-returnValue-async-delegates-expected.txt: Copied from LayoutTests/fast/events/before-unload-returnValue-expected.txt.
+        * fast/events/before-unload-returnValue-async-delegates.html: Copied from LayoutTests/fast/events/before-unload-returnValue.html.
+        * fast/events/before-unload-returnValue-expected.txt:
+        * fast/events/before-unload-returnValue.html:
+
+2018-03-08  Chris Dumez  <cdumez@apple.com>
+
         fast/html/marquee-reparent-check.html is flaky with async delegates
         https://bugs.webkit.org/show_bug.cgi?id=183425
 

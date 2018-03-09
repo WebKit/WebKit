@@ -3,8 +3,11 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.setShouldStayOnPageAfterHandlingBeforeUnload(true);
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
 
 function test(_iframe) {
     iframe = _iframe;
