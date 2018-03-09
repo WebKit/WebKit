@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "SystemPreviewController.h"
+#include "config.h"
+#include "SystemPreviewController.h"
 
 namespace WebKit {
 
