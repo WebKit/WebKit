@@ -1,5 +1,17 @@
 2018-03-08  Michael Saboff  <msaboff@apple.com>
 
+        testmasm crashes in testBranchTruncateDoubleToInt32() on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=183488
+
+        Reviewed by Mark Lam.
+
+        Using stackAlignmentBytes() will keep the stack properly aligned.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTruncateDoubleToInt32):
+
+2018-03-08  Michael Saboff  <msaboff@apple.com>
+
         Emit code to zero the stack frame on function entry
         Nhttps://bugs.webkit.org/show_bug.cgi?id=183391
 
