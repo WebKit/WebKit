@@ -57,7 +57,7 @@ LengthSize ThemeWPE::controlSize(ControlPart part, const FontCascade& fontCascad
     return Theme::controlSize(part, fontCascade, zoomedSize, zoomFactor);
 }
 
-void ThemeWPE::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float, float)
+void ThemeWPE::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float, float, bool)
 {
     switch (part) {
     case CheckboxPart:

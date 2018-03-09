@@ -57,7 +57,7 @@ bool Theme::controlRequiresPreWhiteSpace(ControlPart) const
     return false;
 }
 
-void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float)
+void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool)
 {
 }
 

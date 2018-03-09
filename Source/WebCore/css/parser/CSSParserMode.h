@@ -111,6 +111,8 @@ public:
     
     // This is only needed to support getMatchedCSSRules.
     bool hasDocumentSecurityOrigin { false };
+    
+    bool useSystemAppearance { false };
 
     URL completeURL(const String& url) const
     {

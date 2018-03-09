@@ -57,9 +57,9 @@ public:
     Color platformInactiveSelectionBackgroundColor() const final;
     Color platformActiveListBoxSelectionBackgroundColor() const final;
     Color platformActiveListBoxSelectionForegroundColor() const final;
-    Color platformInactiveListBoxSelectionBackgroundColor() const final;
+    Color platformInactiveListBoxSelectionBackgroundColor(bool) const final;
     Color platformInactiveListBoxSelectionForegroundColor() const final;
-    Color platformFocusRingColor() const final;
+    Color platformFocusRingColor(bool useSystemAppearance) const final;
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return SmallScrollbar; }
 
@@ -169,7 +169,7 @@ private:
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    Color systemColor(CSSValueID) const final;
+    Color systemColor(CSSValueID, bool useSystemAppearance) const final;
 
     void purgeCaches() final;
 

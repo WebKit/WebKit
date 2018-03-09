@@ -6139,6 +6139,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return _page->editorState().postLayoutData().selectionClipRect;
 }
 
+- (BOOL)_useSystemAppearance
+{
+    return _page->useSystemAppearance();
+}
+
+- (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
+{
+    _page->setUseSystemAppearance(useSystemAppearance);
+}
+
 - (void)_setHeaderBannerHeight:(int)height
 {
     _page->setHeaderBannerHeightForTesting(height);

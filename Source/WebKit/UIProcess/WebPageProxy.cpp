@@ -5854,6 +5854,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #endif
 #if PLATFORM(MAC)
     parameters.colorSpace = m_pageClient.colorSpace();
+    parameters.useSystemAppearance = m_useSystemAppearance;
 #endif
 #if PLATFORM(IOS)
     parameters.screenSize = screenSize();
@@ -6950,6 +6951,18 @@ void WebPageProxy::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedC
 void WebPageProxy::didHandleAcceptedCandidate()
 {
     m_pageClient.didHandleAcceptedCandidate();
+}
+    
+void WebPageProxy::setUseSystemAppearance(bool useSystemAppearance)
+{
+    if (!isValid())
+        return;
+    
+    if (useSystemAppearance == m_useSystemAppearance)
+        return;
+    
+    m_useSystemAppearance = useSystemAppearance;
+    m_process->send(Messages::WebPage::SetUseSystemAppearance(useSystemAppearance), m_pageID);
 }
 
 void WebPageProxy::setHeaderBannerHeightForTesting(int height)

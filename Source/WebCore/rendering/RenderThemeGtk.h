@@ -78,7 +78,7 @@ public:
     // List Box selection color
     Color platformActiveListBoxSelectionBackgroundColor() const override;
     Color platformActiveListBoxSelectionForegroundColor() const override;
-    Color platformInactiveListBoxSelectionBackgroundColor() const override;
+    Color platformInactiveListBoxSelectionBackgroundColor(bool) const override;
     Color platformInactiveListBoxSelectionForegroundColor() const override;
 
     Seconds caretBlinkInterval() const override;
@@ -86,7 +86,7 @@ public:
     void platformColorsDidChange() override;
 
     // System colors.
-    Color systemColor(CSSValueID) const override;
+    Color systemColor(CSSValueID, bool) const override;
 
     bool popsMenuBySpaceOrReturn() const override { return true; }
 

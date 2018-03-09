@@ -4119,6 +4119,10 @@ RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
     return pluginView->pdfDocumentForPrinting();
 }
 
+void WebPage::setUseSystemAppearance(bool useSystemAppearance)
+{
+    corePage()->setUseSystemAppearance(useSystemAppearance);
+}
 #endif
 
 void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)

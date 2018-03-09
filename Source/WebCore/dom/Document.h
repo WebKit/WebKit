@@ -544,6 +544,8 @@ public:
     Settings& mutableSettings() { return m_settings.get(); }
 
     float deviceScaleFactor() const;
+        
+    bool useSystemAppearance() const;
 
     WEBCORE_EXPORT Ref<Range> createRange();
 

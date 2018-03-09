@@ -138,6 +138,7 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;
+    bool useSystemAppearance;
 #endif
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize;

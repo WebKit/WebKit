@@ -1741,7 +1741,7 @@ Color RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor() const
     return styleColor(ListBox, static_cast<GtkStateFlags>(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED), StyleColorBackground);
 }
 
-Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor() const
+Color RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor(bool) const
 {
     return styleColor(ListBox, GTK_STATE_FLAG_SELECTED, StyleColorBackground);
 }
@@ -1756,7 +1756,7 @@ Color RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor() const
     return styleColor(ListBox, GTK_STATE_FLAG_SELECTED, StyleColorForeground);
 }
 
-Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
+Color RenderThemeGtk::systemColor(CSSValueID cssValueId, bool) const
 {
     switch (cssValueId) {
     case CSSValueButtontext:
@@ -1764,7 +1764,7 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
     case CSSValueCaptiontext:
         return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorForeground);
     default:
-        return RenderTheme::systemColor(cssValueId);
+        return RenderTheme::systemColor(cssValueId, false);
     }
 }
 

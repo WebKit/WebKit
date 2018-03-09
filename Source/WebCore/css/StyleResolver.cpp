@@ -1822,14 +1822,14 @@ Color StyleResolver::colorFromPrimitiveValue(const CSSPrimitiveValue& value, boo
     case CSSValueWebkitActivelink:
         return document().activeLinkColor();
     case CSSValueWebkitFocusRingColor:
-        return RenderTheme::focusRingColor();
+        return RenderTheme::focusRingColor(document().useSystemAppearance());
     case CSSValueCurrentcolor:
         // Color is an inherited property so depending on it effectively makes the property inherited.
         // FIXME: Setting the flag as a side effect of calling this function is a bit oblique. Can we do better?
         m_state.style()->setHasExplicitlyInheritedProperties();
         return m_state.style()->color();
     default:
-        return StyleColor::colorFromKeyword(identifier);
+        return StyleColor::colorFromKeyword(identifier, document().useSystemAppearance());
     }
 }
 

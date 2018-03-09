@@ -33,7 +33,7 @@ class ThemeWPE final : public Theme {
 private:
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
 
-    void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float) final;
+    void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool) final;
 
     void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, float);
     void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, float);

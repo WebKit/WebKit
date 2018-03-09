@@ -202,7 +202,7 @@ RenderThemeMac::RenderThemeMac()
 NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
 {
     ControlStates states(extractControlStatesForRenderer(o));
-    return ThemeMac::ensuredView(&o.view().frameView(), states);
+    return ThemeMac::ensuredView(&o.view().frameView(), states, o.page().useSystemAppearance());
 }
 
 #if ENABLE(VIDEO)
@@ -327,17 +327,17 @@ Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
     return Color::black;
 }
 
-Color RenderThemeMac::platformFocusRingColor() const
+Color RenderThemeMac::platformFocusRingColor(bool useSystemAppearance) const
 {
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor();
 
-    return systemColor(CSSValueWebkitFocusRingColor);
+    return systemColor(CSSValueWebkitFocusRingColor, useSystemAppearance);
 }
 
-Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
+Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(bool useSystemAppearance) const
 {
-    LocalDefaultSystemAppearance localAppearance;
+    LocalDefaultSystemAppearance localAppearance(useSystemAppearance);
     return platformInactiveSelectionBackgroundColor();
 }
 
@@ -494,10 +494,10 @@ void RenderThemeMac::platformColorsDidChange()
     RenderTheme::platformColorsDidChange();
 }
 
-Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
+Color RenderThemeMac::systemColor(CSSValueID cssValueID, bool useSystemAppearance) const
 {
-    LocalDefaultSystemAppearance localAppearence;
-    return m_systemColorCache.ensure(cssValueID, [this, cssValueID] () -> Color {
+    LocalDefaultSystemAppearance localAppearance(useSystemAppearance);
+    return m_systemColorCache.ensure(cssValueID, [this, cssValueID, useSystemAppearance] () -> Color {
         auto selectCocoaColor = [cssValueID] () -> SEL {
             switch (cssValueID) {
             case CSSValueActiveborder:
@@ -596,7 +596,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
             // Use platform-independent value returned by base class.
             FALLTHROUGH;
         default:
-            return RenderTheme::systemColor(cssValueID);
+            return RenderTheme::systemColor(cssValueID, useSystemAppearance);
         }
     }).iterator->value;
 }
@@ -1433,7 +1433,7 @@ void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell
     bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto();
     bool shouldUseImageBuffer = renderer.style().effectiveZoom() != 1 || renderer.page().pageScaleFactor() != 1;
     bool shouldDrawCell = true;
-    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, renderer.page().deviceScaleFactor()))
+    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, renderer.page().deviceScaleFactor(), renderer.page().useSystemAppearance()))
         renderer.page().focusController().setFocusedElementNeedsRepaint();
 }
 
@@ -1562,7 +1562,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     bool shouldDrawFocusRing = false;
     float deviceScaleFactor = o.page().deviceScaleFactor();
     bool shouldUseImageBuffer = deviceScaleFactor != 1 || zoomLevel != 1;
-    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor);
+    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor, o.page().useSystemAppearance());
     [sliderThumbCell setControlView:nil];
 
     return false;

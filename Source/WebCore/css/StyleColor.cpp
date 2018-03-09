@@ -37,13 +37,13 @@
 
 namespace WebCore {
 
-Color StyleColor::colorFromKeyword(CSSValueID keyword)
+Color StyleColor::colorFromKeyword(CSSValueID keyword, bool useSystemAppearance)
 {
     if (const char* valueName = getValueName(keyword)) {
         if (const NamedColor* namedColor = findColor(valueName, strlen(valueName)))
             return Color(namedColor->ARGBValue);
     }
-    return RenderTheme::singleton().systemColor(keyword);
+    return RenderTheme::singleton().systemColor(keyword, useSystemAppearance);
 }
 
 bool StyleColor::isColorKeyword(CSSValueID id)

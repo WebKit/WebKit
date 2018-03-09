@@ -801,6 +801,11 @@ public:
     void setPaginationLineGridEnabled(bool);
     bool paginationLineGridEnabled() const { return m_paginationLineGridEnabled; }
     unsigned pageCount() const { return m_pageCount; }
+        
+#if PLATFORM(MAC)
+    void setUseSystemAppearance(bool);
+    bool useSystemAppearance() const { return m_useSystemAppearance; }
+#endif
 
 #if PLATFORM(COCOA)
     // Called by the web process through a message.
@@ -1788,6 +1793,10 @@ private:
     bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };
+#endif
+        
+#if PLATFORM(MAC)
+    bool m_useSystemAppearance { false };
 #endif
 
 #if ENABLE(APPLE_PAY)

@@ -135,7 +135,7 @@ private:
     const Color& shadowColor() const;
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
-    Color systemColor(CSSValueID) const override;
+    Color systemColor(CSSValueID, bool) const override;
 
     String m_legacyMediaControlsScript;
     String m_mediaControlsScript;

@@ -31,17 +31,19 @@
 
 namespace WebCore {
     
-LocalDefaultSystemAppearance::LocalDefaultSystemAppearance()
+LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppearance)
     : m_savedSystemAppearance()
 {
-    m_savedSystemAppearance = [NSAppearance currentAppearance];
-    NSAppearance *newAppearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    [NSAppearance setCurrentAppearance:newAppearance];
+    if (!useSystemAppearance) {
+        m_savedSystemAppearance = [NSAppearance currentAppearance];
+        [NSAppearance setCurrentAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+    }
 }
 
 LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance()
 {
-    [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
+    if (m_savedSystemAppearance)
+        [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
 }
     
 }

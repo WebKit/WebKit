@@ -140,7 +140,7 @@ public:
     // List box selection colors
     Color activeListBoxSelectionBackgroundColor() const;
     Color activeListBoxSelectionForegroundColor() const;
-    Color inactiveListBoxSelectionBackgroundColor() const;
+    Color inactiveListBoxSelectionBackgroundColor(bool) const;
     Color inactiveListBoxSelectionForegroundColor() const;
 
     // Highlighting colors for TextMatches.
@@ -149,8 +149,8 @@ public:
 
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    static Color focusRingColor();
-    virtual Color platformFocusRingColor() const { return Color(0, 0, 0); }
+    static Color focusRingColor(bool useSystemAppearance);
+    virtual Color platformFocusRingColor(bool) const { return Color(0, 0, 0); }
     static void setCustomFocusRingColor(const Color&);
     static float platformFocusRingWidth() { return 3; }
     static float platformFocusRingOffset(float outlineWidth) { return std::max<float>(outlineWidth - platformFocusRingWidth(), 0); }
@@ -164,7 +164,7 @@ public:
 
     // System fonts and colors for CSS.
     void systemFont(CSSValueID, FontCascadeDescription&) const;
-    virtual Color systemColor(CSSValueID) const;
+    virtual Color systemColor(CSSValueID, bool useSystemAppearance) const;
 
     virtual int minimumMenuListSize(const RenderStyle&) const { return 0; }
 
@@ -256,7 +256,7 @@ protected:
     virtual Color platformInactiveSelectionForegroundColor() const;
 
     virtual Color platformActiveListBoxSelectionBackgroundColor() const;
-    virtual Color platformInactiveListBoxSelectionBackgroundColor() const;
+    virtual Color platformInactiveListBoxSelectionBackgroundColor(bool) const;
     virtual Color platformActiveListBoxSelectionForegroundColor() const;
     virtual Color platformInactiveListBoxSelectionForegroundColor() const;
 

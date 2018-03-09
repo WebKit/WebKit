@@ -7028,6 +7028,15 @@ float Document::deviceScaleFactor() const
         deviceScaleFactor = documentPage->deviceScaleFactor();
     return deviceScaleFactor;
 }
+    
+bool Document::useSystemAppearance() const
+{
+    bool useSystemAppearance = false;
+    if (Page* documentPage = page())
+        useSystemAppearance = documentPage->useSystemAppearance();
+    return useSystemAppearance;
+}
+    
 void Document::didAssociateFormControl(Element* element)
 {
     if (!frame() || !frame()->page() || !frame()->page()->chrome().client().shouldNotifyOnFormChanges())

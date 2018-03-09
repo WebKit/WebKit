@@ -30,7 +30,7 @@
 
 #if USE(APPKIT)
 
-OBJC_CLASS NSAppearence;
+OBJC_CLASS NSAppearance;
 
 namespace WebCore {
     
@@ -39,7 +39,7 @@ namespace WebCore {
 class LocalDefaultSystemAppearance {
     WTF_MAKE_NONCOPYABLE(LocalDefaultSystemAppearance);
 public:
-    LocalDefaultSystemAppearance();
+    LocalDefaultSystemAppearance(bool useSystemAppearance);
     ~LocalDefaultSystemAppearance();
 private:
     RetainPtr<NSAppearance> m_savedSystemAppearance;

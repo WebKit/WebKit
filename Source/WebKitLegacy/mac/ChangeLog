@@ -1,3 +1,18 @@
+2018-03-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow WebViews to disable system appearance
+        https://bugs.webkit.org/show_bug.cgi?id=183418
+        <rdar://problem/36975642>
+
+        Reviewed by Tim Horton.
+
+        Allow webviews to choose whether or not to follow the default system appearance.
+
+        * WebView/WebView.mm:
+        (-[WebView _setUseSystemAppearance:]):
+        (-[WebView _useSystemAppearance]):
+        * WebView/WebViewPrivate.h:
+
 2018-03-08  Youenn Fablet  <youenn@apple.com>
 
         libwebrtc update broke internal builds

@@ -50,7 +50,7 @@ public:
 
     const Color& resolve(const Color& currentColor) const { return m_currentColor ? currentColor : m_color; }
 
-    static Color colorFromKeyword(CSSValueID);
+    static Color colorFromKeyword(CSSValueID, bool useSystemAppearance);
     static bool isColorKeyword(CSSValueID);
     static bool isSystemColor(CSSValueID);
 

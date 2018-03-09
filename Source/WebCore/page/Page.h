@@ -324,6 +324,9 @@ public:
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
     void setEnclosedInScrollableAncestorView(bool f) { m_enclosedInScrollableAncestorView = f; }
 #endif
+    
+    bool useSystemAppearance() const { return m_useSystemAppearance; }
+    void setUseSystemAppearance(bool a) { m_useSystemAppearance = a; }
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
@@ -699,6 +702,8 @@ private:
 #if PLATFORM(IOS)
     bool m_enclosedInScrollableAncestorView { false };
 #endif
+    
+    bool m_useSystemAppearance { false };
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingWidth { 0 };

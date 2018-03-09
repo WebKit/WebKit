@@ -1397,7 +1397,7 @@ String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String&
 
 #endif // ENABLE(VIDEO)
 
-Color RenderThemeIOS::systemColor(CSSValueID cssValueID) const
+Color RenderThemeIOS::systemColor(CSSValueID cssValueID, bool) const
 {
     auto addResult = m_systemColorCache.add(cssValueID, Color());
     if (!addResult.isNewEntry)
@@ -1434,7 +1434,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID) const
     }
 
     if (!color.isValid())
-        color = RenderTheme::systemColor(cssValueID);
+        color = RenderTheme::systemColor(cssValueID, false);
 
     addResult.iterator->value = color;
 

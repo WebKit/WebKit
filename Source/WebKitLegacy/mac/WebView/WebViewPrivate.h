@@ -927,6 +927,8 @@ typedef struct WebEdgeInsets {
 
 @property (nonatomic, assign, setter=_setUnobscuredSafeAreaInsets:) WebEdgeInsets _unobscuredSafeAreaInsets;
 
+@property (nonatomic, assign, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance;
+
 @end
 
 #if !TARGET_OS_IPHONE

@@ -67,7 +67,7 @@ public:
     virtual bool controlRequiresPreWhiteSpace(ControlPart) const;
 
     // Method for painting a control. The rect is in zoomed coordinates.
-    virtual void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor);
+    virtual void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance);
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.

@@ -176,13 +176,14 @@ Color CSSParser::parseColor(const String& string, bool strict)
     return primitiveValue.color();
 }
 
-Color CSSParser::parseSystemColor(const String& string)
+Color CSSParser::parseSystemColor(const String& string, std::optional<const CSSParserContext&> context)
 {
     CSSValueID id = cssValueKeywordID(string);
     if (!StyleColor::isSystemColor(id))
         return Color();
-    
-    return RenderTheme::singleton().systemColor(id);
+    if (context)
+        return RenderTheme::singleton().systemColor(id, context.value().useSystemAppearance);
+    return RenderTheme::singleton().systemColor(id, false);
 }
 
 RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)

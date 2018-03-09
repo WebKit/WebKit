@@ -1,5 +1,74 @@
 2018-03-08  Megan Gardner  <megan_gardner@apple.com>
 
+        Allow WebViews to disable system appearance
+        https://bugs.webkit.org/show_bug.cgi?id=183418
+        <rdar://problem/36975642>
+
+        Reviewed by Tim Horton.
+
+        Not currently testable, tests will be added in a later patch.
+
+        Allow webviews to choose whether or not to follow the default system appearance.
+
+        * css/StyleColor.cpp:
+        (WebCore::StyleColor::colorFromKeyword):
+        * css/StyleColor.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::colorFromPrimitiveValue const):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserMode.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setStrokeColor):
+        (WebCore::CanvasRenderingContext2DBase::setFillColor):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseColorOrCurrentColor):
+        (WebCore::CanvasStyle::createFromString):
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        * html/canvas/CanvasStyle.h:
+        * page/Page.h:
+        (WebCore::Page::useSystemAppearance const):
+        (WebCore::Page::setUseSystemAppearance):
+        * platform/Theme.cpp:
+        (WebCore::Theme::paint):
+        * platform/Theme.h:
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+        (WebCore::LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance):
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreThemeView initWithUseSystemAppearance:]):
+        (WebCore::paintToggleButton):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::ensuredView):
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        (WebCore::ThemeMac::paint):
+        (-[WebCoreThemeView init]): Deleted.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::systemColor const):
+        (WebCore::RenderTheme::focusRingColor):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformFocusRingColor const):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor const):
+        (WebCore::RenderThemeMac::platformFocusRingColor const):
+        (WebCore::RenderThemeMac::systemColor const):
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+
+2018-03-08  Megan Gardner  <megan_gardner@apple.com>
+
         Ensure default appearance for selection form control
         https://bugs.webkit.org/show_bug.cgi?id=183482
         <rdar://problem/38274894>

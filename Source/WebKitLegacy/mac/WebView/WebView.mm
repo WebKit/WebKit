@@ -5190,6 +5190,19 @@ static Vector<String> toStringVector(NSArray* patterns)
     return insets;
 }
 
+- (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
+{
+    if (auto page = _private->page)
+        page->setUseSystemAppearance(useSystemAppearance);
+}
+
+- (BOOL)_useSystemAppearance
+{
+    if (auto page = _private->page)
+        return page->useSystemAppearance();
+    return NO;
+}
+
 - (void)_setSourceApplicationAuditData:(NSData *)sourceApplicationAuditData
 {
     if (_private->sourceApplicationAuditData == sourceApplicationAuditData)

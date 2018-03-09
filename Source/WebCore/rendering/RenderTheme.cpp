@@ -290,10 +290,10 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     IntRect integralSnappedRect = snappedIntRect(rect);
     float deviceScaleFactor = box.document().deviceScaleFactor();
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
-
+    
 #if USE(NEW_THEME)
     float pageScaleFactor = box.page().pageScaleFactor();
-    
+
     switch (part) {
     case CheckboxPart:
     case RadioPart:
@@ -303,7 +303,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(box, controlStates);
-        Theme::singleton().paint(part, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor);
+        Theme::singleton().paint(part, controlStates, paintInfo.context(), devicePixelSnappedRect, box.style().effectiveZoom(), &box.view().frameView(), deviceScaleFactor, pageScaleFactor, box.page().useSystemAppearance());
         return false;
     default:
         break;
@@ -614,10 +614,10 @@ Color RenderTheme::activeListBoxSelectionBackgroundColor() const
     return m_activeListBoxSelectionBackgroundColor;
 }
 
-Color RenderTheme::inactiveListBoxSelectionBackgroundColor() const
+Color RenderTheme::inactiveListBoxSelectionBackgroundColor(bool useSystemAppearance) const
 {
     if (!m_inactiveListBoxSelectionBackgroundColor.isValid())
-        m_inactiveListBoxSelectionBackgroundColor = platformInactiveListBoxSelectionBackgroundColor();
+        m_inactiveListBoxSelectionBackgroundColor = platformInactiveListBoxSelectionBackgroundColor(useSystemAppearance);
     return m_inactiveListBoxSelectionBackgroundColor;
 }
 
@@ -670,7 +670,7 @@ Color RenderTheme::platformActiveListBoxSelectionForegroundColor() const
     return platformActiveSelectionForegroundColor();
 }
 
-Color RenderTheme::platformInactiveListBoxSelectionBackgroundColor() const
+Color RenderTheme::platformInactiveListBoxSelectionBackgroundColor(bool) const
 {
     return platformInactiveSelectionBackgroundColor();
 }
@@ -1208,8 +1208,10 @@ void RenderTheme::systemFont(CSSValueID systemFontID, FontCascadeDescription& fo
     updateCachedSystemFontDescription(systemFontID, fontDescription);
 }
 
-Color RenderTheme::systemColor(CSSValueID cssValueId) const
+Color RenderTheme::systemColor(CSSValueID cssValueId, bool useSystemAppearance) const
 {
+    UNUSED_PARAM(useSystemAppearance);
+    
     switch (cssValueId) {
     case CSSValueActiveborder:
         return 0xFFFFFFFF;
@@ -1325,9 +1327,9 @@ void RenderTheme::setCustomFocusRingColor(const Color& color)
     customFocusRingColor() = color;
 }
 
-Color RenderTheme::focusRingColor()
+Color RenderTheme::focusRingColor(bool useSystemAppearance)
 {
-    return customFocusRingColor().isValid() ? customFocusRingColor() : RenderTheme::singleton().platformFocusRingColor();
+    return customFocusRingColor().isValid() ? customFocusRingColor() : RenderTheme::singleton().platformFocusRingColor(useSystemAppearance);
 }
 
 String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const
