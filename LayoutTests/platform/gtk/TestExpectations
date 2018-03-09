@@ -3248,6 +3248,7 @@ webkit.org/b/175661 inspector/worker/resources-in-worker.html [ Failure ]
 webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure ]
 
 webkit.org/b/177934 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
+webkit.org/b/177934 http/tests/preconnect/link-header-rel-preconnect-http.html [ Failure ]
 
 webkit.org/b/177936 fast/text/emoji-gender-2.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/emoji-gender.html [ ImageOnlyFailure ]
