@@ -1,3 +1,16 @@
+2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move NicosiaPaintingContextCairo files under Cairo-specific directory
+        https://bugs.webkit.org/show_bug.cgi?id=183497
+
+        Reviewed by Carlos Garcia Campos.
+
+        Pack Cairo-specific files in the Nicosia subsystem under cairo/.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp: Renamed from Source/WebCore/platform/graphics/nicosia/NicosiaPaintingContextCairo.cpp.
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.h: Renamed from Source/WebCore/platform/graphics/nicosia/NicosiaPaintingContextCairo.h.
+
 2018-03-08  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: More accessibility events support

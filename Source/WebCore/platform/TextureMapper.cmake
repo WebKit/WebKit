@@ -47,13 +47,15 @@ if (USE_COORDINATED_GRAPHICS)
     # FIXME: Move this into Nicosia.cmake once the component is set for long-term use.
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/nicosia"
+        "${WEBCORE_DIR}/platform/graphics/nicosia/cairo"
     )
     list(APPEND WebCore_SOURCES
         platform/graphics/nicosia/NicosiaBuffer.cpp
         platform/graphics/nicosia/NicosiaPaintingContext.cpp
-        platform/graphics/nicosia/NicosiaPaintingContextCairo.cpp
         platform/graphics/nicosia/NicosiaPaintingEngine.cpp
         platform/graphics/nicosia/NicosiaPaintingEngineBasic.cpp
+
+        platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp
     )
 else ()
     list(APPEND WebCore_SOURCES
