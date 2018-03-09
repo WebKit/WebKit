@@ -1,3 +1,10 @@
+2018-03-09  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        * platform/gtk/TestExpectations: Skip test requiring DASHBOARD_SUPPORT.
+        * platform/gtk/mathml/mathml-in-dashboard-expected.txt: Removed.
+
 2018-03-09  Andy Estes  <aestes@apple.com>
 
         [Mac] WebKit fails to receive file promises when the embedding app is sandboxed

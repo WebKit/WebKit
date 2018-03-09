@@ -1087,6 +1087,7 @@ svg/custom/embedded-svg-allowed-in-dashboard.xml [ Skip ]
 svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Skip ]
 svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Skip ]
 svg/custom/svg-allowed-in-dashboard-object.html [ Skip ]
+mathml/mathml-in-dashboard.html [ Skip ]
 
 # No embedded PDF support
 fast/hidpi/pdf-image-scaled.html [ Skip ]
