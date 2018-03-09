@@ -118,6 +118,8 @@
 
 #if CPU(ARM64E)
 #define OFFLINE_ASM_ARM64E 1
+#undef OFFLINE_ASM_ARM64
+#define OFFLINE_ASM_ARM64 0 // Pretend that ARM64 and ARM64E are mutually exclusive to please the offlineasm.
 #else
 #define OFFLINE_ASM_ARM64E 0
 #endif

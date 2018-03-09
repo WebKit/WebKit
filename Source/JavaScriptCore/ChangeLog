@@ -1,5 +1,19 @@
 2018-03-09  Mark Lam  <mark.lam@apple.com>
 
+        [Re-landing] Add support for ARM64E.
+        https://bugs.webkit.org/show_bug.cgi?id=183398
+        <rdar://problem/38212621>
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssembler.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/backends.rb:
+
+2018-03-09  Mark Lam  <mark.lam@apple.com>
+
         [Re-landing] Prepare LLInt code to support pointer profiling.
         https://bugs.webkit.org/show_bug.cgi?id=183387
         <rdar://problem/38199678>
