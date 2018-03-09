@@ -329,10 +329,24 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     }
 
     NSEnableScreenUpdates();
+
+    if (_requestedExitFullScreen) {
+        _requestedExitFullScreen = NO;
+        [self exitFullScreen];
+    }
 }
 
 - (void)exitFullScreen
 {
+    if (_fullScreenState == EnteringFullScreen
+        || _fullScreenState == WaitingToEnterFullScreen) {
+        // Do not try to exit fullscreen during the enter animation; remember
+        // that exit was requested and perform the exit upon enter fullscreen
+        // animation complete.
+        _requestedExitFullScreen = YES;
+        return;
+    }
+
     if (_watchdogTimer) {
         [_watchdogTimer invalidate];
         _watchdogTimer.clear();

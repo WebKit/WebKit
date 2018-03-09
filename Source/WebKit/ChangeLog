@@ -1,5 +1,24 @@
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
+        webkitfullscreenchange event not fired at the same time as :-webkit-full-screen pseudo selector changes; causes glitchiness
+        https://bugs.webkit.org/show_bug.cgi?id=183383
+        <rdar://problem/38197028>
+
+        Reviewed by Eric Carlson.
+
+        Follow-up patch: now that the 'fullscreenchange' event is being fired slightly earlier, the
+        Fullscreen.TopContentInset tests triggers what appears to be an existing behavior: if you
+        exit in the middle of an enter fullscreen animation, the exit never happens, because the
+        NSWindow never starts the exit animation. The solution is to store the exit fullscreen
+        request, and only act upon it when the enter animation completes.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
         Unconditionalize more methods in VideoFullscreenInterface (and related classes)
         https://bugs.webkit.org/show_bug.cgi?id=183501
 

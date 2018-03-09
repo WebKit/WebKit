@@ -54,6 +54,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     RetainPtr<NSTimer> _watchdogTimer;
     RetainPtr<NSArray> _savedConstraints;
 
+    bool _requestedExitFullScreen;
     FullScreenState _fullScreenState;
 
     double _savedScale;
