@@ -1,3 +1,57 @@
+2018-03-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Sources: add SourcesTabContentView and SourceSidebarPanel classes
+        https://bugs.webkit.org/show_bug.cgi?id=183316
+        <rdar://problem/38107639>
+
+        Reviewed by Matt Baker.
+
+        Add Sources tab and sidebar panel, which are copies of the corresponding Resources classes.
+        The Sources tab is shown when it's enabled in the experimental settings. This patch doesn't
+        remove existing Resources and Debugger tabs.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Main.html:
+        * UserInterface/Views/SourcesSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.sources > .content):
+        (.sidebar > .panel.navigation.sources > .navigation-bar):
+        * UserInterface/Views/SourcesSidebarPanel.js: Added.
+        (WI.SourcesSidebarPanel):
+        (WI.SourcesSidebarPanel.shouldPlaceResourcesAtTopLevel):
+        (WI.SourcesSidebarPanel.prototype.get minimumWidth):
+        (WI.SourcesSidebarPanel.prototype.closed):
+        (WI.SourcesSidebarPanel.prototype.showDefaultContentView):
+        (WI.SourcesSidebarPanel.prototype.treeElementForRepresentedObject.isAncestor):
+        (WI.SourcesSidebarPanel.prototype.treeElementForRepresentedObject.getParent):
+        (WI.SourcesSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WI.SourcesSidebarPanel.prototype.initialLayout):
+        (WI.SourcesSidebarPanel.prototype.hasCustomFilters):
+        (WI.SourcesSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WI.SourcesSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WI.SourcesSidebarPanel.prototype._mainResourceDidChange):
+        (WI.SourcesSidebarPanel.prototype._mainFrameDidChange):
+        (WI.SourcesSidebarPanel.prototype._mainFrameMainResourceDidChange.delayedWork):
+        (WI.SourcesSidebarPanel.prototype._mainFrameMainResourceDidChange):
+        (WI.SourcesSidebarPanel.prototype._scriptWasAdded):
+        (WI.SourcesSidebarPanel.prototype._addScript):
+        (WI.SourcesSidebarPanel.prototype._scriptWasRemoved):
+        (WI.SourcesSidebarPanel.prototype._scriptsCleared):
+        (WI.SourcesSidebarPanel.prototype._styleSheetAdded):
+        (WI.SourcesSidebarPanel.prototype._addTargetWithMainResource):
+        (WI.SourcesSidebarPanel.prototype._targetRemoved):
+        (WI.SourcesSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.SourcesSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesSidebarPanel.prototype._extraDomainsActivated):
+        (WI.SourcesSidebarPanel.prototype._scopeBarSelectionDidChange):
+        * UserInterface/Views/SourcesTabContentView.js: Added.
+        (WI.SourcesTabContentView):
+        (WI.SourcesTabContentView.tabInfo):
+        (WI.SourcesTabContentView.isTabAllowed):
+        (WI.SourcesTabContentView.prototype.get type):
+        (WI.SourcesTabContentView.prototype.get supportsSplitContentBrowser):
+        (WI.SourcesTabContentView.prototype.canShowRepresentedObject):
+
 2018-03-07  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas tab: ensure that the Recording TreeOutline has a specified height for virtualization
