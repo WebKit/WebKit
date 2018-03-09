@@ -1,3 +1,13 @@
+2018-03-09  Michael Saboff  <msaboff@apple.com>
+
+        Relanding "testmasm crashes in testBranchTruncateDoubleToInt32() on ARM64"
+        https://bugs.webkit.org/show_bug.cgi?id=183488
+
+        It applied and built just fine locally.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTruncateDoubleToInt32):
+
 2018-03-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, remove WebAssemblyFunctionType
