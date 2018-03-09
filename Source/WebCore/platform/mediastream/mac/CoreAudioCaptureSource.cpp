@@ -102,6 +102,8 @@ public:
 
     bool hasAudioUnit() const { return m_ioUnit; }
 
+    void setCaptureDeviceID(uint32_t);
+
 private:
     OSStatus configureSpeakerProc();
     OSStatus configureMicrophoneProc();
@@ -193,6 +195,19 @@ void CoreAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
     m_clients.removeAllMatching([&](const auto& item) {
         return &client == &item.get();
     });
+}
+
+void CoreAudioSharedUnit::setCaptureDeviceID(uint32_t captureDeviceID)
+{
+#if PLATFORM(MAC)
+    if (m_captureDeviceID == captureDeviceID)
+        return;
+
+    m_captureDeviceID = captureDeviceID;
+    reconfigureAudioUnit();
+#else
+    UNUSED_PARAM(captureDeviceID);
+#endif
 }
 
 void CoreAudioSharedUnit::addEchoCancellationSource(AudioSampleDataSource& source)
@@ -762,6 +777,7 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const Str
     , m_captureDeviceID(persistentID)
 {
     auto& unit = CoreAudioSharedUnit::singleton();
+    unit.setCaptureDeviceID(m_captureDeviceID);
 
     initializeEchoCancellation(unit.enableEchoCancellation());
     initializeSampleRate(unit.sampleRate());

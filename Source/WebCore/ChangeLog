@@ -1,3 +1,17 @@
+2018-03-09  Youenn Fablet  <youenn@apple.com>
+
+        Cannot change audio input source device
+        https://bugs.webkit.org/show_bug.cgi?id=175975
+        <rdar://problem/34073589>
+
+        Reviewed by Eric Carlson.
+
+        Covered by manually testing https://webrtc.github.io/samples/src/content/devices/input-output/ with a USB web cam.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setCaptureDeviceID):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Add new CSS env constants for use with fullscreen
