@@ -1,3 +1,15 @@
+2018-03-09  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorker should respect IDB and DOMCache partitioning
+        https://bugs.webkit.org/show_bug.cgi?id=183496
+
+        Reviewed by Brady Eidson.
+
+        * http/wpt/service-workers/resources/third-party-registration-frame.html: Added.
+        * http/wpt/service-workers/resources/third-party-worker.js: Added.
+        * http/wpt/service-workers/third-party-registration-expected.txt: Added.
+        * http/wpt/service-workers/third-party-registration.html: Added.
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Add new CSS env constants for use with fullscreen
