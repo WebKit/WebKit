@@ -1,3 +1,12 @@
+2018-03-09  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Add guard for wtf/glib include
+        https://bugs.webkit.org/show_bug.cgi?id=183521
+
+        Reviewed by Alex Christensen.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+
 2018-03-09  Andy Estes  <aestes@apple.com>
 
         [Mac] WebKit fails to receive file promises when the embedding app is sandboxed

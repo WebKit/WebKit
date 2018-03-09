@@ -30,7 +30,10 @@
 
 #include "CompositingRunLoop.h"
 #include "ThreadedCompositor.h"
+
+#if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
+#endif
 
 namespace WebKit {
 
