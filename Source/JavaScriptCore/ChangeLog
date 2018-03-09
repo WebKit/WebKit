@@ -1,3 +1,41 @@
+2018-03-09  Mark Lam  <mark.lam@apple.com>
+
+        Remove unused LLINT_STATS feature.
+        https://bugs.webkit.org/show_bug.cgi?id=183522
+        <rdar://problem/38313139>
+
+        Rubber-stamped by Keith Miller.
+
+        We haven't used this in a while, and it is one more option that makes offlineasm
+        build slower.  We can always re-introduce this later if we need it.
+
+        * jsc.cpp:
+        * llint/LLIntCommon.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        (JSC::LLInt::Data::finalizeStats): Deleted.
+        (JSC::LLInt::compareStats): Deleted.
+        (JSC::LLInt::Data::dumpStats): Deleted.
+        (JSC::LLInt::Data::ensureStats): Deleted.
+        (JSC::LLInt::Data::loadStats): Deleted.
+        (JSC::LLInt::Data::resetStats): Deleted.
+        (JSC::LLInt::Data::saveStats): Deleted.
+        * llint/LLIntData.h:
+        (): Deleted.
+        (JSC::LLInt::Data::opcodeStats): Deleted.
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::finalizeStatsAtEndOfTesting):
+
 2018-03-09  Michael Saboff  <msaboff@apple.com>
 
         Relanding "testmasm crashes in testBranchTruncateDoubleToInt32() on ARM64"

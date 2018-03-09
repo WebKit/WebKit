@@ -25,9 +25,6 @@
 
 #pragma once
 
-// Enables LLINT stats collection.
-#define ENABLE_LLINT_STATS 0
-
 // Print every instruction executed.
 #define LLINT_EXECUTION_TRACING 0
 

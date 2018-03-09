@@ -27,7 +27,6 @@
 
 #include "JSCJSValue.h"
 #include "Opcode.h"
-#include <array>
 #include <wtf/PointerPreparations.h>
 
 namespace JSC {
@@ -43,32 +42,13 @@ typedef void (*LLIntCode)();
 
 namespace LLInt {
 
-struct OpcodeStats {
-    OpcodeID id;
-    size_t count { 0 };
-    size_t slowPathCount { 0 };
-};
-typedef std::array<OpcodeStats, numOpcodeIDs> OpcodeStatsArray;
-
 class Data {
 public:
-
     static void performAssertions(VM&);
-    static OpcodeStats& opcodeStats(OpcodeID id) { return (*s_opcodeStatsArray)[id]; }
-
-    JS_EXPORT_PRIVATE static void finalizeStats();
-
-    static void dumpStats();
-    static void loadStats();
 
 private:
-    static void ensureStats();
-    static void resetStats();
-    static void saveStats();
-
     static Instruction s_exceptionInstructions[maxOpcodeLength + 1];
     static Opcode s_opcodeMap[numOpcodeIDs];
-    static OpcodeStatsArray* s_opcodeStatsArray;
 
     friend void initialize();
 

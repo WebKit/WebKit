@@ -1803,22 +1803,4 @@ extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash()
     CRASH();
 }
 
-#if ENABLE(LLINT_STATS)
-
-LLINT_SLOW_PATH_DECL(count_opcode)
-{
-    OpcodeID opcodeID = Interpreter::getOpcodeID(pc[0].u.opcode);
-    Data::opcodeStats(opcodeID).count++;
-    LLINT_END_IMPL();
-}
-
-LLINT_SLOW_PATH_DECL(count_opcode_slow_path)
-{
-    OpcodeID opcodeID = Interpreter::getOpcodeID(pc[0].u.opcode);
-    Data::opcodeStats(opcodeID).slowPathCount++;
-    LLINT_END_IMPL();
-}
-
-#endif // ENABLE(LLINT_STATS)
-
 } } // namespace JSC::LLInt
