@@ -346,7 +346,6 @@ void PlaybackSessionManagerProxy::removeClientForContext(uint64_t contextId)
 
 void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(uint64_t contextId)
 {
-#if PLATFORM(MAC)
     if (m_controlsManagerContextId == contextId)
         return;
 
@@ -358,21 +357,16 @@ void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(uint64_t co
     addClientForContext(m_controlsManagerContextId);
 
     m_page->videoControlsManagerDidChange();
-#else
-    UNUSED_PARAM(contextId);
-#endif
 }
 
 void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 {
-#if PLATFORM(MAC)
     if (!m_controlsManagerContextId)
         return;
 
     removeClientForContext(m_controlsManagerContextId);
     m_controlsManagerContextId = 0;
     m_page->videoControlsManagerDidChange();
-#endif
 }
 
 void PlaybackSessionManagerProxy::resetMediaState(uint64_t contextId)

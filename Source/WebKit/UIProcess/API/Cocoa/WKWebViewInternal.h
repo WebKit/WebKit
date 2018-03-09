@@ -114,6 +114,8 @@ struct PrintInfo;
 
 - (void)_updateScrollViewBackground;
 
+- (void)_videoControlsManagerDidChange;
+
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
 - (BOOL)_isNavigationSwipeGestureRecognizer:(UIGestureRecognizer *)recognizer;

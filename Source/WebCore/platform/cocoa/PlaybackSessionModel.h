@@ -102,6 +102,7 @@ public:
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }
+    virtual void ensureControlsManager() { }
 };
 
 }

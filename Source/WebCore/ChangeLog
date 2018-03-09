@@ -1,3 +1,19 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Unconditionalize more methods in VideoFullscreenInterface (and related classes)
+        https://bugs.webkit.org/show_bug.cgi?id=183501
+
+        Reviewed by Eric Carlson.
+
+        No need for these methods to be PLATFORM(MAC) only.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModelClient::ensureControlsManager):
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen const):
+        * platform/mac/VideoFullscreenInterfaceMac.h:
+
 2018-03-09  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorker should respect IDB and DOMCache partitioning

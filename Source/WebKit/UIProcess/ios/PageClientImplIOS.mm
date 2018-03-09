@@ -742,6 +742,11 @@ void PageClientImpl::didChangeBackgroundColor()
     [m_webView _updateScrollViewBackground];
 }
 
+void PageClientImpl::videoControlsManagerDidChange()
+{
+    [m_webView _videoControlsManagerDidChange];
+}
+
 void PageClientImpl::refView()
 {
     [m_contentView retain];

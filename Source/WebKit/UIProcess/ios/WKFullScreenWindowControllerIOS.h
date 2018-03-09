@@ -53,6 +53,7 @@ class IntRect;
 - (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
 - (void)beganExitFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
 - (void)webViewDidRemoveFromSuperviewWhileInFullscreen;
+- (void)videoControlsManagerDidChange;
 
 @end
 

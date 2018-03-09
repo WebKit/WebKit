@@ -6803,13 +6803,10 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingMediaDidChange(*this);
 
-#if PLATFORM(MAC)
     if ((oldState & MediaProducer::HasAudioOrVideo) != (m_mediaState & MediaProducer::HasAudioOrVideo))
         videoControlsManagerDidChange();
-#endif
 }
 
-#if PLATFORM(MAC)
 void WebPageProxy::videoControlsManagerDidChange()
 {
     m_pageClient.videoControlsManagerDidChange();
@@ -6834,7 +6831,9 @@ void WebPageProxy::requestControlledElementID() const
 
 void WebPageProxy::handleControlledElementIDResponse(const String& identifier) const
 {
+#if PLATFORM(MAC)
     m_pageClient.handleControlledElementIDResponse(identifier);
+#endif
 }
 
 bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
@@ -6845,7 +6844,6 @@ bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
     return false;
 #endif
 }
-#endif
 
 #if PLATFORM(COCOA)
 void WebPageProxy::requestActiveNowPlayingSessionInfo(Ref<NowPlayingInfoCallback>&& callback)

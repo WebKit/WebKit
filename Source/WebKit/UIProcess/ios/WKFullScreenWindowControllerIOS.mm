@@ -847,6 +847,10 @@ static UIEdgeInsets mirrorEdgeInsets(UIEdgeInsets insets)
         [self exitFullscreenImmediately];
 }
 
+- (void)videoControlsManagerDidChange
+{
+}
+
 #pragma mark -
 #pragma mark Internal Interface
 

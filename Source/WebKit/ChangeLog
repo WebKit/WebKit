@@ -1,3 +1,35 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Unconditionalize more methods in VideoFullscreenInterface (and related classes)
+        https://bugs.webkit.org/show_bug.cgi?id=183501
+
+        Reviewed by Eric Carlson.
+
+        No reason for these methods to be PLATFORM(MAC) only.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _videoControlsManagerDidChange]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID):
+        (WebKit::PlaybackSessionManagerProxy::clearPlaybackControlsManager):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::handleControlledElementIDResponse const):
+        (WebKit::WebPageProxy::isPlayingVideoInEnhancedFullscreen const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::videoControlsManagerDidChange):
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.h:
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::setUpPlaybackControlsManager):
+
 2018-03-09  Per Arne Vollan  <pvollan@apple.com>
 
         Create CA layer contexts with +remoteContextWithOptions.

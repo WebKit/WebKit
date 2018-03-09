@@ -1564,6 +1564,14 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleDefault];
 }
 
+- (void)_videoControlsManagerDidChange
+{
+#if ENABLE(FULLSCREEN_API)
+    if (_fullScreenWindowController)
+        [_fullScreenWindowController videoControlsManagerDidChange];
+#endif
+}
+
 - (CGPoint)_adjustedContentOffset:(CGPoint)point
 {
     CGPoint result = point;

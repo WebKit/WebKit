@@ -1620,6 +1620,11 @@ void VideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElementEnums::VideoFullsc
         m_videoFullscreenModel->fullscreenModeChanged(m_currentMode.mode());
 }
 
+bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
+{
+    return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
+}
+
 #endif // HAVE(AVKIT)
 
 bool WebCore::supportsPictureInPicture()

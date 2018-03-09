@@ -350,9 +350,9 @@ public:
     virtual void* immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) = 0;
 
     virtual void didHandleAcceptedCandidate() = 0;
-
-    virtual void videoControlsManagerDidChange() = 0;
 #endif
+
+    virtual void videoControlsManagerDidChange() { };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     virtual WebCore::WebMediaSessionManager& mediaSessionManager() = 0;

@@ -151,6 +151,7 @@ public:
     void exitFullscreenHandler(BOOL success, NSError *);
     void enterFullscreenHandler(BOOL success, NSError *);
 #endif
+    bool isPlayingVideoInEnhancedFullscreen() const;
 
     void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);

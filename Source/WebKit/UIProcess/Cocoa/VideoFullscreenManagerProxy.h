@@ -118,7 +118,7 @@ public:
     void applicationDidBecomeActive();
     bool isVisible() const;
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     bool isPlayingVideoInEnhancedFullscreen() const;
 #endif
 

@@ -279,7 +279,7 @@ bool VideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture() co
     return false;
 }
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 bool VideoFullscreenManagerProxy::isPlayingVideoInEnhancedFullscreen() const
 {
     for (auto& tuple : m_contextMap.values()) {

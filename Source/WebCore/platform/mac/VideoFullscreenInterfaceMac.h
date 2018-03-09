@@ -64,6 +64,7 @@ public:
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
     WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
+    WEBCORE_EXPORT void ensureControlsManager() override;
 
     // VideoFullscreenModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
@@ -77,7 +78,6 @@ public:
     WEBCORE_EXPORT void invalidate();
     void requestHideAndExitFullscreen() { }
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow);
-    WEBCORE_EXPORT void ensureControlsManager();
 
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode & mode; }

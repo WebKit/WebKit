@@ -250,7 +250,6 @@ void PlaybackSessionManager::removeClientForContext(uint64_t contextId)
 
 void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
-#if PLATFORM(MAC)
     auto foundIterator = m_mediaElements.find(&mediaElement);
     if (foundIterator != m_mediaElements.end()) {
         uint64_t contextId = foundIterator->value;
@@ -271,7 +270,6 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
 
     addClientForContext(m_controlsManagerContextId);
     m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId), m_page->pageID());
-#endif
 }
 
 void PlaybackSessionManager::clearPlaybackControlsManager()
