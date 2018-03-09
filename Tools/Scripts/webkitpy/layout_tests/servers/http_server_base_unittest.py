@@ -56,3 +56,22 @@ class TestHttpServerBase(unittest.TestCase):
         # Note that the pid file would not be None if _spawn_process()
         # was actually a real implementation.
         self.assertEqual(host.filesystem.files[server._pid_file], None)
+
+    def test_build_alias_path_pairs(self):
+        host = MockHost()
+        test_port = test.TestPort(host)
+        server = HttpServerBase(test_port)
+
+        data = [
+            ['/media-resources', 'media'],
+            ['/modern-media-controls', '../Source/WebCore/Modules/modern-media-controls'],
+            ['/resources/testharness.css', 'resources/testharness.css'],
+        ]
+
+        expected = [
+            ('/media-resources', '/test.checkout/LayoutTests/media'),
+            ('/modern-media-controls', '/test.checkout/LayoutTests/../Source/WebCore/Modules/modern-media-controls'),
+            ('/resources/testharness.css', '/test.checkout/LayoutTests/resources/testharness.css'),
+        ]
+
+        self.assertEqual(server._build_alias_path_pairs(data), expected)

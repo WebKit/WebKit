@@ -1250,8 +1250,10 @@ class Port(object):
 
     # We pass sys_platform into this method to make it easy to unit test.
     def _apache_config_file_name_for_platform(self, sys_platform):
-        if sys_platform == 'cygwin' or sys_platform.startswith('win'):
+        if sys_platform == 'cygwin':
             return 'apache' + self._apache_version() + '-httpd-win.conf'
+        if sys_platform == 'win32':
+            return 'win-httpd-' + self._apache_version() + '-php7.conf'
         if sys_platform == 'darwin':
             return 'apache' + self._apache_version() + self._darwin_php_version() + '-httpd.conf'
         if sys_platform.startswith('linux'):

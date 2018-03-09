@@ -101,8 +101,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-c', 'PidFile "%s"' % self._pid_file,
             '-k', "start"]
 
-        for alias in self.aliases():
-            start_cmd.extend(['-c', 'Alias %s "%s"' % (alias[0], alias[1])])
+        for (alias, path) in self.aliases():
+            start_cmd.extend(['-c', 'Alias %s "%s"' % (alias, path)])
 
         if not port_obj.host.platform.is_win():
             start_cmd.extend(['-C', 'User "%s"' % os.environ.get("USERNAME", os.environ.get("USER", ""))])
@@ -164,7 +164,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # FIXME: Why do we need to copy the config file since we're not modifying it?
         self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
-        if self._port_obj.host.platform.is_cygwin():
+        if self.platform.is_cygwin():
             # Convert to MSDOS file naming:
             precompiledDrive = re.compile('^/cygdrive/[cC]')
             httpd_config_copy = precompiledDrive.sub("C:", httpd_config_copy)
@@ -173,11 +173,15 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         return httpd_config_copy
 
+    @property
+    def platform(self):
+        return self._port_obj.host.platform
+
     def _spawn_process(self):
         _log.debug('Starting %s server, cmd="%s"' % (self._name, str(self._start_cmd)))
         retval, err = self._run(self._start_cmd)
         if retval or len(err):
-            raise http_server_base.ServerError('Failed to start %s: %s' % (self._name, err))
+            raise self._server_error('Failed to start %s' % self._name, err, retval)
 
         # For some reason apache isn't guaranteed to have created the pid file before
         # the process exits, so we wait a little while longer.
@@ -189,25 +193,25 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
     def _stop_running_server(self):
         # If apache was forcefully killed, the pid file will not have been deleted, so check
         # that the process specified by the pid_file no longer exists before deleting the file.
-        if self._pid and not self._port_obj.host.platform.is_win() and not self._executive.check_running_pid(self._pid):
+        if self._pid and not self.platform.is_win() and not self._executive.check_running_pid(self._pid):
             self._filesystem.remove(self._pid_file)
             return
 
         retval, err = self._run(self._stop_cmd)
 
         # Windows httpd outputs shutdown status in stderr:
-        if self._port_obj.host.platform.is_win() and not retval and len(err):
+        if self.platform.is_win() and not retval and len(err):
             _log.debug('Shutdown: %s' % err)
             err = ""
 
         if retval or len(err):
-            raise http_server_base.ServerError('Failed to stop %s: %s' % (self._name, err))
+            raise self._server_error('Failed to stop %s' % self._name, err, retval)
 
         # For some reason apache isn't guaranteed to have actually stopped after
         # the stop command returns, so we wait a little while longer for the
         # pid file to be removed.
         if not self._wait_for_action(lambda: not self._filesystem.exists(self._pid_file)):
-            if self._port_obj.host.platform.is_win():
+            if self.platform.is_win():
                 self._remove_pid_file()
                 return
 
@@ -219,3 +223,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         retval = process.returncode
         err = process.stderr.read()
         return (retval, err)
+
+    def _server_error(self, message, stderr_output, exit_code):
+        if self.platform.is_win() and exit_code == 720005 and not stderr_output:
+            stderr_output = 'Access is denied. Do you have administrator privilege?'
+        return http_server_base.ServerError('{}: {} (exit code={})'.format(message, stderr_output, exit_code))

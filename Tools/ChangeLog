@@ -1,3 +1,42 @@
+2018-03-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [webkitpy, WinCairo] Launch Apache HTTPD for HTTP Tests.
+        https://bugs.webkit.org/show_bug.cgi?id=183265
+
+        Reviewed by Daniel Bates.
+
+        Launch apache httpd server from python script for WinCairo HTTP LayoutTests. By now, AppleWin uses
+        Cygwin to launch httpd server. This patch enables native Windows to run HTTP LayoutTests by starting
+        and stopping httpd server from the script.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        (LayoutTestApacheHttpd._copy_apache_config_file):
+        (LayoutTestApacheHttpd):
+        (LayoutTestApacheHttpd.platform):
+        (LayoutTestApacheHttpd._spawn_process):
+        (LayoutTestApacheHttpd._stop_running_server):
+        (LayoutTestApacheHttpd._run):
+        (LayoutTestApacheHttpd._server_error):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.aliases):
+        (HttpServerBase):
+        (HttpServerBase._build_alias_path_pairs):
+        (HttpServerBase._build_alias_path_pairs._make_path):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base_unittest.py:
+        (TestHttpServerBase.test_corrupt_pid_file):
+        (TestHttpServerBase):
+        (TestHttpServerBase.test_build_alias_path_pairs):
+        * Scripts/webkitpy/port/base.py:
+        (Port._apache_config_file_name_for_platform):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (test_apache_config_file_name_for_platform):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._path_to_apache):
+        (WinCairoPort.default_baseline_search_path):
+        (WinCairoPort):
+        (WinCairoPort.check_httpd):
+
 2018-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not use WebKitDOMHTMLFormElement as argument of signal WebKitWebPage::will-submit-form

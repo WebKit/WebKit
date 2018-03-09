@@ -1,3 +1,17 @@
+2018-03-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [webkitpy, WinCairo] Launch Apache HTTPD for HTTP Tests.
+        https://bugs.webkit.org/show_bug.cgi?id=183265
+
+        Reviewed by Daniel Bates.
+
+        Launch apache httpd server from python script for WinCairo HTTP LayoutTests. By now, AppleWin uses
+        Cygwin to launch httpd server. This patch enables native Windows to run HTTP LayoutTests by starting
+        and stopping httpd server from the script.
+
+        * http/conf/win-httpd-2.4-php7.conf: Added.
+        For WinCairo from native Windows environment.
+
 2018-03-09  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/frame-loading-via-document-write-async-delegates.html fails with async delegates
