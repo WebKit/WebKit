@@ -28,58 +28,21 @@
 
 #pragma once
 
-#include "NicosiaPaintingContext.h"
+#include "NicosiaPaintingEngine.h"
 
-#if USE(CAIRO)
-
-#include <wtf/RefPtr.h>
-
-typedef struct _cairo cairo_t;
-typedef struct _cairo_surface cairo_surface_t;
-
-namespace WebCore {
-class GraphicsContext;
-class PlatformContextCairo;
-}
+typedef struct _GThreadPool GThreadPool;
 
 namespace Nicosia {
 
-class PaintingContextCairo final {
+class PaintingEngineThreaded final : public PaintingEngine {
 public:
-    class ForPainting final : public PaintingContext {
-    public:
-        explicit ForPainting(Buffer&);
-        virtual ~ForPainting();
+    PaintingEngineThreaded();
+    virtual ~PaintingEngineThreaded();
 
-    private:
-        WebCore::GraphicsContext& graphicsContext() override;
-        void replay(const PaintingOperations&) override;
+private:
+    bool paint(WebCore::GraphicsLayer&, Ref<Buffer>&&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
 
-        struct {
-            RefPtr<cairo_surface_t> surface;
-            RefPtr<cairo_t> context;
-        } m_cairo;
-        std::unique_ptr<WebCore::PlatformContextCairo> m_platformContext;
-        std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
-
-#ifndef NDEBUG
-        bool m_deletionComplete { false };
-#endif
-    };
-
-    class ForRecording final : public PaintingContext {
-    public:
-        ForRecording(PaintingOperations&);
-        virtual ~ForRecording();
-
-    private:
-        WebCore::GraphicsContext& graphicsContext() override;
-        void replay(const PaintingOperations&) override;
-
-        std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
-    };
+    GThreadPool* m_threadPool;
 };
 
 } // namespace Nicosia
-
-#endif // USE(CAIRO)

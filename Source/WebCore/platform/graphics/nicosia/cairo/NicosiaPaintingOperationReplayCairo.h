@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 Metrological Group B.V.
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,58 +28,20 @@
 
 #pragma once
 
-#include "NicosiaPaintingContext.h"
-
-#if USE(CAIRO)
-
-#include <wtf/RefPtr.h>
-
-typedef struct _cairo cairo_t;
-typedef struct _cairo_surface cairo_surface_t;
+#include "NicosiaPaintingOperation.h"
 
 namespace WebCore {
-class GraphicsContext;
 class PlatformContextCairo;
 }
 
 namespace Nicosia {
 
-class PaintingContextCairo final {
-public:
-    class ForPainting final : public PaintingContext {
-    public:
-        explicit ForPainting(Buffer&);
-        virtual ~ForPainting();
+struct PaintingOperationReplayCairo : PaintingOperationReplay {
+    PaintingOperationReplayCairo(WebCore::PlatformContextCairo& platformContext)
+        : platformContext(platformContext)
+    { }
 
-    private:
-        WebCore::GraphicsContext& graphicsContext() override;
-        void replay(const PaintingOperations&) override;
-
-        struct {
-            RefPtr<cairo_surface_t> surface;
-            RefPtr<cairo_t> context;
-        } m_cairo;
-        std::unique_ptr<WebCore::PlatformContextCairo> m_platformContext;
-        std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
-
-#ifndef NDEBUG
-        bool m_deletionComplete { false };
-#endif
-    };
-
-    class ForRecording final : public PaintingContext {
-    public:
-        ForRecording(PaintingOperations&);
-        virtual ~ForRecording();
-
-    private:
-        WebCore::GraphicsContext& graphicsContext() override;
-        void replay(const PaintingOperations&) override;
-
-        std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
-    };
+    WebCore::PlatformContextCairo& platformContext;
 };
 
-} // namespace Nicosia
-
-#endif // USE(CAIRO)
+}

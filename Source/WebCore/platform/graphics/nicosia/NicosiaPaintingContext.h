@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "NicosiaPaintingOperation.h"
 #include <memory>
 
 namespace WebCore {
@@ -44,17 +45,32 @@ public:
     template<typename T>
     static void paint(Buffer& buffer, const T& paintFunctor)
     {
-        auto paintingContext = PaintingContext::create(buffer);
+        auto paintingContext = PaintingContext::createForPainting(buffer);
         paintFunctor(paintingContext->graphicsContext());
+    }
+
+    template<typename T>
+    static void record(PaintingOperations& paintingOperations, const T& recordFunctor)
+    {
+        auto recordingContext = PaintingContext::createForRecording(paintingOperations);
+        recordFunctor(recordingContext->graphicsContext());
+    }
+
+    static void replay(Buffer& buffer, const PaintingOperations& paintingOperations)
+    {
+        auto paintingContext = PaintingContext::createForPainting(buffer);
+        paintingContext->replay(paintingOperations);
     }
 
     virtual ~PaintingContext() = default;
 
 protected:
     virtual WebCore::GraphicsContext& graphicsContext() = 0;
+    virtual void replay(const PaintingOperations&) = 0;
 
 private:
-    static std::unique_ptr<PaintingContext> create(Buffer&);
+    static std::unique_ptr<PaintingContext> createForPainting(Buffer&);
+    static std::unique_ptr<PaintingContext> createForRecording(PaintingOperations&);
 };
 
 } // namespace Nicosia

@@ -1,5 +1,89 @@
 2018-03-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Add threaded PaintingEngine implementation
+        https://bugs.webkit.org/show_bug.cgi?id=183511
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add Nicosia::PaintingEngineThreaded, class that internally uses a thread
+        pool in which painting tasks are executed.
+
+        Implementation for now defaults to using GLib's GThreadPool, defaulting
+        to 4 threads that are exclusive to this pool. These parameters should be
+        fine-tuned in the future, or even made configurable, but are a solid
+        basis for testing.
+
+        In PaintingEngineThreaded::paint(), PaintingContext implementation is
+        used to record all the operations, and the gathered Vector is combined
+        with the Buffer object and dispatched into the thread pool. In the
+        thread function, the provided buffer and painting operations are run
+        through the PaintingContext implementation, replaying all the operations
+        on a painting context that draws into the given buffer.
+
+        The recorded operation objects implement the PaintingOperation interface
+        contain all the data necessary to replay a given operation. They can be
+        executed against a PaintingOperationReplay object, as is the case during
+        PaintingContext::replay(), or they can be dumped into a TextStream
+        object for debugging purposes.
+
+        PaintingContext now also provides the record() and replay() static
+        functions. PaintingContext objects now differ per purpose, which can be
+        either for painting or for recording. paint() and replay() use a
+        for-painting PaintingContext, and record() uses a for-recording one.
+        The for-painting PaintingContext receives a Buffer object, i.e. a memory
+        area on which it can draw, while the for-recording PaintingContext uses
+        the passed-in PaintingOperations Vector that should store all the
+        recorded operations.
+
+        The current Cairo implementation of PaintingContext is moved into
+        PaintingContextCairo::ForPainting. PaintingContextCairo::ForRecording is
+        added but is currently no-op until a Cairo-specific GraphicsContextImpl
+        with recording capabilities is added, allowing any call on the
+        GraphicsContext object used in PaintingContext::record() to be recorded
+        for later replay. PaintingOperationReplayCairo, inheriting from
+        PaintingOperationReplay, will be used for replay purposes, providing
+        only reference to the PlatformContextCairo object that is constructed in
+        PaintingContextCairo::ForPainting.
+
+        The Cairo-specific GraphicsContextImpl implementation will be added in
+        a separate patch. After that, PaintingEngine::create() will be modified
+        so that the Nicosia::PaintingEngineThreaded implementation can be used
+        for testing purposes, probably by setting an environment variable.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/NicosiaPaintingContext.cpp:
+        (Nicosia::PaintingContext::createForPainting):
+        (Nicosia::PaintingContext::createForRecording):
+        (Nicosia::PaintingContext::create): Deleted.
+        * platform/graphics/nicosia/NicosiaPaintingContext.h:
+        (Nicosia::PaintingContext::paint):
+        (Nicosia::PaintingContext::record):
+        (Nicosia::PaintingContext::replay):
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp: Added.
+        (Nicosia::s_threadFunc):
+        (Nicosia::paintLayer):
+        (Nicosia::PaintingEngineThreaded::PaintingEngineThreaded):
+        (Nicosia::PaintingEngineThreaded::~PaintingEngineThreaded):
+        (Nicosia::PaintingEngineThreaded::paint):
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.h: Copied from Source/WebCore/platform/graphics/nicosia/NicosiaPaintingContext.cpp.
+        * platform/graphics/nicosia/NicosiaPaintingOperation.h: Copied from Source/WebCore/platform/graphics/nicosia/NicosiaPaintingContext.cpp.
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp:
+        (Nicosia::PaintingContextCairo::ForPainting::ForPainting):
+        (Nicosia::PaintingContextCairo::ForPainting::~ForPainting):
+        (Nicosia::PaintingContextCairo::ForPainting::graphicsContext):
+        (Nicosia::PaintingContextCairo::ForPainting::replay):
+        (Nicosia::PaintingContextCairo::ForRecording::ForRecording):
+        (Nicosia::PaintingContextCairo::ForRecording::graphicsContext):
+        (Nicosia::PaintingContextCairo::ForRecording::replay):
+        (Nicosia::PaintingContextCairo::PaintingContextCairo): Deleted.
+        (Nicosia::PaintingContextCairo::~PaintingContextCairo): Deleted.
+        (Nicosia::PaintingContextCairo::graphicsContext): Deleted.
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.h:
+        * platform/graphics/nicosia/cairo/NicosiaPaintingOperationReplayCairo.h: Copied from Source/WebCore/platform/graphics/nicosia/NicosiaPaintingContext.cpp.
+        (Nicosia::PaintingOperationReplayCairo::PaintingOperationReplayCairo):
+
+2018-03-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove some unused cruft in TextureMapperLayer.
 
         The ScrollingClient class is not used anymore since r229318.

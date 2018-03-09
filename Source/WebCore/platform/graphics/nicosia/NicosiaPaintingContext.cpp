@@ -35,13 +35,22 @@
 
 namespace Nicosia {
 
-std::unique_ptr<PaintingContext> PaintingContext::create(Buffer& buffer)
-{
 #if USE(CAIRO)
-    return std::unique_ptr<PaintingContext>(new PaintingContextCairo(buffer));
+using ForPaintingClass = PaintingContextCairo::ForPainting;
+using ForRecordingClass = PaintingContextCairo::ForRecording;
 #else
 #error A Nicosia::PaintingContext implementation is required.
 #endif
+
+
+std::unique_ptr<PaintingContext> PaintingContext::createForPainting(Buffer& buffer)
+{
+    return std::unique_ptr<PaintingContext>(new ForPaintingClass(buffer));
+}
+
+std::unique_ptr<PaintingContext> PaintingContext::createForRecording(PaintingOperations& paintingOperations)
+{
+    return std::unique_ptr<PaintingContext>(new ForRecordingClass(paintingOperations));
 }
 
 } // namespace Nicosia

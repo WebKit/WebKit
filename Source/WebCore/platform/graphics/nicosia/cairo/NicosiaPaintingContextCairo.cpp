@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
 #include "NicosiaBuffer.h"
+#include "NicosiaPaintingOperationReplayCairo.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
@@ -41,7 +42,7 @@
 
 namespace Nicosia {
 
-PaintingContextCairo::PaintingContextCairo(Buffer& buffer)
+PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
 {
     // Balanced by the deref in the s_bufferKey user data destroy callback.
     buffer.ref();
@@ -51,10 +52,10 @@ PaintingContextCairo::PaintingContextCairo(Buffer& buffer)
 
     static cairo_user_data_key_t s_bufferKey;
     cairo_surface_set_user_data(m_cairo.surface.get(), &s_bufferKey,
-        new std::pair<Buffer*, PaintingContextCairo*> { &buffer, this },
+        new std::pair<Buffer*, ForPainting*> { &buffer, this },
         [](void* data)
         {
-            auto* userData = static_cast<std::pair<Buffer*, PaintingContextCairo*>*>(data);
+            auto* userData = static_cast<std::pair<Buffer*, ForPainting*>*>(data);
 
             // Deref the Buffer object.
             userData->first->deref();
@@ -72,7 +73,7 @@ PaintingContextCairo::PaintingContextCairo(Buffer& buffer)
     m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(WebCore::GraphicsContextImplCairo::createFactory(*m_platformContext));
 }
 
-PaintingContextCairo::~PaintingContextCairo()
+PaintingContextCairo::ForPainting::~ForPainting()
 {
     cairo_surface_flush(m_cairo.surface.get());
 
@@ -88,9 +89,38 @@ PaintingContextCairo::~PaintingContextCairo()
     ASSERT(m_deletionComplete);
 }
 
-WebCore::GraphicsContext& PaintingContextCairo::graphicsContext()
+WebCore::GraphicsContext& PaintingContextCairo::ForPainting::graphicsContext()
 {
     return *m_graphicsContext;
+}
+
+void PaintingContextCairo::ForPainting::replay(const PaintingOperations& paintingOperations)
+{
+    PaintingOperationReplayCairo operationReplay { *m_platformContext };
+    for (auto& operation : paintingOperations)
+        operation->execute(operationReplay);
+}
+
+PaintingContextCairo::ForRecording::ForRecording(PaintingOperations& paintingOperations)
+{
+    m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(
+        [&paintingOperations](WebCore::GraphicsContext&)
+        {
+            // FIXME: return a GraphicsContextImpl with recording capabilities.
+            return nullptr;
+        });
+}
+
+PaintingContextCairo::ForRecording::~ForRecording() = default;
+
+WebCore::GraphicsContext& PaintingContextCairo::ForRecording::graphicsContext()
+{
+    return *m_graphicsContext;
+}
+
+void PaintingContextCairo::ForRecording::replay(const PaintingOperations&)
+{
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace Nicosia
