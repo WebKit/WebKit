@@ -44,7 +44,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES: IndexedDB databases.
  * @WEBKIT_WEBSITE_DATA_PLUGIN_DATA: Plugins data.
  * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
- * @WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS: Resource load statistics. Since 2.20.
+ * @WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS: Resource load statistics. Since 2.22.
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.

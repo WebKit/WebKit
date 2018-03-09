@@ -343,7 +343,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
      *
      * The directory where resource load statistics will be stored.
      *
-     * Since: 2.20
+     * Since: 2.22
      */
     g_object_class_install_property(
         gObjectClass,
@@ -643,7 +643,7 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
  *
  * Returns: (allow-none): the directory where resource load statistics are stored or %NULL if @manager is ephemeral.
  *
- * Since: 2.20
+ * Since: 2.22
  */
 const gchar* webkit_website_data_manager_get_resource_load_statistics_directory(WebKitWebsiteDataManager* manager)
 {
@@ -685,7 +685,7 @@ WebKitCookieManager* webkit_website_data_manager_get_cookie_manager(WebKitWebsit
  *
  * Enable collection of resource load statistics for intelligent tracking prevention.
  *
- * Since: 2.20
+ * Since: 2.22
  */
 void webkit_website_data_manager_set_resource_load_statistics_enabled(WebKitWebsiteDataManager* manager, gboolean enabled)
 {
@@ -702,7 +702,7 @@ void webkit_website_data_manager_set_resource_load_statistics_enabled(WebKitWebs
  *
  * Returns: %TRUE if collection of resource load statistics is enabled, or %FALSE otherwise.
  *
- * Since: 2.20
+ * Since: 2.22
  */
 gboolean webkit_website_data_manager_get_resource_load_statistics_enabled(WebKitWebsiteDataManager* manager)
 {

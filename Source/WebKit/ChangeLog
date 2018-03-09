@@ -1,3 +1,14 @@
+2018-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK][WPE] Bump Since tags of resource load stats API.
+
+        The functionality hasn't been properly tested to be released in WebKitGTK+ 2.20.
+
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkit_website_data_manager_class_init):
+        * UIProcess/API/gtk/WebKitWebsiteData.h:
+        * UIProcess/API/wpe/WebKitWebsiteData.h:
+
 2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Suppress GCC warnings in SystemPreviewController.cpp by
