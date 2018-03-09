@@ -1,3 +1,28 @@
+2018-03-09  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/security/frame-loading-via-document-write-async-delegates.html fails with async delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183460
+
+        Reviewed by Alex Christensen.
+
+        The test has 3 frames which all initially load "about:blank". Then using document.write(), it inserts
+        HTML in each frame.
+        Frame 1: body has an onload event handler, which calls JS is click an anchor link to navigate the frame.
+        Frame 2: body has an onload event handler to do some logging
+        Frame 3: body has an onload event handler and finishes the test (calls testRunner.notifyDone())
+
+        The issue is that with asynchronous policy delegates, the first frame may not have navigated yet by the
+        time the third frame is loaded. Indeed, the onload event of the first frame merely clicks am anchor link
+        which will trigger a navigation policy check and then later navigate.
+
+        To make the test more robust, we now count the number of loads and call testRunner.notifyDone() when
+        we've reached the expected number of loads.
+
+        * http/tests/security/frame-loading-via-document-write-async-delegates-expected.txt: Added.
+        * http/tests/security/frame-loading-via-document-write-async-delegates.html: Copied from LayoutTests/http/tests/security/frame-loading-via-document-write.html.
+        * http/tests/security/frame-loading-via-document-write.html:
+        * http/tests/security/resources/frame-loading-via-document-write.js:
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         webkitfullscreenchange event not fired at the same time as :-webkit-full-screen pseudo selector changes; causes glitchiness
