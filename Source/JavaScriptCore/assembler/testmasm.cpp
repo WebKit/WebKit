@@ -32,7 +32,6 @@
 #include "InitializeThreading.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
-#include "StackAlignment.h"
 #include <limits>
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
@@ -199,7 +198,7 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
 #endif
     CHECK_EQ(compileAndRun<int>([&] (CCallHelpers& jit) {
         jit.emitFunctionPrologue();
-        jit.subPtr(CCallHelpers::TrustedImm32(stackAlignmentBytes()), MacroAssembler::stackPointerRegister);
+        jit.subPtr(CCallHelpers::TrustedImm32(8), MacroAssembler::stackPointerRegister);
         if (isBigEndian) {
             jit.store32(CCallHelpers::TrustedImm32(valAsUInt >> 32),
                 MacroAssembler::stackPointerRegister);
@@ -219,7 +218,7 @@ void testBranchTruncateDoubleToInt32(double val, int32_t expected)
         jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
 
         done.link(&jit);
-        jit.addPtr(CCallHelpers::TrustedImm32(stackAlignmentBytes()), MacroAssembler::stackPointerRegister);
+        jit.addPtr(CCallHelpers::TrustedImm32(8), MacroAssembler::stackPointerRegister);
         jit.emitFunctionEpilogue();
         jit.ret();
     }), expected);
