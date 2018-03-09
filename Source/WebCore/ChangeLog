@@ -1,3 +1,15 @@
+2018-03-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove some unused cruft in TextureMapperLayer.
+
+        The ScrollingClient class is not used anymore since r229318.
+        findScrollableContentsLayerAt() is similarly unused, but also lacking
+        an actual definition. ContentsLayerCount enum can also be purged.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2018-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Add basic synchronization capability to Nicosia::Buffer

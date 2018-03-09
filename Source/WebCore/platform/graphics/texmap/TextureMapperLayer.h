@@ -38,11 +38,6 @@ class WEBCORE_EXPORT TextureMapperLayer : public TextureMapperAnimation::Client 
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-
-    class ScrollingClient {
-    public:
-    };
-
     TextureMapperLayer()
         : m_parent(0)
         , m_effectTarget(0)
@@ -61,7 +56,6 @@ public:
     uint32_t id() { return m_id; }
 
     const Vector<TextureMapperLayer*>& children() const { return m_children; }
-    TextureMapperLayer* findScrollableContentsLayerAt(const FloatPoint& pos);
 
     TextureMapper* textureMapper() const { return rootLayer().m_textureMapper; }
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
@@ -161,11 +155,6 @@ private:
     void setAnimatedFilters(const FilterOperations&) override;
 
     bool isVisible() const;
-    enum ContentsLayerCount {
-        NoLayersWithContent,
-        SingleLayerWithContents,
-        MultipleLayersWithContents
-    };
 
     bool shouldBlend() const;
 
