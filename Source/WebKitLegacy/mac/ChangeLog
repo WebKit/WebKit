@@ -1,3 +1,25 @@
+2018-03-09  Andy Estes  <aestes@apple.com>
+
+        [Mac] WebKit fails to receive file promises when the embedding app is sandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=183489
+        <rdar://problem/38267517>
+
+        WebKitLegacy calls -[NSFilePromiseReceiver receivePromisedFilesAtDestination:...] with
+        NSTemporaryDirectory() as the destination for receiving file promise drops. AppKit attempts
+        to issue a sandbox extension for this directory, but for security reasons App Sandbox
+        refuses to do so for NSTemporaryDirectory() itself. As a result, AppKit will call our reader
+        block with a nil error and a valid file URL, but no file will actually exist at that URL.
+
+        In order for App Sandbox to grant issuing the sandbox extension needed by AppKit, we need to
+        use some other destination directory. This patch uses FileSystem::createTemporaryDirectory()
+        to securely create a unique temporary directory inside NSTemporaryDirectory() for use as the
+        drop destination.
+
+        Reviewed by Wenson Hsieh.
+
+        * WebView/WebView.mm:
+        (-[WebView performDragOperation:]):
+
 2018-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Allow WebViews to disable system appearance

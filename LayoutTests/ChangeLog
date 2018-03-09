@@ -1,3 +1,17 @@
+2018-03-09  Andy Estes  <aestes@apple.com>
+
+        [Mac] WebKit fails to receive file promises when the embedding app is sandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=183489
+        <rdar://problem/38267517>
+
+        Reviewed by Wenson Hsieh.
+
+        Now that we create a unique temporary directory per drop, this test no longer encounters a
+        name conflict for apple.gif.
+
+        * editing/pasteboard/file-input-files-access-promise-expected.txt:
+        * editing/pasteboard/file-input-files-access-promise.html:
+
 2018-03-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening.
