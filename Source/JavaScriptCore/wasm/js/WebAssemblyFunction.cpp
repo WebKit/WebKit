@@ -189,7 +189,7 @@ WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalO
 Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     ASSERT(globalObject);
-    return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyFunctionType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
 WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation wasmEntrypoint, Wasm::SignatureIndex signatureIndex)

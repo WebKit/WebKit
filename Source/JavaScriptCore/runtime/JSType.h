@@ -108,7 +108,6 @@ enum JSType : uint8_t {
     JSWeakMapType,
     JSWeakSetType,
 
-    WebAssemblyFunctionType,
     WebAssemblyToJSCalleeType,
 
     LastJSCObjectType = WebAssemblyToJSCalleeType, // This is the last "JSC" Object type. After this, we have embedder's (e.g., WebCore) extended object types.

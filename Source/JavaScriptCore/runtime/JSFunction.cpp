@@ -107,6 +107,7 @@ void JSFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(jsDynamicCast<JSFunction*>(vm, this));
+    ASSERT(type() == JSFunctionType);
     if (isBuiltinFunction() && jsExecutable()->name().isPrivateName()) {
         // This is anonymous builtin function.
         rareData(vm)->setHasReifiedName();
@@ -117,6 +118,7 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    ASSERT(type() == JSFunctionType);
     m_executable.set(vm, this, executable);
     // Some NativeExecutable functions, like JSBoundFunction, decide to lazily allocate their name string.
     if (!name.isNull())

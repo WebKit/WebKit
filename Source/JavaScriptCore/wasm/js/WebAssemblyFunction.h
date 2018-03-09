@@ -46,7 +46,7 @@ class WebAssemblyFunction final : public WebAssemblyFunctionBase {
 public:
     using Base = WebAssemblyFunctionBase;
 
-    const static unsigned StructureFlags = Base::StructureFlags | TypeOfShouldCallGetCallData;
+    const static unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType>
     static IsoSubspace* subspaceFor(VM& vm)

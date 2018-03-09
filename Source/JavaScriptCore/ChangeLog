@@ -1,3 +1,19 @@
+2018-03-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, remove WebAssemblyFunctionType
+        https://bugs.webkit.org/show_bug.cgi?id=183429
+
+        Drop WebAssemblyFunctionType since it is no longer used. This breaks
+        JSCast assumption that all the derived classes of JSFunction use
+        JSFunctionType. We also add ASSERT for JSFunction::finishCreation.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSType.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::createStructure):
+        * wasm/js/WebAssemblyFunction.h:
+
 2018-03-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r229446.
