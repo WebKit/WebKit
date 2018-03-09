@@ -27,7 +27,7 @@
 
 #include "JSCJSValue.h"
 #include "Opcode.h"
-#include <wtf/PointerPreparations.h>
+#include "PtrTag.h"
 
 namespace JSC {
 

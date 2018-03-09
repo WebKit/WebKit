@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,6 @@ class ExecState;
 struct Instruction;
 
 namespace LLInt {
-
-// Tells you where to jump to if you want to return-to-throw, after you've already
-// set up all information needed to throw the exception.
-Instruction* returnToThrowForThrownException(ExecState*);
 
 // Gives you a PC that you can tell the interpreter to go to, which when advanced
 // between 1 and 9 slots will give you an "instruction" that threads to the

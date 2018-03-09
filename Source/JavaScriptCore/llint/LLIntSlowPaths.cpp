@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,12 +159,13 @@ namespace JSC { namespace LLInt {
         JSValue::encode(value);                  \
     } while (false)
 
-#define LLINT_CALL_END_IMPL(exec, callTarget) LLINT_RETURN_TWO((callTarget), (exec))
+#define LLINT_CALL_END_IMPL(exec, callTarget, callTargetTag) \
+    LLINT_RETURN_TWO(retagCodePtr((callTarget), callTargetTag, SlowPathPtrTag), (exec))
 
 #define LLINT_CALL_THROW(exec, exceptionToThrow) do {                   \
         ExecState* __ct_exec = (exec);                                  \
         throwException(__ct_exec, throwScope, exceptionToThrow);        \
-        LLINT_CALL_END_IMPL(0, callToThrow(__ct_exec));                 \
+        LLINT_CALL_END_IMPL(0, callToThrow(__ct_exec), ExceptionHandlerPtrTag);                 \
     } while (false)
 
 #define LLINT_CALL_CHECK_EXCEPTION(exec, execCallee) do {               \
@@ -172,15 +173,15 @@ namespace JSC { namespace LLInt {
         ExecState* __cce_execCallee = (execCallee);                     \
         doExceptionFuzzingIfEnabled(__cce_exec, throwScope, "LLIntSlowPaths/call", nullptr); \
         if (UNLIKELY(throwScope.exception()))                           \
-            LLINT_CALL_END_IMPL(0, callToThrow(__cce_execCallee));      \
+            LLINT_CALL_END_IMPL(0, callToThrow(__cce_execCallee), ExceptionHandlerPtrTag); \
     } while (false)
 
-#define LLINT_CALL_RETURN(exec, execCallee, callTarget) do {            \
+#define LLINT_CALL_RETURN(exec, execCallee, callTarget, callTargetTag) do { \
         ExecState* __cr_exec = (exec);                                  \
         ExecState* __cr_execCallee = (execCallee);                      \
         void* __cr_callTarget = (callTarget);                           \
         LLINT_CALL_CHECK_EXCEPTION(__cr_exec, __cr_execCallee);         \
-        LLINT_CALL_END_IMPL(__cr_execCallee, __cr_callTarget);          \
+        LLINT_CALL_END_IMPL(__cr_execCallee, __cr_callTarget, callTargetTag); \
     } while (false)
 
 #define LLINT_RETURN_CALLEE_FRAME(execCallee) do {                      \
@@ -283,7 +284,7 @@ LLINT_SLOW_PATH_DECL(trace)
             opcodeNames[opcodeID], pc);
     if (opcodeID == op_enter) {
         dataLogF("Frame will eventually return to %p\n", exec->returnPC().value());
-        *bitwise_cast<volatile char*>(exec->returnPC().value());
+        *removeCodePtrTag<volatile char*>(exec->returnPC().value());
     }
     if (opcodeID == op_ret) {
         dataLogF("Will be returning to %p\n", exec->returnPC().value());
@@ -1325,7 +1326,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
             PoisonedMasmPtr::assertIsNotPoisoned(LLInt::getCodePtr(getHostCallReturnValue));
-            LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
+            LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
         }
         
 #if LLINT_SLOW_PATH_TRACING
@@ -1349,7 +1350,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
         PoisonedMasmPtr::assertIsNotPoisoned(LLInt::getCodePtr(getHostCallReturnValue));
-        LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
+        LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
     }
     
 #if LLINT_SLOW_PATH_TRACING
@@ -1386,10 +1387,11 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                 callLinkInfo->callee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->machineCodeTarget = codePtr;
+                callLinkInfo->callPtrTag = InternalFunctionPtrTag;
             }
 
             PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
+            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), InternalFunctionPtrTag);
         }
         throwScope.release();
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
@@ -1398,10 +1400,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     JSScope* scope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
+    PtrTag callPtrTag = NoPtrTag;
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction()) {
         codePtr = executable->entrypointFor(kind, MustCheckArity);
+        callPtrTag = NativeCodePtrTag;
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1416,10 +1420,13 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
         ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters())) {
             arity = MustCheckArity;
-        else
+            callPtrTag = CodeEntryWithArityCheckPtrTag;
+        } else {
             arity = ArityCheckNotRequired;
+            callPtrTag = CodeEntryPtrTag;
+        }
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
 
@@ -1435,12 +1442,14 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         callLinkInfo->callee.set(vm, callerCodeBlock, callee);
         callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, callee);
         callLinkInfo->machineCodeTarget = codePtr;
+        RELEASE_ASSERT(callPtrTag != NoPtrTag);
+        callLinkInfo->callPtrTag = callPtrTag;
         if (codeBlock)
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
     PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
+    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), callPtrTag);
 }
 
 inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpecializationKind kind)
@@ -1580,7 +1589,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     }
     
     vm.hostCallReturnValue = eval(execCallee);
-    LLINT_CALL_RETURN(exec, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
+    LLINT_CALL_RETURN(exec, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_strcat)

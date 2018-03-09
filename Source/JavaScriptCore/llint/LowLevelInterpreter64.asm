@@ -24,7 +24,7 @@
 
 # Utilities.
 macro jumpToInstruction()
-    jmp [PB, PC, 8]
+    jmp [PB, PC, 8], BytecodePtrTag
 end
 
 macro dispatch(advance)
@@ -92,7 +92,7 @@ macro cCall2Void(function)
         # See http://msdn.microsoft.com/en-us/library/ms235286.aspx
         subp 32, sp 
         call function
-        addp 32, sp 
+        addp 32, sp
     else
         cCall2(function)
     end
@@ -115,7 +115,7 @@ macro cCall4(function)
     end
 end
 
-macro doVMEntry(makeCall)
+macro doVMEntry(makeCall, callTag, callWithArityCheckTag)
     functionPrologue()
     pushCalleeSaves()
 
@@ -225,7 +225,16 @@ macro doVMEntry(makeCall)
 
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
-    makeCall(entry, t3)
+    if POINTER_PROFILING
+        btbnz ProtoCallFrame::hasArityMismatch[protoCallFrame], .doCallWithArityCheck
+        move callTag, t2
+        jmp .readyToCall
+    .doCallWithArityCheck:
+        move callWithArityCheckTag, t2
+    .readyToCall:
+    end
+
+    makeCall(entry, t3, t2)
 
     # We may have just made a call into a JS function, so we can't rely on sp
     # for anything but the fact that our own locals (ie the VMEntryRecord) are
@@ -249,18 +258,18 @@ macro doVMEntry(makeCall)
 end
 
 
-macro makeJavaScriptCall(entry, temp)
+macro makeJavaScriptCall(entry, temp, callTag)
     addp 16, sp
     if C_LOOP
         cloopCallJSFunction entry
     else
-        call entry
+        call entry, callTag
     end
     subp 16, sp
 end
 
 
-macro makeHostFunctionCall(entry, temp)
+macro makeHostFunctionCall(entry, temp, callTag)
     move entry, temp
     storep cfr, [sp]
     move sp, a0
@@ -270,10 +279,10 @@ macro makeHostFunctionCall(entry, temp)
     elsif X86_64_WIN
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
-        call temp
+        call temp, callTag
         addp 32, sp
     else
-        call temp
+        call temp, callTag
     end
 end
 
@@ -370,7 +379,7 @@ macro checkSwitchToJITForLoop()
             cCall2(_llint_loop_osr)
             btpz r0, .recover
             move r1, sp
-            jmp r0
+            jmp r0, CodeEntryPtrTag
         .recover:
             loadi ArgumentCount + TagOffset[cfr], PC
         end)
@@ -543,6 +552,15 @@ macro functionArityCheck(doneLabel, slowPath)
     btiz t1, .continue
 
 .noExtraSlot:
+    if POINTER_PROFILING
+        if ARM64
+            loadp 8[cfr], lr
+        end
+
+        addp 16, cfr, t3
+        untagReturnAddress t3
+    end
+
     // Move frame up t1 slots
     negq t1
     move cfr, t3
@@ -565,6 +583,15 @@ macro functionArityCheck(doneLabel, slowPath)
     storeq t0, [t3, t1, 8]
     addp 8, t3
     baddinz 1, t2, .fillLoop
+
+    if POINTER_PROFILING
+        addp 16, cfr, t1
+        tagReturnAddress t1
+
+        if ARM64
+            storep lr, 8[cfr]
+        end
+    end
 
 .continue:
     # Reload CodeBlock and reset PC, since the slow_path clobbered them.
@@ -1956,6 +1983,9 @@ end
 macro doCall(slowPath, prepareCall)
     loadisFromInstruction(2, t0)
     loadpFromInstruction(5, t1)
+    if POINTER_PROFILING
+        move t1, t5
+    end
     loadp LLIntCallLinkInfo::callee[t1], t2
     loadConstantOrVariable(t0, t3)
     bqneq t3, t2, .opCallSlow
@@ -1971,11 +2001,25 @@ macro doCall(slowPath, prepareCall)
     if POISON
         loadp _g_JITCodePoison, t2
         xorp LLIntCallLinkInfo::machineCodeTarget[t1], t2
-        prepareCall(t2, t1, t3, t4)
-        callTargetFunction(t2)
+        prepareCall(t2, t1, t3, t4, macro (callPtrTag)
+            if POINTER_PROFILING
+                loadp LLIntCallLinkInfo::callPtrTag[t5], callPtrTag
+            end
+        end)
+        if POINTER_PROFILING
+            loadp LLIntCallLinkInfo::callPtrTag[t5], t3
+        end
+        callTargetFunction(t2, t3)
     else
-        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
-        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
+        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, macro (callPtrTag)
+            if POINTER_PROFILING
+                loadp LLIntCallLinkInfo::callPtrTag[t5], callPtrTag
+            end
+        end)
+        if POINTER_PROFILING
+            loadp LLIntCallLinkInfo::callPtrTag[t5], t3
+        end
+        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], t3)
     end
 
 .opCallSlow:
@@ -2075,7 +2119,7 @@ _llint_throw_from_slow_path_trampoline:
     loadp Callee[cfr], t1
     andp MarkedBlockMask, t1
     loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
-    jmp VM::targetMachinePCForThrow[t1]
+    jmp VM::targetMachinePCForThrow[t1], ExceptionHandlerPtrTag
 
 
 _llint_throw_during_call_trampoline:
@@ -2106,12 +2150,12 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call executableOffsetToFunction[t1]
+            call executableOffsetToFunction[t1], NativeCodePtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp executableOffsetToFunction[t1], t2
-            call t2
+            call t2, NativeCodePtrTag
         end
     end
 
@@ -2149,12 +2193,12 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[t1]
+            call offsetOfFunction[t1], InternalFunctionPtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp offsetOfFunction[t1], t2
-            call t2
+            call t2, InternalFunctionPtrTag
         end
     end
 

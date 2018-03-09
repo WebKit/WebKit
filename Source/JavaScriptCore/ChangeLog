@@ -1,5 +1,60 @@
 2018-03-09  Mark Lam  <mark.lam@apple.com>
 
+        [Re-landing] Prepare LLInt code to support pointer profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=183387
+        <rdar://problem/38199678>
+
+        Reviewed by JF Bastien.
+
+        1. Introduced PtrTag enums for supporting pointer profiling later.
+
+        2. Also introduced tagging, untagging, retagging, and tag removal placeholder
+           template functions for the same purpose.
+
+        3. Prepare the offlineasm for supporting pointer profiling later.
+
+        4. Tagged some pointers in LLInt asm code.  Currently, these should have no
+           effect on behavior.
+
+        5. Removed returnToThrowForThrownException() because it is not used anywhere.
+
+        6. Added the offlineasm folder to JavaScriptCore Xcode project so that it's
+           easier to view and edit these files in Xcode.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::unlink):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::returnToThrowForThrownException): Deleted.
+        * llint/LLIntExceptions.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntPCRanges.h:
+        (JSC::LLInt::isLLIntPC):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/ast.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/risc.rb:
+        * runtime/PtrTag.h: Added.
+        (JSC::uniquePtrTagID):
+        (JSC::ptrTag):
+        (JSC::tagCodePtr):
+        (JSC::untagCodePtr):
+        (JSC::retagCodePtr):
+        (JSC::removeCodePtrTag):
+
+2018-03-09  Mark Lam  <mark.lam@apple.com>
+
         Remove unused LLINT_STATS feature.
         https://bugs.webkit.org/show_bug.cgi?id=183522
         <rdar://problem/38313139>
