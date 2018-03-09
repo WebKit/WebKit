@@ -26,12 +26,18 @@
 #include "config.h"
 #include "SystemPreviewController.h"
 
+#import "WebPageProxy.h"
+
 namespace WebKit {
 
 SystemPreviewController::SystemPreviewController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {
-    (void)m_webPageProxy; // This will be used eventually. Using it here to keep the compiler from complaining.
+}
+
+void SystemPreviewController::sendPageBack()
+{
+    m_webPageProxy.goBack();
 }
 
 #if !PLATFORM(IOS) || !USE(QUICK_LOOK)

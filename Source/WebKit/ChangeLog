@@ -1,3 +1,38 @@
+2018-03-09  Dean Jackson  <dino@apple.com>
+
+        Allow NavigationState to intercept requests and send them to SystemPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=183526
+        <rdar://problem/37801140>
+
+        Reviewed by Tim Horton.
+
+        Implement a bit more of SystemPreviewController, such that it can be used
+        from NavigationState to identify and handle content that can be previewed.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+            If we'd in a download response policy, then check if SystemPreviewController
+            can show the content. We ignore the download, but pass the original URL onto
+            the preview. Ultimately, we'd want to avoid the navigation
+            but use the download destination URL for preview.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource initWithURL:]):
+            Move the URL to property, to help use a single datasource object for all previews.
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (-[_WKPreviewControllerDelegate initWithSystemPreviewController:]):
+            Add a delegate object, so we can detect when the preview is dismissed and return
+            to the previous page.
+        (-[_WKPreviewControllerDelegate previewControllerWillDismiss:]):
+        (WebKit::SystemPreviewController::showPreview):
+            Use single instances of the QLPreviewController, its datasource and delegate.
+
+        * UIProcess/SystemPreviewController.cpp:
+            Add a helper to navigate back.
+        (WebKit::SystemPreviewController::SystemPreviewController):
+        (WebKit::SystemPreviewController::sendPageBack):
+        * UIProcess/SystemPreviewController.h:
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         webkitfullscreenchange event not fired at the same time as :-webkit-full-screen pseudo selector changes; causes glitchiness

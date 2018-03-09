@@ -43,8 +43,10 @@ SOFT_LINK_FRAMEWORK(QuickLook)
 SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
-    WebCore::URL _url;
 };
+
+@property (nonatomic) WebCore::URL url;
+
 @end
 
 @implementation _WKPreviewControllerDataSource
@@ -54,7 +56,7 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
     if (!(self = [super init]))
         return nil;
 
-    _url = url;
+    self.url = url;
     return self;
 }
 
@@ -65,9 +67,32 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 
 - (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index
 {
-    return (NSURL*)self->_url;
+    return (NSURL*)self.url;
 }
 
+@end
+
+@interface _WKPreviewControllerDelegate : NSObject <QLPreviewControllerDelegate> {
+    WebKit::SystemPreviewController* _previewController;
+};
+@end
+
+@implementation _WKPreviewControllerDelegate
+
+- (id)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _previewController = previewController;
+    return self;
+}
+
+- (void)previewControllerWillDismiss:(QLPreviewController *)controller
+{
+    if (_previewController)
+        _previewController->sendPageBack();
+}
 @end
 
 namespace WebKit {
@@ -91,12 +116,20 @@ void SystemPreviewController::showPreview(const WebCore::URL& url)
     if (!presentingViewController)
         return;
 
-    RetainPtr<QLPreviewController> qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
-    RetainPtr<_WKPreviewControllerDataSource> dataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithURL:url]);
+    if (!m_qlPreviewController) {
+        m_qlPreviewController = adoptNS([allocQLPreviewControllerInstance() init]);
 
-    [qlPreviewController setDataSource:dataSource.get()];
+        m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
+        [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
 
-    [presentingViewController presentViewController:qlPreviewController.get() animated:YES completion:nullptr];
+        m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithURL:url]);
+        [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
+    } else
+        m_qlPreviewControllerDataSource.get().url = url;
+
+    [m_qlPreviewController reloadData];
+
+    [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
 }
 
 }

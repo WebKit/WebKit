@@ -607,7 +607,7 @@ void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy
     [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView URL:url contentRuleListIdentifiers:identifiers.get() notifications:nsNotifications.get()];
 }
     
-void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy&, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
+void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy& page, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
         NSURL *url = navigationResponse->response().nsURLResponse().URL;
@@ -635,7 +635,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 
     RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
+    RefPtr<API::NavigationResponse> navigationResponseRefPtr(navigationResponse.ptr());
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker, navigationResponse = WTFMove(navigationResponseRefPtr), &page](WKNavigationResponsePolicy responsePolicy) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -653,8 +654,12 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationResponsePolicyBecomeDownload:
+            if (page.systemPreviewController()->canPreview(navigationResponse->response().mimeType())) {
+                page.systemPreviewController()->showPreview(navigationResponse->response().url());
+                localListener->ignore();
+            } else
+                localListener->download();
 #pragma clang diagnostic pop
-            localListener->download();
             break;
         }
     }];

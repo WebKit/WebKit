@@ -26,6 +26,13 @@
 #pragma once
 
 #include <WebCore/URL.h>
+#include <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS) && USE(QUICK_LOOK)
+OBJC_CLASS QLPreviewController;
+OBJC_CLASS _WKPreviewControllerDataSource;
+OBJC_CLASS _WKPreviewControllerDelegate;
+#endif
 
 namespace WebKit {
 
@@ -38,8 +45,16 @@ public:
     bool canPreview(const String& mimeType) const;
     void showPreview(const WebCore::URL&);
 
+    void sendPageBack();
+
 private:
     WebPageProxy& m_webPageProxy;
+
+#if PLATFORM(IOS) && USE(QUICK_LOOK)
+    RetainPtr<QLPreviewController> m_qlPreviewController;
+    RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;
+    RetainPtr<_WKPreviewControllerDataSource> m_qlPreviewControllerDataSource;
+#endif
 };
 
 }
