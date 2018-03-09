@@ -1,3 +1,9 @@
+2018-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Bump WebKitGTK+ version to 2.21.0.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2018-03-08  Tim Horton  <timothy_horton@apple.com>
 
         Add a way to not build libwebrtc when building WebKit via Makefiles
