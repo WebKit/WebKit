@@ -1,3 +1,23 @@
+2018-03-08  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: More accessibility events support
+        https://bugs.webkit.org/show_bug.cgi?id=183023
+        <rdar://problem/37764380>
+
+        Reviewed by Chris Fleizach.
+
+        Fixed the crash that we shouldn't dispatch the accessibility events if the
+        event path is empty.
+
+        Also added a check to not dispatch events if the runtime flag is not enabled.
+
+        Test: accessibility/mac/AOM-events-webarea-crash.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::shouldDispatchAccessibilityEvent const):
+        (WebCore::AccessibilityObject::dispatchAccessibilityEvent const):
+        * accessibility/AccessibilityObject.h:
+
 2018-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Allow WebViews to disable system appearance

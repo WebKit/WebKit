@@ -906,6 +906,7 @@ public:
     const AtomicString& getAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
     
+    bool shouldDispatchAccessibilityEvent() const;
     bool dispatchAccessibilityEvent(Event&) const;
     bool dispatchAccessibilityEventWithType(AccessibilityEventType) const;
     bool dispatchAccessibleSetValueEvent(const String&) const;
