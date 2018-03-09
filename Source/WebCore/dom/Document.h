@@ -35,6 +35,7 @@
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
+#include "GenericTaskQueue.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
 #include "OrientationNotifier.h"
@@ -1136,7 +1137,7 @@ public:
     void setFullScreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer.get(); }
 
-    void fullScreenChangeDelayTimerFired();
+    void dispatchFullScreenChangeEvents();
     bool fullScreenIsAllowedForElement(Element*) const;
     void fullScreenElementRemoved();
     void removeFullScreenElementOfSubtree(Node&, bool amongChildrenOnly = false);
@@ -1683,7 +1684,7 @@ private:
     RefPtr<Element> m_fullScreenElement;
     Vector<RefPtr<Element>> m_fullScreenElementStack;
     WeakPtr<RenderFullScreen> m_fullScreenRenderer { nullptr };
-    Timer m_fullScreenChangeDelayTimer;
+    GenericTaskQueue<Timer> m_fullScreenTaskQueue;
     Deque<RefPtr<Node>> m_fullScreenChangeEventTargetQueue;
     Deque<RefPtr<Node>> m_fullScreenErrorEventTargetQueue;
     LayoutRect m_savedPlaceholderFrameRect;

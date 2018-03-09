@@ -8,13 +8,11 @@
 
             function fullscreenchange()
             {
-                if (document.webkitIsFullScreen)
-                    beginfullscreen();
-                else
+                if (!document.webkitIsFullScreen)
                     endfullscreen();
             }
 
-            function beginfullscreen()
+            function playing()
             {
                 consoleWrite("<br>** Entered fullscreen");
                 testExpected("video.webkitDisplayingFullscreen", true);
@@ -52,9 +50,8 @@
 
                 video = document.getElementsByTagName('video')[0];
                 waitForEvent("canplaythrough", canplaythrough);
-                waitForEvent('playing');
+                waitForEvent('playing', playing);
 
-                video.addEventListener('webkitbeginfullscreen', beginfullscreen, true);
                 video.addEventListener('webkitendfullscreen', endfullscreen, true);
                 video.addEventListener('webkitfullscreenchange', fullscreenchange, true);
 

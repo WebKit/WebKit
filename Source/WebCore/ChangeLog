@@ -1,3 +1,39 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        webkitfullscreenchange event not fired at the same time as :-webkit-full-screen pseudo selector changes; causes glitchiness
+        https://bugs.webkit.org/show_bug.cgi?id=183383
+
+        Reviewed by Eric Carlson.
+
+        Fire the webkitfullscreenchange event at the same time as the pseudo class selector changes, during the handling
+        of webkitDidEnterFullScreenForElement. For WebKit2 clients, this is guaranteed to be asynchronous, since the
+        calling method originates in the UIProcess. For WebKit1 clients (and WKTR and DRT), there's the possibility that
+        webkitWillEnterFullScreenForElement will be called synchronously from within
+        Document::requestFullScreenForElement(), so break that synchronousness by starting the
+        ChromeClient::enterFullScreenForElement(...) process in a async task.
+
+        Previously, the firing of the fullscreenchange event was done through a zero-length timer. Use a
+        GenericTaskQueue instead.
+
+        A number of layout tests depend on the behavior that the element will be in fullscreen when the 'playing' event
+        fires. This was true for DRT (but not WKTR), since its fullscreen implementations were deliberately synchronous, but
+        won't necessarily be true for all ports. Fix this in a subsequent patch.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestFullScreenForElement):
+        (WebCore::Document::webkitExitFullscreen):
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidEnterFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        (WebCore::Document::dispatchFullScreenChangeEvents):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::setPlaying):
+
 2018-03-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add threaded PaintingEngine implementation

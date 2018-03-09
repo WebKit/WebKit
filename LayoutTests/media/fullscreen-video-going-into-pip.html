@@ -22,14 +22,14 @@
             }
 
             consoleWrite("Going into Full Screen");
-            video.addEventListener('webkitfullscreenchange', onfullscreenchange);
+            video.addEventListener('webkitpresentationmodechanged', onfullscreenchange);
             runWithKeyDown(function(){ video.webkitRequestFullscreen(); });
         }
 
         function onfullscreenchange()
         {
             testExpected("document.webkitCurrentFullScreenElement", video);
-            video.removeEventListener('webkitfullscreenchange', onfullscreenchange);
+            video.removeEventListener('webkitpresentationmodechanged', onfullscreenchange);
 
             consoleWrite("Going into Picture-in-Picture from Full Screen");
             video.addEventListener('webkitpresentationmodechanged', onpresentationmodechanged);

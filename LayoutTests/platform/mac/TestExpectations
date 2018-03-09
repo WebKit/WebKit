@@ -1727,3 +1727,12 @@ webkit.org/b/181612 [ Debug ] webanimations/animation-opacity-animation-crash.ht
 webkit.org/b/172241 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
 
 webkit.org/b/173946 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Pass Failure ]
+
+webkit.org/b/183490 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Failure ]
+webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Failure ]
+webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Failure ]
+webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Failure ]
+webkit.org/b/183490 media/modern-media-controls/start-support/start-support-fullscreen.html [ Failure ]
+webkit.org/b/183490 media/video-playsinline.html [ Failure ]
+webkit.org/b/183490 media/video-webkit-playsinline.html [ Failure ]
+webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Failure ]
