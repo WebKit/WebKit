@@ -1,3 +1,16 @@
+2018-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not use WebKitDOMHTMLFormElement as argument of signal WebKitWebPage::will-submit-form
+        https://bugs.webkit.org/show_bug.cgi?id=183510
+
+        Reviewed by Michael Catanzaro.
+
+        Update the test to use WebKitDOMElement instead and fix a memory leak.
+
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (handleFormSubmissionCallback):
+        (willSubmitFormCallback):
+
 2018-03-08  Stephan Szabo  <stephan.szabo@sony.com>
 
         WebKitTestRunner: Don't use accessibility controller when !HAVE(ACCESSIBILITY)

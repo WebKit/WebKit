@@ -1,5 +1,22 @@
 2018-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Do not use WebKitDOMHTMLFormElement as argument of signal WebKitWebPage::will-submit-form
+        https://bugs.webkit.org/show_bug.cgi?id=183510
+
+        Reviewed by Michael Catanzaro.
+
+        In 2.22 WebKitDOMHTMLFormElement will be deprecated in GTK+ port and won't still exist in WPE. The new
+        JavaScript GLib API will be used to replace most of the DOM API, but a few classes will remain with a minimal
+        API for things that can't be done with JavaScript. WebKitDOMElement will stay and will be added to WPE as well,
+        so if we change the signal parameter to WebKitDOMElement we will be able to keep using
+        WebKitWebPage::will-submit-form without any changes. WPE will gain this signal and the rest of the API that uses
+        DOM.
+
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+
+2018-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. [GTK][WPE] Bump Since tags of resource load stats API.
 
         The functionality hasn't been properly tested to be released in WebKitGTK+ 2.20.
