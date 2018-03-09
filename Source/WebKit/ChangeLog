@@ -1,3 +1,22 @@
+2018-03-09  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerClientFetch should send data to its resource loader once the didReceiveResponse completion handler is called
+        https://bugs.webkit.org/show_bug.cgi?id=183110
+
+        Reviewed by Chris Dumez.
+
+        Buffering data/finish event/fail event until the response completion handler is called.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+        (WebKit::ServiceWorkerClientFetch::didReceiveData):
+        (WebKit::ServiceWorkerClientFetch::didFinish):
+        (WebKit::ServiceWorkerClientFetch::didFail):
+        (WebKit::ServiceWorkerClientFetch::didNotHandle):
+        (WebKit::ServiceWorkerClientFetch::cancel):
+        (WebKit::ServiceWorkerClientFetch::continueLoadingAfterCheckingResponse):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Add new CSS env constants for use with fullscreen
