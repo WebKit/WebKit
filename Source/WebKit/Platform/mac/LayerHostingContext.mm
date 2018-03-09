@@ -63,6 +63,9 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
     layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{
         kCAContextIgnoresHitTest : @YES,
         kCAContextDisplayId : @10000 }];
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    [CAContext setAllowsCGSConnections:NO];
+    layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{kCAContextCIFilterBehavior :  @"ignore"}];
 #else
     layerHostingContext->m_context = [CAContext contextWithCGSConnection:CGSMainConnectionID() options:@{ kCAContextCIFilterBehavior : @"ignore" }];
 #endif

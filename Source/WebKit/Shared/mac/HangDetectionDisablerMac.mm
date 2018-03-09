@@ -46,7 +46,14 @@ static bool clientsMayIgnoreEvents()
 
 static void setClientsMayIgnoreEvents(bool clientsMayIgnoreEvents)
 {
-    if (CGSSetConnectionProperty(CGSMainConnectionID(), CGSMainConnectionID(), clientsMayIgnoreEventsKey, clientsMayIgnoreEvents ? kCFBooleanTrue : kCFBooleanFalse) != kCGErrorSuccess)
+    auto cgsId = CGSMainConnectionID();
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    // In macOS 10.14 and later, the WebContent process does not have access to the WindowServer.
+    // In this case, there will be no valid WindowServer main connection.
+    if (!cgsId)
+        return;
+#endif
+    if (CGSSetConnectionProperty(cgsId, cgsId, clientsMayIgnoreEventsKey, clientsMayIgnoreEvents ? kCFBooleanTrue : kCFBooleanFalse) != kCGErrorSuccess)
         ASSERT_NOT_REACHED();
 }
 

@@ -1,3 +1,28 @@
+2018-03-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Create CA layer contexts with +remoteContextWithOptions.
+        https://bugs.webkit.org/show_bug.cgi?id=182747
+
+        Reviewed by Brent Fulgham.
+
+        CA layer contexts (CAContext) are currently created with +contextWithCGSConnection, which is
+        using the main WindowServer connection to create the context. Instead, the contexts can be
+        created with +remoteContextWithOptions, which does not use the main WindowServer connection.
+        This is a step towards limiting the access the WebContent process has to the window server.
+        To make the +remoteContextWithOptions call succeed, the sandbox has to be modified to allow
+        access to CARenderServer. Also, access to the WindowServer should be denied by calling
+        CGSSetDenyWindowServerConnections(true) before entering the sandbox. This is planned to do
+        in a follow-up patch. The call to +remoteContextWithOptions will open up WindowServer
+        connections, since the WindowServer is the system default CA render server, but these
+        connections come with limited WindowServer exposure. In addition, we need to open up the
+        sandbox for accessing some IOKit properties.
+
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        * Shared/mac/HangDetectionDisablerMac.mm:
+        (WebKit::setClientsMayIgnoreEvents):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-03-09  Brent Fulgham  <bfulgham@apple.com>
 
         Remove cookie API access from WebContent Process

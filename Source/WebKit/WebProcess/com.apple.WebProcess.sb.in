@@ -330,6 +330,25 @@
     (iokit-property "saved-config")
     (iokit-property "startup-timing")
     (iokit-property "touch-size-id")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    (iokit-property "ATY,cbits")
+    (iokit-property "ATY,intrev")
+    (iokit-property "AccelNativeDMARowByteAlignment")
+    (iokit-property "CompactVRAM")
+    (iokit-property "EnableBlitLib")
+    (iokit-property "ForceDisableEDRAM")
+    (iokit-property "GPUConfigurationVariable")
+    (iokit-property "GpuDebugPolicy")
+    (iokit-property "IOKitDebug")
+    (iokit-property "IOPCIMatch")
+    (iokit-property "IOOCDBundleName")
+    (iokit-property "MetalStatisticsScriptName")
+    (iokit-property "MetalCoalesce")
+    (iokit-property "PanicOnGPUHang")
+    (iokit-property "TelemetryDisable")
+    (iokit-property "cail_properties")
+    (iokit-property "dpm")
+#endif
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
@@ -569,7 +588,11 @@
        (global-name "com.apple.trustd")
        (global-name "com.apple.trustd.agent")
        (global-name "com.apple.window_proxies")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+       (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
+#else
        (global-name "com.apple.windowserver.active")
+#endif
        (global-name "com.apple.xpc.activity.unmanaged")
        (global-name "com.apple.xpcd")
 )
