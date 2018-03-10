@@ -60,10 +60,10 @@ private:
     static void destructor(void*);
 };
 
+#if HAVE_PTHREAD_MACHDEP_H
+
 class Cache;
 template<typename T> struct PerThreadStorage;
-
-#if HAVE_PTHREAD_MACHDEP_H
 
 // For now, we only support PerThread<PerHeapKind<Cache>>. We can expand to other types by
 // using more keys.
@@ -82,7 +82,7 @@ template<> struct PerThreadStorage<PerHeapKind<Cache>> {
     }
 };
 
-#endif
+#else
 
 template<typename T> struct PerThreadStorage {
     static bool s_didInitialize;
@@ -111,6 +111,8 @@ template<typename T> struct PerThreadStorage {
 template<typename T> bool PerThreadStorage<T>::s_didInitialize;
 template<typename T> pthread_key_t PerThreadStorage<T>::s_key;
 template<typename T> std::once_flag PerThreadStorage<T>::s_onceFlag;
+
+#endif
 
 template<typename T>
 BINLINE T* PerThread<T>::getFastCase()
