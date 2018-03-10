@@ -91,14 +91,17 @@ auto ServiceWorkerContainer::ready() -> ReadyPromise&
 
         auto& context = *scriptExecutionContext();
         auto contextIdentifier = this->contextIdentifier();
-        callOnMainThread([this, connection = makeRef(ensureSWClientConnection()), topOrigin = context.topOrigin().isolatedCopy(), clientURL = context.url().isolatedCopy(), contextIdentifier]() mutable {
-            connection->whenRegistrationReady(topOrigin, clientURL, [this, contextIdentifier](auto&& registrationData) {
-                ScriptExecutionContext::postTaskTo(contextIdentifier, [this, registrationData = crossThreadCopy(registrationData)](auto&) mutable {
-                    if (m_isStopped || !this->scriptExecutionContext()->sessionID().isValid())
+        callOnMainThread([connection = makeRef(ensureSWClientConnection()), topOrigin = context.topOrigin().isolatedCopy(), clientURL = context.url().isolatedCopy(), contextIdentifier]() mutable {
+            connection->whenRegistrationReady(topOrigin, clientURL, [contextIdentifier](auto&& registrationData) {
+                ScriptExecutionContext::postTaskTo(contextIdentifier, [registrationData = crossThreadCopy(registrationData)](auto& context) mutable {
+                    auto* serviceWorkerContainer = context.serviceWorkerContainer();
+                    if (!serviceWorkerContainer)
+                        return;
+                    if (serviceWorkerContainer->m_isStopped || !context.sessionID().isValid())
                         return;
 
-                    auto registration = ServiceWorkerRegistration::getOrCreate(*this->scriptExecutionContext(), *this, WTFMove(registrationData));
-                    m_readyPromise->resolve(WTFMove(registration));
+                    auto registration = ServiceWorkerRegistration::getOrCreate(context, *serviceWorkerContainer, WTFMove(registrationData));
+                    serviceWorkerContainer->m_readyPromise->resolve(WTFMove(registration));
                 });
             });
         });

@@ -1,5 +1,22 @@
 2018-03-09  Youenn Fablet  <youenn@apple.com>
 
+        Crash in ServiceWorkerContainer::ready
+        https://bugs.webkit.org/show_bug.cgi?id=183380
+
+        Reviewed by Chris Dumez.
+
+        Not using 'this' through lambdas.
+        Instead rely on the last lambda that is passed a ScriptExecutionContext& to get back 'this' which is a ServiceWorkerContainer.
+
+        Should be covered by imported/w3c/web-platform-tests/service-workers/service-worker/register-default-scope.https.html no longer crashing.
+        Although it should probably be LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html that should crash
+        since this is the main test using ready.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ready):
+
+2018-03-09  Youenn Fablet  <youenn@apple.com>
+
         RealtimeOutgoingAudioSource and RealtimeOutgoingVideoSource should be destroyed on the main thread
         https://bugs.webkit.org/show_bug.cgi?id=183483
         <rdar://problem/38214152>
