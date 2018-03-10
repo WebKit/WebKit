@@ -62,6 +62,7 @@ bool RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 
 void RealtimeOutgoingVideoSource::stop()
 {
+    ASSERT(isMainThread());
     m_videoSource->removeObserver(*this);
     m_blackFrameTimer.stop();
     m_isStopped = true;

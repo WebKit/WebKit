@@ -73,8 +73,10 @@ private:
     void AddRef() const final { ref(); }
     rtc::RefCountReleaseStatus Release() const final
     {
-        deref();
-        return refCount() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        callOnMainThread([this] {
+            deref();
+        });
+        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
     SourceState state() const final { return kLive; }

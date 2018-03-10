@@ -33,6 +33,7 @@
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -66,6 +67,12 @@ void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& 
         factory = provider->factory();
     }
     provider->setPeerConnectionFactory(MockLibWebRTCPeerConnectionFactory::create(String(testCase)));
+}
+
+MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection()
+{
+    // Free senders in a different thread like an actual peer connection would probably do.
+    Thread::create("MockLibWebRTCPeerConnection thread", [senders = WTFMove(m_senders)] { });
 }
 
 class MockLibWebRTCPeerConnectionForIceCandidates : public MockLibWebRTCPeerConnection {

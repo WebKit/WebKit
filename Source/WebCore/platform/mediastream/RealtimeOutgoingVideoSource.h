@@ -54,8 +54,10 @@ public:
     void AddRef() const final { ref(); }
     rtc::RefCountReleaseStatus Release() const final
     {
-        deref();
-        return refCount() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        callOnMainThread([this] {
+            deref();
+        });
+        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }

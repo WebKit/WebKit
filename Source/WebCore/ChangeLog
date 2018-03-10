@@ -1,3 +1,32 @@
+2018-03-09  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingAudioSource and RealtimeOutgoingVideoSource should be destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=183483
+        <rdar://problem/38214152>
+
+        Reviewed by Eric Carlson.
+
+        When dereferencing from libwebrtc code path, schedule a call to deref on main thread.
+        WebCore dereferencing is happening in the main thread so this guarantees destruction on the main thread.
+
+        Covered by updated mock libwebrtc peer connection backend.
+        We make mock senders to keep a reference to their source which are RealtimeOutgoingXXSource.
+        We then make mock peer connection backend to free the mock senders in a background thread.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doStop):
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::stop):
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::stop):
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::ThreadKeeper::create):
+        (WebCore::ThreadKeeper::setThread):
+        (WebCore::MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection):
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Unconditionalize more methods in VideoFullscreenInterface (and related classes)

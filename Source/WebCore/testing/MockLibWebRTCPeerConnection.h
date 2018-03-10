@@ -41,7 +41,7 @@ void useRealRTCPeerConnectionFactory(LibWebRTCProvider&);
 
 class MockLibWebRTCPeerConnection : public webrtc::PeerConnectionInterface {
 public:
-    virtual ~MockLibWebRTCPeerConnection() = default;
+    ~MockLibWebRTCPeerConnection();
 
 protected:
     explicit MockLibWebRTCPeerConnection(webrtc::PeerConnectionObserver& observer) : m_observer(observer) { }
@@ -151,7 +151,7 @@ private:
 
     bool m_enabled { true };
     std::string m_id;
-    webrtc::AudioSourceInterface* m_source { nullptr };
+    rtc::scoped_refptr<webrtc::AudioSourceInterface> m_source;
 };
 
 class MockLibWebRTCVideoTrack : public webrtc::VideoTrackInterface {
@@ -173,7 +173,7 @@ private:
 
     bool m_enabled;
     std::string m_id;
-    webrtc::VideoTrackSourceInterface* m_source { nullptr };
+    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> m_source;
 };
 
 class MockLibWebRTCDataChannel : public webrtc::DataChannelInterface {
@@ -210,8 +210,11 @@ private:
 class MockRtpSender : public webrtc::RtpSenderInterface {
 public:
     MockRtpSender(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>&& track) : m_track(WTFMove(track)) { }
-
-    bool SetTrack(webrtc::MediaStreamTrackInterface*) final { return false; }
+    bool SetTrack(webrtc::MediaStreamTrackInterface* track) final
+    {
+        m_track = track;
+        return true;
+    }
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final { return m_track; }
     
     uint32_t ssrc() const { return 0; }

@@ -63,6 +63,7 @@ void RealtimeOutgoingAudioSource::initializeConverter()
 
 void RealtimeOutgoingAudioSource::stop()
 {
+    ASSERT(isMainThread());
     m_silenceAudioTimer.stop();
     m_audioSource->removeObserver(*this);
 }
