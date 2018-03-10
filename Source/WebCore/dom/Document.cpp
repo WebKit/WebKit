@@ -2074,6 +2074,10 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
         requireFullLayout = true;
     }
 
+    // Turn off this optimization for input elements with shadow content.
+    if (is<HTMLInputElement>(element))
+        requireFullLayout = true;
+
     bool isVertical = renderer && !renderer->isHorizontalWritingMode();
     bool checkingLogicalWidth = ((dimensionsCheck & WidthDimensionsCheck) && !isVertical) || ((dimensionsCheck & HeightDimensionsCheck) && isVertical);
     bool checkingLogicalHeight = ((dimensionsCheck & HeightDimensionsCheck) && !isVertical) || ((dimensionsCheck & WidthDimensionsCheck) && isVertical);

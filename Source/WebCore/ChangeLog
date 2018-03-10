@@ -1,3 +1,23 @@
+2018-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        Turn off offset*/scroll* optimization for input elements with shadow content
+        https://bugs.webkit.org/show_bug.cgi?id=182383
+        <rdar://problem/37114190>
+
+        Reviewed by Antti Koivisto.
+
+        We normally ensure clean tree before calling offsetHeight/Width, scrollHeight/Width.
+        In certain cases (see updateLayoutIfDimensionsOutOfDate() for details), it's okay to return
+        the previously computed values even when some part of the tree is dirty.
+        In case of shadow content, updateLayoutIfDimensionsOutOfDate() might return false (no need to layout)
+        for the root, while true (needs layout) for the shadow content.
+        This could confuse the caller (Element::scrollWidth/Height etc) and lead to incorrect result.
+
+        Test: fast/forms/scrollheight-with-mutation-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+
 2018-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Copying a table from the Numbers app and pasting into iCloud Numbers fails

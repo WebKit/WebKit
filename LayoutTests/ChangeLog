@@ -1,3 +1,14 @@
+2018-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        Turn off offset*/scroll* optimization for input elements with shadow content
+        https://bugs.webkit.org/show_bug.cgi?id=182383
+        <rdar://problem/37114190>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/scrollheight-with-mutation-crash-expected.txt: Added.
+        * fast/forms/scrollheight-with-mutation-crash.html: Added.
+
 2018-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Copying a table from the Numbers app and pasting into iCloud Numbers fails
