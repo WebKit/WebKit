@@ -772,7 +772,7 @@ String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 
         HashMap<String, String, ASCIICaseInsensitiveHash> map;
         for (auto& pair : mimeTypeAssociations)
-            map->add(ASCIILiteral { pair.first }, ASCIILiteral { pair.second });
+            map.add(ASCIILiteral { pair.first }, ASCIILiteral { pair.second });
         return map;
     }());
 

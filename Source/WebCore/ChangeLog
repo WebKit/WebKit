@@ -1,5 +1,12 @@
 2018-03-09  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed. Fix WinCairo build after r229497.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getNormalizedMIMEType):
+
+2018-03-09  Ross Kirsling  <ross.kirsling@sony.com>
+
         Clean up MIMETypeRegistry::mimeTypeAssociationMap for Curl
         https://bugs.webkit.org/show_bug.cgi?id=170529
 
