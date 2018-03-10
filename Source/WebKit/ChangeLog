@@ -1,3 +1,14 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Don't pass NULL to the result parameter of SecTrustEvaluate()
+        https://bugs.webkit.org/show_bug.cgi?id=183495
+        <rdar://problem/38185688>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+
 2018-03-09  Dean Jackson  <dino@apple.com>
 
         Allow NavigationState to intercept requests and send them to SystemPreviewController

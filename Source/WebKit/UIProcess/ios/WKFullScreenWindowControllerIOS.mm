@@ -573,11 +573,9 @@ static UIEdgeInsets mirrorEdgeInsets(UIEdgeInsets insets)
     // If SecTrustCopyInfo returned NULL then it's likely that the SecTrustRef has not been evaluated
     // and the only way to get the information we need is to call SecTrustEvaluate ourselves.
     if (!infoDictionary) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-        OSStatus err = SecTrustEvaluate(trust, NULL);
-#pragma clang diagnostic pop
-        if (err == noErr)
+        SecTrustResultType result = kSecTrustResultProceed;
+        OSStatus err = SecTrustEvaluate(trust, &result);
+        if (err == noErr && result == kSecTrustResultProceed)
             infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
         if (!infoDictionary)
             return nil;
