@@ -30,6 +30,7 @@
 #include <wtf/InlineASM.h>
 
 #if !ENABLE(JIT)
+#include "Bytecodes.h"
 #include "CLoopStackInlines.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"

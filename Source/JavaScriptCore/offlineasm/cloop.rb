@@ -519,8 +519,6 @@ def cloopEmitCallSlowPathVoid(operands)
 end
 
 class Instruction
-    @@didReturnFromJSLabelCounter = 0
-
     def lowerC_LOOP
         case opcode
         when "addi"
@@ -1078,11 +1076,11 @@ class Instruction
         # use of the call instruction. Instead, we just implement JS calls
         # as an opcode dispatch.
         when "cloopCallJSFunction"
-            @@didReturnFromJSLabelCounter += 1
-            $asm.putc "lr.opcode = getOpcode(llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter});"
+            uid = $asm.newUID
+            $asm.putc "lr.opcode = getOpcode(llint_cloop_did_return_from_js_#{uid});"
             $asm.putc "opcode = #{operands[0].clValue(:opcode)};"
             $asm.putc "DISPATCH_OPCODE();"
-            $asm.putsLabel("llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter}", false)
+            $asm.putsLabel("llint_cloop_did_return_from_js_#{uid}", false)
 
         # We can't do generic function calls with an arbitrary set of args, but
         # fortunately we don't have to here. All native function calls always

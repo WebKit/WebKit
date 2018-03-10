@@ -39,6 +39,10 @@ class Assembler
     def initialize(outp)
         @outp = outp
         @state = :cpp
+        resetAsm
+    end
+
+    def resetAsm
         @commentState = :none
         @comment = nil
         @internalComment = nil
@@ -93,6 +97,7 @@ class Assembler
     end
     
     def inAsm
+        resetAsm
         enterAsm
         yield
         leaveAsm
