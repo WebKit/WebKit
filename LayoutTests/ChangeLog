@@ -1,3 +1,17 @@
+2018-03-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit seems to be running spell checker even on non-editable content text
+        https://bugs.webkit.org/show_bug.cgi?id=183456
+        <rdar://problem/38076042>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable-expected.txt: Added.
+        * accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html: Added.
+        * accessibility/mac/attributed-string/attributed-string-for-range-with-options.html:
+        * accessibility/mac/attributed-string/attributed-string-for-range.html:
+             Update tests to reflect that only editable content returns misspelled attributes.
+
 2018-03-09  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: More accessibility events support
