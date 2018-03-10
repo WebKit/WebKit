@@ -204,7 +204,7 @@ bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const
 {
     if (!forFileDrag() && !RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
         return false;
-    return m_pasteboard->containsFiles();
+    return m_pasteboard->fileContentState() == Pasteboard::FileContentState::MayContainFilePaths;
 }
 
 void DataTransfer::setData(const String& type, const String& data)
@@ -291,7 +291,7 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
     if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
         auto types = m_pasteboard->typesForLegacyUnsafeBindings();
         ASSERT(!types.contains("Files"));
-        if (m_pasteboard->containsFiles() && addFilesType == AddFilesType::Yes)
+        if (m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData && addFilesType == AddFilesType::Yes)
             types.append("Files");
         return types;
     }
@@ -301,10 +301,17 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
         return item->isFile();
     });
 
-    if (hasFileBackedItem || m_pasteboard->containsFiles()) {
+    auto fileContentState = m_pasteboard->fileContentState();
+    if (hasFileBackedItem || fileContentState != Pasteboard::FileContentState::NoFileOrImageData) {
         Vector<String> types;
         if (addFilesType == AddFilesType::Yes)
             types.append(ASCIILiteral("Files"));
+
+        if (fileContentState != Pasteboard::FileContentState::MayContainFilePaths) {
+            types.appendVector(WTFMove(safeTypes));
+            return types;
+        }
+
         if (safeTypes.contains("text/uri-list"))
             types.append(ASCIILiteral("text/uri-list"));
         if (safeTypes.contains("text/html") && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())

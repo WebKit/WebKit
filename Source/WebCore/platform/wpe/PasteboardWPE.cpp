@@ -125,10 +125,10 @@ void Pasteboard::write(const PasteboardWebContent& content)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(content);
 }
 
-bool Pasteboard::containsFiles()
+Pasteboard::FileContentState Pasteboard::fileContentState()
 {
     notImplemented();
-    return false;
+    return FileContentState::NoFileOrImageData;
 }
 
 bool Pasteboard::canSmartReplace()

@@ -1,3 +1,73 @@
+2018-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Copying a table from the Numbers app and pasting into iCloud Numbers fails
+        https://bugs.webkit.org/show_bug.cgi?id=183485
+        <rdar://problem/38041984>
+
+        Reviewed by Ryosuke Niwa.
+
+        After r222656, WebKit now treats raw image data on the pasteboard as files for the purposes of computing
+        DataTransfer.files and DataTransfer.types. However, this is combined with existing policies that suppress
+        DataTransfer.getData and DataTransfer.setData when the pasteboard contains files (generalized to copy/paste in
+        r222688). This means we now don't allow web pages to access "text/plain" in the case where the user copies part
+        of a table from the native Numbers app since Numbers additionally writes a snapshot of the table to the platform
+        pasteboard.
+
+        This restriction on getData/setData was intended to prevent web pages from extracting users' file paths when
+        pasting or dropping, so it doesn't make sense to enforce this restriction even when there is only in-memory
+        image data on the pasteboard. To fix this bug, we make Pasteboard::fileContentState() differentiate between
+        cases where there are (real) files on the pasteboard, and cases where we've fallen back to treating image data
+        as files.
+
+        Rebaselined existing LayoutTests to match new behavior.
+        Also covered by 4 new API tests:
+            - PasteMixedContent.ImageDataAndPlainText
+            - PasteMixedContent.ImageDataAndPlainTextAndURL
+            - PasteMixedContent.ImageDataAndPlainTextAndURLAndHTML
+            - UIPasteboardTests.DataTransferGetDataWhenPastingImageAndText
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths const):
+
+        If custom pasteboard data is enabled, suppress getData and setData if and only if we might actually expose file
+        paths (see Pasteboard::fileContentState).
+
+        (WebCore::DataTransfer::types const):
+
+        Only allow "text/html" or "text/uri-list" in the case where there are actual files in the pasteboard. If there's
+        only image data, add all of the DOM-safe types back into the list of types.
+
+        * platform/Pasteboard.h:
+        * platform/StaticPasteboard.h:
+
+        Add an enum type to represent the result of Pasteboard::fileContentState.
+        -   NoFileOrImageData indicates that there was nothing on the pasteboard that could be considered a file
+            from the point of view of the page.
+        -   InMemoryImage indicates that there are no files on the pasteboard, but there is image data that we consider
+            to be files, exposed via DataTransfer API.
+        -   MayContainFilePaths indicates that there might be file paths on the pasteboard. This means that the source
+            has either written file paths to the pasteboard (for example, through NSFilenamesPboardType) or the source
+            has written image data along with a URL type of some sort that does not match one of the allowed URL schemes
+            that are safe to expose (currently, these are http-family, data, or blob).
+
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+
+        Refactor to return one of the three enum types described above.
+
+        (WebCore::Pasteboard::containsFiles): Deleted.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::fileContentState):
+        (WebCore::Pasteboard::containsFiles): Deleted.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::fileContentState):
+        (WebCore::Pasteboard::containsFiles): Deleted.
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::fileContentState):
+        (WebCore::Pasteboard::containsFiles): Deleted.
+
+        Adjust for Pasteboard::fileContentState() tweaks.
+
 2018-03-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit seems to be running spell checker even on non-editable content text

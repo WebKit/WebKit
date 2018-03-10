@@ -194,6 +194,30 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingPlatformRepresentations)
     });
 }
 
+TEST(UIPasteboardTests, DataTransferGetDataWhenPastingImageAndText)
+{
+    auto webView = setUpWebViewForPasteboardTests(@"DataTransfer");
+    auto copiedText = retainPtr(@"Apple Inc.");
+    auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+        completionHandler([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]], nil);
+        return nil;
+    }];
+    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[copiedText] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+        completionHandler([copiedText dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return nil;
+    }];
+    [UIPasteboard generalPasteboard].itemProviders = @[ itemProvider.get() ];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("Files, text/plain", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/plain), (FILE, image/png)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("('image.png', image/png)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("Apple Inc.", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+}
+
 TEST(UIPasteboardTests, DataTransferSetDataCannotWritePlatformTypes)
 {
     auto webView = setUpWebViewForPasteboardTests(@"dump-datatransfer-types");

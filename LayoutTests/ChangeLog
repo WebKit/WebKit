@@ -1,3 +1,18 @@
+2018-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Copying a table from the Numbers app and pasting into iCloud Numbers fails
+        https://bugs.webkit.org/show_bug.cgi?id=183485
+        <rdar://problem/38041984>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline some pasteboard-related layout tests, in which we now expose text/plain alongside files that were
+        written to the DataTransfer by the page itself.
+
+        * editing/pasteboard/data-transfer-item-list-add-file-multiple-times-expected.txt:
+        * editing/pasteboard/data-transfer-item-list-add-file-on-copy-expected.txt:
+        * editing/pasteboard/data-transfer-item-list-add-file-on-drag-expected.txt:
+
 2018-03-09  Chris Dumez  <cdumez@apple.com>
 
         inspector/page/frameScheduledNavigation.html has different output with async policy delegates

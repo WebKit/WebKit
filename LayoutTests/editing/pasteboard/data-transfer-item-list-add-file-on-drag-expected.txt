@@ -24,7 +24,8 @@ operation performed at each step.
 2. After adding a file of custom type
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/plain": "hello world"
     },
     "items": [
         {
@@ -54,7 +55,8 @@ operation performed at each step.
 3. After adding the first plain text file
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/plain": "hello world"
     },
     "items": [
         {
@@ -98,7 +100,8 @@ operation performed at each step.
 4. After removing the last file
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/plain": "hello world"
     },
     "items": [
         {
@@ -130,6 +133,7 @@ removedItem.getAsFile() should be null: null
 {
     "data": {
         "Files": "",
+        "text/plain": "hello world",
         "text/html": "<a>goodbye world</a>"
     },
     "items": [
@@ -166,6 +170,7 @@ removedItem.getAsFile() should be null: null
 {
     "data": {
         "Files": "",
+        "text/plain": "hello world",
         "text/html": "<a>goodbye world</a>"
     },
     "items": [
@@ -216,6 +221,7 @@ removedItem.getAsFile() should be null: null
 {
     "data": {
         "Files": "",
+        "text/plain": "hello world",
         "text/html": "<a>goodbye world</a>"
     },
     "items": [
@@ -252,7 +258,8 @@ removedItem.getAsFile() should be null: null
 8. After removing the HTML string
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/plain": "hello world"
     },
     "items": [
         {

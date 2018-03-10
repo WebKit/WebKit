@@ -134,21 +134,35 @@ bool Pasteboard::shouldTreatCocoaTypeAsFile(const String& cocoaType)
     return cocoaTypeToImageType(cocoaType) != ImageType::Invalid;
 }
 
-bool Pasteboard::containsFiles()
+Pasteboard::FileContentState Pasteboard::fileContentState()
 {
-    if (!platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName)) {
+    bool mayContainFilePaths = platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName);
+    if (!mayContainFilePaths) {
         Vector<String> cocoaTypes;
         platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName);
         if (cocoaTypes.findMatching([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
-            return false;
+            return FileContentState::NoFileOrImageData;
+
+        bool containsURL = notFound != cocoaTypes.findMatching([] (auto& cocoaType) {
+#if PLATFORM(MAC)
+            if (cocoaType == String(legacyURLPasteboardType()))
+                return true;
+#endif
+            return cocoaType == String(kUTTypeURL);
+        });
+        mayContainFilePaths = containsURL && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString(ASCIILiteral("text/uri-list")));
     }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return false;
+        return FileContentState::NoFileOrImageData;
 
-    return true;
+    // Even when there's only image data in the pasteboard and no file representations, we still run the risk of exposing file paths
+    // to the page if the app has written image data to the pasteboard with a corresponding file path as plain text. An example of
+    // this is copying an image with a local `src` in Safari. To mitigate this, we additionally require that the app has not also
+    // written URLs to the pasteboard, as this would suggest that the plain text data might contain file paths.
+    return mayContainFilePaths ? FileContentState::MayContainFilePaths : FileContentState::InMemoryImage;
 }
 
 Vector<String> Pasteboard::typesSafeForBindings(const String& origin)

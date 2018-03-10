@@ -1,3 +1,18 @@
+2018-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Copying a table from the Numbers app and pasting into iCloud Numbers fails
+        https://bugs.webkit.org/show_bug.cgi?id=183485
+        <rdar://problem/38041984>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new API tests to cover scenarios in which we paste image data alongside text data.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-03-09  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Initial commit -block formatting context.

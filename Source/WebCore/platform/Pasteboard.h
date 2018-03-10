@@ -220,7 +220,8 @@ public:
 
     virtual WEBCORE_EXPORT void writeCustomData(const PasteboardCustomData&);
 
-    virtual WEBCORE_EXPORT bool containsFiles();
+    enum class FileContentState { NoFileOrImageData, InMemoryImage, MayContainFilePaths };
+    virtual WEBCORE_EXPORT FileContentState fileContentState();
     virtual WEBCORE_EXPORT bool canSmartReplace();
 
     virtual WEBCORE_EXPORT void writeMarkup(const String& markup);
