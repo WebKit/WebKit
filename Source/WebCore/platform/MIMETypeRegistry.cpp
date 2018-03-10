@@ -718,73 +718,66 @@ String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 
 #else
 
-typedef HashMap<String, String, ASCIICaseInsensitiveHash> MIMETypeAssociationMap;
-
-static const MIMETypeAssociationMap& mimeTypeAssociationMap()
-{
-    static MIMETypeAssociationMap* mimeTypeMap = 0;
-    if (mimeTypeMap)
-        return *mimeTypeMap;
-
-    // FIXME: Should not allocate this on the heap; use NeverDestroyed instead.
-    mimeTypeMap = new MIMETypeAssociationMap;
-
-    // FIXME: Writing the function out like this will create a giant function.
-    // Should use a loop instead.
-    mimeTypeMap->add(ASCIILiteral("image/x-ms-bmp"), ASCIILiteral("image/bmp"));
-    mimeTypeMap->add(ASCIILiteral("image/x-windows-bmp"), ASCIILiteral("image/bmp"));
-    mimeTypeMap->add(ASCIILiteral("image/x-bmp"), ASCIILiteral("image/bmp"));
-    mimeTypeMap->add(ASCIILiteral("image/x-bitmap"), ASCIILiteral("image/bmp"));
-    mimeTypeMap->add(ASCIILiteral("image/x-ms-bitmap"), ASCIILiteral("image/bmp"));
-    mimeTypeMap->add(ASCIILiteral("image/jpg"), ASCIILiteral("image/jpeg"));
-    mimeTypeMap->add(ASCIILiteral("image/pjpeg"), ASCIILiteral("image/jpeg"));
-    mimeTypeMap->add(ASCIILiteral("image/x-png"), ASCIILiteral("image/png"));
-    mimeTypeMap->add(ASCIILiteral("image/vnd.rim.png"), ASCIILiteral("image/png"));
-    mimeTypeMap->add(ASCIILiteral("image/ico"), ASCIILiteral("image/vnd.microsoft.icon"));
-    mimeTypeMap->add(ASCIILiteral("image/icon"), ASCIILiteral("image/vnd.microsoft.icon"));
-    mimeTypeMap->add(ASCIILiteral("text/ico"), ASCIILiteral("image/vnd.microsoft.icon"));
-    mimeTypeMap->add(ASCIILiteral("application/ico"), ASCIILiteral("image/vnd.microsoft.icon"));
-    mimeTypeMap->add(ASCIILiteral("image/x-icon"), ASCIILiteral("image/vnd.microsoft.icon"));
-    mimeTypeMap->add(ASCIILiteral("audio/vnd.qcelp"), ASCIILiteral("audio/qcelp"));
-    mimeTypeMap->add(ASCIILiteral("audio/qcp"), ASCIILiteral("audio/qcelp"));
-    mimeTypeMap->add(ASCIILiteral("audio/vnd.qcp"), ASCIILiteral("audio/qcelp"));
-    mimeTypeMap->add(ASCIILiteral("audio/wav"), ASCIILiteral("audio/x-wav"));
-    mimeTypeMap->add(ASCIILiteral("audio/vnd.wave"), ASCIILiteral("audio/x-wav"));
-    mimeTypeMap->add(ASCIILiteral("audio/mid"), ASCIILiteral("audio/midi"));
-    mimeTypeMap->add(ASCIILiteral("audio/sp-midi"), ASCIILiteral("audio/midi"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-mid"), ASCIILiteral("audio/midi"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-midi"), ASCIILiteral("audio/midi"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-mpeg"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/mp3"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-mp3"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/mpeg3"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-mpeg3"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/mpg3"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/mpg"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-mpg"), ASCIILiteral("audio/mpeg"));
-    mimeTypeMap->add(ASCIILiteral("audio/m4a"), ASCIILiteral("audio/mp4"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-m4a"), ASCIILiteral("audio/mp4"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-mp4"), ASCIILiteral("audio/mp4"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-aac"), ASCIILiteral("audio/aac"));
-    mimeTypeMap->add(ASCIILiteral("audio/x-amr"), ASCIILiteral("audio/amr"));
-    mimeTypeMap->add(ASCIILiteral("audio/mpegurl"), ASCIILiteral("audio/x-mpegurl"));
-    mimeTypeMap->add(ASCIILiteral("audio/flac"), ASCIILiteral("audio/x-flac"));
-    mimeTypeMap->add(ASCIILiteral("video/3gp"), ASCIILiteral("video/3gpp"));
-    mimeTypeMap->add(ASCIILiteral("video/avi"), ASCIILiteral("video/x-msvideo"));
-    mimeTypeMap->add(ASCIILiteral("video/x-m4v"), ASCIILiteral("video/mp4"));
-    mimeTypeMap->add(ASCIILiteral("video/x-quicktime"), ASCIILiteral("video/quicktime"));
-    mimeTypeMap->add(ASCIILiteral("application/java"), ASCIILiteral("application/java-archive"));
-    mimeTypeMap->add(ASCIILiteral("application/x-java-archive"), ASCIILiteral("application/java-archive"));
-    mimeTypeMap->add(ASCIILiteral("application/x-zip-compressed"), ASCIILiteral("application/zip"));
-    mimeTypeMap->add(ASCIILiteral("text/cache-manifest"), ASCIILiteral("text/plain"));
-
-    return *mimeTypeMap;
-}
-
 String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 {
-    auto it = mimeTypeAssociationMap().find(mimeType);
-    if (it != mimeTypeAssociationMap().end())
+    static const auto mimeTypeAssociationMap = makeNeverDestroyed([] {
+        static const std::pair<const char*, const char*> mimeTypeAssociations[] = {
+            { "image/x-ms-bmp", "image/bmp" },
+            { "image/x-windows-bmp", "image/bmp" },
+            { "image/x-bmp", "image/bmp" },
+            { "image/x-bitmap", "image/bmp" },
+            { "image/x-ms-bitmap", "image/bmp" },
+            { "image/jpg", "image/jpeg" },
+            { "image/pjpeg", "image/jpeg" },
+            { "image/x-png", "image/png" },
+            { "image/vnd.rim.png", "image/png" },
+            { "image/ico", "image/vnd.microsoft.icon" },
+            { "image/icon", "image/vnd.microsoft.icon" },
+            { "text/ico", "image/vnd.microsoft.icon" },
+            { "application/ico", "image/vnd.microsoft.icon" },
+            { "image/x-icon", "image/vnd.microsoft.icon" },
+            { "audio/vnd.qcelp", "audio/qcelp" },
+            { "audio/qcp", "audio/qcelp" },
+            { "audio/vnd.qcp", "audio/qcelp" },
+            { "audio/wav", "audio/x-wav" },
+            { "audio/vnd.wave", "audio/x-wav" },
+            { "audio/mid", "audio/midi" },
+            { "audio/sp-midi", "audio/midi" },
+            { "audio/x-mid", "audio/midi" },
+            { "audio/x-midi", "audio/midi" },
+            { "audio/x-mpeg", "audio/mpeg" },
+            { "audio/mp3", "audio/mpeg" },
+            { "audio/x-mp3", "audio/mpeg" },
+            { "audio/mpeg3", "audio/mpeg" },
+            { "audio/x-mpeg3", "audio/mpeg" },
+            { "audio/mpg3", "audio/mpeg" },
+            { "audio/mpg", "audio/mpeg" },
+            { "audio/x-mpg", "audio/mpeg" },
+            { "audio/m4a", "audio/mp4" },
+            { "audio/x-m4a", "audio/mp4" },
+            { "audio/x-mp4", "audio/mp4" },
+            { "audio/x-aac", "audio/aac" },
+            { "audio/x-amr", "audio/amr" },
+            { "audio/mpegurl", "audio/x-mpegurl" },
+            { "audio/flac", "audio/x-flac" },
+            { "video/3gp", "video/3gpp" },
+            { "video/avi", "video/x-msvideo" },
+            { "video/x-m4v", "video/mp4" },
+            { "video/x-quicktime", "video/quicktime" },
+            { "application/java", "application/java-archive" },
+            { "application/x-java-archive", "application/java-archive" },
+            { "application/x-zip-compressed", "application/zip" },
+            { "text/cache-manifest", "text/plain" },
+        };
+
+        HashMap<String, String, ASCIICaseInsensitiveHash> map;
+        for (auto& pair : mimeTypeAssociations)
+            map->add(ASCIILiteral { pair.first }, ASCIILiteral { pair.second });
+        return map;
+    }());
+
+    auto it = mimeTypeAssociationMap.get().find(mimeType);
+    if (it != mimeTypeAssociationMap.get().end())
         return it->value;
     return mimeType;
 }

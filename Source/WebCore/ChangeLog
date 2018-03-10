@@ -1,3 +1,15 @@
+2018-03-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Clean up MIMETypeRegistry::mimeTypeAssociationMap for Curl
+        https://bugs.webkit.org/show_bug.cgi?id=170529
+
+        Reviewed by Alex Christensen.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getNormalizedMIMEType):
+        (WebCore::mimeTypeAssociationMap): Deleted.
+        Create map with makeNeverDestroyed and a loop instead.
+
 2018-03-09  Brian Burg  <bburg@apple.com>
 
         Web Inspector: there should only be one way for async backend commands to send failure
