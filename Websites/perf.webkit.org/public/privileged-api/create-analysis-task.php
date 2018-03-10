@@ -88,12 +88,14 @@ function ensure_config_from_runs($db, $start_run, $end_run) {
 }
 
 function time_for_run($db, $run_id) {
-    $result = $db->query_and_fetch_all('SELECT max(commit_time) as time
+    $result = $db->query_and_fetch_all('SELECT max(commit_time) as time, max(build_time) as build_time
         FROM test_runs JOIN builds ON run_build = build_id
             JOIN build_commits ON commit_build = build_id
             JOIN commits ON build_commit = commit_id
         WHERE run_id = $1', array($run_id));
-    return $result ? $result[0]['time'] : null;
+
+    $first_result = array_get($result, 0, array());
+    return $first_result['time'] ? $first_result['time'] : $first_result['build_time'];
 }
 
 main();

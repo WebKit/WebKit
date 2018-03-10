@@ -1,3 +1,15 @@
+2018-03-04  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Create analysis task should use build time as fallback when commit time is not available.
+        https://bugs.webkit.org/show_bug.cgi?id=183309
+
+        Reviewed by Ryosuke Niwa.
+
+        Added the ability to schedule analysis task for the range without commit time.
+
+        * public/privileged-api/create-analysis-task.php: Use build time as fallback.
+        * server-tests/privileged-api-create-analysis-task-tests.js: Added a unit test for this change.
+
 2018-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         BuildbotBuildEntry for buildbot 0.9 uses incorrect buildrequestid

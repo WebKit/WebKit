@@ -32,6 +32,30 @@ const reportWithRevision = [{
         },
     }}];
 
+const reportWithRevisionNoTimestamp = [{
+    "buildNumber": "124",
+    "buildTime": "2015-10-27T15:34:51",
+    "revisions": {
+        "WebKit": {
+            "revision": "191622",
+        },
+    },
+    "builderName": "someBuilder",
+    "builderPassword": "somePassword",
+    "platform": "some platform",
+    "tests": {
+        "Suite": {
+            "metrics": {
+                "Time": ["Arithmetic"],
+            },
+            "tests": {
+                "test1": {
+                    "metrics": {"Time": { "current": [11] }},
+                }
+            }
+        },
+    }}];
+
 const anotherReportWithRevision = [{
     "buildNumber": "125",
     "buildTime": "2015-10-27T17:27:41",
@@ -39,6 +63,30 @@ const anotherReportWithRevision = [{
         "WebKit": {
             "revision": "191623",
             "timestamp": '2015-10-27T16:38:10.768995Z',
+        },
+    },
+    "builderName": "someBuilder",
+    "builderPassword": "somePassword",
+    "platform": "some platform",
+    "tests": {
+        "Suite": {
+            "metrics": {
+                "Time": ["Arithmetic"],
+            },
+            "tests": {
+                "test1": {
+                    "metrics": {"Time": { "current": [12] }},
+                }
+            }
+        },
+    }}];
+
+const anotherReportWithRevisionNoTimestamp = [{
+    "buildNumber": "125",
+    "buildTime": "2015-10-27T17:27:41",
+    "revisions": {
+        "WebKit": {
+            "revision": "191623",
         },
     },
     "builderName": "someBuilder",
@@ -177,6 +225,40 @@ describe('/privileged-api/create-analysis-task', function () {
             assert.equal(task.changeType(), null);
             assert.equal(task.platform().label(), 'some platform');
             assert.equal(task.metric().test().label(), 'test1');
+        });
+    });
+
+    it('should create an analysis task and use build time as fallback when commit time is not available', () => {
+        const db = TestServer.database();
+        return addBuilderForReport(reportWithRevisionNoTimestamp[0]).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report/', reportWithRevisionNoTimestamp);
+        }).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report/', anotherReportWithRevisionNoTimestamp);
+        }).then(() => {
+            return Manifest.fetch();
+        }).then(() => {
+            const test1 = Test.findByPath(['Suite', 'test1']);
+            const platform = Platform.findByName('some platform');
+            return db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: platform.id()});
+        }).then((configRow) => {
+            return db.selectRows('test_runs', {config: configRow['id']});
+        }).then((testRuns) => {
+            assert.equal(testRuns.length, 2);
+            return PrivilegedAPI.sendRequest('create-analysis-task', {name: 'hi', startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
+        }).then((content) => {
+            return AnalysisTask.fetchById(content['taskId']);
+        }).then((task) => {
+            assert.equal(task.name(), 'hi');
+            assert(!task.hasResults());
+            assert(!task.hasPendingRequests());
+            assert.deepEqual(task.bugs(), []);
+            assert.deepEqual(task.causes(), []);
+            assert.deepEqual(task.fixes(), []);
+            assert.equal(task.changeType(), null);
+            assert.equal(task.platform().label(), 'some platform');
+            assert.equal(task.metric().test().label(), 'test1');
+            assert.equal(task.startTime(), 1445960091000);
+            assert.equal(task.endTime(), 1445966861000);
         });
     });
 
