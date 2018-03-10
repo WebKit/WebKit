@@ -797,6 +797,7 @@ localizedStrings["Reveal in Layers Tab"] = "Reveal in Layers Tab";
 localizedStrings["Reveal in Network Tab"] = "Reveal in Network Tab";
 localizedStrings["Reveal in Original Resource"] = "Reveal in Original Resource";
 localizedStrings["Reveal in Resources Tab"] = "Reveal in Resources Tab";
+localizedStrings["Reveal in Sources Tab"] = "Reveal in Sources Tab";
 localizedStrings["Right"] = "Right";
 localizedStrings["Role"] = "Role";
 localizedStrings["Rule"] = "Rule";

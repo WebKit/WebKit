@@ -1,3 +1,23 @@
+2018-03-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Sources: Open all resources in Sources tab instead of Resources/Debugger
+        https://bugs.webkit.org/show_bug.cgi?id=183317
+        <rdar://problem/38108455>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForURL):
+        Introduce preferredTabType option instead of listing ignoreResourcesTab, ignoreDebuggerTab, ignoreSearchTab, and ignoreNetworkTab.
+        The only correct outcome of selecting "Reveal in Sources Tab" context menu is to open Sources tab, not any other tab.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+
 2018-03-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Sources: add SourcesTabContentView and SourceSidebarPanel classes

@@ -101,7 +101,13 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options)
     });
 
     if (WI.frameResourceManager.resourceForURL(url)) {
-        if (!WI.isShowingResourcesTab()) {
+        if (WI.settings.experimentalEnableSourcesTab.value) {
+            if (!WI.isShowingSourcesTab()) {
+                contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
+                    showResourceWithOptions({preferredTabType: WI.SourcesTabContentView.Type});
+                });
+            }
+        } else if (!WI.isShowingResourcesTab()) {
             contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
                 showResourceWithOptions({ignoreNetworkTab: true, ignoreSearchTab: true});
             });

@@ -121,6 +121,10 @@ WI.TabBrowser = class TabBrowser extends WI.View
     {
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
 
+        let tabContentView = this._recentTabContentViews.find((tabContentView) => tabContentView.type === options.preferredTabType);
+        if (tabContentView && tabContentView.canShowRepresentedObject(representedObject))
+            return tabContentView;
+
         for (let tabContentView of this._recentTabContentViews) {
             if (options.ignoreSearchTab && tabContentView instanceof WI.SearchTabContentView)
                 continue;
