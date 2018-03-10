@@ -1,3 +1,16 @@
+2018-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Unconditionalize more methods in VideoFullscreenInterface (and related classes)
+        https://bugs.webkit.org/show_bug.cgi?id=183501
+        <rdar://problem/38312038>
+
+        Unreviewed build fix; add correct pragmas to code referencing m_playbackSessionManager.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::hasActiveVideoForControlsManager const):
+        (WebKit::WebPageProxy::requestControlledElementID const):
+        (WebKit::WebPageProxy::isPlayingVideoInEnhancedFullscreen const):
+
 2018-03-09  Brian Burg  <bburg@apple.com>
 
         Web Inspector: there should only be one way for async backend commands to send failure

@@ -6814,7 +6814,7 @@ void WebPageProxy::videoControlsManagerDidChange()
 
 bool WebPageProxy::hasActiveVideoForControlsManager() const
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     return m_playbackSessionManager && m_playbackSessionManager->controlsManagerInterface();
 #else
     return false;
@@ -6823,7 +6823,7 @@ bool WebPageProxy::hasActiveVideoForControlsManager() const
 
 void WebPageProxy::requestControlledElementID() const
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_playbackSessionManager)
         m_playbackSessionManager->requestControlledElementID();
 #endif
@@ -6838,7 +6838,7 @@ void WebPageProxy::handleControlledElementIDResponse(const String& identifier) c
 
 bool WebPageProxy::isPlayingVideoInEnhancedFullscreen() const
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     return m_videoFullscreenManager && m_videoFullscreenManager->isPlayingVideoInEnhancedFullscreen();
 #else
     return false;
