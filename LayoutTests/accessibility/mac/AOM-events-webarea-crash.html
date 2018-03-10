@@ -19,7 +19,9 @@
         webArea.takeFocus();
 
         // make sure we don't crash after focusing onto the web area.
-        setTimeout(finishJSTest(), 50);
+        setTimeout(function() {
+            finishJSTest();
+        }, 100);
     }
 
 </script>
