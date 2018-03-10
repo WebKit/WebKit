@@ -393,8 +393,6 @@ bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool&
 }
 
 struct InlineTextBox::MarkedTextStyle {
-    bool operator==(const MarkedTextStyle& other) const = delete;
-    bool operator!=(const MarkedTextStyle& other) const = delete;
     static bool areBackgroundMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
     {
         return a.backgroundColor == b.backgroundColor;
@@ -411,7 +409,7 @@ struct InlineTextBox::MarkedTextStyle {
     Color backgroundColor;
     TextPaintStyle textStyles;
     TextDecorationPainter::Styles textDecorationStyles;
-    const ShadowData* textShadow;
+    std::optional<ShadowData> textShadow;
     float alpha;
 };
 
@@ -736,7 +734,7 @@ auto InlineTextBox::computeStyleForUnmarkedMarkedText(const PaintInfo& paintInfo
     MarkedTextStyle style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer(), lineStyle.textDecorationsInEffect(), isFirstLine());
     style.textStyles = computeTextPaintStyle(renderer().frame(), lineStyle, paintInfo);
-    style.textShadow = paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow();
+    style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
     style.alpha = 1;
     return style;
 }
@@ -759,9 +757,7 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
         style.alpha = 0.25;
         break;
     case MarkedText::Selection: {
-        const ShadowData* selectionShadow = nullptr;
-        style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer(), lineStyle(), paintInfo, selectionShadow);
-        style.textShadow = selectionShadow;
+        style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer(), lineStyle(), paintInfo, style.textShadow);
 
         Color selectionBackgroundColor = renderer().selectionBackgroundColor();
         style.backgroundColor = selectionBackgroundColor;
@@ -1016,7 +1012,8 @@ void InlineTextBox::paintMarkedTextForeground(GraphicsContext& context, const Fl
     textPainter.setFont(font);
     textPainter.setStyle(markedText.style.textStyles);
     textPainter.setIsHorizontal(isHorizontal());
-    textPainter.setShadow(markedText.style.textShadow);
+    if (markedText.style.textShadow)
+        textPainter.setShadow(&markedText.style.textShadow.value());
     textPainter.setEmphasisMark(emphasisMark, emphasisMarkOffset, combinedText());
 
     GraphicsContextStateSaver stateSaver { context, false };
@@ -1066,7 +1063,8 @@ void InlineTextBox::paintMarkedTextDecoration(GraphicsContext& context, const Fl
     decorationPainter.setWidth(snappedSelectionRect.width());
     decorationPainter.setBaseline(lineStyle().fontMetrics().ascent());
     decorationPainter.setIsHorizontal(isHorizontal());
-    decorationPainter.addTextShadow(markedText.style.textShadow);
+    if (markedText.style.textShadow)
+        decorationPainter.addTextShadow(&markedText.style.textShadow.value());
 
     {
         GraphicsContextStateSaver stateSaver { context, false };

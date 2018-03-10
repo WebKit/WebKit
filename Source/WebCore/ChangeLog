@@ -1,3 +1,36 @@
+2018-03-10  Daniel Bates  <dabates@apple.com>
+
+        InlineTextBox should own shadow data
+        https://bugs.webkit.org/show_bug.cgi?id=183359
+        <rdar://problem/38171343>
+
+        Reviewed by Darin Adler.
+
+        Following r229147 we recompute the selection style, including any shadow data, whenever we
+        paint the inline text box. Therefore, InlineTextBox needs to take ownership of the shadow
+        data or it may be deallocated before it can be used.
+
+        Covered by existing tests.
+
+        * rendering/InlineTextBox.cpp: Changed data type of InlineTextBox::MarkedTextStyle::textShadow
+        from const ShadowData* to std::optional<ShadowData>. Also removed explicitly deleted equality
+        and inequality operators as they are unnecessary. Layout tests should catch if these are ever
+        implemented and used when painting because the painted results will be wrong.
+        (WebCore::InlineTextBox::computeStyleForUnmarkedMarkedText const): Clone ShadowData.
+        (WebCore::InlineTextBox::resolveStyleForMarkedText): Simplified logic.
+        (WebCore::InlineTextBox::paintMarkedTextForeground): Modified code now that MarkedTextStyle
+        holds a std::optional<ShadowData>.
+        (WebCore::InlineTextBox::paintMarkedTextDecoration): Ditto.
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextSelectionPaintStyle): Changed the out parameter type from const ShadowData*
+        to std::optional<ShadowData>& and modified code as needed.
+        * rendering/TextPaintStyle.h:
+        * rendering/style/ShadowData.cpp: Removed unncessary #include of header LayoutRect.h.
+        This header will be included via ShadowData.h.
+        (WebCore::ShadowData::clone): Convenience method that returns an std::optional to a
+        cloned ShadowData object.
+        * rendering/style/ShadowData.h:
+
 2018-03-09  Zalan Bujtas  <zalan@apple.com>
 
         Turn off offset*/scroll* optimization for input elements with shadow content
