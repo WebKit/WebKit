@@ -1,3 +1,20 @@
+2018-03-09  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: there should only be one way for async backend commands to send failure
+        https://bugs.webkit.org/show_bug.cgi?id=183524
+
+        Reviewed by Timothy Hatcher.
+
+        If this is an async command, errors should be reported with BackendDispatcher::CallbackBase::sendFailure.
+        To avoid mixups, don't include the ErrorString out-parameter in generated async command signatures.
+        This change only affects interfaces generated for C++ backend dispatchers.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_async_handler_declaration_for_command):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+
 2018-03-09  Mark Lam  <mark.lam@apple.com>
 
         Build fix after r229476.

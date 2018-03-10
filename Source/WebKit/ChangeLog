@@ -1,3 +1,54 @@
+2018-03-09  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: there should only be one way for async backend commands to send failure
+        https://bugs.webkit.org/show_bug.cgi?id=183524
+
+        Reviewed by Timothy Hatcher.
+
+        Remove useless ErrorString argument from async commands.
+
+        For Automation protocol, introduce sync and async macros for filling
+        in and sending a failure response. Now that async commands don't have
+        an ErrorString and sync commands don't have a callback, trying to send
+        an error with the wrong macro is a compile-time error.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::WebAutomationSession::getBrowsingContext):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext):
+        (WebKit::WebAutomationSession::waitForNavigationToComplete):
+        (WebKit::WebAutomationSession::navigateBrowsingContext):
+        (WebKit::WebAutomationSession::goBackInBrowsingContext):
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext):
+        (WebKit::WebAutomationSession::reloadBrowsingContext):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::selectOptionElement):
+        (WebKit::WebAutomationSession::isShowingJavaScriptDialog):
+        (WebKit::WebAutomationSession::dismissCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::acceptCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::messageOfCurrentJavaScriptDialog):
+        (WebKit::WebAutomationSession::setUserInputForCurrentJavaScriptPrompt):
+        (WebKit::WebAutomationSession::setFilesToSelectForFileUpload):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        (WebKit::WebAutomationSession::setSessionPermissions):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::takeScreenshot):
+        (WebKit::WebAutomationSession::didTakeScreenshot):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSessionMacros.h:
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::inspectBrowsingContext):
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Don't pass NULL to the result parameter of SecTrustEvaluate()

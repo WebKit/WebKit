@@ -271,7 +271,7 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const Str
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)
+void InspectorDatabaseAgent::executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)
 {
     if (!m_enabled) {
         requestCallback->sendFailure("Database agent is not enabled");

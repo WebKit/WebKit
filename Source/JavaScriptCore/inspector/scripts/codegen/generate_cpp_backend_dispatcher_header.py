@@ -160,7 +160,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
     def _generate_async_handler_declaration_for_command(self, command):
         callbackName = "%sCallback" % ucfirst(command.command_name)
 
-        in_parameters = ['ErrorString&']
+        in_parameters = []
         for _parameter in command.call_parameters:
             parameter_name = 'in_' + _parameter.parameter_name
             if _parameter.is_optional:

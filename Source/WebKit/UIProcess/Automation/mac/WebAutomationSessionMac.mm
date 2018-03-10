@@ -44,11 +44,11 @@ namespace WebKit {
 
 #pragma mark Commands for Platform: 'macOS'
 
-void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
+void WebAutomationSession::inspectBrowsingContext(const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
-        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
     if (auto callback = m_pendingInspectorCallbacksPerPage.take(page->pageID()))
         callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));

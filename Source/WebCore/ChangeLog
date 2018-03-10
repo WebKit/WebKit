@@ -1,3 +1,33 @@
+2018-03-09  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: there should only be one way for async backend commands to send failure
+        https://bugs.webkit.org/show_bug.cgi?id=183524
+
+        Reviewed by Timothy Hatcher.
+
+        Remove some useless ErrorString arguments. Fix some bugs where we
+        may never call the callback in an early exit situation.
+
+        Covered by existing Inspector and protocol generator tests.
+
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        * inspector/agents/InspectorDatabaseAgent.h:
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        (WebCore::getDocumentAndIDBFactoryFromFrameOrSendFailure):
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        (WebCore::InspectorIndexedDBAgent::clearObjectStore):
+        (WebCore::assertDocument): Deleted.
+        (WebCore::assertIDBFactory): Deleted.
+        Modernize this code a little bit to share the document/idbFactory extraction code.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::loadResource):
+        * inspector/agents/InspectorNetworkAgent.h:
+
 2018-03-09  Youenn Fablet  <youenn@apple.com>
 
         Crash in ServiceWorkerContainer::ready

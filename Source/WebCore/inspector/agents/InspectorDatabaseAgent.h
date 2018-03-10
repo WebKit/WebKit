@@ -58,7 +58,7 @@ public:
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
     void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names) override;
-    void executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
+    void executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
 
     // Called from the injected script.
     String databaseId(Database&);

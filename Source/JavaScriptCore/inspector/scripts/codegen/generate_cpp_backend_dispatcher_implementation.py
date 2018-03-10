@@ -186,7 +186,9 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         out_parameter_declarations = []
         out_parameter_assignments = []
         alternate_dispatcher_method_parameters = ['requestId']
-        method_parameters = ['error']
+        method_parameters = []
+        if not command.is_async:
+            method_parameters.append('error')
 
         for parameter in command.call_parameters:
             parameter_name = 'in_' + parameter.parameter_name
@@ -299,31 +301,31 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             lines.append('#endif')
             lines.append('')
 
-        lines.append('    ErrorString error;')
-        lines.append('    Ref<JSON::Object> result = JSON::Object::create();')
         if command.is_async:
             lines.append('    Ref<%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new %(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), requestId));' % command_args)
+        else:
+            lines.append('    ErrorString error;')
+            lines.append('    Ref<JSON::Object> result = JSON::Object::create();')
+
         if len(command.return_parameters) > 0:
             lines.extend(out_parameter_declarations)
         lines.append('    m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)
         lines.append('')
-        if command.is_async:
-            lines.append('    if (error.length()) {')
-            lines.extend(out_parameter_assignments)
-            lines.append('    }')
-        elif len(command.return_parameters) > 1:
-            lines.append('    if (!error.length()) {')
-            lines.extend(out_parameter_assignments)
-            lines.append('    }')
-        elif len(command.return_parameters) == 1:
-            lines.append('    if (!error.length())')
-            lines.extend(out_parameter_assignments)
-            lines.append('')
 
         if not command.is_async:
+            if len(command.return_parameters) > 1:
+                lines.append('    if (!error.length()) {')
+                lines.extend(out_parameter_assignments)
+                lines.append('    }')
+            elif len(command.return_parameters) == 1:
+                lines.append('    if (!error.length())')
+                lines.extend(out_parameter_assignments)
+                lines.append('')
+
             lines.append('    if (!error.length())')
             lines.append('        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);')
             lines.append('    else')
             lines.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));')
+
         lines.append('}')
         return "\n".join(lines)

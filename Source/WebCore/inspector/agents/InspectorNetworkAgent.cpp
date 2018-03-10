@@ -787,11 +787,14 @@ void InspectorNetworkAgent::setResourceCachingDisabled(ErrorString&, bool disabl
     setResourceCachingDisabled(disabled);
 }
 
-void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
+void InspectorNetworkAgent::loadResource(const String& frameId, const String& urlString, Ref<LoadResourceCallback>&& callback)
 {
-    auto* context = scriptExecutionContext(errorString, frameId);
-    if (!context)
+    ErrorString error;
+    auto* context = scriptExecutionContext(error, frameId);
+    if (!context) {
+        callback->sendFailure(error);
         return;
+    }
 
     URL url = context->completeURL(urlString);
     ResourceRequest request(url);
@@ -808,8 +811,10 @@ void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String&
     // InspectorThreadableLoaderClient deletes itself when the load completes or fails.
     InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(callback.copyRef());
     auto loader = ThreadableLoader::create(*context, *inspectorThreadableLoaderClient, WTFMove(request), options);
-    if (!loader)
+    if (!loader) {
+        callback->sendFailure(ASCIILiteral("Could not load requested resource."));
         return;
+    }
 
     // If the load already completed, inspectorThreadableLoaderClient will have been deleted and we will have already called the callback.
     if (!callback->isActive())
