@@ -17,3 +17,11 @@ function didImageLoad()
     }
 }
 
+function lastTest()
+{
+    didImageLoad();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+

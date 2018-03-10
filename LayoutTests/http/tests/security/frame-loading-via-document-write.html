@@ -4,14 +4,6 @@
 
 <script language="JavaScript">
 
-const expectedLoadCount = 7;
-let loadCount = 0;
-function finishTestIfLastLoad()
-{
-    if (++loadCount == expectedLoadCount && window.testRunner)
-        testRunner.notifyDone();
-}
-
 function buildFrameset()
 {
     if (window.testRunner) {
@@ -21,9 +13,9 @@ function buildFrameset()
     }
 
     var outHTML="<frameset rows=\"33%, 33%, 33%\">"+
-                "<frame src=\"\" onload=\"finishTestIfLastLoad()\" name=\"topRow\">"+
-                "<frame src=\"\" onload=\"finishTestIfLastLoad()\" name=\"middleRow\">"+
-                "<frame src=\"\" onload=\"finishTestIfLastLoad()\" name=\"bottomRow\">"+
+                "<frame src=\"\" name=\"topRow\">"+
+                "<frame src=\"\" name=\"middleRow\">"+
+                "<frame src=\"\" name=\"bottomRow\">"+
                 "</frameset>";
 
     document.open("text/html","replace");
@@ -56,7 +48,7 @@ function buildFrameset()
     frames['middleRow'].document.close();
 
     outHTML = "<html><head><scr" + "ipt language=\"JavaScript\" src=\"resources/frame-loading-via-document-write.js\">"+
-              "</scr" + "ipt></head><body onLoad=\"didImageLoad()\"><table><tr><td>"+
+              "</scr" + "ipt></head><body onLoad=\"lastTest()\"><table><tr><td>"+
               "<div id=\"result\"></div>"+
               "<img src=\"/resources/abe.png\" id=\"myImg\">"+
               "</td></tr></table></body></html>";
