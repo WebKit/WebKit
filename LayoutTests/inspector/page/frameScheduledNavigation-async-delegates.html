@@ -3,6 +3,9 @@
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
 
+if (window.testRunner && testRunner.setShouldDecideNavigationPolicyAfterDelay)
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+
 function load()
 {
     document.querySelector("iframe").src = "resources/blank.html";

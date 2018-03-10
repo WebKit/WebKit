@@ -1,3 +1,25 @@
+2018-03-09  Chris Dumez  <cdumez@apple.com>
+
+        inspector/page/frameScheduledNavigation.html has different output with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183469
+
+        Reviewed by Ryosuke Niwa.
+
+        The test tracks 3 internal events:
+        1. frameScheduledNavigation
+        2. frameStartedLoading
+        3. frameClearedScheduledNavigation
+
+        Without async policy delegates, the events happen in this order. However, with asynchronous
+        policy delegates, frameStartedLoading happens *after* frameClearedScheduledNavigation. What
+        happens *before* frameClearedScheduledNavigation is the navigation policy check. When we
+        get the policy response to continue (asynchronously), we then actually start the load and
+        frameStartedLoading gets logged.
+
+        * inspector/page/frameScheduledNavigation-async-delegates-expected.txt: Added.
+        * inspector/page/frameScheduledNavigation-async-delegates.html: Copied from LayoutTests/inspector/page/frameScheduledNavigation.html.
+        * inspector/page/frameScheduledNavigation.html:
+
 2018-03-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit seems to be running spell checker even on non-editable content text
