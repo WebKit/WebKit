@@ -1,3 +1,129 @@
+2018-03-10  Jer Noble  <jer.noble@apple.com>
+
+        Improvements to fullscreen; new UI and security features
+        https://bugs.webkit.org/show_bug.cgi?id=183503
+
+        Reviewed by Dean Jackson.
+
+        Now that the iOS Fullscreen code has more than one major class, move it into an ios/
+        directory.
+
+        Clean up the WKFullScreenWindowControllerIOS class to more clearly separate external
+        facing API from purely internal functions.
+
+        Move the WKFullScreenViewController out into its own file. Add support for fullscreen
+        top inset and fullscreen autohide duration CSS constants.
+
+        Add a heuristic to distinguish between media control related touches and ones that look
+        more keyboard interactions.
+
+        Add a new UIStackView based control to hold the fullscreen controls.
+
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm: Removed.
+        * UIProcess/ios/fullscreen/FullscreenTouchSecheuristic.cpp: Added.
+        (WebKit::FullscreenTouchSecheuristic::scoreOfNextTouch):
+        (WebKit::FullscreenTouchSecheuristic::reset):
+        (WebKit::FullscreenTouchSecheuristic::distanceScore):
+        (WebKit::FullscreenTouchSecheuristic::attenuationFactor):
+        * UIProcess/ios/fullscreen/FullscreenTouchSecheuristic.h: 
+        (WebKit::FullscreenTouchSecheuristic::setRampUpSpeed):
+        (WebKit::FullscreenTouchSecheuristic::setRampDownSpeed):
+        (WebKit::FullscreenTouchSecheuristic::setXWeight):
+        (WebKit::FullscreenTouchSecheuristic::setYWeight):
+        (WebKit::FullscreenTouchSecheuristic::setSize):
+        (WebKit::FullscreenTouchSecheuristic::setGamma):
+        (WebKit::FullscreenTouchSecheuristic::setGammaCutoff):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm: Added.
+        (WKFullScreenViewControllerPlaybackSessionModelClient::setParent):
+        (WKFullScreenViewControllerPlaybackSessionModelClient::setInterface):
+        (-[_WKExtrinsicButton setExtrinsicContentSize:]):
+        (-[_WKExtrinsicButton intrinsicContentSize]):
+        (-[WKFullScreenViewController initWithWebView:]):
+        (-[WKFullScreenViewController dealloc]):
+        (-[WKFullScreenViewController showUI]):
+        (-[WKFullScreenViewController hideUI]):
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+        (-[WKFullScreenViewController setPrefersStatusBarHidden:]):
+        (-[WKFullScreenViewController setPlaying:]):
+        (-[WKFullScreenViewController setPictureInPictureActive:]):
+        (-[WKFullScreenViewController loadView]):
+        (-[WKFullScreenViewController viewWillAppear:]):
+        (-[WKFullScreenViewController viewDidLayoutSubviews]):
+        (-[WKFullScreenViewController viewWillTransitionToSize:withTransitionCoordinator:]):
+        (-[WKFullScreenViewController preferredStatusBarStyle]):
+        (-[WKFullScreenViewController prefersStatusBarHidden]):
+        (-[WKFullScreenViewController gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKFullScreenViewController gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKFullScreenViewController _manager]):
+        (-[WKFullScreenViewController _effectiveFullscreenInsetTop]):
+        (-[WKFullScreenViewController _cancelAction:]):
+        (-[WKFullScreenViewController _togglePiPAction:]):
+        (-[WKFullScreenViewController _touchDetected:]):
+        (-[WKFullScreenViewController _statusBarFrameDidChange:]):
+        (-[WKFullScreenViewController _updateWebViewFullscreenInsets]):
+        (-[WKFullScreenViewController _showPhishingAlert]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.h: Copied from Source/WebKit/UIProcess/ios/WKFullScreenWindowControllerIOS.h.
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm: Added.
+        (WebKit::replaceViewWithView):
+        (WebKit::WKWebViewState::applyTo):
+        (WebKit::WKWebViewState::store):
+        (-[WKFullscreenAnimationController transitionDuration:]):
+        (-[WKFullscreenAnimationController configureInitialAndFinalStatesForTransition:]):
+        (-[WKFullscreenAnimationController animateTransition:]):
+        (-[WKFullscreenAnimationController animationEnded:]):
+        (-[WKFullscreenAnimationController startInteractiveTransition:]):
+        (-[WKFullscreenAnimationController updateWithPercent:]):
+        (-[WKFullscreenAnimationController updateWithPercent:translation:anchor:]):
+        (-[WKFullscreenAnimationController end:]):
+        (-[WKFullScreenInteractiveTransition initWithAnimator:anchor:]):
+        (-[WKFullScreenInteractiveTransition wantsInteractiveStart]):
+        (-[WKFullScreenInteractiveTransition startInteractiveTransition:]):
+        (-[WKFullScreenInteractiveTransition updateInteractiveTransition:withTranslation:]):
+        (-[WKFullScreenInteractiveTransition cancelInteractiveTransition]):
+        (-[WKFullScreenInteractiveTransition finishInteractiveTransition]):
+        (-[WKFullScreenWindowController initWithWebView:]):
+        (-[WKFullScreenWindowController dealloc]):
+        (-[WKFullScreenWindowController isFullScreen]):
+        (-[WKFullScreenWindowController webViewPlaceholder]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController requestExitFullScreen]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController close]):
+        (-[WKFullScreenWindowController webViewDidRemoveFromSuperviewWhileInFullscreen]):
+        (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+        (-[WKFullScreenWindowController gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKFullScreenWindowController animationControllerForPresentedController:presentingController:sourceController:]):
+        (-[WKFullScreenWindowController animationControllerForDismissedController:]):
+        (-[WKFullScreenWindowController interactionControllerForDismissal:]):
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+        (-[WKFullScreenWindowController _invalidateEVOrganizationName]):
+        (-[WKFullScreenWindowController _isSecure]):
+        (-[WKFullScreenWindowController _serverTrust]):
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+        (-[WKFullScreenWindowController _updateLocationInfo]):
+        (-[WKFullScreenWindowController _manager]):
+        (-[WKFullScreenWindowController _startToDismissFullscreenChanged:]):
+        (-[WKFullScreenWindowController _interactiveDismissChanged:]):
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.h: Renamed from Source/WebKit/UIProcess/ios/WKFullScreenWindowControllerIOS.h.
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm: Added.
+        (+[WKFullscreenStackView baseEffects]):
+        (+[WKFullscreenStackView configureView:forTintEffectWithColor:filterType:]):
+        (+[WKFullscreenStackView configureView:withBackgroundFillOfColor:opacity:filter:]):
+        (+[WKFullscreenStackView secondaryMaterialOverlayView]):
+        (+[WKFullscreenStackView applyPrimaryGlyphTintToView:]):
+        (+[WKFullscreenStackView applySecondaryGlyphTintToView:]):
+        (-[WKFullscreenStackView initWithArrangedSubviews:axis:]):
+        (-[WKFullscreenStackView setTargetViewForSecondaryMaterialOverlay:]):
+        (-[WKFullscreenStackView contentView]):
+        (-[WKFullscreenStackView _setArrangedSubviews:axis:]):
+        (-[WKFullscreenStackView setBounds:]):
+        (-[WKFullscreenStackView updateConstraints]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-03-10  Megan Gardner  <megan_gardner@apple.com>
 
         Media query for default appearance

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
 
-#import <UIKit/UIViewControllerTransitioning.h>
+#include <wtf/Seconds.h>
 
-namespace WebKit { 
-class WebPageProxy;
+namespace WebKit {
+
+class FullscreenTouchSecheuristic {
+public:
+    double scoreOfNextTouch(CGPoint location);
+    void reset();
+
+    void setRampUpSpeed(Seconds speed) { m_rampUpSpeed = speed; }
+    void setRampDownSpeed(Seconds speed) { m_rampDownSpeed = speed; }
+    void setXWeight(double weight) { m_xWeight = weight; }
+    void setYWeight(double weight) { m_yWeight = weight; }
+    void setSize(CGSize size) { m_size = size; }
+    void setGamma(double gamma) { m_gamma = gamma; }
+    void setGammaCutoff(double cutoff) { m_cutoff = cutoff; }
+
+private:
+    double distanceScore(const CGPoint& nextLocation, const CGPoint& lastLocation, const Seconds& deltaTime);
+    double attenuationFactor(Seconds delta);
+
+    double m_weight { 0.1 };
+    Seconds m_rampUpSpeed { 1 };
+    Seconds m_rampDownSpeed { 1 };
+    double m_xWeight { 1 };
+    double m_yWeight { 1 };
+    double m_gamma { 1 };
+    double m_cutoff { 1 };
+    CGSize m_size { };
+    Seconds m_lastTouchTime { 0 };
+    CGPoint m_lastTouchLocation { };
+    double m_lastScore { 0 };
+};
+
 }
 
-namespace WebCore {
-class IntRect;
-}
-
-@class WebCoreFullScreenPlaceholderView;
-@class WKWebView;
-
-@interface WKFullScreenWindowController : NSObject <UIViewControllerTransitioningDelegate>
-
-- (id)initWithWebView:(WKWebView *)webView;
-
-- (WebCoreFullScreenPlaceholderView*)webViewPlaceholder;
-
-- (BOOL)isFullScreen;
-
-- (void)enterFullScreen;
-- (void)exitFullScreen;
-- (void)requestExitFullScreen;
-- (void)close;
-- (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
-- (void)beganExitFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
-- (void)webViewDidRemoveFromSuperviewWhileInFullscreen;
-- (void)videoControlsManagerDidChange;
-
-@end
-
-#endif
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
