@@ -492,7 +492,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     setPageLength(parameters.pageLength);
     setGapBetweenPages(parameters.gapBetweenPages);
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
-    
+#if PLATFORM(MAC)
+    setUseSystemAppearance(parameters.useSystemAppearance);
+    setDefaultAppearance(parameters.defaultAppearance);
+#endif
     // If the page is created off-screen, its visibilityState should be prerender.
     m_page->setActivityState(m_activityState);
     if (!isVisible())
@@ -4122,6 +4125,11 @@ RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 {
     corePage()->setUseSystemAppearance(useSystemAppearance);
+}
+    
+void WebPage::setDefaultAppearance(bool defaultAppearance)
+{
+    corePage()->setDefaultAppearance(defaultAppearance);
 }
 #endif
 

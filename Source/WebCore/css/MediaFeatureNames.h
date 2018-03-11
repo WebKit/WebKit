@@ -29,6 +29,13 @@
 #define CSS_MEDIAQUERY_DISPLAY_MODE(macro)
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/MediaFeatureNamesAdditions.h>
+#else
+#define DEFAULT_APPEARANCE_MEDIA_QUERY "prefers-default-appearance"
+#endif
+
+
 #define CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(macro) \
     macro(animation, "-webkit-animation") \
     macro(anyHover, "any-hover") \
@@ -70,6 +77,7 @@
     macro(monochrome, "monochrome") \
     macro(orientation, "orientation") \
     macro(pointer, "pointer") \
+    macro(defaultAppearance, DEFAULT_APPEARANCE_MEDIA_QUERY) \
     macro(prefersReducedMotion, "prefers-reduced-motion") \
     macro(resolution, "resolution") \
     macro(transform2d, "-webkit-transform-2d") \

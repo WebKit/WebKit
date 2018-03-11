@@ -1333,6 +1333,10 @@ rec2020
 sRGB
 display-p3
 
+// prefers-default-appearance
+prefers
+// no-preference
+
 // prefers-reduced-motion
 reduce
 no-preference

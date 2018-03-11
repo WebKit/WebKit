@@ -1,3 +1,31 @@
+2018-03-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Media query for default appearance
+        https://bugs.webkit.org/show_bug.cgi?id=183539
+        <rdar://problem/38326388>
+
+        Reviewed by Tim Horton.
+
+        Write a media query to evaluate appearance.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setUseSystemAppearance:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setDefaultAppearance):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::defaultAppearance const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        (WebKit::WebPage::setDefaultAppearance):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-03-09  Jer Noble  <jer.noble@apple.com>
 
         Unconditionalize more methods in VideoFullscreenInterface (and related classes)

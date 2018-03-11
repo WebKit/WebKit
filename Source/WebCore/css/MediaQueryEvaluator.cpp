@@ -710,6 +710,19 @@ static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData&
 {
     return pointerEvaluate(value, cssToLengthConversionData, frame, prefix);
 }
+    
+static bool defaultAppearanceEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+    bool defaultAppearance = false;
+    
+    if (!frame.page()->defaultAppearance())
+        defaultAppearance = true;
+    
+    if (!value)
+        return defaultAppearance;
+    
+    return downcast<CSSPrimitiveValue>(*value).valueID() == (defaultAppearance ? CSSValuePrefers : CSSValueNoPreference);
+}
 
 static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {

@@ -1574,6 +1574,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         ResourceHandle::forceContentSniffing();
 
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+    _private->page->setDefaultAppearance([self _defaultAppearance]);
 #endif
 
     _private->page->settings().setContentDispositionAttachmentSandboxEnabled(true);
@@ -5191,10 +5192,18 @@ static Vector<String> toStringVector(NSArray* patterns)
     return insets;
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewAndWKWebViewAdditions.mm>
+#else
+- (bool)_defaultAppearance { return true; }
+#endif
+
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
-    if (auto page = _private->page)
+    if (auto page = _private->page) {
         page->setUseSystemAppearance(useSystemAppearance);
+        page->setDefaultAppearance([self _defaultAppearance]);
+    }
 }
 
 - (BOOL)_useSystemAppearance

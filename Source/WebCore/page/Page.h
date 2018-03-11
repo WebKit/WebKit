@@ -327,6 +327,9 @@ public:
     
     bool useSystemAppearance() const { return m_useSystemAppearance; }
     void setUseSystemAppearance(bool a) { m_useSystemAppearance = a; }
+    
+    bool defaultAppearance() const { return m_defaultAppearance; }
+    void setDefaultAppearance(bool a) { m_defaultAppearance = a; }
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
@@ -707,6 +710,7 @@ private:
 #endif
     
     bool m_useSystemAppearance { false };
+    bool m_defaultAppearance { true };
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingWidth { 0 };

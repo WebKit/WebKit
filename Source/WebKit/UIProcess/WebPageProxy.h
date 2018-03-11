@@ -805,6 +805,8 @@ public:
 #if PLATFORM(MAC)
     void setUseSystemAppearance(bool);
     bool useSystemAppearance() const { return m_useSystemAppearance; }
+    void setDefaultAppearance(bool);
+    bool defaultAppearance() const { return m_defaultAppearance; }
 #endif
 
 #if PLATFORM(COCOA)
@@ -1795,6 +1797,7 @@ private:
         
 #if PLATFORM(MAC)
     bool m_useSystemAppearance { false };
+    bool m_defaultAppearance { true };
 #endif
 
 #if ENABLE(APPLE_PAY)
