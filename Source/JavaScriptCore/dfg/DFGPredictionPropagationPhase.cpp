@@ -699,6 +699,7 @@ private:
         case RegExpExecNonGlobalOrSticky:
         case RegExpTest:
         case RegExpMatchFast:
+        case RegExpMatchFastGlobal:
         case StringReplace:
         case StringReplaceRegExp:
         case GetById:

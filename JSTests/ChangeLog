@@ -1,3 +1,22 @@
+2018-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Drop NewRegexp for String.prototype.match with RegExp + global flag
+        https://bugs.webkit.org/show_bug.cgi?id=181848
+
+        Reviewed by Sam Weinig.
+
+        * microbenchmarks/regexp-u-global-es5.js: Added.
+        (fn):
+        * microbenchmarks/regexp-u-global-es6.js: Added.
+        (fn):
+        * stress/materialized-regexp-has-correct-last-index-set-by-match-at-osr-exit.js: Added.
+        (shouldBe):
+        (test):
+        (i.switch):
+        * stress/materialized-regexp-has-correct-last-index-set-by-match.js: Added.
+        (shouldBe):
+        (test):
+
 2018-03-07  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Disable test stress/var-injection-cache-invalidation.js on systems with limited memory

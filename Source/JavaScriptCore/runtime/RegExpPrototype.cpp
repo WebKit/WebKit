@@ -508,7 +508,7 @@ static inline unsigned advanceStringIndex(String str, unsigned strSize, unsigned
 {
     if (!isUnicode)
         return ++index;
-    return RegExpObject::advanceStringUnicode(str, strSize, index);
+    return advanceStringUnicode(str, strSize, index);
 }
 
 enum SplitControl {

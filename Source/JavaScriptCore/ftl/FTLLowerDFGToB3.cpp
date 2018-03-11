@@ -1211,6 +1211,9 @@ private:
         case RegExpMatchFast:
             compileRegExpMatchFast();
             break;
+        case RegExpMatchFastGlobal:
+            compileRegExpMatchFastGlobal();
+            break;
         case NewRegexp:
             compileNewRegexp();
             break;
@@ -10681,6 +10684,15 @@ private:
         LValue argument = lowString(m_node->child2());
         LValue result = vmCall(
             Int64, m_out.operation(operationRegExpExecNonGlobalOrSticky), m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
+        setJSValue(result);
+    }
+
+    void compileRegExpMatchFastGlobal()
+    {
+        LValue globalObject = lowCell(m_node->child1());
+        LValue argument = lowString(m_node->child2());
+        LValue result = vmCall(
+            Int64, m_out.operation(operationRegExpMatchFastGlobalString), m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
         setJSValue(result);
     }
 

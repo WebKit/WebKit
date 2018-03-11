@@ -10687,6 +10687,26 @@ void SpeculativeJIT::compileRegExpExecNonGlobalOrSticky(Node* node)
     jsValueResult(resultRegs, node);
 }
 
+void SpeculativeJIT::compileRegExpMatchFastGlobal(Node* node)
+{
+    SpeculateCellOperand globalObject(this, node->child1());
+    SpeculateCellOperand argument(this, node->child2());
+    GPRReg globalObjectGPR = globalObject.gpr();
+    GPRReg argumentGPR = argument.gpr();
+
+    speculateString(node->child2(), argumentGPR);
+
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(
+        operationRegExpMatchFastGlobalString, resultRegs,
+        globalObjectGPR, TrustedImmPtr(node->cellOperand()), argumentGPR);
+    m_jit.exceptionCheck();
+
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileRegExpMatchFast(Node* node)
 {
     SpeculateCellOperand globalObject(this, node->child1());

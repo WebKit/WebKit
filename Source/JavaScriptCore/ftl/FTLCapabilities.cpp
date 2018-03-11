@@ -287,6 +287,7 @@ inline CapabilityLevel canCompile(Node* node)
     case RegExpExecNonGlobalOrSticky:
     case RegExpTest:
     case RegExpMatchFast:
+    case RegExpMatchFastGlobal:
     case NewRegexp:
     case StringReplace:
     case StringReplaceRegExp: 

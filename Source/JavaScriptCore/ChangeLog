@@ -1,5 +1,74 @@
 2018-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] Drop NewRegexp for String.prototype.match with RegExp + global flag
+        https://bugs.webkit.org/show_bug.cgi?id=181848
+
+        Reviewed by Sam Weinig.
+
+        In r181535, we support `string.match(/nonglobal/)` code. However, `string.match(/global/g)` is not
+        optimized since it sets `lastIndex` value before performing RegExp operation.
+
+        This patch optimizes the above "with a global flag" case by emitting `SetRegExpObjectLastIndex` properly.
+        RegExpMatchFast is converted to SetRegExpObjectLastIndex and RegExpMatchFastGlobal. The latter node
+        just holds RegExp (not RegExpObject) cell so that it can offer a chance to make NewRegexp PhantomNewRegexp
+        in object allocation sinking phase.
+
+        Added microbenchmarks shows that this patch makes NewRegexp PhantomNewRegexp even if the given RegExp
+        has a global flag. And it improves the performance.
+
+                                      baseline                  patched
+
+        regexp-u-global-es5       44.1298+-4.6128     ^     33.7920+-2.0110        ^ definitely 1.3059x faster
+        regexp-u-global-es6      182.3272+-2.2861     ^    154.3414+-7.6769        ^ definitely 1.1813x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToRegExpMatchFastGlobal):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCellOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpMatchFastGlobal):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpMatchFastGlobal):
+        * runtime/RegExpObject.cpp:
+        (JSC::collectMatches): Deleted.
+        * runtime/RegExpObject.h:
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::execInline):
+        (JSC::RegExpObject::matchInline):
+        (JSC::advanceStringUnicode):
+        (JSC::collectMatches):
+        (JSC::RegExpObject::advanceStringUnicode): Deleted.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::advanceStringIndex):
+
+2018-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         B3::reduceStrength should canonicalize integer comparisons
         https://bugs.webkit.org/show_bug.cgi?id=150958
 

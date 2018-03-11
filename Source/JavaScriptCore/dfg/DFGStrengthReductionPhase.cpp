@@ -495,12 +495,30 @@ private:
                 regExp = m_node->castOperand<RegExp*>();
 
             if (m_node->op() == RegExpMatchFast) {
-                if (!regExp->global()) {
-                    m_node->setOp(RegExpExec);
+                if (regExp->global()) {
+                    if (regExp->sticky())
+                        break;
+                    if (m_node->child3().useKind() != StringUse)
+                        break;
+                    NodeOrigin origin = m_node->origin;
+                    m_insertionSet.insertNode(
+                        m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
+                    m_insertionSet.insertNode(
+                        m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
+                        OpInfo(false),
+                        Edge(regExpObjectNode, RegExpObjectUse),
+                        m_insertionSet.insertConstantForUse(
+                            m_nodeIndex, origin, jsNumber(0), UntypedUse));
+                    origin = origin.withInvalidExit();
+                    m_node->convertToRegExpMatchFastGlobal(m_graph.freeze(regExp));
+                    m_node->origin = origin;
                     m_changed = true;
-                    // Continue performing strength reduction onto RegExpExec node.
-                } else
                     break;
+                }
+
+                m_node->setOp(RegExpExec);
+                m_changed = true;
+                // Continue performing strength reduction onto RegExpExec node.
             }
 
             ASSERT(m_node->op() != RegExpMatchFast);

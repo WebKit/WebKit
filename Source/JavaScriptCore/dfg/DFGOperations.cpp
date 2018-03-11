@@ -65,7 +65,7 @@
 #include "ParseInt.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
-#include "RegExpObject.h"
+#include "RegExpObjectInlines.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
 #include "StringConstructor.h"
@@ -1097,6 +1097,40 @@ EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(ExecState* exec, JSG
     if (!regExpObject->regExp()->global())
         return JSValue::encode(regExpObject->execInline(exec, globalObject, argument));
     return JSValue::encode(regExpObject->matchGlobal(exec, globalObject, argument));
+}
+
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastGlobalString(ExecState* exec, JSGlobalObject* globalObject, RegExp* regExp, JSString* string)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(regExp->global());
+
+    String s = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
+
+    if (regExp->unicode()) {
+        unsigned stringLength = s.length();
+        scope.release();
+        return JSValue::encode(collectMatches(
+            vm, exec, string, s, regExpConstructor, regExp,
+            [&] (size_t end) -> size_t {
+                return advanceStringUnicode(s, stringLength, end);
+            }));
+    }
+
+    scope.release();
+    return JSValue::encode(collectMatches(
+        vm, exec, string, s, regExpConstructor, regExp,
+        [&] (size_t end) -> size_t {
+            return end + 1;
+        }));
 }
 
 EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState* exec, EncodedJSValue value)

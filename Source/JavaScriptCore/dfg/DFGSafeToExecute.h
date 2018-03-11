@@ -265,6 +265,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case RegExpExecNonGlobalOrSticky:
     case RegExpTest:
     case RegExpMatchFast:
+    case RegExpMatchFastGlobal:
     case CompareLess:
     case CompareLessEq:
     case CompareGreater:

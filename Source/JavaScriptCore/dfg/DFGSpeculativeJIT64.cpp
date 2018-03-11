@@ -3428,6 +3428,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case RegExpMatchFastGlobal: {
+        compileRegExpMatchFastGlobal(node);
+        break;
+    }
+
     case RegExpTest: {
         compileRegExpTest(node);
         break;

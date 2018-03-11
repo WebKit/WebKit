@@ -2004,6 +2004,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         ASSERT(node->child3().useKind() == StringUse);
         forNode(node).setType(m_graph, SpecOther | SpecArray);
         break;
+
+    case RegExpMatchFastGlobal:
+        ASSERT(node->child2().useKind() == StringUse);
+        forNode(node).setType(m_graph, SpecOther | SpecArray);
+        break;
             
     case StringReplace:
     case StringReplaceRegExp:

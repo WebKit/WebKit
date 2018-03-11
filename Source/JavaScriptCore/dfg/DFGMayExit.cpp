@@ -121,6 +121,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewRegexp:
     case ToNumber:
     case RegExpExecNonGlobalOrSticky:
+    case RegExpMatchFastGlobal:
         result = ExitsForExceptions;
         break;
 

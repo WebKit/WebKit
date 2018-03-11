@@ -155,6 +155,7 @@ EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState*, JSGlobalObjec
 EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(ExecState*, JSGlobalObject*, RegExp*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastGlobalString(ExecState*, JSGlobalObject*, RegExp*, JSString*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
 // These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
 size_t JIT_OPERATION operationRegExpTestString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;

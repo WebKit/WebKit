@@ -1400,6 +1400,7 @@ public:
     void compileRegExpExec(Node*);
     void compileRegExpExecNonGlobalOrSticky(Node*);
     void compileRegExpMatchFast(Node*);
+    void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpTest(Node*);
     void compileStringReplace(Node*);
     void compileIsObjectOrNull(Node*);

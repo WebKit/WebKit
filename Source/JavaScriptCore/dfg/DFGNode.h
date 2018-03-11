@@ -738,6 +738,7 @@ public:
     void convertToCallDOM(Graph&);
 
     void convertToRegExpExecNonGlobalOrSticky(FrozenValue* regExp);
+    void convertToRegExpMatchFastGlobal(FrozenValue* regExp);
 
     void convertToSetRegExpObjectLastIndex()
     {
@@ -1595,6 +1596,7 @@ public:
         case RegExpExecNonGlobalOrSticky:
         case RegExpTest:
         case RegExpMatchFast:
+        case RegExpMatchFastGlobal:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case StringReplace:
@@ -1676,6 +1678,7 @@ public:
         case DirectConstruct:
         case DirectTailCallInlinedCaller:
         case RegExpExecNonGlobalOrSticky:
+        case RegExpMatchFastGlobal:
             return true;
         default:
             return false;

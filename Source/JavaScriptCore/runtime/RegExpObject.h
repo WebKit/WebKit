@@ -116,8 +116,6 @@ public:
         return sizeof(RegExpObject);
     }
 
-    static unsigned advanceStringUnicode(String, unsigned length, unsigned currentIndex);
-
 protected:
     JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
     JS_EXPORT_PRIVATE void finishCreation(VM&);

@@ -234,6 +234,16 @@ void Node::convertToRegExpExecNonGlobalOrSticky(FrozenValue* regExp)
     m_opInfo = regExp;
 }
 
+void Node::convertToRegExpMatchFastGlobal(FrozenValue* regExp)
+{
+    ASSERT(op() == RegExpMatchFast);
+    setOpAndDefaultFlags(RegExpMatchFastGlobal);
+    children.child1() = Edge(children.child1().node(), KnownCellUse);
+    children.child2() = Edge(children.child3().node(), StringUse);
+    children.child3() = Edge();
+    m_opInfo = regExp;
+}
+
 String Node::tryGetString(Graph& graph)
 {
     if (hasConstant())
