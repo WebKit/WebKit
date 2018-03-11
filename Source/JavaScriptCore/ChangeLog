@@ -1,3 +1,42 @@
+2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [B3] Above/Below should be strength-reduced for comparison with 0
+        https://bugs.webkit.org/show_bug.cgi?id=183543
+
+        Reviewed by Filip Pizlo.
+
+        Above(0, x) and BelowEqual(0, x) can be converted to constants false and true respectively.
+        This can be seen in ArraySlice(0) case: `Select(Above(0, length), length, 0)` this should
+        be converted to `0`. This patch adds such a folding to comparisons.
+
+        We also fix B3ReduceStrength issue creating an orphan value. If a flipped value is folded to
+        a constant, we do not insert flipped value and make it an orphan. This issue causes JSC test
+        failure with this B3Const32/64Value change. With this patch, we create a flipped value only
+        when we fail to fold it to a constant.
+
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::lessThanConstant const):
+        (JSC::B3::Const32Value::greaterThanConstant const):
+        (JSC::B3::Const32Value::lessEqualConstant const):
+        (JSC::B3::Const32Value::greaterEqualConstant const):
+        (JSC::B3::Const32Value::aboveConstant const):
+        (JSC::B3::Const32Value::belowConstant const):
+        (JSC::B3::Const32Value::aboveEqualConstant const):
+        (JSC::B3::Const32Value::belowEqualConstant const):
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::lessThanConstant const):
+        (JSC::B3::Const64Value::greaterThanConstant const):
+        (JSC::B3::Const64Value::lessEqualConstant const):
+        (JSC::B3::Const64Value::greaterEqualConstant const):
+        (JSC::B3::Const64Value::aboveConstant const):
+        (JSC::B3::Const64Value::belowConstant const):
+        (JSC::B3::Const64Value::aboveEqualConstant const):
+        (JSC::B3::Const64Value::belowEqualConstant const):
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::int64Operands):
+        (JSC::B3::int32Operands):
+
 2018-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Drop NewRegexp for String.prototype.match with RegExp + global flag

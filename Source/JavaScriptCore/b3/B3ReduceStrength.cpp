@@ -1673,46 +1673,46 @@ private:
         case Below:
         case AboveEqual:
         case BelowEqual: {
-            auto* value = newComparisonVaueIfNecessary();
+            CanonicalizedComparison comparison = canonicalizeComparison(m_value);
             TriState result = MixedTriState;
-            switch (value->opcode()) {
+            switch (comparison.opcode) {
             case LessThan:
-                result = value->child(1)->greaterThanConstant(value->child(0));
+                result = comparison.operands[1]->greaterThanConstant(comparison.operands[0]);
                 break;
             case GreaterThan:
-                result = value->child(1)->lessThanConstant(value->child(0));
+                result = comparison.operands[1]->lessThanConstant(comparison.operands[0]);
                 break;
             case LessEqual:
-                result = value->child(1)->greaterEqualConstant(value->child(0));
+                result = comparison.operands[1]->greaterEqualConstant(comparison.operands[0]);
                 break;
             case GreaterEqual:
-                result = value->child(1)->lessEqualConstant(value->child(0));
+                result = comparison.operands[1]->lessEqualConstant(comparison.operands[0]);
                 break;
             case Above:
-                result = value->child(1)->belowConstant(value->child(0));
+                result = comparison.operands[1]->belowConstant(comparison.operands[0]);
                 break;
             case Below:
-                result = value->child(1)->aboveConstant(value->child(0));
+                result = comparison.operands[1]->aboveConstant(comparison.operands[0]);
                 break;
             case AboveEqual:
-                result = value->child(1)->belowEqualConstant(value->child(0));
+                result = comparison.operands[1]->belowEqualConstant(comparison.operands[0]);
                 break;
             case BelowEqual:
-                result = value->child(1)->aboveEqualConstant(value->child(0));
+                result = comparison.operands[1]->aboveEqualConstant(comparison.operands[0]);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
 
-            if (auto* constant = m_proc.addBoolConstant(value->origin(), result)) {
+            if (auto* constant = m_proc.addBoolConstant(m_value->origin(), result)) {
                 replaceWithNewValue(constant);
                 break;
             }
-
-            // Replace with newly created "value". Its opcode is flipped and operands are swapped from m_value.
-            if (m_value != value)
-                replaceWithNewValue(value);
+            if (comparison.opcode != m_value->opcode()) {
+                replaceWithNew<Value>(comparison.opcode, m_value->origin(), comparison.operands[0], comparison.operands[1]);
+                break;
+            }
             break;
         }
 
@@ -2166,7 +2166,11 @@ private:
         }
     }
 
-    Value* newComparisonVaueIfNecessary()
+    struct CanonicalizedComparison {
+        Opcode opcode;
+        Value* operands[2];
+    };
+    static CanonicalizedComparison canonicalizeComparison(Value* value)
     {
         auto flip = [] (Opcode opcode) {
             switch (opcode) {
@@ -2190,11 +2194,9 @@ private:
                 return opcode;
             }
         };
-        if (shouldSwapBinaryOperands(m_value)) {
-            m_changed = true;
-            return m_proc.add<Value>(flip(m_value->opcode()), m_value->origin(), m_value->child(1), m_value->child(0));
-        }
-        return m_value;
+        if (shouldSwapBinaryOperands(value))
+            return { flip(value->opcode()), { value->child(1), value->child(0) } };
+        return { value->opcode(), { value->child(0), value->child(1) } };
     }
 
     // FIXME: This should really be a forward analysis. Instead, we uses a bounded-search backwards

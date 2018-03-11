@@ -247,6 +247,10 @@ static Vector<Int64Operand> int64Operands()
     operands.append({ "int64-min", std::numeric_limits<int64_t>::min() });
     operands.append({ "int32-max", std::numeric_limits<int32_t>::max() });
     operands.append({ "int32-min", std::numeric_limits<int32_t>::min() });
+    operands.append({ "uint64-max", static_cast<int64_t>(std::numeric_limits<uint64_t>::max()) });
+    operands.append({ "uint64-min", static_cast<int64_t>(std::numeric_limits<uint64_t>::min()) });
+    operands.append({ "uint32-max", static_cast<int64_t>(std::numeric_limits<uint32_t>::max()) });
+    operands.append({ "uint32-min", static_cast<int64_t>(std::numeric_limits<uint32_t>::min()) });
 
     return operands;
 }
@@ -260,7 +264,9 @@ static Vector<Int32Operand> int32Operands()
         { "42", 42 },
         { "-42", -42 },
         { "int32-max", std::numeric_limits<int32_t>::max() },
-        { "int32-min", std::numeric_limits<int32_t>::min() }
+        { "int32-min", std::numeric_limits<int32_t>::min() },
+        { "uint32-max", static_cast<int32_t>(std::numeric_limits<uint32_t>::max()) },
+        { "uint32-min", static_cast<int32_t>(std::numeric_limits<uint32_t>::min()) }
     });
     return operands;
 }
