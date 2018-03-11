@@ -1,3 +1,16 @@
+2018-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Disable Sigill crash analyzer on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=183548
+        <rdar://problem/38338032>
+
+        Reviewed by Mark Lam.
+
+        Sigill is not supported on watchOS.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
 2018-03-09  Filip Pizlo  <fpizlo@apple.com>
 
         Split DirectArguments into JSValueOOB and JSValueStrict parts

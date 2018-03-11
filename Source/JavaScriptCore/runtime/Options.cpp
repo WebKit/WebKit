@@ -344,7 +344,9 @@ static void overrideDefaults()
     Options::smallHeapRAMFraction() = 0.8;
     Options::mediumHeapRAMFraction() = 0.9;
 
+#if !PLATFORM(WATCHOS)
     Options::useSigillCrashAnalyzer() = true;
+#endif
 #endif
 
 #if !ENABLE(SIGNAL_BASED_VM_TRAPS)
