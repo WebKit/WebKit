@@ -55,28 +55,15 @@ using PlatformCondition = pthread_cond_t;
 #elif OS(WINDOWS)
 using ThreadIdentifier = uint32_t;
 using PlatformThreadHandle = HANDLE;
-struct PlatformMutex {
-    CRITICAL_SECTION m_internalMutex;
-    size_t m_recursionCount;
-};
-struct PlatformCondition {
-    size_t m_waitersGone;
-    size_t m_waitersBlocked;
-    size_t m_waitersToUnblock; 
-    HANDLE m_blockLock;
-    HANDLE m_blockQueue;
-    HANDLE m_unblockLock;
-
-    bool timedWait(PlatformMutex&, DWORD durationMilliseconds);
-    void signal(bool unblockAll);
-};
+using PlatformMutex = SRWLOCK;
+using PlatformCondition = CONDITION_VARIABLE;
 #else
-typedef void* PlatformMutex;
-typedef void* PlatformCondition;
+#error "Not supported platform"
 #endif
-    
+
 class Mutex {
-    WTF_MAKE_NONCOPYABLE(Mutex); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Mutex);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE Mutex();
     WTF_EXPORT_PRIVATE ~Mutex();
@@ -85,8 +72,8 @@ public:
     WTF_EXPORT_PRIVATE bool tryLock();
     WTF_EXPORT_PRIVATE void unlock();
 
-public:
     PlatformMutex& impl() { return m_mutex; }
+
 private:
     PlatformMutex m_mutex;
 };
@@ -95,6 +82,7 @@ typedef Locker<Mutex> MutexLocker;
 
 class ThreadCondition {
     WTF_MAKE_NONCOPYABLE(ThreadCondition);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE ThreadCondition();
     WTF_EXPORT_PRIVATE ~ThreadCondition();
@@ -109,19 +97,10 @@ private:
     PlatformCondition m_condition;
 };
 
-#if OS(WINDOWS)
-// Returns an interval in milliseconds suitable for passing to one of the Win32 wait functions (e.g., ::WaitForSingleObject).
-WTF_EXPORT_PRIVATE DWORD absoluteTimeToWaitTimeoutInterval(WallTime absoluteTime);
-#endif
-
 } // namespace WTF
 
 using WTF::Mutex;
 using WTF::MutexLocker;
 using WTF::ThreadCondition;
-
-#if OS(WINDOWS)
-using WTF::absoluteTimeToWaitTimeoutInterval;
-#endif
 
 #endif // ThreadingPrimitives_h
