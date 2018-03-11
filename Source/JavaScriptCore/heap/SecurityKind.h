@@ -27,6 +27,8 @@
 
 namespace JSC {
 
+// NOTE: SecurityKind is for distancing. But caging implies distancing. So, things that have their own
+// cages (like typed arrays) don't need to worry about the security kind.
 enum class SecurityKind : uint8_t {
     // The JSValueOOB security kind is for cells that contain JValues and can be accessed out-of-bounds
     // up to minimumDistanceBetweenCellsFromDifferentOrigins.
@@ -41,7 +43,11 @@ enum class SecurityKind : uint8_t {
     // The JSValueStrict security kind is for cells that contain JSValues but cannot be accessed
     // out-of-bounds. Currently, it's not essential to keep this separate from DangerousBits. We're
     // using this to get some wiggle room for how we handle array elements. For example, we might want
-    // to allow OOB reads but not OOB writes.
+    // to allow OOB reads but not OOB writes, since JSValueStrict contains only JSValues and length fields.
+    // Using Spectre to read the length fields is not useful for attackers since they can read them anyway.
+    // So, they will only want to write to length fields, in order to confuse a subsequent bounds check.
+    // They can do that within a speculation window. However, we currently use precise index masking for
+    // this.
     //
     // It's illegal to use this for any subclass of JSObject, JSString, or Symbol, or any other cell
     // that could be referenced from a JSValue. You must use poisoned pointers to point at these cells.

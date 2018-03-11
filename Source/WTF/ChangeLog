@@ -1,3 +1,13 @@
+2018-03-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Split DirectArguments into JSValueOOB and JSValueStrict parts
+        https://bugs.webkit.org/show_bug.cgi?id=183458
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/MathExtras.h:
+        (WTF::dynamicPoison): Deleted.
+
 2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Win] Use SRWLOCK and CONDITION_VARIABLE to simplify implementation

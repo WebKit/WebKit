@@ -73,6 +73,7 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
     
 private:
+    // FIXME: This needs to be poisoned.
     WriteBarrier<SymbolTable> m_symbolTable;
 };
 

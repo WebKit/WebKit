@@ -500,6 +500,8 @@ T opaque(T pointer)
     return pointer;
 }
 
+// This masks the given pointer with 0xffffffffffffffff (ptrwidth) if `index <
+// length`. Otherwise, it masks the pointer with 0. Similar to Linux kernel's array_ptr.
 template<typename T>
 inline T* preciseIndexMaskPtr(uintptr_t index, uintptr_t length, T* value)
 {
@@ -507,23 +509,6 @@ inline T* preciseIndexMaskPtr(uintptr_t index, uintptr_t length, T* value)
         static_cast<intptr_t>(index - opaque(length)) >>
         static_cast<intptr_t>(preciseIndexMaskShift<T*>()));
     return bitwise_cast<T*>(result);
-}
-
-constexpr unsigned bytePoisonShift = 40;
-
-template<typename T, typename U>
-inline T* dynamicPoison(U actual, U expected, T* pointer)
-{
-    static_assert(sizeof(U) == 1, "Poisoning only works for bytes at the moment");
-#if CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
-    return bitwise_cast<T*>(
-        bitwise_cast<char*>(pointer) +
-        (static_cast<uintptr_t>(opaque(actual) ^ expected) << bytePoisonShift));
-#else
-    UNUSED_PARAM(actual);
-    UNUSED_PARAM(expected);
-    return pointer;
-#endif
 }
 
 template<typename VectorType, typename RandomFunc>
@@ -541,7 +526,6 @@ void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
 
 } // namespace WTF
 
-using WTF::dynamicPoison;
 using WTF::opaque;
 using WTF::preciseIndexMaskPtr;
 using WTF::preciseIndexMaskShift;

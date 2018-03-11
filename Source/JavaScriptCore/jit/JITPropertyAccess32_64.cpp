@@ -1118,8 +1118,9 @@ void JIT::emit_op_get_from_arguments(Instruction* currentInstruction)
     int index = currentInstruction[3].u.operand;
     
     emitLoadPayload(arguments, regT0);
-    load32(Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>) + TagOffset), regT1);
-    load32(Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>) + PayloadOffset), regT0);
+    loadPtr(Address(regT0, DirectArguments::offsetOfStorage()), regT0);
+    load32(Address(regT0, index * sizeof(WriteBarrier<Unknown>) + TagOffset), regT1);
+    load32(Address(regT0, index * sizeof(WriteBarrier<Unknown>) + PayloadOffset), regT0);
     emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
 }
@@ -1133,9 +1134,10 @@ void JIT::emit_op_put_to_arguments(Instruction* currentInstruction)
     emitWriteBarrier(arguments, value, ShouldFilterValue);
     
     emitLoadPayload(arguments, regT0);
+    loadPtr(Address(regT0, DirectArguments::offsetOfStorage()), regT0);
     emitLoad(value, regT1, regT2);
-    store32(regT1, Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>) + TagOffset));
-    store32(regT2, Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>) + PayloadOffset));
+    store32(regT1, Address(regT0, index * sizeof(WriteBarrier<Unknown>) + TagOffset));
+    store32(regT2, Address(regT0, index * sizeof(WriteBarrier<Unknown>) + PayloadOffset));
 }
 
 } // namespace JSC

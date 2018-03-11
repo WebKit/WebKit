@@ -1,3 +1,86 @@
+2018-03-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Split DirectArguments into JSValueOOB and JSValueStrict parts
+        https://bugs.webkit.org/show_bug.cgi?id=183458
+
+        Reviewed by Yusuke Suzuki.
+        
+        Our Spectre plan for JSValue objects is to allow inline JSValue stores and loads guarded by
+        unmitigated structure checks. This works because objects reachable from JSValues (i.e. JSValue
+        objects, like String, Symbol, and any descendant of JSObject) will only contain fields that it's OK
+        to read and write within a Spectre mitigation window. Writes are important, because within the
+        window, a write could appear to be made speculatively and rolled out later. This means that:
+        
+        - JSValue objects cannot have lengths, masks, or anything else inline.
+        
+        - JSValue objects cannot have an inline type that is used as part of a Spectre mitigation for a type
+          check, unless that type is in the form of a poison key.
+        
+        This means that the dynamic poisoning that I previously landed for DirectArguments is wrong. It also
+        means that it's wrong for DirectArguments to have an inline length.
+        
+        This changes DirectArguments to use poisoning according to the universal formula:
+        
+        - The random accessed portions are out-of-line, pointed to by a poisoned pointer.
+        
+        - No inline length.
+        
+        Surprisingly, this is perf-neutral. It's probably perf-neutral because our compiler optimizations
+        amortize whatever cost there was.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h:
+        (JSC::DFG::CallCreateDirectArgumentsSlowPathGenerator::CallCreateDirectArgumentsSlowPathGenerator):
+        * dfg/DFGCallCreateDirectArgumentsWithKnownLengthSlowPathGenerator.h: Added.
+        (JSC::DFG::CallCreateDirectArgumentsWithKnownLengthSlowPathGenerator::CallCreateDirectArgumentsWithKnownLengthSlowPathGenerator):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetFromArguments):
+        (JSC::DFG::SpeculativeJIT::compilePutToArguments):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetFromArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutToArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedHeapCell):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoison): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnLoadedType): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnType): Deleted.
+        * heap/SecurityKind.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::DirectArguments):
+        (JSC::DirectArguments::createUninitialized):
+        (JSC::DirectArguments::create):
+        (JSC::DirectArguments::createByCopying):
+        (JSC::DirectArguments::estimatedSize):
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::copyToArguments):
+        (JSC::DirectArguments::mappedArgumentsSize):
+        * runtime/DirectArguments.h:
+        * runtime/JSCPoison.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSSymbolTableObject.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [B3] Above/Below should be strength-reduced for comparison with 0

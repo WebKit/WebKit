@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,16 @@
 
 namespace JSC { namespace DFG {
 
-// This calls operationCreateDirectArguments but then restores the value of lengthGPR and storageGPR.
-class CallCreateDirectArgumentsSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
+// This calls operationCreateDirectArguments but then restores the value of storageGPR.
+class CallCreateDirectArgumentsWithKnownLengthSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
-    CallCreateDirectArgumentsSlowPathGenerator(
+    CallCreateDirectArgumentsWithKnownLengthSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, GPRReg resultGPR, RegisteredStructure structure,
-        GPRReg lengthGPR, GPRReg storageGPR, unsigned minCapacity)
+        unsigned knownLength, GPRReg storageGPR, unsigned minCapacity)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_resultGPR(resultGPR)
         , m_structure(structure)
-        , m_lengthGPR(lengthGPR)
+        , m_knownLength(knownLength)
         , m_storageGPR(storageGPR)
         , m_minCapacity(minCapacity)
     {
@@ -57,7 +57,7 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         jit->callOperation(
-            operationCreateDirectArguments, m_resultGPR, m_structure, m_lengthGPR, m_minCapacity);
+            operationCreateDirectArguments, m_resultGPR, m_structure, m_knownLength, m_minCapacity);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
@@ -65,15 +65,13 @@ protected:
             MacroAssembler::Address(m_resultGPR, DirectArguments::offsetOfStorage()), m_storageGPR);
         jit->m_jit.xorPtr(
             MacroAssembler::TrustedImmPtr(DirectArgumentsPoison::key()), m_storageGPR);
-        jit->m_jit.load32(
-            MacroAssembler::Address(m_storageGPR, DirectArguments::offsetOfLengthInStorage()), m_lengthGPR);
         jumpTo(jit);
     }
     
 private:
     GPRReg m_resultGPR;
     RegisteredStructure m_structure;
-    GPRReg m_lengthGPR;
+    unsigned m_knownLength;
     GPRReg m_storageGPR;
     unsigned m_minCapacity;
     Vector<SilentRegisterSavePlan, 2> m_plans;

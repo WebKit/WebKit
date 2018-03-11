@@ -383,8 +383,12 @@ void AccessCase::generateWithGuard(
             jit.branchTestPtr(
                 CCallHelpers::NonZero,
                 CCallHelpers::Address(baseGPR, DirectArguments::offsetOfMappedArguments())));
+        jit.loadPtr(
+            CCallHelpers::Address(baseGPR, DirectArguments::offsetOfStorage()),
+            valueRegs.payloadGPR());
+        jit.xorPtr(CCallHelpers::TrustedImmPtr(DirectArgumentsPoison::key()), valueRegs.payloadGPR());
         jit.load32(
-            CCallHelpers::Address(baseGPR, DirectArguments::offsetOfLength()),
+            CCallHelpers::Address(valueRegs.payloadGPR(), DirectArguments::offsetOfLengthInStorage()),
             valueRegs.payloadGPR());
         jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();
