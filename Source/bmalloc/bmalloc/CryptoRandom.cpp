@@ -54,8 +54,6 @@ int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
 
 namespace bmalloc {
 
-namespace {
-
 class ARC4Stream {
 public:
     ARC4Stream();
@@ -178,8 +176,6 @@ void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
         stirIfNeeded();
         result[length] = getByte();
     }
-}
-
 }
 
 void cryptoRandom(void* buffer, size_t length)

@@ -38,10 +38,6 @@ namespace bmalloc {
 //
 // Object will be instantiated only once, even in the face of concurrency.
 //
-// WARNING: PerProcess<T> does not export its storage. So in actuality when
-// used in multiple libraries / images it ends up being per-image. To truly
-// declare a per-process singleton use SafePerProcess<T>.
-//
 // NOTE: If you observe global side-effects of the Object constructor, be
 // sure to lock the Object mutex. For example:
 //
@@ -54,6 +50,26 @@ namespace bmalloc {
 // std::lock_guard<StaticMutex> lock(PerProcess<Object>::mutex());
 // Object* object = PerProcess<Object>::get(lock);
 // if (globalFlag) { ... } // OK.
+
+struct PerProcessData {
+    const char* disambiguator;
+    void* memory;
+    size_t size;
+    size_t alignment;
+    StaticMutex mutex;
+    bool isInitialized;
+    PerProcessData* next;
+};
+
+constexpr unsigned stringHash(const char* string)
+{
+    unsigned result = 5381;
+    while (char c = *string++)
+        result = result * 33 + c;
+    return result;
+}
+
+BEXPORT PerProcessData* getPerProcessData(unsigned disambiguatorHash, const char* disambiguator, size_t size, size_t alignment);
 
 template<typename T>
 class PerProcess {
@@ -71,88 +87,46 @@ public:
         return s_object.load(std::memory_order_relaxed);
     }
     
-    static StaticMutex& mutex() { return s_mutex; }
+    static StaticMutex& mutex()
+    {
+        if (!s_data)
+            coalesce();
+        return s_data->mutex;
+    }
 
 private:
+    static void coalesce()
+    {
+        if (s_data)
+            return;
+        
+        const char* disambiguator = __PRETTY_FUNCTION__;
+        s_data = getPerProcessData(stringHash(disambiguator), disambiguator, sizeof(T), std::alignment_of<T>::value);
+    }
+    
     BNO_INLINE static T* getSlowCase()
     {
-        std::lock_guard<StaticMutex> lock(s_mutex);
-        if (!s_object.load(std::memory_order_consume)) {
-            T* t = new (&s_memory) T(lock);
-            s_object.store(t, std::memory_order_release);
+        std::lock_guard<StaticMutex> lock(mutex());
+        if (!s_object.load()) {
+            if (s_data->isInitialized)
+                s_object.store(static_cast<T*>(s_data->memory));
+            else {
+                T* t = new (s_data->memory) T(lock);
+                s_object.store(t);
+                s_data->isInitialized = true;
+            }
         }
-        return s_object.load(std::memory_order_consume);
+        return s_object.load();
     }
 
     static std::atomic<T*> s_object;
-    static StaticMutex s_mutex;
-
-    typedef typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type Memory;
-    static Memory s_memory;
+    static PerProcessData* s_data;
 };
 
 template<typename T>
 std::atomic<T*> PerProcess<T>::s_object;
 
 template<typename T>
-StaticMutex PerProcess<T>::s_mutex;
-
-template<typename T>
-typename PerProcess<T>::Memory PerProcess<T>::s_memory;
-
-
-// SafePerProcess<T> behaves like PerProcess<T>, but its usage
-// requires DECLARE/DEFINE macros that export symbols that allow for
-// a single shared instance is across images in the process.
-
-template<typename T> struct SafePerProcessStorageTraits;
-
-template<typename T>
-class BEXPORT SafePerProcess {
-public:
-    using Storage = typename SafePerProcessStorageTraits<T>::Storage;
-
-    static T* get()
-    {
-        T* object = getFastCase();
-        if (!object)
-            return getSlowCase();
-        return object;
-    }
-
-    static T* getFastCase()
-    {
-        return (Storage::s_object).load(std::memory_order_relaxed);
-    }
-
-    static StaticMutex& mutex() { return Storage::s_mutex; }
-
-    using Memory = typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type;
-
-private:
-    BNO_INLINE static T* getSlowCase()
-    {
-        std::lock_guard<StaticMutex> lock(Storage::s_mutex);
-        if (!Storage::s_object.load(std::memory_order_consume)) {
-            T* t = new (&Storage::s_memory) T(lock);
-            Storage::s_object.store(t, std::memory_order_release);
-        }
-        return Storage::s_object.load(std::memory_order_consume);
-    }
-};
-
-#define DECLARE_SAFE_PER_PROCESS_STORAGE(Type) \
-    template<> struct SafePerProcessStorageTraits<Type> { \
-        struct BEXPORT Storage { \
-            BEXPORT static std::atomic<Type*> s_object; \
-            BEXPORT static StaticMutex s_mutex; \
-            BEXPORT static SafePerProcess<Type>::Memory s_memory; \
-        }; \
-    };
-
-#define DEFINE_SAFE_PER_PROCESS_STORAGE(Type) \
-    std::atomic<Type*> SafePerProcessStorageTraits<Type>::Storage::s_object; \
-    StaticMutex SafePerProcessStorageTraits<Type>::Storage::s_mutex; \
-    SafePerProcess<Type>::Memory SafePerProcessStorageTraits<Type>::Storage::s_memory;
+PerProcessData* PerProcess<T>::s_data;
 
 } // namespace bmalloc

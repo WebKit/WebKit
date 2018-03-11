@@ -1,3 +1,43 @@
+2018-03-10  Filip Pizlo  <fpizlo@apple.com>
+
+        PerProcess<> should be safe by default
+        https://bugs.webkit.org/show_bug.cgi?id=183545
+
+        Reviewed by Yusuke Suzuki.
+        
+        This makes PerProcess<> safe by default, so we don't need SafePerProcess<>.
+        
+        The new PerProcess<> design relies on a hash-consing mechanism for PerProcess<> storage based
+        on the __PRETTY_FUNCTION__ from inside PerProcess<>, which captures the instantiated type in
+        the string. Therefore, this can be used to runtime-coalesce PerProcess<> instances based on
+        type.
+        
+        I expect this to be perf-neutral. It's an important prerequisite to more bmalloc work, since I
+        don't want to have more PerProcess<> vs SafePerProcess<> bugs, and SafePerProcess<> can't be
+        used for everything (I don't see how to use it for isoheaps).
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        * bmalloc/PerProcess.cpp: Added.
+        (bmalloc::stringHash):
+        (bmalloc::allocate):
+        (bmalloc::getPerProcessData):
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess::mutex):
+        (bmalloc::PerProcess::coalesce):
+        (bmalloc::PerProcess::getSlowCase):
+        (): Deleted.
+        * bmalloc/Scavenger.cpp:
+        * bmalloc/Scavenger.h:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::scavenge):
+        (bmalloc::api::setScavengerThreadQOSClass):
+
 2018-03-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229436.

@@ -32,8 +32,6 @@
 
 namespace bmalloc {
 
-DEFINE_SAFE_PER_PROCESS_STORAGE(Scavenger);
-
 Scavenger::Scavenger(std::lock_guard<StaticMutex>&)
 {
 #if BOS(DARWIN)

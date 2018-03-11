@@ -93,8 +93,6 @@ private:
     Vector<DeferredDecommit> m_deferredDecommits;
 };
 
-DECLARE_SAFE_PER_PROCESS_STORAGE(Scavenger);
-
 } // namespace bmalloc
 
 

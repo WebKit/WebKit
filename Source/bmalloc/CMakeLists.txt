@@ -25,6 +25,7 @@ set(bmalloc_SOURCES
     bmalloc/LargeMap.cpp
     bmalloc/Logging.cpp
     bmalloc/ObjectType.cpp
+    bmalloc/PerProcess.cpp
     bmalloc/Scavenger.cpp
     bmalloc/StaticMutex.cpp
     bmalloc/VMHeap.cpp

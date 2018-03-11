@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F26A7A42054830D0090A141 /* PerProcess.cpp */; };
 		0F5167741FAD685C008236A8 /* bmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5167731FAD6852008236A8 /* bmalloc.cpp */; };
 		0F5549EF1FB54704007FF75A /* IsoPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5549EE1FB54701007FF75A /* IsoPage.cpp */; };
 		0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1461F22A8B10029D91D /* HeapKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -174,6 +175,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F26A7A42054830D0090A141 /* PerProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerProcess.cpp; path = bmalloc/PerProcess.cpp; sourceTree = "<group>"; };
 		0F5167731FAD6852008236A8 /* bmalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bmalloc.cpp; path = bmalloc/bmalloc.cpp; sourceTree = "<group>"; };
 		0F5549EE1FB54701007FF75A /* IsoPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IsoPage.cpp; path = bmalloc/IsoPage.cpp; sourceTree = "<group>"; };
 		0F5BF1461F22A8B10029D91D /* HeapKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HeapKind.h; path = bmalloc/HeapKind.h; sourceTree = "<group>"; };
@@ -521,6 +523,7 @@
 				4426E27F1C838EE0008EB042 /* Logging.h */,
 				14C8992A1CC485E70027A057 /* Map.h */,
 				144DCED617A649D90093B2F2 /* Mutex.h */,
+				0F26A7A42054830D0090A141 /* PerProcess.cpp */,
 				0F5BF1481F22A8D80029D91D /* PerHeapKind.h */,
 				14446A0717A61FA400F9EA1D /* PerProcess.h */,
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
@@ -768,6 +771,7 @@
 				14F271C318EA3978008C152F /* Allocator.cpp in Sources */,
 				6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */,
 				14F271C418EA397B008C152F /* Cache.cpp in Sources */,
+				0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */,
 				14F271C518EA397E008C152F /* Deallocator.cpp in Sources */,
 				142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */,
 				14895D911A3A319C0006235D /* Environment.cpp in Sources */,
