@@ -1666,63 +1666,55 @@ private:
             break;
 
         case LessThan:
-            // FIXME: We could do a better job of canonicalizing integer comparisons.
-            // https://bugs.webkit.org/show_bug.cgi?id=150958
-
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->lessThanConstant(m_value->child(1))));
-            break;
-
         case GreaterThan:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->greaterThanConstant(m_value->child(1))));
-            break;
-
         case LessEqual:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->lessEqualConstant(m_value->child(1))));
-            break;
-
         case GreaterEqual:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->greaterEqualConstant(m_value->child(1))));
-            break;
-
         case Above:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->aboveConstant(m_value->child(1))));
-            break;
-
         case Below:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->belowConstant(m_value->child(1))));
-            break;
-
         case AboveEqual:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->aboveEqualConstant(m_value->child(1))));
-            break;
+        case BelowEqual: {
+            auto* value = newComparisonVaueIfNecessary();
+            TriState result = MixedTriState;
+            switch (value->opcode()) {
+            case LessThan:
+                result = value->child(1)->greaterThanConstant(value->child(0));
+                break;
+            case GreaterThan:
+                result = value->child(1)->lessThanConstant(value->child(0));
+                break;
+            case LessEqual:
+                result = value->child(1)->greaterEqualConstant(value->child(0));
+                break;
+            case GreaterEqual:
+                result = value->child(1)->lessEqualConstant(value->child(0));
+                break;
+            case Above:
+                result = value->child(1)->belowConstant(value->child(0));
+                break;
+            case Below:
+                result = value->child(1)->aboveConstant(value->child(0));
+                break;
+            case AboveEqual:
+                result = value->child(1)->belowEqualConstant(value->child(0));
+                break;
+            case BelowEqual:
+                result = value->child(1)->aboveEqualConstant(value->child(0));
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
 
-        case BelowEqual:
-            replaceWithNewValue(
-                m_proc.addBoolConstant(
-                    m_value->origin(),
-                    m_value->child(0)->belowEqualConstant(m_value->child(1))));
+            if (auto* constant = m_proc.addBoolConstant(value->origin(), result)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            // Replace with newly created "value". Its opcode is flipped and operands are swapped from m_value.
+            if (m_value != value)
+                replaceWithNewValue(value);
             break;
+        }
 
         case EqualOrUnordered:
             handleCommutativity();
@@ -2134,6 +2126,31 @@ private:
         predecessor->updatePredecessorsAfter();
     }
 
+    static bool shouldSwapBinaryOperands(Value* value)
+    {
+        // Note that we have commutative operations that take more than two children. Those operations may
+        // commute their first two children while leaving the rest unaffected.
+        ASSERT(value->numChildren() >= 2);
+
+        // Leave it alone if the right child is a constant.
+        if (value->child(1)->isConstant()
+            || value->child(0)->opcode() == AtomicStrongCAS)
+            return false;
+
+        if (value->child(0)->isConstant())
+            return true;
+
+        if (value->child(1)->opcode() == AtomicStrongCAS)
+            return true;
+
+        // Sort the operands. This is an important canonicalization. We use the index instead of
+        // the address to make this at least slightly deterministic.
+        if (value->child(0)->index() > value->child(1)->index())
+            return true;
+
+        return false;
+    }
+
     // Turn this: Add(constant, value)
     // Into this: Add(value, constant)
     //
@@ -2143,30 +2160,41 @@ private:
     // If we decide that value2 coming first is the canonical ordering.
     void handleCommutativity()
     {
-        // Note that we have commutative operations that take more than two children. Those operations may
-        // commute their first two children while leaving the rest unaffected.
-        ASSERT(m_value->numChildren() >= 2);
-        
-        // Leave it alone if the right child is a constant.
-        if (m_value->child(1)->isConstant()
-            || m_value->child(0)->opcode() == AtomicStrongCAS)
-            return;
-        
-        auto swap = [&] () {
+        if (shouldSwapBinaryOperands(m_value)) {
             std::swap(m_value->child(0), m_value->child(1));
             m_changed = true;
+        }
+    }
+
+    Value* newComparisonVaueIfNecessary()
+    {
+        auto flip = [] (Opcode opcode) {
+            switch (opcode) {
+            case LessThan:
+                return GreaterThan;
+            case GreaterThan:
+                return LessThan;
+            case LessEqual:
+                return GreaterEqual;
+            case GreaterEqual:
+                return LessEqual;
+            case Above:
+                return Below;
+            case Below:
+                return Above;
+            case AboveEqual:
+                return BelowEqual;
+            case BelowEqual:
+                return AboveEqual;
+            default:
+                return opcode;
+            }
         };
-        
-        if (m_value->child(0)->isConstant())
-            return swap();
-        
-        if (m_value->child(1)->opcode() == AtomicStrongCAS)
-            return swap();
-        
-        // Sort the operands. This is an important canonicalization. We use the index instead of
-        // the address to make this at least slightly deterministic.
-        if (m_value->child(0)->index() > m_value->child(1)->index())
-            return swap();
+        if (shouldSwapBinaryOperands(m_value)) {
+            m_changed = true;
+            return m_proc.add<Value>(flip(m_value->opcode()), m_value->origin(), m_value->child(1), m_value->child(0));
+        }
+        return m_value;
     }
 
     // FIXME: This should really be a forward analysis. Instead, we uses a bounded-search backwards

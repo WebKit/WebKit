@@ -1462,11 +1462,6 @@ private:
             Value* right = value->child(1);
 
             if (isInt(value->child(0)->type())) {
-                // FIXME: We wouldn't have to worry about leftImm if we canonicalized integer
-                // comparisons.
-                // https://bugs.webkit.org/show_bug.cgi?id=150958
-                
-                Arg leftImm = imm(left);
                 Arg rightImm = imm(right);
 
                 auto tryCompare = [&] (
@@ -1483,12 +1478,6 @@ private:
                     if (rightImm && rightImm.isRepresentableAs(width, signedness)) {
                         if (Inst result = tryCompare(width, loadPromise(left, loadOpcode), rightImm)) {
                             commitInternal(left);
-                            return result;
-                        }
-                    }
-                    if (leftImm && leftImm.isRepresentableAs(width, signedness)) {
-                        if (Inst result = tryCompare(width, leftImm, loadPromise(right, loadOpcode))) {
-                            commitInternal(right);
                             return result;
                         }
                     }
@@ -1547,11 +1536,6 @@ private:
                 }
 
                 // Now handle compares that involve an immediate and a tmp.
-                
-                if (leftImm && leftImm.isRepresentableAs<int32_t>()) {
-                    if (Inst result = tryCompare(width, leftImm, tmpPromise(right)))
-                        return result;
-                }
                 
                 if (rightImm && rightImm.isRepresentableAs<int32_t>()) {
                     if (Inst result = tryCompare(width, tmpPromise(left), rightImm))

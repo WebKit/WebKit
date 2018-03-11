@@ -1,3 +1,25 @@
+2018-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        B3::reduceStrength should canonicalize integer comparisons
+        https://bugs.webkit.org/show_bug.cgi?id=150958
+
+        Reviewed by Filip Pizlo.
+
+        This patch sorts operands of comparisons by flipping opcode. For example, `Above(0, @2)` is
+        converted to `Below(@2, 0)`. This sorting is the same to handleCommutativity rule. Since we
+        canonicalize comparisons to have constant value at least on the right hand side, we can
+        remove pattern matchings checking leftImm in B3LowerToAir.
+
+        Since this flipping changes the opcode of the value, to achieve safely, we just create a
+        new value which has flipped opcode and swapped operands. If we can fold it to a constant,
+        we replace m_value with this constant. If we fail to fold it to constant, we replace
+        m_value with the flipped one.
+
+        These comparisons are already handled in testb3.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+
 2018-03-09  Mark Lam  <mark.lam@apple.com>
 
         offlineasm should reset the Assembler's working state before doing another pass for a new target.
