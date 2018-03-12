@@ -29,8 +29,8 @@
 #import "WKFullScreenWindowControllerIOS.h"
 
 #import "UIKitSPI.h"
+#import "WKFullScreenViewController.h"
 #import "WKFullscreenStackView.h"
-#import "WKFullscreenViewController.h"
 #import "WKWebView.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
@@ -768,7 +768,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     // If SecTrustCopyInfo returned NULL then it's likely that the SecTrustRef has not been evaluated
     // and the only way to get the information we need is to call SecTrustEvaluate ourselves.
     if (!infoDictionary) {
-        OSStatus err = SecTrustEvaluate(trust, NULL);
+        SecTrustResultType result = kSecTrustResultProceed;
+        OSStatus err = SecTrustEvaluate(trust, &result);
         if (err == noErr)
             infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
         if (!infoDictionary)
