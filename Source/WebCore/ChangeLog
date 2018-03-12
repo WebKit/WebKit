@@ -1,3 +1,15 @@
+2018-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Use a different SPI header for some AudioToolbox enums
+        https://bugs.webkit.org/show_bug.cgi?id=183574
+        <rdar://problem/38385889>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        Adjust SPI imports.
+
 2018-03-12  Danyao Wang  <danyao@chromium.org>
 
         Add a query and fragment exception to history API's unique origin restriction.

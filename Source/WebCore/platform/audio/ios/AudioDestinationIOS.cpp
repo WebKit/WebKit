@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "RuntimeApplicationChecks.h"
 #include <AudioToolbox/AudioServices.h>
+#include <pal/spi/cocoa/AudioToolboxSPI.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SoftLinking.h>

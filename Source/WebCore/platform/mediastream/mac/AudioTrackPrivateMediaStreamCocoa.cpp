@@ -33,6 +33,7 @@
 #include "Logging.h"
 
 #include <pal/cf/CoreMediaSoftLink.h>
+#include <pal/spi/cocoa/AudioToolboxSPI.h>
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
