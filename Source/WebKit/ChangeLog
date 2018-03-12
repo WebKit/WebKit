@@ -1,3 +1,21 @@
+2018-03-12  Ali Juma  <ajuma@chromium.org>
+
+        http/tests/workers/service/service-worker-download.https.html times out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183479
+
+        Reviewed by Youenn Fablet.
+
+        Ensure that ServiceWorkerFetchClient::m_isCheckingResponse is set before code that depends on it
+        executes. This bit was set by code that's posted to the runloop using 'callOnMainThread' in
+        ServiceWorkerFetchClient::didReceiveResponse. But when didReceiveResponse is executing, tasks for
+        handling didReceiveData, didFail, or didFinish may already have been posted to the runloop, and in
+        that case would execute before m_isCheckingResponse gets set, and then incorrectly fail to 
+        early-out. Fix this by directly setting m_isCheckingResponse in didReceiveResponse.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::start):
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+
 2018-03-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION(r211643): Dismissing WKActionSheet should not also dismiss its presenting view controller

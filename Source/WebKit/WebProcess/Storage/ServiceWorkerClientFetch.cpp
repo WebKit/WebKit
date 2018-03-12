@@ -68,6 +68,9 @@ void ServiceWorkerClientFetch::start()
 
     auto referrer = request.httpReferrer();
 
+    m_didFail = false;
+    m_didFinish = false;
+
     // We are intercepting fetch calls after going through the HTTP layer, which may add some specific headers.
     cleanHTTPRequestHeadersForAccessControl(request, options.httpHeadersToKeep);
 
@@ -100,11 +103,15 @@ std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const Re
 
 void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
 {
+    m_isCheckingResponse = true;
     callOnMainThread([this, protectedThis = makeRef(*this), response = WTFMove(response)]() mutable {
-        if (!m_loader)
+        if (!m_loader) {
+            m_isCheckingResponse = false;
             return;
+        }
 
         if (auto error = validateResponse(response)) {
+            m_isCheckingResponse = false;
             m_loader->didFail(error.value());
             ASSERT(!m_loader);
             if (auto callback = WTFMove(m_callback))
@@ -114,6 +121,8 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
         response.setSource(ResourceResponse::Source::ServiceWorker);
 
         if (response.isRedirection() && response.httpHeaderFields().contains(HTTPHeaderName::Location)) {
+            m_isCheckingResponse = false;
+            continueLoadingAfterCheckingResponse();
             m_redirectionStatus = RedirectionStatus::Receiving;
             m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {
                 if (request.isNull() || !m_callback)
@@ -142,7 +151,6 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
         if (response.url().isNull())
             response.setURL(m_loader->request().url());
 
-        m_isCheckingResponse = true;
         m_loader->didReceiveResponse(response, [this, protectedThis = WTFMove(protectedThis)] {
             m_isCheckingResponse = false;
             continueLoadingAfterCheckingResponse();
