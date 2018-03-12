@@ -18,6 +18,8 @@ function buildFrameset()
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
         testRunner.dumpChildFramesAsText();
+        if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+            testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
     }
 
     var outHTML="<frameset rows=\"33%, 33%, 33%\">"+
