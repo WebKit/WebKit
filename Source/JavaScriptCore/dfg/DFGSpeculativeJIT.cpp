@@ -7006,7 +7006,8 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
     GPRTemporary length;
 
     if (isX86() && is32Bit() && !lengthIsKnown) {
-        GPRFlushedCallResult result(this);
+        GPRFlushedCallResult realResult(this);
+        result.adopt(realResult);
         resultGPR = result.gpr();
         RELEASE_ASSERT(resultGPR == GPRInfo::regT0);
         flushRegisters();

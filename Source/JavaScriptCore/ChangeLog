@@ -1,3 +1,10 @@
+2018-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix simple goof that was causing 32-bit DFG crashes.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+
 2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] AI should convert CreateThis to NewObject if the prototype object is proved
