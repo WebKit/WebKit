@@ -501,14 +501,14 @@ class Utils {
         return outOfFlowBoxes;
     }
 
-    static nextBreakingOpportunity(inlineBox, currentPosition)
+    static nextBreakingOpportunity(textBox, currentPosition)
     {
-        return window.nextBreakingOpportunity(inlineBox.text(), currentPosition);
+        return window.nextBreakingOpportunity(textBox.content(), currentPosition);
     }
 
-    static measureText(inlineBox, start, end)
+    static measureText(texBox, start, end)
     {
-        return inlineBox.node().measureText(start, end);
+        return texBox.node().textWidth(start, end);
     }
 
     // "RenderView at (0,0) size 1317x366\n HTML RenderBlock at (0,0) size 1317x116\n  BODY RenderBody at (8,8) size 1301x100\n   DIV RenderBlock at (0,0) size 100x100\n";

@@ -23,20 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace LayoutReloaded {
-
-class InlineContainer;
-
 class Text {
-public:
-    Text(Node*, unsigned id, InlineBox& parent);
-    ~Text();
+    constructor(node, id, inlineBox) {
+        this.m_node = node;
+        this.m_id = id;
+        this.m_inlineBox = inlineBox;
+    }
 
-    String& content();
-    unsigned length();
+    node() {
+        return this.m_node;
+    }
 
-private:
-    InlineBox& m_parent;
-};
+    content() {
+        return this.m_node.wholeText;
+    }
 
+    length() {
+        return this.content().length;
+    }
 }

@@ -1,53 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
-   <Group
-      location = "container:"
-      name = "Test">
-      <FileRef
-         location = "group:test/index.html">
-      </FileRef>
-      <FileRef
-         location = "group:test/TestHarness.js">
-      </FileRef>
-   </Group>
-   <Group
-      location = "container:"
-      name = "Misc">
-      <FileRef
-         location = "group:misc/headers/LayoutContext.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/FormattingContext.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/BlockFormattingContext.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/FloatingContext.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/BlockMarginCollapse.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/Box.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/Container.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/BlockContainer.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/InitialBlockContainer.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/InlineBox.h">
-      </FileRef>
-      <FileRef
-         location = "group:misc/headers/Text.h">
-      </FileRef>
-   </Group>
+   <FileRef
+      location = "group:test">
+   </FileRef>
+   <FileRef
+      location = "group:misc">
+   </FileRef>
+   <FileRef
+      location = "group:FormattingContext">
+   </FileRef>
+   <FileRef
+      location = "group:LayoutTree">
+   </FileRef>
    <FileRef
       location = "group:README.md">
    </FileRef>
@@ -56,39 +21,6 @@
    </FileRef>
    <FileRef
       location = "group:LayoutContext.js">
-   </FileRef>
-   <FileRef
-      location = "group:FormattingContext.js">
-   </FileRef>
-   <FileRef
-      location = "group:BlockFormattingContext.js">
-   </FileRef>
-   <FileRef
-      location = "group:InlineFormattingContext.js">
-   </FileRef>
-   <FileRef
-      location = "group:FloatingContext.js">
-   </FileRef>
-   <FileRef
-      location = "group:BlockMarginCollapse.js">
-   </FileRef>
-   <FileRef
-      location = "group:Box.js">
-   </FileRef>
-   <FileRef
-      location = "group:Container.js">
-   </FileRef>
-   <FileRef
-      location = "group:BlockContainer.js">
-   </FileRef>
-   <FileRef
-      location = "group:InitialBlockContainer.js">
-   </FileRef>
-   <FileRef
-      location = "group:InlineBox.js">
-   </FileRef>
-   <FileRef
-      location = "group:Text.js">
    </FileRef>
    <FileRef
       location = "group:Utils.js">

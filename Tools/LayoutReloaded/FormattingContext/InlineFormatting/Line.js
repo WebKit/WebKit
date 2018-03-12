@@ -23,20 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace LayoutReloaded {
+class Line {
+    constructor(availableWidth) {
+        this.m_availableWidth = availableWidth;
+        this.m_fragments = new Array();
+    }
 
-class InlineContainer;
+    isEmpty() {
+        return !this.m_fragments.length;
+    }
 
-class Text {
-public:
-    Text(Node*, unsigned id, InlineBox& parent);
-    ~Text();
+    availableWidth() {
+        return this.m_availableWidth;
+    }
 
-    String& content();
-    unsigned length();
-
-private:
-    InlineBox& m_parent;
-};
-
+    appendFragment(startPosition, endPosition, width) {
+        this.m_availableWidth -= width;
+        this.m_fragments.push({startPosition, endPosition, width});
+    }
 }

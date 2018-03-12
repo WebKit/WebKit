@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 class InlineFormattingContext extends FormattingContext {
     constructor(root) {
         super(root);
@@ -29,6 +30,9 @@ class InlineFormattingContext extends FormattingContext {
         ASSERT(root.isBlockContainerBox());
         if (root.establishesBlockFormattingContext())
             this.m_floatingContext = new FloatingContext(this);
+        // TODO: Floats need to be taken into account.
+        this.m_line = new Line(root.contentBox().width());
+        this.m_lines = new Array();
     }
 
     layout(layoutContext) {
@@ -72,19 +76,28 @@ class InlineFormattingContext extends FormattingContext {
 
     _handleText(inlineBox) {
         // FIXME: This is a extremely simple line breaking algorithm.
-        let endPosition = inlineBox.text().lenght() - 1;
+        let endPosition = inlineBox.text().length() - 1;
         let currentPosition = 0;
         while (currentPosition < endPosition) {
             let breakingPosition = Utils.nextBreakingOpportunity(inlineBox.text(), currentPosition);
-            let fragmentWidth = Utils.measureText(inlineBox, currentPosition, breakingPosition);
-            if (this.line().availableWidth() >= fragmentWidth || this.line().isEmpty()) {
-                this.line().appendFragment(currentPosition, breakingPosition, fragmentWidth);
-            } else {
-                this.line().commitCurrentLine();
-                this.line().appendFragment(currentPosition, breakingPosition, fragmentWidth);
-            }
+            if (breakingPosition == currentPosition)
+                break;
+            let fragmentWidth = Utils.measureText(inlineBox.text(), currentPosition, breakingPosition);
+            if (this._line().availableWidth() < fragmentWidth && !this._line().isEmpty())
+                this._commitLine();
+            this._line().appendFragment(currentPosition, breakingPosition, fragmentWidth);
             currentPosition = breakingPosition;
         }
+    }
+
+    _commitLine() {
+        this.m_lines.push(this._line());
+        // TODO: Floats need to be taken into account.
+        this.m_line = new Line(this.rootContainer().contentBox().width());
+    }
+
+    _line() {
+        return this.m_line;
     }
 }
 

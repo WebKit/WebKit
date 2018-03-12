@@ -23,10 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Text {
-    constructor(node, id, inlineBox) {
-        this.m_node = node;
-        this.m_id = id;
-        this.m_inlineBox = inlineBox;
-    }
+namespace LayoutReloaded {
+
+class Line {
+public:
+    Line(LayoutUnit availableWidth);
+
+    bool isEmpty() const;
+    LayoutUnit availableWidth() const;
+
+    void appendFragment(unsigned startPosition, unsigned endPosition, LayoutUnit width);
+
+private:
+    struct Fragment {
+        unsigned m_start;
+        unsigned m_end;
+        LayoutUnti m_width;
+    };
+
+    Vector<Fragment> m_fragments;
+    LayoutUnit m_availableWidth;
+};
+
 }

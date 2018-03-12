@@ -1,3 +1,170 @@
+2018-03-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Add Line class for InlineFormattingContext -and move files around.
+        https://bugs.webkit.org/show_bug.cgi?id=183551
+
+        Reviewed by Wenson Hsieh.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js: Renamed from Tools/LayoutReloaded/BlockFormattingContext.js.
+        (BlockFormattingContext):
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype.computeWidth):
+        (BlockFormattingContext.prototype.computeHeight):
+        (BlockFormattingContext.prototype.marginTop):
+        (BlockFormattingContext.prototype.marginBottom):
+        (BlockFormattingContext.prototype._computeStaticPosition):
+        (BlockFormattingContext.prototype._placeInFlowPositionedChildren):
+        (BlockFormattingContext.prototype._placeOutOfFlowDescendants):
+        (BlockFormattingContext.prototype._computeOutOfFlowWidth):
+        (BlockFormattingContext.prototype._computeFloatingWidth):
+        (BlockFormattingContext.prototype._computeInFlowWidth):
+        (BlockFormattingContext.prototype._computeOutOfFlowHeight):
+        (BlockFormattingContext.prototype._computeFloatingHeight):
+        (BlockFormattingContext.prototype._computeInFlowHeight):
+        (BlockFormattingContext.prototype._computeHorizontalConstraint):
+        (BlockFormattingContext.prototype._computeContentHeight):
+        (BlockFormattingContext.prototype._computeInFlowPositionedPosition):
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        (BlockFormattingContext.prototype._shrinkToFitWidth):
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockMarginCollapse.js: Renamed from Tools/LayoutReloaded/BlockMarginCollapse.js.
+        (BlockMarginCollapse.marginTop):
+        (BlockMarginCollapse.marginBottom):
+        (BlockMarginCollapse._isMarginTopCollapsedWithSibling):
+        (BlockMarginCollapse._isMarginBottomCollapsedWithSibling):
+        (BlockMarginCollapse._isMarginTopCollapsedWithParent):
+        (BlockMarginCollapse._isMarginBottomCollapsedWithParent):
+        (BlockMarginCollapse._nonCollapsedMarginTop):
+        (BlockMarginCollapse._nonCollapsedMarginBottom):
+        (BlockMarginCollapse._collapsedMarginTopFromFirstChild):
+        (BlockMarginCollapse._collapsedMarginBottomFromLastChild):
+        (BlockMarginCollapse._marginValue):
+        (BlockMarginCollapse._hasAdjoiningMarginTopAndBottom):
+        (BlockMarginCollapse):
+        * LayoutReloaded/FormattingContext/FloatingContext.js: Renamed from Tools/LayoutReloaded/FloatingContext.js.
+        (FloatingContext):
+        (FloatingContext.prototype.computePosition):
+        (FloatingContext.prototype.bottom):
+        (FloatingContext.prototype._positionForFloating):
+        (FloatingContext.prototype._positionForClear):
+        (FloatingContext.prototype._computePositionToAvoidIntrudingFloats):
+        (FloatingContext.prototype._addFloating):
+        (FloatingContext.prototype._findInnerMostLeftAndRight):
+        (FloatingContext.prototype._moveToNextVerticalPosition):
+        (FloatingContext.prototype._availableSpace):
+        (FloatingContext.prototype._findFloatingAtVerticalPosition):
+        (FloatingContext.prototype._isEmpty):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        (FloatingContext.prototype._bottom):
+        (FloatingContext.prototype._formattingContext):
+        * LayoutReloaded/FormattingContext/FormattingContext.js: Renamed from Tools/LayoutReloaded/FormattingContext.js.
+        (FormattingContext):
+        (FormattingContext.prototype.rootContainer):
+        (FormattingContext.prototype.floatingContext):
+        (FormattingContext.prototype.layout):
+        (FormattingContext.prototype.computeWidth):
+        (FormattingContext.prototype.computeHeight):
+        (FormattingContext.prototype.marginTop):
+        (FormattingContext.prototype.marginLeft):
+        (FormattingContext.prototype.marginBottom):
+        (FormattingContext.prototype.marginRight):
+        (FormattingContext.prototype.absoluteMarginBox):
+        (FormattingContext.prototype.absoluteBorderBox):
+        (FormattingContext.prototype.absolutePaddingBox):
+        (FormattingContext.prototype.absoluteContentBox):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js: Renamed from Tools/LayoutReloaded/InlineFormattingContext.js.
+        (InlineFormattingContext):
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleInlineBox):
+        (InlineFormattingContext.prototype._handleText):
+        (InlineFormattingContext.prototype._commitLine):
+        (InlineFormattingContext.prototype._line):
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js: Copied from Tools/LayoutReloaded/InitialBlockContainer.js.
+        (Line):
+        (Line.prototype.isEmpty):
+        (Line.prototype.availableWidth):
+        (Line.prototype.appendFragment):
+        * LayoutReloaded/LayoutReloaded.xcworkspace/contents.xcworkspacedata:
+        * LayoutReloaded/LayoutTree/BlockContainer.js: Renamed from Tools/LayoutReloaded/BlockContainer.js.
+        (BlockContainer):
+        (BlockContainer.prototype.establishesInlineFormattingContext):
+        * LayoutReloaded/LayoutTree/Box.js: Renamed from Tools/LayoutReloaded/Box.js.
+        (Box):
+        (Box.prototype.id):
+        (Box.prototype.setRendererName):
+        (Box.prototype.name):
+        (Box.prototype.node):
+        (Box.prototype.parent):
+        (Box.prototype.nextSibling):
+        (Box.prototype.nextInFlowSibling):
+        (Box.prototype.previousSibling):
+        (Box.prototype.previousInFlowSibling):
+        (Box.prototype.setParent):
+        (Box.prototype.setNextSibling):
+        (Box.prototype.setPreviousSibling):
+        (Box.prototype.rect):
+        (Box.prototype.topLeft):
+        (Box.prototype.bottomRight):
+        (Box.prototype.setTopLeft):
+        (Box.prototype.setSize):
+        (Box.prototype.setWidth):
+        (Box.prototype.setHeight):
+        (Box.prototype.isContainer):
+        (Box.prototype.isBlockLevelBox):
+        (Box.prototype.isBlockContainerBox):
+        (Box.prototype.isInlineLevelBox):
+        (Box.prototype.setIsAnonymous):
+        (Box.prototype.isAnonymous):
+        (Box.prototype.establishesFormattingContext):
+        (Box.prototype.establishedFormattingContext):
+        (Box.prototype.establishesBlockFormattingContext):
+        (Box.prototype.establishesInlineFormattingContext):
+        (Box.prototype.isPositioned):
+        (Box.prototype.isRelativePositioned):
+        (Box.prototype.isAbsolutePositioned):
+        (Box.prototype.isFixedPositioned):
+        (Box.prototype.isInFlow):
+        (Box.prototype.isOutOfFlowPositioned):
+        (Box.prototype.isInFlowPositioned):
+        (Box.prototype.isFloatingPositioned):
+        (Box.prototype.isFloatingOrOutOfFlowPositioned):
+        (Box.prototype.isRootElement):
+        (Box.prototype.containingBlock):
+        (Box.prototype.borderBox):
+        (Box.prototype.paddingBox):
+        (Box.prototype.contentBox):
+        * LayoutReloaded/LayoutTree/Container.js: Renamed from Tools/LayoutReloaded/Container.js.
+        (Container):
+        (Container.prototype.isContainer):
+        (Container.prototype.setFirstChild):
+        (Container.prototype.setLastChild):
+        (Container.prototype.firstChild):
+        (Container.prototype.firstInFlowChild):
+        (Container.prototype.lastChild):
+        (Container.prototype.lastInFlowChild):
+        (Container.prototype.hasChild):
+        (Container.prototype.hasInFlowChild):
+        * LayoutReloaded/LayoutTree/InitialBlockContainer.js: Renamed from Tools/LayoutReloaded/InitialBlockContainer.js.
+        (InitialBlockContainer):
+        (InitialBlockContainer.prototype.establishesBlockFormattingContext):
+        (InitialBlockContainer.prototype.paddingBox):
+        (InitialBlockContainer.prototype.contentBox):
+        * LayoutReloaded/LayoutTree/InlineBox.js: Renamed from Tools/LayoutReloaded/InlineBox.js.
+        (InlineBox):
+        (InlineBox.prototype.setText):
+        (InlineBox.prototype.text):
+        * LayoutReloaded/LayoutTree/Text.js: Renamed from Tools/LayoutReloaded/Text.js.
+        (Text):
+        (Text.prototype.node):
+        (Text.prototype.content):
+        (Text.prototype.length):
+        * LayoutReloaded/Utils.js:
+        (Utils.nextBreakingOpportunity):
+        (Utils.measureText):
+        * LayoutReloaded/misc/headers/Line.h: Copied from Tools/LayoutReloaded/misc/headers/Text.h.
+        * LayoutReloaded/misc/headers/Text.h:
+        * LayoutReloaded/test/border-simple.html:
+        * LayoutReloaded/test/index.html:
+
 2018-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Copying a table from the Numbers app and pasting into iCloud Numbers fails
