@@ -69,6 +69,12 @@ String TextEncoding::decode(const char* data, size_t length, bool stopOnError, b
     return newTextCodec(*this)->decode(data, length, true, stopOnError, sawError);
 }
 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+// NOTE: ICU's unorm_quickCheck and unorm_normalize functions are deprecated in some SDKs.
+
 Vector<uint8_t> TextEncoding::encode(StringView text, UnencodableHandling handling) const
 {
     if (!m_name || text.isEmpty())
@@ -105,6 +111,10 @@ Vector<uint8_t> TextEncoding::encode(StringView text, UnencodableHandling handli
 
     return newTextCodec(*this)->encode(StringView { source, sourceLength }, handling);
 }
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
 
 const char* TextEncoding::domName() const
 {

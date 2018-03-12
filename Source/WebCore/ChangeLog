@@ -1,3 +1,19 @@
+2018-03-12  Brian Burg  <bburg@apple.com>
+
+        Ignore some deprecation warnings encountered when compiling with newer versions of ICU
+        https://bugs.webkit.org/show_bug.cgi?id=183584
+        <rdar://problem/38395317>
+
+        Reviewed by Daniel Bates.
+
+        Ignore new deprecation warnings. Where a function has more than one
+        deprecation warning, mark out the entire function so it remains readable.
+
+        * editing/TextIterator.cpp:
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp:
+        (WebCore::SurrogatePairAwareTextIterator::normalizeVoicingMarks):
+        * platform/text/TextEncoding.cpp:
+
 2018-03-12  Yoav Weiss  <yoav@yoav.ws>
 
         Runtime flag for link prefetch and remove link subresource.
