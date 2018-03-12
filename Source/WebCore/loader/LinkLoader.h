@@ -66,6 +66,7 @@ private:
     void notifyFinished(CachedResource&) override;
     static void preconnectIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& crossOrigin);
     static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& as, const String& media, const String& type, const String& crossOriginMode, LinkLoader*);
+    void prefetchIfNeeded(const LinkRelAttribute&, const URL& href, Document&);
 
     LinkLoaderClient& m_client;
     CachedResourceHandle<CachedResource> m_cachedLinkResource;

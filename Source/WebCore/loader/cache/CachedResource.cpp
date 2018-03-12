@@ -91,12 +91,8 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
         return ResourceLoadPriority::Low;
     case CachedResource::Beacon:
         return ResourceLoadPriority::VeryLow;
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return ResourceLoadPriority::VeryLow;
-    case CachedResource::LinkSubresource:
-        return ResourceLoadPriority::VeryLow;
-#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return ResourceLoadPriority::Low;
@@ -243,10 +239,8 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
     }
 
-#if ENABLE(LINK_PREFETCH)
-    if (type() == CachedResource::LinkPrefetch || type() == CachedResource::LinkSubresource)
+    if (type() == CachedResource::LinkPrefetch)
         m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Purpose, "prefetch");
-#endif
     m_resourceRequest.setPriority(loadPriority());
 
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.

@@ -488,10 +488,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_LETTERPRESS 0
 #endif
 
-#if !defined(ENABLE_LINK_PREFETCH)
-#define ENABLE_LINK_PREFETCH 0
-#endif
-
 #if !defined(ENABLE_MATHML)
 #define ENABLE_MATHML 1
 #endif

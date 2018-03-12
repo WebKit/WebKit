@@ -508,10 +508,7 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         resourceType = DiagnosticLoggingKeys::applicationManifestKey();
         break;
 #endif
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
-#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif

@@ -163,10 +163,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::XSLStyleSheet:
 #endif
     case CachedResource::Beacon:
-#if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkSubresource:
     case CachedResource::LinkPrefetch:
-#endif
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::ApplicationManifest:
 #endif
@@ -265,6 +262,26 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     return nullptr;
 }
 
+void LinkLoader::prefetchIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document)
+{
+    if (!relAttribute.isLinkPrefetch || !href.isValid() || !document.frame() || !m_client.shouldLoadLink())
+        return;
+
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled());
+    std::optional<ResourceLoadPriority> priority;
+    CachedResource::Type type = CachedResource::LinkPrefetch;
+
+    if (m_cachedLinkResource) {
+        m_cachedLinkResource->removeClient(*this);
+        m_cachedLinkResource = nullptr;
+    }
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
+    m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest(document.completeURL(href)), options, priority)).value_or(nullptr);
+    if (m_cachedLinkResource)
+        m_cachedLinkResource->addClient(*this);
+}
+
 void LinkLoader::cancelLoad()
 {
     if (m_preloadResourceClient)
@@ -290,31 +307,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
             m_preloadResourceClient->clear();
     }
 
-#if ENABLE(LINK_PREFETCH)
-    if ((relAttribute.isLinkPrefetch || relAttribute.isLinkSubresource) && href.isValid() && document.frame()) {
-        if (!m_client.shouldLoadLink())
-            return false;
-
-        std::optional<ResourceLoadPriority> priority;
-        CachedResource::Type type = CachedResource::LinkPrefetch;
-        if (relAttribute.isLinkSubresource) {
-            // We only make one request to the cached resource loader if multiple rel types are specified;
-            // this is the higher priority, which should overwrite the lower priority.
-            priority = ResourceLoadPriority::Low;
-            type = CachedResource::LinkSubresource;
-        }
-
-        if (m_cachedLinkResource) {
-            m_cachedLinkResource->removeClient(*this);
-            m_cachedLinkResource = nullptr;
-        }
-        ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-        options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
-        m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest(document.completeURL(href)), options, priority)).value_or(nullptr);
-        if (m_cachedLinkResource)
-            m_cachedLinkResource->addClient(*this);
-    }
-#endif
+    prefetchIfNeeded(relAttribute, href, document);
 
     return true;
 }

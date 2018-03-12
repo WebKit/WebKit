@@ -1,3 +1,49 @@
+2018-03-12  Yoav Weiss  <yoav@yoav.ws>
+
+        Runtime flag for link prefetch and remove link subresource.
+        https://bugs.webkit.org/show_bug.cgi?id=183540
+
+        Reviewed by Chris Dumez.
+
+        This patch removes the LINK_PREFETCH build time flag, removes
+        link subresource, adds an off-by-default runtime flag for link
+        prefetch and makes sure link prefetch only works when this flag is on.
+
+        Subresource is removed as it's not a part of any spec, nor supported by any
+        other browser. It was replaced by link preload.
+
+        No new tests as this is not adding any new functionality.
+
+        * Configurations/FeatureDefines.xcconfig: Remove the LINK_PREFETCH flag.
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute): Put prefetch support behind the runtime flag.
+        (WebCore::LinkRelAttribute::isSupported): Add prefetch.
+        * html/LinkRelAttribute.h: Remove the LINK_PREFETCH flag.
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient): Remove the LINK_PREFETCH flag.
+        (WebCore::LinkLoader::prefetchIfNeeded): Move the prefetch code to `prefetchIfNeeded()`. Remove subresource bits.
+        (WebCore::LinkLoader::loadLink): Call `prefetchIfNeeded()`.
+        * loader/LinkLoader.h:
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType): Remove the LINK_PREFETCH flag as well as subresource.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded): Remove the LINK_PREFETCH flag as well as subresource.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType): Remove the LINK_PREFETCH flag as well as subresource.
+        (WebCore::CachedResource::load): Remove the LINK_PREFETCH flag.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::ignoreForRequestCount const): Remove the LINK_PREFETCH flag as well as subresource.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource): Remove the LINK_PREFETCH flag as well as subresource.
+        (WebCore::CachedResourceLoader::requestLinkResource): Remove subresource.
+        (WebCore::contentTypeFromResourceType): Remove the LINK_PREFETCH flag as well as subresource.
+        (WebCore::CachedResourceLoader::checkInsecureContent const): Remove the LINK_PREFETCH flag as well as subresource.
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest): Remove the LINK_PREFETCH flag as well as subresource.
+        * loader/cache/CachedResourceLoader.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLinkPrefetchEnabled): Set the prefetch flag.
+        (WebCore::RuntimeEnabledFeatures::linkPrefetchEnabled const): Get the prefetch flag.
+
 2018-03-12  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection's close method should update signalingState

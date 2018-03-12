@@ -62,6 +62,8 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
         isLinkPreconnect = true;
     else if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
         isLinkPreload = true;
+    else if (RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(rel, "prefetch"))
+        isLinkPrefetch = true;
     else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
         isStyleSheet = true;
         isAlternate = true;
@@ -84,12 +86,6 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
                 iconType = LinkIconType::TouchIcon;
             else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon-precomposed"))
                 iconType = LinkIconType::TouchPrecomposedIcon;
-#if ENABLE(LINK_PREFETCH)
-            else if (equalLettersIgnoringASCIICase(word, "prefetch"))
-                isLinkPrefetch = true;
-            else if (equalLettersIgnoringASCIICase(word, "subresource"))
-                isLinkSubresource = true;
-#endif
         }
     }
 }
@@ -99,9 +95,6 @@ bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
 {
     static const char* const supportedAttributes[] = {
         "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
-#if ENABLE(LINK_PREFETCH)
-        "prefetch", "subresource",
-#endif
 #if ENABLE(APPLICATION_MANIFEST)
         "manifest",
 #endif
@@ -116,6 +109,9 @@ bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
         return true;
 
     if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
+        return true;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled() && equalIgnoringASCIICase(attribute, "prefetch"))
         return true;
 
     return false;

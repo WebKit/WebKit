@@ -128,12 +128,8 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(WTFMove(request), sessionID);
 #endif
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return new CachedResource(WTFMove(request), CachedResource::LinkPrefetch, sessionID);
-    case CachedResource::LinkSubresource:
-        return new CachedResource(WTFMove(request), CachedResource::LinkSubresource, sessionID);
-#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return new CachedTextTrack(WTFMove(request), sessionID);
@@ -291,14 +287,12 @@ ResourceErrorOr<CachedResourceHandle<CachedSVGDocument>> CachedResourceLoader::r
     return castCachedResourceTo<CachedSVGDocument>(requestResource(CachedResource::SVGDocumentResource, WTFMove(request)));
 }
 
-#if ENABLE(LINK_PREFETCH)
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestLinkResource(CachedResource::Type type, CachedResourceRequest&& request)
 {
     ASSERT(frame());
-    ASSERT(type == CachedResource::LinkPrefetch || type == CachedResource::LinkSubresource);
+    ASSERT(type == CachedResource::LinkPrefetch);
     return requestResource(type, WTFMove(request));
 }
-#endif
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestMedia(CachedResourceRequest&& request)
 {
@@ -367,11 +361,8 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
         return MixedContentChecker::ContentType::Active;
 #endif
 
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
         return MixedContentChecker::ContentType::Active;
-#endif
 
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
@@ -432,11 +423,8 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     }
     case CachedResource::MainResource:
     case CachedResource::Beacon:
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
         // Prefetch cannot affect the current document.
-#endif
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::ApplicationManifest:
 #endif
@@ -654,12 +642,8 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         return false;
     case CachedResource::MainResource:
         return false;
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return false;
-    case CachedResource::LinkSubresource:
-        return false;
-#endif
     default:
         break;
     }

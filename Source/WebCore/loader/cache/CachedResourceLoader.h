@@ -93,9 +93,7 @@ public:
 #if ENABLE(XSLT)
     ResourceErrorOr<CachedResourceHandle<CachedXSLStyleSheet>> requestXSLStyleSheet(CachedResourceRequest&&);
 #endif
-#if ENABLE(LINK_PREFETCH)
     ResourceErrorOr<CachedResourceHandle<CachedResource>> requestLinkResource(CachedResource::Type, CachedResourceRequest&&);
-#endif
 #if ENABLE(VIDEO_TRACK)
     ResourceErrorOr<CachedResourceHandle<CachedTextTrack>> requestTextTrack(CachedResourceRequest&&);
 #endif

@@ -1,3 +1,14 @@
+2018-03-12  Yoav Weiss  <yoav@yoav.ws>
+
+        Runtime flag for link prefetch and remove link subresource.
+        https://bugs.webkit.org/show_bug.cgi?id=183540
+
+        Reviewed by Chris Dumez.
+
+        Remove the LINK_PREFETCH build time flag.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-03-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION(r211643): Dismissing WKActionSheet should not also dismiss its presenting view controller

@@ -65,11 +65,9 @@ ResourceType toResourceType(CachedResource::Type type)
     case CachedResource::TextTrackResource:
         return ResourceType::Media;
 #endif
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
         ASSERT_NOT_REACHED();
-#endif
+        break;
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::ApplicationManifest:
         return ResourceType::Raw;

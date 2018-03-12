@@ -132,10 +132,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Icon:
     case CachedResource::RawResource:
     case CachedResource::SVGDocumentResource:
-#if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkSubresource:
-#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
 #endif

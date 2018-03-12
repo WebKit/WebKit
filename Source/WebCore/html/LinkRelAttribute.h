@@ -47,10 +47,7 @@ struct LinkRelAttribute {
     bool isDNSPrefetch { false };
     bool isLinkPreload { false };
     bool isLinkPreconnect { false };
-#if ENABLE(LINK_PREFETCH)
     bool isLinkPrefetch { false };
-    bool isLinkSubresource { false };
-#endif
 #if ENABLE(APPLICATION_MANIFEST)
     bool isApplicationManifest { false };
 #endif
