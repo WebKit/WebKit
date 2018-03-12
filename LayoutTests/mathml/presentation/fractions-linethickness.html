@@ -4,12 +4,17 @@
     <title>fractions linethickness</title>
     <meta charset="utf-8"/>
     <style type="text/css">
-      /* This test requires the Latin Modern Math font, which satisfies:
-         FractionRuleThickness = 40 * 25 / 1000 = 1px;
-       */
+      @font-face {
+        font-family: TestFont;
+        src: url("../../imported/w3c/web-platform-tests/fonts/math/fraction-rulethickness10000.woff");
+      }
       math {
-        font-family: "Latin Modern Math";
-        font-size: 25px;
+        /* FractionRuleThickness = 10000 * 1 / 1000 = 10px; */
+        font-family: "TestFont";
+        font-size: 1px;
+      }
+      mn {
+        font-size: 20px;
       }
     </style>
   </head>

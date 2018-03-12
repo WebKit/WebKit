@@ -1959,9 +1959,7 @@ mathml/presentation/mathvariant-tokens.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
 
 # These tests require the Latin Modern Math font.
-mathml/opentype/fraction-line.html [ Skip ]
 mathml/opentype/large-operators-italic-correction.html [ Skip ]
-mathml/presentation/fractions-linethickness.html [ Skip ]
 ################################################################################
 #################          End MathML Issues                ####################
 ################################################################################

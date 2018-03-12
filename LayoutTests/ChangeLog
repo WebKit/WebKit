@@ -1,3 +1,29 @@
+2018-03-12  Frederic Wang  <fwang@igalia.com>
+
+        Do not rely on Latin Modern Math to test fraction/radical bars
+        https://bugs.webkit.org/show_bug.cgi?id=183446
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        mathml/opentype/fraction-line.html was added in bug 155639 to test OpenType MATH parameters
+        for fraction but relies on the presence of the Latin Modern Math font, which is not available
+        on several platforms. Since these features are now already covered by the Web Platform
+        tests in Layout/imported/mathml-in-html5/mathml/presentation-markup/fractions/ we just remove
+        the test. Similarly, mathml/presentation/fractions-linethickness.html relies on Latin Modern
+        Math to ensure correct linethickness and we rewrite that test to use the web font
+        fraction-rulethickness10000.woff instead. We perform similar rewriting for
+        radical-bar-visibility.html, using a WOFF font with a specified radical line thickness.
+        Finally, we update the test expectations accordingly on iOS, macOS and Windows platform.
+
+        * mathml/opentype/fraction-line.html: Removed. Already tested by other tests.
+        * mathml/opentype/fraction-line-expected.html: Ditto.
+        * mathml/presentation/fractions-linethickness.html: Use fraction-rulethickness10000.woff
+        * mathml/presentation/fractions-linethickness-expected.html: Ditto.
+        * mathml/presentation/radical-bar-visibility.html: Use radical-degreebottomraisepercent25-rulethickness1000.woff
+        * platform/ios/TestExpectations: Update expectations.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2018-03-12  Javier Fernandez  <jfernandez@igalia.com>
 
         Remove GridLayout runtime flag

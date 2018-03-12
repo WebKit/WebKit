@@ -679,8 +679,6 @@ webkit.org/b/160161 mathml/opentype/horizontal.html [ Skip ]
 webkit.org/b/160161 mathml/opentype/horizontal-munderover.html [ Skip ]
 
 # These tests require the Latin Modern Math font.
-webkit.org/b/160161 mathml/opentype/fraction-line.html [ Skip ]
-webkit.org/b/160161 mathml/presentation/fractions-linethickness.html [ Skip ]
 webkit.org/b/160161 mathml/opentype/large-operators-italic-correction.html [ Skip ]
 webkit.org/b/160161 mathml/presentation/bug159513.html [ Skip ]
 

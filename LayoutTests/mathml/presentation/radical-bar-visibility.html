@@ -4,13 +4,17 @@
     <title>Radical bar visibility</title>
     <meta charset="utf-8"/>
     <style>
+      @font-face {
+        font-family: TestFont;
+        src: url("../../imported/w3c/web-platform-tests/fonts/math/radical-degreebottomraisepercent25-rulethickness1000.woff");
+      }
       math, msqrt {
-        /* Latin Modern Math has
-           RadicalRuleThickess = 40
+        /* TestFont has
+           RadicalRuleThickess = 1000
            em = 1000
-           So the actual rule thickness is 24 * 40 / 1000 = 0.96 < 1 pixel */
-        font-family: Latin Modern Math;
-        font-size: 24px;
+           So the actual rule thickness is .9 * 1000 / 1000 = 0.9 < 1 pixel */
+        font-family: TestFont;
+        font-size: .9px;
       }
     </style>
   </head>
