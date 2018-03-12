@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+  2.20.0
+==================
+
+What's new in WebKitGTK+ 2.20.0?
+
+  - Remove resource load statistics API, it's not ready for stable yet.
+  - Make it possible to close the inspector when webkit_web_view_get_inspector() hasn't been called.
+  - Use WebKitDOMElement instead of WebKitDOMHTMLFormElement in paramater of signal WebKitWebPage::will-submit-form.
+  - Fix a crash when trying to disconnect the wayland connection.
+
+==================
 WebKitGTK+ 2.19.92
 ==================
 
