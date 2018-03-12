@@ -39,6 +39,11 @@ WI.PinnedTabBarItem = class PinnedTabBarItem extends WI.TabBarItem
         return new WI.PinnedTabBarItem(image, title);
     }
 
+    titleDidChange()
+    {
+        this.element.title = this.title;
+    }
+
     // Private
 
     _handleContextMenuEvent(event)

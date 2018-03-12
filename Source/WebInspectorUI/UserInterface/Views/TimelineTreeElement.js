@@ -35,6 +35,7 @@ WI.TimelineTreeElement = class TimelineTreeElement extends WI.GeneralTreeElement
 
         this._placeholder = placeholder || false;
         this.editing = this._placeholder;
+        this.tooltipHandledSeparately = true;
     }
 
     // Public

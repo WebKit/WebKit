@@ -46,6 +46,7 @@ WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralT
         this._statusImageElement = document.createElement("img");
         this._statusImageElement.classList.add("status-image", "resolved");
         this.status = this._statusImageElement;
+        this.tooltipHandledSeparately = true;
 
         breakpoint.addEventListener(WI.XHRBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
 

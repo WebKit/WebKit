@@ -31,6 +31,7 @@ WI.StorageTreeElement = class StorageTreeElement extends WI.GeneralTreeElement
         super(classNames, title, subtitle, representedObject);
 
         this.flattened = false;
+        this.tooltipHandledSeparately = true;
     }
 
     // Public

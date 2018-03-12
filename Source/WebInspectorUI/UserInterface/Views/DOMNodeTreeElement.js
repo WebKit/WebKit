@@ -33,6 +33,7 @@ WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
         super("dom-node", domNode.displayName, subtitle, domNode, {hasChildren: true});
 
         this.status = WI.linkifyNodeReferenceElement(domNode, WI.createGoToArrowButton());
+        this.tooltipHandledSeparately = true;
     }
 
     // Protected

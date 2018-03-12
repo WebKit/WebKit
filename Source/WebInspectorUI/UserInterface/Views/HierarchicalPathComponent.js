@@ -81,6 +81,7 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
         this._selectorArrows = false;
 
         this.displayName = displayName;
+        this.tooltip = displayName;
         this.selectorArrows = showSelectorArrows;
     }
 
@@ -217,6 +218,32 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
         this._element.classList.toggle("show-selector-arrows", !!this._selectorArrows);
     }
 
+    get tooltip()
+    {
+        return this._tooltip;
+    }
+
+    set tooltip(x)
+    {
+        if (x === this._tooltip)
+            return;
+
+
+        this._tooltip = x;
+        this._updateElementTitleAndText();
+    }
+
+    get hideTooltip ()
+    {
+        return this._hideTooltip;
+    }
+
+    set hideTooltip(hide)
+    {
+        this._hideTooltip = hide;
+        this._updateElementTitleAndText();
+    }
+
     get previousSibling() { return this._previousSibling; }
     set previousSibling(newSlibling) { this._previousSibling = newSlibling || null; }
     get nextSibling() { return this._nextSibling; }
@@ -230,8 +257,12 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
         if (this._truncatedDisplayNameLength && truncatedDisplayName.length > this._truncatedDisplayNameLength)
             truncatedDisplayName = truncatedDisplayName.substring(0, this._truncatedDisplayNameLength) + ellipsis;
 
-        this._element.title = this._displayName;
         this._titleContentElement.textContent = truncatedDisplayName;
+
+        if (this.hideTooltip)
+            this._element.title = "";
+        else
+            this._element.title = this._tooltip;
     }
 
     _updateSelectElement()

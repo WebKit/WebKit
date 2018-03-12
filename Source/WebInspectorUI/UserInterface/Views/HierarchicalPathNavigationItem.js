@@ -118,6 +118,7 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
         for (var i = 0; i < this._components.length; ++i) {
             this._components[i].hidden = false;
             this._components[i].forcedWidth = null;
+            this._components[i].hideTooltip = true;
         }
 
         if (expandOnly)
@@ -160,6 +161,8 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
         var widthToRemove = totalOtherItemsWidth + thisItemWidth - barWidth;
         for (var i = 0; i < this._components.length; ++i) {
             var componentWidth = componentWidths[i];
+
+            this._components[i].hideTooltip = false;
 
             // Try to take the whole width we need to remove from each component.
             var forcedWidth = componentWidth - widthToRemove;

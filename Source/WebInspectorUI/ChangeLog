@@ -1,3 +1,84 @@
+2018-03-12  Jon Davis  <jond@apple.com>
+
+        Web Inspector: Remove redundant tooltips
+        https://bugs.webkit.org/show_bug.cgi?id=183099
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Instantiate ConsoleDrawer so the keyboard shortcuts for FindBanner are available.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement):
+        Suppress tooltips by setting the tooltipHandledSeprately flag with no custom handler.
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WI.ButtonNavigationItem):
+        Only show tooltips when the button style is an image.
+
+        * UserInterface/Views/ConsoleDrawer.js:
+        (WI.ConsoleDrawer):
+        (WI.ConsoleDrawer.prototype.toggleButtonShortcutTooltip):
+        Added helper to set the toggle button keyboard shortcut tooltip.
+
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement):
+        Suppress tooltips by setting the tooltipHandledSeprately flag with no custom handler.
+
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement):
+        Suppress tooltips by setting the tooltipHandledSeprately flag with no custom handler.
+
+        * UserInterface/Views/FindBanner.js:
+        (WI.FindBanner):
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WI.HierarchicalPathComponent):
+        (WI.HierarchicalPathComponent.prototype.get tooltip):
+        (WI.HierarchicalPathComponent.prototype.set tooltip):
+        (WI.HierarchicalPathComponent.prototype.get hideTooltip):
+        (WI.HierarchicalPathComponent.prototype.set hideTooltip):
+        (WI.HierarchicalPathComponent.prototype._updateElementTitleAndText):
+        Add tooltip management features to manage tooltips separately of the displayName,
+        and provide a behavior to hide tooltips while retaining the tooltip data.
+
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WI.HierarchicalPathNavigationItem.prototype.updateLayout):
+        Hide tooltips when fully visible, show tooltips for collapsed items.
+
+        * UserInterface/Views/PinnedTabBarItem.js:
+        (WI.PinnedTabBarItem.prototype.titleDidChange):
+        Set tooltips for pinned tab bar items.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+        Set the ConsoleDrawer toggle button tooltip after the keyboard shortcut is registered.
+
+        * UserInterface/Views/StorageTreeElement.js:
+        (WI.StorageTreeElement):
+        Suppress tooltips by setting the tooltipHandledSeprately flag with no custom handler.
+
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem.prototype.get title):
+        (WI.TabBarItem.prototype.set title):
+        (WI.TabBarItem.prototype.titleDidChange):
+        (WI.TabBarItem):
+        Add title property management with an overridable titleDidChange handler for
+        setting tooltips when needed.
+
+        * UserInterface/Views/TimelineTreeElement.js:
+        (WI.TimelineTreeElement):
+        Suppress tooltips by setting the tooltipHandledSeprately flag with no custom handler.
+
+        * UserInterface/Views/ToggleButtonNavigationItem.js:
+        (WI.ToggleButtonNavigationItem.prototype.set defaultToolTip):
+        Added a setter for manging the default tooltip of a toggle button.
+
+        * UserInterface/Views/XHRBreakpointTreeElement.js:
+        (WI.XHRBreakpointTreeElement):
+        Suppress tooltips by setting the tooltipHandledSeprately flag with no custom handler.
+
 2018-03-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Sources: Open all resources in Sources tab instead of Resources/Debugger

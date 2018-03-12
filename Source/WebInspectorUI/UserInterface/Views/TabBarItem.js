@@ -99,8 +99,25 @@ WI.TabBarItem = class TabBarItem extends WI.Object
     get image() { return this._iconElement.src; }
     set image(url) { this._iconElement.src = url || ""; }
 
-    get title() { return this._element.title || ""; }
-    set title(title) { this._element.title = title || ""; }
+    get title()
+    {
+        return this._title;
+    }
+
+    set title(title)
+    {
+        title = title || "";
+        if (this._title === title)
+            return;
+
+        this._title = title;
+        this.titleDidChange();
+    }
+
+    titleDidChange()
+    {
+        // Implemented by subclasses.
+    }
 };
 
 WI.TabBarItem.StyleClassName = "item";

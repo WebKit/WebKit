@@ -34,8 +34,6 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this._enabled = true;
 
-        this.tooltip = toolTipOrLabel;
-
         this.element.addEventListener("click", this._mouseClicked.bind(this));
 
         if (label)
@@ -49,6 +47,9 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         this._label = toolTipOrLabel;
 
         this.buttonStyle = this._image ? WI.ButtonNavigationItem.Style.Image : WI.ButtonNavigationItem.Style.Text;
+
+        if (this.buttonStyle === WI.ButtonNavigationItem.Style.Image)
+            this.tooltip = toolTipOrLabel;
     }
 
     // Public
