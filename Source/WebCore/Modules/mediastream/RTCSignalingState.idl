@@ -31,5 +31,6 @@
     "have-local-offer",
     "have-remote-offer",
     "have-local-pranswer",
-    "have-remote-pranswer"
+    "have-remote-pranswer",
+    "closed"
 };

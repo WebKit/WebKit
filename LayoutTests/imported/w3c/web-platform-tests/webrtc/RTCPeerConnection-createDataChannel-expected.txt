@@ -1,6 +1,6 @@
 
 PASS createDataChannel with no argument should throw TypeError 
-FAIL createDataChannel with closed connection should throw InvalidStateError assert_equals: signaling state expected "closed" but got "stable"
+PASS createDataChannel with closed connection should throw InvalidStateError 
 FAIL createDataChannel attribute default values assert_equals: expected (string) "low" but got (undefined) undefined
 FAIL createDataChannel with provided parameters should initialize attributes to provided values Type error
 PASS createDataChannel with label "foo" should succeed 

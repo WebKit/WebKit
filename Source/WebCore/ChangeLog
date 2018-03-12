@@ -1,3 +1,20 @@
+2018-03-12  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection's close method should update signalingState
+        https://bugs.webkit.org/show_bug.cgi?id=174314
+        <rdar://problem/33267977>
+
+        Reviewed by Eric Carlson.
+
+        Covered by rebased test.
+        Add closed as signalingState enum value.
+        Set peer connection signaling state to closed once close is called.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::doClose):
+        * Modules/mediastream/RTCSignalingState.idl:
+        * platform/mediastream/RTCSignalingState.h:
+
 2018-03-12  Mark Lam  <mark.lam@apple.com>
 
         Make a NativeFunction into a class to support pointer profiling.

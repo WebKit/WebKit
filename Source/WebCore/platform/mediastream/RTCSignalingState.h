@@ -34,6 +34,7 @@ enum class RTCSignalingState {
     HaveRemoteOffer,
     HaveLocalPranswer,
     HaveRemotePranswer,
+    Closed,
 };
 
 String convertEnumerationToString(RTCSignalingState); // in JSCRTCSignalingState.cpp

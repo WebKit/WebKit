@@ -394,6 +394,7 @@ bool RTCPeerConnection::doClose()
 
     m_connectionState = RTCPeerConnectionState::Closed;
     m_iceConnectionState = RTCIceConnectionState::Closed;
+    m_signalingState = RTCSignalingState::Closed;
 
     for (auto& transceiver : m_transceiverSet->list()) {
         transceiver->stop();
