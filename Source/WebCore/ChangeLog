@@ -1,3 +1,17 @@
+2018-03-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Crash in WebCore::PlatformDisplayWayland::~PlatformDisplayWayland
+        https://bugs.webkit.org/show_bug.cgi?id=176490
+
+        Reviewed by Žan Doberšek.
+
+        Destroy the wl_display with wl_display_disconnect() (client process API), not
+        wl_display_destroy() (server process API). It has to be destroyed last, so explicitly
+        destroy the wl_registry and wl_compositor first.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::~PlatformDisplayWayland):
+
 2018-03-10  Megan Gardner  <megan_gardner@apple.com>
 
         Media query for default appearance
