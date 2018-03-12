@@ -1,3 +1,12 @@
+2018-03-12  youenn fablet  <youenn@apple.com>
+
+        Remove empty cpp files in Source/ThirdParty/libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=183529
+
+        Unreviewed.
+
+        * libwebrtc.xcodeproj/project.pbxproj: fix the build.
+
 2018-03-09  Youenn Fablet  <youenn@apple.com>
 
         Remove empty cpp files in Source/ThirdParty/libwebrtc

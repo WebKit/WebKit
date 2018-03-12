@@ -2369,7 +2369,6 @@
 		5CDD8C0B1E43C34600621E92 /* audio_encoder_isac_t_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8BFD1E43C34600621E92 /* audio_encoder_isac_t_impl.h */; };
 		5CDD8C0C1E43C34600621E92 /* audio_encoder_isac_t.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8BFE1E43C34600621E92 /* audio_encoder_isac_t.h */; };
 		5CDD8C0D1E43C34600621E92 /* bandwidth_info.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8BFF1E43C34600621E92 /* bandwidth_info.h */; };
-		5CDD8C0E1E43C34600621E92 /* empty.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8C001E43C34600621E92 /* empty.cc */; };
 		5CDD8C0F1E43C34600621E92 /* locked_bandwidth_info.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8C071E43C34600621E92 /* locked_bandwidth_info.cc */; };
 		5CDD8C101E43C34600621E92 /* locked_bandwidth_info.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8C081E43C34600621E92 /* locked_bandwidth_info.h */; };
 		5CDD8C141E43C3B400621E92 /* vp9_noop.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8C131E43C3B400621E92 /* vp9_noop.cc */; };
@@ -5478,7 +5477,6 @@
 		5CDD8BFD1E43C34600621E92 /* audio_encoder_isac_t_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_encoder_isac_t_impl.h; sourceTree = "<group>"; };
 		5CDD8BFE1E43C34600621E92 /* audio_encoder_isac_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_encoder_isac_t.h; sourceTree = "<group>"; };
 		5CDD8BFF1E43C34600621E92 /* bandwidth_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bandwidth_info.h; sourceTree = "<group>"; };
-		5CDD8C001E43C34600621E92 /* empty.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = empty.cc; sourceTree = "<group>"; };
 		5CDD8C071E43C34600621E92 /* locked_bandwidth_info.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = locked_bandwidth_info.cc; sourceTree = "<group>"; };
 		5CDD8C081E43C34600621E92 /* locked_bandwidth_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locked_bandwidth_info.h; sourceTree = "<group>"; };
 		5CDD8C131E43C3B400621E92 /* vp9_noop.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vp9_noop.cc; path = codecs/vp9/vp9_noop.cc; sourceTree = "<group>"; };
@@ -9346,7 +9344,6 @@
 				5CDD8BFE1E43C34600621E92 /* audio_encoder_isac_t.h */,
 				5CDD8BFD1E43C34600621E92 /* audio_encoder_isac_t_impl.h */,
 				5CDD8BFF1E43C34600621E92 /* bandwidth_info.h */,
-				5CDD8C001E43C34600621E92 /* empty.cc */,
 				5CDD8C071E43C34600621E92 /* locked_bandwidth_info.cc */,
 				5CDD8C081E43C34600621E92 /* locked_bandwidth_info.h */,
 			);
@@ -12912,7 +12909,6 @@
 				5CD285BC1E6A63430094FDC8 /* echo_path_variability.cc in Sources */,
 				5CD285C01E6A63430094FDC8 /* echo_remover.cc in Sources */,
 				5CD285BE1E6A63430094FDC8 /* echo_remover_metrics.cc in Sources */,
-				5CDD8C0E1E43C34600621E92 /* empty.cc in Sources */,
 				5CDD8B961E43C2B500621E92 /* encode.c in Sources */,
 				413A239B1FE18E0800373E99 /* bufferqueue.cc in Sources */,
 				5CDD87B71E43BC0500621E92 /* encode.c in Sources */,
