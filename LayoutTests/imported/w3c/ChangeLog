@@ -1,3 +1,26 @@
+2018-03-12  Frederic Wang  <fwang@igalia.com>
+
+        Import WPT tests for blocked modal dialogs in sanboxed documents
+        https://bugs.webkit.org/show_bug.cgi?id=183568
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-1.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-2.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-3-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-3.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-4-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_block_modals-4.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-opens-modals.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe_sandbox_block_modals.js: Added.
+        (runTest):
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+
 2018-03-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement CSS Animations and CSS Transitions as Web Animations
