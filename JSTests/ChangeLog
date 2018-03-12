@@ -1,3 +1,27 @@
+2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] AI should convert CreateThis to NewObject if the prototype object is proved
+        https://bugs.webkit.org/show_bug.cgi?id=183310
+
+        Reviewed by Filip Pizlo.
+
+        * stress/ai-create-this-to-new-object-fire.js: Added.
+        (assert):
+        (test):
+        (func):
+        (check):
+        (test.body.A):
+        (test.body.B):
+        (test.body):
+        * stress/ai-create-this-to-new-object.js: Added.
+        (assert):
+        (test):
+        (func):
+        (check):
+        (test.body.A):
+        (test.body.B):
+        (test.body):
+
 2018-03-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Drop NewRegexp for String.prototype.match with RegExp + global flag

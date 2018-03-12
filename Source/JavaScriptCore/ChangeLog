@@ -1,3 +1,22 @@
+2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] AI should convert CreateThis to NewObject if the prototype object is proved
+        https://bugs.webkit.org/show_bug.cgi?id=183310
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements CreateThis -> NewObject conversion in AI if the given function is constant.
+        This contributes to 6% win in Octane/raytrace.
+
+                                        baseline                  patched
+
+            raytrace       x2       1.19915+-0.01862    ^     1.13156+-0.01589       ^ definitely 1.0597x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2018-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Disable Sigill crash analyzer on watchOS
