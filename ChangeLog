@@ -1,3 +1,13 @@
+2018-03-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Unbreak the WPE layout testing that's been broken since
+        r229470. Due to disassociation between ENABLE(ACCESSIBILITY) and
+        HAVE(ACCESSIBILITY), the injected bundle for the WPE port was left with
+        undefined symbols. This is fixed with ENABLE_ACCESSIBILITY being enabled
+        for the WPE port as well.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix library version of JavaScriptCoreGTK.
