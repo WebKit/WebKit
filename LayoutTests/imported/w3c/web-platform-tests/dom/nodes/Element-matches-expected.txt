@@ -93,6 +93,7 @@ PASS In-document Element.matches: Attribute presence selector, matching attribut
 PASS In-document Element.matches: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
 PASS In-document Element.matches: Attribute presence selector, matching multiple options with selected attributes (with no refNodes): #attr-presence-select3 option[selected] 
 PASS In-document Element.matches: Attribute value selector, matching align attribute with value (with no refNodes): #attr-value [align="center"] 
+FAIL In-document Element.matches: Attribute value selector, matching align attribute with value, unclosed bracket (with no refNodes): #attr-value [align="center" The string did not match the expected pattern.
 PASS In-document Element.matches: Attribute value selector, matching align attribute with empty value (with no refNodes): #attr-value [align=""] 
 PASS In-document Element.matches: Attribute value selector, matching custom data-* attribute with unicode escaped value (with no refNodes): [data-attr-value="\e9"] 
 PASS In-document Element.matches: Attribute value selector, matching custom data-* attribute with escaped character (with no refNodes): [data-attr-value_foo="\e9"] 
@@ -255,6 +256,7 @@ PASS Detached Element.matches: Attribute presence selector, matching attribute w
 PASS Detached Element.matches: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
 PASS Detached Element.matches: Attribute presence selector, matching multiple options with selected attributes (with no refNodes): #attr-presence-select3 option[selected] 
 PASS Detached Element.matches: Attribute value selector, matching align attribute with value (with no refNodes): #attr-value [align="center"] 
+FAIL Detached Element.matches: Attribute value selector, matching align attribute with value, unclosed bracket (with no refNodes): #attr-value [align="center" The string did not match the expected pattern.
 PASS Detached Element.matches: Attribute value selector, matching align attribute with empty value (with no refNodes): #attr-value [align=""] 
 PASS Detached Element.matches: Attribute value selector, matching custom data-* attribute with unicode escaped value (with no refNodes): [data-attr-value="\e9"] 
 PASS Detached Element.matches: Attribute value selector, matching custom data-* attribute with escaped character (with no refNodes): [data-attr-value_foo="\e9"] 
@@ -412,6 +414,7 @@ PASS Fragment Element.matches: Attribute presence selector, matching attribute w
 PASS Fragment Element.matches: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
 PASS Fragment Element.matches: Attribute presence selector, matching multiple options with selected attributes (with no refNodes): #attr-presence-select3 option[selected] 
 PASS Fragment Element.matches: Attribute value selector, matching align attribute with value (with no refNodes): #attr-value [align="center"] 
+FAIL Fragment Element.matches: Attribute value selector, matching align attribute with value, unclosed bracket (with no refNodes): #attr-value [align="center" The string did not match the expected pattern.
 PASS Fragment Element.matches: Attribute value selector, matching align attribute with empty value (with no refNodes): #attr-value [align=""] 
 PASS Fragment Element.matches: Attribute value selector, matching custom data-* attribute with unicode escaped value (with no refNodes): [data-attr-value="\e9"] 
 PASS Fragment Element.matches: Attribute value selector, matching custom data-* attribute with escaped character (with no refNodes): [data-attr-value_foo="\e9"] 

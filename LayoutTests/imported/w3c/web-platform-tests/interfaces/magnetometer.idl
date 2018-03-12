@@ -1,0 +1,24 @@
+[Constructor(optional MagnetometerSensorOptions sensorOptions), SecureContext,
+  Exposed=Window]
+interface Magnetometer : Sensor {
+  readonly attribute double? x;
+  readonly attribute double? y;
+  readonly attribute double? z;
+};
+
+enum LocalCoordinateSystem { "device", "screen" };
+
+dictionary MagnetometerSensorOptions : SensorOptions {
+  LocalCoordinateSystem referenceFrame = "device";
+};
+
+[Constructor(optional MagnetometerSensorOptions sensorOptions), SecureContext,
+  Exposed=Window]
+interface UncalibratedMagnetometer : Sensor {
+  readonly attribute double? x;
+  readonly attribute double? y;
+  readonly attribute double? z;
+  readonly attribute double? xBias;
+  readonly attribute double? yBias;
+  readonly attribute double? zBias;
+};

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
 idlharness test
 
 This test validates the WebIDL included in the Timing control for script-based animations specification.
@@ -10,10 +10,12 @@ partial interface Window {
 
 callback FrameRequestCallback = void (DOMHighResTimeStamp time);
 
-PASS Window interface: operation requestAnimationFrame(FrameRequestCallback) 
-PASS Window interface: operation cancelAnimationFrame(long) 
-PASS Window interface: window must inherit property "requestAnimationFrame(FrameRequestCallback)" with the proper type 
-PASS Window interface: calling requestAnimationFrame(FrameRequestCallback) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "cancelAnimationFrame(long)" with the proper type 
-PASS Window interface: calling cancelAnimationFrame(long) on window with too few arguments must throw TypeError 
+FAIL Window interface: operation requestAnimationFrame(FrameRequestCallback) assert_own_property: interface prototype object missing non-static operation expected property "requestAnimationFrame" missing
+PASS Unscopable handled correctly for requestAnimationFrame(FrameRequestCallback) on Window 
+FAIL Window interface: operation cancelAnimationFrame(long) assert_own_property: interface prototype object missing non-static operation expected property "cancelAnimationFrame" missing
+PASS Unscopable handled correctly for cancelAnimationFrame(long) on Window 
+FAIL Window interface: window must inherit property "requestAnimationFrame(FrameRequestCallback)" with the proper type assert_inherits: property "requestAnimationFrame" found on object expected in prototype chain
+FAIL Window interface: calling requestAnimationFrame(FrameRequestCallback) on window with too few arguments must throw TypeError assert_inherits: property "requestAnimationFrame" found on object expected in prototype chain
+FAIL Window interface: window must inherit property "cancelAnimationFrame(long)" with the proper type assert_inherits: property "cancelAnimationFrame" found on object expected in prototype chain
+FAIL Window interface: calling cancelAnimationFrame(long) on window with too few arguments must throw TypeError assert_inherits: property "cancelAnimationFrame" found on object expected in prototype chain
 

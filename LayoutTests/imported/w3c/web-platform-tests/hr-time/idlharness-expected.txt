@@ -7,9 +7,13 @@ PASS Performance interface object length
 PASS Performance interface object name 
 PASS Performance interface: existence and properties of interface prototype object 
 PASS Performance interface: existence and properties of interface prototype object's "constructor" property 
+PASS Performance interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Performance interface: operation now() 
+PASS Unscopable handled correctly for now() on Performance 
 FAIL Performance interface: attribute timeOrigin assert_true: The prototype object must have a property "timeOrigin" expected true got false
+PASS Unscopable handled correctly for timeOrigin property on Performance 
 FAIL Performance interface: operation toJSON() assert_own_property: interface prototype object missing non-static operation expected property "toJSON" missing
+PASS Unscopable handled correctly for toJSON() on Performance 
 PASS Performance must be primary interface of [object Performance] 
 PASS Stringification of [object Performance] 
 PASS Performance interface: [object Performance] must inherit property "now()" with the proper type 

@@ -157,7 +157,7 @@ enum RTCSdpType {
 interface RTCSessionDescription {
     readonly attribute RTCSdpType type;
     readonly attribute DOMString  sdp;
-    serializer = {attribute};
+    [Default] object toJSON();
 };
 
 dictionary RTCSessionDescriptionInit {
@@ -180,15 +180,15 @@ interface RTCIceCandidate {
     readonly attribute RTCIceTcpCandidateType? tcpType;
     readonly attribute DOMString?              relatedAddress;
     readonly attribute unsigned short?         relatedPort;
-    readonly attribute DOMString?              ufrag;
-    serializer = {candidate, sdpMid, sdpMLineIndex, ufrag};
+    readonly attribute DOMString?              usernameFragment;
+    RTCIceCandidateInit toJSON();
 };
 
 dictionary RTCIceCandidateInit {
     DOMString       candidate = "";
     DOMString?      sdpMid = null;
     unsigned short? sdpMLineIndex = null;
-    DOMString       ufrag;
+    DOMString       usernameFragment;
 };
 
 enum RTCIceProtocol {
@@ -507,7 +507,7 @@ partial interface RTCPeerConnection {
 
 interface RTCSctpTransport {
     readonly attribute RTCDtlsTransport transport;
-    readonly attribute unsigned long    maxMessageSize;
+    readonly attribute unrestricted double maxMessageSize;
 };
 
 interface RTCDataChannel : EventTarget {

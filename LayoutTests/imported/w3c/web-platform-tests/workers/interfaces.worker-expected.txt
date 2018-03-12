@@ -4,34 +4,58 @@ PASS EventTarget interface object length
 PASS EventTarget interface object name 
 PASS EventTarget interface: existence and properties of interface prototype object 
 PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
+PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
 PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
+PASS Unscopable handled correctly for addEventListener(DOMString, EventListener, [object Object],[object Object]) on EventTarget 
 PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
+PASS Unscopable handled correctly for removeEventListener(DOMString, EventListener, [object Object],[object Object]) on EventTarget 
 PASS EventTarget interface: operation dispatchEvent(Event) 
+PASS Unscopable handled correctly for dispatchEvent(Event) on EventTarget 
 PASS EventListener interface: existence and properties of interface object 
 PASS WorkerGlobalScope interface: existence and properties of interface object 
 PASS WorkerGlobalScope interface object length 
 PASS WorkerGlobalScope interface object name 
 PASS WorkerGlobalScope interface: existence and properties of interface prototype object 
 PASS WorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
+PASS WorkerGlobalScope interface: existence and properties of interface prototype object's @@unscopables property 
 PASS WorkerGlobalScope interface: attribute self 
+PASS Unscopable handled correctly for self property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute location 
+PASS Unscopable handled correctly for location property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute navigator 
+PASS Unscopable handled correctly for navigator property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation importScripts(USVString) 
+PASS Unscopable handled correctly for importScripts(USVString) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on WorkerGlobalScope 
 FAIL WorkerGlobalScope interface: attribute onlanguagechange assert_true: The prototype object must have a property "onlanguagechange" expected true got false
+PASS Unscopable handled correctly for onlanguagechange property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute onoffline 
+PASS Unscopable handled correctly for onoffline property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute ononline 
+PASS Unscopable handled correctly for ononline property on WorkerGlobalScope 
 FAIL WorkerGlobalScope interface: attribute onrejectionhandled assert_true: The prototype object must have a property "onrejectionhandled" expected true got false
+PASS Unscopable handled correctly for onrejectionhandled property on WorkerGlobalScope 
 FAIL WorkerGlobalScope interface: attribute onunhandledrejection assert_true: The prototype object must have a property "onunhandledrejection" expected true got false
+PASS Unscopable handled correctly for onunhandledrejection property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute origin 
+PASS Unscopable handled correctly for origin property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation btoa(DOMString) 
+PASS Unscopable handled correctly for btoa(DOMString) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation atob(DOMString) 
+PASS Unscopable handled correctly for atob(DOMString) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation setTimeout(TimerHandler, long, any) 
+PASS Unscopable handled correctly for setTimeout(TimerHandler, long, any) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation clearTimeout(long) 
+PASS Unscopable handled correctly for clearTimeout(long) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation setInterval(TimerHandler, long, any) 
+PASS Unscopable handled correctly for setInterval(TimerHandler, long, any) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation clearInterval(long) 
+PASS Unscopable handled correctly for clearInterval(long) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource, ImageBitmapOptions) 
+PASS Unscopable handled correctly for createImageBitmap(ImageBitmapSource, ImageBitmapOptions) on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource, long, long, long, long, ImageBitmapOptions) 
+PASS Unscopable handled correctly for createImageBitmap(ImageBitmapSource, long, long, long, long, ImageBitmapOptions) on WorkerGlobalScope 
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface object 
 PASS DedicatedWorkerGlobalScope interface object length 
 PASS DedicatedWorkerGlobalScope interface object name 
@@ -43,11 +67,17 @@ PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via __proto__ should not throw 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Reflect.setPrototypeOf should return true 
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
+PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's @@unscopables property 
 FAIL DedicatedWorkerGlobalScope interface: attribute name assert_own_property: The global object must have a property "name" expected property "name" missing
+PASS Unscopable handled correctly for name property on DedicatedWorkerGlobalScope 
 PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, [object Object]) 
+PASS Unscopable handled correctly for postMessage(any, [object Object]) on DedicatedWorkerGlobalScope 
 PASS DedicatedWorkerGlobalScope interface: operation close() 
+PASS Unscopable handled correctly for close() on DedicatedWorkerGlobalScope 
 PASS DedicatedWorkerGlobalScope interface: attribute onmessage 
+PASS Unscopable handled correctly for onmessage property on DedicatedWorkerGlobalScope 
 FAIL DedicatedWorkerGlobalScope interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
+PASS Unscopable handled correctly for onmessageerror property on DedicatedWorkerGlobalScope 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Reflect.setPrototypeOf should return false 
@@ -101,19 +131,30 @@ PASS WorkerNavigator interface object length
 PASS WorkerNavigator interface object name 
 PASS WorkerNavigator interface: existence and properties of interface prototype object 
 PASS WorkerNavigator interface: existence and properties of interface prototype object's "constructor" property 
+PASS WorkerNavigator interface: existence and properties of interface prototype object's @@unscopables property 
 PASS WorkerNavigator interface: attribute appCodeName 
+PASS Unscopable handled correctly for appCodeName property on WorkerNavigator 
 PASS WorkerNavigator interface: attribute appName 
+PASS Unscopable handled correctly for appName property on WorkerNavigator 
 PASS WorkerNavigator interface: attribute appVersion 
+PASS Unscopable handled correctly for appVersion property on WorkerNavigator 
 PASS WorkerNavigator interface: attribute platform 
+PASS Unscopable handled correctly for platform property on WorkerNavigator 
 PASS WorkerNavigator interface: attribute product 
+PASS Unscopable handled correctly for product property on WorkerNavigator 
 PASS WorkerNavigator interface: member productSub 
 PASS WorkerNavigator interface: attribute userAgent 
+PASS Unscopable handled correctly for userAgent property on WorkerNavigator 
 PASS WorkerNavigator interface: member vendor 
 PASS WorkerNavigator interface: member vendorSub 
 PASS WorkerNavigator interface: attribute language 
+PASS Unscopable handled correctly for language property on WorkerNavigator 
 PASS WorkerNavigator interface: attribute languages 
+PASS Unscopable handled correctly for languages property on WorkerNavigator 
 PASS WorkerNavigator interface: attribute onLine 
+PASS Unscopable handled correctly for onLine property on WorkerNavigator 
 FAIL WorkerNavigator interface: attribute hardwareConcurrency assert_true: The prototype object must have a property "hardwareConcurrency" expected true got false
+PASS Unscopable handled correctly for hardwareConcurrency property on WorkerNavigator 
 PASS WorkerNavigator must be primary interface of self.navigator 
 PASS Stringification of self.navigator 
 PASS WorkerNavigator interface: self.navigator must inherit property "appCodeName" with the proper type 
@@ -121,10 +162,10 @@ PASS WorkerNavigator interface: self.navigator must inherit property "appName" w
 PASS WorkerNavigator interface: self.navigator must inherit property "appVersion" with the proper type 
 PASS WorkerNavigator interface: self.navigator must inherit property "platform" with the proper type 
 PASS WorkerNavigator interface: self.navigator must inherit property "product" with the proper type 
-PASS WorkerNavigatorinterface: self.navigatormust not have property "productSub" 
+PASS WorkerNavigator interface: self.navigator must not have property "productSub" 
 PASS WorkerNavigator interface: self.navigator must inherit property "userAgent" with the proper type 
-PASS WorkerNavigatorinterface: self.navigatormust not have property "vendor" 
-PASS WorkerNavigatorinterface: self.navigatormust not have property "vendorSub" 
+PASS WorkerNavigator interface: self.navigator must not have property "vendor" 
+PASS WorkerNavigator interface: self.navigator must not have property "vendorSub" 
 PASS WorkerNavigator interface: self.navigator must inherit property "language" with the proper type 
 PASS WorkerNavigator interface: self.navigator must inherit property "languages" with the proper type 
 PASS WorkerNavigator interface: self.navigator must inherit property "onLine" with the proper type 
@@ -134,16 +175,26 @@ PASS WorkerLocation interface object length
 PASS WorkerLocation interface object name 
 PASS WorkerLocation interface: existence and properties of interface prototype object 
 PASS WorkerLocation interface: existence and properties of interface prototype object's "constructor" property 
+PASS WorkerLocation interface: existence and properties of interface prototype object's @@unscopables property 
 PASS WorkerLocation interface: attribute href 
+PASS Unscopable handled correctly for href property on WorkerLocation 
 PASS WorkerLocation interface: stringifier 
 PASS WorkerLocation interface: attribute origin 
+PASS Unscopable handled correctly for origin property on WorkerLocation 
 PASS WorkerLocation interface: attribute protocol 
+PASS Unscopable handled correctly for protocol property on WorkerLocation 
 PASS WorkerLocation interface: attribute host 
+PASS Unscopable handled correctly for host property on WorkerLocation 
 PASS WorkerLocation interface: attribute hostname 
+PASS Unscopable handled correctly for hostname property on WorkerLocation 
 PASS WorkerLocation interface: attribute port 
+PASS Unscopable handled correctly for port property on WorkerLocation 
 PASS WorkerLocation interface: attribute pathname 
+PASS Unscopable handled correctly for pathname property on WorkerLocation 
 PASS WorkerLocation interface: attribute search 
+PASS Unscopable handled correctly for search property on WorkerLocation 
 PASS WorkerLocation interface: attribute hash 
+PASS Unscopable handled correctly for hash property on WorkerLocation 
 PASS WorkerLocation must be primary interface of self.location 
 PASS Stringification of self.location 
 PASS WorkerLocation interface: self.location must inherit property "href" with the proper type 

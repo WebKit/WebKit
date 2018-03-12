@@ -131,6 +131,8 @@ interface ElementCSSInlineStyle {
 
 HTMLElement implements ElementCSSInlineStyle;
 
+SVGElement implements ElementCSSInlineStyle;
+
 partial interface Window {
   [NewObject] CSSStyleDeclaration getComputedStyle(Element elt, optional CSSOMString? pseudoElt);
 };

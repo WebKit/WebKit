@@ -2,33 +2,48 @@ IndexedDB IDL tests
 
 
 PASS IndexedDB IDL tests 
-PASS Window interface: attribute indexedDB 
+FAIL Window interface: attribute indexedDB assert_true: The prototype object must have a property "indexedDB" expected true got false
+PASS Unscopable handled correctly for indexedDB property on Window 
 PASS IDBRequest interface: existence and properties of interface object 
 PASS IDBRequest interface object length 
 PASS IDBRequest interface object name 
 PASS IDBRequest interface: existence and properties of interface prototype object 
 PASS IDBRequest interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBRequest interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBRequest interface: attribute result 
+PASS Unscopable handled correctly for result property on IDBRequest 
 PASS IDBRequest interface: attribute error 
+PASS Unscopable handled correctly for error property on IDBRequest 
 PASS IDBRequest interface: attribute source 
+PASS Unscopable handled correctly for source property on IDBRequest 
 PASS IDBRequest interface: attribute transaction 
+PASS Unscopable handled correctly for transaction property on IDBRequest 
 PASS IDBRequest interface: attribute readyState 
+PASS Unscopable handled correctly for readyState property on IDBRequest 
 PASS IDBRequest interface: attribute onsuccess 
+PASS Unscopable handled correctly for onsuccess property on IDBRequest 
 PASS IDBRequest interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on IDBRequest 
 PASS IDBOpenDBRequest interface: existence and properties of interface object 
 PASS IDBOpenDBRequest interface object length 
 PASS IDBOpenDBRequest interface object name 
 PASS IDBOpenDBRequest interface: existence and properties of interface prototype object 
 PASS IDBOpenDBRequest interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBOpenDBRequest interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBOpenDBRequest interface: attribute onblocked 
+PASS Unscopable handled correctly for onblocked property on IDBOpenDBRequest 
 PASS IDBOpenDBRequest interface: attribute onupgradeneeded 
+PASS Unscopable handled correctly for onupgradeneeded property on IDBOpenDBRequest 
 PASS IDBVersionChangeEvent interface: existence and properties of interface object 
 PASS IDBVersionChangeEvent interface object length 
 PASS IDBVersionChangeEvent interface object name 
 PASS IDBVersionChangeEvent interface: existence and properties of interface prototype object 
 PASS IDBVersionChangeEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBVersionChangeEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBVersionChangeEvent interface: attribute oldVersion 
+PASS Unscopable handled correctly for oldVersion property on IDBVersionChangeEvent 
 PASS IDBVersionChangeEvent interface: attribute newVersion 
+PASS Unscopable handled correctly for newVersion property on IDBVersionChangeEvent 
 PASS IDBVersionChangeEvent must be primary interface of new IDBVersionChangeEvent('foo') 
 PASS Stringification of new IDBVersionChangeEvent('foo') 
 PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent('foo') must inherit property "oldVersion" with the proper type 
@@ -38,9 +53,13 @@ PASS IDBFactory interface object length
 PASS IDBFactory interface object name 
 PASS IDBFactory interface: existence and properties of interface prototype object 
 PASS IDBFactory interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBFactory interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBFactory interface: operation open(DOMString, unsigned long long) 
+PASS Unscopable handled correctly for open(DOMString, unsigned long long) on IDBFactory 
 PASS IDBFactory interface: operation deleteDatabase(DOMString) 
+PASS Unscopable handled correctly for deleteDatabase(DOMString) on IDBFactory 
 PASS IDBFactory interface: operation cmp(any, any) 
+PASS Unscopable handled correctly for cmp(any, any) on IDBFactory 
 PASS IDBFactory must be primary interface of window.indexedDB 
 PASS Stringification of window.indexedDB 
 PASS IDBFactory interface: window.indexedDB must inherit property "open(DOMString, unsigned long long)" with the proper type 
@@ -54,72 +73,127 @@ PASS IDBDatabase interface object length
 PASS IDBDatabase interface object name 
 PASS IDBDatabase interface: existence and properties of interface prototype object 
 PASS IDBDatabase interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBDatabase interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBDatabase interface: attribute name 
+PASS Unscopable handled correctly for name property on IDBDatabase 
 PASS IDBDatabase interface: attribute version 
+PASS Unscopable handled correctly for version property on IDBDatabase 
 PASS IDBDatabase interface: attribute objectStoreNames 
+PASS Unscopable handled correctly for objectStoreNames property on IDBDatabase 
 PASS IDBDatabase interface: operation transaction([object Object],[object Object], IDBTransactionMode) 
+PASS Unscopable handled correctly for transaction([object Object],[object Object], IDBTransactionMode) on IDBDatabase 
 PASS IDBDatabase interface: operation close() 
+PASS Unscopable handled correctly for close() on IDBDatabase 
 PASS IDBDatabase interface: operation createObjectStore(DOMString, IDBObjectStoreParameters) 
+PASS Unscopable handled correctly for createObjectStore(DOMString, IDBObjectStoreParameters) on IDBDatabase 
 PASS IDBDatabase interface: operation deleteObjectStore(DOMString) 
+PASS Unscopable handled correctly for deleteObjectStore(DOMString) on IDBDatabase 
 PASS IDBDatabase interface: attribute onabort 
+PASS Unscopable handled correctly for onabort property on IDBDatabase 
 PASS IDBDatabase interface: attribute onclose 
+PASS Unscopable handled correctly for onclose property on IDBDatabase 
 PASS IDBDatabase interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on IDBDatabase 
 PASS IDBDatabase interface: attribute onversionchange 
+PASS Unscopable handled correctly for onversionchange property on IDBDatabase 
 PASS IDBObjectStore interface: existence and properties of interface object 
 PASS IDBObjectStore interface object length 
 PASS IDBObjectStore interface object name 
 PASS IDBObjectStore interface: existence and properties of interface prototype object 
 PASS IDBObjectStore interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBObjectStore interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBObjectStore interface: attribute name 
+PASS Unscopable handled correctly for name property on IDBObjectStore 
 PASS IDBObjectStore interface: attribute keyPath 
+PASS Unscopable handled correctly for keyPath property on IDBObjectStore 
 PASS IDBObjectStore interface: attribute indexNames 
+PASS Unscopable handled correctly for indexNames property on IDBObjectStore 
 PASS IDBObjectStore interface: attribute transaction 
+PASS Unscopable handled correctly for transaction property on IDBObjectStore 
 PASS IDBObjectStore interface: attribute autoIncrement 
+PASS Unscopable handled correctly for autoIncrement property on IDBObjectStore 
 PASS IDBObjectStore interface: operation put(any, any) 
+PASS Unscopable handled correctly for put(any, any) on IDBObjectStore 
 PASS IDBObjectStore interface: operation add(any, any) 
+PASS Unscopable handled correctly for add(any, any) on IDBObjectStore 
 PASS IDBObjectStore interface: operation delete(any) 
+PASS Unscopable handled correctly for delete(any) on IDBObjectStore 
 PASS IDBObjectStore interface: operation clear() 
+PASS Unscopable handled correctly for clear() on IDBObjectStore 
 PASS IDBObjectStore interface: operation get(any) 
+PASS Unscopable handled correctly for get(any) on IDBObjectStore 
 PASS IDBObjectStore interface: operation getKey(any) 
+PASS Unscopable handled correctly for getKey(any) on IDBObjectStore 
 PASS IDBObjectStore interface: operation getAll(any, unsigned long) 
+PASS Unscopable handled correctly for getAll(any, unsigned long) on IDBObjectStore 
 PASS IDBObjectStore interface: operation getAllKeys(any, unsigned long) 
+PASS Unscopable handled correctly for getAllKeys(any, unsigned long) on IDBObjectStore 
 PASS IDBObjectStore interface: operation count(any) 
+PASS Unscopable handled correctly for count(any) on IDBObjectStore 
 PASS IDBObjectStore interface: operation openCursor(any, IDBCursorDirection) 
+PASS Unscopable handled correctly for openCursor(any, IDBCursorDirection) on IDBObjectStore 
 PASS IDBObjectStore interface: operation openKeyCursor(any, IDBCursorDirection) 
+PASS Unscopable handled correctly for openKeyCursor(any, IDBCursorDirection) on IDBObjectStore 
 PASS IDBObjectStore interface: operation index(DOMString) 
+PASS Unscopable handled correctly for index(DOMString) on IDBObjectStore 
 PASS IDBObjectStore interface: operation createIndex(DOMString, [object Object],[object Object], IDBIndexParameters) 
+PASS Unscopable handled correctly for createIndex(DOMString, [object Object],[object Object], IDBIndexParameters) on IDBObjectStore 
 PASS IDBObjectStore interface: operation deleteIndex(DOMString) 
+PASS Unscopable handled correctly for deleteIndex(DOMString) on IDBObjectStore 
 PASS IDBIndex interface: existence and properties of interface object 
 PASS IDBIndex interface object length 
 PASS IDBIndex interface object name 
 PASS IDBIndex interface: existence and properties of interface prototype object 
 PASS IDBIndex interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBIndex interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBIndex interface: attribute name 
+PASS Unscopable handled correctly for name property on IDBIndex 
 PASS IDBIndex interface: attribute objectStore 
+PASS Unscopable handled correctly for objectStore property on IDBIndex 
 PASS IDBIndex interface: attribute keyPath 
+PASS Unscopable handled correctly for keyPath property on IDBIndex 
 PASS IDBIndex interface: attribute multiEntry 
+PASS Unscopable handled correctly for multiEntry property on IDBIndex 
 PASS IDBIndex interface: attribute unique 
+PASS Unscopable handled correctly for unique property on IDBIndex 
 PASS IDBIndex interface: operation get(any) 
+PASS Unscopable handled correctly for get(any) on IDBIndex 
 PASS IDBIndex interface: operation getKey(any) 
+PASS Unscopable handled correctly for getKey(any) on IDBIndex 
 PASS IDBIndex interface: operation getAll(any, unsigned long) 
+PASS Unscopable handled correctly for getAll(any, unsigned long) on IDBIndex 
 PASS IDBIndex interface: operation getAllKeys(any, unsigned long) 
+PASS Unscopable handled correctly for getAllKeys(any, unsigned long) on IDBIndex 
 PASS IDBIndex interface: operation count(any) 
+PASS Unscopable handled correctly for count(any) on IDBIndex 
 PASS IDBIndex interface: operation openCursor(any, IDBCursorDirection) 
+PASS Unscopable handled correctly for openCursor(any, IDBCursorDirection) on IDBIndex 
 PASS IDBIndex interface: operation openKeyCursor(any, IDBCursorDirection) 
+PASS Unscopable handled correctly for openKeyCursor(any, IDBCursorDirection) on IDBIndex 
 PASS IDBKeyRange interface: existence and properties of interface object 
 PASS IDBKeyRange interface object length 
 PASS IDBKeyRange interface object name 
 PASS IDBKeyRange interface: existence and properties of interface prototype object 
 PASS IDBKeyRange interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBKeyRange interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBKeyRange interface: attribute lower 
+PASS Unscopable handled correctly for lower property on IDBKeyRange 
 PASS IDBKeyRange interface: attribute upper 
+PASS Unscopable handled correctly for upper property on IDBKeyRange 
 PASS IDBKeyRange interface: attribute lowerOpen 
+PASS Unscopable handled correctly for lowerOpen property on IDBKeyRange 
 PASS IDBKeyRange interface: attribute upperOpen 
+PASS Unscopable handled correctly for upperOpen property on IDBKeyRange 
 PASS IDBKeyRange interface: operation only(any) 
+PASS Unscopable handled correctly for only(any) on IDBKeyRange 
 PASS IDBKeyRange interface: operation lowerBound(any, boolean) 
+PASS Unscopable handled correctly for lowerBound(any, boolean) on IDBKeyRange 
 PASS IDBKeyRange interface: operation upperBound(any, boolean) 
+PASS Unscopable handled correctly for upperBound(any, boolean) on IDBKeyRange 
 PASS IDBKeyRange interface: operation bound(any, any, boolean, boolean) 
+PASS Unscopable handled correctly for bound(any, any, boolean, boolean) on IDBKeyRange 
 PASS IDBKeyRange interface: operation includes(any) 
+PASS Unscopable handled correctly for includes(any) on IDBKeyRange 
 PASS IDBKeyRange must be primary interface of IDBKeyRange.only(0) 
 PASS Stringification of IDBKeyRange.only(0) 
 PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lower" with the proper type 
@@ -141,33 +215,55 @@ PASS IDBCursor interface object length
 PASS IDBCursor interface object name 
 PASS IDBCursor interface: existence and properties of interface prototype object 
 PASS IDBCursor interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBCursor interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBCursor interface: attribute source 
+PASS Unscopable handled correctly for source property on IDBCursor 
 PASS IDBCursor interface: attribute direction 
+PASS Unscopable handled correctly for direction property on IDBCursor 
 PASS IDBCursor interface: attribute key 
+PASS Unscopable handled correctly for key property on IDBCursor 
 PASS IDBCursor interface: attribute primaryKey 
+PASS Unscopable handled correctly for primaryKey property on IDBCursor 
 PASS IDBCursor interface: operation advance(unsigned long) 
+PASS Unscopable handled correctly for advance(unsigned long) on IDBCursor 
 PASS IDBCursor interface: operation continue(any) 
+PASS Unscopable handled correctly for continue(any) on IDBCursor 
 PASS IDBCursor interface: operation continuePrimaryKey(any, any) 
+PASS Unscopable handled correctly for continuePrimaryKey(any, any) on IDBCursor 
 PASS IDBCursor interface: operation update(any) 
+PASS Unscopable handled correctly for update(any) on IDBCursor 
 PASS IDBCursor interface: operation delete() 
+PASS Unscopable handled correctly for delete() on IDBCursor 
 PASS IDBCursorWithValue interface: existence and properties of interface object 
 PASS IDBCursorWithValue interface object length 
 PASS IDBCursorWithValue interface object name 
 PASS IDBCursorWithValue interface: existence and properties of interface prototype object 
 PASS IDBCursorWithValue interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBCursorWithValue interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBCursorWithValue interface: attribute value 
+PASS Unscopable handled correctly for value property on IDBCursorWithValue 
 PASS IDBTransaction interface: existence and properties of interface object 
 PASS IDBTransaction interface object length 
 PASS IDBTransaction interface object name 
 PASS IDBTransaction interface: existence and properties of interface prototype object 
 PASS IDBTransaction interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBTransaction interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBTransaction interface: attribute objectStoreNames 
+PASS Unscopable handled correctly for objectStoreNames property on IDBTransaction 
 PASS IDBTransaction interface: attribute mode 
+PASS Unscopable handled correctly for mode property on IDBTransaction 
 PASS IDBTransaction interface: attribute db 
+PASS Unscopable handled correctly for db property on IDBTransaction 
 PASS IDBTransaction interface: attribute error 
+PASS Unscopable handled correctly for error property on IDBTransaction 
 PASS IDBTransaction interface: operation objectStore(DOMString) 
+PASS Unscopable handled correctly for objectStore(DOMString) on IDBTransaction 
 PASS IDBTransaction interface: operation abort() 
+PASS Unscopable handled correctly for abort() on IDBTransaction 
 PASS IDBTransaction interface: attribute onabort 
+PASS Unscopable handled correctly for onabort property on IDBTransaction 
 PASS IDBTransaction interface: attribute oncomplete 
+PASS Unscopable handled correctly for oncomplete property on IDBTransaction 
 PASS IDBTransaction interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on IDBTransaction 
 

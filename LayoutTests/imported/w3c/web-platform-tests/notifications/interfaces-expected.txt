@@ -1,24 +1,38 @@
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
 
 PASS Notification interface: existence and properties of interface object 
 PASS Notification interface object length 
 PASS Notification interface object name 
 PASS Notification interface: existence and properties of interface prototype object 
 PASS Notification interface: existence and properties of interface prototype object's "constructor" property 
+PASS Notification interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Notification interface: attribute permission 
+PASS Unscopable handled correctly for permission property on Notification 
 PASS Notification interface: operation requestPermission(NotificationPermissionCallback) 
+PASS Unscopable handled correctly for requestPermission(NotificationPermissionCallback) on Notification 
 PASS Notification interface: attribute onclick 
+PASS Unscopable handled correctly for onclick property on Notification 
 PASS Notification interface: attribute onshow 
+PASS Unscopable handled correctly for onshow property on Notification 
 PASS Notification interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on Notification 
 PASS Notification interface: attribute onclose 
+PASS Unscopable handled correctly for onclose property on Notification 
 PASS Notification interface: attribute title 
+PASS Unscopable handled correctly for title property on Notification 
 PASS Notification interface: attribute dir 
+PASS Unscopable handled correctly for dir property on Notification 
 PASS Notification interface: attribute lang 
+PASS Unscopable handled correctly for lang property on Notification 
 PASS Notification interface: attribute body 
+PASS Unscopable handled correctly for body property on Notification 
 PASS Notification interface: attribute tag 
+PASS Unscopable handled correctly for tag property on Notification 
 PASS Notification interface: attribute icon 
+PASS Unscopable handled correctly for icon property on Notification 
 PASS Notification interface: operation close() 
+PASS Unscopable handled correctly for close() on Notification 
 PASS Notification must be primary interface of new Notification("Running idlharness.") 
 PASS Stringification of new Notification("Running idlharness.") 
 PASS Notification interface: new Notification("Running idlharness.") must inherit property "permission" with the proper type 

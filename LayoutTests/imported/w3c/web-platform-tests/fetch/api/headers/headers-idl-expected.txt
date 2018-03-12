@@ -4,17 +4,27 @@ PASS Headers interface object length
 PASS Headers interface object name 
 PASS Headers interface: existence and properties of interface prototype object 
 PASS Headers interface: existence and properties of interface prototype object's "constructor" property 
+PASS Headers interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Headers interface: operation append(ByteString, ByteString) 
+PASS Unscopable handled correctly for append(ByteString, ByteString) on Headers 
 PASS Headers interface: operation delete(ByteString) 
+PASS Unscopable handled correctly for delete(ByteString) on Headers 
 PASS Headers interface: operation get(ByteString) 
+PASS Unscopable handled correctly for get(ByteString) on Headers 
 PASS Headers interface: operation has(ByteString) 
+PASS Unscopable handled correctly for has(ByteString) on Headers 
 PASS Headers interface: operation set(ByteString, ByteString) 
+PASS Unscopable handled correctly for set(ByteString, ByteString) on Headers 
 PASS Testing Symbol.iterator property of iterable interface Headers 
 PASS Testing pair iterable interface Headers 
 PASS Headers interface: operation entries() 
+PASS Unscopable handled correctly for entries() on Headers 
 PASS Headers interface: operation keys() 
+PASS Unscopable handled correctly for keys() on Headers 
 PASS Headers interface: operation values() 
+PASS Unscopable handled correctly for values() on Headers 
 PASS Headers interface: operation forEach(function, any) 
+PASS Unscopable handled correctly for forEach(function, any) on Headers 
 PASS Headers must be primary interface of new Headers() 
 PASS Stringification of new Headers() 
 PASS Headers interface: new Headers() must inherit property "append(ByteString, ByteString)" with the proper type 

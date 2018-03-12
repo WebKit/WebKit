@@ -345,6 +345,8 @@ PASS Document.querySelectorAll: Attribute presence selector, matching multiple o
 PASS Document.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS Document.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS Document.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
+FAIL Document.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+FAIL Document.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
 PASS Document.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Document.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Document.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -763,6 +765,8 @@ PASS Detached Element.querySelectorAll: Attribute presence selector, matching mu
 PASS Detached Element.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS Detached Element.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS Detached Element.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
+FAIL Detached Element.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+FAIL Detached Element.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
 PASS Detached Element.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Detached Element.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Detached Element.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -1181,6 +1185,8 @@ PASS Fragment.querySelectorAll: Attribute presence selector, matching multiple o
 PASS Fragment.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS Fragment.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS Fragment.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
+FAIL Fragment.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+FAIL Fragment.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
 PASS Fragment.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Fragment.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Fragment.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -1599,6 +1605,8 @@ PASS In-document Element.querySelectorAll: Attribute presence selector, matching
 PASS In-document Element.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS In-document Element.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS In-document Element.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
+FAIL In-document Element.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+FAIL In-document Element.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
 PASS In-document Element.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS In-document Element.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS In-document Element.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 

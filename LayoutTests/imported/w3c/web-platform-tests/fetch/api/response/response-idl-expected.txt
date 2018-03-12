@@ -4,23 +4,41 @@ PASS Response interface object length
 PASS Response interface object name 
 PASS Response interface: existence and properties of interface prototype object 
 PASS Response interface: existence and properties of interface prototype object's "constructor" property 
+PASS Response interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Response interface: operation error() 
+PASS Unscopable handled correctly for error() on Response 
 PASS Response interface: operation redirect(USVString, unsigned short) 
+PASS Unscopable handled correctly for redirect(USVString, unsigned short) on Response 
 PASS Response interface: attribute type 
+PASS Unscopable handled correctly for type property on Response 
 PASS Response interface: attribute url 
+PASS Unscopable handled correctly for url property on Response 
 PASS Response interface: attribute status 
+PASS Unscopable handled correctly for status property on Response 
 PASS Response interface: attribute ok 
+PASS Unscopable handled correctly for ok property on Response 
 PASS Response interface: attribute statusText 
+PASS Unscopable handled correctly for statusText property on Response 
 PASS Response interface: attribute headers 
+PASS Unscopable handled correctly for headers property on Response 
 FAIL Response interface: attribute trailer assert_true: The prototype object must have a property "trailer" expected true got false
+PASS Unscopable handled correctly for trailer property on Response 
 PASS Response interface: operation clone() 
+PASS Unscopable handled correctly for clone() on Response 
 PASS Response interface: attribute body 
+PASS Unscopable handled correctly for body property on Response 
 PASS Response interface: attribute bodyUsed 
+PASS Unscopable handled correctly for bodyUsed property on Response 
 PASS Response interface: operation arrayBuffer() 
+PASS Unscopable handled correctly for arrayBuffer() on Response 
 PASS Response interface: operation blob() 
+PASS Unscopable handled correctly for blob() on Response 
 PASS Response interface: operation formData() 
+PASS Unscopable handled correctly for formData() on Response 
 PASS Response interface: operation json() 
+PASS Unscopable handled correctly for json() on Response 
 PASS Response interface: operation text() 
+PASS Unscopable handled correctly for text() on Response 
 PASS Response must be primary interface of new Response() 
 PASS Stringification of new Response() 
 PASS Response interface: new Response() must inherit property "error()" with the proper type 

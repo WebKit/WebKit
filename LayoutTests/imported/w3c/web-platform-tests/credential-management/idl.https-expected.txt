@@ -4,10 +4,15 @@ PASS CredentialsContainer interface object length
 PASS CredentialsContainer interface object name 
 PASS CredentialsContainer interface: existence and properties of interface prototype object 
 PASS CredentialsContainer interface: existence and properties of interface prototype object's "constructor" property 
+PASS CredentialsContainer interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CredentialsContainer interface: operation get(CredentialRequestOptions) 
+PASS Unscopable handled correctly for get(CredentialRequestOptions) on CredentialsContainer 
 PASS CredentialsContainer interface: operation store(Credential) 
+PASS Unscopable handled correctly for store(Credential) on CredentialsContainer 
 PASS CredentialsContainer interface: operation create(CredentialCreationOptions) 
+PASS Unscopable handled correctly for create(CredentialCreationOptions) on CredentialsContainer 
 PASS CredentialsContainer interface: operation preventSilentAccess() 
+PASS Unscopable handled correctly for preventSilentAccess() on CredentialsContainer 
 PASS CredentialsContainer must be primary interface of navigator.credentials 
 PASS Stringification of navigator.credentials 
 PASS CredentialsContainer interface: navigator.credentials must inherit property "get(CredentialRequestOptions)" with the proper type 
@@ -22,7 +27,9 @@ FAIL PasswordCredential interface object length assert_own_property: self does n
 FAIL PasswordCredential interface object name assert_own_property: self does not have own property "PasswordCredential" expected property "PasswordCredential" missing
 FAIL PasswordCredential interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PasswordCredential" expected property "PasswordCredential" missing
 FAIL PasswordCredential interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PasswordCredential" expected property "PasswordCredential" missing
+FAIL PasswordCredential interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "PasswordCredential" expected property "PasswordCredential" missing
 FAIL PasswordCredential interface: attribute password assert_own_property: self does not have own property "PasswordCredential" expected property "PasswordCredential" missing
+PASS Unscopable handled correctly for password property on PasswordCredential 
 FAIL PasswordCredential must be primary interface of new PasswordCredential({ id: "id", password: "pencil", iconURL: "https://example.com/", name: "name" }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PasswordCredential"
 FAIL Stringification of new PasswordCredential({ id: "id", password: "pencil", iconURL: "https://example.com/", name: "name" }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PasswordCredential"
 FAIL PasswordCredential interface: new PasswordCredential({ id: "id", password: "pencil", iconURL: "https://example.com/", name: "name" }) must inherit property "password" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PasswordCredential"
@@ -31,8 +38,11 @@ FAIL FederatedCredential interface object length assert_own_property: self does 
 FAIL FederatedCredential interface object name assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
 FAIL FederatedCredential interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
 FAIL FederatedCredential interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
+FAIL FederatedCredential interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
 FAIL FederatedCredential interface: attribute provider assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
+PASS Unscopable handled correctly for provider property on FederatedCredential 
 FAIL FederatedCredential interface: attribute protocol assert_own_property: self does not have own property "FederatedCredential" expected property "FederatedCredential" missing
+PASS Unscopable handled correctly for protocol property on FederatedCredential 
 FAIL FederatedCredential must be primary interface of new FederatedCredential({ id: "id", provider: "https://example.com", iconURL: "https://example.com/", name: "name" }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FederatedCredential"
 FAIL Stringification of new FederatedCredential({ id: "id", provider: "https://example.com", iconURL: "https://example.com/", name: "name" }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FederatedCredential"
 FAIL FederatedCredential interface: new FederatedCredential({ id: "id", provider: "https://example.com", iconURL: "https://example.com/", name: "name" }) must inherit property "provider" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FederatedCredential"

@@ -8,28 +8,51 @@ FAIL RTCDataChannel interface: existence and properties of interface prototype o
                          .members[inherit_interface]
                          .has_extended_attribute')
 PASS RTCDataChannel interface: existence and properties of interface prototype object's "constructor" property 
+PASS RTCDataChannel interface: existence and properties of interface prototype object's @@unscopables property 
 PASS RTCDataChannel interface: attribute label 
+PASS Unscopable handled correctly for label property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute ordered 
+PASS Unscopable handled correctly for ordered property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute maxPacketLifeTime 
+PASS Unscopable handled correctly for maxPacketLifeTime property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute maxRetransmits 
+PASS Unscopable handled correctly for maxRetransmits property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute protocol 
+PASS Unscopable handled correctly for protocol property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute negotiated 
+PASS Unscopable handled correctly for negotiated property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute id 
+PASS Unscopable handled correctly for id property on RTCDataChannel 
 FAIL RTCDataChannel interface: attribute priority assert_true: The prototype object must have a property "priority" expected true got false
+PASS Unscopable handled correctly for priority property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute readyState 
+PASS Unscopable handled correctly for readyState property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute bufferedAmount 
+PASS Unscopable handled correctly for bufferedAmount property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute bufferedAmountLowThreshold 
+PASS Unscopable handled correctly for bufferedAmountLowThreshold property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute onopen 
+PASS Unscopable handled correctly for onopen property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute onbufferedamountlow 
+PASS Unscopable handled correctly for onbufferedamountlow property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute onclose 
+PASS Unscopable handled correctly for onclose property on RTCDataChannel 
 PASS RTCDataChannel interface: operation close() 
+PASS Unscopable handled correctly for close() on RTCDataChannel 
 PASS RTCDataChannel interface: attribute onmessage 
+PASS Unscopable handled correctly for onmessage property on RTCDataChannel 
 PASS RTCDataChannel interface: attribute binaryType 
+PASS Unscopable handled correctly for binaryType property on RTCDataChannel 
 PASS RTCDataChannel interface: operation send(USVString) 
+PASS Unscopable handled correctly for send(USVString) on RTCDataChannel 
 PASS RTCDataChannel interface: operation send(Blob) 
+PASS Unscopable handled correctly for send(Blob) on RTCDataChannel 
 PASS RTCDataChannel interface: operation send(ArrayBuffer) 
+PASS Unscopable handled correctly for send(ArrayBuffer) on RTCDataChannel 
 PASS RTCDataChannel interface: operation send(ArrayBufferView) 
+PASS Unscopable handled correctly for send(ArrayBufferView) on RTCDataChannel 
 PASS RTCDataChannel must be primary interface of channel 
 FAIL Stringification of channel undefined is not an object (evaluating 'this.array.members[this.base].has_stringifier')
 PASS RTCDataChannel interface: channel must inherit property "label" with the proper type 

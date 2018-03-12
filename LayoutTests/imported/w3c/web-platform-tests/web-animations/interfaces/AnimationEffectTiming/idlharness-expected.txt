@@ -4,14 +4,23 @@ PASS AnimationEffectTimingReadOnly interface object length
 PASS AnimationEffectTimingReadOnly interface object name 
 PASS AnimationEffectTimingReadOnly interface: existence and properties of interface prototype object 
 PASS AnimationEffectTimingReadOnly interface: existence and properties of interface prototype object's "constructor" property 
+PASS AnimationEffectTimingReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AnimationEffectTimingReadOnly interface: attribute delay 
+PASS Unscopable handled correctly for delay property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute endDelay 
+PASS Unscopable handled correctly for endDelay property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute fill 
+PASS Unscopable handled correctly for fill property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute iterationStart 
+PASS Unscopable handled correctly for iterationStart property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute iterations 
+PASS Unscopable handled correctly for iterations property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute duration 
+PASS Unscopable handled correctly for duration property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute direction 
+PASS Unscopable handled correctly for direction property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly interface: attribute easing 
+PASS Unscopable handled correctly for easing property on AnimationEffectTimingReadOnly 
 PASS AnimationEffectTimingReadOnly must be primary interface of (new KeyframeEffectReadOnly(null, null)).timing 
 PASS Stringification of (new KeyframeEffectReadOnly(null, null)).timing 
 PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "delay" with the proper type 
@@ -27,14 +36,23 @@ PASS AnimationEffectTiming interface object length
 PASS AnimationEffectTiming interface object name 
 PASS AnimationEffectTiming interface: existence and properties of interface prototype object 
 PASS AnimationEffectTiming interface: existence and properties of interface prototype object's "constructor" property 
+PASS AnimationEffectTiming interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AnimationEffectTiming interface: attribute delay 
+PASS Unscopable handled correctly for delay property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute endDelay 
+PASS Unscopable handled correctly for endDelay property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute fill 
+PASS Unscopable handled correctly for fill property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute iterationStart 
+PASS Unscopable handled correctly for iterationStart property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute iterations 
+PASS Unscopable handled correctly for iterations property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute duration 
+PASS Unscopable handled correctly for duration property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute direction 
+PASS Unscopable handled correctly for direction property on AnimationEffectTiming 
 PASS AnimationEffectTiming interface: attribute easing 
+PASS Unscopable handled correctly for easing property on AnimationEffectTiming 
 PASS AnimationEffectTiming must be primary interface of (new KeyframeEffect(null, null)).timing 
 PASS Stringification of (new KeyframeEffect(null, null)).timing 
 PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "delay" with the proper type 

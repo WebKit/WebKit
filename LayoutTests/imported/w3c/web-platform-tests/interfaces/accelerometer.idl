@@ -1,0 +1,23 @@
+[Constructor(optional AccelerometerSensorOptions options), SecureContext,
+  Exposed=Window]
+interface Accelerometer : Sensor {
+  readonly attribute double? x;
+  readonly attribute double? y;
+  readonly attribute double? z;
+};
+
+enum AccelerometerLocalCoordinateSystem { "device", "screen" };
+
+dictionary AccelerometerSensorOptions : SensorOptions {
+  AccelerometerLocalCoordinateSystem referenceFrame = "device";
+};
+
+[Constructor(optional AccelerometerSensorOptions options), SecureContext,
+  Exposed=Window]
+interface LinearAccelerationSensor : Accelerometer {
+};
+
+[Constructor(optional AccelerometerSensorOptions options), SecureContext,
+  Exposed=Window]
+interface GravitySensor : Accelerometer {
+};

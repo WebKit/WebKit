@@ -1,15 +1,21 @@
 
 PASS Window interface: existence and properties of interface object 
 PASS URL interface: operation createObjectURL(Blob) 
+PASS Unscopable handled correctly for createObjectURL(Blob) on URL 
 PASS URL interface: operation revokeObjectURL(DOMString) 
+PASS Unscopable handled correctly for revokeObjectURL(DOMString) on URL 
 PASS Blob interface: existence and properties of interface object 
 PASS Blob interface object length 
 PASS Blob interface object name 
 PASS Blob interface: existence and properties of interface prototype object 
 PASS Blob interface: existence and properties of interface prototype object's "constructor" property 
+PASS Blob interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Blob interface: attribute size 
+PASS Unscopable handled correctly for size property on Blob 
 PASS Blob interface: attribute type 
+PASS Unscopable handled correctly for type property on Blob 
 PASS Blob interface: operation slice(long long, long long, DOMString) 
+PASS Unscopable handled correctly for slice(long long, long long, DOMString) on Blob 
 PASS Blob must be primary interface of new Blob(["TEST"]) 
 PASS Stringification of new Blob(["TEST"]) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type 
@@ -21,8 +27,11 @@ FAIL File interface object length assert_own_property: self does not have own pr
 FAIL File interface object name assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface: existence and properties of interface prototype object assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "File" expected property "File" missing
+FAIL File interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "File" expected property "File" missing
 FAIL File interface: attribute name assert_own_property: self does not have own property "File" expected property "File" missing
+PASS Unscopable handled correctly for name property on File 
 FAIL File interface: attribute lastModified assert_own_property: self does not have own property "File" expected property "File" missing
+PASS Unscopable handled correctly for lastModified property on File 
 FAIL File must be primary interface of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL Stringification of new File(["myFileBits"], "myFileName") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
 FAIL File interface: new File(["myFileBits"], "myFileName") must inherit property "name" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: File"
@@ -36,18 +45,27 @@ FAIL FileList interface object length assert_own_property: self does not have ow
 FAIL FileList interface object name assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+FAIL FileList interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FileList" expected property "FileList" missing
 FAIL FileList interface: operation item(unsigned long) assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+PASS Unscopable handled correctly for item(unsigned long) on FileList 
 FAIL FileList interface: attribute length assert_own_property: self does not have own property "FileList" expected property "FileList" missing
+PASS Unscopable handled correctly for length property on FileList 
 PASS FileReader interface: existence and properties of interface object 
 PASS FileReader interface object length 
 PASS FileReader interface object name 
 PASS FileReader interface: existence and properties of interface prototype object 
 PASS FileReader interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileReader interface: existence and properties of interface prototype object's @@unscopables property 
 PASS FileReader interface: operation readAsArrayBuffer(Blob) 
+PASS Unscopable handled correctly for readAsArrayBuffer(Blob) on FileReader 
 PASS FileReader interface: operation readAsBinaryString(Blob) 
+PASS Unscopable handled correctly for readAsBinaryString(Blob) on FileReader 
 PASS FileReader interface: operation readAsText(Blob, DOMString) 
+PASS Unscopable handled correctly for readAsText(Blob, DOMString) on FileReader 
 PASS FileReader interface: operation readAsDataURL(Blob) 
+PASS Unscopable handled correctly for readAsDataURL(Blob) on FileReader 
 PASS FileReader interface: operation abort() 
+PASS Unscopable handled correctly for abort() on FileReader 
 PASS FileReader interface: constant EMPTY on interface object 
 PASS FileReader interface: constant EMPTY on interface prototype object 
 PASS FileReader interface: constant LOADING on interface object 
@@ -55,14 +73,23 @@ PASS FileReader interface: constant LOADING on interface prototype object
 PASS FileReader interface: constant DONE on interface object 
 PASS FileReader interface: constant DONE on interface prototype object 
 PASS FileReader interface: attribute readyState 
+PASS Unscopable handled correctly for readyState property on FileReader 
 PASS FileReader interface: attribute result 
+PASS Unscopable handled correctly for result property on FileReader 
 PASS FileReader interface: attribute error 
+PASS Unscopable handled correctly for error property on FileReader 
 PASS FileReader interface: attribute onloadstart 
+PASS Unscopable handled correctly for onloadstart property on FileReader 
 PASS FileReader interface: attribute onprogress 
+PASS Unscopable handled correctly for onprogress property on FileReader 
 PASS FileReader interface: attribute onload 
+PASS Unscopable handled correctly for onload property on FileReader 
 PASS FileReader interface: attribute onabort 
+PASS Unscopable handled correctly for onabort property on FileReader 
 PASS FileReader interface: attribute onerror 
+PASS Unscopable handled correctly for onerror property on FileReader 
 PASS FileReader interface: attribute onloadend 
+PASS Unscopable handled correctly for onloadend property on FileReader 
 PASS FileReader must be primary interface of new FileReader() 
 PASS Stringification of new FileReader() 
 PASS FileReader interface: new FileReader() must inherit property "readAsArrayBuffer(Blob)" with the proper type 
@@ -91,10 +118,15 @@ PASS FileReaderSync interface object length
 PASS FileReaderSync interface object name 
 PASS FileReaderSync interface: existence and properties of interface prototype object 
 PASS FileReaderSync interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileReaderSync interface: existence and properties of interface prototype object's @@unscopables property 
 PASS FileReaderSync interface: operation readAsArrayBuffer(Blob) 
+PASS Unscopable handled correctly for readAsArrayBuffer(Blob) on FileReaderSync 
 PASS FileReaderSync interface: operation readAsBinaryString(Blob) 
+PASS Unscopable handled correctly for readAsBinaryString(Blob) on FileReaderSync 
 PASS FileReaderSync interface: operation readAsText(Blob, DOMString) 
+PASS Unscopable handled correctly for readAsText(Blob, DOMString) on FileReaderSync 
 PASS FileReaderSync interface: operation readAsDataURL(Blob) 
+PASS Unscopable handled correctly for readAsDataURL(Blob) on FileReaderSync 
 PASS FileReaderSync must be primary interface of new FileReaderSync() 
 PASS Stringification of new FileReaderSync() 
 PASS FileReaderSync interface: new FileReaderSync() must inherit property "readAsArrayBuffer(Blob)" with the proper type 

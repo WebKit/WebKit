@@ -41,5 +41,11 @@ PASS CompositionEvent constructor (null argument)
 PASS CompositionEvent constructor (empty argument) 
 PASS CompositionEvent constructor (argument with default values) 
 PASS CompositionEvent constructor (argument with non-default values) 
+FAIL SubclassedEvent constructor (no argument) assert_true: expected true got false
+FAIL SubclassedEvent constructor (undefined argument) assert_true: expected true got false
+FAIL SubclassedEvent constructor (null argument) assert_true: expected true got false
+FAIL SubclassedEvent constructor (empty argument) assert_true: expected true got false
+FAIL SubclassedEvent constructor (argument with default values) assert_true: expected true got false
+FAIL SubclassedEvent constructor (argument with non-default values) assert_true: expected true got false
 PASS UIEvent constructor (view argument with wrong type) 
 

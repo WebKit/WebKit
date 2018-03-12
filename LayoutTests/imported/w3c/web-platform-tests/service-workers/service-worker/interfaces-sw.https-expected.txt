@@ -14,14 +14,23 @@ PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of i
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via __proto__ should not throw 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Reflect.setPrototypeOf should return true 
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ServiceWorkerGlobalScope interface: attribute clients 
+PASS Unscopable handled correctly for clients property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: attribute registration 
+PASS Unscopable handled correctly for registration property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: operation skipWaiting() 
+PASS Unscopable handled correctly for skipWaiting() on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: attribute oninstall 
+PASS Unscopable handled correctly for oninstall property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: attribute onactivate 
+PASS Unscopable handled correctly for onactivate property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: attribute onfetch 
+PASS Unscopable handled correctly for onfetch property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: attribute onmessage 
+PASS Unscopable handled correctly for onmessage property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: attribute onmessageerror 
+PASS Unscopable handled correctly for onmessageerror property on ServiceWorkerGlobalScope 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Reflect.setPrototypeOf should return false 
@@ -43,30 +52,47 @@ PASS Client interface object length
 PASS Client interface object name 
 PASS Client interface: existence and properties of interface prototype object 
 PASS Client interface: existence and properties of interface prototype object's "constructor" property 
+PASS Client interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Client interface: attribute url 
+PASS Unscopable handled correctly for url property on Client 
 PASS Client interface: attribute id 
+PASS Unscopable handled correctly for id property on Client 
 PASS Client interface: attribute type 
+PASS Unscopable handled correctly for type property on Client 
 FAIL Client interface: attribute reserved assert_true: The prototype object must have a property "reserved" expected true got false
+PASS Unscopable handled correctly for reserved property on Client 
 PASS Client interface: operation postMessage(any, [object Object]) 
+PASS Unscopable handled correctly for postMessage(any, [object Object]) on Client 
 PASS WindowClient interface: existence and properties of interface object 
 PASS WindowClient interface object length 
 PASS WindowClient interface object name 
 PASS WindowClient interface: existence and properties of interface prototype object 
 PASS WindowClient interface: existence and properties of interface prototype object's "constructor" property 
+PASS WindowClient interface: existence and properties of interface prototype object's @@unscopables property 
 PASS WindowClient interface: attribute visibilityState 
+PASS Unscopable handled correctly for visibilityState property on WindowClient 
 PASS WindowClient interface: attribute focused 
+PASS Unscopable handled correctly for focused property on WindowClient 
 FAIL WindowClient interface: attribute ancestorOrigins assert_true: The prototype object must have a property "ancestorOrigins" expected true got false
+PASS Unscopable handled correctly for ancestorOrigins property on WindowClient 
 PASS WindowClient interface: operation focus() 
+PASS Unscopable handled correctly for focus() on WindowClient 
 PASS WindowClient interface: operation navigate(USVString) 
+PASS Unscopable handled correctly for navigate(USVString) on WindowClient 
 PASS Clients interface: existence and properties of interface object 
 PASS Clients interface object length 
 PASS Clients interface object name 
 PASS Clients interface: existence and properties of interface prototype object 
 PASS Clients interface: existence and properties of interface prototype object's "constructor" property 
+PASS Clients interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Clients interface: operation get(DOMString) 
+PASS Unscopable handled correctly for get(DOMString) on Clients 
 PASS Clients interface: operation matchAll(ClientQueryOptions) 
+PASS Unscopable handled correctly for matchAll(ClientQueryOptions) on Clients 
 PASS Clients interface: operation openWindow(USVString) 
+PASS Unscopable handled correctly for openWindow(USVString) on Clients 
 PASS Clients interface: operation claim() 
+PASS Unscopable handled correctly for claim() on Clients 
 PASS Clients must be primary interface of self.clients 
 PASS Stringification of self.clients 
 PASS Clients interface: self.clients must inherit property "get(DOMString)" with the proper type 
@@ -81,24 +107,39 @@ PASS ServiceWorker interface object length
 PASS ServiceWorker interface object name 
 PASS ServiceWorker interface: existence and properties of interface prototype object 
 PASS ServiceWorker interface: existence and properties of interface prototype object's "constructor" property 
+PASS ServiceWorker interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ServiceWorker interface: attribute scriptURL 
+PASS Unscopable handled correctly for scriptURL property on ServiceWorker 
 PASS ServiceWorker interface: attribute state 
+PASS Unscopable handled correctly for state property on ServiceWorker 
 PASS ServiceWorker interface: operation postMessage(any, [object Object]) 
+PASS Unscopable handled correctly for postMessage(any, [object Object]) on ServiceWorker 
 PASS ServiceWorker interface: attribute onstatechange 
+PASS Unscopable handled correctly for onstatechange property on ServiceWorker 
 PASS ServiceWorkerRegistration interface: existence and properties of interface object 
 PASS ServiceWorkerRegistration interface object length 
 PASS ServiceWorkerRegistration interface object name 
 PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object 
 PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's "constructor" property 
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ServiceWorkerRegistration interface: attribute installing 
+PASS Unscopable handled correctly for installing property on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: attribute waiting 
+PASS Unscopable handled correctly for waiting property on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: attribute active 
+PASS Unscopable handled correctly for active property on ServiceWorkerRegistration 
 FAIL ServiceWorkerRegistration interface: attribute navigationPreload assert_true: The prototype object must have a property "navigationPreload" expected true got false
+PASS Unscopable handled correctly for navigationPreload property on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: attribute scope 
+PASS Unscopable handled correctly for scope property on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: attribute updateViaCache 
+PASS Unscopable handled correctly for updateViaCache property on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: operation update() 
+PASS Unscopable handled correctly for update() on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: operation unregister() 
+PASS Unscopable handled correctly for unregister() on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration interface: attribute onupdatefound 
+PASS Unscopable handled correctly for onupdatefound property on ServiceWorkerRegistration 
 PASS ServiceWorkerRegistration must be primary interface of self.registration 
 PASS Stringification of self.registration 
 PASS ServiceWorkerRegistration interface: self.registration must inherit property "installing" with the proper type 
@@ -121,30 +162,47 @@ PASS EventTarget interface object length
 PASS EventTarget interface object name 
 PASS EventTarget interface: existence and properties of interface prototype object 
 PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
+PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
 PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
+PASS Unscopable handled correctly for addEventListener(DOMString, EventListener, [object Object],[object Object]) on EventTarget 
 PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
+PASS Unscopable handled correctly for removeEventListener(DOMString, EventListener, [object Object],[object Object]) on EventTarget 
 PASS EventTarget interface: operation dispatchEvent(Event) 
+PASS Unscopable handled correctly for dispatchEvent(Event) on EventTarget 
 FAIL NavigationPreloadManager interface: existence and properties of interface object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 FAIL NavigationPreloadManager interface object length assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 FAIL NavigationPreloadManager interface object name assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 FAIL NavigationPreloadManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 FAIL NavigationPreloadManager interface: operation enable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+PASS Unscopable handled correctly for enable() on NavigationPreloadManager 
 FAIL NavigationPreloadManager interface: operation disable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+PASS Unscopable handled correctly for disable() on NavigationPreloadManager 
 FAIL NavigationPreloadManager interface: operation setHeaderValue(ByteString) assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+PASS Unscopable handled correctly for setHeaderValue(ByteString) on NavigationPreloadManager 
 FAIL NavigationPreloadManager interface: operation getState() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+PASS Unscopable handled correctly for getState() on NavigationPreloadManager 
 PASS Cache interface: existence and properties of interface object 
 PASS Cache interface object length 
 PASS Cache interface object name 
 PASS Cache interface: existence and properties of interface prototype object 
 PASS Cache interface: existence and properties of interface prototype object's "constructor" property 
+PASS Cache interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Cache interface: operation match(RequestInfo, CacheQueryOptions) 
+PASS Unscopable handled correctly for match(RequestInfo, CacheQueryOptions) on Cache 
 PASS Cache interface: operation matchAll(RequestInfo, CacheQueryOptions) 
+PASS Unscopable handled correctly for matchAll(RequestInfo, CacheQueryOptions) on Cache 
 PASS Cache interface: operation add(RequestInfo) 
+PASS Unscopable handled correctly for add(RequestInfo) on Cache 
 PASS Cache interface: operation addAll([object Object]) 
+PASS Unscopable handled correctly for addAll([object Object]) on Cache 
 PASS Cache interface: operation put(RequestInfo, Response) 
+PASS Unscopable handled correctly for put(RequestInfo, Response) on Cache 
 PASS Cache interface: operation delete(RequestInfo, CacheQueryOptions) 
+PASS Unscopable handled correctly for delete(RequestInfo, CacheQueryOptions) on Cache 
 PASS Cache interface: operation keys(RequestInfo, CacheQueryOptions) 
+PASS Unscopable handled correctly for keys(RequestInfo, CacheQueryOptions) on Cache 
 PASS Cache must be primary interface of self.cacheInstance 
 PASS Stringification of self.cacheInstance 
 PASS Cache interface: self.cacheInstance must inherit property "match(RequestInfo, CacheQueryOptions)" with the proper type 
@@ -166,11 +224,17 @@ PASS CacheStorage interface object length
 PASS CacheStorage interface object name 
 PASS CacheStorage interface: existence and properties of interface prototype object 
 PASS CacheStorage interface: existence and properties of interface prototype object's "constructor" property 
+PASS CacheStorage interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CacheStorage interface: operation match(RequestInfo, CacheQueryOptions) 
+PASS Unscopable handled correctly for match(RequestInfo, CacheQueryOptions) on CacheStorage 
 PASS CacheStorage interface: operation has(DOMString) 
+PASS Unscopable handled correctly for has(DOMString) on CacheStorage 
 PASS CacheStorage interface: operation open(DOMString) 
+PASS Unscopable handled correctly for open(DOMString) on CacheStorage 
 PASS CacheStorage interface: operation delete(DOMString) 
+PASS Unscopable handled correctly for delete(DOMString) on CacheStorage 
 PASS CacheStorage interface: operation keys() 
+PASS Unscopable handled correctly for keys() on CacheStorage 
 PASS CacheStorage must be primary interface of self.caches 
 PASS Stringification of self.caches 
 PASS CacheStorage interface: self.caches must inherit property "match(RequestInfo, CacheQueryOptions)" with the proper type 

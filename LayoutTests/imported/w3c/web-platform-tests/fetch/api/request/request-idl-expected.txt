@@ -4,25 +4,45 @@ PASS Request interface object length
 PASS Request interface object name 
 PASS Request interface: existence and properties of interface prototype object 
 PASS Request interface: existence and properties of interface prototype object's "constructor" property 
+PASS Request interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Request interface: attribute method 
+PASS Unscopable handled correctly for method property on Request 
 PASS Request interface: attribute url 
+PASS Unscopable handled correctly for url property on Request 
 PASS Request interface: attribute headers 
+PASS Unscopable handled correctly for headers property on Request 
 PASS Request interface: attribute destination 
+PASS Unscopable handled correctly for destination property on Request 
 PASS Request interface: attribute referrer 
+PASS Unscopable handled correctly for referrer property on Request 
 PASS Request interface: attribute referrerPolicy 
+PASS Unscopable handled correctly for referrerPolicy property on Request 
 PASS Request interface: attribute mode 
+PASS Unscopable handled correctly for mode property on Request 
 PASS Request interface: attribute credentials 
+PASS Unscopable handled correctly for credentials property on Request 
 PASS Request interface: attribute cache 
+PASS Unscopable handled correctly for cache property on Request 
 PASS Request interface: attribute redirect 
+PASS Unscopable handled correctly for redirect property on Request 
 PASS Request interface: attribute integrity 
+PASS Unscopable handled correctly for integrity property on Request 
 PASS Request interface: operation clone() 
+PASS Unscopable handled correctly for clone() on Request 
 PASS Request interface: attribute body 
+PASS Unscopable handled correctly for body property on Request 
 PASS Request interface: attribute bodyUsed 
+PASS Unscopable handled correctly for bodyUsed property on Request 
 PASS Request interface: operation arrayBuffer() 
+PASS Unscopable handled correctly for arrayBuffer() on Request 
 PASS Request interface: operation blob() 
+PASS Unscopable handled correctly for blob() on Request 
 PASS Request interface: operation formData() 
+PASS Unscopable handled correctly for formData() on Request 
 PASS Request interface: operation json() 
+PASS Unscopable handled correctly for json() on Request 
 PASS Request interface: operation text() 
+PASS Unscopable handled correctly for text() on Request 
 PASS Request must be primary interface of new Request("") 
 PASS Stringification of new Request("") 
 PASS Request interface: new Request("") must inherit property "method" with the proper type 

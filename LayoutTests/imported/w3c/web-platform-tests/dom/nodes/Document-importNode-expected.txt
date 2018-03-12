@@ -3,4 +3,5 @@ PASS No 'deep' argument.
 PASS Undefined 'deep' argument. 
 PASS True 'deep' argument. 
 PASS False 'deep' argument. 
+FAIL Import an Attr node with namespace/prefix correctly. assert_equals: expected (string) "p" but got (object) null
 

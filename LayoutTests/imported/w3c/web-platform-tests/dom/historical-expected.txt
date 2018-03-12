@@ -70,4 +70,5 @@ PASS Event should not have this constant: FOCUS
 PASS Event should not have this constant: BLUR 
 PASS Event should not have this constant: SELECT 
 PASS Event should not have this constant: CHANGE 
+PASS Event.prototype should not have this property: getPreventDefault 
 

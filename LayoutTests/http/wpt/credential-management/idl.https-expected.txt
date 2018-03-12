@@ -4,10 +4,15 @@ PASS CredentialsContainer interface object length
 PASS CredentialsContainer interface object name 
 PASS CredentialsContainer interface: existence and properties of interface prototype object 
 PASS CredentialsContainer interface: existence and properties of interface prototype object's "constructor" property 
+PASS CredentialsContainer interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CredentialsContainer interface: operation get(CredentialRequestOptions) 
+PASS Unscopable handled correctly for get(CredentialRequestOptions) on CredentialsContainer 
 PASS CredentialsContainer interface: operation store(Credential) 
+PASS Unscopable handled correctly for store(Credential) on CredentialsContainer 
 PASS CredentialsContainer interface: operation create(CredentialCreationOptions) 
+PASS Unscopable handled correctly for create(CredentialCreationOptions) on CredentialsContainer 
 PASS CredentialsContainer interface: operation preventSilentAccess() 
+PASS Unscopable handled correctly for preventSilentAccess() on CredentialsContainer 
 PASS CredentialsContainer must be primary interface of navigator.credentials 
 PASS Stringification of navigator.credentials 
 PASS CredentialsContainer interface: navigator.credentials must inherit property "get(CredentialRequestOptions)" with the proper type 

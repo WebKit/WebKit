@@ -9,17 +9,25 @@ PASS Credential interface object length
 PASS Credential interface object name 
 PASS Credential interface: existence and properties of interface prototype object 
 PASS Credential interface: existence and properties of interface prototype object's "constructor" property 
+PASS Credential interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Credential interface: attribute id 
+PASS Unscopable handled correctly for id property on Credential 
 PASS Credential interface: attribute type 
+PASS Unscopable handled correctly for type property on Credential 
 PASS PublicKeyCredential interface: existence and properties of interface object 
 PASS PublicKeyCredential interface object length 
 PASS PublicKeyCredential interface object name 
 PASS PublicKeyCredential interface: existence and properties of interface prototype object 
 PASS PublicKeyCredential interface: existence and properties of interface prototype object's "constructor" property 
+PASS PublicKeyCredential interface: existence and properties of interface prototype object's @@unscopables property 
 PASS PublicKeyCredential interface: attribute rawId 
+PASS Unscopable handled correctly for rawId property on PublicKeyCredential 
 PASS PublicKeyCredential interface: attribute response 
+PASS Unscopable handled correctly for response property on PublicKeyCredential 
 PASS PublicKeyCredential interface: operation getClientExtensionResults() 
+PASS Unscopable handled correctly for getClientExtensionResults() on PublicKeyCredential 
 PASS PublicKeyCredential interface: operation isUserVerifyingPlatformAuthenticatorAvailable() 
+PASS Unscopable handled correctly for isUserVerifyingPlatformAuthenticatorAvailable() on PublicKeyCredential 
 PASS PublicKeyCredential must be primary interface of createdCredential 
 PASS Stringification of createdCredential 
 PASS PublicKeyCredential interface: createdCredential must inherit property "rawId" with the proper type 
@@ -33,13 +41,17 @@ PASS AuthenticatorResponse interface object length
 PASS AuthenticatorResponse interface object name 
 PASS AuthenticatorResponse interface: existence and properties of interface prototype object 
 PASS AuthenticatorResponse interface: existence and properties of interface prototype object's "constructor" property 
+PASS AuthenticatorResponse interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AuthenticatorResponse interface: attribute clientDataJSON 
+PASS Unscopable handled correctly for clientDataJSON property on AuthenticatorResponse 
 PASS AuthenticatorAttestationResponse interface: existence and properties of interface object 
 PASS AuthenticatorAttestationResponse interface object length 
 PASS AuthenticatorAttestationResponse interface object name 
 PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object 
 PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object's "constructor" property 
+PASS AuthenticatorAttestationResponse interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AuthenticatorAttestationResponse interface: attribute attestationObject 
+PASS Unscopable handled correctly for attestationObject property on AuthenticatorAttestationResponse 
 PASS AuthenticatorAttestationResponse must be primary interface of createdCredential.response 
 PASS Stringification of createdCredential.response 
 PASS AuthenticatorAttestationResponse interface: createdCredential.response must inherit property "attestationObject" with the proper type 
@@ -49,9 +61,13 @@ PASS AuthenticatorAssertionResponse interface object length
 PASS AuthenticatorAssertionResponse interface object name 
 PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object 
 PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object's "constructor" property 
+PASS AuthenticatorAssertionResponse interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AuthenticatorAssertionResponse interface: attribute authenticatorData 
+PASS Unscopable handled correctly for authenticatorData property on AuthenticatorAssertionResponse 
 PASS AuthenticatorAssertionResponse interface: attribute signature 
+PASS Unscopable handled correctly for signature property on AuthenticatorAssertionResponse 
 PASS AuthenticatorAssertionResponse interface: attribute userHandle 
+PASS Unscopable handled correctly for userHandle property on AuthenticatorAssertionResponse 
 PASS AuthenticatorAssertionResponse must be primary interface of requestedCredential.response 
 PASS Stringification of requestedCredential.response 
 PASS AuthenticatorAssertionResponse interface: requestedCredential.response must inherit property "authenticatorData" with the proper type 

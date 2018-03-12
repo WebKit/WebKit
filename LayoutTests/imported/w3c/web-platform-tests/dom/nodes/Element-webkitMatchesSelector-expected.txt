@@ -93,6 +93,7 @@ PASS In-document Element.webkitMatchesSelector: Attribute presence selector, mat
 PASS In-document Element.webkitMatchesSelector: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
 PASS In-document Element.webkitMatchesSelector: Attribute presence selector, matching multiple options with selected attributes (with no refNodes): #attr-presence-select3 option[selected] 
 PASS In-document Element.webkitMatchesSelector: Attribute value selector, matching align attribute with value (with no refNodes): #attr-value [align="center"] 
+FAIL In-document Element.webkitMatchesSelector: Attribute value selector, matching align attribute with value, unclosed bracket (with no refNodes): #attr-value [align="center" The string did not match the expected pattern.
 PASS In-document Element.webkitMatchesSelector: Attribute value selector, matching align attribute with empty value (with no refNodes): #attr-value [align=""] 
 PASS In-document Element.webkitMatchesSelector: Attribute value selector, matching custom data-* attribute with unicode escaped value (with no refNodes): [data-attr-value="\e9"] 
 PASS In-document Element.webkitMatchesSelector: Attribute value selector, matching custom data-* attribute with escaped character (with no refNodes): [data-attr-value_foo="\e9"] 
@@ -255,6 +256,7 @@ PASS Detached Element.webkitMatchesSelector: Attribute presence selector, matchi
 PASS Detached Element.webkitMatchesSelector: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
 PASS Detached Element.webkitMatchesSelector: Attribute presence selector, matching multiple options with selected attributes (with no refNodes): #attr-presence-select3 option[selected] 
 PASS Detached Element.webkitMatchesSelector: Attribute value selector, matching align attribute with value (with no refNodes): #attr-value [align="center"] 
+FAIL Detached Element.webkitMatchesSelector: Attribute value selector, matching align attribute with value, unclosed bracket (with no refNodes): #attr-value [align="center" The string did not match the expected pattern.
 PASS Detached Element.webkitMatchesSelector: Attribute value selector, matching align attribute with empty value (with no refNodes): #attr-value [align=""] 
 PASS Detached Element.webkitMatchesSelector: Attribute value selector, matching custom data-* attribute with unicode escaped value (with no refNodes): [data-attr-value="\e9"] 
 PASS Detached Element.webkitMatchesSelector: Attribute value selector, matching custom data-* attribute with escaped character (with no refNodes): [data-attr-value_foo="\e9"] 
@@ -412,6 +414,7 @@ PASS Fragment Element.webkitMatchesSelector: Attribute presence selector, matchi
 PASS Fragment Element.webkitMatchesSelector: Attribute presence selector, matching option with selected attribute (with no refNodes): #attr-presence-select2 option[selected] 
 PASS Fragment Element.webkitMatchesSelector: Attribute presence selector, matching multiple options with selected attributes (with no refNodes): #attr-presence-select3 option[selected] 
 PASS Fragment Element.webkitMatchesSelector: Attribute value selector, matching align attribute with value (with no refNodes): #attr-value [align="center"] 
+FAIL Fragment Element.webkitMatchesSelector: Attribute value selector, matching align attribute with value, unclosed bracket (with no refNodes): #attr-value [align="center" The string did not match the expected pattern.
 PASS Fragment Element.webkitMatchesSelector: Attribute value selector, matching align attribute with empty value (with no refNodes): #attr-value [align=""] 
 PASS Fragment Element.webkitMatchesSelector: Attribute value selector, matching custom data-* attribute with unicode escaped value (with no refNodes): [data-attr-value="\e9"] 
 PASS Fragment Element.webkitMatchesSelector: Attribute value selector, matching custom data-* attribute with escaped character (with no refNodes): [data-attr-value_foo="\e9"] 

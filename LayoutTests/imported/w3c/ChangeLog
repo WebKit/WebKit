@@ -1,3 +1,117 @@
+2018-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync dom web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=183570
+
+        Reviewed by Alex Christensen.
+
+        Re-sync dom web-platform-tests from upstream 5a1c088ef0.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/dom/abort/event.any-expected.txt:
+        * web-platform-tests/dom/abort/event.any.js:
+        (test.t.signal.onabort):
+        * web-platform-tests/dom/abort/event.any.worker-expected.txt:
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+        * web-platform-tests/dom/events/Event-subclasses-constructors.html:
+        * web-platform-tests/dom/events/EventListener-invoke-legacy.html:
+        * web-platform-tests/dom/events/event-disabled-dynamic-expected.txt: Added.
+        * web-platform-tests/dom/events/event-disabled-dynamic.html: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/historical.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/nodes/Document-constructor-svg.svg: Removed.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/generate.py:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-importNode-expected.txt:
+        * web-platform-tests/dom/nodes/Document-importNode.html:
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+        * web-platform-tests/dom/nodes/Element-classlist.html:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/interfaces/dom.idl:
+        * web-platform-tests/interfaces/html.idl:
+        * web-platform-tests/resources/idlharness.js:
+        (constValue):
+        (self.IdlArray):
+        (IdlArray.prototype.add_idls):
+        (should_skip):
+        (IdlArray.prototype.internal_add_idls):
+        (IdlArray.prototype.recursively_get_includes):
+        (IdlArray.prototype.is_json_type):
+        (IdlArray.prototype.test):
+        (IdlInterface):
+        (IdlInterface.prototype.is_mixin):
+        (IdlInterface.prototype.get_unscopables):
+        (IdlInterface.prototype.is_global):
+        (_traverse_inherited_and_consequential_interfaces):
+        (IdlInterface.prototype.test):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.test_member_attribute):
+        (IdlInterface.prototype.test_member_operation):
+        (IdlInterface.prototype.do_member_unscopable_asserts):
+        (IdlInterface.prototype.test_primary_interface_of):
+        (IdlInterface.prototype.test_interface_of):
+        (IdlInterfaceMember):
+        * web-platform-tests/resources/idlharness.js.headers:
+        * web-platform-tests/resources/webidl2/lib/webidl2.js:
+        (WebIDLParseError):
+        (WebIDLParseError.prototype.toString):
+        (sanitize_name):
+        (consume):
+        (ws):
+        (all_ws):
+        (integer_type):
+        (float_type):
+        (primitive_type):
+        (const_value):
+        (type_suffix):
+        (single_type):
+        (union_type):
+        (type):
+        (type_with_extended_attributes):
+        (argument):
+        (argument_list):
+        (simple_extended_attr):
+        (extended_attrs):
+        (default_):
+        (const_):
+        (inheritance):
+        (operation_rest):
+        (callback):
+        (attribute):
+        (attribute_rest):
+        (return_type):
+        (operation):
+        (static_member):
+        (stringifier):
+        (identifiers):
+        (iterable_type):
+        (readonly_iterable_type):
+        (iterable):
+        (interface_rest):
+        (mixin_rest):
+        (interface_):
+        (namespace):
+        (noninherited_attribute):
+        (regular_operation):
+        (partial):
+        (dictionary):
+        (enum_):
+        (parse):
+
 2018-03-12  Frederic Wang  <fwang@igalia.com>
 
         Import WPT tests for blocked modal dialogs in sanboxed documents
