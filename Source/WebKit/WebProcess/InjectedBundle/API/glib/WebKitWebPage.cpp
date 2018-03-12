@@ -417,7 +417,7 @@ private:
             g_ptr_array_add(textFieldValues.get(), g_strdup(pair.second.utf8().data()));
         }
 
-        g_signal_emit(m_webPage, signals[WILL_SUBMIT_FORM], 0, WebKit::kit(formElement), step, webkitSourceFrame, webkitTargetFrame, textFieldNames.get(), textFieldValues.get());
+        g_signal_emit(m_webPage, signals[WILL_SUBMIT_FORM], 0, WEBKIT_DOM_ELEMENT(WebKit::kit(formElement)), step, webkitSourceFrame, webkitTargetFrame, textFieldNames.get(), textFieldValues.get());
     }
 
     WebKitWebPage* m_webPage;
@@ -591,7 +591,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
     /**
      * WebKitWebPage::will-submit-form:
      * @web_page: the #WebKitWebPage on which the signal is emitted
-     * @form: the #WebKitDOMHTMLFormElement to be submitted
+     * @form: the #WebKitDOMElement to be submitted, which will always correspond to an HTMLFormElement
      * @step: a #WebKitFormSubmissionEventType indicating the current
      * stage of form submission
      * @source_frame: the #WebKitFrame containing the form to be
@@ -640,7 +640,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         0, 0, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 6,
-        WEBKIT_DOM_TYPE_HTML_FORM_ELEMENT,
+        WEBKIT_DOM_TYPE_ELEMENT,
         WEBKIT_TYPE_FORM_SUBMISSION_STEP,
         WEBKIT_TYPE_FRAME,
         WEBKIT_TYPE_FRAME,

@@ -354,7 +354,7 @@ static void emitFormSubmissionEvent(GDBusConnection* connection, const char* met
     g_assert(ok);
 }
 
-static void handleFormSubmissionCallback(WebKitWebPage* webPage, DelayedSignalType delayedSignalType, const char* methodName, WebKitDOMHTMLFormElement* formElement, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, GPtrArray* textFieldNames, GPtrArray* textFieldValues, WebKitWebExtension* extension)
+static void handleFormSubmissionCallback(WebKitWebPage* webPage, DelayedSignalType delayedSignalType, const char* methodName, const char* formID, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, GPtrArray* textFieldNames, GPtrArray* textFieldValues, WebKitWebExtension* extension)
 {
     GString* namesBuilder = g_string_new(nullptr);
     for (guint i = 0; i < textFieldNames->len; ++i) {
@@ -374,19 +374,21 @@ static void handleFormSubmissionCallback(WebKitWebPage* webPage, DelayedSignalTy
 
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
     if (data)
-        emitFormSubmissionEvent(G_DBUS_CONNECTION(data), methodName, webkit_dom_element_get_id(WEBKIT_DOM_ELEMENT(formElement)), names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame));
+        emitFormSubmissionEvent(G_DBUS_CONNECTION(data), methodName, formID, names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame));
     else
-        delayedSignalsQueue.append(DelayedSignal(delayedSignalType, webkit_dom_element_get_id(WEBKIT_DOM_ELEMENT(formElement)), names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame)));
+        delayedSignalsQueue.append(DelayedSignal(delayedSignalType, formID, names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame)));
 }
 
-static void willSubmitFormCallback(WebKitWebPage* webPage, WebKitDOMHTMLFormElement* formElement, WebKitFormSubmissionStep step, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, GPtrArray* textFieldNames, GPtrArray* textFieldValues, WebKitWebExtension* extension)
+static void willSubmitFormCallback(WebKitWebPage* webPage, WebKitDOMElement* formElement, WebKitFormSubmissionStep step, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, GPtrArray* textFieldNames, GPtrArray* textFieldValues, WebKitWebExtension* extension)
 {
+    g_assert(WEBKIT_DOM_IS_HTML_FORM_ELEMENT(formElement));
+    GUniquePtr<char> formID(webkit_dom_element_get_id(formElement));
     switch (step) {
     case WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT:
-        handleFormSubmissionCallback(webPage, FormSubmissionWillSendDOMEventSignal, "FormSubmissionWillSendDOMEvent", formElement, sourceFrame, targetFrame, textFieldNames, textFieldValues, extension);
+        handleFormSubmissionCallback(webPage, FormSubmissionWillSendDOMEventSignal, "FormSubmissionWillSendDOMEvent", formID.get(), sourceFrame, targetFrame, textFieldNames, textFieldValues, extension);
         break;
     case WEBKIT_FORM_SUBMISSION_WILL_COMPLETE:
-        handleFormSubmissionCallback(webPage, FormSubmissionWillCompleteSignal, "FormSubmissionWillComplete", formElement, sourceFrame, targetFrame, textFieldNames, textFieldValues, extension);
+        handleFormSubmissionCallback(webPage, FormSubmissionWillCompleteSignal, "FormSubmissionWillComplete", formID.get(), sourceFrame, targetFrame, textFieldNames, textFieldValues, extension);
         break;
     default:
         g_assert_not_reached();
