@@ -1,3 +1,16 @@
+2018-03-12  Danyao Wang  <danyao@chromium.org>
+
+        Add a query and fragment exception to history API's unique origin restriction.
+        https://bugs.webkit.org/show_bug.cgi?id=183028
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/navigation/pushstate-at-unique-origin-denied.php
+               Tools/TestWebKitAPI/Tests/WebCore/URL.cpp
+
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+
 2018-03-12  Antti Koivisto  <antti@apple.com>
 
         Don't invalidate descendants for nth pseudo classes unless needed

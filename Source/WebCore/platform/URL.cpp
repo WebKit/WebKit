@@ -729,6 +729,18 @@ bool equalIgnoringFragmentIdentifier(const URL& a, const URL& b)
     return true;
 }
 
+bool equalIgnoringQueryAndFragment(const URL& a, const URL& b)
+{
+    if (a.pathEnd() != b.pathEnd())
+        return false;
+    unsigned pathEnd = a.pathEnd();
+    for (unsigned i = 0; i < pathEnd; ++i) {
+        if (a.string()[i] != b.string()[i])
+            return false;
+    }
+    return true;
+}
+
 bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
 {
     if (a.m_schemeEnd != b.m_schemeEnd)
