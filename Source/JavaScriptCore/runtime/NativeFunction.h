@@ -68,6 +68,9 @@ public:
     TaggedNativeFunction() = default;
     TaggedNativeFunction(std::nullptr_t) : m_ptr(nullptr) { }
     explicit TaggedNativeFunction(uintptr_t bits) : m_ptr(bitwise_cast<void*>(bits)) { }
+#if COMPILER(MSVC)
+    explicit TaggedNativeFunction(intptr_t bits) : m_ptr(bitwise_cast<void*>(bits)) { }
+#endif
 
     TaggedNativeFunction(NativeFunction func)
         : m_ptr(tagCFunctionPtr<void*>(func.m_ptr, NativeCodePtrTag))
