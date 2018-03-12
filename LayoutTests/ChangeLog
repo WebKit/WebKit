@@ -1,3 +1,12 @@
+2018-03-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark webanimations/css-animations.html and webanimations/css-transitions.html as failures on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=183569
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-03-12  Frederic Wang  <fwang@igalia.com>
 
         Do not rely on Latin Modern Math to test fraction/radical bars
