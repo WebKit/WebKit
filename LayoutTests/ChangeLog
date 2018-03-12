@@ -1,5 +1,27 @@
 2018-03-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r229086. rdar://problem/37992301
+
+    2018-02-27  Youenn Fablet  <youenn@apple.com>
+
+            Do not trigger a service worker match in case of document redirection if it will be already served by AppCache
+            https://bugs.webkit.org/show_bug.cgi?id=183185
+            <rdar://problem/37693796>
+
+            Reviewed by Chris Dumez.
+
+            * http/tests/appcache/main-resource-redirect-with-sw-expected.txt: Added.
+            * http/tests/appcache/main-resource-redirect-with-sw.html: Added.
+            * http/tests/appcache/resources/main-resource-redirect-with-sw.manifest: Added.
+            * http/tests/appcache/resources/register-resources-service-worker.html: Added.
+            * http/tests/appcache/service-worker-proxy.js: Added.
+            * platform/gtk/TestExpectations:
+            * platform/mac-wk1/TestExpectations:
+            * platform/win/TestExpectations:
+            * platform/wpe/TestExpectations:
+
+2018-03-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228279. rdar://problem/38154561
 
     2018-02-08  Chris Fleizach  <cfleizach@apple.com>
