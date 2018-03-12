@@ -1,3 +1,67 @@
+2018-03-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r211643): Dismissing WKActionSheet should not also dismiss its presenting view controller
+        https://bugs.webkit.org/show_bug.cgi?id=183549
+        <rdar://problem/34960698>
+
+        Reviewed by Andy Estes.
+
+        Add TestWebKitAPI support for testing WKWebViews embedded within presented view controllers, and use this to
+        check that dismissing an action sheet does not additionally cause the view controller being used to present the
+        web view to also dismiss.
+
+        * TestWebKitAPI/ClassMethodSwizzler.h: Added.
+        * TestWebKitAPI/ClassMethodSwizzler.mm: Added.
+        (TestWebKitAPI::ClassMethodSwizzler::ClassMethodSwizzler):
+        (TestWebKitAPI::ClassMethodSwizzler::~ClassMethodSwizzler):
+
+        Add ClassMethodSwizzler, an RAII which swizzles an Objective-C class method over its lifetime.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+
+        Add a new API test that loads a view controller which embeds a WKWebView, and verifies that presenting and then
+        dismissing an action sheet from that web view does not cause the view controller to also dismiss.
+
+        (TestWebKitAPI::setOverrideViewControllerForFullscreenPresentation):
+        (TestWebKitAPI::overrideViewControllerForFullscreenPresentation):
+
+        Mock +[UIViewController _viewControllerForFullScreenPresentationFromView:] to return the web view. This works
+        around the fact that TestWebKitAPI is not a UI application, so certain pieces of UIKit API and SPI need to be
+        stubbed or mocked to simulate being a UI application. We can remove these workarounds once
+        https://webkit.org/b/175204 is addressed, and TestWebKitAPI becomes a UI application that can actually maintain
+        a root view controller and key window.
+
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+
+        Add a new initializer for TestWKWebView that doesn't force the view to be hosted within a UIWindow. This is used
+        by TestWKWebViewController to create a TestWKWebView in -loadView.
+
+        * TestWebKitAPI/ios/TestWKWebViewController.h: Added.
+        * TestWebKitAPI/ios/TestWKWebViewController.mm: Added.
+        (-[TestWKWebViewControllerWindow _beginKeyWindowDeferral]):
+        (-[TestWKWebViewControllerWindow _endKeyWindowDeferral]):
+
+        Stub out these methods to prevent UIKit from hitting assertions when making this UIWindow the key window. This
+        can also be removed once TestWebKitAPI is a UI application.
+
+        (-[TestWKWebViewController initWithFrame:configuration:]):
+        (-[TestWKWebViewController loadView]):
+        (-[TestWKWebViewController webView]):
+        (-[TestWKWebViewController dismissViewControllerAnimated:completion:]):
+        (-[TestWKWebViewController dismissalHandler]):
+        (-[TestWKWebViewController setDismissalHandler:]):
+
+        Add a UIViewController helper subclass whose -view is a WKWebView. The new API test presents this view
+        controller. Tests may also provide a dismissalHandler, which is invoked when the view controller is being
+        dismissed. The new API test uses this hook to verify that the view controller containing the web view isn't also
+        dismissed after the action sheet goes away.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-03-12  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [webkitpy] Remove openssl command dependency.

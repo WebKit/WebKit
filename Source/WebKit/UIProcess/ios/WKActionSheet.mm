@@ -125,8 +125,11 @@
 
 - (void)doneWithSheet:(BOOL)dismiss
 {
-    if (dismiss && _currentPresentingViewController)
-        [_currentPresentingViewController dismissViewControllerAnimated:YES completion:nil];
+    if (dismiss) {
+        UIViewController *currentPresentedViewController = [_currentPresentingViewController presentedViewController];
+        if (currentPresentedViewController == self || currentPresentedViewController == _presentedViewControllerWhileRotating)
+            [currentPresentedViewController dismissViewControllerAnimated:YES completion:nil];
+    }
 
     _currentPresentingViewController = nil;
     _presentedViewControllerWhileRotating = nil;

@@ -32,13 +32,14 @@
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
+#import <UIKit/UIViewController_Private.h>
 
 #if ENABLE(DRAG_SUPPORT)
 @protocol UIDragSession;
 @class UIDragInteraction;
 @class UIDragItem;
 #import <UIKit/UIDragInteraction_Private.h>
-#endif
+#endif // ENABLE(DRAG_SUPPORT)
 
 #else
 
@@ -93,6 +94,10 @@ WTF_EXTERN_C_END
 
 @interface NSURL (UIKitSPI)
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
+@end
+
+@interface UIViewController (UIKitSPI)
++ (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
 @end
 
 #endif // PLATFORM(IOS)

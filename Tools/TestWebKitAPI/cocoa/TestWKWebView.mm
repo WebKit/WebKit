@@ -175,7 +175,16 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
-    if (self = [super initWithFrame:frame configuration:configuration])
+    return [self initWithFrame:frame configuration:configuration addToWindow:YES];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration addToWindow:(BOOL)addToWindow
+{
+    self = [super initWithFrame:frame configuration:configuration];
+    if (!self)
+        return nil;
+
+    if (addToWindow)
         [self _setUpTestWindow:frame];
 
     return self;
