@@ -67,8 +67,11 @@ PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display, Nativ
 
 PlatformDisplayWayland::~PlatformDisplayWayland()
 {
-    if (m_nativeDisplayOwned == NativeDisplayOwned::Yes)
-        wl_display_destroy(m_display);
+    if (m_nativeDisplayOwned == NativeDisplayOwned::Yes) {
+        m_compositor = nullptr;
+        m_registry = nullptr;
+        wl_display_disconnect(m_display);
+    }
 }
 
 void PlatformDisplayWayland::initialize(wl_display* display)
