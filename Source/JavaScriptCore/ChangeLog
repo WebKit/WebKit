@@ -1,5 +1,15 @@
 2018-03-12  Mark Lam  <mark.lam@apple.com>
 
+        Add another PtrTag.
+        https://bugs.webkit.org/show_bug.cgi?id=183580
+        <rdar://problem/38390584>
+
+        Reviewed by Keith Miller.
+
+        * runtime/PtrTag.h:
+
+2018-03-12  Mark Lam  <mark.lam@apple.com>
+
         Make a NativeFunction into a class to support pointer profiling.
         https://bugs.webkit.org/show_bug.cgi?id=183573
         <rdar://problem/38384697>

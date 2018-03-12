@@ -32,6 +32,7 @@ namespace JSC {
 enum PtrTag : uintptr_t {
     NoPtrTag = 0,
     NearCallPtrTag,
+    NearJumpPtrTag,
     CFunctionPtrTag,
 
     BytecodePtrTag,
