@@ -2014,6 +2014,43 @@ static void checkForEmptyStyleChange(Element& element)
     }
 }
 
+
+static void invalidateForForwardPositionalRules(Element& parent, Element* elementAfterChange)
+{
+    bool childrenAffected = parent.childrenAffectedByForwardPositionalRules();
+    bool descendantsAffected = parent.descendantsAffectedByForwardPositionalRules();
+
+    if (!childrenAffected && !descendantsAffected)
+        return;
+
+    for (auto* sibling = elementAfterChange; sibling; sibling = sibling->nextElementSibling()) {
+        if (childrenAffected)
+            sibling->invalidateStyleInternal();
+        if (descendantsAffected) {
+            for (auto* siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+                siblingChild->invalidateStyleForSubtreeInternal();
+        }
+    }
+}
+
+static void invalidateForBackwardPositionalRules(Element& parent, Element* elementBeforeChange)
+{
+    bool childrenAffected = parent.childrenAffectedByBackwardPositionalRules();
+    bool descendantsAffected = parent.descendantsAffectedByBackwardPositionalRules();
+
+    if (!childrenAffected && !descendantsAffected)
+        return;
+
+    for (auto* sibling = elementBeforeChange; sibling; sibling = sibling->previousElementSibling()) {
+        if (childrenAffected)
+            sibling->invalidateStyleInternal();
+        if (descendantsAffected) {
+            for (auto* siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+                siblingChild->invalidateStyleForSubtreeInternal();
+        }
+    }
+}
+
 enum SiblingCheckType { FinishedParsingChildren, SiblingElementRemoved, Other };
 
 static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkType, Element* elementBeforeChange, Element* elementAfterChange)
@@ -2070,17 +2107,8 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
 
     invalidateForSiblingCombinators(elementAfterChange);
 
-    // We have to invalidate everything following the insertion point in the forward case, and everything before the insertion point in the
-    // backward case.
-    if (parent.childrenAffectedByForwardPositionalRules()) {
-        for (auto* next = elementAfterChange; next; next = next->nextElementSibling())
-            next->invalidateStyleForSubtreeInternal();
-    }
-    // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
-    if (parent.childrenAffectedByBackwardPositionalRules()) {
-        for (auto* previous = elementBeforeChange; previous; previous = previous->previousElementSibling())
-            previous->invalidateStyleForSubtreeInternal();
-    }
+    invalidateForForwardPositionalRules(parent, elementAfterChange);
+    invalidateForBackwardPositionalRules(parent, elementBeforeChange);
 }
 
 void Element::childrenChanged(const ChildChange& change)
@@ -2815,9 +2843,19 @@ void Element::setChildrenAffectedByForwardPositionalRules()
     ensureElementRareData().setChildrenAffectedByForwardPositionalRules(true);
 }
 
+void Element::setDescendantsAffectedByForwardPositionalRules()
+{
+    ensureElementRareData().setDescendantsAffectedByForwardPositionalRules(true);
+}
+
 void Element::setChildrenAffectedByBackwardPositionalRules()
 {
     ensureElementRareData().setChildrenAffectedByBackwardPositionalRules(true);
+}
+
+void Element::setDescendantsAffectedByBackwardPositionalRules()
+{
+    ensureElementRareData().setDescendantsAffectedByBackwardPositionalRules(true);
 }
 
 void Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules()
@@ -2841,7 +2879,9 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
     return rareDataStyleAffectedByActive()
         || rareDataChildrenAffectedByDrag()
         || rareDataChildrenAffectedByForwardPositionalRules()
+        || rareDataDescendantsAffectedByForwardPositionalRules()
         || rareDataChildrenAffectedByBackwardPositionalRules()
+        || rareDataDescendantsAffectedByBackwardPositionalRules()
         || rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules();
 }
 
@@ -2875,10 +2915,22 @@ bool Element::rareDataChildrenAffectedByForwardPositionalRules() const
     return elementRareData()->childrenAffectedByForwardPositionalRules();
 }
 
+bool Element::rareDataDescendantsAffectedByForwardPositionalRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->descendantsAffectedByForwardPositionalRules();
+}
+
 bool Element::rareDataChildrenAffectedByBackwardPositionalRules() const
 {
     ASSERT(hasRareData());
     return elementRareData()->childrenAffectedByBackwardPositionalRules();
+}
+
+bool Element::rareDataDescendantsAffectedByBackwardPositionalRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->descendantsAffectedByBackwardPositionalRules();
 }
 
 bool Element::rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules() const

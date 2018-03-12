@@ -72,8 +72,12 @@ public:
     void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
     bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
     void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
+    bool descendantsAffectedByForwardPositionalRules() const { return m_descendantsAffectedByForwardPositionalRules; }
+    void setDescendantsAffectedByForwardPositionalRules(bool value) { m_descendantsAffectedByForwardPositionalRules = value; }
     bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
     void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
+    bool descendantsAffectedByBackwardPositionalRules() const { return m_descendantsAffectedByBackwardPositionalRules; }
+    void setDescendantsAffectedByBackwardPositionalRules(bool value) { m_descendantsAffectedByBackwardPositionalRules = value; }
     bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return m_childrenAffectedByPropertyBasedBackwardPositionalRules; }
     void setChildrenAffectedByPropertyBasedBackwardPositionalRules(bool value) { m_childrenAffectedByPropertyBasedBackwardPositionalRules = value; }
 
@@ -131,7 +135,9 @@ private:
     // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
     unsigned m_childrenAffectedByLastChildRules : 1;
     unsigned m_childrenAffectedByForwardPositionalRules : 1;
+    unsigned m_descendantsAffectedByForwardPositionalRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
+    unsigned m_descendantsAffectedByBackwardPositionalRules : 1;
     unsigned m_childrenAffectedByPropertyBasedBackwardPositionalRules : 1;
 
     LayoutSize m_minimumSizeForResizing;
@@ -172,7 +178,9 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByDrag(false)
     , m_childrenAffectedByLastChildRules(false)
     , m_childrenAffectedByForwardPositionalRules(false)
+    , m_descendantsAffectedByForwardPositionalRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
+    , m_descendantsAffectedByBackwardPositionalRules(false)
     , m_childrenAffectedByPropertyBasedBackwardPositionalRules(false)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
@@ -211,7 +219,9 @@ inline void ElementRareData::resetStyleRelations()
     setChildrenAffectedByDrag(false);
     setChildrenAffectedByLastChildRules(false);
     setChildrenAffectedByForwardPositionalRules(false);
+    setDescendantsAffectedByForwardPositionalRules(false);
     setChildrenAffectedByBackwardPositionalRules(false);
+    setDescendantsAffectedByBackwardPositionalRules(false);
     setChildrenAffectedByPropertyBasedBackwardPositionalRules(false);
 }
 

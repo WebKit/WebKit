@@ -106,7 +106,8 @@ enum class FunctionType {
 
 enum class FragmentPositionInRootFragments {
     Rightmost,
-    NotRightmost
+    AdjacentToRightmost,
+    Other
 };
 
 enum class VisitedMode {
@@ -178,6 +179,7 @@ struct SelectorFragment {
     FragmentRelation relationToLeftFragment;
     FragmentRelation relationToRightFragment;
     FragmentPositionInRootFragments positionInRootFragments;
+    bool isRightmostOrAdjacent { false };
 
     BacktrackingAction traversalBacktrackingAction = BacktrackingAction::NoBacktracking;
     BacktrackingAction matchingTagNameBacktrackingAction = BacktrackingAction::NoBacktracking;
@@ -425,6 +427,11 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
 static inline bool fragmentMatchesTheRightmostElement(const SelectorFragment& fragment)
 {
     return fragment.relationToRightFragment == FragmentRelation::Rightmost && fragment.positionInRootFragments == FragmentPositionInRootFragments::Rightmost;
+}
+
+static inline bool fragmentMatchesRightmostOrAdjacentElement(const SelectorFragment& fragment)
+{
+    return fragment.isRightmostOrAdjacent && fragment.positionInRootFragments != FragmentPositionInRootFragments::Other;
 }
 
 FunctionType SelectorFragment::appendUnoptimizedPseudoClassWithContext(bool (*matcher)(const SelectorChecker::CheckingContext&))
@@ -873,6 +880,7 @@ static bool isScrollbarPseudoElement(CSSSelector::PseudoElementType type)
 static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
 {
     FragmentRelation relationToPreviousFragment = FragmentRelation::Rightmost;
+    bool isRightmostOrAdjacent = positionInRootFragments != FragmentPositionInRootFragments::Other;
     FunctionType functionType = FunctionType::SimpleSelectorChecker;
     SelectorFragment* fragment = nullptr;
     unsigned specificity = 0;
@@ -914,7 +922,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         case CSSSelector::PseudoClass: {
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)
-                subPosition = FragmentPositionInRootFragments::NotRightmost;
+                subPosition = isRightmostOrAdjacent ? FragmentPositionInRootFragments::AdjacentToRightmost : FragmentPositionInRootFragments::Other;
             if (fragment->pseudoElementSelector && isScrollbarPseudoElement(fragment->pseudoElementSelector->pseudoElementType()))
                 functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, *fragment));
             else {
@@ -1016,7 +1024,10 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         fragment->relationToLeftFragment = fragmentRelationForSelectorRelation(relation);
         fragment->relationToRightFragment = relationToPreviousFragment;
         fragment->positionInRootFragments = positionInRootFragments;
+        fragment->isRightmostOrAdjacent = isRightmostOrAdjacent;
         relationToPreviousFragment = fragment->relationToLeftFragment;
+        if (relationToPreviousFragment != FragmentRelation::Rightmost && relationToPreviousFragment != FragmentRelation::DirectAdjacent && relationToPreviousFragment != FragmentRelation::IndirectAdjacent)
+            isRightmostOrAdjacent = false;
 
         if (fragmentLevel != FragmentsLevel::Root)
             fragment->onlyMatchesLinksInQuirksMode = false;
@@ -3491,7 +3502,10 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
     {
         LocalRegister parentElement(m_registerAllocator);
         generateWalkToParentElement(failureCases, parentElement);
-        generateAddStyleRelationIfResolvingStyle(parentElement, Style::Relation::ChildrenAffectedByForwardPositionalRules);
+        auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
+            ? Style::Relation::ChildrenAffectedByForwardPositionalRules
+            : Style::Relation::DescendantsAffectedByForwardPositionalRules;
+        generateAddStyleRelationIfResolvingStyle(parentElement, relation);
     }
 
     Vector<std::pair<int, int>, 32> validSubsetFilters;
@@ -3551,7 +3565,10 @@ void SelectorCodeGenerator::generateElementIsNthChildOf(Assembler::JumpList& fai
     {
         LocalRegister parentElement(m_registerAllocator);
         generateWalkToParentElement(failureCases, parentElement);
-        generateAddStyleRelationIfResolvingStyle(parentElement, Style::Relation::ChildrenAffectedByForwardPositionalRules);
+        auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
+            ? Style::Relation::ChildrenAffectedByForwardPositionalRules
+            : Style::Relation::DescendantsAffectedByForwardPositionalRules;
+        generateAddStyleRelationIfResolvingStyle(parentElement, relation);
     }
 
     // The initial element must match the selector list.
@@ -3604,7 +3621,10 @@ void SelectorCodeGenerator::generateElementIsNthLastChild(Assembler::JumpList& f
         LocalRegister parentElement(m_registerAllocator);
         generateWalkToParentElement(failureCases, parentElement);
 
-        generateAddStyleRelationIfResolvingStyle(parentElement, Style::Relation::ChildrenAffectedByBackwardPositionalRules);
+        auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
+            ? Style::Relation::ChildrenAffectedByBackwardPositionalRules
+            : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
+        generateAddStyleRelationIfResolvingStyle(parentElement, relation);
 
         failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished())));
 

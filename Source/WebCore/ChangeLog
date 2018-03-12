@@ -1,3 +1,65 @@
+2018-03-12  Antti Koivisto  <antti@apple.com>
+
+        Don't invalidate descendants for nth pseudo classes unless needed
+        https://bugs.webkit.org/show_bug.cgi?id=183566
+
+        Reviewed by Zalan Bujtas.
+
+        We currently invalidate the whole subtrees that may match :nth-child and similar. In many common
+        cases we know that only the direct siblings may be affected.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::localContextForParent):
+        (WebCore::SelectorChecker::matchRecursively const):
+
+            Track if the context matches the subject element if the selector or its siblings only.
+
+        (WebCore::SelectorChecker::checkOne const):
+
+            Use different bits of descendant and child invalidation cases.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentMatchesRightmostOrAdjacentElement):
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+
+            Track if the context matches the subject element if the selector or its siblings only.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChildOf):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChild):
+
+            Use different bits of descendant and child invalidation cases.
+
+        * dom/Element.cpp:
+        (WebCore::invalidateForForwardPositionalRules):
+        (WebCore::invalidateForBackwardPositionalRules):
+
+            Invalidate more precisely based on the new bits.
+
+        (WebCore::checkForSiblingStyleChanges):
+        (WebCore::Element::setDescendantsAffectedByForwardPositionalRules):
+        (WebCore::Element::setDescendantsAffectedByBackwardPositionalRules):
+        (WebCore::Element::hasFlagsSetDuringStylingOfChildren const):
+        (WebCore::Element::rareDataDescendantsAffectedByForwardPositionalRules const):
+        (WebCore::Element::rareDataDescendantsAffectedByBackwardPositionalRules const):
+
+            New bits.
+
+        * dom/Element.h:
+        (WebCore::Element::descendantsAffectedByForwardPositionalRules const):
+        (WebCore::Element::descendantsAffectedByBackwardPositionalRules const):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::descendantsAffectedByForwardPositionalRules const):
+        (WebCore::ElementRareData::setDescendantsAffectedByForwardPositionalRules):
+        (WebCore::ElementRareData::descendantsAffectedByBackwardPositionalRules const):
+        (WebCore::ElementRareData::setDescendantsAffectedByBackwardPositionalRules):
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::resetStyleRelations):
+        * style/StyleRelations.cpp:
+        (WebCore::Style::commitRelationsToRenderStyle):
+        (WebCore::Style::commitRelations):
+        * style/StyleRelations.h:
+
 2018-03-12  Javier Fernandez  <jfernandez@igalia.com>
 
         Remove GridLayout runtime flag
