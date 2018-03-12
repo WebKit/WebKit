@@ -1387,11 +1387,11 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                 callLinkInfo->callee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->machineCodeTarget = codePtr;
-                callLinkInfo->callPtrTag = InternalFunctionPtrTag;
+                callLinkInfo->callPtrTag = NativeCodePtrTag;
             }
 
             PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), InternalFunctionPtrTag);
+            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), NativeCodePtrTag);
         }
         throwScope.release();
         return handleHostCall(execCallee, pc, calleeAsValue, kind);

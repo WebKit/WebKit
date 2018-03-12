@@ -2193,12 +2193,12 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[t1], InternalFunctionPtrTag
+            call offsetOfFunction[t1], NativeCodePtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp offsetOfFunction[t1], t2
-            call t2, InternalFunctionPtrTag
+            call t2, NativeCodePtrTag
         end
     end
 

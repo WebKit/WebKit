@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CallData.h"
 #include "JSCJSValue.h"
+#include "NativeFunction.h"
 
 namespace JSC {
 
@@ -48,7 +49,7 @@ enum class ConstructType : unsigned {
 struct ConstructData {
     union {
         struct {
-            NativeFunction function;
+            TaggedNativeFunction function;
         } native;
         struct {
             FunctionExecutable* functionExecutable;

@@ -108,12 +108,12 @@ void JITThunks::finalize(Handle<Unknown> handle, void*)
     weakRemove(*m_hostFunctionStubMap, std::make_tuple(nativeExecutable->function(), nativeExecutable->constructor(), nativeExecutable->name()), nativeExecutable);
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM* vm, TaggedNativeFunction function, TaggedNativeFunction constructor, const String& name)
 {
     return hostFunctionStub(vm, function, constructor, nullptr, NoIntrinsic, nullptr, name);
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, ThunkGenerator generator, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM* vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ThunkGenerator generator, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {
     ASSERT(!isCompilationThread());    
     ASSERT(VM::canUseJIT());
@@ -135,7 +135,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
     return nativeExecutable;
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic, const String& name)
+NativeExecutable* JITThunks::hostFunctionStub(VM* vm, TaggedNativeFunction function, ThunkGenerator generator, Intrinsic intrinsic, const String& name)
 {
     return hostFunctionStub(vm, function, callHostFunctionAsConstructor, generator, intrinsic, nullptr, name);
 }

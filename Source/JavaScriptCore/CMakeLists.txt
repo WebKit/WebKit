@@ -829,6 +829,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Microtask.h
     runtime/ModuleProgramExecutable.h
     runtime/NativeExecutable.h
+    runtime/NativeFunction.h
     runtime/NumberObject.h
     runtime/NumberPrototype.h
     runtime/NumericStrings.h

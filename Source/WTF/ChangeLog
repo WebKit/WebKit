@@ -1,3 +1,15 @@
+2018-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Make a NativeFunction into a class to support pointer profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=183573
+        <rdar://problem/38384697>
+
+        Reviewed by Filip Pizlo.
+
+        Changed Poisoned so that it can be used on tagged pointers as well.
+
+        * wtf/Poisoned.h:
+
 2018-03-11  Filip Pizlo  <fpizlo@apple.com>
 
         Split DirectArguments into JSValueOOB and JSValueStrict parts

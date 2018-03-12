@@ -70,7 +70,7 @@ public:
     static uintptr_t key(const PoisonedType* = nullptr) { return poisonKey; }
 };
 
-template<typename Poison, typename T, typename = std::enable_if_t<std::is_pointer<T>::value>>
+template<typename Poison, typename T, typename = std::enable_if_t<sizeof(T) == sizeof(void*)>>
 class Poisoned {
 public:
     static constexpr bool isPoisonedType = true;

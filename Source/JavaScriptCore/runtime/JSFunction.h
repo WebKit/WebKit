@@ -107,8 +107,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info()); 
     }
 
-    NativeFunction nativeFunction();
-    NativeFunction nativeConstructor();
+    TaggedNativeFunction nativeFunction();
+    TaggedNativeFunction nativeConstructor();
 
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);

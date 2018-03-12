@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -75,7 +75,7 @@ struct HashTableValue {
 
     Intrinsic intrinsic() const { ASSERT(m_attributes & PropertyAttribute::Function); return m_intrinsic; }
     BuiltinGenerator builtinGenerator() const { ASSERT(m_attributes & PropertyAttribute::Builtin); return reinterpret_cast<BuiltinGenerator>(m_values.value1); }
-    NativeFunction function() const { ASSERT(m_attributes & PropertyAttribute::Function); return reinterpret_cast<NativeFunction>(m_values.value1); }
+    NativeFunction function() const { ASSERT(m_attributes & PropertyAttribute::Function); return NativeFunction(m_values.value1); }
     unsigned char functionLength() const
     {
         ASSERT(m_attributes & PropertyAttribute::Function);
@@ -90,8 +90,8 @@ struct HashTableValue {
     const DOMJIT::GetterSetter* domJIT() const { ASSERT(m_attributes & PropertyAttribute::DOMJITAttribute); return reinterpret_cast<const DOMJIT::GetterSetter*>(m_values.value1); }
     const DOMJIT::Signature* signature() const { ASSERT(m_attributes & PropertyAttribute::DOMJITFunction); return reinterpret_cast<const DOMJIT::Signature*>(m_values.value2); }
 
-    NativeFunction accessorGetter() const { ASSERT(m_attributes & PropertyAttribute::Accessor); return reinterpret_cast<NativeFunction>(m_values.value1); }
-    NativeFunction accessorSetter() const { ASSERT(m_attributes & PropertyAttribute::Accessor); return reinterpret_cast<NativeFunction>(m_values.value2); }
+    NativeFunction accessorGetter() const { ASSERT(m_attributes & PropertyAttribute::Accessor); return NativeFunction(m_values.value1); }
+    NativeFunction accessorSetter() const { ASSERT(m_attributes & PropertyAttribute::Accessor); return NativeFunction(m_values.value2); }
     BuiltinGenerator builtinAccessorGetterGenerator() const;
     BuiltinGenerator builtinAccessorSetterGenerator() const;
 
@@ -404,7 +404,7 @@ inline void reifyStaticProperties(VM& vm, const ClassInfo* classInfo, const Hash
     }
 }
 
-template<NativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetter(ExecState* state, EncodedJSValue, PropertyName propertyName)
+template<RawNativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetter(ExecState* state, EncodedJSValue, PropertyName propertyName)
 {
     return JSValue::encode(JSFunction::create(state->vm(), state->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
 }

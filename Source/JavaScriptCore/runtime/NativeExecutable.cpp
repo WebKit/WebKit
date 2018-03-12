@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ namespace JSC {
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeExecutable) };
 
-NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, NativeFunction function, Ref<JITCode>&& constructThunk, NativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
+NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, TaggedNativeFunction function, Ref<JITCode>&& constructThunk, TaggedNativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {
     NativeExecutable* executable;
     executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor, intrinsic, signature);
@@ -68,7 +68,7 @@ void NativeExecutable::finishCreation(VM& vm, Ref<JITCode>&& callThunk, Ref<JITC
     m_name = name;
 }
 
-NativeExecutable::NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature)
+NativeExecutable::NativeExecutable(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature)
     : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST, intrinsic)
     , m_function(function)
     , m_constructor(constructor)

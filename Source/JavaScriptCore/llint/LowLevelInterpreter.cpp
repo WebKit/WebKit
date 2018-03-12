@@ -374,7 +374,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #endif // USE(JSVALUE64)
 
     // Interpreter variables for value passing between opcodes and/or helpers:
-    NativeFunction nativeFunc = 0;
+    NativeFunction nativeFunc = nullptr;
     JSValue functionReturnValue;
     Opcode opcode = getOpcode(entryOpcodeID);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Instruction.h"
 #include "Interpreter.h"
 #include "LLIntData.h"
+#include "PtrTag.h"
 #include "UnlinkedCodeBlock.h"
 
 namespace JSC {
@@ -46,7 +47,7 @@ inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
     // The OpcodeID is embedded in the int32_t word preceding the location of
     // the LLInt code for the opcode (see the EMBED_OPCODE_ID_IF_NEEDED macro
     // in LowLevelInterpreter.cpp).
-    MacroAssemblerCodePtr codePtr(reinterpret_cast<void*>(opcode));
+    MacroAssemblerCodePtr codePtr(removeCodePtrTag<void*>(opcode));
     int32_t* opcodeIDAddress = codePtr.dataLocation<int32_t*>() - 1;
     OpcodeID opcodeID = static_cast<OpcodeID>(*opcodeIDAddress);
     ASSERT(opcodeID < NUMBER_OF_BYTECODE_IDS);

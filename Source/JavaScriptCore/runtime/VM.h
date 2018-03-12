@@ -570,11 +570,6 @@ public:
         return OBJECT_OFFSETOF(VM, callFrameForCatch);
     }
 
-    static ptrdiff_t targetMachinePCForThrowOffset()
-    {
-        return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
-    }
-
     static ptrdiff_t topEntryFrameOffset()
     {
         return OBJECT_OFFSETOF(VM, topEntryFrame);

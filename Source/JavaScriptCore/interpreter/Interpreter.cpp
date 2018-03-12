@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1027,7 +1027,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
             throwScope.release();
             result = callData.js.functionExecutable->generatedJITCodeForCall()->execute(&vm, &protoCallFrame);
         } else {
-            result = JSValue::decode(vmEntryToNative(reinterpret_cast<void*>(callData.native.function), &vm, &protoCallFrame));
+            result = JSValue::decode(vmEntryToNative(callData.native.function.rawPointer(), &vm, &protoCallFrame));
             RETURN_IF_EXCEPTION(throwScope, JSValue());
         }
     }
@@ -1093,7 +1093,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         if (isJSConstruct)
             result = constructData.js.functionExecutable->generatedJITCodeForConstruct()->execute(&vm, &protoCallFrame);
         else {
-            result = JSValue::decode(vmEntryToNative(reinterpret_cast<void*>(constructData.native.function), &vm, &protoCallFrame));
+            result = JSValue::decode(vmEntryToNative(constructData.native.function.rawPointer(), &vm, &protoCallFrame));
 
             if (LIKELY(!throwScope.exception()))
                 RELEASE_ASSERT(result.isObject());

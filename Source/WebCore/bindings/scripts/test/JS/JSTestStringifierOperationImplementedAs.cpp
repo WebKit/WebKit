@@ -93,8 +93,8 @@ template<> const ClassInfo JSTestStringifierOperationImplementedAsConstructor::s
 static const HashTableValue JSTestStringifierOperationImplementedAsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierOperationImplementedAsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierOperationImplementedAsConstructor) } },
-    { "identifier", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestStringifierOperationImplementedAsPrototypeFunctionIdentifier), (intptr_t) (0) } },
-    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestStringifierOperationImplementedAsPrototypeFunctionToString), (intptr_t) (0) } },
+    { "identifier", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierOperationImplementedAsPrototypeFunctionIdentifier), (intptr_t) (0) } },
+    { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierOperationImplementedAsPrototypeFunctionToString), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestStringifierOperationImplementedAsPrototype::s_info = { "TestStringifierOperationImplementedAsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierOperationImplementedAsPrototype) };

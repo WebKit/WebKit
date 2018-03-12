@@ -5,7 +5,7 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
-# Copyright (C) 2007, 2008, 2009, 2015-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2007-2018 Apple Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -306,13 +306,13 @@ sub output() {
         my $intrinsic = "NoIntrinsic";
 
         if ($values[$i]{"type"} eq "PropertyAttribute::Function") {
-            $firstCastStr = "static_cast<NativeFunction>";
+            $firstCastStr = "static_cast<RawNativeFunction>";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
             $intrinsic = $values[$i]{"intrinsic"};
         } elsif ($values[$i]{"type"} eq "PropertyAttribute::Accessor") {
-            $firstCastStr = "static_cast<NativeFunction>";
-            $secondCastStr = "static_cast<NativeFunction>";
+            $firstCastStr = "static_cast<RawNativeFunction>";
+            $secondCastStr = "static_cast<RawNativeFunction>";
             $firstValue = $values[$i]{"get"};
             $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "PropertyAttribute::Property") {

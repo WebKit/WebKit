@@ -1,3 +1,54 @@
+2018-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Make a NativeFunction into a class to support pointer profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=183573
+        <rdar://problem/38384697>
+
+        Reviewed by Filip Pizlo.
+
+        No new tests because there's no new behavior.  Only updating bindings.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHashTableValueArray):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+
 2018-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Use a different SPI header for some AudioToolbox enums

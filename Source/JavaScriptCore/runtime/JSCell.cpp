@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -98,17 +98,17 @@ const JSObject* JSCell::getObject() const
 
 CallType JSCell::getCallData(JSCell*, CallData& callData)
 {
-    callData.js.functionExecutable = 0;
-    callData.js.scope = 0;
-    callData.native.function = 0;
+    callData.js.functionExecutable = nullptr;
+    callData.js.scope = nullptr;
+    callData.native.function = nullptr;
     return CallType::None;
 }
 
 ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.js.functionExecutable = 0;
-    constructData.js.scope = 0;
-    constructData.native.function = 0;
+    constructData.js.functionExecutable = nullptr;
+    constructData.js.scope = nullptr;
+    constructData.native.function = nullptr;
     return ConstructType::None;
 }
 

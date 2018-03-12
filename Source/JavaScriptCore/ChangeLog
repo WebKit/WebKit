@@ -1,3 +1,103 @@
+2018-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Make a NativeFunction into a class to support pointer profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=183573
+        <rdar://problem/38384697>
+
+        Reviewed by Filip Pizlo.
+
+        1. NativeFunction is now a class, and introducing RawNativeFunction and
+           TaggedNativeFunction.
+
+           RawNativeFunction is the raw pointer type (equivalent
+           to the old definition of NativeFunction).  This is mainly used for underlying
+           storage inside the NativeFunction class, and also for global data tables that
+           cannot embed non-trivially constructed objects.
+
+           NativeFunction's role is mainly to encapsulate a pointer to a C function that
+           we pass into the VM.
+
+           TaggedNativeFunction encapsulates the tagged version of a pointer to a C
+           function that we track in the VM.
+
+        2. Added a convenience constructor for TrustedImmPtr so that we don't have to
+           cast function pointers to void* anymore when constructing a TrustedImmPtr.
+
+        3. Removed the unused CALL_RETURN macro in CommonSlowPaths.cpp.
+
+        4. Added more PtrTag utility functions.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::TrustedImmPtr):
+        * create_hash_table:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::getOpcodeID):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/ast.rb:
+        * runtime/CallData.h:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/ConstructData.h:
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::nativeFunctionFor):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getCallData):
+        (JSC::JSCell::getConstructData):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::nativeConstructor):
+        (JSC::isHostFunction):
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::function const):
+        (JSC::HashTableValue::accessorGetter const):
+        (JSC::HashTableValue::accessorSetter const):
+        (JSC::nonCachingStaticFunctionGetter):
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::NativeExecutable):
+        * runtime/NativeExecutable.h:
+        * runtime/NativeFunction.h: Added.
+        (JSC::NativeFunction::NativeFunction):
+        (JSC::NativeFunction::operator intptr_t const):
+        (JSC::NativeFunction::operator bool const):
+        (JSC::NativeFunction::operator! const):
+        (JSC::NativeFunction::operator== const):
+        (JSC::NativeFunction::operator!= const):
+        (JSC::NativeFunction::operator()):
+        (JSC::NativeFunction::rawPointer const):
+        (JSC::NativeFunctionHash::hash):
+        (JSC::NativeFunctionHash::equal):
+        (JSC::TaggedNativeFunction::TaggedNativeFunction):
+        (JSC::TaggedNativeFunction::operator bool const):
+        (JSC::TaggedNativeFunction::operator! const):
+        (JSC::TaggedNativeFunction::operator== const):
+        (JSC::TaggedNativeFunction::operator!= const):
+        (JSC::TaggedNativeFunction::operator()):
+        (JSC::TaggedNativeFunction::operator NativeFunction):
+        (JSC::TaggedNativeFunction::rawPointer const):
+        (JSC::TaggedNativeFunctionHash::hash):
+        (JSC::TaggedNativeFunctionHash::equal):
+        * runtime/PtrTag.h:
+        (JSC::tagCFunctionPtr):
+        (JSC::untagCFunctionPtr):
+        * runtime/VM.h:
+        (JSC::VM::targetMachinePCForThrowOffset): Deleted.
+
 2018-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix simple goof that was causing 32-bit DFG crashes.

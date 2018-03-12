@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,21 +150,14 @@ namespace JSC {
         JSValue::encode(value);                  \
     } while (false)
 
-#define CALL_END_IMPL(exec, callTarget) RETURN_TWO((callTarget), (exec))
+#define CALL_END_IMPL(exec, callTarget, callTargetTag) \
+    RETURN_TWO(retagCodePtr((callTarget), callTargetTag, SlowPathPtrTag), (exec))
 
 #define CALL_CHECK_EXCEPTION(exec, pc) do {                          \
         ExecState* cceExec = (exec);                                 \
         Instruction* ccePC = (pc);                                   \
         if (UNLIKELY(throwScope.exception()))                        \
-            CALL_END_IMPL(cceExec, LLInt::callToThrow(cceExec));     \
-    } while (false)
-
-#define CALL_RETURN(exec, pc, callTarget) do {                    \
-        ExecState* crExec = (exec);                                  \
-        Instruction* crPC = (pc);                                    \
-        void* crCallTarget = (callTarget);                           \
-        CALL_CHECK_EXCEPTION(crExec->callerFrame(), crPC);  \
-        CALL_END_IMPL(crExec, crCallTarget);                \
+            CALL_END_IMPL(cceExec, LLInt::callToThrow(cceExec), ExceptionHandlerPtrTag); \
     } while (false)
 
 SLOW_PATH_DECL(slow_path_call_arityCheck)

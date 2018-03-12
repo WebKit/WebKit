@@ -6678,10 +6678,10 @@ sub GenerateHashTableValueArray
         }
 
         if ("@$specials[$i]" =~ m/DOMJITFunction/) {
-            $firstTargetType = "static_cast<NativeFunction>";
+            $firstTargetType = "static_cast<RawNativeFunction>";
             $secondTargetType = "static_cast<const JSC::DOMJIT::Signature*>";
         } elsif ("@$specials[$i]" =~ m/Function/) {
-            $firstTargetType = "static_cast<NativeFunction>";
+            $firstTargetType = "static_cast<RawNativeFunction>";
         } elsif ("@$specials[$i]" =~ m/Builtin/) {
             $firstTargetType = "static_cast<BuiltinGenerator>";
         } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {

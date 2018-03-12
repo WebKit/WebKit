@@ -264,7 +264,6 @@ const BytecodePtrTag = constexpr BytecodePtrTag
 const CodeEntryPtrTag = constexpr CodeEntryPtrTag
 const CodeEntryWithArityCheckPtrTag = constexpr CodeEntryWithArityCheckPtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
-const InternalFunctionPtrTag = constexpr InternalFunctionPtrTag
 const NativeCodePtrTag = constexpr NativeCodePtrTag
 const NoPtrTag = constexpr NoPtrTag
 const SlowPathPtrTag = constexpr SlowPathPtrTag

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,6 +257,12 @@ public:
         
         explicit TrustedImmPtr(const void* value)
             : m_value(value)
+        {
+        }
+
+        template<typename ReturnType, typename... Arguments>
+        explicit TrustedImmPtr(ReturnType(*value)(Arguments...))
+            : m_value(reinterpret_cast<void*>(value))
         {
         }
 

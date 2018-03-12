@@ -93,7 +93,7 @@ template<> const ClassInfo JSTestNamedGetterWithIdentifierConstructor::s_info = 
 static const HashTableValue JSTestNamedGetterWithIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedGetterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedGetterWithIdentifierConstructor) } },
-    { "getterName", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName), (intptr_t) (1) } },
+    { "getterName", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestNamedGetterWithIdentifierPrototype::s_info = { "TestNamedGetterWithIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifierPrototype) };

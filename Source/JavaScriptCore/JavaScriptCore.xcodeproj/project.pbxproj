@@ -1732,6 +1732,7 @@
 		FE10AAEB1F44D528009DEDC5 /* ProbeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE10AAEE1F44D954009DEDC5 /* ProbeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE10AAED1F44D946009DEDC5 /* ProbeContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */; };
+		FE1409072056F3FF00CFE318 /* NativeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1409062056F3FE00CFE318 /* NativeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE187A021BFBE5610038BBCA /* JITMulGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A001BFBC73C0038BBCA /* JITMulGenerator.h */; };
 		FE187A0D1C030D5C0038BBCA /* JITDivGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A0B1C0229230038BBCA /* JITDivGenerator.h */; };
 		FE187A0F1C030D6C0038BBCA /* SnippetOperand.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */; };
@@ -4637,6 +4638,7 @@
 		FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeContext.cpp; sourceTree = "<group>"; };
 		FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITAddGenerator.cpp; sourceTree = "<group>"; };
 		FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITAddGenerator.h; sourceTree = "<group>"; };
+		FE1409062056F3FE00CFE318 /* NativeFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFunction.h; sourceTree = "<group>"; };
 		FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITMulGenerator.cpp; sourceTree = "<group>"; };
 		FE187A001BFBC73C0038BBCA /* JITMulGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITMulGenerator.h; sourceTree = "<group>"; };
 		FE187A0A1C0229230038BBCA /* JITDivGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITDivGenerator.cpp; sourceTree = "<group>"; };
@@ -6827,6 +6829,7 @@
 				BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */,
 				147341DE1DC2CE9600AA29BA /* NativeExecutable.cpp */,
 				147341CF1DC02DB400AA29BA /* NativeExecutable.h */,
+				FE1409062056F3FE00CFE318 /* NativeFunction.h */,
 				E33E8D1E1B9013DE00346B52 /* NativeStdFunctionCell.cpp */,
 				E33E8D1F1B9013DE00346B52 /* NativeStdFunctionCell.h */,
 				6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */,
@@ -9143,6 +9146,7 @@
 				79CFC6F01C33B10000C768EA /* LLIntPCRanges.h in Headers */,
 				53FA2AE11CF37F3F0022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.h in Headers */,
 				0F4680A514BA7F8D00BFE272 /* LLIntSlowPaths.h in Headers */,
+				FE1409072056F3FF00CFE318 /* NativeFunction.h in Headers */,
 				0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */,
 				0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */,
 				0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */,

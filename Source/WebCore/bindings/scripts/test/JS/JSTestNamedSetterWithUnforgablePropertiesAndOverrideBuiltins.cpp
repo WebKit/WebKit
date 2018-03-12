@@ -88,7 +88,7 @@ static const struct CompactHashIndex JSTestNamedSetterWithUnforgablePropertiesAn
 static const HashTableValue JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableValues[] =
 {
     { "unforgeableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "unforgeableOperation", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation), (intptr_t) (0) } },
+    { "unforgeableOperation", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation), (intptr_t) (0) } },
 };
 
 static const HashTable JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTable = { 2, 3, true, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::info(), JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableValues, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableIndex };

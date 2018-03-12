@@ -39,7 +39,6 @@ enum PtrTag : uintptr_t {
     CodeEntryPtrTag,
     CodeEntryWithArityCheckPtrTag,
     ExceptionHandlerPtrTag,
-    InternalFunctionPtrTag,
     JITCodePtrTag,
     NativeCodePtrTag,
     SlowPathPtrTag,
@@ -75,6 +74,18 @@ inline constexpr T removeCodePtrTag(PtrType ptr) { return bitwise_cast<T>(ptr); 
 template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
 inline constexpr PtrType removeCodePtrTag(PtrType ptr) { return ptr; }
 
+template<typename T, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_same<T, PtrType>::value>>
+inline T tagCFunctionPtr(PtrType ptr, PtrTag) { return bitwise_cast<T>(ptr); }
+
+template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
+inline PtrType tagCFunctionPtr(PtrType ptr, PtrTag) { return ptr; }
+
+template<typename T, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_same<T, PtrType>::value>>
+inline T untagCFunctionPtr(PtrType ptr, PtrTag) { return bitwise_cast<T>(ptr); }
+
+template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
+inline PtrType untagCFunctionPtr(PtrType ptr, PtrTag) { return ptr; }
+
 #endif // !USE(POINTER_PROFILING)
 
 } // namespace JSC
@@ -82,4 +93,3 @@ inline constexpr PtrType removeCodePtrTag(PtrType ptr) { return ptr; }
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PtrTagSupport.h>)
 #include <WebKitAdditions/PtrTagSupport.h>
 #endif
-

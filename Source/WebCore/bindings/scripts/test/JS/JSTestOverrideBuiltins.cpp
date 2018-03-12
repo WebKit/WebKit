@@ -96,7 +96,7 @@ template<> const ClassInfo JSTestOverrideBuiltinsConstructor::s_info = { "TestOv
 static const HashTableValue JSTestOverrideBuiltinsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestOverrideBuiltinsConstructor) } },
-    { "namedItem", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestOverrideBuiltinsPrototypeFunctionNamedItem), (intptr_t) (1) } },
+    { "namedItem", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestOverrideBuiltinsPrototypeFunctionNamedItem), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestOverrideBuiltinsPrototype::s_info = { "TestOverrideBuiltinsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsPrototype) };

@@ -77,11 +77,11 @@ void initialize()
             CodeEntryWithArityCheckPtrTag, // llint_function_for_construct_arity_check
             CodeEntryPtrTag, // llint_generic_return_point
             BytecodePtrTag, // llint_throw_from_slow_path_trampoline
-            CodeEntryPtrTag, // llint_throw_during_call_trampoline
+            ExceptionHandlerPtrTag, // llint_throw_during_call_trampoline
             NativeCodePtrTag, // llint_native_call_trampoline
             NativeCodePtrTag, // llint_native_construct_trampoline
-            InternalFunctionPtrTag, // llint_internal_function_call_trampoline
-            InternalFunctionPtrTag, // llint_internal_function_construct_trampoline
+            NativeCodePtrTag, // llint_internal_function_call_trampoline
+            NativeCodePtrTag, // llint_internal_function_construct_trampoline
             ExceptionHandlerPtrTag, // handleUncaughtException
         };
 
