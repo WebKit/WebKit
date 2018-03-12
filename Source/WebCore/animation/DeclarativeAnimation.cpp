@@ -24,41 +24,53 @@
  */
 
 #include "config.h"
-#include "CSSTransition.h"
+#include "DeclarativeAnimation.h"
 
 #include "Animation.h"
+#include "AnimationEffectTimingReadOnly.h"
 #include "Element.h"
 #include "KeyframeEffectReadOnly.h"
 
 namespace WebCore {
 
-Ref<CSSTransition> CSSTransition::create(Element& target, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
-{
-    auto result = adoptRef(*new CSSTransition(target.document(), backingAnimation));
-    result->m_transitionProperty = backingAnimation.property();
-    result->initialize(target);
-    downcast<KeyframeEffectReadOnly>(result->effect())->computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
-    return result;
-}
-
-CSSTransition::CSSTransition(Document& document, const Animation& backingAnimation)
-    : DeclarativeAnimation(document, backingAnimation)
+DeclarativeAnimation::DeclarativeAnimation(Document& document, const Animation& backingAnimation)
+    : WebAnimation(document)
+    , m_backingAnimation(const_cast<Animation&>(backingAnimation))
 {
 }
 
-bool CSSTransition::matchesBackingAnimationAndStyles(const Animation& newBackingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle) const
+void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation)
 {
-    bool backingAnimationsMatch = backingAnimation() == newBackingAnimation;
-    if (!oldStyle)
-        return backingAnimationsMatch;
-    return backingAnimationsMatch && !downcast<KeyframeEffectReadOnly>(effect())->stylesWouldYieldNewCSSTransitionsBlendingKeyframes(*oldStyle, newStyle);
+    m_backingAnimation = const_cast<Animation&>(backingAnimation);
+    syncPropertiesWithBackingAnimation();
 }
 
-bool CSSTransition::canBeListed() const
+void DeclarativeAnimation::initialize(const Element& target)
 {
-    if (!downcast<KeyframeEffectReadOnly>(effect())->hasBlendingKeyframes())
-        return false;
-    return WebAnimation::canBeListed();
+    // We need to suspend invalidation of the animation's keyframe effect during its creation
+    // as it would otherwise trigger invalidation of the document's style and this would be
+    // incorrect since it would happen during style invalidation.
+    suspendEffectInvalidation();
+
+    setEffect(KeyframeEffectReadOnly::create(target));
+    setTimeline(&target.document().timeline());
+    syncPropertiesWithBackingAnimation();
+    if (backingAnimation().playState() == AnimPlayStatePlaying)
+        play();
+
+    unsuspendEffectInvalidation();
+}
+
+void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
+{
+    suspendEffectInvalidation();
+
+    auto* timing = effect()->timing();
+    timing->setDelay(Seconds(m_backingAnimation->delay()));
+    timing->setIterationDuration(Seconds(m_backingAnimation->duration()));
+    timing->setTimingFunction(m_backingAnimation->timingFunction());
+
+    unsuspendEffectInvalidation();
 }
 
 } // namespace WebCore

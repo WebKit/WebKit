@@ -104,6 +104,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
         else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             this->allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
+        else if (key == "enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations")
+            this->enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

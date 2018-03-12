@@ -338,6 +338,7 @@ animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
 animation/CSSTransition.cpp
+animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectReadOnly.cpp

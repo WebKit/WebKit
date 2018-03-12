@@ -2029,6 +2029,20 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
 HRESULT WebPreferences::fetchAPIKeepAliveEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)

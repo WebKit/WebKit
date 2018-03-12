@@ -3,11 +3,11 @@ PASS Returns an empty array for an element with no animations
 PASS Returns both animations for an element with two animations 
 PASS Returns only the animations specific to each sibling element 
 PASS Returns only the animations specific to each parent/child element 
-FAIL Does not return finished animations that do not fill forwards assert_array_equals: lengths differ, expected 0 got 1
+PASS Does not return finished animations that do not fill forwards 
 PASS Returns finished animations that fill forwards 
 PASS Returns animations in their delay phase 
-FAIL Returns animations based on dynamic changes to individual animations' duration assert_array_equals: Animation should not be returned when it is finished lengths differ, expected 0 got 1
-FAIL Returns animations based on dynamic changes to individual animations' end delay assert_array_equals: Animation should not be returned after setting a negative end delay such that the end time is less than the current time lengths differ, expected 0 got 1
-FAIL Returns animations based on dynamic changes to individual animations' iteration count assert_array_equals: Animation should not be returned when it is finished lengths differ, expected 0 got 1
-FAIL Returns animations based on dynamic changes to individual animations' current time assert_array_equals: Animation should not be returned after seeking to the clipped end of the active interval lengths differ, expected 0 got 1
+PASS Returns animations based on dynamic changes to individual animations' duration 
+PASS Returns animations based on dynamic changes to individual animations' end delay 
+PASS Returns animations based on dynamic changes to individual animations' iteration count 
+PASS Returns animations based on dynamic changes to individual animations' current time 
 

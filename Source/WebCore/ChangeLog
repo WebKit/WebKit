@@ -1,3 +1,165 @@
+2018-03-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement CSS Animations and CSS Transitions as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183504
+        <rdar://problem/38372965>
+
+        Reviewed by Dean Jackson and Jon Lee.
+
+        Tests: webanimations/css-animations.html
+               webanimations/css-transitions.html
+
+        This patch implements CSS Animations and CSS Transitions as Web Animations. The main changes are:
+
+        * StyleTreeResolver: StyleTreeResolver now has a code path to add CSSAnimation and CSSTransition objects onto the DocumentTimeline
+        to be picked up by the Web Animations engine. The previous CSSAnimationController code path is preserved if the runtime flag is disabled.
+
+        * AnimationTimeline: we add two new methods, updateCSSAnimationsForElement() and updateCSSTransitionsForElement() which are called from
+        TreeResolver::createAnimatedElementUpdate(). These look at the AnimationList for the old and new RenderStyle objects and create, update
+        and remove matching CSSAnimation and CSSTransition instances.
+
+        * DeclarativeAnimation: a new superclass to both CSSAnimation and CSSTransition which introduces the concept of a backingAnimation(),
+        which is an Animation held by the RenderStyle objects, and two virtual methods with base implementations, initialize() which is called
+        upon creating by create() methods in subclasses, and syncPropertiesWithBackingAnimation() which ensures that properties on the
+        DeclarativeAnimation objects (Web Animations side) match the backing animation (CSS side).
+
+        * KeyframeEffectReadOnly: two new important methods to create blending keyframes (KeyframeList) based on backing Animation objects,
+        computeCSSAnimationBlendingKeyframes() and computeCSSTransitionBlendingKeyframes().
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffectReadOnly.h:
+        (WebCore::AnimationEffectReadOnly::isKeyframeEffectReadOnly const): We fix this method such that calling it on a KeyframeEffect, which
+        is a subclass of KeyframeEffectReadOnly, returns true.
+        * animation/AnimationEffectTimingReadOnly.cpp: In order for DeclarativeAnimation::syncPropertiesWithBackingAnimation() to set the timing
+        function for a declarative animation's effect, we need a public method to set an effect's timing function outside of just the "easing"
+        property setter exposed via the JS API. So we introduce a setTimingFunction() method and call it from setEasing().
+        (WebCore::AnimationEffectTimingReadOnly::setEasing):
+        (WebCore::AnimationEffectTimingReadOnly::setTimingFunction):
+        * animation/AnimationEffectTimingReadOnly.h:
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::~AnimationTimeline): Clear all maps and sets containing WebAnimation references to ensure these get destructed
+        when the AnimationTimeline is being destructed and should no longer hold a reference to them.
+        (WebCore::AnimationTimeline::relevantMapForAnimation): We store various subclasses of WebAnimation in dedicated maps so we can composite
+        animations in the correct order when animating. This function returns the correct map for a given animation such that animationWasAddedToElement()
+        and animationWasRemovedFromElement() mutate the right map.
+        (WebCore::AnimationTimeline::animationWasAddedToElement):
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement):
+        (WebCore::AnimationTimeline::animationsForElement): Make sure to look for animations in the lists of CSS Animations and CSS Transitions as well
+        as Web Animations.
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): This method is called by TreeResolver::createAnimatedElementUpdate() during style
+        resolution. It compares the AnimationList of the previous style and the new style for a given element, checks that animations with a given name
+        that were not present in the old AnimationList have a new matching CSSAnimation object for them added to the AnimationTimeline, that animations
+        with a given name that are no longer present in the new AnimationList have their matching CSSAnimation object removed from the AnimationTimeline,
+        and that animations with a given name that are present in both the old and new AnimationList have their matching CSSAnimation updated to match
+        the current state of the animation in the AnimationList.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): Similarly to updateCSSAnimationsForElement(), this method is called during style
+        resolution by TreeResolver::createAnimatedElementUpdate(). Its role is to create or remove CSSTransition objects based on the AnimationList found
+        in the old and new styles for a given element. It follows a slightly different logic than updateCSSAnimationsForElement() since for CSS Transitions,
+        there is no need to update CSSTransition objects for a CSS property existing in both the old and new AnimationList, since when a CSS transitions
+        property is changed, a whole new transition is initiated. However, it's important to check that different Animation objects and styles would actually
+        result in different timing properties and blending keyframes, so check for this as well before creating new CSSTransition objects.
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::animations const): Change the m_animations type from HashSet to ListHashSet to guarantee we preserve the insertion order which is
+        required by getAnimations().
+        (WebCore::AnimationTimeline::hasElementAnimations const): Indicates to DocumentTimeline::updateAnimations() that there are animations targeting the provided element.
+        (WebCore::AnimationTimeline::elementToAnimationsMap):
+        (WebCore::AnimationTimeline::elementToCSSAnimationsMap):
+        (WebCore::AnimationTimeline::elementToCSSTransitionsMap):
+        * animation/CSSAnimation.cpp: CSSAnimation is now a subclass of DeclarativeAnimation and subclasses initialize() and syncPropertiesWithBackingAnimation()
+        to perform work specific to CSS Animations.
+        (WebCore::CSSAnimation::create): Set the animationName property based on the provided backing animation.
+        (WebCore::CSSAnimation::CSSAnimation):
+        (WebCore::CSSAnimation::initialize): Create the blending keyframes for this CSSAnimation.
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation): Reflect the animation-fill-mode, animation-direction, animation-iteration-count and
+        animation-play-state CSS properties on the AnimationEffectTimingReadOnly object associated with this CSSAnimation.
+        * animation/CSSAnimation.h:
+        * animation/CSSTransition.cpp: CSSTransition is now a subclass of DeclarativeAnimation.
+        (WebCore::CSSTransition::create): Set the transitionProperty property based on the provided backing animation.
+        (WebCore::CSSTransition::CSSTransition):
+        (WebCore::CSSTransition::matchesBackingAnimationAndStyles const):
+        (WebCore::CSSTransition::canBeListed const): Subclass this method such that we also check that we have blending keyframes for a CSSTransition to be
+        listed by calls to getAnimations().
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp: Added. This new WebAnimation subclass now is the common base class for both CSSAnimation and CSSTransition.
+        It establishes a relationship with a "backing animation", which is an Animation obtained from a style's AnimationList while resolving styles.
+        These backing animations contain all of the parsed CSS styles related to CSS Animations and CSS Transitions and we use those to set matching properties
+        of the Web Animations timing model in the new syncPropertiesWithBackingAnimation() virtual method, which subclasses can override to perform further
+        work that is specific to a given declarative animation type. The initialize() method is called during create() methods to perform common animation
+        setup work. Note that while both initialize() and syncPropertiesWithBackingAnimation() are called, we suspend invalidation to that animation's effect
+        since these methods are meant to be called during style invalidation and we would hit an assertion if we followed the usual route of calling
+        updateStyleIfNeeded() on the target's document during invalidation.
+        (WebCore::DeclarativeAnimation::DeclarativeAnimation):
+        (WebCore::DeclarativeAnimation::setBackingAnimation):
+        (WebCore::DeclarativeAnimation::initialize): Create a KeyframeEffectReadOnly for this animation and set the provided element as its target, set that
+        element's document's timeline and play the animation if the backing animation's play state is playing.
+        (WebCore::DeclarativeAnimation::syncPropertiesWithBackingAnimation): Reflect the {animation|transition}-delay, {animation|transition}-duration and
+        {animation|transition}-timing-function properties as set on the backing animation.
+        * animation/DeclarativeAnimation.h: Added.
+        (WebCore::DeclarativeAnimation::backingAnimation const):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateAnimations): Trigger style invalidation for elements targeted not just by WebAnimation instances, but also by any
+        of the DeclarativeAnimation subclasses. We also remove the call to updateFinishedState() which should have been removed when we implemented correct
+        support for asynchronous WebAnimation operations.
+        (WebCore::DocumentTimeline::animatedStyleForRenderer): Declarative animations are backed by KeyframeEffectReadOnly effects, so make sure we check
+        for KeyframeEffectReadOnly or one of its subclasses and not just KeyframeEffect since there now are animation types that use the ReadOnly variant.
+        (WebCore::DocumentTimeline::runningAnimationsForElementAreAllAccelerated): Same as for animatedStyleForRenderer, check for KeyframeEffectReadOnly
+        and not simply KeyframeEffect.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::invalidateElement): Stop forcing a style resolution as we invalidate element, marking them as dirty is sufficient. Calls to getAnimations()
+        already force a style resolution as needed.
+        (WebCore::KeyframeEffectReadOnly::create): Add a new create() method that only provides a target and which is used by DeclarativeAnimation::initialize().
+        (WebCore::KeyframeEffectReadOnly::getKeyframes): The previous implementation of getKeyframes() used the ParsedKeyframe list held as m_parsedKeyframes
+        to compute keyframes. In the case of declarative animations, there are no ParsedKeyframe since the JS API was not involved, so we use the blending keyframes
+        to look for keyframe data.
+        (WebCore::KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes): Called by CSSAnimation::initialize(), this function creates blending keyframes by
+        looking up the keyframes date obtained from the @keyframes rule with this backing animation's name.
+        (WebCore::KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes): Called by CSSTransition::create(), this function creates blending keyframes by
+        creating a 0-offset keyframe with the old style and a 1-offset keyframe with the new style as provided during TreeResolver::createAnimatedElementUpdate().
+        (WebCore::KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes const): Called by AnimationTimeline::updateCSSTransitionsForElement()
+        to check that a provided backing Animation and a pair of old and new RenderStyles that may be different objects actually would yield different timing
+        properties and keyframe CSS values for a given CSS transition to avoid the deletion and creation of CSSTransition objects.
+        (WebCore::KeyframeEffectReadOnly::shouldRunAccelerated): We mistakenly assumed we always had blending keyframes, which is not always the case with a
+        CSSTransition where the transition style itself might be set first, but the target value after. So we should only run accelerated provided there are blending
+        keyframes at least, the function already returning false if it finds a blending keyframe animating a non-accelerated CSS property.
+        (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle): Check that there actually is a matching ParsedKeyframe to read the timing function from.
+        * animation/KeyframeEffectReadOnly.h:
+        (WebCore::KeyframeEffectReadOnly::hasBlendingKeyframes const):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::~WebAnimation): We used to do something very wrong when a WebAnimation was destroyed which uncovered crashes when dealing with
+        declarative animations. In AnimationTimeline's updateCSSAnimationsForElement() and updateCSSTransitionsForElement(), when we identify that a DeclarativeAnimation
+        no longer matches an Animation from the current style's AnimationList, we set that DeclarativeAnimation's effect to null and call removeAnimation() on
+        the timeline. This removes all references from AnimationTimeline to this DeclarativeAnimation and leads to ~WebAnimation being called. Calling removeAnimation()
+        again in the destructor means that we'd hit ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun) in ref(). It was also meaningless to perform this work in
+        the WebAnimation destructor since an animation could never be destroyed if it were still registered on a timeline.
+        (WebCore::WebAnimation::suspendEffectInvalidation): DeclarativeAnimation instances have their timing model properties set during style invalidation, so we need
+        a mechanism to allow the usual effect invalidation to be suspended in this case. We now maintain a simple m_suspendCount count that increases and decreases with
+        calls to this method and unsuspendEffectInvalidation() and a isEffectInvalidationSuspended() method returning true whenever that count is positive.
+        (WebCore::WebAnimation::unsuspendEffectInvalidation):
+        (WebCore::WebAnimation::timingModelDidChange): Check that effect invalidation is not suspended before proceeding with invalidating the effect.
+        (WebCore::WebAnimation::setEffect): Check for KeyframeEffectReadOnly and not just KeyframeEffect since declarative animations have ReadOnly effects.
+        (WebCore::WebAnimation::setTimeline): Check for KeyframeEffectReadOnly and not just KeyframeEffect since declarative animations have ReadOnly effects.
+        (WebCore::WebAnimation::scheduleMicrotaskIfNeeded): Ensure that the WebAnimation's lifecycle is extended at least to the completion of the scheduled microtask.
+        This would otherwise cause crashes after declarative animations were destroyed when they were no longer applied.
+        (WebCore::WebAnimation::runPendingPlayTask): Only fulfill the "ready" promise if it hasn't already been, which might have been the case if multiple calls to play()
+        are made as a result of updating the animation play state in CSSAnimation::syncPropertiesWithBackingAnimation().
+        (WebCore::WebAnimation::runPendingPauseTask): Same as above but with multiple pause() calls.
+        (WebCore::WebAnimation::startOrStopAccelerated): Check for KeyframeEffectReadOnly and not just KeyframeEffect since declarative animations have ReadOnly effects.
+        (WebCore::WebAnimation::canBeListed const): This new method is called by {Document|Element}::getAnimations() to check that an animation is in the correct state to
+        be listed. The Web Animations spec explains that only animations "that have an associated target effect which is current or in effect" can be listed. We implement
+        this behavior as specified.
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::isDeclarativeAnimation const):
+        (WebCore::WebAnimation::isEffectInvalidationSuspended):
+        * dom/Document.cpp:
+        (WebCore::Document::getAnimations): Ensure that the document's pending styles are resolved before returning animations to ensure that any pending declarative
+        animations are created. Additionally, we ensure that we only list qualifying animations that have effects targeting elements that are children of thi document.
+        * dom/Element.cpp:
+        (WebCore::Element::getAnimations): Same as Document::getAnimations().
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate): When resolving styles, call into the AnimationTimeline if the runtime flag to enable CSS Animations and
+        CSS Transitions as Web Animations is on. Otherwise, use CSSAnimationController.
+
 2018-03-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Crash in WebCore::PlatformDisplayWayland::~PlatformDisplayWayland

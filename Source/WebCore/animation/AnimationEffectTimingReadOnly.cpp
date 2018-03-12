@@ -170,8 +170,7 @@ ExceptionOr<void> AnimationEffectTimingReadOnly::setEasing(const String& easing)
     auto timingFunctionResult = TimingFunction::createFromCSSText(easing);
     if (timingFunctionResult.hasException())
         return timingFunctionResult.releaseException();
-    m_timingFunction = timingFunctionResult.returnValue();
-    propertyDidChange();
+    setTimingFunction(timingFunctionResult.returnValue());
     return { };
 }
 
@@ -227,6 +226,12 @@ void AnimationEffectTimingReadOnly::setDirection(PlaybackDirection direction)
         return;
 
     m_direction = direction;
+    propertyDidChange();
+}
+
+void AnimationEffectTimingReadOnly::setTimingFunction(const RefPtr<TimingFunction>& timingFunction)
+{
+    m_timingFunction = timingFunction;
     propertyDidChange();
 }
 

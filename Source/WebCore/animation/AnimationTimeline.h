@@ -26,10 +26,12 @@
 
 #pragma once
 
+#include "CSSValue.h"
+#include "RenderStyle.h"
 #include "WebAnimation.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -37,8 +39,9 @@
 
 namespace WebCore {
 
+class CSSAnimation;
+class CSSTransition;
 class Element;
-class WebAnimation;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline> {
 public:
@@ -53,10 +56,13 @@ public:
 
     virtual void timingModelDidChange() { };
 
-    const HashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
+    const ListHashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&);
     void animationWasAddedToElement(WebAnimation&, Element&);
     void animationWasRemovedFromElement(WebAnimation&, Element&);
+
+    void updateCSSAnimationsForElement(Element&, const RenderStyle& newStyle, const RenderStyle* oldStyle);
+    void updateCSSTransitionsForElement(Element&, const RenderStyle& newStyle, const RenderStyle* oldStyle);
 
     virtual ~AnimationTimeline();
 
@@ -69,13 +75,24 @@ protected:
 
     explicit AnimationTimeline(ClassType);
 
-    const HashMap<RefPtr<Element>, Vector<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
+    bool hasElementAnimations() const { return !m_elementToAnimationsMap.isEmpty() || !m_elementToCSSAnimationsMap.isEmpty() || !m_elementToCSSTransitionsMap.isEmpty(); }
+
+    const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
+    const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToCSSAnimationsMap() { return m_elementToCSSAnimationsMap; }
+    const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToCSSTransitionsMap() { return m_elementToCSSTransitionsMap; }
 
 private:
+    HashMap<Element*, Vector<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
+
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;
-    HashMap<RefPtr<Element>, Vector<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
-    HashSet<RefPtr<WebAnimation>> m_animations;
+    HashMap<Element*, Vector<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
+    HashMap<Element*, Vector<RefPtr<WebAnimation>>> m_elementToCSSAnimationsMap;
+    HashMap<Element*, Vector<RefPtr<WebAnimation>>> m_elementToCSSTransitionsMap;
+    ListHashSet<RefPtr<WebAnimation>> m_animations;
+
+    HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
+    HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToCSSTransitionByCSSPropertyID;
 };
 
 } // namespace WebCore

@@ -52,8 +52,11 @@ public:
     static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*, AnimationTimeline*);
     ~WebAnimation();
 
+    virtual bool isDeclarativeAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }
     virtual bool isCSSTransition() const { return false; }
+
+    virtual bool canBeListed() const;
 
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }
@@ -105,6 +108,8 @@ public:
     void updateFinishedState(DidSeek, SynchronouslyNotify);
 
     void timingModelDidChange();
+    void suspendEffectInvalidation();
+    void unsuspendEffectInvalidation();
 
     String description();
 
@@ -113,6 +118,8 @@ public:
 
 protected:
     explicit WebAnimation(Document&);
+
+    bool isEffectInvalidationSuspended() { return m_suspendCount; }
 
 private:
     enum class RespectHoldTime { Yes, No };
@@ -145,6 +152,7 @@ private:
     std::optional<Seconds> m_previousCurrentTime;
     std::optional<Seconds> m_startTime;
     std::optional<Seconds> m_holdTime;
+    int m_suspendCount { 0 };
     double m_playbackRate { 1 };
     bool m_isStopped { false };
     bool m_finishNotificationStepsMicrotaskPending;

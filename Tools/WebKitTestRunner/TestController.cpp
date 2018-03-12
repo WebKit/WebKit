@@ -693,6 +693,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);
     WKPreferencesSetIsSecureContextAttributeEnabled(preferences, options.enableIsSecureContextAttribute);
     WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials);
+    WKPreferencesSetCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(preferences, options.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations);
 
     static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
     WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
@@ -1087,6 +1088,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.applicationManifest = parseStringTestHeaderValueAsRelativePath(value, pathOrURL);
         if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             testOptions.allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
+        if (key == "enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations")
+            testOptions.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

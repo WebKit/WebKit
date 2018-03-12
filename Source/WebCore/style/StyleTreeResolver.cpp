@@ -44,6 +44,7 @@
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleFontSizeFunctions.h"
@@ -286,7 +287,21 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 {
     auto* oldStyle = renderOrDisplayContentsStyle(element);
 
-    if (auto timeline = element.document().existingTimeline()) {
+    // New code path for CSS Animations and CSS Transitions.
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
+        // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
+        // in case no Web Animations have been created through the JS API.
+        if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
+            m_document.timeline().updateCSSAnimationsForElement(element, *newStyle, oldStyle);
+
+        if ((oldStyle && oldStyle->hasTransitions()) || newStyle->hasTransitions())
+            m_document.timeline().updateCSSTransitionsForElement(element, *newStyle, oldStyle);
+    }
+
+    if (auto timeline = m_document.existingTimeline()) {
+        // Now we can update all Web animations, which will include CSS Animations as well
+        // as animations created via the JS API.
         auto webAnimations = timeline->animationsForElement(element);
         if (!webAnimations.isEmpty()) {
             auto animatedStyle = RenderStyle::clonePtr(*newStyle);
@@ -296,12 +311,18 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         }
     }
 
-    auto& animationController = m_document.frame()->animation();
+    bool shouldRecompositeLayer = false;
 
-    auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
+    // Old code path for CSS Animations and CSS Transitions.
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        auto& animationController = m_document.frame()->animation();
 
-    if (animationUpdate.style)
-        newStyle = WTFMove(animationUpdate.style);
+        auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
+        shouldRecompositeLayer = animationUpdate.stateChanged;
+
+        if (animationUpdate.style)
+            newStyle = WTFMove(animationUpdate.style);
+    }
 
     auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Detach;
 
@@ -309,7 +330,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     if (validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Detach)
         change = Detach;
 
-    bool shouldRecompositeLayer = element.styleResolutionShouldRecompositeLayer() || animationUpdate.stateChanged;
+    shouldRecompositeLayer |= element.styleResolutionShouldRecompositeLayer();
 
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }

@@ -182,6 +182,8 @@
 
 #define WebKitWebAnimationsEnabledPreferenceKey "WebKitWebAnimationsEnabled"
 
+#define WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey "WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled"
+
 #define WebKitUserTimingEnabledPreferenceKey "WebKitUserTimingEnabled"
 
 #define WebKitResourceTimingEnabledPreferenceKey "WebKitResourceTimingEnabled"

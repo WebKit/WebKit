@@ -1,11 +1,9 @@
 <div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
 <script>
 
-const animation = new Animation(new KeyframeEffect(document.getElementById("target"), [
+document.getElementById("target").animate([
     { opacity: 1 },
     { opacity: 0 }
-]));
-animation.startTime = 0;
-animation.effect.timing.duration = 1000;
+], 1000);
 
 </script>

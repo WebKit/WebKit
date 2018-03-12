@@ -240,7 +240,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCustomElementsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE modernMediaControlsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setModernMediaControlsEnabled(BOOL);
-
+    virtual HRESULT STDMETHODCALLTYPE cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled(BOOL);
+    
     // IWebPreferencesPrivate4
     virtual HRESULT STDMETHODCALLTYPE setApplicationId(BSTR);
     virtual HRESULT STDMETHODCALLTYPE webAnimationsEnabled(_Out_ BOOL*);

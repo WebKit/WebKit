@@ -1,3 +1,25 @@
+2018-03-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement CSS Animations and CSS Transitions as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183504
+        <rdar://problem/38372965>
+
+        Reviewed by Jon Lee.
+
+        Add a new <!-- webkit-test-runner --> flag to enable the CSS Animations and CSS Transitions
+        as Web Animations runtime flag in the new tests we've created for this feature.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-03-11  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add Line class for InlineFormattingContext -and move files around.

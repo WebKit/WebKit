@@ -87,6 +87,8 @@ public:
     ExceptionOr<void> setEasing(const String&);
 
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    void setTimingFunction(const RefPtr<TimingFunction>&);
+
     Seconds endTime() const;
     Seconds activeDuration() const;
 

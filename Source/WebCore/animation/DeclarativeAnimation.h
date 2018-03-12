@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DeclarativeAnimation.h"
+#include "WebAnimation.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -33,25 +33,26 @@ namespace WebCore {
 class Animation;
 class Element;
 
-class CSSAnimation final : public DeclarativeAnimation {
+class DeclarativeAnimation : public WebAnimation {
 public:
-    static Ref<CSSAnimation> create(Element&, const Animation&);
-    ~CSSAnimation() = default;
+    ~DeclarativeAnimation() = default;
 
-    bool isCSSAnimation() const override { return true; }
-    const String& animationName() const { return m_animationName; }
+    bool isDeclarativeAnimation() const final { return true; }
+
+    const Animation& backingAnimation() const { return m_backingAnimation; }
+    void setBackingAnimation(const Animation&);
 
 protected:
-    void initialize(const Element&) final;
-    void syncPropertiesWithBackingAnimation() final;
+    DeclarativeAnimation(Document&, const Animation&);
+
+    virtual void initialize(const Element&);
+    virtual void syncPropertiesWithBackingAnimation();
 
 private:
-    CSSAnimation(Document&, const Animation&);
-
-    String m_animationName;
+    Ref<Animation> m_backingAnimation;
 
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(CSSAnimation, isCSSAnimation())
+SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(DeclarativeAnimation, isDeclarativeAnimation())

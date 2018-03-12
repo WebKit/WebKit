@@ -995,6 +995,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.isSecureContextAttributeEnabled = options.enableIsSecureContextAttribute;
     preferences.inspectorAdditionsEnabled = options.enableInspectorAdditions;
     preferences.allowCrossOriginSubresourcesToAskForCredentials = options.allowCrossOriginSubresourcesToAskForCredentials;
+    preferences.CSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled = options.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations;
 }
 
 // Called once on DumpRenderTree startup.

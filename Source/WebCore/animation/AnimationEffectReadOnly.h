@@ -41,7 +41,7 @@ public:
     virtual ~AnimationEffectReadOnly();
 
     bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
-    bool isKeyframeEffectReadOnly() const { return m_classType == KeyframeEffectReadOnlyClass; }
+    bool isKeyframeEffectReadOnly() const { return isKeyframeEffect() || m_classType == KeyframeEffectReadOnlyClass; }
     AnimationEffectTimingReadOnly* timing() const { return m_timing.get(); }
     ComputedTimingProperties getComputedTiming();
     virtual void apply(RenderStyle&) = 0;

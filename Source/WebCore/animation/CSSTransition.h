@@ -26,24 +26,28 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "WebAnimation.h"
+#include "DeclarativeAnimation.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class Animation;
 class Element;
+class RenderStyle;
 
-class CSSTransition final : public WebAnimation {
+class CSSTransition final : public DeclarativeAnimation {
 public:
-    static Ref<CSSTransition> create(Element&, const Animation&);
+    static Ref<CSSTransition> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     ~CSSTransition() = default;
 
     bool isCSSTransition() const override { return true; }
     String transitionProperty() const { return getPropertyNameString(m_transitionProperty); }
 
+    bool matchesBackingAnimationAndStyles(const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle) const;
+    bool canBeListed() const final;
+
 private:
-    CSSTransition(Document&);
+    CSSTransition(Document&, const Animation&);
 
     CSSPropertyID m_transitionProperty;
 

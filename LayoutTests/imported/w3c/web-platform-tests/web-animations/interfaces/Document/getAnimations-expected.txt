@@ -1,6 +1,6 @@
 
 PASS Test document.getAnimations for non-animated content 
-FAIL Test document.getAnimations for script-generated animations assert_equals: getAnimation only returns running animations expected 0 but got 2
-FAIL Test the order of document.getAnimations with script generated animations assert_array_equals: getAnimations() returns running animations lengths differ, expected 2 got 4
-FAIL Test document.getAnimations with null target assert_equals: document.getAnimations() only returns animations targeting elements in this document expected 0 but got 5
+PASS Test document.getAnimations for script-generated animations 
+PASS Test the order of document.getAnimations with script generated animations 
+PASS Test document.getAnimations with null target 
 

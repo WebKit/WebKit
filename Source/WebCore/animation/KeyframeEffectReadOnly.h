@@ -46,6 +46,7 @@ class KeyframeEffectReadOnly : public AnimationEffectReadOnly
 public:
     static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
     static ExceptionOr<Ref<KeyframeEffectReadOnly>> create(JSC::ExecState&, Ref<KeyframeEffectReadOnly>&&);
+    static Ref<KeyframeEffectReadOnly> create(const Element&);
     ~KeyframeEffectReadOnly() { }
 
     struct BasePropertyIndexedKeyframe {
@@ -108,6 +109,11 @@ public:
 #if ENABLE(FILTERS_LEVEL_2)
     bool backdropFilterFunctionListsMatch() const override { return false; }
 #endif
+
+    void computeCSSAnimationBlendingKeyframes();
+    void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    bool stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const;
+    bool hasBlendingKeyframes() const { return m_blendingKeyframes.size(); }
 
 protected:
     void copyPropertiesFromSource(Ref<KeyframeEffectReadOnly>&&);

@@ -3768,9 +3768,20 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::ExecState& state, JSC::Stro
 Vector<RefPtr<WebAnimation>> Element::getAnimations()
 {
     // FIXME: Filter and order the list as specified (webkit.org/b/179535).
-    if (auto timeline = document().existingTimeline())
-        return timeline->animationsForElement(*this);
-    return { };
+
+    // For the list of animations to be current, we need to account for any pending CSS changes,
+    // such as updates to CSS Animations and CSS Transitions.
+    // FIXME: We might be able to use ComputedStyleExtractor which is more optimized.
+    document().updateStyleIfNeeded();
+
+    Vector<RefPtr<WebAnimation>> animations;
+    if (auto timeline = document().existingTimeline()) {
+        for (auto& animation : timeline->animationsForElement(*this)) {
+            if (animation->canBeListed())
+                animations.append(animation);
+        }
+    }
+    return animations;
 }
 
 } // namespace WebCore

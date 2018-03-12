@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DocumentTimeline.h"
 
+#include "AnimationPlaybackEvent.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
@@ -162,18 +163,19 @@ void DocumentTimeline::animationResolutionTimerFired()
 
 void DocumentTimeline::updateAnimations()
 {
-    if (m_document && !elementToAnimationsMap().isEmpty()) {
+    if (m_document && hasElementAnimations()) {
         for (const auto& elementToAnimationsMapItem : elementToAnimationsMap())
             elementToAnimationsMapItem.key->invalidateStyleAndLayerComposition();
+        for (const auto& elementToCSSAnimationsMapItem : elementToCSSAnimationsMap())
+            elementToCSSAnimationsMapItem.key->invalidateStyleAndLayerComposition();
+        for (const auto& elementToCSSTransitionsMapItem : elementToCSSTransitionsMap())
+            elementToCSSTransitionsMapItem.key->invalidateStyleAndLayerComposition();
         m_document->updateStyleIfNeeded();
     }
 
     for (auto animation : m_acceleratedAnimationsPendingRunningStateChange)
         animation->startOrStopAccelerated();
     m_acceleratedAnimationsPendingRunningStateChange.clear();
-
-    for (const auto& animation : animations())
-        animation->updateFinishedState(WebAnimation::DidSeek::No, WebAnimation::SynchronouslyNotify::No);
 
     // Time has advanced, the timing model requires invalidation now.
     timingModelDidChange();
@@ -185,8 +187,8 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
 
     if (auto* element = renderer.element()) {
         for (auto animation : animationsForElement(*element)) {
-            if (animation->effect() && animation->effect()->isKeyframeEffect())
-                downcast<KeyframeEffect>(animation->effect())->getAnimatedStyle(result);
+            if (is<KeyframeEffectReadOnly>(animation->effect()))
+                downcast<KeyframeEffectReadOnly>(animation->effect())->getAnimatedStyle(result);
         }
     }
 
@@ -208,7 +210,7 @@ bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& ele
     // disabled (webkit.org/b/179974).
     auto animations = animationsForElement(element);
     for (const auto& animation : animations) {
-        if (animation->effect() && animation->effect()->isKeyframeEffect() && !downcast<KeyframeEffect>(animation->effect())->isRunningAccelerated())
+        if (is<KeyframeEffectReadOnly>(animation->effect()) && !downcast<KeyframeEffectReadOnly>(animation->effect())->isRunningAccelerated())
             return false;
     }
     return !animations.isEmpty();

@@ -68,13 +68,22 @@ WebAnimation::WebAnimation(Document& document)
 
 WebAnimation::~WebAnimation()
 {
-    if (m_timeline)
-        m_timeline->removeAnimation(*this);
+}
+
+void WebAnimation::suspendEffectInvalidation()
+{
+    ++m_suspendCount;
+}
+
+void WebAnimation::unsuspendEffectInvalidation()
+{
+    ASSERT(m_suspendCount > 0);
+    --m_suspendCount;
 }
 
 void WebAnimation::timingModelDidChange()
 {
-    if (m_effect)
+    if (!isEffectInvalidationSuspended() && m_effect)
         m_effect->invalidate();
     if (m_timeline)
         m_timeline->timingModelDidChange();
@@ -119,16 +128,16 @@ void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
         oldEffect->setAnimation(nullptr);
-        if (m_timeline && is<KeyframeEffect>(oldEffect)) {
-            if (auto* target = downcast<KeyframeEffect>(oldEffect.get())->target())
+        if (m_timeline && is<KeyframeEffectReadOnly>(oldEffect)) {
+            if (auto* target = downcast<KeyframeEffectReadOnly>(oldEffect.get())->target())
                 m_timeline->animationWasRemovedFromElement(*this, *target);
         }
     }
 
     if (m_effect) {
         m_effect->setAnimation(this);
-        if (m_timeline && is<KeyframeEffect>(m_effect)) {
-            if (auto* target = downcast<KeyframeEffect>(m_effect.get())->target())
+        if (m_timeline && is<KeyframeEffectReadOnly>(m_effect)) {
+            if (auto* target = downcast<KeyframeEffectReadOnly>(m_effect.get())->target())
                 m_timeline->animationWasAddedToElement(*this, *target);
         }
     }
@@ -155,8 +164,8 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     if (timeline)
         timeline->addAnimation(*this);
 
-    if (is<KeyframeEffect>(m_effect)) {
-        auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
+    if (is<KeyframeEffectReadOnly>(m_effect)) {
+        auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(m_effect.get());
         auto* target = keyframeEffect->target();
         if (target) {
             if (m_timeline)
@@ -661,7 +670,9 @@ void WebAnimation::scheduleMicrotaskIfNeeded()
         return;
 
     m_scheduledMicrotask = true;
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>(std::bind(&WebAnimation::performMicrotask, this)));
+    MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([this, protectedThis = makeRef(*this)] () {
+        this->performMicrotask();
+    }));
 }
 
 void WebAnimation::performMicrotask()
@@ -805,7 +816,8 @@ void WebAnimation::runPendingPlayTask()
     }
 
     // 4. Resolve animation's current ready promise with animation.
-    m_readyPromise->resolve(*this);
+    if (!m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
 
     // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
@@ -924,7 +936,8 @@ void WebAnimation::runPendingPauseTask()
     setStartTime(std::nullopt);
 
     // 4. Resolve animation's current ready promise with animation.
-    m_readyPromise->resolve(*this);
+    if (!m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
 
     // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the
     //    synchronously notify flag set to false.
@@ -990,8 +1003,8 @@ void WebAnimation::acceleratedRunningStateDidChange()
 
 void WebAnimation::startOrStopAccelerated()
 {
-    if (is<KeyframeEffect>(m_effect))
-        downcast<KeyframeEffect>(*m_effect).startOrStopAccelerated();
+    if (is<KeyframeEffectReadOnly>(m_effect))
+        downcast<KeyframeEffectReadOnly>(*m_effect).startOrStopAccelerated();
 }
 
 WebAnimation& WebAnimation::readyPromiseResolve()
@@ -1023,6 +1036,27 @@ void WebAnimation::stop()
 {
     m_isStopped = true;
     removeAllEventListeners();
+}
+
+bool WebAnimation::canBeListed() const
+{
+    // To be listed in getAnimations() an animation needs a target effect which is current or in effect.
+    if (!m_effect)
+        return false;
+
+    // An animation effect is in effect if its active time is not unresolved.
+    if (m_effect->activeTime())
+        return true;
+
+    // An animation effect is current if either of the following conditions is true:
+    // - the animation effect is in the before phase, or
+    // - the animation effect is in play.
+
+    // An animation effect is in play if all of the following conditions are met:
+    // - the animation effect is in the active phase, and
+    // - the animation effect is associated with an animation that is not finished.
+    auto phase = m_effect->phase();
+    return phase == AnimationEffectReadOnly::Phase::Before || (phase == AnimationEffectReadOnly::Phase::Active && playState() != PlayState::Finished);
 }
 
 } // namespace WebCore

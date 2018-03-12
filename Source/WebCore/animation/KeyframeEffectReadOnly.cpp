@@ -28,11 +28,13 @@
 
 #include "Animation.h"
 #include "AnimationEffectTimingReadOnly.h"
+#include "CSSAnimation.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTransition.h"
 #include "Element.h"
 #include "FontCascade.h"
 #include "JSCompositeOperation.h"
@@ -40,6 +42,7 @@
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
+#include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include "TimingFunction.h"
 #include "WillChangeData.h"
@@ -50,11 +53,8 @@ using namespace JSC;
 
 static inline void invalidateElement(Element* element)
 {
-    if (!element)
-        return;
-
-    element->invalidateStyleAndLayerComposition();
-    element->document().updateStyleIfNeeded();
+    if (element)
+        element->invalidateStyleAndLayerComposition();
 }
 
 static inline String CSSPropertyIDToIDLAttributeName(CSSPropertyID cssPropertyId)
@@ -446,6 +446,11 @@ ExceptionOr<Ref<KeyframeEffectReadOnly>> KeyframeEffectReadOnly::create(JSC::Exe
     return WTFMove(keyframeEffect);
 }
 
+Ref<KeyframeEffectReadOnly> KeyframeEffectReadOnly::create(const Element& target)
+{
+    return adoptRef(*new KeyframeEffectReadOnly(KeyframeEffectReadOnlyClass, AnimationEffectTimingReadOnly::create(), const_cast<Element*>(&target)));
+}
+
 KeyframeEffectReadOnly::KeyframeEffectReadOnly(ClassType classType, Ref<AnimationEffectTimingReadOnly>&& timing, Element* target)
     : AnimationEffectReadOnly(classType, WTFMove(timing))
     , m_target(target)
@@ -500,40 +505,81 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
     // 2. Let keyframes be the result of applying the procedure to compute missing keyframe offsets to the keyframes for this keyframe effect.
 
     // 3. For each keyframe in keyframes perform the following steps:
-    for (auto& parsedKeyframe : m_parsedKeyframes) {
-        // 1. Initialize a dictionary object, output keyframe, using the following definition:
-        //
-        // dictionary BaseComputedKeyframe {
-        //      double?             offset = null;
-        //      double              computedOffset;
-        //      DOMString           easing = "linear";
-        //      CompositeOperation? composite = null;
-        // };
+    if (is<DeclarativeAnimation>(animation())) {
+        auto computedStyleExtractor = ComputedStyleExtractor(m_target.get());
+        for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
+            // 1. Initialize a dictionary object, output keyframe, using the following definition:
+            //
+            // dictionary BaseComputedKeyframe {
+            //      double?             offset = null;
+            //      double              computedOffset;
+            //      DOMString           easing = "linear";
+            //      CompositeOperation? composite = null;
+            // };
 
-        // 2. Set offset, computedOffset, easing, composite members of output keyframe to the respective values keyframe offset, computed keyframe
-        // offset, keyframe-specific timing function and keyframe-specific composite operation of keyframe.
-        BaseComputedKeyframe computedKeyframe;
-        computedKeyframe.offset = parsedKeyframe.offset;
-        computedKeyframe.computedOffset = parsedKeyframe.computedOffset;
-        computedKeyframe.easing = parsedKeyframe.timingFunction->cssText();
-        computedKeyframe.composite = parsedKeyframe.composite;
+            auto& keyframe = m_blendingKeyframes[i];
 
-        auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
+            // 2. Set offset, computedOffset, easing members of output keyframe to the respective values keyframe offset, computed keyframe offset,
+            // and keyframe-specific timing function of keyframe.
+            BaseComputedKeyframe computedKeyframe;
+            computedKeyframe.offset = keyframe.key();
+            computedKeyframe.computedOffset = keyframe.key();
 
-        // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
-        for (auto it = parsedKeyframe.unparsedStyle.begin(), end = parsedKeyframe.unparsedStyle.end(); it != end; ++it) {
-            // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
-            auto propertyName = CSSPropertyIDToIDLAttributeName(it->key);
-            // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
-            // 3. Let value be the result of converting IDL value to an ECMAScript String value.
-            auto value = toJS<IDLDOMString>(state, it->value);
-            // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
-            //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-            JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+            auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
+
+            // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
+            auto& style = *keyframe.style();
+            for (auto cssPropertyId : keyframe.properties()) {
+                // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
+                auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
+                // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
+                auto idlValue = computedStyleExtractor.valueForPropertyinStyle(style, cssPropertyId)->cssText();
+                // 3. Let value be the result of converting IDL value to an ECMAScript String value.
+                auto value = toJS<IDLDOMString>(state, idlValue);
+                // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
+                //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
+                JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+            }
+
+            // 5. Append output keyframe to result.
+            result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
         }
+    } else {
+        for (auto& parsedKeyframe : m_parsedKeyframes) {
+            // 1. Initialize a dictionary object, output keyframe, using the following definition:
+            //
+            // dictionary BaseComputedKeyframe {
+            //      double?             offset = null;
+            //      double              computedOffset;
+            //      DOMString           easing = "linear";
+            //      CompositeOperation? composite = null;
+            // };
 
-        // 4. Append output keyframe to result.
-        result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
+            // 2. Set offset, computedOffset, easing, composite members of output keyframe to the respective values keyframe offset, computed keyframe
+            // offset, keyframe-specific timing function and keyframe-specific composite operation of keyframe.
+            BaseComputedKeyframe computedKeyframe;
+            computedKeyframe.offset = parsedKeyframe.offset;
+            computedKeyframe.computedOffset = parsedKeyframe.computedOffset;
+            computedKeyframe.easing = parsedKeyframe.timingFunction->cssText();
+            computedKeyframe.composite = parsedKeyframe.composite;
+
+            auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
+
+            // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
+            for (auto it = parsedKeyframe.unparsedStyle.begin(), end = parsedKeyframe.unparsedStyle.end(); it != end; ++it) {
+                // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
+                auto propertyName = CSSPropertyIDToIDLAttributeName(it->key);
+                // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
+                // 3. Let value be the result of converting IDL value to an ECMAScript String value.
+                auto value = toJS<IDLDOMString>(state, it->value);
+                // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
+                //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
+                JSObject::defineOwnProperty(outputKeyframe, &state, AtomicString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+            }
+
+            // 4. Append output keyframe to result.
+            result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
+        }
     }
 
     // 4. Return result.
@@ -641,6 +687,78 @@ void KeyframeEffectReadOnly::updateBlendingKeyframes()
     computeStackingContextImpact();
 }
 
+void KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes()
+{
+    ASSERT(is<CSSAnimation>(animation()));
+
+    auto& backingAnimation = downcast<CSSAnimation>(animation())->backingAnimation();
+    if (backingAnimation.name().isEmpty())
+        return;
+
+    auto renderStyle = RenderStyle::createPtr();
+    // We need to call update() on the FontCascade or we'll hit an ASSERT when parsing font-related properties.
+    renderStyle->fontCascade().update(nullptr);
+
+    KeyframeList keyframeList(backingAnimation.name());
+    if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, renderStyle.get(), keyframeList);
+
+    // Ensure resource loads for all the frames.
+    for (auto& keyframe : keyframeList.keyframes()) {
+        if (auto* style = const_cast<RenderStyle*>(keyframe.style()))
+            Style::loadPendingResources(*style, m_target->document(), m_target.get());
+    }
+
+    m_blendingKeyframes = WTFMove(keyframeList);
+
+    computeStackingContextImpact();
+}
+
+void KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
+{
+    ASSERT(is<CSSTransition>(animation()));
+
+    if (!oldStyle || m_blendingKeyframes.size())
+        return;
+
+    auto& backingAnimation = downcast<CSSTransition>(animation())->backingAnimation();
+
+    auto toStyle = RenderStyle::clonePtr(newStyle);
+    if (m_target)
+        Style::loadPendingResources(*toStyle, m_target->document(), m_target.get());
+
+    KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
+    keyframeList.addProperty(backingAnimation.property());
+
+    KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(*oldStyle));
+    fromKeyframeValue.addProperty(backingAnimation.property());
+    keyframeList.insert(WTFMove(fromKeyframeValue));
+
+    KeyframeValue toKeyframeValue(1, WTFMove(toStyle));
+    toKeyframeValue.addProperty(backingAnimation.property());
+    keyframeList.insert(WTFMove(toKeyframeValue));
+
+    m_blendingKeyframes = WTFMove(keyframeList);
+
+    computeStackingContextImpact();
+}
+
+bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const
+{
+    ASSERT(is<CSSTransition>(animation()));
+    auto property = downcast<CSSTransition>(animation())->backingAnimation().property();
+
+    // If we didn't have blending keyframes yet, we would create new blending keyframes provided
+    // the start and end styles hold different values for this property.
+    if (!hasBlendingKeyframes())
+        return !CSSPropertyAnimation::propertiesEqual(property, &oldStyle, &newStyle);
+
+    // Otherwise, we would create new blending keyframes provided the current start keyframe holds
+    // a different value than the new start style or the current end keyframe holds a different value
+    // than the new end style for this property.
+    return !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[0].style(), &oldStyle) || !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[1].style(), &newStyle);
+}
+
 void KeyframeEffectReadOnly::computeStackingContextImpact()
 {
     m_triggersStackingContext = false;
@@ -718,7 +836,7 @@ bool KeyframeEffectReadOnly::shouldRunAccelerated()
         if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId))
             return false;
     }
-    return true;
+    return hasBlendingKeyframes();
 }
 
 void KeyframeEffectReadOnly::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
@@ -861,7 +979,8 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
         // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
         //     passing interval distance as the input progress.
         auto transformedDistance = intervalDistance;
-        if (startKeyframeIndex) {
+        // In case we're backing a CSSAnimation or CSSTransition we won't actually have parsed keyframes.
+        if (startKeyframeIndex && startKeyframeIndex.value() + 1 <= m_parsedKeyframes.size()) {
             if (auto iterationDuration = timing()->iterationDuration()) {
                 auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
                 transformedDistance = m_parsedKeyframes[startKeyframeIndex.value()].timingFunction->transformTime(intervalDistance, rangeDuration);

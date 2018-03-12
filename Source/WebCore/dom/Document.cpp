@@ -111,6 +111,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
+#include "KeyframeEffectReadOnly.h"
 #include "LayoutDisallowedScope.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
@@ -7643,11 +7644,22 @@ DocumentTimeline& Document::timeline()
 
 Vector<RefPtr<WebAnimation>> Document::getAnimations()
 {
+    // FIXME: Filter and order the list as specified (webkit.org/b/179535).
+
+    // For the list of animations to be current, we need to account for any pending CSS changes,
+    // such as updates to CSS Animations and CSS Transitions.
+    updateStyleIfNeeded();
+
     Vector<RefPtr<WebAnimation>> animations;
     if (m_timeline) {
-        // FIXME: Filter and order the list as specified (webkit.org/b/179535).
-        for (auto& animation : m_timeline->animations())
-            animations.append(animation);
+        for (auto& animation : m_timeline->animations()) {
+            if (animation->canBeListed() && is<KeyframeEffectReadOnly>(animation->effect())) {
+                if (auto* target = downcast<KeyframeEffectReadOnly>(animation->effect())->target()) {
+                    if (target->isDescendantOf(this))
+                        animations.append(animation);
+                }
+            }
+        }
     }
     return animations;
 }
