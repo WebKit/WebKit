@@ -686,14 +686,6 @@ ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
   type: bool
   defaultValue: false
 
-CSSGridLayoutEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "CSS Grid"
-  humanReadableDescription: "CSS Grid Layout Module support"
-  binding: RuntimeEnabledFeatures
-  webcoreBinding: RuntimeEnabledFeatures
-
 GamepadsEnabled:
   type: bool
   defaultValue: true

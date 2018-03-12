@@ -104,7 +104,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 #endif
-    , m_cssGridLayoutEnabled(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled())
 #if ENABLE(WEBGL2)
     , m_webGL2Enabled(RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
 #endif
@@ -205,7 +204,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
 #endif
-    RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(m_cssGridLayoutEnabled);
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(m_webGL2Enabled);
 #endif
@@ -738,11 +736,6 @@ void InternalSettings::setIndexedDBWorkersEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
-}
-
-void InternalSettings::setCSSGridLayoutEnabled(bool enabled)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
 }
 
 void InternalSettings::setWebGL2Enabled(bool enabled)

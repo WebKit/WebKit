@@ -1176,11 +1176,6 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
     return CustomElementNameValidationStatus::Valid;
 }
 
-bool Document::isCSSGridLayoutEnabled() const
-{
-    return RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
-}
-
 ExceptionOr<Ref<Element>> Document::createElementNS(const AtomicString& namespaceURI, const String& qualifiedName)
 {
     auto parseResult = parseQualifiedName(namespaceURI, qualifiedName);

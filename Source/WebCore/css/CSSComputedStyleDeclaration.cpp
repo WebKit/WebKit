@@ -2533,7 +2533,7 @@ static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSe
     return result;
 }
 
-static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlignment(const StyleContentAlignmentData& data, CSSValueID normalBehaviorValueID)
+static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlignment(const StyleContentAlignmentData& data)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     auto result = CSSValueList::createSpaceSeparated();
@@ -2541,15 +2541,12 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
     if (data.distribution() != ContentDistributionDefault)
         result->append(cssValuePool.createValue(data.distribution()));
 
-    bool gridEnabled = false;
-    gridEnabled = RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
-
     // Handle content-position values (either as fallback or actual value)
     switch (data.position()) {
     case ContentPositionNormal:
         // Handle 'normal' value, not valid as content-distribution fallback.
         if (data.distribution() == ContentDistributionDefault)
-            result->append(cssValuePool.createIdentifierValue(gridEnabled ? CSSValueNormal : normalBehaviorValueID));
+            result->append(cssValuePool.createIdentifierValue(CSSValueNormal));
         break;
     case ContentPositionLastBaseline:
         result->append(cssValuePool.createIdentifierValue(CSSValueLast));
@@ -2984,7 +2981,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyEmptyCells:
             return cssValuePool.createValue(style.emptyCells());
         case CSSPropertyAlignContent:
-            return valueForContentPositionAndDistributionWithOverflowAlignment(style.alignContent(), CSSValueStretch);
+            return valueForContentPositionAndDistributionWithOverflowAlignment(style.alignContent());
         case CSSPropertyAlignItems:
             return valueForItemPositionWithOverflowAlignment(style.alignItems());
         case CSSPropertyAlignSelf:
@@ -3004,7 +3001,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyFlexWrap:
             return cssValuePool.createValue(style.flexWrap());
         case CSSPropertyJustifyContent:
-            return valueForContentPositionAndDistributionWithOverflowAlignment(style.justifyContent(), CSSValueFlexStart);
+            return valueForContentPositionAndDistributionWithOverflowAlignment(style.justifyContent());
         case CSSPropertyJustifyItems:
             return valueForItemPositionWithOverflowAlignment(style.justifyItems());
         case CSSPropertyJustifySelf:

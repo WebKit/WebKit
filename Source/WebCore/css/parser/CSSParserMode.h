@@ -96,7 +96,6 @@ public:
     String charset;
     CSSParserMode mode { HTMLStandardMode };
     bool isHTMLDocument { false };
-    bool cssGridLayoutEnabled { false };
 #if ENABLE(TEXT_AUTOSIZING)
     bool textAutosizingEnabled { false };
 #endif
@@ -137,19 +136,18 @@ struct CSSParserContextHash {
             hash ^= StringHash::hash(key.charset);
         unsigned bits = key.isHTMLDocument                  << 0
             & key.isHTMLDocument                            << 1
-            & key.cssGridLayoutEnabled                      << 2
 #if ENABLE(TEXT_AUTOSIZING)
-            & key.textAutosizingEnabled                     << 3
+            & key.textAutosizingEnabled                     << 2
 #endif
-            & key.needsSiteSpecificQuirks                   << 4
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 5
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 6
-            & key.springTimingFunctionEnabled               << 7
-            & key.conicGradientsEnabled                     << 8
-            & key.deferredCSSParserEnabled                  << 9
-            & key.hasDocumentSecurityOrigin                 << 10
-            & key.mode                                      << 11
-            & key.allowNewLinesClamp                        << 12;
+            & key.needsSiteSpecificQuirks                   << 3
+            & key.enforcesCSSMIMETypeInNoQuirksMode         << 4
+            & key.useLegacyBackgroundSizeShorthandBehavior  << 5
+            & key.springTimingFunctionEnabled               << 6
+            & key.conicGradientsEnabled                     << 7
+            & key.deferredCSSParserEnabled                  << 8
+            & key.hasDocumentSecurityOrigin                 << 9
+            & key.mode                                      << 10
+            & key.allowNewLinesClamp                        << 11;
         hash ^= WTF::intHash(bits);
         return hash;
     }

@@ -568,8 +568,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none
         // flex | inline-flex | -webkit-flex | -webkit-inline-flex | grid | inline-grid
         return (valueID >= CSSValueInline && valueID <= CSSValueContents) || valueID == CSSValueNone
-            || (RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled() && (valueID == CSSValueGrid || valueID == CSSValueInlineGrid))
-        ;
+            || valueID == CSSValueGrid || valueID == CSSValueInlineGrid;
     case CSSPropertyDominantBaseline:
         // auto | use-script | no-change | reset-size | ideographic |
         // alphabetic | hanging | mathematical | central | middle |
@@ -707,24 +706,12 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueHorizontal || valueID == CSSValueVertical || valueID == CSSValueAuto;
     case CSSPropertyWebkitColumnProgression:
         return valueID == CSSValueNormal || valueID == CSSValueReverse;
-    case CSSPropertyAlignContent:
-        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
-        return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch;
-    case CSSPropertyAlignItems:
-        // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
-        return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch;
-    case CSSPropertyAlignSelf:
-        // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
-        return valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch;
     case CSSPropertyFlexDirection:
         return valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse;
     case CSSPropertyFlexWrap:
         return valueID == CSSValueNowrap || valueID == CSSValueWrap || valueID == CSSValueWrapReverse;
     case CSSPropertyWebkitHyphens:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueManual;
-    case CSSPropertyJustifyContent:
-        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
-        return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround;
     case CSSPropertyWebkitFontKerning:
         return valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone;
     case CSSPropertyWebkitFontSmoothing:
@@ -976,11 +963,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontOpticalSizing:
 #endif
         return true;
-    case CSSPropertyJustifyContent:
-    case CSSPropertyAlignContent:
-    case CSSPropertyAlignItems:
-    case CSSPropertyAlignSelf:
-        return !RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
     default:
         return false;
     }

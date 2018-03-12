@@ -1,3 +1,45 @@
+2018-03-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        Remove GridLayout runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=183484
+
+        Reviewed by Myles C. Maxfield.
+
+        The Grid Layout feature has been enabled by default for almost a
+        year, so I think it's time to remove the runtime flag and the
+        codepath run when the feature is disabled.
+
+        No new tests, because there are no changes in functionality.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertContentAlignmentData):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * page/RuntimeEnabledFeatures.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::alignmentOffset):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialDefaultAlignment):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2018-03-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement CSS Animations and CSS Transitions as Web Animations

@@ -1369,10 +1369,8 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
     case ItemPositionEnd:
     case ItemPositionLeft:
     case ItemPositionRight:
-        // FIXME: Implement these. The extended grammar
-        // is not enabled by default so we shouldn't hit this codepath.
-        // The new grammar is only used when Grid Layout feature is enabled.
-        ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
+        // FIXME: Implement the extended grammar, enabled when the Grid Layout
+        // feature was enabled by default.
         break;
     }
     return 0;

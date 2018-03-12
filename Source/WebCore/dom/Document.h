@@ -424,8 +424,6 @@ public:
 
     static CustomElementNameValidationStatus validateCustomElementName(const AtomicString&);
 
-    bool isCSSGridLayoutEnabled() const;
-
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
     RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 

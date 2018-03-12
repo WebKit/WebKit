@@ -204,9 +204,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWritableStreamAPIEnabled(enabled);
 #endif
 
-    if (preference == "WebKitCSSGridLayoutEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
-
     if (preference == "WebKitInteractiveFormValidationEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setInteractiveFormValidationEnabled(enabled);
 

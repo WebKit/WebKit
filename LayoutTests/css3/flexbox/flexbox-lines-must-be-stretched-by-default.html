@@ -23,16 +23,10 @@
 <script src="../../resources/check-layout-th.js"></script>
 <body>
 <script>
-function runTest(gridEnabled)
+function runTest()
 {
-    if (window.internals)
-        internals.settings.setCSSGridLayoutEnabled(gridEnabled);
-
     var flexContainer = document.createElement("div");
-    if (gridEnabled)
-        flexContainer.className += "gridEnabled flex-container";
-    else
-        flexContainer.className += "gridDisabled flex-container";
+    flexContainer.className += "flex-container";
     document.body.appendChild(flexContainer);
 
     var flexItem1 = document.createElement("div");
@@ -52,14 +46,10 @@ function runTest(gridEnabled)
 
     flexContainer.style.alignContent = "initial";
 
-    if (gridEnabled)
-        checkLayout('.gridEnabled');
-    else
-        checkLayout('.gridDisabled');
+    checkLayout('.flex-container');
 }
 
-runTest(false);
-runTest(true);
+runTest();
 </script>
 <p>'Test for BUG=647694 - align-content "stretch" is not applied by default when grid is disabled.'</p>
 <div id="log"></div>

@@ -235,11 +235,6 @@ RenderStyle RenderStyle::replace(RenderStyle&& newStyle)
     return RenderStyle { *this, WTFMove(newStyle) };
 }
 
-bool RenderStyle::isCSSGridLayoutEnabled()
-{
-    return RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
-}
-
 static StyleSelfAlignmentData resolvedSelfAlignment(const StyleSelfAlignmentData& value, ItemPosition normalValueBehavior)
 {
     if (value.position() == ItemPositionLegacy || value.position() == ItemPositionNormal || value.position() == ItemPositionAuto)

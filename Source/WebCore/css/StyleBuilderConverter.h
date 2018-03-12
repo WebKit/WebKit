@@ -1373,35 +1373,15 @@ inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignme
 inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentData(StyleResolver&, const CSSValue& value)
 {
     StyleContentAlignmentData alignmentData = RenderStyle::initialContentAlignment();
-    if (RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled()) {
-        if (!is<CSSContentDistributionValue>(value))
-            return alignmentData;
-        auto& contentValue = downcast<CSSContentDistributionValue>(value);
-        if (contentValue.distribution()->valueID() != CSSValueInvalid)
-            alignmentData.setDistribution(contentValue.distribution().get());
-        if (contentValue.position()->valueID() != CSSValueInvalid)
-            alignmentData.setPosition(contentValue.position().get());
-        if (contentValue.overflow()->valueID() != CSSValueInvalid)
-            alignmentData.setOverflow(contentValue.overflow().get());
+    if (!is<CSSContentDistributionValue>(value))
         return alignmentData;
-    }
-    if (!is<CSSPrimitiveValue>(value))
-        return alignmentData;
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.valueID()) {
-    case CSSValueStretch:
-    case CSSValueSpaceBetween:
-    case CSSValueSpaceAround:
-        alignmentData.setDistribution(primitiveValue);
-        break;
-    case CSSValueFlexStart:
-    case CSSValueFlexEnd:
-    case CSSValueCenter:
-        alignmentData.setPosition(primitiveValue);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    auto& contentValue = downcast<CSSContentDistributionValue>(value);
+    if (contentValue.distribution()->valueID() != CSSValueInvalid)
+        alignmentData.setDistribution(contentValue.distribution().get());
+    if (contentValue.position()->valueID() != CSSValueInvalid)
+        alignmentData.setPosition(contentValue.position().get());
+    if (contentValue.overflow()->valueID() != CSSValueInvalid)
+        alignmentData.setOverflow(contentValue.overflow().get());
     return alignmentData;
 }
 

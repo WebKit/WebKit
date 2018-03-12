@@ -1,3 +1,22 @@
+2018-03-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        Remove GridLayout runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=183484
+
+        Reviewed by Myles C. Maxfield.
+
+        Since the GridLayout runtime flag is removed and the feature
+        enabled by default, we don't need the tests verifying the
+        codepaths run when the feature is disabled.
+
+        * css3/flexbox/flexbox-lines-must-be-stretched-by-default.html:
+        * css3/flexbox/new-alignment-values-invalid-if-grid-not-enabled-expected.txt: Removed.
+        * css3/flexbox/new-alignment-values-invalid-if-grid-not-enabled.html: Removed.
+        * fast/css-grid-layout/grid-disable-expected.txt: Removed.
+        * fast/css-grid-layout/grid-disable.html: Removed.
+        * fast/css/ensure-flexbox-compatibility-with-initial-values-expected.txt: Removed.
+        * fast/css/ensure-flexbox-compatibility-with-initial-values.html: Removed.
+
 2018-03-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement CSS Animations and CSS Transitions as Web Animations

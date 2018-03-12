@@ -4288,43 +4288,27 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitMaskRepeatY:
         return nullptr;
     case CSSPropertyAlignItems:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeAlignItems(m_range);
     case CSSPropertyJustifySelf:
         return consumeSelfPositionOverflowPosition(m_range, isSelfPositionOrLeftOrRightKeyword);
     case CSSPropertyAlignSelf:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeSelfPositionOverflowPosition(m_range, isSelfPositionKeyword);
     case CSSPropertyJustifyItems:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeJustifyItems(m_range);
     case CSSPropertyGridColumnEnd:
     case CSSPropertyGridColumnStart:
     case CSSPropertyGridRowEnd:
     case CSSPropertyGridRowStart:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeGridLine(m_range);
     case CSSPropertyGridAutoColumns:
     case CSSPropertyGridAutoRows:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeGridTrackList(m_range, m_context.mode, GridAuto);
     case CSSPropertyGridTemplateColumns:
     case CSSPropertyGridTemplateRows:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeGridTemplatesRowsOrColumns(m_range, m_context.mode);
     case CSSPropertyGridTemplateAreas:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeGridTemplateAreas(m_range);
     case CSSPropertyGridAutoFlow:
-        if (!m_context.cssGridLayoutEnabled)
-            return nullptr;
         return consumeGridAutoFlow(m_range);
     case CSSPropertyWebkitLineGrid:
         return consumeLineGrid(m_range);

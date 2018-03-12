@@ -641,7 +641,6 @@ public:
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitCSSGridLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
 
 #if PLATFORM(IOS)
@@ -3056,16 +3055,6 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)directoryUploadEnabled
 {
     return [self _boolValueForKey:WebKitDirectoryUploadEnabledPreferenceKey];
-}
-
-- (BOOL)isCSSGridLayoutEnabled
-{
-    return [self _boolValueForKey:WebKitCSSGridLayoutEnabledPreferenceKey];
-}
-
-- (void)setCSSGridLayoutEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCSSGridLayoutEnabledPreferenceKey];
 }
 
 - (BOOL)visualViewportEnabled

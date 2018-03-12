@@ -202,9 +202,6 @@ public:
     bool downloadAttributeEnabled() const { return m_isDownloadAttributeEnabled; }
 #endif
 
-    void setCSSGridLayoutEnabled(bool isEnabled) { m_cssGridLayoutEnabled = isEnabled; }
-    bool isCSSGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
-
 #if ENABLE(INTERSECTION_OBSERVER)
     void setIntersectionObserverEnabled(bool isEnabled) { m_intersectionObserverEnabled = isEnabled; }
     bool intersectionObserverEnabled() const { return m_intersectionObserverEnabled; }
@@ -352,8 +349,6 @@ private:
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     bool m_isDownloadAttributeEnabled { false };
 #endif
-
-    bool m_cssGridLayoutEnabled { true };
 
 #if ENABLE(ENCRYPTED_MEDIA)
     bool m_encryptedMediaAPIEnabled { false };

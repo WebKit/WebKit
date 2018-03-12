@@ -1,3 +1,18 @@
+2018-03-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        Remove GridLayout runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=183484
+
+        Reviewed by Myles C. Maxfield.
+
+        The Grid Layout feature has been enabled by default for almost a
+        year, so I think it's time to remove the runtime flag and the
+        codepath run when the feature is disabled.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2018-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix the internal iOS build after r229512

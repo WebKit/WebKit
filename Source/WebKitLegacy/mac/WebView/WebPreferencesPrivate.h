@@ -558,9 +558,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setDirectoryUploadEnabled:(BOOL)flag;
 - (BOOL)directoryUploadEnabled;
 
-- (void)setCSSGridLayoutEnabled:(BOOL)flag;
-- (BOOL)isCSSGridLayoutEnabled;
-
 - (void)setWebAnimationsEnabled:(BOOL)flag;
 - (BOOL)webAnimationsEnabled;
 

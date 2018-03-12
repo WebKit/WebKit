@@ -1495,7 +1495,7 @@ public:
     static int initialOrder() { return 0; }
     static StyleSelfAlignmentData initialJustifyItems() { return StyleSelfAlignmentData(ItemPositionLegacy, OverflowAlignmentDefault); }
     static StyleSelfAlignmentData initialSelfAlignment() { return StyleSelfAlignmentData(ItemPositionAuto, OverflowAlignmentDefault); }
-    static StyleSelfAlignmentData initialDefaultAlignment() { return StyleSelfAlignmentData(isCSSGridLayoutEnabled() ? ItemPositionNormal : ItemPositionStretch, OverflowAlignmentDefault); }
+    static StyleSelfAlignmentData initialDefaultAlignment() { return StyleSelfAlignmentData(ItemPositionNormal, OverflowAlignmentDefault); }
     static StyleContentAlignmentData initialContentAlignment() { return StyleContentAlignmentData(ContentPositionNormal, ContentDistributionDefault, OverflowAlignmentDefault); }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
@@ -1578,8 +1578,6 @@ public:
     static Length initialSpecifiedLineHeight() { return Length(-100.0f, Percent); }
     static TextSizeAdjustment initialTextSizeAdjust() { return TextSizeAdjustment(); }
 #endif
-
-    static bool isCSSGridLayoutEnabled();
 
     static WillChangeData* initialWillChange() { return nullptr; }
 

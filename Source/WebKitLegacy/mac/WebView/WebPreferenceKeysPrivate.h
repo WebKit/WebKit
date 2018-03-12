@@ -178,7 +178,6 @@
 #define WebKitReadableByteStreamAPIEnabledPreferenceKey @"WebKitReadableByteStreamAPIEnabled"
 #define WebKitDownloadAttributeEnabledPreferenceKey @"WebKitDownloadAttributeEnabled"
 #define WebKitDirectoryUploadEnabledPreferenceKey @"WebKitDirectoryUploadEnabled"
-#define WebKitCSSGridLayoutEnabledPreferenceKey @"WebKitCSSGridLayoutEnabled"
 #define WebKitVisualViewportEnabledPreferenceKey @"WebKitVisualViewportEnabled"
 #define WebKitVisualViewportAPIEnabledPreferenceKey @"WebKitVisualViewportAPIEnabled"
 #define WebKitModernMediaControlsEnabledPreferenceKey @"WebKitModernMediaControlsEnabled"
