@@ -185,7 +185,7 @@ public:
     void handleModalChange(Node*);
     Node* modalNode();
 
-    void handleAttributeChanged(const QualifiedName& attrName, Element*);
+    void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
     void recomputeIsIgnored(RenderObject* renderer);
 
 #if HAVE(ACCESSIBILITY)
@@ -409,6 +409,8 @@ private:
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
+    void handleAttributeChange(const QualifiedName&, Element*);
+    bool shouldProcessAttributeChange(const QualifiedName&, Element*);
     
     // aria-modal related
     void findModalNodes();
@@ -446,6 +448,7 @@ private:
     ListHashSet<Node*> m_deferredTextChangedList;
     ListHashSet<Element*> m_deferredSelectedChildredChangedList;
     HashMap<Element*, String> m_deferredTextFormControlValue;
+    HashMap<Element*, QualifiedName> m_deferredAttributeChange;
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
 };
@@ -507,7 +510,9 @@ inline void AXObjectCache::handleActiveDescendantChanged(Node*) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::handleModalChange(Node*) { }
 inline void AXObjectCache::handleAriaRoleChanged(Node*) { }
-inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
+inline void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName&, Element*) { }
+inline void AXObjectCache::handleAttributeChange(const QualifiedName&, Element*) { }
+inline bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName&, Element*) { return false; }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }

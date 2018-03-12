@@ -50,20 +50,20 @@
             
             // 2. Click the new button, dialog2 shows and focus should move to the close button.
             document.getElementById("new").click();
-            closeBtn = accessibilityController.accessibleElementById("close");
             setTimeout(function(){ 
+                closeBtn = accessibilityController.accessibleElementById("close");
                 shouldBeTrue("closeBtn.isFocused");
-                
+                  
                 // 3. Click the close button, dialog2 closes and focus should go back to the
                 // first focusable child of dialog1.
                 document.getElementById("close").click();
-                okBtn = accessibilityController.accessibleElementById("ok");
                 setTimeout(function(){
+                    okBtn = accessibilityController.accessibleElementById("ok");
                     shouldBeTrue("okBtn.isFocused");
                     finishJSTest();
-                }, 50);
-            }, 50);
-        }, 50);
+                }, 100);
+            }, 100);
+        }, 100);
     }
     
     function backgroundAccessible() {

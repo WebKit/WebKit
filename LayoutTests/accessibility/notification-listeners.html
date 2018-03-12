@@ -45,6 +45,10 @@ function runTest() {
         });
     }
 
+    // Ensure these elements exist in the AX tree otherwise notifications won't be generated.
+    accessibilityController.accessibleElementById("select");
+    accessibilityController.accessibleElementById("slider");
+
     // This should trigger a "invalid status changed" notification on the select.
     document.getElementById("select").setAttribute("aria-invalid", "true");
 
