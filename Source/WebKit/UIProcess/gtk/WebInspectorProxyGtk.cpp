@@ -396,7 +396,7 @@ void WebInspectorProxy::platformDetach()
         return;
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
-    if (m_client && !m_client->detach(*this)) {
+    if (!m_client || !m_client->detach(*this)) {
         // Detach is called when m_isAttached is true, but it could called before
         // the inspector is opened if the inspector is shown/closed quickly. So,
         // we might not have a parent yet.
