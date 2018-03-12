@@ -1,3 +1,38 @@
+2018-03-12  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [webkitpy] Remove openssl command dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=183494
+
+        Reviewed by Ryosuke Niwa.
+
+        Added Python implementation of PEM file perser and switched to use that
+        from external `openssl` command.
+
+        * Scripts/webkitpy/common/system/pemfile.py: Added.
+        (load):
+        (BadFormatError):
+        (Pem):
+        (Pem.__init__):
+        (Pem.get):
+        (Pem.get_all):
+        (Pem.certificate):
+        (Pem.private_key):
+        (Pem.csr):
+        (Pem.certificate_request):
+        (Pem.certificate_signing_request):
+        (_parse_pem_format):
+        (_parse_pem_format.find_begin):
+        (_parse_pem_format.find_end):
+        (_parse_pem_format.sections):
+        * Scripts/webkitpy/common/system/pemfile_unittest.py: Added.
+        (PemFileTest):
+        (PemFileTest.test_parse):
+        (PemFileTest.test_parse_bad_format):
+        * Scripts/webkitpy/port/base.py:
+        (Port.start_websocket_server):
+        (Port._extract_certificate_from_pem): Deleted.
+        (Port._extract_private_key_from_pem): Deleted.
+
 2018-03-12  Javier Fernandez  <jfernandez@igalia.com>
 
         Remove GridLayout runtime flag
