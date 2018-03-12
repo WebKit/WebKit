@@ -114,7 +114,13 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
 
     CompletionHandler<void()> policyDecisionCompletionHandler;
     if (needsContinueDidReceiveResponseMessage) {
+#if !ASSERT_DISABLED
+        m_isProcessingNetworkResponse = true;
+#endif
         policyDecisionCompletionHandler = [this, protectedThis = WTFMove(protectedThis)] {
+#if !ASSERT_DISABLED
+            m_isProcessingNetworkResponse = false;
+#endif
             // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function().
             if (m_coreLoader)
                 send(Messages::NetworkResourceLoader::ContinueDidReceiveResponse());
@@ -127,6 +133,7 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
 void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
+    ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
 
     if (!m_numBytesReceived) {
         RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
@@ -149,6 +156,7 @@ void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkL
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("didFinishResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", length = %zd)", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID, m_numBytesReceived);
 
+    ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Load should not be able to finish before we've validated the response");
     m_coreLoader->didFinishLoading(networkLoadMetrics);
 }
 
@@ -156,6 +164,8 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFailResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("didFailResourceLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
+
+    ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Load should not be able to finish before we've validated the response");
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForError(m_coreLoader.get(), error))
         return;

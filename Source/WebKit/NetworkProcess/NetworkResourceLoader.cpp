@@ -488,6 +488,11 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
+    if (m_cacheEntryWaitingForContinueDidReceiveResponse) {
+        continueProcessingCachedEntryAfterDidReceiveResponse(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
+        return;
+    }
+
     // FIXME: Remove this check once BlobResourceHandle implements didReceiveResponseAsync correctly.
     // Currently, it does not wait for response, so the load is likely to finish before continueDidReceiveResponse.
     if (m_networkLoad)
@@ -563,6 +568,14 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     bool needsContinueDidReceiveResponseMessage = isMainResource();
     send(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
 
+    if (needsContinueDidReceiveResponseMessage)
+        m_cacheEntryWaitingForContinueDidReceiveResponse = WTFMove(entry);
+    else
+        continueProcessingCachedEntryAfterDidReceiveResponse(WTFMove(entry));
+}
+
+void NetworkResourceLoader::continueProcessingCachedEntryAfterDidReceiveResponse(std::unique_ptr<NetworkCache::Entry> entry)
+{
     if (entry->sourceStorageRecord().bodyHash && !m_parameters.derivedCachedDataTypesToRetrieve.isEmpty()) {
         auto bodyHash = *entry->sourceStorageRecord().bodyHash;
         auto* entryPtr = entry.release();

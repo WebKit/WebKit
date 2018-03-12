@@ -1,3 +1,16 @@
+2018-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Load may get committed before receiving policy for the resource response
+        https://bugs.webkit.org/show_bug.cgi?id=183579
+        <rdar://problem/38268780>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/cache/cachedEntry-waits-for-response-policy-expected.txt: Added.
+        * http/tests/cache/cachedEntry-waits-for-response-policy.html: Added.
+
 2018-03-12  Ali Juma  <ajuma@chromium.org>
 
         http/tests/workers/service/service-worker-download.https.html times out with async policy delegates
