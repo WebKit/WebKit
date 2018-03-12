@@ -1,3 +1,10 @@
+2018-03-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline two cssom tests after r229544.
+
+        * web-platform-tests/cssom-view/interfaces-expected.txt:
+        * web-platform-tests/cssom/interfaces-expected.txt:
+
 2018-03-12  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection's close method should update signalingState

@@ -1,20 +1,25 @@
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 309: callback not yet supported
 
 CSSOM View IDL tests
 
 
 PASS Test driver 
 PASS HTMLElement interface: attribute offsetParent 
+PASS Unscopable handled correctly for offsetParent property on HTMLElement 
 PASS HTMLElement interface: attribute offsetTop 
+PASS Unscopable handled correctly for offsetTop property on HTMLElement 
 PASS HTMLElement interface: attribute offsetLeft 
+PASS Unscopable handled correctly for offsetLeft property on HTMLElement 
 PASS HTMLElement interface: attribute offsetWidth 
+PASS Unscopable handled correctly for offsetWidth property on HTMLElement 
 PASS HTMLElement interface: attribute offsetHeight 
+PASS Unscopable handled correctly for offsetHeight property on HTMLElement 
 PASS HTMLElement interface: document.createElement('div') must inherit property "offsetParent" with the proper type 
 PASS HTMLElement interface: document.createElement('div') must inherit property "offsetTop" with the proper type 
 PASS HTMLElement interface: document.createElement('div') must inherit property "offsetLeft" with the proper type 
@@ -22,7 +27,6 @@ PASS HTMLElement interface: document.createElement('div') must inherit property 
 PASS HTMLElement interface: document.createElement('div') must inherit property "offsetHeight" with the proper type 
 PASS Element interface: document.createElement('div') must inherit property "getClientRects()" with the proper type 
 PASS Element interface: document.createElement('div') must inherit property "getBoundingClientRect()" with the proper type 
-PASS Element interface: document.createElement('div') must inherit property "scrollIntoView()" with the proper type 
 PASS Element interface: document.createElement('div') must inherit property "scrollIntoView([object Object],[object Object])" with the proper type 
 PASS Element interface: calling scrollIntoView([object Object],[object Object]) on document.createElement('div') with too few arguments must throw TypeError 
 PASS Element interface: document.createElement('div') must inherit property "scroll(ScrollToOptions)" with the proper type 
@@ -54,7 +58,9 @@ FAIL Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNod
 FAIL Element interface: document.createElement('div') must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
 FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on document.createElement('div') with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
 PASS HTMLImageElement interface: attribute x 
+PASS Unscopable handled correctly for x property on HTMLImageElement 
 PASS HTMLImageElement interface: attribute y 
+PASS Unscopable handled correctly for y property on HTMLImageElement 
 PASS HTMLImageElement interface: document.createElement('img') must inherit property "x" with the proper type 
 PASS HTMLImageElement interface: document.createElement('img') must inherit property "y" with the proper type 
 PASS HTMLElement interface: document.createElement('img') must inherit property "offsetParent" with the proper type 
@@ -64,7 +70,6 @@ PASS HTMLElement interface: document.createElement('img') must inherit property 
 PASS HTMLElement interface: document.createElement('img') must inherit property "offsetHeight" with the proper type 
 PASS Element interface: document.createElement('img') must inherit property "getClientRects()" with the proper type 
 PASS Element interface: document.createElement('img') must inherit property "getBoundingClientRect()" with the proper type 
-PASS Element interface: document.createElement('img') must inherit property "scrollIntoView()" with the proper type 
 PASS Element interface: document.createElement('img') must inherit property "scrollIntoView([object Object],[object Object])" with the proper type 
 PASS Element interface: calling scrollIntoView([object Object],[object Object]) on document.createElement('img') with too few arguments must throw TypeError 
 PASS Element interface: document.createElement('img') must inherit property "scroll(ScrollToOptions)" with the proper type 
@@ -96,28 +101,51 @@ FAIL Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNod
 FAIL Element interface: document.createElement('img') must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
 FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on document.createElement('img') with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
 PASS Window interface: operation matchMedia(CSSOMString) 
+PASS Unscopable handled correctly for matchMedia(CSSOMString) on Window 
 PASS Window interface: attribute screen 
+PASS Unscopable handled correctly for screen property on Window 
 FAIL Window interface: operation moveTo(long, long) assert_equals: property has wrong .length expected 2 but got 0
+PASS Unscopable handled correctly for moveTo(long, long) on Window 
 FAIL Window interface: operation moveBy(long, long) assert_equals: property has wrong .length expected 2 but got 0
+PASS Unscopable handled correctly for moveBy(long, long) on Window 
 FAIL Window interface: operation resizeTo(long, long) assert_equals: property has wrong .length expected 2 but got 0
+PASS Unscopable handled correctly for resizeTo(long, long) on Window 
 FAIL Window interface: operation resizeBy(long, long) assert_equals: property has wrong .length expected 2 but got 0
+PASS Unscopable handled correctly for resizeBy(long, long) on Window 
 PASS Window interface: attribute innerWidth 
+PASS Unscopable handled correctly for innerWidth property on Window 
 PASS Window interface: attribute innerHeight 
+PASS Unscopable handled correctly for innerHeight property on Window 
 PASS Window interface: attribute scrollX 
+PASS Unscopable handled correctly for scrollX property on Window 
 PASS Window interface: attribute pageXOffset 
+PASS Unscopable handled correctly for pageXOffset property on Window 
 PASS Window interface: attribute scrollY 
+PASS Unscopable handled correctly for scrollY property on Window 
 PASS Window interface: attribute pageYOffset 
+PASS Unscopable handled correctly for pageYOffset property on Window 
 PASS Window interface: operation scroll(ScrollToOptions) 
+PASS Unscopable handled correctly for scroll(ScrollToOptions) on Window 
 PASS Window interface: operation scroll(unrestricted double, unrestricted double) 
+PASS Unscopable handled correctly for scroll(unrestricted double, unrestricted double) on Window 
 PASS Window interface: operation scrollTo(ScrollToOptions) 
+PASS Unscopable handled correctly for scrollTo(ScrollToOptions) on Window 
 PASS Window interface: operation scrollTo(unrestricted double, unrestricted double) 
+PASS Unscopable handled correctly for scrollTo(unrestricted double, unrestricted double) on Window 
 PASS Window interface: operation scrollBy(ScrollToOptions) 
+PASS Unscopable handled correctly for scrollBy(ScrollToOptions) on Window 
 PASS Window interface: operation scrollBy(unrestricted double, unrestricted double) 
+PASS Unscopable handled correctly for scrollBy(unrestricted double, unrestricted double) on Window 
 PASS Window interface: attribute screenX 
+PASS Unscopable handled correctly for screenX property on Window 
 PASS Window interface: attribute screenY 
+PASS Unscopable handled correctly for screenY property on Window 
 PASS Window interface: attribute outerWidth 
+PASS Unscopable handled correctly for outerWidth property on Window 
 PASS Window interface: attribute outerHeight 
+PASS Unscopable handled correctly for outerHeight property on Window 
 PASS Window interface: attribute devicePixelRatio 
+PASS Unscopable handled correctly for devicePixelRatio property on Window 
 PASS Window interface: window must inherit property "matchMedia(CSSOMString)" with the proper type 
 PASS Window interface: calling matchMedia(CSSOMString) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "screen" with the proper type 
@@ -166,13 +194,21 @@ PASS SharedWorkerGlobalScope interface: existence and properties of interface ob
 PASS WorkerNavigator interface: existence and properties of interface object 
 PASS WorkerLocation interface: existence and properties of interface object 
 PASS Document interface: operation elementFromPoint(double, double) 
+PASS Unscopable handled correctly for elementFromPoint(double, double) on Document 
 PASS Document interface: operation elementsFromPoint(double, double) 
+PASS Unscopable handled correctly for elementsFromPoint(double, double) on Document 
 FAIL Document interface: operation caretPositionFromPoint(double, double) assert_own_property: interface prototype object missing non-static operation expected property "caretPositionFromPoint" missing
+PASS Unscopable handled correctly for caretPositionFromPoint(double, double) on Document 
 PASS Document interface: attribute scrollingElement 
+PASS Unscopable handled correctly for scrollingElement property on Document 
 FAIL Document interface: operation getBoxQuads(BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
+PASS Unscopable handled correctly for getBoxQuads(BoxQuadOptions) on Document 
 FAIL Document interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
+PASS Unscopable handled correctly for convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions) on Document 
 FAIL Document interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertRectFromNode" missing
+PASS Unscopable handled correctly for convertRectFromNode(DOMRectReadOnly, GeometryNode, ConvertCoordinateOptions) on Document 
 FAIL Document interface: operation convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertPointFromNode" missing
+PASS Unscopable handled correctly for convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on Document 
 PASS Document interface: document must inherit property "elementFromPoint(double, double)" with the proper type 
 PASS Document interface: calling elementFromPoint(double, double) on document with too few arguments must throw TypeError 
 PASS Document interface: document must inherit property "elementsFromPoint(double, double)" with the proper type 
@@ -189,30 +225,49 @@ FAIL Document interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNo
 FAIL Document interface: document must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
 FAIL Document interface: calling convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on document with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
 PASS Element interface: operation getClientRects() 
+PASS Unscopable handled correctly for getClientRects() on Element 
 PASS Element interface: operation getBoundingClientRect() 
-PASS Element interface: operation scrollIntoView() 
+PASS Unscopable handled correctly for getBoundingClientRect() on Element 
 PASS Element interface: operation scrollIntoView([object Object],[object Object]) 
+PASS Unscopable handled correctly for scrollIntoView([object Object],[object Object]) on Element 
 PASS Element interface: operation scroll(ScrollToOptions) 
+PASS Unscopable handled correctly for scroll(ScrollToOptions) on Element 
 PASS Element interface: operation scroll(unrestricted double, unrestricted double) 
+PASS Unscopable handled correctly for scroll(unrestricted double, unrestricted double) on Element 
 PASS Element interface: operation scrollTo(ScrollToOptions) 
+PASS Unscopable handled correctly for scrollTo(ScrollToOptions) on Element 
 PASS Element interface: operation scrollTo(unrestricted double, unrestricted double) 
+PASS Unscopable handled correctly for scrollTo(unrestricted double, unrestricted double) on Element 
 PASS Element interface: operation scrollBy(ScrollToOptions) 
+PASS Unscopable handled correctly for scrollBy(ScrollToOptions) on Element 
 PASS Element interface: operation scrollBy(unrestricted double, unrestricted double) 
+PASS Unscopable handled correctly for scrollBy(unrestricted double, unrestricted double) on Element 
 PASS Element interface: attribute scrollTop 
+PASS Unscopable handled correctly for scrollTop property on Element 
 PASS Element interface: attribute scrollLeft 
+PASS Unscopable handled correctly for scrollLeft property on Element 
 PASS Element interface: attribute scrollWidth 
+PASS Unscopable handled correctly for scrollWidth property on Element 
 PASS Element interface: attribute scrollHeight 
+PASS Unscopable handled correctly for scrollHeight property on Element 
 PASS Element interface: attribute clientTop 
+PASS Unscopable handled correctly for clientTop property on Element 
 PASS Element interface: attribute clientLeft 
+PASS Unscopable handled correctly for clientLeft property on Element 
 PASS Element interface: attribute clientWidth 
+PASS Unscopable handled correctly for clientWidth property on Element 
 PASS Element interface: attribute clientHeight 
+PASS Unscopable handled correctly for clientHeight property on Element 
 FAIL Element interface: operation getBoxQuads(BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
+PASS Unscopable handled correctly for getBoxQuads(BoxQuadOptions) on Element 
 FAIL Element interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
+PASS Unscopable handled correctly for convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions) on Element 
 FAIL Element interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertRectFromNode" missing
+PASS Unscopable handled correctly for convertRectFromNode(DOMRectReadOnly, GeometryNode, ConvertCoordinateOptions) on Element 
 FAIL Element interface: operation convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertPointFromNode" missing
+PASS Unscopable handled correctly for convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on Element 
 PASS Element interface: document.createElementNS('x', 'y') must inherit property "getClientRects()" with the proper type 
 PASS Element interface: document.createElementNS('x', 'y') must inherit property "getBoundingClientRect()" with the proper type 
-PASS Element interface: document.createElementNS('x', 'y') must inherit property "scrollIntoView()" with the proper type 
 PASS Element interface: document.createElementNS('x', 'y') must inherit property "scrollIntoView([object Object],[object Object])" with the proper type 
 PASS Element interface: calling scrollIntoView([object Object],[object Object]) on document.createElementNS('x', 'y') with too few arguments must throw TypeError 
 PASS Element interface: document.createElementNS('x', 'y') must inherit property "scroll(ScrollToOptions)" with the proper type 
@@ -244,9 +299,13 @@ FAIL Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNod
 FAIL Element interface: document.createElementNS('x', 'y') must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
 FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on document.createElementNS('x', 'y') with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
 FAIL Text interface: operation getBoxQuads(BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
+PASS Unscopable handled correctly for getBoxQuads(BoxQuadOptions) on Text 
 FAIL Text interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
+PASS Unscopable handled correctly for convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions) on Text 
 FAIL Text interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertRectFromNode" missing
+PASS Unscopable handled correctly for convertRectFromNode(DOMRectReadOnly, GeometryNode, ConvertCoordinateOptions) on Text 
 FAIL Text interface: operation convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertPointFromNode" missing
+PASS Unscopable handled correctly for convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on Text 
 FAIL Text interface: document.createTextNode('x') must inherit property "getBoxQuads(BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
 FAIL Text interface: calling getBoxQuads(BoxQuadOptions) on document.createTextNode('x') with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain
 FAIL Text interface: document.createTextNode('x') must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertQuadFromNode" not found in prototype chain
@@ -256,7 +315,9 @@ FAIL Text interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, 
 FAIL Text interface: document.createTextNode('x') must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
 FAIL Text interface: calling convertPointFromNode(DOMPointInit, GeometryNode, ConvertCoordinateOptions) on document.createTextNode('x') with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
 PASS Range interface: operation getClientRects() 
+PASS Unscopable handled correctly for getClientRects() on Range 
 PASS Range interface: operation getBoundingClientRect() 
+PASS Unscopable handled correctly for getBoundingClientRect() on Range 
 PASS Range interface: new Range() must inherit property "getClientRects()" with the proper type 
 PASS Range interface: new Range() must inherit property "getBoundingClientRect()" with the proper type 
 FAIL MediaQueryList interface: existence and properties of interface object assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
@@ -264,11 +325,17 @@ FAIL MediaQueryList interface object length assert_own_property: self does not h
 FAIL MediaQueryList interface object name assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
 FAIL MediaQueryList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
 FAIL MediaQueryList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+FAIL MediaQueryList interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
 FAIL MediaQueryList interface: attribute media assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+PASS Unscopable handled correctly for media property on MediaQueryList 
 FAIL MediaQueryList interface: attribute matches assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+PASS Unscopable handled correctly for matches property on MediaQueryList 
 FAIL MediaQueryList interface: operation addListener(EventListener) assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+PASS Unscopable handled correctly for addListener(EventListener) on MediaQueryList 
 FAIL MediaQueryList interface: operation removeListener(EventListener) assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+PASS Unscopable handled correctly for removeListener(EventListener) on MediaQueryList 
 FAIL MediaQueryList interface: attribute onchange assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+PASS Unscopable handled correctly for onchange property on MediaQueryList 
 FAIL MediaQueryList must be primary interface of matchMedia('all') assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
 PASS Stringification of matchMedia('all') 
 PASS MediaQueryList interface: matchMedia('all') must inherit property "media" with the proper type 
@@ -287,8 +354,11 @@ FAIL MediaQueryListEvent interface object length assert_own_property: self does 
 FAIL MediaQueryListEvent interface object name assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
 FAIL MediaQueryListEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
 FAIL MediaQueryListEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
+FAIL MediaQueryListEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
 FAIL MediaQueryListEvent interface: attribute media assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
+PASS Unscopable handled correctly for media property on MediaQueryListEvent 
 FAIL MediaQueryListEvent interface: attribute matches assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
+PASS Unscopable handled correctly for matches property on MediaQueryListEvent 
 FAIL MediaQueryListEvent must be primary interface of new MediaQueryListEvent('change') assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
 FAIL Stringification of new MediaQueryListEvent('change') assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
 FAIL MediaQueryListEvent interface: new MediaQueryListEvent('change') must inherit property "media" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
@@ -298,12 +368,19 @@ PASS Screen interface object length
 PASS Screen interface object name 
 PASS Screen interface: existence and properties of interface prototype object 
 PASS Screen interface: existence and properties of interface prototype object's "constructor" property 
+PASS Screen interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Screen interface: attribute availWidth 
+PASS Unscopable handled correctly for availWidth property on Screen 
 PASS Screen interface: attribute availHeight 
+PASS Unscopable handled correctly for availHeight property on Screen 
 PASS Screen interface: attribute width 
+PASS Unscopable handled correctly for width property on Screen 
 PASS Screen interface: attribute height 
+PASS Unscopable handled correctly for height property on Screen 
 PASS Screen interface: attribute colorDepth 
+PASS Unscopable handled correctly for colorDepth property on Screen 
 PASS Screen interface: attribute pixelDepth 
+PASS Unscopable handled correctly for pixelDepth property on Screen 
 PASS Screen must be primary interface of screen 
 PASS Stringification of screen 
 PASS Screen interface: screen must inherit property "availWidth" with the proper type 
@@ -317,9 +394,13 @@ FAIL CaretPosition interface object length assert_own_property: self does not ha
 FAIL CaretPosition interface object name assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
 FAIL CaretPosition interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
 FAIL CaretPosition interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
+FAIL CaretPosition interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
 FAIL CaretPosition interface: attribute offsetNode assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
+PASS Unscopable handled correctly for offsetNode property on CaretPosition 
 FAIL CaretPosition interface: attribute offset assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
+PASS Unscopable handled correctly for offset property on CaretPosition 
 FAIL CaretPosition interface: operation getClientRect() assert_own_property: self does not have own property "CaretPosition" expected property "CaretPosition" missing
+PASS Unscopable handled correctly for getClientRect() on CaretPosition 
 FAIL CaretPosition must be primary interface of document.caretPositionFromPoint(5, 5) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
 FAIL Stringification of document.caretPositionFromPoint(5, 5) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
 FAIL CaretPosition interface: document.caretPositionFromPoint(5, 5) must inherit property "offsetNode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(5, 5)', 'document.caretPositionFromPoint' is undefined)"
