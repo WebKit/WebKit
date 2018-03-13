@@ -1,3 +1,16 @@
+2018-03-13  Dean Jackson  <dino@apple.com>
+
+        WKSystemPreviewView needs to implement some of UIScrollViewDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=183607
+        <rdar://problem/38427622>
+
+        Reviewed by Antoine Quint.
+
+        Add an empty implementation of scrollViewDidScroll.
+
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView scrollViewDidScroll:]):
+
 2018-03-13  Jiewen Tan  <jiewen_tan@apple.com>
 
         Soft-link LocalAuthentication.Framework
