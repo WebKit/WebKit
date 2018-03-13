@@ -1,3 +1,9 @@
+2018-03-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix typo in a comment
+
+        * wtf/Platform.h:
+
 2018-03-12  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Forwarding headers of WTF and PAL are copied twice in Visual Studio builds

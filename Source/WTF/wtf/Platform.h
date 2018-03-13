@@ -89,7 +89,7 @@
 #define WTF_CPU_KNOWN 1
 #endif
 
-/* CPU(PPC64) - PowerPC 64-bit Little Endian */
+/* CPU(PPC64LE) - PowerPC 64-bit Little Endian */
 #if (   defined(__ppc64__)     \
     || defined(__PPC64__)      \
     || defined(__ppc64le__)    \
