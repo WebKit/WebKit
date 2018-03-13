@@ -1,5 +1,15 @@
 2018-03-13  Youenn Fablet  <youenn@apple.com>
 
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182853
+        <rdar://problem/37645429>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/register-closed-window.https-expected.txt:
+
+2018-03-13  Youenn Fablet  <youenn@apple.com>
+
         Calling removeTrack with RTCRtpSender does not set SenderTrack to null
         https://bugs.webkit.org/show_bug.cgi?id=183308
 

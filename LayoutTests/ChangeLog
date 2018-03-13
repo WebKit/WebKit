@@ -1,3 +1,14 @@
+2018-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182853
+        <rdar://problem/37645429>
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2018-03-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK expectations gardening
