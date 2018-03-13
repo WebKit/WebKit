@@ -225,4 +225,6 @@ interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
     HRESULT setFetchAPIKeepAliveEnabled([in] BOOL enabled);
     HRESULT spatialNavigationEnabled([out, retval] BOOL *enabled);
     HRESULT setSpatialNavigationEnabled([in] BOOL enabled);
+    HRESULT menuItemElementEnabled([out, retval] BOOL* enabled);
+    HRESULT setMenuItemElementEnabled([in] BOOL enabled);
 }

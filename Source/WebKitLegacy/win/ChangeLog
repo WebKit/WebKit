@@ -1,3 +1,20 @@
+2018-03-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Layout Test fast/html/menuitem-element.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=179299
+
+        Reviewed by Per Arne Vollan.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::menuItemElementEnabled):
+        (WebPreferences::setMenuItemElementEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+        Add private web preference "menuItemElementEnabled".
+
 2018-03-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement CSS Animations and CSS Transitions as Web Animations

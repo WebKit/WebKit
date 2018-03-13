@@ -273,6 +273,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setFetchAPIKeepAliveEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE spatialNavigationEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setSpatialNavigationEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE menuItemElementEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setMenuItemElementEnabled(BOOL);
 
     // WebPreferences
 

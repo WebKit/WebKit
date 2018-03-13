@@ -1,3 +1,14 @@
+2018-03-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Layout Test fast/html/menuitem-element.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=179299
+
+        Reviewed by Per Arne Vollan.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setWebPreferencesForTestOptions):
+        Recognize test option "enableMenuItemElement".
+
 2018-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Stop using SDK conditionals to control feature definitions

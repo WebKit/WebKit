@@ -178,6 +178,8 @@
 
 #define WebKitCustomElementsEnabledPreferenceKey "WebKitCustomElementsEnabled"
 
+#define WebKitMenuItemElementEnabledPreferenceKey "WebKitMenuItemElementEnabled"
+
 #define WebKitModernMediaControlsEnabledPreferenceKey "WebKitModernMediaControlsEnabled"
 
 #define WebKitWebAnimationsEnabledPreferenceKey "WebKitWebAnimationsEnabled"

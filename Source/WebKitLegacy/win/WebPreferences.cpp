@@ -2015,6 +2015,20 @@ HRESULT WebPreferences::setCustomElementsEnabled(BOOL enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::menuItemElementEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitMenuItemElementEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setMenuItemElementEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitMenuItemElementEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
 HRESULT WebPreferences::setModernMediaControlsEnabled(BOOL enabled)
 {
     setBoolValue(WebKitModernMediaControlsEnabledPreferenceKey, enabled);

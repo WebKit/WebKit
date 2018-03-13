@@ -1,3 +1,13 @@
+2018-03-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Layout Test fast/html/menuitem-element.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=179299
+
+        Reviewed by Per Arne Vollan.
+
+        * platform/win/TestExpectations:
+        Remove "failure" line.
+
 2018-03-13  Danyao Wang  <danyao@chromium.org>
 
         LayoutTests/http/tests/navigation/page-cache-iframe-provisional-load.html fails with async policy delegate
