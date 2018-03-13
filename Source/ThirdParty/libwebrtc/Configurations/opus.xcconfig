@@ -1,4 +1,4 @@
-#include "macOSTargetConditionals.xcconfig"
+#include "WebKitTargetConditionals.xcconfig"
 
 PRODUCT_NAME = opus;
 

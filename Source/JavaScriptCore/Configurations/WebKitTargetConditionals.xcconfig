@@ -1,3 +1,26 @@
+// Copyright (C) 2018 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 // Use the following helpers to define build settings whose value depends on the target
 // macOS version in a succinct and future-proof way.
 //
@@ -22,6 +45,8 @@
 //     EXTRA_PATH_MACOS_BEFORE_1012 = "/Library/Application Support/WebKit";
 //     EXTRA_PATH_MACOS_BEFORE_1014 = /System/Library/CoreServices;
 //     EXTRA_PATH_MACOS_SINCE_1014 = /System/Library/PrivateFrameworks;
+
+// macOS
 
 WK_MACOS_BEFORE_1012 = $(WK_MACOS_BEFORE_1012_$(TARGET_MAC_OS_X_VERSION_MAJOR));
 WK_MACOS_BEFORE_1012_101100 = YES;
@@ -80,3 +105,41 @@ WK_MACOS_1014_1015_YES = _MACOS_BEFORE_1014;
 WK_MACOS_1015 = $(WK_MACOS_1015_$(WK_MACOS_BEFORE_1015));
 WK_MACOS_1015_ = _MACOS_SINCE_1015;
 WK_MACOS_1015_YES = _MACOS_BEFORE_1015;
+
+// iOS
+
+WK_IOS_BEFORE_12 = $(WK_IOS_BEFORE_12_$(IPHONEOS_DEPLOYMENT_TARGET:base));
+WK_IOS_BEFORE_12_11 = YES;
+
+WK_IOS_BEFORE_13 = $(WK_IOS_BEFORE_13_$(IPHONEOS_DEPLOYMENT_TARGET:base));
+WK_IOS_BEFORE_13_11 = YES;
+WK_IOS_BEFORE_13_12 = YES;
+
+WK_IOS_BEFORE_14 = $(WK_IOS_BEFORE_14_$(IPHONEOS_DEPLOYMENT_TARGET:base));
+WK_IOS_BEFORE_14_11 = YES;
+WK_IOS_BEFORE_14_12 = YES;
+WK_IOS_BEFORE_14_13 = YES;
+
+WK_IOS_12 = $(WK_IOS_12_$(WK_IOS_BEFORE_12));
+WK_IOS_12_ = _IOS_SINCE_12;
+WK_IOS_12_YES = _IOS_BEFORE_12;
+
+WK_IOS_12_13 = $(WK_IOS_12_13_$(WK_IOS_BEFORE_12));
+WK_IOS_12_13_ = $(WK_IOS_13);
+WK_IOS_12_13_YES = _IOS_BEFORE_12;
+
+WK_IOS_12_14 = $(WK_IOS_12_14_$(WK_IOS_BEFORE_12));
+WK_IOS_12_14_ = $(WK_IOS_14);
+WK_IOS_12_14_YES = _IOS_BEFORE_12;
+
+WK_IOS_13 = $(WK_IOS_13_$(WK_IOS_BEFORE_13));
+WK_IOS_13_ = _IOS_SINCE_13;
+WK_IOS_13_YES = _IOS_BEFORE_13;
+
+WK_IOS_13_14 = $(WK_IOS_13_14_$(WK_IOS_BEFORE_13));
+WK_IOS_13_14_ = $(WK_IOS_14);
+WK_IOS_13_14_YES = _IOS_BEFORE_13;
+
+WK_IOS_14 = $(WK_IOS_14_$(WK_IOS_BEFORE_14));
+WK_IOS_14_ = _IOS_SINCE_14;
+WK_IOS_14_YES = _IOS_BEFORE_14;
