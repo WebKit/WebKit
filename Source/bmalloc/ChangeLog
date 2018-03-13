@@ -1,3 +1,15 @@
+2018-03-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in WTF and bmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=183576
+        <rdar://problem/38396766>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/bmalloc.xcconfig:
+        * Configurations/mbmalloc.xcconfig:
+
 2018-03-10  Filip Pizlo  <fpizlo@apple.com>
 
         PerProcess<> should be safe by default

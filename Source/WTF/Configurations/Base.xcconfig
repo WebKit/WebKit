@@ -90,7 +90,9 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 PREBINDING = NO;
 WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough;
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(DSTROOT)/usr/local/include $(HEADER_SEARCH_PATHS);
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)$(WTF_INSTALL_PATH_PREFIX)/usr/local/include $(DSTROOT)$(WTF_INSTALL_PATH_PREFIX)/usr/local/include $(inherited);
+SYSTEM_HEADER_SEARCH_PATHS = $(SDK_DIR)$(WTF_INSTALL_PATH_PREFIX)/usr/local/include $(inherited);
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WTF_INSTALL_PATH_PREFIX)/usr/local/lib $(inherited);
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
 TARGET_MAC_OS_X_VERSION_MAJOR_11 = 101100;
@@ -126,3 +128,12 @@ SDKROOT = macosx.internal;
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+
+WK_EMPTY_ = YES;
+WK_NOT_ = YES;
+WK_NOT_YES = NO;
+
+WK_USE_ALTERNATE_FRAMEWORKS_DIR = $(WK_NOT_$(WK_EMPTY_$(WK_ALTERNATE_FRAMEWORKS_DIR)));
+
+WTF_INSTALL_PATH_PREFIX = $(WTF_INSTALL_PATH_PREFIX_$(WK_USE_ALTERNATE_FRAMEWORKS_DIR));
+WTF_INSTALL_PATH_PREFIX_YES = $(WK_ALTERNATE_FRAMEWORKS_DIR)/;
