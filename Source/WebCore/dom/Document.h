@@ -1415,6 +1415,11 @@ public:
 
     JSC::ThreadLocalCache& threadLocalCache();
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    bool hasGrantedPageSpecificStorageAccess(String& primaryDomain);
+    void setHasGrantedPageSpecificStorageAccess(String& primaryDomain);
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1901,6 +1906,10 @@ private:
     HashSet<ApplicationStateChangeListener*> m_applicationStateChangeListeners;
     
     RefPtr<JSC::ThreadLocalCache> m_threadLocalCache;
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    String m_primaryDomainGrantedPageSpecificStorageAccess { };
+#endif
 };
 
 Element* eventTargetElementForDocument(Document*);

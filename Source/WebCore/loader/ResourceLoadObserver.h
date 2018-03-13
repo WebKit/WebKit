@@ -61,6 +61,7 @@ public:
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
+    WEBCORE_EXPORT void setGrantStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&)>&&);
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
@@ -82,6 +83,7 @@ private:
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
+    WTF::Function<void(String, uint64_t, String)> m_grantStorageAccessUnderOpenerCallback;
     Timer m_notificationTimer;
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };

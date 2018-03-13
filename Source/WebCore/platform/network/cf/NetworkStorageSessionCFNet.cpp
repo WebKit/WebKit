@@ -196,7 +196,7 @@ String NetworkStorageSession::cookieStoragePartition(const URL& firstPartyForCoo
     if (firstPartyDomain == resourceDomain)
         return emptyString();
 
-    if (frameID && pageID && hasStorageAccessForFrame(resourceDomain, firstPartyDomain, frameID.value(), pageID.value()))
+    if (pageID && hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID.value()))
         return emptyString();
 
     return firstPartyDomain;
@@ -281,19 +281,25 @@ void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains
     }
 }
 
-bool NetworkStorageSession::hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const
+bool NetworkStorageSession::hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const
 {
-    UNUSED_PARAM(firstPartyDomain);
+    if (frameID) {
+        auto framesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
+        if (framesGrantedIterator != m_framesGrantedStorageAccess.end()) {
+            auto it = framesGrantedIterator->value.find(frameID.value());
+            if (it != framesGrantedIterator->value.end() && it->value == resourceDomain)
+                return true;
+        }
+    }
 
-    auto it1 = m_framesGrantedStorageAccess.find(pageID);
-    if (it1 == m_framesGrantedStorageAccess.end())
-        return false;
+    auto pagesGrantedIterator = m_pagesGrantedStorageAccess.find(pageID);
+    if (pagesGrantedIterator != m_pagesGrantedStorageAccess.end()) {
+        auto it = pagesGrantedIterator->value.find(firstPartyDomain);
+        if (it != pagesGrantedIterator->value.end() && it->value == resourceDomain)
+            return true;
+    }
 
-    auto it2 = it1->value.find(frameID);
-    if (it2 == it1->value.end())
-        return false;
-    
-    return it2->value == resourceDomain;
+    return false;
 }
 
 Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
@@ -307,18 +313,35 @@ Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
     return entries;
 }
     
-void NetworkStorageSession::grantStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID)
+void NetworkStorageSession::grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID)
 {
-    UNUSED_PARAM(firstPartyDomain);
+    if (!frameID) {
+        auto pagesGrantedIterator = m_pagesGrantedStorageAccess.find(pageID);
+        if (pagesGrantedIterator == m_pagesGrantedStorageAccess.end()) {
+            HashMap<String, String> entry;
+            entry.add(firstPartyDomain, resourceDomain);
+            m_pagesGrantedStorageAccess.add(pageID, entry);
+        } else {
+            auto firstPartyDomainIterator = pagesGrantedIterator->value.find(firstPartyDomain);
+            if (firstPartyDomainIterator == pagesGrantedIterator->value.end())
+                pagesGrantedIterator->value.add(firstPartyDomain, resourceDomain);
+            else
+                firstPartyDomainIterator->value = resourceDomain;
+        }
+        return;
+    }
 
-    auto it1 = m_framesGrantedStorageAccess.find(pageID);
-    if (it1 == m_framesGrantedStorageAccess.end()) {
+    auto pagesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
+    if (pagesGrantedIterator == m_framesGrantedStorageAccess.end()) {
         HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> entry;
-        entry.add(frameID, resourceDomain);
+        entry.add(frameID.value(), resourceDomain);
         m_framesGrantedStorageAccess.add(pageID, entry);
     } else {
-        auto it2 = it1->value.find(frameID);
-        it2->value = resourceDomain;
+        auto framesGrantedIterator = pagesGrantedIterator->value.find(frameID.value());
+        if (framesGrantedIterator == pagesGrantedIterator->value.end())
+            pagesGrantedIterator->value.add(frameID.value(), resourceDomain);
+        else
+            framesGrantedIterator->value = resourceDomain;
     }
 }
 
@@ -333,6 +356,7 @@ void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64
 
 void NetworkStorageSession::removeStorageAccessForAllFramesOnPage(uint64_t pageID)
 {
+    m_pagesGrantedStorageAccess.remove(pageID);
     m_framesGrantedStorageAccess.remove(pageID);
 }
 

@@ -154,12 +154,12 @@ static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& ex
     return mergedDates;
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessForFrameHandler&& grantStorageAccessForFrameHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessHandler&& grantStorageAccessHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_persistentStorage(*this, resourceLoadStatisticsDirectory, isEphemeral ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes : ResourceLoadStatisticsPersistentStorage::IsReadOnly::No)
     , m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler))
     , m_hasStorageAccessForFrameHandler(WTFMove(hasStorageAccessForFrameHandler))
-    , m_grantStorageAccessForFrameHandler(WTFMove(grantStorageAccessForFrameHandler))
+    , m_grantStorageAccessHandler(WTFMove(grantStorageAccessHandler))
     , m_removeDomainsHandler(WTFMove(removeDomainsHandler))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
     , m_statisticsTestingCallback(WTFMove(testingCallback))
@@ -381,10 +381,28 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
 
         subFrameStatistic.timesAccessedAsFirstPartyDueToStorageAccessAPI++;
 
-        m_grantStorageAccessForFrameHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
+        m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
     });
 }
-    
+
+void WebResourceLoadStatisticsStore::grantStorageAccessUnderOpener(String&& domainReceivingUserInteraction, uint64_t openerPageID, String&& openerDomain)
+{
+    ASSERT(domainReceivingUserInteraction != openerDomain);
+    ASSERT(!RunLoop::isMain());
+
+    if (domainReceivingUserInteraction == openerDomain)
+        return;
+
+    auto& domainReceivingUserInteractionStatistic = ensureResourceStatisticsForPrimaryDomain(domainReceivingUserInteraction);
+    if (!shouldPartitionCookies(domainReceivingUserInteractionStatistic) && !shouldBlockCookies(domainReceivingUserInteractionStatistic))
+        return;
+
+    m_grantStorageAccessHandler(WTFMove(domainReceivingUserInteraction), WTFMove(openerDomain), std::nullopt, openerPageID, [](bool) { });
+#if !RELEASE_LOG_DISABLED
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Grant storage access for %s under opener %s.", domainReceivingUserInteraction.utf8().data(), openerDomain.utf8().data());
+#endif
+}
+
 void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandler<void()>&& callback)
 {
     ASSERT(!RunLoop::isMain());

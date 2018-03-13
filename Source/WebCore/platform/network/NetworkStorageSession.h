@@ -104,9 +104,9 @@ public:
     WEBCORE_EXPORT String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
     WEBCORE_EXPORT void setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
-    WEBCORE_EXPORT bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const;
+    WEBCORE_EXPORT bool hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const;
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
-    WEBCORE_EXPORT void grantStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
+    WEBCORE_EXPORT void grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
 #endif
@@ -182,6 +182,7 @@ private:
     HashSet<String> m_topPrivatelyControlledDomainsToPartition;
     HashSet<String> m_topPrivatelyControlledDomainsToBlock;
     HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
+    HashMap<uint64_t, HashMap<String, String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;
 #endif
 
 #if PLATFORM(COCOA)

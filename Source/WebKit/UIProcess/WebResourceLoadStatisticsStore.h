@@ -63,11 +63,11 @@ class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMe
 public:
     using UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler = WTF::Function<void(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst)>;
     using HasStorageAccessForFrameHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool hasAccess)>&& callback)>;
-    using GrantStorageAccessForFrameHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool wasGranted)>&& callback)>;
+    using GrantStorageAccessHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::Function<void(bool wasGranted)>&& callback)>;
     using RemovePrevalentDomainsHandler = WTF::Function<void (const Vector<String>&)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const WTF::Vector<String>&, const WTF::Vector<String>&, const WTF::Vector<String>&, ShouldClearFirst) { }, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, GrantStorageAccessForFrameHandler&& grantStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const WTF::Vector<String>&) { })
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const WTF::Vector<String>&, const WTF::Vector<String>&, const WTF::Vector<String>&, ShouldClearFirst) { }, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, GrantStorageAccessHandler&& grantStorageAccessHandler = [](const String&, const String&, std::optional<uint64_t>, uint64_t, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const WTF::Vector<String>&) { })
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), isEphemeral, WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(hasStorageAccessForFrameHandler), WTFMove(grantStorageAccessForFrameHandler), WTFMove(removeDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), isEphemeral, WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(hasStorageAccessForFrameHandler), WTFMove(grantStorageAccessHandler), WTFMove(removeDomainsHandler)));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -85,6 +85,7 @@ public:
 
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
+    void grantStorageAccessUnderOpener(String&& domainReceivingUserInteraction, uint64_t openerPageID, String&& openerDomain);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
@@ -150,7 +151,7 @@ public:
     void logTestingEvent(const String&);
 
 private:
-    WebResourceLoadStatisticsStore(const String&, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, HasStorageAccessForFrameHandler&&, GrantStorageAccessForFrameHandler&&, RemovePrevalentDomainsHandler&&);
+    WebResourceLoadStatisticsStore(const String&, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, HasStorageAccessForFrameHandler&&, GrantStorageAccessHandler&&, RemovePrevalentDomainsHandler&&);
 
     void removeDataRecords(CompletionHandler<void()>&&);
 
@@ -210,7 +211,7 @@ private:
 
     UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler;
     HasStorageAccessForFrameHandler m_hasStorageAccessForFrameHandler;
-    GrantStorageAccessForFrameHandler m_grantStorageAccessForFrameHandler;
+    GrantStorageAccessHandler m_grantStorageAccessHandler;
     RemovePrevalentDomainsHandler m_removeDomainsHandler;
 
     WallTime m_endOfGrandfatheringTimestamp;

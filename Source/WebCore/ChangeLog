@@ -1,3 +1,47 @@
+2018-03-12  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Immediately forward cookie access at user interaction when there's an opener document
+        https://bugs.webkit.org/show_bug.cgi?id=183577
+        <rdar://problem/38266987>
+
+        Reviewed by Brent Fulgham.
+
+        Tested manually on live websites.
+        No new automated tests because of a bug in WebKitTestRunner:
+        https://bugs.webkit.org/show_bug.cgi?id=183578
+        The event sender triggers gestures in the opener rather than
+        in the popup.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+            Clears the new m_primaryDomainsGrantedPageSpecificStorageAccess.
+        (WebCore::Document::hasGrantedPageSpecificStorageAccess):
+        (WebCore::Document::setHasGrantedPageSpecificStorageAccess):
+        * dom/Document.h:
+            Added member m_primaryDomainsGrantedPageSpecificStorageAccess
+            where we store domains that have been granted access.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setGrantStorageAccessUnderOpenerCallback):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+            Now checks if there is a cross-origin opener and if so, immediately
+            grants cookie access to the popup's domain if it is partitioned or
+            blocked. 
+        * loader/ResourceLoadObserver.h:
+        * platform/network/NetworkStorageSession.h:
+            Added member m_pagesGrantedStorageAccess.
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::cookieStoragePartition const):
+        (WebCore::NetworkStorageSession::hasStorageAccess const):
+            Renamed from hasStorageAccessForFrame since the frameID now is optional.
+        (WebCore::NetworkStorageSession::grantStorageAccess):
+            Renamed from grantStorageAccessForFrame since the frameID now is optional.
+        (WebCore::NetworkStorageSession::removeStorageAccessForAllFramesOnPage):
+            Now removes the pageID entry in m_pagesGrantedStorageAccess.
+        (WebCore::NetworkStorageSession::hasStorageAccessForFrame const): Deleted.
+            Renamed since the frameID now is optional.
+        (WebCore::NetworkStorageSession::grantStorageAccessForFrame): Deleted.
+            Renamed since the frameID now is optional.
+
 2018-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Stop using SDK conditionals to control feature definitions

@@ -786,7 +786,7 @@ void NetworkResourceLoader::logCookieInformation(const String& label, const void
     auto escapedFrameID = escapeIDForJSON(frameID);
     auto escapedPageID = escapeIDForJSON(pageID);
     auto escapedIdentifier = escapeIDForJSON(identifier);
-    bool hasStorageAccessForFrame = (frameID && pageID) ? networkStorageSession.hasStorageAccessForFrame(url.string(), partition.string(), frameID.value(), pageID.value()) : false;
+    bool hasStorageAccess = (frameID && pageID) ? networkStorageSession.hasStorageAccess(url.string(), partition.string(), frameID.value(), pageID.value()) : false;
 
 #define LOCAL_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(networkStorageSession.sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - %s::" fmt, loggedObject, label.utf8().data(), ##__VA_ARGS__)
 #define LOCAL_LOG(str, ...) \
@@ -794,7 +794,7 @@ void NetworkResourceLoader::logCookieInformation(const String& label, const void
 
     LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
     LOCAL_LOG(R"(  "partition": "%{public}s",)", escapedPartition.utf8().data());
-    LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", hasStorageAccessForFrame ? "true" : "false");
+    LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", hasStorageAccess ? "true" : "false");
     LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
     LOCAL_LOG(R"(  "cookies": [)");
 

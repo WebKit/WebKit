@@ -1208,10 +1208,10 @@ void WebsiteDataStore::getAllStorageAccessEntries(CompletionHandler<void(Vector<
         processPool->networkProcess()->getAllStorageAccessEntries(m_sessionID, WTFMove(callback));
 }
 
-void WebsiteDataStore::grantStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback)
+void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback)
 {
     for (auto& processPool : processPools())
-        processPool->networkProcess()->grantStorageAccessForFrame(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+        processPool->networkProcess()->grantStorageAccess(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
 }
 
 void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
@@ -1442,8 +1442,8 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
     }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback) {
         hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
-    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback) {
-        grantStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback) {
+        grantStorageAccessHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
     }, [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToRemove) {
         removePrevalentDomains(domainsToRemove);
     });

@@ -7622,6 +7622,17 @@ void Document::setHasFrameSpecificStorageAccess(bool value)
 {
     m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
 }
+
+bool Document::hasGrantedPageSpecificStorageAccess(String& primaryDomain)
+{
+    return m_primaryDomainGrantedPageSpecificStorageAccess == primaryDomain;
+}
+
+void Document::setHasGrantedPageSpecificStorageAccess(String& primaryDomain)
+{
+    m_primaryDomainGrantedPageSpecificStorageAccess = primaryDomain;
+}
+
 #endif
 
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)

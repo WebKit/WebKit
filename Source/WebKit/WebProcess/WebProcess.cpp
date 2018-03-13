@@ -206,6 +206,10 @@ WebProcess::WebProcess()
         parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 
+    ResourceLoadObserver::shared().setGrantStorageAccessUnderOpenerCallback([this] (const String& domainReceivingUserInteraction, uint64_t openerPageID, const String& openerDomain) {
+        parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::GrantStorageAccessUnderOpener(domainReceivingUserInteraction, openerPageID, openerDomain), 0);
+    });
+    
     Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
 }
 

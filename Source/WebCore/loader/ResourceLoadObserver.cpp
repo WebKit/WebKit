@@ -108,6 +108,12 @@ void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<Re
     m_notificationCallback = WTFMove(notificationCallback);
 }
 
+void ResourceLoadObserver::setGrantStorageAccessUnderOpenerCallback(WTF::Function<void(const String& domainReceivingUserInteraction, uint64_t openerPageID, const String& openerDomain)>&& callback)
+{
+    ASSERT(!m_grantStorageAccessUnderOpenerCallback);
+    m_grantStorageAccessUnderOpenerCallback = WTFMove(callback);
+}
+
 ResourceLoadObserver::ResourceLoadObserver()
     : m_notificationTimer(*this, &ResourceLoadObserver::notifyObserver)
 {
@@ -310,6 +316,25 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     statistics.hadUserInteraction = true;
     statistics.lastSeen = newTime;
     statistics.mostRecentUserInteractionTime = newTime;
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (auto* opener = document.frame()->loader().opener()) {
+        if (auto* openerDocument = opener->document()) {
+            if (auto* openerFrame = openerDocument->frame()) {
+                if (auto openerPageID = openerFrame->loader().client().pageID()) {
+                    auto openerUrl = openerDocument->url();
+                    auto openerPrimaryDomain = primaryDomain(openerUrl);
+                    if (domain != openerPrimaryDomain
+                        && !openerDocument->hasGrantedPageSpecificStorageAccess(domain)
+                        && !equalIgnoringASCIICase(openerUrl.string(), blankURL())) {
+                        openerDocument->setHasGrantedPageSpecificStorageAccess(domain);
+                        m_grantStorageAccessUnderOpenerCallback(domain, openerPageID.value(), openerPrimaryDomain);
+                    }
+                }
+            }
+        }
+    }
+#endif
 
     m_notificationTimer.stop();
     notifyObserver();

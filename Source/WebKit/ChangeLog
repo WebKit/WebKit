@@ -1,3 +1,54 @@
+2018-03-12  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Immediately forward cookie access at user interaction when there's an opener document
+        https://bugs.webkit.org/show_bug.cgi?id=183577
+        <rdar://problem/38266987>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::hasStorageAccessForFrame):
+            Now also checks for general page access.
+        (WebKit::NetworkProcess::grantStorageAccess):
+            Renamed from grantStorageAccessForFrame since the frameID now is optional.
+        (WebKit::NetworkProcess::grantStorageAccessForFrame): Deleted.
+            Renamed since the frameID now is optional.
+        * NetworkProcess/NetworkProcess.h:
+            Renaming since the frameID now is optional.
+        * NetworkProcess/NetworkProcess.messages.in:
+            Renaming since the frameID now is optional.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::logCookieInformation):
+            Consequence of function renaming.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::grantStorageAccess):
+        (WebKit::NetworkProcessProxy::grantStorageAccessForFrame): Deleted.
+            Renaming since the frameID now is optional.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            Renaming since the frameID now is optional.
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+            Handler renaming since the frameID now is optional.
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccessUnderOpener):
+            New function for that grants cookie access under a whole page.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+            Member renaming since the frameID now is optional.
+        * UIProcess/WebResourceLoadStatisticsStore.messages.in:
+            New message received straight from WebCore::ResourceLoadObserver.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::grantStorageAccessHandler):
+            Renamed and made frameID optional.
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+            Consequence of renaming and making frameID optional.
+        (WebKit::WebsiteDataStore::grantStorageAccessForFrameHandler): Deleted.
+            Renamed and made frameID optional.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebProcess.cpp:
+        (WebProcess::WebProcess):
+            Now calls setGrantStorageAccessUnderOpenerCallback() on the shared
+            WebCore::ResourceLoadObserver.
+
 2018-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Stop using SDK conditionals to control feature definitions

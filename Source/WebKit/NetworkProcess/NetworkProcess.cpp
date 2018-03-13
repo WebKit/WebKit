@@ -368,7 +368,7 @@ void NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::Sessio
 void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-        parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessRequestResult(networkStorageSession->hasStorageAccessForFrame(resourceDomain, firstPartyDomain, frameID, pageID), contextId), 0);
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessRequestResult(networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID), contextId), 0);
     else
         ASSERT_NOT_REACHED();
 }
@@ -381,12 +381,12 @@ void NetworkProcess::getAllStorageAccessEntries(PAL::SessionID sessionID, uint64
         ASSERT_NOT_REACHED();
 }
 
-void NetworkProcess::grantStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
+void NetworkProcess::grantStorageAccess(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
 {
     bool isStorageGranted = false;
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID)) {
-        networkStorageSession->grantStorageAccessForFrame(resourceDomain, firstPartyDomain, frameID, pageID);
-        ASSERT(networkStorageSession->hasStorageAccessForFrame(resourceDomain, firstPartyDomain, frameID, pageID));
+        networkStorageSession->grantStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
+        ASSERT(networkStorageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
         isStorageGranted = true;
     } else
         ASSERT_NOT_REACHED();
