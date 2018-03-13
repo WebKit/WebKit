@@ -101,6 +101,14 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
     Util::run(&didBeginPlaying);
 
     EXPECT_WK_STREQ(getAVAudioSessionCategoryAmbient(), [[getAVAudioSessionClass() sharedInstance] category]);
+
+    didBeginPlaying = false;
+
+    [uiWebView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"video-with-paused-audio-and-playing-muted" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+
+    Util::run(&didBeginPlaying);
+
+    EXPECT_WK_STREQ(getAVAudioSessionCategoryAmbient(), [[getAVAudioSessionClass() sharedInstance] category]);
 }
 
 }

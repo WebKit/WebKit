@@ -1,3 +1,16 @@
+2018-03-13  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Muted media playback can interrupt out-of-process audio
+        https://bugs.webkit.org/show_bug.cgi?id=183606
+        <rdar://problem/37466253>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/video-with-paused-audio-and-playing-muted.html: Added.
+
 2018-03-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Layout Test fast/html/menuitem-element.html is failing.

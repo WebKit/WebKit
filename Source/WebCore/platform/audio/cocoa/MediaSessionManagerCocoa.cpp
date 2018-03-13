@@ -70,7 +70,7 @@ void PlatformMediaSessionManager::updateSessionState()
         auto type = session.mediaType();
         if (type == PlatformMediaSession::WebAudio)
             hasWebAudioType = true;
-        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio())
+        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.state() == PlatformMediaSession::Playing)
             hasAudibleAudioOrVideoMediaType = true;
         return (type == PlatformMediaSession::MediaStreamCapturingAudio);
     });

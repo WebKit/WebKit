@@ -1,3 +1,20 @@
+2018-03-13  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Muted media playback can interrupt out-of-process audio
+        https://bugs.webkit.org/show_bug.cgi?id=183606
+        <rdar://problem/37466253>
+
+        Reviewed by Eric Carlson.
+
+        Test: Updated TestWebKitAPI test to verify the correct AVAudioSession category is set.
+
+        A non-playing, non-muted media element will cause the AVAudioSession category to be set to
+        "playing" when a muted media element begins playback. Ignore these non-playing elements for
+        the purposes of determining the AVAudioSession category.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (PlatformMediaSessionManager::updateSessionState):
+
 2018-03-13  Youenn Fablet  <youenn@apple.com>
 
         Calling removeTrack with RTCRtpSender does not set SenderTrack to null
