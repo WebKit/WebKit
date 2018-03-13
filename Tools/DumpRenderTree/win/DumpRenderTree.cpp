@@ -37,6 +37,7 @@
 #include "PixelDumpSupport.h"
 #include "PolicyDelegate.h"
 #include "ResourceLoadDelegate.h"
+#include "TestOptions.h"
 #include "TestRunner.h"
 #include "UIDelegate.h"
 #include "WebCoreTestSupport.h"
@@ -787,7 +788,6 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
-    prefsPrivate->setIsSecureContextAttributeEnabled(TRUE);
 }
 
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
@@ -881,14 +881,21 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setFetchAPIEnabled(TRUE);
     prefsPrivate->setShadowDOMEnabled(TRUE);
     prefsPrivate->setCustomElementsEnabled(TRUE);
-    prefsPrivate->setModernMediaControlsEnabled(FALSE);
     prefsPrivate->setResourceTimingEnabled(TRUE);
     prefsPrivate->setUserTimingEnabled(TRUE);
     prefsPrivate->setDataTransferItemsEnabled(TRUE);
-    prefsPrivate->setInspectorAdditionsEnabled(TRUE);
     prefsPrivate->clearNetworkLoaderSession();
 
     setAlwaysAcceptCookies(false);
+}
+
+static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const TestOptions& options)
+{
+    COMPtr<IWebPreferencesPrivate6> prefsPrivate { Query, preferences };
+
+    prefsPrivate->setModernMediaControlsEnabled(options.enableModernMediaControls);
+    prefsPrivate->setIsSecureContextAttributeEnabled(options.enableIsSecureContextAttribute);
+    prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
 }
 
 static String applicationId()
@@ -937,7 +944,7 @@ static void setDefaultsToConsistentValuesForTesting()
 #endif
 }
 
-static void resetWebViewToConsistentStateBeforeTesting()
+static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& options)
 {
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView))) 
@@ -983,8 +990,10 @@ static void resetWebViewToConsistentStateBeforeTesting()
     }
 
     COMPtr<IWebPreferences> preferences;
-    if (SUCCEEDED(webView->preferences(&preferences)))
+    if (SUCCEEDED(webView->preferences(&preferences))) {
         resetWebPreferencesToConsistentValues(preferences.get());
+        setWebPreferencesForTestOptions(preferences.get(), options);
+    }
 
     TestRunner::setSerializeHTTPLoads(false);
 
@@ -1155,7 +1164,9 @@ static void runTest(const string& inputLine)
 
     CFRelease(url);
 
-    resetWebViewToConsistentStateBeforeTesting();
+    TestOptions options { command.pathOrURL, command.absolutePath };
+
+    resetWebViewToConsistentStateBeforeTesting(options);
 
     ::gTestRunner = TestRunner::create(testURL.data(), command.expectedPixelHash);
     ::gTestRunner->setCustomTimeout(command.timeout);
@@ -1261,7 +1272,7 @@ static void runTest(const string& inputLine)
         }
     }
 
-    resetWebViewToConsistentStateBeforeTesting();
+    resetWebViewToConsistentStateBeforeTesting(options);
 
     // Loading an empty request synchronously replaces the document with a blank one, which is necessary
     // to stop timers, WebSockets and other activity that could otherwise spill output into next test's results.

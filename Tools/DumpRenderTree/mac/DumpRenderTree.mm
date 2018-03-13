@@ -1907,7 +1907,8 @@ static void runTest(const string& inputLine)
     NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
     WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
-    TestOptions options(url, command);
+    TestOptions options { [url isFileURL] ? [url fileSystemRepresentation] : pathOrURL, command.absolutePath };
+
     if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
         if (mainFrame)
             destroyWebViewAndOffscreenWindow([mainFrame webView]);

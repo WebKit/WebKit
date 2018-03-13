@@ -1,3 +1,23 @@
+2018-03-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [DRT] TestOptions should not be ObjC.
+        https://bugs.webkit.org/show_bug.cgi?id=183487
+
+        Reviewed by Per Arne Vollan.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/PlatformMac.cmake:
+        Move TestOptions to platform-agnostic sources.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.cpp: Renamed from Tools/DumpRenderTree/TestOptions.mm.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        Remove NSURL dependency and align with WTR as much as possible.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        Consume TestOptions (recognizing just the ones that have WebPreferences defined for now).
+
 2018-03-12  Yoav Weiss  <yoav@yoav.ws>
 
         Runtime flag for link prefetch and remove link subresource.

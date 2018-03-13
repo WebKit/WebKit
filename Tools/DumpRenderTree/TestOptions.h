@@ -24,9 +24,8 @@
  */
 
 #pragma once
-#include "DumpRenderTree.h"
 
-@class NSURL;
+#include <string>
 
 struct TestOptions {
     bool enableAttachmentElement { false };
@@ -44,6 +43,6 @@ struct TestOptions {
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
 
-    TestOptions(NSURL*, const TestCommand&);
+    TestOptions(const std::string& pathOrURL, const std::string& absolutePath);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;
 };

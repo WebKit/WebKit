@@ -26,9 +26,7 @@
 #include "config.h"
 #include "TestOptions.h"
 
-#include <Foundation/Foundation.h>
 #include <fstream>
-#include <string>
 
 static bool parseBooleanTestHeaderValue(const std::string& value)
 {
@@ -37,18 +35,15 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
     if (value == "false")
         return false;
 
-    NSLog(@"Found unexpected value '%s' for boolean option. Expected 'true' or 'false'.", value.c_str());
+    LOG_ERROR("Found unexpected value '%s' for boolean option. Expected 'true' or 'false'.", value.c_str());
     return false;
 }
 
-TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
+TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolutePath)
 {
-    std::string path = command.absolutePath;
-    if (path.empty()) {
-        path = [testURL isFileURL] ? [testURL fileSystemRepresentation] : command.pathOrURL;
-        if (path.empty())
-            return;
-    }
+    const auto& path = absolutePath.empty() ? pathOrURL : absolutePath;
+    if (path.empty())
+        return;
 
     std::string options;
     std::ifstream testFile(path.data());
@@ -62,7 +57,7 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
         return;
     size_t endLocation = options.find(endString, beginLocation);
     if (endLocation == std::string::npos) {
-        NSLog(@"Could not find end of test header in %s", path.c_str());
+        LOG_ERROR("Could not find end of test header in %s", path.c_str());
         return;
     }
     std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
@@ -73,39 +68,39 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             pairEnd = pairString.size();
         size_t equalsLocation = pairString.find("=", pairStart);
         if (equalsLocation == std::string::npos) {
-            NSLog(@"Malformed option in test header (could not find '=' character) in %s", path.c_str());
+            LOG_ERROR("Malformed option in test header (could not find '=' character) in %s", path.c_str());
             break;
         }
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         if (key == "enableAttachmentElement")
-            this->enableAttachmentElement = parseBooleanTestHeaderValue(value);
+            enableAttachmentElement = parseBooleanTestHeaderValue(value);
         if (key == "useAcceleratedDrawing")
-            this->useAcceleratedDrawing = parseBooleanTestHeaderValue(value);
+            useAcceleratedDrawing = parseBooleanTestHeaderValue(value);
         else if (key == "enableIntersectionObserver")
-            this->enableIntersectionObserver = parseBooleanTestHeaderValue(value);
+            enableIntersectionObserver = parseBooleanTestHeaderValue(value);
         else if (key == "enableMenuItemElement")
-            this->enableMenuItemElement = parseBooleanTestHeaderValue(value);
+            enableMenuItemElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableModernMediaControls")
-            this->enableModernMediaControls = parseBooleanTestHeaderValue(value);
+            enableModernMediaControls = parseBooleanTestHeaderValue(value);
         else if (key == "enablePointerLock")
-            this->enablePointerLock = parseBooleanTestHeaderValue(value);
+            enablePointerLock = parseBooleanTestHeaderValue(value);
         else if (key == "enableWebAuthentication")
-            this->enableWebAuthentication = parseBooleanTestHeaderValue(value);
+            enableWebAuthentication = parseBooleanTestHeaderValue(value);
         else if (key == "enableDragDestinationActionLoad")
-            this->enableDragDestinationActionLoad = parseBooleanTestHeaderValue(value);
+            enableDragDestinationActionLoad = parseBooleanTestHeaderValue(value);
         else if (key == "layerBackedWebView")
-            this->layerBackedWebView = parseBooleanTestHeaderValue(value);
+            layerBackedWebView = parseBooleanTestHeaderValue(value);
         else if (key == "enableIsSecureContextAttribute")
-            this->enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
+            enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
         else if (key == "enableInspectorAdditions")
-            this->enableInspectorAdditions = parseBooleanTestHeaderValue(value);
+            enableInspectorAdditions = parseBooleanTestHeaderValue(value);
         else if (key == "dumpJSConsoleLogInStdErr")
-            this->dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
+            dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
         else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
-            this->allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
+            allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
         else if (key == "enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations")
-            this->enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations = parseBooleanTestHeaderValue(value);
+            enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
