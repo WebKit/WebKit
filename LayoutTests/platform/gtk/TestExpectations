@@ -1335,7 +1335,6 @@ webkit.org/b/119735 [ Debug ] plugins/unavailable-plugin-indicator-obscurity.htm
 
 webkit.org/b/71777 fast/lists/inlineBoxWrapperNullCheck.html [ Failure Pass ]
 
-webkit.org/b/71655 fast/frames/flattening/frameset-flattening-simple.html [ Failure Pass ]
 webkit.org/b/80129 fast/frames/flattening/iframe-flattening-fixed-width.html [ Failure Pass ]
 webkit.org/b/80129 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
 webkit.org/b/80129 fast/frames/flattening/frameset-flattening-grid.html [ Failure Pass ]

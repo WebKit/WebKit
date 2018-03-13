@@ -1,3 +1,29 @@
+2018-03-13  Frederic Wang  <fwang@igalia.com>
+
+        Rewrite frameset-flattening-simple to make expectation clearer
+        https://bugs.webkit.org/show_bug.cgi?id=183129
+
+        The description of fast/frames/flattening/frameset-flattening-simple.html says that the
+        iframe should be 800px wide and should not have any scrollbars. However, it is a bit
+        difficult to know the size when checking the test visually. Moreover, the scrollbars of the
+        main frame are visible, which makes things a bit confusing and may be the cause of bug 71655
+        on GTK.
+
+        Reviewed by Javier Fernandez.
+
+        * fast/frames/flattening/frameset-flattening-simple.html: Put the frame inside a 200x300
+        frameset cell and set its width to 300px. The frame should be a 300x300 square when it is
+        flattened (test passes) and a 200x300 rectangle when it is not (test fails). That's easier
+        to verify visually. That also avoids scrollbars on the main frame.
+        * platform/gtk/TestExpectations: Attempt to remove flacky expectation.
+        * platform/gtk/fast/frames/flattening/frameset-flattening-simple-expected.png: Update.
+        * platform/gtk/fast/frames/flattening/frameset-flattening-simple-expected.txt: Ditto.
+        * platform/ios/fast/frames/flattening/frameset-flattening-simple-expected.txt: Ditto.
+        * platform/mac-wk2/fast/frames/flattening/frameset-flattening-simple-expected.txt: Ditto.
+        * platform/mac/fast/frames/flattening/frameset-flattening-simple-expected.png: Ditto.
+        * platform/mac/fast/frames/flattening/frameset-flattening-simple-expected.txt: Ditto.
+        * platform/win/fast/frames/flattening/frameset-flattening-simple-expected.txt: Ditto.
+
 2018-03-12  Chris Dumez  <cdumez@apple.com>
 
         Load may get committed before receiving policy for the resource response
