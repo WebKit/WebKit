@@ -1,3 +1,9 @@
+2018-03-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK expectations gardening
+
+        * platform/gtk/TestExpectations:
+
 2018-03-13  Youenn Fablet  <youenn@apple.com>
 
         Changing link element rel attribute from preload to stylesheet should succeed loading the stylesheet

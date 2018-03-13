@@ -1133,6 +1133,7 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers [ Skip ]
 webkit.org/b/175419 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 webkit.org/b/175419 http/tests/appcache/main-resource-redirect.html [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Skip ]
+webkit.org/b/175419 http/wpt/service-workers/third-party-registration.html [ Skip ]
 
 # Skip anything related to WebAuthN
 http/tests/webauthn/ [ Skip ]
@@ -1934,6 +1935,10 @@ webkit.org/b/183036 fast/events/message-port.html [ Timeout Pass ]
 webkit.org/b/183037 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Timeout Pass ]
 
 webkit.org/b/183188 imported/blink/svg/as-image/image-change-with-equal-sizes.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
+
+webkit.org/b/183609 inspector/unit-tests/throttle.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3326,6 +3331,10 @@ webkit.org/b/182765 fast/backgrounds/background-leakage-transforms.html [ Failur
 webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Failure ]
+
+webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
+
+webkit.org/b/183613 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
