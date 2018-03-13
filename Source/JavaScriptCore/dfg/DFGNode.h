@@ -726,7 +726,7 @@ public:
 
     void convertToNewObject(RegisteredStructure structure)
     {
-        ASSERT(m_op == CallObjectConstructor);
+        ASSERT(m_op == CallObjectConstructor || m_op == CreateThis);
         setOpAndDefaultFlags(NewObject);
         children.reset();
         m_opInfo = structure;
