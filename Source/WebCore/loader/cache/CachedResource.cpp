@@ -579,6 +579,12 @@ void CachedResource::removeClient(CachedResourceClient& client)
     memoryCache.pruneSoon();
 }
 
+void CachedResource::allClientsRemoved()
+{
+    if (isLinkPreload() && m_loader)
+        m_loader->cancelIfNotFinishing();
+}
+
 void CachedResource::destroyDecodedDataIfNeeded()
 {
     if (!m_decodedSize)

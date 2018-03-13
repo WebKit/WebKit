@@ -141,7 +141,7 @@ public:
 
     virtual void didAddClient(CachedResourceClient&);
     virtual void didRemoveClient(CachedResourceClient&) { }
-    virtual void allClientsRemoved() { }
+    virtual void allClientsRemoved();
     void destroyDecodedDataIfNeeded();
 
     unsigned count() const { return m_clients.size(); }

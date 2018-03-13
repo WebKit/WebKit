@@ -1,3 +1,21 @@
+2018-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Changing link element rel attribute from preload to stylesheet should succeed loading the stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=183601
+        <rdar://problem/38309441>
+
+        Reviewed by Antti Koivisto.
+
+        Test: http/wpt/preload/change-link-rel-attribute.html
+
+        * loader/LinkPreloadResourceClients.h:
+        (WebCore::LinkPreloadResourceClient::clearResource): Remove the call to CachedResource::cancelLoad.
+        This call is expected to be called by ResourceLoader when cancelling the load from below CachedResource.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::allClientsRemoved): In case of preload,
+        cancel the load if not finished when there is no more client attached to it.
+        * loader/cache/CachedResource.h:
+
 2018-03-12  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Immediately forward cookie access at user interaction when there's an opener document

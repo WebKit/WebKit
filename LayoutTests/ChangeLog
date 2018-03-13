@@ -1,3 +1,16 @@
+2018-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Changing link element rel attribute from preload to stylesheet should succeed loading the stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=183601
+        <rdar://problem/38309441>
+
+        Reviewed by Antti Koivisto.
+
+        * http/wpt/preload/change-link-rel-attribute-expected.txt: Added.
+        * http/wpt/preload/change-link-rel-attribute.html: Added.
+        * http/wpt/preload/resources/style.css: Added.
+        (body):
+
 2018-03-13  Frederic Wang  <fwang@igalia.com>
 
         Skip mathml-in-dashboard-expected on Windows
