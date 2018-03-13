@@ -31,6 +31,10 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <WebCore/NotImplemented.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK(LocalAuthentication)
+SOFT_LINK_CLASS(LocalAuthentication, LAContext);
 
 namespace WebKit {
 
@@ -40,7 +44,7 @@ void WebCredentialsMessengerProxy::platformIsUserVerifyingPlatformAuthenticatorA
     ASSERT_UNUSED(messageId, messageId);
     notImplemented();
 #else
-    auto context = adoptNS([[LAContext alloc] init]);
+    auto context = adoptNS([allocLAContextInstance() init]);
     NSError *error = nil;
 
     if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error])

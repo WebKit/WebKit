@@ -1218,7 +1218,6 @@
 		53BA47D01DC2EF5E004DF4AD /* NetworkDataTaskBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */; };
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
-		5750F32B2032D4E500389347 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5750F32A2032D4E500389347 /* LocalAuthentication.framework */; };
 		5760828E2029895E00116678 /* WebCredentialsMessenger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760828C2029854200116678 /* WebCredentialsMessenger.cpp */; };
 		57608298202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57608296202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp */; };
 		5760829C202D2C3C00116678 /* WebCredentialsMessengerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760829020298FBD00116678 /* WebCredentialsMessengerMessageReceiver.cpp */; };
@@ -4751,7 +4750,6 @@
 			files = (
 				3766F9EE189A1241003CF19B /* JavaScriptCore.framework in Frameworks */,
 				3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */,
-				5750F32B2032D4E500389347 /* LocalAuthentication.framework in Frameworks */,
 				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
 				37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */,
