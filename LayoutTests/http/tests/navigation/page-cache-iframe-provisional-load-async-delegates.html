@@ -6,8 +6,12 @@
 description("A frame in provisional load stage should prevent page caching.");
 window.jsTestIsAsync = true;
 
-if (window.testRunner)
+if (window.testRunner) {
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+          testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+
     testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");

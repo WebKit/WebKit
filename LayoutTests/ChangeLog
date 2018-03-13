@@ -1,3 +1,23 @@
+2018-03-13  Danyao Wang  <danyao@chromium.org>
+
+        LayoutTests/http/tests/navigation/page-cache-iframe-provisional-load.html fails with async policy delegate
+        https://bugs.webkit.org/show_bug.cgi?id=183386
+
+        Reviewed by Chris Dumez.
+
+        This test relies on the happenstance that with sync poicy decision, the subframe transitions
+        to FrameLoadProvisional before main frame navigation is committed. With async delegate,
+        policy checks for the main frame and subframe are interleaved. When the main frame policy
+        decision is received, it cancels the subframe check. So the page ends up being cached when
+        navigating away. This is working as intended.
+
+        * http/tests/navigation/page-cache-iframe-provisional-load-async-delegates-expected.txt: Added.
+        * http/tests/navigation/page-cache-iframe-provisional-load-async-delegates.html: Copied from LayoutTests/http/tests/navigation/page-cache-iframe-provisional-load.html.
+        Add a new version of the test that forces async policy delegate.
+
+        * http/tests/navigation/page-cache-iframe-provisional-load.html:
+        Update test to sequence main frame navigation after start of provisional navigation in subframe.
+
 2018-03-13  Frederic Wang  <fwang@igalia.com>
 
         Rewrite frameset-flattening-simple to make expectation clearer
