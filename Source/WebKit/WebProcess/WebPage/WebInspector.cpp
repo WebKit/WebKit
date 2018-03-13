@@ -145,6 +145,8 @@ void WebInspector::close()
 
 void WebInspector::openInNewTab(const String& urlString)
 {
+    UserGestureIndicator indicator { ProcessingUserGesture };
+
     Page* inspectedPage = m_page->corePage();
     if (!inspectedPage)
         return;

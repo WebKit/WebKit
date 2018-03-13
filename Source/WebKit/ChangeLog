@@ -1,3 +1,17 @@
+2018-03-13  Brian Burg  <bburg@apple.com>
+
+        [WK2] Web Inspector: NavigationAction for opening a link in a new tab should have a UserGestureIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=183612
+        <rdar://problem/38388641>
+
+        Reviewed by Timothy Hatcher.
+
+        The current gesture token will be attached to the NavigationAction at construction time,
+        so set up a UserGestureIndicator when creating the action and sending it out.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab):
+
 2018-03-13  Dean Jackson  <dino@apple.com>
 
         WKSystemPreviewView needs to implement some of UIScrollViewDelegate
