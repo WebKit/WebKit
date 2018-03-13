@@ -636,7 +636,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
     RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
     RefPtr<API::NavigationResponse> navigationResponseRefPtr(navigationResponse.ptr());
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker, navigationResponse = WTFMove(navigationResponseRefPtr), &page](WKNavigationResponsePolicy responsePolicy) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -654,11 +654,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationResponsePolicyBecomeDownload:
-            if (page.systemPreviewController()->canPreview(navigationResponse->response().mimeType())) {
-                page.systemPreviewController()->showPreview(navigationResponse->response().url());
-                localListener->ignore();
-            } else
-                localListener->download();
+            localListener->download();
 #pragma clang diagnostic pop
             break;
         }

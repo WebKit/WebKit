@@ -1,3 +1,15 @@
+2018-03-12  Dean Jackson  <dino@apple.com>
+
+        Add a WKWebViewContentProvider for system previews
+        https://bugs.webkit.org/show_bug.cgi?id=183582
+        <rdar://problem/38393569>
+
+        Reviewed by Tim Horton.
+
+        Add some QuickLook SPI.
+
+        * pal/spi/ios/QuickLookSPI.h:
+
 2018-03-12  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Forwarding headers of WTF and PAL are copied twice in Visual Studio builds

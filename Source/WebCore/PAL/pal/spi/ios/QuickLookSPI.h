@@ -34,6 +34,9 @@
 @interface QLPreviewConverter : NSObject
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
+
 @interface QLPreviewConverter ()
 - (NSURLRequest *)safeRequestForRequest:(NSURLRequest *)request;
 - (id)initWithConnection:(NSURLConnection *)connection delegate:(id)delegate response:(NSURLResponse *)response options:(NSDictionary *)options;
@@ -46,6 +49,17 @@
 @property (readonly, nonatomic) NSURLRequest *previewRequest;
 @property (readonly, nonatomic) NSURLResponse *previewResponse;
 @end
+
+@class QLItem;
+
+@protocol QLPreviewItemDataProvider <NSObject>
+- (NSData *)provideDataForItem:(QLItem *)item;
+@end
+
+@interface QLItem : NSObject
+- (instancetype)initWithDataProvider:(id<QLPreviewItemDataProvider> _Nonnull)data contentType:(NSString *_Nonnull)contentType previewTitle:(NSString *_Nonnull)previewTitle;
+@end
+
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 #define kQLReturnPasswordProtected 1 << 2
@@ -70,3 +84,5 @@ NSString *QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *, NSString *mimeType);
 NSString *QLTypeCopyUTIForURLAndMimeType(NSURL *, NSString *mimeType);
 
 WTF_EXTERN_C_END
+
+#pragma clang diagnostic pop

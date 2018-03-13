@@ -1,3 +1,47 @@
+2018-03-12  Dean Jackson  <dino@apple.com>
+
+        Add a WKWebViewContentProvider for system previews
+        https://bugs.webkit.org/show_bug.cgi?id=183582
+        <rdar://problem/38393569>
+
+        Reviewed by Tim Horton.
+
+        Implement WKSystemPreviewView, which conforms to WKWebViewContentProvider, in
+        order to view content as a "system preview". This effectively replaces the
+        SystemPreviewController, which will be removed soon.
+
+        Some of the required methods of WKWebViewContentProvider are not necessary on
+        this instance, so a follow-up patch will clean the protocol up a bit.
+
+        * UIProcess/Cocoa/NavigationState.mm: Don't trigger a SystemPreview when downloading.
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry init]): Register the WKSystemPreviewView for
+        MIME types retrieved from WebKitAdditions.
+
+        * UIProcess/ios/WKSystemPreviewView.h: Added.
+        * UIProcess/ios/WKSystemPreviewView.mm: Added.
+
+        (-[WKSystemPreviewView web_initWithFrame:webView:]):
+        (-[WKSystemPreviewView web_setContentProviderData:suggestedFilename:]): This is the
+        method that actually creates a QuickLook preview and provides the data.
+        (-[WKSystemPreviewView web_setMinimumSize:]):
+        (-[WKSystemPreviewView web_setOverlaidAccessoryViewsInset:]):
+        (-[WKSystemPreviewView web_computedContentInsetDidChange]):
+        (-[WKSystemPreviewView web_setFixedOverlayView:]):
+        (-[WKSystemPreviewView web_didSameDocumentNavigation:]):
+        (-[WKSystemPreviewView web_countStringMatches:options:maxCount:]):
+        (-[WKSystemPreviewView web_findString:options:maxCount:]):
+        (-[WKSystemPreviewView web_hideFindUI]):
+
+        (-[WKSystemPreviewView numberOfPreviewItemsInPreviewController:]): QuickLook delegates.
+        (-[WKSystemPreviewView previewController:previewItemAtIndex:]):
+        (-[WKSystemPreviewView provideDataForItem:]):
+        (-[WKSystemPreviewView previewControllerWillDismiss:]):
+
+        * WebKit.xcodeproj/project.pbxproj: Add new files.
+
 2018-03-12  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Immediately forward cookie access at user interaction when there's an opener document

@@ -31,6 +31,7 @@
 #if PLATFORM(IOS)
 
 #import "WKPDFView.h"
+#import "WKSystemPreviewView.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/MIMETypeRegistry.h>
@@ -38,6 +39,10 @@
 #import <wtf/HashMap.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SystemPreviewTypes.cpp>
+#endif
 
 using namespace WebKit;
 
@@ -54,6 +59,11 @@ using namespace WebKit;
 #if ENABLE(WKPDFVIEW)
     for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
         [self registerProvider:[WKPDFView class] forMIMEType:mimeType];
+#endif
+
+#if PLATFORM(IOS) && USE(QUICK_LOOK) && USE(APPLE_INTERNAL_SDK)
+    for (auto& mimeType : getSystemPreviewMIMETypes())
+        [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
 #endif
 
     return self;

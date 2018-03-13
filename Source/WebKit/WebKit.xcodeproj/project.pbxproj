@@ -760,6 +760,8 @@
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
 		3157135E2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */; };
 		3157135F2040A9B20084F9CF /* SystemPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3157135D2040A9B20084F9CF /* SystemPreviewController.h */; };
+		316B8B632054B55800BD4A62 /* WKSystemPreviewView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316B8B612054B55800BD4A62 /* WKSystemPreviewView.mm */; };
+		316B8B642054B55800BD4A62 /* WKSystemPreviewView.h in Headers */ = {isa = PBXBuildFile; fileRef = 316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */; };
 		317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */; };
 		317FE7C61C487A7100A0CA89 /* APIExperimentalFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */; };
 		317FE7CD1C487DAE00A0CA89 /* _WKExperimentalFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C91C487D9D00A0CA89 /* _WKExperimentalFeatureInternal.h */; };
@@ -3148,6 +3150,8 @@
 		3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemPreviewControllerCocoa.mm; sourceTree = "<group>"; };
 		3157135D2040A9B20084F9CF /* SystemPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewController.h; sourceTree = "<group>"; };
 		31607F3819627002009B87DA /* LegacySessionStateCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionStateCoding.h; sourceTree = "<group>"; };
+		316B8B612054B55800BD4A62 /* WKSystemPreviewView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSystemPreviewView.mm; path = ios/WKSystemPreviewView.mm; sourceTree = "<group>"; };
+		316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKSystemPreviewView.h; path = ios/WKSystemPreviewView.h; sourceTree = "<group>"; };
 		317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIExperimentalFeature.cpp; sourceTree = "<group>"; };
 		317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIExperimentalFeature.h; sourceTree = "<group>"; };
 		317FE7C71C487D9D00A0CA89 /* _WKExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKExperimentalFeature.h; sourceTree = "<group>"; };
@@ -3299,8 +3303,8 @@
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
 		4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCResolver.cpp; path = NetworkProcess/webrtc/NetworkRTCResolver.cpp; sourceTree = "<group>"; };
-		4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolver.h; path = NetworkProcess/webrtc/NetworkRTCResolver.h; sourceTree = "<group>"; };
 		4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCResolverCocoa.cpp; path = NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp; sourceTree = "<group>"; };
+		4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolver.h; path = NetworkProcess/webrtc/NetworkRTCResolver.h; sourceTree = "<group>"; };
 		4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolverCocoa.h; path = NetworkProcess/webrtc/NetworkRTCResolverCocoa.h; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
 		413075981DE84FB00039EC69 /* NetworkRTCSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCSocket.cpp; path = NetworkProcess/webrtc/NetworkRTCSocket.cpp; sourceTree = "<group>"; };
@@ -5828,6 +5832,8 @@
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
 				26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */,
 				26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */,
+				316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */,
+				316B8B612054B55800BD4A62 /* WKSystemPreviewView.mm */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -8492,14 +8498,14 @@
 		CDC2831A201BD75600E6E745 /* fullscreen */ = {
 			isa = PBXGroup;
 			children = (
+				CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */,
+				CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */,
 				CDC2831B201BD79D00E6E745 /* WKFullscreenStackView.h */,
 				CDC2831C201BD79D00E6E745 /* WKFullscreenStackView.mm */,
 				CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */,
 				CD0C6830201FD10100A59409 /* WKFullScreenViewController.mm */,
 				3F915C0F1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.h */,
 				3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */,
-				CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */,
-				CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */,
 			);
 			name = fullscreen;
 			sourceTree = "<group>";
@@ -8829,7 +8835,6 @@
 				9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */,
 				99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */,
 				99249AD61F1F1E5F00B62FBB /* AutomationFrontendDispatchers.h in Headers */,
-				CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */,
 				9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */,
 				990D28BB1C6539D300986977 /* AutomationSessionClient.h in Headers */,
 				CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */,
@@ -8845,7 +8850,6 @@
 				1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */,
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
 				51FAEC3A1B0657630009C4E7 /* ChildProcessMessages.h in Headers */,
-				CDC2831D201BD79D00E6E745 /* WKFullscreenStackView.h in Headers */,
 				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 				290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */,
 				CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */,
@@ -8888,6 +8892,7 @@
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
 				2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */,
 				CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */,
+				CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
@@ -9390,7 +9395,6 @@
 				934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */,
 				939F401C19FB0BBC002B2B42 /* WKActionMenuTypes.h in Headers */,
 				0FCB4E4818BBE044000FCFC9 /* WKActionSheet.h in Headers */,
-				CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */,
 				0FCB4E4A18BBE044000FCFC9 /* WKActionSheetAssistant.h in Headers */,
 				C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */,
 				BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */,
@@ -9524,6 +9528,8 @@
 				2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */,
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
+				CDC2831D201BD79D00E6E745 /* WKFullscreenStackView.h in Headers */,
+				CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
 				3FFDDB961F577F480050E593 /* WKFullScreenWindowControllerIOS.h in Headers */,
 				3F915C101F564DEE00183CE9 /* WKFullScreenWindowControllerIOS.mm in Headers */,
@@ -9668,6 +9674,7 @@
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
 				26F10BE819187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h in Headers */,
+				316B8B642054B55800BD4A62 /* WKSystemPreviewView.h in Headers */,
 				51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */,
 				31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */,
 				2DD67A351BD861060053B251 /* WKTextFinderClient.h in Headers */,
@@ -10483,7 +10490,6 @@
 				990D28BC1C6539DA00986977 /* AutomationSessionClient.mm in Sources */,
 				46A2B6081E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.cpp in Sources */,
 				E164A2F1191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp in Sources */,
-				CD19D2EB2046406F0017074A /* FullscreenTouchSecheuristic.cpp in Sources */,
 				E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */,
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
 				41897ED71F415D8A0016FA42 /* CacheStorageEngine.cpp in Sources */,
@@ -10534,6 +10540,7 @@
 				1A14F8E11D74C834006CBEC6 /* FrameInfoData.cpp in Sources */,
 				1AE00D601831792100087DD7 /* FrameLoadState.cpp in Sources */,
 				CD78E1141DB7D7ED0014A2DE /* FullscreenClient.mm in Sources */,
+				CD19D2EB2046406F0017074A /* FullscreenTouchSecheuristic.cpp in Sources */,
 				515BE1B21D5902DD00DD7C68 /* GamepadData.cpp in Sources */,
 				BC06F43012DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp in Sources */,
 				BC06F44B12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp in Sources */,
@@ -10571,7 +10578,6 @@
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				0F0C365E18C110A500F607D7 /* LayerRepresentation.mm in Sources */,
-				CDC2831E201BD79D00E6E745 /* WKFullscreenStackView.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContext.cpp in Sources */,
 				1AFDE64519510B5500C48FFA /* LegacyBundleForClass.mm in Sources */,
 				5CFECB041E1ED1CC00F88504 /* LegacyCustomProtocolManager.cpp in Sources */,
@@ -11070,7 +11076,6 @@
 				BC3066BE125A442100E71278 /* WebProcessMessageReceiver.cpp in Sources */,
 				7CE4D21A1A4914A300C7F152 /* WebProcessPool.cpp in Sources */,
 				7CE4D2161A49148400C7F152 /* WebProcessPoolCocoa.mm in Sources */,
-				CD0C6832201FD10100A59409 /* WKFullScreenViewController.mm in Sources */,
 				7CE4D2271A4916C200C7F152 /* WebProcessPoolMessageReceiver.cpp in Sources */,
 				BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */,
 				1A04F6191A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm in Sources */,
@@ -11218,6 +11223,8 @@
 				2D3A65E61A7C3AA700CAC637 /* WKFrameInfoRef.cpp in Sources */,
 				BCB9F6A61123DD0D00A137E0 /* WKFramePolicyListener.cpp in Sources */,
 				E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */,
+				CDC2831E201BD79D00E6E745 /* WKFullscreenStackView.mm in Sources */,
+				CD0C6832201FD10100A59409 /* WKFullScreenViewController.mm in Sources */,
 				CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */,
 				3FFDDB971F5780E10050E593 /* WKFullScreenWindowControllerIOS.mm in Sources */,
 				BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */,
@@ -11311,6 +11318,7 @@
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
 				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,
 				26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */,
+				316B8B632054B55800BD4A62 /* WKSystemPreviewView.mm in Sources */,
 				51F886A51F2C227E00C193EF /* WKTestingSupport.cpp in Sources */,
 				31D755C21D91B81B00843BD1 /* WKTextChecker.cpp in Sources */,
 				2DD67A361BD861060053B251 /* WKTextFinderClient.mm in Sources */,
