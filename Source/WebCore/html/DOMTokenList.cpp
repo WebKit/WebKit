@@ -157,33 +157,48 @@ ExceptionOr<bool> DOMTokenList::toggle(const AtomicString& token, std::optional<
     return true;
 }
 
-// https://dom.spec.whatwg.org/#dom-domtokenlist-replace
-ExceptionOr<void> DOMTokenList::replace(const AtomicString& item, const AtomicString& replacement)
+static inline void replaceInOrderedSet(Vector<AtomicString>& tokens, size_t tokenIndex, const AtomicString& newToken)
 {
-    if (item.isEmpty() || replacement.isEmpty())
+    ASSERT(tokenIndex != notFound);
+    ASSERT(tokenIndex < tokens.size());
+
+    auto newTokenIndex = tokens.find(newToken);
+    if (newTokenIndex == notFound) {
+        tokens[tokenIndex] = newToken;
+        return;
+    }
+
+    if (newTokenIndex == tokenIndex)
+        return;
+
+    if (newTokenIndex > tokenIndex) {
+        tokens[tokenIndex] = newToken;
+        tokens.remove(newTokenIndex);
+    } else
+        tokens.remove(tokenIndex);
+}
+
+// https://dom.spec.whatwg.org/#dom-domtokenlist-replace
+ExceptionOr<bool> DOMTokenList::replace(const AtomicString& token, const AtomicString& newToken)
+{
+    if (token.isEmpty() || newToken.isEmpty())
         return Exception { SyntaxError };
 
-    if (tokenContainsHTMLSpace(item) || tokenContainsHTMLSpace(replacement))
+    if (tokenContainsHTMLSpace(token) || tokenContainsHTMLSpace(newToken))
         return Exception { InvalidCharacterError };
 
     auto& tokens = this->tokens();
 
-    auto matchesItemOrReplacement = [&](auto& token) {
-        return token == item || token == replacement;
-    };
+    auto tokenIndex = tokens.find(token);
+    if (tokenIndex == notFound)
+        return false;
 
-    size_t index = tokens.findMatching(matchesItemOrReplacement);
-    if (index == notFound)
-        return { };
-
-    tokens[index] = replacement;
-    tokens.removeFirstMatching(matchesItemOrReplacement, index + 1);
-    ASSERT(item == replacement || tokens.find(item) == notFound);
-    ASSERT(tokens.reverseFind(replacement) == index);
+    replaceInOrderedSet(tokens, tokenIndex, newToken);
+    ASSERT(token == newToken || tokens.find(token) == notFound);
 
     updateAssociatedAttributeFromTokens();
 
-    return { };
+    return true;
 }
 
 // https://dom.spec.whatwg.org/#concept-domtokenlist-validation

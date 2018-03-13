@@ -1,3 +1,14 @@
+2018-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Return boolean from DOMTokenList's replace() method
+        https://bugs.webkit.org/show_bug.cgi?id=183567
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline web platform test now that all checks are passing.
+
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+
 2018-03-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline two cssom tests after r229544.

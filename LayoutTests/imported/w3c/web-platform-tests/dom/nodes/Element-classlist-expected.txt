@@ -258,31 +258,31 @@ PASS classList.replace("b", "\ra") with attribute value null (HTML node)
 PASS classList.replace("b", "a\r") with attribute value null (HTML node) 
 PASS classList.replace("b", " a") with attribute value null (HTML node) 
 PASS classList.replace("b", "a ") with attribute value null (HTML node) 
-FAIL classList.replace("a", "a") with attribute value "a" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "a" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("A", "b") with attribute value "a" (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("b", "A") with attribute value "a b" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b" (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("d", "e") with attribute value "a b c" (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "a") with attribute value "a a a  b" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "d") with attribute value "a a a  b" (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value null (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "" (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " " (HTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " a  \f" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "d") with attribute value "a b c" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b c" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "c b a" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "a b a" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "a b a" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "   a  a b" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "   a  a b" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(null, "b") with attribute value "a null" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", null) with attribute value "a b" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(undefined, "b") with attribute value "a undefined" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", undefined) with attribute value "a b" (HTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
+PASS classList.replace("a", "a") with attribute value "a" (HTML node) 
+PASS classList.replace("a", "b") with attribute value "a" (HTML node) 
+PASS classList.replace("A", "b") with attribute value "a" (HTML node) 
+PASS classList.replace("b", "A") with attribute value "a b" (HTML node) 
+PASS classList.replace("c", "a") with attribute value "a b" (HTML node) 
+PASS classList.replace("d", "e") with attribute value "a b c" (HTML node) 
+PASS classList.replace("a", "a") with attribute value "a a a  b" (HTML node) 
+PASS classList.replace("c", "d") with attribute value "a a a  b" (HTML node) 
+PASS classList.replace("a", "b") with attribute value null (HTML node) 
+PASS classList.replace("a", "b") with attribute value "" (HTML node) 
+PASS classList.replace("a", "b") with attribute value " " (HTML node) 
+PASS classList.replace("a", "b") with attribute value " a  \f" (HTML node) 
+PASS classList.replace("b", "d") with attribute value "a b c" (HTML node) 
+PASS classList.replace("c", "a") with attribute value "a b c" (HTML node) 
+PASS classList.replace("c", "a") with attribute value "c b a" (HTML node) 
+PASS classList.replace("a", "c") with attribute value "a b a" (HTML node) 
+PASS classList.replace("b", "c") with attribute value "a b a" (HTML node) 
+PASS classList.replace("a", "c") with attribute value "   a  a b" (HTML node) 
+PASS classList.replace("b", "c") with attribute value "   a  a b" (HTML node) 
+PASS classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (HTML node) 
+PASS classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (HTML node) 
+PASS classList.replace(null, "b") with attribute value "a null" (HTML node) 
+PASS classList.replace("a", null) with attribute value "a b" (HTML node) 
+PASS classList.replace(undefined, "b") with attribute value "a undefined" (HTML node) 
+PASS classList.replace("a", undefined) with attribute value "a b" (HTML node) 
 PASS Assigning to classList (XHTML node) 
 PASS .supports() must throw TypeError (XHTML node) 
 PASS classList.length when removed (XHTML node) 
@@ -542,31 +542,31 @@ PASS classList.replace("b", "\ra") with attribute value null (XHTML node)
 PASS classList.replace("b", "a\r") with attribute value null (XHTML node) 
 PASS classList.replace("b", " a") with attribute value null (XHTML node) 
 PASS classList.replace("b", "a ") with attribute value null (XHTML node) 
-FAIL classList.replace("a", "a") with attribute value "a" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "a" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("A", "b") with attribute value "a" (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("b", "A") with attribute value "a b" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b" (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("d", "e") with attribute value "a b c" (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "a") with attribute value "a a a  b" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "d") with attribute value "a a a  b" (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value null (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "" (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " " (XHTML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " a  \f" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "d") with attribute value "a b c" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b c" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "c b a" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "a b a" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "a b a" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "   a  a b" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "   a  a b" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(null, "b") with attribute value "a null" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", null) with attribute value "a b" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(undefined, "b") with attribute value "a undefined" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", undefined) with attribute value "a b" (XHTML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
+PASS classList.replace("a", "a") with attribute value "a" (XHTML node) 
+PASS classList.replace("a", "b") with attribute value "a" (XHTML node) 
+PASS classList.replace("A", "b") with attribute value "a" (XHTML node) 
+PASS classList.replace("b", "A") with attribute value "a b" (XHTML node) 
+PASS classList.replace("c", "a") with attribute value "a b" (XHTML node) 
+PASS classList.replace("d", "e") with attribute value "a b c" (XHTML node) 
+PASS classList.replace("a", "a") with attribute value "a a a  b" (XHTML node) 
+PASS classList.replace("c", "d") with attribute value "a a a  b" (XHTML node) 
+PASS classList.replace("a", "b") with attribute value null (XHTML node) 
+PASS classList.replace("a", "b") with attribute value "" (XHTML node) 
+PASS classList.replace("a", "b") with attribute value " " (XHTML node) 
+PASS classList.replace("a", "b") with attribute value " a  \f" (XHTML node) 
+PASS classList.replace("b", "d") with attribute value "a b c" (XHTML node) 
+PASS classList.replace("c", "a") with attribute value "a b c" (XHTML node) 
+PASS classList.replace("c", "a") with attribute value "c b a" (XHTML node) 
+PASS classList.replace("a", "c") with attribute value "a b a" (XHTML node) 
+PASS classList.replace("b", "c") with attribute value "a b a" (XHTML node) 
+PASS classList.replace("a", "c") with attribute value "   a  a b" (XHTML node) 
+PASS classList.replace("b", "c") with attribute value "   a  a b" (XHTML node) 
+PASS classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XHTML node) 
+PASS classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XHTML node) 
+PASS classList.replace(null, "b") with attribute value "a null" (XHTML node) 
+PASS classList.replace("a", null) with attribute value "a b" (XHTML node) 
+PASS classList.replace(undefined, "b") with attribute value "a undefined" (XHTML node) 
+PASS classList.replace("a", undefined) with attribute value "a b" (XHTML node) 
 PASS Assigning to classList (MathML node) 
 PASS .supports() must throw TypeError (MathML node) 
 PASS classList.length when removed (MathML node) 
@@ -826,31 +826,31 @@ PASS classList.replace("b", "\ra") with attribute value null (MathML node)
 PASS classList.replace("b", "a\r") with attribute value null (MathML node) 
 PASS classList.replace("b", " a") with attribute value null (MathML node) 
 PASS classList.replace("b", "a ") with attribute value null (MathML node) 
-FAIL classList.replace("a", "a") with attribute value "a" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "a" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("A", "b") with attribute value "a" (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("b", "A") with attribute value "a b" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b" (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("d", "e") with attribute value "a b c" (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "a") with attribute value "a a a  b" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "d") with attribute value "a a a  b" (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value null (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "" (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " " (MathML node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " a  \f" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "d") with attribute value "a b c" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b c" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "c b a" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "a b a" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "a b a" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "   a  a b" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "   a  a b" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(null, "b") with attribute value "a null" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", null) with attribute value "a b" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(undefined, "b") with attribute value "a undefined" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", undefined) with attribute value "a b" (MathML node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
+PASS classList.replace("a", "a") with attribute value "a" (MathML node) 
+PASS classList.replace("a", "b") with attribute value "a" (MathML node) 
+PASS classList.replace("A", "b") with attribute value "a" (MathML node) 
+PASS classList.replace("b", "A") with attribute value "a b" (MathML node) 
+PASS classList.replace("c", "a") with attribute value "a b" (MathML node) 
+PASS classList.replace("d", "e") with attribute value "a b c" (MathML node) 
+PASS classList.replace("a", "a") with attribute value "a a a  b" (MathML node) 
+PASS classList.replace("c", "d") with attribute value "a a a  b" (MathML node) 
+PASS classList.replace("a", "b") with attribute value null (MathML node) 
+PASS classList.replace("a", "b") with attribute value "" (MathML node) 
+PASS classList.replace("a", "b") with attribute value " " (MathML node) 
+PASS classList.replace("a", "b") with attribute value " a  \f" (MathML node) 
+PASS classList.replace("b", "d") with attribute value "a b c" (MathML node) 
+PASS classList.replace("c", "a") with attribute value "a b c" (MathML node) 
+PASS classList.replace("c", "a") with attribute value "c b a" (MathML node) 
+PASS classList.replace("a", "c") with attribute value "a b a" (MathML node) 
+PASS classList.replace("b", "c") with attribute value "a b a" (MathML node) 
+PASS classList.replace("a", "c") with attribute value "   a  a b" (MathML node) 
+PASS classList.replace("b", "c") with attribute value "   a  a b" (MathML node) 
+PASS classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (MathML node) 
+PASS classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (MathML node) 
+PASS classList.replace(null, "b") with attribute value "a null" (MathML node) 
+PASS classList.replace("a", null) with attribute value "a b" (MathML node) 
+PASS classList.replace(undefined, "b") with attribute value "a undefined" (MathML node) 
+PASS classList.replace("a", undefined) with attribute value "a b" (MathML node) 
 PASS Assigning to classList (XML node with null namespace) 
 PASS .supports() must throw TypeError (XML node with null namespace) 
 PASS classList.length when removed (XML node with null namespace) 
@@ -1110,31 +1110,31 @@ PASS classList.replace("b", "\ra") with attribute value null (XML node with null
 PASS classList.replace("b", "a\r") with attribute value null (XML node with null namespace) 
 PASS classList.replace("b", " a") with attribute value null (XML node with null namespace) 
 PASS classList.replace("b", "a ") with attribute value null (XML node with null namespace) 
-FAIL classList.replace("a", "a") with attribute value "a" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "a" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("A", "b") with attribute value "a" (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("b", "A") with attribute value "a b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("d", "e") with attribute value "a b c" (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "a") with attribute value "a a a  b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "d") with attribute value "a a a  b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value null (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "" (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " " (XML node with null namespace) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " a  \f" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "d") with attribute value "a b c" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b c" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "c b a" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "a b a" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "a b a" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "   a  a b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "   a  a b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(null, "b") with attribute value "a null" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", null) with attribute value "a b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(undefined, "b") with attribute value "a undefined" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", undefined) with attribute value "a b" (XML node with null namespace) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
+PASS classList.replace("a", "a") with attribute value "a" (XML node with null namespace) 
+PASS classList.replace("a", "b") with attribute value "a" (XML node with null namespace) 
+PASS classList.replace("A", "b") with attribute value "a" (XML node with null namespace) 
+PASS classList.replace("b", "A") with attribute value "a b" (XML node with null namespace) 
+PASS classList.replace("c", "a") with attribute value "a b" (XML node with null namespace) 
+PASS classList.replace("d", "e") with attribute value "a b c" (XML node with null namespace) 
+PASS classList.replace("a", "a") with attribute value "a a a  b" (XML node with null namespace) 
+PASS classList.replace("c", "d") with attribute value "a a a  b" (XML node with null namespace) 
+PASS classList.replace("a", "b") with attribute value null (XML node with null namespace) 
+PASS classList.replace("a", "b") with attribute value "" (XML node with null namespace) 
+PASS classList.replace("a", "b") with attribute value " " (XML node with null namespace) 
+PASS classList.replace("a", "b") with attribute value " a  \f" (XML node with null namespace) 
+PASS classList.replace("b", "d") with attribute value "a b c" (XML node with null namespace) 
+PASS classList.replace("c", "a") with attribute value "a b c" (XML node with null namespace) 
+PASS classList.replace("c", "a") with attribute value "c b a" (XML node with null namespace) 
+PASS classList.replace("a", "c") with attribute value "a b a" (XML node with null namespace) 
+PASS classList.replace("b", "c") with attribute value "a b a" (XML node with null namespace) 
+PASS classList.replace("a", "c") with attribute value "   a  a b" (XML node with null namespace) 
+PASS classList.replace("b", "c") with attribute value "   a  a b" (XML node with null namespace) 
+PASS classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XML node with null namespace) 
+PASS classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (XML node with null namespace) 
+PASS classList.replace(null, "b") with attribute value "a null" (XML node with null namespace) 
+PASS classList.replace("a", null) with attribute value "a b" (XML node with null namespace) 
+PASS classList.replace(undefined, "b") with attribute value "a undefined" (XML node with null namespace) 
+PASS classList.replace("a", undefined) with attribute value "a b" (XML node with null namespace) 
 PASS Assigning to classList (foo node) 
 PASS .supports() must throw TypeError (foo node) 
 PASS classList.length when removed (foo node) 
@@ -1394,29 +1394,29 @@ PASS classList.replace("b", "\ra") with attribute value null (foo node)
 PASS classList.replace("b", "a\r") with attribute value null (foo node) 
 PASS classList.replace("b", " a") with attribute value null (foo node) 
 PASS classList.replace("b", "a ") with attribute value null (foo node) 
-FAIL classList.replace("a", "a") with attribute value "a" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "a" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("A", "b") with attribute value "a" (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("b", "A") with attribute value "a b" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b" (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("d", "e") with attribute value "a b c" (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "a") with attribute value "a a a  b" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "d") with attribute value "a a a  b" (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value null (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value "" (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " " (foo node) assert_equals: wrong return value expected (boolean) false but got (undefined) undefined
-FAIL classList.replace("a", "b") with attribute value " a  \f" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "d") with attribute value "a b c" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "a b c" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("c", "a") with attribute value "c b a" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "a b a" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "a b a" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "   a  a b" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "   a  a b" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(null, "b") with attribute value "a null" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", null) with attribute value "a b" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace(undefined, "b") with attribute value "a undefined" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
-FAIL classList.replace("a", undefined) with attribute value "a b" (foo node) assert_equals: wrong return value expected (boolean) true but got (undefined) undefined
+PASS classList.replace("a", "a") with attribute value "a" (foo node) 
+PASS classList.replace("a", "b") with attribute value "a" (foo node) 
+PASS classList.replace("A", "b") with attribute value "a" (foo node) 
+PASS classList.replace("b", "A") with attribute value "a b" (foo node) 
+PASS classList.replace("c", "a") with attribute value "a b" (foo node) 
+PASS classList.replace("d", "e") with attribute value "a b c" (foo node) 
+PASS classList.replace("a", "a") with attribute value "a a a  b" (foo node) 
+PASS classList.replace("c", "d") with attribute value "a a a  b" (foo node) 
+PASS classList.replace("a", "b") with attribute value null (foo node) 
+PASS classList.replace("a", "b") with attribute value "" (foo node) 
+PASS classList.replace("a", "b") with attribute value " " (foo node) 
+PASS classList.replace("a", "b") with attribute value " a  \f" (foo node) 
+PASS classList.replace("b", "d") with attribute value "a b c" (foo node) 
+PASS classList.replace("c", "a") with attribute value "a b c" (foo node) 
+PASS classList.replace("c", "a") with attribute value "c b a" (foo node) 
+PASS classList.replace("a", "c") with attribute value "a b a" (foo node) 
+PASS classList.replace("b", "c") with attribute value "a b a" (foo node) 
+PASS classList.replace("a", "c") with attribute value "   a  a b" (foo node) 
+PASS classList.replace("b", "c") with attribute value "   a  a b" (foo node) 
+PASS classList.replace("a", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (foo node) 
+PASS classList.replace("b", "c") with attribute value "\t\n\f\r a\t\n\f\r b\t\n\f\r " (foo node) 
+PASS classList.replace(null, "b") with attribute value "a null" (foo node) 
+PASS classList.replace("a", null) with attribute value "a b" (foo node) 
+PASS classList.replace(undefined, "b") with attribute value "a undefined" (foo node) 
+PASS classList.replace("a", undefined) with attribute value "a b" (foo node) 
 

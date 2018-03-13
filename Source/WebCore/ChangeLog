@@ -1,3 +1,25 @@
+2018-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Return boolean from DOMTokenList's replace() method
+        https://bugs.webkit.org/show_bug.cgi?id=183567
+
+        Reviewed by Youenn Fablet.
+
+        Have DOMTokenList's replace() method return a boolean indicating if the
+        token was replaced, as per:
+        - https://dom.spec.whatwg.org/#dom-domtokenlist-replace
+
+        This is a recent addition to the DOM specification:
+        - https://github.com/whatwg/dom/pull/582
+
+        No new tests, rebaselined existing test.
+
+        * html/DOMTokenList.cpp:
+        (WebCore::replaceInOrderedSet):
+        (WebCore::DOMTokenList::replace):
+        * html/DOMTokenList.h:
+        * html/DOMTokenList.idl:
+
 2018-03-12  Brian Burg  <bburg@apple.com>
 
         Ignore some deprecation warnings encountered when compiling with newer versions of ICU
