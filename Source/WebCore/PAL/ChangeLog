@@ -1,3 +1,12 @@
+2018-03-13  Dean Jackson  <dino@apple.com>
+
+        Fix some build errors and cleanup QuickLookSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=183599
+
+        Reviewed by Ryan Haddad.
+
+        * pal/spi/ios/QuickLookSPI.h:
+
 2018-03-12  Dean Jackson  <dino@apple.com>
 
         Add a WKWebViewContentProvider for system previews
