@@ -1,3 +1,16 @@
+2018-03-13  Frederic Wang  <fwang@igalia.com>
+
+        Skip mathml-in-dashboard-expected on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=183562
+
+        There is no dashboard compatibility mode on Windows so the test is not necessary.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/win/TestExpectations: Skip test.
+        * platform/win/mathml/mathml-in-dashboard-expected.png: Removed.
+        * platform/win/mathml/mathml-in-dashboard-expected.txt: Removed.
+
 2018-03-13  Chris Dumez  <cdumez@apple.com>
 
         fast/loader/javascript-url-iframe-remove-on-navigate.html is flaky with async policy delegates
