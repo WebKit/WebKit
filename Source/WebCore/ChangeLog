@@ -1,5 +1,18 @@
 2018-03-13  Youenn Fablet  <youenn@apple.com>
 
+        Calling removeTrack with RTCRtpSender does not set SenderTrack to null
+        https://bugs.webkit.org/show_bug.cgi?id=183308
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::stop): Set track to null when being stopped i.e. removed.
+        * Modules/mediastream/RTCRtpSender.h:
+
+2018-03-13  Youenn Fablet  <youenn@apple.com>
+
         Changing link element rel attribute from preload to stylesheet should succeed loading the stylesheet
         https://bugs.webkit.org/show_bug.cgi?id=183601
         <rdar://problem/38309441>

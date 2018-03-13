@@ -62,6 +62,13 @@ void RTCRtpSender::setTrackToNull()
     m_track = nullptr;
 }
 
+void RTCRtpSender::stop()
+{
+    m_trackId = { };
+    m_track = nullptr;
+    m_backend = nullptr;
+}
+
 void RTCRtpSender::setTrack(Ref<MediaStreamTrack>&& track)
 {
     ASSERT(!isStopped());

@@ -1,3 +1,12 @@
+2018-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Calling removeTrack with RTCRtpSender does not set SenderTrack to null
+        https://bugs.webkit.org/show_bug.cgi?id=183308
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-removeTrack.https-expected.txt:
+
 2018-03-12  Chris Dumez  <cdumez@apple.com>
 
         Return boolean from DOMTokenList's replace() method
