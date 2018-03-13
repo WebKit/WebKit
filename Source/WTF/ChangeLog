@@ -1,3 +1,13 @@
+2018-03-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, include time.h
+        https://bugs.webkit.org/show_bug.cgi?id=183312
+
+        Attempt to fix oss-fuzz build.
+
+        * wtf/CurrentTime.cpp:
+        * wtf/unix/CPUTimeUnix.cpp:
+
 2018-03-12  Yoav Weiss  <yoav@yoav.ws>
 
         Runtime flag for link prefetch and remove link subresource.
