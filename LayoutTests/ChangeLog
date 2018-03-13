@@ -1,3 +1,23 @@
+2018-03-13  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/javascript-url-iframe-remove-on-navigate.html is flaky with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183588
+
+        Reviewed by Alex Christensen.
+
+        The test was setting the frame's src to a javascript URL in a setTimeout(0), expecting the
+        navigation policy delegate to have already completed. However, with asynchronous policy
+        delegates, this is not necessarily the case. Therefore, we now wait for the beforeunload
+        event to be fired at the window, since this indicates a policy decision has been made and
+        we are actually navigating.
+
+        I checked that this test was printing the "FAIL" alert in both Firefox and Chrome before
+        this change.
+
+        * fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate-expected.txt: Added.
+        * fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html: Added.
+        * fast/loader/javascript-url-iframe-remove-on-navigate.html:
+
 2018-03-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Layout Test fast/html/menuitem-element.html is failing.
