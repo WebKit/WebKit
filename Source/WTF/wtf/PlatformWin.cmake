@@ -1,4 +1,4 @@
-list(APPEND WTF_HEADERS
+list(APPEND WTF_PUBLIC_HEADERS
     text/win/WCharStringExtras.h
 
     win/GDIObject.h
@@ -21,7 +21,7 @@ list(APPEND WTF_SOURCES
 )
 
 if (USE_CF)
-    list(APPEND WTF_HEADERS
+    list(APPEND WTF_PUBLIC_HEADERS
         cf/TypeCastsCF.h
 
         text/cf/TextBreakIteratorCF.h

@@ -1,4 +1,4 @@
-list(APPEND PAL_HEADERS
+list(APPEND PAL_PUBLIC_HEADERS
     avfoundation/MediaTimeAVFoundation.h
 
     cf/CoreMediaSoftLink.h
@@ -15,7 +15,7 @@ list(APPEND PAL_HEADERS
 
 if (${USE_DIRECT2D})
 else ()
-    list(APPEND PAL_HEADERS
+    list(APPEND PAL_PUBLIC_HEADERS
         spi/cg/CoreGraphicsSPI.h
         spi/cg/ImageIOSPI.h
     )

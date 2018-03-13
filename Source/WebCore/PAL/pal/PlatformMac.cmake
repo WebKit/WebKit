@@ -1,4 +1,4 @@
-list(APPEND PAL_HEADERS
+list(APPEND PAL_PUBLIC_HEADERS
     avfoundation/MediaTimeAVFoundation.h
 
     cf/CoreMediaSoftLink.h

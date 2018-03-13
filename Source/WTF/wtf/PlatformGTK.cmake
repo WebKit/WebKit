@@ -1,6 +1,6 @@
 set(WTF_OUTPUT_NAME WTFGTK)
 
-list(APPEND WTF_HEADERS
+list(APPEND WTF_PUBLIC_HEADERS
     glib/GLibUtilities.h
     glib/GMutexLocker.h
     glib/GRefPtr.h

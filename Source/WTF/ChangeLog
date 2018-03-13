@@ -1,3 +1,17 @@
+2018-03-12  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Forwarding headers of WTF and PAL are copied twice in Visual Studio builds
+        https://bugs.webkit.org/show_bug.cgi?id=183240
+
+        Reviewed by Alex Christensen.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+
 2018-03-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, include time.h

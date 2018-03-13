@@ -7,7 +7,7 @@ list(APPEND WTF_LIBRARIES
     ${READLINE_LIBRARY}
 )
 
-list(APPEND WTF_HEADERS
+list(APPEND WTF_PUBLIC_HEADERS
     cf/TypeCastsCF.h
 
     cocoa/SoftLinking.h
