@@ -248,9 +248,11 @@ bool PropertyListNode::hasStaticallyNamedProperty(const Identifier& propName)
 {
     PropertyListNode* list = this;
     while (list) {
-        const Identifier* currentNodeName = list->m_node->name();
-        if (currentNodeName && *currentNodeName == propName)
-            return true;
+        if (list->m_node->isStaticClassProperty()) {
+            const Identifier* currentNodeName = list->m_node->name();
+            if (currentNodeName && *currentNodeName == propName)
+                return true;
+        }
         list = list->m_next;
     }
     return false;

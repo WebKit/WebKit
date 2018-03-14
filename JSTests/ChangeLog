@@ -1,3 +1,23 @@
+2018-03-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] fix order of evaluation for ClassDefinitionEvaluation
+        https://bugs.webkit.org/show_bug.cgi?id=183523
+
+        Reviewed by Keith Miller.
+
+        Computed property names need to be evaluated in source order during class
+        definition evaluation, as it's observable (and specified to work this way).
+
+        This change improves compatibility with Chromium.
+
+        * stress/class_elements.js: Added.
+        (test):
+        (test.C.prototype.effect):
+        (test.C.effect):
+        (test.C.prototype.get effect):
+        (test.C.prototype.set effect):
+        (test.C):
+
 2018-03-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] AI should convert CreateThis to NewObject if the prototype object is proved

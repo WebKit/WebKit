@@ -1,3 +1,43 @@
+2018-03-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] fix order of evaluation for ClassDefinitionEvaluation
+        https://bugs.webkit.org/show_bug.cgi?id=183523
+
+        Reviewed by Keith Miller.
+
+        Computed property names need to be evaluated in source order during class
+        definition evaluation, as it's observable (and specified to work this way).
+
+        This change improves compatibility with Chromium.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitDefineClassElements):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        (JSC::ClassExprNode::ClassExprNode):
+        * parser/Nodes.cpp:
+        (JSC::PropertyListNode::hasStaticallyNamedProperty):
+        * parser/Nodes.h:
+        (JSC::PropertyNode::isClassProperty const):
+        (JSC::PropertyNode::isStaticClassProperty const):
+        (JSC::PropertyNode::isInstanceClassProperty const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClassExpr):
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+
 2018-03-14  Keith Miller  <keith_miller@apple.com>
 
         Move jsc CLI breakpoint function to $vm

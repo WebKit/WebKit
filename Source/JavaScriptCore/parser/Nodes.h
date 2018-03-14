@@ -695,21 +695,24 @@ namespace JSC {
         bool m_optional;
     };
 
+    enum class ClassElementTag { No, Instance, Static, LastTag };
     class PropertyNode : public ParserArenaFreeable {
     public:
         enum Type { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32 };
         enum PutType { Unknown, KnownDirect };
 
-        PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding, bool isClassProperty);
-        PropertyNode(ExpressionNode*, Type, PutType, SuperBinding, bool isClassProperty);
-        PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type, PutType, SuperBinding, bool isClassProperty);
+        PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
+        PropertyNode(ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
+        PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
 
         ExpressionNode* expressionName() const { return m_expression; }
         const Identifier* name() const { return m_name; }
 
         Type type() const { return static_cast<Type>(m_type); }
         bool needsSuperBinding() const { return m_needsSuperBinding; }
-        bool isClassProperty() const { return m_isClassProperty; }
+        bool isClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) != ClassElementTag::No; }
+        bool isStaticClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) == ClassElementTag::Static; }
+        bool isInstanceClassProperty() const { return static_cast<ClassElementTag>(m_classElementTag) == ClassElementTag::Instance; }
         bool isOverriddenByDuplicate() const { return m_isOverriddenByDuplicate; }
         void setIsOverriddenByDuplicate() { m_isOverriddenByDuplicate = true; }
         PutType putType() const { return static_cast<PutType>(m_putType); }
@@ -722,7 +725,8 @@ namespace JSC {
         unsigned m_type : 6;
         unsigned m_needsSuperBinding : 1;
         unsigned m_putType : 1;
-        unsigned m_isClassProperty: 1;
+        static_assert(1 << 2 > static_cast<unsigned>(ClassElementTag::LastTag), "ClassElementTag shouldn't use more than two bits");
+        unsigned m_classElementTag : 2;
         unsigned m_isOverriddenByDuplicate: 1;
     };
 
@@ -733,8 +737,13 @@ namespace JSC {
 
         bool hasStaticallyNamedProperty(const Identifier& propName);
 
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*);
+
     private:
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        RegisterID* emitBytecode(BytecodeGenerator& generator, RegisterID* dst = nullptr) override
+        {
+            return emitBytecode(generator, dst, nullptr);
+        }
         void emitPutConstantProperty(BytecodeGenerator&, RegisterID*, PropertyNode&);
 
         PropertyNode* m_node;
@@ -2139,13 +2148,13 @@ namespace JSC {
     public:
         ClassExprNode(const JSTokenLocation&, const Identifier&, const SourceCode& classSource,
             VariableEnvironment& classEnvironment, ExpressionNode* constructorExpresssion,
-            ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods);
+            ExpressionNode* parentClass, PropertyListNode* classElements);
 
         const Identifier& name() { return m_name; }
         const Identifier& ecmaName() { return m_ecmaName ? *m_ecmaName : m_name; }
         void setEcmaName(const Identifier& name) { m_ecmaName = m_name.isNull() ? &name : &m_name; }
 
-        bool hasStaticProperty(const Identifier& propName) { return m_staticMethods ? m_staticMethods->hasStaticallyNamedProperty(propName) : false; }
+        bool hasStaticProperty(const Identifier& propName) { return m_classElements ? m_classElements->hasStaticallyNamedProperty(propName) : false; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -2157,8 +2166,7 @@ namespace JSC {
         const Identifier* m_ecmaName;
         ExpressionNode* m_constructorExpression;
         ExpressionNode* m_classHeritage;
-        PropertyListNode* m_instanceMethods;
-        PropertyListNode* m_staticMethods;
+        PropertyListNode* m_classElements;
     };
 
     class DestructuringPatternNode : public ParserArenaFreeable {
