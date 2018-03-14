@@ -1,0 +1,7 @@
+http://127.0.0.1:8000/navigation/redirect-preserves-fragment.html - didFinishLoading
+http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#foo - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#foo, main document URL http://127.0.0.1:8000/navigation/redirect-preserves-fragment.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#foo - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/success.html#foo, main document URL http://127.0.0.1:8000/navigation/redirect-preserves-fragment.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#foo, http status code 302>
+http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#foo - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/success.html#foo, http status code 200>
+Test passes if WebKit preserves the request fragment identifier after the redirection.
+
+

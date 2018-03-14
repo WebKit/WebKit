@@ -1,5 +1,29 @@
 2018-03-14  Chris Dumez  <cdumez@apple.com>
 
+        Make policy decisions asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=180568
+        <rdar://problem/37131297>
+
+        Reviewed by Alex Christensen.
+
+        Get rid of synchronous IPC and synchronous code paths for policy delegates.
+        Policy decisions are now all made asynchronously and rely on asynchronous
+        IPC.
+
+        This code change is based on work by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
+2018-03-14  Chris Dumez  <cdumez@apple.com>
+
         Drop unnecessary StorageToWebProcessConnection::workerContextProcessConnectionCreated()
         https://bugs.webkit.org/show_bug.cgi?id=183624
 
