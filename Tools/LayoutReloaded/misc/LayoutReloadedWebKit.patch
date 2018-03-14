@@ -1,8 +1,8 @@
 diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
-index c315ee25fc0..6898b4d55a1 100644
+index 921a108206b..679703fa9e9 100644
 --- a/Source/WTF/wtf/Platform.h
 +++ b/Source/WTF/wtf/Platform.h
-@@ -1103,7 +1103,7 @@
+@@ -1116,7 +1116,7 @@
  #if !defined(NDEBUG)
  #define ENABLE_TREE_DEBUGGING 1
  #else
@@ -12,10 +12,10 @@ index c315ee25fc0..6898b4d55a1 100644
  #endif
  
 diff --git a/Source/WebCore/css/CSSComputedStyleDeclaration.cpp b/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
-index ab2a17854c5..05d1bced1f3 100644
+index 209e29aa740..411353e5871 100644
 --- a/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
 +++ b/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
-@@ -4101,6 +4101,36 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
+@@ -4114,6 +4114,36 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
      return value->cssText();
  }
  
@@ -118,10 +118,10 @@ index 04196405ddf..59981205cae 100644
      String getPropertyShorthand(const String& propertyName) final;
      bool isPropertyImplicit(const String& propertyName) final;
 diff --git a/Source/WebCore/dom/Node.cpp b/Source/WebCore/dom/Node.cpp
-index 48f3161a9ac..0e01d2a73f0 100644
+index 2d899e76b9a..71751c862a1 100644
 --- a/Source/WebCore/dom/Node.cpp
 +++ b/Source/WebCore/dom/Node.cpp
-@@ -514,6 +514,20 @@ ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
+@@ -514,6 +514,27 @@ ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
      return parent->insertBefore(*node, viablePreviousSibling.get());
  }
  
@@ -139,14 +139,21 @@ index 48f3161a9ac..0e01d2a73f0 100644
 +    return renderer()->measureText(start, end);
 +}
 +
++double Node::textHeight()
++{
++    if (!renderer())
++        return 0;
++    return renderer()->style().computedFontPixelSize();
++}
++
  ExceptionOr<void> Node::after(Vector<NodeOrString>&& nodeOrStringVector)
  {
      RefPtr<ContainerNode> parent = parentNode();
 diff --git a/Source/WebCore/dom/Node.h b/Source/WebCore/dom/Node.h
-index eb857feb9ac..6f0b75d518d 100644
+index acee486a00d..514b2911d3f 100644
 --- a/Source/WebCore/dom/Node.h
 +++ b/Source/WebCore/dom/Node.h
-@@ -178,7 +178,10 @@ public:
+@@ -178,7 +178,11 @@ public:
  
      WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
      WEBCORE_EXPORT ExceptionOr<void> setTextContent(const String&);
@@ -154,29 +161,39 @@ index eb857feb9ac..6f0b75d518d 100644
 +
 +    int rendererId();
 +    double textWidth(int start, int end);
++    double textHeight();
 +
      Node* lastDescendant() const;
      Node* firstDescendant() const;
  
 diff --git a/Source/WebCore/dom/Node.idl b/Source/WebCore/dom/Node.idl
-index 25177a8cd43..6235bb654b5 100644
+index 25177a8cd43..294307dc815 100644
 --- a/Source/WebCore/dom/Node.idl
 +++ b/Source/WebCore/dom/Node.idl
-@@ -73,6 +73,9 @@
+@@ -73,6 +73,10 @@
      unsigned short compareDocumentPosition(Node other);
      boolean contains(Node? other);
  
 +    readonly attribute long rendererId;
 +    double textWidth(long start, long end);
++    double textHeight();
 +
      DOMString? lookupPrefix(DOMString? namespaceURI);
      DOMString? lookupNamespaceURI(DOMString? prefix);
      boolean isDefaultNamespace(DOMString? namespaceURI);
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index f1d1985d104..f5a01075bea 100644
+index a62e2005505..a71947cc54f 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
-@@ -77,6 +77,7 @@
+@@ -29,6 +29,7 @@
+ 
+ #include "BackForwardController.h"
+ #include "BarProp.h"
++#include "BreakLines.h"
+ #include "CSSComputedStyleDeclaration.h"
+ #include "CSSRule.h"
+ #include "CSSRuleList.h"
+@@ -78,6 +79,7 @@
  #include "PageConsoleClient.h"
  #include "PageTransitionEvent.h"
  #include "Performance.h"
@@ -184,7 +201,15 @@ index f1d1985d104..f5a01075bea 100644
  #include "RequestAnimationFrameCallback.h"
  #include "ResourceLoadInfo.h"
  #include "RuntimeApplicationChecks.h"
-@@ -1367,6 +1368,23 @@ String DOMWindow::name() const
+@@ -115,6 +117,7 @@
+ #include <wtf/NeverDestroyed.h>
+ #include <wtf/Ref.h>
+ #include <wtf/Variant.h>
++#include <wtf/text/TextBreakIterator.h>
+ #include <wtf/text/WTFString.h>
+ 
+ #if ENABLE(USER_MESSAGE_HANDLERS)
+@@ -1377,6 +1380,25 @@ String DOMWindow::name() const
      return m_frame->tree().name();
  }
  
@@ -200,16 +225,18 @@ index f1d1985d104..f5a01075bea 100644
 +
 +int DOMWindow::nextBreakingOpportunity(const String& text, unsigned startPosition)
 +{
-+    if (startPosition >= text.length() - 1)
-+        return startPosition;
-+    return startPosition + 1;
++    LazyLineBreakIterator lineBreakIterator(text, m_frame->view()->renderView()->style().locale());
++
++    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default)
++            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
++    return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
 +}
 +
  void DOMWindow::setName(const String& string)
  {
      if (!m_frame)
 diff --git a/Source/WebCore/page/DOMWindow.h b/Source/WebCore/page/DOMWindow.h
-index 7748efaf84b..a6863a3274a 100644
+index 6422a48517a..fccc7ef1a9f 100644
 --- a/Source/WebCore/page/DOMWindow.h
 +++ b/Source/WebCore/page/DOMWindow.h
 @@ -191,6 +191,10 @@ public:
@@ -254,11 +281,102 @@ index 4807e7b61d1..f5916c11502 100644
  #endif
  }
  
+diff --git a/Source/WebCore/rendering/InlineBox.cpp b/Source/WebCore/rendering/InlineBox.cpp
+index cd23ae0b97c..da072efdfa9 100644
+--- a/Source/WebCore/rendering/InlineBox.cpp
++++ b/Source/WebCore/rendering/InlineBox.cpp
+@@ -123,6 +123,15 @@ void InlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
+     stream.nextLine();
+ }
+ 
++void InlineBox::outputSimplifiedLineTree(TextStream& stream, int depth) const
++{
++    int printedCharacters = 0;
++    while (++printedCharacters <= depth)
++        stream << " ";
++    stream << boxName() << " " << FloatRect(x(), y(), width(), height());
++    stream.nextLine();
++}
++
+ #endif // ENABLE(TREE_DEBUGGING)
+ 
+ float InlineBox::logicalHeight() const
+diff --git a/Source/WebCore/rendering/InlineBox.h b/Source/WebCore/rendering/InlineBox.h
+index 7f1dd6cbba4..eddb048440a 100644
+--- a/Source/WebCore/rendering/InlineBox.h
++++ b/Source/WebCore/rendering/InlineBox.h
+@@ -78,6 +78,7 @@ public:
+     void showLineTreeForThis() const;
+     
+     virtual void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
++    virtual void outputSimplifiedLineTree(WTF::TextStream&, int depth) const;
+     virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
+     virtual const char* boxName() const;
+ #endif
+diff --git a/Source/WebCore/rendering/InlineFlowBox.cpp b/Source/WebCore/rendering/InlineFlowBox.cpp
+index 063f3b64189..5494aabe546 100644
+--- a/Source/WebCore/rendering/InlineFlowBox.cpp
++++ b/Source/WebCore/rendering/InlineFlowBox.cpp
+@@ -1720,6 +1720,13 @@ void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const InlineB
+         box->outputLineTreeAndMark(stream, markedBox, depth + 1);
+ }
+ 
++void InlineFlowBox::outputSimplifiedLineTree(WTF::TextStream& stream, int depth) const
++{
++    InlineBox::outputSimplifiedLineTree(stream, depth);
++    for (auto* box = firstChild(); box; box = box->nextOnLine())
++        box->outputSimplifiedLineTree(stream, depth + 1);
++}
++
+ #endif
+ 
+ #ifndef NDEBUG
+diff --git a/Source/WebCore/rendering/InlineFlowBox.h b/Source/WebCore/rendering/InlineFlowBox.h
+index 0b26444903f..595203b201e 100644
+--- a/Source/WebCore/rendering/InlineFlowBox.h
++++ b/Source/WebCore/rendering/InlineFlowBox.h
+@@ -72,6 +72,7 @@ public:
+ 
+ #if ENABLE(TREE_DEBUGGING)
+     void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const override;
++    void outputSimplifiedLineTree(WTF::TextStream&, int depth) const override;
+     const char* boxName() const override;
+ #endif
+ 
+diff --git a/Source/WebCore/rendering/RenderBlockFlow.cpp b/Source/WebCore/rendering/RenderBlockFlow.cpp
+index 85f34090de5..503d71eb88e 100644
+--- a/Source/WebCore/rendering/RenderBlockFlow.cpp
++++ b/Source/WebCore/rendering/RenderBlockFlow.cpp
+@@ -3658,6 +3658,12 @@ void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const Inlin
+     if (auto simpleLineLayout = this->simpleLineLayout())
+         SimpleLineLayout::outputLineLayoutForFlow(stream, *this, *simpleLineLayout, depth);
+ }
++
++void RenderBlockFlow::outputSimplifiedLineTree(WTF::TextStream& stream, int depth) const
++{
++    for (auto* root = firstRootBox(); root; root = root->nextRootBox())
++        root->outputSimplifiedLineTree(stream, depth);
++}
+ #endif
+ 
+ RenderBlockFlow::RenderBlockFlowRareData& RenderBlockFlow::ensureRareBlockFlowData()
+diff --git a/Source/WebCore/rendering/RenderBlockFlow.h b/Source/WebCore/rendering/RenderBlockFlow.h
+index 52dc7dad4b5..696e5a5ee5b 100644
+--- a/Source/WebCore/rendering/RenderBlockFlow.h
++++ b/Source/WebCore/rendering/RenderBlockFlow.h
+@@ -363,6 +363,7 @@ public:
+ 
+ #if ENABLE(TREE_DEBUGGING)
+     void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
++    void outputSimplifiedLineTree(WTF::TextStream&, int depth) const;
+ #endif
+ 
+     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
 diff --git a/Source/WebCore/rendering/RenderObject.cpp b/Source/WebCore/rendering/RenderObject.cpp
-index cac0551646b..68f5c317260 100644
+index 0555b1e712f..e1f1578c96a 100644
 --- a/Source/WebCore/rendering/RenderObject.cpp
 +++ b/Source/WebCore/rendering/RenderObject.cpp
-@@ -107,7 +107,7 @@ struct SameSizeAsRenderObject {
+@@ -108,7 +108,7 @@ struct SameSizeAsRenderObject {
      unsigned m_bitfields;
  };
  
@@ -267,7 +385,7 @@ index cac0551646b..68f5c317260 100644
  
  DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
  
-@@ -128,6 +128,8 @@ RenderObject::RenderObject(Node& node)
+@@ -129,6 +129,8 @@ RenderObject::RenderObject(Node& node)
  #endif
      , m_bitfields(node)
  {
@@ -276,14 +394,17 @@ index cac0551646b..68f5c317260 100644
      if (RenderView* renderView = node.document().renderView())
          renderView->didCreateRenderer();
  #ifndef NDEBUG
-@@ -1197,14 +1199,78 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth)
+@@ -1197,14 +1199,80 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth)
      stream.nextLine();
  }
  
 -void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderObject* markedObject, int depth) const
 +
 +void RenderObject::renderSubtreeStructure(TextStream& stream) const
-+{
+ {
+-    outputRenderObject(stream, markedObject == this, depth);
+-    if (is<RenderBlockFlow>(*this))
+-        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
 +    outputRenderObjectStructure(stream);
 +    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
 +        child->renderSubtreeStructure(stream);
@@ -291,16 +412,13 @@ index cac0551646b..68f5c317260 100644
 +
 +// 1()RenderView|2(1)RenderBlock|3(2)RenderBody|4(3)RenderBlock|5(3)AnonymousRenderBlock|
 +void RenderObject::outputRenderObjectStructure(WTF::TextStream& stream) const
- {
--    outputRenderObject(stream, markedObject == this, depth);
--    if (is<RenderBlockFlow>(*this))
--        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
++{
 +    stream << renderId();
 +    if (parent())
 +        stream << "(" << parent()->renderId() << ")";
 +    else
 +        stream << "()";
-+
+ 
 +    String name = renderName();
 +    // FIXME: Renderer's name should not include property value listing.
 +    int pos = name.find('(');
@@ -312,10 +430,12 @@ index cac0551646b..68f5c317260 100644
 +        stream << name.utf8().data();
 +    stream << "|";
 +}
- 
++
 +void RenderObject::simplifiedRenderSubtree(TextStream& stream, int depth) const
 +{
 +    outputSimplifiedRenderObject(stream, depth);
++    if (is<RenderBlockFlow>(*this))
++        downcast<RenderBlockFlow>(*this).outputSimplifiedLineTree(stream, depth + 1);
      for (auto* child = firstChildSlow(); child; child = child->nextSibling())
 -        child->outputRenderSubTreeAndMark(stream, markedObject, depth + 1);
 +        child->simplifiedRenderSubtree(stream, depth + 1);
@@ -361,10 +481,10 @@ index cac0551646b..68f5c317260 100644
  
  #endif // NDEBUG
 diff --git a/Source/WebCore/rendering/RenderObject.h b/Source/WebCore/rendering/RenderObject.h
-index fc047c5c14d..854dccf7778 100644
+index 3c4f15aa4f1..383bb46b876 100644
 --- a/Source/WebCore/rendering/RenderObject.h
 +++ b/Source/WebCore/rendering/RenderObject.h
-@@ -112,6 +112,9 @@ public:
+@@ -113,6 +113,9 @@ public:
  
      auto& weakPtrFactory() const { return m_weakFactory; }
  
@@ -374,7 +494,7 @@ index fc047c5c14d..854dccf7778 100644
      RenderTheme& theme() const;
  
      virtual const char* renderName() const = 0;
-@@ -202,10 +205,16 @@ public:
+@@ -203,10 +206,16 @@ public:
      void showNodeTreeForThis() const;
      void showRenderTreeForThis() const;
      void showLineTreeForThis() const;
@@ -391,7 +511,7 @@ index fc047c5c14d..854dccf7778 100644
  #endif
  
      bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
-@@ -828,6 +837,7 @@ private:
+@@ -829,6 +838,7 @@ private:
  #endif
  
      Node& m_node;
@@ -416,7 +536,7 @@ index 6ae047c469f..3a9f4839352 100644
  {
      return false;
 diff --git a/Source/WebCore/rendering/RenderText.h b/Source/WebCore/rendering/RenderText.h
-index f46290f5dea..71b72747699 100644
+index e9f727310ae..5ffea9389a8 100644
 --- a/Source/WebCore/rendering/RenderText.h
 +++ b/Source/WebCore/rendering/RenderText.h
 @@ -45,6 +45,8 @@ public:
@@ -429,10 +549,18 @@ index f46290f5dea..71b72747699 100644
  
      const RenderStyle& style() const;
 diff --git a/Source/WebCore/rendering/RenderView.cpp b/Source/WebCore/rendering/RenderView.cpp
-index 67959ae711f..347a51f8703 100644
+index c699d65a26f..b2db6c21c00 100644
 --- a/Source/WebCore/rendering/RenderView.cpp
 +++ b/Source/WebCore/rendering/RenderView.cpp
-@@ -956,4 +956,19 @@ void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
+@@ -56,6 +56,7 @@
+ #include <wtf/IsoMallocInlines.h>
+ #include <wtf/SetForScope.h>
+ #include <wtf/StackStats.h>
++#include <wtf/text/TextStream.h>
+ 
+ namespace WebCore {
+ 
+@@ -953,4 +954,19 @@ void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
  }
  #endif
  
@@ -453,7 +581,7 @@ index 67959ae711f..347a51f8703 100644
 +
  } // namespace WebCore
 diff --git a/Source/WebCore/rendering/RenderView.h b/Source/WebCore/rendering/RenderView.h
-index 9c5bb9895c5..4bea5e3630b 100644
+index 294737daad7..e4c7524227d 100644
 --- a/Source/WebCore/rendering/RenderView.h
 +++ b/Source/WebCore/rendering/RenderView.h
 @@ -198,6 +198,9 @@ public:

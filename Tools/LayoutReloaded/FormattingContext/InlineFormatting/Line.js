@@ -24,21 +24,33 @@
  */
 
 class Line {
-    constructor(availableWidth) {
+    constructor(topLeft, height, availableWidth) {
         this.m_availableWidth = availableWidth;
-        this.m_fragments = new Array();
+        this.m_lineRect = new LayoutRect(topLeft, new LayoutSize(0, height));
+        this.m_lineBoxes = new Array();
     }
 
     isEmpty() {
-        return !this.m_fragments.length;
+        return !this.m_lineBoxes.length;
     }
 
     availableWidth() {
         return this.m_availableWidth;
     }
 
-    appendFragment(startPosition, endPosition, width) {
-        this.m_availableWidth -= width;
-        this.m_fragments.push({startPosition, endPosition, width});
+    rect() {
+        return this.m_lineRect;
+    }
+
+    lineBoxes() {
+        return this.m_lineBoxes;
+    }
+
+    addLineBox(startPosition, endPosition, size) {
+        this.m_availableWidth -= size.width();
+        // TODO: use the actual height instead of the line height.
+        let lineBoxRect = new LayoutRect(this.rect().topLeft(), new LayoutSize(size.width(), this.rect().height()));
+        this.m_lineBoxes.push({startPosition, endPosition, lineBoxRect});
+        this.m_lineRect.growBy(new LayoutSize(size.width(), 0));
     }
 }

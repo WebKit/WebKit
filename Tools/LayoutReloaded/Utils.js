@@ -391,6 +391,10 @@ class Utils {
         return this.computedBorderAndPaddingTop(box) + this.computedBorderAndPaddingBottom(box);
     }
 
+    static computedLineHeight(box) {
+        return Utils.computedValue(window.getComputedStyle(box.node()).lineHeight);
+    }
+
     static hasClear(box) {
         return Utils.hasClearLeft(box) || Utils.hasClearRight(box) || Utils.hasClearBoth(box);
     }
@@ -418,6 +422,8 @@ class Utils {
     }
 
     static isBlockContainerElement(node) {
+        if (node.nodeType != Node.ELEMENT_NODE)
+            return false;
         let display = window.getComputedStyle(node).display;
         return  display == "block" || display == "list-item" || display == "inline-block" || display == "table-cell" || display == "table-caption"; //TODO && !replaced element
     }
@@ -511,6 +517,11 @@ class Utils {
         return texBox.node().textWidth(start, end);
     }
 
+    static textHeight(textBox)
+    {
+        return textBox.text().node().textHeight();
+    }
+
     // "RenderView at (0,0) size 1317x366\n HTML RenderBlock at (0,0) size 1317x116\n  BODY RenderBody at (8,8) size 1301x100\n   DIV RenderBlock at (0,0) size 100x100\n";
     static layoutTreeDump(initialContainingBlock) {
         return this._dumpBox(initialContainingBlock, 1) + this._dumpTree(initialContainingBlock, 2);
@@ -519,21 +530,49 @@ class Utils {
     static _dumpBox(box, level) {
         // Skip anonymous boxes for now -This is the case where WebKit does not generate an anon inline container for text content where the text is a direct child
         // of a block container.
-        if (box.isAnonymous())
-            return;
         let indentation = " ".repeat(level);
+        if (box instanceof InlineBox) {
+            if (box.text())
+                return indentation + "#text RenderText\n";
+        }
+        if (box.isAnonymous())
+            return "";
         let boxRect = box.rect();
         return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
     }
 
+    static _dumpLines(root, level) {
+        ASSERT(root.establishesInlineFormattingContext());
+        let inlineFormattingContext = root.establishedFormattingContext();
+        let lines = inlineFormattingContext.lines();
+        let content = "";
+        let indentation = " ".repeat(level);
+        lines.forEach(function(line) {
+            let lineRect = line.rect();
+            content += indentation + "RootInlineBox at (" + lineRect.left() + "," + lineRect.top() + ") size " + Utils.precisionRound(lineRect.width(), 2) + "x" + lineRect.height() + "\n";
+            line.lineBoxes().forEach(function(lineBox) {
+                let indentation = " ".repeat(level + 1);
+                content += indentation + "InlineTextBox at (" + lineBox.lineBoxRect.left() + "," + lineBox.lineBoxRect.top() + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width(), 2) + "x" + lineBox.lineBoxRect.height() + "\n";
+            });
+        });
+        return content;
+    }
+
     static _dumpTree(root, level) {
         let content = "";
+        if (root.isBlockContainerBox() && root.establishesInlineFormattingContext())
+            content += this._dumpLines(root, level);
         for (let child = root.firstChild(); child; child = child.nextSibling()) {
             content += this._dumpBox(child, level);
             if (child.isContainer())
                 content += this._dumpTree(child, level + 1, content);
         }
         return content;
+    }
+
+    static precisionRound(number, precision) {
+        var factor = Math.pow(10, precision);
+        return Math.round(number * factor) / factor;
     }
 }
 

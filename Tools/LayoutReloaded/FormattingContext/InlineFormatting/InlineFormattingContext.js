@@ -30,9 +30,13 @@ class InlineFormattingContext extends FormattingContext {
         ASSERT(root.isBlockContainerBox());
         if (root.establishesBlockFormattingContext())
             this.m_floatingContext = new FloatingContext(this);
-        // TODO: Floats need to be taken into account.
-        this.m_line = new Line(root.contentBox().width());
+        this._initializeLine();
         this.m_lines = new Array();
+    }
+
+    lines() {
+        // TODO: this is temporary. Line boxes will live off of the BoxTree.
+        return this.m_lines;
     }
 
     layout(layoutContext) {
@@ -65,8 +69,8 @@ class InlineFormattingContext extends FormattingContext {
                 }
             }
         }
-        // And finally place the out of flow descendants for the root.
         //this._placeOutOfFlowDescendants(this.rootContainer());
+        this._commitLine();
    }
 
     _handleInlineBox(inlineBox) {
@@ -76,8 +80,8 @@ class InlineFormattingContext extends FormattingContext {
 
     _handleText(inlineBox) {
         // FIXME: This is a extremely simple line breaking algorithm.
-        let endPosition = inlineBox.text().length() - 1;
         let currentPosition = 0;
+        let endPosition = inlineBox.text().length() - 1;
         while (currentPosition < endPosition) {
             let breakingPosition = Utils.nextBreakingOpportunity(inlineBox.text(), currentPosition);
             if (breakingPosition == currentPosition)
@@ -85,19 +89,24 @@ class InlineFormattingContext extends FormattingContext {
             let fragmentWidth = Utils.measureText(inlineBox.text(), currentPosition, breakingPosition);
             if (this._line().availableWidth() < fragmentWidth && !this._line().isEmpty())
                 this._commitLine();
-            this._line().appendFragment(currentPosition, breakingPosition, fragmentWidth);
+            this._line().addLineBox(currentPosition, breakingPosition, new LayoutSize(fragmentWidth, Utils.textHeight(inlineBox)));
             currentPosition = breakingPosition;
         }
     }
 
     _commitLine() {
         this.m_lines.push(this._line());
-        // TODO: Floats need to be taken into account.
-        this.m_line = new Line(this.rootContainer().contentBox().width());
+        this._initializeLine();
     }
 
     _line() {
         return this.m_line;
+    }
+
+    _initializeLine() {
+        // TODO: Floats need to be taken into account.
+        let contentBoxRect = this.rootContainer().contentBox();
+        this.m_line = new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.rootContainer()), contentBoxRect.width());
     }
 }
 

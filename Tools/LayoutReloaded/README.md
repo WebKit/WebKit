@@ -8,10 +8,10 @@ WebCore
 LayoutReloaded
 1. iterative layout within a formatting context, recursive across nested formatting contexts 
 2. formatting context is responsible for computing size/positions for all the boxes that live in the
-context including in/out-of-flow and floating boxes  
+context including in/out-of-flow and floating boxes
 3. Initial containing block creates the top level (initial) block formatting context
 4. Floats are resitriced to their containing blocks.
-
+5. Boxes, including inline tree are generated while laying out the content. LayoutTree -> BoxTree.
 
 Instructions:
 1. apply ./misc/LayoutReloadedWebKit.patch

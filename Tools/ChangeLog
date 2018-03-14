@@ -1,3 +1,43 @@
+2018-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Add InlineBox dump
+        https://bugs.webkit.org/show_bug.cgi?id=183625
+
+        Reviewed by Antti Koivisto.
+
+        Right now line boxes live off of the inline formatting context but that's temporary and
+        they will be moved over to the BoxTree.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeContentHeight):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext):
+        (InlineFormattingContext.prototype.lines):
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleText):
+        (InlineFormattingContext.prototype._commitLine):
+        (InlineFormattingContext.prototype._initializeLine):
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        (Line):
+        (Line.prototype.isEmpty):
+        (Line.prototype.rect):
+        (Line.prototype.lineBoxes):
+        (Line.prototype.addLineBox):
+        (Line.prototype.appendFragment): Deleted.
+        * LayoutReloaded/README.md:
+        * LayoutReloaded/Utils.js:
+        (Utils.computedLineHeight):
+        (Utils.isBlockContainerElement):
+        (Utils.textHeight):
+        (Utils._dumpBox):
+        (Utils._dumpLines.):
+        (Utils._dumpLines):
+        (Utils._dumpTree):
+        (Utils.precisionRound):
+        (Utils):
+        * LayoutReloaded/misc/LayoutReloadedWebKit.patch:
+        * LayoutReloaded/test/index.html:
+
 2018-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229567

@@ -242,6 +242,14 @@ class BlockFormattingContext extends FormattingContext {
         // Only children in the normal flow are taken into account.
         if (!box.isContainer() || !box.hasInFlowChild())
             return 0;
+        if (box.establishesInlineFormattingContext()) {
+            ASSERT(box.establishedFormattingContext());
+            let lines = box.establishedFormattingContext().lines();
+            if (!lines.length)
+                return 0;
+            let lastLine = lines[lines.length - 1];
+            return lastLine.rect().bottom();
+        }
         let top = box.contentBox().top();
         let lastInFlowChild = box.lastInFlowChild();
 
