@@ -1,3 +1,19 @@
+2018-03-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary StorageToWebProcessConnection::workerContextProcessConnectionCreated()
+        https://bugs.webkit.org/show_bug.cgi?id=183624
+
+        Reviewed by Youenn Fablet.
+
+        Pass in context connection to SWServer::serverToContextConnectionCreated() to avoid
+        relying on the deprecated globalServerToContextConnection().
+
+        No new tests, no expected behavior change.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::serverToContextConnectionCreated):
+        * workers/service/server/SWServer.h:
+
 2018-03-14  Mark Lam  <mark.lam@apple.com>
 
         Enhance the MacroAssembler and LinkBuffer to support pointer profiling.

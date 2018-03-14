@@ -1,3 +1,21 @@
+2018-03-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary StorageToWebProcessConnection::workerContextProcessConnectionCreated()
+        https://bugs.webkit.org/show_bug.cgi?id=183624
+
+        Reviewed by Youenn Fablet.
+
+        Drop unnecessary StorageToWebProcessConnection::workerContextProcessConnectionCreated()
+        since it was going through all SWServers. Calling workerContextProcessConnectionCreated()
+        on every StorageToWebProcessConnection was thus doing redundant work.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        (WebKit::StorageToWebProcessConnection::workerContextProcessConnectionCreated): Deleted.
+        * StorageProcess/StorageToWebProcessConnection.h:
+
 2018-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229567

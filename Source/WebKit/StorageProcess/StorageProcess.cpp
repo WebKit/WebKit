@@ -271,8 +271,8 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
         m_serverToContextConnection = WebSWServerToContextConnection::create(m_storageToWebProcessConnections.last()->connection());
         m_waitingForServerToContextProcessConnection = false;
 
-        for (auto& connection : m_storageToWebProcessConnections)
-            connection->workerContextProcessConnectionCreated();
+        for (auto* server : SWServer::allServers())
+            server->serverToContextConnectionCreated(*m_serverToContextConnection);
     }
 #else
     UNUSED_PARAM(isServiceWorkerProcess);

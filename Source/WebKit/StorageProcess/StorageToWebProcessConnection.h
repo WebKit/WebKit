@@ -44,10 +44,6 @@ public:
 
     IPC::Connection& connection() { return m_connection.get(); }
 
-#if ENABLE(SERVICE_WORKER)
-    void workerContextProcessConnectionCreated();
-#endif
-
 private:
     StorageToWebProcessConnection(IPC::Connection::Identifier);
 

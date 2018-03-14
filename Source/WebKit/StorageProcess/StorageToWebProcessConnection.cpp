@@ -170,12 +170,6 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
     auto addResult = m_swConnections.add(serverConnectionIdentifier, WTFMove(connection));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
-
-void StorageToWebProcessConnection::workerContextProcessConnectionCreated()
-{
-    for (auto* server : SWServer::allServers())
-        server->serverToContextConnectionCreated();
-}
 #endif
 
 #if ENABLE(INDEXED_DATABASE)

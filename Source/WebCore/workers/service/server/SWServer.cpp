@@ -508,11 +508,8 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
     installContextData(data);
 }
 
-void SWServer::serverToContextConnectionCreated()
+void SWServer::serverToContextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
-    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
-    ASSERT(connection);
-
     auto pendingContextDatas = WTFMove(m_pendingContextDatas);
     for (auto& data : pendingContextDatas)
         installContextData(data);
@@ -521,7 +518,7 @@ void SWServer::serverToContextConnectionCreated()
     for (auto& item : serviceWorkerRunRequests) {
         bool success = runServiceWorker(item.key);
         for (auto& callback : item.value)
-            callback(success, *connection);
+            callback(success, contextConnection);
     }
 }
 

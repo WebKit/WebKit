@@ -157,7 +157,7 @@ public:
     void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void claim(SWServerWorker&);
 
-    WEBCORE_EXPORT void serverToContextConnectionCreated();
+    WEBCORE_EXPORT void serverToContextConnectionCreated(SWServerToContextConnection&);
     
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
