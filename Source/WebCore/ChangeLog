@@ -1,3 +1,9 @@
+2018-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r229567
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-03-13  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Immediately forward cookie access for domains with previous user interaction when there's an opener document
