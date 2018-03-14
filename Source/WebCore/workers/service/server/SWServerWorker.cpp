@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static HashMap<ServiceWorkerIdentifier, SWServerWorker*>& allWorkers()
+HashMap<ServiceWorkerIdentifier, SWServerWorker*>& SWServerWorker::allWorkers()
 {
     static NeverDestroyed<HashMap<ServiceWorkerIdentifier, SWServerWorker*>> workers;
     return workers;
@@ -90,6 +90,14 @@ const ClientOrigin& SWServerWorker::origin() const
     return *m_origin;
 }
 
+SWServerToContextConnection* SWServerWorker::contextConnection()
+{
+    if (!m_contextConnectionIdentifier)
+        return nullptr;
+
+    return SWServerToContextConnection::connectionForIdentifier(*m_contextConnectionIdentifier);
+}
+
 void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
 {
     m_server.scriptContextFailedToStart(jobDataIdentifier, *this, message);
@@ -120,9 +128,9 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(co
     return m_server.serviceWorkerClientWithOriginByID(origin(), clientId);
 }
 
-void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
+void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, const ServiceWorkerClientsMatchAllCallback& callback)
 {
-    return m_server.matchAll(*this, options, WTFMove(callback));
+    return m_server.matchAll(*this, options, callback);
 }
 
 void SWServerWorker::claim()

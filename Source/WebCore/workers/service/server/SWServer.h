@@ -154,7 +154,7 @@ public:
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, bool wasSuccessful);
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
-    void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
+    void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, const ServiceWorkerClientsMatchAllCallback&);
     void claim(SWServerWorker&);
 
     WEBCORE_EXPORT void serverToContextConnectionCreated(SWServerToContextConnection&);
@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
 
-    using RunServiceWorkerCallback = WTF::Function<void(bool, SWServerToContextConnection&)>;
+    using RunServiceWorkerCallback = WTF::Function<void(SWServerToContextConnection*)>;
     WEBCORE_EXPORT void runServiceWorkerIfNecessary(ServiceWorkerIdentifier, RunServiceWorkerCallback&&);
 
     void resolveRegistrationReadyRequests(SWServerRegistration&);

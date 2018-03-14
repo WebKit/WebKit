@@ -1,5 +1,19 @@
 2018-03-14  Chris Dumez  <cdumez@apple.com>
 
+        Reduce use of SWServerToContextConnection::globalServerToContextConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=183626
+
+        Reviewed by Youenn Fablet.
+
+        Reduce use of SWServerToContextConnection::globalServerToContextConnection() as we are moving
+        towards having multiple context connections.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+
+2018-03-14  Chris Dumez  <cdumez@apple.com>
+
         Make policy decisions asynchronous
         https://bugs.webkit.org/show_bug.cgi?id=180568
         <rdar://problem/37131297>

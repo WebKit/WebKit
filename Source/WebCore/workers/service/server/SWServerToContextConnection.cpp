@@ -111,14 +111,14 @@ void SWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier servi
 void SWServerToContextConnection::findClientByIdentifier(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerClientIdentifier clientId)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        globalServerToContextConnection()->findClientByIdentifierCompleted(requestIdentifier, worker->findClientByIdentifier(clientId), false);
+        worker->contextConnection()->findClientByIdentifierCompleted(requestIdentifier, worker->findClientByIdentifier(clientId), false);
 }
 
 void SWServerToContextConnection::matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ServiceWorkerClientQueryOptions& options)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
-        worker->matchAll(options, [requestIdentifier] (auto&& data) {
-            globalServerToContextConnection()->matchAllCompleted(requestIdentifier, data);
+        worker->matchAll(options, [&] (auto&& data) {
+            worker->contextConnection()->matchAllCompleted(requestIdentifier, data);
         });
     }
 }
@@ -127,7 +127,7 @@ void SWServerToContextConnection::claim(uint64_t requestIdentifier, ServiceWorke
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
         worker->claim();
-        globalServerToContextConnection()->claimCompleted(requestIdentifier);
+        worker->contextConnection()->claimCompleted(requestIdentifier);
     }
 }
 

@@ -154,13 +154,13 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
         if (!StorageProcess::singleton().globalServerToContextConnection())
             StorageProcess::singleton().createServerToContextConnection(server().sessionID());
 
-        server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](bool success, auto& contextConnection) {
+        server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](auto* contextConnection) {
             if (!weakThis)
                 return;
 
-            if (success) {
+            if (contextConnection) {
                 SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %llu via service worker %llu", fetchIdentifier, serviceWorkerIdentifier.toUInt64());
-                sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::StartFetch { this->identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer });
+                sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::StartFetch { this->identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer });
             } else {
                 SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %llu -> DidNotHandle because failed to run service worker", fetchIdentifier);
                 m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
@@ -198,9 +198,9 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
         StorageProcess::singleton().createServerToContextConnection(server().sessionID());
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](bool success, auto& contextConnection) mutable {
-        if (success)
-            sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), WTFMove(sourceData) });
+    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](auto* contextConnection) mutable {
+        if (contextConnection)
+            sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), WTFMove(sourceData) });
     });
 }
 
@@ -293,12 +293,6 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerCli
 
     server().unregisterServiceWorkerClient(iterator->value, clientIdentifier);
     m_clientOrigins.remove(iterator);
-}
-
-template<typename U> void WebSWServerConnection::sendToContextProcess(U&& message)
-{
-    if (auto* connection = StorageProcess::singleton().globalServerToContextConnection())
-        connection->send(WTFMove(message));
 }
 
 template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)

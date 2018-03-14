@@ -98,7 +98,6 @@ private:
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier().toUInt64(); }
     
-    template<typename U> void sendToContextProcess(U&& message);
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
 
     PAL::SessionID m_sessionID;
