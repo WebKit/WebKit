@@ -110,7 +110,7 @@ class TestExporterTest(unittest.TestCase):
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN'])
         exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub)
         exporter.do_export()
-        self.assertEquals(exporter._github.calls, ['create_pr'])
+        self.assertEquals(exporter._github.calls, ['create_pr', 'add_label "webkit-export"'])
         self.assertTrue('WebKit export' in exporter._github.pull_requests_created[0][1])
         self.assertEquals(exporter._git.calls, [
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests',
@@ -131,3 +131,25 @@ class TestExporterTest(unittest.TestCase):
         self.assertEquals(exporter._bugzilla.calls, [
             'fetch bug 1234',
             'post comment to bug 1234 : Submitted web-platform-tests pull request: https://github.com/w3c/web-platform-tests/pull/5678'])
+
+    def test_export_with_specific_branch(self):
+        host = TestExporterTest.MyMockHost()
+        options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN', '-bn', 'wpt-export-branch'])
+        exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub)
+        exporter.do_export()
+        self.assertEquals(exporter._git.calls, [
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests',
+            'fetch',
+            'checkout master',
+            'reset hard origin/master',
+            'checkout new branch wpt-export-for-webkit-1234',
+            'apply_mail_patch patch.temp --exclude *-expected.txt',
+            'commit -a -m WebKit export of https://bugs.webkit.org/show_bug.cgi?id=1234',
+            'remote ',
+            'remote add USER https://USER@github.com/USER/web-platform-tests.git',
+            'remote get-url USER',
+            'push USER wpt-export-for-webkit-1234:wpt-export-branch -f',
+            'checkout master',
+            'delete branch wpt-export-for-webkit-1234',
+            'checkout master',
+            'reset hard origin/master'])

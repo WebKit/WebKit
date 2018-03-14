@@ -1,3 +1,16 @@
+2018-03-14  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Add label on github when exporting wpt tests to w3c/web-platform-test repo
+        https://bugs.webkit.org/show_bug.cgi?id=183575
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (TestExporter.make_pull_request):
+        (parse_args):
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.test_export):
+
 2018-03-14  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add InlineBox dump

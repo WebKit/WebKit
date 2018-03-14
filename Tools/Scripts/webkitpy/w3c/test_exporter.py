@@ -39,6 +39,7 @@ _log = logging.getLogger(__name__)
 
 WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
 WPT_PR_URL = "https://github.com/w3c/web-platform-tests/pull/"
+WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
 
 class TestExporter(object):
@@ -177,9 +178,27 @@ class TestExporter(object):
 
         _log.info('Making pull request')
         description = self._bugzilla.fetch_bug_dictionary(self._bug_id)["title"]
-        pr_number = self._github.create_pr(self._wpt_fork_remote + ':' + self._branch_name, self._commit_message, self._commit_message + "\n" + description)
-        if self._bug_id:
+        pr_number = self.create_wpt_pull_request(self._wpt_fork_remote + ':' + self._public_branch_name, self._commit_message, self._commit_message + "\n" + description)
+        if pr_number:
+            try:
+                self._github.add_label(pr_number, WEBKIT_EXPORT_PR_LABEL)
+            except Exception as e:
+                _log.warning(e)
+                _log.info('Could not add label "%s" to pr #%s. User "%s" may not have permission to update labels in the w3c/web-platform-test repo.' % (WEBKIT_EXPORT_PR_LABEL, pr_number, self._username))
+        if self._bug_id and pr_number:
             self._bugzilla.post_comment_to_bug(self._bug_id, "Submitted web-platform-tests pull request: " + WPT_PR_URL + str(pr_number))
+
+    def create_wpt_pull_request(self, remote_branch_name, title, body):
+        pr_number = None
+        try:
+            pr_number = self._github.create_pr(remote_branch_name, title, body)
+        except Exception as e:
+            if e.code == 422:
+                _log.info('Unable to create a new pull request for branch "%s" because a pull request already exists. The branch has been updated and there is no further action needed.' % (remote_branch_name))
+            else:
+                _log.warning(e)
+                _log.info('Error creating a pull request on github. Please ensure that the provided github token has the "public_repo" scope.')
+        return pr_number
 
     def delete_local_branch(self):
         _log.info('Removing branch ' + self._branch_name)
@@ -246,7 +265,6 @@ def parse_args(args):
     - As a dry run, one can start by running the script without -c. This will only create the branch on the user public GitHub repository.
     - By default, the script will create an https remote URL that will require a password-based authentication to GitHub. If you are using an SSH key, please use the --remote-url option.
     FIXME:
-    - Add a label on github issues
     - The script is not yet able to update an existing pull request
     - Need a way to monitor the progress of the pul request so that status of all pending pull requests can be done at import time.
     """
