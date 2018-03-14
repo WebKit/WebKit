@@ -1,7 +1,7 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
-main frame - didFinishDocumentLoadForFrame
 frame "frame" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
 127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with webkit:rocks
 frame "frame" - didCommitLoadForFrame
 frame "frame" - didFinishDocumentLoadForFrame
