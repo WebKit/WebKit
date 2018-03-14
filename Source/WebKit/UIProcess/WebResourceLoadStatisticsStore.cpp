@@ -385,21 +385,28 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
     });
 }
 
-void WebResourceLoadStatisticsStore::grantStorageAccessUnderOpener(String&& domainReceivingUserInteraction, uint64_t openerPageID, String&& openerDomain)
+void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(String&& domainInNeedOfStorageAccess, uint64_t openerPageID, String&& openerDomain, bool isTriggeredByUserGesture)
 {
-    ASSERT(domainReceivingUserInteraction != openerDomain);
+    ASSERT(domainInNeedOfStorageAccess != openerDomain);
     ASSERT(!RunLoop::isMain());
 
-    if (domainReceivingUserInteraction == openerDomain)
+    if (domainInNeedOfStorageAccess == openerDomain)
         return;
 
-    auto& domainReceivingUserInteractionStatistic = ensureResourceStatisticsForPrimaryDomain(domainReceivingUserInteraction);
-    if (!shouldPartitionCookies(domainReceivingUserInteractionStatistic) && !shouldBlockCookies(domainReceivingUserInteractionStatistic))
+    auto& domainInNeedOfStorageAccessStatistic = ensureResourceStatisticsForPrimaryDomain(domainInNeedOfStorageAccess);
+    auto cookiesBlocked = shouldBlockCookies(domainInNeedOfStorageAccessStatistic);
+
+    // There are no cookies to get access to if the domain has its cookies blocked and did not get user interaction now.
+    if (cookiesBlocked && !isTriggeredByUserGesture)
         return;
 
-    m_grantStorageAccessHandler(WTFMove(domainReceivingUserInteraction), WTFMove(openerDomain), std::nullopt, openerPageID, [](bool) { });
+    // The domain already has access if its cookies are neither blocked nor partitioned.
+    if (!cookiesBlocked && !shouldPartitionCookies(domainInNeedOfStorageAccessStatistic))
+        return;
+
+    m_grantStorageAccessHandler(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, [](bool) { });
 #if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Grant storage access for %s under opener %s.", domainReceivingUserInteraction.utf8().data(), openerDomain.utf8().data());
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Grant storage access for %{public}s under opener %{public}s, %{public}s user interaction.", domainInNeedOfStorageAccess.utf8().data(), openerDomain.utf8().data(), (isTriggeredByUserGesture ? "with" : "without"));
 #endif
 }
 

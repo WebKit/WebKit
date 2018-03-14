@@ -1416,8 +1416,8 @@ public:
     JSC::ThreadLocalCache& threadLocalCache();
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    bool hasGrantedPageSpecificStorageAccess(String& primaryDomain);
-    void setHasGrantedPageSpecificStorageAccess(String& primaryDomain);
+    bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
+    void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
 #endif
 
 protected:
@@ -1908,7 +1908,7 @@ private:
     RefPtr<JSC::ThreadLocalCache> m_threadLocalCache;
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String m_primaryDomainGrantedPageSpecificStorageAccess { };
+    String m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
 #endif
 };
 

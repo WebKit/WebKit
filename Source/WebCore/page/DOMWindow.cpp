@@ -80,6 +80,7 @@
 #include "Performance.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
+#include "ResourceLoadObserver.h"
 #include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
@@ -2279,6 +2280,13 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
         ResourceRequest resourceRequest { completedURL, referrer, UseProtocolCachePolicy };
         FrameLoadRequest frameLoadRequest { *activeWindow.document(), activeWindow.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate(), initiatedByMainFrame };
         newFrame->loader().changeLocation(WTFMove(frameLoadRequest));
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+        if (auto openerDocument = openerFrame.document()) {
+            if (auto openerPageID = openerFrame.loader().client().pageID())
+                ResourceLoadObserver::shared().logWindowCreation(completedURL, openerPageID.value(), *openerDocument);
+        }
+#endif
     } else if (!urlString.isEmpty()) {
         LockHistory lockHistory = UserGestureIndicator::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
         newFrame->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(), completedURL, referrer, lockHistory, LockBackForwardList::No);

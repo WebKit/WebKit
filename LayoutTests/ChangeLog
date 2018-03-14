@@ -1,3 +1,21 @@
+2018-03-13  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Immediately forward cookie access for domains with previous user interaction when there's an opener document
+        https://bugs.webkit.org/show_bug.cgi?id=183620
+        <rdar://problem/38431469>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/storageAccess/deny-storage-access-under-opener-expected.txt: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener.html: Added.
+        * http/tests/storageAccess/grant-storage-access-under-opener-expected.txt: Added.
+        * http/tests/storageAccess/grant-storage-access-under-opener.html: Added.
+        * http/tests/storageAccess/resources/set-cookie-and-report-back.html: Added.
+        * platform/ios/TestExpectations:
+            New tests marked as [ Pass ].
+        * platform/mac-wk2/TestExpectations:
+            New tests marked as [ Pass ].
+
 2018-03-13  Youenn Fablet  <youenn@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky

@@ -7623,14 +7623,14 @@ void Document::setHasFrameSpecificStorageAccess(bool value)
     m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
 }
 
-bool Document::hasGrantedPageSpecificStorageAccess(String& primaryDomain)
+bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain)
 {
-    return m_primaryDomainGrantedPageSpecificStorageAccess == primaryDomain;
+    return m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction == primaryDomain;
 }
 
-void Document::setHasGrantedPageSpecificStorageAccess(String& primaryDomain)
+void Document::setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain)
 {
-    m_primaryDomainGrantedPageSpecificStorageAccess = primaryDomain;
+    m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction = primaryDomain;
 }
 
 #endif

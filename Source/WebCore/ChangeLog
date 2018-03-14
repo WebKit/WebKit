@@ -1,3 +1,50 @@
+2018-03-13  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Immediately forward cookie access for domains with previous user interaction when there's an opener document
+        https://bugs.webkit.org/show_bug.cgi?id=183620
+        <rdar://problem/38431469>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/storageAccess/deny-storage-access-under-opener.html
+               http/tests/storageAccess/grant-storage-access-under-opener.html
+
+        It turns out the fix in https://bugs.webkit.org/show_bug.cgi?id=183577
+        wasn't enough to address the compatibility issues with popups. Some of
+        them just detect their unpartitioned cookies, auto-dismiss themselves,
+        and expect their unpartitioned cookies to be available under the opener
+        afterwards. We should grant them access if the popup's domain has had
+        user interaction _previously_.
+
+        Note that we still need https://bugs.webkit.org/show_bug.cgi?id=183577
+        because if the popup's domain has not received user interaction
+        previously, we will not grant it storage access on just the window open.
+
+        * dom/Document.cpp:
+        (WebCore::Document::hasRequestedPageSpecificStorageAccessWithUserInteraction):
+        (WebCore::Document::setHasRequestedPageSpecificStorageAccessWithUserInteraction):
+        (WebCore::Document::hasGrantedPageSpecificStorageAccess): Deleted.
+        (WebCore::Document::setHasGrantedPageSpecificStorageAccess): Deleted.
+            Renamed from *Granted* to *Requested* since there is now a case
+            where access will not be granted, i.e. when the popup domain has
+            not had user interaction previously.
+        * dom/Document.h:
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback):
+            Renamed *Grant* to *Request*.
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::logWindowCreation):
+            New function called from DOMWindow::createWindow().
+        (WebCore::ResourceLoadObserver::requestStorageAccessUnderOpener):
+            New convenience function.
+        (WebCore::ResourceLoadObserver::setGrantStorageAccessUnderOpenerCallback): Deleted.
+            Renamed *Grant* to *Request*.
+        * loader/ResourceLoadObserver.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+            Now calls ResourceLoadObserver::logWindowCreation() if a window
+            was created and the opener has a document and a page ID.
+
 2018-03-13  Chris Dumez  <cdumez@apple.com>
 
         fast/loader/javascript-url-iframe-remove-on-navigate.html is a flaky crash on iOS with async delegates

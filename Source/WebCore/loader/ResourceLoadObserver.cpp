@@ -108,10 +108,10 @@ void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<Re
     m_notificationCallback = WTFMove(notificationCallback);
 }
 
-void ResourceLoadObserver::setGrantStorageAccessUnderOpenerCallback(WTF::Function<void(const String& domainReceivingUserInteraction, uint64_t openerPageID, const String& openerDomain)>&& callback)
+void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, const String& openerDomain, bool isTriggeredByUserGesture)>&& callback)
 {
-    ASSERT(!m_grantStorageAccessUnderOpenerCallback);
-    m_grantStorageAccessUnderOpenerCallback = WTFMove(callback);
+    ASSERT(!m_requestStorageAccessUnderOpenerCallback);
+    m_requestStorageAccessUnderOpenerCallback = WTFMove(callback);
 }
 
 ResourceLoadObserver::ResourceLoadObserver()
@@ -322,14 +322,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         if (auto* openerDocument = opener->document()) {
             if (auto* openerFrame = openerDocument->frame()) {
                 if (auto openerPageID = openerFrame->loader().client().pageID()) {
-                    auto openerUrl = openerDocument->url();
-                    auto openerPrimaryDomain = primaryDomain(openerUrl);
-                    if (domain != openerPrimaryDomain
-                        && !openerDocument->hasGrantedPageSpecificStorageAccess(domain)
-                        && !equalIgnoringASCIICase(openerUrl.string(), blankURL())) {
-                        openerDocument->setHasGrantedPageSpecificStorageAccess(domain);
-                        m_grantStorageAccessUnderOpenerCallback(domain, openerPageID.value(), openerPrimaryDomain);
-                    }
+                    requestStorageAccessUnderOpener(domain, openerPageID.value(), *openerDocument, true);
                 }
             }
         }
@@ -360,6 +353,33 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     }
 #endif
 }
+
+void ResourceLoadObserver::logWindowCreation(const URL& popupUrl, uint64_t openerPageID, Document& openerDocument)
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    requestStorageAccessUnderOpener(primaryDomain(popupUrl), openerPageID, openerDocument, false);
+#else
+    UNUSED_PARAM(popupUrl);
+    UNUSED_PARAM(openerPageID);
+    UNUSED_PARAM(openerDocument);
+#endif
+}
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+void ResourceLoadObserver::requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument, bool isTriggeredByUserGesture)
+{
+    auto openerUrl = openerDocument.url();
+    auto openerPrimaryDomain = primaryDomain(openerUrl);
+    if (domainInNeedOfStorageAccess != openerPrimaryDomain
+        && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
+        && !equalIgnoringASCIICase(openerUrl.string(), blankURL())) {
+        m_requestStorageAccessUnderOpenerCallback(domainInNeedOfStorageAccess, openerPageID, openerPrimaryDomain, isTriggeredByUserGesture);
+        // Remember user interaction-based requests since they don't need to be repeated.
+        if (isTriggeredByUserGesture)
+            openerDocument.setHasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess);
+    }
+}
+#endif
 
 ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {

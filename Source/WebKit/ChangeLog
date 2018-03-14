@@ -1,3 +1,36 @@
+2018-03-13  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Immediately forward cookie access for domains with previous user interaction when there's an opener document
+        https://bugs.webkit.org/show_bug.cgi?id=183620
+        <rdar://problem/38431469>
+
+        Reviewed by Brent Fulgham.
+
+        It turns out the fix in https://bugs.webkit.org/show_bug.cgi?id=183577
+        wasn't enough to address the compatibility issues with popups. Some of
+        them just detect their unpartitioned cookies, auto-dismiss themselves,
+        and expect their unpartitioned cookies to be available under the opener
+        afterwards. We should grant them access if the popup's domain has had
+        user interaction _previously_.
+
+        Note that we still need https://bugs.webkit.org/show_bug.cgi?id=183577
+        because if the popup's domain has not received user interaction
+        previously, we will not grant it storage access on just the window open.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccessUnderOpener): Deleted.
+            Renamed WebResourceLoadStatisticsStore::grantStorageAccessUnderOpener()
+            to WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener()
+            since there is now a case where access will not be granted, i.e. when
+            the popup domain has not had user interaction previously.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.messages.in:
+             Similar renaming.
+        * WebProcess/WebProcess.cpp:
+        (WebProcess::WebProcess):
+             Similar renaming.
+
 2018-03-13  Jer Noble  <jer.noble@apple.com>
 
         Add missing artwork for fullscreen mode.

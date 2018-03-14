@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a cross-origin window from a prevalent domain without user interaction is denied storage access under its opener.");
+        jsTestIsAsync = true;
+
+        function setEnableFeature(enable) {
+            if (!enable)
+                testRunner.statisticsResetToConsistentState();
+            internals.setResourceLoadStatisticsEnabled(enable);
+            testRunner.setCookieStoragePartitioningEnabled(enable);
+            testRunner.setStorageAccessAPIEnabled(enable);
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function finishTest() {
+            setEnableFeature(false);
+            finishJSTest();
+        }
+
+        function openIframe(url, onLoadHandler) {
+            const element = document.createElement("iframe");
+            element.src = url;
+            if (onLoadHandler) {
+                element.onload = onLoadHandler;
+            }
+            document.body.appendChild(element);
+        }
+
+        function receiveMessage(event) {
+            if (event.origin === "http://localhost:8000") {
+                if (event.data.indexOf("PASS") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data);
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+
+            newWin.close();
+            openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should not receive first-party cookie.", finishTest);
+        }
+
+        setEnableFeature(true);
+        testRunner.setCanOpenWindows();
+
+        const thirdPartyOrigin = "http://localhost:8000";
+        const resourcePath = "/storageAccess/resources";
+        const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
+        const firstPartyCookieName = "firstPartyCookie";
+        const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName;
+
+        testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true);
+        if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+            testFailed("Host did not get set as prevalent resource.");
+        if (testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+            testFailed("Host logged for user interaction.");
+        testRunner.dumpChildFramesAsText();
+        testRunner.setCloseRemainingWindowsWhenComplete(true);
+
+        var newWin;
+        testRunner.statisticsUpdateCookiePartitioning(function () {
+            newWin = window.open(thirdPartyOrigin + "/storageAccess/resources/set-cookie-and-report-back.html", "testWindow");
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

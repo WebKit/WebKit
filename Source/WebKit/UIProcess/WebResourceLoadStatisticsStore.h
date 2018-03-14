@@ -85,7 +85,7 @@ public:
 
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
-    void grantStorageAccessUnderOpener(String&& domainReceivingUserInteraction, uint64_t openerPageID, String&& openerDomain);
+    void requestStorageAccessUnderOpener(String&& domainInNeedOfStorageAccess, uint64_t openerPageID, String&& openerDomain, bool isTriggeredByUserGesture);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);

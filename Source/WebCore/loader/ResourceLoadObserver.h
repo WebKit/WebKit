@@ -57,11 +57,12 @@ public:
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logWebSocketLoading(const Frame*, const URL&);
     void logUserInteractionWithReducedTimeResolution(const Document&);
+    void logWindowCreation(const URL& popupUrl, uint64_t openerPageID, Document& openerDocument);
 
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
-    WEBCORE_EXPORT void setGrantStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&)>&&);
+    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String&, uint64_t, const String&, bool)>&&);
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
@@ -80,10 +81,14 @@ private:
     void scheduleNotificationIfNeeded();
     Vector<ResourceLoadStatistics> takeStatistics();
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    void requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument, bool isTriggeredByUserGesture);
+#endif
+
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
-    WTF::Function<void(String, uint64_t, String)> m_grantStorageAccessUnderOpenerCallback;
+    WTF::Function<void(const String&, uint64_t, const String&, bool)> m_requestStorageAccessUnderOpenerCallback;
     Timer m_notificationTimer;
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
