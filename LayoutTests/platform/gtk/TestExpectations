@@ -1940,6 +1940,8 @@ webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 
 webkit.org/b/183609 inspector/unit-tests/throttle.html [ Pass Failure ]
 
+webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
