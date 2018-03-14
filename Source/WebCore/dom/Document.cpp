@@ -568,8 +568,10 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Document::~Document()
 {
-    bool wasRemoved = allDocumentsMap().remove(m_identifier);
-    ASSERT_UNUSED(wasRemoved, wasRemoved);
+    ASSERT(allDocumentsMap().contains(m_identifier));
+    allDocumentsMap().remove(m_identifier);
+    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this Document from another thread is safe.
+    removeFromContextsMap();
 
     ASSERT(!renderView());
     ASSERT(m_pageCacheState != InPageCache);

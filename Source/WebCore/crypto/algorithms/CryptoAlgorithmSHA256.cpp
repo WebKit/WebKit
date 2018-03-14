@@ -51,13 +51,11 @@ void CryptoAlgorithmSHA256::digest(Vector<uint8_t>&& message, VectorCallback&& c
         return;
     }
 
-    context.ref();
-    workQueue.dispatch([digest = WTFMove(digest), message = WTFMove(message), callback = WTFMove(callback), &context]() mutable {
+    workQueue.dispatch([digest = WTFMove(digest), message = WTFMove(message), callback = WTFMove(callback), contextIdentifier = context.contextIdentifier()]() mutable {
         digest->addBytes(message.data(), message.size());
         auto result = digest->computeHash();
-        context.postTask([callback = WTFMove(callback), result = WTFMove(result)](ScriptExecutionContext& context) {
+        ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTFMove(callback), result = WTFMove(result)](auto&) {
             callback(result);
-            context.deref();
         });
     });
 }

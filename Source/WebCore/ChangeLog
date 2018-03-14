@@ -1,3 +1,48 @@
+2018-03-14  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=183602
+
+        Reviewed by Chris Dumez.
+
+        Introduce a map of ScriptExecutionContext that is read/write protected using a Lock.
+        This allows introducing postTaskTo taking a ScriptExecutionContext identifier and callable from any thread.
+        Use that method in Crypto instead of refing/unrefing  the context.
+        Lock only happens if context does some postTask activity. This is governed by calling or not the new contextIdentifier() getter.
+
+        Covered by crypto tests no longer failing m_workerGlobalScope->hasOneRef() assertion.
+
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::dispatchAlgorithmOperation):
+        * crypto/algorithms/CryptoAlgorithmECDH.cpp:
+        (WebCore::CryptoAlgorithmECDH::deriveBits):
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        (WebCore::CryptoAlgorithmSHA1::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        (WebCore::CryptoAlgorithmSHA224::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        (WebCore::CryptoAlgorithmSHA256::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        (WebCore::CryptoAlgorithmSHA384::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        (WebCore::CryptoAlgorithmSHA512::digest):
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::allScriptExecutionContextsMapLock):
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::removeFromContextsMap):
+        (WebCore::ScriptExecutionContext::checkConsistency const):
+        (WebCore::ScriptExecutionContext::postTaskTo):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::contextIdentifier const):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+
 2018-03-14  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of SWServerToContextConnection::globalServerToContextConnection()

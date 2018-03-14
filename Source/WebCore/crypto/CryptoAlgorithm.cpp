@@ -95,26 +95,17 @@ ExceptionOr<size_t> CryptoAlgorithm::getKeyLength(const CryptoAlgorithmParameter
 template<typename ResultCallbackType, typename OperationType>
 static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionContext& context, ResultCallbackType&& callback, CryptoAlgorithm::ExceptionCallback&& exceptionCallback, OperationType&& operation)
 {
-    context.ref();
+    // There is no guarantee that callback and exceptionCallback will be destroyed in the thread in which they were created.
     workQueue.dispatch(
-        [operation = WTFMove(operation), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        [operation = WTFMove(operation), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), contextIdentifier = context.contextIdentifier()]() mutable {
             auto result = operation();
-            if (result.hasException()) {
-                // We should only dereference callbacks after being back to the Document/Worker threads.
-                context.postTask(
-                    [ec = result.releaseException().code(), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-                        exceptionCallback(ec);
-                        context.deref();
-                    });
-                return;
-            }
-
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask(
-                [result = result.releaseReturnValue(), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-                    callback(result);
-                    context.deref();
-                });
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [result = crossThreadCopy(result), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
+                if (result.hasException()) {
+                    exceptionCallback(result.releaseException().code());
+                    return;
+                }
+                callback(result.releaseReturnValue());
+            });
         });
 }
 

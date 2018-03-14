@@ -293,24 +293,24 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
     // We only use the callback functions when back on the main/worker thread, but captured variables are copied on a secondary thread too.
     KeyPairCallback* localCallback = new KeyPairCallback(WTFMove(callback));
     VoidCallback* localFailureCallback = new VoidCallback(WTFMove(failureCallback));
-    context->ref();
+    auto contextIdentifier = context->contextIdentifier();
 
+    // FIXME: There is a risk that localCallback and localFailureCallback are never freed.
+    // Fix this by using unique pointers and move them from one lambda to the other.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        ASSERT(context);
         CCRSACryptorRef ccPublicKey;
         CCRSACryptorRef ccPrivateKey;
         CCCryptorStatus status = CCRSACryptorGeneratePair(modulusLength, e, &ccPublicKey, &ccPrivateKey);
         if (status) {
             WTFLogAlways("Could not generate a key pair, status %d", status);
-            context->postTask([localCallback, localFailureCallback](ScriptExecutionContext& context) {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [localCallback, localFailureCallback](auto&) {
                 (*localFailureCallback)();
                 delete localCallback;
                 delete localFailureCallback;
-                context.deref();
             });
             return;
         }
-        context->postTask([algorithm, hash, hasHash, extractable, usage, localCallback, localFailureCallback, ccPublicKey, ccPrivateKey](ScriptExecutionContext& context) {
+        ScriptExecutionContext::postTaskTo(contextIdentifier, [algorithm, hash, hasHash, extractable, usage, localCallback, localFailureCallback, ccPublicKey, ccPrivateKey](auto&) {
             auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, ccPublicKey, true, usage);
             auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
 
@@ -318,7 +318,6 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
 
             delete localCallback;
             delete localFailureCallback;
-            context.deref();
         });
     });
 }

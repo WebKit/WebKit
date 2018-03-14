@@ -89,6 +89,8 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, c
 WorkerGlobalScope::~WorkerGlobalScope()
 {
     ASSERT(thread().thread() == &Thread::current());
+    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
+    removeFromContextsMap();
 
     m_performance = nullptr;
     m_crypto = nullptr;

@@ -65,6 +65,19 @@
 namespace WebCore {
 using namespace Inspector;
 
+static Lock& allScriptExecutionContextsMapLock()
+{
+    static NeverDestroyed<Lock> lock;
+    return lock;
+}
+
+static HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>& allScriptExecutionContextsMap()
+{
+    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>> contexts;
+    ASSERT(allScriptExecutionContextsMapLock().isLocked());
+    return contexts;
+}
+
 struct ScriptExecutionContext::PendingException {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -85,6 +98,29 @@ public:
 
 ScriptExecutionContext::ScriptExecutionContext()
 {
+}
+
+ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() const
+{
+    ASSERT(isContextThread());
+    if (!m_contextIdentifier) {
+        Locker<Lock> locker(allScriptExecutionContextsMapLock());
+
+        m_contextIdentifier = generateObjectIdentifier<ScriptExecutionContextIdentifierType>();
+
+        ASSERT(!allScriptExecutionContextsMap().contains(m_contextIdentifier));
+        allScriptExecutionContextsMap().add(m_contextIdentifier, const_cast<ScriptExecutionContext*>(this));
+    }
+    return m_contextIdentifier;
+}
+
+void ScriptExecutionContext::removeFromContextsMap()
+{
+    if (m_contextIdentifier) {
+        Locker<Lock> locker(allScriptExecutionContextsMapLock());
+        ASSERT(allScriptExecutionContextsMap().contains(m_contextIdentifier));
+        allScriptExecutionContextsMap().remove(m_contextIdentifier);
+    }
 }
 
 #if ASSERT_DISABLED
@@ -116,6 +152,12 @@ ScriptExecutionContext::~ScriptExecutionContext()
     checkConsistency();
 
 #if !ASSERT_DISABLED
+    if (m_contextIdentifier) {
+        Locker<Lock> locker(allScriptExecutionContextsMapLock());
+        ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier),
+            "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
+    }
+
     m_inScriptExecutionContextDestructor = true;
 #endif
 
@@ -580,6 +622,19 @@ bool ScriptExecutionContext::postTaskTo(const DocumentOrWorkerIdentifier& contex
     });
     return wasPosted;
 }
+
 #endif
+
+bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identifier, Task&& task)
+{
+    Locker<Lock> locker(allScriptExecutionContextsMapLock());
+    auto* context = allScriptExecutionContextsMap().get(identifier);
+
+    if (!context)
+        return false;
+
+    context->postTask(WTFMove(task));
+    return true;
+}
 
 } // namespace WebCore

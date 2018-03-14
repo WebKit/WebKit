@@ -36,6 +36,7 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -77,6 +78,9 @@ class ServiceWorkerContainer;
 namespace IDBClient {
 class IDBConnectionProxy;
 }
+
+enum ScriptExecutionContextIdentifierType { };
+using ScriptExecutionContextIdentifier = ObjectIdentifier<ScriptExecutionContextIdentifierType>;
 
 class ScriptExecutionContext : public SecurityContext {
 public:
@@ -253,6 +257,9 @@ public:
 
     WEBCORE_EXPORT static bool postTaskTo(const DocumentOrWorkerIdentifier&, WTF::Function<void(ScriptExecutionContext&)>&&);
 #endif
+    WEBCORE_EXPORT static bool postTaskTo(ScriptExecutionContextIdentifier, Task&&);
+
+    ScriptExecutionContextIdentifier contextIdentifier() const;
 
 protected:
     class AddConsoleMessageTask : public Task {
@@ -275,6 +282,7 @@ protected:
     ActiveDOMObject::ReasonForSuspension reasonForSuspendingActiveDOMObjects() const { return m_reasonForSuspendingActiveDOMObjects; }
 
     bool hasPendingActivity() const;
+    void removeFromContextsMap();
 
 private:
     // The following addMessage function is deprecated.
@@ -328,6 +336,7 @@ private:
 #endif
 
     String m_domainForCachePartition;
+    mutable ScriptExecutionContextIdentifier m_contextIdentifier;
 };
 
 } // namespace WebCore
