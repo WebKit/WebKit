@@ -110,7 +110,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     jit.move(AssemblyHelpers::TrustedImmPtr(&exit), GPRInfo::argumentGPR1);
 #endif
     jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(triggerReoptimizationNow)), GPRInfo::nonArgGPR0);
-    jit.call(GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0, NoPtrTag);
     AssemblyHelpers::Jump doneAdjusting = jit.jump();
     
     tooFewFails.link(&jit);
@@ -263,7 +263,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 
     jit.setupArguments<decltype(operationOSRWriteBarrier)>(owner);
     jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch);
-    jit.call(scratch);
+    jit.call(scratch, NoPtrTag);
 
 #if CPU(X86)
     jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 4), MacroAssembler::stackPointerRegister);
@@ -318,7 +318,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     }
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
-    jit.jump(GPRInfo::regT2);
+    jit.jump(GPRInfo::regT2, NoPtrTag);
 }
 
 } } // namespace JSC::DFG

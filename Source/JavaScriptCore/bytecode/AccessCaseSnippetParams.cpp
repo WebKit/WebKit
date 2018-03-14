@@ -61,7 +61,7 @@ public:
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
 
-        CCallHelpers::Call operationCall = jit.call();
+        CCallHelpers::Call operationCall = jit.call(NoPtrTag);
         auto function = m_function;
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
             linkBuffer.link(operationCall, FunctionPtr(function));

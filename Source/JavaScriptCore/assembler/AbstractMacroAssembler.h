@@ -34,6 +34,7 @@
 #include "MacroAssemblerCodeRef.h"
 #include "MacroAssemblerHelpers.h"
 #include "Options.h"
+#include "PtrTag.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/SharedTask.h>
@@ -871,9 +872,10 @@ public:
         AssemblerType::linkPointer(code, label, value.executableAddress());
     }
 
-    static void* getLinkerAddress(void* code, AssemblerLabel label)
+    // FIXME: remove the default PtrTag value once we've tagged all the clients.
+    static void* getLinkerAddress(void* code, AssemblerLabel label, PtrTag tag = NoPtrTag)
     {
-        return AssemblerType::getRelocatedAddress(code, label);
+        return tagCodePtr(AssemblerType::getRelocatedAddress(code, label), tag);
     }
 
     static unsigned getLinkerCallReturnOffset(Call call)
@@ -950,6 +952,12 @@ public:
         AssemblerType::fillNops(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes, isCopyingToExecutableMemory);
         buffer.setCodeSize(targetCodeSize);
     }
+
+    ALWAYS_INLINE void tagPtr(RegisterID, PtrTag) { }
+    ALWAYS_INLINE void tagPtr(RegisterID, RegisterID) { }
+    ALWAYS_INLINE void untagPtr(RegisterID, PtrTag) { }
+    ALWAYS_INLINE void untagPtr(RegisterID, RegisterID) { }
+    ALWAYS_INLINE void removePtrTag(RegisterID) { }
 
 protected:
     AbstractMacroAssembler()

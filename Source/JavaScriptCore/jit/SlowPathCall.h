@@ -61,7 +61,7 @@ public:
         m_jit->move(JIT::callFrameRegister, JIT::argumentGPR0);
         m_jit->move(JIT::TrustedImmPtr(m_pc), JIT::argumentGPR1);
 #endif
-        JIT::Call call = m_jit->call();
+        JIT::Call call = m_jit->call(NoPtrTag);
         m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, m_stub.value()));
 
 #if CPU(X86) && USE(JSVALUE32_64)

@@ -109,7 +109,7 @@ void JIT::emitEnterOptimizationCheck()
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
     move(returnValueGPR2, stackPointerRegister);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
     skipOptimize.link(this);
 }
 #endif
@@ -776,32 +776,36 @@ CompilationResult JIT::link()
             ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
             ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
-            record.jumpTable.simpleJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset]);
+            record.jumpTable.simpleJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], NoPtrTag);
 
             for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
                 unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
-                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset]) : record.jumpTable.simpleJumpTable->ctiDefault;
+                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], NoPtrTag) : record.jumpTable.simpleJumpTable->ctiDefault;
             }
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
-            record.jumpTable.stringJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset]);
+            auto* stringJumpTable = record.jumpTable.stringJumpTable;
+            stringJumpTable->ctiDefault =
+                patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], NoPtrTag);
 
-            for (auto& location : record.jumpTable.stringJumpTable->offsetTable.values()) {
+            for (auto& location : stringJumpTable->offsetTable.values()) {
                 unsigned offset = location.branchOffset;
-                location.ctiOffset = offset ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
+                location.ctiOffset = offset
+                    ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], NoPtrTag)
+                    : stringJumpTable->ctiDefault;
             }
         }
     }
 
     for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
         HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
-        handler.nativeCode = patchBuffer.locationOf(m_labels[handler.target]);
+        handler.nativeCode = patchBuffer.locationOf(m_labels[handler.target], ExceptionHandlerPtrTag);
     }
 
     for (auto& record : m_calls) {
         if (record.to)
-            patchBuffer.link(record.from, FunctionPtr(record.to));
+            patchBuffer.link(record.from, FunctionPtr(record.to, SlowPathPtrTag));
     }
 
     for (unsigned i = m_getByIds.size(); i--;)
@@ -812,7 +816,7 @@ CompilationResult JIT::link()
         m_putByIds[i].finalize(patchBuffer);
 
     if (m_byValCompilationInfo.size()) {
-        CodeLocationLabel exceptionHandler = patchBuffer.locationOf(m_exceptionHandler);
+        CodeLocationLabel exceptionHandler = patchBuffer.locationOf(m_exceptionHandler, ExceptionHandlerPtrTag);
 
         for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
             PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
@@ -820,9 +824,9 @@ CompilationResult JIT::link()
             if (Jump(patchableNotIndexJump).isSet())
                 notIndexJump = CodeLocationJump(patchBuffer.locationOf(patchableNotIndexJump));
             CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(byValCompilationInfo.badTypeJump));
-            CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget);
-            CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget);
-            CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget);
+            CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget, NoPtrTag);
+            CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget, NoPtrTag);
+            CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget, NoPtrTag);
             CodeLocationCall returnAddress = patchBuffer.locationOf(byValCompilationInfo.returnAddress);
 
             *byValCompilationInfo.byValInfo = ByValInfo(
@@ -855,7 +859,7 @@ CompilationResult JIT::link()
 
     MacroAssemblerCodePtr withArityCheck;
     if (m_codeBlock->codeType() == FunctionCode)
-        withArityCheck = patchBuffer.locationOf(m_arityCheck);
+        withArityCheck = patchBuffer.locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
 
     if (Options::dumpDisassembly()) {
         m_disassembler->dump(patchBuffer);
@@ -871,7 +875,7 @@ CompilationResult JIT::link()
         m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
     
     CodeRef result = FINALIZE_CODE(
-        patchBuffer,
+        patchBuffer, CodeEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data());
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
@@ -913,7 +917,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame).value()));
+        m_calls.append(CallRecord(call(SlowPathPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame, SlowPathPtrTag).value()));
         jumpToExceptionHandler(*vm());
     }
 
@@ -932,7 +936,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallRecord(call(), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler).value()));
+        m_calls.append(CallRecord(call(SlowPathPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler, SlowPathPtrTag).value()));
         jumpToExceptionHandler(*vm());
     }
 }

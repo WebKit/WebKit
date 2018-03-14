@@ -190,7 +190,7 @@ public:
     }
 #endif
 
-    Call call()
+    Call call(PtrTag)
     {
 #if OS(WINDOWS)
         // JIT relies on the CallerFrame (frame pointer) being put on the stack,
@@ -224,10 +224,10 @@ public:
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(AbsoluteAddress address)
+    void jump(AbsoluteAddress address, PtrTag tag)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        jump(Address(scratchRegister()));
+        jump(Address(scratchRegister()), tag);
     }
 
     Call tailRecursiveCall()
@@ -1870,7 +1870,7 @@ public:
     
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation()));
+        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation()), CodeEntryPtrTag);
     }
 
     bool haveScratchRegisterForBlinding() { return m_allowScratchRegister; }

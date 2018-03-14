@@ -127,7 +127,8 @@ std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel
 template<typename T, typename... Arguments>
 T invoke(MacroAssemblerCodePtr ptr, Arguments... arguments)
 {
-    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(ptr.executableAddress());
+    void* executableAddress = untagCFunctionPtr(ptr.executableAddress(), JITCodePtrTag);
+    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }
 
@@ -13042,12 +13043,12 @@ void testInterpreter()
             jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
             jit.load64(CCallHelpers::BaseIndex(scratch, params[0].gpr(), CCallHelpers::timesPtr()), scratch);
             jit.xor64(poisonScratch, scratch);
-            jit.jump(scratch);
+            jit.jump(scratch, NoPtrTag);
 
             jit.addLinkTask(
                 [&, jumpTable, labels] (LinkBuffer& linkBuffer) {
                     for (unsigned i = labels.size(); i--;)
-                        jumpTable[i] = linkBuffer.locationOf(*labels[i]);
+                        jumpTable[i] = linkBuffer.locationOf(*labels[i], NoPtrTag);
                 });
         });
     
@@ -13296,12 +13297,12 @@ void testEntrySwitchSimple()
     CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
-    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
-    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
-    
-    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, "testb3 compilation");
-    
+    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0), JITCodePtrTag);
+    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1), JITCodePtrTag);
+    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2), JITCodePtrTag);
+
+    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testb3 compilation");
+
     CHECK(invoke<int>(labelOne, 1, 2) == 3);
     CHECK(invoke<int>(labelTwo, 1, 2) == -1);
     CHECK(invoke<int>(labelThree, 1, 2) == 2);
@@ -13329,12 +13330,12 @@ void testEntrySwitchNoEntrySwitch()
     CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
-    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
-    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
-    
-    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, "testb3 compilation");
-    
+    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0), JITCodePtrTag);
+    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1), JITCodePtrTag);
+    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2), JITCodePtrTag);
+
+    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testb3 compilation");
+
     CHECK_EQ(invoke<int>(labelOne, 1, 2), 3);
     CHECK_EQ(invoke<int>(labelTwo, 1, 2), 3);
     CHECK_EQ(invoke<int>(labelThree, 1, 2), 3);
@@ -13416,12 +13417,12 @@ void testEntrySwitchWithCommonPaths()
     CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
-    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
-    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
-    
-    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, "testb3 compilation");
-    
+    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0), JITCodePtrTag);
+    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1), JITCodePtrTag);
+    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2), JITCodePtrTag);
+
+    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testb3 compilation");
+
     CHECK_EQ(invoke<int>(labelOne, 1, 2, 10), 3);
     CHECK_EQ(invoke<int>(labelTwo, 1, 2, 10), -1);
     CHECK_EQ(invoke<int>(labelThree, 1, 2, 10), 2);
@@ -13533,12 +13534,12 @@ void testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint()
     CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
-    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
-    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2));
-    
-    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, "testb3 compilation");
-    
+    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0), JITCodePtrTag);
+    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1), JITCodePtrTag);
+    CodeLocationLabel labelThree = linkBuffer.locationOf(proc.entrypointLabel(2), JITCodePtrTag);
+
+    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testb3 compilation");
+
     CHECK_EQ(invoke<int>(labelOne, 1, 2, 10, false), 3);
     CHECK_EQ(invoke<int>(labelTwo, 1, 2, 10, false), -1);
     CHECK_EQ(invoke<int>(labelThree, 1, 2, 10, false), 2);
@@ -13611,10 +13612,10 @@ void testEntrySwitchLoop()
     CCallHelpers jit;
     generate(proc, jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0));
-    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1));
-    
-    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, "testb3 compilation");
+    CodeLocationLabel labelOne = linkBuffer.locationOf(proc.entrypointLabel(0), JITCodePtrTag);
+    CodeLocationLabel labelTwo = linkBuffer.locationOf(proc.entrypointLabel(1), JITCodePtrTag);
+
+    MacroAssemblerCodeRef codeRef = FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testb3 compilation");
 
     CHECK(invoke<int>(labelOne, 0) == 1);
     CHECK(invoke<int>(labelOne, 42) == 43);

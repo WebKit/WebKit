@@ -135,7 +135,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
         LinkBuffer linkBuffer(jit, stubInfo.patch.start.dataLocation(), stubInfo.patch.inlineSize, JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
         function(linkBuffer);
-        FINALIZE_CODE(linkBuffer, "InlineAccessType: '%s'", name);
+        FINALIZE_CODE(linkBuffer, JITCodePtrTag, "InlineAccessType: '%s'", name);
         return true;
     }
 
@@ -290,7 +290,7 @@ void InlineAccess::rewireStubAsJump(StructureStubInfo& stubInfo, CodeLocationLab
     RELEASE_ASSERT(linkBuffer.isValid());
     linkBuffer.link(jump, target);
 
-    FINALIZE_CODE(linkBuffer, "InlineAccess: linking constant jump");
+    FINALIZE_CODE(linkBuffer, JITCodePtrTag, "InlineAccess: linking constant jump");
 }
 
 } // namespace JSC

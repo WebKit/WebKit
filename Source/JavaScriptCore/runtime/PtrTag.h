@@ -33,6 +33,7 @@ enum PtrTag : uintptr_t {
     NoPtrTag = 0,
     NearCallPtrTag,
     NearJumpPtrTag,
+
     CFunctionPtrTag,
 
     BytecodePtrTag,
@@ -43,6 +44,12 @@ enum PtrTag : uintptr_t {
     JITCodePtrTag,
     NativeCodePtrTag,
     SlowPathPtrTag,
+
+    Yarr8BitPtrTag,
+    Yarr16BitPtrTag,
+    YarrMatchOnly8BitPtrTag,
+    YarrMatchOnly16BitPtrTag,
+    YarrBacktrackPtrTag,
 };
 
 #if !USE(POINTER_PROFILING)

@@ -269,7 +269,7 @@ namespace JSC {
         // Add a call out from JIT code, without an exception check.
         Call appendCall(const FunctionPtr& function)
         {
-            Call functionCall = call();
+            Call functionCall = call(NoPtrTag);
             m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
             return functionCall;
         }

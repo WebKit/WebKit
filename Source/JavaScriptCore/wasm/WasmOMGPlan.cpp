@@ -98,7 +98,7 @@ void OMGPlan::work(CompilationEffort)
     }
 
     omgEntrypoint.compilation = std::make_unique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, "WebAssembly OMG function[%i] %s", m_functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data()),
+        FINALIZE_CODE(linkBuffer, NoPtrTag, "WebAssembly OMG function[%i] %s", m_functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);

@@ -86,7 +86,7 @@ static MacroAssemblerCodeRef genericGenerationThunkGenerator(
     jit.peek(
         GPRInfo::argumentGPR1,
         (stackMisalignment - MacroAssembler::pushToSaveByteOffset()) / sizeof(void*));
-    MacroAssembler::Call functionCall = jit.call();
+    MacroAssembler::Call functionCall = jit.call(NoPtrTag);
     
     // At this point we want to make a tail call to what was returned to us in the
     // returnValueGPR. But at the same time as we do this, we must restore all registers.
@@ -119,21 +119,21 @@ static MacroAssemblerCodeRef genericGenerationThunkGenerator(
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     patchBuffer.link(functionCall, generationFunction);
-    return FINALIZE_CODE(patchBuffer, "%s", name);
+    return FINALIZE_CODE(patchBuffer, NoPtrTag, "%s", name);
 }
 
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
     unsigned extraPopsToRestore = 0;
     return genericGenerationThunkGenerator(
-        vm, compileFTLOSRExit, "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
+        vm, FunctionPtr(compileFTLOSRExit, NoPtrTag), "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
 }
 
 MacroAssemblerCodeRef lazySlowPathGenerationThunkGenerator(VM* vm)
 {
     unsigned extraPopsToRestore = 1;
     return genericGenerationThunkGenerator(
-        vm, compileFTLLazySlowPath, "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
+        vm, FunctionPtr(compileFTLLazySlowPath, NoPtrTag), "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
 }
 
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
@@ -197,7 +197,7 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(const SlowPathCallKey& key)
     
     registerClobberCheck(jit, key.argumentRegisters());
     
-    AssemblyHelpers::Call call = jit.call();
+    AssemblyHelpers::Call call = jit.call(NoPtrTag);
 
     jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()), GPRInfo::nonPreservedNonReturnGPR);
     jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
@@ -224,7 +224,7 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(const SlowPathCallKey& key)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     patchBuffer.link(call, FunctionPtr(key.callTarget()));
-    return FINALIZE_CODE(patchBuffer, "FTL slow path call thunk for %s", toCString(key).data());
+    return FINALIZE_CODE(patchBuffer, NoPtrTag, "FTL slow path call thunk for %s", toCString(key).data());
 }
 
 } } // namespace JSC::FTL

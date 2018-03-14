@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,25 +101,25 @@ public:
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has8BitCode());
-        return MatchResult(reinterpret_cast<YarrJITCode8>(m_ref8.code().executableAddress())(input, start, length, output, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCode8>(m_ref8.code().executableAddress(), ptrTag(Yarr8BitPtrTag, this))(input, start, length, output, freeParenContext, parenContextSize));
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has16BitCode());
-        return MatchResult(reinterpret_cast<YarrJITCode16>(m_ref16.code().executableAddress())(input, start, length, output, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCode16>(m_ref16.code().executableAddress(), ptrTag(Yarr16BitPtrTag, this))(input, start, length, output, freeParenContext, parenContextSize));
     }
 
     MatchResult execute(const LChar* input, unsigned start, unsigned length, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has8BitCodeMatchOnly());
-        return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly8>(m_matchOnly8.code().executableAddress())(input, start, length, 0, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8>(m_matchOnly8.code().executableAddress(), ptrTag(YarrMatchOnly8BitPtrTag, this))(input, start, length, 0, freeParenContext, parenContextSize));
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has16BitCodeMatchOnly());
-        return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly16>(m_matchOnly16.code().executableAddress())(input, start, length, 0, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16>(m_matchOnly16.code().executableAddress(), ptrTag(YarrMatchOnly16BitPtrTag, this))(input, start, length, 0, freeParenContext, parenContextSize));
     }
 #else
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output)

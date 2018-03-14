@@ -2696,19 +2696,19 @@ public:
         return Jump(m_assembler.jmp());
     }
 
-    void jump(RegisterID target)
+    void jump(RegisterID target, PtrTag)
     {
         m_assembler.jmp_r(target);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(Address address)
+    void jump(Address address, PtrTag)
     {
         m_assembler.jmp_m(address.offset, address.base);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(BaseIndex address)
+    void jump(BaseIndex address, PtrTag)
     {
         m_assembler.jmp_m(address.offset, address.base, address.index, address.scale);
     }
@@ -2894,12 +2894,12 @@ public:
         return Call(m_assembler.call(), Call::LinkableNear);
     }
 
-    Call call(RegisterID target)
+    Call call(RegisterID target, PtrTag)
     {
         return Call(m_assembler.call(target), Call::None);
     }
 
-    void call(Address address)
+    void call(Address address, PtrTag)
     {
         m_assembler.call_m(address.offset, address.base);
     }

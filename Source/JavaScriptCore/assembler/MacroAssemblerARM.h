@@ -789,17 +789,17 @@ public:
         return Jump(m_assembler.jmp());
     }
 
-    void jump(RegisterID target)
+    void jump(RegisterID target, PtrTag)
     {
         m_assembler.bx(target);
     }
 
-    void jump(Address address)
+    void jump(Address address, PtrTag)
     {
         load32(address, ARMRegisters::pc);
     }
 
-    void jump(AbsoluteAddress address)
+    void jump(AbsoluteAddress address, PtrTag)
     {
         move(TrustedImmPtr(address.m_ptr), ARMRegisters::S0);
         load32(Address(ARMRegisters::S0, 0), ARMRegisters::pc);
@@ -988,12 +988,12 @@ public:
         return Call(m_assembler.jmp(), Call::LinkableNearTail);
     }
 
-    Call call(RegisterID target)
+    Call call(RegisterID target, PtrTag)
     {
         return Call(m_assembler.blx(target), Call::None);
     }
 
-    void call(Address address)
+    void call(Address address, PtrTag)
     {
         call32(address.base, address.offset);
     }
@@ -1118,7 +1118,7 @@ public:
         m_assembler.mov(ARMRegisters::r0, ARMRegisters::r0);
     }
 
-    Call call()
+    Call call(PtrTag)
     {
         ensureSpace(2 * sizeof(ARMWord), sizeof(ARMWord));
         m_assembler.loadBranchTarget(ARMRegisters::S1, ARMAssembler::AL, true);
@@ -1499,7 +1499,7 @@ public:
 
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())), CodeEntryPtrTag);
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

@@ -286,11 +286,11 @@ public:
 
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
                     jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::argumentGPR1);
-                    CCallHelpers::Call throwCall = jit.call();
+                    CCallHelpers::Call throwCall = jit.call(NoPtrTag);
 
                     jit.move(CCallHelpers::TrustedImmPtr(vm), GPRInfo::argumentGPR0);
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call();
+                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call(NoPtrTag);
                     jit.jumpToExceptionHandler(*vm);
 
                     jit.addLinkTask(
@@ -7636,7 +7636,7 @@ private:
 
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
-                    jit.call(GPRInfo::nonPreservedNonArgumentGPR);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR, NoPtrTag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
@@ -7975,7 +7975,7 @@ private:
 
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
-                    jit.call(GPRInfo::nonPreservedNonArgumentGPR);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR, NoPtrTag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
@@ -8163,7 +8163,7 @@ private:
                 jit.subPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.setupArguments<decltype(operationCallEval)>(GPRInfo::regT1);
                 jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCallEval)), GPRInfo::nonPreservedNonArgumentGPR);
-                jit.call(GPRInfo::nonPreservedNonArgumentGPR);
+                jit.call(GPRInfo::nonPreservedNonArgumentGPR, NoPtrTag);
                 exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 
                 CCallHelpers::Jump done = jit.branchTest64(CCallHelpers::NonZero, GPRInfo::returnValueGPR);

@@ -511,7 +511,7 @@ private:
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
                         jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
                         jit.xor64(poisonScratch, scratch);
-                        jit.jump(scratch);
+                        jit.jump(scratch, NoPtrTag);
 
                         // These labels are guaranteed to be populated before either late paths or
                         // link tasks run.

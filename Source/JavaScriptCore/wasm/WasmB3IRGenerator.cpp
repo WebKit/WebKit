@@ -1147,7 +1147,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
                 patchpoint->setGenerator([returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    jit.call(params[returnType == Void ? 0 : 1].gpr());
+                    jit.call(params[returnType == Void ? 0 : 1].gpr(), NoPtrTag);
                 });
             });
         UpsilonValue* embedderCallResultUpsilon = returnType == Void ? nullptr : isEmbedderBlock->appendNew<UpsilonValue>(m_proc, origin(), embedderCallResult);
@@ -1330,7 +1330,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                jit.call(params[returnType == Void ? 0 : 1].gpr());
+                jit.call(params[returnType == Void ? 0 : 1].gpr(), NoPtrTag);
             });
         });
 

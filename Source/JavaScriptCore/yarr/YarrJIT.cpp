@@ -41,7 +41,7 @@ namespace JSC { namespace Yarr {
 
 template<YarrJITCompileMode compileMode>
 class YarrGenerator : private MacroAssembler {
-    friend void jitCompile(VM*, YarrCodeBlock& jitObject, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
+    friend void jitCompile(VM*, YarrCodeBlock&, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
 #if CPU(ARM)
     static const RegisterID input = ARMRegisters::r0;
@@ -604,7 +604,7 @@ class YarrGenerator : private MacroAssembler {
 
     void loadFromFrameAndJump(unsigned frameLocation)
     {
-        jump(Address(stackPointerRegister, frameLocation * sizeof(void*)));
+        jump(Address(stackPointerRegister, frameLocation * sizeof(void*)), ptrTag(YarrBacktrackPtrTag, &m_codeBlock));
     }
 
     unsigned alignCallFrameSizeInBytes(unsigned callFrameSize)
@@ -927,11 +927,11 @@ class YarrGenerator : private MacroAssembler {
         }
 
         // Called at the end of code generation to link all return addresses.
-        void linkDataLabels(LinkBuffer& linkBuffer)
+        void linkDataLabels(LinkBuffer& linkBuffer, YarrCodeBlock& codeBlock)
         {
             ASSERT(isEmpty());
             for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
-                linkBuffer.patch(m_backtrackRecords[i].m_dataLabel, linkBuffer.locationOf(m_backtrackRecords[i].m_backtrackLocation));
+                linkBuffer.patch(m_backtrackRecords[i].m_dataLabel, linkBuffer.locationOf(m_backtrackRecords[i].m_backtrackLocation, ptrTag(YarrBacktrackPtrTag, &codeBlock)));
         }
 
     private:
@@ -3282,6 +3282,10 @@ class YarrGenerator : private MacroAssembler {
 
         m_tryReadUnicodeCharacterEntry = label();
 
+#if CPU(ARM64)
+        tagPtr(linkRegister, stackPointerRegister);
+#endif
+
         tryReadUnicodeCharImpl(regT0);
 
         ret();
@@ -3343,6 +3347,7 @@ class YarrGenerator : private MacroAssembler {
             loadPtr(Address(X86Registers::ebp, 2 * sizeof(void*)), output);
     #endif
 #elif CPU(ARM64)
+        tagPtr(linkRegister, stackPointerRegister);
         if (m_decodeSurrogatePairs) {
             pushPair(framePointerRegister, linkRegister);
             move(TrustedImm32(0x10000), supplementaryPlanesBase);
@@ -3417,9 +3422,10 @@ class YarrGenerator : private MacroAssembler {
     }
 
 public:
-    YarrGenerator(VM* vm, YarrPattern& pattern, YarrCharSize charSize)
+    YarrGenerator(VM* vm, YarrPattern& pattern, YarrCodeBlock& codeBlock, YarrCharSize charSize)
         : m_vm(vm)
         , m_pattern(pattern)
+        , m_codeBlock(codeBlock)
         , m_charSize(charSize)
         , m_decodeSurrogatePairs(m_charSize == Char16 && m_pattern.unicode())
         , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
@@ -3431,18 +3437,20 @@ public:
     {
     }
 
-    void compile(YarrCodeBlock& jitObject)
+    void compile()
     {
+        YarrCodeBlock& codeBlock = m_codeBlock;
+
 #ifndef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
-            jitObject.setFallBackWithFailureReason(JITFailureReason::DecodeSurrogatePair);
+            codeBlock.setFallBackWithFailureReason(JITFailureReason::DecodeSurrogatePair);
             return;
         }
 #endif
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns)
-            jitObject.setUsesPaternContextBuffer();
+            codeBlock.setUsesPaternContextBuffer();
 #endif
 
         // We need to compile before generating code since we set flags based on compilation that
@@ -3450,7 +3458,7 @@ public:
         opCompileBody(m_pattern.m_body);
         
         if (m_failureReason) {
-            jitObject.setFallBackWithFailureReason(*m_failureReason);
+            codeBlock.setFallBackWithFailureReason(*m_failureReason);
             return;
         }
         
@@ -3497,32 +3505,32 @@ public:
 
         LinkBuffer linkBuffer(*this, REGEXP_CODE_ID, JITCompilationCanFail);
         if (linkBuffer.didFailToAllocate()) {
-            jitObject.setFallBackWithFailureReason(JITFailureReason::ExecutableMemoryAllocationFailure);
+            codeBlock.setFallBackWithFailureReason(JITFailureReason::ExecutableMemoryAllocationFailure);
             return;
         }
 
         if (!m_tryReadUnicodeCharacterCalls.isEmpty()) {
-            CodeLocationLabel tryReadUnicodeCharacterHelper = linkBuffer.locationOf(m_tryReadUnicodeCharacterEntry);
+            CodeLocationLabel tryReadUnicodeCharacterHelper = linkBuffer.locationOf(m_tryReadUnicodeCharacterEntry, NearCallPtrTag);
 
             for (auto call : m_tryReadUnicodeCharacterCalls)
                 linkBuffer.link(call, tryReadUnicodeCharacterHelper);
         }
 
-        m_backtrackingState.linkDataLabels(linkBuffer);
+        m_backtrackingState.linkDataLabels(linkBuffer, codeBlock);
 
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
-                jitObject.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, "Match-only 8-bit regular expression"));
+                codeBlock.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ptrTag(YarrMatchOnly8BitPtrTag, &codeBlock), "Match-only 8-bit regular expression"));
             else
-                jitObject.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, "Match-only 16-bit regular expression"));
+                codeBlock.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ptrTag(YarrMatchOnly16BitPtrTag, &codeBlock), "Match-only 16-bit regular expression"));
         } else {
             if (m_charSize == Char8)
-                jitObject.set8BitCode(FINALIZE_CODE(linkBuffer, "8-bit regular expression"));
+                codeBlock.set8BitCode(FINALIZE_CODE(linkBuffer, ptrTag(Yarr8BitPtrTag, &codeBlock), "8-bit regular expression"));
             else
-                jitObject.set16BitCode(FINALIZE_CODE(linkBuffer, "16-bit regular expression"));
+                codeBlock.set16BitCode(FINALIZE_CODE(linkBuffer, ptrTag(Yarr16BitPtrTag, &codeBlock), "16-bit regular expression"));
         }
         if (m_failureReason)
-            jitObject.setFallBackWithFailureReason(*m_failureReason);
+            codeBlock.setFallBackWithFailureReason(*m_failureReason);
     }
 
 private:
@@ -3530,6 +3538,7 @@ private:
 
     YarrPattern& m_pattern;
 
+    YarrCodeBlock& m_codeBlock;
     YarrCharSize m_charSize;
 
     // Used to detect regular expression constructs that are not currently
@@ -3591,14 +3600,14 @@ static void dumpCompileFailure(JITFailureReason failure)
     }
 }
 
-void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
+void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& codeBlock, YarrJITCompileMode mode)
 {
     if (mode == MatchOnly)
-        YarrGenerator<MatchOnly>(vm, pattern, charSize).compile(jitObject);
+        YarrGenerator<MatchOnly>(vm, pattern, codeBlock, charSize).compile();
     else
-        YarrGenerator<IncludeSubpatterns>(vm, pattern, charSize).compile(jitObject);
+        YarrGenerator<IncludeSubpatterns>(vm, pattern, codeBlock, charSize).compile();
 
-    if (auto failureReason = jitObject.failureReason()) {
+    if (auto failureReason = codeBlock.failureReason()) {
         if (Options::dumpCompiledRegExpPatterns())
             dumpCompileFailure(*failureReason);
     }

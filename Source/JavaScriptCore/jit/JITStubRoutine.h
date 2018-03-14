@@ -114,8 +114,8 @@ protected:
 };
 
 // Helper for the creation of simple stub routines that need no help from the GC.
-#define FINALIZE_CODE_FOR_STUB(codeBlock, patchBuffer, ...) \
-    (adoptRef(new JITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), __VA_ARGS__))))
+#define FINALIZE_CODE_FOR_STUB(codeBlock, patchBuffer, resultPtrTag, ...) \
+    (adoptRef(new JITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), (resultPtrTag), __VA_ARGS__))))
 
 } // namespace JSC
 

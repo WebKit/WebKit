@@ -51,15 +51,15 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    CCallHelpers::Call call = jit.call();
-    jit.jump(GPRInfo::returnValueGPR);
+    CCallHelpers::Call call = jit.call(NoPtrTag);
+    jit.jump(GPRInfo::returnValueGPR, NoPtrTag);
     jit.breakpoint(); // We should not reach this.
 
     ThrowWasmException throwWasmException = Thunks::singleton().throwWasmException();
     RELEASE_ASSERT(throwWasmException);
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(call, FunctionPtr(throwWasmException));
-    return FINALIZE_CODE(linkBuffer, "Throw exception from Wasm");
+    return FINALIZE_CODE(linkBuffer, NoPtrTag, "Throw exception from Wasm");
 }
 
 MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
@@ -73,7 +73,7 @@ MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLoc
     auto jumpToExceptionHandler = jit.jump();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
-    return FINALIZE_CODE(linkBuffer, "Throw stack overflow from Wasm");
+    return FINALIZE_CODE(linkBuffer, NoPtrTag, "Throw stack overflow from Wasm");
 }
 
 MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
@@ -92,14 +92,14 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
     typedef void (*Run)(Instance*, uint32_t);
     Run run = OMGPlan::runForIndex;
     jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(run)), GPRInfo::argumentGPR2);
-    jit.call(GPRInfo::argumentGPR2);
+    jit.call(GPRInfo::argumentGPR2, NoPtrTag);
 
     ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
 
     jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(linkBuffer, "Trigger OMG tier up");
+    return FINALIZE_CODE(linkBuffer, NoPtrTag, "Trigger OMG tier up");
 }
 
 static Thunks* thunks;

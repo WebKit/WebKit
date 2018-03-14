@@ -147,7 +147,7 @@ private:
                 m_assembler.move(m_firstArgument, JSC::GPRInfo::argumentGPR0);
         }
 
-        JSC::MacroAssembler::Call call = m_assembler.call();
+        JSC::MacroAssembler::Call call = m_assembler.call(JSC::CFunctionPtrTag);
         m_callRegistry.append(std::make_pair(call, m_functionAddress));
     }
 

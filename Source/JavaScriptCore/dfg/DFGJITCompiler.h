@@ -158,7 +158,7 @@ public:
     // Add a call out from JIT code, without an exception check.
     Call appendCall(const FunctionPtr& function)
     {
-        Call functionCall = call();
+        Call functionCall = call(NoPtrTag);
         m_calls.append(CallLinkRecord(functionCall, function));
         return functionCall;
     }

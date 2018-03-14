@@ -90,13 +90,14 @@ std::unique_ptr<B3::Compilation> compile(B3::Procedure& proc)
     LinkBuffer linkBuffer(jit, nullptr);
 
     return std::make_unique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, "testair compilation"), proc.releaseByproducts());
+        FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testair compilation"), proc.releaseByproducts());
 }
 
 template<typename T, typename... Arguments>
 T invoke(const B3::Compilation& code, Arguments... arguments)
 {
-    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(code.code().executableAddress());
+    void* executableAddress = untagCFunctionPtr(code.code().executableAddress(), JITCodePtrTag);
+    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }
 

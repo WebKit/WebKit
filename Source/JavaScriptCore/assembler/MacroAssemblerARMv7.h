@@ -1599,19 +1599,19 @@ public:
         return branchTest32(cond, addressTempRegister, mask8);
     }
 
-    void jump(RegisterID target)
+    void jump(RegisterID target, PtrTag)
     {
         m_assembler.bx(target);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(Address address)
+    void jump(Address address, PtrTag)
     {
         load32(address, dataTempRegister);
         m_assembler.bx(dataTempRegister);
     }
     
-    void jump(AbsoluteAddress address)
+    void jump(AbsoluteAddress address, PtrTag)
     {
         move(TrustedImmPtr(address.m_ptr), dataTempRegister);
         load32(Address(dataTempRegister), dataTempRegister);
@@ -1763,7 +1763,7 @@ public:
 
         ShiftTypeAndAmount shift(SRType_LSL, scale);
         m_assembler.add(dataTempRegister, dataTempRegister, index, shift);
-        jump(dataTempRegister);
+        jump(dataTempRegister, NoPtrTag);
     }
 
     // Miscellaneous operations:
@@ -1787,18 +1787,18 @@ public:
         return Call(m_assembler.bx(dataTempRegister), Call::LinkableNearTail);
     }
 
-    ALWAYS_INLINE Call call()
+    ALWAYS_INLINE Call call(PtrTag)
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Call(m_assembler.blx(dataTempRegister), Call::Linkable);
     }
 
-    ALWAYS_INLINE Call call(RegisterID target)
+    ALWAYS_INLINE Call call(RegisterID target, PtrTag)
     {
         return Call(m_assembler.blx(target), Call::None);
     }
 
-    ALWAYS_INLINE Call call(Address address)
+    ALWAYS_INLINE Call call(Address address, PtrTag)
     {
         load32(address, dataTempRegister);
         return Call(m_assembler.blx(dataTempRegister), Call::None);
@@ -1977,7 +1977,7 @@ public:
     
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())));
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())), CodeEntryPtrTag);
     }
     
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }

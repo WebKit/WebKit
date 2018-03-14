@@ -149,13 +149,14 @@ MacroAssemblerCodeRef compile(Generator&& generate)
     CCallHelpers jit;
     generate(jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    return FINALIZE_CODE(linkBuffer, "testmasm compilation");
+    return FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testmasm compilation");
 }
 
 template<typename T, typename... Arguments>
 T invoke(MacroAssemblerCodeRef code, Arguments... arguments)
 {
-    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(code.code().executableAddress());
+    void* executableAddress = untagCFunctionPtr(code.code().executableAddress(), JITCodePtrTag);
+    T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }
 

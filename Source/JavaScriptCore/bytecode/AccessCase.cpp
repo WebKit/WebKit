@@ -863,7 +863,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 #endif
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-            operationCall = jit.call();
+            operationCall = jit.call(NoPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(operationCall, FunctionPtr(this->as<GetterSetterAccessCase>().m_customAccessor.opaque));
             });
@@ -1007,7 +1007,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 if (!reallocating) {
                     jit.setupArguments<decltype(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity)>(baseGPR);
                     
-                    CCallHelpers::Call operationCall = jit.call();
+                    CCallHelpers::Call operationCall = jit.call(NoPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                         linkBuffer.link(
                             operationCall,
@@ -1019,7 +1019,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     jit.setupArguments<decltype(operationReallocateButterflyToGrowPropertyStorage)>(
                         baseGPR, CCallHelpers::TrustedImm32(newSize / sizeof(JSValue)));
                     
-                    CCallHelpers::Call operationCall = jit.call();
+                    CCallHelpers::Call operationCall = jit.call(NoPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                         linkBuffer.link(
                             operationCall,

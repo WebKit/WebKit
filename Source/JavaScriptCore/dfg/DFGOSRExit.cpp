@@ -1000,7 +1000,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        jit.call(GPRInfo::nonArgGPR0);
+        jit.call(GPRInfo::nonArgGPR0, NoPtrTag);
         jit.storeCell(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(operand));
 
         alreadyAllocatedArguments.add(id, operand);
@@ -1069,7 +1069,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
         LinkBuffer patchBuffer(jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
-            patchBuffer,
+            patchBuffer, NoPtrTag,
             "DFG OSR exit #%u (%s, %s) from %s, with operands = %s",
                 exitIndex, toCString(exit.m_codeOrigin).data(),
                 exitKindToString(exit.m_kind), toCString(*codeBlock).data(),

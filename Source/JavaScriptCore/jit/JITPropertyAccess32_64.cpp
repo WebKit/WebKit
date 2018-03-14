@@ -178,7 +178,7 @@ JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
     jit.ret();
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, "String get_by_val stub");
+    return FINALIZE_CODE(patchBuffer, NoPtrTag, "String get_by_val stub");
 }
 
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)

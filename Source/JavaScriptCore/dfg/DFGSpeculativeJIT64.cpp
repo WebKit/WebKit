@@ -5682,7 +5682,7 @@ void SpeculativeJIT::compile(Node* node)
                 osrEnter.link(&m_jit);
             }
             m_jit.emitRestoreCalleeSaves();
-            m_jit.jump(tempGPR);
+            m_jit.jump(tempGPR, NoPtrTag);
         });
         break;
     }

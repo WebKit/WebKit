@@ -121,6 +121,13 @@ public:
     
     // These methods are used to link or set values at code generation time.
 
+    template<typename Func, typename = std::enable_if_t<std::is_function<typename std::remove_pointer<Func>::type>::value>>
+    void link(Call call, Func funcName, PtrTag tag)
+    {
+        FunctionPtr function(funcName, tag);
+        link(call, function);
+    }
+
     void link(Call call, FunctionPtr function)
     {
         ASSERT(call.isFlagSet(Call::Linkable));
@@ -175,7 +182,7 @@ public:
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         ASSERT(call.isFlagSet(Call::Near));
-        return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)),
+        return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label), NearCallPtrTag),
             call.isFlagSet(Call::Tail) ? NearCallMode::Tail : NearCallMode::Regular);
     }
 
@@ -184,9 +191,10 @@ public:
         return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_jump.m_label)));
     }
 
-    CodeLocationLabel locationOf(Label label)
+    // FIXME: remove the default PtrTag value once we've tagged all the clients.
+    CodeLocationLabel locationOf(Label label, PtrTag tag = NoPtrTag)
     {
-        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label)));
+        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label), tag));
     }
 
     CodeLocationDataLabelPtr locationOf(DataLabelPtr label)
@@ -232,8 +240,8 @@ public:
     // finalizeCodeWithoutDisassembly() directly if you have your own way of
     // displaying disassembly.
     
-    JS_EXPORT_PRIVATE CodeRef finalizeCodeWithoutDisassembly();
-    JS_EXPORT_PRIVATE CodeRef finalizeCodeWithDisassembly(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    JS_EXPORT_PRIVATE CodeRef finalizeCodeWithoutDisassembly(PtrTag);
+    JS_EXPORT_PRIVATE CodeRef finalizeCodeWithDisassembly(PtrTag, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
 
     CodePtr trampolineAt(Label label)
     {
@@ -307,19 +315,19 @@ private:
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
 };
 
-#define FINALIZE_CODE_IF(condition, linkBufferReference, ...)  \
+#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...)  \
     (UNLIKELY((condition))                                              \
-        ? (linkBufferReference).finalizeCodeWithDisassembly(__VA_ARGS__) \
-        : (linkBufferReference).finalizeCodeWithoutDisassembly())
+        ? (linkBufferReference).finalizeCodeWithDisassembly(resultPtrTag, __VA_ARGS__) \
+        : (linkBufferReference).finalizeCodeWithoutDisassembly(resultPtrTag))
 
 bool shouldDumpDisassemblyFor(CodeBlock*);
 
-#define FINALIZE_CODE_FOR(codeBlock, linkBufferReference, ...)  \
-    FINALIZE_CODE_IF((shouldDumpDisassemblyFor(codeBlock) || Options::asyncDisassembly()), linkBufferReference, __VA_ARGS__)
+#define FINALIZE_CODE_FOR(codeBlock, linkBufferReference, resultPtrTag, ...)  \
+    FINALIZE_CODE_IF((shouldDumpDisassemblyFor(codeBlock) || Options::asyncDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
 // Use this to finalize code, like so:
 //
-// CodeRef code = FINALIZE_CODE(linkBuffer, "my super thingy number %d", number);
+// CodeRef code = FINALIZE_CODE(linkBuffer, tag, "my super thingy number %d", number);
 //
 // Which, in disassembly mode, will print:
 //
@@ -333,11 +341,11 @@ bool shouldDumpDisassemblyFor(CodeBlock*);
 // Note that the format string and print arguments are only evaluated when dumpDisassembly
 // is true, so you can hide expensive disassembly-only computations inside there.
 
-#define FINALIZE_CODE(linkBufferReference, ...)  \
-    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly()), linkBufferReference, __VA_ARGS__)
+#define FINALIZE_CODE(linkBufferReference, resultPtrTag, ...)  \
+    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
-#define FINALIZE_DFG_CODE(linkBufferReference, ...)  \
-    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpDFGDisassembly()), linkBufferReference, __VA_ARGS__)
+#define FINALIZE_DFG_CODE(linkBufferReference, resultPtrTag, ...)  \
+    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpDFGDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
 } // namespace JSC
 

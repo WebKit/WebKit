@@ -120,7 +120,7 @@ SlowPathCallKey SlowPathCallContext::keyWithTarget(void* callTarget) const
 
 SlowPathCall SlowPathCallContext::makeCall(VM& vm, void* callTarget)
 {
-    SlowPathCall result = SlowPathCall(m_jit.call(), keyWithTarget(callTarget));
+    SlowPathCall result = SlowPathCall(m_jit.call(NoPtrTag), keyWithTarget(callTarget));
 
     m_jit.addLinkTask(
         [result, &vm] (LinkBuffer& linkBuffer) {

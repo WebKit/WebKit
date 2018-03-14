@@ -75,13 +75,13 @@ bool JITFinalizer::finalizeCommon()
     
     jitCode->initializeB3Code(
         FINALIZE_CODE_IF(
-            dumpDisassembly, *b3CodeLinkBuffer,
+            dumpDisassembly, *b3CodeLinkBuffer, CodeEntryPtrTag,
             "FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data()));
 
     if (entrypointLinkBuffer) {
         jitCode->initializeArityCheckEntrypoint(
             FINALIZE_CODE_IF(
-                dumpDisassembly, *entrypointLinkBuffer,
+                dumpDisassembly, *entrypointLinkBuffer, CodeEntryWithArityCheckPtrTag,
                 "FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function));
     }
     

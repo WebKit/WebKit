@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,10 @@
 
 namespace JSC {
 
-MacroAssemblerCodePtr MacroAssemblerCodePtr::createLLIntCodePtr(OpcodeID codeId)
+MacroAssemblerCodePtr MacroAssemblerCodePtr::createLLIntCodePtr(OpcodeID opcodeID)
 {
-    return createFromExecutableAddress(LLInt::getCodePtr(codeId));
+    ASSERT(opcodeID >= NUMBER_OF_BYTECODE_IDS);
+    return createFromExecutableAddress(LLInt::getCodePtr(opcodeID));
 }
 
 void MacroAssemblerCodePtr::dumpWithName(const char* name, PrintStream& out) const
@@ -56,9 +57,9 @@ void MacroAssemblerCodePtr::dump(PrintStream& out) const
     dumpWithName("CodePtr", out);
 }
 
-MacroAssemblerCodeRef MacroAssemblerCodeRef::createLLIntCodeRef(OpcodeID codeId)
+MacroAssemblerCodeRef MacroAssemblerCodeRef::createLLIntCodeRef(OpcodeID opcodeID)
 {
-    return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(codeId)));
+    return createSelfManagedCodeRef(MacroAssemblerCodePtr::createLLIntCodePtr(opcodeID));
 }
 
 bool MacroAssemblerCodeRef::tryToDisassemble(PrintStream& out, const char* prefix) const

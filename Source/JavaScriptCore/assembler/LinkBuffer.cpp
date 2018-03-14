@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,20 +44,20 @@ bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
     return Options::dumpDisassembly();
 }
 
-LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()
+LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly(PtrTag tag)
 {
     performFinalization();
     
     ASSERT(m_didAllocate);
     if (m_executableMemory)
-        return CodeRef(*m_executableMemory);
+        return CodeRef(*m_executableMemory, tag);
     
-    return CodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(m_code));
+    return CodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(tagCodePtr(m_code, tag)));
 }
 
-LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, ...)
+LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(PtrTag tag, const char* format, ...)
 {
-    CodeRef result = finalizeCodeWithoutDisassembly();
+    CodeRef result = finalizeCodeWithoutDisassembly(tag);
 
     if (m_alreadyDisassembled)
         return result;
@@ -70,7 +70,8 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
     va_end(argList);
     out.printf(":\n");
 
-    out.printf("    Code at [%p, %p):\n", result.code().executableAddress(), result.code().executableAddress<char*>() + result.size());
+    uint8_t* executableAddress = removeCodePtrTag<uint8_t*>(result.code().executableAddress());
+    out.printf("    Code at [%p, %p):\n", executableAddress, executableAddress + result.size());
     
     CString header = out.toCString();
     

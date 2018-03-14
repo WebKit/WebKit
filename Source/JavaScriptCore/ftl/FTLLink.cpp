@@ -140,13 +140,13 @@ void link(State& state)
             jit.emitFunctionPrologue();
             jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-            CCallHelpers::Call callArityCheck = jit.call();
+            CCallHelpers::Call callArityCheck = jit.call(NoPtrTag);
 
             auto noException = jit.branch32(CCallHelpers::GreaterThanOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
             jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
             jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
             jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-            CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call();
+            CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call(NoPtrTag);
             jit.jumpToExceptionHandler(vm);
             noException.link(&jit);
 
@@ -159,7 +159,7 @@ void link(State& state)
             jit.emitFunctionEpilogue();
             mainPathJumps.append(jit.branchTest32(CCallHelpers::Zero, GPRInfo::argumentGPR0));
             jit.emitFunctionPrologue();
-            CCallHelpers::Call callArityFixup = jit.call();
+            CCallHelpers::Call callArityFixup = jit.call(NoPtrTag);
             jit.emitFunctionEpilogue();
             mainPathJumps.append(jit.jump());
 

@@ -339,7 +339,7 @@ static void compileStub(
                 CCallHelpers::TrustedImmPtr(materialization),
                 CCallHelpers::TrustedImmPtr(materializationArguments));
             jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(operationMaterializeObjectInOSR)), GPRInfo::nonArgGPR0);
-            jit.call(GPRInfo::nonArgGPR0);
+            jit.call(GPRInfo::nonArgGPR0, NoPtrTag);
             jit.storePtr(GPRInfo::returnValueGPR, materializationToPointer.get(materialization));
 
             // Let everyone know that we're done.
@@ -367,7 +367,7 @@ static void compileStub(
             CCallHelpers::TrustedImmPtr(materializationToPointer.get(materialization)),
             CCallHelpers::TrustedImmPtr(materializationArguments));
         jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(operationPopulateObjectInOSR)), GPRInfo::nonArgGPR0);
-        jit.call(GPRInfo::nonArgGPR0);
+        jit.call(GPRInfo::nonArgGPR0, NoPtrTag);
     }
 
     // Save all state from wherever the exit data tells us it was, into the appropriate place in
@@ -494,7 +494,7 @@ static void compileStub(
     LinkBuffer patchBuffer(jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
-        patchBuffer,
+        patchBuffer, NoPtrTag,
         "FTL OSR exit #%u (%s, %s) from %s, with operands = %s",
             exitID, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
@@ -541,7 +541,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     }
 
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
-    
+
     compileStub(exitID, jitCode, exit, &vm, codeBlock);
 
     MacroAssembler::repatchJump(

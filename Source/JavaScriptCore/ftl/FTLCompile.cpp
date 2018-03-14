@@ -134,7 +134,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-    CCallHelpers::Call call = jit.call();
+    CCallHelpers::Call call = jit.call(NoPtrTag);
     jit.jumpToExceptionHandler(vm);
     jit.addLinkTask(
         [=] (LinkBuffer& linkBuffer) {

@@ -76,13 +76,13 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
 
     // Tail call into the callee WebAssembly function.
     jit.loadPtr(scratch, scratch);
-    jit.jump(scratch);
+    jit.jump(scratch, NoPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_CODE(patchBuffer, "WebAssembly->WebAssembly import[%i]", importIndex);
+    return FINALIZE_CODE(patchBuffer, NoPtrTag, "WebAssembly->WebAssembly import[%i]", importIndex);
 }
 
 } } // namespace JSC::Wasm

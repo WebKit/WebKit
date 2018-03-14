@@ -1756,14 +1756,14 @@ public:
         return branchEqual(MIPSRegisters::zero, MIPSRegisters::zero);
     }
 
-    void jump(RegisterID target)
+    void jump(RegisterID target, PtrTag)
     {
         move(target, MIPSRegisters::t9);
         m_assembler.jr(MIPSRegisters::t9);
         m_assembler.nop();
     }
 
-    void jump(Address address)
+    void jump(Address address, PtrTag)
     {
         m_fixedWidth = true;
         load32(address, MIPSRegisters::t9);
@@ -1772,7 +1772,7 @@ public:
         m_fixedWidth = false;
     }
 
-    void jump(AbsoluteAddress address)
+    void jump(AbsoluteAddress address, PtrTag)
     {
         m_fixedWidth = true;
         load32(address.m_ptr, MIPSRegisters::t9);
@@ -2250,7 +2250,7 @@ public:
         return Call(m_assembler.label(), Call::LinkableNearTail);
     }
 
-    Call call()
+    Call call(PtrTag)
     {
         m_assembler.lui(MIPSRegisters::t9, 0);
         m_assembler.ori(MIPSRegisters::t9, MIPSRegisters::t9, 0);
@@ -2259,7 +2259,7 @@ public:
         return Call(m_assembler.label(), Call::Linkable);
     }
 
-    Call call(RegisterID target)
+    Call call(RegisterID target, PtrTag)
     {
         move(target, MIPSRegisters::t9);
         m_assembler.jalr(MIPSRegisters::t9);
@@ -2267,7 +2267,7 @@ public:
         return Call(m_assembler.label(), Call::None);
     }
 
-    Call call(Address address)
+    Call call(Address address, PtrTag)
     {
         m_fixedWidth = true;
         load32(address, MIPSRegisters::t9);
@@ -3078,7 +3078,7 @@ public:
 
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())));
+        return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())), CodeEntryPtrTag);
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

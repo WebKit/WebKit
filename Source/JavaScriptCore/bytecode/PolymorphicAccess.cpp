@@ -199,10 +199,10 @@ void AccessGenerationState::emitExplicitExceptionHandler()
             });
     } else {
         jit->setupArguments<decltype(lookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&m_vm), GPRInfo::callFrameRegister);
-        CCallHelpers::Call lookupExceptionHandlerCall = jit->call();
+        CCallHelpers::Call lookupExceptionHandlerCall = jit->call(NoPtrTag);
         jit->addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(lookupExceptionHandlerCall, lookupExceptionHandler);
+                linkBuffer.link(lookupExceptionHandlerCall, lookupExceptionHandler, NoPtrTag);
             });
         jit->jumpToExceptionHandler(m_vm);
     }
@@ -538,7 +538,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
                 linkBuffer.link(jumpToOSRExitExceptionHandler, oldHandler.nativeCode);
 
                 HandlerInfo handlerToRegister = oldHandler;
-                handlerToRegister.nativeCode = linkBuffer.locationOf(makeshiftCatchHandler);
+                handlerToRegister.nativeCode = linkBuffer.locationOf(makeshiftCatchHandler, NoPtrTag);
                 handlerToRegister.start = newExceptionHandlingCallSite.bits();
                 handlerToRegister.end = newExceptionHandlingCallSite.bits() + 1;
                 codeBlock->appendExceptionHandler(handlerToRegister);
@@ -568,7 +568,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");
 
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
-        codeBlock, linkBuffer,
+        codeBlock, linkBuffer, NoPtrTag,
         "%s", toCString("Access stub for ", *codeBlock, " ", stubInfo.codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     bool doesCalls = false;

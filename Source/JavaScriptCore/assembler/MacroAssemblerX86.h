@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,13 +213,13 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Call call()
+    Call call(PtrTag)
     {
         return Call(m_assembler.call(), Call::Linkable);
     }
 
     // Address is a memory location containing the address to jump to
-    void jump(AbsoluteAddress address)
+    void jump(AbsoluteAddress address, PtrTag)
     {
         m_assembler.jmp_m(address.m_ptr);
     }
@@ -298,7 +298,7 @@ public:
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         intptr_t offset = reinterpret_cast<int32_t*>(call.dataLocation())[-1];
-        return FunctionPtr(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset));
+        return FunctionPtr(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset), CodeEntryPtrTag);
     }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }

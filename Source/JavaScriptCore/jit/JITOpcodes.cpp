@@ -572,7 +572,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
         callOperation(operationTryOSREnterAtCatchAndValueProfile, m_bytecodeOffset);
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
     skipOSREntry.link(this);
     if (buffer && shouldEmitProfiling()) {
         buffer->forEach([&] (ValueProfileAndOperand& profile) {
@@ -610,7 +610,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_switch_char(Instruction* currentInstruction)
@@ -626,7 +626,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_switch_string(Instruction* currentInstruction)
@@ -641,7 +641,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_debug(Instruction* currentInstruction)
@@ -877,7 +877,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
             abortWithReason(JITUnreasonableLoopHintJumpTarget);
             ok.link(this);
         }
-        jump(returnValueGPR);
+        jump(returnValueGPR, NoPtrTag);
         noOptimizedEntry.link(this);
 
         emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
@@ -1081,11 +1081,11 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
     
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-        m_codeBlock, patchBuffer,
+        m_codeBlock, patchBuffer, NoPtrTag,
         "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
     
     MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall(MacroAssemblerCodePtr(returnAddress)), FunctionPtr(operationHasIndexedPropertyGeneric));
+    MacroAssembler::repatchCall(CodeLocationCall(MacroAssemblerCodePtr(returnAddress)), FunctionPtr(operationHasIndexedPropertyGeneric, SlowPathPtrTag));
 }
 
 void JIT::emit_op_has_indexed_property(Instruction* currentInstruction)

@@ -738,7 +738,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
         callOperation(operationTryOSREnterAtCatchAndValueProfile, m_bytecodeOffset);
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
     skipOSREntry.link(this);
     if (buffer && shouldEmitProfiling()) {
         buffer->forEach([&] (ValueProfileAndOperand& profile) {
@@ -776,7 +776,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_switch_char(Instruction* currentInstruction)
@@ -792,7 +792,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_switch_string(Instruction* currentInstruction)
@@ -807,7 +807,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, JSValueRegs(regT1, regT0), tableIndex);
-    jump(returnValueGPR);
+    jump(returnValueGPR, NoPtrTag);
 }
 
 void JIT::emit_op_debug(Instruction* currentInstruction)
@@ -932,11 +932,11 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
     
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-        m_codeBlock, patchBuffer,
+        m_codeBlock, patchBuffer, NoPtrTag,
         "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
     
     MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall(MacroAssemblerCodePtr(returnAddress)), FunctionPtr(operationHasIndexedPropertyGeneric));
+    MacroAssembler::repatchCall(CodeLocationCall(MacroAssemblerCodePtr(returnAddress)), FunctionPtr(operationHasIndexedPropertyGeneric, SlowPathPtrTag));
 }
 
 void JIT::emit_op_has_indexed_property(Instruction* currentInstruction)

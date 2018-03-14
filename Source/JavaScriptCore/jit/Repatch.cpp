@@ -73,7 +73,7 @@ static FunctionPtr readCallTarget(CodeBlock* codeBlock, CodeLocationCall call)
     if (codeBlock->jitType() == JITCode::FTLJIT) {
         return FunctionPtr(codeBlock->vm()->ftlThunks->keyForSlowPathCallThunk(
             MacroAssemblerCodePtr::createFromExecutableAddress(
-                result.executableAddress())).callTarget());
+                result.executableAddress())).callTarget(), CodeEntryPtrTag);
     }
 #else
     UNUSED_PARAM(codeBlock);
@@ -386,14 +386,17 @@ static V_JITOperation_ESsiJJI appropriateGenericPutByIdFunction(const PutPropert
 
 static V_JITOperation_ESsiJJI appropriateOptimizingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
 {
-    if (slot.isStrictMode()) {
+    auto pickSlowPath = [&] () -> V_JITOperation_ESsiJJI {
+        if (slot.isStrictMode()) {
+            if (putKind == Direct)
+                return operationPutByIdDirectStrictOptimize;
+            return operationPutByIdStrictOptimize;
+        }
         if (putKind == Direct)
-            return operationPutByIdDirectStrictOptimize;
-        return operationPutByIdStrictOptimize;
-    }
-    if (putKind == Direct)
-        return operationPutByIdDirectNonStrictOptimize;
-    return operationPutByIdNonStrictOptimize;
+            return operationPutByIdDirectNonStrictOptimize;
+        return operationPutByIdNonStrictOptimize;
+    };
+    return tagCFunctionPtr(pickSlowPath(), SlowPathPtrTag);
 }
 
 static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
@@ -1068,7 +1071,7 @@ void linkPolymorphicCall(
         // with a non-decorated bottom bit but a normal call calls an address with a decorated bottom bit.
         bool isTailCall = callToCodePtr.call.isFlagSet(CCallHelpers::Call::Tail);
         patchBuffer.link(
-            callToCodePtr.call, FunctionPtr(isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress()));
+            callToCodePtr.call, FunctionPtr(tagCodePtr(isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress(), CodeEntryPtrTag)));
     }
     if (isWebAssembly || JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
         patchBuffer.link(done, callLinkInfo.callReturnLocation().labelAtOffset(0));
@@ -1078,7 +1081,7 @@ void linkPolymorphicCall(
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
-            callerCodeBlock, patchBuffer,
+            callerCodeBlock, patchBuffer, NoPtrTag,
             "Polymorphic call stub for %s, return point %p, targets %s",
                 isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
                 toCString(listDump(callCases)).data()),
@@ -1124,7 +1127,7 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;
     }
 
-    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), optimizedFunction);
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), tagCFunctionPtr(optimizedFunction, SlowPathPtrTag));
     InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 

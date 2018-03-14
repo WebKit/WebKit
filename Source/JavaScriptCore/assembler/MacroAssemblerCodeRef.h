@@ -27,6 +27,7 @@
 
 #include "ExecutableAllocator.h"
 #include "JSCPoison.h"
+#include "PtrTag.h"
 #include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
@@ -63,9 +64,9 @@ class FunctionPtr {
 public:
     FunctionPtr() { }
 
-    template<typename returnType, typename... Arguments>
-    FunctionPtr(returnType(*value)(Arguments...))
-        : m_value(reinterpret_cast<void*>(value))
+    template<typename ReturnType, typename... Arguments>
+    FunctionPtr(ReturnType(*value)(Arguments...), PtrTag tag = SlowPathPtrTag)
+        : m_value(tagCFunctionPtr<void*>(value, tag))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
@@ -75,9 +76,9 @@ public:
 // different types; these methods already defined for fastcall, below.
 #if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
 
-    template<typename returnType, typename... Arguments>
-    FunctionPtr(returnType(CDECL *value)(Arguments...))
-        : m_value(reinterpret_cast<void*>(value))
+    template<typename ReturnType, typename... Arguments>
+    FunctionPtr(ReturnType(CDECL *value)(Arguments...), PtrTag tag = SlowPathPtrTag)
+        : m_value(tagCFunctionPtr<void*>(value, tag))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
@@ -87,9 +88,9 @@ public:
 
 #if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
-    template<typename returnType, typename... Arguments>
-    FunctionPtr(returnType(FASTCALL *value)(Arguments...))
-        : m_value(reinterpret_cast<void*>(value))
+    template<typename ReturnType, typename... Arguments>
+    FunctionPtr(ReturnType(FASTCALL *value)(Arguments...), PtrTag tag = SlowPathPtrTag)
+        : m_value(tagCFunctionPtr<void*>(value, tag))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
@@ -98,11 +99,11 @@ public:
 #endif // COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
     template<typename FunctionType>
-    explicit FunctionPtr(FunctionType* value)
+    explicit FunctionPtr(FunctionType* value, PtrTag tag = SlowPathPtrTag)
         // Using a C-ctyle cast here to avoid compiler error on RVTC:
         // Error:  #694: reinterpret_cast cannot cast away const or other type qualifiers
         // (I guess on RVTC function pointers have a different constness to GCC/MSVC?)
-        : m_value((void*)value)
+        : m_value(tagCodePtr<void*>(value, tag))
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
@@ -113,7 +114,7 @@ public:
     void* value() const
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        return m_value;
+        return removeCodePtrTag(m_value);
     }
     void* executableAddress() const
     {
@@ -183,7 +184,7 @@ public:
         ASSERT(value);
         ASSERT_VALID_CODE_POINTER(m_value.unpoisoned());
     }
-    
+
     static MacroAssemblerCodePtr createFromExecutableAddress(void* value)
     {
         ASSERT(value);
@@ -227,7 +228,7 @@ public:
     {
         m_value.assertIsPoisoned();
         ASSERT_VALID_CODE_POINTER(m_value);
-        return m_value.unpoisoned<T>();
+        return bitwise_cast<T>(m_value ? removeCodePtrTag(m_value.unpoisoned()) : nullptr);
     }
 #endif
 
@@ -315,8 +316,8 @@ public:
     {
     }
 
-    MacroAssemblerCodeRef(Ref<ExecutableMemoryHandle>&& executableMemory)
-        : m_codePtr(executableMemory->start())
+    MacroAssemblerCodeRef(Ref<ExecutableMemoryHandle>&& executableMemory, PtrTag tag)
+        : m_codePtr(tagCodePtr(executableMemory->start(), tag))
         , m_executableMemory(WTFMove(executableMemory))
     {
         ASSERT(m_executableMemory->isManaged());
@@ -344,7 +345,12 @@ public:
     {
         return m_codePtr;
     }
-    
+
+    MacroAssemblerCodePtr retaggedCode(PtrTag oldTag, PtrTag newTag) const
+    {
+        return MacroAssemblerCodePtr(retagCodePtr(m_codePtr.executableAddress(), oldTag, newTag));
+    }
+
     size_t size() const
     {
         if (!m_executableMemory)

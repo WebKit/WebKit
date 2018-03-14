@@ -51,51 +51,52 @@ EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void* code, VM* vm, ProtoCallFram
 
 namespace LLInt {
 
-static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind)
+static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, OpcodeID opcodeID, PtrTag thunkTag, const char *thunkKind)
 {
     JSInterfaceJIT jit(vm);
-    
+
     // FIXME: there's probably a better way to do it on X86, but I'm not sure I care.
+    LLIntCode target = LLInt::getCodeFunctionPtr(opcodeID);
     jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);
-    jit.jump(JSInterfaceJIT::regT0);
-    
+    jit.jump(JSInterfaceJIT::regT0, ptrTag(BytecodeHelperPtrTag, opcodeID));
+
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, "LLInt %s prologue thunk", thunkKind);
+    return FINALIZE_CODE(patchBuffer, thunkTag, "LLInt %s prologue thunk", thunkKind);
 }
 
 MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_prologue), "function for call");
+    return generateThunkWithJumpTo(vm, llint_function_for_call_prologue, CodeEntryPtrTag, "function for call");
 }
 
 MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_prologue), "function for construct");
+    return generateThunkWithJumpTo(vm, llint_function_for_construct_prologue, CodeEntryPtrTag, "function for construct");
 }
 
 MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_arity_check), "function for call with arity check");
+    return generateThunkWithJumpTo(vm, llint_function_for_call_arity_check, CodeEntryWithArityCheckPtrTag, "function for call with arity check");
 }
 
 MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_arity_check), "function for construct with arity check");
+    return generateThunkWithJumpTo(vm, llint_function_for_construct_arity_check, CodeEntryWithArityCheckPtrTag, "function for construct with arity check");
 }
 
 MacroAssemblerCodeRef evalEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_eval_prologue), "eval");
+    return generateThunkWithJumpTo(vm, llint_eval_prologue, CodeEntryPtrTag, "eval");
 }
 
 MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_program_prologue), "program");
+    return generateThunkWithJumpTo(vm, llint_program_prologue, CodeEntryPtrTag, "program");
 }
 
 MacroAssemblerCodeRef moduleProgramEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_module_program_prologue), "module_program");
+    return generateThunkWithJumpTo(vm, llint_module_program_prologue, CodeEntryPtrTag, "module_program");
 }
 
 } // namespace LLInt

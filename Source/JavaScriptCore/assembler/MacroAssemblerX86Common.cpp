@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -753,7 +753,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), RegisterID::edx);
     push(RegisterID::ebx);
     move(TrustedImmPtr(arg), RegisterID::ebx);
-    call(RegisterID::eax);
+    call(RegisterID::eax, CFunctionPtrTag);
 }
 #endif // ENABLE(MASM_PROBE)
 

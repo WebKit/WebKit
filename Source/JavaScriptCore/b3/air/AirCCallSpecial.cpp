@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,14 +134,14 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     case Arg::Imm:
     case Arg::BigImm:
         jit.move(inst.args[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
-        jit.call(scratchRegister);
+        jit.call(scratchRegister, NoPtrTag);
         break;
     case Arg::Tmp:
-        jit.call(inst.args[calleeArgOffset].gpr());
+        jit.call(inst.args[calleeArgOffset].gpr(), NoPtrTag);
         break;
     case Arg::Addr:
     case Arg::ExtendedOffsetAddr:
-        jit.call(inst.args[calleeArgOffset].asAddress());
+        jit.call(inst.args[calleeArgOffset].asAddress(), NoPtrTag);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

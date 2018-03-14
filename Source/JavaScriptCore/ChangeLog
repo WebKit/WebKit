@@ -1,3 +1,251 @@
+2018-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Enhance the MacroAssembler and LinkBuffer to support pointer profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=183623
+        <rdar://problem/38443314>
+
+        Reviewed by Michael Saboff.
+
+        1. Added a PtrTag argument to indirect call() and indirect jump() MacroAssembler
+           emitters to support pointer profiling.
+
+        2. Also added tagPtr(), untagPtr(), and removePtrTag() placeholder methods.
+
+        3. Added a PtrTag to LinkBuffer finalizeCodeWithoutDisassembly() and clients.
+
+        4. Updated clients to pass a PtrTag.  For the most part, I just apply NoPtrTag as
+           a placeholder until we have time to analyze what pointer profile each client
+           site has later.
+    
+        5. Apply PtrTags to the YarrJIT.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::getLinkerAddress):
+        (JSC::AbstractMacroAssembler::tagPtr):
+        (JSC::AbstractMacroAssembler::untagPtr):
+        (JSC::AbstractMacroAssembler::removePtrTag):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly):
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::link):
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::locationOf):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::jump):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::readCallTarget):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::call):
+        (JSC::MacroAssemblerARM64::jump):
+        (JSC::MacroAssemblerARM64::readCallTarget):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::relativeTableJump):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::readCallTarget):
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr):
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+        (JSC::FunctionPtr::value const):
+        (JSC::MacroAssemblerCodePtr:: const):
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        (JSC::MacroAssemblerCodeRef::retaggedCode const):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::jump):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::readCallTarget):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::call):
+        (JSC::MacroAssemblerX86::jump):
+        (JSC::MacroAssemblerX86::readCallTarget):
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::jump):
+        (JSC::MacroAssemblerX86Common::call):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::jump):
+        (JSC::MacroAssemblerX86_64::readCallTarget):
+        * assembler/testmasm.cpp:
+        (JSC::compile):
+        (JSC::invoke):
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile):
+        * b3/B3LowerMacros.cpp:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::generate):
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::invoke):
+        (JSC::B3::testInterpreter):
+        (JSC::B3::testEntrySwitchSimple):
+        (JSC::B3::testEntrySwitchNoEntrySwitch):
+        (JSC::B3::testEntrySwitchWithCommonPaths):
+        (JSC::B3::testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint):
+        (JSC::B3::testEntrySwitchLoop):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCaseSnippetParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * bytecode/InlineAccess.cpp:
+        (JSC::linkCodeInline):
+        (JSC::InlineAccess::rewireStubAsJump):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        (JSC::PolymorphicAccess::regenerate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::noticeCatchEntrypoint):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendCall):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitThunkGenerator):
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::JIT::appendCall):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::readCallTarget):
+        (JSC::appropriateOptimizingPutByIdFunction):
+        (JSC::linkPolymorphicCall):
+        (JSC::resetPutByID):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        (JSC::SpecializedThunkJIT::callDoubleToDouble):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForCallEntryThunkGenerator):
+        (JSC::LLInt::functionForConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator):
+        (JSC::LLInt::evalEntryThunkGenerator):
+        (JSC::LLInt::programEntryThunkGenerator):
+        (JSC::LLInt::moduleProgramEntryThunkGenerator):
+        * runtime/PtrTag.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::loadFromFrameAndJump):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::linkDataLabels):
+        (JSC::Yarr::YarrGenerator::generateTryReadUnicodeCharacterHelper):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::jitCompile):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+
 2018-03-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fix order of evaluation for ClassDefinitionEvaluation
