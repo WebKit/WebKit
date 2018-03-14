@@ -1,3 +1,14 @@
+2018-03-14  Youenn Fablet  <youenn@apple.com>
+
+        MessagePort should remove its listeners when being closed
+        https://bugs.webkit.org/show_bug.cgi?id=183644
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/resources/messageport-echo-worker.js: Added.
+        * http/tests/workers/worker-messageport-expected.txt: Added.
+        * http/tests/workers/worker-messageport.html: Added.
+
 2018-03-14  Chris Dumez  <cdumez@apple.com>
 
         Make policy decisions asynchronous
