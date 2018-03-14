@@ -1051,7 +1051,7 @@
 #if PLATFORM(MAC)
 #define USE_OPENGL 1
 #define USE_OPENGL_ES 0
-#elif ENABLE(MINIMAL_SIMULATOR)
+#elif ENABLE(MINIMAL_SIMULATOR) && __has_include(<OpenGL/OpenGL.h>)
 #define USE_OPENGL 1
 #define USE_OPENGL_ES 0
 #else

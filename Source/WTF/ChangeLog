@@ -1,3 +1,13 @@
+2018-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r229387
+        https://bugs.webkit.org/show_bug.cgi?id=183639
+        <rdar://problem/38448568>
+
+        Reviewed by Dean Jackson.
+
+        * wtf/Platform.h:
+
 2018-03-13  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in WTF and bmalloc
