@@ -1,3 +1,22 @@
+2018-03-13  Chris Dumez  <cdumez@apple.com>
+
+        fast/loader/javascript-url-iframe-remove-on-navigate.html is a flaky crash on iOS with async delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183610
+
+        Reviewed by Youenn Fablet.
+
+        The issue was that in DocumentLoader::loadMainResource(), the call to requestMainResource() which
+        return null due to the load getting cancelled synchronously. If this load is the parent frame's last
+        pending load, then the 'load' event gets fired in the parent frame. In the test, the parent frame's
+        load event handler does a document.write() call which blows away the iframe. As a result, when
+        we return from the requestMainResource(), m_frame is null and we crash later on dereferencing it.
+
+        No new tests, covered by fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html
+        which was crashing flakily.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::loadMainResource):
+
 2018-03-13  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Muted media playback can interrupt out-of-process audio

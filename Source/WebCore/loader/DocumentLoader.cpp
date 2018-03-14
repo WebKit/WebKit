@@ -1718,15 +1718,12 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
     m_mainResource = m_cachedResourceLoader->requestMainResource(WTFMove(mainResourceRequest)).value_or(nullptr);
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    if (m_mainResource && m_mainResource->errorOccurred() && m_frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
-        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Blocked by content blocker error (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
-        cancelMainResourceLoad(frameLoader()->blockedByContentBlockerError(m_request));
-        return;
-    }
-#endif
-
     if (!m_mainResource) {
+        // The frame may have gone away if this load was cancelled synchronously and this was the last pending load.
+        // This is because we may have fired the load event in a parent frame.
+        if (!m_frame)
+            return;
+
         if (!m_request.url().isValid()) {
             RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, URL is invalid (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
@@ -1743,6 +1740,16 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         maybeLoadEmpty();
         return;
     }
+
+    ASSERT(m_frame);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (m_mainResource->errorOccurred() && m_frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
+        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Blocked by content blocker error (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+        cancelMainResourceLoad(frameLoader()->blockedByContentBlockerError(m_request));
+        return;
+    }
+#endif
 
     if (!mainResourceLoader()) {
         m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
