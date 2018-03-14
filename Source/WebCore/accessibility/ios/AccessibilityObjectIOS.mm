@@ -68,10 +68,19 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
 {
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
+    
+bool AccessibilityObject::hasAccessibleDismissEventListener() const
+{
+    for (auto* node = this->node(); node; node = node->parentNode()) {
+        if (node->hasEventListeners(eventNames().accessibledismissEvent))
+            return true;
+    }
+    return false;
+}
 
 bool AccessibilityObject::hasTouchEventListener() const
 {
-    for (Node* node = this->node(); node; node = node->parentNode()) {
+    for (auto* node = this->node(); node; node = node->parentNode()) {
         if (node->hasEventListeners(eventNames().touchstartEvent) || node->hasEventListeners(eventNames().touchendEvent))
             return true;
     }

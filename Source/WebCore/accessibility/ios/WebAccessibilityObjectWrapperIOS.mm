@@ -1488,6 +1488,17 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return [self convertPointToScreenSpace:floatPoint];
 }
 
+- (BOOL)accessibilityPerformEscape
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    m_object->dispatchAccessibilityEventWithType(AccessibilityEventType::Dismiss);
+    
+    // Return whether a listener received this event so it prevents other callers up the hierarchy chain.
+    return m_object->shouldDispatchAccessibilityEvent() && m_object->hasAccessibleDismissEventListener();
+}
+
 - (BOOL)_accessibilityScrollToVisible
 {
     if (![self _prepareAccessibilityCall])

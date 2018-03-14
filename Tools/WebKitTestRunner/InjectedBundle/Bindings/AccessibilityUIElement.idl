@@ -118,6 +118,7 @@ interface AccessibilityUIElement {
     void press();
     void syncPress();
     void showMenu();
+    boolean dismiss();
 
     // Attribute info.
     DOMString allAttributes();

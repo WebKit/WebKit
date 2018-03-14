@@ -97,6 +97,7 @@ public:
     void decrement();
     void showMenu();
     void press();
+    bool dismiss();
 #if PLATFORM(MAC)
     void syncPress();
 #else

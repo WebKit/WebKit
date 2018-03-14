@@ -1,3 +1,16 @@
+2018-03-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement accessible dismiss action on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183352
+        <rdar://problem/38161500>
+
+        Reviewed by Zalan Bujtas.
+
+        Test: accessibility/ios-simulator/AOM-dismiss-event.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPerformEscape]):
+
 2018-03-14  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc up to 36af4e9614f707f733eb2340fae66d6325aaac5b

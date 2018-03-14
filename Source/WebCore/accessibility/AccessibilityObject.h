@@ -1124,6 +1124,7 @@ public:
     int accessibilityPasswordFieldLength();
     bool hasTouchEventListener() const;
     bool isInputTypePopupButton() const;
+    bool hasAccessibleDismissEventListener() const;
 #endif
     
     // allows for an AccessibilityObject to update its render tree or perform

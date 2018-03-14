@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test-pre.js"></script>
+<div id="content">
+
+<div id="event" role="group" tabindex=0>
+test1
+</div>
+
+<div id="no_event" role="group" tabindex=0>
+test2
+</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the accessibledismiss event on iOS.");
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+
+        var node = document.getElementById("event");
+        var axNode = accessibilityController.accessibleElementById("event");
+        node.onaccessibledismiss = function(event) {
+            debug("received accessibledismiss: " + event);
+            finishJSTest(); 
+         };
+
+        var dispatched = axNode.dismiss();
+        shouldBeTrue("dispatched");
+
+        node = document.getElementById("no_event");
+        axNode = accessibilityController.accessibleElementById("no_event");
+        dispatched = axNode.dismiss();
+        shouldBeFalse("dispatched");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
