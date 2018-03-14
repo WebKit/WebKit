@@ -1,5 +1,5 @@
 
-PASS RadicalDegreeBottomRaisePercent 
+FAIL RadicalDegreeBottomRaisePercent assert_approx_equals: mroot: vertical position of index expected 27.5 +/- 1 but got 25
 PASS RadicalDisplayStyleVerticalGap 
 PASS RadicalExtraAscender 
 PASS RadicalKernAfterDegree 

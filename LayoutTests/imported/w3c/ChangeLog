@@ -1,3 +1,47 @@
+2018-03-14  Frederic Wang  <fwang@igalia.com>
+
+        Finish migration to MathML WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=183628
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        In r225162, the MathML tests from the WPT repository were imported. They were intended to
+        replace the ones in imported/mathml-in-html5 but the migration was not fully possible. The
+        main issue was that many MathML tests use Web fonts to test the use of OpenType parameters
+        but document.fonts.ready is unreliable in WebKit (bug 174030). A workaround was implemented
+        in WPT ( https://github.com/w3c/web-platform-tests/pull/10025 ) so this commit finishes
+        the migration. We update the WPT MathML tests and now run them all, we remove
+        imported/mathml-in-html5 and the associated TestExpectations failures. Two cases unrelated to
+        font loading are still failing: One for the SuperscriptShiftUpCramped parameter (bug 156401)
+        and one for the RadicalDegreeBottomRaisePercent parameter (bug 183631).
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/radicals/root-parameters-1-expected.txt.
+        Also add the failure with RadicalDegreeBottomRaisePercent.
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-parameters-1-expected.txt.
+        Also add the failure for SuperscriptShiftUpCramped.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-2-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-4-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html: Import font loading workaround.
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height.html: Import font loading workaround.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1.html: Import font loading workaround.
+        * web-platform-tests/mathml/relations/css-styling/lengths-3.html: Import font loading workaround.
+        * web-platform-tests/mathml/tools/utils/misc.py: Import update to Python 3.
+        (downloadWithProgressBar):
+
 2018-03-13  Youenn Fablet  <youenn@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
