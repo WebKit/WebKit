@@ -127,6 +127,13 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   virtual std::vector<RtpSource> GetSources() const {
     return std::vector<RtpSource>();
   }
+  // TODO(hta): Remove default implementation or move function to
+  // an internal interface. content::FakeRtpReceiver in Chromium needs this.
+
+  // Returns an ID that changes if the attached track changes, but
+  // otherwise remains constant. Used to generate IDs for stats.
+  // The special value zero means that no track is attached.
+  virtual int AttachmentId() const { return 0; }
 
  protected:
   virtual ~RtpReceiverInterface() {}
@@ -146,6 +153,7 @@ BEGIN_SIGNALING_PROXY_MAP(RtpReceiver)
   PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
   PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
   PROXY_CONSTMETHOD0(std::vector<RtpSource>, GetSources);
+  PROXY_CONSTMETHOD0(int, AttachmentId);
   END_PROXY_MAP()
 
 }  // namespace webrtc

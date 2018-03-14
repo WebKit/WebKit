@@ -33,7 +33,9 @@ namespace webrtc {
 // Proves linear echo cancellation functionality
 class Subtractor {
  public:
-  Subtractor(ApmDataDumper* data_dumper, Aec3Optimization optimization);
+  Subtractor(const EchoCanceller3Config& config,
+             ApmDataDumper* data_dumper,
+             Aec3Optimization optimization);
   ~Subtractor();
 
   // Performs the echo subtraction.
@@ -45,34 +47,39 @@ class Subtractor {
 
   void HandleEchoPathChange(const EchoPathVariability& echo_path_variability);
 
+  // Exits the initial state.
+  void ExitInitialState();
+
   // Returns the block-wise frequency response for the main adaptive filter.
   const std::vector<std::array<float, kFftLengthBy2Plus1>>&
   FilterFrequencyResponse() const {
-    if (use_shadow_filter_frequency_response_) {
-      return shadow_filter_.FilterFrequencyResponse();
-    }
-    return main_filter_.FilterFrequencyResponse();
+    return main_filter_converged_ || (!shadow_filter_converged_)
+               ? main_filter_.FilterFrequencyResponse()
+               : shadow_filter_.FilterFrequencyResponse();
   }
 
   // Returns the estimate of the impulse response for the main adaptive filter.
-  const std::array<float, kAdaptiveFilterTimeDomainLength>&
-  FilterImpulseResponse() const {
-    return main_filter_.FilterImpulseResponse();
+  const std::vector<float>& FilterImpulseResponse() const {
+    return main_filter_converged_ || (!shadow_filter_converged_)
+               ? main_filter_.FilterImpulseResponse()
+               : shadow_filter_.FilterImpulseResponse();
   }
 
-  bool ConvergedFilter() const { return converged_filter_; }
+  bool ConvergedFilter() const {
+    return main_filter_converged_ || shadow_filter_converged_;
+  }
 
  private:
   const Aec3Fft fft_;
   ApmDataDumper* data_dumper_;
   const Aec3Optimization optimization_;
+  const EchoCanceller3Config config_;
   AdaptiveFirFilter main_filter_;
   AdaptiveFirFilter shadow_filter_;
   MainFilterUpdateGain G_main_;
   ShadowFilterUpdateGain G_shadow_;
-  bool converged_filter_ = false;
-  size_t converged_filter_counter_ = 0;
-  bool use_shadow_filter_frequency_response_ = false;
+  bool main_filter_converged_ = false;
+  bool shadow_filter_converged_ = false;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(Subtractor);
 };
 

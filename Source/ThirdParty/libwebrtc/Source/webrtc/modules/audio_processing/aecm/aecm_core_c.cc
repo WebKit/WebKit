@@ -74,9 +74,9 @@ static void WindowAndFFT(AecmCore* aecm,
   for (i = 0; i < PART_LEN; i++) {
     // Window time domain signal and insert into real part of
     // transformation array |fft|
-    int16_t scaled_time_signal = time_signal[i] << time_signal_scaling;
+    int16_t scaled_time_signal = time_signal[i] * (1 << time_signal_scaling);
     fft[i] = (int16_t)((scaled_time_signal * WebRtcAecm_kSqrtHanning[i]) >> 14);
-    scaled_time_signal = time_signal[i + PART_LEN] << time_signal_scaling;
+    scaled_time_signal = time_signal[i + PART_LEN] * (1 << time_signal_scaling);
     fft[PART_LEN + i] = (int16_t)((
         scaled_time_signal * WebRtcAecm_kSqrtHanning[PART_LEN - i]) >> 14);
   }

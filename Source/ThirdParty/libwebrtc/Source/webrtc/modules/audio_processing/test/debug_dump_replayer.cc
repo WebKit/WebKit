@@ -193,7 +193,7 @@ void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
   // We only create APM once, since changes on these fields should not
   // happen in current implementation.
   if (!apm_.get()) {
-    apm_.reset(AudioProcessing::Create(config));
+    apm_.reset(AudioProcessingBuilder().Create(config));
   }
 }
 

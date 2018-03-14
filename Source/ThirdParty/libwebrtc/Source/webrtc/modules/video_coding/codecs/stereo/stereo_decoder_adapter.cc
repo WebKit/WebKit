@@ -12,7 +12,6 @@
 
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame_buffer.h"
-#include "api/video_codecs/sdp_video_format.h"
 #include "common_video/include/video_frame.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
@@ -80,8 +79,10 @@ struct StereoDecoderAdapter::DecodedImageData {
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(DecodedImageData);
 };
 
-StereoDecoderAdapter::StereoDecoderAdapter(VideoDecoderFactory* factory)
-    : factory_(factory) {}
+StereoDecoderAdapter::StereoDecoderAdapter(
+    VideoDecoderFactory* factory,
+    const SdpVideoFormat& associated_format)
+    : factory_(factory), associated_format_(associated_format) {}
 
 StereoDecoderAdapter::~StereoDecoderAdapter() {
   Release();
@@ -89,12 +90,12 @@ StereoDecoderAdapter::~StereoDecoderAdapter() {
 
 int32_t StereoDecoderAdapter::InitDecode(const VideoCodec* codec_settings,
                                          int32_t number_of_cores) {
+  RTC_DCHECK_EQ(kVideoCodecStereo, codec_settings->codecType);
   VideoCodec settings = *codec_settings;
-  settings.codecType = kVideoCodecVP9;
+  settings.codecType = PayloadStringToCodecType(associated_format_.name);
   for (size_t i = 0; i < kAlphaCodecStreams; ++i) {
-    const SdpVideoFormat format("VP9");
     std::unique_ptr<VideoDecoder> decoder =
-        factory_->CreateVideoDecoder(format);
+        factory_->CreateVideoDecoder(associated_format_);
     const int32_t rv = decoder->InitDecode(&settings, number_of_cores);
     if (rv)
       return rv;

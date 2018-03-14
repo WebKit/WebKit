@@ -20,7 +20,6 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/basictypes.h"
 #include "rtc_base/sigslot.h"
-#include "rtc_base/window.h"
 
 namespace rtc {
 class ByteBufferReader;
@@ -102,20 +101,6 @@ class VideoCapturerListener
   int frame_width_;
   int frame_height_;
   bool resolution_changed_;
-};
-
-class VideoMediaErrorCatcher : public sigslot::has_slots<> {
- public:
-  VideoMediaErrorCatcher() : ssrc_(0), error_(VideoMediaChannel::ERROR_NONE) { }
-  uint32_t ssrc() const { return ssrc_; }
-  VideoMediaChannel::Error error() const { return error_; }
-  void OnError(uint32_t ssrc, VideoMediaChannel::Error error) {
-    ssrc_ = ssrc;
-    error_ = error;
-  }
- private:
-  uint32_t ssrc_;
-  VideoMediaChannel::Error error_;
 };
 
 // Checks whether |codecs| contains |codec|; checks using Codec::Matches().

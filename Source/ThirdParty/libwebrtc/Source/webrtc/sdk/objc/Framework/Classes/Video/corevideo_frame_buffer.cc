@@ -10,11 +10,11 @@
 
 #include "sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h"
 
-#include "libyuv/convert.h"
 #include "api/video/i420_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
 
 namespace webrtc {
 

@@ -8,7 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <list>
 #include <memory>
+#include <string>
 
 #include "p2p/base/asyncstuntcpsocket.h"
 #include "rtc_base/asyncsocket.h"

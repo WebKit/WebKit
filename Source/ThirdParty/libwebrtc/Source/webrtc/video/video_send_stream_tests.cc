@@ -15,7 +15,6 @@
 #include "call/rtp_transport_controller_send.h"
 #include "common_video/include/frame_callback.h"
 #include "common_video/include/video_frame.h"
-#include "modules/pacing/alr_detector.h"
 #include "modules/rtp_rtcp/include/rtp_header_parser.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "modules/rtp_rtcp/source/rtcp_sender.h"
@@ -26,6 +25,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/event.h"
+#include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/rate_limiter.h"
@@ -1964,7 +1964,7 @@ TEST_F(VideoSendStreamTest, VideoSendStreamStopSetEncoderRateToZero) {
     int32_t SetRateAllocation(const BitrateAllocation& bitrate,
                               uint32_t framerate) override {
       rtc::CritScope lock(&crit_);
-      bitrate_kbps_ = rtc::Optional<int>(bitrate.get_sum_kbps());
+      bitrate_kbps_ = bitrate.get_sum_kbps();
       bitrate_changed_.Set();
       return FakeEncoder::SetRateAllocation(bitrate, framerate);
     }
@@ -3541,7 +3541,7 @@ TEST_F(VideoSendStreamTest, SendsKeepAlive) {
 
 TEST_F(VideoSendStreamTest, ConfiguresAlrWhenSendSideOn) {
   const std::string kAlrProbingExperiment =
-      std::string(AlrDetector::kScreenshareProbingBweExperimentName) +
+      std::string(AlrExperimentSettings::kScreenshareProbingBweExperimentName) +
       "/1.0,2875,80,40,-60,3/";
   test::ScopedFieldTrials alr_experiment(kAlrProbingExperiment);
   class PacingFactorObserver : public test::SendTest {

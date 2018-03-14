@@ -13,10 +13,12 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
-using webrtc::rtcp::ReceiverReport;
-using webrtc::rtcp::ReportBlock;
+namespace {
 
-namespace webrtc {
+using ::testing::_;
+using ::testing::MockFunction;
+using ::webrtc::rtcp::ReceiverReport;
+using ::webrtc::rtcp::ReportBlock;
 
 const uint32_t kSenderSsrc = 0x12345678;
 
@@ -30,13 +32,10 @@ TEST(RtcpPacketTest, BuildWithTooSmallBuffer) {
   const size_t kReportBlockLength = 24;
 
   // No packet.
-  class Verifier : public rtcp::RtcpPacket::PacketReadyCallback {
-    void OnPacketReady(uint8_t* data, size_t length) override {
-      ADD_FAILURE() << "Packet should not fit within max size.";
-    }
-  } verifier;
+  MockFunction<void(rtc::ArrayView<const uint8_t>)> callback;
+  EXPECT_CALL(callback, Call(_)).Times(0);
   const size_t kBufferSize = kRrLength + kReportBlockLength - 1;
-  uint8_t buffer[kBufferSize];
-  EXPECT_FALSE(rr.BuildExternalBuffer(buffer, kBufferSize, &verifier));
+  EXPECT_FALSE(rr.Build(kBufferSize, callback.AsStdFunction()));
 }
-}  // namespace webrtc
+
+}  // namespace

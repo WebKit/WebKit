@@ -13,7 +13,7 @@
 
 #include <vector>
 
-#include "p2p/base/jseptransport.h"  // for ConnectionInfos
+#include "p2p/base/port.h"  // for ConnectionInfos
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/sigslot.h"
 #include "rtc_base/thread.h"
@@ -31,7 +31,7 @@ class ConnectionStatsGetter {
 
 class ConnectionMonitor : public rtc::MessageHandler,
                           public sigslot::has_slots<> {
-public:
+ public:
   ConnectionMonitor(ConnectionStatsGetter* stats_getter,
                     rtc::Thread* network_thread,
                     rtc::Thread* monitoring_thread);

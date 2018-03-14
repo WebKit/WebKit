@@ -17,6 +17,8 @@
 
 #include "api/turncustomizer.h"
 #include "p2p/base/portallocator.h"
+#include "p2p/client/turnportfactory.h"
+#include "p2p/client/relayportfactoryinterface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/messagequeue.h"
 #include "rtc_base/network.h"
@@ -26,18 +28,21 @@ namespace cricket {
 
 class BasicPortAllocator : public PortAllocator {
  public:
+  // note: The (optional) relay_port_factory is owned by caller
+  // and must have a life time that exceeds that of BasicPortAllocator.
   BasicPortAllocator(rtc::NetworkManager* network_manager,
                      rtc::PacketSocketFactory* socket_factory,
-                     webrtc::TurnCustomizer* customizer = nullptr);
+                     webrtc::TurnCustomizer* customizer = nullptr,
+                     RelayPortFactoryInterface* relay_port_factory = nullptr);
   explicit BasicPortAllocator(rtc::NetworkManager* network_manager);
   BasicPortAllocator(rtc::NetworkManager* network_manager,
                      rtc::PacketSocketFactory* socket_factory,
                      const ServerAddresses& stun_servers);
   BasicPortAllocator(rtc::NetworkManager* network_manager,
                      const ServerAddresses& stun_servers,
-                     const rtc::SocketAddress& relay_server_udp,
-                     const rtc::SocketAddress& relay_server_tcp,
-                     const rtc::SocketAddress& relay_server_ssl);
+                     const rtc::SocketAddress& relay_address_udp,
+                     const rtc::SocketAddress& relay_address_tcp,
+                     const rtc::SocketAddress& relay_address_ssl);
   ~BasicPortAllocator() override;
 
   // Set to kDefaultNetworkIgnoreMask by default.
@@ -59,16 +64,29 @@ class BasicPortAllocator : public PortAllocator {
   // Convenience method that adds a TURN server to the configuration.
   void AddTurnServer(const RelayServerConfig& turn_server);
 
+  RelayPortFactoryInterface* relay_port_factory() {
+    return relay_port_factory_;
+  }
+
  private:
   void Construct();
 
   void OnIceRegathering(PortAllocatorSession* session,
                         IceRegatheringReason reason);
 
+  // This function makes sure that relay_port_factory_ is set properly.
+  void InitRelayPortFactory(RelayPortFactoryInterface* relay_port_factory);
+
   rtc::NetworkManager* network_manager_;
   rtc::PacketSocketFactory* socket_factory_;
   bool allow_tcp_listen_;
   int network_ignore_mask_ = rtc::kDefaultNetworkIgnoreMask;
+
+  // This is the factory being used.
+  RelayPortFactoryInterface* relay_port_factory_;
+
+  // This instance is created if caller does pass a factory.
+  std::unique_ptr<RelayPortFactoryInterface> default_relay_port_factory_;
 };
 
 struct PortConfiguration;
@@ -369,7 +387,7 @@ class AllocationSequence : public rtc::MessageHandler,
   std::unique_ptr<rtc::AsyncPacketSocket> udp_socket_;
   // There will be only one udp port per AllocationSequence.
   UDPPort* udp_port_;
-  std::vector<TurnPort*> turn_ports_;
+  std::vector<Port*> relay_ports_;
   int phase_;
 };
 

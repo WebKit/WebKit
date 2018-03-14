@@ -44,7 +44,8 @@ TEST(Aec3Fft, NullIfftOutput) {
 TEST(Aec3Fft, NullZeroPaddedFftOutput) {
   Aec3Fft fft;
   std::array<float, kFftLengthBy2> x;
-  EXPECT_DEATH(fft.ZeroPaddedFft(x, nullptr), "");
+  EXPECT_DEATH(fft.ZeroPaddedFft(x, Aec3Fft::Window::kRectangular, nullptr),
+               "");
 }
 
 // Verifies that the check for input length in ZeroPaddedFft works.
@@ -52,7 +53,7 @@ TEST(Aec3Fft, ZeroPaddedFftWrongInputLength) {
   Aec3Fft fft;
   FftData X;
   std::array<float, kFftLengthBy2 - 1> x;
-  EXPECT_DEATH(fft.ZeroPaddedFft(x, &X), "");
+  EXPECT_DEATH(fft.ZeroPaddedFft(x, Aec3Fft::Window::kRectangular, &X), "");
 }
 
 // Verifies that the check for non-null output in PaddedFft works.
@@ -167,7 +168,7 @@ TEST(Aec3Fft, ZeroPaddedFft) {
       x_in[j] = v++;
       x_ref[j + kFftLengthBy2] = x_in[j] * 64.f;
     }
-    fft.ZeroPaddedFft(x_in, &X);
+    fft.ZeroPaddedFft(x_in, Aec3Fft::Window::kRectangular, &X);
     fft.Ifft(X, &x_out);
     for (size_t j = 0; j < x_out.size(); ++j) {
       EXPECT_NEAR(x_ref[j], x_out[j], 0.1f);

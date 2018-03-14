@@ -197,6 +197,8 @@
     [self teardownGL];
   }
   [_timer invalidate];
+  [self ensureGLContext];
+  _shader = nil;
   if (_glContext && [EAGLContext currentContext] == _glContext) {
     [EAGLContext setCurrentContext:nil];
   }

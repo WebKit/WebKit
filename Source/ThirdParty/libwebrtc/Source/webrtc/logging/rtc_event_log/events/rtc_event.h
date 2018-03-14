@@ -30,14 +30,13 @@ class RtcEvent {
   // superclass, but the *actual* information - rtclog::StreamConfig, etc. -
   // is kept separate.
   enum class Type {
+    AlrStateEvent,
     AudioNetworkAdaptation,
     AudioPlayout,
     AudioReceiveStreamConfig,
     AudioSendStreamConfig,
     BweUpdateDelayBased,
     BweUpdateLossBased,
-    LoggingStarted,
-    LoggingStopped,
     ProbeClusterCreated,
     ProbeResultFailure,
     ProbeResultSuccess,

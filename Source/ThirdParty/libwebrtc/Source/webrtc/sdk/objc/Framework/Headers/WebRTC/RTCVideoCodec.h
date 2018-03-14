@@ -148,7 +148,7 @@ RTC_EXPORT
                        numberOfCores:(int)numberOfCores;
 - (NSInteger)releaseEncoder;
 - (NSInteger)encode:(RTCVideoFrame *)frame
-    codecSpecificInfo:(id<RTCCodecSpecificInfo>)info
+    codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            frameTypes:(NSArray<NSNumber *> *)frameTypes;
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
 - (NSString *)implementationName;
@@ -171,7 +171,7 @@ RTC_EXPORT
 - (NSInteger)decode:(RTCEncodedImage *)encodedImage
           missingFrames:(BOOL)missingFrames
     fragmentationHeader:(RTCRtpFragmentationHeader *)fragmentationHeader
-      codecSpecificInfo:(__nullable id<RTCCodecSpecificInfo>)info
+      codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            renderTimeMs:(int64_t)renderTimeMs;
 - (NSString *)implementationName;
 

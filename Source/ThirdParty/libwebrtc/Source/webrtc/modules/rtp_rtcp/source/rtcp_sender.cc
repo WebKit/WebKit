@@ -87,37 +87,31 @@ RTCPSender::FeedbackState::FeedbackState()
       has_last_xr_rr(false),
       module(nullptr) {}
 
-class PacketContainer : public rtcp::CompoundPacket,
-                        public rtcp::RtcpPacket::PacketReadyCallback {
+class PacketContainer : public rtcp::CompoundPacket {
  public:
   PacketContainer(Transport* transport, RtcEventLog* event_log)
-      : transport_(transport), event_log_(event_log), bytes_sent_(0) {}
+      : transport_(transport), event_log_(event_log) {}
   virtual ~PacketContainer() {
     for (RtcpPacket* packet : appended_packets_)
       delete packet;
   }
 
-  void OnPacketReady(uint8_t* data, size_t length) override {
-    if (transport_->SendRtcp(data, length)) {
-      bytes_sent_ += length;
-      if (event_log_) {
-        event_log_->Log(rtc::MakeUnique<RtcEventRtcpPacketOutgoing>(
-            rtc::ArrayView<const uint8_t>(data, length)));
-      }
-    }
-  }
-
   size_t SendPackets(size_t max_payload_length) {
-    RTC_DCHECK_LE(max_payload_length, IP_PACKET_SIZE);
-    uint8_t buffer[IP_PACKET_SIZE];
-    BuildExternalBuffer(buffer, max_payload_length, this);
-    return bytes_sent_;
+    size_t bytes_sent = 0;
+    Build(max_payload_length, [&](rtc::ArrayView<const uint8_t> packet) {
+      if (transport_->SendRtcp(packet.data(), packet.size())) {
+        bytes_sent += packet.size();
+        if (event_log_) {
+          event_log_->Log(rtc::MakeUnique<RtcEventRtcpPacketOutgoing>(packet));
+        }
+      }
+    });
+    return bytes_sent;
   }
 
  private:
   Transport* transport_;
   RtcEventLog* const event_log_;
-  size_t bytes_sent_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(PacketContainer);
 };
@@ -236,10 +230,11 @@ int32_t RTCPSender::SetSendingStatus(const FeedbackState& feedback_state,
   return 0;
 }
 
-void RTCPSender::SetRemb(uint32_t bitrate, const std::vector<uint32_t>& ssrcs) {
+void RTCPSender::SetRemb(int64_t bitrate_bps, std::vector<uint32_t> ssrcs) {
+  RTC_CHECK_GE(bitrate_bps, 0);
   rtc::CritScope lock(&critical_section_rtcp_sender_);
-  remb_bitrate_ = bitrate;
-  remb_ssrcs_ = ssrcs;
+  remb_bitrate_ = bitrate_bps;
+  remb_ssrcs_ = std::move(ssrcs);
 
   SetFlag(kRtcpRemb, /*is_volatile=*/false);
   // Send a REMB immediately if we have a new REMB. The frequency of REMBs is
@@ -946,30 +941,6 @@ void RTCPSender::SetVideoBitrateAllocation(const BitrateAllocation& bitrate) {
 }
 
 bool RTCPSender::SendFeedbackPacket(const rtcp::TransportFeedback& packet) {
-  class Sender : public rtcp::RtcpPacket::PacketReadyCallback {
-   public:
-    Sender(Transport* transport, RtcEventLog* event_log)
-        : transport_(transport), event_log_(event_log), send_failure_(false) {}
-
-    void OnPacketReady(uint8_t* data, size_t length) override {
-      if (transport_->SendRtcp(data, length)) {
-        if (event_log_) {
-          event_log_->Log(rtc::MakeUnique<RtcEventRtcpPacketOutgoing>(
-              rtc::ArrayView<const uint8_t>(data, length)));
-        }
-      } else {
-        send_failure_ = true;
-      }
-    }
-
-    Transport* const transport_;
-    RtcEventLog* const event_log_;
-    bool send_failure_;
-    // TODO(terelius): We would like to
-    // RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(Sender);
-    // but we can't because of an incorrect warning (C4822) in MVS 2013.
-  } sender(transport_, event_log_);
-
   size_t max_packet_size;
   {
     rtc::CritScope lock(&critical_section_rtcp_sender_);
@@ -979,9 +950,16 @@ bool RTCPSender::SendFeedbackPacket(const rtcp::TransportFeedback& packet) {
   }
 
   RTC_DCHECK_LE(max_packet_size, IP_PACKET_SIZE);
-  uint8_t buffer[IP_PACKET_SIZE];
-  return packet.BuildExternalBuffer(buffer, max_packet_size, &sender) &&
-         !sender.send_failure_;
+  bool send_failure = false;
+  auto callback = [&](rtc::ArrayView<const uint8_t> packet) {
+    if (transport_->SendRtcp(packet.data(), packet.size())) {
+      if (event_log_)
+        event_log_->Log(rtc::MakeUnique<RtcEventRtcpPacketOutgoing>(packet));
+    } else {
+      send_failure = true;
+    }
+  };
+  return packet.Build(max_packet_size, callback) && !send_failure;
 }
 
 }  // namespace webrtc

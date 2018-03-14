@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "api/video/video_frame.h"
-#include "media/base/videosinkinterface.h"
+#include "api/videosinkinterface.h"
 #include "media/base/videosourcebase.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_checker.h"

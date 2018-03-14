@@ -86,9 +86,6 @@ class BitrateProber {
     int retries = 0;
   };
 
-  // Resets the state of the prober and clears any cluster/timing data tracked.
-  void ResetState(int64_t now_ms);
-
   int64_t GetNextProbeTime(const ProbeCluster& cluster);
 
   ProbingState probing_state_;

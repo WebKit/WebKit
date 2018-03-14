@@ -384,7 +384,7 @@ TEST_F(SendSideCongestionControllerTest, LongFeedbackDelays) {
 
     // Check that packets have timed out.
     for (PacketFeedback& packet : packets) {
-      packet.send_time_ms = -1;
+      packet.send_time_ms = PacketFeedback::kNoSendTime;
       packet.payload_size = 0;
       packet.pacing_info = PacedPacketInfo();
     }

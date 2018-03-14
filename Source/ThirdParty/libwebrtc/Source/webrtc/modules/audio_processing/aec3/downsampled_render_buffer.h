@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -21,8 +22,34 @@ namespace webrtc {
 struct DownsampledRenderBuffer {
   explicit DownsampledRenderBuffer(size_t downsampled_buffer_size);
   ~DownsampledRenderBuffer();
+
+  int IncIndex(int index) const {
+    RTC_DCHECK_EQ(buffer.size(), static_cast<size_t>(size));
+    return index < size - 1 ? index + 1 : 0;
+  }
+
+  int DecIndex(int index) const {
+    RTC_DCHECK_EQ(buffer.size(), static_cast<size_t>(size));
+    return index > 0 ? index - 1 : size - 1;
+  }
+
+  int OffsetIndex(int index, int offset) const {
+    RTC_DCHECK_GE(buffer.size(), offset);
+    RTC_DCHECK_EQ(buffer.size(), static_cast<size_t>(size));
+    return (size + index + offset) % size;
+  }
+
+  void UpdateWriteIndex(int offset) { write = OffsetIndex(write, offset); }
+  void IncWriteIndex() { write = IncIndex(write); }
+  void DecWriteIndex() { write = DecIndex(write); }
+  void UpdateReadIndex(int offset) { read = OffsetIndex(read, offset); }
+  void IncReadIndex() { read = IncIndex(read); }
+  void DecReadIndex() { read = DecIndex(read); }
+
+  const int size;
   std::vector<float> buffer;
-  int position = 0;
+  int write = 0;
+  int read = 0;
 };
 
 }  // namespace webrtc

@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
@@ -105,6 +106,7 @@ UlpfecGenerator::UlpfecGenerator()
 
 UlpfecGenerator::UlpfecGenerator(std::unique_ptr<ForwardErrorCorrection> fec)
     : fec_(std::move(fec)),
+      last_media_packet_rtp_header_length_(0),
       num_protected_frames_(0),
       min_num_media_packets_(1) {
   memset(&params_, 0, sizeof(params_));
@@ -142,6 +144,10 @@ int UlpfecGenerator::AddRtpPacketAndGenerateFec(const uint8_t* data_buffer,
     packet->length = payload_length + rtp_header_length;
     memcpy(packet->data, data_buffer, packet->length);
     media_packets_.push_back(std::move(packet));
+    // Keep track of the RTP header length, so we can copy the RTP header
+    // from |packet| to newly generated ULPFEC+RED packets.
+    RTC_DCHECK_GE(rtp_header_length, kRtpHeaderSize);
+    last_media_packet_rtp_header_length_ = rtp_header_length;
   }
   if (marker_bit) {
     ++num_protected_frames_;
@@ -200,8 +206,7 @@ size_t UlpfecGenerator::MaxPacketOverhead() const {
 std::vector<std::unique_ptr<RedPacket>> UlpfecGenerator::GetUlpfecPacketsAsRed(
     int red_payload_type,
     int ulpfec_payload_type,
-    uint16_t first_seq_num,
-    size_t rtp_header_length) {
+    uint16_t first_seq_num) {
   std::vector<std::unique_ptr<RedPacket>> red_packets;
   red_packets.reserve(generated_fec_packets_.size());
   RTC_DCHECK(!media_packets_.empty());
@@ -212,9 +217,12 @@ std::vector<std::unique_ptr<RedPacket>> UlpfecGenerator::GetUlpfecPacketsAsRed(
     // Wrap FEC packet (including FEC headers) in a RED packet. Since the
     // FEC packets in |generated_fec_packets_| don't have RTP headers, we
     // reuse the header from the last media packet.
-    std::unique_ptr<RedPacket> red_packet(new RedPacket(
-        fec_packet->length + kRedForFecHeaderLength + rtp_header_length));
-    red_packet->CreateHeader(last_media_packet->data, rtp_header_length,
+    RTC_DCHECK_GT(last_media_packet_rtp_header_length_, 0);
+    std::unique_ptr<RedPacket> red_packet(
+        new RedPacket(last_media_packet_rtp_header_length_ +
+                      kRedForFecHeaderLength + fec_packet->length));
+    red_packet->CreateHeader(last_media_packet->data,
+                             last_media_packet_rtp_header_length_,
                              red_payload_type, ulpfec_payload_type);
     red_packet->SetSeqNum(seq_num++);
     red_packet->ClearMarkerBit();
@@ -237,6 +245,7 @@ int UlpfecGenerator::Overhead() const {
 
 void UlpfecGenerator::ResetState() {
   media_packets_.clear();
+  last_media_packet_rtp_header_length_ = 0;
   generated_fec_packets_.clear();
   num_protected_frames_ = 0;
 }

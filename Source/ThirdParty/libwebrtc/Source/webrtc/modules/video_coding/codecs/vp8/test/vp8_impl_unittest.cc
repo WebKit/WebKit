@@ -254,8 +254,6 @@ TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
   EXPECT_EQ(kWidth, static_cast<int>(encoded_cb_.encoded_frame_._encodedWidth));
   EXPECT_EQ(kHeight,
             static_cast<int>(encoded_cb_.encoded_frame_._encodedHeight));
-  EXPECT_EQ(-1,  // Disabled for single stream.
-            encoded_cb_.encoded_frame_.adapt_reason_.bw_resolutions_disabled);
 }
 
 // We only test the encoder here, since the decoded frame rotation is set based

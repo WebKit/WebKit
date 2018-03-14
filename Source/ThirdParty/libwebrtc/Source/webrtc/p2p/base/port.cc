@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "p2p/base/common.h"
@@ -137,6 +138,34 @@ static std::string ComputeFoundation(const std::string& type,
   ost << type << base_address.ipaddr().ToString() << protocol << relay_protocol;
   return rtc::ToString<uint32_t>(rtc::ComputeCrc32(ost.str()));
 }
+
+ConnectionInfo::ConnectionInfo()
+    : best_connection(false),
+      writable(false),
+      receiving(false),
+      timeout(false),
+      new_connection(false),
+      rtt(0),
+      sent_total_bytes(0),
+      sent_bytes_second(0),
+      sent_discarded_packets(0),
+      sent_total_packets(0),
+      sent_ping_requests_total(0),
+      sent_ping_requests_before_first_response(0),
+      sent_ping_responses(0),
+      recv_total_bytes(0),
+      recv_bytes_second(0),
+      recv_ping_requests(0),
+      recv_ping_responses(0),
+      key(nullptr),
+      state(IceCandidatePairState::WAITING),
+      priority(0),
+      nominated(false),
+      total_round_trip_time_ms(0) {}
+
+ConnectionInfo::ConnectionInfo(const ConnectionInfo&) = default;
+
+ConnectionInfo::~ConnectionInfo() = default;
 
 Port::Port(rtc::Thread* thread,
            const std::string& type,
@@ -620,6 +649,10 @@ bool Port::HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
   return false;
 }
 
+bool Port::CanHandleIncomingPacketsFrom(const rtc::SocketAddress&) const {
+  return false;
+}
+
 void Port::SendBindingResponse(StunMessage* request,
                                const rtc::SocketAddress& addr) {
   RTC_DCHECK(request->type() == STUN_BINDING_REQUEST);
@@ -1084,7 +1117,6 @@ void Connection::OnReadPacket(
           port_->SendBindingErrorResponse(msg.get(), addr,
                                           STUN_ERROR_UNAUTHORIZED,
                                           STUN_ERROR_REASON_UNAUTHORIZED);
-
         }
         break;
 
@@ -1330,8 +1362,7 @@ void Connection::ReceivedPingResponse(int rtt, const std::string& request_id) {
   }
 
   total_round_trip_time_ms_ += rtt;
-  current_round_trip_time_ms_ = rtc::Optional<uint32_t>(
-      static_cast<uint32_t>(rtt));
+  current_round_trip_time_ms_ = static_cast<uint32_t>(rtt);
 
   pings_since_last_response_.clear();
   last_ping_response_received_ = rtc::TimeMillis();

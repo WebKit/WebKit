@@ -26,16 +26,18 @@
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "modules/include/module_common_types.h"
-#include "rtc_base/flags.h"
 #include "rtc_base/ignore_wundef.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/protobuf_utils.h"
-#include "rtc_base/sha1digest.h"
 #include "rtc_base/stringencode.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 #include "typedefs.h"  // NOLINT(build/include)
+
+// This must come after test/gtest.h
+#include "rtc_base/flags.h"  // NOLINT(build/include)
 
 #ifdef WEBRTC_NETEQ_UNITTEST_BITEXACT
 RTC_PUSH_IGNORING_WUNDEF()
@@ -174,9 +176,9 @@ class ResultSink {
   std::unique_ptr<rtc::MessageDigest> digest_;
 };
 
-ResultSink::ResultSink(const std::string &output_file)
+ResultSink::ResultSink(const std::string& output_file)
     : output_fp_(nullptr),
-      digest_(new rtc::Sha1Digest()) {
+      digest_(rtc::MessageDigestFactory::Create(rtc::DIGEST_SHA_1)) {
   if (!output_file.empty()) {
     output_fp_ = fopen(output_file.c_str(), "wb");
     EXPECT_TRUE(output_fp_ != NULL);

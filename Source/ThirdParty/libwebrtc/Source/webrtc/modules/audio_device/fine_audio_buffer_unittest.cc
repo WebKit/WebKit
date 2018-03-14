@@ -111,7 +111,7 @@ void RunFineBufferTest(int frame_size_in_samples) {
           .RetiresOnSaturation();
     }
   }
-  EXPECT_CALL(audio_device_buffer, SetVQEData(_, _, _))
+  EXPECT_CALL(audio_device_buffer, SetVQEData(_, _))
       .Times(kNumberOfUpdateBufferCalls - 1);
   EXPECT_CALL(audio_device_buffer, DeliverRecordedData())
       .Times(kNumberOfUpdateBufferCalls - 1)

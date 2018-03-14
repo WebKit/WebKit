@@ -204,7 +204,7 @@ class LatencyAudioStream : public AudioStream {
       {
         rtc::CritScope lock(&lock_);
         if (!pulse_time_) {
-          pulse_time_ = rtc::Optional<int64_t>(rtc::TimeMillis());
+          pulse_time_ = rtc::TimeMillis();
         }
       }
       constexpr int16_t impulse = std::numeric_limits<int16_t>::max();
@@ -455,7 +455,8 @@ class MockAudioTransport : public test::MockAudioTransport {
 class AudioDeviceTest : public ::testing::Test {
  protected:
   AudioDeviceTest() : event_(false, false) {
-#if !defined(ADDRESS_SANITIZER) && !defined(MEMORY_SANITIZER)
+#if !defined(ADDRESS_SANITIZER) && !defined(MEMORY_SANITIZER) && \
+    !defined(WEBRTC_DUMMY_AUDIO_BUILD)
     rtc::LogMessage::LogToDebug(rtc::LS_INFO);
     // Add extra logging fields here if needed for debugging.
     // rtc::LogMessage::LogTimestamps();
@@ -496,8 +497,6 @@ class AudioDeviceTest : public ::testing::Test {
       // See https://bugs.chromium.org/p/webrtc/issues/detail?id=7397 for
       // details.
       EXPECT_EQ(0, audio_device_->SetStereoRecording(false));
-      EXPECT_EQ(0, audio_device_->SetAGC(false));
-      EXPECT_FALSE(audio_device_->AGC());
     }
   }
 

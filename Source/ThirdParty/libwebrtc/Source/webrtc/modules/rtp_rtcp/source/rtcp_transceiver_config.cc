@@ -67,6 +67,10 @@ bool RtcpTransceiverConfig::Validate() const {
     RTC_LOG(LS_ERROR) << debug_id << "unsupported rtcp mode";
     return false;
   }
+  if (non_sender_rtt_measurement && !rtt_observer)
+    RTC_LOG(LS_WARNING) << debug_id
+                        << "Enabled special feature to calculate rtt, but no "
+                           "rtt observer is provided.";
   // TODO(danilchap): Remove or update the warning when RtcpTransceiver supports
   // send-only sessions.
   if (receive_statistics == nullptr)

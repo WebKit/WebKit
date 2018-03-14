@@ -47,7 +47,7 @@ class FrameBuffer {
 
   // Insert a frame into the frame buffer. Returns the picture id
   // of the last continuous frame or -1 if there is no continuous frame.
-  int InsertFrame(std::unique_ptr<FrameObject> frame);
+  int64_t InsertFrame(std::unique_ptr<FrameObject> frame);
 
   // Get the next frame for decoding. Will return at latest after
   // |max_wait_time_ms|.

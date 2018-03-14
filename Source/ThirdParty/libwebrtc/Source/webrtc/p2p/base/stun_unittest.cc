@@ -9,6 +9,7 @@
  */
 
 #include <string>
+#include <utility>
 
 #include "p2p/base/stun.h"
 #include "rtc_base/arraysize.h"
@@ -1477,6 +1478,96 @@ TEST_F(StunTest, ReadRelayMessage) {
   std::string outstring2;
   read_buf2.ReadString(&outstring2, len2);
   EXPECT_EQ(0, memcmp(outstring2.c_str(), input, len2));
+}
+
+// Test that we can remove attribute from a message.
+TEST_F(StunTest, RemoveAttribute) {
+  StunMessage msg;
+
+  // Removing something that does exist should return nullptr.
+  EXPECT_EQ(msg.RemoveAttribute(STUN_ATTR_USERNAME), nullptr);
+
+  {
+    auto attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+    attr->CopyBytes("kes", sizeof("kes"));
+    msg.AddAttribute(std::move(attr));
+  }
+
+  size_t len = msg.length();
+  {
+    auto attr = msg.RemoveAttribute(STUN_ATTR_USERNAME);
+    ASSERT_NE(attr, nullptr);
+    EXPECT_EQ(attr->type(), STUN_ATTR_USERNAME);
+    EXPECT_STREQ("kes",
+                 static_cast<StunByteStringAttribute*>(attr.get())->bytes());
+    EXPECT_LT(msg.length(), len);
+  }
+
+  // Now add same attribute type twice.
+  {
+    auto attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+    attr->CopyBytes("kes", sizeof("kes"));
+    msg.AddAttribute(std::move(attr));
+  }
+
+  {
+    auto attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+    attr->CopyBytes("kenta", sizeof("kenta"));
+    msg.AddAttribute(std::move(attr));
+  }
+
+  // Remove should remove the last added occurrence.
+  {
+    auto attr = msg.RemoveAttribute(STUN_ATTR_USERNAME);
+    ASSERT_NE(attr, nullptr);
+    EXPECT_EQ(attr->type(), STUN_ATTR_USERNAME);
+    EXPECT_STREQ("kenta",
+                 static_cast<StunByteStringAttribute*>(attr.get())->bytes());
+  }
+
+  // Remove should remove the last added occurrence.
+  {
+    auto attr = msg.RemoveAttribute(STUN_ATTR_USERNAME);
+    ASSERT_NE(attr, nullptr);
+    EXPECT_EQ(attr->type(), STUN_ATTR_USERNAME);
+    EXPECT_STREQ("kes",
+                 static_cast<StunByteStringAttribute*>(attr.get())->bytes());
+  }
+
+  // Removing something that does exist should return nullptr.
+  EXPECT_EQ(msg.RemoveAttribute(STUN_ATTR_USERNAME), nullptr);
+}
+
+// Test CopyStunAttribute
+TEST_F(StunTest, CopyAttribute) {
+  rtc::ByteBufferWriter buf;
+  rtc::ByteBufferWriter* buffer_ptrs[] = { &buf, nullptr };
+  // Test both with and without supplied ByteBufferWriter.
+  for (auto buffer_ptr : buffer_ptrs) {
+    { // Test StunByteStringAttribute.
+      auto attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+      attr->CopyBytes("kes", sizeof("kes"));
+
+      auto copy = CopyStunAttribute(*attr.get(), buffer_ptr);
+      ASSERT_EQ(copy->value_type(), STUN_VALUE_BYTE_STRING);
+      EXPECT_STREQ("kes",
+                   static_cast<StunByteStringAttribute*>(copy.get())->bytes());
+    }
+
+    { // Test StunAddressAttribute.
+      rtc::IPAddress test_ip(kIPv6TestAddress2);
+      auto addr = StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
+      rtc::SocketAddress test_addr(test_ip, kTestMessagePort2);
+      addr->SetAddress(test_addr);
+      CheckStunAddressAttribute(addr.get(),
+                                STUN_ADDRESS_IPV6, kTestMessagePort2, test_ip);
+
+      auto copy = CopyStunAttribute(*addr.get(), buffer_ptr);
+      ASSERT_EQ(copy->value_type(), STUN_VALUE_ADDRESS);
+      CheckStunAddressAttribute(static_cast<StunAddressAttribute*>(copy.get()),
+                                STUN_ADDRESS_IPV6, kTestMessagePort2, test_ip);
+    }
+  }
 }
 
 }  // namespace cricket

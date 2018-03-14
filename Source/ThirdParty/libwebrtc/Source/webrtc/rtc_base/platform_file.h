@@ -15,7 +15,7 @@
 #include <string>
 
 #if defined(WEBRTC_WIN)
-#include "rtc_base/win32.h"
+#include <windows.h>
 #endif
 
 namespace rtc {

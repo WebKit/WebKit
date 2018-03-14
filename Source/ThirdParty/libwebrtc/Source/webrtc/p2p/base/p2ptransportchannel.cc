@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <iterator>
 #include <set>
+#include <utility>
 
 #include "api/candidate.h"
 #include "api/umametrics.h"
@@ -99,6 +100,17 @@ static constexpr int DEFAULT_BACKUP_CONNECTION_PING_INTERVAL = 25 * 1000;
 
 static constexpr int a_is_better = 1;
 static constexpr int b_is_better = -1;
+
+bool IceCredentialsChanged(const std::string& old_ufrag,
+                           const std::string& old_pwd,
+                           const std::string& new_ufrag,
+                           const std::string& new_pwd) {
+  // The standard (RFC 5245 Section 9.1.1.1) says that ICE restarts MUST change
+  // both the ufrag and password. However, section 9.2.1.1 says changing the
+  // ufrag OR password indicates an ICE restart. So, to keep compatibility with
+  // endpoints that only change one, we'll treat this as an ICE restart.
+  return (old_ufrag != new_ufrag) || (old_pwd != new_pwd);
+}
 
 P2PTransportChannel::P2PTransportChannel(const std::string& transport_name,
                                          int component,
@@ -307,9 +319,9 @@ IceGatheringState P2PTransportChannel::gathering_state() const {
 rtc::Optional<int> P2PTransportChannel::GetRttEstimate() {
   if (selected_connection_ != nullptr
       && selected_connection_->rtt_samples() > 0) {
-    return rtc::Optional<int>(selected_connection_->rtt());
+    return selected_connection_->rtt();
   } else {
-    return rtc::Optional<int>();
+    return rtc::nullopt;
   }
 }
 
@@ -1340,8 +1352,7 @@ void P2PTransportChannel::SortConnectionsAndUpdateState() {
   // TODO(honghaiz): Don't sort;  Just use std::max_element in the right places.
   std::stable_sort(connections_.begin(), connections_.end(),
                    [this](const Connection* a, const Connection* b) {
-                     int cmp = CompareConnections(
-                         a, b, rtc::Optional<int64_t>(), nullptr);
+                     int cmp = CompareConnections(a, b, rtc::nullopt, nullptr);
                      if (cmp != 0) {
                        return cmp > 0;
                      }

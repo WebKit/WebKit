@@ -38,6 +38,10 @@ class RtpPacketHistory {
                     StorageType type,
                     bool sent);
 
+  // Set RTT, used to avoid premature retransmission and to prevent over-writing
+  // a packet in the history before we are reasonably sure it has been received.
+  void SetRtt(int64_t rtt_ms);
+
   // Gets stored RTP packet corresponding to the input |sequence number|.
   // Returns nullptr if packet is not found.
   // |min_elapsed_time_ms| is the minimum time that must have elapsed since
@@ -76,9 +80,9 @@ class RtpPacketHistory {
   Clock* clock_;
   rtc::CriticalSection critsect_;
   bool store_ RTC_GUARDED_BY(critsect_);
-  uint32_t prev_index_ RTC_GUARDED_BY(critsect_);
+  size_t prev_index_ RTC_GUARDED_BY(critsect_);
   std::vector<StoredPacket> stored_packets_ RTC_GUARDED_BY(critsect_);
-
+  int64_t rtt_ms_ RTC_GUARDED_BY(critsect_);
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RtpPacketHistory);
 };
 }  // namespace webrtc

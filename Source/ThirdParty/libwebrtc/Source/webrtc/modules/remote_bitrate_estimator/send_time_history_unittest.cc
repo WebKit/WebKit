@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <random>
 #include <vector>
 
 #include "modules/remote_bitrate_estimator/include/send_time_history.h"
@@ -116,14 +117,15 @@ TEST_F(SendTimeHistoryTest, AddThenRemoveOutOfOrder) {
   }
   for (size_t i = 0; i < num_items; ++i) {
     PacketFeedback packet = sent_packets[i];
-    packet.arrival_time_ms = -1;
-    packet.send_time_ms = -1;
+    packet.arrival_time_ms = PacketFeedback::kNotReceived;
+    packet.send_time_ms = PacketFeedback::kNoSendTime;
     history_.AddAndRemoveOld(packet);
   }
   for (size_t i = 0; i < num_items; ++i)
     history_.OnSentPacket(sent_packets[i].sequence_number,
                           sent_packets[i].send_time_ms);
-  std::random_shuffle(received_packets.begin(), received_packets.end());
+  std::shuffle(received_packets.begin(), received_packets.end(),
+               std::mt19937(std::random_device()()));
   for (size_t i = 0; i < num_items; ++i) {
     PacketFeedback packet = received_packets[i];
     EXPECT_TRUE(history_.GetFeedback(&packet, false));

@@ -120,7 +120,7 @@ class RTCPSender {
                            int32_t nackSize = 0,
                            const uint16_t* nackList = 0);
 
-  void SetRemb(uint32_t bitrate, const std::vector<uint32_t>& ssrcs);
+  void SetRemb(int64_t bitrate_bps, std::vector<uint32_t> ssrcs);
 
   void UnsetRemb();
 
@@ -221,7 +221,7 @@ class RTCPSender {
   uint8_t sequence_number_fir_ RTC_GUARDED_BY(critical_section_rtcp_sender_);
 
   // REMB
-  uint32_t remb_bitrate_ RTC_GUARDED_BY(critical_section_rtcp_sender_);
+  int64_t remb_bitrate_ RTC_GUARDED_BY(critical_section_rtcp_sender_);
   std::vector<uint32_t> remb_ssrcs_
       RTC_GUARDED_BY(critical_section_rtcp_sender_);
 

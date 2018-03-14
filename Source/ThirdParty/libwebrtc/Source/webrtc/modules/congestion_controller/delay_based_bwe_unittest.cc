@@ -34,10 +34,12 @@ TEST_F(DelayBasedBweTest, NoCrashEmptyFeedback) {
 
 TEST_F(DelayBasedBweTest, NoCrashOnlyLostFeedback) {
   std::vector<PacketFeedback> packet_feedback_vector;
-  packet_feedback_vector.push_back(
-      PacketFeedback(-1, -1, 0, 1500, PacedPacketInfo()));
-  packet_feedback_vector.push_back(
-      PacketFeedback(-1, -1, 1, 1500, PacedPacketInfo()));
+  packet_feedback_vector.push_back(PacketFeedback(PacketFeedback::kNotReceived,
+                                                  PacketFeedback::kNoSendTime,
+                                                  0, 1500, PacedPacketInfo()));
+  packet_feedback_vector.push_back(PacketFeedback(PacketFeedback::kNotReceived,
+                                                  PacketFeedback::kNoSendTime,
+                                                  1, 1500, PacedPacketInfo()));
   bitrate_estimator_->IncomingPacketFeedbackVector(packet_feedback_vector,
                                                    rtc::nullopt);
 }

@@ -49,6 +49,7 @@ class StatsCollector {
   // Adds a MediaStream with tracks that can be used as a |selector| in a call
   // to GetStats.
   void AddStream(MediaStreamInterface* stream);
+  void AddTrack(MediaStreamTrackInterface* track);
 
   // Adds a local audio track that is used for getting some voice statistics.
   void AddLocalAudioTrack(AudioTrackInterface* audio_track, uint32_t ssrc);
@@ -140,7 +141,6 @@ class StatsCollector {
   // Raw pointer to the peer connection the statistics are gathered from.
   PeerConnection* const pc_;
   double stats_gathering_started_;
-  std::map<std::string, std::string> proxy_to_transport_;
 
   // TODO(tommi): We appear to be holding on to raw pointers to reference
   // counted objects?  We should be using scoped_refptr here.

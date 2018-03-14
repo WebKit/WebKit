@@ -133,7 +133,10 @@ int AvgPropagationDelayMs() {
   return static_cast<int>(FLAG_avg_propagation_delay_ms);
 }
 
-DEFINE_string(rtc_event_log_name, "", "Filename for rtc event log.");
+DEFINE_string(rtc_event_log_name,
+              "",
+              "Filename for rtc event log. Two files "
+              "with \"_send\" and \"_recv\" suffixes will be created.");
 std::string RtcEventLogName() {
   return static_cast<std::string>(FLAG_rtc_event_log_name);
 }
@@ -267,34 +270,34 @@ void Loopback() {
 
   VideoQualityTest::Params params;
   params.call = {flags::FLAG_send_side_bwe, call_bitrate_config, 0};
-  params.video = {flags::FLAG_video,
-                  flags::Width(),
-                  flags::Height(),
-                  flags::Fps(),
-                  flags::MinBitrateKbps() * 1000,
-                  flags::TargetBitrateKbps() * 1000,
-                  flags::MaxBitrateKbps() * 1000,
-                  flags::FLAG_suspend_below_min_bitrate,
-                  flags::Codec(),
-                  flags::NumTemporalLayers(),
-                  flags::SelectedTL(),
-                  0,  // No min transmit bitrate.
-                  flags::FLAG_use_ulpfec,
-                  flags::FLAG_use_flexfec,
-                  flags::Clip(),
-                  flags::GetCaptureDevice()};
+  params.video[0] = {flags::FLAG_video,
+                     flags::Width(),
+                     flags::Height(),
+                     flags::Fps(),
+                     flags::MinBitrateKbps() * 1000,
+                     flags::TargetBitrateKbps() * 1000,
+                     flags::MaxBitrateKbps() * 1000,
+                     flags::FLAG_suspend_below_min_bitrate,
+                     flags::Codec(),
+                     flags::NumTemporalLayers(),
+                     flags::SelectedTL(),
+                     0,  // No min transmit bitrate.
+                     flags::FLAG_use_ulpfec,
+                     flags::FLAG_use_flexfec,
+                     flags::Clip(),
+                     flags::GetCaptureDevice()};
   params.audio = {flags::FLAG_audio, flags::FLAG_audio_video_sync,
                   flags::FLAG_audio_dtx};
   params.logging = {flags::FLAG_logs, flags::FLAG_rtc_event_log_name,
                     flags::FLAG_rtp_dump_name, flags::FLAG_encoded_frame_path};
-  params.screenshare.enabled = false;
+  params.screenshare[0].enabled = false;
   params.analyzer = {"video", 0.0, 0.0, flags::DurationSecs(),
       flags::OutputFilename(), flags::GraphTitle()};
   params.pipe = pipe_config;
 
   if (flags::NumStreams() > 1 && flags::Stream0().empty() &&
       flags::Stream1().empty()) {
-    params.ss.infer_streams = true;
+    params.ss[0].infer_streams = true;
   }
 
   std::vector<std::string> stream_descriptors;
@@ -304,8 +307,9 @@ void Loopback() {
   SL_descriptors.push_back(flags::SL0());
   SL_descriptors.push_back(flags::SL1());
   VideoQualityTest::FillScalabilitySettings(
-      &params, stream_descriptors, flags::NumStreams(), flags::SelectedStream(),
-      flags::NumSpatialLayers(), flags::SelectedSL(), SL_descriptors);
+      &params, 0, stream_descriptors, flags::NumStreams(),
+      flags::SelectedStream(), flags::NumSpatialLayers(), flags::SelectedSL(),
+      SL_descriptors);
 
   VideoQualityTest test;
   if (flags::DurationSecs()) {

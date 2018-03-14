@@ -23,7 +23,9 @@ VideoStream::VideoStream()
       min_bitrate_bps(-1),
       target_bitrate_bps(-1),
       max_bitrate_bps(-1),
-      max_qp(-1) {}
+      max_qp(-1),
+      active(true) {}
+VideoStream::VideoStream(const VideoStream& other) = default;
 
 VideoStream::~VideoStream() = default;
 
@@ -36,6 +38,7 @@ std::string VideoStream::ToString() const {
   ss << ", target_bitrate_bps:" << target_bitrate_bps;
   ss << ", max_bitrate_bps:" << max_bitrate_bps;
   ss << ", max_qp: " << max_qp;
+  ss << ", active: " << active;
 
   ss << ", temporal_layer_thresholds_bps: [";
   for (size_t i = 0; i < temporal_layer_thresholds_bps.size(); ++i) {
@@ -54,6 +57,7 @@ VideoEncoderConfig::VideoEncoderConfig()
       encoder_specific_settings(nullptr),
       min_transmit_bitrate_bps(0),
       max_bitrate_bps(0),
+      bitrate_priority(1.0),
       number_of_streams(0) {}
 
 VideoEncoderConfig::VideoEncoderConfig(VideoEncoderConfig&&) = default;

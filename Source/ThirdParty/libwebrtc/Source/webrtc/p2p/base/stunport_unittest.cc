@@ -126,7 +126,6 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
   static void SetUpTestCase() {
     // Ensure the RNG is inited.
     rtc::InitRandom(NULL, 0);
-
   }
 
   void OnPortComplete(cricket::Port* port) {

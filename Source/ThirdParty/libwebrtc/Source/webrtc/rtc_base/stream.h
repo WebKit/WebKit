@@ -571,37 +571,6 @@ class FifoBuffer : public StreamInterface {
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-
-class LoggingAdapter : public StreamAdapterInterface {
- public:
-  LoggingAdapter(StreamInterface* stream, LoggingSeverity level,
-                 const std::string& label, bool hex_mode = false);
-
-  void set_label(const std::string& label);
-
-  StreamResult Read(void* buffer,
-                    size_t buffer_len,
-                    size_t* read,
-                    int* error) override;
-  StreamResult Write(const void* data,
-                     size_t data_len,
-                     size_t* written,
-                     int* error) override;
-  void Close() override;
-
- protected:
-  void OnEvent(StreamInterface* stream, int events, int err) override;
-
- private:
-  LoggingSeverity level_;
-  std::string label_;
-  bool hex_mode_;
-  LogMultilineState lms_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(LoggingAdapter);
-};
-
-///////////////////////////////////////////////////////////////////////////////
 // StringStream - Reads/Writes to an external std::string
 ///////////////////////////////////////////////////////////////////////////////
 

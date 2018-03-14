@@ -87,10 +87,7 @@ class BitrateAllocator {
                    uint32_t pad_up_bitrate_bps,
                    bool enforce_min_bitrate,
                    std::string track_id,
-                   // TODO(shampson): Take out default value and wire the
-                   // bitrate_priority up to the AudioSendStream::Config and
-                   // VideoSendStream::Config.
-                   double bitrate_priority = 1.0);
+                   double bitrate_priority);
 
   // Removes a previously added observer, but will not trigger a new bitrate
   // allocation.
@@ -134,6 +131,11 @@ class BitrateAllocator {
     // observers. If an observer has twice the bitrate_priority of other
     // observers, it should be allocated twice the bitrate above its min.
     double bitrate_priority;
+
+    uint32_t LastAllocatedBitrate() const;
+    // The minimum bitrate required by this observer, including
+    // enable-hysteresis if the observer is in a paused state.
+    uint32_t MinBitrateWithHysteresis() const;
   };
 
   // Calculates the minimum requested send bitrate and max padding bitrate and
@@ -164,10 +166,6 @@ class BitrateAllocator {
   ObserverAllocation MaxRateAllocation(uint32_t bitrate,
                                        uint32_t sum_max_bitrates);
 
-  uint32_t LastAllocatedBitrate(const ObserverConfig& observer_config);
-  // The minimum bitrate required by this observer, including enable-hysteresis
-  // if the observer is in a paused state.
-  uint32_t MinBitrateWithHysteresis(const ObserverConfig& observer_config);
   // Splits |bitrate| evenly to observers already in |allocation|.
   // |include_zero_allocations| decides if zero allocations should be part of
   // the distribution or not. The allowed max bitrate is |max_multiplier| x

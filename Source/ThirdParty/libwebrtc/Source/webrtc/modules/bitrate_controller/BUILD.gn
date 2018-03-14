@@ -9,11 +9,7 @@
 import("../../webrtc.gni")
 
 rtc_static_library("bitrate_controller") {
-  # TODO(mbonadei): Remove (bugs.webrtc.org/6828)
-  # Errors on cyclic dependency with:
-  # congestion_controller:congestion_controller if enabled.
-  check_includes = false
-
+  visibility = [ "*" ]
   sources = [
     "bitrate_controller_impl.cc",
     "bitrate_controller_impl.h",
@@ -37,13 +33,33 @@ rtc_static_library("bitrate_controller") {
   }
 
   deps = [
+    "..:module_api",
+    "../../logging:rtc_event_log_api",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
+    "../../system_wrappers:field_trial_api",
+    "../../system_wrappers:metrics_api",
+    "../congestion_controller:delay_based_bwe",
+    "../pacing",
+    "../remote_bitrate_estimator:remote_bitrate_estimator",
     "../rtp_rtcp",
+    "../rtp_rtcp:rtp_rtcp_format",
   ]
 }
 
 if (rtc_include_tests) {
+  rtc_source_set("mocks") {
+    testonly = true
+    sources = [
+      "include/mock/mock_bitrate_controller.h",
+    ]
+    deps = [
+      ":bitrate_controller",
+      "../../test:test_support",
+    ]
+  }
+
   rtc_source_set("bitrate_controller_unittests") {
     testonly = true
 
@@ -53,6 +69,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":bitrate_controller",
+      "../../logging:mocks",
       "../../logging:rtc_event_log_api",
       "../../test:field_trial",
       "../../test:test_support",

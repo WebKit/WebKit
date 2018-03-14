@@ -14,6 +14,7 @@
 // This file contains classes for dealing with the STUN protocol, as specified
 // in RFC 5389, and its descendants.
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -164,6 +165,9 @@ class StunMessage {
   // Takes ownership of the specified attribute and adds it to the message.
   void AddAttribute(std::unique_ptr<StunAttribute> attr);
 
+  // Remove the last occurrence of an attribute.
+  std::unique_ptr<StunAttribute> RemoveAttribute(int type);
+
   // Validates that a raw STUN message has a correct MESSAGE-INTEGRITY value.
   // This can't currently be done on a StunMessage, since it is affected by
   // padding data (which we discard when reading a StunMessage).
@@ -233,7 +237,7 @@ class StunAttribute {
                                uint16_t type,
                                uint16_t length,
                                StunMessage* owner);
-  // TODO: Allow these create functions to take parameters, to reduce
+  // TODO(?): Allow these create functions to take parameters, to reduce
   // the amount of work callers need to do to initialize attributes.
   static std::unique_ptr<StunAddressAttribute> CreateAddress(uint16_t type);
   static std::unique_ptr<StunXorAddressAttribute> CreateXorAddress(
@@ -476,11 +480,23 @@ bool IsStunErrorResponseType(int msg_type);
 bool ComputeStunCredentialHash(const std::string& username,
     const std::string& realm, const std::string& password, std::string* hash);
 
-// TODO: Move the TURN/ICE stuff below out to separate files.
+// Make a copy af |attribute| and return a new StunAttribute.
+//   This is useful if you don't care about what kind of attribute you
+//   are handling.
+//
+// The implementation copies by calling Write() followed by Read().
+//
+// If |tmp_buffer| is supplied this buffer will be used, otherwise
+// a buffer will created in the method.
+std::unique_ptr<StunAttribute> CopyStunAttribute(
+    const StunAttribute& attribute,
+    rtc::ByteBufferWriter* tmp_buffer_ptr = 0);
+
+// TODO(?): Move the TURN/ICE stuff below out to separate files.
 extern const char TURN_MAGIC_COOKIE_VALUE[4];
 
 // "GTURN" STUN methods.
-// TODO: Rename these methods to GTURN_ to make it clear they aren't
+// TODO(?): Rename these methods to GTURN_ to make it clear they aren't
 // part of standard STUN/TURN.
 enum RelayMessageType {
   // For now, using the same defs from TurnMessageType below.
@@ -494,7 +510,7 @@ enum RelayMessageType {
 };
 
 // "GTURN"-specific STUN attributes.
-// TODO: Rename these attributes to GTURN_ to avoid conflicts.
+// TODO(?): Rename these attributes to GTURN_ to avoid conflicts.
 enum RelayAttributeType {
   STUN_ATTR_LIFETIME                    = 0x000d,  // UInt32
   STUN_ATTR_MAGIC_COOKIE                = 0x000f,  // ByteString, 4 bytes

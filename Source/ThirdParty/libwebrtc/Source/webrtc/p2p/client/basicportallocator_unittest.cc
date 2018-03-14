@@ -110,7 +110,7 @@ std::ostream& operator<<(std::ostream& os,
     }
     os << c.ToString();
     first = false;
-  };
+  }
   os << ']';
   return os;
 }
@@ -1239,7 +1239,7 @@ TEST_F(BasicPortAllocatorTest,
 // the srflx addresses.
 TEST_F(
     BasicPortAllocatorTest,
-    TestDisableAdapterEnumerationWithoutNatLocalhostCandidateDisabledWithDifferentDefaultRoute) {
+    TestDisableAdapterEnumerationWithoutNatLocalhostCandDisabledDiffRoute) {
   ResetWithStunServerNoNat(kStunAddr);
   AddInterfaceAsDefaultRoute(kClientAddr);
   EXPECT_TRUE(CreateSession(ICE_CANDIDATE_COMPONENT_RTP));

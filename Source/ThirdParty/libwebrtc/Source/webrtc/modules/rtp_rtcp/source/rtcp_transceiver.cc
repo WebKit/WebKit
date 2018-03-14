@@ -12,6 +12,7 @@
 
 #include <utility>
 
+#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/ptr_util.h"
@@ -50,6 +51,28 @@ RtcpTransceiver::~RtcpTransceiver() {
   RTC_CHECK(!rtcp_transceiver_) << "Task queue is too busy to handle rtcp";
 }
 
+void RtcpTransceiver::AddMediaReceiverRtcpObserver(
+    uint32_t remote_ssrc,
+    MediaReceiverRtcpObserver* observer) {
+  rtc::WeakPtr<RtcpTransceiverImpl> ptr = ptr_;
+  task_queue_->PostTask([ptr, remote_ssrc, observer] {
+    if (ptr)
+      ptr->AddMediaReceiverRtcpObserver(remote_ssrc, observer);
+  });
+}
+
+void RtcpTransceiver::RemoveMediaReceiverRtcpObserver(
+    uint32_t remote_ssrc,
+    MediaReceiverRtcpObserver* observer,
+    std::unique_ptr<rtc::QueuedTask> on_removed) {
+  rtc::WeakPtr<RtcpTransceiverImpl> ptr = ptr_;
+  auto remove = [ptr, remote_ssrc, observer] {
+    if (ptr)
+      ptr->RemoveMediaReceiverRtcpObserver(remote_ssrc, observer);
+  };
+  task_queue_->PostTaskAndReply(std::move(remove), std::move(on_removed));
+}
+
 void RtcpTransceiver::ReceivePacket(rtc::CopyOnWriteBuffer packet) {
   rtc::WeakPtr<RtcpTransceiverImpl> ptr = ptr_;
   int64_t now_us = rtc::TimeMicros();
@@ -67,7 +90,8 @@ void RtcpTransceiver::SendCompoundPacket() {
   });
 }
 
-void RtcpTransceiver::SetRemb(int bitrate_bps, std::vector<uint32_t> ssrcs) {
+void RtcpTransceiver::SetRemb(int64_t bitrate_bps,
+                              std::vector<uint32_t> ssrcs) {
   // TODO(danilchap): Replace with lambda with move capture when available.
   struct SetRembClosure {
     void operator()() {
@@ -76,7 +100,7 @@ void RtcpTransceiver::SetRemb(int bitrate_bps, std::vector<uint32_t> ssrcs) {
     }
 
     rtc::WeakPtr<RtcpTransceiverImpl> ptr;
-    int bitrate_bps;
+    int64_t bitrate_bps;
     std::vector<uint32_t> ssrcs;
   };
   task_queue_->PostTask(SetRembClosure{ptr_, bitrate_bps, std::move(ssrcs)});
@@ -88,6 +112,24 @@ void RtcpTransceiver::UnsetRemb() {
     if (ptr)
       ptr->UnsetRemb();
   });
+}
+
+uint32_t RtcpTransceiver::SSRC() const {
+  return rtcp_transceiver_->sender_ssrc();
+}
+
+bool RtcpTransceiver::SendFeedbackPacket(
+    const rtcp::TransportFeedback& packet) {
+  struct Closure {
+    void operator()() {
+      if (ptr)
+        ptr->SendRawPacket(raw_packet);
+    }
+    rtc::WeakPtr<RtcpTransceiverImpl> ptr;
+    rtc::Buffer raw_packet;
+  };
+  task_queue_->PostTask(Closure{ptr_, packet.Build()});
+  return true;
 }
 
 void RtcpTransceiver::SendNack(uint32_t ssrc,
@@ -106,18 +148,12 @@ void RtcpTransceiver::SendNack(uint32_t ssrc,
   task_queue_->PostTask(Closure{ptr_, ssrc, std::move(sequence_numbers)});
 }
 
-void RtcpTransceiver::SendPictureLossIndication(std::vector<uint32_t> ssrcs) {
-  // TODO(danilchap): Replace with lambda with move capture when available.
-  struct Closure {
-    void operator()() {
-      if (ptr)
-        ptr->SendPictureLossIndication(ssrcs);
-    }
-
-    rtc::WeakPtr<RtcpTransceiverImpl> ptr;
-    std::vector<uint32_t> ssrcs;
-  };
-  task_queue_->PostTask(Closure{ptr_, std::move(ssrcs)});
+void RtcpTransceiver::SendPictureLossIndication(uint32_t ssrc) {
+  rtc::WeakPtr<RtcpTransceiverImpl> ptr = ptr_;
+  task_queue_->PostTask([ptr, ssrc] {
+    if (ptr)
+      ptr->SendPictureLossIndication(ssrc);
+  });
 }
 
 void RtcpTransceiver::SendFullIntraRequest(std::vector<uint32_t> ssrcs) {

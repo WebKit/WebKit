@@ -13,8 +13,8 @@
 
 #include "api/mediastreaminterface.h"
 #include "api/notifier.h"
+#include "api/videosinkinterface.h"
 #include "media/base/mediachannel.h"
-#include "media/base/videosinkinterface.h"
 #include "rtc_base/thread_checker.h"
 
 // VideoTrackSource implements VideoTrackSourceInterface.

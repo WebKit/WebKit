@@ -36,9 +36,6 @@ constexpr int kMinProbeDurationMs = 15;
 // retried from the start when this limit is reached.
 constexpr int kMaxProbeDelayMs = 3;
 
-// Number of times probing is retried before the cluster is dropped.
-constexpr int kMaxRetryAttempts = 3;
-
 // The min probe packet size is scaled with the bitrate we're probing at.
 // This defines the max min probe packet size, meaning that on high bitrates
 // we have a min probe packet size of 200 bytes.
@@ -118,23 +115,6 @@ void BitrateProber::CreateProbeCluster(int bitrate_bps, int64_t now_ms) {
     probing_state_ = ProbingState::kInactive;
 }
 
-void BitrateProber::ResetState(int64_t now_ms) {
-  RTC_DCHECK(probing_state_ == ProbingState::kActive);
-
-  // Recreate all probing clusters.
-  std::queue<ProbeCluster> clusters;
-  clusters.swap(clusters_);
-  while (!clusters.empty()) {
-    if (clusters.front().retries < kMaxRetryAttempts) {
-      CreateProbeCluster(clusters.front().pace_info.send_bitrate_bps, now_ms);
-      clusters_.back().retries = clusters.front().retries + 1;
-    }
-    clusters.pop();
-  }
-
-  probing_state_ = ProbingState::kInactive;
-}
-
 int BitrateProber::TimeUntilNextProbe(int64_t now_ms) {
   // Probing is not active or probing is already complete.
   if (probing_state_ != ProbingState::kActive || clusters_.empty())
@@ -144,7 +124,9 @@ int BitrateProber::TimeUntilNextProbe(int64_t now_ms) {
   if (next_probe_time_ms_ >= 0) {
     time_until_probe_ms = next_probe_time_ms_ - now_ms;
     if (time_until_probe_ms < -kMaxProbeDelayMs) {
-      ResetState(now_ms);
+      RTC_LOG(LS_WARNING)<<"Probe delay too high"<<
+                           " (next_ms:"<<next_probe_time_ms_<<
+                           ", now_ms: "<<now_ms<<")";
       return -1;
     }
   }

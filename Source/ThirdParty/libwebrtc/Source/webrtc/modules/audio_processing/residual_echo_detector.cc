@@ -177,7 +177,8 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
                               : 0;
 }
 
-void ResidualEchoDetector::Initialize() {
+void ResidualEchoDetector::Initialize(int /*sample_rate_hz*/,
+                                      int /*num_channels*/) {
   render_buffer_.Clear();
   std::fill(render_power_.begin(), render_power_.end(), 0.f);
   std::fill(render_power_mean_.begin(), render_power_mean_.end(), 0.f);
@@ -193,12 +194,17 @@ void ResidualEchoDetector::Initialize() {
   reliability_ = 0.f;
 }
 
-void ResidualEchoDetector::PackRenderAudioBuffer(
-    AudioBuffer* audio,
-    std::vector<float>* packed_buffer) {
+void EchoDetector::PackRenderAudioBuffer(AudioBuffer* audio,
+                                         std::vector<float>* packed_buffer) {
   packed_buffer->clear();
   packed_buffer->insert(packed_buffer->end(), audio->channels_f()[0],
                         audio->channels_f()[0] + audio->num_frames());
 }
 
+EchoDetector::Metrics ResidualEchoDetector::GetMetrics() const {
+  EchoDetector::Metrics metrics;
+  metrics.echo_likelihood = echo_likelihood_;
+  metrics.echo_likelihood_recent_max = recent_likelihood_max_.max();
+  return metrics;
+}
 }  // namespace webrtc

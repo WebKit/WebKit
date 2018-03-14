@@ -163,9 +163,16 @@ void SetFrameLenIfFlagIsPositive(int* config_frame_len) {
   }
 }
 
-AudioEncoderL16::Config Pcm16bConfig(CodecType codec_type) {
-  AudioEncoderL16::Config config;
+template <typename T>
+typename T::Config GetCodecConfig() {
+  typename T::Config config;
   SetFrameLenIfFlagIsPositive(&config.frame_size_ms);
+  RTC_CHECK(config.IsOk());
+  return config;
+}
+
+AudioEncoderL16::Config Pcm16bConfig(CodecType codec_type) {
+  auto config = GetCodecConfig<AudioEncoderL16>();
   switch (codec_type) {
     case CodecType::kPcm16b8:
       config.sample_rate_hz = 8000;
@@ -189,20 +196,18 @@ std::unique_ptr<AudioEncoder> CreateEncoder(CodecType codec_type,
                                             int payload_type) {
   switch (codec_type) {
     case CodecType::kOpus: {
-      AudioEncoderOpusConfig config;
+      AudioEncoderOpus::Config config = GetCodecConfig<AudioEncoderOpus>();
       if (FLAG_bitrate > 0) {
         config.bitrate_bps = FLAG_bitrate;
       }
       config.dtx_enabled = FLAG_dtx;
-      SetFrameLenIfFlagIsPositive(&config.frame_size_ms);
       RTC_CHECK(config.IsOk());
       return AudioEncoderOpus::MakeAudioEncoder(config, payload_type);
     }
 
     case CodecType::kPcmU:
     case CodecType::kPcmA: {
-      AudioEncoderG711::Config config;
-      SetFrameLenIfFlagIsPositive(&config.frame_size_ms);
+      AudioEncoderG711::Config config = GetCodecConfig<AudioEncoderG711>();
       config.type = codec_type == CodecType::kPcmU
                         ? AudioEncoderG711::Config::Type::kPcmU
                         : AudioEncoderG711::Config::Type::kPcmA;
@@ -211,10 +216,8 @@ std::unique_ptr<AudioEncoder> CreateEncoder(CodecType codec_type,
     }
 
     case CodecType::kG722: {
-      AudioEncoderG722Config config;
-      SetFrameLenIfFlagIsPositive(&config.frame_size_ms);
-      RTC_CHECK(config.IsOk());
-      return AudioEncoderG722::MakeAudioEncoder(config, payload_type);
+      return AudioEncoderG722::MakeAudioEncoder(
+          GetCodecConfig<AudioEncoderG722>(), payload_type);
     }
 
     case CodecType::kPcm16b8:
@@ -226,17 +229,13 @@ std::unique_ptr<AudioEncoder> CreateEncoder(CodecType codec_type,
     }
 
     case CodecType::kIlbc: {
-      AudioEncoderIlbcConfig config;
-      SetFrameLenIfFlagIsPositive(&config.frame_size_ms);
-      RTC_CHECK(config.IsOk());
-      return AudioEncoderIlbc::MakeAudioEncoder(config, payload_type);
+      return AudioEncoderIlbc::MakeAudioEncoder(
+          GetCodecConfig<AudioEncoderIlbc>(), payload_type);
     }
 
     case CodecType::kIsac: {
-      AudioEncoderIsac::Config config;
-      SetFrameLenIfFlagIsPositive(&config.frame_size_ms);
-      RTC_CHECK(config.IsOk());
-      return AudioEncoderIsac::MakeAudioEncoder(config, payload_type);
+      return AudioEncoderIsac::MakeAudioEncoder(
+          GetCodecConfig<AudioEncoderIsac>(), payload_type);
     }
   }
   RTC_NOTREACHED();

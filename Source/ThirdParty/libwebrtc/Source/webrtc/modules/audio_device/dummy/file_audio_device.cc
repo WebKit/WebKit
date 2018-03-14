@@ -140,6 +140,14 @@ int32_t FileAudioDevice::PlayoutIsAvailable(bool& available) {
 }
 
 int32_t FileAudioDevice::InitPlayout() {
+  rtc::CritScope lock(&_critSect);
+
+  if (_playing) {
+    return -1;
+  }
+
+  _playoutFramesIn10MS = static_cast<size_t>(kPlayoutFixedSampleRate / 100);
+
   if (_ptrAudioBuffer) {
     // Update webrtc audio buffer with the selected parameters
     _ptrAudioBuffer->SetPlayoutSampleRate(kPlayoutFixedSampleRate);
@@ -149,7 +157,7 @@ int32_t FileAudioDevice::InitPlayout() {
 }
 
 bool FileAudioDevice::PlayoutIsInitialized() const {
-  return true;
+  return _playoutFramesIn10MS != 0;
 }
 
 int32_t FileAudioDevice::RecordingIsAvailable(bool& available) {
@@ -186,7 +194,6 @@ int32_t FileAudioDevice::StartPlayout() {
     return 0;
   }
 
-  _playoutFramesIn10MS = static_cast<size_t>(kPlayoutFixedSampleRate / 100);
   _playing = true;
   _playoutFramesLeft = 0;
 
@@ -243,7 +250,7 @@ int32_t FileAudioDevice::StopPlayout() {
 }
 
 bool FileAudioDevice::Playing() const {
-  return true;
+  return _playing;
 }
 
 int32_t FileAudioDevice::StartRecording() {
@@ -301,14 +308,6 @@ int32_t FileAudioDevice::StopRecording() {
 
 bool FileAudioDevice::Recording() const {
   return _recording;
-}
-
-int32_t FileAudioDevice::SetAGC(bool enable) {
-  return -1;
-}
-
-bool FileAudioDevice::AGC() const {
-  return false;
 }
 
 int32_t FileAudioDevice::InitSpeaker() {

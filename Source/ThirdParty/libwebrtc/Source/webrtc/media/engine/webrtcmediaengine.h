@@ -17,10 +17,10 @@
 
 #include "call/call.h"
 #include "media/base/mediaengine.h"
+#include "modules/audio_device/include/audio_device.h"
 
 namespace webrtc {
 class AudioDecoderFactory;
-class AudioDeviceModule;
 class AudioMixer;
 class AudioProcessing;
 class VideoDecoderFactory;

@@ -28,23 +28,27 @@ constexpr int kPoorExcitationCounterInitial = 1000;
 
 int MainFilterUpdateGain::instance_count_ = 0;
 
-MainFilterUpdateGain::MainFilterUpdateGain()
+MainFilterUpdateGain::MainFilterUpdateGain(
+    const EchoCanceller3Config::Filter::MainConfiguration& config)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
+      config_(config),
       poor_excitation_counter_(kPoorExcitationCounterInitial) {
   H_error_.fill(kHErrorInitial);
 }
 
 MainFilterUpdateGain::~MainFilterUpdateGain() {}
 
-void MainFilterUpdateGain::HandleEchoPathChange() {
+void MainFilterUpdateGain::HandleEchoPathChange(
+    const EchoPathVariability& echo_path_variability) {
+  // TODO(peah): Add even-specific behavior.
   H_error_.fill(kHErrorInitial);
   poor_excitation_counter_ = kPoorExcitationCounterInitial;
   call_counter_ = 0;
 }
 
 void MainFilterUpdateGain::Compute(
-    const RenderBuffer& render_buffer,
+    const std::array<float, kFftLengthBy2Plus1>& render_power,
     const RenderSignalAnalyzer& render_signal_analyzer,
     const SubtractorOutput& subtractor_output,
     const AdaptiveFirFilter& filter,
@@ -57,7 +61,7 @@ void MainFilterUpdateGain::Compute(
   const auto& E2_shadow = subtractor_output.E2_shadow;
   FftData* G = gain_fft;
   const size_t size_partitions = filter.SizePartitions();
-  const auto& X2 = render_buffer.SpectralSum(size_partitions);
+  auto X2 = render_power;
   const auto& erl = filter.Erl();
 
   ++call_counter_;
@@ -73,11 +77,10 @@ void MainFilterUpdateGain::Compute(
     G->im.fill(0.f);
   } else {
     // Corresponds to WGN of power -39 dBFS.
-    constexpr float kNoiseGatePower = 220075344.f;
     std::array<float, kFftLengthBy2Plus1> mu;
     // mu = H_error / (0.5* H_error* X2 + n * E2).
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
-      mu[k] = X2[k] > kNoiseGatePower
+      mu[k] = X2[k] > config_.noise_gate
                   ? H_error_[k] / (0.5f * H_error_[k] * X2[k] +
                                    size_partitions * E2_main[k])
                   : 0.f;
@@ -100,17 +103,17 @@ void MainFilterUpdateGain::Compute(
 
   // H_error = H_error + factor * erl.
   std::array<float, kFftLengthBy2Plus1> H_error_increase;
-  constexpr float kErlScaleAccurate = 1.f / 100.0f;
-  constexpr float kErlScaleInaccurate = 1.f / 60.0f;
   std::transform(E2_shadow.begin(), E2_shadow.end(), E2_main.begin(),
                  H_error_increase.begin(), [&](float a, float b) {
-                   return a >= b ? kErlScaleAccurate : kErlScaleInaccurate;
+                   return a >= b ? config_.leakage_converged
+                                 : config_.leakage_diverged;
                  });
   std::transform(erl.begin(), erl.end(), H_error_increase.begin(),
                  H_error_increase.begin(), std::multiplies<float>());
   std::transform(H_error_.begin(), H_error_.end(), H_error_increase.begin(),
-                 H_error_.begin(),
-                 [&](float a, float b) { return std::max(a + b, 0.1f); });
+                 H_error_.begin(), [&](float a, float b) {
+                   return std::max(a + b, config_.error_floor);
+                 });
 
   data_dumper_->DumpRaw("aec3_main_gain_H_error", H_error_);
 }

@@ -71,12 +71,11 @@ rtc::Optional<uint32_t> RateStatistics::Rate(int64_t now_ms) const {
   int64_t active_window_size = now_ms - oldest_time_ + 1;
   if (num_samples_ == 0 || active_window_size <= 1 ||
       (num_samples_ <= 1 && active_window_size < current_window_size_ms_)) {
-    return rtc::Optional<uint32_t>();
+    return rtc::nullopt;
   }
 
   float scale = scale_ / active_window_size;
-  return rtc::Optional<uint32_t>(
-      static_cast<uint32_t>(accumulated_count_ * scale + 0.5f));
+  return static_cast<uint32_t>(accumulated_count_ * scale + 0.5f);
 }
 
 void RateStatistics::EraseOld(int64_t now_ms) {

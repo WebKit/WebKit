@@ -89,8 +89,8 @@ class PeerConnectionTestWrapper
   sigslot::signal1<webrtc::DataChannelInterface*> SignalOnDataChannel;
 
  private:
-  void SetLocalDescription(const std::string& type, const std::string& sdp);
-  void SetRemoteDescription(const std::string& type, const std::string& sdp);
+  void SetLocalDescription(webrtc::SdpType type, const std::string& sdp);
+  void SetRemoteDescription(webrtc::SdpType type, const std::string& sdp);
   bool CheckForConnection();
   bool CheckForAudio();
   bool CheckForVideo();

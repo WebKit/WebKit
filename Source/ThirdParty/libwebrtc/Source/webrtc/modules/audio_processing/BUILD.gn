@@ -7,8 +7,10 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("//build/config/arm.gni")
-import("//third_party/protobuf/proto_library.gni")
 import("../../webrtc.gni")
+if (!build_with_mozilla) {
+  import("//third_party/protobuf/proto_library.gni")
+}
 
 declare_args() {
   # Disables the usual mode where we trust the reported system delay
@@ -17,11 +19,18 @@ declare_args() {
   aec_untrusted_delay_for_testing = false
 }
 
+config("apm_debug_dump") {
+  if (apm_debug_dump) {
+    defines = [ "WEBRTC_APM_DEBUG_DUMP=1" ]
+  } else {
+    defines = [ "WEBRTC_APM_DEBUG_DUMP=0" ]
+  }
+}
+
 rtc_static_library("audio_processing") {
+  visibility = [ "*" ]
+  configs += [ ":apm_debug_dump" ]
   sources = [
-    "aec/aec_core.cc",
-    "aec/aec_core.h",
-    "aec/aec_core_optimized_methods.h",
     "aec/aec_resampler.cc",
     "aec/aec_resampler.h",
     "aec/echo_cancellation.cc",
@@ -46,6 +55,7 @@ rtc_static_library("audio_processing") {
     "aec3/comfort_noise_generator.h",
     "aec3/decimator.cc",
     "aec3/decimator.h",
+    "aec3/delay_estimate.h",
     "aec3/downsampled_render_buffer.cc",
     "aec3/downsampled_render_buffer.h",
     "aec3/echo_canceller3.cc",
@@ -62,6 +72,8 @@ rtc_static_library("audio_processing") {
     "aec3/erl_estimator.h",
     "aec3/erle_estimator.cc",
     "aec3/erle_estimator.h",
+    "aec3/fft_buffer.cc",
+    "aec3/fft_buffer.h",
     "aec3/fft_data.h",
     "aec3/frame_blocker.cc",
     "aec3/frame_blocker.h",
@@ -71,6 +83,8 @@ rtc_static_library("audio_processing") {
     "aec3/matched_filter.h",
     "aec3/matched_filter_lag_aggregator.cc",
     "aec3/matched_filter_lag_aggregator.h",
+    "aec3/matrix_buffer.cc",
+    "aec3/matrix_buffer.h",
     "aec3/output_selector.cc",
     "aec3/output_selector.h",
     "aec3/render_buffer.cc",
@@ -94,11 +108,9 @@ rtc_static_library("audio_processing") {
     "aec3/suppression_filter.h",
     "aec3/suppression_gain.cc",
     "aec3/suppression_gain.h",
+    "aec3/vector_buffer.cc",
+    "aec3/vector_buffer.h",
     "aec3/vector_math.h",
-    "aecm/aecm_core.cc",
-    "aecm/aecm_core.h",
-    "aecm/echo_control_mobile.cc",
-    "aecm/echo_control_mobile.h",
     "agc/agc.cc",
     "agc/agc.h",
     "agc/agc_manager_direct.cc",
@@ -166,8 +178,6 @@ rtc_static_library("audio_processing") {
     "level_controller/signal_classifier.h",
     "level_estimator_impl.cc",
     "level_estimator_impl.h",
-    "logging/apm_data_dumper.cc",
-    "logging/apm_data_dumper.h",
     "low_cut_filter.cc",
     "low_cut_filter.h",
     "noise_suppression_impl.cc",
@@ -196,16 +206,6 @@ rtc_static_library("audio_processing") {
     "transient/wpd_tree.h",
     "typing_detection.cc",
     "typing_detection.h",
-    "utility/block_mean_calculator.cc",
-    "utility/block_mean_calculator.h",
-    "utility/delay_estimator.cc",
-    "utility/delay_estimator.h",
-    "utility/delay_estimator_internal.h",
-    "utility/delay_estimator_wrapper.cc",
-    "utility/delay_estimator_wrapper.h",
-    "utility/ooura_fft.cc",
-    "utility/ooura_fft.h",
-    "utility/ooura_fft_tables_common.h",
     "vad/common.h",
     "vad/gmm.cc",
     "vad/gmm.h",
@@ -232,26 +232,27 @@ rtc_static_library("audio_processing") {
 
   defines = []
   deps = [
+    ":aec_core",
     ":aec_dump_interface",
+    ":apm_logging",
+    ":audio_processing_c",
     ":audio_processing_statistics",
     "..:module_api",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../api:array_view",
     "../../api:optional",
     "../../audio/utility:audio_frame_operations",
+    "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
     "../../rtc_base:gtest_prod",
     "../../rtc_base:protobuf_utils",
+    "../../rtc_base:sanitizer",
+    "../../system_wrappers:cpu_features_api",
+    "../../system_wrappers:field_trial_api",
+    "../../system_wrappers:metrics_api",
     "../audio_coding:isac",
   ]
-  public_deps = [
-    ":audio_processing_c",
-  ]
-
-  if (apm_debug_dump) {
-    defines += [ "WEBRTC_APM_DEBUG_DUMP=1" ]
-  } else {
-    defines += [ "WEBRTC_APM_DEBUG_DUMP=0" ]
-  }
 
   if (aec_untrusted_delay_for_testing) {
     defines += [ "WEBRTC_UNTRUSTED_DELAY" ]
@@ -280,26 +281,6 @@ rtc_static_library("audio_processing") {
     defines += [ "WEBRTC_NS_FLOAT" ]
   }
 
-  if (current_cpu == "x86" || current_cpu == "x64") {
-    deps += [ ":audio_processing_sse2" ]
-  }
-
-  if (rtc_build_with_neon) {
-    deps += [ ":audio_processing_neon" ]
-  }
-
-  if (current_cpu == "mipsel") {
-    sources += [ "aecm/aecm_core_mips.cc" ]
-    if (mips_float_abi == "hard") {
-      sources += [
-        "aec/aec_core_mips.cc",
-        "utility/ooura_fft_mips.cc",
-      ]
-    }
-  } else {
-    sources += [ "aecm/aecm_core_c.cc" ]
-  }
-
   # TODO(jschuh): Bug 1348: fix this warning.
   configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 
@@ -313,6 +294,7 @@ rtc_static_library("audio_processing") {
 }
 
 rtc_source_set("audio_processing_statistics") {
+  visibility = [ "*" ]
   sources = [
     "include/audio_processing_statistics.cc",
     "include/audio_processing_statistics.h",
@@ -370,13 +352,32 @@ rtc_source_set("audio_processing_c") {
 
   deps = [
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../common_audio",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers",
+    "../../system_wrappers:cpu_features_api",
   ]
 
   if (rtc_build_with_neon) {
-    deps += [ ":audio_processing_neon_c" ]
+    sources += [ "ns/nsx_core_neon.c" ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set. This is needed
+      # since //build/config/arm.gni only enables NEON for iOS, not Android.
+      # This provides the same functionality as webrtc/build/arm_neon.gypi.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+
+    # Disable LTO on NEON targets due to compiler bug.
+    # TODO(fdegans): Enable this. See crbug.com/408997.
+    if (rtc_use_lto) {
+      cflags -= [
+        "-flto",
+        "-ffat-lto-objects",
+      ]
+    }
   }
 }
 
@@ -390,37 +391,72 @@ if (rtc_enable_protobuf) {
   }
 }
 
-if (current_cpu == "x86" || current_cpu == "x64") {
-  rtc_static_library("audio_processing_sse2") {
-    # TODO(ehmaldonado): Remove (bugs.webrtc.org/6828)
-    # Errors on cyclic dependency with :audio_processing if enabled.
-    check_includes = false
+rtc_source_set("apm_logging") {
+  configs += [ ":apm_debug_dump" ]
+  sources = [
+    "logging/apm_data_dumper.cc",
+    "logging/apm_data_dumper.h",
+  ]
+  deps = [
+    "../../api:array_view",
+    "../../common_audio:common_audio",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
+  ]
+  defines = []
+}
 
-    sources = [
+rtc_source_set("aec_core") {
+  configs += [ ":apm_debug_dump" ]
+  sources = [
+    "aec/aec_common.h",
+    "aec/aec_core.cc",
+    "aec/aec_core.h",
+    "aec/aec_core_optimized_methods.h",
+    "aecm/aecm_core.cc",
+    "aecm/aecm_core.h",
+    "aecm/aecm_defines.h",
+    "aecm/echo_control_mobile.cc",
+    "aecm/echo_control_mobile.h",
+    "utility/block_mean_calculator.cc",
+    "utility/block_mean_calculator.h",
+    "utility/delay_estimator.cc",
+    "utility/delay_estimator.h",
+    "utility/delay_estimator_internal.h",
+    "utility/delay_estimator_wrapper.cc",
+    "utility/delay_estimator_wrapper.h",
+    "utility/ooura_fft.cc",
+    "utility/ooura_fft.h",
+    "utility/ooura_fft_tables_common.h",
+  ]
+  deps = [
+    ":apm_logging",
+    ":audio_processing_statistics",
+    "../..:webrtc_common",
+    "../../:typedefs",
+    "../../common_audio:common_audio",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:sanitizer",
+    "../../system_wrappers:cpu_features_api",
+    "../../system_wrappers:metrics_api",
+  ]
+  cflags = []
+  defines = []
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    sources += [
       "aec/aec_core_sse2.cc",
       "utility/ooura_fft_sse2.cc",
       "utility/ooura_fft_tables_neon_sse2.h",
     ]
-
     if (is_posix) {
-      cflags = [ "-msse2" ]
-    }
-
-    if (apm_debug_dump) {
-      defines = [ "WEBRTC_APM_DEBUG_DUMP=1" ]
-    } else {
-      defines = [ "WEBRTC_APM_DEBUG_DUMP=0" ]
+      cflags += [ "-msse2" ]
     }
   }
-}
 
-if (rtc_build_with_neon) {
-  rtc_static_library("audio_processing_neon") {
-    # TODO(ehmaldonado): Remove (bugs.webrtc.org/6828)
-    # Errors on cyclic dependency with :audio_processing if enabled.
-    check_includes = false
-
-    sources = [
+  if (rtc_build_with_neon) {
+    sources += [
       "aec/aec_core_neon.cc",
       "aecm/aecm_core_neon.cc",
       "utility/ooura_fft_neon.cc",
@@ -432,7 +468,7 @@ if (rtc_build_with_neon) {
       # since //build/config/arm.gni only enables NEON for iOS, not Android.
       # This provides the same functionality as webrtc/build/arm_neon.gypi.
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
-      cflags = [ "-mfpu=neon" ]
+      cflags += [ "-mfpu=neon" ]
     }
 
     # Disable LTO on NEON targets due to compiler bug.
@@ -444,55 +480,42 @@ if (rtc_build_with_neon) {
       ]
     }
 
-    deps = [
-      "../../common_audio",
-    ]
-    public_deps = [
-      ":audio_processing_neon_c",
-    ]
-
-    if (apm_debug_dump) {
-      defines = [ "WEBRTC_APM_DEBUG_DUMP=1" ]
-    } else {
-      defines = [ "WEBRTC_APM_DEBUG_DUMP=0" ]
-    }
+    deps += [ "../../common_audio" ]
   }
 
-  rtc_static_library("audio_processing_neon_c") {
-    # TODO(mbonadei): Remove (bugs.webrtc.org/6828)
-    # Errors on cyclic dependency with :audio_processing_c if enabled.
-    check_includes = false
-
-    sources = [
-      "ns/nsx_core_neon.c",
-    ]
-
-    if (current_cpu != "arm64") {
-      # Enable compilation for the NEON instruction set. This is needed
-      # since //build/config/arm.gni only enables NEON for iOS, not Android.
-      # This provides the same functionality as webrtc/build/arm_neon.gypi.
-      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
-      cflags = [ "-mfpu=neon" ]
-    }
-
-    # Disable LTO on NEON targets due to compiler bug.
-    # TODO(fdegans): Enable this. See crbug.com/408997.
-    if (rtc_use_lto) {
-      cflags -= [
-        "-flto",
-        "-ffat-lto-objects",
+  if (current_cpu == "mipsel") {
+    sources += [ "aecm/aecm_core_mips.cc" ]
+    if (mips_float_abi == "hard") {
+      sources += [
+        "aec/aec_core_mips.cc",
+        "utility/ooura_fft_mips.cc",
       ]
     }
-    deps = [
-      "../../rtc_base:rtc_base_approved",
-    ]
+  } else {
+    sources += [ "aecm/aecm_core_c.cc" ]
   }
+
+  # TODO(jschuh): Bug 1348: fix this warning.
+  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 }
 
 if (rtc_include_tests) {
+  rtc_source_set("mocks") {
+    testonly = true
+    sources = [
+      "include/mock_audio_processing.h",
+    ]
+    deps = [
+      ":aec_dump_interface",
+      ":audio_processing",
+      ":audio_processing_statistics",
+      "../../test:test_support",
+    ]
+  }
+
   group("audio_processing_tests") {
     testonly = true
-    public_deps = [
+    deps = [
       ":audioproc_test_utils",
       ":click_annotate",
       ":nonlinear_beamformer_test",
@@ -500,14 +523,13 @@ if (rtc_include_tests) {
     ]
 
     if (rtc_enable_intelligibility_enhancer) {
-      public_deps += [ ":intelligibility_proc" ]
+      deps += [ ":intelligibility_proc" ]
     }
 
     if (rtc_enable_protobuf) {
-      public_deps += [
+      deps += [
         ":audioproc_f",
         ":audioproc_unittest_proto",
-        ":unpack_aecdump",
         "aec_dump:aec_dump_unittests",
         "test/conversational_speech",
         "test/py_quality_assessment",
@@ -518,9 +540,14 @@ if (rtc_include_tests) {
   rtc_source_set("audio_processing_unittests") {
     testonly = true
 
+    configs += [ ":apm_debug_dump" ]
     sources = [
       "aec/echo_cancellation_unittest.cc",
       "aec/system_delay_unittest.cc",
+      "aec3/mock/mock_block_processor.h",
+      "aec3/mock/mock_echo_remover.h",
+      "aec3/mock/mock_render_delay_buffer.h",
+      "aec3/mock/mock_render_delay_controller.h",
       "agc/agc_manager_direct_unittest.cc",
       "agc/loudness_histogram_unittest.cc",
       "agc/mock_agc.h",
@@ -528,6 +555,7 @@ if (rtc_include_tests) {
       "beamformer/array_util_unittest.cc",
       "beamformer/complex_matrix_unittest.cc",
       "beamformer/covariance_matrix_generator_unittest.cc",
+      "beamformer/matrix_test_helpers.h",
       "beamformer/matrix_unittest.cc",
       "beamformer/mock_nonlinear_beamformer.h",
       "config_unittest.cc",
@@ -556,19 +584,25 @@ if (rtc_include_tests) {
     ]
 
     deps = [
+      ":aec_core",
       ":analog_mic_simulation",
+      ":apm_logging",
       ":audio_processing",
       ":audioproc_test_utils",
+      ":mocks",
       "..:module_api",
       "../..:webrtc_common",
+      "../../:typedefs",
       "../../api:array_view",
       "../../api:optional",
       "../../common_audio:common_audio",
+      "../../rtc_base:checks",
       "../../rtc_base:gtest_prod",
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:system_wrappers",
+      "../../system_wrappers",
+      "../../system_wrappers:cpu_features_api",
       "../../test:test_support",
       "../audio_coding:neteq_input_audio_tools",
       "aec_dump:mock_aec_dump_unittests",
@@ -578,12 +612,6 @@ if (rtc_include_tests) {
     ]
 
     defines = []
-
-    if (apm_debug_dump) {
-      defines += [ "WEBRTC_APM_DEBUG_DUMP=1" ]
-    } else {
-      defines += [ "WEBRTC_APM_DEBUG_DUMP=0" ]
-    }
 
     if (rtc_enable_intelligibility_enhancer) {
       defines += [ "WEBRTC_INTELLIGIBILITY_ENHANCER=1" ]
@@ -682,16 +710,6 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("audio_processing_perf_tests") {
-    # Has problems with autogenerated targets on Android and iOS
-    # Dependency chain (there may also be others):
-    #  :audio_processing_perf_tests -->
-    #  ..:modules_unittests --[private]-->
-    #  ..:modules_unittests_apk -->
-    #  ..:modules_unittests_apk__create -->
-    #  ..:modules_unittests_apk__create__finalize -->
-    #  ..:modules_unittests_apk__create__package --[private]-->
-    #  ..:_modules_unittests__library
-    check_includes = false
     testonly = true
 
     sources = [
@@ -705,7 +723,8 @@ if (rtc_include_tests) {
       "../../modules:module_api",
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:system_wrappers",
+      "../../system_wrappers",
+      "../../test:perf_test",
       "../../test:test_support",
     ]
 
@@ -725,30 +744,12 @@ if (rtc_include_tests) {
       "../../api:array_view",
       "../../common_audio:common_audio",
       "../../modules:module_api",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
     ]
   }
 
   if (rtc_enable_protobuf) {
-    rtc_executable("unpack_aecdump") {
-      testonly = true
-      sources = [
-        "test/unpack.cc",
-      ]
-
-      deps = [
-        ":audio_processing",
-        ":audioproc_debug_proto",
-        ":audioproc_protobuf_utils",
-        ":audioproc_test_utils",
-        "../..:webrtc_common",
-        "../../common_audio",
-        "../../rtc_base:protobuf_utils",
-        "../../rtc_base:rtc_base_approved",
-        "../../system_wrappers:system_wrappers_default",
-      ]
-    }  # unpack_aecdump
-
     rtc_executable("audioproc_f") {
       testonly = true
       sources = [
@@ -769,9 +770,11 @@ if (rtc_include_tests) {
         ":audioproc_test_utils",
         "../../api:optional",
         "../../common_audio:common_audio",
+        "../../rtc_base:checks",
         "../../rtc_base:protobuf_utils",
         "../../rtc_base:rtc_base_approved",
         "../../rtc_base:rtc_task_queue",
+        "../../rtc_base:stringutils",
         "../../system_wrappers",
         "../../system_wrappers:system_wrappers_default",
         "../../test:test_support",
@@ -783,6 +786,7 @@ if (rtc_include_tests) {
   }
 
   rtc_source_set("audioproc_test_utils") {
+    visibility = [ "*" ]
     testonly = true
     sources = [
       "test/audio_buffer_tools.cc",
@@ -803,8 +807,9 @@ if (rtc_include_tests) {
       "../../api:array_view",
       "../../api:optional",
       "../../common_audio",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers:system_wrappers",
+      "../../system_wrappers",
       "../../test:test_support",
       "../audio_coding:neteq_input_audio_tools",
       "//testing/gtest",
@@ -822,10 +827,11 @@ if (rtc_include_tests) {
       ":audio_processing",
       "..:module_api",
       "../..:webrtc_common",
+      "../../:typedefs",
       "../../common_audio:common_audio",
       "../../rtc_base:rtc_base_approved",
+      "../../system_wrappers",
       "../../system_wrappers:metrics_default",
-      "../../system_wrappers:system_wrappers",
       "../../test:test_support",
       "//testing/gtest",
     ]
@@ -841,8 +847,9 @@ if (rtc_include_tests) {
     deps = [
       ":audio_processing",
       "../..:webrtc_common",
+      "../../:typedefs",
+      "../../system_wrappers",
       "../../system_wrappers:metrics_default",
-      "../../system_wrappers:system_wrappers",
     ]
   }
 
@@ -855,6 +862,7 @@ if (rtc_include_tests) {
       ":audio_processing",
       ":audioproc_test_utils",
       "../../common_audio:common_audio",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers:metrics_default",
     ]
@@ -894,6 +902,7 @@ if (rtc_include_tests) {
       deps = [
         ":audioproc_debug_proto",
         "../..:webrtc_common",
+        "../../:typedefs",
         "../../rtc_base:protobuf_utils",
         "../../rtc_base:rtc_base_approved",
       ]

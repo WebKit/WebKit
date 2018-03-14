@@ -18,6 +18,7 @@
 #include "modules/utility/include/helpers_android.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/platform_thread.h"
 
 #define TAG "AudioManager"
 #define ALOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
@@ -40,11 +41,11 @@ AudioManager::JavaAudioManager::JavaAudioManager(
       is_device_blacklisted_for_open_sles_usage_(
           native_reg->GetMethodId("isDeviceBlacklistedForOpenSLESUsage",
                                   "()Z")) {
-  ALOGD("JavaAudioManager::ctor%s", GetThreadInfo().c_str());
+  ALOGD("JavaAudioManager::ctor @[tid=%d]", rtc::CurrentThreadId());
 }
 
 AudioManager::JavaAudioManager::~JavaAudioManager() {
-  ALOGD("JavaAudioManager::dtor%s", GetThreadInfo().c_str());
+  ALOGD("JavaAudioManager::dtor[tid=%d]", rtc::CurrentThreadId());
 }
 
 bool AudioManager::JavaAudioManager::Init() {
@@ -75,7 +76,7 @@ AudioManager::AudioManager()
       low_latency_playout_(false),
       low_latency_record_(false),
       delay_estimate_in_milliseconds_(0) {
-  ALOGD("ctor%s", GetThreadInfo().c_str());
+  ALOGD("ctor[tid=%d]", rtc::CurrentThreadId());
   RTC_CHECK(j_environment_);
   JNINativeMethod native_methods[] = {
       {"nativeCacheAudioParameters", "(IIIZZZZZZIIJ)V",
@@ -90,14 +91,14 @@ AudioManager::AudioManager()
 }
 
 AudioManager::~AudioManager() {
-  ALOGD("~dtor%s", GetThreadInfo().c_str());
+  ALOGD("~dtor[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   Close();
 }
 
 void AudioManager::SetActiveAudioLayer(
     AudioDeviceModule::AudioLayer audio_layer) {
-  ALOGD("SetActiveAudioLayer(%d)%s", audio_layer, GetThreadInfo().c_str());
+  ALOGD("SetActiveAudioLayer(%d)[tid=%d]", audio_layer, rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!initialized_);
   // Store the currently utilized audio layer.
@@ -114,7 +115,7 @@ void AudioManager::SetActiveAudioLayer(
 }
 
 SLObjectItf AudioManager::GetOpenSLEngine() {
-  ALOGD("GetOpenSLEngine%s", GetThreadInfo().c_str());
+  ALOGD("GetOpenSLEngine[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   // Only allow usage of OpenSL ES if such an audio layer has been specified.
   if (audio_layer_ != AudioDeviceModule::kAndroidOpenSLESAudio &&
@@ -153,7 +154,7 @@ SLObjectItf AudioManager::GetOpenSLEngine() {
 }
 
 bool AudioManager::Init() {
-  ALOGD("Init%s", GetThreadInfo().c_str());
+  ALOGD("Init[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!initialized_);
   RTC_DCHECK_NE(audio_layer_, AudioDeviceModule::kPlatformDefaultAudio);
@@ -166,7 +167,7 @@ bool AudioManager::Init() {
 }
 
 bool AudioManager::Close() {
-  ALOGD("Close%s", GetThreadInfo().c_str());
+  ALOGD("Close[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   if (!initialized_)
     return true;
@@ -271,7 +272,7 @@ void AudioManager::OnCacheAudioParameters(JNIEnv* env,
                                           jboolean pro_audio,
                                           jint output_buffer_size,
                                           jint input_buffer_size) {
-  ALOGD("OnCacheAudioParameters%s", GetThreadInfo().c_str());
+  ALOGD("OnCacheAudioParameters[tid=%d]", rtc::CurrentThreadId());
   ALOGD("hardware_aec: %d", hardware_aec);
   ALOGD("hardware_agc: %d", hardware_agc);
   ALOGD("hardware_ns: %d", hardware_ns);

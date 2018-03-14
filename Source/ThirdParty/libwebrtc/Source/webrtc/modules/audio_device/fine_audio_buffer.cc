@@ -81,7 +81,7 @@ void FineAudioBuffer::DeliverRecordedData(
   while (record_buffer_.size() >= bytes_per_10_ms_) {
     device_buffer_->SetRecordedBuffer(record_buffer_.data(),
                                       samples_per_10_ms_);
-    device_buffer_->SetVQEData(playout_delay_ms, record_delay_ms, 0);
+    device_buffer_->SetVQEData(playout_delay_ms, record_delay_ms);
     device_buffer_->DeliverRecordedData();
     memmove(record_buffer_.data(), record_buffer_.data() + bytes_per_10_ms_,
             record_buffer_.size() - bytes_per_10_ms_);

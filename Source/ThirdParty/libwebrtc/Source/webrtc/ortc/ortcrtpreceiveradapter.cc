@@ -150,17 +150,20 @@ void OrtcRtpReceiverAdapter::MaybeRecreateInternalReceiver() {
   }
   internal_receiver_ = nullptr;
   switch (kind_) {
-    case cricket::MEDIA_TYPE_AUDIO:
-      internal_receiver_ =
-          new AudioRtpReceiver(rtc::CreateRandomUuid(), {}, ssrc,
-                               rtp_transport_controller_->voice_channel());
+    case cricket::MEDIA_TYPE_AUDIO: {
+      auto* voice_channel = rtp_transport_controller_->voice_channel();
+      internal_receiver_ = new AudioRtpReceiver(
+          rtp_transport_controller_->worker_thread(), rtc::CreateRandomUuid(),
+          {}, ssrc, (voice_channel ? voice_channel->media_channel() : nullptr));
       break;
-    case cricket::MEDIA_TYPE_VIDEO:
-      internal_receiver_ =
-          new VideoRtpReceiver(rtc::CreateRandomUuid(), {},
-                               rtp_transport_controller_->worker_thread(), ssrc,
-                               rtp_transport_controller_->video_channel());
+    }
+    case cricket::MEDIA_TYPE_VIDEO: {
+      auto* video_channel = rtp_transport_controller_->video_channel();
+      internal_receiver_ = new VideoRtpReceiver(
+          rtp_transport_controller_->worker_thread(), rtc::CreateRandomUuid(),
+          {}, ssrc, (video_channel ? video_channel->media_channel() : nullptr));
       break;
+    }
     case cricket::MEDIA_TYPE_DATA:
       RTC_NOTREACHED();
   }

@@ -311,66 +311,6 @@ int inet_pton_v6(const char* src, void* dst) {
   return 1;
 }
 
-//
-// Unix time is in seconds relative to 1/1/1970.  So we compute the windows
-// FILETIME of that time/date, then we add/subtract in appropriate units to
-// convert to/from unix time.
-// The units of FILETIME are 100ns intervals, so by multiplying by or dividing
-// by 10000000, we can convert to/from seconds.
-//
-// FileTime = UnixTime*10000000 + FileTime(1970)
-// UnixTime = (FileTime-FileTime(1970))/10000000
-//
-
-void FileTimeToUnixTime(const FILETIME& ft, time_t* ut) {
-  RTC_DCHECK(nullptr != ut);
-
-  // FILETIME has an earlier date base than time_t (1/1/1970), so subtract off
-  // the difference.
-  SYSTEMTIME base_st;
-  memset(&base_st, 0, sizeof(base_st));
-  base_st.wDay = 1;
-  base_st.wMonth = 1;
-  base_st.wYear = 1970;
-
-  FILETIME base_ft;
-  SystemTimeToFileTime(&base_st, &base_ft);
-
-  ULARGE_INTEGER base_ul, current_ul;
-  memcpy(&base_ul, &base_ft, sizeof(FILETIME));
-  memcpy(&current_ul, &ft, sizeof(FILETIME));
-
-  // Divide by big number to convert to seconds, then subtract out the 1970
-  // base date value.
-  const ULONGLONG RATIO = 10000000;
-  *ut = static_cast<time_t>((current_ul.QuadPart - base_ul.QuadPart) / RATIO);
-}
-
-void UnixTimeToFileTime(const time_t& ut, FILETIME* ft) {
-  RTC_DCHECK(nullptr != ft);
-
-  // FILETIME has an earlier date base than time_t (1/1/1970), so add in
-  // the difference.
-  SYSTEMTIME base_st;
-  memset(&base_st, 0, sizeof(base_st));
-  base_st.wDay = 1;
-  base_st.wMonth = 1;
-  base_st.wYear = 1970;
-
-  FILETIME base_ft;
-  SystemTimeToFileTime(&base_st, &base_ft);
-
-  ULARGE_INTEGER base_ul;
-  memcpy(&base_ul, &base_ft, sizeof(FILETIME));
-
-  // Multiply by big number to convert to 100ns units, then add in the 1970
-  // base date value.
-  const ULONGLONG RATIO = 10000000;
-  ULARGE_INTEGER current_ul;
-  current_ul.QuadPart = base_ul.QuadPart + static_cast<int64_t>(ut) * RATIO;
-  memcpy(ft, &current_ul, sizeof(FILETIME));
-}
-
 bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename) {
   // TODO: Integrate into fileutils.h
   // TODO: Handle wide and non-wide cases via TCHAR?

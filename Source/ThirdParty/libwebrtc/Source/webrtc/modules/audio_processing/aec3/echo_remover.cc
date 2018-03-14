@@ -58,10 +58,9 @@ class EchoRemoverImpl final : public EchoRemover {
   // Removes the echo from a block of samples from the capture signal. The
   // supplied render signal is assumed to be pre-aligned with the capture
   // signal.
-  void ProcessCapture(const rtc::Optional<size_t>& echo_path_delay_samples,
-                      const EchoPathVariability& echo_path_variability,
+  void ProcessCapture(const EchoPathVariability& echo_path_variability,
                       bool capture_signal_saturation,
-                      const RenderBuffer& render_buffer,
+                      RenderBuffer* render_buffer,
                       std::vector<std::vector<float>>* capture) override;
 
   // Updates the status on whether echo leakage is detected in the output of the
@@ -87,6 +86,7 @@ class EchoRemoverImpl final : public EchoRemover {
   bool echo_leakage_detected_ = false;
   AecState aec_state_;
   EchoRemoverMetrics metrics_;
+  bool initial_state_ = true;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(EchoRemoverImpl);
 };
@@ -101,7 +101,7 @@ EchoRemoverImpl::EchoRemoverImpl(const EchoCanceller3Config& config,
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       optimization_(DetectOptimization()),
       sample_rate_hz_(sample_rate_hz),
-      subtractor_(data_dumper_.get(), optimization_),
+      subtractor_(config, data_dumper_.get(), optimization_),
       suppression_gain_(config_, optimization_),
       cng_(optimization_),
       suppression_filter_(sample_rate_hz_),
@@ -120,14 +120,13 @@ void EchoRemoverImpl::GetMetrics(EchoControl::Metrics* metrics) const {
 }
 
 void EchoRemoverImpl::ProcessCapture(
-    const rtc::Optional<size_t>& echo_path_delay_samples,
     const EchoPathVariability& echo_path_variability,
     bool capture_signal_saturation,
-    const RenderBuffer& render_buffer,
+    RenderBuffer* render_buffer,
     std::vector<std::vector<float>>* capture) {
-  const std::vector<std::vector<float>>& x = render_buffer.MostRecentBlock();
+  const std::vector<std::vector<float>>& x = render_buffer->Block(0);
   std::vector<std::vector<float>>* y = capture;
-
+  RTC_DCHECK(render_buffer);
   RTC_DCHECK(y);
   RTC_DCHECK_EQ(x.size(), NumBandsForRate(sample_rate_hz_));
   RTC_DCHECK_EQ(y->size(), NumBandsForRate(sample_rate_hz_));
@@ -148,6 +147,7 @@ void EchoRemoverImpl::ProcessCapture(
   if (echo_path_variability.AudioPathChanged()) {
     subtractor_.HandleEchoPathChange(echo_path_variability);
     aec_state_.HandleEchoPathChange(echo_path_variability);
+    initial_state_ = true;
   }
 
   std::array<float, kFftLengthBy2Plus1> Y2;
@@ -159,29 +159,33 @@ void EchoRemoverImpl::ProcessCapture(
   FftData comfort_noise;
   FftData high_band_comfort_noise;
   SubtractorOutput subtractor_output;
-  FftData& E_main = subtractor_output.E_main;
-  auto& E2_main = subtractor_output.E2_main;
+  FftData& E_main_nonwindowed = subtractor_output.E_main_nonwindowed;
+  auto& E2_main = subtractor_output.E2_main_nonwindowed;
   auto& E2_shadow = subtractor_output.E2_shadow;
   auto& e_main = subtractor_output.e_main;
 
   // Analyze the render signal.
-  render_signal_analyzer_.Update(render_buffer, aec_state_.FilterDelay());
+  render_signal_analyzer_.Update(*render_buffer, aec_state_.FilterDelay());
 
   // Perform linear echo cancellation.
-  subtractor_.Process(render_buffer, y0, render_signal_analyzer_, aec_state_,
+  if (initial_state_ && !aec_state_.InitialState()) {
+    subtractor_.ExitInitialState();
+    initial_state_ = false;
+  }
+  subtractor_.Process(*render_buffer, y0, render_signal_analyzer_, aec_state_,
                       &subtractor_output);
 
   // Compute spectra.
-  fft_.ZeroPaddedFft(y0, &Y);
-  LinearEchoPower(E_main, Y, &S2_linear);
-  Y.Spectrum(optimization_, &Y2);
+  // fft_.ZeroPaddedFft(y0, Aec3Fft::Window::kHanning, &Y);
+  fft_.ZeroPaddedFft(y0, Aec3Fft::Window::kRectangular, &Y);
+  LinearEchoPower(E_main_nonwindowed, Y, &S2_linear);
+  Y.Spectrum(optimization_, Y2);
 
   // Update the AEC state information.
   aec_state_.Update(subtractor_.FilterFrequencyResponse(),
                     subtractor_.FilterImpulseResponse(),
-                    subtractor_.ConvergedFilter(), echo_path_delay_samples,
-                    render_buffer, E2_main, Y2, x0, subtractor_output.s_main,
-                    echo_leakage_detected_);
+                    subtractor_.ConvergedFilter(), *render_buffer, E2_main, Y2,
+                    subtractor_output.s_main, echo_leakage_detected_);
 
   // Choose the linear output.
   output_selector_.FormLinearOutput(!aec_state_.TransparentMode(), e_main, y0);
@@ -191,7 +195,7 @@ void EchoRemoverImpl::ProcessCapture(
   const auto& E2 = output_selector_.UseSubtractorOutput() ? E2_main : Y2;
 
   // Estimate the residual echo power.
-  residual_echo_estimator_.Estimate(aec_state_, render_buffer, S2_linear, Y2,
+  residual_echo_estimator_.Estimate(aec_state_, *render_buffer, S2_linear, Y2,
                                     &R2);
 
   // Estimate the comfort noise.
@@ -229,19 +233,13 @@ void EchoRemoverImpl::ProcessCapture(
   data_dumper_->DumpRaw("aec3_E2_shadow", E2_shadow);
   data_dumper_->DumpRaw("aec3_S2_linear", S2_linear);
   data_dumper_->DumpRaw("aec3_Y2", Y2);
-  data_dumper_->DumpRaw("aec3_X2", render_buffer.Spectrum(0));
+  data_dumper_->DumpRaw("aec3_X2", render_buffer->Spectrum(0));
   data_dumper_->DumpRaw("aec3_R2", R2);
   data_dumper_->DumpRaw("aec3_erle", aec_state_.Erle());
   data_dumper_->DumpRaw("aec3_erl", aec_state_.Erl());
-  data_dumper_->DumpRaw("aec3_active_render", aec_state_.ActiveRender());
   data_dumper_->DumpRaw("aec3_usable_linear_estimate",
                         aec_state_.UsableLinearEstimate());
-  data_dumper_->DumpRaw(
-      "aec3_filter_delay",
-      aec_state_.FilterDelay() ? *aec_state_.FilterDelay() : -1);
-  data_dumper_->DumpRaw(
-      "aec3_external_delay",
-      aec_state_.ExternalDelay() ? *aec_state_.ExternalDelay() : -1);
+  data_dumper_->DumpRaw("aec3_filter_delay", aec_state_.FilterDelay());
   data_dumper_->DumpRaw("aec3_capture_saturation",
                         aec_state_.SaturatedCapture() ? 1 : 0);
 }

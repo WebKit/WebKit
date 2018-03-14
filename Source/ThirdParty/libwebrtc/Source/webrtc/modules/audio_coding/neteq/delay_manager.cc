@@ -398,18 +398,20 @@ DelayManager::IATVector DelayManager::ScaleHistogram(const IATVector& histogram,
   RTC_DCHECK_EQ(old_packet_length % 10, 0);
   RTC_DCHECK_EQ(new_packet_length % 10, 0);
   IATVector new_histogram(histogram.size(), 0);
-  int acc = 0;
+  int64_t acc = 0;
   int time_counter = 0;
   size_t new_histogram_idx = 0;
   for (size_t i = 0; i < histogram.size(); i++) {
     acc += histogram[i];
     time_counter += old_packet_length;
     // The bins should be scaled, to ensure the histogram still sums to one.
-    const int scaled_acc = acc * new_packet_length / time_counter;
-    int actually_used_acc = 0;
+    const int64_t scaled_acc = acc * new_packet_length / time_counter;
+    int64_t actually_used_acc = 0;
     while (time_counter >= new_packet_length) {
-      actually_used_acc += scaled_acc;
-      new_histogram[new_histogram_idx] += scaled_acc;
+      const int64_t old_histogram_val = new_histogram[new_histogram_idx];
+      new_histogram[new_histogram_idx] =
+          rtc::saturated_cast<int>(old_histogram_val + scaled_acc);
+      actually_used_acc += new_histogram[new_histogram_idx] - old_histogram_val;
       new_histogram_idx =
           std::min(new_histogram_idx + 1, new_histogram.size() - 1);
       time_counter -= new_packet_length;
@@ -418,11 +420,23 @@ DelayManager::IATVector DelayManager::ScaleHistogram(const IATVector& histogram,
     acc -= actually_used_acc;
   }
   // If there is anything left in acc (due to rounding errors), add it to the
-  // last bin.
-  new_histogram[new_histogram_idx] += acc;
+  // last bin. If we cannot add everything to the last bin we need to add as
+  // much as possible to the bins after the last bin (this is only possible
+  // when compressing a histogram).
+  while (acc > 0 && new_histogram_idx < new_histogram.size()) {
+    const int64_t old_histogram_val = new_histogram[new_histogram_idx];
+    new_histogram[new_histogram_idx] =
+        rtc::saturated_cast<int>(old_histogram_val + acc);
+    acc -= new_histogram[new_histogram_idx] - old_histogram_val;
+    new_histogram_idx++;
+  }
   RTC_DCHECK_EQ(histogram.size(), new_histogram.size());
-  RTC_DCHECK_EQ(accumulate(histogram.begin(), histogram.end(), 0),
-                accumulate(new_histogram.begin(), new_histogram.end(), 0));
+  if (acc == 0) {
+    // If acc is non-zero, we were not able to add everything to the new
+    // histogram, so this check will not hold.
+    RTC_DCHECK_EQ(accumulate(histogram.begin(), histogram.end(), 0ll),
+                  accumulate(new_histogram.begin(), new_histogram.end(), 0ll));
+  }
   return new_histogram;
 }
 

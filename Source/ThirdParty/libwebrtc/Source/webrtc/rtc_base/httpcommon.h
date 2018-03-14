@@ -158,8 +158,6 @@ bool HttpShouldKeepAlive(const HttpData& data);
 
 typedef std::pair<std::string, std::string> HttpAttribute;
 typedef std::vector<HttpAttribute> HttpAttributeList;
-void HttpComposeAttributes(const HttpAttributeList& attributes, char separator,
-                           std::string* composed);
 void HttpParseAttributes(const char * data, size_t len,
                          HttpAttributeList& attributes);
 bool HttpHasAttribute(const HttpAttributeList& attributes,

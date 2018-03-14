@@ -71,10 +71,6 @@ class AudioDeviceGeneric {
   virtual int32_t StopRecording() = 0;
   virtual bool Recording() const = 0;
 
-  // Microphone Automatic Gain Control (AGC)
-  virtual int32_t SetAGC(bool enable) = 0;
-  virtual bool AGC() const = 0;
-
   // Audio mixer initialization
   virtual int32_t InitSpeaker() = 0;
   virtual bool SpeakerIsInitialized() const = 0;

@@ -12,6 +12,7 @@ import("../../webrtc.gni")
 use_desktop_capture_differ_sse2 = current_cpu == "x86" || current_cpu == "x64"
 
 rtc_static_library("primitives") {
+  visibility = [ "*" ]
   sources = [
     "desktop_capture_types.h",
     "desktop_frame.cc",
@@ -28,8 +29,13 @@ rtc_static_library("primitives") {
 
   deps = [
     "../..:webrtc_common",
-    "../../rtc_base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+    "../../:typedefs",
+    "../../rtc_base:checks",
   ]
+
+  if (!build_with_mozilla) {
+    deps += [ "../../rtc_base:rtc_base" ]  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+  }
 }
 
 if (rtc_include_tests) {
@@ -37,7 +43,9 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = []
-    deps = []
+    deps = [
+      "../../rtc_base:checks",
+    ]
     if (rtc_desktop_capture_supported) {
       deps += [
         ":desktop_capture_mock",
@@ -86,8 +94,10 @@ if (rtc_include_tests) {
       ":desktop_capture_mock",
       ":primitives",
       "../..:webrtc_common",
+      "../../:typedefs",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "../../system_wrappers",
+      "../../system_wrappers:cpu_features_api",
       "../../test:test_support",
       "//testing/gmock",
     ]
@@ -125,6 +135,7 @@ if (rtc_include_tests) {
 
     deps = [
       ":primitives",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
     ]
@@ -152,6 +163,7 @@ if (rtc_include_tests) {
 }
 
 rtc_source_set("desktop_capture") {
+  visibility = [ "*" ]
   public_deps = [
     ":desktop_capture_generic",
   ]
@@ -174,8 +186,10 @@ if (is_mac) {
     deps = [
       ":desktop_capture_generic",
       ":primitives",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
+      "../../sdk:common_objc",
     ]
     libs = [
       "AppKit.framework",
@@ -287,7 +301,17 @@ rtc_static_library("desktop_capture_generic") {
     "window_finder_win.h",
   ]
 
-  if (use_x11) {
+  if (build_with_mozilla) {
+    sources += [
+      "app_capturer_win.cc",
+      "desktop_device_info.cc",
+      "desktop_device_info.h",
+      "win/desktop_device_info_win.cc",
+      "win/win_shared.cc",
+    ]
+  }
+
+  if (rtc_use_x11) {
     sources += [
       "mouse_cursor_monitor_x11.cc",
       "screen_capturer_x11.cc",
@@ -306,9 +330,20 @@ rtc_static_library("desktop_capture_generic") {
       "x11/x_server_pixel_buffer.h",
     ]
     configs += [ "//build/config/linux:x11" ]
+
+    if (build_with_mozilla) {
+      sources += [
+        "app_capturer_x11.cc",
+        "app_capturer_x11.h",
+        "x11/desktop_device_info_x11.cc",
+        "x11/desktop_device_info_x11.h",
+        "x11/shared_x_util.cc",
+        "x11/shared_x_util.h",
+      ]
+    }
   }
 
-  if (!is_win && !is_mac && !use_x11) {
+  if (!is_win && !is_mac && !rtc_use_x11) {
     sources += [
       "mouse_cursor_monitor_null.cc",
       "screen_capturer_null.cc",
@@ -326,11 +361,20 @@ rtc_static_library("desktop_capture_generic") {
   deps = [
     ":primitives",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../api:refcountedbase",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
     "../../system_wrappers",
-    "//third_party/libyuv",
+    "../../system_wrappers:cpu_features_api",
+    "../../system_wrappers:metrics_api",
   ]
+
+  if (build_with_mozilla) {
+    deps += [ "../../rtc_base:rtc_base_approved" ]
+  } else {
+    deps += [ "//third_party/libyuv" ]
+  }
 
   if (use_desktop_capture_differ_sse2) {
     deps += [ ":desktop_capture_differ_sse2" ]

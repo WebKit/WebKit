@@ -12,7 +12,6 @@
 #include <memory>
 
 #include "p2p/base/basicpacketsocketfactory.h"
-#include "p2p/base/jseptransport.h"
 #include "p2p/base/relayport.h"
 #include "p2p/base/stunport.h"
 #include "p2p/base/tcpport.h"
@@ -47,49 +46,51 @@ using rtc::NAT_SYMMETRIC;
 using rtc::PacketSocketFactory;
 using rtc::Socket;
 using rtc::SocketAddress;
-using namespace cricket;
 
-static const int kDefaultTimeout = 3000;
-static const int kShortTimeout = 1000;
-static const SocketAddress kLocalAddr1("192.168.1.2", 0);
-static const SocketAddress kLocalAddr2("192.168.1.3", 0);
-static const SocketAddress kNatAddr1("77.77.77.77", rtc::NAT_SERVER_UDP_PORT);
-static const SocketAddress kNatAddr2("88.88.88.88", rtc::NAT_SERVER_UDP_PORT);
-static const SocketAddress kStunAddr("99.99.99.1", STUN_SERVER_PORT);
-static const SocketAddress kRelayUdpIntAddr("99.99.99.2", 5000);
-static const SocketAddress kRelayUdpExtAddr("99.99.99.3", 5001);
-static const SocketAddress kRelayTcpIntAddr("99.99.99.2", 5002);
-static const SocketAddress kRelayTcpExtAddr("99.99.99.3", 5003);
-static const SocketAddress kRelaySslTcpIntAddr("99.99.99.2", 5004);
-static const SocketAddress kRelaySslTcpExtAddr("99.99.99.3", 5005);
-static const SocketAddress kTurnUdpIntAddr("99.99.99.4", STUN_SERVER_PORT);
-static const SocketAddress kTurnTcpIntAddr("99.99.99.4", 5010);
-static const SocketAddress kTurnUdpExtAddr("99.99.99.5", 0);
-static const RelayCredentials kRelayCredentials("test", "test");
+namespace cricket {
+namespace {
 
-// TODO: Update these when RFC5245 is completely supported.
+constexpr int kDefaultTimeout = 3000;
+constexpr int kShortTimeout = 1000;
+const SocketAddress kLocalAddr1("192.168.1.2", 0);
+const SocketAddress kLocalAddr2("192.168.1.3", 0);
+const SocketAddress kNatAddr1("77.77.77.77", rtc::NAT_SERVER_UDP_PORT);
+const SocketAddress kNatAddr2("88.88.88.88", rtc::NAT_SERVER_UDP_PORT);
+const SocketAddress kStunAddr("99.99.99.1", STUN_SERVER_PORT);
+const SocketAddress kRelayUdpIntAddr("99.99.99.2", 5000);
+const SocketAddress kRelayUdpExtAddr("99.99.99.3", 5001);
+const SocketAddress kRelayTcpIntAddr("99.99.99.2", 5002);
+const SocketAddress kRelayTcpExtAddr("99.99.99.3", 5003);
+const SocketAddress kRelaySslTcpIntAddr("99.99.99.2", 5004);
+const SocketAddress kRelaySslTcpExtAddr("99.99.99.3", 5005);
+const SocketAddress kTurnUdpIntAddr("99.99.99.4", STUN_SERVER_PORT);
+const SocketAddress kTurnTcpIntAddr("99.99.99.4", 5010);
+const SocketAddress kTurnUdpExtAddr("99.99.99.5", 0);
+const RelayCredentials kRelayCredentials("test", "test");
+
+// TODO(?): Update these when RFC5245 is completely supported.
 // Magic value of 30 is from RFC3484, for IPv4 addresses.
-static const uint32_t kDefaultPrflxPriority =
-    ICE_TYPE_PREFERENCE_PRFLX << 24 | 30 << 8 |
-    (256 - ICE_CANDIDATE_COMPONENT_DEFAULT);
+const uint32_t kDefaultPrflxPriority = ICE_TYPE_PREFERENCE_PRFLX << 24 |
+                                       30 << 8 |
+                                       (256 - ICE_CANDIDATE_COMPONENT_DEFAULT);
 
-static const int kTiebreaker1 = 11111;
-static const int kTiebreaker2 = 22222;
+constexpr int kTiebreaker1 = 11111;
+constexpr int kTiebreaker2 = 22222;
 
-static const char* data = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+const char* data = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-static const int kGturnUserNameLength = 16;
+constexpr int kGturnUserNameLength = 16;
 
-static Candidate GetCandidate(Port* port) {
-  assert(port->Candidates().size() >= 1);
+Candidate GetCandidate(Port* port) {
+  RTC_DCHECK_GE(port->Candidates().size(), 1);
   return port->Candidates()[0];
 }
 
-static SocketAddress GetAddress(Port* port) {
+SocketAddress GetAddress(Port* port) {
   return GetCandidate(port).address();
 }
 
-static IceMessage* CopyStunMessage(const IceMessage* src) {
+IceMessage* CopyStunMessage(const IceMessage* src) {
   IceMessage* dst = new IceMessage();
   ByteBufferWriter buf;
   src->Write(&buf);
@@ -98,10 +99,12 @@ static IceMessage* CopyStunMessage(const IceMessage* src) {
   return dst;
 }
 
-static bool WriteStunMessage(const StunMessage* msg, ByteBufferWriter* buf) {
+bool WriteStunMessage(const StunMessage* msg, ByteBufferWriter* buf) {
   buf->Resize(0);  // clear out any existing buffer contents
   return msg->Write(buf);
 }
+
+}  // namespace
 
 // Stub port class for testing STUN generation and processing.
 class TestPort : public Port {
@@ -128,7 +131,7 @@ class TestPort : public Port {
   using cricket::Port::GetStunMessage;
 
   // The last StunMessage that was sent on this Port.
-  // TODO: Make these const; requires changes to SendXXXXResponse.
+  // TODO(?): Make these const; requires changes to SendXXXXResponse.
   Buffer* last_stun_buf() { return last_stun_buf_.get(); }
   IceMessage* last_stun_msg() { return last_stun_msg_.get(); }
   int last_stun_error_code() {
@@ -243,7 +246,7 @@ static void SendPingAndReceiveResponse(
 class TestChannel : public sigslot::has_slots<> {
  public:
   // Takes ownership of |p1| (but not |p2|).
-  TestChannel(Port* p1)
+  explicit TestChannel(Port* p1)
       : ice_mode_(ICEMODE_FULL),
         port_(p1),
         complete_count_(0),
@@ -553,7 +556,7 @@ class PortTest : public testing::Test, public sigslot::has_slots<> {
     std::string username = rtc::CreateRandomString(kGturnUserNameLength);
     return RelayPort::Create(&main_, &socket_factory_, MakeNetwork(addr), 0, 0,
                              username, password_);
-    // TODO: Add an external address for ext_proto, so that the
+    // TODO(?): Add an external address for ext_proto, so that the
     // other side can connect to this port using a non-UDP protocol.
   }
   rtc::NATServer* CreateNatServer(const SocketAddress& addr,
@@ -996,7 +999,7 @@ class FakePacketSocketFactory : public rtc::PacketSocketFactory {
     return result;
   }
 
-  // TODO: |proxy_info| and |user_agent| should be set
+  // TODO(?): |proxy_info| and |user_agent| should be set
   // per-factory and not when socket is created.
   AsyncPacketSocket* CreateClientTcpSocket(const SocketAddress& local_address,
                                            const SocketAddress& remote_address,
@@ -1283,7 +1286,7 @@ TEST_F(PortTest, TestTcpNeverConnect) {
   EXPECT_TRUE_WAIT(!ch1.conn(), kDefaultTimeout);  // for TCP connect
 }
 
-/* TODO: Enable these once testrelayserver can accept external TCP.
+/* TODO(?): Enable these once testrelayserver can accept external TCP.
 TEST_F(PortTest, TestTcpToTcpRelay) {
   TestTcpToRelay(PROTO_TCP);
 }
@@ -1294,7 +1297,7 @@ TEST_F(PortTest, TestTcpToSslTcpRelay) {
 */
 
 // Outbound SSLTCP -> XXXX
-/* TODO: Enable these once testrelayserver can accept external SSL.
+/* TODO(?): Enable these once testrelayserver can accept external SSL.
 TEST_F(PortTest, TestSslTcpToTcpRelay) {
   TestSslTcpToRelay(PROTO_TCP);
 }
@@ -2199,7 +2202,7 @@ TEST_F(PortTest, TestHandleStunMessageBadMessageIntegrity) {
   EXPECT_EQ("", username);
   EXPECT_EQ(STUN_ERROR_UNAUTHORIZED, port->last_stun_error_code());
 
-  // TODO: BINDING-RESPONSES and BINDING-ERROR-RESPONSES are checked
+  // TODO(?): BINDING-RESPONSES and BINDING-ERROR-RESPONSES are checked
   // by the Connection, not the Port, since they require the remote username.
   // Change this test to pass in data via Connection::OnReadPacket instead.
 }
@@ -2897,3 +2900,5 @@ TEST_F(PortTest, TestAddConnectionWithSameAddress) {
   rtc::Thread::Current()->ProcessMessages(300);
   EXPECT_TRUE(port->GetConnection(address) != nullptr);
 }
+
+}  // namespace cricket

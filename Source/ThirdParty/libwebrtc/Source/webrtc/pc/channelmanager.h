@@ -80,6 +80,8 @@ class ChannelManager final {
   // call the appropriate Destroy*Channel method when done.
 
   // Creates a voice channel, to be associated with the specified session.
+  // TODO(zhihuang): Replace this with the method taking an
+  // RtpTransportInternal*;
   VoiceChannel* CreateVoiceChannel(
       webrtc::Call* call,
       const cricket::MediaConfig& media_config,
@@ -90,6 +92,8 @@ class ChannelManager final {
       bool srtp_required,
       const AudioOptions& options);
   // Version of the above that takes PacketTransportInternal.
+  // TODO(zhihuang): Replace this with the method taking an
+  // RtpTransportInternal*;
   VoiceChannel* CreateVoiceChannel(
       webrtc::Call* call,
       const cricket::MediaConfig& media_config,
@@ -99,11 +103,21 @@ class ChannelManager final {
       const std::string& content_name,
       bool srtp_required,
       const AudioOptions& options);
+
+  VoiceChannel* CreateVoiceChannel(webrtc::Call* call,
+                                   const cricket::MediaConfig& media_config,
+                                   webrtc::RtpTransportInternal* rtp_transport,
+                                   rtc::Thread* signaling_thread,
+                                   const std::string& content_name,
+                                   bool srtp_required,
+                                   const AudioOptions& options);
   // Destroys a voice channel created by CreateVoiceChannel.
   void DestroyVoiceChannel(VoiceChannel* voice_channel);
 
   // Creates a video channel, synced with the specified voice channel, and
   // associated with the specified session.
+  // TODO(zhihuang): Replace this with the method taking an
+  // RtpTransportInternal*;
   VideoChannel* CreateVideoChannel(
       webrtc::Call* call,
       const cricket::MediaConfig& media_config,
@@ -114,6 +128,8 @@ class ChannelManager final {
       bool srtp_required,
       const VideoOptions& options);
   // Version of the above that takes PacketTransportInternal.
+  // TODO(zhihuang): Replace this with the method taking an
+  // RtpTransportInternal*;
   VideoChannel* CreateVideoChannel(
       webrtc::Call* call,
       const cricket::MediaConfig& media_config,
@@ -123,13 +139,28 @@ class ChannelManager final {
       const std::string& content_name,
       bool srtp_required,
       const VideoOptions& options);
+  VideoChannel* CreateVideoChannel(webrtc::Call* call,
+                                   const cricket::MediaConfig& media_config,
+                                   webrtc::RtpTransportInternal* rtp_transport,
+                                   rtc::Thread* signaling_thread,
+                                   const std::string& content_name,
+                                   bool srtp_required,
+                                   const VideoOptions& options);
   // Destroys a video channel created by CreateVideoChannel.
   void DestroyVideoChannel(VideoChannel* video_channel);
 
+  // TODO(zhihuang): Replace this with the method taking an
+  // RtpTransportInternal*;
   RtpDataChannel* CreateRtpDataChannel(
       const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_transport,
       DtlsTransportInternal* rtcp_transport,
+      rtc::Thread* signaling_thread,
+      const std::string& content_name,
+      bool srtp_required);
+  RtpDataChannel* CreateRtpDataChannel(
+      const cricket::MediaConfig& media_config,
+      webrtc::RtpTransportInternal* rtp_transport,
       rtc::Thread* signaling_thread,
       const std::string& content_name,
       bool srtp_required);

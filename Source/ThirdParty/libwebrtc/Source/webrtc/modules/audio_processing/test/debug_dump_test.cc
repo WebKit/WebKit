@@ -139,14 +139,14 @@ DebugDumpGenerator::DebugDumpGenerator(const std::string& input_file_name,
       output_(new ChannelBuffer<float>(output_config_.num_frames(),
                                        output_config_.num_channels())),
       worker_queue_("debug_dump_generator_worker_queue"),
-      apm_(AudioProcessing::Create(
-          config,
-          nullptr,
-          (enable_aec3 ? std::unique_ptr<EchoControlFactory>(
-                             new EchoCanceller3Factory())
-                       : nullptr),
-          nullptr)),
-      dump_file_name_(dump_file_name) {}
+      dump_file_name_(dump_file_name) {
+  AudioProcessingBuilder apm_builder;
+  if (enable_aec3) {
+    apm_builder.SetEchoControlFactory(
+        std::unique_ptr<EchoControlFactory>(new EchoCanceller3Factory()));
+  }
+  apm_.reset(apm_builder.Create(config));
+}
 
 DebugDumpGenerator::DebugDumpGenerator(
     const Config& config,

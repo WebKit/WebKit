@@ -11,9 +11,9 @@
 #include "rtc_base/file.h"
 
 #include <io.h>
-#include "rtc_base/win32.h"
+#include <windows.h>
 
-#include <limits>  // NOLINT: win32.h should be considered a system header
+#include <limits>
 
 #include "rtc_base/checks.h"
 

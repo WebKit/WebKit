@@ -30,11 +30,13 @@ extern const char kRtxCodecName[];
 extern const char kRedCodecName[];
 extern const char kUlpfecCodecName[];
 extern const char kFlexfecCodecName[];
+extern const char kStereoCodecName[];
 
 extern const char kFlexfecFmtpRepairWindow[];
 
 // Codec parameters
 extern const char kCodecParamAssociatedPayloadType[];
+extern const char kCodecParamAssociatedCodecName[];
 
 extern const char kOpusCodecName[];
 extern const char kIsacCodecName[];

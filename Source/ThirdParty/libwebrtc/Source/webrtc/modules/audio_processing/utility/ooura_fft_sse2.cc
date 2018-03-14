@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_processing//utility/ooura_fft.h"
+#include "modules/audio_processing/utility/ooura_fft.h"
 
 #include <emmintrin.h>
 

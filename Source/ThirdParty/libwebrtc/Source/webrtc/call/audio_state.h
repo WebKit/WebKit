@@ -16,23 +16,17 @@
 
 namespace webrtc {
 
+class AudioDeviceModule;
 class AudioProcessing;
 class AudioTransport;
 class VoiceEngine;
-
-// WORK IN PROGRESS
-// This class is under development and is not yet intended for for use outside
-// of WebRtc/Libjingle. Please use the VoiceEngine API instead.
-// See: https://bugs.chromium.org/p/webrtc/issues/detail?id=4690
 
 // AudioState holds the state which must be shared between multiple instances of
 // webrtc::Call for audio processing purposes.
 class AudioState : public rtc::RefCountInterface {
  public:
   struct Config {
-    // VoiceEngine used for audio streams and audio/video synchronization.
-    // AudioState will tickle the VoE refcount to keep it alive for as long as
-    // the AudioState itself.
+    // TODO(solenberg): Remove once clients don't use it anymore.
     VoiceEngine* voice_engine = nullptr;
 
     // The audio mixer connected to active receive streams. One per
@@ -41,6 +35,19 @@ class AudioState : public rtc::RefCountInterface {
 
     // The audio processing module.
     rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing;
+
+    // TODO(solenberg): Temporary: audio device module.
+    rtc::scoped_refptr<webrtc::AudioDeviceModule> audio_device_module;
+  };
+
+  struct Stats {
+    // Audio peak level (max(abs())), linearly on the interval [0,32767].
+    int32_t audio_level = -1;
+    // Audio peak level (max(abs())), logarithmically on the interval [0,9].
+    int8_t quantized_audio_level = -1;
+    // See: https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats-totalaudioenergy
+    double total_energy = 0.0f;
+    double total_duration = 0.0f;
   };
 
   virtual AudioProcessing* audio_processing() = 0;
@@ -56,6 +63,9 @@ class AudioState : public rtc::RefCountInterface {
   // This will stop recording of the underlying audio device and no audio
   // packets will be encoded or transmitted.
   virtual void SetRecording(bool enabled) = 0;
+
+  virtual Stats GetAudioInputStats() const = 0;
+  virtual void SetStereoChannelSwapping(bool enable) = 0;
 
   // TODO(solenberg): Replace scoped_refptr with shared_ptr once we can use it.
   static rtc::scoped_refptr<AudioState> Create(

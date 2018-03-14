@@ -468,22 +468,6 @@ TEST_F(SSLAdapterTestTLS_ECDSA, TestTLSEllipticCurves) {
   TestTransfer("Hello, world!");
 }
 
-// Test transfer using ALPN with protos as h2 and http/1.1
-TEST_F(SSLAdapterTestTLS_ECDSA, TestTLSALPN) {
-  std::vector<std::string> alpn_protos{"h2", "http/1.1"};
-  SetAlpnProtocols(alpn_protos);
-  TestHandshake(true);
-  TestTransfer("Hello, world!");
-}
-
-// Test transfer with TLS Elliptic curves set to "X25519:P-256:P-384:P-521"
-TEST_F(SSLAdapterTestTLS_ECDSA, TestTLSEllipticCurves) {
-  std::vector<std::string> elliptic_curves{"X25519", "P-256", "P-384", "P-521"};
-  SetEllipticCurves(elliptic_curves);
-  TestHandshake(true);
-  TestTransfer("Hello, world!");
-}
-
 // Basic tests: DTLS
 
 // Test that handshake works, using RSA

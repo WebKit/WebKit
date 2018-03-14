@@ -834,6 +834,7 @@ bool VirtualSocketServer::Disconnect(VirtualSocket* socket) {
 int VirtualSocketServer::SendUdp(VirtualSocket* socket,
                                  const char* data, size_t data_size,
                                  const SocketAddress& remote_addr) {
+  ++sent_packets_;
   if (sending_blocked_) {
     CritScope cs(&socket->crit_);
     socket->ready_to_send_ = false;
@@ -897,6 +898,7 @@ int VirtualSocketServer::SendUdp(VirtualSocket* socket,
 }
 
 void VirtualSocketServer::SendTcp(VirtualSocket* socket) {
+  ++sent_packets_;
   if (sending_blocked_) {
     // Eventually the socket's buffer will fill and VirtualSocket::SendTcp will
     // set EWOULDBLOCK.

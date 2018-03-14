@@ -12,7 +12,7 @@
 #define MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
 
 #include "api/video/video_rotation.h"
-#include "media/base/videosinkinterface.h"
+#include "api/videosinkinterface.h"
 #include "modules/include/module.h"
 #include "modules/video_capture/video_capture_defines.h"
 

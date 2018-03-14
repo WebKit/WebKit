@@ -22,11 +22,15 @@
 namespace webrtc {
 namespace {
 constexpr size_t kMinPacketRequestBytes = 50;
+// Don't overwrite a packet within one second, or three RTTs, after transmission
+// whichever is larger. Instead try to dynamically expand history.
+constexpr int64_t kMinPacketDurationMs = 1000;
+constexpr int kMinPacketDurationRtt = 3;
 }  // namespace
 constexpr size_t RtpPacketHistory::kMaxCapacity;
 
 RtpPacketHistory::RtpPacketHistory(Clock* clock)
-    : clock_(clock), store_(false), prev_index_(0) {}
+    : clock_(clock), store_(false), prev_index_(0), rtt_ms_(-1) {}
 
 RtpPacketHistory::~RtpPacketHistory() {}
 
@@ -78,12 +82,20 @@ void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
     return;
   }
 
+  int64_t now_ms = clock_->TimeInMilliseconds();
+
   // If index we're about to overwrite contains a packet that has not
-  // yet been sent (probably pending in paced sender), we need to expand
-  // the buffer.
-  if (stored_packets_[prev_index_].packet &&
-      stored_packets_[prev_index_].send_time == 0) {
-    size_t current_size = static_cast<uint16_t>(stored_packets_.size());
+  // yet been sent (probably pending in paced sender), or if the send time is
+  // less than 3 round trip times ago, expand the buffer to avoid overwriting
+  // valid data.
+  StoredPacket* stored_packet = &stored_packets_[prev_index_];
+  int64_t packet_duration_ms =
+      std::max(kMinPacketDurationRtt * rtt_ms_, kMinPacketDurationMs);
+  if (stored_packet->packet &&
+      (stored_packet->send_time == 0 ||
+       (rtt_ms_ >= 0 &&
+        now_ms - stored_packet->send_time <= packet_duration_ms))) {
+    size_t current_size = stored_packets_.size();
     if (current_size < kMaxCapacity) {
       size_t expanded_size = std::max(current_size * 3 / 2, current_size + 1);
       expanded_size = std::min(expanded_size, kMaxCapacity);
@@ -91,23 +103,20 @@ void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
       // Causes discontinuity, but that's OK-ish. FindSeqNum() will still work,
       // but may be slower - at least until buffer has wrapped around once.
       prev_index_ = current_size;
+      stored_packet = &stored_packets_[prev_index_];
     }
   }
 
   // Store packet.
   if (packet->capture_time_ms() <= 0)
-    packet->set_capture_time_ms(clock_->TimeInMilliseconds());
-  stored_packets_[prev_index_].sequence_number = packet->SequenceNumber();
-  stored_packets_[prev_index_].send_time =
-      (sent ? clock_->TimeInMilliseconds() : 0);
-  stored_packets_[prev_index_].storage_type = type;
-  stored_packets_[prev_index_].has_been_retransmitted = false;
-  stored_packets_[prev_index_].packet = std::move(packet);
+    packet->set_capture_time_ms(now_ms);
+  stored_packet->sequence_number = packet->SequenceNumber();
+  stored_packet->send_time = sent ? now_ms : 0;
+  stored_packet->storage_type = type;
+  stored_packet->has_been_retransmitted = false;
+  stored_packet->packet = std::move(packet);
 
-  ++prev_index_;
-  if (prev_index_ >= stored_packets_.size()) {
-    prev_index_ = 0;
-  }
+  prev_index_ = (prev_index_ + 1) % stored_packets_.size();
 }
 
 bool RtpPacketHistory::HasRtpPacket(uint16_t sequence_number) const {
@@ -218,6 +227,12 @@ int RtpPacketHistory::FindBestFittingPacket(size_t size) const {
     }
   }
   return best_index;
+}
+
+void RtpPacketHistory::SetRtt(int64_t rtt_ms) {
+  rtc::CritScope cs(&critsect_);
+  RTC_DCHECK_GE(rtt_ms, 0);
+  rtt_ms_ = rtt_ms;
 }
 
 }  // namespace webrtc

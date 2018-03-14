@@ -37,9 +37,6 @@ const int ICE_CANDIDATE_COMPONENT_RTP = 1;
 const int ICE_CANDIDATE_COMPONENT_RTCP = 2;
 const int ICE_CANDIDATE_COMPONENT_DEFAULT = 1;
 
-const char NS_JINGLE_RTP[] = "urn:xmpp:jingle:apps:rtp:1";
-const char NS_JINGLE_DRAFT_SCTP[] = "google:jingle:sctp";
-
 // From RFC 4145, SDP setup attribute values.
 const char CONNECTIONROLE_ACTIVE_STR[] = "active";
 const char CONNECTIONROLE_PASSIVE_STR[] = "passive";

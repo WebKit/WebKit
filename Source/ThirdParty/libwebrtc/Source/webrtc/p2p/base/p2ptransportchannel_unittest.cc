@@ -9,6 +9,7 @@
  */
 
 #include <algorithm>
+#include <list>
 #include <memory>
 
 #include "api/fakemetricsobserver.h"
@@ -265,7 +266,7 @@ class P2PTransportChannelTestBase : public testing::Test,
       return ret;
     }
 
-    std::string name_;  // TODO - Currently not used.
+    std::string name_;  // TODO(?) - Currently not used.
     std::list<std::string> ch_packets_;
     std::unique_ptr<P2PTransportChannel> ch_;
   };
@@ -589,25 +590,25 @@ class P2PTransportChannelTestBase : public testing::Test,
       }
     }
     // Try sending some data to other end.
-    TestSendRecv(clock);
+    TestSendRecv(&clock);
 
     // Destroy the channels, and wait for them to be fully cleaned up.
     DestroyChannels();
   }
 
-  void TestSendRecv(rtc::FakeClock& clock) {
+  void TestSendRecv(rtc::FakeClock* clock) {
     for (int i = 0; i < 10; ++i) {
       const char* data = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
       int len = static_cast<int>(strlen(data));
       // local_channel1 <==> remote_channel1
       EXPECT_EQ_SIMULATED_WAIT(len, SendData(ep1_ch1(), data, len),
-                               kMediumTimeout, clock);
+                               kMediumTimeout, *clock);
       EXPECT_TRUE_SIMULATED_WAIT(CheckDataOnChannel(ep2_ch1(), data, len),
-                                 kMediumTimeout, clock);
+                                 kMediumTimeout, *clock);
       EXPECT_EQ_SIMULATED_WAIT(len, SendData(ep2_ch1(), data, len),
-                               kMediumTimeout, clock);
+                               kMediumTimeout, *clock);
       EXPECT_TRUE_SIMULATED_WAIT(CheckDataOnChannel(ep1_ch1(), data, len),
-                                 kMediumTimeout, clock);
+                                 kMediumTimeout, *clock);
     }
   }
 
@@ -677,7 +678,7 @@ class P2PTransportChannelTestBase : public testing::Test,
     EXPECT_TRUE(ep1_ch1()->selected_connection() &&
                 ep2_ch1()->selected_connection());
 
-    TestSendRecv(clock);
+    TestSendRecv(&clock);
   }
 
   void OnReadyToSend(rtc::PacketTransportInternal* transport) {
@@ -1076,15 +1077,15 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
 #define LTLT &kLocalTcpToLocalTcp
 #define LTPT &kLocalTcpToPrflxTcp
 #define PTLT &kPrflxTcpToLocalTcp
-// TODO: Enable these once TestRelayServer can accept external TCP.
+// TODO(?): Enable these once TestRelayServer can accept external TCP.
 #define LTRT NULL
 #define LSRS NULL
 
 // Test matrix. Originator behavior defined by rows, receiever by columns.
 
-// TODO: Fix NULLs caused by lack of TCP support in NATSocket.
-// TODO: Fix NULLs caused by no HTTP proxy support.
-// TODO: Rearrange rows/columns from best to worst.
+// TODO(?): Fix NULLs caused by lack of TCP support in NATSocket.
+// TODO(?): Fix NULLs caused by no HTTP proxy support.
+// TODO(?): Rearrange rows/columns from best to worst.
 const P2PTransportChannelTest::Result*
     P2PTransportChannelTest::kMatrix[NUM_CONFIGS][NUM_CONFIGS] = {
 //      OPEN  CONE  ADDR  PORT  SYMM  2CON  SCON  !UDP  !TCP  HTTP  PRXH  PRXS
@@ -1114,8 +1115,7 @@ const P2PTransportChannelTest::Result*
       RTC_LOG(LS_WARNING) << "Not yet implemented";              \
   }
 
-#define P2P_TEST(x, y) \
-  P2P_TEST_DECLARATION(x, y,)
+#define P2P_TEST(x, y) P2P_TEST_DECLARATION(x, y, /* empty argument */)
 
 #define P2P_TEST_SET(x)                    \
   P2P_TEST(x, OPEN)                        \
@@ -1174,10 +1174,10 @@ TEST_F(P2PTransportChannelTest, GetStats) {
                                  ep2_ch1()->receiving() &&
                                  ep2_ch1()->writable(),
                              kMediumTimeout, clock);
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   ConnectionInfos infos;
   ASSERT_TRUE(ep1_ch1()->GetStats(&infos));
-  ASSERT_TRUE(infos.size() >= 1);
+  ASSERT_GE(infos.size(), 1u);
   ConnectionInfo* best_conn_info = nullptr;
   for (ConnectionInfo& info : infos) {
     if (info.best_connection) {
@@ -1336,9 +1336,9 @@ TEST_F(P2PTransportChannelTest,
 
   // ep1 gathers continually but ep2 does not.
   IceConfig config1 = CreateIceConfig(1000, GATHER_CONTINUALLY);
-  config1.regather_on_failed_networks_interval = rtc::Optional<int>(2000);
+  config1.regather_on_failed_networks_interval = 2000;
   IceConfig config2;
-  config2.regather_on_failed_networks_interval = rtc::Optional<int>(2000);
+  config2.regather_on_failed_networks_interval = 2000;
   CreateChannels(config1, config2);
 
   EXPECT_TRUE_SIMULATED_WAIT(ep1_ch1()->receiving() && ep1_ch1()->writable() &&
@@ -1446,7 +1446,7 @@ class P2PTransportRegatherAllNetworksTest : public P2PTransportChannelTest {
     ASSERT_NE(initial_selected, new_selected);
 
     // Make sure we can communicate over the new connection too.
-    TestSendRecv(clock);
+    TestSendRecv(&clock);
   }
 };
 
@@ -1734,7 +1734,7 @@ TEST_F(P2PTransportChannelTest, TestTcpConnectionsFromActiveToPassive) {
               LocalCandidate(ep1_ch1())->address().EqualIPs(kPublicAddrs[0]) &&
               RemoteCandidate(ep1_ch1())->address().EqualIPs(kPublicAddrs[1]));
 
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   DestroyChannels();
 }
 
@@ -1787,7 +1787,7 @@ TEST_F(P2PTransportChannelTest, TestIceConfigWillPassDownToPort) {
   EXPECT_TRUE(ep1_ch1()->selected_connection() &&
               ep2_ch1()->selected_connection());
 
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   DestroyChannels();
 }
 
@@ -1847,7 +1847,7 @@ TEST_F(P2PTransportChannelTest, TestIPv6Connections) {
       LocalCandidate(ep1_ch1())->address().EqualIPs(kIPv6PublicAddrs[0]) &&
       RemoteCandidate(ep1_ch1())->address().EqualIPs(kIPv6PublicAddrs[1]));
 
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   DestroyChannels();
 }
 
@@ -1878,7 +1878,7 @@ TEST_F(P2PTransportChannelTest, TestForceTurn) {
   EXPECT_EQ("relay", RemoteCandidate(ep2_ch1())->type());
   EXPECT_EQ("relay", LocalCandidate(ep2_ch1())->type());
 
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   DestroyChannels();
 }
 
@@ -1945,7 +1945,7 @@ TEST_F(P2PTransportChannelTest, TestUsingPooledSessionBeforeDoneGathering) {
           ep1_ch1()->writable() && ep2_ch1()->receiving() &&
           ep2_ch1()->writable(),
       kMediumTimeout, clock);
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   // Make sure the P2PTransportChannels are actually using ports from the
   // pooled sessions.
   auto pooled_ports_1 = pooled_session_1->ReadyPorts();
@@ -1990,7 +1990,7 @@ TEST_F(P2PTransportChannelTest, TestUsingPooledSessionAfterDoneGathering) {
           ep1_ch1()->writable() && ep2_ch1()->receiving() &&
           ep2_ch1()->writable(),
       kMediumTimeout, clock);
-  TestSendRecv(clock);
+  TestSendRecv(&clock);
   // Make sure the P2PTransportChannels are actually using ports from the
   // pooled sessions.
   auto pooled_ports_1 = pooled_session_1->ReadyPorts();
@@ -3013,7 +3013,7 @@ TEST_F(P2PTransportChannelMultihomedTest, TestRestoreBackupConnection) {
 
   // Create channels and let them go writable, as usual.
   IceConfig config = CreateIceConfig(1000, GATHER_CONTINUALLY);
-  config.regather_on_failed_networks_interval = rtc::Optional<int>(2000);
+  config.regather_on_failed_networks_interval = 2000;
   CreateChannels(config, config);
   EXPECT_TRUE_SIMULATED_WAIT(ep1_ch1()->receiving() && ep1_ch1()->writable() &&
                                  ep2_ch1()->receiving() &&
@@ -3107,27 +3107,27 @@ class P2PTransportChannelPingTest : public testing::Test,
     return conn;
   }
 
-  int SendData(IceTransportInternal& channel,
+  int SendData(IceTransportInternal* channel,
                const char* data,
                size_t len,
                int packet_id) {
     rtc::PacketOptions options;
     options.packet_id = packet_id;
-    return channel.SendPacket(data, len, options, 0);
+    return channel->SendPacket(data, len, options, 0);
   }
 
-  Connection* CreateConnectionWithCandidate(P2PTransportChannel& channel,
-                                            rtc::ScopedFakeClock& clock,
+  Connection* CreateConnectionWithCandidate(P2PTransportChannel* channel,
+                                            rtc::ScopedFakeClock* clock,
                                             const std::string& ip_addr,
                                             int port,
                                             int priority,
                                             bool writable) {
-    channel.AddRemoteCandidate(
+    channel->AddRemoteCandidate(
         CreateUdpCandidate(LOCAL_PORT_TYPE, ip_addr, port, priority));
     EXPECT_TRUE_SIMULATED_WAIT(
-        GetConnectionTo(&channel, ip_addr, port) != nullptr, kMediumTimeout,
-        clock);
-    Connection* conn = GetConnectionTo(&channel, ip_addr, port);
+        GetConnectionTo(channel, ip_addr, port) != nullptr, kMediumTimeout,
+        *clock);
+    Connection* conn = GetConnectionTo(channel, ip_addr, port);
 
     if (conn && writable) {
       conn->ReceivedPingResponse(LOW_RTT, "id");  // make it writable
@@ -3602,14 +3602,14 @@ TEST_F(P2PTransportChannelPingTest, TestSelectConnectionBeforeNomination) {
   int last_packet_id = 0;
   const char* data = "ABCDEFGH";
   int len = static_cast<int>(strlen(data));
-  EXPECT_EQ(-1, SendData(ch, data, len, ++last_packet_id));
+  EXPECT_EQ(-1, SendData(&ch, data, len, ++last_packet_id));
   EXPECT_EQ(-1, last_sent_packet_id());
 
   // A connection needs to be writable before it is selected for transmission.
   conn1->ReceivedPingResponse(LOW_RTT, "id");
   EXPECT_EQ_WAIT(conn1, ch.selected_connection(), kDefaultTimeout);
   EXPECT_TRUE(CandidatePairMatchesNetworkRoute(conn1));
-  EXPECT_EQ(len, SendData(ch, data, len, ++last_packet_id));
+  EXPECT_EQ(len, SendData(&ch, data, len, ++last_packet_id));
 
   // When a higher priority candidate comes in, the new connection is chosen
   // as the selected connection.
@@ -3625,7 +3625,7 @@ TEST_F(P2PTransportChannelPingTest, TestSelectConnectionBeforeNomination) {
   // If a stun request with use-candidate attribute arrives, the receiving
   // connection will be set as the selected connection, even though
   // its priority is lower.
-  EXPECT_EQ(len, SendData(ch, data, len, ++last_packet_id));
+  EXPECT_EQ(len, SendData(&ch, data, len, ++last_packet_id));
   ch.AddRemoteCandidate(CreateUdpCandidate(LOCAL_PORT_TYPE, "3.3.3.3", 3, 1));
   Connection* conn3 = WaitForConnectionTo(&ch, "3.3.3.3", 3);
   ASSERT_TRUE(conn3 != nullptr);
@@ -3643,7 +3643,7 @@ TEST_F(P2PTransportChannelPingTest, TestSelectConnectionBeforeNomination) {
   // Even if another higher priority candidate arrives, it will not be set as
   // the selected connection because the selected connection is nominated by
   // the controlling side.
-  EXPECT_EQ(len, SendData(ch, data, len, ++last_packet_id));
+  EXPECT_EQ(len, SendData(&ch, data, len, ++last_packet_id));
   ch.AddRemoteCandidate(CreateUdpCandidate(LOCAL_PORT_TYPE, "4.4.4.4", 4, 100));
   Connection* conn4 = WaitForConnectionTo(&ch, "4.4.4.4", 4);
   ASSERT_TRUE(conn4 != nullptr);
@@ -3811,10 +3811,10 @@ TEST_F(P2PTransportChannelPingTest,
   ch.MaybeStartGathering();
   // The connections have decreasing priority.
   Connection* conn1 =
-      CreateConnectionWithCandidate(ch, clock, "1.1.1.1", 1, 10, true);
+      CreateConnectionWithCandidate(&ch, &clock, "1.1.1.1", 1, 10, true);
   ASSERT_TRUE(conn1 != nullptr);
   Connection* conn2 =
-      CreateConnectionWithCandidate(ch, clock, "2.2.2.2", 2, 9, true);
+      CreateConnectionWithCandidate(&ch, &clock, "2.2.2.2", 2, 9, true);
   ASSERT_TRUE(conn2 != nullptr);
 
   // Initially, connections are selected based on priority.
@@ -3860,10 +3860,10 @@ TEST_F(P2PTransportChannelPingTest,
   ch.MaybeStartGathering();
   // The connections have decreasing priority.
   Connection* conn1 =
-      CreateConnectionWithCandidate(ch, clock, "1.1.1.1", 1, 10, true);
+      CreateConnectionWithCandidate(&ch, &clock, "1.1.1.1", 1, 10, true);
   ASSERT_TRUE(conn1 != nullptr);
   Connection* conn2 =
-      CreateConnectionWithCandidate(ch, clock, "2.2.2.2", 2, 9, true);
+      CreateConnectionWithCandidate(&ch, &clock, "2.2.2.2", 2, 9, true);
   ASSERT_TRUE(conn2 != nullptr);
 
   // conn1 received data; it is the selected connection.
@@ -3900,10 +3900,10 @@ TEST_F(P2PTransportChannelPingTest,
   ch.MaybeStartGathering();
   // The connections have decreasing priority.
   Connection* conn1 =
-      CreateConnectionWithCandidate(ch, clock, "1.1.1.1", 1, 10, true);
+      CreateConnectionWithCandidate(&ch, &clock, "1.1.1.1", 1, 10, true);
   ASSERT_TRUE(conn1 != nullptr);
   Connection* conn2 =
-      CreateConnectionWithCandidate(ch, clock, "2.2.2.2", 2, 9, true);
+      CreateConnectionWithCandidate(&ch, &clock, "2.2.2.2", 2, 9, true);
   ASSERT_TRUE(conn2 != nullptr);
 
   // conn1 is the selected connection because it has a higher priority,
@@ -3946,7 +3946,7 @@ TEST_F(P2PTransportChannelPingTest,
   ch.SetIceRole(ICEROLE_CONTROLLED);
   ch.MaybeStartGathering();
   Connection* conn =
-      CreateConnectionWithCandidate(ch, clock, "1.1.1.1", 1, 10, false);
+      CreateConnectionWithCandidate(&ch, &clock, "1.1.1.1", 1, 10, false);
   ReceivePingOnConnection(conn, kIceUfrag[1], 1, 2U);
   EXPECT_EQ(2U, conn->remote_nomination());
   // Smaller nomination is ignored.
@@ -3965,10 +3965,10 @@ TEST_F(P2PTransportChannelPingTest,
   ch.MaybeStartGathering();
   // The connections have decreasing priority.
   Connection* conn1 =
-      CreateConnectionWithCandidate(ch, clock, "1.1.1.1", 1, 10, false);
+      CreateConnectionWithCandidate(&ch, &clock, "1.1.1.1", 1, 10, false);
   ASSERT_TRUE(conn1 != nullptr);
   Connection* conn2 =
-      CreateConnectionWithCandidate(ch, clock, "2.2.2.2", 2, 9, false);
+      CreateConnectionWithCandidate(&ch, &clock, "2.2.2.2", 2, 9, false);
   ASSERT_TRUE(conn2 != nullptr);
 
   NominateConnection(conn1);
@@ -4031,7 +4031,7 @@ TEST_F(P2PTransportChannelPingTest, TestAddRemoteCandidateWithAddressReuse) {
   // connection.
   EXPECT_EQ(0, conn2->last_ping_received());
   ReceivePingOnConnection(conn2, kIceUfrag[2], 1 /* priority */);
-  EXPECT_TRUE(conn2->last_ping_received() > 0);
+  EXPECT_GT(conn2->last_ping_received(), 0);
 }
 
 // When the current selected connection is strong, lower-priority connections
@@ -4081,10 +4081,10 @@ TEST_F(P2PTransportChannelPingTest, TestDontPruneHighPriorityConnections) {
   ch.SetIceRole(ICEROLE_CONTROLLED);
   ch.MaybeStartGathering();
   Connection* conn1 =
-      CreateConnectionWithCandidate(ch, clock, "1.1.1.1", 1, 100, true);
+      CreateConnectionWithCandidate(&ch, &clock, "1.1.1.1", 1, 100, true);
   ASSERT_TRUE(conn1 != nullptr);
   Connection* conn2 =
-      CreateConnectionWithCandidate(ch, clock, "2.2.2.2", 2, 200, false);
+      CreateConnectionWithCandidate(&ch, &clock, "2.2.2.2", 2, 200, false);
   ASSERT_TRUE(conn2 != nullptr);
   // Even if conn1 is writable, nominated, receiving data, it should not prune
   // conn2.
@@ -4132,7 +4132,7 @@ TEST_F(P2PTransportChannelPingTest, TestConnectionPrunedAgain) {
   P2PTransportChannel ch("test channel", 1, &pa);
   PrepareChannel(&ch);
   IceConfig config = CreateIceConfig(1000, GATHER_ONCE);
-  config.receiving_switching_delay = rtc::Optional<int>(800);
+  config.receiving_switching_delay = 800;
   ch.SetIceConfig(config);
   ch.MaybeStartGathering();
   ch.AddRemoteCandidate(CreateUdpCandidate(LOCAL_PORT_TYPE, "1.1.1.1", 1, 100));
@@ -4525,4 +4525,4 @@ TEST_F(P2PTransportChannelMostLikelyToWorkFirstTest, TestTcpTurn) {
   VerifyNextPingableConnection(LOCAL_PORT_TYPE, RELAY_PORT_TYPE);
 }
 
-}  // namespace cricket {
+}  // namespace cricket

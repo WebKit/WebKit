@@ -18,6 +18,7 @@
 #include "p2p/base/port.h"
 #include "p2p/base/stun.h"
 #include "rtc_base/asyncudpsocket.h"
+#include "rtc_base/random.h"
 #include "rtc_base/socketaddresspair.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/timeutils.h"
@@ -76,6 +77,7 @@ class RelayServer : public rtc::MessageHandler,
                    RelayServerConnection*> ConnectionMap;
 
   rtc::Thread* thread_;
+  webrtc::Random random_;
   bool log_bindings_;
   SocketList internal_sockets_;
   SocketList external_sockets_;
@@ -228,7 +230,7 @@ class RelayServerBinding : public rtc::MessageHandler {
 
   int lifetime_;
   int64_t last_used_;
-  // TODO: bandwidth
+  // TODO(?): bandwidth
 };
 
 }  // namespace cricket

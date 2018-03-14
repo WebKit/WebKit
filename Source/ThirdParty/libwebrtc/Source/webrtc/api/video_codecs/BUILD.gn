@@ -13,6 +13,7 @@ if (is_android) {
 }
 
 rtc_source_set("video_codecs_api") {
+  visibility = [ "*" ]
   sources = [
     "sdp_video_format.h",
     "video_decoder.h",
@@ -26,7 +27,9 @@ rtc_source_set("video_codecs_api") {
     "..:optional",
     "..:video_frame_api",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../common_video",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
   ]
 }

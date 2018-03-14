@@ -81,11 +81,9 @@ class RtpToNtpEstimator {
 
   int consecutive_invalid_samples_;
   std::list<RtcpMeasurement> measurements_;
-  Parameters params_;
   MovingMedianFilter<Parameters> smoothing_filter_;
   bool params_calculated_;
   mutable TimestampUnwrapper unwrapper_;
-  const bool is_experiment_enabled_;
 };
 }  // namespace webrtc
 

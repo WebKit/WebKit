@@ -29,7 +29,7 @@
 
 #include "LibWebRTCProvider.h"
 #include <sstream>
-#include <webrtc/api/mediastream.h>
+#include <webrtc/pc/mediastream.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

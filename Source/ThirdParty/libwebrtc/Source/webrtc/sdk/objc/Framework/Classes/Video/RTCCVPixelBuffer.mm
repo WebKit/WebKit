@@ -14,7 +14,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
-#include "libyuv.h"
+#include "third_party/libyuv/include/libyuv.h"
 
 @implementation RTCCVPixelBuffer {
   int _width;

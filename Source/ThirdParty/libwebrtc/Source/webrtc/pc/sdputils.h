@@ -16,7 +16,7 @@
 #include <string>
 
 #include "api/jsep.h"
-#include "p2p/base/sessiondescription.h"
+#include "pc/sessiondescription.h"
 
 namespace webrtc {
 
@@ -27,7 +27,7 @@ std::unique_ptr<SessionDescriptionInterface> CloneSessionDescription(
 // Returns a copy of the given session description with the type changed.
 std::unique_ptr<SessionDescriptionInterface> CloneSessionDescriptionAsType(
     const SessionDescriptionInterface* sdesc,
-    const std::string& type);
+    SdpType type);
 
 // Function that takes a single session description content with its
 // corresponding transport and produces a boolean.

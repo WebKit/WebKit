@@ -33,6 +33,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/gtest_prod_util.h"
 #include "rtc_base/ignore_wundef.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/protobuf_utils.h"
 #include "rtc_base/refcountedobject.h"
@@ -243,7 +244,7 @@ void OpenFileAndWriteMessage(const std::string& filename,
   FILE* file = fopen(filename.c_str(), "wb");
   ASSERT_TRUE(file != NULL);
 
-  int32_t size = msg.ByteSize();
+  int32_t size = rtc::checked_cast<int32_t>(msg.ByteSizeLong());
   ASSERT_GT(size, 0);
   std::unique_ptr<uint8_t[]> array(new uint8_t[size]);
   ASSERT_TRUE(msg.SerializeToArray(array.get(), size));
@@ -451,7 +452,7 @@ ApmTest::ApmTest()
       out_file_(NULL) {
   Config config;
   config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
-  apm_.reset(AudioProcessing::Create(config));
+  apm_.reset(AudioProcessingBuilder().Create(config));
 }
 
 void ApmTest::SetUp() {
@@ -1317,7 +1318,10 @@ TEST_F(ApmTest, AgcOnlyAdaptsWhenTargetSignalIsPresent) {
   testing::NiceMock<MockNonlinearBeamformer>* beamformer =
       new testing::NiceMock<MockNonlinearBeamformer>(geometry, 1u);
   std::unique_ptr<AudioProcessing> apm(
-      AudioProcessing::Create(config, nullptr, nullptr, beamformer));
+      AudioProcessingBuilder()
+          .SetNonlinearBeamformer(
+              std::unique_ptr<webrtc::NonlinearBeamformer>(beamformer))
+          .Create(config));
   EXPECT_EQ(kNoErr, apm->gain_control()->Enable(true));
   ChannelBuffer<float> src_buf(kSamplesPerChannel, kNumInputChannels);
   ChannelBuffer<float> dest_buf(kSamplesPerChannel, kNumOutputChannels);
@@ -1581,7 +1585,7 @@ TEST_F(ApmTest, NoProcessingWhenAllComponentsDisabledFloat) {
   auto src_channels = &src[0];
   auto dest_channels = &dest[0];
 
-  apm_.reset(AudioProcessing::Create());
+  apm_.reset(AudioProcessingBuilder().Create());
   EXPECT_NOERR(apm_->ProcessStream(
       &src_channels, kSamples, sample_rate, LayoutFromChannels(1),
       sample_rate, LayoutFromChannels(1), &dest_channels));
@@ -1961,7 +1965,8 @@ TEST_F(ApmTest, FloatAndIntInterfacesGiveSimilarResults) {
 
   Config config;
   config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
-  std::unique_ptr<AudioProcessing> fapm(AudioProcessing::Create(config));
+  std::unique_ptr<AudioProcessing> fapm(
+      AudioProcessingBuilder().Create(config));
   EnableAllComponents();
   EnableAllAPComponents(fapm.get());
   for (int i = 0; i < ref_data.test_size(); i++) {
@@ -2113,7 +2118,7 @@ TEST_F(ApmTest, Process) {
     config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
     config.Set<ExtendedFilter>(
         new ExtendedFilter(test->use_aec_extended_filter()));
-    apm_.reset(AudioProcessing::Create(config));
+    apm_.reset(AudioProcessingBuilder().Create(config));
 
     EnableAllComponents();
 
@@ -2328,7 +2333,7 @@ TEST_F(ApmTest, NoErrorsWithKeyboardChannel) {
     {AudioProcessing::kStereoAndKeyboard, AudioProcessing::kStereo},
   };
 
-  std::unique_ptr<AudioProcessing> ap(AudioProcessing::Create());
+  std::unique_ptr<AudioProcessing> ap(AudioProcessingBuilder().Create());
   // Enable one component just to ensure some processing takes place.
   ap->noise_suppression()->Enable(true);
   for (size_t i = 0; i < arraysize(cf); ++i) {
@@ -2457,7 +2462,8 @@ class AudioProcessingTest
                             const std::string& output_file_prefix) {
     Config config;
     config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
-    std::unique_ptr<AudioProcessing> ap(AudioProcessing::Create(config));
+    std::unique_ptr<AudioProcessing> ap(
+        AudioProcessingBuilder().Create(config));
     EnableAllAPComponents(ap.get());
 
     ProcessingConfig processing_config = {
@@ -2911,11 +2917,13 @@ TEST(ApmConfiguration, EnablePostProcessing) {
   // Verify that apm uses a capture post processing module if one is provided.
   webrtc::Config webrtc_config;
   auto mock_post_processor_ptr =
-      new testing::NiceMock<test::MockPostProcessing>();
+      new testing::NiceMock<test::MockCustomProcessing>();
   auto mock_post_processor =
-      std::unique_ptr<PostProcessing>(mock_post_processor_ptr);
-  rtc::scoped_refptr<AudioProcessing> apm = AudioProcessing::Create(
-      webrtc_config, std::move(mock_post_processor), nullptr, nullptr);
+      std::unique_ptr<CustomProcessing>(mock_post_processor_ptr);
+  rtc::scoped_refptr<AudioProcessing> apm =
+      AudioProcessingBuilder()
+          .SetCapturePostProcessing(std::move(mock_post_processor))
+          .Create(webrtc_config);
 
   AudioFrame audio;
   audio.num_channels_ = 1;
@@ -2923,6 +2931,26 @@ TEST(ApmConfiguration, EnablePostProcessing) {
 
   EXPECT_CALL(*mock_post_processor_ptr, Process(testing::_)).Times(1);
   apm->ProcessStream(&audio);
+}
+
+TEST(ApmConfiguration, EnablePreProcessing) {
+  // Verify that apm uses a capture post processing module if one is provided.
+  webrtc::Config webrtc_config;
+  auto mock_pre_processor_ptr =
+      new testing::NiceMock<test::MockCustomProcessing>();
+  auto mock_pre_processor =
+      std::unique_ptr<CustomProcessing>(mock_pre_processor_ptr);
+  rtc::scoped_refptr<AudioProcessing> apm =
+      AudioProcessingBuilder()
+          .SetRenderPreProcessing(std::move(mock_pre_processor))
+          .Create(webrtc_config);
+
+  AudioFrame audio;
+  audio.num_channels_ = 1;
+  SetFrameSampleRate(&audio, AudioProcessing::NativeRate::kSampleRate16kHz);
+
+  EXPECT_CALL(*mock_pre_processor_ptr, Process(testing::_)).Times(1);
+  apm->ProcessReverseStream(&audio);
 }
 
 class MyEchoControlFactory : public EchoControlFactory {
@@ -2942,8 +2970,10 @@ TEST(ApmConfiguration, EchoControlInjection) {
   std::unique_ptr<EchoControlFactory> echo_control_factory(
       new MyEchoControlFactory());
 
-  rtc::scoped_refptr<AudioProcessing> apm = AudioProcessing::Create(
-      webrtc_config, nullptr, std::move(echo_control_factory), nullptr);
+  rtc::scoped_refptr<AudioProcessing> apm =
+      AudioProcessingBuilder()
+          .SetEchoControlFactory(std::move(echo_control_factory))
+          .Create(webrtc_config);
 
   AudioFrame audio;
   audio.num_channels_ = 1;
@@ -2959,7 +2989,8 @@ std::unique_ptr<AudioProcessing> CreateApm(bool use_AEC2) {
     old_config.Set<ExtendedFilter>(new ExtendedFilter(true));
     old_config.Set<DelayAgnostic>(new DelayAgnostic(true));
   }
-  std::unique_ptr<AudioProcessing> apm(AudioProcessing::Create(old_config));
+  std::unique_ptr<AudioProcessing> apm(
+      AudioProcessingBuilder().Create(old_config));
   if (!apm) {
     return apm;
   }

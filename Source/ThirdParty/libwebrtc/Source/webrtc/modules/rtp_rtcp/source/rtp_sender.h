@@ -205,6 +205,8 @@ class RTPSender {
   int64_t LastTimestampTimeMs() const;
   void SendKeepAlive(uint8_t payload_type);
 
+  void SetRtt(int64_t rtt_ms);
+
  protected:
   int32_t CheckPayloadType(int8_t payload_type, RtpVideoCodecTypes* video_type);
 

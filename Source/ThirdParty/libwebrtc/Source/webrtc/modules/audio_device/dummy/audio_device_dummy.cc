@@ -79,10 +79,6 @@ int32_t AudioDeviceDummy::StopRecording() { return 0; }
 
 bool AudioDeviceDummy::Recording() const { return false; }
 
-int32_t AudioDeviceDummy::SetAGC(bool enable) { return -1; }
-
-bool AudioDeviceDummy::AGC() const { return false; }
-
 int32_t AudioDeviceDummy::InitSpeaker() { return -1; }
 
 bool AudioDeviceDummy::SpeakerIsInitialized() const { return false; }

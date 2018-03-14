@@ -30,7 +30,7 @@ class TestTurnCustomizer : public webrtc::TurnCustomizer {
   void MaybeModifyOutgoingStunMessage(
       cricket::PortInterface* port,
       cricket::StunMessage* message) override {
-    modify_cnt_ ++;
+    modify_cnt_++;
 
     ASSERT_NE(0, message->type());
     if (add_counter_) {

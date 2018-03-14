@@ -27,7 +27,6 @@
 #include "media/base/streamparams.h"
 #include "media/engine/webrtcvideoengine.h"
 #include "modules/audio_processing/include/audio_processing.h"
-#include "p2p/base/sessiondescription.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copyonwritebuffer.h"
 #include "rtc_base/networkroute.h"

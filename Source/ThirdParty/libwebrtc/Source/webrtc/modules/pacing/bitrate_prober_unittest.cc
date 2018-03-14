@@ -88,14 +88,10 @@ TEST(BitrateProberTest, DoesntProbeWithoutRecentPackets) {
   // Let time pass, no large enough packets put into prober.
   now_ms += 6000;
   EXPECT_EQ(-1, prober.TimeUntilNextProbe(now_ms));
-  // Insert a large-enough packet after downtime while probing should reset to
-  // perform a new probe since the requested one didn't finish.
+  // Check that legacy behaviour where prober is reset in TimeUntilNextProbe is
+  // no longer there. Probes are no longer retried if they are timed out.
   prober.OnIncomingPacket(1000);
-  EXPECT_EQ(0, prober.TimeUntilNextProbe(now_ms));
-  prober.ProbeSent(now_ms, 1000);
-  // Next packet should be part of new probe and be sent with non-zero delay.
-  prober.OnIncomingPacket(1000);
-  EXPECT_GT(prober.TimeUntilNextProbe(now_ms), 0);
+  EXPECT_EQ(-1, prober.TimeUntilNextProbe(now_ms));
 }
 
 TEST(BitrateProberTest, DoesntInitializeProbingForSmallPackets) {

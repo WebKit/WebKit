@@ -38,8 +38,7 @@ void InitCocoaMultiThreading() {
 
 namespace rtc {
 
-ThreadManager::ThreadManager() {
-  main_thread_ref_ = CurrentThreadRef();
+ThreadManager::ThreadManager() : main_thread_ref_(CurrentThreadRef()) {
   pthread_key_create(&key_, nullptr);
   // This is necessary to alert the cocoa runtime of the fact that
   // we are running in a multithreaded environment.
@@ -58,6 +57,7 @@ void* Thread::PreRun(void* pv) {
       init->thread->Run();
     }
   }
+  ThreadManager::Instance()->SetCurrentThread(nullptr);
   delete init;
   return nullptr;
 }

@@ -489,6 +489,16 @@ INSTANTIATE_TEST_CASE_P(SpsPpsIdrIsKeyframe,
                         TestPacketBufferH264Parameterized,
                         ::testing::Values(false, true));
 
+TEST_P(TestPacketBufferH264Parameterized, DontRemoveMissingPacketOnClearTo) {
+  EXPECT_TRUE(InsertH264(0, kKeyFrame, kFirst, kLast, 0));
+  EXPECT_TRUE(InsertH264(2, kDeltaFrame, kFirst, kNotLast, 2));
+  packet_buffer_->ClearTo(0);
+  EXPECT_TRUE(InsertH264(3, kDeltaFrame, kNotFirst, kLast, 2));
+
+  ASSERT_EQ(1UL, frames_from_callback_.size());
+  CheckFrame(0);
+}
+
 TEST_P(TestPacketBufferH264Parameterized, GetBitstreamOneFrameFullBuffer) {
   uint8_t* data_arr[kStartSize];
   uint8_t expected[kStartSize];

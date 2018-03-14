@@ -66,9 +66,10 @@ MediaEngineInterface* WebRtcMediaEngineFactory::Create(
         audio_decoder_factory,
     WebRtcVideoEncoderFactory* video_encoder_factory,
     WebRtcVideoDecoderFactory* video_decoder_factory) {
-  return CreateWebRtcMediaEngine(
-      adm, audio_encoder_factory, audio_decoder_factory, video_encoder_factory,
-      video_decoder_factory, nullptr, webrtc::AudioProcessing::Create());
+  return CreateWebRtcMediaEngine(adm, audio_encoder_factory,
+                                 audio_decoder_factory, video_encoder_factory,
+                                 video_decoder_factory, nullptr,
+                                 webrtc::AudioProcessingBuilder().Create());
 }
 
 MediaEngineInterface* WebRtcMediaEngineFactory::Create(

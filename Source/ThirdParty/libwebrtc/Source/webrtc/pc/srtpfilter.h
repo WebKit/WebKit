@@ -19,7 +19,7 @@
 
 #include "api/cryptoparams.h"
 #include "api/optional.h"
-#include "p2p/base/sessiondescription.h"
+#include "pc/sessiondescription.h"
 #include "rtc_base/basictypes.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"

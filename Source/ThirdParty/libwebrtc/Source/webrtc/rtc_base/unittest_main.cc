@@ -67,7 +67,7 @@ int TestCrtReportHandler(int report_type, char* msg, int* retval) {
 }
 #endif  // WEBRTC_WIN
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, false);
   if (FLAG_help) {
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
   rtc::SSLStreamAdapter::enable_time_callback_for_testing();
 
 #if defined(WEBRTC_IOS)
-  rtc::test::InitTestSuite(RUN_ALL_TESTS, argc, argv);
+  rtc::test::InitTestSuite(RUN_ALL_TESTS, argc, argv, false);
   rtc::test::RunTestsFromIOSApp();
 #endif
   const int res = RUN_ALL_TESTS();

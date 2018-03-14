@@ -43,7 +43,6 @@ class VideoProcessorIntegrationTestLibvpx
     config_.output_filename =
         TempFilename(OutputPath(), "videoprocessor_integrationtest_libvpx");
     config_.num_frames = kNumFramesLong;
-    config_.networking_config.packet_loss_probability = 0.0;
     // Only allow encoder/decoder to use single core, for predictability.
     config_.use_single_core = true;
     config_.hw_encoder = false;
@@ -89,26 +88,6 @@ TEST_F(VideoProcessorIntegrationTestLibvpx, Process0PercentPacketLossVP9) {
       {0, 40, 20, 10, 20, 0, 1}};
 
   QualityThresholds quality_thresholds(37.0, 36.0, 0.93, 0.92);
-
-  ProcessFramesAndMaybeVerify(rate_profiles, &rc_thresholds,
-                              &quality_thresholds, nullptr,
-                              kNoVisualizationParams);
-}
-
-// VP9: Run with 5% packet loss and fixed bitrate. Quality should be a bit
-// lower. One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTestLibvpx, Process5PercentPacketLossVP9) {
-  config_.networking_config.packet_loss_probability = 0.05f;
-  config_.num_frames = kNumFramesShort;
-  config_.SetCodecSettings(kVideoCodecVP9, 1, false, false, true, false,
-                           kResilienceOn, kCifWidth, kCifHeight);
-
-  std::vector<RateProfile> rate_profiles = {{500, 30, kNumFramesShort + 1}};
-
-  std::vector<RateControlThresholds> rc_thresholds = {
-      {0, 40, 20, 10, 20, 0, 1}};
-
-  QualityThresholds quality_thresholds(17.0, 14.0, 0.45, 0.36);
 
   ProcessFramesAndMaybeVerify(rate_profiles, &rc_thresholds,
                               &quality_thresholds, nullptr,
@@ -225,46 +204,6 @@ TEST_F(VideoProcessorIntegrationTestLibvpx, ProcessZeroPacketLoss) {
       {0, 40, 20, 10, 15, 0, 1}};
 
   QualityThresholds quality_thresholds(34.95, 33.0, 0.90, 0.89);
-
-  ProcessFramesAndMaybeVerify(rate_profiles, &rc_thresholds,
-                              &quality_thresholds, nullptr,
-                              kNoVisualizationParams);
-}
-
-// VP8: Run with 5% packet loss and fixed bitrate. Quality should be a bit
-// lower. One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTestLibvpx, Process5PercentPacketLoss) {
-  config_.networking_config.packet_loss_probability = 0.05f;
-  config_.SetCodecSettings(kVideoCodecVP8, 1, false, true, true, false,
-                           kResilienceOn, kCifWidth, kCifHeight);
-  config_.num_frames = kNumFramesShort;
-
-  std::vector<RateProfile> rate_profiles = {{500, 30, kNumFramesShort + 1}};
-
-  std::vector<RateControlThresholds> rc_thresholds = {
-      {0, 40, 20, 10, 15, 0, 1}};
-
-  QualityThresholds quality_thresholds(20.0, 16.0, 0.60, 0.40);
-
-  ProcessFramesAndMaybeVerify(rate_profiles, &rc_thresholds,
-                              &quality_thresholds, nullptr,
-                              kNoVisualizationParams);
-}
-
-// VP8: Run with 10% packet loss and fixed bitrate. Quality should be lower.
-// One key frame (first frame only) in sequence.
-TEST_F(VideoProcessorIntegrationTestLibvpx, Process10PercentPacketLoss) {
-  config_.networking_config.packet_loss_probability = 0.1f;
-  config_.SetCodecSettings(kVideoCodecVP8, 1, false, true, true, false,
-                           kResilienceOn, kCifWidth, kCifHeight);
-  config_.num_frames = kNumFramesShort;
-
-  std::vector<RateProfile> rate_profiles = {{500, 30, kNumFramesShort + 1}};
-
-  std::vector<RateControlThresholds> rc_thresholds = {
-      {0, 40, 20, 10, 15, 0, 1}};
-
-  QualityThresholds quality_thresholds(19.0, 16.0, 0.50, 0.35);
 
   ProcessFramesAndMaybeVerify(rate_profiles, &rc_thresholds,
                               &quality_thresholds, nullptr,

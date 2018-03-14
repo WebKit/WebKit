@@ -240,6 +240,10 @@ bool DtlsTransport::SetRemoteFingerprint(const std::string& digest_alg,
   }
 
   // If the other side doesn't support DTLS, turn off |dtls_active_|.
+  // TODO(deadbeef): Remove this. It's dangerous, because it relies on higher
+  // level code to ensure DTLS is actually used, but there are tests that
+  // depend on it, for the case where an m= section is rejected. In that case
+  // SetRemoteFingerprint shouldn't even be called though.
   if (digest_alg.empty()) {
     RTC_DCHECK(!digest_len);
     LOG_J(LS_INFO, this) << "Other side didn't support DTLS.";

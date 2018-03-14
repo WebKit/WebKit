@@ -75,10 +75,14 @@ class RtpTransport : public RtpTransportInternal {
   RtpTransportAdapter* GetInternal() override;
 
  private:
+  bool IsRtpTransportWritable();
   bool HandlesPacket(const uint8_t* data, size_t len);
 
   void OnReadyToSend(rtc::PacketTransportInternal* transport);
   void OnNetworkRouteChange(rtc::Optional<rtc::NetworkRoute> network_route);
+  void OnWritableState(rtc::PacketTransportInternal* packet_transport);
+  void OnSentPacket(rtc::PacketTransportInternal* packet_transport,
+                    const rtc::SentPacket& sent_packet);
 
   // Updates "ready to send" for an individual channel and fires
   // SignalReadyToSend.

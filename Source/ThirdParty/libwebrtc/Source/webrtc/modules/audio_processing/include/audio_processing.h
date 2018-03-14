@@ -12,7 +12,9 @@
 #define MODULES_AUDIO_PROCESSING_INCLUDE_AUDIO_PROCESSING_H_
 
 // MSVC++ requires this to be set before any other includes to get M_PI.
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 
 #include <math.h>
 #include <stddef.h>  // size_t
@@ -28,6 +30,7 @@
 #include "rtc_base/deprecation.h"
 #include "rtc_base/platform_file.h"
 #include "rtc_base/refcount.h"
+#include "rtc_base/scoped_ref_ptr.h"
 #include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
@@ -46,12 +49,16 @@ class ProcessingConfig;
 class EchoCancellation;
 class EchoControlMobile;
 class EchoControlFactory;
+class EchoDetector;
 class GainControl;
 class HighPassFilter;
 class LevelEstimator;
 class NoiseSuppression;
-class PostProcessing;
+class CustomProcessing;
 class VoiceDetection;
+
+// webrtc:8665, addedd temporarily to avoid breaking dependencies.
+typedef CustomProcessing PostProcessing;
 
 // Use to enable the extended filter mode in the AEC, along with robustness
 // measures around the reported system delays. It comes with a significant
@@ -106,7 +113,7 @@ struct DelayAgnostic {
 // microphone volume is set too low. The value is clamped to its operating range
 // [12, 255]. Here, 255 maps to 100%.
 //
-// Must be provided through AudioProcessing::Create(Confg&).
+// Must be provided through AudioProcessingBuilder().Create(config).
 #if defined(WEBRTC_CHROMIUM_BUILD)
 static const int kAgcStartupMinVolume = 85;
 #else
@@ -199,7 +206,7 @@ struct Intelligibility {
 // data.
 //
 // Usage example, omitting error checking:
-// AudioProcessing* apm = AudioProcessing::Create(0);
+// AudioProcessing* apm = AudioProcessingBuilder().Create();
 //
 // AudioProcessing::Config config;
 // config.level_controller.enabled = true;
@@ -312,17 +319,31 @@ class AudioProcessing : public rtc::RefCountInterface {
   // instance for the near-end stream, and additional instances for each far-end
   // stream which requires processing. On the server-side, this would typically
   // be one instance for every incoming stream.
+  // The Create functions are deprecated, please use AudioProcessingBuilder
+  // instead.
+  // TODO(bugs.webrtc.org/8668): Remove these Create functions when all callers
+  // have moved to AudioProcessingBuilder.
   static AudioProcessing* Create();
   // Allows passing in an optional configuration at create-time.
   static AudioProcessing* Create(const webrtc::Config& config);
-  // Deprecated. Use the Create below, with nullptr PostProcessing.
+  // Deprecated. Use the Create below, with nullptr CustomProcessing.
   RTC_DEPRECATED
   static AudioProcessing* Create(const webrtc::Config& config,
                                  NonlinearBeamformer* beamformer);
+
+  // Will be deprecated and removed as part of webrtc:8665. Use the
+  // Create below, with nullptr CustomProcessing.
+  static AudioProcessing* Create(
+      const webrtc::Config& config,
+      std::unique_ptr<CustomProcessing> capture_post_processor,
+      std::unique_ptr<EchoControlFactory> echo_control_factory,
+      NonlinearBeamformer* beamformer);
+
   // Allows passing in optional user-defined processing modules.
   static AudioProcessing* Create(
       const webrtc::Config& config,
-      std::unique_ptr<PostProcessing> capture_post_processor,
+      std::unique_ptr<CustomProcessing> capture_post_processor,
+      std::unique_ptr<CustomProcessing> render_pre_processor,
       std::unique_ptr<EchoControlFactory> echo_control_factory,
       NonlinearBeamformer* beamformer);
   ~AudioProcessing() override {}
@@ -627,6 +648,39 @@ class AudioProcessing : public rtc::RefCountInterface {
       kNativeSampleRatesHz[kNumNativeSampleRates - 1];
 
   static const int kChunkSizeMs = 10;
+};
+
+class AudioProcessingBuilder {
+ public:
+  AudioProcessingBuilder();
+  ~AudioProcessingBuilder();
+  // The AudioProcessingBuilder takes ownership of the echo_control_factory.
+  AudioProcessingBuilder& SetEchoControlFactory(
+      std::unique_ptr<EchoControlFactory> echo_control_factory);
+  // The AudioProcessingBuilder takes ownership of the capture_post_processing.
+  AudioProcessingBuilder& SetCapturePostProcessing(
+      std::unique_ptr<CustomProcessing> capture_post_processing);
+  // The AudioProcessingBuilder takes ownership of the render_pre_processing.
+  AudioProcessingBuilder& SetRenderPreProcessing(
+      std::unique_ptr<CustomProcessing> render_pre_processing);
+  // The AudioProcessingBuilder takes ownership of the nonlinear beamformer.
+  AudioProcessingBuilder& SetNonlinearBeamformer(
+      std::unique_ptr<NonlinearBeamformer> nonlinear_beamformer);
+  // The AudioProcessingBuilder takes ownership of the echo_detector.
+  AudioProcessingBuilder& SetEchoDetector(
+      std::unique_ptr<EchoDetector> echo_detector);
+  // This creates an APM instance using the previously set components. Calling
+  // the Create function resets the AudioProcessingBuilder to its initial state.
+  AudioProcessing* Create();
+  AudioProcessing* Create(const webrtc::Config& config);
+
+ private:
+  std::unique_ptr<EchoControlFactory> echo_control_factory_;
+  std::unique_ptr<CustomProcessing> capture_post_processing_;
+  std::unique_ptr<CustomProcessing> render_pre_processing_;
+  std::unique_ptr<NonlinearBeamformer> nonlinear_beamformer_;
+  std::unique_ptr<EchoDetector> echo_detector_;
+  RTC_DISALLOW_COPY_AND_ASSIGN(AudioProcessingBuilder);
 };
 
 class StreamConfig {
@@ -1085,8 +1139,8 @@ class NoiseSuppression {
   virtual ~NoiseSuppression() {}
 };
 
-// Interface for a post processing submodule.
-class PostProcessing {
+// Interface for a custom processing submodule.
+class CustomProcessing {
  public:
   // (Re-)Initializes the submodule.
   virtual void Initialize(int sample_rate_hz, int num_channels) = 0;
@@ -1095,7 +1149,35 @@ class PostProcessing {
   // Returns a string representation of the module state.
   virtual std::string ToString() const = 0;
 
-  virtual ~PostProcessing() {}
+  virtual ~CustomProcessing() {}
+};
+
+// Interface for an echo detector submodule.
+class EchoDetector {
+ public:
+  // (Re-)Initializes the submodule.
+  virtual void Initialize(int sample_rate_hz, int num_channels) = 0;
+
+  // Analysis (not changing) of the render signal.
+  virtual void AnalyzeRenderAudio(rtc::ArrayView<const float> render_audio) = 0;
+
+  // Analysis (not changing) of the capture signal.
+  virtual void AnalyzeCaptureAudio(
+      rtc::ArrayView<const float> capture_audio) = 0;
+
+  // Pack an AudioBuffer into a vector<float>.
+  static void PackRenderAudioBuffer(AudioBuffer* audio,
+                                    std::vector<float>* packed_buffer);
+
+  struct Metrics {
+    double echo_likelihood;
+    double echo_likelihood_recent_max;
+  };
+
+  // Collect current metrics from the echo detector.
+  virtual Metrics GetMetrics() const = 0;
+
+  virtual ~EchoDetector() {}
 };
 
 // The voice activity detection (VAD) component analyzes the stream to
@@ -1153,8 +1235,35 @@ struct EchoCanceller3Config {
   struct Delay {
     size_t default_delay = 5;
     size_t down_sampling_factor = 4;
-    size_t num_filters = 4;
+    size_t num_filters = 5;
+    size_t api_call_jitter_blocks = 26;
+    size_t min_echo_path_delay_blocks = 0;
+    size_t delay_headroom_blocks = 2;
+    size_t hysteresis_limit_1_blocks = 1;
+    size_t hysteresis_limit_2_blocks = 1;
   } delay;
+
+  struct Filter {
+    struct MainConfiguration {
+      size_t length_blocks;
+      float leakage_converged;
+      float leakage_diverged;
+      float error_floor;
+      float noise_gate;
+    };
+
+    struct ShadowConfiguration {
+      size_t length_blocks;
+      float rate;
+      float noise_gate;
+    };
+
+    MainConfiguration main = {13, 0.005f, 0.1f, 0.001f, 20075344.f};
+    ShadowConfiguration shadow = {13, 0.7f, 20075344.f};
+
+    MainConfiguration main_initial = {12, 0.05f, 5.f, 0.001f, 20075344.f};
+    ShadowConfiguration shadow_initial = {12, 0.9f, 20075344.f};
+  } filter;
 
   struct Erle {
     float min = 1.f;
@@ -1176,7 +1285,7 @@ struct EchoCanceller3Config {
     float m2 = 0.0001f;
     float m3 = 0.01f;
     float m4 = 0.1f;
-    float m5 = 0.3f;
+    float m5 = 0.1f;
     float m6 = 0.0001f;
     float m7 = 0.01f;
     float m8 = 0.0001f;
@@ -1203,12 +1312,13 @@ struct EchoCanceller3Config {
       float min_dec;
     };
 
-    GainChanges low_noise = {3.f, 3.f, 1.5f, 1.5f, 1.5f, 1.5f};
+    GainChanges low_noise = {2.f, 2.f, 1.4f, 1.4f, 1.1f, 1.1f};
+    GainChanges initial = {2.f, 2.f, 1.5f, 1.5f, 1.2f, 1.2f};
     GainChanges normal = {2.f, 2.f, 1.5f, 1.5f, 1.2f, 1.2f};
-    GainChanges saturation = {1.5f, 1.5f, 1.2f, 1.2f, 1.1f, 1.1f};
+    GainChanges saturation = {1.2f, 1.2f, 1.5f, 1.5f, 1.f, 1.f};
     GainChanges nonlinear = {1.5f, 1.5f, 1.2f, 1.2f, 1.1f, 1.1f};
 
-    float floor_first_increase = 0.0001f;
+    float floor_first_increase = 0.00001f;
   } gain_updates;
 };
 

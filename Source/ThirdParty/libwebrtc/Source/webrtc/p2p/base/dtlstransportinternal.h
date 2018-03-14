@@ -16,12 +16,24 @@
 #include <vector>
 
 #include "p2p/base/icetransportinternal.h"
-#include "p2p/base/jseptransport.h"
 #include "p2p/base/packettransportinternal.h"
 #include "rtc_base/sslstreamadapter.h"
 #include "rtc_base/stringencode.h"
 
 namespace cricket {
+
+enum DtlsTransportState {
+  // Haven't started negotiating.
+  DTLS_TRANSPORT_NEW = 0,
+  // Have started negotiating.
+  DTLS_TRANSPORT_CONNECTING,
+  // Negotiated, and has a secure connection.
+  DTLS_TRANSPORT_CONNECTED,
+  // Transport is closed.
+  DTLS_TRANSPORT_CLOSED,
+  // Failed due to some error in the handshake process.
+  DTLS_TRANSPORT_FAILED,
+};
 
 enum PacketFlags {
   PF_NORMAL = 0x00,       // A normal packet.

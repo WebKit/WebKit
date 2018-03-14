@@ -28,10 +28,7 @@
 
 namespace webrtc {
 
-// WORK IN PROGRESS
-// This class is under development and is not yet intended for for use outside
-// of WebRtc/Libjingle. Please use the VoiceEngine API instead.
-// See: https://bugs.chromium.org/p/webrtc/issues/detail?id=4690
+class AudioFrame;
 
 class AudioSendStream {
  public:
@@ -90,10 +87,7 @@ class AudioSendStream {
     // the entire life of the AudioSendStream and is owned by the API client.
     Transport* send_transport = nullptr;
 
-    // Underlying VoiceEngine handle, used to map AudioSendStream to lower-level
-    // components.
-    // TODO(solenberg): Remove when VoiceEngine channels are created outside
-    // of Call.
+    // TODO(solenberg): Remove once clients don't use it anymore.
     int voe_channel_id = -1;
 
     // Bitrate limits used for variable audio bitrate streams. Set both to -1 to
@@ -101,6 +95,8 @@ class AudioSendStream {
     // Note: This is still an experimental feature and not ready for real usage.
     int min_bitrate_bps = -1;
     int max_bitrate_bps = -1;
+
+    double bitrate_priority = 1.0;
 
     // Defines whether to turn on audio network adaptor, and defines its config
     // string.
@@ -145,6 +141,10 @@ class AudioSendStream {
   // Stops stream activity.
   // When a stream is stopped, it can't receive, process or deliver packets.
   virtual void Stop() = 0;
+
+  // Encode and send audio.
+  virtual void SendAudioData(
+      std::unique_ptr<webrtc::AudioFrame> audio_frame) = 0;
 
   // TODO(solenberg): Make payload_type a config property instead.
   virtual bool SendTelephoneEvent(int payload_type, int payload_frequency,

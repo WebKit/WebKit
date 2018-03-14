@@ -251,7 +251,7 @@ class VideoStreamEncoder::VideoSourceProxy {
     RTC_LOG(LS_INFO) << "Scaling down resolution, max pixels: "
                      << pixels_wanted;
     sink_wants_.max_pixel_count = pixels_wanted;
-    sink_wants_.target_pixel_count = rtc::Optional<int>();
+    sink_wants_.target_pixel_count = rtc::nullopt;
     source_->AddOrUpdateSink(video_stream_encoder_,
                              GetActiveSinkWantsInternal());
     return true;
@@ -290,8 +290,7 @@ class VideoStreamEncoder::VideoSourceProxy {
       // count selected depends on the capabilities of the source. In order to
       // not take a too large step up, we cap the requested pixel count to be at
       // most four time the current number of pixels.
-      sink_wants_.target_pixel_count =
-          rtc::Optional<int>((pixel_count * 5) / 3);
+      sink_wants_.target_pixel_count = (pixel_count * 5) / 3;
     }
     RTC_LOG(LS_INFO) << "Scaling up resolution, max pixels: "
                      << max_pixels_wanted;
@@ -388,7 +387,6 @@ VideoStreamEncoder::VideoStreamEncoder(
     SendStatisticsProxy* stats_proxy,
     const VideoSendStream::Config::EncoderSettings& settings,
     rtc::VideoSinkInterface<VideoFrame>* pre_encode_callback,
-    EncodedFrameObserver* encoder_timing,
     std::unique_ptr<OveruseFrameDetector> overuse_detector)
     : shutdown_event_(true /* manual_reset */, false),
       number_of_cores_(number_of_cores),
@@ -404,7 +402,6 @@ VideoStreamEncoder::VideoStreamEncoder(
               : new OveruseFrameDetector(
                     GetCpuOveruseOptions(settings.full_overuse_time),
                     this,
-                    encoder_timing,
                     stats_proxy)),
       stats_proxy_(stats_proxy),
       pre_encode_callback_(pre_encode_callback),
@@ -560,8 +557,7 @@ void VideoStreamEncoder::ConfigureEncoderOnTaskQueue(
   if (last_frame_info_) {
     ReconfigureEncoder();
   } else if (settings_.internal_source) {
-    last_frame_info_ =
-        rtc::Optional<VideoFrameInfo>(VideoFrameInfo(176, 144, false));
+    last_frame_info_ = VideoFrameInfo(176, 144, false);
     ReconfigureEncoder();
   }
 }
@@ -618,7 +614,7 @@ void VideoStreamEncoder::ReconfigureEncoder() {
   if (current_framerate == 0)
     current_framerate = codec.maxFramerate;
   stats_proxy_->OnEncoderReconfigured(
-      encoder_config_,
+      encoder_config_, streams,
       rate_allocator_.get()
           ? rate_allocator_->GetPreferredBitrateBps(current_framerate)
           : codec.maxBitrate);
@@ -759,8 +755,8 @@ void VideoStreamEncoder::EncodeVideoFrame(const VideoFrame& video_frame,
       video_frame.height() != last_frame_info_->height ||
       video_frame.is_texture() != last_frame_info_->is_texture) {
     pending_encoder_reconfiguration_ = true;
-    last_frame_info_ = rtc::Optional<VideoFrameInfo>(VideoFrameInfo(
-        video_frame.width(), video_frame.height(), video_frame.is_texture()));
+    last_frame_info_ = VideoFrameInfo(video_frame.width(), video_frame.height(),
+                                      video_frame.is_texture());
     RTC_LOG(LS_INFO) << "Video frame parameters changed: dimensions="
                      << last_frame_info_->width << "x"
                      << last_frame_info_->height
@@ -771,7 +767,11 @@ void VideoStreamEncoder::EncodeVideoFrame(const VideoFrame& video_frame,
       video_frame.size() >
           MaximumFrameSizeForBitrate(encoder_start_bitrate_bps_ / 1000)) {
     RTC_LOG(LS_INFO) << "Dropping frame. Too large for target bitrate.";
+    int count = GetConstAdaptCounter().ResolutionCount(kQuality);
     AdaptDown(kQuality);
+    if (GetConstAdaptCounter().ResolutionCount(kQuality) > count) {
+      stats_proxy_->OnInitialQualityResolutionAdaptDown();
+    }
     ++initial_rampup_;
     return;
   }
@@ -850,12 +850,26 @@ EncodedImageCallback::Result VideoStreamEncoder::OnEncodedImage(
   int64_t time_sent_us = rtc::TimeMicros();
   uint32_t timestamp = encoded_image._timeStamp;
   const int qp = encoded_image.qp_;
-  encoder_queue_.PostTask([this, timestamp, time_sent_us, qp] {
-    RTC_DCHECK_RUN_ON(&encoder_queue_);
-    overuse_detector_->FrameSent(timestamp, time_sent_us);
-    if (quality_scaler_ && qp >= 0)
-      quality_scaler_->ReportQP(qp);
-  });
+  int64_t capture_time_us =
+      encoded_image.capture_time_ms_ * rtc::kNumMicrosecsPerMillisec;
+
+  rtc::Optional<int> encode_duration_us;
+  if (encoded_image.timing_.flags != TimingFrameFlags::kInvalid) {
+    encode_duration_us.emplace(
+        // TODO(nisse): Maybe use capture_time_ms_ rather than encode_start_ms_?
+        rtc::kNumMicrosecsPerMillisec *
+        (encoded_image.timing_.encode_finish_ms -
+         encoded_image.timing_.encode_start_ms));
+  }
+
+  encoder_queue_.PostTask(
+      [this, timestamp, time_sent_us, qp, capture_time_us, encode_duration_us] {
+        RTC_DCHECK_RUN_ON(&encoder_queue_);
+        overuse_detector_->FrameSent(timestamp, time_sent_us, capture_time_us,
+                                     encode_duration_us);
+        if (quality_scaler_ && qp >= 0)
+          quality_scaler_->ReportQP(qp);
+      });
 
   return result;
 }
@@ -960,15 +974,6 @@ void VideoStreamEncoder::AdaptDown(AdaptReason reason) {
       break;
     case VideoSendStream::DegradationPreference::kDegradationDisabled:
       return;
-  }
-
-  if (reason == kCpu) {
-    if (GetConstAdaptCounter().ResolutionCount(kCpu) >=
-            kMaxCpuResolutionDowngrades ||
-        GetConstAdaptCounter().FramerateCount(kCpu) >=
-            kMaxCpuFramerateDowngrades) {
-      return;
-    }
   }
 
   switch (degradation_preference_) {

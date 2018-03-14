@@ -57,6 +57,7 @@ void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
                                     size_t num_channels,
                                     InputAudioFile* stereo_pcm_file,
                                     rtc::ArrayView<float> data) {
+  RTC_DCHECK_LE(num_channels, 2);
   RTC_DCHECK_EQ(data.size(), samples_per_channel * num_channels);
   std::vector<int16_t> read_samples(samples_per_channel * 2);
   stereo_pcm_file->Read(samples_per_channel * 2, read_samples.data());

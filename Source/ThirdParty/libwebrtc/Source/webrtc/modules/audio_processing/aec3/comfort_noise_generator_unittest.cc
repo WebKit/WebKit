@@ -24,7 +24,7 @@ namespace {
 
 float Power(const FftData& N) {
   std::array<float, kFftLengthBy2Plus1> N2;
-  N.Spectrum(Aec3Optimization::kNone, &N2);
+  N.Spectrum(Aec3Optimization::kNone, N2);
   return std::accumulate(N2.begin(), N2.end(), 0.f) / N2.size();
 }
 

@@ -30,8 +30,15 @@
 #include <windows.h>
 #endif
 
+#if defined(WEBRTC_WIN)
+#define LAST_SYSTEM_ERROR (::GetLastError())
+#elif defined(__native_client__) && __native_client__
+#define LAST_SYSTEM_ERROR (0)
+#elif defined(WEBRTC_POSIX)
+#define LAST_SYSTEM_ERROR (errno)
+#endif  // WEBRTC_WIN
+
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 #if defined(_MSC_VER)
 // Warning C4722: destructor never returns, potential memory leak.
@@ -40,6 +47,7 @@
 #endif
 
 namespace rtc {
+namespace {
 
 void VPrintError(const char* format, va_list args) {
 #if defined(WEBRTC_ANDROID)
@@ -48,6 +56,11 @@ void VPrintError(const char* format, va_list args) {
   vfprintf(stderr, format, args);
 #endif
 }
+
+#if defined(__GNUC__)
+void PrintError(const char* format, ...)
+    __attribute__((__format__(__printf__, 1, 2)));
+#endif
 
 void PrintError(const char* format, ...) {
   va_list args;
@@ -90,6 +103,8 @@ void DumpBacktrace() {
 #endif
 }
 
+}  // namespace
+
 FatalMessage::FatalMessage(const char* file, int line) {
   Init(file, line);
 }
@@ -104,7 +119,7 @@ NO_RETURN FatalMessage::~FatalMessage() {
   fflush(stdout);
   fflush(stderr);
   stream_ << std::endl << "#" << std::endl;
-  PrintError(stream_.str().c_str());
+  PrintError("%s", stream_.str().c_str());
   DumpBacktrace();
   fflush(stderr);
   abort();
@@ -115,7 +130,7 @@ void FatalMessage::Init(const char* file, int line) {
           << std::endl
           << "#" << std::endl
           << "# Fatal error in " << file << ", line " << line << std::endl
-          << "# last system error: " << RTC_LAST_SYSTEM_ERROR << std::endl
+          << "# last system error: " << LAST_SYSTEM_ERROR << std::endl
           << "# ";
 }
 

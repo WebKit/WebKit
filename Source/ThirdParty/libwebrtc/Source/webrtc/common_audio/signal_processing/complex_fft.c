@@ -134,8 +134,8 @@ int WebRtcSpl_ComplexFFT(int16_t frfi[], int stages, int mode)
                     tr32 >>= 15 - CFFTSFT;
                     ti32 >>= 15 - CFFTSFT;
 
-                    qr32 = ((int32_t)frfi[2 * i]) << CFFTSFT;
-                    qi32 = ((int32_t)frfi[2 * i + 1]) << CFFTSFT;
+                    qr32 = ((int32_t)frfi[2 * i]) * (1 << CFFTSFT);
+                    qi32 = ((int32_t)frfi[2 * i + 1]) * (1 << CFFTSFT);
 
                     frfi[2 * j] = (int16_t)(
                         (qr32 - tr32 + CFFTRND2) >> (1 + CFFTSFT));
@@ -276,8 +276,8 @@ int WebRtcSpl_ComplexIFFT(int16_t frfi[], int stages, int mode)
                     tr32 >>= 15 - CIFFTSFT;
                     ti32 >>= 15 - CIFFTSFT;
 
-                    qr32 = ((int32_t)frfi[2 * i]) << CIFFTSFT;
-                    qi32 = ((int32_t)frfi[2 * i + 1]) << CIFFTSFT;
+                    qr32 = ((int32_t)frfi[2 * i]) * (1 << CIFFTSFT);
+                    qi32 = ((int32_t)frfi[2 * i + 1]) * (1 << CIFFTSFT);
 
                     frfi[2 * j] = (int16_t)(
                         (qr32 - tr32 + round2) >> (shift + CIFFTSFT));

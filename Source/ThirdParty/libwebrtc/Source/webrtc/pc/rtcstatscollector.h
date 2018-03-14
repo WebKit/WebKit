@@ -118,10 +118,11 @@ class RTCStatsCollector : public virtual rtc::RefCountInterface,
   void ProducePeerConnectionStats_s(
       int64_t timestamp_us, RTCStatsReport* report) const;
   // Produces |RTCInboundRTPStreamStats| and |RTCOutboundRTPStreamStats|.
-  void ProduceRTPStreamStats_n(
-      int64_t timestamp_us, const SessionStats& session_stats,
-      const TrackMediaInfoMap& track_media_info_map,
-      RTCStatsReport* report) const;
+  void ProduceRTPStreamStats_n(int64_t timestamp_us,
+                               const SessionStats& session_stats,
+                               const ChannelNamePairs& channel_name_pairs,
+                               const TrackMediaInfoMap& track_media_info_map,
+                               RTCStatsReport* report) const;
   // Produces |RTCTransportStats|.
   void ProduceTransportStats_n(
       int64_t timestamp_us, const SessionStats& session_stats,
@@ -158,6 +159,7 @@ class RTCStatsCollector : public virtual rtc::RefCountInterface,
   std::unique_ptr<ChannelNamePairs> channel_name_pairs_;
   std::unique_ptr<TrackMediaInfoMap> track_media_info_map_;
   std::map<MediaStreamTrackInterface*, std::string> track_to_id_;
+
   Call::Stats call_stats_;
 
   // A timestamp, in microseconds, that is based on a timer that is

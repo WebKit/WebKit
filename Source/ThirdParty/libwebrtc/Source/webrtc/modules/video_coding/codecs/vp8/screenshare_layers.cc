@@ -85,6 +85,7 @@ ScreenshareLayers::ScreenshareLayers(int num_temporal_layers,
       last_timestamp_(-1),
       last_sync_timestamp_(-1),
       last_emitted_tl0_timestamp_(-1),
+      last_frame_time_ms_(-1),
       min_qp_(-1),
       max_qp_(-1),
       max_debt_bytes_(0),
@@ -113,14 +114,6 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
   }
 
   const int64_t now_ms = clock_->TimeInMilliseconds();
-  if (target_framerate_.value_or(0) > 0 &&
-      encode_framerate_.Rate(now_ms).value_or(0) > *target_framerate_) {
-    // Max framerate exceeded, drop frame.
-    return TemporalLayers::FrameConfig(kNone, kNone, kNone);
-  }
-
-  if (stats_.first_frame_time_ms_ == -1)
-    stats_.first_frame_time_ms_ = now_ms;
 
   int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
   int64_t ts_diff;
@@ -129,10 +122,41 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
   } else {
     ts_diff = unwrapped_timestamp - last_timestamp_;
   }
+
+  if (target_framerate_) {
+    // If input frame rate exceeds target frame rate, either over a one second
+    // averaging window, or if frame interval is below 90% of desired value,
+    // drop frame.
+    if (encode_framerate_.Rate(now_ms).value_or(0) > *target_framerate_)
+      return TemporalLayers::FrameConfig(kNone, kNone, kNone);
+
+    // Primarily check if frame interval is too short using frame timestamps,
+    // as if they are correct they won't be affected by queuing in webrtc.
+    const int64_t expected_frame_interval_90khz =
+        kOneSecond90Khz / *target_framerate_;
+    if (last_timestamp_ != -1 && ts_diff > 0) {
+      if (ts_diff < 85 * expected_frame_interval_90khz / 100) {
+        return TemporalLayers::FrameConfig(kNone, kNone, kNone);
+      }
+    } else {
+      // Timestamps looks off, use realtime clock here instead.
+      const int64_t expected_frame_interval_ms = 1000 / *target_framerate_;
+      if (last_frame_time_ms_ != -1 &&
+          now_ms - last_frame_time_ms_ <
+              (85 * expected_frame_interval_ms) / 100) {
+        return TemporalLayers::FrameConfig(kNone, kNone, kNone);
+      }
+    }
+  }
+
+  if (stats_.first_frame_time_ms_ == -1)
+    stats_.first_frame_time_ms_ = now_ms;
+
   // Make sure both frame droppers leak out bits.
   layers_[0].UpdateDebt(ts_diff / 90);
   layers_[1].UpdateDebt(ts_diff / 90);
   last_timestamp_ = timestamp;
+  last_frame_time_ms_ = now_ms;
 
   TemporalLayerState layer_state = TemporalLayerState::kDrop;
 
@@ -360,8 +384,20 @@ uint32_t ScreenshareLayers::GetCodecTargetBitrateKbps() const {
 bool ScreenshareLayers::UpdateConfiguration(vpx_codec_enc_cfg_t* cfg) {
   bool cfg_updated = false;
   uint32_t target_bitrate_kbps = GetCodecTargetBitrateKbps();
-  if (bitrate_updated_ || cfg->rc_target_bitrate != target_bitrate_kbps) {
-    cfg->rc_target_bitrate = target_bitrate_kbps;
+
+  // TODO(sprang): We _really_ need to make an overhaul of this class. :(
+  // If we're dropping frames in order to meet a target framerate, adjust the
+  // bitrate assigned to the encoder so the total average bitrate is correct.
+  float encoder_config_bitrate_kbps = target_bitrate_kbps;
+  if (target_framerate_ && capture_framerate_ &&
+      *target_framerate_ < *capture_framerate_) {
+    encoder_config_bitrate_kbps *=
+        static_cast<float>(*capture_framerate_) / *target_framerate_;
+  }
+
+  if (bitrate_updated_ ||
+      cfg->rc_target_bitrate != encoder_config_bitrate_kbps) {
+    cfg->rc_target_bitrate = encoder_config_bitrate_kbps;
 
     // Don't reconfigure qp limits during quality boost frames.
     if (active_layer_ == -1 ||

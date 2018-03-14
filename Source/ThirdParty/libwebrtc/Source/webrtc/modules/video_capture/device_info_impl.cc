@@ -14,6 +14,7 @@
 #include "modules/video_capture/device_info_impl.h"
 #include "modules/video_capture/video_capture_config.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 
 #ifndef abs
 #define abs(a) (a >= 0 ? a : -a)
@@ -21,6 +22,7 @@
 
 namespace webrtc {
 namespace videocapturemodule {
+
 DeviceInfoImpl::DeviceInfoImpl()
     : _apiLock(*RWLockWrapper::CreateRWLock()),
       _lastUsedDeviceName(NULL),
@@ -33,6 +35,7 @@ DeviceInfoImpl::~DeviceInfoImpl(void) {
 
   delete &_apiLock;
 }
+
 int32_t DeviceInfoImpl::NumberOfCapabilities(const char* deviceUniqueIdUTF8) {
   if (!deviceUniqueIdUTF8)
     return -1;
@@ -40,15 +43,9 @@ int32_t DeviceInfoImpl::NumberOfCapabilities(const char* deviceUniqueIdUTF8) {
   _apiLock.AcquireLockShared();
 
   if (_lastUsedDeviceNameLength == strlen((char*)deviceUniqueIdUTF8)) {
-// Is it the same device that is asked for again.
-#if defined(WEBRTC_MAC) || defined(WEBRTC_LINUX)
-    if (strncasecmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
-                    _lastUsedDeviceNameLength) == 0)
-#else
+    // Is it the same device that is asked for again.
     if (_strnicmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
-                  _lastUsedDeviceNameLength) == 0)
-#endif
-    {
+                  _lastUsedDeviceNameLength) == 0) {
       // yes
       _apiLock.ReleaseLockShared();
       return static_cast<int32_t>(_captureCapabilities.size());
@@ -69,16 +66,9 @@ int32_t DeviceInfoImpl::GetCapability(const char* deviceUniqueIdUTF8,
 
   ReadLockScoped cs(_apiLock);
 
-  if ((_lastUsedDeviceNameLength != strlen((char*)deviceUniqueIdUTF8))
-#if defined(WEBRTC_MAC) || defined(WEBRTC_LINUX)
-      || (strncasecmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
-                      _lastUsedDeviceNameLength) != 0))
-#else
-      || (_strnicmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
-                    _lastUsedDeviceNameLength) != 0))
-#endif
-
-  {
+  if ((_lastUsedDeviceNameLength != strlen((char*)deviceUniqueIdUTF8)) ||
+      (_strnicmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
+                 _lastUsedDeviceNameLength) != 0)) {
     _apiLock.ReleaseLockShared();
     _apiLock.AcquireLockExclusive();
     if (-1 == CreateCapabilityMap(deviceUniqueIdUTF8)) {
@@ -110,15 +100,9 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
     return -1;
 
   ReadLockScoped cs(_apiLock);
-  if ((_lastUsedDeviceNameLength != strlen((char*)deviceUniqueIdUTF8))
-#if defined(WEBRTC_MAC) || defined(WEBRTC_LINUX)
-      || (strncasecmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
-                      _lastUsedDeviceNameLength) != 0))
-#else
-      || (_strnicmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
-                    _lastUsedDeviceNameLength) != 0))
-#endif
-  {
+  if ((_lastUsedDeviceNameLength != strlen((char*)deviceUniqueIdUTF8)) ||
+      (_strnicmp((char*)_lastUsedDeviceName, (char*)deviceUniqueIdUTF8,
+                 _lastUsedDeviceNameLength) != 0)) {
     _apiLock.ReleaseLockShared();
     _apiLock.AcquireLockExclusive();
     if (-1 == CreateCapabilityMap(deviceUniqueIdUTF8)) {

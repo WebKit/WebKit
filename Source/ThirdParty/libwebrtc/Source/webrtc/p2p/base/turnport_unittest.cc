@@ -13,6 +13,8 @@
 
 #include <list>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "p2p/base/basicpacketsocketfactory.h"
 #include "p2p/base/p2pconstants.h"
@@ -121,7 +123,7 @@ class TurnPortTestVirtualSocketServer : public rtc::VirtualSocketServer {
 
 class TestConnectionWrapper : public sigslot::has_slots<> {
  public:
-  TestConnectionWrapper(Connection* conn) : connection_(conn) {
+  explicit TestConnectionWrapper(Connection* conn) : connection_(conn) {
     conn->SignalDestroyed.connect(
         this, &TestConnectionWrapper::OnConnectionDestroyed);
   }
@@ -1471,7 +1473,7 @@ class MessageObserver : public StunMessageObserver{
         channel_data_counter_(channel_data_counter),
         attr_counter_(attr_counter) {}
   virtual ~MessageObserver() {}
-  virtual void ReceivedMessage(const TurnMessage* msg) override {
+  void ReceivedMessage(const TurnMessage* msg) override {
     if (message_counter_ != nullptr) {
       (*message_counter_)++;
     }
@@ -1486,7 +1488,7 @@ class MessageObserver : public StunMessageObserver{
     }
   }
 
-  virtual void ReceivedChannelData(const char* data, size_t size) override {
+  void ReceivedChannelData(const char* data, size_t size) override {
     if (channel_data_counter_ != nullptr) {
       (*channel_data_counter_)++;
     }

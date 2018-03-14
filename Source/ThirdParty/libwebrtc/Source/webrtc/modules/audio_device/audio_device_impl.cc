@@ -568,18 +568,6 @@ int32_t AudioDeviceModuleImpl::StereoPlayout(bool* enabled) const {
   return 0;
 }
 
-int32_t AudioDeviceModuleImpl::SetAGC(bool enable) {
-  RTC_LOG(INFO) << __FUNCTION__ << "(" << enable << ")";
-  CHECKinitialized_();
-  return (audio_device_->SetAGC(enable));
-}
-
-bool AudioDeviceModuleImpl::AGC() const {
-  RTC_LOG(INFO) << __FUNCTION__;
-  CHECKinitialized__BOOL();
-  return audio_device_->AGC();
-}
-
 int32_t AudioDeviceModuleImpl::PlayoutIsAvailable(bool* available) {
   RTC_LOG(INFO) << __FUNCTION__;
   CHECKinitialized_();

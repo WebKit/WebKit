@@ -5,14 +5,12 @@
 # tree. An additional intellectual property rights grant can be found
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
-
 import("//build/config/arm.gni")
 import("//build/config/features.gni")
 import("//build/config/mips.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build/config/ui.gni")
 import("//build_overrides/build.gni")
-import("//testing/test.gni")
 
 if (!build_with_chromium && is_component_build) {
   print("The Gn argument `is_component_build` is currently " +
@@ -57,9 +55,6 @@ declare_args() {
   # Selects fixed-point code where possible.
   rtc_prefer_fixed_point = false
 
-  # Enables the use of protocol buffers for debug recordings.
-  rtc_enable_protobuf = true
-
   # Disable the code for the intelligibility enhancer by default.
   rtc_enable_intelligibility_enhancer = false
 
@@ -74,19 +69,14 @@ declare_args() {
   # Set this to true to enable BWE test logging.
   rtc_enable_bwe_test_logging = false
 
-  # Set this to disable building with support for SCTP data channels.
-  rtc_enable_sctp = true
+  # Set this to false to skip building examples.
+  rtc_build_examples = true
 
-  # Disable these to not build components which can be externally provided.
-  rtc_build_json = true
-  rtc_build_libsrtp = true
-  rtc_build_libvpx = true
-  rtc_libvpx_build_vp9 = true
-  rtc_build_libyuv = true
-  rtc_build_openmax_dl = true
-  rtc_build_opus = true
-  rtc_build_ssl = true
-  rtc_build_usrsctp = true
+  # Set this to false to skip building tools.
+  rtc_build_tools = true
+
+  # Set this to false to skip building code that requires X11.
+  rtc_use_x11 = use_x11
 
   # Enable to use the Mozilla internal settings.
   build_with_mozilla = false
@@ -110,26 +100,8 @@ declare_args() {
   # use an external implementation.
   rtc_link_task_queue_impl = true
 
-  # Enable libevent task queues on platforms that support it.
-  # rtc_link_task_queue_impl must be set to true for this to
-  # have an effect.
-  if (is_win || is_mac || is_ios || is_nacl) {
-    rtc_enable_libevent = false
-    rtc_build_libevent = false
-  } else {
-    rtc_enable_libevent = true
-    rtc_build_libevent = true
-  }
-
   if (current_cpu == "arm" || current_cpu == "arm64") {
     rtc_prefer_fixed_point = true
-  }
-
-  if (!is_ios && (current_cpu != "arm" || arm_version >= 7) &&
-      current_cpu != "mips64el") {
-    rtc_use_openmax_dl = true
-  } else {
-    rtc_use_openmax_dl = false
   }
 
   # Determines whether NEON code will be built.
@@ -144,7 +116,8 @@ declare_args() {
   # also: |rtc_initialize_ffmpeg|.
   # CHECK THE OPENH264, FFMPEG AND H.264 LICENSES/PATENTS BEFORE BUILDING.
   # http://www.openh264.org, https://www.ffmpeg.org/
-  rtc_use_h264 = proprietary_codecs && !is_android && !is_ios
+  rtc_use_h264 =
+      is_chrome_branded && proprietary_codecs && !is_android && !is_ios
 
   # By default, use normal platform audio support or dummy audio, but don't
   # use file-based audio playout and record.
@@ -166,17 +139,55 @@ declare_args() {
   # as Chromium, must turn this flag off so that WebRTC does not also
   # initialize.
   rtc_initialize_ffmpeg = !build_with_chromium
+}
 
-  # Build sources requiring GTK. NOTICE: This is not present in Chrome OS
-  # build environments, even if available for Chromium builds.
-  rtc_use_gtk = !build_with_chromium
+if (!build_with_mozilla) {
+  import("//testing/test.gni")
 }
 
 # A second declare_args block, so that declarations within it can
 # depend on the possibly overridden variables in the first
 # declare_args block.
 declare_args() {
-  rtc_restrict_logging = build_with_chromium
+  # Enables the use of protocol buffers for debug recordings.
+  rtc_enable_protobuf = !build_with_mozilla
+
+  # Set this to disable building with support for SCTP data channels.
+  rtc_enable_sctp = !build_with_mozilla
+
+  # Disable these to not build components which can be externally provided.
+  rtc_build_json = !build_with_mozilla
+  rtc_build_libsrtp = !build_with_mozilla
+  rtc_build_libvpx = !build_with_mozilla
+  rtc_libvpx_build_vp9 = !build_with_mozilla
+  rtc_build_openmax_dl = !build_with_mozilla
+  rtc_build_opus = !build_with_mozilla
+  rtc_build_ssl = !build_with_mozilla
+  rtc_build_usrsctp = !build_with_mozilla
+
+  # Enable libevent task queues on platforms that support it.
+  # rtc_link_task_queue_impl must be set to true for this to
+  # have an effect.
+  if (is_win || is_mac || is_ios || is_nacl) {
+    rtc_enable_libevent = false
+    rtc_build_libevent = false
+  } else {
+    rtc_enable_libevent = true
+    rtc_build_libevent = !build_with_mozilla
+  }
+
+  if (!is_ios && (current_cpu != "arm" || arm_version >= 7) &&
+      current_cpu != "mips64el" && !build_with_mozilla) {
+    rtc_use_openmax_dl = true
+  } else {
+    rtc_use_openmax_dl = false
+  }
+
+  # Build sources requiring GTK. NOTICE: This is not present in Chrome OS
+  # build environments, even if available for Chromium builds.
+  rtc_use_gtk = !build_with_chromium && !build_with_mozilla
+
+  rtc_restrict_logging = build_with_chromium || build_with_mozilla
 
   # Excluded in Chromium since its prerequisites don't require Pulse Audio.
   rtc_include_pulse_audio = !build_with_chromium
@@ -186,17 +197,16 @@ declare_args() {
   rtc_include_internal_audio_device = !build_with_chromium
 
   # Include tests in standalone checkout.
-  rtc_include_tests = !build_with_chromium
+  rtc_include_tests = !build_with_chromium && !build_with_mozilla
 }
 
 # Make it possible to provide custom locations for some libraries (move these
 # up into declare_args should we need to actually use them for the GN build).
 rtc_libvpx_dir = "//third_party/libvpx"
-rtc_libyuv_dir = "//third_party/libyuv"
 rtc_opus_dir = "//third_party/opus"
 
 # Desktop capturer is supported only on Windows, OSX and Linux.
-rtc_desktop_capture_supported = is_win || is_mac || (is_linux && use_x11)
+rtc_desktop_capture_supported = is_win || is_mac || (is_linux && rtc_use_x11)
 
 ###############################################################################
 # Templates
@@ -256,6 +266,13 @@ set_defaults("rtc_shared_library") {
   suppressed_configs = []
 }
 
+webrtc_default_visibility = [ webrtc_root + "/*" ]
+if (build_with_chromium) {
+  # Allow Chromium's WebRTC overrides targets to bypass the regular
+  # visibility restrictions.
+  webrtc_default_visibility += [ webrtc_root + "/../webrtc_overrides/*" ]
+}
+
 template("rtc_test") {
   test(target_name) {
     forward_variables_from(invoker,
@@ -296,6 +313,9 @@ template("rtc_source_set") {
                              "visibility",
                            ])
     forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -318,6 +338,9 @@ template("rtc_executable") {
                              "visibility",
                            ])
     forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -344,6 +367,9 @@ template("rtc_static_library") {
                              "visibility",
                            ])
     forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -365,6 +391,9 @@ template("rtc_shared_library") {
                              "visibility",
                            ])
     forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
     configs += invoker.configs
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
@@ -392,6 +421,9 @@ if (is_ios) {
                                "visibility",
                              ])
       forward_variables_from(invoker, [ "visibility" ])
+      if (!defined(visibility)) {
+        visibility = webrtc_default_visibility
+      }
       configs += invoker.configs
       configs -= rtc_remove_configs
       configs -= invoker.suppressed_configs
@@ -400,6 +432,50 @@ if (is_ios) {
         public_configs += invoker.public_configs
       }
     }
+  }
+
+  template("ios_framework_bundle_with_umbrella_header") {
+    forward_variables_from(invoker, [ "output_name" ])
+    umbrella_header_path =
+        "$target_gen_dir/$output_name.framework/Headers/$output_name.h"
+
+    ios_framework_bundle(target_name) {
+      forward_variables_from(invoker, "*", [])
+
+      deps += [ ":copy_umbrella_header_$target_name" ]
+    }
+
+    action("umbrella_header_$target_name") {
+      forward_variables_from(invoker, [ "public_headers" ])
+
+      script = "//tools_webrtc/ios/generate_umbrella_header.py"
+
+      outputs = [
+        umbrella_header_path,
+      ]
+      args = [
+               "--out",
+               rebase_path(umbrella_header_path, root_build_dir),
+               "--sources",
+             ] + rebase_path(public_headers, "objc/Framework/Headers/")
+    }
+
+    copy("copy_umbrella_header_$target_name") {
+      sources = [
+        umbrella_header_path,
+      ]
+      outputs = [
+        "$root_out_dir/$output_name.framework/Headers/$output_name.h",
+      ]
+
+      deps = [
+        ":umbrella_header_$target_name",
+      ]
+    }
+  }
+
+  set_defaults("ios_framework_bundle_with_umbrella_header") {
+    configs = default_shared_library_configs
   }
 }
 

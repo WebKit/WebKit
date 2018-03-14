@@ -11,6 +11,7 @@
 #ifndef LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_LEGACY_H_
 #define LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_LEGACY_H_
 
+#include <deque>
 #include <memory>
 #include <string>
 
@@ -42,6 +43,7 @@ class RtcEventRtpPacketIncoming;
 class RtcEventRtpPacketOutgoing;
 class RtcEventVideoReceiveStreamConfig;
 class RtcEventVideoSendStreamConfig;
+class RtcEventAlrState;
 class RtpPacket;
 
 class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
@@ -50,8 +52,16 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
 
   std::string Encode(const RtcEvent& event) override;
 
+  std::string EncodeLogStart(int64_t timestamp_us) override;
+  std::string EncodeLogEnd(int64_t timestamp_us) override;
+
+  std::string EncodeBatch(
+      std::deque<std::unique_ptr<RtcEvent>>::const_iterator begin,
+      std::deque<std::unique_ptr<RtcEvent>>::const_iterator end) override;
+
  private:
   // Encoding entry-point for the various RtcEvent subclasses.
+  std::string EncodeAlrState(const RtcEventAlrState& event);
   std::string EncodeAudioNetworkAdaptation(
       const RtcEventAudioNetworkAdaptation& event);
   std::string EncodeAudioPlayout(const RtcEventAudioPlayout& event);
@@ -62,8 +72,6 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
   std::string EncodeBweUpdateDelayBased(
       const RtcEventBweUpdateDelayBased& event);
   std::string EncodeBweUpdateLossBased(const RtcEventBweUpdateLossBased& event);
-  std::string EncodeLoggingStarted(const RtcEventLoggingStarted& event);
-  std::string EncodeLoggingStopped(const RtcEventLoggingStopped& event);
   std::string EncodeProbeClusterCreated(
       const RtcEventProbeClusterCreated& event);
   std::string EncodeProbeResultFailure(const RtcEventProbeResultFailure& event);

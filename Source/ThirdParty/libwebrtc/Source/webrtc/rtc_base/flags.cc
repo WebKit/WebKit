@@ -15,9 +15,10 @@
 #include <string.h>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/stringutils.h"
 
 #if defined(WEBRTC_WIN)
-#include "rtc_base/win32.h"
+#include <windows.h>
 #include <shellapi.h>
 #endif
 

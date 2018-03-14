@@ -89,10 +89,6 @@
   return [self currentDevice].systemVersion.doubleValue;
 }
 
-+ (BOOL)isIOS9OrLater {
-  return [self currentDeviceSystemVersion] >= 9.0;
-}
-
 + (BOOL)isIOS11OrLater {
   return [self currentDeviceSystemVersion] >= 11.0;
 }

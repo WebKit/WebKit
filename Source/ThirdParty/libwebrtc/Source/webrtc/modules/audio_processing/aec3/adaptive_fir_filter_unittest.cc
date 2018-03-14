@@ -21,6 +21,7 @@
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
+#include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/aec3/shadow_filter_update_gain.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -47,8 +48,8 @@ std::string ProduceDebugText(size_t delay) {
 // Verifies that the optimized methods for filter adaptation are similar to
 // their reference counterparts.
 TEST(AdaptiveFirFilter, FilterAdaptationNeonOptimizations) {
-  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 12,
-                             std::vector<size_t>(1, 12));
+  std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
+      RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
   Random random_generator(42U);
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   FftData S_C;
@@ -66,8 +67,13 @@ TEST(AdaptiveFirFilter, FilterAdaptationNeonOptimizations) {
 
   for (size_t k = 0; k < 30; ++k) {
     RandomizeSampleVector(&random_generator, x[0]);
-    render_buffer.Insert(x);
+    render_delay_buffer->Insert(x);
+    if (k == 0) {
+      render_delay_buffer->Reset();
+    }
+    render_delay_buffer->PrepareCaptureProcessing();
   }
+  const auto& render_buffer = render_delay_buffer->GetRenderBuffer();
 
   for (size_t j = 0; j < G.re.size(); ++j) {
     G.re[j] = j / 10001.f;
@@ -78,10 +84,10 @@ TEST(AdaptiveFirFilter, FilterAdaptationNeonOptimizations) {
   G.im[0] = 0.f;
   G.im[G.im.size() - 1] = 0.f;
 
-  AdaptPartitions_NEON(render_buffer, G, H_NEON);
-  AdaptPartitions(render_buffer, G, H_C);
-  AdaptPartitions_NEON(render_buffer, G, H_NEON);
-  AdaptPartitions(render_buffer, G, H_C);
+  AdaptPartitions_NEON(*render_buffer, G, H_NEON);
+  AdaptPartitions(*render_buffer, G, H_C);
+  AdaptPartitions_NEON(*render_buffer, G, H_NEON);
+  AdaptPartitions(*render_buffer, G, H_C);
 
   for (size_t l = 0; l < H_C.size(); ++l) {
     for (size_t j = 0; j < H_C[l].im.size(); ++j) {
@@ -90,8 +96,8 @@ TEST(AdaptiveFirFilter, FilterAdaptationNeonOptimizations) {
     }
   }
 
-  ApplyFilter_NEON(render_buffer, H_NEON, &S_NEON);
-  ApplyFilter(render_buffer, H_C, &S_C);
+  ApplyFilter_NEON(*render_buffer, H_NEON, &S_NEON);
+  ApplyFilter(*render_buffer, H_C, &S_C);
   for (size_t j = 0; j < S_C.re.size(); ++j) {
     EXPECT_NEAR(S_C.re[j], S_NEON.re[j], fabs(S_C.re[j] * 0.00001f));
     EXPECT_NEAR(S_C.im[j], S_NEON.im[j], fabs(S_C.re[j] * 0.00001f));
@@ -153,8 +159,8 @@ TEST(AdaptiveFirFilter, UpdateErlNeonOptimization) {
 TEST(AdaptiveFirFilter, FilterAdaptationSse2Optimizations) {
   bool use_sse2 = (WebRtc_GetCPUInfo(kSSE2) != 0);
   if (use_sse2) {
-    RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 12,
-                               std::vector<size_t>(1, 12));
+    std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
+        RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
     Random random_generator(42U);
     std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
     FftData S_C;
@@ -172,10 +178,15 @@ TEST(AdaptiveFirFilter, FilterAdaptationSse2Optimizations) {
 
     for (size_t k = 0; k < 500; ++k) {
       RandomizeSampleVector(&random_generator, x[0]);
-      render_buffer.Insert(x);
+      render_delay_buffer->Insert(x);
+      if (k == 0) {
+        render_delay_buffer->Reset();
+      }
+      render_delay_buffer->PrepareCaptureProcessing();
+      const auto& render_buffer = render_delay_buffer->GetRenderBuffer();
 
-      ApplyFilter_SSE2(render_buffer, H_SSE2, &S_SSE2);
-      ApplyFilter(render_buffer, H_C, &S_C);
+      ApplyFilter_SSE2(*render_buffer, H_SSE2, &S_SSE2);
+      ApplyFilter(*render_buffer, H_C, &S_C);
       for (size_t j = 0; j < S_C.re.size(); ++j) {
         EXPECT_FLOAT_EQ(S_C.re[j], S_SSE2.re[j]);
         EXPECT_FLOAT_EQ(S_C.im[j], S_SSE2.im[j]);
@@ -186,8 +197,8 @@ TEST(AdaptiveFirFilter, FilterAdaptationSse2Optimizations) {
       std::for_each(G.im.begin(), G.im.end(),
                     [&](float& a) { a = random_generator.Rand<float>(); });
 
-      AdaptPartitions_SSE2(render_buffer, G, H_SSE2);
-      AdaptPartitions(render_buffer, G, H_C);
+      AdaptPartitions_SSE2(*render_buffer, G, H_SSE2);
+      AdaptPartitions(*render_buffer, G, H_C);
 
       for (size_t k = 0; k < H_C.size(); ++k) {
         for (size_t j = 0; j < H_C[k].re.size(); ++j) {
@@ -264,10 +275,10 @@ TEST(AdaptiveFirFilter, NullDataDumper) {
 TEST(AdaptiveFirFilter, NullFilterOutput) {
   ApmDataDumper data_dumper(42);
   AdaptiveFirFilter filter(9, DetectOptimization(), &data_dumper);
-  RenderBuffer render_buffer(Aec3Optimization::kNone, 3,
-                             filter.SizePartitions(),
-                             std::vector<size_t>(1, filter.SizePartitions()));
-  EXPECT_DEATH(filter.Filter(render_buffer, nullptr), "");
+  std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
+      RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
+  EXPECT_DEATH(filter.Filter(*render_delay_buffer->GetRenderBuffer(), nullptr),
+               "");
 }
 
 #endif
@@ -293,14 +304,17 @@ TEST(AdaptiveFirFilter, FilterSize) {
 // Verifies that the filter is being able to properly filter a signal and to
 // adapt its coefficients.
 TEST(AdaptiveFirFilter, FilterAndAdapt) {
-  constexpr size_t kNumBlocksToProcess = 500;
+  constexpr size_t kNumBlocksToProcess = 1000;
   ApmDataDumper data_dumper(42);
-  AdaptiveFirFilter filter(9, DetectOptimization(), &data_dumper);
+  EchoCanceller3Config config;
+  AdaptiveFirFilter filter(config.filter.main.length_blocks,
+                           DetectOptimization(), &data_dumper);
   Aec3Fft fft;
-  RenderBuffer render_buffer(Aec3Optimization::kNone, 3,
-                             filter.SizePartitions(),
-                             std::vector<size_t>(1, filter.SizePartitions()));
-  ShadowFilterUpdateGain gain;
+  config.delay.min_echo_path_delay_blocks = 0;
+  config.delay.default_delay = 1;
+  std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
+      RenderDelayBuffer::Create(config, 3));
+  ShadowFilterUpdateGain gain(config.filter.shadow);
   Random random_generator(42U);
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<float> n(kBlockSize, 0.f);
@@ -345,34 +359,43 @@ TEST(AdaptiveFirFilter, FilterAndAdapt) {
       x_hp_filter.Process(x[0]);
       y_hp_filter.Process(y);
 
-      render_buffer.Insert(x);
-      render_signal_analyzer.Update(render_buffer, aec_state.FilterDelay());
+      render_delay_buffer->Insert(x);
+      if (k == 0) {
+        render_delay_buffer->Reset();
+      }
+      render_delay_buffer->PrepareCaptureProcessing();
+      const auto& render_buffer = render_delay_buffer->GetRenderBuffer();
 
-      filter.Filter(render_buffer, &S);
+      render_signal_analyzer.Update(*render_buffer, aec_state.FilterDelay());
+
+      filter.Filter(*render_buffer, &S);
       fft.Ifft(S, &s_scratch);
       std::transform(y.begin(), y.end(), s_scratch.begin() + kFftLengthBy2,
                      e.begin(),
                      [&](float a, float b) { return a - b * kScale; });
       std::for_each(e.begin(), e.end(),
                     [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
-      fft.ZeroPaddedFft(e, &E);
+      fft.ZeroPaddedFft(e, Aec3Fft::Window::kRectangular, &E);
       for (size_t k = 0; k < kBlockSize; ++k) {
         s[k] = kScale * s_scratch[k + kFftLengthBy2];
       }
 
-      gain.Compute(render_buffer, render_signal_analyzer, E,
+      std::array<float, kFftLengthBy2Plus1> render_power;
+      render_buffer->SpectralSum(filter.SizePartitions(), &render_power);
+      gain.Compute(render_power, render_signal_analyzer, E,
                    filter.SizePartitions(), false, &G);
-      filter.Adapt(render_buffer, G);
-      aec_state.HandleEchoPathChange(EchoPathVariability(false, false));
+      filter.Adapt(*render_buffer, G);
+      aec_state.HandleEchoPathChange(EchoPathVariability(
+          false, EchoPathVariability::DelayAdjustment::kNone, false));
       aec_state.Update(filter.FilterFrequencyResponse(),
-                       filter.FilterImpulseResponse(), true, rtc::nullopt,
-                       render_buffer, E2_main, Y2, x[0], s, false);
+                       filter.FilterImpulseResponse(), true, *render_buffer,
+                       E2_main, Y2, s, false);
     }
     // Verify that the filter is able to perform well.
     EXPECT_LT(1000 * std::inner_product(e.begin(), e.end(), e.begin(), 0.f),
               std::inner_product(y.begin(), y.end(), y.begin(), 0.f));
-    ASSERT_TRUE(aec_state.FilterDelay());
-    EXPECT_EQ(delay_samples / kBlockSize, *aec_state.FilterDelay());
+    EXPECT_EQ(delay_samples / kBlockSize,
+              static_cast<size_t>(aec_state.FilterDelay()));
   }
 }
 }  // namespace aec3

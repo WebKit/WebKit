@@ -9,6 +9,7 @@
  */
 
 #include <memory>
+#include <vector>
 
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "system_wrappers/include/clock.h"
@@ -16,23 +17,33 @@
 #include "test/gtest.h"
 
 namespace webrtc {
+namespace {
+
+using ::testing::SizeIs;
+using ::testing::UnorderedElementsAre;
 
 const size_t kPacketSize1 = 100;
 const size_t kPacketSize2 = 300;
-const uint32_t kSsrc1 = 1;
-const uint32_t kSsrc2 = 2;
+const uint32_t kSsrc1 = 101;
+const uint32_t kSsrc2 = 202;
+const uint32_t kSsrc3 = 203;
+const uint32_t kSsrc4 = 304;
+
+RTPHeader CreateRtpHeader(uint32_t ssrc) {
+  RTPHeader header;
+  memset(&header, 0, sizeof(header));
+  header.ssrc = ssrc;
+  header.sequenceNumber = 100;
+  return header;
+}
 
 class ReceiveStatisticsTest : public ::testing::Test {
  public:
   ReceiveStatisticsTest() :
       clock_(0),
       receive_statistics_(ReceiveStatistics::Create(&clock_)) {
-    memset(&header1_, 0, sizeof(header1_));
-    header1_.ssrc = kSsrc1;
-    header1_.sequenceNumber = 100;
-    memset(&header2_, 0, sizeof(header2_));
-    header2_.ssrc = kSsrc2;
-    header2_.sequenceNumber = 100;
+    header1_ = CreateRtpHeader(kSsrc1);
+    header2_ = CreateRtpHeader(kSsrc2);
   }
 
  protected:
@@ -87,6 +98,47 @@ TEST_F(ReceiveStatisticsTest, TwoIncomingSsrcs) {
       &bytes_received, &packets_received);
   EXPECT_EQ(900u, bytes_received);
   EXPECT_EQ(3u, packets_received);
+}
+
+TEST_F(ReceiveStatisticsTest,
+       RtcpReportBlocksReturnsMaxBlocksWhenThereAreMoreStatisticians) {
+  RTPHeader header1 = CreateRtpHeader(kSsrc1);
+  RTPHeader header2 = CreateRtpHeader(kSsrc2);
+  RTPHeader header3 = CreateRtpHeader(kSsrc3);
+  receive_statistics_->IncomingPacket(header1, kPacketSize1, false);
+  receive_statistics_->IncomingPacket(header2, kPacketSize1, false);
+  receive_statistics_->IncomingPacket(header3, kPacketSize1, false);
+
+  EXPECT_THAT(receive_statistics_->RtcpReportBlocks(2), SizeIs(2));
+  EXPECT_THAT(receive_statistics_->RtcpReportBlocks(2), SizeIs(2));
+  EXPECT_THAT(receive_statistics_->RtcpReportBlocks(2), SizeIs(2));
+}
+
+TEST_F(ReceiveStatisticsTest,
+       RtcpReportBlocksReturnsAllObservedSsrcsWithMultipleCalls) {
+  RTPHeader header1 = CreateRtpHeader(kSsrc1);
+  RTPHeader header2 = CreateRtpHeader(kSsrc2);
+  RTPHeader header3 = CreateRtpHeader(kSsrc3);
+  RTPHeader header4 = CreateRtpHeader(kSsrc4);
+  receive_statistics_->IncomingPacket(header1, kPacketSize1, false);
+  receive_statistics_->IncomingPacket(header2, kPacketSize1, false);
+  receive_statistics_->IncomingPacket(header3, kPacketSize1, false);
+  receive_statistics_->IncomingPacket(header4, kPacketSize1, false);
+
+  std::vector<uint32_t> observed_ssrcs;
+  std::vector<rtcp::ReportBlock> report_blocks =
+      receive_statistics_->RtcpReportBlocks(2);
+  ASSERT_THAT(report_blocks, SizeIs(2));
+  observed_ssrcs.push_back(report_blocks[0].source_ssrc());
+  observed_ssrcs.push_back(report_blocks[1].source_ssrc());
+
+  report_blocks = receive_statistics_->RtcpReportBlocks(2);
+  ASSERT_THAT(report_blocks, SizeIs(2));
+  observed_ssrcs.push_back(report_blocks[0].source_ssrc());
+  observed_ssrcs.push_back(report_blocks[1].source_ssrc());
+
+  EXPECT_THAT(observed_ssrcs,
+              UnorderedElementsAre(kSsrc1, kSsrc2, kSsrc3, kSsrc4));
 }
 
 TEST_F(ReceiveStatisticsTest, ActiveStatisticians) {
@@ -195,7 +247,7 @@ TEST_F(ReceiveStatisticsTest, RtcpCallbacks) {
   EXPECT_EQ(statistics.fraction_lost, callback.stats_.fraction_lost);
   EXPECT_EQ(statistics.jitter, callback.stats_.jitter);
   EXPECT_EQ(51, statistics.fraction_lost);
-  EXPECT_EQ(1u, statistics.packets_lost);
+  EXPECT_EQ(1, statistics.packets_lost);
   EXPECT_EQ(5u, statistics.extended_highest_sequence_number);
   EXPECT_EQ(4u, statistics.jitter);
 
@@ -367,4 +419,6 @@ TEST_F(ReceiveStatisticsTest, RtpCallbacksFecFirst) {
   expected.fec.packets = 1;
   callback.Matches(2, kSsrc1, expected);
 }
+
+}  // namespace
 }  // namespace webrtc

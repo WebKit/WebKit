@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <climits>
+#include <random>
 
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/numerics/percentile_filter.h"
@@ -113,7 +114,8 @@ TEST_P(PercentileFilterTest, InsertAndEraseTenValuesInRandomOrder) {
 
   // Insert two sets of |zero_to_nine| in random order.
   for (int i = 0; i < 2; ++i) {
-    std::random_shuffle(zero_to_nine, zero_to_nine + 10);
+    std::shuffle(zero_to_nine, zero_to_nine + 10,
+                 std::mt19937(std::random_device()()));
     for (int64_t value : zero_to_nine)
       filter_.Insert(value);
     // After inserting a full set of |zero_to_nine|, the percentile should
@@ -123,12 +125,13 @@ TEST_P(PercentileFilterTest, InsertAndEraseTenValuesInRandomOrder) {
 
   // Insert and erase sets of |zero_to_nine| in random order a few times.
   for (int i = 0; i < 3; ++i) {
-    std::random_shuffle(zero_to_nine, zero_to_nine + 10);
+    std::shuffle(zero_to_nine, zero_to_nine + 10,
+                 std::mt19937(std::random_device()()));
     for (int64_t value : zero_to_nine)
       filter_.Erase(value);
     EXPECT_EQ(expected_value, filter_.GetPercentileValue());
-
-    std::random_shuffle(zero_to_nine, zero_to_nine + 10);
+    std::shuffle(zero_to_nine, zero_to_nine + 10,
+                 std::mt19937(std::random_device()()));
     for (int64_t value : zero_to_nine)
       filter_.Insert(value);
     EXPECT_EQ(expected_value, filter_.GetPercentileValue());

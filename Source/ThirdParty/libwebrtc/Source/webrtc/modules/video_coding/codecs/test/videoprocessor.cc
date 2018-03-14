@@ -30,7 +30,6 @@ namespace test {
 namespace {
 
 const int kRtpClockRateHz = 90000;
-const int64_t kNoRenderTime = 0;
 
 std::unique_ptr<VideoBitrateAllocator> CreateBitrateAllocator(
     TestConfig* config) {
@@ -166,9 +165,11 @@ void VideoProcessor::ProcessFrame() {
   // want to use capture timestamps in the IVF files.
   const uint32_t rtp_timestamp = (frame_number + 1) * kRtpClockRateHz /
                                  config_.codec_settings.maxFramerate;
+  const int64_t render_time_ms = (frame_number + 1) * rtc::kNumMillisecsPerSec /
+                                 config_.codec_settings.maxFramerate;
   rtp_timestamp_to_frame_num_[rtp_timestamp] = frame_number;
   input_frames_[frame_number] = rtc::MakeUnique<VideoFrame>(
-      buffer, rtp_timestamp, kNoRenderTime, webrtc::kVideoRotation_0);
+      buffer, rtp_timestamp, render_time_ms, webrtc::kVideoRotation_0);
 
   std::vector<FrameType> frame_types = config_.FrameTypeForFrame(frame_number);
 

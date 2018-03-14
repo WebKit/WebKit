@@ -14,18 +14,6 @@ namespace webrtc {
 
 using rtc::CritScope;
 
-struct ProtectionBitrateCalculator::EncodedFrameSample {
-  EncodedFrameSample(size_t size_bytes,
-                     uint32_t timestamp,
-                     int64_t time_complete_ms)
-      : size_bytes(size_bytes),
-        timestamp(timestamp),
-        time_complete_ms(time_complete_ms) {}
-  size_t size_bytes;
-  uint32_t timestamp;
-  int64_t time_complete_ms;
-};
-
 ProtectionBitrateCalculator::ProtectionBitrateCalculator(
     Clock* clock,
     VCMProtectionCallback* protection_callback)

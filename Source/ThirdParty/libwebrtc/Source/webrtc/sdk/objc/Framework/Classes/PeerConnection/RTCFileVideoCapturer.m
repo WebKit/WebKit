@@ -139,6 +139,7 @@ typedef NS_ENUM(NSInteger, RTCFileVideoCapturerStatus) {
   }
   if (CMSampleBufferGetNumSamples(sampleBuffer) != 1 || !CMSampleBufferIsValid(sampleBuffer) ||
       !CMSampleBufferDataIsReady(sampleBuffer)) {
+    CFRelease(sampleBuffer);
     [self readNextBuffer];
     return;
   }

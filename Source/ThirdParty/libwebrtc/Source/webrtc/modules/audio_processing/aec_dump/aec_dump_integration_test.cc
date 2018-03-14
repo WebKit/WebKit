@@ -24,7 +24,7 @@ namespace {
 std::unique_ptr<webrtc::AudioProcessing> CreateAudioProcessing() {
   webrtc::Config config;
   std::unique_ptr<webrtc::AudioProcessing> apm(
-      webrtc::AudioProcessing::Create(config));
+      webrtc::AudioProcessingBuilder().Create(config));
   RTC_DCHECK(apm);
   return apm;
 }

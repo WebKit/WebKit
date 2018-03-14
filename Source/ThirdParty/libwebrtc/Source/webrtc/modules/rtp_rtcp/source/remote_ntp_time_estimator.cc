@@ -12,8 +12,6 @@
 
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
-#include "system_wrappers/include/field_trial.h"
-#include "system_wrappers/include/timestamp_extrapolator.h"
 
 namespace webrtc {
 
@@ -21,19 +19,14 @@ namespace {
 static const int kTimingLogIntervalMs = 10000;
 static const int kClocksOffsetSmoothingWindow = 100;
 
-bool IsClockEstimationExperimentEnabled() {
-  return webrtc::field_trial::IsEnabled("WebRTC-ClockEstimation");
-}
 }  // namespace
 
 // TODO(wu): Refactor this class so that it can be shared with
 // vie_sync_module.cc.
 RemoteNtpTimeEstimator::RemoteNtpTimeEstimator(Clock* clock)
     : clock_(clock),
-      ts_extrapolator_(new TimestampExtrapolator(clock_->TimeInMilliseconds())),
       ntp_clocks_offset_estimator_(kClocksOffsetSmoothingWindow),
-      last_timing_log_ms_(-1),
-      is_experiment_enabled_(IsClockEstimationExperimentEnabled()) {}
+      last_timing_log_ms_(-1) {}
 
 RemoteNtpTimeEstimator::~RemoteNtpTimeEstimator() {}
 
@@ -55,9 +48,6 @@ bool RemoteNtpTimeEstimator::UpdateRtcpTimestamp(int64_t rtt,
   // The extrapolator assumes the TimeInMilliseconds time.
   int64_t receiver_arrival_time_ms = clock_->TimeInMilliseconds();
   int64_t sender_send_time_ms = Clock::NtpToMs(ntp_secs, ntp_frac);
-  int64_t sender_arrival_time_90k = (sender_send_time_ms + rtt / 2) * 90;
-  ts_extrapolator_->Update(receiver_arrival_time_ms, sender_arrival_time_90k);
-
   int64_t sender_arrival_time_ms = sender_send_time_ms + rtt / 2;
   int64_t remote_to_local_clocks_offset =
       receiver_arrival_time_ms - sender_arrival_time_ms;
@@ -71,16 +61,10 @@ int64_t RemoteNtpTimeEstimator::Estimate(uint32_t rtp_timestamp) {
     return -1;
   }
 
-  int64_t receiver_capture_ms;
-
-  if (is_experiment_enabled_) {
-    int64_t remote_to_local_clocks_offset =
-        ntp_clocks_offset_estimator_.GetFilteredValue();
-    receiver_capture_ms = sender_capture_ntp_ms + remote_to_local_clocks_offset;
-  } else {
-    uint32_t timestamp = sender_capture_ntp_ms * 90;
-    receiver_capture_ms = ts_extrapolator_->ExtrapolateLocalTime(timestamp);
-  }
+  int64_t remote_to_local_clocks_offset =
+      ntp_clocks_offset_estimator_.GetFilteredValue();
+  int64_t receiver_capture_ms =
+      sender_capture_ntp_ms + remote_to_local_clocks_offset;
   int64_t now_ms = clock_->TimeInMilliseconds();
   int64_t ntp_offset = clock_->CurrentNtpInMilliseconds() - now_ms;
   int64_t receiver_capture_ntp_ms = receiver_capture_ms + ntp_offset;

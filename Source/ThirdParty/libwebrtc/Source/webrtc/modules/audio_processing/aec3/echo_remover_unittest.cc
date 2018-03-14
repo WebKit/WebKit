@@ -39,9 +39,6 @@ std::string ProduceDebugText(int sample_rate_hz, int delay) {
   return ss.str();
 }
 
-constexpr size_t kDownSamplingFactor = 4;
-constexpr size_t kNumMatchedFilters = 4;
-
 }  // namespace
 
 // Verifies the basic API call sequence
@@ -51,24 +48,22 @@ TEST(EchoRemover, BasicApiCalls) {
     std::unique_ptr<EchoRemover> remover(
         EchoRemover::Create(EchoCanceller3Config(), rate));
     std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
-        NumBandsForRate(rate), kDownSamplingFactor,
-        GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-        GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+        EchoCanceller3Config(), NumBandsForRate(rate)));
 
     std::vector<std::vector<float>> render(NumBandsForRate(rate),
                                            std::vector<float>(kBlockSize, 0.f));
     std::vector<std::vector<float>> capture(
         NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
     for (size_t k = 0; k < 100; ++k) {
-      EchoPathVariability echo_path_variability(k % 3 == 0 ? true : false,
-                                                k % 5 == 0 ? true : false);
-      rtc::Optional<size_t> echo_path_delay_samples =
-          (k % 6 == 0 ? rtc::Optional<size_t>(k * 10)
-                      : rtc::nullopt);
+      EchoPathVariability echo_path_variability(
+          k % 3 == 0 ? true : false,
+          k % 5 == 0 ? EchoPathVariability::DelayAdjustment::kNewDetectedDelay
+                     : EchoPathVariability::DelayAdjustment::kNone,
+          false);
       render_buffer->Insert(render);
-      render_buffer->UpdateBuffers();
-      remover->ProcessCapture(echo_path_delay_samples, echo_path_variability,
-                              k % 2 == 0 ? true : false,
+      render_buffer->PrepareCaptureProcessing();
+
+      remover->ProcessCapture(echo_path_variability, k % 2 == 0 ? true : false,
                               render_buffer->GetRenderBuffer(), &capture);
     }
   }
@@ -92,17 +87,15 @@ TEST(EchoRemover, WrongCaptureBlockSize) {
     std::unique_ptr<EchoRemover> remover(
         EchoRemover::Create(EchoCanceller3Config(), rate));
     std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
-        NumBandsForRate(rate), kDownSamplingFactor,
-        GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-        GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+        EchoCanceller3Config(), NumBandsForRate(rate)));
     std::vector<std::vector<float>> capture(
         NumBandsForRate(rate), std::vector<float>(kBlockSize - 1, 0.f));
-    EchoPathVariability echo_path_variability(false, false);
-    rtc::Optional<size_t> echo_path_delay_samples;
-    EXPECT_DEATH(remover->ProcessCapture(
-                     echo_path_delay_samples, echo_path_variability, false,
-                     render_buffer->GetRenderBuffer(), &capture),
-                 "");
+    EchoPathVariability echo_path_variability(
+        false, EchoPathVariability::DelayAdjustment::kNone, false);
+    EXPECT_DEATH(
+        remover->ProcessCapture(echo_path_variability, false,
+                                render_buffer->GetRenderBuffer(), &capture),
+        "");
   }
 }
 
@@ -115,18 +108,16 @@ TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
     std::unique_ptr<EchoRemover> remover(
         EchoRemover::Create(EchoCanceller3Config(), rate));
     std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
-        NumBandsForRate(rate), kDownSamplingFactor,
-        GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-        GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+        EchoCanceller3Config(), NumBandsForRate(rate)));
     std::vector<std::vector<float>> capture(
         NumBandsForRate(rate == 48000 ? 16000 : rate + 16000),
         std::vector<float>(kBlockSize, 0.f));
-    EchoPathVariability echo_path_variability(false, false);
-    rtc::Optional<size_t> echo_path_delay_samples;
-    EXPECT_DEATH(remover->ProcessCapture(
-                     echo_path_delay_samples, echo_path_variability, false,
-                     render_buffer->GetRenderBuffer(), &capture),
-                 "");
+    EchoPathVariability echo_path_variability(
+        false, EchoPathVariability::DelayAdjustment::kNone, false);
+    EXPECT_DEATH(
+        remover->ProcessCapture(echo_path_variability, false,
+                                render_buffer->GetRenderBuffer(), &capture),
+        "");
   }
 }
 
@@ -134,15 +125,13 @@ TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
 TEST(EchoRemover, NullCapture) {
   std::unique_ptr<EchoRemover> remover(
       EchoRemover::Create(EchoCanceller3Config(), 8000));
-  std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
-      3, kDownSamplingFactor,
-      GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-      GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
-  EchoPathVariability echo_path_variability(false, false);
-  rtc::Optional<size_t> echo_path_delay_samples;
+  std::unique_ptr<RenderDelayBuffer> render_buffer(
+      RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
+  EchoPathVariability echo_path_variability(
+      false, EchoPathVariability::DelayAdjustment::kNone, false);
   EXPECT_DEATH(
-      remover->ProcessCapture(echo_path_delay_samples, echo_path_variability,
-                              false, render_buffer->GetRenderBuffer(), nullptr),
+      remover->ProcessCapture(echo_path_variability, false,
+                              render_buffer->GetRenderBuffer(), nullptr),
       "");
 }
 
@@ -158,17 +147,17 @@ TEST(EchoRemover, BasicEchoRemoval) {
                                       std::vector<float>(kBlockSize, 0.f));
     std::vector<std::vector<float>> y(NumBandsForRate(rate),
                                       std::vector<float>(kBlockSize, 0.f));
-    EchoPathVariability echo_path_variability(false, false);
+    EchoPathVariability echo_path_variability(
+        false, EchoPathVariability::DelayAdjustment::kNone, false);
     for (size_t delay_samples : {0, 64, 150, 200, 301}) {
       SCOPED_TRACE(ProduceDebugText(rate, delay_samples));
-      std::unique_ptr<EchoRemover> remover(
-          EchoRemover::Create(EchoCanceller3Config(), rate));
+      EchoCanceller3Config config;
+      config.delay.min_echo_path_delay_blocks = 0;
+      std::unique_ptr<EchoRemover> remover(EchoRemover::Create(config, rate));
       std::unique_ptr<RenderDelayBuffer> render_buffer(
-          RenderDelayBuffer::Create(
-              NumBandsForRate(rate), kDownSamplingFactor,
-              GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-              GetRenderDelayBufferSize(kDownSamplingFactor,
-                                       kNumMatchedFilters)));
+          RenderDelayBuffer::Create(config, NumBandsForRate(rate)));
+      render_buffer->SetDelay(delay_samples / kBlockSize);
+
       std::vector<std::unique_ptr<DelayBuffer<float>>> delay_buffers(x.size());
       for (size_t j = 0; j < x.size(); ++j) {
         delay_buffers[j].reset(new DelayBuffer<float>(delay_samples));
@@ -196,9 +185,9 @@ TEST(EchoRemover, BasicEchoRemoval) {
         }
 
         render_buffer->Insert(x);
-        render_buffer->UpdateBuffers();
+        render_buffer->PrepareCaptureProcessing();
 
-        remover->ProcessCapture(delay_samples, echo_path_variability, false,
+        remover->ProcessCapture(echo_path_variability, false,
                                 render_buffer->GetRenderBuffer(), &y);
 
         if (k > kNumBlocksToProcess / 2) {

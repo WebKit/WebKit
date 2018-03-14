@@ -186,7 +186,7 @@ void BitrateAllocator::UpdateAllocationLimits() {
       total_requested_min_bitrate += config.min_bitrate_bps;
     } else if (config.allocated_bitrate_bps == 0) {
       stream_padding =
-          std::max(MinBitrateWithHysteresis(config), stream_padding);
+          std::max(config.MinBitrateWithHysteresis(), stream_padding);
     }
     total_requested_padding_bitrate += stream_padding;
   }
@@ -331,10 +331,10 @@ BitrateAllocator::ObserverAllocation BitrateAllocator::LowRateAllocation(
   if (remaining_bitrate > 0) {
     for (const auto& observer_config : bitrate_observer_configs_) {
       if (observer_config.enforce_min_bitrate ||
-          LastAllocatedBitrate(observer_config) == 0)
+          observer_config.LastAllocatedBitrate() == 0)
         continue;
 
-      uint32_t required_bitrate = MinBitrateWithHysteresis(observer_config);
+      uint32_t required_bitrate = observer_config.MinBitrateWithHysteresis();
       if (remaining_bitrate >= required_bitrate) {
         allocation[observer_config.observer] = required_bitrate;
         remaining_bitrate -= required_bitrate;
@@ -345,11 +345,11 @@ BitrateAllocator::ObserverAllocation BitrateAllocator::LowRateAllocation(
   // Allocate bitrate to previously paused streams.
   if (remaining_bitrate > 0) {
     for (const auto& observer_config : bitrate_observer_configs_) {
-      if (LastAllocatedBitrate(observer_config) != 0)
+      if (observer_config.LastAllocatedBitrate() != 0)
         continue;
 
       // Add a hysteresis to avoid toggling.
-      uint32_t required_bitrate = MinBitrateWithHysteresis(observer_config);
+      uint32_t required_bitrate = observer_config.MinBitrateWithHysteresis();
       if (remaining_bitrate >= required_bitrate) {
         allocation[observer_config.observer] = required_bitrate;
         remaining_bitrate -= required_bitrate;
@@ -408,20 +408,16 @@ BitrateAllocator::ObserverAllocation BitrateAllocator::MaxRateAllocation(
   return allocation;
 }
 
-uint32_t BitrateAllocator::LastAllocatedBitrate(
-    const ObserverConfig& observer_config) {
+uint32_t BitrateAllocator::ObserverConfig::LastAllocatedBitrate() const {
   // Return the configured minimum bitrate for newly added observers, to avoid
   // requiring an extra high bitrate for the observer to get an allocated
   // bitrate.
-  return observer_config.allocated_bitrate_bps == -1
-             ? observer_config.min_bitrate_bps
-             : observer_config.allocated_bitrate_bps;
+  return allocated_bitrate_bps == -1 ? min_bitrate_bps : allocated_bitrate_bps;
 }
 
-uint32_t BitrateAllocator::MinBitrateWithHysteresis(
-    const ObserverConfig& observer_config) {
-  uint32_t min_bitrate = observer_config.min_bitrate_bps;
-  if (LastAllocatedBitrate(observer_config) == 0) {
+uint32_t BitrateAllocator::ObserverConfig::MinBitrateWithHysteresis() const {
+  uint32_t min_bitrate = min_bitrate_bps;
+  if (LastAllocatedBitrate() == 0) {
     min_bitrate += std::max(static_cast<uint32_t>(kToggleFactor * min_bitrate),
                             kMinToggleBitrateBps);
   }
@@ -431,8 +427,8 @@ uint32_t BitrateAllocator::MinBitrateWithHysteresis(
   // paused stream won't get any ratio updates. This might lead to waiting a bit
   // longer than necessary if the network condition improves, but this is to
   // avoid too much toggling.
-  if (observer_config.media_ratio > 0.0 && observer_config.media_ratio < 1.0)
-    min_bitrate += min_bitrate * (1.0 - observer_config.media_ratio);
+  if (media_ratio > 0.0 && media_ratio < 1.0)
+    min_bitrate += min_bitrate * (1.0 - media_ratio);
 
   return min_bitrate;
 }
@@ -483,7 +479,7 @@ bool BitrateAllocator::EnoughBitrateForAllObservers(uint32_t bitrate,
       static_cast<uint32_t>(bitrate_observer_configs_.size());
   for (const auto& observer_config : bitrate_observer_configs_) {
     if (observer_config.min_bitrate_bps + extra_bitrate_per_observer <
-        MinBitrateWithHysteresis(observer_config)) {
+        observer_config.MinBitrateWithHysteresis()) {
       return false;
     }
   }

@@ -36,6 +36,45 @@ instead of                          | use
 
 See [the source](webrtc/api/array_view.h) for more detailed docs.
 
+### sigslot
+
+sigslot is a lightweight library that adds a signal/slot language
+construct to C++, making it easy to implement the observer pattern
+with minimal boilerplate code.
+
+When adding a signal to a pure interface, **prefer to add a pure
+virtual method that returns a reference to a signal**:
+
+```
+sigslot::signal<int>& SignalFoo() = 0;
+```
+
+As opposed to making it a public member variable, as a lot of legacy
+code does:
+
+```
+sigslot::signal<int> SignalFoo;
+```
+
+The virtual method approach has the advantage that it keeps the
+interface stateless, and gives the subclass more flexibility in how it
+implements the signal. It may:
+
+* Have its own signal as a member variable.
+* Use a `sigslot::repeater`, to repeat a signal of another object:
+
+  ```
+  sigslot::repeater<int> foo_;
+  /* ... */
+  foo_.repeat(bar_.SignalFoo());
+  ```
+* Just return another object's signal directly, if the other object's
+  lifetime is the same as its own.
+
+  ```
+  sigslot::signal<int>& SignalFoo() { return bar_.SignalFoo(); }
+  ```
+
 ## **C**
 
 There’s a substantial chunk of legacy C code in WebRTC, and a lot of
@@ -77,7 +116,7 @@ Chromium style guide.
 [gn]: https://chromium.googlesource.com/chromium/src/tools/gn/
 [chr-gn-style]: https://chromium.googlesource.com/chromium/src/tools/gn/+/HEAD/docs/style_guide.md
 
-### WebRTC-specific GN templates
+### <a name="webrtc-gn-templates"></a>WebRTC-specific GN templates
 
 Use the following [GN templates][gn-templ] to ensure that all
 our [targets][gn-target] are built with the same configuration:
@@ -92,6 +131,23 @@ instead of       | use
 
 [gn-templ]: https://chromium.googlesource.com/chromium/src/tools/gn/+/HEAD/docs/language.md#Templates
 [gn-target]: https://chromium.googlesource.com/chromium/src/tools/gn/+/HEAD/docs/language.md#Targets
+
+### Target visibility and the native API
+
+The [WebRTC-specific GN templates](#webrtc-gn-templates) declare build
+targets whose default `visibility` allows all other targets in the
+WebRTC tree (and no targets outside the tree) to depend on them.
+
+Prefer to restrict the visibility if possible:
+
+* If a target is used by only one or a tiny number of other targets,
+  prefer to list them explicitly: `visibility = [ ":foo", ":bar" ]`
+* If a target is used only by targets in the same `BUILD.gn` file:
+  `visibility = [ ":*" ]`.
+
+Setting `visibility = [ "*" ]` means that targets outside the WebRTC
+tree can depend on this target; use this only for build targets whose
+headers are part of the [native API](native-api.md).
 
 ### Conditional compilation with the C preprocessor
 

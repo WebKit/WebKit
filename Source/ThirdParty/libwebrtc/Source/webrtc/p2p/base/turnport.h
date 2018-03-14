@@ -13,8 +13,10 @@
 
 #include <stdio.h>
 #include <list>
+#include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 #include "p2p/base/port.h"
 #include "p2p/client/basicportallocator.h"
@@ -122,6 +124,8 @@ class TurnPort : public Port {
                             size_t size,
                             const rtc::SocketAddress& remote_addr,
                             const rtc::PacketTime& packet_time) override;
+  bool CanHandleIncomingPacketsFrom(
+      const rtc::SocketAddress& addr) const override;
   virtual void OnReadPacket(rtc::AsyncPacketSocket* socket,
                             const char* data, size_t size,
                             const rtc::SocketAddress& remote_addr,
@@ -163,7 +167,7 @@ class TurnPort : public Port {
       SignalCreatePermissionResult;
   void FlushRequests(int msg_type) { request_manager_.Flush(msg_type); }
   bool HasRequests() { return !request_manager_.empty(); }
-  void set_credentials(RelayCredentials& credentials) {
+  void set_credentials(const RelayCredentials& credentials) {
     credentials_ = credentials;
   }
   // Finds the turn entry with |address| and sets its channel id.
@@ -172,6 +176,8 @@ class TurnPort : public Port {
   // Visible for testing.
   // Shuts down the turn port, usually because of some fatal errors.
   void Close();
+
+  void HandleConnectionDestroyed(Connection* conn) override;
 
  protected:
   TurnPort(rtc::Thread* thread,
@@ -201,6 +207,11 @@ class TurnPort : public Port {
            const std::vector<std::string>& tls_elliptic_curves,
            webrtc::TurnCustomizer* customizer);
 
+  // NOTE: This method needs to be accessible for StacPort
+  // return true if entry was created (i.e channel_number consumed).
+  bool CreateOrRefreshEntry(const rtc::SocketAddress& addr,
+                            int channel_number);
+
  private:
   enum {
     MSG_ALLOCATE_ERROR = MSG_FIRST_AVAILABLE,
@@ -214,7 +225,6 @@ class TurnPort : public Port {
   typedef std::set<rtc::SocketAddress> AttemptedServerSet;
 
   void OnMessage(rtc::Message* pmsg) override;
-  void HandleConnectionDestroyed(Connection* conn) override;
 
   bool CreateTurnClientSocket();
 
@@ -262,7 +272,6 @@ class TurnPort : public Port {
   TurnEntry* FindEntry(const rtc::SocketAddress& address) const;
   TurnEntry* FindEntry(int channel_id) const;
   bool EntryExists(TurnEntry* e);
-  void CreateOrRefreshEntry(const rtc::SocketAddress& address);
   void DestroyEntry(TurnEntry* entry);
   // Destroys the entry only if |timestamp| matches the destruction timestamp
   // in |entry|.

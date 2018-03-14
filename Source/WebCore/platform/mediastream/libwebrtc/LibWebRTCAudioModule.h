@@ -77,8 +77,6 @@ private:
     int32_t StartRecording() final { return 0; }
     int32_t StopRecording() final { return 0;  }
     bool Recording() const final { return 0;  }
-    int32_t SetAGC(bool) final { return 0;  }
-    bool AGC() const final { return shouldNotBeCalled(0);  }
     int32_t InitSpeaker() final { return 0; }
     bool SpeakerIsInitialized() const final { return false; }
     int32_t InitMicrophone() final { return 0; }
@@ -105,15 +103,7 @@ private:
     int32_t StereoRecordingIsAvailable(bool* available) const final { *available = false; return 0;  }
     int32_t SetStereoRecording(bool) final { return 0;  }
     int32_t StereoRecording(bool*) const final { return shouldNotBeCalled(-1); }
-    int32_t SetRecordingChannel(const ChannelType) final { return 0; }
-    int32_t RecordingChannel(ChannelType*) const final { return shouldNotBeCalled(-1); }
     int32_t PlayoutDelay(uint16_t* delay) const final { *delay = 0; return 0; }
-    int32_t SetRecordingSampleRate(const uint32_t) final { return shouldNotBeCalled(-1); }
-    int32_t RecordingSampleRate(uint32_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t SetPlayoutSampleRate(const uint32_t) final { return shouldNotBeCalled(-1); }
-    int32_t PlayoutSampleRate(uint32_t*) const final { return shouldNotBeCalled(-1); }
-    int32_t SetLoudspeakerStatus(bool) final { return shouldNotBeCalled(-1); }
-    int32_t GetLoudspeakerStatus(bool*) const final { return shouldNotBeCalled(-1); }
     bool BuiltInAECIsAvailable() const final { return false; }
     bool BuiltInAGCIsAvailable() const final { return false;  }
     bool BuiltInNSIsAvailable() const final { return false;  }

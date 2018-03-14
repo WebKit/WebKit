@@ -28,10 +28,9 @@ namespace webrtc {
 // that protects and unprotects sent and received RTP packets.
 class SrtpTransport : public RtpTransportInternalAdapter {
  public:
-  SrtpTransport(bool rtcp_mux_enabled, const std::string& content_name);
+  explicit SrtpTransport(bool rtcp_mux_enabled);
 
-  SrtpTransport(std::unique_ptr<RtpTransportInternal> rtp_transport,
-                const std::string& content_name);
+  explicit SrtpTransport(std::unique_ptr<RtpTransportInternal> rtp_transport);
 
   bool SendRtpPacket(rtc::CopyOnWriteBuffer* packet,
                      const rtc::PacketOptions& options,
@@ -93,16 +92,15 @@ class SrtpTransport : public RtpTransportInternalAdapter {
   // Returns rtp auth params from srtp context.
   bool GetRtpAuthParams(uint8_t** key, int* key_len, int* tag_len);
 
-  // Helper method to get RTP Absoulute SendTime extension header id if
-  // present in remote supported extensions list.
+  // Cache RTP Absoulute SendTime extension header ID. This is only used when
+  // external authentication is enabled.
   void CacheRtpAbsSendTimeHeaderExtension(int rtp_abs_sendtime_extn_id) {
     rtp_abs_sendtime_extn_id_ = rtp_abs_sendtime_extn_id;
   }
 
  private:
-  void CreateSrtpSessions();
-
   void ConnectToRtpTransport();
+  void CreateSrtpSessions();
 
   bool SendPacket(bool rtcp,
                   rtc::CopyOnWriteBuffer* packet,
@@ -114,6 +112,12 @@ class SrtpTransport : public RtpTransportInternalAdapter {
                         const rtc::PacketTime& packet_time);
   void OnReadyToSend(bool ready) { SignalReadyToSend(ready); }
   void OnNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute> network_route);
+
+  void OnWritableState(bool writable) { SignalWritableState(writable); }
+
+  void OnSentPacket(const rtc::SentPacket& sent_packet) {
+    SignalSentPacket(sent_packet);
+  }
 
   bool ProtectRtp(void* data, int in_len, int max_len, int* out_len);
 

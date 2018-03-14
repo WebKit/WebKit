@@ -26,15 +26,6 @@ class Win32Test : public testing::Test {
   }
 };
 
-TEST_F(Win32Test, FileTimeToUInt64Test) {
-  FILETIME ft;
-  ft.dwHighDateTime = 0xBAADF00D;
-  ft.dwLowDateTime = 0xFEED3456;
-
-  uint64_t expected = 0xBAADF00DFEED3456;
-  EXPECT_EQ(expected, ToUInt64(ft));
-}
-
 TEST_F(Win32Test, IPv6AddressCompression) {
   IPAddress ipv6;
 

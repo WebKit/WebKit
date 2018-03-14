@@ -33,6 +33,10 @@ DtlsSrtpTransport::DtlsSrtpTransport(
       this, &DtlsSrtpTransport::OnPacketReceived);
   srtp_transport_->SignalReadyToSend.connect(this,
                                              &DtlsSrtpTransport::OnReadyToSend);
+  srtp_transport_->SignalWritableState.connect(
+      this, &DtlsSrtpTransport::OnWritableState);
+  srtp_transport_->SignalSentPacket.connect(this,
+                                            &DtlsSrtpTransport::OnSentPacket);
 }
 
 void DtlsSrtpTransport::SetDtlsTransports(
@@ -51,23 +55,22 @@ void DtlsSrtpTransport::SetDtlsTransports(
     srtp_transport_->ResetParams();
   }
 
-  if (rtcp_dtls_transport) {
-    // This would only be possible if using BUNDLE but not rtcp-mux, which isn't
-    // allowed according to the BUNDLE spec.
-    RTC_CHECK(!(IsActive()))
-        << "Setting RTCP for DTLS/SRTP after the DTLS is active "
-        << "should never happen.";
+  const std::string transport_name =
+      rtp_dtls_transport ? rtp_dtls_transport->transport_name() : "null";
 
-    RTC_LOG(LS_INFO) << "Setting RTCP Transport on "
-                     << rtcp_dtls_transport->transport_name() << " transport "
-                     << rtcp_dtls_transport;
-    SetRtcpDtlsTransport(rtcp_dtls_transport);
-    SetRtcpPacketTransport(rtcp_dtls_transport);
-  }
+  // This would only be possible if using BUNDLE but not rtcp-mux, which isn't
+  // allowed according to the BUNDLE spec.
+  RTC_CHECK(!(IsActive()))
+      << "Setting RTCP for DTLS/SRTP after the DTLS is active "
+      << "should never happen.";
 
-  RTC_LOG(LS_INFO) << "Setting RTP Transport on "
-                   << rtp_dtls_transport->transport_name() << " transport "
-                   << rtp_dtls_transport;
+  RTC_LOG(LS_INFO) << "Setting RTCP Transport on " << transport_name
+                   << " transport " << rtcp_dtls_transport;
+  SetRtcpDtlsTransport(rtcp_dtls_transport);
+  SetRtcpPacketTransport(rtcp_dtls_transport);
+
+  RTC_LOG(LS_INFO) << "Setting RTP Transport on " << transport_name
+                   << " transport " << rtp_dtls_transport;
   SetRtpDtlsTransport(rtp_dtls_transport);
   SetRtpPacketTransport(rtp_dtls_transport);
 
@@ -81,18 +84,28 @@ void DtlsSrtpTransport::SetRtcpMuxEnabled(bool enable) {
   }
 }
 
-void DtlsSrtpTransport::SetSendEncryptedHeaderExtensionIds(
+void DtlsSrtpTransport::UpdateSendEncryptedHeaderExtensionIds(
     const std::vector<int>& send_extension_ids) {
+  if (send_extension_ids_ == send_extension_ids) {
+    return;
+  }
   send_extension_ids_.emplace(send_extension_ids);
-  // Reset the crypto parameters to update the send_extension IDs.
-  SetupRtpDtlsSrtp();
+  if (DtlsHandshakeCompleted()) {
+    // Reset the crypto parameters to update the send extension IDs.
+    SetupRtpDtlsSrtp();
+  }
 }
 
-void DtlsSrtpTransport::SetRecvEncryptedHeaderExtensionIds(
+void DtlsSrtpTransport::UpdateRecvEncryptedHeaderExtensionIds(
     const std::vector<int>& recv_extension_ids) {
+  if (recv_extension_ids_ == recv_extension_ids) {
+    return;
+  }
   recv_extension_ids_.emplace(recv_extension_ids);
-  // Reset the crypto parameters to update the send_extension IDs.
-  SetupRtpDtlsSrtp();
+  if (DtlsHandshakeCompleted()) {
+    // Reset the crypto parameters to update the receive extension IDs.
+    SetupRtpDtlsSrtp();
+  }
 }
 
 bool DtlsSrtpTransport::IsDtlsActive() {
@@ -267,9 +280,12 @@ bool DtlsSrtpTransport::ExtractParams(
 void DtlsSrtpTransport::SetDtlsTransport(
     cricket::DtlsTransportInternal* new_dtls_transport,
     cricket::DtlsTransportInternal** old_dtls_transport) {
+  if (*old_dtls_transport == new_dtls_transport) {
+    return;
+  }
+
   if (*old_dtls_transport) {
     (*old_dtls_transport)->SignalDtlsState.disconnect(this);
-    (*old_dtls_transport)->SignalWritableState.disconnect(this);
   }
 
   *old_dtls_transport = new_dtls_transport;
@@ -277,8 +293,6 @@ void DtlsSrtpTransport::SetDtlsTransport(
   if (new_dtls_transport) {
     new_dtls_transport->SignalDtlsState.connect(
         this, &DtlsSrtpTransport::OnDtlsState);
-    new_dtls_transport->SignalWritableState.connect(
-        this, &DtlsSrtpTransport::OnWritableState);
   }
 }
 
@@ -321,11 +335,15 @@ void DtlsSrtpTransport::OnDtlsState(cricket::DtlsTransportInternal* transport,
   MaybeSetupDtlsSrtp();
 }
 
-void DtlsSrtpTransport::OnWritableState(
-    rtc::PacketTransportInternal* transport) {
-  RTC_DCHECK(transport == srtp_transport_->rtp_packet_transport() ||
-             transport == srtp_transport_->rtcp_packet_transport());
-  UpdateWritableStateAndMaybeSetupDtlsSrtp();
+void DtlsSrtpTransport::OnWritableState(bool writable) {
+  SetWritable(writable);
+  if (writable) {
+    MaybeSetupDtlsSrtp();
+  }
+}
+
+void DtlsSrtpTransport::OnSentPacket(const rtc::SentPacket& sent_packet) {
+  SignalSentPacket(sent_packet);
 }
 
 void DtlsSrtpTransport::OnPacketReceived(bool rtcp,

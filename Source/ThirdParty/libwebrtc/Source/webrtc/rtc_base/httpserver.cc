@@ -272,7 +272,6 @@ void HttpListenServer::OnReadEvent(AsyncSocket* socket) {
   AsyncSocket* incoming = listener_->Accept(nullptr);
   if (incoming) {
     StreamInterface* stream = new SocketStream(incoming);
-    //stream = new LoggingAdapter(stream, LS_VERBOSE, "HttpServer", false);
     HandleConnection(stream);
   }
 }

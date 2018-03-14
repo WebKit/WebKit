@@ -15,10 +15,10 @@
 #include "api/optional.h"
 #include "api/video/i420_buffer.h"
 #include "modules/include/module_common_types_public.h"
-#include "modules/pacing/alr_detector.h"
 #include "modules/video_coding/encoded_frame.h"
 #include "modules/video_coding/media_optimization.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/timeutils.h"
 #include "rtc_base/trace_event.h"
@@ -27,8 +27,8 @@
 namespace webrtc {
 
 namespace {
-const int kMessagesThrottlingThreshold = 100;
-const int kThrottleRatio = 1000;
+const int kMessagesThrottlingThreshold = 2;
+const int kThrottleRatio = 100000;
 }  // namespace
 
 VCMGenericEncoder::VCMGenericEncoder(
@@ -194,16 +194,16 @@ VCMEncodedFrameCallback::VCMEncodedFrameCallback(
       incorrect_capture_time_logged_messages_(0),
       reordered_frames_logged_messages_(0),
       stalled_encoder_logged_messages_(0) {
-  rtc::Optional<AlrDetector::AlrExperimentSettings> experiment_settings =
-      AlrDetector::ParseAlrSettingsFromFieldTrial(
-          AlrDetector::kStrictPacingAndProbingExperimentName);
+  rtc::Optional<AlrExperimentSettings> experiment_settings =
+      AlrExperimentSettings::CreateFromFieldTrial(
+          AlrExperimentSettings::kStrictPacingAndProbingExperimentName);
   if (experiment_settings) {
     experiment_groups_[0] = experiment_settings->group_id + 1;
   } else {
     experiment_groups_[0] = 0;
   }
-  experiment_settings = AlrDetector::ParseAlrSettingsFromFieldTrial(
-      AlrDetector::kScreenshareProbingBweExperimentName);
+  experiment_settings = AlrExperimentSettings::CreateFromFieldTrial(
+      AlrExperimentSettings::kScreenshareProbingBweExperimentName);
   if (experiment_settings) {
     experiment_groups_[1] = experiment_settings->group_id + 1;
   } else {

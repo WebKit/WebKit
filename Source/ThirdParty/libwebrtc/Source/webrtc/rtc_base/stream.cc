@@ -29,7 +29,7 @@
 #include "rtc_base/timeutils.h"
 
 #if defined(WEBRTC_WIN)
-#include "rtc_base/win32.h"
+#include <windows.h>
 #define fileno _fileno
 #endif
 
@@ -886,65 +886,6 @@ StreamResult FifoBuffer::WriteOffsetLocked(const void* buffer,
   return SR_SUCCESS;
 }
 
-
-
-///////////////////////////////////////////////////////////////////////////////
-// LoggingAdapter
-///////////////////////////////////////////////////////////////////////////////
-
-LoggingAdapter::LoggingAdapter(StreamInterface* stream, LoggingSeverity level,
-                               const std::string& label, bool hex_mode)
-    : StreamAdapterInterface(stream), level_(level), hex_mode_(hex_mode) {
-  set_label(label);
-}
-
-void LoggingAdapter::set_label(const std::string& label) {
-  label_.assign("[");
-  label_.append(label);
-  label_.append("]");
-}
-
-StreamResult LoggingAdapter::Read(void* buffer, size_t buffer_len,
-                                  size_t* read, int* error) {
-  size_t local_read; if (!read) read = &local_read;
-  StreamResult result = StreamAdapterInterface::Read(buffer, buffer_len, read,
-                                                     error);
-  if (result == SR_SUCCESS) {
-    LogMultiline(level_, label_.c_str(), true, buffer, *read, hex_mode_, &lms_);
-  }
-  return result;
-}
-
-StreamResult LoggingAdapter::Write(const void* data, size_t data_len,
-                                   size_t* written, int* error) {
-  size_t local_written;
-  if (!written) written = &local_written;
-  StreamResult result = StreamAdapterInterface::Write(data, data_len, written,
-                                                      error);
-  if (result == SR_SUCCESS) {
-    LogMultiline(level_, label_.c_str(), false, data, *written, hex_mode_,
-                 &lms_);
-  }
-  return result;
-}
-
-void LoggingAdapter::Close() {
-  LogMultiline(level_, label_.c_str(), false, nullptr, 0, hex_mode_, &lms_);
-  LogMultiline(level_, label_.c_str(), true, nullptr, 0, hex_mode_, &lms_);
-  RTC_LOG_V(level_) << label_ << " Closed locally";
-  StreamAdapterInterface::Close();
-}
-
-void LoggingAdapter::OnEvent(StreamInterface* stream, int events, int err) {
-  if (events & SE_OPEN) {
-    RTC_LOG_V(level_) << label_ << " Open";
-  } else if (events & SE_CLOSE) {
-    LogMultiline(level_, label_.c_str(), false, nullptr, 0, hex_mode_, &lms_);
-    LogMultiline(level_, label_.c_str(), true, nullptr, 0, hex_mode_, &lms_);
-    RTC_LOG_V(level_) << label_ << " Closed with error: " << err;
-  }
-  StreamAdapterInterface::OnEvent(stream, events, err);
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // StringStream - Reads/Writes to an external std::string

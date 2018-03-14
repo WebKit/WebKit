@@ -48,6 +48,11 @@ extern const int WEAK_OR_STABILIZING_WRITABLE_CONNECTION_PING_INTERVAL;
 extern const int STRONG_AND_STABLE_WRITABLE_CONNECTION_PING_INTERVAL;
 static const int MIN_PINGS_AT_WEAK_PING_INTERVAL = 3;
 
+bool IceCredentialsChanged(const std::string& old_ufrag,
+                           const std::string& old_pwd,
+                           const std::string& new_ufrag,
+                           const std::string& new_pwd);
+
 // Adds the port on which the candidate originated.
 class RemoteCandidate : public Candidate {
  public:

@@ -11,6 +11,8 @@
 #ifndef P2P_BASE_BASICPACKETSOCKETFACTORY_H_
 #define P2P_BASE_BASICPACKETSOCKETFACTORY_H_
 
+#include <string>
+
 #include "p2p/base/packetsocketfactory.h"
 
 namespace rtc {

@@ -72,7 +72,7 @@ enum class DegradationPreference {
   BALANCED,
 };
 
-enum class PriorityType { VERY_LOW, LOW, MEDIUM, HIGH };
+extern const double kDefaultBitratePriority;
 
 struct RtcpFeedback {
   RtcpFeedbackType type = RtcpFeedbackType::CCM;
@@ -361,9 +361,10 @@ struct RtpEncodingParameters {
   // codec as long as it's present.
   rtc::Optional<DtxStatus> dtx;
 
-  // The relative priority of this encoding.
-  // TODO(deadbeef): Not implemented.
-  rtc::Optional<PriorityType> priority;
+  // The relative bitrate priority of this encoding. Currently this is
+  // implemented on the sender level (using the first RtpEncodingParameters
+  // of the rtp parameters).
+  double bitrate_priority = kDefaultBitratePriority;
 
   // If set, this represents the Transport Independent Application Specific
   // maximum bandwidth defined in RFC3890. If unset, there is no maximum
@@ -407,7 +408,8 @@ struct RtpEncodingParameters {
   bool operator==(const RtpEncodingParameters& o) const {
     return ssrc == o.ssrc && codec_payload_type == o.codec_payload_type &&
            fec == o.fec && rtx == o.rtx && dtx == o.dtx &&
-           priority == o.priority && max_bitrate_bps == o.max_bitrate_bps &&
+           bitrate_priority == o.bitrate_priority &&
+           max_bitrate_bps == o.max_bitrate_bps &&
            max_framerate == o.max_framerate &&
            scale_resolution_down_by == o.scale_resolution_down_by &&
            scale_framerate_down_by == o.scale_framerate_down_by &&

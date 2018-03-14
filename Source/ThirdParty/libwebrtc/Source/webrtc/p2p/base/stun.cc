@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <memory>
+#include <utility>
 
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
@@ -69,8 +70,7 @@ bool StunMessage::SetTransactionID(const std::string& str) {
   return true;
 }
 
-static bool ImplementationDefinedRange(int attr_type)
-{
+static bool ImplementationDefinedRange(int attr_type) {
   return attr_type >= 0xC000 && attr_type <= 0xFFFF;
 }
 
@@ -90,6 +90,26 @@ void StunMessage::AddAttribute(std::unique_ptr<StunAttribute> attr) {
   length_ += static_cast<uint16_t>(attr_length + 4);
 
   attrs_.push_back(std::move(attr));
+}
+
+std::unique_ptr<StunAttribute> StunMessage::RemoveAttribute(int type) {
+  std::unique_ptr<StunAttribute> attribute;
+  for (auto it = attrs_.rbegin(); it != attrs_.rend(); ++it) {
+    if ((* it)->type() == type) {
+      attribute = std::move(* it);
+      attrs_.erase(std::next(it).base());
+      break;
+    }
+  }
+  if (attribute) {
+    attribute->SetOwner(nullptr);
+    size_t attr_length = attribute->length();
+    if (attr_length % 4 != 0) {
+      attr_length += (4 - (attr_length % 4));
+    }
+    length_ -= static_cast<uint16_t>(attr_length + 4);
+  }
+  return attribute;
 }
 
 const StunAddressAttribute* StunMessage::GetAddress(int type) const {
@@ -982,6 +1002,35 @@ bool ComputeStunCredentialHash(const std::string& username,
 
   *hash = std::string(digest, size);
   return true;
+}
+
+std::unique_ptr<StunAttribute> CopyStunAttribute(
+    const StunAttribute& attribute,
+    rtc::ByteBufferWriter* tmp_buffer_ptr) {
+  ByteBufferWriter tmpBuffer;
+  if (tmp_buffer_ptr == nullptr) {
+    tmp_buffer_ptr = &tmpBuffer;
+  }
+
+  std::unique_ptr<StunAttribute> copy(
+      StunAttribute::Create(attribute.value_type(),
+                            attribute.type(),
+                            static_cast<uint16_t>(attribute.length()),
+                            nullptr));
+
+  if (!copy) {
+    return nullptr;
+  }
+  tmp_buffer_ptr->Clear();
+  if (!attribute.Write(tmp_buffer_ptr)) {
+    return nullptr;
+  }
+  rtc::ByteBufferReader reader(*tmp_buffer_ptr);
+  if (!copy->Read(&reader)) {
+    return nullptr;
+  }
+
+  return copy;
 }
 
 StunAttributeValueType RelayMessage::GetAttributeValueType(int type) const {

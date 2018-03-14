@@ -29,9 +29,9 @@
 #include "rtc_base/timeutils.h"
 
 // The following logging is for detailed (packet-level) analysis only.
-#define _DBG_NONE     0
-#define _DBG_NORMAL   1
-#define _DBG_VERBOSE  2
+#define _DBG_NONE 0
+#define _DBG_NORMAL 1
+#define _DBG_VERBOSE 2
 #define _DEBUGMSG _DBG_NONE
 
 namespace cricket {
@@ -69,7 +69,7 @@ const uint32_t MIN_PACKET = 296;
 
 const uint32_t IP_HEADER_SIZE = 20;  // (+ up to 40 bytes of options?)
 const uint32_t UDP_HEADER_SIZE = 8;
-// TODO: Make JINGLE_HEADER_SIZE transparent to this code?
+// TODO(?): Make JINGLE_HEADER_SIZE transparent to this code?
 const uint32_t JINGLE_HEADER_SIZE = 64;  // when relay framing is in use
 
 // Default size for receive and send buffer.
@@ -125,8 +125,10 @@ const uint8_t TCP_OPT_NOOP = 1;       // No-op.
 const uint8_t TCP_OPT_MSS = 2;        // Maximum segment size.
 const uint8_t TCP_OPT_WND_SCALE = 3;  // Window scale factor.
 
-const long DEFAULT_TIMEOUT = 4000; // If there are no pending clocks, wake up every 4 seconds
-const long CLOSED_TIMEOUT = 60 * 1000; // If the connection is closed, once per minute
+const long DEFAULT_TIMEOUT =
+    4000;  // If there are no pending clocks, wake up every 4 seconds
+const long CLOSED_TIMEOUT =
+    60 * 1000;  // If the connection is closed, once per minute
 
 #if PSEUDO_KEEPALIVE
 // !?! Rethink these times
@@ -134,7 +136,7 @@ const uint32_t IDLE_PING =
     20 *
     1000;  // 20 seconds (note: WinXP SP2 firewall udp timeout is 90 seconds)
 const uint32_t IDLE_TIMEOUT = 90 * 1000;  // 90 seconds;
-#endif // PSEUDO_KEEPALIVE
+#endif                                    // PSEUDO_KEEPALIVE
 
 //////////////////////////////////////////////////////////////////////
 // Helper Functions
@@ -163,11 +165,11 @@ inline uint16_t bytes_to_short(const void* buf) {
 #if 0  // Not used yet
 
 enum Stat {
-  S_SENT_PACKET,   // All packet sends
-  S_RESENT_PACKET, // All packet sends that are retransmits
-  S_RECV_PACKET,   // All packet receives
-  S_RECV_NEW,      // All packet receives that are too new
-  S_RECV_OLD,      // All packet receives that are too old
+  S_SENT_PACKET,    // All packet sends
+  S_RESENT_PACKET,  // All packet sends that are retransmits
+  S_RECV_PACKET,    // All packet receives
+  S_RECV_NEW,       // All packet receives that are too new
+  S_RECV_OLD,       // All packet receives that are too old
   S_NUM_STATS
 };
 
@@ -256,8 +258,7 @@ PseudoTcp::PseudoTcp(IPseudoTcpNotify* notify, uint32_t conv)
   m_support_wnd_scale = true;
 }
 
-PseudoTcp::~PseudoTcp() {
-}
+PseudoTcp::~PseudoTcp() {}
 
 int PseudoTcp::Connect() {
   if (m_state != TCP_LISTEN) {
@@ -285,19 +286,19 @@ void PseudoTcp::NotifyClock(uint32_t now) {
   if (m_state == TCP_CLOSED)
     return;
 
-    // Check if it's time to retransmit a segment
+  // Check if it's time to retransmit a segment
   if (m_rto_base && (rtc::TimeDiff32(m_rto_base + m_rx_rto, now) <= 0)) {
     if (m_slist.empty()) {
       RTC_NOTREACHED();
     } else {
-      // Note: (m_slist.front().xmit == 0)) {
-      // retransmit segments
+// Note: (m_slist.front().xmit == 0)) {
+// retransmit segments
 #if _DEBUGMSG >= _DBG_NORMAL
       RTC_LOG(LS_INFO) << "timeout retransmit (rto: " << m_rx_rto
                        << ") (rto_base: " << m_rto_base << ") (now: " << now
                        << ") (dup_acks: " << static_cast<unsigned>(m_dup_acks)
                        << ")";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
       if (!transmit(m_slist.begin(), now)) {
         closedown(ECONNABORTED);
         return;
@@ -350,7 +351,7 @@ void PseudoTcp::NotifyClock(uint32_t now) {
                   now) <= 0)) {
     packet(m_snd_nxt, 0, 0, 0);
   }
-#endif // PSEUDO_KEEPALIVE
+#endif  // PSEUDO_KEEPALIVE
 }
 
 bool PseudoTcp::NotifyPacket(const char* buffer, size_t len) {
@@ -533,8 +534,8 @@ IPseudoTcpNotify::WriteResult PseudoTcp::packet(uint32_t seq,
 
   if (len) {
     size_t bytes_read = 0;
-    rtc::StreamResult result = m_sbuf.ReadOffset(
-        buffer.get() + HEADER_SIZE, len, offset, &bytes_read);
+    rtc::StreamResult result =
+        m_sbuf.ReadOffset(buffer.get() + HEADER_SIZE, len, offset, &bytes_read);
     RTC_DCHECK(result == rtc::SR_SUCCESS);
     RTC_DCHECK(static_cast<uint32_t>(bytes_read) == len);
   }
@@ -547,13 +548,14 @@ IPseudoTcpNotify::WriteResult PseudoTcp::packet(uint32_t seq,
                    << "><TS=" << (now % 10000)
                    << "><TSR=" << (m_ts_recent % 10000) << "><LEN=" << len
                    << ">";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
 
   IPseudoTcpNotify::WriteResult wres = m_notify->TcpWritePacket(
-      this, reinterpret_cast<char *>(buffer.get()), len + HEADER_SIZE);
-  // Note: When len is 0, this is an ACK packet.  We don't read the return value for those,
-  // and thus we won't retry.  So go ahead and treat the packet as a success (basically simulate
-  // as if it were dropped), which will prevent our timers from being messed up.
+      this, reinterpret_cast<char*>(buffer.get()), len + HEADER_SIZE);
+  // Note: When len is 0, this is an ACK packet.  We don't read the return value
+  // for those, and thus we won't retry.  So go ahead and treat the packet as a
+  // success (basically simulate as if it were dropped), which will prevent our
+  // timers from being messed up.
   if ((wres != IPseudoTcpNotify::WR_SUCCESS) && (0 != len))
     return wres;
 
@@ -581,7 +583,7 @@ bool PseudoTcp::parse(const uint8_t* buffer, uint32_t size) {
   seg.tsval = bytes_to_long(buffer + 16);
   seg.tsecr = bytes_to_long(buffer + 20);
 
-  seg.data = reinterpret_cast<const char *>(buffer) + HEADER_SIZE;
+  seg.data = reinterpret_cast<const char*>(buffer) + HEADER_SIZE;
   seg.len = size - HEADER_SIZE;
 
 #if _DEBUGMSG >= _DBG_VERBOSE
@@ -592,7 +594,7 @@ bool PseudoTcp::parse(const uint8_t* buffer, uint32_t size) {
                    << "><TS=" << (seg.tsval % 10000)
                    << "><TSR=" << (seg.tsecr % 10000) << "><LEN=" << seg.len
                    << ">";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
 
   return process(seg);
 }
@@ -603,9 +605,9 @@ bool PseudoTcp::clock_check(uint32_t now, long& nTimeout) {
 
   size_t snd_buffered = 0;
   m_sbuf.GetBuffered(&snd_buffered);
-  if ((m_shutdown == SD_GRACEFUL)
-      && ((m_state != TCP_ESTABLISHED)
-          || ((snd_buffered == 0) && (m_t_ack == 0)))) {
+  if ((m_shutdown == SD_GRACEFUL) &&
+      ((m_state != TCP_ESTABLISHED) ||
+       ((snd_buffered == 0) && (m_t_ack == 0)))) {
     return false;
   }
 
@@ -636,14 +638,15 @@ bool PseudoTcp::clock_check(uint32_t now, long& nTimeout) {
             m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3 / 2 : IDLE_PING),
             now));
   }
-#endif // PSEUDO_KEEPALIVE
+#endif  // PSEUDO_KEEPALIVE
   return true;
 }
 
 bool PseudoTcp::process(Segment& seg) {
-  // If this is the wrong conversation, send a reset!?! (with the correct conversation?)
+  // If this is the wrong conversation, send a reset!?! (with the correct
+  // conversation?)
   if (seg.conv != m_conv) {
-    //if ((seg.flags & FLAG_RST) == 0) {
+    // if ((seg.flags & FLAG_RST) == 0) {
     //  packet(tcb, seg.ack, 0, FLAG_RST, 0, 0);
     //}
     RTC_LOG_F(LS_ERROR) << "wrong conversation";
@@ -681,7 +684,7 @@ bool PseudoTcp::process(Segment& seg) {
       if (m_state == TCP_LISTEN) {
         m_state = TCP_SYN_RECEIVED;
         RTC_LOG(LS_INFO) << "State: TCP_SYN_RECEIVED";
-        //m_notify->associate(addr);
+        // m_notify->associate(addr);
         queueConnectMessage();
       } else if (m_state == TCP_SYN_SENT) {
         m_state = TCP_ESTABLISHED;
@@ -690,7 +693,7 @@ bool PseudoTcp::process(Segment& seg) {
         if (m_notify) {
           m_notify->OnTcpOpen(this);
         }
-        //notify(evOpen);
+        // notify(evOpen);
       }
     } else {
       RTC_LOG_F(LS_WARNING) << "Unknown control code: " << seg.data[0];
@@ -725,7 +728,7 @@ bool PseudoTcp::process(Segment& seg) {
 #if _DEBUGMSG >= _DBG_VERBOSE
         RTC_LOG(LS_INFO) << "rtt: " << rtt << "  srtt: " << m_rx_srtt
                          << "  rto: " << m_rx_rto;
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
       } else {
         RTC_NOTREACHED();
       }
@@ -755,17 +758,17 @@ bool PseudoTcp::process(Segment& seg) {
     }
 
     if (m_dup_acks >= 3) {
-      if (m_snd_una >= m_recover) { // NewReno
+      if (m_snd_una >= m_recover) {  // NewReno
         uint32_t nInFlight = m_snd_nxt - m_snd_una;
         m_cwnd = std::min(m_ssthresh, nInFlight + m_mss);  // (Fast Retransmit)
 #if _DEBUGMSG >= _DBG_NORMAL
         RTC_LOG(LS_INFO) << "exit recovery";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
         m_dup_acks = 0;
       } else {
 #if _DEBUGMSG >= _DBG_NORMAL
         RTC_LOG(LS_INFO) << "recovery retransmit";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
         if (!transmit(m_slist.begin(), now)) {
           closedown(ECONNABORTED);
           return false;
@@ -782,7 +785,8 @@ bool PseudoTcp::process(Segment& seg) {
       }
     }
   } else if (seg.ack == m_snd_una) {
-    // !?! Note, tcp says don't do this... but otherwise how does a closed window become open?
+    // !?! Note, tcp says don't do this... but otherwise how does a closed
+    // window become open?
     m_snd_wnd = static_cast<uint32_t>(seg.wnd) << m_swnd_scale;
 
     // Check duplicate acks
@@ -790,11 +794,11 @@ bool PseudoTcp::process(Segment& seg) {
       // it's a dup ack, but with a data payload, so don't modify m_dup_acks
     } else if (m_snd_una != m_snd_nxt) {
       m_dup_acks += 1;
-      if (m_dup_acks == 3) { // (Fast Retransmit)
+      if (m_dup_acks == 3) {  // (Fast Retransmit)
 #if _DEBUGMSG >= _DBG_NORMAL
         RTC_LOG(LS_INFO) << "enter recovery";
         RTC_LOG(LS_INFO) << "recovery retransmit";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
         if (!transmit(m_slist.begin(), now)) {
           closedown(ECONNABORTED);
           return false;
@@ -821,7 +825,7 @@ bool PseudoTcp::process(Segment& seg) {
     if (m_notify) {
       m_notify->OnTcpOpen(this);
     }
-    //notify(evOpen);
+    // notify(evOpen);
   }
 
   // If we make room in the send queue, notify the user
@@ -836,18 +840,19 @@ bool PseudoTcp::process(Segment& seg) {
     if (m_notify) {
       m_notify->OnTcpWriteable(this);
     }
-    //notify(evWrite);
+    // notify(evWrite);
   }
 
   // Conditions were acks must be sent:
   // 1) Segment is too old (they missed an ACK) (immediately)
   // 2) Segment is too new (we missed a segment) (immediately)
   // 3) Segment has data (so we need to ACK!) (delayed)
-  // ... so the only time we don't need to ACK, is an empty segment that points to rcv_nxt!
+  // ... so the only time we don't need to ACK, is an empty segment that points
+  // to rcv_nxt!
 
   SendFlags sflags = sfNone;
   if (seg.seq != m_rcv_nxt) {
-    sflags = sfImmediateAck; // (Fast Recovery)
+    sflags = sfImmediateAck;  // (Fast Recovery)
   } else if (seg.len != 0) {
     if (m_ack_delay == 0) {
       sflags = sfImmediateAck;
@@ -863,7 +868,7 @@ bool PseudoTcp::process(Segment& seg) {
       RTC_LOG_F(LS_INFO) << "too old";
     }
   }
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
 
   // Adjust the incoming segment to fit our receive buffer
   if (seg.seq < m_rcv_nxt) {
@@ -920,13 +925,13 @@ bool PseudoTcp::process(Segment& seg) {
         RList::iterator it = m_rlist.begin();
         while ((it != m_rlist.end()) && (it->seq <= m_rcv_nxt)) {
           if (it->seq + it->len > m_rcv_nxt) {
-            sflags = sfImmediateAck; // (Fast Recovery)
+            sflags = sfImmediateAck;  // (Fast Recovery)
             uint32_t nAdjust = (it->seq + it->len) - m_rcv_nxt;
 #if _DEBUGMSG >= _DBG_NORMAL
             RTC_LOG(LS_INFO)
                 << "Recovered " << nAdjust << " bytes (" << m_rcv_nxt << " -> "
                 << m_rcv_nxt + nAdjust << ")";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
             m_rbuf.ConsumeWriteBuffer(nAdjust);
             m_rcv_nxt += nAdjust;
             m_rcv_wnd -= nAdjust;
@@ -937,7 +942,7 @@ bool PseudoTcp::process(Segment& seg) {
 #if _DEBUGMSG >= _DBG_NORMAL
         RTC_LOG(LS_INFO) << "Saving " << seg.len << " bytes (" << seg.seq
                          << " -> " << seg.seq + seg.len << ")";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
         RSegment rseg;
         rseg.seq = seg.seq;
         rseg.len = seg.len;
@@ -958,7 +963,7 @@ bool PseudoTcp::process(Segment& seg) {
     if (m_notify) {
       m_notify->OnTcpReadable(this);
     }
-    //notify(evRead);
+    // notify(evRead);
   }
 
   return true;
@@ -975,10 +980,8 @@ bool PseudoTcp::transmit(const SList::iterator& seg, uint32_t now) {
   while (true) {
     uint32_t seq = seg->seq;
     uint8_t flags = (seg->bCtrl ? FLAG_CTL : 0);
-    IPseudoTcpNotify::WriteResult wres = packet(seq,
-                                                flags,
-                                                seg->seq - m_snd_una,
-                                                nTransmit);
+    IPseudoTcpNotify::WriteResult wres =
+        packet(seq, flags, seg->seq - m_snd_una, nTransmit);
 
     if (wres == IPseudoTcpNotify::WR_SUCCESS)
       break;
@@ -995,10 +998,11 @@ bool PseudoTcp::transmit(const SList::iterator& seg, uint32_t now) {
         RTC_LOG_F(LS_VERBOSE) << "MTU too small";
         return false;
       }
-      // !?! We need to break up all outstanding and pending packets and then retransmit!?!
+      // !?! We need to break up all outstanding and pending packets and then
+      // retransmit!?!
 
       m_mss = PACKET_MAXIMUMS[++m_msslevel] - PACKET_OVERHEAD;
-      m_cwnd = 2 * m_mss; // I added this... haven't researched actual formula
+      m_cwnd = 2 * m_mss;  // I added this... haven't researched actual formula
       if (m_mss < nTransmit) {
         nTransmit = m_mss;
         break;
@@ -1006,14 +1010,14 @@ bool PseudoTcp::transmit(const SList::iterator& seg, uint32_t now) {
     }
 #if _DEBUGMSG >= _DBG_NORMAL
     RTC_LOG(LS_INFO) << "Adjusting mss to " << m_mss << " bytes";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
   }
 
   if (nTransmit < seg->len) {
     RTC_LOG_F(LS_VERBOSE) << "mss reduced to " << m_mss;
 
     SSegment subseg(seg->seq + nTransmit, seg->len - nTransmit, seg->bCtrl);
-    //subseg.tstamp = seg->tstamp;
+    // subseg.tstamp = seg->tstamp;
     subseg.xmit = seg->xmit;
     seg->len = nTransmit;
 
@@ -1025,7 +1029,7 @@ bool PseudoTcp::transmit(const SList::iterator& seg, uint32_t now) {
     m_snd_nxt += seg->len;
   }
   seg->xmit += 1;
-  //seg->tstamp = now;
+  // seg->tstamp = now;
   if (m_rto_base == 0) {
     m_rto_base = now;
   }
@@ -1042,11 +1046,11 @@ void PseudoTcp::attemptSend(SendFlags sflags) {
 
 #if _DEBUGMSG
   bool bFirst = true;
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
 
   while (true) {
     uint32_t cwnd = m_cwnd;
-    if ((m_dup_acks == 1) || (m_dup_acks == 2)) { // Limited Transmit
+    if ((m_dup_acks == 1) || (m_dup_acks == 2)) {  // Limited Transmit
       cwnd += m_dup_acks * m_mss;
     }
     uint32_t nWindow = std::min(m_snd_wnd, cwnd);
@@ -1080,7 +1084,7 @@ void PseudoTcp::attemptSend(SendFlags sflags) {
                        << "  nEmpty: " << available_space
                        << "  ssthresh: " << m_ssthresh << "]";
     }
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
 
     if (nAvailable == 0) {
       if (sflags == sfNone)
@@ -1099,7 +1103,7 @@ void PseudoTcp::attemptSend(SendFlags sflags) {
     // If there is data already in-flight, and we haven't a full segment of
     // data ready to send then hold off until we get more to send, or the
     // in-flight data is acknowledged.
-    if (m_use_nagling && (m_snd_nxt > m_snd_una) && (nAvailable < m_mss))  {
+    if (m_use_nagling && (m_snd_nxt > m_snd_una) && (nAvailable < m_mss)) {
       return;
     }
 
@@ -1120,7 +1124,7 @@ void PseudoTcp::attemptSend(SendFlags sflags) {
 
     if (!transmit(seg, now)) {
       RTC_LOG_F(LS_VERBOSE) << "transmit failed";
-      // TODO: consider closing socket
+      // TODO(?): consider closing socket
       return;
     }
 
@@ -1134,11 +1138,10 @@ void PseudoTcp::closedown(uint32_t err) {
   if (m_notify) {
     m_notify->OnTcpClosed(this, err);
   }
-  //notify(evClose, err);
+  // notify(evClose, err);
 }
 
-void
-PseudoTcp::adjustMTU() {
+void PseudoTcp::adjustMTU() {
   // Determine our current mss level, so that we can adjust appropriately later
   for (m_msslevel = 0; PACKET_MAXIMUMS[m_msslevel + 1] > 0; ++m_msslevel) {
     if (static_cast<uint16_t>(PACKET_MAXIMUMS[m_msslevel]) <= m_mtu_advise) {
@@ -1146,29 +1149,26 @@ PseudoTcp::adjustMTU() {
     }
   }
   m_mss = m_mtu_advise - PACKET_OVERHEAD;
-  // !?! Should we reset m_largest here?
+// !?! Should we reset m_largest here?
 #if _DEBUGMSG >= _DBG_NORMAL
   RTC_LOG(LS_INFO) << "Adjusting mss to " << m_mss << " bytes";
-#endif // _DEBUGMSG
+#endif  // _DEBUGMSG
   // Enforce minimums on ssthresh and cwnd
   m_ssthresh = std::max(m_ssthresh, 2 * m_mss);
   m_cwnd = std::max(m_cwnd, m_mss);
 }
 
-bool
-PseudoTcp::isReceiveBufferFull() const {
+bool PseudoTcp::isReceiveBufferFull() const {
   size_t available_space = 0;
   m_rbuf.GetWriteRemaining(&available_space);
   return !available_space;
 }
 
-void
-PseudoTcp::disableWindowScale() {
+void PseudoTcp::disableWindowScale() {
   m_support_wnd_scale = false;
 }
 
-void
-PseudoTcp::queueConnectMessage() {
+void PseudoTcp::queueConnectMessage() {
   rtc::ByteBufferWriter buf(rtc::ByteBuffer::ORDER_NETWORK);
 
   buf.WriteUInt8(CTL_CONNECT);
@@ -1230,7 +1230,7 @@ void PseudoTcp::parseOptions(const char* data, uint32_t len) {
 void PseudoTcp::applyOption(char kind, const char* data, uint32_t len) {
   if (kind == TCP_OPT_MSS) {
     RTC_LOG(LS_WARNING) << "Peer specified MSS option which is not supported.";
-    // TODO: Implement.
+    // TODO(?): Implement.
   } else if (kind == TCP_OPT_WND_SCALE) {
     // Window scale factor.
     // http://www.ietf.org/rfc/rfc1323.txt

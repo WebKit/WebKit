@@ -69,6 +69,12 @@ inline bool IsEnabled(const char* name) {
   return FindFullName(name).find("Enabled") == 0;
 }
 
+// Convenience method, returns true iff FindFullName(name) return a string that
+// starts with "Disabled".
+inline bool IsDisabled(const char* name) {
+  return FindFullName(name).find("Disabled") == 0;
+}
+
 }  // namespace field_trial
 }  // namespace webrtc
 

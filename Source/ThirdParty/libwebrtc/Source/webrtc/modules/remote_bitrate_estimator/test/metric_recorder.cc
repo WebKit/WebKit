@@ -10,6 +10,8 @@
 
 #include "modules/remote_bitrate_estimator/test/metric_recorder.h"
 
+#include <inttypes.h>
+
 #include <algorithm>
 
 #include "modules/remote_bitrate_estimator/test/packet_sender.h"
@@ -321,10 +323,12 @@ void MetricRecorder::PlotDelayHistogram(const std::string& title,
   // Log added latency, disregard baseline path delay.
   BWE_TEST_LOGGING_LOG1("RESULTS >>> " + bwe_name + " Delay average : ",
                         "%lf ms", average_delay_ms - one_way_path_delay_ms);
-  BWE_TEST_LOGGING_LOG1("RESULTS >>> " + bwe_name + " Delay 5th percentile : ",
-                        "%ld ms", percentile_5_ms - one_way_path_delay_ms);
-  BWE_TEST_LOGGING_LOG1("RESULTS >>> " + bwe_name + " Delay 95th percentile : ",
-                        "%ld ms", percentile_95_ms - one_way_path_delay_ms);
+  BWE_TEST_LOGGING_LOG1(
+      "RESULTS >>> " + bwe_name + " Delay 5th percentile : ", "%" PRId64 " ms",
+      percentile_5_ms - one_way_path_delay_ms);
+  BWE_TEST_LOGGING_LOG1(
+      "RESULTS >>> " + bwe_name + " Delay 95th percentile : ", "%" PRId64 " ms",
+      percentile_95_ms - one_way_path_delay_ms);
 
   RTC_UNUSED(average_delay_ms);
   RTC_UNUSED(percentile_5_ms);

@@ -105,6 +105,9 @@ class EchoCancellationImpl : public EchoCancellation {
   bool delay_agnostic_enabled_ RTC_GUARDED_BY(crit_capture_);
   bool refined_adaptive_filter_enabled_ RTC_GUARDED_BY(crit_capture_) = false;
 
+  // Only active on Chrome OS devices.
+  const bool enforce_zero_stream_delay_ RTC_GUARDED_BY(crit_capture_);
+
   std::vector<std::unique_ptr<Canceller>> cancellers_;
   std::unique_ptr<StreamProperties> stream_properties_;
 

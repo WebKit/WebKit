@@ -161,7 +161,7 @@ class NetEqImpl : public webrtc::NetEq {
 
   int SetTargetDelay() override;
 
-  int TargetDelayMs() override;
+  int TargetDelayMs() const override;
 
   int CurrentDelayMs() const override;
 

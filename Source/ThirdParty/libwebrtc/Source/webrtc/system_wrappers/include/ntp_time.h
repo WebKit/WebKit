@@ -12,6 +12,8 @@
 
 #include <stdint.h>
 
+#include "rtc_base/numerics/safe_conversions.h"
+
 namespace webrtc {
 
 class NtpTime {
@@ -40,8 +42,12 @@ class NtpTime {
   // NTP standard (RFC1305, section 3.1) explicitly state value 0 is invalid.
   bool Valid() const { return value_ != 0; }
 
-  uint32_t seconds() const { return value_ / kFractionsPerSecond; }
-  uint32_t fractions() const { return value_ % kFractionsPerSecond; }
+  uint32_t seconds() const {
+    return rtc::dchecked_cast<uint32_t>(value_ / kFractionsPerSecond);
+  }
+  uint32_t fractions() const {
+    return rtc::dchecked_cast<uint32_t>(value_ % kFractionsPerSecond);
+  }
 
  private:
   uint64_t value_;

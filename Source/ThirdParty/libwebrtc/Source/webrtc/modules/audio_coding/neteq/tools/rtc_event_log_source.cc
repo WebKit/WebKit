@@ -15,7 +15,6 @@
 #include <iostream>
 #include <limits>
 
-#include "call/call.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/rtp_rtcp/include/rtp_header_parser.h"
 #include "rtc_base/checks.h"

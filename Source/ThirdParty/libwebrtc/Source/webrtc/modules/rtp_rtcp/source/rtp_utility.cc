@@ -14,6 +14,7 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 
 namespace webrtc {
 
@@ -37,17 +38,10 @@ enum {
  * Misc utility routines
  */
 
-#if defined(_WIN32)
 bool StringCompare(const char* str1, const char* str2,
                    const uint32_t length) {
   return _strnicmp(str1, str2, length) == 0;
 }
-#elif defined(WEBRTC_LINUX) || defined(WEBRTC_MAC)
-bool StringCompare(const char* str1, const char* str2,
-                   const uint32_t length) {
-  return strncasecmp(str1, str2, length) == 0;
-}
-#endif
 
 size_t Word32Align(size_t size) {
   uint32_t remainder = size % 4;

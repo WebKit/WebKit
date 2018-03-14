@@ -16,7 +16,6 @@
 namespace webrtc {
 
 class AudioProcessing;
-class AudioDeviceModule;
 
 enum EcModes {
   kEcConference,     // Conferencing default (aggressive AEC).
@@ -36,7 +35,6 @@ AgcConfig GetAgcConfig(AudioProcessing* apm);
 void SetAgcConfig(AudioProcessing* apm,
                   const AgcConfig& config);
 void SetAgcStatus(AudioProcessing* apm,
-                  AudioDeviceModule* adm,
                   bool enable);
 void SetEcStatus(AudioProcessing* apm,
                  bool enable,

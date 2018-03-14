@@ -1,0 +1,393 @@
+// THIS FILE IS EXPERIMENTAL. BREAKING CHANGES MAY BE MADE AT ANY TIME
+// WITHOUT PRIOR WARNING. THIS FILE SHOULD NOT BE USED IN PRODUCTION CODE.
+
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+package webrtc.rtclog2;
+
+// At the top level, a WebRTC event log is just an EventStream object. Note that
+// concatenating multiple EventStreams in the same file is equivalent to a
+// single EventStream object containing the same events. Hence, it is not
+// necessary to wait for the entire log to be complete before beginning to
+// write it to a file.
+message EventStream {
+  // Deprecated - Maintained for compatibility with the old event log.
+  // TODO(terelius): Maybe we can remove this and instead check the stream for
+  // presence of a version field. That requires a custom protobuf parser, but we
+  // have that already anyway.
+  repeated Event stream = 1 [deprecated = true];
+  // required - The version number must be 2 for this version of the event log.
+  optional uint32 version = 2;
+  repeated IncomingRtpPackets incoming_rtp_packets = 3;
+  repeated OutgoingRtpPackets outgoing_rtp_packets = 4;
+  repeated IncomingRtcpPackets incoming_rtcp_packets = 5;
+  repeated OutgoingRtcpPackets outgoing_rtcp_packets = 6;
+  repeated AudioPlayoutEvents audio_playout_events = 7;
+  // The field tags 8-15 are reserved for the most common events
+  repeated BeginLogEvent begin_log_events = 16;
+  repeated EndLogEvent end_log_events = 17;
+  repeated LossBasedBweUpdates loss_based_bwe_updates = 18;
+  repeated DelayBasedBweUpdates delay_based_bwe_updates = 19;
+  repeated AudioNetworkAdaptations audio_network_adaptations = 20;
+  repeated BweProbeCluster probe_clusters = 21;
+  repeated BweProbeResultSuccess probe_success = 22;
+  repeated BweProbeResultFailure probe_failure = 23;
+
+  repeated AudioRecvStreamConfig audio_recv_stream_configs = 101;
+  repeated AudioSendStreamConfig audio_send_stream_configs = 102;
+  repeated VideoRecvStreamConfig video_recv_stream_configs = 103;
+  repeated VideoSendStreamConfig video_send_stream_configs = 104;
+}
+
+// DEPRECATED.
+message Event {
+  // TODO(terelius): Do we want to preserve the old Event definition here?
+}
+
+message IncomingRtpPackets {
+  optional int64 timestamp_ms = 1;
+
+  // RTP marker bit, used to label boundaries within e.g. video frames.
+  optional bool marker = 2;
+
+  // RTP payload type.
+  optional uint32 payload_type = 3;
+
+  // RTP sequence number.
+  optional uint32 sequence_number = 4;
+
+  // RTP monotonic clock timestamp (not actual time).
+  optional fixed32 rtp_timestamp = 5;
+
+  // Synchronization source of this packet's RTP stream.
+  optional fixed32 ssrc = 6;
+
+  // TODO(terelius/dinor): Add CSRCs. Field number 7 reserved for this purpose.
+
+  // required - The size of the packet including both payload and header.
+  optional uint32 packet_size = 8;
+
+  // Optional header extensions.
+  optional int32 transmission_time_offset = 9;
+  optional uint32 absolute_send_time = 10;
+  optional uint32 transport_sequence_number = 11;
+  optional uint32 audio_level = 12;
+  // TODO(terelius): Add header extensions like video rotation, playout delay?
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes marker_deltas = 102;
+  optional bytes payload_type_deltas = 103;
+  optional bytes sequence_number_deltas = 104;
+  optional bytes rtp_timestamp_deltas = 105;
+  optional bytes ssrc_deltas = 106;
+  optional bytes packet_size_deltas = 107;
+  optional bytes transmission_time_offset_deltas = 108;
+  optional bytes absolute_send_time_deltas = 109;
+  optional bytes transport_sequence_number_deltas = 110;
+  optional bytes audio_level_deltas = 111;
+}
+
+message OutgoingRtpPackets {
+  optional int64 timestamp_ms = 1;
+
+  // RTP marker bit, used to label boundaries within e.g. video frames.
+  optional bool marker = 2;
+
+  optional uint32 payload_type = 3;
+
+  // RTP sequence number.
+  optional uint32 sequence_number = 4;
+
+  // RTP monotonic clock timestamp (not actual time).
+  optional fixed32 rtp_timestamp = 5;
+
+  // Synchronization source of this packet's RTP stream.
+  optional fixed32 ssrc = 6;
+
+  // TODO(terelius/dinor): Add CSRCs. Field number 7 reserved for this purpose.
+
+  // required - The size of the packet including both payload and header.
+  optional uint32 packet_size = 8;
+
+  // Optional header extensions.
+  optional int32 transmission_time_offset = 9;
+  optional uint32 absolute_send_time = 10;
+  optional uint32 transport_sequence_number = 11;
+  optional uint32 audio_level = 12;
+  // TODO(terelius): Add header extensions like video rotation, playout delay?
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes marker_deltas = 102;
+  optional bytes payload_type_deltas = 103;
+  optional bytes sequence_number_deltas = 104;
+  optional bytes rtp_timestamp_deltas = 105;
+  optional bytes ssrc_deltas = 106;
+  optional bytes packet_size_deltas = 107;
+  optional bytes probe_cluster_id_deltas = 108;
+  optional bytes transmission_time_offset_deltas = 109;
+  optional bytes absolute_send_time_deltas = 110;
+  optional bytes transport_sequence_number_deltas = 111;
+}
+
+message IncomingRtcpPackets {
+  optional int64 timestamp_ms = 1;
+
+  // required - The whole packet including both payload and header.
+  optional bytes raw_packet = 2;
+  // TODO(terelius): Feasible to log parsed RTCP instead?
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes raw_packet_deltas = 102;
+}
+
+message OutgoingRtcpPackets {
+  optional int64 timestamp_ms = 1;
+
+  // required - The whole packet including both payload and header.
+  optional bytes raw_packet = 2;
+  // TODO(terelius): Feasible to log parsed RTCP instead?
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes raw_packet_deltas = 102;
+}
+
+message AudioPlayoutEvents {
+  optional int64 timestamp_ms = 1;
+
+  // required - The SSRC of the audio stream associated with the playout event.
+  optional uint32 local_ssrc = 2;
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes local_ssrc_deltas = 102;
+}
+
+message BeginLogEvent {
+  optional int64 timestamp_ms = 1;
+}
+
+message EndLogEvent {
+  optional int64 timestamp_ms = 1;
+}
+
+message LossBasedBweUpdates {
+  optional int64 timestamp_ms = 1;
+
+  // TODO(terelius): Update log interface to unsigned.
+  // required - Bandwidth estimate (in bps) after the update.
+  optional uint32 bitrate_bps = 2;
+
+  // required - Fraction of lost packets since last receiver report
+  // computed as floor( 256 * (#lost_packets / #total_packets) ).
+  // The possible values range from 0 to 255.
+  optional uint32 fraction_loss = 3;
+
+  // TODO(terelius): Is this really needed? Remove or make optional?
+  // TODO(terelius): Update log interface to unsigned.
+  // required - Total number of packets that the BWE update is based on.
+  optional uint32 total_packets = 4;
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes bitrate_deltas_bps = 102;
+  optional bytes fraction_loss_deltas = 103;
+  optional bytes total_packets_deltas = 104;
+}
+
+message DelayBasedBweUpdates {
+  optional int64 timestamp_ms = 1;
+
+  // required - Bandwidth estimate (in bps) after the update.
+  optional uint32 bitrate_bps = 2;
+
+  enum DetectorState {
+    BWE_NORMAL = 0;
+    BWE_UNDERUSING = 1;
+    BWE_OVERUSING = 2;
+  }
+  optional DetectorState detector_state = 3;
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes bitrate_deltas_bps = 102;
+  optional bytes detector_state_deltas = 103;
+}
+
+// Maps RTP header extension names to numerical IDs.
+message RtpHeaderExtensionConfig {
+  // Optional IDs for the header extensions. Each ID is a 4-bit number that is
+  // only set if that extension is configured.
+  // TODO(terelius): Can we skip transmission_time_offset? When is it used?
+  optional int32 transmission_time_offset_id = 1;
+  optional int32 absolute_send_time_id = 2;
+  optional int32 transport_sequence_number_id = 3;
+  optional int32 audio_level_id = 4;
+  // TODO(terelius): Add video_rotation and playout delay?
+}
+
+message VideoRecvStreamConfig {
+  optional int64 timestamp_ms = 1;
+
+  // required - Synchronization source (stream identifier) to be received.
+  optional uint32 remote_ssrc = 2;
+
+  // required - Sender SSRC used for sending RTCP (such as receiver reports).
+  optional uint32 local_ssrc = 3;
+
+  // required if RTX is configured
+  optional uint32 rtx_ssrc = 4;
+
+  // optional - RTP source stream ID
+  optional bytes rsid = 5;
+
+  // IDs for the header extension we care about. Only required if there are
+  // header extensions configured.
+  optional RtpHeaderExtensionConfig header_extensions = 6;
+
+  // TODO(terelius): Do we need codec-payload mapping? If so and rtx_ssrc is
+  // used, we also need a map between RTP payload type and RTX payload type.
+}
+
+message VideoSendStreamConfig {
+  optional int64 timestamp_ms = 1;
+
+  // Synchronization source (stream identifier) for outgoing stream.
+  // One stream can have several ssrcs for e.g. simulcast.
+  optional uint32 ssrc = 2;
+
+  // SSRC for the RTX stream
+  optional uint32 rtx_ssrc = 3;
+
+  // RTP source stream ID
+  optional bytes rsid = 4;
+
+  // IDs for the header extension we care about. Only required if there are
+  // header extensions configured.
+  optional RtpHeaderExtensionConfig header_extensions = 5;
+
+  // TODO(terelius): Do we need codec-payload mapping? If so and rtx_ssrc is
+  // used, we also need a map between RTP payload type and RTX payload type.
+}
+
+message AudioRecvStreamConfig {
+  optional int64 timestamp_ms = 1;
+
+  // required - Synchronization source (stream identifier) to be received.
+  optional uint32 remote_ssrc = 2;
+
+  // required - Sender SSRC used for sending RTCP (such as receiver reports).
+  optional uint32 local_ssrc = 3;
+
+  // Field number 4 reserved for RTX SSRC.
+
+  // optional - RTP source stream ID
+  optional bytes rsid = 5;
+
+  // IDs for the header extension we care about. Only required if there are
+  // header extensions configured.
+  optional RtpHeaderExtensionConfig header_extensions = 6;
+
+  // TODO(terelius): Do we need codec-payload mapping? If so and rtx_ssrc is
+  // used, we also need a map between RTP payload type and RTX payload type.
+}
+
+message AudioSendStreamConfig {
+  optional int64 timestamp_ms = 1;
+
+  // Synchronization source (stream identifier) for outgoing stream.
+  // One stream can have several ssrcs for e.g. simulcast.
+  optional uint32 ssrc = 2;
+
+  // Field number 3 reserved for RTX SSRC
+
+  // RTP source stream ID
+  optional bytes rsid = 4;
+
+  // IDs for the header extension we care about. Only required if there are
+  // header extensions configured.
+  optional RtpHeaderExtensionConfig header_extensions = 5;
+
+  // TODO(terelius): Do we need codec-payload mapping? If so and rtx_ssrc is
+  // used, we also need a map between RTP payload type and RTX payload type.
+}
+
+message AudioNetworkAdaptations {
+  optional int64 timestamp_ms = 1;
+
+  // Bit rate that the audio encoder is operating at.
+  // TODO(terelius): Signed vs unsigned?
+  optional int32 bitrate_bps = 2;
+
+  // Frame length that each encoded audio packet consists of.
+  // TODO(terelius): Signed vs unsigned?
+  optional int32 frame_length_ms = 3;
+
+  // Packet loss fraction that the encoder's forward error correction (FEC) is
+  // optimized for.
+  optional float uplink_packet_loss_fraction = 4;
+
+  // Whether forward error correction (FEC) is turned on or off.
+  optional bool enable_fec = 5;
+
+  // Whether discontinuous transmission (DTX) is turned on or off.
+  optional bool enable_dtx = 6;
+
+  // Number of audio channels that each encoded packet consists of.
+  optional uint32 num_channels = 7;
+
+  // Delta encodings
+  optional bytes timestamp_deltas_ms = 101;
+  optional bytes bitrate_deltas_bps = 102;
+  optional bytes frame_length_deltas_ms = 103;
+  optional bytes uplink_packet_loss_fraction_deltas = 104;
+  optional bytes enable_fec_deltas = 105;
+  optional bytes enable_dtx_deltas = 106;
+  optional bytes num_channels_deltas = 107;
+}
+
+message BweProbeCluster {
+  optional int64 timestamp_ms = 1;
+
+  // required - The id of this probe cluster.
+  optional uint32 id = 2;
+
+  // required - The bitrate in bps that this probe cluster is meant to probe.
+  optional uint32 bitrate_bps = 3;
+
+  // required - The minimum number of packets used to probe the given bitrate.
+  optional uint32 min_packets = 4;
+
+  // required - The minimum number of bytes used to probe the given bitrate.
+  optional uint32 min_bytes = 5;
+}
+
+message BweProbeResultSuccess {
+  optional int64 timestamp_ms = 1;
+
+  // required - The id of this probe cluster.
+  optional uint32 id = 2;
+
+  // required - The resulting bitrate in bps.
+  optional uint32 bitrate_bps = 3;
+}
+
+message BweProbeResultFailure {
+  optional int64 timestamp_ms = 1;
+
+  // required - The id of this probe cluster.
+  optional uint32 id = 2;
+
+  enum FailureReason {
+    UNKNOWN = 0;
+    INVALID_SEND_RECEIVE_INTERVAL = 1;
+    INVALID_SEND_RECEIVE_RATIO = 2;
+    TIMEOUT = 3;
+  }
+
+  // required
+  optional FailureReason failure = 3;
+}

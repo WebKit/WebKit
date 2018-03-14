@@ -13,6 +13,7 @@ import("../../webrtc.gni")
 # 'video_capture_internal_impl' depending on whether they want to
 # use the internal capturer.
 rtc_static_library("video_capture_module") {
+  visibility = [ "*" ]
   sources = [
     "device_info_impl.cc",
     "device_info_impl.h",
@@ -28,10 +29,16 @@ rtc_static_library("video_capture_module") {
   deps = [
     "..:module_api",
     "../..:webrtc_common",
+    "../../:typedefs",
+    "../../api:libjingle_peerconnection_api",
+    "../../api:video_frame_api",
     "../../api:video_frame_api_i420",
     "../../common_video",
+    "../../media:rtc_media_base",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
     "../../system_wrappers",
+    "//third_party/libyuv",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -41,6 +48,7 @@ rtc_static_library("video_capture_module") {
 }
 
 rtc_static_library("video_capture") {
+  visibility = [ "*" ]
   sources = [
     "external/device_info_external.cc",
     "external/video_capture_external.cc",
@@ -123,6 +131,7 @@ if (!build_with_chromium) {
 
     deps = [
       ":video_capture_module",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
     ]
@@ -158,7 +167,16 @@ if (!build_with_chromium) {
 
       libs = [ "Strmiids.lib" ]
 
-      deps += [ "//third_party/winsdk_samples" ]
+      if (build_with_mozilla) {
+        sources += [
+          "windows/BaseFilter.cpp",
+          "windows/BaseInputPin.cpp",
+          "windows/BasePin.cpp",
+          "windows/MediaType.cpp",
+        ]
+      } else {
+        deps += [ "//third_party/winsdk_samples" ]
+      }
     }
     if (is_ios || is_mac) {
       deps += [ ":video_capture_internal_impl_objc" ]
@@ -169,6 +187,19 @@ if (!build_with_chromium) {
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    if (build_with_mozilla && is_android) {
+      include_dirs = [
+        "/config/external/nspr",
+        "/nsprpub/lib/ds",
+        "/nsprpub/pr/include",
+      ]
+
+      sources = [
+        "android/device_info_android.cc",
+        "android/video_capture_android.cc",
+      ]
     }
   }
 
@@ -201,6 +232,7 @@ if (!build_with_chromium) {
       deps = [
         ":video_capture_internal_impl",
         ":video_capture_module",
+        "../../api:video_frame_api",
         "../../api:video_frame_api_i420",
         "../../common_video:common_video",
         "../../rtc_base:rtc_base_approved",

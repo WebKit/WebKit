@@ -10,6 +10,7 @@
 
 #include "modules/remote_bitrate_estimator/test/bwe.h"
 
+#include <random>
 #include <vector>
 
 #include "rtc_base/arraysize.h"
@@ -52,7 +53,8 @@ TEST_F(LinkedSetTest, MultiplePackets) {
   for (size_t i = 0; i < kNumberPackets; ++i) {
     sequence_numbers.push_back(static_cast<uint16_t>(i + 1));
   }
-  random_shuffle(sequence_numbers.begin(), sequence_numbers.end());
+  std::shuffle(sequence_numbers.begin(), sequence_numbers.end(),
+               std::mt19937(std::random_device()()));
 
   for (size_t i = 0; i < kNumberPackets; ++i) {
     // Other parameters don't matter here.
@@ -319,7 +321,8 @@ TEST_F(BweReceiverTest, PacketLossUnorderedPackets) {
     sequence_numbers.push_back(static_cast<uint16_t>(i + 1));
   }
 
-  random_shuffle(sequence_numbers.begin(), sequence_numbers.end());
+  std::shuffle(sequence_numbers.begin(), sequence_numbers.end(),
+               std::mt19937(std::random_device()()));
 
   for (size_t i = 0; i < num_packets; ++i) {
     const MediaPacket media_packet(kFlowId, 0, 0, sequence_numbers[i]);

@@ -13,6 +13,7 @@ if (is_android) {
 }
 
 rtc_static_library("audio_encoder_L16") {
+  visibility = [ "*" ]
   sources = [
     "audio_encoder_L16.cc",
     "audio_encoder_L16.h",
@@ -27,6 +28,7 @@ rtc_static_library("audio_encoder_L16") {
 }
 
 rtc_static_library("audio_decoder_L16") {
+  visibility = [ "*" ]
   sources = [
     "audio_decoder_L16.cc",
     "audio_decoder_L16.h",

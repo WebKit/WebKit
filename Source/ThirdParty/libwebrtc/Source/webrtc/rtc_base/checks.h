@@ -134,8 +134,8 @@ std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
   return msg;
 }
 
-// MSVC doesn't like complex extern templates and DLLs.
-#if 0
+// MSVC doesn't like complex extern templates and DLLs. WebKit build system neither.
+#if 0 //!defined(COMPILER_MSVC)
 // Commonly used instantiations of MakeCheckOpString<>. Explicitly instantiated
 // in logging.cc.
 extern template std::string* MakeCheckOpString<int, int>(

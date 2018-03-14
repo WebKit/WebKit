@@ -25,6 +25,7 @@
 #include "call/video_send_stream.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/bitrateallocationstrategy.h"
+#include "rtc_base/copyonwritebuffer.h"
 #include "rtc_base/networkroute.h"
 #include "rtc_base/platform_file.h"
 #include "rtc_base/socket.h"
@@ -63,8 +64,7 @@ class PacketReceiver {
   };
 
   virtual DeliveryStatus DeliverPacket(MediaType media_type,
-                                       const uint8_t* packet,
-                                       size_t length,
+                                       rtc::CopyOnWriteBuffer packet,
                                        const PacketTime& packet_time) = 0;
 
  protected:

@@ -103,14 +103,14 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
   int32_t PlayoutDeviceName(uint16_t index,
                             char name[kAdmMaxDeviceNameSize],
                             char guid[kAdmMaxGuidSize]) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t RecordingDeviceName(uint16_t index,
                               char name[kAdmMaxDeviceNameSize],
                               char guid[kAdmMaxGuidSize]) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
@@ -123,7 +123,7 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
 
   int32_t SetPlayoutDevice(
       AudioDeviceModule::WindowsDeviceType device) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
@@ -136,7 +136,7 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
 
   int32_t SetRecordingDevice(
       AudioDeviceModule::WindowsDeviceType device) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
@@ -215,18 +215,6 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
 
   bool Recording() const override { return input_.Recording(); }
 
-  int32_t SetAGC(bool enable) override {
-    if (enable) {
-      RTC_FATAL() << "Should never be called";
-    }
-    return -1;
-  }
-
-  bool AGC() const override {
-    RTC_LOG(INFO) << __FUNCTION__;
-    return false;
-  }
-
   int32_t InitSpeaker() override {
     RTC_LOG(INFO) << __FUNCTION__;
     return 0;
@@ -278,52 +266,52 @@ class AudioDeviceTemplate : public AudioDeviceGeneric {
   }
 
   int32_t SetMicrophoneVolume(uint32_t volume) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t MicrophoneVolume(uint32_t& volume) const override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t MinMicrophoneVolume(uint32_t& minVolume) const override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t SpeakerMuteIsAvailable(bool& available) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t SetSpeakerMute(bool enable) override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t SpeakerMute(bool& enabled) const override {
-    RTC_FATAL() << "Should never be called";
+    FATAL() << "Should never be called";
     return -1;
   }
 
   int32_t MicrophoneMuteIsAvailable(bool& available) override {
-    RTC_FATAL() << "Not implemented";
+    FATAL() << "Not implemented";
     return -1;
   }
 
   int32_t SetMicrophoneMute(bool enable) override {
-    RTC_FATAL() << "Not implemented";
+    FATAL() << "Not implemented";
     return -1;
   }
 
   int32_t MicrophoneMute(bool& enabled) const override {
-    RTC_FATAL() << "Not implemented";
+    FATAL() << "Not implemented";
     return -1;
   }
 

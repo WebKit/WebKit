@@ -19,6 +19,7 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/format_macros.h"
+#include "rtc_base/platform_thread.h"
 #include "rtc_base/timeutils.h"
 
 #define TAG "OpenSLESPlayer"
@@ -51,7 +52,7 @@ OpenSLESPlayer::OpenSLESPlayer(AudioManager* audio_manager)
       simple_buffer_queue_(nullptr),
       volume_(nullptr),
       last_play_time_(0) {
-  ALOGD("ctor%s", GetThreadInfo().c_str());
+  ALOGD("ctor[tid=%d]", rtc::CurrentThreadId());
   // Use native audio output parameters provided by the audio manager and
   // define the PCM format structure.
   pcm_format_ = CreatePCMConfiguration(audio_parameters_.channels(),
@@ -63,7 +64,7 @@ OpenSLESPlayer::OpenSLESPlayer(AudioManager* audio_manager)
 }
 
 OpenSLESPlayer::~OpenSLESPlayer() {
-  ALOGD("dtor%s", GetThreadInfo().c_str());
+  ALOGD("dtor[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   Terminate();
   DestroyAudioPlayer();
@@ -77,7 +78,7 @@ OpenSLESPlayer::~OpenSLESPlayer() {
 }
 
 int OpenSLESPlayer::Init() {
-  ALOGD("Init%s", GetThreadInfo().c_str());
+  ALOGD("Init[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   if (audio_parameters_.channels() == 2) {
     // TODO(henrika): FineAudioBuffer needs more work to support stereo.
@@ -88,14 +89,14 @@ int OpenSLESPlayer::Init() {
 }
 
 int OpenSLESPlayer::Terminate() {
-  ALOGD("Terminate%s", GetThreadInfo().c_str());
+  ALOGD("Terminate[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   StopPlayout();
   return 0;
 }
 
 int OpenSLESPlayer::InitPlayout() {
-  ALOGD("InitPlayout%s", GetThreadInfo().c_str());
+  ALOGD("InitPlayout[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!initialized_);
   RTC_DCHECK(!playing_);
@@ -110,7 +111,7 @@ int OpenSLESPlayer::InitPlayout() {
 }
 
 int OpenSLESPlayer::StartPlayout() {
-  ALOGD("StartPlayout%s", GetThreadInfo().c_str());
+  ALOGD("StartPlayout[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(initialized_);
   RTC_DCHECK(!playing_);
@@ -138,7 +139,7 @@ int OpenSLESPlayer::StartPlayout() {
 }
 
 int OpenSLESPlayer::StopPlayout() {
-  ALOGD("StopPlayout%s", GetThreadInfo().c_str());
+  ALOGD("StopPlayout[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   if (!initialized_ || !playing_) {
     return 0;

@@ -24,8 +24,7 @@ class MockAudioDeviceBuffer : public AudioDeviceBuffer {
   MOCK_METHOD1(GetPlayoutData, int32_t(void* audioBuffer));
   MOCK_METHOD2(SetRecordedBuffer,
                int32_t(const void* audioBuffer, size_t nSamples));
-  MOCK_METHOD3(SetVQEData,
-               void(int playDelayMS, int recDelayMS, int clockDrift));
+  MOCK_METHOD2(SetVQEData, void(int playDelayMS, int recDelayMS));
   MOCK_METHOD0(DeliverRecordedData, int32_t());
 };
 

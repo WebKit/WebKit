@@ -12,7 +12,7 @@
 #define MEDIA_BASE_FAKEVIDEORENDERER_H_
 
 #include "api/video/video_frame.h"
-#include "media/base/videosinkinterface.h"
+#include "api/videosinkinterface.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/logging.h"
 

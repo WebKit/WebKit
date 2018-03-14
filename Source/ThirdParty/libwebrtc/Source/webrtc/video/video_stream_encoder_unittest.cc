@@ -31,6 +31,7 @@
 namespace {
 const int kMinPixelsPerFrame = 320 * 180;
 const int kMinFramerateFps = 2;
+const int kMinBalancedFramerateFps = 7;
 const int64_t kFrameTimeoutMs = 100;
 const unsigned char kNumSlDummy = 0;
 }  // namespace
@@ -67,11 +68,9 @@ class CpuOveruseDetectorProxy : public OveruseFrameDetector {
  public:
   CpuOveruseDetectorProxy(const CpuOveruseOptions& options,
                           AdaptationObserverInterface* overuse_observer,
-                          EncodedFrameObserver* encoder_timing_,
                           CpuOveruseMetricsObserver* metrics_observer)
       : OveruseFrameDetector(options,
                              overuse_observer,
-                             encoder_timing_,
                              metrics_observer),
         last_target_framerate_fps_(-1) {}
   virtual ~CpuOveruseDetectorProxy() {}
@@ -101,12 +100,10 @@ class VideoStreamEncoderUnderTest : public VideoStreamEncoder {
             stats_proxy,
             settings,
             nullptr /* pre_encode_callback */,
-            nullptr /* encoder_timing */,
             std::unique_ptr<OveruseFrameDetector>(
                 overuse_detector_proxy_ = new CpuOveruseDetectorProxy(
                     GetCpuOveruseOptions(settings.full_overuse_time),
                     this,
-                    nullptr,
                     stats_proxy))) {}
 
   void PostTaskAndWait(bool down, AdaptReason reason) {
@@ -187,6 +184,9 @@ class AdaptingFrameForwarder : public test::FrameForwarder {
     return last_wants_;
   }
 
+  rtc::Optional<int> last_sent_width() const { return last_width_; }
+  rtc::Optional<int> last_sent_height() const { return last_height_; }
+
   void IncomingCapturedFrame(const VideoFrame& video_frame) override {
     int cropped_width = 0;
     int cropped_height = 0;
@@ -202,9 +202,16 @@ class AdaptingFrameForwarder : public test::FrameForwarder {
                                  99, 99, kVideoRotation_0);
         adapted_frame.set_ntp_time_ms(video_frame.ntp_time_ms());
         test::FrameForwarder::IncomingCapturedFrame(adapted_frame);
+        last_width_.emplace(adapted_frame.width());
+        last_height_.emplace(adapted_frame.height());
+      } else {
+        last_width_ = rtc::nullopt;
+        last_height_ = rtc::nullopt;
       }
     } else {
       test::FrameForwarder::IncomingCapturedFrame(video_frame);
+      last_width_.emplace(video_frame.width());
+      last_height_.emplace(video_frame.height());
     }
   }
 
@@ -220,6 +227,8 @@ class AdaptingFrameForwarder : public test::FrameForwarder {
   cricket::VideoAdapter adapter_;
   bool adaptation_enabled_ RTC_GUARDED_BY(crit_);
   rtc::VideoSinkWants last_wants_ RTC_GUARDED_BY(crit_);
+  rtc::Optional<int> last_width_;
+  rtc::Optional<int> last_height_;
 };
 
 class MockableSendStatisticsProxy : public SendStatisticsProxy {
@@ -434,6 +443,22 @@ class VideoStreamEncoderTest : public ::testing::Test {
     EXPECT_FALSE(wants.target_pixel_count);
   }
 
+  void VerifyBalancedModeFpsRange(const rtc::VideoSinkWants& wants,
+                                  int last_frame_pixels) {
+    // Balanced mode should always scale FPS to the desired range before
+    // attempting to scale resolution.
+    int fps_limit = wants.max_framerate_fps;
+    if (last_frame_pixels <= 320 * 240) {
+      EXPECT_TRUE(7 <= fps_limit && fps_limit <= 10);
+    } else if (last_frame_pixels <= 480 * 270) {
+      EXPECT_TRUE(10 <= fps_limit && fps_limit <= 15);
+    } else if (last_frame_pixels <= 640 * 480) {
+      EXPECT_LE(15, fps_limit);
+    } else {
+      EXPECT_EQ(std::numeric_limits<int>::max(), fps_limit);
+    }
+  }
+
   void WaitForEncodedFrame(int64_t expected_ntp_time) {
     sink_.WaitForEncodedFrame(expected_ntp_time);
     fake_clock_.AdvanceTimeMicros(rtc::kNumMicrosecsPerSec / max_framerate_);
@@ -589,10 +614,10 @@ class VideoStreamEncoderTest : public ::testing::Test {
     void WaitForEncodedFrame(uint32_t expected_width,
                              uint32_t expected_height) {
       EXPECT_TRUE(encoded_frame_event_.Wait(kDefaultTimeoutMs));
-      CheckLastFrameSizeMathces(expected_width, expected_height);
+      CheckLastFrameSizeMatches(expected_width, expected_height);
     }
 
-    void CheckLastFrameSizeMathces(uint32_t expected_width,
+    void CheckLastFrameSizeMatches(uint32_t expected_width,
                                    uint32_t expected_height) {
       uint32_t width = 0;
       uint32_t height = 0;
@@ -989,114 +1014,95 @@ TEST_F(VideoStreamEncoderTest, SinkWantsRotationApplied) {
   video_stream_encoder_->Stop();
 }
 
-TEST_F(VideoStreamEncoderTest, SinkWantsFromOveruseDetector) {
-  const int kMaxDowngrades = VideoStreamEncoder::kMaxCpuResolutionDowngrades;
-  video_stream_encoder_->OnBitrateUpdated(kTargetBitrateBps, 0, 0);
-
-  VerifyNoLimitation(video_source_.sink_wants());
-
-  int frame_width = 1280;
-  int frame_height = 720;
-
-  // Trigger CPU overuse kMaxCpuDowngrades times. Every time, VideoStreamEncoder
-  // should request lower resolution.
-  for (int i = 1; i <= kMaxDowngrades; ++i) {
-    video_source_.IncomingCapturedFrame(
-        CreateFrame(i, frame_width, frame_height));
-    WaitForEncodedFrame(i);
-
-    video_stream_encoder_->TriggerCpuOveruse();
-
-    EXPECT_FALSE(video_source_.sink_wants().target_pixel_count);
-    EXPECT_LT(video_source_.sink_wants().max_pixel_count,
-              frame_width * frame_height);
-    EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
-    EXPECT_EQ(i, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
-
-    frame_width /= 2;
-    frame_height /= 2;
-  }
-
-  // Trigger CPU overuse one more time. This should not trigger a request for
-  // lower resolution.
-  rtc::VideoSinkWants current_wants = video_source_.sink_wants();
-  video_source_.IncomingCapturedFrame(
-      CreateFrame(kMaxDowngrades + 1, frame_width, frame_height));
-  WaitForEncodedFrame(kMaxDowngrades + 1);
-  video_stream_encoder_->TriggerCpuOveruse();
-  EXPECT_EQ(video_source_.sink_wants().target_pixel_count,
-            current_wants.target_pixel_count);
-  EXPECT_EQ(video_source_.sink_wants().max_pixel_count,
-            current_wants.max_pixel_count);
-  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
-  EXPECT_EQ(kMaxDowngrades,
-            stats_proxy_->GetStats().number_of_cpu_adapt_changes);
-
-  // Trigger CPU normal use.
-  video_stream_encoder_->TriggerCpuNormalUsage();
-  EXPECT_EQ(frame_width * frame_height * 5 / 3,
-            video_source_.sink_wants().target_pixel_count.value_or(0));
-  EXPECT_EQ(frame_width * frame_height * 4,
-            video_source_.sink_wants().max_pixel_count);
-  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
-  EXPECT_EQ(kMaxDowngrades + 1,
-            stats_proxy_->GetStats().number_of_cpu_adapt_changes);
-
-  video_stream_encoder_->Stop();
-}
-
-TEST_F(VideoStreamEncoderTest,
-       TestMaxCpuResolutionDowngrades_BalancedMode_NoFpsLimit) {
-  const int kMaxDowngrades = VideoStreamEncoder::kMaxCpuResolutionDowngrades;
+TEST_F(VideoStreamEncoderTest, TestCpuDowngrades_BalancedMode) {
+  const int kFramerateFps = 30;
   const int kWidth = 1280;
   const int kHeight = 720;
-  video_stream_encoder_->OnBitrateUpdated(kTargetBitrateBps, 0, 0);
+
+  // We rely on the automatic resolution adaptation, but we handle framerate
+  // adaptation manually by mocking the stats proxy.
+  video_source_.set_adaptation_enabled(true);
 
   // Enable kBalanced preference, no initial limitation.
-  AdaptingFrameForwarder source;
-  source.set_adaptation_enabled(true);
+  video_stream_encoder_->OnBitrateUpdated(kTargetBitrateBps, 0, 0);
   video_stream_encoder_->SetSource(
-      &source,
+      &video_source_,
       VideoSendStream::DegradationPreference::kBalanced);
-  VerifyNoLimitation(source.sink_wants());
+  VerifyNoLimitation(video_source_.sink_wants());
   EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_resolution);
+  EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_framerate);
   EXPECT_EQ(0, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
 
-  // Trigger adapt down kMaxCpuDowngrades times.
-  int t = 1;
-  for (int i = 1; i <= kMaxDowngrades; ++i) {
-    source.IncomingCapturedFrame(CreateFrame(t, kWidth, kHeight));
-    sink_.WaitForEncodedFrame(t++);
+  // Adapt down as far as possible.
+  rtc::VideoSinkWants last_wants;
+  int64_t t = 1;
+  int loop_count = 0;
+  do {
+    ++loop_count;
+    last_wants = video_source_.sink_wants();
+
+    // Simulate the framerate we've been asked to adapt to.
+    const int fps = std::min(kFramerateFps, last_wants.max_framerate_fps);
+    const int frame_interval_ms = rtc::kNumMillisecsPerSec / fps;
+    VideoSendStream::Stats mock_stats = stats_proxy_->GetStats();
+    mock_stats.input_frame_rate = fps;
+    stats_proxy_->SetMockStats(mock_stats);
+
+    video_source_.IncomingCapturedFrame(CreateFrame(t, kWidth, kHeight));
+    sink_.WaitForEncodedFrame(t);
+    t += frame_interval_ms;
+
     video_stream_encoder_->TriggerCpuOveruse();
-    VerifyFpsMaxResolutionLt(source.sink_wants(), source.last_wants());
-    EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
-    EXPECT_EQ(i, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
-  }
+    VerifyBalancedModeFpsRange(
+        video_source_.sink_wants(),
+        *video_source_.last_sent_width() * *video_source_.last_sent_height());
+  } while (video_source_.sink_wants().max_pixel_count <
+               last_wants.max_pixel_count ||
+           video_source_.sink_wants().max_framerate_fps <
+               last_wants.max_framerate_fps);
 
-  // Trigger adapt down, max cpu downgrades reach, expect no change.
-  rtc::VideoSinkWants last_wants = source.sink_wants();
-  source.IncomingCapturedFrame(CreateFrame(t, kWidth, kHeight));
-  sink_.WaitForEncodedFrame(t++);
-  video_stream_encoder_->TriggerCpuOveruse();
-  VerifyFpsEqResolutionEq(source.sink_wants(), last_wants);
-  EXPECT_EQ(last_wants.max_pixel_count, source.sink_wants().max_pixel_count);
+  // Verify that we've adapted all the way down.
+  stats_proxy_->ResetMockStats();
   EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
-  EXPECT_EQ(kMaxDowngrades,
+  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_framerate);
+  EXPECT_EQ(loop_count - 1,
             stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(kMinPixelsPerFrame, *video_source_.last_sent_width() *
+                                    *video_source_.last_sent_height());
+  EXPECT_EQ(kMinBalancedFramerateFps,
+            video_source_.sink_wants().max_framerate_fps);
 
-  // Trigger adapt up kMaxCpuDowngrades times.
-  for (int i = 1; i <= kMaxDowngrades; ++i) {
-    source.IncomingCapturedFrame(CreateFrame(t, kWidth, kHeight));
-    sink_.WaitForEncodedFrame(t++);
+  // Adapt back up the same number of times we adapted down.
+  for (int i = 0; i < loop_count - 1; ++i) {
+    last_wants = video_source_.sink_wants();
+
+    // Simulate the framerate we've been asked to adapt to.
+    const int fps = std::min(kFramerateFps, last_wants.max_framerate_fps);
+    const int frame_interval_ms = rtc::kNumMillisecsPerSec / fps;
+    VideoSendStream::Stats mock_stats = stats_proxy_->GetStats();
+    mock_stats.input_frame_rate = fps;
+    stats_proxy_->SetMockStats(mock_stats);
+
+    video_source_.IncomingCapturedFrame(CreateFrame(t, kWidth, kHeight));
+    sink_.WaitForEncodedFrame(t);
+    t += frame_interval_ms;
+
     video_stream_encoder_->TriggerCpuNormalUsage();
-    VerifyFpsMaxResolutionGt(source.sink_wants(), source.last_wants());
-    EXPECT_GT(source.sink_wants().max_pixel_count, last_wants.max_pixel_count);
-    EXPECT_EQ(kMaxDowngrades + i,
-              stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+    VerifyBalancedModeFpsRange(
+        video_source_.sink_wants(),
+        *video_source_.last_sent_width() * *video_source_.last_sent_height());
+    EXPECT_TRUE(video_source_.sink_wants().max_pixel_count >
+                    last_wants.max_pixel_count ||
+                video_source_.sink_wants().max_framerate_fps >
+                    last_wants.max_framerate_fps);
   }
 
-  VerifyNoLimitation(source.sink_wants());
+  VerifyNoLimitation(video_source_.sink_wants());
+  stats_proxy_->ResetMockStats();
   EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_resolution);
+  EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_framerate);
+  EXPECT_EQ((loop_count - 1) * 2,
+            stats_proxy_->GetStats().number_of_cpu_adapt_changes);
 
   video_stream_encoder_->Stop();
 }
@@ -2076,72 +2082,92 @@ TEST_F(VideoStreamEncoderTest,
   source.IncomingCapturedFrame(CreateFrame(3, kWidth, kHeight));
   WaitForEncodedFrame(3);
   VerifyFpsMaxResolutionLt(source.sink_wants(), source.last_wants());
-  rtc::VideoSinkWants last_wants = source.sink_wants();
   EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
   EXPECT_FALSE(stats_proxy_->GetStats().bw_limited_resolution);
   EXPECT_EQ(2, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
   EXPECT_EQ(0, stats_proxy_->GetStats().number_of_quality_adapt_changes);
 
-  // Trigger cpu adapt down, max cpu downgrades reached, expect no change.
+  // Trigger cpu adapt down, expect scaled down resolution (480x270).
   video_stream_encoder_->TriggerCpuOveruse();
   source.IncomingCapturedFrame(CreateFrame(4, kWidth, kHeight));
   WaitForEncodedFrame(4);
-  VerifyFpsEqResolutionEq(source.sink_wants(), last_wants);
+  VerifyFpsMaxResolutionLt(source.sink_wants(), source.last_wants());
   EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
   EXPECT_FALSE(stats_proxy_->GetStats().bw_limited_resolution);
-  EXPECT_EQ(2, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(3, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
   EXPECT_EQ(0, stats_proxy_->GetStats().number_of_quality_adapt_changes);
 
-  // Trigger quality adapt down, expect scaled down resolution (480x270).
+  // Trigger quality adapt down, expect scaled down resolution (320x180).
   video_stream_encoder_->TriggerQualityLow();
   source.IncomingCapturedFrame(CreateFrame(5, kWidth, kHeight));
   WaitForEncodedFrame(5);
   VerifyFpsMaxResolutionLt(source.sink_wants(), source.last_wants());
-  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
-  EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
-  EXPECT_EQ(2, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
-  EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
-
-  // Trigger cpu adapt up, expect upscaled resolution (640x360).
-  video_stream_encoder_->TriggerCpuNormalUsage();
-  source.IncomingCapturedFrame(CreateFrame(6, kWidth, kHeight));
-  WaitForEncodedFrame(6);
-  VerifyFpsMaxResolutionGt(source.sink_wants(), source.last_wants());
+  rtc::VideoSinkWants last_wants = source.sink_wants();
   EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
   EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
   EXPECT_EQ(3, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
   EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
 
-  // Trigger cpu adapt up, expect upscaled resolution (960x540).
+  // Trigger quality adapt down, expect no change (min resolution reached).
+  video_stream_encoder_->TriggerQualityLow();
+  source.IncomingCapturedFrame(CreateFrame(6, kWidth, kHeight));
+  WaitForEncodedFrame(6);
+  VerifyFpsMaxResolutionEq(source.sink_wants(), last_wants);
+  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
+  EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
+  EXPECT_EQ(3, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
+
+  // Trigger cpu adapt up, expect upscaled resolution (480x270).
   video_stream_encoder_->TriggerCpuNormalUsage();
   source.IncomingCapturedFrame(CreateFrame(7, kWidth, kHeight));
   WaitForEncodedFrame(7);
   VerifyFpsMaxResolutionGt(source.sink_wants(), source.last_wants());
+  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
+  EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
+  EXPECT_EQ(4, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
+
+  // Trigger cpu adapt up, expect upscaled resolution (640x360).
+  video_stream_encoder_->TriggerCpuNormalUsage();
+  source.IncomingCapturedFrame(CreateFrame(8, kWidth, kHeight));
+  WaitForEncodedFrame(8);
+  VerifyFpsMaxResolutionGt(source.sink_wants(), source.last_wants());
+  EXPECT_TRUE(stats_proxy_->GetStats().cpu_limited_resolution);
+  EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
+  EXPECT_EQ(5, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
+
+  // Trigger cpu adapt up, expect upscaled resolution (960x540).
+  video_stream_encoder_->TriggerCpuNormalUsage();
+  source.IncomingCapturedFrame(CreateFrame(9, kWidth, kHeight));
+  WaitForEncodedFrame(9);
+  VerifyFpsMaxResolutionGt(source.sink_wants(), source.last_wants());
   last_wants = source.sink_wants();
   EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_resolution);
   EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
-  EXPECT_EQ(4, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(6, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
   EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
 
   // Trigger cpu adapt up, no cpu downgrades, expect no change (960x540).
   video_stream_encoder_->TriggerCpuNormalUsage();
-  source.IncomingCapturedFrame(CreateFrame(8, kWidth, kHeight));
-  WaitForEncodedFrame(8);
+  source.IncomingCapturedFrame(CreateFrame(10, kWidth, kHeight));
+  WaitForEncodedFrame(10);
   VerifyFpsEqResolutionEq(source.sink_wants(), last_wants);
   EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_resolution);
   EXPECT_TRUE(stats_proxy_->GetStats().bw_limited_resolution);
-  EXPECT_EQ(4, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(6, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
   EXPECT_EQ(1, stats_proxy_->GetStats().number_of_quality_adapt_changes);
 
   // Trigger quality adapt up, expect no restriction (1280x720).
   video_stream_encoder_->TriggerQualityHigh();
-  source.IncomingCapturedFrame(CreateFrame(9, kWidth, kHeight));
+  source.IncomingCapturedFrame(CreateFrame(11, kWidth, kHeight));
   WaitForEncodedFrame(kWidth, kHeight);
   VerifyFpsMaxResolutionGt(source.sink_wants(), source.last_wants());
   VerifyNoLimitation(source.sink_wants());
   EXPECT_FALSE(stats_proxy_->GetStats().cpu_limited_resolution);
   EXPECT_FALSE(stats_proxy_->GetStats().bw_limited_resolution);
-  EXPECT_EQ(4, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
+  EXPECT_EQ(6, stats_proxy_->GetStats().number_of_cpu_adapt_changes);
   EXPECT_EQ(2, stats_proxy_->GetStats().number_of_quality_adapt_changes);
 
   video_stream_encoder_->Stop();
@@ -2637,7 +2663,7 @@ TEST_F(VideoStreamEncoderTest,
     if (!WaitForFrame(kFrameTimeoutMs)) {
       ++num_frames_dropped;
     } else {
-      sink_.CheckLastFrameSizeMathces(kFrameWidth, kFrameHeight);
+      sink_.CheckLastFrameSizeMatches(kFrameWidth, kFrameHeight);
     }
   }
 
@@ -2656,7 +2682,7 @@ TEST_F(VideoStreamEncoderTest,
     if (!WaitForFrame(kFrameTimeoutMs)) {
       ++num_frames_dropped;
     } else {
-      sink_.CheckLastFrameSizeMathces(kFrameWidth, kFrameHeight);
+      sink_.CheckLastFrameSizeMatches(kFrameWidth, kFrameHeight);
     }
   }
   EXPECT_NEAR(num_frames_dropped, max_framerate_ - (max_framerate_ * 4 / 9),
@@ -2672,7 +2698,7 @@ TEST_F(VideoStreamEncoderTest,
     if (!WaitForFrame(kFrameTimeoutMs)) {
       ++num_frames_dropped;
     } else {
-      sink_.CheckLastFrameSizeMathces(kFrameWidth, kFrameHeight);
+      sink_.CheckLastFrameSizeMatches(kFrameWidth, kFrameHeight);
     }
   }
   EXPECT_NEAR(num_frames_dropped, max_framerate_ - (max_framerate_ * 2 / 3),
@@ -2688,7 +2714,7 @@ TEST_F(VideoStreamEncoderTest,
     if (!WaitForFrame(kFrameTimeoutMs)) {
       ++num_frames_dropped;
     } else {
-      sink_.CheckLastFrameSizeMathces(kFrameWidth, kFrameHeight);
+      sink_.CheckLastFrameSizeMatches(kFrameWidth, kFrameHeight);
     }
   }
   EXPECT_NEAR(num_frames_dropped, 0, kErrorMargin);
@@ -2699,7 +2725,6 @@ TEST_F(VideoStreamEncoderTest,
 TEST_F(VideoStreamEncoderTest, DoesntAdaptDownPastMinFramerate) {
   const int kFramerateFps = 5;
   const int kFrameIntervalMs = rtc::kNumMillisecsPerSec / kFramerateFps;
-  const int kMinFpsFrameInterval = rtc::kNumMillisecsPerSec / kMinFramerateFps;
   const int kFrameWidth = 1280;
   const int kFrameHeight = 720;
 
@@ -2716,27 +2741,27 @@ TEST_F(VideoStreamEncoderTest, DoesntAdaptDownPastMinFramerate) {
   int64_t timestamp_ms = fake_clock_.TimeNanos() / rtc::kNumNanosecsPerMillisec;
 
   // Trigger overuse as much as we can.
-  for (int i = 0; i < VideoStreamEncoder::kMaxCpuResolutionDowngrades; ++i) {
+  rtc::VideoSinkWants last_wants;
+  do {
+    last_wants = video_source_.sink_wants();
+
     // Insert frames to get a new fps estimate...
     for (int j = 0; j < kFramerateFps; ++j) {
       video_source_.IncomingCapturedFrame(
           CreateFrame(timestamp_ms, kFrameWidth, kFrameHeight));
+      if (video_source_.last_sent_width()) {
+        sink_.WaitForEncodedFrame(timestamp_ms);
+      }
       timestamp_ms += kFrameIntervalMs;
+      fake_clock_.AdvanceTimeMicros(
+          kFrameIntervalMs * rtc::kNumMicrosecsPerMillisec);
     }
     // ...and then try to adapt again.
     video_stream_encoder_->TriggerCpuOveruse();
-  }
+  } while (video_source_.sink_wants().max_framerate_fps <
+           last_wants.max_framerate_fps);
 
-  // Drain any frame in the pipeline.
-  WaitForFrame(kDefaultTimeoutMs);
-
-  // Insert frames at min fps, all should go through.
-  for (int i = 0; i < 10; ++i) {
-    timestamp_ms += kMinFpsFrameInterval;
-    video_source_.IncomingCapturedFrame(
-        CreateFrame(timestamp_ms, kFrameWidth, kFrameHeight));
-    WaitForEncodedFrame(timestamp_ms);
-  }
+  VerifyFpsEqResolutionMax(video_source_.sink_wants(), kMinFramerateFps);
 
   video_stream_encoder_->Stop();
 }

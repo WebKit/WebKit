@@ -19,32 +19,33 @@
 #include <vector>
 
 #include "api/call/audio_sink.h"
+#include "api/jsep.h"
 #include "api/rtpreceiverinterface.h"
+#include "api/videosinkinterface.h"
+#include "api/videosourceinterface.h"
 #include "media/base/mediachannel.h"
 #include "media/base/mediaengine.h"
 #include "media/base/streamparams.h"
-#include "media/base/videosinkinterface.h"
-#include "media/base/videosourceinterface.h"
 #include "p2p/base/dtlstransportinternal.h"
 #include "p2p/base/packettransportinternal.h"
 #include "p2p/client/socketmonitor.h"
 #include "pc/audiomonitor.h"
+#include "pc/dtlssrtptransport.h"
 #include "pc/mediamonitor.h"
 #include "pc/mediasession.h"
 #include "pc/rtcpmuxfilter.h"
+#include "pc/rtptransport.h"
 #include "pc/srtpfilter.h"
+#include "pc/srtptransport.h"
 #include "pc/transportcontroller.h"
 #include "rtc_base/asyncinvoker.h"
 #include "rtc_base/asyncudpsocket.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/network.h"
 #include "rtc_base/sigslot.h"
-#include "rtc_base/window.h"
 
 namespace webrtc {
 class AudioSinkInterface;
-class RtpTransportInternal;
-class SrtpTransport;
 }  // namespace webrtc
 
 namespace cricket {
@@ -85,10 +86,14 @@ class BaseChannel
               bool rtcp_mux_required,
               bool srtp_required);
   virtual ~BaseChannel();
+  // TODO(zhihuang): Remove this once the RtpTransport can be shared between
+  // BaseChannels.
   void Init_w(DtlsTransportInternal* rtp_dtls_transport,
               DtlsTransportInternal* rtcp_dtls_transport,
               rtc::PacketTransportInternal* rtp_packet_transport,
               rtc::PacketTransportInternal* rtcp_packet_transport);
+  void Init_w(webrtc::RtpTransportInternal* rtp_transport);
+
   // Deinit may be called multiple times and is simply ignored if it's already
   // done.
   void Deinit();
@@ -101,13 +106,23 @@ class BaseChannel
   bool enabled() const { return enabled_; }
 
   // This function returns true if we are using SDES.
-  bool sdes_active() const { return sdes_negotiator_.IsActive(); }
+  bool sdes_active() const {
+    return sdes_transport_ && sdes_negotiator_.IsActive();
+  }
   // The following function returns true if we are using DTLS-based keying.
-  bool dtls_active() const { return dtls_active_; }
+  bool dtls_active() const {
+    return dtls_srtp_transport_ && dtls_srtp_transport_->IsActive();
+  }
   // This function returns true if using SRTP (DTLS-based keying or SDES).
   bool srtp_active() const { return sdes_active() || dtls_active(); }
 
   bool writable() const { return writable_; }
+
+  // Set an RTP level transport which could be an RtpTransport without
+  // encryption, an SrtpTransport for SDES or a DtlsSrtpTransport for DTLS-SRTP.
+  // This can be called from any thread and it hops to the network thread
+  // internally. It would replace the |SetTransports| and its variants.
+  void SetRtpTransport(webrtc::RtpTransportInternal* rtp_transport);
 
   // Set the transport(s), and update writability and "ready-to-send" state.
   // |rtp_transport| must be non-null.
@@ -117,16 +132,18 @@ class BaseChannel
   // well.
   // Can not start with "rtc::PacketTransportInternal" and switch to
   // "DtlsTransportInternal", or vice-versa.
+  // TODO(zhihuang): Remove these two once the RtpTransport can be shared
+  // between BaseChannels.
   void SetTransports(DtlsTransportInternal* rtp_dtls_transport,
                      DtlsTransportInternal* rtcp_dtls_transport);
   void SetTransports(rtc::PacketTransportInternal* rtp_packet_transport,
                      rtc::PacketTransportInternal* rtcp_packet_transport);
   // Channel control
   bool SetLocalContent(const MediaContentDescription* content,
-                       ContentAction action,
+                       webrtc::SdpType type,
                        std::string* error_desc);
   bool SetRemoteContent(const MediaContentDescription* content,
-                        ContentAction action,
+                        webrtc::SdpType type,
                         std::string* error_desc);
 
   bool Enable(bool enable);
@@ -190,6 +207,12 @@ class BaseChannel
   // an RtpTransport in a more explicit way.
   bool HandlesPayloadType(int payload_type) const;
 
+  // Used by the RTCStatsCollector tests to set the transport name without
+  // creating RtpTransports.
+  void set_transport_name_for_testing(const std::string& transport_name) {
+    transport_name_ = transport_name;
+  }
+
  protected:
   virtual MediaChannel* media_channel() const { return media_channel_.get(); }
 
@@ -200,6 +223,8 @@ class BaseChannel
 
   // This does not update writability or "ready-to-send" state; it just
   // disconnects from the old channel and connects to the new one.
+  // TODO(zhihuang): Remove this once the RtpTransport can be shared between
+  // BaseChannels.
   void SetTransport_n(bool rtcp,
                       DtlsTransportInternal* new_dtls_transport,
                       rtc::PacketTransportInternal* new_packet_transport);
@@ -225,11 +250,6 @@ class BaseChannel
   bool IsReadyToSendMedia_w() const;
   rtc::Thread* signaling_thread() { return signaling_thread_; }
 
-  void ConnectToDtlsTransport(DtlsTransportInternal* transport);
-  void DisconnectFromDtlsTransport(DtlsTransportInternal* transport);
-  void ConnectToPacketTransport(rtc::PacketTransportInternal* transport);
-  void DisconnectFromPacketTransport(rtc::PacketTransportInternal* transport);
-
   void FlushRtcpMessages_n();
 
   // NetworkInterface implementation, called by MediaEngine
@@ -238,10 +258,8 @@ class BaseChannel
   bool SendRtcp(rtc::CopyOnWriteBuffer* packet,
                 const rtc::PacketOptions& options) override;
 
-  // From TransportChannel
-  void OnWritableState(rtc::PacketTransportInternal* transport);
-
-  void OnDtlsState(DtlsTransportInternal* transport, DtlsTransportState state);
+  // From RtpTransportInternal
+  void OnWritableState(bool writable);
 
   void OnNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute> network_route);
 
@@ -290,22 +308,26 @@ class BaseChannel
   virtual void UpdateMediaSendRecvState_w() = 0;
 
   bool UpdateLocalStreams_w(const std::vector<StreamParams>& streams,
-                            ContentAction action,
+                            webrtc::SdpType type,
                             std::string* error_desc);
   bool UpdateRemoteStreams_w(const std::vector<StreamParams>& streams,
-                             ContentAction action,
+                             webrtc::SdpType type,
                              std::string* error_desc);
   virtual bool SetLocalContent_w(const MediaContentDescription* content,
-                                 ContentAction action,
+                                 webrtc::SdpType type,
                                  std::string* error_desc) = 0;
   virtual bool SetRemoteContent_w(const MediaContentDescription* content,
-                                  ContentAction action,
+                                  webrtc::SdpType type,
                                   std::string* error_desc) = 0;
   bool SetRtpTransportParameters(const MediaContentDescription* content,
-      ContentAction action, ContentSource src,
-      const RtpHeaderExtensions& extensions, std::string* error_desc);
-  bool SetRtpTransportParameters_n(const MediaContentDescription* content,
-      ContentAction action, ContentSource src,
+                                 webrtc::SdpType type,
+                                 ContentSource src,
+                                 const RtpHeaderExtensions& extensions,
+                                 std::string* error_desc);
+  bool SetRtpTransportParameters_n(
+      const MediaContentDescription* content,
+      webrtc::SdpType type,
+      ContentSource src,
       const std::vector<int>& encrypted_extension_ids,
       std::string* error_desc);
 
@@ -324,12 +346,12 @@ class BaseChannel
                          bool* dtls,
                          std::string* error_desc);
   bool SetSrtp_n(const std::vector<CryptoParams>& params,
-                 ContentAction action,
+                 webrtc::SdpType type,
                  ContentSource src,
                  const std::vector<int>& encrypted_extension_ids,
                  std::string* error_desc);
   bool SetRtcpMux_n(bool enable,
-                    ContentAction action,
+                    webrtc::SdpType type,
                     ContentSource src,
                     std::string* error_desc);
 
@@ -349,30 +371,30 @@ class BaseChannel
   void AddHandledPayloadType(int payload_type);
 
  private:
-  void InitNetwork_n(DtlsTransportInternal* rtp_dtls_transport,
-                     DtlsTransportInternal* rtcp_dtls_transport,
-                     rtc::PacketTransportInternal* rtp_packet_transport,
-                     rtc::PacketTransportInternal* rtcp_packet_transport);
-  void DisconnectTransportChannels_n();
-  void SignalSentPacket_n(rtc::PacketTransportInternal* transport,
-                          const rtc::SentPacket& sent_packet);
+  void ConnectToRtpTransport();
+  void DisconnectFromRtpTransport();
+  void SignalSentPacket_n(const rtc::SentPacket& sent_packet);
   void SignalSentPacket_w(const rtc::SentPacket& sent_packet);
   bool IsReadyToSendMedia_n() const;
   void CacheRtpAbsSendTimeHeaderExtension_n(int rtp_abs_sendtime_extn_id);
   // Wraps the existing RtpTransport in an SrtpTransport.
-  void EnableSrtpTransport_n();
+  void EnableSdes_n();
 
-  // Cache the encrypted header extension IDs when setting the local/remote
+  // Wraps the existing RtpTransport in a new SrtpTransport and wraps that in a
+  // new DtlsSrtpTransport.
+  void EnableDtlsSrtp_n();
+
+  // Update the encrypted header extension IDs when setting the local/remote
   // description and use them later together with other crypto parameters from
-  // DtlsTransport.
-  void CacheEncryptedHeaderExtensionIds(cricket::ContentSource source,
-                                        const std::vector<int>& extension_ids);
+  // DtlsTransport. If DTLS-SRTP is enabled, it also update the encrypted header
+  // extension IDs for DtlsSrtpTransport.
+  void UpdateEncryptedHeaderExtensionIds(cricket::ContentSource source,
+                                         const std::vector<int>& extension_ids);
 
-  // Return true if the new header extension IDs are different from the existing
-  // ones.
-  bool EncryptedHeaderExtensionIdsChanged(
-      cricket::ContentSource source,
-      const std::vector<int>& new_extension_ids);
+  // Permanently enable RTCP muxing. Set null RTCP PacketTransport for
+  // BaseChannel and RtpTransport. If using DTLS-SRTP, set null DtlsTransport
+  // for DtlsSrtpTransport.
+  void ActivateRtcpMux();
 
   rtc::Thread* const worker_thread_;
   rtc::Thread* const network_thread_;
@@ -392,8 +414,14 @@ class BaseChannel
   // If non-null, "X_dtls_transport_" will always equal "X_packet_transport_".
   DtlsTransportInternal* rtp_dtls_transport_ = nullptr;
   DtlsTransportInternal* rtcp_dtls_transport_ = nullptr;
-  std::unique_ptr<webrtc::RtpTransportInternal> rtp_transport_;
-  webrtc::SrtpTransport* srtp_transport_ = nullptr;
+
+  webrtc::RtpTransportInternal* rtp_transport_ = nullptr;
+  // Only one of these transports is non-null at a time. One for DTLS-SRTP, one
+  // for SDES and one for unencrypted RTP.
+  std::unique_ptr<webrtc::SrtpTransport> sdes_transport_;
+  std::unique_ptr<webrtc::DtlsSrtpTransport> dtls_srtp_transport_;
+  std::unique_ptr<webrtc::RtpTransport> unencrypted_rtp_transport_;
+
   std::vector<std::pair<rtc::Socket::Option, int> > socket_options_;
   std::vector<std::pair<rtc::Socket::Option, int> > rtcp_socket_options_;
   SrtpFilter sdes_negotiator_;
@@ -401,7 +429,6 @@ class BaseChannel
   bool writable_ = false;
   bool was_ever_writable_ = false;
   bool has_received_packet_ = false;
-  bool dtls_active_ = false;
   const bool srtp_required_ = true;
 
   // MediaChannel related members that should be accessed from the worker
@@ -419,8 +446,8 @@ class BaseChannel
       webrtc::RtpTransceiverDirection::kInactive;
 
   // The cached encrypted header extension IDs.
-  rtc::Optional<std::vector<int>> catched_send_extension_ids_;
-  rtc::Optional<std::vector<int>> catched_recv_extension_ids_;
+  rtc::Optional<std::vector<int>> cached_send_extension_ids_;
+  rtc::Optional<std::vector<int>> cached_recv_extension_ids_;
 };
 
 // VoiceChannel is a specialization that adds support for early media, DTMF,
@@ -455,29 +482,8 @@ class VoiceChannel : public BaseChannel {
   // own ringing sound
   sigslot::signal1<VoiceChannel*> SignalEarlyMediaTimeout;
 
-  // Returns if the telephone-event has been negotiated.
-  bool CanInsertDtmf();
-  // Send and/or play a DTMF |event| according to the |flags|.
-  // The DTMF out-of-band signal will be used on sending.
-  // The |ssrc| should be either 0 or a valid send stream ssrc.
-  // The valid value for the |event| are 0 which corresponding to DTMF
-  // event 0-9, *, #, A-D.
-  bool InsertDtmf(uint32_t ssrc, int event_code, int duration);
-  bool SetOutputVolume(uint32_t ssrc, double volume);
-  void SetRawAudioSink(uint32_t ssrc,
-                       std::unique_ptr<webrtc::AudioSinkInterface> sink);
-  webrtc::RtpParameters GetRtpSendParameters(uint32_t ssrc) const;
-  bool SetRtpSendParameters(uint32_t ssrc,
-                            const webrtc::RtpParameters& parameters);
-  webrtc::RtpParameters GetRtpReceiveParameters(uint32_t ssrc) const;
-  bool SetRtpReceiveParameters(uint32_t ssrc,
-                               const webrtc::RtpParameters& parameters);
-
   // Get statistics about the current media session.
   bool GetStats(VoiceMediaInfo* stats);
-
-  std::vector<webrtc::RtpSource> GetSources(uint32_t ssrc) const;
-  std::vector<webrtc::RtpSource> GetSources_w(uint32_t ssrc) const;
 
   // Monitoring functions
   sigslot::signal2<VoiceChannel*, const std::vector<ConnectionInfo>&>
@@ -497,9 +503,6 @@ class VoiceChannel : public BaseChannel {
   void GetActiveStreams_w(AudioInfo::StreamList* actives);
   webrtc::RtpParameters GetRtpSendParameters_w(uint32_t ssrc) const;
   bool SetRtpSendParameters_w(uint32_t ssrc, webrtc::RtpParameters parameters);
-  webrtc::RtpParameters GetRtpReceiveParameters_w(uint32_t ssrc) const;
-  bool SetRtpReceiveParameters_w(uint32_t ssrc,
-                                 webrtc::RtpParameters parameters);
   cricket::MediaType media_type() override { return cricket::MEDIA_TYPE_AUDIO; }
 
  private:
@@ -509,14 +512,12 @@ class VoiceChannel : public BaseChannel {
                         const rtc::PacketTime& packet_time) override;
   void UpdateMediaSendRecvState_w() override;
   bool SetLocalContent_w(const MediaContentDescription* content,
-                         ContentAction action,
+                         webrtc::SdpType type,
                          std::string* error_desc) override;
   bool SetRemoteContent_w(const MediaContentDescription* content,
-                          ContentAction action,
+                          webrtc::SdpType type,
                           std::string* error_desc) override;
   void HandleEarlyMediaTimeout();
-  bool InsertDtmf_w(uint32_t ssrc, int event, int duration);
-  bool SetOutputVolume_w(uint32_t ssrc, double volume);
 
   void OnMessage(rtc::Message* pmsg) override;
   void OnConnectionMonitorUpdate(
@@ -557,8 +558,6 @@ class VideoChannel : public BaseChannel {
     return static_cast<VideoMediaChannel*>(BaseChannel::media_channel());
   }
 
-  bool SetSink(uint32_t ssrc,
-               rtc::VideoSinkInterface<webrtc::VideoFrame>* sink);
   void FillBitrateInfo(BandwidthEstimationInfo* bwe_info);
   // Get statistics about the current media session.
   bool GetStats(VideoMediaInfo* stats);
@@ -570,37 +569,19 @@ class VideoChannel : public BaseChannel {
   void StopMediaMonitor();
   sigslot::signal2<VideoChannel*, const VideoMediaInfo&> SignalMediaMonitor;
 
-  // Register a source and set options.
-  // The |ssrc| must correspond to a registered send stream.
-  bool SetVideoSend(uint32_t ssrc,
-                    bool enable,
-                    const VideoOptions* options,
-                    rtc::VideoSourceInterface<webrtc::VideoFrame>* source);
-  webrtc::RtpParameters GetRtpSendParameters(uint32_t ssrc) const;
-  bool SetRtpSendParameters(uint32_t ssrc,
-                            const webrtc::RtpParameters& parameters);
-  webrtc::RtpParameters GetRtpReceiveParameters(uint32_t ssrc) const;
-  bool SetRtpReceiveParameters(uint32_t ssrc,
-                               const webrtc::RtpParameters& parameters);
   cricket::MediaType media_type() override { return cricket::MEDIA_TYPE_VIDEO; }
 
  private:
   // overrides from BaseChannel
   void UpdateMediaSendRecvState_w() override;
   bool SetLocalContent_w(const MediaContentDescription* content,
-                         ContentAction action,
+                         webrtc::SdpType type,
                          std::string* error_desc) override;
   bool SetRemoteContent_w(const MediaContentDescription* content,
-                          ContentAction action,
+                          webrtc::SdpType type,
                           std::string* error_desc) override;
   bool GetStats_w(VideoMediaInfo* stats);
-  webrtc::RtpParameters GetRtpSendParameters_w(uint32_t ssrc) const;
-  bool SetRtpSendParameters_w(uint32_t ssrc, webrtc::RtpParameters parameters);
-  webrtc::RtpParameters GetRtpReceiveParameters_w(uint32_t ssrc) const;
-  bool SetRtpReceiveParameters_w(uint32_t ssrc,
-                                 webrtc::RtpParameters parameters);
 
-  void OnMessage(rtc::Message* pmsg) override;
   void OnConnectionMonitorUpdate(
       ConnectionMonitor* monitor,
       const std::vector<ConnectionInfo>& infos) override;
@@ -628,10 +609,13 @@ class RtpDataChannel : public BaseChannel {
                  bool rtcp_mux_required,
                  bool srtp_required);
   ~RtpDataChannel();
+  // TODO(zhihuang): Remove this once the RtpTransport can be shared between
+  // BaseChannels.
   void Init_w(DtlsTransportInternal* rtp_dtls_transport,
               DtlsTransportInternal* rtcp_dtls_transport,
               rtc::PacketTransportInternal* rtp_packet_transport,
               rtc::PacketTransportInternal* rtcp_packet_transport);
+  void Init_w(webrtc::RtpTransportInternal* rtp_transport);
 
   virtual bool SendData(const SendDataParams& params,
                         const rtc::CopyOnWriteBuffer& payload,
@@ -700,10 +684,10 @@ class RtpDataChannel : public BaseChannel {
   bool CheckDataChannelTypeFromContent(const DataContentDescription* content,
                                        std::string* error_desc);
   bool SetLocalContent_w(const MediaContentDescription* content,
-                         ContentAction action,
+                         webrtc::SdpType type,
                          std::string* error_desc) override;
   bool SetRemoteContent_w(const MediaContentDescription* content,
-                          ContentAction action,
+                          webrtc::SdpType type,
                           std::string* error_desc) override;
   void UpdateMediaSendRecvState_w() override;
 
@@ -715,7 +699,6 @@ class RtpDataChannel : public BaseChannel {
                             const DataMediaInfo& info);
   void OnDataReceived(
       const ReceiveDataParams& params, const char* data, size_t len);
-  void OnDataChannelError(uint32_t ssrc, DataMediaChannel::Error error);
   void OnDataChannelReadyToSend(bool writable);
 
   std::unique_ptr<DataMediaMonitor> media_monitor_;

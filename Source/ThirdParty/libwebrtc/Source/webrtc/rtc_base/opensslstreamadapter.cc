@@ -80,11 +80,8 @@ struct SslCipherMapEntry {
 #define DEFINE_CIPHER_ENTRY_SSL3(name)  {SSL3_CK_##name, "TLS_"#name}
 #define DEFINE_CIPHER_ENTRY_TLS1(name)  {TLS1_CK_##name, "TLS_"#name}
 
-// There currently is no method available to get a RFC-compliant name for a
-// cipher suite from BoringSSL, so we need to define the mapping manually here.
-// This should go away once BoringSSL supports "SSL_CIPHER_standard_name"
-// (as available in OpenSSL if compiled with tracing enabled) or a similar
-// method.
+// The "SSL_CIPHER_standard_name" function is only available in OpenSSL when
+// compiled with tracing, so we need to define the mapping manually here.
 static const SslCipherMapEntry kSslCipherMap[] = {
     // TLS v1.0 ciphersuites from RFC2246.
     DEFINE_CIPHER_ENTRY_SSL3(RSA_RC4_128_SHA),

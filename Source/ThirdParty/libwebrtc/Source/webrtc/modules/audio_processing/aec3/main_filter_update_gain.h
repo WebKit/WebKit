@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
- *
+spect *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
  *  tree. An additional intellectual property rights grant can be found
@@ -16,9 +16,10 @@
 
 #include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/aec3/render_buffer.h"
+#include "modules/audio_processing/aec3/echo_path_variability.h"
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/aec3/subtractor_output.h"
+#include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
@@ -28,23 +29,31 @@ class ApmDataDumper;
 // Provides functionality for computing the adaptive gain for the main filter.
 class MainFilterUpdateGain {
  public:
-  MainFilterUpdateGain();
+  explicit MainFilterUpdateGain(
+      const EchoCanceller3Config::Filter::MainConfiguration& config);
   ~MainFilterUpdateGain();
 
   // Takes action in the case of a known echo path change.
-  void HandleEchoPathChange();
+  void HandleEchoPathChange(const EchoPathVariability& echo_path_variability);
 
   // Computes the gain.
-  void Compute(const RenderBuffer& render_buffer,
+  void Compute(const std::array<float, kFftLengthBy2Plus1>& render_power,
                const RenderSignalAnalyzer& render_signal_analyzer,
                const SubtractorOutput& subtractor_output,
                const AdaptiveFirFilter& filter,
                bool saturated_capture_signal,
                FftData* gain_fft);
 
+  // Sets a new config.
+  void SetConfig(
+      const EchoCanceller3Config::Filter::MainConfiguration& config) {
+    config_ = config;
+  }
+
  private:
   static int instance_count_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
+  EchoCanceller3Config::Filter::MainConfiguration config_;
   std::array<float, kFftLengthBy2Plus1> H_error_;
   size_t poor_excitation_counter_;
   size_t call_counter_ = 0;

@@ -49,7 +49,6 @@ AudioDeviceLinuxPulse::AudioDeviceLinuxPulse()
       _stopRec(false),
       _startPlay(false),
       _stopPlay(false),
-      _AGC(false),
       update_speaker_volume_at_startup_(false),
       _sndCardPlayDelay(0),
       _sndCardRecDelay(0),
@@ -577,18 +576,6 @@ int32_t AudioDeviceLinuxPulse::StereoPlayout(bool& enabled) const {
     enabled = false;
 
   return 0;
-}
-
-int32_t AudioDeviceLinuxPulse::SetAGC(bool enable) {
-  rtc::CritScope lock(&_critSect);
-  _AGC = enable;
-
-  return 0;
-}
-
-bool AudioDeviceLinuxPulse::AGC() const {
-  rtc::CritScope lock(&_critSect);
-  return _AGC;
 }
 
 int32_t AudioDeviceLinuxPulse::MicrophoneVolumeIsAvailable(bool& available) {
@@ -1964,21 +1951,10 @@ int32_t AudioDeviceLinuxPulse::ReadRecordedData(const void* bufferData,
 int32_t AudioDeviceLinuxPulse::ProcessRecordedData(int8_t* bufferData,
                                                    uint32_t bufferSizeInSamples,
                                                    uint32_t recDelay)
-    RTC_EXCLUSIVE_LOCKS_REQUIRED(_critSect) {
-  uint32_t currentMicLevel(0);
-  uint32_t newMicLevel(0);
+  RTC_EXCLUSIVE_LOCKS_REQUIRED(_critSect) {
 
   _ptrAudioBuffer->SetRecordedBuffer(bufferData, bufferSizeInSamples);
 
-  if (AGC()) {
-    // Store current mic level in the audio buffer if AGC is enabled
-    if (MicrophoneVolume(currentMicLevel) == 0) {
-      // This call does not affect the actual microphone volume
-      _ptrAudioBuffer->SetCurrentMicLevel(currentMicLevel);
-    }
-  }
-
-  const uint32_t clockDrift(0);
   // TODO(andrew): this is a temporary hack, to avoid non-causal far- and
   // near-end signals at the AEC for PulseAudio. I think the system delay is
   // being correctly calculated here, but for legacy reasons we add +10 ms
@@ -1988,7 +1964,7 @@ int32_t AudioDeviceLinuxPulse::ProcessRecordedData(int8_t* bufferData,
     recDelay -= 10;
   else
     recDelay = 0;
-  _ptrAudioBuffer->SetVQEData(_sndCardPlayDelay, recDelay, clockDrift);
+  _ptrAudioBuffer->SetVQEData(_sndCardPlayDelay, recDelay);
   _ptrAudioBuffer->SetTypingStatus(KeyPressed());
   // Deliver recorded samples at specified sample rate,
   // mic level etc. to the observer using callback.
@@ -1999,22 +1975,6 @@ int32_t AudioDeviceLinuxPulse::ProcessRecordedData(int8_t* bufferData,
   // We have been unlocked - check the flag again.
   if (!_recording) {
     return -1;
-  }
-
-  if (AGC()) {
-    newMicLevel = _ptrAudioBuffer->NewMicLevel();
-    if (newMicLevel != 0) {
-      // The VQE will only deliver non-zero microphone levels when a
-      // change is needed.
-      // Set this new mic level (received from the observer as return
-      // value in the callback).
-      RTC_LOG(LS_VERBOSE) << "AGC change of volume: old=" << currentMicLevel
-                          << " => new=" << newMicLevel;
-      if (SetMicrophoneVolume(newMicLevel) == -1) {
-        RTC_LOG(LS_WARNING)
-            << "the required modification of the microphone volume failed";
-      }
-    }
   }
 
   return 0;

@@ -1,3 +1,17 @@
+2018-03-14  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 36af4e9614f707f733eb2340fae66d6325aaac5b
+        https://bugs.webkit.org/show_bug.cgi?id=183481
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+        Updated libwebrtc binding code.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::fillEncodingParameters):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+
 2018-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229567

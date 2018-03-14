@@ -9,6 +9,7 @@
 import("../../webrtc.gni")
 
 rtc_static_library("utility") {
+  visibility = [ "*" ]
   sources = [
     "include/audio_frame_operations.h",
     "include/helpers_android.h",
@@ -32,8 +33,10 @@ rtc_static_library("utility") {
   deps = [
     "..:module_api",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../audio/utility:audio_frame_operations",
     "../../common_audio",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
     "../../system_wrappers",
@@ -43,6 +46,7 @@ rtc_static_library("utility") {
 
 rtc_source_set("mock_process_thread") {
   testonly = true
+  visibility = [ "*" ]
   sources = [
     "include/mock/mock_process_thread.h",
   ]

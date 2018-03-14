@@ -13,13 +13,13 @@
 
 #include <memory>
 
-#include "media/engine/webrtcvideodecoderfactory.h"
-#include "media/engine/webrtcvideoencoderfactory.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
 
 namespace webrtc {
 
-std::unique_ptr<cricket::WebRtcVideoEncoderFactory> CreateObjCEncoderFactory();
-std::unique_ptr<cricket::WebRtcVideoDecoderFactory> CreateObjCDecoderFactory();
+std::unique_ptr<VideoEncoderFactory> CreateObjCEncoderFactory();
+std::unique_ptr<VideoDecoderFactory> CreateObjCDecoderFactory();
 
 }  // namespace webrtc
 

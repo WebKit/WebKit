@@ -67,7 +67,8 @@ class EchoCanceller3 : public EchoControl {
                  int sample_rate_hz,
                  bool use_highpass_filter);
   // Testing c-tor that is used only for testing purposes.
-  EchoCanceller3(int sample_rate_hz,
+  EchoCanceller3(const EchoCanceller3Config& config,
+                 int sample_rate_hz,
                  bool use_highpass_filter,
                  std::unique_ptr<BlockProcessor> block_processor);
   ~EchoCanceller3() override;

@@ -33,7 +33,6 @@
 #include "media/engine/fakewebrtcvideoengine.h"
 #include "p2p/base/p2pconstants.h"
 #include "p2p/base/portinterface.h"
-#include "p2p/base/sessiondescription.h"
 #include "p2p/base/teststunserver.h"
 #include "p2p/base/testturncustomizer.h"
 #include "p2p/base/testturnserver.h"
@@ -43,6 +42,7 @@
 #include "pc/mediasession.h"
 #include "pc/peerconnection.h"
 #include "pc/peerconnectionfactory.h"
+#include "pc/sessiondescription.h"
 #include "pc/test/fakeaudiocapturemodule.h"
 #include "pc/test/fakeperiodicvideocapturer.h"
 #include "pc/test/fakertccertificategenerator.h"
@@ -82,6 +82,7 @@ using webrtc::PeerConnectionInterface;
 using webrtc::PeerConnectionFactory;
 using webrtc::PeerConnectionProxy;
 using webrtc::RtpReceiverInterface;
+using webrtc::SdpType;
 using webrtc::SessionDescriptionInterface;
 using webrtc::StreamCollectionInterface;
 
@@ -117,9 +118,7 @@ PeerConnectionInterface::RTCOfferAnswerOptions IceRestartOfferAnswerOptions() {
 // attribute from received SDP, simulating a legacy endpoint.
 void RemoveSsrcsAndMsids(cricket::SessionDescription* desc) {
   for (ContentInfo& content : desc->contents()) {
-    MediaContentDescription* media_desc =
-        static_cast<MediaContentDescription*>(content.description);
-    media_desc->mutable_streams().clear();
+    content.media_description()->mutable_streams().clear();
   }
   desc->set_msid_supported(false);
 }
@@ -138,8 +137,7 @@ int FindFirstMediaStatsIndexByKind(
 
 class SignalingMessageReceiver {
  public:
-  virtual void ReceiveSdpMessage(const std::string& type,
-                                 const std::string& msg) = 0;
+  virtual void ReceiveSdpMessage(SdpType type, const std::string& msg) = 0;
   virtual void ReceiveIceMessage(const std::string& sdp_mid,
                                  int sdp_mline_index,
                                  const std::string& msg) = 0;
@@ -681,8 +679,8 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
 
   void HandleIncomingOffer(const std::string& msg) {
     RTC_LOG(LS_INFO) << debug_name_ << ": HandleIncomingOffer";
-    std::unique_ptr<SessionDescriptionInterface> desc(
-        webrtc::CreateSessionDescription("offer", msg, nullptr));
+    std::unique_ptr<SessionDescriptionInterface> desc =
+        webrtc::CreateSessionDescription(SdpType::kOffer, msg);
     if (received_sdp_munger_) {
       received_sdp_munger_(desc->description());
     }
@@ -698,8 +696,8 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
 
   void HandleIncomingAnswer(const std::string& msg) {
     RTC_LOG(LS_INFO) << debug_name_ << ": HandleIncomingAnswer";
-    std::unique_ptr<SessionDescriptionInterface> desc(
-        webrtc::CreateSessionDescription("answer", msg, nullptr));
+    std::unique_ptr<SessionDescriptionInterface> desc =
+        webrtc::CreateSessionDescription(SdpType::kAnswer, msg);
     if (received_sdp_munger_) {
       received_sdp_munger_(desc->description());
     }
@@ -748,7 +746,7 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     rtc::scoped_refptr<MockSetSessionDescriptionObserver> observer(
         new rtc::RefCountedObject<MockSetSessionDescriptionObserver>());
     RTC_LOG(LS_INFO) << debug_name_ << ": SetLocalDescriptionAndSendSdpMessage";
-    std::string type = desc->type();
+    SdpType type = desc->GetType();
     std::string sdp;
     EXPECT_TRUE(desc->ToString(&sdp));
     pc()->SetLocalDescription(observer, desc.release());
@@ -770,7 +768,7 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
 
   // Simulate sending a blob of SDP with delay |signaling_delay_ms_| (0 by
   // default).
-  void SendSdpMessage(const std::string& type, const std::string& msg) {
+  void SendSdpMessage(SdpType type, const std::string& msg) {
     if (signaling_delay_ms_ == 0) {
       RelaySdpMessageIfReceiverExists(type, msg);
     } else {
@@ -782,8 +780,7 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
     }
   }
 
-  void RelaySdpMessageIfReceiverExists(const std::string& type,
-                                       const std::string& msg) {
+  void RelaySdpMessageIfReceiverExists(SdpType type, const std::string& msg) {
     if (signaling_message_receiver_) {
       signaling_message_receiver_->ReceiveSdpMessage(type, msg);
     }
@@ -815,9 +812,8 @@ class PeerConnectionWrapper : public webrtc::PeerConnectionObserver,
   }
 
   // SignalingMessageReceiver callbacks.
-  void ReceiveSdpMessage(const std::string& type,
-                         const std::string& msg) override {
-    if (type == webrtc::SessionDescriptionInterface::kOffer) {
+  void ReceiveSdpMessage(SdpType type, const std::string& msg) override {
+    if (type == SdpType::kOffer) {
       HandleIncomingOffer(msg);
     } else {
       HandleIncomingAnswer(msg);
@@ -2112,9 +2108,8 @@ TEST_F(PeerConnectionIntegrationTest,
 // Helper for test below.
 void ModifySsrcs(cricket::SessionDescription* desc) {
   for (ContentInfo& content : desc->contents()) {
-    MediaContentDescription* media_desc =
-        static_cast<MediaContentDescription*>(content.description);
-    for (cricket::StreamParams& stream : media_desc->mutable_streams()) {
+    for (cricket::StreamParams& stream :
+         content.media_description()->mutable_streams()) {
       for (uint32_t& ssrc : stream.ssrcs) {
         ssrc = rtc::CreateRandomId();
       }
@@ -2737,10 +2732,9 @@ TEST_F(PeerConnectionIntegrationTest, SctpDataChannelToAudioVideoUpgrade) {
 }
 
 static void MakeSpecCompliantSctpOffer(cricket::SessionDescription* desc) {
-  const ContentInfo* dc_offer = GetFirstDataContent(desc);
-  ASSERT_NE(nullptr, dc_offer);
   cricket::DataContentDescription* dcd_offer =
-      static_cast<cricket::DataContentDescription*>(dc_offer->description);
+      GetFirstDataContentDescription(desc);
+  ASSERT_TRUE(dcd_offer);
   dcd_offer->set_use_sctpmap(false);
   dcd_offer->set_protocol("UDP/DTLS/SCTP");
 }
@@ -3663,6 +3657,31 @@ TEST_F(PeerConnectionIntegrationTest, DisableAndEnableAudioRecording) {
   ExpectNewFramesReceivedWithWait(kDefaultExpectedAudioFrameCount, 0,
                                   kDefaultExpectedAudioFrameCount, 0,
                                   kMaxWaitForFramesMs);
+}
+
+// Test that after closing PeerConnections, they stop sending any packets (ICE,
+// DTLS, RTP...).
+TEST_F(PeerConnectionIntegrationTest, ClosingConnectionStopsPacketFlow) {
+  // Set up audio/video/data, wait for some frames to be received.
+  ASSERT_TRUE(CreatePeerConnectionWrappers());
+  ConnectFakeSignaling();
+  caller()->AddAudioVideoMediaStream();
+#ifdef HAVE_SCTP
+  caller()->CreateDataChannel();
+#endif
+  caller()->CreateAndSetAndSignalOffer();
+  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  ExpectNewFramesReceivedWithWait(0, 0, kDefaultExpectedAudioFrameCount,
+                                  kDefaultExpectedAudioFrameCount,
+                                  kMaxWaitForFramesMs);
+  // Close PeerConnections.
+  caller()->pc()->Close();
+  callee()->pc()->Close();
+  // Pump messages for a second, and ensure no new packets end up sent.
+  uint32_t sent_packets_a = virtual_socket_server()->sent_packets();
+  WAIT(false, 1000);
+  uint32_t sent_packets_b = virtual_socket_server()->sent_packets();
+  EXPECT_EQ(sent_packets_a, sent_packets_b);
 }
 
 }  // namespace

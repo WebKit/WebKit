@@ -129,10 +129,6 @@ public:
     virtual int32_t StopRecording();
     virtual bool Recording() const;
 
-    // Microphone Automatic Gain Control (AGC)
-    virtual int32_t SetAGC(bool enable);
-    virtual bool AGC() const;
-
     // Audio mixer initialization
     virtual int32_t InitSpeaker();
     virtual bool SpeakerIsInitialized() const;
@@ -201,12 +197,6 @@ private:    // thread functions
     static DWORD WINAPI WSAPIRenderThread(LPVOID context);
     DWORD DoRenderThread();
 
-    static DWORD WINAPI GetCaptureVolumeThread(LPVOID context);
-    DWORD DoGetCaptureVolumeThread();
-
-    static DWORD WINAPI SetCaptureVolumeThread(LPVOID context);
-    DWORD DoSetCaptureVolumeThread();
-
     void _Lock() { _critSect.Enter(); };
     void _UnLock() { _critSect.Leave(); };
 
@@ -274,10 +264,6 @@ private:    // thread functions
     HANDLE                                  _hCaptureStartedEvent;
     HANDLE                                  _hShutdownCaptureEvent;
 
-    HANDLE                                  _hGetCaptureVolumeThread;
-    HANDLE                                  _hSetCaptureVolumeThread;
-    HANDLE                                  _hSetCaptureVolumeEvent;
-
     HANDLE                                  _hMmTask;
 
     UINT                                    _playAudioFrameSize;
@@ -318,11 +304,7 @@ private:
     uint16_t                          _inputDeviceIndex;
     uint16_t                          _outputDeviceIndex;
 
-    bool                                    _AGC;
-
     uint16_t                          _playBufDelay;
-
-    uint16_t                          _newMicLevel;
 
     mutable char                            _str[512];
 };

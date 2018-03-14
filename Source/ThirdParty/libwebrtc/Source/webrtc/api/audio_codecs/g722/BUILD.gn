@@ -13,12 +13,14 @@ if (is_android) {
 }
 
 rtc_source_set("audio_encoder_g722_config") {
+  visibility = [ "*" ]
   sources = [
     "audio_encoder_g722_config.h",
   ]
 }
 
 rtc_static_library("audio_encoder_g722") {
+  visibility = [ "*" ]
   sources = [
     "audio_encoder_g722.cc",
     "audio_encoder_g722.h",
@@ -34,6 +36,7 @@ rtc_static_library("audio_encoder_g722") {
 }
 
 rtc_static_library("audio_decoder_g722") {
+  visibility = [ "*" ]
   sources = [
     "audio_decoder_g722.cc",
     "audio_decoder_g722.h",

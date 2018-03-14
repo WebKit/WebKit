@@ -20,7 +20,6 @@
 namespace webrtc {
 
 class Clock;
-class TimestampExtrapolator;
 
 // RemoteNtpTimeEstimator can be used to estimate a given RTP timestamp's NTP
 // time in local timebase.
@@ -43,11 +42,9 @@ class RemoteNtpTimeEstimator {
 
  private:
   Clock* clock_;
-  std::unique_ptr<TimestampExtrapolator> ts_extrapolator_;
   MovingMedianFilter<int64_t> ntp_clocks_offset_estimator_;
   RtpToNtpEstimator rtp_to_ntp_;
   int64_t last_timing_log_ms_;
-  const bool is_experiment_enabled_;
   RTC_DISALLOW_COPY_AND_ASSIGN(RemoteNtpTimeEstimator);
 };
 

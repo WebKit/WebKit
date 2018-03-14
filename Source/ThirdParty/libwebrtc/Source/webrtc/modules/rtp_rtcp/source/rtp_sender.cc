@@ -927,10 +927,7 @@ bool RTPSender::SendToNetwork(std::unique_ptr<RtpPacketToSend> packet,
   // To support retransmissions, we store the media packet as sent in the
   // packet history (even if send failed).
   if (storage == kAllowRetransmission) {
-    // TODO(brandtr): Uncomment the DCHECK line below when |ssrc_| cannot
-    // change after the first packet has been sent. For more details, see
-    // https://bugs.chromium.org/p/webrtc/issues/detail?id=6887.
-    // RTC_DCHECK_EQ(ssrc, SSRC());
+    RTC_DCHECK_EQ(ssrc, SSRC());
     packet_history_.PutRtpPacket(std::move(packet), storage, true);
   }
 
@@ -1318,4 +1315,8 @@ void RTPSender::SendKeepAlive(uint8_t payload_type) {
                 RtpPacketSender::Priority::kLowPriority);
 }
 
+void RTPSender::SetRtt(int64_t rtt_ms) {
+  packet_history_.SetRtt(rtt_ms);
+  flexfec_packet_history_.SetRtt(rtt_ms);
+}
 }  // namespace webrtc

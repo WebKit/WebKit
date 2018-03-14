@@ -137,7 +137,7 @@ class WebRtcSessionDescriptionFactory : public rtc::MessageHandler,
       const std::string& error);
   void PostCreateSessionDescriptionSucceeded(
       CreateSessionDescriptionObserver* observer,
-      SessionDescriptionInterface* description);
+      std::unique_ptr<SessionDescriptionInterface> description);
 
   void OnCertificateRequestFailed();
   void SetCertificate(

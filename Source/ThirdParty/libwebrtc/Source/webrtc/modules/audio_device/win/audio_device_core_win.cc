@@ -417,9 +417,6 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       _hShutdownCaptureEvent(NULL),
       _hRenderStartedEvent(NULL),
       _hCaptureStartedEvent(NULL),
-      _hGetCaptureVolumeThread(NULL),
-      _hSetCaptureVolumeThread(NULL),
-      _hSetCaptureVolumeEvent(NULL),
       _hMmTask(NULL),
       _initialized(false),
       _recording(false),
@@ -428,15 +425,13 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       _playIsInitialized(false),
       _speakerIsInitialized(false),
       _microphoneIsInitialized(false),
-      _AGC(false),
       _playBufDelay(80),
       _usingInputDeviceIndex(false),
       _usingOutputDeviceIndex(false),
       _inputDevice(AudioDeviceModule::kDefaultCommunicationDevice),
       _outputDevice(AudioDeviceModule::kDefaultCommunicationDevice),
       _inputDeviceIndex(0),
-      _outputDeviceIndex(0),
-      _newMicLevel(0) {
+      _outputDeviceIndex(0) {
   RTC_LOG(LS_INFO) << __FUNCTION__ << " created";
   assert(_comInit.succeeded());
 
@@ -487,7 +482,6 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
   _hShutdownCaptureEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   _hRenderStartedEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   _hCaptureStartedEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  _hSetCaptureVolumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
   _perfCounterFreq.QuadPart = 1;
   _perfCounterFactor = 0.0;
@@ -573,11 +567,6 @@ AudioDeviceWindowsCore::~AudioDeviceWindowsCore() {
   if (NULL != _hShutdownCaptureEvent) {
     CloseHandle(_hShutdownCaptureEvent);
     _hShutdownCaptureEvent = NULL;
-  }
-
-  if (NULL != _hSetCaptureVolumeEvent) {
-    CloseHandle(_hSetCaptureVolumeEvent);
-    _hSetCaptureVolumeEvent = NULL;
   }
 
   if (_avrtLibrary) {
@@ -1268,25 +1257,6 @@ int32_t AudioDeviceWindowsCore::StereoPlayout(bool& enabled) const {
     enabled = false;
 
   return 0;
-}
-
-// ----------------------------------------------------------------------------
-//  SetAGC
-// ----------------------------------------------------------------------------
-
-int32_t AudioDeviceWindowsCore::SetAGC(bool enable) {
-  rtc::CritScope lock(&_critSect);
-  _AGC = enable;
-  return 0;
-}
-
-// ----------------------------------------------------------------------------
-//  AGC
-// ----------------------------------------------------------------------------
-
-bool AudioDeviceWindowsCore::AGC() const {
-  rtc::CritScope lock(&_critSect);
-  return _AGC;
 }
 
 // ----------------------------------------------------------------------------
@@ -2423,21 +2393,6 @@ int32_t AudioDeviceWindowsCore::StartRecording() {
     // Set thread priority to highest possible
     SetThreadPriority(_hRecThread, THREAD_PRIORITY_TIME_CRITICAL);
 
-    assert(_hGetCaptureVolumeThread == NULL);
-    _hGetCaptureVolumeThread =
-        CreateThread(NULL, 0, GetCaptureVolumeThread, this, 0, NULL);
-    if (_hGetCaptureVolumeThread == NULL) {
-      RTC_LOG(LS_ERROR) << "failed to create the volume getter thread";
-      return -1;
-    }
-
-    assert(_hSetCaptureVolumeThread == NULL);
-    _hSetCaptureVolumeThread =
-        CreateThread(NULL, 0, SetCaptureVolumeThread, this, 0, NULL);
-    if (_hSetCaptureVolumeThread == NULL) {
-      RTC_LOG(LS_ERROR) << "failed to create the volume setter thread";
-      return -1;
-    }
   }  // critScoped
 
   DWORD ret = WaitForSingleObject(_hCaptureStartedEvent, 1000);
@@ -2490,24 +2445,6 @@ int32_t AudioDeviceWindowsCore::StopRecording() {
   } else {
     RTC_LOG(LS_VERBOSE) << "webrtc_core_audio_capture_thread is now closed";
   }
-
-  ret = WaitForSingleObject(_hGetCaptureVolumeThread, 2000);
-  if (ret != WAIT_OBJECT_0) {
-    // the thread did not stop as it should
-    RTC_LOG(LS_ERROR) << "failed to close down volume getter thread";
-    err = -1;
-  } else {
-    RTC_LOG(LS_VERBOSE) << "volume getter thread is now closed";
-  }
-
-  ret = WaitForSingleObject(_hSetCaptureVolumeThread, 2000);
-  if (ret != WAIT_OBJECT_0) {
-    // the thread did not stop as it should
-    RTC_LOG(LS_ERROR) << "failed to close down volume setter thread";
-    err = -1;
-  } else {
-    RTC_LOG(LS_VERBOSE) << "volume setter thread is now closed";
-  }
   _Lock();
 
   ResetEvent(_hShutdownCaptureEvent);  // Must be manually reset.
@@ -2522,12 +2459,6 @@ int32_t AudioDeviceWindowsCore::StopRecording() {
   // but we can at least resume the call.
   CloseHandle(_hRecThread);
   _hRecThread = NULL;
-
-  CloseHandle(_hGetCaptureVolumeThread);
-  _hGetCaptureVolumeThread = NULL;
-
-  CloseHandle(_hSetCaptureVolumeThread);
-  _hSetCaptureVolumeThread = NULL;
 
   if (_builtInAecEnabled) {
     assert(_dmo != NULL);
@@ -2734,72 +2665,6 @@ DWORD WINAPI AudioDeviceWindowsCore::WSAPICaptureThread(LPVOID context) {
 DWORD WINAPI AudioDeviceWindowsCore::WSAPICaptureThreadPollDMO(LPVOID context) {
   return reinterpret_cast<AudioDeviceWindowsCore*>(context)
       ->DoCaptureThreadPollDMO();
-}
-
-DWORD WINAPI AudioDeviceWindowsCore::GetCaptureVolumeThread(LPVOID context) {
-  return reinterpret_cast<AudioDeviceWindowsCore*>(context)
-      ->DoGetCaptureVolumeThread();
-}
-
-DWORD WINAPI AudioDeviceWindowsCore::SetCaptureVolumeThread(LPVOID context) {
-  return reinterpret_cast<AudioDeviceWindowsCore*>(context)
-      ->DoSetCaptureVolumeThread();
-}
-
-DWORD AudioDeviceWindowsCore::DoGetCaptureVolumeThread() {
-  HANDLE waitObject = _hShutdownCaptureEvent;
-
-  while (1) {
-    if (AGC()) {
-      uint32_t currentMicLevel = 0;
-      if (MicrophoneVolume(currentMicLevel) == 0) {
-        // This doesn't set the system volume, just stores it.
-        _Lock();
-        if (_ptrAudioBuffer) {
-          _ptrAudioBuffer->SetCurrentMicLevel(currentMicLevel);
-        }
-        _UnLock();
-      }
-    }
-
-    DWORD waitResult =
-        WaitForSingleObject(waitObject, GET_MIC_VOLUME_INTERVAL_MS);
-    switch (waitResult) {
-      case WAIT_OBJECT_0:  // _hShutdownCaptureEvent
-        return 0;
-      case WAIT_TIMEOUT:  // timeout notification
-        break;
-      default:  // unexpected error
-        RTC_LOG(LS_WARNING) << "unknown wait termination on get volume thread";
-        return 1;
-    }
-  }
-}
-
-DWORD AudioDeviceWindowsCore::DoSetCaptureVolumeThread() {
-  HANDLE waitArray[2] = {_hShutdownCaptureEvent, _hSetCaptureVolumeEvent};
-
-  while (1) {
-    DWORD waitResult = WaitForMultipleObjects(2, waitArray, FALSE, INFINITE);
-    switch (waitResult) {
-      case WAIT_OBJECT_0:  // _hShutdownCaptureEvent
-        return 0;
-      case WAIT_OBJECT_0 + 1:  // _hSetCaptureVolumeEvent
-        break;
-      default:  // unexpected error
-        RTC_LOG(LS_WARNING) << "unknown wait termination on set volume thread";
-        return 1;
-    }
-
-    _Lock();
-    uint32_t newMicLevel = _newMicLevel;
-    _UnLock();
-
-    if (SetMicrophoneVolume(newMicLevel) == -1) {
-      RTC_LOG(LS_WARNING)
-          << "the required modification of the microphone volume failed";
-    }
-  }
 }
 
 // ----------------------------------------------------------------------------
@@ -3188,8 +3053,6 @@ DWORD AudioDeviceWindowsCore::DoCaptureThreadPollDMO() {
         break;
       }
 
-      // TODO(andrew): handle AGC.
-
       if (bytesProduced > 0) {
         const int kSamplesProduced = bytesProduced / _recAudioFrameSize;
         // TODO(andrew): verify that this is always satisfied. It might
@@ -3199,7 +3062,7 @@ DWORD AudioDeviceWindowsCore::DoCaptureThreadPollDMO() {
         assert(sizeof(BYTE) == sizeof(int8_t));
         _ptrAudioBuffer->SetRecordedBuffer(reinterpret_cast<int8_t*>(data),
                                            kSamplesProduced);
-        _ptrAudioBuffer->SetVQEData(0, 0, 0);
+        _ptrAudioBuffer->SetVQEData(0, 0);
 
         _UnLock();  // Release lock while making the callback.
         _ptrAudioBuffer->DeliverRecordedData();
@@ -3426,7 +3289,7 @@ DWORD AudioDeviceWindowsCore::DoCaptureThread() {
           if (_ptrAudioBuffer) {
             _ptrAudioBuffer->SetRecordedBuffer((const int8_t*)syncBuffer,
                                                _recBlockSize);
-            _ptrAudioBuffer->SetVQEData(sndCardPlayDelay, sndCardRecDelay, 0);
+            _ptrAudioBuffer->SetVQEData(sndCardPlayDelay, sndCardRecDelay);
 
             _ptrAudioBuffer->SetTypingStatus(KeyPressed());
 
@@ -3450,20 +3313,6 @@ DWORD AudioDeviceWindowsCore::DoCaptureThread() {
                      (syncBufIndex - _recBlockSize) * _recAudioFrameSize);
           syncBufIndex -= _recBlockSize;
           sndCardRecDelay -= 10;
-        }
-
-        if (_AGC) {
-          uint32_t newMicLevel = _ptrAudioBuffer->NewMicLevel();
-          if (newMicLevel != 0) {
-            // The VQE will only deliver non-zero microphone levels when a
-            // change is needed. Set this new mic level (received from the
-            // observer as return value in the callback).
-            RTC_LOG(LS_VERBOSE) << "AGC change of volume: new=" << newMicLevel;
-            // We store this outside of the audio buffer to avoid
-            // having it overwritten by the getter thread.
-            _newMicLevel = newMicLevel;
-            SetEvent(_hSetCaptureVolumeEvent);
-          }
         }
       } else {
         // If GetBuffer returns AUDCLNT_E_BUFFER_ERROR, the thread consuming the

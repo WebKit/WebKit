@@ -20,25 +20,25 @@ namespace webrtc {
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-// Verifies the check for the provided numbers of Ffts to include in the
-// spectral sum.
-TEST(RenderBuffer, TooLargeNumberOfSpectralSums) {
-  EXPECT_DEATH(
-      RenderBuffer(Aec3Optimization::kNone, 3, 1, std::vector<size_t>(2, 1)),
-      "");
+// Verifies the check for non-null fft buffer.
+TEST(RenderBuffer, NullExternalFftBuffer) {
+  MatrixBuffer block_buffer(10, 3, kBlockSize);
+  VectorBuffer spectrum_buffer(10, kFftLengthBy2Plus1);
+  EXPECT_DEATH(RenderBuffer(&block_buffer, &spectrum_buffer, nullptr), "");
 }
 
-TEST(RenderBuffer, TooSmallNumberOfSpectralSums) {
-  EXPECT_DEATH(
-      RenderBuffer(Aec3Optimization::kNone, 3, 1, std::vector<size_t>()), "");
+// Verifies the check for non-null spectrum buffer.
+TEST(RenderBuffer, NullExternalSpectrumBuffer) {
+  FftBuffer fft_buffer(10);
+  MatrixBuffer block_buffer(10, 3, kBlockSize);
+  EXPECT_DEATH(RenderBuffer(&block_buffer, nullptr, &fft_buffer), "");
 }
 
-// Verifies the feasibility check for the provided number of Ffts to include in
-// the spectral.
-TEST(RenderBuffer, FeasibleNumberOfFftsInSum) {
-  EXPECT_DEATH(
-      RenderBuffer(Aec3Optimization::kNone, 3, 1, std::vector<size_t>(1, 2)),
-      "");
+// Verifies the check for non-null block buffer.
+TEST(RenderBuffer, NullExternalBlockBuffer) {
+  FftBuffer fft_buffer(10);
+  VectorBuffer spectrum_buffer(10, kFftLengthBy2Plus1);
+  EXPECT_DEATH(RenderBuffer(nullptr, &spectrum_buffer, &fft_buffer), "");
 }
 
 #endif

@@ -32,7 +32,7 @@ class WebRtcMediaEngineNullVideo
                                   audio_encoder_factory,
                                   audio_decoder_factory,
                                   nullptr,
-                                  webrtc::AudioProcessing::Create()),
+                                  webrtc::AudioProcessingBuilder().Create()),
             std::forward_as_tuple()) {}
 };
 

@@ -13,13 +13,15 @@
 
 #include <string>
 
-#if !defined(WEBRTC_WIN)
+#if defined(WEBRTC_WIN)
+#include <windows.h>
+#else
 #include <dirent.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif
+#endif  // WEBRTC_WIN
 
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
@@ -94,9 +96,6 @@ class FilesystemInterface {
   // Returns true if pathname refers to a file
   virtual bool IsFile(const Pathname& pathname) = 0;
 
-  virtual std::string TempFilename(const Pathname &dir,
-                                   const std::string &prefix) = 0;
-
   // Determines the size of the file indicated by path.
   virtual bool GetFileSize(const Pathname& path, size_t* size) = 0;
 };
@@ -133,11 +132,6 @@ class Filesystem {
 
   static bool IsFile(const Pathname &pathname) {
     return EnsureDefaultFilesystem()->IsFile(pathname);
-  }
-
-  static std::string TempFilename(const Pathname &dir,
-                                  const std::string &prefix) {
-    return EnsureDefaultFilesystem()->TempFilename(dir, prefix);
   }
 
   static bool GetFileSize(const Pathname& path, size_t* size) {

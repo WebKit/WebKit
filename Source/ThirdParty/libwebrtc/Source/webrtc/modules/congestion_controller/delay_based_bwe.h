@@ -61,14 +61,12 @@ class DelayBasedBwe {
  private:
   void IncomingPacketFeedback(const PacketFeedback& packet_feedback);
   Result OnLongFeedbackDelay(int64_t arrival_time_ms);
-  Result MaybeUpdateEstimate(bool overusing,
-                             rtc::Optional<uint32_t> acked_bitrate_bps,
+  Result MaybeUpdateEstimate(rtc::Optional<uint32_t> acked_bitrate_bps,
                              bool request_probe);
   // Updates the current remote rate estimate and returns true if a valid
   // estimate exists.
   bool UpdateEstimate(int64_t now_ms,
                       rtc::Optional<uint32_t> acked_bitrate_bps,
-                      bool overusing,
                       uint32_t* target_bitrate_bps);
 
   rtc::RaceChecker network_race_;
@@ -87,7 +85,6 @@ class DelayBasedBwe {
   int consecutive_delayed_feedbacks_;
   uint32_t prev_bitrate_;
   BandwidthUsage prev_state_;
-  bool in_sparse_update_experiment_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(DelayBasedBwe);
 };

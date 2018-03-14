@@ -38,7 +38,7 @@ class Observer : public webrtc::RemoteBitrateObserver {
   webrtc::Clock* clock_;
 };
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   webrtc::test::RtpFileReader* reader;
   webrtc::RemoteBitrateEstimator* estimator;
   webrtc::RtpHeaderParser* parser;

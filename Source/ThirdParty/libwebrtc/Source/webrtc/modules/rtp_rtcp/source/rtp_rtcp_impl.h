@@ -192,8 +192,7 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
       std::vector<RTCPReportBlock>* receive_blocks) const override;
 
   // (REMB) Receiver Estimated Max Bitrate.
-  void SetRemb(uint32_t bitrate_bps,
-               const std::vector<uint32_t>& ssrcs) override;
+  void SetRemb(int64_t bitrate_bps, std::vector<uint32_t> ssrcs) override;
   void UnsetRemb() override;
 
   // (TMMBR) Temporary Max Media Bit Rate.

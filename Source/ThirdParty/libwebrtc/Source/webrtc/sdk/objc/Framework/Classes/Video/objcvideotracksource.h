@@ -30,9 +30,7 @@ class ObjcVideoTrackSource : public rtc::AdaptedVideoTrackSource {
   // Indicates that the encoder should denoise video before encoding it.
   // If it is not set, the default configuration is used which is different
   // depending on video codec.
-  rtc::Optional<bool> needs_denoising() const override {
-    return rtc::Optional<bool>(false);
-  }
+  rtc::Optional<bool> needs_denoising() const override { return false; }
 
   SourceState state() const override { return SourceState::kLive; }
 

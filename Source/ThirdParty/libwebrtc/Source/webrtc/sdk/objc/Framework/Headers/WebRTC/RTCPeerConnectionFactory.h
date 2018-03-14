@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCPeerConnection;
 @class RTCVideoSource;
 @class RTCVideoTrack;
+@class RTCPeerConnectionFactoryOptions;
 @protocol RTCPeerConnectionDelegate;
 @protocol RTCVideoDecoderFactory;
 @protocol RTCVideoEncoderFactory;
@@ -74,6 +75,9 @@ RTC_EXPORT
     (RTCMediaConstraints *)constraints
                                               delegate:
     (nullable id<RTCPeerConnectionDelegate>)delegate;
+
+/** Set the options to be used for subsequently created RTCPeerConnections */
+- (void)setOptions:(nonnull RTCPeerConnectionFactoryOptions *)options;
 
 /** Start an AecDump recording. This API call will likely change in the future. */
 - (BOOL)startAecDumpWithFilePath:(NSString *)filePath

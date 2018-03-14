@@ -164,6 +164,8 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
 
   int FilteredCurrentDelayMs() const override;
 
+  int TargetDelayMs() const override;
+
   // Get 10 milliseconds of raw audio data to play out, and
   // automatic resample to the requested frequency if > 0.
   int PlayoutData10Ms(int desired_freq_hz,
@@ -1191,6 +1193,10 @@ rtc::Optional<uint32_t> AudioCodingModuleImpl::PlayoutTimestamp() {
 
 int AudioCodingModuleImpl::FilteredCurrentDelayMs() const {
   return receiver_.FilteredCurrentDelayMs();
+}
+
+int AudioCodingModuleImpl::TargetDelayMs() const {
+  return receiver_.TargetDelayMs();
 }
 
 bool AudioCodingModuleImpl::HaveValidEncoder(const char* caller_name) const {

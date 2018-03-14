@@ -18,6 +18,7 @@
 #include <limits>
 
 #include "api/optional.h"
+#include "api/rtp_headers.h"
 #include "api/video/video_rotation.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types_public.h"

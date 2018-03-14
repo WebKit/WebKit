@@ -19,10 +19,12 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/virtualsocketserver.h"
 
-using namespace cricket;
+namespace cricket {
 
-static const rtc::SocketAddress server_addr("99.99.99.1", 3478);
-static const rtc::SocketAddress client_addr("1.2.3.4", 1234);
+namespace {
+const rtc::SocketAddress server_addr("99.99.99.1", 3478);
+const rtc::SocketAddress client_addr("1.2.3.4", 1234);
+}  // namespace
 
 class StunServerTest : public testing::Test {
  public:
@@ -57,6 +59,7 @@ class StunServerTest : public testing::Test {
     }
     return msg;
   }
+
  private:
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
   rtc::Thread network_;
@@ -93,7 +96,7 @@ TEST_F(StunServerTest, TestGood) {
   delete msg;
 }
 
-#endif // if !defined(THREAD_SANITIZER)
+#endif  // if !defined(THREAD_SANITIZER)
 
 TEST_F(StunServerTest, TestBad) {
   const char* bad = "this is a completely nonsensical message whose only "
@@ -103,3 +106,5 @@ TEST_F(StunServerTest, TestBad) {
 
   ASSERT_TRUE(ReceiveFails());
 }
+
+}  // namespace cricket

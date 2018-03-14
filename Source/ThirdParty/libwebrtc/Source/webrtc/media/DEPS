@@ -16,6 +16,7 @@ include_rules = [
   "+system_wrappers",
   "+voice_engine",
   "+usrsctplib",
+  "+third_party/libyuv",
 ]
 
 specific_include_rules = {

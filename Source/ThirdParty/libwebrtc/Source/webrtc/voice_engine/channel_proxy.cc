@@ -17,15 +17,14 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "voice_engine/channel.h"
 
 namespace webrtc {
 namespace voe {
-ChannelProxy::ChannelProxy() : channel_owner_(nullptr) {}
+ChannelProxy::ChannelProxy() {}
 
-ChannelProxy::ChannelProxy(const ChannelOwner& channel_owner) :
-    channel_owner_(channel_owner) {
-  RTC_CHECK(channel_owner_.channel());
+ChannelProxy::ChannelProxy(std::unique_ptr<Channel> channel) :
+    channel_(std::move(channel)) {
+  RTC_DCHECK(channel_);
   module_process_thread_checker_.DetachFromThread();
 }
 
@@ -34,23 +33,23 @@ ChannelProxy::~ChannelProxy() {}
 bool ChannelProxy::SetEncoder(int payload_type,
                               std::unique_ptr<AudioEncoder> encoder) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->SetEncoder(payload_type, std::move(encoder));
+  return channel_->SetEncoder(payload_type, std::move(encoder));
 }
 
 void ChannelProxy::ModifyEncoder(
     rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->ModifyEncoder(modifier);
+  channel_->ModifyEncoder(modifier);
 }
 
 void ChannelProxy::SetRTCPStatus(bool enable) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetRTCPStatus(enable);
+  channel_->SetRTCPStatus(enable);
 }
 
 void ChannelProxy::SetLocalSSRC(uint32_t ssrc) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  int error = channel()->SetLocalSSRC(ssrc);
+  int error = channel_->SetLocalSSRC(ssrc);
   RTC_DCHECK_EQ(0, error);
 }
 
@@ -58,65 +57,54 @@ void ChannelProxy::SetRTCP_CNAME(const std::string& c_name) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   // Note: VoERTP_RTCP::SetRTCP_CNAME() accepts a char[256] array.
   std::string c_name_limited = c_name.substr(0, 255);
-  int error = channel()->SetRTCP_CNAME(c_name_limited.c_str());
+  int error = channel_->SetRTCP_CNAME(c_name_limited.c_str());
   RTC_DCHECK_EQ(0, error);
 }
 
 void ChannelProxy::SetNACKStatus(bool enable, int max_packets) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetNACKStatus(enable, max_packets);
+  channel_->SetNACKStatus(enable, max_packets);
 }
 
 void ChannelProxy::SetSendAudioLevelIndicationStatus(bool enable, int id) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  int error = channel()->SetSendAudioLevelIndicationStatus(enable, id);
-  RTC_DCHECK_EQ(0, error);
-}
-
-void ChannelProxy::SetReceiveAudioLevelIndicationStatus(bool enable, int id) {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  int error = channel()->SetReceiveAudioLevelIndicationStatus(enable, id);
+  int error = channel_->SetSendAudioLevelIndicationStatus(enable, id);
   RTC_DCHECK_EQ(0, error);
 }
 
 void ChannelProxy::EnableSendTransportSequenceNumber(int id) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->EnableSendTransportSequenceNumber(id);
-}
-
-void ChannelProxy::EnableReceiveTransportSequenceNumber(int id) {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->EnableReceiveTransportSequenceNumber(id);
+  channel_->EnableSendTransportSequenceNumber(id);
 }
 
 void ChannelProxy::RegisterSenderCongestionControlObjects(
     RtpTransportControllerSendInterface* transport,
     RtcpBandwidthObserver* bandwidth_observer) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->RegisterSenderCongestionControlObjects(transport,
+  channel_->RegisterSenderCongestionControlObjects(transport,
                                                     bandwidth_observer);
 }
 
 void ChannelProxy::RegisterReceiverCongestionControlObjects(
     PacketRouter* packet_router) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->RegisterReceiverCongestionControlObjects(packet_router);
+  channel_->RegisterReceiverCongestionControlObjects(packet_router);
 }
 
 void ChannelProxy::ResetSenderCongestionControlObjects() {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->ResetSenderCongestionControlObjects();
+  channel_->ResetSenderCongestionControlObjects();
 }
 
 void ChannelProxy::ResetReceiverCongestionControlObjects() {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->ResetReceiverCongestionControlObjects();
+  channel_->ResetReceiverCongestionControlObjects();
 }
 
 CallStatistics ChannelProxy::GetRTCPStatistics() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   CallStatistics stats = {0};
-  int error = channel()->GetRTPStatistics(stats);
+  int error = channel_->GetRTPStatistics(stats);
   RTC_DCHECK_EQ(0, error);
   return stats;
 }
@@ -124,7 +112,7 @@ CallStatistics ChannelProxy::GetRTCPStatistics() const {
 std::vector<ReportBlock> ChannelProxy::GetRemoteRTCPReportBlocks() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   std::vector<webrtc::ReportBlock> blocks;
-  int error = channel()->GetRemoteRTCPReportBlocks(&blocks);
+  int error = channel_->GetRemoteRTCPReportBlocks(&blocks);
   RTC_DCHECK_EQ(0, error);
   return blocks;
 }
@@ -132,7 +120,7 @@ std::vector<ReportBlock> ChannelProxy::GetRemoteRTCPReportBlocks() const {
 NetworkStatistics ChannelProxy::GetNetworkStatistics() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   NetworkStatistics stats = {0};
-  int error = channel()->GetNetworkStatistics(stats);
+  int error = channel_->GetNetworkStatistics(stats);
   RTC_DCHECK_EQ(0, error);
   return stats;
 }
@@ -140,51 +128,51 @@ NetworkStatistics ChannelProxy::GetNetworkStatistics() const {
 AudioDecodingCallStats ChannelProxy::GetDecodingCallStatistics() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
   AudioDecodingCallStats stats;
-  channel()->GetDecodingCallStatistics(&stats);
+  channel_->GetDecodingCallStatistics(&stats);
   return stats;
 }
 
 ANAStats ChannelProxy::GetANAStatistics() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetANAStatistics();
+  return channel_->GetANAStatistics();
 }
 
 int ChannelProxy::GetSpeechOutputLevel() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetSpeechOutputLevel();
+  return channel_->GetSpeechOutputLevel();
 }
 
 int ChannelProxy::GetSpeechOutputLevelFullRange() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetSpeechOutputLevelFullRange();
+  return channel_->GetSpeechOutputLevelFullRange();
 }
 
 double ChannelProxy::GetTotalOutputEnergy() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetTotalOutputEnergy();
+  return channel_->GetTotalOutputEnergy();
 }
 
 double ChannelProxy::GetTotalOutputDuration() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetTotalOutputDuration();
+  return channel_->GetTotalOutputDuration();
 }
 
 uint32_t ChannelProxy::GetDelayEstimate() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread() ||
              module_process_thread_checker_.CalledOnValidThread());
-  return channel()->GetDelayEstimate();
+  return channel_->GetDelayEstimate();
 }
 
 bool ChannelProxy::SetSendTelephoneEventPayloadType(int payload_type,
                                                     int payload_frequency) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->SetSendTelephoneEventPayloadType(payload_type,
+  return channel_->SetSendTelephoneEventPayloadType(payload_type,
                                                      payload_frequency) == 0;
 }
 
 bool ChannelProxy::SendTelephoneEventOutband(int event, int duration_ms) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->SendTelephoneEventOutband(event, duration_ms) == 0;
+  return channel_->SendTelephoneEventOutband(event, duration_ms) == 0;
 }
 
 void ChannelProxy::SetBitrate(int bitrate_bps, int64_t probing_interval_ms) {
@@ -194,82 +182,82 @@ void ChannelProxy::SetBitrate(int bitrate_bps, int64_t probing_interval_ms) {
   // rules.
   // RTC_DCHECK(worker_thread_checker_.CalledOnValidThread() ||
   //            module_process_thread_checker_.CalledOnValidThread());
-  channel()->SetBitRate(bitrate_bps, probing_interval_ms);
+  channel_->SetBitRate(bitrate_bps, probing_interval_ms);
 }
 
 void ChannelProxy::SetReceiveCodecs(
     const std::map<int, SdpAudioFormat>& codecs) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetReceiveCodecs(codecs);
+  channel_->SetReceiveCodecs(codecs);
 }
 
-void ChannelProxy::SetSink(std::unique_ptr<AudioSinkInterface> sink) {
+void ChannelProxy::SetSink(AudioSinkInterface* sink) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetSink(std::move(sink));
+  channel_->SetSink(sink);
 }
 
 void ChannelProxy::SetInputMute(bool muted) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetInputMute(muted);
+  channel_->SetInputMute(muted);
 }
 
 void ChannelProxy::RegisterTransport(Transport* transport) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->RegisterTransport(transport);
+  channel_->RegisterTransport(transport);
 }
 
 void ChannelProxy::OnRtpPacket(const RtpPacketReceived& packet) {
   // May be called on either worker thread or network thread.
-  channel()->OnRtpPacket(packet);
+  channel_->OnRtpPacket(packet);
 }
 
 bool ChannelProxy::ReceivedRTCPPacket(const uint8_t* packet, size_t length) {
   // May be called on either worker thread or network thread.
-  return channel()->ReceivedRTCPPacket(packet, length) == 0;
-}
-
-const rtc::scoped_refptr<AudioDecoderFactory>&
-    ChannelProxy::GetAudioDecoderFactory() const {
-  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetAudioDecoderFactory();
+  return channel_->ReceivedRTCPPacket(packet, length) == 0;
 }
 
 void ChannelProxy::SetChannelOutputVolumeScaling(float scaling) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetChannelOutputVolumeScaling(scaling);
+  channel_->SetChannelOutputVolumeScaling(scaling);
 }
 
 void ChannelProxy::SetRtcEventLog(RtcEventLog* event_log) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetRtcEventLog(event_log);
+  channel_->SetRtcEventLog(event_log);
 }
 
 AudioMixer::Source::AudioFrameInfo ChannelProxy::GetAudioFrameWithInfo(
     int sample_rate_hz,
     AudioFrame* audio_frame) {
   RTC_DCHECK_RUNS_SERIALIZED(&audio_thread_race_checker_);
-  return channel()->GetAudioFrameWithInfo(sample_rate_hz, audio_frame);
+  return channel_->GetAudioFrameWithInfo(sample_rate_hz, audio_frame);
 }
 
 int ChannelProxy::PreferredSampleRate() const {
   RTC_DCHECK_RUNS_SERIALIZED(&audio_thread_race_checker_);
-  return channel()->PreferredSampleRate();
+  return channel_->PreferredSampleRate();
+}
+
+void ChannelProxy::ProcessAndEncodeAudio(
+    std::unique_ptr<AudioFrame> audio_frame) {
+  RTC_DCHECK_RUNS_SERIALIZED(&audio_thread_race_checker_);
+  return channel_->ProcessAndEncodeAudio(std::move(audio_frame));
 }
 
 void ChannelProxy::SetTransportOverhead(int transport_overhead_per_packet) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetTransportOverhead(transport_overhead_per_packet);
+  channel_->SetTransportOverhead(transport_overhead_per_packet);
 }
 
 void ChannelProxy::AssociateSendChannel(
     const ChannelProxy& send_channel_proxy) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->set_associate_send_channel(send_channel_proxy.channel_owner_);
+  channel_->SetAssociatedSendChannel(send_channel_proxy.channel_.get());
 }
 
 void ChannelProxy::DisassociateSendChannel() {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->set_associate_send_channel(ChannelOwner(nullptr));
+  channel_->SetAssociatedSendChannel(nullptr);
 }
 
 void ChannelProxy::GetRtpRtcp(RtpRtcp** rtp_rtcp,
@@ -277,14 +265,14 @@ void ChannelProxy::GetRtpRtcp(RtpRtcp** rtp_rtcp,
   RTC_DCHECK(module_process_thread_checker_.CalledOnValidThread());
   RTC_DCHECK(rtp_rtcp);
   RTC_DCHECK(rtp_receiver);
-  int error = channel()->GetRtpRtcp(rtp_rtcp, rtp_receiver);
+  int error = channel_->GetRtpRtcp(rtp_rtcp, rtp_receiver);
   RTC_DCHECK_EQ(0, error);
 }
 
 uint32_t ChannelProxy::GetPlayoutTimestamp() const {
   RTC_DCHECK_RUNS_SERIALIZED(&video_capture_thread_race_checker_);
   unsigned int timestamp = 0;
-  int error = channel()->GetPlayoutTimestamp(timestamp);
+  int error = channel_->GetPlayoutTimestamp(timestamp);
   RTC_DCHECK(!error || timestamp == 0);
   return timestamp;
 }
@@ -294,7 +282,7 @@ void ChannelProxy::SetMinimumPlayoutDelay(int delay_ms) {
   // Limit to range accepted by both VoE and ACM, so we're at least getting as
   // close as possible, instead of failing.
   delay_ms = rtc::SafeClamp(delay_ms, 0, 10000);
-  int error = channel()->SetMinimumPlayoutDelay(delay_ms);
+  int error = channel_->SetMinimumPlayoutDelay(delay_ms);
   if (0 != error) {
     RTC_LOG(LS_WARNING) << "Error setting minimum playout delay.";
   }
@@ -302,34 +290,51 @@ void ChannelProxy::SetMinimumPlayoutDelay(int delay_ms) {
 
 void ChannelProxy::SetRtcpRttStats(RtcpRttStats* rtcp_rtt_stats) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->SetRtcpRttStats(rtcp_rtt_stats);
+  channel_->SetRtcpRttStats(rtcp_rtt_stats);
 }
 
 bool ChannelProxy::GetRecCodec(CodecInst* codec_inst) const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetRecCodec(*codec_inst) == 0;
+  return channel_->GetRecCodec(*codec_inst) == 0;
 }
 
 void ChannelProxy::OnTwccBasedUplinkPacketLossRate(float packet_loss_rate) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->OnTwccBasedUplinkPacketLossRate(packet_loss_rate);
+  channel_->OnTwccBasedUplinkPacketLossRate(packet_loss_rate);
 }
 
 void ChannelProxy::OnRecoverableUplinkPacketLossRate(
     float recoverable_packet_loss_rate) {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  channel()->OnRecoverableUplinkPacketLossRate(recoverable_packet_loss_rate);
+  channel_->OnRecoverableUplinkPacketLossRate(recoverable_packet_loss_rate);
 }
 
 std::vector<RtpSource> ChannelProxy::GetSources() const {
   RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
-  return channel()->GetSources();
+  return channel_->GetSources();
 }
 
-Channel* ChannelProxy::channel() const {
-  RTC_DCHECK(channel_owner_.channel());
-  return channel_owner_.channel();
+void ChannelProxy::StartSend() {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  int error = channel_->StartSend();
+  RTC_DCHECK_EQ(0, error);
 }
 
+void ChannelProxy::StopSend() {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  channel_->StopSend();
+}
+
+void ChannelProxy::StartPlayout() {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  int error = channel_->StartPlayout();
+  RTC_DCHECK_EQ(0, error);
+}
+
+void ChannelProxy::StopPlayout() {
+  RTC_DCHECK(worker_thread_checker_.CalledOnValidThread());
+  int error = channel_->StopPlayout();
+  RTC_DCHECK_EQ(0, error);
+}
 }  // namespace voe
 }  // namespace webrtc

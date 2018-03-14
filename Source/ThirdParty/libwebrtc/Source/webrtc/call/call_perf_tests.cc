@@ -40,7 +40,6 @@
 #include "test/testsupport/fileutils.h"
 #include "test/testsupport/perf_test.h"
 #include "video/transport_adapter.h"
-#include "voice_engine/include/voe_base.h"
 
 using webrtc::test::DriftingClock;
 using webrtc::test::FakeAudioDevice;
@@ -59,7 +58,8 @@ class CallPerfTest : public test::CallTest {
                           CreateOrder create_first,
                           float video_ntp_speed,
                           float video_rtp_speed,
-                          float audio_rtp_speed);
+                          float audio_rtp_speed,
+                          const std::string& test_label);
 
   void TestMinTransmitBitrate(bool pad_to_min_bitrate);
 
@@ -83,9 +83,10 @@ class VideoRtcpAndSyncObserver : public test::RtpRtcpObserver,
   static const int kMinRunTimeMs = 30000;
 
  public:
-  explicit VideoRtcpAndSyncObserver(Clock* clock)
+  explicit VideoRtcpAndSyncObserver(Clock* clock, const std::string& test_label)
       : test::RtpRtcpObserver(CallPerfTest::kLongTimeoutMs),
         clock_(clock),
+        test_label_(test_label),
         creation_time_ms_(clock_->TimeInMilliseconds()),
         first_time_in_sync_(-1),
         receive_stream_(nullptr) {}
@@ -109,11 +110,8 @@ class VideoRtcpAndSyncObserver : public test::RtpRtcpObserver,
     if (std::abs(stats.sync_offset_ms) < kInSyncThresholdMs) {
       if (first_time_in_sync_ == -1) {
         first_time_in_sync_ = now_ms;
-        webrtc::test::PrintResult("sync_convergence_time",
-                                  "",
-                                  "synchronization",
-                                  time_since_creation,
-                                  "ms",
+        webrtc::test::PrintResult("sync_convergence_time", test_label_,
+                                  "synchronization", time_since_creation, "ms",
                                   false);
       }
       if (time_since_creation > kMinRunTimeMs)
@@ -129,12 +127,13 @@ class VideoRtcpAndSyncObserver : public test::RtpRtcpObserver,
   }
 
   void PrintResults() {
-    test::PrintResultList("stream_offset", "", "synchronization",
+    test::PrintResultList("stream_offset", test_label_, "synchronization",
                           sync_offset_ms_list_, "ms", false);
   }
 
  private:
   Clock* const clock_;
+  std::string test_label_;
   const int64_t creation_time_ms_;
   int64_t first_time_in_sync_;
   rtc::CriticalSection crit_;
@@ -146,23 +145,17 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
                                       CreateOrder create_first,
                                       float video_ntp_speed,
                                       float video_rtp_speed,
-                                      float audio_rtp_speed) {
+                                      float audio_rtp_speed,
+                                      const std::string& test_label) {
   const char* kSyncGroup = "av_sync";
   const uint32_t kAudioSendSsrc = 1234;
   const uint32_t kAudioRecvSsrc = 5678;
-
-  int send_channel_id;
-  int recv_channel_id;
 
   FakeNetworkPipe::Config audio_net_config;
   audio_net_config.queue_delay_ms = 500;
   audio_net_config.loss_percent = 5;
 
-  rtc::scoped_refptr<AudioProcessing> audio_processing;
-  VoiceEngine* voice_engine;
-  VoEBase* voe_base;
-  std::unique_ptr<FakeAudioDevice> fake_audio_device;
-  VideoRtcpAndSyncObserver observer(Clock::GetRealTimeClock());
+  VideoRtcpAndSyncObserver observer(Clock::GetRealTimeClock(), test_label);
 
   std::map<uint8_t, MediaType> audio_pt_map;
   std::map<uint8_t, MediaType> video_pt_map;
@@ -177,24 +170,17 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
 
   task_queue_.SendTask([&]() {
     metrics::Reset();
-    audio_processing = AudioProcessing::Create();
-    voice_engine = VoiceEngine::Create();
-    voe_base = VoEBase::GetInterface(voice_engine);
-    fake_audio_device = rtc::MakeUnique<FakeAudioDevice>(
-        FakeAudioDevice::CreatePulsedNoiseCapturer(256, 48000),
-        FakeAudioDevice::CreateDiscardRenderer(48000), audio_rtp_speed);
+    rtc::scoped_refptr<FakeAudioDevice> fake_audio_device =
+        new rtc::RefCountedObject<FakeAudioDevice>(
+            FakeAudioDevice::CreatePulsedNoiseCapturer(256, 48000),
+            FakeAudioDevice::CreateDiscardRenderer(48000), audio_rtp_speed);
     EXPECT_EQ(0, fake_audio_device->Init());
-    EXPECT_EQ(0, voe_base->Init(fake_audio_device.get(), audio_processing.get(),
-                                decoder_factory_));
-    VoEBase::ChannelConfig config;
-    config.enable_voice_pacing = true;
-    send_channel_id = voe_base->CreateChannel(config);
-    recv_channel_id = voe_base->CreateChannel();
 
     AudioState::Config send_audio_state_config;
-    send_audio_state_config.voice_engine = voice_engine;
     send_audio_state_config.audio_mixer = AudioMixerImpl::Create();
-    send_audio_state_config.audio_processing = audio_processing;
+    send_audio_state_config.audio_processing =
+        AudioProcessingBuilder().Create();
+    send_audio_state_config.audio_device_module = fake_audio_device;
     Call::Config sender_config(event_log_.get());
 
     auto audio_state = AudioState::Create(send_audio_state_config);
@@ -236,11 +222,9 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     CreateMatchingReceiveConfigs(receive_transport.get());
 
     AudioSendStream::Config audio_send_config(audio_send_transport.get());
-    audio_send_config.voe_channel_id = send_channel_id;
     audio_send_config.rtp.ssrc = kAudioSendSsrc;
-    audio_send_config.send_codec_spec =
-        rtc::Optional<AudioSendStream::Config::SendCodecSpec>(
-            {kAudioSendPayloadType, {"ISAC", 16000, 1}});
+    audio_send_config.send_codec_spec = AudioSendStream::Config::SendCodecSpec(
+        kAudioSendPayloadType, {"ISAC", 16000, 1});
     audio_send_config.encoder_factory = CreateBuiltinAudioEncoderFactory();
     audio_send_stream = sender_call_->CreateAudioSendStream(audio_send_config);
 
@@ -258,7 +242,6 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     AudioReceiveStream::Config audio_recv_config;
     audio_recv_config.rtp.remote_ssrc = kAudioSendSsrc;
     audio_recv_config.rtp.local_ssrc = kAudioRecvSsrc;
-    audio_recv_config.voe_channel_id = recv_channel_id;
     audio_recv_config.sync_group = kSyncGroup;
     audio_recv_config.decoder_factory = decoder_factory_;
     audio_recv_config.decoder_map = {
@@ -304,15 +287,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     sender_call_->DestroyAudioSendStream(audio_send_stream);
     receiver_call_->DestroyAudioReceiveStream(audio_receive_stream);
 
-    voe_base->DeleteChannel(send_channel_id);
-    voe_base->DeleteChannel(recv_channel_id);
-    voe_base->Release();
-
     DestroyCalls();
-
-    VoiceEngine::Delete(voice_engine);
-
-    fake_audio_device.reset();
   });
 
   observer.PrintResults();
@@ -326,21 +301,22 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
 TEST_F(CallPerfTest, PlaysOutAudioAndVideoInSyncWithVideoNtpDrift) {
   TestAudioVideoSync(FecMode::kOff, CreateOrder::kAudioFirst,
                      DriftingClock::PercentsFaster(10.0f),
-                     DriftingClock::kNoDrift, DriftingClock::kNoDrift);
+                     DriftingClock::kNoDrift, DriftingClock::kNoDrift,
+                     "_video_ntp_drift");
 }
 
 TEST_F(CallPerfTest, PlaysOutAudioAndVideoInSyncWithAudioFasterThanVideoDrift) {
   TestAudioVideoSync(FecMode::kOff, CreateOrder::kAudioFirst,
                      DriftingClock::kNoDrift,
                      DriftingClock::PercentsSlower(30.0f),
-                     DriftingClock::PercentsFaster(30.0f));
+                     DriftingClock::PercentsFaster(30.0f), "_audio_faster");
 }
 
 TEST_F(CallPerfTest, PlaysOutAudioAndVideoInSyncWithVideoFasterThanAudioDrift) {
   TestAudioVideoSync(FecMode::kOn, CreateOrder::kVideoFirst,
                      DriftingClock::kNoDrift,
                      DriftingClock::PercentsFaster(30.0f),
-                     DriftingClock::PercentsSlower(30.0f));
+                     DriftingClock::PercentsSlower(30.0f), "_video_faster");
 }
 
 void CallPerfTest::TestCaptureNtpTime(const FakeNetworkPipe::Config& net_config,
@@ -895,11 +871,11 @@ void CallPerfTest::TestMinAudioVideoBitrate(
       }
       EXPECT_GT(last_passed_test_bitrate, -1)
           << "Minimum supported bitrate out of the test scope";
-      webrtc::test::PrintResult("min_test_bitrate_",
-                                use_bitrate_allocation_strategy_
-                                    ? "with_allocation_strategy"
-                                    : "no_allocation_strategy",
-                                "", last_passed_test_bitrate, "kbps", false);
+      webrtc::test::PrintResult(
+          "min_test_bitrate_",
+          use_bitrate_allocation_strategy_ ? "with_allocation_strategy"
+                                           : "no_allocation_strategy",
+          "min_bitrate", last_passed_test_bitrate, "kbps", false);
     }
 
     void OnCallsCreated(Call* sender_call, Call* receiver_call) override {

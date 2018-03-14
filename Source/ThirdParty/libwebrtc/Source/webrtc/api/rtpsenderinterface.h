@@ -59,6 +59,13 @@ class RtpSenderInterface : public rtc::RefCountInterface {
   // Returns null for a video sender.
   virtual rtc::scoped_refptr<DtmfSenderInterface> GetDtmfSender() const = 0;
 
+  // Returns an ID that changes every time SetTrack() is called, but
+  // otherwise remains constant. Used to generate IDs for stats.
+  // The special value zero means that no track is attached.
+  // TODO(hta): Remove default implementation when callers have updated,
+  // or move function to an internal interface.
+  virtual int AttachmentId() const { return 0; }
+
  protected:
   virtual ~RtpSenderInterface() {}
 };
@@ -77,7 +84,8 @@ BEGIN_SIGNALING_PROXY_MAP(RtpSender)
   PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
   PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
   PROXY_CONSTMETHOD0(rtc::scoped_refptr<DtmfSenderInterface>, GetDtmfSender);
-END_PROXY_MAP()
+  PROXY_CONSTMETHOD0(int, AttachmentId);
+  END_PROXY_MAP()
 
 }  // namespace webrtc
 

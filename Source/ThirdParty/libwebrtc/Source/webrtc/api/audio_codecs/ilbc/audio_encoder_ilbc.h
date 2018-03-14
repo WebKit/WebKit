@@ -26,6 +26,7 @@ namespace webrtc {
 //
 // NOTE: This struct is still under development and may change without notice.
 struct AudioEncoderIlbc {
+  using Config = AudioEncoderIlbcConfig;
   static rtc::Optional<AudioEncoderIlbcConfig> SdpToConfig(
       const SdpAudioFormat& audio_format);
   static void AppendSupportedEncoders(std::vector<AudioCodecSpec>* specs);

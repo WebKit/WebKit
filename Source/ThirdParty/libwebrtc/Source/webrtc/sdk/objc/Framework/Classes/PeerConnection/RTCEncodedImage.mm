@@ -48,7 +48,7 @@
     _frameType = static_cast<RTCFrameType>(encodedImage._frameType);
     _rotation = static_cast<RTCVideoRotation>(encodedImage.rotation_);
     _completeFrame = encodedImage._completeFrame;
-    _qp = encodedImage.qp_ == -1 ? nil : @(encodedImage.qp_);
+    _qp = @(encodedImage.qp_);
     _contentType = (encodedImage.content_type_ == webrtc::VideoContentType::SCREENSHARE) ?
         RTCVideoContentTypeScreenshare :
         RTCVideoContentTypeUnspecified;

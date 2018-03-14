@@ -42,16 +42,6 @@ bool Win32Filesystem::DeleteFile(const Pathname &filename) {
   return ::DeleteFile(ToUtf16(filename.pathname()).c_str()) != 0;
 }
 
-std::string Win32Filesystem::TempFilename(const Pathname &dir,
-                                          const std::string &prefix) {
-  wchar_t filename[MAX_PATH];
-  if (::GetTempFileName(ToUtf16(dir.pathname()).c_str(),
-                        ToUtf16(prefix).c_str(), 0, filename) != 0)
-    return ToUtf8(filename);
-  RTC_NOTREACHED();
-  return "";
-}
-
 bool Win32Filesystem::MoveFile(const Pathname &old_path,
                                const Pathname &new_path) {
   if (!IsFile(old_path)) {

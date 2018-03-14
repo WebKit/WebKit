@@ -9,7 +9,7 @@
  */
 
 #if defined(WEBRTC_WIN)
-#include "rtc_base/win32.h"
+#include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
 #include <tchar.h>

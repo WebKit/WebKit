@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <vector>
+
 #include "p2p/base/stunrequest.h"
 #include "rtc_base/fakeclock.h"
 #include "rtc_base/gunit.h"
@@ -16,7 +18,7 @@
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/timeutils.h"
 
-using namespace cricket;
+namespace cricket {
 
 class StunRequestTest : public testing::Test,
                         public sigslot::has_slots<> {
@@ -198,3 +200,5 @@ TEST_F(StunRequestTest, TestNoEmptyRequest) {
   EXPECT_FALSE(timeout_);
   delete res;
 }
+
+}  // namespace cricket

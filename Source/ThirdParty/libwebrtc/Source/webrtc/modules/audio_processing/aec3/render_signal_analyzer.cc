@@ -30,8 +30,8 @@ void IdentifySmallNarrowBandRegions(
     return;
   }
 
-  const std::array<float, kFftLengthBy2Plus1>& X2 =
-      render_buffer.Spectrum(*delay_partitions);
+  rtc::ArrayView<const float> X2 = render_buffer.Spectrum(*delay_partitions);
+  RTC_DCHECK_EQ(kFftLengthBy2Plus1, X2.size());
 
   for (size_t k = 1; k < (X2.size() - 1); ++k) {
     (*narrow_band_counters)[k - 1] = X2[k] > 3 * std::max(X2[k - 1], X2[k + 1])
@@ -61,8 +61,7 @@ void IdentifyStrongNarrowBandComponent(const RenderBuffer& render_buffer,
   }
 
   // Assess the render signal strength
-  const std::vector<std::vector<float>>& x_latest =
-      render_buffer.MostRecentBlock();
+  const std::vector<std::vector<float>>& x_latest = render_buffer.Block(0);
   auto result0 = std::minmax_element(x_latest[0].begin(), x_latest[0].end());
   float max_abs = std::max(fabs(*result0.first), fabs(*result0.second));
 

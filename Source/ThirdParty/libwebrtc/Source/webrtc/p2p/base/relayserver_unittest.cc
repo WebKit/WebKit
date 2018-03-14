@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "p2p/base/relayserver.h"
 #include "rtc_base/gunit.h"
@@ -23,18 +24,23 @@
 #include "rtc_base/virtualsocketserver.h"
 
 using rtc::SocketAddress;
-using namespace cricket;
 
-static const uint32_t LIFETIME = 4;  // seconds
-static const SocketAddress server_int_addr("127.0.0.1", 5000);
-static const SocketAddress server_ext_addr("127.0.0.1", 5001);
-static const SocketAddress client1_addr("127.0.0.1", 6000 + (rand() % 1000));
-static const SocketAddress client2_addr("127.0.0.1", 7000 + (rand() % 1000));
-static const char* bad = "this is a completely nonsensical message whose only "
-                         "purpose is to make the parser go 'ack'.  it doesn't "
-                         "look anything like a normal stun message";
-static const char* msg1 = "spamspamspamspamspamspamspambakedbeansspam";
-static const char* msg2 = "Lobster Thermidor a Crevette with a mornay sauce...";
+namespace cricket {
+namespace {
+
+constexpr uint32_t LIFETIME = 4;  // seconds
+const SocketAddress server_int_addr("127.0.0.1", 5000);
+const SocketAddress server_ext_addr("127.0.0.1", 5001);
+const SocketAddress client1_addr("127.0.0.1", 6111);
+const SocketAddress client2_addr("127.0.0.1", 7222);
+const char* bad =
+    "this is a completely nonsensical message whose only "
+    "purpose is to make the parser go 'ack'.  it doesn't "
+    "look anything like a normal stun message";
+const char* msg1 = "spamspamspamspamspamspamspambakedbeansspam";
+const char* msg2 = "Lobster Thermidor a Crevette with a mornay sauce...";
+
+}  // namespace
 
 class RelayServerTest : public testing::Test {
  public:
@@ -511,3 +517,5 @@ TEST_F(RelayServerTest, DISABLED_TestExpiration) {
   SendRaw2(msg2, static_cast<int>(strlen(msg2)));
   EXPECT_TRUE(ReceiveRaw1().empty());
 }
+
+}  // namespace cricket

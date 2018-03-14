@@ -10,8 +10,10 @@
 
 #include "api/test/mock_video_decoder_factory.h"
 #include "api/test/mock_video_encoder_factory.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "media/base/mediaconstants.h"
 #include "modules/video_coding/codecs/stereo/include/stereo_decoder_adapter.h"
 #include "modules/video_coding/codecs/stereo/include/stereo_encoder_adapter.h"
 #include "modules/video_coding/codecs/test/video_codec_test.h"
@@ -24,6 +26,10 @@ using testing::Return;
 
 namespace webrtc {
 
+constexpr const char* kStereoAssociatedCodecName = cricket::kVp9CodecName;
+const VideoCodecType kStereoAssociatedCodecType =
+    PayloadStringToCodecType(kStereoAssociatedCodecName);
+
 class TestStereoAdapter : public VideoCodecTest {
  public:
   TestStereoAdapter()
@@ -32,18 +38,21 @@ class TestStereoAdapter : public VideoCodecTest {
 
  protected:
   std::unique_ptr<VideoDecoder> CreateDecoder() override {
-    return rtc::MakeUnique<StereoDecoderAdapter>(decoder_factory_.get());
+    return rtc::MakeUnique<StereoDecoderAdapter>(
+        decoder_factory_.get(), SdpVideoFormat(kStereoAssociatedCodecName));
   }
 
   std::unique_ptr<VideoEncoder> CreateEncoder() override {
-    return rtc::MakeUnique<StereoEncoderAdapter>(encoder_factory_.get());
+    return rtc::MakeUnique<StereoEncoderAdapter>(
+        encoder_factory_.get(), SdpVideoFormat(kStereoAssociatedCodecName));
   }
 
   VideoCodec codec_settings() override {
     VideoCodec codec_settings;
-    codec_settings.codecType = webrtc::kVideoCodecVP9;
+    codec_settings.codecType = kStereoAssociatedCodecType;
     codec_settings.VP9()->numberOfTemporalLayers = 1;
     codec_settings.VP9()->numberOfSpatialLayers = 1;
+    codec_settings.codecType = webrtc::kVideoCodecStereo;
     return codec_settings;
   }
 
@@ -103,7 +112,7 @@ TEST_F(TestStereoAdapter, EncodeDecodeI420Frame) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
 
   EXPECT_EQ(kVideoCodecStereo, codec_specific_info.codecType);
-  EXPECT_EQ(kVideoCodecVP9,
+  EXPECT_EQ(kStereoAssociatedCodecType,
             codec_specific_info.codecSpecific.stereo.associated_codec_type);
   EXPECT_EQ(0, codec_specific_info.codecSpecific.stereo.indices.frame_index);
   EXPECT_EQ(1, codec_specific_info.codecSpecific.stereo.indices.frame_count);
@@ -134,7 +143,7 @@ TEST_F(TestStereoAdapter, EncodeDecodeI420AFrame) {
 
   const CodecSpecificInfo& yuv_info = codec_specific_infos[kYUVStream];
   EXPECT_EQ(kVideoCodecStereo, yuv_info.codecType);
-  EXPECT_EQ(kVideoCodecVP9,
+  EXPECT_EQ(kStereoAssociatedCodecType,
             yuv_info.codecSpecific.stereo.associated_codec_type);
   EXPECT_EQ(kYUVStream, yuv_info.codecSpecific.stereo.indices.frame_index);
   EXPECT_EQ(kAlphaCodecStreams,
@@ -143,7 +152,7 @@ TEST_F(TestStereoAdapter, EncodeDecodeI420AFrame) {
 
   const CodecSpecificInfo& axx_info = codec_specific_infos[kAXXStream];
   EXPECT_EQ(kVideoCodecStereo, axx_info.codecType);
-  EXPECT_EQ(kVideoCodecVP9,
+  EXPECT_EQ(kStereoAssociatedCodecType,
             axx_info.codecSpecific.stereo.associated_codec_type);
   EXPECT_EQ(kAXXStream, axx_info.codecSpecific.stereo.indices.frame_index);
   EXPECT_EQ(kAlphaCodecStreams,

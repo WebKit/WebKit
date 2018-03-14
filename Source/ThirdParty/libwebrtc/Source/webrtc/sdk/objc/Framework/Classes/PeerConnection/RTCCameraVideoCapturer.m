@@ -116,6 +116,17 @@ const int64_t kNanosecondsPerSecond = 1000000000;
 - (void)startCaptureWithDevice:(AVCaptureDevice *)device
                         format:(AVCaptureDeviceFormat *)format
                            fps:(NSInteger)fps {
+  [self startCaptureWithDevice:device format:format fps:fps completionHandler:nil];
+}
+
+- (void)stopCapture {
+  [self stopCaptureWithCompletionHandler:nil];
+}
+
+- (void)startCaptureWithDevice:(AVCaptureDevice *)device
+                        format:(AVCaptureDeviceFormat *)format
+                           fps:(NSInteger)fps
+             completionHandler:(nullable void (^)(NSError *))completionHandler {
   _willBeRunning = YES;
   [RTCDispatcher
       dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
@@ -132,6 +143,9 @@ const int64_t kNanosecondsPerSecond = 1000000000;
                       if (![_currentDevice lockForConfiguration:&error]) {
                         RTCLogError(
                             @"Failed to lock device %@. Error: %@", _currentDevice, error.userInfo);
+                        if (completionHandler) {
+                          completionHandler(error);
+                        }
                         return;
                       }
                       [self reconfigureCaptureSessionInput];
@@ -141,10 +155,13 @@ const int64_t kNanosecondsPerSecond = 1000000000;
                       [_captureSession startRunning];
                       [_currentDevice unlockForConfiguration];
                       _isRunning = YES;
+                      if (completionHandler) {
+                        completionHandler(nil);
+                      }
                     }];
 }
 
-- (void)stopCapture {
+- (void)stopCaptureWithCompletionHandler:(nullable void (^)())completionHandler {
   _willBeRunning = NO;
   [RTCDispatcher
       dispatchAsyncOnType:RTCDispatcherTypeCaptureSession
@@ -160,6 +177,9 @@ const int64_t kNanosecondsPerSecond = 1000000000;
                       [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 #endif
                       _isRunning = NO;
+                      if (completionHandler) {
+                        completionHandler();
+                      }
                     }];
 }
 
@@ -248,25 +268,22 @@ const int64_t kNanosecondsPerSecond = 1000000000;
 
 - (void)handleCaptureSessionInterruption:(NSNotification *)notification {
   NSString *reasonString = nil;
-#if defined(__IPHONE_9_0) && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0
-  if ([UIDevice isIOS9OrLater]) {
-    NSNumber *reason = notification.userInfo[AVCaptureSessionInterruptionReasonKey];
-    if (reason) {
-      switch (reason.intValue) {
-        case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground:
-          reasonString = @"VideoDeviceNotAvailableInBackground";
-          break;
-        case AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient:
-          reasonString = @"AudioDeviceInUseByAnotherClient";
-          break;
-        case AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient:
-          reasonString = @"VideoDeviceInUseByAnotherClient";
-          break;
-        case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps:
-          reasonString = @"VideoDeviceNotAvailableWithMultipleForegroundApps";
-          break;
-      }
+#if TARGET_OS_IPHONE
+  NSNumber *reason = notification.userInfo[AVCaptureSessionInterruptionReasonKey];
+  if (reason) {
+    switch (reason.intValue) {
+      case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground:
+        reasonString = @"VideoDeviceNotAvailableInBackground";
+        break;
+      case AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient:
+        reasonString = @"AudioDeviceInUseByAnotherClient";
+        break;
+      case AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient:
+        reasonString = @"VideoDeviceInUseByAnotherClient";
+        break;
+      case AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps:
+        reasonString = @"VideoDeviceNotAvailableWithMultipleForegroundApps";
+        break;
     }
   }
 #endif

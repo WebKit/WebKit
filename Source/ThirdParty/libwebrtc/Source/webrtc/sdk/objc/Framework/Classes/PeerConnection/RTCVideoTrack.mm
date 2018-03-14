@@ -32,7 +32,7 @@
   rtc::scoped_refptr<webrtc::VideoTrackInterface> track =
       factory.nativeFactory->CreateVideoTrack(nativeId,
                                               source.nativeVideoSource);
-  if ([self initWithNativeTrack:track type:RTCMediaStreamTrackTypeVideo]) {
+  if (self = [self initWithNativeTrack:track type:RTCMediaStreamTrackTypeVideo]) {
     _source = source;
   }
   return self;

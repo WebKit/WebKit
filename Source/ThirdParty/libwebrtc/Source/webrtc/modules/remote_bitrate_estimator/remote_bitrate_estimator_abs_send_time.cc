@@ -91,6 +91,7 @@ bool RemoteBitrateEstimatorAbsSendTime::IsWithinClusterBounds(
         first_packet_time_ms_(-1),
         last_update_ms_(-1),
         uma_recorded_(false) {
+    RTC_DCHECK(clock_);
     RTC_DCHECK(observer_);
     RTC_LOG(LS_INFO) << "RemoteBitrateEstimatorAbsSendTime: Instantiating.";
 }

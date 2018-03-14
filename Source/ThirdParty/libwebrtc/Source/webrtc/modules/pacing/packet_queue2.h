@@ -49,7 +49,7 @@ class PacketQueue2 : public PacketQueue {
     bool operator<(const StreamPrioKey& other) const {
       if (priority != other.priority)
         return priority < other.priority;
-      return bytes > other.bytes;
+      return bytes < other.bytes;
     }
 
     const RtpPacketSender::Priority priority;

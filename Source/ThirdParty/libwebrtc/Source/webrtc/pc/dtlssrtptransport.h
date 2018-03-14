@@ -38,13 +38,20 @@ class DtlsSrtpTransport : public RtpTransportInternalAdapter {
   void SetRtcpMuxEnabled(bool enable) override;
 
   // Set the header extension ids that should be encrypted.
-  void SetSendEncryptedHeaderExtensionIds(
+  void UpdateSendEncryptedHeaderExtensionIds(
       const std::vector<int>& send_extension_ids);
 
-  void SetRecvEncryptedHeaderExtensionIds(
+  void UpdateRecvEncryptedHeaderExtensionIds(
       const std::vector<int>& recv_extension_ids);
 
   bool IsActive() { return srtp_transport_->IsActive(); }
+
+  // Cache RTP Absoulute SendTime extension header ID. This is only used when
+  // external authentication is enabled.
+  void CacheRtpAbsSendTimeHeaderExtension(int rtp_abs_sendtime_extn_id) {
+    srtp_transport_->CacheRtpAbsSendTimeHeaderExtension(
+        rtp_abs_sendtime_extn_id);
+  }
 
   // TODO(zhihuang): Remove this when we remove RtpTransportAdapter.
   RtpTransportAdapter* GetInternal() override { return nullptr; }
@@ -75,7 +82,8 @@ class DtlsSrtpTransport : public RtpTransportInternalAdapter {
 
   void OnDtlsState(cricket::DtlsTransportInternal* dtls_transport,
                    cricket::DtlsTransportState state);
-  void OnWritableState(rtc::PacketTransportInternal* transport);
+  void OnWritableState(bool writable);
+  void OnSentPacket(const rtc::SentPacket& sent_packet);
   void OnPacketReceived(bool rtcp,
                         rtc::CopyOnWriteBuffer* packet,
                         const rtc::PacketTime& packet_time);

@@ -42,7 +42,7 @@ using namespace webrtc::videocapturemodule;
 @synthesize frameRotation = _framRotation;
 
 - (id)initWithOwner:(VideoCaptureIos*)owner {
-  if (self == [super init]) {
+  if (self = [super init]) {
     _owner = owner;
     _captureSession = [[AVCaptureSession alloc] init];
 #if defined(WEBRTC_IOS)

@@ -32,6 +32,8 @@ namespace webrtc {
 // Implementation of SessionDescriptionInterface.
 class JsepSessionDescription : public SessionDescriptionInterface {
  public:
+  explicit JsepSessionDescription(SdpType type);
+  // TODO(steveanton): Remove this once callers have switched to SdpType.
   explicit JsepSessionDescription(const std::string& type);
   virtual ~JsepSessionDescription();
 
@@ -54,11 +56,9 @@ class JsepSessionDescription : public SessionDescriptionInterface {
   virtual std::string session_version() const {
     return session_version_;
   }
-  virtual std::string type() const {
-    return type_;
-  }
+  virtual SdpType GetType() const { return type_; }
+  virtual std::string type() const { return SdpTypeToString(type_); }
   // Allows changing the type. Used for testing.
-  void set_type(const std::string& type) { type_ = type; }
   virtual bool AddCandidate(const IceCandidateInterface* candidate);
   virtual size_t RemoveCandidates(
       const std::vector<cricket::Candidate>& candidates);
@@ -74,7 +74,7 @@ class JsepSessionDescription : public SessionDescriptionInterface {
   std::unique_ptr<cricket::SessionDescription> description_;
   std::string session_id_;
   std::string session_version_;
-  std::string type_;
+  SdpType type_;
   std::vector<JsepCandidateCollection> candidate_collection_;
 
   bool GetMediasectionIndex(const IceCandidateInterface* candidate,

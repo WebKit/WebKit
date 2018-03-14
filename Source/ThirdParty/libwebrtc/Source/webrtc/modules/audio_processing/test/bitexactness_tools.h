@@ -29,7 +29,7 @@ std::string GetApmRenderTestVectorFileName(int sample_rate_hz);
 // APM bitexactness test.
 std::string GetApmCaptureTestVectorFileName(int sample_rate_hz);
 
-// Extract float samples from a pcm file.
+// Extract float samples of up to two channels from a pcm file.
 void ReadFloatSamplesFromStereoFile(size_t samples_per_channel,
                                     size_t num_channels,
                                     InputAudioFile* stereo_pcm_file,

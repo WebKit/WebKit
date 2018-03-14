@@ -656,6 +656,12 @@ class AudioCodingModule {
   virtual int FilteredCurrentDelayMs() const = 0;
 
   ///////////////////////////////////////////////////////////////////////////
+  // int FilteredCurrentDelayMs()
+  // Returns the current target delay for NetEq in ms.
+  //
+  virtual int TargetDelayMs() const = 0;
+
+  ///////////////////////////////////////////////////////////////////////////
   // int32_t PlayoutData10Ms(
   // Get 10 milliseconds of raw audio data for playout, at the given sampling
   // frequency. ACM will perform a resampling if required.

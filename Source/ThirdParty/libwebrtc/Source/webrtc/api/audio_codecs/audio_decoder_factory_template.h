@@ -46,6 +46,10 @@ struct Helper<T, Ts...> {
   }
   static bool IsSupportedDecoder(const SdpAudioFormat& format) {
     auto opt_config = T::SdpToConfig(format);
+    static_assert(std::is_same<decltype(opt_config),
+                               rtc::Optional<typename T::Config>>::value,
+                  "T::SdpToConfig() must return a value of type "
+                  "rtc::Optional<T::Config>");
     return opt_config ? true : Helper<Ts...>::IsSupportedDecoder(format);
   }
   static std::unique_ptr<AudioDecoder> MakeAudioDecoder(
@@ -96,7 +100,8 @@ class AudioDecoderFactoryT : public AudioDecoderFactory {
 //   std::unique_ptr<AudioDecoder> MakeAudioDecoder(const ConfigType& config);
 //
 // ConfigType should be a type that encapsulates all the settings needed to
-// create an AudioDecoder.
+// create an AudioDecoder. T::Config (where T is the decoder struct) should
+// either be the config type, or an alias for it.
 //
 // Whenever it tries to do something, the new factory will try each of the
 // decoder types in the order they were specified in the template argument

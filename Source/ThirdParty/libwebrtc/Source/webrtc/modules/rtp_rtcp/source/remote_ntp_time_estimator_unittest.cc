@@ -11,7 +11,6 @@
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "system_wrappers/include/clock.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -108,11 +107,6 @@ TEST_F(RemoteNtpTimeEstimatorTest, Estimate) {
 }
 
 TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
-  test::ScopedFieldTrials override_field_trials(
-      "WebRTC-ClockEstimation/Enabled/");
-  // Reset estimator_ because it checks experiment status during construction.
-  estimator_.reset(new RemoteNtpTimeEstimator(&local_clock_));
-
   // Remote peer sends first 5 RTCP SR without errors.
   AdvanceTimeMilliseconds(1000);
   SendRtcpSr();

@@ -89,6 +89,7 @@ class TestRelayServer : public sigslot::has_slots<> {
   void OnExternalClose(rtc::AsyncPacketSocket* socket, int error) {
     server_.RemoveExternalSocket(socket);
   }
+
  private:
   cricket::RelayServer server_;
   std::unique_ptr<rtc::AsyncSocket> tcp_int_socket_;

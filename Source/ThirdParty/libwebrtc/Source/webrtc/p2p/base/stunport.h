@@ -11,6 +11,7 @@
 #ifndef P2P_BASE_STUNPORT_H_
 #define P2P_BASE_STUNPORT_H_
 
+#include <map>
 #include <memory>
 #include <string>
 

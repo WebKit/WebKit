@@ -74,6 +74,8 @@ ParsedRtcEventLog::EventType GetRuntimeEventType(
       return ParsedRtcEventLog::EventType::BWE_PROBE_CLUSTER_CREATED_EVENT;
     case rtclog::Event::BWE_PROBE_RESULT_EVENT:
       return ParsedRtcEventLog::EventType::BWE_PROBE_RESULT_EVENT;
+    case rtclog::Event::ALR_STATE_EVENT:
+      return ParsedRtcEventLog::EventType::ALR_STATE_EVENT;
   }
   return ParsedRtcEventLog::EventType::UNKNOWN_EVENT;
 }
@@ -648,6 +650,22 @@ ParsedRtcEventLog::BweProbeResultEvent ParsedRtcEventLog::GetBweProbeResult(
   } else {
     RTC_NOTREACHED();
   }
+
+  return res;
+}
+
+ParsedRtcEventLog::AlrStateEvent ParsedRtcEventLog::GetAlrState(
+    size_t index) const {
+  RTC_CHECK_LT(index, GetNumberOfEvents());
+  const rtclog::Event& event = events_[index];
+  RTC_CHECK(event.has_type());
+  RTC_CHECK_EQ(event.type(), rtclog::Event::ALR_STATE_EVENT);
+  RTC_CHECK(event.has_alr_state());
+  const rtclog::AlrState& alr_event = event.alr_state();
+  AlrStateEvent res;
+  res.timestamp = GetTimestamp(index);
+  RTC_CHECK(alr_event.has_in_alr());
+  res.in_alr = alr_event.in_alr();
 
   return res;
 }

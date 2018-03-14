@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "api/video/video_frame.h"
-#include "media/base/videosourceinterface.h"
+#include "api/videosourceinterface.h"
 #include "rtc_base/thread_checker.h"
 
 namespace rtc {

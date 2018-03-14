@@ -124,7 +124,7 @@ const char *kRTCFileLoggerRotatingLogPrefix = "rotating_log";
   _logSink.reset();
 }
 
-- (NSData *)logData {
+- (nullable NSData *)logData {
   if (_hasStarted) {
     return nil;
   }

@@ -19,7 +19,6 @@
 
 #if defined(WEBRTC_POSIX)
 #include <string.h>
-#include <errno.h>
 #include <fcntl.h>
 #if defined(WEBRTC_USE_EPOLL)
 // "poll" will be used to wait for the signal dispatcher.
@@ -40,6 +39,8 @@
 #undef SetPort
 #endif
 
+#include <errno.h>
+
 #include <algorithm>
 #include <map>
 
@@ -52,6 +53,14 @@
 #include "rtc_base/nullsocketserver.h"
 #include "rtc_base/timeutils.h"
 #include "rtc_base/win32socketinit.h"
+
+#if defined(WEBRTC_WIN)
+#define LAST_SYSTEM_ERROR (::GetLastError())
+#elif defined(__native_client__) && __native_client__
+#define LAST_SYSTEM_ERROR (0)
+#elif defined(WEBRTC_POSIX)
+#define LAST_SYSTEM_ERROR (errno)
+#endif  // WEBRTC_WIN
 
 #if defined(WEBRTC_POSIX)
 #include <netinet/tcp.h>  // for TCP_NODELAY
@@ -525,7 +534,7 @@ void PhysicalSocket::OnResolveResult(AsyncResolverInterface* resolver) {
 }
 
 void PhysicalSocket::UpdateLastError() {
-  SetError(RTC_LAST_SYSTEM_ERROR);
+  SetError(LAST_SYSTEM_ERROR);
 }
 
 void PhysicalSocket::MaybeRemapSendError() {
@@ -568,15 +577,6 @@ int PhysicalSocket::TranslateOption(Option opt, int* slevel, int* sopt) {
       *sopt = IP_MTU_DISCOVER;
       break;
 #endif
-    case OPT_ISDEFUNCT:
-#if defined(SO_ISDEFUNCT)
-      *slevel = SOL_SOCKET;
-      *sopt = SO_ISDEFUNCT;
-      break;
-#else
-      return -1;
-#endif
-      break;
     case OPT_RCVBUF:
       *slevel = SOL_SOCKET;
       *sopt = SO_RCVBUF;

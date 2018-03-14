@@ -11,6 +11,7 @@
 #import "RTCRtpSender+Private.h"
 
 #import "NSString+StdString.h"
+#import "RTCDtmfSender+Private.h"
 #import "RTCMediaStreamTrack+Private.h"
 #import "RTCRtpParameters+Private.h"
 #import "WebRTC/RTCLogging.h"
@@ -20,6 +21,8 @@
 @implementation RTCRtpSender {
   rtc::scoped_refptr<webrtc::RtpSenderInterface> _nativeRtpSender;
 }
+
+@synthesize dtmfSender = _dtmfSender;
 
 - (NSString *)senderId {
   return [NSString stringForStdString:_nativeRtpSender->id()];
@@ -86,6 +89,11 @@
   NSParameterAssert(nativeRtpSender);
   if (self = [super init]) {
     _nativeRtpSender = nativeRtpSender;
+    rtc::scoped_refptr<webrtc::DtmfSenderInterface> nativeDtmfSender(
+        _nativeRtpSender->GetDtmfSender());
+    if (nativeDtmfSender) {
+      _dtmfSender = [[RTCDtmfSender alloc] initWithNativeDtmfSender:nativeDtmfSender];
+    }
     RTCLogInfo(@"RTCRtpSender(%p): created sender: %@", self, self.description);
   }
   return self;

@@ -443,6 +443,71 @@ TEST_F(FlexfecReceiverTest, TooDelayedFecPacketDoesNotHelp) {
   // Do not expect a call back.
 }
 
+TEST_F(FlexfecReceiverTest, SurvivesOldRecoveredPacketBeingReinserted) {
+  // Simulates the behaviour of the
+  // Call->FlexfecReceiveStream->FlexfecReceiver->Call loop in production code.
+  class LoopbackRecoveredPacketReceiver : public RecoveredPacketReceiver {
+   public:
+    LoopbackRecoveredPacketReceiver() : receiver_(nullptr) {}
+
+    void SetReceiver(FlexfecReceiver* receiver) { receiver_ = receiver; }
+
+    // Implements RecoveredPacketReceiver.
+    void OnRecoveredPacket(const uint8_t* packet, size_t length) {
+      RtpPacketReceived parsed_packet;
+      EXPECT_TRUE(parsed_packet.Parse(packet, length));
+      parsed_packet.set_recovered(true);
+
+      RTC_DCHECK(receiver_);
+      receiver_->OnRtpPacket(parsed_packet);
+    }
+
+   private:
+    FlexfecReceiver* receiver_;
+  } loopback_recovered_packet_receiver;
+
+  // Feed recovered packets back into |receiver|.
+  FlexfecReceiver receiver(kFlexfecSsrc, kMediaSsrc,
+                           &loopback_recovered_packet_receiver);
+  loopback_recovered_packet_receiver.SetReceiver(&receiver);
+
+  // Receive first set of packets.
+  PacketList first_media_packets;
+  for (int i = 0; i < 46; ++i) {
+    PacketizeFrame(1, 0, &first_media_packets);
+  }
+  for (const auto& media_packet : first_media_packets) {
+    receiver.OnRtpPacket(ParsePacket(*media_packet));
+  }
+
+  // Protect one media packet. Lose the media packet,
+  // but do not receive FEC packet yet.
+  PacketList protected_media_packet;
+  PacketizeFrame(1, 0, &protected_media_packet);
+  const std::list<Packet*> fec_packets = EncodeFec(protected_media_packet, 1);
+  EXPECT_EQ(1u, fec_packets.size());
+  std::unique_ptr<Packet> fec_packet_with_rtp_header =
+      packet_generator_.BuildFlexfecPacket(*fec_packets.front());
+
+  // Lose some packets, thus introducing a sequence number gap.
+  PacketList lost_packets;
+  for (int i = 0; i < 100; ++i) {
+    PacketizeFrame(1, 0, &lost_packets);
+  }
+
+  // Receive one more packet.
+  PacketList second_media_packets;
+  PacketizeFrame(1, 0, &second_media_packets);
+  for (const auto& media_packet : second_media_packets) {
+    receiver.OnRtpPacket(ParsePacket(*media_packet));
+  }
+
+  // Receive delayed FEC packet.
+  receiver.OnRtpPacket(ParsePacket(*fec_packet_with_rtp_header));
+
+  // Expect no crash.
+}
+
 TEST_F(FlexfecReceiverTest, RecoversWithMediaPacketsOutOfOrder) {
   const size_t kNumMediaPackets = 6;
   const size_t kNumFecPackets = 2;

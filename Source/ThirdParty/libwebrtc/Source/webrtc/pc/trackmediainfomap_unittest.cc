@@ -60,6 +60,7 @@ rtc::scoped_refptr<MockRtpSender> CreateMockRtpSender(
       .WillRepeatedly(testing::Return(media_type));
   EXPECT_CALL(*sender, GetParameters())
       .WillRepeatedly(testing::Return(CreateRtpParametersWithSsrcs(ssrcs)));
+  EXPECT_CALL(*sender, AttachmentId()).WillRepeatedly(testing::Return(1));
   return sender;
 }
 
@@ -75,6 +76,7 @@ rtc::scoped_refptr<MockRtpReceiver> CreateMockRtpReceiver(
       .WillRepeatedly(testing::Return(media_type));
   EXPECT_CALL(*receiver, GetParameters())
       .WillRepeatedly(testing::Return(CreateRtpParametersWithSsrcs(ssrcs)));
+  EXPECT_CALL(*receiver, AttachmentId()).WillRepeatedly(testing::Return(1));
   return receiver;
 }
 
@@ -384,6 +386,28 @@ TEST_F(TrackMediaInfoMapTest, SingleSenderReceiverPerTrackWithSsrcNotUnique) {
             &video_media_info_->receivers[0]);
   EXPECT_EQ(map_->GetVideoTrack(video_media_info_->receivers[0]),
             remote_video_track_.get());
+}
+
+TEST_F(TrackMediaInfoMapTest, SsrcLookupFunction) {
+  AddRtpSenderWithSsrcs({1}, local_audio_track_);
+  AddRtpReceiverWithSsrcs({2}, remote_audio_track_);
+  AddRtpSenderWithSsrcs({3}, local_video_track_);
+  AddRtpReceiverWithSsrcs({4}, remote_video_track_);
+  CreateMap();
+  EXPECT_TRUE(map_->GetVoiceSenderInfoBySsrc(1));
+  EXPECT_TRUE(map_->GetVoiceReceiverInfoBySsrc(2));
+  EXPECT_TRUE(map_->GetVideoSenderInfoBySsrc(3));
+  EXPECT_TRUE(map_->GetVideoReceiverInfoBySsrc(4));
+  EXPECT_FALSE(map_->GetVoiceSenderInfoBySsrc(2));
+  EXPECT_FALSE(map_->GetVoiceSenderInfoBySsrc(1024));
+}
+
+TEST_F(TrackMediaInfoMapTest, GetAttachmentIdByTrack) {
+  AddRtpSenderWithSsrcs({1}, local_audio_track_);
+  CreateMap();
+  EXPECT_EQ(rtp_senders_[0]->AttachmentId(),
+            map_->GetAttachmentIdByTrack(local_audio_track_));
+  EXPECT_EQ(rtc::nullopt, map_->GetAttachmentIdByTrack(local_video_track_));
 }
 
 // Death tests.

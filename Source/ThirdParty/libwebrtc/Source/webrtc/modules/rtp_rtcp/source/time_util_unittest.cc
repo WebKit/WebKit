@@ -16,7 +16,15 @@
 
 namespace webrtc {
 
-TEST(TimeUtilTest, TimeMicrosToNtpMatchRealTimeClockInitially) {
+// Disabled as flake: http://bugs.webrtc.org/8610
+#ifdef WEBRTC_IOS
+#define MAYBE_TimeMicrosToNtpMatchRealTimeClockInitially \
+  DISABLED_TimeMicrosToNtpMatchRealTimeClockInitially
+#else
+#define MAYBE_TimeMicrosToNtpMatchRealTimeClockInitially \
+  TimeMicrosToNtpMatchRealTimeClockInitially
+#endif
+TEST(TimeUtilTest, MAYBE_TimeMicrosToNtpMatchRealTimeClockInitially) {
   Clock* legacy_clock = Clock::GetRealTimeClock();
   NtpTime before_legacy_time = TimeMicrosToNtp(rtc::TimeMicros());
   NtpTime legacy_time = legacy_clock->CurrentNtpTime();

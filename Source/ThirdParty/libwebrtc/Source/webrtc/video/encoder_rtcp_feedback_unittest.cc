@@ -29,7 +29,6 @@ class MockVideoStreamEncoder : public VideoStreamEncoder {
                            VideoSendStream::Config::EncoderSettings("fake", 0,
                                                                     nullptr),
                            nullptr,
-                           nullptr,
                            std::unique_ptr<OveruseFrameDetector>()) {}
   ~MockVideoStreamEncoder() { Stop(); }
 

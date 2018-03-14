@@ -12,6 +12,7 @@
 #define LOGGING_RTC_EVENT_LOG_OUTPUT_RTC_EVENT_LOG_OUTPUT_FILE_H_
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include <memory>
 #include <string>
@@ -20,8 +21,6 @@
 #include "rtc_base/platform_file.h"  // Can't neatly forward PlatformFile.
 
 namespace webrtc {
-
-class FileWrapper;
 
 class RtcEventLogOutputFile final : public RtcEventLogOutput {
  public:
@@ -47,12 +46,10 @@ class RtcEventLogOutputFile final : public RtcEventLogOutput {
   // some other function of this class.
   inline bool IsActiveInternal() const;
 
-  // TODO(eladalon): We're still discussing whether to use FileWrapper or not.
-  // If we end up keeping FileWrapper, we should use its own max-size logic,
-  // rather than duplicate it.
+  // Maximum size, or zero for no limit.
   const size_t max_size_bytes_;
   size_t written_bytes_{0};
-  std::unique_ptr<FileWrapper> file_;
+  FILE* file_{nullptr};
 };
 
 }  // namespace webrtc

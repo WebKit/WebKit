@@ -9,6 +9,7 @@
  */
 
 #include <algorithm>
+#include <string>
 #include <vector>
 
 #include "p2p/base/pseudotcp.h"
@@ -30,18 +31,14 @@ class PseudoTcpForTest : public cricket::PseudoTcp {
   PseudoTcpForTest(cricket::IPseudoTcpNotify* notify, uint32_t conv)
       : PseudoTcp(notify, conv) {}
 
-  bool isReceiveBufferFull() const {
-    return PseudoTcp::isReceiveBufferFull();
-  }
+  bool isReceiveBufferFull() const { return PseudoTcp::isReceiveBufferFull(); }
 
-  void disableWindowScale() {
-    PseudoTcp::disableWindowScale();
-  }
+  void disableWindowScale() { PseudoTcp::disableWindowScale(); }
 };
 
 class PseudoTcpTestBase : public testing::Test,
-                      public rtc::MessageHandler,
-                      public cricket::IPseudoTcpNotify {
+                          public rtc::MessageHandler,
+                          public cricket::IPseudoTcpNotify {
  public:
   PseudoTcpTestBase()
       : local_(this, 1),
@@ -67,12 +64,8 @@ class PseudoTcpTestBase : public testing::Test,
     remote_.NotifyMTU(mtu);
     remote_mtu_ = mtu;
   }
-  void SetDelay(int delay) {
-    delay_ = delay;
-  }
-  void SetLoss(int percent) {
-    loss_ = percent;
-  }
+  void SetDelay(int delay) { delay_ = delay; }
+  void SetLoss(int percent) { loss_ = percent; }
   void SetOptNagling(bool enable_nagles) {
     local_.SetOption(PseudoTcp::OPT_NODELAY, !enable_nagles);
     remote_.SetOption(PseudoTcp::OPT_NODELAY, !enable_nagles);
@@ -91,12 +84,8 @@ class PseudoTcpTestBase : public testing::Test,
   void SetLocalOptRcvBuf(int size) {
     local_.SetOption(PseudoTcp::OPT_RCVBUF, size);
   }
-  void DisableRemoteWindowScale() {
-    remote_.disableWindowScale();
-  }
-  void DisableLocalWindowScale() {
-    local_.disableWindowScale();
-  }
+  void DisableRemoteWindowScale() { remote_.disableWindowScale(); }
+  void DisableLocalWindowScale() { local_.disableWindowScale(); }
 
  protected:
   int Connect() {
@@ -111,8 +100,14 @@ class PseudoTcpTestBase : public testing::Test,
     UpdateLocalClock();
   }
 
-  enum { MSG_LPACKET, MSG_RPACKET, MSG_LCLOCK, MSG_RCLOCK, MSG_IOCOMPLETE,
-         MSG_WRITE};
+  enum {
+    MSG_LPACKET,
+    MSG_RPACKET,
+    MSG_LCLOCK,
+    MSG_RCLOCK,
+    MSG_IOCOMPLETE,
+    MSG_WRITE
+  };
   virtual void OnTcpOpen(PseudoTcp* tcp) {
     // Consider ourselves connected when the local side gets OnTcpOpen.
     // OnTcpWriteable isn't fired at open, so we trigger it now.
@@ -128,7 +123,7 @@ class PseudoTcpTestBase : public testing::Test,
   //   virtual void OnTcpWritable(PseudoTcp* tcp)
   virtual void OnTcpClosed(PseudoTcp* tcp, uint32_t error) {
     // Consider ourselves closed when the remote side gets OnTcpClosed.
-    // TODO: OnTcpClosed is only ever notified in case of error in
+    // TODO(?): OnTcpClosed is only ever notified in case of error in
     // the current implementation.  Solicited close is not (yet) supported.
     RTC_LOG(LS_VERBOSE) << "Closed";
     EXPECT_EQ(0U, error);
@@ -137,7 +132,8 @@ class PseudoTcpTestBase : public testing::Test,
     }
   }
   virtual WriteResult TcpWritePacket(PseudoTcp* tcp,
-                                     const char* buffer, size_t len) {
+                                     const char* buffer,
+                                     size_t len) {
     // Randomly drop the desired percentage of packets.
     // Also drop packets that are larger than the configured MTU.
     if (rtc::CreateRandomId() % 100 < static_cast<uint32_t>(loss_)) {
@@ -167,15 +163,13 @@ class PseudoTcpTestBase : public testing::Test,
   virtual void OnMessage(rtc::Message* message) {
     switch (message->message_id) {
       case MSG_LPACKET: {
-        const std::string& s(
-            rtc::UseMessageData<std::string>(message->pdata));
+        const std::string& s(rtc::UseMessageData<std::string>(message->pdata));
         local_.NotifyPacket(s.c_str(), s.size());
         UpdateLocalClock();
         break;
       }
       case MSG_RPACKET: {
-        const std::string& s(
-            rtc::UseMessageData<std::string>(message->pdata));
+        const std::string& s(rtc::UseMessageData<std::string>(message->pdata));
         remote_.NotifyPacket(s.c_str(), s.size());
         UpdateRemoteClock();
         break;
@@ -231,12 +225,12 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     elapsed = rtc::Time32() - start;
     recv_stream_.GetSize(&received);
     // Ensure we closed down OK and we got the right data.
-    // TODO: Ensure the errors are cleared properly.
-    //EXPECT_EQ(0, local_.GetError());
-    //EXPECT_EQ(0, remote_.GetError());
+    // TODO(?): Ensure the errors are cleared properly.
+    // EXPECT_EQ(0, local_.GetError());
+    // EXPECT_EQ(0, remote_.GetError());
     EXPECT_EQ(static_cast<size_t>(size), received);
-    EXPECT_EQ(0, memcmp(send_stream_.GetBuffer(),
-                        recv_stream_.GetBuffer(), size));
+    EXPECT_EQ(0,
+              memcmp(send_stream_.GetBuffer(), recv_stream_.GetBuffer(), size));
     RTC_LOG(LS_INFO) << "Transferred " << received << " bytes in " << elapsed
                      << " ms (" << size * 8 / elapsed << " Kbps)";
   }
@@ -249,7 +243,7 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     if (tcp == &remote_) {
       ReadData();
 
-      // TODO: OnTcpClosed() is currently only notified on error -
+      // TODO(?): OnTcpClosed() is currently only notified on error -
       // there is no on-the-wire equivalent of TCP FIN.
       // So we fake the notification when all the data has been read.
       size_t received, required;
@@ -314,18 +308,14 @@ class PseudoTcpTest : public PseudoTcpTestBase {
   rtc::MemoryStream recv_stream_;
 };
 
-
 class PseudoTcpTestPingPong : public PseudoTcpTestBase {
  public:
   PseudoTcpTestPingPong()
       : iterations_remaining_(0),
-	sender_(NULL),
-	receiver_(NULL),
-	bytes_per_send_(0) {
-  }
-  void SetBytesPerSend(int bytes) {
-    bytes_per_send_ = bytes;
-  }
+        sender_(NULL),
+        receiver_(NULL),
+        bytes_per_send_(0) {}
+  void SetBytesPerSend(int bytes) { bytes_per_send_ = bytes; }
   void TestPingPong(int size, int iterations) {
     uint32_t start, elapsed;
     iterations_remaining_ = iterations;
@@ -370,7 +360,7 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
     if (position == desired) {
       if (receiver_ == &local_ && --iterations_remaining_ == 0) {
         Close();
-        // TODO: Fake OnTcpClosed() on the receiver for now.
+        // TODO(?): Fake OnTcpClosed() on the receiver for now.
         OnTcpClosed(&remote_, 0);
         return;
       }
@@ -411,8 +401,7 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
     do {
       send_stream_.GetPosition(&position);
       tosend = bytes_per_send_ ? bytes_per_send_ : sizeof(block);
-      if (send_stream_.Read(block, tosend, &tosend, NULL) !=
-          rtc::SR_EOS) {
+      if (send_stream_.Read(block, tosend, &tosend, NULL) != rtc::SR_EOS) {
         sent = sender_->Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -500,11 +489,9 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
 
  private:
   // IPseudoTcpNotify interface
-  virtual void OnTcpReadable(PseudoTcp* tcp) {
-  }
+  virtual void OnTcpReadable(PseudoTcp* tcp) {}
 
-  virtual void OnTcpWriteable(PseudoTcp* tcp) {
-  }
+  virtual void OnTcpWriteable(PseudoTcp* tcp) {}
 
   void ReadUntilIOPending() {
     char block[kBlockSize];
@@ -555,8 +542,7 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     } while (sent > 0);
     // At this point, we've filled up the available space in the send queue.
 
-    int message_queue_size =
-        static_cast<int>(rtc::Thread::Current()->size());
+    int message_queue_size = static_cast<int>(rtc::Thread::Current()->size());
     // The message queue will always have at least 2 messages, an RCLOCK and
     // an LCLOCK, since they are added back on the delay queue at the same time
     // they are pulled off and therefore are never really removed.
@@ -774,7 +760,7 @@ TEST_F(PseudoTcpTestPingPong, TestPingPongShortSegments) {
   SetLocalMtu(1500);
   SetRemoteMtu(1500);
   SetOptAckDelay(5000);
-  SetBytesPerSend(50); // i.e. two Send calls per payload
+  SetBytesPerSend(50);  // i.e. two Send calls per payload
   TestPingPong(100, 5);
 }
 
@@ -784,7 +770,7 @@ TEST_F(PseudoTcpTestPingPong, TestPingPongShortSegmentsWithNaglingOff) {
   SetLocalMtu(1500);
   SetRemoteMtu(1500);
   SetOptNagling(false);
-  SetBytesPerSend(50); // i.e. two Send calls per payload
+  SetBytesPerSend(50);  // i.e. two Send calls per payload
   TestPingPong(100, 5);
 }
 
@@ -793,7 +779,7 @@ TEST_F(PseudoTcpTestPingPong, TestPingPongShortSegmentsWithNaglingOff) {
 TEST_F(PseudoTcpTestPingPong, TestPingPongShortSegmentsWithAckDelayOff) {
   SetLocalMtu(1500);
   SetRemoteMtu(1500);
-  SetBytesPerSend(50); // i.e. two Send calls per payload
+  SetBytesPerSend(50);  // i.e. two Send calls per payload
   SetOptAckDelay(0);
   TestPingPong(100, 5);
 }
@@ -832,7 +818,7 @@ TEST_F(PseudoTcpTestReceiveWindow, TestSetReceiveWindowSize) {
 
 /* Test sending data with mismatched MTUs. We should detect this and reduce
 // our packet size accordingly.
-// TODO: This doesn't actually work right now. The current code
+// TODO(?): This doesn't actually work right now. The current code
 // doesn't detect if the MTU is set too high on either side.
 TEST_F(PseudoTcpTest, TestSendWithMismatchedMtus) {
   SetLocalMtu(1500);

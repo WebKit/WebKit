@@ -12,8 +12,10 @@
 #define P2P_BASE_PORTINTERFACE_H_
 
 #include <string>
+#include <vector>
 
-#include "p2p/base/jseptransport.h"
+#include "api/candidate.h"
+#include "p2p/base/transportdescription.h"
 #include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/socketaddress.h"
 

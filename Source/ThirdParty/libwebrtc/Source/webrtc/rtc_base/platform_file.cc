@@ -10,6 +10,8 @@
 
 #include "rtc_base/platform_file.h"
 
+#include "rtc_base/stringutils.h"
+
 #if defined(WEBRTC_WIN)
 #include <io.h>
 #else

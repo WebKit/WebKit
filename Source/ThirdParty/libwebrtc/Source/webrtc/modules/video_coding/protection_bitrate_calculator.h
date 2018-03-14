@@ -61,7 +61,6 @@ class ProtectionBitrateCalculator {
   void UpdateWithEncodedData(const EncodedImage& encoded_image);
 
  private:
-  struct EncodedFrameSample;
   enum { kBitrateAverageWinMs = 1000 };
 
   Clock* const clock_;

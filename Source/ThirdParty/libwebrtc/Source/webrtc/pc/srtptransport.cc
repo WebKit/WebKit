@@ -24,10 +24,8 @@
 
 namespace webrtc {
 
-SrtpTransport::SrtpTransport(bool rtcp_mux_enabled,
-                             const std::string& content_name)
-    : RtpTransportInternalAdapter(new RtpTransport(rtcp_mux_enabled)),
-      content_name_(content_name) {
+SrtpTransport::SrtpTransport(bool rtcp_mux_enabled)
+    : RtpTransportInternalAdapter(new RtpTransport(rtcp_mux_enabled)) {
   // Own the raw pointer |transport| from the base class.
   rtp_transport_.reset(transport_);
   RTC_DCHECK(rtp_transport_);
@@ -35,10 +33,8 @@ SrtpTransport::SrtpTransport(bool rtcp_mux_enabled,
 }
 
 SrtpTransport::SrtpTransport(
-    std::unique_ptr<RtpTransportInternal> rtp_transport,
-    const std::string& content_name)
+    std::unique_ptr<RtpTransportInternal> rtp_transport)
     : RtpTransportInternalAdapter(rtp_transport.get()),
-      content_name_(content_name),
       rtp_transport_(std::move(rtp_transport)) {
   RTC_DCHECK(rtp_transport_);
   ConnectToRtpTransport();
@@ -51,6 +47,9 @@ void SrtpTransport::ConnectToRtpTransport() {
                                             &SrtpTransport::OnReadyToSend);
   rtp_transport_->SignalNetworkRouteChanged.connect(
       this, &SrtpTransport::OnNetworkRouteChanged);
+  rtp_transport_->SignalWritableState.connect(this,
+                                              &SrtpTransport::OnWritableState);
+  rtp_transport_->SignalSentPacket.connect(this, &SrtpTransport::OnSentPacket);
 }
 
 bool SrtpTransport::SendRtpPacket(rtc::CopyOnWriteBuffer* packet,
@@ -117,9 +116,8 @@ bool SrtpTransport::SendPacket(bool rtcp,
       uint32_t ssrc = 0;
       cricket::GetRtpSeqNum(data, len, &seq_num);
       cricket::GetRtpSsrc(data, len, &ssrc);
-      RTC_LOG(LS_ERROR) << "Failed to protect " << content_name_
-                        << " RTP packet: size=" << len << ", seqnum=" << seq_num
-                        << ", SSRC=" << ssrc;
+      RTC_LOG(LS_ERROR) << "Failed to protect RTP packet: size=" << len
+                        << ", seqnum=" << seq_num << ", SSRC=" << ssrc;
       return false;
     }
   } else {
@@ -127,8 +125,8 @@ bool SrtpTransport::SendPacket(bool rtcp,
     if (!res) {
       int type = -1;
       cricket::GetRtcpType(data, len, &type);
-      RTC_LOG(LS_ERROR) << "Failed to protect " << content_name_
-                        << " RTCP packet: size=" << len << ", type=" << type;
+      RTC_LOG(LS_ERROR) << "Failed to protect RTCP packet: size=" << len
+                        << ", type=" << type;
       return false;
     }
   }
@@ -159,9 +157,8 @@ void SrtpTransport::OnPacketReceived(bool rtcp,
       uint32_t ssrc = 0;
       cricket::GetRtpSeqNum(data, len, &seq_num);
       cricket::GetRtpSsrc(data, len, &ssrc);
-      RTC_LOG(LS_ERROR) << "Failed to unprotect " << content_name_
-                        << " RTP packet: size=" << len << ", seqnum=" << seq_num
-                        << ", SSRC=" << ssrc;
+      RTC_LOG(LS_ERROR) << "Failed to unprotect RTP packet: size=" << len
+                        << ", seqnum=" << seq_num << ", SSRC=" << ssrc;
       return;
     }
   } else {
@@ -169,8 +166,8 @@ void SrtpTransport::OnPacketReceived(bool rtcp,
     if (!res) {
       int type = -1;
       cricket::GetRtcpType(data, len, &type);
-      RTC_LOG(LS_ERROR) << "Failed to unprotect " << content_name_
-                        << " RTCP packet: size=" << len << ", type=" << type;
+      RTC_LOG(LS_ERROR) << "Failed to unprotect RTCP packet: size=" << len
+                        << ", type=" << type;
       return;
     }
   }

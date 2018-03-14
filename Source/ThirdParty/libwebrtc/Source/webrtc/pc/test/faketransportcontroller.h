@@ -105,13 +105,13 @@ class FakeTransportController : public TransportController {
           remote_fingerprint.get());
       std::string err;
       SetLocalTransportDescription(transport_name, local_desc,
-                                   cricket::CA_OFFER, &err);
+                                   webrtc::SdpType::kOffer, &err);
       dest->SetRemoteTransportDescription(transport_name, local_desc,
-                                          cricket::CA_OFFER, &err);
+                                          webrtc::SdpType::kOffer, &err);
       dest->SetLocalTransportDescription(transport_name, remote_desc,
-                                         cricket::CA_ANSWER, &err);
+                                         webrtc::SdpType::kAnswer, &err);
       SetRemoteTransportDescription(transport_name, remote_desc,
-                                    cricket::CA_ANSWER, &err);
+                                    webrtc::SdpType::kAnswer, &err);
     }
     MaybeStartGathering();
     dest->MaybeStartGathering();

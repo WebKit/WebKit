@@ -15,8 +15,9 @@
 
 #if defined(WEBRTC_ANDROID)
 #include "modules/video_coding/codecs/test/android_test_initializer.h"
-#include "sdk/android/src/jni/androidmediadecoder_jni.h"
-#include "sdk/android/src/jni/androidmediaencoder_jni.h"
+#include "sdk/android/src/jni/class_loader.h"
+#include "sdk/android/src/jni/videodecoderfactorywrapper.h"
+#include "sdk/android/src/jni/videoencoderfactorywrapper.h"
 #elif defined(WEBRTC_IOS)
 #include "modules/video_coding/codecs/test/objc_codec_h264_test.h"
 #endif
@@ -63,56 +64,32 @@ bool RunEncodeInRealTime(const TestConfig& config) {
 #endif
 }
 
-// An internal encoder factory in the old WebRtcVideoEncoderFactory format.
-// TODO(magjed): Update these tests to use new webrtc::VideoEncoderFactory
-// instead.
-class LegacyInternalEncoderFactory : public cricket::WebRtcVideoEncoderFactory {
- public:
-  LegacyInternalEncoderFactory() {
-    for (const SdpVideoFormat& format :
-         InternalEncoderFactory().GetSupportedFormats()) {
-      supported_codecs_.push_back(cricket::VideoCodec(format));
+SdpVideoFormat CreateSdpVideoFormat(const TestConfig& config) {
+  switch (config.codec_settings.codecType) {
+    case kVideoCodecVP8:
+      return SdpVideoFormat(cricket::kVp8CodecName);
+
+    case kVideoCodecVP9:
+      return SdpVideoFormat(cricket::kVp9CodecName);
+
+    case kVideoCodecH264: {
+      const char* packetization_mode =
+          config.h264_codec_settings.packetization_mode ==
+                  H264PacketizationMode::NonInterleaved
+              ? "1"
+              : "0";
+      return SdpVideoFormat(
+          cricket::kH264CodecName,
+          {{cricket::kH264FmtpProfileLevelId,
+            *H264::ProfileLevelIdToString(H264::ProfileLevelId(
+                config.h264_codec_settings.profile, H264::kLevel3_1))},
+           {cricket::kH264FmtpPacketizationMode, packetization_mode}});
     }
+    default:
+      RTC_NOTREACHED();
+      return SdpVideoFormat("");
   }
-
-  // WebRtcVideoEncoderFactory implementation.
-  VideoEncoder* CreateVideoEncoder(const cricket::VideoCodec& codec) override {
-    return InternalEncoderFactory()
-        .CreateVideoEncoder(SdpVideoFormat(codec.name, codec.params))
-        .release();
-  }
-
-  const std::vector<cricket::VideoCodec>& supported_codecs() const override {
-    return supported_codecs_;
-  }
-
-  bool EncoderTypeHasInternalSource(
-      webrtc::VideoCodecType type) const override {
-    return false;
-  }
-
-  void DestroyVideoEncoder(VideoEncoder* encoder) override { delete encoder; }
-
- private:
-  std::vector<cricket::VideoCodec> supported_codecs_;
-};
-
-// An internal decoder factory in the old WebRtcVideoDecoderFactory format.
-// TODO(magjed): Update these tests to use new webrtc::VideoDecoderFactory
-// instead.
-class LegacyInternalDecoderFactory : public cricket::WebRtcVideoDecoderFactory {
- public:
-  // WebRtcVideoDecoderFactory implementation.
-  VideoDecoder* CreateVideoDecoderWithParams(
-      const cricket::VideoCodec& codec,
-      cricket::VideoDecoderParams params) override {
-    return InternalDecoderFactory()
-        .CreateVideoDecoder(SdpVideoFormat(codec.name, codec.params))
-        .release();
-  }
-
-  void DestroyVideoDecoder(VideoDecoder* decoder) override { delete decoder; }
-};
+}
 
 }  // namespace
 
@@ -309,10 +286,21 @@ void VideoProcessorIntegrationTest::ProcessFramesAndMaybeVerify(
 }
 
 void VideoProcessorIntegrationTest::CreateEncoderAndDecoder() {
-  std::unique_ptr<cricket::WebRtcVideoEncoderFactory> encoder_factory;
+  std::unique_ptr<VideoEncoderFactory> encoder_factory;
   if (config_.hw_encoder) {
 #if defined(WEBRTC_ANDROID)
-    encoder_factory.reset(new jni::MediaCodecVideoEncoderFactory());
+    JNIEnv* env = jni::AttachCurrentThreadIfNeeded();
+    jni::ScopedJavaLocalRef<jclass> factory_class =
+        jni::GetClass(env, "org/webrtc/HardwareVideoEncoderFactory");
+    jmethodID factory_constructor = env->GetMethodID(
+        factory_class.obj(), "<init>", "(Lorg/webrtc/EglBase$Context;ZZ)V");
+    jni::ScopedJavaLocalRef<jobject> factory_object(
+        env, env->NewObject(factory_class.obj(), factory_constructor,
+                            nullptr /* shared_context */,
+                            false /* enable_intel_vp8_encoder */,
+                            true /* enable_h264_high_profile */));
+    encoder_factory = rtc::MakeUnique<webrtc::jni::VideoEncoderFactoryWrapper>(
+        env, factory_object);
 #elif defined(WEBRTC_IOS)
     EXPECT_EQ(kVideoCodecH264, config_.codec_settings.codecType)
         << "iOS HW codecs only support H264.";
@@ -321,13 +309,22 @@ void VideoProcessorIntegrationTest::CreateEncoderAndDecoder() {
     RTC_NOTREACHED() << "Only support HW encoder on Android and iOS.";
 #endif
   } else {
-    encoder_factory.reset(new LegacyInternalEncoderFactory());
+    encoder_factory = rtc::MakeUnique<InternalEncoderFactory>();
   }
 
-  std::unique_ptr<cricket::WebRtcVideoDecoderFactory> decoder_factory;
+  std::unique_ptr<VideoDecoderFactory> decoder_factory;
   if (config_.hw_decoder) {
 #if defined(WEBRTC_ANDROID)
-    decoder_factory.reset(new jni::MediaCodecVideoDecoderFactory());
+    JNIEnv* env = jni::AttachCurrentThreadIfNeeded();
+    jni::ScopedJavaLocalRef<jclass> factory_class =
+        jni::GetClass(env, "org/webrtc/HardwareVideoDecoderFactory");
+    jmethodID factory_constructor = env->GetMethodID(
+        factory_class.obj(), "<init>", "(Lorg/webrtc/EglBase$Context;)V");
+    jni::ScopedJavaLocalRef<jobject> factory_object(
+        env, env->NewObject(factory_class.obj(), factory_constructor,
+                            nullptr /* shared_context */));
+    decoder_factory = rtc::MakeUnique<webrtc::jni::VideoDecoderFactoryWrapper>(
+        env, factory_object);
 #elif defined(WEBRTC_IOS)
     EXPECT_EQ(kVideoCodecH264, config_.codec_settings.codecType)
         << "iOS HW codecs only support H264.";
@@ -336,68 +333,21 @@ void VideoProcessorIntegrationTest::CreateEncoderAndDecoder() {
     RTC_NOTREACHED() << "Only support HW decoder on Android and iOS.";
 #endif
   } else {
-    decoder_factory.reset(new LegacyInternalDecoderFactory());
+    decoder_factory = rtc::MakeUnique<InternalDecoderFactory>();
   }
 
-  cricket::VideoCodec codec;
-  cricket::VideoDecoderParams decoder_params;  // Empty.
-  switch (config_.codec_settings.codecType) {
-    case kVideoCodecVP8:
-      codec = cricket::VideoCodec(cricket::kVp8CodecName);
-      encoder_.reset(encoder_factory->CreateVideoEncoder(codec));
-      decoder_.reset(
-          decoder_factory->CreateVideoDecoderWithParams(codec, decoder_params));
-      break;
-    case kVideoCodecVP9:
-      codec = cricket::VideoCodec(cricket::kVp9CodecName);
-      encoder_.reset(encoder_factory->CreateVideoEncoder(codec));
-      decoder_.reset(
-          decoder_factory->CreateVideoDecoderWithParams(codec, decoder_params));
-      break;
-    case kVideoCodecH264:
-      codec = cricket::VideoCodec(cricket::kH264CodecName);
-      if (config_.h264_codec_settings.profile ==
-          H264::kProfileConstrainedHigh) {
-        const H264::ProfileLevelId constrained_high_profile(
-            H264::kProfileConstrainedHigh, H264::kLevel3_1);
-        codec.SetParam(cricket::kH264FmtpProfileLevelId,
-                       *H264::ProfileLevelIdToString(constrained_high_profile));
-      } else {
-        RTC_CHECK_EQ(config_.h264_codec_settings.profile,
-                     H264::kProfileConstrainedBaseline);
-        const H264::ProfileLevelId constrained_baseline_profile(
-            H264::kProfileConstrainedBaseline, H264::kLevel3_1);
-        codec.SetParam(
-            cricket::kH264FmtpProfileLevelId,
-            *H264::ProfileLevelIdToString(constrained_baseline_profile));
-      }
-      if (config_.h264_codec_settings.packetization_mode ==
-          H264PacketizationMode::NonInterleaved) {
-        codec.SetParam(cricket::kH264FmtpPacketizationMode, "1");
-      } else {
-        RTC_CHECK_EQ(config_.h264_codec_settings.packetization_mode,
-                     H264PacketizationMode::SingleNalUnit);
-        codec.SetParam(cricket::kH264FmtpPacketizationMode, "0");
-      }
-      encoder_.reset(encoder_factory->CreateVideoEncoder(codec));
-      decoder_.reset(
-          decoder_factory->CreateVideoDecoderWithParams(codec, decoder_params));
-      break;
-    default:
-      RTC_NOTREACHED();
-      break;
-  }
+  const SdpVideoFormat format = CreateSdpVideoFormat(config_);
+  encoder_ = encoder_factory->CreateVideoEncoder(format);
+  decoder_ = decoder_factory->CreateVideoDecoder(format);
 
   if (config_.sw_fallback_encoder) {
     encoder_ = rtc::MakeUnique<VideoEncoderSoftwareFallbackWrapper>(
-        InternalEncoderFactory().CreateVideoEncoder(
-            SdpVideoFormat(codec.name, codec.params)),
+        InternalEncoderFactory().CreateVideoEncoder(format),
         std::move(encoder_));
   }
   if (config_.sw_fallback_decoder) {
     decoder_ = rtc::MakeUnique<VideoDecoderSoftwareFallbackWrapper>(
-        InternalDecoderFactory().CreateVideoDecoder(
-            SdpVideoFormat(codec.name, codec.params)),
+        InternalDecoderFactory().CreateVideoDecoder(format),
         std::move(decoder_));
   }
 

@@ -16,6 +16,7 @@ output files will be performed.
 
 import argparse
 import collections
+import json
 import logging
 import os
 import re
@@ -54,6 +55,8 @@ def _ParseArgs():
   parser.add_argument('--android', action='store_true',
       help='Perform the test on a connected Android device instead.')
   parser.add_argument('--adb-path', help='Path to adb binary.', default='adb')
+  parser.add_argument('--chartjson-result-file',
+      help='Where to store perf results in chartjson format.', default=None)
 
   # Ignore Chromium-specific flags
   parser.add_argument('--isolated-script-test-output',
@@ -192,6 +195,15 @@ def _RunPolqa(executable_path, reference_file, degraded_file):
   return {'polqa_mos_lqo': (mos_lqo, 'score')}
 
 
+def _AddChart(charts, metric, test_name, value, units):
+  chart = charts.setdefault(metric, {})
+  chart[test_name] = {
+      "type": "scalar",
+      "value": value,
+      "units": units,
+  }
+
+
 Analyzer = collections.namedtuple('Analyzer', ['func', 'executable',
                                                'sample_rate_hz'])
 
@@ -220,6 +232,8 @@ def main():
   if polqa_path and _RunPolqa(polqa_path, example_path, example_path):
     analyzers.append(Analyzer(_RunPolqa, polqa_path, 48000))
 
+  charts = {}
+
   for analyzer in analyzers:
     # Start the test executable that produces audio files.
     test_process = subprocess.Popen(
@@ -245,12 +259,17 @@ def main():
         for metric, (value, units) in analyzer_results.items():
           # Output a result for the perf dashboard.
           print 'RESULT %s: %s= %s %s' % (metric, test_name, value, units)
+          _AddChart(charts, metric, test_name, value, units)
 
         if args.remove:
           os.remove(reference_file)
           os.remove(degraded_file)
     finally:
       test_process.terminate()
+
+  if args.chartjson_result_file:
+    with open(args.chartjson_result_file, 'w') as f:
+      json.dump({"format_version": "1.0", "charts": charts}, f)
 
   return test_process.wait()
 

@@ -19,10 +19,10 @@
 
 #include "api/video/video_rotation.h"
 #include "api/video_codecs/video_encoder.h"
+#include "api/videosinkinterface.h"
 #include "call/call.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/include/video_bitrate_allocator.h"
-#include "media/base/videosinkinterface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/utility/quality_scaler.h"
 #include "modules/video_coding/video_coding_impl.h"
@@ -66,16 +66,10 @@ class VideoStreamEncoder : public rtc::VideoSinkInterface<VideoFrame>,
     int fps = 0;
   };
 
-  // Downscale resolution at most 2 times for CPU reasons.
-  static const int kMaxCpuResolutionDowngrades = 2;
-  // Downscale framerate at most 4 times.
-  static const int kMaxCpuFramerateDowngrades = 4;
-
   VideoStreamEncoder(uint32_t number_of_cores,
                      SendStatisticsProxy* stats_proxy,
                      const VideoSendStream::Config::EncoderSettings& settings,
                      rtc::VideoSinkInterface<VideoFrame>* pre_encode_callback,
-                     EncodedFrameObserver* encoder_timing,
                      std::unique_ptr<OveruseFrameDetector> overuse_detector);
   ~VideoStreamEncoder();
 

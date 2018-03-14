@@ -117,6 +117,7 @@ rtc_executable("fake_polqa") {
   output_name = "py_quality_assessment/quality_assessment/fake_polqa"
   deps = [
     "../../../..:webrtc_common",
+    "../../../../rtc_base:checks",
     "../../../../rtc_base:rtc_base_approved",
   ]
 }
@@ -141,6 +142,7 @@ rtc_executable("apm_vad") {
     "../../../..:webrtc_common",
     "../../../../common_audio",
     "../../../../rtc_base:rtc_base_approved",
+    "../../../../system_wrappers:metrics_default",
   ]
 }
 

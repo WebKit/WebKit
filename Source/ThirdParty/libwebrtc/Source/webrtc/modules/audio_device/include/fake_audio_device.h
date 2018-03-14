@@ -41,7 +41,6 @@ class FakeAudioDeviceModule : public AudioDeviceModule {
   int32_t SetRecordingDevice(uint16_t index) override { return 0; }
   int32_t SetRecordingDevice(WindowsDeviceType device) override { return 0; }
   int32_t SetStereoRecording(bool enable) override { return 0; }
-  int32_t SetAGC(bool enable) override { return 0; }
   int32_t StopRecording() override { return 0; }
 
   int32_t Terminate() override { return 0; }
@@ -70,7 +69,6 @@ class FakeAudioDeviceModule : public AudioDeviceModule {
   bool Playing() const override { return false; }
   int32_t StartRecording() override { return 0; }
   bool Recording() const override { return false; }
-  bool AGC() const override { return true; }
   bool SpeakerIsInitialized() const override { return true; }
   bool MicrophoneIsInitialized() const override { return true; }
   int32_t SpeakerVolumeIsAvailable(bool* available) override { return 0; }

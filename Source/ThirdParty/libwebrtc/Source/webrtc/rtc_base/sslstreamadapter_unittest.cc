@@ -960,36 +960,6 @@ class SSLStreamAdapterTestDTLSCertChain : public SSLStreamAdapterTestDTLS {
   }
 };
 
-// Test fixture for certificate chaining. Server will push more than one
-// certificate.
-class SSLStreamAdapterTestDTLSCertChain : public SSLStreamAdapterTestDTLS {
- public:
-  SSLStreamAdapterTestDTLSCertChain() : SSLStreamAdapterTestDTLS("", ""){};
-  void SetUp() override {
-    CreateStreams();
-
-    client_ssl_.reset(rtc::SSLStreamAdapter::Create(client_stream_));
-    server_ssl_.reset(rtc::SSLStreamAdapter::Create(server_stream_));
-
-    // Set up the slots
-    client_ssl_->SignalEvent.connect(
-        reinterpret_cast<SSLStreamAdapterTestBase*>(this),
-        &SSLStreamAdapterTestBase::OnEvent);
-    server_ssl_->SignalEvent.connect(
-        reinterpret_cast<SSLStreamAdapterTestBase*>(this),
-        &SSLStreamAdapterTestBase::OnEvent);
-
-    if (!client_cert_pem_.empty() && !client_private_key_pem_.empty()) {
-      client_identity_ = rtc::SSLIdentity::FromPEMStrings(
-          client_private_key_pem_, client_cert_pem_);
-    } else {
-      client_identity_ = rtc::SSLIdentity::Generate("client", client_key_type_);
-    }
-
-    client_ssl_->SetIdentity(client_identity_);
-  }
-};
-
 // Basic tests: TLS
 
 // Test that we can make a handshake work
@@ -1011,6 +981,21 @@ TEST_P(SSLStreamAdapterTestTLS, GetPeerCertChainWithOneCertificate) {
 TEST_F(SSLStreamAdapterTestDTLSCertChain, TwoCertHandshake) {
   server_identity_ = rtc::SSLIdentity::FromPEMChainStrings(
       kRSA_PRIVATE_KEY_PEM, std::string(kCERT_PEM) + kCACert);
+  server_ssl_->SetIdentity(server_identity_);
+  TestHandshake();
+  std::unique_ptr<rtc::SSLCertChain> peer_cert_chain =
+      client_ssl_->GetPeerSSLCertChain();
+  ASSERT_NE(nullptr, peer_cert_chain);
+  ASSERT_EQ(2u, peer_cert_chain->GetSize());
+  EXPECT_EQ(kCERT_PEM, peer_cert_chain->Get(0).ToPEMString());
+  EXPECT_EQ(kCACert, peer_cert_chain->Get(1).ToPEMString());
+}
+
+TEST_F(SSLStreamAdapterTestDTLSCertChain, TwoCertHandshakeWithCopy) {
+  std::unique_ptr<rtc::SSLIdentity> identity(
+      rtc::SSLIdentity::FromPEMChainStrings(kRSA_PRIVATE_KEY_PEM,
+                                            std::string(kCERT_PEM) + kCACert));
+  server_identity_ = identity->GetReference();
   server_ssl_->SetIdentity(server_identity_);
   TestHandshake();
   std::unique_ptr<rtc::SSLCertChain> peer_cert_chain =

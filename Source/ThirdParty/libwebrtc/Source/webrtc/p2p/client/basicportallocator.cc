@@ -11,6 +11,7 @@
 #include "p2p/client/basicportallocator.h"
 
 #include <algorithm>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -99,8 +100,11 @@ const uint32_t DISABLE_ALL_PHASES =
 BasicPortAllocator::BasicPortAllocator(
     rtc::NetworkManager* network_manager,
     rtc::PacketSocketFactory* socket_factory,
-    webrtc::TurnCustomizer* customizer)
+    webrtc::TurnCustomizer* customizer,
+    RelayPortFactoryInterface* relay_port_factory)
     : network_manager_(network_manager), socket_factory_(socket_factory) {
+  InitRelayPortFactory(relay_port_factory);
+  RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(network_manager_ != nullptr);
   RTC_DCHECK(socket_factory_ != nullptr);
   SetConfiguration(ServerAddresses(), std::vector<RelayServerConfig>(),
@@ -108,16 +112,22 @@ BasicPortAllocator::BasicPortAllocator(
   Construct();
 }
 
-BasicPortAllocator::BasicPortAllocator(rtc::NetworkManager* network_manager)
+BasicPortAllocator::BasicPortAllocator(
+    rtc::NetworkManager* network_manager)
     : network_manager_(network_manager), socket_factory_(nullptr) {
+  InitRelayPortFactory(nullptr);
+  RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(network_manager_ != nullptr);
   Construct();
 }
 
-BasicPortAllocator::BasicPortAllocator(rtc::NetworkManager* network_manager,
-                                       rtc::PacketSocketFactory* socket_factory,
-                                       const ServerAddresses& stun_servers)
+BasicPortAllocator::BasicPortAllocator(
+    rtc::NetworkManager* network_manager,
+    rtc::PacketSocketFactory* socket_factory,
+    const ServerAddresses& stun_servers)
     : network_manager_(network_manager), socket_factory_(socket_factory) {
+  InitRelayPortFactory(nullptr);
+  RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(socket_factory_ != NULL);
   SetConfiguration(stun_servers, std::vector<RelayServerConfig>(), 0, false,
                    nullptr);
@@ -131,6 +141,9 @@ BasicPortAllocator::BasicPortAllocator(
     const rtc::SocketAddress& relay_address_tcp,
     const rtc::SocketAddress& relay_address_ssl)
     : network_manager_(network_manager), socket_factory_(NULL) {
+  InitRelayPortFactory(nullptr);
+  RTC_DCHECK(relay_port_factory_ != nullptr);
+  RTC_DCHECK(network_manager_ != nullptr);
   std::vector<RelayServerConfig> turn_servers;
   RelayServerConfig config(RELAY_GTURN);
   if (!relay_address_udp.IsNil()) {
@@ -201,6 +214,16 @@ void BasicPortAllocator::AddTurnServer(const RelayServerConfig& turn_server) {
   new_turn_servers.push_back(turn_server);
   SetConfiguration(stun_servers(), new_turn_servers, candidate_pool_size(),
                    prune_turn_ports(), turn_customizer());
+}
+
+void BasicPortAllocator::InitRelayPortFactory(
+    RelayPortFactoryInterface* relay_port_factory) {
+  if (relay_port_factory != nullptr) {
+    relay_port_factory_ = relay_port_factory;
+  } else {
+    default_relay_port_factory_.reset(new TurnPortFactory());
+    relay_port_factory_ = default_relay_port_factory_.get();
+  }
 }
 
 // BasicPortAllocatorSession
@@ -1106,7 +1129,7 @@ void AllocationSequence::Init() {
 
 void AllocationSequence::Clear() {
   udp_port_ = NULL;
-  turn_ports_.clear();
+  relay_ports_.clear();
 }
 
 void AllocationSequence::OnNetworkFailed() {
@@ -1386,8 +1409,6 @@ void AllocationSequence::CreateTurnPort(const RelayServerConfig& config) {
   PortList::const_iterator relay_port;
   for (relay_port = config.ports.begin();
        relay_port != config.ports.end(); ++relay_port) {
-    TurnPort* port = NULL;
-
     // Skip UDP connections to relay servers if it's disallowed.
     if (IsFlagSet(PORTALLOCATOR_DISABLE_UDP_RELAY) &&
         relay_port->proto == PROTO_UDP) {
@@ -1406,35 +1427,53 @@ void AllocationSequence::CreateTurnPort(const RelayServerConfig& config) {
       continue;
     }
 
+    CreateRelayPortArgs args;
+    args.network_thread = session_->network_thread();
+    args.socket_factory = session_->socket_factory();
+    args.network = network_;
+    args.username = session_->username();
+    args.password = session_->password();
+    args.server_address = &(*relay_port);
+    args.config = &config;
+    args.origin = session_->allocator()->origin();
+    args.turn_customizer = session_->allocator()->turn_customizer();
+
+    std::unique_ptr<cricket::Port> port;
     // Shared socket mode must be enabled only for UDP based ports. Hence
     // don't pass shared socket for ports which will create TCP sockets.
     // TODO(mallinath) - Enable shared socket mode for TURN ports. Disabled
     // due to webrtc bug https://code.google.com/p/webrtc/issues/detail?id=3537
     if (IsFlagSet(PORTALLOCATOR_ENABLE_SHARED_SOCKET) &&
         relay_port->proto == PROTO_UDP && udp_socket_) {
-      port = TurnPort::Create(session_->network_thread(),
-                              session_->socket_factory(),
-                              network_, udp_socket_.get(),
-                              session_->username(), session_->password(),
-                              *relay_port, config.credentials, config.priority,
-                              session_->allocator()->origin(),
-                              session_->allocator()->turn_customizer());
-      turn_ports_.push_back(port);
+      port = session_->allocator()->relay_port_factory()->Create(
+          args, udp_socket_.get());
+
+      if (!port) {
+        RTC_LOG(LS_WARNING)
+            << "Failed to create relay port with "
+            << args.server_address->address.ToString();
+        continue;
+      }
+
+      relay_ports_.push_back(port.get());
       // Listen to the port destroyed signal, to allow AllocationSequence to
       // remove entrt from it's map.
       port->SignalDestroyed.connect(this, &AllocationSequence::OnPortDestroyed);
     } else {
-      port = TurnPort::Create(
-          session_->network_thread(), session_->socket_factory(), network_,
-          session_->allocator()->min_port(), session_->allocator()->max_port(),
-          session_->username(), session_->password(), *relay_port,
-          config.credentials, config.priority, session_->allocator()->origin(),
-          config.tls_alpn_protocols, config.tls_elliptic_curves,
-          session_->allocator()->turn_customizer());
+      port = session_->allocator()->relay_port_factory()->Create(
+          args,
+          session_->allocator()->min_port(),
+          session_->allocator()->max_port());
+
+      if (!port) {
+        RTC_LOG(LS_WARNING)
+            << "Failed to create relay port with "
+            << args.server_address->address.ToString();
+        continue;
+      }
     }
     RTC_DCHECK(port != NULL);
-    port->SetTlsCertPolicy(config.tls_cert_policy);
-    session_->AddAllocatedPort(port, this, true);
+    session_->AddAllocatedPort(port.release(), this, true);
   }
 }
 
@@ -1452,8 +1491,8 @@ void AllocationSequence::OnReadPacket(
   // a STUN binding response, so we pass the message to TurnPort regardless of
   // the message type. The TurnPort will just ignore the message since it will
   // not find any request by transaction ID.
-  for (TurnPort* port : turn_ports_) {
-    if (port->server_address().address == remote_addr) {
+  for (auto* port : relay_ports_) {
+    if (port->CanHandleIncomingPacketsFrom(remote_addr)) {
       if (port->HandleIncomingPacket(socket, data, size, remote_addr,
                                      packet_time)) {
         return;
@@ -1482,9 +1521,9 @@ void AllocationSequence::OnPortDestroyed(PortInterface* port) {
     return;
   }
 
-  auto it = std::find(turn_ports_.begin(), turn_ports_.end(), port);
-  if (it != turn_ports_.end()) {
-    turn_ports_.erase(it);
+  auto it = std::find(relay_ports_.begin(), relay_ports_.end(), port);
+  if (it != relay_ports_.end()) {
+    relay_ports_.erase(it);
   } else {
     RTC_LOG(LS_ERROR) << "Unexpected OnPortDestroyed for nonexistent port.";
     RTC_NOTREACHED();

@@ -65,25 +65,35 @@ bool ReportBlock::Parse(const uint8_t* buffer, size_t length) {
 
 void ReportBlock::Create(uint8_t* buffer) const {
   // Runtime check should be done while setting cumulative_lost.
-  RTC_DCHECK_LT(cumulative_lost(), (1 << 24));  // Have only 3 bytes for it.
+  RTC_DCHECK_LT(cumulative_lost_signed(),
+                (1 << 23));  // Have only 3 bytes for it.
 
   ByteWriter<uint32_t>::WriteBigEndian(&buffer[0], source_ssrc());
   ByteWriter<uint8_t>::WriteBigEndian(&buffer[4], fraction_lost());
-  ByteWriter<uint32_t, 3>::WriteBigEndian(&buffer[5], cumulative_lost());
+  ByteWriter<int32_t, 3>::WriteBigEndian(&buffer[5], cumulative_lost_signed());
   ByteWriter<uint32_t>::WriteBigEndian(&buffer[8], extended_high_seq_num());
   ByteWriter<uint32_t>::WriteBigEndian(&buffer[12], jitter());
   ByteWriter<uint32_t>::WriteBigEndian(&buffer[16], last_sr());
   ByteWriter<uint32_t>::WriteBigEndian(&buffer[20], delay_since_last_sr());
 }
 
-bool ReportBlock::SetCumulativeLost(uint32_t cumulative_lost) {
-  if (cumulative_lost >= (1u << 24)) {  // Have only 3 bytes to store it.
+bool ReportBlock::SetCumulativeLost(int32_t cumulative_lost) {
+  // We have only 3 bytes to store it, and it's a signed value.
+  if (cumulative_lost >= (1 << 23) || cumulative_lost < -(1 << 23)) {
     RTC_LOG(LS_WARNING)
         << "Cumulative lost is too big to fit into Report Block";
     return false;
   }
   cumulative_lost_ = cumulative_lost;
   return true;
+}
+
+uint32_t ReportBlock::cumulative_lost() const {
+  if (cumulative_lost_ < 0) {
+    RTC_LOG(LS_VERBOSE) << "Ignoring negative value of cumulative_lost";
+    return 0;
+  }
+  return cumulative_lost_;
 }
 
 }  // namespace rtcp

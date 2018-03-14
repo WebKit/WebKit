@@ -50,19 +50,6 @@ typedef TypeForAdd<float> FloatForAdd;
 typedef TypeForAdd<int64_t> Int64ForAdd;
 typedef TypeForAdd<int> IntForAdd;
 
-StatsReport::Id GetTransportIdFromProxy(
-    const std::map<std::string, std::string>& map,
-    const std::string& proxy) {
-  RTC_DCHECK(!proxy.empty());
-  auto found = map.find(proxy);
-  if (found == map.end()) {
-    return StatsReport::Id();
-  }
-
-  return StatsReport::NewComponentId(
-      found->second, cricket::ICE_CANDIDATE_COMPONENT_RTP);
-}
-
 StatsReport* AddTrackReport(StatsCollection* reports,
                             const std::string& track_id) {
   // Adds an empty track report.
@@ -73,15 +60,22 @@ StatsReport* AddTrackReport(StatsCollection* reports,
   return report;
 }
 
+template <class Track>
+void CreateTrackReport(const Track* track,
+                       StatsCollection* reports,
+                       TrackIdMap* track_ids) {
+  const std::string& track_id = track->id();
+  StatsReport* report = AddTrackReport(reports, track_id);
+  RTC_DCHECK(report != nullptr);
+  (*track_ids)[track_id] = report;
+}
+
 template <class TrackVector>
 void CreateTrackReports(const TrackVector& tracks,
                         StatsCollection* reports,
                         TrackIdMap* track_ids) {
   for (const auto& track : tracks) {
-    const std::string& track_id = track->id();
-    StatsReport* report = AddTrackReport(reports, track_id);
-    RTC_DCHECK(report != nullptr);
-    (*track_ids)[track_id] = report;
+    CreateTrackReport(track.get(), reports, track_ids);
   }
 }
 
@@ -467,6 +461,18 @@ void StatsCollector::AddStream(MediaStreamInterface* stream) {
                                        &track_ids_);
 }
 
+void StatsCollector::AddTrack(MediaStreamTrackInterface* track) {
+  if (track->kind() == MediaStreamTrackInterface::kAudioKind) {
+    CreateTrackReport(static_cast<AudioTrackInterface*>(track), &reports_,
+                      &track_ids_);
+  } else if (track->kind() == MediaStreamTrackInterface::kVideoKind) {
+    CreateTrackReport(static_cast<VideoTrackInterface*>(track), &reports_,
+                      &track_ids_);
+  } else {
+    RTC_NOTREACHED() << "Illegal track kind";
+  }
+}
+
 void StatsCollector::AddLocalAudioTrack(AudioTrackInterface* audio_track,
                                         uint32_t ssrc) {
   RTC_DCHECK(pc_->signaling_thread()->IsCurrent());
@@ -744,14 +750,6 @@ void StatsCollector::ExtractSessionInfo() {
     return;
   }
 
-  // Store the proxy map away for use in SSRC reporting.
-  // TODO(tommi): This shouldn't be necessary if we post the stats back to the
-  // signaling thread after fetching them on the worker thread, then just use
-  // the proxy map directly from the session stats.
-  // As is, if GetStats() failed, we could be using old (incorrect?) proxy
-  // data.
-  proxy_to_transport_ = stats->proxy_to_transport;
-
   for (const auto& transport_iter : stats->transport_stats) {
     // Attempt to get a copy of the certificates from the transport and
     // expose them in stats reports.  All channels in a transport share the
@@ -858,13 +856,9 @@ void StatsCollector::ExtractVoiceInfo() {
   // results back to the signaling thread, where we can add data to the reports.
   rtc::Thread::ScopedDisallowBlockingCalls no_blocking_calls;
 
-  StatsReport::Id transport_id(GetTransportIdFromProxy(
-      proxy_to_transport_, pc_->voice_channel()->content_name()));
-  if (!transport_id.get()) {
-    RTC_LOG(LS_ERROR) << "Failed to get transport name for proxy "
-                      << pc_->voice_channel()->content_name();
-    return;
-  }
+  StatsReport::Id transport_id =
+      StatsReport::NewComponentId(pc_->voice_channel()->transport_name(),
+                                  cricket::ICE_CANDIDATE_COMPONENT_RTP);
 
   ExtractStatsFromList(voice_info.receivers, transport_id, this,
       StatsReport::kReceive);
@@ -878,9 +872,9 @@ void StatsCollector::ExtractVideoInfo(
     PeerConnectionInterface::StatsOutputLevel level) {
   RTC_DCHECK(pc_->signaling_thread()->IsCurrent());
 
-  if (!pc_->video_channel())
+  if (!pc_->video_channel()) {
     return;
-
+  }
   cricket::VideoMediaInfo video_info;
   if (!pc_->video_channel()->GetStats(&video_info)) {
     RTC_LOG(LS_ERROR) << "Failed to get video channel stats.";
@@ -891,13 +885,10 @@ void StatsCollector::ExtractVideoInfo(
   // results back to the signaling thread, where we can add data to the reports.
   rtc::Thread::ScopedDisallowBlockingCalls no_blocking_calls;
 
-  StatsReport::Id transport_id(GetTransportIdFromProxy(
-      proxy_to_transport_, pc_->video_channel()->content_name()));
-  if (!transport_id.get()) {
-    RTC_LOG(LS_ERROR) << "Failed to get transport name for proxy "
-                      << pc_->video_channel()->content_name();
-    return;
-  }
+  StatsReport::Id transport_id =
+      StatsReport::NewComponentId(pc_->video_channel()->transport_name(),
+                                  cricket::ICE_CANDIDATE_COMPONENT_RTP);
+
   ExtractStatsFromList(video_info.receivers, transport_id, this,
       StatsReport::kReceive);
   ExtractStatsFromList(video_info.senders, transport_id, this,

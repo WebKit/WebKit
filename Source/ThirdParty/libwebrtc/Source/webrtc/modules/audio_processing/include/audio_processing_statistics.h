@@ -48,7 +48,7 @@ struct AudioProcessingStats {
   // The instantaneous delay estimate produced in the AEC. The unit is in
   // milliseconds and the value is the instantaneous value at the time of the
   // call to |GetStatistics()|.
-  int delay_ms;
+  rtc::Optional<int32_t> delay_ms;
 };
 
 }  // namespace webrtc

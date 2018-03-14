@@ -496,7 +496,7 @@ AudioProcessingImplLockTest::AudioProcessingImplLockTest()
       render_thread_(RenderProcessorThreadFunc, this, "render"),
       capture_thread_(CaptureProcessorThreadFunc, this, "capture"),
       stats_thread_(StatsProcessorThreadFunc, this, "stats"),
-      apm_(AudioProcessingImpl::Create()),
+      apm_(AudioProcessingBuilder().Create()),
       render_thread_state_(kMaxFrameSize,
                            &rand_gen_,
                            &render_call_event_,

@@ -48,7 +48,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     rtc::scoped_refptr<AudioProcessing> audio_processing) {
   rtc::scoped_refptr<AudioProcessing> audio_processing_use = audio_processing;
   if (!audio_processing_use) {
-    audio_processing_use = AudioProcessing::Create();
+    audio_processing_use = AudioProcessingBuilder().Create();
   }
 
   std::unique_ptr<cricket::MediaEngineInterface> media_engine(
@@ -79,7 +79,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     rtc::scoped_refptr<AudioMixer> audio_mixer,
     rtc::scoped_refptr<AudioProcessing> audio_processing) {
   if (!audio_processing)
-    audio_processing = AudioProcessing::Create();
+    audio_processing = AudioProcessingBuilder().Create();
 
   std::unique_ptr<cricket::MediaEngineInterface> media_engine =
       cricket::WebRtcMediaEngineFactory::Create(

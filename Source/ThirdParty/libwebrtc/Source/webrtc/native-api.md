@@ -14,7 +14,8 @@ legacy API directories&mdash;but see the
 Legacy API directory                       | Including subdirectories?
 -------------------------------------------|--------------------------
 `common_audio/include`                     | No
-`media`                                    | No
+`media/base`                               | No
+`media/engine`                             | No
 `modules/audio_coding/include`             | No
 `modules/audio_device/include`             | No
 `modules/audio_processing/include`         | No
@@ -33,7 +34,6 @@ Legacy API directory                       | Including subdirectories?
 `pc`                                       | No
 `rtc_base`                                 | No
 `system_wrappers/include`                  | No
-`voice_engine/include`                     | No
 
 While the files, types, functions, macros, build targets, etc. in the
 API and legacy API directories will sometimes undergo incompatible

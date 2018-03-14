@@ -125,6 +125,9 @@ DEFINE_int(transport_seq_no, 5, "Extension ID for transport sequence number");
 DEFINE_bool(matlabplot,
             false,
             "Generates a matlab script for plotting the delay profile");
+DEFINE_bool(pythonplot,
+            false,
+            "Generates a python script for plotting the delay profile");
 DEFINE_bool(help, false, "Prints this message");
 
 // Maps a codec type to a printable name string.
@@ -171,7 +174,7 @@ std::string CodecName(NetEqDecoder codec) {
     case NetEqDecoder::kDecoderCNGswb48kHz:
       return "comfort noise (48 kHz)";
     default:
-      RTC_FATAL();
+      FATAL();
       return "undefined";
   }
 }
@@ -614,7 +617,7 @@ int RunTest(int argc, char* argv[]) {
 
   NetEqTest::Callbacks callbacks;
   std::unique_ptr<NetEqDelayAnalyzer> delay_analyzer;
-  if (FLAG_matlabplot) {
+  if (FLAG_matlabplot || FLAG_pythonplot) {
     delay_analyzer.reset(new NetEqDelayAnalyzer);
   }
 
@@ -636,6 +639,14 @@ int RunTest(int argc, char* argv[]) {
     std::cout << "Creating Matlab plot script " << matlab_script_name + ".m"
               << std::endl;
     delay_analyzer->CreateMatlabScript(matlab_script_name + ".m");
+  }
+  if (FLAG_pythonplot) {
+    auto python_script_name = output_file_name;
+    std::replace(python_script_name.begin(), python_script_name.end(), '.',
+                 '_');
+    std::cout << "Creating Python plot script " << python_script_name + ".py"
+              << std::endl;
+    delay_analyzer->CreatePythonScript(python_script_name + ".py");
   }
 
   printf("Simulation statistics:\n");
@@ -666,5 +677,5 @@ int RunTest(int argc, char* argv[]) {
 }  // namespace webrtc
 
 int main(int argc, char* argv[]) {
-  webrtc::test::RunTest(argc, argv);
+  return webrtc::test::RunTest(argc, argv);
 }

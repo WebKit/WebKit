@@ -39,9 +39,6 @@ extern const int ICE_CANDIDATE_COMPONENT_RTP;
 extern const int ICE_CANDIDATE_COMPONENT_RTCP;
 extern const int ICE_CANDIDATE_COMPONENT_DEFAULT;
 
-extern const char NS_JINGLE_RTP[];
-extern const char NS_JINGLE_DRAFT_SCTP[];
-
 // RFC 4145, SDP setup attribute values.
 extern const char CONNECTIONROLE_ACTIVE_STR[];
 extern const char CONNECTIONROLE_PASSIVE_STR[];

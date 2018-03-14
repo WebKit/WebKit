@@ -20,6 +20,7 @@ config("rtc_p2p_inherited_config") {
 }
 
 rtc_static_library("rtc_p2p") {
+  visibility = [ "*" ]
   sources = [
     "base/asyncstuntcpsocket.cc",
     "base/asyncstuntcpsocket.h",
@@ -33,8 +34,6 @@ rtc_static_library("rtc_p2p") {
     "base/dtlstransportinternal.h",
     "base/icetransportinternal.cc",
     "base/icetransportinternal.h",
-    "base/jseptransport.cc",
-    "base/jseptransport.h",
     "base/p2pconstants.cc",
     "base/p2pconstants.h",
     "base/p2ptransportchannel.cc",
@@ -58,8 +57,6 @@ rtc_static_library("rtc_p2p") {
     "base/relayport.h",
     "base/session.cc",
     "base/session.h",
-    "base/sessiondescription.cc",
-    "base/sessiondescription.h",
     "base/stun.cc",
     "base/stun.h",
     "base/stunport.cc",
@@ -81,8 +78,11 @@ rtc_static_library("rtc_p2p") {
     "base/udptransport.h",
     "client/basicportallocator.cc",
     "client/basicportallocator.h",
+    "client/relayportfactoryinterface.h",
     "client/socketmonitor.cc",
     "client/socketmonitor.h",
+    "client/turnportfactory.cc",
+    "client/turnportfactory.h",
   ]
 
   defines = []
@@ -91,7 +91,9 @@ rtc_static_library("rtc_p2p") {
     "../api:libjingle_peerconnection_api",
     "../api:optional",
     "../api:ortc_api",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base",
+    "../rtc_base:stringutils",
     "../system_wrappers:field_trial_api",
   ]
 
@@ -151,7 +153,6 @@ if (rtc_include_tests) {
     sources = [
       "base/asyncstuntcpsocket_unittest.cc",
       "base/dtlstransport_unittest.cc",
-      "base/jseptransport_unittest.cc",
       "base/p2ptransportchannel_unittest.cc",
       "base/packetlossestimator_unittest.cc",
       "base/port_unittest.cc",
@@ -175,9 +176,11 @@ if (rtc_include_tests) {
       ":rtc_p2p",
       "../api:fakemetricsobserver",
       "../api:ortc_api",
+      "../rtc_base:checks",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:stringutils",
       "../test:test_support",
       "//testing/gmock",
       "//testing/gtest",
@@ -191,6 +194,7 @@ if (rtc_include_tests) {
 }
 
 rtc_static_library("libstunprober") {
+  visibility = [ "*" ]
   sources = [
     "stunprober/stunprober.cc",
     "stunprober/stunprober.h",
@@ -199,6 +203,8 @@ rtc_static_library("libstunprober") {
   deps = [
     ":rtc_p2p",
     "..:webrtc_common",
+    "../:typedefs",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base",
   ]
 }
@@ -214,6 +220,7 @@ if (rtc_include_tests) {
       ":libstunprober",
       ":p2p_test_utils",
       ":rtc_p2p",
+      "../rtc_base:checks",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_tests_utils",
       "//testing/gmock",

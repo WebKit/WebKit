@@ -22,6 +22,7 @@
 #import "WebRTC/RTCVideoFrame.h"
 #import "WebRTC/RTCVideoFrameBuffer.h"
 #import "helpers.h"
+#import "scoped_cftyperef.h"
 
 #if defined(WEBRTC_IOS)
 #import "Common/RTCUIApplicationStatusObserver.h"
@@ -36,9 +37,13 @@ struct RTCFrameDecodeParams {
   int64_t timestamp;
 };
 
+@interface RTCVideoDecoderH264 ()
+- (void)setError:(OSStatus)error;
+@end
+
 // This is the callback function that VideoToolbox calls when decode is
 // complete.
-void decompressionOutputCallback(void *decoder,
+void decompressionOutputCallback(void *decoderRef,
                                  void *params,
                                  OSStatus status,
                                  VTDecodeInfoFlags infoFlags,
@@ -48,6 +53,8 @@ void decompressionOutputCallback(void *decoder,
   std::unique_ptr<RTCFrameDecodeParams> decodeParams(
       reinterpret_cast<RTCFrameDecodeParams *>(params));
   if (status != noErr) {
+    RTCVideoDecoderH264 *decoder = (__bridge RTCVideoDecoderH264 *)decoderRef;
+    [decoder setError:status];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
     return;
   }
@@ -66,12 +73,14 @@ void decompressionOutputCallback(void *decoder,
   CMVideoFormatDescriptionRef _videoFormat;
   VTDecompressionSessionRef _decompressionSession;
   RTCVideoDecoderCallback _callback;
+  OSStatus _error;
 }
 
 - (instancetype)init {
   if (self = [super init]) {
 #if defined(WEBRTC_IOS)
     [RTCUIApplicationStatusObserver prepareForUse];
+    _error = noErr;
 #endif
   }
 
@@ -91,9 +100,15 @@ void decompressionOutputCallback(void *decoder,
 - (NSInteger)decode:(RTCEncodedImage *)inputImage
           missingFrames:(BOOL)missingFrames
     fragmentationHeader:(RTCRtpFragmentationHeader *)fragmentationHeader
-      codecSpecificInfo:(__nullable id<RTCCodecSpecificInfo>)info
+      codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            renderTimeMs:(int64_t)renderTimeMs {
   RTC_DCHECK(inputImage.buffer);
+
+  if (_error != noErr) {
+    RTC_LOG(LS_WARNING) << "Last frame decode failed.";
+    _error = noErr;
+    return WEBRTC_VIDEO_CODEC_ERROR;
+  }
 
 #if defined(WEBRTC_IOS)
   if (![[RTCUIApplicationStatusObserver sharedInstance] isApplicationActive]) {
@@ -105,19 +120,22 @@ void decompressionOutputCallback(void *decoder,
     return WEBRTC_VIDEO_CODEC_NO_OUTPUT;
   }
 #endif
-  CMVideoFormatDescriptionRef inputFormat = nullptr;
   if (webrtc::H264AnnexBBufferHasVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
                                                         inputImage.buffer.length)) {
-    inputFormat = webrtc::CreateVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
-                                                       inputImage.buffer.length);
+    rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
+        rtc::ScopedCF(webrtc::CreateVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
+                                                           inputImage.buffer.length));
     if (inputFormat) {
       // Check if the video format has changed, and reinitialize decoder if
       // needed.
-      if (!CMFormatDescriptionEqual(inputFormat, _videoFormat)) {
-        [self setVideoFormat:inputFormat];
-        [self resetDecompressionSession];
+      if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
+        [self setVideoFormat:inputFormat.get()];
+
+        int resetDecompressionSessionError = [self resetDecompressionSession];
+        if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
+          return resetDecompressionSessionError;
+        }
       }
-      CFRelease(inputFormat);
     }
   }
   if (!_videoFormat) {
@@ -161,6 +179,10 @@ void decompressionOutputCallback(void *decoder,
 
 - (void)setCallback:(RTCVideoDecoderCallback)callback {
   _callback = callback;
+}
+
+- (void)setError:(OSStatus)error {
+  _error = error;
 }
 
 - (NSInteger)releaseDecoder {

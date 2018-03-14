@@ -132,7 +132,6 @@ AudioDeviceMac::AudioDeviceMac()
       _playing(false),
       _recIsInitialized(false),
       _playIsInitialized(false),
-      _AGC(false),
       _renderDeviceIsAlive(1),
       _captureDeviceIsAlive(1),
       _twoDevices(true),
@@ -149,8 +148,7 @@ AudioDeviceMac::AudioDeviceMac()
       _paRenderBuffer(NULL),
       _captureBufSizeSamples(0),
       _renderBufSizeSamples(0),
-      prev_key_state_(),
-      get_mic_volume_counter_ms_(0) {
+      prev_key_state_() {
   RTC_LOG(LS_INFO) << __FUNCTION__ << " created";
 
   RTC_DCHECK(&_stopEvent != NULL);
@@ -336,8 +334,6 @@ AudioDeviceGeneric::InitStatus AudioDeviceMac::Init() {
       _macBookPro = true;
     }
   }
-
-  get_mic_volume_counter_ms_ = 0;
 
   _initialized = true;
 
@@ -731,16 +727,6 @@ int32_t AudioDeviceMac::StereoPlayout(bool& enabled) const {
     enabled = false;
 
   return 0;
-}
-
-int32_t AudioDeviceMac::SetAGC(bool enable) {
-  _AGC = enable;
-
-  return 0;
-}
-
-bool AudioDeviceMac::AGC() const {
-  return _AGC;
 }
 
 int32_t AudioDeviceMac::MicrophoneVolumeIsAvailable(bool& available) {
@@ -2494,8 +2480,6 @@ bool AudioDeviceMac::CaptureWorkerThread() {
 
   // TODO(xians): what if the returned size is incorrect?
   if (size == ENGINE_REC_BUF_SIZE_IN_SAMPLES) {
-    uint32_t currentMicLevel(0);
-    uint32_t newMicLevel(0);
     int32_t msecOnPlaySide;
     int32_t msecOnRecordSide;
 
@@ -2515,43 +2499,12 @@ bool AudioDeviceMac::CaptureWorkerThread() {
     // store the recorded buffer (no action will be taken if the
     // #recorded samples is not a full buffer)
     _ptrAudioBuffer->SetRecordedBuffer((int8_t*)&recordBuffer, (uint32_t)size);
-
-    if (AGC()) {
-      // Use mod to ensure we check the volume on the first pass.
-      if (get_mic_volume_counter_ms_ % kGetMicVolumeIntervalMs == 0) {
-        get_mic_volume_counter_ms_ = 0;
-        // store current mic level in the audio buffer if AGC is enabled
-        if (MicrophoneVolume(currentMicLevel) == 0) {
-          // this call does not affect the actual microphone volume
-          _ptrAudioBuffer->SetCurrentMicLevel(currentMicLevel);
-        }
-      }
-      get_mic_volume_counter_ms_ += kBufferSizeMs;
-    }
-
-    _ptrAudioBuffer->SetVQEData(msecOnPlaySide, msecOnRecordSide, 0);
-
+    _ptrAudioBuffer->SetVQEData(msecOnPlaySide, msecOnRecordSide);
     _ptrAudioBuffer->SetTypingStatus(KeyPressed());
 
     // deliver recorded samples at specified sample rate, mic level etc.
     // to the observer using callback
     _ptrAudioBuffer->DeliverRecordedData();
-
-    if (AGC()) {
-      newMicLevel = _ptrAudioBuffer->NewMicLevel();
-      if (newMicLevel != 0) {
-        // The VQE will only deliver non-zero microphone levels when
-        // a change is needed.
-        // Set this new mic level (received from the observer as return
-        // value in the callback).
-        RTC_LOG(LS_VERBOSE) << "AGC change of volume: old=" << currentMicLevel
-                            << " => new=" << newMicLevel;
-        if (SetMicrophoneVolume(newMicLevel) == -1) {
-          RTC_LOG(LS_WARNING)
-              << "the required modification of the microphone volume failed";
-        }
-      }
-    }
   }
 
   return true;

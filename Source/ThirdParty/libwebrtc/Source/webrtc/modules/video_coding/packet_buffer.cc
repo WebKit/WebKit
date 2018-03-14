@@ -162,8 +162,11 @@ void PacketBuffer::ClearTo(uint16_t seq_num) {
   first_seq_num_ = seq_num;
 
   is_cleared_to_first_seq_num_ = true;
-  missing_packets_.erase(missing_packets_.begin(),
-                         missing_packets_.upper_bound(seq_num));
+  auto clear_to_it = missing_packets_.upper_bound(seq_num);
+  if (clear_to_it != missing_packets_.begin()) {
+    --clear_to_it;
+    missing_packets_.erase(missing_packets_.begin(), clear_to_it);
+  }
 }
 
 void PacketBuffer::Clear() {

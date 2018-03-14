@@ -18,7 +18,7 @@
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/platform_thread.h"
 
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
 #include <X11/Xlib.h>
 #endif
 #include <alsa/asoundlib.h>
@@ -78,10 +78,6 @@ public:
     int32_t StartRecording() override;
     int32_t StopRecording() override;
     bool Recording() const override;
-
-    // Microphone Automatic Gain Control (AGC)
-    int32_t SetAGC(bool enable) override;
-    bool AGC() const override;
 
     // Audio mixer initialization
     int32_t InitSpeaker() override;
@@ -191,13 +187,12 @@ private:
     bool _playing;
     bool _recIsInitialized;
     bool _playIsInitialized;
-    bool _AGC;
 
     snd_pcm_sframes_t _recordingDelay;
     snd_pcm_sframes_t _playoutDelay;
 
     char _oldKeyState[32];
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
     Display* _XDisplay;
 #endif
 };

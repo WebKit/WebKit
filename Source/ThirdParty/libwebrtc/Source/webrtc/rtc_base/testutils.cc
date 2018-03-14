@@ -84,33 +84,5 @@ void StreamSource::Close() {
   state_ = SS_CLOSED;
 }
 
-SocketTestClient::SocketTestClient() {
-  Init(nullptr, AF_INET);
-}
-
-SocketTestClient::SocketTestClient(AsyncSocket* socket) {
-  Init(socket, socket->GetLocalAddress().family());
-}
-
-SocketTestClient::SocketTestClient(const SocketAddress& address) {
-  Init(nullptr, address.family());
-  socket_->Connect(address);
-}
-
-SocketTestClient::~SocketTestClient() = default;
-
-SocketTestServer::SocketTestServer(const SocketAddress& address)
-    : socket_(
-          Thread::Current()->socketserver()->CreateAsyncSocket(address.family(),
-                                                               SOCK_STREAM)) {
-  socket_->SignalReadEvent.connect(this, &SocketTestServer::OnReadEvent);
-  socket_->Bind(address);
-  socket_->Listen(5);
-}
-
-SocketTestServer::~SocketTestServer() {
-  clear();
-}
-
 }  // namespace testing
 }  // namespace webrtc

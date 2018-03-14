@@ -15,6 +15,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "modules/video_coding/include/video_codec_interface.h"
@@ -30,7 +31,8 @@ enum AlphaCodecStream {
 class StereoEncoderAdapter : public VideoEncoder {
  public:
   // |factory| is not owned and expected to outlive this class' lifetime.
-  explicit StereoEncoderAdapter(VideoEncoderFactory* factory);
+  explicit StereoEncoderAdapter(VideoEncoderFactory* factory,
+                                const SdpVideoFormat& associated_format);
   virtual ~StereoEncoderAdapter();
 
   // Implements VideoEncoder
@@ -58,6 +60,7 @@ class StereoEncoderAdapter : public VideoEncoder {
   class AdapterEncodedImageCallback;
 
   VideoEncoderFactory* const factory_;
+  const SdpVideoFormat associated_format_;
   std::vector<std::unique_ptr<VideoEncoder>> encoders_;
   std::vector<std::unique_ptr<AdapterEncodedImageCallback>> adapter_callbacks_;
   EncodedImageCallback* encoded_complete_callback_;

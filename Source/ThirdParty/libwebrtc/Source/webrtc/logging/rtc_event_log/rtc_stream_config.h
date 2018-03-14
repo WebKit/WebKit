@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "api/rtp_headers.h"
 #include "api/rtpparameters.h"
 #include "common_types.h"  // NOLINT(build/include)
 

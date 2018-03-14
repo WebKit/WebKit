@@ -55,12 +55,13 @@ void WriteEchoLikelihoodGraphFileHeader(std::ofstream* output_file) {
 
 void WriteEchoLikelihoodGraphFileFooter(std::ofstream* output_file) {
   (*output_file) << "])" << std::endl
-                 << "x = np.arange(len(y))*.01" << std::endl
-                 << "plt.plot(x, y)" << std::endl
-                 << "plt.ylabel('Echo likelihood')" << std::endl
-                 << "plt.xlabel('Time (s)')" << std::endl
-                 << "plt.ylim([0,1])" << std::endl
-                 << "plt.show()" << std::endl;
+                 << "if __name__ == '__main__':" << std::endl
+                 << "  x = np.arange(len(y))*.01" << std::endl
+                 << "  plt.plot(x, y)" << std::endl
+                 << "  plt.ylabel('Echo likelihood')" << std::endl
+                 << "  plt.xlabel('Time (s)')" << std::endl
+                 << "  plt.ylim([0,1])" << std::endl
+                 << "  plt.show()" << std::endl;
 }
 
 }  // namespace
@@ -347,8 +348,9 @@ void AudioProcessingSimulator::CreateAudioProcessor() {
     apm_config.residual_echo_detector.enabled = *settings_.use_ed;
   }
 
-  ap_.reset(AudioProcessing::Create(config, nullptr,
-                                    std::move(echo_control_factory), nullptr));
+  ap_.reset(AudioProcessingBuilder()
+                .SetEchoControlFactory(std::move(echo_control_factory))
+                .Create(config));
   RTC_CHECK(ap_);
 
   ap_->ApplyConfig(apm_config);

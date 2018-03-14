@@ -22,6 +22,9 @@
 #include "rtc_base/helpers.h"
 #include "rtc_base/sslidentity.h"
 #include "rtc_base/thread.h"
+#include "test/gtest.h"
+
+using webrtc::SdpType;
 
 static const int kTimeout = 100;
 static const char kIceUfrag1[] = "TESTICEUFRAG0001";
@@ -30,6 +33,7 @@ static const char kIceUfrag2[] = "TESTICEUFRAG0002";
 static const char kIcePwd2[] = "TESTICEPWD00000000000002";
 static const char kIceUfrag3[] = "TESTICEUFRAG0003";
 static const char kIcePwd3[] = "TESTICEPWD00000000000003";
+static const bool kRtcpMuxEnabled = true;
 
 namespace cricket {
 
@@ -111,9 +115,9 @@ class TransportControllerTest : public testing::Test,
                                     CONNECTIONROLE_ACTPASS, nullptr);
     std::string err;
     transport_controller_->SetLocalTransportDescription("audio", local_desc,
-                                                        CA_OFFER, &err);
+                                                        SdpType::kOffer, &err);
     transport_controller_->SetLocalTransportDescription("video", local_desc,
-                                                        CA_OFFER, &err);
+                                                        SdpType::kOffer, &err);
     transport_controller_->MaybeStartGathering();
     transport1->fake_ice_transport()->SignalCandidateGathered(
         transport1->fake_ice_transport(), CreateCandidate(1));
@@ -297,9 +301,9 @@ TEST_F(TransportControllerTest, TestGetSslRole) {
                                    CONNECTIONROLE_ACTIVE, fingerprint.get());
   std::string err;
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, cricket::CA_OFFER, &err));
+      "audio", local_desc, SdpType::kOffer, &err));
   EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, cricket::CA_ANSWER, &err));
+      "audio", remote_desc, SdpType::kAnswer, &err));
 
   // Finally we can get the role. Should be "server" since the remote
   // endpoint's role was "active".
@@ -369,7 +373,7 @@ TEST_F(TransportControllerTest, TestSetLocalTransportDescription) {
                                   CONNECTIONROLE_ACTPASS, nullptr);
   std::string err;
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_OFFER, &err));
+      "audio", local_desc, SdpType::kOffer, &err));
   // Check that ICE ufrag and pwd were propagated to transport.
   EXPECT_EQ(kIceUfrag1, transport->fake_ice_transport()->ice_ufrag());
   EXPECT_EQ(kIcePwd1, transport->fake_ice_transport()->ice_pwd());
@@ -388,7 +392,7 @@ TEST_F(TransportControllerTest, TestSetRemoteTransportDescription) {
                                    CONNECTIONROLE_ACTPASS, nullptr);
   std::string err;
   EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   // Check that ICE ufrag and pwd were propagated to transport.
   EXPECT_EQ(kIceUfrag1, transport->fake_ice_transport()->remote_ice_ufrag());
   EXPECT_EQ(kIcePwd1, transport->fake_ice_transport()->remote_ice_pwd());
@@ -417,14 +421,14 @@ TEST_F(TransportControllerTest, TestReadyForRemoteCandidates) {
                                    kIcePwd1, ICEMODE_FULL,
                                    CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   EXPECT_FALSE(transport_controller_->ReadyForRemoteCandidates("audio"));
 
   TransportDescription local_desc(std::vector<std::string>(), kIceUfrag2,
                                   kIcePwd2, ICEMODE_FULL,
                                   CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_ANSWER, &err));
+      "audio", local_desc, SdpType::kAnswer, &err));
   EXPECT_TRUE(transport_controller_->ReadyForRemoteCandidates("audio"));
 }
 
@@ -693,7 +697,7 @@ TEST_F(TransportControllerTest, TestSignalCandidatesGathered) {
                                   CONNECTIONROLE_ACTPASS, nullptr);
   std::string err;
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_OFFER, &err));
+      "audio", local_desc, SdpType::kOffer, &err));
   transport_controller_->MaybeStartGathering();
 
   transport->fake_ice_transport()->SignalCandidateGathered(
@@ -740,12 +744,12 @@ TEST_F(TransportControllerTest, IceRoleRedeterminedOnIceRestartByDefault) {
                                    kIcePwd1, ICEMODE_FULL,
                                    CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   TransportDescription local_desc(std::vector<std::string>(), kIceUfrag2,
                                   kIcePwd2, ICEMODE_FULL,
                                   CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_ANSWER, &err));
+      "audio", local_desc, SdpType::kAnswer, &err));
   EXPECT_EQ(ICEROLE_CONTROLLED, transport->fake_ice_transport()->GetIceRole());
 
   // The endpoint that initiated an ICE restart should take the controlling
@@ -754,7 +758,7 @@ TEST_F(TransportControllerTest, IceRoleRedeterminedOnIceRestartByDefault) {
                                         kIcePwd3, ICEMODE_FULL,
                                         CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", ice_restart_desc, CA_OFFER, &err));
+      "audio", ice_restart_desc, SdpType::kOffer, &err));
   EXPECT_EQ(ICEROLE_CONTROLLING, transport->fake_ice_transport()->GetIceRole());
 }
 
@@ -773,12 +777,12 @@ TEST_F(TransportControllerTest, IceRoleNotRedetermined) {
                                    kIcePwd1, ICEMODE_FULL,
                                    CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   TransportDescription local_desc(std::vector<std::string>(), kIceUfrag2,
                                   kIcePwd2, ICEMODE_FULL,
                                   CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_ANSWER, &err));
+      "audio", local_desc, SdpType::kAnswer, &err));
   EXPECT_EQ(ICEROLE_CONTROLLED, transport->fake_ice_transport()->GetIceRole());
 
   // The endpoint that initiated an ICE restart should keep the existing role.
@@ -786,7 +790,7 @@ TEST_F(TransportControllerTest, IceRoleNotRedetermined) {
                                         kIcePwd3, ICEMODE_FULL,
                                         CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", ice_restart_desc, CA_OFFER, &err));
+      "audio", ice_restart_desc, SdpType::kOffer, &err));
   EXPECT_EQ(ICEROLE_CONTROLLED, transport->fake_ice_transport()->GetIceRole());
 }
 
@@ -801,10 +805,10 @@ TEST_F(TransportControllerTest, TestSetRemoteIceLiteInOffer) {
                                    kIcePwd1, ICEMODE_LITE,
                                    CONNECTIONROLE_ACTPASS, nullptr);
   EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   TransportDescription local_desc(kIceUfrag1, kIcePwd1);
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_ANSWER, nullptr));
+      "audio", local_desc, SdpType::kAnswer, nullptr));
 
   EXPECT_EQ(ICEROLE_CONTROLLING, transport->fake_ice_transport()->GetIceRole());
   EXPECT_EQ(ICEMODE_LITE, transport->fake_ice_transport()->remote_ice_mode());
@@ -819,7 +823,7 @@ TEST_F(TransportControllerTest, TestSetRemoteIceLiteInAnswer) {
   transport_controller_->SetIceRole(ICEROLE_CONTROLLING);
   TransportDescription local_desc(kIceUfrag1, kIcePwd1);
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_OFFER, nullptr));
+      "audio", local_desc, SdpType::kOffer, nullptr));
   EXPECT_EQ(ICEROLE_CONTROLLING, transport->fake_ice_transport()->GetIceRole());
   // Transports will be created in ICEFULL_MODE.
   EXPECT_EQ(ICEMODE_FULL, transport->fake_ice_transport()->remote_ice_mode());
@@ -827,7 +831,7 @@ TEST_F(TransportControllerTest, TestSetRemoteIceLiteInAnswer) {
                                    kIcePwd1, ICEMODE_LITE, CONNECTIONROLE_NONE,
                                    nullptr);
   ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_ANSWER, nullptr));
+      "audio", remote_desc, SdpType::kAnswer, nullptr));
   EXPECT_EQ(ICEROLE_CONTROLLING, transport->fake_ice_transport()->GetIceRole());
   // After receiving remote description with ICEMODE_LITE, transport should
   // have mode set to ICEMODE_LITE.
@@ -849,18 +853,18 @@ TEST_F(TransportControllerTest,
                                    CONNECTIONROLE_ACTPASS, nullptr);
   TransportDescription local_desc(kIceUfrag1, kIcePwd1);
   ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_ANSWER, nullptr));
+      "audio", local_desc, SdpType::kAnswer, nullptr));
   // Subsequent ICE restart offer/answer.
   remote_desc.ice_ufrag = kIceUfrag2;
   remote_desc.ice_pwd = kIcePwd2;
   local_desc.ice_ufrag = kIceUfrag2;
   local_desc.ice_pwd = kIcePwd2;
   ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_OFFER, &err));
+      "audio", remote_desc, SdpType::kOffer, &err));
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_ANSWER, nullptr));
+      "audio", local_desc, SdpType::kAnswer, nullptr));
 
   EXPECT_EQ(ICEROLE_CONTROLLING, transport->fake_ice_transport()->GetIceRole());
 }
@@ -875,13 +879,13 @@ TEST_F(TransportControllerTest, NeedsIceRestart) {
   TransportDescription local_desc(kIceUfrag1, kIcePwd1);
   TransportDescription remote_desc(kIceUfrag1, kIcePwd1);
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", local_desc, CA_OFFER, nullptr));
+      "audio", local_desc, SdpType::kOffer, nullptr));
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "video", local_desc, CA_OFFER, nullptr));
+      "video", local_desc, SdpType::kOffer, nullptr));
   ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "audio", remote_desc, CA_ANSWER, nullptr));
+      "audio", remote_desc, SdpType::kAnswer, nullptr));
   ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
-      "video", remote_desc, CA_ANSWER, nullptr));
+      "video", remote_desc, SdpType::kAnswer, nullptr));
 
   // Initially NeedsIceRestart should return false.
   EXPECT_FALSE(transport_controller_->NeedsIceRestart("audio"));
@@ -898,12 +902,118 @@ TEST_F(TransportControllerTest, NeedsIceRestart) {
   // Do ICE restart but only for audio.
   TransportDescription ice_restart_local_desc(kIceUfrag2, kIcePwd2);
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "audio", ice_restart_local_desc, CA_OFFER, nullptr));
+      "audio", ice_restart_local_desc, SdpType::kOffer, nullptr));
   ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
-      "video", local_desc, CA_OFFER, nullptr));
+      "video", local_desc, SdpType::kOffer, nullptr));
   // NeedsIceRestart should still be true for video.
   EXPECT_FALSE(transport_controller_->NeedsIceRestart("audio"));
   EXPECT_TRUE(transport_controller_->NeedsIceRestart("video"));
 }
+
+enum class RTPTransportType { kSdes, kDtlsSrtp };
+std::ostream& operator<<(std::ostream& out, RTPTransportType value) {
+  switch (value) {
+    case RTPTransportType::kSdes:
+      return out << "SDES";
+    case RTPTransportType::kDtlsSrtp:
+      return out << "DTLS-SRTP";
+  }
+  return out;
+}
+
+// Tests the TransportController can correctly create and destroy the RTP
+// transports.
+class TransportControllerRTPTransportTest
+    : public TransportControllerTest,
+      public ::testing::WithParamInterface<RTPTransportType> {
+ protected:
+  // Helper function used to create an RTP layer transport.
+  webrtc::RtpTransportInternal* CreateRtpTransport(
+      const std::string& transport_name) {
+    RTPTransportType type = GetParam();
+    switch (type) {
+      case RTPTransportType::kSdes:
+        return transport_controller_->CreateSdesTransport(transport_name,
+                                                          kRtcpMuxEnabled);
+      case RTPTransportType::kDtlsSrtp:
+        return transport_controller_->CreateDtlsSrtpTransport(transport_name,
+                                                              kRtcpMuxEnabled);
+    }
+    return nullptr;
+  }
+};
+
+// Tests that creating transports with the same name will cause the
+// second call to re-use the transport created in the first call.
+TEST_P(TransportControllerRTPTransportTest, CreateTransportsWithReference) {
+  const std::string transport_name = "transport";
+  webrtc::RtpTransportInternal* transport1 = CreateRtpTransport(transport_name);
+  webrtc::RtpTransportInternal* transport2 = CreateRtpTransport(transport_name);
+  EXPECT_NE(nullptr, transport1);
+  EXPECT_NE(nullptr, transport2);
+  // The TransportController is expected to return the existing one when using
+  // the same transport name.
+  EXPECT_EQ(transport1, transport2);
+  transport_controller_->DestroyTransport(transport_name);
+  transport_controller_->DestroyTransport(transport_name);
+}
+
+// Tests that creating different type of RTP transports with same name is not
+// allowed.
+TEST_P(TransportControllerRTPTransportTest,
+       CreateDifferentTypeOfTransportsWithSameName) {
+  const std::string transport_name = "transport";
+  webrtc::RtpTransportInternal* transport1 = CreateRtpTransport(transport_name);
+  EXPECT_NE(nullptr, transport1);
+  RTPTransportType type = GetParam();
+  switch (type) {
+    case RTPTransportType::kSdes:
+      EXPECT_EQ(nullptr, transport_controller_->CreateDtlsSrtpTransport(
+                             transport_name, kRtcpMuxEnabled));
+      break;
+    case RTPTransportType::kDtlsSrtp:
+      EXPECT_EQ(nullptr, transport_controller_->CreateSdesTransport(
+                             transport_name, kRtcpMuxEnabled));
+      break;
+    default:
+      ASSERT_TRUE(false);
+  }
+  transport_controller_->DestroyTransport(transport_name);
+}
+
+// Tests the RTP transport is not actually destroyed if references still exist.
+TEST_P(TransportControllerRTPTransportTest, DestroyTransportWithReference) {
+  const std::string transport_name = "transport";
+  webrtc::RtpTransportInternal* transport1 = CreateRtpTransport(transport_name);
+  webrtc::RtpTransportInternal* transport2 = CreateRtpTransport(transport_name);
+  EXPECT_NE(nullptr, transport1);
+  EXPECT_NE(nullptr, transport2);
+  transport_controller_->DestroyTransport(transport_name);
+  EXPECT_NE(nullptr, transport1->rtp_packet_transport());
+  EXPECT_EQ(nullptr, transport1->rtcp_packet_transport());
+  transport_controller_->DestroyTransport(transport_name);
+}
+
+// Tests the RTP is actually destroyed if there is no reference to it.
+// Disabled because of sometimes not working on Windows.
+// https://bugs.webrtc.org/34942
+TEST_P(TransportControllerRTPTransportTest,
+       DISABLED_DestroyTransportWithNoReference) {
+  const std::string transport_name = "transport";
+  webrtc::RtpTransportInternal* transport1 = CreateRtpTransport(transport_name);
+  webrtc::RtpTransportInternal* transport2 = CreateRtpTransport(transport_name);
+  EXPECT_NE(nullptr, transport1);
+  EXPECT_NE(nullptr, transport2);
+  transport_controller_->DestroyTransport(transport_name);
+  transport_controller_->DestroyTransport(transport_name);
+#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+  EXPECT_DEATH(transport1->IsWritable(false), /*error_message=*/"");
+#endif
+}
+
+INSTANTIATE_TEST_CASE_P(TransportControllerTest,
+                        TransportControllerRTPTransportTest,
+                        ::testing::Values(RTPTransportType::kSdes,
+                                          RTPTransportType::kDtlsSrtp));
 
 }  // namespace cricket

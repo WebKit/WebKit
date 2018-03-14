@@ -22,11 +22,10 @@
 #import "WebRTC/RTCVideoCodec.h"
 #import "WebRTC/RTCVideoFrame.h"
 #import "WebRTC/RTCVideoFrameBuffer.h"
-#import "helpers.h"
-#include "libyuv/convert_from.h"
 #include "common_video/h264/h264_bitstream_parser.h"
 #include "common_video/h264/profile_level_id.h"
 #include "common_video/include/bitrate_adjuster.h"
+#import "helpers.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/buffer.h"
@@ -34,6 +33,7 @@
 #include "rtc_base/timeutils.h"
 #include "sdk/objc/Framework/Classes/VideoToolbox/nalu_rewriter.h"
 #include "system_wrappers/include/clock.h"
+#include "third_party/libyuv/include/libyuv/convert_from.h"
 
 @interface RTCVideoEncoderH264 ()
 
@@ -340,7 +340,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 }
 
 - (NSInteger)encode:(RTCVideoFrame *)frame
-    codecSpecificInfo:(id<RTCCodecSpecificInfo>)codecSpecificInfo
+    codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)codecSpecificInfo
            frameTypes:(NSArray<NSNumber *> *)frameTypes {
   RTC_DCHECK_EQ(frame.width, _width);
   RTC_DCHECK_EQ(frame.height, _height);
@@ -502,11 +502,10 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 
   // If we're capturing native frames in another pixel format than the compression session is
   // configured with, make sure the compression session is reset using the correct pixel format.
+  // If we're capturing non-native frames and the compression session is configured with a non-NV12
+  // format, reset it to NV12.
   OSType framePixelFormat = kNV12PixelFormat;
-  if (pixelBufferPool && [frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
-    RTCCVPixelBuffer *rtcPixelBuffer = (RTCCVPixelBuffer *)frame.buffer;
-    framePixelFormat = CVPixelBufferGetPixelFormatType(rtcPixelBuffer.pixelBuffer);
-
+  if (pixelBufferPool) {
     // The pool attribute `kCVPixelBufferPixelFormatTypeKey` can contain either an array of pixel
     // formats or a single pixel format.
     NSDictionary *poolAttributes =
@@ -518,6 +517,11 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
       compressionSessionPixelFormats = (NSArray *)pixelFormats;
     } else {
       compressionSessionPixelFormats = @[ (NSNumber *)pixelFormats ];
+    }
+
+    if ([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
+      RTCCVPixelBuffer *rtcPixelBuffer = (RTCCVPixelBuffer *)frame.buffer;
+      framePixelFormat = CVPixelBufferGetPixelFormatType(rtcPixelBuffer.pixelBuffer);
     }
 
     if (![compressionSessionPixelFormats

@@ -14,11 +14,11 @@
 #include <algorithm>
 
 #include "api/video/i420_buffer.h"
-#include "libyuv/convert.h"
-#include "libyuv/planar_functions.h"
-#include "libyuv/scale.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/keep_ref_until_done.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
+#include "third_party/libyuv/include/libyuv/planar_functions.h"
+#include "third_party/libyuv/include/libyuv/scale.h"
 
 namespace webrtc {
 

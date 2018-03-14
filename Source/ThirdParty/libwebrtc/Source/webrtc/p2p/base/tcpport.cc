@@ -66,6 +66,8 @@
 
 #include "p2p/base/tcpport.h"
 
+#include <vector>
+
 #include "p2p/base/common.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -370,7 +372,7 @@ int TCPConnection::Send(const void* data, size_t size,
   // Note that this is important to put this after the previous check to give
   // the connection a chance to reconnect.
   if (pretending_to_be_writable_ || write_state() != STATE_WRITABLE) {
-    // TODO: Should STATE_WRITE_TIMEOUT return a non-blocking error?
+    // TODO(?): Should STATE_WRITE_TIMEOUT return a non-blocking error?
     error_ = ENOTCONN;
     return SOCKET_ERROR;
   }

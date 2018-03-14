@@ -180,7 +180,7 @@ int32_t WebRtcAecm_Init(void *aecmInst, int32_t sampFreq)
     aecm->knownDelay = 0;
     aecm->lastDelayDiff = 0;
 
-    memset(&aecm->farendOld[0][0], 0, 160);
+    memset(&aecm->farendOld, 0, sizeof(aecm->farendOld));
 
     // Default settings.
     aecConfig.cngMode = AecmTrue;

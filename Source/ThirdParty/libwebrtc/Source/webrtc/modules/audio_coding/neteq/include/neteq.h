@@ -18,6 +18,7 @@
 
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/optional.h"
+#include "api/rtp_headers.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/neteq/neteq_decoder_enum.h"
 #include "rtc_base/constructormagic.h"
@@ -208,7 +209,7 @@ class NetEq {
 
   // Returns the current target delay in ms. This includes any extra delay
   // requested through SetMinimumDelay.
-  virtual int TargetDelayMs() = 0;
+  virtual int TargetDelayMs() const = 0;
 
   // Returns the current total delay (packet buffer and sync buffer) in ms.
   virtual int CurrentDelayMs() const = 0;

@@ -67,22 +67,6 @@ bool UnixFilesystem::DeleteFile(const Pathname &filename) {
   return ::unlink(filename.pathname().c_str()) == 0;
 }
 
-std::string UnixFilesystem::TempFilename(const Pathname &dir,
-                                         const std::string &prefix) {
-  int len = dir.pathname().size() + prefix.size() + 2 + 6;
-  char *tempname = new char[len];
-
-  snprintf(tempname, len, "%s/%sXXXXXX", dir.pathname().c_str(),
-           prefix.c_str());
-  int fd = ::mkstemp(tempname);
-  if (fd != -1)
-    ::close(fd);
-  std::string ret(tempname);
-  delete[] tempname;
-
-  return ret;
-}
-
 bool UnixFilesystem::MoveFile(const Pathname &old_path,
                               const Pathname &new_path) {
   if (!IsFile(old_path)) {
@@ -117,18 +101,6 @@ bool UnixFilesystem::GetFileSize(const Pathname& pathname, size_t *size) {
     return false;
   *size = st.st_size;
   return true;
-}
-
-char* UnixFilesystem::CopyString(const std::string& str) {
-  size_t size = str.length() + 1;
-
-  char* buf = new char[size];
-  if (!buf) {
-    return nullptr;
-  }
-
-  strcpyn(buf, size, str.c_str());
-  return buf;
 }
 
 }  // namespace rtc

@@ -138,7 +138,7 @@ promise_test((test) => {
     }).then(() => {
         return getStatsType(firstConnection);
     }).then((types) => {
-        assert_array_equals(types, ["candidate-pair", "certificate", "outbound-rtp"]);
+        assert_array_equals(types, ["candidate-pair", "certificate", "outbound-rtp", "track"]);
     }).then(() => {
         return getStatsType(secondConnection);
     }).then((types) => {

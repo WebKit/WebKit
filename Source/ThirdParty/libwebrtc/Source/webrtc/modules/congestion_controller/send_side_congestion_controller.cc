@@ -22,11 +22,13 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/ptr_util.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/field_trial.h"
+#include "system_wrappers/include/runtime_enabled_features.h"
 
 namespace webrtc {
 namespace {
@@ -92,6 +94,13 @@ void SortPacketFeedbackVector(
   std::sort(input->begin(), input->end(), PacketFeedbackComparator());
 }
 
+bool IsPacerPushbackExperimentEnabled() {
+  return webrtc::field_trial::IsEnabled(kPacerPushbackExperiment) || (
+      !webrtc::field_trial::IsDisabled(kPacerPushbackExperiment) &&
+      webrtc::runtime_enabled_features::IsFeatureEnabled(
+          webrtc::runtime_enabled_features::kDualStreamModeFeatureName));
+}
+
 }  // namespace
 
 SendSideCongestionController::SendSideCongestionController(
@@ -123,7 +132,7 @@ SendSideCongestionController::SendSideCongestionController(
       accepted_queue_ms_(kDefaultAcceptedQueueMs),
       was_in_alr_(false),
       pacer_pushback_experiment_(
-          webrtc::field_trial::IsEnabled(kPacerPushbackExperiment)) {
+          IsPacerPushbackExperimentEnabled()) {
   delay_based_bwe_->SetMinBitrate(min_bitrate_bps_);
   if (in_cwnd_experiment_ &&
       !ReadCwndExperimentParameter(&accepted_queue_ms_)) {
@@ -258,7 +267,7 @@ void SendSideCongestionController::SignalNetworkState(NetworkState state) {
 void SendSideCongestionController::SetTransportOverhead(
     size_t transport_overhead_bytes_per_packet) {
   transport_feedback_adapter_.SetTransportOverhead(
-      transport_overhead_bytes_per_packet);
+      rtc::dchecked_cast<int>(transport_overhead_bytes_per_packet));
 }
 
 void SendSideCongestionController::OnSentPacket(

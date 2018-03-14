@@ -19,6 +19,7 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/format_macros.h"
+#include "rtc_base/platform_thread.h"
 #include "rtc_base/timeutils.h"
 
 #define TAG "OpenSLESRecorder"
@@ -51,7 +52,7 @@ OpenSLESRecorder::OpenSLESRecorder(AudioManager* audio_manager)
       simple_buffer_queue_(nullptr),
       buffer_index_(0),
       last_rec_time_(0) {
-  ALOGD("ctor%s", GetThreadInfo().c_str());
+  ALOGD("ctor[tid=%d]", rtc::CurrentThreadId());
   // Detach from this thread since we want to use the checker to verify calls
   // from the internal  audio thread.
   thread_checker_opensles_.DetachFromThread();
@@ -63,7 +64,7 @@ OpenSLESRecorder::OpenSLESRecorder(AudioManager* audio_manager)
 }
 
 OpenSLESRecorder::~OpenSLESRecorder() {
-  ALOGD("dtor%s", GetThreadInfo().c_str());
+  ALOGD("dtor[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   Terminate();
   DestroyAudioRecorder();
@@ -74,7 +75,7 @@ OpenSLESRecorder::~OpenSLESRecorder() {
 }
 
 int OpenSLESRecorder::Init() {
-  ALOGD("Init%s", GetThreadInfo().c_str());
+  ALOGD("Init[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   if (audio_parameters_.channels() == 2) {
     // TODO(henrika): FineAudioBuffer needs more work to support stereo.
@@ -85,14 +86,14 @@ int OpenSLESRecorder::Init() {
 }
 
 int OpenSLESRecorder::Terminate() {
-  ALOGD("Terminate%s", GetThreadInfo().c_str());
+  ALOGD("Terminate[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   StopRecording();
   return 0;
 }
 
 int OpenSLESRecorder::InitRecording() {
-  ALOGD("InitRecording%s", GetThreadInfo().c_str());
+  ALOGD("InitRecording[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(!initialized_);
   RTC_DCHECK(!recording_);
@@ -107,7 +108,7 @@ int OpenSLESRecorder::InitRecording() {
 }
 
 int OpenSLESRecorder::StartRecording() {
-  ALOGD("StartRecording%s", GetThreadInfo().c_str());
+  ALOGD("StartRecording[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(initialized_);
   RTC_DCHECK(!recording_);
@@ -144,7 +145,7 @@ int OpenSLESRecorder::StartRecording() {
 }
 
 int OpenSLESRecorder::StopRecording() {
-  ALOGD("StopRecording%s", GetThreadInfo().c_str());
+  ALOGD("StopRecording[tid=%d]", rtc::CurrentThreadId());
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   if (!initialized_ || !recording_) {
     return 0;

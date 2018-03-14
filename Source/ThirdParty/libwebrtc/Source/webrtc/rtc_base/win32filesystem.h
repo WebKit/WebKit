@@ -33,14 +33,6 @@ class Win32Filesystem : public FilesystemInterface {
   // Returns true if a file exists at path
   bool IsFile(const Pathname& path) override;
 
-  // All of the following functions set pathname and return true if successful.
-  // Returned paths always include a trailing backslash.
-  // If create is true, the path will be recursively created.
-  // If append is non-null, it will be appended (and possibly created).
-
-  std::string TempFilename(const Pathname& dir,
-                           const std::string& prefix) override;
-
   bool GetFileSize(const Pathname& path, size_t* size) override;
 };
 

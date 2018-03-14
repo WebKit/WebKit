@@ -30,51 +30,57 @@ std::string ProduceDebugText(int sample_rate_hz) {
   return ss.str();
 }
 
-constexpr size_t kDownSamplingFactor = 4;
-constexpr size_t kNumMatchedFilters = 4;
-
 }  // namespace
 
 // Verifies that the buffer overflow is correctly reported.
 TEST(RenderDelayBuffer, BufferOverflow) {
+  const EchoCanceller3Config config;
   for (auto rate : {8000, 16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-        NumBandsForRate(rate), kDownSamplingFactor,
-        GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-        GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+    std::unique_ptr<RenderDelayBuffer> delay_buffer(
+        RenderDelayBuffer::Create(config, NumBandsForRate(rate)));
     std::vector<std::vector<float>> block_to_insert(
         NumBandsForRate(rate), std::vector<float>(kBlockSize, 0.f));
-    for (size_t k = 0; k < kMaxApiCallsJitterBlocks; ++k) {
-      EXPECT_TRUE(delay_buffer->Insert(block_to_insert));
+    for (size_t k = 0; k < 10; ++k) {
+      EXPECT_EQ(RenderDelayBuffer::BufferingEvent::kNone,
+                delay_buffer->Insert(block_to_insert));
     }
-    EXPECT_FALSE(delay_buffer->Insert(block_to_insert));
+    bool overrun_occurred = false;
+    for (size_t k = 0; k < 1000; ++k) {
+      RenderDelayBuffer::BufferingEvent event =
+          delay_buffer->Insert(block_to_insert);
+      overrun_occurred =
+          overrun_occurred ||
+          RenderDelayBuffer::BufferingEvent::kRenderOverrun == event;
+    }
+
+    EXPECT_TRUE(overrun_occurred);
   }
 }
 
 // Verifies that the check for available block works.
 TEST(RenderDelayBuffer, AvailableBlock) {
   constexpr size_t kNumBands = 1;
-  std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-      kNumBands, kDownSamplingFactor,
-      GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-      GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+  std::unique_ptr<RenderDelayBuffer> delay_buffer(
+      RenderDelayBuffer::Create(EchoCanceller3Config(), kNumBands));
   std::vector<std::vector<float>> input_block(
       kNumBands, std::vector<float>(kBlockSize, 1.f));
-  EXPECT_TRUE(delay_buffer->Insert(input_block));
-  delay_buffer->UpdateBuffers();
+  EXPECT_EQ(RenderDelayBuffer::BufferingEvent::kNone,
+            delay_buffer->Insert(input_block));
+  delay_buffer->PrepareCaptureProcessing();
 }
 
 // Verifies the SetDelay method.
 TEST(RenderDelayBuffer, SetDelay) {
-  std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-      1, kDownSamplingFactor,
-      GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-      GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
-  EXPECT_EQ(0u, delay_buffer->Delay());
-  for (size_t delay = 0; delay < 20; ++delay) {
+  EchoCanceller3Config config;
+  std::unique_ptr<RenderDelayBuffer> delay_buffer(
+      RenderDelayBuffer::Create(config, 1));
+  ASSERT_FALSE(delay_buffer->Delay());
+  for (size_t delay = config.delay.min_echo_path_delay_blocks + 1; delay < 20;
+       ++delay) {
     delay_buffer->SetDelay(delay);
-    EXPECT_EQ(delay, delay_buffer->Delay());
+    ASSERT_TRUE(delay_buffer->Delay());
+    EXPECT_EQ(delay, *delay_buffer->Delay());
   }
 }
 
@@ -84,10 +90,8 @@ TEST(RenderDelayBuffer, SetDelay) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.
 TEST(RenderDelayBuffer, DISABLED_WrongDelay) {
-  std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-      3, kDownSamplingFactor,
-      GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-      GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+  std::unique_ptr<RenderDelayBuffer> delay_buffer(
+      RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
   EXPECT_DEATH(delay_buffer->SetDelay(21), "");
 }
 
@@ -96,9 +100,7 @@ TEST(RenderDelayBuffer, WrongNumberOfBands) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-        NumBandsForRate(rate), kDownSamplingFactor,
-        GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-        GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+        EchoCanceller3Config(), NumBandsForRate(rate)));
     std::vector<std::vector<float>> block_to_insert(
         NumBandsForRate(rate < 48000 ? rate + 16000 : 16000),
         std::vector<float>(kBlockSize, 0.f));
@@ -110,10 +112,8 @@ TEST(RenderDelayBuffer, WrongNumberOfBands) {
 TEST(RenderDelayBuffer, WrongBlockLength) {
   for (auto rate : {8000, 16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-        3, kDownSamplingFactor,
-        GetDownSampledBufferSize(kDownSamplingFactor, kNumMatchedFilters),
-        GetRenderDelayBufferSize(kDownSamplingFactor, kNumMatchedFilters)));
+    std::unique_ptr<RenderDelayBuffer> delay_buffer(
+        RenderDelayBuffer::Create(EchoCanceller3Config(), 3));
     std::vector<std::vector<float>> block_to_insert(
         NumBandsForRate(rate), std::vector<float>(kBlockSize - 1, 0.f));
     EXPECT_DEATH(delay_buffer->Insert(block_to_insert), "");

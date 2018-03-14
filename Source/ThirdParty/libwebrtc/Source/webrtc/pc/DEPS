@@ -2,7 +2,7 @@ include_rules = [
   "+third_party/libsrtp",
   "+api",
   "+call",
-  "+common_video/h264",
+  "+common_video",
   "+logging/rtc_event_log",
   "+logging/rtc_event_log",
   "+media",

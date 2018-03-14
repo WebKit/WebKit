@@ -34,7 +34,7 @@
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/criticalsection.h"
-#include "rtc_base/md5digest.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/refcountedobject.h"
@@ -1121,7 +1121,8 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
         packet_count_(0),
         payload_type_(0),
         last_sequence_number_(0),
-        last_timestamp_(0) {}
+        last_timestamp_(0),
+        payload_checksum_(rtc::MessageDigestFactory::Create(rtc::DIGEST_MD5)) {}
 
   // Sets up the test::AcmSendTest object. Returns true on success, otherwise
   // false.
@@ -1196,9 +1197,10 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
     EXPECT_EQ(audio_checksum_ref, checksum_string);
 
     // Extract and verify the payload checksum.
-    char checksum_result[rtc::Md5Digest::kSize];
-    payload_checksum_.Finish(checksum_result, rtc::Md5Digest::kSize);
-    checksum_string = rtc::hex_encode(checksum_result, rtc::Md5Digest::kSize);
+    rtc::Buffer checksum_result(payload_checksum_->Size());
+    payload_checksum_->Finish(checksum_result.data(), checksum_result.size());
+    checksum_string =
+        rtc::hex_encode(checksum_result.data<char>(), checksum_result.size());
     EXPECT_EQ(payload_checksum_ref, checksum_string);
 
     // Verify number of packets produced.
@@ -1238,7 +1240,8 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
     last_sequence_number_ = packet->header().sequenceNumber;
     last_timestamp_ = packet->header().timestamp;
     // Update the checksum.
-    payload_checksum_.Update(packet->payload(), packet->payload_length_bytes());
+    payload_checksum_->Update(packet->payload(),
+                              packet->payload_length_bytes());
   }
 
   void SetUpTest(const char* codec_name,
@@ -1270,7 +1273,7 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
   uint8_t payload_type_;
   uint16_t last_sequence_number_;
   uint32_t last_timestamp_;
-  rtc::Md5Digest payload_checksum_;
+  std::unique_ptr<rtc::MessageDigest> payload_checksum_;
 };
 
 class AcmSenderBitExactnessNewApi : public AcmSenderBitExactnessOldApi {};

@@ -25,6 +25,8 @@ namespace webrtc {
 // FftData type.
 class Aec3Fft {
  public:
+  enum class Window { kRectangular, kHanning };
+
   Aec3Fft() = default;
   // Computes the FFT. Note that both the input and output are modified.
   void Fft(std::array<float, kFftLength>* x, FftData* X) const {
@@ -40,8 +42,11 @@ class Aec3Fft {
     ooura_fft_.InverseFft(x->data());
   }
 
-  // Pads the input with kFftLengthBy2 initial zeros before computing the Fft.
-  void ZeroPaddedFft(rtc::ArrayView<const float> x, FftData* X) const;
+  // Windows the input using a Hanning window, and then adds padding of
+  // kFftLengthBy2 initial zeros before computing the Fft.
+  void ZeroPaddedFft(rtc::ArrayView<const float> x,
+                     Window window,
+                     FftData* X) const;
 
   // Concatenates the kFftLengthBy2 values long x and x_old before computing the
   // Fft. After that, x is copied to x_old.

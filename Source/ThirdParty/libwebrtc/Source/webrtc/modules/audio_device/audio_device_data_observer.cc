@@ -165,8 +165,6 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
   int32_t StartRecording() override { return impl_->StartRecording(); }
   int32_t StopRecording() override { return impl_->StopRecording(); }
   bool Recording() const override { return impl_->Recording(); }
-  int32_t SetAGC(bool enable) override { return impl_->SetAGC(enable); }
-  bool AGC() const override { return impl_->AGC(); }
   int32_t InitSpeaker() override { return impl_->InitSpeaker(); }
   bool SpeakerIsInitialized() const override {
     return impl_->SpeakerIsInitialized();

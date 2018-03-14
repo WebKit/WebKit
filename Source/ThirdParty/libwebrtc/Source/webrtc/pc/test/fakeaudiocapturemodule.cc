@@ -233,16 +233,6 @@ bool FakeAudioCaptureModule::Recording() const {
   return recording_;
 }
 
-int32_t FakeAudioCaptureModule::SetAGC(bool /*enable*/) {
-  // No AGC but not needed since audio is pregenerated. Return success.
-  return 0;
-}
-
-bool FakeAudioCaptureModule::AGC() const {
-  RTC_NOTREACHED();
-  return 0;
-}
-
 int32_t FakeAudioCaptureModule::InitSpeaker() {
   // No speaker, just playing from file. Return success.
   return 0;

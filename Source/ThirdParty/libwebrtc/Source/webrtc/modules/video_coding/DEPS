@@ -2,8 +2,10 @@ include_rules = [
   "+vpx",
   "+call",
   "+common_video",
+  "+experiments",
   "+system_wrappers",
   "+rtc_tools",
+  "+third_party/libyuv",
 ]
 
 specific_include_rules = {

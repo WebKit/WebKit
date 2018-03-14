@@ -1,4 +1,4 @@
-/*
+  /*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -101,10 +101,6 @@ class AudioDeviceModule : public rtc::RefCountInterface {
   virtual int32_t StopRecording() = 0;
   virtual bool Recording() const = 0;
 
-  // Microphone Automatic Gain Control (AGC)
-  virtual int32_t SetAGC(bool enable) = 0;
-  virtual bool AGC() const = 0;
-
   // Audio mixer initialization
   virtual int32_t InitSpeaker() = 0;
   virtual bool SpeakerIsInitialized() const = 0;
@@ -142,30 +138,9 @@ class AudioDeviceModule : public rtc::RefCountInterface {
   virtual int32_t StereoRecordingIsAvailable(bool* available) const = 0;
   virtual int32_t SetStereoRecording(bool enable) = 0;
   virtual int32_t StereoRecording(bool* enabled) const = 0;
-  // TODO(bugs.webrtc.org/7306): deprecated.
-  virtual int32_t SetRecordingChannel(const ChannelType) { return -1; }
-  virtual int32_t RecordingChannel(ChannelType*) const { return -1; }
 
   // Playout delay
   virtual int32_t PlayoutDelay(uint16_t* delayMS) const = 0;
-
-  // TODO(bugs.webrtc.org/7306): deprecated (to be removed).
-  virtual int32_t SetRecordingSampleRate(const uint32_t) {
-    return -1;
-  }
-  virtual int32_t RecordingSampleRate(uint32_t*) const {
-    return -1;
-  }
-  virtual int32_t SetPlayoutSampleRate(const uint32_t) {
-    return -1;
-  }
-  virtual int32_t PlayoutSampleRate(uint32_t*) const {
-    return -1;
-  }
-
-  // TODO(bugs.webrtc.org/7306): deprecated (to be removed).
-  virtual int32_t SetLoudspeakerStatus(bool) { return -1; }
-  virtual int32_t GetLoudspeakerStatus(bool*) const { return -1; }
 
   // Only supported on Android.
   virtual bool BuiltInAECIsAvailable() const = 0;

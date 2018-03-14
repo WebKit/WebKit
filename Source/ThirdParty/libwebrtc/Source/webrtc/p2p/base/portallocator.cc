@@ -9,6 +9,9 @@
  */
 
 #include "p2p/base/portallocator.h"
+
+#include <utility>
+
 #include "rtc_base/checks.h"
 
 namespace cricket {

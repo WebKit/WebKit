@@ -20,6 +20,10 @@
 #include <sys/syscall.h>
 #endif
 
+#if defined(WEBRTC_FUCHSIA)
+#include <zircon/process.h>
+#endif
+
 namespace rtc {
 
 PlatformThreadId CurrentThreadId() {
@@ -31,8 +35,10 @@ PlatformThreadId CurrentThreadId() {
   ret = pthread_mach_thread_np(pthread_self());
 #elif defined(WEBRTC_ANDROID)
   ret = gettid();
+#elif defined(WEBRTC_FUCHSIA)
+  ret = zx_thread_self();
 #elif defined(WEBRTC_LINUX)
-  ret =  syscall(__NR_gettid);
+  ret = syscall(__NR_gettid);
 #else
   // Default implementation for nacl and solaris.
   ret = reinterpret_cast<pid_t>(pthread_self());

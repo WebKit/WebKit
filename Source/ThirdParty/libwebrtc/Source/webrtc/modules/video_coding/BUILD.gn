@@ -9,6 +9,7 @@
 import("../../webrtc.gni")
 
 rtc_static_library("video_coding") {
+  visibility = [ "*" ]
   sources = [
     "codec_database.cc",
     "codec_database.h",
@@ -36,8 +37,6 @@ rtc_static_library("video_coding") {
     "histogram.cc",
     "histogram.h",
     "include/video_codec_initializer.h",
-    "include/video_coding.h",
-    "include/video_coding_defines.h",
     "inter_frame_delay.cc",
     "inter_frame_delay.h",
     "internal_defines.h",
@@ -90,28 +89,53 @@ rtc_static_library("video_coding") {
 
   deps = [
     ":codec_globals_headers",
+    ":video_codec_interface",
     ":video_coding_utility",
     ":webrtc_h264",
     ":webrtc_i420",
     ":webrtc_stereo",
     ":webrtc_vp8",
+    ":webrtc_vp8_helpers",
     ":webrtc_vp9",
     "..:module_api",
     "..:module_api_public",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../api:optional",
+    "../../api:video_frame_api",
     "../../api:video_frame_api_i420",
+    "../../api/video_codecs:video_codecs_api",
     "../../call:video_stream_api",
     "../../common_video",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_numerics",
     "../../rtc_base:rtc_task_queue",
     "../../rtc_base:sequenced_task_checker",
+    "../../rtc_base/experiments:alr_experiment",
     "../../system_wrappers",
-    "../pacing",
-    "../rtp_rtcp:rtp_rtcp",
+    "../../system_wrappers:field_trial_api",
+    "../../system_wrappers:metrics_api",
+    "../rtp_rtcp:rtp_rtcp_format",
     "../utility:utility",
+  ]
+}
+
+rtc_source_set("video_codec_interface") {
+  visibility = [ "*" ]
+  sources = [
+    "include/video_codec_interface.h",
+    "include/video_coding_defines.h",
+    "include/video_error_codes.h",
+  ]
+  deps = [
+    "..:module_api",
+    "../..:typedefs",
+    "../..:webrtc_common",
+    "../../api:video_frame_api",
+    "../../api/video_codecs:video_codecs_api",
+    "../../common_video:common_video",
   ]
 }
 
@@ -122,8 +146,10 @@ rtc_source_set("mock_headers") {
     "include/mock/mock_video_codec_interface.h",
   ]
   deps = [
+    ":video_codec_interface",
     ":video_coding_utility",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../test:test_support",
   ]
 }
@@ -139,6 +165,7 @@ rtc_source_set("codec_globals_headers") {
 }
 
 rtc_source_set("video_coding_utility") {
+  visibility = [ "*" ]
   sources = [
     "codecs/interface/video_codec_interface.h",
     "codecs/interface/video_error_codes.h",
@@ -164,21 +191,26 @@ rtc_source_set("video_coding_utility") {
   }
 
   deps = [
+    ":video_codec_interface",
     "..:module_api",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../api:optional",
     "../../api/video_codecs:video_codecs_api",
     "../../common_video",
-    "../../modules/rtp_rtcp:rtp_rtcp",
+    "../../modules/rtp_rtcp",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_numerics",
     "../../rtc_base:rtc_task_queue",
     "../../rtc_base:sequenced_task_checker",
     "../../system_wrappers",
+    "../rtp_rtcp:rtp_rtcp_format",
   ]
 }
 
 rtc_static_library("webrtc_h264") {
+  visibility = [ "*" ]
   sources = [
     "codecs/h264/h264.cc",
     "codecs/h264/include/h264.h",
@@ -191,12 +223,15 @@ rtc_static_library("webrtc_h264") {
 
   defines = []
   deps = [
+    ":video_codec_interface",
     ":video_coding_utility",
     "../../api:video_frame_api_i420",
     "../../api/video_codecs:video_codecs_api",
+    "../../media:rtc_h264_profile_id",
     "../../media:rtc_media_base",
-    "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base",
+    "../../system_wrappers:metrics_api",
   ]
 
   if (rtc_use_h264) {
@@ -212,14 +247,23 @@ rtc_static_library("webrtc_h264") {
     ]
     deps += [
       "../../common_video",
-      "../../media:rtc_media_base",
       "//third_party/ffmpeg:ffmpeg",
       "//third_party/openh264:encoder",
     ]
+
+    # TODO(bugs.webrtc.org/8745): stop using av_lockmgr_register
+    if (!is_win) {
+      cflags = [ "-Wno-deprecated-declarations" ]
+    }
+
+    if (!build_with_mozilla) {
+      deps += [ "../../media:rtc_media_base" ]
+    }
   }
 }
 
 rtc_static_library("webrtc_i420") {
+  visibility = [ "*" ]
   sources = [
     "codecs/i420/i420.cc",
     "codecs/i420/include/i420.h",
@@ -231,12 +275,16 @@ rtc_static_library("webrtc_i420") {
   }
 
   deps = [
+    ":video_codec_interface",
     ":video_coding_utility",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../api:video_frame_api_i420",
     "../../common_video:common_video",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
+    "//third_party/libyuv",
   ]
 }
 
@@ -254,29 +302,54 @@ rtc_static_library("webrtc_stereo") {
   }
 
   deps = [
+    ":video_codec_interface",
     ":video_coding_utility",
     "..:module_api",
     "../..:webrtc_common",
+    "../../api:video_frame_api",
     "../../api:video_frame_api_i420",
     "../../api/video_codecs:video_codecs_api",
     "../../common_video:common_video",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_base",
     "../../system_wrappers",
   ]
 }
 
+# This target includes VP8 files that may be used for any VP8 codec, internal SW or external HW.
+rtc_source_set("webrtc_vp8_helpers") {
+  sources = [
+    "codecs/vp8/include/vp8_common_types.h",
+    "codecs/vp8/screenshare_layers.h",
+    "codecs/vp8/simulcast_rate_allocator.h",
+    "codecs/vp8/temporal_layers.h",
+  ]
+
+  deps = [
+    ":video_coding_utility",
+    "..:module_api",
+    "../..:webrtc_common",
+    "../../:typedefs",
+    "../../api/video_codecs:video_codecs_api",
+    "../../common_video",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../system_wrappers",
+    "../../system_wrappers:field_trial_api",
+    "../../system_wrappers:metrics_api",
+  ]
+}
+
+# This target includes the internal SW codec.
 rtc_static_library("webrtc_vp8") {
+  visibility = [ "*" ]
   sources = [
     "codecs/vp8/default_temporal_layers.cc",
     "codecs/vp8/default_temporal_layers.h",
     "codecs/vp8/include/vp8.h",
     "codecs/vp8/include/vp8_common_types.h",
     "codecs/vp8/screenshare_layers.cc",
-    "codecs/vp8/screenshare_layers.h",
     "codecs/vp8/simulcast_rate_allocator.cc",
-    "codecs/vp8/simulcast_rate_allocator.h",
     "codecs/vp8/temporal_layers.cc",
-    "codecs/vp8/temporal_layers.h",
     "codecs/vp8/vp8_impl.cc",
     "codecs/vp8/vp8_impl.h",
   ]
@@ -290,16 +363,22 @@ rtc_static_library("webrtc_vp8") {
   }
 
   deps = [
+    ":video_codec_interface",
     ":video_coding_utility",
+    ":webrtc_vp8_helpers",
     "..:module_api",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../api:optional",
-    "../../api/video_codecs:video_codecs_api",
+    "../../api:video_frame_api",
     "../../common_video",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_numerics",
-    "../../rtc_base:sequenced_task_checker",
     "../../system_wrappers",
+    "../../system_wrappers:field_trial_api",
+    "../../system_wrappers:metrics_api",
+    "//third_party/libyuv",
   ]
   if (rtc_build_libvpx) {
     deps += [ rtc_libvpx_dir ]
@@ -307,6 +386,7 @@ rtc_static_library("webrtc_vp8") {
 }
 
 rtc_static_library("webrtc_vp9") {
+  visibility = [ "*" ]
   if (rtc_libvpx_build_vp9) {
     sources = [
       "codecs/vp9/include/vp9.h",
@@ -329,10 +409,12 @@ rtc_static_library("webrtc_vp9") {
   }
 
   deps = [
+    ":video_codec_interface",
     ":video_coding_utility",
     "..:module_api",
     "../../common_video",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base",
     "../../system_wrappers",
   ]
   if (rtc_build_libvpx) {
@@ -352,6 +434,7 @@ if (rtc_include_tests) {
         "../../api/video_codecs:video_codecs_api",
         "../../media:rtc_audio_video",
         "../../modules:module_api",
+        "../../rtc_base:rtc_base_approved",
         "../../sdk:common_objc",
         "../../sdk:peerconnection_objc",
         "../../sdk:peerconnectionfactory_objc",
@@ -379,11 +462,14 @@ if (rtc_include_tests) {
 
     deps = [
       ":mock_headers",
+      ":video_codec_interface",
       ":video_coding",
       ":webrtc_vp8",
+      ":webrtc_vp8_helpers",
       "../../api:video_frame_api",
       "../../api:video_frame_api_i420",
       "../../common_video:common_video",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
     ]
@@ -412,17 +498,22 @@ if (rtc_include_tests) {
 
     deps = [
       ":codec_globals_headers",
+      ":video_codec_interface",
       ":video_coding",
       ":video_coding_utility",
       ":webrtc_vp8",
+      ":webrtc_vp8_helpers",
       "../..:webrtc_common",
+      "../../:typedefs",
+      "../../api:video_frame_api",
       "../../api:video_frame_api_i420",
       "../../api/video_codecs:video_codecs_api",
       "../../common_video:common_video",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../rtc_base:sequenced_task_checker",
-      "../../system_wrappers:system_wrappers",
+      "../../system_wrappers",
       "../../test:test_support",
       "../../test:video_test_common",
       "../../test:video_test_support",
@@ -462,22 +553,28 @@ if (rtc_include_tests) {
     ]
 
     deps = [
+      ":video_codec_interface",
       ":video_codecs_test_framework",
       ":video_coding",
       ":video_coding_utility",
       ":webrtc_h264",
       ":webrtc_stereo",
       ":webrtc_vp8",
+      ":webrtc_vp8_helpers",
       ":webrtc_vp9",
       "../..:webrtc_common",
       "../../api:mock_video_codec_factory",
       "../../api:optional",
       "../../api:video_frame_api",
       "../../api:video_frame_api_i420",
+      "../../api/video_codecs:video_codecs_api",
       "../../common_video",
       "../../media:rtc_audio_video",
+      "../../media:rtc_h264_profile_id",
+      "../../media:rtc_internal_video_codecs",
       "../../media:rtc_media_base",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_tests_utils",
       "../../system_wrappers",
       "../../test:field_trial",
@@ -574,29 +671,35 @@ if (rtc_include_tests) {
     deps = [
       ":mock_headers",
       ":simulcast_test_utility",
+      ":video_codec_interface",
       ":video_codecs_test_framework",
       ":video_coding",
       ":video_coding_utility",
       ":webrtc_h264",
       ":webrtc_vp8",
+      ":webrtc_vp8_helpers",
       ":webrtc_vp9",
       "..:module_api",
       "../..:webrtc_common",
+      "../../:typedefs",
       "../../api:video_frame_api",
       "../../api:video_frame_api_i420",
       "../../api/video_codecs:video_codecs_api",
       "../../common_video:common_video",
+      "../../rtc_base:checks",
       "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_numerics",
       "../../rtc_base:rtc_task_queue",
+      "../../system_wrappers",
+      "../../system_wrappers:field_trial_api",
+      "../../system_wrappers:metrics_api",
       "../../system_wrappers:metrics_default",
-      "../../system_wrappers:system_wrappers",
       "../../test:field_trial",
       "../../test:test_support",
       "../../test:video_test_common",
       "../../test:video_test_support",
-      "../rtp_rtcp:rtp_rtcp",
+      "../rtp_rtcp:rtp_rtcp_format",
       "//testing/gmock",
     ]
     if (rtc_build_libvpx) {

@@ -98,14 +98,24 @@ class DtlsTransport : public DtlsTransportInternal {
   const std::string& transport_name() const override;
   int component() const override;
 
-  // Returns false if no local certificate was set, or if the peer doesn't
-  // support DTLS.
+  // DTLS is active if a local certificate was set. Otherwise this acts in a
+  // "passthrough" mode, sending packets directly through the underlying ICE
+  // transport.
+  // TODO(deadbeef): Remove this weirdness, and handle it in the upper layers.
   bool IsDtlsActive() const override;
 
+  // SetLocalCertificate is what makes DTLS active. It must be called before
+  // SetRemoteFinterprint.
+  // TODO(deadbeef): Once DtlsTransport no longer has the concept of being
+  // "active" or not (acting as a passthrough if not active), just require this
+  // certificate on construction or "Start".
   bool SetLocalCertificate(
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) override;
   rtc::scoped_refptr<rtc::RTCCertificate> GetLocalCertificate() const override;
 
+  // SetRemoteFingerprint must be called after SetLocalCertificate, and any
+  // other methods like SetSslRole. It's what triggers the actual DTLS setup.
+  // TODO(deadbeef): Rename to "Start" like in ORTC?
   bool SetRemoteFingerprint(const std::string& digest_alg,
                             const uint8_t* digest,
                             size_t digest_len) override;

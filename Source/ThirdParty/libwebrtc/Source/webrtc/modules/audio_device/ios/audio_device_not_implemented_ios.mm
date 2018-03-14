@@ -143,17 +143,6 @@ int32_t AudioDeviceIOS::StereoPlayout(bool& enabled) const {
   return 0;
 }
 
-int32_t AudioDeviceIOS::SetAGC(bool enable) {
-  if (enable) {
-    RTC_NOTREACHED() << "Should never be called";
-  }
-  return -1;
-}
-
-bool AudioDeviceIOS::AGC() const {
-  return false;
-}
-
 int32_t AudioDeviceIOS::MicrophoneVolumeIsAvailable(bool& available) {
   available = false;
   return 0;

@@ -90,7 +90,6 @@ AudioDeviceLinuxALSA::AudioDeviceLinuxALSA()
       _playing(false),
       _recIsInitialized(false),
       _playIsInitialized(false),
-      _AGC(false),
       _recordingDelay(0),
       _playoutDelay(0) {
   memset(_oldKeyState, 0, sizeof(_oldKeyState));
@@ -150,7 +149,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceLinuxALSA::Init() {
   if (_initialized) {
     return InitStatus::OK;
   }
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   // Get X display handle for typing detection
   _XDisplay = XOpenDisplay(NULL);
   if (!_XDisplay) {
@@ -194,7 +193,7 @@ int32_t AudioDeviceLinuxALSA::Terminate() {
 
     _critSect.Enter();
   }
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   if (_XDisplay) {
     XCloseDisplay(_XDisplay);
     _XDisplay = NULL;
@@ -517,16 +516,6 @@ int32_t AudioDeviceLinuxALSA::StereoPlayout(bool& enabled) const {
     enabled = false;
 
   return 0;
-}
-
-int32_t AudioDeviceLinuxALSA::SetAGC(bool enable) {
-  _AGC = enable;
-
-  return 0;
-}
-
-bool AudioDeviceLinuxALSA::AGC() const {
-  return _AGC;
 }
 
 int32_t AudioDeviceLinuxALSA::MicrophoneVolumeIsAvailable(bool& available) {
@@ -1593,19 +1582,6 @@ bool AudioDeviceLinuxALSA::RecThreadProcess() {
       _ptrAudioBuffer->SetRecordedBuffer(_recordingBuffer,
                                          _recordingFramesIn10MS);
 
-      uint32_t currentMicLevel = 0;
-      uint32_t newMicLevel = 0;
-
-      if (AGC()) {
-        // store current mic level in the audio buffer if AGC is enabled
-        if (MicrophoneVolume(currentMicLevel) == 0) {
-          if (currentMicLevel == 0xffffffff)
-            currentMicLevel = 100;
-          // this call does not affect the actual microphone volume
-          _ptrAudioBuffer->SetCurrentMicLevel(currentMicLevel);
-        }
-      }
-
       // calculate delay
       _playoutDelay = 0;
       _recordingDelay = 0;
@@ -1631,7 +1607,7 @@ bool AudioDeviceLinuxALSA::RecThreadProcess() {
 
       // TODO(xians): Shall we add 10ms buffer delay to the record delay?
       _ptrAudioBuffer->SetVQEData(_playoutDelay * 1000 / _playoutFreq,
-                                  _recordingDelay * 1000 / _recordingFreq, 0);
+                                  _recordingDelay * 1000 / _recordingFreq);
 
       _ptrAudioBuffer->SetTypingStatus(KeyPressed());
 
@@ -1640,18 +1616,6 @@ bool AudioDeviceLinuxALSA::RecThreadProcess() {
       UnLock();
       _ptrAudioBuffer->DeliverRecordedData();
       Lock();
-
-      if (AGC()) {
-        newMicLevel = _ptrAudioBuffer->NewMicLevel();
-        if (newMicLevel != 0) {
-          // The VQE will only deliver non-zero microphone levels when a
-          // change is needed. Set this new mic level (received from the
-          // observer as return value in the callback).
-          if (SetMicrophoneVolume(newMicLevel) == -1)
-            RTC_LOG(LS_WARNING)
-                << "the required modification of the microphone volume failed";
-        }
-      }
     }
   }
 
@@ -1660,7 +1624,7 @@ bool AudioDeviceLinuxALSA::RecThreadProcess() {
 }
 
 bool AudioDeviceLinuxALSA::KeyPressed() const {
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   char szKey[32];
   unsigned int i = 0;
   char state = 0;

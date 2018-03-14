@@ -18,6 +18,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/ptr_util.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -38,11 +39,12 @@ class RemoteAudioSource::Sink : public AudioSinkInterface {
 };
 
 rtc::scoped_refptr<RemoteAudioSource> RemoteAudioSource::Create(
-    uint32_t ssrc,
-    cricket::VoiceChannel* channel) {
+    rtc::Thread* worker_thread,
+    cricket::VoiceMediaChannel* media_channel,
+    uint32_t ssrc) {
   rtc::scoped_refptr<RemoteAudioSource> ret(
       new rtc::RefCountedObject<RemoteAudioSource>());
-  ret->Initialize(ssrc, channel);
+  ret->Initialize(worker_thread, media_channel, ssrc);
   return ret;
 }
 
@@ -58,14 +60,16 @@ RemoteAudioSource::~RemoteAudioSource() {
   RTC_DCHECK(sinks_.empty());
 }
 
-void RemoteAudioSource::Initialize(uint32_t ssrc,
-                                   cricket::VoiceChannel* channel) {
+void RemoteAudioSource::Initialize(rtc::Thread* worker_thread,
+                                   cricket::VoiceMediaChannel* media_channel,
+                                   uint32_t ssrc) {
   RTC_DCHECK(main_thread_->IsCurrent());
   // To make sure we always get notified when the channel goes out of scope,
   // we register for callbacks here and not on demand in AddSink.
-  if (channel) {  // May be null in tests.
-    channel->SetRawAudioSink(
-        ssrc, std::unique_ptr<AudioSinkInterface>(new Sink(this)));
+  if (media_channel) {  // May be null in tests.
+    worker_thread->Invoke<void>(RTC_FROM_HERE, [&] {
+      media_channel->SetRawAudioSink(ssrc, rtc::MakeUnique<Sink>(this));
+    });
   }
 }
 

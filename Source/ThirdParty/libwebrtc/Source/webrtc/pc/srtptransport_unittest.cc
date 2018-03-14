@@ -64,9 +64,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     rtp_transport2->AddHandledPayloadType(0xc9);
 
     srtp_transport1_ =
-        rtc::MakeUnique<SrtpTransport>(std::move(rtp_transport1), "content");
+        rtc::MakeUnique<SrtpTransport>(std::move(rtp_transport1));
     srtp_transport2_ =
-        rtc::MakeUnique<SrtpTransport>(std::move(rtp_transport2), "content");
+        rtc::MakeUnique<SrtpTransport>(std::move(rtp_transport2));
 
     srtp_transport1_->SignalPacketReceived.connect(
         this, &SrtpTransportTest::OnPacketReceived1);

@@ -44,7 +44,7 @@ class Bye : public RtcpPacket {
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
-              RtcpPacket::PacketReadyCallback* callback) const override;
+              PacketReadyCallback callback) const override;
 
  private:
   static const int kMaxNumberOfCsrcs = 0x1f - 1;  // First item is sender SSRC.

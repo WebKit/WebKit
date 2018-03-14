@@ -89,11 +89,6 @@ public class WebRtcAudioManager {
 
   private static final int DEFAULT_FRAME_PER_BUFFER = 256;
 
-  // List of possible audio modes.
-  private static final String[] AUDIO_MODES = new String[] {
-      "MODE_NORMAL", "MODE_RINGTONE", "MODE_IN_CALL", "MODE_IN_COMMUNICATION",
-  };
-
   // Private utility class that periodically checks and logs the volume level
   // of the audio stream that is currently controlled by the volume control.
   // A timer triggers logs once every 30 seconds and the timer's associated
@@ -189,7 +184,8 @@ public class WebRtcAudioManager {
     if (initialized) {
       return true;
     }
-    Logging.d(TAG, "audio mode is: " + AUDIO_MODES[audioManager.getMode()]);
+    Logging.d(TAG, "audio mode is: "
+        + WebRtcAudioUtils.modeToString(audioManager.getMode()));
     initialized = true;
     volumeLogger.start();
     return true;

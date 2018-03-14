@@ -10,14 +10,13 @@ import("../webrtc.gni")
 import("audio_coding/audio_coding.gni")
 
 group("modules") {
-  public_deps = [
+  deps = [
     "audio_coding",
     "audio_device",
     "audio_mixer",
     "audio_processing",
     "bitrate_controller",
     "congestion_controller",
-    "desktop_capture",
     "media_file",
     "pacing",
     "remote_bitrate_estimator",
@@ -26,6 +25,10 @@ group("modules") {
     "video_coding",
     "video_processing",
   ]
+
+  if (rtc_desktop_capture_supported) {
+    deps += [ "desktop_capture" ]
+  }
 }
 
 rtc_source_set("module_api_public") {
@@ -34,11 +37,13 @@ rtc_source_set("module_api_public") {
   ]
   deps = [
     "..:webrtc_common",
+    "../:typedefs",
     "../api:optional",
   ]
 }
 
 rtc_source_set("module_api") {
+  visibility = [ "*" ]
   sources = [
     "include/module.h",
     "include/module_common_types.h",
@@ -46,9 +51,12 @@ rtc_source_set("module_api") {
   deps = [
     ":module_api_public",
     "..:webrtc_common",
+    "../:typedefs",
+    "../api:libjingle_peerconnection_api",
     "../api:optional",
     "../api:video_frame_api",
     "../api:video_frame_api_i420",
+    "../rtc_base:deprecation",
     "../rtc_base:rtc_base_approved",
     "video_coding:codec_globals_headers",
   ]
@@ -79,12 +87,15 @@ if (rtc_include_tests) {
       "../test:test_main",
       "../test:video_test_common",
       "audio_coding:audio_coding_modules_tests",
-      "desktop_capture:desktop_capture_modules_tests",
       "rtp_rtcp:rtp_rtcp_modules_tests",
       "video_coding:video_coding_modules_tests",
       "//testing/gmock",
       "//testing/gtest",
     ]
+
+    if (rtc_desktop_capture_supported) {
+      deps += [ "desktop_capture:desktop_capture_modules_tests" ]
+    }
 
     data = modules_tests_resources
 
@@ -249,16 +260,22 @@ if (rtc_include_tests) {
       "audio_processing:audio_processing_unittests",
       "bitrate_controller:bitrate_controller_unittests",
       "congestion_controller:congestion_controller_unittests",
-      "desktop_capture:desktop_capture_unittests",
       "media_file:media_file_unittests",
       "pacing:pacing_unittests",
       "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
       "rtp_rtcp:rtp_rtcp_unittests",
       "utility:utility_unittests",
-      "video_capture",
       "video_coding:video_coding_unittests",
       "video_processing:video_processing_unittests",
     ]
+
+    if (rtc_desktop_capture_supported) {
+      deps += [ "desktop_capture:desktop_capture_unittests" ]
+    }
+
+    if (!build_with_mozilla) {
+      deps += [ "video_capture" ]
+    }
 
     data = modules_unittests_resources
 

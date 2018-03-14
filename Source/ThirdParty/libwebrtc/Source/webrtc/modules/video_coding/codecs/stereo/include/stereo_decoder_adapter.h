@@ -15,6 +15,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "modules/video_coding/codecs/stereo/include/stereo_encoder_adapter.h"
@@ -24,7 +25,8 @@ namespace webrtc {
 class StereoDecoderAdapter : public VideoDecoder {
  public:
   // |factory| is not owned and expected to outlive this class' lifetime.
-  explicit StereoDecoderAdapter(VideoDecoderFactory* factory);
+  explicit StereoDecoderAdapter(VideoDecoderFactory* factory,
+                                const SdpVideoFormat& associated_format);
   virtual ~StereoDecoderAdapter();
 
   // Implements VideoDecoder
@@ -59,6 +61,7 @@ class StereoDecoderAdapter : public VideoDecoder {
                         const rtc::Optional<uint8_t>& stereo_qp);
 
   VideoDecoderFactory* const factory_;
+  const SdpVideoFormat associated_format_;
   std::vector<std::unique_ptr<VideoDecoder>> decoders_;
   std::vector<std::unique_ptr<AdapterDecodedImageCallback>> adapter_callbacks_;
   DecodedImageCallback* decoded_complete_callback_;

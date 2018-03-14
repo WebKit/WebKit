@@ -11,8 +11,6 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_DECODER_ISAC_T_IMPL_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_DECODER_ISAC_T_IMPL_H_
 
-#include "modules/audio_coding/codecs/isac/main/include/audio_decoder_isac.h"
-
 #include "rtc_base/checks.h"
 
 namespace webrtc {

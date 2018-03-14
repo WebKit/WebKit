@@ -359,6 +359,7 @@ ReceiveStatistics* ReceiveStatistics::Create(Clock* clock) {
 
 ReceiveStatisticsImpl::ReceiveStatisticsImpl(Clock* clock)
     : clock_(clock),
+      last_returned_ssrc_(0),
       rtcp_stats_callback_(NULL),
       rtp_stats_callback_(NULL) {}
 
@@ -467,29 +468,35 @@ std::vector<rtcp::ReportBlock> ReceiveStatisticsImpl::RtcpReportBlocks(
   }
   std::vector<rtcp::ReportBlock> result;
   result.reserve(std::min(max_blocks, statisticians.size()));
-  for (auto& statistician : statisticians) {
-    // TODO(danilchap): Select statistician subset across multiple calls using
-    // round-robin, as described in rfc3550 section 6.4 when single
-    // rtcp_module/receive_statistics will be used for more rtp streams.
-    if (result.size() == max_blocks)
-      break;
-
+  auto add_report_block = [&result](uint32_t media_ssrc,
+                                    StreamStatisticianImpl* statistician) {
     // Do we have receive statistics to send?
     RtcpStatistics stats;
-    if (!statistician.second->GetActiveStatisticsAndReset(&stats))
-      continue;
+    if (!statistician->GetActiveStatisticsAndReset(&stats))
+      return;
     result.emplace_back();
     rtcp::ReportBlock& block = result.back();
-    block.SetMediaSsrc(statistician.first);
+    block.SetMediaSsrc(media_ssrc);
     block.SetFractionLost(stats.fraction_lost);
     if (!block.SetCumulativeLost(stats.packets_lost)) {
       RTC_LOG(LS_WARNING) << "Cumulative lost is oversized.";
       result.pop_back();
-      continue;
+      return;
     }
     block.SetExtHighestSeqNum(stats.extended_highest_sequence_number);
     block.SetJitter(stats.jitter);
-  }
+  };
+
+  const auto start_it = statisticians.upper_bound(last_returned_ssrc_);
+  for (auto it = start_it;
+       result.size() < max_blocks && it != statisticians.end(); ++it)
+    add_report_block(it->first, it->second);
+  for (auto it = statisticians.begin();
+       result.size() < max_blocks && it != start_it; ++it)
+    add_report_block(it->first, it->second);
+
+  if (!result.empty())
+    last_returned_ssrc_ = result.back().source_ssrc();
   return result;
 }
 

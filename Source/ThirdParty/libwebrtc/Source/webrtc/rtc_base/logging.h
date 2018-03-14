@@ -254,20 +254,6 @@ class LogMessage {
 // Logging Helpers
 //////////////////////////////////////////////////////////////////////
 
-class LogMultilineState {
- public:
-  size_t unprintable_count_[2];
-  LogMultilineState() {
-    unprintable_count_[0] = unprintable_count_[1] = 0;
-  }
-};
-
-// When possible, pass optional state variable to track various data across
-// multiple calls to LogMultiline.  Otherwise, pass null.
-void LogMultiline(LoggingSeverity level, const char* label, bool input,
-                  const void* data, size_t len, bool hex_mode,
-                  LogMultilineState* state);
-
 // The following non-obvious technique for implementation of a
 // conditional log stream was stolen from google3/base/logging.h.
 
@@ -341,22 +327,16 @@ inline bool LogCheckLevel(LoggingSeverity sev) {
   RTC_LOG_GLE_EX(sev, err)
 #define RTC_LOG_ERR(sev) \
   RTC_LOG_GLE(sev)
-#define RTC_LAST_SYSTEM_ERROR \
-  (::GetLastError())
 #elif defined(__native_client__) && __native_client__
 #define RTC_LOG_ERR_EX(sev, err) \
   RTC_LOG(sev)
 #define RTC_LOG_ERR(sev) \
   RTC_LOG(sev)
-#define RTC_LAST_SYSTEM_ERROR \
-  (0)
 #elif defined(WEBRTC_POSIX)
 #define RTC_LOG_ERR_EX(sev, err) \
   RTC_LOG_ERRNO_EX(sev, err)
 #define RTC_LOG_ERR(sev) \
   RTC_LOG_ERRNO(sev)
-#define RTC_LAST_SYSTEM_ERROR \
-  (errno)
 #endif  // WEBRTC_WIN
 
 #define RTC_LOG_TAG(sev, tag)        \

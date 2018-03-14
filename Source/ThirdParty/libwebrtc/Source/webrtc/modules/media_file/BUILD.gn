@@ -13,6 +13,7 @@ config("media_file_config") {
 }
 
 rtc_static_library("media_file") {
+  visibility = [ "*" ]
   sources = [
     "media_file.h",
     "media_file_defines.h",
@@ -35,9 +36,9 @@ rtc_static_library("media_file") {
   deps = [
     "..:module_api",
     "../..:webrtc_common",
+    "../../:typedefs",
     "../../common_audio",
     "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers",
   ]
 }
 
@@ -50,7 +51,6 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":media_file",
-      "../../system_wrappers:system_wrappers",
       "../../test:test_support",
     ]
     if (is_win) {

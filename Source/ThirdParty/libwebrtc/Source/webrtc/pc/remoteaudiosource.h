@@ -33,8 +33,9 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
  public:
   // Creates an instance of RemoteAudioSource.
   static rtc::scoped_refptr<RemoteAudioSource> Create(
-      uint32_t ssrc,
-      cricket::VoiceChannel* channel);
+      rtc::Thread* worker_thread,
+      cricket::VoiceMediaChannel* media_channel,
+      uint32_t ssrc);
 
   // MediaSourceInterface implementation.
   MediaSourceInterface::SourceState state() const override;
@@ -49,7 +50,9 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
 
   // Post construction initialize where we can do things like save a reference
   // to ourselves (need to be fully constructed).
-  void Initialize(uint32_t ssrc, cricket::VoiceChannel* channel);
+  void Initialize(rtc::Thread* worker_thread,
+                  cricket::VoiceMediaChannel* media_channel,
+                  uint32_t ssrc);
 
  private:
   typedef std::list<AudioObserver*> AudioObserverList;

@@ -20,12 +20,11 @@ rtc_static_library("audio") {
     "audio_send_stream.h",
     "audio_state.cc",
     "audio_state.h",
-    "audio_transport_proxy.cc",
-    "audio_transport_proxy.h",
+    "audio_transport_impl.cc",
+    "audio_transport_impl.h",
     "conversion.h",
     "null_audio_poller.cc",
     "null_audio_poller.h",
-    "scoped_voe_interface.h",
     "time_interval.cc",
     "time_interval.h",
   ]
@@ -53,12 +52,16 @@ rtc_static_library("audio") {
     "../modules/congestion_controller:congestion_controller",
     "../modules/pacing:pacing",
     "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
-    "../modules/rtp_rtcp:rtp_rtcp",
+    "../modules/rtp_rtcp",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
     "../system_wrappers",
+    "../system_wrappers:field_trial_api",
     "../voice_engine",
+    "../voice_engine:audio_level",
+    "utility:audio_frame_operations",
   ]
 }
 if (rtc_include_tests) {
@@ -97,12 +100,16 @@ if (rtc_include_tests) {
       ":audio",
       ":audio_end_to_end_test",
       "../api:mock_audio_mixer",
+      "../call:mock_call_interfaces",
       "../call:mock_rtp_interfaces",
       "../call:rtp_interfaces",
       "../call:rtp_receiver",
+      "../logging:mocks",
       "../modules/audio_device:mock_audio_device",
       "../modules/audio_mixer:audio_mixer_impl",
       "../modules/audio_processing:audio_processing_statistics",
+      "../modules/audio_processing:mocks",
+      "../modules/bitrate_controller:mocks",
       "../modules/congestion_controller:congestion_controller",
       "../modules/congestion_controller:mock_congestion_controller",
       "../modules/pacing:mock_paced_sender",
@@ -112,6 +119,7 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
       "../rtc_base:rtc_task_queue",
+      "../rtc_base:safe_compare",
       "../system_wrappers:system_wrappers",
       "../test:audio_codec_mocks",
       "../test:rtp_test_utils",
@@ -163,7 +171,7 @@ if (rtc_include_tests) {
         "../resources/voice_engine/audio_tiny48.wav",
         "test/low_bandwidth_audio_test.py",
       ]
-      if (is_linux) {
+      if (is_linux || is_android) {
         data += [
           "../tools_webrtc/audio_quality/linux/PolqaOem64",
           "../tools_webrtc/audio_quality/linux/pesq",

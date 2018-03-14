@@ -47,7 +47,7 @@
 }
 
 - (NSInteger)encode:(RTCVideoFrame *)frame
-    codecSpecificInfo:(id<RTCCodecSpecificInfo>)info
+    codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            frameTypes:(NSArray<NSNumber *> *)frameTypes {
   RTC_NOTREACHED();
   return 0;

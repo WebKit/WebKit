@@ -42,8 +42,10 @@ class AudioProcessingImpl : public AudioProcessing {
   // AudioProcessingImpl takes ownership of capture post processor and
   // beamformer.
   AudioProcessingImpl(const webrtc::Config& config,
-                      std::unique_ptr<PostProcessing> capture_post_processor,
+                      std::unique_ptr<CustomProcessing> capture_post_processor,
+                      std::unique_ptr<CustomProcessing> render_pre_processor,
                       std::unique_ptr<EchoControlFactory> echo_control_factory,
+                      std::unique_ptr<EchoDetector> echo_detector,
                       NonlinearBeamformer* beamformer);
   ~AudioProcessingImpl() override;
   int Initialize() override;
@@ -148,7 +150,8 @@ class AudioProcessingImpl : public AudioProcessing {
 
   class ApmSubmoduleStates {
    public:
-    explicit ApmSubmoduleStates(bool capture_post_processor_enabled);
+    ApmSubmoduleStates(bool capture_post_processor_enabled,
+                       bool render_pre_processor_enabled);
     // Updates the submodule state and returns true if it has changed.
     bool Update(bool low_cut_filter_enabled,
                 bool echo_canceller_enabled,
@@ -168,10 +171,12 @@ class AudioProcessingImpl : public AudioProcessing {
     bool CaptureMultiBandProcessingActive() const;
     bool CaptureFullBandProcessingActive() const;
     bool RenderMultiBandSubModulesActive() const;
+    bool RenderFullBandProcessingActive() const;
     bool RenderMultiBandProcessingActive() const;
 
    private:
     const bool capture_post_processor_enabled_ = false;
+    const bool render_pre_processor_enabled_ = false;
     bool low_cut_filter_enabled_ = false;
     bool echo_canceller_enabled_ = false;
     bool mobile_echo_controller_enabled_ = false;
@@ -228,6 +233,7 @@ class AudioProcessingImpl : public AudioProcessing {
   void InitializeEchoController() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_capture_);
   void InitializeGainController2() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_capture_);
   void InitializePostProcessor() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_capture_);
+  void InitializePreProcessor() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_render_);
 
   void EmptyQueuedRenderAudio();
   void AllocateRenderQueue()

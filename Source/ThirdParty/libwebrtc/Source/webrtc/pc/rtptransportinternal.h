@@ -57,13 +57,15 @@ class RtpTransportInternal : public RtpTransportInterface,
   sigslot::signal3<bool, rtc::CopyOnWriteBuffer*, const rtc::PacketTime&>
       SignalPacketReceived;
 
+  // Called whenever the network route of the P2P layer transport changes.
+  // The argument is an optional network route.
+  sigslot::signal1<rtc::Optional<rtc::NetworkRoute>> SignalNetworkRouteChanged;
+
   // Called whenever a transport's writable state might change. The argument is
   // true if the transport is writable, otherwise it is false.
   sigslot::signal1<bool> SignalWritableState;
 
-  // Called whenever the network route of the P2P layer transport changes.
-  // The argument is an optional network route.
-  sigslot::signal1<rtc::Optional<rtc::NetworkRoute>> SignalNetworkRouteChanged;
+  sigslot::signal1<const rtc::SentPacket&> SignalSentPacket;
 
   virtual bool IsWritable(bool rtcp) const = 0;
 

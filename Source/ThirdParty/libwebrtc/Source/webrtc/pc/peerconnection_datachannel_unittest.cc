@@ -74,9 +74,10 @@ class PeerConnectionWrapperForDataChannelTest : public PeerConnectionWrapper {
   }
 
   PeerConnection* GetInternalPeerConnection() {
-    auto* pci = reinterpret_cast<
-        PeerConnectionProxyWithInternal<PeerConnectionInterface>*>(pc());
-    return reinterpret_cast<PeerConnection*>(pci->internal());
+    auto* pci =
+        static_cast<PeerConnectionProxyWithInternal<PeerConnectionInterface>*>(
+            pc());
+    return static_cast<PeerConnection*>(pci->internal());
   }
 
  private:
@@ -146,8 +147,7 @@ class PeerConnectionDataChannelTest : public ::testing::Test {
 
     auto* data_content = cricket::GetFirstDataContent(desc);
     RTC_DCHECK(data_content);
-    auto* data_desc = static_cast<cricket::DataContentDescription*>(
-        data_content->description);
+    auto* data_desc = data_content->media_description()->as_data();
     data_desc->set_codecs({sctp_codec});
   }
 

@@ -99,7 +99,8 @@ class RtpFrameReferenceFinder {
 
   // Updates necessary layer info state used to determine frame references for
   // Vp8.
-  void UpdateLayerInfoVp8(RtpFrameObject* frame)
+  void UpdateLayerInfoVp8(RtpFrameObject* frame,
+                          const RTPVideoHeaderVP8& codec_header)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for Vp9 frames

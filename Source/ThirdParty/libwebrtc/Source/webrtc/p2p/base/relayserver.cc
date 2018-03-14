@@ -15,11 +15,13 @@
 #endif  // WEBRTC_POSIX
 
 #include <algorithm>
+#include <utility>
 
 #include "rtc_base/asynctcpsocket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/socketadapters.h"
 
 namespace cricket {
@@ -80,7 +82,7 @@ void SendStunError(const StunMessage& msg, rtc::AsyncPacketSocket* socket,
 }
 
 RelayServer::RelayServer(rtc::Thread* thread)
-  : thread_(thread), log_bindings_(true) {
+  : thread_(thread), random_(rtc::SystemTimeNanos()), log_bindings_(true) {
 }
 
 RelayServer::~RelayServer() {
@@ -217,7 +219,7 @@ void RelayServer::OnInternalPacket(
   RelayServerConnection* ext_conn = int_conn->binding()->GetExternalConnection(
       int_conn->default_destination());
   if (ext_conn && ext_conn->locked()) {
-    // TODO: Check the HMAC.
+    // TODO(?): Check the HMAC.
     ext_conn->Send(bytes, size);
   } else {
     // This happens very often and is not an error.
@@ -237,7 +239,7 @@ void RelayServer::OnExternalPacket(
   // If this connection already exists, then forward the traffic.
   ConnectionMap::iterator piter = connections_.find(ap);
   if (piter != connections_.end()) {
-    // TODO: Check the HMAC.
+    // TODO(?): Check the HMAC.
     RelayServerConnection* ext_conn = piter->second;
     RelayServerConnection* int_conn =
         ext_conn->binding()->GetInternalConnection(
@@ -268,7 +270,7 @@ void RelayServer::OnExternalPacket(
   uint32_t length =
       std::min(static_cast<uint32_t>(username_attr->length()), USERNAME_LENGTH);
   std::string username(username_attr->bytes(), length);
-  // TODO: Check the HMAC.
+  // TODO(?): Check the HMAC.
 
   // The binding should already be present.
   BindingMap::iterator biter = bindings_.find(username);
@@ -317,7 +319,7 @@ bool RelayServer::HandleStun(
   if (username)
     username->append(username_attr->bytes(), username_attr->length());
 
-  // TODO: Check for unknown attributes (<= 0x7fff)
+  // TODO(?): Check for unknown attributes (<= 0x7fff)
 
   return true;
 }
@@ -343,7 +345,7 @@ void RelayServer::HandleStunAllocate(
     return;
   }
 
-  // TODO: Check the HMAC.
+  // TODO(?): Check the HMAC.
 
   // Find or create the binding for this username.
 
@@ -400,7 +402,7 @@ void RelayServer::HandleStun(
     return;
   }
 
-  // TODO: Check the HMAC.
+  // TODO(?): Check the HMAC.
 
   // Send this request to the appropriate handler.
   if (request.type() == STUN_SEND_REQUEST)
@@ -427,7 +429,9 @@ void RelayServer::HandleStunAllocate(
                                int_conn->binding()->magic_cookie().size());
   response.AddAttribute(std::move(magic_cookie_attr));
 
-  size_t index = rand() % external_sockets_.size();
+  RTC_DCHECK_GT(external_sockets_.size(), 0);
+  size_t index = random_.Rand(rtc::dchecked_cast<uint32_t>(
+      external_sockets_.size() - 1));
   rtc::SocketAddress ext_addr =
       external_sockets_[index]->GetLocalAddress();
 
@@ -440,9 +444,9 @@ void RelayServer::HandleStunAllocate(
   res_lifetime_attr->SetValue(int_conn->binding()->lifetime() / 1000);
   response.AddAttribute(std::move(res_lifetime_attr));
 
-  // TODO: Support transport-prefs (preallocate RTCP port).
-  // TODO: Support bandwidth restrictions.
-  // TODO: Add message integrity check.
+  // TODO(?): Support transport-prefs (preallocate RTCP port).
+  // TODO(?): Support bandwidth restrictions.
+  // TODO(?): Add message integrity check.
 
   // Send a response to the caller.
   int_conn->SendStun(response);

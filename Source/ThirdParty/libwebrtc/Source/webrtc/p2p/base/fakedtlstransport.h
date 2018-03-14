@@ -91,6 +91,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
       dest_ = dest;
       if (local_cert_ && dest_->local_cert_) {
         do_dtls_ = true;
+        RTC_LOG(LS_INFO) << "FakeDtlsTransport is doing DTLS";
+      } else {
+        do_dtls_ = false;
+        RTC_LOG(LS_INFO) << "FakeDtlsTransport is not doing DTLS";
       }
       SetWritable(true);
       if (!asymmetric) {
@@ -137,6 +141,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   }
   bool SetLocalCertificate(
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) override {
+    do_dtls_ = true;
     local_cert_ = certificate;
     return true;
   }

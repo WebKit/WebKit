@@ -181,7 +181,6 @@ class Socket {
     OPT_RTP_SENDTIME_EXTN_ID,  // This is a non-traditional socket option param.
                                // This is specific to libjingle and will be used
                                // if SendTime option is needed at socket level.
-    OPT_ISDEFUNCT
   };
   virtual int GetOption(Option opt, int* value) = 0;
   virtual int SetOption(Option opt, int value) = 0;

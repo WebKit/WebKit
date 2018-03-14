@@ -40,6 +40,7 @@ message Event {
     AUDIO_NETWORK_ADAPTATION_EVENT = 16;
     BWE_PROBE_CLUSTER_CREATED_EVENT = 17;
     BWE_PROBE_RESULT_EVENT = 18;
+    ALR_STATE_EVENT = 19;
   }
 
   // required - Indicates the type of this event
@@ -81,6 +82,9 @@ message Event {
 
     // required if type == BWE_PROBE_RESULT_EVENT
     BweProbeResult probe_result = 18;
+
+    // required if type == ALR_STATE_EVENT
+    AlrState alr_state = 19;
   }
 }
 
@@ -313,4 +317,9 @@ message BweProbeResult {
 
   // optional - but required if result == SUCCESS. The resulting bitrate in bps.
   optional uint64 bitrate_bps = 3;
+}
+
+message AlrState {
+  // required - If we are in ALR or not.
+  optional bool in_alr = 1;
 }

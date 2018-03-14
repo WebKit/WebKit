@@ -47,7 +47,6 @@ constexpr double kDefaultTrendlineThresholdGain = 4.0;
 
 constexpr int kMaxConsecutiveFailedLookups = 5;
 
-const char kBweSparseUpdateExperiment[] = "WebRTC-BweSparseUpdateExperiment";
 const char kBweWindowSizeInPacketsExperiment[] =
     "WebRTC-BweWindowSizeInPackets";
 
@@ -101,9 +100,7 @@ DelayBasedBwe::DelayBasedBwe(RtcEventLog* event_log, const Clock* clock)
       trendline_threshold_gain_(kDefaultTrendlineThresholdGain),
       consecutive_delayed_feedbacks_(0),
       prev_bitrate_(0),
-      prev_state_(BandwidthUsage::kBwNormal),
-      in_sparse_update_experiment_(
-          webrtc::field_trial::IsEnabled(kBweSparseUpdateExperiment)) {
+      prev_state_(BandwidthUsage::kBwNormal) {
   RTC_LOG(LS_INFO)
       << "Using Trendline filter for delay change estimation with window size "
       << trendline_window_size_;
@@ -133,7 +130,6 @@ DelayBasedBwe::Result DelayBasedBwe::IncomingPacketFeedbackVector(
                               BweNames::kBweNamesMax);
     uma_recorded_ = true;
   }
-  bool overusing = false;
   bool delayed_feedback = true;
   bool recovered_from_overuse = false;
   BandwidthUsage prev_detector_state = detector_.State();
@@ -142,16 +138,12 @@ DelayBasedBwe::Result DelayBasedBwe::IncomingPacketFeedbackVector(
       continue;
     delayed_feedback = false;
     IncomingPacketFeedback(packet_feedback);
-    if (!in_sparse_update_experiment_)
-      overusing |= (detector_.State() == BandwidthUsage::kBwOverusing);
     if (prev_detector_state == BandwidthUsage::kBwUnderusing &&
         detector_.State() == BandwidthUsage::kBwNormal) {
       recovered_from_overuse = true;
     }
     prev_detector_state = detector_.State();
   }
-  if (in_sparse_update_experiment_)
-    overusing = (detector_.State() == BandwidthUsage::kBwOverusing);
 
   if (delayed_feedback) {
     ++consecutive_delayed_feedbacks_;
@@ -161,8 +153,7 @@ DelayBasedBwe::Result DelayBasedBwe::IncomingPacketFeedbackVector(
     }
   } else {
     consecutive_delayed_feedbacks_ = 0;
-    return MaybeUpdateEstimate(overusing, acked_bitrate_bps,
-                               recovered_from_overuse);
+    return MaybeUpdateEstimate(acked_bitrate_bps, recovered_from_overuse);
   }
   return Result();
 }
@@ -230,7 +221,6 @@ void DelayBasedBwe::IncomingPacketFeedback(
 }
 
 DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
-    bool overusing,
     rtc::Optional<uint32_t> acked_bitrate_bps,
     bool recovered_from_overuse) {
   Result result;
@@ -239,11 +229,11 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
   rtc::Optional<int> probe_bitrate_bps =
       probe_bitrate_estimator_.FetchAndResetLastEstimatedBitrateBps();
   // Currently overusing the bandwidth.
-  if (overusing) {
+  if (detector_.State() == BandwidthUsage::kBwOverusing) {
     if (acked_bitrate_bps &&
         rate_control_.TimeToReduceFurther(now_ms, *acked_bitrate_bps)) {
-      result.updated = UpdateEstimate(now_ms, acked_bitrate_bps, overusing,
-                                      &result.target_bitrate_bps);
+      result.updated =
+          UpdateEstimate(now_ms, acked_bitrate_bps, &result.target_bitrate_bps);
     } else if (!acked_bitrate_bps && rate_control_.ValidEstimate() &&
                rate_control_.TimeToReduceFurther(
                    now_ms, rate_control_.LatestEstimate() / 2 - 1)) {
@@ -264,8 +254,8 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
       result.target_bitrate_bps = *probe_bitrate_bps;
       rate_control_.SetEstimate(*probe_bitrate_bps, now_ms);
     } else {
-      result.updated = UpdateEstimate(now_ms, acked_bitrate_bps, overusing,
-                                      &result.target_bitrate_bps);
+      result.updated =
+          UpdateEstimate(now_ms, acked_bitrate_bps, &result.target_bitrate_bps);
       result.recovered_from_overuse = recovered_from_overuse;
     }
   }
@@ -289,13 +279,10 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
 
 bool DelayBasedBwe::UpdateEstimate(int64_t now_ms,
                                    rtc::Optional<uint32_t> acked_bitrate_bps,
-                                   bool overusing,
                                    uint32_t* target_bitrate_bps) {
   // TODO(terelius): RateControlInput::noise_var is deprecated and will be
   // removed. In the meantime, we set it to zero.
-  const RateControlInput input(
-      overusing ? BandwidthUsage::kBwOverusing : detector_.State(),
-      acked_bitrate_bps, 0);
+  const RateControlInput input(detector_.State(), acked_bitrate_bps, 0);
   *target_bitrate_bps = rate_control_.Update(&input, now_ms);
   return rate_control_.ValidEstimate();
 }

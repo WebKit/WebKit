@@ -15,7 +15,7 @@
 
 #include "api/video/i420_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "libyuv.h"  // NOLINT
+#include "third_party/libyuv/include/libyuv.h"
 
 namespace {
 const size_t kI420HeaderSize = 4;

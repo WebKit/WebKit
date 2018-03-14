@@ -11,6 +11,8 @@
 #ifndef LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_H_
 #define LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_H_
 
+#include <deque>
+#include <memory>
 #include <string>
 
 #include "logging/rtc_event_log/events/rtc_event.h"
@@ -20,7 +22,14 @@ class RtcEventLogEncoder {
  public:
   virtual ~RtcEventLogEncoder() = default;
 
+  virtual std::string EncodeLogStart(int64_t timestamp_us) = 0;
+  virtual std::string EncodeLogEnd(int64_t timestamp_us) = 0;
+
   virtual std::string Encode(const RtcEvent& event) = 0;
+
+  virtual std::string EncodeBatch(
+      std::deque<std::unique_ptr<RtcEvent>>::const_iterator begin,
+      std::deque<std::unique_ptr<RtcEvent>>::const_iterator end) = 0;
 };
 
 }  // namespace webrtc

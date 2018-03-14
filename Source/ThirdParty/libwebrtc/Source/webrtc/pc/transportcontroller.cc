@@ -12,11 +12,15 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "p2p/base/port.h"
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/ptr_util.h"
 #include "rtc_base/thread.h"
+
+using webrtc::SdpType;
 
 namespace {
 
@@ -35,6 +39,47 @@ struct CandidatesData : public rtc::MessageData {
   std::string transport_name;
   cricket::Candidates candidates;
 };
+
+bool VerifyCandidate(const cricket::Candidate& cand, std::string* error) {
+  // No address zero.
+  if (cand.address().IsNil() || cand.address().IsAnyIP()) {
+    *error = "candidate has address of zero";
+    return false;
+  }
+
+  // Disallow all ports below 1024, except for 80 and 443 on public addresses.
+  int port = cand.address().port();
+  if (cand.protocol() == cricket::TCP_PROTOCOL_NAME &&
+      (cand.tcptype() == cricket::TCPTYPE_ACTIVE_STR || port == 0)) {
+    // Expected for active-only candidates per
+    // http://tools.ietf.org/html/rfc6544#section-4.5 so no error.
+    // Libjingle clients emit port 0, in "active" mode.
+    return true;
+  }
+  if (port < 1024) {
+    if ((port != 80) && (port != 443)) {
+      *error = "candidate has port below 1024, but not 80 or 443";
+      return false;
+    }
+
+    if (cand.address().IsPrivateIP()) {
+      *error = "candidate has port of 80 or 443 with private IP address";
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool VerifyCandidates(const cricket::Candidates& candidates,
+                      std::string* error) {
+  for (const cricket::Candidate& candidate : candidates) {
+    if (!VerifyCandidate(candidate, error)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 }  // namespace
 
@@ -158,23 +203,23 @@ TransportController::GetRemoteSSLCertificate(
 bool TransportController::SetLocalTransportDescription(
     const std::string& transport_name,
     const TransportDescription& tdesc,
-    ContentAction action,
+    SdpType type,
     std::string* err) {
   return network_thread_->Invoke<bool>(
       RTC_FROM_HERE,
       rtc::Bind(&TransportController::SetLocalTransportDescription_n, this,
-                transport_name, tdesc, action, err));
+                transport_name, tdesc, type, err));
 }
 
 bool TransportController::SetRemoteTransportDescription(
     const std::string& transport_name,
     const TransportDescription& tdesc,
-    ContentAction action,
+    SdpType type,
     std::string* err) {
   return network_thread_->Invoke<bool>(
       RTC_FROM_HERE,
       rtc::Bind(&TransportController::SetRemoteTransportDescription_n, this,
-                transport_name, tdesc, action, err));
+                transport_name, tdesc, type, err));
 }
 
 void TransportController::MaybeStartGathering() {
@@ -327,6 +372,133 @@ void TransportController::DestroyDtlsTransport_n(
   UpdateAggregateStates_n();
 }
 
+webrtc::SrtpTransport* TransportController::CreateSdesTransport(
+    const std::string& transport_name,
+    bool rtcp_mux_enabled) {
+  if (!network_thread_->IsCurrent()) {
+    return network_thread_->Invoke<webrtc::SrtpTransport*>(RTC_FROM_HERE, [&] {
+      return CreateSdesTransport(transport_name, rtcp_mux_enabled);
+    });
+  }
+
+  auto existing_rtp_transport = FindRtpTransport(transport_name);
+
+  if (existing_rtp_transport) {
+    // For SRTP transport wrapper, the |srtp_transport| is expected to be
+    // non-null and |dtls_srtp_transport| is expected to be a nullptr.
+    if (!existing_rtp_transport->srtp_transport ||
+        existing_rtp_transport->dtls_srtp_transport) {
+      RTC_LOG(LS_ERROR)
+          << "Failed to create an RTP transport for SDES using name: "
+          << transport_name << " because the type doesn't match.";
+      return nullptr;
+    }
+    existing_rtp_transport->AddRef();
+    return existing_rtp_transport->srtp_transport;
+  }
+
+  auto new_srtp_transport =
+      rtc::MakeUnique<webrtc::SrtpTransport>(rtcp_mux_enabled);
+
+  // The SDES should use an IceTransport rather than a DtlsTransport. We call
+  // |CreateDtlsTransport_n| here because the DtlsTransport will downgrade to an
+  // wrapper over IceTransport if we don't set the certificates and it will just
+  // forward the packets and signals without using DTLS. The support of SDES
+  // will be removed once all the downstream application stop using it.
+  new_srtp_transport->SetRtpPacketTransport(CreateDtlsTransport_n(
+      transport_name, cricket::ICE_CANDIDATE_COMPONENT_RTP));
+  if (!rtcp_mux_enabled) {
+    new_srtp_transport->SetRtcpPacketTransport(CreateDtlsTransport_n(
+        transport_name, cricket::ICE_CANDIDATE_COMPONENT_RTCP));
+  }
+
+#if defined(ENABLE_EXTERNAL_AUTH)
+  new_srtp_transport->EnableExternalAuth();
+#endif
+
+  auto new_rtp_transport_wrapper = new RefCountedRtpTransport();
+  new_rtp_transport_wrapper->srtp_transport = new_srtp_transport.get();
+  new_rtp_transport_wrapper->rtp_transport = std::move(new_srtp_transport);
+  new_rtp_transport_wrapper->AddRef();
+  rtp_transports_[transport_name] = new_rtp_transport_wrapper;
+  return rtp_transports_[transport_name]->srtp_transport;
+}
+
+webrtc::DtlsSrtpTransport* TransportController::CreateDtlsSrtpTransport(
+    const std::string& transport_name,
+    bool rtcp_mux_enabled) {
+  if (!network_thread_->IsCurrent()) {
+    return network_thread_->Invoke<webrtc::DtlsSrtpTransport*>(
+        RTC_FROM_HERE, [&] {
+          return CreateDtlsSrtpTransport(transport_name, rtcp_mux_enabled);
+        });
+  }
+  auto existing_rtp_transport = FindRtpTransport(transport_name);
+
+  if (existing_rtp_transport) {
+    // For DTLS-SRTP transport wrapper, the |dtls_srtp_transport| is expected to
+    // be non-null and |srtp_transport| is expected to be a nullptr.
+    if (existing_rtp_transport->srtp_transport ||
+        !existing_rtp_transport->dtls_srtp_transport) {
+      RTC_LOG(LS_ERROR)
+          << "Failed to create an RTP transport for DTLS-SRTP using name: "
+          << transport_name << " because the type doesn't match.";
+      return nullptr;
+    }
+    existing_rtp_transport->AddRef();
+    return existing_rtp_transport->dtls_srtp_transport;
+  }
+
+  auto new_srtp_transport =
+      rtc::MakeUnique<webrtc::SrtpTransport>(rtcp_mux_enabled);
+
+#if defined(ENABLE_EXTERNAL_AUTH)
+  new_srtp_transport->EnableExternalAuth();
+#endif
+
+  auto new_dtls_srtp_transport =
+      rtc::MakeUnique<webrtc::DtlsSrtpTransport>(std::move(new_srtp_transport));
+
+  auto rtp_dtls_transport = CreateDtlsTransport_n(
+      transport_name, cricket::ICE_CANDIDATE_COMPONENT_RTP);
+  auto rtcp_dtls_transport =
+      rtcp_mux_enabled
+          ? nullptr
+          : CreateDtlsTransport_n(transport_name,
+                                  cricket::ICE_CANDIDATE_COMPONENT_RTCP);
+
+  new_dtls_srtp_transport->SetDtlsTransports(rtp_dtls_transport,
+                                             rtcp_dtls_transport);
+
+  auto new_rtp_transport_wrapper = new RefCountedRtpTransport();
+  new_rtp_transport_wrapper->dtls_srtp_transport =
+      new_dtls_srtp_transport.get();
+  new_rtp_transport_wrapper->rtp_transport = std::move(new_dtls_srtp_transport);
+  new_rtp_transport_wrapper->AddRef();
+  rtp_transports_[transport_name] = new_rtp_transport_wrapper;
+  return rtp_transports_[transport_name]->dtls_srtp_transport;
+}
+
+void TransportController::DestroyTransport(const std::string& transport_name) {
+  if (!network_thread_->IsCurrent()) {
+    network_thread_->Invoke<void>(RTC_FROM_HERE,
+                                  [&] { DestroyTransport(transport_name); });
+    return;
+  }
+
+  auto existing_rtp_transport = FindRtpTransport(transport_name);
+  if (!existing_rtp_transport) {
+    RTC_LOG(LS_WARNING) << "Attempting to delete " << transport_name
+                        << " transport , which doesn't exist.";
+    return;
+  }
+  if (existing_rtp_transport->Release() ==
+      rtc::RefCountReleaseStatus::kDroppedLastRef) {
+    rtp_transports_.erase(transport_name);
+  }
+  return;
+}
+
 std::vector<std::string> TransportController::transport_names_for_testing() {
   std::vector<std::string> ret;
   for (const auto& kv : transports_) {
@@ -400,6 +572,12 @@ void TransportController::OnMessage(rtc::Message* pmsg) {
     default:
       RTC_NOTREACHED();
   }
+}
+
+const TransportController::RefCountedRtpTransport*
+TransportController::FindRtpTransport(const std::string& transport_name) {
+  auto it = rtp_transports_.find(transport_name);
+  return it == rtp_transports_.end() ? nullptr : it->second;
 }
 
 std::vector<TransportController::RefCountedChannel*>::iterator
@@ -584,7 +762,7 @@ TransportController::GetRemoteSSLCertificate_n(
 bool TransportController::SetLocalTransportDescription_n(
     const std::string& transport_name,
     const TransportDescription& tdesc,
-    ContentAction action,
+    SdpType type,
     std::string* err) {
   RTC_DCHECK(network_thread_->IsCurrent());
 
@@ -595,6 +773,19 @@ bool TransportController::SetLocalTransportDescription_n(
     // TODO(deadbeef): Make callers smarter so they won't attempt to set a
     // description on a deleted transport.
     return true;
+  }
+
+  // The initial offer side may use ICE Lite, in which case, per RFC5245 Section
+  // 5.1.1, the answer side should take the controlling role if it is in the
+  // full ICE mode.
+  //
+  // When both sides use ICE Lite, the initial offer side must take the
+  // controlling role, and this is the default logic implemented in
+  // SetLocalDescription in PeerConnection.
+  if (transport->remote_description() &&
+      transport->remote_description()->ice_mode == ICEMODE_LITE &&
+      ice_role_ == ICEROLE_CONTROLLED && tdesc.ice_mode == ICEMODE_FULL) {
+    SetIceRole_n(ICEROLE_CONTROLLING);
   }
 
   // Older versions of Chrome expect the ICE role to be re-determined when an
@@ -613,18 +804,18 @@ bool TransportController::SetLocalTransportDescription_n(
       (!transport->remote_description() ||
        transport->remote_description()->ice_mode != ICEMODE_LITE)) {
     IceRole new_ice_role =
-        (action == CA_OFFER) ? ICEROLE_CONTROLLING : ICEROLE_CONTROLLED;
+        (type == SdpType::kOffer) ? ICEROLE_CONTROLLING : ICEROLE_CONTROLLED;
     SetIceRole(new_ice_role);
   }
 
   RTC_LOG(LS_INFO) << "Set local transport description on " << transport_name;
-  return transport->SetLocalTransportDescription(tdesc, action, err);
+  return transport->SetLocalTransportDescription(tdesc, type, err);
 }
 
 bool TransportController::SetRemoteTransportDescription_n(
     const std::string& transport_name,
     const TransportDescription& tdesc,
-    ContentAction action,
+    SdpType type,
     std::string* err) {
   RTC_DCHECK(network_thread_->IsCurrent());
 
@@ -645,8 +836,17 @@ bool TransportController::SetRemoteTransportDescription_n(
     return true;
   }
 
+  // If we use ICE Lite and the remote endpoint uses the full implementation of
+  // ICE, the local endpoint must take the controlled role, and the other side
+  // must be the controlling role.
+  if (transport->local_description() &&
+      transport->local_description()->ice_mode == ICEMODE_LITE &&
+      ice_role_ == ICEROLE_CONTROLLING && tdesc.ice_mode == ICEMODE_FULL) {
+    SetIceRole_n(ICEROLE_CONTROLLED);
+  }
+
   RTC_LOG(LS_INFO) << "Set remote transport description on " << transport_name;
-  return transport->SetRemoteTransportDescription(tdesc, action, err);
+  return transport->SetRemoteTransportDescription(tdesc, type, err);
 }
 
 void TransportController::MaybeStartGathering_n() {

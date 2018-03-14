@@ -20,10 +20,10 @@
 #include <string>
 #include <vector>
 
+#include "api/videosourceinterface.h"
 #include "media/base/videoadapter.h"
 #include "media/base/videobroadcaster.h"
 #include "media/base/videocommon.h"
-#include "media/base/videosourceinterface.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/sigslot.h"

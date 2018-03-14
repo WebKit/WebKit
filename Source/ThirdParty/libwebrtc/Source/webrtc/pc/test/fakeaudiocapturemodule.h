@@ -90,9 +90,6 @@ class FakeAudioCaptureModule
   int32_t StopRecording() override;
   bool Recording() const override;
 
-  int32_t SetAGC(bool enable) override;
-  bool AGC() const override;
-
   int32_t InitSpeaker() override;
   bool SpeakerIsInitialized() const override;
   int32_t InitMicrophone() override;

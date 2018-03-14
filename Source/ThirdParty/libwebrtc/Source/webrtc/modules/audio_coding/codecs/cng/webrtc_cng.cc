@@ -99,7 +99,7 @@ void ComfortNoiseDecoder::UpdateSid(rtc::ArrayView<const uint8_t> sid) {
     }
   } else {
     for (size_t i = 0; i < (dec_order_); i++) {
-      refCs[i] = (sid[i + 1] - 127) << 8; /* Q7 to Q15. */
+      refCs[i] = (sid[i + 1] - 127) * (1 << 8); /* Q7 to Q15. */
       dec_target_reflCoefs_[i] = refCs[i];
     }
   }

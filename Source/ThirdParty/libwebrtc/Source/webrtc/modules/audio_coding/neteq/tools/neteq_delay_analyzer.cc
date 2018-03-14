@@ -252,5 +252,85 @@ void NetEqDelayAnalyzer::CreateMatlabScript(
   }
 }
 
+void NetEqDelayAnalyzer::CreatePythonScript(
+    const std::string& script_name) const {
+  std::vector<float> send_time_s;
+  std::vector<float> arrival_delay_ms;
+  std::vector<float> corrected_arrival_delay_ms;
+  std::vector<rtc::Optional<float>> playout_delay_ms;
+  std::vector<rtc::Optional<float>> target_delay_ms;
+  CreateGraphs(&send_time_s, &arrival_delay_ms, &corrected_arrival_delay_ms,
+               &playout_delay_ms, &target_delay_ms);
+
+  // Create an output file stream to the python script file.
+  std::ofstream output(script_name);
+  // The iterator is used to batch-output comma-separated values from vectors.
+  std::ostream_iterator<float> output_iterator(output, ",");
+
+  // Necessary includes
+  output << "import numpy as np" << std::endl;
+  output << "import matplotlib.pyplot as plt" << std::endl;
+
+  output << "send_time_s = [";
+  std::copy(send_time_s.begin(), send_time_s.end(), output_iterator);
+  output << "]" << std::endl;
+
+  output << "arrival_delay_ms = [";
+  std::copy(arrival_delay_ms.begin(), arrival_delay_ms.end(), output_iterator);
+  output << "]" << std::endl;
+
+  output << "corrected_arrival_delay_ms = [";
+  std::copy(corrected_arrival_delay_ms.begin(),
+            corrected_arrival_delay_ms.end(), output_iterator);
+  output << "]" << std::endl;
+
+  output << "playout_delay_ms = [";
+  for (const auto& v : playout_delay_ms) {
+    if (!v) {
+      output << "float('nan'), ";
+    } else {
+      output << *v << ", ";
+    }
+  }
+  output << "]" << std::endl;
+
+  output << "target_delay_ms = [";
+  for (const auto& v : target_delay_ms) {
+    if (!v) {
+      output << "float('nan'), ";
+    } else {
+      output << *v << ", ";
+    }
+  }
+  output << "]" << std::endl;
+
+  output << "if __name__ == '__main__':" << std::endl;
+  output << "  h=plt.plot(send_time_s, arrival_delay_ms, "
+         << "send_time_s, target_delay_ms, 'g.', "
+         << "send_time_s, playout_delay_ms)" << std::endl;
+  output << "  plt.setp(h[0],'color',[.75, .75, .75])" << std::endl;
+  output << "  plt.setp(h[1],'markersize',6)" << std::endl;
+  output << "  plt.setp(h[2],'linewidth',1.5)" << std::endl;
+  output << "  plt.axis('tight')" << std::endl;
+  output << "  plt.xlabel('send time [s]')" << std::endl;
+  output << "  plt.ylabel('relative delay [ms]')" << std::endl;
+  if (!ssrcs_.empty()) {
+    auto ssrc_it = ssrcs_.cbegin();
+    output << "  plt.title('SSRC: 0x" << std::hex
+           << static_cast<int64_t>(*ssrc_it++);
+    while (ssrc_it != ssrcs_.end()) {
+      output << ", 0x" << std::hex << static_cast<int64_t>(*ssrc_it++);
+    }
+    output << std::dec;
+    auto pt_it = payload_types_.cbegin();
+    output << "; Payload Types: " << *pt_it++;
+    while (pt_it != payload_types_.end()) {
+      output << ", " << *pt_it++;
+    }
+    output << "')" << std::endl;
+  }
+  output << "  plt.show()" << std::endl;
+}
+
 }  // namespace test
 }  // namespace webrtc

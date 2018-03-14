@@ -9,13 +9,12 @@
 import("../webrtc.gni")
 
 config("common_video_config") {
-  include_dirs = [
-    "include",
-    "$rtc_libyuv_dir/include",
-  ]
+  include_dirs = [ "include" ]
 }
 
 rtc_static_library("common_video") {
+  visibility = [ "*" ]
+
   sources = [
     "bitrate_adjuster.cc",
     "h264/h264_bitstream_parser.cc",
@@ -57,25 +56,19 @@ rtc_static_library("common_video") {
 
   deps = [
     "..:webrtc_common",
+    "../:typedefs",
+    "../api:libjingle_peerconnection_api",
     "../api:optional",
+    "../api:video_frame_api",
     "../api:video_frame_api_i420",
     "../media:rtc_h264_profile_id",
     "../modules:module_api",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_task_queue",
     "../system_wrappers",
+    "//third_party/libyuv",
   ]
-  public_deps = [
-    "../api:video_frame_api",
-  ]
-
-  if (rtc_build_libyuv) {
-    deps += [ "$rtc_libyuv_dir" ]
-    public_deps += [ "$rtc_libyuv_dir" ]
-  } else {
-    # Need to add a directory normally exported by libyuv.
-    include_dirs += [ "$rtc_libyuv_dir/include" ]
-  }
 }
 
 if (rtc_include_tests) {
@@ -116,6 +109,7 @@ if (rtc_include_tests) {
 
     deps = [
       ":common_video",
+      "../api:video_frame_api",
       "../api:video_frame_api_i420",
       "../modules/video_capture:video_capture",
       "../rtc_base:rtc_base",
@@ -125,6 +119,7 @@ if (rtc_include_tests) {
       "../test:video_test_common",
       "//testing/gmock",
       "//testing/gtest",
+      "//third_party/libyuv",
     ]
 
     data = common_video_resources

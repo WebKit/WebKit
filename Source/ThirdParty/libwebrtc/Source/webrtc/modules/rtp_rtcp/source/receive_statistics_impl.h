@@ -125,6 +125,7 @@ class ReceiveStatisticsImpl : public ReceiveStatistics,
 
   Clock* const clock_;
   rtc::CriticalSection receive_statistics_lock_;
+  uint32_t last_returned_ssrc_;
   std::map<uint32_t, StreamStatisticianImpl*> statisticians_;
 
   RtcpStatisticsCallback* rtcp_stats_callback_;

@@ -58,7 +58,7 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
   }
 }
 
-- (RTCMediaStreamTrack *)track {
+- (nullable RTCMediaStreamTrack *)track {
   rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> nativeTrack(
     _nativeRtpReceiver->track());
   if (nativeTrack) {

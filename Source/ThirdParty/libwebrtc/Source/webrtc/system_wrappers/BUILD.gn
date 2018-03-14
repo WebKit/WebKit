@@ -13,10 +13,10 @@ if (is_android) {
 import("../webrtc.gni")
 
 rtc_static_library("system_wrappers") {
+  visibility = [ "*" ]
   sources = [
     "include/aligned_array.h",
     "include/aligned_malloc.h",
-    "include/atomic32.h",
     "include/clock.h",
     "include/cpu_info.h",
     "include/event_wrapper.h",
@@ -27,7 +27,6 @@ rtc_static_library("system_wrappers") {
     "include/sleep.h",
     "include/timestamp_extrapolator.h",
     "source/aligned_malloc.cc",
-    "source/atomic32.cc",
     "source/clock.cc",
     "source/cpu_features.cc",
     "source/cpu_info.cc",
@@ -50,20 +49,29 @@ rtc_static_library("system_wrappers") {
   defines = []
   libs = []
   deps = [
-    "..:webrtc_common",
-    "../api:optional",
-    "../modules:module_api_public",
-  ]
-  public_deps = [
     ":cpu_features_api",
     ":field_trial_api",
     ":metrics_api",
+    ":runtime_enabled_features_api",
+    "..:webrtc_common",
+    "../:typedefs",
+    "../api:optional",
+    "../modules:module_api_public",
+    "../rtc_base:checks",
   ]
 
   if (is_android) {
     defines += [ "WEBRTC_THREAD_RR" ]
 
-    deps += [ ":cpu_features_android" ]
+    if (build_with_mozilla) {
+      include_dirs = [
+        "/config/external/nspr",
+        "/nsprpub/lib/ds",
+        "/nsprpub/pr/include",
+      ]
+    } else {
+      deps += [ ":cpu_features_android" ]
+    }
 
     libs += [ "log" ]
   }
@@ -92,7 +100,6 @@ rtc_static_library("system_wrappers") {
 
     # Windows needs ../rtc_base:rtc_base due to include of
     # webrtc/rtc_base/win32.h in source/clock.cc.
-    # TODO(kjellander): Remove (bugs.webrtc.org/6828)
     deps += [ "../rtc_base:rtc_base" ]
   }
 
@@ -113,6 +120,7 @@ rtc_source_set("cpu_features_api") {
   ]
   deps = [
     "..:webrtc_common",
+    "../:typedefs",
   ]
 }
 
@@ -128,17 +136,26 @@ rtc_source_set("field_trial_api") {
   ]
 }
 
+rtc_source_set("runtime_enabled_features_api") {
+  sources = [
+    "include/runtime_enabled_features.h",
+  ]
+}
+
 rtc_source_set("metrics_api") {
+  visibility = [ "*" ]
   sources = [
     "include/metrics.h",
   ]
   deps = [
     "..:webrtc_common",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
   ]
 }
 
 rtc_source_set("field_trial_default") {
+  visibility = [ "*" ]
   sources = [
     "include/field_trial_default.h",
     "source/field_trial_default.cc",
@@ -148,7 +165,18 @@ rtc_source_set("field_trial_default") {
   ]
 }
 
+rtc_source_set("runtime_enabled_features_default") {
+  sources = [
+    "source/runtime_enabled_features_default.cc",
+  ]
+  deps = [
+    ":runtime_enabled_features_api",
+    "../rtc_base:rtc_base_approved",
+  ]
+}
+
 rtc_source_set("metrics_default") {
+  visibility = [ "*" ]
   sources = [
     "include/metrics_default.h",
     "source/metrics_default.cc",
@@ -163,11 +191,12 @@ group("system_wrappers_default") {
   deps = [
     ":field_trial_default",
     ":metrics_default",
+    ":runtime_enabled_features_default",
     ":system_wrappers",
   ]
 }
 
-if (is_android) {
+if (is_android && !build_with_mozilla) {
   rtc_static_library("cpu_features_android") {
     sources = [
       "source/cpu_features_android.c",
@@ -211,9 +240,11 @@ if (rtc_include_tests) {
     }
 
     deps = [
+      ":metrics_api",
       ":metrics_default",
       ":system_wrappers",
       "..:webrtc_common",
+      "../:typedefs",
       "../rtc_base:rtc_base_approved",
       "../test:test_main",
       "//testing/gtest",

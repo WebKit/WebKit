@@ -285,7 +285,7 @@ void FrameBuffer::UpdatePlayoutDelays(const FrameObject& frame) {
     timing_->set_max_playout_delay(playout_delay.max_ms);
 }
 
-int FrameBuffer::InsertFrame(std::unique_ptr<FrameObject> frame) {
+int64_t FrameBuffer::InsertFrame(std::unique_ptr<FrameObject> frame) {
   TRACE_EVENT0("webrtc", "FrameBuffer::InsertFrame");
   RTC_DCHECK(frame);
   if (stats_callback_)
@@ -295,7 +295,7 @@ int FrameBuffer::InsertFrame(std::unique_ptr<FrameObject> frame) {
 
   rtc::CritScope lock(&crit_);
 
-  int last_continuous_picture_id =
+  int64_t last_continuous_picture_id =
       last_continuous_frame_it_ == frames_.end()
           ? -1
           : last_continuous_frame_it_->first.picture_id;

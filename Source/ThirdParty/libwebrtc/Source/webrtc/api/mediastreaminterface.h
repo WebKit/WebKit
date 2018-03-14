@@ -27,8 +27,8 @@
 // TODO(zhihuang): Remove unrelated headers once downstream applications stop
 // relying on them; they were previously transitively included by
 // mediachannel.h, which is no longer a dependency of this file.
-#include "media/base/videosinkinterface.h"
-#include "media/base/videosourceinterface.h"
+#include "api/videosinkinterface.h"
+#include "api/videosourceinterface.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "rtc_base/ratetracker.h"
 #include "rtc_base/refcount.h"
@@ -236,7 +236,6 @@ class AudioProcessorInterface : public rtc::RefCountInterface {
           echo_return_loss_enhancement(0),
           echo_delay_median_ms(0),
           echo_delay_std_ms(0),
-          aec_quality_min(0.0),
           residual_echo_likelihood(0.0f),
           residual_echo_likelihood_recent_max(0.0f),
           aec_divergent_filter_fraction(0.0) {}
@@ -247,7 +246,6 @@ class AudioProcessorInterface : public rtc::RefCountInterface {
     int echo_return_loss_enhancement;
     int echo_delay_median_ms;
     int echo_delay_std_ms;
-    float aec_quality_min;
     float residual_echo_likelihood;
     float residual_echo_likelihood_recent_max;
     float aec_divergent_filter_fraction;
@@ -260,7 +258,7 @@ class AudioProcessorInterface : public rtc::RefCountInterface {
   };
 
   // Get audio processor statistics.
-  virtual void GetStats(AudioProcessorStats* stats) = 0;
+  virtual void GetStats(AudioProcessorStats* stats);
 
   // Get audio processor statistics. The |has_remote_tracks| argument should be
   // set if there are active remote tracks (this would usually be true during

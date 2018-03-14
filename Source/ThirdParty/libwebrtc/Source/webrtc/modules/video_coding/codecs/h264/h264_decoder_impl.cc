@@ -32,7 +32,8 @@ namespace webrtc {
 
 namespace {
 
-const AVPixelFormat kPixelFormat = AV_PIX_FMT_YUV420P;
+const AVPixelFormat kPixelFormatDefault = AV_PIX_FMT_YUV420P;
+const AVPixelFormat kPixelFormatFullRange = AV_PIX_FMT_YUVJ420P;
 const size_t kYPlaneIndex = 0;
 const size_t kUPlaneIndex = 1;
 const size_t kVPlaneIndex = 2;
@@ -95,9 +96,12 @@ int H264DecoderImpl::AVGetBuffer2(
   H264DecoderImpl* decoder = static_cast<H264DecoderImpl*>(context->opaque);
   // DCHECK values set in |InitDecode|.
   RTC_DCHECK(decoder);
-  RTC_DCHECK_EQ(context->pix_fmt, kPixelFormat);
   // Necessary capability to be allowed to provide our own buffers.
   RTC_DCHECK(context->codec->capabilities | AV_CODEC_CAP_DR1);
+
+  // Limited or full range YUV420 is expected.
+  RTC_CHECK(context->pix_fmt == kPixelFormatDefault ||
+            context->pix_fmt == kPixelFormatFullRange);
 
   // |av_frame->width| and |av_frame->height| are set by FFmpeg. These are the
   // actual image's dimensions and may be different from |context->width| and
@@ -225,7 +229,7 @@ int32_t H264DecoderImpl::InitDecode(const VideoCodec* codec_settings,
     av_context_->coded_width = codec_settings->width;
     av_context_->coded_height = codec_settings->height;
   }
-  av_context_->pix_fmt = kPixelFormat;
+  av_context_->pix_fmt = kPixelFormatDefault;
   av_context_->extradata = nullptr;
   av_context_->extradata_size = 0;
 
@@ -377,12 +381,10 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
         video_frame->rotation());
     // TODO(nisse): Timestamp and rotation are all zero here. Change decoder
     // interface to pass a VideoFrameBuffer instead of a VideoFrame?
-    decoded_image_callback_->Decoded(cropped_frame, rtc::Optional<int32_t>(),
-                                     qp);
+    decoded_image_callback_->Decoded(cropped_frame, rtc::nullopt, qp);
   } else {
     // Return decoded frame.
-    decoded_image_callback_->Decoded(*video_frame, rtc::Optional<int32_t>(),
-                                     qp);
+    decoded_image_callback_->Decoded(*video_frame, rtc::nullopt, qp);
   }
   // Stop referencing it, possibly freeing |video_frame|.
   av_frame_unref(av_frame_.get());

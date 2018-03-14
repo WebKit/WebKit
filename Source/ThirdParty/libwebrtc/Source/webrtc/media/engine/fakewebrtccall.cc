@@ -23,7 +23,6 @@ namespace cricket {
 FakeAudioSendStream::FakeAudioSendStream(
     int id, const webrtc::AudioSendStream::Config& config)
     : id_(id), config_(config) {
-  RTC_DCHECK(config.voe_channel_id != -1);
 }
 
 void FakeAudioSendStream::Reconfigure(
@@ -72,7 +71,6 @@ webrtc::AudioSendStream::Stats FakeAudioSendStream::GetStats(
 FakeAudioReceiveStream::FakeAudioReceiveStream(
     int id, const webrtc::AudioReceiveStream::Config& config)
     : id_(id), config_(config) {
-  RTC_DCHECK(config.voe_channel_id != -1);
 }
 
 const webrtc::AudioReceiveStream::Config&
@@ -98,13 +96,17 @@ bool FakeAudioReceiveStream::DeliverRtp(const uint8_t* packet,
   return true;
 }
 
+void FakeAudioReceiveStream::Reconfigure(
+    const webrtc::AudioReceiveStream::Config& config) {
+  config_ = config;
+}
+
 webrtc::AudioReceiveStream::Stats FakeAudioReceiveStream::GetStats() const {
   return stats_;
 }
 
-void FakeAudioReceiveStream::SetSink(
-    std::unique_ptr<webrtc::AudioSinkInterface> sink) {
-  sink_ = std::move(sink);
+void FakeAudioReceiveStream::SetSink(webrtc::AudioSinkInterface* sink) {
+  sink_ = sink;
 }
 
 void FakeAudioReceiveStream::SetGain(float gain) {
@@ -546,15 +548,14 @@ webrtc::PacketReceiver* FakeCall::Receiver() {
 
 FakeCall::DeliveryStatus FakeCall::DeliverPacket(
     webrtc::MediaType media_type,
-    const uint8_t* packet,
-    size_t length,
+    rtc::CopyOnWriteBuffer packet,
     const webrtc::PacketTime& packet_time) {
-  EXPECT_GE(length, 12u);
+  EXPECT_GE(packet.size(), 12u);
   RTC_DCHECK(media_type == webrtc::MediaType::AUDIO ||
              media_type == webrtc::MediaType::VIDEO);
 
   uint32_t ssrc;
-  if (!GetRtpSsrc(packet, length, &ssrc))
+  if (!GetRtpSsrc(packet.cdata(), packet.size(), &ssrc))
     return DELIVERY_PACKET_ERROR;
 
   if (media_type == webrtc::MediaType::VIDEO) {
@@ -566,7 +567,7 @@ FakeCall::DeliveryStatus FakeCall::DeliverPacket(
   if (media_type == webrtc::MediaType::AUDIO) {
     for (auto receiver : audio_receive_streams_) {
       if (receiver->GetConfig().rtp.remote_ssrc == ssrc) {
-        receiver->DeliverRtp(packet, length, packet_time);
+        receiver->DeliverRtp(packet.cdata(), packet.size(), packet_time);
         return DELIVERY_OK;
       }
     }

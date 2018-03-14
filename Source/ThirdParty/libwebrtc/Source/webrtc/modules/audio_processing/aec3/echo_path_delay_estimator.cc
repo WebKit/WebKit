@@ -43,12 +43,14 @@ EchoPathDelayEstimator::EchoPathDelayEstimator(
 
 EchoPathDelayEstimator::~EchoPathDelayEstimator() = default;
 
-void EchoPathDelayEstimator::Reset() {
-  matched_filter_lag_aggregator_.Reset();
+void EchoPathDelayEstimator::Reset(bool soft_reset) {
+  if (!soft_reset) {
+    matched_filter_lag_aggregator_.Reset();
+  }
   matched_filter_.Reset();
 }
 
-rtc::Optional<size_t> EchoPathDelayEstimator::EstimateDelay(
+rtc::Optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
     const DownsampledRenderBuffer& render_buffer,
     rtc::ArrayView<const float> capture) {
   RTC_DCHECK_EQ(kBlockSize, capture.size());
@@ -64,24 +66,25 @@ rtc::Optional<size_t> EchoPathDelayEstimator::EstimateDelay(
                         16000 / down_sampling_factor_, 1);
   matched_filter_.Update(render_buffer, downsampled_capture);
 
-  rtc::Optional<size_t> aggregated_matched_filter_lag =
+  rtc::Optional<DelayEstimate> aggregated_matched_filter_lag =
       matched_filter_lag_aggregator_.Aggregate(
           matched_filter_.GetLagEstimates());
 
   // TODO(peah): Move this logging outside of this class once EchoCanceller3
   // development is done.
-  data_dumper_->DumpRaw("aec3_echo_path_delay_estimator_delay",
-                        aggregated_matched_filter_lag
-                            ? static_cast<int>(*aggregated_matched_filter_lag *
-                                               down_sampling_factor_)
-                            : -1);
+  data_dumper_->DumpRaw(
+      "aec3_echo_path_delay_estimator_delay",
+      aggregated_matched_filter_lag
+          ? static_cast<int>(aggregated_matched_filter_lag->delay *
+                             down_sampling_factor_)
+          : -1);
 
   // Return the detected delay in samples as the aggregated matched filter lag
   // compensated by the down sampling factor for the signal being correlated.
-  return aggregated_matched_filter_lag
-             ? rtc::Optional<size_t>(*aggregated_matched_filter_lag *
-                                     down_sampling_factor_)
-             : rtc::nullopt;
+  if (aggregated_matched_filter_lag) {
+    aggregated_matched_filter_lag->delay *= down_sampling_factor_;
+  }
+  return aggregated_matched_filter_lag;
 }
 
 }  // namespace webrtc

@@ -11,12 +11,14 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_RENDER_BUFFER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_RENDER_BUFFER_H_
 
+#include <array>
 #include <memory>
-#include <vector>
 
 #include "api/array_view.h"
-#include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/fft_buffer.h"
 #include "modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/aec3/matrix_buffer.h"
+#include "modules/audio_processing/aec3/vector_buffer.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
@@ -24,55 +26,45 @@ namespace webrtc {
 // Provides a buffer of the render data for the echo remover.
 class RenderBuffer {
  public:
-  // The constructor takes, besides from the other parameters, a vector
-  // containing the number of FFTs that will be included in the spectral sums in
-  // the call to SpectralSum.
-  RenderBuffer(Aec3Optimization optimization,
-               size_t num_bands,
-               size_t size,
-               const std::vector<size_t> num_ffts_for_spectral_sums);
+  RenderBuffer(MatrixBuffer* block_buffer,
+               VectorBuffer* spectrum_buffer,
+               FftBuffer* fft_buffer);
   ~RenderBuffer();
 
-  // Clears the buffer.
-  void Clear();
-
-  // Insert a block into the buffer.
-  void Insert(const std::vector<std::vector<float>>& block);
-
-  // Gets the last inserted block.
-  const std::vector<std::vector<float>>& MostRecentBlock() const {
-    return last_block_;
+  // Get a block.
+  const std::vector<std::vector<float>>& Block(int buffer_offset_blocks) const {
+    int position =
+        block_buffer_->OffsetIndex(block_buffer_->read, buffer_offset_blocks);
+    return block_buffer_->buffer[position];
   }
 
-  // Get the spectrum from one of the FFTs in the buffer
-  const std::array<float, kFftLengthBy2Plus1>& Spectrum(
-      size_t buffer_offset_ffts) const {
-    return spectrum_buffer_[(position_ + buffer_offset_ffts) %
-                            fft_buffer_.size()];
+  // Get the spectrum from one of the FFTs in the buffer.
+  rtc::ArrayView<const float> Spectrum(int buffer_offset_ffts) const {
+    int position = spectrum_buffer_->OffsetIndex(spectrum_buffer_->read,
+                                                 buffer_offset_ffts);
+    return spectrum_buffer_->buffer[position];
+  }
+
+  // Returns the circular fft buffer.
+  rtc::ArrayView<const FftData> GetFftBuffer() const {
+    return fft_buffer_->buffer;
+  }
+
+  // Returns the current position in the circular buffer.
+  size_t Position() const {
+    RTC_DCHECK_EQ(spectrum_buffer_->read, fft_buffer_->read);
+    RTC_DCHECK_EQ(spectrum_buffer_->write, fft_buffer_->write);
+    return fft_buffer_->read;
   }
 
   // Returns the sum of the spectrums for a certain number of FFTs.
-  const std::array<float, kFftLengthBy2Plus1>& SpectralSum(
-      size_t num_ffts) const {
-    RTC_DCHECK_EQ(spectral_sums_length_, num_ffts);
-    return spectral_sums_[0];
-  }
-
-  // Returns the circular buffer.
-  rtc::ArrayView<const FftData> Buffer() const { return fft_buffer_; }
-
-  // Returns the current position in the circular buffer
-  size_t Position() const { return position_; }
+  void SpectralSum(size_t num_spectra,
+                   std::array<float, kFftLengthBy2Plus1>* X2) const;
 
  private:
-  const Aec3Optimization optimization_;
-  std::vector<FftData> fft_buffer_;
-  std::vector<std::array<float, kFftLengthBy2Plus1>> spectrum_buffer_;
-  size_t spectral_sums_length_;
-  std::vector<std::array<float, kFftLengthBy2Plus1>> spectral_sums_;
-  size_t position_ = 0;
-  std::vector<std::vector<float>> last_block_;
-  const Aec3Fft fft_;
+  const MatrixBuffer* const block_buffer_;
+  const VectorBuffer* const spectrum_buffer_;
+  const FftBuffer* const fft_buffer_;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RenderBuffer);
 };
 

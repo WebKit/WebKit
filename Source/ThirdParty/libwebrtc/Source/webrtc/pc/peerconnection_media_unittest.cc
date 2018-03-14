@@ -133,7 +133,7 @@ TEST_F(PeerConnectionMediaTest,
 
   std::string error;
   ASSERT_FALSE(callee->SetRemoteDescription(caller->CreateOffer(), &error));
-  EXPECT_EQ("Failed to set remote offer sdp: Failed to create channels.",
+  EXPECT_EQ("Failed to set remote offer sdp: Failed to create voice channel.",
             error);
 }
 
@@ -144,7 +144,8 @@ TEST_F(PeerConnectionMediaTest,
 
   std::string error;
   ASSERT_FALSE(caller->SetLocalDescription(caller->CreateOffer(), &error));
-  EXPECT_EQ("Failed to set local offer sdp: Failed to create channels.", error);
+  EXPECT_EQ("Failed to set local offer sdp: Failed to create voice channel.",
+            error);
 }
 
 std::vector<std::string> GetIds(
@@ -631,8 +632,8 @@ void ReverseMediaContent(cricket::SessionDescription* desc) {
 void ChangeMediaTypeAudioToVideo(cricket::SessionDescription* desc) {
   desc->RemoveContentByName(cricket::CN_AUDIO);
   auto* video_content = desc->GetContentByName(cricket::CN_VIDEO);
-  desc->AddContent(cricket::CN_AUDIO, cricket::NS_JINGLE_RTP,
-                   video_content->description->Copy());
+  desc->AddContent(cricket::CN_AUDIO, video_content->type,
+                   video_content->media_description()->Copy());
 }
 
 constexpr char kMLinesOutOfOrder[] =

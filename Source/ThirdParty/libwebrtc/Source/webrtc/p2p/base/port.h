@@ -20,7 +20,6 @@
 #include "api/candidate.h"
 #include "api/optional.h"
 #include "p2p/base/candidatepairinterface.h"
-#include "p2p/base/jseptransport.h"
 #include "p2p/base/packetlossestimator.h"
 #include "p2p/base/packetsocketfactory.h"
 #include "p2p/base/portinterface.h"
@@ -103,6 +102,52 @@ enum class IceCandidatePairState {
   // According to spec there should also be a frozen state, but nothing is ever
   // frozen because we have not implemented ICE freezing logic.
 };
+
+// Stats that we can return about the connections for a transport channel.
+// TODO(hta): Rename to ConnectionStats
+struct ConnectionInfo {
+  ConnectionInfo();
+  ConnectionInfo(const ConnectionInfo&);
+  ~ConnectionInfo();
+
+  bool best_connection;      // Is this the best connection we have?
+  bool writable;             // Has this connection received a STUN response?
+  bool receiving;            // Has this connection received anything?
+  bool timeout;              // Has this connection timed out?
+  bool new_connection;       // Is this a newly created connection?
+  size_t rtt;                // The STUN RTT for this connection.
+  size_t sent_total_bytes;   // Total bytes sent on this connection.
+  size_t sent_bytes_second;  // Bps over the last measurement interval.
+  size_t sent_discarded_packets;  // Number of outgoing packets discarded due to
+                                  // socket errors.
+  size_t sent_total_packets;  // Number of total outgoing packets attempted for
+                              // sending.
+  size_t sent_ping_requests_total;  // Number of STUN ping request sent.
+  size_t sent_ping_requests_before_first_response;  // Number of STUN ping
+  // sent before receiving the first response.
+  size_t sent_ping_responses;  // Number of STUN ping response sent.
+
+  size_t recv_total_bytes;     // Total bytes received on this connection.
+  size_t recv_bytes_second;    // Bps over the last measurement interval.
+  size_t recv_ping_requests;   // Number of STUN ping request received.
+  size_t recv_ping_responses;  // Number of STUN ping response received.
+  Candidate local_candidate;   // The local candidate for this connection.
+  Candidate remote_candidate;  // The remote candidate for this connection.
+  void* key;                   // A static value that identifies this conn.
+  // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatepairstats-state
+  IceCandidatePairState state;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatepairstats-priority
+  uint64_t priority;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatepairstats-nominated
+  bool nominated;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatepairstats-totalroundtriptime
+  uint64_t total_round_trip_time_ms;
+  // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatepairstats-currentroundtriptime
+  rtc::Optional<uint32_t> current_round_trip_time_ms;
+};
+
+// Information about all the connections of a channel.
+typedef std::vector<ConnectionInfo> ConnectionInfos;
 
 const char* ProtoToString(ProtocolType proto);
 bool StringToProto(const char* value, ProtocolType* proto);
@@ -253,6 +298,11 @@ class Port : public PortInterface, public rtc::MessageHandler,
                                     size_t size,
                                     const rtc::SocketAddress& remote_addr,
                                     const rtc::PacketTime& packet_time);
+
+  // Shall the port handle packet from this |remote_addr|.
+  // This method is overridden by TurnPort.
+  virtual bool CanHandleIncomingPacketsFrom(
+      const rtc::SocketAddress& remote_addr) const;
 
   // Sends a response message (normal or error) to the given request.  One of
   // these methods should be called as a response to SignalUnknownAddress.

@@ -93,8 +93,6 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
       AudioDeviceModule::AudioLayer& audioLayer) const override;
   int32_t PlayoutIsAvailable(bool& available) override;
   int32_t RecordingIsAvailable(bool& available) override;
-  int32_t SetAGC(bool enable) override;
-  bool AGC() const override;
   int16_t PlayoutDevices() override;
   int16_t RecordingDevices() override;
   int32_t PlayoutDeviceName(uint16_t index,

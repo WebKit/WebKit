@@ -138,7 +138,8 @@ std::unique_ptr<AudioProcessing> CreateLimiter() {
   Config config;
   config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
 
-  std::unique_ptr<AudioProcessing> limiter(AudioProcessing::Create(config));
+  std::unique_ptr<AudioProcessing> limiter(
+      AudioProcessingBuilder().Create(config));
   RTC_DCHECK(limiter);
 
   webrtc::AudioProcessing::Config apm_config;

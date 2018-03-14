@@ -24,7 +24,9 @@ struct SubtractorOutput {
   std::array<float, kBlockSize> e_main;
   std::array<float, kBlockSize> e_shadow;
   FftData E_main;
+  FftData E_main_nonwindowed;
   std::array<float, kFftLengthBy2Plus1> E2_main;
+  std::array<float, kFftLengthBy2Plus1> E2_main_nonwindowed;
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
 
   void Reset() {

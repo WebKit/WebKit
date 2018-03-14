@@ -13,7 +13,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -22,9 +21,6 @@ const size_t kNumRtcpReportsToUse = 2;
 // Number of parameters samples used to smooth.
 const size_t kNumSamplesToSmooth = 20;
 
-bool IsClockEstimationExperimentEnabled() {
-  return webrtc::field_trial::IsEnabled("WebRTC-ClockEstimation");
-}
 
 // Calculates the RTP timestamp frequency from two pairs of NTP/RTP timestamps.
 bool CalculateFrequency(int64_t ntp_ms1,
@@ -90,8 +86,7 @@ bool RtpToNtpEstimator::RtcpMeasurement::IsEqual(
 RtpToNtpEstimator::RtpToNtpEstimator()
     : consecutive_invalid_samples_(0),
       smoothing_filter_(kNumSamplesToSmooth),
-      params_calculated_(false),
-      is_experiment_enabled_(IsClockEstimationExperimentEnabled()) {}
+      params_calculated_(false) {}
 
 RtpToNtpEstimator::~RtpToNtpEstimator() {}
 
@@ -112,11 +107,7 @@ void RtpToNtpEstimator::UpdateParameters() {
   }
   params.offset_ms = timestamp_new - params.frequency_khz * ntp_ms_new;
   params_calculated_ = true;
-  if (is_experiment_enabled_) {
-    smoothing_filter_.Insert(params);
-  } else {
-    params_ = params;
-  }
+  smoothing_filter_.Insert(params);
 }
 
 bool RtpToNtpEstimator::UpdateMeasurements(uint32_t ntp_secs,
@@ -186,8 +177,7 @@ bool RtpToNtpEstimator::Estimate(int64_t rtp_timestamp,
 
   int64_t rtp_timestamp_unwrapped = unwrapper_.Unwrap(rtp_timestamp);
 
-  Parameters params =
-      is_experiment_enabled_ ? smoothing_filter_.GetFilteredValue() : params_;
+  Parameters params = smoothing_filter_.GetFilteredValue();
 
   // params_calculated_ should not be true unless ms params.frequency_khz has
   // been calculated to something non zero.
@@ -208,8 +198,7 @@ const rtc::Optional<RtpToNtpEstimator::Parameters> RtpToNtpEstimator::params()
     const {
   rtc::Optional<Parameters> res;
   if (params_calculated_) {
-    res.emplace(is_experiment_enabled_ ? smoothing_filter_.GetFilteredValue()
-                                       : params_);
+    res.emplace(smoothing_filter_.GetFilteredValue());
   }
   return res;
 }

@@ -10,6 +10,7 @@
 
 #include <string>
 
+#include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/weak_ptr.h"

@@ -10,7 +10,6 @@
 
 #include "modules/video_coding/codecs/stereo/include/stereo_encoder_adapter.h"
 
-#include "api/video_codecs/sdp_video_format.h"
 #include "common_video/include/video_frame.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
@@ -58,8 +57,12 @@ struct StereoEncoderAdapter::ImageStereoInfo {
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(ImageStereoInfo);
 };
 
-StereoEncoderAdapter::StereoEncoderAdapter(VideoEncoderFactory* factory)
-    : factory_(factory), encoded_complete_callback_(nullptr) {}
+StereoEncoderAdapter::StereoEncoderAdapter(
+    VideoEncoderFactory* factory,
+    const SdpVideoFormat& associated_format)
+    : factory_(factory),
+      associated_format_(associated_format),
+      encoded_complete_callback_(nullptr) {}
 
 StereoEncoderAdapter::~StereoEncoderAdapter() {
   Release();
@@ -74,13 +77,16 @@ int StereoEncoderAdapter::InitEncode(const VideoCodec* inst,
   // It is more expensive to encode 0x00, so use 0x80 instead.
   std::fill(stereo_dummy_planes_.begin(), stereo_dummy_planes_.end(), 0x80);
 
+  RTC_DCHECK_EQ(kVideoCodecStereo, inst->codecType);
+  VideoCodec settings = *inst;
+  settings.codecType = PayloadStringToCodecType(associated_format_.name);
   for (size_t i = 0; i < kAlphaCodecStreams; ++i) {
-    const SdpVideoFormat format("VP9");
     std::unique_ptr<VideoEncoder> encoder =
-        factory_->CreateVideoEncoder(format);
-    const int rv = encoder->InitEncode(inst, number_of_cores, max_payload_size);
+        factory_->CreateVideoEncoder(associated_format_);
+    const int rv =
+        encoder->InitEncode(&settings, number_of_cores, max_payload_size);
     if (rv) {
-      RTC_LOG(LS_ERROR) << "Failed to create stere codec index " << i;
+      RTC_LOG(LS_ERROR) << "Failed to create stereo codec index " << i;
       return rv;
     }
     adapter_callbacks_.emplace_back(new AdapterEncodedImageCallback(
@@ -180,7 +186,7 @@ EncodedImageCallback::Result StereoEncoderAdapter::OnEncodedImage(
     const EncodedImage& encodedImage,
     const CodecSpecificInfo* codecSpecificInfo,
     const RTPFragmentationHeader* fragmentation) {
-  const VideoCodecType associated_coded_type = codecSpecificInfo->codecType;
+  const VideoCodecType associated_codec_type = codecSpecificInfo->codecType;
   const auto& image_stereo_info_itr =
       image_stereo_info_.find(encodedImage._timeStamp);
   RTC_DCHECK(image_stereo_info_itr != image_stereo_info_.end());
@@ -193,7 +199,7 @@ EncodedImageCallback::Result StereoEncoderAdapter::OnEncodedImage(
   CodecSpecificInfo codec_info = *codecSpecificInfo;
   codec_info.codecType = kVideoCodecStereo;
   codec_info.codec_name = "stereo";
-  codec_info.codecSpecific.stereo.associated_codec_type = associated_coded_type;
+  codec_info.codecSpecific.stereo.associated_codec_type = associated_codec_type;
   codec_info.codecSpecific.stereo.indices.frame_index = stream_idx;
   codec_info.codecSpecific.stereo.indices.frame_count = frame_count;
   codec_info.codecSpecific.stereo.indices.picture_index = picture_index;

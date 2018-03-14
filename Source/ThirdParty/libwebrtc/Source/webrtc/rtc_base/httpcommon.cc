@@ -29,8 +29,6 @@
 #include "rtc_base/httpcommon.h"
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/socketaddress.h"
-#include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
 
 namespace rtc {
 
@@ -223,32 +221,7 @@ inline bool IsEndOfAttributeName(size_t pos, size_t len, const char * data) {
   return false;
 }
 
-// TODO: unittest for EscapeAttribute and HttpComposeAttributes.
-
-std::string EscapeAttribute(const std::string& attribute) {
-  const size_t kMaxLength = attribute.length() * 2 + 1;
-  char* buffer = STACK_ARRAY(char, kMaxLength);
-  size_t len = escape(buffer, kMaxLength, attribute.data(), attribute.length(),
-                      "\"", '\\');
-  return std::string(buffer, len);
-}
-
 }  // anonymous namespace
-
-void HttpComposeAttributes(const HttpAttributeList& attributes, char separator,
-                           std::string* composed) {
-  std::stringstream ss;
-  for (size_t i=0; i<attributes.size(); ++i) {
-    if (i > 0) {
-      ss << separator << " ";
-    }
-    ss << attributes[i].first;
-    if (!attributes[i].second.empty()) {
-      ss << "=\"" << EscapeAttribute(attributes[i].second) << "\"";
-    }
-  }
-  *composed = ss.str();
-}
 
 void HttpParseAttributes(const char * data, size_t len,
                          HttpAttributeList& attributes) {

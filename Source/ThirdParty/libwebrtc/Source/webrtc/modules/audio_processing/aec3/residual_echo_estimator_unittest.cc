@@ -12,6 +12,7 @@
 
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/random.h"
@@ -23,38 +24,43 @@ namespace webrtc {
 
 // Verifies that the check for non-null output residual echo power works.
 TEST(ResidualEchoEstimator, NullResidualEchoPowerOutput) {
-  AecState aec_state(EchoCanceller3Config{});
-  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 10,
-                             std::vector<size_t>(1, 10));
+  EchoCanceller3Config config;
+  AecState aec_state(config);
+  std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
+      RenderDelayBuffer::Create(config, 3));
   std::vector<std::array<float, kFftLengthBy2Plus1>> H2;
   std::array<float, kFftLengthBy2Plus1> S2_linear;
   std::array<float, kFftLengthBy2Plus1> Y2;
   EXPECT_DEATH(ResidualEchoEstimator(EchoCanceller3Config{})
-                   .Estimate(aec_state, render_buffer, S2_linear, Y2, nullptr),
+                   .Estimate(aec_state, *render_delay_buffer->GetRenderBuffer(),
+                             S2_linear, Y2, nullptr),
                "");
 }
 
 #endif
 
-TEST(ResidualEchoEstimator, BasicTest) {
-  ResidualEchoEstimator estimator(EchoCanceller3Config{});
+// TODO(peah): This test is broken in the sense that it not at all tests what it
+// seems to test. Enable the test once that is adressed.
+TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
   EchoCanceller3Config config;
   config.ep_strength.default_len = 0.f;
+  config.delay.min_echo_path_delay_blocks = 0;
+  ResidualEchoEstimator estimator(config);
   AecState aec_state(config);
-  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 10,
-                             std::vector<size_t>(1, 10));
+  std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
+      RenderDelayBuffer::Create(config, 3));
+
   std::array<float, kFftLengthBy2Plus1> E2_main;
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
   std::array<float, kFftLengthBy2Plus1> S2_linear;
   std::array<float, kFftLengthBy2Plus1> S2_fallback;
   std::array<float, kFftLengthBy2Plus1> Y2;
   std::array<float, kFftLengthBy2Plus1> R2;
-  EchoPathVariability echo_path_variability(false, false);
+  EchoPathVariability echo_path_variability(
+      false, EchoPathVariability::DelayAdjustment::kNone, false);
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<std::array<float, kFftLengthBy2Plus1>> H2(10);
   Random random_generator(42U);
-  FftData X;
-  std::array<float, kBlockSize> x_old;
   std::array<float, kBlockSize> s;
   Aec3Fft fft;
 
@@ -64,8 +70,8 @@ TEST(ResidualEchoEstimator, BasicTest) {
   H2[2].fill(10.f);
   H2[2][0] = 0.1f;
 
-  std::array<float, kAdaptiveFilterTimeDomainLength> h;
-  h.fill(0.f);
+  std::vector<float> h(GetTimeDomainLength(config.filter.main.length_blocks),
+                       0.f);
 
   s.fill(100.f);
 
@@ -76,17 +82,21 @@ TEST(ResidualEchoEstimator, BasicTest) {
   S2_fallback.fill(kLevel);
   Y2.fill(kLevel);
 
-  for (int k = 0; k < 2000; ++k) {
+  for (int k = 0; k < 1993; ++k) {
     RandomizeSampleVector(&random_generator, x[0]);
     std::for_each(x[0].begin(), x[0].end(), [](float& a) { a /= 30.f; });
-    fft.PaddedFft(x[0], x_old, &X);
-    render_buffer.Insert(x);
+    render_delay_buffer->Insert(x);
+    if (k == 0) {
+      render_delay_buffer->Reset();
+    }
+    render_delay_buffer->PrepareCaptureProcessing();
 
     aec_state.HandleEchoPathChange(echo_path_variability);
-    aec_state.Update(H2, h, true, 2, render_buffer, E2_main, Y2, x[0], s,
-                     false);
+    aec_state.Update(H2, h, true, *render_delay_buffer->GetRenderBuffer(),
+                     E2_main, Y2, s, false);
 
-    estimator.Estimate(aec_state, render_buffer, S2_linear, Y2, &R2);
+    estimator.Estimate(aec_state, *render_delay_buffer->GetRenderBuffer(),
+                       S2_linear, Y2, &R2);
   }
   std::for_each(R2.begin(), R2.end(),
                 [&](float a) { EXPECT_NEAR(kLevel, a, 0.1f); });

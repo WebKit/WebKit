@@ -19,7 +19,7 @@
 #include "rtc_base/format_macros.h"
 #include "test/rtp_file_reader.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   webrtc::test::RtpFileReader* reader;
   webrtc::RtpHeaderParser* parser;
   if (!ParseArgsAndSetupEstimator(argc, argv, NULL, NULL, &reader, &parser,

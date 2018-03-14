@@ -27,7 +27,7 @@ namespace {
 const uint32_t kSenderSsrc = 0x12345678;
 const uint32_t kRemoteSsrc = 0x23456789;
 const uint8_t kFractionLost = 55;
-const uint32_t kCumulativeLost = 0x111213;
+const int32_t kCumulativeLost = 0x111213;
 const uint32_t kExtHighestSeqNum = 0x22232425;
 const uint32_t kJitter = 0x33343536;
 const uint32_t kLastSr = 0x44454647;
@@ -51,7 +51,7 @@ TEST(RtcpPacketReceiverReportTest, ParseWithOneReportBlock) {
   const ReportBlock& rb = parsed.report_blocks().front();
   EXPECT_EQ(kRemoteSsrc, rb.source_ssrc());
   EXPECT_EQ(kFractionLost, rb.fraction_lost());
-  EXPECT_EQ(kCumulativeLost, rb.cumulative_lost());
+  EXPECT_EQ(kCumulativeLost, rb.cumulative_lost_signed());
   EXPECT_EQ(kExtHighestSeqNum, rb.extended_high_seq_num());
   EXPECT_EQ(kJitter, rb.jitter());
   EXPECT_EQ(kLastSr, rb.last_sr());

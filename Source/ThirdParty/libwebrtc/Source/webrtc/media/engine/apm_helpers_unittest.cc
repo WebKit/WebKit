@@ -10,13 +10,10 @@
 
 #include "media/engine/apm_helpers.h"
 
-#include "media/engine/webrtcvoe.h"
-#include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/scoped_ref_ptr.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/mock_audio_decoder_factory.h"
-#include "voice_engine/transmit_mixer.h"
 
 namespace webrtc {
 namespace {
@@ -28,24 +25,14 @@ struct TestHelper {
     // This replicates the conditions from voe_auto_test.
     Config config;
     config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
-    apm_ = rtc::scoped_refptr<AudioProcessing>(AudioProcessing::Create(config));
+    apm_ = rtc::scoped_refptr<AudioProcessing>(
+        AudioProcessingBuilder().Create(config));
     apm_helpers::Init(apm());
-    EXPECT_EQ(0, voe_wrapper_.base()->Init(
-                     &mock_audio_device_, apm_,
-                     MockAudioDecoderFactory::CreateEmptyFactory()));
   }
 
   AudioProcessing* apm() { return apm_.get(); }
 
   const AudioProcessing* apm() const { return apm_.get(); }
-
-  test::MockAudioDeviceModule* adm() {
-    return &mock_audio_device_;
-  }
-
-  voe::TransmitMixer* transmit_mixer() {
-    return voe_wrapper_.base()->transmit_mixer();
-  }
 
   bool GetEcMetricsStatus() const {
     EchoCancellation* ec = apm()->echo_cancellation();
@@ -67,8 +54,6 @@ struct TestHelper {
   }
 
  private:
-  testing::NiceMock<test::MockAudioDeviceModule> mock_audio_device_;
-  cricket::VoEWrapper voe_wrapper_;
   rtc::scoped_refptr<AudioProcessing> apm_;
 };
 }  // namespace
@@ -117,21 +102,18 @@ TEST(ApmHelpersTest, AgcStatus_EnableDisable) {
   TestHelper helper;
   GainControl* gc = helper.apm()->gain_control();
 #if defined(WEBRTC_IOS) || defined(WEBRTC_ANDROID)
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), false);
+  apm_helpers::SetAgcStatus(helper.apm(), false);
   EXPECT_FALSE(gc->is_enabled());
   EXPECT_EQ(GainControl::kFixedDigital, gc->mode());
 
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), true);
+  apm_helpers::SetAgcStatus(helper.apm(), true);
   EXPECT_TRUE(gc->is_enabled());
   EXPECT_EQ(GainControl::kFixedDigital, gc->mode());
 #else
-  EXPECT_CALL(*helper.adm(), SetAGC(false)).WillOnce(testing::Return(0));
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), false);
+  apm_helpers::SetAgcStatus(helper.apm(), false);
   EXPECT_FALSE(gc->is_enabled());
   EXPECT_EQ(GainControl::kAdaptiveAnalog, gc->mode());
-
-  EXPECT_CALL(*helper.adm(), SetAGC(true)).WillOnce(testing::Return(0));
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), true);
+  apm_helpers::SetAgcStatus(helper.apm(), true);
   EXPECT_TRUE(gc->is_enabled());
   EXPECT_EQ(GainControl::kAdaptiveAnalog, gc->mode());
 #endif
@@ -243,21 +225,14 @@ TEST(ApmHelpersTest, TypingDetectionStatus_DefaultMode) {
   EXPECT_FALSE(vd->is_enabled());
 }
 
-// TODO(kthelgason): Reenable this test on simulator.
-// See bugs.webrtc.org/5569
-#if defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR
-#define MAYBE_TypingDetectionStatus_EnableDisable \
-  DISABLED_TypingDetectionStatus_EnableDisable
-#else
-#define MAYBE_TypingDetectionStatus_EnableDisable \
-  TypingDetectionStatus_EnableDisable
-#endif
-TEST(ApmHelpersTest, MAYBE_TypingDetectionStatus_EnableDisable) {
+TEST(ApmHelpersTest, TypingDetectionStatus_EnableDisable) {
   TestHelper helper;
   VoiceDetection* vd = helper.apm()->voice_detection();
   apm_helpers::SetTypingDetectionStatus(helper.apm(), true);
+  EXPECT_EQ(VoiceDetection::kVeryLowLikelihood, vd->likelihood());
   EXPECT_TRUE(vd->is_enabled());
   apm_helpers::SetTypingDetectionStatus(helper.apm(), false);
+  EXPECT_EQ(VoiceDetection::kVeryLowLikelihood, vd->likelihood());
   EXPECT_FALSE(vd->is_enabled());
 }
 
@@ -266,22 +241,5 @@ TEST(ApmHelpersTest, MAYBE_TypingDetectionStatus_EnableDisable) {
 TEST(ApmHelpersTest, HighPassFilter_DefaultMode) {
   TestHelper helper;
   EXPECT_FALSE(helper.apm()->high_pass_filter()->is_enabled());
-}
-
-// TODO(solenberg): Move this test to a better place - added here for the sake
-// of duplicating all relevant tests from audio_processing_test.cc.
-TEST(ApmHelpersTest, StereoSwapping_DefaultMode) {
-  TestHelper helper;
-  EXPECT_FALSE(helper.transmit_mixer()->IsStereoChannelSwappingEnabled());
-}
-
-// TODO(solenberg): Move this test to a better place - added here for the sake
-// of duplicating all relevant tests from audio_processing_test.cc.
-TEST(ApmHelpersTest, StereoSwapping_EnableDisable) {
-  TestHelper helper;
-  helper.transmit_mixer()->EnableStereoChannelSwapping(true);
-  EXPECT_TRUE(helper.transmit_mixer()->IsStereoChannelSwappingEnabled());
-  helper.transmit_mixer()->EnableStereoChannelSwapping(false);
-  EXPECT_FALSE(helper.transmit_mixer()->IsStereoChannelSwappingEnabled());
 }
 }  // namespace webrtc

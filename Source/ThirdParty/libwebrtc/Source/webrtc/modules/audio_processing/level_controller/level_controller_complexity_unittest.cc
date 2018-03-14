@@ -86,7 +86,7 @@ void RunTogetherWithApm(const std::string& test_description,
   apm_config.residual_echo_detector.enabled = include_default_apm_processing;
 
   std::unique_ptr<AudioProcessing> apm;
-  apm.reset(AudioProcessing::Create(config));
+  apm.reset(AudioProcessingBuilder().Create(config));
   ASSERT_TRUE(apm.get());
   apm->ApplyConfig(apm_config);
 

@@ -385,6 +385,13 @@ int VP9EncoderImpl::NumberOfThreads(int width,
   } else if (width * height >= 640 * 360 && number_of_cores > 2) {
     return 2;
   } else {
+    // Use 2 threads for low res on ARM.
+#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || \
+    defined(WEBRTC_ANDROID)
+    if (width * height >= 320 * 180 && number_of_cores > 2) {
+      return 2;
+    }
+#endif
     // 1 thread less than VGA.
     return 1;
   }

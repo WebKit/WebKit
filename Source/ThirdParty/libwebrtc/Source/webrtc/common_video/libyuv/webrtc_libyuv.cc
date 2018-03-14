@@ -12,11 +12,9 @@
 
 #include <string.h>
 
-#include "rtc_base/checks.h"
 #include "api/video/i420_buffer.h"
-
-// NOTE(ajm): Path provided by gn.
-#include "libyuv.h"  // NOLINT
+#include "rtc_base/checks.h"
+#include "third_party/libyuv/include/libyuv.h"
 
 namespace webrtc {
 

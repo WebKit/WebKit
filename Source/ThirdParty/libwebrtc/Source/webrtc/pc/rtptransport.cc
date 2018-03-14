@@ -33,6 +33,8 @@ void RtpTransport::SetRtpPacketTransport(
     rtp_packet_transport_->SignalReadyToSend.disconnect(this);
     rtp_packet_transport_->SignalReadPacket.disconnect(this);
     rtp_packet_transport_->SignalNetworkRouteChanged.disconnect(this);
+    rtp_packet_transport_->SignalWritableState.disconnect(this);
+    rtp_packet_transport_->SignalSentPacket.disconnect(this);
     // Reset the network route of the old transport.
     SignalNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute>());
   }
@@ -43,6 +45,10 @@ void RtpTransport::SetRtpPacketTransport(
                                                    &RtpTransport::OnReadPacket);
     new_packet_transport->SignalNetworkRouteChanged.connect(
         this, &RtpTransport::OnNetworkRouteChange);
+    new_packet_transport->SignalWritableState.connect(
+        this, &RtpTransport::OnWritableState);
+    new_packet_transport->SignalSentPacket.connect(this,
+                                                   &RtpTransport::OnSentPacket);
     // Set the network route for the new transport.
     SignalNetworkRouteChanged(new_packet_transport->network_route());
   }
@@ -63,6 +69,8 @@ void RtpTransport::SetRtcpPacketTransport(
     rtcp_packet_transport_->SignalReadyToSend.disconnect(this);
     rtcp_packet_transport_->SignalReadPacket.disconnect(this);
     rtcp_packet_transport_->SignalNetworkRouteChanged.disconnect(this);
+    rtcp_packet_transport_->SignalWritableState.disconnect(this);
+    rtcp_packet_transport_->SignalSentPacket.disconnect(this);
     // Reset the network route of the old transport.
     SignalNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute>());
   }
@@ -73,6 +81,10 @@ void RtpTransport::SetRtcpPacketTransport(
                                                    &RtpTransport::OnReadPacket);
     new_packet_transport->SignalNetworkRouteChanged.connect(
         this, &RtpTransport::OnNetworkRouteChange);
+    new_packet_transport->SignalWritableState.connect(
+        this, &RtpTransport::OnWritableState);
+    new_packet_transport->SignalSentPacket.connect(this,
+                                                   &RtpTransport::OnSentPacket);
     // Set the network route for the new transport.
     SignalNetworkRouteChanged(new_packet_transport->network_route());
   }
@@ -172,6 +184,13 @@ RtpTransportAdapter* RtpTransport::GetInternal() {
   return nullptr;
 }
 
+bool RtpTransport::IsRtpTransportWritable() {
+  auto rtcp_packet_transport =
+      rtcp_mux_enabled_ ? nullptr : rtcp_packet_transport_;
+  return rtp_packet_transport_ && rtp_packet_transport_->writable() &&
+         (!rtcp_packet_transport || rtcp_packet_transport->writable());
+}
+
 void RtpTransport::OnReadyToSend(rtc::PacketTransportInternal* transport) {
   SetReadyToSend(transport == rtcp_packet_transport_, true);
 }
@@ -179,6 +198,20 @@ void RtpTransport::OnReadyToSend(rtc::PacketTransportInternal* transport) {
 void RtpTransport::OnNetworkRouteChange(
     rtc::Optional<rtc::NetworkRoute> network_route) {
   SignalNetworkRouteChanged(network_route);
+}
+
+void RtpTransport::OnWritableState(
+    rtc::PacketTransportInternal* packet_transport) {
+  RTC_DCHECK(packet_transport == rtp_packet_transport_ ||
+             packet_transport == rtcp_packet_transport_);
+  SignalWritableState(IsRtpTransportWritable());
+}
+
+void RtpTransport::OnSentPacket(rtc::PacketTransportInternal* packet_transport,
+                                const rtc::SentPacket& sent_packet) {
+  RTC_DCHECK(packet_transport == rtp_packet_transport_ ||
+             packet_transport == rtcp_packet_transport_);
+  SignalSentPacket(sent_packet);
 }
 
 void RtpTransport::SetReadyToSend(bool rtcp, bool ready) {
@@ -226,7 +259,6 @@ void RtpTransport::OnReadPacket(rtc::PacketTransportInternal* transport,
   if (!WantsPacket(rtcp, &packet)) {
     return;
   }
-
   // This mutates |packet| if it is protected.
   SignalPacketReceived(rtcp, &packet, packet_time);
 }

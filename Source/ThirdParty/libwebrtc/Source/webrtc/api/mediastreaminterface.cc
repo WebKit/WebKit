@@ -9,11 +9,20 @@
  */
 
 #include "api/mediastreaminterface.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
 const char MediaStreamTrackInterface::kVideoKind[] = "video";
 const char MediaStreamTrackInterface::kAudioKind[] = "audio";
+
+void AudioProcessorInterface::GetStats(AudioProcessorStats* /*stats*/) {
+  RTC_NOTREACHED() << "Old-style GetStats() is called but it has no "
+                   << "implementation.";
+  RTC_LOG(LS_ERROR) << "Old-style GetStats() is called but it has no "
+                    << "implementation.";
+}
 
 // TODO(ivoc): Remove this when the function becomes pure virtual.
 AudioProcessorInterface::AudioProcessorStatistics

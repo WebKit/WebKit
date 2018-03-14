@@ -12,6 +12,7 @@ import("../../webrtc.gni")
 build_video_processing_sse2 = current_cpu == "x86" || current_cpu == "x64"
 
 rtc_static_library("video_processing") {
+  visibility = [ "*" ]
   sources = [
     "util/denoiser_filter.cc",
     "util/denoiser_filter_c.cc",
@@ -30,8 +31,10 @@ rtc_static_library("video_processing") {
     "../../common_audio",
     "../../common_video",
     "../../modules/utility",
+    "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers",
+    "../../system_wrappers:cpu_features_api",
+    "//third_party/libyuv",
   ]
   if (build_video_processing_sse2) {
     deps += [ ":video_processing_sse2" ]

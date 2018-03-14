@@ -34,8 +34,8 @@ TEST(FftData, TestOptimizations) {
 
     std::array<float, kFftLengthBy2Plus1> spectrum;
     std::array<float, kFftLengthBy2Plus1> spectrum_sse2;
-    x.Spectrum(Aec3Optimization::kNone, &spectrum);
-    x.Spectrum(Aec3Optimization::kSse2, &spectrum_sse2);
+    x.Spectrum(Aec3Optimization::kNone, spectrum);
+    x.Spectrum(Aec3Optimization::kSse2, spectrum_sse2);
     EXPECT_EQ(spectrum, spectrum_sse2);
   }
 }
@@ -102,7 +102,7 @@ TEST(FftData, Spectrum) {
   }
 
   std::array<float, kFftLengthBy2Plus1> spectrum;
-  x.Spectrum(Aec3Optimization::kNone, &spectrum);
+  x.Spectrum(Aec3Optimization::kNone, spectrum);
 
   EXPECT_EQ(x.re[0] * x.re[0], spectrum[0]);
   EXPECT_EQ(x.re[spectrum.size() - 1] * x.re[spectrum.size() - 1],

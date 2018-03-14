@@ -27,7 +27,7 @@ void CompoundPacket::Append(RtcpPacket* packet) {
 bool CompoundPacket::Create(uint8_t* packet,
                             size_t* index,
                             size_t max_length,
-                            RtcpPacket::PacketReadyCallback* callback) const {
+                            PacketReadyCallback callback) const {
   for (RtcpPacket* appended : appended_packets_) {
     if (!appended->Create(packet, index, max_length, callback))
       return false;

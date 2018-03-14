@@ -160,7 +160,7 @@ class EchoCanceller3Tester {
   // output.
   void RunCaptureTransportVerificationTest() {
     EchoCanceller3 aec3(
-        sample_rate_hz_, false,
+        EchoCanceller3Config(), sample_rate_hz_, false,
         std::unique_ptr<BlockProcessor>(
             new CaptureTransportVerificationProcessor(num_bands_)));
 
@@ -185,7 +185,7 @@ class EchoCanceller3Tester {
   // block processor.
   void RunRenderTransportVerificationTest() {
     EchoCanceller3 aec3(
-        sample_rate_hz_, false,
+        EchoCanceller3Config(), sample_rate_hz_, false,
         std::unique_ptr<BlockProcessor>(
             new RenderTransportVerificationProcessor(num_bands_)));
 
@@ -249,7 +249,7 @@ class EchoCanceller3Tester {
         break;
     }
 
-    EchoCanceller3 aec3(sample_rate_hz_, false,
+    EchoCanceller3 aec3(EchoCanceller3Config(), sample_rate_hz_, false,
                         std::move(block_processor_mock));
 
     for (size_t frame_index = 0; frame_index < kNumFramesToProcess;
@@ -331,7 +331,7 @@ class EchoCanceller3Tester {
       } break;
     }
 
-    EchoCanceller3 aec3(sample_rate_hz_, false,
+    EchoCanceller3 aec3(EchoCanceller3Config(), sample_rate_hz_, false,
                         std::move(block_processor_mock));
 
     for (size_t frame_index = 0; frame_index < kNumFramesToProcess;
@@ -420,7 +420,7 @@ class EchoCanceller3Tester {
       } break;
     }
 
-    EchoCanceller3 aec3(sample_rate_hz_, false,
+    EchoCanceller3 aec3(EchoCanceller3Config(), sample_rate_hz_, false,
                         std::move(block_processor_mock));
     for (size_t frame_index = 0; frame_index < kNumFramesToProcess;
          ++frame_index) {
@@ -458,12 +458,13 @@ class EchoCanceller3Tester {
   // This test verifies that the swapqueue is able to handle jitter in the
   // capture and render API calls.
   void RunRenderSwapQueueVerificationTest() {
+    const EchoCanceller3Config config;
     EchoCanceller3 aec3(
-        sample_rate_hz_, false,
+        config, sample_rate_hz_, false,
         std::unique_ptr<BlockProcessor>(
             new RenderTransportVerificationProcessor(num_bands_)));
 
-    for (size_t frame_index = 0; frame_index < kRenderTransferQueueSize;
+    for (size_t frame_index = 0; frame_index < kRenderTransferQueueSizeFrames;
          ++frame_index) {
       if (sample_rate_hz_ > 16000) {
         render_buffer_.SplitIntoFrequencyBands();
@@ -478,7 +479,7 @@ class EchoCanceller3Tester {
       aec3.AnalyzeRender(&render_buffer_);
     }
 
-    for (size_t frame_index = 0; frame_index < kRenderTransferQueueSize;
+    for (size_t frame_index = 0; frame_index < kRenderTransferQueueSizeFrames;
          ++frame_index) {
       aec3.AnalyzeCapture(&capture_buffer_);
       if (sample_rate_hz_ > 16000) {

@@ -92,7 +92,6 @@ class VideoMediaChannelTest : public testing::Test,
     EXPECT_TRUE(channel_.get() != NULL);
     network_interface_.SetDestination(channel_.get());
     channel_->SetInterface(&network_interface_);
-    media_error_ = cricket::VideoMediaChannel::ERROR_NONE;
     cricket::VideoRecvParameters parameters;
     parameters.codecs = engine_.codecs();
     channel_->SetRecvParameters(parameters);
@@ -342,11 +341,6 @@ class VideoMediaChannelTest : public testing::Test,
       *fir_count = count;
     }
     return true;
-  }
-
-  void OnVideoChannelError(uint32_t ssrc,
-                           cricket::VideoMediaChannel::Error error) {
-    media_error_ = error;
   }
 
   // Test that SetSend works.
@@ -942,7 +936,6 @@ class VideoMediaChannelTest : public testing::Test,
   std::unique_ptr<C> channel_;
   cricket::FakeNetworkInterface network_interface_;
   cricket::FakeVideoRenderer renderer_;
-  cricket::VideoMediaChannel::Error media_error_;
 
   // Used by test cases where 2 streams are run on the same channel.
   cricket::FakeVideoRenderer renderer2_;

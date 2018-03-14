@@ -74,6 +74,7 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
       const VideoStreamEncoder::AdaptCounts& cpu_counts,
       const VideoStreamEncoder::AdaptCounts& quality_counts);
   void OnMinPixelLimitReached();
+  void OnInitialQualityResolutionAdaptDown();
 
   void OnSuspendChange(bool is_suspended);
   void OnInactiveSsrc(uint32_t ssrc);
@@ -81,6 +82,7 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
   // Used to indicate change in content type, which may require a change in
   // how stats are collected and set the configured preferred media bitrate.
   void OnEncoderReconfigured(const VideoEncoderConfig& encoder_config,
+                             const std::vector<VideoStream>& streams,
                              uint32_t preferred_bitrate_bps);
 
   // Used to update the encoder target rate.
@@ -180,6 +182,10 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
     SampleCounter vp9;   // QP range: 0-255.
     SampleCounter h264;  // QP range: 0-51.
   };
+  struct AdaptChanges {
+    int down = 0;
+    int up = 0;
+  };
 
   // Map holding encoded frames (mapped by timestamp).
   // If simulcast layers are encoded on different threads, there is no guarantee
@@ -190,12 +196,19 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
     }
   };
   struct Frame {
-    Frame(int64_t send_ms, uint32_t width, uint32_t height)
-        : send_ms(send_ms), max_width(width), max_height(height) {}
+    Frame(int64_t send_ms,
+          uint32_t width,
+          uint32_t height,
+          size_t simulcast_idx)
+        : send_ms(send_ms),
+          max_width(width),
+          max_height(height),
+          max_simulcast_idx(simulcast_idx) {}
     const int64_t
         send_ms;          // Time when first frame with this timestamp is sent.
     uint32_t max_width;   // Max width with this timestamp.
     uint32_t max_height;  // Max height with this timestamp.
+    size_t max_simulcast_idx;  // Max simulcast index with this timestamp.
   };
   typedef std::map<uint32_t, Frame, TimestampOlderThan> EncodedFrameMap;
 
@@ -207,6 +220,9 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
                      StatsTimer* timer) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
   void UpdateAdaptationStats(
       const VideoStreamEncoder::AdaptCounts& cpu_counts,
+      const VideoStreamEncoder::AdaptCounts& quality_counts)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void TryUpdateInitialQualityResolutionAdaptUp(
       const VideoStreamEncoder::AdaptCounts& quality_counts)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
@@ -247,8 +263,10 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
 
     void InitializeBitrateCounters(const VideoSendStream::Stats& stats);
 
-    bool InsertEncodedFrame(const EncodedImage& encoded_frame);
-    void RemoveOld(int64_t now_ms);
+    bool InsertEncodedFrame(const EncodedImage& encoded_frame,
+                            size_t simulcast_idx,
+                            bool* is_limited_in_resolution);
+    void RemoveOld(int64_t now_ms, bool* is_limited_in_resolution);
 
     const std::string uma_prefix_;
     Clock* const clock_;
@@ -285,7 +303,10 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
     FallbackEncoderInfoDisabled fallback_info_disabled_;
     ReportBlockStats report_block_stats_;
     const VideoSendStream::Stats start_stats_;
+    size_t num_streams_;  // Number of configured streams to encoder.
+    size_t num_pixels_highest_stream_;
     EncodedFrameMap encoded_frames_;
+    AdaptChanges initial_quality_changes_;
 
     std::map<int, QpCounters>
         qp_counters_;  // QP counters mapped by spatial idx.

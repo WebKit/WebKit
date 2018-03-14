@@ -13,12 +13,28 @@
 
 #include <string>
 
+#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/task_queue.h"
 
 namespace webrtc {
 class ReceiveStatisticsProvider;
 class Transport;
+
+// Interface to watch incoming rtcp packets by media (rtp) receiver.
+class MediaReceiverRtcpObserver {
+ public:
+  virtual ~MediaReceiverRtcpObserver() = default;
+
+  // All message handlers have default empty implementation. This way user needs
+  // to implement only those she is interested in.
+  virtual void OnSenderReport(uint32_t sender_ssrc,
+                              NtpTime ntp_time,
+                              uint32_t rtp_time) {}
+  virtual void OnBye(uint32_t sender_ssrc) {}
+  virtual void OnBitrateAllocation(uint32_t sender_ssrc,
+                                   const BitrateAllocation& allocation) {}
+};
 
 struct RtcpTransceiverConfig {
   RtcpTransceiverConfig();
@@ -52,6 +68,10 @@ struct RtcpTransceiverConfig {
   // Rtcp report block generator for outgoing receiver reports.
   ReceiveStatisticsProvider* receive_statistics = nullptr;
 
+  // Callback to pass result of rtt calculation. Should outlive RtcpTransceiver.
+  // Callbacks will be invoked on the task_queue.
+  RtcpRttStats* rtt_observer = nullptr;
+
   // Configures if sending should
   //  enforce compound packets: https://tools.ietf.org/html/rfc4585#section-3.1
   //  or allow reduced size packets: https://tools.ietf.org/html/rfc5506
@@ -70,6 +90,9 @@ struct RtcpTransceiverConfig {
   // Flags for features and experiments.
   //
   bool schedule_periodic_compound_packets = true;
+  // Estimate RTT as non-sender as described in
+  // https://tools.ietf.org/html/rfc3611#section-4.4 and #section-4.5
+  bool non_sender_rtt_measurement = false;
 };
 
 }  // namespace webrtc

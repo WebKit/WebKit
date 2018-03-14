@@ -785,6 +785,17 @@ int main(int argc, char* argv[]) {
         event_recognized = true;
         break;
       }
+
+      case webrtc::ParsedRtcEventLog::ALR_STATE_EVENT: {
+        if (FLAG_bwe) {
+          webrtc::ParsedRtcEventLog::AlrStateEvent alr_state =
+              parsed_stream.GetAlrState(i);
+          std::cout << parsed_stream.GetTimestamp(i) << "\tALR_STATE"
+                    << "\tin_alr=" << alr_state.in_alr << std::endl;
+        }
+        event_recognized = true;
+        break;
+      }
     }
 
     if (!event_recognized) {

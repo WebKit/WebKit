@@ -15,6 +15,7 @@
 
 #include "api/optional.h"
 #include "modules/audio_processing/aec3/decimator.h"
+#include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
 #include "modules/audio_processing/aec3/matched_filter_lag_aggregator.h"
@@ -32,11 +33,12 @@ class EchoPathDelayEstimator {
                          const EchoCanceller3Config& config);
   ~EchoPathDelayEstimator();
 
-  // Resets the estimation.
-  void Reset();
+  // Resets the estimation. If the soft-reset is specified, only  the matched
+  // filters are reset.
+  void Reset(bool soft_reset);
 
   // Produce a delay estimate if such is avaliable.
-  rtc::Optional<size_t> EstimateDelay(
+  rtc::Optional<DelayEstimate> EstimateDelay(
       const DownsampledRenderBuffer& render_buffer,
       rtc::ArrayView<const float> capture);
 

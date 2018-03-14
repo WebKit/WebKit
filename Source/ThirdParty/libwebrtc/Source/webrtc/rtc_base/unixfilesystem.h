@@ -37,20 +37,7 @@ class UnixFilesystem : public FilesystemInterface {
   // Returns true of pathname represents an existing file
   bool IsFile(const Pathname& pathname) override;
 
-  std::string TempFilename(const Pathname& dir,
-                           const std::string& prefix) override;
-
   bool GetFileSize(const Pathname& path, size_t* size) override;
-
- private:
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_MAC)
-  static char* provided_app_data_folder_;
-  static char* provided_app_temp_folder_;
-#else
-  static char* app_temp_path_;
-#endif
-
-  static char* CopyString(const std::string& str);
 };
 
 }  // namespace rtc

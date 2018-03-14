@@ -17,6 +17,8 @@
 namespace webrtc {
 namespace rtcp {
 
+// A ReportBlock represents the Sender Report packet from
+// RFC 3550 section 6.4.1.
 class ReportBlock {
  public:
   static const size_t kLength = 24;
@@ -34,7 +36,7 @@ class ReportBlock {
   void SetFractionLost(uint8_t fraction_lost) {
     fraction_lost_ = fraction_lost;
   }
-  bool SetCumulativeLost(uint32_t cumulative_lost);
+  bool SetCumulativeLost(int32_t cumulative_lost);
   void SetExtHighestSeqNum(uint32_t ext_highest_seq_num) {
     extended_high_seq_num_ = ext_highest_seq_num;
   }
@@ -46,20 +48,22 @@ class ReportBlock {
 
   uint32_t source_ssrc() const { return source_ssrc_; }
   uint8_t fraction_lost() const { return fraction_lost_; }
-  uint32_t cumulative_lost() const { return cumulative_lost_; }
+  int32_t cumulative_lost_signed() const { return cumulative_lost_; }
+  // Deprecated - returns max(0, cumulative_lost_), not negative values.
+  uint32_t cumulative_lost() const;
   uint32_t extended_high_seq_num() const { return extended_high_seq_num_; }
   uint32_t jitter() const { return jitter_; }
   uint32_t last_sr() const { return last_sr_; }
   uint32_t delay_since_last_sr() const { return delay_since_last_sr_; }
 
  private:
-  uint32_t source_ssrc_;
-  uint8_t fraction_lost_;
-  uint32_t cumulative_lost_;
-  uint32_t extended_high_seq_num_;
-  uint32_t jitter_;
-  uint32_t last_sr_;
-  uint32_t delay_since_last_sr_;
+  uint32_t source_ssrc_;     // 32 bits
+  uint8_t fraction_lost_;    // 8 bits representing a fixed point value 0..1
+  int32_t cumulative_lost_;  // Signed 24-bit value
+  uint32_t extended_high_seq_num_;  // 32 bits
+  uint32_t jitter_;                 // 32 bits
+  uint32_t last_sr_;                // 32 bits
+  uint32_t delay_since_last_sr_;    // 32 bits, units of 1/65536 seconds
 };
 
 }  // namespace rtcp

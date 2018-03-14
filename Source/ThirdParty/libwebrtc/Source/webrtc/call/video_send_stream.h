@@ -18,12 +18,14 @@
 
 #include "api/call/transport.h"
 #include "api/rtpparameters.h"
+#include "api/rtp_headers.h"
+#include "api/videosinkinterface.h"
+#include "api/videosourceinterface.h"
 #include "call/rtp_config.h"
 #include "call/video_config.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/include/frame_callback.h"
-#include "media/base/videosinkinterface.h"
-#include "media/base/videosourceinterface.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/platform_file.h"
 
 namespace webrtc {

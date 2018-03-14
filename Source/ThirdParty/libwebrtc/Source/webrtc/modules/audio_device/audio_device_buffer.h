@@ -95,8 +95,7 @@ class AudioDeviceBuffer {
 
   virtual int32_t SetRecordedBuffer(const void* audio_buffer,
                                     size_t samples_per_channel);
-  int32_t SetCurrentMicLevel(uint32_t level);
-  virtual void SetVQEData(int play_delay_ms, int rec_delay_ms, int clock_drift);
+  virtual void SetVQEData(int play_delay_ms, int rec_delay_ms);
   virtual int32_t DeliverRecordedData();
   uint32_t NewMicLevel() const;
 
@@ -195,24 +194,12 @@ class AudioDeviceBuffer {
   // dynamically.
   rtc::BufferT<int16_t> rec_buffer_ RTC_ACCESS_ON(recording_thread_checker_);
 
-// AGC parameters.
-#if !defined(WEBRTC_WIN)
-  uint32_t current_mic_level_ RTC_ACCESS_ON(recording_thread_checker_);
-#else
-  // Windows uses a dedicated thread for volume APIs.
-  uint32_t current_mic_level_;
-#endif
-  uint32_t new_mic_level_ RTC_ACCESS_ON(recording_thread_checker_);
-
   // Contains true of a key-press has been detected.
   bool typing_status_ RTC_ACCESS_ON(recording_thread_checker_);
 
   // Delay values used by the AEC.
   int play_delay_ms_ RTC_ACCESS_ON(recording_thread_checker_);
   int rec_delay_ms_ RTC_ACCESS_ON(recording_thread_checker_);
-
-  // Contains a clock-drift measurement.
-  int clock_drift_ RTC_ACCESS_ON(recording_thread_checker_);
 
   // Counts number of times LogStats() has been called.
   size_t num_stat_reports_ RTC_ACCESS_ON(task_queue_);

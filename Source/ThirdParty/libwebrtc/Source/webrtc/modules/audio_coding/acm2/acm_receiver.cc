@@ -300,6 +300,10 @@ int AcmReceiver::FilteredCurrentDelayMs() const {
   return neteq_->FilteredCurrentDelayMs();
 }
 
+int AcmReceiver::TargetDelayMs() const {
+  return neteq_->TargetDelayMs();
+}
+
 int AcmReceiver::LastAudioCodec(CodecInst* codec) const {
   rtc::CritScope lock(&crit_sect_);
   if (!last_audio_decoder_) {

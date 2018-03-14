@@ -461,7 +461,9 @@ std::string RampUpDownUpTester::GetModifierString() const {
     str += "_";
   }
   str += (rtx_ ? "" : "no");
-  str += "rtx";
+  str += "rtx_";
+  str += (red_ ? "" : "no");
+  str += "red";
   return str;
 }
 

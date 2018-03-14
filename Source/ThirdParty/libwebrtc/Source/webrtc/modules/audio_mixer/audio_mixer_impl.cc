@@ -88,18 +88,6 @@ AudioMixerImpl::SourceStatusList::const_iterator FindSourceInList(
         return p->audio_source == audio_source;
       });
 }
-
-// TODO(aleloi): remove non-const version when WEBRTC only supports modern STL.
-AudioMixerImpl::SourceStatusList::iterator FindSourceInList(
-    AudioMixerImpl::Source const* audio_source,
-    AudioMixerImpl::SourceStatusList* audio_source_list) {
-  return std::find_if(
-      audio_source_list->begin(), audio_source_list->end(),
-      [audio_source](const std::unique_ptr<AudioMixerImpl::SourceStatus>& p) {
-        return p->audio_source == audio_source;
-      });
-}
-
 }  // namespace
 
 AudioMixerImpl::AudioMixerImpl(

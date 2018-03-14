@@ -57,10 +57,10 @@ class FakeAudioSendStream final : public webrtc::AudioSendStream {
  private:
   // webrtc::AudioSendStream implementation.
   void Reconfigure(const webrtc::AudioSendStream::Config& config) override;
-
   void Start() override { sending_ = true; }
   void Stop() override { sending_ = false; }
-
+  void SendAudioData(std::unique_ptr<webrtc::AudioFrame> audio_frame) override {
+  }
   bool SendTelephoneEvent(int payload_type, int payload_frequency, int event,
                           int duration_ms) override;
   void SetMuted(bool muted) override;
@@ -86,7 +86,7 @@ class FakeAudioReceiveStream final : public webrtc::AudioReceiveStream {
   void SetStats(const webrtc::AudioReceiveStream::Stats& stats);
   int received_packets() const { return received_packets_; }
   bool VerifyLastPacket(const uint8_t* data, size_t length) const;
-  const webrtc::AudioSinkInterface* sink() const { return sink_.get(); }
+  const webrtc::AudioSinkInterface* sink() const { return sink_; }
   float gain() const { return gain_; }
   bool DeliverRtp(const uint8_t* packet,
                   size_t length,
@@ -95,12 +95,13 @@ class FakeAudioReceiveStream final : public webrtc::AudioReceiveStream {
 
  private:
   // webrtc::AudioReceiveStream implementation.
+  void Reconfigure(const webrtc::AudioReceiveStream::Config& config) override;
   void Start() override { started_ = true; }
   void Stop() override { started_ = false; }
 
   webrtc::AudioReceiveStream::Stats GetStats() const override;
   int GetOutputLevel() const override { return 0; }
-  void SetSink(std::unique_ptr<webrtc::AudioSinkInterface> sink) override;
+  void SetSink(webrtc::AudioSinkInterface* sink) override;
   void SetGain(float gain) override;
   std::vector<webrtc::RtpSource> GetSources() const override {
     return std::vector<webrtc::RtpSource>();
@@ -110,7 +111,7 @@ class FakeAudioReceiveStream final : public webrtc::AudioReceiveStream {
   webrtc::AudioReceiveStream::Config config_;
   webrtc::AudioReceiveStream::Stats stats_;
   int received_packets_ = 0;
-  std::unique_ptr<webrtc::AudioSinkInterface> sink_;
+  webrtc::AudioSinkInterface* sink_ = nullptr;
   float gain_ = 1.0f;
   rtc::Buffer last_packet_;
   bool started_ = false;
@@ -288,8 +289,7 @@ class FakeCall final : public webrtc::Call, public webrtc::PacketReceiver {
   webrtc::PacketReceiver* Receiver() override;
 
   DeliveryStatus DeliverPacket(webrtc::MediaType media_type,
-                               const uint8_t* packet,
-                               size_t length,
+                               rtc::CopyOnWriteBuffer packet,
                                const webrtc::PacketTime& packet_time) override;
 
   webrtc::Call::Stats GetStats() const override;

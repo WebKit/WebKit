@@ -8,33 +8,22 @@
 
 import("../webrtc.gni")
 
+visibility = [ ":*" ]
+
 rtc_static_library("voice_engine") {
+  visibility += [ "*" ]
   sources = [
     "channel.cc",
     "channel.h",
-    "channel_manager.cc",
-    "channel_manager.h",
     "channel_proxy.cc",
     "channel_proxy.h",
-    "include/voe_base.h",
-    "include/voe_errors.h",
-    "shared_data.cc",
-    "shared_data.h",
-    "transmit_mixer.cc",
-    "transmit_mixer.h",
     "transport_feedback_packet_loss_tracker.cc",
     "transport_feedback_packet_loss_tracker.h",
     "utility.cc",
     "utility.h",
-    "voe_base_impl.cc",
-    "voe_base_impl.h",
-    "voice_engine_impl.cc",
-    "voice_engine_impl.h",
   ]
 
   if (is_win) {
-    defines = [ "WEBRTC_DRIFT_COMPENSATION_SUPPORTED" ]
-
     cflags = [
       # TODO(kjellander): Bug 261: fix this warning.
       "/wd4373",  # Virtual function override.
@@ -46,12 +35,10 @@ rtc_static_library("voice_engine") {
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
-  public_deps = [
-    "../modules/audio_coding",
-  ]
   deps = [
     ":audio_level",
     "..:webrtc_common",
+    "../:typedefs",
     "../api:array_view",
     "../api:audio_mixer_api",
     "../api:call_api",
@@ -65,6 +52,7 @@ rtc_static_library("voice_engine") {
     "../common_audio",
     "../logging:rtc_event_log_api",
     "../modules:module_api",
+    "../modules/audio_coding",
     "../modules/audio_coding:audio_format_conversion",
     "../modules/audio_coding:audio_network_adaptor_config",
     "../modules/audio_device",
@@ -73,14 +61,23 @@ rtc_static_library("voice_engine") {
     "../modules/media_file",
     "../modules/pacing",
     "../modules/rtp_rtcp",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
     "../modules/utility",
+    "../rtc_base:checks",
+    "../rtc_base:rate_limiter",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
     "../system_wrappers",
+    "../system_wrappers:field_trial_api",
+    "../system_wrappers:metrics_api",
   ]
 }
 
 rtc_static_library("audio_level") {
+  visibility += [
+    ":voice_engine",
+    "../audio:audio",
+  ]
   sources = [
     "audio_level.cc",
     "audio_level.h",
@@ -88,6 +85,7 @@ rtc_static_library("audio_level") {
 
   deps = [
     "..:webrtc_common",
+    "../:typedefs",
     "../common_audio",
     "../modules:module_api",
     "../rtc_base:rtc_base_approved",
@@ -96,6 +94,7 @@ rtc_static_library("audio_level") {
 
 if (rtc_include_tests) {
   rtc_test("voice_engine_unittests") {
+    visibility += webrtc_default_visibility
     deps = [
       ":voice_engine",
       "../api/audio_codecs:builtin_audio_decoder_factory",
@@ -105,9 +104,10 @@ if (rtc_include_tests) {
       "../modules/audio_device",
       "../modules/audio_processing",
       "../modules/media_file",
-      "../modules/rtp_rtcp",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
       "../modules/utility",
       "../modules/video_capture:video_capture",
+      "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
       "../system_wrappers",
@@ -124,10 +124,8 @@ if (rtc_include_tests) {
     }
 
     sources = [
-      "channel_unittest.cc",
       "transport_feedback_packet_loss_tracker_unittest.cc",
       "utility_unittest.cc",
-      "voe_base_unittest.cc",
     ]
 
     data = [
@@ -136,8 +134,6 @@ if (rtc_include_tests) {
     ]
 
     if (is_win) {
-      defines = [ "WEBRTC_DRIFT_COMPENSATION_SUPPORTED" ]
-
       cflags = [
         # TODO(kjellander): Bug 261: fix this warning.
         "/wd4373",  # Virtual function override.

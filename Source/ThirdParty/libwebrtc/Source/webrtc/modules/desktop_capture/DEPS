@@ -2,3 +2,9 @@ include_rules = [
   "+system_wrappers",
   "+third_party/libyuv",
 ]
+
+specific_include_rules = {
+  "screen_capturer_mac\.mm": [
+    "+sdk/objc",
+  ],
+}

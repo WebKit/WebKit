@@ -6,25 +6,79 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+# This is the root build file for GN. GN will start processing by loading this
+# file, and recursively load all dependencies until all dependencies are either
+# resolved or known not to exist (which will cause the build to fail). So if
+# you add a new build file, there must be some path of dependencies from this
+# file to your new one or GN won't know about it.
+
 import("//build/config/linux/pkg_config.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("webrtc.gni")
-import("//third_party/protobuf/proto_library.gni")
+if (!build_with_mozilla) {
+  import("//third_party/protobuf/proto_library.gni")
+}
 if (is_android) {
   import("//build/config/android/config.gni")
   import("//build/config/android/rules.gni")
 }
 
 if (!build_with_chromium) {
+  # This target should (transitively) cause everything to be built; if you run
+  # 'ninja default' and then 'ninja all', the second build should do no work.
   group("default") {
     testonly = true
     deps = [
       ":webrtc",
-      "examples",
-      "rtc_tools",
     ]
+    if (rtc_build_examples) {
+      deps += [ "examples" ]
+    }
+    if (rtc_build_tools) {
+      deps += [ "rtc_tools" ]
+    }
     if (rtc_include_tests) {
-      deps += [ ":webrtc_tests" ]
+      deps += [
+        ":rtc_unittests",
+        ":video_engine_tests",
+        ":webrtc_nonparallel_tests",
+        ":webrtc_perf_tests",
+        "common_audio:common_audio_unittests",
+        "common_video:common_video_unittests",
+        "media:rtc_media_unittests",
+        "modules:modules_tests",
+        "modules:modules_unittests",
+        "modules/audio_coding:audio_coding_tests",
+        "modules/audio_processing:audio_processing_tests",
+        "modules/remote_bitrate_estimator:bwe_simulations_tests",
+        "modules/rtp_rtcp:test_packet_masks_metrics",
+        "modules/video_capture:video_capture_internal_impl",
+        "ortc:ortc_unittests",
+        "pc:peerconnection_unittests",
+        "pc:rtc_pc_unittests",
+        "rtc_base:rtc_base_tests_utils",
+        "stats:rtc_stats_unittests",
+        "system_wrappers:system_wrappers_unittests",
+        "test",
+        "video:screenshare_loopback",
+        "video:sv_loopback",
+        "video:video_loopback",
+        "voice_engine:voice_engine_unittests",
+      ]
+      if (is_android) {
+        deps += [
+          ":android_junit_tests",
+          "sdk/android:libjingle_peerconnection_android_unittest",
+        ]
+      } else {
+        deps += [ "modules/video_capture:video_capture_tests" ]
+      }
+      if (rtc_enable_protobuf) {
+        deps += [
+          "audio:low_bandwidth_audio_test",
+          "logging:rtc_event_log2rtp_dump",
+        ]
+      }
     }
   }
 }
@@ -83,6 +137,9 @@ config("common_inherited_config") {
   if (is_mac) {
     defines += [ "WEBRTC_MAC" ]
   }
+  if (is_fuchsia) {
+    defines += [ "WEBRTC_FUCHSIA" ]
+  }
   if (is_win) {
     defines += [
       "WEBRTC_WIN",
@@ -94,6 +151,10 @@ config("common_inherited_config") {
       "WEBRTC_LINUX",
       "WEBRTC_ANDROID",
     ]
+
+    if (build_with_mozilla) {
+      defines += [ "WEBRTC_ANDROID_OPENSLES" ]
+    }
   }
   if (is_chromeos) {
     defines += [ "CHROMEOS" ]
@@ -268,98 +329,63 @@ if (!build_with_chromium) {
 
     deps = [
       ":webrtc_common",
-      "api",
       "api:transport_api",
       "audio",
       "call",
       "common_audio",
       "common_video",
-      "logging",
       "media",
       "modules",
       "modules/video_capture:video_capture_internal_impl",
       "ortc",
-      "p2p",
-      "pc",
       "rtc_base",
       "sdk",
-      "stats",
       "system_wrappers:system_wrappers_default",
       "video",
       "voice_engine",
     ]
+
+    if (build_with_mozilla) {
+      deps += [
+        "api:video_frame_api",
+        "system_wrappers:field_trial_default",
+        "system_wrappers:metrics_default",
+      ]
+    } else {
+      deps += [
+        "api",
+        "logging",
+        "p2p",
+        "pc",
+        "stats",
+      ]
+    }
 
     if (rtc_enable_protobuf) {
       defines += [ "ENABLE_RTC_EVENT_LOG" ]
       deps += [ "logging:rtc_event_log_proto" ]
     }
   }
+}
 
-  if (rtc_include_tests) {
-    # Target to build all the WebRTC tests (but not examples or tools).
-    # Executable in order to get a target that links all WebRTC code.
-    rtc_executable("webrtc_tests") {
-      testonly = true
-
-      # Only the root target should depend on this.
-      visibility = [ "//:default" ]
-
-      deps = [
-        ":rtc_unittests",
-        ":video_engine_tests",
-        ":webrtc_nonparallel_tests",
-        ":webrtc_perf_tests",
-        "common_audio:common_audio_unittests",
-        "common_video:common_video_unittests",
-        "media:rtc_media_unittests",
-        "modules:modules_tests",
-        "modules:modules_unittests",
-        "modules/audio_coding:audio_coding_tests",
-        "modules/audio_processing:audio_processing_tests",
-        "modules/remote_bitrate_estimator:bwe_simulations_tests",
-        "modules/rtp_rtcp:test_packet_masks_metrics",
-        "modules/video_capture:video_capture_internal_impl",
-        "ortc:ortc_unittests",
-        "pc:peerconnection_unittests",
-        "pc:rtc_pc_unittests",
-        "rtc_base:rtc_base_tests_utils",
-        "stats:rtc_stats_unittests",
-        "system_wrappers:system_wrappers_unittests",
-        "test",
-        "video:screenshare_loopback",
-        "video:video_loopback",
-        "voice_engine:voice_engine_unittests",
-      ]
-      if (is_android) {
-        deps += [
-          ":android_junit_tests",
-          "sdk/android:libjingle_peerconnection_android_unittest",
-        ]
-      } else {
-        deps += [ "modules/video_capture:video_capture_tests" ]
-      }
-      if (rtc_enable_protobuf) {
-        deps += [
-          "audio:low_bandwidth_audio_test",
-          "logging:rtc_event_log2rtp_dump",
-        ]
-      }
-    }
-  }
+rtc_source_set("typedefs") {
+  sources = [
+    "typedefs.h",
+  ]
 }
 
 rtc_static_library("webrtc_common") {
-  # TODO(mbonadei): Remove (bugs.webrtc.org/7745)
-  # Enabling GN check triggers cyclic dependency error:
-  # :webrtc_common ->
-  # api:video_frame_api ->
-  # system_wrappers:system_wrappers ->
-  # webrtc_common
-  check_includes = false
   sources = [
     "common_types.cc",
     "common_types.h",
-    "typedefs.h",
+  ]
+  deps = [
+    ":typedefs",
+    "api:array_view",
+    "api:optional",
+    "rtc_base:checks",
+    "rtc_base:deprecation",
+    "rtc_base:stringutils",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -410,6 +436,7 @@ if (rtc_include_tests) {
       "rtc_base:sequenced_task_checker_unittests",
       "rtc_base:weak_ptr_unittests",
       "system_wrappers:metrics_default",
+      "system_wrappers:runtime_enabled_features_default",
     ]
 
     if (rtc_enable_protobuf) {

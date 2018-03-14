@@ -559,7 +559,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
     int num_capture_channels = 1;
     switch (simulation_config_.simulation_settings) {
       case SettingsType::kDefaultApmMobile: {
-        apm_.reset(AudioProcessingImpl::Create());
+        apm_.reset(AudioProcessingBuilder().Create());
         ASSERT_TRUE(!!apm_);
         set_default_mobile_apm_runtime_settings(apm_.get());
         break;
@@ -567,7 +567,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       case SettingsType::kDefaultApmDesktop: {
         Config config;
         add_default_desktop_config(&config);
-        apm_.reset(AudioProcessingImpl::Create(config));
+        apm_.reset(AudioProcessingBuilder().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         apm_->SetExtraOptions(config);
@@ -577,7 +577,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
         Config config;
         add_beamformer_config(&config);
         add_default_desktop_config(&config);
-        apm_.reset(AudioProcessingImpl::Create(config));
+        apm_.reset(AudioProcessingBuilder().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         apm_->SetExtraOptions(config);
@@ -588,14 +588,14 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
         Config config;
         config.Set<Intelligibility>(new Intelligibility(true));
         add_default_desktop_config(&config);
-        apm_.reset(AudioProcessingImpl::Create(config));
+        apm_.reset(AudioProcessingBuilder().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         apm_->SetExtraOptions(config);
         break;
       }
       case SettingsType::kAllSubmodulesTurnedOff: {
-        apm_.reset(AudioProcessingImpl::Create());
+        apm_.reset(AudioProcessingBuilder().Create());
         ASSERT_TRUE(!!apm_);
         turn_off_default_apm_runtime_settings(apm_.get());
         break;
@@ -604,7 +604,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
         Config config;
         config.Set<ExtendedFilter>(new ExtendedFilter(true));
         config.Set<DelayAgnostic>(new DelayAgnostic(false));
-        apm_.reset(AudioProcessingImpl::Create(config));
+        apm_.reset(AudioProcessingBuilder().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         apm_->SetExtraOptions(config);
@@ -614,7 +614,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
         Config config;
         config.Set<ExtendedFilter>(new ExtendedFilter(false));
         config.Set<DelayAgnostic>(new DelayAgnostic(true));
-        apm_.reset(AudioProcessingImpl::Create(config));
+        apm_.reset(AudioProcessingBuilder().Create(config));
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         apm_->SetExtraOptions(config);

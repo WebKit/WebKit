@@ -204,6 +204,10 @@ class AcmReceiver {
   //
   int FilteredCurrentDelayMs() const;
 
+  // Returns the current target delay for NetEq in ms.
+  //
+  int TargetDelayMs() const;
+
   //
   // Get the audio codec associated with the last non-CNG/non-DTMF received
   // payload. If no non-CNG/non-DTMF packet is received -1 is returned,

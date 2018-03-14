@@ -247,11 +247,11 @@ RTCError RtpTransportControllerAdapter::SetRtpTransportParameters(
                                        &local_audio_description_,
                                        &remote_audio_description_);
       if (!voice_channel_->SetLocalContent(&local_audio_description_,
-                                           cricket::CA_OFFER, nullptr)) {
+                                           SdpType::kOffer, nullptr)) {
         break;
       }
       if (!voice_channel_->SetRemoteContent(&remote_audio_description_,
-                                            cricket::CA_ANSWER, nullptr)) {
+                                            SdpType::kAnswer, nullptr)) {
         break;
       }
     } else if (inner_transport == inner_video_transport_) {
@@ -259,11 +259,11 @@ RTCError RtpTransportControllerAdapter::SetRtpTransportParameters(
                                        &local_video_description_,
                                        &remote_video_description_);
       if (!video_channel_->SetLocalContent(&local_video_description_,
-                                           cricket::CA_OFFER, nullptr)) {
+                                           SdpType::kOffer, nullptr)) {
         break;
       }
       if (!video_channel_->SetRemoteContent(&remote_video_description_,
-                                            cricket::CA_ANSWER, nullptr)) {
+                                            SdpType::kAnswer, nullptr)) {
         break;
       }
     }
@@ -354,12 +354,12 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioSenderParameters(
   // Set remote content first, to ensure the stream is created with the correct
   // codec.
   if (!voice_channel_->SetRemoteContent(&remote_audio_description_,
-                                        cricket::CA_OFFER, nullptr)) {
+                                        SdpType::kOffer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply remote parameters to media channel.");
   }
   if (!voice_channel_->SetLocalContent(&local_audio_description_,
-                                       cricket::CA_ANSWER, nullptr)) {
+                                       SdpType::kAnswer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply local parameters to media channel.");
   }
@@ -442,12 +442,12 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoSenderParameters(
   // Set remote content first, to ensure the stream is created with the correct
   // codec.
   if (!video_channel_->SetRemoteContent(&remote_video_description_,
-                                        cricket::CA_OFFER, nullptr)) {
+                                        SdpType::kOffer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply remote parameters to media channel.");
   }
   if (!video_channel_->SetLocalContent(&local_video_description_,
-                                       cricket::CA_ANSWER, nullptr)) {
+                                       SdpType::kAnswer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply local parameters to media channel.");
   }
@@ -516,12 +516,12 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyAudioReceiverParameters(
       RtpTransceiverDirectionReversed(local_direction));
 
   if (!voice_channel_->SetLocalContent(&local_audio_description_,
-                                       cricket::CA_OFFER, nullptr)) {
+                                       SdpType::kOffer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply local parameters to media channel.");
   }
   if (!voice_channel_->SetRemoteContent(&remote_audio_description_,
-                                        cricket::CA_ANSWER, nullptr)) {
+                                        SdpType::kAnswer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply remote parameters to media channel.");
   }
@@ -592,12 +592,12 @@ RTCError RtpTransportControllerAdapter::ValidateAndApplyVideoReceiverParameters(
       RtpTransceiverDirectionReversed(local_direction));
 
   if (!video_channel_->SetLocalContent(&local_video_description_,
-                                       cricket::CA_OFFER, nullptr)) {
+                                       SdpType::kOffer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply local parameters to media channel.");
   }
   if (!video_channel_->SetRemoteContent(&remote_video_description_,
-                                        cricket::CA_ANSWER, nullptr)) {
+                                        SdpType::kAnswer, nullptr)) {
     LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                          "Failed to apply remote parameters to media channel.");
   }

@@ -598,7 +598,7 @@ const OpenSSLCertificate& OpenSSLIdentity::certificate() const {
 
 OpenSSLIdentity* OpenSSLIdentity::GetReference() const {
   return new OpenSSLIdentity(WrapUnique(key_pair_->GetReference()),
-                             WrapUnique(certificate().GetReference()));
+                             WrapUnique(cert_chain_->Copy()));
 }
 
 bool OpenSSLIdentity::ConfigureIdentity(SSL_CTX* ctx) {

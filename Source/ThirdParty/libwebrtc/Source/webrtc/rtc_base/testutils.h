@@ -13,29 +13,15 @@
 
 // Utilities for testing rtc infrastructure in unittests
 
-#if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
-#include <X11/Xlib.h>
-#include <X11/extensions/Xrandr.h>
-
-// X defines a few macros that stomp on types that gunit.h uses.
-#undef None
-#undef Bool
-#endif
-
 #include <algorithm>
 #include <map>
 #include <memory>
 #include <vector>
-#include "rtc_base/arraysize.h"
 #include "rtc_base/asyncsocket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/nethelpers.h"
-#include "rtc_base/pathutils.h"
 #include "rtc_base/stream.h"
-#include "rtc_base/stringencode.h"
 #include "rtc_base/stringutils.h"
-#include "rtc_base/thread.h"
 
 namespace webrtc {
 namespace testing {
@@ -175,6 +161,10 @@ public:
   void QueueString(const char* data) {
     QueueData(data, strlen(data));
   }
+#if defined(__GNUC__)
+  // Note: Implicit |this| argument counts as the first argument.
+  __attribute__((__format__(__printf__, 2, 3)))
+#endif
   void QueueStringF(const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -236,283 +226,6 @@ public:
   StreamState state_;
   size_t read_block_, write_block_;
 };
-
-///////////////////////////////////////////////////////////////////////////////
-// SocketTestClient
-// Creates a simulated client for testing.  Works on real and virtual networks.
-///////////////////////////////////////////////////////////////////////////////
-
-class SocketTestClient : public sigslot::has_slots<> {
-public:
- SocketTestClient();
- SocketTestClient(AsyncSocket* socket);
- SocketTestClient(const SocketAddress& address);
- ~SocketTestClient() override;
-
- AsyncSocket* socket() { return socket_.get(); }
-
- void QueueString(const char* data) { QueueData(data, strlen(data)); }
- void QueueStringF(const char* format, ...) {
-   va_list args;
-   va_start(args, format);
-   char buffer[1024];
-   size_t len = vsprintfn(buffer, sizeof(buffer), format, args);
-   RTC_CHECK(len < sizeof(buffer) - 1);
-   va_end(args);
-   QueueData(buffer, len);
-  }
-  void QueueData(const char* data, size_t len) {
-    send_buffer_.insert(send_buffer_.end(), data, data + len);
-    if (Socket::CS_CONNECTED == socket_->GetState()) {
-      Flush();
-    }
-  }
-  std::string ReadData() {
-    std::string data(&recv_buffer_[0], recv_buffer_.size());
-    recv_buffer_.clear();
-    return data;
-  }
-
-  bool IsConnected() const {
-    return (Socket::CS_CONNECTED == socket_->GetState());
-  }
-  bool IsClosed() const {
-    return (Socket::CS_CLOSED == socket_->GetState());
-  }
-
-private:
-  typedef std::vector<char> Buffer;
-
-  void Init(AsyncSocket* socket, int family) {
-    if (!socket) {
-      socket = Thread::Current()->socketserver()
-          ->CreateAsyncSocket(family, SOCK_STREAM);
-    }
-    socket_.reset(socket);
-    socket_->SignalConnectEvent.connect(this,
-      &SocketTestClient::OnConnectEvent);
-    socket_->SignalReadEvent.connect(this, &SocketTestClient::OnReadEvent);
-    socket_->SignalWriteEvent.connect(this, &SocketTestClient::OnWriteEvent);
-    socket_->SignalCloseEvent.connect(this, &SocketTestClient::OnCloseEvent);
-  }
-
-  void Flush() {
-    size_t sent = 0;
-    while (sent < send_buffer_.size()) {
-      int result = socket_->Send(&send_buffer_[sent],
-                                 send_buffer_.size() - sent);
-      if (result > 0) {
-        sent += result;
-      } else {
-        break;
-      }
-    }
-    size_t new_size = send_buffer_.size() - sent;
-    memmove(&send_buffer_[0], &send_buffer_[sent], new_size);
-    send_buffer_.resize(new_size);
-  }
-
-  void OnConnectEvent(AsyncSocket* socket) {
-    if (!send_buffer_.empty()) {
-      Flush();
-    }
-  }
-  void OnReadEvent(AsyncSocket* socket) {
-    char data[64 * 1024];
-    int result = socket_->Recv(data, arraysize(data), nullptr);
-    if (result > 0) {
-      recv_buffer_.insert(recv_buffer_.end(), data, data + result);
-    }
-  }
-  void OnWriteEvent(AsyncSocket* socket) {
-    if (!send_buffer_.empty()) {
-      Flush();
-    }
-  }
-  void OnCloseEvent(AsyncSocket* socket, int error) {
-  }
-
-  std::unique_ptr<AsyncSocket> socket_;
-  Buffer send_buffer_, recv_buffer_;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// SocketTestServer
-// Creates a simulated server for testing.  Works on real and virtual networks.
-///////////////////////////////////////////////////////////////////////////////
-
-class SocketTestServer : public sigslot::has_slots<> {
- public:
-  SocketTestServer(const SocketAddress& address);
-  ~SocketTestServer() override;
-
-  size_t size() const { return clients_.size(); }
-  SocketTestClient* client(size_t index) const { return clients_[index]; }
-  SocketTestClient* operator[](size_t index) const { return client(index); }
-
-  void clear() {
-    for (size_t i=0; i<clients_.size(); ++i) {
-      delete clients_[i];
-    }
-    clients_.clear();
-  }
-
- private:
-  void OnReadEvent(AsyncSocket* socket) {
-    AsyncSocket* accepted = static_cast<AsyncSocket*>(socket_->Accept(nullptr));
-    if (!accepted)
-      return;
-    clients_.push_back(new SocketTestClient(accepted));
-  }
-
-  std::unique_ptr<AsyncSocket> socket_;
-  std::vector<SocketTestClient*> clients_;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// Unittest predicates which are similar to STREQ, but for raw memory
-///////////////////////////////////////////////////////////////////////////////
-
-inline ::testing::AssertionResult CmpHelperMemEq(
-    const char* expected_expression,
-    const char* expected_length_expression,
-    const char* actual_expression,
-    const char* actual_length_expression,
-    const void* expected,
-    size_t expected_length,
-    const void* actual,
-    size_t actual_length) {
-  if ((expected_length == actual_length)
-      && (0 == memcmp(expected, actual, expected_length))) {
-    return ::testing::AssertionSuccess();
-  }
-
-  ::testing::Message msg;
-  msg << "Value of: " << actual_expression
-      << " [" << actual_length_expression << "]";
-  if (true) {  //!actual_value.Equals(actual_expression)) {
-    size_t buffer_size = actual_length * 2 + 1;
-    char* buffer = STACK_ARRAY(char, buffer_size);
-    hex_encode(buffer, buffer_size,
-               reinterpret_cast<const char*>(actual), actual_length);
-    msg << "\n  Actual: " << buffer << " [" << actual_length << "]";
-  }
-
-  msg << "\nExpected: " << expected_expression
-      << " [" << expected_length_expression << "]";
-  if (true) {  //!expected_value.Equals(expected_expression)) {
-    size_t buffer_size = expected_length * 2 + 1;
-    char* buffer = STACK_ARRAY(char, buffer_size);
-    hex_encode(buffer, buffer_size,
-               reinterpret_cast<const char*>(expected), expected_length);
-    msg << "\nWhich is: " << buffer << " [" << expected_length << "]";
-  }
-
-  return AssertionFailure(msg);
-}
-
-#define EXPECT_MEMEQ(expected, expected_length, actual, actual_length) \
-  EXPECT_PRED_FORMAT4(::testing::CmpHelperMemEq, expected, expected_length, \
-                      actual, actual_length)
-
-#define ASSERT_MEMEQ(expected, expected_length, actual, actual_length) \
-  ASSERT_PRED_FORMAT4(::testing::CmpHelperMemEq, expected, expected_length, \
-                      actual, actual_length)
-
-///////////////////////////////////////////////////////////////////////////////
-// Helpers for initializing constant memory with integers in a particular byte
-// order
-///////////////////////////////////////////////////////////////////////////////
-
-#define BYTE_CAST(x) static_cast<uint8_t>((x)&0xFF)
-
-// Declare a N-bit integer as a little-endian sequence of bytes
-#define LE16(x) BYTE_CAST(((uint16_t)x) >> 0), BYTE_CAST(((uint16_t)x) >> 8)
-
-#define LE32(x) \
-  BYTE_CAST(((uint32_t)x) >> 0), BYTE_CAST(((uint32_t)x) >> 8), \
-      BYTE_CAST(((uint32_t)x) >> 16), BYTE_CAST(((uint32_t)x) >> 24)
-
-#define LE64(x) \
-  BYTE_CAST(((uint64_t)x) >> 0), BYTE_CAST(((uint64_t)x) >> 8),       \
-      BYTE_CAST(((uint64_t)x) >> 16), BYTE_CAST(((uint64_t)x) >> 24), \
-      BYTE_CAST(((uint64_t)x) >> 32), BYTE_CAST(((uint64_t)x) >> 40), \
-      BYTE_CAST(((uint64_t)x) >> 48), BYTE_CAST(((uint64_t)x) >> 56)
-
-// Declare a N-bit integer as a big-endian (Internet) sequence of bytes
-#define BE16(x) BYTE_CAST(((uint16_t)x) >> 8), BYTE_CAST(((uint16_t)x) >> 0)
-
-#define BE32(x) \
-  BYTE_CAST(((uint32_t)x) >> 24), BYTE_CAST(((uint32_t)x) >> 16), \
-      BYTE_CAST(((uint32_t)x) >> 8), BYTE_CAST(((uint32_t)x) >> 0)
-
-#define BE64(x) \
-  BYTE_CAST(((uint64_t)x) >> 56), BYTE_CAST(((uint64_t)x) >> 48),     \
-      BYTE_CAST(((uint64_t)x) >> 40), BYTE_CAST(((uint64_t)x) >> 32), \
-      BYTE_CAST(((uint64_t)x) >> 24), BYTE_CAST(((uint64_t)x) >> 16), \
-      BYTE_CAST(((uint64_t)x) >> 8), BYTE_CAST(((uint64_t)x) >> 0)
-
-// Declare a N-bit integer as a this-endian (local machine) sequence of bytes
-#ifndef BIG_ENDIAN
-#define BIG_ENDIAN 1
-#endif  // BIG_ENDIAN
-
-#if BIG_ENDIAN
-#define TE16 BE16
-#define TE32 BE32
-#define TE64 BE64
-#else  // !BIG_ENDIAN
-#define TE16 LE16
-#define TE32 LE32
-#define TE64 LE64
-#endif  // !BIG_ENDIAN
-
-///////////////////////////////////////////////////////////////////////////////
-
-// Helpers for determining if X/screencasting is available (on linux).
-
-#define MAYBE_SKIP_SCREENCAST_TEST()                             \
-  if (!testing::IsScreencastingAvailable()) {                    \
-    RTC_LOG(LS_WARNING)                                          \
-        << "Skipping test, since it doesn't have the requisite " \
-        << "X environment for screen capture.";                  \
-    return;                                                      \
-  }
-
-#if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
-struct XDisplay {
-  XDisplay() : display_(XOpenDisplay(nullptr)) {}
-  ~XDisplay() { if (display_) XCloseDisplay(display_); }
-  bool IsValid() const { return display_ != nullptr; }
-  operator Display*() { return display_; }
- private:
-  Display* display_;
-};
-#endif
-
-// Returns true if screencasting is available. When false, anything that uses
-// screencasting features may fail.
-inline bool IsScreencastingAvailable() {
-#if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
-  XDisplay display;
-  if (!display.IsValid()) {
-    RTC_LOG(LS_WARNING) << "No X Display available.";
-    return false;
-  }
-  int ignored_int, major_version, minor_version;
-  if (!XRRQueryExtension(display, &ignored_int, &ignored_int) ||
-      !XRRQueryVersion(display, &major_version, &minor_version)) {
-    RTC_LOG(LS_WARNING) << "XRandr is not supported.";
-    return false;
-  }
-  if (major_version < 1 || (major_version < 2 && minor_version < 3)) {
-    RTC_LOG(LS_WARNING) << "XRandr is too old (version: " << major_version
-                        << "." << minor_version << "). Need 1.3 or later.";
-    return false;
-  }
-#endif
-  return true;
-}
 
 }  // namespace testing
 }  // namespace webrtc

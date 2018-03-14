@@ -411,4 +411,39 @@ TEST(DelayManagerIATScalingTest, CompressionTest) {
   EXPECT_EQ(compressed_iat, expected_result);
 }
 
+// Test if the histogram scaling function handles overflows correctly.
+TEST(DelayManagerIATScalingTest, OverflowTest) {
+  using IATVector = DelayManager::IATVector;
+  // Test a compression operation that can cause overflow.
+  IATVector iat = {733544448, 0, 0, 0, 0, 0, 0, 340197376, 0, 0, 0, 0, 0, 0};
+  IATVector expected_result = {733544448, 340197376, 0, 0, 0, 0, 0,
+                               0,         0,         0, 0, 0, 0, 0};
+  IATVector scaled_iat = DelayManager::ScaleHistogram(iat, 10, 60);
+  EXPECT_EQ(scaled_iat, expected_result);
+
+  iat = {655591163, 39962288, 360736736, 1930514, 4003853, 1782764,
+         114119,    2072996,  0,         2149354, 0};
+  expected_result = {1056290187, 7717131, 2187115, 2149354, 0, 0,
+                     0,          0,       0,       0,       0};
+  scaled_iat = DelayManager::ScaleHistogram(iat, 20, 60);
+  EXPECT_EQ(scaled_iat, expected_result);
+
+  // In this test case we will not be able to add everything to the final bin in
+  // the scaled histogram. Check that the last bin doesn't overflow.
+  iat = {2000000000, 2000000000, 2000000000,
+         2000000000, 2000000000, 2000000000};
+  expected_result = {666666666, 666666666, 666666666,
+                     666666667, 666666667, 2147483647};
+  scaled_iat = DelayManager::ScaleHistogram(iat, 60, 20);
+  EXPECT_EQ(scaled_iat, expected_result);
+
+  // In this test case we will not be able to add enough to each of the bins,
+  // so the values should be smeared out past the end of the normal range.
+  iat = {2000000000, 2000000000, 2000000000,
+         2000000000, 2000000000, 2000000000};
+  expected_result = {2147483647, 2147483647, 2147483647,
+                     2147483647, 2147483647, 1262581765};
+  scaled_iat = DelayManager::ScaleHistogram(iat, 20, 60);
+  EXPECT_EQ(scaled_iat, expected_result);
+}
 }  // namespace webrtc

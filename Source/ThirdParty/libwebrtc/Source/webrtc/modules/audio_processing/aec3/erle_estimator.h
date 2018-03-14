@@ -13,6 +13,7 @@
 
 #include <array>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/constructormagic.h"
 
@@ -25,9 +26,9 @@ class ErleEstimator {
   ~ErleEstimator();
 
   // Updates the ERLE estimate.
-  void Update(const std::array<float, kFftLengthBy2Plus1>& render_spectrum,
-              const std::array<float, kFftLengthBy2Plus1>& capture_spectrum,
-              const std::array<float, kFftLengthBy2Plus1>& subtractor_spectrum);
+  void Update(rtc::ArrayView<const float> render_spectrum,
+              rtc::ArrayView<const float> capture_spectrum,
+              rtc::ArrayView<const float> subtractor_spectrum);
 
   // Returns the most recent ERLE estimate.
   const std::array<float, kFftLengthBy2Plus1>& Erle() const { return erle_; }

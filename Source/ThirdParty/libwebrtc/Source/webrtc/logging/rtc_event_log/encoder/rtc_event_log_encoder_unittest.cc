@@ -22,8 +22,6 @@
 #include "logging/rtc_event_log/events/rtc_event_audio_send_stream_config.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
-#include "logging/rtc_event_log/events/rtc_event_logging_started.h"
-#include "logging/rtc_event_log/events/rtc_event_logging_stopped.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
@@ -332,10 +330,9 @@ TEST_P(RtcEventLogEncoderTest, RtcEventBweUpdateLossBased) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventLoggingStarted) {
-  auto event = rtc::MakeUnique<RtcEventLoggingStarted>();
-  const int64_t timestamp_us = event->timestamp_us_;
+  const int64_t timestamp_us = rtc::TimeMicros();
 
-  ASSERT_TRUE(parsed_log_.ParseString(encoder_->Encode(*event)));
+  ASSERT_TRUE(parsed_log_.ParseString(encoder_->EncodeLogStart(timestamp_us)));
   ASSERT_EQ(parsed_log_.GetNumberOfEvents(), 1u);
   ASSERT_EQ(parsed_log_.GetEventType(0), ParsedRtcEventLog::LOG_START);
 
@@ -343,10 +340,9 @@ TEST_P(RtcEventLogEncoderTest, RtcEventLoggingStarted) {
 }
 
 TEST_P(RtcEventLogEncoderTest, RtcEventLoggingStopped) {
-  auto event = rtc::MakeUnique<RtcEventLoggingStopped>();
-  const int64_t timestamp_us = event->timestamp_us_;
+  const int64_t timestamp_us = rtc::TimeMicros();
 
-  ASSERT_TRUE(parsed_log_.ParseString(encoder_->Encode(*event)));
+  ASSERT_TRUE(parsed_log_.ParseString(encoder_->EncodeLogEnd(timestamp_us)));
   ASSERT_EQ(parsed_log_.GetNumberOfEvents(), 1u);
   ASSERT_EQ(parsed_log_.GetEventType(0), ParsedRtcEventLog::LOG_END);
 

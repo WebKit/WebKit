@@ -24,6 +24,7 @@
 
 namespace webrtc {
 class PacketRouter;
+class ProcessThread;
 class RtcEventLog;
 class RtpPacketReceived;
 class RtpStreamReceiverControllerInterface;
@@ -42,17 +43,26 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
  public:
   AudioReceiveStream(RtpStreamReceiverControllerInterface* receiver_controller,
                      PacketRouter* packet_router,
+                     ProcessThread* module_process_thread,
                      const webrtc::AudioReceiveStream::Config& config,
                      const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
                      webrtc::RtcEventLog* event_log);
+  // For unit tests, which need to supply a mock channel proxy.
+  AudioReceiveStream(RtpStreamReceiverControllerInterface* receiver_controller,
+                     PacketRouter* packet_router,
+                     const webrtc::AudioReceiveStream::Config& config,
+                     const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
+                     webrtc::RtcEventLog* event_log,
+                     std::unique_ptr<voe::ChannelProxy> channel_proxy);
   ~AudioReceiveStream() override;
 
   // webrtc::AudioReceiveStream implementation.
+  void Reconfigure(const webrtc::AudioReceiveStream::Config& config) override;
   void Start() override;
   void Stop() override;
   webrtc::AudioReceiveStream::Stats GetStats() const override;
   int GetOutputLevel() const override;
-  void SetSink(std::unique_ptr<AudioSinkInterface> sink) override;
+  void SetSink(AudioSinkInterface* sink) override;
   void SetGain(float gain) override;
   std::vector<webrtc::RtpSource> GetSources() const override;
 
@@ -78,17 +88,21 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
   void SignalNetworkState(NetworkState state);
   bool DeliverRtcp(const uint8_t* packet, size_t length);
   const webrtc::AudioReceiveStream::Config& config() const;
+  const AudioSendStream* GetAssociatedSendStreamForTesting() const;
 
  private:
-  VoiceEngine* voice_engine() const;
+  static void ConfigureStream(AudioReceiveStream* stream,
+                              const Config& new_config,
+                              bool first_time);
+
   AudioState* audio_state() const;
-  int SetVoiceEnginePlayout(bool playout);
 
   rtc::ThreadChecker worker_thread_checker_;
   rtc::ThreadChecker module_process_thread_checker_;
-  const webrtc::AudioReceiveStream::Config config_;
+  webrtc::AudioReceiveStream::Config config_;
   rtc::scoped_refptr<webrtc::AudioState> audio_state_;
   std::unique_ptr<voe::ChannelProxy> channel_proxy_;
+  AudioSendStream* associated_send_stream_ = nullptr;
 
   bool playing_ RTC_ACCESS_ON(worker_thread_checker_) = false;
 

@@ -20,6 +20,7 @@
 #include "api/mediaconstraintsinterface.h"
 #include "pc/peerconnection.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/ptr_util.h"
 #include "rtc_base/sslidentity.h"
 
 using cricket::MediaSessionOptions;
@@ -251,7 +252,7 @@ void WebRtcSessionDescriptionFactory::CreateAnswer(
     PostCreateSessionDescriptionFailed(observer, error);
     return;
   }
-  if (pc_->remote_description()->type() != JsepSessionDescription::kOffer) {
+  if (pc_->remote_description()->GetType() != SdpType::kOffer) {
     error += " failed because remote_description is not an offer.";
     RTC_LOG(LS_ERROR) << error;
     PostCreateSessionDescriptionFailed(observer, error);
@@ -343,11 +344,9 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
   // is created regardless if it's identical to the previous one or not.
   // The |session_version_| is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  JsepSessionDescription* offer(new JsepSessionDescription(
-      JsepSessionDescription::kOffer));
+  auto offer = rtc::MakeUnique<JsepSessionDescription>(SdpType::kOffer);
   if (!offer->Initialize(desc, session_id_,
                          rtc::ToString(session_version_++))) {
-    delete offer;
     PostCreateSessionDescriptionFailed(request.observer,
                                        "Failed to initialize the offer.");
     return;
@@ -357,11 +356,11 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
          request.options.media_description_options) {
       if (!options.transport_options.ice_restart) {
         CopyCandidatesFromSessionDescription(pc_->local_description(),
-                                             options.mid, offer);
+                                             options.mid, offer.get());
       }
     }
   }
-  PostCreateSessionDescriptionSucceeded(request.observer, offer);
+  PostCreateSessionDescriptionSucceeded(request.observer, std::move(offer));
 }
 
 void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
@@ -398,11 +397,9 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
   // Get a new version number by increasing the |session_version_answer_|.
   // The |session_version_| is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  JsepSessionDescription* answer(new JsepSessionDescription(
-      JsepSessionDescription::kAnswer));
+  auto answer = rtc::MakeUnique<JsepSessionDescription>(SdpType::kAnswer);
   if (!answer->Initialize(desc, session_id_,
                           rtc::ToString(session_version_++))) {
-    delete answer;
     PostCreateSessionDescriptionFailed(request.observer,
                                        "Failed to initialize the answer.");
     return;
@@ -414,11 +411,11 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
          request.options.media_description_options) {
       if (!options.transport_options.ice_restart) {
         CopyCandidatesFromSessionDescription(pc_->local_description(),
-                                             options.mid, answer);
+                                             options.mid, answer.get());
       }
     }
   }
-  PostCreateSessionDescriptionSucceeded(request.observer, answer);
+  PostCreateSessionDescriptionSucceeded(request.observer, std::move(answer));
 }
 
 void WebRtcSessionDescriptionFactory::FailPendingRequests(
@@ -445,9 +442,9 @@ void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionFailed(
 
 void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionSucceeded(
     CreateSessionDescriptionObserver* observer,
-    SessionDescriptionInterface* description) {
+    std::unique_ptr<SessionDescriptionInterface> description) {
   CreateSessionDescriptionMsg* msg = new CreateSessionDescriptionMsg(observer);
-  msg->description.reset(description);
+  msg->description = std::move(description);
   signaling_thread_->Post(RTC_FROM_HERE, this,
                           MSG_CREATE_SESSIONDESCRIPTION_SUCCESS, msg);
 }

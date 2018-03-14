@@ -198,7 +198,7 @@ RelayPort::RelayPort(rtc::Thread* thread,
       error_(0) {
   entries_.push_back(
       new RelayEntry(this, rtc::SocketAddress()));
-  // TODO: set local preference value for TCP based candidates.
+  // TODO(?): set local preference value for TCP based candidates.
 }
 
 RelayPort::~RelayPort() {
@@ -609,7 +609,7 @@ int RelayEntry::SendTo(const void* data, size_t size,
   data_attr->CopyBytes(data, size);
   request.AddAttribute(std::move(data_attr));
 
-  // TODO: compute the HMAC.
+  // TODO(?): compute the HMAC.
 
   rtc::ByteBufferWriter buf;
   request.Write(&buf);
@@ -659,7 +659,7 @@ void RelayEntry::OnMessage(rtc::Message *pmsg) {
     // the next address, otherwise give this connection more time and
     // await the real timeout.
     //
-    // TODO: Connect to servers in parallel to speed up connect time
+    // TODO(?): Connect to servers in parallel to speed up connect time
     // and to avoid giving up too early.
     port_->SignalSoftTimeout(ra);
     HandleConnectFailure(current_connection_->socket());
@@ -688,7 +688,7 @@ void RelayEntry::OnReadPacket(
     const rtc::SocketAddress& remote_addr,
     const rtc::PacketTime& packet_time) {
   // RTC_DCHECK(remote_addr == port_->server_addr());
-  // TODO: are we worried about this?
+  // TODO(?): are we worried about this?
 
   if (current_connection_ == NULL || socket != current_connection_->socket()) {
     // This packet comes from an unknown address.

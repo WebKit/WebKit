@@ -22,6 +22,7 @@
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/h264/profile_level_id.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "common_video/include/incoming_video_stream.h"
 #include "modules/rtp_rtcp/include/rtp_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "modules/utility/include/process_thread.h"
@@ -59,6 +60,14 @@ VideoCodec CreateDecoderVideoCodec(const VideoReceiveStream::Decoder& decoder) {
     *(codec.H264()) = VideoEncoder::GetDefaultH264Settings();
     codec.H264()->profile =
         H264::ParseSdpProfileLevelId(decoder.codec_params)->profile;
+  } else if (codec.codecType == kVideoCodecStereo) {
+    VideoReceiveStream::Decoder associated_decoder = decoder;
+    associated_decoder.payload_name = CodecTypeToPayloadString(kVideoCodecVP9);
+    VideoCodec associated_codec = CreateDecoderVideoCodec(associated_decoder);
+    associated_codec.codecType = kVideoCodecStereo;
+    strncpy(associated_codec.plName, decoder.payload_name.c_str(),
+            sizeof(associated_codec.plName));
+    return associated_codec;
   }
 
   codec.width = 320;
@@ -344,7 +353,7 @@ void VideoReceiveStream::RequestKeyFrame() {
 
 void VideoReceiveStream::OnCompleteFrame(
     std::unique_ptr<video_coding::FrameObject> frame) {
-  int last_continuous_pid = frame_buffer_->InsertFrame(std::move(frame));
+  int64_t last_continuous_pid = frame_buffer_->InsertFrame(std::move(frame));
   if (last_continuous_pid != -1)
     rtp_video_stream_receiver_.FrameContinuous(last_continuous_pid);
 }
@@ -367,7 +376,7 @@ rtc::Optional<Syncable::Info> VideoReceiveStream::GetInfo() const {
   if (!rtp_receiver->GetLatestTimestamps(
           &info.latest_received_capture_timestamp,
           &info.latest_receive_time_ms))
-    return rtc::Optional<Syncable::Info>();
+    return rtc::nullopt;
 
   RtpRtcp* rtp_rtcp = rtp_video_stream_receiver_.rtp_rtcp();
   RTC_DCHECK(rtp_rtcp);
@@ -376,11 +385,11 @@ rtc::Optional<Syncable::Info> VideoReceiveStream::GetInfo() const {
                           nullptr,
                           nullptr,
                           &info.capture_time_source_clock) != 0) {
-    return rtc::Optional<Syncable::Info>();
+    return rtc::nullopt;
   }
 
   info.current_delay_ms = video_receiver_.Delay();
-  return rtc::Optional<Syncable::Info>(info);
+  return info;
 }
 
 uint32_t VideoReceiveStream::GetPlayoutTimestamp() const {
@@ -418,10 +427,15 @@ bool VideoReceiveStream::Decode() {
   if (frame) {
     int64_t now_ms = clock_->TimeInMilliseconds();
     RTC_DCHECK_EQ(res, video_coding::FrameBuffer::ReturnReason::kFrameFound);
-    if (video_receiver_.Decode(frame.get()) == VCM_OK) {
+    int decode_result = video_receiver_.Decode(frame.get());
+    if (decode_result == WEBRTC_VIDEO_CODEC_OK ||
+        decode_result == WEBRTC_VIDEO_CODEC_OK_REQUEST_KEYFRAME) {
       keyframe_required_ = false;
       frame_decoded_ = true;
       rtp_video_stream_receiver_.FrameDecoded(frame->picture_id);
+
+      if (decode_result == WEBRTC_VIDEO_CODEC_OK_REQUEST_KEYFRAME)
+        RequestKeyFrame();
     } else if (!frame_decoded_ || !keyframe_required_ ||
                (last_keyframe_request_ms_ + kMaxWaitForKeyFrameMs < now_ms)) {
       keyframe_required_ = true;

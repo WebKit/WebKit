@@ -31,7 +31,7 @@ static const SocketAddress kRemoteAddr("22.22.22.22", 0);
 
 class ConnectionObserver : public sigslot::has_slots<> {
  public:
-  ConnectionObserver(Connection* conn) {
+  explicit ConnectionObserver(Connection* conn) {
     conn->SignalDestroyed.connect(this, &ConnectionObserver::OnDestroyed);
   }
 
@@ -157,7 +157,7 @@ TEST_F(TCPPortTest, TCPPortNotDiscardedIfNotBoundToBestIP) {
 
 class SentPacketCounter : public sigslot::has_slots<> {
  public:
-  SentPacketCounter(TCPPort* p) {
+  explicit SentPacketCounter(TCPPort* p) {
     p->SignalSentPacket.connect(this, &SentPacketCounter::OnSentPacket);
   }
 

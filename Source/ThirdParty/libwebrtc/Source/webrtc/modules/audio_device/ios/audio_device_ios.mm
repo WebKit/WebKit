@@ -83,18 +83,14 @@ static void LogDeviceInfo() {
   RTC_LOG(LS_INFO) << "LogDeviceInfo";
   @autoreleasepool {
     RTC_LOG(LS_INFO) << " system name: " << ios::GetSystemName();
-    RTC_LOG(LS_INFO) << " system version 1(2): " << ios::GetSystemVersionAsString();
-    RTC_LOG(LS_INFO) << " system version 2(2): " << ios::GetSystemVersion();
+    RTC_LOG(LS_INFO) << " system version: " << ios::GetSystemVersionAsString();
     RTC_LOG(LS_INFO) << " device type: " << ios::GetDeviceType();
     RTC_LOG(LS_INFO) << " device name: " << ios::GetDeviceName();
     RTC_LOG(LS_INFO) << " process name: " << ios::GetProcessName();
     RTC_LOG(LS_INFO) << " process ID: " << ios::GetProcessID();
     RTC_LOG(LS_INFO) << " OS version: " << ios::GetOSVersionString();
     RTC_LOG(LS_INFO) << " processing cores: " << ios::GetProcessorCount();
-#if defined(__IPHONE_9_0) && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0
     RTC_LOG(LS_INFO) << " low power mode: " << ios::GetLowPowerModeEnabled();
-#endif
 #if TARGET_IPHONE_SIMULATOR
     RTC_LOG(LS_INFO) << " TARGET_IPHONE_SIMULATOR is defined";
 #endif
@@ -647,10 +643,10 @@ void AudioDeviceIOS::UpdateAudioDeviceBuffer() {
   // AttachAudioBuffer() is called at construction by the main class but check
   // just in case.
   RTC_DCHECK(audio_device_buffer_) << "AttachAudioBuffer must be called first";
-  RTC_CHECK_GT(playout_parameters_.sample_rate(), 0);
-  RTC_CHECK_GT(record_parameters_.sample_rate(), 0);
-  RTC_CHECK_EQ(playout_parameters_.channels(), 1);
-  RTC_CHECK_EQ(record_parameters_.channels(), 1);
+  RTC_DCHECK_GT(playout_parameters_.sample_rate(), 0);
+  RTC_DCHECK_GT(record_parameters_.sample_rate(), 0);
+  RTC_DCHECK_EQ(playout_parameters_.channels(), 1);
+  RTC_DCHECK_EQ(record_parameters_.channels(), 1);
   // Inform the audio device buffer (ADB) about the new audio format.
   audio_device_buffer_->SetPlayoutSampleRate(playout_parameters_.sample_rate());
   audio_device_buffer_->SetPlayoutChannels(playout_parameters_.channels());
@@ -864,16 +860,22 @@ bool AudioDeviceIOS::InitPlayOrRecord() {
     return false;
   }
 
-  // If we are ready to play or record, initialize the audio unit.
+  // If we are ready to play or record, and if the audio session can be
+  // configured, then initialize the audio unit.
   if (session.canPlayOrRecord) {
-    ConfigureAudioSession();
+    if (!ConfigureAudioSession()) {
+      // One possible reason for failure is if an attempt was made to use the
+      // audio session during or after a Media Services failure.
+      // See AVAudioSessionErrorCodeMediaServicesFailed for details.
+      [session unlockForConfiguration];
+      return false;
+    }
     SetupAudioBuffersForActiveAudioSession();
     audio_unit_->Initialize(playout_parameters_.sample_rate());
   }
 
   // Release the lock.
   [session unlockForConfiguration];
-
   return true;
 }
 

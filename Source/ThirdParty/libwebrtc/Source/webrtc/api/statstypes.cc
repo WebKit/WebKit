@@ -487,8 +487,6 @@ const char* StatsReport::Value::display_name() const {
       return "googDerBase64";
     case kStatsValueNameDtlsCipher:
       return "dtlsCipher";
-    case kStatsValueNameEchoCancellationQualityMin:
-      return "googEchoCancellationQualityMin";
     case kStatsValueNameEchoDelayMedian:
       return "googEchoCancellationEchoDelayMedian";
     case kStatsValueNameEchoDelayStdDev:

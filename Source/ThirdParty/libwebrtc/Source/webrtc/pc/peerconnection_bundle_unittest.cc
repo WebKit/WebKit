@@ -55,9 +55,7 @@ class PeerConnectionWrapperForBundleTest : public PeerConnectionWrapper {
     auto* desc = pc()->remote_description()->description();
     for (size_t i = 0; i < desc->contents().size(); i++) {
       const auto& content = desc->contents()[i];
-      auto* media_desc =
-          static_cast<cricket::MediaContentDescription*>(content.description);
-      if (media_desc->type() == media_type) {
+      if (content.media_description()->type() == media_type) {
         candidate->set_transport_name(content.name);
         JsepIceCandidate jsep_candidate(content.name, i, *candidate);
         return pc()->AddIceCandidate(&jsep_candidate);
@@ -92,9 +90,10 @@ class PeerConnectionWrapperForBundleTest : public PeerConnectionWrapper {
   }
 
   PeerConnection* GetInternalPeerConnection() {
-    auto* pci = reinterpret_cast<
-        PeerConnectionProxyWithInternal<PeerConnectionInterface>*>(pc());
-    return reinterpret_cast<PeerConnection*>(pci->internal());
+    auto* pci =
+        static_cast<PeerConnectionProxyWithInternal<PeerConnectionInterface>*>(
+            pc());
+    return static_cast<PeerConnection*>(pci->internal());
   }
 
   // Returns true if the stats indicate that an ICE connection is either in
@@ -219,9 +218,7 @@ class PeerConnectionBundleTest : public ::testing::Test {
 
 SdpContentMutator RemoveRtcpMux() {
   return [](cricket::ContentInfo* content, cricket::TransportInfo* transport) {
-    auto* media_desc =
-        static_cast<cricket::MediaContentDescription*>(content->description);
-    media_desc->set_rtcp_mux(false);
+    content->media_description()->set_rtcp_mux(false);
   };
 }
 

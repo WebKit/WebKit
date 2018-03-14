@@ -515,7 +515,7 @@ TEST(PacketRouterRembTest, SetMaxDesiredReceiveBitrateLimitsSetRemb) {
   constexpr bool remb_candidate = true;
   packet_router.AddSendRtpModule(&remb_sender, remb_candidate);
 
-  const uint32_t cap_bitrate = 100000;
+  const int64_t cap_bitrate = 100000;
   EXPECT_CALL(remb_sender, SetRemb(Le(cap_bitrate), _)).Times(AtLeast(1));
   EXPECT_CALL(remb_sender, SetRemb(Gt(cap_bitrate), _)).Times(0);
 
@@ -538,8 +538,8 @@ TEST(PacketRouterRembTest,
   constexpr bool remb_candidate = true;
   packet_router.AddSendRtpModule(&remb_sender, remb_candidate);
 
-  const uint32_t measured_bitrate_bps = 150000;
-  const uint32_t cap_bitrate_bps = measured_bitrate_bps - 5000;
+  const int64_t measured_bitrate_bps = 150000;
+  const int64_t cap_bitrate_bps = measured_bitrate_bps - 5000;
   const std::vector<uint32_t> ssrcs = {1234};
   EXPECT_CALL(remb_sender, SetRemb(measured_bitrate_bps, _));
   packet_router.OnReceiveBitrateChanged(ssrcs, measured_bitrate_bps);

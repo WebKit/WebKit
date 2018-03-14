@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"

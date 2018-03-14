@@ -62,7 +62,7 @@ RTCErrorOr<cricket::FeedbackParam> ToCricketFeedbackParam(
       return cricket::FeedbackParam(cricket::kRtcpFbParamTransportCc);
   }
   // Not reached; avoids compile warning.
-  RTC_FATAL();
+  FATAL();
 }
 
 template <typename C>

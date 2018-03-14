@@ -203,11 +203,13 @@ int EchoCanceller3::instance_count_ = 0;
 EchoCanceller3::EchoCanceller3(const EchoCanceller3Config& config,
                                int sample_rate_hz,
                                bool use_highpass_filter)
-    : EchoCanceller3(sample_rate_hz,
+    : EchoCanceller3(config,
+                     sample_rate_hz,
                      use_highpass_filter,
                      std::unique_ptr<BlockProcessor>(
                          BlockProcessor::Create(config, sample_rate_hz))) {}
-EchoCanceller3::EchoCanceller3(int sample_rate_hz,
+EchoCanceller3::EchoCanceller3(const EchoCanceller3Config& config,
+                               int sample_rate_hz,
                                bool use_highpass_filter,
                                std::unique_ptr<BlockProcessor> block_processor)
     : data_dumper_(
@@ -219,7 +221,7 @@ EchoCanceller3::EchoCanceller3(int sample_rate_hz,
       capture_blocker_(num_bands_),
       render_blocker_(num_bands_),
       render_transfer_queue_(
-          kRenderTransferQueueSize,
+          kRenderTransferQueueSizeFrames,
           std::vector<std::vector<float>>(
               num_bands_,
               std::vector<float>(frame_length_, 0.f)),

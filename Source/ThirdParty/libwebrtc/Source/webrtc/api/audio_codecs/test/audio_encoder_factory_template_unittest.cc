@@ -37,16 +37,15 @@ struct ShamParams {
   static AudioCodecInfo CodecInfo() { return {16000, 2, 23456}; }
 };
 
-struct MyLittleConfig {
-  SdpAudioFormat audio_format;
-};
-
 template <typename Params>
 struct AudioEncoderFakeApi {
-  static rtc::Optional<MyLittleConfig> SdpToConfig(
-      const SdpAudioFormat& audio_format) {
+  struct Config {
+    SdpAudioFormat audio_format;
+  };
+
+  static rtc::Optional<Config> SdpToConfig(const SdpAudioFormat& audio_format) {
     if (Params::AudioFormat() == audio_format) {
-      MyLittleConfig config = {audio_format};
+      Config config = {audio_format};
       return config;
     } else {
       return rtc::nullopt;
@@ -57,11 +56,11 @@ struct AudioEncoderFakeApi {
     specs->push_back({Params::AudioFormat(), Params::CodecInfo()});
   }
 
-  static AudioCodecInfo QueryAudioEncoder(const MyLittleConfig&) {
+  static AudioCodecInfo QueryAudioEncoder(const Config&) {
     return Params::CodecInfo();
   }
 
-  static std::unique_ptr<AudioEncoder> MakeAudioEncoder(const MyLittleConfig&,
+  static std::unique_ptr<AudioEncoder> MakeAudioEncoder(const Config&,
                                                         int payload_type) {
     auto enc = rtc::MakeUnique<testing::StrictMock<MockAudioEncoder>>();
     EXPECT_CALL(*enc, SampleRateHz())

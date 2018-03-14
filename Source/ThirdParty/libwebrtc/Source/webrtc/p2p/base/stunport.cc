@@ -10,6 +10,9 @@
 
 #include "p2p/base/stunport.h"
 
+#include <utility>
+#include <vector>
+
 #include "p2p/base/common.h"
 #include "p2p/base/portallocator.h"
 #include "p2p/base/stun.h"
@@ -21,7 +24,7 @@
 
 namespace cricket {
 
-// TODO: Move these to a common place (used in relayport too)
+// TODO(?): Move these to a common place (used in relayport too)
 const int KEEPALIVE_DELAY = 10 * 1000;  // 10 seconds - sort timeouts
 const int RETRY_TIMEOUT = 50 * 1000;    // 50 seconds
 
@@ -457,7 +460,6 @@ void UDPPort::OnStunBindingRequestSucceeded(
   // For STUN, related address is the local socket address.
   if ((!SharedSocket() || stun_reflected_addr != socket_->GetLocalAddress()) &&
       !HasCandidateWithAddress(stun_reflected_addr)) {
-
     rtc::SocketAddress related_address = socket_->GetLocalAddress();
     // If we can't stamp the related address correctly, empty it to avoid leak.
     if (!MaybeSetDefaultLocalAddress(&related_address)) {
@@ -510,7 +512,7 @@ void UDPPort::MaybeSetPortCompleteOrError() {
   }
 }
 
-// TODO: merge this with SendTo above.
+// TODO(?): merge this with SendTo above.
 void UDPPort::OnSendPacket(const void* data, size_t size, StunRequest* req) {
   StunBindingRequest* sreq = static_cast<StunBindingRequest*>(req);
   rtc::PacketOptions options(DefaultDscpValue());

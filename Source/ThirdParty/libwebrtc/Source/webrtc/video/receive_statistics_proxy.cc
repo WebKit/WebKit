@@ -15,7 +15,6 @@
 #include <sstream>
 #include <utility>
 
-#include "modules/pacing/alr_detector.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -645,14 +644,14 @@ void ReceiveStatisticsProxy::OnDecodedFrame(rtc::Optional<uint8_t> qp,
             << "Frames decoded was not 1 when first qp value was received.";
         stats_.frames_decoded = 1;
       }
-      stats_.qp_sum = rtc::Optional<uint64_t>(0);
+      stats_.qp_sum = 0;
     }
     *stats_.qp_sum += *qp;
     content_specific_stats->qp_counter.Add(*qp);
   } else if (stats_.qp_sum) {
     RTC_LOG(LS_WARNING)
         << "QP sum was already set and no QP was given for a frame.";
-    stats_.qp_sum = rtc::Optional<uint64_t>();
+    stats_.qp_sum = rtc::nullopt;
   }
   last_content_type_ = content_type;
   decode_fps_estimator_.Update(1, now);

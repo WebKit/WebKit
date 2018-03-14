@@ -130,12 +130,6 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
       continue;
     }
 
-    // TODO(webrtc:8460): On 10.12, the name of the dock window is not "Dock"
-    // anymore. The following check should be removed soon or later.
-    if (CFStringCompare(window_title, CFSTR("Dock"), 0) == 0) {
-      continue;
-    }
-
     CFNumberRef window_id = reinterpret_cast<CFNumberRef>(
         CFDictionaryGetValue(window, kCGWindowNumber));
     if (!window_id) {
@@ -148,10 +142,7 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
       continue;
     }
 
-    // Skip windows with layer=0 (menu, dock).
-    // TODO(zijiehe): The windows with layer != 0 are skipped, is this a bug in
-    // code (not likely) or a bug in comments? What's the meaning of window
-    // layer number in the first place.
+    // Skip windows with layer!=0 (menu, dock).
     int layer;
     if (!CFNumberGetValue(window_layer, kCFNumberIntType, &layer)) {
       continue;

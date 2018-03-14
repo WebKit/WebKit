@@ -115,10 +115,7 @@ TEST(BlockProcessor, DISABLED_DelayControllerIntegration) {
             new StrictMock<webrtc::test::MockRenderDelayBuffer>(rate));
     EXPECT_CALL(*render_delay_buffer_mock, Insert(_))
         .Times(kNumBlocks)
-        .WillRepeatedly(Return(true));
-    EXPECT_CALL(*render_delay_buffer_mock, IsBlockAvailable())
-        .Times(kNumBlocks)
-        .WillRepeatedly(Return(true));
+        .WillRepeatedly(Return(RenderDelayBuffer::BufferingEvent::kNone));
     EXPECT_CALL(*render_delay_buffer_mock, SetDelay(kDelayInBlocks))
         .Times(AtLeast(1));
     EXPECT_CALL(*render_delay_buffer_mock, MaxDelay()).WillOnce(Return(30));
@@ -160,21 +157,16 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
 
     EXPECT_CALL(*render_delay_buffer_mock, Insert(_))
         .Times(kNumBlocks - 1)
-        .WillRepeatedly(Return(true));
-    EXPECT_CALL(*render_delay_buffer_mock, IsBlockAvailable())
-        .Times(kNumBlocks)
-        .WillRepeatedly(Return(true));
-    EXPECT_CALL(*render_delay_buffer_mock, UpdateBuffers()).Times(kNumBlocks);
+        .WillRepeatedly(Return(RenderDelayBuffer::BufferingEvent::kNone));
+    EXPECT_CALL(*render_delay_buffer_mock, PrepareCaptureProcessing())
+        .Times(kNumBlocks);
     EXPECT_CALL(*render_delay_buffer_mock, SetDelay(9)).Times(AtLeast(1));
     EXPECT_CALL(*render_delay_buffer_mock, Delay())
         .Times(kNumBlocks)
         .WillRepeatedly(Return(0));
     EXPECT_CALL(*render_delay_controller_mock, GetDelay(_, _))
-        .Times(kNumBlocks)
-        .WillRepeatedly(Return(9));
-    EXPECT_CALL(*render_delay_controller_mock, AlignmentHeadroomSamples())
         .Times(kNumBlocks);
-    EXPECT_CALL(*echo_remover_mock, ProcessCapture(_, _, _, _, _))
+    EXPECT_CALL(*echo_remover_mock, ProcessCapture(_, _, _, _))
         .Times(kNumBlocks);
     EXPECT_CALL(*echo_remover_mock, UpdateEchoLeakageStatus(_))
         .Times(kNumBlocks);

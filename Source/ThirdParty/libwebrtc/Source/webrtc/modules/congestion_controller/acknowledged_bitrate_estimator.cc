@@ -13,13 +13,14 @@
 #include <utility>
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
 namespace {
 bool IsInSendTimeHistory(const PacketFeedback& packet) {
-  return packet.send_time_ms >= 0;
+  return packet.send_time_ms != PacketFeedback::kNoSendTime;
 }
 }  // namespace
 
@@ -38,7 +39,8 @@ void AcknowledgedBitrateEstimator::IncomingPacketFeedbackVector(
   for (const auto& packet : packet_feedback_vector) {
     if (IsInSendTimeHistory(packet)) {
       MaybeExpectFastRateChange(packet.send_time_ms);
-      bitrate_estimator_->Update(packet.arrival_time_ms, packet.payload_size);
+      bitrate_estimator_->Update(packet.arrival_time_ms,
+                                 rtc::dchecked_cast<int>(packet.payload_size));
     }
   }
 }

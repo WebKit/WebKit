@@ -36,7 +36,7 @@
 #include <webrtc/api/mediastreaminterface.h>
 #include <webrtc/api/optional.h>
 #include <webrtc/common_video/include/i420_buffer_pool.h>
-#include <webrtc/media/base/videosinkinterface.h>
+#include <webrtc/api/videosinkinterface.h>
 #include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

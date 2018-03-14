@@ -32,7 +32,10 @@ CPPLINT_BLACKLIST = [
   'modules/media_file',
   'modules/utility',
   'modules/video_capture',
-  'p2p',
+  'p2p/base/session.cc',
+  'p2p/base/session.h',
+  'p2p/base/pseudotcp.cc',
+  'p2p/base/pseudotcp.h',
   'rtc_base',
   'sdk/android/src/jni',
   'sdk/objc',
@@ -65,7 +68,8 @@ BLACKLIST_LINT_FILTERS = [
 # 4. (later) The deprecated APIs are removed.
 NATIVE_API_DIRS = (
   'api',  # All subdirectories of api/ are included as well.
-  'media',
+  'media/base',
+  'media/engine',
   'modules/audio_device/include',
   'pc',
 )
@@ -90,7 +94,6 @@ LEGACY_API_DIRS = (
   'modules/video_coding/include',
   'rtc_base',
   'system_wrappers/include',
-  'voice_engine/include',
 )
 
 # NOTE: The set of directories in API_DIRS should be the same as those
@@ -401,10 +404,40 @@ def CheckNoPackageBoundaryViolations(input_api, gn_files, output_api):
         long_text='\n\n'.join(str(err) for err in errors))]
   return []
 
+def CheckPublicDepsIsNotUsed(gn_files, output_api):
+  result = []
+  error_msg = ('public_deps is not allowed in WebRTC BUILD.gn files because '
+               'it doesn\'t map well to downstream build systems.\n'
+               'Used in: %s (line %d).')
+  for affected_file in gn_files:
+    for (line_number, affected_line) in affected_file.ChangedContents():
+      if 'public_deps' in affected_line:
+        result.append(
+            output_api.PresubmitError(error_msg % (affected_file.LocalPath(),
+                                                   line_number)))
+  return result
+
+def CheckCheckIncludesIsNotUsed(gn_files, output_api):
+  result = []
+  error_msg = ('check_includes overrides are not allowed since it can cause '
+               'incorrect dependencies to form. It effectively means that your '
+               'module can include any .h file without depending on its '
+               'corresponding target. There are some exceptional cases when '
+               'this is allowed: if so, get approval from a .gn owner in the'
+               'root OWNERS file.\n'
+               'Used in: %s (line %d).')
+  for affected_file in gn_files:
+    for (line_number, affected_line) in affected_file.ChangedContents():
+      if 'check_includes' in affected_line:
+        result.append(
+            output_api.PresubmitError(error_msg % (affected_file.LocalPath(),
+                                                   line_number)))
+  return result
+
 def CheckGnChanges(input_api, output_api):
   source_file_filter = lambda x: input_api.FilterSourceFile(
       x, white_list=(r'.+\.(gn|gni)$',),
-      black_list=r'.*/presubmit_checks_lib/testdata/.*')
+      black_list=(r'.*/presubmit_checks_lib/testdata/.*',))
 
   gn_files = []
   for f in input_api.AffectedSourceFiles(source_file_filter):
@@ -416,6 +449,8 @@ def CheckGnChanges(input_api, output_api):
     result.extend(CheckNoMixingSources(input_api, gn_files, output_api))
     result.extend(CheckNoPackageBoundaryViolations(input_api, gn_files,
                                                    output_api))
+    result.extend(CheckPublicDepsIsNotUsed(gn_files, output_api))
+    result.extend(CheckCheckIncludesIsNotUsed(gn_files, output_api))
   return result
 
 def CheckGnGen(input_api, output_api):
@@ -731,16 +766,20 @@ def CheckOrphanHeaders(input_api, output_api):
   # We need to wait until we have an input_api object and use this
   # roundabout construct to import prebubmit_checks_lib because this file is
   # eval-ed and thus doesn't have __file__.
-  error_msg = """Header file {} is not listed in any GN target.
-  Please create a target or add it to an existing one in {}"""
+  error_msg = """{} should be listed in {}."""
   results = []
+  orphan_blacklist = [
+    os.path.join('tools_webrtc', 'ios', 'SDK'),
+  ]
   with _AddToPath(input_api.os_path.join(
       input_api.PresubmitLocalPath(), 'tools_webrtc', 'presubmit_checks_lib')):
     from check_orphan_headers import GetBuildGnPathFromFilePath
     from check_orphan_headers import IsHeaderInBuildGn
 
-  for f in input_api.AffectedSourceFiles(input_api.FilterSourceFile):
-    if f.LocalPath().endswith('.h') and f.Action() == 'A':
+  source_file_filter = lambda x: input_api.FilterSourceFile(
+      x, black_list=orphan_blacklist)
+  for f in input_api.AffectedSourceFiles(source_file_filter):
+    if f.LocalPath().endswith('.h'):
       file_path = os.path.abspath(f.LocalPath())
       root_dir = os.getcwd()
       gn_file_path = GetBuildGnPathFromFilePath(file_path, os.path.exists,
@@ -748,7 +787,7 @@ def CheckOrphanHeaders(input_api, output_api):
       in_build_gn = IsHeaderInBuildGn(file_path, gn_file_path)
       if not in_build_gn:
         results.append(output_api.PresubmitError(error_msg.format(
-            file_path, gn_file_path)))
+            f.LocalPath(), os.path.relpath(gn_file_path))))
   return results
 
 

@@ -29,6 +29,9 @@ enum class RtpTransceiverDirection {
   kInactive
 };
 
+// This is provided as a debugging aid. The format of the output is unspecified.
+std::ostream& operator<<(std::ostream& os, RtpTransceiverDirection direction);
+
 // Structure for initializing an RtpTransceiver in a call to
 // PeerConnectionInterface::AddTransceiver.
 // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiverinit
@@ -38,7 +41,7 @@ struct RtpTransceiverInit final {
 
   // The added RtpTransceiver will be added to these streams.
   // TODO(bugs.webrtc.org/7600): Not implemented.
-  std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams;
+  std::vector<std::string> stream_labels;
 
   // TODO(bugs.webrtc.org/7600): Not implemented.
   std::vector<RtpEncodingParameters> send_encodings;

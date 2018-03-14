@@ -1,3 +1,16 @@
+2018-03-14  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 36af4e9614f707f733eb2340fae66d6325aaac5b
+        https://bugs.webkit.org/show_bug.cgi?id=183481
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/: refreshed
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Stop using SDK conditionals to control feature definitions

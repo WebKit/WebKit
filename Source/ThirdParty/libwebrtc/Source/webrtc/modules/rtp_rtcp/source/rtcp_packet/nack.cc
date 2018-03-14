@@ -84,7 +84,7 @@ size_t Nack::BlockLength() const {
 bool Nack::Create(uint8_t* packet,
                   size_t* index,
                   size_t max_length,
-                  RtcpPacket::PacketReadyCallback* callback) const {
+                  PacketReadyCallback callback) const {
   RTC_DCHECK(!packed_.empty());
   // If nack list can't fit in packet, try to fragment.
   constexpr size_t kNackHeaderLength = kHeaderLength + kCommonFeedbackLength;

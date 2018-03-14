@@ -29,8 +29,8 @@ class VP8Encoder : public VideoEncoder {
 
 class VP8Decoder : public VideoDecoder {
  public:
-    static bool IsSupported();
-    static std::unique_ptr<VP8Decoder> Create();
+  static bool IsSupported();
+  static std::unique_ptr<VP8Decoder> Create();
 
   virtual ~VP8Decoder() {}
 };  // end of VP8Decoder class

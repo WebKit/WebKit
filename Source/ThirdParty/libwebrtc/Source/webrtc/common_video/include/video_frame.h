@@ -16,6 +16,7 @@
 // to refactor and clean up related interfaces, at which point it
 // should be moved to somewhere under api/.
 
+#include "api/rtp_headers.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "typedefs.h"  // NOLINT(build/include)
 
@@ -35,14 +36,6 @@ class EncodedImage {
 
   void SetEncodeTime(int64_t encode_start_ms, int64_t encode_finish_ms);
 
-  // TODO(kthelgason): get rid of this struct as it only has a single member
-  // remaining.
-  struct AdaptReason {
-    AdaptReason() : bw_resolutions_disabled(-1) {}
-    int bw_resolutions_disabled;  // Number of resolutions that are not sent
-                                  // due to bandwidth for this frame.
-                                  // Or -1 if information is not provided.
-  };
   uint32_t _encodedWidth = 0;
   uint32_t _encodedHeight = 0;
   uint32_t _timeStamp = 0;
@@ -56,7 +49,6 @@ class EncodedImage {
   VideoRotation rotation_ = kVideoRotation_0;
   VideoContentType content_type_ = VideoContentType::UNSPECIFIED;
   bool _completeFrame = false;
-  AdaptReason adapt_reason_;
   int qp_ = -1;  // Quantizer value.
 
   // When an application indicates non-zero values here, it is taken as an

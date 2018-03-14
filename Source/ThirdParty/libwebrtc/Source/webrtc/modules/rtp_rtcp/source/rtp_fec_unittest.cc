@@ -31,6 +31,8 @@ constexpr size_t kTransportOverhead = 28;
 constexpr uint32_t kMediaSsrc = 83542;
 constexpr uint32_t kFlexfecSsrc = 43245;
 
+constexpr size_t kMaxMediaPackets = 48;
+
 // Deep copies |src| to |dst|, but only keeps every Nth packet.
 void DeepCopyEveryNthPacket(const ForwardErrorCorrection::PacketList& src,
                             int n,
@@ -216,6 +218,51 @@ class UlpfecForwardErrorCorrection : public ForwardErrorCorrection {
 using FecTypes =
     Types<FlexfecForwardErrorCorrection, UlpfecForwardErrorCorrection>;
 TYPED_TEST_CASE(RtpFecTest, FecTypes);
+
+TYPED_TEST(RtpFecTest, WillProtectMediaPacketsWithLargeSequenceNumberGap) {
+  constexpr int kNumImportantPackets = 0;
+  constexpr bool kUseUnequalProtection = false;
+  constexpr int kNumMediaPackets = 2;
+  constexpr uint8_t kProtectionFactor = 127;
+
+  this->media_packets_ =
+      this->media_packet_generator_.ConstructMediaPackets(kNumMediaPackets);
+
+  // Create |kMaxMediaPackets - 1| sequence number difference.
+  ByteWriter<uint16_t>::WriteBigEndian(&this->media_packets_.front()->data[2],
+                                       1);
+  ByteWriter<uint16_t>::WriteBigEndian(&this->media_packets_.back()->data[2],
+                                       kMaxMediaPackets);
+
+  EXPECT_EQ(
+      0, this->fec_.EncodeFec(this->media_packets_, kProtectionFactor,
+                              kNumImportantPackets, kUseUnequalProtection,
+                              kFecMaskBursty, &this->generated_fec_packets_));
+  EXPECT_EQ(1u, this->generated_fec_packets_.size());
+}
+
+TYPED_TEST(RtpFecTest,
+           WillNotProtectMediaPacketsWithTooLargeSequenceNumberGap) {
+  constexpr int kNumImportantPackets = 0;
+  constexpr bool kUseUnequalProtection = false;
+  constexpr int kNumMediaPackets = 2;
+  constexpr uint8_t kProtectionFactor = 127;
+
+  this->media_packets_ =
+      this->media_packet_generator_.ConstructMediaPackets(kNumMediaPackets);
+
+  // Create |kMaxMediaPackets| sequence number difference.
+  ByteWriter<uint16_t>::WriteBigEndian(&this->media_packets_.front()->data[2],
+                                       1);
+  ByteWriter<uint16_t>::WriteBigEndian(&this->media_packets_.back()->data[2],
+                                       kMaxMediaPackets + 1);
+
+  EXPECT_EQ(
+      -1, this->fec_.EncodeFec(this->media_packets_, kProtectionFactor,
+                               kNumImportantPackets, kUseUnequalProtection,
+                               kFecMaskBursty, &this->generated_fec_packets_));
+  EXPECT_TRUE(this->generated_fec_packets_.empty());
+}
 
 TYPED_TEST(RtpFecTest, FecRecoveryNoLoss) {
   constexpr int kNumImportantPackets = 0;

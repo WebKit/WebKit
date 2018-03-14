@@ -37,7 +37,8 @@ TEST(ResidualEchoDetectorTests, Echo) {
     }
   }
   // We expect to detect echo with near certain likelihood.
-  EXPECT_NEAR(1.f, echo_detector.echo_likelihood(), 0.01f);
+  auto ed_metrics = echo_detector.GetMetrics();
+  EXPECT_NEAR(1.f, ed_metrics.echo_likelihood, 0.01f);
 }
 
 TEST(ResidualEchoDetectorTests, NoEcho) {
@@ -57,7 +58,8 @@ TEST(ResidualEchoDetectorTests, NoEcho) {
     echo_detector.AnalyzeCaptureAudio(zeros);
   }
   // We expect to not detect any echo.
-  EXPECT_NEAR(0.f, echo_detector.echo_likelihood(), 0.01f);
+  auto ed_metrics = echo_detector.GetMetrics();
+  EXPECT_NEAR(0.f, ed_metrics.echo_likelihood, 0.01f);
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
@@ -92,7 +94,8 @@ TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
   // A growing buffer can be caused by jitter or clock drift and it's not
   // possible to make this decision right away. For this reason we only expect
   // an echo likelihood of 75% in this test.
-  EXPECT_GT(echo_detector.echo_likelihood(), 0.75f);
+  auto ed_metrics = echo_detector.GetMetrics();
+  EXPECT_GT(ed_metrics.echo_likelihood, 0.75f);
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
@@ -122,7 +125,8 @@ TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
     }
   }
   // We expect to detect echo with near certain likelihood.
-  EXPECT_NEAR(1.f, echo_detector.echo_likelihood(), 0.01f);
+  auto ed_metrics = echo_detector.GetMetrics();
+  EXPECT_NEAR(1.f, ed_metrics.echo_likelihood, 0.01f);
 }
 
 }  // namespace webrtc

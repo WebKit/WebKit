@@ -21,28 +21,40 @@
 
 namespace webrtc {
 
+namespace {
+
+// This function is only expected to be called on the signalling thread.
+int GenerateUniqueId() {
+  static int g_unique_id = 0;
+
+  return ++g_unique_id;
+}
+
+}  // namespace
+
 AudioRtpReceiver::AudioRtpReceiver(
+    rtc::Thread* worker_thread,
     const std::string& receiver_id,
-    std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams,
+    const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams,
     uint32_t ssrc,
-    cricket::VoiceChannel* channel)
-    : id_(receiver_id),
+    cricket::VoiceMediaChannel* media_channel)
+    : worker_thread_(worker_thread),
+      id_(receiver_id),
       ssrc_(ssrc),
-      channel_(channel),
       track_(AudioTrackProxy::Create(
           rtc::Thread::Current(),
-          AudioTrack::Create(receiver_id,
-                             RemoteAudioSource::Create(ssrc, channel)))),
-      streams_(std::move(streams)),
-      cached_track_enabled_(track_->enabled()) {
+          AudioTrack::Create(
+              receiver_id,
+              RemoteAudioSource::Create(worker_thread, media_channel, ssrc)))),
+      cached_track_enabled_(track_->enabled()),
+      attachment_id_(GenerateUniqueId()) {
+  RTC_DCHECK(worker_thread_);
   RTC_DCHECK(track_->GetSource()->remote());
   track_->RegisterObserver(this);
   track_->GetSource()->RegisterAudioObserver(this);
+  SetStreams(streams);
+  SetMediaChannel(media_channel);
   Reconfigure();
-  if (channel_) {
-    channel_->SignalFirstPacketReceived.connect(
-        this, &AudioRtpReceiver::OnFirstPacketReceived);
-  }
 }
 
 AudioRtpReceiver::~AudioRtpReceiver() {
@@ -58,11 +70,20 @@ void AudioRtpReceiver::OnChanged() {
   }
 }
 
+bool AudioRtpReceiver::SetOutputVolume(double volume) {
+  RTC_DCHECK_GE(volume, 0.0);
+  RTC_DCHECK_LE(volume, 10.0);
+  RTC_DCHECK(media_channel_);
+  return worker_thread_->Invoke<bool>(RTC_FROM_HERE, [&] {
+    return media_channel_->SetOutputVolume(ssrc_, volume);
+  });
+}
+
 void AudioRtpReceiver::OnSetVolume(double volume) {
   RTC_DCHECK_GE(volume, 0);
   RTC_DCHECK_LE(volume, 10);
   cached_volume_ = volume;
-  if (!channel_) {
+  if (!media_channel_) {
     RTC_LOG(LS_ERROR)
         << "AudioRtpReceiver::OnSetVolume: No audio channel exists.";
     return;
@@ -71,25 +92,29 @@ void AudioRtpReceiver::OnSetVolume(double volume) {
   // corresponding WebRtc Voice Engine channel will be 0. So we do not allow
   // setting the volume to the source when the track is disabled.
   if (!stopped_ && track_->enabled()) {
-    if (!channel_->SetOutputVolume(ssrc_, cached_volume_)) {
+    if (!SetOutputVolume(cached_volume_)) {
       RTC_NOTREACHED();
     }
   }
 }
 
 RtpParameters AudioRtpReceiver::GetParameters() const {
-  if (!channel_ || stopped_) {
+  if (!media_channel_ || stopped_) {
     return RtpParameters();
   }
-  return channel_->GetRtpReceiveParameters(ssrc_);
+  return worker_thread_->Invoke<RtpParameters>(RTC_FROM_HERE, [&] {
+    return media_channel_->GetRtpReceiveParameters(ssrc_);
+  });
 }
 
 bool AudioRtpReceiver::SetParameters(const RtpParameters& parameters) {
   TRACE_EVENT0("webrtc", "AudioRtpReceiver::SetParameters");
-  if (!channel_ || stopped_) {
+  if (!media_channel_ || stopped_) {
     return false;
   }
-  return channel_->SetRtpReceiveParameters(ssrc_, parameters);
+  return worker_thread_->Invoke<bool>(RTC_FROM_HERE, [&] {
+    return media_channel_->SetRtpReceiveParameters(ssrc_, parameters);
+  });
 }
 
 void AudioRtpReceiver::Stop() {
@@ -97,27 +122,60 @@ void AudioRtpReceiver::Stop() {
   if (stopped_) {
     return;
   }
-  if (channel_) {
+  if (media_channel_) {
     // Allow that SetOutputVolume fail. This is the normal case when the
     // underlying media channel has already been deleted.
-    channel_->SetOutputVolume(ssrc_, 0);
+    SetOutputVolume(0.0);
   }
   stopped_ = true;
 }
 
+void AudioRtpReceiver::SetStreams(
+    const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
+  // Remove remote track from any streams that are going away.
+  for (auto existing_stream : streams_) {
+    bool removed = true;
+    for (auto stream : streams) {
+      if (existing_stream->label() == stream->label()) {
+        RTC_DCHECK_EQ(existing_stream.get(), stream.get());
+        removed = false;
+        break;
+      }
+    }
+    if (removed) {
+      existing_stream->RemoveTrack(track_);
+    }
+  }
+  // Add remote track to any streams that are new.
+  for (auto stream : streams) {
+    bool added = true;
+    for (auto existing_stream : streams_) {
+      if (stream->label() == existing_stream->label()) {
+        RTC_DCHECK_EQ(stream.get(), existing_stream.get());
+        added = false;
+        break;
+      }
+    }
+    if (added) {
+      stream->AddTrack(track_);
+    }
+  }
+  streams_ = streams;
+}
+
 std::vector<RtpSource> AudioRtpReceiver::GetSources() const {
-  return channel_->GetSources(ssrc_);
+  return worker_thread_->Invoke<std::vector<RtpSource>>(
+      RTC_FROM_HERE, [&] { return media_channel_->GetSources(ssrc_); });
 }
 
 void AudioRtpReceiver::Reconfigure() {
   RTC_DCHECK(!stopped_);
-  if (!channel_) {
+  if (!media_channel_) {
     RTC_LOG(LS_ERROR)
         << "AudioRtpReceiver::Reconfigure: No audio channel exists.";
     return;
   }
-  if (!channel_->SetOutputVolume(ssrc_,
-                                 track_->enabled() ? cached_volume_ : 0)) {
+  if (!SetOutputVolume(track_->enabled() ? cached_volume_ : 0)) {
     RTC_NOTREACHED();
   }
 }
@@ -130,18 +188,12 @@ void AudioRtpReceiver::SetObserver(RtpReceiverObserverInterface* observer) {
   }
 }
 
-void AudioRtpReceiver::SetChannel(cricket::VoiceChannel* channel) {
-  if (channel_) {
-    channel_->SignalFirstPacketReceived.disconnect(this);
-  }
-  channel_ = channel;
-  if (channel_) {
-    channel_->SignalFirstPacketReceived.connect(
-        this, &AudioRtpReceiver::OnFirstPacketReceived);
-  }
+void AudioRtpReceiver::SetMediaChannel(
+    cricket::VoiceMediaChannel* media_channel) {
+  media_channel_ = media_channel;
 }
 
-void AudioRtpReceiver::OnFirstPacketReceived(cricket::BaseChannel* channel) {
+void AudioRtpReceiver::NotifyFirstPacketReceived() {
   if (observer_) {
     observer_->OnFirstPacketReceived(media_type());
   }
@@ -149,39 +201,30 @@ void AudioRtpReceiver::OnFirstPacketReceived(cricket::BaseChannel* channel) {
 }
 
 VideoRtpReceiver::VideoRtpReceiver(
-    const std::string& track_id,
-    std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams,
     rtc::Thread* worker_thread,
+    const std::string& receiver_id,
+    const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams,
     uint32_t ssrc,
-    cricket::VideoChannel* channel)
-    : id_(track_id),
+    cricket::VideoMediaChannel* media_channel)
+    : worker_thread_(worker_thread),
+      id_(receiver_id),
       ssrc_(ssrc),
-      channel_(channel),
       source_(new RefCountedObject<VideoTrackSource>(&broadcaster_,
                                                      true /* remote */)),
       track_(VideoTrackProxy::Create(
           rtc::Thread::Current(),
           worker_thread,
           VideoTrack::Create(
-              track_id,
+              receiver_id,
               VideoTrackSourceProxy::Create(rtc::Thread::Current(),
                                             worker_thread,
                                             source_),
               worker_thread))),
-      streams_(std::move(streams)) {
+      attachment_id_(GenerateUniqueId()) {
+  RTC_DCHECK(worker_thread_);
+  SetStreams(streams);
   source_->SetState(MediaSourceInterface::kLive);
-  if (!channel_) {
-    RTC_LOG(LS_ERROR)
-        << "VideoRtpReceiver::VideoRtpReceiver: No video channel exists.";
-  } else {
-    if (!channel_->SetSink(ssrc_, &broadcaster_)) {
-      RTC_NOTREACHED();
-    }
-  }
-  if (channel_) {
-    channel_->SignalFirstPacketReceived.connect(
-        this, &VideoRtpReceiver::OnFirstPacketReceived);
-  }
+  SetMediaChannel(media_channel);
 }
 
 VideoRtpReceiver::~VideoRtpReceiver() {
@@ -190,19 +233,29 @@ VideoRtpReceiver::~VideoRtpReceiver() {
   Stop();
 }
 
+bool VideoRtpReceiver::SetSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
+  RTC_DCHECK(media_channel_);
+  return worker_thread_->Invoke<bool>(
+      RTC_FROM_HERE, [&] { return media_channel_->SetSink(ssrc_, sink); });
+}
+
 RtpParameters VideoRtpReceiver::GetParameters() const {
-  if (!channel_ || stopped_) {
+  if (!media_channel_ || stopped_) {
     return RtpParameters();
   }
-  return channel_->GetRtpReceiveParameters(ssrc_);
+  return worker_thread_->Invoke<RtpParameters>(RTC_FROM_HERE, [&] {
+    return media_channel_->GetRtpReceiveParameters(ssrc_);
+  });
 }
 
 bool VideoRtpReceiver::SetParameters(const RtpParameters& parameters) {
   TRACE_EVENT0("webrtc", "VideoRtpReceiver::SetParameters");
-  if (!channel_ || stopped_) {
+  if (!media_channel_ || stopped_) {
     return false;
   }
-  return channel_->SetRtpReceiveParameters(ssrc_, parameters);
+  return worker_thread_->Invoke<bool>(RTC_FROM_HERE, [&] {
+    return media_channel_->SetRtpReceiveParameters(ssrc_, parameters);
+  });
 }
 
 void VideoRtpReceiver::Stop() {
@@ -212,14 +265,47 @@ void VideoRtpReceiver::Stop() {
   }
   source_->SetState(MediaSourceInterface::kEnded);
   source_->OnSourceDestroyed();
-  if (!channel_) {
+  if (!media_channel_) {
     RTC_LOG(LS_WARNING) << "VideoRtpReceiver::Stop: No video channel exists.";
   } else {
     // Allow that SetSink fail. This is the normal case when the underlying
     // media channel has already been deleted.
-    channel_->SetSink(ssrc_, nullptr);
+    SetSink(nullptr);
   }
   stopped_ = true;
+}
+
+void VideoRtpReceiver::SetStreams(
+    const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
+  // Remove remote track from any streams that are going away.
+  for (auto existing_stream : streams_) {
+    bool removed = true;
+    for (auto stream : streams) {
+      if (existing_stream->label() == stream->label()) {
+        RTC_DCHECK_EQ(existing_stream.get(), stream.get());
+        removed = false;
+        break;
+      }
+    }
+    if (removed) {
+      existing_stream->RemoveTrack(track_);
+    }
+  }
+  // Add remote track to any streams that are new.
+  for (auto stream : streams) {
+    bool added = true;
+    for (auto existing_stream : streams_) {
+      if (stream->label() == existing_stream->label()) {
+        RTC_DCHECK_EQ(stream.get(), existing_stream.get());
+        added = false;
+        break;
+      }
+    }
+    if (added) {
+      stream->AddTrack(track_);
+    }
+  }
+  streams_ = streams;
 }
 
 void VideoRtpReceiver::SetObserver(RtpReceiverObserverInterface* observer) {
@@ -230,22 +316,20 @@ void VideoRtpReceiver::SetObserver(RtpReceiverObserverInterface* observer) {
   }
 }
 
-void VideoRtpReceiver::SetChannel(cricket::VideoChannel* channel) {
-  if (channel_) {
-    channel_->SignalFirstPacketReceived.disconnect(this);
-    channel_->SetSink(ssrc_, nullptr);
+void VideoRtpReceiver::SetMediaChannel(
+    cricket::VideoMediaChannel* media_channel) {
+  if (media_channel_) {
+    SetSink(nullptr);
   }
-  channel_ = channel;
-  if (channel_) {
-    if (!channel_->SetSink(ssrc_, &broadcaster_)) {
+  media_channel_ = media_channel;
+  if (media_channel_) {
+    if (!SetSink(&broadcaster_)) {
       RTC_NOTREACHED();
     }
-    channel_->SignalFirstPacketReceived.connect(
-        this, &VideoRtpReceiver::OnFirstPacketReceived);
   }
 }
 
-void VideoRtpReceiver::OnFirstPacketReceived(cricket::BaseChannel* channel) {
+void VideoRtpReceiver::NotifyFirstPacketReceived() {
   if (observer_) {
     observer_->OnFirstPacketReceived(media_type());
   }
