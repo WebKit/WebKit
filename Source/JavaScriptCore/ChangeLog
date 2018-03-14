@@ -1,3 +1,17 @@
+2018-03-14  Keith Miller  <keith_miller@apple.com>
+
+        Move jsc CLI breakpoint function to $vm
+        https://bugs.webkit.org/show_bug.cgi?id=183512
+
+        Reviewed by Yusuke Suzuki.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionBreakpoint): Deleted.
+        * tools/JSDollarVM.cpp:
+        (JSC::functionBreakpoint):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229567
