@@ -1,5 +1,15 @@
 2018-03-15  Youenn Fablet  <youenn@apple.com>
 
+        Layout Test http/wpt/service-workers/update-service-worker.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181753
+        <rdar://problem/36605091>
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations: Test is no longer flaky on High Sierra Release.
+
+2018-03-15  Youenn Fablet  <youenn@apple.com>
+
         MessagePort is not always destroyed on the right thread
         https://bugs.webkit.org/show_bug.cgi?id=183619
         <rdar://problem/38204711>
