@@ -508,9 +508,12 @@ function test() {
                 InspectorTest.assert(!event.data.recording, "The recording payload should be null.");
 
                 ++eventCount;
-                if (eventCount == 1)
+                if (eventCount == 1) {
                     InspectorTest.pass("A recording should have been started and stopped once.");
-                else if (eventCount >= 2) {
+
+                    WI.canvasManager.startRecording(canvas);
+                    WI.canvasManager.stopRecording();
+                } else if (eventCount >= 2) {
                     InspectorTest.pass("A recording should have been started and stopped twice.");
 
                     WI.canvasManager.removeEventListener(handleRecordingStopped);
@@ -518,9 +521,6 @@ function test() {
                 }
             }
             WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, handleRecordingStopped);
-
-            WI.canvasManager.startRecording(canvas);
-            WI.canvasManager.stopRecording();
 
             WI.canvasManager.startRecording(canvas);
             WI.canvasManager.stopRecording();

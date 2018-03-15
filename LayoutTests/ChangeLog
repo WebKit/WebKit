@@ -1,3 +1,15 @@
+2018-03-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas: a recording initiated by the user should be shown immediately on completion
+        https://bugs.webkit.org/show_bug.cgi?id=183647
+        <rdar://problem/38479187>
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/recording-2d.html:
+        Reorder the agent calls so that the CanvasManager `_recordingCanvas` state variable has a
+        chance to properly update after a recording is stopped.
+
 2018-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r229613.

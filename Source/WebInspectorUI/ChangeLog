@@ -1,3 +1,27 @@
+2018-03-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas: a recording initiated by the user should be shown immediately on completion
+        https://bugs.webkit.org/show_bug.cgi?id=183647
+        <rdar://problem/38479187>
+
+        Reviewed by Matt Baker.
+
+        When recordings are initiated via `console.record`, we don't want to automatically show the
+        recording after it's payload is sent to the frontend. We determine whether a recording came
+        from the console by comparing the recording's associated canvas with the current value of
+        `_recordingCanvas`. Previously, when stopping a recording, we would always null the value,
+        which meant that all non-single-frame recordings (single-frame recordings are stopped by
+        the agent after the first paint or tick after an action is performed) would be categorized
+        as coming from the console, since `_recordingCanvas` would be null by the time the frontend
+        recieved the payload.
+
+        This patch changes it so that the nulling of `_recordingCanvas` in `stopRecording` is only
+        done if the agent command errors. It was already the case that `_recordingCanvas` was nulled
+        in `stopRecording`, so this patch just prevents it from being nulled too early.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.stopRecording):
+
 2018-03-12  Jon Davis  <jond@apple.com>
 
         Web Inspector: Remove redundant tooltips
