@@ -1,3 +1,10 @@
+2018-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix tiny mistake in r229615 that caused API tests failures.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+
 2018-03-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Remove TextureMapperLayer::texture()

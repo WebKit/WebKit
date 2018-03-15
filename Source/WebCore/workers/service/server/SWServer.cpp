@@ -139,7 +139,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
     addRegistration(WTFMove(registration));
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
-    auto worker = SWServerWorker::create(*this, *registrationPtr, connection ? connection->identifier() : SWServerToContextConnectionIdentifier(), data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    auto worker = SWServerWorker::create(*this, *registrationPtr, connection ? std::make_optional(connection->identifier()) : std::nullopt, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
     registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
     worker->setState(ServiceWorkerState::Activated);
 }
