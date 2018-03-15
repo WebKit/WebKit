@@ -188,6 +188,7 @@ SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetRequiresCustomURLLoadingKey, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetOutOfBandMIMETypeKey, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetUseClientURLLoadingExclusively, NSString *)
 
 #define AVPlayer initAVPlayer()
 #define AVPlayerItem initAVPlayerItem()
@@ -211,6 +212,7 @@ SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetOutOfBandMIMETypeKey, NSStrin
 #define AVURLAssetClientBundleIdentifierKey getAVURLAssetClientBundleIdentifierKey()
 #define AVURLAssetRequiresCustomURLLoadingKey getAVURLAssetRequiresCustomURLLoadingKey()
 #define AVURLAssetOutOfBandMIMETypeKey getAVURLAssetOutOfBandMIMETypeKey()
+#define AVURLAssetUseClientURLLoadingExclusively getAVURLAssetUseClientURLLoadingExclusively()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 #define AVLayerVideoGravityResizeAspect getAVLayerVideoGravityResizeAspect()
@@ -887,14 +889,15 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     if (player()->doesHaveAttribute("x-itunes-inherit-uri-query-component"))
         [options.get() setObject:@YES forKey: AVURLAssetInheritURIQueryComponentFromReferencingURIKey];
 
+    if (AVURLAssetUseClientURLLoadingExclusively)
+        [options setObject:@YES forKey:AVURLAssetUseClientURLLoadingExclusively];
 #if PLATFORM(IOS)
+    else if (AVURLAssetRequiresCustomURLLoadingKey)
+        [options setObject:@YES forKey:AVURLAssetRequiresCustomURLLoadingKey];
     // FIXME: rdar://problem/20354688
     String identifier = player()->sourceApplicationIdentifier();
     if (!identifier.isEmpty() && AVURLAssetClientBundleIdentifierKey)
         [options setObject:identifier forKey:AVURLAssetClientBundleIdentifierKey];
-
-    if (AVURLAssetRequiresCustomURLLoadingKey)
-        [options setObject:@YES forKey:AVURLAssetRequiresCustomURLLoadingKey];
 #endif
 
     auto type = player()->contentMIMEType();

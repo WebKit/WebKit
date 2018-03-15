@@ -1,3 +1,13 @@
+2018-03-15  Jer Noble  <jer.noble@apple.com>
+
+        Adopt new AVURLAssetUseClientURLLoadingExclusively AVURLAsset creation option.
+        https://bugs.webkit.org/show_bug.cgi?id=183660
+
+        Reviewed by Jon Lee.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+
 2018-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix tiny mistake in r229615 that caused API tests failures.
