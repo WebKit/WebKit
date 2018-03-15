@@ -1,3 +1,12 @@
+2018-03-15  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Enable service workers
+        https://bugs.webkit.org/show_bug.cgi?id=178576
+
+        Reviewed by Žan Doberšek.
+
+        * platform/wpe/TestExpectations: update remaining expectations to point to another bug.
+
 2018-03-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas: a recording initiated by the user should be shown immediately on completion
