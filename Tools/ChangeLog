@@ -1,3 +1,21 @@
+2018-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Hit-testing fails when specifying a large top content inset
+        https://bugs.webkit.org/show_bug.cgi?id=183648
+        <rdar://problem/38421894>
+
+        Reviewed by Tim Horton.
+
+        Adds four new API tests to verify that adding top or bottom content insets to the WKWebView's scroll view does
+        not cause the DOMWindow's innerHeight to shrink. Currently, doing so would cause the innerHeight to be reported
+        as (viewHeight - inset.top) or (viewHeight - inset.bottom).
+
+        See WebKit ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2018-03-15  Aakash Jain  <aakash_jain@apple.com>
 
         Add unit-test for NetworkTransaction URLError handling

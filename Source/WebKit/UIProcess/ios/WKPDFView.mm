@@ -308,7 +308,7 @@ static void detachViewForPage(PDFPageInfo& page)
 
 - (CGPoint)_offsetForPageNumberIndicator
 {
-    UIEdgeInsets insets = UIEdgeInsetsAdd(_webView._computedUnobscuredSafeAreaInset, _webView._computedContentInset, UIRectEdgeAll);
+    UIEdgeInsets insets = UIEdgeInsetsAdd(_webView._computedUnobscuredSafeAreaInset, _webView._computedObscuredInset, UIRectEdgeAll);
     return CGPointMake(insets.left, insets.top + _overlaidAccessoryViewsInset.height);
 }
 
@@ -366,7 +366,7 @@ static void detachViewForPage(PDFPageInfo& page)
     [self _resetZoomAnimated:NO];
 
     // Ensure that the page margin is visible below the content inset.
-    const CGFloat verticalOffset = _pages[pageIndex].frame.origin.y - _webView._computedContentInset.top - pdfPageMargin;
+    const CGFloat verticalOffset = _pages[pageIndex].frame.origin.y - _webView._computedObscuredInset.top - pdfPageMargin;
     [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x, verticalOffset) animated:NO];
 
     _isPerformingSameDocumentNavigation = NO;

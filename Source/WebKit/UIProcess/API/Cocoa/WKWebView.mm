@@ -1461,7 +1461,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [_customContentView web_setFixedOverlayView:_customContentFixedOverlayView.get()];
 
         _scrollViewBackgroundColor = WebCore::Color();
-        [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
+        [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
 
         [self _setAvoidsUnsafeArea:NO];
     } else if (_customContentView) {
@@ -1581,10 +1581,16 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 #endif
 }
 
-- (CGPoint)_adjustedContentOffset:(CGPoint)point
+- (CGPoint)_initialContentOffsetForScrollView
+{
+    auto combinedUnobscuredAndScrollViewInset = [self _computedContentInset];
+    return CGPointMake(-combinedUnobscuredAndScrollViewInset.left, -combinedUnobscuredAndScrollViewInset.top);
+}
+
+- (CGPoint)_contentOffsetAdjustedForObscuredInset:(CGPoint)point
 {
     CGPoint result = point;
-    UIEdgeInsets contentInset = [self _computedContentInset];
+    UIEdgeInsets contentInset = [self _computedObscuredInset];
 
     result.x -= contentInset.left;
     result.y -= contentInset.top;
@@ -1597,6 +1603,19 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (![self usesStandardContentView])
         return UIRectEdgeAll;
     return _obscuredInsetEdgesAffectedBySafeArea;
+}
+
+- (UIEdgeInsets)_computedObscuredInset
+{
+    if (_haveSetObscuredInsets)
+        return _obscuredInsets;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    if (self._safeAreaShouldAffectObscuredInsets)
+        return UIEdgeInsetsAdd(UIEdgeInsetsZero, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
+#endif
+
+    return UIEdgeInsetsZero;
 }
 
 - (UIEdgeInsets)_computedContentInset
@@ -1641,7 +1660,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     }
     [_contentView setFrame:self.bounds];
     [_scrollView setBackgroundColor:[UIColor whiteColor]];
-    [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
+    [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
     [_scrollView setZoomScale:1];
 
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
@@ -1778,7 +1797,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     if (_needsResetViewStateAfterCommitLoadForMainFrame && layerTreeTransaction.transactionID() >= _firstPaintAfterCommitLoadTransactionID) {
         _needsResetViewStateAfterCommitLoadForMainFrame = NO;
-        [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
+        [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
         if (_observedRenderingProgressEvents & _WKRenderingProgressEventFirstPaint)
             _navigationState->didFirstPaint();
 
@@ -1847,7 +1866,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         double scale = newScale / currentTargetScale;
         _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 1);
 
-        CGPoint newContentOffset = [self _adjustedContentOffset:CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale)];
+        CGPoint newContentOffset = [self _contentOffsetAdjustedForObscuredInset:CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale)];
         CGPoint currentContentOffset = [_scrollView contentOffset];
 
         _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / animatingScaleTarget;
@@ -2006,7 +2025,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale);
 
-    CGPoint contentOffsetInScrollViewCoordinates = [self _adjustedContentOffset:scaledOffset];
+    CGPoint contentOffsetInScrollViewCoordinates = [self _contentOffsetAdjustedForObscuredInset:scaledOffset];
     contentOffsetInScrollViewCoordinates = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
 
     [_scrollView _stopScrollingAndZoomingAnimations];
@@ -2373,17 +2392,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         // FIXME: Here, I'm finding the maximum horizontal/vertical scroll offsets. There's probably a better way to do this.
         CGSize maxScrollOffsets = CGSizeMake(scrollView.contentSize.width - scrollView.bounds.size.width, scrollView.contentSize.height - scrollView.bounds.size.height);
 
-        CGRect fullViewRect = self.bounds;
-
-        UIEdgeInsets contentInset;
+        UIEdgeInsets obscuredInset;
 
         id<WKUIDelegatePrivate> uiDelegatePrivate = static_cast<id <WKUIDelegatePrivate>>([self UIDelegate]);
         if ([uiDelegatePrivate respondsToSelector:@selector(_webView:finalObscuredInsetsForScrollView:withVelocity:targetContentOffset:)])
-            contentInset = [uiDelegatePrivate _webView:self finalObscuredInsetsForScrollView:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+            obscuredInset = [uiDelegatePrivate _webView:self finalObscuredInsetsForScrollView:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
         else
-            contentInset = [self _computedContentInset];
+            obscuredInset = [self _computedObscuredInset];
 
-        CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, contentInset);
+        CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInset);
 
         coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, unobscuredRect.origin.y, targetContentOffset);
     }
@@ -2750,16 +2767,15 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         || _currentlyAdjustingScrollViewInsetsForKeyboard)
         return;
 
-    CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
 
-    UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedContentInset];
+    UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedObscuredInset];
     if (!_haveSetObscuredInsets)
         computedContentInsetUnadjustedForKeyboard.bottom -= _totalScrollViewBottomInsetAdjustmentForKeyboard;
 
     CGFloat scaleFactor = contentZoomScale(self);
 
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, computedContentInsetUnadjustedForKeyboard);
     CGRect unobscuredRectInContentCoordinates = _frozenUnobscuredContentRect ? _frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()];
     unobscuredRectInContentCoordinates = CGRectIntersection(unobscuredRectInContentCoordinates, [self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
 
@@ -2767,8 +2783,6 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     if (inStableState) {
         WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
         if (coordinator && coordinator->hasActiveSnapPoint()) {
-            CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
-
             CGPoint currentPoint = [_scrollView contentOffset];
             CGPoint activePoint = coordinator->nearestActiveContentInsetAdjustedSnapPoint(unobscuredRect.origin.y, currentPoint);
 
@@ -2948,7 +2962,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     // an offset and animation on it, which results in computing incorrect rectangles. Work around by using
     // frozen rects during swipes.
     CGRect fullViewRect = self.bounds;
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedObscuredInset]);
 
     _frozenVisibleContentRect = [self convertRect:fullViewRect toView:_contentView.get()];
     _frozenUnobscuredContentRect = [self convertRect:unobscuredRect toView:_contentView.get()];

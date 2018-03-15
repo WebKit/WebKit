@@ -1,3 +1,89 @@
+2018-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Hit-testing fails when specifying a large top content inset
+        https://bugs.webkit.org/show_bug.cgi?id=183648
+        <rdar://problem/38421894>
+
+        Reviewed by Tim Horton.
+
+        Currently, in the process of computing unobscured content rect in the UI process on iOS, we subtract away parts
+        of the view that are obscured by insets (e.g. MobileSafari's chrome). The helper method -[WKWebView
+        _computeContentInset] is intended to compute these obscuring insets around the view, but it takes scroll view
+        insets into account. This means that if WKWebView's inner scroll view has content insets, we'll end up shrinking
+        the unobscured content rect as if the insetted region obscures the viewport; this causes visible content on the
+        page to be uninteractible, since WKWebView erroneously thinks it's obscured.
+
+        To address this, we rename _computeContentInset to _computeObscuredInset, and make it _not_ affected by the
+        scroll view's content insets. From code inspection and testing, all but one of the former call sites of
+        _computeContentInset really need the obscured inset instead (see below). The one exception, -[WKWebView
+        _adjustedContentOffset:], takes a scroll position from the page and maps it to a content offset in the inner
+        UIScrollView (see below for more details).
+
+        Tests:  ScrollViewInsetTests.InnerHeightWithLargeTopContentInset
+                ScrollViewInsetTests.InnerHeightWithLargeBottomContentInset
+                ScrollViewInsetTests.RestoreInitialContentOffsetAfterCrash
+                ScrollViewInsetTests.RestoreInitialContentOffsetAfterNavigation
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+        (-[WKWebView _initialContentOffsetForScrollView]):
+
+        See -_contentOffsetAdjustedForObscuredInset: below.
+
+        (-[WKWebView _contentOffsetAdjustedForObscuredInset:]):
+
+        Formerly -_adjustedContentOffset:. -_contentOffsetAdjustedForObscuredInset: no longer takes scroll view content
+        inset into account, and only cares about insets that obscure the view. This means that the scroll position
+        (0, 0) in the document now maps to the content offset in the inner UIScrollView, such that the top of the page
+        is aligned with the top of the viewport.
+
+        However, many call sites of -_adjustedContentOffset: were intended to compute the initial, top-left-most content
+        offset in the scroll view to scroll to when resetting the web view (i.e., they pass in CGPointZero for the
+        scroll position). An example of this is the scroll position to jump to after web content process termination, or
+        the scroll position after main frame navigation. In these cases, we actually want to jump to the top of the
+        scroll view, so we do want to use the version of the computed content insets that accounts for scroll view
+        insets.
+
+        Since these cases are limited to finding the top-left-most scroll position, we pull this out into a separate
+        helper method (-_initialContentOffsetForScrollView) and replace calls to
+        `-[self _adjustedContentOffset:CGPointZero]` with this instead.
+
+        (-[WKWebView _computedObscuredInset]):
+
+        A version of -_computeContentInset that doesn't care about scroll view insets. Used whereever we need to account
+        for obscured insets rather than the combination of content insets and unobscured insets (e.g.
+        -_initialContentOffsetForScrollView).
+
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:nextValidLayerTreeTransactionID:]):
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]):
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _navigationGestureDidBegin]):
+
+        In all these places where we inset the view bounds to compute the unobscured region of the viewport, it doesn't
+        make sense to additionally inset by the scroll view's content insets, since (1) the scroll view's content insets
+        don't obscure the viewport, and (2) it's perfectly valid for the inner scroll view to have arbitrarily large
+        content insets.
+
+        (-[WKWebView _adjustedContentOffset:]): Deleted.
+
+        Renamed to -_contentOffsetAdjustedForObscuredInset:.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _offsetForPageNumberIndicator]):
+
+        Similar to -_scrollToFragment: (see below).
+
+        (-[WKPDFView _scrollToFragment:]):
+
+        This helper figures out which content offset to scroll to, given the y-origin of a page in a PDF document. If
+        insets are added to the scroll view, we end up scrolling to the wrong content offset since we'll add the height
+        of the top content inset (imagine that the top content inset is enormous — then we'll scroll an amount equal to
+        the top content inset _past_ the point where the y-origin of the page is at the top of the viewport).
+
 2018-03-15  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Correct sandbox violations during Flash playback under ToT WebKit
