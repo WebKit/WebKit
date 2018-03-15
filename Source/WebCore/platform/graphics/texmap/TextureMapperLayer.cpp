@@ -91,17 +91,6 @@ static Color blendWithOpacity(const Color& color, float opacity)
     return color.colorWithAlphaMultipliedBy(opacity);
 }
 
-void TextureMapperLayer::computePatternTransformIfNeeded()
-{
-    if (!m_patternTransformDirty)
-        return;
-
-    m_patternTransformDirty = false;
-    m_patternTransform =
-        TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_state.contentsTileSize), FloatRect(FloatPoint::zero(), m_state.contentsRect.size()))
-        .multiply(TransformationMatrix().translate(m_state.contentsTilePhase.width() / m_state.contentsRect.width(), m_state.contentsTilePhase.height() / m_state.contentsRect.height()));
-}
-
 void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
     if (!m_state.visible || !m_state.contentsVisible)
@@ -138,9 +127,11 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
         return;
 
     if (!m_state.contentsTileSize.isEmpty()) {
-        computePatternTransformIfNeeded();
         options.textureMapper.setWrapMode(TextureMapper::RepeatWrap);
-        options.textureMapper.setPatternTransform(m_patternTransform);
+
+        auto patternTransform = TransformationMatrix::rectToRect({ { }, m_state.contentsTileSize }, { { }, m_state.contentsRect.size() })
+            .translate(m_state.contentsTilePhase.width() / m_state.contentsRect.width(), m_state.contentsTilePhase.height() / m_state.contentsRect.height());
+        options.textureMapper.setPatternTransform(patternTransform);
     }
 
     ASSERT(!layerRect().isEmpty());
@@ -555,26 +546,17 @@ void TextureMapperLayer::setChildrenTransform(const TransformationMatrix& childr
 
 void TextureMapperLayer::setContentsRect(const FloatRect& contentsRect)
 {
-    if (contentsRect == m_state.contentsRect)
-        return;
     m_state.contentsRect = contentsRect;
-    m_patternTransformDirty = true;
 }
 
 void TextureMapperLayer::setContentsTileSize(const FloatSize& size)
 {
-    if (size == m_state.contentsTileSize)
-        return;
     m_state.contentsTileSize = size;
-    m_patternTransformDirty = true;
 }
 
 void TextureMapperLayer::setContentsTilePhase(const FloatSize& phase)
 {
-    if (phase == m_state.contentsTilePhase)
-        return;
     m_state.contentsTilePhase = phase;
-    m_patternTransformDirty = true;
 }
 
 void TextureMapperLayer::setMasksToBounds(bool masksToBounds)

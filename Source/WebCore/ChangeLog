@@ -1,3 +1,29 @@
+2018-03-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Don't bother caching pattern transform matrix
+        https://bugs.webkit.org/show_bug.cgi?id=183633
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the m_patternTransform and m_patternTransformDirty member
+        variables from the TextureMapperLayer class. These unnecessarily
+        complicate the state update methods that need to compare the given
+        attribute against the current state, and only update it if it has
+        changed.
+
+        Instead, compute the pattern TransformationMatrix value on-the-fly in
+        the paintSelf() method, if at all necessary.
+
+        No change in functionality.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::setContentsRect):
+        (WebCore::TextureMapperLayer::setContentsTileSize):
+        (WebCore::TextureMapperLayer::setContentsTilePhase):
+        (WebCore::TextureMapperLayer::computePatternTransformIfNeeded): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2018-03-14  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add clearing of storage access to WebResourceLoadStatisticsStore::clearInMemory()

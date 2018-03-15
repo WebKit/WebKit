@@ -47,7 +47,6 @@ public:
         , m_textureMapper(0)
         , m_fixedToViewport(false)
         , m_id(0)
-        , m_patternTransformDirty(false)
     { }
 
     virtual ~TextureMapperLayer();
@@ -147,7 +146,6 @@ private:
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
     void applyMask(const TextureMapperPaintOptions&);
-    void computePatternTransformIfNeeded();
 
     // TextureMapperAnimation::Client
     void setAnimatedTransform(const TransformationMatrix&) override;
@@ -226,8 +224,6 @@ private:
     FloatSize m_scrollPositionDelta;
     bool m_fixedToViewport;
     uint32_t m_id;
-    TransformationMatrix m_patternTransform;
-    bool m_patternTransformDirty;
 };
 
 }
