@@ -262,15 +262,20 @@ bool PluginPackage::load()
 
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = 0;
     NP_InitializeFuncPtr NP_Initialize = 0;
-    NPError npErr;
+    NPError npErr = NPERR_NO_ERROR;
 
     NP_Initialize = (NP_InitializeFuncPtr)GetProcAddress(m_module, "NP_Initialize");
     NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)GetProcAddress(m_module, "NP_GetEntryPoints");
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_NPP_Shutdown = (NPP_ShutdownProcPtr)GetProcAddress(m_module, "NP_Shutdown");
 
     if (!NP_Initialize || !NP_GetEntryPoints || !m_NPP_Shutdown)
+#else
+    if (!NP_Initialize || !NP_GetEntryPoints)
+#endif
         goto abort;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     memset(&m_pluginFuncs, 0, sizeof(m_pluginFuncs));
     m_pluginFuncs.size = sizeof(m_pluginFuncs);
 
@@ -286,7 +291,7 @@ bool PluginPackage::load()
 
     if (npErr != NPERR_NO_ERROR)
         goto abort;
-
+#endif
     m_loadCount++;
     return true;
 

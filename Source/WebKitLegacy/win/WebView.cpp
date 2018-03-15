@@ -2549,11 +2549,13 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
     // they are delivered. We repost paint messages so that we eventually get
     // a chance to paint once the modal loop has exited, but other messages
     // aren't safe to repost, so we just drop them.
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (PluginView::isCallingPlugin()) {
         if (message == WM_PAINT)
             PostMessage(hWnd, message, wParam, lParam);
         return 0;
     }
+#endif
 
     bool handled = true;
 

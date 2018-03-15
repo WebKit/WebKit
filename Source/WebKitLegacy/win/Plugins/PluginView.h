@@ -312,9 +312,9 @@ namespace WebCore {
         NPP m_instance;
         NPP_t m_instanceStruct;
         NPWindow m_npWindow;
-#endif
 
         NPObject* m_elementNPObject;
+#endif
 
         Vector<bool, 4> m_popupStateStack;
 

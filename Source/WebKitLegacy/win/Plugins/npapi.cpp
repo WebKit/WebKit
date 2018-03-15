@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "PluginMainThreadScheduler.h"
 #include "PluginView.h"
 #include <WebCore/Page.h>
@@ -198,3 +200,5 @@ NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
     UNUSED_PARAM(menu);
     return NPERR_NO_ERROR;
 }
+
+#endif

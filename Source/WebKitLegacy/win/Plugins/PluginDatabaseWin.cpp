@@ -68,6 +68,7 @@ static inline void addPluginPathsFromRegistry(HKEY rootKey, HashSet<String>& pat
     RegCloseKey(key);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 {
     // FIXME: This should be a case insensitive set.
@@ -120,6 +121,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
     if (!oldWMPPluginPath.isEmpty() && !newWMPPluginPath.isEmpty())
         paths.remove(oldWMPPluginPath);
 }
+#endif
 
 static inline Vector<int> parseVersionString(const String& versionString)
 {
@@ -356,6 +358,7 @@ static inline void addMacromediaPluginDirectories(Vector<String>& directories)
     directories.append(nullTerminatedWCharToString(macromediaDirectoryStr));
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 Vector<String> PluginDatabase::defaultPluginDirectories()
 {
     Vector<String> directories;
@@ -380,5 +383,6 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
 
     return false;
 }
+#endif
 
 }

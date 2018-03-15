@@ -1,3 +1,24 @@
+2018-03-15  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Fix build errors when ENABLE_NETSCAPE_PLUGIN_API is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=183335
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/PluginDatabaseWin.cpp:
+        * Plugins/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::processQueuedMessage):
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load):
+        * Plugins/PluginView.h:
+        * Plugins/PluginViewWin.cpp:
+        * Plugins/npapi.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+        * WebView.cpp:
+        (WebView::WebViewWndProc):
+
 2018-03-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Layout Test fast/html/menuitem-element.html is failing.

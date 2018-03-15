@@ -1169,6 +1169,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTM
         }
     }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     Frame* frame = core(m_webFrame);
     RefPtr<PluginView> pluginView = PluginView::create(frame, pluginSize, &element, url, paramNames, paramValues, mimeType, loadManually);
 
@@ -1176,7 +1177,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTM
         return pluginView;
 
     dispatchDidFailToStartPlugin(pluginView.get());
-
+#endif
     return nullptr;
 }
 
@@ -1191,6 +1192,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 
 RefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement& element, const URL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<PluginView> pluginView = PluginView::create(core(m_webFrame), pluginSize, &element, URL(), paramNames, paramValues, "application/x-java-applet", false);
 
     // Check if the plugin can be loaded successfully
@@ -1213,6 +1215,9 @@ RefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& plugi
     resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(coreFrame->loader().documentLoader()));
 
     return WTFMove(pluginView);
+#else
+    return nullptr;
+#endif
 }
 
 WebHistory* WebFrameLoaderClient::webHistory() const

@@ -25,6 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginView.h"
 
 #include "PluginDatabase.h"
@@ -976,3 +977,5 @@ float PluginView::deviceScaleFactor() const
 }
 
 } // namespace WebCore
+
+#endif
