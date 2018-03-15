@@ -101,6 +101,7 @@ promise_test((test) => {
     });
 }, "Switching from front to back camera");
 
+var didReplaceTrack = false;
 promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
@@ -115,6 +116,9 @@ promise_test((test) => {
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
+                firstConnection.addEventListener('negotiationneeded', test.step_func(() => {
+                    assert_false(didReplaceTrack, 'negotiationeeded should not be called after replacing an ongoing track');
+                }));
             }, (secondConnection) => {
                 secondConnection.ontrack = (trackEvent) => {
                     resolve(trackEvent.streams[0]);
@@ -132,6 +136,7 @@ promise_test((test) => {
     }).then((stream) => {
         backStream = stream;
         assert_true(backStream.getVideoTracks()[0].getSettings().height === 240, "backStream should be small");
+        didReplaceTrack = true;
         return sender.replaceTrack(backStream.getVideoTracks()[0]);
     }).then(() => {
         return testBackCameraImage();

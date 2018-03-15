@@ -1,3 +1,13 @@
+2018-03-15  Youenn Fablet  <youenn@apple.com>
+
+        replaceTrack triggers negotiationneeded
+        https://bugs.webkit.org/show_bug.cgi?id=180342
+        <rdar://problem/35822426>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-replace-track.html:
+
 2018-03-15  Chris Dumez  <cdumez@apple.com>
 
         webkitdirectory-open-panel stumbles over unordered results

@@ -559,8 +559,10 @@ void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, Ref<MediaS
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), protectedSender = makeRef(sender), promise = WTFMove(promise), withTrack = WTFMove(withTrack)](ScriptExecutionContext&) mutable {
         if (protectedThis->isClosed())
             return;
+        bool hasTrack = protectedSender->track();
         protectedSender->setTrack(WTFMove(withTrack));
-        protectedThis->m_backend->notifyAddedTrack(protectedSender.get());
+        if (!hasTrack)
+            protectedThis->m_backend->notifyAddedTrack(protectedSender.get());
         promise.resolve();
     });
 }

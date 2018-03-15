@@ -1,3 +1,18 @@
+2018-03-15  Youenn Fablet  <youenn@apple.com>
+
+        replaceTrack triggers negotiationneeded
+        https://bugs.webkit.org/show_bug.cgi?id=180342
+        <rdar://problem/35822426>
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+        Fix the case of replacing a track for which data is already flowing.
+        We should probably do the same for null tracks when fully implementing transceivers.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::enqueueReplaceTrackTask):
+
 2018-03-15  Keith Rollin  <krollin@apple.com>
 
         Telemetry for stalled webpage loads
