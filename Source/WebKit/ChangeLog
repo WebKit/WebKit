@@ -1,5 +1,16 @@
 2018-03-15  Brent Fulgham  <bfulgham@apple.com>
 
+        [macOS] Correct sandbox violations during Flash playback under ToT WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=183672
+        <rdar://problem/38510839>
+
+        Reviewed by Eric Carlson.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2018-03-15  Brent Fulgham  <bfulgham@apple.com>
+
         REGRESSION(r229484): Plugins often require CGS Connections to draw
         https://bugs.webkit.org/show_bug.cgi?id=183663
         <rdar://problem/38439218>

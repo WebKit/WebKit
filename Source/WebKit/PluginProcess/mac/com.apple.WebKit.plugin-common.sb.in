@@ -1,4 +1,4 @@
-; Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+; Copyright (C) 2013-2018 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -22,7 +22,7 @@
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
 (version 1)
-(deny default)
+(deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
 (import "system.sb")
@@ -44,13 +44,16 @@
 (deny iokit-get-properties)
 (allow iokit-get-properties
     (iokit-property-regex #"^AAPL,(DisplayPipe|boot-display|mux-switch-state)")
+    (iokit-property "AGCInfo")
     (iokit-property-regex #"^ATY,fb_(linebytes|offset|size)")
+    (iokit-property "AccelCaps")
     (iokit-property "ActuationSupported")
     (iokit-property "AllowDisplaySleep")
     (iokit-property "AlwaysNeedsVelocityCalculated")
     (iokit-property "Apple(DisplayType|GVAKeyDoesNotExist|IntelMEVABundleName|Sense)")
     (iokit-property "CFBundleIdentifier")
     (iokit-property-regex #"^Display(ParameterHandlerUsesCharPtr|ProductID|Routing|SerialNumber|VendorID)")
+    (iokit-property "Development")
     (iokit-property "DeviceEqID")
     (iokit-property "Driver is Ready")
     (iokit-property "EnableLPVP")
@@ -58,7 +61,7 @@
     (iokit-property "Family ID")
     (iokit-property "ForceSupported")
     (iokit-property "HIDPointerAccelerationType")
-    (iokit-property-regex #"^IOAccel(Index|Revision|Types)")
+    (iokit-property-regex #"^IOAccel(DisplayPipeCapabilities|Index|Revision|Types)")
     (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage)")
     (iokit-property-regex #"^IOAudioDevice(CanBeDefaults|TransportType)")
     (iokit-property-regex #"^IOAudioEngine(ChannelNames|ClientDescription|CoreAudioPlugIn|(|Device)Description|Flavor|GlobalUniqueID|OutputChannelLayout|SampleOffset|State)")
@@ -80,18 +83,24 @@
     (iokit-property "IOGeneralInterest")
     (iokit-property "IOGLBundleName")
     (iokit-property "IOGVACodec")
+    (iokit-property "IOGVAVTCapabilities")
+    (iokit-property-regex #"^IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler)")
     (iokit-property "IOI2CTransactionTypes")
     (iokit-property-regex "^IOGVA[A-Z]+(De|En)code")
     (iokit-property "IOMACAddress") ;; For some Flash players
     (iokit-property "IOMatchCategory")
     (iokit-property-regex #"^IOName(Match|Matched)")
+    (iokit-property-regex #"^IOPCI(ClassMatch|Express(Capabilities|Link(Status|Capabilities))|PrimaryMatch|MSIMode|Resourced|Tunnelled)")
     (iokit-property "IOPMStrictTreeOrder")
     (iokit-property-regex #"^IOPlatform(SerialNumber|UUID)") ;; Ditto
     (iokit-property "IOPowerManagement")
     (iokit-property "IOProbeScore")
     (iokit-property "IOProviderClass")
+    (iokit-property-regex #"^IOReport(Lures|Legend(|Public))")
     (iokit-property "IOScreenRestoreState")
+    (iokit-property "IOSourceVersion")
     (iokit-property "IOVARendererID")
+    (iokit-property-regex #"^InternalStatistics(|Accm)")
     (iokit-property-regex #"^MT( Built-In|HIDDevice)")
     (iokit-property "MaintainPowerInUILock")
     (iokit-property "Max Packet Size")
@@ -99,11 +108,14 @@
     (iokit-property-regex #"^Multitouch (ID|Serial Number|Subdevice ID)")
     (iokit-property "NXSystemInfo")
     (iokit-property "NoAutoRoute")
+    (iokit-property-regex #"^PerformanceStatistics(|Accum)")
     (iokit-property "Protocol Characteristics")
     (iokit-property-regex #"^Sensor (Columns|Region (Descriptor|Param)|Rows|Surface (Descriptor|Height|Width))")
     (iokit-property "SupportAudioAUUC")
+    (iokit-property "SurfaceList")
     (iokit-property "TimeStampFiltering")
     (iokit-property "Transport")
+    (iokit-property "VRAM,totalMB")
     (iokit-property "WANTS_FRAMES_IGNORED")
     (iokit-property "board-id")
     (iokit-property-regex #"^audio-(codec-info|device-(mvalue|nvalue))")
