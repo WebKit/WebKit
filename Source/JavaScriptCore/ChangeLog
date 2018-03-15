@@ -1,5 +1,17 @@
 2018-03-15  Tim Horton  <timothy_horton@apple.com>
 
+        Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=183675
+        <rdar://problem/38515281>
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Don't install the JSC alias if we're installing to an alternate location.
+        This should have been a part of r229637.
+
+2018-03-15  Tim Horton  <timothy_horton@apple.com>
+
         Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=183649
         <rdar://problem/38480526>

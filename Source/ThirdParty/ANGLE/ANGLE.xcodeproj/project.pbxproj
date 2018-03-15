@@ -550,7 +550,7 @@
 		312BDB0B15FECAB00097EBC7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceVersions";
+			dstPath = "$(ANGLE_INSTALL_PATH_PREFIX)/usr/local/OpenSourceVersions";
 			dstSubfolderSpec = 0;
 			files = (
 				312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */,
@@ -560,7 +560,7 @@
 		312BDB0D15FECACE0097EBC7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
+			dstPath = "$(ANGLE_INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
 			dstSubfolderSpec = 0;
 			files = (
 				312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */,
