@@ -1,3 +1,25 @@
+2018-03-15  Youenn Fablet  <youenn@apple.com>
+
+        MessagePort is not always destroyed on the right thread
+        https://bugs.webkit.org/show_bug.cgi?id=183619
+        <rdar://problem/38204711>
+
+        Reviewed by Chris Dumez.
+
+        Add assertion to ensure MessagePort is destroyed in the right thread.
+        Modify methods taking a ref in a lambda to rely on weak pointers and refing the WorkerThread if in a worker context.
+        It is safe to ref the WorkerThread since it is thread safe ref counted and we are passing the ref to the main thread
+        where the WorkerThread is expected to be destroyed.
+
+        Test: http/tests/workers/worker-messageport-2.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::~MessagePort):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::updateActivity):
+        (WebCore::MessagePort::hasPendingActivity const):
+        * dom/MessagePort.h:
+
 2018-03-15  Jer Noble  <jer.noble@apple.com>
 
         Adopt new AVURLAssetUseClientURLLoadingExclusively AVURLAsset creation option.

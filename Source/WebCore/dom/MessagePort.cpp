@@ -34,6 +34,7 @@
 #include "MessagePortChannelProvider.h"
 #include "MessageWithMessagePorts.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerThread.h"
 
 namespace WebCore {
 
@@ -108,6 +109,8 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
 
 MessagePort::~MessagePort()
 {
+    ASSERT(m_creationThread.ptr() == &Thread::current());
+
     LOG(MessagePorts, "Destroyed MessagePort %s (%p) in process %" PRIu64, m_identifier.logString().utf8().data(), this, Process::identifier().toUInt64());
 
     ASSERT(allMessagePortsLock().isLocked());
@@ -243,8 +246,16 @@ void MessagePort::dispatchMessages()
     if (!isEntangled())
         return;
 
-    auto messagesTakenHandler = [this, protectedThis = makeRef(*this)](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionCallback) mutable {
-        auto innerHandler = [this, otherProtectedThis = WTFMove(protectedThis)](Vector<MessageWithMessagePorts>&& messages) {
+    RefPtr<WorkerThread> workerThread;
+    if (is<WorkerGlobalScope>(*m_scriptExecutionContext))
+        workerThread = &downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread();
+
+    auto messagesTakenHandler = [this, weakThis = makeWeakPtr(this), workerThread = WTFMove(workerThread)](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionCallback) mutable {
+        ASSERT(isMainThread());
+        auto innerHandler = [this, weakThis = WTFMove(weakThis)](auto&& messages) {
+            if (!weakThis)
+                return;
+
             LOG(MessagePorts, "MessagePort %s (%p) dispatching %zu messages", m_identifier.logString().utf8().data(), this, messages.size());
 
             if (!m_scriptExecutionContext)
@@ -265,24 +276,34 @@ void MessagePort::dispatchMessages()
             }
         };
 
-        if (!m_scriptExecutionContext)
-            return;
-
-        if (m_scriptExecutionContext->isContextThread()) {
+        if (!workerThread) {
             innerHandler(WTFMove(messages));
             completionCallback();
             return;
         }
-
-        m_scriptExecutionContext->postTask([innerHandler = WTFMove(innerHandler), messages = WTFMove(messages), completionCallback = WTFMove(completionCallback)](ScriptExecutionContext&) mutable {
+        workerThread->runLoop().postTaskForMode([innerHandler = WTFMove(innerHandler), messages = WTFMove(messages), completionCallback = WTFMove(completionCallback)](auto&) mutable {
             innerHandler(WTFMove(messages));
             RunLoop::main().dispatch([completionCallback = WTFMove(completionCallback)] {
                 completionCallback();
             });
-        });
+        }, WorkerRunLoop::defaultMode());
     };
 
     MessagePortChannelProvider::singleton().takeAllMessagesForPort(m_identifier, WTFMove(messagesTakenHandler));
+}
+
+void MessagePort::updateActivity(MessagePortChannelProvider::HasActivity hasActivity)
+{
+    bool hasHadLocalActivity = m_hasHadLocalActivitySinceLastCheck;
+    m_hasHadLocalActivitySinceLastCheck = false;
+
+    if (hasActivity == MessagePortChannelProvider::HasActivity::No && !hasHadLocalActivity)
+        m_isRemoteEligibleForGC = true;
+
+    if (hasActivity == MessagePortChannelProvider::HasActivity::Yes)
+        m_isRemoteEligibleForGC = false;
+
+    m_isAskingRemoteAboutGC = false;
 }
 
 bool MessagePort::hasPendingActivity() const
@@ -303,32 +324,23 @@ bool MessagePort::hasPendingActivity() const
 
     // If we're not in the middle of asking the remote port about collectability, do so now.
     if (!m_isAskingRemoteAboutGC) {
-        MessagePortChannelProvider::singleton().checkRemotePortForActivity(m_remoteIdentifier, [this, protectedThis = makeRef(*this)](MessagePortChannelProvider::HasActivity hasActivity) mutable {
-            auto innerHandler = [this, otherProtectedThis = WTFMove(protectedThis)](MessagePortChannelProvider::HasActivity hasActivity) {
-                bool hasHadLocalActivity = m_hasHadLocalActivitySinceLastCheck;
-                m_hasHadLocalActivitySinceLastCheck = false;
+        RefPtr<WorkerThread> workerThread;
+        if (is<WorkerGlobalScope>(*m_scriptExecutionContext))
+            workerThread = &downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread();
 
-                if (hasActivity == MessagePortChannelProvider::HasActivity::No && !hasHadLocalActivity)
-                    m_isRemoteEligibleForGC = true;
+        MessagePortChannelProvider::singleton().checkRemotePortForActivity(m_remoteIdentifier, [weakThis = makeWeakPtr(const_cast<MessagePort*>(this)), workerThread = WTFMove(workerThread)](MessagePortChannelProvider::HasActivity hasActivity) mutable {
 
-                if (hasActivity == MessagePortChannelProvider::HasActivity::Yes)
-                    m_isRemoteEligibleForGC = false;
-
-                m_isAskingRemoteAboutGC = false;
-            };
-
-
-            if (!m_scriptExecutionContext)
-                return;
-
-            if (m_scriptExecutionContext->isContextThread()) {
-                innerHandler(hasActivity);
+            ASSERT(isMainThread());
+            if (!workerThread) {
+                if (weakThis)
+                    weakThis->updateActivity(hasActivity);
                 return;
             }
 
-            m_scriptExecutionContext->postTask([innerHandler = WTFMove(innerHandler), hasActivity](ScriptExecutionContext&) mutable {
-                innerHandler(hasActivity);
-            });
+            workerThread->runLoop().postTaskForMode([weakThis = WTFMove(weakThis), hasActivity](auto&) mutable {
+                if (weakThis)
+                    weakThis->updateActivity(hasActivity);
+            }, WorkerRunLoop::defaultMode());
         });
         m_isAskingRemoteAboutGC = true;
     }

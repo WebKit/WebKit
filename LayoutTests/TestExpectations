@@ -211,6 +211,8 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-red
 # Reenable it when having a custom gc exposed in service workers.
 [ Debug ] http/wpt/service-workers/fetchEvent.https.html [ Skip ]
 
+[ Debug ] http/tests/workers/worker-messageport-2.html [ Slow ]
+
 # Skip workers tests that are timing out or are SharedWorker related only
 imported/w3c/web-platform-tests/workers/constructors/Worker/same-origin.html [ Skip ]
 imported/w3c/web-platform-tests/workers/data-url-shared.html [ Skip ]
