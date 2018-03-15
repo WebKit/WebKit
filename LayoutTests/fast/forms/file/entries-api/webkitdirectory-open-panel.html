@@ -20,20 +20,28 @@ function runTest()
         inputElement.offsetTop + inputElement.offsetHeight / 2);
 }
 
+function checkFileListIncludes(files, name, relativePath)
+{
+    for (let _file of files) {
+        file = _file;
+        if (file.name === name) {
+            testPassed("fileList contains file " + name);
+            shouldBeEqualToString("file.webkitRelativePath", "" + relativePath);
+            return;
+        }
+    }
+    testFailed("fileList does not contain file " + name);
+}
+
 function changed(event)
 {
     fileList = event.target.files;
     shouldBe("fileList.length", "5");
-    shouldBeEqualToString("fileList[0].name", "file1.txt");
-    shouldBeEqualToString("fileList[0].webkitRelativePath", "testFiles/file1.txt");
-    shouldBeEqualToString("fileList[1].name", "file2.txt");
-    shouldBeEqualToString("fileList[1].webkitRelativePath", "testFiles/file2.txt");
-    shouldBeEqualToString("fileList[2].name", "file3.txt");
-    shouldBeEqualToString("fileList[2].webkitRelativePath", "testFiles/subfolder1/file3.txt");
-    shouldBeEqualToString("fileList[3].name", "file4.txt");
-    shouldBeEqualToString("fileList[3].webkitRelativePath", "testFiles/subfolder2/file4.txt");
-    shouldBeEqualToString("fileList[4].name", "file5.txt");
-    shouldBeEqualToString("fileList[4].webkitRelativePath", "testFiles/subfolder2/subfolder2a/file5.txt");
+    checkFileListIncludes(fileList, "file1.txt", "testFiles/file1.txt");
+    checkFileListIncludes(fileList, "file2.txt", "testFiles/file2.txt");
+    checkFileListIncludes(fileList, "file3.txt", "testFiles/subfolder1/file3.txt");
+    checkFileListIncludes(fileList, "file4.txt", "testFiles/subfolder2/file4.txt");
+    checkFileListIncludes(fileList, "file5.txt", "testFiles/subfolder2/subfolder2a/file5.txt");
 
     finishJSTest();
 }

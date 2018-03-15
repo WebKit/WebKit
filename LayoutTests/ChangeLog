@@ -1,3 +1,16 @@
+2018-03-15  Chris Dumez  <cdumez@apple.com>
+
+        webkitdirectory-open-panel stumbles over unordered results
+        https://bugs.webkit.org/show_bug.cgi?id=183643
+
+        Reviewed by Wenson Hsieh.
+
+        Update fast/forms/file/entries-api/webkitdirectory-open-panel.html to not rely on a
+        specific file ordering when checking input.files.
+
+        * fast/forms/file/entries-api/webkitdirectory-open-panel-expected.txt:
+        * fast/forms/file/entries-api/webkitdirectory-open-panel.html:
+
 2018-03-15  Youenn Fablet  <youenn@apple.com>
 
         Layout Test http/wpt/service-workers/update-service-worker.https.html is flaky
