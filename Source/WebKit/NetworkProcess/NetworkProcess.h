@@ -140,6 +140,7 @@ public:
     void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId);
     void getAllStorageAccessEntries(PAL::SessionID, uint64_t contextId);
     void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId);
+    void removeAllStorageAccess(PAL::SessionID);
     void removePrevalentDomains(PAL::SessionID, const Vector<String>& domains);
 #endif
 

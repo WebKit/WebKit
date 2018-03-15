@@ -86,6 +86,7 @@ messages -> NetworkProcess LegacyReceiver {
     HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
     GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
     GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
+    RemoveAllStorageAccess(PAL::SessionID sessionID)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction);
 #endif
 

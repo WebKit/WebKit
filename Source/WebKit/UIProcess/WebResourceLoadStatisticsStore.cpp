@@ -154,12 +154,13 @@ static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& ex
     return mergedDates;
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessHandler&& grantStorageAccessHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessHandler&& grantStorageAccessHandler, RemoveAllStorageAccessHandler&& removeAllStorageAccessHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_persistentStorage(*this, resourceLoadStatisticsDirectory, isEphemeral ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes : ResourceLoadStatisticsPersistentStorage::IsReadOnly::No)
     , m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler))
     , m_hasStorageAccessForFrameHandler(WTFMove(hasStorageAccessForFrameHandler))
     , m_grantStorageAccessHandler(WTFMove(grantStorageAccessHandler))
+    , m_removeAllStorageAccessHandler(WTFMove(removeAllStorageAccessHandler))
     , m_removeDomainsHandler(WTFMove(removeDomainsHandler))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
     , m_statisticsTestingCallback(WTFMove(testingCallback))
@@ -408,6 +409,14 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(String&& do
 #if !RELEASE_LOG_DISABLED
     RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Grant storage access for %{public}s under opener %{public}s, %{public}s user interaction.", domainInNeedOfStorageAccess.utf8().data(), openerDomain.utf8().data(), (isTriggeredByUserGesture ? "with" : "without"));
 #endif
+}
+
+void WebResourceLoadStatisticsStore::removeAllStorageAccess()
+{
+    ASSERT(!RunLoop::isMain());
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () {
+        m_removeAllStorageAccessHandler();
+    });
 }
 
 void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandler<void()>&& callback)
@@ -954,6 +963,7 @@ void WebResourceLoadStatisticsStore::clearInMemory()
     m_resourceStatisticsMap.clear();
     m_operatingDates.clear();
 
+    removeAllStorageAccess();
     updateCookiePartitioningForDomains({ }, { }, { }, ShouldClearFirst::Yes, []() { });
 }
 

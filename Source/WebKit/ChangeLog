@@ -1,3 +1,38 @@
+2018-03-14  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add clearing of storage access to WebResourceLoadStatisticsStore::clearInMemory()
+        https://bugs.webkit.org/show_bug.cgi?id=183641
+        <rdar://problem/38469497>
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        This change is to stabilize existing layout tests by removing
+        all storage access entries on a call to 
+        WebResourceLoadStatisticsStore::clearInMemory().
+        See Ryan Haddad's comment in https://bugs.webkit.org/show_bug.cgi?id=183620.
+
+        Almost all of the code changes are piping to get this
+        call from the WebResourceLoadStatisticsStore to
+        WebCore::NetworkStorageSession where entries reside.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removeAllStorageAccess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::removeAllStorageAccess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemory):
+            Now also clears all storage access entries in the network process.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeAllStorageAccessHandler):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r229613.

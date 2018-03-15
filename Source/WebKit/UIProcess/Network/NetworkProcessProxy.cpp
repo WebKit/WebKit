@@ -428,6 +428,12 @@ void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const Str
     send(Messages::NetworkProcess::GrantStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, contextId), 0);
 }
 
+void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID)
+{
+    if (canSendMessage())
+        send(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID), 0);
+}
+
 void NetworkProcessProxy::storageAccessRequestResult(bool wasGranted, uint64_t contextId)
 {
     auto callback = m_storageAccessResponseCallbackMap.take(contextId);

@@ -1214,6 +1214,14 @@ void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, c
         processPool->networkProcess()->grantStorageAccess(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
 }
 
+void WebsiteDataStore::removeAllStorageAccessHandler()
+{
+    for (auto& processPool : processPools()) {
+        if (auto networkProcess = processPool->networkProcess())
+            networkProcess->removeAllStorageAccess(m_sessionID);
+    }
+}
+
 void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
 {
     for (auto& processPool : processPools())
@@ -1444,6 +1452,8 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
     }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback) {
         grantStorageAccessHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    }, [this, protectedThis = makeRef(*this)] () {
+        removeAllStorageAccessHandler();
     }, [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToRemove) {
         removePrevalentDomains(domainsToRemove);
     });
