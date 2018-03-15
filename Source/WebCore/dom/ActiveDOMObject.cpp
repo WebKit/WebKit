@@ -47,8 +47,6 @@ ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
 
 ActiveDOMObject::~ActiveDOMObject()
 {
-    ASSERT(m_creationThread.ptr() == &Thread::current());
-
     // ActiveDOMObject may be inherited by a sub-class whose life-cycle
     // exceeds that of the associated ScriptExecutionContext. In those cases,
     // m_scriptExecutionContext would/should have been nullified by

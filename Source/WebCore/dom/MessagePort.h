@@ -32,6 +32,7 @@
 #include "MessagePortChannel.h"
 #include "MessagePortIdentifier.h"
 #include "MessageWithMessagePorts.h"
+#include <wtf/Threading.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -128,6 +129,10 @@ private:
     MessagePortIdentifier m_remoteIdentifier;
 
     mutable std::atomic<unsigned> m_refCount { 1 };
+
+#if !ASSERT_DISABLED
+    Ref<Thread> m_creationThread { Thread::current() };
+#endif
 };
 
 } // namespace WebCore

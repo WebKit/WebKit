@@ -30,7 +30,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -118,7 +117,6 @@ private:
     unsigned m_pendingActivityCount;
 #if !ASSERT_DISABLED
     bool m_suspendIfNeededWasCalled;
-    Ref<Thread> m_creationThread { Thread::current() };
 #endif
 };
 

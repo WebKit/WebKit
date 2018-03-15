@@ -109,6 +109,8 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
 
 MessagePort::~MessagePort()
 {
+    ASSERT(m_creationThread.ptr() == &Thread::current());
+
     LOG(MessagePorts, "Destroyed MessagePort %s (%p) in process %" PRIu64, m_identifier.logString().utf8().data(), this, Process::identifier().toUInt64());
 
     ASSERT(allMessagePortsLock().isLocked());
